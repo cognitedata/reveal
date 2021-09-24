@@ -560,10 +560,12 @@ const AnnotationPreviewSidebar = ({
           <TitleWrapper>
             {fileIcon || <Icon type="PDF" />}
             <Title level={4}>{file?.name} </Title>
-            <div>
-              <DiagramReviewStatus file={file} />{' '}
-              <Detail>- Interactive Diagram</Detail>
-            </div>
+            {file?.id && (
+              <div>
+                <DiagramReviewStatus fileId={file.id} />
+                <Detail>Interactive Diagram</Detail>
+              </div>
+            )}
             <FileReview
               annotations={annotations}
               onApprove={onApproveAllAnnotations}

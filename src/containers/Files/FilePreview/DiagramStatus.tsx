@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo } from '@cognite/sdk';
-import { Label, LabelVariants } from '@cognite/cogs.js';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Icon, Label, LabelVariants } from '@cognite/cogs.js';
 import { Tooltip } from 'antd';
 import {
   PENDING_LABEL,
@@ -9,7 +10,7 @@ import {
   isFilePending,
 } from '../hooks';
 
-type Props = { file?: FileInfo };
+type Props = { fileId: number };
 
 export type ReviewStatus = {
   status: string;
@@ -38,24 +39,34 @@ export const approvalDetails: { [key: string]: ReviewStatus } = {
     tooltip: 'No tags were found in the diagram',
   },
 };
-export default function DiagramReviewStatus({ file }: Props) {
+export default function DiagramReviewStatus({ fileId }: Props) {
   const [fileStatus, setFileStatus] = useState<ReviewStatus>(
     approvalDetails.unknown
   );
+
+  const { data: file, isFetched, error } = useCdfItem<FileInfo>('files', {
+    id: fileId,
+  });
+
   useEffect(() => {
-    if (file) {
-      if (isFileApproved(file)) {
-        setFileStatus(approvalDetails.approved);
-      } else if (isFilePending(file)) {
-        setFileStatus(approvalDetails.pending);
-      }
+    if (!file) {
+      return;
     }
-  }, [file]);
+    if (isFileApproved(file)) {
+      setFileStatus(approvalDetails.approved);
+    } else if (isFilePending(file)) {
+      setFileStatus(approvalDetails.pending);
+    } else if (error) {
+      setFileStatus(approvalDetails.unknown);
+    } else {
+      setFileStatus(approvalDetails.unknown);
+    }
+  }, [error, file]);
 
   return (
     <Tooltip title={fileStatus.tooltip}>
       <Label size="small" variant={fileStatus.variant}>
-        {fileStatus.label}
+        {isFetched ? fileStatus.label : <Icon type="Loading" />}
       </Label>
     </Tooltip>
   );
