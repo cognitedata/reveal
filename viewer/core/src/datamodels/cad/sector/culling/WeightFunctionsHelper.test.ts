@@ -11,6 +11,7 @@ import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 describe('WeightFunctionsHelper', () => {
   let camera: THREE.PerspectiveCamera;
   let sectors: SectorMetadata[];
+  let helper: WeightFunctionsHelper;
   const identityMatrix = new THREE.Matrix4().identity();
 
   beforeEach(() => {
@@ -33,10 +34,11 @@ describe('WeightFunctionsHelper', () => {
       sectors.push(x);
       return true;
     });
+
+    helper = new WeightFunctionsHelper(camera);
   });
 
   test('computeTransformedSectorBounds applies model matrix', () => {
-    const helper = new WeightFunctionsHelper(camera);
     const modelMatrix = new THREE.Matrix4().makeRotationX(Math.PI / 4);
     const bounds = new THREE.Box3(new THREE.Vector3(-1, -2, -3), new THREE.Vector3(4, 5, 6));
     const expectedResult = bounds.clone().applyMatrix4(modelMatrix);
@@ -48,7 +50,6 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeDistanceToCameraWeight returns 1 for camera sector is inside', () => {
-    const helper = new WeightFunctionsHelper(camera);
     helper.addCandidateSectors(sectors, identityMatrix);
     const bounds = new THREE.Box3().setFromArray([0, 0, 0, 1, 1, 1]);
     camera.position.set(0.5, 0.5, 0.5);
@@ -59,7 +60,6 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeDistanceToCameraWeight returns values in range [0,1]', () => {
-    const helper = new WeightFunctionsHelper(camera);
     helper.addCandidateSectors(sectors, identityMatrix);
 
     const weights = sectors.map(x => helper.computeDistanceToCameraWeight(x.bounds));
@@ -72,7 +72,6 @@ describe('WeightFunctionsHelper', () => {
   test('computeScreenAreaWeight returns 0 for sector outside frustum', () => {
     camera.position.set(11, 12, 13);
     camera.updateMatrixWorld();
-    const helper = new WeightFunctionsHelper(camera);
 
     const bounds = new THREE.Box3().setFromArray([1000, 1000, 1000, 1001, 1001, 1001]);
     const weight = helper.computeScreenAreaWeight(bounds);
@@ -91,7 +90,6 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeScreenArea returns value in range (0, 1) for sector partially overlapping view', () => {
-    const helper = new WeightFunctionsHelper(camera);
     const bounds = new THREE.Box3().setFromArray([-0.2, -0.2, 0.9, 0.2, 0.2, 1]);
 
     const weight = helper.computeScreenAreaWeight(bounds);
@@ -101,7 +99,6 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeFrustumDepthWeight returns 0 for sector outside frustum', () => {
-    const helper = new WeightFunctionsHelper(camera);
     const bounds = new THREE.Box3().setFromArray([11, 11, 11, 12, 12, 12]);
 
     const weight = helper.computeFrustumDepthWeight(bounds);
@@ -110,7 +107,6 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeFrustumDepthWeight returns weight greater if covers more depth', () => {
-    const helper = new WeightFunctionsHelper(camera);
     const partialDepthBounds = new THREE.Box3().setFromArray([-0.1, -0.1, 2, 0.1, 0.1, 5]);
     const fullDepthBounds = new THREE.Box3().setFromArray([-0.1, -0.1, 0, 0.1, 0.1, 15]);
 
@@ -118,5 +114,22 @@ describe('WeightFunctionsHelper', () => {
     const fullDepthWeight = helper.computeFrustumDepthWeight(fullDepthBounds);
 
     expect(fullDepthWeight).toBeGreaterThan(partialDepthWeight);
+  });
+
+  test('computeMaximumNodeScreensizeWeight returns greater weight for large objects', () => {
+    const bounds = new THREE.Box3().setFromArray([-1, -1, 5, 1, 1, 6]);
+
+    const smallObjectWeight = helper.computeMaximumNodeScreensizeWeight(bounds, 0.1);
+    const largeObjectWeight = helper.computeMaximumNodeScreensizeWeight(bounds, 0.2);
+
+    expect(smallObjectWeight).toBeGreaterThan(0.0);
+    expect(largeObjectWeight).toBeGreaterThan(smallObjectWeight);
+    expect(largeObjectWeight).toBeLessThan(1.0);
+  });
+
+  test('computeMaximumNodeScreensizeWeight returns 1.0 for regardless of size if camera is inside sector', () => {
+    const bounds = new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1]);
+    expect(helper.computeMaximumNodeScreensizeWeight(bounds, 1e-10)).toBe(1);
+    expect(helper.computeMaximumNodeScreensizeWeight(bounds, 1e10)).toBe(1);
   });
 });
