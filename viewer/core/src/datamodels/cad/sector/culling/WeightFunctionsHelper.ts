@@ -38,7 +38,8 @@ export class WeightFunctionsHelper {
       { near: near + 0.4 * nearFarRange, far: near + 1.0 * nearFarRange, weight: 0.2 } // 40-100% of frustum
     ].map(x => {
       const projectionMatrix = createModifiedProjectionMatrix(camera, x.near, x.far);
-      const frustum = new THREE.Frustum().setFromProjectionMatrix(projectionMatrix);
+      const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, this._camera.matrixWorldInverse);
+      const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
       return {
         ...x,
         frustum
@@ -97,12 +98,6 @@ export class WeightFunctionsHelper {
    * @param transformedSectorBounds
    */
   computeFrustumDepthWeight(transformedSectorBounds: THREE.Box3): number {
-    const frustum = new THREE.Frustum();
-    frustum.setFromProjectionMatrix(
-      new THREE.Matrix4().multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse)
-    );
-    frustum.intersectsBox(transformedSectorBounds);
-
     const frustumWeight = this._modifiedFrustums.reduce((accumulatedWeight, x) => {
       const { frustum, weight } = x;
       const accepted = frustum.intersectsBox(transformedSectorBounds);

@@ -10,19 +10,15 @@ import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 
 describe('WeightFunctionsHelper', () => {
   let camera: THREE.PerspectiveCamera;
-  let helper: WeightFunctionsHelper;
   let sectors: SectorMetadata[];
   const identityMatrix = new THREE.Matrix4().identity();
 
   beforeEach(() => {
-    camera = new THREE.PerspectiveCamera();
-    camera.near = 0.1;
-    camera.far = 10.0;
+    camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10.0);
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 1);
-    camera.updateMatrixWorld();
     camera.updateProjectionMatrix();
-    helper = new WeightFunctionsHelper(camera);
+    camera.updateMatrixWorld();
 
     const rootSector = createSectorMetadata([
       0,
@@ -40,6 +36,7 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeTransformedSectorBounds applies model matrix', () => {
+    const helper = new WeightFunctionsHelper(camera);
     const modelMatrix = new THREE.Matrix4().makeRotationX(Math.PI / 4);
     const bounds = new THREE.Box3(new THREE.Vector3(-1, -2, -3), new THREE.Vector3(4, 5, 6));
     const expectedResult = bounds.clone().applyMatrix4(modelMatrix);
@@ -51,6 +48,7 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeDistanceToCameraWeight returns 1 for camera sector is inside', () => {
+    const helper = new WeightFunctionsHelper(camera);
     helper.addCandidateSectors(sectors, identityMatrix);
     const bounds = new THREE.Box3().setFromArray([0, 0, 0, 1, 1, 1]);
     camera.position.set(0.5, 0.5, 0.5);
@@ -61,7 +59,7 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeDistanceToCameraWeight returns values in range [0,1]', () => {
-    camera.position.set(11, 12, 13);
+    const helper = new WeightFunctionsHelper(camera);
     helper.addCandidateSectors(sectors, identityMatrix);
 
     const weights = sectors.map(x => helper.computeDistanceToCameraWeight(x.bounds));
@@ -72,15 +70,20 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeScreenAreaWeight returns 0 for sector outside frustum', () => {
+    camera.position.set(11, 12, 13);
+    camera.updateMatrixWorld();
+    const helper = new WeightFunctionsHelper(camera);
+
     const bounds = new THREE.Box3().setFromArray([1000, 1000, 1000, 1001, 1001, 1001]);
     const weight = helper.computeScreenAreaWeight(bounds);
     expect(weight).toBe(0.0);
   });
 
   test('computeScreenAreaWeight returns 1 for sector camera is inside', () => {
-    const bounds = new THREE.Box3().setFromArray([0, 0, 0, 1, 1, 1]);
     camera.position.set(0.5, 0.5, 0.5);
     camera.updateProjectionMatrix();
+    const helper = new WeightFunctionsHelper(camera);
+    const bounds = new THREE.Box3().setFromArray([0, 0, 0, 1, 1, 1]);
 
     const weight = helper.computeScreenAreaWeight(bounds);
 
@@ -88,6 +91,7 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeScreenArea returns value in range (0, 1) for sector partially overlapping view', () => {
+    const helper = new WeightFunctionsHelper(camera);
     const bounds = new THREE.Box3().setFromArray([-0.2, -0.2, 0.9, 0.2, 0.2, 1]);
 
     const weight = helper.computeScreenAreaWeight(bounds);
@@ -97,6 +101,7 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeFrustumDepthWeight returns 0 for sector outside frustum', () => {
+    const helper = new WeightFunctionsHelper(camera);
     const bounds = new THREE.Box3().setFromArray([11, 11, 11, 12, 12, 12]);
 
     const weight = helper.computeFrustumDepthWeight(bounds);
@@ -105,8 +110,9 @@ describe('WeightFunctionsHelper', () => {
   });
 
   test('computeFrustumDepthWeight returns weight greater if covers more depth', () => {
-    const partialDepthBounds = new THREE.Box3().setFromArray([-10, -10, 2, 10, 10, 5]);
-    const fullDepthBounds = new THREE.Box3().setFromArray([-10, -10, 0, 10, 10, 15]);
+    const helper = new WeightFunctionsHelper(camera);
+    const partialDepthBounds = new THREE.Box3().setFromArray([-0.1, -0.1, 2, 0.1, 0.1, 5]);
+    const fullDepthBounds = new THREE.Box3().setFromArray([-0.1, -0.1, 0, 0.1, 0.1, 15]);
 
     const partialDepthWeight = helper.computeFrustumDepthWeight(partialDepthBounds);
     const fullDepthWeight = helper.computeFrustumDepthWeight(fullDepthBounds);
