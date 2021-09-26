@@ -80,19 +80,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       );
 
       sectors.forEach(sector => {
-        weightFunctions.computeTransformedSectorBounds(sector, model.modelMatrix, transformedBounds);
+        weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
 
-        // const levelWeightImportance = 3.0;
-        // const distanceToImportance = 0.3;
-        // const screenAreaImportance = 0.7;
-        // const frustumDepthImportance = 0.5;
         const levelWeightImportance = 2.0;
         const distanceToImportance = 1.0;
         const screenAreaImportance = 0.3;
         const frustumDepthImportance = 0.2;
         const nodeScreenSizeImportance = 1.0;
 
-        // Weight "level 2" sectors really high
         const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
         const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
         const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);

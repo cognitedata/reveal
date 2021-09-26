@@ -6,7 +6,6 @@ import * as THREE from 'three';
 
 import { SectorMetadata } from '../types';
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
-import { transformBoxToNDC } from './transformBoxToNDC';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()
@@ -28,7 +27,7 @@ export class WeightFunctionsHelper {
   constructor(camera: THREE.PerspectiveCamera) {
     this._camera = camera;
 
-    // Create modified projection matrices to add heurestic of how "deep" in the frustum sectors are located
+    // Create modified projection matrices to add heuristic of how "deep" in the frustum sectors are located
     // This is done to avoid loading too much geometry from sectors we are barely inside and prioritize
     // loading of geometry
     const { near, far } = camera;
@@ -62,8 +61,8 @@ export class WeightFunctionsHelper {
     this._maxSectorDistance = maxDistance;
   }
 
-  computeTransformedSectorBounds(sector: SectorMetadata, modelMatrix: THREE.Matrix4, out: THREE.Box3): void {
-    out.copy(sector.bounds);
+  computeTransformedSectorBounds(sectorBounds: THREE.Box3, modelMatrix: THREE.Matrix4, out: THREE.Box3): void {
+    out.copy(sectorBounds);
     out.applyMatrix4(modelMatrix);
   }
 
@@ -99,6 +98,9 @@ export class WeightFunctionsHelper {
    */
   computeFrustumDepthWeight(transformedSectorBounds: THREE.Box3): number {
     const frustum = new THREE.Frustum();
+    frustum.setFromProjectionMatrix(
+      new THREE.Matrix4().multiplyMatrices(this._camera.projectionMatrix, this._camera.matrixWorldInverse)
+    );
     frustum.intersectsBox(transformedSectorBounds);
 
     const frustumWeight = this._modifiedFrustums.reduce((accumulatedWeight, x) => {
@@ -107,45 +109,6 @@ export class WeightFunctionsHelper {
       return accumulatedWeight + (accepted ? weight : 0);
     }, 0.0);
     return frustumWeight;
-  }
-
-  /**
-   * Compute a weight that is based on where on the screen the sector is placed.
-   * Sectors overlapping the center of the screen is considered more important than
-   * sectors on the edge.
-   * @param transformedSectorBounds
-   * @returns
-   * @deprecated Doesn't make sense
-   */
-  computeCenterOfScreenWeight(transformedSectorBounds: THREE.Box3): number {
-    const samplePoints = [
-      { weight: 1.0, point: new THREE.Vector2(0, 0) },
-
-      { weight: 0.25, point: new THREE.Vector2(-0.5, -0.5) },
-      { weight: 0.25, point: new THREE.Vector2(-0.5, 0.5) },
-      { weight: 0.25, point: new THREE.Vector2(0.5, -0.5) },
-      { weight: 0.25, point: new THREE.Vector2(0.5, 0.5) },
-
-      { weight: 0.125, point: new THREE.Vector2(-0.75, -0.75) },
-      { weight: 0.125, point: new THREE.Vector2(-0.75, 0.75) },
-      { weight: 0.125, point: new THREE.Vector2(0.75, -0.75) },
-      { weight: 0.125, point: new THREE.Vector2(0.75, 0.75) }
-    ];
-    const accumulatedSampleWeight = samplePoints.reduce((value, x) => x.weight + value, 0.0);
-
-    const ndcBounds = transformBoxToNDC(transformedSectorBounds, this._camera);
-    const ndcRect = new THREE.Box2(
-      new THREE.Vector2(ndcBounds.min.x, ndcBounds.min.y),
-      new THREE.Vector2(ndcBounds.max.x, ndcBounds.max.y)
-    );
-    const accumulatedWeight = samplePoints.reduce((sum, sample) => {
-      const d = ndcRect.distanceToPoint(sample.point);
-      const weight = (sample.weight * (2.0 - Math.max(d, 0.0))) / 2.0;
-      return sum + weight;
-    }, 0.0);
-
-    // Scale to [0-1]
-    return accumulatedWeight / accumulatedSampleWeight;
   }
 
   /**

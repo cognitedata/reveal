@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { SectorMetadata } from '../datamodels/cad';
 
-export type SectorTree = [number, SectorTree[], THREE.Box3?];
+export type SectorTree = [id: number, subtree: SectorTree[], bounds?: THREE.Box3];
 
 const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
