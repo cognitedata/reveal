@@ -54,7 +54,8 @@ describe('parseCadMetadataV8', () => {
       },
       children: [],
       estimatedDrawCallCount: 10,
-      estimatedRenderCost: 10
+      estimatedRenderCost: 10,
+      maxDiagonalLength: 1
     };
 
     // Act
@@ -88,7 +89,8 @@ describe('parseCadMetadataV8', () => {
       facesFile: { ...sectorRoot.facesFile!, recursiveCoverageFactors: sectorRoot.facesFile!.coverageFactors },
       children: [],
       estimatedDrawCallCount: 10,
-      estimatedRenderCost: 10
+      estimatedRenderCost: 10,
+      maxDiagonalLength: 1
     };
 
     // Act
