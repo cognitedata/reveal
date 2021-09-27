@@ -1606,17 +1606,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.9.1.tgz#e2f4fcca03052016292341b790c29a8278d1c44a"
-  integrity sha512-RVCU2nmsRwMUA+Y+hHzOJUki8RQKJy8oymPoZc33wt6p2+kinNa6QYQ1obFfrxsGwpl4gLRp1V3TfrGgUrU5rg==
+"@cognite/data-exploration@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.0.1.tgz#889f3a995b2cab845bd04d002d4525f5a70853e0"
+  integrity sha512-tlW6N0sr5vEOxr+W0BoCNNVAgFV4iHM3pcxTWzCfvGeDsdZO6FtF3zj+djOBa8isElUcf4MUs1VbOHcxsRrmSQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^3.32.1"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^1.13.4-beta.1"
+    "@cognite/react-picture-annotation" "^1.16.3"
     "@cognite/sdk" "^3.3.6"
     "@cognite/sdk-provider" "^1.0.0"
     "@cognite/sdk-react-query-hooks" "^5.0.1"
@@ -1707,10 +1707,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^1.13.4-beta.1":
-  version "1.16.2"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.16.2.tgz#c44d5d422040405028deccba7ff1503a2f3659e5"
-  integrity sha512-uPLD4o4GfLXxECsskqrbhI4ol545Dux+gI4XRal7aM8kbHSl2ZVvf0dCssr0L5K5Id6YUXCCYnLLb83i/Cg2Dw==
+"@cognite/react-picture-annotation@^1.16.3":
+  version "1.16.3"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.16.3.tgz#b4ea16dc7676dd9ca858250b7a71a743dbc32222"
+  integrity sha512-v79UmJA7q3hyt02/Kgud8J7myalhfSNR3IDGM2uDm3WexaHipD/Gf91SmluuW2ZG94kzjlmhzl+LsL2fCLmtPw==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^3.3.0"
