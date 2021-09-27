@@ -110,7 +110,8 @@ module.exports = env => {
         'process.env': JSON.stringify({
           VERSION: packageJSON.version,
           WORKER_VERSION: parserWorkerVersion,
-          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
+          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
+          IS_DEVELOPMENT_MODE: development
         })
       })
     ]

@@ -13,6 +13,7 @@ import {
 } from './types';
 
 import { traverseDepthFirst } from '../../../../utilities/objectTraversal';
+import log from '@reveal/logger';
 
 export class TakenSectorTree {
   get totalCost(): SectorCost {
@@ -157,5 +158,7 @@ export class TakenSectorTree {
 }
 
 function assert(condition: boolean, message: string = 'assertion hit') {
-  console.assert(condition, message);
+  if (!condition) {
+    log.error('[ASSERT]', message);
+  }
 }

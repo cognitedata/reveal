@@ -516,6 +516,7 @@ __metadata:
     jsdom: ^16.6.0
     lint-staged: ^10.5.0
     lodash: ^4.17.20
+    loglevel: ^1.7.1
     mixpanel-browser: ^2.39.0
     moq.ts: ^7.3.4
     nock: ^13.0.4
@@ -929,7 +930,14 @@ __metadata:
   resolution: "@reveal/core@workspace:core"
   dependencies:
     "@reveal/camera-manager": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/logger@workspace:*, @reveal/logger@workspace:packages/logger":
+  version: 0.0.0-use.local
+  resolution: "@reveal/logger@workspace:packages/logger"
   languageName: unknown
   linkType: soft
 
@@ -951,6 +959,7 @@ __metadata:
   dependencies:
     "@reveal/camera-manager": "workspace:*"
     "@reveal/core": "workspace:*"
+    "@reveal/logger": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -8434,7 +8443,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"loglevel@npm:^1.6.8":
+"loglevel@npm:^1.6.8, loglevel@npm:^1.7.1":
   version: 1.7.1
   resolution: "loglevel@npm:1.7.1"
   checksum: abee97e346afb3c7e4130eff3025b4e8da1450cf92495bd12f3cc5faff46d6f658f73529c21e7d75634677f48ab1e14ceb5167d1952f53e8aceba5cb795029c2
