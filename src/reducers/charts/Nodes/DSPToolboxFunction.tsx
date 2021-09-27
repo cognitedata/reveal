@@ -336,9 +336,13 @@ export const ConfigPanel = ({
 
         return (
           <div style={{ marginTop: 8 }}>
-            <Tooltip type="primary" content={description}>
+            <Tooltip
+              disabled={!description}
+              type="primary"
+              content={description}
+            >
               <ParameterTitle>
-                {name} <ParameterIcon type="Info" size={12} />
+                {name || param} <ParameterIcon type="Info" size={12} />
               </ParameterTitle>
             </Tooltip>
             {type === DSPFunctionParameterType.boolean ? (
@@ -363,11 +367,14 @@ export const ConfigPanel = ({
     );
   };
 
-  const hasParameters = functionData?.toolFunction?.parameters?.length > 0;
+  const selectedOperation = operations?.find(
+    (dspFunction) => dspFunction.op === functionData?.toolFunction?.op
+  );
 
-  const parameters = hasParameters
-    ? functionData?.toolFunction?.parameters
-    : [];
+  const parameters = (selectedOperation?.parameters ||
+    functionData?.toolFunction?.parameters) as
+    | DSPFunctionParameter[]
+    | undefined;
 
   return (
     <>
@@ -375,7 +382,7 @@ export const ConfigPanel = ({
       {error && <Icon style={{ color: 'white' }} type="XLarge" />}
       {isLoading && <Icon style={{ color: 'white' }} type="Loading" />}
       {operations && renderAvailableOperations(operations)}
-      {hasParameters && renderParameter(parameters)}
+      {!!parameters?.length && renderParameter(parameters)}
       <InfoModal
         appElement={document.getElementsByTagName('body')}
         title={selectedFunction?.name}
