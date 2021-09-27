@@ -3,17 +3,17 @@
  */
 import * as THREE from 'three';
 
-import { DetermineSectorsInput, SectorCost } from './types';
+import { SectorCost } from './types';
 import { CadMaterialManager } from '../../CadMaterialManager';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller, LevelOfDetail } from '../../../../internals';
-import { SectorMetadata, CadNode, CadModelMetadata } from '../../../../internals';
+import { SectorMetadata, CadNode } from '../../../../internals';
 
 import { generateSectorTree } from '../../../../__testutilities__/createSectorMetadata';
 import { createCadModelMetadata } from '../../../../__testutilities__/createCadModelMetadata';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { PropType } from '../../../../utilities/reflection';
 import { createGlContext } from '../../../../__testutilities__/createGlContext';
+import { createDetermineSectorInput } from '../../../../__testutilities__';
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();
@@ -175,24 +175,3 @@ describe('ByVisibilityGpuSectorCuller', () => {
     expect(coverageUtil.dispose).toBeCalledTimes(1);
   });
 });
-
-function createDetermineSectorInput(
-  camera: THREE.PerspectiveCamera,
-  models: CadModelMetadata | CadModelMetadata[],
-  budget?: CadModelSectorBudget
-): DetermineSectorsInput {
-  const determineSectorsInput: DetermineSectorsInput = {
-    camera,
-    clippingPlanes: [],
-    cadModelsMetadata: Array.isArray(models) ? models : [models],
-    loadingHints: {},
-    cameraInMotion: false,
-    budget: budget || {
-      geometryDownloadSizeBytes: 20,
-      highDetailProximityThreshold: 10,
-      maximumNumberOfDrawCalls: Infinity,
-      maximumRenderCost: Infinity
-    }
-  };
-  return determineSectorsInput;
-}
