@@ -4,5 +4,6 @@
 
 export { AutoDisposeGroup } from './AutoDisposeGroup';
 export { BoundingBoxLOD } from './BoundingBoxLOD';
-export { getBox3CornerPoints } from './getBox3CornerPoints';
+export { iterateBox3CornerPoints } from './box3CornerPoints';
 export { dumpRendererToImage } from './dumpRendererToImage';
+export { isBox3OnPositiveSideOfPlane } from './isBox3OnPositiveSideOfPlane';

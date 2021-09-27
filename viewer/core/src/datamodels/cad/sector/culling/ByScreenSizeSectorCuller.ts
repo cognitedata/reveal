@@ -21,7 +21,7 @@ import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { traverseDepthFirst } from '../../../../utilities';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import Log from '@reveal/logger';
-import { getBox3CornerPoints } from '../../../../utilities/three';
+import { isBox3OnPositiveSideOfPlane } from '../../../../utilities/three';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -307,19 +307,7 @@ function determineCandidateSectors(
       bounds.copy(sector.bounds);
       bounds.applyMatrix4(modelMatrix);
 
-      const boundPoints = getBox3CornerPoints(bounds);
-
-      let shouldKeep = true;
-      for (let k = 0; k < clippingPlanes.length; k++) {
-        let planeAccepts = false;
-
-        for (let j = 0; j < boundPoints.length; j++) {
-          planeAccepts = clippingPlanes[k].distanceToPoint(boundPoints[j]) >= 0 || planeAccepts;
-        }
-
-        shouldKeep = shouldKeep && planeAccepts;
-      }
-
+      const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
       return shouldKeep;
     });
   }

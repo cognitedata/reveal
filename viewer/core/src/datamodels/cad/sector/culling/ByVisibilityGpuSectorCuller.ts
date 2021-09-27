@@ -10,7 +10,7 @@ import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent 
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { SectorMetadata, WantedSector } from '../types';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { getBox3CornerPoints } from '../../../../utilities/three';
+import { isBox3OnPositiveSideOfPlane } from '../../../../utilities/three';
 import { TakenSectorMap } from './TakenSectorMap';
 import { computeSectorCost } from './computeSectorCost';
 
@@ -171,25 +171,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     modelMatrix: THREE.Matrix4
   ): SectorMetadata[] {
     const passingSectors = [];
-
+    const bounds = new THREE.Box3();
     for (let i = 0; i < intersectingSectors.length; i++) {
-      const boundPoints = getBox3CornerPoints(intersectingSectors[i].bounds).map(p => {
-        const outvec = p.clone();
-        outvec.applyMatrix4(modelMatrix);
-        return outvec;
-      });
+      bounds.copy(intersectingSectors[i].bounds);
+      bounds.applyMatrix4(modelMatrix);
 
-      let shouldKeep = true;
-      for (let k = 0; k < clippingPlanes.length; k++) {
-        let planeAccepts = false;
-
-        for (let j = 0; j < boundPoints.length; j++) {
-          planeAccepts = clippingPlanes[k].distanceToPoint(boundPoints[j]) >= 0 || planeAccepts;
-        }
-
-        shouldKeep = shouldKeep && planeAccepts;
-      }
-
+      const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
       if (shouldKeep) {
         passingSectors.push(intersectingSectors[i]);
       }
