@@ -57,7 +57,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       model: CadModelMetadata;
       sectorId: number;
       priority: number;
-      debugStuff: any;
     }>();
     let insideSectors = 0;
     const insideLeafSectors = 0;
@@ -111,17 +110,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         candidateSectors.push({
           model,
           sectorId: sector.id,
-          priority,
-          debugStuff: {
-            levelWeight,
-            distanceToCameraWeight,
-            screenAreaWeight,
-            frustumDepthWeight,
-            nodeScreenSizeWeight,
-            priority,
-            camera: camera.clone(),
-            transformedBounds: transformedBounds.clone()
-          }
+          priority
         });
       });
     });
@@ -176,7 +165,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     return Promise.resolve(wantedSectorsBatch);
   }
 
-  dispose(): void {}
+  dispose(): void { }
 }
 
 class ScheduledSectorTree {
