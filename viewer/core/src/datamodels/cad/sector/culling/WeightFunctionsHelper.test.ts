@@ -116,20 +116,20 @@ describe('WeightFunctionsHelper', () => {
     expect(fullDepthWeight).toBeGreaterThan(partialDepthWeight);
   });
 
-  test('computeMaximumNodeScreensizeWeight returns greater weight for large objects', () => {
+  test('computeMaximumNodeScreenSizeWeight returns greater weight for large objects', () => {
     const bounds = new THREE.Box3().setFromArray([-1, -1, 5, 1, 1, 6]);
 
-    const smallObjectWeight = helper.computeMaximumNodeScreensizeWeight(bounds, 0.1);
-    const largeObjectWeight = helper.computeMaximumNodeScreensizeWeight(bounds, 0.2);
+    const smallObjectWeight = helper.computeMaximumNodeScreenSizeWeight(bounds, 0.1);
+    const largeObjectWeight = helper.computeMaximumNodeScreenSizeWeight(bounds, 0.2);
 
     expect(smallObjectWeight).toBeGreaterThan(0.0);
     expect(largeObjectWeight).toBeGreaterThan(smallObjectWeight);
     expect(largeObjectWeight).toBeLessThan(1.0);
   });
 
-  test('computeMaximumNodeScreensizeWeight returns 1.0 for regardless of size if camera is inside sector', () => {
+  test('computeMaximumNodeScreenSizeWeight returns 1.0 for regardless of size if camera is inside sector', () => {
     const bounds = new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1]);
-    expect(helper.computeMaximumNodeScreensizeWeight(bounds, 1e-10)).toBe(1);
-    expect(helper.computeMaximumNodeScreensizeWeight(bounds, 1e10)).toBe(1);
+    expect(helper.computeMaximumNodeScreenSizeWeight(bounds, 1e-10)).toBe(1);
+    expect(helper.computeMaximumNodeScreenSizeWeight(bounds, 1e10)).toBe(1);
   });
 });

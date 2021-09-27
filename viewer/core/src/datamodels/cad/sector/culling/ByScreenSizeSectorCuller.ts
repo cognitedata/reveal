@@ -59,7 +59,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       sectorId: number;
       priority: number;
     }>();
-    let insideSectors = 0;
+    const insideSectors = 0;
     const insideLeafSectors = 0;
 
     cadModelsMetadata.map(model => {
@@ -94,7 +94,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
         const nodeScreenSizeWeight =
           sector.maxDiagonalLength !== undefined
-            ? weightFunctions.computeMaximumNodeScreensizeWeight(transformedBounds, sector.maxDiagonalLength)
+            ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
             : 1.0;
 
         const priority =
@@ -103,10 +103,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
           screenAreaImportance * screenAreaWeight +
           frustumDepthImportance * frustumDepthWeight +
           nodeScreenSizeImportance * nodeScreenSizeWeight;
-
-        if (distanceToCameraWeight === 1.0) {
-          insideSectors++;
-        }
 
         candidateSectors.push({
           model,
@@ -142,7 +138,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       'Candidates:\n',
       candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId)
     );
-    Log.debug(`Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`);
 
     const takenPriorities = candidateSectors
       .slice(0, takenSectorCount)
