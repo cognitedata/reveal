@@ -172,6 +172,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   }
 
   filterSectorsToLoad(_input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {
+    // TODO 2021-09-27 larsmoa: Implement pre-load occlusion culling in ByScreenSizeSectorCuller
     return Promise.resolve(wantedSectorsBatch);
   }
 
