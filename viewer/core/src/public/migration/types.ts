@@ -258,6 +258,12 @@ export type CadModelBudget = {
    * are very important for the framerate.
    */
   readonly maximumNumberOfDrawCalls: number;
+
+  /**
+   * Maximum render cost. This number can be thought of as triangle count, although the number
+   * doesn't match this directly.
+   */
+  readonly maximumRenderCost: number;
 };
 
 /**
