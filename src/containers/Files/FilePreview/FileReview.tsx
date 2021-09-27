@@ -137,7 +137,7 @@ const StyledTag = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 6px 8px 8px;
+  padding: 8px 8px 4px;
   width: 100%;
   background: var(--cogs-bg-hover);
   color: var(--cogs-text-info);
