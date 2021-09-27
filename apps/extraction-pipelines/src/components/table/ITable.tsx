@@ -62,6 +62,9 @@ const TableTop = styled.div`
   align-items: center;
 `;
 
+const VerticalSpace = styled.div`
+  height: 16px;
+`;
 const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
   return (
     <Modal
@@ -76,6 +79,7 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
       footer={null}
       title="Create extraction pipeline"
     >
+      <VerticalSpace />
       <CreateIntegration
         showAdditionalFields={false}
         customCancelCallback={props.close}
