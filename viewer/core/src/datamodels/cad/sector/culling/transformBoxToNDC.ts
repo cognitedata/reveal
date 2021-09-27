@@ -4,15 +4,16 @@
 
 import * as THREE from 'three';
 
-import { iterateBox3CornerPoints } from '../../../../utilities/three';
+import { visitBox3CornerPoints } from '../../../../utilities/three';
 
 export function transformBoxToNDC(box: THREE.Box3, camera: THREE.Camera, out?: THREE.Box3): THREE.Box3 {
-  out = out !== undefined ? out : new THREE.Box3();
+  const transformedBox = out !== undefined ? out : new THREE.Box3();
+  transformedBox.makeEmpty();
 
-  out.makeEmpty();
-  for (const corner of iterateBox3CornerPoints(box)) {
+  visitBox3CornerPoints(box, corner => {
     corner.project(camera);
-    out.expandByPoint(corner);
-  }
-  return out;
+    transformedBox.expandByPoint(corner);
+  });
+
+  return transformedBox;
 }

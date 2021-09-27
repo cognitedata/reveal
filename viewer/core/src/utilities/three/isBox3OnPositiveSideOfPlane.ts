@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { iterateBox3CornerPoints } from './box3CornerPoints';
+import { visitBox3CornerPoints } from './visitBox3CornerPoints';
 
 /**
  * Returns true if all corner point of the box provides is on the "positive side"
@@ -11,8 +11,8 @@ import { iterateBox3CornerPoints } from './box3CornerPoints';
  */
 export function isBox3OnPositiveSideOfPlane(box: THREE.Box3, plane: THREE.Plane): boolean {
   let planeAccepts = false;
-  for (const boundCorner of iterateBox3CornerPoints(box)) {
+  visitBox3CornerPoints(box, boundCorner => {
     planeAccepts = plane.distanceToPoint(boundCorner) >= 0 || planeAccepts;
-  }
+  });
   return planeAccepts;
 }
