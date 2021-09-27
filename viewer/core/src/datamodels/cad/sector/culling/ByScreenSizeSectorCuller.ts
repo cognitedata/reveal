@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { CadModelMetadata, SectorCuller } from '../../../../internals';
-import { WantedSector } from '../types';
+import { SectorScene, WantedSector } from '../types';
 import {
   addSectorCost,
   DetermineSectorCostDelegate,
@@ -21,6 +21,7 @@ import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { traverseDepthFirst } from '../../../../utilities';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import Log from '@reveal/logger';
+import { getBox3CornerPoints } from '../../../../utilities/three';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -41,18 +42,14 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     wantedSectors: WantedSector[];
     spentBudget: SectorLoadingSpent;
   } {
-    if (input.clippingPlanes !== null && input.clippingPlanes.length > 0) {
-      throw new Error('Clipping planes not supported');
-    }
     const takenSectors = new ScheduledSectorTree(this._determineSectorCost);
 
     const { cadModelsMetadata, camera } = input;
-    const cameraMatrixWorldInverse = camera.matrixWorldInverse;
+    const cameraWorldInverseMatrix = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
 
     const weightFunctions = new WeightFunctionsHelper(camera);
 
-    const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
     const transformedBounds = new THREE.Box3();
     const candidateSectors = new Array<{
       model: CadModelMetadata;
@@ -62,19 +59,25 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 
     cadModelsMetadata.map(model => {
       takenSectors.initializeScene(model);
-      transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
 
-      const sectors = model.scene.getSectorsIntersectingFrustum(
+      const sectors = determineCandidateSectors(
+        cameraWorldInverseMatrix,
         cameraProjectionMatrix,
-        transformedCameraMatrixWorldInverse
+        model.modelMatrix,
+        model.scene,
+        input.clippingPlanes
       );
+
       weightFunctions.addCandidateSectors(sectors, model.modelMatrix);
     });
 
     cadModelsMetadata.map(model => {
-      const sectors = model.scene.getSectorsIntersectingFrustum(
+      const sectors = determineCandidateSectors(
+        cameraWorldInverseMatrix,
         cameraProjectionMatrix,
-        transformedCameraMatrixWorldInverse
+        model.modelMatrix,
+        model.scene,
+        input.clippingPlanes
       );
 
       sectors.forEach(sector => {
@@ -285,4 +288,40 @@ class ScheduledSectorTree {
   clear() {
     this._models.clear();
   }
+}
+
+function determineCandidateSectors(
+  cameraWorldInverseMatrix: THREE.Matrix4,
+  cameraProjectionMatrix: THREE.Matrix4,
+  modelMatrix: THREE.Matrix4,
+  modelScene: SectorScene,
+  clippingPlanes: THREE.Plane[]
+) {
+  const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
+  transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
+  const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
+
+  if (clippingPlanes.length > 0) {
+    const bounds = new THREE.Box3();
+    return sectors.filter(sector => {
+      bounds.copy(sector.bounds);
+      bounds.applyMatrix4(modelMatrix);
+
+      const boundPoints = getBox3CornerPoints(bounds);
+
+      let shouldKeep = true;
+      for (let k = 0; k < clippingPlanes.length; k++) {
+        let planeAccepts = false;
+
+        for (let j = 0; j < boundPoints.length; j++) {
+          planeAccepts = clippingPlanes[k].distanceToPoint(boundPoints[j]) >= 0 || planeAccepts;
+        }
+
+        shouldKeep = shouldKeep && planeAccepts;
+      }
+
+      return shouldKeep;
+    });
+  }
+  return sectors;
 }

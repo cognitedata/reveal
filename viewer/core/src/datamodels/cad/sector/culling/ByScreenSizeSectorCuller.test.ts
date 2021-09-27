@@ -12,6 +12,7 @@ import {
 } from '../../../../__testutilities__';
 import { CadModelMetadata } from '../../CadModelMetadata';
 import { LevelOfDetail } from '../LevelOfDetail';
+import { WantedSector } from '../types';
 import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
 describe('ByScreenSizeSectorCuller', () => {
@@ -66,4 +67,20 @@ describe('ByScreenSizeSectorCuller', () => {
     expect(scheduledSectors.length).toBeLessThan(model.scene.sectorCount);
     expect(scheduledSectors.length).not.toBeEmpty();
   });
+
+  test('determineSectors doesnt return fully culled sectors', () => {
+    budget = { ...budget, maximumRenderCost: allSectorsRenderCost / 2.0 };
+    const input = createDetermineSectorInput(camera, model, budget);
+    const clipPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.5);
+    input.clippingPlanes = [clipPlane];
+
+    const { wantedSectors } = culler.determineSectors(input);
+    const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+
+    expect(scheduledSectors).toSatisfyAll((x: WantedSector) => {
+      const bounds = x.metadata.bounds;
+      return clipPlane.intersectsBox(bounds);
+    });
+  });
+
 });
