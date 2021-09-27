@@ -28,7 +28,7 @@ export class TakenSectorTree {
   }[] = [];
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
-  private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0 };
+  private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
   constructor(sectorRoot: SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
     this.determineSectorCost = determineSectorCost;
@@ -39,7 +39,7 @@ export class TakenSectorTree {
         sector: x,
         parentIndex: -1,
         priority: -1,
-        cost: { downloadSize: 0, drawCalls: 0 },
+        cost: { downloadSize: 0, drawCalls: 0, renderCost: 0 },
         lod: LevelOfDetail.Discarded
       };
       return true;

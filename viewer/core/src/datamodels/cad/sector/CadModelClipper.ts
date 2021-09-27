@@ -68,6 +68,7 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
       ...sector,
       children: intersectingChildren,
       estimatedDrawCallCount: Math.ceil(keptDrawCallsRatio * sector.estimatedDrawCallCount),
+      estimatedRenderCost: Math.ceil(keptDrawCallsRatio * sector.estimatedRenderCost),
       bounds
     };
     return clippedSector;
