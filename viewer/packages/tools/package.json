@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@reveal/camera-manager": "workspace:*",
-    "@reveal/core": "workspace:*"
+    "@reveal/core": "workspace:*",
+    "@reveal/logger": "workspace:*"
   }
 }
