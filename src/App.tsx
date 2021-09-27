@@ -4,8 +4,7 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { ThemeProvider } from 'styled-components';
-
-import { ClientSDKProvider } from '@cognite/gearbox/dist/components/ClientSDKProvider';
+import { SDKProvider } from '@cognite/sdk-provider';
 import GlobalStyle from 'styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import sdk from 'sdk-singleton';
@@ -49,7 +48,7 @@ export default () => {
             showLoader
             loadingScreen={<Loader />}
           >
-            <ClientSDKProvider client={sdk}>
+            <SDKProvider sdk={sdk}>
               <ThemeProvider theme={theme}>
                 <Router history={history}>
                   <Switch>
@@ -58,7 +57,7 @@ export default () => {
                 </Router>
               </ThemeProvider>
               <GlobalStyle theme={theme} />
-            </ClientSDKProvider>
+            </SDKProvider>
           </AuthWrapper>
         </SubAppWrapper>
       </AntStyles>

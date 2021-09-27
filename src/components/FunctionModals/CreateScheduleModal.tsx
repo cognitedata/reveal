@@ -3,7 +3,7 @@ import { Modal, Form, Input, Alert, notification } from 'antd';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { isValidCron } from 'cron-validator';
 import { useMutation, useQueryCache } from 'react-query';
-import { createSchedule as createScheduleApi } from 'utils/api';
+import { createSchedule as createScheduleApi, isOIDCFlow } from 'utils/api';
 
 const isValidData = (data: string) => {
   if (data === '') {
@@ -42,6 +42,7 @@ export default function CreateScheduleModal({
   onCancel,
 }: Props) {
   const queryCache = useQueryCache();
+
   const [scheduleName, setScheduleName] = useState({
     value: '',
     touched: false,
@@ -51,7 +52,11 @@ export default function CreateScheduleModal({
     touched: false,
   });
   const [description, setDescription] = useState('');
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
   const [data, setData] = useState('');
+
+  const isOIDC = isOIDCFlow();
 
   const handleScheduleNameChange = (evt: { target: { value: string } }) => {
     setScheduleName({ value: evt.target.value, touched: true });
@@ -62,6 +67,12 @@ export default function CreateScheduleModal({
   };
   const handleDescriptionChange = (evt: { target: { value: string } }) => {
     setDescription(evt.target.value);
+  };
+  const handleClientIdChange = (evt: { target: { value: string } }) => {
+    setClientId(evt.target.value);
+  };
+  const handleClientSecretChange = (evt: { target: { value: string } }) => {
+    setClientSecret(evt.target.value);
   };
 
   const handleDataChange = (evt: { target: { value: string } }) => {
@@ -165,6 +176,34 @@ export default function CreateScheduleModal({
               allowClear
             />
           </Form.Item>
+          {isOIDC && (
+            <>
+              <Form.Item
+                label="Client ID"
+                required
+                style={{ fontWeight: 'bold' }}
+              >
+                <Input
+                  name="clientId"
+                  value={clientId}
+                  onChange={handleClientIdChange}
+                  allowClear
+                />
+              </Form.Item>
+              <Form.Item
+                label="Client Secret"
+                required
+                style={{ fontWeight: 'bold' }}
+              >
+                <Input.Password
+                  name="clientSecret"
+                  value={clientSecret}
+                  onChange={handleClientSecretChange}
+                  allowClear
+                />
+              </Form.Item>
+            </>
+          )}
           <Form.Item
             label="Description"
             validateStatus={
@@ -217,12 +256,18 @@ export default function CreateScheduleModal({
               disabled={!canBeSubmitted && !isLoading}
               onClick={() => {
                 triggerCreateSchedule({
-                  name: scheduleName.value,
-                  functionExternalId: externalId,
-                  functionId: id,
-                  description,
-                  cronExpression: cronExpression.value,
-                  data: data === '' ? {} : JSON.parse(data),
+                  schedule: {
+                    name: scheduleName.value,
+                    description,
+                    cronExpression: cronExpression.value,
+                    data: data === '' ? {} : JSON.parse(data),
+                    ...(isOIDC
+                      ? { functionId: id }
+                      : { functionExternalId: externalId }),
+                  },
+                  clientCredentials: isOIDC
+                    ? { clientId, clientSecret }
+                    : undefined,
                 });
               }}
               htmlType="submit"

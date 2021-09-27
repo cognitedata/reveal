@@ -1,7 +1,6 @@
-import { CogniteClient } from 'cognite-sdk-v3';
-
 import {
   v3Client,
+  CogniteClient,
   getAuthState,
   loginAndAuthIfNeeded,
 } from '@cognite/cdf-sdk-singleton';

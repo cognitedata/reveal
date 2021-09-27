@@ -4,6 +4,7 @@ export default {
   post: jest.fn(),
   // @ts-ingore
   get: jest.fn(),
+  getOAuthFlowType: jest.fn(),
 };
 
 export const getAuthState = () => ({

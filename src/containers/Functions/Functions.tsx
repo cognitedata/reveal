@@ -149,7 +149,7 @@ function Functions() {
             total={filteredFunctions?.length}
             defaultPageSize={FUNCTIONS_PER_PAGE}
             onChange={page => setCurrentPage(page)}
-            style={{ float: 'right' }}
+            style={{ float: 'right', marginTop: '8px' }}
           />
         </CollapseDiv>
       </div>

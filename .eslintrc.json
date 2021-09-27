@@ -21,7 +21,7 @@
     "jest/consistent-test-it": ["error", { "fn": "it" }],
     "jest/require-top-level-describe": "error",
     "jest/valid-describe": "error",
-    "no-console": "error",
+    "no-console": "warn",
     "@cognite/no-unissued-todos": "off",
     "@cognite/no-number-z-index-styled-components": "off",
     "@cognite/no-number-z-index-property": "off",

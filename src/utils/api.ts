@@ -1,13 +1,13 @@
 import sdk from 'sdk-singleton';
 import { QueryKey } from 'react-query';
 import {
-  CreateSchedule,
   CogFunctionUpload,
   CogFunction,
   GetCallArgs,
   CallResponse,
   GetCallsArgs,
   Call,
+  CreateScheduleApiParams,
 } from 'types';
 import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -95,29 +95,39 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
     .then(response => response?.data?.items);
 };
 
-export const createFunctionCall = ({
+export const createFunctionCall = async ({
   id,
   data,
+  isOIDC,
 }: {
   id: number;
   data: any;
+  isOIDC?: boolean;
 }): Promise<CallResponse> => {
   if (!id) {
     throw new Error('id missing');
   }
+
+  const { nonce } = isOIDC && (await createSession());
   return sdk
     .post(`/api/playground/projects/${sdk.project}/functions/${id}/call`, {
-      data: { data: data || {} },
+      data: { data: data || {}, nonce },
     })
     .then(response => response?.data);
 };
 
-export const createSchedule = (schedule: CreateSchedule) =>
-  sdk
+export const createSchedule = async ({
+  schedule,
+  clientCredentials,
+}: CreateScheduleApiParams) => {
+  const { nonce } =
+    !!clientCredentials && (await createSession(clientCredentials));
+  return sdk
     .post(`/api/playground/projects/${sdk.project}/functions/schedules`, {
-      data: { items: [schedule] },
+      data: { items: [{ ...schedule, nonce }] },
     })
     .then(response => response?.data);
+};
 
 export const deleteSchedule = (id: number) =>
   sdk
@@ -233,4 +243,21 @@ export const uploadFunction = async ({
     await sdk.files.delete([{ id: fileId }]);
     throw e;
   }
+};
+
+export const createSession = (clientCredentials?: {
+  clientId: string;
+  clientSecret: string;
+}) => {
+  return sdk
+    .post(`/api/v1/projects/${sdk.project}/sessions`, {
+      data: {
+        items: [clientCredentials || { tokenExchange: true }],
+      },
+    })
+    .then(response => response?.data.items[0]);
+};
+
+export const isOIDCFlow = () => {
+  return sdk.getOAuthFlowType() === 'AAD_OAUTH';
 };

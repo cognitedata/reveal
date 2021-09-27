@@ -4,10 +4,11 @@ import { Button } from '@cognite/cogs.js';
 import CreateScheduleModal from 'components/FunctionModals/CreateScheduleModal';
 
 type Props = {
-  externalId: string;
+  id: number;
+  externalId?: string;
 };
 
-export default function CreateScheduleButton({ externalId }: Props) {
+export default function CreateScheduleButton({ id, externalId }: Props) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -26,6 +27,7 @@ export default function CreateScheduleButton({ externalId }: Props) {
       </Button>
       {showModal ? (
         <CreateScheduleModal
+          id={id}
           externalId={externalId}
           onCancel={() => setShowModal(false)}
         />
