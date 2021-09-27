@@ -72,6 +72,8 @@ const AnnotationPreviewSidebar = ({
   fileIcon,
 }: Props) => {
   const client = useQueryClient();
+  const sdk = useSDK();
+
   const { data: userData } = useUserInfo();
   const { email = 'UNKNOWN' } = userData || {};
   const [editing, setEditing] = useState<boolean>(false);
@@ -115,7 +117,7 @@ const AnnotationPreviewSidebar = ({
 
   const isEditingMode = isPendingAnnotation || editing;
 
-  const onSuccess = () => {
+  const onSuccess = (action: string) => {
     const invalidate = () => {
       client.invalidateQueries([
         'sdk-react-query-hooks',
@@ -158,18 +160,18 @@ const AnnotationPreviewSidebar = ({
       pendingAnnotations.filter(el => el.id !== selectedAnnotation?.id)
     );
     notification.success({
-      message: 'Annotation saved!',
+      message: `Annotation ${action} successfully!`,
     });
   };
 
   const { mutate: createEvent } = useCreate('events', {
-    onSuccess,
+    onSuccess: () => onSuccess('created'),
   });
-  const sdk = useSDK();
+
   const { mutate: updateEvent } = useMutation(
     (updates: EventChange) => sdk.events.update([updates]),
     {
-      onSuccess,
+      onSuccess: () => onSuccess('saved'),
     }
   );
 
@@ -177,7 +179,7 @@ const AnnotationPreviewSidebar = ({
     (deletedAnnotations: CogniteAnnotation[]) =>
       hardDeleteAnnotations(sdk, deletedAnnotations),
     {
-      onSuccess,
+      onSuccess: () => onSuccess('deleted'),
     }
   );
 
@@ -198,14 +200,14 @@ const AnnotationPreviewSidebar = ({
         },
       ]),
     {
-      onSuccess,
+      onSuccess: () => onSuccess('status updated!'),
     }
   );
 
   const { mutate: approveAnnotations } = useMutation(
     (update: CogniteAnnotationPatch[]) => updateAnnotations(sdk, update),
     {
-      onSuccess,
+      onSuccess: () => onSuccess('approved'),
     }
   );
 
@@ -403,6 +405,7 @@ const AnnotationPreviewSidebar = ({
               onChange={i => {
                 setCurrentIndex(i - 1);
               }}
+              style={{ marginTop: '20px' }}
             />
           )}
 
