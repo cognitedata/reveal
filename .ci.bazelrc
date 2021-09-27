@@ -1,6 +1,10 @@
 # Configure remote caching
 build --remote_cache=grpc://bazel-build-cache.bazel-build-cache.svc.cluster.local:9092
-build --remote_download_toplevel
+# Expands the --remote_download_minimal rule but change the download_outputs to toplevel
+build --nobuild_runfile_links
+build --experimental_inmemory_jdeps_files
+build --experimental_inmemory_dotd_files
+build --remote_download_outputs=toplevel
 run --remote_download_toplevel
 
 # Limit the number of parallel jobs in CI to avoid getting OOM-killed
