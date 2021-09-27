@@ -55,7 +55,7 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
   const { pass: owners, fail: nonOwners } = partition(
-    current?.contacts.map((u, index) => ({ ...u, index })) ?? [],
+    (current?.contacts || []).map((u, index) => ({ ...u, index })) ?? [],
     isOwner
   );
 
