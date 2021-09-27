@@ -20,6 +20,7 @@ import { LevelOfDetail } from '../LevelOfDetail';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { traverseDepthFirst } from '../../../../utilities';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
+import Log from '@reveal/logger';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -125,23 +126,23 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       takenSectorCount = i;
     }
 
-    console.log('Scheduled', takenSectorCount, 'of', candidateSectors.length, 'candidates');
+    Log.debug('Scheduled', takenSectorCount, 'of', candidateSectors.length, 'candidates');
 
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
 
-    console.log(
+    Log.debug(
       'Scheduled sectors\n',
       candidateSectors
         .slice(0, takenSectorCount)
         .map(x => ({ ...x, sector: x.model.scene.getSectorById(x.sectorId) }))
         .sort(x => x.priority)
     );
-    console.log(
+    Log.log(
       'Candidates:\n',
       candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId)
     );
-    console.log(`Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`);
+    Log.debug(`Inside sectors: ${insideSectors} (${insideLeafSectors} leafs)`);
 
     const takenPriorities = candidateSectors
       .slice(0, takenSectorCount)
@@ -150,12 +151,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const meanPriority = takenPriorities[Math.floor(takenPriorities.length / 2)];
     const notAcceptedPriority =
       candidateSectors.length > takenSectorCount ? candidateSectors[takenSectorCount].priority : -1;
-    console.log(
+    Log.debug(
       `Sector priority. Min: ${Math.min(...takenPriorities)}, max: ${Math.max(
         ...takenPriorities
       )}, mean: ${meanPriority}, first not accepted: ${notAcceptedPriority}`
     );
-    console.log('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
+    Log.debug('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
 
     return { spentBudget, wantedSectors: wanted };
   }
