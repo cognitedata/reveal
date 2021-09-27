@@ -4,6 +4,8 @@
 
 import mixpanel from 'mixpanel-browser';
 
+import { Log } from '@reveal/logger';
+
 type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'cameraNavigated';
 type EventProps = {
   [key: string]: any;
@@ -106,7 +108,7 @@ export function trackLoadModel(eventProps: EventProps, modelIdentifier: any) {
 }
 
 export function trackError(error: Error, eventProps: EventProps) {
-  console.error(error);
+  Log.error(error);
 
   trackEvent('error', {
     message: error.message,
