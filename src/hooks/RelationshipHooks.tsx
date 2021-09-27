@@ -98,6 +98,35 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
 ) => {
   const fetchEnabled = enabled && !!resourceExternalId;
 
+  const extractExternalIds = (
+    pages: { items: Relationship[] }[] = [],
+    key: 'target' | 'source'
+  ): ExternalId[] => {
+    const externalIdKey =
+      key === 'source' ? 'targetExternalId' : 'sourceExternalId';
+
+    // Extracting externalIds from pages
+    const externalIds = pages.reduce(
+      (accl, t) =>
+        accl.concat(
+          t.items.map(({ [externalIdKey]: externalId }) => ({
+            externalId,
+          }))
+        ),
+      [] as ExternalId[]
+    );
+
+    // Removing duplicate ids from array
+    const filteredExternalIds = externalIds.filter(
+      ({ externalId }, index, arr) =>
+        arr.findIndex(
+          ({ externalId: testExternalId }) => testExternalId === externalId
+        ) === index
+    );
+
+    return filteredExternalIds;
+  };
+
   const { data: sourceData, ...sourceParams } = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
@@ -106,14 +135,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     { enabled: fetchEnabled, staleTime: 60 * 1000 }
   );
   const sourceItems = useMemo(
-    () =>
-      sourceData?.pages?.reduce(
-        (accl, t) =>
-          accl.concat(
-            t.items.map(({ targetExternalId: externalId }) => ({ externalId }))
-          ),
-        [] as ExternalId[]
-      ) || ([] as ExternalId[]),
+    () => extractExternalIds(sourceData?.pages, 'source'),
     [sourceData]
   );
   const { data: sourceResources = [] } = useCdfItems<T>(
@@ -138,14 +160,7 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     }
   );
   const targetItems = useMemo(
-    () =>
-      targetData?.pages?.reduce(
-        (accl, t) =>
-          accl.concat(
-            t.items.map(({ sourceExternalId: externalId }) => ({ externalId }))
-          ),
-        [] as ExternalId[]
-      ) || ([] as ExternalId[]),
+    () => extractExternalIds(targetData?.pages, 'target'),
     [targetData]
   );
   const { data: targetResources = [] } = useCdfItems<T>(
