@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+
 import { Body } from '@cognite/cogs.js';
-import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 import AutoResizer from 'react-virtualized-auto-sizer';
+import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
+import styled from 'styled-components';
+
 import { SelectableItemsProps, AllowedTableStateId } from 'CommonProps';
 import { Loader } from 'components';
 
@@ -72,82 +75,92 @@ export const GridTable = <T extends { id: AllowedTableStateId }>({
   const isItemLoaded = (index: number) => canFetchMore && index > data.length;
 
   return (
-    <AutoResizer onResize={size => setCurrentWidth(size.width)}>
-      {({ width, height }) => (
-        <InfiniteLoader
-          isItemLoaded={isItemLoaded}
-          itemCount={data.length}
-          loadMoreItems={async (_, endIndex) => {
-            if (
-              endIndex >= data.length - columnCount * LOOKAHEAD &&
-              !isFetching &&
-              canFetchMore
-            ) {
-              onEndReached();
-            }
-          }}
-        >
-          {({ onItemsRendered, ref }) => (
-            <Grid
-              columnCount={columnCount}
-              columnWidth={Math.floor(width / columnCount) - 4}
-              height={height}
-              rowCount={rowCount}
-              rowHeight={cellHeight}
-              width={width}
-              ref={ref}
-              onItemsRendered={({
-                overscanColumnStartIndex,
-                overscanColumnStopIndex,
-                overscanRowStartIndex,
-                overscanRowStopIndex,
-                visibleColumnStartIndex,
-                visibleColumnStopIndex,
-                visibleRowStartIndex,
-                visibleRowStopIndex,
-              }) =>
-                onItemsRendered({
-                  overscanStartIndex:
-                    overscanColumnStartIndex +
-                    overscanRowStartIndex * columnCount,
-                  overscanStopIndex:
-                    overscanColumnStopIndex +
-                    overscanRowStopIndex * columnCount,
-                  visibleStartIndex:
-                    visibleColumnStartIndex +
-                    visibleRowStartIndex * columnCount,
-                  visibleStopIndex:
-                    visibleColumnStopIndex + visibleRowStopIndex * columnCount,
-                })
+    <GridTableWrapper>
+      <AutoResizer onResize={size => setCurrentWidth(size.width)}>
+        {({ width, height }) => (
+          <InfiniteLoader
+            isItemLoaded={isItemLoaded}
+            itemCount={data.length}
+            loadMoreItems={async (_, endIndex) => {
+              if (
+                endIndex >= data.length - columnCount * LOOKAHEAD &&
+                !isFetching &&
+                canFetchMore
+              ) {
+                onEndReached();
               }
-            >
-              {
-                (({ columnIndex, rowIndex, style }) => {
-                  const item = data[columnIndex + rowIndex * columnCount];
-                  if (item) {
-                    return renderCell({
-                      style,
-                      isActive: activeIds.some(el => el === item.id),
-                      isPreviewing: previewIds.some(el => el === item.id),
-                      item,
-                      query,
-                      onClick: () => onItemClicked(item),
-                      selectionMode,
-                      onSelect,
-                      isSelected,
-                    });
-                  }
-                  return () => (
-                    <div style={style}>
-                      <Loader />
-                    </div>
-                  );
-                }) as React.FunctionComponent<GridChildComponentProps>
-              }
-            </Grid>
-          )}
-        </InfiniteLoader>
-      )}
-    </AutoResizer>
+            }}
+          >
+            {({ onItemsRendered, ref }) => (
+              <Grid
+                columnCount={columnCount}
+                columnWidth={Math.floor(width / columnCount) - 4}
+                height={height}
+                rowCount={rowCount}
+                rowHeight={cellHeight}
+                width={width}
+                ref={ref}
+                onItemsRendered={({
+                  overscanColumnStartIndex,
+                  overscanColumnStopIndex,
+                  overscanRowStartIndex,
+                  overscanRowStopIndex,
+                  visibleColumnStartIndex,
+                  visibleColumnStopIndex,
+                  visibleRowStartIndex,
+                  visibleRowStopIndex,
+                }) =>
+                  onItemsRendered({
+                    overscanStartIndex:
+                      overscanColumnStartIndex +
+                      overscanRowStartIndex * columnCount,
+                    overscanStopIndex:
+                      overscanColumnStopIndex +
+                      overscanRowStopIndex * columnCount,
+                    visibleStartIndex:
+                      visibleColumnStartIndex +
+                      visibleRowStartIndex * columnCount,
+                    visibleStopIndex:
+                      visibleColumnStopIndex +
+                      visibleRowStopIndex * columnCount,
+                  })
+                }
+              >
+                {
+                  (({ columnIndex, rowIndex, style }) => {
+                    const item = data[columnIndex + rowIndex * columnCount];
+                    if (item) {
+                      return renderCell({
+                        style,
+                        isActive: activeIds.some(el => el === item.id),
+                        isPreviewing: previewIds.some(el => el === item.id),
+                        item,
+                        query,
+                        onClick: () => onItemClicked(item),
+                        selectionMode,
+                        onSelect,
+                        isSelected,
+                      });
+                    }
+                    return () => (
+                      <div style={style}>
+                        <Loader />
+                      </div>
+                    );
+                  }) as React.FunctionComponent<GridChildComponentProps>
+                }
+              </Grid>
+            )}
+          </InfiniteLoader>
+        )}
+      </AutoResizer>
+    </GridTableWrapper>
   );
 };
+
+const GridTableWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+`;
