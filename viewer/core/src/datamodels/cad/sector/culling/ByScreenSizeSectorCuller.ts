@@ -165,7 +165,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     return Promise.resolve(wantedSectorsBatch);
   }
 
-  dispose(): void { }
+  dispose(): void {}
 }
 
 class ScheduledSectorTree {
@@ -194,29 +194,21 @@ class ScheduledSectorTree {
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    const addParents = false;
-
     const entry = this._models.get(model.modelIdentifier);
     assert(!!entry, `Could not find sector tree for ${model.modelIdentifier}`);
 
-    const allSectors = model.scene.getAllSectors();
     const { sectorIds } = entry!;
-    let nextSectorIdToAdd = sectorId;
-    if (nextSectorIdToAdd !== -1 && !sectorIds.has(nextSectorIdToAdd)) {
-      const existingPriority = sectorIds.get(nextSectorIdToAdd);
-      if (existingPriority === undefined) {
-        const sectorMetadata = model.scene.getSectorById(sectorId);
-        assert(sectorMetadata !== undefined);
+    const existingPriority = sectorIds.get(sectorId);
+    if (existingPriority === undefined) {
+      const sectorMetadata = model.scene.getSectorById(sectorId);
+      assert(sectorMetadata !== undefined);
 
-        const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
-        addSectorCost(this._totalCost, sectorCost);
+      const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
+      addSectorCost(this._totalCost, sectorCost);
 
-        sectorIds.set(nextSectorIdToAdd, priority);
-      } else {
-        sectorIds.set(nextSectorIdToAdd, Math.max(priority, existingPriority));
-      }
-      const parent = allSectors.find(x => x.children.findIndex(x => x.id === nextSectorIdToAdd));
-      nextSectorIdToAdd = addParents && parent !== undefined ? parent.id : -1;
+      sectorIds.set(sectorId, priority);
+    } else {
+      sectorIds.set(sectorId, Math.max(priority, existingPriority));
     }
   }
 

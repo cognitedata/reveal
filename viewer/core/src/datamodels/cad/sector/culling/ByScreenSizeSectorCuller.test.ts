@@ -11,6 +11,7 @@ import {
   createSectorMetadata
 } from '../../../../__testutilities__';
 import { CadModelMetadata } from '../../CadModelMetadata';
+import { LevelOfDetail } from '../LevelOfDetail';
 import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
 describe('ByScreenSizeSectorCuller', () => {
@@ -25,12 +26,12 @@ describe('ByScreenSizeSectorCuller', () => {
     const root = createSectorMetadata([
       0,
       [
-        [1, [], new THREE.Box3().setFromArray([0, 0, 0, 0.5, 0.5, 1])],
-        [2, [], new THREE.Box3().setFromArray([0.5, 0, 0, 1, 0.5, 1])],
-        [3, [], new THREE.Box3().setFromArray([0, 0.5, 0, 0, 1, 1])],
-        [4, [], new THREE.Box3().setFromArray([0.5, 0.5, 0.5, 1, 1, 1])]
+        [1, [], new THREE.Box3().setFromArray([-1, -1, 0, 0, 1])],
+        [2, [], new THREE.Box3().setFromArray([0, -1, 1, 0, 0, 1])],
+        [3, [], new THREE.Box3().setFromArray([-1, 0, 1, 0, 1, 1])],
+        [4, [], new THREE.Box3().setFromArray([0, 0, 1, 1, 1, 1])]
       ],
-      new THREE.Box3().setFromArray([0, 0, 0, 1, 1, 1])
+      new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1])
     ]);
     model = createCadModelMetadata(root);
     allSectorsRenderCost = model.scene.getAllSectors().reduce((sum, x) => sum + x.estimatedRenderCost, 0);
@@ -58,10 +59,11 @@ describe('ByScreenSizeSectorCuller', () => {
     const input = createDetermineSectorInput(camera, model, budget);
 
     const { wantedSectors, spentBudget } = culler.determineSectors(input);
+    const scheduledSectors = wantedSectors.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
 
     expect(spentBudget.renderCost).toBeLessThan(allSectorsRenderCost);
     expect(spentBudget.renderCost).toBeGreaterThanOrEqual(budget.maximumRenderCost);
-    expect(wantedSectors.length).toBeLessThan(model.scene.sectorCount);
-    expect(wantedSectors.length).not.toBeEmpty();
+    expect(scheduledSectors.length).toBeLessThan(model.scene.sectorCount);
+    expect(scheduledSectors.length).not.toBeEmpty();
   });
 });
