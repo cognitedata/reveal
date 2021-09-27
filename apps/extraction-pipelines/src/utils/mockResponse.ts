@@ -175,7 +175,7 @@ const mockResponseV2 = {
         },
         {
           email: 'lisa.halvorsen@item.no',
-          role: 'Janitor',
+          role: 'Technician',
           name: 'Lisa Halvorsen',
         },
       ],

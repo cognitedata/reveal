@@ -43,7 +43,7 @@ export const StyledLabel = styled.label`
 `;
 
 export const Hint = styled.span`
-  color: ${Colors['greyscale-grey6'].hex()};
+  color: ${Colors['greyscale-grey8'].hex()};
   margin-bottom: ${hintBottomSpacing};
   display: block;
 `;
