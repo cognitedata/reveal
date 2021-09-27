@@ -9,7 +9,7 @@ import { ModelStateHandler } from './ModelStateHandler';
 import { Repository } from './Repository';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../../../utilities/PromiseUtils';
-import { Log } from '@reveal/logger';
+import log from '@reveal/logger';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -90,7 +90,7 @@ export class SectorLoader {
         const consumedSector = await this._sectorRepository.loadSector(wantedSector);
         return consumedSector;
       } catch (error) {
-        Log.error('Failed to load sector', wantedSector, 'error:', error);
+        log.error('Failed to load sector', wantedSector, 'error:', error);
         // Ignore error but mark sector as discarded since we didn't load any geometry
         const errorSector = makeErrorSector(wantedSector);
         return errorSector;
