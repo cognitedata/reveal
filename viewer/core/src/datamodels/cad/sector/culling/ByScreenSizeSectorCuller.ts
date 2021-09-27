@@ -59,8 +59,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       sectorId: number;
       priority: number;
     }>();
-    const insideSectors = 0;
-    const insideLeafSectors = 0;
 
     cadModelsMetadata.map(model => {
       takenSectors.initializeScene(model);
