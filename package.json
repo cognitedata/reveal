@@ -132,7 +132,7 @@
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.2",
     "babel-eslint": "^10.0.3",
     "babel-loader": "8.1.0",
-    "concurrently": "^6.0.2",
+    "concurrently": "^6.2.1",
     "crypto": "^1.0.1",
     "depcheck": "^1.4.1",
     "enzyme": "^3.9.0",
