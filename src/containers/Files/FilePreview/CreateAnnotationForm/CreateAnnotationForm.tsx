@@ -143,7 +143,7 @@ export const CreateAnnotationForm = ({
           })
         }
       />
-      <SpacedRow>
+      <SpacedRow style={{ gap: '10px' }}>
         <Button
           onClick={onSave}
           type="primary"
