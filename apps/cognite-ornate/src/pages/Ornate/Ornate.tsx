@@ -16,6 +16,7 @@ import { storage } from '@cognite/storage';
 interface OrnateProps {
   client: CogniteClient;
 }
+
 const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const ornateViewer = useRef<CogniteOrnate>();
   const [activeTool, setActiveTool] = useState<ToolType>('default');
@@ -222,6 +223,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     });
   };
 
+  const onZoom = (scale: number) => {
+    ornateViewer.current?.onZoom(scale, false);
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <WorkSpaceSidebar title="My workspace" onLoadFile={loadFile} />
@@ -239,6 +244,23 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
         <button type="button" onClick={onLoad}>
           Load
+        </button>
+      </div>
+      <div
+        style={{
+          position: 'fixed',
+          top: '16px',
+          right: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <button type="button" onClick={() => onZoom(-1)}>
+          +
+        </button>
+
+        <button type="button" onClick={() => onZoom(1)}>
+          -
         </button>
       </div>
     </div>

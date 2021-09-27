@@ -21,6 +21,7 @@ import {
 import { Tool } from 'library/tools/Tool';
 import { ConnectedLine } from 'library/connectedLine';
 import bgImage from 'library/assets/bg.png';
+import { Vector2d } from 'konva/lib/types';
 
 const sceneBaseWidth = window.innerWidth;
 const sceneBaseHeight = window.innerHeight;
@@ -264,21 +265,33 @@ export class CogniteOrnate {
 
   onStageMouseWheel = (e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
-    const oldScale = this.stage.scaleX();
+    this.onZoom(e.evt.deltaY, true);
+  };
 
-    const pointer = this.stage.getPointerPosition();
-    if (!pointer) {
+  onZoom = (scale: number, pointer: boolean) => {
+    const oldScale = this.stage.scaleX();
+    let referencePoint = null;
+
+    if (pointer) {
+      referencePoint = this.stage.getPointerPosition();
+    } else {
+      referencePoint = {
+        x: this.stage.x() / 2,
+        y: this.stage.y(),
+      } as Vector2d;
+    }
+
+    if (!referencePoint) {
       return;
     }
-    const mousePointTo = {
-      x: (pointer.x - this.stage.x()) / oldScale,
-      y: (pointer.y - this.stage.y()) / oldScale,
+
+    const referencePointTo = {
+      x: (referencePoint.x - this.stage.x()) / oldScale,
+      y: (referencePoint.y - this.stage.y()) / oldScale,
     };
 
     const newScale =
-      e.evt.deltaY > 0
-        ? oldScale * SCALE_SENSITIVITY
-        : oldScale / SCALE_SENSITIVITY;
+      scale > 0 ? oldScale * SCALE_SENSITIVITY : oldScale / SCALE_SENSITIVITY;
     if (newScale < SCALE_MIN || newScale > SCALE_MAX) {
       return;
     }
@@ -286,8 +299,8 @@ export class CogniteOrnate {
     this.stage.scale({ x: newScale, y: newScale });
 
     const newPos = {
-      x: pointer.x - mousePointTo.x * newScale,
-      y: pointer.y - mousePointTo.y * newScale,
+      x: referencePoint.x - referencePointTo.x * newScale,
+      y: referencePoint.y - referencePointTo.y * newScale,
     };
     this.stage.position(newPos);
 
