@@ -20,7 +20,7 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
-import { Button, Modal } from '@cognite/cogs.js';
+import { Button, Colors, Modal } from '@cognite/cogs.js';
 import { ids } from 'cogs-variables';
 import { CreateIntegration } from 'pages/create/CreateIntegration';
 import styled from 'styled-components';
@@ -83,6 +83,12 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
     </Modal>
   );
 };
+
+const StyledTable = styled.table`
+  tbody td {
+    color: ${Colors['greyscale-grey8'].hex()};
+  }
+`;
 
 const ITable = <T extends { id: ReactText }>({
   data,
@@ -166,7 +172,7 @@ const ITable = <T extends { id: ReactText }>({
           Create extraction pipeline
         </Button>
       </TableTop>
-      <table
+      <StyledTable
         {...getTableProps()}
         className="cogs-table integrations-table"
         role="grid"
@@ -234,7 +240,7 @@ const ITable = <T extends { id: ReactText }>({
             );
           })}
         </tbody>
-      </table>
+      </StyledTable>
     </>
   );
 };

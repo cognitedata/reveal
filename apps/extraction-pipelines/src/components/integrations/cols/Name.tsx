@@ -11,6 +11,7 @@ export const StyledRouterLink = styled((props) => (
 ))`
   color: ${Colors.black.hex()};
   margin-right: 0.5rem;
+  font-weight: 500;
   &:hover {
     text-decoration: underline;
   }
