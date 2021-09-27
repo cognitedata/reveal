@@ -163,7 +163,7 @@
     "prettier": "^2.4.1",
     "pretty-quick": "^3.1.0",
     "redux-mock-store": "^1.5.4",
-    "rollup": "^2.53.1",
+    "rollup": "^2.57.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "serve": "^12.0.0",
