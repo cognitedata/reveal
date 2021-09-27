@@ -5,10 +5,10 @@ import { CogniteClient } from '@cognite/sdk';
 
 type Props = {
   viewerOptions?: Cognite3DViewerOptions;
-  modelUrl: string;
+  modelUrls: string[];
   geometryFilter?: GeometryFilter;
 
-  modelAddedCallback?: (viewer: Cognite3DModel) => void;
+  modelAddedCallback?: (model: Cognite3DModel, modelIndex: number, modelUrl: string) => void;
   initializeCallback?: (viewer: Cognite3DViewer) => void;
 };
 
@@ -19,7 +19,7 @@ type LoadingState = {
 }
 
 export function Cognite3DTestViewer(props: Props) {
-  const { viewerOptions, modelUrl, geometryFilter } = props;
+  const { viewerOptions, modelUrls, geometryFilter } = props;
   const { modelAddedCallback, initializeCallback } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,7 @@ export function Cognite3DTestViewer(props: Props) {
       initializeCallback(viewer);
     }
 
-    async function addModel(modelUrl: string, geometryFilter?: GeometryFilter) {
+    async function addModel(modelIndex: number, modelUrl: string, geometryFilter?: GeometryFilter) {
       const model = await viewer.addCadModel(
         {
           modelId: -1,
@@ -64,16 +64,16 @@ export function Cognite3DTestViewer(props: Props) {
         });
       viewer.fitCameraToModel(model, 0);
       if (modelAddedCallback) {
-        modelAddedCallback(model);
+        modelAddedCallback(model, modelIndex, modelUrl);
       }
     }
 
-    addModel(modelUrl, geometryFilter);
+    modelUrls.forEach((modelUrl, modelIndex) => addModel(modelIndex, modelUrl, geometryFilter));
 
     return () => {
       viewer && viewer.dispose();
     };
-  }, [geometryFilter, initializeCallback, modelAddedCallback, modelUrl, viewerOptions]);
+  }, [geometryFilter, initializeCallback, modelAddedCallback, modelUrls, viewerOptions]);
 
   const readyForScreenshot = loadingState.itemsLoaded > 0 &&
     loadingState.itemsLoaded === loadingState.itemsRequested;

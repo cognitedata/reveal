@@ -54,4 +54,8 @@ export const visualTests: VisualTest[] = [
     testKey: 'default',
     category: 'pointcloud'
   },
+  {
+    testKey: 'two-models-one-ghosted',
+    category: 'cad'
+  }
 ];

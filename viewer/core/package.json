@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reveal/camera-manager": "workspace:*",
+    "@reveal/logger": "workspace:*",
     "@reveal/nodes-api": "workspace:*"
   },
   "sideEffects": false,
