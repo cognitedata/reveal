@@ -22,6 +22,7 @@ import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
 import { pushMetric } from 'src/utils/pushMetric';
+import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
 pushMetric('Vision.Review');
 
@@ -65,10 +66,25 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   };
 
   const handleFileDelete = () => {
-    batch(() => {
-      dispatch(DeleteFilesById([file!.id]));
-    });
-    onBackButtonClick();
+    // go to previous page if in single file review
+    if (reviewFileIds.length <= 1) {
+      onBackButtonClick();
+    } else {
+      // go to previous image if in multi file review
+      const currentIndex = reviewFileIds.indexOf(file!.id);
+      const nextIndex =
+        currentIndex - 1 < 0 ? currentIndex + 1 : currentIndex - 1;
+
+      history.replace(
+        getParamLink(
+          workflowRoutes.review,
+          ':fileId',
+          String(reviewFileIds[nextIndex])
+        ),
+        { from: previousPage }
+      );
+    }
+    dispatch(DeleteFilesById([file!.id]));
   };
 
   useEffect(() => {
