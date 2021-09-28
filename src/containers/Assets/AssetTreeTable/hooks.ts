@@ -10,10 +10,20 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 
+export type ConstructedTreeAssetChildren =
+  | ConstructedTreeAsset
+  | { loading?: boolean };
+
+export type ConstructedTreeAsset = Asset & {
+  children?: ConstructedTreeAssetChildren[];
+};
+
+export type ConstructedTreeAssetMap = { [key in number]: ConstructedTreeAsset };
+
 export const useSearchTree = (
   filter: AssetFilterProps,
   query?: string,
-  config?: UseQueryOptions<Asset[]>
+  config?: UseQueryOptions<ConstructedTreeAsset[]>
 ) => {
   const sdk = useSDK();
   const client = useQueryClient();
@@ -60,9 +70,7 @@ export const useSearchTree = (
 
   const fetchAndBuildTree = async () => {
     const rootAssets: number[] = [];
-    const assetsMap: {
-      [key in number]: Asset;
-    } = {};
+    const assetsMap: ConstructedTreeAssetMap = {};
     const assetsChildrenMap: {
       [key in number]: number[];
     } = {};
@@ -104,7 +112,7 @@ export const useSearchTree = (
     }
     return constructTree(rootAssets, assetsChildrenMap, assetsMap);
   };
-  const treeResult = useQuery<(Asset & { children?: Asset[] })[]>(
+  const treeResult = useQuery<ConstructedTreeAsset[]>(
     ['asset-search-tree', query, filter],
     fetchAndBuildTree,
     { enabled }
@@ -121,7 +129,7 @@ export const useSearchTree = (
 
 export const useRootTree = (
   openIds: number[] = [],
-  config?: UseQueryOptions<Asset[]>
+  config?: UseQueryOptions<ConstructedTreeAsset[]>
 ) => {
   const sdk = useSDK();
   const client = useQueryClient();
@@ -139,7 +147,7 @@ export const useRootTree = (
     }
   );
 
-  return useQuery<(Asset & { children?: Asset[] })[]>(
+  return useQuery<ConstructedTreeAsset[]>(
     ['asset-list-tree', openIds],
     async () => {
       const rootAssetIds: number[] = rootAssets.map(el => el.id);
@@ -147,7 +155,7 @@ export const useRootTree = (
         [key in number]: number[];
       } = {};
 
-      const assetsMap = rootAssets.reduce(
+      const assetsMap: ConstructedTreeAssetMap = rootAssets.reduce(
         (prev, el) => {
           prev[el.id] = {
             ...el,
@@ -155,16 +163,12 @@ export const useRootTree = (
               el.aggregates &&
               el.aggregates.childCount &&
               el.aggregates.childCount > 0
-                ? ([{ loading: true }] as (Asset & { loading?: boolean })[])
+                ? [{ loading: true }]
                 : undefined,
           };
           return prev;
         },
-        {} as {
-          [key in number]: Asset & {
-            children?: (Asset | { loading?: boolean })[];
-          };
-        }
+        {} as ConstructedTreeAssetMap
       );
 
       await Promise.all(
@@ -185,14 +189,15 @@ export const useRootTree = (
           );
 
           items.forEach(el => {
-            const item = {
+            const item: ConstructedTreeAsset = {
               ...el,
               children:
                 el.aggregates &&
                 el.aggregates.childCount &&
                 el.aggregates.childCount > 0
-                  ? (assetsMap[el.id] && assetsMap[el.id].children) ||
-                    ([{ loading: true }] as (Asset & { loading?: boolean })[])
+                  ? (assetsMap[el.id] && assetsMap[el.id].children) || [
+                      { loading: true },
+                    ]
                   : undefined,
             };
             assetsMap[el.id] = item;
@@ -213,18 +218,24 @@ export const useRootTree = (
   );
 };
 
-const constructTree = <T>(
+const constructTree = (
   ids: number[],
   idsChildrenMap: { [key in number]: number[] },
-  resourceMap: { [key in number]: T }
-): (T & { children?: T[] })[] =>
-  ids.map(id => ({
+  resourceMap: ConstructedTreeAssetMap
+): ConstructedTreeAsset[] => {
+  const sortedIds = ids.sort((idA, idB) => {
+    const nameA = resourceMap[idA].name ?? '';
+    const nameB = resourceMap[idB].name ?? '';
+    return nameA.localeCompare(nameB);
+  });
+
+  return sortedIds.map(id => ({
     ...resourceMap[id],
     children: idsChildrenMap[id]
       ? constructTree(idsChildrenMap[id], idsChildrenMap, resourceMap)
-      : // @ts-ignore
-        resourceMap[id].children,
+      : resourceMap[id].children,
   }));
+};
 
 export const useRootPath = (
   assetId: any,

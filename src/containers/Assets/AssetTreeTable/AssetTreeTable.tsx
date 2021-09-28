@@ -5,7 +5,12 @@ import styled from 'styled-components';
 import { usePrevious } from 'hooks/CustomHooks';
 import { Loader, Table } from 'components';
 import { SelectableItemsProps, TableStateProps } from 'CommonProps';
-import { useRootTree, useSearchTree, useRootPath } from './hooks';
+import {
+  useRootTree,
+  useSearchTree,
+  useRootPath,
+  ConstructedTreeAsset,
+} from './hooks';
 
 export const AssetTreeTable = ({
   filter = {},
@@ -103,12 +108,10 @@ export const AssetTreeTable = ({
 
   useEffect(() => {
     if (searchItems) {
-      const reducer = (
-        prev: number[],
-        el: Asset & { children?: Asset[] }
-      ): number[] => {
+      const reducer = (prev: number[], el: ConstructedTreeAsset): number[] => {
         if (el.children) {
-          const childrenIds = (el.children || []).reduce(reducer, prev);
+          const childrenIds = ((el.children ||
+            []) as ConstructedTreeAsset[]).reduce(reducer, prev);
           return childrenIds.concat([el.id]);
         }
         return prev;
