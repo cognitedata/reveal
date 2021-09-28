@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Loader } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { useUserContext } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { handleUserIdentification } from 'utils/config';
@@ -15,7 +15,6 @@ const Home = () => {
 
   return (
     <>
-      <Loader />
       <Container>
         <p>Your Unified UI Subapp is now running! Congrats {user.username}!</p>
         <Button

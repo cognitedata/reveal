@@ -30,6 +30,8 @@ module.exports = {
     'lodash/prefer-is-nil': ['off'],
     'lodash/prefer-get': ['off'],
 
+    'react/prop-types': ['off'],
+
     '@typescript-eslint/no-unused-vars': [
       'error',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
