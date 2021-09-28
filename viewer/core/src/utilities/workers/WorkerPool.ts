@@ -6,6 +6,8 @@ import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { revealEnv } from '../../revealEnv';
 import { isTheSameDomain } from '../networking/isTheSameDomain';
 
+import log from '@reveal/logger';
+
 type WorkDelegate<T> = (worker: RevealParserWorker) => Promise<T>;
 
 interface PooledWorker {
@@ -43,7 +45,7 @@ export class WorkerPool {
     }
 
     if (process.env.NODE_ENV !== 'test') {
-      checkWorkerVersion(this.workerList[0].worker).catch(console.error);
+      checkWorkerVersion(this.workerList[0].worker).catch(x => log.error(x));
     }
 
     if (this.workerObjUrl) {

@@ -87,14 +87,14 @@ describe('ByVisibilityGpuSectorCuller', () => {
       switch (lod) {
         case LevelOfDetail.Detailed:
           return [
-            { downloadSize: 10, drawCalls: 0 },
-            { downloadSize: 10, drawCalls: 0 },
-            { downloadSize: 100, drawCalls: 0 }
+            { downloadSize: 10, drawCalls: 0, renderCost: 0 },
+            { downloadSize: 10, drawCalls: 0, renderCost: 0 },
+            { downloadSize: 100, drawCalls: 0, renderCost: 0 }
           ][sector.id];
         case LevelOfDetail.Simple:
-          return { downloadSize: 1, drawCalls: 0 };
+          return { downloadSize: 1, drawCalls: 0, renderCost: 0 };
         default:
-          return { downloadSize: 0, drawCalls: 0 };
+          return { downloadSize: 0, drawCalls: 0, renderCost: 0 };
       }
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
@@ -114,7 +114,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const input = createDetermineSectorInput(camera, model, {
       geometryDownloadSizeBytes: 20,
       maximumNumberOfDrawCalls: Infinity,
-      highDetailProximityThreshold: 10
+      highDetailProximityThreshold: 10,
+      maximumRenderCost: Infinity
     });
 
     // Act
@@ -131,11 +132,11 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const determineSectorCost = (_sector: SectorMetadata, lod: LevelOfDetail): SectorCost => {
       switch (lod) {
         case LevelOfDetail.Detailed:
-          return { downloadSize: 0, drawCalls: 5 };
+          return { downloadSize: 0, drawCalls: 5, renderCost: 0 };
         case LevelOfDetail.Simple:
-          return { downloadSize: 0, drawCalls: 1 };
+          return { downloadSize: 0, drawCalls: 1, renderCost: 0 };
         default:
-          return { downloadSize: 0, drawCalls: 0 };
+          return { downloadSize: 0, drawCalls: 0, renderCost: 0 };
       }
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
@@ -155,7 +156,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const input = createDetermineSectorInput(camera, model, {
       geometryDownloadSizeBytes: Infinity,
       maximumNumberOfDrawCalls: 10,
-      highDetailProximityThreshold: -1
+      highDetailProximityThreshold: -1,
+      maximumRenderCost: Infinity
     });
 
     // Act
@@ -188,7 +190,8 @@ function createDetermineSectorInput(
     budget: budget || {
       geometryDownloadSizeBytes: 20,
       highDetailProximityThreshold: 10,
-      maximumNumberOfDrawCalls: Infinity
+      maximumNumberOfDrawCalls: Infinity,
+      maximumRenderCost: Infinity
     }
   };
   return determineSectorsInput;
