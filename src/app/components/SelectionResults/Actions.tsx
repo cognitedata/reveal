@@ -1,7 +1,5 @@
 import React from 'react';
-import { Space, Tooltip, Divider } from 'antd';
-import { Button } from '@cognite/cogs.js';
-import CollectionsDropdown from 'app/components/CollectionsDropdown';
+import { Space, Divider } from 'antd';
 import { ResourceType } from '@cognite/data-exploration';
 import { InternalId } from '@cognite/sdk';
 import DownloadButton from './DownloadButton';
@@ -18,15 +16,6 @@ export const Actions = ({ resourceType, ids }: ActionsProps) => {
     <Space>
       <Divider type="vertical" style={{ height: '36px' }} />
       <DownloadButton ids={ids} resourceType={resourceType} />
-      <CollectionsDropdown
-        items={ids}
-        type={resourceType}
-        button={
-          <Tooltip title="Collection">
-            <Button icon="Folder" />
-          </Tooltip>
-        }
-      />
       <PowerBIButton ids={ids} resourceType={resourceType} />
       <GrafanaButton ids={ids} resourceType={resourceType} />
       <DeselectButton />

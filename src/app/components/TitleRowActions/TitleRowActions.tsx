@@ -1,7 +1,5 @@
 import React from 'react';
-import { Space, Divider, Tooltip } from 'antd';
-import { Button } from '@cognite/cogs.js';
-import CollectionsDropdown from 'app/components/CollectionsDropdown';
+import { Space, Divider } from 'antd';
 import { ResourceItem } from '@cognite/data-exploration';
 import DownloadButton from './DownloadButton';
 import { PowerBIButton, GrafanaButton } from './CopyIdsButton';
@@ -22,15 +20,6 @@ export const TitleRowActions = ({
       <Divider type="vertical" style={{ height: '36px' }} />
       {beforeDefaultActions}
       <DownloadButton item={item} />
-      <CollectionsDropdown
-        items={[{ id: item.id }]}
-        type={item.type}
-        button={
-          <Tooltip title="Collection">
-            <Button icon="Folder" />
-          </Tooltip>
-        }
-      />
       <PowerBIButton item={item} />
       <GrafanaButton item={item} />
       {afterDefaultActions}
