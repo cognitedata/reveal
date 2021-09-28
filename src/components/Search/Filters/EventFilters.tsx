@@ -1,12 +1,16 @@
 import React from 'react';
-import { useList } from '@cognite/sdk-react-query-hooks';
+
 import { EventFilter, InternalId } from '@cognite/sdk';
-import { StringFilter } from './StringFilter/StringFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
-import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
+import { useList } from '@cognite/sdk-react-query-hooks';
+
+import { useAggregatedEventFilter } from 'hooks/useAggregatedEventFilter';
+
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
+import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { DateFilter } from './DateFilter/DateFilter';
+import { MetadataFilter } from './MetadataFilter/MetadataFilter';
+import { StringFilter } from './StringFilter/StringFilter';
 
 export const EventFilters = ({
   filter,
@@ -16,6 +20,22 @@ export const EventFilters = ({
   setFilter: (newFilter: EventFilter) => void;
 }) => {
   const { data: items = [] } = useList('events', { filter, limit: 1000 });
+
+  const typeFilter = useAggregatedEventFilter({
+    field: 'type',
+    filter,
+    onUpdate: newValue => setFilter({ ...filter, type: newValue }),
+    title: 'Type',
+    value: filter.type,
+  });
+  const subtypeFilter = useAggregatedEventFilter({
+    field: 'subtype',
+    filter,
+    onUpdate: newValue => setFilter({ ...filter, subtype: newValue }),
+    title: 'Sub-type',
+    value: filter.subtype,
+  });
+
   return (
     <div>
       <DataSetFilter
@@ -28,20 +48,8 @@ export const EventFilters = ({
           })
         }
       />
-      <AggregatedFilter
-        items={items}
-        aggregator="type"
-        title="Type"
-        value={filter.type}
-        setValue={newValue => setFilter({ ...filter, type: newValue })}
-      />
-      <AggregatedFilter
-        items={items}
-        aggregator="subtype"
-        title="Sub-type"
-        value={filter.subtype}
-        setValue={newValue => setFilter({ ...filter, subtype: newValue })}
-      />
+      {typeFilter}
+      {subtypeFilter}
       <DateFilter
         title="Start Time"
         value={filter.startTime}
