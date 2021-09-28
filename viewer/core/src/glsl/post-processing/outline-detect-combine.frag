@@ -71,6 +71,11 @@ void main() {
   float backDepth = texture2D(tBackDepth, vUv).r;  
   float customDepth = texture2D(tCustomDepth, vUv).r;
   float ghostDepth = texture2D(tGhostDepth, vUv).r;
+
+  customDepth = customDepth > 0.0 ? customDepth : 1.0; 
+  backDepth = backDepth > 0.0 ? backDepth : 1.0; 
+  ghostDepth = ghostDepth > 0.0 ? ghostDepth : 1.0;
+  frontDepth = frontDepth > 0.0 ? frontDepth : 1.0; 
   
   // Decompose and clamp "ghost" color
   vec4 clampedGhostAlbedo = vec4(max(ghostAlbedo.rgb, 0.5), min(ghostAlbedo.a, 0.8));
@@ -88,11 +93,6 @@ void main() {
 #endif
     return;
   }
-
-  customDepth = customDepth > 0.0 ? customDepth : infinity; 
-  backDepth = backDepth > 0.0 ? backDepth : infinity; 
-  ghostDepth = ghostDepth > 0.0 ? ghostDepth : infinity;
-  frontDepth = frontDepth > 0.0 ? frontDepth : infinity; 
 
   // texture has drawn fragment
   if(frontDepth < 1.0){
