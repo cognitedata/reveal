@@ -38,19 +38,15 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
-import {
-  SdkResourceType,
-  useCdfItem,
-  useUserInfo,
-} from '@cognite/sdk-react-query-hooks';
+import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
+import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import ReviewTagBar from './ReviewTagBar';
-import FileReview from './FileReview';
-import DiagramReviewStatus from './DiagramStatus';
+import FilePreviewSidebar from './FilePreviewSidebar';
 
 type Props = {
   file?: FileInfo;
@@ -73,13 +69,15 @@ const AnnotationPreviewSidebar = ({
 }: Props) => {
   const client = useQueryClient();
   const sdk = useSDK();
-
   const { data: userData } = useUserInfo();
   const { email = 'UNKNOWN' } = userData || {};
+
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(3);
-
-  const { isLoading: isApprovingFile, onApproveFile } = useReviewFile(file?.id);
+  const [viewingAnnotations, setViewingAnnotations] = useState<
+    'assets' | 'files' | undefined
+  >();
+  const { isLoading: isApprovingFile } = useReviewFile(file?.id);
   const {
     selectedAnnotations = [],
     setSelectedAnnotations,
@@ -264,39 +262,6 @@ const AnnotationPreviewSidebar = ({
     });
   };
 
-  const onApproveAllAnnotations = () => {
-    Modal.confirm({
-      okText: 'Approve tags',
-      title: 'Are you sure?',
-      content: (
-        <span>
-          Are you sure you want to approve all tags for this file? Changes will
-          be saved to CDF.
-        </span>
-      ),
-      onOk: async () => {
-        const unhandedAnnotations = annotations.filter(
-          a => a.status === 'unhandled'
-        ) as Array<CogniteAnnotation>;
-        const updatePatch = unhandedAnnotations.map(annotation => ({
-          id: Number(annotation.id),
-          annotation,
-          update: {
-            status: {
-              set: 'verified' as AnnotationStatus,
-            },
-            checkedBy: {
-              set: email,
-            },
-          },
-        }));
-        approveAnnotations(updatePatch);
-        await onApproveFile();
-        setSelectedAnnotations([]);
-      },
-      onCancel: () => {},
-    });
-  };
   const onDeleteAnnotation = (
     annotation: CogniteAnnotation | ProposedCogniteAnnotation
   ) => {
@@ -361,6 +326,23 @@ const AnnotationPreviewSidebar = ({
     setSelectedAnnotations,
   ]);
 
+  const isLinked =
+    !!selectedAnnotation?.resourceId ||
+    !!selectedAnnotation?.resourceExternalId;
+  const type = isLinked
+    ? (selectedAnnotation?.resourceType as ResourceType)
+    : undefined;
+  const apiType = type ? convertResourceType(type) : 'assets';
+  const { resourceExternalId, resourceId } = selectedAnnotation || {};
+
+  const { data: item, isLoading } = useCdfItem<{ id: number }>(
+    apiType,
+    resourceExternalId
+      ? { externalId: resourceExternalId! }
+      : { id: resourceId! },
+    { enabled: !!type }
+  );
+
   const Header = ({
     annotation,
     onClose,
@@ -368,19 +350,6 @@ const AnnotationPreviewSidebar = ({
     annotation: CogniteAnnotation | ProposedCogniteAnnotation;
     onClose: () => void;
   }) => {
-    const resourceType = annotation?.resourceType
-      ? (convertResourceType(
-          annotation?.resourceType as ResourceType
-        ) as SdkResourceType)
-      : undefined;
-
-    const { data: item, isLoading } = useCdfItem(
-      resourceType ?? 'assets', // to-do: should be handled in sdk-react-query-hooks
-      { id: Number(annotation.resourceId) },
-      {
-        enabled: !!annotation.resourceType && !!annotation.resourceId,
-      }
-    );
     const menuOptions = () => (
       <Menu>
         <Menu.Item onClick={() => setEditing(true)}> Edit</Menu.Item>
@@ -395,6 +364,44 @@ const AnnotationPreviewSidebar = ({
     if (!isEditingMode) {
       return (
         <InfoGrid>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginTop: '20px',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <div>
+              <Button
+                icon="ArrowBack"
+                onClick={() => {
+                  setViewingAnnotations(
+                    apiType === 'assets' || apiType === 'files'
+                      ? apiType
+                      : undefined
+                  );
+                  onClose();
+                }}
+                style={{ color: 'black', marginTop: '-5px' }}
+                type="ghost"
+              />
+              <BreadcrumbItem>{type?.toUpperCase()}</BreadcrumbItem>
+              <BreadcrumbItem separator={<span />}>
+                {annotation.label ?? 'N/A'}
+              </BreadcrumbItem>
+            </div>
+            <div>
+              <div>
+                <Dropdown overlay={menuOptions}>
+                  <Icon type="MoreOverflowEllipsisVertical" />
+                </Dropdown>
+                <Button icon="Close" variant="ghost" onClick={onClose} />
+              </div>
+            </div>
+          </div>
+
           {selectedAnnotations?.length > 1 && (
             <Pagination
               size="small"
@@ -405,7 +412,7 @@ const AnnotationPreviewSidebar = ({
               onChange={i => {
                 setCurrentIndex(i - 1);
               }}
-              style={{ marginTop: '20px' }}
+              style={{ marginTop: '10px' }}
             />
           )}
 
@@ -424,12 +431,6 @@ const AnnotationPreviewSidebar = ({
               }}
             >
               <Title level={5}>{annotation.label} </Title>
-              <div>
-                <Dropdown overlay={menuOptions}>
-                  <Icon type="MoreOverflowEllipsisVertical" />
-                </Dropdown>
-                <Button icon="Close" variant="ghost" onClick={onClose} />
-              </div>
             </div>
             <Body level={2}>
               {annotation.description ||
@@ -463,22 +464,6 @@ const AnnotationPreviewSidebar = ({
 
     return <></>;
   };
-
-  const isLinked =
-    !!selectedAnnotation?.resourceId ||
-    !!selectedAnnotation?.resourceExternalId;
-  const type = isLinked
-    ? (selectedAnnotation?.resourceType as ResourceType)
-    : undefined;
-  const apiType = type ? convertResourceType(type) : 'assets';
-  const { resourceExternalId, resourceId } = selectedAnnotation || {};
-  const { data: item } = useCdfItem<{ id: number }>(
-    apiType,
-    resourceExternalId
-      ? { externalId: resourceExternalId! }
-      : { id: resourceId! },
-    { enabled: !!type }
-  );
 
   if (selectedAnnotation) {
     return (
@@ -558,48 +543,14 @@ const AnnotationPreviewSidebar = ({
     );
   }
   return (
-    <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
-      <ResourcePreviewSidebar
-        hideTitle
-        hideContent
-        closable={false}
-        actions={
-          onItemClicked &&
-          item &&
-          type && [
-            <Button
-              icon="ArrowRight"
-              iconPlacement="right"
-              onClick={() =>
-                onItemClicked({
-                  id: item.id,
-                  type,
-                })
-              }
-            >
-              View {type}
-            </Button>,
-          ]
-        }
-        header={
-          <TitleWrapper>
-            {fileIcon || <Icon type="PDF" />}
-            <Title level={4}>{file?.name} </Title>
-            {file?.id && (
-              <div>
-                <DiagramReviewStatus fileId={file.id} />
-                <Detail>- Interactive Diagram</Detail>
-              </div>
-            )}
-            <FileReview
-              annotations={annotations}
-              onApprove={onApproveAllAnnotations}
-            />
-          </TitleWrapper>
-        }
-        onClose={() => setSelectedAnnotations([])}
-      />
-    </div>
+    <FilePreviewSidebar
+      annotations={annotations}
+      file={file}
+      fileIcon={fileIcon}
+      approveAnnotations={approveAnnotations}
+      viewingAnnotations={viewingAnnotations}
+      setViewingAnnotations={setViewingAnnotations}
+    />
   );
 };
 
@@ -614,10 +565,4 @@ const PreviewImage = styled.img`
   margin-bottom: 16px;
 `;
 
-const TitleWrapper = styled.div`
-  padding: 20px 10px;
-  gap: 15px;
-  display: flex;
-  flex-direction: column;
-`;
 export { AnnotationPreviewSidebar };

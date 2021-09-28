@@ -1,5 +1,5 @@
 import { CogniteAnnotation } from '@cognite/annotations';
-import { Body, Button, Detail } from '@cognite/cogs.js';
+import { Body, Button, Icon } from '@cognite/cogs.js';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Tooltip } from 'antd';
@@ -10,11 +10,13 @@ import styled from 'styled-components';
 const FileReview = ({
   annotations,
   onApprove,
+  onTypeClick,
 }: {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   onApprove: (
     annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>
   ) => void;
+  onTypeClick: (type: 'assets' | 'files') => void;
 }) => {
   const { data: labelsReadAcl } = usePermissions('labelsAcl', 'READ');
   const { data: labelsWriteAcl } = usePermissions('labelsAcl', 'WRITE');
@@ -72,7 +74,7 @@ const FileReview = ({
         </Tooltip>
       ) : null}
 
-      <StyledTag>
+      <StyledTag onClick={() => onTypeClick('assets')}>
         <IconWrapper>
           <ResourceIcons
             style={{
@@ -93,9 +95,12 @@ const FileReview = ({
             </Body>
           ) : null}
         </IconWrapper>
-        <Body level={5}>{assetAnnotations.length}</Body>
+        <CountWrapper>
+          <Body level={5}>{assetAnnotations.length}</Body>
+          <Icon type="ChevronRightCompact" style={{ marginTop: '3px' }} />
+        </CountWrapper>
       </StyledTag>
-      <StyledTag>
+      <StyledTag onClick={() => onTypeClick('files')}>
         <IconWrapper>
           <ResourceIcons
             style={{
@@ -116,7 +121,10 @@ const FileReview = ({
             </Body>
           ) : null}
         </IconWrapper>
-        <Body level={5}>{fileAnnotations.length}</Body>
+        <CountWrapper>
+          <Body level={5}>{fileAnnotations.length}</Body>
+          <Icon type="ChevronRightCompact" style={{ marginTop: '3px' }} />
+        </CountWrapper>
       </StyledTag>
     </ReviewTagWrapper>
   );
@@ -144,6 +152,11 @@ const StyledTag = styled.div`
   margin: 6px 0px 6px;
   border-radius: 8px;
   box-sizing: border-box;
+  border: 1px solid var(--cogs-midblue-5);
+  cursor: pointer;
+  :hover {
+    background: var(--cogs-bg-selected);
+  }
 `;
 
 const ButtonWrapper = styled.div`
@@ -154,4 +167,8 @@ const ButtonWrapper = styled.div`
 const IconWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const CountWrapper = styled.div`
+  display: flex;
 `;
