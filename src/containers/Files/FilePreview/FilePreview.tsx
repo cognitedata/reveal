@@ -30,12 +30,14 @@ type FilePreviewProps = {
   creatable: boolean;
   contextualization: boolean;
   onItemClicked?: (item: ResourceItem) => void;
+  fileIcon?: React.ReactNode;
 };
 export const FilePreview = ({
   fileId,
   creatable,
   contextualization,
   onItemClicked,
+  fileIcon,
 }: FilePreviewProps) => {
   const [pendingAnnotations, setPendingAnnotations] = useState<
     ProposedCogniteAnnotation[]
@@ -124,6 +126,7 @@ export const FilePreview = ({
         contextualization={contextualization}
         onItemClicked={onItemClicked}
         annotations={allAnnotations}
+        fileIcon={fileIcon}
       />
     </div>
   );
