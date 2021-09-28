@@ -1,21 +1,21 @@
 import React from 'react';
 import Spin from 'antd/lib/spin';
 import { Flex, CountTag } from 'components/Common';
-import useAnnotationsDetails from 'hooks/useAnnotationsDetails';
+import { useAnnotationsDetails } from 'hooks';
 import { Body, Colors } from '@cognite/cogs.js';
 
 type DetectedTagsProps = {
   fileId: number;
+  refetch?: boolean;
 };
 
-const DetectedTags = ({ fileId }: DetectedTagsProps) => {
+const DetectedTags = ({ fileId, refetch }: DetectedTagsProps) => {
   const { assetTags, fileTags, pendingAssetTags, pendingFileTags, isFetched } =
-    useAnnotationsDetails(fileId);
+    useAnnotationsDetails(fileId, refetch);
 
   const noTags = !assetTags.length && !fileTags.length;
 
   if (!isFetched) return <Spin />;
-
   if (noTags)
     return (
       <Body level={2} style={{ color: Colors['greyscale-grey6'].hex() }}>

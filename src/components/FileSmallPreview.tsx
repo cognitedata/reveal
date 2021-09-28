@@ -16,7 +16,7 @@ import {
   isFilePreviewable,
   readablePreviewableFileTypes,
 } from 'utils/mimeTypeUtils';
-import { useAnnotationsForFiles } from 'hooks';
+import { useAnnotationsDetails } from 'hooks';
 
 export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
   const sdk = useSDK();
@@ -29,7 +29,7 @@ export const FileSmallPreview = ({ fileId }: { fileId: number }) => {
     id: fileId,
   });
 
-  const { annotations } = useAnnotationsForFiles([fileId]);
+  const { annotations } = useAnnotationsDetails(fileId);
   const canPreview = isFilePreviewable(file);
 
   if (!isFetched) {

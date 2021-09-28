@@ -13,7 +13,7 @@ import {
 } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks';
-import ReviewStatus from 'components/ReviewStatus';
+import DiagramReviewStatus from 'components/DiagramReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
 import DetectedTags from 'components/DetectedTags';
 import { sortFilesByAnnotations } from './utils';
@@ -114,13 +114,13 @@ export const getColumns = (
     key: 'status',
     width: 150,
     render: (_: any, file: FileInfo) => (
-      <ReviewStatus file={file} size="medium" />
+      <DiagramReviewStatus fileId={file.id} size="medium" />
     ),
   },
   {
     title: 'Linked to',
     key: 'tags',
-    render: (row: FileWithAnnotations) => <DetectedTags fileId={row.id} />,
+    render: (_: any, file: FileInfo) => <DetectedTags fileId={file.id} />,
     sorter: (a: FileWithAnnotations, b: FileWithAnnotations) =>
       sortFilesByAnnotations(a, b),
   },

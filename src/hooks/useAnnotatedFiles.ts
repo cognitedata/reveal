@@ -3,7 +3,7 @@ import { useList } from '@cognite/sdk-react-query-hooks';
 import { useAnnotationsForFiles } from 'hooks';
 import { PENDING_LABEL } from './useReviewFiles';
 
-export const useAnnotatedFiles = ({ filter }: FileRequestFilter) => {
+export const useAnnotatedFiles = ({ filter = {} }: FileRequestFilter) => {
   const {
     data: files,
     isError,

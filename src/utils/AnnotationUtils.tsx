@@ -7,11 +7,7 @@ import {
   CURRENT_VERSION,
   AnnotationBoundingBox,
   ANNOTATION_EVENT_TYPE,
-  ANNOTATION_METADATA_PREFIX,
 } from '@cognite/annotations';
-import sdk from 'sdk-singleton';
-import chunk from 'lodash/chunk';
-import handleError from './handleError';
 
 const findSimilarMatches = (
   entities: CogniteAnnotation[],
@@ -82,9 +78,9 @@ export const createPendingAnnotationsFromJob = async (
         box: entity.boundingBox,
         ...(!file.externalId ? { fileId: file.id } : {}),
         ...(file.externalId ? { fileExternalId: file.externalId } : {}),
-        resourceId: item.id,
-        resourceExternalId: item.externalId,
-        resourceType: item.resourceType,
+        resourceId,
+        resourceExternalId,
+        resourceType,
         type: ANNOTATION_EVENT_TYPE,
         label: entity.text,
         source: `job:${jobId}`,
@@ -94,7 +90,6 @@ export const createPendingAnnotationsFromJob = async (
         page: entity.page,
       } as PendingCogniteAnnotation);
     });
-
     return prev;
   }, [] as PendingCogniteAnnotation[]);
 };
@@ -132,34 +127,4 @@ export const isSimilarBoundingBox = (
     }
   }
   return false;
-};
-
-export const deleteAnnotationsForFile = async (file?: FileInfo) => {
-  try {
-    if (!file) return;
-    const metadataFilter: { [key: string]: string } = {};
-    if (file.externalId) {
-      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_external_id`] =
-        file.externalId;
-    } else {
-      metadataFilter[`${ANNOTATION_METADATA_PREFIX}file_id`] = String(file.id);
-    }
-    const allAnnotations = await sdk.events
-      .list({
-        filter: {
-          metadata: metadataFilter,
-        },
-      })
-      .autoPagingToArray({ limit: -1 });
-
-    const chunkedList = chunk(allAnnotations, 1000);
-
-    const deleteRequests = chunkedList.map((items) =>
-      sdk.events.delete(items.map((event) => ({ id: event.id })))
-    );
-
-    await Promise.allSettled(deleteRequests);
-  } catch (e) {
-    handleError({ ...e });
-  }
 };

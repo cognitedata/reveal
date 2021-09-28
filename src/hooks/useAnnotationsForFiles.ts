@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import uniqBy from 'lodash/uniqBy';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import {
@@ -6,8 +8,6 @@ import {
   convertEventsToAnnotations,
   CogniteAnnotation,
 } from '@cognite/annotations';
-import uniqBy from 'lodash/uniqBy';
-import { useEffect, useState } from 'react';
 import sdk from 'sdk-singleton';
 
 export type FileWithAnnotations = FileInfo & {
@@ -18,6 +18,7 @@ type AnnotationsForFiles = {
   annotations: { [id: number]: CogniteAnnotation[] };
   files: FileWithAnnotations[];
   isFetchingAnnotations: boolean;
+  isFetchingFiles: boolean;
   isFetched: boolean;
 };
 
@@ -28,6 +29,7 @@ export const useAnnotationsForFiles = (
 
   const [isFetchingAnnotations, setIsFetchingAnnotations] =
     useState<boolean>(false);
+  const [annotationsFetched, setAnnotationsFetched] = useState<boolean>(false);
   const [annotations, setAnnotations] = useState<{
     [id: number]: CogniteAnnotation[];
   }>({});
@@ -72,11 +74,13 @@ export const useAnnotationsForFiles = (
       })
     );
     setIsFetchingAnnotations(false);
+    setAnnotationsFetched(true);
     setAnnotations(fixedAnnotations);
   };
 
   useEffect(() => {
     if (filesFetched && files) {
+      setAnnotationsFetched(false);
       getAnnotationsForFiles();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,6 +93,7 @@ export const useAnnotationsForFiles = (
       annotations: annotations[file.id],
     })),
     isFetchingAnnotations,
-    isFetched: filesFetched,
+    isFetchingFiles: filesFetched,
+    isFetched: filesFetched && annotationsFetched,
   };
 };

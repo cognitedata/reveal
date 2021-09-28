@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Body, Colors } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import InteractiveIcon from 'components/InteractiveIcon';
-import ReviewStatus from 'components/ReviewStatus';
+import DiagramReviewStatus from 'components/DiagramReviewStatus';
 
 type FileItemProps = {
   file: FileInfo;
@@ -35,7 +35,7 @@ export default function FileItem({ file, isSelected, onClick }: FileItemProps) {
         <Body level={2}>{file.name}</Body>
       </FileItem.Title>
       <FileItem.Tag>
-        <ReviewStatus file={file} size="small" />
+        <DiagramReviewStatus fileId={file.id} size="small" />
       </FileItem.Tag>
     </FileItem.Wrapper>
   );

@@ -42,7 +42,7 @@ export default function TitleBar(props: Props) {
               isActive={editMode}
               onClick={() => setEditMode(!editMode)}
             />
-            <ClearTagsButton id={file!.id} setEditMode={setEditMode} />
+            <ClearTagsButton id={file?.id} setEditMode={setEditMode} />
             <Dropdown content={<MenuSingle file={file!} />}>
               <Button
                 icon="MoreOverflowEllipsisHorizontal"

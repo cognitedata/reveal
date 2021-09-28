@@ -29,20 +29,26 @@ export const boundingBoxToVertices = (boundingBox: BoundingBox): Vertices => {
 
 export const mapAssetsToEntities = (
   assets?: Asset[],
-  fieldToMatch: keyof Asset = 'name'
+  fieldToMatch: keyof Asset = 'name',
+  userDefinedField: string = 'userDefinedField'
 ) => {
   return (assets ?? []).map((asset) => ({
     resourceType: 'asset',
-    name: asset[fieldToMatch] ?? asset.name, // temporary solution - mapping fields chosen by user to name
+    id: asset.id,
+    externalId: asset.externalId,
+    [userDefinedField]: asset[fieldToMatch],
   }));
 };
 
 export const mapFilesToEntities = (
   files?: FileInfo[],
-  fieldToMatch: keyof FileInfo = 'name'
+  fieldToMatch: keyof FileInfo = 'name',
+  userDefinedField: string = 'userDefinedField'
 ) => {
   return (files ?? []).map((file) => ({
     resourceType: 'file',
-    name: file[fieldToMatch] ?? file.name, // temporary solution - mapping fields chosen by user to name
+    id: file.id,
+    externalId: file.externalId,
+    [userDefinedField]: file[fieldToMatch],
   }));
 };

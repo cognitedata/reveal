@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-import { Body } from '@cognite/cogs.js';
+import { Body, Colors } from '@cognite/cogs.js';
 import DetectedTags from 'components/DetectedTags';
 
 type Props = { workflowId: number; fileId: number };
@@ -16,7 +16,12 @@ export default function ColumnLinkedTo({
   const didFileFail = failedFiles?.find(
     (failedFile) => failedFile.fileId === fileId
   );
-  if (didFileFail) return <Body level={2}>No links</Body>;
+  if (didFileFail)
+    return (
+      <Body level={2} style={{ color: Colors['greyscale-grey6'].hex() }}>
+        No links
+      </Body>
+    );
 
-  return <DetectedTags fileId={fileId} />;
+  return <DetectedTags fileId={fileId} refetch />;
 }

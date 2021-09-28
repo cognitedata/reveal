@@ -5,7 +5,7 @@ import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
 import { stringCompare } from 'modules/contextualization/utils';
 import { Flex, LoadingSkeleton } from 'components/Common';
 import { StatusType } from 'components/Filters';
-import ReviewStatus from 'components/ReviewStatus';
+import DiagramReviewStatus from 'components/DiagramReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
 import ColumnProgress from './ColumnProgress';
 import ColumnFileActions from './ColumnFileActions';
@@ -56,7 +56,7 @@ export const getColumns: any = (
       width: 150,
       render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
-          <ReviewStatus file={file} size="medium" />
+          <DiagramReviewStatus fileId={file.id} size="medium" />
         </LoadingSkeleton>
       ),
     },

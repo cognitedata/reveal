@@ -1,14 +1,15 @@
 import React, { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useQueryClient } from 'react-query';
 import { message } from 'antd';
-import { WorkflowStep } from 'modules/workflows';
-import { useActiveWorkflow } from 'hooks';
 import { landingPage, diagramSelection } from 'routes/paths';
+import { useActiveWorkflow } from 'hooks';
 import { AppStateContext } from 'context';
 import { DiagramsSettingsBar } from 'containers';
 import { Flex, PageTitle } from 'components/Common';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
+import { WorkflowStep } from 'modules/workflows';
 import { useParsingJob } from 'modules/contextualization/pnidParsing';
 import { getWorkflowItems, getSelectedDiagramsIds } from './selectors';
 import SectionProgress from './SectionProgress';
@@ -22,6 +23,7 @@ type Props = {
 export default function PageResultsOverview(props: Props) {
   const { step } = props;
   const history = useHistory();
+  const client = useQueryClient();
   const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow(step);
 
@@ -43,6 +45,19 @@ export default function PageResultsOverview(props: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflow]);
+
+  useEffect(() => {
+    const invalidate = () => {
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'files',
+        'get',
+        'byId',
+      ]);
+    };
+    if (isJobDone) invalidate();
+  }, [client, isJobDone]);
 
   return (
     <Flex column style={{ width: '100%', position: 'relative' }}>

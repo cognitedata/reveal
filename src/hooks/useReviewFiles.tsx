@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+import chunk from 'lodash/chunk';
+import uniqBy from 'lodash/uniqBy';
 import { Modal, notification } from 'antd';
 import { Body } from '@cognite/cogs.js';
-import { useCdfItems, useUserInfo } from '@cognite/sdk-react-query-hooks';
+import {
+  useCdfItem,
+  useCdfItems,
+  useUserInfo,
+  useList,
+} from '@cognite/sdk-react-query-hooks';
 import {
   ExternalLabelDefinition,
   FileChangeUpdate,
   FileInfo,
+  CogniteEvent,
 } from '@cognite/sdk';
+import {
+  getIdFilter,
+  getExternalIdFilter,
+  updateAnnotations,
+} from '@cognite/annotations';
 import sdk from 'sdk-singleton';
-import { useMutation, useQueryClient } from 'react-query';
-import { updateAnnotations } from '@cognite/annotations';
-import { deleteAnnotationsForFile } from 'utils/AnnotationUtils';
 import { sleep } from 'utils/utils';
 import handleError from 'utils/handleError';
 import { useAnnotationsForFiles } from './useAnnotationsForFiles';
@@ -69,6 +80,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     fileIds.map((id) => ({ id }))
   );
   const { annotations: annotationsMap } = useAnnotationsForFiles(fileIds);
+  const { deleteAnnotationsForFile } = useDeleteTags();
 
   const onError = (error: any) => {
     handleError({ ...error });
@@ -94,6 +106,14 @@ export const useReviewFiles = (fileIds: Array<number>) => {
         'cdf',
         'files',
         'list',
+      ]);
+
+      client.invalidateQueries([
+        'sdk-react-query-hooks',
+        'cdf',
+        'files',
+        'get',
+        'byId',
       ]);
 
       client.invalidateQueries([
@@ -330,10 +350,9 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       content: <Body level={2}>{content}</Body>,
       onOk: async () => {
         await Promise.all(
-          selectedFileIds.map((fileId: number) => {
-            const file = files?.find((curFile) => curFile.id === fileId);
-            return deleteAnnotationsForFile(file);
-          })
+          selectedFileIds.map((fileId: number) =>
+            deleteAnnotationsForFile(fileId)
+          )
         );
         await onClearFileTags(selectedFileIds);
       },
@@ -352,6 +371,88 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     onRejectDiagrams,
     onClearTags,
   };
+};
+
+export const useDeleteTags = () => {
+  const [fileId, setFileId] = useState<number>();
+  const [shouldDelete, setShouldDelete] = useState<boolean>(false);
+  const [fileIdFilter, setFileIdFilter] = useState<any>();
+  const [fileExternalIdFilter, setFileExternalIdFilter] = useState<any>();
+
+  const { data: file } = useCdfItem<FileInfo>(
+    'files',
+    // @ts-ignore
+    { id: fileId! },
+    { enabled: !!fileId }
+  );
+  const {
+    data: eventsById,
+    isError: isEventsByIdError,
+    isFetched: isEventsByIdFetched,
+  } = useList<CogniteEvent>(
+    'events',
+    { filter: fileIdFilter, limit: 1000 },
+    { enabled: !!file && !!fileIdFilter }
+  );
+  const {
+    data: eventsByExternalId,
+    isError: isEventsByExternalIdError,
+    isFetched: isEventsByExternalIdFetched,
+  } = useList<CogniteEvent>(
+    'events',
+    { filter: fileExternalIdFilter, limit: 1000 },
+    { enabled: !!file && !!fileExternalIdFilter }
+  );
+
+  useEffect(() => {
+    if (file?.id) setFileIdFilter(getIdFilter(file.id));
+    if (file?.externalId)
+      setFileExternalIdFilter(
+        file?.externalId ? getExternalIdFilter(file.externalId) : undefined
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file]);
+
+  useEffect(() => {
+    const deleteAll = async () => {
+      const allAnnotations: CogniteEvent[] = uniqBy(
+        [...(eventsById ?? []), ...(eventsByExternalId ?? [])],
+        (el: CogniteEvent) => el.id
+      );
+      const chunkedList = chunk(allAnnotations, 1000);
+      const deleteRequests = chunkedList.map((items) =>
+        sdk.events.delete([...items.map((event) => ({ id: event.id }))])
+      );
+      await Promise.allSettled(deleteRequests);
+      setShouldDelete(false);
+    };
+    if (
+      shouldDelete &&
+      (eventsById || eventsByExternalId) &&
+      (isEventsByIdFetched || isEventsByExternalIdFetched)
+    )
+      deleteAll();
+  }, [
+    shouldDelete,
+    eventsById,
+    eventsByExternalId,
+    isEventsByIdFetched,
+    isEventsByExternalIdFetched,
+  ]);
+
+  useEffect(() => {
+    if (isEventsByIdError || isEventsByExternalIdError) {
+      // [todo] put legit error here
+      // console.log('error :(');
+    }
+  }, [isEventsByIdError, isEventsByExternalIdError]);
+
+  const deleteAnnotationsForFile = (newFileId: number) => {
+    setFileId(newFileId);
+    setShouldDelete(true);
+  };
+
+  return { deleteAnnotationsForFile };
 };
 
 export const REVIEW_DIAGRAMS_LABELS = {

@@ -23,7 +23,7 @@ export const getColumns: any = (resourceType: ResourceType) => {
   const detectedTagsColumn = {
     title: 'Linked to',
     key: 'tags',
-    render: (row: FileInfo) => <DetectedTags fileId={row?.id} />,
+    render: (file: FileInfo) => <DetectedTags fileId={file?.id} />,
   };
 
   const nameColumn = (resource: any) => (

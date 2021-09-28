@@ -38,7 +38,6 @@ const SectionProgress = (): JSX.Element => {
       dispatch(pollJobResults.action({ jobId, workflowId }));
     }
   };
-
   useInterval(pollJobIfRunning, isJobDone ? null : 5000);
 
   const successPercentage = total
