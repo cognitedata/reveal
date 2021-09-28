@@ -15,6 +15,7 @@ import {
   ProposedCogniteAnnotation,
   useSelectedAnnotations,
 } from '@cognite/react-picture-annotation';
+import AnnotationsList from 'components/AnnotationsList';
 import { useReviewFile } from '../hooks';
 import DiagramReviewStatus from './DiagramStatus';
 import FileReview from './FileReview';
@@ -24,6 +25,8 @@ interface FilePreviewSidebarProps {
   file?: FileInfo;
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   approveAnnotations: (updatePatch: CogniteAnnotationPatch[]) => void;
+  viewingAnnotations?: 'assets' | 'files';
+  setViewingAnnotations: (type: 'assets' | 'files' | undefined) => void;
 }
 
 const FilePreviewSidebar = ({
@@ -31,13 +34,11 @@ const FilePreviewSidebar = ({
   file,
   annotations,
   approveAnnotations,
+  viewingAnnotations,
+  setViewingAnnotations,
 }: FilePreviewSidebarProps) => {
   const { data: userData } = useUserInfo();
   const { email = 'UNKNOWN' } = userData || {};
-
-  const [viewingAnnotations, setViewingAnnotations] = useState<
-    'assets' | 'files'
-  >();
 
   const { setSelectedAnnotations } = useSelectedAnnotations();
 
@@ -76,6 +77,19 @@ const FilePreviewSidebar = ({
       onCancel: () => {},
     });
   };
+  if (viewingAnnotations) {
+    return (
+      <AnnotationsList
+        annotations={annotations.filter(an =>
+          viewingAnnotations === 'assets'
+            ? an.resourceType === 'asset'
+            : an.resourceType === 'file'
+        )}
+        type={viewingAnnotations}
+        goBack={() => setViewingAnnotations(undefined)}
+      />
+    );
+  }
   return (
     <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
       <ResourcePreviewSidebar
@@ -95,6 +109,9 @@ const FilePreviewSidebar = ({
             <FileReview
               annotations={annotations}
               onApprove={onApproveAllAnnotations}
+              onTypeClick={(type: 'assets' | 'files') =>
+                setViewingAnnotations(type)
+              }
             />
           </TitleWrapper>
         }
