@@ -28,7 +28,7 @@ import { FullTextArea } from 'components/inputs/FullTextArea';
 import { usePostIntegration } from 'hooks/usePostIntegration';
 import { GridH2Wrapper } from 'styles/StyledPage';
 import styled from 'styled-components';
-import { Button, Collapse, Colors } from '@cognite/cogs.js';
+import { Button, Collapse, Colors, Modal } from '@cognite/cogs.js';
 import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   descriptionRule,
@@ -69,6 +69,7 @@ import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTable
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
+import { ids } from 'cogs-variables';
 
 const StyledCollapse = styled(Collapse)`
   background-color: red;
@@ -363,7 +364,7 @@ export const CreateIntegration = (props: {
                 href={createLink(
                   `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
                 )}
-                className="cogs-btn cogs-btn-secondary cogs-btn--padding"
+                className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"
               >
                 {CANCEL}
               </a>
@@ -476,7 +477,19 @@ export default function CombinedComponent() {
   return (
     <RegisterIntegrationLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
-        <CreateIntegration showAdditionalFields />
+        <Modal
+          visible
+          width={600}
+          closable
+          appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+          getContainer={() =>
+            document.getElementsByClassName(ids.styleScope).item(0) as any
+          }
+          footer={null}
+          title="Create extraction pipeline"
+        >
+          <CreateIntegration showAdditionalFields={false} />
+        </Modal>
       </CapabilityCheck>
     </RegisterIntegrationLayout>
   );
