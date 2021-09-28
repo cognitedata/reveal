@@ -38,11 +38,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
-import {
-  SdkResourceType,
-  useCdfItem,
-  useUserInfo,
-} from '@cognite/sdk-react-query-hooks';
+import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
