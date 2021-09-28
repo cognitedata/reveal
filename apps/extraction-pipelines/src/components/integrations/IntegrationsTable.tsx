@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import Layers from 'utils/zindex';
-import { bottomSpacing, mainContentSpaceAround } from 'styles/StyledVariables';
+import { mainContentSpaceAround } from 'styles/StyledVariables';
 import { Integration } from 'model/Integration';
 import ITable from 'components/table/ITable';
 import { integrationTableColumns } from 'components/table/IntegrationTableCol';
@@ -12,9 +12,6 @@ import { Span3 } from 'styles/grid/StyledGrid';
 const StyledIntegrationsTable = styled(StyledTable)`
   ${Span3};
   margin: ${mainContentSpaceAround};
-  .cogs-input-container {
-    margin-bottom: ${bottomSpacing};
-  }
 
   table {
     border-collapse: collapse;

@@ -59,7 +59,7 @@ fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 const TableTop = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const VerticalSpace = styled.div`
@@ -89,7 +89,9 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
 };
 
 const StyledTable = styled.table`
+  table-layout: fixed;
   tbody td {
+    word-break: break-word;
     color: ${Colors['greyscale-grey8'].hex()};
   }
 `;
