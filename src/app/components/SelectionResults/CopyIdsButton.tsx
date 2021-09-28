@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Dropdown } from 'antd';
+import { Menu, Dropdown, Tooltip } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import {
   ResourceType,
@@ -79,9 +79,9 @@ export function PowerBIButton({ ids, resourceType }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button variant="outline" icon="PowerBI">
-        PowerBI
-      </Button>
+      <Tooltip title="PowerBI">
+        <Button icon="PowerBI" />
+      </Tooltip>
     </Dropdown>
   );
 }
@@ -117,9 +117,9 @@ export function GrafanaButton({ ids, resourceType }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Button variant="outline" icon="LineChart">
-        Grafana
-      </Button>
+      <Tooltip title="Grafana">
+        <Button icon="LineChart" />
+      </Tooltip>
     </Dropdown>
   );
 }

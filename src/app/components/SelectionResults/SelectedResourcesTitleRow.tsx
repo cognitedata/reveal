@@ -1,9 +1,13 @@
 import React from 'react';
-import { Space } from 'antd';
+
 import { AllIconTypes, Icon } from '@cognite/cogs.js';
-import { InternalId } from '@cognite/sdk';
 import { ResourceType, getIcon, getTitle } from '@cognite/data-exploration';
+import { InternalId } from '@cognite/sdk';
+import { Space } from 'antd';
+import styled from 'styled-components';
+
 import { TitleRowWrapper } from '../ResourceTitleRow';
+
 import { Actions } from './Actions';
 
 type Props = {
@@ -16,13 +20,7 @@ export default function SelectedResourcesTitleRow({
 }: Props) {
   return (
     <TitleRowWrapper>
-      <div
-        style={{
-          display: 'inline-block',
-          overflow: 'hidden',
-          width: 'calc(100% - 650px)',
-        }}
-      >
+      <SelectedResourcesTitleWrapper>
         <Space size="large" align="center">
           <Icon type={getIcon(resourceType) as AllIconTypes} />
           <h1>
@@ -30,16 +28,19 @@ export default function SelectedResourcesTitleRow({
             {getTitle(resourceType, ids.length !== 1).toLowerCase()} selected
           </h1>
         </Space>
-      </div>
-      <div
-        style={{
-          display: 'inline-block',
-          overflow: 'hidden',
-          width: 650,
-        }}
-      >
+      </SelectedResourcesTitleWrapper>
+      <SelectedResourcesActionsWrapper>
         <Actions ids={ids} resourceType={resourceType} />
-      </div>
+      </SelectedResourcesActionsWrapper>
     </TitleRowWrapper>
   );
 }
+
+const SelectedResourcesTitleWrapper = styled.div`
+  margin-right: 16px;
+  white-space: nowrap;
+`;
+
+const SelectedResourcesActionsWrapper = styled.div`
+  margin-left: auto;
+`;
