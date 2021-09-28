@@ -387,7 +387,7 @@ const AnnotationPreviewSidebar = ({
                 style={{ color: 'black', marginTop: '-5px' }}
                 type="ghost"
               />
-              <BreadcrumbItem>{type?.toLocaleUpperCase()}</BreadcrumbItem>
+              <BreadcrumbItem>{type?.toUpperCase()}</BreadcrumbItem>
               <BreadcrumbItem separator={<span />}>
                 {annotation.label ?? 'N/A'}
               </BreadcrumbItem>

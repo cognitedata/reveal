@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { CogniteAnnotation } from '@cognite/annotations';
 import styled from 'styled-components';
-import { Body, Button, Graphic, SegmentedControl } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Graphic,
+  Icon,
+  SegmentedControl,
+} from '@cognite/cogs.js';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import { lightGrey } from 'utils/Colors';
 import { ResourceIcons } from 'components';
@@ -49,6 +55,43 @@ const AnnotationsList = ({
     setSelectedAnnotations([annotation]);
   };
 
+  const AnnotationItem = ({
+    annotation,
+  }: {
+    annotation: CogniteAnnotation | ProposedCogniteAnnotation;
+  }) => (
+    <ListItem
+      key={annotation.id}
+      onClick={() => handleClick(annotation)}
+      pending={annotation.status === 'unhandled'}
+    >
+      <Flex>
+        <ResourceIcons
+          style={{
+            marginTop: '-5px',
+            background: 'transparent',
+          }}
+          type={type === 'files' ? 'file' : 'asset'}
+        />
+        <Body
+          style={{
+            color: annotation.status === 'unhandled' ? '#4255BB' : '#333333',
+          }}
+          level={2}
+          strong
+        >
+          {annotation.label ?? 'N/A'}
+        </Body>
+      </Flex>
+      <Icon
+        type="ChevronRightCompact"
+        style={{
+          marginTop: '3px',
+          color: annotation.status === 'unhandled' ? '#4255BB' : '#333333',
+        }}
+      />
+    </ListItem>
+  );
   return (
     <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
       <ResourcePreviewWrapper>
@@ -60,7 +103,7 @@ const AnnotationsList = ({
             type="ghost"
           />
           <BreadcrumbItem separator={<span />}>
-            {type?.toLocaleUpperCase()}
+            {type?.toUpperCase()}
           </BreadcrumbItem>
         </div>
         <SegmentedControl
@@ -83,28 +126,7 @@ const AnnotationsList = ({
         <ListWrapper>
           {filteredList.length ? (
             filteredList.map(an => (
-              <ListItem
-                key={an.id}
-                onClick={() => handleClick(an)}
-                pending={an.status === 'unhandled'}
-              >
-                <ResourceIcons
-                  style={{
-                    marginTop: '-5px',
-                    background: 'transparent',
-                  }}
-                  type={type === 'files' ? 'file' : 'asset'}
-                />
-                <Body
-                  style={{
-                    color: an.status === 'unhandled' ? '#4255BB' : '#333333',
-                  }}
-                  level={2}
-                  strong
-                >
-                  {an.label ?? 'N/A'}
-                </Body>
-              </ListItem>
+              <AnnotationItem key={an.id} annotation={an} />
             ))
           ) : (
             <EmptyState type={filterType} />
@@ -124,6 +146,7 @@ type TagProps = {
 const ListItem = styled.div<TagProps>`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   padding: 8px 8px 4px;
   width: 100%;
   background: ${({ pending }: TagProps) =>
@@ -161,6 +184,11 @@ const ListWrapper = styled.div`
   gap: 5px;
   height: 100%;
   overflow: auto;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const EmptyState = ({ type }: { type: AnnotationType }) => (
