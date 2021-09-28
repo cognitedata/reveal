@@ -10,6 +10,7 @@ import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
 import { Flex } from 'components/Common';
 import { Alert } from 'antd';
+import InteractiveIcon from './InteractiveIcon';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -78,6 +79,7 @@ export const FilePreview = ({
         fileId={fileId!}
         creatable={editMode}
         contextualization={writeAccess}
+        fileIcon={<InteractiveIcon />}
       />
     </Flex>
   );
