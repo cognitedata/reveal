@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 import { getProject } from 'hooks';
 import { useCluster } from 'config';
 import { useCallFunction, functionResponseKey } from 'utils/backendService';
@@ -14,6 +16,7 @@ import { usePrevious } from 'hooks/usePrevious';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
 import { getCallResponse } from 'utils/backendApi';
+import { units } from 'utils/units';
 import { CogniteClient } from '@cognite/sdk';
 import * as backendApi from 'utils/backendApi';
 import { StatisticsResult } from '.';
@@ -85,7 +88,8 @@ export const useStatistics = (
     );
 
   const { results } = (data as any) || {};
-  const { statistics = [] } = (results as StatisticsResult) || {};
+  const { statistics = [], histogram_data: histogram = [] } =
+    (results as StatisticsResult) || {};
   const statisticsForSource = statistics[0];
   const { mutate: callFunction } = useCallFunction('individual_calc-master');
   const memoizedCallFunction = useCallback(callFunction, [callFunction]);
@@ -137,6 +141,7 @@ export const useStatistics = (
             timeseries: [
               {
                 tag: (sourceItem as ChartTimeSeries).tsExternalId,
+                histogram_data: { num_boxes: 10 },
               },
             ],
             start_time: new Date(dateFrom).getTime(),
@@ -172,5 +177,28 @@ export const useStatistics = (
     sourceChanged,
   ]);
 
-  return statisticsForSource;
+  return { statistics: statisticsForSource, histogram: histogram[0]?.data };
+};
+
+export const getDisplayUnit = (preferredUnit?: string) => {
+  return (
+    (
+      units.find(
+        (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
+      ) || {}
+    ).label || preferredUnit
+  );
+};
+
+export const getHistogramRange = (
+  min: number,
+  max: number,
+  nticks: number
+): number[] => {
+  const dtick = (max - min) / nticks;
+  const result: number[] = [min];
+  for (let i = 0; i < nticks; i++) {
+    result.push(min + dtick * (i + 1));
+  }
+  return result;
 };

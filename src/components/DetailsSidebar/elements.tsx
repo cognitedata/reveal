@@ -48,3 +48,7 @@ export const SourceItemName = styled.span`
   overflow: hidden;
   white-space: nowrap;
 `;
+
+export const HistogramWrapper = styled.div`
+  padding: 5px;
+`;

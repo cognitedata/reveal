@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 import {
   Icon,
   Button,
@@ -7,7 +9,12 @@ import {
 } from '@cognite/cogs.js';
 import { Row, Col, List } from 'antd';
 import DetailsBlock from 'components/common/DetailsBlock';
-import { MetadataList, useStatistics } from 'components/DetailsSidebar';
+import {
+  getDisplayUnit,
+  Histogram,
+  MetadataList,
+  useStatistics,
+} from 'components/DetailsSidebar';
 import FunctionCall from 'components/FunctionCall';
 import { useState } from 'react';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
@@ -16,7 +23,7 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
 } from 'reducers/charts/types';
-import { convertValue, units } from 'utils/units';
+import { convertValue } from 'utils/units';
 import { roundToSignificantDigits } from 'utils/axis';
 import {
   Sidebar,
@@ -27,6 +34,7 @@ import {
   Container,
   SourceItemName,
   SourceItemWrapper,
+  HistogramWrapper,
 } from './elements';
 
 const renderStatusIcon = (status?: FunctionCallStatus) => {
@@ -51,6 +59,8 @@ type Props = {
 
 export type StatisticsResult = {
   statistics: StatisticsData[];
+  // eslint-disable-next-line camelcase
+  histogram_data?: HistogramData[];
 };
 
 type StatisticsData = {
@@ -66,6 +76,12 @@ type StatisticsData = {
   raw: boolean;
   skewness: number;
   std: number;
+  tag: string;
+};
+
+type HistogramData = {
+  data: number[];
+  raw: boolean;
   tag: string;
 };
 
@@ -117,10 +133,13 @@ export default function DetailsSidebar({
         </TopContainerAside>
       </TopContainer>
       <ContentOverflowWrapper>
-        {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
-        {selectedMenu === 'statistics' && (
-          <Statistics sourceItem={sourceItem} />
-        )}
+        <Container>
+          <SourceHeader sourceItem={sourceItem} />
+          {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
+          {selectedMenu === 'statistics' && (
+            <Statistics sourceItem={sourceItem} />
+          )}
+        </Container>
       </ContentOverflowWrapper>
     </Sidebar>
   );
@@ -132,14 +151,13 @@ const Metadata = ({
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
   return (
-    <Container>
-      <SourceHeader sourceItem={sourceItem} />
+    <>
       {sourceItem?.type === 'timeseries' ? (
         <MetadataList timeseriesId={(sourceItem as ChartTimeSeries)?.tsId} />
       ) : (
         <p>(currently unavailable for calculations)</p>
       )}
-    </Container>
+    </>
   );
 };
 
@@ -149,19 +167,13 @@ const Statistics = ({
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
   const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
-  const statisticsForSource = useStatistics(sourceItem);
+  const { statistics, histogram } = useStatistics(sourceItem);
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
-  const displayUnit =
-    (
-      units.find(
-        (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
-      ) || {}
-    ).label || preferredUnit;
+  const displayUnit = getDisplayUnit(preferredUnit);
 
   return (
-    <Container>
-      <SourceHeader sourceItem={sourceItem} />
+    <>
       {sourceItem?.type === 'timeseries' ? (
         <>
           <div>
@@ -177,17 +189,17 @@ const Statistics = ({
           <DetailsBlock title="Statistics">
             <List
               dataSource={[
-                { label: 'Mean', value: statisticsForSource?.mean },
-                { label: 'Median', value: statisticsForSource?.median },
+                { label: 'Mean', value: statistics?.mean },
+                { label: 'Median', value: statistics?.median },
                 {
                   label: 'Standard Deviation',
-                  value: statisticsForSource?.std,
+                  value: statistics?.std,
                 },
-                { label: 'Max', value: statisticsForSource?.max },
-                { label: 'Min', value: statisticsForSource?.min },
+                { label: 'Max', value: statistics?.max },
+                { label: 'Min', value: statistics?.min },
                 // Missing values from backend according to the sketch
-                // { label: 'Avg', value: statisticsForSource?.average },
-                // { label: 'Last', value: statisticsForSource?.last },
+                // { label: 'Avg', value: statistics?.average },
+                // { label: 'Last', value: statistics?.last },
               ]}
               size="small"
               renderItem={({ label, value }) => (
@@ -208,9 +220,9 @@ const Statistics = ({
           <DetailsBlock title="Percentiles">
             <List
               dataSource={[
-                { label: '25th Percentile', value: statisticsForSource?.q25 },
-                { label: '50th Percentile', value: statisticsForSource?.q50 },
-                { label: '75th Percentile', value: statisticsForSource?.q75 },
+                { label: '25th Percentile', value: statistics?.q25 },
+                { label: '50th Percentile', value: statistics?.q50 },
+                { label: '75th Percentile', value: statistics?.q75 },
               ]}
               size="small"
               renderItem={({ label, value }) => (
@@ -231,8 +243,8 @@ const Statistics = ({
           <DetailsBlock title="Shape">
             <List
               dataSource={[
-                { label: 'Skewness', value: statisticsForSource?.skewness },
-                { label: 'Kurtosis', value: statisticsForSource?.kurtosis },
+                { label: 'Skewness', value: statistics?.skewness },
+                { label: 'Kurtosis', value: statistics?.kurtosis },
               ]}
               size="small"
               renderItem={({ label, value }) => (
@@ -245,11 +257,19 @@ const Statistics = ({
               )}
             />
           </DetailsBlock>
+          <DetailsBlock title="Histogram">
+            <HistogramWrapper>
+              <Histogram
+                sourceItem={sourceItem as ChartTimeSeries}
+                histogramData={histogram}
+              />
+            </HistogramWrapper>
+          </DetailsBlock>
         </>
       ) : (
         <p>(currently unavailable for calculations)</p>
       )}
-    </Container>
+    </>
   );
 };
 
