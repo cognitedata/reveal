@@ -49,8 +49,7 @@ import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
 import ReviewTagBar from './ReviewTagBar';
-import FileReview from './FileReview';
-import DiagramReviewStatus from './DiagramStatus';
+import FilePreviewSidebar from './FilePreviewSidebar';
 
 type Props = {
   file?: FileInfo;
@@ -73,13 +72,13 @@ const AnnotationPreviewSidebar = ({
 }: Props) => {
   const client = useQueryClient();
   const sdk = useSDK();
-
   const { data: userData } = useUserInfo();
   const { email = 'UNKNOWN' } = userData || {};
+
   const [editing, setEditing] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(3);
 
-  const { isLoading: isApprovingFile, onApproveFile } = useReviewFile(file?.id);
+  const { isLoading: isApprovingFile } = useReviewFile(file?.id);
   const {
     selectedAnnotations = [],
     setSelectedAnnotations,
@@ -264,39 +263,6 @@ const AnnotationPreviewSidebar = ({
     });
   };
 
-  const onApproveAllAnnotations = () => {
-    Modal.confirm({
-      okText: 'Approve tags',
-      title: 'Are you sure?',
-      content: (
-        <span>
-          Are you sure you want to approve all tags for this file? Changes will
-          be saved to CDF.
-        </span>
-      ),
-      onOk: async () => {
-        const unhandedAnnotations = annotations.filter(
-          a => a.status === 'unhandled'
-        ) as Array<CogniteAnnotation>;
-        const updatePatch = unhandedAnnotations.map(annotation => ({
-          id: Number(annotation.id),
-          annotation,
-          update: {
-            status: {
-              set: 'verified' as AnnotationStatus,
-            },
-            checkedBy: {
-              set: email,
-            },
-          },
-        }));
-        approveAnnotations(updatePatch);
-        await onApproveFile();
-        setSelectedAnnotations([]);
-      },
-      onCancel: () => {},
-    });
-  };
   const onDeleteAnnotation = (
     annotation: CogniteAnnotation | ProposedCogniteAnnotation
   ) => {
@@ -558,48 +524,12 @@ const AnnotationPreviewSidebar = ({
     );
   }
   return (
-    <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
-      <ResourcePreviewSidebar
-        hideTitle
-        hideContent
-        closable={false}
-        actions={
-          onItemClicked &&
-          item &&
-          type && [
-            <Button
-              icon="ArrowRight"
-              iconPlacement="right"
-              onClick={() =>
-                onItemClicked({
-                  id: item.id,
-                  type,
-                })
-              }
-            >
-              View {type}
-            </Button>,
-          ]
-        }
-        header={
-          <TitleWrapper>
-            {fileIcon || <Icon type="PDF" />}
-            <Title level={4}>{file?.name} </Title>
-            {file?.id && (
-              <div>
-                <DiagramReviewStatus fileId={file.id} />
-                <Detail>- Interactive Diagram</Detail>
-              </div>
-            )}
-            <FileReview
-              annotations={annotations}
-              onApprove={onApproveAllAnnotations}
-            />
-          </TitleWrapper>
-        }
-        onClose={() => setSelectedAnnotations([])}
-      />
-    </div>
+    <FilePreviewSidebar
+      annotations={annotations}
+      file={file}
+      fileIcon={fileIcon}
+      approveAnnotations={approveAnnotations}
+    />
   );
 };
 
@@ -614,10 +544,4 @@ const PreviewImage = styled.img`
   margin-bottom: 16px;
 `;
 
-const TitleWrapper = styled.div`
-  padding: 20px 10px;
-  gap: 15px;
-  display: flex;
-  flex-direction: column;
-`;
 export { AnnotationPreviewSidebar };
