@@ -12,7 +12,7 @@ import { NumericRange } from '../../utilities';
 import { CadNode } from '../../internals';
 import { trackError } from '../../utilities/metrics';
 
-import { SupportedModelTypes, CadModelMetadata } from '../types';
+import { SupportedModelTypes, CadModelMetadata, WellKnownUnit } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 import { NodeCollectionBase } from '../../datamodels/cad/styling';
 import { NodeAppearance } from '../../datamodels/cad';
@@ -41,22 +41,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
-   * Returns the unit the coordinates for the model is stored in. Possible return values are:
-   * - Meters
-   * - Centimeters
-   * - Millimeters
-   * - Micrometers
-   * - Kilometers
-   * - Feet
-   * - Inches
-   * - Yards
-   * - Miles
-   * - Mils
-   * - Microinches
-   * Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+   * Returns the unit the coordinates for the model is stored in.  Note that coordinates in Reveal always are
+   * converted to meters using {@see modelUnitToMetersFactor}.
    * @version New since 2.1
    */
-  get modelUnit(): string {
+  get modelUnit(): WellKnownUnit | string {
+    // Note! Returns union type, because we expect it to be a value in WellKnownUnit, but we
+    // can't guarantee it.
     return this.cadNode.cadModelMetadata.scene.unit;
   }
 
