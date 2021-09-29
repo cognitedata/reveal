@@ -152,7 +152,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   }
 
   return (
-    <Section title={DetailFieldNames.DOCUMENTATION}>
+    <Section title={DetailFieldNames.DOCUMENTATION} icon="Documentation">
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         {isEdit ? (
           <>

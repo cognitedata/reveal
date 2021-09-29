@@ -7,7 +7,7 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { Schedule } from 'components/integration/edit/Schedule';
-import { Colors } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/integration/fields/FieldVerticalDisplay';
@@ -16,6 +16,7 @@ import { ContactsView } from 'components/integration/ContactsView';
 import { MetaData } from 'components/integration/MetaData';
 import { EditDataSetId } from 'components/integration/edit/EditDataSetId';
 import { bottomSpacing, sideBarSectionSpacing } from 'styles/StyledVariables';
+import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
 
 const SectionDiv = styled.div`
   background-color: white;
@@ -28,15 +29,22 @@ const SectionHeader = styled.div`
   font-weight: 500;
   padding: 1em;
   border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
 `;
 const SectionBody = styled.div`
   padding: 0.3em;
 `;
 
-export const Section = (props: PropsWithChildren<{ title: string }>) => {
+export const Section = (
+  props: PropsWithChildren<{ title: string; icon: AllIconTypes }>
+) => {
   return (
     <SectionDiv>
-      <SectionHeader>{props.title}</SectionHeader>
+      <SectionHeader>
+        <Icon type={props.icon} style={{ marginRight: '0.5rem' }} />{' '}
+        {props.title}
+      </SectionHeader>
       <SectionBody>{props.children}</SectionBody>
     </SectionDiv>
   );
@@ -58,7 +66,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
 
   return (
     <div>
-      <Section title="Basic information">
+      <Section title="Basic information" icon="World">
         <InlineEdit
           name="description"
           label={DetailFieldNames.DESCRIPTION}
@@ -106,16 +114,16 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
           canEdit={canEdit}
         />
       </Section>
-      <Section title="Contacts">
+      <Section title="Contacts" icon="Public">
         <ContactsView canEdit={canEdit} />
       </Section>
-      <Section title="Raw database - Raw table">
+      <Section title="Raw database - Raw table" icon="Datasource">
         <EditRawTable canEdit={canEdit} />
       </Section>
-      <Section title="Additional metadata">
+      <Section title="Additional metadata" icon="DataTable">
         <MetaData canEdit={canEdit} />
       </Section>
-      <Section title="About extraction pipeline">
+      <Section title="About extraction pipeline" icon="Info">
         <FieldVerticalDisplay
           label={DetailFieldNames.ID}
           fieldName="id"

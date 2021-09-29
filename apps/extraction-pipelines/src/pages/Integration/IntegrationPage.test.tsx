@@ -130,8 +130,8 @@ describe('IntegrationPage', () => {
     expect(screen.getAllByText(mockData.name).length).toEqual(2); // heading + breadcrumb
     expect(screen.getByText(mockData.description!)).toBeInTheDocument();
     expect(screen.getByText(mockData.externalId)).toBeInTheDocument();
-    expect(screen.getAllByText(mockData.dataSet.name!).length).toEqual(3); // breadcrumb, heading and side bar
-    expect(screen.getAllByText(mockIntegration.source!).length).toEqual(2); // heading and side bar
+    expect(screen.getAllByText(mockData.dataSet.name!).length).toEqual(2); // breadcrumb and side bar
+    expect(screen.getAllByText(mockIntegration.source!).length).toEqual(1); // side bar
     // navigate to runs
     fireEvent.click(runsLink);
     expect(
