@@ -40,4 +40,5 @@ export interface SectorMetadata {
   readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
+  readonly estimatedRenderCost: number;
 }

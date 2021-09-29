@@ -5,7 +5,7 @@
 import React, { ComponentType, Suspense } from 'react';
 import styled from 'styled-components';
 import { DemoProps } from './DemoProps';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk-2.x';
 import { env } from '@site/docs/utils/env';
 
 const DemoContainer = styled.div`

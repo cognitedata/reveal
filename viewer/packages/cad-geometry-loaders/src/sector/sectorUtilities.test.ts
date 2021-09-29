@@ -28,6 +28,7 @@ describe('sectorUtilities', () => {
       bounds: new THREE.Box3(new THREE.Vector3(1, 2, 3), new THREE.Vector3(3, 4, 5)),
       children: [],
       estimatedDrawCallCount: 10,
+      estimatedRenderCost: 1000,
       indexFile: {
         fileName: 'sector_1.i3d',
         peripheralFiles: [],

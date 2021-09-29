@@ -48,7 +48,7 @@ describe('CadModelClipper', () => {
     });
   });
 
-  test('createClippedModel() reduces estimated draw calls for clipped sectors', () => {
+  test('createClippedModel() reduces estimated draw calls and render cost for clipped sectors', () => {
     const box = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 0.5, 0.5));
     const clipper = new CadModelClipper(box);
 
@@ -58,6 +58,7 @@ describe('CadModelClipper', () => {
     sectors.forEach(s => {
       const original = modelDepth2.scene.getSectorById(s.id)!;
       expect(s.estimatedDrawCallCount).toBeLessThan(original.estimatedDrawCallCount);
+      expect(s.estimatedRenderCost).toBeLessThan(original.estimatedRenderCost);
     });
   });
 });

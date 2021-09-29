@@ -10,6 +10,8 @@ import { RenderMode, Materials } from '@reveal/cad-parsers';
 import { TreeIndexNodeCollection } from './styling';
 import { CadMaterialManager } from './CadMaterialManager';
 
+import { cloneDeep } from 'lodash';
+
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
 
@@ -36,11 +38,10 @@ describe('CadMaterialManager', () => {
 
   test('set render mode, materials are updated', () => {
     manager.addModelMaterials('model', 16);
-    const materialsChangedListener = jest.fn();
-    manager.on('materialsChanged', materialsChangedListener);
+    const initialRenderMode = cloneDeep(manager.getModelMaterials('model').box.uniforms['renderMode']);
 
     manager.setRenderMode(RenderMode.TreeIndex);
-    expect(materialsChangedListener).toBeCalledTimes(1);
+    expect(manager.getModelMaterials('model').box.uniforms['renderMode']).not.toEqual(initialRenderMode);
   });
 
   test('setModelDefaultNodeAppearance, node collection are updated', () => {

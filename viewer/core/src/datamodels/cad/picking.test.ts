@@ -23,6 +23,7 @@ describe('intersectCadNodes', () => {
     },
     renderer,
     camera,
+    clippingPlanes: [],
     domElement: document.createElement('canvas')
   };
   const cadNode: CadNode = new THREE.Object3D() as any;

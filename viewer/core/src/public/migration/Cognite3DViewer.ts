@@ -30,7 +30,8 @@ import {
   Intersection,
   CameraChangeDelegate,
   PointerEventDelegate,
-  CadModelBudget
+  CadModelBudget,
+  PointCloudBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -38,6 +39,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
+
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
 import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
@@ -128,7 +130,7 @@ export class Cognite3DViewer {
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
-  private _slicingNeedsUpdate: boolean = false;
+  private _clippingNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
 
@@ -176,6 +178,22 @@ export class Cognite3DViewer {
     // Note! Type here differes from the one in RevealManager to expose a documentated
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
+  }
+
+  /**
+   * Returns the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public get pointCloudBudget(): PointCloudBudget {
+    return this.revealManager.pointCloudBudget;
+  }
+
+  /**
+   * Sets the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public set pointCloudBudget(budget: PointCloudBudget) {
+    this.revealManager.pointCloudBudget = budget;
   }
 
   /**
@@ -698,38 +716,54 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Sets per-pixel slicing planes. Pixels behind any of the planes will be sliced away.
-   * @param slicingPlanes The planes to use for slicing.
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes The planes to use for clipping.
    * @example
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setSlicingPlanes([xPlane, yPlane]);
+   * viewer.setClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
-   * // Disable slicing planes
-   *  viewer.setSlicingPlanes([]);
+   * // Disable clipping planes
+   *  viewer.setClippingPlanes([]);
    * ```
    */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.revealManager.clippingPlanes = clippingPlanes;
+    this._clippingNeedsUpdate = true;
+  }
+
+  /**
+   * @param slicingPlanes
+   * @deprecated Since version 2.1, will be removed in version 3.0. Use {@link setClippingPlanes}.
+   */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    this.revealManager.clippingPlanes = slicingPlanes;
-    this._slicingNeedsUpdate = true;
+    this.setClippingPlanes(slicingPlanes);
+  }
+
+  /**
+   * Returns the current active clipping planes.
+   * @version New in 2.1
+   */
+  getClippingPlanes(): THREE.Plane[] {
+    return this.revealManager.clippingPlanes;
   }
 
   /**
@@ -1086,10 +1120,12 @@ export class Cognite3DViewer {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
+
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.camera,
       renderer: this.renderer,
+      clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = intersectCadNodes(cadNodes, input);
@@ -1239,20 +1275,20 @@ export class Cognite3DViewer {
       TWEEN.update(time);
       const didResize = this.resizeIfNecessary();
       if (didResize) {
-        renderController.redraw();
+        this.requestRedraw();
       }
       this.controls.update(this.clock.getDelta());
       renderController.update();
       this.revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._slicingNeedsUpdate) {
+      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.updateCameraNearAndFar(this.camera);
         this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
-        this._slicingNeedsUpdate = false;
+        this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
         this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });

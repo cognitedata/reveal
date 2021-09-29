@@ -79,6 +79,10 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointBudget = count;
   }
 
+  get visiblePointCount(): number {
+    return this._potreeNode.visiblePointCount;
+  }
+
   get pointColorType(): PotreePointColorType {
     return this._potreeNode.pointColorType;
   }

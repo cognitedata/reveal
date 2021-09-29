@@ -13,6 +13,7 @@ import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { ClippingUI } from '../utils/ClippingUI';
 
 CameraControls.install({ THREE });
 
@@ -86,7 +87,7 @@ export function SimplePointcloud() {
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
       });
-      renderer.setClearColor('#000000');
+      renderer.setClearColor('#444444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       let pointCloudNode: reveal.PointCloudNode;
@@ -116,6 +117,11 @@ export function SimplePointcloud() {
             pointCloudNode.setClassVisible(clazz, visible);
           });
       }
+
+      const clippingUi = new ClippingUI(gui.addFolder('Clipping'), planes => {
+        revealManager.clippingPlanes = planes;
+      });
+      clippingUi.updateWorldBounds(pointCloudNode.getBoundingBox());
 
       const camera = new THREE.PerspectiveCamera(
         75,
@@ -157,7 +163,7 @@ export function SimplePointcloud() {
           controlsNeedUpdate || revealManager.needsRedraw || settingsChanged;
 
         if (needsUpdate) {
-          renderer.render(scene, camera);
+          revealManager.render(camera);
           settingsChanged = false;
         }
       });

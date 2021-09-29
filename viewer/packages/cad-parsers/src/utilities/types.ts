@@ -85,6 +85,7 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
+
 export interface ModelMetadataProvider<TModelIdentifier> {
   getModelUrl(identifier: TModelIdentifier): Promise<string>;
   getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
@@ -93,9 +94,9 @@ export interface ModelMetadataProvider<TModelIdentifier> {
 
 export interface ModelDataClient<TModelIdentifier>
   extends HttpHeadersProvider,
-    ModelMetadataProvider<TModelIdentifier>,
-    JsonFileProvider,
-    BinaryFileProvider {
+  ModelMetadataProvider<TModelIdentifier>,
+  JsonFileProvider,
+  BinaryFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 

@@ -14,6 +14,7 @@ export interface CadSectorMetadataV8 {
   readonly path: string;
   readonly depth: number;
   readonly estimatedDrawCallCount: number;
+  readonly estimatedTriangleCount: number;
 
   readonly boundingBox: {
     readonly min: {
@@ -40,12 +41,12 @@ export interface CadSectorMetadataV8 {
       xz: number;
     };
     readonly recursiveCoverageFactors:
-      | {
-          xy: number;
-          yz: number;
-          xz: number;
-        }
-      | undefined;
+    | {
+      xy: number;
+      yz: number;
+      xz: number;
+    }
+    | undefined;
     readonly fileName: string | null;
     readonly downloadSize: number;
   } | null;
@@ -112,6 +113,7 @@ function createSectorMetadata(metadata: CadSectorMetadataV8): SectorMetadata {
     depth: metadata.depth,
     bounds: new THREE.Box3(new THREE.Vector3(min_x, min_y, min_z), new THREE.Vector3(max_x, max_y, max_z)),
     estimatedDrawCallCount: metadata.estimatedDrawCallCount,
+    estimatedRenderCost: metadata.estimatedTriangleCount || 0,
 
     // I3D
     indexFile: { ...metadata.indexFile },

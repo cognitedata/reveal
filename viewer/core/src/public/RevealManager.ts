@@ -6,7 +6,6 @@ import * as THREE from 'three';
 
 import { RenderMode } from '@reveal/cad-parsers';
 import {
-  defaultRenderOptions,
   RenderOptions,
   NodeAppearanceProvider,
   CadModelSectorBudget,
@@ -17,7 +16,7 @@ import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavig
 
 import { CadManager } from '../datamodels/cad/CadManager';
 import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
-import { LoadingStateChangeListener } from './types';
+import { LoadingStateChangeListener, defaultRenderOptions, PointCloudBudget } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { CadNode } from '../datamodels/cad';
@@ -131,16 +130,25 @@ export class RevealManager<TModelIdentifier> {
     return this._cadManager.loadedStatistics;
   }
 
-  public get renderMode(): RenderMode {
+  public get cadRenderMode(): RenderMode {
     return this._cadManager.renderMode;
   }
 
-  public set renderMode(renderMode: RenderMode) {
+  public set cadRenderMode(renderMode: RenderMode) {
     this._cadManager.renderMode = renderMode;
+  }
+
+  public get pointCloudBudget(): PointCloudBudget {
+    return { numberOfPoints: this._pointCloudManager.pointBudget };
+  }
+
+  public set pointCloudBudget(budget: PointCloudBudget) {
+    this._pointCloudManager.pointBudget = budget.numberOfPoints;
   }
 
   public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
     this._cadManager.clippingPlanes = clippingPlanes;
+    this._pointCloudManager.clippingPlanes = clippingPlanes;
   }
 
   public get clippingPlanes(): THREE.Plane[] {
@@ -171,6 +179,7 @@ export class RevealManager<TModelIdentifier> {
 
   public render(camera: THREE.PerspectiveCamera) {
     this._effectRenderManager.render(camera);
+    this.resetRedraw();
   }
 
   /**

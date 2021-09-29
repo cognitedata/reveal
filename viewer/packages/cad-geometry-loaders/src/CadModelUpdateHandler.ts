@@ -48,6 +48,7 @@ export class CadModelUpdateHandler {
     this._lastSpent = {
       downloadSize: 0,
       drawCalls: 0,
+      renderCost: 0,
       loadedSectorCount: 0,
       simpleSectorCount: 0,
       detailedSectorCount: 0,

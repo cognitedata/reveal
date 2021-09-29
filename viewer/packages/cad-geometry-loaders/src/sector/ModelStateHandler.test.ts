@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { WantedSector, ConsumedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { WantedSector, ConsumedSector, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
 
 import { ModelStateHandler } from './ModelStateHandler';
 
@@ -12,7 +12,7 @@ describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.
   const { simple, detailed, discarded } = mockWantedSectors(1);
 
-  test('addModel for already added model throws', () => {});
+  test('addModel for already added model throws', () => { });
   const modelStateHandler = new ModelStateHandler();
   modelStateHandler.addModel('modelId');
   expect(() => modelStateHandler.addModel('modelId')).toThrowError();
@@ -57,12 +57,13 @@ function mockWantedSectors(id: number): {
   detailed: WantedSector;
   discarded: WantedSector;
 } {
-  const metadata = {
+  const metadata: SectorMetadata = {
     id,
     path: '0/',
     depth: 0,
     bounds: new THREE.Box3(),
     estimatedDrawCallCount: 0,
+    estimatedRenderCost: 0,
     indexFile: {
       fileName: `sector_${id}.i3d`,
       peripheralFiles: [],

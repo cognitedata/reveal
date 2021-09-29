@@ -53,7 +53,8 @@ describe('parseCadMetadataV8', () => {
         recursiveCoverageFactors: sectorRoot.facesFile!.recursiveCoverageFactors!
       },
       children: [],
-      estimatedDrawCallCount: 10
+      estimatedDrawCallCount: 10,
+      estimatedRenderCost: 10
     };
 
     // Act
@@ -86,7 +87,8 @@ describe('parseCadMetadataV8', () => {
       indexFile: sectorRoot.indexFile,
       facesFile: { ...sectorRoot.facesFile!, recursiveCoverageFactors: sectorRoot.facesFile!.coverageFactors },
       children: [],
-      estimatedDrawCallCount: 10
+      estimatedDrawCallCount: 10,
+      estimatedRenderCost: 10
     };
 
     // Act
@@ -292,6 +294,7 @@ function createSectorMetadata(id: number, parentId: number = -1): CadSectorMetad
     path: '0/',
     depth: 0,
     estimatedDrawCallCount: 10,
+    estimatedTriangleCount: 10,
     boundingBox: {
       min: {
         x: 0.0,

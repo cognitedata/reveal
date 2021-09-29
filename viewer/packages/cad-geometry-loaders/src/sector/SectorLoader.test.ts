@@ -39,7 +39,12 @@ describe('SectorLoader', () => {
 
     input = {
       camera: new THREE.PerspectiveCamera(),
-      budget: { geometryDownloadSizeBytes: 0, highDetailProximityThreshold: 0, maximumNumberOfDrawCalls: 0 },
+      budget: {
+        geometryDownloadSizeBytes: 0,
+        highDetailProximityThreshold: 0,
+        maximumNumberOfDrawCalls: 0,
+        maximumRenderCost: 0
+      },
       cameraInMotion: false,
       cadModelsMetadata: [model],
       clippingPlanes: [],
@@ -166,6 +171,7 @@ const noBudget: SectorLoadingSpent = {
   accumulatedPriority: 0,
   detailedSectorCount: 0,
   drawCalls: 0,
+  renderCost: 0,
   forcedDetailedSectorCount: 0,
   loadedSectorCount: 0,
   simpleSectorCount: 0,

@@ -19,9 +19,15 @@ export type CadModelSectorBudget = {
   readonly geometryDownloadSizeBytes: number;
 
   /**
-   * Maximum number of estimated drawcalls of geometry to load.
+   * Maximum number of estimated draw calls of geometry to load.
    */
   readonly maximumNumberOfDrawCalls: number;
+
+  /**
+   * Maximum render cost. This number can be thought of as triangle count, although the number
+   * doesn't match this directly.
+   */
+  readonly maximumRenderCost: number;
 };
 
 export const defaultCadModelSectorBudget: CadModelSectorBudget = isMobileOrTablet()
@@ -29,11 +35,13 @@ export const defaultCadModelSectorBudget: CadModelSectorBudget = isMobileOrTable
     {
       highDetailProximityThreshold: 5,
       geometryDownloadSizeBytes: 20 * 1024 * 1024,
-      maximumNumberOfDrawCalls: 700
+      maximumNumberOfDrawCalls: 700,
+      maximumRenderCost: Infinity
     }
   : // Desktop
     {
       highDetailProximityThreshold: 10,
       geometryDownloadSizeBytes: 35 * 1024 * 1024,
-      maximumNumberOfDrawCalls: 2000
+      maximumNumberOfDrawCalls: 2000,
+      maximumRenderCost: Infinity
     };
