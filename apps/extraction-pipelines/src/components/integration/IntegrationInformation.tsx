@@ -33,7 +33,7 @@ const SectionBody = styled.div`
   padding: 0.3em;
 `;
 
-const Section = (props: PropsWithChildren<{ title: string }>) => {
+export const Section = (props: PropsWithChildren<{ title: string }>) => {
   return (
     <SectionDiv>
       <SectionHeader>{props.title}</SectionHeader>

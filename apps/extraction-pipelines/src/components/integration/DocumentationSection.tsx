@@ -29,6 +29,7 @@ import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
+import { Section } from 'components/integration/IntegrationInformation';
 
 const EditDocumentationButton = styled(EditButton)`
   &.cogs-btn {
@@ -46,16 +47,7 @@ const EditDocumentationButton = styled(EditButton)`
     text-align: left;
   }
 `;
-const DocumentationWrapper = styled.section`
-  margin-bottom: 5rem;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  background: white;
-  box-shadow: 0px 1px 2px #0002;
-  border-radius: 3px;
-`;
+
 const DocumentationForm = styled.form`
   display: grid;
   grid-template-areas: 'label . .' 'hint . .' 'error . .' 'text text text' 'count btn1 btn2';
@@ -160,10 +152,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   }
 
   return (
-    <DocumentationWrapper>
-      <HeadingLabel labelFor="documentation-textarea">
-        {DetailFieldNames.DOCUMENTATION}
-      </HeadingLabel>
+    <Section title={DetailFieldNames.DOCUMENTATION}>
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         {isEdit ? (
           <>
@@ -226,6 +215,6 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           </EditDocumentationButton>
         )}
       </DocumentationForm>
-    </DocumentationWrapper>
+    </Section>
   );
 };
