@@ -228,8 +228,7 @@ export class Cognite3DViewer {
 
     // camera controls
     let startedScroll = false;
-    const clickClock = new THREE.Clock(),
-      wheelClock = new THREE.Clock();
+    const wheelClock = new THREE.Clock();
 
     const changeTarget = async (event: any) => {
       const { offsetX, offsetY } = event;
@@ -244,25 +243,8 @@ export class Cognite3DViewer {
     }
 
     this.on('click', (e) => {
-      clickClock.getDelta();
+      this.controls.enableKeyboardNavigation = false;
       changeTarget(e);
-    
-    });
-
-    this.canvas.addEventListener('wheel', (e) => {
-      const timeDelta = wheelClock.getDelta(),
-        clickDelta = clickClock.getDelta();
-      //@ts-ignore
-      if (startedScroll && (e.wheelDeltaY > 0)) {  // consider other browsers
-        console.log(timeDelta, 'scroll:', startedScroll);
-        startedScroll = false;
-        changeTarget(e);
-      } else {
-        if (timeDelta > 0.2 && clickDelta > 0.6) {
-          console.log('Changed flag! with delta:', timeDelta)
-          startedScroll = true;
-        }
-      }
     });
 
     this.controls = new ComboControls(this.camera, this.canvas);
@@ -271,7 +253,6 @@ export class Cognite3DViewer {
     this.controls.maxDistance = 100.0;
     
     this.controls.dynamicTarget = false; 
-    //ßthis.controls.panDollyMinDistanceFactor = 5;
 
 
     this.controls.addEventListener('cameraChange', event => {
@@ -1197,11 +1178,6 @@ export class Cognite3DViewer {
   }
 
   /** @private */ 
-  private setCameraViewTarget(target: THREE.Vector3, duration?: number,) {
-    
-  }
-
-  /** @private */ 
   private moveCameraTargetTo(target: THREE.Vector3, duration?: number,) {
     if (this.isDisposed) {
       return;
@@ -1252,8 +1228,9 @@ export class Cognite3DViewer {
       this.canvas.addEventListener('wheel', stopTween);
       document.addEventListener('keydown', stopTween);
     }
-
+    
     this.controls.newClickTarget = true;
+    this.setCameraTarget(target);
 
     const tmpTarget = new THREE.Vector3();
     const tween = animation
@@ -1273,8 +1250,8 @@ export class Cognite3DViewer {
         if (this.isDisposed) {
           return;
         }
-        this.setCameraTarget(target);
         this.controls.newClickTarget = false;
+        this.setCameraTarget(tmpTarget);
 
         this.canvas.removeEventListener('pointerdown', stopTween);
       })

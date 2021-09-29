@@ -69,7 +69,6 @@ export default class ComboControls extends EventDispatcher {
   public minZoom: number = 0;
   public maxZoom: number = Infinity;
   public orthographicCameraDollyFactor: number = 0.3;
-  public targetChanged: boolean = false;
   public newClickTarget = false; // flag for enabling different camera rotation when target is changed by click
 
   private temporarilyDisableDamping: boolean = false;
@@ -93,7 +92,6 @@ export default class ComboControls extends EventDispatcher {
   private targetFPS: number = 30;
   private targetFPSOverActualFPS: number = 1;
   private isFocused = false;
-  private hasStartedScrolling = false;
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
