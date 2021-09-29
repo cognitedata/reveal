@@ -40,7 +40,7 @@ const getAadApplicationId = (cluster: string) => {
   ...getDefaultSidecar({
     prod: PROD,
     cluster: CLUSTER,
-    localComments: LOCAL_COMMENTS_API,
+    localServices: LOCAL_COMMENTS_API ? ['comment-service'] : [],
   }),
   ...getAadApplicationId(CLUSTER),
   __sidecarFormatVersion: 1,

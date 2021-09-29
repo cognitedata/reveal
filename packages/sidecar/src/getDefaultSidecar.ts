@@ -1,79 +1,76 @@
+import { generateUrl } from './generateUrl';
 import { SidecarConfig, CDFCluster } from './types';
+
+export type Service =
+  | 'discover-api'
+  | 'comment-service'
+  | 'user-management-service'
+  | 'digital-cockpit-api';
+
+export const services: Record<
+  number,
+  { name: Service; key: keyof SidecarConfig }
+> = {
+  8700: { name: 'discover-api', key: 'discoverApiBaseUrl' },
+  8300: { name: 'comment-service', key: 'commentServiceBaseUrl' },
+  8600: {
+    name: 'user-management-service',
+    key: 'userManagementServiceBaseUrl',
+  },
+  8001: { name: 'digital-cockpit-api', key: 'digitalCockpitApiBaseUrl' },
+};
+
+const getPort = (name: Service) => {
+  return Object.keys(services)?.reduce((result, port) => {
+    const service = services[Number(port)];
+    if (service.name === name) {
+      return Number(port);
+    }
+
+    return result;
+  }, undefined as undefined | number);
+};
 
 interface Props {
   prod: boolean;
   cluster: CDFCluster;
-  localComments?: boolean;
-  localDiscover?: boolean;
-  localDigitalCockpit?: boolean;
-  localUserManagement?: boolean;
+  localServices?: Service[];
 }
 export const getDefaultSidecar = (
-  {
-    prod,
-    cluster,
-    localComments,
-    localDiscover,
-    localDigitalCockpit,
-    localUserManagement,
-  }: Props = { prod: false, cluster: 'azure-dev' }
+  { prod, cluster, localServices }: Props = {
+    prod: false,
+    cluster: 'azure-dev',
+    localServices: [],
+  }
 ): Partial<SidecarConfig> => {
   const generateBaseUrls = (cluster: string, prod = false) => {
-    const generateUrl = (
-      base: string,
-      prod: boolean,
-      cluster: string,
-      local?: false | string
-    ) => {
-      if (local) {
-        return `http://localhost:${local}`;
+    const serviceUrls = Object.keys(services)?.reduce((result, port) => {
+      const service = services[Number(port)];
+      let localService: any =
+        (localServices || []).includes(service.name) && getPort(service.name);
+
+      if (localService) {
+        localService = `${localService}`;
       }
 
-      return [
-        base,
-        !prod && 'staging.',
-        cluster !== 'ew1' && `${cluster}.`,
-        'cognite.ai',
-      ]
-        .filter(Boolean)
-        .join('');
-    };
+      const url = generateUrl(
+        `https://${service.name}.`,
+        prod,
+        cluster,
+        localService
+      );
 
-    const discoverApiBaseUrl = generateUrl(
-      'https://discover-api.',
-      prod,
-      cluster,
-      localDiscover && '8700'
-    );
-    const commentServiceBaseUrl = generateUrl(
-      'https://comment-service.',
-      prod,
-      cluster,
-      localComments && '8300'
-    );
-    const userManagementServiceBaseUrl = generateUrl(
-      'https://user-management-service.',
-      prod,
-      cluster,
-      localUserManagement && '8600'
-    );
-    const digitalCockpitApiBaseUrl = generateUrl(
-      'https://digital-cockpit-api.',
-      prod,
-      cluster,
-      localDigitalCockpit && '8001'
-    );
+      return { ...result, [service.key]: url };
+    }, {});
+
     const appsApiBaseUrl = generateUrl('https://apps-api.', prod, cluster);
 
     return {
       appsApiBaseUrl,
+      ...serviceUrls,
       cdfApiBaseUrl: `https://${
         cluster === 'ew1' ? 'api' : cluster
       }.cognitedata.com`,
-      commentServiceBaseUrl,
-      discoverApiBaseUrl,
-      userManagementServiceBaseUrl,
-      digitalCockpitApiBaseUrl,
       cdfCluster: cluster === 'ew1' ? '' : cluster,
     };
   };

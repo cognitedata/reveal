@@ -65,7 +65,7 @@ describe('getDefaultSidecar', () => {
       getDefaultSidecar({
         prod: false,
         cluster: 'bluefield',
-        localComments: true,
+        localServices: ['comment-service'],
       })
     ).toEqual({
       appsApiBaseUrl: 'https://apps-api.staging.bluefield.cognite.ai',

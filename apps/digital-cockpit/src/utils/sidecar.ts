@@ -32,7 +32,7 @@ const getAadApplicationId = (cluster: string) => {
   ...getDefaultSidecar({
     prod: PROD,
     cluster: CLUSTER,
-    localDigitalCockpit,
+    localServices: localDigitalCockpit ? ['digital-cockpit-api'] : [],
   }),
   ...getAadApplicationId(CLUSTER),
   __sidecarFormatVersion: 1,
