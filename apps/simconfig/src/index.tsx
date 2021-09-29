@@ -3,8 +3,8 @@ import * as Sentry from '@sentry/browser';
 import { Metrics } from '@cognite/metrics';
 import '@cognite/cogs.js/dist/cogs.css';
 import config from 'utils/config';
+import AppRoot from 'components/app/AppRoot';
 
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 if (process.env.REACT_APP_SENTRY_DSN) {
@@ -29,7 +29,7 @@ if (process.env.REACT_APP_MIXPANEL_TOKEN) {
   });
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<AppRoot />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

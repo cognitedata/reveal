@@ -1,6 +1,4 @@
-import { Moment } from 'moment';
-
-import { RequestStatus } from '../types';
+import { RequestStatus } from 'store/types';
 
 export enum SimulatorBackend {
   UNKNOWN = 'Unknown',
@@ -10,7 +8,7 @@ export enum SimulatorBackend {
 export type Simulator = {
   simulator: SimulatorBackend;
   name: string;
-  heartbeat: Moment;
+  heartbeat: number;
 };
 
 export interface SimulatorState {

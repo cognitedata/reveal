@@ -1,5 +1,7 @@
 import { AuthContext } from '@cognite/react-container';
 
+import { DatasetState } from './dataset/types';
+import { GroupState } from './group/types';
 import { SimulatorState } from './simulator/types';
 
 export enum RequestStatus {
@@ -10,6 +12,8 @@ export enum RequestStatus {
 }
 
 export type StoreState = {
-  simulator: SimulatorState;
   auth?: AuthContext;
+  dataset: DatasetState;
+  group: GroupState;
+  simulator: SimulatorState;
 };

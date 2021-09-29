@@ -3,36 +3,34 @@ import { useSelector } from 'react-redux';
 import { Icon, Colors } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { usePolling } from 'hooks/usePolling';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { withRequireCapability } from 'utils/hocs/withRequireCapability';
+import { fetchSimulators } from 'store/simulator/thunks';
 import {
   selectAvailableSimulators,
-  selectSimulatorInitialized,
+  selectIsSimulatorInitialized,
   selectSimulators,
-  fetchSimulators,
-} from '../../store/simulator/simulatorSlice';
+} from 'store/simulator/selectors';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { HEARTBEAT_POLL_INTERVAL } from 'store/simulator/constants';
 
 import { SimulatorTag } from './elements';
 
-const POLLING_INTERVAL = 100000;
-
-export function SimulatorStatus() {
+function SimulatorStatusComponent() {
   const dispatch = useAppDispatch();
   const cdfClient = useContext(CdfClientContext);
-
   const simulators = useAppSelector(selectSimulators);
-  const simulatorInitialized = useSelector(selectSimulatorInitialized);
+  const isSimulatorInitialized = useSelector(selectIsSimulatorInitialized);
   const availableSimulators = useSelector(selectAvailableSimulators);
 
   usePolling(
     () => {
       dispatch(fetchSimulators(cdfClient));
     },
-    POLLING_INTERVAL,
+    HEARTBEAT_POLL_INTERVAL * 1000,
     true
   );
 
-  if (!simulatorInitialized) {
+  if (!isSimulatorInitialized) {
     return <Icon type="LoadingSpinner" />;
   }
 
@@ -58,3 +56,7 @@ export function SimulatorStatus() {
     </SimulatorTag>
   );
 }
+
+export const SimulatorStatus = withRequireCapability('sequences', ['READ'])(
+  SimulatorStatusComponent
+);

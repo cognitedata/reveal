@@ -80,28 +80,23 @@ DEPENDENCIES = [
     "@npm//@reduxjs/toolkit",
     "@npm//@sentry/browser",
     "@npm//eslint-config-react-app",
+    "@npm//formik",
     "@npm//moment",
     "@npm//react",
     "@npm//react-dom",
-    "@npm//react-i18next",
     "@npm//react-redux",
     "@npm//react-router-dom",
-    "@npm//redux",
-    "@npm//redux-devtools-extension",
-    "@npm//redux-thunk",
     "@npm//styled-components",
-    "@npm//typesafe-actions",
-    "//packages/react-container",
     "//packages/metrics",
     "//packages/sidecar",
     "//packages/react-i18n",
+    "//packages/react-container",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/react",
     "@npm//@types/react-dom",
-    "@npm//@types/react-i18next",
     "@npm//@types/react-redux",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
@@ -124,7 +119,6 @@ DEV_DEPENDENCIES = [
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "App": "build/App",
     "components": "build/components",
     "global-styles": "build/global-styles",
     "hooks": "build/hooks",

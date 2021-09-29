@@ -1,11 +1,8 @@
 import { Graphic } from '@cognite/cogs.js';
-import { useTranslation } from 'react-i18next';
 
 import { FooterContainer, VersionWrapper } from './elements';
 
 export const Footer: React.FC = () => {
-  const { t } = useTranslation('general');
-
   return (
     <FooterContainer>
       <Graphic
@@ -17,7 +14,7 @@ export const Footer: React.FC = () => {
       />
       <VersionWrapper>
         <div className="cogs-micro" aria-label="Version">
-          {t('Version')} {process.env.REACT_APP_VERSION}
+          Version {process.env.REACT_APP_VERSION}
         </div>
       </VersionWrapper>
     </FooterContainer>

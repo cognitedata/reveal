@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import fileInfoReducer from 'components/forms/ModelForm/slices';
 
-import simulatorReducer from './simulator/simulatorSlice';
+import { simulatorReducer } from './simulator';
+import { groupReducer } from './group';
+import { datasetReducer } from './dataset';
 
 export const store = configureStore({
   reducer: {
+    dataset: datasetReducer,
+    group: groupReducer,
     simulator: simulatorReducer,
-    fileInfo: fileInfoReducer,
   },
 });
 

@@ -1,6 +1,7 @@
+import { OptionType } from '@cognite/cogs.js';
 import { ExternalFileInfo, Metadata } from '@cognite/sdk';
 
-import { ModelSource, UnitSystem } from './constants';
+import { BoundaryCondition, ModelSource, UnitSystem } from './constants';
 
 export interface ModelMetadata extends Metadata {
   dataType: string;
@@ -16,6 +17,14 @@ export interface ModelMetadata extends Metadata {
 export interface FileInfo extends ExternalFileInfo {
   metadata: ModelMetadata;
   source: keyof typeof ModelSource;
+}
+
+export interface ModelFormData {
+  file?: File;
+  boundaryConditions: (OptionType<BoundaryCondition> & {
+    value: BoundaryCondition;
+  })[];
+  fileInfo: FileInfo;
 }
 
 export type UpdateFieldPayload<T> = { name: keyof T | string; value: string };
