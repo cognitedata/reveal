@@ -10,7 +10,7 @@ import { TreeIndexNodeCollection } from './styling';
 import { NumericRange } from '../../utilities';
 import { CadMaterialManager } from './CadMaterialManager';
 import { Materials } from './rendering/materials';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
