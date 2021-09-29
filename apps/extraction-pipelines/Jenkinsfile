@@ -84,20 +84,20 @@ pods {
     }
 
     parallel(
-//       'Lint': {
-//         container('fas') {
-//           stageWithNotify('Lint') {
-//             sh("yarn lint")
-//           }
-//         }
-//       },
-//       'Test': {
-//         container('fas') {
-//           stageWithNotify('Unit tests') {
-//             sh("yarn test")
-//           }
-//         }
-//       },
+      'Lint': {
+        container('fas') {
+          stageWithNotify('Lint') {
+            sh("yarn lint")
+          }
+        }
+      },
+      'Test': {
+        container('fas') {
+          stageWithNotify('Unit tests') {
+            sh("yarn test")
+          }
+        }
+      },
       'Preview': {
         if(!isPullRequest) {
           print "No PR previews for release builds"
