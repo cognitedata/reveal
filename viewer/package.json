@@ -31,7 +31,7 @@
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "test": "yarn workspaces foreach run test",
     "coverage": "jest --coverage",
-    "lint": "yarn workspaces foreach run lint",
+    "lint": "yarn workspaces foreach -p run lint",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
     "bump": " yarn bump:commit && yarn bump:tag && yarn bump:push",
     "bump:commit": "git add -A && cross-var git commit -m \"chore(viewer): bump version $npm_package_version\"",
