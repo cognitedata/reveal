@@ -123,7 +123,7 @@ export type BingMapConfig = {
   /**
    * Bing Map API Key
    */
-   APIKey: string;
+  APIKey: string;
   /**
    * The type of the map used.
    */
@@ -135,7 +135,7 @@ export type HereMapConfig = {
   /**
    * Here map API Key
    */
-   APIKey: string;
+  APIKey: string;
   /**
    * Service application code token.
    */
@@ -171,7 +171,7 @@ export type MapboxConfig = {
   /**
    * Mapbox API Key
    */
-   APIKey: string;
+  APIKey: string;
   /**
    * Map style or map ID if the mode is set to MAP_ID
    */
