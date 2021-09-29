@@ -480,7 +480,8 @@ export default function CombinedComponent() {
         <Modal
           visible
           width={600}
-          closable
+          closable={false}
+          closeIcon={false}
           appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
           getContainer={() =>
             document.getElementsByClassName(ids.styleScope).item(0) as any
