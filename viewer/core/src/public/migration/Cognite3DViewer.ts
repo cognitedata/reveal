@@ -59,6 +59,7 @@ import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-
 import { RevealManagerHelper } from './RevealManagerHelper';
 import { Vector3 } from 'three';
 
+
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
 /**
@@ -126,6 +127,8 @@ export class Cognite3DViewer {
 
   private readonly _automaticNearFarPlane: boolean;
   private readonly _automaticControlsSensitivity: boolean;
+  private readonly _canInterruptAnimations: boolean;
+  
 
   private isDisposed = false;
 
@@ -200,9 +203,9 @@ export class Cognite3DViewer {
     this._renderer = options.renderer || new THREE.WebGLRenderer();
     this._renderer.localClippingEnabled = true;
 
-    this._automaticNearFarPlane = options.automaticCameraNearFar !== undefined ? options.automaticCameraNearFar : true;
-    this._automaticControlsSensitivity =
-      options.automaticControlsSensitivity !== undefined ? options.automaticControlsSensitivity : true;
+    this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
+    this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? false;
+    this._canInterruptAnimations = options.canInterruptAnimations ?? false;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -222,14 +225,54 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
+
+    // camera controls
+    let startedScroll = false;
+    const clickClock = new THREE.Clock(),
+      wheelClock = new THREE.Clock();
+
+    const changeTarget = async (event: any) => {
+      const { offsetX, offsetY } = event;
+  
+      const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+      if (intersection !== null) {
+        this.setCameraTarget(intersection.point, true);
+      } else { 
+        const boBo = this._models[0].getModelBoundingBox();
+        this.setCameraTarget(boBo.getCenter(new Vector3()), true);
+      }
+    }
+
+    this.on('click', (e) => {
+      clickClock.getDelta();
+      changeTarget(e);
+    
+    });
+
+    this.canvas.addEventListener('wheel', (e) => {
+      const timeDelta = wheelClock.getDelta(),
+        clickDelta = clickClock.getDelta();
+      //@ts-ignore
+      if (startedScroll && (e.wheelDeltaY > 0)) {  // consider other browsers
+        console.log(timeDelta, 'scroll:', startedScroll);
+        startedScroll = false;
+        changeTarget(e);
+      } else {
+        if (timeDelta > 0.2 && clickDelta > 0.6) {
+          console.log('Changed flag! with delta:', timeDelta)
+          startedScroll = true;
+        }
+      }
+    });
+
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 0.1;
     this.controls.maxDistance = 100.0;
-
-    // for tests
+    
     this.controls.dynamicTarget = false; 
-    this.controls.panDollyMinDistanceFactor = 5;
+    //ßthis.controls.panDollyMinDistanceFactor = 5;
+
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -813,13 +856,13 @@ export class Cognite3DViewer {
    * viewer.setCameraTarget(target);
    * ```
    */
-  setCameraTarget(target: THREE.Vector3, animated: boolean): void {
+  setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
     if (this.isDisposed) {
       return;
     }
 
     if (!animated) this.controls.setState(this.getCameraPosition(), target);
-    else this.moveCameraTo(this.getCameraPosition(), target, 1000);
+    else this.moveCameraTargetTo(target, 600); // TODO: add duration property somewhere
 
     //this.controls.newClickTarget = true;
   }
@@ -1154,7 +1197,93 @@ export class Cognite3DViewer {
   }
 
   /** @private */ 
-  private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
+  private setCameraViewTarget(target: THREE.Vector3, duration?: number,) {
+    
+  }
+
+  /** @private */ 
+  private moveCameraTargetTo(target: THREE.Vector3, duration?: number,) {
+    if (this.isDisposed) {
+      return;
+    }
+
+    const { camera } = this;
+
+    if (duration == null) {
+      const distance = target.distanceTo(this.controls.getState().target);
+      duration = distance * 125; // 250ms per unit distance
+      duration = Math.min(Math.max(duration, 600), 2500); // min duration 600ms and 2500ms as max duration
+    }
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+    const distanceToTarget = target.distanceTo(camera.position);
+    const scaledDirection = raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
+    const startTarget = raycaster.ray.origin.clone().add(scaledDirection);
+    const from = {
+      targetX: startTarget.x,
+      targetY: startTarget.y,
+      targetZ: startTarget.z
+    };
+    const to = {
+      targetX: target.x,
+      targetY: target.y,
+      targetZ: target.z
+    };
+
+    const animation = new TWEEN.Tween(from);
+    const stopTween = (event: Event) => {
+      if (this.isDisposed) {
+        document.removeEventListener('keydown', stopTween);
+        animation.stop();
+        return;
+      }
+
+      if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
+        animation.stop();
+        this.canvas.removeEventListener('pointerdown', stopTween);
+        this.canvas.removeEventListener('wheel', stopTween);
+        document.removeEventListener('keydown', stopTween);
+      }
+    };
+
+    if (this._canInterruptAnimations) {
+      this.canvas.addEventListener('pointerdown', stopTween);
+      this.canvas.addEventListener('wheel', stopTween);
+      document.addEventListener('keydown', stopTween);
+    }
+
+    this.controls.newClickTarget = true;
+
+    const tmpTarget = new THREE.Vector3();
+    const tween = animation
+      .to(to, duration)
+      .easing((x: number) => TWEEN.Easing.Circular.Out(x))
+      .onUpdate(() => {
+        if (this.isDisposed) {
+          return;
+        }
+        tmpTarget.set(from.targetX, from.targetY, from.targetZ);
+        if (!this.camera) {
+          return;
+        }
+        this.controls.setViewTarget(tmpTarget);
+      })
+      .onComplete(() => {
+        if (this.isDisposed) {
+          return;
+        }
+        this.setCameraTarget(target);
+        this.controls.newClickTarget = false;
+
+        this.canvas.removeEventListener('pointerdown', stopTween);
+      })
+      .start(TWEEN.now());
+    tween.update(TWEEN.now());
+  }
+
+  /** @private */ 
+  private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number,) {
     if (this.isDisposed) {
       return;
     }
@@ -1205,10 +1334,11 @@ export class Cognite3DViewer {
       }
     };
 
-    this.canvas.addEventListener('pointerdown', stopTween);
-    this.canvas.addEventListener('wheel', stopTween);
-    document.addEventListener('keydown', stopTween);
-
+    if (this._canInterruptAnimations) {
+      this.canvas.addEventListener('pointerdown', stopTween);
+      this.canvas.addEventListener('wheel', stopTween);
+      document.addEventListener('keydown', stopTween);
+    }
     const tmpTarget = new THREE.Vector3();
     const tmpPosition = new THREE.Vector3();
     const tween = animation
@@ -1225,7 +1355,7 @@ export class Cognite3DViewer {
         }
 
         this.setCameraPosition(tmpPosition);
-        this.setCameraTarget(tmpTarget, false);
+        this.setCameraTarget(tmpTarget);
       })
       .onComplete(() => {
         if (this.isDisposed) {
@@ -1336,7 +1466,7 @@ export class Cognite3DViewer {
     }
     if (this._automaticControlsSensitivity) {
       // The minDistance of the camera controller determines at which distance
-      // we will push the target in front of us instead of getting closer to it.
+      // we will stop when zooming with mouse wheel.
       // This is also used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside

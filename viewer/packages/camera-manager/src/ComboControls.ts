@@ -43,7 +43,7 @@ export default class ComboControls extends EventDispatcher {
   public enabled: boolean = true;
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.2;
-  public dynamicTarget: boolean = true;
+  public dynamicTarget: boolean = false;
   public minDistance: number = 0.1;
   public maxDistance: number = Infinity;
   public dollyFactor: number = 0.98;
@@ -71,7 +71,7 @@ export default class ComboControls extends EventDispatcher {
   public orthographicCameraDollyFactor: number = 0.3;
   public targetChanged: boolean = false;
   public newClickTarget = false; // flag for enabling different camera rotation when target is changed by click
-  
+
   private temporarilyDisableDamping: boolean = false;
   private camera: PerspectiveCamera | OrthographicCamera;
   private firstPersonMode: boolean = false;
@@ -80,6 +80,7 @@ export default class ComboControls extends EventDispatcher {
   private _accumulatedMouseMove: Vector2 = new Vector2();
   private domElement: HTMLElement;
   private target: Vector3 = new Vector3();
+  private viewTarget: Vector3 = new Vector3();
   private targetEnd: Vector3 = new Vector3();
   private spherical: Spherical = new Spherical();
   private sphericalEnd: Spherical = new Spherical();
@@ -92,6 +93,7 @@ export default class ComboControls extends EventDispatcher {
   private targetFPS: number = 30;
   private targetFPSOverActualFPS: number = 1;
   private isFocused = false;
+  private hasStartedScrolling = false;
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
@@ -202,7 +204,7 @@ export default class ComboControls extends EventDispatcher {
 
     spherical.makeSafe();
     camera.position.setFromSpherical(spherical).add(target);
-    if (!this.newClickTarget) camera.lookAt(target);
+    camera.lookAt(this.newClickTarget ? this.viewTarget : target);
 
     if (changed) {
       this.triggerCameraChangeEvent();
@@ -229,6 +231,10 @@ export default class ComboControls extends EventDispatcher {
     this.update(1000 / this.targetFPS);
     this.triggerCameraChangeEvent();
   };
+
+  public setViewTarget = (target: Vector3) => {
+    this.viewTarget.copy(target);
+  }
 
   public triggerCameraChangeEvent = () => {
     const { camera, target } = this;
@@ -299,7 +305,7 @@ export default class ComboControls extends EventDispatcher {
       this.camera.isPerspectiveCamera
         ? this.getDollyDeltaDistance(dollyIn, Math.abs(delta))
         : Math.sign(delta) * this.orthographicCameraDollyFactor;
-    this.dolly(x, y, deltaDistance, false);
+    this.dolly(0, 0, deltaDistance, false);
   };
 
   private onTouchStart = (event: TouchEvent) => {

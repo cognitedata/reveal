@@ -519,7 +519,7 @@ export function Migration() {
                 //const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
                 //viewer.fitCameraToBoundingBox(boundingBox, 1000);
                 
-                viewer.setCameraTarget(intersection.point, true);
+                //viewer.setCameraTarget(intersection.point, true);
               }
               break;
 

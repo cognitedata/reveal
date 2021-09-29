@@ -43,7 +43,7 @@ export class EffectRenderManager {
   private readonly _ssaoBlurScene: THREE.Scene;
 
   // Simple scene with a single triangle with UVs [0,1] in both directions
-  // used for bluring and applying the ambient occlusion map (screen space)
+  // used for calculating depth data of current frame
   private readonly _depthBufferScene: THREE.Scene;
 
   // Holds all CAD models

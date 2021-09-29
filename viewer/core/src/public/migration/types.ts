@@ -70,6 +70,14 @@ export interface Cognite3DViewerOptions {
    */
   automaticControlsSensitivity?: boolean;
 
+  /**
+   * When false, animations of the camera won't be stopped by movements of the camera/mouse/touches.
+   * This is useful when we don't want to interrupt the camera target change animation because then new target will be much more explicit 
+   * 
+   * Default is false
+   */
+  canInterruptAnimations?: boolean;
+
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 
