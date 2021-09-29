@@ -47,6 +47,9 @@ const createPendingAnnotations = async (
 ): Promise<FileAnnotationsCount> => {
   const existingAnnotations = await listAnnotationsForFile(sdk, file, true);
 
+  const existingNotRejectedAnnotations = existingAnnotations.filter(
+    (annotation) => annotation.status !== 'deleted'
+  );
   const existingUnhandledAnnotations = existingAnnotations.filter(
     (annotation) => annotation.status === 'unhandled'
   );
@@ -84,6 +87,9 @@ const createPendingAnnotations = async (
   // If file is missing the pending label OR has unapproved annotations
   if (hasLinkedPendingTags || isFileMissingLabel) {
     await setFilePending(file);
+  }
+  if (!existingNotRejectedAnnotations?.length && !hasLinkedPendingTags) {
+    await setFileNoLabels(file);
   }
 
   return {
@@ -302,6 +308,23 @@ const setFilePending = async (file: FileInfo) => {
       remove: [{ externalId: INTERACTIVE_LABEL.externalId }],
     };
   }
+  await sdk.files.update([
+    {
+      id: file.id,
+      update: updatePatch,
+    },
+  ]);
+};
+
+const setFileNoLabels = async (file: FileInfo) => {
+  const updatePatch: FileChangeUpdate['update'] = {
+    labels: {
+      remove: [
+        { externalId: INTERACTIVE_LABEL.externalId },
+        { externalId: PENDING_LABEL.externalId },
+      ],
+    },
+  };
   await sdk.files.update([
     {
       id: file.id,
