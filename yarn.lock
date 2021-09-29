@@ -1579,10 +1579,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.33.1":
-  version "3.33.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.33.1.tgz#6b759cb06127b3417e689d6b974069267b652975"
-  integrity sha512-aLMRhbexvyVq29Pu7HJQoFvJkI2NcAChIV3fX65zZjOlAjA0tfNN4jfbswVOodxV/qTeQWp55WeInFIO8F2bGw==
+"@cognite/cogs.js@^3.36.0":
+  version "3.36.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.36.0.tgz#3a85d1f6f9a77f50ea811e43d6a3fe0bd66080dd"
+  integrity sha512-7gyFjWKVNuNHBaQKSB7m9cWRVYPtp202C42xX18RgwBCW9RJIYRTVmCzHtFew4tkDdfvyiILelmzti3JNT5ZtA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
