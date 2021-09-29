@@ -60,26 +60,19 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
     <div>
       <Section title="Basic information">
         <InlineEdit
-          name="externalId"
-          label={DetailFieldNames.EXTERNAL_ID}
+          name="description"
+          label={DetailFieldNames.DESCRIPTION}
           canEdit={canEdit}
           schema={yup.object().shape({
-            externalId: yup.string().required('ExternalId is required'),
+            description: yup.string(),
           })}
-          defaultValues={{ externalId: integration?.externalId }}
+          defaultValues={{ description: integration?.description }}
           fullWidth
-          updateFn={rootUpdate({ integration, name: 'externalId', project })}
+          updateFn={rootUpdate({ integration, name: 'description', project })}
           marginBottom
           showLabel
         />
-        <FieldVerticalDisplay
-          label={DetailFieldNames.ID}
-          fieldName="id"
-          fieldValue={integration?.id}
-          marginBottom={bottomSpacing}
-        />
         <EditDataSetId canEdit={canEdit} />
-        <EditRawTable canEdit={canEdit} />
         <InlineEdit
           name="source"
           label={DetailFieldNames.SOURCE}
@@ -93,6 +86,19 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
           showLabel
           marginBottom
         />
+        <InlineEdit
+          name="externalId"
+          label={DetailFieldNames.EXTERNAL_ID}
+          canEdit={canEdit}
+          schema={yup.object().shape({
+            externalId: yup.string().required('ExternalId is required'),
+          })}
+          defaultValues={{ externalId: integration?.externalId }}
+          fullWidth
+          updateFn={rootUpdate({ integration, name: 'externalId', project })}
+          marginBottom
+          showLabel
+        />
         <Schedule
           name="schedule"
           integration={integration}
@@ -103,10 +109,19 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
       <Section title="Contacts">
         <ContactsView canEdit={canEdit} />
       </Section>
+      <Section title="Raw database - Raw table">
+        <EditRawTable canEdit={canEdit} />
+      </Section>
       <Section title="Additional metadata">
         <MetaData canEdit={canEdit} />
       </Section>
       <Section title="About extraction pipeline">
+        <FieldVerticalDisplay
+          label={DetailFieldNames.ID}
+          fieldName="id"
+          fieldValue={integration?.id}
+          marginBottom={bottomSpacing}
+        />
         <FieldVerticalDisplay
           label={DetailFieldNames.CREATED_BY}
           fieldName="createdBy"
