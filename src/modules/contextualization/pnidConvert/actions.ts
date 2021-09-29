@@ -111,14 +111,17 @@ export const startConvertFileToSvgJob = {
                     fileName.lastIndexOf('.') !== 0
                       ? fileName.substr(0, fileName.lastIndexOf('.'))
                       : fileName;
-                  // if this file already had an SVG created from it,
-                  // its name cannot be changed unless file is recreated from scratch.
-                  // https://cognitedata.slack.com/archives/C85QG3UBU/p1631263010036300
-                  // We always delete because it's easier than checking if the file exists
-                  // and if it is being saved with a different name
-                  await sdk.files.delete([
-                    { externalId: `processed-${fileId}` },
-                  ]);
+                  try {
+                    // if this file already had an SVG created from it,
+                    // its name cannot be changed unless file is recreated from scratch.
+                    // https://cognitedata.slack.com/archives/C85QG3UBU/p1631263010036300
+                    await sdk.files.delete([
+                      { externalId: `processed-${fileId}` },
+                    ]);
+                  } catch (_e) {
+                    // it's easier to silently catch an error when file to delete does not exist
+                    // than checking if it does beforehand
+                  }
                   const newFile = await sdk.files.upload(
                     {
                       externalId: `processed-${fileId}`,
