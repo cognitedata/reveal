@@ -5,10 +5,12 @@
 import * as THREE from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
-import { SectorScene,
-	 WellKnownDistanceToMeterConversionFactors,
-	 File3dFormat,
-	 ModelDataClient } from '../utilities/types';
+import {
+  SectorScene,
+  WellKnownDistanceToMeterConversionFactors,
+  File3dFormat,
+  ModelDataClient
+} from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';
 import { transformCameraConfiguration } from '@reveal/utilities';

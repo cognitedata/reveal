@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { BinaryFileProvider, CadSectorParser} from '@reveal/cad-parsers';
+import { BinaryFileProvider, CadSectorParser } from '@reveal/cad-parsers';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
 import { CachedRepository } from './sector/CachedRepository';
 import { SectorCuller } from './sector/culling/SectorCuller';

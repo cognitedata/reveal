@@ -12,7 +12,7 @@ describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.
   const { simple, detailed, discarded } = mockWantedSectors(1);
 
-  test('addModel for already added model throws', () => { });
+  test('addModel for already added model throws', () => {});
   const modelStateHandler = new ModelStateHandler();
   modelStateHandler.addModel('modelId');
   expect(() => modelStateHandler.addModel('modelId')).toThrowError();

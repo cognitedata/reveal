@@ -4,7 +4,6 @@
 
 export { SectorQuads } from '@cognite/reveal-parser-worker';
 
-
 /**
  * Anti-aliasing modes supported by Reveal.
  */
@@ -18,8 +17,6 @@ export enum AntiAliasingMode {
    */
   FXAA = 1
 }
-
-
 
 /**
  * Options and hints for how the Reveal viewer applies rendering effects.

@@ -41,12 +41,12 @@ export interface CadSectorMetadataV8 {
       xz: number;
     };
     readonly recursiveCoverageFactors:
-    | {
-      xy: number;
-      yz: number;
-      xz: number;
-    }
-    | undefined;
+      | {
+          xy: number;
+          yz: number;
+          xz: number;
+        }
+      | undefined;
     readonly fileName: string | null;
     readonly downloadSize: number;
   } | null;

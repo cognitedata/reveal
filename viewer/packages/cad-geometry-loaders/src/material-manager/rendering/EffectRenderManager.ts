@@ -5,11 +5,18 @@
 import * as THREE from 'three';
 
 import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
-import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders, LevelOfDetail, RenderMode } from '@reveal/cad-parsers';
+import {
+  outlineDetectionShaders,
+  fxaaShaders,
+  ssaoShaders,
+  ssaoBlurCombineShaders,
+  LevelOfDetail,
+  RenderMode
+} from '@reveal/cad-parsers';
 import { RootSectorNode } from '../../sector/RootSectorNode';
 import { SectorNode } from '../../sector/SectorNode';
 
-import { CadMaterialManager } from '../CadMaterialManager'
+import { CadMaterialManager } from '../CadMaterialManager';
 import { CogniteColors, RevealColors } from '../../utilities/types';
 import { CadNode } from '../../CadNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
@@ -456,7 +463,7 @@ export class EffectRenderManager {
 
   private extractCadNodes(scene: THREE.Scene) {
     this._rootSectorNodeBuffer.forEach(p => {
-      if (p[1].parent !== scene && (p[1].parent !==  null && p[1].parent.parent !== scene)) {
+      if (p[1].parent !== scene && p[1].parent !== null && p[1].parent.parent !== scene) {
         throw new Error('CadNode must be put at scene root');
       }
       this._cadScene.add(p[0]);

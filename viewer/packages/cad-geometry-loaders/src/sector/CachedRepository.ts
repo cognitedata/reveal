@@ -3,7 +3,17 @@
  */
 
 import { assertNever, trackError, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
-import { BinaryFileProvider, CadSectorParser, LevelOfDetail, WantedSector, SectorGeometry, ConsumedSector, TriangleMesh, InstancedMeshFile, InstancedMesh } from '@reveal/cad-parsers';
+import {
+  BinaryFileProvider,
+  CadSectorParser,
+  LevelOfDetail,
+  WantedSector,
+  SectorGeometry,
+  ConsumedSector,
+  TriangleMesh,
+  InstancedMeshFile,
+  InstancedMesh
+} from '@reveal/cad-parsers';
 
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { Repository } from './Repository';

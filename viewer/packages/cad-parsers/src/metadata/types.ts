@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-
 export interface SectorMetadataIndexFileSection {
   readonly fileName: string;
   readonly peripheralFiles: string[];

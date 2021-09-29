@@ -6,7 +6,15 @@ import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
 import { traverseDepthFirst, AutoDisposeGroup } from '@reveal/utilities';
-import { SectorMetadata, SectorGeometry, WantedSector, ConsumedSector, InstancedMeshFile, Materials, createPrimitives } from '@reveal/cad-parsers';
+import {
+  SectorMetadata,
+  SectorGeometry,
+  WantedSector,
+  ConsumedSector,
+  InstancedMeshFile,
+  Materials,
+  createPrimitives
+} from '@reveal/cad-parsers';
 
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';

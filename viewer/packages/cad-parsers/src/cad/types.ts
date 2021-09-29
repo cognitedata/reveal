@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { AutoDisposeGroup }from '@reveal/utilities';
+import { AutoDisposeGroup } from '@reveal/utilities';
 
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult, SectorQuads } from '@cognite/reveal-parser-worker';
 
@@ -44,7 +44,6 @@ export interface SectorGeometry {
   readonly instanceMeshes: InstancedMeshFile[];
   readonly triangleMeshes: TriangleMesh[];
 }
-
 
 export interface ConsumedSector {
   modelIdentifier: string;
