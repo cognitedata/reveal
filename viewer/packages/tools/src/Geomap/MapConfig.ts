@@ -153,11 +153,11 @@ export type HereMapConfig = {
    */
   imageFormat?: HereMapImageFormat;
   /**
-   * Returned tile map image size.
-   * The following sizes are supported:
-   *  - 256
-   *  - 512
-   *  - 128 (deprecated, although usage is still accepted)
+   Returned tile map image size.
+   The following sizes are supported:
+    - 256
+    - 512
+    - 128 (deprecated, although usage is still accepted)
    */
   size?: number;
 };
@@ -177,9 +177,9 @@ export type MapboxConfig = {
    */
   id: string;
   /**
-   * Map tile access mode
-   *  - MapboxMode.STYLE
-   *  - MapboxMode.MAP_ID
+   Map tile access mode
+    - MapboxMode.STYLE
+    - MapboxMode.MAP_ID
    */
   mode?: MapboxMode;
   /**
