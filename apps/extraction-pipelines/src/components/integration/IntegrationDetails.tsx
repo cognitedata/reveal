@@ -17,6 +17,7 @@ const MiddleSectionGrid = styled.div`
   grid-template-columns: 2fr 1fr;
   padding: 1rem;
   margin-bottom: 1rem;
+  grid-gap: 16px;
 `;
 const TopSection = styled.section`
   display: flex;

@@ -20,7 +20,7 @@ import { bottomSpacing, sideBarSectionSpacing } from 'styles/StyledVariables';
 const SectionDiv = styled.div`
   background-color: white;
   box-shadow: 0px 1px 3px #0002;
-  margin: 10px 0;
+  margin-bottom: 10px;
   border-radius: 3px;
 `;
 const SectionHeader = styled.div`

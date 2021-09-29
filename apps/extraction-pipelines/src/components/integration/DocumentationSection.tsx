@@ -52,6 +52,9 @@ const DocumentationWrapper = styled.section`
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  background: white;
+  box-shadow: 0px 1px 2px #0002;
+  border-radius: 3px;
 `;
 const DocumentationForm = styled.form`
   display: grid;
