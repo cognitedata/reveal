@@ -81,8 +81,7 @@ export const SideInfo = styled.aside`
 
 export const PageWrapperColumn = styled.div`
   ${Span3};
-  overflow-y: auto;
-  height: calc(100vh - 15rem);
+  min-height: calc(100vh - 15rem);
   display: flex;
   flex-direction: column;
   padding: 0 ${mainContentSpaceSides};
