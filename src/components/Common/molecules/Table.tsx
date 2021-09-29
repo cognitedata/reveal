@@ -10,6 +10,7 @@ export interface CustomTableProps extends AntdTableProps<any> {
     expandedRowPadding?: boolean;
     narrow?: boolean;
     pointer?: boolean;
+    bordered?: boolean;
   };
 }
 
@@ -19,6 +20,11 @@ export const Table = styled(AntdTable)<CustomTableProps>`
       props.options?.secondary
         ? Colors['greyscale-grey1'].hex()
         : Colors.white.hex()};
+    border: ${(props) =>
+      props.options?.bordered
+        ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+        : 'none'};
+    border-radius: ${(props) => (props.options?.bordered ? '8px' : '0')};
 
     tr > th.ant-table-selection-column,
     tr > td.ant-table-selection-column {
@@ -77,6 +83,14 @@ export const Table = styled(AntdTable)<CustomTableProps>`
   }
   td {
     cursor: ${(props) => (props.options?.pointer ? 'pointer' : 'default')};
+  }
+  .ant-table-container table > thead > tr:first-child th:last-child {
+    border-top-right-radius: ${(props) =>
+      props.options?.bordered ? '8px' : '4px'};
+  }
+  .ant-table-container table > thead > tr:first-child th:first-child {
+    border-top-left-radius: ${(props) =>
+      props.options?.bordered ? '8px' : '4px'};
   }
 `;
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Checkbox, message } from 'antd';
 import { Asset, FileInfo } from '@cognite/sdk';
-import { Tooltip, Colors } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import isEqual from 'lodash/isEqual';
 import { ResourceType, Filter } from 'modules/sdk-builder/types';
 import {
@@ -10,7 +10,7 @@ import {
   Item,
   useSelectedItems,
 } from 'hooks';
-import { Flex, Table } from 'components/Common';
+import { Table } from 'components/Common';
 import { getColumns } from './columns';
 
 type Props = {
@@ -108,49 +108,39 @@ export default function SelectionTable<T extends RecordType>(
   }, [shouldFilterUpdate]);
 
   return (
-    <Flex
-      row
-      style={{
-        width: '100%',
-        border: `1px solid ${Colors['greyscale-grey3'].hex()}`,
-        borderRadius: '8px',
-        padding: '3px 0',
+    <Table
+      columns={getColumns(type)}
+      dataSource={showSelected ? selectedItems : items}
+      loading={fetching}
+      rowKey="id"
+      rowSelection={{
+        columnWidth: '5%',
+        columnTitle: (
+          <Tooltip content={tooltipSelectAll()}>
+            <Checkbox
+              disabled={isDataEmpty || !canSelectAll}
+              onChange={(e) => setSelectAll(e.target.checked)}
+              checked={isSelectAll}
+            />
+          </Tooltip>
+        ),
+        selectedRowKeys,
+        getCheckboxProps,
+        // @ts-ignore
+        onSelect: onRowSelect,
       }}
-    >
-      <Table
-        columns={getColumns(type)}
-        dataSource={showSelected ? selectedItems : items}
-        loading={fetching}
-        rowKey="id"
-        rowSelection={{
-          columnWidth: '5%',
-          columnTitle: (
-            <Tooltip content={tooltipSelectAll()}>
-              <Checkbox
-                disabled={isDataEmpty || !canSelectAll}
-                onChange={(e) => setSelectAll(e.target.checked)}
-                checked={isSelectAll}
-              />
-            </Tooltip>
-          ),
-          selectedRowKeys,
-          getCheckboxProps,
-          // @ts-ignore
-          onSelect: onRowSelect,
-        }}
-        pagination={{
-          position: ['bottomLeft'],
-          showQuickJumper: true,
-          showSizeChanger: true,
-          size: 'small',
-          pageSize,
-          current: page,
-          onChange: onPaginationChange,
-          onShowSizeChange: onPaginationChange,
-        }}
-        style={{ width: '100%', borderRadius: '8px' }}
-        options={{ narrow: true }}
-      />
-    </Flex>
+      pagination={{
+        position: ['bottomLeft'],
+        showQuickJumper: true,
+        showSizeChanger: true,
+        size: 'small',
+        pageSize,
+        current: page,
+        onChange: onPaginationChange,
+        onShowSizeChange: onPaginationChange,
+      }}
+      style={{ width: '100%', borderRadius: '8px' }}
+      options={{ narrow: true, bordered: true }}
+    />
   );
 }
