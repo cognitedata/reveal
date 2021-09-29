@@ -11,14 +11,14 @@ export default function ResourcesLoaded() {
   const { jobStarted } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow();
   const jobStatus = useJobStatus(workflowId, jobStarted);
-  const { isLoaded: areResourcesLoaded, loadedPercent } =
-    useWorkflowAllLoadPercentages(Number(workflowId));
+  const { loadedPercent } = useWorkflowAllLoadPercentages(Number(workflowId));
 
   const shouldShowLoadingProgress = jobStatus === 'loading';
+  const areResourcesLoaded = jobStatus === 'running' || jobStatus === 'done';
 
   return (
     <Flex row align>
-      {!areResourcesLoaded && shouldShowLoadingProgress && (
+      {shouldShowLoadingProgress && (
         <InfoWrapper>
           <Icon type="LoadingSpinner" />
           <Body strong level={2}>

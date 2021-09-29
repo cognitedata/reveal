@@ -40,15 +40,13 @@ export default function ModelInfo(props: Props): JSX.Element {
         {children}
       </Body>
       {editable && (
-        <span>
-          <Icon
-            type="Edit"
-            style={{
-              color: Colors['greyscale-grey6'].hex(),
-              marginLeft: '6px',
-            }}
-          />
-        </span>
+        <Icon
+          type="Edit"
+          style={{
+            color: Colors['greyscale-grey6'].hex(),
+            marginLeft: '6px',
+          }}
+        />
       )}
     </StyledModelInfo>
   );
