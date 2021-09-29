@@ -15,6 +15,7 @@ export interface DetermineSectorsInput {
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
   budget: CadModelSectorBudget;
+  prioritizedAreas: THREE.Box3[];
 }
 
 /**

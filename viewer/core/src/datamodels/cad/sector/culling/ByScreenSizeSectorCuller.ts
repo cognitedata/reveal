@@ -44,7 +44,8 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   } {
     const takenSectors = new ScheduledSectorTree(this._determineSectorCost);
 
-    const { cadModelsMetadata, camera } = input;
+    const { cadModelsMetadata, camera, prioritizedAreas } = input;
+
     const cameraWorldInverseMatrix = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
 
@@ -83,11 +84,12 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
       sectors.forEach(sector => {
         weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
 
-        const levelWeightImportance = 2.0;
+        const levelWeightImportance = 20.0;
         const distanceToImportance = 1.0;
         const screenAreaImportance = 0.3;
         const frustumDepthImportance = 0.2;
         const nodeScreenSizeImportance = 1.0;
+        const prioritizedAreaImportance = 4.0;
 
         const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
         const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
@@ -97,13 +99,15 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
           sector.maxDiagonalLength !== undefined
             ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
             : 1.0;
+        const prioritizedAreaWeight = weightFunctions.computePrioritizedAreaWeight(transformedBounds, prioritizedAreas);
 
         const priority =
           levelWeightImportance * levelWeight +
           distanceToImportance * distanceToCameraWeight +
           screenAreaImportance * screenAreaWeight +
           frustumDepthImportance * frustumDepthWeight +
-          nodeScreenSizeImportance * nodeScreenSizeWeight;
+          nodeScreenSizeImportance * nodeScreenSizeWeight +
+          prioritizedAreaImportance * prioritizedAreaWeight;
 
         candidateSectors.push({
           model,

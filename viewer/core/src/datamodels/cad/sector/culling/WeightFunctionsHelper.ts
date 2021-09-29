@@ -147,6 +147,15 @@ export class WeightFunctionsHelper {
     return weight;
   }
 
+  /**
+   * Returns a weight that is either 0 or 1, depending on if the sector bounds intersects one
+   * or more of the prioritized areas or not.
+   */
+  computePrioritizedAreaWeight(transformedSectorBounds: THREE.Box3, prioritizedAreas: THREE.Box3[]): number {
+    const prioritized = prioritizedAreas.some(area => transformedSectorBounds.intersectsBox(area));
+    return prioritized ? 1 : 0;
+  }
+
   private distanceToCamera(sector: SectorMetadata, modelMatrix: THREE.Matrix4) {
     const { transformedBounds } = preallocated;
     transformedBounds.copy(sector.bounds);

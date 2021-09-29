@@ -29,6 +29,7 @@ export class CadModelUpdateHandler {
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
+  private readonly _prioritizedAreasSubject: Subject<THREE.Box3[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelSectorBudget> = new Subject();
@@ -54,7 +55,8 @@ export class CadModelUpdateHandler {
     };
 
     /* Creates and observable that emits an event when either of the observables emitts an item.
-     * ------- new camera ---------\
+     * ------- new camera --------\
+     * --- new prioritized areas---\
      * --- new clipping plane ------\
      * --- new clip intersection ----\_______ DetermineSectorsInput
      * --- new global loading hints--/
@@ -72,6 +74,7 @@ export class CadModelUpdateHandler {
         this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600))
       ]).pipe(map(makeCameraInput)),
       combineLatest([this._clippingPlaneSubject.pipe(startWith([]))]).pipe(map(makeClippingInput)),
+      combineLatest([this._prioritizedAreasSubject.pipe(startWith([]))]).pipe(map(makePrioritizedAreasInput)),
       this.loadingModelObservable()
     ]);
     const collectStatisticsCallback = (spendage: SectorLoadingSpent) => {
@@ -124,6 +127,10 @@ export class CadModelUpdateHandler {
 
   set clippingPlanes(value: THREE.Plane[]) {
     this._clippingPlaneSubject.next(value);
+  }
+
+  set prioritizedAreas(value: THREE.Box3[]) {
+    this._prioritizedAreasSubject.next(value);
   }
 
   get budget(): CadModelSectorBudget {
@@ -194,6 +201,9 @@ type CameraInput = {
 type ClippingInput = {
   clippingPlanes: THREE.Plane[] | never[];
 };
+type PrioritizedAreasInput = {
+  prioritizedAreas: THREE.Box3[];
+};
 
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelSectorBudget]): SettingsInput {
   return { loadingHints, budget };
@@ -204,17 +214,22 @@ function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boo
 function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
   return { clippingPlanes };
 }
+function makePrioritizedAreasInput([prioritizedAreas]: [THREE.Box3[]]): PrioritizedAreasInput {
+  return { prioritizedAreas };
+}
 
-function createDetermineSectorsInput([settings, camera, clipping, models]: [
+function createDetermineSectorsInput([settings, camera, clipping, prioritizedAreas, models]: [
   SettingsInput,
   CameraInput,
   ClippingInput,
+  PrioritizedAreasInput,
   CadNode[]
 ]): DetermineSectorsInput {
   return {
     ...camera,
     ...settings,
     ...clipping,
+    ...prioritizedAreas,
     cadModelsMetadata: models.filter(x => x.visible).map(x => x.cadModelMetadata)
   };
 }

@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CadModelSectorBudget } from "../datamodels/cad/CadModelSectorBudget";
-import { CadModelMetadata, DetermineSectorsInput } from "../internals";
+import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
+import { CadModelMetadata, DetermineSectorsInput } from '../internals';
 
 export function createDetermineSectorInput(
   camera: THREE.PerspectiveCamera,
@@ -21,7 +21,8 @@ export function createDetermineSectorInput(
       highDetailProximityThreshold: 10,
       maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: Infinity
-    }
+    },
+    prioritizedAreas: []
   };
   return determineSectorsInput;
 }

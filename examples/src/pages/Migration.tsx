@@ -16,7 +16,7 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  DefaultNodeAppearance
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -386,6 +386,11 @@ export function Migration() {
       }
 
       const selectedSet = new TreeIndexNodeCollection([]);
+      (viewer.models[0] as Cognite3DModel).assignStyledNodeCollection(selectedSet, 
+      {
+        ...DefaultNodeAppearance.Highlighted,
+        renderGhosted: false
+      });
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -439,6 +444,8 @@ export function Migration() {
 
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
+
+      const prioritizedBounds: THREE.Box3[] = [];
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -450,15 +457,20 @@ export function Migration() {
               {
                 const { treeIndex, point, model } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = document.createElement('div');
-                overlayHtml.innerText = `Node ${treeIndex}`;
-                overlayHtml.style.cssText = 'background: white; position: absolute;';
-                overlayTool.add(overlayHtml, point);
+                // const overlayHtml = document.createElement('div');
+                // overlayHtml.innerText = `Node ${treeIndex}`;
+                // overlayHtml.style.cssText = 'background: white; position: absolute;';
+                // overlayTool.add(overlayHtml, point);
   
                 // highlight the object
-                selectedSet.updateSet(new IndexSet([treeIndex]));
-                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+                const highlights = selectedSet.getIndexSet();
+                highlights.add(treeIndex);
+                selectedSet.updateSet(highlights);
+                const nodeBounds = new THREE.Box3();
+                nodeBounds.setFromCenterAndSize(point, new THREE.Vector3(0.5, 0.5, 0.5));
+                prioritizedBounds.push(nodeBounds);
+                // @ts-expect-error
+                viewer._revealManagerHelper._revealManager._cadManager._cadModelUpdateHandler.prioritizedAreas = prioritizedBounds;
               }
               break;
             case 'pointcloud':
