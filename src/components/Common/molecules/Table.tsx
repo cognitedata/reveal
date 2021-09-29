@@ -9,6 +9,7 @@ export interface CustomTableProps extends AntdTableProps<any> {
     secondary?: boolean;
     expandedRowPadding?: boolean;
     narrow?: boolean;
+    pointer?: boolean;
   };
 }
 
@@ -75,7 +76,7 @@ export const Table = styled(AntdTable)<CustomTableProps>`
         : Colors.white.hex()};
   }
   td {
-    cursor: pointer;
+    cursor: ${(props) => (props.options?.pointer ? 'pointer' : 'default')};
   }
 `;
 

@@ -1,6 +1,7 @@
 import React, { SyntheticEvent } from 'react';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
+import { Button } from '@cognite/cogs.js';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
 import {
@@ -18,7 +19,7 @@ import InteractiveIcon from 'components/InteractiveIcon';
 import DetectedTags from 'components/DetectedTags';
 import { sortFilesByAnnotations } from './utils';
 
-const SettingButtons = styled(Flex)`
+const ActionsButtons = styled(Flex)`
   & > * {
     margin: 0 4px;
   }
@@ -100,11 +101,17 @@ export const getColumns = (
             visible && trackUsage(PNID_METRICS.landingPage.previewFile)
           }
         >
-          <InteractiveIcon />
-          <span style={{ fontWeight: 500, marginLeft: '12px' }}>
-            {file.name ?? '—'}
-          </span>
+          <Flex align justify>
+            <InteractiveIcon />
+          </Flex>
         </Popover>
+        <Button
+          unstyled
+          style={{ fontWeight: 500, marginLeft: '12px' }}
+          onClick={() => onFileView(file)}
+        >
+          {file.name ?? '—'}
+        </Button>
       </Flex>
     ),
     sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
@@ -136,13 +143,13 @@ export const getColumns = (
     defaultSortOrder: 'descend',
   },
   {
-    title: 'Settings',
-    key: 'settings',
+    title: 'Actions',
+    key: 'actions',
     width: '100px',
     align: 'center' as 'center',
     render: (file: FileInfo) => {
       return (
-        <SettingButtons row align>
+        <ActionsButtons row align>
           <IconButton
             aria-label="Icon-Button"
             icon="EyeShow"
@@ -168,7 +175,7 @@ export const getColumns = (
               />
             }
           />
-        </SettingButtons>
+        </ActionsButtons>
       );
     },
   },
