@@ -45,7 +45,7 @@ export default function Preview(props: Props) {
           <CogniteFileViewer fileId={file?.id} editMode={editMode} />
         </ContentWrapper>
       </Tabs.Pane>
-      <Tabs.Pane title={<TabTitle>File details</TabTitle>} key="info">
+      <Tabs.Pane title={<TabTitle>Diagram details</TabTitle>} key="info">
         <FileDetails file={file} />
         <Metadata metadata={file?.metadata} />
       </Tabs.Pane>
@@ -53,7 +53,7 @@ export default function Preview(props: Props) {
         key="assets"
         title={
           <>
-            <TabTitle>Assets</TabTitle>
+            <TabTitle>Linked assets</TabTitle>
             <Badge
               text={counts.asset}
               background={Colors['greyscale-grey3'].hex()}
@@ -67,7 +67,7 @@ export default function Preview(props: Props) {
         key="files"
         title={
           <>
-            <TabTitle>Diagrams</TabTitle>
+            <TabTitle>Linked diagrams</TabTitle>
             <Badge
               text={counts.file}
               background={Colors['greyscale-grey3'].hex()}

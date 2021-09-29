@@ -56,7 +56,7 @@ export const EditFileButton = ({
         onClick={onClick}
         style={{ whiteSpace: 'nowrap' }}
       >
-        Done editing
+        Leave edit mode
       </Button>
     );
   }

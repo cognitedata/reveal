@@ -1,23 +1,17 @@
-import React, { SyntheticEvent } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
 import { dateSorter, stringCompare } from 'modules/contextualization/utils';
-import {
-  Flex,
-  IconButton,
-  Popover,
-  Dropdown,
-  DropdownMenu,
-  MenuButton,
-} from 'components/Common';
+import { Flex, IconButton, Popover, Dropdown } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks';
 import DiagramReviewStatus from 'components/DiagramReviewStatus';
 import InteractiveIcon from 'components/InteractiveIcon';
 import DetectedTags from 'components/DetectedTags';
 import { sortFilesByAnnotations } from './utils';
+import { FileContextMenu } from './FileContextMenu';
 
 const ActionsButtons = styled(Flex)`
   & > * {
@@ -25,71 +19,7 @@ const ActionsButtons = styled(Flex)`
   }
 `;
 
-type ContextMenuProps = {
-  onApproveFile: (e: SyntheticEvent) => void;
-  onRejectTags: (e: SyntheticEvent) => void;
-  onClearTags: (e: SyntheticEvent) => void;
-  onEditFile: (e: SyntheticEvent) => void;
-};
-
-const buttonStyle = {
-  width: '100%',
-};
-const FileContextMenu = ({
-  onApproveFile,
-  onRejectTags,
-  onClearTags,
-  onEditFile,
-}: ContextMenuProps) => {
-  return (
-    <DropdownMenu column justify grow style={{ width: '250px' }}>
-      <MenuButton
-        icon="Refresh"
-        iconPlacement="left"
-        style={buttonStyle}
-        onClick={onEditFile}
-        type="ghost"
-      >
-        Recontextualize diagram
-      </MenuButton>
-      <MenuButton
-        icon="Checkmark"
-        iconPlacement="left"
-        style={buttonStyle}
-        onClick={onApproveFile}
-        type="ghost"
-      >
-        Approve pending tags
-      </MenuButton>
-      <MenuButton
-        icon="XLarge"
-        iconPlacement="left"
-        style={buttonStyle}
-        onClick={onRejectTags}
-        type="ghost-danger"
-      >
-        Reject pending tags
-      </MenuButton>
-      <MenuButton
-        icon="Trash"
-        iconPlacement="left"
-        style={buttonStyle}
-        onClick={onClearTags}
-        type="ghost-danger"
-      >
-        Clear all tags
-      </MenuButton>
-    </DropdownMenu>
-  );
-};
-
-export const getColumns = (
-  onFileEdit: (file: FileInfo) => void,
-  onFileView: (file: FileInfo) => void,
-  onApproveTags: (file: FileInfo) => void,
-  onRejectTags: (file: FileInfo) => void,
-  onClearFileTags: (file: FileInfo) => void
-) => [
+export const getColumns = (onFileView: (file: FileInfo) => void) => [
   {
     title: 'Name',
     key: 'name',
@@ -162,19 +92,7 @@ export const getColumns = (
               onFileView(file);
             }}
           />
-          <Dropdown
-            content={
-              <FileContextMenu
-                onEditFile={(event) => {
-                  event.stopPropagation();
-                  onFileEdit(file);
-                }}
-                onApproveFile={() => onApproveTags(file)}
-                onClearTags={() => onClearFileTags(file)}
-                onRejectTags={() => onRejectTags(file)}
-              />
-            }
-          />
+          <Dropdown content={<FileContextMenu file={file} />} />
         </ActionsButtons>
       );
     },

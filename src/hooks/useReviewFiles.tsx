@@ -459,21 +459,21 @@ export const REVIEW_DIAGRAMS_LABELS = {
   approve: {
     all: {
       button: 'Approve all pending tags',
-      desc: 'Are you sure you want to approve all new links? Changes will be saved to CDF and everybody will have access to them.',
+      desc: 'Accept all tags? Changes will be saved to CDF.',
     },
     some: {
       button: 'Approve tags',
-      desc: 'Are you sure you want to approve selected links? Changes will be saved to CDF and everybody will have access to them.',
+      desc: 'Approve selected tags? Changes will be saved to CDF.',
     },
   },
   reject: {
     all: {
       button: 'Reject all pending tags',
-      desc: 'Are you sure you want to reject all new links? You will be able to recontextualize later.',
+      desc: 'Reject all tags? Changes will be saved to CDF.',
     },
     some: {
       button: 'Reject tags',
-      desc: 'Are you sure you want to reject selected links? You will be able to recontextualize later.',
+      desc: 'Reject selected tags? Changes will be saved to CDF.',
     },
   },
   clear: {

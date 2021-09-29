@@ -28,8 +28,8 @@ export const OptionMinTokens = ({ workflowId }: { workflowId: number }) => {
         Number of tokens
       </Body>
       <Body level={2}>
-        Each detected asset must match the matched entity on at least this
-        number of tokens. That is, substrings of consecutive letters or
+        Select how many tokens on each detected tag must match the tag on the
+        diagram or asset. That is substrings of consecutive letters or
         consecutive digits.
       </Body>
       <Flex style={{ flex: 1, maxWidth: '240px', marginTop: '12px' }}>
