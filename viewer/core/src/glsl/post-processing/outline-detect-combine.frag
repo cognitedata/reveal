@@ -72,8 +72,10 @@ void main() {
   float customDepth = texture2D(tCustomDepth, vUv).r;
   float ghostDepth = texture2D(tGhostDepth, vUv).r;
 
-  // This is a hack to make sure that all textures are initialize
-  // If a texture is unused, it will have a clear value of 0.0
+  // This is a hack to make sure that all textures are initialized
+  // If a texture is unused, it will have a clear value of 0.0.
+  // Without this we've seen issues with MSAA where resizing render targets
+  // causes depth to cleared to either 1 or 0 depending on the device/browser
   customDepth = customDepth > 0.0 ? customDepth : 1.0; 
   backDepth = backDepth > 0.0 ? backDepth : 1.0;
   ghostDepth = ghostDepth > 0.0 ? ghostDepth : 1.0;
