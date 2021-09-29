@@ -75,10 +75,6 @@ export const RunScheduleConnection: FunctionComponent = () => {
           <StyledTitleCard className="card-title">
             <Icon type="Calendar" />
             {TableHeadings.LATEST_RUN_TIME}
-            <LatestRunMessage
-              status={lastRun.status}
-              message={integration?.lastMessage}
-            />
           </StyledTitleCard>
           <CardValue className="card-value">
             <TimeDisplay value={lastRun.time} relative />

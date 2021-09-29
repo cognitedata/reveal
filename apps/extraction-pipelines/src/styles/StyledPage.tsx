@@ -87,4 +87,5 @@ export const PageWrapperColumn = styled.div`
   flex-direction: column;
   padding: 0 ${mainContentSpaceSides};
   scroll-behavior: smooth;
+  background-color: ${Colors['greyscale-grey1'].hex()};
 `;

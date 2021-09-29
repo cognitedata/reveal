@@ -79,6 +79,7 @@ export const MainFullWidthGrid = styled.div`
   grid-area: main;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
+  border-top: 1px solid #ccc;
 `;
 
 export const Span3 = css`

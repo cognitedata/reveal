@@ -30,6 +30,7 @@ export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
 interface IntegrationViewProps {}
 export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () => {
   const { id } = useParams<RouterParams>();
+  // TODO: take as param??
   const { integration } = useSelectedIntegration();
   const integrationId = integration?.id;
   const permissions = useOneOfPermissions(EXTPIPES_WRITES);

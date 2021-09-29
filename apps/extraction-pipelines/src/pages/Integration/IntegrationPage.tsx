@@ -54,7 +54,6 @@ const PageNav = styled.ul`
   padding: 1rem 0 0.8rem 0;
   list-style: none;
   display: flex;
-  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
   li {
     margin: 0;
     padding: 0;
@@ -216,13 +215,6 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         headingSide={
           <div>
             <LinkWrapper>
-              <InteractiveCopyWithText
-                id="copy-link-this-page"
-                textToCopy={`${origin}${pathname}${search}`}
-                copyType="pageLink"
-              >
-                <>Copy link to this page</>
-              </InteractiveCopyWithText>
               <DeleteDialog
                 isOpen={isDeleteDialogOpen}
                 doDelete={deletePipeline}
@@ -238,27 +230,31 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                 <IconWithSpace type="Trash" />
                 Delete extraction pipeline
               </Button>
+              <PageNav>
+                <li>
+                  <NavLink
+                    to={{ pathname: url, search }}
+                    exact
+                    className="tab-link"
+                  >
+                    {EXT_PIPE_TAB_OVERVIEW}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={{ pathname: `${url}/${HEALTH_PATH}`, search }}
+                    exact
+                    className="tab-link"
+                  >
+                    {EXT_PIPE_TAB_RUN_HISTORY}
+                  </NavLink>
+                </li>
+              </PageNav>
             </LinkWrapper>
           </div>
         }
         breadcrumbs={<IntegrationBreadcrumbs integration={integration} />}
       >
-        <PageNav>
-          <li>
-            <NavLink to={{ pathname: url, search }} exact className="tab-link">
-              {EXT_PIPE_TAB_OVERVIEW}
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={{ pathname: `${url}/${HEALTH_PATH}`, search }}
-              exact
-              className="tab-link"
-            >
-              {EXT_PIPE_TAB_RUN_HISTORY}
-            </NavLink>
-          </li>
-        </PageNav>
         <Switch>
           <Route exact path={path}>
             <IntegrationDetails />

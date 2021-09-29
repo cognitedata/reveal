@@ -20,10 +20,10 @@ import {
 } from 'utils/constants';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
+import StatusMarker from 'components/integrations/cols/StatusMarker';
+import { calculateStatus } from 'utils/integrationUtils';
 
 const Wrapper = styled.div`
-  margin: 0.5rem 1rem 1rem 1rem;
-
   #description,
   #name {
     flex: 1;
@@ -52,46 +52,28 @@ export const IntegrationHeading: FunctionComponent = () => {
     return <></>;
   }
 
+  // TODO: calculate this a more centralized place?
+  const lastRun = calculateStatus({
+    lastSuccess: integration?.lastSuccess,
+    lastFailure: integration?.lastFailure,
+  });
+
   return (
-    <Wrapper className="heading">
-      <DivFlex>
-        <InlineEdit
-          name="name"
-          defaultValues={{ name: integration?.name }}
-          schema={nameSchema}
-          updateFn={rootUpdate({ integration, name: 'name', project })}
-          label={EXT_PIPE_NAME_HEADING}
-          viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
-          canEdit={canEdit}
-        />
-        {integration?.dataSet && (
-          <>
-            <IconWithMargin type="Grid" />
-            <DetailsValueView
-              fieldName="dataSet"
-              fieldValue={integration.dataSet}
-            />
-          </>
-        )}
-        <IconWithMargin type="Dot" />
-        <Icon type="datasource" />
-        <InlineEdit
-          name="source"
-          updateFn={rootUpdate({ integration, name: 'source', project })}
-          defaultValues={{ source: integration?.source }}
-          schema={sourceSchema}
-          label={SOURCE_LABEL}
-          canEdit={canEdit}
-        />
-      </DivFlex>
-      <InlineEdit
-        name="description"
-        updateFn={rootUpdate({ integration, name: 'description', project })}
-        defaultValues={{ description: integration?.description }}
-        schema={descriptionSchema}
-        label={DESCRIPTION_LABEL}
-        canEdit={canEdit}
-      />
-    </Wrapper>
+    <>
+      <Wrapper className="heading">
+        <DivFlex>
+          <InlineEdit
+            name="name"
+            defaultValues={{ name: integration?.name }}
+            schema={nameSchema}
+            updateFn={rootUpdate({ integration, name: 'name', project })}
+            label={EXT_PIPE_NAME_HEADING}
+            viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
+            canEdit={canEdit}
+          />
+          Last reported status: <StatusMarker status={lastRun.status} />
+        </DivFlex>
+      </Wrapper>
+    </>
   );
 };
