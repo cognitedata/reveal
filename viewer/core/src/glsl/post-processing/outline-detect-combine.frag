@@ -72,10 +72,16 @@ void main() {
   float customDepth = texture2D(tCustomDepth, vUv).r;
   float ghostDepth = texture2D(tGhostDepth, vUv).r;
 
+  // This is a hack to make sure that all textures are initialize
+  // If a texture is unused, it will have a clear value of 0.0
   customDepth = customDepth > 0.0 ? customDepth : 1.0; 
-  backDepth = backDepth > 0.0 ? backDepth : 1.0; 
+  backDepth = backDepth > 0.0 ? backDepth : 1.0;
   ghostDepth = ghostDepth > 0.0 ? ghostDepth : 1.0;
   frontDepth = frontDepth > 0.0 ? frontDepth : 1.0; 
+
+  if(all(greaterThanEqual(vec4(backDepth, customDepth, ghostDepth, frontDepth), vec4(1.0)))){
+    discard;
+  }
   
   // Decompose and clamp "ghost" color
   vec4 clampedGhostAlbedo = vec4(max(ghostAlbedo.rgb, 0.5), min(ghostAlbedo.a, 0.8));
@@ -120,12 +126,6 @@ void main() {
 #endif
       return;
     }
-  }
-
-  if (texture2D(tBackDepth, vUv).x == 1.0 && 
-      texture2D(tGhostDepth, vUv).x == 1.0 && 
-      texture2D(tCustomDepth, vUv).x == 1.0) {
-    discard;
   }
   
   float edgeStrength = 0.0;
