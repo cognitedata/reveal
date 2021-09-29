@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
   CANCEL,
+  CREATE,
   DESCRIPTION_HINT,
   DESCRIPTION_LABEL,
   DOCUMENTATION_HINT,
@@ -25,10 +26,9 @@ import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
 import { FullTextArea } from 'components/inputs/FullTextArea';
 import { usePostIntegration } from 'hooks/usePostIntegration';
-import { GridH2Wrapper, SideInfo } from 'styles/StyledPage';
-import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
+import { GridH2Wrapper } from 'styles/StyledPage';
 import styled from 'styled-components';
-import { Collapse, Colors } from '@cognite/cogs.js';
+import { Button, Collapse, Colors, Modal } from '@cognite/cogs.js';
 import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   descriptionRule,
@@ -69,6 +69,7 @@ import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTable
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
+import { ids } from 'cogs-variables';
 
 const StyledCollapse = styled(Collapse)`
   background-color: red;
@@ -120,8 +121,8 @@ const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your 
 export const ADD_MORE_INFO_HEADING: Readonly<string> = `Additional information`;
 const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the ${EXTRACTION_PIPELINE_LOWER}, such as pipeline schedule configuration details and configure notifications.`;
 const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
+// eslint-disable-next-line
 const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
-export const NOT_LINKED: Readonly<string> = `${EXTRACTION_PIPELINE} will not be linked to data set. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set using edit later.`;
 
 export interface AddIntegrationFormInput
   extends ScheduleFormInput,
@@ -151,14 +152,30 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
-const CreateIntegration = () => {
+const CustomLabel = styled.label<{ required: boolean }>`
+  font-size: 1.1em;
+  font-weight: 500;
+  display: block;
+  padding: 3px 0;
+
+  &::after {
+    content: ' *';
+    color: red;
+    visibility: ${(props) => (props.required ? 'visible' : 'hidden')};
+  }
+`;
+
+export const CreateIntegration = (props: {
+  showAdditionalFields: boolean;
+  customCancelCallback?: () => void;
+}) => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
   const [showCron, setShowCron] = useState(false);
   const history = useHistory();
   const location = useLocation();
   const { search } = location;
   const dataSetId = findDataSetId(search) ?? '';
-  const { data, isLoading, error } = useDataSet(
+  const { data: dataSet, isLoading, error: dataSetError } = useDataSet(
     parseInt(dataSetId, 10),
     dataSetLoadError ? 0 : 3
   );
@@ -190,10 +207,10 @@ const CreateIntegration = () => {
   } = methods;
 
   useEffect(() => {
-    if (error) {
-      setDataSetLoadError(error.errors[0].missing && NO_DATA_SET_MSG);
+    if (dataSetError) {
+      setDataSetLoadError(dataSetError.errors[0].missing && NO_DATA_SET_MSG);
     }
-  }, [error, setDataSetLoadError]);
+  }, [dataSetError, setDataSetLoadError]);
   useEffect(() => {
     if (isLoading) {
       setDataSetLoadError(null);
@@ -218,7 +235,7 @@ const CreateIntegration = () => {
   const count = watch('documentation')?.length ?? 0;
 
   const handleNext = (fields: AddIntegrationFormInput) => {
-    const integrationInfo = createAddIntegrationInfo(fields, data);
+    const integrationInfo = createAddIntegrationInfo(fields, dataSet);
     mutate(
       { integrationInfo },
       {
@@ -233,11 +250,24 @@ const CreateIntegration = () => {
             errorRes?.data,
             variables.integrationInfo
           );
-          setError('server', {
-            type: 'server',
-            message: serverErrorMessage.message,
-            shouldFocus: true,
-          });
+          if (errorRes.duplicated != null) {
+            errorRes.duplicated.forEach((errorObject) => {
+              const [fieldName, fieldValue] = Object.entries(errorObject)[0];
+              setError(
+                fieldName,
+                {
+                  message: `'${fieldValue}' is already in use`,
+                },
+                { shouldFocus: true }
+              );
+            });
+          } else {
+            setError('server', {
+              type: 'server',
+              message: serverErrorMessage.message,
+              shouldFocus: true,
+            });
+          }
         },
       }
     );
@@ -261,157 +291,185 @@ const CreateIntegration = () => {
           {dataSetLoadError}
         </InfoMessage>
       )}
-      {!dataSetId && (
-        <InfoMessage
-          id="dataset-data"
-          className="data-set-info"
-          role="region"
-          aria-live="polite"
-        >
-          <InfoIcon />
-          {NOT_LINKED}
-        </InfoMessage>
-      )}
-      <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
-        <FullInput
-          name="name"
-          inputId="integration-name"
-          defaultValue=""
-          control={control as any}
-          errors={errors}
-          labelText={EXT_PIPE_NAME_HEADING}
-          hintText={NAME_HINT}
-          renderLabel={(labelText, inputId) => (
-            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+      <FormProvider {...methods}>
+        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+          {errors.server ? (
+            <InfoMessage
+              id="dataset-data"
+              className="data-set-info"
+              role="region"
+              aria-live="polite"
+            >
+              <InfoIcon />
+              <p>{errors.server.message}</p>
+            </InfoMessage>
+          ) : null}
+          {!dataSetId && (
+            <DataSetIdInput
+              data={dataSets}
+              status={dataSetsStatus}
+              renderLabel={(labelText, inputId) => (
+                <CustomLabel required htmlFor={inputId}>
+                  {labelText}
+                </CustomLabel>
+              )}
+            />
           )}
-        />
-        <FullInput
-          name="externalId"
-          inputId="integration-external-id"
-          defaultValue=""
-          control={control as any}
-          errors={errors}
-          labelText={INTEGRATION_EXTERNAL_ID_HEADING}
-          hintText={EXTERNAL_ID_HINT}
-          renderLabel={(labelText, inputId) => (
-            <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-          )}
-        />
-        <FullTextArea
-          name="description"
-          control={control as any}
-          defaultValue=""
-          labelText={DESCRIPTION_LABEL}
-          hintText={DESCRIPTION_HINT}
-          inputId="integration-description"
-          errors={errors}
-        />
-        <PriSecBtnWrapper>
-          <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
-            {SAVE}
-          </ButtonPlaced>
-          <a
-            href={createLink(
-              `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
+          <div style={{ height: '1rem' }} />
+          <FullInput
+            name="name"
+            inputId="integration-name"
+            defaultValue=""
+            control={control as any}
+            errors={errors}
+            labelText={EXT_PIPE_NAME_HEADING}
+            hintText={NAME_HINT}
+            renderLabel={(labelText, inputId) => (
+              <CustomLabel required htmlFor={inputId}>
+                {labelText}
+              </CustomLabel>
             )}
-            className="cogs-btn cogs-btn-secondary cogs-btn--padding"
-          >
-            {CANCEL}
-          </a>
-        </PriSecBtnWrapper>
-        <InfoBox iconType="Info">
-          <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-          <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
-          <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
-        </InfoBox>
-        <StyledCollapse accordion ghost data-testid="add-more-info-collapse">
-          <Panel
-            header={
-              <DivFlex direction="column" align="flex-start">
+          />
+          <FullInput
+            name="externalId"
+            inputId="integration-external-id"
+            defaultValue=""
+            control={control as any}
+            errors={errors}
+            labelText={INTEGRATION_EXTERNAL_ID_HEADING}
+            hintText={EXTERNAL_ID_HINT}
+            renderLabel={(labelText, inputId) => (
+              <CustomLabel required htmlFor={inputId}>
+                {labelText}
+              </CustomLabel>
+            )}
+          />
+          <FullInput
+            name="description"
+            control={control as any}
+            defaultValue=""
+            labelText={DESCRIPTION_LABEL}
+            hintText={DESCRIPTION_HINT}
+            inputId="integration-description"
+            errors={errors}
+            renderLabel={(labelText, inputId) => (
+              <CustomLabel required={false} htmlFor={inputId}>
+                {labelText}
+              </CustomLabel>
+            )}
+          />
+          <PriSecBtnWrapper>
+            {props.customCancelCallback == null ? (
+              <a
+                href={createLink(
+                  `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
+                )}
+                className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"
+              >
+                {CANCEL}
+              </a>
+            ) : (
+              <Button variant="ghost" onClick={props.customCancelCallback}>
+                {CANCEL}
+              </Button>
+            )}
+            <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
+              {CREATE}
+            </ButtonPlaced>
+          </PriSecBtnWrapper>
+          {props.showAdditionalFields && (
+            <>
+              <InfoBox iconType="Info">
                 <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-              </DivFlex>
-            }
-            key={1}
-          >
-            <FormProvider {...methods}>
-              <CreateContacts
-                renderLabel={(labelText, inputId) => (
-                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-                )}
-              />
-              <HeadingLabel labelFor="schedule-selector">
-                {TableHeadings.SCHEDULE}
-              </HeadingLabel>
-              <ScheduleSelector
-                inputId="schedule-selector"
-                schedule={scheduleValue}
-                onSelectChange={selectChanged}
-              />
-              {showCron && (
-                <CronWrapper
-                  id="cron-expression"
-                  role="region"
-                  direction="column"
-                  align="flex-start"
+                <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
+                <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
+              </InfoBox>
+              <StyledCollapse
+                accordion
+                ghost
+                data-testid="add-more-info-collapse"
+              >
+                <Panel
+                  header={
+                    <DivFlex direction="column" align="flex-start">
+                      <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
+                    </DivFlex>
+                  }
+                  key={1}
                 >
-                  <CronInput />
-                </CronWrapper>
-              )}
-              {!dataSetId && (
-                <DataSetIdInput
-                  data={dataSets}
-                  status={dataSetsStatus}
-                  renderLabel={(labelText, inputId) => (
-                    <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
+                  <CreateContacts
+                    renderLabel={(labelText, inputId) => (
+                      <HeadingLabel labelFor={inputId}>
+                        {labelText}
+                      </HeadingLabel>
+                    )}
+                  />
+                  <HeadingLabel labelFor="schedule-selector">
+                    {TableHeadings.SCHEDULE}
+                  </HeadingLabel>
+                  <ScheduleSelector
+                    inputId="schedule-selector"
+                    schedule={scheduleValue}
+                    onSelectChange={selectChanged}
+                  />
+                  {showCron && (
+                    <CronWrapper
+                      id="cron-expression"
+                      role="region"
+                      direction="column"
+                      align="flex-start"
+                    >
+                      <CronInput />
+                    </CronWrapper>
                   )}
-                />
-              )}
-              <HeadingLabel labelFor="raw-table">
-                {DetailFieldNames.RAW_TABLE}
-              </HeadingLabel>
-              <ConnectRawTablesInput />
-              <FullInput
-                name="source"
-                inputId="source-input"
-                defaultValue=""
-                control={control as any}
-                errors={errors}
-                labelText={DetailFieldNames.SOURCE}
-                hintText={SOURCE_HINT}
-                renderLabel={(labelText, inputId) => (
-                  <HeadingLabel labelFor={inputId}>{labelText}</HeadingLabel>
-                )}
-              />
+                  <HeadingLabel labelFor="raw-table">
+                    {DetailFieldNames.RAW_TABLE}
+                  </HeadingLabel>
+                  <ConnectRawTablesInput />
+                  <FullInput
+                    name="source"
+                    inputId="source-input"
+                    defaultValue=""
+                    control={control as any}
+                    errors={errors}
+                    labelText={DetailFieldNames.SOURCE}
+                    hintText={SOURCE_HINT}
+                    renderLabel={(labelText, inputId) => (
+                      <HeadingLabel labelFor={inputId}>
+                        {labelText}
+                      </HeadingLabel>
+                    )}
+                  />
 
-              <FullTextArea
-                name="documentation"
-                inputId="documentation-input"
-                labelText={DetailFieldNames.DOCUMENTATION}
-                hintText={DOCUMENTATION_HINT}
-                control={control as any}
-                errors={errors}
-                defaultValue=""
-              />
-              {MAX_DOCUMENTATION_LENGTH && (
-                <CountSpan className="count bottom-spacing">
-                  {count}/{MAX_DOCUMENTATION_LENGTH}
-                </CountSpan>
-              )}
+                  <FullTextArea
+                    name="documentation"
+                    inputId="documentation-input"
+                    labelText={DetailFieldNames.DOCUMENTATION}
+                    hintText={DOCUMENTATION_HINT}
+                    control={control as any}
+                    errors={errors}
+                    defaultValue=""
+                  />
+                  {MAX_DOCUMENTATION_LENGTH && (
+                    <CountSpan className="count bottom-spacing">
+                      {count}/{MAX_DOCUMENTATION_LENGTH}
+                    </CountSpan>
+                  )}
 
-              <RegisterMetaData />
-              <ButtonPlaced type="primary" htmlType="submit" marginbottom={5}>
-                {SAVE}
-              </ButtonPlaced>
-            </FormProvider>
-          </Panel>
-        </StyledCollapse>
-      </CreateFormWrapper>
-      <SideInfo>
-        <ExtractorDownloadsLink
-          link={{ path: 'to' }}
-          linkText={ADD_MORE_INFO_LINK}
-        />
-      </SideInfo>
+                  <RegisterMetaData />
+                  <ButtonPlaced
+                    type="primary"
+                    htmlType="submit"
+                    marginbottom={5}
+                  >
+                    {SAVE}
+                  </ButtonPlaced>
+                </Panel>
+              </StyledCollapse>
+            </>
+          )}
+        </CreateFormWrapper>
+      </FormProvider>
     </>
   );
 };
@@ -419,7 +477,20 @@ export default function CombinedComponent() {
   return (
     <RegisterIntegrationLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
-        <CreateIntegration />
+        <Modal
+          visible
+          width={600}
+          closable={false}
+          closeIcon={false}
+          appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+          getContainer={() =>
+            document.getElementsByClassName(ids.styleScope).item(0) as any
+          }
+          footer={null}
+          title="Create extraction pipeline"
+        >
+          <CreateIntegration showAdditionalFields={false} />
+        </Modal>
       </CapabilityCheck>
     </RegisterIntegrationLayout>
   );

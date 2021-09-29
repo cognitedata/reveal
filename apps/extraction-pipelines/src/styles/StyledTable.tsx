@@ -13,12 +13,6 @@ export const StyledTable = styled.div`
           background-color: white;
           padding: 1rem 0.75rem;
           white-space: nowrap;
-          &:last-child {
-            width: 3rem;
-          }
-          &:first-child {
-            width: 3rem;
-          }
         }
       }
     }
@@ -74,11 +68,13 @@ const StyledTableNoRowColor = styled((props) => (
     }
     tbody {
       tr {
+        &:hover,
+        &:nth-child(2n):hover {
+          background-color: ${Colors['midblue-7'].hex()};
+          cursor: pointer;
+        }
         &:nth-child(2n) {
           background-color: white;
-          &:hover {
-            background-color: ${Colors['greyscale-grey2'].hex()};
-          }
         }
         &.row-active {
           background-color: ${Colors['midblue-7'].hex()};

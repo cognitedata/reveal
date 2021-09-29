@@ -1,9 +1,9 @@
 import { Integration } from './Integration';
 
 export enum RunStatusUI {
-  SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE',
-  SEEN = 'SEEN',
+  SUCCESS = 'Success',
+  FAILURE = 'Failure',
+  SEEN = 'Seen',
   NOT_ACTIVATED = 'Not activated',
 }
 

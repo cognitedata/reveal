@@ -16,7 +16,7 @@ export const HeadingLabel: FunctionComponent<HeadingLabelProps> = ({
 }: PropsWithChildren<HeadingLabelProps>) => {
   return (
     <GridH2Wrapper>
-      <label htmlFor={labelFor} className="input-label" {...rest}>
+      <label htmlFor={labelFor} {...rest}>
         {children}
       </label>
     </GridH2Wrapper>

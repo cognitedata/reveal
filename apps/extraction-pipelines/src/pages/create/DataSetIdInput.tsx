@@ -47,7 +47,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
     formState: { errors },
     watch,
     control,
-  } = useFormContext();
+  } = useFormContext<any>();
   const storedValue = parseInt(watch('dataSetId'), 10);
 
   const getOptions = (): SelectOption[] => {

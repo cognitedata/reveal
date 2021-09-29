@@ -59,7 +59,7 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
   return (
     <Select
       inputId={inputId}
-      defaultValue={selectedValue(schedule)}
+      value={selectedValue(schedule)}
       options={options}
       styles={customStyles}
       onChange={handleChange}

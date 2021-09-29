@@ -12,11 +12,12 @@ module.exports = {
       { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
     ],
 
-    'react/prop-types': 'off',
     'max-classes-per-file': ['off'],
     'lines-between-class-members': ['off'],
     'class-methods-use-this': ['off'],
 
+    'react/prop-types': 'off',
+    'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],

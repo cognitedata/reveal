@@ -1,4 +1,4 @@
-import React, { ReactText, useMemo } from 'react';
+import React, { ReactText, useMemo, useState } from 'react';
 import {
   ActionType,
   Cell,
@@ -20,6 +20,10 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
+import { Button, Colors, Modal } from '@cognite/cogs.js';
+import { ids } from 'cogs-variables';
+import { CreateIntegration } from 'pages/create/CreateIntegration';
+import styled from 'styled-components';
 
 const selectReducer = (
   newState: TableState,
@@ -52,6 +56,46 @@ const fuzzyTextFilterFn = <T extends { values: any }>(
 };
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
+const TableTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+`;
+
+const VerticalSpace = styled.div`
+  height: 16px;
+`;
+const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
+  return (
+    <Modal
+      visible={props.visible}
+      width={600}
+      closable
+      onCancel={props.close}
+      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+      getContainer={() =>
+        document.getElementsByClassName(ids.styleScope).item(0) as any
+      }
+      footer={null}
+      title="Create extraction pipeline"
+    >
+      <VerticalSpace />
+      <CreateIntegration
+        showAdditionalFields={false}
+        customCancelCallback={props.close}
+      />
+    </Modal>
+  );
+};
+
+const StyledTable = styled.table`
+  table-layout: fixed;
+  tbody td {
+    word-break: break-word;
+    color: ${Colors['greyscale-grey8'].hex()};
+  }
+`;
+
 const ITable = <T extends { id: ReactText }>({
   data,
   columns,
@@ -59,6 +103,7 @@ const ITable = <T extends { id: ReactText }>({
   const { setIntegration } = useSelectedIntegration();
   const { project } = useAppEnv();
   const history = useHistory();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const filterTypes = React.useMemo(
     () => ({
@@ -112,82 +157,96 @@ const ITable = <T extends { id: ReactText }>({
 
   return (
     <>
-      <IntegrationTableSearch
-        globalFilter={state.globalFilter}
-        preGlobalFilteredRows={preGlobalFilteredRows}
-        setGlobalFilter={setGlobalFilter}
+      <CreateExtpipeModal
+        visible={createModalOpen}
+        close={() => setCreateModalOpen(false)}
       />
-      <div className="tableFixHead">
-        <table
-          {...getTableProps()}
-          className="cogs-table integrations-table"
-          role="grid"
-          aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
+      <TableTop>
+        <IntegrationTableSearch
+          globalFilter={state.globalFilter}
+          preGlobalFilteredRows={preGlobalFilteredRows}
+          setGlobalFilter={setGlobalFilter}
+        />
+        <Button
+          variant="default"
+          type="primary"
+          icon="PlusCompact"
+          onClick={() => {
+            setCreateModalOpen(true);
+          }}
         >
-          <thead>
-            {headerGroups.map((headerGroup: HeaderGroup<any>) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((col: HeaderGroup<T>) => {
+          Create extraction pipeline
+        </Button>
+      </TableTop>
+      <StyledTable
+        {...getTableProps()}
+        className="cogs-table integrations-table"
+        role="grid"
+        aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
+      >
+        <thead>
+          {headerGroups.map((headerGroup: HeaderGroup<any>) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((col: HeaderGroup<T>) => {
+                return (
+                  <th
+                    scope="col"
+                    {...col.getHeaderProps(col.getSortByToggleProps())}
+                    className={`${col.id}-col`}
+                  >
+                    {col.disableFilters && col.render('Header')}
+                    {!col.disableFilters && col.render('Filter')}
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row: Row<T>) => {
+            prepareRow(row);
+            const handleClickOnRow = () => {
+              row.toggleRowSelected(true);
+              // @ts-ignore
+              setIntegration(row.original);
+            };
+            return (
+              <tr
+                {...row.getRowProps()}
+                className={`cogs-table-row integrations-table-row ${
+                  row.isSelected ? 'row-active' : ''
+                }`}
+                onClick={handleClickOnRow}
+              >
+                {row.cells.map((cell: Cell<T>) => {
+                  const handleCellClick = (
+                    e: React.MouseEvent<HTMLTableDataCellElement>
+                  ) => {
+                    if (e.currentTarget === e.target) {
+                      history.push(
+                        createExtPipePath(
+                          `/${EXT_PIPE_PATH}/${row.original.id}`
+                        )
+                      );
+                    }
+                  };
                   return (
-                    <th
-                      scope="col"
-                      {...col.getHeaderProps(col.getSortByToggleProps())}
-                      className={`${col.id}-col`}
+                    // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
+                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+                    <td
+                      {...cell.getCellProps()}
+                      className={`${cell.column.id}-cell`}
+                      onClick={handleCellClick}
                     >
-                      {col.disableFilters && col.render('Header')}
-                      {!col.disableFilters && col.render('Filter')}
-                    </th>
+                      {cell.render('Cell')}
+                    </td>
                   );
                 })}
               </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row: Row<T>) => {
-              prepareRow(row);
-              const handleClickOnRow = () => {
-                row.toggleRowSelected(true);
-                // @ts-ignore
-                setIntegration(row.original);
-              };
-              return (
-                <tr
-                  {...row.getRowProps()}
-                  className={`cogs-table-row integrations-table-row ${
-                    row.isSelected ? 'row-active' : ''
-                  }`}
-                  onClick={handleClickOnRow}
-                >
-                  {row.cells.map((cell: Cell<T>) => {
-                    const handleCellClick = (
-                      e: React.MouseEvent<HTMLTableDataCellElement>
-                    ) => {
-                      if (e.currentTarget === e.target) {
-                        history.push(
-                          createExtPipePath(
-                            `/${EXT_PIPE_PATH}/${row.original.id}`
-                          )
-                        );
-                      }
-                    };
-                    return (
-                      // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
-                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-                      <td
-                        {...cell.getCellProps()}
-                        className={`${cell.column.id}-cell`}
-                        onClick={handleCellClick}
-                      >
-                        {cell.render('Cell')}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+            );
+          })}
+        </tbody>
+      </StyledTable>
     </>
   );
 };

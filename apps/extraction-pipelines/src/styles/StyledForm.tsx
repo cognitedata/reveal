@@ -22,25 +22,15 @@ export const CreateFormWrapper = styled.form`
       border-color: ${Colors.danger.hex()};
     }
     &:focus {
-      outline: -webkit-focus-ring-color auto 0.0625rem;
-      outline-offset: 0.0625rem;
+      box-shadow: none;
     }
   }
 
-  button,
-  a.cogs-btn.cogs-btn-secondary,
-  textarea,
-  .cogs-input,
-  .cogs-select,
-  .cogs-checkbox,
-  .bottom-spacing {
-    margin-bottom: 2rem;
-  }
   > input.cogs-input,
   .cogs-select,
   .rc-collapse-content-box > .cogs-input,
   #cron-input {
-    width: 50%;
+    width: 100%;
   }
   #documentation-input {
     width: 100%;
@@ -53,9 +43,9 @@ export const StyledLabel = styled.label`
 `;
 
 export const Hint = styled.span`
-  font-style: italic;
-  color: ${Colors['greyscale-grey6'].hex()};
+  color: ${Colors['greyscale-grey8'].hex()};
   margin-bottom: ${hintBottomSpacing};
+  display: block;
 `;
 
 export const StyledInput = styled(Input)`

@@ -40,9 +40,6 @@ describe('RawEditModal', () => {
       ORIGIN_DEV,
       integration
     );
-    const modalRoot = document.createElement('div');
-    modalRoot.setAttribute('class', 'integrations-ui-style-scope');
-    document.body.appendChild(modalRoot);
   });
   afterEach(() => {
     wrapper = null;

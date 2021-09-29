@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -17,7 +16,6 @@ export const LinkWrapper = styled.div`
 `;
 
 export const StyledLink = styled((props) => <a {...props}>{props.children}</a>)`
-  color: ${Colors.black.hex()};
   margin-right: 0.5rem;
   &:hover {
     text-decoration: underline;

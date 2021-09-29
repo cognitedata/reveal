@@ -46,6 +46,7 @@ export const renderWithSelectedIntegrationContext = (
 ) => {
   const history = createMemoryHistory();
   history.push(route);
+  addModalElements();
   return render(
     <QueryClientProvider client={client}>
       <Router history={history}>
@@ -91,6 +92,12 @@ export const renderQueryCacheIntegration = (
   return wrapper;
 };
 
+function addModalElements() {
+  const modalRoot = document.createElement('div');
+  modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+  document.body.appendChild(modalRoot);
+}
+
 export const renderWithReQueryCacheSelectedIntegrationContext = (
   client: QueryClient,
   project: string,
@@ -115,6 +122,7 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
       </AppEnvProvider>
     </QueryClientProvider>
   );
+  addModalElements();
   return { wrapper, history };
 };
 export const renderRegisterContext = (
@@ -138,6 +146,7 @@ export const renderRegisterContext = (
 ) => {
   const history = createMemoryHistory();
   history.push(route);
+  addModalElements();
   return {
     ...render(
       <QueryClientProvider client={client}>

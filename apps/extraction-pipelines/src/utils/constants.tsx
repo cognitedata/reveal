@@ -30,6 +30,7 @@ export const CANCEL: Readonly<string> = 'Cancel';
 export const CLOSE: Readonly<string> = 'Close';
 export const EDIT: Readonly<string> = 'Edit';
 export const SAVE: Readonly<string> = 'Save';
+export const CREATE: Readonly<string> = 'Create';
 export const OK: Readonly<string> = 'OK';
 export const BACK: Readonly<string> = 'Back';
 export const NEXT: Readonly<string> = 'Next';
@@ -91,7 +92,7 @@ export const EXT_PIPE_NAME_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} n
 
 // Data set
 export const DATA_SET_ID_HINT: Readonly<string> =
-  'Type in the name or id of your data set';
+  'Select the data set the extraction pipeline feeds data into.';
 export const DATA_SETS_LABEL: Readonly<string> = 'Data sets';
 // Documentation
 export const DOCUMENTATION_HINT: Readonly<ReactFragment> = (
@@ -111,7 +112,7 @@ export const SOURCE_HINT: Readonly<string> =
   'Enter the name of the extraction pipeline source system.';
 
 export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> = 'External ID';
-export const EXTERNAL_ID_HINT: Readonly<string> = `Enter a unique identifier. Use this ID when setting up status and heartbeat reporting in the extractor.`;
+export const EXTERNAL_ID_HINT: Readonly<string> = `Enter a unique identifier. Use this ID when setting up status and heartbeat reporting for extractors.`;
 
 // Page headings
 export const ADD_EXTRACTION_PIPELINE: Readonly<string> = `Add ${EXTRACTION_PIPELINE_LOWER}`;

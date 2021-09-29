@@ -13,7 +13,6 @@ import {
 import styled from 'styled-components';
 import { OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { RunUI } from 'model/Runs';
-import { OptionTypeBase } from 'react-select';
 
 const Wrapper = styled.div`
   margin-bottom: 5rem;
@@ -41,7 +40,7 @@ const StyledTable = styled.table`
     }
   }
 `;
-const itemsPrPageOptions: OptionTypeBase[] = [
+const itemsPrPageOptions: OptionType<unknown>[] = [
   {
     label: '10',
     value: 10,
@@ -107,15 +106,15 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     gotoPage(current - 1);
   };
 
-  const handleSelectItemsPrPage = (option: OptionType) => {
+  const handleSelectItemsPrPage = (option: OptionType<any>) => {
     setPageSize(option?.value);
   };
 
   const findOptionValue = (
-    options: OptionTypeBase[],
+    options: OptionType<unknown>[],
     innerPageSize: number
   ) => {
-    return options.find(({ value }) => value === innerPageSize);
+    return options.find(({ value }) => value === innerPageSize)!;
   };
 
   return (

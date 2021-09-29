@@ -4,24 +4,24 @@ import { Button } from '@cognite/cogs.js';
 import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon';
 import { trackUsage } from 'utils/Metrics';
 import { SORT } from 'utils/constants';
+import styled from 'styled-components';
 
 const getSortOrder = <T extends object>(
   column: ColumnInstance<T>
 ): { icon: AllIconTypes; ariaSort: AriaAttributes['aria-sort'] } => {
   if (column.isSorted) {
-    if (column.isSortedDesc) {
-      return {
-        icon: 'SortDown',
-        ariaSort: 'descending',
-      };
-    }
-    return {
-      icon: 'SortUp',
-      ariaSort: 'ascending',
-    };
+    return column.isSortedDesc
+      ? {
+          icon: 'SortDown',
+          ariaSort: 'descending',
+        }
+      : {
+          icon: 'SortUp',
+          ariaSort: 'ascending',
+        };
   }
   return {
-    icon: 'OrderDesc',
+    icon: 'SortBoth',
     ariaSort: 'none',
   };
 };
@@ -29,6 +29,13 @@ interface SorterIndicatorProps<T extends object> {
   column: ColumnInstance<T>;
   name: string;
 }
+const ButtonWithNoPadding = styled(Button)`
+  && {
+    padding: 0;
+  }
+  display: block;
+  color: inherit;
+`;
 const SorterIndicator = <T extends object>({
   column,
   name,
@@ -38,7 +45,7 @@ const SorterIndicator = <T extends object>({
     trackUsage(SORT, { field: name });
   };
   return (
-    <Button
+    <ButtonWithNoPadding
       type="ghost"
       icon={icon}
       iconPlacement="right"
@@ -46,7 +53,7 @@ const SorterIndicator = <T extends object>({
       onClick={onClickSort}
     >
       {name}
-    </Button>
+    </ButtonWithNoPadding>
   );
 };
 

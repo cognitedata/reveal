@@ -165,14 +165,17 @@ const mockResponseV2 = {
       contacts: [
         {
           email: 'Birger.Urdahl@itera.no',
+          role: 'Owner',
           name: 'Birger Urdahl',
         },
         {
           email: 'Jacek.Fijalkowski@itera.no',
+          role: 'Mechanic',
           name: 'Jacek Fijalkowski',
         },
         {
           email: 'lisa.halvorsen@item.no',
+          role: 'Technician',
           name: 'Lisa Halvorsen',
         },
       ],
