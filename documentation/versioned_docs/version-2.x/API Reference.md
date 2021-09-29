@@ -5924,6 +5924,7 @@ Base class for tools attaching to a {@see Cognite3DViewer}.
 ##### Defined in
 
 [viewer/src/tools/Geomap/GeomapTool.ts:95](https://github.com/cognitedata/reveal/blob/pramodcog/tools-geomap/viewer/core/src/tools/Geomap/GeomapTool.ts#L95)
+[viewer/src/tools/AxisView/AxisViewTool.ts:62](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/AxisView/AxisViewTool.ts#L62)
 
 ___
 
@@ -5950,7 +5951,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 ##### Defined in
 
-[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/d0fe97f8/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
 
 
 <a name="classes_cognite_reveal_toolscognite3dviewertoolbasemd"></a>

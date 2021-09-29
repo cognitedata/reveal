@@ -924,6 +924,7 @@ __metadata:
   resolution: "@reveal/cad-geometry-loaders@workspace:packages/cad-geometry-loaders"
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -986,6 +987,8 @@ __metadata:
 "@reveal/utilities@workspace:*, @reveal/utilities@workspace:packages/utilities":
   version: 0.0.0-use.local
   resolution: "@reveal/utilities@workspace:packages/utilities"
+  dependencies:
+    "@reveal/logger": "workspace:*"
   languageName: unknown
   linkType: soft
 
