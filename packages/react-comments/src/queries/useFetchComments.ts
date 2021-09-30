@@ -15,6 +15,7 @@ export type FetchCommentProps = {
   serviceUrl: string;
   scope?: CommentListBody['scope'];
   target: CommentTarget;
+  fasAppId?: string;
 };
 
 export const doFetchComments = ({
@@ -23,7 +24,7 @@ export const doFetchComments = ({
   serviceUrl,
   scope,
 }: {
-  headers: AuthHeaders;
+  headers: AuthHeaders | { fasAppId?: string };
 } & FetchCommentProps) => {
   return axios
     .post<{ items: CommentResponse[] }>(
@@ -43,12 +44,19 @@ export const useFetchComments = ({
   target,
   serviceUrl,
   scope,
+  fasAppId,
 }: FetchCommentProps) => {
-  const headers = getAuthHeaders({ useIdToken: true });
+  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
 
   return useQuery(
     commentKeys.thread(target),
-    () => doFetchComments({ target, serviceUrl, headers, scope }),
+    () =>
+      doFetchComments({
+        target,
+        serviceUrl,
+        headers,
+        scope,
+      }),
     {
       enabled: !!target,
       staleTime: 1000 * 60 * 5, // 5 mins

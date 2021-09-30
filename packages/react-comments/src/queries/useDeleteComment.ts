@@ -8,7 +8,7 @@ import { commentKeys } from './queryKeys';
 interface Props {
   id: string;
   serviceUrl: string;
-  headers: AuthHeaders;
+  headers: AuthHeaders | { fasAppId?: string };
   target: CommentTarget;
 }
 export const doDeleteComment: (props: Props) => Promise<any> = ({
@@ -38,11 +38,13 @@ export const doDeleteComment: (props: Props) => Promise<any> = ({
 export function useCommentDeleteMutate({
   target,
   serviceUrl,
+  fasAppId,
 }: {
   serviceUrl: string;
   target: CommentTarget;
+  fasAppId?: string;
 }) {
-  const headers = getAuthHeaders({ useIdToken: true });
+  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
   const queryClient = useQueryClient();
 
   return useMutation(

@@ -10,8 +10,9 @@ export const UserList: React.FC<{
   search?: string;
   userManagementServiceBaseUrl: string;
   onSelect: (id: string, display: string) => (event: any) => void;
-}> = ({ search, onSelect, userManagementServiceBaseUrl }) => {
-  const headers = getAuthHeaders({ useIdToken: true });
+  fasAppId?: string;
+}> = ({ search, onSelect, userManagementServiceBaseUrl, fasAppId }) => {
+  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
   const { data, isLoading } = useFindUsers({
     headers,
     userManagementServiceBaseUrl,

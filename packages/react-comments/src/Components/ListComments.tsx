@@ -27,13 +27,14 @@ const ConversationContainer = styled.div`
 `;
 
 export type ListCommentsProps = Pick<FetchCommentProps, 'scope' | 'target'> &
-  BaseUrls;
+  BaseUrls & { fasAppId?: string };
 
 export const ListComments: React.FC<ListCommentsProps> = ({
   scope,
   target,
   commentServiceBaseUrl,
   userManagementServiceBaseUrl,
+  fasAppId,
 }) => {
   const { authState } = useAuthContext();
   const [editing, setEditing] = React.useState<
@@ -44,25 +45,30 @@ export const ListComments: React.FC<ListCommentsProps> = ({
     target,
     scope: scope ? scope[0] : undefined, // always assume first scope is 'home' app (for legacy)
     serviceUrl: fullServiceUrl,
+    fasAppId,
   });
   const { mutate: deleteComment } = useCommentDeleteMutate({
     serviceUrl: fullServiceUrl,
     target,
+    fasAppId,
   });
 
   const { mutate: editComment } = useCommentEditMutate({
     serviceUrl: fullServiceUrl,
     target,
+    fasAppId,
   });
 
   const { data: richComments, isError } = useFetchComments({
     target,
     scope,
     serviceUrl: fullServiceUrl,
+    fasAppId,
   });
 
   const { data: user } = useFetchUser({
     userManagementServiceBaseUrl,
+    fasAppId,
   });
 
   const handleCreateMessage = (comment: CommentData) => {

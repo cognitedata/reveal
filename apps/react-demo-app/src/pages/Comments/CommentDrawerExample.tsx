@@ -10,11 +10,13 @@ import { Cards } from './Cards';
 
 interface Props extends BaseUrls {
   data: Asset[];
+  fasAppId?: string;
 }
 export const CommentDrawerExample: React.FC<Props> = ({
   data,
   commentServiceBaseUrl,
   userManagementServiceBaseUrl,
+  fasAppId,
 }) => {
   const [target, setTarget] = React.useState<CommentTarget | undefined>();
 
@@ -33,6 +35,7 @@ export const CommentDrawerExample: React.FC<Props> = ({
           scope={['fas-demo']}
           commentServiceBaseUrl={commentServiceBaseUrl}
           userManagementServiceBaseUrl={userManagementServiceBaseUrl}
+          fasAppId={fasAppId}
         />
       )}
 

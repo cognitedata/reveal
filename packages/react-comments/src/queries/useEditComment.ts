@@ -9,7 +9,7 @@ import { commentKeys } from './queryKeys';
 
 type Props = {
   serviceUrl: string;
-  headers: AuthHeaders;
+  headers: AuthHeaders | { fasAppId?: string };
 } & Pick<CommentResponse, 'id' | 'comment' | 'target'>;
 export const doEditComment: (props: Props) => Promise<any> = ({
   id,
@@ -35,11 +35,13 @@ export const doEditComment: (props: Props) => Promise<any> = ({
 export function useCommentEditMutate({
   target,
   serviceUrl,
+  fasAppId,
 }: {
   serviceUrl: string;
   target: CommentTarget;
+  fasAppId?: string;
 }) {
-  const headers = getAuthHeaders({ useIdToken: true });
+  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
   const queryClient = useQueryClient();
 
   return useMutation(

@@ -12,7 +12,7 @@ export const userKeys = {
 };
 
 interface Props {
-  headers: AuthHeaders;
+  headers: AuthHeaders | { fasAppId?: string };
   query?: string;
   userManagementServiceBaseUrl: string;
 }

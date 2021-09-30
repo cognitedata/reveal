@@ -40,6 +40,7 @@ export const CommentSlider: React.FC<Props> = ({ client }) => {
       data={data}
       commentServiceBaseUrl={sidecar.commentServiceBaseUrl}
       userManagementServiceBaseUrl={sidecar.userManagementServiceBaseUrl}
+      fasAppId={sidecar.aadApplicationId}
     />
   );
 };

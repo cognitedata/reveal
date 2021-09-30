@@ -11,21 +11,27 @@ import { userKeys } from './useFindUsers';
 
 interface Props {
   userManagementServiceBaseUrl: string;
+  fasAppId?: string;
 }
 const doFetchUser = ({
   userManagementServiceBaseUrl,
   headers,
   id,
-}: { headers: AuthHeaders; id: string } & Props) => {
+}: { headers: AuthHeaders | { fasAppId?: string }; id: string } & Props) => {
   return axios
-    .get<UMSUser>(`${userManagementServiceBaseUrl}/user/${id}`, { headers })
+    .get<UMSUser>(`${userManagementServiceBaseUrl}/user/${id}`, {
+      headers,
+    })
     .then((result) => {
       return result.data;
     });
 };
 
-export const useFetchUser = ({ userManagementServiceBaseUrl }: Props) => {
-  const headers = getAuthHeaders({ useIdToken: true });
+export const useFetchUser = ({
+  userManagementServiceBaseUrl,
+  fasAppId,
+}: Props) => {
+  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
   const { authState } = useAuthContext();
 
   return useQuery(

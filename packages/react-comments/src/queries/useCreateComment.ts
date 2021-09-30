@@ -13,7 +13,7 @@ interface Props {
   comment: string;
   serviceUrl: string;
   scope?: string;
-  headers: AuthHeaders;
+  headers: AuthHeaders | { fasAppId?: string };
   target: CommentTarget;
 }
 export const doCreateComment: (props: Props) => Promise<any> = ({
@@ -42,12 +42,14 @@ export function useCommentCreateMutate({
   target,
   scope,
   serviceUrl,
+  fasAppId,
 }: {
   serviceUrl: string;
   scope?: string;
   target: CommentTarget;
+  fasAppId?: string;
 }) {
-  const headers = getAuthHeaders({ useIdToken: true });
+  const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
   const queryClient = useQueryClient();
 
   return useMutation(

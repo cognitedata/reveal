@@ -1,3 +1,7 @@
+## 0.2.0 Sep 30 2021
+
+- Add 'fasAppId' as prop. to add support for legacy tokens.
+
 ## 0.1.0 Sep 23 2021
 
 - Lookup users from UMS

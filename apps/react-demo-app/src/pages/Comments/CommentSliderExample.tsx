@@ -9,11 +9,13 @@ import { Cards } from './Cards';
 
 interface Props extends BaseUrls {
   data: Asset[];
+  fasAppId?: string;
 }
 export const CommentSliderExample: React.FC<Props> = ({
   data,
   commentServiceBaseUrl,
   userManagementServiceBaseUrl,
+  fasAppId,
 }) => {
   return (
     <BaseContainer>
@@ -21,6 +23,7 @@ export const CommentSliderExample: React.FC<Props> = ({
         scope={['fas-demo']}
         commentServiceBaseUrl={commentServiceBaseUrl}
         userManagementServiceBaseUrl={userManagementServiceBaseUrl}
+        fasAppId={fasAppId}
       >
         {({ setCommentTarget }) => {
           return (
