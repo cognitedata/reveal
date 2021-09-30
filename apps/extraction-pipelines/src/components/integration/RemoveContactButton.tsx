@@ -1,4 +1,4 @@
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 import { Integration, IntegrationFieldName } from 'model/Integration';
 import {
@@ -58,7 +58,7 @@ export const RemoveContactButton: FunctionComponent<RemoveButtonProps> = ({
       contentText={SERVER_ERROR_CONTENT}
     >
       <RemoveBtn
-        type="tertiary"
+        type="ghost-danger"
         aria-label={`Remove ${name} ${index}`}
         onClick={removeRow}
       >
