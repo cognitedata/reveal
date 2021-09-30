@@ -1,15 +1,18 @@
 import React from 'react';
-import {
-  useResourceFilter,
-  useSetResourceFilter,
-} from 'app/context/ResourceSelectionContext';
+
+import { Button } from '@cognite/cogs.js';
+import { SpacedRow } from '@cognite/data-exploration';
 import {
   FileFilterProps,
   AssetFilterProps,
   LabelContainsAnyFilter,
 } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
-import { SpacedRow } from '@cognite/data-exploration';
+import styled from 'styled-components';
+
+import {
+  useResourceFilter,
+  useSetResourceFilter,
+} from 'app/context/ResourceSelectionContext';
 import { trackUsage } from 'app/utils/Metrics';
 
 export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
@@ -47,7 +50,7 @@ export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
   return (
     <SpacedRow>
       {labels.map(label => (
-        <Button
+        <LabelButton
           key={label}
           size="small"
           type="primary"
@@ -55,8 +58,14 @@ export const LabelsQuickSelect = ({ type }: { type: 'file' | 'asset' }) => {
           onClick={() => setLabel(label)}
         >
           {label}
-        </Button>
+        </LabelButton>
       ))}
     </SpacedRow>
   );
 };
+
+const LabelButton = styled(Button)`
+  :not(:last-child) {
+    margin-right: 8px;
+  }
+`;
