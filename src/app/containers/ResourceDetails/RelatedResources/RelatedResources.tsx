@@ -30,12 +30,17 @@ export const RelatedResources = ({
 
   const {
     relationshipCount,
-    linkedResourceCount,
+    linkedResourceCount = 0,
     assetIdCount,
     annotationCount,
     annotatedWithCount,
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
+
+  const filteredLinkedResourceCount =
+    parentResource.type === 'asset'
+      ? Math.max(linkedResourceCount - 1, 0)
+      : linkedResourceCount;
 
   const relatedResourceTypes = useMemo(() => {
     let types: TypeOption[] = [
@@ -60,9 +65,11 @@ export const RelatedResources = ({
     if (parentResource.type === 'asset') {
       types = [
         {
-          label: `Linked ${convertResourceType(type)} (${linkedResourceCount})`,
+          label: `Linked ${convertResourceType(
+            type
+          )} (${filteredLinkedResourceCount})`,
           value: 'linkedResource',
-          count: linkedResourceCount || 0,
+          count: filteredLinkedResourceCount,
         },
         ...types,
       ];
@@ -96,7 +103,7 @@ export const RelatedResources = ({
     type,
     relationshipCount,
     assetIdCount,
-    linkedResourceCount,
+    filteredLinkedResourceCount,
     annotationCount,
     annotatedWithCount,
   ]);
@@ -136,6 +143,7 @@ export const RelatedResources = ({
 
         {selectedType?.value === 'linkedResource' && (
           <LinkedResourceTable
+            excludeParentResource
             parentResource={parentResource}
             type={type}
             {...props}

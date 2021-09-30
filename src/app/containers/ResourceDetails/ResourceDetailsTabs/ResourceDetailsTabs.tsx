@@ -75,27 +75,34 @@ export const ResourceDetailsTabs = ({
 }: ResouceDetailsTabsProps) => {
   const { counts } = useRelatedResourceCounts(parentResource);
 
-  const relationshipTabs = defaultRelationshipTabs
-    .filter(type => !excludedTypes.includes(type))
-    .map(key => (
-      <Tabs.Pane
-        key={key}
-        title={
-          <>
-            <TabTitle>{getTitle(key)}</TabTitle>
-            <Badge
-              text={counts[key]}
-              background={Colors['greyscale-grey3'].hex()}
-            />
-          </>
-        }
-      >
-        <ResourceDetailTabContent
-          resource={parentResource}
-          type={key as ResourceType}
-        />
-      </Tabs.Pane>
-    ));
+  const filteredTabs = defaultRelationshipTabs.filter(
+    type => !excludedTypes.includes(type)
+  );
+
+  let assetCount = parseInt(counts.asset, 10);
+  assetCount = Number.isNaN(assetCount) ? 0 : assetCount;
+  assetCount =
+    parentResource.type === 'asset' ? Math.max(assetCount - 1, 0) : assetCount;
+
+  const relationshipTabs = filteredTabs.map(key => (
+    <Tabs.Pane
+      key={key}
+      title={
+        <>
+          <TabTitle>{getTitle(key)}</TabTitle>
+          <Badge
+            text={key === 'asset' ? assetCount.toString() : counts[key]}
+            background={Colors['greyscale-grey3'].hex()}
+          />
+        </>
+      }
+    >
+      <ResourceDetailTabContent
+        resource={parentResource}
+        type={key as ResourceType}
+      />
+    </Tabs.Pane>
+  ));
   const tabs = [...additionalTabs, ...relationshipTabs];
 
   return (
