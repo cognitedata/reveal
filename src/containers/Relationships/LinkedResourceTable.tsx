@@ -12,11 +12,13 @@ import { SelectableItemsProps } from 'CommonProps';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 
 export const LinkedResourceTable = ({
+  excludeParentResource = false,
   type,
   parentResource,
   onItemClicked,
   ...selectionMode
 }: {
+  excludeParentResource?: boolean;
   type: ResourceType;
   parentResource: ResourceItem;
   onItemClicked: (id: number) => void;
@@ -26,6 +28,7 @@ export const LinkedResourceTable = ({
     case 'asset':
       return (
         <ResultTableLoader<Asset>
+          excludedIds={excludeParentResource ? [parentResource.id] : []}
           mode="search"
           type="asset"
           filter={filter}

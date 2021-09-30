@@ -32,11 +32,13 @@ export const SearchResultLoader = <T extends RealResourceType>({
   children,
   selectionMode = 'none',
   onSelect = () => {},
+  excludedIds = [],
   ...props
 }: {
   children: (
     tableProps: TableProps<T> & TableStateProps & DateRangeProps
   ) => React.ReactNode;
+  excludedIds?: number[];
 } & Partial<SelectableItemsProps> &
   SearchResultLoaderProps &
   TableStateProps &
@@ -51,12 +53,13 @@ export const SearchResultLoader = <T extends RealResourceType>({
     items,
   } = useResourceResults(api, query, filter);
 
+  const filteredItems = items?.filter(({ id }) => !excludedIds.includes(id));
   const selectedIds = useMemo(
     () =>
-      (items || [])
+      (filteredItems || [])
         .filter(el => isSelected({ type, id: el.id }))
         .map(el => el.id),
-    [items, isSelected, type]
+    [filteredItems, isSelected, type]
   );
 
   if (!isFetched) {
@@ -84,7 +87,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
         selectedIds,
         selectionMode,
         onRowSelected: item => onSelect({ type, id: item.id }),
-        data: items as T[] | undefined,
+        data: filteredItems as T[] | undefined,
       })}
     </>
   );

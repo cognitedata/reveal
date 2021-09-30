@@ -20,10 +20,12 @@ import {
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
 export const ResultTableLoader = <T extends Resource>({
+  excludedIds = [],
   mode = 'search',
   children,
   ...props
 }: {
+  excludedIds?: number[];
   mode?: 'search' | 'relatedResources';
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SearchResultLoaderProps> &
@@ -32,7 +34,10 @@ export const ResultTableLoader = <T extends Resource>({
   TableStateProps) => {
   if (mode === 'search') {
     return (
-      <SearchResultLoader {...(props as SearchResultLoaderProps)}>
+      <SearchResultLoader
+        excludedIds={excludedIds}
+        {...(props as SearchResultLoaderProps)}
+      >
         {children}
       </SearchResultLoader>
     );
