@@ -1,7 +1,11 @@
 import { setupServer } from 'msw/node';
 import { screen, waitFor } from '@testing-library/react';
 import { testRenderer } from '__test_utils__/testRenderer';
-import { useAuthContext, getAuthHeaders } from '@cognite/react-container';
+import {
+  useAuthContext,
+  getAuthHeaders,
+  getTenantInfo,
+} from '@cognite/react-container';
 import { getMockNetworkUserGet } from '__test_utils__/getMockNetworkUserGet';
 
 import { ListComments } from '../ListComments';
@@ -21,12 +25,14 @@ const mocks = {
       };
     },
   getAuthHeaders: () => ({}),
+  getTenantInfo: () => ['test', 'test', 'test'],
 };
 
 jest.mock('@cognite/react-container', () => {
   return {
     useAuthContext: jest.fn(),
     getAuthHeaders: jest.fn(),
+    getTenantInfo: jest.fn(),
   };
 });
 
@@ -41,6 +47,7 @@ describe('ListComments', () => {
 
   it('should load without id', async () => {
     (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext(''));
+    (getTenantInfo as jest.Mock).mockImplementation(mocks.getTenantInfo);
 
     testRenderer(ListComments, {
       target: {
@@ -56,7 +63,8 @@ describe('ListComments', () => {
 
   it('should be ok in good case', async () => {
     (useAuthContext as jest.Mock).mockImplementation(mocks.useAuthContext());
-    (getAuthHeaders as jest.Mock).mockImplementation(mocks.getAuthHeaders);
+    (getTenantInfo as jest.Mock).mockImplementation(mocks.getTenantInfo);
+    (getAuthHeaders as jest.Mock).mockImplementation(mocks.getTenantInfo);
 
     testRenderer(ListComments, {
       target: {

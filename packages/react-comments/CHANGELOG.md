@@ -1,3 +1,7 @@
+## 0.2.1 Sep 30 2021
+
+- Fallback to project from 'URL' when authState is undefined.
+
 ## 0.2.0 Sep 30 2021
 
 - Add 'fasAppId' as prop. to add support for legacy tokens.

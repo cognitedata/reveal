@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ErrorBoundary } from '@cognite/react-errors';
 import { Comment, Conversation } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
+import { getTenantInfo, useAuthContext } from '@cognite/react-container';
 import { CommentResponse } from '@cognite/comment-service-types';
 
 import { convertCommentToRichtextEditable } from '../utils/convertCommentToRichtext';
@@ -36,11 +36,15 @@ export const ListComments: React.FC<ListCommentsProps> = ({
   userManagementServiceBaseUrl,
   fasAppId,
 }) => {
+  const [, projectFromUrl] = getTenantInfo(window.location);
+
   const { authState } = useAuthContext();
   const [editing, setEditing] = React.useState<
     CommentResponse['id'] | undefined
   >();
-  const fullServiceUrl = `${commentServiceBaseUrl}/${authState?.project}`;
+  const fullServiceUrl = `${commentServiceBaseUrl}/${
+    authState?.project || projectFromUrl
+  }`;
   const { mutate: createComment } = useCommentCreateMutate({
     target,
     scope: scope ? scope[0] : undefined, // always assume first scope is 'home' app (for legacy)
