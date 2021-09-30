@@ -198,7 +198,7 @@ const AnnotationPreviewSidebar = ({
         },
       ]),
     {
-      onSuccess: () => onSuccess('status updated!'),
+      onSuccess: () => onSuccess('status updated'),
     }
   );
 
@@ -210,12 +210,19 @@ const AnnotationPreviewSidebar = ({
   );
 
   const onSaveAnnotation = (
-    annotation: ProposedCogniteAnnotation | CogniteAnnotation
+    annotation: ProposedCogniteAnnotation | CogniteAnnotation,
+    savedItem: any
   ) => {
     if (typeof annotation.id === 'string') {
-      const item = convertAnnotationsToEvents([annotation])[0];
-      item.id = undefined;
-      createEvent(item);
+      if (savedItem.name && !annotation.label) {
+        annotation.label = savedItem.name;
+      }
+      if (savedItem.description && !annotation.description) {
+        annotation.description = savedItem.description;
+      }
+      const event = convertAnnotationsToEvents([annotation])[0];
+      event.id = undefined;
+      createEvent(event);
     } else {
       const event = convertAnnotationsToEvents([annotation])[0] as CogniteEvent;
       const update: EventChange = {
@@ -521,9 +528,9 @@ const AnnotationPreviewSidebar = ({
                 onDelete={() => {
                   onDeleteAnnotation(selectedAnnotation);
                 }}
-                onSave={() => {
+                onSave={(savedItem: any) => {
                   if (selectedAnnotation) {
-                    onSaveAnnotation(selectedAnnotation);
+                    onSaveAnnotation(selectedAnnotation, savedItem);
                   }
                   setEditing(false);
                   if (isPendingAnnotation) {

@@ -22,6 +22,7 @@ import { removeSimilarAnnotations } from 'utils/AnnotationUtils';
 import { ResourceItem } from 'types/Types';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
+import { AnnotationHoverPreview } from './AnnotationHoverPreview';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js`;
 
@@ -98,6 +99,10 @@ export const FilePreview = ({
           file={file}
           creatable={creatable}
           annotations={allAnnotations}
+          renderItemPreview={annotation => (
+            <AnnotationHoverPreview annotation={annotation} />
+          )}
+          hoverable
           hideDownload
           renderAnnotation={(annotation, isAnnotationSelected) => {
             const iAnnotation = convertCogniteAnnotationToIAnnotation(
