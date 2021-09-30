@@ -198,7 +198,7 @@ const AnnotationPreviewSidebar = ({
         },
       ]),
     {
-      onSuccess: () => onSuccess('status updated!'),
+      onSuccess: () => onSuccess('status updated'),
     }
   );
 
