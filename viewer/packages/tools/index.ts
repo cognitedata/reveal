@@ -20,5 +20,6 @@ export { MapConfig, MapProviders, BingMapConfig, HereMapConfig, MapboxConfig,
   BingMapType, BingMapImageFormat,
   HereMapType, HereMapScheme, HereMapImageFormat
 } from './src/Geomap/MapConfig';
+export { TimelineTool } from './src/Timeline/TimeLineTool';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
