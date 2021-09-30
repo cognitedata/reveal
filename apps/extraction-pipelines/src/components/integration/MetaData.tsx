@@ -5,13 +5,13 @@ import { DetailFieldNames } from 'model/Integration';
 import styled from 'styled-components';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
-import { DetailHeadingEditBtn } from 'components/buttons/DetailHeadingEditBtn';
 import { MetaData as MetaDataModel } from 'model/MetaData';
 import { MetaField } from 'components/integration/MetaDataField';
 import { EditModal } from 'components/modals/EditModal';
 import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import { Hint } from 'styles/StyledForm';
+import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
 const MetaWrapper = styled.section`
   display: flex;
@@ -43,14 +43,7 @@ export const MetaData = ({
     };
   };
 
-  const renderMeta = (meta?: MetaDataModel) => {
-    if (!meta) {
-      return (
-        <AddFieldValueBtn canEdit={canEdit} onClick={toggleModal(true)}>
-          {DetailFieldNames.META_DATA.toLowerCase()}
-        </AddFieldValueBtn>
-      );
-    }
+  const renderMeta = (meta: MetaDataModel) => {
     return (
       <>
         {Object.entries(meta).map(([k, v], index) => {
@@ -68,15 +61,22 @@ export const MetaData = ({
     );
   };
 
+  const meta = storedIntegration?.metadata;
   return (
     <MetaWrapper>
-      <DetailHeadingEditBtn
-        canEdit={canEdit}
-        onClick={() => setShowMetaModal(true)}
-      >
-        {DetailFieldNames.META_DATA}
-      </DetailHeadingEditBtn>
-      {renderMeta(storedIntegration?.metadata)}
+      {meta == null ? (
+        <AddFieldValueBtn canEdit={canEdit} onClick={toggleModal(true)}>
+          {DetailFieldNames.META_DATA.toLowerCase()}
+        </AddFieldValueBtn>
+      ) : (
+        <EditableAreaButton
+          disabled={!canEdit}
+          onClick={() => canEdit && setShowMetaModal(true)}
+          $full
+        >
+          <div>{renderMeta(meta)}</div>
+        </EditableAreaButton>
+      )}
       <EditModal
         visible={showMetaModal}
         onCancel={() => setShowMetaModal(false)}
