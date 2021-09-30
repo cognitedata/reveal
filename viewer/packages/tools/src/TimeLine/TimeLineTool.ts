@@ -23,7 +23,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   public createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
-    return new TimelineKeyframe(this._model, date, nodeCollection, nodeAppearance);
+    this._timeframe.push(new TimelineKeyframe(this._model, date, nodeCollection, nodeAppearance));
   }
 
   public removeKeyFrame(keyFrame: TimelineKeyframe) {
@@ -55,6 +55,9 @@ export class TimelineTool extends Cognite3DViewerToolBase {
         this.styleByDate(this._currentDate);
         this.getNextDate();
       }
+      else {
+        this.stopPlayback();
+      }
     }, durationInMilliSeconds);
   }
 
@@ -62,6 +65,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public stopPlayback() {
     if(this._intervalId !== 0) {
       clearInterval(this._intervalId);
+      this._intervalId = 0;
     }
   }
 
@@ -71,7 +75,14 @@ export class TimelineTool extends Cognite3DViewerToolBase {
       if(currentIndex !== this._timeframe.length - 1) {
         this._currentDate = this._timeframe[currentIndex + 1].getTimeFrameDate();
       }
+      else {
+        this.stopPlayback();
+      }
     }
+  }
+
+  public dispose(): void {
+    super.dispose();
   }
 }
 

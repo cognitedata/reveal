@@ -102,6 +102,10 @@
         },
         {
           "type": "doc",
+          "id": "version-2.x/examples/timelinetool"
+        },
+        {
+          "type": "doc",
           "id": "version-2.x/examples/combine-models"
         }
       ]

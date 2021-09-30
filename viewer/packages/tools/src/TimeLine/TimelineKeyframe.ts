@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
+import { NodeCollectionBase, NodeAppearance, DefaultNodeAppearance } from '@reveal/core/src';
 import { Cognite3DModel } from '@reveal/core';
 
 export class TimelineKeyframe {
@@ -23,7 +23,8 @@ export class TimelineKeyframe {
   }
 
   public applyStyle() {
-    this._model.assignStyledNodeCollection(this._nodeCollection, this._nodeAppearance);
+    //this._model.assignStyledNodeCollection(this._nodeCollection, this._nodeAppearance);
+    this._model.setDefaultNodeAppearance(this._nodeAppearance);
   }
 
   public removeStyle() {
