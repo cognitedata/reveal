@@ -27,9 +27,11 @@ const Name = styled.h4`
   font-size: 0.875rem;
   margin: 0;
 `;
-const Role = styled.div`
+const Role = styled.div<{ isOwner: boolean }>`
   margin-left: 1rem;
-  color: ${Colors['greyscale-grey8'].hex()};
+  color: ${(props) =>
+    props.isOwner ? Colors['purple-2'].hex() : Colors['greyscale-grey8'].hex()};
+  font-weight: ${(props) => (props.isOwner ? 'bold' : 'normal')};
 `;
 const VisuallyHidden = styled.span`
   clip: rect(0 0 0 0);
@@ -48,7 +50,7 @@ export const ContactCard = (user: User) => {
       <InfoList>
         <DivFlex>
           <Name>{name}</Name>
-          <Role>{role}</Role>
+          <Role isOwner={role?.toLowerCase() === 'owner'}>{role}</Role>
         </DivFlex>
         <EmailLink email={email} />
       </InfoList>
