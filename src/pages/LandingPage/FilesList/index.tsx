@@ -8,7 +8,7 @@ import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { Table } from 'components/Common';
 import { getColumns } from './columns';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 8;
 
 type Props = {
   query: string;

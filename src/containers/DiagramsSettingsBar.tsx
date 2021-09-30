@@ -18,6 +18,7 @@ type Props = {
   selectedDiagramsIds: number[];
   buttons?: Button[];
   primarySetting?: Button;
+  marginBottom?: number;
 };
 
 export const DiagramsSettingsBar = (props: Props) => {
@@ -25,6 +26,7 @@ export const DiagramsSettingsBar = (props: Props) => {
     selectedDiagramsIds,
     buttons = [],
     primarySetting = 'svgSave',
+    marginBottom = 64,
   } = props;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -80,7 +82,7 @@ export const DiagramsSettingsBar = (props: Props) => {
   }, [allDiagrams, selectedDiagramsIds]);
 
   return (
-    <Bar row align>
+    <Bar marginBottom={marginBottom}>
       <Title
         level={6}
         style={{
@@ -178,10 +180,12 @@ export const DiagramsSettingsBar = (props: Props) => {
   );
 };
 
-const Bar = styled(Flex)`
+const Bar = styled.div<{ marginBottom: number }>`
+  display: flex;
   position: sticky;
-  bottom: 64px;
+  bottom: ${(props) => props.marginBottom}px;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
   height: 52px;
   border-radius: 8px;

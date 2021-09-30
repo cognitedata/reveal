@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Title } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { Flex, HugeButton, PageTitle } from 'components/Common';
+import { Flex, PageTitle } from 'components/Common';
 import { useWorkflowCreateNew } from 'modules/workflows';
 import { FileRequestFilter } from '@cognite/cdf-sdk-singleton';
 import { useAnnotatedFiles } from 'hooks';
 import { DiagramsSettingsBar } from 'containers';
-import { Loading } from './components';
+import { Loading, TitleRow } from './components';
 import FilesListEmpty from './FilesList/FilesListEmpty';
 import FilesList from './FilesList';
 import FilterBar from './FilterBar';
@@ -27,30 +27,34 @@ export default function LandingPage() {
   };
 
   const Header = () => (
-    <div>
-      <PageTitle title="Interactive Engineering Diagrams" />
-      <Flex row style={{ margin: '32px 16px 56px 0' }}>
-        <HugeButton type="primary" onClick={onContextualizeNew}>
+    <Flex column>
+      <TitleRow align>
+        <PageTitle title="Interactive Engineering Diagrams" />
+        <Button type="primary" onClick={onContextualizeNew}>
           Create interactive diagrams
-        </HugeButton>
-      </Flex>
-      <Title level={4}>Review and approve pending interactive diagrams</Title>
-    </div>
+        </Button>
+      </TitleRow>
+      <Title level={4}>Diagrams pending approval</Title>
+    </Flex>
   );
 
   if (isLoading) {
     return (
-      <>
+      <Flex column style={{ padding: '16px 16px 0 16px' }}>
         <Header />
         <Loading />
-      </>
+      </Flex>
     );
   }
   if (!files.length && isFilterEmpty) {
-    return <FilesListEmpty />;
+    return (
+      <Flex column style={{ padding: '16px 16px 0 16px' }}>
+        <FilesListEmpty />
+      </Flex>
+    );
   }
   return (
-    <>
+    <Flex column style={{ padding: '16px 16px 0 16px' }}>
       <Header />
       <FilterBar
         query={query}
@@ -69,8 +73,9 @@ export default function LandingPage() {
           selectedDiagramsIds={selectedDiagramsIds}
           buttons={['reject', 'approve', 'svgSave', 'recontextualize']}
           primarySetting="recontextualize"
+          marginBottom={16}
         />
       )}
-    </>
+    </Flex>
   );
 }
