@@ -46,8 +46,5 @@ describe('IntegrationHeading', () => {
       screen.getByText(mockIntegration.name);
     });
     expect(screen.getByText(mockIntegration.name)).toBeInTheDocument();
-    expect(screen.getByText(mockDataSet.name)).toBeInTheDocument();
-    expect(screen.getByText(/add source/i)).toBeInTheDocument();
-    expect(screen.getByText(/add description/i)).toBeInTheDocument();
   });
 });
