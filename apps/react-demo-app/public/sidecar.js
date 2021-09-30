@@ -31,4 +31,5 @@ window.__cogniteSidecar = {
       userId: 'react-demo-app-e2e-azure-dev',
     },
   ],
+  disableIntercom: false,
 };
