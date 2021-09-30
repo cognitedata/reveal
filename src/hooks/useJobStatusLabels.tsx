@@ -1,9 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { LabelVariants } from '@cognite/cogs.js';
 import { AppStateContext } from 'context';
 import { JobStatus } from 'modules/types';
 import { useJobStatus } from 'modules/contextualization/pnidParsing';
 import { useActiveWorkflow } from 'hooks';
+import ResourcesLoaded from 'pages/PageResultsOverview/SectionResults/ResourcesLoaded';
 
 export const useJobStatusLabels = () => {
   const { workflowId } = useActiveWorkflow();
@@ -31,7 +32,7 @@ type StatusLabels = {
   [key in JobStatus]: {
     jobLabel: string;
     labelVariant: LabelVariants;
-    buttonLabel: string;
+    buttonLabel: string | React.ReactNode;
   };
 };
 
@@ -49,7 +50,7 @@ const statusLabels: StatusLabels = {
   loading: {
     jobLabel: 'Running...',
     labelVariant: 'normal',
-    buttonLabel: 'Loading resources...',
+    buttonLabel: <ResourcesLoaded />,
   },
   running: {
     jobLabel: 'In progress',

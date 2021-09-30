@@ -11,7 +11,6 @@ import {
 } from 'modules/contextualization/pnidParsing';
 import ResultsTable from './ResultsTable';
 import ResultsTableEmpty from './ResultsTableEmpty';
-import ResourcesLoaded from './ResourcesLoaded';
 import DiagramActions from './DiagramActions';
 import FilterBar from './FilterBar';
 import { SelectionFilter } from './types';
@@ -77,7 +76,7 @@ const TitleBar = ({ jobStatus }: { jobStatus: JobStatus }) => {
           {diagrams}
         </span>
       </Title>
-      {isJobDone ? <DiagramActions /> : <ResourcesLoaded />}
+      {isJobDone && <DiagramActions />}
     </Flex>
   );
 };

@@ -20,7 +20,6 @@ export default function ResourcesLoaded() {
     <Flex row align>
       {shouldShowLoadingProgress && (
         <InfoWrapper>
-          <Icon type="LoadingSpinner" />
           <Body strong level={2}>
             {loadedPercent}% resources loaded
           </Body>
@@ -30,7 +29,7 @@ export default function ResourcesLoaded() {
         <InfoWrapper>
           <Icon type="CheckmarkFilled" />
           <Body strong level={2}>
-            All resources loaded!
+            All resources loaded
           </Body>
         </InfoWrapper>
       )}
