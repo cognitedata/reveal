@@ -4,7 +4,6 @@ import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
-import { isOwner, partition } from 'utils/integrationUtils';
 import { User } from 'model/User';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
@@ -27,12 +26,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
   if (!integration || !project) {
     return <></>;
   }
-  const { pass: owner, fail: other } = partition<User>(
-    integration.contacts ?? [],
-    isOwner
-  );
-
-  const contacts = integration.contacts;
+  const { contacts } = integration;
 
   const openEdit = () => {
     setShowModal(true);

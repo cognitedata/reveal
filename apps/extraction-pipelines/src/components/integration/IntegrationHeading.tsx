@@ -1,23 +1,14 @@
 import React, { FunctionComponent } from 'react';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import {
-  descriptionSchema,
-  nameSchema,
-  sourceSchema,
-} from 'utils/validation/integrationSchemas';
+import { nameSchema } from 'utils/validation/integrationSchemas';
 import InlineEdit from 'components/integration/InlineEdit';
-import { Icon, Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import DetailsValueView from 'components/table/details/DetailsValueView';
-import {
-  DESCRIPTION_LABEL,
-  EXT_PIPE_NAME_HEADING,
-  SOURCE_LABEL,
-} from 'utils/constants';
+import { EXT_PIPE_NAME_HEADING } from 'utils/constants';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
@@ -28,10 +19,6 @@ const Wrapper = styled.div`
   #name {
     flex: 1;
   }
-`;
-
-const IconWithMargin = styled(Icon)`
-  margin: 0 1em;
 `;
 
 const StyledTitle = styled(Title)`
@@ -52,7 +39,7 @@ export const IntegrationHeading: FunctionComponent = () => {
     return <></>;
   }
 
-  // TODO: calculate this a more centralized place?
+  // calculate this a more centralized place?
   const lastRun = calculateStatus({
     lastSuccess: integration?.lastSuccess,
     lastFailure: integration?.lastFailure,

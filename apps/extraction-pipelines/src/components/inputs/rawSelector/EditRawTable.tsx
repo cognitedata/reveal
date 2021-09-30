@@ -1,28 +1,17 @@
 import React, { FunctionComponent, useState } from 'react';
 import { DetailFieldNames, Integration } from 'model/Integration';
 import { RawEditModal } from 'components/modals/RawEditModal';
-import { EditButton } from 'styles/StyledButton';
 import { TEST_ID_BTN_SAVE } from 'components/integration/DocumentationSection';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { StyledLabel } from 'styles/StyledForm';
-import { bottomSpacing } from 'styles/StyledVariables';
 import { createLink } from '@cognite/cdf-utilities';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
-const RawLabel = styled(StyledLabel)`
-  color: ${Colors['text-color'].hex()};
-  display: flex;
-`;
 const RawTableWrapper = styled.div``;
-const StyledButton = styled(Button)`
-  display: block;
-  height: fit-content;
-`;
 export const RAW_DB: Readonly<string> = 'Raw database';
 export const RAW_TABLE: Readonly<string> = 'Raw table';
 const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {

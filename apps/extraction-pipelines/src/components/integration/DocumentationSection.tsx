@@ -200,7 +200,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
                   flexDirection: 'column',
                 }}
               >
-                <Graphic type={'RuleMonitoring'} />
+                <Graphic type="RuleMonitoring" />
                 <p style={{ margin: '3em 0' }}>
                   Use markdown to document important information about the
                   extraction pipeline, for troubleshooting or more detailed

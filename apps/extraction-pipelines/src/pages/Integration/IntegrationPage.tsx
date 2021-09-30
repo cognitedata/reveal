@@ -27,7 +27,6 @@ import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
-import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
 import {
@@ -127,9 +126,8 @@ const DeleteDialog: FunctionComponent<{
 };
 
 const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
-  const { pathname, search } = useLocation();
+  const { search } = useLocation();
   const { path, url } = useRouteMatch();
-  const { origin } = useAppEnv();
   const { id } = useParams<RouterParams>();
   const history = useHistory();
   const { project } = useAppEnv();

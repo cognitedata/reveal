@@ -28,7 +28,6 @@ import { RunUI } from 'model/Runs';
 import moment from 'moment';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
-import { LatestRunMessage } from 'components/integration/LatestRunMessage';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
 
