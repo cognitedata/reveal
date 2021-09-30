@@ -43,6 +43,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   currentShape: string;
   nextKeyPoint: { collectionName: string; orderNumber: number };
   currentCollection: KeypointItemCollection | null;
+  isLoading: (status: boolean) => void;
 };
 
 export type AnnotationTableRowProps = {

@@ -1,7 +1,7 @@
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
 import { ProcessFileDetailsContainer } from 'src/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { workflowRoutes, WorkflowStepKey } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
@@ -9,11 +9,14 @@ import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 
 type ProcessPageProps = RouteComponentProps<{ step: WorkflowStepKey }>;
 
-const ProcessStep = (props: ProcessPageProps) =>
-  LazyWrapper(
-    props,
-    () => import('src/modules/Process/Containers/ProcessStep')
+const ProcessStep = (props: ProcessPageProps) => {
+  const compRoute = useMemo(
+    () => () => import('src/modules/Process/Containers/ProcessStep'),
+    []
   );
+
+  return <LazyWrapper routeProps={props} importFn={compRoute} />;
+};
 
 export default function Process({ location }: ProcessPageProps) {
   return (

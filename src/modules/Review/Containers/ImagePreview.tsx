@@ -25,10 +25,12 @@ export const ImagePreview = ({
   file,
   onEditMode,
   annotations,
+  isLoading,
 }: {
   file: FileInfo;
   onEditMode: (editMode: boolean) => void;
   annotations: VisibleAnnotation[];
+  isLoading: (status: boolean) => void;
 }) => {
   const dispatch = useDispatch();
 
@@ -97,6 +99,7 @@ export const ImagePreview = ({
       currentShape={currentShape}
       nextKeyPoint={nextPoint}
       currentCollection={currentKeypointCollection}
+      isLoading={isLoading}
     />
   );
 };

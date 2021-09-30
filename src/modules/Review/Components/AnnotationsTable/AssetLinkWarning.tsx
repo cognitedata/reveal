@@ -61,9 +61,6 @@ export const AssetLinkWarning = ({
       setWarning,
       setWarningType
     );
-    return () => {
-      console.log('removed');
-    };
   }, [annotation, file]);
 
   const childrenWithProps = React.Children.map(children, (child) => {

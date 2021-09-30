@@ -157,16 +157,13 @@ export default annotationSlice.reducer;
 
 // selectors
 
-export const annotationsById = createSelector(
-  (state: State) => state,
-  (state: State) => {
-    return state.annotations.byId;
-  }
-);
+export const annotationsById = (state: State) => {
+  return state.annotations.byId;
+};
 
 export const selectFileAnnotations = createSelector(
   (state: State, id: number) => state.files.byId[id],
-  (state: State) => state.annotations.byId,
+  annotationsById,
   (annotationIds, allAnnotations) => {
     if (annotationIds && annotationIds.length) {
       return annotationIds.map((id) => allAnnotations[id]);

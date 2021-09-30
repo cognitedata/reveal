@@ -15,6 +15,7 @@ import { RootState } from 'src/store/rootReducer';
 const queryClient = new QueryClient();
 
 const VideoReview = (props: { file: FileInfo; prev: string | undefined }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { file, prev } = props;
 
   const reviewFiles = useSelector((state: RootState) =>
@@ -33,7 +34,7 @@ const VideoReview = (props: { file: FileInfo; prev: string | undefined }) => {
               {file && <VideoPreview fileObj={file} />}
             </PreviewContainer>
             {reviewFiles.length > 1 && (
-              <ThumbnailCarousel prev={prev} files={reviewFiles} />
+              <ThumbnailCarousel files={reviewFiles} onItemClick={() => {}} />
             )}
           </FilePreviewContainer>
           <RightPanelContainer>

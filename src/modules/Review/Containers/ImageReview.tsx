@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { Spin } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import {
   selectAllReviewFiles,
@@ -6,6 +8,7 @@ import {
   selectTagAnnotationsForFile,
   selectVisibleNonRejectedAnnotationsForFile,
 } from 'src/modules/Review/store/reviewSlice';
+import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
@@ -21,7 +24,10 @@ const queryClient = new QueryClient();
 
 const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
+  const history = useHistory();
   const [inFocus, setInFocus] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const loadingState = useRef<boolean>(false);
 
   const reviewFiles = useSelector((state: RootState) =>
     selectAllReviewFiles(state)
@@ -43,6 +49,35 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
     setInFocus(mode);
   };
 
+  const handleImageLoad = (status: boolean) => {
+    setLoading(status);
+    loadingState.current = status;
+  };
+
+  const onItemClick = (fileId: number) => {
+    if (fileId !== file.id) {
+      setLoading(true);
+      loadingState.current = true;
+
+      // Go to this file
+      history.replace(
+        getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
+        { from: prev }
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (loading && loadingState.current) {
+      // timeout loading spinner
+      setTimeout(() => {
+        if (loadingState.current) {
+          setLoading(false);
+        }
+      }, 10000);
+    }
+  }, [loading]);
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -52,16 +87,26 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
               fullHeight={reviewFiles.length === 1}
               inFocus={inFocus}
             >
+              {loading && (
+                // eslint-disable-next-line @cognite/no-number-z-index
+                <PreviewLoader style={{ zIndex: 1000 }}>
+                  <Spin />
+                </PreviewLoader>
+              )}
               {file && (
                 <ImagePreview
                   file={file}
                   onEditMode={onEditMode}
                   annotations={visibleNonRejectedAnnotations}
+                  isLoading={handleImageLoad}
                 />
               )}
             </PreviewContainer>
             {reviewFiles.length > 1 && (
-              <ThumbnailCarousel prev={prev} files={reviewFiles} />
+              <ThumbnailCarousel
+                files={reviewFiles}
+                onItemClick={onItemClick}
+              />
             )}
           </FilePreviewContainer>
           <RightPanelContainer>
@@ -112,7 +157,7 @@ const AnnotationContainer = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: auto minmax(500px, 32%);
+  grid-template-columns: auto minmax(520px, 32%);
   grid-template-rows: 100%;
 `;
 
@@ -124,13 +169,27 @@ const FilePreviewContainer = styled.div`
 `;
 type PreviewProps = {
   fullHeight: boolean;
-  inFocus: boolean;
+  inFocus?: boolean;
 };
+
+// eslint-disable-next-line @cognite/no-number-z-index
+const PreviewLoader = styled.div`
+  width: calc(100% - 50px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.15),
+    inset -3px 0 5px rgba(0, 0, 0, 0.15), inset 3px 0 5px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  background-color: white;
+  right: 0;
+`;
 const PreviewContainer = styled.div<PreviewProps>`
   max-height: ${(props) => (props.fullHeight ? '100%' : 'calc(100% - 120px)')};
   height: ${(props) => (props.fullHeight ? '100%' : 'calc(100% - 120px)')};
-  background: grey;
   outline: ${(props) => (props.inFocus ? '3px solid #4A67FB' : 'none')};
+  position: relative;
 `;
 
 const RightPanelContainer = styled.div`

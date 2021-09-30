@@ -49,6 +49,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
     nextKeyPoint,
     currentShape,
     currentCollection,
+    isLoading,
   }: ReactImageAnnotateWrapperProps) => {
     const [imageUrl, setImageUrl] = useState<string>();
     const [selectedTool, setSelectedTool] = useState<AnnotatorTool>();
@@ -259,6 +260,10 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
       setSelectedTool(tool);
     };
 
+    const onImageOrVideoLoaded = () => {
+      isLoading(false);
+    };
+
     useEffect(() => {
       return () => {
         dispatch(deleteCurrentCollection());
@@ -279,6 +284,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
           deSelectAllRegions={deselectAllRegions}
           onSelectTool={onSelectTool}
           selectedTool={selectedTool}
+          onImageOrVideoLoaded={onImageOrVideoLoaded}
         />
         <ExtraToolbar>
           <Tooltip

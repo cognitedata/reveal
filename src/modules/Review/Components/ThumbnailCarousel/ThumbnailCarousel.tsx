@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 // import Swiper core and required modules
@@ -12,7 +11,6 @@ import SwiperCore, {
 } from 'swiper/core';
 import styled from 'styled-components';
 import { getIdfromUrl } from 'src/utils/tenancy';
-import { useHistory } from 'react-router-dom';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import { Button } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
@@ -22,11 +20,11 @@ import swiperStyles from 'swiper/swiper-bundle.css';
 SwiperCore.use([Navigation, Mousewheel, Pagination, Virtual, Keyboard]);
 
 export const ThumbnailCarousel = (props: {
-  prev?: string;
   files: FileInfo[];
+  onItemClick: (fileId: number) => void;
 }) => {
-  const { prev, files } = props;
-  const history = useHistory();
+  const { files } = props;
+
   const initialSlide = Number(getIdfromUrl());
   const [currentSlide, setCurrentSlide] = useState<number>(initialSlide);
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(
@@ -45,11 +43,7 @@ export const ThumbnailCarousel = (props: {
     setCurrentSlide(fileId);
     setCurrentSlideIndex(files.findIndex((item: any) => item.id === fileId));
 
-    // Go to this file
-    history.replace(
-      getParamLink(workflowRoutes.review, ':fileId', String(fileId)),
-      { from: prev }
-    );
+    props.onItemClick(fileId);
   };
 
   const slides = files.map((data, index) => {
