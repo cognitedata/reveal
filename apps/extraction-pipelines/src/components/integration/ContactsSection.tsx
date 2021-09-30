@@ -27,6 +27,7 @@ import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { AddContact } from './AddContact';
+import { Checkbox, Radio } from '@cognite/cogs.js';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -37,7 +38,7 @@ export const OwnerWrapper = styled.div`
 `;
 export const Row = styled.div`
   display: grid;
-  grid-template-columns: 10rem 6rem 2fr 2fr 5rem;
+  grid-template-columns: 2rem 10rem 6rem 2fr 2fr 5rem;
   grid-column-gap: 0.5rem;
   align-items: center;
   input {
@@ -54,23 +55,16 @@ interface ContactsSectionProps {}
 export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
-  const { pass: owners, fail: nonOwners } = partition(
-    (current?.contacts || []).map((u, index) => ({ ...u, index })) ?? [],
-    isOwner
-  );
+  const contacts =
+    (current?.contacts || []).map((u, index) => ({ ...u, index })) ?? [];
 
   return (
     <ContactsSectionWrapper role="grid">
-      <StyledTitle2 id="owner-heading">{DetailFieldNames.OWNER}</StyledTitle2>
-      <Hint>{OWNER_HINT}</Hint>
-      {integration && contactTable(owners, integration)}
-      {owners.length === 0 && <AddContact isOwner />}
-
       <StyledTitle2 id="contacts-heading">
         {TableHeadings.CONTACTS}
       </StyledTitle2>
       <Hint>{CONTACTS_HINT}</Hint>
-      {integration && contactTable(nonOwners, integration)}
+      {integration && contactTable(contacts, integration)}
 
       <AddContact />
     </ContactsSectionWrapper>
@@ -82,59 +76,81 @@ function contactTable(
   integration: Integration
 ) {
   return (
-    <>
-      <HeadingRow>
-        <Heading>{ROLE_LABEL}</Heading>
-        <Heading>{NOTIFICATION_LABEL}</Heading>
-        <Heading>{NAME_LABEL}</Heading>
-        <Heading>{EMAIL_LABEL}</Heading>
-      </HeadingRow>
-      {contacts.map((contact) => {
-        return (
-          <Row key={contact.email} className="row-style-even row-height-4">
-            <EditPartContacts
-              integration={integration}
-              name="contacts"
-              index={contact.index}
-              field="role"
-              label="Role"
-              schema={contactRoleNotOwnerSchema}
-              defaultValues={{ role: contact.role }}
-            />
-            <NotificationUpdateSwitch
-              integration={integration}
-              name="contacts"
-              index={contact.index}
-              field="sendNotification"
-              defaultValues={{ sendNotification: contact.sendNotification }}
-            />
-            <EditPartContacts
-              integration={integration}
-              name="contacts"
-              index={contact.index}
-              field="name"
-              label={TableHeadings.NAME}
-              schema={contactNameSchema}
-              defaultValues={{ name: contact.name }}
-            />
-            <EditPartContacts
-              integration={integration}
-              name="contacts"
-              index={contact.index}
-              field="email"
-              label="Email"
-              schema={contactEmailSchema}
-              defaultValues={{ email: contact.email }}
-            />
+    <table>
+      <thead>
+        <tr>
+          <td>Owner</td>
+          <td>{ROLE_LABEL}</td>
+          <td>{NOTIFICATION_LABEL}</td>
+          <td>{NAME_LABEL}</td>
+          <td>{EMAIL_LABEL}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {contacts.map((contact) => {
+          return (
+            <tr key={contact.email} className="row-style-even row-height-4">
+              <td>
+                <Radio
+                  name="whatever"
+                  checked={contact.role?.toLowerCase() === 'owner'}
+                />
+              </td>
 
-            <RemoveContactButton
-              integration={integration}
-              name="contacts"
-              index={contact.index}
-            />
-          </Row>
-        );
-      })}
-    </>
+              <td>
+                <EditPartContacts
+                  integration={integration}
+                  name="contacts"
+                  index={contact.index}
+                  field="role"
+                  label="Role"
+                  schema={contactRoleNotOwnerSchema}
+                  defaultValues={{ role: contact.role }}
+                />
+              </td>
+              <td>
+                <NotificationUpdateSwitch
+                  integration={integration}
+                  name="contacts"
+                  index={contact.index}
+                  field="sendNotification"
+                  defaultValues={{ sendNotification: contact.sendNotification }}
+                />
+              </td>
+              <td>
+                <EditPartContacts
+                  integration={integration}
+                  name="contacts"
+                  index={contact.index}
+                  field="name"
+                  label={TableHeadings.NAME}
+                  schema={contactNameSchema}
+                  defaultValues={{ name: contact.name }}
+                />
+              </td>
+              <td>
+                <EditPartContacts
+                  integration={integration}
+                  name="contacts"
+                  index={contact.index}
+                  field="email"
+                  label="Email"
+                  schema={contactEmailSchema}
+                  defaultValues={{ email: contact.email }}
+                />
+              </td>
+
+              <td>
+                <RemoveContactButton
+                  integration={integration}
+                  name="contacts"
+                  index={contact.index}
+                />
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }
