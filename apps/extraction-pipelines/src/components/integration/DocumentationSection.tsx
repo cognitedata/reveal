@@ -24,30 +24,13 @@ import {
 import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
-import { HeadingLabel } from 'components/inputs/HeadingLabel';
+import { CloseButton, SaveButton } from 'styles/StyledButton';
 import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Section } from 'components/integration/IntegrationInformation';
 import { Graphic } from '@cognite/cogs.js';
-
-export const EditDocumentationButton = styled(EditButton)`
-  &.cogs-btn {
-    .cogs-icon {
-      &.cogs-icon-Edit {
-        align-self: flex-start;
-      }
-    }
-  }
-  &.cogs-btn.cogs-btn-ghost.has-content {
-    display: flex;
-  }
-  .cogs-documentation--header {
-    margin: 1rem 0;
-    text-align: left;
-  }
-`;
+import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
 const DocumentationForm = styled.form`
   display: grid;
@@ -191,7 +174,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             />
           </>
         ) : (
-          <EditDocumentationButton
+          <EditableAreaButton
             onClick={onEditClick}
             disabled={!canEdit}
             className={`edit-button ${
@@ -228,7 +211,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
                 </AddFieldInfoText>
               </div>
             )}
-          </EditDocumentationButton>
+          </EditableAreaButton>
         )}
       </DocumentationForm>
     </Section>
