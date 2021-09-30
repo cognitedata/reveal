@@ -14,7 +14,7 @@ import { Colors } from '@cognite/cogs.js';
 
 const Wrapper = styled.div`
   &:hover {
-    background-color: ${Colors['midblue-8'].hex()};
+    background-color: ${Colors['midblue-7'].hex()};
     cursor: pointer;
   }
 `;

@@ -117,7 +117,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
       <Section title="Contacts" icon="Public">
         <ContactsView canEdit={canEdit} />
       </Section>
-      <Section title="Raw database - Raw table" icon="Datasource">
+      <Section title="Raw database • Raw table" icon="Datasource">
         <EditRawTable canEdit={canEdit} />
       </Section>
       <Section title="Additional metadata" icon="DataTable">

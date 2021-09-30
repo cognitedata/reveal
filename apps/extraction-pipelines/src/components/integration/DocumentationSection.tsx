@@ -30,8 +30,9 @@ import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Section } from 'components/integration/IntegrationInformation';
+import { Graphic } from '@cognite/cogs.js';
 
-const EditDocumentationButton = styled(EditButton)`
+export const EditDocumentationButton = styled(EditButton)`
   &.cogs-btn {
     .cogs-icon {
       &.cogs-icon-Edit {
@@ -208,9 +209,24 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
                 {currentIntegration.documentation ?? ''}
               </MarkdownView>
             ) : (
-              <AddFieldInfoText>
-                {DetailFieldNames.DOCUMENTATION.toLowerCase()}
-              </AddFieldInfoText>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: '100%',
+                  flexDirection: 'column',
+                }}
+              >
+                <Graphic type={'RuleMonitoring'} />
+                <p style={{ margin: '3em 0' }}>
+                  Use markdown to document important information about the
+                  extraction pipeline, for troubleshooting or more detailed
+                  information about the data such as selection criteria.
+                </p>
+                <AddFieldInfoText>
+                  {DetailFieldNames.DOCUMENTATION.toLowerCase()}
+                </AddFieldInfoText>
+              </div>
             )}
           </EditDocumentationButton>
         )}

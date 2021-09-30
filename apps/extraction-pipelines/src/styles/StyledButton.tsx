@@ -64,7 +64,7 @@ export const EditButton = styled((props) => (
         }
       }
       :hover {
-        background-color: ${Colors['midblue-8'].hex()};
+        background-color: ${Colors['midblue-7'].hex()};
         .cogs-icon {
           &.cogs-icon-Edit {
             opacity: 1;
