@@ -10,14 +10,9 @@ import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
 import { ContactsSection } from 'components/integration/ContactsSection';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
-const Wrapper = styled.div`
-  &:hover {
-    background-color: ${Colors['midblue-7'].hex()};
-    cursor: pointer;
-  }
-`;
+const Wrapper = styled.div``;
 interface ContactsViewProps {
   canEdit: boolean;
 }
@@ -49,11 +44,15 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
 
   return (
     <>
-      <Wrapper onClick={openEdit}>
+      <Wrapper>
         {contacts && contacts.length > 0 ? (
-          contacts.map((contact: User) => {
-            return <ContactCard key={contact.email} {...contact} />;
-          })
+          <EditableAreaButton onClick={openEdit} $full>
+            <div>
+              {contacts.map((contact: User) => {
+                return <ContactCard key={contact.email} {...contact} />;
+              })}
+            </div>
+          </EditableAreaButton>
         ) : (
           <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
             {TableHeadings.CONTACTS.toLowerCase()}
