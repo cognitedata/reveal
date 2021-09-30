@@ -79,10 +79,19 @@ export const ResourceDetailsTabs = ({
     type => !excludedTypes.includes(type)
   );
 
-  let assetCount = parseInt(counts.asset, 10);
-  assetCount = Number.isNaN(assetCount) ? 0 : assetCount;
-  assetCount =
-    parentResource.type === 'asset' ? Math.max(assetCount - 1, 0) : assetCount;
+  let assetCount = counts.asset;
+  if (parentResource.type === 'asset') {
+    const assetCountWithoutSeparator = counts.asset.split(',').join('');
+    let parsedAssetCount = parseInt(assetCountWithoutSeparator, 10);
+    parsedAssetCount = Number.isNaN(parsedAssetCount) ? 0 : parsedAssetCount;
+    parsedAssetCount =
+      parentResource.type === 'asset'
+        ? Math.max(parsedAssetCount - 1, 0)
+        : parsedAssetCount;
+    assetCount = parsedAssetCount
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
 
   const relationshipTabs = filteredTabs.map(key => (
     <Tabs.Pane
@@ -91,7 +100,7 @@ export const ResourceDetailsTabs = ({
         <>
           <TabTitle>{getTitle(key)}</TabTitle>
           <Badge
-            text={key === 'asset' ? assetCount.toString() : counts[key]}
+            text={key === 'asset' ? assetCount : counts[key]}
             background={Colors['greyscale-grey3'].hex()}
           />
         </>
