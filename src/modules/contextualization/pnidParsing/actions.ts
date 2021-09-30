@@ -14,10 +14,11 @@ import {
   StartPnidParsingJobProps,
   PollJobResultsProps,
   PnidsParsingJobSchema,
+  PnidFailedFileSchema,
 } from 'modules/types';
 import { setJobId, workflowDiagramsSelector } from 'modules/workflows';
 import { getUniqueValuesArray } from 'utils/utils';
-import handleError from 'utils/handleError';
+import handleError, { translateError } from 'utils/handleError';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import {
   isFileApproved,
@@ -286,7 +287,10 @@ const handleNewAnnotations = async (
             annotationCounts[fileId] = fileAnnotationCount;
           }
         } else if (errorMessage) {
-          failedFiles.push({ fileId, errorMessage });
+          const err = translateError(errorMessage);
+          const failedFile: PnidFailedFileSchema = { fileId };
+          if (err) failedFile.errorMessage = err;
+          failedFiles.push(failedFile);
         }
       }
     )

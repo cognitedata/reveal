@@ -31,7 +31,10 @@ export default function DiagramActions() {
   return (
     <InfoWrapper>
       <Tooltip
-        title={isApproveAllDisabled && 'All diagrams have been approved!'}
+        title={
+          isApproveAllDisabled &&
+          'All diagrams are already approved or have no tags to review!'
+        }
       >
         <Button
           aria-label="Button-Approve-All"

@@ -39,7 +39,12 @@ export const useConvertToSVG = (fileIds: number[]) => {
   );
 
   useEffect(() => {
-    if (convertStatus && convertStatus !== 'Completed') setIsConverting(true);
+    if (
+      convertStatus &&
+      convertStatus !== 'Completed' &&
+      convertStatus !== 'Failed'
+    )
+      setIsConverting(true);
     else setIsConverting(false);
   }, [convertStatus]);
 
@@ -52,6 +57,7 @@ export const useConvertToSVG = (fileIds: number[]) => {
         })
       );
   };
+
   return {
     convertDiagramsToSVG,
     nrOfPendingDiagramsToConvert,

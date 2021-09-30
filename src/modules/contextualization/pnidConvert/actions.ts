@@ -90,7 +90,7 @@ export const startConvertFileToSvgJob = {
             } = data;
             if (newStatus === 'Failed') {
               convertErrorNotification(scopedErrorMessage);
-              dispatch(rejectJob({ jobId }));
+              dispatch(rejectJob({ jobId, job: data }));
               Promise.reject();
               return;
             }
@@ -147,9 +147,8 @@ export const startConvertFileToSvgJob = {
               );
 
               await dispatch(finishJob({ job: { ...data, svgIds } }));
-              convertSuccessNotification();
+              convertSuccessNotification(data);
               Promise.resolve(jobId);
-
               timer.stop({ success: true, jobId });
             } catch (e) {
               convertErrorNotification(tryToStringify({ ...e }));
@@ -159,7 +158,9 @@ export const startConvertFileToSvgJob = {
             }
           },
           (data) => {
-            dispatch(updateJob({ jobId, status: data.status }));
+            // failed files show as success for a few seconds if this check is not here
+            if (data.status !== 'Completed' && data.status !== 'Failed')
+              dispatch(updateJob({ jobId, status: data.status }));
           },
           undefined,
           3000

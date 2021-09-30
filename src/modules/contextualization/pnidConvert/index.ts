@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { ERRORS } from 'stringConstants';
 import { startConvertFileToSvgJob } from './actions';
 
 type State = {
@@ -7,6 +8,7 @@ type State = {
     fileId: number;
     status: string;
     svgId?: number;
+    errorMessage?: string;
   };
 };
 
@@ -36,13 +38,15 @@ export const svgConvertSlice = createSlice({
       });
     },
     rejectJob: (state, action) => {
-      const { jobId } = action.payload;
+      const { jobId, job } = action.payload;
       const fileIds = Object.values(state).map((fileData) => fileData.fileId);
       fileIds.forEach((fileId: number) => {
+        const file = job?.items?.find((item: any) => item.fileId === fileId);
         state[fileId] = {
           jobId,
           fileId,
           status: 'Failed',
+          errorMessage: file?.errorMessage ?? ERRORS.SVG_BAD,
         };
       });
     },
@@ -50,13 +54,18 @@ export const svgConvertSlice = createSlice({
       const { job } = action.payload;
       const fileIds = Object.values(state).map((fileData) => fileData.fileId);
       fileIds.forEach((fileId: number) => {
+        const file = job.items.find((item: any) => item.fileId === fileId);
         state[fileId] = {
           jobId: job.jobId,
           fileId,
-          status: job.status,
-          svgId: job.svgIds.find(
-            (ids: { fileId: number; svgId: number }) => ids.fileId === fileId
-          )?.svgId,
+          status: file?.errorMessage ? 'Failed' : job.status,
+          errorMessage: file?.errorMessage,
+          svgId: !file?.errorMessage
+            ? job.svgIds.find(
+                (ids: { fileId: number; svgId: number }) =>
+                  ids.fileId === fileId
+              )?.svgId
+            : undefined,
         };
       });
     },

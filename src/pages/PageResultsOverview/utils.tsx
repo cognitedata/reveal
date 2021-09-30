@@ -1,49 +1,47 @@
 import React from 'react';
-import { createLink } from '@cognite/cdf-utilities';
 import { notification, Typography } from 'antd';
-import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
+import {
+  PnidsConvertJobSchema,
+  ApiStatusCount,
+} from 'modules/contextualization/pnidParsing';
+import { ERRORS } from 'stringConstants';
 import { getContainer } from 'utils/utils';
 
 const { Paragraph } = Typography;
 
-export const convertSuccessNotification = (
-  svgName?: string,
-  fileName?: string,
-  newFileId?: number | string
-) => {
-  const single = svgName && fileName && newFileId;
-  const message = single
-    ? `SVG ${svgName} has been created successfully!`
-    : 'All of the selected diagrams have been successfully converted to SVG!';
-  const duration = null; // null keeps the notification as long as someone closes it
-  const description = single ? (
-    <Paragraph>
-      File {fileName} has been converted to an SVG successfully.
-      <a
-        href={createLink(`/explore/file/${newFileId}`)}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {' '}
-        Click here to view file.
-      </a>
-    </Paragraph>
-  ) : null;
-  return notification.success({
-    message,
+export const convertSuccessNotification = (data: PnidsConvertJobSchema) => {
+  const { numFiles = 0, statusCount = {} } = data;
+  const content: any = {
     getContainer,
-    duration,
-    description,
-  });
+    duration: null,
+  };
+
+  // all files converted successfully
+  if (!statusCount.failed) {
+    content.message =
+      numFiles === 1
+        ? 'Selected diagram has been successfully converted to SVG!'
+        : 'All of the selected diagrams have been successfully converted to SVG!';
+    notification.success(content);
+  }
+  // some but not all files failed
+  else if (statusCount.failed && statusCount.failed < numFiles) {
+    content.message = 'SVG convertion finished!';
+    content.description = `${statusCount.completed ?? 0} file${
+      (statusCount.completed ?? 0) > 1 ? 's were' : ' was'
+    } converted successfully. Failed to create SVG for ${
+      statusCount.failed ?? 0
+    } file${(statusCount.failed ?? 0) > 1 ? 's' : ''}.`;
+    notification.success(content);
+  }
+  // all files failed
+  else if (statusCount.failed === numFiles) {
+    convertErrorNotification(ERRORS.SVG_BAD.translation);
+  }
 };
 
-export const convertErrorNotification = (
-  errorMessage: string,
-  fileName?: string
-) => {
-  const message = fileName
-    ? `Failed to create SVG for file ${fileName}`
-    : 'Failed to create SVG';
+export const convertErrorNotification = (errorMessage: string) => {
+  const message = ERRORS.SVG_BAD.translation;
   return notification.error({
     message,
     getContainer,

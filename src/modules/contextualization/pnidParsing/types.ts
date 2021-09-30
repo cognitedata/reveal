@@ -1,13 +1,32 @@
 import { Asset, FileInfo } from '@cognite/sdk';
 
+export type PnidFailedFileSchema = { fileId: number; errorMessage?: string };
 export type PnidsParsingJobSchema = {
   jobId?: number;
   status?: 'Completed' | 'Failed' | string;
   statusCount?: ApiStatusCount;
   items?: { fileId: number }[];
+  numFiles?: number;
   annotationCounts?: { [fileId: number]: FileAnnotationsCount };
-  failedFiles?: Array<{ fileId: number; errorMessage: string }>;
+  failedFiles?: Array<PnidFailedFileSchema>;
   selectedDiagramIds?: number[];
+};
+export type PnidsConvertJobSchema = {
+  createdTime: number;
+  grayscale: boolean;
+  items: Array<{
+    errorMessage?: string;
+    fileId?: number;
+  }>;
+  jobId: number;
+  numFiles?: number;
+  startTime?: number;
+  status?: string;
+  statusCount?: {
+    failed?: number;
+    completed?: number;
+  };
+  statusTime?: number;
 };
 
 export interface PnidResponseEntity {
