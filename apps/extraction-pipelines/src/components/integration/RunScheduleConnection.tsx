@@ -69,7 +69,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
     ...addIfExist(integration?.lastFailure),
   ]);
   return (
-    <CardWrapper className={`${lastRun.status.toLowerCase()}`}>
+    <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
           <StyledTitleCard className="card-title">

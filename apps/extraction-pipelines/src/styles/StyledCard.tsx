@@ -52,7 +52,6 @@ export const CardWrapper = styled.div`
   display: flex;
   background-color: white;
   border-radius: 1px;
-  box-shadow: 0px 1px 2px #0002;
   & > div,
   > a {
     flex: 1;

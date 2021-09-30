@@ -20,7 +20,6 @@ import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
 
 const SectionDiv = styled.div`
   background-color: white;
-  box-shadow: 0px 1px 3px #0002;
   margin-bottom: 10px;
   border-radius: 3px;
 `;
@@ -40,7 +39,7 @@ export const Section = (
   props: PropsWithChildren<{ title: string; icon: AllIconTypes }>
 ) => {
   return (
-    <SectionDiv>
+    <SectionDiv className="z-2">
       <SectionHeader>
         <Icon type={props.icon} style={{ marginRight: '0.5rem' }} />{' '}
         {props.title}
