@@ -1,5 +1,4 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
-import styled from 'styled-components';
+import React, { FunctionComponent } from 'react';
 import InlineEdit from 'components/integration/InlineEdit';
 import { DetailFieldNames } from 'model/Integration';
 import * as yup from 'yup';
@@ -7,7 +6,6 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { Schedule } from 'components/integration/edit/Schedule';
-import { Icon } from '@cognite/cogs.js';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/integration/fields/FieldVerticalDisplay';
@@ -16,38 +14,7 @@ import { ContactsView } from 'components/integration/ContactsView';
 import { MetaData } from 'components/integration/MetaData';
 import { EditDataSetId } from 'components/integration/edit/EditDataSetId';
 import { bottomSpacing, sideBarSectionSpacing } from 'styles/StyledVariables';
-import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
-
-const SectionDiv = styled.div`
-  background-color: white;
-  margin-bottom: 10px;
-  border-radius: 3px;
-`;
-const SectionHeader = styled.div`
-  font-size: 1.1em;
-  font-weight: 500;
-  padding: 1em;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-`;
-const SectionBody = styled.div`
-  padding: 0.3em;
-`;
-
-export const Section = (
-  props: PropsWithChildren<{ title: string; icon: AllIconTypes }>
-) => {
-  return (
-    <SectionDiv className="z-2">
-      <SectionHeader>
-        <Icon type={props.icon} style={{ marginRight: '0.5rem' }} />{' '}
-        {props.title}
-      </SectionHeader>
-      <SectionBody>{props.children}</SectionBody>
-    </SectionDiv>
-  );
-};
+import { Section } from 'components/integration/Section';
 
 interface IntegrationInformationProps {
   canEdit: boolean;

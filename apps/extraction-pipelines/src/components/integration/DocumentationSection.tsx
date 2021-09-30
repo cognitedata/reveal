@@ -28,9 +28,9 @@ import { CloseButton, SaveButton } from 'styles/StyledButton';
 import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { Section } from 'components/integration/IntegrationInformation';
 import { Graphic } from '@cognite/cogs.js';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
+import { Section } from 'components/integration/Section';
 
 const DocumentationForm = styled.form`
   display: grid;
