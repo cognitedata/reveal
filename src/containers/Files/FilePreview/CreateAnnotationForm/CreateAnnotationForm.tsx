@@ -38,7 +38,7 @@ export const CreateAnnotationForm = ({
   ) => void;
   onDelete: () => void;
   onCancel?: () => void;
-  onSave: () => void;
+  onSave: (item: any) => void;
   onLinkResource: () => void;
   previewImageSrc?: string;
   children?: React.ReactNode;
@@ -145,7 +145,7 @@ export const CreateAnnotationForm = ({
       />
       <SpacedRow style={{ gap: '10px' }}>
         <Button
-          onClick={onSave}
+          onClick={() => onSave(item)}
           type="primary"
           icon={onCancel ? 'Check' : 'Plus'}
         >

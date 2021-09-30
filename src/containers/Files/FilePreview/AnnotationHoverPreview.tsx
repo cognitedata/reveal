@@ -20,7 +20,7 @@ export const AnnotationHoverPreview = (props: Props) => {
           color: Colors.white.hex(),
         }}
       >
-        {annotation[0]?.label ?? 'N/A'}
+        {annotation[0]?.label?.length ? annotation[0]?.label : 'N/A'}
       </Body>
     </Wrapper>
   );
