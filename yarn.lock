@@ -1535,10 +1535,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^0.9.4":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.9.4.tgz#304291c3ad839637b01fbe9415cb2014ca444ab6"
-  integrity sha512-u6oyz7k8nKMf2nsrvT4h7KyrlLx5zApQjdBXI/6FBwvCrxt/BqHJIbCRG1YxIH4mkhvqO3glavn7FaWxpjMx/w==
+"@cognite/data-exploration@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.1.0.tgz#e92b8acedb8befda8144085c98229c7ea8f923eb"
+  integrity sha512-RGejH1izGBIHA3GBlzjMWJWATAjJEunbrsPlBpjxI6mpPCkApi8c26dc2FytOmPbZyQ1G6cHRU+/jftUnhbRrw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
