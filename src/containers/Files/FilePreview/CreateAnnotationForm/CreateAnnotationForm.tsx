@@ -108,9 +108,7 @@ export const CreateAnnotationForm = ({
   }
   return (
     <Wrapper>
-      <Title level={5}>
-        {onCancel ? 'Edit annotation' : 'Create annotation'}
-      </Title>
+      <Title level={5}>{onCancel ? 'Edit tag' : 'Create tag'}</Title>
       {previewImageSrc && <PreviewImage src={previewImageSrc} alt="preview" />}
       <Body>{buttonText}</Body>
       <Button onClick={onLinkResource}>
@@ -144,16 +142,18 @@ export const CreateAnnotationForm = ({
         }
       />
       <SpacedRow style={{ gap: '10px' }}>
-        <Button
-          onClick={() => onSave(item)}
-          type="primary"
-          icon={onCancel ? 'Check' : 'Plus'}
-        >
-          {onCancel ? 'Save' : 'Create'}
+        <Button onClick={onSave} type="primary" icon="Save">
+          Save
         </Button>
         <div style={{ flex: 1 }} />
         {onCancel && <Button onClick={onCancel}>Cancel</Button>}
-        <Button onClick={onDelete} icon="Trash" type="danger" />
+        {!onCancel ? (
+          <Button onClick={onDelete} type="danger">
+            Cancel
+          </Button>
+        ) : (
+          <Button onClick={onDelete} icon="Trash" type="danger" />
+        )}
       </SpacedRow>
       {children}
     </Wrapper>

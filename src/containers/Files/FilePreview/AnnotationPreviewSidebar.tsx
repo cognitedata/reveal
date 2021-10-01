@@ -158,7 +158,7 @@ const AnnotationPreviewSidebar = ({
       pendingAnnotations.filter(el => el.id !== selectedAnnotation?.id)
     );
     notification.success({
-      message: `Annotation ${action} successfully!`,
+      message: `Tag ${action} successfully`,
     });
   };
 
@@ -198,7 +198,7 @@ const AnnotationPreviewSidebar = ({
         },
       ]),
     {
-      onSuccess: () => onSuccess('status updated'),
+      onSuccess: () => onSuccess('updated'),
     }
   );
 
