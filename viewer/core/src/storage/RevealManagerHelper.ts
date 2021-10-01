@@ -2,13 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { AddModelOptions } from './types';
-import { RevealManager } from '../RevealManager';
-import { createCdfRevealManager, createLocalRevealManager } from '../createRevealManager';
-import { assertNever } from '../../utilities';
-import { RevealOptions } from '../..';
-import { CadNode } from '../../datamodels/cad';
-import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
+import { AddModelOptions } from '../public/migration/types';
+import { RevealManager } from '../public/RevealManager';
+import { createCdfRevealManager, createLocalRevealManager } from '../public/createRevealManager';
+import { assertNever } from '../utilities';
+import { RevealOptions } from '..';
+import { CadNode } from '../datamodels/cad';
+import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { CogniteClient } from '@cognite/sdk';

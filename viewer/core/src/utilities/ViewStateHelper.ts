@@ -7,10 +7,10 @@ import { NodeAppearance } from '../datamodels/cad/NodeAppearance';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { CogniteClient } from '@cognite/sdk';
 
 import * as THREE from 'three';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
+import { StorageContext } from '../storage/StorageContext';
 
 export type ViewerState = {
   camera: {
@@ -30,11 +30,11 @@ export type ModelState = {
 export class ViewStateHelper {
   private readonly _cameraControls: ComboControls;
   private readonly _viewer: Cognite3DViewer;
-  private _client: CogniteClient;
+  private readonly _storageContext: StorageContext;
 
-  constructor(viewer: Cognite3DViewer, client: CogniteClient) {
+  constructor(viewer: Cognite3DViewer, storageContext: StorageContext) {
     this._viewer = viewer;
-    this._client = client;
+    this._storageContext = storageContext;
     this._cameraControls = viewer.cameraControls;
   }
 
@@ -72,6 +72,8 @@ export class ViewStateHelper {
   }
 
   public async setState(viewerState: ViewerState): Promise<void> {
+    const sdkClient = this._storageContext.getSdkClient();
+
     const cameraPosition = new THREE.Vector3(
       viewerState.camera.position.x,
       viewerState.camera.position.y,
@@ -107,7 +109,7 @@ export class ViewStateHelper {
 
           await Promise.all(
             state.styledSets.map(async styleFilter => {
-              const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._client, model, {
+              const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(sdkClient, model, {
                 token: styleFilter.token,
                 state: styleFilter.state,
                 options: styleFilter.options
