@@ -110,7 +110,7 @@ export default function CreateScheduleModal({
   };
 
   const canBeSubmitted =
-    !!externalId &&
+    (isOIDCFlow() || !!externalId) &&
     isValidScheduleName(scheduleName.value) &&
     isValidCronExpression(cronExpression.value) &&
     isValidDescription(description) &&
