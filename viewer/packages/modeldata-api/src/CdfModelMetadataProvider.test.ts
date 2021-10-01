@@ -4,7 +4,7 @@
 
 import nock from 'nock';
 
-import { CdfModelMetadataProvider } from './CdfModelDataClient';
+import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
 import { CogniteClient } from '@cognite/sdk';
 import { File3dFormat } from './types';
 

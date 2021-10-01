@@ -1,8 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { LocalModelDataClient, LocalModelMetadataProvider } from './src/LocalModelDataClient';
-export { CdfModelDataClient, CdfModelMetadataProvider } from './src/CdfModelDataClient';
+export { CdfModelDataClient } from './src/CdfModelDataClient';
+export { CdfModelMetadataProvider } from './src/CdfModelMetadataProvider';
+export { LocalModelDataClient } from './src/LocalModelDataClient';
+export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
 export {
   ModelDataClient,
   LocalModelIdentifier,
