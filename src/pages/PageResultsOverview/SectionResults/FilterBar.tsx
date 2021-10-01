@@ -24,7 +24,7 @@ export default function FilterBar(props: Props) {
   const [dataSetIds, setDataSetIds] = useState<number[]>([]);
   const [labels, setLabels] = useState<string[]>([]);
   const [status, setStatus] = useState<StatusType[]>([]);
-  const [fileTypes, setFileTypes] = useState<string[]>(['application/pdf']);
+  const [fileTypes, setFileTypes] = useState<string[]>([]);
 
   const onNameChange = useCallback(
     (e: any) => setNameQuery(e.target.value),

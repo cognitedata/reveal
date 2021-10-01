@@ -25,6 +25,9 @@ export default function LandingPage() {
     trackUsage(PNID_METRICS.landingPage.startNew);
     createWorkflow();
   };
+  const onSelectionClose = () => {
+    setSelectedDiagramsIds([]);
+  };
 
   const Header = () => (
     <Flex column>
@@ -73,6 +76,7 @@ export default function LandingPage() {
           selectedDiagramsIds={selectedDiagramsIds}
           buttons={['reject', 'approve', 'svgSave', 'recontextualize']}
           primarySetting="recontextualize"
+          onClose={onSelectionClose}
           marginBottom={16}
         />
       )}

@@ -267,7 +267,11 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     await sdk.files.update(updatePatch);
   };
 
-  const { isLoading: isOnApprovedLoading, mutate: onApproved } = useMutation(
+  const {
+    isLoading: isOnApprovedLoading,
+    isSuccess: isOnApprovedSuccess,
+    mutate: onApproved,
+  } = useMutation(
     (selectedFileIds: Array<number>) => setFilesApproved(selectedFileIds),
     {
       onError,
@@ -281,7 +285,11 @@ export const useReviewFiles = (fileIds: Array<number>) => {
       onSuccess,
     }
   );
-  const { isLoading: isOnRejectedLoading, mutate: onRejected } = useMutation(
+  const {
+    isLoading: isOnRejectedLoading,
+    isSuccess: isOnRejectedSuccess,
+    mutate: onRejected,
+  } = useMutation(
     (selectedFileIds: Array<number>) => setFilesRejected(selectedFileIds),
     {
       onError,
@@ -366,6 +374,8 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     isOnApprovedLoading,
     isOnPendingLoading,
     isOnRejectedLoading,
+    isOnApprovedSuccess,
+    isOnRejectedSuccess,
     isOnClearFileTags,
     onApproveDiagrams,
     onRejectDiagrams,

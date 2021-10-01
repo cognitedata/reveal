@@ -83,6 +83,12 @@ export const useJobStatus = (workflowId: number, jobInitiated?: boolean) => {
     if (!jobId || !jobInitiated) {
       return 'ready';
     }
+    if (
+      parsingJobStatus === 'Distributing' ||
+      parsingJobStatus === 'Distributed'
+    ) {
+      return 'running';
+    }
     if (jobInitiated && !total) {
       return 'loading';
     }

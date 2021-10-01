@@ -35,6 +35,7 @@ const convertStatusMap = (
   error?: string
 ): { [key: string]: JSX.Element } => ({
   Queued: <Icon type="LoadingSpinner" />,
+  Distributing: <Icon type="LoadingSpinner" />,
   Distributed: <Icon type="LoadingSpinner" />,
   Running: <Icon type="LoadingSpinner" />,
   Collecting: <Icon type="LoadingSpinner" />,

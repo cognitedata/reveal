@@ -25,12 +25,7 @@ export default function SectionResults() {
   const parsingJob = useParsingJob(workflowId);
 
   const isJobDone = jobStatus === 'done' || parsingJob?.status === 'Completed';
-  const shouldShowTable =
-    parsingJob?.status === 'Queued' ||
-    parsingJob?.status === 'Running' ||
-    parsingJob?.status === 'Collecting' ||
-    parsingJob?.status === 'Completed' ||
-    parsingJob?.annotationCounts;
+  const shouldShowTable = parsingJob?.status || parsingJob?.annotationCounts;
 
   useEffect(() => {
     if (shouldShowTable) setShowResults(true);

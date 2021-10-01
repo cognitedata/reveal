@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 import { message } from 'antd';
 import { landingPage, diagramSelection } from 'routes/paths';
@@ -8,9 +8,12 @@ import { useActiveWorkflow } from 'hooks';
 import { AppStateContext } from 'context';
 import { DiagramsSettingsBar } from 'containers';
 import { Flex, PageTitle } from 'components/Common';
+import {
+  selectDiagrams,
+  useParsingJob,
+} from 'modules/contextualization/pnidParsing';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
 import { WorkflowStep } from 'modules/workflows';
-import { useParsingJob } from 'modules/contextualization/pnidParsing';
 import { getWorkflowItems, getSelectedDiagramsIds } from './selectors';
 import SectionProgress from './SectionProgress';
 import SectionSetup from './SectionSetup';
@@ -23,6 +26,7 @@ type Props = {
 export default function PageResultsOverview(props: Props) {
   const { step } = props;
   const history = useHistory();
+  const dispatch = useDispatch();
   const client = useQueryClient();
   const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow(step);
@@ -37,6 +41,9 @@ export default function PageResultsOverview(props: Props) {
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
   const onGoBackHomePage = () => history.push(landingPage.path(tenant));
+  const onSelectionClose = () => {
+    dispatch(selectDiagrams({ workflowId, diagramIds: [] }));
+  };
 
   useEffect(() => {
     if (!workflow) {
@@ -81,6 +88,7 @@ export default function PageResultsOverview(props: Props) {
           selectedDiagramsIds={selectedDiagramsIds}
           buttons={['reject', 'approve', 'preview', 'svgSave']}
           primarySetting="svgSave"
+          onClose={onSelectionClose}
         />
       )}
       <NavigationStickyBottomRow

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
@@ -11,7 +10,6 @@ import { ModalSaveSVG } from 'containers';
 import { Flex, MenuButton } from 'components/Common';
 import { useReviewFiles, useConvertToSVG, isFilePending } from 'hooks';
 import { useWorkflowCreateNew } from 'modules/workflows';
-import { selectDiagrams } from 'modules/contextualization/pnidParsing';
 
 type Button = 'reject' | 'approve' | 'svgSave' | 'recontextualize' | 'preview';
 type Props = {
@@ -19,6 +17,7 @@ type Props = {
   buttons?: Button[];
   primarySetting?: Button;
   marginBottom?: number;
+  onClose: () => void;
 };
 
 export const DiagramsSettingsBar = (props: Props) => {
@@ -27,8 +26,8 @@ export const DiagramsSettingsBar = (props: Props) => {
     buttons = [],
     primarySetting = 'svgSave',
     marginBottom = 64,
+    onClose,
   } = props;
-  const dispatch = useDispatch();
   const history = useHistory();
   const { createWorkflow } = useWorkflowCreateNew();
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -43,12 +42,13 @@ export const DiagramsSettingsBar = (props: Props) => {
   const { tenant, workflowId } =
     useParams<{ tenant: string; workflowId: string }>();
   const { isConverting } = useConvertToSVG(selectedDiagramsIds);
-  const { onApproveDiagrams, onRejectDiagrams } =
-    useReviewFiles(selectedDiagramsIds);
+  const {
+    onApproveDiagrams,
+    onRejectDiagrams,
+    isOnApprovedSuccess,
+    isOnRejectedSuccess,
+  } = useReviewFiles(selectedDiagramsIds);
 
-  const onCancelClick = () => {
-    dispatch(selectDiagrams({ workflowId, diagramIds: [] }));
-  };
   const onPreviewSelectedClick = () => {
     history.push(
       diagramPreview.path(tenant, workflowId, selectedDiagramsIds[0])
@@ -80,6 +80,11 @@ export const DiagramsSettingsBar = (props: Props) => {
       setIsApproveDisabled(false);
     } else setIsApproveDisabled(true);
   }, [allDiagrams, selectedDiagramsIds]);
+
+  useEffect(() => {
+    if (isOnApprovedSuccess || isOnRejectedSuccess) onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnApprovedSuccess, isOnRejectedSuccess]);
 
   return (
     <Bar marginBottom={marginBottom}>
@@ -168,7 +173,7 @@ export const DiagramsSettingsBar = (props: Props) => {
           type="secondary"
           icon="XLarge"
           variant="inverted"
-          onClick={onCancelClick}
+          onClick={onClose}
         />
         <ModalSaveSVG
           diagramIds={selectedDiagramsIds}
