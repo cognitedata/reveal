@@ -1,20 +1,20 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import React from 'react';
+import { unwrapResult } from '@reduxjs/toolkit';
+import React, { ReactText, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { Annotation } from 'src/api/types';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
   currentCollection,
-  deSelectAllCollections,
-  deselectAllKeypoints,
+  deleteCurrentCollection,
   nextKeyPoint,
   nextShape,
 } from 'src/modules/Review/store/annotationLabelSlice';
-import {
-  deselectAllAnnotations,
-  VisibleAnnotation,
-} from 'src/modules/Review/store/reviewSlice';
+import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
+import { AnnotationTableItem } from 'src/modules/Review/types';
+import { AppDispatch } from 'src/store';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
@@ -26,13 +26,15 @@ export const ImagePreview = ({
   onEditMode,
   annotations,
   isLoading,
+  scrollIntoView,
 }: {
   file: FileInfo;
   onEditMode: (editMode: boolean) => void;
   annotations: VisibleAnnotation[];
   isLoading: (status: boolean) => void;
+  scrollIntoView: (id: ReactText) => void;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const definedCollection = useSelector(
     ({ annotationLabelReducer }: RootState) =>
@@ -52,7 +54,13 @@ export const ImagePreview = ({
       currentCollection(annotationLabelReducer)
   );
 
-  const handleCreateAnnotation = (annotation: UnsavedAnnotation) => {
+  useEffect(() => {
+    if (currentKeypointCollection) {
+      scrollIntoView(currentKeypointCollection.id);
+    }
+  }, [currentKeypointCollection]);
+
+  const handleCreateAnnotation = async (annotation: UnsavedAnnotation) => {
     pushMetric('Vision.Review.CreateAnnotation');
 
     if (annotation?.region?.shape === 'rectangle') {
@@ -64,14 +72,19 @@ export const ImagePreview = ({
     if (annotation?.region?.shape === 'polygon') {
       pushMetric('Vision.Review.CreateAnnotation.Polygon');
     }
-    dispatch(CreateAnnotations({ fileId: file.id, annotation }));
+    const res = await dispatch(
+      CreateAnnotations({ fileId: file.id, annotation })
+    );
+    const createdAnnotations = unwrapResult(res);
+
+    if (createdAnnotations.length && createdAnnotations[0].id) {
+      scrollIntoView(createdAnnotations[0].id);
+    }
   };
 
   const handleModifyAnnotation = async (annotation: Annotation) => {
+    dispatch(deselectAllSelectionsReviewPage());
     await dispatch(UpdateAnnotations([annotation]));
-    dispatch(deselectAllAnnotations());
-    dispatch(deSelectAllCollections());
-    dispatch(deselectAllKeypoints());
   };
 
   const handleDeleteAnnotation = (annotation: Annotation) => {
@@ -87,6 +100,15 @@ export const ImagePreview = ({
     onEditMode(mode);
   };
 
+  const onFocus = (annotation: AnnotationTableItem) => {
+    scrollIntoView(annotation.id);
+  };
+
+  const onSelectTool = () => {
+    dispatch(deleteCurrentCollection());
+    dispatch(deselectAllSelectionsReviewPage());
+  };
+
   return (
     <ReactImageAnnotateWrapper
       fileInfo={file}
@@ -100,6 +122,8 @@ export const ImagePreview = ({
       nextKeyPoint={nextPoint}
       currentCollection={currentKeypointCollection}
       isLoading={isLoading}
+      onSelectTool={onSelectTool}
+      focusIntoView={onFocus}
     />
   );
 };

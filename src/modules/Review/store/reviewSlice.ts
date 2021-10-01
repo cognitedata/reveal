@@ -7,7 +7,10 @@ import {
 } from '@reduxjs/toolkit';
 import { VisionAPIType } from 'src/api/types';
 import { selectFileAnnotations } from 'src/modules/Common/store/annotationSlice';
-import { clearFileState } from 'src/store/commonActions';
+import {
+  clearFileState,
+  deselectAllSelectionsReviewPage,
+} from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
@@ -64,9 +67,6 @@ const reviewSlice = createSlice({
       const annotationId = action.payload;
       state.selectedAnnotationIds = [annotationId];
     },
-    deselectAllAnnotations(state) {
-      state.selectedAnnotationIds = [];
-    },
     showCollectionSettingsModel(state, action: PayloadAction<boolean>) {
       state.showCollectionSettings = action.payload;
     },
@@ -79,6 +79,10 @@ const reviewSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(deselectAllSelectionsReviewPage, (state) => {
+      state.selectedAnnotationIds = [];
+    });
+
     builder.addCase(DeleteAnnotations.fulfilled, (state, { payload }) => {
       state.selectedAnnotationIds = state.selectedAnnotationIds.filter(
         (id) => !payload.includes(id)
@@ -108,7 +112,6 @@ export const {
   setReviewFileIds,
   toggleAnnotationVisibility,
   selectAnnotation,
-  deselectAllAnnotations,
   showCollectionSettingsModel,
   resetPreview,
 } = reviewSlice.actions;

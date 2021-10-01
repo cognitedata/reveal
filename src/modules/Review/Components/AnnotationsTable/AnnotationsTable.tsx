@@ -23,6 +23,7 @@ export interface AnnotationTableProps {
   ) => void;
   onSelect: (id: ReactText, nextState: boolean) => void;
   onKeypointSelect?: (id: string) => void;
+  expandAllRowsByDefault?: boolean;
 }
 
 export const AnnotationsTable = ({
@@ -35,6 +36,7 @@ export const AnnotationsTable = ({
   onApproveStateChange,
   onSelect,
   onKeypointSelect,
+  expandAllRowsByDefault,
 }: AnnotationTableProps) => {
   const annotationsAvailable = annotations.length > 0;
 
@@ -61,6 +63,7 @@ export const AnnotationsTable = ({
                     onApprove={onApproveStateChange}
                     onVisibilityChange={onVisibilityChange}
                     onKeyPointSelect={onKeypointSelect}
+                    expandByDefault={expandAllRowsByDefault}
                   />
                 </AssetLinkWarning>
               );
@@ -74,6 +77,7 @@ export const AnnotationsTable = ({
                 onApprove={onApproveStateChange}
                 onVisibilityChange={onVisibilityChange}
                 onKeyPointSelect={onKeypointSelect}
+                expandByDefault={expandAllRowsByDefault}
               />
             );
           })}

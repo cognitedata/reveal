@@ -1,16 +1,12 @@
 import React, { ReactText } from 'react';
 import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
+import { keypointSelectStatusChange } from 'src/modules/Review/store/annotationLabelSlice';
 import {
-  deSelectAllCollections,
-  deselectAllKeypoints,
-  keypointSelectStatusChange,
-} from 'src/modules/Review/store/annotationLabelSlice';
-import {
-  deselectAllAnnotations,
   selectAnnotation,
   toggleAnnotationVisibility,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { ApproveAnnotation } from 'src/store/thunks/Annotation/ApproveAnnotation';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
@@ -60,13 +56,10 @@ export const VideoContextualization = (props: {
   };
 
   const handleOnAnnotationSelect = (id: ReactText, nextState: boolean) => {
+    dispatch(deselectAllSelectionsReviewPage());
     if (nextState) {
       dispatch(selectAnnotation(+id));
-    } else {
-      dispatch(deselectAllAnnotations());
     }
-    dispatch(deSelectAllCollections());
-    dispatch(deselectAllKeypoints());
   };
 
   const onKeypointSelect = (id: ReactText) => {

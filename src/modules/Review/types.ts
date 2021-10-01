@@ -44,6 +44,8 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   nextKeyPoint: { collectionName: string; orderNumber: number };
   currentCollection: KeypointItemCollection | null;
   isLoading: (status: boolean) => void;
+  onSelectTool: (tool: string) => void;
+  focusIntoView: (annotation: AnnotationTableItem) => void;
 };
 
 export type AnnotationTableRowProps = {
@@ -57,6 +59,7 @@ export type AnnotationTableRowProps = {
   ) => void;
   iconComponent?: ReactElement;
   borderColor?: string;
+  expandByDefault?: boolean;
 };
 
 export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {

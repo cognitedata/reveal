@@ -1,19 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactText, useEffect, useMemo, useState } from 'react';
 import {
   deleteCurrentCollection,
-  deSelectAllCollections,
-  deselectAllKeypoints,
   keypointSelectStatusChange,
   onCreateKeyPoint,
   onCreateOrUpdateShape,
   onUpdateKeyPoint,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
-  deselectAllAnnotations,
   selectAnnotation,
   showCollectionSettingsModel,
 } from 'src/modules/Review/store/reviewSlice';
 import {
+  AnnotationTableItem,
   ReactImageAnnotateWrapperProps,
   VisionOptionType,
 } from 'src/modules/Review/types';
@@ -29,7 +27,9 @@ import {
   convertCollectionToRegions,
   convertKeyPointCollectionToAnnotationStub,
   convertToAnnotation,
+  RegionTagsIndex,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateKeypointAnnotation } from 'src/store/thunks/Annotation/CreateKeypointAnnotation';
 import { RetrieveKeypointCollection } from 'src/store/thunks/Review/RetrieveKeypointCollection';
 import styled from 'styled-components';
@@ -50,6 +50,8 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
     currentShape,
     currentCollection,
     isLoading,
+    onSelectTool,
+    focusIntoView,
   }: ReactImageAnnotateWrapperProps) => {
     const [imageUrl, setImageUrl] = useState<string>();
     const [selectedTool, setSelectedTool] = useState<AnnotatorTool>();
@@ -240,23 +242,36 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
     }, [imageUrl, regions, fileInfo]);
 
     const onRegionSelect = (region: Region) => {
-      dispatch(deSelectAllCollections());
-      dispatch(deselectAllKeypoints());
-      dispatch(selectAnnotation(region.id as number));
-      dispatch(keypointSelectStatusChange(region.id as string));
+      dispatch(deselectAllSelectionsReviewPage());
+      let selectedAnnotationId: ReactText;
+      if (typeof region.id === 'string') {
+        dispatch(keypointSelectStatusChange(region.id));
+        selectedAnnotationId = region.tags![RegionTagsIndex.parentAnnotationId];
+      } else {
+        dispatch(selectAnnotation(region.id));
+        selectedAnnotationId = region.id;
+      }
+      if (selectedAnnotationId) {
+        let annotation: AnnotationTableItem = annotations.find(
+          (ann) => ann.id === +selectedAnnotationId
+        ) as AnnotationTableItem;
+        if (!annotation && currentCollection) {
+          annotation = {
+            ...convertKeyPointCollectionToAnnotationStub(currentCollection),
+          };
+        }
+        if (annotation) {
+          focusIntoView(annotation);
+        }
+      }
     };
 
     const deselectAllRegions = () => {
-      dispatch(deselectAllAnnotations());
-      dispatch(deSelectAllCollections());
-      dispatch(deselectAllKeypoints());
+      dispatch(deselectAllSelectionsReviewPage());
     };
 
-    const onSelectTool = (tool: AnnotatorTool) => {
-      dispatch(deleteCurrentCollection());
-      dispatch(deselectAllAnnotations());
-      dispatch(deSelectAllCollections());
-      dispatch(deselectAllKeypoints());
+    const onToolChange = (tool: AnnotatorTool) => {
+      onSelectTool(tool);
       setSelectedTool(tool);
     };
 
@@ -282,7 +297,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
           showTags
           onSelectRegion={onRegionSelect}
           deSelectAllRegions={deselectAllRegions}
-          onSelectTool={onSelectTool}
+          onSelectTool={onToolChange}
           selectedTool={selectedTool}
           onImageOrVideoLoaded={onImageOrVideoLoaded}
         />

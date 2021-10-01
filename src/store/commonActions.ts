@@ -13,3 +13,7 @@ export const clearFileState = createAction<number[]>('clearFileState');
 export const clearExplorerFileState = createAction<number[]>(
   'clearExplorerFileState'
 );
+
+export const deselectAllSelectionsReviewPage = createAction<void>(
+  'deselectAllSelectionsReviewPage'
+);

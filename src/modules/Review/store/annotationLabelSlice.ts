@@ -5,6 +5,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
@@ -88,9 +89,6 @@ const annotationLabelSlice = createSlice({
         state.collections.selectedIds = [action.payload];
       }
     },
-    deSelectAllCollections(state) {
-      state.collections.selectedIds = [];
-    },
     toggleCollectionVisibility(state, action: PayloadAction<string>) {
       const collection = state.collections.byId[action.payload];
       if (collection) {
@@ -116,9 +114,6 @@ const annotationLabelSlice = createSlice({
       } else if (keypoint) {
         state.keypointMap.selectedIds = [action.payload];
       }
-    },
-    deselectAllKeypoints(state) {
-      state.keypointMap.selectedIds = [];
     },
     onCreateOrUpdateShape(state, action: PayloadAction<string>) {
       state.lastShape = action.payload;
@@ -201,6 +196,10 @@ const annotationLabelSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(deselectAllSelectionsReviewPage, (state) => {
+      state.collections.selectedIds = [];
+      state.keypointMap.selectedIds = [];
+    });
     // Matchers
     builder.addMatcher(
       isAnyOf(
@@ -257,11 +256,9 @@ export { initialState as annotationLabelReducerInitialState };
 
 export const {
   selectCollection,
-  deSelectAllCollections,
   toggleCollectionVisibility,
   setCollectionStatus,
   keypointSelectStatusChange,
-  deselectAllKeypoints,
   onCreateOrUpdateShape,
   onCreateKeyPoint,
   onUpdateKeyPoint,

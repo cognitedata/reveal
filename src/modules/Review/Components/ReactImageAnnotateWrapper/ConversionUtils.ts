@@ -20,6 +20,12 @@ import {
   VisionOptionType,
 } from 'src/modules/Review/types';
 
+export enum RegionTagsIndex {
+  label,
+  keypointOrder,
+  parentAnnotationId,
+}
+
 export const convertAnnotations = (
   annotations: VisibleAnnotation[]
 ): Region[] => {

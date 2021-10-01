@@ -8,13 +8,10 @@ import {
   Title,
   OptionType,
 } from '@cognite/cogs.js';
-import { deselectAllAnnotations } from 'src/modules/Review/store/reviewSlice';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import {
-  deleteCurrentCollection,
-  deselectAllKeypoints,
-} from 'src/modules/Review/store/annotationLabelSlice';
+import { deleteCurrentCollection } from 'src/modules/Review/store/annotationLabelSlice';
 import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
 import { VisionOptionType } from 'src/modules/Review/types';
 
@@ -173,8 +170,7 @@ export const AnnotationEditPopup = (props: {
   const handleOnCancel = () => {
     onClose(region);
     if (alreadyCreated) {
-      dispatch(deselectAllAnnotations());
-      dispatch(deselectAllKeypoints());
+      dispatch(deselectAllSelectionsReviewPage());
     } else {
       onDelete(region);
     }

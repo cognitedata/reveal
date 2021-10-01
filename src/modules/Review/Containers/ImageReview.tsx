@@ -1,5 +1,5 @@
 import { Spin } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactText, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import {
@@ -28,6 +28,8 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const loadingState = useRef<boolean>(false);
+  const [currentTab, tabChange] = useState('context');
+  const contextElement = useRef<HTMLElement>(null);
 
   const reviewFiles = useSelector((state: RootState) =>
     selectAllReviewFiles(state)
@@ -78,6 +80,18 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
     }
   }, [loading]);
 
+  const scrollToItem = (id: ReactText) => {
+    tabChange('context');
+    if (contextElement.current) {
+      const rowElement = contextElement.current.querySelector(
+        `#annotation-table-row-${id}`
+      );
+      if (rowElement) {
+        rowElement.scrollIntoView(true);
+      }
+    }
+  };
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -99,6 +113,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
                   onEditMode={onEditMode}
                   annotations={visibleNonRejectedAnnotations}
                   isLoading={handleImageLoad}
+                  scrollIntoView={scrollToItem}
                 />
               )}
             </PreviewContainer>
@@ -113,8 +128,8 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
             <StyledTitle level={4}>{file?.name}</StyledTitle>
             <TabsContainer>
               <Tabs
-                tab="context"
-                onTabChange={() => {}}
+                tab={currentTab}
+                onTabChange={tabChange}
                 style={{
                   border: 0,
                 }}
@@ -126,6 +141,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
                 >
                   <ImageContextualization
                     file={file}
+                    reference={contextElement}
                     tagAnnotations={tagAnnotations}
                     otherAnnotations={otherAnnotations}
                   />

@@ -49,6 +49,7 @@ export const CollapsibleAnnotationTableRow = ({
   onKeyPointSelect,
   iconComponent,
   borderColor,
+  expandByDefault,
 }: AnnotationTableRowProps & {
   onKeyPointSelect?: (id: string) => void;
 }) => {
@@ -56,69 +57,88 @@ export const CollapsibleAnnotationTableRow = ({
     annotation.region?.shape === 'points' &&
     annotation.region.vertices.length
   ) {
+    const expanded =
+      expandByDefault ||
+      annotation.region.vertices.some(
+        (vertex) => (vertex as KeypointVertex).selected
+      );
+    let options: any = {
+      accordion: true,
+      collapsible: undefined,
+    };
+    if (expanded) options = { ...options, activeKey: 1 };
+
     return (
-      <Collapse accordion>
-        <StyledCollapsePanel
-          header={
-            <AnnotationTableRow
-              annotation={annotation}
-              onSelect={onSelect}
-              onDelete={onDelete}
-              onApprove={onApprove}
-              onVisibilityChange={onVisibilityChange}
-              iconComponent={iconComponent}
-              borderColor={borderColor}
-            />
-          }
-          key={1}
-          className={annotation.selected ? 'active' : ''}
-        >
-          {annotation.region.vertices.map((keypoint) => (
-            <CollapseRowContainer
-              key={(keypoint as KeypointVertex).id}
-              onClick={() => {
-                if (onKeyPointSelect) {
-                  onKeyPointSelect((keypoint as KeypointVertex).id);
+      <div id={`annotation-table-row-${annotation.id}`}>
+        <Collapse {...options}>
+          <StyledCollapsePanel
+            header={
+              <AnnotationTableRow
+                annotation={annotation}
+                onSelect={onSelect}
+                onDelete={onDelete}
+                onApprove={onApprove}
+                onVisibilityChange={onVisibilityChange}
+                iconComponent={iconComponent}
+                borderColor={borderColor}
+              />
+            }
+            key={1}
+            className={annotation.selected ? 'active' : ''}
+          >
+            {annotation.region.vertices.map((keypoint) => (
+              <CollapseRowContainer
+                id={`annotation-table-row-${(keypoint as KeypointVertex).id}`}
+                key={(keypoint as KeypointVertex).id}
+                onClick={() => {
+                  if (onKeyPointSelect) {
+                    onKeyPointSelect((keypoint as KeypointVertex).id);
+                  }
+                }}
+                className={
+                  (keypoint as KeypointVertex).selected ? 'active' : ''
                 }
-              }}
-              className={(keypoint as KeypointVertex).selected ? 'active' : ''}
-            >
-              <StyledRow cols={12}>
-                <StyledCol span={1}>
-                  <ColorBox color={(keypoint as KeypointVertex).color} />
-                </StyledCol>
-                <StyledCol span={1}>
-                  <div>{(keypoint as KeypointVertex).order}</div>
-                </StyledCol>
-                <StyledCol span={10} className="label">
-                  <AnnotationTextContainer>
-                    <AnnotationText>
-                      {(keypoint as KeypointVertex).caption}
-                    </AnnotationText>
-                  </AnnotationTextContainer>
-                </StyledCol>
-                {/* <StyledCol span={1}> */}
-                {/*  <AnnotationActionMenuExtended */}
-                {/*    showPolygon={annotation.show} */}
-                {/*    disableShowPolygon={false} */}
-                {/*    handleAnnotationDelete={() => { */}
-                {/*      if (onKeyPointDelete) { */}
-                {/*        onKeyPointDelete((keypoint as KeypointVertex).id); */}
-                {/*      } */}
-                {/*    }} */}
-                {/*    deleteMenuText="Delete keypoint" */}
-                {/*    deleteConfirmText="Are you sure you want to delete this keypoint?" */}
-                {/*  /> */}
-                {/* </StyledCol> */}
-              </StyledRow>
-            </CollapseRowContainer>
-          ))}
-        </StyledCollapsePanel>
-      </Collapse>
+              >
+                <StyledRow cols={12}>
+                  <StyledCol span={1}>
+                    <ColorBox color={(keypoint as KeypointVertex).color} />
+                  </StyledCol>
+                  <StyledCol span={1}>
+                    <div>{(keypoint as KeypointVertex).order}</div>
+                  </StyledCol>
+                  <StyledCol span={10} className="label">
+                    <AnnotationTextContainer>
+                      <AnnotationText>
+                        {(keypoint as KeypointVertex).caption}
+                      </AnnotationText>
+                    </AnnotationTextContainer>
+                  </StyledCol>
+                  {/* <StyledCol span={1}> */}
+                  {/*  <AnnotationActionMenuExtended */}
+                  {/*    showPolygon={annotation.show} */}
+                  {/*    disableShowPolygon={false} */}
+                  {/*    handleAnnotationDelete={() => { */}
+                  {/*      if (onKeyPointDelete) { */}
+                  {/*        onKeyPointDelete((keypoint as KeypointVertex).id); */}
+                  {/*      } */}
+                  {/*    }} */}
+                  {/*    deleteMenuText="Delete keypoint" */}
+                  {/*    deleteConfirmText="Are you sure you want to delete this keypoint?" */}
+                  {/*  /> */}
+                  {/* </StyledCol> */}
+                </StyledRow>
+              </CollapseRowContainer>
+            ))}
+          </StyledCollapsePanel>
+        </Collapse>
+      </div>
     );
   }
   return (
-    <TableRowContainer className={annotation.selected ? 'active' : ''}>
+    <TableRowContainer
+      className={annotation.selected ? 'active' : ''}
+      id={`annotation-table-row-${annotation.id}`}
+    >
       <AnnotationTableRow
         annotation={annotation}
         onSelect={onSelect}

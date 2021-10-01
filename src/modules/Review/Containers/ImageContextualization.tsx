@@ -3,19 +3,17 @@ import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import {
   currentCollection,
   deleteCollectionById,
-  deSelectAllCollections,
-  deselectAllKeypoints,
   keypointSelectStatusChange,
   selectCollection,
   setCollectionStatus,
   toggleCollectionVisibility,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
-  deselectAllAnnotations,
   selectAnnotation,
   toggleAnnotationVisibility,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { ApproveAnnotation } from 'src/store/thunks/Annotation/ApproveAnnotation';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
@@ -30,6 +28,7 @@ import { AnnotationTableItem } from 'src/modules/Review/types';
 
 export const ImageContextualization = (props: {
   file: FileInfo;
+  reference: any;
   tagAnnotations: VisibleAnnotation[];
   otherAnnotations: VisibleAnnotation[];
 }) => {
@@ -72,24 +71,18 @@ export const ImageContextualization = (props: {
   };
 
   const handleOnAnnotationSelect = (id: ReactText, nextState: boolean) => {
+    dispatch(deselectAllSelectionsReviewPage());
     if (nextState) {
       dispatch(selectAnnotation(+id));
-    } else {
-      dispatch(deselectAllAnnotations());
     }
-    dispatch(deSelectAllCollections());
-    dispatch(deselectAllKeypoints());
   };
 
   // keypoint annotation changes
 
   const onKeypointCollectionSelect = (id: ReactText, nextState: boolean) => {
+    dispatch(deselectAllSelectionsReviewPage());
     if (nextState) {
-      dispatch(deselectAllAnnotations());
-      dispatch(deselectAllKeypoints());
       dispatch(selectCollection(id.toString()));
-    } else {
-      dispatch(deSelectAllCollections());
     }
   };
 
@@ -113,7 +106,7 @@ export const ImageContextualization = (props: {
   };
 
   return (
-    <Container>
+    <Container ref={props.reference}>
       <Detail style={{ color: '#595959' }}>
         {'Approve and reject detected annotations '}
         <PrimaryTooltip
@@ -169,6 +162,7 @@ export const ImageContextualization = (props: {
             onApproveStateChange={onKeypointCollectionApprovalStateChange}
             onSelect={onKeypointCollectionSelect}
             onKeypointSelect={onKeypointSelect}
+            expandAllRowsByDefault
           />
         )}
       </TableContainer>
