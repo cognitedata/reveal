@@ -85,7 +85,7 @@ export const getColumns: any = (
       ),
     },
     {
-      title: '',
+      title: 'Actions',
       key: 'actions',
       width: 60,
       render: (file: any) => <ColumnFileActions file={file} />,

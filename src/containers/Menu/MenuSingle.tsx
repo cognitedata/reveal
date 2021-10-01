@@ -19,6 +19,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
   const {
     onApproveDiagrams,
     onRejectDiagrams,
+    onClearTags,
     isOnApprovedLoading,
     isOnRejectedLoading,
   } = useReviewFiles([file.id]);
@@ -40,7 +41,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
         aria-label="Button-Approve-Single"
         icon={isLoading ? 'LoadingSpinner' : 'Checkmark'}
         iconPlacement="left"
-        onClick={() => onApproveDiagrams()}
+        onClick={() => onApproveDiagrams(true)}
         disabled={isLoading || isApproved || isFailed}
         style={{ width: '100%' }}
       >
@@ -60,13 +61,24 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
       <MenuButton
         type="ghost-danger"
         aria-label="Button-Reject-Single"
-        icon={isLoading ? 'LoadingSpinner' : 'Trash'}
+        icon={isLoading ? 'LoadingSpinner' : 'XLarge'}
         iconPlacement="left"
-        onClick={() => onRejectDiagrams()}
+        onClick={() => onRejectDiagrams(true)}
         disabled={isLoading || isFailed || isApproved}
         style={{ width: '100%' }}
       >
         Reject pending tags
+      </MenuButton>
+      <MenuButton
+        type="ghost-danger"
+        aria-label="Button-Clear-Single"
+        icon={isLoading ? 'LoadingSpinner' : 'Trash'}
+        iconPlacement="left"
+        onClick={() => onClearTags([file.id])}
+        disabled={isLoading}
+        style={{ width: '100%' }}
+      >
+        Clear all tags
       </MenuButton>
       <ModalSaveSVG
         diagramIds={[file.id]}

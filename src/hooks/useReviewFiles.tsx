@@ -468,22 +468,36 @@ export const useDeleteTags = () => {
 export const REVIEW_DIAGRAMS_LABELS = {
   approve: {
     all: {
-      button: 'Approve all pending tags',
-      desc: 'Accept all tags? Changes will be saved to CDF.',
+      button: 'Approve all tags',
+      desc: 'Accept all tags?',
     },
     some: {
       button: 'Approve tags',
-      desc: 'Approve selected tags? Changes will be saved to CDF.',
+      desc: 'Approve selected tags?',
     },
   },
   reject: {
     all: {
-      button: 'Reject all pending tags',
-      desc: 'Reject all tags? Changes will be saved to CDF.',
+      button: 'Reject all tags',
+      desc: (
+        <>
+          <Body level={2} strong>
+            Reject all tags?
+          </Body>
+          <Body level={2}>The tags will be removed from the diagram.</Body>
+        </>
+      ),
     },
     some: {
       button: 'Reject tags',
-      desc: 'Reject selected tags? Changes will be saved to CDF.',
+      desc: (
+        <>
+          <Body level={2} strong>
+            Reject selected tags?
+          </Body>
+          <Body level={2}>The tags will be removed from the diagram.</Body>
+        </>
+      ),
     },
   },
   clear: {

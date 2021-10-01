@@ -7,7 +7,6 @@ import { WorkflowStep } from 'modules/workflows';
 import { MenuSingle } from 'containers';
 import { LoadingSkeleton } from 'components/Common';
 import { EditFileButton } from './EditFileButton';
-import { ClearTagsButton } from './ClearTagsButton';
 
 type Props = {
   file: FileInfo | undefined;
@@ -42,7 +41,6 @@ export default function TitleBar(props: Props) {
               isActive={editMode}
               onClick={() => setEditMode(!editMode)}
             />
-            <ClearTagsButton id={file?.id} setEditMode={setEditMode} />
             <Dropdown content={<MenuSingle file={file!} />}>
               <Button
                 icon="MoreOverflowEllipsisHorizontal"
