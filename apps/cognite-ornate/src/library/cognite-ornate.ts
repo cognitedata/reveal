@@ -1,7 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { v4 as uuid } from 'uuid';
-import { pdfToImage } from 'library/utils/pdfToImage';
 import {
   OrnateAnnotation,
   ToolType,
@@ -22,6 +21,9 @@ import { Tool } from 'library/tools/Tool';
 import { ConnectedLine } from 'library/connectedLine';
 import bgImage from 'library/assets/bg.png';
 import { Vector2d } from 'konva/lib/types';
+import { PDFDocument } from 'pdf-lib';
+
+import { downloadURL, pdfToImage } from './utils';
 
 const sceneBaseWidth = window.innerWidth;
 const sceneBaseHeight = window.innerHeight;
@@ -37,6 +39,7 @@ export type CogniteOrnateOptions = {
 export class CogniteOrnate {
   host: HTMLDivElement;
   documents: OrnatePDFDocument[] = [];
+  // @ts-ignore
   stage: Konva.Stage;
   backgroundLayer: Konva.Layer = new Konva.Layer();
   baseLayer: Konva.Layer = new Konva.Layer();
@@ -51,7 +54,10 @@ export class CogniteOrnate {
       console.error('ORNATE: Failed to get HTML element to attach to');
     }
     this.host = host;
+    this.init();
+  }
 
+  init() {
     // Setup out stage
     this.stage = new Konva.Stage({
       container: this.host,
@@ -457,9 +463,10 @@ export class CogniteOrnate {
   }
 
   restart = () => {
-    this.baseLayer.destroyChildren();
-    this.drawingLayer.destroyChildren();
+    this.stage.destroy();
+    this.isDrawing = false;
     this.documents = [];
+    this.init();
   };
 
   addDrawings = (...drawings: Drawing[]) => {
@@ -486,6 +493,16 @@ export class CogniteOrnate {
     });
   };
 
+  removeDocument(doc: OrnatePDFDocument) {
+    doc.group.destroy();
+    doc.kImage.destroy();
+
+    // remove annotations
+    this.documents = this.documents.filter((d) => {
+      return d !== doc;
+    });
+  }
+
   exportToJSON = (): OrnateJSON => {
     return {
       documents: this.documents.map((doc) => ({
@@ -498,5 +515,35 @@ export class CogniteOrnate {
         })),
       })),
     };
+  };
+
+  onExport = async () => {
+    const pdf = await PDFDocument.create();
+
+    // To do: instead of getting the PIDs from the canvas,
+    // get the original PID and draw the annotations on the original ones.
+    const annotatedPIDs = this.documents.map(async (doc) => {
+      const tempPrevScale = this.stage.scale();
+      this.stage.scale({ x: 1, y: 1 });
+      const dataURL = doc.group.toDataURL();
+      this.stage.scale(tempPrevScale);
+
+      const layer = await pdf.embedPng(dataURL);
+      const page = pdf.addPage([doc.kImage.width(), doc.kImage.height()]);
+
+      page.drawImage(layer, {
+        x: 0,
+        y: 0,
+        width: doc.kImage.width(),
+        height: doc.kImage.height(),
+      });
+    });
+
+    await Promise.all(annotatedPIDs);
+
+    const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
+
+    // To do: replace the file name with the workspace name
+    downloadURL(pdfBytes, 'file.pdf');
   };
 }

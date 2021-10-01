@@ -7,7 +7,7 @@ import NotFoundPage from 'pages/Error404';
 import { OrnateWrapper } from 'pages/Ornate/OrnateWrapper';
 
 const App = () => (
-  <Container sidecar={sidecar}>
+  <Container sidecar={sidecar as any}>
     <>
       <GlobalStyles />
 

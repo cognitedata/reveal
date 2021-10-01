@@ -5,6 +5,7 @@ export const savedWorkspace: OrnateJSON = {
     {
       metadata: {
         fileId: '3269899516392866',
+        fileName: 'Some pdf file',
       },
       x: 0,
       y: 0,

@@ -1,14 +1,20 @@
 import { useEffect } from 'react';
 import { ToolType } from 'library/types';
+import { Button, Icon } from '@cognite/cogs.js';
 
-import { WorkSpaceToolsWrapper } from './elements';
+import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 
 type WorkSpaceToolsProps = {
   activeTool: ToolType;
+  isSidebarExpanded: boolean;
   onToolChange: (nextTool: ToolType) => void;
 };
 
-const WorkSpaceTools = ({ activeTool, onToolChange }: WorkSpaceToolsProps) => {
+const WorkSpaceTools = ({
+  activeTool,
+  isSidebarExpanded,
+  onToolChange,
+}: WorkSpaceToolsProps) => {
   useEffect(() => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'm') {
@@ -33,62 +39,80 @@ const WorkSpaceTools = ({ activeTool, onToolChange }: WorkSpaceToolsProps) => {
   }, []);
 
   return (
-    <WorkSpaceToolsWrapper>
-      <button
-        type="button"
+    <WorkSpaceToolsWrapper className={isSidebarExpanded ? 'expanded' : ''}>
+      <Button
+        type="ghost"
+        variant="ghost"
+        size="small"
+        onClick={() => {
+          onToolChange('default');
+        }}
+        title="Select S"
+        disabled={activeTool === 'default'}
+      >
+        <Icon type="SelectCursor" />
+      </Button>
+      <Button
+        type="ghost"
+        variant="ghost"
+        size="small"
+        title="Move M"
         onClick={() => {
           onToolChange('move');
         }}
         disabled={activeTool === 'move'}
       >
-        [M]ove
-      </button>
-      <button
-        type="button"
+        <Icon type="GrabAndMove" />
+      </Button>
+      <ToolboxSeparator />
+      <Button
+        type="ghost"
+        variant="ghost"
+        size="small"
+        title="Line L"
         onClick={() => {
           onToolChange('line');
         }}
         disabled={activeTool === 'line'}
       >
-        [L]ine
-      </button>
-      <button
-        type="button"
+        <Icon type="LineTool" />
+      </Button>
+      <Button
+        type="ghost"
+        variant="ghost"
+        size="small"
+        title="Rectangle R"
         onClick={() => {
           onToolChange('rect');
         }}
         disabled={activeTool === 'rect'}
       >
-        [R]ect
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          onToolChange('text');
-        }}
-        disabled={activeTool === 'text'}
-      >
-        [T]ext
-      </button>
-      <button
-        type="button"
+        <Icon type="BoxTool" />
+      </Button>
+      <Button
+        type="ghost"
+        variant="ghost"
+        size="small"
+        title="Circle C"
         onClick={() => {
           onToolChange('circle');
         }}
         disabled={activeTool === 'circle'}
       >
-        [C]ircle
-      </button>
-
-      <button
-        type="button"
+        <Icon type="ColorPalette" />
+      </Button>
+      <Button
+        type="ghost"
+        variant="ghost"
+        size="small"
+        title="Text T"
         onClick={() => {
-          onToolChange('default');
+          onToolChange('text');
         }}
-        disabled={activeTool === 'default'}
+        disabled={activeTool === 'text'}
       >
-        [S]elect
-      </button>
+        <Icon type="TextTool" />
+      </Button>
     </WorkSpaceToolsWrapper>
   );
 };

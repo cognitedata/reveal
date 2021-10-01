@@ -1,17 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteOrnate } from 'library/cognite-ornate';
 import {
   Drawing,
   OrnateAnnotation,
   OrnateAnnotationInstance,
-  OrnateJSON,
   ToolType,
 } from 'library/types';
-import Konva from 'konva';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
 import WorkSpaceTools from 'components/WorkSpaceTools';
-import { storage } from '@cognite/storage';
+import { Button, Icon, toast, ToastContainer } from '@cognite/cogs.js';
+import { workspaceService } from 'services';
+import { Workspace, WorkspaceDocument } from 'types';
+import { WorkspaceDocsPanel } from 'components/WorkspaceDocsPanel';
+import { useTranslation } from 'hooks/useTranslation';
+import { RecentWorkspaces } from 'components/Workspace/WorkspacesList';
+import WorkSpaceSearch from 'components/WorkspaceDocsPanel/WorkspaceSearch';
+import { WorkspaceHeader } from 'components/Workspace/WorkspaceHeader';
+import { toDisplayDate } from 'utils/date';
+
+import {
+  Loader,
+  MainToolbar,
+  WorkspaceContainer,
+  ZoomButtonsToolbar,
+} from './elements';
 
 interface OrnateProps {
   client: CogniteClient;
@@ -20,7 +33,13 @@ interface OrnateProps {
 const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const ornateViewer = useRef<CogniteOrnate>();
   const [activeTool, setActiveTool] = useState<ToolType>('default');
-  const currentWorkspaceId = 'my_workspace_1';
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
+  const { t } = useTranslation('WorkspaceHeader');
+  const [workspace, setWorkspace] = useState<Workspace | null>(null);
+  const [workspaceDocuments, setWorkspaceDocuments] = useState<
+    WorkspaceDocument[]
+  >([]);
 
   useEffect(() => {
     ornateViewer.current = new CogniteOrnate({
@@ -40,7 +59,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         return;
       }
 
-      const fileInfo = await loadFile(file[0].id);
+      const fileInfo = await loadFile(file[0].id.toString(), file[0].name);
       if (!fileInfo) {
         return;
       }
@@ -71,8 +90,54 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     setActiveTool(tool);
   };
 
+  const loadWorkspace = async (workspace: Workspace) => {
+    try {
+      setShowLoader(true);
+      setWorkspace(workspace);
+      setWorkspaceDocuments([]);
+      onToolChange('default');
+      const contents = await workspaceService.loadWorkspaceContents(workspace);
+
+      ornateViewer.current!.restart();
+
+      const documents = [] as WorkspaceDocument[];
+      await Promise.all(
+        contents!.documents.map(async (doc) => {
+          const { fileId, fileName } = doc.metadata;
+
+          const workspaceDoc = await loadFile(fileId, fileName, {
+            initialPosition: { x: doc.x, y: doc.y },
+            zoomAfterLoad: false,
+          });
+
+          documents.push({ documentId: fileId, documentName: fileName });
+
+          const parsedDrawings: Drawing[] = doc.drawings.map((drawing) => {
+            return {
+              ...drawing,
+              groupId: workspaceDoc.doc?.group.id(),
+            };
+          });
+          ornateViewer.current!.addDrawings(...parsedDrawings);
+        })
+      );
+      setWorkspaceDocuments(documents);
+      setShowLoader(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        t(
+          'error_load_workspace',
+          'An error occured, the workspace could not be loaded!'
+        )
+      );
+      setShowLoader(false);
+    }
+  };
+
   const loadFile = async (
-    fileId: number | string,
+    fileId: string,
+    fileName: string,
     options?: {
       initialPosition?: { x: number; y: number };
       zoomAfterLoad?: boolean;
@@ -97,7 +162,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     const newDoc = await ornateViewer.current!.addPDFDocument(
       urls[0].downloadUrl,
       1,
-      { fileId: String(fileId) },
+      { fileId: String(fileId), fileName },
       { initialPosition, zoomAfterLoad, groupId: String(fileId) }
     );
 
@@ -146,124 +211,199 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       annotations
     );
 
+    setWorkspaceDocuments(
+      workspaceService.addDocument(workspaceDocuments, fileId, fileName)
+    );
+
     return {
       doc: newDoc,
       instances,
     };
   };
 
-  const onExport = async () => {
-    const rects = ornateViewer.current!.documents.map((x) =>
-      // @ts-ignore - relativeTo DOES work with stage.
-      x.group.getClientRect({ relativeTo: ornateViewer.current!.stage })
-    );
-    console.log(rects);
-    ornateViewer.current!.documents.forEach(async (doc) => {
-      const tempPrevScale = ornateViewer.current!.stage.scale();
-      ornateViewer.current!.stage.scale({ x: 1, y: 1 });
-      doc.kImage.hide();
-      doc.group.add(
-        new Konva.Rect({
-          fill: 'rgba(0, 0, 0, 0)',
-          opacity: 0,
-          x: 0,
-          y: 0,
-          width: doc.group.width(),
-          height: doc.group.height(),
-        })
-      );
-      doc.group.draw();
-      const dataURL = doc.group.toDataURL();
-      doc.kImage.show();
-      ornateViewer.current!.stage.scale(tempPrevScale);
-
-      console.log(dataURL);
-      // This gives us the overlays. Just plop this ontop of the PDF in the right scale using PDF-LIB and we're golden!
-
-      // const newCanvas = this.ornateViewer.baseLayer.toCanvas(rect);
-      // const imageData = newCanvas.getContext('2d').getImageData(0, 0, newCanvas.width, newCanvas.height);
-      // console.log(imageData);
-    });
+  const onExport = () => {
+    ornateViewer.current!.onExport();
   };
 
   const onSave = () => {
+    if (!workspace) {
+      return;
+    }
     const json = ornateViewer.current!.exportToJSON();
-    const parsedJson = {
-      documents: json.documents.map((doc) => {
-        return {
-          ...doc,
-          drawings: doc.drawings.filter(
-            (drawing) => drawing.attrs.userGenerated
-          ),
-        };
-      }),
-    };
-    storage.saveToLocalStorage(currentWorkspaceId, parsedJson);
+    workspaceService.saveWorkspaceContents(workspace.id, json);
+    workspaceService.saveWorkspace(workspace);
+    toast.success(t('save_success', 'Workspace was saved'), {
+      position: 'top-right',
+      autoClose: 3000,
+    });
   };
 
-  const onLoad = () => {
-    const storageData =
-      storage.getFromLocalStorage<OrnateJSON>(currentWorkspaceId);
-    if (!storageData) return;
-    ornateViewer.current!.restart();
+  const toggleWorkSpaceSidebar = useCallback(() => {
+    setIsSidebarOpen(!isSidebarOpen);
+  }, [isSidebarOpen]);
 
-    storageData!.documents.forEach((doc) => {
-      loadFile(doc.metadata.fileId, {
-        initialPosition: { x: doc.x, y: doc.y },
-        zoomAfterLoad: false,
-      }).then((x) => {
-        const parsedDrawings: Drawing[] = doc.drawings.map((drawing) => {
-          return {
-            ...drawing,
-            groupId: x.doc?.group.id(),
-          };
-        });
-        ornateViewer.current!.addDrawings(...parsedDrawings);
+  const updateWorkspaceTitle = useCallback(
+    (newTitle: string) => {
+      if (!workspace) {
+        return;
+      }
+      setWorkspace({
+        ...workspace,
+        name: newTitle,
       });
-    });
+    },
+    [workspace]
+  );
+
+  const onDeleteDocument = useCallback(
+    (workspaceDoc: WorkspaceDocument) => {
+      // ornateViewer.current!
+      const docToRemove = ornateViewer.current!.documents.find(
+        (doc) => doc.metadata && doc.metadata.fileId === workspaceDoc.documentId
+      );
+      if (docToRemove) {
+        ornateViewer.current!.removeDocument(docToRemove);
+        setWorkspaceDocuments(
+          workspaceService.removeDocument(
+            workspaceDocuments,
+            workspaceDoc.documentId
+          )
+        );
+      }
+    },
+    [ornateViewer, workspaceDocuments]
+  );
+
+  const createNewWorkspace = () => {
+    const ws = workspaceService.create();
+    setWorkspace(ws);
+    setWorkspaceDocuments([]);
+    setActiveTool('default');
+    ornateViewer.current!.restart();
+  };
+
+  const showWorkspaces = () => {
+    setWorkspace(null);
+    setWorkspaceDocuments([]);
+    ornateViewer.current!.restart();
+  };
+
+  const deleteWorkspace = async (workspace: Workspace) => {
+    await workspaceService.deleteWorkspace(workspace);
+    setWorkspace(null);
+    setWorkspaceDocuments([]);
+    ornateViewer.current!.restart();
   };
 
   const onZoom = (scale: number) => {
     ornateViewer.current?.onZoom(scale, false);
   };
 
+  const sidebarHeader = (
+    <WorkspaceHeader
+      setIsOpen={setIsSidebarOpen}
+      isBackVisible={workspace !== null}
+      onBackClick={showWorkspaces}
+    />
+  );
+
+  const sidebarContent =
+    workspace !== null ? (
+      <WorkSpaceSearch onLoadFile={loadFile}>
+        <>
+          <WorkspaceDocsPanel
+            workspace={workspace as Workspace}
+            workspaceDocs={workspaceDocuments}
+            onLoadFile={loadFile}
+            onWorkspaceTitleUpdated={updateWorkspaceTitle}
+            onDeleteDocument={onDeleteDocument}
+          />
+        </>
+      </WorkSpaceSearch>
+    ) : (
+      <RecentWorkspaces
+        onLoadWorkspace={loadWorkspace}
+        onDeleteWorkspace={deleteWorkspace}
+      />
+    );
+
+  const sidebarFooter =
+    workspace !== null ? (
+      <div style={{ display: 'flex', color: '#595959', fontSize: '12px' }}>
+        <span>
+          {t('created', 'Created')}: {toDisplayDate(workspace.dateCreated)}
+        </span>
+        <span style={{ marginLeft: 'auto' }}>
+          {t('last_updated', 'Last updated')}:{' '}
+          {toDisplayDate(workspace.dateModified)}
+        </span>
+      </div>
+    ) : (
+      <Button type="secondary" onClick={createNewWorkspace}>
+        {t('create_new', 'Create new')}
+      </Button>
+    );
+
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <WorkSpaceSidebar title="My workspace" onLoadFile={loadFile} />
-      <WorkSpaceTools onToolChange={onToolChange} activeTool={activeTool} />
+    <WorkspaceContainer>
+      <ToastContainer />
+      <WorkSpaceSidebar
+        isOpen={isSidebarOpen}
+        header={sidebarHeader}
+        content={sidebarContent}
+        footer={sidebarFooter}
+      />
+
+      <Button
+        icon="WorkSpace"
+        iconPlacement="left"
+        size="default"
+        type="ghost"
+        className="workspace-toggle-button"
+        onClick={toggleWorkSpaceSidebar}
+      >
+        {t('my-workspace-title', 'My Workspace')}
+      </Button>
+      <WorkSpaceTools
+        onToolChange={onToolChange}
+        isSidebarExpanded={isSidebarOpen}
+        activeTool={activeTool}
+      />
       <div id="container" />
 
-      <div style={{ position: 'fixed', bottom: '16px', left: '416px' }}>
-        <button type="button" onClick={onExport}>
-          Export
-        </button>
+      <MainToolbar>
+        <Button
+          type="secondary"
+          icon="WorkSpaceSave"
+          onClick={onSave}
+          disabled={!workspaceDocuments.length}
+          style={{ marginRight: '10px' }}
+        >
+          {t('save', 'Save')}
+        </Button>
 
-        <button type="button" onClick={onSave}>
-          Save
-        </button>
+        <Button
+          icon="Download"
+          type="primary"
+          onClick={onExport}
+          disabled={!workspaceDocuments.length}
+        >
+          {t('download', 'Download')}
+        </Button>
+      </MainToolbar>
+      <ZoomButtonsToolbar>
+        <Button type="ghost" onClick={() => onZoom(-1)}>
+          <Icon type="ZoomIn" />
+        </Button>
 
-        <button type="button" onClick={onLoad}>
-          Load
-        </button>
-      </div>
-      <div
-        style={{
-          position: 'fixed',
-          top: '16px',
-          right: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <button type="button" onClick={() => onZoom(-1)}>
-          +
-        </button>
-
-        <button type="button" onClick={() => onZoom(1)}>
-          -
-        </button>
-      </div>
-    </div>
+        <Button type="ghost" onClick={() => onZoom(1)}>
+          <Icon type="ZoomOut" />
+        </Button>
+      </ZoomButtonsToolbar>
+      <Loader className={showLoader ? 'visible' : ''}>
+        <Icon type="Loading" className="loading-icon" size={40} />
+      </Loader>
+    </WorkspaceContainer>
   );
 };
 
