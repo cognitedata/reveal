@@ -80,12 +80,14 @@ export default class ComboControls extends EventDispatcher {
   private domElement: HTMLElement;
   private target: Vector3 = new Vector3();
   private viewTarget: Vector3 = new Vector3();
+  private scrollTarget: Vector3 = new Vector3();
   private targetEnd: Vector3 = new Vector3();
   private spherical: Spherical = new Spherical();
   private sphericalEnd: Spherical = new Spherical();
   private deltaTarget: Vector3 = new Vector3();
   private keyboard: Keyboard = new Keyboard();
 
+  private lastTargetBeforeScroll: Vector3 = new Vector3();
   private offsetVector: Vector3 = new Vector3();
   private panVector: Vector3 = new Vector3();
   private raycaster: Raycaster = new Raycaster();
@@ -234,6 +236,11 @@ export default class ComboControls extends EventDispatcher {
     this.viewTarget.copy(target);
   }
 
+  public setScrollTarget = (target: Vector3) => {
+    this.scrollTarget.copy(target);
+    this.lastTargetBeforeScroll.copy(this.target);
+  }
+
   public triggerCameraChangeEvent = () => {
     const { camera, target } = this;
     this.dispatchEvent({
@@ -303,7 +310,7 @@ export default class ComboControls extends EventDispatcher {
       this.camera.isPerspectiveCamera
         ? this.getDollyDeltaDistance(dollyIn, Math.abs(delta))
         : Math.sign(delta) * this.orthographicCameraDollyFactor;
-    this.dolly(0, 0, deltaDistance, false);
+    this.dolly(x, y, deltaDistance, false);
   };
 
   private onTouchStart = (event: TouchEvent) => {
@@ -616,6 +623,57 @@ export default class ComboControls extends EventDispatcher {
       cameraDirection.normalize().multiplyScalar(deltaDistance);
       const rayDirection = raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
       const targetOffset = rayDirection.add(cameraDirection);
+      targetEnd.add(targetOffset);
+    }
+  };
+
+  private dollyPerspectiveCameraScrollTarget = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
+    const { dynamicTarget, minDistance, raycaster, reusableVector3, sphericalEnd, targetEnd, camera, reusableCamera } =
+      this;
+
+    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - (camera as PerspectiveCamera).fov * 0.5));
+    const distFromCameraToCursor = Math.sqrt(
+      distFromCameraToScreenCenter * distFromCameraToScreenCenter + x * x + y * y
+    );
+    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
+    const distToTarget = reusableVector3.setFromSpherical(sphericalEnd).length();
+
+    // @ts-ignore
+    reusableCamera.copy(camera);
+    reusableCamera.position.setFromSpherical(sphericalEnd).add(targetEnd);
+    reusableCamera.lookAt(targetEnd);
+    raycaster.setFromCamera({ x, y }, reusableCamera);
+
+    const cameraDirection = reusableVector3;
+    let radius = distToTarget + deltaDistance;
+
+
+    if (moveTarget) { // move target together with the camera (for 'w' and 's' keys movement)
+      reusableCamera.getWorldDirection(cameraDirection);
+      targetEnd.add(cameraDirection.normalize().multiplyScalar(-deltaDistance));
+    } else { // behaviour for scrolling with mouse wheel
+      if (radius < minDistance) {
+        radius = minDistance;
+        if (dynamicTarget) {
+          // push targetEnd forward
+          reusableCamera.getWorldDirection(cameraDirection);
+          targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
+        } else {
+          // stops camera from moving forward
+          deltaDistance = distToTarget - radius;
+        }
+      }
+      
+      //const distFromRayOrigin = -deltaDistance * ratio;
+
+      sphericalEnd.radius = radius;
+      const targetOffset = reusableVector3.subVectors(this.scrollTarget, this.lastTargetBeforeScroll)
+        .normalize().multiplyScalar(0.1);
+
+      // reusableCamera.getWorldDirection(cameraDirection);
+      // cameraDirection.normalize().multiplyScalar(deltaDistance);
+      // const rayDirection = raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
+      // const targetOffset = rayDirection.add(cameraDirection);
       targetEnd.add(targetOffset);
     }
   };

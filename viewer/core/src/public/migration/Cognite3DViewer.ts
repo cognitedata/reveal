@@ -57,7 +57,6 @@ import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import { RevealManagerHelper } from './RevealManagerHelper';
-import { Vector3 } from 'three';
 
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
@@ -238,7 +237,7 @@ export class Cognite3DViewer {
         this.setCameraTarget(intersection.point, true);
       } else { 
         const boBo = this._models[0].getModelBoundingBox();
-        this.setCameraTarget(boBo.getCenter(new Vector3()), true);
+        this.setCameraTarget(boBo.getCenter(new THREE.Vector3()), true);
       }
     }
 
@@ -247,9 +246,34 @@ export class Cognite3DViewer {
       changeTarget(e);
     });
 
+    this.canvas.addEventListener('wheel', async (e) => {
+      const timeDelta = wheelClock.getDelta();
+      const { offsetX, offsetY } = e;
+      
+      //@ts-ignore
+      if (startedScroll && (e.wheelDeltaY > 0)) {  // consider other browsers
+        console.log(timeDelta, 'scroll:', startedScroll);
+        startedScroll = false;
+
+        const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+        if (intersection !== null) {
+          this.controls.setScrollTarget(intersection.point);
+        } else {
+          const boBo = this._models[0].getModelBoundingBox();
+          this.controls.setScrollTarget(boBo.getCenter(new THREE.Vector3()));
+        }
+
+      } else {
+        if (timeDelta > 0.2 ) {
+          console.log('Changed flag! with delta:', timeDelta)
+          startedScroll = true;
+        }
+      }
+    });
+
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
-    this.controls.minDistance = 0.1;
+    this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
     
     this.controls.dynamicTarget = false; 
@@ -841,11 +865,10 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-
-    if (!animated) this.controls.setState(this.getCameraPosition(), target);
+    
+    if (!animated) this.moveCameraTargetTo(target, 0);
     else this.moveCameraTargetTo(target, 600); // TODO: add duration property somewhere
-
-    //this.controls.newClickTarget = true;
+  
   }
 
   /**
@@ -1183,6 +1206,11 @@ export class Cognite3DViewer {
       return;
     }
 
+    if (duration === 0) {
+      this.controls.setState(this.getCameraPosition(), target);
+      return;
+    }
+
     const { camera } = this;
 
     if (duration == null) {
@@ -1230,7 +1258,7 @@ export class Cognite3DViewer {
     }
     
     this.controls.newClickTarget = true;
-    this.setCameraTarget(target);
+    this.controls.setState(this.getCameraPosition(), target);
 
     const tmpTarget = new THREE.Vector3();
     const tween = animation
@@ -1251,7 +1279,8 @@ export class Cognite3DViewer {
           return;
         }
         this.controls.newClickTarget = false;
-        this.setCameraTarget(tmpTarget);
+        this.controls.enableKeyboardNavigation = true;
+        this.controls.setState(this.getCameraPosition(), tmpTarget);
 
         this.canvas.removeEventListener('pointerdown', stopTween);
       })
