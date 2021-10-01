@@ -9,14 +9,15 @@ import { LevelOfDetail } from './LevelOfDetail';
 import { CadSectorParser } from './CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { MemoryRequestCache } from '../../../utilities/cache/MemoryRequestCache';
-import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { TriangleMesh, InstancedMeshFile, InstancedMesh } from '../rendering/types';
 import { assertNever, createOffsetsArray } from '../../../utilities';
 
-import { BinaryFileProvider } from '../../../utilities/networking/types';
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { MostFrequentlyUsedCache } from '../../../utilities/MostFrequentlyUsedCache';
 import { trackError } from '../../../utilities/metrics';
+
+import { BinaryFileProvider } from '@reveal/modeldata-api';
+import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {

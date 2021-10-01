@@ -35,11 +35,9 @@ import {
   SsaoSampleQuality
 } from '../types';
 
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { assertNever, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
-import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
 import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
@@ -54,10 +52,12 @@ import {
 } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
-import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import { RevealManagerHelper } from './RevealManagerHelper';
+
+import ComboControls from '@reveal/camera-manager';
+import { CdfModelDataClient, CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 

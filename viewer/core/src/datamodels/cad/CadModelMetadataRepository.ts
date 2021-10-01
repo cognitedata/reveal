@@ -10,7 +10,8 @@ import { File3dFormat } from '../../utilities';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
-import { ModelDataClient } from '../../utilities/networking/types';
+
+import { ModelDataClient } from '@reveal/modeldata-api';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 

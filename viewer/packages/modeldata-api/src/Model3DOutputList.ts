@@ -3,7 +3,7 @@
  */
 
 import { BlobOutputMetadata } from './types';
-import { File3dFormat } from '../types';
+import { File3dFormat } from '../../../core/src/utilities/types';
 
 export class Model3DOutputList {
   public readonly modelId: number;

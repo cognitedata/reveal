@@ -3,7 +3,6 @@
  */
 
 export { File3dFormat, CameraConfiguration, CogniteColors, LoadingState } from './types';
-export { LocalModelIdentifier, CdfModelIdentifier } from './networking/types';
 export { createOffsetsArray } from './arrays';
 export { worldToViewportCoordinates, worldToNormalizedViewportCoordinates } from './worldToViewport';
 export { BoundingBoxClipper } from './BoundingBoxClipper';
@@ -13,3 +12,5 @@ export { NumericRange } from './NumericRange';
 export { assertNever } from './assertNever';
 export { traverseDepthFirst } from './objectTraversal';
 export * from './events';
+
+export { LocalModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';

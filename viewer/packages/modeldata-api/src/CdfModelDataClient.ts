@@ -4,12 +4,9 @@
 import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
-import { ModelDataClient } from './types';
-import { BlobOutputMetadata } from './BlobOutputMetadata';
+import { ModelDataClient, File3dFormat, CameraConfiguration, BlobOutputMetadata } from './types';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat, CameraConfiguration } from './types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
-import { getSdkApplicationId } from './utilities';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
@@ -138,4 +135,14 @@ async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefin
     }
   }
   throw error;
+}
+
+/**
+ * Determines the `appId` of the `CogniteClient` provided.
+ * @param sdk Instance of `CogniteClient`.
+ * @returns Application ID or 'unknown' if not found.
+ */
+function getSdkApplicationId(sdk: CogniteClient): string {
+  const headers = sdk.getDefaultRequestHeaders();
+  return headers['x-cdp-app'] || 'unknown';
 }
