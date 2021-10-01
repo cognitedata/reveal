@@ -32,11 +32,18 @@ export const mapAssetsToEntities = (
   fieldToMatch: keyof Asset = 'name',
   userDefinedField: string = 'userDefinedField'
 ) => {
+  const isMetadata = fieldToMatch.includes('metadata');
+  const metadataField: keyof Asset['metadata'] = (
+    isMetadata ? fieldToMatch.replace('metadata.', '') : fieldToMatch
+  ) as keyof Asset['metadata'];
+
   return (assets ?? []).map((asset) => ({
     resourceType: 'asset',
     id: asset.id,
     externalId: asset.externalId,
-    [userDefinedField]: asset[fieldToMatch],
+    [userDefinedField]: isMetadata
+      ? (asset?.metadata ?? {})[metadataField] ?? ''
+      : asset[fieldToMatch] ?? '',
   }));
 };
 
@@ -45,10 +52,17 @@ export const mapFilesToEntities = (
   fieldToMatch: keyof FileInfo = 'name',
   userDefinedField: string = 'userDefinedField'
 ) => {
+  const isMetadata = fieldToMatch.includes('metadata');
+  const metadataField: keyof FileInfo['metadata'] = (
+    isMetadata ? fieldToMatch.replace('metadata.', '') : fieldToMatch
+  ) as keyof FileInfo['metadata'];
+
   return (files ?? []).map((file) => ({
     resourceType: 'file',
     id: file.id,
     externalId: file.externalId,
-    [userDefinedField]: file[fieldToMatch],
+    [userDefinedField]: isMetadata
+      ? (file?.metadata ?? {})[metadataField] ?? ''
+      : file[fieldToMatch] ?? '',
   }));
 };

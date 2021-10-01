@@ -24,3 +24,6 @@ export const getEnvironment = () => {
 export default {
   env: getEnvironment(),
 };
+
+// # of resources checked for possible match fields out of total
+export const NUM_OF_RESOURCES_CHECKED = 100;

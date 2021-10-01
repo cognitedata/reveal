@@ -145,6 +145,17 @@ export const getAllPossibleStringFields = (items: ResourceItem[]) => {
     });
     return accumulator;
   }, {});
+  const resourceMetadata = Array.from(
+    new Set(
+      items.reduce(
+        (accl: string[], item: any) =>
+          item && item.metadata
+            ? accl.concat(Object.keys(item?.metadata))
+            : accl,
+        []
+      )
+    ) as Set<string>
+  ).map((metadataKey: string) => `metadata.${metadataKey}`);
 
-  return Object.keys(possibleFields);
+  return [...Object.keys(possibleFields), ...resourceMetadata];
 };
