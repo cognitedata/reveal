@@ -3,7 +3,8 @@
  */
 
 import * as THREE from 'three';
-import { File3dFormat } from '../../../core/src/utilities';
+
+import { File3dFormat } from './types';
 
 // The below is equal to new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
 const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
