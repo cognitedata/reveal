@@ -6,9 +6,12 @@ import {
   OrnateAnnotation,
   OrnateAnnotationInstance,
   ToolType,
+  ShapeSettings as ShapeSettingsType,
 } from 'library/types';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
 import WorkSpaceTools from 'components/WorkSpaceTools';
+import ShapeSettings from 'components/ShapeSettings';
+import { defaultShapeSettings } from 'components/ShapeSettings/constants';
 import { Button, Icon, toast, ToastContainer } from '@cognite/cogs.js';
 import { workspaceService } from 'services';
 import { Workspace, WorkspaceDocument } from 'types';
@@ -33,6 +36,11 @@ interface OrnateProps {
 const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const ornateViewer = useRef<CogniteOrnate>();
   const [activeTool, setActiveTool] = useState<ToolType>('default');
+  const [shapeSettings, setShapeSettings] =
+    useState<ShapeSettingsType>(defaultShapeSettings);
+
+  const shouldSettingsBeVisible =
+    activeTool === 'line' || activeTool === 'rect' || activeTool === 'circle';
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
   const { t } = useTranslation('WorkspaceHeader');
@@ -90,6 +98,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     setActiveTool(tool);
   };
 
+  const onShapeSettingsChange = (nextSettings: Partial<ShapeSettingsType>) => {
+    ornateViewer.current!.handleShapeSettingsChange(nextSettings);
+    setShapeSettings({ ...shapeSettings, ...nextSettings });
+  };
   const loadWorkspace = async (workspace: Workspace) => {
     try {
       setShowLoader(true);
@@ -353,6 +365,13 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         content={sidebarContent}
         footer={sidebarFooter}
       />
+
+      {shouldSettingsBeVisible && (
+        <ShapeSettings
+          shapeSettings={shapeSettings}
+          onSettingsChange={onShapeSettingsChange}
+        />
+      )}
 
       <Button
         icon="WorkSpace"

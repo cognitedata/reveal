@@ -25,8 +25,9 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       y: translatedMousePosition.y,
       width: 1,
       height: 1,
-      stroke: 'red',
-      strokeWidth: 3,
+      stroke: this.shapeSettings.strokeColor,
+      strokeWidth: this.shapeSettings.strokeWidth,
+      opacity: this.shapeSettings.opacity,
       userGenerated: true,
       type: 'circle',
     });

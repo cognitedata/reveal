@@ -64,6 +64,7 @@
     "rc-collapse": "^3.1.1",
     "react": "17.0.2",
     "react-chartjs-2": "^2.10.0",
+    "react-color": "^2.19.3",
     "react-dom": "17.0.2",
     "react-glider": "^2.2.0",
     "react-helmet": "^6.1.0",

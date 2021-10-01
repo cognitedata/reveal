@@ -1,5 +1,5 @@
 import { KonvaEventObject } from 'konva/lib/Node';
-import { ICogniteOrnateTool } from 'library/types';
+import { ICogniteOrnateTool, ShapeSettings } from 'library/types';
 import noop from 'lodash/noop';
 
 import { CogniteOrnate } from '../cognite-ornate';
@@ -7,8 +7,10 @@ import { CogniteOrnate } from '../cognite-ornate';
 export class Tool implements ICogniteOrnateTool {
   cursor = 'default';
   ornateInstance: CogniteOrnate;
+  shapeSettings: ShapeSettings;
   constructor(ornateInstance: CogniteOrnate) {
     this.ornateInstance = ornateInstance;
+    this.shapeSettings = ornateInstance.shapeSettings;
   }
 
   onInit = noop;

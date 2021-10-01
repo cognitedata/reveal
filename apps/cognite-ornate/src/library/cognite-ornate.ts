@@ -8,6 +8,7 @@ import {
   OrnatePDFDocument,
   OrnateJSON,
   Drawing,
+  ShapeSettings,
 } from 'library/types';
 import {
   MoveTool,
@@ -21,6 +22,7 @@ import { Tool } from 'library/tools/Tool';
 import { ConnectedLine } from 'library/connectedLine';
 import bgImage from 'library/assets/bg.png';
 import { Vector2d } from 'konva/lib/types';
+import { defaultShapeSettings } from 'components/ShapeSettings/constants';
 import { PDFDocument } from 'pdf-lib';
 
 import { downloadURL, pdfToImage } from './utils';
@@ -47,6 +49,7 @@ export class CogniteOrnate {
   isDrawing = false;
   currentTool: Tool = new DefaultTool(this);
   connectedLineGroup: ConnectedLine[] = [];
+  shapeSettings: ShapeSettings = defaultShapeSettings;
 
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
@@ -110,6 +113,15 @@ export class CogniteOrnate {
 
     this.stage.width(containerWidth);
     this.stage.height(containerHeight);
+  };
+
+  handleShapeSettingsChange = (nextSettings: Partial<ShapeSettings>) => {
+    const newSettings = {
+      ...this.shapeSettings,
+      ...nextSettings,
+    };
+    this.shapeSettings = newSettings;
+    this.currentTool.shapeSettings = newSettings;
   };
 
   handleToolChange(tool: ToolType) {

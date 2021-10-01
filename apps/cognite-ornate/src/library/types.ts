@@ -46,6 +46,12 @@ export type OrnateJSON = {
 
 export type ToolType = 'move' | 'line' | 'rect' | 'text' | 'default' | 'circle';
 
+export type ShapeSettings = {
+  strokeColor: string;
+  strokeWidth: number;
+  opacity: number;
+};
+
 export interface ICogniteOrnateTool {
   /** Mouse cursor that will be used for this tool */
   cursor: string;

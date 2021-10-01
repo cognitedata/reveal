@@ -85,6 +85,7 @@ DEPENDENCIES = [
     "@npm//pdf-lib",
     "@npm//react",
     "@npm//react-dom",
+    "@npm//react-color",
     "@npm//react-router-dom",
     "@npm//styled-components",
     "@npm//uuid",
@@ -100,6 +101,7 @@ DEPENDENCIES = [
 TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
     "@npm//@types/react",
+    "@npm//@types/react-color",
     "@npm//@types/react-dom",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
