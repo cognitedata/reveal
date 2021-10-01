@@ -249,23 +249,29 @@ const AnnotationPreviewSidebar = ({
     status: AnnotationStatus
   ) => {
     const isApprove = status === 'verified';
+    const okText = isApprove ? 'Approve tag' : 'Reject tag';
+    const content = isApprove ? (
+      'Approve this tag'
+    ) : (
+      <>
+        <Body level={2} strong>
+          Reject this tag?
+        </Body>
+        <Body level={2}>The tag will be removed from the diagram.</Body>
+      </>
+    );
+
     Modal.confirm({
-      okText: isApprove ? 'Approve tag' : 'Reject tag',
-      title: 'Are you sure?',
-      content: (
-        <span>
-          Are you sure you want to {isApprove ? 'approve' : 'reject'} this tag
-          for this file? Changes will be saved to CDF.
-        </span>
-      ),
+      icon: <></>,
+      width: 320,
+      maskClosable: true,
+      okText,
+      content,
       onOk: async () => {
         updateAnnotationStatus({ annotation, status });
         setSelectedAnnotations([]);
       },
-      onCancel: () => {},
-      okButtonProps: {
-        loading: isApprovingFile,
-      },
+      okButtonProps: { loading: isApprovingFile },
     });
   };
 
