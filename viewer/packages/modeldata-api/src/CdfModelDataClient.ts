@@ -4,9 +4,10 @@
 import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 
-import { BlobOutputMetadata, ModelDataClient } from './types';
+import { ModelDataClient } from './types';
+import { BlobOutputMetadata } from './BlobOutputMetadata';
 import { Model3DOutputList } from './Model3DOutputList';
-import { File3dFormat, CameraConfiguration } from '../types';
+import { File3dFormat, CameraConfiguration } from './types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { getSdkApplicationId } from './utilities';
 

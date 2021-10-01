@@ -11,6 +11,7 @@
   "dependencies": {
     "@reveal/camera-manager": "workspace:*",
     "@reveal/logger": "workspace:*",
+    "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*"
   },
   "sideEffects": false,

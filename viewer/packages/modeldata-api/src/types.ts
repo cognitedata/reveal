@@ -3,14 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { File3dFormat, CameraConfiguration } from '../types';
-import { HttpHeadersProvider } from './HttpHeadersProvider';
-
-export interface BlobOutputMetadata {
-  blobId: number;
-  format: File3dFormat | string;
-  version: number;
-}
+import { CameraConfiguration } from '../../../core/src/utilities/types';
 
 export interface LocalModelIdentifier {
   fileName: string;
@@ -35,9 +28,8 @@ export interface ModelMetadataProvider<TModelIdentifier> {
   getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
 }
 
-export interface ModelDataClient<TModelIdentifier>
-  extends HttpHeadersProvider,
-    ModelMetadataProvider<TModelIdentifier>,
+export interface ModelDataClient<TModelIdentifier> /*HttpHeadersProvider,*/
+  extends ModelMetadataProvider<TModelIdentifier>,
     JsonFileProvider,
     BinaryFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;

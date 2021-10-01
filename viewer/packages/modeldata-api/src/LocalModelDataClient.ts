@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { ModelDataClient } from './types';
 import { fetchWithStatusCheck } from './utilities';
-import { File3dFormat, CameraConfiguration } from '../types';
+import { File3dFormat, CameraConfiguration } from './types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 
 export class LocalModelDataClient implements ModelDataClient<{ fileName: string }> {

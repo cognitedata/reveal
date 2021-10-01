@@ -931,6 +931,7 @@ __metadata:
   dependencies:
     "@reveal/camera-manager": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -938,6 +939,12 @@ __metadata:
 "@reveal/logger@workspace:*, @reveal/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@reveal/logger@workspace:packages/logger"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/modeldata-api@workspace:*, @reveal/modeldata-api@workspace:packages/modeldata-api":
+  version: 0.0.0-use.local
+  resolution: "@reveal/modeldata-api@workspace:packages/modeldata-api"
   languageName: unknown
   linkType: soft
 
