@@ -28,11 +28,7 @@ export interface ModelMetadataProvider<TModelIdentifier> {
   getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
 }
 
-export interface ModelDataClient<TModelIdentifier>
-  extends HttpHeadersProvider,
-    ModelMetadataProvider<TModelIdentifier>,
-    JsonFileProvider,
-    BinaryFileProvider {
+export interface ModelDataClient extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 

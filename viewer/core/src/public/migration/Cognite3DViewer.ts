@@ -57,7 +57,12 @@ import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-
 import { RevealManagerHelper } from './RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelDataClient, CdfModelIdentifier, LocalModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import {
+  CdfModelIdentifier,
+  LocalModelIdentifier,
+  File3dFormat,
+  CdfModelMetadataProvider
+} from '@reveal/modeldata-api';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -626,8 +631,8 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    const clientExt = new CdfModelDataClient(this.sdkClient);
-    const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
+    const metadataProvider = new CdfModelMetadataProvider(this.sdkClient);
+    const outputs = await metadataProvider.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return 'cad';
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {

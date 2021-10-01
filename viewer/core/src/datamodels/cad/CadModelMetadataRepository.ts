@@ -10,24 +10,27 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
 
-import { ModelDataClient, File3dFormat } from '@reveal/modeldata-api';
+import { File3dFormat, ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 
 export class CadModelMetadataRepository<TModelIdentifier>
   implements MetadataRepository<TModelIdentifier, Promise<CadModelMetadata>>
 {
-  private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
+  private readonly _modelMetadataProvider: ModelMetadataProvider<ModelIdentifierWithFormat<TModelIdentifier>>;
+  private readonly _modelDataClient: ModelDataClient;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
   private _currentModelIdentifier = 0;
 
   constructor(
-    modelMetadataProvider: ModelDataClient<TModelIdentifier>,
+    modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
+    modelDataClient: ModelDataClient,
     cadMetadataParser: CadMetadataParser,
     blobFileName: string = 'scene.json'
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
+    this._modelDataClient = modelDataClient;
     this._cadSceneParser = cadMetadataParser;
     this._blobFileName = blobFileName;
   }
@@ -39,7 +42,7 @@ export class CadModelMetadataRepository<TModelIdentifier>
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(identifierWithFormat);
 
     const blobBaseUrl = await blobBaseUrlPromise;
-    const json = await this._modelMetadataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
+    const json = await this._modelDataClient.getJsonFile(blobBaseUrl, this._blobFileName);
     const modelIdentifier = `${this._currentModelIdentifier++}`;
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
