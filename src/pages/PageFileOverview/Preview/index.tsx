@@ -53,7 +53,7 @@ export default function Preview(props: Props) {
         key="assets"
         title={
           <>
-            <TabTitle>Linked assets</TabTitle>
+            <TabTitle>Assets</TabTitle>
             <Badge
               text={counts.asset}
               background={Colors['greyscale-grey3'].hex()}
@@ -67,7 +67,7 @@ export default function Preview(props: Props) {
         key="files"
         title={
           <>
-            <TabTitle>Linked diagrams</TabTitle>
+            <TabTitle>Diagrams</TabTitle>
             <Badge
               text={counts.file}
               background={Colors['greyscale-grey3'].hex()}

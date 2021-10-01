@@ -33,7 +33,7 @@ export default function DiagramActions() {
       <Tooltip
         title={
           isApproveAllDisabled &&
-          'All diagrams are already approved or have no tags to review!'
+          'All diagrams are already approved or have no tags to review'
         }
       >
         <Button

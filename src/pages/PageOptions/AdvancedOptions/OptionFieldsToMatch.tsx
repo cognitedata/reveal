@@ -65,7 +65,7 @@ export const OptionFieldsToMatch = ({ workflowId }: { workflowId: number }) => {
   return (
     <OptionWrapper>
       <Body level={2} strong>
-        Select fields to match to scanned results
+        Select fields to match with diagrams
       </Body>
       {resources.files && (
         <Select

@@ -20,13 +20,13 @@ export const convertSuccessNotification = (data: PnidsConvertJobSchema) => {
   if (!statusCount.failed) {
     content.message =
       numFiles === 1
-        ? 'Selected diagram has been successfully converted to SVG!'
-        : 'All of the selected diagrams have been successfully converted to SVG!';
+        ? 'Selected diagram has been successfully converted to SVG'
+        : 'All of the selected diagrams have been successfully converted to SVG';
     notification.success(content);
   }
   // some but not all files failed
   else if (statusCount.failed && statusCount.failed < numFiles) {
-    content.message = 'SVG convertion finished!';
+    content.message = 'SVG convertion finished';
     content.description = `${statusCount.completed ?? 0} file${
       (statusCount.completed ?? 0) > 1 ? 's were' : ' was'
     } converted successfully. Failed to create SVG for ${

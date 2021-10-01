@@ -49,7 +49,7 @@ export default function SectionSetup(): JSX.Element {
     <SetUpWrapper jobStatus={jobStatus}>
       <Flex column>
         <Flex row align style={{ justifyContent: 'space-between' }}>
-          <Title level={5}>Set up for creating interactive diagrams</Title>
+          <Title level={5}>Setup for creating interactive diagrams</Title>
           <Label size="small" variant={labelVariant}>
             {jobLabel}
           </Label>

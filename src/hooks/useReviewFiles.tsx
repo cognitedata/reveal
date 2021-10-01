@@ -130,19 +130,19 @@ export const useReviewFiles = (fileIds: Array<number>) => {
   };
   const onApproveSuccess = () => {
     notification.success({
-      message: 'Diagram tags successfully approved!',
+      message: 'Diagram tags successfully approved',
     });
     onSuccess();
   };
   const onRejectSuccess = () => {
     notification.success({
-      message: 'Diagram tags successfully rejected!',
+      message: 'Diagram tags successfully rejected',
     });
     onSuccess();
   };
   const onClearSuccess = () => {
     notification.success({
-      message: 'Diagram tags successfully deleted!',
+      message: 'Diagram tags successfully deleted',
     });
     onSuccess();
   };

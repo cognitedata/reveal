@@ -44,9 +44,7 @@ export default function PageOptions(props: Props) {
             style={{ marginBottom: '14px' }}
           >
             <Body level={2}>
-              Uses the default set of configurations for creating interactive
-              engineering diagrams. This is recommended for most engineering
-              diagrams.
+              This is recommended for most engineering diagrams.
             </Body>
           </CollapsibleRadio>
           <CollapsibleRadio
