@@ -251,7 +251,9 @@ const AnnotationPreviewSidebar = ({
     const isApprove = status === 'verified';
     const okText = isApprove ? 'Approve tag' : 'Reject tag';
     const content = isApprove ? (
-      'Approve this tag'
+      <Body level={2} strong>
+        Approve this tag?
+      </Body>
     ) : (
       <>
         <Body level={2} strong>
