@@ -1606,17 +1606,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.2.0.tgz#c9e0520e9fa4a5e227d3a8ea3b8c9e6f6a511974"
-  integrity sha512-znfyU51iDT6FN+dcyl5KaPm8TdRzp6g+YFOnqa1EDkBtSe3oqohvedHuifjcW80vd7m7yxuCJfkBlzGp3vOFmg==
+"@cognite/data-exploration@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.5.1.tgz#278bf2153cb1b03bf11b638f79251f59ccb0f2ef"
+  integrity sha512-RG0RRbqDbL2uWscJczUoY0wRM22/6UZX61VuGZP3/tqQ4WpjT55gO9SHKcPUb07FP8r1pW9wEKONgdRNF9ajgA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cogs.js" "^3.32.1"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^1.16.3"
+    "@cognite/react-picture-annotation" "^2.0.0"
     "@cognite/sdk" "^3.3.6"
     "@cognite/sdk-provider" "^1.0.0"
     "@cognite/sdk-react-query-hooks" "^5.0.1"
@@ -1711,6 +1711,36 @@
   version "1.16.3"
   resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.16.3.tgz#b4ea16dc7676dd9ca858250b7a71a743dbc32222"
   integrity sha512-v79UmJA7q3hyt02/Kgud8J7myalhfSNR3IDGM2uDm3WexaHipD/Gf91SmluuW2ZG94kzjlmhzl+LsL2fCLmtPw==
+  dependencies:
+    "@cognite/annotations" "^1.1.0"
+    "@cognite/sdk" "^3.3.0"
+    "@storybook/addon-knobs" "^6.1.10"
+    "@types/lodash" "^4.14.165"
+    "@types/lz-string" "^1.3.34"
+    "@types/react-canvas-draw" "^1.1.0"
+    "@types/react-splitter-layout" "^3.0.0"
+    lz-string "^1.4.4"
+    parse-color "^1.0.0"
+    pdf-lib "^1.12.0"
+    pdfjs-dist "2.6.347"
+    react-archer "^3.0.0"
+    react-canvas-draw "^1.1.1"
+    react-color "^2.19.3"
+    react-color-palette "^4.1.0"
+    react-draggable "^4.4.3"
+    react-is "^17.0.1"
+    react-splitter-layout "^4.0.0"
+    react-tiny-popover "^6.0.5"
+    reselect "^4.0.0"
+    simplify-js "^1.2.4"
+    styled-components "^5.2.0"
+    typescript "^4.1.2"
+    uuid "^8.3.0"
+
+"@cognite/react-picture-annotation@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.0.tgz#181f0bd90192a3892c4f9b5ad59584aa8fd5f80d"
+  integrity sha512-/lHq0JMrNkYyJL+8SZfJbW8btW0g5l7XYyTgx+3XSYOKUxDDGlGAAWTW9KgBsdyqc5CjtWPXphJko937Wp7UQg==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^3.3.0"
