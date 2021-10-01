@@ -3,12 +3,13 @@
  */
 
 import { SectorCuller } from '../../internals';
-import { BinaryFileProvider } from '../../utilities/networking/types';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './CadMaterialManager';
 import { CachedRepository } from './sector/CachedRepository';
 import { CadSectorParser } from './sector/CadSectorParser';
 import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
+
+import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 describe('CadModelUpdateHandler', () => {
   let repository: CachedRepository;

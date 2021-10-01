@@ -3,12 +3,13 @@
  */
 import * as THREE from 'three';
 
-import { ModelDataClient } from '../utilities/networking/types';
 import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
 import { createGlContext } from '../__testutilities__/createGlContext';
+
+import { ModelDataClient } from '@reveal/modeldata-api';
 
 describe('RevealManager', () => {
   const mockClient: ModelDataClient<{ id: number }> = {

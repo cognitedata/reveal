@@ -29,7 +29,7 @@
     "build:prod": "yarn run clean && webpack --env.production",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
-    "test": "yarn workspaces foreach run test",
+    "test": "jest",
     "coverage": "jest --coverage",
     "lint": "yarn workspaces foreach run lint",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
