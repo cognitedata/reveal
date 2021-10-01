@@ -23,8 +23,7 @@ export class TimelineKeyframe {
   }
 
   public applyStyle() {
-    //this._model.assignStyledNodeCollection(this._nodeCollection, this._nodeAppearance);
-    this._model.setDefaultNodeAppearance(this._nodeAppearance);
+    this._model.assignStyledNodeCollection(this._nodeCollection, this._nodeAppearance);
   }
 
   public removeStyle() {
