@@ -172,6 +172,19 @@ export const selectFileAnnotations = createSelector(
   }
 );
 
+export const selecAllAnnotations = createSelector(
+  annotationsById,
+  (annotations: Record<number, VisionAnnotation>) => {
+    const allAnnotations = Object.entries(annotations).map(
+      ([_, annotation]) => {
+        return annotation;
+      }
+    );
+
+    return allAnnotations;
+  }
+);
+
 export const selectAnnotationsForAllFiles = createSelector(
   (state: State, fileIds: number[]) =>
     fileIds.map((id) => selectFileAnnotations(state, id)),
@@ -203,40 +216,12 @@ export const filesAnnotationCounts = createDeepEqualSelector(
 
 export const makeSelectAnnotationCounts = () =>
   createDeepEqualSelector(selectFileAnnotations, (annotations) => {
-    const annotationsBadgeProps: AnnotationsBadgeCounts = {
-      tag: {},
-      gdpr: {},
-      text: {},
-      objects: {},
-    };
+    return getBadgeProps(annotations);
+  });
 
-    if (annotations) {
-      annotationsBadgeProps.text = getSingleAnnotationCounts(
-        annotations.filter((item) => item.modelType === VisionAPIType.OCR)
-      );
-      annotationsBadgeProps.tag = getSingleAnnotationCounts(
-        annotations.filter(
-          (item) => item.modelType === VisionAPIType.TagDetection
-        )
-      );
-
-      annotationsBadgeProps.gdpr = getSingleAnnotationCounts(
-        annotations.filter(
-          (item) =>
-            item.modelType === VisionAPIType.ObjectDetection &&
-            item.text === 'person'
-        )
-      );
-
-      annotationsBadgeProps.objects = getSingleAnnotationCounts(
-        annotations.filter(
-          (item) =>
-            item.modelType === VisionAPIType.ObjectDetection &&
-            item.text !== 'person'
-        )
-      );
-    }
-    return annotationsBadgeProps;
+export const makeSelectTotalAnnotationCounts = () =>
+  createDeepEqualSelector(selecAllAnnotations, (annotations) => {
+    return getBadgeProps(annotations);
   });
 
 export const selectFileAnnotationsByType = createSelector(
@@ -279,4 +264,41 @@ const getSingleAnnotationCounts = (annotations: AnnotationPreview[]) => {
     unhandled,
     rejected,
   } as AnnotationCounts;
+};
+
+const getBadgeProps = (annotations: VisionAnnotation[]) => {
+  const annotationsBadgeProps: AnnotationsBadgeCounts = {
+    tag: {},
+    gdpr: {},
+    text: {},
+    objects: {},
+  };
+
+  if (annotations) {
+    annotationsBadgeProps.text = getSingleAnnotationCounts(
+      annotations.filter((item) => item.modelType === VisionAPIType.OCR)
+    );
+    annotationsBadgeProps.tag = getSingleAnnotationCounts(
+      annotations.filter(
+        (item) => item.modelType === VisionAPIType.TagDetection
+      )
+    );
+
+    annotationsBadgeProps.gdpr = getSingleAnnotationCounts(
+      annotations.filter(
+        (item) =>
+          item.modelType === VisionAPIType.ObjectDetection &&
+          item.text === 'person'
+      )
+    );
+
+    annotationsBadgeProps.objects = getSingleAnnotationCounts(
+      annotations.filter(
+        (item) =>
+          item.modelType === VisionAPIType.ObjectDetection &&
+          item.text !== 'person'
+      )
+    );
+  }
+  return annotationsBadgeProps;
 };

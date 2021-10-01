@@ -1,6 +1,5 @@
 import { Button, Icon, toast } from '@cognite/cogs.js';
 import { notification } from 'antd';
-import { ArgsProps } from 'antd/lib/notification';
 import React from 'react';
 import { ToastContentProps } from 'react-toastify/dist/types';
 import styled from 'styled-components';
@@ -96,21 +95,3 @@ export class ToastUtils {
     });
   }
 }
-
-export const toastProps = {
-  key: 'inProgressToast',
-  top: 170,
-  closeIcon: <div />,
-  icon: <Icon type="Info" style={{ color: '#4A67FB' }} />,
-  message: '',
-  description:
-    'Processing files. Please do not leave this page until it is done.',
-  style: {
-    background: '#F6F7FF',
-    border: '1px solid #4A67FB',
-    boxSizing: 'border-box',
-    borderRadius: '5px',
-    boxShadow: 'none',
-    color: '#4A67FB',
-  },
-} as ArgsProps;

@@ -82,6 +82,7 @@ export const ExploreModalContainer = () => {
     });
 
     dispatch(setProcessFileIds(allProcessFileIds));
+    dispatch(ClearExplorerStateOnTransition());
     dispatch(setSelectFromExploreModalVisibility(false));
   };
 

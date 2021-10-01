@@ -12,16 +12,17 @@ import {
   revertDetectionModelParameters,
   resetDetectionModelParameters,
   selectAllProcessFiles,
+  selectIsProcessingStarted,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
-import { toastProps } from 'src/utils/ToastUtils';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Title, Modal } from '@cognite/cogs.js';
 import { DetectionModelSelect } from 'src/modules/Process/Components/DetectionModelSelect';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { VisionAPIType } from 'src/api/types';
 import { getContainer } from 'src/utils';
 import { AppDispatch } from 'src/store';
+import ProgressStatus from './ProgressStatus';
 
 export const ProcessToolBar = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -34,9 +35,9 @@ export const ProcessToolBar = () => {
     return selectIsPollingComplete(state.processSlice);
   });
 
-  const showDrawer = useSelector(
-    (state: RootState) => state.processSlice.showFileMetadataDrawer
-  );
+  const isProcessingStarted = useSelector((state: RootState) => {
+    return selectIsProcessingStarted(state.processSlice);
+  });
 
   const selectedDetectionModels = useSelector(
     (state: RootState) => state.processSlice.selectedDetectionModels
@@ -78,17 +79,6 @@ export const ProcessToolBar = () => {
     !!processFiles.length &&
     !selectedDetectionModels.length &&
     isPollingFinished;
-
-  useEffect(() => {
-    if (isPollingFinished || showDrawer) {
-      notification.close('inProgressToast');
-    } else {
-      notification.info({
-        ...toastProps,
-        duration: 0,
-      });
-    }
-  }, [isPollingFinished, showDrawer]);
 
   const detectionModelConfiguration = () => {
     return (
@@ -211,6 +201,11 @@ export const ProcessToolBar = () => {
           </ElementContent>
         </ProcessToolBarElement>
       </ToolContainer>
+      {isProcessingStarted && (
+        <ToolContainer style={{ justifySelf: 'end' }}>
+          <ProgressStatus />
+        </ToolContainer>
+      )}
     </Container>
   );
 };
@@ -220,7 +215,7 @@ const Container = styled.div`
   padding-top: 20px;
   padding-bottom: 15px;
   grid-gap: 25px;
-  grid-template-columns: max-content auto;
+  grid-template-columns: max-content max-content 1fr;
 `;
 
 const StyledModal = styled(Modal)`

@@ -60,6 +60,7 @@ export type State = {
     objectDetection: ParamsObjectDetection;
   };
   showExploreModal: boolean;
+  showSummaryModal: boolean;
   sortPaginate: Record<FileSortPaginateType, SortPaginate>;
   currentView: ViewMode;
   mapTableTabKey: string;
@@ -100,6 +101,7 @@ const initialState: State = {
   detectionModelParameters: initialDetectionModelParameters,
   temporaryDetectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
+  showSummaryModal: false,
   sortPaginate: {
     LIST: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
     GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
@@ -185,6 +187,9 @@ const processSlice = createSlice({
     },
     setSelectFromExploreModalVisibility(state, action: PayloadAction<boolean>) {
       state.showExploreModal = action.payload;
+    },
+    setSummaryModalVisibility(state, action: PayloadAction<boolean>) {
+      state.showSummaryModal = action.payload;
     },
     setSortKey(
       state,
@@ -350,6 +355,7 @@ export const {
   resetDetectionModelParameters,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
+  setSummaryModalVisibility,
   setSortKey,
   setReverse,
   setCurrentPage,
@@ -430,6 +436,19 @@ export const selectJobsByFileId = createSelector(
   }
 );
 
+export const selectAllJobsForAllFilesDict = createSelector(
+  selectAllFilesDict,
+  selectAllJobs,
+  (allFilesDict, allJobs) => {
+    const allJobsAllFilesDict = Object.entries(allFilesDict).map(
+      ([fileId, { jobIds }]) => {
+        return { fileId, jobs: jobIds.map((jobId) => allJobs[jobId]) };
+      }
+    );
+    return allJobsAllFilesDict;
+  }
+);
+
 export const selectAllProcessFiles = createSelector(
   (state: RootState) => state.filesSlice.files.byId,
   (state: RootState) => state.processSlice.fileIds,
@@ -495,6 +514,20 @@ export const makeSelectAnnotationStatuses = () =>
     });
     return annotationBadgeProps as AnnotationsBadgeStatuses;
   });
+
+export const selectPageCount = (state: State): number => {
+  if (state.currentView === 'grid')
+    return Math.ceil(state.fileIds.length / state.sortPaginate.GRID.pageSize);
+
+  if (state.currentView === 'map')
+    return Math.ceil(
+      state.fileIds.length /
+        (state.sortPaginate.LOCATION.pageSize +
+          state.sortPaginate.NO_LOCATION.pageSize)
+    );
+
+  return Math.ceil(state.fileIds.length / state.sortPaginate.LIST.pageSize);
+};
 
 // helpers
 export const isProcessingFile = (

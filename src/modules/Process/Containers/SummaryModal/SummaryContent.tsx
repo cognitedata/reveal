@@ -15,7 +15,7 @@ import { selectAllProcessFiles } from 'src/modules/Process/processSlice';
 
 const queryClient = new QueryClient();
 
-export default function SummaryStep() {
+export default function SummaryContent() {
   const processFiles = useSelector((state: RootState) =>
     selectAllProcessFiles(state)
   );

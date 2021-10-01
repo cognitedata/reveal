@@ -165,6 +165,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 40px auto;
+  background: white;
 `;
 
 const Content = styled.div`

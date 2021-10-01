@@ -1,5 +1,5 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
@@ -11,18 +11,15 @@ import {
   selectAllProcessFiles,
   selectIsPollingComplete,
   selectIsProcessingStarted,
-  setProcessViewFileUploadModalVisibility,
+  setSummaryModalVisibility,
 } from 'src/modules/Process/processSlice';
-import { pushMetric } from 'src/utils/pushMetric';
 import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'src/utils';
-import SummaryStep from 'src/modules/Process/Containers/SummaryStep';
 import { AppDispatch } from 'src/store';
+import { SummaryModal } from './SummaryModal/SummaryModal';
 
 export const ProcessFooter = () => {
   const history = useHistory();
   const dispatch: AppDispatch = useDispatch();
-  const [isModalOpen, setModalOpen] = useState(false);
   const isPollingFinished = useSelector((state: RootState) => {
     return selectIsPollingComplete(state.processSlice);
   });
@@ -35,24 +32,12 @@ export const ProcessFooter = () => {
     selectAllProcessFiles(state)
   );
 
-  const onCancel = () => {
-    setModalOpen(false);
-  };
-
   const clearOnFinishProcessing = () => {
     dispatch(PopulateProcessFiles([]));
   };
 
-  const onNextClicked = () => {
-    clearOnFinishProcessing();
-    pushMetric('Vision.Session.Finished');
-    history.push(createLink('/vision/explore'));
-  };
-
-  const onUploadMoreClicked = () => {
-    pushMetric('Vision.Session.UploadMore');
-    setModalOpen(false);
-    dispatch(setProcessViewFileUploadModalVisibility(true));
+  const handleShowSummaryModal = () => {
+    dispatch(setSummaryModalVisibility(true));
   };
 
   const handleSkipClick = () => {
@@ -73,34 +58,11 @@ export const ProcessFooter = () => {
 
   return (
     <>
-      <Modal
-        getContainer={getContainer}
-        footer={
-          <FooterContainer>
-            <Button onClick={onUploadMoreClicked} disabled={false}>
-              Upload More
-            </Button>
-            <div style={{ flexGrow: 1 }} />
-            <Button onClick={() => setModalOpen(false)} disabled={false}>
-              Continue processing files
-            </Button>
-            <div style={{ padding: '10px' }} />
-            <Button onClick={onNextClicked} disabled={false} type="primary">
-              Finish Session
-            </Button>
-          </FooterContainer>
-        }
-        visible={isModalOpen}
-        width={800}
-        closable={false}
-        onCancel={onCancel}
-      >
-        <SummaryStep />
-      </Modal>
+      <SummaryModal />
       <FooterContainer>
         {showComplete ? (
           <Button
-            onClick={() => setModalOpen(true)}
+            onClick={handleShowSummaryModal}
             disabled={!processFiles.length || !isPollingFinished}
             style={{ zIndex: 1 }}
           >
