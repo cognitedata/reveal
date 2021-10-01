@@ -8,5 +8,6 @@ export {
   LocalModelIdentifier,
   CdfModelIdentifier,
   BinaryFileProvider,
-  HttpHeadersProvider
+  HttpHeadersProvider,
+  File3dFormat
 } from './src/types';

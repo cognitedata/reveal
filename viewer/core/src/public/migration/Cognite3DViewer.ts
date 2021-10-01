@@ -35,7 +35,7 @@ import {
   SsaoSampleQuality
 } from '../types';
 
-import { assertNever, File3dFormat, LoadingState } from '../../utilities';
+import { assertNever, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
 import { trackError, trackEvent } from '../../utilities/metrics';
 import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
@@ -57,7 +57,7 @@ import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-
 import { RevealManagerHelper } from './RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelDataClient, CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelDataClient, CdfModelIdentifier, LocalModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 

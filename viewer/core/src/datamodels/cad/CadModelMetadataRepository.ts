@@ -6,12 +6,11 @@ import * as THREE from 'three';
 
 import { CadMetadataParser } from './parsers/CadMetadataParser';
 import { SectorScene, WellKnownDistanceToMeterConversionFactors } from './sector/types';
-import { File3dFormat } from '../../utilities';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
 
-import { ModelDataClient } from '@reveal/modeldata-api';
+import { ModelDataClient, File3dFormat } from '@reveal/modeldata-api';
 
 type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
 

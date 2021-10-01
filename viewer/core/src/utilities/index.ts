@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export { File3dFormat, CameraConfiguration, CogniteColors, LoadingState } from './types';
+export { CameraConfiguration, CogniteColors, LoadingState } from './types';
 export { createOffsetsArray } from './arrays';
 export { worldToViewportCoordinates, worldToNormalizedViewportCoordinates } from './worldToViewport';
 export { BoundingBoxClipper } from './BoundingBoxClipper';

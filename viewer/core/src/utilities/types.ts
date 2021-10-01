@@ -2,13 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-
-export enum File3dFormat {
-  EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory',
-  AnyFormat = 'all-outputs'
-}
-
 /**
  * Colors from the Cognite theme.
  */

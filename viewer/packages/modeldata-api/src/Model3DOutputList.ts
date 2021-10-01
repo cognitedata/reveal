@@ -2,8 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { BlobOutputMetadata } from './types';
-import { File3dFormat } from '../../../core/src/utilities/types';
+import { BlobOutputMetadata, File3dFormat } from './types';
 
 export class Model3DOutputList {
   public readonly modelId: number;
