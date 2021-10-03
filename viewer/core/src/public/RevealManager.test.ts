@@ -12,7 +12,7 @@ import { createGlContext } from '../__testutilities__/createGlContext';
 import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 describe('RevealManager', () => {
-  const stubMetadataProvider: ModelMetadataProvider<{ id: number }> = {} as any;
+  const stubMetadataProvider: ModelMetadataProvider = {} as any;
   const stubClient: ModelDataClient = {
     getApplicationIdentifier: () => {
       return 'dummy';
@@ -23,7 +23,7 @@ describe('RevealManager', () => {
     filterSectorsToLoad: jest.fn(),
     dispose: jest.fn()
   };
-  let manager: RevealManager<{ id: number }>;
+  let manager: RevealManager;
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
