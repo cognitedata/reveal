@@ -6,6 +6,7 @@ import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/internals';
+
 import { defaultRenderOptions, RenderOptions } from '@cognite/reveal';
 
 type CadModelEnv = {
@@ -141,12 +142,14 @@ export function TestViewer(props: Props) {
       let model: reveal.PointCloudNode | reveal.CadNode;
 
       if (props.modelType === 'pointcloud') {
-        model = await revealManager.addModel('pointcloud', modelUrl);
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl, reveal.File3dFormat.EptPointCloud);
+        model = await revealManager.addModel('pointcloud', modelIdentifier);
         model.pointColorType = props.pointColorType ? props.pointColorType : reveal.PotreePointColorType.Rgb;
       } else {
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl, reveal.File3dFormat.RevealCadModel);
         model = await revealManager.addModel(
           'cad',
-          modelUrl
+          modelIdentifier
         );
       }
 
