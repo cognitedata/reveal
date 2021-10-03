@@ -6,35 +6,12 @@ import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PointCloudFactory } from './PointCloudFactory';
 
-import {
-  CdfModelDataClient,
-  LocalModelDataClient,
-  CdfModelIdentifier,
-  LocalModelIdentifier,
-  ModelDataClient,
-  LocalModelMetadataProvider,
-  ModelMetadataProvider,
-  CdfModelMetadataProvider
-} from '@reveal/modeldata-api';
+import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
 
-export function createLocalPointCloudManager(
-  modelMetadataProvider: LocalModelMetadataProvider,
-  modelDataClient: LocalModelDataClient
-): PointCloudManager<LocalModelIdentifier> {
-  return createPointCloudManager(modelMetadataProvider, modelDataClient);
-}
-
-export function createCdfPointCloudManager(
-  modelMetadataProvider: CdfModelMetadataProvider,
-  modelDataClient: CdfModelDataClient
-): PointCloudManager<CdfModelIdentifier> {
-  return createPointCloudManager(modelMetadataProvider, modelDataClient);
-}
-
-export function createPointCloudManager<T>(
-  modelMetadataProvider: ModelMetadataProvider<T>,
+export function createPointCloudManager(
+  modelMetadataProvider: ModelMetadataProvider,
   modelDataClient: ModelDataClient
-): PointCloudManager<T> {
+): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataClient);
   const modelFactory = new PointCloudFactory(modelDataClient);
   return new PointCloudManager(metadataRepository, modelFactory);

@@ -21,7 +21,7 @@ export function SSAO() {
   useEffect(() => {
     const gui = new dat.GUI();
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({

@@ -10,21 +10,17 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
 
-import { File3dFormat, ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataClient, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
 
-type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
-
-export class CadModelMetadataRepository<TModelIdentifier>
-  implements MetadataRepository<TModelIdentifier, Promise<CadModelMetadata>>
-{
-  private readonly _modelMetadataProvider: ModelMetadataProvider<ModelIdentifierWithFormat<TModelIdentifier>>;
+export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
+  private readonly _modelMetadataProvider: ModelMetadataProvider;
   private readonly _modelDataClient: ModelDataClient;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
   private _currentModelIdentifier = 0;
 
   constructor(
-    modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
+    modelMetadataProvider: ModelMetadataProvider,
     modelDataClient: ModelDataClient,
     cadMetadataParser: CadMetadataParser,
     blobFileName: string = 'scene.json'
@@ -35,22 +31,20 @@ export class CadModelMetadataRepository<TModelIdentifier>
     this._blobFileName = blobFileName;
   }
 
-  async loadData(model: TModelIdentifier): Promise<CadModelMetadata> {
-    const identifierWithFormat = { format: File3dFormat.RevealCadModel, ...model };
-    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(identifierWithFormat);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(identifierWithFormat);
-    const modelCameraPromise = this._modelMetadataProvider.getModelCamera(identifierWithFormat);
+  async loadData(modelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
+    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(modelIdentifier);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier);
+    const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
     const json = await this._modelDataClient.getJsonFile(blobBaseUrl, this._blobFileName);
-    const modelIdentifier = `${this._currentModelIdentifier++}`;
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();
     const cameraConfiguration = await modelCameraPromise;
 
     return {
-      modelIdentifier,
+      modelIdentifier: `${this._currentModelIdentifier++}`, // TODO 2021-10-03 larsmoa: Change to ModelIdentifier
       modelBaseUrl: blobBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,

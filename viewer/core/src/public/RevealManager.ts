@@ -21,6 +21,8 @@ import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLo
 import { GeometryFilter, NodeAppearanceProvider, RenderOptions } from '..';
 import { EventTrigger } from '../utilities/events';
 
+import { ModelIdentifier } from '@reveal/modeldata-api';
+
 /* eslint-disable jsdoc/require-jsdoc */
 
 export type AddCadModelOptions = {
@@ -28,9 +30,9 @@ export type AddCadModelOptions = {
   geometryFilter?: GeometryFilter;
 };
 
-export class RevealManager<TModelIdentifier> {
-  private readonly _cadManager: CadManager<TModelIdentifier>;
-  private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
+export class RevealManager {
+  private readonly _cadManager: CadManager;
+  private readonly _pointCloudManager: PointCloudManager;
   private readonly _effectRenderManager: EffectRenderManager;
 
   private readonly _lastCamera = {
@@ -47,11 +49,7 @@ export class RevealManager<TModelIdentifier> {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(
-    cadManager: CadManager<TModelIdentifier>,
-    renderManager: EffectRenderManager,
-    pointCloudManager: PointCloudManager<TModelIdentifier>
-  ) {
+  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
@@ -188,11 +186,12 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  public addModel(type: 'cad', modelIdentifier: TModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
+  // TODO 2021-10-03 larsmoa: Determine type of model by the modelIdentifier
+  public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
+  public addModel(type: 'pointcloud', modelIdentifier: ModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
-    modelIdentifier: TModelIdentifier,
+    modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
@@ -250,10 +249,7 @@ export class RevealManager<TModelIdentifier> {
     this._events.loadingStateChanged.fire(loadingState);
   }
 
-  private initLoadingStateObserver(
-    cadManager: CadManager<TModelIdentifier>,
-    pointCloudManager: PointCloudManager<TModelIdentifier>
-  ) {
+  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager) {
     this._subscriptions.add(
       combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(

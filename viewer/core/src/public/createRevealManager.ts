@@ -15,14 +15,12 @@ import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering
 import {
   LocalModelDataClient,
   CdfModelDataClient,
-  LocalModelIdentifier,
-  CdfModelIdentifier,
   ModelDataClient,
+  ModelMetadataProvider,
   CdfModelMetadataProvider,
   LocalModelMetadataProvider
 } from '@reveal/modeldata-api';
 import { CogniteClient } from '@cognite/sdk';
-import { ModelMetadataProvider } from '../../../packages/modeldata-api/src/types';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -35,7 +33,7 @@ export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
-): RevealManager<LocalModelIdentifier> {
+): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataClient = new LocalModelDataClient();
   return createRevealManager('local', modelMetadataProvider, modelDataClient, renderer, scene, revealOptions);
@@ -53,7 +51,7 @@ export function createCdfRevealManager(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
-): RevealManager<CdfModelIdentifier> {
+): RevealManager {
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
   const modelDataClient = new CdfModelDataClient(client);
   return createRevealManager(client.project, modelMetadataProvider, modelDataClient, renderer, scene, revealOptions);
@@ -69,14 +67,14 @@ export function createCdfRevealManager(
  * @param scene
  * @param revealOptions
  */
-export function createRevealManager<T>(
+export function createRevealManager(
   project: string,
-  modelMetadataProvider: ModelMetadataProvider<T>,
+  modelMetadataProvider: ModelMetadataProvider,
   modelDataClient: ModelDataClient,
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
-): RevealManager<T> {
+): RevealManager {
   const applicationId = modelDataClient.getApplicationIdentifier();
   initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
     moduleName: 'createRevealManager',

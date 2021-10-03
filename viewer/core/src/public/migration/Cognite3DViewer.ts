@@ -56,7 +56,7 @@ import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 import { CdfStorageContext, LocalStorageContext, StorageContext } from '../../storage/StorageContext';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelIdentifier, LocalModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -136,7 +136,7 @@ export class Cognite3DViewer {
   private readonly spinner: Spinner;
   private readonly _viewStateHelper: ViewStateHelper;
 
-  private get revealManager(): RevealManager<CdfModelIdentifier> | RevealManager<LocalModelIdentifier> {
+  private get revealManager(): RevealManager {
     return this._revealManagerHelper.revealManager;
   }
 
@@ -620,8 +620,9 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
     const metadataProvider = this._storageContext.getModelMetadataProvider();
-    const outputs = await metadataProvider.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
+    const outputs = await metadataProvider.getOutputs(modelIdentifier);
 
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return 'cad';

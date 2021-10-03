@@ -19,7 +19,7 @@ type PointCloudModelEnv = {
 
 export type TestEnv = {
   camera: THREE.PerspectiveCamera;
-  revealManager: reveal.RevealManager<unknown>;
+  revealManager: reveal.RevealManager;
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
 };
@@ -66,7 +66,7 @@ export function TestViewer(props: Props) {
   });
 
   const setupLoadingStateHandler = (
-    revealManager: reveal.RevealManager<unknown>
+    revealManager: reveal.RevealManager
   ) => {
     let skipFirstLoadingState = true;
     revealManager.on('loadingStateChanged', (loadingState) => {
@@ -106,7 +106,7 @@ export function TestViewer(props: Props) {
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
 
     async function main() {
       if (!canvas.current) {
