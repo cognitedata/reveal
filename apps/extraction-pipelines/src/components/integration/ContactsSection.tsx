@@ -5,7 +5,7 @@ import { TableHeadings } from 'components/table/IntegrationTableCol';
 import {
   contactEmailSchema,
   contactNameSchema,
-  contactRoleNotOwnerSchema,
+  contactSchema,
 } from 'utils/validation/integrationSchemas';
 import { EditPartContacts } from 'components/integration/EditPartContacts';
 import { RemoveContactButton } from 'components/integration/RemoveContactButton';
@@ -104,7 +104,7 @@ function contactTable(
                     index={contact.index}
                     field="role"
                     label="Role"
-                    schema={contactRoleNotOwnerSchema}
+                    schema={contactSchema}
                     defaultValues={{ role: contact.role }}
                   />
                 </td>

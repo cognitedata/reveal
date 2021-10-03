@@ -4,10 +4,7 @@ import { useIntegrationById } from 'hooks/useIntegration';
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from '@cognite/cogs.js';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  contactOwnerSchema,
-  contactNotOwnerSchema,
-} from 'utils/validation/integrationSchemas';
+import { contactSchema } from 'utils/validation/integrationSchemas';
 import {
   createUpdateSpec,
   useDetailsUpdate,
@@ -61,7 +58,7 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
     getValues,
     reset,
   } = useForm({
-    resolver: yupResolver(isOwner ? contactOwnerSchema : contactNotOwnerSchema),
+    resolver: yupResolver(contactSchema),
   });
 
   const handleClick = () => {
