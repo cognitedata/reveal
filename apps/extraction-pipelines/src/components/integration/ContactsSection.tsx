@@ -15,19 +15,18 @@ import {
   EMAIL_LABEL,
   NAME_LABEL,
   NOTIFICATION_LABEL,
-  OWNER_HINT,
   ROLE_LABEL,
 } from 'utils/constants';
 import { StyledTitle2 } from 'styles/StyledHeadings';
 import { Hint } from 'styles/StyledForm';
 import { NotificationUpdateSwitch } from 'components/inputs/NotificationUpdateSwitch';
-import { DetailFieldNames, Integration } from 'model/Integration';
-import { isOwner, partition } from 'utils/integrationUtils';
+import { Integration } from 'model/Integration';
 import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { AddContact } from './AddContact';
-import { Checkbox, Radio } from '@cognite/cogs.js';
+import { Radio } from '@cognite/cogs.js';
+import { StyledTableNoRowColor2 } from 'styles/StyledTable';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -76,81 +75,85 @@ function contactTable(
   integration: Integration
 ) {
   return (
-    <table>
-      <thead>
-        <tr>
-          <td>Owner</td>
-          <td>{ROLE_LABEL}</td>
-          <td>{NOTIFICATION_LABEL}</td>
-          <td>{NAME_LABEL}</td>
-          <td>{EMAIL_LABEL}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {contacts.map((contact) => {
-          return (
-            <tr key={contact.email} className="row-style-even row-height-4">
-              <td>
-                <Radio
-                  name="whatever"
-                  checked={contact.role?.toLowerCase() === 'owner'}
-                />
-              </td>
+    <StyledTableNoRowColor2>
+      <table className="cogs-table">
+        <thead>
+          <tr>
+            <td>Owner</td>
+            <td>{ROLE_LABEL}</td>
+            <td>{NOTIFICATION_LABEL}</td>
+            <td>{NAME_LABEL}</td>
+            <td>{EMAIL_LABEL}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {contacts.map((contact) => {
+            return (
+              <tr key={contact.email} className="row-style-even row-height-4">
+                <td>
+                  <Radio
+                    name="whatever"
+                    checked={contact.role?.toLowerCase() === 'owner'}
+                  />
+                </td>
 
-              <td>
-                <EditPartContacts
-                  integration={integration}
-                  name="contacts"
-                  index={contact.index}
-                  field="role"
-                  label="Role"
-                  schema={contactRoleNotOwnerSchema}
-                  defaultValues={{ role: contact.role }}
-                />
-              </td>
-              <td>
-                <NotificationUpdateSwitch
-                  integration={integration}
-                  name="contacts"
-                  index={contact.index}
-                  field="sendNotification"
-                  defaultValues={{ sendNotification: contact.sendNotification }}
-                />
-              </td>
-              <td>
-                <EditPartContacts
-                  integration={integration}
-                  name="contacts"
-                  index={contact.index}
-                  field="name"
-                  label={TableHeadings.NAME}
-                  schema={contactNameSchema}
-                  defaultValues={{ name: contact.name }}
-                />
-              </td>
-              <td>
-                <EditPartContacts
-                  integration={integration}
-                  name="contacts"
-                  index={contact.index}
-                  field="email"
-                  label="Email"
-                  schema={contactEmailSchema}
-                  defaultValues={{ email: contact.email }}
-                />
-              </td>
+                <td>
+                  <EditPartContacts
+                    integration={integration}
+                    name="contacts"
+                    index={contact.index}
+                    field="role"
+                    label="Role"
+                    schema={contactRoleNotOwnerSchema}
+                    defaultValues={{ role: contact.role }}
+                  />
+                </td>
+                <td>
+                  <NotificationUpdateSwitch
+                    integration={integration}
+                    name="contacts"
+                    index={contact.index}
+                    field="sendNotification"
+                    defaultValues={{
+                      sendNotification: contact.sendNotification,
+                    }}
+                  />
+                </td>
+                <td>
+                  <EditPartContacts
+                    integration={integration}
+                    name="contacts"
+                    index={contact.index}
+                    field="name"
+                    label={TableHeadings.NAME}
+                    schema={contactNameSchema}
+                    defaultValues={{ name: contact.name }}
+                  />
+                </td>
+                <td>
+                  <EditPartContacts
+                    integration={integration}
+                    name="contacts"
+                    index={contact.index}
+                    field="email"
+                    label="Email"
+                    schema={contactEmailSchema}
+                    defaultValues={{ email: contact.email }}
+                  />
+                </td>
 
-              <td>
-                <RemoveContactButton
-                  integration={integration}
-                  name="contacts"
-                  index={contact.index}
-                />
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+                <td>
+                  <RemoveContactButton
+                    integration={integration}
+                    name="contacts"
+                    index={contact.index}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </StyledTableNoRowColor2>
   );
 }
