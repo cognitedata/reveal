@@ -3,13 +3,14 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { AddModelOptions } from '../public/types';
 
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import {
   CdfModelMetadataProvider,
   ModelDataClient,
+  ModelMetadataProvider,
   LocalModelDataClient,
+  LocalModelMetadataProvider,
   CdfModelDataClient
 } from '@reveal/modeldata-api';
 
@@ -18,15 +19,20 @@ import {
  */
 export interface StorageContext {
   /**
-   * Gets a node API client that is able to fetch data about the
-   * model that is about to be added given the options provided.
-   * @param addModelOptions
+   * Gets a node API client that is able to fetch data about
+   * models.
    */
-  getNodesApiClient(addModelOptions: AddModelOptions): NodesApiClient;
+  getNodesApiClient(): NodesApiClient;
 
-  // TODO 2021-10-01 larsmoa: Replace with non-generic interface
-  getModelMetadataProvider(): CdfModelMetadataProvider;
+  /**
+   * Gets a metadata provider for models.
+   */
+  getModelMetadataProvider(): ModelMetadataProvider;
 
+  /**
+   * Gets a client that is able to download geometry and other files
+   * for models.
+   */
   getModelDataClient(): ModelDataClient;
 
   // TODO 2021-10-01 larsmoa: Get rid of direct dependency to CogniteClient
@@ -44,7 +50,7 @@ export class CdfStorageContext implements StorageContext {
     return this._sdkClient;
   }
 
-  getNodesApiClient(_addModelOptions: AddModelOptions): NodesApiClient {
+  getNodesApiClient(): NodesApiClient {
     return new NodesCdfClient(this._sdkClient);
   }
 
@@ -52,7 +58,7 @@ export class CdfStorageContext implements StorageContext {
     return new CdfModelDataClient(this._sdkClient);
   }
 
-  getModelMetadataProvider(): CdfModelMetadataProvider {
+  getModelMetadataProvider(): ModelMetadataProvider {
     return new CdfModelMetadataProvider(this._sdkClient);
   }
 }
@@ -62,18 +68,15 @@ export class LocalStorageContext implements StorageContext {
     throw new Error(`Local storage doesn't support Cognite CDF`);
   }
 
-  getNodesApiClient(addModelOptions: AddModelOptions): NodesApiClient {
-    if (addModelOptions.localPath === undefined) {
-      throw new Error('Only supports local models');
-    }
-    return new NodesLocalClient(addModelOptions.localPath);
+  getNodesApiClient(): NodesApiClient {
+    return new NodesLocalClient();
   }
 
   getModelDataClient(): ModelDataClient {
     return new LocalModelDataClient();
   }
 
-  getModelMetadataProvider(): CdfModelMetadataProvider {
-    throw new Error('Not implemented yet');
+  getModelMetadataProvider(): ModelMetadataProvider {
+    throw new LocalModelMetadataProvider();
   }
 }

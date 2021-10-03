@@ -69,7 +69,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     return `${this._client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
   }
 
-  public async getOutputs(modelIdentifier: CdfModelIdentifier): Promise<Model3DOutputList> {
+  private async getOutputs(modelIdentifier: CdfModelIdentifier): Promise<Model3DOutputList> {
     const { modelId, revisionId, modelFormat } = modelIdentifier;
     const url = `/api/v1/projects/${this._client.project}/3d/models/${modelId}/revisions/${revisionId}/outputs`;
     const params = modelFormat !== undefined ? { params: { format: modelFormat } } : undefined;

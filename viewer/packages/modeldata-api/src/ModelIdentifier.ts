@@ -5,6 +5,7 @@
 import { File3dFormat } from './types';
 
 export interface ModelIdentifier {
+  // TODO 2021-10-03 larsmoa: Not sure if modelFormat belongs here
   readonly modelFormat: File3dFormat;
   readonly revealInternalId: symbol;
 

@@ -3,6 +3,7 @@
  */
 export { CdfModelDataClient } from './src/CdfModelDataClient';
 export { CdfModelMetadataProvider } from './src/CdfModelMetadataProvider';
+export { CdfModelOutputsProvider } from './src/CdfModelOutputsProvider';
 export { LocalModelDataClient } from './src/LocalModelDataClient';
 export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
