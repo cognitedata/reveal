@@ -159,6 +159,10 @@ export class CogniteOrnate {
     });
   }
 
+  isCurrentToolUsingShapeSettings = () => {
+    return this.currentTool.isToolUsingShapeSettings;
+  };
+
   addPDFDocument = async (
     pdfURL: string,
     pageNumber: number,

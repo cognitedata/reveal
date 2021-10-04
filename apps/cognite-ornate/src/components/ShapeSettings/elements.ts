@@ -3,7 +3,16 @@ import z from 'utils/z';
 
 export const ShapeSettingsWrapper = styled.div`
   position: fixed;
-  right: 108px;
-  bottom: 60px;
+  left: 16px;
+  bottom: 16px;
   z-index: ${z.OVERLAY};
+  margin-left: 37px;
+
+  .cogs-menu {
+    border-radius: 4px;
+  }
+
+  &.expanded {
+    left: 386px;
+  }
 `;

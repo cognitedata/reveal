@@ -17,4 +17,5 @@ export const defaultShapeSettings = {
   strokeWidth: 10,
   strokeColor: Colors['yellow-5'].hex(),
   opacity: 1,
+  fontSize: 32,
 };

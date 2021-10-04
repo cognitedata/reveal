@@ -8,6 +8,7 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
   cursor = 'crosshair';
   newLine: Konva.Line | null = null;
   group: Konva.Group | null = null;
+  isToolUsingShapeSettings = true;
 
   getPosition = () => {
     let { x, y } = this.ornateInstance.getTranslatedPointerPosition();

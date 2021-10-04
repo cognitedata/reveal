@@ -8,6 +8,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
   cursor = 'crosshair';
   newCircle: Konva.Circle | null = null;
   group: Konva.Group | null = null;
+  isToolUsingShapeSettings = true;
 
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     const { drawingLayer } = this.ornateInstance;

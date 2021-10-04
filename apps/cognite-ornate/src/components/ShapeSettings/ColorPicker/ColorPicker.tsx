@@ -13,7 +13,7 @@ export default function ColorPicker({
   onSettingsChange,
 }: ColorPickerProps) {
   const onBrushColorChange = (color: ColorResult) =>
-    onSettingsChange({ strokeColor: color.hex });
+    onSettingsChange({ strokeColor: color.hex, fill: color.hex });
 
   return (
     <div style={{ marginBottom: '10px' }}>

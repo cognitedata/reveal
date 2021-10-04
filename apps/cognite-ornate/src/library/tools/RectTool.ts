@@ -8,6 +8,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
   cursor = 'crosshair';
   newRect: Konva.Rect | null = null;
   group: Konva.Group | null = null;
+  isToolUsingShapeSettings = true;
 
   getPosition = () => {
     let { x, y } = this.ornateInstance.getTranslatedPointerPosition();

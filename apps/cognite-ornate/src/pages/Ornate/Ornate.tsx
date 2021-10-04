@@ -38,9 +38,6 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const [activeTool, setActiveTool] = useState<ToolType>('default');
   const [shapeSettings, setShapeSettings] =
     useState<ShapeSettingsType>(defaultShapeSettings);
-
-  const shouldSettingsBeVisible =
-    activeTool === 'line' || activeTool === 'rect' || activeTool === 'circle';
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
   const { t } = useTranslation('WorkspaceHeader');
@@ -96,6 +93,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const onToolChange = (tool: ToolType) => {
     ornateViewer.current!.handleToolChange(tool);
     setActiveTool(tool);
+    onShapeSettingsChange({ tool });
   };
 
   const onShapeSettingsChange = (nextSettings: Partial<ShapeSettingsType>) => {
@@ -356,6 +354,15 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       </Button>
     );
 
+  const shapeSettingsComponent =
+    ornateViewer.current?.isCurrentToolUsingShapeSettings() && (
+      <ShapeSettings
+        shapeSettings={shapeSettings}
+        isSidebarExpanded={isSidebarOpen}
+        onSettingsChange={onShapeSettingsChange}
+      />
+    );
+
   return (
     <WorkspaceContainer>
       <ToastContainer />
@@ -366,12 +373,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         footer={sidebarFooter}
       />
 
-      {shouldSettingsBeVisible && (
-        <ShapeSettings
-          shapeSettings={shapeSettings}
-          onSettingsChange={onShapeSettingsChange}
-        />
-      )}
+      {shapeSettingsComponent}
 
       <Button
         icon="WorkSpace"

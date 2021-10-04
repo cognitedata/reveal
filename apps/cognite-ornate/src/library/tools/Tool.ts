@@ -8,6 +8,7 @@ export class Tool implements ICogniteOrnateTool {
   cursor = 'default';
   ornateInstance: CogniteOrnate;
   shapeSettings: ShapeSettings;
+  isToolUsingShapeSettings = false;
   constructor(ornateInstance: CogniteOrnate) {
     this.ornateInstance = ornateInstance;
     this.shapeSettings = ornateInstance.shapeSettings;

@@ -7,6 +7,7 @@ import { Tool } from './Tool';
 export class TextTool extends Tool implements ICogniteOrnateTool {
   cursor = 'text';
   newText: Konva.Text | null = null;
+  isToolUsingShapeSettings = true;
   group: Konva.Group | null = null;
 
   onTextEdit = (textNode: Konva.Text) => {
@@ -20,7 +21,6 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
 
     const textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
-
     // apply many styles to match text on canvas as close as possible
     // remember that text rendering on canvas and on the textarea can be different
     // and sometimes it is hard to make it 100% the same. But we will try...
@@ -171,10 +171,10 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       text: '',
       x: translatedMousePosition.x,
       y: translatedMousePosition.y,
-      fontSize: 32,
+      fontSize: this.shapeSettings.fontSize || 32,
+      fill: this.shapeSettings.fill || this.shapeSettings.strokeColor,
       userGenerated: true,
       type: 'text',
-      fill: 'green',
     });
 
     if (!this.group) {

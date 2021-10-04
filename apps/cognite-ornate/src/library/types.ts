@@ -1,3 +1,4 @@
+import ShapeSettings from 'components/ShapeSettings';
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 
@@ -47,9 +48,12 @@ export type OrnateJSON = {
 export type ToolType = 'move' | 'line' | 'rect' | 'text' | 'default' | 'circle';
 
 export type ShapeSettings = {
+  [key: string]: string | number | undefined;
   strokeColor: string;
   strokeWidth: number;
   opacity: number;
+  fontSize?: number;
+  fill?: string;
 };
 
 export interface ICogniteOrnateTool {
