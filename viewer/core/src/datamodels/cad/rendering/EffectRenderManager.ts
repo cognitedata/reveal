@@ -304,7 +304,6 @@ export class EffectRenderManager {
     this.setupSsaoScene();
     this.setupSsaoBlurCombineScene();
     this.setupFxaaScene();
-    this.setupDepthBufferReader();
 
     this._normalSceneBuilder = new TemporarySceneBuilder(this._normalScene);
     this._inFrontSceneBuilder = new TemporarySceneBuilder(this._inFrontScene);
@@ -735,12 +734,6 @@ export class EffectRenderManager {
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Red, RevealColors.Red);
     setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Orange, CogniteColors.Orange);
     return outlineColorTexture;
-  }
-
-  private setupDepthBufferReader() {
-    const geometry = this.createRenderTriangle();
-    const mesh = new THREE.Mesh(geometry, this._depthBufferMaterial);
-    this._depthBufferScene.add(mesh);
   }
 
   private setupCompositionScene() {

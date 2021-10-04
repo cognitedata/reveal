@@ -87,7 +87,6 @@ export default class ComboControls extends EventDispatcher {
   private deltaTarget: Vector3 = new Vector3();
   private keyboard: Keyboard = new Keyboard();
 
-  private lastTargetBeforeScroll: Vector3 = new Vector3();
   private offsetVector: Vector3 = new Vector3();
   private panVector: Vector3 = new Vector3();
   private raycaster: Raycaster = new Raycaster();
@@ -238,7 +237,6 @@ export default class ComboControls extends EventDispatcher {
 
   public setScrollTarget = (target: Vector3) => {
     this.scrollTarget.copy(target);
-    this.lastTargetBeforeScroll.copy(this.target);
   }
 
   public triggerCameraChangeEvent = () => {
@@ -659,21 +657,25 @@ export default class ComboControls extends EventDispatcher {
           reusableCamera.getWorldDirection(cameraDirection);
           targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
         } else {
-          // stops camera from moving forward
-          deltaDistance = distToTarget - radius;
+          // stops camera from moving forward only if target became close to scroll target
+          if (this.scrollTarget.clone().sub(this.target).length() < 0.2) deltaDistance = distToTarget - radius;
         }
       }
-      
-      //const distFromRayOrigin = -deltaDistance * ratio;
+  
+      const tarSTarVec = reusableVector3.subVectors(this.scrollTarget, this.target).normalize(),
+          camTarVec = (new Vector3()).subVectors(this.target, this.camera.position),
+          camSTarVec = (new Vector3()).subVectors(this.scrollTarget, this.camera.position);
+        
+      const tarCamSTarAngle = camTarVec.angleTo(camSTarVec),
+        tarSTarCamAngle = tarSTarVec.negate().angleTo(camSTarVec.negate());
+
+      const targetOffsetDistance = deltaDistance * (Math.sin(tarCamSTarAngle)/Math.sin(tarSTarCamAngle));
 
       sphericalEnd.radius = radius;
-      const targetOffset = reusableVector3.subVectors(this.scrollTarget, this.lastTargetBeforeScroll)
-        .normalize().multiplyScalar(0.1);
 
-      // reusableCamera.getWorldDirection(cameraDirection);
-      // cameraDirection.normalize().multiplyScalar(deltaDistance);
-      // const rayDirection = raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
-      // const targetOffset = rayDirection.add(cameraDirection);
+      // if we scroll out, we 
+      const targetOffset = tarSTarVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0); 
+      
       targetEnd.add(targetOffset);
     }
   };
@@ -685,7 +687,7 @@ export default class ComboControls extends EventDispatcher {
       this.dollyOrthographicCamera(x, y, deltaDistance);
       // @ts-ignore
     } else if (camera.isPerspectiveCamera) {
-      this.dollyPerspectiveCamera(x, y, deltaDistance, moveTarget);
+      this.dollyPerspectiveCameraScrollTarget(x, y, deltaDistance, moveTarget);
     }
   };
 

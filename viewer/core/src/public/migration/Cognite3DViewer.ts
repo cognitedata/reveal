@@ -165,6 +165,21 @@ export class Cognite3DViewer {
   };
 
   /**
+   * Changes controls target based on current cursor position
+   */
+  private changeTarget = async (event: any) => {
+    const { offsetX, offsetY } = event;
+
+    const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+    if (intersection !== null) {
+      this.setCameraTarget(intersection.point, true);
+    } else { 
+      const boBo = this._models[0].getModelBoundingBox();
+      this.setCameraTarget(boBo.getCenter(new THREE.Vector3()), true);
+    }
+  }
+
+  /**
    * Gets the current budget for downloading geometry for CAD models. Note that this
    * budget is shared between all added CAD models and not a per-model budget.
    */
@@ -229,21 +244,9 @@ export class Cognite3DViewer {
     let startedScroll = false;
     const wheelClock = new THREE.Clock();
 
-    const changeTarget = async (event: any) => {
-      const { offsetX, offsetY } = event;
-  
-      const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
-      if (intersection !== null) {
-        this.setCameraTarget(intersection.point, true);
-      } else { 
-        const boBo = this._models[0].getModelBoundingBox();
-        this.setCameraTarget(boBo.getCenter(new THREE.Vector3()), true);
-      }
-    }
-
     this.on('click', (e) => {
       this.controls.enableKeyboardNavigation = false;
-      changeTarget(e);
+      this.changeTarget(e);
     });
 
     this.canvas.addEventListener('wheel', async (e) => {
@@ -251,21 +254,16 @@ export class Cognite3DViewer {
       const { offsetX, offsetY } = e;
       
       //@ts-ignore
-      if (startedScroll && (e.wheelDeltaY > 0)) {  // consider other browsers
-        console.log(timeDelta, 'scroll:', startedScroll);
+      if (startedScroll && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0)) {  
         startedScroll = false;
 
         const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
           this.controls.setScrollTarget(intersection.point);
-        } else {
-          const boBo = this._models[0].getModelBoundingBox();
-          this.controls.setScrollTarget(boBo.getCenter(new THREE.Vector3()));
-        }
+        } 
 
       } else {
-        if (timeDelta > 0.2 ) {
-          console.log('Changed flag! with delta:', timeDelta)
+        if (timeDelta > 0.15 ) {
           startedScroll = true;
         }
       }
@@ -275,7 +273,6 @@ export class Cognite3DViewer {
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
-    
     this.controls.dynamicTarget = false; 
 
 
@@ -851,6 +848,7 @@ export class Cognite3DViewer {
    * Set camera's target.
    * @public
    * @param target Target in world space.
+   * @param animated Whether change of target should be animated or not (default is false)
    * @example
    * ```js
    * // store position, target
