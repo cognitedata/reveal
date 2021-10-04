@@ -5,12 +5,7 @@ import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
 import { createSearchParams } from 'utils/integrationUtils';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import {
-  CDF_LABEL,
-  DATA_SETS_LABEL,
-  EXTRACTION_PIPELINES_LIST,
-} from 'utils/constants';
-import { StyledNavLink } from 'styles/StyledLinks';
+import { CDF_LABEL, DATA_SETS_LABEL } from 'utils/constants';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
 
 interface IntegrationBreadcrumbsProps {

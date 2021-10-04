@@ -8,10 +8,7 @@ import styled from 'styled-components';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import {
-  EXT_PIPE_NAME_HEADING,
-  EXTRACTION_PIPELINES_LIST,
-} from 'utils/constants';
+import { EXT_PIPE_NAME_HEADING } from 'utils/constants';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
