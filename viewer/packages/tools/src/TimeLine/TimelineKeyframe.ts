@@ -8,7 +8,7 @@ import { Cognite3DModel } from '@reveal/core';
 /**
  * Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
  */
-export class TimelineKeyframe {
+export class TimeLineKeyframe {
   private readonly _date: number;
   private readonly _model: Cognite3DModel;
   private readonly _nodeCollection: NodeCollectionBase;

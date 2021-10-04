@@ -4,7 +4,7 @@
 
 import { Cognite3DViewer, Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { TimelineKeyframe } from './TimelineKeyframe';
+import { TimeLineKeyframe } from './TimeLineKeyframe';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 
 /**
@@ -13,7 +13,7 @@ import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _model: Cognite3DModel;
-  private _timelineframes: TimelineKeyframe[];
+  private _timelineframes: TimeLineKeyframe[];
   private _intervalId: any = 0;
   private _currentDate: number = 0;
   private _allDates: number[];
@@ -23,7 +23,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
     this._viewer = viewer;
     this._model = cadModel;
-    this._timelineframes = new Array<TimelineKeyframe>();
+    this._timelineframes = new Array<TimeLineKeyframe>();
     this._allDates = new Array<number>();
   }
 
@@ -34,7 +34,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param nodeAppearance - Styling of the nodes
    */
   public createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
-    this._timelineframes.push(new TimelineKeyframe(this._model, date, nodeCollection, nodeAppearance));
+    this._timelineframes.push(new TimeLineKeyframe(this._model, date, nodeCollection, nodeAppearance));
     this._allDates.push(date);
   }
 
@@ -134,7 +134,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Provides all the dates in the TImeline
    * @returns All dates in the Timeline
    */
-  public getAllDateInTimelineFrames() {
+  public getAllDateInTimeLineFrames() {
     if (this._allDates.length > 0) {
       return this._allDates;
     }

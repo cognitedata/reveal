@@ -24,16 +24,16 @@ Each timeframe consists of nodes which are the elements to be rendered, appearan
 lastly the date for the nodes as reference to be rendered.
 
 ### Create TimeFrame
-To create TimelineFrames, use createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
-- date - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
+To create TimeLineFrames, use createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
+- date - Date reference for the TimeLineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
 - nodeCollection - Set of nodes to be rendered for the TimeFrame.
 - nodeAppearance - Styling of the nodes.
 
 ### Play Timeline
 We use play(durationInMilliSeconds: number, startDate: number, endDate: number)
-- durationInMilliSeconds - Number of milli-seconds after which next TimelineFrame is rendered.
-- startDate - TimelineFrame date to start the Playback of TimelineFrames.
-- endDate - TimelineFrame date to stop the Playback of TimelineFrames. 
+- durationInMilliSeconds - Number of milli-seconds after which next TimeLineFrame is rendered.
+- startDate - TimeLineFrame date to start the Playback of TimeLineFrames.
+- endDate - TimeLineFrame date to stop the Playback of TimeLineFrames.
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
@@ -61,9 +61,9 @@ timeline.play(5000, 1000, 80000);
 
 ```
 
-### Remove a TimelineFrame
-To remove any TimelineFrame, use removeKeyFrame(date: number)
-- date - TimelineFrame date to be removed from the Timeline in milliseconds.
+### Remove a TimeLineFrame
+To remove any TimeLineFrame, use removeKeyFrame(date: number)
+- date - TimeLineFrame date to be removed from the Timeline in milliseconds.
 
 ```js runnable
 timeline.removeKeyFrame(40000);
@@ -74,9 +74,9 @@ timeline.removeKeyFrame(40000);
 ```js runnable
 timeline.stopPlayback();
 ```
-### Dates in TimelineFrame
-We can get all the dates added into the TimelineFrame by calling getAllDateInTimelineFrames()
+### Dates in TimeLineFrame
+We can get all the dates added into the TimeLineFrame by calling getAllDateInTimeLineFrames()
 
 ```js runnable
-const allDates = timeline.getAllDateInTimelineFrames();
+const allDates = timeline.getAllDateInTimeLineFrames();
 ```
