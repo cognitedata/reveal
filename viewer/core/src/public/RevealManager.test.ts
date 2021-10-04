@@ -9,11 +9,11 @@ import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
 import { createGlContext } from '../__testutilities__/createGlContext';
 
-import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
-  const stubClient: ModelDataClient = {
+  const stubDataProvider: ModelDataProvider = {
     getApplicationIdentifier: () => {
       return 'dummy';
     }
@@ -28,7 +28,7 @@ describe('RevealManager', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager = createRevealManager('test', stubMetadataProvider, stubClient, renderer, new THREE.Scene(), {
+    manager = createRevealManager('test', stubMetadataProvider, stubDataProvider, renderer, new THREE.Scene(), {
       internal: { sectorCuller }
     });
   });
@@ -90,7 +90,7 @@ describe('RevealManager', () => {
   });
 
   test('addUiObject() and removeUiObject() requests redraw', () => {
-    manager = createRevealManager('test', stubMetadataProvider, stubClient, renderer, new THREE.Scene(), {
+    manager = createRevealManager('test', stubMetadataProvider, stubDataProvider, renderer, new THREE.Scene(), {
       internal: { sectorCuller }
     });
     expect(manager).not.toBeUndefined();
