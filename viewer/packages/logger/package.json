@@ -1,0 +1,8 @@
+{
+  "name": "@reveal/logger",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "lint": "yarn ws:lint"
+  }
+}

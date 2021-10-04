@@ -1,9 +1,4 @@
-import {
-  cadTestBasePath,
-  pointcloudTestBasePath,
-  TestCaseCad,
-  TestCasePointCloud,
-} from './testUtils';
+import { visualTests } from '../pages/e2e/visualTests';
 
 const retry = require('jest-retries');
 
@@ -42,23 +37,16 @@ console.log(`Run tests with ${RETRIES} retries`);
  * and create a new record in src/routes to map a component to its route
  */
 describe('Reveal visual tests', () => {
-  Object.values(TestCaseCad).forEach(function (test) {
-    const snapshotName = 'cad_' + test;
-    const url = `http://localhost:3000` + cadTestBasePath + test;
-    
-    const blur = (test === 'ssao') ? 2 : 0;
+  visualTests.forEach(test => {
+    const { testKey, category, snapshotBlur } = test;
+
+    const snapshotName = `${category}_${testKey}`;
+    const url = `http://localhost:3000/test/${category}/${testKey}`;
+    const blur = snapshotBlur ?? 0;
 
     retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
       await screenShotTest(url, snapshotName, blur);
     });
-  });
 
-  Object.values(TestCasePointCloud).forEach(function (test) {
-    const snapshotName = 'pc_' + test;
-    const url = `http://localhost:3000` + pointcloudTestBasePath + test;
-
-    retry(`matches the screenshot for ${snapshotName}`, RETRIES, async () => {
-      await screenShotTest(url, snapshotName);
-    });
   });
 });

@@ -513,9 +513,10 @@ export class EffectRenderManager {
 
   private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
     const result = { hasBackElements: false, hasInFrontElements: false, hasGhostElements: false };
+
+    // Determine what rendering stages will be active
     this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
       const cadNode: CadNode = rootSectorNodeData[1];
-      const root: RootSectorNode = rootSectorNodeData[0];
 
       const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
       const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
@@ -526,6 +527,16 @@ export class EffectRenderManager {
       result.hasBackElements = result.hasBackElements || hasBackElements;
       result.hasInFrontElements = result.hasInFrontElements || hasInFrontElements;
       result.hasGhostElements = result.hasGhostElements || hasGhostElements;
+    });
+
+    // Split scenes based on what render stages we need
+    const { hasBackElements, hasInFrontElements, hasGhostElements } = result;
+    this._rootSectorNodeBuffer.forEach(rootSectorNodeData => {
+      const root: RootSectorNode = rootSectorNodeData[0];
+      const cadNode: CadNode = rootSectorNodeData[1];
+
+      const backSet = this._materialManager.getModelBackTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
+      const infrontSet = this._materialManager.getModelInFrontTreeIndices(cadNode.cadModelMetadata.modelIdentifier);
 
       const backRoot = new THREE.Object3D();
       backRoot.applyMatrix4(root.matrix);

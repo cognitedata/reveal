@@ -266,6 +266,24 @@ export type CadModelBudget = {
    * are very important for the framerate.
    */
   readonly maximumNumberOfDrawCalls: number;
+
+  /**
+   * Maximum render cost. This number can be thought of as triangle count, although the number
+   * doesn't match this directly.
+   */
+  readonly maximumRenderCost: number;
+};
+
+/**
+ * Represents a budget of how many point from point clouds can be
+ * loaded at the same time.
+ */
+export type PointCloudBudget = {
+  /**
+   * Total number of points that can be loaded for all point clouds models
+   * accumulated.
+   */
+  readonly numberOfPoints: number;
 };
 
 /**

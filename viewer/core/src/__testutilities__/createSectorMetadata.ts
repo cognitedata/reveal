@@ -23,6 +23,7 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
     depth,
     bounds,
     estimatedDrawCallCount: 100,
+    estimatedRenderCost: 1000,
     indexFile: {
       fileName: `sector_${id}.i3d`,
       peripheralFiles: [],

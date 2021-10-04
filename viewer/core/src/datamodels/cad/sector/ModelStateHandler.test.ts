@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { ModelStateHandler } from './ModelStateHandler';
 import { WantedSector, ConsumedSector } from './types';
 import { LevelOfDetail } from './LevelOfDetail';
+import { SectorMetadata } from '..';
 
 describe('ModelStateHandler', () => {
   // TODO: 10-08-2020 j-bjorne: Consider changing WantedSector and ConsumedSector metadata field. Annoying to mock.
@@ -57,12 +58,13 @@ function mockWantedSectors(id: number): {
   detailed: WantedSector;
   discarded: WantedSector;
 } {
-  const metadata = {
+  const metadata: SectorMetadata = {
     id,
     path: '0/',
     depth: 0,
     bounds: new THREE.Box3(),
     estimatedDrawCallCount: 0,
+    estimatedRenderCost: 0,
     indexFile: {
       fileName: `sector_${id}.i3d`,
       peripheralFiles: [],

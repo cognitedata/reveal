@@ -12,6 +12,7 @@ declare global {
       VERSION: string;
       WORKER_VERSION: string;
       MIXPANEL_TOKEN: string;
+      IS_DEVELOPMENT_MODE: boolean;
     }
   }
 }
