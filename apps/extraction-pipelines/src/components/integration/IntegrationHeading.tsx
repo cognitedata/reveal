@@ -68,7 +68,8 @@ export const IntegrationHeading: FunctionComponent = () => {
             viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
             canEdit={canEdit}
           />
-          Last reported status: <StatusMarker status={lastRun.status} />
+          <span style={{ marginRight: '1em' }}>Last reported status:</span>{' '}
+          <StatusMarker status={lastRun.status} />
         </DivFlex>
       </Wrapper>
     </>
