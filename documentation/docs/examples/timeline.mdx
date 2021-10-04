@@ -6,42 +6,77 @@ describe: Applying styles to nodes based on date with Play & Stop
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-Reveal allows for applying styles to nodes based on date property.
+Reveal allows for applying styles to nodes based on date property and can be viewed as a playable entity
+where node styles are applied to different nodes which can be used to showcase progress of the model construction.
 
 
 :::note
-The test model used in the documentation site is lacking good node properties and the quality of 
-the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs 
-we recommend providing a rich 3D models with a good set of high-quality attributes associated with 
-the nodes.
+The test data used in the documentation site is for testing and to show the capabilities of the tool.
+The examples shown is therefore might not be a ideal model construction progression.
 :::
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-## Show all pipes
+## Timeline
 
-If nodes in the 3D model has an attribute `'PDMS.Type'`, `PropertyFilterNodeCollection` can be used to
-retrieve nodes of a certain type. In the following example, only pipes are accepted:
+Timeline tool provides ablility to apply styles to nodes using Date as a property. It requires Time Keyframes to be created.
+Each timeframe consists of nodes which are the elements to be rendered, appearance/styles to be assigned to the nodes and
+lastly the date for the nodes as reference to be rendered.
+
+### Create TimeFrame
+To create TimelineFrames, use createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
+- date - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
+- nodeCollection - Set of nodes to be rendered for the TimeFrame.
+- nodeAppearance - Styling of the nodes.
+
+### Play Timeline
+We use play(durationInMilliSeconds: number, startDate: number, endDate: number)
+- durationInMilliSeconds - Number of milli-seconds after which next TimelineFrame is rendered.
+- startDate - TimelineFrame date to start the Playback of TimelineFrames.
+- endDate - TimelineFrame date to stop the Playback of TimelineFrames. 
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
 // import { TimelineTool } from '@cognite/reveal/tools';
 
-const nodes = new AssetNodeCollection(sdk, model);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
 const timeline = new TimelineTool(viewer, model);
-timeline.createKeyFrame(10000, nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
+
+const nodes = new AssetNodeCollection(sdk, model);
+timeline.createKeyFrame(Date.now(), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
 
 nodes.executeFilter({ assetId: 4222791488928479 });
 timeline.createKeyFrame(20000, nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
-timeline.createKeyFrame(40000, allPipes, { renderGhosted: true, color: [40, 200, 20] });
+timeline.createKeyFrame(40000, allPipes, { renderGhosted: false, color: [40, 200, 20] });
 
 const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 timeline.createKeyFrame(60000, stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
-timeline.play(2000, 1000, 80000);
+timeline.play(5000, 1000, 80000);
+
+```
+
+### Remove a TimelineFrame
+To remove any TimelineFrame, use removeKeyFrame(date: number)
+- date - TimelineFrame date to be removed from the Timeline in milliseconds.
+
+```js runnable
+timeline.removeKeyFrame(40000);
+```
+
+### Stop Timeline
+
+```js runnable
+timeline.stopPlayback();
+```
+### Dates in TimelineFrame
+We can get all the dates added into the TimelineFrame by calling getAllDateInTimelineFrames()
+
+```js runnable
+const allDates = timeline.getAllDateInTimelineFrames();
 ```
