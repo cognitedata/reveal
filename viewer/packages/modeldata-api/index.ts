@@ -8,4 +8,10 @@ export { LocalModelDataProvider } from './src/LocalModelDataProvider';
 export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
 export { ModelIdentifier, CdfModelIdentifier, LocalModelIdentifier } from './src/ModelIdentifier';
-export { ModelDataProvider, BinaryFileProvider, HttpHeadersProvider, File3dFormat } from './src/types';
+export {
+  ModelDataProvider,
+  BinaryFileProvider,
+  HttpHeadersProvider,
+  File3dFormat,
+  CameraConfiguration
+} from './src/types';
