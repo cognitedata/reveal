@@ -3,7 +3,7 @@
  */
 
 /**
- * @module @cognite/reveal/datasource
+ * @module @cognite/reveal/extensions/datasource
  */
 
 export { DataSource } from '../packages/data-source';
