@@ -47,6 +47,7 @@ import { ids } from 'cogs-variables';
 import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/IntegrationsAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -210,7 +211,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         pageHeadingText={integration.name}
         pageHeading={<IntegrationHeading />}
         headingSide={
-          <div>
+          <DivFlex direction="row" align="flex-end" justify="flex-end">
             <LinkWrapper>
               <DeleteDialog
                 isOpen={isDeleteDialogOpen}
@@ -268,7 +269,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                 />
               </Dropdown>
             </LinkWrapper>
-          </div>
+          </DivFlex>
         }
         breadcrumbs={<IntegrationBreadcrumbs integration={integration} />}
       >

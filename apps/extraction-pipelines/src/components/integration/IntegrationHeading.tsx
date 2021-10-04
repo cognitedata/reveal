@@ -3,22 +3,28 @@ import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { nameSchema } from 'utils/validation/integrationSchemas';
 import InlineEdit from 'components/integration/InlineEdit';
-import { Title } from '@cognite/cogs.js';
+import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { DivFlex } from 'styles/flex/StyledFlex';
-import { EXT_PIPE_NAME_HEADING } from 'utils/constants';
+import {
+  EXT_PIPE_NAME_HEADING,
+  EXTRACTION_PIPELINES_LIST,
+} from 'utils/constants';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import StatusMarker from 'components/integrations/cols/StatusMarker';
 import { calculateStatus } from 'utils/integrationUtils';
+import { StyledNavLink } from 'styles/StyledLinks';
+import { createExtPipePath } from 'utils/baseURL';
 
 const Wrapper = styled.div`
   #description,
   #name {
     flex: 1;
   }
+  padding: 1em;
 `;
 
 const StyledTitle = styled(Title)`
@@ -49,6 +55,13 @@ export const IntegrationHeading: FunctionComponent = () => {
     <>
       <Wrapper className="heading">
         <DivFlex>
+          <StyledNavLink
+            to={{
+              pathname: createExtPipePath(),
+            }}
+          >
+            <Icon type="ArrowBack" />
+          </StyledNavLink>
           <InlineEdit
             name="name"
             defaultValues={{ name: integration?.name }}

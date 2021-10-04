@@ -48,18 +48,5 @@ export const IntegrationBreadcrumbs: FunctionComponent<IntegrationBreadcrumbsPro
         ]
       : []),
   ];
-  return (
-    <Breadcrumbs
-      breadcrumbs={currentPageBreadCrumbs}
-      rightSide={
-        <StyledNavLink
-          to={{
-            pathname: createExtPipePath(),
-          }}
-        >
-          {EXTRACTION_PIPELINES_LIST}
-        </StyledNavLink>
-      }
-    />
-  );
+  return <Breadcrumbs breadcrumbs={currentPageBreadCrumbs} />;
 };
