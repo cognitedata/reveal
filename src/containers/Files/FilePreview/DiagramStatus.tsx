@@ -33,9 +33,9 @@ export const approvalDetails: { [key: string]: ReviewStatus } = {
     tooltip: 'All tags have been reviewed',
   },
   unknown: {
-    status: 'N\\A',
+    status: 'No tags detected',
     variant: 'unknown',
-    label: 'N\\A',
+    label: 'No tags detected',
     tooltip: 'No tags were found in the diagram',
   },
 };
