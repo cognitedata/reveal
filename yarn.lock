@@ -11599,10 +11599,10 @@ github-slugger@^1.0.0:
   dependencies:
     emoji-regex ">=6.0.0 <=6.1.1"
 
-glider-js@1.7.6:
-  version "1.7.6"
-  resolved "https://registry.yarnpkg.com/glider-js/-/glider-js-1.7.6.tgz#0285436ab13c6895914caa285c6bca4c729c05d0"
-  integrity sha512-m2QiQl5bE10DvFBmJoL7Vkjjq26Ylq+OzABIfqD2l//A2WUuqr+NkoxEqJlcGxh5od0d0y943U7A0nd1GASwrg==
+glider-js@1.7.7:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/glider-js/-/glider-js-1.7.7.tgz#24508efecf6f20fd32b08b2940e4762e1c35fa23"
+  integrity sha512-jowNSpd/38EG0Kw83NgTo4F9YSAcpWQxBw0SFZcc2FysZD+dUuW/AcSeFU27rwGJilqdocKbw12IHOKi+DtpZw==
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -18707,13 +18707,13 @@ react-focus-lock@^2.1.0:
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
 
-react-glider@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-glider/-/react-glider-2.2.0.tgz#2d0858f7e3f0cf62c97dcd07d1d81d85838a4cfb"
-  integrity sha512-FRd6H+crhMtc8T+/iP67V4I/8xk0i7QE9LZBlV1kSl1EJFG0UvR5ReqH1BdQeIdNkg0O4bK5x7pgKjpoVnizjw==
+react-glider@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-glider/-/react-glider-2.2.1.tgz#ebda8cb9bd6a3661ac2069c29485c92a8f85e46c"
+  integrity sha512-9RS/VqQU9tGqROHyXULjnrejhoHUhW/iRvqObkCTnTtQbabzt2CNx0kSvjv5NX17XHi43fT+m3O5SIVfD86xLA==
   dependencies:
     "@reach/auto-id" "^0.12.1"
-    glider-js "1.7.6"
+    glider-js "1.7.7"
 
 react-helmet-async@^1.0.2, react-helmet-async@^1.0.7:
   version "1.0.9"
