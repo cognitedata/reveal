@@ -13,7 +13,6 @@ import {
 import * as reveal from '@cognite/reveal';
 
 import { 
-  CameraConfiguration, 
   DataSource, 
   ModelDataProvider, 
   ModelIdentifier, 
@@ -38,8 +37,10 @@ class MyModelMetadataProvider implements ModelMetadataProvider {
     // Note! identifier will always be a CdfModelIdentifier
     return Promise.resolve('/primitives');
   }
-  getModelCamera(identifier: ModelIdentifier): Promise<CameraConfiguration | undefined> {
+  getModelCamera(identifier: ModelIdentifier): Promise< { position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
     // Note! identifier will always be a CdfModelIdentifier
+
+    // Use default camera
     return Promise.resolve(undefined);
   }
   getModelMatrix(identifier: ModelIdentifier): Promise<THREE.Matrix4> {

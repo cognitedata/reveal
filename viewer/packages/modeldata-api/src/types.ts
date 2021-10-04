@@ -1,7 +1,6 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
 
 import { HttpHeaders } from '@cognite/sdk-core';
 export interface JsonFileProvider {
@@ -32,14 +31,6 @@ export enum File3dFormat {
   RevealCadModel = 'reveal-directory',
   AnyFormat = 'all-outputs'
 }
-
-/**
- * Represents a camera configuration, consisting of a camera position and target.
- */
-export type CameraConfiguration = {
-  readonly position: THREE.Vector3;
-  readonly target: THREE.Vector3;
-};
 
 export interface BlobOutputMetadata {
   blobId: number;

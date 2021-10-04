@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
-import { CameraConfiguration, BlobOutputMetadata } from './types';
+import { BlobOutputMetadata } from './types';
 import { ModelMetadataProvider } from './ModelMetadataProvider';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { Model3DOutputList } from './Model3DOutputList';
@@ -35,7 +35,9 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     return modelMatrix;
   }
 
-  public async getModelCamera(modelIdentifier: ModelIdentifier): Promise<CameraConfiguration | undefined> {
+  public async getModelCamera(
+    modelIdentifier: ModelIdentifier
+  ): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }

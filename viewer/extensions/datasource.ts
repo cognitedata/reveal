@@ -12,7 +12,5 @@ export {
   ModelIdentifier,
   CdfModelIdentifier,
   ModelMetadataProvider,
-  ModelDataProvider,
-  // TODO 2021-10-04 larsmoa: Consider removing this export
-  CameraConfiguration
+  ModelDataProvider
 } from '../packages/modeldata-api';
