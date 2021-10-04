@@ -171,8 +171,7 @@
   },
   "release": {
     "branches": [
-      "master",
-      "MERGE_TO"
+      "master"
     ],
     "plugins": [
       [

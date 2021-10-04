@@ -127,17 +127,6 @@ pods {
           )
         }   
       },
-      'Release': {
-        if (env.BRANCH_NAME != 'master') {
-          println "GitHub releases are generated only from master branch, this branch name is " + env.BRANCH_NAME
-          return
-        }
-        container('fas') {
-          stageWithNotify('Generate Github release') {
-            sh("npx semantic-release")
-          }
-        }
-      }
     )
 
     if (isRelease) {
