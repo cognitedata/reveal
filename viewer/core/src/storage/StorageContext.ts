@@ -15,7 +15,8 @@ import {
 } from '@reveal/modeldata-api';
 
 /**
- *
+ * Describes how Reveal data is stored, and provides means to create custom storage providers
+ * that Reveal will fetch data from.
  */
 export interface StorageContext {
   /**
@@ -36,6 +37,9 @@ export interface StorageContext {
   getModelDataClient(): ModelDataProvider;
 }
 
+/**
+ * Storage context for Cognite Data Fusion.
+ */
 export class CdfStorageContext implements StorageContext {
   private readonly _metadataProvider: CdfModelMetadataProvider;
   private readonly _nodesApiClient: NodesCdfClient;
@@ -60,6 +64,10 @@ export class CdfStorageContext implements StorageContext {
   }
 }
 
+/**
+ * Storage context for loading models from local storage (i.e. by URL).
+ * This implementation is meant for use in development.
+ */
 export class LocalStorageContext implements StorageContext {
   getNodesApiClient(): NodesApiClient {
     return new NodesLocalClient();
