@@ -123,7 +123,7 @@ export type BingMapConfig = {
   /**
    * Bing Map API Key
    */
-   APIKey: string;
+  APIKey: string;
   /**
    * The type of the map used.
    */
@@ -135,7 +135,7 @@ export type HereMapConfig = {
   /**
    * Here map API Key
    */
-   APIKey: string;
+  APIKey: string;
   /**
    * Service application code token.
    */
@@ -153,11 +153,11 @@ export type HereMapConfig = {
    */
   imageFormat?: HereMapImageFormat;
   /**
-   * Returned tile map image size.
-   * The following sizes are supported:
-   *  - 256
-   *  - 512
-   *  - 128 (deprecated, although usage is still accepted)
+   Returned tile map image size.
+   The following sizes are supported:
+    - 256
+    - 512
+    - 128 (deprecated, although usage is still accepted)
    */
   size?: number;
 };
@@ -171,15 +171,15 @@ export type MapboxConfig = {
   /**
    * Mapbox API Key
    */
-   APIKey: string;
+  APIKey: string;
   /**
    * Map style or map ID if the mode is set to MAP_ID
    */
   id: string;
   /**
-   * Map tile access mode
-   *  - MapboxMode.STYLE
-   *  - MapboxMode.MAP_ID
+   Map tile access mode
+    - MapboxMode.STYLE
+    - MapboxMode.MAP_ID
    */
   mode?: MapboxMode;
   /**
