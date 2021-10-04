@@ -8,9 +8,10 @@ import { useParams } from 'react-router';
 import {
   Button,
   Colors,
-  Icon,
+  Dropdown,
   Input,
   Loader,
+  Menu,
   Modal,
   toast,
 } from '@cognite/cogs.js';
@@ -72,10 +73,6 @@ const PageNav = styled.ul`
       }
     }
   }
-`;
-
-const IconWithSpace = styled(Icon)`
-  margin-right: 1rem;
 `;
 
 interface IntegrationPageProps {}
@@ -221,13 +218,6 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                   setIsDeleteDialogOpen(false);
                 }}
               />
-              <Button
-                type="ghost-danger"
-                onClick={() => setIsDeleteDialogOpen(true)}
-              >
-                <IconWithSpace type="Trash" />
-                Delete extraction pipeline
-              </Button>
               <PageNav>
                 <li>
                   <NavLink
@@ -248,6 +238,25 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                   </NavLink>
                 </li>
               </PageNav>
+              <Dropdown
+                content={
+                  <Menu>
+                    <Menu.Header>Actions for extraction pipeline</Menu.Header>
+                    <Menu.Item
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      color="danger"
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button
+                  icon="MoreOverflowEllipsisHorizontal"
+                  iconPlacement="right"
+                  variant="ghost"
+                />
+              </Dropdown>
             </LinkWrapper>
           </div>
         }
