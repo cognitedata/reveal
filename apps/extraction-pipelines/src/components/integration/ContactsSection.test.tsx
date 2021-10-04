@@ -20,7 +20,7 @@ import {
   SAVE,
 } from 'utils/constants';
 
-xdescribe('ContactSection', () => {
+describe.skip('ContactSection', () => {
   const mock = getMockResponse()[0];
   const mockDataSet = mockDataSetResponse()[0];
   let wrapper;

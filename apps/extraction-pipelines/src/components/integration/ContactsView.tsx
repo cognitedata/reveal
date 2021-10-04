@@ -30,7 +30,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
     return <></>;
   }
   const { contacts } = integration;
-  const contactsSorted = [...contacts].sort(
+  const contactsSorted = [...(contacts ?? [])].sort(
     (a, b) =>
       (isOwnerRole(a.role ?? '') ? -1000 : 0) -
       (isOwnerRole(b.role ?? '') ? -1000 : 0)

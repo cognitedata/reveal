@@ -24,9 +24,9 @@ import { Integration } from 'model/Integration';
 import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
 import { bottomSpacing } from 'styles/StyledVariables';
-import { AddContact } from './AddContact';
 import { StyledTableNoRowColor2 } from 'styles/StyledTable';
 import { ErrorMessage } from 'components/error/ErrorMessage';
+import { AddContact } from './AddContact';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
