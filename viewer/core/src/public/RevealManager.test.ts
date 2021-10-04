@@ -11,7 +11,7 @@ import { createGlContext } from '../__testutilities__/createGlContext';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
-describe('RevealManager', () => {
+describe(RevealManager.name, () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
   const stubDataProvider: ModelDataProvider = {} as any;
   const sectorCuller: SectorCuller = {

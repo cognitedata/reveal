@@ -2,12 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteClient, ItemsResponse } from '@cognite/sdk';
+
 import { BlobOutputMetadata } from './types';
 import { ModelMetadataProvider } from './ModelMetadataProvider';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { Model3DOutputList } from './Model3DOutputList';
-import { ModelIdentifier, CdfModelIdentifier } from './ModelIdentifier';
+import { ModelIdentifier } from './ModelIdentifier';
+import { CdfModelIdentifier } from './CdfModelIdentifier';
+
+import { CogniteClient } from '@cognite/sdk';
+import { ItemsResponse } from '@cognite/sdk-core';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.

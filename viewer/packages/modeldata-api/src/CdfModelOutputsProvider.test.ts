@@ -8,7 +8,7 @@ import { File3dFormat } from './types';
 import { CdfModelOutputsProvider } from './CdfModelOutputsProvider';
 
 import { CogniteClient } from '@cognite/sdk';
-import { CdfModelIdentifier } from './ModelIdentifier';
+import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 describe('CdfModelOutputsProvider', () => {
   let modelIdentifier: CdfModelIdentifier;

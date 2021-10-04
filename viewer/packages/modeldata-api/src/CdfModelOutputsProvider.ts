@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CdfModelIdentifier } from './ModelIdentifier';
+import { CdfModelIdentifier } from './CdfModelIdentifier';
 import { Model3DOutputList } from './Model3DOutputList';
 import { BlobOutputMetadata } from './types';
 

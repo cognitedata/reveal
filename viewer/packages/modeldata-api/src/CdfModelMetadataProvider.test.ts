@@ -6,7 +6,7 @@ import nock from 'nock';
 
 import { CogniteClient } from '@cognite/sdk';
 import { File3dFormat } from './types';
-import { CdfModelIdentifier } from './ModelIdentifier';
+import { CdfModelIdentifier } from './CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
 
 describe(CdfModelMetadataProvider.name, () => {
