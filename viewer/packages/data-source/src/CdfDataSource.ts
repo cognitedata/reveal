@@ -3,7 +3,7 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 
-import { StorageContext } from './StorageContext';
+import { DataSource } from './DataSource';
 
 import { NodesApiClient, NodesCdfClient } from '@reveal/nodes-api';
 import {
@@ -14,10 +14,10 @@ import {
 } from '@reveal/modeldata-api';
 
 /**
- * Storage context for Cognite Data Fusion.
+ * Data source for Cognite Data Fusion.
  */
 
-export class CdfStorageContext implements StorageContext {
+export class CdfDataSource implements DataSource {
   private readonly _metadataProvider: CdfModelMetadataProvider;
   private readonly _nodesApiClient: NodesCdfClient;
   private readonly _modelDataClient: CdfModelDataProvider;

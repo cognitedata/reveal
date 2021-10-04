@@ -56,7 +56,7 @@ import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
 import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
-import { StorageContext, CdfStorageContext, LocalStorageContext } from '@reveal/storage-context';
+import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
 
@@ -103,7 +103,7 @@ export class Cognite3DViewer {
   }
 
   private readonly _cdfSdkClient: CogniteClient | undefined;
-  private readonly _storageContext: StorageContext;
+  private readonly _dataSource: DataSource;
 
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
@@ -251,7 +251,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
     if (options._localModels !== true) {
-      this._storageContext = new CdfStorageContext(options.sdk);
+      this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
@@ -260,7 +260,7 @@ export class Cognite3DViewer {
         options.sdk
       );
     } else {
-      this._storageContext = new LocalStorageContext();
+      this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
     }
@@ -532,7 +532,7 @@ export class Cognite3DViewer {
    * ```
    */
   async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
-    const nodesApiClient = this._storageContext.getNodesApiClient();
+    const nodesApiClient = this._dataSource.getNodesApiClient();
 
     const { modelId, revisionId } = options;
     const cadNode = await this._revealManagerHelper.addCadModel(options);

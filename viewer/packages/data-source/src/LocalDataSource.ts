@@ -8,14 +8,14 @@ import {
   LocalModelDataProvider,
   LocalModelMetadataProvider
 } from '@reveal/modeldata-api';
-import { StorageContext } from './StorageContext';
+import { DataSource } from './DataSource';
 
 /**
- * Storage context for loading models from local storage (i.e. by URL).
+ * Data source for loading models from local storage (i.e. by URL).
  * This implementation is meant for use in development.
  */
 
-export class LocalStorageContext implements StorageContext {
+export class LocalDataSource implements DataSource {
   getNodesApiClient(): NodesApiClient {
     return new NodesLocalClient();
   }

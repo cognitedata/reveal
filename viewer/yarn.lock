@@ -930,10 +930,19 @@ __metadata:
   resolution: "@reveal/core@workspace:core"
   dependencies:
     "@reveal/camera-manager": "workspace:*"
+    "@reveal/data-source": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
-    "@reveal/storage-context": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/data-source@workspace:*, @reveal/data-source@workspace:packages/data-source":
+  version: 0.0.0-use.local
+  resolution: "@reveal/data-source@workspace:packages/data-source"
+  dependencies:
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/nodes-api": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -958,15 +967,6 @@ __metadata:
 "@reveal/sector-parser@workspace:packages/sector-parser":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-parser@workspace:packages/sector-parser"
-  languageName: unknown
-  linkType: soft
-
-"@reveal/storage-context@workspace:*, @reveal/storage-context@workspace:packages/storage-context":
-  version: 0.0.0-use.local
-  resolution: "@reveal/storage-context@workspace:packages/storage-context"
-  dependencies:
-    "@reveal/modeldata-api": "workspace:*"
-    "@reveal/nodes-api": "workspace:*"
   languageName: unknown
   linkType: soft
 

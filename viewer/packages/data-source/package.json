@@ -1,5 +1,5 @@
 {
-  "name": "@reveal/storage-context",
+  "name": "@reveal/data-source",
   "private": true,
   "main": "index.ts",
   "scripts": {
