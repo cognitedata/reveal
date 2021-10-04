@@ -21,7 +21,7 @@ export const emailRule = {
 // export const roleNotOwnerRule = {
 //   role: yup.string().lowercase().not(['owner']),
 // };
-export const roleOwnerRule = {
+export const roleRule = {
   role: yup.string(), // .is(['Owner']),
 };
 export const sentNotificationRule = {
@@ -31,14 +31,14 @@ export const nameSchema = yup.object().shape(nameRule);
 export const contactNameSchema = yup.object().shape(contactNameRule);
 export const contactEmailSchema = yup.object().shape(emailRule);
 // export const contactRoleNotOwnerSchema = yup.object().shape(roleNotOwnerRule);
-export const contactRoleOwnerSchema = yup.object().shape(roleOwnerRule);
+export const contactRoleSchema = yup.object().shape(roleRule);
 export const contactSendNotificationSchema = yup
   .object()
   .shape(sentNotificationRule);
 export const contactSchema = yup.object().shape({
   ...contactNameRule,
   ...emailRule,
-  ...roleOwnerRule,
+  ...roleRule,
   ...sentNotificationRule,
 });
 

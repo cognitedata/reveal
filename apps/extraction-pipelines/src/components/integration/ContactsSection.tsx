@@ -5,7 +5,7 @@ import { TableHeadings } from 'components/table/IntegrationTableCol';
 import {
   contactEmailSchema,
   contactNameSchema,
-  contactSchema,
+  contactRoleSchema,
 } from 'utils/validation/integrationSchemas';
 import { EditPartContacts } from 'components/integration/EditPartContacts';
 import { RemoveContactButton } from 'components/integration/RemoveContactButton';
@@ -25,11 +25,8 @@ import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { AddContact } from './AddContact';
-import { Checkbox, Radio } from '@cognite/cogs.js';
 import { StyledTableNoRowColor2 } from 'styles/StyledTable';
-import ValidationError from 'components/form/ValidationError';
 import { ErrorMessage } from 'components/error/ErrorMessage';
-import { isOwner } from 'utils/integrationUtils';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -111,7 +108,7 @@ function contactTable(
                     index={contact.index}
                     field="role"
                     label="Role"
-                    schema={contactSchema}
+                    schema={contactRoleSchema}
                     defaultValues={{ role: contact.role }}
                   />
                 </td>
