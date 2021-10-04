@@ -30,8 +30,10 @@ const Name = styled.h4`
 const Role = styled.div<{ isOwner: boolean }>`
   margin-left: 1rem;
   color: ${(props) =>
-    props.isOwner ? Colors['purple-2'].hex() : Colors['greyscale-grey8'].hex()};
-  font-weight: ${(props) => (props.isOwner ? 'bold' : 'normal')};
+    props.isOwner
+      ? Colors['greyscale-grey8'].hex()
+      : Colors['greyscale-grey8'].hex()};
+  font-weight: ${(props) => (props.isOwner ? 'normal' : 'normal')};
 `;
 const VisuallyHidden = styled.span`
   clip: rect(0 0 0 0);
