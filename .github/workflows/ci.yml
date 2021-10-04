@@ -27,7 +27,7 @@ jobs:
 
     - name: Lint
       working-directory: viewer
-      continue-on-error: true
+      continue-on-error: false
       run: yarn run lint
 
     - name: Setup tools for coverage tests
