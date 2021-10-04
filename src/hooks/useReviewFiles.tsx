@@ -503,11 +503,25 @@ export const REVIEW_DIAGRAMS_LABELS = {
   clear: {
     all: {
       button: 'Clear all tags',
-      desc: 'All annotations will be deleted. However, the cleared diagrams can be made interactive again later.',
+      desc: (
+        <>
+          <Body level={2} strong>
+            Clear all tags?
+          </Body>
+          <Body level={2}>All tags from the diagrams will be removed.</Body>
+        </>
+      ),
     },
     some: {
       button: 'Clear tags',
-      desc: 'All annotations from selected diagrams will be deleted. However, the cleared diagrams can be made interactive again later.',
+      desc: (
+        <>
+          <Body level={2} strong>
+            Clear all tags?
+          </Body>
+          <Body level={2}>All tags from the diagram will be removed.</Body>
+        </>
+      ),
     },
   },
 };
