@@ -19,6 +19,9 @@ const SectionHeader = styled.div`
 const SectionBody = styled.div`
   padding: 0.3em;
 `;
+export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
+  <SectionDiv className="z-2">{props.children}</SectionDiv>
+);
 export const Section = (
   props: PropsWithChildren<{ title: string; icon: AllIconTypes }>
 ) => {

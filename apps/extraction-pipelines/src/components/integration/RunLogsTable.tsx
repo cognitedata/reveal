@@ -39,6 +39,17 @@ const StyledTable = styled.table`
       }
     }
   }
+  tbody {
+    tr {
+      &:hover,
+      &:nth-child(2n):hover {
+        background-color: unset;
+      }
+      &:nth-child(2n) {
+        background-color: white;
+      }
+    }
+  }
 `;
 const itemsPrPageOptions: OptionType<unknown>[] = [
   {
