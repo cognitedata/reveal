@@ -6,7 +6,7 @@ import { abbreviateNumber } from 'utils/utils';
 type CountTagProps = {
   value: number;
   type: 'assets' | 'files';
-  draft: boolean;
+  pending: boolean;
   tooltipContent?: React.ReactNode;
 };
 
@@ -16,14 +16,14 @@ const iconForType = {
 };
 export const CountTag = ({
   value,
-  draft,
+  pending,
   type,
   tooltipContent,
 }: CountTagProps) => {
   const Tag = () => (
-    <StyledTag draft={draft}>
+    <StyledTag pending={pending}>
       <Icon type={iconForType[type] as AllIconTypes} />{' '}
-      {abbreviateNumber(value)}
+      <span style={{ marginLeft: '6px' }}>{abbreviateNumber(value)}</span>
     </StyledTag>
   );
 
@@ -36,25 +36,25 @@ export const CountTag = ({
   return <Tag />;
 };
 
-const StyledTag = styled.span<{ draft: boolean }>`
+const StyledTag = styled.span<{ pending: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   padding: 4px 8px;
-  width: 63px;
-  height: 28px;
-  background: ${({ draft }) => (draft ? Colors['midblue-8'].hex() : 'white')};
+  background: ${({ pending }) =>
+    pending ? Colors['midblue-8'].hex() : 'white'};
   border: 1px solid
-    ${({ draft }) =>
-      draft ? Colors['midblue-6'].hex() : Colors['greyscale-grey5'].hex()};
-  color: ${({ draft }) =>
-    draft ? Colors['midblue-2'].hex() : Colors['greyscale-grey9'].hex()};
+    ${({ pending }) =>
+      pending ? Colors['midblue-6'].hex() : Colors['greyscale-grey5'].hex()};
+  color: ${({ pending }) =>
+    pending ? Colors['midblue-2'].hex() : Colors['greyscale-grey9'].hex()};
   box-sizing: border-box;
   border-radius: 4px;
   flex: none;
   order: 1;
   flex-grow: 0;
-  margin: 0px 6px;
+  margin-right: 6px;
   font-family: Inter;
   font-style: normal;
   font-weight: 500;

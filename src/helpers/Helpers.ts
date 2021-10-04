@@ -131,3 +131,31 @@ export async function boundedParallelRequests<T, K>(
 export const stuffForUnitTests = {
   oneAtATime,
 };
+
+type ResourceItem = { [key: string]: any };
+export const getAllPossibleStringFields = (items: ResourceItem[]) => {
+  const possibleFields = items.reduce((accumulator, item) => {
+    const keys: Array<keyof ResourceItem> = Object.keys(item);
+    keys.forEach((key) => {
+      if (!accumulator[key]) {
+        if (typeof item[key] === 'string') {
+          accumulator[key] = key;
+        }
+      }
+    });
+    return accumulator;
+  }, {});
+  const resourceMetadata = Array.from(
+    new Set(
+      items.reduce(
+        (accl: string[], item: any) =>
+          item && item.metadata
+            ? accl.concat(Object.keys(item?.metadata))
+            : accl,
+        []
+      )
+    ) as Set<string>
+  ).map((metadataKey: string) => `metadata.${metadataKey}`);
+
+  return [...Object.keys(possibleFields), ...resourceMetadata];
+};

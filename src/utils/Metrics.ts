@@ -82,13 +82,20 @@ export const PNID_METRICS = {
     byRootAsset: 'filters.byRootAsset',
     byMimeType: 'filters.byMimeType',
   },
-  configuration: 'configuration',
-  parsingJob: {
-    start: 'pasringJob.start',
-    end: 'pasringJob.end',
-    results: 'pasringJob.results',
+  configPage: {
+    skipSettings: 'configPage.skipSettings',
+    configuration: 'configPage.configuration',
   },
-  convertingJob: 'convertingJob.time',
+  parsingJob: {
+    start: 'parsingJob.start',
+    end: 'parsingJob.end',
+    results: 'parsingJob.results',
+  },
+  convertingJob: {
+    start: 'convertingJob.start',
+    end: 'convertingJob.end',
+    time: 'convertingJob.time',
+  },
   results: {
     convertToSvg: 'results.convertToSvg',
     linkToAssets: 'results.linkToAssets',
@@ -98,6 +105,7 @@ export const PNID_METRICS = {
     nextButton: 'navigation.nextButton',
     backButton: 'navigation.backButton',
     breadcrumbs: 'navigation.breadcrumbs',
+    moveToStep: 'navigation.moveToStep',
   },
   fileViewer: {
     convertToSvg: 'fileViewer.convertToSvg',

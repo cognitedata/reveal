@@ -19,17 +19,26 @@ interface WorkflowState {
   localStorage: any;
 }
 
+export const standardModelOptions = {
+  partialMatch: false,
+  minTokens: 2,
+  matchFields: {
+    files: 'name',
+    assets: 'name',
+  },
+};
+
 const initialState: WorkflowState = {
   active: -1,
   items: {},
   localStorage: { version: 1 },
 };
-const initialWorkflow: Workflow = {
-  options: {
-    partialMatch: false,
-    minTokens: 2,
+const defaultInitialWorkflow: Workflow = {
+  options: standardModelOptions,
+  steps: {
+    current: 'diagramSelection',
+    lastCompleted: 'diagramSelection',
   },
-  step: 'diagramSelection',
 };
 
 /**
@@ -146,9 +155,11 @@ export const workflowsSlice = createSlice({
         workflowId = Number(new Date()),
         diagrams = undefined,
         resources = undefined,
+        options = undefined,
       } = action.payload;
       const newWorkflow = {
-        ...initialWorkflow,
+        ...defaultInitialWorkflow,
+        ...(options ? { options } : standardModelOptions),
         ...(diagrams ? { diagrams } : {}),
         ...(resources ? { resources } : {}),
       };
@@ -157,17 +168,23 @@ export const workflowsSlice = createSlice({
     },
     updateSelection: (state, action) => {
       const { type, endpoint, query, filter } = action.payload;
+
       const workflowId = state.active ?? Number(new Date());
-      const { step } = state.items[workflowId];
-      const selection = { type, endpoint, query, filter };
+      const { steps } = state.items[workflowId];
+      const selection = {
+        type,
+        endpoint,
+        query,
+        filter,
+      };
 
       // Remove jobId to trigger new run
       state.items[workflowId].jobId = undefined;
 
-      if (step === 'diagramSelection') {
+      if (steps.current === 'diagramSelection') {
         state.items[workflowId].diagrams = selection;
       }
-      if (step.startsWith('resourceSelection')) {
+      if (steps.current.startsWith('resourceSelection')) {
         const oldSelection = state.items[workflowId].resources ?? [];
         const resourceAlreadyExists = oldSelection.find(
           (old: any) => old.type === type
@@ -186,11 +203,11 @@ export const workflowsSlice = createSlice({
       const workflowId = state.active ?? Number(new Date());
       // Remove jobId to trigger new run
       state.items[workflowId].jobId = undefined;
-      const { step } = state.items[workflowId];
-      if (step === 'diagramSelection') {
+      const { steps } = state.items[workflowId];
+      if (steps.current === 'diagramSelection') {
         delete state.items[workflowId].diagrams;
       }
-      if (step.startsWith('resourceSelection')) {
+      if (steps.current.startsWith('resourceSelection')) {
         const filteredResourceSelection =
           state.items[workflowId].resources?.filter(
             (resource) => resource.type !== type
@@ -206,21 +223,39 @@ export const workflowsSlice = createSlice({
       state.items[workflowId].jobId = undefined;
       const activeWorkflow = state.items[workflowId];
       const partialMatch =
-        action.payload.partialMatch !== undefined
-          ? action.payload.partialMatch
-          : activeWorkflow.options.partialMatch;
-      const minTokens = action.payload.minTokens
-        ? action.payload.minTokens
-        : activeWorkflow.options.minTokens;
+        action.payload.partialMatch ??
+        activeWorkflow.options?.partialMatch ??
+        standardModelOptions.partialMatch;
+      const minTokens =
+        action.payload.minTokens ??
+        activeWorkflow.options?.minTokens ??
+        standardModelOptions.minTokens;
+      const matchFields =
+        action.payload.matchFields ??
+        activeWorkflow.options?.matchFields ??
+        standardModelOptions.matchFields;
       state.items[workflowId].options = {
         partialMatch,
         minTokens,
+        matchFields,
       };
     },
     moveToStep: (state, action) => {
-      const step: WorkflowStep = action.payload;
+      const {
+        step,
+        lastCompletedStep = undefined,
+      }: {
+        step: WorkflowStep;
+        lastCompletedStep: WorkflowStep | undefined;
+      } = action.payload;
       const workflowId = state.active;
-      state.items[workflowId].step = step;
+      if (!state.items[workflowId]) return;
+      state.items[workflowId].steps = {
+        ...state.items[workflowId].steps,
+        current: step,
+        lastCompleted:
+          lastCompletedStep ?? state.items[workflowId].steps.lastCompleted,
+      };
     },
     importLocalStorageContent: (state, action) => {
       const { items, version } = action.payload;
@@ -265,5 +300,6 @@ export const {
 } = workflowsSlice.actions;
 
 export * from './selectors';
+export * from './helpers';
 export * from './hooks';
 export * from './types';

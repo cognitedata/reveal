@@ -2,6 +2,7 @@ import React from 'react';
 import notification from 'antd/lib/notification';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { getContainer } from 'utils/utils';
+import { ERRORS } from 'stringConstants';
 
 // To achieve this typing for the props, the error catched should be: handleError({...error})
 interface ErrorNotificationProps {
@@ -77,6 +78,14 @@ export const handleError = (props: ErrorNotificationProps): void => {
     description: errorDescription,
     getContainer,
   });
+};
+
+export const translateError = (originalError?: string): string | undefined => {
+  if (!originalError) return 'Something went wrong, please try again';
+  const errors = Object.values(ERRORS);
+  const error = errors.find((err) => originalError.startsWith(err.startsWith));
+  if (error) return error.translation;
+  return originalError;
 };
 
 export default handleError;

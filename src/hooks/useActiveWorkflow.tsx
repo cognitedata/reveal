@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useLoadStepOnMount } from 'hooks';
@@ -24,9 +25,12 @@ export const useActiveWorkflow = (step?: WorkflowStep) => {
   const activeWorkflowId = useSelector(getActiveWorkflowId);
   const workflowId = Number(workflowIdString);
 
-  if (workflowId && workflowId !== activeWorkflowId) {
-    dispatch(setActiveWorkflowId(workflowId));
-  }
+  useEffect(() => {
+    if (workflowId && workflowId !== activeWorkflowId) {
+      dispatch(setActiveWorkflowId(workflowId));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeWorkflowId, workflowId]);
 
   useLoadStepOnMount(step);
 

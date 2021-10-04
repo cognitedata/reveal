@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@cognite/cogs.js';
-import 'antd/dist/antd.css';
-import '@cognite/cogs.js/dist/cogs.css';
 import { Asset } from '@cognite/sdk';
 import { AssetDetailsAbstract } from './AssetDetailsAbstract';
 
@@ -77,14 +75,7 @@ export const WithExtras = () => {
             createdTime: new Date(),
           },
         ]}
-        extras={
-          <Button
-            type="primary"
-            variant="ghost"
-            shape="round"
-            icon="VerticalEllipsis"
-          />
-        }
+        extras={<Button type="ghost" shape="round" icon="VerticalEllipsis" />}
       >
         <Button>Hover me!</Button>
       </AssetDetailsAbstract>

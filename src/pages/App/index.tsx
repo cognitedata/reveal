@@ -26,9 +26,11 @@ import { staticRoot } from 'routes/paths';
 const Routes = React.lazy(() => import('routes'));
 
 export default function App() {
-  const { cdfEnv: cdfEnvFromContext, setCdfEnv, setTenant } = useContext(
-    AppStateContext
-  );
+  const {
+    cdfEnv: cdfEnvFromContext,
+    setCdfEnv,
+    setTenant,
+  } = useContext(AppStateContext);
   const history = useHistory();
   const { location } = history;
   const { username } = getAuthState();
@@ -66,6 +68,7 @@ export default function App() {
       <FileContextualizationContextProvider>
         <ResourceSelectionProvider allowEdit mode="multiple">
           <ResourceActionsProvider>
+            {/* @ts-ignore */}
             <DataExplorationProvider sdk={sdk}>
               <Switch>
                 <Redirect

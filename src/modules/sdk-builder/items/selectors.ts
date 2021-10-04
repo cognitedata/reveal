@@ -20,17 +20,16 @@ export function createItemSelector<T extends InternalId>(
   return createSelector(
     itemListSelector,
     itemRetrieveByExternalIdSelector,
-    (items: ItemsList<T>, byExternalId: any) => (
-      id: number | string | undefined
-    ) => {
-      const isExternalId = typeof id === 'string';
-      if (!id) return undefined;
-      if (!isExternalId) {
-        return items[id];
+    (items: ItemsList<T>, byExternalId: any) =>
+      (id: number | string | undefined) => {
+        const isExternalId = typeof id === 'string';
+        if (!id) return undefined;
+        if (!isExternalId) {
+          return items[id];
+        }
+        const itemId = byExternalId[id]?.id;
+        return itemId ? items[itemId] : undefined;
       }
-      const itemId = byExternalId[id]?.id;
-      return itemId ? items[itemId] : undefined;
-    }
   );
 }
 
@@ -66,26 +65,25 @@ export function createRetrieveSelector<T extends InternalId>(
   return createSelector(
     itemListSelector,
     itemRetrieveByIdSelector,
-    (allItems: ItemsList<T>, allRequests: ItemsAsyncStatus) => (
-      ids: InternalId[]
-    ) => {
-      const requests: ItemStatus[] = ids.map(({ id }) => allRequests[id]);
-      const items: ItemsList<T>[] = ids
-        .map((item) => allItems[item.id])
-        .filter((item) => !!item) as any[];
-      const statusFilter = (status: Status) =>
-        requests.filter((request) => request?.status === status).length;
-      const done = statusFilter('success');
-      const progress = statusFilter('pending');
-      const error = statusFilter('error');
-      const fetching = !!progress;
-      return ({
-        progress,
-        fetching,
-        done,
-        error,
-        items,
-      } as unknown) as Result<T>;
-    }
+    (allItems: ItemsList<T>, allRequests: ItemsAsyncStatus) =>
+      (ids: InternalId[]) => {
+        const requests: ItemStatus[] = ids.map(({ id }) => allRequests[id]);
+        const items: ItemsList<T>[] = ids
+          .map((item) => allItems[item.id])
+          .filter((item) => !!item) as any[];
+        const statusFilter = (status: Status) =>
+          requests.filter((request) => request?.status === status).length;
+        const done = statusFilter('success');
+        const progress = statusFilter('pending');
+        const error = statusFilter('error');
+        const fetching = !!progress;
+        return {
+          progress,
+          fetching,
+          done,
+          error,
+          items,
+        } as unknown as Result<T>;
+      }
   );
 }

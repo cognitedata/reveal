@@ -2,7 +2,12 @@ import { createSelector } from '@reduxjs/toolkit';
 import { InternalId, Asset, FileInfo } from '@cognite/sdk';
 import { RootState } from 'store';
 import { ResourceType } from 'modules/sdk-builder/types';
-import { ResourceSelection, ResourceObjectType, Workflow } from 'modules/types';
+import {
+  ResourceSelection,
+  ResourceObjectType,
+  Workflow,
+  Filter,
+} from 'modules/types';
 
 import {
   countSelector as countFileSelector,
@@ -20,12 +25,12 @@ export const getActiveWorkflowId = createSelector(
   (workflowId: number) => workflowId
 );
 
-export const getActiveWorkflowStep = createSelector(
+export const getActiveWorkflowSteps = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
   (workflowId: number, items: { [id: number]: Workflow }) => {
     const activeWorkflow = items[workflowId];
-    return activeWorkflow?.step;
+    return activeWorkflow?.steps;
   }
 );
 
@@ -61,18 +66,24 @@ export const getActiveWorkflowResources = createSelector(
 export const getActiveWorkflowResourcesByResourceType = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId: number, items: { [id: number]: Workflow }) => (
-    resourceType: ResourceType
-  ) => {
-    if (workflowId) {
-      const { resources } = items[workflowId];
-      const resourceOfType = resources?.find(
-        (resource: ResourceSelection) => resource.type === resourceType
-      );
-      return resourceOfType;
+  (workflowId: number, items: { [id: number]: Workflow }) =>
+    (resourceType: ResourceType) => {
+      if (workflowId) {
+        const { resources } = items[workflowId];
+        const resourceOfType = resources?.find(
+          (resource: ResourceSelection) => resource.type === resourceType
+        );
+        return resourceOfType;
+      }
+      return undefined;
     }
-    return undefined;
-  }
+);
+
+export const getActiveWorkflowJobId = createSelector(
+  (state: RootState) => state.workflows.active,
+  (state: RootState) => state.workflows.items,
+  (workflowId: number, items: { [id: number]: Workflow }) =>
+    items[workflowId]?.jobId
 );
 
 export const getCountsSelector = createSelector(
@@ -191,14 +202,14 @@ export const countOfTotalDiagramsForWorkflowSelector = (workflowId: number) =>
     (state: RootState) => state.workflows.items[workflowId]?.diagrams,
     getCountsSelector,
     (diagrams: ResourceSelection | undefined, countSelector) => {
-      if (!diagrams) return 0;
+      if (!diagrams) return undefined;
       const { filter, endpoint } = diagrams;
       if (endpoint === 'list') {
         const fixedFilter = filter.filter ?? filter;
-        return countSelector('files')(fixedFilter)?.count || 0;
+        return countSelector('files')(fixedFilter)?.count ?? 0;
       }
-      if (endpoint === 'retrieve') return filter?.length || 0;
-      return 0;
+      if (endpoint === 'retrieve') return filter?.length ?? 0;
+      return undefined;
     }
   );
 
@@ -212,16 +223,16 @@ export const countOfTotalResourcesForWorkflowSelector = (workflowId: number) =>
     getCountsSelector,
     (resources: ResourceSelection[] | undefined, countSelector) => {
       if (!resources) return undefined;
-      const resourcesCounts: { [key: string]: number } = {};
+      const resourcesCounts: { [key in ResourceType]?: number } = {};
       resources.forEach((resource: ResourceSelection) => {
         const { filter, endpoint, type } = resource;
-        resourcesCounts[type] = 0;
+        resourcesCounts[type] = undefined;
         if (endpoint === 'list') {
           const fixedFilter = filter.filter ?? filter;
-          resourcesCounts[type] = countSelector(type)(fixedFilter)?.count || 0;
+          resourcesCounts[type] = countSelector(type)(fixedFilter)?.count ?? 0;
         }
         if (endpoint === 'retrieve')
-          resourcesCounts[type] = filter?.length || 0;
+          resourcesCounts[type] = filter?.length ?? 0;
       });
       return resourcesCounts;
     }
@@ -456,6 +467,21 @@ export const workflowAllResourcesStatusSelector = (
               status.error
           ).length > 0,
       };
+    }
+  );
+
+export const workflowFiltersSelector = (workflowId: number) =>
+  createSelector(
+    (state: RootState) => state.workflows.items[workflowId],
+    (workflow: any) => {
+      const filters: { [key: string]: Filter } = {};
+      if (workflow?.diagrams && workflow.diagrams.endpoint === 'list')
+        filters.diagrams = workflow.diagrams.filter;
+      (workflow?.resources ?? []).forEach((resource: ResourceSelection) => {
+        if (resource?.endpoint === 'list')
+          filters[resource.type] = resource?.filter ?? {};
+      });
+      return filters;
     }
   );
 

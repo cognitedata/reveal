@@ -1,8 +1,16 @@
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { FileInfo } from '@cognite/sdk';
+import { useMemo, useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useLocalStorage } from '@cognite/cogs.js';
+import { Asset, FileInfo, IdEither } from '@cognite/sdk';
+import { diagramSelection } from 'routes/paths';
+import { AppStateContext } from 'context';
+import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
+import { selectParsingJob } from 'modules/contextualization/pnidParsing';
 import {
+  standardModelOptions,
+  createNewWorkflow,
   countOfLoadedDiagramsForWorkflowSelector,
   countOfLoadedResourcesForWorkflowSelector,
   countOfTotalDiagramsForWorkflowSelector,
@@ -13,6 +21,37 @@ import {
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
+import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
+import { RootState } from '../../store/reducer';
+import { NUM_OF_RESOURCES_CHECKED } from '../../utils/config';
+
+/**
+ * Creates a new workflow.
+ */
+export const useWorkflowCreateNew = () => {
+  const { tenant } = useContext(AppStateContext);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+    skip: false,
+    modelSelected: 'standard',
+  });
+
+  const createWorkflow = (args?: any) => {
+    const newWorkflowId = Number(new Date());
+    const options =
+      savedSettings?.skip && savedSettings?.options
+        ? savedSettings.options
+        : standardModelOptions;
+    dispatch(
+      createNewWorkflow({ workflowId: newWorkflowId, options, ...(args ?? {}) })
+    );
+    history.push(diagramSelection.path(tenant, String(newWorkflowId)));
+  };
+
+  return { createWorkflow };
+};
 
 /**
  * Returns all the items data associated with the specific workflow.
@@ -35,12 +74,37 @@ export const useWorkflowDiagrams = (
   workflowId: number,
   all: boolean = false
 ) => {
-  const getDiagrams = useMemo(() => workflowDiagramsSelector(workflowId, all), [
-    workflowId,
-    all,
-  ]);
+  const getDiagrams = useMemo(
+    () => workflowDiagramsSelector(workflowId, all),
+    [all, workflowId]
+  );
   const diagrams: FileInfo[] = useSelector(getDiagrams);
   return diagrams;
+};
+
+/**
+ * Returns all diagrams IDs associated with the specific workflow.
+ * @param workflowId
+ * @param all
+ */
+export const useWorkflowDiagramsIds = (
+  workflowId: number,
+  all: boolean = false,
+  ignoreFailed: boolean = false
+) => {
+  const parsingJob = useSelector(selectParsingJob)(workflowId);
+  const failedFiles =
+    parsingJob?.failedFiles?.map((file: any) => file.fileId) ?? [];
+  const getDiagrams = useMemo(
+    () => workflowDiagramsSelector(workflowId, all),
+    [all, workflowId]
+  );
+  const diagrams: FileInfo[] = useSelector(getDiagrams);
+  if (ignoreFailed)
+    return diagrams
+      .filter((el: any) => !failedFiles.includes(el.id))
+      .map((item) => item.id);
+  return diagrams.map((item) => item.id);
 };
 
 /**
@@ -54,7 +118,7 @@ export const useWorkflowResources = (
 ) => {
   const getResources = useMemo(
     () => workflowAllResourcesSelector(workflowId, all),
-    [workflowId, all]
+    [all, workflowId]
   );
   const resources = useSelector(getResources);
 
@@ -104,7 +168,7 @@ export const useWorkflowTotalCounts = (workflowId: number) => {
 };
 
 /**
- * Returns an info of how much of the workflow is already loaded.
+ * Returns an info of how many of the workflow resources are already loaded.
  * @param workflowId
  * @param all
  * @returns
@@ -122,13 +186,41 @@ export const useWorkflowLoadPercentages = (
     : workflowLoadedCounts.resources?.[type] ?? 0;
   const totalCount: number = diagrams
     ? workflowTotalCounts.diagrams
-    : workflowTotalCounts.resources?.[type] ?? 0;
+    : workflowTotalCounts.resources?.[type as ResourceType] ?? 0;
   const loadedPercent: number = Math.round(
     (totalCount ? downloadedCount / totalCount : 0) * 100
   );
-  const loaded = loadedPercent === 100;
+  const isLoaded = loadedPercent === 100;
 
-  return { downloadedCount, totalCount, loadedPercent, loaded };
+  return { downloadedCount, totalCount, loadedPercent, isLoaded };
+};
+
+/**
+ * Returns an info of how much of the entire workflow is already loaded.
+ * @param workflowId
+ * @param all
+ * @returns
+ */
+export const useWorkflowAllLoadPercentages = (workflowId: number) => {
+  const workflowLoadedCounts = useWorkflowLoadedCounts(Number(workflowId));
+  const workflowTotalCounts = useWorkflowTotalCounts(Number(workflowId));
+
+  const totalCount = [
+    ...Object.values(workflowTotalCounts?.resources ?? {}),
+    workflowTotalCounts?.diagrams ?? 0,
+  ].reduce((sum, count) => sum + count, 0);
+
+  const downloadedCount = [
+    ...Object.values(workflowLoadedCounts?.resources ?? {}),
+    workflowLoadedCounts?.diagrams ?? 0,
+  ].reduce((sum, count) => sum + count, 0);
+
+  const loadedPercent: number = Math.round(
+    (totalCount ? downloadedCount / totalCount : 0) * 100
+  );
+  const isLoaded = loadedPercent === 100;
+
+  return { downloadedCount, totalCount, loadedPercent, isLoaded };
 };
 
 /**
@@ -187,4 +279,65 @@ export const useWorkflowAllResourcesStatus = (
     workflowAllResourcesStatusSelector(workflowId, all)
   );
   return resourcesStatus;
+};
+
+// TO BE REMOVED LATER
+export const useSomeResources = (workflowId: number) => {
+  const resources = useSelector(
+    (state: RootState) => state.workflows.items[workflowId].resources
+  );
+
+  const assetSelection = (resources ?? [])?.find(
+    (item) => item.type === 'assets'
+  );
+  const fileSelection = (resources ?? [])?.find(
+    (item) => item.type === 'files'
+  );
+
+  const isAssetsList = assetSelection?.endpoint === 'list';
+  const isFilesList = fileSelection?.endpoint === 'list';
+
+  const { data: assetsRetrieve } = useCdfItems<Asset>(
+    'assets',
+    Array.isArray(assetSelection?.filter)
+      ? (assetSelection?.filter as IdEither[])
+      : [],
+    true,
+    {
+      enabled: !!assetSelection && !isAssetsList,
+    }
+  );
+  const { data: filesRetrieve } = useCdfItems<FileInfo>(
+    'files',
+    Array.isArray(fileSelection?.filter)
+      ? (fileSelection?.filter as IdEither[])
+      : [],
+    true,
+    {
+      enabled: !!fileSelection && !isFilesList,
+    }
+  );
+
+  const { data: assetsList } = useList<Asset>(
+    'assets',
+    {
+      filter: assetSelection?.filter?.filter ?? {},
+      limit: NUM_OF_RESOURCES_CHECKED,
+    },
+    { enabled: !!assetSelection && isAssetsList }
+  );
+
+  const { data: filesList } = useList<FileInfo>(
+    'files',
+    {
+      filter: fileSelection?.filter?.filter ?? {},
+      limit: NUM_OF_RESOURCES_CHECKED,
+    },
+    { enabled: !!fileSelection && isFilesList }
+  );
+
+  return {
+    assets: (isAssetsList ? assetsList : assetsRetrieve) ?? [],
+    files: (isFilesList ? filesList : filesRetrieve) ?? [],
+  };
 };

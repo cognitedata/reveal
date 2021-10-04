@@ -6,5 +6,13 @@ module.exports = {
       'warn',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: ['accumulator', 'state'],
+      },
+    ],
+    'react-hooks/exhaustive-deps': ['warn'],
   },
 };

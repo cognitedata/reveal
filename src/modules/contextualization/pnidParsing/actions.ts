@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileInfo } from '@cognite/sdk';
+import { FileChangeUpdate, FileInfo } from '@cognite/sdk';
 import { createPendingAnnotationsFromJob } from 'utils/AnnotationUtils';
 import sdk from 'sdk-singleton';
 import {
@@ -14,10 +14,19 @@ import {
   StartPnidParsingJobProps,
   PollJobResultsProps,
   PnidsParsingJobSchema,
+  PnidFailedFileSchema,
 } from 'modules/types';
 import { setJobId, workflowDiagramsSelector } from 'modules/workflows';
-import handleError from 'utils/handleError';
+import { getUniqueValuesArray } from 'utils/utils';
+import handleError, { translateError } from 'utils/handleError';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import {
+  isFileApproved,
+  isFilePending,
+  doesLabelExist,
+  PENDING_LABEL,
+  INTERACTIVE_LABEL,
+} from 'hooks';
 import {
   verticesToBoundingBox,
   mapAssetsToEntities,
@@ -37,16 +46,22 @@ const createPendingAnnotations = async (
   jobId: string,
   annotations: NonNullable<RetrieveResultsResponseItem['annotations']>
 ): Promise<FileAnnotationsCount> => {
-  const existingAnnotations = await listAnnotationsForFile(sdk, file, false);
+  const existingAnnotations = await listAnnotationsForFile(sdk, file, true);
 
+  const existingNotRejectedAnnotations = existingAnnotations.filter(
+    (annotation) => annotation.status !== 'deleted'
+  );
+  const existingUnhandledAnnotations = existingAnnotations.filter(
+    (annotation) => annotation.status === 'unhandled'
+  );
   const preparedAnnotations: PnidResponseEntity[] = annotations.map(
     (annotation) => ({
       text: annotation.text,
       boundingBox: verticesToBoundingBox(annotation.region.vertices),
       page: annotation.region.page,
-      items: annotation.entities.map((item) => ({
-        id: item.id,
+      items: getUniqueValuesArray(annotation.entities).map((item) => ({
         resourceType: item.resourceType,
+        id: item.id,
         externalId: item?.externalId,
       })),
     })
@@ -60,7 +75,23 @@ const createPendingAnnotations = async (
     existingAnnotations
   );
 
+  const hasLinkedPendingTags = pendingAnnotations.some(
+    (an) =>
+      (an.resourceId || an.resourceExternalId) && an.status === 'unhandled'
+  );
+
   await createAnnotations(sdk, pendingAnnotations);
+
+  const isFileMissingLabel =
+    !isFilePending(file) && !!existingUnhandledAnnotations.length;
+
+  // If file is missing the pending label OR has unapproved annotations
+  if (hasLinkedPendingTags || isFileMissingLabel) {
+    await setFilePending(file);
+  }
+  if (!existingNotRejectedAnnotations?.length && !hasLinkedPendingTags) {
+    await setFileNoLabels(file);
+  }
 
   return {
     existingFilesAnnotations: existingAnnotations.filter(
@@ -121,20 +152,32 @@ export const startPnidParsingJob = {
       }
       // Job not created yet, so need to create it
       try {
+        const userDefinedField = 'userDefinedField';
+        const { matchFields, ...otherOptions } = options;
+
         const mappedDiagrams = diagrams.map((diagram: FileInfo) => ({
           fileId: diagram.id,
         }));
 
         const mappedResources = [
-          ...mapAssetsToEntities(resources.assets),
-          ...mapFilesToEntities(resources.files),
+          ...mapAssetsToEntities(
+            resources.assets,
+            matchFields.assets,
+            userDefinedField
+          ),
+          ...mapFilesToEntities(
+            resources.files,
+            matchFields.files,
+            userDefinedField
+          ),
         ];
 
         const response = await sdk.post(createPnidDetectJobPath(sdk.project), {
           data: {
             items: mappedDiagrams,
             entities: mappedResources,
-            ...options,
+            searchField: userDefinedField,
+            ...otherOptions,
           },
         });
 
@@ -244,10 +287,52 @@ const handleNewAnnotations = async (
             annotationCounts[fileId] = fileAnnotationCount;
           }
         } else if (errorMessage) {
-          failedFiles.push({ fileId, errorMessage });
+          const err = translateError(errorMessage);
+          const failedFile: PnidFailedFileSchema = { fileId };
+          if (err) failedFile.errorMessage = err;
+          failedFiles.push(failedFile);
         }
       }
     )
   );
   return { annotationCounts, failedFiles };
+};
+
+const setFilePending = async (file: FileInfo) => {
+  await doesLabelExist(PENDING_LABEL);
+
+  const updatePatch: FileChangeUpdate['update'] = {
+    labels: {
+      add: [{ externalId: PENDING_LABEL.externalId }],
+    },
+  };
+  if (file && isFileApproved(file)) {
+    updatePatch.labels = {
+      ...updatePatch.labels,
+      remove: [{ externalId: INTERACTIVE_LABEL.externalId }],
+    };
+  }
+  await sdk.files.update([
+    {
+      id: file.id,
+      update: updatePatch,
+    },
+  ]);
+};
+
+const setFileNoLabels = async (file: FileInfo) => {
+  const updatePatch: FileChangeUpdate['update'] = {
+    labels: {
+      remove: [
+        { externalId: INTERACTIVE_LABEL.externalId },
+        { externalId: PENDING_LABEL.externalId },
+      ],
+    },
+  };
+  await sdk.files.update([
+    {
+      id: file.id,
+      update: updatePatch,
+    },
+  ]);
 };

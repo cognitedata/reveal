@@ -15,11 +15,8 @@ export default function LoadingProgress(props: Props) {
   const { label, type = 'assets' } = props;
   const { workflowId } = useParams<{ workflowId: string }>();
 
-  const {
-    downloadedCount,
-    totalCount,
-    loadedPercent,
-  } = useWorkflowLoadPercentages(Number(workflowId), type);
+  const { downloadedCount, totalCount, loadedPercent } =
+    useWorkflowLoadPercentages(Number(workflowId), type);
 
   return (
     <Flex column style={{ width: '100%', margin: '4px 0' }}>

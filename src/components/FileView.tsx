@@ -5,13 +5,12 @@ import {
   ErrorFeedback,
   Loader,
 } from '@cognite/data-exploration';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteFileViewer } from '@cognite/react-picture-annotation';
 import { useCdfItem, usePermissions } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
 import isMatch from 'lodash/isMatch';
 import { Flex } from 'components/Common';
 import { Alert } from 'antd';
+import InteractiveIcon from './InteractiveIcon';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -29,7 +28,6 @@ export const FilePreview = ({
   fileId: number;
   editMode: boolean;
 }) => {
-  const sdk = useSDK();
   const { resourcesState, setResourcesState } = useContext(
     ResourceSelectionContext
   );
@@ -52,12 +50,14 @@ export const FilePreview = ({
     }
   }, [isActive, resourcesState, fileId, setResourcesState]);
 
-  const { data: fileInfo, isFetched, isError, error } = useCdfItem<FileInfo>(
-    'files',
-    {
-      id: fileId!,
-    }
-  );
+  const {
+    data: fileInfo,
+    isFetched,
+    isError,
+    error,
+  } = useCdfItem<FileInfo>('files', {
+    id: fileId!,
+  });
 
   if (!isFetched) {
     return <Loader />;
@@ -74,14 +74,13 @@ export const FilePreview = ({
   }
 
   return (
-    <CogniteFileViewer.Provider sdk={sdk}>
-      <Flex column style={{ flex: '1' }}>
-        <CogniteFilePreview
-          fileId={fileId!}
-          creatable={editMode}
-          contextualization={writeAccess}
-        />
-      </Flex>
-    </CogniteFileViewer.Provider>
+    <Flex column style={{ flex: '1' }}>
+      <CogniteFilePreview
+        fileId={fileId!}
+        creatable={editMode}
+        contextualization={writeAccess}
+        fileIcon={<InteractiveIcon />}
+      />
+    </Flex>
   );
 };

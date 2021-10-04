@@ -15,12 +15,14 @@ export default function buildCount<Q extends Query>(
       async ({ filter }: { filter: Q }) => {
         const path = `/api/v1/projects/${sdk.project}/${resourceType}/aggregate`;
         const adjustedFilter = filter.filter ? filter : { filter };
+        // @ts-ignore
+        const { limit: _, ...fixedFilter } = adjustedFilter;
         const {
           data: {
             items: [{ count: aggregateCount }],
           },
         } = await sdk.post(path, {
-          data: adjustedFilter || {},
+          data: fixedFilter || {},
         });
         return {
           filter,
@@ -29,14 +31,14 @@ export default function buildCount<Q extends Query>(
       }
     ),
     pending: (state: any, action: any): void => {
-      const key: string = JSON.stringify(action.meta.arg.filter);
-      if (!state.count[key]) {
-        state.count[key] = { ...defaultCount };
-      }
+      const key: string = JSON.stringify(action?.meta?.arg?.filter);
+      if (!key) return;
+      if (!state.count[key]) state.count[key] = { ...defaultCount };
       state.count[key].status = 'pending';
     },
     rejected: (state: any, action: any): void => {
-      const key = JSON.stringify(action.meta.arg.filter);
+      const key = JSON.stringify(action?.meta?.arg?.filter);
+      if (!key) return;
       state.count[key].status = 'error';
     },
     fulfilled: (state: any, action: any): void => {

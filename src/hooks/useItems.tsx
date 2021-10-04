@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import { usePrevious } from 'hooks';
 import { FileInfo } from '@cognite/sdk';
-import { searchItemSelector } from 'pages/SelectionPage/selectors';
+import { searchItemSelector } from 'pages/PageSelection/selectors';
 import { RootState } from 'store';
 import { ResourceType, Filter } from 'modules/types';
 
@@ -127,4 +127,25 @@ export const useIncludeSelectedDiagramInDiagramList = (
   }, [items, fetching, diagramsToContextualizeFromStore]);
 
   return { items: fixedDiagrams, fetching };
+};
+
+export const useSelectedItems = (
+  items: Item[],
+  filter: Filter,
+  isSelectAll: boolean,
+  selectedRowKeys: number[]
+) => {
+  const [selectedItems, setSelectedItems] = useState<Item[]>([]);
+
+  useEffect(() => {
+    if (isSelectAll) {
+      setSelectedItems(items);
+    } else if (selectedRowKeys) {
+      setSelectedItems(
+        items.filter((item) => selectedRowKeys.includes(item.id))
+      );
+    } else setSelectedItems([]);
+  }, [filter, isSelectAll, items, selectedRowKeys]);
+
+  return selectedItems;
 };

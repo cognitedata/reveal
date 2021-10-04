@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 type TFlex = {
+  key?: string;
   row?: boolean;
   column?: boolean;
   justify?: boolean;

@@ -11,6 +11,12 @@ export type ResourceSelection = {
   filter: any;
 };
 
+export type MatchFields = {
+  assets?: string;
+  files?: string;
+  diagrams?: string;
+};
+
 export type ResourceObjectType = {
   assets?: Asset[];
   files?: FileInfo[];
@@ -24,10 +30,15 @@ export interface Workflow {
   diagrams?: ResourceSelection;
   resources?: ResourceSelection[];
   options: WorkflowOptions;
-  step: WorkflowStep;
+  steps: WorkflowSteps;
   status?: Status;
   jobId?: number;
 }
+
+export type WorkflowSteps = {
+  current: WorkflowStep;
+  lastCompleted: WorkflowStep;
+};
 
 export type WorkflowStep =
   | 'diagramSelection'
@@ -40,4 +51,13 @@ export type WorkflowStep =
 export type WorkflowOptions = {
   partialMatch: boolean;
   minTokens: number;
+  matchFields: MatchFields;
+};
+
+export type ModelSelected = 'standard' | 'advanced';
+
+export type ResourceCount = {
+  assets?: number | undefined;
+  files?: number | undefined;
+  diagrams?: number;
 };

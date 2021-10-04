@@ -1,12 +1,32 @@
-import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
+import { Asset, FileInfo } from '@cognite/sdk';
 
+export type PnidFailedFileSchema = { fileId: number; errorMessage?: string };
 export type PnidsParsingJobSchema = {
   jobId?: number;
   status?: 'Completed' | 'Failed' | string;
   statusCount?: ApiStatusCount;
   items?: { fileId: number }[];
+  numFiles?: number;
   annotationCounts?: { [fileId: number]: FileAnnotationsCount };
-  failedFiles?: Array<{ fileId: number; errorMessage: string }>;
+  failedFiles?: Array<PnidFailedFileSchema>;
+  selectedDiagramIds?: number[];
+};
+export type PnidsConvertJobSchema = {
+  createdTime: number;
+  grayscale: boolean;
+  items: Array<{
+    errorMessage?: string;
+    fileId?: number;
+  }>;
+  jobId: number;
+  numFiles?: number;
+  startTime?: number;
+  status?: string;
+  statusCount?: {
+    failed?: number;
+    completed?: number;
+  };
+  statusTime?: number;
 };
 
 export interface PnidResponseEntity {
@@ -22,7 +42,10 @@ export type StartPnidParsingJobProps = {
   options: {
     minTokens: number;
     partialMatch: boolean;
-    searchField: string | string[];
+    matchFields: {
+      files?: keyof FileInfo;
+      assets?: keyof Asset;
+    };
   };
   workflowId: number;
 };
@@ -45,6 +68,12 @@ export type Vertix = {
 };
 
 export type Vertices = [Vertix, Vertix, Vertix, Vertix]; // {"x":xMin, "y":"yMin"},{"x":xMax, "y": yMin}, {"x": xMax: "y":yMax}, {"x": xMin, "y": yMax}
+export type BoundingBox = {
+  xMin: number;
+  yMin: number;
+  xMax: number;
+  yMax: number;
+};
 
 export type RetrieveResultsResponseItem = {
   fileId: number;
@@ -73,3 +102,11 @@ export type ApiStatusCount = {
   queued?: number;
   failed?: number;
 };
+
+export type JobStatus =
+  | 'incomplete'
+  | 'ready'
+  | 'loading'
+  | 'running'
+  | 'done'
+  | 'error';

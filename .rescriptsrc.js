@@ -21,10 +21,6 @@ const addLoaders = (config) => {
         // the root app is mounted / unmounted
         esModule: true,
         injectType: 'lazyStyleTag',
-        insert: function insertAtTop(element) {
-          var parent = document.querySelector('head');
-          parent.insertBefore(element, parent.firstChild);
-        },
       },
     },
     {

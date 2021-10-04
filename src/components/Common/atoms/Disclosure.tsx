@@ -12,7 +12,7 @@ const Wrapper = styled(Flex)`
   border-radius: 4px;
 `;
 
-type Props = { content: React.ReactNode | string; title?: string };
+type Props = { content: React.ReactNode; title?: string };
 
 export const Disclosure = (props: Props) => {
   const { title, content } = props;

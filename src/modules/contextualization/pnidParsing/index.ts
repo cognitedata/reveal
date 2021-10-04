@@ -32,18 +32,21 @@ export const pnidParsingSlice = createSlice({
       };
     },
     finishJob: (state, action) => {
-      const {
-        workflowId,
-        annotationCounts,
-        statusCount,
-        failedFiles,
-      } = action.payload;
+      const { workflowId, annotationCounts, statusCount, failedFiles } =
+        action.payload;
       state[workflowId] = {
         ...state[workflowId],
         statusCount,
         status: 'Completed',
         annotationCounts,
         failedFiles,
+      };
+    },
+    selectDiagrams: (state, action) => {
+      const { workflowId, diagramIds = [] } = action.payload;
+      state[workflowId] = {
+        ...state[workflowId],
+        selectedDiagramIds: diagramIds,
       };
     },
   },
@@ -57,4 +60,8 @@ export const {
   rejectJob,
   finishJob,
   resetJob,
+  selectDiagrams,
 } = pnidParsingSlice.actions;
+export * from './hooks';
+export * from './types';
+export * from './helpers';

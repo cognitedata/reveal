@@ -1,9 +1,7 @@
-import { Asset, FileInfo } from 'cognite-sdk-v3/dist/src';
-import { Vertices } from 'modules/types';
+import { Asset, FileInfo } from '@cognite/sdk';
+import { Vertices, BoundingBox } from 'modules/types';
 
-export const verticesToBoundingBox = (
-  vertices: Vertices
-): { xMin: number; yMin: number; xMax: number; yMax: number } => {
+export const verticesToBoundingBox = (vertices: Vertices): BoundingBox => {
   let xMin = 0;
   let yMin = 0;
   let yMax = 0;
@@ -18,10 +16,53 @@ export const verticesToBoundingBox = (
   return { xMin, yMin, xMax, yMax };
 };
 
-export const mapAssetsToEntities = (assets?: Asset[]) => {
-  return (assets ?? []).map((asset) => ({ ...asset, resourceType: 'asset' }));
+export const boundingBoxToVertices = (boundingBox: BoundingBox): Vertices => {
+  const { xMin, xMax, yMin, yMax } = boundingBox;
+  const vertices: Vertices = [
+    { x: xMin, y: yMin },
+    { x: xMax, y: yMin },
+    { x: xMax, y: yMax },
+    { x: xMin, y: yMax },
+  ];
+  return vertices;
 };
 
-export const mapFilesToEntities = (files?: FileInfo[]) => {
-  return (files ?? []).map((file) => ({ ...file, resourceType: 'file' }));
+export const mapAssetsToEntities = (
+  assets?: Asset[],
+  fieldToMatch: keyof Asset = 'name',
+  userDefinedField: string = 'userDefinedField'
+) => {
+  const isMetadata = fieldToMatch.includes('metadata');
+  const metadataField: keyof Asset['metadata'] = (
+    isMetadata ? fieldToMatch.replace('metadata.', '') : fieldToMatch
+  ) as keyof Asset['metadata'];
+
+  return (assets ?? []).map((asset) => ({
+    resourceType: 'asset',
+    id: asset.id,
+    externalId: asset.externalId,
+    [userDefinedField]: isMetadata
+      ? (asset?.metadata ?? {})[metadataField] ?? ''
+      : asset[fieldToMatch] ?? '',
+  }));
+};
+
+export const mapFilesToEntities = (
+  files?: FileInfo[],
+  fieldToMatch: keyof FileInfo = 'name',
+  userDefinedField: string = 'userDefinedField'
+) => {
+  const isMetadata = fieldToMatch.includes('metadata');
+  const metadataField: keyof FileInfo['metadata'] = (
+    isMetadata ? fieldToMatch.replace('metadata.', '') : fieldToMatch
+  ) as keyof FileInfo['metadata'];
+
+  return (files ?? []).map((file) => ({
+    resourceType: 'file',
+    id: file.id,
+    externalId: file.externalId,
+    [userDefinedField]: isMetadata
+      ? (file?.metadata ?? {})[metadataField] ?? ''
+      : file[fieldToMatch] ?? '',
+  }));
 };
