@@ -246,6 +246,7 @@ sh_binary(
 # :build target above and override here
 build_sed(
     name = "build_sed",
+    app = "Sim Config",
     binary = select({
         "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
         "//conditions:default": ":build_sed_default",

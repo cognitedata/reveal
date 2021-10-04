@@ -6,7 +6,7 @@ def _build_sed_impl(ctx):
     ctx.actions.run(
         inputs = ctx.files.src_dir,
         outputs = [out_file],
-        arguments = [ctx.files.src_dir[0].path, out_file.path],
+        arguments = [ctx.files.src_dir[0].path, out_file.path, ctx.attr.app],
         executable = ctx.executable.binary,
     )
 
@@ -18,6 +18,9 @@ build_sed = rule(
         "src_dir": attr.label(
             allow_files = True,
             doc = "source directory",
+        ),
+        "app": attr.string(
+            doc = "application name",
         ),
         "out_dir": attr.string(
             doc = "directory name",
