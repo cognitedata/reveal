@@ -31,6 +31,30 @@ export enum ExploreSortPaginateType {
   modal = 'MODAL',
 }
 
+const SORT_PAGINATE_DEFAULT_STATE = {
+  LIST: {
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    reverse: false,
+  },
+  GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+  LOCATION: {
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    reverse: false,
+  },
+  NO_LOCATION: {
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    reverse: false,
+  },
+  MODAL: {
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    reverse: false,
+  },
+};
+
 export type ExplorerFileState = {
   id: number;
   createdTime: number;
@@ -65,6 +89,12 @@ export type State = {
   uploadedFileIds: number[];
   sortPaginate: Record<ExploreSortPaginateType, SortPaginate>;
   loadingAnnotations?: boolean;
+  // Creating a separate state to make it not affected by preserved state in local storage
+  exploreModal: {
+    filter: FileFilterProps;
+    query: string;
+    focusedFileId: number | null;
+  };
 };
 
 const initialState: State = {
@@ -82,30 +112,13 @@ const initialState: State = {
     selectedIds: [],
   },
   uploadedFileIds: [],
-  sortPaginate: {
-    LIST: {
-      currentPage: 1,
-      pageSize: DEFAULT_PAGE_SIZE,
-      reverse: false,
-    },
-    GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    LOCATION: {
-      currentPage: 1,
-      pageSize: DEFAULT_PAGE_SIZE,
-      reverse: false,
-    },
-    NO_LOCATION: {
-      currentPage: 1,
-      pageSize: DEFAULT_PAGE_SIZE,
-      reverse: false,
-    },
-    MODAL: {
-      currentPage: 1,
-      pageSize: DEFAULT_PAGE_SIZE,
-      reverse: false,
-    },
-  },
+  sortPaginate: SORT_PAGINATE_DEFAULT_STATE,
   loadingAnnotations: false,
+  exploreModal: {
+    filter: {},
+    query: '',
+    focusedFileId: null,
+  },
 };
 
 export const setSelectedAllExplorerFiles = createAction<{
@@ -169,6 +182,9 @@ const explorerSlice = createSlice({
     setExplorerFocusedFileId(state, action: PayloadAction<number | null>) {
       state.focusedFileId = action.payload;
     },
+    setExplorerModalFocusedFileId(state, action: PayloadAction<number | null>) {
+      state.exploreModal.focusedFileId = action.payload;
+    },
     hideExplorerFileMetadata(state) {
       state.showFileMetadata = false;
     },
@@ -178,6 +194,10 @@ const explorerSlice = createSlice({
     setExplorerQueryString(state, action: PayloadAction<string>) {
       if (state.query !== action.payload) resetSortKey(state);
       state.query = action.payload;
+    },
+    setExplorerModalQueryString(state, action: PayloadAction<string>) {
+      if (state.exploreModal.query !== action.payload) resetSortKey(state);
+      state.exploreModal.query = action.payload;
     },
     setExplorerFilter(state, action: PayloadAction<FileFilterProps>) {
       if (state.filter !== action.payload) resetSortKey(state);
@@ -287,14 +307,19 @@ const explorerSlice = createSlice({
   },
 });
 
+export type { State as ExplorerReducerState };
+export { initialState as explorerReducerInitialState };
+
 export const {
   setExplorerFiles,
   setExplorerFileSelectState,
   setExplorerSelectedFiles,
   setExplorerFocusedFileId,
+  setExplorerModalFocusedFileId,
   hideExplorerFileMetadata,
   showExplorerFileMetadata,
   setExplorerQueryString,
+  setExplorerModalQueryString,
   setExplorerFilter,
   toggleExplorerFilterView,
   setExplorerFileUploadModalVisibility,
@@ -382,4 +407,8 @@ const resetSortKey = (state: State) => {
     state.sortPaginate.LIST.sortKey === 'annotations'
       ? undefined
       : state.sortPaginate.LIST.sortKey;
+  state.sortPaginate.MODAL.sortKey =
+    state.sortPaginate.MODAL.sortKey === 'annotations'
+      ? undefined
+      : state.sortPaginate.MODAL.sortKey;
 };

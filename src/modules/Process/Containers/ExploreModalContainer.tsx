@@ -1,3 +1,4 @@
+import React from 'react';
 import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
 import { FileState } from 'src/modules/Common/store/filesSlice';
 import {
@@ -9,11 +10,9 @@ import {
   selectExplorerAllSelectedFiles,
   selectExplorerSelectedFileIds,
   setExplorerFileSelectState,
-  setExplorerFilter,
-  setExplorerFocusedFileId,
-  setExplorerQueryString,
+  setExplorerModalFocusedFileId,
+  setExplorerModalQueryString,
 } from 'src/modules/Explorer/store/explorerSlice';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { TableDataItem } from 'src/modules/Common/types';
@@ -35,10 +34,10 @@ export const ExploreModalContainer = () => {
     (state: RootState) => state.explorerReducer.focusedFileId
   );
   const exploreModalSearchQuery = useSelector(
-    (state: RootState) => state.explorerReducer.query
+    (state: RootState) => state.explorerReducer.exploreModal.query
   );
   const filter = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.filter
+    ({ explorerReducer }: RootState) => explorerReducer.exploreModal.filter
   );
   const selectedExploreModalFiles: FileState[] = useSelector(
     (state: RootState) => {
@@ -49,7 +48,7 @@ export const ExploreModalContainer = () => {
     selectExplorerSelectedFileIds(state.explorerReducer)
   );
   const handleExploreSearchChange = (text: string) => {
-    dispatch(setExplorerQueryString(text));
+    dispatch(setExplorerModalQueryString(text));
   };
 
   const handleExplorerModalItemClick = ({
@@ -59,7 +58,7 @@ export const ExploreModalContainer = () => {
     /* eslint-enable @typescript-eslint/no-unused-vars */
     ...file
   }: TableDataItem) => {
-    dispatch(setExplorerFocusedFileId(file.id));
+    dispatch(setExplorerModalFocusedFileId(file.id));
   };
   const handleExploreModalRowSelect = (
     item: TableDataItem,
@@ -67,8 +66,9 @@ export const ExploreModalContainer = () => {
   ) => {
     dispatch(setExplorerFileSelectState(item.id, selected));
   };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setFilter = (newFilter: FileFilterProps) => {
-    dispatch(setExplorerFilter(newFilter));
+    // Todo: Implement setExplorerModalFilter
   };
   const handleUseFiles = () => {
     const availableFileIds = processFiles.map((file) => file.id);

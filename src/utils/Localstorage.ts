@@ -1,4 +1,8 @@
 import {
+  explorerReducerInitialState,
+  ExplorerReducerState,
+} from 'src/modules/Explorer/store/explorerSlice';
+import {
   annotationLabelReducerInitialState,
   AnnotationLabelReducerState,
 } from 'src/modules/Review/store/annotationLabelSlice';
@@ -6,6 +10,7 @@ import {
   reviewReducerInitialState,
   ReviewReducerState,
 } from 'src/modules/Review/store/reviewSlice';
+
 import { RootState } from 'src/store/rootReducer';
 
 export const loadState = (): Partial<RootState> | undefined => {
@@ -22,6 +27,10 @@ export const loadState = (): Partial<RootState> | undefined => {
           ...reviewReducerInitialState,
           ...persistedState.reviewSlice,
         },
+        explorerReducer: {
+          ...explorerReducerInitialState,
+          ...persistedState.explorerSlice,
+        },
       };
     }
     return {
@@ -30,6 +39,9 @@ export const loadState = (): Partial<RootState> | undefined => {
       },
       reviewSlice: {
         ...reviewReducerInitialState,
+      },
+      explorerReducer: {
+        ...explorerReducerInitialState,
       },
     };
   } catch (err) {
@@ -52,6 +64,10 @@ export type OfflineState = {
     'predefinedCollections'
   >;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
+  explorerSlice: Pick<
+    ExplorerReducerState,
+    'filter' | 'query' | 'sortPaginate' | 'focusedFileId'
+  >;
 };
 
 const getOfflineState = (state: RootState): OfflineState => {
@@ -61,6 +77,12 @@ const getOfflineState = (state: RootState): OfflineState => {
     },
     reviewSlice: {
       fileIds: state.reviewSlice.fileIds,
+    },
+    explorerSlice: {
+      filter: state.explorerReducer.filter,
+      query: state.explorerReducer.query,
+      sortPaginate: state.explorerReducer.sortPaginate,
+      focusedFileId: state.explorerReducer.focusedFileId,
     },
   };
   return offState;
