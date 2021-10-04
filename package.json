@@ -23,7 +23,6 @@
     "@cognite/eslint-plugin": "link:packages/eslint-plugin",
     "@cognite/fas-utils": "^3.1.2",
     "@cognite/gcs-browser-upload": "^1.1.1",
-    "@cognite/metrics": "^1.2.1",
     "@cognite/sdk": "^5.4.0",
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",
     "@cognite/user-management-service-types": "^0.0.4",

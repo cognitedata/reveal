@@ -1549,13 +1549,6 @@
     es6-promise "^4.2.8"
     spark-md5 "^3.0.0"
 
-"@cognite/metrics@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.2.1.tgz#bd747c7332e74e44fedf775d076bf78210164430"
-  integrity sha512-P3hmEqsmqD+bvzJR2WY/Kh2Q7rGg9LB5ZQO6QOXdqjrV6R0hjP1WQOHSzCqJJiJXSOG5eiu5h7V75bA+n/6WDg==
-  dependencies:
-    mixpanel-browser "2.41.0"
-
 "@cognite/sdk-core@^3.2.5":
   version "3.2.5"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.2.5.tgz#76b7b1632ed84fb2740ba69959bcebbce91251c7"
@@ -15399,7 +15392,7 @@ mixin-deep@^1.2.0:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
 
-mixpanel-browser@2.41.0, mixpanel-browser@^2.35.0:
+mixpanel-browser@^2.35.0:
   version "2.41.0"
   resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
   integrity sha512-IEuc9cH44hba9a3KEyulXINLn+gpFqluBDo7xiTk1h3j111dmmsctaE6tUzZYxgGLVqeNhTpsccdliOeX24Wlw==
@@ -16732,16 +16725,6 @@ pdfjs-dist@2.6.347:
   version "2.6.347"
   resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-2.6.347.tgz#f257ed66e83be900cd0fd28524a2187fb9e25cd5"
   integrity sha512-QC+h7hG2su9v/nU1wEI3SnpPIrqJODL7GTDFvR74ANKGq1AFJW16PH8VWnhpiTi9YcLSFV9xLeWSgq+ckHLdVQ==
-
-pdf-lib@^1.16.0:
-  version "1.16.0"
-  resolved "https://registry.yarnpkg.com/pdf-lib/-/pdf-lib-1.16.0.tgz#63cacec0d6139bf7a670dea8bad747ebf4c1fb42"
-  integrity sha512-P/1SSmElOBKrPlbc+Sn7UxikRQbzVA64+4Dh6/uczPscvq/NatP9eryoOguyBTpTnzICNiG8EnMH4Ziqp2TnFA==
-  dependencies:
-    "@pdf-lib/standard-fonts" "^1.0.0"
-    "@pdf-lib/upng" "^1.0.1"
-    pako "^1.0.11"
-    tslib "^1.11.1"
 
 performance-now@^2.1.0:
   version "2.1.0"

@@ -76,7 +76,6 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/metrics",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//@types/pdfjs-dist",
