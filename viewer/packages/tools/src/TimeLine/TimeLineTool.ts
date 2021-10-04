@@ -10,7 +10,7 @@ import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
  */
-export class TimelineTool extends Cognite3DViewerToolBase {
+export class TimeLineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _timelineframes: TimeLineKeyframe[];
   private _intervalId: any = 0;
