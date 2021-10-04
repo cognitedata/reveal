@@ -29,11 +29,11 @@ const ShapeSettings = ({
         <Menu.Header>STROKE</Menu.Header>
         <input
           type="range"
-          min="1"
-          max="101"
+          min="2"
+          max="12"
           value={strokeWidth}
           onChange={onThicknessSliderChange}
-          step="10"
+          step="1"
         />
         <p>Thickness</p>
         <input
