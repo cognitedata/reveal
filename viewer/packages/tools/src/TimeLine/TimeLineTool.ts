@@ -43,8 +43,8 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param date - Date of the TimelineFrame to be removed from the Timeline
    */
   public removeKeyFrame(date: number) {
-    if(this._timelineframes.length > 0) {
-      const index = this._timelineframes.findIndex(obj => (obj.getTimeLineFrameDate() === date));
+    if (this._timelineframes.length > 0) {
+      const index = this._timelineframes.findIndex(obj => obj.getTimeLineFrameDate() === date);
 
       if (index > -1) {
         this._timelineframes = this._timelineframes.splice(index, 1);
@@ -57,18 +57,18 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param date - Date of the TimelineFrame to apply the styling on the CAD Model
    */
   private styleByDate(date: number) {
-    if(this._timelineframes.length > 0) {
-      const currentIndex = this._timelineframes.findIndex(obj => (obj.getTimeLineFrameDate() === date));
+    if (this._timelineframes.length > 0) {
+      const currentIndex = this._timelineframes.findIndex(obj => obj.getTimeLineFrameDate() === date);
 
-      if(currentIndex <= this._timelineframes.length - 1) {
+      if (currentIndex <= this._timelineframes.length - 1) {
         const currentTimeframe = this._timelineframes[currentIndex];
         const previousTimeframe = this._timelineframes[currentIndex - 1];
 
-        if(previousTimeframe) {
+        if (previousTimeframe) {
           previousTimeframe.removeStyle();
         }
 
-        if(currentTimeframe) {
+        if (currentTimeframe) {
           currentTimeframe.applyStyle();
         }
       }
@@ -82,17 +82,15 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param endDate - TimelineFrame date to stop the Playback of TimelineFrames
    */
   public play(durationInMilliSeconds: number, startDate: number, endDate: number) {
-    
     this.stopPlayback();
     this._currentDate = startDate;
     this.styleByDate(this._currentDate);
 
     this._intervalId = setInterval(() => {
-      if(this._currentDate !== endDate) {
+      if (this._currentDate !== endDate) {
         this.getNextDate();
         this.styleByDate(this._currentDate);
-      }
-      else {
+      } else {
         this.stopPlayback();
       }
     }, durationInMilliSeconds);
@@ -102,10 +100,9 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Stops any ongoing playback
    */
   public stopPlayback() {
-    if(this._intervalId !== 0) {
+    if (this._intervalId !== 0) {
       clearInterval(this._intervalId);
       this._intervalId = 0;
-
     }
   }
 
@@ -113,7 +110,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Restores the Style of the model to default style
    */
   public applyDefaultStyle() {
-    if(this._timelineframes.length > 0) {
+    if (this._timelineframes.length > 0) {
       this._timelineframes[0].applyDefaultStyle();
     }
   }
@@ -122,13 +119,12 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Provides the next Timelineframes date value
    */
   private getNextDate() {
-    if(this._timelineframes.length > 0) {
-      const currentIndex = this._timelineframes.findIndex(obj => (obj.getTimeLineFrameDate() === this._currentDate));
+    if (this._timelineframes.length > 0) {
+      const currentIndex = this._timelineframes.findIndex(obj => obj.getTimeLineFrameDate() === this._currentDate);
 
-      if(currentIndex !== this._timelineframes.length - 1) {
+      if (currentIndex !== this._timelineframes.length - 1) {
         this._currentDate = this._timelineframes[currentIndex + 1].getTimeLineFrameDate();
-      }
-      else {
+      } else {
         this.stopPlayback();
       }
     }
@@ -139,7 +135,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @returns All dates in the Timeline
    */
   public getAllDateInTimelineFrames() {
-    if(this._allDates.length > 0) {
+    if (this._allDates.length > 0) {
       return this._allDates;
     }
   }
@@ -148,4 +144,3 @@ export class TimelineTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 }
-

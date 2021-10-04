@@ -14,7 +14,12 @@ export class TimelineKeyframe {
   private readonly _nodeCollection: NodeCollectionBase;
   private readonly _nodeAppearance: NodeAppearance;
 
-  constructor(model: Cognite3DModel, date: number, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
+  constructor(
+    model: Cognite3DModel,
+    date: number,
+    nodeCollection: NodeCollectionBase,
+    nodeAppearance?: NodeAppearance
+  ) {
     this._model = model;
     this._date = date;
     this._nodeCollection = nodeCollection;
