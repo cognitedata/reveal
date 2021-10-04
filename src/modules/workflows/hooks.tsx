@@ -2,7 +2,7 @@ import { useMemo, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useLocalStorage } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+import { Asset, FileInfo, IdEither } from '@cognite/sdk';
 import { diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
@@ -21,6 +21,9 @@ import {
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
+import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
+import { RootState } from '../../store/reducer';
+import { NUM_OF_RESOURCES_CHECKED } from '../../utils/config';
 
 /**
  * Creates a new workflow.
@@ -276,4 +279,65 @@ export const useWorkflowAllResourcesStatus = (
     workflowAllResourcesStatusSelector(workflowId, all)
   );
   return resourcesStatus;
+};
+
+// TO BE REMOVED LATER
+export const useSomeResources = (workflowId: number) => {
+  const resources = useSelector(
+    (state: RootState) => state.workflows.items[workflowId].resources
+  );
+
+  const assetSelection = (resources ?? [])?.find(
+    (item) => item.type === 'assets'
+  );
+  const fileSelection = (resources ?? [])?.find(
+    (item) => item.type === 'files'
+  );
+
+  const isAssetsList = assetSelection?.endpoint === 'list';
+  const isFilesList = fileSelection?.endpoint === 'list';
+
+  const { data: assetsRetrieve } = useCdfItems<Asset>(
+    'assets',
+    Array.isArray(assetSelection?.filter)
+      ? (assetSelection?.filter as IdEither[])
+      : [],
+    true,
+    {
+      enabled: !!assetSelection && !isAssetsList,
+    }
+  );
+  const { data: filesRetrieve } = useCdfItems<FileInfo>(
+    'files',
+    Array.isArray(fileSelection?.filter)
+      ? (fileSelection?.filter as IdEither[])
+      : [],
+    true,
+    {
+      enabled: !!fileSelection && !isFilesList,
+    }
+  );
+
+  const { data: assetsList } = useList<Asset>(
+    'assets',
+    {
+      filter: assetSelection?.filter?.filter ?? {},
+      limit: NUM_OF_RESOURCES_CHECKED,
+    },
+    { enabled: !!assetSelection && isAssetsList }
+  );
+
+  const { data: filesList } = useList<FileInfo>(
+    'files',
+    {
+      filter: fileSelection?.filter?.filter ?? {},
+      limit: NUM_OF_RESOURCES_CHECKED,
+    },
+    { enabled: !!fileSelection && isFilesList }
+  );
+
+  return {
+    assets: (isAssetsList ? assetsList : assetsRetrieve) ?? [],
+    files: (isFilesList ? filesList : filesRetrieve) ?? [],
+  };
 };

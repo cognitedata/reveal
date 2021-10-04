@@ -2,10 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { Body, Select, OptionType } from '@cognite/cogs.js';
-import { changeOptions, useWorkflowItems } from 'modules/workflows';
+import { changeOptions, useSomeResources } from 'modules/workflows';
 import { getAllPossibleStringFields } from 'helpers';
 import { OptionWrapper } from 'pages/PageOptions/components';
-import { NUM_OF_RESOURCES_CHECKED } from 'utils/config';
 
 type ResourceType = 'assets' | 'files';
 const defaultField: OptionType<React.ReactText> = {
@@ -15,7 +14,9 @@ const defaultField: OptionType<React.ReactText> = {
 
 export const OptionFieldsToMatch = ({ workflowId }: { workflowId: number }) => {
   const dispatch = useDispatch();
-  const { resources } = useWorkflowItems(workflowId, false);
+
+  const resources = useSomeResources(workflowId);
+
   const { matchFields } = useSelector(
     (state: RootState) => state.workflows.items[workflowId].options
   );
@@ -25,17 +26,15 @@ export const OptionFieldsToMatch = ({ workflowId }: { workflowId: number }) => {
     files: OptionType<React.ReactText>[];
   } = {
     assets: [
-      ...getAllPossibleStringFields(
-        (resources?.assets ?? []).slice(0, NUM_OF_RESOURCES_CHECKED)
-      ).map((resource) => ({
-        label: resource,
-        value: resource,
-      })),
+      ...getAllPossibleStringFields(resources?.assets ?? []).map(
+        (resource) => ({
+          label: resource,
+          value: resource,
+        })
+      ),
     ],
     files: [
-      ...getAllPossibleStringFields(
-        (resources?.files ?? []).slice(0, NUM_OF_RESOURCES_CHECKED)
-      ).map((resource) => ({
+      ...getAllPossibleStringFields(resources?.files ?? []).map((resource) => ({
         label: resource,
         value: resource,
       })),
