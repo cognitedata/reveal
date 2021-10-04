@@ -2,6 +2,7 @@ import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'library/types';
 
+import { TextTool } from './TextTool';
 import { Tool } from './Tool';
 
 export class DefaultTool extends Tool implements ICogniteOrnateTool {
@@ -64,6 +65,15 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     }
     this.reset();
     if (e.target.attrs.unselectable) {
+      return;
+    }
+
+    // If we clicked a text element already selected, swap to 'text' tool and edit
+    if (this.selectedNode?.attrs.type === 'text') {
+      this.ornateInstance.handleToolChange('text');
+      (this.ornateInstance.currentTool as TextTool).onTextEdit(
+        this.selectedNode as Konva.Text
+      );
       return;
     }
     // If this is defined, we dont select the original target, but the group instead
