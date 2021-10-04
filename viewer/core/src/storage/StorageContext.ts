@@ -34,40 +34,33 @@ export interface StorageContext {
    * for models.
    */
   getModelDataClient(): ModelDataClient;
-
-  // TODO 2021-10-01 larsmoa: Get rid of direct dependency to CogniteClient
-  getSdkClient(): CogniteClient;
 }
 
 export class CdfStorageContext implements StorageContext {
-  private readonly _sdkClient: CogniteClient;
+  private readonly _metadataProvider: CdfModelMetadataProvider;
+  private readonly _nodesApiClient: NodesCdfClient;
+  private readonly _modelDataClient: CdfModelDataClient;
 
   constructor(sdkClient: CogniteClient) {
-    this._sdkClient = sdkClient;
-  }
-
-  getSdkClient(): CogniteClient {
-    return this._sdkClient;
+    this._metadataProvider = new CdfModelMetadataProvider(sdkClient);
+    this._nodesApiClient = new NodesCdfClient(sdkClient);
+    this._modelDataClient = new CdfModelDataClient(sdkClient);
   }
 
   getNodesApiClient(): NodesApiClient {
-    return new NodesCdfClient(this._sdkClient);
+    return this._nodesApiClient;
   }
 
   getModelDataClient(): ModelDataClient {
-    return new CdfModelDataClient(this._sdkClient);
+    return this._modelDataClient;
   }
 
   getModelMetadataProvider(): ModelMetadataProvider {
-    return new CdfModelMetadataProvider(this._sdkClient);
+    return this._metadataProvider;
   }
 }
 
 export class LocalStorageContext implements StorageContext {
-  getSdkClient(): CogniteClient {
-    throw new Error(`Local storage doesn't support Cognite CDF`);
-  }
-
   getNodesApiClient(): NodesApiClient {
     return new NodesLocalClient();
   }

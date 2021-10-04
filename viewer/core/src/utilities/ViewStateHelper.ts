@@ -10,7 +10,7 @@ import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 
 import * as THREE from 'three';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 
 export type ViewerState = {
   camera: {
