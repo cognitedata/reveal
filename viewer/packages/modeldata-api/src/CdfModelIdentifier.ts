@@ -1,13 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { LocalModelIdentifier } from './LocalModelIdentifier';
+import { ModelIdentifier } from '..';
 import { File3dFormat } from './types';
 
 /**
- * Identifies a 3D model stored in CDF by the combination of a modelId and a revisionId.
+ * Identifies a 3D model stored in CDF by the combination of a modelId, a revisionId
+ * and a format.
  */
-export class CdfModelIdentifier {
+export class CdfModelIdentifier implements ModelIdentifier {
   readonly revealInternalId: symbol;
   readonly modelFormat: File3dFormat;
 
@@ -15,13 +16,13 @@ export class CdfModelIdentifier {
   readonly revisionId: number;
 
   constructor(modelId: number, revisionId: number, modelFormat: File3dFormat) {
-    this.revealInternalId = Symbol(`${modelId}/${revisionId}`);
+    this.revealInternalId = Symbol(`${modelId}/${revisionId}[${modelFormat}]`);
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.modelFormat = modelFormat;
   }
 
   public toString(): string {
-    return `${LocalModelIdentifier.name} (${String(this.revealInternalId)} - ${this.modelFormat})`;
+    return `${CdfModelIdentifier.name} (${String(this.revealInternalId)} - ${this.modelFormat})`;
   }
 }

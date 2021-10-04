@@ -111,7 +111,7 @@ export class RevealManagerHelper {
     if (model.localPath === undefined) {
       throw new Error('addLocalCadModel only works with local models');
     }
-    const modelIdentifier = new LocalModelIdentifier(model.localPath, File3dFormat.EptPointCloud);
+    const modelIdentifier = new LocalModelIdentifier(model.localPath);
     return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
   }
 

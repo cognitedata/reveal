@@ -186,7 +186,6 @@ export class RevealManager {
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  // TODO 2021-10-03 larsmoa: Determine type of model by the modelIdentifier
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
   public addModel(type: 'pointcloud', modelIdentifier: ModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
