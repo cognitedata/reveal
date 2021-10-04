@@ -7,6 +7,7 @@ import {
   CLUSTER_KEY,
   FALLBACK_TO_FUNCTIONS_URL_KEY,
 } from 'utils/constants';
+import { FunctionCall } from './backendService';
 
 export type CogniteFunction = {
   id: number;
@@ -41,7 +42,7 @@ const getServiceClient = async (sdk: CogniteClient) => {
     timeout: 10000,
     headers: {
       ...sdk.getDefaultRequestHeaders(),
-      'X-COGNITE-AUTH-FLOW': sdk.getOAuthFlowType(),
+      'X-COGNITE-AUTH-FLOW': sdk.getOAuthFlowType()!,
     },
   });
 
@@ -52,7 +53,9 @@ export const getCalls = async (sdk: CogniteClient, fnId: number) => {
   const client = await getServiceClient(sdk);
 
   return client
-    .get(`/api/playground/projects/${sdk.project}/functions/${fnId}/calls`)
+    .get<{ items: any[] }>(
+      `/api/playground/projects/${sdk.project}/functions/${fnId}/calls`
+    )
     .then((response) => response?.data?.items || []);
 };
 
@@ -70,11 +73,11 @@ export async function callFunction(
   sdk: CogniteClient,
   functionId: number,
   data?: object
-) {
+): Promise<{ id: number }> {
   const client = await getServiceClient(sdk);
 
   return client
-    .post(
+    .post<{ data?: object }, { data: { id: number } }>(
       `/api/playground/projects/${sdk.project}/functions/${functionId}/call`,
       {
         data,
@@ -87,7 +90,7 @@ export async function getCallStatus(
   sdk: CogniteClient,
   functionId: number,
   callId: number
-) {
+): Promise<FunctionCall> {
   const client = await getServiceClient(sdk);
 
   return client
@@ -105,7 +108,7 @@ export async function getCallResponse(
   const client = await getServiceClient(sdk);
 
   return client
-    .get(
+    .get<{ response: any }>(
       `/api/playground/projects/${sdk.project}/functions/${functionId}/calls/${callId}/response`
     )
     .then((r) => r.data.response);
