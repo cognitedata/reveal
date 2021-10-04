@@ -7,11 +7,7 @@
  */
 
 export { DataSource } from '../packages/data-source';
-export {
-  NodesApiClient,
-  // TODO 2021-10-04 larsmoa: Remove this export
-  NodeTreeIndexAndSubtreeSize
-} from '../packages/nodes-api';
+export { NodesApiClient } from '../packages/nodes-api';
 export {
   ModelIdentifier,
   CdfModelIdentifier,

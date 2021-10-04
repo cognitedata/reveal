@@ -14,7 +14,6 @@ import * as reveal from '@cognite/reveal';
 
 import { 
   CameraConfiguration, 
-  NodeTreeIndexAndSubtreeSize,
   DataSource, 
   ModelDataProvider, 
   ModelIdentifier, 
@@ -90,10 +89,10 @@ class MyNodesApiClient implements NodesApiClient {
     // Map 1:1 - pretend treeIndices == nodeIds
     return Promise.resolve(nodeIds);
   }
-  determineTreeIndexAndSubtreeSizesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<NodeTreeIndexAndSubtreeSize[]> {
+  determineTreeIndexAndSubtreeSizesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<{treeIndex: number; subtreeSize: number }[]> {
     throw new Error('Not supported.');
   }
-  determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<NodeTreeIndexAndSubtreeSize> {
+  determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{treeIndex: number; subtreeSize: number }> {
     throw new Error('Not supported.');
   }
   getBoundingBoxByNodeId(modelId: number, revisionId: number, nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
