@@ -15,11 +15,11 @@ import { createDefaultSectorCuller } from './sector/culling/ByVisibilityGpuSecto
 import { RevealOptions } from '../../public/types';
 import { OccludingGeometryProvider } from './sector/culling/OccludingGeometryProvider';
 
-import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 export function createCadManager(
   modelMetadataProvider: ModelMetadataProvider,
-  modelDataClient: ModelDataClient,
+  modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   occludingGeometryProvider: OccludingGeometryProvider,
@@ -28,13 +28,13 @@ export function createCadManager(
   const cadMetadataParser = new CadMetadataParser();
   const cadModelMetadataRepository = new CadModelMetadataRepository(
     modelMetadataProvider,
-    modelDataClient,
+    modelDataProvider,
     cadMetadataParser
   );
   const cadModelFactory = new CadModelFactory(materialManager);
   const modelDataParser = new CadSectorParser();
   const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-  const cachedSectorRepository = new CachedRepository(modelDataClient, modelDataParser, modelDataTransformer);
+  const cachedSectorRepository = new CachedRepository(modelDataProvider, modelDataParser, modelDataTransformer);
   const { internal } = options;
   const sectorCuller =
     internal && internal.sectorCuller

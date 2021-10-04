@@ -2,10 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ModelDataClient } from './types';
+import { ModelDataProvider } from './types';
 import { fetchWithStatusCheck } from './utilities';
 
-export class LocalModelDataClient implements ModelDataClient {
+export class LocalModelDataProvider implements ModelDataProvider {
   get headers() {
     return {};
   }

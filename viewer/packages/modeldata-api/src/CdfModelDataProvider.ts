@@ -3,12 +3,12 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 
-import { ModelDataClient } from './types';
+import { ModelDataProvider } from './types';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CdfModelDataClient implements ModelDataClient {
+export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
   private appId: string | undefined;
 

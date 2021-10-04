@@ -13,9 +13,9 @@ import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
 import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
 import {
-  LocalModelDataClient,
-  CdfModelDataClient,
-  ModelDataClient,
+  LocalModelDataProvider,
+  CdfModelDataProvider,
+  ModelDataProvider,
   ModelMetadataProvider,
   CdfModelMetadataProvider,
   LocalModelMetadataProvider
@@ -35,8 +35,8 @@ export function createLocalRevealManager(
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
-  const modelDataClient = new LocalModelDataClient();
-  return createRevealManager('local', modelMetadataProvider, modelDataClient, renderer, scene, revealOptions);
+  const modelDataProvider = new LocalModelDataProvider();
+  return createRevealManager('local', modelMetadataProvider, modelDataProvider, renderer, scene, revealOptions);
 }
 
 /**
@@ -53,8 +53,8 @@ export function createCdfRevealManager(
   revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
-  const modelDataClient = new CdfModelDataClient(client);
-  return createRevealManager(client.project, modelMetadataProvider, modelDataClient, renderer, scene, revealOptions);
+  const modelDataProvider = new CdfModelDataProvider(client);
+  return createRevealManager(client.project, modelMetadataProvider, modelDataProvider, renderer, scene, revealOptions);
 }
 
 /**
@@ -62,7 +62,7 @@ export function createCdfRevealManager(
  * @internal
  * @param project
  * @param modelMetadataProvider
- * @param modelDataClient
+ * @param modelDataProvider
  * @param renderer
  * @param scene
  * @param revealOptions
@@ -70,12 +70,12 @@ export function createCdfRevealManager(
 export function createRevealManager(
   project: string,
   modelMetadataProvider: ModelMetadataProvider,
-  modelDataClient: ModelDataClient,
+  modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager {
-  const applicationId = modelDataClient.getApplicationIdentifier();
+  const applicationId = modelDataProvider.getApplicationIdentifier();
   initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
     moduleName: 'createRevealManager',
     methodName: 'createRevealManager',
@@ -88,12 +88,12 @@ export function createRevealManager(
   const alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(renderManager);
   const cadManager = createCadManager(
     modelMetadataProvider,
-    modelDataClient,
+    modelDataProvider,
     renderer,
     materialManager,
     alreadyLoadedProvider,
     revealOptions
   );
-  const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataClient);
+  const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
   return new RevealManager(cadManager, renderManager, pointCloudManager);
 }

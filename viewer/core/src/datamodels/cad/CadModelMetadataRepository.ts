@@ -10,23 +10,23 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
 
-import { ModelDataClient, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
-  private readonly _modelDataClient: ModelDataClient;
+  private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
   private _currentModelIdentifier = 0;
 
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
-    modelDataClient: ModelDataClient,
+    modelDataProvider: ModelDataProvider,
     cadMetadataParser: CadMetadataParser,
     blobFileName: string = 'scene.json'
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
-    this._modelDataClient = modelDataClient;
+    this._modelDataProvider = modelDataProvider;
     this._cadSceneParser = cadMetadataParser;
     this._blobFileName = blobFileName;
   }
@@ -37,7 +37,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
-    const json = await this._modelDataClient.getJsonFile(blobBaseUrl, this._blobFileName);
+    const json = await this._modelDataProvider.getJsonFile(blobBaseUrl, this._blobFileName);
     const scene: SectorScene = this._cadSceneParser.parse(json);
     const modelMatrix = createScaleToMetersModelMatrix(scene.unit, await modelMatrixPromise);
     const inverseModelMatrix = new THREE.Matrix4().copy(modelMatrix).invert();

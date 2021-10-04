@@ -8,22 +8,22 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 import { MetadataRepository } from '../base';
 import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
 
-import { ModelDataClient, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
 
 const identityMatrix = new THREE.Matrix4().identity();
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
-  private readonly _modelDataClient: ModelDataClient;
+  private readonly _modelDataProvider: ModelDataProvider;
   private readonly _blobFileName: string;
 
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
-    modelDataClient: ModelDataClient,
+    modelDataProvider: ModelDataProvider,
     blobFileName: string = 'ept.json'
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
-    this._modelDataClient = modelDataClient;
+    this._modelDataProvider = modelDataProvider;
     this._blobFileName = blobFileName;
   }
 
@@ -34,7 +34,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
 
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
-    const scene = await this._modelDataClient.getJsonFile(modelBaseUrl, this._blobFileName);
+    const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       modelBaseUrl,

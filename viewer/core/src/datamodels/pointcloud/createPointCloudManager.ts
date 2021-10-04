@@ -6,13 +6,13 @@ import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PointCloudFactory } from './PointCloudFactory';
 
-import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 export function createPointCloudManager(
   modelMetadataProvider: ModelMetadataProvider,
-  modelDataClient: ModelDataClient
+  modelDataProvider: ModelDataProvider
 ): PointCloudManager {
-  const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataClient);
-  const modelFactory = new PointCloudFactory(modelDataClient);
+  const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
+  const modelFactory = new PointCloudFactory(modelDataProvider);
   return new PointCloudManager(metadataRepository, modelFactory);
 }

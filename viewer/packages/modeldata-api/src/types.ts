@@ -12,7 +12,7 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
-export interface ModelDataClient extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
+export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 
