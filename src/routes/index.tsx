@@ -9,7 +9,6 @@ import LandingPage from 'pages/LandingPage';
 import GroupsRequired from 'components/GroupsRequired';
 import Breadcrumbs from 'components/Breadcrumbs';
 import { Flex, PageWrapper, StepsList } from 'components/Common';
-import BetaBanner from 'components/BetaBanner';
 import {
   landingPage,
   diagramSelection,
@@ -48,7 +47,6 @@ export default function Routes() {
   return (
     <>
       <Breadcrumbs breadcrumbs={getBreadcrumbs()} />
-      <BetaBanner />
       <GroupsRequired>
         <Switch>
           <Route
