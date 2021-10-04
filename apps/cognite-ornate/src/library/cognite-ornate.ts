@@ -529,7 +529,7 @@ export class CogniteOrnate {
     };
   };
 
-  onExport = async () => {
+  onExport = async (fileName = 'WorkSpace') => {
     const pdf = await PDFDocument.create();
 
     // To do: instead of getting the PIDs from the canvas,
@@ -556,6 +556,6 @@ export class CogniteOrnate {
     const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
 
     // To do: replace the file name with the workspace name
-    downloadURL(pdfBytes, 'file.pdf');
+    downloadURL(pdfBytes, `${fileName}.pdf`);
   };
 }

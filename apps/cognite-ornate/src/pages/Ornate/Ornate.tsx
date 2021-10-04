@@ -233,9 +233,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     };
   };
 
-  const onExport = () => {
-    ornateViewer.current!.onExport();
-  };
+  const onExport = useCallback(() => {
+    ornateViewer.current!.onExport(workspace?.name);
+  }, [workspace?.name]);
 
   const onSave = () => {
     if (!workspace) {
