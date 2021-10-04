@@ -16,6 +16,23 @@ export type Color = {
   g: number;
   b: number;
 };
+
+/**
+ * Units supported by {@link Cognite3DModel}.
+ */
+export type WellKnownUnit =
+  | 'Meters'
+  | 'Centimeters'
+  | 'Millimeters'
+  | 'Micrometers'
+  | 'Kilometers'
+  | 'Feet'
+  | 'Inches'
+  | 'Yards'
+  | 'Miles'
+  | 'Mils'
+  | 'Microinches';
+
 /**
  * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.

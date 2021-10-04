@@ -458,16 +458,16 @@ export class Cognite3DViewer {
    * node collections and applies the `state` object.
    * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
-  setViewState(state: ViewerState) {
+  setViewState(state: ViewerState): Promise<void> {
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
       .forEach(model => {
-        model.styledNodeCollections.forEach(nodeCollection => nodeCollection.nodes.clear());
+        model.styledNodeCollections.forEach(nodeCollection => model.unassignStyledNodeCollection(nodeCollection.nodes));
         model.styledNodeCollections.splice(0);
       });
 
-    this._viewStateHelper.setState(state);
+    return this._viewStateHelper.setState(state);
   }
 
   /**

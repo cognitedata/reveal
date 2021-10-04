@@ -9,8 +9,7 @@ import { RenderMode, Materials } from '@reveal/cad-parsers';
 
 import { TreeIndexNodeCollection } from './styling';
 import { CadMaterialManager } from './CadMaterialManager';
-
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
