@@ -1,0 +1,13 @@
+{
+  "name": "@reveal/storage-context",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/modeldata-api": "workspace:*",
+    "@reveal/nodes-api": "workspace:*"
+  }
+}

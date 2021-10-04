@@ -53,10 +53,11 @@ import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
-import { CdfStorageContext, LocalStorageContext, StorageContext } from '../../storage/StorageContext';
 
 import ComboControls from '@reveal/camera-manager';
 import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
+import { StorageContext, CdfStorageContext, LocalStorageContext } from '@reveal/storage-context';
+
 import { CogniteClient } from '@cognite/sdk';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
