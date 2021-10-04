@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { AddModelOptions } from '../public/migration/types';
 import { RevealManager } from '../public/RevealManager';
-import { createCdfRevealManager, createLocalRevealManager } from '../public/createRevealManager';
+import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { assertNever } from '../utilities';
 import { RevealOptions } from '..';
 import { CadNode } from '../datamodels/cad';
@@ -12,6 +12,7 @@ import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 
 import { CdfModelIdentifier, LocalModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { CogniteClient } from '@cognite/sdk';
+import { DataSource } from '@reveal/data-source';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -74,6 +75,25 @@ export class RevealManagerHelper {
     sdkClient: CogniteClient
   ) {
     const revealManager = createCdfRevealManager(sdkClient, renderer, scene, revealOptions);
+    return new RevealManagerHelper('cdf', revealManager);
+  }
+
+  static createCustomDataSourceHelper(
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    revealOptions: RevealOptions,
+    dataSource: DataSource
+  ) {
+    const revealManager = createRevealManager(
+      'custom-datasource',
+      dataSource.getModelMetadataProvider(),
+      dataSource.getModelDataClient(),
+      renderer,
+      scene,
+      revealOptions
+    );
+    // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
+    // for custom data sources too.
     return new RevealManagerHelper('cdf', revealManager);
   }
 

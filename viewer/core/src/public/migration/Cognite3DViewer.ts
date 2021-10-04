@@ -250,8 +250,21 @@ export class Cognite3DViewer {
     });
 
     const revealOptions = createRevealManagerOptions(options);
-    if (options._localModels !== true) {
-      this._dataSource = options.customDataSource ?? new CdfDataSource(options.sdk);
+    if (options._localModels === true) {
+      this._dataSource = new LocalDataSource();
+      this._cdfSdkClient = undefined;
+      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+    } else if (options.customDataSource !== undefined) {
+      this._dataSource = options.customDataSource;
+      this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
+        this._renderer,
+        this.scene,
+        revealOptions,
+        options.customDataSource
+      );
+    } else {
+      // CDF - default mode
+      this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
@@ -259,10 +272,6 @@ export class Cognite3DViewer {
         revealOptions,
         options.sdk
       );
-    } else {
-      this._dataSource = new LocalDataSource();
-      this._cdfSdkClient = undefined;
-      this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
     }
     this.renderController = new RenderController(this.camera);
 
