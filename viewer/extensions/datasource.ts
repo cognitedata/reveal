@@ -6,12 +6,12 @@
  * @module @cognite/reveal/datasource
  */
 
-export { DataSource } from './packages/data-source';
-export { NodesApiClient } from './packages/nodes-api';
+export { DataSource } from '../packages/data-source';
+export { NodesApiClient } from '../packages/nodes-api';
 export {
   ModelIdentifier,
   CdfModelIdentifier,
   ModelMetadataProvider,
   ModelDataProvider,
   CameraConfiguration
-} from './packages/modeldata-api';
+} from '../packages/modeldata-api';
