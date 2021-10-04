@@ -20,6 +20,11 @@ export const WorkSpaceToolsWrapper = styled.div`
   &.expanded {
     left: 386px;
   }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 `;
 
 export const ToolboxSeparator = styled.div`

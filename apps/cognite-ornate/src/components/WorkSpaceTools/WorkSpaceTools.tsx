@@ -7,11 +7,13 @@ import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 type WorkSpaceToolsProps = {
   activeTool: ToolType;
   isSidebarExpanded: boolean;
+  isDisabled: boolean;
   onToolChange: (nextTool: ToolType) => void;
 };
 
 const WorkSpaceTools = ({
   activeTool,
+  isDisabled,
   isSidebarExpanded,
   onToolChange,
 }: WorkSpaceToolsProps) => {
@@ -38,11 +40,18 @@ const WorkSpaceTools = ({
     });
   }, []);
 
+  const toolbarWrapperClasses = isDisabled ? 'disabled' : '';
+
   return (
-    <WorkSpaceToolsWrapper className={isSidebarExpanded ? 'expanded' : ''}>
+    <WorkSpaceToolsWrapper
+      className={
+        isSidebarExpanded
+          ? `expanded ${toolbarWrapperClasses}`
+          : toolbarWrapperClasses
+      }
+    >
       <Button
         type="ghost"
-        variant="ghost"
         size="small"
         onClick={() => {
           onToolChange('default');
@@ -54,7 +63,6 @@ const WorkSpaceTools = ({
       </Button>
       <Button
         type="ghost"
-        variant="ghost"
         size="small"
         title="Move M"
         onClick={() => {
@@ -67,7 +75,6 @@ const WorkSpaceTools = ({
       <ToolboxSeparator />
       <Button
         type="ghost"
-        variant="ghost"
         size="small"
         title="Line L"
         onClick={() => {
@@ -79,7 +86,6 @@ const WorkSpaceTools = ({
       </Button>
       <Button
         type="ghost"
-        variant="ghost"
         size="small"
         title="Rectangle R"
         onClick={() => {
@@ -91,7 +97,6 @@ const WorkSpaceTools = ({
       </Button>
       <Button
         type="ghost"
-        variant="ghost"
         size="small"
         title="Circle C"
         onClick={() => {
@@ -103,7 +108,6 @@ const WorkSpaceTools = ({
       </Button>
       <Button
         type="ghost"
-        variant="ghost"
         size="small"
         title="Text T"
         onClick={() => {

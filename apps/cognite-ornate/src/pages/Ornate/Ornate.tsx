@@ -151,6 +151,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     options?: {
       initialPosition?: { x: number; y: number };
       zoomAfterLoad?: boolean;
+      showLoader?: boolean;
     }
   ) => {
     const { initialPosition = { x: 0, y: 0 }, zoomAfterLoad = true } =
@@ -163,6 +164,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       ornateViewer.current!.zoomToDocument(existingDoc);
       return {};
     }
+    setShowLoader(true);
     const urls = await client.files.getDownloadUrls([{ id: +fileId }]);
     if (!urls[0]) {
       console.error('Failed to get URL');
@@ -225,6 +227,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       workspaceService.addDocument(workspaceDocuments, fileId, fileName)
     );
 
+    setShowLoader(false);
     return {
       doc: newDoc,
       instances,
@@ -236,16 +239,30 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   }, [workspace?.name]);
 
   const onSave = () => {
-    if (!workspace) {
-      return;
+    try {
+      if (!workspace) {
+        return;
+      }
+      setShowLoader(true);
+      const json = ornateViewer.current!.exportToJSON();
+      workspaceService.saveWorkspaceContents(workspace.id, json);
+      workspaceService.saveWorkspace(workspace);
+      toast.success(t('save_success', 'Workspace was saved'), {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setShowLoader(false);
+    } catch (err) {
+      setShowLoader(false);
+      console.error(err);
+      toast.error(
+        t('save_fail', 'An error occured, the workspace was not saved!'),
+        {
+          position: 'top-right',
+          autoClose: 3000,
+        }
+      );
     }
-    const json = ornateViewer.current!.exportToJSON();
-    workspaceService.saveWorkspaceContents(workspace.id, json);
-    workspaceService.saveWorkspace(workspace);
-    toast.success(t('save_success', 'Workspace was saved'), {
-      position: 'top-right',
-      autoClose: 3000,
-    });
   };
 
   const toggleWorkSpaceSidebar = useCallback(() => {
@@ -387,6 +404,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       </Button>
       <WorkSpaceTools
         onToolChange={onToolChange}
+        isDisabled={!workspaceDocuments.length}
         isSidebarExpanded={isSidebarOpen}
         activeTool={activeTool}
       />
