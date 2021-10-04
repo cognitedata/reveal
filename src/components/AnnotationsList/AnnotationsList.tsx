@@ -15,6 +15,7 @@ import {
   ProposedCogniteAnnotation,
   useSelectedAnnotations,
 } from '@cognite/react-picture-annotation';
+import capitalize from 'lodash/capitalize';
 
 interface AnnotationsListProps {
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
@@ -29,7 +30,7 @@ const AnnotationsList = ({
   type,
   goBack,
 }: AnnotationsListProps) => {
-  const [filterType, setFilterType] = useState<AnnotationType>('pending');
+  const [filterType, setFilterType] = useState<AnnotationType>('all');
   const [filteredList, setFilteredList] = useState<
     Array<CogniteAnnotation | ProposedCogniteAnnotation>
   >([]);
@@ -99,11 +100,11 @@ const AnnotationsList = ({
           <Button
             icon="ArrowBack"
             onClick={goBack}
-            style={{ color: 'black', marginTop: '-5px' }}
+            style={{ color: 'black', marginTop: '-7px' }}
             type="ghost"
           />
           <BreadcrumbItem separator={<span />}>
-            {type?.toUpperCase()}
+            {capitalize(type)}
           </BreadcrumbItem>
         </div>
         <SegmentedControl
@@ -124,6 +125,9 @@ const AnnotationsList = ({
           </SegmentedControl.Button>
         </SegmentedControl>
         <ListWrapper>
+          <div>
+            {filteredList.length} {type}{' '}
+          </div>
           {filteredList.length ? (
             filteredList.map(an => (
               <AnnotationItem key={an.id} annotation={an} />
@@ -202,6 +206,6 @@ const EmptyState = ({ type }: { type: AnnotationType }) => (
     }}
   >
     <Graphic type="Search" />
-    <p>No {type !== 'all' ? type : ''} annotations found.</p>
+    <p>No {type !== 'all' ? type : ''} tags found.</p>
   </div>
 );
