@@ -1,3 +1,7 @@
+## 1.8.5 Oct 01 2021
+
+- Add support for legacy 'user sync' to UMS.
+
 ## 1.8.4 Sept 24 2021
 
 - Add `getHeaders` helpers

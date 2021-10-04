@@ -22,6 +22,7 @@ export interface RichtextProps {
   onPostMessage?: (message: CommentData) => void;
   handleCancel?: () => void;
   initialValue?: CommentData;
+  fasAppId?: string;
 }
 /*
  * This is heavily based from: https://github.com/ianstormtaylor/slate/blob/main/site/examples/mentions.tsx
@@ -38,6 +39,7 @@ export const Richtext: React.FC<RichtextProps> = ({
   zIndex = 3,
   placeholder = 'Write a comment...',
   userManagementServiceBaseUrl,
+  fasAppId,
   initialValue = [
     {
       type: 'paragraph',
@@ -197,6 +199,7 @@ export const Richtext: React.FC<RichtextProps> = ({
               userManagementServiceBaseUrl={userManagementServiceBaseUrl}
               search={search.toLowerCase()}
               onSelect={handleSelect}
+              fasAppId={fasAppId}
             />
           </div>
         </Portal>

@@ -3,7 +3,7 @@ import { SidecarConfig } from '@cognite/sidecar';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { reportException } from '@cognite/react-errors';
 
-import { getHeaders } from '../auth';
+import { getAuthorizationHeader } from '../auth';
 
 import { log } from './log';
 
@@ -20,9 +20,9 @@ export const syncUser = async (
     return;
   }
 
-  if (!authState.token || !authState.idToken) {
+  if (!authState.token) {
     // Legacy token not currently support, thus just add warning.
-    log('[User Sync]: Missing access token or id token', [], 2);
+    log('[User Sync]: Missing access token', [], 2);
     return;
   }
 
@@ -33,7 +33,13 @@ export const syncUser = async (
     .post(
       umsUserSyncEndpoint,
       { accessToken: authState.token },
-      getHeaders(authState.idToken)
+      {
+        headers: {
+          ...getAuthorizationHeader(authState.idToken || authState.token),
+          // Used for legacy token
+          fasAppId: authState?.project,
+        },
+      }
     )
     .catch((error) => {
       reportException(error);

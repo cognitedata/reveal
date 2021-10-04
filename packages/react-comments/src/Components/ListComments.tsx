@@ -146,6 +146,7 @@ export const ListComments: React.FC<ListCommentsProps> = ({
                     actionTarget={actionButtonsTarget}
                     onPostMessage={handleCreateMessage}
                     userManagementServiceBaseUrl={userManagementServiceBaseUrl}
+                    fasAppId={fasAppId}
                   />
                 }
               />

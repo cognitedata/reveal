@@ -13,6 +13,7 @@ export const UserList: React.FC<{
   fasAppId?: string;
 }> = ({ search, onSelect, userManagementServiceBaseUrl, fasAppId }) => {
   const headers = { ...getAuthHeaders({ useIdToken: true }), fasAppId };
+
   const { data, isLoading } = useFindUsers({
     headers,
     userManagementServiceBaseUrl,
