@@ -44,7 +44,6 @@ export const Row = styled.div`
     width: 100%;
   }
 `;
-const HeadingRow = styled(Row)``;
 
 export const Heading = styled.span`
   padding: 0.5rem 0.75rem 0.5rem 1rem;
