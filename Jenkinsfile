@@ -6,7 +6,7 @@ static final String SLACK_ALERTS_CHANNEL = "#datastudio-logs"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-context-ui-pnid'
 static final String APPLICATION_REPO_ID = 'context-ui-pnid'
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
 static final String SENTRY_DSN = "https://d09f6d3557114e6cbaa63b56d7ef86cc@o124058.ingest.sentry.io/1288725"
@@ -114,23 +114,33 @@ pods {
         }
       },
       'Build': {
-            if (isPullRequest) {
-                println "Skipping build for pull requests"
-                return
-            }
-            stageWithNotify('Build for FAS') {
-                fas.build(
-                appId: APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build',
-                shouldPublishSourceMap: false
-                )
-            }   
+        if (isPullRequest) {
+          println "Skipping build for pull requests"
+          return
         }
+        stageWithNotify('Build for FAS') {
+          fas.build(
+            appId: APP_ID,
+            repo: APPLICATION_REPO_ID,
+            buildCommand: 'yarn build',
+            shouldPublishSourceMap: false
+          )
+        }   
+      },
+      'Release': {
+        if (env.BRANCH_NAME != 'master') {
+          println "GitHub releases are generated only from master branch, this branch name is " + env.BRANCH_NAME
+          return
+        }
+        container('fas') {
+          stageWithNotify('Generate Github release') {
+            sh("npx semantic-release")
+          }
+        }
+      }
     )
 
     if (isRelease) {
-
       stageWithNotify('Deploy to FAS') {
         fas.publish(
           shouldPublishSourceMap: false
