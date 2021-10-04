@@ -18,6 +18,10 @@
     "commit": "git-cz",
     "semantic-release": "semantic-release"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/context-ui-pnid.git"
+  },
   "resolutions": {
     "babel-loader": "8.1.0"
   },
