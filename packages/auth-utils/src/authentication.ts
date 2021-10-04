@@ -89,11 +89,14 @@ export class CogniteAuth {
 
           if (this.options.aad) {
             const response = await this.getClient().loginWithOAuth({
-              clientId: this.options.aad?.appId,
-              cluster: this.getCluster(),
-              tenantId: this.options.aad?.directoryTenantId,
-              signInType: {
-                type: 'loginRedirect',
+              type: 'AAD_OAUTH',
+              options: {
+                clientId: this.options.aad?.appId,
+                cluster: this.getCluster(),
+                tenantId: this.options.aad?.directoryTenantId,
+                signInType: {
+                  type: 'loginRedirect',
+                },
               },
             });
 
@@ -135,7 +138,10 @@ export class CogniteAuth {
 
           this.setCluster();
           await this.getClient().loginWithOAuth({
-            project,
+            type: 'CDF_OAUTH',
+            options: {
+              project,
+            },
           });
           this.state.authenticated = await this.getClient().authenticate();
           const accessToken = await this.getClient().getCDFToken();
@@ -215,13 +221,16 @@ export class CogniteAuth {
 
       this.client
         .loginWithOAuth({
-          clientId: this.options.aad?.appId,
-          cluster: this.getCluster(),
-          tenantId: directory,
-          signInType: {
-            type: 'loginRedirect',
-            requestParams: {
-              prompt: 'select_account',
+          type: 'AAD_OAUTH',
+          options: {
+            clientId: this.options.aad?.appId,
+            cluster: this.getCluster(),
+            tenantId: directory,
+            signInType: {
+              type: 'loginRedirect',
+              requestParams: {
+                prompt: 'select_account',
+              },
             },
           },
         })
@@ -275,7 +284,10 @@ export class CogniteAuth {
     if (authFlow === 'COGNITE_AUTH') {
       if (options?.project) {
         await this.getClient().loginWithOAuth({
-          project: options.project,
+          type: 'CDF_OAUTH',
+          options: {
+            project: options.project,
+          },
         });
         const response = await this.getClient().authenticate();
         this.state.authenticated = response;
@@ -300,18 +312,21 @@ export class CogniteAuth {
       if (this.options.aad) {
         await this.client
           .loginWithOAuth({
-            clientId: this.options.aad?.appId,
-            cluster: this.getCluster(),
-            tenantId: this.options.aad?.directoryTenantId,
-            signInType: {
-              type: 'loginRedirect',
-              requestParams: {
-                prompt: 'none',
+            type: 'AAD_OAUTH',
+            options: {
+              clientId: this.options.aad?.appId,
+              cluster: this.getCluster(),
+              tenantId: this.options.aad?.directoryTenantId,
+              signInType: {
+                type: 'loginRedirect',
+                requestParams: {
+                  prompt: 'none',
+                },
               },
-            },
-            onHandleRedirectError: (error) => {
-              this.state.authenticated = false;
-              this.setError(error);
+              onNoProjectAvailable: () => {
+                this.state.authenticated = false;
+                this.setError('Invalid access token!');
+              },
             },
           })
           .then(async (response) => {
@@ -360,10 +375,13 @@ export class CogniteAuth {
       this.makeNewCDFClient();
 
       this.getClient().loginWithOAuth({
-        project: fakeAuth.project,
-        accessToken: fakeAuth.accessToken,
-        onAuthenticate: (login) => {
-          login.skip();
+        type: 'CDF_OAUTH',
+        options: {
+          project: fakeAuth.project,
+          accessToken: fakeAuth.accessToken,
+          onAuthenticate: (login) => {
+            login.skip();
+          },
         },
       });
 

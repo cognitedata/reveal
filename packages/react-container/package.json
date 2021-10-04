@@ -1,6 +1,6 @@
 {
   "name": "@cognite/react-container",
-  "version": "1.8.5",
+  "version": "2.0.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -29,7 +29,7 @@
   "peerDependencies": {
     "@cognite/metrics": "^1.0.0",
     "@cognite/cogs.js": "^2.4.0",
-    "@cognite/sdk": "^4.0.4",
+    "@cognite/sdk": "^5.4.0",
     "lodash": "^4.17.20",
     "react-dom": ">=16",
     "react-redux": "^7.2.2",
