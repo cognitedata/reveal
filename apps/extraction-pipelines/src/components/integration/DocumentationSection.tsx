@@ -28,9 +28,10 @@ import { CloseButton, SaveButton } from 'styles/StyledButton';
 import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { Graphic } from '@cognite/cogs.js';
+import { Button, Graphic } from '@cognite/cogs.js';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 import { Section } from 'components/integration/Section';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 const DocumentationForm = styled.form`
   display: grid;
@@ -135,84 +136,84 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     return null;
   }
 
+  const whenNotEditing =
+    currentIntegration.documentation == null ? (
+      <DivFlex align="center" direction="column" css="margin: 5em 5em">
+        <Graphic type="RuleMonitoring" />
+        <p style={{ margin: '3em 0', textAlign: 'center' }}>
+          Use{' '}
+          <a href="https://guides.github.com/features/mastering-markdown/">
+            markdown
+          </a>{' '}
+          to document important information about the extraction pipeline, for
+          troubleshooting or more detailed information about the data such as
+          selection criteria.
+        </p>
+        <Button variant="ghost" onClick={onEditClick}>
+          <AddFieldInfoText>
+            {DetailFieldNames.DOCUMENTATION.toLowerCase()}
+          </AddFieldInfoText>
+        </Button>
+      </DivFlex>
+    ) : (
+      <EditableAreaButton
+        onClick={onEditClick}
+        disabled={!canEdit}
+        className={`edit-button ${
+          currentIntegration?.documentation && 'has-content'
+        }`}
+        title="Toggle edit documentation"
+        aria-expanded={isEdit}
+        aria-label="Edit documentation"
+        aria-controls="documentation"
+        data-testid={`${ContactBtnTestIds.EDIT_BTN}documentation`}
+        $full
+      >
+        {currentIntegration.documentation ? (
+          <MarkdownView>{currentIntegration.documentation ?? ''}</MarkdownView>
+        ) : null}
+      </EditableAreaButton>
+    );
+  const whenEditing = (
+    <>
+      <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
+      <ValidationError errors={errors} name="documentation" />
+      <StyledTextArea
+        id="documentation-textarea"
+        {...register('documentation')}
+        defaultValue={currentIntegration?.documentation}
+        className={`cogs-input ${!!errors.documentation && 'has-error'}`}
+        rows={30}
+        cols={30}
+      />
+      {MAX_DOCUMENTATION_LENGTH && (
+        <CountSpan className="count">
+          {count}/{MAX_DOCUMENTATION_LENGTH}
+        </CountSpan>
+      )}
+      <MessageDialog
+        visible={!!errors.server}
+        handleClickError={handleClickError}
+        title={SERVER_ERROR_TITLE}
+        contentText={SERVER_ERROR_CONTENT}
+      >
+        <SaveButton
+          htmlType="submit"
+          aria-controls="documentation"
+          data-testid={`${TEST_ID_BTN_SAVE}documentation`}
+        />
+      </MessageDialog>
+      <CloseButton
+        onClick={onCancel}
+        aria-controls="documentation"
+        data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
+      />
+    </>
+  );
   return (
     <Section title={DetailFieldNames.DOCUMENTATION} icon="Documentation">
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
-        {isEdit ? (
-          <>
-            <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
-            <ValidationError errors={errors} name="documentation" />
-            <StyledTextArea
-              id="documentation-textarea"
-              {...register('documentation')}
-              defaultValue={currentIntegration?.documentation}
-              className={`cogs-input ${!!errors.documentation && 'has-error'}`}
-              rows={30}
-              cols={30}
-            />
-            {MAX_DOCUMENTATION_LENGTH && (
-              <CountSpan className="count">
-                {count}/{MAX_DOCUMENTATION_LENGTH}
-              </CountSpan>
-            )}
-            <MessageDialog
-              visible={!!errors.server}
-              handleClickError={handleClickError}
-              title={SERVER_ERROR_TITLE}
-              contentText={SERVER_ERROR_CONTENT}
-            >
-              <SaveButton
-                htmlType="submit"
-                aria-controls="documentation"
-                data-testid={`${TEST_ID_BTN_SAVE}documentation`}
-              />
-            </MessageDialog>
-            <CloseButton
-              onClick={onCancel}
-              aria-controls="documentation"
-              data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
-            />
-          </>
-        ) : (
-          <EditableAreaButton
-            onClick={onEditClick}
-            disabled={!canEdit}
-            className={`edit-button ${
-              currentIntegration?.documentation && 'has-content'
-            }`}
-            title="Toggle edit documentation"
-            aria-expanded={isEdit}
-            aria-label="Edit documentation"
-            aria-controls="documentation"
-            data-testid={`${ContactBtnTestIds.EDIT_BTN}documentation`}
-            $full
-          >
-            {currentIntegration.documentation ? (
-              <MarkdownView>
-                {currentIntegration.documentation ?? ''}
-              </MarkdownView>
-            ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '100%',
-                  flexDirection: 'column',
-                }}
-              >
-                <Graphic type="RuleMonitoring" />
-                <p style={{ margin: '3em 0' }}>
-                  Use markdown to document important information about the
-                  extraction pipeline, for troubleshooting or more detailed
-                  information about the data such as selection criteria.
-                </p>
-                <AddFieldInfoText>
-                  {DetailFieldNames.DOCUMENTATION.toLowerCase()}
-                </AddFieldInfoText>
-              </div>
-            )}
-          </EditableAreaButton>
-        )}
+        {isEdit ? whenEditing : whenNotEditing}
       </DocumentationForm>
     </Section>
   );
