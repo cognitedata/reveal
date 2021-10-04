@@ -251,7 +251,7 @@ export class Cognite3DViewer {
 
     const revealOptions = createRevealManagerOptions(options);
     if (options._localModels !== true) {
-      this._dataSource = new CdfDataSource(options.sdk);
+      this._dataSource = options.customDataSource ?? new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
