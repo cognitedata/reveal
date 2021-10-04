@@ -448,7 +448,7 @@ export function Migration() {
           switch (intersection.type) {
             case 'cad':
               {
-                const { treeIndex, point, model } = intersection;
+                const { treeIndex, point} = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
                 const overlayHtml = document.createElement('div');
                 overlayHtml.innerText = `Node ${treeIndex}`;
@@ -457,9 +457,7 @@ export function Migration() {
   
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
-                //const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-                //viewer.fitCameraToBoundingBox(boundingBox, 1000);
-                
+
               }
               break;
             case 'pointcloud':

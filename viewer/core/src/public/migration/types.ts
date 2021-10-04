@@ -72,9 +72,9 @@ export interface Cognite3DViewerOptions {
 
   /**
    * When false, animations of the camera won't be stopped by movements of the camera/mouse/touches.
-   * This is useful when we don't want to interrupt the camera target change animation because then new target will be much more explicit
+   * This is useful when we don't want to interrupt the camera target change animation because then new target will be much more explicit.
    *
-   * Default is false
+   * Default is false.
    */
   canInterruptAnimations?: boolean;
 

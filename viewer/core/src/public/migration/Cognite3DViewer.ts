@@ -164,7 +164,8 @@ export class Cognite3DViewer {
   };
 
   /**
-   * Changes controls target based on current cursor position
+   * Changes controls target based on current cursor position.
+   * @param event MouseEvent that contains pointer location data.
    */
   private changeTarget = async (event: any) => {
     const { offsetX, offsetY } = event;
@@ -877,7 +878,7 @@ export class Cognite3DViewer {
    * Set camera's target.
    * @public
    * @param target Target in world space.
-   * @param animated Whether change of target should be animated or not (default is false)
+   * @param animated Whether change of target should be animated or not (default is false).
    * @example
    * ```js
    * // store position, target

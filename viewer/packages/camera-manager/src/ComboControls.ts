@@ -101,7 +101,7 @@ export default class ComboControls extends EventDispatcher {
     this.domElement = domElement;
 
     // rotation
-    
+
     this.spherical.setFromVector3(camera.position);
     this.sphericalEnd.copy(this.spherical);
 
@@ -146,7 +146,7 @@ export default class ComboControls extends EventDispatcher {
       dampingFactor,
       EPSILON,
       targetFPS,
-      enabled,
+      enabled
     } = this;
 
     if (!enabled) {
@@ -233,11 +233,11 @@ export default class ComboControls extends EventDispatcher {
 
   public setViewTarget = (target: Vector3) => {
     this.viewTarget.copy(target);
-  }
+  };
 
   public setScrollTarget = (target: Vector3) => {
     this.scrollTarget.copy(target);
-  }
+  };
 
   public triggerCameraChangeEvent = () => {
     const { camera, target } = this;
@@ -513,7 +513,7 @@ export default class ComboControls extends EventDispatcher {
 
     const speedFactor = keyboard.isPressed('shift') ? keyboardSpeedFactor : 1;
     const moveForward = keyboard.isPressed('w') ? true : keyboard.isPressed('s') ? false : undefined;
-    
+
     if (moveForward !== undefined) {
       this.dolly(0, 0, this.getDollyDeltaDistance(moveForward, keyboardDollySpeed * speedFactor), true);
       this.firstPersonMode = true;
@@ -579,7 +579,7 @@ export default class ComboControls extends EventDispatcher {
   private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveTarget: boolean = false) => {
     const { dynamicTarget, minDistance, raycaster, reusableVector3, sphericalEnd, targetEnd, camera, reusableCamera } =
       this;
-    
+
     const distToTarget = reusableVector3.setFromSpherical(sphericalEnd).length();
 
     // @ts-ignore
@@ -591,11 +591,12 @@ export default class ComboControls extends EventDispatcher {
     const cameraDirection = reusableVector3;
     let radius = distToTarget + deltaDistance;
 
-
-    if (moveTarget) { // move target together with the camera (for 'w' and 's' keys movement)
+    if (moveTarget) {
+      // move target together with the camera (for 'w' and 's' keys movement)
       reusableCamera.getWorldDirection(cameraDirection);
       targetEnd.add(cameraDirection.normalize().multiplyScalar(-deltaDistance));
-    } else { // behaviour for scrolling with mouse wheel
+    } else {
+      // behaviour for scrolling with mouse wheel
       if (radius < minDistance) {
         radius = minDistance;
         if (dynamicTarget) {
@@ -607,29 +608,29 @@ export default class ComboControls extends EventDispatcher {
           if (this.scrollTarget.clone().sub(this.target).length() < 0.2) deltaDistance = distToTarget - radius;
         }
       }
-      
+
       // Here we use the law of sines to determine how far we want to move the target.
       // Direction is always determined by scrollTarget-target vector
       const tarSTarVec = reusableVector3.subVectors(this.scrollTarget, this.target).normalize(),
-          camTarVec = (new Vector3()).subVectors(this.target, this.camera.position),
-          camSTarVec = (new Vector3()).subVectors(this.scrollTarget, this.camera.position);
-        
+        camTarVec = new Vector3().subVectors(this.target, this.camera.position),
+        camSTarVec = new Vector3().subVectors(this.scrollTarget, this.camera.position);
+
       const tarCamSTarAngle = camTarVec.angleTo(camSTarVec),
         tarSTarCamAngle = tarSTarVec.negate().angleTo(camSTarVec.negate());
 
-      let targetOffsetDistance = deltaDistance * (Math.sin(tarCamSTarAngle)/Math.sin(tarSTarCamAngle));
-      
-      const ratio = Math.abs(targetOffsetDistance/deltaDistance);
-      
-      if (ratio > 4) 
+      let targetOffsetDistance = deltaDistance * (Math.sin(tarCamSTarAngle) / Math.sin(tarSTarCamAngle));
+
+      const ratio = Math.abs(targetOffsetDistance / deltaDistance);
+
+      if (ratio > 4)
         if (ratio > 10) targetOffsetDistance *= 0.1;
-        else targetOffsetDistance *=0.4
+        else targetOffsetDistance *= 0.4;
 
       sphericalEnd.radius = radius;
 
       // if we scroll out, we don't change the target
-      const targetOffset = tarSTarVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0); 
-      
+      const targetOffset = tarSTarVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0);
+
       targetEnd.add(targetOffset);
     }
   };
@@ -653,19 +654,17 @@ export default class ComboControls extends EventDispatcher {
     return distance * (factor - 1);
   };
 
-  
   private panLeft = (distance: number) => {
     const { camera, targetEnd, panVector } = this;
     panVector.setFromMatrixColumn(camera.matrix, 0); // get X column of objectMatrix
     panVector.multiplyScalar(-distance);
     targetEnd.add(panVector);
   };
-  
+
   private panUp = (distance: number) => {
     const { camera, targetEnd, panVector } = this;
     panVector.setFromMatrixColumn(camera.matrix, 1); // get Y column of objectMatrix
     panVector.multiplyScalar(distance);
     targetEnd.add(panVector);
   };
-
 }

@@ -13,8 +13,9 @@ let controls: ComboControls;
 let sphere: THREE.Mesh;
 let keyboard: Keyboard;
 let cuState: {
-    position: THREE.Vector3; 
-    target: THREE.Vector3};
+  position: THREE.Vector3;
+  target: THREE.Vector3;
+};
 
 init();
 
@@ -60,13 +61,13 @@ function render(time: number) {
   cuState = controls.getState();
 
   if (keyboard.isPressed('c')) {
-    controls.setState(cuState.position, cuState.target.add(new Vector3(-0.05,0,0)));
-  } 
+    controls.setState(cuState.position, cuState.target.add(new Vector3(-0.05, 0, 0)));
+  }
   if (keyboard.isPressed('b')) {
-    controls.setState(cuState.position, cuState.target.add(new Vector3(0.05,0,0)));
+    controls.setState(cuState.position, cuState.target.add(new Vector3(0.05, 0, 0)));
   }
   if (keyboard.isPressed('f')) {
-    controls.setState(cuState.position, cuState.target.copy(new Vector3(3,2,0)));
+    controls.setState(cuState.position, cuState.target.copy(new Vector3(3, 2, 0)));
   }
 
   controls.update(time);
