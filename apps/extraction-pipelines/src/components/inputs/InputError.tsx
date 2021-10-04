@@ -10,6 +10,7 @@ import { DeepMap, FieldError } from 'react-hook-form';
 interface InputErrorProps extends InputControllerProps {
   errors: DeepMap<Record<string, any>, FieldError>;
   labelText: string;
+  disabled?: boolean;
 }
 
 export const InputError: FunctionComponent<InputErrorProps> = ({
@@ -19,6 +20,7 @@ export const InputError: FunctionComponent<InputErrorProps> = ({
   defaultValue,
   errors,
   labelText,
+  disabled,
 }: PropsWithChildren<InputErrorProps>) => {
   return (
     <DivFlex direction="column" align="flex-start">
@@ -31,6 +33,7 @@ export const InputError: FunctionComponent<InputErrorProps> = ({
         aria-invalid={!!errors[name]}
         aria-describedby={`${name}-hint ${name}-error`}
         aria-label={labelText}
+        disabled={disabled}
       />
     </DivFlex>
   );

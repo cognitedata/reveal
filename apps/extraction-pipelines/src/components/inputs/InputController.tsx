@@ -6,6 +6,7 @@ export interface InputControllerProps
   extends Pick<UseControllerProps, 'name' | 'defaultValue'> {
   inputId: string;
   control: Control;
+  disabled?: boolean;
 }
 
 export const InputController: FC<InputControllerProps> = ({
@@ -13,6 +14,7 @@ export const InputController: FC<InputControllerProps> = ({
   inputId,
   control,
   defaultValue,
+  disabled,
   ...rest
 }: PropsWithChildren<InputControllerProps>) => {
   return (
@@ -23,6 +25,7 @@ export const InputController: FC<InputControllerProps> = ({
       render={({ field }) => (
         <Input
           id={inputId}
+          disabled={disabled}
           value={field.value ?? ''}
           onChange={(e) => field.onChange(e)}
           {...rest}

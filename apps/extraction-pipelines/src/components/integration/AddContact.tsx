@@ -106,6 +106,7 @@ export const AddContact: FunctionComponent<AddContactProps> = ({
             control={control}
             errors={errors}
             defaultValue={isOwner ? 'Owner' : ''}
+            disabled={isOwner}
             inputId="role"
             labelText={ROLE_LABEL}
           />
