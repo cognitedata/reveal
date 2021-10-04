@@ -11,7 +11,7 @@ import { CadNode } from '..';
 import { Cognite3DModel } from '../../../migration';
 import { RootSectorNode } from '../sector/RootSectorNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters } from '../../..';
-import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders} from './shaders';
+import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
 import { SsaoSampleQuality } from '../../../public/types';
 import { WebGLRendererStateHelper } from '../../../utilities/WebGLRendererStateHelper';
 import { SectorNode } from '../sector/SectorNode';

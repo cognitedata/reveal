@@ -59,7 +59,6 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import { RevealManagerHelper } from './RevealManagerHelper';
 
-
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
 /**
@@ -128,7 +127,6 @@ export class Cognite3DViewer {
   private readonly _automaticNearFarPlane: boolean;
   private readonly _automaticControlsSensitivity: boolean;
   private readonly _canInterruptAnimations: boolean;
-  
 
   private isDisposed = false;
 
@@ -174,11 +172,11 @@ export class Cognite3DViewer {
     const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
     if (intersection !== null) {
       this.setCameraTarget(intersection.point, true);
-    } else { 
+    } else {
       const boBo = this._models[0].getModelBoundingBox();
       this.setCameraTarget(boBo.getCenter(new THREE.Vector3()), true);
     }
-  }
+  };
 
   /**
    * Gets the current budget for downloading geometry for CAD models. Note that this
@@ -261,26 +259,25 @@ export class Cognite3DViewer {
     let startedScroll = false;
     const wheelClock = new THREE.Clock();
 
-    this.on('click', (e) => {
+    this.on('click', e => {
       this.controls.enableKeyboardNavigation = false;
       this.changeTarget(e);
     });
 
-    this.canvas.addEventListener('wheel', async (e) => {
+    this.canvas.addEventListener('wheel', async e => {
       const timeDelta = wheelClock.getDelta();
       const { offsetX, offsetY } = e;
-      
+
       //@ts-ignore
-      if (startedScroll && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0)) {  
+      if (startedScroll && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0)) {
         startedScroll = false;
 
         const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
           this.controls.setScrollTarget(intersection.point);
-        } 
-
+        }
       } else {
-        if (timeDelta > 0.15 ) {
+        if (timeDelta > 0.15) {
           startedScroll = true;
         }
       }
@@ -290,8 +287,7 @@ export class Cognite3DViewer {
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
-    this.controls.dynamicTarget = false; 
-
+    this.controls.dynamicTarget = false;
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -896,10 +892,9 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    
+
     if (!animated) this.moveCameraTargetTo(target, 0);
     else this.moveCameraTargetTo(target, 600); // TODO: add duration property somewhere
-  
   }
 
   /**
@@ -1215,7 +1210,7 @@ export class Cognite3DViewer {
             model,
             treeIndex: result.treeIndex,
             point: result.point,
-            distanceToCamera: result.distance,
+            distanceToCamera: result.distance
           };
           intersections.push(intersection);
         }
@@ -1233,8 +1228,8 @@ export class Cognite3DViewer {
     return this._models.filter(x => x.type === type);
   }
 
-  /** @private */ 
-  private moveCameraTargetTo(target: THREE.Vector3, duration?: number,) {
+  /** @private */
+  private moveCameraTargetTo(target: THREE.Vector3, duration?: number) {
     if (this.isDisposed) {
       return;
     }
@@ -1289,7 +1284,7 @@ export class Cognite3DViewer {
       this.canvas.addEventListener('wheel', stopTween);
       document.addEventListener('keydown', stopTween);
     }
-    
+
     this.controls.newClickTarget = true;
     this.controls.setState(this.getCameraPosition(), target);
 
@@ -1321,8 +1316,8 @@ export class Cognite3DViewer {
     tween.update(TWEEN.now());
   }
 
-  /** @private */ 
-  private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number,) {
+  /** @private */
+  private moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
     if (this.isDisposed) {
       return;
     }

@@ -25,10 +25,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_0.ctm",
-          "mesh_1.ctm"
-        ],
+        "peripheralFiles": ["mesh_0.ctm", "mesh_1.ctm"],
         "estimatedDrawCallCount": 9,
         "fileName": "sector_0.i3d",
         "downloadSize": 148745
@@ -130,10 +127,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_2.ctm",
-          "mesh_1.ctm"
-        ],
+        "peripheralFiles": ["mesh_2.ctm", "mesh_1.ctm"],
         "estimatedDrawCallCount": 14,
         "fileName": "sector_3.i3d",
         "downloadSize": 339357
@@ -167,10 +161,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_3.ctm",
-          "mesh_1.ctm"
-        ],
+        "peripheralFiles": ["mesh_3.ctm", "mesh_1.ctm"],
         "estimatedDrawCallCount": 14,
         "fileName": "sector_4.i3d",
         "downloadSize": 320999
@@ -306,9 +297,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_4.ctm"
-        ],
+        "peripheralFiles": ["mesh_4.ctm"],
         "estimatedDrawCallCount": 11,
         "fileName": "sector_8.i3d",
         "downloadSize": 126723
@@ -342,9 +331,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_1.ctm"
-        ],
+        "peripheralFiles": ["mesh_1.ctm"],
         "estimatedDrawCallCount": 5,
         "fileName": "sector_9.i3d",
         "downloadSize": 82548
@@ -378,9 +365,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_5.ctm"
-        ],
+        "peripheralFiles": ["mesh_5.ctm"],
         "estimatedDrawCallCount": 11,
         "fileName": "sector_10.i3d",
         "downloadSize": 307631
@@ -448,9 +433,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_6.ctm"
-        ],
+        "peripheralFiles": ["mesh_6.ctm"],
         "estimatedDrawCallCount": 10,
         "fileName": "sector_12.i3d",
         "downloadSize": 77758
@@ -518,9 +501,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_7.ctm"
-        ],
+        "peripheralFiles": ["mesh_7.ctm"],
         "estimatedDrawCallCount": 10,
         "fileName": "sector_14.i3d",
         "downloadSize": 184854
@@ -554,10 +535,7 @@
         }
       },
       "indexFile": {
-        "peripheralFiles": [
-          "mesh_8.ctm",
-          "mesh_1.ctm"
-        ],
+        "peripheralFiles": ["mesh_8.ctm", "mesh_1.ctm"],
         "estimatedDrawCallCount": 13,
         "fileName": "sector_15.i3d",
         "downloadSize": 360965
