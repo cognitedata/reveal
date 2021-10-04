@@ -87,10 +87,10 @@ export const SourceOrigin: FC<Props> = ({
           }}
         />
 
-        <Label>Select quality tags:</Label>
+        <Label>Select status tags:</Label>
         <Select
           isMulti
-          placeholder="Available quality tags"
+          placeholder="Available status tags"
           closeMenuOnSelect
           theme="filled"
           value={configuration.data_status.map((item) => ({

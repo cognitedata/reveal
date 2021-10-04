@@ -12,7 +12,7 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
         <Row className="all-steps-wrapper">
           <Col span={24}>
             <details open>
-              <summary>Revision steps</summary>
+              <summary>Steps: Cognuit to target system </summary>
               <div>
                 {target.revisionSteps.map((step) => (
                   <Step key={`${step.created_time}+${step.status}`} {...step} />
@@ -22,6 +22,7 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
           </Col>
         </Row>
       )}
+
       <Row>
         <Col span={24}>
           <h3>Name</h3>
@@ -33,16 +34,8 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
           />
         </Col>
       </Row>
+
       <Row>
-        <Col span={12}>
-          <h3>CRS</h3>
-          <Input
-            type="text"
-            value={target.crs || ''}
-            readOnly
-            variant="noBorder"
-          />
-        </Col>
         <Col span={12}>
           <h3>Data type</h3>
           <Input
@@ -52,18 +45,59 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
             readOnly
           />
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <h3>Configuration tag</h3>
+        <Col span={12}>
+          <h3>External ID</h3>
           <Input
             type="text"
-            value={target.configTag || ''}
+            value={target.externalId || ''}
             variant="noBorder"
             readOnly
           />
         </Col>
       </Row>
+
+      <Row>
+        <Col span={12}>
+          <h3>Project</h3>
+          <Input
+            type="text"
+            value={target.repository || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+        <Col span={12}>
+          <h3>CRS</h3>
+          <Input
+            type="text"
+            value={target.crs || ''}
+            readOnly
+            variant="noBorder"
+          />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col span={12}>
+          <h3>Cognuit ID</h3>
+          <Input
+            type="text"
+            value={target.id || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+        <Col span={12}>
+          <h3>Cognuit revision</h3>
+          <Input
+            type="text"
+            value={target.revision || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+      </Row>
+
       <Row>
         <Col span={12}>
           <h3>Created time</h3>
@@ -75,10 +109,10 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
           />
         </Col>
         <Col span={12}>
-          <h3>Repository / Project</h3>
+          <h3>Last updated</h3>
           <Input
             type="text"
-            value={target.repository || ''}
+            value={target.lastUpdated ? formatDate(target.lastUpdated) : ''}
             variant="noBorder"
             readOnly
           />

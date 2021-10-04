@@ -26,7 +26,7 @@ export const dataTransfersColumnRules = ({
     {
       key: ['source.name', 'target.name'],
       render: ({ value }: { value: any }) => {
-        return getFormattedTimestampOrString(value);
+        return value;
       },
       Filter: Table.InputFilter(),
       filter: 'fuzzyText',
@@ -69,7 +69,14 @@ export const dataTransfersColumnRules = ({
       filter: 'arrayContains',
     },
     {
-      key: ['source.last_updated', 'target.last_updated'],
+      key: [
+        'source.last_updated',
+        'target.last_updated',
+        'source.created_time',
+        'target.created_time',
+        'source.source_last_updated',
+        'source.source_created_time',
+      ],
       render: ({ value }: { value: any }) => {
         return getFormattedTimestampOrString(value);
       },
@@ -78,7 +85,7 @@ export const dataTransfersColumnRules = ({
       filterIcon: 'Calendar',
     },
     {
-      key: 'source.datatype',
+      key: ['source.business_tags', 'source.data_status'],
       render: ({ value }: { value: string }) => {
         return <Tag>{value}</Tag>;
       },
@@ -102,7 +109,7 @@ export const dataTransfersColumnRules = ({
     {
       key: '*',
       render: ({ value }: { value: any }) => {
-        return getFormattedTimestampOrString(value);
+        return value;
       },
     },
   ];

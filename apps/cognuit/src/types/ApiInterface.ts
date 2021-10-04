@@ -113,8 +113,8 @@ export interface ObjectsRevisionsResponse {
   name: string;
   crs: string;
   cdf_metadata: any;
-  business_tags: any[];
-  data_status: any[];
+  business_tags: string[];
+  data_status: string[];
   origin: string;
   project: string;
   package: Package | null;
@@ -123,7 +123,7 @@ export interface ObjectsRevisionsResponse {
   source_created_time: number | null;
   source_last_updated: number | null;
   author: string | null;
-  grouping: unknown | null;
+  grouping: string | null;
   source_object_id: number | null;
   revisions_count: number;
 }

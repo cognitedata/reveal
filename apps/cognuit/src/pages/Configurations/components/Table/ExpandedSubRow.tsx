@@ -61,7 +61,7 @@ export function ExpandedSubRow({
       )}
       {record.data_status.length > 0 && (
         <ExpandedItem>
-          <ExpandedItemLabel>Quality tags: </ExpandedItemLabel>
+          <ExpandedItemLabel>Status tags: </ExpandedItemLabel>
           {record.data_status.map((tag) => (
             <Badge key={tag} text={tag} background="greyscale-grey3" />
           ))}

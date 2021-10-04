@@ -20,35 +20,40 @@ const DetailView: FC<Props> = ({ onClose, record }) => {
   const [target, setTarget] = useState<TargetType | null>(null);
 
   const {
-    revisions,
+    id,
     name,
     external_id,
+    author,
+    grouping,
     crs,
     datatype,
-    source_created_time,
     created_time,
+    last_updated,
     project,
     business_tags,
-    author,
-    cdf_metadata,
     data_status,
+    cdf_metadata,
+    revisions,
   } = record.source;
 
   const [revision] = revisions.reverse();
 
   const source = {
+    id,
     name,
     externalId: external_id,
+    author,
+    grouping,
     crs,
     dataType: datatype,
-    createdTime: source_created_time || created_time,
+    createdTime: created_time,
+    lastUpdated: last_updated,
     repository: project,
-    businessTag: business_tags.join(', '),
+    businessTags: business_tags.join(', '),
+    statusTags: data_status.join(', '),
+    cdfMetadata: cdf_metadata,
     revision: revision.revision,
     revisionSteps: revision.steps,
-    interpreter: author,
-    cdfMetadata: cdf_metadata,
-    qualityTags: data_status,
   };
 
   const translation =
@@ -67,10 +72,13 @@ const DetailView: FC<Props> = ({ onClose, record }) => {
   useEffect(() => {
     if (isSuccess) {
       setTarget({
+        id: availableTargets.id,
+        externalId: availableTargets.external_id,
         name: availableTargets.name,
         crs: availableTargets.crs,
         dataType: availableTargets.datatype,
         createdTime: translation?.revision.created_time,
+        lastUpdated: translation?.revision.last_updated,
         repository: availableTargets.project,
         revision: translation?.revision.revision,
         revisionSteps: translation?.revision.steps,

@@ -8,6 +8,22 @@ import { SourceType } from './types';
 const SourceTabContent = ({ ...source }: SourceType) => (
   <>
     <Section>
+      <Row className="all-steps-wrapper">
+        <Col span={24}>
+          <details open>
+            <summary>Steps: Source system to Cognuit </summary>
+            <div>
+              {source.revisionSteps &&
+                source.revisionSteps.length > 0 &&
+                source.revisionSteps.map((step) => (
+                  <Step key={`${step.status}-${step.created_time}`} {...step} />
+                ))}
+            </div>
+          </details>
+        </Col>
+      </Row>
+    </Section>
+    <Section>
       <Row>
         <Col span={24}>
           <h3>Name</h3>
@@ -19,16 +35,8 @@ const SourceTabContent = ({ ...source }: SourceType) => (
           />
         </Col>
       </Row>
+
       <Row>
-        <Col span={12}>
-          <h3>External Id</h3>
-          <Input
-            type="text"
-            value={source.externalId || ''}
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
         <Col span={12}>
           <h3>Data type</h3>
           <Input
@@ -38,9 +46,28 @@ const SourceTabContent = ({ ...source }: SourceType) => (
             readOnly
           />
         </Col>
+        <Col span={12}>
+          <h3>External Id</h3>
+          <Input
+            type="text"
+            value={source.externalId || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
       </Row>
+
       <Row>
-        <Col span={24}>
+        <Col span={12}>
+          <h3>Repository</h3>
+          <Input
+            type="text"
+            value={source.repository || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+        <Col span={12}>
           <h3>CRS</h3>
           <Input
             type="text"
@@ -50,6 +77,70 @@ const SourceTabContent = ({ ...source }: SourceType) => (
           />
         </Col>
       </Row>
+
+      <Row>
+        <Col span={12}>
+          <h3>Grouping</h3>
+          <Input
+            type="text"
+            value={source.grouping || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+        <Col span={12}>
+          <h3>Author</h3>
+          <Input
+            type="text"
+            value={source.author || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col span={12}>
+          <h3>Business project tag</h3>
+          <Input
+            type="text"
+            value={source.businessTags || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+        <Col span={12}>
+          <h3>Data status tag</h3>
+          <Input
+            type="text"
+            value={source.statusTags || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col span={12}>
+          <h3>Cognuit ID</h3>
+          <Input
+            type="text"
+            value={source.id || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+        <Col span={12}>
+          <h3>Cognuit revision</h3>
+          <Input
+            type="text"
+            value={source.revision || ''}
+            variant="noBorder"
+            readOnly
+          />
+        </Col>
+      </Row>
+
       <Row>
         <Col span={12}>
           <h3>Created time</h3>
@@ -61,46 +152,16 @@ const SourceTabContent = ({ ...source }: SourceType) => (
           />
         </Col>
         <Col span={12}>
-          <h3>Repository / Project</h3>
+          <h3>Last updated</h3>
           <Input
             type="text"
-            value={source.repository || ''}
+            value={source.lastUpdated ? formatDate(source.lastUpdated) : ''}
             variant="noBorder"
             readOnly
           />
         </Col>
       </Row>
-      <Row>
-        <Col span={24}>
-          <h3>Interpreter</h3>
-          <Input
-            type="text"
-            value={source.interpreter || ''}
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col span={12}>
-          <h3>Business project tag</h3>
-          <Input
-            type="text"
-            value={source.businessTag || ''}
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
-        <Col span={12}>
-          <h3>Quality tags</h3>
-          <Input
-            type="text"
-            value={source.qualityTags?.join(', ') || ''}
-            variant="noBorder"
-            readOnly
-          />
-        </Col>
-      </Row>
+
       {source.cdfMetadata && Object.keys(source.cdfMetadata).length > 0 && (
         <details>
           <summary>
@@ -121,16 +182,6 @@ const SourceTabContent = ({ ...source }: SourceType) => (
           </Row>
         </details>
       )}
-    </Section>
-    <Section>
-      <details open>
-        <summary>Upload to CDF</summary>
-        {source.revisionSteps &&
-          source.revisionSteps.length > 0 &&
-          source.revisionSteps.map((step) => (
-            <Step key={`${step.status}-${step.created_time}`} {...step} />
-          ))}
-      </details>
     </Section>
   </>
 );

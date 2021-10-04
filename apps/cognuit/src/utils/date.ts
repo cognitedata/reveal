@@ -16,6 +16,6 @@ export const toUnixLocalString = (value: number) => {
   return toUnixDate(value).toLocaleString();
 };
 
-export const formatDate = (value: number, formatString = 'Pp') => {
+export const formatDate = (value: number, formatString = 'yyyy-MM-dd H:mm') => {
   return format(toUnixDate(value), formatString);
 };
