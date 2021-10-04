@@ -7,7 +7,10 @@ import { useIntegrationById } from 'hooks/useIntegration';
 import { User } from 'model/User';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
-import { ContactsSection } from 'components/integration/ContactsSection';
+import {
+  ContactsSection,
+  isOwnerRole,
+} from 'components/integration/ContactsSection';
 import styled from 'styled-components';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
@@ -27,6 +30,11 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
     return <></>;
   }
   const { contacts } = integration;
+  const contactsSorted = [...contacts].sort(
+    (a, b) =>
+      (isOwnerRole(a.role ?? '') ? -1000 : 0) -
+      (isOwnerRole(b.role ?? '') ? -1000 : 0)
+  );
 
   const openEdit = () => {
     setShowModal(true);
@@ -42,7 +50,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
         {contacts && contacts.length > 0 ? (
           <EditableAreaButton onClick={openEdit} $full>
             <div>
-              {contacts.map((contact: User) => {
+              {contactsSorted.map((contact: User) => {
                 return <ContactCard key={contact.email} {...contact} />;
               })}
             </div>

@@ -51,7 +51,7 @@ export const Heading = styled.span`
 `;
 interface ContactsSectionProps {}
 
-const isOwnerRole = (role: string) => role.toLowerCase() === 'owner';
+export const isOwnerRole = (role: string) => role.toLowerCase() === 'owner';
 export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
@@ -83,8 +83,8 @@ function contactTable(
 ) {
   const contactsSorted = [...contacts].sort(
     (a, b) =>
-      (isOwnerRole(a.role ?? '') ? -100 : a.index) -
-      (isOwnerRole(b.role ?? '') ? -100 : b.index)
+      (isOwnerRole(a.role ?? '') ? -1000 : a.index) -
+      (isOwnerRole(b.role ?? '') ? -1000 : b.index)
   );
   return (
     <StyledTableNoRowColor2>
@@ -95,6 +95,7 @@ function contactTable(
             <td>{NOTIFICATION_LABEL}</td>
             <td>{NAME_LABEL}</td>
             <td>{EMAIL_LABEL}</td>
+            <td />
           </tr>
         </thead>
         <tbody>
