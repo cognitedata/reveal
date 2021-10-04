@@ -576,64 +576,10 @@ export default class ComboControls extends EventDispatcher {
     camera.updateProjectionMatrix();
   };
 
-  private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
+  private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveTarget: boolean = false) => {
     const { dynamicTarget, minDistance, raycaster, reusableVector3, sphericalEnd, targetEnd, camera, reusableCamera } =
       this;
-
-    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - (camera as PerspectiveCamera).fov * 0.5));
-    const distFromCameraToCursor = Math.sqrt(
-      distFromCameraToScreenCenter * distFromCameraToScreenCenter + x * x + y * y
-    );
-    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
-    const distToTarget = reusableVector3.setFromSpherical(sphericalEnd).length();
-
-    // @ts-ignore
-    reusableCamera.copy(camera);
-    reusableCamera.position.setFromSpherical(sphericalEnd).add(targetEnd);
-    reusableCamera.lookAt(targetEnd);
-    raycaster.setFromCamera({ x, y }, reusableCamera);
-
-    const cameraDirection = reusableVector3;
-    let radius = distToTarget + deltaDistance;
-
-
-    if (moveTarget) { // move target together with the camera (for 'w' and 's' keys movement)
-      reusableCamera.getWorldDirection(cameraDirection);
-      targetEnd.add(cameraDirection.normalize().multiplyScalar(-deltaDistance));
-    } else { // behaviour for scrolling with mouse wheel
-      if (radius < minDistance) {
-        radius = minDistance;
-        if (dynamicTarget) {
-          // push targetEnd forward
-          reusableCamera.getWorldDirection(cameraDirection);
-          targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
-        } else {
-          // stops camera from moving forward
-          deltaDistance = distToTarget - radius;
-        }
-      }
-      
-      const distFromRayOrigin = -deltaDistance * ratio;
-
-      sphericalEnd.radius = radius;
-
-      reusableCamera.getWorldDirection(cameraDirection);
-      cameraDirection.normalize().multiplyScalar(deltaDistance);
-      const rayDirection = raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
-      const targetOffset = rayDirection.add(cameraDirection);
-      targetEnd.add(targetOffset);
-    }
-  };
-
-  private dollyPerspectiveCameraScrollTarget = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
-    const { dynamicTarget, minDistance, raycaster, reusableVector3, sphericalEnd, targetEnd, camera, reusableCamera } =
-      this;
-
-    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - (camera as PerspectiveCamera).fov * 0.5));
-    const distFromCameraToCursor = Math.sqrt(
-      distFromCameraToScreenCenter * distFromCameraToScreenCenter + x * x + y * y
-    );
-    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
+    
     const distToTarget = reusableVector3.setFromSpherical(sphericalEnd).length();
 
     // @ts-ignore
@@ -661,7 +607,9 @@ export default class ComboControls extends EventDispatcher {
           if (this.scrollTarget.clone().sub(this.target).length() < 0.2) deltaDistance = distToTarget - radius;
         }
       }
-  
+      
+      // Here we use the law of sines to determine how far we want to move the target.
+      // Direction is always determined by scrollTarget-target vector
       const tarSTarVec = reusableVector3.subVectors(this.scrollTarget, this.target).normalize(),
           camTarVec = (new Vector3()).subVectors(this.target, this.camera.position),
           camSTarVec = (new Vector3()).subVectors(this.scrollTarget, this.camera.position);
@@ -669,11 +617,17 @@ export default class ComboControls extends EventDispatcher {
       const tarCamSTarAngle = camTarVec.angleTo(camSTarVec),
         tarSTarCamAngle = tarSTarVec.negate().angleTo(camSTarVec.negate());
 
-      const targetOffsetDistance = deltaDistance * (Math.sin(tarCamSTarAngle)/Math.sin(tarSTarCamAngle));
+      let targetOffsetDistance = deltaDistance * (Math.sin(tarCamSTarAngle)/Math.sin(tarSTarCamAngle));
+      
+      const ratio = Math.abs(targetOffsetDistance/deltaDistance);
+      
+      if (ratio > 4) 
+        if (ratio > 10) targetOffsetDistance *= 0.1;
+        else targetOffsetDistance *=0.4
 
       sphericalEnd.radius = radius;
 
-      // if we scroll out, we 
+      // if we scroll out, we don't change the target
       const targetOffset = tarSTarVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0); 
       
       targetEnd.add(targetOffset);
@@ -687,7 +641,7 @@ export default class ComboControls extends EventDispatcher {
       this.dollyOrthographicCamera(x, y, deltaDistance);
       // @ts-ignore
     } else if (camera.isPerspectiveCamera) {
-      this.dollyPerspectiveCameraScrollTarget(x, y, deltaDistance, moveTarget);
+      this.dollyPerspectiveCamera(x, y, deltaDistance, moveTarget);
     }
   };
 

@@ -94,14 +94,6 @@ export const fxaaShaders = {
 };
 
 /**
- * Depth buffer reader shader
- */
-export const depthBufferShaders = {
-  fragment: glsl(require('../../../glsl/post-processing/depth-buffer.frag').default),
-  vertex: glsl(require('../../../glsl/post-processing/depth-buffer.vert').default)
-};
-
-/**
  * Screen space ambient occlusion shader
  */
 export const ssaoShaders = {
