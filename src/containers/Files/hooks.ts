@@ -131,7 +131,7 @@ export const useReviewFile = (fileId?: number) => {
       ];
       await sdk.files.update(updatePatch);
       notification.success({
-        message: 'Diagram approved successfully!',
+        message: 'Diagram approved successfully',
       });
     }
   };

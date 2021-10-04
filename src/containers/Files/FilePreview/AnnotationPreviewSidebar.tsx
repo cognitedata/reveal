@@ -42,6 +42,7 @@ import { useCdfItem, useUserInfo } from '@cognite/sdk-react-query-hooks';
 
 import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
+import capitalize from 'lodash/capitalize';
 import { useReviewFile } from '../hooks';
 import { ContextualizationData } from './ContextualizationModule';
 import { CreateAnnotationForm } from './CreateAnnotationForm/CreateAnnotationForm';
@@ -388,7 +389,7 @@ const AnnotationPreviewSidebar = ({
               width: '100%',
             }}
           >
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
               <Button
                 icon="ArrowBack"
                 onClick={() => {
@@ -399,10 +400,10 @@ const AnnotationPreviewSidebar = ({
                   );
                   onClose();
                 }}
-                style={{ color: 'black', marginTop: '-5px' }}
+                style={{ color: 'black', marginTop: '-7px' }}
                 type="ghost"
               />
-              <BreadcrumbItem>{type?.toUpperCase()}</BreadcrumbItem>
+              <BreadcrumbItem> {capitalize(type)}</BreadcrumbItem>
               <BreadcrumbItem separator={<span />}>
                 {annotation.label ?? 'N/A'}
               </BreadcrumbItem>
