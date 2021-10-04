@@ -25,8 +25,11 @@ import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { AddContact } from './AddContact';
-import { Radio } from '@cognite/cogs.js';
+import { Checkbox, Radio } from '@cognite/cogs.js';
 import { StyledTableNoRowColor2 } from 'styles/StyledTable';
+import ValidationError from 'components/form/ValidationError';
+import { ErrorMessage } from 'components/error/ErrorMessage';
+import { isOwner } from 'utils/integrationUtils';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -51,11 +54,16 @@ export const Heading = styled.span`
 `;
 interface ContactsSectionProps {}
 
+const isOwnerRole = (role: string) => role.toLowerCase() === 'owner';
 export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
   const contacts =
     (current?.contacts || []).map((u, index) => ({ ...u, index })) ?? [];
+  const numOwners = contacts.reduce(
+    (count, contact) => count + (isOwnerRole(contact.role ?? '') ? 1 : 0),
+    0
+  );
 
   return (
     <ContactsSectionWrapper role="grid">
@@ -65,7 +73,9 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
       <Hint>{CONTACTS_HINT}</Hint>
       {integration && contactTable(contacts, integration)}
 
-      <AddContact />
+      <AddContact isOwner={numOwners === 0} />
+
+      {numOwners >= 2 && <ErrorMessage>Too many owners.</ErrorMessage>}
     </ContactsSectionWrapper>
   );
 };
@@ -74,12 +84,16 @@ function contactTable(
   contacts: (User & { index: number })[],
   integration: Integration
 ) {
+  const contactsSorted = [...contacts].sort(
+    (a, b) =>
+      (isOwnerRole(a.role ?? '') ? -100 : a.index) -
+      (isOwnerRole(b.role ?? '') ? -100 : b.index)
+  );
   return (
     <StyledTableNoRowColor2>
       <table className="cogs-table">
         <thead>
           <tr>
-            <td>Owner</td>
             <td>{ROLE_LABEL}</td>
             <td>{NOTIFICATION_LABEL}</td>
             <td>{NAME_LABEL}</td>
@@ -87,16 +101,9 @@ function contactTable(
           </tr>
         </thead>
         <tbody>
-          {contacts.map((contact) => {
+          {contactsSorted.map((contact) => {
             return (
               <tr key={contact.email} className="row-style-even row-height-4">
-                <td>
-                  <Radio
-                    name="whatever"
-                    checked={contact.role?.toLowerCase() === 'owner'}
-                  />
-                </td>
-
                 <td>
                   <EditPartContacts
                     integration={integration}
