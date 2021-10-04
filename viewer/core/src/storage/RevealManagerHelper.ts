@@ -86,6 +86,7 @@ export class RevealManagerHelper {
   ) {
     const revealManager = createRevealManager(
       'custom-datasource',
+      'custom-datasource-app',
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
       renderer,

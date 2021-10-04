@@ -75,10 +75,6 @@ class MyModelDataProvider implements ModelDataProvider {
     }
     return response.arrayBuffer();
   }
-
-  getApplicationIdentifier(): string {
-    return 'MyAppId';
-  }
 }
 
 class MyNodesApiClient implements NodesApiClient {

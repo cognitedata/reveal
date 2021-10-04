@@ -13,11 +13,7 @@ import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api'
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
-  const stubDataProvider: ModelDataProvider = {
-    getApplicationIdentifier: () => {
-      return 'dummy';
-    }
-  } as any;
+  const stubDataProvider: ModelDataProvider = {} as any;
   const sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
     filterSectorsToLoad: jest.fn(),
@@ -28,9 +24,17 @@ describe('RevealManager', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager = createRevealManager('test', stubMetadataProvider, stubDataProvider, renderer, new THREE.Scene(), {
-      internal: { sectorCuller }
-    });
+    manager = createRevealManager(
+      'test',
+      'myAppId',
+      stubMetadataProvider,
+      stubDataProvider,
+      renderer,
+      new THREE.Scene(),
+      {
+        internal: { sectorCuller }
+      }
+    );
   });
 
   beforeAll(() => {
@@ -90,9 +94,17 @@ describe('RevealManager', () => {
   });
 
   test('addUiObject() and removeUiObject() requests redraw', () => {
-    manager = createRevealManager('test', stubMetadataProvider, stubDataProvider, renderer, new THREE.Scene(), {
-      internal: { sectorCuller }
-    });
+    manager = createRevealManager(
+      'test',
+      'myAppId',
+      stubMetadataProvider,
+      stubDataProvider,
+      renderer,
+      new THREE.Scene(),
+      {
+        internal: { sectorCuller }
+      }
+    );
     expect(manager).not.toBeUndefined();
     expect(manager.needsRedraw).toBeFalse();
     const uiObject = new THREE.Object3D();

@@ -14,12 +14,6 @@ export interface BinaryFileProvider {
 export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
-
-  // TODO 2021-10-04 larsmoa: Move getApplicationIdentifier() to another class - doesn't belong here
-  /**
-   * Returns an identifier that can be used to identify the application Reveal is used in.
-   */
-  getApplicationIdentifier(): string;
 }
 
 export interface HttpHeadersProvider {

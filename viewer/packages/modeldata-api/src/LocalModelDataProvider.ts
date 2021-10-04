@@ -19,8 +19,4 @@ export class LocalModelDataProvider implements ModelDataProvider {
     const response = await fetchWithStatusCheck(`${baseUrl}/${fileName}`);
     return response.json();
   }
-
-  getApplicationIdentifier(): string {
-    return 'LocalClient';
-  }
 }
