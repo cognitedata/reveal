@@ -185,6 +185,8 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
       });
   }, [integration, history, project, queryClient]);
 
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
   if (error != null) {
     return (
       <FullPageLayout
@@ -239,11 +241,17 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                 </li>
               </PageNav>
               <Dropdown
+                visible={dropdownVisible}
+                onClickOutside={() => setDropdownVisible(false)}
                 content={
                   <Menu>
                     <Menu.Header>Actions for extraction pipeline</Menu.Header>
                     <Menu.Item
-                      onClick={() => setIsDeleteDialogOpen(true)}
+                      onClick={() => {
+                        setDropdownVisible(false);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      data-testid="getByTestId"
                       color="danger"
                     >
                       Delete
@@ -252,7 +260,9 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                 }
               >
                 <Button
+                  onClick={() => setDropdownVisible(true)}
                   icon="MoreOverflowEllipsisHorizontal"
+                  data-testid="extpipe-actions-dropdown-button"
                   iconPlacement="right"
                   variant="ghost"
                 />
