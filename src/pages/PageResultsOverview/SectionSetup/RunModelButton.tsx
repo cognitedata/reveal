@@ -67,7 +67,7 @@ export default function RunModelButton(): JSX.Element {
         >
           {`${statusCount?.completed ?? 0}/${
             (statusCount?.completed ?? 0) + (statusCount?.failed ?? 0)
-          } diagrams are now interactive!`}
+          } diagrams are now interactive`}
         </Body>
       </Flex>
     );
