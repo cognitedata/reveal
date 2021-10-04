@@ -32,7 +32,7 @@ export class CdfDataSource implements DataSource {
     return this._nodesApiClient;
   }
 
-  getModelDataClient(): ModelDataProvider {
+  getModelDataProvider(): ModelDataProvider {
     return this._modelDataClient;
   }
 

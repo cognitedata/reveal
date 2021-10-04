@@ -27,7 +27,7 @@ class MyDataSource implements DataSource {
   getModelMetadataProvider(): ModelMetadataProvider {
     return new MyModelMetadataProvider();
   }
-  getModelDataClient(): ModelDataProvider {
+  getModelDataProvider(): ModelDataProvider {
     return new MyModelDataProvider();
   }
 }

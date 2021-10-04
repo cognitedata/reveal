@@ -20,7 +20,7 @@ export class LocalDataSource implements DataSource {
     return new NodesLocalClient();
   }
 
-  getModelDataClient(): ModelDataProvider {
+  getModelDataProvider(): ModelDataProvider {
     return new LocalModelDataProvider();
   }
 

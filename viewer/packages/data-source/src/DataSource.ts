@@ -21,10 +21,9 @@ export interface DataSource {
    */
   getModelMetadataProvider(): ModelMetadataProvider;
 
-  // TODO 2021-10-04 larsmoa: Rename getModelDataClient()
   /**
    * Gets a client that is able to download geometry and other files
    * for models.
    */
-  getModelDataClient(): ModelDataProvider;
+  getModelDataProvider(): ModelDataProvider;
 }
