@@ -306,7 +306,13 @@ export function getYaxisUpdatesFromEventData(
         const axisIndex = (+key.split('.')[0].split('yaxis')[1] || 1) - 1;
         const rangeMatch = key.split('.')[1].match(/(\d+)/g);
         const rangeIndex = rangeMatch ? +rangeMatch[0] : 0;
-        const { series } = seriesData[axisIndex];
+        const selectedSeriesData = seriesData[axisIndex];
+
+        if (!selectedSeriesData) {
+          return result;
+        }
+
+        const { series } = selectedSeriesData;
 
         const update = series.reduce((diff: { [key: string]: any }, s) => {
           const { id = '', type = '', range: seriesRange = [] } = s;
