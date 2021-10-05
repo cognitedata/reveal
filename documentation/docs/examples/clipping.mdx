@@ -88,7 +88,7 @@ After running this snippet the clipping plane can be manipulated by dragging the
 
 const bounds = model.getModelBoundingBox();
 
-// Create draggable cone at center of bounds
+// Create draggable sphere at the center of bounds
 const initialDragPosition = new THREE.Vector3(bounds.min.x, 0.5*(bounds.max.y + bounds.min.y), bounds.min.z);
 const draggerGeometry = new THREE.SphereBufferGeometry(5);
 const draggerMaterial = new THREE.MeshBasicMaterial({ color: 'white' });
@@ -96,11 +96,11 @@ const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
 draggerMesh.position.copy(initialDragPosition);
 viewer.addObject3D(draggerMesh);
 
-// Prepare a clipping plane
+// Prepare a slicing plane
 const orientation = new THREE.Vector3(0, -1, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
-viewer.setClippingPlanes([plane]);
+viewer.setSlicingPlanes([plane]);
 
 
 // Handle drag events
@@ -109,33 +109,24 @@ controls.addEventListener('drag', () => {
   // Fix XZ-poistion
   draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
   draggerMesh.updateWorldMatrix();
-  // Update clipping plane
+  // Update slicing plane
   plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
   viewer.requestRedraw();
 });
 
-// DragControls will stop navigation from working because it stops events
-// Ensure it's only enabled when hovering over the dragger
-const raycaster = new THREE.Raycaster();
-viewer.domElement.addEventListener('mousemove', ev => {
-  const normalizedCoords = new THREE.Vector2(
-    ev.offsetX / viewer.domElement.clientWidth * 2 - 1,
-    ev.offsetY / viewer.domElement.clientHeight * -2 + 1
-  );
-
-  raycaster.setFromCamera(normalizedCoords, viewer.getCamera());
-  const intersections = raycaster.intersectObject(draggerMesh);
-  if (intersections.length > 0) {
-    controls.activate();
-    draggerMaterial.color.set('gray');
-    viewer.requestRedraw();
-  } else {
-    controls.deactivate();
-    draggerMaterial.color.set('white');
-    viewer.requestRedraw();
-  }
+// When we are hovering over a sphere we want to disable viewer controls
+controls.addEventListener('hoveron', () => { 
+  viewer.cameraControlsEnabled = false;
+  draggerMaterial.color.set('gray');
+  viewer.requestRedraw();
 });
-controls.deactivate();
+
+// And turn them back on when we stop hovering over it
+controls.addEventListener('hoveroff', () => {
+  viewer.cameraControlsEnabled = true;
+  draggerMaterial.color.set('white');
+  viewer.requestRedraw();
+});
 ```
 
 ### CAD geometry filter
