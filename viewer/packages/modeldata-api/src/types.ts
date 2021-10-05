@@ -12,11 +12,25 @@ export interface BinaryFileProvider {
 }
 
 export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
+  /**
+   * Download and parse a JSON file and return the resulting struct.
+   * @param baseUrl     Base URL of the model.
+   * @param fileName    Filename of JSON file.
+   */
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+  /**
+   * Downloads a binary blob.
+   * @param baseUrl     Base URL of the model.
+   * @param fileName    Filename of binary file.
+   */
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
 export interface HttpHeadersProvider {
+  /**
+   * A map of headers that is necessary to retrieve files using the URL. This is used for point cloud
+   * streaming which manages it's own networking.
+   */
   readonly headers: HttpHeaders;
 }
 
