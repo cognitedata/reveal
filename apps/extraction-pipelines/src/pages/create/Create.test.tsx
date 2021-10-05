@@ -21,7 +21,7 @@ import {
 import 'utils/test/windowLocation';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { INTEGRATIONS_ACL } from 'model/AclAction';
+import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 describe('Register', () => {
   window.location.href =
@@ -42,7 +42,7 @@ describe('Register', () => {
 
     useCapabilities.mockReturnValue({
       isLoading: false,
-      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
     });
   });
   afterEach(() => {

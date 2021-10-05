@@ -21,7 +21,7 @@ import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
-  'https://docs.cognite.com/cdf/integration/';
+  'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
 
 interface OwnProps {}
 

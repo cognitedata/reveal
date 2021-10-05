@@ -20,13 +20,13 @@ import {
 import { EXTRACTION_PIPELINES } from 'utils/constants';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { INTEGRATIONS_ACL } from 'model/AclAction';
+import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 describe('<Home />', () => {
   beforeAll(() => {
     useCapabilities.mockReturnValue({
       isLoading: false,
-      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
     });
   });
 

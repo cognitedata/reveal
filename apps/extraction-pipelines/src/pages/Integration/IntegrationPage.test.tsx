@@ -28,7 +28,7 @@ import IntegrationPage from 'pages/Integration/IntegrationPage';
 import { useDataSetsList } from 'hooks/useDataSetsList';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { INTEGRATIONS_ACL } from 'model/AclAction';
+import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 import { act } from '@testing-library/react-hooks';
 
 jest.mock('react-router-dom', () => {
@@ -72,7 +72,7 @@ describe.skip('IntegrationPage', () => {
     useDataSetsList.mockReturnValue({ data: mockDataSetResponse() });
     useCapabilities.mockReturnValue({
       isLoading: false,
-      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
     });
     const modalRoot = document.createElement('div');
     modalRoot.setAttribute('class', 'integrations-ui-style-scope');

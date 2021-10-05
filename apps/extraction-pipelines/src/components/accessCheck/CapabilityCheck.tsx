@@ -16,6 +16,7 @@ export interface CapabilityCheckProps {
 
 const Padded = styled.div`
   padding: 1.5em;
+  grid-column: 2;
 `;
 
 const MissingCapabilityList = styled.ul`

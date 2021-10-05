@@ -131,7 +131,10 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
       </p>
       <p>
         Learn how to activate an extraction pipeline in the{' '}
-        <a href="https://docs.cognite.com">documentation</a>.
+        <a href="https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html">
+          documentation
+        </a>
+        .
       </p>
       <p>&nbsp;</p>
     </DivFlex>

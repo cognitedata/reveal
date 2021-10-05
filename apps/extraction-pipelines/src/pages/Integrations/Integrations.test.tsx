@@ -14,7 +14,7 @@ import {
 } from 'utils/baseURL';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { INTEGRATIONS_ACL } from 'model/AclAction';
+import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 jest.mock('hooks/useRawDBAndTables', () => {
   return {
@@ -26,7 +26,7 @@ describe('Integrations', () => {
   beforeEach(() => {
     useCapabilities.mockReturnValue({
       isLoading: false,
-      data: [{ acl: INTEGRATIONS_ACL, actions: ['READ', 'WRITE'] }],
+      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
     });
   });
 
@@ -89,7 +89,7 @@ describe('Integrations', () => {
     sdkv3.get.mockRejectedValue(unauthorizedError);
     useCapabilities.mockReturnValue({
       isLoading: false,
-      data: [{ acl: INTEGRATIONS_ACL, actions: [] }],
+      data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: [] }],
     });
     const queryCache = new QueryClient({
       defaultOptions: { queries: { retry: false } },
