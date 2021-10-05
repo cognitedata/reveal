@@ -14,15 +14,16 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _timelineframes: TimelineKeyframe[];
   private _intervalId: any = 0;
-  private _currentDate: number = 0;
-  private _allDates: number[];
+  private _currentDate: Date;
+  private _allDates: Date[];
 
   constructor(cadModel: Cognite3DModel) {
     super();
 
     this._model = cadModel;
     this._timelineframes = new Array<TimelineKeyframe>();
-    this._allDates = new Array<number>();
+    this._allDates = new Array<Date>();
+    this._currentDate = new Date();
   }
 
   /**
@@ -32,8 +33,8 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param nodeAppearance - Styling of the nodes
    */
   public createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
-    this._timelineframes.push(new TimelineKeyframe(this._model, date.getTime(), nodeCollection, nodeAppearance));
-    this._allDates.push(date.getTime());
+    this._timelineframes.push(new TimelineKeyframe(this._model, date, nodeCollection, nodeAppearance));
+    this._allDates.push(date);
   }
 
   /**
@@ -42,7 +43,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    */
   public removeKeyFrame(date: Date) {
     if (this._timelineframes.length > 0) {
-      const index = this._timelineframes.findIndex(obj => obj.getTimelineFrameDate() === date.getTime());
+      const index = this._timelineframes.findIndex(obj => obj.getTimelineFrameDate() === date);
 
       if (index > -1) {
         this._timelineframes = this._timelineframes.splice(index, 1);
@@ -54,7 +55,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Overrides styling of cadModel to match styling at "date"
    * @param date - Date of the TimelineFrame to apply the styling on the CAD Model
    */
-  private styleByDate(date: number) {
+  private styleByDate(date: Date) {
     if (this._timelineframes.length > 0) {
       let currentIndex = this._timelineframes.findIndex(obj => obj.getTimelineFrameDate() === date);
 
@@ -88,11 +89,11 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public play(startDate: Date, endDate: Date, durationInMilliSeconds: number) {
     this.stopPlayback();
     this.sortTimelineFramesByDates();
-    this._currentDate = startDate.getTime();
+    this._currentDate = startDate;
     this.styleByDate(this._currentDate);
 
     this._intervalId = setInterval(() => {
-      if (this._currentDate !== endDate.getTime()) {
+      if (this._currentDate !== endDate) {
         this.styleByDate(this._currentDate);
       } else {
         this.stopPlayback();
@@ -130,7 +131,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
   private sortTimelineFramesByDates() {
     this._timelineframes.sort((a: TimelineKeyframe, b: TimelineKeyframe) => {
-      return a.getTimelineFrameDate() - b.getTimelineFrameDate();
+      return a.getTimelineFrameDate().getTime() - b.getTimelineFrameDate().getTime();
     });
   }
 

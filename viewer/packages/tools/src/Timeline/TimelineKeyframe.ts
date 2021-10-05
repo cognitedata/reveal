@@ -9,17 +9,12 @@ import { Cognite3DModel } from '@reveal/core';
  * Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
  */
 export class TimelineKeyframe {
-  private readonly _date: number;
+  private readonly _date: Date;
   private readonly _model: Cognite3DModel;
   private readonly _nodeCollection: NodeCollectionBase;
   private readonly _nodeAppearance: NodeAppearance;
 
-  constructor(
-    model: Cognite3DModel,
-    date: number,
-    nodeCollection: NodeCollectionBase,
-    nodeAppearance?: NodeAppearance
-  ) {
+  constructor(model: Cognite3DModel, date: Date, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
     this._model = model;
     this._date = date;
     this._nodeCollection = nodeCollection;
@@ -30,7 +25,7 @@ export class TimelineKeyframe {
    * Get date of the TimelineFrame
    * @returns date
    */
-  public getTimelineFrameDate() {
+  public getTimelineFrameDate(): Date {
     return this._date;
   }
 
