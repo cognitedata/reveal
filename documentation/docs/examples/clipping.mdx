@@ -96,11 +96,11 @@ const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
 draggerMesh.position.copy(initialDragPosition);
 viewer.addObject3D(draggerMesh);
 
-// Prepare a slicing plane
+// Prepare a clipping plane
 const orientation = new THREE.Vector3(0, -1, 0);
 const plane = new THREE.Plane();
 plane.setFromNormalAndCoplanarPoint(orientation, initialDragPosition);
-viewer.setSlicingPlanes([plane]);
+viewer.setClippingPlanes([plane]);
 
 
 // Handle drag events
@@ -109,7 +109,7 @@ controls.addEventListener('drag', () => {
   // Fix XZ-poistion
   draggerMesh.position.set(initialDragPosition.x, draggerMesh.position.y, initialDragPosition.z);
   draggerMesh.updateWorldMatrix();
-  // Update slicing plane
+  // Update clipping plane
   plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), draggerMesh.position);
   viewer.requestRedraw();
 });
