@@ -1,7 +1,11 @@
 import { cognite } from '@cognite/acl-protos';
+import {
+  AclGroups,
+  CogniteCapability,
+  Group,
+  SingleCogniteCapability,
+} from '@cognite/sdk';
 import queryString from 'query-string';
-
-import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 
 const capitalize = (s: string) =>
   s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
@@ -376,4 +380,17 @@ export const stringContains = (
     // Error here means invalid character was used
     return false;
   }
+};
+
+export const hasAnyValidGroupForOIDC = (groups?: Group[]): boolean => {
+  return Boolean(
+    groups?.some(
+      ({ capabilities, sourceId }) =>
+        sourceId &&
+        capabilities?.some(capability => {
+          const { groupsAcl } = capability as { groupsAcl?: AclGroups };
+          return groupsAcl?.actions.includes('CREATE');
+        })
+    )
+  );
 };

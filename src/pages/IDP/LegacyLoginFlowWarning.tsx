@@ -7,7 +7,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Alert as AntdAlert, Tooltip, notification } from 'antd';
 import styled from 'styled-components';
-import { useAuthConfiguration } from 'hooks';
+import { useAuthConfiguration, useGroups } from 'hooks';
+import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
 
 const StyledAlert = styled(AntdAlert)`
   margin-bottom: 16px;
@@ -34,10 +35,16 @@ const LegacyLoginFlowWarning = () => {
   const flow = sdk.getOAuthFlowType();
   const { data: writeOk } = usePermissions('projectsAcl', 'UPDATE');
   const isLoggedInUsingLegacyLoginFlow = flow === 'CDF_OAUTH';
-  const { data: authConfiguration, isFetched } = useAuthConfiguration();
+  const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
+    useAuthConfiguration();
   const isOIDCConfigured = authConfiguration?.isOidcEnabled;
+  const { data: groups, isFetched: areGroupsFetched } = useGroups(true);
+  const hasAnyValidGroup = hasAnyValidGroupForOIDC(groups);
   const canLegacyLoginFlowBeDisabled =
-    isFetched && isOIDCConfigured && !isLoggedInUsingLegacyLoginFlow;
+    isAuthConfigurationFetched &&
+    areGroupsFetched &&
+    !isLoggedInUsingLegacyLoginFlow &&
+    hasAnyValidGroup;
 
   const history = useHistory();
   const match =
@@ -112,6 +119,10 @@ const LegacyLoginFlowWarning = () => {
                   <br />
                   <StyledIcon $success={!isLoggedInUsingLegacyLoginFlow} />
                   Log in using OIDC
+                  <br />
+                  <StyledIcon $success={hasAnyValidGroup} />
+                  Have a group in your project that has a source ID and the{' '}
+                  <b>groups:create</b> capability.
                 </div>
               )
             }
