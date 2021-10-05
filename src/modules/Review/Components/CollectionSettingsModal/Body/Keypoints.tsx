@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Collapse, Input } from 'antd';
+import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
+import { getRandomColor } from 'src/modules/Review/Components/CollectionSettingsModal/utill';
 import {
   AnnotationCollection,
   Keypoint,
   KeypointCollection,
-} from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
-import { getRandomColor } from 'src/modules/Common/Components/CollectionSettingsModal/utill';
+} from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/CollectionSettings';
 import { Header } from './Header';
-import { ColorPicker } from './ColorPicker';
 
 const { Panel } = Collapse;
 

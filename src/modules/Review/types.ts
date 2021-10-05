@@ -1,12 +1,37 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { OptionType } from '@cognite/cogs.js';
+import { ReactElement, ReactText } from 'react';
 import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
-import { ReactElement, ReactText } from 'react';
-import { OptionType } from '@cognite/cogs.js';
 
 export type TO_COMPLETE = number;
 export type COLLECTION_LENGTH = number;
+
+export type KeypointItemCollection = {
+  id: string;
+  keypoints: KeypointItem[];
+  name: string;
+  show: boolean;
+  status: AnnotationStatus;
+  selected: boolean;
+};
+
+export type Keypoint = {
+  caption: string;
+  order: string;
+  color: string;
+  defaultPosition?: [number, number];
+};
+export type Shape = {
+  shapeName: string;
+  color: string;
+  lastUpdated?: number;
+  id?: number;
+};
+export type AnnotationCollection = {
+  predefinedKeypoints: KeypointCollection[];
+  predefinedShapes: Shape[];
+};
 
 export type FilePreviewProps = {
   fileInfo: FileInfo;
@@ -18,15 +43,6 @@ export type FilePreviewProps = {
   editable?: boolean;
   creatable?: boolean;
   handleAddToFile?: () => void;
-};
-
-export type KeypointItemCollection = {
-  id: string;
-  keypoints: KeypointItem[];
-  name: string;
-  show: boolean;
-  status: AnnotationStatus;
-  selected: boolean;
 };
 
 export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
@@ -69,4 +85,10 @@ export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {
 export type VisionOptionType<T> = OptionType<T> & {
   order?: string;
   color?: string;
+};
+export type KeypointCollection = {
+  collectionName: string;
+  keypoints?: Keypoint[];
+  lastUpdated?: number;
+  id?: number;
 };

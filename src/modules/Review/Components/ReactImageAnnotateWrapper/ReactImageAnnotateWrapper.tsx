@@ -36,7 +36,6 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
-import { Button, Tooltip } from '@cognite/cogs.js';
 
 export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps> =
   ({
@@ -301,20 +300,6 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
           selectedTool={selectedTool}
           onImageOrVideoLoaded={onImageOrVideoLoaded}
         />
-        <ExtraToolbar>
-          <Tooltip
-            content={
-              <span data-testid="text-content">Collection settings</span>
-            }
-          >
-            <ExtraToolItem
-              type="ghost"
-              icon="Settings"
-              aria-label="open collection settings"
-              onClick={onOpenCollectionSettings}
-            />
-          </Tooltip>
-        </ExtraToolbar>
       </Container>
     );
   };
@@ -327,16 +312,4 @@ const Container = styled.div`
   .MuiIconButton-colorPrimary {
     color: #3f51b5;
   }
-`;
-const ExtraToolbar = styled.div`
-  position: absolute;
-  bottom: 10px;
-  width: 50px;
-  display: grid;
-`;
-
-const ExtraToolItem = styled(Button)`
-  height: 50px;
-  width: 50px;
-  border-radius: 50px;
 `;

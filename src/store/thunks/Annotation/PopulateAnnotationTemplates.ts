@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import {
   AnnotationCollection,
   KeypointCollection,
   Shape,
-} from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+} from 'src/modules/Review/types';
+import { ThunkConfig } from 'src/store/rootReducer';
+import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 

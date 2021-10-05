@@ -1,10 +1,10 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { ThunkConfig } from 'src/store/rootReducer';
 import {
   AnnotationCollection,
   KeypointCollection,
   Shape,
-} from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+} from 'src/modules/Review/types';
+import { ThunkConfig } from 'src/store/rootReducer';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';

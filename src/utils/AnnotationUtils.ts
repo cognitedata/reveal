@@ -11,7 +11,6 @@ import {
   VisionAPIType,
 } from 'src/api/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { Keypoint } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
 import {
   ColorsObjectDetection,
   ColorsOCR,
@@ -19,6 +18,7 @@ import {
   ColorsTagDetection,
   ColorsTextAndIconsSecondary,
 } from 'src/constants/Colors';
+import { Keypoint } from 'src/modules/Review/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',

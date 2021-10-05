@@ -4,7 +4,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { AnnotationCollection } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';

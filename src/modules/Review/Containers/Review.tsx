@@ -11,16 +11,12 @@ import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import {
-  resetPreview,
-  showCollectionSettingsModel,
-} from 'src/modules/Review/store/reviewSlice';
+import { resetPreview } from 'src/modules/Review/store/reviewSlice';
 import ImageReview from 'src/modules/Review/Containers/ImageReview';
 import VideoReview from 'src/modules/Review/Containers/VideoReview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
-import { CollectionSettingsModal } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsModal';
 import { pushMetric } from 'src/utils/pushMetric';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
@@ -45,10 +41,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { fileId } = props.match.params;
-
-  const showCollectionSettingsModal = useSelector(
-    ({ reviewSlice }: RootState) => reviewSlice.showCollectionSettings
-  );
 
   const file = useSelector(({ filesSlice }: RootState) =>
     selectFileById(filesSlice, +fileId)
@@ -169,10 +161,6 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
       )}
 
       {renderView()}
-      <CollectionSettingsModal
-        showModal={showCollectionSettingsModal}
-        onCancel={() => dispatch(showCollectionSettingsModel(false))}
-      />
     </>
   );
 };
