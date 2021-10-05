@@ -78,19 +78,18 @@ export async function calculateDefaultYAxis({
     OUTLIER_THRESHOLD
   );
 
-  const roundedMin = roundToSignificantDigits(filteredSortedDatapoints[0], 3);
-  const roundedMax = roundToSignificantDigits(
-    filteredSortedDatapoints[filteredSortedDatapoints.length - 1],
-    3
-  );
+  const min = filteredSortedDatapoints[0];
+  const max = filteredSortedDatapoints[filteredSortedDatapoints.length - 1];
 
   const isValidRange =
-    !Number.isNaN(roundedMin) &&
-    !Number.isNaN(roundedMax) &&
-    typeof roundedMin === 'number' &&
-    typeof roundedMax === 'number';
+    !Number.isNaN(min) &&
+    !Number.isNaN(max) &&
+    typeof min === 'number' &&
+    typeof max === 'number';
 
-  const range = isValidRange ? [roundedMin, roundedMax] : [];
+  const range = isValidRange
+    ? [roundToSignificantDigits(min, 3), roundToSignificantDigits(max, 3)]
+    : [];
 
   return range as number[];
 }
