@@ -11,21 +11,12 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
-import { OptionType, Pagination, Select } from '@cognite/cogs.js';
+import { Graphic, OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { RunUI } from 'model/Runs';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 const Wrapper = styled.div`
   margin-bottom: 5rem;
-  display: grid;
-  grid-template-areas: 'table table table' 'pagination select text';
-  grid-template-columns: max-content 5rem 1fr;
-  .cogs-select,
-  .select-post-fix {
-    align-self: center;
-  }
-  .select-post-fix {
-    margin-left: 0.5rem;
-  }
 `;
 const StyledTable = styled.table`
   grid-area: table;
@@ -36,6 +27,17 @@ const StyledTable = styled.table`
       }
       .status-col {
         width: 9rem;
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:hover,
+      &:nth-child(2n):hover {
+        background-color: unset;
+      }
+      &:nth-child(2n) {
+        background-color: white;
       }
     }
   }
@@ -54,6 +56,10 @@ const itemsPrPageOptions: OptionType<unknown>[] = [
     value: 100,
   },
 ];
+const InlineBlockDiv = styled.div`
+  display: inline-block;
+  width: 5em;
+`;
 interface LogsTableProps {
   data: RunUI[];
   columns: Column<RunUI>[];
@@ -117,7 +123,19 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     return options.find(({ value }) => value === innerPageSize)!;
   };
 
-  return (
+  return rows.length === 0 ? (
+    <DivFlex align="center" direction="column">
+      <Graphic style={{ margin: '2em 0' }} type="RuleMonitoring" />
+      <p style={{ fontWeight: 'bold' }}>
+        Activate the extraction pipeline to monitor its status.
+      </p>
+      <p>
+        Learn how to activate an extraction pipeline in the{' '}
+        <a href="https://docs.cognite.com">documentation</a>.
+      </p>
+      <p>&nbsp;</p>
+    </DivFlex>
+  ) : (
     <Wrapper>
       <StyledTable {...getTableProps()} className="cogs-table">
         <thead>
@@ -153,21 +171,26 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
           })}
         </tbody>
       </StyledTable>
-      <Pagination
-        current={pageIndex + 1}
-        defaultCurrent={pageIndex + 1}
-        total={rows.length}
-        pageSize={pageSize}
-        onChange={paginationChanged}
-        locale={{ goTo: 'Go to' }}
-      />
-      <Select
-        value={findOptionValue(itemsPrPageOptions, pageSize)}
-        onChange={handleSelectItemsPrPage}
-        options={itemsPrPageOptions}
-        menuPlacement="top"
-      />
-      <span className="select-post-fix">pr page</span>
+      <DivFlex align="center" justify="space-between">
+        <Pagination
+          current={pageIndex + 1}
+          defaultCurrent={pageIndex + 1}
+          total={rows.length}
+          pageSize={pageSize}
+          onChange={paginationChanged}
+          locale={{ goTo: 'Go to' }}
+        />
+        <div>
+          <InlineBlockDiv>
+            <Select
+              value={findOptionValue(itemsPrPageOptions, pageSize)}
+              onChange={handleSelectItemsPrPage}
+              options={itemsPrPageOptions}
+            />
+          </InlineBlockDiv>
+          <span className="select-post-fix">&nbsp; pr page</span>
+        </div>
+      </DivFlex>
     </Wrapper>
   );
 };

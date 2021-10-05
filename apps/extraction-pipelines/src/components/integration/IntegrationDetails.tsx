@@ -17,6 +17,7 @@ const MiddleSectionGrid = styled.div`
   grid-template-columns: 2fr 1fr;
   padding: 1rem;
   margin-bottom: 1rem;
+  grid-gap: 16px;
 `;
 const TopSection = styled.section`
   display: flex;
@@ -30,6 +31,7 @@ export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
 interface IntegrationViewProps {}
 export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () => {
   const { id } = useParams<RouterParams>();
+  // take as param??
   const { integration } = useSelectedIntegration();
   const integrationId = integration?.id;
   const permissions = useOneOfPermissions(EXTPIPES_WRITES);

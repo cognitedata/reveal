@@ -8,9 +8,10 @@ import { useParams } from 'react-router';
 import {
   Button,
   Colors,
-  Icon,
+  Dropdown,
   Input,
   Loader,
+  Menu,
   Modal,
   toast,
 } from '@cognite/cogs.js';
@@ -27,7 +28,6 @@ import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
-import InteractiveCopyWithText from 'components/InteractiveCopyWithText';
 import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
 import {
@@ -47,6 +47,7 @@ import { ids } from 'cogs-variables';
 import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/IntegrationsAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -54,7 +55,6 @@ const PageNav = styled.ul`
   padding: 1rem 0 0.8rem 0;
   list-style: none;
   display: flex;
-  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
   li {
     margin: 0;
     padding: 0;
@@ -74,10 +74,6 @@ const PageNav = styled.ul`
       }
     }
   }
-`;
-
-const IconWithSpace = styled(Icon)`
-  margin-right: 1rem;
 `;
 
 interface IntegrationPageProps {}
@@ -128,9 +124,8 @@ const DeleteDialog: FunctionComponent<{
 };
 
 const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
-  const { pathname, search } = useLocation();
+  const { search } = useLocation();
   const { path, url } = useRouteMatch();
-  const { origin } = useAppEnv();
   const { id } = useParams<RouterParams>();
   const history = useHistory();
   const { project } = useAppEnv();
@@ -191,6 +186,8 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
       });
   }, [integration, history, project, queryClient]);
 
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
   if (error != null) {
     return (
       <FullPageLayout
@@ -214,15 +211,8 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         pageHeadingText={integration.name}
         pageHeading={<IntegrationHeading />}
         headingSide={
-          <div>
+          <DivFlex direction="row" align="flex-end" justify="flex-end">
             <LinkWrapper>
-              <InteractiveCopyWithText
-                id="copy-link-this-page"
-                textToCopy={`${origin}${pathname}${search}`}
-                copyType="pageLink"
-              >
-                <>Copy link to this page</>
-              </InteractiveCopyWithText>
               <DeleteDialog
                 isOpen={isDeleteDialogOpen}
                 doDelete={deletePipeline}
@@ -231,34 +221,58 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                   setIsDeleteDialogOpen(false);
                 }}
               />
-              <Button
-                type="ghost-danger"
-                onClick={() => setIsDeleteDialogOpen(true)}
+              <PageNav>
+                <li>
+                  <NavLink
+                    to={{ pathname: url, search }}
+                    exact
+                    className="tab-link"
+                  >
+                    {EXT_PIPE_TAB_OVERVIEW}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={{ pathname: `${url}/${HEALTH_PATH}`, search }}
+                    exact
+                    className="tab-link"
+                  >
+                    {EXT_PIPE_TAB_RUN_HISTORY}
+                  </NavLink>
+                </li>
+              </PageNav>
+              <Dropdown
+                visible={dropdownVisible}
+                onClickOutside={() => setDropdownVisible(false)}
+                content={
+                  <Menu>
+                    <Menu.Header>Actions for extraction pipeline</Menu.Header>
+                    <Menu.Item
+                      onClick={() => {
+                        setDropdownVisible(false);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      data-testid="getByTestId"
+                      color="danger"
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu>
+                }
               >
-                <IconWithSpace type="Trash" />
-                Delete extraction pipeline
-              </Button>
+                <Button
+                  onClick={() => setDropdownVisible(true)}
+                  icon="MoreOverflowEllipsisHorizontal"
+                  data-testid="extpipe-actions-dropdown-button"
+                  iconPlacement="right"
+                  variant="ghost"
+                />
+              </Dropdown>
             </LinkWrapper>
-          </div>
+          </DivFlex>
         }
         breadcrumbs={<IntegrationBreadcrumbs integration={integration} />}
       >
-        <PageNav>
-          <li>
-            <NavLink to={{ pathname: url, search }} exact className="tab-link">
-              {EXT_PIPE_TAB_OVERVIEW}
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={{ pathname: `${url}/${HEALTH_PATH}`, search }}
-              exact
-              className="tab-link"
-            >
-              {EXT_PIPE_TAB_RUN_HISTORY}
-            </NavLink>
-          </li>
-        </PageNav>
         <Switch>
           <Route exact path={path}>
             <IntegrationDetails />

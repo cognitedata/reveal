@@ -50,8 +50,8 @@ export const CardValue = styled.span`
 
 export const CardWrapper = styled.div`
   display: flex;
-  background-color: ${Colors['greyscale-grey1'].hex()};
-  border-radius: 8px;
+  background-color: white;
+  border-radius: 1px;
   & > div,
   > a {
     flex: 1;

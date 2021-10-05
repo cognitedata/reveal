@@ -37,6 +37,7 @@ import {
 import { Span3 } from 'styles/grid/StyledGrid';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ErrorBox } from 'components/error/ErrorBox';
+import { SectionWithoutHeader } from 'components/integration/Section';
 
 const TableWrapper = styled(PageWrapperColumn)`
   ${Span3};
@@ -45,7 +46,6 @@ const TableWrapper = styled(PageWrapperColumn)`
 const FilterWrapper = styled.div`
   display: flex;
   padding: 1rem;
-  background-color: ${Colors['greyscale-grey2'].hex()};
   > :first-child,
   > :nth-child(2) {
     margin-right: 1rem;
@@ -189,7 +189,7 @@ export const IntegrationRunHistory: FunctionComponent<LogsViewProps> = ({
       return <Loader />;
     }
     return (
-      <>
+      <div style={{ margin: '1rem' }}>
         {chartEnabled ? (
           <RunChart allRuns={all} timeFormat={timeFormat} />
         ) : null}
@@ -200,23 +200,26 @@ export const IntegrationRunHistory: FunctionComponent<LogsViewProps> = ({
           fetchData={fetchData}
           pageSize={pageSize}
         />
-      </>
+      </div>
     );
   }
 
   return (
     <TableWrapper>
-      <FilterWrapper>
-        <QuickDateTimeFilters />
-        <DateRangeFilter />
-        <TimeSelector />
-        <StatusFilterMenu />
-        <DebouncedSearch
-          label={ERROR_SEARCH_LABEL}
-          placeholder={MESSAGE_SEARCH_PLACEHOLDER}
-        />
-      </FilterWrapper>
-      {renderContent(isFetching)}
+      <div style={{ height: '2rem' }} />
+      <SectionWithoutHeader>
+        <FilterWrapper>
+          <QuickDateTimeFilters />
+          <DateRangeFilter />
+          <TimeSelector />
+          <StatusFilterMenu />
+          <DebouncedSearch
+            label={ERROR_SEARCH_LABEL}
+            placeholder={MESSAGE_SEARCH_PLACEHOLDER}
+          />
+        </FilterWrapper>
+        {renderContent(isFetching)}
+      </SectionWithoutHeader>
     </TableWrapper>
   );
 };

@@ -55,7 +55,7 @@ export const StyledTable = styled.div`
   }
 `;
 
-const StyledTableNoRowColor = styled((props) => (
+export const StyledTableNoRowColor = styled((props) => (
   <StyledTable {...props}>{props.children}</StyledTable>
 ))`
   .cogs-table {
@@ -87,4 +87,22 @@ const StyledTableNoRowColor = styled((props) => (
   }
 `;
 
+export const StyledTableNoRowColor2 = styled((props) => (
+  <StyledTable {...props}>{props.children}</StyledTable>
+))`
+  .cogs-table {
+    tbody {
+      tr {
+        &:hover,
+        &:nth-child(2n):hover {
+          background-color: unset;
+          cursor: pointer;
+        }
+        &:nth-child(2n) {
+          background-color: white;
+        }
+      }
+    }
+  }
+`;
 export default StyledTableNoRowColor;

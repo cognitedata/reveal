@@ -27,7 +27,7 @@ describe('DocumentationSection', () => {
       '/'
     );
   });
-  test('Interacts with documentation', async () => {
+  test.skip('Interacts with documentation', async () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
     sdkv3.get.mockResolvedValueOnce({ data: mock });
     sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);

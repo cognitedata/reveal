@@ -10,8 +10,8 @@ import { NotificationIcon } from 'components/icons/NotificationIcon';
 const StyledContactCard = styled.section`
   display: flex;
   align-items: center;
-  margin-left: 1rem;
-  margin-bottom: 1.9375rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   span {
     display: flex;
     align-items: center;
@@ -27,9 +27,13 @@ const Name = styled.h4`
   font-size: 0.875rem;
   margin: 0;
 `;
-const Role = styled.div`
+const Role = styled.div<{ isOwner: boolean }>`
   margin-left: 1rem;
-  color: ${Colors['greyscale-grey8'].hex()};
+  color: ${(props) =>
+    props.isOwner
+      ? Colors['greyscale-grey8'].hex()
+      : Colors['greyscale-grey8'].hex()};
+  font-weight: ${(props) => (props.isOwner ? 'normal' : 'normal')};
 `;
 const VisuallyHidden = styled.span`
   clip: rect(0 0 0 0);
@@ -48,7 +52,7 @@ export const ContactCard = (user: User) => {
       <InfoList>
         <DivFlex>
           <Name>{name}</Name>
-          <Role>{role}</Role>
+          <Role isOwner={role?.toLowerCase() === 'owner'}>{role}</Role>
         </DivFlex>
         <EmailLink email={email} />
       </InfoList>

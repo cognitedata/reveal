@@ -28,7 +28,6 @@ import { RunUI } from 'model/Runs';
 import moment from 'moment';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
-import { LatestRunMessage } from 'components/integration/LatestRunMessage';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
 
@@ -69,16 +68,12 @@ export const RunScheduleConnection: FunctionComponent = () => {
     ...addIfExist(integration?.lastFailure),
   ]);
   return (
-    <CardWrapper className={`${lastRun.status.toLowerCase()}`}>
+    <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Icon type="Calendar" />
             {TableHeadings.LATEST_RUN_TIME}
-            <LatestRunMessage
-              status={lastRun.status}
-              message={integration?.lastMessage}
-            />
           </StyledTitleCard>
           <CardValue className="card-value">
             <TimeDisplay value={lastRun.time} relative />
