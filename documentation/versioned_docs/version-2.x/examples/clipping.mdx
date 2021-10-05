@@ -92,7 +92,7 @@ After running this snippet the slicing plane can be manipulated by dragging the 
 
 const bounds = model.getModelBoundingBox();
 
-// Create draggable sphere at the center of bounds
+// Create draggable cone at center of bounds
 const initialDragPosition = new THREE.Vector3(bounds.min.x, 0.5*(bounds.max.y + bounds.min.y), bounds.min.z);
 const draggerGeometry = new THREE.SphereBufferGeometry(5);
 const draggerMaterial = new THREE.MeshBasicMaterial({ color: 'white' });
@@ -118,19 +118,28 @@ controls.addEventListener('drag', () => {
   viewer.requestRedraw();
 });
 
-// When we are hovering over a sphere we want to disable viewer controls
-controls.addEventListener('hoveron', () => { 
-  viewer.cameraControlsEnabled = false;
-  draggerMaterial.color.set('gray');
-  viewer.requestRedraw();
-});
+// DragControls will stop navigation from working because it stops events
+// Ensure it's only enabled when hovering over the dragger
+const raycaster = new THREE.Raycaster();
+viewer.domElement.addEventListener('mousemove', ev => {
+  const normalizedCoords = new THREE.Vector2(
+    ev.offsetX / viewer.domElement.clientWidth * 2 - 1,
+    ev.offsetY / viewer.domElement.clientHeight * -2 + 1
+  );
 
-// And turn them back on when we stop hovering over it
-controls.addEventListener('hoveroff', () => {
-  viewer.cameraControlsEnabled = true;
-  draggerMaterial.color.set('white');
-  viewer.requestRedraw();
+  raycaster.setFromCamera(normalizedCoords, viewer.getCamera());
+  const intersections = raycaster.intersectObject(draggerMesh);
+  if (intersections.length > 0) {
+    controls.activate();
+    draggerMaterial.color.set('gray');
+    viewer.requestRedraw();
+  } else {
+    controls.deactivate();
+    draggerMaterial.color.set('white');
+    viewer.requestRedraw();
+  }
 });
+controls.deactivate();
 ```
 
 ### CAD geometry filter
