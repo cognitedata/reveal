@@ -1,3 +1,7 @@
+## 2.0.0 Oct 5 2021
+
+- Bump version for auth-utils
+
 ## 1.4.1 Sept 20 2021
 
 - Use the `SidecarConfig` type from '@cognite/sidecar' package.

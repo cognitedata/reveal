@@ -1,3 +1,7 @@
+## 1.0.0 Oct 05 2021
+
+- Bumps version for react-container
+
 ## 0.2.2 Oct 01 2021
 
 - Missing to add 'fasAppId' in a few places that were hitting the 'search' endpoint for UMS.

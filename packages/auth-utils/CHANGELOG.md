@@ -1,3 +1,7 @@
+## 2.0.0 Oct 5 2021
+
+- adds `@cognite/sdk v5.4.0` support by fixing breaking change
+
 ## 1.0.15 Sep 15 2021
 
 ### Changes

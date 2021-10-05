@@ -1,3 +1,7 @@
+## 2.0.0 Oct 05 2021
+
+- bump version for auth-utils
+
 ## 1.8.5 Oct 01 2021
 
 - Add support for legacy 'user sync' to UMS.
