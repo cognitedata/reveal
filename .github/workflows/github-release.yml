@@ -1,7 +1,7 @@
 name: Generate GitHub release
 on:
   push:
-    branches: [master]
+    branches: [master, workflow]
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -19,7 +19,10 @@ jobs:
           key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
 
       - name: Install 🔧
-        run: yarn install --frozen-lockfile
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}" > .npmrc
+          yarn install --frozen-lockfile
+          rm .npmrc
 
       - name: Build package 🔧
         run: yarn build
@@ -27,5 +30,4 @@ jobs:
       - name: Release 🚀
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
         run: npx semantic-release
