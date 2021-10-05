@@ -19,6 +19,7 @@ import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
 import { AxisUpdate } from 'components/PlotlyChart';
+import { removeIllegalCharacters } from 'utils/text';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 
 type Props = {
@@ -104,7 +105,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
                 marginLeft: 5,
               }}
-              searchWords={[query]}
+              searchWords={[removeIllegalCharacters(query)]}
               textToHighlight={asset.name}
             />
           </ResourceNameWrapper>
@@ -115,7 +116,7 @@ export default function AssetSearchHit({ asset, query = '' }: Props) {
                 backgroundColor: Colors['yellow-4'].alpha(0.4),
                 marginLeft: 5,
               }}
-              searchWords={[query]}
+              searchWords={[removeIllegalCharacters(query)]}
               textToHighlight={asset.description ?? ' '}
             />
           </Description>

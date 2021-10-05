@@ -6,6 +6,7 @@ import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import { Timeseries } from '@cognite/sdk';
 import Highlighter from 'react-highlight-words';
+import { removeIllegalCharacters } from 'utils/text';
 
 export default function TimeseriesSearchHit({
   timeseries,
@@ -20,6 +21,7 @@ export default function TimeseriesSearchHit({
     .subtract(1, 'years')
     .startOf('day')
     .toDate();
+
   const sparklineEndDate = dayjs().endOf('day').toDate();
   return (
     <>
@@ -36,7 +38,7 @@ export default function TimeseriesSearchHit({
                       backgroundColor: Colors['yellow-4'].alpha(0.4),
                       marginLeft: 5,
                     }}
-                    searchWords={[query]}
+                    searchWords={[removeIllegalCharacters(query)]}
                     textToHighlight={t.name ?? ''}
                   />
                 </ResourceNameWrapper>
@@ -45,7 +47,7 @@ export default function TimeseriesSearchHit({
                     highlightStyle={{
                       backgroundColor: Colors['yellow-4'].alpha(0.4),
                     }}
-                    searchWords={[query]}
+                    searchWords={[removeIllegalCharacters(query)]}
                     textToHighlight={t.description ?? ''}
                   />
                 </Description>
