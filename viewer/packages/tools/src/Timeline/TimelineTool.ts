@@ -4,15 +4,15 @@
 
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { TimeLineKeyframe } from './TimeLineKeyframe';
+import { TimelineKeyframe } from './TimelineKeyframe';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
  */
-export class TimeLineTool extends Cognite3DViewerToolBase {
+export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
-  private _timelineframes: TimeLineKeyframe[];
+  private _timelineframes: TimelineKeyframe[];
   private _intervalId: any = 0;
   private _currentDate: number = 0;
   private _allDates: number[];
@@ -21,28 +21,28 @@ export class TimeLineTool extends Cognite3DViewerToolBase {
     super();
 
     this._model = cadModel;
-    this._timelineframes = new Array<TimeLineKeyframe>();
+    this._timelineframes = new Array<TimelineKeyframe>();
     this._allDates = new Array<number>();
   }
 
   /**
    * Create Key frame for the Timeline
-   * @param date - date value by Date.now() or number of milliseconds elapsed since January 1, 1970
+   * @param date - date value by Date.now() since January 1, 1970
    * @param nodeCollection - Set of nodes to be rendered for the TimelineFrame
    * @param nodeAppearance - Styling of the nodes
    */
-  public createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
-    this._timelineframes.push(new TimeLineKeyframe(this._model, date, nodeCollection, nodeAppearance));
-    this._allDates.push(date);
+  public createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
+    this._timelineframes.push(new TimelineKeyframe(this._model, date.getTime(), nodeCollection, nodeAppearance));
+    this._allDates.push(date.getTime());
   }
 
   /**
    * Removes the TimelineFrame from the Timeline
    * @param date - Date of the TimelineFrame to be removed from the Timeline
    */
-  public removeKeyFrame(date: number) {
+  public removeKeyFrame(date: Date) {
     if (this._timelineframes.length > 0) {
-      const index = this._timelineframes.findIndex(obj => obj.getTimeLineFrameDate() === date);
+      const index = this._timelineframes.findIndex(obj => obj.getTimelineFrameDate() === date.getTime());
 
       if (index > -1) {
         this._timelineframes = this._timelineframes.splice(index, 1);
@@ -56,37 +56,43 @@ export class TimeLineTool extends Cognite3DViewerToolBase {
    */
   private styleByDate(date: number) {
     if (this._timelineframes.length > 0) {
-      const currentIndex = this._timelineframes.findIndex(obj => obj.getTimeLineFrameDate() === date);
+      let currentIndex = this._timelineframes.findIndex(obj => obj.getTimelineFrameDate() === date);
 
-      if (currentIndex <= this._timelineframes.length - 1) {
-        const currentTimeframe = this._timelineframes[currentIndex];
-        const previousTimeframe = this._timelineframes[currentIndex - 1];
-
-        if (previousTimeframe) {
-          previousTimeframe.removeStyle();
-        }
-
-        if (currentTimeframe) {
-          currentTimeframe.applyStyle();
-        }
+      // Date provided not found than get the closest downward date
+      // e.g if you have keyframes "1000, 2000, 3000" the result from styleByDate(2500) should be styles from 2000
+      if (currentIndex === -1) {
+        const timelineframe = this._timelineframes.reduce((prev, curr) =>
+          date >= curr.getTimelineFrameDate() ? curr : prev
+        );
+        currentIndex = this._timelineframes.findIndex(obj => obj === timelineframe);
       }
+
+      const currentTimeframe = this._timelineframes[currentIndex];
+      const previousTimeframe = this._timelineframes[currentIndex - 1];
+
+      if (previousTimeframe) {
+        previousTimeframe.deactivate();
+      }
+      currentTimeframe.activate();
+
+      this.setNextDate(currentIndex);
     }
   }
 
   /**
-   * Starts playback of TImeline
-   * @param durationInMilliSeconds -Number of milli-seconds after which next TimelineFrame is rendered
+   * Starts playback of Timeline
    * @param startDate - TimelineFrame date to start the Playback of TimelineFrames
    * @param endDate - TimelineFrame date to stop the Playback of TimelineFrames
+   * @param durationInMilliSeconds -Number of milli-seconds after which next TimelineFrame is rendered
    */
-  public play(durationInMilliSeconds: number, startDate: number, endDate: number) {
+  public play(startDate: Date, endDate: Date, durationInMilliSeconds: number) {
     this.stopPlayback();
-    this._currentDate = startDate;
+    this.sortTimelineFramesByDates();
+    this._currentDate = startDate.getTime();
     this.styleByDate(this._currentDate);
 
     this._intervalId = setInterval(() => {
-      if (this._currentDate !== endDate) {
-        this.getNextDate();
+      if (this._currentDate !== endDate.getTime()) {
         this.styleByDate(this._currentDate);
       } else {
         this.stopPlayback();
@@ -116,23 +122,23 @@ export class TimeLineTool extends Cognite3DViewerToolBase {
   /**
    * Provides the next Timelineframes date value
    */
-  private getNextDate() {
-    if (this._timelineframes.length > 0) {
-      const currentIndex = this._timelineframes.findIndex(obj => obj.getTimeLineFrameDate() === this._currentDate);
-
-      if (currentIndex !== this._timelineframes.length - 1) {
-        this._currentDate = this._timelineframes[currentIndex + 1].getTimeLineFrameDate();
-      } else {
-        this.stopPlayback();
-      }
+  private setNextDate(index: number) {
+    if (index < this._timelineframes.length - 1) {
+      this._currentDate = this._timelineframes[index + 1].getTimelineFrameDate();
     }
+  }
+
+  private sortTimelineFramesByDates() {
+    this._timelineframes.sort((a: TimelineKeyframe, b: TimelineKeyframe) => {
+      return a.getTimelineFrameDate() - b.getTimelineFrameDate();
+    });
   }
 
   /**
    * Provides all the dates in the TImeline
    * @returns All dates in the Timeline
    */
-  public getAllDateInTimeLineFrames() {
+  public getAllDateInTimelineFrames() {
     if (this._allDates.length > 0) {
       return this._allDates;
     }

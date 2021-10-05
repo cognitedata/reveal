@@ -8,7 +8,7 @@ import { Cognite3DModel } from '@reveal/core';
 /**
  * Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
  */
-export class TimeLineKeyframe {
+export class TimelineKeyframe {
   private readonly _date: number;
   private readonly _model: Cognite3DModel;
   private readonly _nodeCollection: NodeCollectionBase;
@@ -27,24 +27,24 @@ export class TimeLineKeyframe {
   }
 
   /**
-   * Get date of the TimeLineFrame
+   * Get date of the TimelineFrame
    * @returns date
    */
-  public getTimeLineFrameDate() {
+  public getTimelineFrameDate() {
     return this._date;
   }
 
   /**
-   * Assigns the styles for the node set for the model for this TimeLineFrame
+   * Assigns the styles for the node set for the model for this TimelineFrame
    */
-  public applyStyle() {
+  public activate() {
     this._model.assignStyledNodeCollection(this._nodeCollection, this._nodeAppearance);
   }
 
   /**
    * Removes the style for the current node collection
    */
-  public removeStyle() {
+  public deactivate() {
     this._model.unassignStyledNodeCollection(this._nodeCollection);
   }
 

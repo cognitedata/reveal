@@ -1,6 +1,6 @@
 ---
 id: timelinetool
-title: TimeLine Tool
+title: Timeline Tool
 describe: Applying styles to nodes based on date with Play & Stop
 ---
 
@@ -17,66 +17,66 @@ The examples shown is therefore might not be a ideal model construction progress
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
-## TimeLine
+## Timeline
 
-TimeLine tool provides ablility to apply styles to nodes using Date as a property. It requires Time Keyframes to be created.
+Timeline tool provides ablility to apply styles to nodes using Date as a property. It requires Time Keyframes to be created.
 Each timeframe consists of nodes which are the elements to be rendered, appearance/styles to be assigned to the nodes and
 lastly the date for the nodes as reference to be rendered.
 
-### Create TimeFrame
-To create TimeLineFrames, use createKeyFrame(date: number, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
-- date - Date reference for the TimeLineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
+### Creating keyframes
+To create TimelineFrames, use createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
+- date - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
 - nodeCollection - Set of nodes to be rendered for the TimeFrame.
 - nodeAppearance - Styling of the nodes.
 
-### Play TimeLine
-We use play(durationInMilliSeconds: number, startDate: number, endDate: number)
-- durationInMilliSeconds - Number of milli-seconds after which next TimeLineFrame is rendered.
-- startDate - TimeLineFrame date to start the Playback of TimeLineFrames.
-- endDate - TimeLineFrame date to stop the Playback of TimeLineFrames.
+### Play timelines
+We use play(startDate: Date, endDate: Date, durationInMilliSeconds: number)
+- startDate - TimelineFrame date to start the Playback of TimelineFrames.
+- endDate - TimelineFrame date to stop the Playback of TimelineFrames.
+- durationInMilliSeconds - Number of milli-seconds after which next TimelineFrame is rendered.
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
-// import { TimeLineTool } from '@cognite/reveal/tools';
+// import { TimelineTool } from '@cognite/reveal/tools';
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
-const timeline = new TimeLineTool(viewer, model);
+const timeline = new TimelineTool(model);
 
 const nodes = new AssetNodeCollection(sdk, model);
-timeline.createKeyFrame(Date.now(), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
+timeline.createKeyFrame(new Date('2021-10-05'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
 
 nodes.executeFilter({ assetId: 4222791488928479 });
-timeline.createKeyFrame(20000, nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
+timeline.createKeyFrame(new Date('2021-10-06'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
-timeline.createKeyFrame(40000, allPipes, { renderGhosted: false, color: [40, 200, 20] });
+timeline.createKeyFrame(new Date('2021-10-07'), allPipes, { renderGhosted: false, color: [40, 200, 20] });
 
 const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
-timeline.createKeyFrame(60000, stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
+timeline.createKeyFrame(new Date('2021-10-08'), stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
-timeline.play(5000, 1000, 80000);
+timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 5000);
 
 ```
 
-### Remove a TimeLineFrame
-To remove any TimeLineFrame, use removeKeyFrame(date: number)
-- date - TimeLineFrame date to be removed from the TimeLine in milliseconds.
+### Removing keyframes
+To remove any TimelineFrame, use removeKeyFrame(date: Date)
+- date - TimelineFrame date to be removed from the Timeline in milliseconds.
 
 ```js runnable
-timeline.removeKeyFrame(40000);
+timeline.removeKeyFrame(new Date('2021-10-07'));
 ```
 
-### Stop TimeLine
+### Stop timeline playback
 
 ```js runnable
 timeline.stopPlayback();
 ```
-### Dates in TimeLineFrame
-We can get all the dates added into the TimeLineFrame by calling getAllDateInTimeLineFrames()
+### Dates in keyframes
+We can get all the dates added into the TimelineFrame by calling getAllDateInTimelineFrames()
 
 ```js runnable
-const allDates = timeline.getAllDateInTimeLineFrames();
+const allDates = timeline.getAllDateInTimelineFrames();
 ```
