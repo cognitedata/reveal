@@ -137,7 +137,7 @@
     "babel-loader": "8.1.0",
     "concurrently": "^6.3.0",
     "crypto": "^1.0.1",
-    "depcheck": "^1.4.1",
+    "depcheck": "^1.4.2",
     "enzyme": "^3.9.0",
     "es-check": "^5.0.0",
     "eslint-config-airbnb": "^18.2.1",
