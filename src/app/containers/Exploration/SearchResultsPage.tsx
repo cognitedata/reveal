@@ -33,7 +33,6 @@ import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSear
 import { useDateRange } from 'app/context/DateRangeContext';
 import { PageTitle } from '@cognite/cdf-utilities';
 import FilterToggleButton from './FilterToggleButton';
-import { LabelsQuickSelect } from './LabelsQuickSelect';
 
 const Wrapper = styled.div`
   display: flex;
@@ -207,16 +206,6 @@ function SearchPage() {
               <ExplorationSearchBar />
             </Col>
           </SearchInputContainer>
-          {['file', 'asset'].includes(currentResourceType) ? (
-            <Row style={{ marginTop: 8, marginLeft: showFilter ? 8 : 0 }}>
-              <Col flex="auto">
-                <LabelsQuickSelect
-                  key={currentResourceType}
-                  type={currentResourceType as 'file' | 'asset'}
-                />
-              </Col>
-            </Row>
-          ) : undefined}
           <SearchResultWrapper
             style={{
               paddingRight: active ? 8 : 0,
