@@ -18,7 +18,7 @@ const doFetchUsers = ({
 }: { headers: AuthHeaders | { fasAppId?: string } } & Props) => {
   return axios
     .post<Record<string, UMSUser>>(
-      `${userManagementServiceBaseUrl}/user`,
+      `${userManagementServiceBaseUrl}/user/map`,
       { uids: ids },
       { headers }
     )
@@ -27,6 +27,7 @@ const doFetchUsers = ({
     });
 };
 
+// Not used - mark for delete.
 export const useFetchUsers = ({
   userManagementServiceBaseUrl,
   ids,

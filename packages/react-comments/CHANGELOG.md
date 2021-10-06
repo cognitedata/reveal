@@ -1,3 +1,7 @@
+## 1.0.1 Oct 06 2021
+
+- Change UMS endpoints
+
 ## 1.0.0 Oct 05 2021
 
 - Bumps version for react-container

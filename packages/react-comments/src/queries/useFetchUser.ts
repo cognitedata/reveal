@@ -16,10 +16,9 @@ interface Props {
 const doFetchUser = ({
   userManagementServiceBaseUrl,
   headers,
-  id,
-}: { headers: AuthHeaders | { fasAppId?: string }; id: string } & Props) => {
+}: { headers: AuthHeaders | { fasAppId?: string } } & Props) => {
   return axios
-    .get<UMSUser>(`${userManagementServiceBaseUrl}/user/${id}`, {
+    .get<UMSUser>(`${userManagementServiceBaseUrl}/user/me`, {
       headers,
     })
     .then((result) => {
@@ -38,7 +37,6 @@ export const useFetchUser = ({
     userKeys.usersGet([authState?.id || '']),
     () =>
       doFetchUser({
-        id: authState?.id || '',
         userManagementServiceBaseUrl,
         headers,
       }),
