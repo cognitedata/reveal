@@ -2,7 +2,6 @@ import React from 'react';
 import {
   fireEvent,
   screen,
-  waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import { QueryClient } from 'react-query';
@@ -29,7 +28,6 @@ import { useDataSetsList } from 'hooks/useDataSetsList';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
-import { act } from '@testing-library/react-hooks';
 
 jest.mock('react-router-dom', () => {
   const r = jest.requireActual('react-router-dom');
@@ -64,7 +62,7 @@ jest.mock('components/chart/RunChart', () => {
     },
   };
 });
-describe.skip('IntegrationPage', () => {
+describe('IntegrationPage', () => {
   beforeEach(() => {
     useLocation.mockReturnValue({ pathname: '', search: '' });
     useRouteMatch.mockReturnValue({ path: 'path', url: '/' });
@@ -150,24 +148,14 @@ describe.skip('IntegrationPage', () => {
     screen.queryByText('Delete "PI AF integration"?');
 
   async function clickDeletePipeline() {
-    fireEvent.click(
-      screen.getAllByTestId('extpipe-actions-dropdown-button')[0]
-    );
-    await waitFor(() => {
-      screen.getByTestId('delete-pipeline-in-dropdown');
-    });
-    await act(() => {
-      fireEvent.click(screen.getByTestId('delete-pipeline-in-dropdown'));
-    });
-    // await waitForElementToBeRemoved(() => {
-    //  screen.getByTestId('delete-pipeline-in-dropdown');
-    // });
+    fireEvent.click(screen.getByTestId('extpipe-actions-dropdown-button'));
+    fireEvent.click(screen.getByText('Delete'));
   }
 
-  test('Dialog pops up when clicking', () => {
+  test('Dialog pops up when clicking', async () => {
     renderIntegrationPage();
     expect(deleteDialogHeader()).not.toBeInTheDocument();
-    clickDeletePipeline();
+    await clickDeletePipeline();
     expect(deleteDialogHeader()).toBeInTheDocument();
   });
 
@@ -186,9 +174,9 @@ describe.skip('IntegrationPage', () => {
     await clickDeletePipeline();
 
     const confirmTextField = getInputFieldForDeleteConfirm();
-    const deleteButtonInsideDialog = screen.getByText(
-      'Delete'
-    ) as HTMLButtonElement;
+    const deleteButtonInsideDialog = screen.getByText('Delete', {
+      selector: '.cogs-btn-primary',
+    }) as HTMLButtonElement;
 
     expect(deleteButtonInsideDialog.disabled).toBe(true);
     fireEvent.change(confirmTextField, { target: { value: 'DELETE' } });

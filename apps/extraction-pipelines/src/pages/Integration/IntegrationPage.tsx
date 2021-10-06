@@ -252,7 +252,6 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                         setDropdownVisible(false);
                         setIsDeleteDialogOpen(true);
                       }}
-                      data-testid="getByTestId"
                       color="danger"
                     >
                       Delete
@@ -261,11 +260,12 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                 }
               >
                 <Button
-                  onClick={() => setDropdownVisible(true)}
+                  onClick={() => setDropdownVisible(!dropdownVisible)}
                   icon="MoreOverflowEllipsisHorizontal"
                   data-testid="extpipe-actions-dropdown-button"
+                  aria-label="More pipeline actions"
                   iconPlacement="right"
-                  variant="ghost"
+                  type="ghost"
                 />
               </Dropdown>
             </LinkWrapper>
