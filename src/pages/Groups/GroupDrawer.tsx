@@ -22,7 +22,6 @@ type Props = {
 };
 export default function GroupDrawer({ group, onClose }: Props) {
   const sdk = useSDK();
-  const legacyAuth = sdk.getOAuthFlowType() === 'CDF_OAUTH';
   const client = useQueryClient();
   const [caps, setCaps] = useState(group?.capabilities || []);
   const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
@@ -39,9 +38,14 @@ export default function GroupDrawer({ group, onClose }: Props) {
       // @ts-ignore
       const { name, sourceId, source, capabilities, id } = g;
       const defaultGroup = project?.defaultGroupId === id;
-      const groupAccountIds = (
-        legacyAuth && !!id ? await sdk.groups.listServiceAccounts(id) : []
-      ).map(account => account.id);
+      let groupAccountIds: number[];
+      try {
+        groupAccountIds = (
+          id ? await sdk.groups.listServiceAccounts(id) : []
+        ).map(account => account.id);
+      } catch {
+        groupAccountIds = [];
+      }
 
       const [newGroup] = await sdk.groups.create([
         // @ts-ignore
