@@ -125,8 +125,5 @@
     "hooks": {
       "pre-push": "yarn run lint"
     }
-  },
-  "resolutions": {
-    "@cognite/reveal": "portal:/D:/Work/Projects/Cognite/git/reveal/viewer"
   }
 }
