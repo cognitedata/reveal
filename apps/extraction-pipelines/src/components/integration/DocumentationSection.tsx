@@ -24,11 +24,11 @@ import {
 import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CloseButton, SaveButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { DetailFieldNames } from 'model/Integration';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { Button, Graphic } from '@cognite/cogs.js';
+import { Graphic } from '@cognite/cogs.js';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 import { Section } from 'components/integration/Section';
 import { DivFlex } from 'styles/flex/StyledFlex';
@@ -149,11 +149,11 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           troubleshooting or more detailed information about the data such as
           selection criteria.
         </p>
-        <Button variant="ghost" onClick={onEditClick}>
+        <EditButton variant="ghost" onClick={onEditClick} disabled={!canEdit}>
           <AddFieldInfoText>
             {DetailFieldNames.DOCUMENTATION.toLowerCase()}
           </AddFieldInfoText>
-        </Button>
+        </EditButton>
       </DivFlex>
     ) : (
       <EditableAreaButton

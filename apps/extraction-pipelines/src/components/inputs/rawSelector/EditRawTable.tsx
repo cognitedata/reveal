@@ -45,6 +45,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
           type="ghost"
           icon="Edit"
           iconPlacement="right"
+          disabled={!canEdit}
           onClick={toggleModal(true)}
           title="Toggle raw table modal"
           data-testid={`${TEST_ID_BTN_SAVE}rawTable`}

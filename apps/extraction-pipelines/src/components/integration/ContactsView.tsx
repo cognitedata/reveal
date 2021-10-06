@@ -37,7 +37,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
   );
 
   const openEdit = () => {
-    setShowModal(true);
+    setShowModal(canEdit);
   };
 
   const hideModal = () => {
@@ -48,7 +48,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
     <>
       <Wrapper>
         {contacts && contacts.length > 0 ? (
-          <EditableAreaButton onClick={openEdit} $full>
+          <EditableAreaButton disabled={!canEdit} onClick={openEdit} $full>
             <div>
               {contactsSorted.map((contact: User) => {
                 return <ContactCard key={contact.email} {...contact} />;
