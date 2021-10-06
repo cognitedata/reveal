@@ -18,11 +18,11 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier,
   ModelDataClient,
+  ModelMetadataProvider,
   CdfModelMetadataProvider,
   LocalModelMetadataProvider
 } from '@reveal/modeldata-api';
 import { CogniteClient } from '@cognite/sdk';
-import { ModelMetadataProvider } from '../../../packages/modeldata-api/src/types';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
