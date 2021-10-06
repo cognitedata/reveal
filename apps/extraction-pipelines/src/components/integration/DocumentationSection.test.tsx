@@ -27,7 +27,7 @@ describe('DocumentationSection', () => {
       '/'
     );
   });
-  test.skip('Interacts with documentation', async () => {
+  test('Interacts with documentation', async () => {
     sdkv3.post.mockResolvedValue({ data: { items: [mock] } });
     sdkv3.get.mockResolvedValueOnce({ data: mock });
     sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
@@ -42,11 +42,11 @@ describe('DocumentationSection', () => {
     expect(documentation).toBeInTheDocument();
     fireEvent.click(documentation);
     await waitFor(() => {
-      screen.getByLabelText(DetailFieldNames.DOCUMENTATION);
+      screen.getByTestId('documentation-textarea');
     });
     const newDocumentation = 'new documentation';
 
-    fireEvent.change(screen.getByLabelText(DetailFieldNames.DOCUMENTATION), {
+    fireEvent.change(screen.getByTestId('documentation-textarea'), {
       target: { value: newDocumentation },
     });
     sdkv3.get.mockResolvedValueOnce({
