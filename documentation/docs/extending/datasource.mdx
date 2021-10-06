@@ -48,7 +48,7 @@ class CdfModelIdentifier implements ModelIdentifier {
 ```
 
 | Function/Field          | Required?                                  | Description                                                      |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| ----------------------- | ------------------------------------------ | ---------------------------------------------------------------- |
 | `getModelUrl()`         | Yes                                        | Determine the base URL that will be used when download metadata and geometry using `ModelDataProvider`. |
 | `getModelCamera()`      | No - return `undefined` to use default     | Return an initial camera pose for the model                      |
 | `getModelMatrix()`      | Yes, but value can be hardcoded.           | Returns an transformation matrix for transforming from stored coordinates to Reveal coordinates (see below) |
@@ -128,7 +128,7 @@ class MyModelMetaDataProvider implements ModelMetaDataProvider {
 `ModelDataProvider` is responsible for receiving files by URL.
 
 | Function/Field          | Required?                                  | Description                                                      |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| ----------------------- | ------------------------------------------ | ---------------------------------------------------------------- |
 | `getBinaryFile()`       | Yes                                        | Retrieves a binary blob. Used to download CAD geometry           |
 | `getJsonFile()`         | Yes                                        | Retrieves JSON data. This is used to store some metadata about models |
 | `headers: HttpHeaders`  | Only used for point clouds.                | Headers used during point cloud streaming. Useful if you e.g. need to provide authentication headers to the requests |
@@ -169,7 +169,29 @@ class MyModelDataProvider implements ModelDataProvider {
 
 ## NodesApiClient
 
-The API client is responsible for providing metadata about 3D CAD nodes, including 
+The API client is responsible for providing metadata about 3D CAD nodes, including node bounding boxes and parent/child relationships between nodes.
+
+| Function/Field              | Required?                                  | Description                                                      |
+| --------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| `mapTreeIndicesToNodeIds()` | No, but recommended to have a 1:1 mapping  | Maps from Reveal tree indices to CDF node IDs used to identify nodes in CDF |
+| `mapNodeIdsToTreeIndices()` | No, but recommended to have a 1:1 mapping  | Reverse mapping of `mapTreeIndicesToNodeIds()`                   |
+| `determineTreeIndexAndSubtreeSizesByNodeIds()` | No                      | Determines the "span" of a node identified by a CDF node ID (i.e. the tree index and how many descendants it has including the node itself). |
+| `determineNodeAncestorsByNodeId()` | No                                  | Find "ancestor span" of a node identified by the CDF node ID. Returns data on same format as function above. |
+| `getBoundingBoxByNodeId()` | No                                          | Determines bounds of a node by its CDF node ID. |
+
+
+### Requirement matrix
+
+| `Cognite3DModel` \ `NodesApiClient` | <div >`mapTreeIndicesToNodeIds()`</div> | `mapNodeIdsToTreeIndices()` | `determineTreeIndexAndSubtreeSizesByNodeIds()` | `determineNodeAncestorsByNodeId()` | `getBoundingBoxByNodeId()` |
+| ----------------------------------- | --------------------------------------- | --------------------------- | ---------------------------------------------- | ---------------------------------- | -------------------------- |
+| `getBoundingBoxByNodeId()`          |                             |                             |                                                |                                    | X                          |
+| `getBoundingBoxByNodeTreeIndex()`   | X                           |                             |                                                |                                    | X                          |
+| `mapNodeIdToTreeIndex()`            |                             | X                           |                                                |                                    |                            |
+| `mapNodeIdsToTreeIndices()`         |                             | X                           |                                                |                                    |                            |
+| `mapTreeIndexToNodeId()`            | X                           |                             |                                                |                                    |                            |
 
 ## Unsupported features
 
+** TODO **
+- Point clouds - partially supported?
+- Node styling based on CDF
