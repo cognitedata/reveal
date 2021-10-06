@@ -65,8 +65,8 @@ export class CdfModelMetadataProvider
         `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal, because no outputs for format '(${format})' was found. If this model works with a previous version of Reveal it must be reprocessed to support this version.`
       );
     }
-    const blobId = mostRecentOutput.blobId;
-    return `${this._client.getBaseUrl()}${this.buildBlobRequestPath(blobId)}`;
+    const directoryId = mostRecentOutput.blobId;
+    return `${this._client.getBaseUrl()}${this.getRequestPath(directoryId)}`;
   }
 
   public async getOutputs(modelIdentifier: {
@@ -84,7 +84,7 @@ export class CdfModelMetadataProvider
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 
-  private buildBlobRequestPath(blobId: number): string {
-    return  `/api/v1/projects/${this._client.project}/3d/files/${blobId}`;
+  private getRequestPath(directoryId: number): string {
+    return `/api/v1/projects/${this._client.project}/3d/files/${directoryId}`;
   }
 }
