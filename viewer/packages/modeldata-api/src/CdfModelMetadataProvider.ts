@@ -85,7 +85,6 @@ export class CdfModelMetadataProvider
   }
 
   private buildBlobRequestPath(blobId: number): string {
-    const url = `/api/v1/projects/${this._client.project}/3d/files/${blobId}`;
-    return url;
+    return  `/api/v1/projects/${this._client.project}/3d/files/${blobId}`;
   }
 }
