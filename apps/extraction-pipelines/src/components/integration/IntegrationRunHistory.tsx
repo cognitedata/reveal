@@ -30,8 +30,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
 import { RunChart } from 'components/chart/RunChart';
 import {
-  DateFormatsRecord,
   DateFormatRecordType,
+  DateFormatsRecord,
   mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
 import { Span3 } from 'styles/grid/StyledGrid';
@@ -199,6 +199,7 @@ export const IntegrationRunHistory: FunctionComponent<LogsViewProps> = ({
           pageCount={pageCount}
           fetchData={fetchData}
           pageSize={pageSize}
+          integration={integration}
         />
       </div>
     );
