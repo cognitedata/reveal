@@ -2,11 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NumericRange } from '../../../utilities';
-import { IndexSet } from '../../../utilities/IndexSet';
+import { NumericRange, IndexSet } from '@reveal/utilities';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { ListResponse } from '@cognite/sdk-core';
-import { sleep } from '../../../__testutilities__/wait';
+import { sleep } from '../../../../../test-utilities';
 
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
