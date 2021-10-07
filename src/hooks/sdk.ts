@@ -91,7 +91,7 @@ export const useFileIcon = (file: FileInfo) => {
 };
 
 export interface DataSetWCount extends DataSet {
-  count: number;
+  count?: number;
 }
 export const useRelevantDatasets = (
   type: SdkResourceType
@@ -144,8 +144,8 @@ export const useRelevantDatasets = (
 
   if (aggregateFetched && counts) {
     return counts
-      .filter(({ count }) => count > 0)
-      .sort((a, b) => b.count - a.count);
+      .filter(({ count = 0 }) => count > 0)
+      .sort(({ count: countA = 0 }, { count: countB = 0 }) => countB - countA);
   }
-  return undefined;
+  return datasets;
 };

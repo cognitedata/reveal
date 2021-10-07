@@ -16,7 +16,10 @@ export const DataSetFilter = ({
   value: IdEither[] | undefined;
   setValue: (newValue: IdEither[] | undefined) => void;
 }) => {
-  const { data: hasPermissions } = usePermissions('datasetsAcl', 'READ');
+  const {
+    data: hasPermissions,
+    isFetched: arePermissionsFetched,
+  } = usePermissions('datasetsAcl', 'READ');
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
     value || [],
@@ -36,7 +39,7 @@ export const DataSetFilter = ({
     const name = dataset?.name || '';
     const label = name.length > 0 ? name : `${dataset.id}`;
     return {
-      label: `${label} (${dataset.count})`,
+      label: `${label}${dataset.count ? ` (${dataset.count})` : ''}`,
       value: dataset.id,
     };
   };
@@ -44,8 +47,12 @@ export const DataSetFilter = ({
   return (
     <Tooltip
       interactive
-      disabled={hasPermissions}
-      content="You do not have access to data sets, please make sure you have datasetsAcl:READ"
+      disabled={arePermissionsFetched && hasPermissions}
+      content={
+        arePermissionsFetched &&
+        !hasPermissions &&
+        'You do not have access to data sets, please make sure you have datasetsAcl:READ'
+      }
     >
       <>
         <Body
@@ -57,7 +64,7 @@ export const DataSetFilter = ({
         </Body>
         <Select
           options={validDatasets?.map(formatOption)}
-          isDisabled={!hasPermissions}
+          isDisabled={!arePermissionsFetched || !hasPermissions}
           onChange={newValue => {
             setDataSetFilter(
               newValue
