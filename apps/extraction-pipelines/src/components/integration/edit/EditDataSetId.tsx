@@ -19,7 +19,7 @@ import {
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
-import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { AddInfo } from 'components/integration/AddInfo';
 import { ColumnForm, StyledLabel } from 'styles/StyledForm';
 import styled from 'styled-components';
@@ -110,6 +110,17 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   const onCancel = () => {
     setIsEdit(false);
   };
+
+  if (!canEdit) {
+    return (
+      <div css="padding: 1em">
+        <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
+          {TableHeadings.DATA_SET}
+        </StyledLabel>
+        <div css="margin: 1em 0">Some dataset name</div>
+      </div>
+    );
+  }
 
   return (
     <FormProvider {...methods}>
