@@ -25,5 +25,11 @@ testcafe/videos
 testcafe/logs
 res.xml
 
+# cypress
+cypress/plugins
+cypress/screenshots
+cypress/support
+cypress/videos
+
 #storybook
 storybook-static/

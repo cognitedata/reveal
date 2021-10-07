@@ -16,6 +16,11 @@ This repo uses [Bazel](https://bazel.build/) as a build tool. To get that set up
 
 If you want to read more details about the Bazel setup, see [bazel.md](https://github.com/cognitedata/application-services/tree/master/bazel.md).
 
+## Running cypress
+
+To work with cypress, you might have to install some dependencies on your machine.
+Please refer to the official [documentation](https://docs.cypress.io/guides/continuous-integration/introduction#Machine-requirements)
+
 ## How do I run my application locally?
 
 All the api middleware have a set of scripts defined in their `package.json`.
@@ -50,7 +55,7 @@ This will spit out all of the boilerplate that you need to have a production-cap
 - Jenkinsfile steps
 - TypeScript usage
 - Storybook usage
-- Testcafe
+- Testcafe or Cypress
 - Folder / component layout
 - Authentication workflow
 
@@ -88,7 +93,7 @@ When you have your project available you need to:
 
 1. Ask in #infrastructure to populate `apps-e2e-fake-idp-private-keys` secret with the new key being the name of your project.
 2. In `public/sidecar.js` inside `fakeIdp` array object define `name: <projectName>` and `project: <projectName>` parameters which will render a button `Login with Fake IDP (<projectName>)`.
-3. Inside your app's testcafe role find and click the button above in order to obtain a token.
+3. Inside your app's testcafe / cypress role find and click the button above in order to obtain a token.
 
 ## Release procedure
 

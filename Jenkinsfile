@@ -71,7 +71,7 @@ def pods = { body ->
             ]
           ) {
             codecov.pod {
-              testcafe.pod(
+              fakeIdp.pod(
                 fakeIdpEnvVars: fakeIdpEnvVars,
               ) {
                 properties([
@@ -129,7 +129,7 @@ pods {
         // bazel on alpine (linux for testcafe image)
         sh('npm install -g @bazel/bazelisk')
         // zip is needed for Bazel to archive test artifacts
-        sh('apt update && apt --assume-yes install g++ unzip zip')
+        sh('apt update && apt --assume-yes install g++ unzip zip xvfb')
 
         sh("cp .ci.bazelrc ~/.bazelrc")
         sh(label: 'Set up NPM', script: 'cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
@@ -152,10 +152,7 @@ pods {
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: "bazel --bazelrc=.ci.bazelrc run //:buildifier_check")
-        retry(3) {
-          // Testcafe occasionally failing, let's simply retry until an issue is solved
-          sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
-        }
+        sh(label: 'bazel test //...', script: "bazel --bazelrc=.ci.bazelrc test //...")
 
         // Bazel stores test outputs as zip files
         sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo")

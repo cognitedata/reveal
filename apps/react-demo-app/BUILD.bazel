@@ -1,8 +1,11 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@npm//@bazel/typescript:index.bzl", "ts_project")
+load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
 load("@npm//testcafe:index.bzl", "testcafe")
+load("@npm//cypress:index.bzl", "cypress")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
@@ -29,6 +32,11 @@ _TESTS_TESTCAFE = [
     "testcafe/**/*.ts",
 ]
 
+_TESTS_CYPRESS = [
+    "cypress/**/*.spec.ts",
+    "cypress/**/*.test.ts",
+]
+
 _STORYBOOK = [
     ".storybook/*",
     "src/**/*.stories.ts*",
@@ -41,6 +49,8 @@ _SOURCES = [
 TESTS = glob(_TESTS + _STORYBOOK)
 
 TESTS_TESTCAFE = glob(_TESTS_TESTCAFE)
+
+TESTS_CYPRESS = glob(_TESTS_CYPRESS)
 
 STORYBOOK = glob(_STORYBOOK)
 
@@ -345,6 +355,73 @@ testcafe(
     env = {
         "BASE_URL": "https://localhost:3000",
     },
+)
+
+### Cypress ###
+
+ts_project(
+    name = "plugin_file",
+    srcs = ["cypress/plugin.ts"],
+    extends = "cypress/tsconfig.json",
+    tsconfig = {
+        "compilerOptions": {
+            "types": ["node"],
+        },
+    },
+    deps = [
+        "@npm//@types/node",
+        "@npm//express",
+    ],
+)
+
+# You can write your cypress tests a javascript files or in typescript.
+ts_project(
+    name = "cypress_project",
+    srcs = TESTS_CYPRESS,
+    extends = "cypress/tsconfig.json",
+    tsconfig = {
+        "compilerOptions": {
+            "types": ["cypress"],
+        },
+    },
+    deps = [
+        "@npm//cypress",
+    ],
+)
+
+cypress_web_test(
+    # The name of your test target
+    name = "cypress_test",
+    srcs = [
+        ":build_sed",
+        # Load ts_library tests as a target to srcs
+        ":cypress_project",
+    ],
+    # A cypress config file is required
+    config_file = "cypress.json",
+    # Any runtime dependencies you need to boot your server or run your tests
+    data = [],
+    env = {
+        "PORT": "11112",
+    },
+    # Your cypress plugin used to configure cypress and boot your server
+    plugin_file = ":plugin_file",
+)
+
+cypress(
+    name = "cypress",
+    args = [
+        "run",
+        "--headed",
+        "--project ./apps/react-demo-app",
+        "--spec ./apps/react-demo-app/cypress/**/*.spec.js",
+        "--env BASE_URL=https://localhost:3000",
+    ],
+    data = [
+        "cypress.json",
+        ":cypress_project",
+        ":start",
+    ],
 )
 
 ### Storybook ###

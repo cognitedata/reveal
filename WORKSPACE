@@ -89,3 +89,13 @@ git_repository(
 load("@com_github_cognitedata_bazel_tools//:deps.bzl", "cognitedata_bazel_tools_deps")
 
 cognitedata_bazel_tools_deps()
+
+# Cypress
+
+load("@build_bazel_rules_nodejs//toolchains/cypress:cypress_repositories.bzl", "cypress_repositories")
+
+# The name you pass here names the external repository you can load cypress_web_test from
+cypress_repositories(
+    name = "cypress",
+    version = "8.5.0",
+)
