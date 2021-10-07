@@ -121,8 +121,6 @@ const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your 
 export const ADD_MORE_INFO_HEADING: Readonly<string> = `Additional information`;
 const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the ${EXTRACTION_PIPELINE_LOWER}, such as pipeline schedule configuration details and configure notifications.`;
 const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
-// eslint-disable-next-line
-const ADD_MORE_INFO_LINK: Readonly<string> = `Read about registering an ${EXTRACTION_PIPELINE_LOWER}`;
 
 export interface AddIntegrationFormInput
   extends ScheduleFormInput,
@@ -369,7 +367,7 @@ export const CreateIntegration = (props: {
                 {CANCEL}
               </a>
             ) : (
-              <Button variant="ghost" onClick={props.customCancelCallback}>
+              <Button type="ghost" onClick={props.customCancelCallback}>
                 {CANCEL}
               </Button>
             )}

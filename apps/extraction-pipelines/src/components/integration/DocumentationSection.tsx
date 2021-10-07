@@ -149,7 +149,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           troubleshooting or more detailed information about the data such as
           selection criteria.
         </p>
-        <EditButton variant="ghost" onClick={onEditClick} disabled={!canEdit}>
+        <EditButton type="ghost" onClick={onEditClick} disabled={!canEdit}>
           <AddFieldInfoText>
             {DetailFieldNames.DOCUMENTATION.toLowerCase()}
           </AddFieldInfoText>
@@ -180,6 +180,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
       <ValidationError errors={errors} name="documentation" />
       <StyledTextArea
         id="documentation-textarea"
+        data-testid="documentation-textarea"
         {...register('documentation')}
         defaultValue={currentIntegration?.documentation}
         className={`cogs-input ${!!errors.documentation && 'has-error'}`}

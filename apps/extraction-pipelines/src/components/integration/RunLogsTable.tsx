@@ -14,6 +14,9 @@ import styled from 'styled-components';
 import { Graphic, OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { RunUI } from 'model/Runs';
 import { DivFlex } from 'styles/flex/StyledFlex';
+import { Integration } from 'model/Integration';
+import { calculateStatus } from 'utils/integrationUtils';
+import { RunStatusUI } from 'model/Status';
 
 const Wrapper = styled.div`
   margin-bottom: 5rem;
@@ -66,6 +69,7 @@ interface LogsTableProps {
   fetchData: (params: { pageSize: number }) => void;
   pageCount: number;
   pageSize: number;
+  integration: Integration | null;
 }
 export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   data,
@@ -73,6 +77,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   fetchData,
   pageCount: controlledPageCount,
   pageSize: controlledPageSize,
+  integration,
 }: PropsWithChildren<LogsTableProps>) => {
   const dataSource = useMemo(() => {
     return data;
@@ -123,9 +128,15 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     return options.find(({ value }) => value === innerPageSize)!;
   };
 
-  return rows.length === 0 ? (
-    <DivFlex align="center" direction="column">
-      <Graphic style={{ margin: '2em 0' }} type="RuleMonitoring" />
+  const pipelineNotActivated =
+    integration != null &&
+    calculateStatus({
+      lastSuccess: integration.lastSuccess,
+      lastFailure: integration.lastFailure,
+    }).status === RunStatusUI.NOT_ACTIVATED;
+
+  const reasonForNoRows = pipelineNotActivated ? (
+    <>
       <p style={{ fontWeight: 'bold' }}>
         Activate the extraction pipeline to monitor its status.
       </p>
@@ -136,6 +147,15 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
         </a>
         .
       </p>
+    </>
+  ) : (
+    <p>No data is available for this criteria.</p>
+  );
+
+  return rows.length === 0 ? (
+    <DivFlex align="center" direction="column">
+      <Graphic style={{ margin: '2em 0' }} type="Search" />
+      {reasonForNoRows}
       <p>&nbsp;</p>
     </DivFlex>
   ) : (
