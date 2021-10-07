@@ -1,0 +1,5 @@
+# By default, @cognitedata/cdf-user-experiencereceives all PRs.
+#
+# Make sure that @cognitedata/cdf-user-experienceis on all other specifications in
+# this file.
+* @cognitedata/cdf-user-experience
