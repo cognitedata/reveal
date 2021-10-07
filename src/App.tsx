@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import styled from "styled-components/macro";
+import "./AppGlobalStyles.tsx";
+import { GlobalStyle } from "./AppGlobalStyles";
+import "@cognite/cogs.js/dist/cogs.css";
+import { Header } from "./components/Header/Header";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { SolutionsPage } from "./pages/solutions/SolutionsPage";
+import { GuideToolsPage } from "./pages/guide&tools/GuideToolsPage";
+import { StatusPage } from "./pages/status/StatusPage";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <GlobalStyle />
+      <StyledWrapper>
+        <Router>
+          <Header />
+          <StyledPage>
+            <Switch>
+              <Route exact path="/">
+                <SolutionsPage />
+              </Route>
+              <Route exact path="/guidetools">
+                <GuideToolsPage />
+              </Route>
+              <Route exact path="/status">
+                <StatusPage />
+              </Route>
+            </Switch>
+          </StyledPage>
+        </Router>
+      </StyledWrapper>
+    </>
   );
 }
 
 export default App;
+
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+`;
+
+const StyledPage = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+`;
