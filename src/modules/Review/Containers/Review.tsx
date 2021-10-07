@@ -133,10 +133,9 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
                   <Button
                     type="secondary"
                     style={{ background: 'white' }}
-                    shape="round"
                     onClick={onBackButtonClick}
                   >
-                    <Icon type="Left" />
+                    <Icon type="ChevronLeftCompact" />
                     Back
                   </Button>
                 ) : (
