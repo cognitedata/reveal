@@ -3,8 +3,7 @@
  */
 
 import { ListResponse } from '@cognite/sdk';
-import { IndexSet } from '../../../utilities/IndexSet';
-import { NumericRange } from '../../../utilities/NumericRange';
+import { IndexSet, NumericRange } from '@reveal/utilities';
 
 /**
  * Helper class that populates an IndexSet based on a paged results from the Cognite SDK.

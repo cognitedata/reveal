@@ -10,38 +10,36 @@
  * @module @cognite/reveal
  */
 
+export {
+  NodeCollectionBase,
+  TreeIndexNodeCollection,
+  IntersectionNodeCollection,
+  UnionNodeCollection,
+  NodeAppearanceProvider,
+  SerializedNodeCollection,
+  NodeAppearance,
+  NodeOutlineColor,
+  DefaultNodeAppearance
+} from '@reveal/cad-geometry-loaders';
+
+export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
+
 export * from './public/migration/Cognite3DViewer';
-export * from './revealEnv';
 export { BoundingBoxClipper } from './utilities';
 export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 
 export * from './public/types';
-
-export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
-
 export {
-  NodeCollectionBase,
   PropertyFilterNodeCollection,
   SinglePropertyFilterNodeCollection,
-  TreeIndexNodeCollection,
   AssetNodeCollection,
-  IntersectionNodeCollection,
-  UnionNodeCollection,
   InvertedNodeCollection,
-  NodeAppearanceProvider
-} from './datamodels/cad/styling';
-export { IndexSet } from './utilities/IndexSet';
-export { NumericRange } from './utilities/NumericRange';
-
-// Custom NodeCollection deserialization free-function
-export {
   registerCustomNodeCollectionType,
   TypeName,
   NodeCollectionDescriptor,
-  NodeCollectionSerializationContext,
-  SerializedNodeCollection
+  NodeCollectionSerializationContext
 } from './datamodels/cad/styling';
 
 // Export ThreeJS to enable easy import for our users

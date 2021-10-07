@@ -9,14 +9,11 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/cad-geometry-loaders": "workspace:*",
+    "@reveal/cad-parsers": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/nodes-api": "workspace:*"
-  },
-  "sideEffects": false,
-  "glslify": {
-    "transform": [
-      "glslify-import"
-    ]
+    "@reveal/nodes-api": "workspace:*",
+    "@reveal/utilities": "workspace:*"
   }
 }
