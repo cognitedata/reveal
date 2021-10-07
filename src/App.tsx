@@ -7,7 +7,7 @@ import { Header } from "./components/Header/Header";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { SolutionsPage } from "./pages/solutions/SolutionsPage";
 import { GuideToolsPage } from "./pages/guide&tools/GuideToolsPage";
-import { StatusPage } from "./pages/status/StatusPage";
+import { StatusPage } from "./pages/statusboard/StatusboardPage";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
               <Route exact path="/guidetools">
                 <GuideToolsPage />
               </Route>
-              <Route exact path="/status">
+              <Route exact path="/statusboard">
                 <StatusPage />
               </Route>
             </Switch>

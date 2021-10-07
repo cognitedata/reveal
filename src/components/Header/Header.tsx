@@ -17,8 +17,8 @@ const tabs: Array<{
     title: "Guide & Tools",
   },
   {
-    slug: "status",
-    title: "Status",
+    slug: "statusboard",
+    title: "Statusboard",
   },
 ];
 
@@ -48,7 +48,7 @@ export const Header = () => {
             history.push("/");
           }}
         >
-          <StyledGraphicLogo type="Cognite" />
+          <StyledLogo />
           <StyledTitleLogo level={6}>Platypus</StyledTitleLogo>
         </StyledTopBarItemLogo>
         {renderLinks()}
@@ -66,9 +66,11 @@ const StyledTopBarItemLogo = styled(TopBar.Item)`
   }
 `;
 
-const StyledGraphicLogo = styled(Graphic)`
-  width: 3.5rem !important;
-  margin: 0 1rem 0 0;
+const StyledLogo = styled.div`
+  width: 80px;
+  height: 35px;
+  background: transparent url("/images/logos/cognite-platypus.svg") center
+    center repeat-y;
 `;
 
 const StyledTitleLogo = styled(Title)`

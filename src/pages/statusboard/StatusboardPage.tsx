@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Spinner } from "../../components/Spinner/Spinner";
 
 const Status = lazy(() =>
-  import("./Status").then((module) => ({
+  import("./Statusboard").then((module) => ({
     default: module.Status,
   }))
 );
