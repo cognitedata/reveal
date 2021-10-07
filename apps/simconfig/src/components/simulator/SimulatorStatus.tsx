@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { Icon, Colors } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { usePolling } from 'hooks/usePolling';
-import { withRequireCapability } from 'utils/hocs/withRequireCapability';
 import { fetchSimulators } from 'store/simulator/thunks';
 import {
   selectAvailableSimulators,
@@ -57,6 +56,4 @@ function SimulatorStatusComponent() {
   );
 }
 
-export const SimulatorStatus = withRequireCapability('sequences', ['READ'])(
-  SimulatorStatusComponent
-);
+export const SimulatorStatus = SimulatorStatusComponent;
