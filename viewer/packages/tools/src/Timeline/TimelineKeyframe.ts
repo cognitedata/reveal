@@ -14,7 +14,7 @@ export class TimelineKeyframe {
   private readonly _nodeCollection: NodeCollectionBase;
   private readonly _nodeAppearance: NodeAppearance;
 
-  constructor(model: Cognite3DModel, date: Date, nodeCollection: NodeCollectionBase, nodeAppearance?: NodeAppearance) {
+  constructor(model: Cognite3DModel, date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
     this._model = model;
     this._date = date;
     this._nodeCollection = nodeCollection;
@@ -22,15 +22,15 @@ export class TimelineKeyframe {
   }
 
   /**
-   * Get date of the TimelineFrame
+   * Get date of the TimelineKeyframe
    * @returns date
    */
-  public getTimelineFrameDate(): Date {
+  public getTimelineKeyframeDate(): Date {
     return this._date;
   }
 
   /**
-   * Assigns the styles for the node set for the model for this TimelineFrame
+   * Assigns the styles for the node set for the model for this TimelineKeyframe
    */
   public activate() {
     this._model.assignStyledNodeCollection(this._nodeCollection, this._nodeAppearance);
@@ -48,5 +48,22 @@ export class TimelineKeyframe {
    */
   public applyDefaultStyle() {
     this._model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+  }
+
+  /**
+   * Assign Style to node collection
+   * @param nodeCollection Node set to apply the Styles
+   * @param nodeAppearance Style to assign to the node collection
+   */
+  public assignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
+    this._model.assignStyledNodeCollection(nodeCollection, nodeAppearance);
+  }
+
+  /**
+   * Remove Style for given node collection
+   * @param nodeCollection Node set to remove the Styles
+   */
+  public unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    this._model.unassignStyledNodeCollection(nodeCollection);
   }
 }

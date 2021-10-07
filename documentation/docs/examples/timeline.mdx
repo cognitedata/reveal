@@ -26,7 +26,7 @@ lastly the date for the nodes as reference to be rendered.
 ### Creating keyframes
 To create TimelineFrames, use createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
 - date - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
-- nodeCollection - Set of nodes to be rendered for the TimeFrame.
+- nodeCollection - Set of nodes to be rendered for the TimelineKeyframe.
 - nodeAppearance - Styling of the nodes.
 
 ### Play timelines
@@ -74,9 +74,23 @@ timeline.removeKeyFrame(new Date('2021-10-07'));
 ```js runnable
 timeline.stopPlayback();
 ```
+
 ### Dates in keyframes
 We can get all the dates added into the TimelineFrame by calling getAllDateInTimelineFrames()
 
 ```js runnable
 const allDates = timeline.getAllDateInTimelineFrames();
+```
+
+### Assign Styles to set of Nodes to a TimelineKeyFrame or number of TimelineKeyFrames
+Tool provides feature to add additional styles to a TimelineKeyframe or number of TimelineKeyframes or to all of the TimelineKeyframes in the Timeline Tool.
+setNodeCollectionAndAppearance(dates: Date | Date[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)
+- dates - Date of a TimelineKeyFrame or list of Dates from any existing TimelineKeyframes.
+- nodeCollection - Set of nodes to be rendered for the TimelineKeyframe.
+- nodeAppearance - Styling of the nodes.
+
+```js runnable
+const allDates = timeline.getAllDateInTimelineFrames();
+
+timeline.setNodeCollectionAndAppearance(allDates, stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 ```
