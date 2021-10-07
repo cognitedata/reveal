@@ -18,7 +18,6 @@ const MetaWrapper = styled.section`
   flex-direction: column;
   align-items: stretch;
   .meta-field {
-    margin-left: 1rem;
     margin-bottom: ${bottomSpacing};
   }
 `;
