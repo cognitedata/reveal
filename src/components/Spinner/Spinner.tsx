@@ -1,6 +1,5 @@
-import React from "react";
-import styled from "styled-components/macro";
-import { Loader } from "@cognite/cogs.js";
+import styled from 'styled-components/macro';
+import { Loader } from '@cognite/cogs.js';
 
 export const Spinner = () => (
   <StyledContainer className="spinner">

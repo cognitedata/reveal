@@ -1,13 +1,13 @@
-import React from "react";
-import styled from "styled-components/macro";
-import "./AppGlobalStyles.tsx";
-import { GlobalStyle } from "./AppGlobalStyles";
-import "@cognite/cogs.js/dist/cogs.css";
-import { Header } from "./components/Header/Header";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { SolutionsPage } from "./pages/solutions/SolutionsPage";
-import { GuideToolsPage } from "./pages/guide&tools/GuideToolsPage";
-import { StatusPage } from "./pages/statusboard/StatusboardPage";
+import styled from 'styled-components/macro';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+import '@cognite/cogs.js/dist/cogs.css';
+import { Header } from './components/Header/Header';
+import { SolutionsPage } from './pages/solutions/SolutionsPage';
+import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
+import { StatusPage } from './pages/statusboard/StatusboardPage';
+import './AppGlobalStyles.tsx';
+import { GlobalStyle } from './AppGlobalStyles';
 
 function App() {
   return (
