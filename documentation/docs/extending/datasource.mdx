@@ -178,19 +178,38 @@ The API client is responsible for providing metadata about 3D CAD nodes, includi
 | `determineNodeAncestorsByNodeId()` | No                                  | Find "ancestor span" of a node identified by the CDF node ID. Returns data on same format as function above. |
 | `getBoundingBoxByNodeId()` | No                                          | Determines bounds of a node by its CDF node ID. |
 
+See [API documentation](../API Reference.md#interfaces_cognite_reveal_extensions_nodesapiclientmd).
 
-### Requirement matrix
 
-| `Cognite3DModel` \ `NodesApiClient` | `mapTreeIndicesToNodeIds()` | `mapNodeIdsToTreeIndices()` | `determineTreeIndexAndSubtreeSizesByNodeIds()` | `determineNodeAncestorsByNodeId()` | `getBoundingBoxByNodeId()` |
-| ----------------------------------- | --------------------------- | --------------------------- | ---------------------------------------------- | ---------------------------------- | -------------------------- |
-| `getBoundingBoxByNodeId()`          |                             |                             |                                                |                                    | X                          |
-| `getBoundingBoxByNodeTreeIndex()`   | X                           |                             |                                                |                                    | X                          |
-| `mapNodeIdToTreeIndex()`            |                             | X                           |                                                |                                    |                            |
-| `mapNodeIdsToTreeIndices()`         |                             | X                           |                                                |                                    |                            |
-| `mapTreeIndexToNodeId()`            | X                           |                             |                                                |                                    |                            |
+### Example implementation
+
+```js
+class MyNodesApiClient implements NodesApiClient {
+  mapTreeIndicesToNodeIds(modelId: number, revisionId: number, treeIndices: number[]): Promise<number[]> {
+    // Map 1:1 - pretend treeIndices == nodeIds
+    return Promise.resolve(treeIndices);
+  }
+  mapNodeIdsToTreeIndices(modelId: number, revisionId: number, nodeIds: number[]): Promise<number[]> {
+    // Map 1:1 - pretend treeIndices == nodeIds
+    return Promise.resolve(nodeIds);
+  }
+  determineTreeIndexAndSubtreeSizesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<{treeIndex: number; subtreeSize: number }[]> {
+    throw new Error('Not supported.');
+  }
+  determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{treeIndex: number; subtreeSize: number }> {
+    throw new Error('Not supported.');
+  }
+  getBoundingBoxByNodeId(modelId: number, revisionId: number, nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+    throw new Error('Not supported.');
+  }
+}
+```
 
 ## Unsupported features
 
-** TODO **
-- Point clouds - partially supported?
-- Node styling based on CDF
+There's a few features that is not backed by the `DataSource`-API and hence won't be affected by the implementation. The most
+notable feature is the [CAD styling API](cad-styling) which in large is backed by `CogniteClient`. To use the styling API with
+custom data sources, you will need to [create custom node collections](cad-styling-custom) or [use `TreeIndexNodeCollection`](cad-styling).
+
+Currently there are restrictions in the [the API for saving viewer state](cad-save-viewerstate) causing `Cognite3DViewer.setViewState` not
+to work with a custom `DataSource`. This might change in the future.
