@@ -5967,11 +5967,894 @@ ___
 
 ##### Defined in
 
+[viewer/src/tools/Geomap/GeomapTool.ts:95](https://github.com/cognitedata/reveal/blob/pramodcog/tools-geomap/viewer/core/src/tools/Geomap/GeomapTool.ts#L95)
+[viewer/src/tools/AxisView/AxisViewTool.ts:62](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/AxisView/AxisViewTool.ts#L62)
 [viewer/core/src/datamodels/cad/NodeAppearance.ts:7](https://github.com/cognitedata/reveal/blob/54196b33/viewer/core/src/datamodels/cad/NodeAppearance.ts#L7)
 
 
 <a name="enumspotreepointcolortypemd"></a>
 
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[off](#off)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+
+<a name="classes_cognite_reveal_toolscognite3dviewertoolbasemd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / Cognite3DViewerToolBase
+
+## Class: Cognite3DViewerToolBase
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).Cognite3DViewerToolBase
+
+Base class for tools attaching to a {@see Cognite3DViewer}.
+
+### Hierarchy
+
+- **Cognite3DViewerToolBase**
+
+  ↳ [HtmlOverlayTool](#classes_cognite_reveal_toolshtmloverlaytoolmd)
+
+  ↳ [ExplodedViewTool](#classes_cognite_reveal_toolsexplodedviewtoolmd)
+
+  ↳ [DebugCameraTool](#classes_cognite_reveal_toolsdebugcameratoolmd)
+
+  ↳ [AxisViewTool](#classes_cognite_reveal_toolsaxisviewtoolmd)
+
+  ↳ [GeomapTool](#classes_cognite_reveal_toolsgeomaptoolmd)
+
+  ↳ [DebugLoadedSectorsTool](#classes_cognite_reveal_toolsdebugloadedsectorstoolmd)
+
+### Table of contents
+
+#### Constructors
+
+- [constructor](#constructor)
+
+#### Methods
+
+- [dispose](#dispose)
+- [off](#off)
+
+### Constructors
+
+#### constructor
+
+• **new Cognite3DViewerToolBase**()
+
+### Methods
+
+#### dispose
+
+▸ **dispose**(): `void`
+
+Disposes the element and triggeres the 'disposed' event before clearing the list
+of dipose-listeners.
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:53](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L53)
+
+___
+
+#### off
+
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+
+<a name="classes_cognite_reveal_toolsdebugcameratoolmd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / DebugCameraTool
+
+## Class: DebugCameraTool
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).DebugCameraTool
+
+### Hierarchy
+
+- [Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd)
+
+  ↳ **DebugCameraTool**
+
+### Table of contents
+
+#### Constructors
+
+- [constructor](#constructor)
+
+#### Methods
+
+- [dispose](#dispose)
+- [hideCameraHelper](#hidecamerahelper)
+- [off](#off)
+- [showCameraHelper](#showcamerahelper)
+
+### Constructors
+
+#### constructor
+
+• **new DebugCameraTool**(`viewer`)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `viewer` | [Cognite3DViewer](#classes_cognite_revealcognite3dviewermd) |
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[constructor](#constructor)
+
+##### Defined in
+
+[viewer/src/tools/DebugCameraTool.ts:18](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugCameraTool.ts#L18)
+
+### Methods
+
+#### dispose
+
+▸ **dispose**(): `void`
+
+Removes all elements and detaches from the viewer.
+
+**`override`**
+
+##### Returns
+
+`void`
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[dispose](#dispose)
+
+##### Defined in
+
+[viewer/src/tools/DebugCameraTool.ts:32](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugCameraTool.ts#L32)
+
+___
+
+#### hideCameraHelper
+
+▸ **hideCameraHelper**(): `void`
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/DebugCameraTool.ts:43](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugCameraTool.ts#L43)
+
+___
+
+#### off
+
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[off](#off)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+___
+
+#### showCameraHelper
+
+▸ **showCameraHelper**(): `void`
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/DebugCameraTool.ts:37](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugCameraTool.ts#L37)
+
+
+<a name="classes_cognite_reveal_toolsdebugloadedsectorstoolmd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / DebugLoadedSectorsTool
+
+## Class: DebugLoadedSectorsTool
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).DebugLoadedSectorsTool
+
+### Hierarchy
+
+- [Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd)
+
+  ↳ **DebugLoadedSectorsTool**
+
+### Table of contents
+
+#### Constructors
+
+- [constructor](#constructor)
+
+#### Methods
+
+- [dispose](#dispose)
+- [off](#off)
+- [setOptions](#setoptions)
+- [showSectorBoundingBoxes](#showsectorboundingboxes)
+
+### Constructors
+
+#### constructor
+
+• **new DebugLoadedSectorsTool**(`viewer`, `options?`)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `viewer` | [Cognite3DViewer](#classes_cognite_revealcognite3dviewermd) |
+| `options` | [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions) |
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[constructor](#constructor)
+
+##### Defined in
+
+[viewer/src/tools/DebugLoadedSectorsTool.ts:27](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugLoadedSectorsTool.ts#L27)
+
+### Methods
+
+#### dispose
+
+▸ **dispose**(): `void`
+
+##### Returns
+
+`void`
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[dispose](#dispose)
+
+##### Defined in
+
+[viewer/src/tools/DebugLoadedSectorsTool.ts:48](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugLoadedSectorsTool.ts#L48)
+
+___
+
+#### off
+
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[off](#off)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+___
+
+#### setOptions
+
+▸ **setOptions**(`options`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | [DebugLoadedSectorsToolOptions](#debugloadedsectorstooloptions) |
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/DebugLoadedSectorsTool.ts:37](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugLoadedSectorsTool.ts#L37)
+
+___
+
+#### showSectorBoundingBoxes
+
+▸ **showSectorBoundingBoxes**(`model`): `void`
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `model` | [Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) |
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/DebugLoadedSectorsTool.ts:52](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/DebugLoadedSectorsTool.ts#L52)
+
+
+<a name="classes_cognite_reveal_toolsexplodedviewtoolmd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / ExplodedViewTool
+
+## Class: ExplodedViewTool
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).ExplodedViewTool
+
+### Hierarchy
+
+- [Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd)
+
+  ↳ **ExplodedViewTool**
+
+### Table of contents
+
+#### Constructors
+
+- [constructor](#constructor)
+
+#### Accessors
+
+- [readyPromise](#readypromise)
+
+#### Methods
+
+- [dispose](#dispose)
+- [expand](#expand)
+- [off](#off)
+- [reset](#reset)
+
+### Constructors
+
+#### constructor
+
+• **new ExplodedViewTool**(`treeIndex`, `cadModel`)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `treeIndex` | `number` |
+| `cadModel` | [Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) |
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[constructor](#constructor)
+
+##### Defined in
+
+[viewer/src/tools/ExplodedViewTool.ts:15](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/ExplodedViewTool.ts#L15)
+
+### Accessors
+
+#### readyPromise
+
+• `get` **readyPromise**(): `Promise`<void\>
+
+##### Returns
+
+`Promise`<void\>
+
+##### Defined in
+
+[viewer/src/tools/ExplodedViewTool.ts:13](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/ExplodedViewTool.ts#L13)
+
+### Methods
+
+#### dispose
+
+▸ **dispose**(): `void`
+
+Disposes the element and triggeres the 'disposed' event before clearing the list
+of dipose-listeners.
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[dispose](#dispose)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:53](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L53)
+
+___
+
+#### expand
+
+▸ **expand**(`expandRadius`): `Promise`<void\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `expandRadius` | `number` |
+
+##### Returns
+
+`Promise`<void\>
+
+##### Defined in
+
+[viewer/src/tools/ExplodedViewTool.ts:26](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/ExplodedViewTool.ts#L26)
+
+___
+
+#### off
+
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[off](#off)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+___
+
+#### reset
+
+▸ **reset**(): `void`
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/ExplodedViewTool.ts:43](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/ExplodedViewTool.ts#L43)
+
+
+<a name="classes_cognite_reveal_toolshtmloverlaytoolmd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd) / HtmlOverlayTool
+
+## Class: HtmlOverlayTool
+
+[@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).HtmlOverlayTool
+
+Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+3D position and updates it's position/visibility as user moves the camera. This is
+useful to create HTML overlays to highlight information about key positions in the 3D model.
+
+Attached elements *must* have CSS style 'position: absolute'. It's also recommended
+in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
+interfering with 3D navigation. Consider also applying 'transform: translate(-50%, -50%)'
+to anchor the center of the element rather than the top-left corner. In some cases the
+`zIndex`-attribute is necessary for the element to appear on top of the viewer.
+
+**`example`**
+```js
+const el = document.createElement('div');
+el.style.position = 'absolute'; // Required!
+// Anchor to center of element
+el.style.transform = 'translate(-50%, -50%)';
+// Avoid being target for events
+el.style.pointerEvents = 'none;
+el.style.touchAction = 'none';
+// Render in front of other elements
+el.style.zIndex = 10;
+
+el.style.color = 'red';
+el.innerHtml = '<h1>Overlay</h1>';
+
+const overlayTool = new HtmlOverlayTool(viewer);
+overlayTool.add(el, new THREE.Vector3(10, 10, 10));
+// ...
+overlayTool.remove(el);
+// or, to remove all attached elements
+overlayTool.clear();
+
+// detach the tool from the viewer
+overlayTool.dispose();
+```
+
+### Hierarchy
+
+- [Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd)
+
+  ↳ **HtmlOverlayTool**
+
+### Table of contents
+
+#### Constructors
+
+- [constructor](#constructor)
+
+#### Methods
+
+- [add](#add)
+- [clear](#clear)
+- [dispose](#dispose)
+- [forceUpdate](#forceupdate)
+- [off](#off)
+- [remove](#remove)
+
+### Constructors
+
+#### constructor
+
+• **new HtmlOverlayTool**(`viewer`)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `viewer` | [Cognite3DViewer](#classes_cognite_revealcognite3dviewermd) |
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[constructor](#constructor)
+
+##### Defined in
+
+[viewer/src/tools/HtmlOverlayTool.ts:91](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/HtmlOverlayTool.ts#L91)
+
+### Methods
+
+#### add
+
+▸ **add**(`htmlElement`, `position3D`, `options?`): `void`
+
+Registers a HTML overlay that will be updated on rendering.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `htmlElement` | `HTMLElement` |
+| `position3D` | `Vector3` |
+| `options` | [HtmlOverlayOptions](#htmloverlayoptions) |
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/HtmlOverlayTool.ts:121](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/HtmlOverlayTool.ts#L121)
+
+___
+
+#### clear
+
+▸ **clear**(): `void`
+
+Removes all attached HTML overlay elements.
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/HtmlOverlayTool.ts:158](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/HtmlOverlayTool.ts#L158)
+
+___
+
+#### dispose
+
+▸ **dispose**(): `void`
+
+Removes all elements and detaches from the viewer.
+
+**`override`**
+
+##### Returns
+
+`void`
+
+##### Overrides
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[dispose](#dispose)
+
+##### Defined in
+
+[viewer/src/tools/HtmlOverlayTool.ts:107](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/HtmlOverlayTool.ts#L107)
+
+___
+
+#### forceUpdate
+
+▸ **forceUpdate**(): `void`
+
+Updates positions of all overlays. This is automatically managed and there
+shouldn't be any reason to trigger this unless the attached elements are
+modified externally.
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/HtmlOverlayTool.ts:170](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/HtmlOverlayTool.ts#L170)
+
+___
+
+#### off
+
+▸ **off**(`event`, `handler`): `void`
+
+Unregisters an event handler for the 'disposed'-event.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `handler` | () => `void` |
+
+##### Returns
+
+`void`
+
+##### Inherited from
+
+[Cognite3DViewerToolBase](#classes_cognite_reveal_toolscognite3dviewertoolbasemd).[off](#off)
+
+##### Defined in
+
+[viewer/src/tools/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/Cognite3DViewerToolBase.ts#L38)
+
+___
+
+#### remove
+
+▸ **remove**(`htmlElement`): `void`
+
+Removes a overlay and removes it from the DOM.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `htmlElement` | `HTMLElement` |
+
+##### Returns
+
+`void`
+
+##### Defined in
+
+[viewer/src/tools/HtmlOverlayTool.ts:146](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/tools/HtmlOverlayTool.ts#L146)
+
+# Enums
+
+
+<a name="enums_cognite_revealantialiasingmodemd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal](#modules_cognite_revealmd) / AntiAliasingMode
+
+## Enumeration: AntiAliasingMode
+
+[@cognite/reveal](#modules_cognite_revealmd).AntiAliasingMode
+
+Anti-aliasing modes supported by Reveal.
+
+### Table of contents
+
+#### Enumeration members
+
+- [FXAA](#fxaa)
+- [NoAA](#noaa)
+
+### Enumeration members
+
+#### FXAA
+
+• **FXAA** = 1
+
+Fast-approximate anti-aliasing (FXAA) (1).
+
+##### Defined in
+
+[viewer/src/public/types.ts:21](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/public/types.ts#L21)
+
+___
+
+#### NoAA
+
+• **NoAA** = 0
+
+No anti-aliasing (0).
+
+##### Defined in
+
+[viewer/src/public/types.ts:17](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/public/types.ts#L17)
+
+
+<a name="enums_cognite_revealnodeoutlinecolormd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal](#modules_cognite_revealmd) / NodeOutlineColor
+
+## Enumeration: NodeOutlineColor
+
+[@cognite/reveal](#modules_cognite_revealmd).NodeOutlineColor
+
+### Table of contents
+
+#### Enumeration members
+
+- [Black](#black)
+- [Blue](#blue)
+- [Cyan](#cyan)
+- [Green](#green)
+- [NoOutline](#nooutline)
+- [Orange](#orange)
+- [Red](#red)
+- [White](#white)
+
+### Enumeration members
+
+#### Black
+
+• **Black** = 2
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:8](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L8)
+
+___
+
+#### Blue
+
+• **Blue** = 4
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:10](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L10)
+
+___
+
+#### Cyan
+
+• **Cyan** = 3
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:9](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L9)
+
+___
+
+#### Green
+
+• **Green** = 5
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:11](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L11)
+
+___
+
+#### NoOutline
+
+• **NoOutline** = 0
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:6](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L6)
+
+___
+
+#### Orange
+
+• **Orange** = 7
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:13](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L13)
+
+___
+
+#### Red
+
+• **Red** = 6
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:12](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L12)
+
+___
+
+#### White
+
+• **White** = 1
+
+##### Defined in
+
+[viewer/src/datamodels/cad/NodeAppearance.ts:7](https://github.com/cognitedata/reveal/blob/c5308418/viewer/src/datamodels/cad/NodeAppearance.ts#L7)
+
+
+<a name="enums_cognite_revealpotreepointcolortypemd"></a>
+
+[@cognite/reveal](#readmemd) / [Modules](#modulesmd) / [@cognite/reveal](#modules_cognite_revealmd) / PotreePointColorType
+=======
 [@reveal/core](#readmemd) / [Modules](#modulesmd) / PotreePointColorType
 
 ## Enumeration: PotreePointColorType

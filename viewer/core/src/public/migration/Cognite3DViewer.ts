@@ -17,8 +17,6 @@ import {
   LoadingState
 } from '@reveal/cad-geometry-loaders';
 
-import { File3dFormat } from '@reveal/cad-parsers';
-
 import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -39,12 +37,9 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
 import { Spinner } from '../../utilities/Spinner';
-import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
@@ -52,10 +47,17 @@ import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
-import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import { RevealManagerHelper } from './RevealManagerHelper';
+
+import ComboControls from '@reveal/camera-manager';
+import {
+  CdfModelIdentifier,
+  LocalModelIdentifier,
+  File3dFormat,
+  CdfModelMetadataProvider
+} from '@reveal/modeldata-api';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -624,8 +626,8 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    const clientExt = new CdfModelDataClient(this.sdkClient);
-    const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
+    const metadataProvider = new CdfModelMetadataProvider(this.sdkClient);
+    const outputs = await metadataProvider.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return 'cad';
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {

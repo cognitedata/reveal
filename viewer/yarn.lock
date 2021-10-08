@@ -925,6 +925,7 @@ __metadata:
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -933,6 +934,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -951,6 +953,7 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
@@ -959,6 +962,12 @@ __metadata:
 "@reveal/logger@workspace:*, @reveal/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@reveal/logger@workspace:packages/logger"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/modeldata-api@workspace:*, @reveal/modeldata-api@workspace:packages/modeldata-api":
+  version: 0.0.0-use.local
+  resolution: "@reveal/modeldata-api@workspace:packages/modeldata-api"
   languageName: unknown
   linkType: soft
 
