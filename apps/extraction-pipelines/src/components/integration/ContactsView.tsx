@@ -16,11 +16,10 @@ import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
 const Wrapper = styled.div``;
 
-const MarginedChildren = styled.div`
-  > * + * {
-    color: red;
-    margin-top: 1rem;
-  }
+export const MarginedChildren = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 interface ContactsViewProps {
