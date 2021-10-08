@@ -13,7 +13,6 @@ import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
 import { ContactsView } from 'components/integration/ContactsView';
 import { MetaData } from 'components/integration/MetaData';
 import { EditDataSetId } from 'components/integration/edit/EditDataSetId';
-import { bottomSpacing, sideBarSectionSpacing } from 'styles/StyledVariables';
 import { Section } from 'components/integration/Section';
 
 interface IntegrationInformationProps {
@@ -94,25 +93,21 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
           label={DetailFieldNames.ID}
           fieldName="id"
           fieldValue={integration?.id}
-          marginBottom={bottomSpacing}
         />
         <FieldVerticalDisplay
           label={DetailFieldNames.CREATED_BY}
           fieldName="createdBy"
           fieldValue={integration?.createdBy}
-          marginBottom={bottomSpacing}
         />
         <FieldVerticalDisplay
           label={DetailFieldNames.CREATED_TIME}
           fieldName="createdTime"
           fieldValue={integration?.createdTime}
-          marginBottom={bottomSpacing}
         />
         <FieldVerticalDisplay
           label={DetailFieldNames.LAST_UPDATED_TIME}
           fieldName="lastUpdatedTime"
           fieldValue={integration?.lastUpdatedTime}
-          marginBottom={sideBarSectionSpacing}
         />
       </Section>
     </div>

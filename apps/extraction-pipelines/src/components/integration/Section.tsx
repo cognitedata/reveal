@@ -16,7 +16,9 @@ const SectionHeader = styled.div`
   display: flex;
   align-items: center;
 `;
-const SectionBody = styled.div``;
+const SectionBody = styled.div`
+  padding: 1em 0;
+`;
 export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
   <SectionDiv className="z-2">{props.children}</SectionDiv>
 );

@@ -84,7 +84,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
 
   return (
     <>
-      {renderRaw(storedIntegration)}
+      <div>{renderRaw(storedIntegration)}</div>
       <RawEditModal visible={showRawModal} onCancel={toggleModal(false)} />
     </>
   );
