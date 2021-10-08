@@ -87,6 +87,6 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
   }
 
   private buildBlobRequestPath(blobId: number): string {
-    return  `/api/v1/projects/${this._client.project}/3d/files/${blobId}`;
+    return `/api/v1/projects/${this._client.project}/3d/files/${blobId}`;
   }
 }
