@@ -349,6 +349,7 @@ export const getCapabilityScopes = (
     case 'relationships':
     case 'templategroups':
     case 'templateinstances':
+    case 'annotations':
       return ['datasetScope', 'all'];
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
