@@ -17,7 +17,6 @@ const Template: Story<Parameters<typeof SchemaPreview>[0]> = (args) => (
   <SchemaPreview {...args} />
 );
 
-
 export const Default = Template.bind({});
 Default.args = {
   graphQLSchemaString: mockComplexGraphqlModel,

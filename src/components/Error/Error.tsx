@@ -6,12 +6,10 @@ export const Error = ({
 }: {
   message?: string;
   children?: React.ReactNode;
-}) => {
-  return (
-    <Flex gap={10} direction='column' alignItems='center'>
-      <Graphic type='Search' />
-      <Title level={4}>{message}</Title>
-      {children}
-    </Flex>
-  );
-};
+}) => (
+  <Flex gap={10} direction="column" alignItems="center">
+    <Graphic type="Search" />
+    <Title level={4}>{message}</Title>
+    {children}
+  </Flex>
+);

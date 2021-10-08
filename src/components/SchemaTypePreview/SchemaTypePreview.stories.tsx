@@ -1,9 +1,9 @@
 import React from 'react';
 import { Story } from '@storybook/react';
+import { parse } from 'graphql';
 import { SchemaTypePreview } from './SchemaTypePreview';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 import { getObjectTypes } from '../../utils/graphql-utils';
-import { parse } from 'graphql';
 
 export default {
   title: 'Components/Schema Type Preview',
@@ -18,7 +18,6 @@ export default {
 const Template: Story<Parameters<typeof SchemaTypePreview>[0]> = (args) => (
   <SchemaTypePreview {...args} />
 );
-
 
 export const Default = Template.bind({});
 Default.args = {

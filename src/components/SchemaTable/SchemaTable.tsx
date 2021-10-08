@@ -19,7 +19,7 @@ export const SchemaTable = ({
     (el) => 'name' in el && el.name?.value === schemaName
   );
   if (!item) {
-    return <Error message='Unable to find schema!' />;
+    return <Error message="Unable to find schema!" />;
   }
 
   switch (item.kind) {

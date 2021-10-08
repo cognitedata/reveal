@@ -1,9 +1,9 @@
 import React from 'react';
 import { Story } from '@storybook/react';
+import { parse } from 'graphql';
 import { PropertyAttributesDisplay } from './PropertyAttributesDisplay';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 import { getObjectTypes } from '../../utils/graphql-utils';
-import { parse } from 'graphql';
 
 export default {
   title: 'Components/Property Attribute Display',
@@ -23,21 +23,17 @@ const fieldWithId = getObjectTypes(
   parse(mockComplexGraphqlModel).definitions
 )[0].fields![0];
 
-export const IDAttribute = () => {
-  return <Template field={fieldWithId} />;
-};
+export const IDAttribute = () => <Template field={fieldWithId} />;
 
 const fieldWithSearchIndexUnique = getObjectTypes(
   parse(mockComplexGraphqlModel).definitions
 )[0].fields![2];
 
-export const EverythingElse = () => {
-  return <Template field={fieldWithSearchIndexUnique} />;
-};
+export const EverythingElse = () => (
+  <Template field={fieldWithSearchIndexUnique} />
+);
 const fieldWithNone = getObjectTypes(parse(mockComplexGraphqlModel).definitions)
   .find((el) => el.name.value === 'ParkingArea')!
   .fields!.find((el) => el.name.value === 'rentalCost')!;
 
-export const None = () => {
-  return <Template field={fieldWithNone} />;
-};
+export const None = () => <Template field={fieldWithNone} />;

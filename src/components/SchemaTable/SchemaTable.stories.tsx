@@ -1,9 +1,9 @@
 import React from 'react';
 import { Story } from '@storybook/react';
+import { parse } from 'graphql';
 import { SchemaTable } from './SchemaTable';
 import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
 import { getObjectTypes } from '../../utils/graphql-utils';
-import { parse } from 'graphql';
 
 export default {
   title: 'Components/Schema Table',

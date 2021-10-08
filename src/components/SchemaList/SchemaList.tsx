@@ -4,14 +4,12 @@ import { useMemo } from 'react';
 import styled from 'styled-components';
 import { getObjectTypes, getUnionTypes } from '../../utils/graphql-utils';
 
-const AddNewDropdownContent = () => {
-  return (
-    <Menu>
-      <Menu.Item>Schema Type</Menu.Item>
-      <Menu.Item>Union</Menu.Item>
-    </Menu>
-  );
-};
+const AddNewDropdownContent = () => (
+  <Menu>
+    <Menu.Item>Schema Type</Menu.Item>
+    <Menu.Item>Union</Menu.Item>
+  </Menu>
+);
 
 export const SchemaList = ({
   graphQLSchemaString,
@@ -33,7 +31,7 @@ export const SchemaList = ({
           Schema Types
         </Title>
         <Dropdown content={AddNewDropdownContent}>
-          <Button icon='Down' iconPlacement='right' variant='outline'>
+          <Button icon="Down" iconPlacement="right" variant="outline">
             Add New
           </Button>
         </Dropdown>
@@ -43,8 +41,8 @@ export const SchemaList = ({
           <Body level={2} style={{ flex: 1 }}>
             {el.name.value}
           </Body>
-          <Button variant='ghost' icon='VerticalEllipsis' />
-          <Button variant='ghost' icon='ArrowRight' />
+          <Button variant="ghost" icon="VerticalEllipsis" />
+          <Button variant="ghost" icon="ArrowRight" />
         </ListItem>
       ))}
 
@@ -58,8 +56,8 @@ export const SchemaList = ({
           <Body level={2} style={{ flex: 1 }}>
             {el.name.value}
           </Body>
-          <Button variant='ghost' icon='VerticalEllipsis' />
-          <Button variant='ghost' icon='ArrowRight' />
+          <Button variant="ghost" icon="VerticalEllipsis" />
+          <Button variant="ghost" icon="ArrowRight" />
         </ListItem>
       ))}
     </>

@@ -11,48 +11,46 @@ export const PropertyAttributesDisplay = ({
   field,
 }: {
   field: FieldDefinitionNode;
-}) => {
-  return (
-    <Container gap={4}>
-      <div>
-        {isFieldRequired(field.type) ? (
-          <Tooltip content="Required" delay={TOOLTIP_DELAY}>
-            <Icon type="ExclamationMark" />
-          </Tooltip>
-        ) : (
-          <></>
-        )}
-      </div>
-      <div>
-        {doesFieldHaveDirective(field, 'search') ? (
-          <Tooltip content="Searchable" delay={TOOLTIP_DELAY}>
-            <Icon type="Search" />
-          </Tooltip>
-        ) : (
-          <></>
-        )}
-      </div>
-      <div>
-        {doesFieldHaveDirective(field, 'unique') ? (
-          <Tooltip content="Unique" delay={TOOLTIP_DELAY}>
-            <Icon type="Sun" />
-          </Tooltip>
-        ) : (
-          <></>
-        )}
-      </div>
-      <div>
-        {doesFieldHaveDirective(field, 'index') ? (
-          <Tooltip content="Indexed" delay={TOOLTIP_DELAY}>
-            <Icon type="DataTable" />
-          </Tooltip>
-        ) : (
-          <></>
-        )}
-      </div>
-    </Container>
-  );
-};
+}) => (
+  <Container gap={4}>
+    <div>
+      {isFieldRequired(field.type) ? (
+        <Tooltip content="Required" delay={TOOLTIP_DELAY}>
+          <Icon type="ExclamationMark" />
+        </Tooltip>
+      ) : (
+        <></>
+      )}
+    </div>
+    <div>
+      {doesFieldHaveDirective(field, 'search') ? (
+        <Tooltip content="Searchable" delay={TOOLTIP_DELAY}>
+          <Icon type="Search" />
+        </Tooltip>
+      ) : (
+        <></>
+      )}
+    </div>
+    <div>
+      {doesFieldHaveDirective(field, 'unique') ? (
+        <Tooltip content="Unique" delay={TOOLTIP_DELAY}>
+          <Icon type="Sun" />
+        </Tooltip>
+      ) : (
+        <></>
+      )}
+    </div>
+    <div>
+      {doesFieldHaveDirective(field, 'index') ? (
+        <Tooltip content="Indexed" delay={TOOLTIP_DELAY}>
+          <Icon type="DataTable" />
+        </Tooltip>
+      ) : (
+        <></>
+      )}
+    </div>
+  </Container>
+);
 
 const Container = styled(Flex)`
   && > div {

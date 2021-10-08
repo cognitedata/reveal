@@ -1,6 +1,12 @@
 import { ObjectTypeDefinitionNode, parse } from 'graphql';
 import { useMemo } from 'react';
-import { Body, Collapse, CollapsePanelProps, Icon, Title } from '@cognite/cogs.js';
+import {
+  Body,
+  Collapse,
+  CollapsePanelProps,
+  Icon,
+  Title,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { SchemaTypePreview } from '../SchemaTypePreview/SchemaTypePreview';
 
@@ -10,11 +16,12 @@ export const SchemaPreview = ({
   graphQLSchemaString: string;
 }) => {
   const schemaTypes = useMemo(
-    () => parse(graphQLSchemaString as string).definitions
-    .filter(definition =>
-      definition.kind === 'ObjectTypeDefinition' ||
-      definition.kind === 'InterfaceTypeDefinition'
-    ),
+    () =>
+      parse(graphQLSchemaString as string).definitions.filter(
+        (definition) =>
+          definition.kind === 'ObjectTypeDefinition' ||
+          definition.kind === 'InterfaceTypeDefinition'
+      ),
     [graphQLSchemaString]
   ) as ObjectTypeDefinitionNode[];
 
@@ -27,26 +34,34 @@ export const SchemaPreview = ({
   return (
     <Wrapper>
       {schemaTypes.map((schemaType: ObjectTypeDefinitionNode) => (
-        <Collapse ghost expandIcon={expandIcon} defaultActiveKey={schemaType.name.value}>
+        <Collapse
+          ghost
+          expandIcon={expandIcon}
+          defaultActiveKey={schemaType.name.value}
+        >
           <StyledCollapsePanel
             header={
               <StyledHeaderWrapper>
                 <Title level={5}>{schemaType.name.value}</Title>
                 <Body level={2}>
-                  {schemaType.description?.value ? `[${schemaType.description?.value}]` : ''}
+                  {schemaType.description?.value
+                    ? `[${schemaType.description?.value}]`
+                    : ''}
                 </Body>
               </StyledHeaderWrapper>
             }
             key={schemaType.name.value}
           >
-            <SchemaTypePreview schemaName={schemaType.name.value} graphQLSchemaString={graphQLSchemaString}/>
+            <SchemaTypePreview
+              schemaName={schemaType.name.value}
+              graphQLSchemaString={graphQLSchemaString}
+            />
           </StyledCollapsePanel>
         </Collapse>
       ))}
     </Wrapper>
-  )
+  );
 };
-
 
 const Wrapper = styled.div`
   .cogs-collapse {
@@ -80,7 +95,8 @@ const StyledCollapsePanel = styled(Collapse.Panel)`
 const StyledHeaderWrapper = styled.div`
   display: flex;
 
-  .cogs-title-5, .cogs-body-2 {
+  .cogs-title-5,
+  .cogs-body-2 {
     color: var(--cogs-text-color-secondary);
   }
 
