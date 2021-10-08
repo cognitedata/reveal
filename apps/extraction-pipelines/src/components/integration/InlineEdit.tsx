@@ -143,7 +143,7 @@ const InlineEdit = <Fields extends FieldValues>({
           {viewComp ?? <AddInfo fieldValue={actualValue} fieldName={name} />}
         </EditButton>
       ) : (
-        <div css="padding: 1em">
+        <div css="padding: 1rem">
           {viewComp != null ? (
             viewComp
           ) : actualValue && actualValue !== '' ? (

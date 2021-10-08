@@ -12,6 +12,8 @@ export const AddFieldValueBtn = ({
   children,
   canEdit,
 }: PropsWithChildren<AddFieldValueBtnProps>) => {
+  if (!canEdit)
+    return <div css="color: grey; padding: 1rem">No {children} added.</div>;
   return (
     <EditButton
       disabled={!canEdit}

@@ -5,7 +5,7 @@ import { EditButton } from 'styles/StyledButton';
 export const EditableAreaButton = styled((props: PropsWithChildren<any>) => {
   const { children, disabled } = props;
   return disabled ? (
-    <div css="padding: 1em">{children}</div>
+    <div css="padding: 1rem">{children}</div>
   ) : (
     <EditButton {...props}>{children}</EditButton>
   );

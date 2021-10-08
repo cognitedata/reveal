@@ -138,9 +138,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
 
   const whenNotEditing =
     currentIntegration.documentation == null ? (
-      <DivFlex align="center" direction="column" css="margin: 5em 5em">
+      <DivFlex align="center" direction="column" css="margin: 5rem 5rem">
         <Graphic type="RuleMonitoring" />
-        <p style={{ margin: '3em 0', textAlign: 'center' }}>
+        <p style={{ margin: '3rem 0', textAlign: 'center' }}>
           Use{' '}
           <a href="https://guides.github.com/features/mastering-markdown/">
             markdown

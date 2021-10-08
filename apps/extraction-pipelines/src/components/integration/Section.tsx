@@ -9,16 +9,14 @@ const SectionDiv = styled.div`
   border-radius: 3px;
 `;
 const SectionHeader = styled.div`
-  font-size: 1.1em;
+  font-size: 1.1rem;
   font-weight: 500;
-  padding: 1em;
+  padding: 1rem;
   border-bottom: 1px solid #eee;
   display: flex;
   align-items: center;
 `;
-const SectionBody = styled.div`
-  padding: 0.3em;
-`;
+const SectionBody = styled.div``;
 export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
   <SectionDiv className="z-2">{props.children}</SectionDiv>
 );

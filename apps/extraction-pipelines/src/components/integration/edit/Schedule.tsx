@@ -34,7 +34,7 @@ import { ColumnForm, Hint, StyledLabel } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
-import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 
@@ -206,6 +206,8 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
               </ButtonWrapper>
             </ScheduleWrapper>
           </>
+        ) : !canEdit ? (
+          <span css="color: grey; padding: 1rem">No schedule set</span>
         ) : (
           <EditButton
             onClick={onEditClick}

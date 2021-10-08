@@ -151,7 +151,7 @@ const findDataSetId = (search: string) => {
 };
 
 const CustomLabel = styled.label<{ required: boolean }>`
-  font-size: 1.1em;
+  font-size: 1.1rem;
   font-weight: 500;
   display: block;
   padding: 3px 0;
