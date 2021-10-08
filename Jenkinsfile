@@ -4,8 +4,8 @@ static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 // deploySpinnakerPipelineConfigs {}
-static final String APP_ID = 'cdf-demo-app'
-static final String APPLICATION_REPO_ID = 'unified-cdf-ui-demo-app'
+static final String APP_ID = 'cdf-raw-explorer'
+static final String APPLICATION_REPO_ID = 'cdf-hub-raw-explorer'
 static final String NODE_VERSION = 'node:12'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
@@ -104,60 +104,62 @@ pods {
       gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
       gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
     }
-  
+
     githubNotifyWrapper(context_install) {
         stage('Install dependencies') {
             yarn.setup()
         }
     }
 
-    parallel(
-      'Lint': {
-        container('fas') {
-          stageWithNotify('Lint') {
-            sh("yarn lint")
-          }
-        }
-      },
-      'Test': {
-        container('fas') {
-          stageWithNotify('Unit tests') {
-            sh("yarn test")
-          }
-        }
-      },
-      'Preview': {
-        if(!isPullRequest) {
-          print "No PR previews for release builds"
-          return;
-        }
-        stageWithNotify('Build and deploy PR') {
-          previewServer(
-            buildCommand: 'yarn build:preview',
-            prefix: 'pr',
-            buildFolder: 'build',
-            commentPrefix: PR_COMMENT_MARKER
-          )
-        }
-      },
-      'Build': {
-            if (isPullRequest) {
-                println "Skipping build for pull requests"
-                return
+    threadPool(
+      tasks: [
+        'Lint': {
+          container('fas') {
+            stageWithNotify('Lint') {
+              sh("yarn lint")
             }
-            stageWithNotify('Build for FAS') {
-                fas.build(
-                appId: APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build',
-                shouldPublishSourceMap: false
-                )
-            }   
+          }
+        },
+        'Test': {
+          container('fas') {
+            stageWithNotify('Unit tests') {
+              sh("yarn test")
+            }
+          }
+        },
+        'Preview': {
+          if(!isPullRequest) {
+            print "No PR previews for release builds"
+            return;
+          }
+          stageWithNotify('Build and deploy PR') {
+            previewServer(
+              buildCommand: 'yarn build:preview',
+              prefix: 'pr',
+              buildFolder: 'build',
+              commentPrefix: PR_COMMENT_MARKER
+            )
+          }
+        },
+        'Build': {
+          if(isPullRequest) {
+            print "No builds for prs"
+            return;
+          }
+          stageWithNotify('Build for FAS') {
+              fas.build(
+              appId: APP_ID,
+              repo: APPLICATION_REPO_ID,
+              buildCommand: 'yarn build',
+              shouldPublishSourceMap: false
+              )
+          }
         }
+      ],
+      workers: 2,
     )
 
     if (isRelease) {
-
       stageWithNotify('Deploy to FAS') {
         fas.publish(
           shouldPublishSourceMap: false
@@ -175,4 +177,3 @@ pods {
     }
   }
 }
-

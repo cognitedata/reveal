@@ -11,7 +11,7 @@ const App = () => {
     // If styles are broken please check: .rescripts#PrefixWrap(
     <GlobalStyles>
       <SubAppWrapper>
-        <AuthWrapper subAppName="unified-cdf-ui-demo">
+        <AuthWrapper subAppName="raw-explorer">
           <Home />
         </AuthWrapper>
       </SubAppWrapper>
