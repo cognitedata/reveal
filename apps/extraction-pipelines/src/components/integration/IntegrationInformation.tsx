@@ -46,6 +46,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
           showLabel
         />
         <EditDataSetId canEdit={canEdit} />
+        <div css="height: 1em" />
         <InlineEdit
           name="source"
           label={DetailFieldNames.SOURCE}

@@ -207,7 +207,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
             </ScheduleWrapper>
           </>
         ) : !canEdit ? (
-          <span css="color: grey; padding: 1rem">No schedule set</span>
+          <span css="color: grey; padding: 0 1rem">No schedule set</span>
         ) : (
           <EditButton
             onClick={onEditClick}
