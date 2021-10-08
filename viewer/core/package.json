@@ -16,11 +16,5 @@
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*",
     "@reveal/utilities": "workspace:*"
-  },
-  "sideEffects": false,
-  "glslify": {
-    "transform": [
-      "glslify-import"
-    ]
   }
 }

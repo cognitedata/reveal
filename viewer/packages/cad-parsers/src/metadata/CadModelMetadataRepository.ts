@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 
 import { CadMetadataParser } from './CadMetadataParser';
+
 import { SectorScene, WellKnownDistanceToMeterConversionFactors } from '../utilities/types';
 import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';

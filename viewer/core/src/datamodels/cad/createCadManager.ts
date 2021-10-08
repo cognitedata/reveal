@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+
 import { CadMetadataParser, CadModelMetadataRepository, CadSectorParser } from '@reveal/cad-parsers';
 
 import { CadManager } from './CadManager';

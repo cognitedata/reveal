@@ -925,7 +925,10 @@ __metadata:
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/logger": "workspace:*"
+<<<<<<< HEAD
     "@reveal/modeldata-api": "workspace:*"
+=======
+>>>>>>> origin/master
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -934,7 +937,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
+<<<<<<< HEAD
     "@reveal/modeldata-api": "workspace:*"
+=======
+>>>>>>> origin/master
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
