@@ -23,7 +23,11 @@ export interface BinaryFileProvider {
 }
 
 export interface ModelMetadataProvider<TModelIdentifier> {
-  getModelUrl(identifier: TModelIdentifier): Promise<string>;
+  /**
+   * Returns an URI that identifies the resource where model geometry and metadata files are stored.
+   * @param identifier Identifier of the model
+   */
+  getModelUri(identifier: TModelIdentifier): Promise<string>;
   getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
   getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
 }

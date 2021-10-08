@@ -65,7 +65,7 @@ describe('CdfModelMetadataProvider', () => {
     expect(result).toEqual({ modelId: 1337, revisionId: 42, outputs: response.items });
   });
 
-  test('getModelUrl throw error if no compatible output is found', async () => {
+  test('getModelUri throw error if no compatible output is found', async () => {
     // Arrange
     const response = {
       items: [
@@ -80,7 +80,7 @@ describe('CdfModelMetadataProvider', () => {
 
     // Act & Assert
     expect(
-      clientExt.getModelUrl({ modelId: 1337, revisionId: 42, format: File3dFormat.RevealCadModel })
+      clientExt.getModelUri({ modelId: 1337, revisionId: 42, format: File3dFormat.RevealCadModel })
     ).rejects.toThrowError();
   });
 });

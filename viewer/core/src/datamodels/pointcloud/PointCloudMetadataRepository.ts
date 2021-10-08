@@ -34,7 +34,7 @@ export class PointCloudMetadataRepository<TModelIdentifier>
 
   async loadData(modelIdentifier: TModelIdentifier): Promise<PointCloudMetadata> {
     const idWithFormat = { format: File3dFormat.EptPointCloud, ...modelIdentifier };
-    const baseUrlPromise = this._modelMetadataProvider.getModelUrl(idWithFormat);
+    const baseUrlPromise = this._modelMetadataProvider.getModelUri(idWithFormat);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(idWithFormat);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(idWithFormat);
 

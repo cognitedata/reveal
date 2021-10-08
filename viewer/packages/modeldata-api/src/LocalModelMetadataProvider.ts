@@ -7,7 +7,7 @@ import { File3dFormat, CameraConfiguration } from './types';
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 
 export class LocalModelMetadataProvider implements ModelMetadataProvider<{ fileName: string }> {
-  getModelUrl(params: { fileName: string }): Promise<string> {
+  getModelUri(params: { fileName: string }): Promise<string> {
     return Promise.resolve(`${location.origin}/${params.fileName}`);
   }
 

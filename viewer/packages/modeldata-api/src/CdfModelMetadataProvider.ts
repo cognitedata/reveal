@@ -53,7 +53,7 @@ export class CdfModelMetadataProvider
     return undefined;
   }
 
-  public async getModelUrl(modelIdentifier: {
+  public async getModelUri(modelIdentifier: {
     modelId: number;
     revisionId: number;
     format: File3dFormat | string;

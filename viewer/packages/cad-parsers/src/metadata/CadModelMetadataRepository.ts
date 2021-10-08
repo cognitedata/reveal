@@ -38,11 +38,11 @@ export class CadModelMetadataRepository<TModelIdentifier>
 
   async loadData(model: TModelIdentifier): Promise<CadModelMetadata> {
     const identifierWithFormat = { format: File3dFormat.RevealCadModel, ...model };
-    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(identifierWithFormat);
+    const modelUriPromise = this._modelMetadataProvider.getModelUri(identifierWithFormat);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(identifierWithFormat);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(identifierWithFormat);
 
-    const blobBaseUrl = await blobBaseUrlPromise;
+    const blobBaseUrl = await modelUriPromise;
     const json = await this._modelDataClient.getJsonFile(blobBaseUrl, this._blobFileName);
     const modelIdentifier = `${this._currentModelIdentifier++}`;
     const scene: SectorScene = this._cadSceneParser.parse(json);
