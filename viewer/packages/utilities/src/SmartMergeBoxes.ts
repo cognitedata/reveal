@@ -4,7 +4,6 @@
 
 import { Box3, Vector3 } from 'three';
 
-
 const BOX_MERGE_MIN_IOU = 0.15;
 
 // IoU - Intersection over Union, measure of overlap between two boxes
@@ -39,10 +38,8 @@ export class SmartMergeBoxes {
       }
     }
   }
-  
+
   squashBoxes(): void {
-    
-    
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
         const overlap = iou(this.resultBoxes[i], this.resultBoxes[j]);
@@ -56,11 +53,10 @@ export class SmartMergeBoxes {
       }
     }
   }
-  
-  
+
   squashAndGetBoxes(): Box3[] {
     this.squashBoxes();
-    
+
     return this.resultBoxes;
   }
 }
