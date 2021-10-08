@@ -24,7 +24,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "lint": "tsc --noEmit && eslint './src/**/*.ts{,x}'",
+    "lint": "eslint './src/**/*.ts{,x}'",
+    "test:ci": "yarn test",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
