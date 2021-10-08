@@ -171,9 +171,9 @@ class MyModelDataProvider implements ModelDataProvider {
 
 The API client is responsible for providing metadata about 3D CAD nodes, including node bounding boxes and parent/child relationships between nodes.
 
-| Function/Field              | Required?                                  | Description                                                      |
+| Function/Field              | Required by<br />(in `Cognite3DModel`)          | Description                                                      |
 | --------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
-| `mapTreeIndicesToNodeIds()` | No, but recommended to have a 1:1 mapping  | Maps from Reveal tree indices to CDF node IDs used to identify nodes in CDF |
+| `mapTreeIndicesToNodeIds()` | `mapTreeIndexToNodeId()`, `mapTreeIndicesToNodeIds()`, `getBoundingBoxByTreeIndex()` | Maps from Reveal tree indices to CDF node IDs used to identify nodes in CDF |
 | `mapNodeIdsToTreeIndices()` | No, but recommended to have a 1:1 mapping  | Reverse mapping of `mapTreeIndicesToNodeIds()`                   |
 | `determineTreeIndexAndSubtreeSizesByNodeIds()` | No                      | Determines the "span" of a node identified by a CDF node ID (i.e. the tree index and how many descendants it has including the node itself). |
 | `determineNodeAncestorsByNodeId()` | No                                  | Find "ancestor span" of a node identified by the CDF node ID. Returns data on same format as function above. |
@@ -182,8 +182,8 @@ The API client is responsible for providing metadata about 3D CAD nodes, includi
 
 ### Requirement matrix
 
-| `Cognite3DModel` \ `NodesApiClient` | <div >`mapTreeIndicesToNodeIds()`</div> | `mapNodeIdsToTreeIndices()` | `determineTreeIndexAndSubtreeSizesByNodeIds()` | `determineNodeAncestorsByNodeId()` | `getBoundingBoxByNodeId()` |
-| ----------------------------------- | --------------------------------------- | --------------------------- | ---------------------------------------------- | ---------------------------------- | -------------------------- |
+| `Cognite3DModel` \ `NodesApiClient` | `mapTreeIndicesToNodeIds()` | `mapNodeIdsToTreeIndices()` | `determineTreeIndexAndSubtreeSizesByNodeIds()` | `determineNodeAncestorsByNodeId()` | `getBoundingBoxByNodeId()` |
+| ----------------------------------- | --------------------------- | --------------------------- | ---------------------------------------------- | ---------------------------------- | -------------------------- |
 | `getBoundingBoxByNodeId()`          |                             |                             |                                                |                                    | X                          |
 | `getBoundingBoxByNodeTreeIndex()`   | X                           |                             |                                                |                                    | X                          |
 | `mapNodeIdToTreeIndex()`            |                             | X                           |                                                |                                    |                            |
