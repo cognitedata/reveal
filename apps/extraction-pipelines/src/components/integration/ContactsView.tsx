@@ -15,6 +15,14 @@ import styled from 'styled-components';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
 const Wrapper = styled.div``;
+
+const MarginedChildren = styled.div`
+  > * + * {
+    color: red;
+    margin-top: 1rem;
+  }
+`;
+
 interface ContactsViewProps {
   canEdit: boolean;
 }
@@ -49,11 +57,11 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
       <Wrapper>
         {contacts && contacts.length > 0 ? (
           <EditableAreaButton disabled={!canEdit} onClick={openEdit} $full>
-            <div>
+            <MarginedChildren>
               {contactsSorted.map((contact: User) => {
                 return <ContactCard key={contact.email} {...contact} />;
               })}
-            </div>
+            </MarginedChildren>
           </EditableAreaButton>
         ) : (
           <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
