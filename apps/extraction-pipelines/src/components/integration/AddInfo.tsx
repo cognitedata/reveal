@@ -1,6 +1,8 @@
 import React, { PropsWithoutRef } from 'react';
 import { IntegrationFieldName, IntegrationFieldValue } from 'model/Integration';
 import DetailsValueView from 'components/table/details/DetailsValueView';
+import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
+import { splitWordsLowerCase } from 'utils/primitivesUtils';
 
 export const AddInfo = ({
   fieldValue,
@@ -12,12 +14,11 @@ export const AddInfo = ({
   label?: string;
 }>) => {
   if (!fieldValue) {
-    return <span>No value given here</span>;
-    // return (
-    //   <AddFieldInfoText>
-    //     {label ?? splitWordsLowerCase(fieldName)}
-    //   </AddFieldInfoText>
-    // );
+    return (
+      <AddFieldInfoText>
+        {label ?? splitWordsLowerCase(fieldName)}
+      </AddFieldInfoText>
+    );
   }
   return (
     <>

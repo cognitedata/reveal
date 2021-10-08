@@ -136,24 +136,34 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     return null;
   }
 
+  const infoHowEdit = (
+    <>
+      <p style={{ margin: '3rem 0', textAlign: 'center' }}>
+        Use{' '}
+        <a href="https://guides.github.com/features/mastering-markdown/">
+          markdown
+        </a>{' '}
+        to document important information about the extraction pipeline, for
+        troubleshooting or more detailed information about the data such as
+        selection criteria.
+      </p>
+      <EditButton type="ghost" onClick={onEditClick} disabled={!canEdit}>
+        <AddFieldInfoText>
+          {DetailFieldNames.DOCUMENTATION.toLowerCase()}
+        </AddFieldInfoText>
+      </EditButton>
+    </>
+  );
+  const infoNoDocumentation = (
+    <p style={{ margin: '3rem 0', textAlign: 'center', color: 'grey' }}>
+      No documentation added.
+    </p>
+  );
   const whenNotEditing =
     currentIntegration.documentation == null ? (
       <DivFlex align="center" direction="column" css="margin: 5rem 5rem">
         <Graphic type="RuleMonitoring" />
-        <p style={{ margin: '3rem 0', textAlign: 'center' }}>
-          Use{' '}
-          <a href="https://guides.github.com/features/mastering-markdown/">
-            markdown
-          </a>{' '}
-          to document important information about the extraction pipeline, for
-          troubleshooting or more detailed information about the data such as
-          selection criteria.
-        </p>
-        <EditButton type="ghost" onClick={onEditClick} disabled={!canEdit}>
-          <AddFieldInfoText>
-            {DetailFieldNames.DOCUMENTATION.toLowerCase()}
-          </AddFieldInfoText>
-        </EditButton>
+        {canEdit ? infoHowEdit : infoNoDocumentation}
       </DivFlex>
     ) : (
       <EditableAreaButton
