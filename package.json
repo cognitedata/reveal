@@ -1,6 +1,6 @@
 {
   "name": "@cognite/data-explorer",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "typings": "dist/lib/index.d.ts",
@@ -9,7 +9,7 @@
     "@babel/runtime": "^7.13.17",
     "@cognite/cdf-utilities": "^0.9.0",
     "@cognite/cogs.js": "^3.36.0",
-    "@cognite/data-exploration": "^1.5.5",
+    "@cognite/data-exploration": "^1.6.3",
     "@cognite/react-feature-flags": "^0.2.2",
     "@cognite/react-picture-annotation": "^1.16.3",
     "@cognite/sdk": "^3.3.6",
