@@ -162,11 +162,11 @@ pods {
           }
         },
 
-        // 'Storybook': {
-        //   previewServer.runStorybookStage(
-        //     shouldExecute: isPullRequest
-        //   )
-        // },
+        'Storybook': {
+          previewServer.runStorybookStage(
+            shouldExecute: isPullRequest
+          )
+        },
 
         'Preview': {
           dir('preview') {
@@ -216,7 +216,7 @@ pods {
         //   )
         // },
       ],
-      workers: 3,
+      workers: 4,
     )
 
     stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
