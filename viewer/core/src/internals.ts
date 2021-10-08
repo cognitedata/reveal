@@ -5,23 +5,24 @@
 export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 
+export { CadModelMetadata, SectorMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+export {
+  CadLoadingHints,
+  CadNode,
+  SuggestedCameraConfig,
+  SectorCuller,
+  DetermineSectorsInput,
+  ByVisibilityGpuSectorCuller,
+  GpuOrderSectorsByVisibilityCoverage,
+  NodeAppearance,
+  DefaultNodeAppearance,
+  NodeAppearanceProvider
+} from '@reveal/cad-geometry-loaders';
+export { revealEnv } from '@reveal/utilities';
+
 // CAD
-export { SectorMetadata } from './datamodels/cad/sector/types';
-export { CadLoadingHints } from './datamodels/cad/CadLoadingHints';
 export { intersectCadNodes } from './datamodels/cad/picking';
-export { DetermineSectorsInput } from './datamodels/cad/sector/culling/types';
-export { SectorCuller } from './datamodels/cad/sector/culling/SectorCuller';
-export { ByVisibilityGpuSectorCuller } from './datamodels/cad/sector/culling/ByVisibilityGpuSectorCuller';
-export { GpuOrderSectorsByVisibilityCoverage } from './datamodels/cad/sector/culling/OrderSectorsByVisibilityCoverage';
 export { CadModelSectorLoadStatistics } from './datamodels/cad/CadModelSectorLoadStatistics';
-export { NodeAppearance, DefaultNodeAppearance } from './datamodels/cad/NodeAppearance';
-export { NodeAppearanceProvider } from './datamodels/cad/styling/NodeAppearanceProvider';
-
-export { CadModelMetadata } from './datamodels/cad/CadModelMetadata';
-export { CadNode, SuggestedCameraConfig } from './datamodels/cad/CadNode';
-
-export { WantedSector } from './datamodels/cad/sector/types';
-export { LevelOfDetail } from './datamodels/cad/sector/LevelOfDetail';
 
 // Point cloud
 export { PointCloudMetadata } from './datamodels/pointcloud';
@@ -34,5 +35,3 @@ export { PointCloudNode } from './datamodels/pointcloud/PointCloudNode';
 // Utilities
 import * as utilities from './utilities';
 export { utilities };
-
-export * from './revealEnv';

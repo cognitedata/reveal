@@ -9,6 +9,16 @@ import omit from 'lodash/omit';
 import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
+import {
+  defaultRenderOptions,
+  SsaoParameters,
+  SsaoSampleQuality,
+  AntiAliasingMode,
+  LoadingState
+} from '@reveal/cad-geometry-loaders';
+
+import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
 
@@ -18,7 +28,8 @@ import {
   Intersection,
   CameraChangeDelegate,
   PointerEventDelegate,
-  CadModelBudget
+  CadModelBudget,
+  PointCloudBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -26,30 +37,16 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import {
-  defaultRenderOptions,
-  DisposedDelegate,
-  PointCloudBudget,
-  SceneRenderedDelegate,
-  SsaoParameters,
-  SsaoSampleQuality
-} from '../types';
 
-import { assertNever, LoadingState } from '../../utilities';
+import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+
+
 import { Spinner } from '../../utilities/Spinner';
-import { trackError, trackEvent } from '../../utilities/metrics';
-import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import {
-  AntiAliasingMode,
-  CadIntersection,
-  IntersectionFromPixelOptions,
-  PointCloudIntersection,
-  RevealOptions
-} from '../..';
+import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';

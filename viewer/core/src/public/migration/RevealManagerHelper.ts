@@ -2,10 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+
+import { assertNever } from '@reveal/utilities';
+
 import { AddModelOptions } from './types';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager, createLocalRevealManager } from '../createRevealManager';
-import { assertNever } from '../../utilities';
+
 import { RevealOptions } from '../..';
 import { CadNode } from '../../datamodels/cad';
 import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';

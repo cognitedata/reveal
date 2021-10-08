@@ -1,0 +1,20 @@
+{
+  "name": "@reveal/cad-parsers",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:start",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/modeldata-api": "workspace:*",
+    "@reveal/utilities": "workspace:*"
+  },
+  "sideEffects": false,
+  "glslify": {
+    "transform": [
+      "glslify-import"
+    ]
+  }
+}

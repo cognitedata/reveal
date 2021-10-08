@@ -4,21 +4,20 @@
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
 
+import { CadModelMetadata } from '@reveal/cad-parsers';
+import { NumericRange, trackError } from '@reveal/utilities';
+import { NodeCollectionBase, CadNode, NodeTransformProvider, NodeAppearance } from '@reveal/cad-geometry-loaders';
+
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 
-import { NumericRange } from '../../utilities';
-import { CadNode } from '../../internals';
-import { trackError } from '../../utilities/metrics';
-
-import { SupportedModelTypes, CadModelMetadata, WellKnownUnit } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
-import { NodeCollectionBase } from '../../datamodels/cad/styling';
-import { NodeAppearance } from '../../datamodels/cad';
-import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
+
 import { NodesApiClient } from '@reveal/nodes-api';
-import { WellKnownDistanceToMeterConversionFactors } from '../../datamodels/cad/sector/types';
+import { SupportedModelTypes } from '../types';
+import { WellKnownUnit } from './types';
+import { WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers/src/utilities/types';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -366,7 +365,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
-      trackError(error, {
+      trackError(error as Error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });

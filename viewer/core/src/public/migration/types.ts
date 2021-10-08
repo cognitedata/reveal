@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
+import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
@@ -218,7 +218,7 @@ export type Intersection = CadIntersection | PointCloudIntersection;
 /**
  * @module @cognite/reveal
  */
-export { CameraConfiguration } from '../../utilities';
+export { CameraConfiguration } from '@reveal/utilities';
 
 /**
  * Delegate for pointer events.

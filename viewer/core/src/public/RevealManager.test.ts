@@ -7,7 +7,7 @@ import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
-import { createGlContext } from '../__testutilities__/createGlContext';
+import { createGlContext } from '../../../test-utilities';
 
 import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
 

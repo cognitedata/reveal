@@ -4,8 +4,8 @@
 import * as THREE from 'three';
 
 // TODO: Fix dependencies such that test app doesn't depend on core internals
-import matCapTextureImage from '../../../core/src/datamodels/cad/rendering/matCapTextureData';
-import { sectorShaders } from '../../../core/src/datamodels/cad/rendering/shaders';
+import matCapTextureImage from '../../../packages/cad-parsers/src/cad/matCapTextureData';
+import { sectorShaders } from '../../../packages/cad-parsers/src/cad/shaders';
 
 const matCapTexture = new THREE.Texture(matCapTextureImage);
 matCapTexture.needsUpdate = true;
