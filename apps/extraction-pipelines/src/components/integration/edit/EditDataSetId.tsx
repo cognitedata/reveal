@@ -25,6 +25,7 @@ import { ColumnForm, StyledLabel } from 'styles/StyledForm';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
+import DetailsValueView from 'components/table/details/DetailsValueView';
 
 const Wrapper = styled.div`
   display: grid;
@@ -117,7 +118,10 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
           {TableHeadings.DATA_SET}
         </StyledLabel>
-        <div css="margin: 1em 0">Some dataset name</div>
+        <DetailsValueView
+          fieldName="dataSet"
+          fieldValue={integration?.dataSet}
+        />
       </div>
     );
   }
