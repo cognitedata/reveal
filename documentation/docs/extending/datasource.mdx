@@ -208,8 +208,8 @@ class MyNodesApiClient implements NodesApiClient {
 ## Unsupported features
 
 There's a few features that is not backed by the `DataSource`-API and hence won't be affected by the implementation. The most
-notable feature is the [CAD styling API](cad-styling) which in large is backed by `CogniteClient`. To use the styling API with
-custom data sources, you will need to [create custom node collections](cad-styling-custom) or [use `TreeIndexNodeCollection`](cad-styling).
+notable feature is the [CAD styling API](../examples/cad-styling) which in large is backed by `CogniteClient`. To use the styling API with
+custom data sources, you will need to [create custom node collections](../examples/cad-styling-custom) or [use `TreeIndexNodeCollection`](../examples/cad-styling).
 
-Currently there are restrictions in the [the API for saving viewer state](cad-save-viewerstate) causing `Cognite3DViewer.setViewState` not
+Currently there are restrictions in the [the API for saving viewer state](../examples/cad-save-viewerstate) causing `Cognite3DViewer.setViewState` not
 to work with a custom `DataSource`. This might change in the future.
