@@ -7,6 +7,7 @@ interface AddFieldInfoTextProps {}
 const Styled = styled.span`
   display: flex;
   align-items: center;
+  line-height: 1.5rem;
   button:enabled > & {
     color: ${Colors.primary.hex()};
   }

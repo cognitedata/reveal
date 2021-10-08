@@ -7,7 +7,9 @@ export const EditableAreaButton = styled((props: PropsWithChildren<any>) => {
   return disabled ? (
     <div css="padding: 0 1rem">{children}</div>
   ) : (
-    <EditButton {...props}>{children}</EditButton>
+    <EditButton $full {...props}>
+      {children}
+    </EditButton>
   );
 })`
   &.cogs-btn {
