@@ -40,7 +40,6 @@ import { RevealManager } from '../RevealManager';
 
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
-
 import { Spinner } from '../../utilities/Spinner';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
