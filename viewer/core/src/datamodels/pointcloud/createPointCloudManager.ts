@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-
 import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PointCloudFactory } from './PointCloudFactory';

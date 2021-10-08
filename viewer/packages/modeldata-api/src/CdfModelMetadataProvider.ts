@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 import { ModelMetadataProvider } from './ModelMetadataProvider';
 import { BlobOutputMetadata } from './types';
+
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { Model3DOutputList } from './Model3DOutputList';
 import { ModelIdentifier } from './ModelIdentifier';

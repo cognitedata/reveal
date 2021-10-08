@@ -485,7 +485,7 @@ __metadata:
     "@types/mixpanel-browser": ^2.35.4
     "@types/node": ^14.14.5
     "@types/skmeans": ^0.11.1
-    "@types/three": 0.131.0
+    "@types/three": 0.133.0
     "@types/tween.js": ^18.5.1
     "@typescript-eslint/eslint-plugin": ^4.29.1
     "@typescript-eslint/parser": ^4.29.1
@@ -527,7 +527,7 @@ __metadata:
     rxjs: ^7.1.0
     shx: ^0.3.3
     skmeans: ^0.11.3
-    three: 0.131.0
+    three: 0.133.0
     ts-jest: ^26.4.3
     ts-loader: 8.0.7
     typescript: ^4.3.2
@@ -925,10 +925,7 @@ __metadata:
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/logger": "workspace:*"
-<<<<<<< HEAD
     "@reveal/modeldata-api": "workspace:*"
-=======
->>>>>>> origin/master
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -937,10 +934,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
   dependencies:
-<<<<<<< HEAD
     "@reveal/modeldata-api": "workspace:*"
-=======
->>>>>>> origin/master
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1286,10 +1280,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.131.0":
-  version: 0.131.0
-  resolution: "@types/three@npm:0.131.0"
-  checksum: 3d8def97d9a42855a7726f26bfd3339fc6f0565adf6206852cb2d6e4296af8372fb5dc9c39312fa8472824776664e16b20f860e7560697f0a3ec4e8db222dcb9
+"@types/three@npm:0.133.0":
+  version: 0.133.0
+  resolution: "@types/three@npm:0.133.0"
+  checksum: e74e797d64f2525d1572f93bdafca481a59ea70804ca60d5d093e2c39a387ce5546472026b05e41851654d653a44c145d491ea1f746fb05ee085192e93db252e
   languageName: node
   linkType: hard
 
@@ -12014,10 +12008,10 @@ resolve@^0.6.1:
   languageName: node
   linkType: hard
 
-"three@npm:0.131.0":
-  version: 0.131.0
-  resolution: "three@npm:0.131.0"
-  checksum: 8e1d35aeaa75fe6c73aac9fd14b38b280f8718e10807e71e01f8fb8488c23c37591c9765866198563b14cfb8219d3d2553bb17a97474a44b7084988da1b3d9eb
+"three@npm:0.133.0":
+  version: 0.133.0
+  resolution: "three@npm:0.133.0"
+  checksum: 9a1d03ac702a65423e984fe9c9944585d24df82fc42b1bc44206d4ada06607f49ca6bbaf140739e48d8046db4a72bc33292a89b236b7d829107dcd3c9ba4b8d1
   languageName: node
   linkType: hard
 
