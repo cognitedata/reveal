@@ -36,7 +36,6 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
