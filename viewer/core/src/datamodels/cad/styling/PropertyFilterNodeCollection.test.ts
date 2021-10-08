@@ -3,12 +3,11 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
+import { IndexSet, NumericRange } from '@reveal/utilities';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
-import { IndexSet } from '../../../utilities/IndexSet';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 
 import nock from 'nock';
-import { NumericRange } from '../../../utilities';
 
 describe('PropertyFilterNodeCollection', () => {
   let client: CogniteClient;

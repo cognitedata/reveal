@@ -919,6 +919,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reveal/cad-geometry-loaders@workspace:*, @reveal/cad-geometry-loaders@workspace:packages/cad-geometry-loaders":
+  version: 0.0.0-use.local
+  resolution: "@reveal/cad-geometry-loaders@workspace:packages/cad-geometry-loaders"
+  dependencies:
+    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/logger": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/cad-parsers@workspace:*, @reveal/cad-parsers@workspace:packages/cad-parsers":
+  version: 0.0.0-use.local
+  resolution: "@reveal/cad-parsers@workspace:packages/cad-parsers"
+  dependencies:
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/camera-manager@workspace:*, @reveal/camera-manager@workspace:packages/camera-manager":
   version: 0.0.0-use.local
   resolution: "@reveal/camera-manager@workspace:packages/camera-manager"
@@ -929,11 +949,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/core@workspace:core"
   dependencies:
+    "@reveal/cad-geometry-loaders": "workspace:*"
+    "@reveal/cad-parsers": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
     "@reveal/data-source": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -976,6 +999,14 @@ __metadata:
   dependencies:
     "@reveal/camera-manager": "workspace:*"
     "@reveal/core": "workspace:*"
+    "@reveal/logger": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/utilities@workspace:*, @reveal/utilities@workspace:packages/utilities":
+  version: 0.0.0-use.local
+  resolution: "@reveal/utilities@workspace:packages/utilities"
+  dependencies:
     "@reveal/logger": "workspace:*"
   languageName: unknown
   linkType: soft

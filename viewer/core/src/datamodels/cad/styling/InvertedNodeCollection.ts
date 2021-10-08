@@ -2,9 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
-import { NumericRange } from '../../../utilities';
-import { IndexSet } from '../../../utilities/IndexSet';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
+import { NumericRange, IndexSet } from '@reveal/utilities';
+import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-geometry-loaders';
 
 /**
  * Node collection that inverts the result from another node collection.

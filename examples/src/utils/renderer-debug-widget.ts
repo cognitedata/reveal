@@ -136,31 +136,7 @@ export function createRendererDebugWidget(
   controls.push(
     sectorsGui.add(sceneInfo.quads, 'meshCount').name('Loaded quads')
   );
-
-  // Sectors to load
-  const loadOverrideGui = sectorsGui.addFolder('Override loading');
-  const loadOverride = {
-    maxQuadSize: 0.0025,
-    quadsFilter: '',
-    detailedFilter: '',
-  };
-  const updateWantedNodesFilter = () =>
-    updateWantedSectorOverride(
-      cadNode,
-      renderOptions,
-      sectorMetadataRoot,
-      loadOverride.quadsFilter,
-      loadOverride.detailedFilter
-    );
-  loadOverrideGui
-    .add(loadOverride, 'quadsFilter')
-    .name('Quads (low detail)')
-    .onFinishChange(updateWantedNodesFilter);
-  loadOverrideGui
-    .add(loadOverride, 'detailedFilter')
-    .name('Detailed')
-    .onFinishChange(updateWantedNodesFilter);
-
+  
   // Details about different geometries
   const primitivesGui = gui.addFolder('Primitives');
   controls.push(
@@ -354,76 +330,6 @@ function getMaterials(mesh: THREE.Mesh): THREE.Material[] {
     return mesh.material;
   } else {
     return [mesh.material as THREE.Material];
-  }
-}
-
-/**
- * From the provided filter, returns a set of nodeIds accepted by the filter.
- * @param filter Comma-separated list of regular expressions, matched with the sector-tree paths (on
- *               format x/y/z/ where x,y,z is a number).
- * @param root   The root of the sector tree.
- */
-function filterSectorNodes(
-  filter: string,
-  root: reveal.SectorMetadata
-): reveal.SectorMetadata[] {
-  const acceptedNodes: reveal.SectorMetadata[] = [];
-  for (let pathRegex of filter.split('|').map((x) => x.trim())) {
-    if (!pathRegex.startsWith('^')) {
-      pathRegex = '^' + pathRegex;
-    }
-    if (!pathRegex.endsWith('$')) {
-      pathRegex = pathRegex + '$';
-    }
-    reveal.utilities.traverseDepthFirst(root, node => {
-      if (node.path.match(pathRegex)) {
-        acceptedNodes.push(node);
-      }
-      return true;
-    });
-  }
-  return acceptedNodes;
-}
-
-function updateWantedSectorOverride(
-  cadNode: reveal.CadNode,
-  renderOptions: RenderOptions,
-  root: reveal.SectorMetadata,
-  quadsFilter: string,
-  detailedFilter: string
-) {
-  function createWantedSector(
-    node: reveal.SectorMetadata,
-    levelOfDetail: reveal.LevelOfDetail
-  ): reveal.WantedSector {
-    return {
-      modelIdentifier: cadNode.cadModelMetadata.modelIdentifier,
-      modelBaseUrl: cadNode.cadModelMetadata.modelBaseUrl,
-      levelOfDetail,
-      metadata: node,
-      geometryClipBox: null
-    };
-  }
-
-  if (quadsFilter === '' && detailedFilter === '') {
-    renderOptions.overrideWantedSectors = undefined;
-  } else {
-    const acceptedSimple = filterSectorNodes(quadsFilter, root);
-    const acceptedDetailed = filterSectorNodes(detailedFilter, root);
-    const wanted: reveal.WantedSector[] = [
-      ...cadNode.sectorScene
-        .getAllSectors()
-        .map((x) =>
-          createWantedSector(x, reveal.LevelOfDetail.Discarded)
-        ),
-      ...acceptedSimple.map((x) =>
-        createWantedSector(x, reveal.LevelOfDetail.Simple)
-      ),
-      ...acceptedDetailed.map((x) =>
-        createWantedSector(x, reveal.LevelOfDetail.Detailed)
-      ),
-    ];
-    renderOptions.overrideWantedSectors = wanted;
   }
 }
 

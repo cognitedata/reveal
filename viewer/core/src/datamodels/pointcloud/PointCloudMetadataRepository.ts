@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 import { PointCloudMetadata } from './PointCloudMetadata';
 import { MetadataRepository } from '../base';
-import { transformCameraConfiguration } from '../../utilities/transformCameraConfiguration';
+
+import { transformCameraConfiguration } from '@reveal/utilities';
 
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
 

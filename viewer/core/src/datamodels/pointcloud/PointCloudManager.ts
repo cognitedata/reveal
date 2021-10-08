@@ -3,14 +3,15 @@
  */
 
 import * as THREE from 'three';
-import { Observable } from 'rxjs';
+
+import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 
-import { LoadingState } from '../../utilities';
+import { Observable } from 'rxjs';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
