@@ -1,6 +1,6 @@
-import { GetOffsetFunction, Node } from '../Graph/Graph';
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
 import { FieldDefinitionNode, ObjectTypeDefinitionNode } from 'graphql';
+import { GetOffsetFunction, Node } from '../Graph/Graph';
 import { getFieldType, SchemaDefinitionNode } from '../../utils/graphql-utils';
 
 export const NODE_WIDTH = 240;

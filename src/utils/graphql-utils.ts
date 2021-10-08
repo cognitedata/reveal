@@ -1,5 +1,5 @@
-import { FieldDefinitionNode } from 'graphql';
 import {
+  FieldDefinitionNode,
   DefinitionNode,
   InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
@@ -21,14 +21,14 @@ export const isFieldRequired = (type: TypeNode): boolean => {
     case 'ListType':
       return isFieldRequired(type.type);
   }
+  return false;
 };
 
 export const doesFieldHaveDirective = (
   type: FieldDefinitionNode,
   directive: string
-): boolean => {
-  return type.directives?.some((el) => el.name.value === directive) || false;
-};
+): boolean =>
+  type.directives?.some((el) => el.name.value === directive) || false;
 
 export const getFieldType = (type: TypeNode): string => {
   switch (type?.kind) {

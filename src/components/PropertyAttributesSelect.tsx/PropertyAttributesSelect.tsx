@@ -1,11 +1,11 @@
 import { Menu, Icon, Dropdown, Flex } from '@cognite/cogs.js';
 import { FieldDefinitionNode } from 'graphql';
+import styled from 'styled-components/macro';
 import {
   isFieldRequired,
   doesFieldHaveDirective,
 } from '../../utils/graphql-utils';
 import { PropertyAttributesDisplay } from '../PropertyAttributesDisplay/PropertyAttributesDisplay';
-import styled from 'styled-components/macro';
 
 export const PropertyAttributesSelect = ({
   field,

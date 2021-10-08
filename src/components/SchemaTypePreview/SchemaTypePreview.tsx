@@ -1,12 +1,15 @@
 import { FieldDefinitionNode, ObjectTypeDefinitionNode, parse } from 'graphql';
 import { useMemo } from 'react';
-import { doesFieldHaveDirective, getFieldType } from '../../utils/graphql-utils';
-import { Error } from '../Error/Error';
 import { Table } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import {
+  doesFieldHaveDirective,
+  getFieldType,
+} from '../../utils/graphql-utils';
+import { Error } from '../Error/Error';
 import { PropertyAttributesDisplay } from '../PropertyAttributesDisplay/PropertyAttributesDisplay';
 
-type Field = {
+export type Field = {
   field: FieldDefinitionNode;
   id: number;
 };
@@ -19,11 +22,12 @@ export const SchemaTypePreview = ({
   graphQLSchemaString: string;
 }) => {
   const schemaTypes = useMemo(
-    () => parse(graphQLSchemaString as string).definitions
-    .filter(definition =>
-      definition.kind === 'ObjectTypeDefinition' ||
-      definition.kind === 'InterfaceTypeDefinition'
-    ),
+    () =>
+      parse(graphQLSchemaString as string).definitions.filter(
+        (definition) =>
+          definition.kind === 'ObjectTypeDefinition' ||
+          definition.kind === 'InterfaceTypeDefinition'
+      ),
     [graphQLSchemaString]
   ) as ObjectTypeDefinitionNode[];
 
@@ -32,39 +36,46 @@ export const SchemaTypePreview = ({
   );
 
   if (!item) {
-    return <Error message='Unable to find schema type!' />;
+    return <Error message="Unable to find schema type!" />;
   }
 
-  const fields = item.fields?.map((
-    field: FieldDefinitionNode,
-    index: number
-  ) => ({
-    field,
-    id: index
-  })) as Field[];
+  const fields = item.fields?.map(
+    (field: FieldDefinitionNode, index: number) => ({
+      field,
+      id: index,
+    })
+  ) as Field[];
 
   const columns = [
     {
-      accessor: (field: Field) => doesFieldHaveDirective(field.field, 'id') 
-        ? <StyledMainID>{field.field.name.value}</StyledMainID>
-        : field.field.name.value,
-      id: 'name'
+      accessor: (field: Field) =>
+        doesFieldHaveDirective(field.field, 'id') ? (
+          <StyledMainID>{field.field.name.value}</StyledMainID>
+        ) : (
+          field.field.name.value
+        ),
+      id: 'name',
     },
     {
       accessor: ({ field: { type } }: Field) => getFieldType(type),
-      id: 'type'
+      id: 'type',
     },
     {
-      accessor: (field: Field) => <PropertyAttributesDisplay field={field.field} />,
-      id: 'directives'
+      accessor: (field: Field) => (
+        <PropertyAttributesDisplay field={field.field} />
+      ),
+      id: 'directives',
     },
     {
-      accessor: ({ field: { description } }: Field) => description?.value
-        ? description?.value
-        : <StyledNoDescription>No description</StyledNoDescription>,
-      id: 'description'
-    }
-  ]
+      accessor: ({ field: { description } }: Field) =>
+        description?.value ? (
+          description?.value
+        ) : (
+          <StyledNoDescription>No description</StyledNoDescription>
+        ),
+      id: 'description',
+    },
+  ];
   return (
     <Wrapper>
       <Table<Field>
@@ -74,9 +85,8 @@ export const SchemaTypePreview = ({
         showHeader={false}
       />
     </Wrapper>
-  )
+  );
 };
-
 
 const Wrapper = styled.div`
   .cogs-table {
@@ -100,4 +110,4 @@ const StyledMainID = styled.span`
 const StyledNoDescription = styled.span`
   color: var(--cogs-greyscale-grey6);
   font-style: italic;
-`
+`;

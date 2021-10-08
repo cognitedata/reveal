@@ -20,5 +20,5 @@ const Template: Story<Parameters<typeof GraphqlCodeEditor>[0]> = (args) => (
 export const Default = Template.bind({});
 
 Default.args = {
-  code: mockComplexGraphqlModel
+  code: mockComplexGraphqlModel,
 };

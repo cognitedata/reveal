@@ -65,7 +65,6 @@ export const SchemaVisualizer = ({
 
   const graphRef = useRef<GraphFns | null>(null);
 
-  // TODO: should be moved to a memoized context
   const schemaTypes = useMemo(
     () => parse(graphQLSchemaString as string).definitions,
     [graphQLSchemaString]
@@ -84,7 +83,8 @@ export const SchemaVisualizer = ({
         ...getUnionTypes(schemaTypes),
       ];
       const filteredObjectTypes = objectTypes?.filter((objectType) =>
-          objectType.name.value.toLowerCase()
+        objectType.name.value
+          .toLowerCase()
           .includes(searchFilterValue.toLowerCase().trim())
       );
       setNodes(
@@ -96,7 +96,10 @@ export const SchemaVisualizer = ({
       );
       setLinks(
         filteredObjectTypes.reduce((prev, current) => {
-          const linkedNodes = getLinkedNodes(current.name.value, filteredObjectTypes);
+          const linkedNodes = getLinkedNodes(
+            current.name.value,
+            filteredObjectTypes
+          );
           prev.push(
             ...linkedNodes.map((linkedNode) => ({
               source: current.name.value,
@@ -142,7 +145,7 @@ export const SchemaVisualizer = ({
       <Menu.Header>display:</Menu.Header>
       <Menu.Item>
         <Checkbox
-          name='mainID'
+          name="mainID"
           value={highlightMainID}
           onChange={(nextState: boolean) => {
             setHighlightMainID(nextState);
@@ -154,7 +157,7 @@ export const SchemaVisualizer = ({
       </Menu.Item>
       <Menu.Item>
         <Checkbox
-          name='required'
+          name="required"
           value={showRequiredIcon}
           onChange={(nextState: boolean) => {
             setShowRequiredIcon(nextState);
@@ -166,7 +169,7 @@ export const SchemaVisualizer = ({
       </Menu.Item>
       <Menu.Item>
         <Checkbox
-          name='search'
+          name="search"
           value={showSearchIcon}
           onChange={(nextState: boolean) => {
             setShowSearchIcon(nextState);
@@ -179,7 +182,7 @@ export const SchemaVisualizer = ({
       <Menu.Divider />
       <Menu.Item>
         <Checkbox
-          name='headersOnly'
+          name="headersOnly"
           value={showHeaderOnly}
           onChange={(nextState: boolean) => {
             setShowHeaderOnly(nextState);
@@ -201,10 +204,10 @@ export const SchemaVisualizer = ({
   const renderTopBar = () => (
     <StyledTopBar>
       <TopBar.Item className="cogs-topbar--item__search">
-        <Icon type='Search' />
+        <Icon type="Search" />
         <Input
-          placeholder='Search'
-          value={searchFilterValue} 
+          placeholder="Search"
+          value={searchFilterValue}
           onChange={(e) => setSearchFilterValue(e.target.value)}
         />
       </TopBar.Item>
@@ -216,10 +219,8 @@ export const SchemaVisualizer = ({
             setMenuVisible(false);
           }}
         >
-          <Button
-            type='ghost'
-            onClick={() => setMenuVisible(!menuVisible)}>
-            <StyledFilterIcon type='Filter' />
+          <Button type="ghost" onClick={() => setMenuVisible(!menuVisible)}>
+            <StyledFilterIcon type="Filter" />
             <Badge text={`${countFilters}`} />
           </Button>
         </Dropdown>
@@ -228,17 +229,17 @@ export const SchemaVisualizer = ({
         actions={[
           {
             key: 'zoomIn',
-            component: <Icon type='ZoomIn' />,
+            component: <Icon type="ZoomIn" />,
             onClick: () => zoomInHandler(),
           },
           {
             key: 'ZoomOut',
-            component: <Icon type='ZoomOut' />,
+            component: <Icon type="ZoomOut" />,
             onClick: () => zoomOutHandler(),
           },
           {
             key: 'ExpandMax',
-            component: <Icon type='ExpandMax' />,
+            component: <Icon type="ExpandMax" />,
             onClick: () => fitHandler(),
           },
         ]}
@@ -247,13 +248,15 @@ export const SchemaVisualizer = ({
         actions={[
           {
             key: 'Expand',
-            component: <Icon type={isVisualizerExpanded ? 'Collapse' : 'Expand'} />,
+            component: (
+              <Icon type={isVisualizerExpanded ? 'Collapse' : 'Expand'} />
+            ),
             onClick: () => setIsVisualizerExpanded(!isVisualizerExpanded),
           },
         ]}
       />
     </StyledTopBar>
-  )
+  );
 
   const renderConnectorsForNode = (
     item: d3.SimulationNodeDatum & {
@@ -358,14 +361,14 @@ export const SchemaVisualizer = ({
         </Header>
         {item.fields?.map((el) => (
           <PropertyItem key={el.name.value}>
-            <Body level={2} className='property-name'>
+            <Body level={2} className="property-name">
               {highlightMainID && doesFieldHaveDirective(el, 'id') ? (
                 <StyledMainID>{el.name.value}</StyledMainID>
               ) : (
                 el.name.value
               )}
             </Body>
-            <div className='property-type'>
+            <div className="property-type">
               <Body level={2}>{renderFieldType(el.type)}</Body>
               {hasRequiredFilter && renderIconIfRequired(el)}
               {hasSearchFilter && renderIconIfSearch(el)}
@@ -426,9 +429,9 @@ export const SchemaVisualizer = ({
             style.strokeWidth = 2;
             style.stroke = Colors['greyscale-grey7'].hex();
           }
-          return <path className='line' key={id} id={id} style={style} />;
+          return <path className="line" key={id} id={id} style={style} />;
         }}
-        renderNode={(item, transform, displayedNodes) => {
+        renderNode={(item, _, displayedNodes) => {
           const isActive = selected.has(item.id);
           const style: CSSProperties = {};
           if (highlightedIds.includes(item.id)) {
@@ -479,15 +482,18 @@ export const SchemaVisualizer = ({
   );
 
   return (
-    <div id='visualizer-wrapper' style={{height: '100%'}}>
+    <div id="visualizer-wrapper" style={{ height: '100%' }}>
       {isVisualizerExpanded ? (
         <StyledModal
-          appElement={document.getElementById('visualizer-wrapper') || undefined}
+          appElement={
+            document.getElementById('visualizer-wrapper') || undefined
+          }
           visible={isVisualizerExpanded}
           footer={null}
           onCancel={() => {
             setIsVisualizerExpanded(false);
-          }}>
+          }}
+        >
           {renderGraph()}
         </StyledModal>
       ) : (
@@ -508,7 +514,7 @@ const renderIconIfRequired = (item: FieldDefinitionNode) => {
 
 const renderIconIfSearch = (item: FieldDefinitionNode) => {
   if (doesFieldHaveDirective(item, 'search')) {
-    return <StyledSearchIcon type='Search' />;
+    return <StyledSearchIcon type="Search" />;
   }
   return <div style={{ width: 16 }} />;
 };

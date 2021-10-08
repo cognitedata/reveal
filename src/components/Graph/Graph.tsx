@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, {
   useCallback,
   useEffect,
@@ -87,7 +88,7 @@ const defaultGetOffset = () => ({
 
 const defaultRenderLink = (el: SimulationLinkDatum<Node>) => {
   const id = getLinkId(el);
-  return <path className='line' key={id} id={id} />;
+  return <path className="line" key={id} id={id} />;
 };
 
 export type GraphFns = {
@@ -185,7 +186,7 @@ export const Graph = <T,>({
   const nodeChildren = useMemo(
     () =>
       nodes.map((el) => (
-        <div className='node' key={el.id} id={el.id}>
+        <div className="node" key={el.id} id={el.id}>
           {renderNode(el, transform, d3Nodes?.data())}
         </div>
       )),
@@ -359,7 +360,7 @@ export const Graph = <T,>({
   useEffect(() => {
     if (d3Nodes && simulation) {
       const { k } = transform;
-      const dragStart = (event: { active: any }, d: any) => {
+      const dragStart = (_event: { active: any }, d: any) => {
         simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
@@ -373,7 +374,7 @@ export const Graph = <T,>({
         setTransform((oldTransform) => ({ ...oldTransform }));
       };
 
-      const dragEnd = (event: { active: any }, d: any) => {
+      const dragEnd = (event: { active: any }, _d: any) => {
         if (!event.active) simulation.alphaTarget(0);
         if (useFixedNodes) {
           // addFixedNode.mutate({ id: d.id, x: d.fx, y: d.fy });
@@ -467,9 +468,9 @@ export const Graph = <T,>({
         {children}
       </div>
       <Wrapper ref={mainWrapperRef}>
-        <div className='node-container' ref={containerRef}>
-          <svg className='chart' ref={svgRef}>
-            <g className='links'>{linksChildren}</g>
+        <div className="node-container" ref={containerRef}>
+          <svg className="chart" ref={svgRef}>
+            <g className="links">{linksChildren}</g>
           </svg>
           {nodeChildren}
         </div>

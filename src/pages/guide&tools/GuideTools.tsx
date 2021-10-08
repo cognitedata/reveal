@@ -1,5 +1,1 @@
-import React from "react";
-
-export const GuideTools = () => {
-  return <div>Guide & Tools</div>;
-};
+export const GuideTools = () => <div>Guide & Tools</div>;
