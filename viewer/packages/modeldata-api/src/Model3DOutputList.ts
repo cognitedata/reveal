@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { File3dFormat, BlobOutputMetadata } from '@reveal/cad-parsers';
+import { BlobOutputMetadata, File3dFormat } from './types';
 
 export class Model3DOutputList {
   public readonly modelId: number;

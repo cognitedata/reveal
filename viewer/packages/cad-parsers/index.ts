@@ -9,13 +9,11 @@ export { CadModelMetadata } from './src/metadata/CadModelMetadata';
 export { SectorSceneImpl } from './src/utilities/SectorScene';
 export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 
-export { SectorScene, BinaryFileProvider, ModelDataClient, BlobOutputMetadata } from './src/utilities/types';
+export { SectorScene } from './src/utilities/types';
 
 export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
 
 export { CadSectorParser } from './src/cad/CadSectorParser';
-
-export { File3dFormat } from './src/utilities/types';
 
 export { RenderMode } from './src/cad/RenderMode';
 
