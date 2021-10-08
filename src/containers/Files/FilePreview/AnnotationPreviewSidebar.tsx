@@ -22,6 +22,7 @@ import {
   convertAnnotationsToEvents,
   hardDeleteAnnotations,
   updateAnnotations,
+  linkFileToAssetIds,
 } from '@cognite/annotations';
 import styled from 'styled-components';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
@@ -272,6 +273,7 @@ const AnnotationPreviewSidebar = ({
       content,
       onOk: async () => {
         updateAnnotationStatus({ annotation, status });
+        await linkFileToAssetIds(sdk, [annotation]);
         setSelectedAnnotations([]);
       },
       okButtonProps: { loading: isApprovingFile },

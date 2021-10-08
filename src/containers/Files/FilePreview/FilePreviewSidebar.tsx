@@ -9,7 +9,9 @@ import {
   AnnotationStatus,
   CogniteAnnotation,
   CogniteAnnotationPatch,
+  linkFileToAssetIds,
 } from '@cognite/annotations';
+import { useSDK } from '@cognite/sdk-provider';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import {
   ProposedCogniteAnnotation,
@@ -37,6 +39,7 @@ const FilePreviewSidebar = ({
   viewingAnnotations,
   setViewingAnnotations,
 }: FilePreviewSidebarProps) => {
+  const sdk = useSDK();
   const { data: userData } = useUserInfo();
   const { email = 'UNKNOWN' } = userData || {};
 
@@ -55,10 +58,10 @@ const FilePreviewSidebar = ({
         </span>
       ),
       onOk: async () => {
-        const unhandedAnnotations = annotations.filter(
+        const unhandledAnnotations = annotations.filter(
           a => a.status === 'unhandled'
         ) as Array<CogniteAnnotation>;
-        const updatePatch = unhandedAnnotations.map(annotation => ({
+        const updatePatch = unhandledAnnotations.map(annotation => ({
           id: Number(annotation.id),
           annotation,
           update: {
@@ -72,6 +75,7 @@ const FilePreviewSidebar = ({
         }));
         approveAnnotations(updatePatch);
         await onApproveFile();
+        await linkFileToAssetIds(sdk, unhandledAnnotations);
         setSelectedAnnotations([]);
       },
       onCancel: () => {},
