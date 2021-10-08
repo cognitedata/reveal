@@ -35,7 +35,8 @@
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,jsx,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "lint": "eslint --config .eslintrc.production.js 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html'",
     "lint:fix": "yarn lint --fix",
-    "storybook": "start-storybook -p 6006"
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook -c .storybook -s ./public"
   },
   "browserslist": {
     "production": [
@@ -52,12 +53,12 @@
   "devDependencies": {
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
-    "@storybook/addon-actions": "^6.3.10",
-    "@storybook/addon-essentials": "^6.3.10",
-    "@storybook/addon-links": "^6.3.10",
-    "@storybook/node-logger": "^6.3.10",
-    "@storybook/preset-create-react-app": "^4.0.0",
-    "@storybook/react": "^6.3.10",
+    "@storybook/addon-actions": "^6.3.9",
+    "@storybook/addon-essentials": "^6.3.9",
+    "@storybook/addon-links": "^6.3.9",
+    "@storybook/node-logger": "^6.3.9",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.3.9",
     "eslint": "^7.27.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
