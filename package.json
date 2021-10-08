@@ -68,7 +68,8 @@
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-testcafe": "^0.2.1",
-    "eslint-plugin-testing-library": "^4.12.4"
+    "eslint-plugin-testing-library": "^4.12.4",
+    "jest-junit": "^13.0.0"
   },
   "resolutions": {
     "babel-loader": "8.1.0"

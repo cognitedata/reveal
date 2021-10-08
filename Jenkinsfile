@@ -162,11 +162,11 @@ pods {
           }
         },
 
-        'Storybook': {
-          previewServer.runStorybookStage(
-            shouldExecute: isPullRequest
-          )
-        },
+        // 'Storybook': {
+        //   previewServer.runStorybookStage(
+        //     shouldExecute: isPullRequest
+        //   )
+        // },
 
         'Preview': {
           dir('preview') {
