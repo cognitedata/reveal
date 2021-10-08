@@ -27,10 +27,6 @@ export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider
 }
 
 export interface HttpHeadersProvider {
-  /**
-   * A map of headers that is necessary to retrieve files using the URL. This is used for point cloud
-   * streaming which manages it's own networking.
-   */
   readonly headers: HttpHeaders;
 }
 

@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { LocalModelIdentifier } from './LocalModelIdentifier';
 import { ModelIdentifier } from './ModelIdentifier';
@@ -9,7 +10,7 @@ import { ModelMetadataProvider } from './ModelMetadataProvider';
 import { File3dFormat } from './types';
 
 export class LocalModelMetadataProvider implements ModelMetadataProvider {
-  getModelUrl(modelIdentifier: ModelIdentifier): Promise<string> {
+  getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }

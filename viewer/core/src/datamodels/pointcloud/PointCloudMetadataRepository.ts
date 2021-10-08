@@ -29,7 +29,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
   }
 
   async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
-    const baseUrlPromise = this._modelMetadataProvider.getModelUrl(modelIdentifier);
+    const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier);
     const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 

@@ -27,7 +27,7 @@ describe(CdfModelMetadataProvider.name, () => {
     provider = new CdfModelMetadataProvider(client);
   });
 
-  test('getModelUrl throw error if no compatible output is found', async () => {
+  test('getModelUri throw error if no compatible output is found', async () => {
     // Arrange
     const response = {
       items: [
@@ -41,6 +41,6 @@ describe(CdfModelMetadataProvider.name, () => {
     nock(/.*/).post(apiPath).reply(200, response);
 
     // Act & Assert
-    expect(provider.getModelUrl(modelIdentifier)).rejects.toThrowError();
+    expect(provider.getModelUri(modelIdentifier)).rejects.toThrowError();
   });
 });

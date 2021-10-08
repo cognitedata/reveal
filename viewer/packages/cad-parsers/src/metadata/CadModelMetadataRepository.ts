@@ -33,7 +33,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   }
 
   async loadData(modelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUrl(modelIdentifier);
+    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier);
     const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 

@@ -2,21 +2,19 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-
-import { ModelMetadataProvider } from './ModelMetadataProvider';
 import { BlobOutputMetadata } from './types';
+import { ModelMetadataProvider } from './ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { Model3DOutputList } from './Model3DOutputList';
-import { ModelIdentifier } from './ModelIdentifier';
-import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 import { CogniteClient } from '@cognite/sdk';
 import { ItemsResponse } from '@cognite/sdk-core';
+import { ModelIdentifier } from './ModelIdentifier';
+import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
-
 export class CdfModelMetadataProvider implements ModelMetadataProvider {
   private readonly _client: CogniteClient;
 
@@ -59,7 +57,7 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     return undefined;
   }
 
-  public async getModelUrl(modelIdentifier: ModelIdentifier): Promise<string> {
+  public async getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }

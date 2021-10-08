@@ -33,7 +33,7 @@ class MyDataSource implements DataSource {
 }
 
 class MyModelMetadataProvider implements ModelMetadataProvider {
-  getModelUrl(identifier: ModelIdentifier): Promise<string> {
+  getModelUri(identifier: ModelIdentifier): Promise<string> {
     // Note! identifier will always be a CdfModelIdentifier
     return Promise.resolve('/primitives');
   }
