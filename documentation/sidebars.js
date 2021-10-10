@@ -53,7 +53,6 @@ module.exports = {
       collapsed: false,
       items: [
         'extending/datasource',
-
       ]
     },
     {
