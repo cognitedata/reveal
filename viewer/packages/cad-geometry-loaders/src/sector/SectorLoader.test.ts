@@ -48,6 +48,7 @@ describe('SectorLoader', () => {
       cameraInMotion: false,
       cadModelsMetadata: [model],
       clippingPlanes: [],
+      prioritizedAreas: [],
       loadingHints: {}
     };
     stateHandler.addModel(model.modelIdentifier);
