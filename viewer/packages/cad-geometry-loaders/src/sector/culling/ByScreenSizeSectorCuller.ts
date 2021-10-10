@@ -89,7 +89,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         const screenAreaImportance = 0.3;
         const frustumDepthImportance = 0.2;
         const nodeScreenSizeImportance = 1.0;
-        const prioritizedAreaImportance = 4.0;
+        const prioritizedAreaImportance = 1.0;
 
         const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
         const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);

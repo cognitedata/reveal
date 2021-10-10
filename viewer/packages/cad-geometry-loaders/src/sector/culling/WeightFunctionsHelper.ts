@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
 import { SectorMetadata } from '@reveal/cad-parsers';
+import { PrioritizedArea } from './types';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()
@@ -149,12 +150,16 @@ export class WeightFunctionsHelper {
   }
 
   /**
-   * Returns a weight that is either 0 or 1, depending on if the sector bounds intersects one
-   * or more of the prioritized areas or not.
+   * Returns a weight that is the maximum of the extra priority in intersecting prioritized areas.
    */
-  computePrioritizedAreaWeight(transformedSectorBounds: THREE.Box3, prioritizedAreas: THREE.Box3[]): number {
-    const prioritized = prioritizedAreas.some(area => transformedSectorBounds.intersectsBox(area));
-    return prioritized ? 1 : 0;
+  computePrioritizedAreaWeight(transformedSectorBounds: THREE.Box3, prioritizedAreas: PrioritizedArea[]): number {
+    const extraPriority = prioritizedAreas.reduce((maxExtraPriority, prioritizedArea) => {
+      if (transformedSectorBounds.intersectsBox(prioritizedArea.area)) {
+        return Math.max(prioritizedArea.extraPriority, maxExtraPriority);
+      }
+      return maxExtraPriority;
+    }, 0.0);
+    return extraPriority;
   }
 
   private distanceToCamera(sector: SectorMetadata, modelMatrix: THREE.Matrix4) {

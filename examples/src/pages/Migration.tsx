@@ -470,7 +470,10 @@ export function Migration() {
                 nodeBounds.setFromCenterAndSize(point, new THREE.Vector3(0.5, 0.5, 0.5));
                 prioritizedBounds.push(nodeBounds);
                 // @ts-expect-error
-                viewer._revealManagerHelper._revealManager._cadManager._cadModelUpdateHandler.prioritizedAreas = prioritizedBounds;
+                viewer._revealManagerHelper._revealManager._cadManager._cadModelUpdateHandler.prioritizedAreas = prioritizedBounds.map(x => ({
+                  area: x,
+                  extraPriority: 4.0
+                }));
               }
               break;
             case 'pointcloud':

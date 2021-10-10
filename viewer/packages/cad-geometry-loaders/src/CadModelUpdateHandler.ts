@@ -19,7 +19,7 @@ import { emissionLastMillis } from './utilities/rxOperations';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
-import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
+import { DetermineSectorsInput, PrioritizedArea, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
 
 const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
@@ -33,7 +33,7 @@ export class CadModelUpdateHandler {
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
-  private readonly _prioritizedAreasSubject: Subject<THREE.Box3[]> = new Subject();
+  private readonly _prioritizedAreasSubject: Subject<PrioritizedArea[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _modelSubject: Subject<{ model: CadNode; operation: 'add' | 'remove' }> = new Subject();
   private readonly _budgetSubject: Subject<CadModelSectorBudget> = new Subject();
@@ -133,7 +133,7 @@ export class CadModelUpdateHandler {
     this._clippingPlaneSubject.next(value);
   }
 
-  set prioritizedAreas(value: THREE.Box3[]) {
+  set prioritizedAreas(value: PrioritizedArea[]) {
     this._prioritizedAreasSubject.next(value);
   }
 
@@ -206,7 +206,7 @@ type ClippingInput = {
   clippingPlanes: THREE.Plane[] | never[];
 };
 type PrioritizedAreasInput = {
-  prioritizedAreas: THREE.Box3[];
+  prioritizedAreas: PrioritizedArea[];
 };
 
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelSectorBudget]): SettingsInput {
@@ -218,7 +218,7 @@ function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boo
 function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
   return { clippingPlanes };
 }
-function makePrioritizedAreasInput([prioritizedAreas]: [THREE.Box3[]]): PrioritizedAreasInput {
+function makePrioritizedAreasInput([prioritizedAreas]: [PrioritizedArea[]]): PrioritizedAreasInput {
   return { prioritizedAreas };
 }
 

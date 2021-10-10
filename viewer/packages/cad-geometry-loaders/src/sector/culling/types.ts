@@ -7,6 +7,8 @@ import { SectorMetadata, CadModelMetadata, LevelOfDetail, WantedSector } from '@
 import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
+export type PrioritizedArea = { area: THREE.Box3; extraPriority: number };
+
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
   clippingPlanes: THREE.Plane[];
@@ -14,7 +16,7 @@ export interface DetermineSectorsInput {
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
   budget: CadModelSectorBudget;
-  prioritizedAreas: THREE.Box3[];
+  prioritizedAreas: PrioritizedArea[];
 }
 
 /**
