@@ -71,7 +71,6 @@ export class WeightFunctionsHelper {
 
   /**
    * Computes a weight in range [0-1], where 1 means close to camera and 0 means far away.
-   * @param sector
    */
   computeDistanceToCameraWeight(transformedSectorBounds: THREE.Box3): number {
     const minSectorDistance = this._minSectorDistance;
@@ -151,6 +150,8 @@ export class WeightFunctionsHelper {
 
   /**
    * Returns a weight that is the maximum of the extra priority in intersecting prioritized areas.
+   * @param transformedSectorBounds   Bounds of sectors in "Reveal coordinates".
+   * @param prioritizedAreas          Zero or more areas with associated priorities.
    */
   computePrioritizedAreaWeight(transformedSectorBounds: THREE.Box3, prioritizedAreas: PrioritizedArea[]): number {
     const extraPriority = prioritizedAreas.reduce((maxExtraPriority, prioritizedArea) => {
