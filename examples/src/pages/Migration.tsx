@@ -497,7 +497,6 @@ export function Migration() {
       viewer.addObject3D(boxes);
     }
 
-
     main();
 
     return () => {

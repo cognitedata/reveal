@@ -2,54 +2,85 @@
  * Copyright 2021 Cognite AS
  */
 
+import { CadMetadataParser, CadModelMetadataRepository, CadSectorParser } from '@reveal/cad-parsers';
+
 import { CadManager } from './CadManager';
-import { CadMetadataParser } from './parsers/CadMetadataParser';
-import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { CadModelFactory } from './CadModelFactory';
-import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { CadMaterialManager } from './CadMaterialManager';
-import { CadSectorParser } from './sector/CadSectorParser';
-import { CachedRepository } from './sector/CachedRepository';
-import { createDefaultSectorCuller } from './sector/culling/createDefaultSectorCuller';
-import { LocalModelDataClient } from '../../utilities/networking/LocalModelDataClient';
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { LocalModelIdentifier, CdfModelIdentifier, ModelDataClient } from '../../utilities/networking/types';
+import {
+  CadModelUpdateHandler,
+  CadMaterialManager,
+  CachedRepository,
+  SimpleAndDetailedToSector3D,
+  createDefaultSectorCuller,
+  OccludingGeometryProvider
+} from '@reveal/cad-geometry-loaders';
+
 import { RevealOptions } from '../../public/types';
-import { OccludingGeometryProvider } from './sector/culling/OccludingGeometryProvider';
-import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
+
+import {
+  LocalModelDataClient,
+  LocalModelMetadataProvider,
+  CdfModelDataClient,
+  CdfModelMetadataProvider,
+  LocalModelIdentifier,
+  CdfModelIdentifier,
+  ModelDataClient,
+  ModelMetadataProvider
+} from '@reveal/modeldata-api';
 
 export function createLocalCadManager(
-  client: LocalModelDataClient,
+  modelMetadataProvider: LocalModelMetadataProvider,
+  modelDataClient: LocalModelDataClient,
   renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   alreadyLoadedGeometryProvider: OccludingGeometryProvider,
   options: RevealOptions = {}
 ): CadManager<LocalModelIdentifier> {
-  return createCadManager(client, renderer, materialManager, alreadyLoadedGeometryProvider, options);
+  return createCadManager(
+    modelMetadataProvider,
+    modelDataClient,
+    renderer,
+    materialManager,
+    alreadyLoadedGeometryProvider,
+    options
+  );
 }
 export function createCdfCadManager(
-  client: CdfModelDataClient,
+  modelMetadataProvider: CdfModelMetadataProvider,
+  modelDataClient: CdfModelDataClient,
   renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   alreadyLoadedGeometryProvider: OccludingGeometryProvider,
   options: RevealOptions = {}
 ): CadManager<CdfModelIdentifier> {
-  return createCadManager(client, renderer, materialManager, alreadyLoadedGeometryProvider, options);
+  return createCadManager(
+    modelMetadataProvider,
+    modelDataClient,
+    renderer,
+    materialManager,
+    alreadyLoadedGeometryProvider,
+    options
+  );
 }
 
 export function createCadManager<T>(
-  client: ModelDataClient<T>,
+  modelMetadataProvider: ModelMetadataProvider<T>,
+  modelDataClient: ModelDataClient,
   renderer: THREE.WebGLRenderer,
   materialManager: CadMaterialManager,
   occludingGeometryProvider: OccludingGeometryProvider,
   options: RevealOptions
 ): CadManager<T> {
   const cadMetadataParser = new CadMetadataParser();
-  const cadModelMetadataRepository = new CadModelMetadataRepository(client, cadMetadataParser);
+  const cadModelMetadataRepository = new CadModelMetadataRepository(
+    modelMetadataProvider,
+    modelDataClient,
+    cadMetadataParser
+  );
   const cadModelFactory = new CadModelFactory(materialManager);
   const modelDataParser = new CadSectorParser();
   const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-  const cachedSectorRepository = new CachedRepository(client, modelDataParser, modelDataTransformer);
+  const cachedSectorRepository = new CachedRepository(modelDataClient, modelDataParser, modelDataTransformer);
   const { internal } = options;
   const sectorCuller =
     internal && internal.sectorCuller

@@ -3,11 +3,11 @@
  */
 
 import * as THREE from 'three';
-import { generateSectorTree } from '../../../__testutilities__/createSectorMetadata';
-import { createCadModelMetadata } from '../../../__testutilities__/createCadModelMetadata';
+import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 import { CadModelClipper } from './CadModelClipper';
-import { CadModelMetadata, SectorMetadata } from '..';
-import { Mutable } from '../../../utilities/reflection';
+import { createCadModelMetadata } from '../../../../../test-utilities/src/createCadModelMetadata';
+import { generateSectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
+import { Mutable } from '../../../../../test-utilities/src/reflection';
 
 describe('CadModelClipper', () => {
   // Model with depth 2 where root has 8 children. Bounds is <[0,0,0], [2,2,2]>

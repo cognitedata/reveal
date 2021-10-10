@@ -5,10 +5,12 @@ import { CogniteClient } from '@cognite/sdk';
 
 type Props = {
   viewerOptions?: Cognite3DViewerOptions;
+
   modelUrls: string[];
   geometryFilter?: GeometryFilter;
 
   modelAddedCallback?: (model: Cognite3DModel, modelIndex: number, modelUrl: string) => void;
+
   initializeCallback?: (viewer: Cognite3DViewer) => void;
 };
 

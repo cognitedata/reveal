@@ -14,7 +14,6 @@ export class Geomap {
   private readonly _onCameraChange = this.handleCameraChange.bind(this);
 
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
-
     this._viewer = viewer;
     const mapProvider = this.getMapProvider(mapConfig);
     this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider, mapProvider);
@@ -29,7 +28,7 @@ export class Geomap {
   }
 
   private requestRedraw(timeOut: number) {
-    if(this._intervalId == 0) {
+    if (this._intervalId == 0) {
       this._intervalId = setInterval(() => {
         this._viewer.requestRedraw();
       }, 100);
@@ -58,12 +57,7 @@ export class Geomap {
         );
         break;
       case MapProviders.MapboxMap:
-        mapProvider = new GEOTHREE.MapBoxProvider(
-          mapConfig.APIKey,
-          mapConfig.id,
-          mapConfig.mode,
-          mapConfig.tileFormat
-        );
+        mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey, mapConfig.id, mapConfig.mode, mapConfig.tileFormat);
         break;
       case MapProviders.OpenStreetMap:
         mapProvider = new GEOTHREE.OpenStreetMapsProvider();
@@ -86,6 +80,6 @@ export class Geomap {
 
   public dispose(): void {
     this._viewer.removeObject3D(this._map);
-    this._viewer.off("cameraChange", this._onCameraChange);
+    this._viewer.off('cameraChange', this._onCameraChange);
   }
 }

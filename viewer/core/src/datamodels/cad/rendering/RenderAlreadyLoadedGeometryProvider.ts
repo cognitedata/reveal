@@ -2,8 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { OccludingGeometryProvider } from '../sector/culling/OccludingGeometryProvider';
-import { EffectRenderManager } from './EffectRenderManager';
+import { OccludingGeometryProvider, EffectRenderManager } from '@reveal/cad-geometry-loaders';
 
 export class RenderAlreadyLoadedGeometryProvider implements OccludingGeometryProvider {
   private readonly _renderManager: EffectRenderManager;
