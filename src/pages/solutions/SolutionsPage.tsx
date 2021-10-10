@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Spinner } from '../../components/Spinner/Spinner';
@@ -11,14 +11,14 @@ const SolutionsList = lazy(() =>
 
 export const SolutionsPage = () => (
   <Suspense fallback={<Spinner />}>
-    <Wrapper>
+    <StyledWrapper>
       <Title level={3}>Solutions</Title>
       <SolutionsList />
-    </Wrapper>
+    </StyledWrapper>
   </Suspense>
 );
 
-const Wrapper = styled.div`
+const StyledWrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100%;

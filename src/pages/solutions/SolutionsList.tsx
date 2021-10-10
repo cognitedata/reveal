@@ -1,58 +1,32 @@
-import React from 'react';
 import { Title, Detail, Body, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-
-const solutions = [
-  {
-    id: 0,
-    name: 'BestDay',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 1,
-    name: 'InField',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 2,
-    name: 'Solution',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 3,
-    name: 'Another solution',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 4,
-    name: 'Yet another solution',
-    lastEditedAt: '02.05.2021',
-  },
-];
+import { solutions } from '../../mocks/solutions';
 
 export const SolutionsList = () => {
   const history = useHistory();
 
   return (
-    <Wrapper>
-      <NewCard onClick={() => history.push('/new')}>
+    <StyledWrapper>
+      <StyledNewCard onClick={() => history.push('/new')}>
         <Icon type="PlusCompact" />
         <Body level={2}>Create a solution</Body>
-      </NewCard>
+      </StyledNewCard>
       {solutions.map((solution) => (
-        <SolutionCard onClick={() => history.push(`solutions/${solution.id}`)}>
+        <StyledSolutionCard
+          onClick={() => history.push(`solutions/${solution.id}`)}
+        >
           <Title level={4}>{solution.name}</Title>
           <Detail>Edited on {solution.lastEditedAt}</Detail>
           <Body level={2}>relevant info</Body>
-          <MoreActionsIcon type="MoreOverflowEllipsisHorizontal" />
-        </SolutionCard>
+          <StyledMoreActionsIcon type="MoreOverflowEllipsisHorizontal" />
+        </StyledSolutionCard>
       ))}
-    </Wrapper>
+    </StyledWrapper>
   );
 };
 
-const Wrapper = styled.div`
+const StyledWrapper = styled.div`
   display: flex;
   margin-top: 3rem;
   flex-wrap: wrap;
@@ -74,7 +48,7 @@ const Card = styled.div`
   }
 `;
 
-const NewCard = styled(Card)`
+const StyledNewCard = styled(Card)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -88,7 +62,7 @@ const NewCard = styled(Card)`
   }
 `;
 
-const SolutionCard = styled(Card)`
+const StyledSolutionCard = styled(Card)`
   border: 1px solid var(--cogs-greyscale-grey2);
   box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.04),
     0px 3px 8px rgba(0, 0, 0, 0.06);
@@ -98,7 +72,7 @@ const SolutionCard = styled(Card)`
   }
 `;
 
-const MoreActionsIcon = styled(Icon)`
+const StyledMoreActionsIcon = styled(Icon)`
   position: absolute;
   margin-left: 26.5rem;
 `;
