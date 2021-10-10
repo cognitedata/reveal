@@ -68,7 +68,7 @@ const StyledTopBarItemLogo = styled(TopBar.Item)`
 const StyledLogo = styled.div`
   width: 70px;
   height: 35px;
-  background: transparent url('/images/logos/cognite-platypus.png') center
+  background: transparent url('/images/logos/cognite-platypus.svg') center
     center no-repeat;
   background-size: 63px;
 `;
