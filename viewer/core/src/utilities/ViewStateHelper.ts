@@ -3,7 +3,7 @@
  */
 
 import ComboControls from '@reveal/camera-manager';
-import { NodeAppearance } from '../datamodels/cad/NodeAppearance';
+import { NodeAppearance } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
@@ -71,7 +71,7 @@ export class ViewStateHelper {
     };
   }
 
-  public setState(viewerState: ViewerState): void {
+  public async setState(viewerState: ViewerState): Promise<void> {
     const cameraPosition = new THREE.Vector3(
       viewerState.camera.position.x,
       viewerState.camera.position.y,
@@ -89,30 +89,34 @@ export class ViewStateHelper {
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel);
 
-    viewerState.models
-      .map(state => {
-        const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
-        if (model === undefined) {
-          throw new Error(
-            `Cannot apply model state. Model (modelId: ${state.modelId}, revisionId: ${state.revisionId}) has not been added to viewer.`
+    await Promise.all(
+      viewerState.models
+        .map(state => {
+          const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
+          if (model === undefined) {
+            throw new Error(
+              `Cannot apply model state. Model (modelId: ${state.modelId}, revisionId: ${state.revisionId}) has not been added to viewer.`
+            );
+          }
+
+          return { model: model, state: state };
+        })
+        .map(async modelState => {
+          const { model, state } = modelState;
+          model.setDefaultNodeAppearance(state.defaultNodeAppearance);
+
+          await Promise.all(
+            state.styledSets.map(async styleFilter => {
+              const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._client, model, {
+                token: styleFilter.token,
+                state: styleFilter.state,
+                options: styleFilter.options
+              });
+
+              model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
+            })
           );
-        }
-
-        return { model: model, state: state };
-      })
-      .forEach(modelState => {
-        const { model, state } = modelState;
-        model.setDefaultNodeAppearance(state.defaultNodeAppearance);
-
-        state.styledSets.forEach(async styleFilter => {
-          const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._client, model, {
-            token: styleFilter.token,
-            state: styleFilter.state,
-            options: styleFilter.options
-          });
-
-          model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
-        });
-      });
+        })
+    );
   }
 }

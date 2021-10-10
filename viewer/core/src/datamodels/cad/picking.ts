@@ -4,10 +4,10 @@
 
 import * as THREE from 'three';
 
-import { CadNode } from './CadNode';
-import { RenderMode } from './rendering/RenderMode';
+import { RenderMode } from '@reveal/cad-parsers';
+import { CadNode } from '@reveal/cad-geometry-loaders';
 import { IntersectInput } from '../base/types';
-import { WebGLRendererStateHelper } from '../../utilities/WebGLRendererStateHelper';
+import { WebGLRendererStateHelper } from '@reveal/utilities';
 
 export interface PickingInput {
   normalizedCoords: {

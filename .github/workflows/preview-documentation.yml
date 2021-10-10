@@ -31,6 +31,7 @@ jobs:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
           include: "docusaurus.config.js"
+          exclude: ".git"
 
       - name: Update Docosaurus title
         uses: jacobtomlinson/gha-find-replace@master
@@ -38,6 +39,7 @@ jobs:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
           include: "docusaurus.config.js"
+          exclude: ".git"
 
       - name: Install and Build documentation 🔧
         working-directory: documentation
@@ -56,7 +58,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@master
+        uses: unsplash/comment-on-pr@v1.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

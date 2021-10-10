@@ -4,20 +4,20 @@
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
 
+import { CadModelMetadata } from '@reveal/cad-parsers';
+import { NumericRange, trackError } from '@reveal/utilities';
+import { NodeCollectionBase, CadNode, NodeTransformProvider, NodeAppearance } from '@reveal/cad-geometry-loaders';
+
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
 
-import { NumericRange } from '../../utilities';
-import { CadNode } from '../../internals';
-import { trackError } from '../../utilities/metrics';
-
-import { SupportedModelTypes, CadModelMetadata } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
-import { NodeCollectionBase } from '../../datamodels/cad/styling';
-import { NodeAppearance } from '../../datamodels/cad';
-import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
+
 import { NodesApiClient } from '@reveal/nodes-api';
+import { SupportedModelTypes } from '../types';
+import { WellKnownUnit } from './types';
+import { WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers/src/utilities/types';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -37,6 +37,27 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /** @internal */
   get styledNodeCollections(): { nodes: NodeCollectionBase; appearance: NodeAppearance }[] {
     return this._styledNodeCollections;
+  }
+
+  /**
+   * Returns the unit the coordinates for the model is stored. Returns an empty string
+   * if no unit has been stored.
+   * Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+   * @version New since 2.1
+   */
+  get modelUnit(): WellKnownUnit | '' {
+    // Note! Returns union type, because we expect it to be a value in WellKnownUnit, but we
+    // can't guarantee it.
+    return this.cadNode.cadModelMetadata.scene.unit as WellKnownUnit | '';
+  }
+
+  /**
+   * Returns the conversion factor that converts from model coordinates to meters. Note that this can
+   * return undefined if the model has been stored in an unsupported unit.
+   * @version New since 2.1
+   */
+  get modelUnitToMetersFactor(): number | undefined {
+    return WellKnownDistanceToMeterConversionFactors.get(this.modelUnit);
   }
 
   /**
@@ -344,7 +365,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
-      trackError(error, {
+      trackError(error as Error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });
