@@ -31,6 +31,7 @@ export {
 export { createMaterials, Materials } from './src/cad/materials';
 export { createPrimitives } from './src/cad/primitives';
 export { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './src/cad/filterPrimitives';
+export { WellKnownDistanceToMeterConversionFactors } from './src/utilities/types';
 
 export {
   outlineDetectionShaders,

@@ -3,7 +3,8 @@
  */
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange, IndexSet } from '@reveal/utilities';
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-geometry-loaders';
+
+import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
 
 /**
  * Node collection that inverts the result from another node collection.
