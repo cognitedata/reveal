@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';
-import { NodeAppearance } from '../../../cad-styling/src/NodeAppearance';
+import { NodeAppearance } from '@reveal/cad-styling';
 import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
 
