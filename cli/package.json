@@ -1,0 +1,64 @@
+{
+  "name": "de",
+  "version": "0.0.1-alpha.1",
+  "description": "A CLI for Platypus",
+  "repository": "https://github.com/cognitedata/platypus/cli",
+  "author": "Cognite",
+  "license": "Apache-2.0",
+  "private": false,
+  "files": [
+    "lib"
+  ],
+  "main": "./lib/index.js",
+  "bin": {
+    "platypus": "./lib/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "chalk": "^4.1.0",
+    "graphql": "^15.5.0",
+    "graphql-request": "^3.4.0",
+    "open": "^8.0.3",
+    "papaparse": "^5.3.0",
+    "yargs": "^16.2.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/csv-parse": "^1.2.2",
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.37",
+    "@types/papaparse": "^5.2.5",
+    "@types/shelljs": "^0.8.8",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.23.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-prettier": "7",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.3.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.1.1",
+    "tsc-alias": "^1.2.9",
+    "typescript": "^4.2.3"
+  },
+  "scripts": {
+    "platypus": "yarn build && node lib/index.js",
+    "build": "rimraf lib && tsc -p . && tsc-alias -p tsconfig.json",
+    "test:unit": "jest ./src/**/*.test.ts",
+    "test": "yarn build && jest",
+    "lint": "tsc --noEmit && eslint './**/*.ts{,x}'"
+  }
+}
