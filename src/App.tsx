@@ -18,7 +18,7 @@ function App() {
           <Header />
           <StyledPage>
             <Switch>
-              <Route exact path="/">
+              <Route exact path={['/', '/solutions/:solutionId?']}>
                 <SolutionsPage />
               </Route>
               <Route exact path="/guidetools">
