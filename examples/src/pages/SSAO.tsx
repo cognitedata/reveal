@@ -11,7 +11,7 @@ import dat from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
-import { defaultRenderOptions } from '@cognite/reveal';
+import { defaultRenderOptions } from '@cognite/reveal/internals';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 
 CameraControls.install({ THREE });

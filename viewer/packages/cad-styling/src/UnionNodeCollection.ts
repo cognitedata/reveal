@@ -1,9 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { IndexSet } from '@reveal/utilities';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
+
+import { IndexSet } from '@reveal/utilities';
 
 /**
  * Node collection that takes the set union of multiple node collections.

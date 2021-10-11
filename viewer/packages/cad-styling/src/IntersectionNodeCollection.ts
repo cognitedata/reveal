@@ -1,15 +1,15 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { IndexSet } from '@reveal/utilities';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
 
+import { IndexSet } from '@reveal/utilities';
+
 /**
  * Node collection that is the intersection between a set of underlying node collections.
  */
-
 export class IntersectionNodeCollection extends CombineNodeCollectionBase {
   public static readonly classToken = 'IntersectionNodeCollection';
 

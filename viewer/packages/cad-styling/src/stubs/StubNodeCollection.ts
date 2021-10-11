@@ -31,4 +31,8 @@ export class StubNodeCollection extends NodeCollectionBase {
   serialize(): SerializedNodeCollection {
     return { token: 'stub', state: {} };
   }
+
+  triggerChanged(): void {
+    this.notifyChanged();
+  }
 }
