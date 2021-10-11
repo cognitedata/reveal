@@ -21,15 +21,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - uses: actions/setup-node@v2
-      with:
-        cache: 'yarn'
-        cache-dependency-path: |
-          viewer/yarn.lock
-          examples/yarn.lock
-          documentation/yarn.lock
-          parser-worker/yarn.lock
-
     - name: Install NPM dependencies
       working-directory: viewer
       run: yarn install --immutable
@@ -67,6 +58,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v2
+      with:
+        cache: 'yarn'
+        cache-dependency-path: |
+          viewer/yarn.lock
+          examples/yarn.lock
+          documentation/yarn.lock
+          parser-worker/yarn.lock
 
     - name: Install NPM dependencies
       working-directory: viewer
