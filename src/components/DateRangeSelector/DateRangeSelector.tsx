@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
 import styled from 'styled-components/macro';
-import { DateRange, SegmentedControl } from '@cognite/cogs.js';
+import { DateRange, Button } from '@cognite/cogs.js';
 import TimeSelector from 'components/TimeSelector';
 import { trackUsage } from 'utils/metrics';
 import { useRecoilState } from 'recoil';
 import { chartState } from 'atoms/chart';
+import { useState } from 'react';
 
 const relativeTimeOptions = [
   {
@@ -41,7 +42,12 @@ const relativeTimeOptions = [
 
 const DateRangeSelector = () => {
   const [chart, setChart] = useRecoilState(chartState);
-  const selectedRange = chart?.selectedDateRange ?? '1M';
+  const [[selectedRange, selectedDateFrom, selectedDateTo], setSelectedRange] =
+    useState<[string | undefined, string | undefined, string | undefined]>([
+      undefined,
+      undefined,
+      undefined,
+    ]);
 
   if (!chart) {
     return null;
@@ -51,17 +57,14 @@ const DateRangeSelector = () => {
     dateFrom,
     dateTo,
     source = 'daterange',
-    dateRange,
   }: {
     dateFrom?: Date;
     dateTo?: Date;
     source?: 'button' | 'daterange';
-    dateRange: string;
   }) => {
     if (dateFrom || dateTo) {
       setChart((oldChart) => ({
         ...oldChart!,
-        selectedDateRange: dateRange,
         dateFrom: (dateFrom || new Date(oldChart?.dateFrom!)).toJSON(),
         dateTo: (dateTo || new Date(oldChart?.dateTo!)).toJSON(),
       }));
@@ -78,24 +81,41 @@ const DateRangeSelector = () => {
       dateFrom: selectedTimeOption?.dateFrom().toDate(),
       dateTo: selectedTimeOption?.dateTo().toDate(),
       source: 'button',
-      dateRange: selectedTimeOption ? selectedTimeOption.label : '1M',
     });
+
+    setSelectedRange([
+      selectedTimeOption?.label,
+      selectedTimeOption?.dateFrom().toISOString(),
+      selectedTimeOption?.dateTo().toISOString(),
+    ]);
   };
+
+  const shouldShowRangeSelectionAsActive =
+    chart?.dateFrom === selectedDateFrom && chart?.dateTo === selectedDateTo;
 
   return (
     <Wrapper>
       <Column>
-        <SegmentedControl
-          currentKey={selectedRange}
-          variant="ghost"
-          onButtonClicked={handleTimeOptionSelected}
-        >
+        <div>
           {relativeTimeOptions.map((option) => (
-            <SegmentedControl.Button key={option.label}>
+            <Button
+              type={
+                shouldShowRangeSelectionAsActive &&
+                selectedRange === option.label
+                  ? 'secondary'
+                  : 'ghost'
+              }
+              toggled={
+                shouldShowRangeSelectionAsActive &&
+                selectedRange === option.label
+              }
+              key={option.label}
+              onClick={() => handleTimeOptionSelected(option.label)}
+            >
               {option.label}
-            </SegmentedControl.Button>
+            </Button>
           ))}
-        </SegmentedControl>
+        </div>
       </Column>
       <Column>
         <DateRange
@@ -118,7 +138,6 @@ const DateRangeSelector = () => {
             handleDateChange({
               dateFrom: newStart,
               dateTo: newEnd,
-              dateRange: selectedRange,
             });
 
             // Force mouseup event as it doesn't bubble up for this component
@@ -137,7 +156,6 @@ const DateRangeSelector = () => {
                   onChange={(value) => {
                     handleDateChange({
                       dateFrom: value,
-                      dateRange: selectedRange,
                     });
                   }}
                 />
@@ -148,7 +166,6 @@ const DateRangeSelector = () => {
                   onChange={(value) => {
                     handleDateChange({
                       dateTo: value,
-                      dateRange: selectedRange,
                     });
                   }}
                 />

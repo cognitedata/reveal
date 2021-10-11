@@ -22,7 +22,6 @@ export type Chart = {
   sourceCollection?: SourceCollectionData[];
   dateFrom: string;
   dateTo: string;
-  selectedDateRange?: string;
   public?: boolean;
   dirty?: boolean;
   settings?: ChartSettings;
