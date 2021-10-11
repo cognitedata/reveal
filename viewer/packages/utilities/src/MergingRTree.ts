@@ -3,8 +3,13 @@
  */
 import { Box3, Vector3 } from 'three';
 
-// IoU - Intersection over Union, measure of overlap between two boxes
-export function iou(box1: Box3, box2: Box3): number {
+/**
+ * IoU - Intersection over Union, measure of overlap between two boxes.
+ *
+ * 0 means no overlap
+ * 1 means the two boxes are equal
+ */
+export function intersectionOverUnion(box1: Box3, box2: Box3): number {
   const intersection = box1.clone().intersect(box2);
   const union = box1.clone().union(box2);
 
@@ -39,10 +44,10 @@ function canMergeOnSameNode(box1: Box3, box2: Box3) {
 }
 
 /*
- * RTree implementation
+ * RTree implementation containing boxes, merges boxes lying close to each other
  */
-export class RTree {
-  root: RTreeNode | null;
+export class MergingRTree {
+  private root: RTreeNode | null;
 
   constructor() {
     this.root = null;

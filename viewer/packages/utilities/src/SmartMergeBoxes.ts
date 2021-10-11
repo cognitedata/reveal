@@ -3,7 +3,7 @@
  */
 
 import { Box3 } from 'three';
-import { iou } from './RTree';
+import { intersectionOverUnion } from './RTree';
 
 const BOX_MERGE_MIN_IOU = 0.15;
 
@@ -32,7 +32,7 @@ export class SmartMergeBoxes {
   squashBoxes(): void {
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
-        const overlap = iou(this.resultBoxes[i], this.resultBoxes[j]);
+        const overlap = intersectionOverUnion(this.resultBoxes[i], this.resultBoxes[j]);
         if (overlap >= BOX_MERGE_MIN_IOU) {
           this.resultBoxes[i].union(this.resultBoxes[j]);
 

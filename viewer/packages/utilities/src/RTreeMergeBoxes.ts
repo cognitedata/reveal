@@ -3,10 +3,10 @@
  */
 
 import { Box3 } from 'three';
-import { RTree } from './RTree';
+import { MergingRTree } from './MergingRTree';
 
 export class RTreeMergeBoxes {
-  rtree: RTree = new RTree();
+  rtree: MergingRTree = new MergingRTree();
 
   addBoxes(boxes: Box3[]): void {
     for (const box of boxes) {
