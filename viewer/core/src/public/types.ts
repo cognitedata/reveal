@@ -51,8 +51,8 @@ export * from './migration/types';
 export {
   CadLoadingHints,
   DefaultNodeAppearance,
-  TreeIndexNodeCollection,
   defaultRenderOptions,
   RenderOptions
 } from '@reveal/cad-geometry-loaders';
+
 export { SupportedModelTypes } from '../datamodels/base';

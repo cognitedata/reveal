@@ -6,10 +6,10 @@ import * as THREE from 'three';
 import { IndexSet } from '@reveal/utilities';
 
 import { NodeAppearance, NodeOutlineColor } from '../NodeAppearance';
-import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
-
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
+
+import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 describe('NodeAppearanceTextureBuilder', () => {
   let styleProvider: NodeAppearanceProvider;

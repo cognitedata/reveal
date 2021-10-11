@@ -5,10 +5,10 @@
 import { IndexSet } from '@reveal/utilities';
 
 import { NodeAppearance } from '../NodeAppearance';
-import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { NodeOutlineColor } from '../NodeAppearance';
+
+import { NodeCollectionBase, SerializedNodeCollection, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 describe('NodeAppearanceProvider', () => {
   let provider: NodeAppearanceProvider;

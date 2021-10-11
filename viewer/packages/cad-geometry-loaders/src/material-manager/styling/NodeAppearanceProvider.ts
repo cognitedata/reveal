@@ -3,8 +3,9 @@
  */
 
 import { NodeAppearance } from '../NodeAppearance';
+
+import { NodeCollectionBase } from '@reveal/cad-styling';
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
-import { NodeCollectionBase } from './NodeCollectionBase';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
