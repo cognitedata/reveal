@@ -35,10 +35,13 @@ const cdfApiUrl = `https://${
 const getServiceClient = async (sdk: CogniteClient) => {
   await sdk.get('/api/v1/token/inspect');
 
+  const { origin } = window.location;
+
   const client = axios.create({
     baseURL: fallBackToFunctions
       ? cdfApiUrl
-      : backendServiceBaseUrlFromQuery || getBackendServiceBaseUrl(),
+      : backendServiceBaseUrlFromQuery ||
+        getBackendServiceBaseUrl(origin, urlCluster as string),
     timeout: 10000,
     headers: {
       ...sdk.getDefaultRequestHeaders(),
