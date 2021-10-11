@@ -5,10 +5,13 @@
 import { Box3 } from 'three';
 import { intersectionOverUnion } from './MergingRTree';
 
-const BOX_MERGE_MIN_IOU = 0.15;
-
+/**
+ * SmartMergeBoxes - takes in batches of bounding boxes and
+ * clusters them together in larger bounding boxes. The union of the larger
+ * boxes contains all boxes that have been inserted
+ */
 export class SmartMergeBoxes {
-  resultBoxes: Box3[] = [];
+  private readonly resultBoxes: Box3[] = [];
 
   addBoxes(boxes: Box3[]): void {
     for (const box of boxes) {
@@ -30,6 +33,8 @@ export class SmartMergeBoxes {
   }
 
   squashBoxes(): void {
+    const BOX_MERGE_MIN_IOU = 0.15;
+
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
         const overlap = intersectionOverUnion(this.resultBoxes[i], this.resultBoxes[j]);
