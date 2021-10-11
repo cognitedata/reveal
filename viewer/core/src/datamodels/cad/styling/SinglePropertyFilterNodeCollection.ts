@@ -7,7 +7,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollectionBase } from '@reveal/cad-styling';
+import { AreaCollection, NodeCollectionBase, SimpleAreaCollection } from '@reveal/cad-styling';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
@@ -64,6 +64,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
    */
   async executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
     const indexSet = new IndexSet();
+    const areas = new SimpleAreaCollection();
     const { requestPartitions } = this._options;
 
     if (this._fetchResultHelper !== undefined) {
@@ -72,6 +73,12 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
       node => new NumericRange(node.treeIndex, node.subtreeSize),
+      node => {
+        const box = new THREE.Box3();
+        if (node.boundingBox !== undefined) {
+          box.set(node.boundingBox.min.indexOf, )
+        }
+        node.boundingBox || new THREE.Box3(),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -111,6 +118,10 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  getAreas(): AreaCollection {
+    throw new Error(`${this.getAreas.name}() not supported by ${this.constructor.name}`);
   }
 
   private buildUrl(): string {

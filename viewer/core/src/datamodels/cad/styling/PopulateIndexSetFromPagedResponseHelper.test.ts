@@ -2,7 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NumericRange, IndexSet } from '@reveal/utilities';
+import * as THREE from 'three';
+
+import { NumericRange } from '@reveal/utilities';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { ListResponse } from '@cognite/sdk-core';
 import { sleep } from '../../../../../test-utilities';
@@ -13,32 +15,35 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
 
   beforeEach(() => {
     notifyChangedCallback = jest.fn();
-    helper = new PopulateIndexSetFromPagedResponseHelper<number>(x => new NumericRange(x, 1), notifyChangedCallback);
+    helper = new PopulateIndexSetFromPagedResponseHelper<number>(
+      x => new NumericRange(x, 1),
+      x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1]),
+      notifyChangedCallback
+    );
   });
 
-  test('is interrupted before paging results, returns false', async () => {
-    const indexSet = new IndexSet();
+  test('is interrupted before paging results, returns not completed ', async () => {
     const response = createResponse<number>([], 1000);
 
     helper.interrupt();
-    const completed = await helper.pageResults(indexSet, Promise.resolve(response));
+    const { completed, indexSet, areas } = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeFalse();
     expect(indexSet.count).toBe(0);
+    expect(areas).toBeEmpty();
     expect(helper.isLoading).toBeFalse();
   });
 
   test('is not interrupted, fetches all pages and populates set', async () => {
-    const indexSet = new IndexSet();
     const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
-    const completed = await helper.pageResults(indexSet, Promise.resolve(response));
+    const { completed, indexSet, areas } = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeTrue();
     expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
   });
 
   test('is interrupted after first page is fetched, partially populates the set', async () => {
-    const indexSet = new IndexSet();
     const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
     const originalNext = response.next!;
     response.next = () => {
@@ -46,37 +51,40 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
       return originalNext();
     };
 
-    const completed = await helper.pageResults(indexSet, Promise.resolve(response));
+    const { completed, indexSet, areas } = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeFalse();
     expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
+    expect(areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
     expect(notifyChangedCallback).toBeCalledTimes(1);
   });
 
   test('isLoading returns true while processing pages', async () => {
-    const indexSet = new IndexSet();
     const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
-    const operation = helper.pageResults(indexSet, Promise.resolve(response));
+    const operation = helper.pageResults(Promise.resolve(response));
     expect(helper.isLoading).toBeTrue();
-    const completed = await operation;
+    const { completed } = await operation;
     expect(completed).toBeTrue();
     expect(helper.isLoading).toBeFalse();
   });
 
   test('two concurrent load operations, both populate indexset', async () => {
-    const indexSet = new IndexSet();
     const response1 = createResponse([1, 2, 3, 4], 2, () => sleep(50));
     const response2 = createResponse([5, 6, 7, 8], 2, () => sleep(100));
 
-    const operation1 = helper.pageResults(indexSet, Promise.resolve(response1));
-    const operation2 = helper.pageResults(indexSet, Promise.resolve(response2));
+    const operation1 = helper.pageResults(Promise.resolve(response1));
+    const operation2 = helper.pageResults(Promise.resolve(response2));
     expect(helper.isLoading).toBeTrue();
-    expect(await operation1).toBeTrue();
-    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
+    const { completed: completed1, indexSet: indexSet1, areas: areas1 } = await operation1;
+    expect(completed1).toBeTrue();
+    expect(indexSet1.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(areas1).not.toBeEmpty();
     expect(helper.isLoading).toBeTrue();
-    expect(await operation2).toBeTrue();
-    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    const { completed: completed2, indexSet: indexSet2, areas: areas2 } = await operation2;
+    expect(completed2).toBeTrue();
+    expect(indexSet2.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(areas2).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
 
     expect(notifyChangedCallback).toBeCalledTimes(4);

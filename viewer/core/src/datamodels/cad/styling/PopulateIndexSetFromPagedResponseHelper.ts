@@ -2,21 +2,30 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { ListResponse } from '@cognite/sdk';
 import { IndexSet, NumericRange } from '@reveal/utilities';
+import { AreaCollection, SimpleAreaCollection } from '@reveal/cad-styling';
 
 /**
  * Helper class that populates an IndexSet based on a paged results from the Cognite SDK.
  */
 export class PopulateIndexSetFromPagedResponseHelper<T> {
   private readonly _itemToTreeIndexRangeCallback: (item: T) => NumericRange;
+  private readonly _itemToAreaCallback: (item: T) => THREE.Box3;
   private readonly _notifyChangedCallback: () => void;
 
   private _ongoingOperations = 0;
   private _interrupted = false;
 
-  constructor(itemToTreeIndexRangeCallback: (item: T) => NumericRange, notifySetChangedCallback: () => void) {
+  constructor(
+    itemToTreeIndexRangeCallback: (item: T) => NumericRange,
+    itemToAreaCallback: (item: T) => THREE.Box3,
+    notifySetChangedCallback: () => void
+  ) {
     this._itemToTreeIndexRangeCallback = itemToTreeIndexRangeCallback;
+    this._itemToAreaCallback = itemToAreaCallback;
     this._notifyChangedCallback = notifySetChangedCallback;
   }
 
@@ -34,7 +43,14 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
    * @param request
    * @returns True if the operation was completed, false if it was interrupted using {@link interrupt}.
    */
-  public async pageResults(indexSet: IndexSet, request: Promise<ListResponse<T[]>>): Promise<boolean> {
+  public async pageResults(request: Promise<ListResponse<T[]>>): Promise<{
+    indexSet: IndexSet;
+    areas: AreaCollection;
+    completed: boolean;
+  }> {
+    const indexSet = new IndexSet();
+    const areas = new SimpleAreaCollection();
+
     const itemToTreeIndexRangeCallback = this._itemToTreeIndexRangeCallback;
     const notifyChangedCallback = this._notifyChangedCallback;
     this._ongoingOperations++;
@@ -45,6 +61,9 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
         response.items.forEach(x => {
           const range = itemToTreeIndexRangeCallback(x);
           indexSet.addRange(range);
+
+          const area = this._itemToAreaCallback(x);
+          areas.addArea(area);
         });
         notifyChangedCallback();
 
@@ -55,7 +74,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
         }
       }
 
-      return !this._interrupted;
+      return { indexSet, areas, completed: !this._interrupted };
     } finally {
       this._ongoingOperations--;
     }

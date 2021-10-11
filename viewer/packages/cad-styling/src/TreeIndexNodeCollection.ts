@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { NumericRange, IndexSet } from '@reveal/utilities';
+import { AreaCollection } from './AreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**
@@ -41,6 +42,10 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
 
   getIndexSet(): IndexSet {
     return this._treeIndices;
+  }
+
+  getAreas(): AreaCollection {
+    throw new Error(`${this.getAreas.name}() not supported by ${this.constructor.name}`);
   }
 
   get isLoading(): boolean {

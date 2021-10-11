@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { IndexSet } from '@reveal/utilities';
+import { AreaCollection } from './AreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**
@@ -57,6 +58,10 @@ export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
   getIndexSet(): IndexSet {
     this._cachedCombinedIndexSet = this._cachedCombinedIndexSet ?? this.createCombinedIndexSet();
     return this._cachedCombinedIndexSet;
+  }
+
+  getAreas(): AreaCollection {
+    throw new Error(`${this.getAreas.name}() not supported by ${this.constructor.name}`);
   }
 
   /**
