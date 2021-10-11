@@ -70,11 +70,43 @@ export class MergingRTree {
       return [];
     }
   }
+
+  getSize(): number {
+    if (this.root != null) {
+      return this.root.numBoxes;
+    } else {
+      return 0;
+    }
+  }
+
+  clone(): MergingRTree {
+    const newTree = new MergingRTree();
+    
+    if (this.root != null) {
+      newTree.root = this.root.clone();
+    } else {
+      newTree.root = null;
+    }
+
+    return newTree;
+  }
+
+  findOverlappingBoxes(box: Box3): Box3[] {
+
+    if (this.root != null) {
+      const results: Box3[] = [];
+      this.root.findOverlappingBoxes(box, results);
+      return results;
+    } else {
+      return [];
+    }
+  }
 }
 
 export class RTreeNode {
   readonly bounds: Box3;
   readonly children: [RTreeNode, RTreeNode] | null;
+  readonly numBoxes: number;
 
   constructor(child0: RTreeNode, child1: RTreeNode);
   constructor(box: Box3);
@@ -82,9 +114,11 @@ export class RTreeNode {
     if (a1 instanceof Box3 && a2 === undefined) {
       this.children = null;
       this.bounds = a1;
+      this.numBoxes = 1;
     } else if (a1 instanceof RTreeNode && a2 instanceof RTreeNode) {
       this.children = [a1, a2];
       this.bounds = a1.bounds.clone().union(a2.bounds);
+      this.numBoxes = a1.numBoxes + a2.numBoxes;
     } else {
       throw new Error('Invalid argument combination to RTreeNode constructor');
     }
@@ -118,4 +152,83 @@ export class RTreeNode {
       result.push(this.bounds);
     }
   }
+
+  clone(): RTreeNode {
+    if (this.children != null) {
+      return new RTreeNode(this.children[0].clone(), this.children[1].clone());
+    } else {
+      return new RTreeNode(this.bounds);
+    }
+  }
+
+  findOverlappingBoxes(box: Box3, results: Box3[]): void {
+    if (this.children != null) {
+      if (this.children[0].bounds.intersectsBox(box)) {
+        this.children[0].findOverlappingBoxes(box, results);
+      }
+
+      if (this.children[1].bounds.intersectsBox(box)) {
+        this.children[1].findOverlappingBoxes(box, results);
+      }
+    } else {
+      if (this.bounds.intersectsBox(box)) {
+        results.push(this.bounds.intersect(box));
+      }
+    }
+  }
+}
+
+/**
+ * rtreeUnion - Returns the union of two MergingRTree
+ */
+export function rtreeUnion(tree0: MergingRTree, tree1: MergingRTree): MergingRTree {
+
+  let unionTree;
+  let otherTree;
+  
+  if (tree0.getSize() < tree1.getSize()) {
+    unionTree = tree1.clone();
+    otherTree = tree0;
+  } else {
+    unionTree = tree0.clone();
+    otherTree = tree1;
+  }
+
+  const insertBoxes = otherTree.getBoxes();
+  for (const insertBox of insertBoxes) {
+    unionTree.insert(insertBox);
+  }
+
+  return unionTree;
+}
+
+/**
+ * rtreeIntersection - Returns the intersection of two MergingRTree
+ */
+export function rtreeIntersection(tree0: MergingRTree, tree1: MergingRTree): MergingRTree {
+  let biggestTree;
+  let smallestTree;
+
+  if (tree0.getSize() < tree1.getSize()) {
+    biggestTree = tree1;
+    smallestTree = tree0;
+  } else {
+    biggestTree = tree0;
+    smallestTree = tree1;
+  }
+
+  const boxes0 = smallestTree.getBoxes();
+
+  const rtree = new MergingRTree();
+  for (const box0 of boxes0) {
+    const overlappingBoxes = biggestTree.findOverlappingBoxes(box0);
+    for (const box1 of overlappingBoxes) {
+      const intersection = box0.clone().intersect(box1);
+      if (!intersection.isEmpty()) {
+        rtree.insert(intersection);
+      }
+    }
+  }
+
+  return rtree;
 }

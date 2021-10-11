@@ -3,7 +3,7 @@
  */
 
 import { Box3 } from 'three';
-import { intersectionOverUnion } from './RTree';
+import { intersectionOverUnion } from './MergingRTree';
 
 const BOX_MERGE_MIN_IOU = 0.15;
 
