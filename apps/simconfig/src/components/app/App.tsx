@@ -12,6 +12,7 @@ import { fetchGroups } from 'store/group/thunks';
 import { Loader } from '@cognite/cogs.js';
 import { fetchDatasets } from 'store/dataset/thunks';
 import { selectIsAppInitialized } from 'store/selectors';
+import NewVersion from 'pages/ModelLibrary/NewVersion';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,16 @@ export default function App() {
       <Switch>
         <Route exact path={PAGES.MODEL_LIBRARY} component={ModelLibrary} />
         <Route path={PAGES.MODEL_LIBRARY_NEW} component={NewModel} />
+        <Route
+          exact
+          path={PAGES.MODEL_LIBRARY_VERSION}
+          component={ModelLibrary}
+        />
+        <Route
+          exact
+          path={PAGES.MODEL_LIBRARY_VERSION_NEW}
+          component={NewVersion}
+        />
         <Route path={PAGES.LOGOUT} render={() => <Logout />} />
         <Redirect from="" to={PAGES.MODEL_LIBRARY} />
         <Redirect from="/" to={PAGES.MODEL_LIBRARY} />

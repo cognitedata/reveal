@@ -26,5 +26,3 @@ export interface ModelFormData {
   })[];
   fileInfo: FileInfo;
 }
-
-export type UpdateFieldPayload<T> = { name: keyof T | string; value: string };

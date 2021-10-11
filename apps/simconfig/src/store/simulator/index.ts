@@ -1,29 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RequestStatus } from 'store/types';
 
-import { initialState } from './constants';
+import { partialUpdate } from '../utils';
+
 import { fetchSimulators } from './thunks';
+import { initialState } from './constants';
 
 export const simulatorSlice = createSlice({
   name: 'simulator',
+  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {},
-  extraReducers(builder) {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchSimulators.pending, (state) => ({
-        ...state,
-        requestStatus: RequestStatus.LOADING,
-      }))
-      .addCase(fetchSimulators.fulfilled, (state, action) => ({
-        ...state,
-        requestStatus: RequestStatus.SUCCESS,
-        initialized: true,
-        simulators: action.payload,
-      }))
-      .addCase(fetchSimulators.rejected, (state) => ({
-        ...state,
-        requestStatus: RequestStatus.ERROR,
-      }));
+      .addCase(fetchSimulators.pending, (state) =>
+        partialUpdate(state, {
+          requestStatus: RequestStatus.LOADING,
+        })
+      )
+      .addCase(fetchSimulators.fulfilled, (state, action) =>
+        partialUpdate(state, {
+          requestStatus: RequestStatus.SUCCESS,
+          initialized: true,
+          simulators: action.payload,
+        })
+      )
+      .addCase(fetchSimulators.rejected, (state) =>
+        partialUpdate(state, {
+          requestStatus: RequestStatus.ERROR,
+        })
+      );
   },
 });
 

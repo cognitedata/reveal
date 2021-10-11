@@ -8,6 +8,8 @@ import { SidebarIcon } from './Sidebar';
 export const PAGES = {
   MODEL_LIBRARY: '/model-library',
   MODEL_LIBRARY_NEW: '/model-library/new',
+  MODEL_LIBRARY_VERSION: '/model-library/:modelName',
+  MODEL_LIBRARY_VERSION_NEW: '/model-library/:modelName/version-new',
   LOGOUT: '/logout',
 };
 

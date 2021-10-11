@@ -80,6 +80,10 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
           boundaryConditions,
         });
 
+        if (formData) {
+          history.push(`/model-library/${formData.fileInfo.name}`);
+          return;
+        }
         history.push('/model-library');
       }}
     >
@@ -90,7 +94,7 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
         isSubmitting,
       }: FormikProps<ModelFormData>) => (
         <Form>
-          {!fileInfo.metadata.fileName ? (
+          {!fileInfo.metadata.fileName && !formData ? (
             <Field
               as={FileInput}
               onFileSelected={(file?: File) => {
@@ -123,6 +127,7 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
                   name="fileInfo.name"
                   maxLength={256}
                   fullWidth
+                  disabled={!!formData}
                   required
                 />
               </InputRow>
@@ -135,36 +140,53 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
                   fullWidth
                 />
               </InputRow>
-              <InputRow>
-                <Field
-                  as={Select}
-                  title="Boundary conditions"
-                  name="boundaryConditions"
-                  onChange={(values: { label: string; value: string }[]) => {
-                    setFieldValue('boundaryConditions', values);
-                  }}
-                  options={getSelectEntriesFromMap(BoundaryCondition)}
-                  isMulti
-                  required
-                />
-              </InputRow>
-              <InputRow>
-                <Field
-                  as={Select}
-                  title="Unit system"
-                  name="fileInfo.metadata.unitSystem"
-                  options={getSelectEntriesFromMap(UnitSystem)}
-                  value={{
-                    value: fileInfo.metadata.unitSystem,
-                    label: UnitSystem[fileInfo.metadata.unitSystem],
-                  }}
-                  onChange={({ value }: { value: string }) =>
-                    setFieldValue('fileInfo.metadata.unitSystem', value)
-                  }
-                  closeMenuOnSelect
-                />
-              </InputRow>
-              {datasets.length > 1 && (
+
+              {formData ? (
+                <InputRow>
+                  <Input
+                    value={UnitSystem[fileInfo.metadata.unitSystem]}
+                    disabled
+                    title="Unit system"
+                    fullWidth
+                  />
+                </InputRow>
+              ) : (
+                <>
+                  <InputRow>
+                    <Field
+                      as={Select}
+                      title="Boundary conditions"
+                      name="boundaryConditions"
+                      onChange={(
+                        values: { label: string; value: string }[]
+                      ) => {
+                        setFieldValue('boundaryConditions', values);
+                      }}
+                      options={getSelectEntriesFromMap(BoundaryCondition)}
+                      isMulti
+                      required
+                    />
+                  </InputRow>
+                  <InputRow>
+                    <Field
+                      as={Select}
+                      title="Unit system"
+                      name="fileInfo.metadata.unitSystem"
+                      options={getSelectEntriesFromMap(UnitSystem)}
+                      value={{
+                        value: fileInfo.metadata.unitSystem,
+                        label: UnitSystem[fileInfo.metadata.unitSystem],
+                      }}
+                      onChange={({ value }: { value: string }) =>
+                        setFieldValue('fileInfo.metadata.unitSystem', value)
+                      }
+                      closeMenuOnSelect
+                    />
+                  </InputRow>
+                </>
+              )}
+
+              {!formData && datasets.length > 1 && (
                 <InputRow>
                   <Field
                     as={Select}
@@ -192,7 +214,7 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
                   disabled={isSubmitting}
                   loading={isSubmitting}
                 >
-                  Create new model
+                  Create new {formData ? 'version' : 'model'}
                 </Button>
               </div>
             </>
