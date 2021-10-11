@@ -977,6 +977,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@reveal/sector-loader@workspace:packages/sector-loader":
+  version: 0.0.0-use.local
+  resolution: "@reveal/sector-loader@workspace:packages/sector-loader"
+  dependencies:
+    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/sector-parser@workspace:packages/sector-parser":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-parser@workspace:packages/sector-parser"

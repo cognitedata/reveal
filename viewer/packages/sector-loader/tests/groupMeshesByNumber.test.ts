@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { groupMeshesByNumber } from './groupMeshesByNumber';
+import { groupMeshesByNumber } from '../src/groupMeshesByNumber';
 
 describe('groupMeshesByNumber', () => {
   test('empty input yields no result', () => {

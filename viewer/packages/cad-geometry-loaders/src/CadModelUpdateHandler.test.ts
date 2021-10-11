@@ -3,8 +3,7 @@
  */
 
 import { CadSectorParser } from '@reveal/cad-parsers';
-import { SimpleAndDetailedToSector3D } from './sector/SimpleAndDetailedToSector3D';
-import { CachedRepository } from './sector/CachedRepository';
+import { CachedRepository } from '../../sector-loader/src/CachedRepository';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 import { CadMaterialManager } from './material-manager/CadMaterialManager';
@@ -23,9 +22,8 @@ describe('CadModelUpdateHandler', () => {
     };
     const materialManager = new CadMaterialManager();
     const modelDataParser = new CadSectorParser();
-    const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
 
-    repository = new CachedRepository(modelSectorProvider, modelDataParser, modelDataTransformer);
+    repository = new CachedRepository(modelSectorProvider, modelDataParser, materialManager);
     mockCuller = {
       determineSectors: jest.fn(),
       filterSectorsToLoad: jest.fn(),

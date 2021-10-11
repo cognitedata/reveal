@@ -3,7 +3,6 @@
  */
 
 export { CadNode, SuggestedCameraConfig } from './src/CadNode';
-export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
 
 export { NodeCollectionBase, SerializedNodeCollection } from './src/material-manager/styling/NodeCollectionBase';
 export { NodeTransformProvider } from './src/material-manager/styling/NodeTransformProvider';
@@ -17,7 +16,7 @@ export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 
 export { SectorNode } from './src/sector/SectorNode';
 
-export { CachedRepository } from './src/sector/CachedRepository';
+export { CachedRepository } from '../sector-loader/src/CachedRepository';
 
 export {
   defaultRenderOptions,

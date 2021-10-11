@@ -7,7 +7,7 @@ import { ConsumedSector, WantedSector, LevelOfDetail } from '@reveal/cad-parsers
 import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
 import { SectorCuller } from './culling/SectorCuller';
 import { ModelStateHandler } from './ModelStateHandler';
-import { Repository } from './Repository';
+import { Repository } from '../../../sector-loader/src/Repository';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
@@ -89,29 +89,23 @@ export class SectorLoader {
   private startLoadingBatch(batch: WantedSector[], progressHelper: ProgressReportHelper): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(async wantedSector => {
       try {
-        const consumedSector = await this._sectorRepository.loadSector(wantedSector);
-        return consumedSector;
+        return this._sectorRepository.loadSector(wantedSector);
       } catch (error) {
         log.error('Failed to load sector', wantedSector, 'error:', error);
         // Ignore error but mark sector as discarded since we didn't load any geometry
-        const errorSector = makeErrorSector(wantedSector);
-        return errorSector;
+        return {
+          modelIdentifier: wantedSector.modelIdentifier,
+          metadata: wantedSector.metadata,
+          levelOfDetail: LevelOfDetail.Discarded,
+          group: undefined,
+          instancedMeshes: undefined
+        };
       } finally {
         progressHelper.reportNewSectorsLoaded(1);
       }
     });
     return consumedPromises;
   }
-}
-
-function makeErrorSector(wantedSector: WantedSector): ConsumedSector {
-  return {
-    modelIdentifier: wantedSector.modelIdentifier,
-    metadata: wantedSector.metadata,
-    levelOfDetail: LevelOfDetail.Discarded,
-    group: undefined,
-    instancedMeshes: undefined
-  };
 }
 
 class ProgressReportHelper {

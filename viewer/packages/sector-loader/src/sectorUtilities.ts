@@ -5,23 +5,12 @@
 import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
-import { traverseDepthFirst, AutoDisposeGroup } from '@reveal/utilities';
-import {
-  SectorMetadata,
-  SectorGeometry,
-  WantedSector,
-  ConsumedSector,
-  InstancedMeshFile,
-  Materials,
-  createPrimitives
-} from '@reveal/cad-parsers';
+import { AutoDisposeGroup } from '@reveal/utilities';
+import { SectorMetadata, SectorGeometry, InstancedMeshFile, Materials, createPrimitives } from '@reveal/cad-parsers';
 
-import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
-import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
-
-import { createTriangleMeshes } from '../material-manager/rendering/triangleMeshes';
-import { createSimpleGeometryMesh } from '../material-manager/rendering/createSimpleGeometryMesh';
-import { filterInstanceMesh } from '../material-manager/rendering/filterInstanceMesh';
+import { createTriangleMeshes } from '../../cad-geometry-loaders/src/material-manager/rendering/triangleMeshes';
+import { createSimpleGeometryMesh } from '../../cad-geometry-loaders/src/material-manager/rendering/createSimpleGeometryMesh';
+import { filterInstanceMesh } from '../../cad-geometry-loaders/src/material-manager/rendering/filterInstanceMesh';
 
 export function consumeSectorSimple(
   sector: SectorQuads,
@@ -81,53 +70,4 @@ export function consumeSectorDetailed(
     })
     .filter(x => x.instances.length > 0);
   return { sectorMeshes: group, instancedMeshes: instanceMeshes };
-}
-
-export function distinctUntilLevelOfDetailChanged() {
-  return pipe(
-    groupBy((sector: ConsumedSector) => sector.modelIdentifier),
-    mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
-      return modelGroup.pipe(
-        groupBy((sector: ConsumedSector) => sector.metadata.id),
-        mergeMap((group: GroupedObservable<number, ConsumedSector>) =>
-          group.pipe(distinctUntilKeyChanged('levelOfDetail'))
-        )
-      );
-    })
-  );
-}
-
-export function filterCurrentWantedSectors(
-  wantedObservable: Observable<WantedSector[]>
-): OperatorFunction<ConsumedSector, ConsumedSector> {
-  return pipe(
-    withLatestFrom(wantedObservable),
-    filter(([loaded, wanted]) => {
-      for (const wantedSector of wanted) {
-        if (
-          loaded.modelIdentifier === wantedSector.modelIdentifier &&
-          loaded.metadata.id === wantedSector.metadata.id &&
-          loaded.levelOfDetail === wantedSector.levelOfDetail
-        ) {
-          return true;
-        }
-      }
-      return false;
-    }),
-    map(([loaded, _wanted]) => loaded)
-  );
-}
-
-export function findSectorMetadata(root: SectorMetadata, sectorId: number): SectorMetadata {
-  let foundSector: SectorMetadata | null = null;
-  traverseDepthFirst(root, sector => {
-    if (sector.id === sectorId) {
-      foundSector = sector;
-    }
-    return !foundSector;
-  });
-  if (!foundSector) {
-    throw new Error(`Could not find metadata for sector ${sectorId} - invalid id?`);
-  }
-  return foundSector;
 }

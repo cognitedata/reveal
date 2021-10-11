@@ -12,7 +12,7 @@ import { SectorCuller } from './culling/SectorCuller';
 import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
 
 import { ModelStateHandler } from './ModelStateHandler';
-import { Repository } from './Repository';
+import { Repository } from '../../../sector-loader/src/Repository';
 import { SectorLoader } from './SectorLoader';
 
 describe('SectorLoader', () => {

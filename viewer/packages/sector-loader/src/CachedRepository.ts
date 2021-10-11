@@ -17,11 +17,12 @@ import {
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { Repository } from './Repository';
 
-import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
-import { createOffsetsArray } from '../utilities/arrays';
+import { groupMeshesByNumber } from './groupMeshesByNumber';
+import { createOffsetsArray } from './arrays';
 
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
+import { CadMaterialManager } from '../../cad-geometry-loaders';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
@@ -35,11 +36,11 @@ export class CachedRepository implements Repository {
   constructor(
     modelSectorProvider: BinaryFileProvider,
     modelDataParser: CadSectorParser,
-    modelDataTransformer: SimpleAndDetailedToSector3D
+    materialManager: CadMaterialManager
   ) {
     this._modelSectorProvider = modelSectorProvider;
     this._modelDataParser = modelDataParser;
-    this._modelDataTransformer = modelDataTransformer;
+    this._modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
 
     this._consumedSectorCache = new MemoryRequestCache(50, consumedSector => {
       if (consumedSector.group !== undefined) {
@@ -96,7 +97,7 @@ export class CachedRepository implements Repository {
       }
     } catch (error) {
       this._consumedSectorCache.remove(cacheKey);
-      trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
+      trackError(error as Error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
     }
   }
@@ -281,8 +282,6 @@ export class CachedRepository implements Repository {
     })();
 
     const sector: SectorGeometry = {
-      treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
-      nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
       primitives: i3dFile.primitives,
       instanceMeshes: finalInstanceMeshes,
       triangleMeshes: finalTriangleMeshes

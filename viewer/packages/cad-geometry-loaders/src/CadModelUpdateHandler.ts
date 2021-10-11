@@ -12,7 +12,7 @@ import { CadNode } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
-import { Repository } from './sector/Repository';
+import { Repository } from '../../sector-loader/src/Repository';
 
 import { LoadingState } from './utilities/types';
 import { emissionLastMillis } from './utilities/rxOperations';

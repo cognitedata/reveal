@@ -9,7 +9,7 @@ import { SectorQuads } from '@cognite/reveal-parser-worker';
 import { SectorMetadata, InstancedMeshFile, SectorGeometry } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
 
-import { CadMaterialManager } from '../material-manager/CadMaterialManager';
+import { CadMaterialManager } from '../../cad-geometry-loaders/src/material-manager/CadMaterialManager';
 
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
 import assert from 'assert';

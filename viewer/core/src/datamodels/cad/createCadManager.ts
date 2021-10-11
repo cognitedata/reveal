@@ -11,7 +11,6 @@ import {
   CadModelUpdateHandler,
   CadMaterialManager,
   CachedRepository,
-  SimpleAndDetailedToSector3D,
   createDefaultSectorCuller,
   OccludingGeometryProvider
 } from '@reveal/cad-geometry-loaders';
@@ -80,8 +79,7 @@ export function createCadManager<T>(
   );
   const cadModelFactory = new CadModelFactory(materialManager);
   const modelDataParser = new CadSectorParser();
-  const modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
-  const cachedSectorRepository = new CachedRepository(modelDataClient, modelDataParser, modelDataTransformer);
+  const cachedSectorRepository = new CachedRepository(modelDataClient, modelDataParser, materialManager);
   const { internal } = options;
   const sectorCuller =
     internal && internal.sectorCuller
