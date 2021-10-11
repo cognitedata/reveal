@@ -6,8 +6,6 @@ export { CadNode, SuggestedCameraConfig } from './src/CadNode';
 export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
 
 export { NodeTransformProvider } from './src/material-manager/styling/NodeTransformProvider';
-export { NodeAppearanceProvider } from './src/material-manager/styling/NodeAppearanceProvider';
-export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './src/material-manager/NodeAppearance';
 
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 

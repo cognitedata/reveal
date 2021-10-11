@@ -48,11 +48,7 @@ export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 export * from '../datamodels/pointcloud/types';
 export * from './migration/types';
 
-export {
-  CadLoadingHints,
-  DefaultNodeAppearance,
-  defaultRenderOptions,
-  RenderOptions
-} from '@reveal/cad-geometry-loaders';
+export { CadLoadingHints, defaultRenderOptions, RenderOptions } from '@reveal/cad-geometry-loaders';
+export { DefaultNodeAppearance } from '@reveal/cad-styling';
 
 export { SupportedModelTypes } from '../datamodels/base';

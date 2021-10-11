@@ -4,7 +4,15 @@
 
 import * as THREE from 'three';
 
-import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
+import { RootSectorNode } from '../../sector/RootSectorNode';
+import { SectorNode } from '../../sector/SectorNode';
+
+import { CadMaterialManager } from '../CadMaterialManager';
+import { CogniteColors, RevealColors } from '../../utilities/types';
+import { CadNode } from '../../CadNode';
+import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
+
+import { NodeOutlineColor } from '@reveal/cad-styling';
 import {
   outlineDetectionShaders,
   fxaaShaders,
@@ -13,14 +21,7 @@ import {
   LevelOfDetail,
   RenderMode
 } from '@reveal/cad-parsers';
-import { RootSectorNode } from '../../sector/RootSectorNode';
-import { SectorNode } from '../../sector/SectorNode';
-
-import { CadMaterialManager } from '../CadMaterialManager';
-import { CogniteColors, RevealColors } from '../../utilities/types';
-import { CadNode } from '../../CadNode';
-import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
-import { NodeOutlineColor } from '../NodeAppearance';
+import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
 
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;

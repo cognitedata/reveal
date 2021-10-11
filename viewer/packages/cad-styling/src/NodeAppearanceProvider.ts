@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeAppearance } from '../NodeAppearance';
+import { NodeAppearance } from './NodeAppearance';
+import { NodeCollectionBase } from './NodeCollectionBase';
 
-import { NodeCollectionBase } from '@reveal/cad-styling';
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
 
 /**

@@ -4,14 +4,14 @@
 
 import * as THREE from 'three';
 
-import { createMaterials, Materials, RenderMode } from '@reveal/cad-parsers';
-
-import { NodeAppearanceProvider } from './styling/NodeAppearanceProvider';
 import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';
-import { NodeAppearance } from './NodeAppearance';
-import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
+import { NodeAppearance } from '../../../cad-styling/src/NodeAppearance';
 import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './styling/NodeTransformProvider';
+
+import { createMaterials, Materials, RenderMode } from '@reveal/cad-parsers';
+import { NodeAppearanceProvider } from '@reveal/cad-styling';
+import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
 
 import throttle from 'lodash/throttle';
 
