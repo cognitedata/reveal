@@ -12,7 +12,9 @@ export {
   SectorCuller,
   DetermineSectorsInput,
   ByVisibilityGpuSectorCuller,
-  GpuOrderSectorsByVisibilityCoverage
+  GpuOrderSectorsByVisibilityCoverage,
+  RenderOptions,
+  defaultRenderOptions
 } from './packages/cad-geometry-loaders';
 export { NodeAppearanceProvider } from './packages/cad-styling';
 export { revealEnv } from './packages/utilities';
