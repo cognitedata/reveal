@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { CogniteClient } from '@cognite/sdk';
+import { Asset, CogniteClient } from '@cognite/sdk';
 import { CogniteOrnate } from 'library/cognite-ornate';
 import {
   Drawing,
@@ -45,6 +45,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const [workspaceDocuments, setWorkspaceDocuments] = useState<
     WorkspaceDocument[]
   >([]);
+  const [workspaceDocumentAnnotations, setWorkSpaceDocumentAnnotations] =
+    useState<Record<string, OrnateAnnotationInstance[]>>();
 
   useEffect(() => {
     ornateViewer.current = new CogniteOrnate({
@@ -112,7 +114,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
       const documents = [] as WorkspaceDocument[];
       await Promise.all(
-        contents!.documents.map(async (doc) => {
+        contents.documents.map(async (doc) => {
           const { fileId, fileName } = doc.metadata;
 
           const workspaceDoc = await loadFile(fileId, fileName, {
@@ -222,7 +224,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       newDoc,
       annotations
     );
-
+    setWorkSpaceDocumentAnnotations((prev) => ({
+      ...prev,
+      [fileId]: instances,
+    }));
     setWorkspaceDocuments(
       workspaceService.addDocument(workspaceDocuments, fileId, fileName)
     );
@@ -284,7 +289,6 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const onDeleteDocument = useCallback(
     (workspaceDoc: WorkspaceDocument) => {
-      // ornateViewer.current!
       const docToRemove = ornateViewer.current!.documents.find(
         (doc) => doc.metadata && doc.metadata.fileId === workspaceDoc.documentId
       );
@@ -299,6 +303,18 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       }
     },
     [ornateViewer, workspaceDocuments]
+  );
+
+  const onAssetClick = useCallback(
+    (fileId: string, asset: Asset) => {
+      const instance = workspaceDocumentAnnotations?.[fileId].find(
+        (x) => x.annotation.metadata?.resourceId === String(asset.id)
+      );
+      if (instance) {
+        ornateViewer.current?.zoomTo(instance.instance);
+      }
+    },
+    [workspaceDocumentAnnotations]
   );
 
   const createNewWorkspace = () => {
@@ -344,6 +360,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
             onLoadFile={loadFile}
             onWorkspaceTitleUpdated={updateWorkspaceTitle}
             onDeleteDocument={onDeleteDocument}
+            onAssetClick={onAssetClick}
           />
         </>
       </WorkSpaceSearch>

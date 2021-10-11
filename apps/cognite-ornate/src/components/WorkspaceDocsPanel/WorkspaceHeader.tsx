@@ -8,7 +8,10 @@ import {
 import { Icon, Input } from '@cognite/cogs.js';
 import { useTranslation } from 'hooks/useTranslation';
 
-import { WorkspaceHeaderTitlePanel } from './elements';
+import {
+  WorkspaceHeaderTitlePanel,
+  WorkspaceHeaderContainer,
+} from './elements';
 
 export interface WorkspaceHeaderProps {
   title: string;
@@ -58,7 +61,7 @@ export const WorkspaceHeader = ({
   );
 
   return (
-    <div>
+    <WorkspaceHeaderContainer>
       {!isInputVisible && (
         <WorkspaceHeaderTitlePanel>{workspaceTitle}</WorkspaceHeaderTitlePanel>
       )}
@@ -78,6 +81,6 @@ export const WorkspaceHeader = ({
         onClick={showTitleInput}
         size={10}
       />
-    </div>
+    </WorkspaceHeaderContainer>
   );
 };

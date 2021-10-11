@@ -397,14 +397,21 @@ export class CogniteOrnate {
   zoomTo(node: Konva.Node, duration = 0.35) {
     // @ts-ignore - relativeTo DOES accept this.stage just fine.
     const rect = node.getClientRect({ relativeTo: this.stage });
-    const scale = Math.min(
+    const rawScale = Math.min(
       this.stage.width() / rect.width,
       this.stage.height() / rect.height
     );
 
+    const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
+
+    // Scale the location, and center it to the screen
     const location = {
-      x: -node.x() * scale,
-      y: -node.y() * scale,
+      x:
+        -node.x() * scale + this.stage.width() / 2 - (node.width() * scale) / 2,
+      y:
+        -node.y() * scale +
+        this.stage.height() / 2 -
+        (node.height() * scale) / 2,
     };
     const { x, y } = location;
     const tween = new Konva.Tween({

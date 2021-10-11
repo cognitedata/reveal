@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useState } from 'react';
-import { Input } from '@cognite/cogs.js';
+import { Input, SegmentedControl } from '@cognite/cogs.js';
 import { Asset, FileInfo } from '@cognite/sdk';
 import { ListItem } from 'components/List';
 import { useSearch } from 'hooks/useSearch';
@@ -7,6 +7,8 @@ import { useTranslation } from 'hooks/useTranslation';
 import debounce from 'lodash/debounce';
 
 import { Results, ResultsWrapper } from '../WorkSpaceSidebar/elements';
+
+import { WorkSpaceAssetListItem } from './WorkspaceAssetListItem';
 
 type WorkSpaceSearchProps = {
   onLoadFile: (fileId: string, fileName: string) => void;
@@ -19,16 +21,23 @@ type StateMachine<T> = {
   lastQuery?: string;
 };
 
+type Mode = 'asset' | 'file';
+
 const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
   const [filesState, setFilesState] = useState<StateMachine<FileInfo>>();
   const [assetsState, setAssetsState] = useState<StateMachine<Asset>>();
   const [query, setQuery] = useState<string>('');
   const [showResults, setShowResults] = useState<boolean>(false);
   const { t } = useTranslation('workspace-sidebar');
+  const [mode, setMode] = useState<Mode>('asset');
   const { search } = useSearch();
 
   const onSearch = useCallback(async (query: string) => {
-    if (query && filesState?.lastQuery !== query) {
+    if (query.length === 0) {
+      setShowResults(false);
+      return;
+    }
+    if (query.length > 0 && filesState?.lastQuery !== query) {
       setFilesState({ status: 'LOADING' });
       setAssetsState({ status: 'LOADING' });
 
@@ -43,7 +52,6 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
         results: results.assets,
       });
 
-      console.log(assetsState);
       setShowResults(true);
     }
   }, []);
@@ -62,7 +70,11 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
   );
 
   const renderResults = () => {
-    if (query && !filesState?.results?.length) {
+    if (
+      query.length > 0 &&
+      !filesState?.results?.length &&
+      !assetsState?.results?.length
+    ) {
       return (
         <div>
           {t(
@@ -73,13 +85,38 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
       );
     }
 
-    if (filesState?.results?.length) {
+    if (mode === 'asset' && assetsState?.results?.length) {
       return (
         <div>
-          <strong>{t('search_results_header', 'Found tags in cdf')}</strong>
+          <strong>
+            {t('search_results_header_tags', 'Found tags in cdf')}
+          </strong>
           <br />
           <Results>
-            {filesState.results.map((file) => (
+            {(assetsState?.results || []).map((asset) => (
+              <WorkSpaceAssetListItem
+                key={asset.id}
+                asset={asset}
+                onClickFile={(file) => {
+                  setShowResults(false);
+                  onLoadFile(file.id.toString(), file.name);
+                }}
+              />
+            ))}
+          </Results>
+        </div>
+      );
+    }
+
+    if (mode === 'file' && filesState?.results?.length) {
+      return (
+        <div>
+          <strong>
+            {t('search_results_header_files', 'Found files in cdf')}
+          </strong>
+          <br />
+          <Results>
+            {(filesState?.results || []).map((file) => (
               <ListItem
                 key={file.id}
                 title={t('add_file', 'Click to add to workspace')}
@@ -106,7 +143,7 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
         placeholder={t('search_placeholder', 'Search for documents / tags')}
         value={query}
         variant="noBorder"
-        icon="Search"
+        icon={filesState?.status === 'LOADING' ? 'Loading' : 'Search'}
         iconPlacement="right"
         fullWidth
         onKeyDown={(event) => {
@@ -116,11 +153,29 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
             setShowResults(false);
           }
         }}
-        onClick={() => setShowResults(true)}
-        // onBlur={() => setShowResults(false)}
         onChange={onInputChange}
       />
-      {showResults && <ResultsWrapper>{renderResults()}</ResultsWrapper>}
+      {showResults && (
+        <ResultsWrapper>
+          <SegmentedControl
+            currentKey={mode}
+            fullWidth
+            style={{ marginBottom: 16 }}
+            onButtonClicked={(key) => {
+              setMode(key as Mode);
+            }}
+          >
+            <SegmentedControl.Button key="asset">
+              {t('search_tags', 'Search for Tags')}
+            </SegmentedControl.Button>
+            <SegmentedControl.Button key="file">
+              {t('search_files', 'Search for Files')}
+            </SegmentedControl.Button>
+          </SegmentedControl>
+
+          {renderResults()}
+        </ResultsWrapper>
+      )}
       {children}
     </div>
   );

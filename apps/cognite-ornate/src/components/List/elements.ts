@@ -19,12 +19,25 @@ export const ListItem = styled.a`
 
   .action-button {
     position: absolute;
-    top: 13px;
+    top: 8px;
     right: 0;
     display: none;
   }
 
+  .right-icon {
+    position: absolute;
+    top: 12px;
+    right: 0;
+  }
+
   &:hover .action-button {
     display: block;
+  }
+
+  &.indent {
+    display: block;
+    border-bottom: none;
+    padding: 4px 0 4px 12px;
+    width: 100%;
   }
 `;
