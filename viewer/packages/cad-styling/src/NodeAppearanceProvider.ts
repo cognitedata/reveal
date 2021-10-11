@@ -2,9 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { NodeAppearance } from '../NodeAppearance';
-import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+import { NodeAppearance } from './NodeAppearance';
 import { NodeCollectionBase } from './NodeCollectionBase';
+
+import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
