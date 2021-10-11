@@ -2,20 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Box3, Vector3 } from 'three';
+import { Box3 } from 'three';
+import { iou } from './RTree';
 
 const BOX_MERGE_MIN_IOU = 0.15;
-
-// IoU - Intersection over Union, measure of overlap between two boxes
-function iou(box1: Box3, box2: Box3): number {
-  const intersection = box1.clone().intersect(box2);
-  const union = box1.clone().union(box2);
-
-  const intsize = intersection.getSize(new Vector3());
-  const unsize = union.getSize(new Vector3());
-
-  return (intsize.x * intsize.y * intsize.z) / (unsize.x * unsize.y * unsize.z);
-}
 
 export class SmartMergeBoxes {
   resultBoxes: Box3[] = [];
