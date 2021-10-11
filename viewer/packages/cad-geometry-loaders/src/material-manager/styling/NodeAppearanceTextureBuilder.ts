@@ -5,9 +5,7 @@
 import * as THREE from 'three';
 
 import { IndexSet, determinePowerOfTwoDimensions, NumericRange } from '@reveal/utilities';
-
-import { DefaultNodeAppearance, NodeAppearance } from '../NodeAppearance';
-import { NodeAppearanceProvider } from './NodeAppearanceProvider';
+import { NodeAppearanceProvider, NodeAppearance, DefaultNodeAppearance } from '@reveal/cad-styling';
 
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};
