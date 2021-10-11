@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { NodeAppearance, NodeOutlineColor } from '../../../../cad-styling/src/NodeAppearance';
+import { NodeAppearance, NodeOutlineColor } from '@reveal/cad-styling';
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
 import { TreeIndexNodeCollection, NodeAppearanceProvider } from '@reveal/cad-styling';
