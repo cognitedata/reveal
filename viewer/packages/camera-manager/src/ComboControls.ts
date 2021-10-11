@@ -42,7 +42,7 @@ const defaultKeyboardRotationSpeed = defaultPointerRotationSpeed * 10;
 export default class ComboControls extends EventDispatcher {
   public enabled: boolean = true;
   public enableDamping: boolean = true;
-  public dampingFactor: number = 0.2;
+  public dampingFactor: number = 0.4;
   public dynamicTarget: boolean = false;
   public minDistance: number = 0.1;
   public maxDistance: number = Infinity;
@@ -163,10 +163,11 @@ export default class ComboControls extends EventDispatcher {
       this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
       this._accumulatedMouseMove.set(0, 0);
     }
-
+    
     sphericalEnd.theta = Math.sign(sphericalEnd.theta) * Math.min(Math.abs(sphericalEnd.theta), 2.0 * Math.PI);
-
+    
     let deltaTheta = sphericalEnd.theta - spherical.theta;
+
     if (Math.abs(deltaTheta) > Math.PI) {
       deltaTheta -= 2.0 * Math.PI * Math.sign(deltaTheta);
     }
@@ -204,7 +205,7 @@ export default class ComboControls extends EventDispatcher {
     spherical.makeSafe();
     camera.position.setFromSpherical(spherical).add(target);
     camera.lookAt(this.newClickTarget ? this.viewTarget : target);
-
+    
     if (changed) {
       this.triggerCameraChangeEvent();
     }
@@ -519,7 +520,7 @@ export default class ComboControls extends EventDispatcher {
       this.firstPersonMode = true;
     }
 
-    // pan (actually not seems like a pan movement according to google) should we rename it?
+    // pan
     const horizontalMovement = Number(keyboard.isPressed('a')) - Number(keyboard.isPressed('d'));
     const verticalMovement = Number(keyboard.isPressed('e')) - Number(keyboard.isPressed('q'));
     if (horizontalMovement !== 0 || verticalMovement !== 0) {
@@ -539,9 +540,10 @@ export default class ComboControls extends EventDispatcher {
 
   private rotateFirstPersonMode = (azimuthAngle: number, polarAngle: number) => {
     const { firstPersonRotationFactor, reusableCamera, reusableVector3, sphericalEnd, targetEnd } = this;
+    
     reusableCamera.position.setFromSpherical(sphericalEnd).add(targetEnd);
     reusableCamera.lookAt(targetEnd);
-
+    
     reusableCamera.rotateX(firstPersonRotationFactor * polarAngle);
     reusableCamera.rotateY(firstPersonRotationFactor * azimuthAngle);
 
@@ -549,6 +551,7 @@ export default class ComboControls extends EventDispatcher {
     reusableCamera.getWorldDirection(reusableVector3);
     targetEnd.addVectors(reusableCamera.position, reusableVector3.multiplyScalar(distToTarget));
     sphericalEnd.setFromVector3(reusableVector3.subVectors(reusableCamera.position, targetEnd));
+  
     sphericalEnd.makeSafe();
   };
 
@@ -623,8 +626,14 @@ export default class ComboControls extends EventDispatcher {
       const ratio = Math.abs(targetOffsetDistance / deltaDistance);
 
       if (ratio > 4)
-        if (ratio > 10) targetOffsetDistance *= 0.1;
-        else targetOffsetDistance *= 0.4;
+        if (ratio > 10) {
+          deltaDistance *= 0.1;
+          targetOffsetDistance *= 0.1;
+        }
+        else {
+          deltaDistance *= 0.4;
+          targetOffsetDistance *= 0.4;
+        }
 
       sphericalEnd.radius = radius;
 

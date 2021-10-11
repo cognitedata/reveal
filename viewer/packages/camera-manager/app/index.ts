@@ -26,19 +26,19 @@ function init() {
 
   keyboard = new Keyboard();
 
-  const grid = new THREE.GridHelper(5, 20);
+  const grid = new THREE.GridHelper(40, 40);
   scene.add(grid);
 
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const geometry = new THREE.BoxGeometry(10, 10, 10);
   const material = new THREE.MeshNormalMaterial();
 
-  const sphereGeometry = new THREE.SphereGeometry(0.1);
+  const sphereGeometry = new THREE.SphereGeometry(1);
   const sphereMaterial = new THREE.MeshBasicMaterial({ color: 'green' });
   sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
   scene.add(sphere);
 
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(0, 0.5, 0);
+  mesh.position.set(0, 5, 0);
   scene.add(mesh);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -50,7 +50,7 @@ function init() {
   controls.minDistance = 0.1;
   controls.enabled = true;
 
-  controls.setState(new THREE.Vector3(0, 2, 2), new THREE.Vector3());
+  controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());
 
   sphere.position.copy(controls.getState().target);
 

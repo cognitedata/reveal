@@ -173,10 +173,7 @@ export class Cognite3DViewer {
     const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
     if (intersection !== null) {
       this.setCameraTarget(intersection.point, true);
-    } else {
-      const boBo = this._models[0].getModelBoundingBox();
-      this.setCameraTarget(boBo.getCenter(new THREE.Vector3()), true);
-    }
+    } 
   };
 
   /**
@@ -265,11 +262,10 @@ export class Cognite3DViewer {
       this.changeTarget(e);
     });
 
-    this.canvas.addEventListener('wheel', async e => {
+    this.canvas.addEventListener('wheel', async (e: any)=> {
       const timeDelta = wheelClock.getDelta();
       const { offsetX, offsetY } = e;
 
-      //@ts-ignore
       if (startedScroll && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0)) {
         startedScroll = false;
 
@@ -289,6 +285,7 @@ export class Cognite3DViewer {
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
     this.controls.dynamicTarget = false;
+
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -1274,9 +1271,11 @@ export class Cognite3DViewer {
 
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
-        this.canvas.removeEventListener('pointerdown', stopTween);
-        this.canvas.removeEventListener('wheel', stopTween);
-        document.removeEventListener('keydown', stopTween);
+        if (this._canInterruptAnimations) {
+          this.canvas.removeEventListener('pointerdown', stopTween);
+          this.canvas.removeEventListener('wheel', stopTween);
+          document.removeEventListener('keydown', stopTween);
+        }
       }
     };
 
