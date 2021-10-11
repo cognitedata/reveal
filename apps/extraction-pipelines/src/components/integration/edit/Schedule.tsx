@@ -150,10 +150,15 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   };
 
   function renderSchedule(schedule?: string) {
-    if (!schedule) {
-      return !canEdit ? (
+    if (!canEdit) {
+      return schedule == null ? (
         <span css="color: grey; padding: 0 1rem">No schedule set</span>
       ) : (
+        <span css="padding: 0 1rem">{schedule}</span>
+      );
+    }
+    if (!schedule) {
+      return (
         <EditButton
           onClick={onEditClick}
           disabled={!canEdit}
