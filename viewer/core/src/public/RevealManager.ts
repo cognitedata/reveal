@@ -8,7 +8,7 @@ import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } fro
 
 import { CadManager } from '../datamodels/cad/CadManager';
 import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
-import { LoadingStateChangeListener, defaultRenderOptions, PointCloudBudget } from './types';
+import { LoadingStateChangeListener, PointCloudBudget } from './types';
 import { SupportedModelTypes } from '../datamodels/base';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
@@ -20,7 +20,8 @@ import {
   CadModelSectorBudget,
   EffectRenderManager,
   LoadingState,
-  CadNode
+  CadNode,
+  defaultRenderOptions
 } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
