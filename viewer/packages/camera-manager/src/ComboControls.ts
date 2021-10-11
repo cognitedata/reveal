@@ -159,18 +159,19 @@ export default class ComboControls extends EventDispatcher {
       this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
       this._accumulatedMouseMove.set(0, 0);
     }
-
-    sphericalEnd.theta = Math.sign(sphericalEnd.theta) * Math.min(Math.abs(sphericalEnd.theta), 2.0 * Math.PI);
-
-    let deltaTheta = sphericalEnd.theta - spherical.theta;
-    if (Math.abs(deltaTheta) > Math.PI) {
-      deltaTheta -= 2.0 * Math.PI * Math.sign(deltaTheta);
-    }
+    let rawDeltaTheta = (this.firstPersonMode ? (sphericalEnd.theta % (2*Math.PI)) - (((spherical.theta) % (2*Math.PI))) : sphericalEnd.theta - spherical.theta );
+    
+    
+    let deltaTheta = Math.min(Math.abs(rawDeltaTheta), 2 * Math.PI - Math.abs(rawDeltaTheta));
+    const thetaSign = ((deltaTheta === Math.abs(rawDeltaTheta)) ? 1 : -1) * Math.sign(rawDeltaTheta);
+    deltaTheta *= thetaSign;
+    
     const deltaPhi = sphericalEnd.phi - spherical.phi;
     const deltaRadius = sphericalEnd.radius - spherical.radius;
     deltaTarget.subVectors(targetEnd, target);
 
     let changed = false;
+    console.log('Updated with:', spherical.theta);
 
     const wantDamping = enableDamping && !this.temporarilyDisableDamping;
     const deltaFactor = wantDamping ? Math.min(dampingFactor * this.targetFPSOverActualFPS, 1) : 1;
@@ -189,7 +190,7 @@ export default class ComboControls extends EventDispatcher {
         spherical.phi + deltaPhi * deltaFactor,
         spherical.theta + deltaTheta * deltaFactor
       );
-      spherical.theta = spherical.theta % (2.0 * Math.PI);
+      //spherical.theta = spherical.theta % (2.0 * Math.PI);
       target.add(deltaTarget.multiplyScalar(deltaFactor));
       changed = true;
     } else {
@@ -325,6 +326,8 @@ export default class ComboControls extends EventDispatcher {
       event.type !== 'blur' && (event.target === this.domElement || document.activeElement === this.domElement);
 
     this.keyboard.disabled = !this.isFocused;
+    this.firstPersonMode = false;
+
   };
 
   private onContextMenu = (event: MouseEvent) => {
@@ -495,8 +498,6 @@ export default class ComboControls extends EventDispatcher {
       sphericalEnd.phi = oldPhi;
       this.rotateFirstPersonMode(azimuthAngle, polarAngle);
     }
-
-    this.firstPersonMode = false;
 
     const speedFactor = keyboard.isPressed('shift') ? keyboardSpeedFactor : 1;
     const moveForward = keyboard.isPressed('w') ? true : keyboard.isPressed('s') ? false : undefined;

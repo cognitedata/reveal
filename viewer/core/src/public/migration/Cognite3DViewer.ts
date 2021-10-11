@@ -238,10 +238,12 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
+
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
-    this.controls.minDistance = 1.0;
+    this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
+
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
