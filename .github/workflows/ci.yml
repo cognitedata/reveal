@@ -63,10 +63,7 @@ jobs:
       with:
         cache: 'yarn'
         cache-dependency-path: |
-          viewer/yarn.lock
           examples/yarn.lock
-          documentation/yarn.lock
-          parser-worker/yarn.lock
 
     - name: Install NPM dependencies
       working-directory: viewer
@@ -116,6 +113,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          cache: 'yarn'
+          cache-dependency-path: |
+            documentation/yarn.lock
 
       - name: Install Reveal dependencies
         working-directory: viewer
