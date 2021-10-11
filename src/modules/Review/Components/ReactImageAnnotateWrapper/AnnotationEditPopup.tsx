@@ -190,10 +190,9 @@ export const AnnotationEditPopup = (props: {
     let updatedRegionTags = [];
 
     if (label) {
+      updatedRegionTags = [label];
       if (region.tags?.length) {
-        updatedRegionTags = region.tags.slice(1);
-      } else {
-        updatedRegionTags = [label];
+        updatedRegionTags = updatedRegionTags.concat(region.tags.slice(1));
       }
       const updatedRegion = { ...region, tags: updatedRegionTags };
       onChange(updatedRegion);
