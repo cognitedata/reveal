@@ -1,0 +1,48 @@
+import React from 'react';
+
+import styled from 'styled-components/macro';
+
+import ManageColumnsPanel from 'components/manage-columns-panel';
+import { ViewMode, AvailableColumn } from 'modules/documentSearch/types';
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-self: flex-start;
+`;
+
+export const GROUP_EXACT_DUPLICATES_LABEL = 'Group exact duplicates';
+export const SEARCH_IN_SENSITIVE_INDEX = 'Search in Sensitive index';
+
+interface Props {
+  columns: AvailableColumn[];
+  viewMode?: ViewMode;
+  searchForSensitive?: boolean;
+  handleSelectAllColumns: (selectall: boolean) => void;
+  handleColumnSelection: (column: AvailableColumn) => void;
+  handleSearchInSensitiveToggle?: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => void;
+  setViewModel?: (viewMode: ViewMode) => void;
+  hideGroupDuplicateOption?: boolean;
+}
+
+const OptionsPanel: React.FC<Props> = ({
+  columns,
+  handleSelectAllColumns,
+  handleColumnSelection,
+}) => {
+  return (
+    <Root>
+      <ManageColumnsPanel
+        columns={columns}
+        handleSelectAllColumns={handleSelectAllColumns}
+        handleColumnSelection={handleColumnSelection}
+      />
+    </Root>
+  );
+};
+
+export default OptionsPanel;

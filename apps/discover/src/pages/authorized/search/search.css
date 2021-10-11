@@ -1,0 +1,19 @@
+﻿@keyframes horizontal-bounce {
+  0%,
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  50% {
+    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+}
+
+.mapboxgl-control-container {
+  user-select: none;
+}
+
+.mapboxgl-canvas-container canvas.mapboxgl-canvas {
+  position: relative !important;
+}

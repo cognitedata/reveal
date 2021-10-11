@@ -2,6 +2,7 @@
   "selectorTimeout": 20000,
   "assertionTimeout": 20000,
   "pageLoadTimeout": 10000,
+  "color": true,
   "screenshots": {
     "path": "testcafe/screenshots",
     "takeOnFails": true

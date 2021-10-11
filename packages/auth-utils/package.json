@@ -25,5 +25,14 @@
     "prettier": "bazel test :prettier_test",
     "prettier:fix": "bazel run :prettier_test -- --write",
     "update-helpers": "bazel run :generate_package_json_helpers"
+  },
+  "dependencies": {
+    "@cognite/sdk-core": "2.2.0"
+  },
+  "resolutions": {
+    "@cognite/sdk-core": "2.2.0"
+  },
+  "peerDependencies": {
+    "@cognite/sdk-core": "2.2.0"
   }
 }

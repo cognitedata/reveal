@@ -1,0 +1,44 @@
+import React from 'react';
+
+import MetadataTable from 'components/metadataTable';
+import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
+import { DocumentType } from 'modules/documentSearch/types';
+
+interface Props {
+  doc: DocumentType;
+  numberOfColumns?: number;
+}
+export const Metadata: React.FC<Props> = ({
+  doc: { doc: defaultMetadata },
+  numberOfColumns = 2,
+}) => {
+  const filteredLabels = useDocumentLabelsByExternalIds(defaultMetadata.labels);
+
+  return (
+    <MetadataTable
+      columns={numberOfColumns}
+      metadata={[
+        { label: 'Author', value: defaultMetadata.author },
+        { label: 'Location', value: defaultMetadata.location },
+        { label: 'Categories', value: filteredLabels },
+        { label: 'Top folder', value: defaultMetadata.topfolder },
+        {
+          label: 'File size',
+          value: defaultMetadata.filesize,
+          type: 'filesize',
+        },
+        { label: 'File type', value: defaultMetadata.filetype },
+        {
+          label: 'Creation date',
+          value: defaultMetadata.creationdate,
+          type: 'date',
+        },
+        {
+          label: 'Last modified',
+          value: defaultMetadata.lastmodified,
+          type: 'date',
+        },
+      ]}
+    />
+  );
+};

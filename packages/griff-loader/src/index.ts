@@ -24,7 +24,7 @@ function isAggregateDatapoint(
 }
 
 type GriffSeries = {
-  firstSeries: Datapoint[];
+  firstSeries?: Datapoint[];
   subDomain: number[];
   granularity: string;
 };
@@ -179,7 +179,7 @@ const getDataPoints = async ({
 };
 
 export const mergeInsert = (
-  base: Datapoint[],
+  base: Datapoint[] = [],
   toInsert: Datapoint[],
   subDomain: number[],
   xAccessor: AccessorFunc = (d) => d.timestamp

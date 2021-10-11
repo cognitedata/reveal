@@ -1,0 +1,148 @@
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+
+import { getTenantInfo } from '@cognite/react-container';
+import { reportException } from '@cognite/react-errors';
+
+import { log } from '_helpers/log';
+import {
+  RELATED_DOCUMENT_KEY,
+  SAVED_SEARCHES_QUERY_KEY,
+  SAVED_SEARCHES_QUERY_KEY_CURRENT,
+  SURVEYS_QUERY_KEY,
+} from 'constants/react-query';
+import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
+import { useSearchActions } from 'hooks/useSearchActions';
+import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import {
+  SavedSearchItem,
+  SavedSearchContent,
+} from 'modules/api/savedSearches/types';
+import { updateCurrentSearch } from 'modules/api/savedSearches/utils';
+import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { Modules } from 'modules/sidebar/types';
+import { SeismicConfig } from 'tenants/types';
+
+import { GenericApiError } from '../types';
+
+import { SAVED_SEARCHES_CURRENT_KEY } from './constants';
+
+// Need to keep separate query for related document filters
+// This does not tie into 'current' filters
+export const useQuerySavedSearchRelatedDocuments = () => {
+  const headers = getJsonHeaders();
+  const [tenant] = getTenantInfo();
+
+  return useQuery(
+    RELATED_DOCUMENT_KEY,
+    () => discoverAPI.savedSearches.get(RELATED_DOCUMENT_KEY, headers, tenant),
+    {
+      enabled: true,
+      retry: false,
+    }
+  );
+};
+
+export const useQuerySavedSearchCurrent = () => {
+  const headers = getJsonHeaders({}, true);
+  const [tenant] = getTenantInfo();
+
+  return useQuery(
+    SAVED_SEARCHES_QUERY_KEY_CURRENT,
+    () =>
+      discoverAPI.savedSearches.get(
+        SAVED_SEARCHES_CURRENT_KEY,
+        headers,
+        tenant
+      ),
+    {
+      enabled: true,
+      retry: false,
+    }
+  );
+};
+
+export const useQuerySavedSearchesList = () => {
+  const headers = getJsonHeaders({}, true);
+  const [tenant] = getTenantInfo();
+
+  return useQuery<SavedSearchItem[]>(
+    SAVED_SEARCHES_QUERY_KEY,
+    () => discoverAPI.savedSearches.list(headers, tenant),
+    {
+      enabled: true,
+      retry: false,
+    }
+  );
+};
+
+export const useQuerySavedSearcheGetOne = (id: string) => {
+  const headers = getJsonHeaders({}, true);
+  const [tenant] = getTenantInfo();
+
+  return useQuery<SavedSearchContent>(
+    [SAVED_SEARCHES_QUERY_KEY, id],
+    () =>
+      discoverAPI.savedSearches
+        .get(id, headers, tenant)
+        .then((response) => response as SavedSearchContent),
+    {
+      enabled: true,
+      retry: false,
+    }
+  );
+};
+
+export const useMutatePatchSavedSearch = (
+  doSearch = true,
+  successCallback?: (data: SavedSearchContent | GenericApiError) => void
+) => {
+  const currentSavedSearch = useCurrentSavedSearchState();
+  const headers = getJsonHeaders({}, true);
+  const { data: seismicConfig } = useTenantConfigByKey<SeismicConfig>(
+    Modules.SEISMIC
+  );
+  const { doCommonSearch } = useSearchActions();
+  const [tenant] = getTenantInfo();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (savedSearchPatchContent: Partial<SavedSearchContent>) => {
+      // console.log('Should update saved search with:', props);
+      return updateCurrentSearch(
+        currentSavedSearch,
+        savedSearchPatchContent,
+        false,
+        headers,
+        tenant
+      );
+    },
+    {
+      onSuccess: (data) => {
+        // eslint-disable-next-line no-debugger
+        // debugger;
+
+        if ('error' in data) {
+          log('Error from useMutatePatchSavedSearch', [data]);
+          reportException('Error updating saved search');
+          return;
+        }
+
+        // console.log('Setting into current query state', data);
+
+        // need to set here, because the data in the db-service is only 'eventually consistent'
+        queryClient.setQueryData(SAVED_SEARCHES_QUERY_KEY_CURRENT, data);
+        // queryClient.invalidateQueries(SAVED_SEARCHES_QUERY_KEY_CURRENT);
+        queryClient.invalidateQueries(SURVEYS_QUERY_KEY);
+
+        if (doSearch) {
+          // this is what activates the 'saved search'
+          doCommonSearch(data, queryClient, headers);
+        }
+
+        if (seismicConfig && !seismicConfig?.disabled)
+          queryClient.invalidateQueries(SURVEYS_QUERY_KEY);
+        if (successCallback) successCallback(data);
+      },
+    }
+  );
+};

@@ -1,0 +1,72 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/**/node_modules
+/functions/node_modules
+
+# testing
+/coverage
+junit.xml
+src/experiments-local.json
+src/config/experiments-local.json
+database-debug.log
+
+# keys
+private-keys/*.json
+discover-e2e-*.jwk-key.json
+
+# production
+/build
+/public/locales
+
+# misc
+.DS_Store
+
+# PR Server builds
+build.tar.gz
+
+# testcafe
+testcafe/artifacts
+
+# storybook
+storybook-static/
+
+# frontend app server builds
+.fas-build.json
+
+.env.local
+.env.docker
+
+# testcafe
+testcafe/screenshots
+testcafe/logs
+testcafe/videos
+res.xml
+
+# lint
+.eslintcache
+
+# local test env.
+.yalc
+yalc.lock
+
+# IDE
+.idea/
+
+# yarn v2 - zero installs
+# .yarn/*
+# !.yarn/cache
+# !.yarn/releases
+# !.yarn/plugins
+# !.yarn/sdks
+# !.yarn/versions
+
+# NOT zero installs mode:
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+yarn-error.log

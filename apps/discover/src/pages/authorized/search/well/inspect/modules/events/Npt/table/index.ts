@@ -1,0 +1,1 @@
+export { NPTTable } from './NPTTable';

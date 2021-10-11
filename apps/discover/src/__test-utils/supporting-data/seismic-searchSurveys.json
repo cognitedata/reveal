@@ -1,0 +1,24 @@
+{
+  "surveysList": [
+    {
+      "id": "1234-abcd",
+      "name": "STM0415",
+      "filesList": [
+        {
+          "id": "12341234",
+          "name": "STM0415-PRE-SEGY",
+          "metadataMap": [
+            ["Data Description", "FINAL POST STM STACK"],
+            ["Data type", "POST-STACK"],
+            ["First shot point", "None"],
+            ["Last shot point", "None"],
+            ["Line length", "1268.8638"],
+            ["Name", "TTI.00052625"],
+            ["Survey", "NSA.11125"],
+            ["Survey Specific", "MIGRATION - CFD"]
+          ]
+        }
+      ]
+    }
+  ]
+}

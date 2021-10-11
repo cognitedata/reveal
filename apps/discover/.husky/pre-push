@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo ' '
+echo 'Running pre-push hook'
+echo ' '
+
+yarn test:changed
+
+echo ' '
+printf "\033[01;33mVisit the Jenkins CI pipeline: %s (cmd/ctrl + click) \e[0m\n" \
+"https://ci.jenkins.cognite.ai/blue/pipelines?search=discover"
+
+if type "gh" > /dev/null; then
+  PR=$(gh pr view | grep pull | sed -En 's/.*pull\///p')
+  echo "or go directly to your branch: https://ci.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-ci%2Fdiscover/activity?branch=${PR}"
+fi
+echo ' '
+echo ' '

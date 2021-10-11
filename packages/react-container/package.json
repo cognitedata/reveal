@@ -26,8 +26,15 @@
     "update-helpers": "bazel run :generate_package_json_helpers",
     "storybook": "ibazel run :start-storybook"
   },
+  "dependencies": {
+    "@cognite/sdk-core": "2.2.0"
+  },
+  "resolutions": {
+    "@cognite/sdk-core": "2.2.0"
+  },
   "peerDependencies": {
     "@cognite/metrics": "^1.0.0",
+    "@cognite/sdk-core": "^2.2.0",
     "@cognite/cogs.js": "^2.4.0",
     "@cognite/sdk": "^5.4.0",
     "lodash": "^4.17.20",

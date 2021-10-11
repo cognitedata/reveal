@@ -1,0 +1,22 @@
+{
+  "git.ignoreLimitWarning": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "node_modules/**": true,
+    "/dist/**": true
+  },
+  "npm.packageManager": "yarn"
+}

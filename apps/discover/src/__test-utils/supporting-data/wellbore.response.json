@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "externalId": "31117718",
+      "name": "16/2-D-13",
+      "parentId": 2526330628837091,
+      "metadata": {
+        "ABBREVIATION": "CLOSED",
+        "WATER_DEPTH": "113.4",
+        "WATER_DEPTH_OUOM": "M",
+        "WELLBORE_TYPE": "DEVELOPMENT",
+        "WELL_NAME": "16/2-D-13",
+        "WELL_NUM": "31117718",
+        "contentSize": "0",
+        "geoType": "point",
+        "hasContent": "false",
+        "nbInfoItems": "57",
+        "nbLogs": "5",
+        "type": "Wellbore"
+      },
+      "source": "DISKOS",
+      "id": 8420794549122936,
+      "createdTime": 1574682210216,
+      "lastUpdatedTime": 1574682210216,
+      "rootId": 2526330628837091
+    }
+  ]
+}

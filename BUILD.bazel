@@ -38,6 +38,14 @@ copy_to_bin(
     visibility = ["//visibility:public"],
 )
 
+copy_to_bin(
+    name = "eslintrc",
+    srcs = [
+        ":.eslintrc.js",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 # Bazel file linter: lints BUILD files, WORKSPACE and .bzl files, and can
 # automatically apply fixes.
 #

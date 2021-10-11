@@ -1,0 +1,42 @@
+import { SeismicFile } from 'modules/seismicSearch/types';
+
+export const getSurvey = (extras: Partial<SeismicFile> = {}) => {
+  return {
+    id: '3c9d0b18-6bec-4a4e-a4b5-cfd1c5c9205b',
+    surveyId: '21d723f4-2b56-4826-9311-49cccd838288',
+    survey: 'DN09M02',
+    dataSetName: 'DN09M02-MID-STACK.MIG_FIN.POST_STACK.3D.JS-021875.segy',
+    dataType: 'POST STACK',
+    metadata: {},
+
+    // offset: 'nan',
+    // timeDepth: '',
+    // fileSize: 0,
+    // source: '',
+    // selected: true,
+    // data_type: 'POST STACK',
+    // dimension: 'nan',
+    // diskos_id: 'DN09M02-MID-STACK',
+    // processing: 'MIG FIN',
+    // processing_year: '2010',
+    // geometry: {
+    //   coordinates: [],
+    //   crs: {
+    //     properties: {
+    //       name: 'EPSG:0',
+    //     },
+    //     type: 'name',
+    //   },
+    //   type: 'Polygon',
+    // },
+    // header: {
+    //   meta: {
+    //     fileId: '3c9d0b18-6bec-4a4e-a4b5-cfd1c5c9205b',
+    //     header:
+    //       'C01CLIENT=DET NORSKE,                     PROCESSED BY=CGGVERITAS NORGE\nC02INLINE: 3033-4842\nC03SURVEY: DN09M02\nC04AREA: PL383 - 6507/3                   DATAFORMAT: SEG-Y  DATE: 25/03/10\nC05DATA TYPE: FINAL STACK - MID\nC06RECORD LENGTH: 6000MS     SAMPLE INTERVAL: 4 MS\nC07GEODETIC DATUM: ED-50     SPHEROID: INTERNATIONAL  PROJECTION: UTM\nC08CENTR. MERID.: 9 DEG E,   UTM ZONE: 32 N,          FALSE EASTING: 500000\nC09DISTANCE BETWEEN INLINES=12.5M,CROSSLINES=12.5M,BIN\nSIZE(INLxCRL):12.5Mx12.5MC10INLINE DIRECTION (GRID):    311.95 DEGREES\n(CLOCKWISE FROM NORTH)            C11CROSSLINE DIRECTION (GRID):  41.95 DEGREES\n(CLOCKWISE FROM NORTH)            C12ORIGO(0,0): UTM-X AT:  429234.881166M\nUTM-Y AT: 7254897.694742M            C13DATA RANGE: INLINES=(3033-4842)(INC 1),\nCROSSLINES=(466-2010)(INC 1),        C14CORNER01:3D INLINE 3033, 3D XLINE  466,\nUTM-X 450246.48, UTM-Y 7286988.21    C15CORNER02:3D INLINE 4842, 3D XLINE  466,\nUTM-X 465362.53, UTM-Y 7303805.77    C16CORNER03:3D INLINE 4842, 3D XLINE 2010,\nUTM-X 451008.57, UTM-Y 7316707.47    C17CORNER04:3D INLINE 3033, 3D XLINE 2010,\nUTM-X 435892.52, UTM-Y 7299889.91    C18LIVE DATA POLYGON\n(INLINE/XLINE):(4818/466),(4842/1299),(4224/1299),\nC19(4224/2010),(3093/2007),(3033/1947),(3033/902),(3399/466),(4818/466)\nC20-------- PROCESSING SEQUENCE-------------------------------------------------\nC21REFORMAT + SEISMIC/NAVIG. MERGE + AMPLITUDE RECOVERY + ANTI-ALIAS FILTER +\nC22RESAMPLE TO 4MS + BAD TRACE DETECT. & REMOVAL + LOWCUT (3HZ, 18dB/OCT) +\nC23LINEAR NOISE ATT. + SWELL NOISE ATT. + ZP + 2DSRME + TAUP MUTE +  Q150 +\nC24PARABOLIC RADON DEMULTIPLE + BINNING & REGULARIZATION + MATCH & MERGE +\nC25MIGRATION + MULTICHANNEL DECON IN OFC DOMAIN + RMO CORRECTION + HR RADON\nC26DEMULTIPLE + ANGLE MUTES + STACK + Q COMPENSATION + RANDOM NOISE ATTENUATION\nC27+ TVF + AMPLITUDE SCALING + GUN/CABLE STATITCS + INTERPOLATION TO\nC2812.5 M x 12.5 M BIN SIZE + SEGY OUTPUT\nC29--------TRACE HEADERS\n(BYTES)------------------------------------------------C303D INLINE         IN\nBYTES 189-192    3D CROSSLINE        IN BYTES 193-196   C31BIN CENTER UTM-X  IN\nBYTES 181-184    BIN CENTER UTM-Y    IN BYTES 185-188   C32POLARITY:\nC33A POSITIVE SAMPLE CORRESPONDS TO AN INCREASE IN ACOUSTIC IMPEDANCE.\nC34\nC35\nC36\nC37\nC38\nC39\nC40',
+    //     rawHeader: '',
+    //   },
+    // },
+    ...extras,
+  } as SeismicFile;
+};

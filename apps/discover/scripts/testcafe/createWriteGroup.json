@@ -1,0 +1,98 @@
+{
+  "items": [
+    {
+      "name": "writeGroup",
+      "sourceId": "writeGroup",
+      "capabilities": [
+        {
+          "seismicAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "labelsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "assetsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "eventsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "filesAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "geospatialAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "relationshipsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "datasetsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "rawAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "sequencesAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "groupsAcl": {
+            "actions": ["READ", "LIST"],
+            "scope": {
+              "all": {}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

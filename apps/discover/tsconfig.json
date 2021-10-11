@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "module": "esnext",
+    "alwaysStrict": true,
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin"
+      }
+    ]
+  },
+  "include": [
+    "**/src/**/*",
+    "**/.storybook/**/*",
+    "**/testcafe/**/*",
+    "./.eslintrc.production.js",
+    "./.eslintrc.js",
+    "public/sidecar.js"
+  ]
+}

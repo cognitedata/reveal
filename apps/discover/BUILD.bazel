@@ -1,0 +1,605 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
+load("@npm//react-scripts:index.bzl", "react_scripts")
+load("@npm//testcafe:index.bzl", "testcafe")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/publish:publish_storybook.bzl", "publish_storybook")
+load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
+load("//rules/test:testcafe_test.bzl", "testcafe_test")
+load("//rules/build_sed:build_sed.bzl", "build_sed")
+load("//rules/test:version_info.bzl", "USER_ID")
+load("//rules/publish:publish_fas.bzl", "publish_fas")
+
+# Filename conventions described at
+# https://create-react-app.dev/docs/running-tests#filename-conventions
+_TESTS = [
+    "src/**/*.test*.js*",
+    "src/**/*.test*.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
+    "src/__mocks/*",
+    "src/**/__mocks/*",
+    "src/utils/test/*",
+    "src/__test-utils/**/*",
+]
+
+_TESTS_TESTCAFE = [
+    "testcafe/**/*.ts",
+]
+
+_STORYBOOK = [
+    ".storybook/*",
+    "src/**/__stories__/*",
+    "src/**/*.stories.ts*",
+]
+
+TESTS_AND_STORYBOOK = glob(_TESTS + _STORYBOOK)
+
+_SOURCES = [
+    "src/**/*.ts*",
+    "src/**/*.js*",
+    "src/**/*.png",
+    "src/**/*.svg",
+    "src/**/*.css",
+]
+
+TESTS = glob(_TESTS + _STORYBOOK)
+
+TESTS_TESTCAFE = glob(_TESTS_TESTCAFE)
+
+STORYBOOK = glob(_STORYBOOK + _TESTS)
+
+SOURCES = glob(
+    _SOURCES,
+    exclude = _TESTS + _STORYBOOK,
+)
+
+SCRIPTS = glob([
+    "scripts/*",
+    "scripts/**/*",
+])
+
+PUBLIC = glob([
+    "public/*",
+])
+
+LINTERS = [
+    "//packages/eslint-config",
+    "//packages/eslint-plugin",
+    "@npm//eslint-config-airbnb",
+    "@npm//eslint-config-prettier",
+    "@npm//eslint-plugin-jest",
+    "@npm//eslint-plugin-jest-dom",
+    "@npm//eslint-plugin-lodash",
+    "@npm//eslint-plugin-prettier",
+    "@npm//eslint-plugin-testcafe",
+    "@npm//eslint-plugin-testing-library",
+]
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    out_dir = "build",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/discover-api-types",
+    "@npm//@cognite/geospatial-sdk-js",
+    "@npm//@cognite/node-visualizer",
+    "@npm//@cognite/sdk-wells",
+    "@npm//@cognite/sdk",
+    "@npm//@cognite/sdk-playground",
+    "@npm//@cognite/seismic-sdk-js",
+    "@npm//@cognite/subsurface-interfaces",
+    "@npm//@cognite/videx-wellog",
+    "@npm//@fontsource/inter",
+    "@npm//@mapbox/mapbox-gl-draw",
+    "@npm//@material-ui/core",
+    "@npm//@material-ui/icons",
+    "@npm//@material-ui/lab",
+    "@npm//@reduxjs/toolkit",
+    "@npm//@turf/centroid",
+    "@npm//@turf/clean-coords",
+    "@npm//@turf/helpers",
+    "@npm//@turf/nearest-point",
+    "@npm//@turf/simplify",
+    "@npm//classnames",
+    "@npm//convert-units",
+    "@npm//d3",
+    "@npm//file-saver",
+    "@npm//html2canvas",
+    "@npm//jszip",
+    "@npm//immutable",
+    "@npm//lodash",
+    "@npm//maplibre-gl",
+    "@npm//moment",
+    "@npm//plotly.js",
+    "@npm//proj4",
+    "@npm//react-autosuggest",
+    "@npm//react-copy-to-clipboard",
+    "@npm//react-custom-scrollbars",
+    "@npm//react-dom",
+    "@npm//react-i18next",
+    "@npm//react-modal",
+    "@npm//react-pdf",
+    "@npm//react-plotly.js",
+    "@npm//react-query",
+    "@npm//react-redux",
+    "@npm//react-resizable",
+    "@npm//react-router-dom",
+    "@npm//react-sanitized-html",
+    "@npm//react-sizeme",
+    "@npm//react-table",
+    "@npm//react",
+    "@npm//redux-devtools-extension",
+    "@npm//redux-logger",
+    "@npm//redux-thunk",
+    "@npm//redux",
+    "@npm//styled-components",
+    "@npm//typeface-inter",
+    "@npm//uuid",
+    "@npm//web-vitals",
+    "//packages/metrics",
+    "//packages/react-tenant-selector",
+    "//packages/react-azure-telemetry",
+    "//packages/react-container",
+    "//packages/react-comments",
+    "//packages/react-feature-flags",
+    "//packages/react-i18n",
+    "//packages/react-errors",
+    "//packages/sidecar",
+    "//packages/z-index",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/classnames",
+    "@npm//@types/convert-units",
+    "@npm//@types/d3",
+    "@npm//@types/fetch-mock",
+    "@npm//@types/file-saver",
+    "@npm//@types/lodash",
+    "@npm//@types/maplibre-gl",
+    "@npm//@types/proj4",
+    "@npm//@types/react-autosuggest",
+    "@npm//@types/react-copy-to-clipboard",
+    "@npm//@types/react-custom-scrollbars",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-i18next",
+    "@npm//@types/react-modal",
+    "@npm//@types/react-pdf",
+    "@npm//@types/react-plotly.js",
+    "@npm//@types/react-redux",
+    "@npm//@types/react-resizable",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/react-table",
+    "@npm//@types/react",
+    "@npm//@types/redux-logger",
+    "@npm//@types/redux-mock-store",
+    "@npm//@types/styled-components",
+    "@npm//@types/url-parse",
+    "@npm//@types/uuid",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react-hooks",
+    "@npm//@testing-library/react",
+    "@npm//@testing-library/testcafe",
+    "@npm//babel-eslint",
+    "@npm//eslint-plugin-import",
+    "@npm//eslint-plugin-jsx-a11y",
+    "@npm//eslint-plugin-react-hooks",
+    "@npm//eslint-plugin-react",
+    "@npm//fetch-mock",
+    "@npm//redux-mock-store",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "__mocks": "build/__mocks",
+    "__test-utils": "build/__test-utils",
+    "_helpers": "build/_helpers",
+    "components": "build/components",
+    "constants": "build/constants",
+    "core": "build/core",
+    "hooks": "build/hooks",
+    "icons": "build/icons",
+    "images": "build/images",
+    "index": "build/index",
+    "modules": "build/modules",
+    "pages": "build/pages",
+    "providers": "build/providers",
+    "react-app-env.d": "build/react-app-env.d",
+    "setupTests": "build/setupTests",
+    "storybook": "build/storybook",
+    "styles": "build/styles",
+    "tenants": "build/tenants",
+    "typings": "build/typings",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".eslintrc.production.js",
+        "//:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS_AND_STORYBOOK + [
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS_AND_STORYBOOK,
+    prettier_config = "//:prettier_config",
+)
+
+# We don't want to teach react-scripts to include from multiple directories
+# So we copy everything it wants to read to the output "bin" directory
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + PUBLIC + [
+        ":package.json",
+        ":tsconfig.json",
+        ":.eslintrc.js",
+        ":.eslintrc.production.js",
+    ],
+)
+
+# react-scripts can only work if the working directory is the root of the application.
+# So we'll need to chdir before it runs.
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+)
+
+_RUNTIME_DEPS = [
+    "chdir.js",
+    "copy_static_files",
+    # root level rules:
+    "//:eslintrc",
+    "//:tsconfig",
+]
+
+### react-scripts build ###
+
+react_scripts(
+    # Note: If you want to change the name make sure you update BUILD_PATH below accordingly
+    # https://create-react-app.dev/docs/advanced-configuration/
+    name = "build",
+    args = [
+        "--node_options=--require=./$(execpath chdir.js)",
+        "build",
+    ],
+    # data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + LINTERS + [
+        # see patches/react-scripts+4.0.3.patch
+        # we have added this plugin into webpack so Bazel should know about it
+        # TODO: move build script into a custom rules with defined plugin once and for all
+        "@npm//tsconfig-paths-webpack-plugin",
+        # Files that have been excluded from the typeface-inter__files target above because
+        # they are filtered out by 'included_files' or because they are not valid runfiles
+        # See https://github.com/bazelbuild/bazel/issues/4327.
+        # Adding those files is not possible for runtime targets due to spaces in the path
+        "@npm//typeface-inter:typeface-inter__all_files",
+        # Fix Property 'hot' does not exist on type 'NodeModule'.  TS2339
+        "@npm//@types/webpack-env",
+    ],
+    env = {
+        "REACT_APP_SENTRY_DSN": "https://73501539810546ed8fd963457833f566@o124058.ingest.sentry.io/5208164",
+        "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
+        "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
+        "REACT_APP_ENABLE_REDUX_LOGGER": "false",
+        "REACT_APP_LOCIZE_VERSION": "production",
+        "GENERATE_SOURCEMAP": "false",
+        "REACT_APP_USER_ID": USER_ID,
+
+        ### DO NOT CHANGE: FAS placeholders
+        # In order to build only once we set placeholders into dynamic variables
+        # Which will be on FAS publish step in Jenkins replaced to actual values
+        # see https://cognitedata.atlassian.net/browse/FAS-159?focusedCommentId=124832
+        "NODE_ENV": "NODE_ENV_VALUE",
+        "PUBLIC_URL": "PUBLIC_URL_VALUE",
+        "REACT_APP_APP_ID": "REACT_APP_APP_ID_VALUE",
+        "REACT_APP_ENV": "REACT_APP_ENV_VALUE",
+        "REACT_APP_RELEASE_ID": "REACT_APP_RELEASE_ID_VALUE",
+        "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
+        "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
+        "INLINE_RUNTIME_CHUNK": "false",
+        ### END
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+    output_dir = True,
+)
+
+sh_binary(
+    name = "build_sed_default",
+    srcs = ["//rules/build_sed:sed_linux.sh"],
+)
+
+sh_binary(
+    name = "build_sed_darwin",
+    srcs = ["//rules/build_sed:sed_darwin.sh"],
+)
+
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
+# If you need additional env vars being set during testcafe run add them into
+# :build target above and override here
+build_sed(
+    name = "build_sed",
+    binary = select({
+        "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
+        "//conditions:default": ":build_sed_default",
+    }),
+    out_dir = "build_bazel",
+    src_dir = ":build",
+)
+
+### react-scripts test ###
+
+copy_to_bin(
+    name = "copy_test_files",
+    srcs = TESTS_AND_STORYBOOK,
+)
+
+react_scripts_test(
+    name = "test",
+    # folder name to store jest coverage in during CI run
+    app_name = "discover",
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+        "@npm//@storybook/addon-essentials",
+        "@npm//@storybook/addon-links",
+        "@npm//@storybook/preset-create-react-app",
+        "@npm//@storybook/react",
+        "copy_test_files",
+    ],
+)
+
+### react-scripts start ###
+
+react_scripts(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "start",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "HTTPS": "true",
+        "REACT_APP_ENABLE_REDUX_LOGGER": "true",
+        "REACT_APP_DEBUG_METRICS": "true",
+        "REACT_APP_DEBUG_KEYS": "false",
+        "REACT_APP_ENABLE_ERRORS": "flash",
+        "REACT_APP_LANGUAGE_SELECTOR": "false",
+        "REACT_APP_RELEASE": "localhost",
+        "REACT_APP_I18N_DEBUG": "true",
+        "REACT_APP_I18N_PSEUDO": "false",
+        "BROWSER": "false",
+        "REACT_APP_LANGUAGE": "en",
+        "REACT_APP_LOCIZE_API_KEY": "f1f6b763-2c20-4e12-a1c5-c33f1a71cec2",
+        "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
+        "REACT_APP_LOCIZE_VERSION": "latest",
+        "REACT_APP_MIXPANEL_DEBUG": "false",
+        "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
+        ### END
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+react_scripts(
+    name = "start-bluefield",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "start",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "HTTPS": "true",
+        "REACT_APP_E2E_CLUSTER": "bluefield",
+        "REACT_APP_ENABLE_REDUX_LOGGER": "true",
+        "REACT_APP_DEBUG_METRICS": "true",
+        "REACT_APP_DEBUG_KEYS": "false",
+        "REACT_APP_ENABLE_ERRORS": "flash",
+        "REACT_APP_LANGUAGE_SELECTOR": "false",
+        "REACT_APP_RELEASE": "localhost",
+        "REACT_APP_I18N_DEBUG": "true",
+        "REACT_APP_I18N_PSEUDO": "false",
+        "BROWSER": "false",
+        "REACT_APP_LANGUAGE": "en",
+        "REACT_APP_LOCIZE_API_KEY": "f1f6b763-2c20-4e12-a1c5-c33f1a71cec2",
+        "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
+        "REACT_APP_LOCIZE_VERSION": "latest",
+        "REACT_APP_MIXPANEL_DEBUG": "false",
+        "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
+        ### END
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+### Testcafe ###
+
+copy_to_bin(
+    name = "copy_testcafe_files",
+    srcs = TESTS_TESTCAFE + TESTS + [
+        ".testcaferc.json",
+        "tsconfig.testcafe.json",
+    ],
+)
+
+testcafe_test(
+    name = "testcafe_test",
+    timeout = "eternal",
+    # folder name to store artifacts during CI run
+    app_name = "discover",
+    args = [
+        "'chrome --headless --disable-software-rasterizer --use-gl=swiftshader --window-size=\"1500,1040\"'",
+        "testcafe",
+        "--stop-on-first-fail",
+        "--app './scripts/testcafe/testcafe-bazel-serve.sh'",
+        "–q",
+        "--config-file .testcaferc.json",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + SCRIPTS + [
+        ":build_sed",
+        "copy_testcafe_files",
+    ],
+    env = {
+        "BASE_URL": "http://localhost:3000",
+        "REACT_APP_USER_ID": USER_ID,
+    },
+)
+
+testcafe(
+    name = "testcafe",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "'chrome --headless --no-sandbox --disable-software-rasterizer --use-gl=swiftshader --window-size=1500,1040'",
+        "testcafe",
+        "--stop-on-first-fail",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
+        ":start",
+        "chdir-workspace.js",
+        "copy_testcafe_files",
+    ],
+    env = {
+        "BASE_URL": "https://localhost:3000",
+    },
+)
+
+### Storybook ###
+
+copy_to_bin(
+    name = "copy_storybook_files",
+    srcs = STORYBOOK,
+)
+
+build_storybook(
+    # Note: If you want to change the name make sure you pass that value with -o into args
+    # https://storybook.js.org/docs/react/api/cli-options
+    name = "storybook-static",
+    args = [
+        # Suppress verbose build output
+        "--quiet",
+    ],
+    chdir = "$(RULEDIR)",
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "copy_storybook_files",
+        "@npm//@storybook/addon-essentials",
+        "@npm//@storybook/addon-links",
+        "@npm//@storybook/addon-viewport",
+        "@npm//@storybook/preset-create-react-app",
+        "@npm//@storybook/react",
+        # see patches/react-scripts+4.0.3.patch
+        # we have added this plugin into webpack so Bazel should know about it
+        # TODO: move build script into a custom rules with defined plugin once and for all
+        "@npm//tsconfig-paths-webpack-plugin",
+        # Files that have been excluded from the typeface-inter__files target above because
+        # they are filtered out by 'included_files' or because they are not valid runfiles
+        # See https://github.com/bazelbuild/bazel/issues/4327.
+        # Adding those files is not possible for runtime targets due to spaces in the path
+        "@npm//typeface-inter:typeface-inter__all_files",
+        # Fix Property 'hot' does not exist on type 'NodeModule'.  TS2339
+        "@npm//@types/webpack-env",
+    ],
+    output_dir = True,
+)
+
+start_storybook(
+    name = "start-storybook",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-p",
+        "6006",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [
+        "chdir-workspace.js",
+        "copy_storybook_files",
+        "@npm//@types",
+        "@npm//@storybook/addon-essentials",
+        "@npm//@storybook/addon-links",
+        "@npm//@storybook/addon-viewport",
+        "@npm//@storybook/preset-create-react-app",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+publish_storybook(
+    name = "publish_storybook",
+    build = ":storybook-static",
+    # Storybook sub domain to be used
+    sub_domain = "discover",
+)
+
+### FAS ###
+
+publish_fas(
+    name = "publish_fas",
+    build = ":build",
+    package_json = ":package.json",
+    # Subdomain name used for the pull requests preview.
+    preview_subdomain = "discover",
+    # FAS production app id
+    production_app_id = "prettypoly",
+    # FAS app identifier (repo) shared across both production and staging apps
+    repo_id = "prettypoly",
+    # Sentry project name
+    sentry_project_name = "discover",
+    # FAS staging app id
+    staging_app_id = "pp-dev",
+    versioning_strategy = "multi-branch",
+)

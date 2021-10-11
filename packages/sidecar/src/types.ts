@@ -1,5 +1,7 @@
 import { IntercomBootSettings } from '@cognite/intercom-helper';
 
+import { Service } from './getDefaultSidecar';
+
 export type CDFCluster =
   | 'asia-northeast1-1'
   | 'az-ams-aloe'
@@ -53,6 +55,7 @@ export type SidecarConfig = {
   helpLink?: string;
   intercom?: string;
   intercomSettings?: IntercomBootSettings;
+  localServices?: Service[];
   locize?: {
     apiKey?: string;
     projectId: string;

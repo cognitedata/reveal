@@ -1,0 +1,87 @@
+{
+  "name": "discover",
+  "description": "Discover - AKA: PrettyPoly",
+  "version": "0.14.99-rc1",
+  "private": true,
+  "scripts": {
+    "analyse": "../../node_modules/.bin/source-map-explorer 'build/static/js/*.js' --only-mapped --html /tmp/result.html && google-chrome /tmp/result.html",
+    "analyze": "yarn analyse",
+    "build:staging": "./scripts/build.sh staging",
+    "build:prod": "./scripts/build.sh production",
+    "build:bazel": "bazel build :build_sed",
+    "clean": "rm -Rf build",
+    "build": "yarn clean && GENERATE_SOURCEMAP=false ../../node_modules/.bin/react-scripts --max_old_space_size=4096 build",
+    "testcafe:start": "REACT_APP_E2E_CLUSTER=bluefield ./scripts/testcafe/serve-run.sh discover-e2e-bluefield",
+    "testcafe:local-server": "REACT_APP_E2E_CLUSTER=bluefield ./scripts/testcafe/local-server.sh",
+    "testcafe:local-server-a": "REACT_APP_E2E_CLUSTER=azure-dev ./scripts/testcafe/local-server.sh",
+    "testcafe:serve": "./scripts/testcafe/testcafe.sh serve",
+    "testcafe:run": "./scripts/testcafe/testcafe.sh run-live",
+    "testcafe": "bash ./scripts/testcafe/start-testcafe.sh",
+    "testcafe:bazel": "bazel test :testcafe_test",
+    "testcafe:bazel-run-live": "ibazel run :testcafe",
+    "env-import": "node ./scripts/env-import.js ../config/index.js --dry-run",
+    "eslint": "../../node_modules/.bin/eslint --max-warnings 0 --color --config .eslintrc.production.js",
+    "eslint:changed": "../../node_modules/.bin/eslint --config .eslintrc.production.js",
+    "eslint:fix": "../../node_modules/.bin/eslint --fix",
+    "eslint:bazel": "bazel test :eslint_test",
+    "eslint:bazel-fix": "bazel run :eslint_test -- --fix",
+    "lint:fix": "scripts/lint-fix.sh",
+    "lint": "scripts/lint.sh",
+    "lint:fast": "pretty-quick --staged",
+    "lint:bazel": "bazel test :eslint_test :prettier_test",
+    "prettier:fix": "../../node_modules/.bin/prettier --config ../../.prettierrc.js --write -l 'src/**/*.{js,ts,tsx}'",
+    "prettier": "../../node_modules/.bin/prettier --config ../../.prettierrc.js -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier:bazel": "bazel test :prettier_test",
+    "prettier:bazel-fix": "bazel run :prettier_test -- --write",
+    "serve": "serve -s build",
+    "start": "ibazel run :start",
+    "start:old": "./scripts/start.sh",
+    "start:raw": "../../node_modules/.bin/react-scripts start",
+    "start:bazel:bluefield": "ibazel run :start-bluefield",
+    "storybook": "../../node_modules/.bin/start-storybook -p 6006",
+    "storybook:bazel": "ibazel run :start-storybook",
+    "build-storybook": "../../node_modules/.bin/build-storybook",
+    "build-storybook:bazel": "bazel build :storybook-static",
+    "test:debug": "../../node_modules/.bin/react-scripts --inspect-brk test --runInBand",
+    "t": "yarn test:all",
+    "test": "./scripts/test.sh src",
+    "test:bazel": "ibazel test :test",
+    "test:all": "../../node_modules/.bin/react-scripts test --env=jest-environment-jsdom-sixteen",
+    "test:changed": "yarn test:all --detectOpenHandles --bail --colors --verbose --onlyChanged --coverageReporters=none --watchAll=false",
+    "update-helpers": "bazel run :generate_package_json_helpers"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "__tests__",
+      ".stories."
+    ],
+    "moduleNameMapper": {
+      "^@cognite/(.*)/dist/mocks$": [
+        "<rootDir>/../../packages/$1/src/mocks",
+        "<rootDir>/../../packages/$1/dist/mocks"
+      ],
+      "^@cognite/(?!cogs.js|sdk|seismic-sdk-js|gcs-browser-upload|geospatial-sdk-js|node-visualizer|sdk-wells|subsurface-interfaces|videx-wellog)(.*)$": [
+        "../../../packages/$1/src",
+        "../../../packages/$1/dist",
+        "<rootDir>/../../packages/$1/src",
+        "<rootDir>/../../packages/$1/dist"
+      ]
+    }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+import { renderHook } from '@testing-library/react-hooks';
+
+import { useAppliedDocumentFilters } from 'modules/sidebar/selectors';
+
+import { useAppliedDocumentFiltersFacetsKeys } from '../useAppliedDocumentFiltersFacetsKeys';
+
+jest.mock('modules/sidebar/selectors', () => ({
+  useAppliedDocumentFilters: jest.fn(),
+}));
+
+describe('useAppliedDocumentsFacetsKeys hook', () => {
+  beforeEach(() => {
+    (useAppliedDocumentFilters as jest.Mock).mockImplementation(() => ({
+      filetype: ['filetype1', 'filetype2'],
+      labels: [],
+      lastmodified: [],
+      lastcreated: [],
+      location: ['location1'],
+    }));
+  });
+
+  it('should return applied document facets keys', () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useAppliedDocumentFiltersFacetsKeys()
+    );
+    waitForNextUpdate();
+
+    expect(result.current).toEqual(['filetype', 'location']);
+  });
+});
