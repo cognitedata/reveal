@@ -14,5 +14,5 @@ export {
   ByVisibilityGpuSectorCuller,
   GpuOrderSectorsByVisibilityCoverage
 } from './packages/cad-geometry-loaders';
-export { NodeAppearance, DefaultNodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
+export { NodeAppearance, DefaultNodeAppearance, NodeAppearanceProvider } from './packages/cad-styling';
 export { revealEnv } from './packages/utilities';
