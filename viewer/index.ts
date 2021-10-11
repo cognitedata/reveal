@@ -9,3 +9,5 @@
  */
 
 export * from './core/src/index';
+
+export { NodeAppearance, DefaultNodeAppearance } from './packages/cad-styling';

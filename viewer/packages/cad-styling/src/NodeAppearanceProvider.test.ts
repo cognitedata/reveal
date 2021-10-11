@@ -4,11 +4,10 @@
 
 import { IndexSet } from '@reveal/utilities';
 
-import { NodeAppearance } from '../NodeAppearance';
-import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
+import { NodeAppearance, NodeOutlineColor } from './NodeAppearance';
 import { NodeAppearanceProvider } from './NodeAppearanceProvider';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
-import { NodeOutlineColor } from '../NodeAppearance';
+import { StubNodeCollection } from './stubs/StubNodeCollection';
+import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 describe('NodeAppearanceProvider', () => {
   let provider: NodeAppearanceProvider;
@@ -122,22 +121,3 @@ describe('NodeAppearanceProvider', () => {
     expect(isLoadingChangedListener).toBeCalledWith(false);
   });
 });
-
-class StubNodeCollection extends NodeCollectionBase {
-  public isLoading = false;
-
-  constructor() {
-    super('stub');
-  }
-
-  getIndexSet(): IndexSet {
-    return new IndexSet();
-  }
-  triggerChanged() {
-    this.notifyChanged();
-  }
-  serialize(): SerializedNodeCollection {
-    return { token: 'stub', state: {}, options: {} };
-  }
-  clear() {}
-}

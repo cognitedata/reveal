@@ -4,17 +4,15 @@
 
 import * as THREE from 'three';
 
-import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
-
 import { SectorQuads } from './material-manager/rendering/types';
 import { RootSectorNode } from './sector/RootSectorNode';
 import { CadMaterialManager } from './material-manager/CadMaterialManager';
 import { suggestCameraConfig } from './cameraconfig';
-
 import { NodeTransformProvider } from './material-manager/styling/NodeTransformProvider';
 import { InstancedMeshManager } from './InstancedMeshManager';
-import { NodeAppearanceProvider } from './material-manager/styling/NodeAppearanceProvider';
-import { NodeAppearance } from './material-manager/NodeAppearance';
+
+import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
+import { NodeAppearanceProvider, NodeAppearance } from '@reveal/cad-styling';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
