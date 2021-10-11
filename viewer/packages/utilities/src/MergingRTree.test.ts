@@ -6,7 +6,6 @@ import { MergingRTree, rtreeIntersection, rtreeUnion } from './MergingRTree';
 import { Box3, Vector3 } from 'three';
 
 describe('RTree', () => {
-
   function createRandomBoxes(n: number, maxDim: number, maxPos: number): Box3[] {
     const boxes: Box3[] = [];
 
@@ -25,7 +24,7 @@ describe('RTree', () => {
 
     return boxes;
   }
-  
+
   test('add bounding boxes and check that result contains them', () => {
     const rtree = new MergingRTree();
 
@@ -79,8 +78,6 @@ describe('RTree', () => {
 
     const allBoxes = boxes0.concat(boxes1);
 
-    console.log("UnionBoxes length = " + unionBoxes.length);
-    
     for (const box of allBoxes) {
       let isInUnion = false;
       for (const unionBox of unionBoxes) {
@@ -127,7 +124,7 @@ describe('RTree', () => {
         }
       }
     }
-    
+
     for (const box of allIntersectionBoxes) {
       let isInIntersection = false;
       for (const treeIntersectionBox of treeIntersectionBoxes) {

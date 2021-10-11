@@ -81,7 +81,7 @@ export class MergingRTree {
 
   clone(): MergingRTree {
     const newTree = new MergingRTree();
-    
+
     if (this.root != null) {
       newTree.root = this.root.clone();
     } else {
@@ -92,7 +92,6 @@ export class MergingRTree {
   }
 
   findOverlappingBoxes(box: Box3): Box3[] {
-
     if (this.root != null) {
       const results: Box3[] = [];
       this.root.findOverlappingBoxes(box, results);
@@ -182,10 +181,9 @@ export class RTreeNode {
  * rtreeUnion - Returns the union of two MergingRTree
  */
 export function rtreeUnion(tree0: MergingRTree, tree1: MergingRTree): MergingRTree {
-
   let unionTree;
   let otherTree;
-  
+
   if (tree0.getSize() < tree1.getSize()) {
     unionTree = tree1.clone();
     otherTree = tree0;
