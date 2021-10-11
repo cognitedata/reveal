@@ -10,7 +10,7 @@
  * @module @cognite/reveal
  */
 
-export { NodeAppearanceProvider, NodeAppearance, NodeOutlineColor } from '@reveal/cad-styling';
+export { NodeAppearanceProvider, NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from '@reveal/cad-styling';
 
 export {
   NodeCollectionBase,
