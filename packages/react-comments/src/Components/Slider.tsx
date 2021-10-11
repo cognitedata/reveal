@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { CommentTarget } from '@cognite/comment-service-types';
+import { CollapsablePanel } from '@cognite/cogs.js';
 
 import { ListComments, ListCommentsProps } from './ListComments';
-import CollapsablePanel from './collapsable-panel';
 import { Header } from './Header';
 
 export type SetCommentTarget = (target: CommentTarget | undefined) => void;
