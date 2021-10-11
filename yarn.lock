@@ -26782,14 +26782,13 @@ ts-protoc-gen@^0.12.0:
   dependencies:
     google-protobuf "^3.6.1"
 
-ts-unused-exports@^6.2.4:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/ts-unused-exports/-/ts-unused-exports-6.3.0.tgz#ac74aa15f1858d0b3111773cf0c886faf678b8c0"
-  integrity sha512-lVFBPY9S9u63qmDMc0BBM51UlmSgMC38xYOLwsjzXAqsKpQlhfJiLdZeyVHDJe/L1dMjqq27xPmsYLhT8aykhA==
+ts-unused-exports@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/ts-unused-exports/-/ts-unused-exports-7.0.3.tgz#37a06d103d9d5b8619807dbd50d89f698e8cebf1"
+  integrity sha512-D0VdTiTfrmZM7tViQEMuzG0+giU5z5crn4vjK+f1dnxTKcNx23Vc2lpMgd1vP3lYrwnvJofZmCnvEuJ7XUeV2Q==
   dependencies:
-    chalk "^3.0.0"
+    chalk "^4.0.0"
     tsconfig-paths "^3.9.0"
-    typescript "^3.8.3"
 
 tsconfig-paths-webpack-plugin@^3.5.1:
   version "3.5.1"
@@ -27030,11 +27029,6 @@ typescript@^3.3.3:
   version "3.9.9"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.9.tgz#e69905c54bc0681d0518bd4d587cc6f2d0b1a674"
   integrity sha512-kdMjTiekY+z/ubJCATUPlRDl39vXYiMV9iyeMuEuXZh2we6zz80uovNN2WlAxmmdE/Z/YQe+EbOEXB5RHEED3w==
-
-typescript@^3.8.3:
-  version "3.9.10"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
-  integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
 typescript@^4.3.2:
   version "4.3.2"
