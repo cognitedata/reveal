@@ -173,7 +173,7 @@ export class Cognite3DViewer {
     const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
     if (intersection !== null) {
       this.setCameraTarget(intersection.point, true);
-    } 
+    }
   };
 
   /**
@@ -262,7 +262,7 @@ export class Cognite3DViewer {
       this.changeTarget(e);
     });
 
-    this.canvas.addEventListener('wheel', async (e: any)=> {
+    this.canvas.addEventListener('wheel', async (e: any) => {
       const timeDelta = wheelClock.getDelta();
       const { offsetX, offsetY } = e;
 
@@ -285,7 +285,6 @@ export class Cognite3DViewer {
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
     this.controls.dynamicTarget = false;
-
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;

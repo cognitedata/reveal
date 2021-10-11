@@ -163,9 +163,9 @@ export default class ComboControls extends EventDispatcher {
       this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
       this._accumulatedMouseMove.set(0, 0);
     }
-    
+
     sphericalEnd.theta = Math.sign(sphericalEnd.theta) * Math.min(Math.abs(sphericalEnd.theta), 2.0 * Math.PI);
-    
+
     let deltaTheta = sphericalEnd.theta - spherical.theta;
 
     if (Math.abs(deltaTheta) > Math.PI) {
@@ -205,7 +205,7 @@ export default class ComboControls extends EventDispatcher {
     spherical.makeSafe();
     camera.position.setFromSpherical(spherical).add(target);
     camera.lookAt(this.newClickTarget ? this.viewTarget : target);
-    
+
     if (changed) {
       this.triggerCameraChangeEvent();
     }
@@ -540,10 +540,10 @@ export default class ComboControls extends EventDispatcher {
 
   private rotateFirstPersonMode = (azimuthAngle: number, polarAngle: number) => {
     const { firstPersonRotationFactor, reusableCamera, reusableVector3, sphericalEnd, targetEnd } = this;
-    
+
     reusableCamera.position.setFromSpherical(sphericalEnd).add(targetEnd);
     reusableCamera.lookAt(targetEnd);
-    
+
     reusableCamera.rotateX(firstPersonRotationFactor * polarAngle);
     reusableCamera.rotateY(firstPersonRotationFactor * azimuthAngle);
 
@@ -551,7 +551,7 @@ export default class ComboControls extends EventDispatcher {
     reusableCamera.getWorldDirection(reusableVector3);
     targetEnd.addVectors(reusableCamera.position, reusableVector3.multiplyScalar(distToTarget));
     sphericalEnd.setFromVector3(reusableVector3.subVectors(reusableCamera.position, targetEnd));
-  
+
     sphericalEnd.makeSafe();
   };
 
@@ -629,8 +629,7 @@ export default class ComboControls extends EventDispatcher {
         if (ratio > 10) {
           deltaDistance *= 0.1;
           targetOffsetDistance *= 0.1;
-        }
-        else {
+        } else {
           deltaDistance *= 0.4;
           targetOffsetDistance *= 0.4;
         }
