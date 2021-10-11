@@ -138,7 +138,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   const reasonForNoRows = pipelineNotActivated ? (
     <>
       <p style={{ fontWeight: 'bold' }}>
-        Activate the extraction pipeline to monitor its status.
+        Activate the extraction pipeline to monitor the status.
       </p>
       <p>
         Learn how to activate an extraction pipeline in the{' '}
