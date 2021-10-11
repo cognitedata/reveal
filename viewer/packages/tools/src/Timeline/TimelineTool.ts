@@ -54,8 +54,8 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Overrides styling of cadModel to match styling at "date"
-   * @param date - Date of the TimelineKeyframe to apply the styling on the CAD Model
+   * Overrides styling of cadModel to match styling
+   * @param index - Index of the TimelineKeyframe to apply the styling on the CAD Model
    */
   private styleByDate(index: number) {
     if (this._activeTimelineKeyframes.length > 0) {
@@ -73,7 +73,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Starts playback of Timeline
    * @param startDate - TimelineKeyframe date to start the Playback of TimelineKeyframes
    * @param endDate - TimelineKeyframe date to stop the Playback of TimelineKeyframes
-   * @param durationInMilliSeconds - Number of milli-seconds for all TimelineKeyframe within startDate & endDate to be rendered
+   * @param totalDurationInMilliSeconds - Number of milli-seconds for all TimelineKeyframe within startDate & endDate to be rendered
    */
   public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
     this.stopPlayback();
