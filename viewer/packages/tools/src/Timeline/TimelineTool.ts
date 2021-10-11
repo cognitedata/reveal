@@ -133,12 +133,23 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   *
+   * Provides all TimelineKeyframes in the Timeline
+   * @returns All TimelineKeyframes in Timeline
+   */
+  public getAllTimelineKeyframes(): TimelineKeyframe[] {
+    if (this._timelineKeyframes.length > 0) {
+      return this._timelineKeyframes;
+    }
+    return [] as TimelineKeyframe[];
+  }
+
+  /**
+   * Set Styles for Set of nodes by Dates
    * @param dates List of TimelineKeyframe Dates or a Date to apply Style
    * @param nodeCollection Node set to apply the Styles
    * @param nodeAppearance Style to assign to the node collection
    */
-  public setNodeCollectionAndAppearance(
+  public setNodeCollectionAndAppearanceByDates(
     dates: Date | Date[],
     nodeCollection: NodeCollectionBase,
     nodeAppearance: NodeAppearance
@@ -151,6 +162,25 @@ export class TimelineTool extends Cognite3DViewerToolBase {
       if (timelineKeyframe) {
         timelineKeyframe.assignStyledNodeCollection(nodeCollection, nodeAppearance);
       }
+    }
+  }
+
+  /**
+   * Set Styles for Set of nodes for a TimelineKeyframe or set of TimelineKeyframe
+   * @param timelineKeyframes List of TimelineKeyframe to apply Style
+   * @param nodeCollection Node set to apply the Styles
+   * @param nodeAppearance Style to assign to the node collection
+   */
+  public setNodeCollectionAndAppearanceByTimelineKeyframes(
+    timelineKeyframes: TimelineKeyframe | TimelineKeyframe[],
+    nodeCollection: NodeCollectionBase,
+    nodeAppearance: NodeAppearance
+  ) {
+    let timelineKeyframeList = new Array<TimelineKeyframe>();
+    timelineKeyframeList = timelineKeyframeList.concat(timelineKeyframes);
+
+    for (const timelineKeyframe of timelineKeyframeList) {
+      timelineKeyframe.assignStyledNodeCollection(nodeCollection, nodeAppearance);
     }
   }
 
