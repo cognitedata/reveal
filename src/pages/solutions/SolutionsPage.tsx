@@ -23,7 +23,7 @@ export const SolutionsPage = () => {
       <StyledWrapper>
         <Title level={3}>Solutions</Title>
         <Switch>
-          <Route exact path="/">
+          <Route exact path={['/', '/solutions']}>
             <SolutionsList />
           </Route>
           <Route exact path="/solutions/:solutionId?">
