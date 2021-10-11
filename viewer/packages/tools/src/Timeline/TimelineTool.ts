@@ -25,7 +25,6 @@ export class TimelineTool extends Cognite3DViewerToolBase {
     this._timelineKeyframes = new Array<TimelineKeyframe>();
     this._activeTimelineKeyframes = new Array<TimelineKeyframe>();
     this._allDates = new Array<Date>();
-    // this._animateDates = new Array<Date>();
     this._activeIndex = 0;
   }
 
