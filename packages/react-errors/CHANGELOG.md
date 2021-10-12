@@ -1,3 +1,7 @@
+## 1.0.0 Oct 12 2021
+
+- Bump to change deps from sdk v4 -> sdk v5
+
 ## 0.4.1 Sept 16 2021
 
 - Change reload method
