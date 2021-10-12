@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [
+      "es6",
+      "es2015",
+      "dom"
+    ],
+    "declaration": true,
+    "outDir": "lib",
+    "baseUrl": "src",
+    "strict": true,
+    "types": [
+      "node",
+      "@types/jest"
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}
