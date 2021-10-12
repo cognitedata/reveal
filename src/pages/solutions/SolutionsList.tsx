@@ -7,30 +7,38 @@ export const SolutionsList = () => {
   const history = useHistory();
 
   return (
-    <StyledWrapper>
-      <StyledNewCard onClick={() => history.push('/new')}>
-        <Icon type="PlusCompact" />
-        <Body level={2}>Create a solution</Body>
-      </StyledNewCard>
-      {solutions.map((solution) => (
-        <StyledSolutionCard
-          onClick={() => history.push(`solutions/${solution.id}`)}
-        >
-          <Title level={4}>{solution.name}</Title>
-          <Detail>Edited on {solution.lastEditedAt}</Detail>
-          <Body level={2}>relevant info</Body>
-          <StyledMoreActionsIcon type="MoreOverflowEllipsisHorizontal" />
-        </StyledSolutionCard>
-      ))}
-    </StyledWrapper>
+    <StyledPage>
+      <Title level={3}>Solutions</Title>
+      <StyledWrapper>
+        <StyledNewCard onClick={() => history.push('/new')}>
+          <Icon type="PlusCompact" />
+          <Body level={2}>Create a solution</Body>
+        </StyledNewCard>
+        {solutions.map((solution) => (
+          <StyledSolutionCard
+            onClick={() => history.push(`solutions/${solution.id}`)}
+          >
+            <Title level={4}>{solution.name}</Title>
+            <Detail>Edited on {solution.lastEditedAt}</Detail>
+            <Body level={2}>relevant info</Body>
+            <StyledMoreActionsIcon type="MoreOverflowEllipsisHorizontal" />
+          </StyledSolutionCard>
+        ))}
+      </StyledWrapper>
+    </StyledPage>
   );
 };
 
+const StyledPage = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const StyledWrapper = styled.div`
   display: flex;
-  margin-top: 3rem;
+  margin-top: 1rem;
   flex-wrap: wrap;
-  align-content: flex-start;
+  /* border: solid 20px blue; */
 `;
 
 const Card = styled.div`

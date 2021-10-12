@@ -8,7 +8,7 @@ const tabs: Array<{
   title: string;
 }> = [
   {
-    slug: '',
+    slug: 'solutions',
     title: 'Solutions',
   },
   {
@@ -27,7 +27,9 @@ export const Header = () => {
 
   const projectManagementLinks: NavigationLink[] = tabs.map((tab) => ({
     name: tab.title,
-    isActive: pathname === `/${tab.slug}`,
+    isActive:
+      pathname.startsWith(`/${tab.slug}`) ||
+      (tab.slug === 'solutions' && pathname === '/'),
     onClick: () => {
       history.push({
         pathname: `/${tab.slug}`,

@@ -6,7 +6,7 @@ import { Header } from './components/Header/Header';
 import { SolutionsPage } from './pages/solutions/SolutionsPage';
 import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
 import { StatusPage } from './pages/statusboard/StatusboardPage';
-import './AppGlobalStyles.tsx';
+// import './AppGlobalStyles.tsx';
 import { GlobalStyle } from './AppGlobalStyles';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
           <Header />
           <StyledPage>
             <Switch>
-              <Route exact path={['/', '/solutions/:solutionId?']}>
+              <Route exact path={['/', '/solutions/:solutionId?/:tabKey?']}>
                 <SolutionsPage />
               </Route>
               <Route exact path="/guidetools">
@@ -41,12 +41,12 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-flow: column;
   height: 100vh;
+  overflow: hidden;
 `;
 
 const StyledPage = styled.div`
   display: flex;
   flex: 1;
-  justify-content: center;
-  align-items: center;
-  font-size: 3rem;
+  padding: 3rem;
+  overflow: hidden;
 `;
