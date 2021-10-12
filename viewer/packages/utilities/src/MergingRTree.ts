@@ -7,7 +7,7 @@ import { Box3, Vector3 } from 'three';
  * IoU - Intersection over Union, measure of overlap between two boxes.
  *
  * 0 means no overlap
- * 1 means the two boxes are equal
+ * 1 means the two boxes are identical
  */
 export function intersectionOverUnion(box1: Box3, box2: Box3): number {
   const intersection = box1.clone().intersect(box2);
@@ -39,7 +39,7 @@ function canMergeOnSameNode(box1: Box3, box2: Box3) {
 
   return (
     unionVolume <= size1.x * size1.y * size1.z * MERGE_VOLUME_LIMIT ||
-    unionVolume <= size2.x * size2.y * size1.z * MERGE_VOLUME_LIMIT
+    unionVolume <= size2.x * size2.y * size2.z * MERGE_VOLUME_LIMIT
   );
 }
 
@@ -100,6 +100,57 @@ export class MergingRTree {
       return [];
     }
   }
+
+  /**
+   * union - Returns the union of two MergingRTree. Does not mutate this object nor the input object
+   */
+  union(inTree: MergingRTree): MergingRTree {
+    let unionTree;
+    let otherTree;
+
+    if (this.getSize() < inTree.getSize()) {
+      unionTree = inTree.clone();
+      otherTree = this;
+    } else {
+      unionTree = this.clone();
+      otherTree = inTree;
+    }
+
+    const insertBoxes = otherTree.getBoxes();
+    for (const insertBox of insertBoxes) {
+      unionTree.insert(insertBox);
+    }
+
+    return unionTree;
+  }
+
+  intersection(inTree: MergingRTree): MergingRTree {
+    let biggestTree;
+    let smallestTree;
+
+    if (this.getSize() < inTree.getSize()) {
+      biggestTree = inTree;
+      smallestTree = this;
+    } else {
+      biggestTree = this;
+      smallestTree = inTree;
+    }
+
+    const boxes0 = smallestTree.getBoxes();
+
+    const rtree = new MergingRTree();
+    for (const box0 of boxes0) {
+      const overlappingBoxes = biggestTree.findOverlappingBoxes(box0);
+      for (const box1 of overlappingBoxes) {
+        const intersection = box0.clone().intersect(box1);
+        if (!intersection.isEmpty()) {
+          rtree.insert(intersection);
+        }
+      }
+    }
+
+    return rtree;
+  }
 }
 
 export class RTreeNode {
@@ -112,7 +163,7 @@ export class RTreeNode {
   constructor(a1: Box3 | RTreeNode, a2: RTreeNode | undefined = undefined) {
     if (a1 instanceof Box3 && a2 === undefined) {
       this.children = null;
-      this.bounds = a1;
+      this.bounds = a1.clone();
       this.numBoxes = 1;
     } else if (a1 instanceof RTreeNode && a2 instanceof RTreeNode) {
       this.children = [a1, a2];
@@ -126,8 +177,7 @@ export class RTreeNode {
   insert(box: Box3): RTreeNode {
     if (this.children == null) {
       if (canMergeOnSameNode(this.bounds, box)) {
-        this.bounds.union(box);
-        return new RTreeNode(this.bounds.union(box));
+        return new RTreeNode(this.bounds.clone().union(box));
       } else {
         return new RTreeNode(new RTreeNode(this.bounds), new RTreeNode(box));
       }
@@ -148,7 +198,7 @@ export class RTreeNode {
       this.children[0].getBoxes(result);
       this.children[1].getBoxes(result);
     } else {
-      result.push(this.bounds);
+      result.push(this.bounds.clone());
     }
   }
 
@@ -156,7 +206,7 @@ export class RTreeNode {
     if (this.children != null) {
       return new RTreeNode(this.children[0].clone(), this.children[1].clone());
     } else {
-      return new RTreeNode(this.bounds);
+      return new RTreeNode(this.bounds.clone());
     }
   }
 
@@ -171,62 +221,8 @@ export class RTreeNode {
       }
     } else {
       if (this.bounds.intersectsBox(box)) {
-        results.push(this.bounds.intersect(box));
+        results.push(this.bounds.clone());
       }
     }
   }
-}
-
-/**
- * rtreeUnion - Returns the union of two MergingRTree
- */
-export function rtreeUnion(tree0: MergingRTree, tree1: MergingRTree): MergingRTree {
-  let unionTree;
-  let otherTree;
-
-  if (tree0.getSize() < tree1.getSize()) {
-    unionTree = tree1.clone();
-    otherTree = tree0;
-  } else {
-    unionTree = tree0.clone();
-    otherTree = tree1;
-  }
-
-  const insertBoxes = otherTree.getBoxes();
-  for (const insertBox of insertBoxes) {
-    unionTree.insert(insertBox);
-  }
-
-  return unionTree;
-}
-
-/**
- * rtreeIntersection - Returns the intersection of two MergingRTree
- */
-export function rtreeIntersection(tree0: MergingRTree, tree1: MergingRTree): MergingRTree {
-  let biggestTree;
-  let smallestTree;
-
-  if (tree0.getSize() < tree1.getSize()) {
-    biggestTree = tree1;
-    smallestTree = tree0;
-  } else {
-    biggestTree = tree0;
-    smallestTree = tree1;
-  }
-
-  const boxes0 = smallestTree.getBoxes();
-
-  const rtree = new MergingRTree();
-  for (const box0 of boxes0) {
-    const overlappingBoxes = biggestTree.findOverlappingBoxes(box0);
-    for (const box1 of overlappingBoxes) {
-      const intersection = box0.clone().intersect(box1);
-      if (!intersection.isEmpty()) {
-        rtree.insert(intersection);
-      }
-    }
-  }
-
-  return rtree;
 }

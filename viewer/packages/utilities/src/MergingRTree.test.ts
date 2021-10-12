@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { MergingRTree, rtreeIntersection, rtreeUnion } from './MergingRTree';
+import { MergingRTree } from './MergingRTree';
 import { Box3, Vector3 } from 'three';
 
 describe('RTree', () => {
@@ -72,7 +72,7 @@ describe('RTree', () => {
       rtree1.insert(box);
     }
 
-    const unionTree = rtreeUnion(rtree0, rtree1);
+    const unionTree = rtree0.union(rtree1);
 
     const unionBoxes = unionTree.getBoxes();
 
@@ -95,7 +95,7 @@ describe('RTree', () => {
     const rtree0 = new MergingRTree();
     const rtree1 = new MergingRTree();
 
-    const n = 500;
+    const n = 1000;
     const d = 10;
     const ms = 100;
 
@@ -110,7 +110,7 @@ describe('RTree', () => {
       rtree1.insert(box);
     }
 
-    const intersection = rtreeIntersection(rtree0, rtree1);
+    const intersection = rtree0.intersection(rtree1);
 
     const treeIntersectionBoxes = intersection.getBoxes();
 
@@ -135,6 +135,50 @@ describe('RTree', () => {
       }
 
       expect(isInIntersection).toEqual(true);
+    }
+  });
+
+  test('findOverlappingBoxes returns all overlapping boxes', () => {
+    const rtree0 = new MergingRTree();
+
+    const n = 1000;
+    const d = 10;
+    const ms = 100;
+
+    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
+
+    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+
+    for (const box of boxes0) {
+      rtree0.insert(box);
+    }
+
+    const overlappingBoxes: Box3[][] = [];
+
+    for (const box1 of boxes1) {
+      const tempArray: Box3[] = [];
+      for (const box0 of boxes0) {
+        if (box1.intersectsBox(box0)) {
+          tempArray.push(box0.clone());
+        }
+      }
+
+      overlappingBoxes.push(tempArray);
+    }
+
+    for (let i = 0; i < boxes1.length; i++) {
+      const foundOverlappingBoxes = rtree0.findOverlappingBoxes(boxes1[i]);
+      for (const b0 of overlappingBoxes[i]) {
+        let isInSomeBox = false;
+        for (const b1 of foundOverlappingBoxes) {
+          if (b1.containsBox(b0)) {
+            isInSomeBox = true;
+            break;
+          }
+        }
+
+        expect(isInSomeBox).toEqual(true);
+      }
     }
   });
 });
