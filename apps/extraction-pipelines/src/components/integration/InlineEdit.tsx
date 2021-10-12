@@ -130,30 +130,40 @@ const InlineEdit = <Fields extends FieldValues>({
             />
           </DivFlex>
         </DivFlex>
-      ) : canEdit ? (
-        <EditButton
-          onClick={onEditClick}
-          title="Toggle edit row"
-          aria-expanded={isEdit}
-          aria-controls={name}
-          disabled={!canEdit}
-          data-testid={`${ContactBtnTestIds.EDIT_BTN}${name}`}
-          $full={!!fullWidth}
-        >
-          {viewComp ?? <AddInfo fieldValue={actualValue} fieldName={name} />}
-        </EditButton>
       ) : (
-        <div css="padding: 0 1rem">
-          {viewComp != null ? (
-            viewComp
-          ) : actualValue && actualValue !== '' ? (
-            <span>{actualValue}</span>
+        <>
+          {canEdit ? (
+            <EditButton
+              onClick={onEditClick}
+              title="Toggle edit row"
+              aria-expanded={isEdit}
+              aria-controls={name}
+              disabled={!canEdit}
+              data-testid={`${ContactBtnTestIds.EDIT_BTN}${name}`}
+              $full={!!fullWidth}
+            >
+              {viewComp ?? (
+                <AddInfo fieldValue={actualValue} fieldName={name} />
+              )}
+            </EditButton>
           ) : (
-            <span style={{ color: Colors['greyscale-grey6'] }}>
-              No {name} added.
-            </span>
+            <div css="padding: 0 1rem">
+              {viewComp != null ? (
+                viewComp
+              ) : (
+                <>
+                  {actualValue && actualValue !== '' ? (
+                    <span>{actualValue}</span>
+                  ) : (
+                    <span style={{ color: Colors['greyscale-grey6'] }}>
+                      No {name} added.
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
     </ColumnForm>
   );
