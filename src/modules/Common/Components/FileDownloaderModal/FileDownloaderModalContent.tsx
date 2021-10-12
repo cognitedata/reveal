@@ -15,6 +15,7 @@ import { RootState } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
 import { selectAnnotationsForAllFiles } from 'src/modules/Common/store/annotationSlice';
+import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { getDownloadControls } from './DownloadControlButtons';
 import {
   AnnotationChoice,
@@ -126,12 +127,14 @@ export const FileDownloaderModalContent = ({
           )
           .then((response) => response.data.items as (FileLink & IdEither)[]);
 
+        const uniqueFilenames = renameDuplicates(files.map((f) => f.name));
+
         await Promise.all(
           data.map((item, index) => {
             return fetch(item.downloadUrl, {
               method: 'GET',
             }).then((value) => {
-              zip.file(files[index + batchId].name, value.blob());
+              zip.file(uniqueFilenames[index + batchId], value.blob());
             });
           })
         );

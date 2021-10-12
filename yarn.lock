@@ -2466,10 +2466,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-image-annotate@^1.8.0-rc-17":
-  version "1.8.0-rc-17"
-  resolved "https://registry.yarnpkg.com/@cognite/react-image-annotate/-/react-image-annotate-1.8.0-rc-17.tgz#b7c7a73aecbff6a35f1258a200a509e971a8711d"
-  integrity sha512-ao5GL4Ixll8bY6RFbxkUI81m0ngNv+KKqUYLJVz441fFZkdkujRfHpbTlEhtr6gYIQThCWl58q4UqmvsJpp9vw==
+"@cognite/react-image-annotate@^1.8.0-rc-22":
+  version "1.8.0-rc-22"
+  resolved "https://registry.yarnpkg.com/@cognite/react-image-annotate/-/react-image-annotate-1.8.0-rc-22.tgz#9606f8ec2a67ee13e70e8698b95482d738ccca0e"
+  integrity sha512-3/lUmt851oJKT+jfKrwGhtkYuUpoRFNPNJft6UUW6uvp3OhLiUw9lVNBKU0ctkKfuxDTlmdh/whH7+ZazwTsDQ==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^1.2.12"
     "@fortawesome/free-solid-svg-icons" "^5.6.3"

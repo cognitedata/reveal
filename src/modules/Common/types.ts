@@ -43,7 +43,13 @@ export type FileActions = {
 
 export type TableDataItem = Pick<
   FileInfo,
-  'id' | 'mimeType' | 'name' | 'sourceCreatedTime' | 'geoLocation' | 'uploaded'
+  | 'id'
+  | 'mimeType'
+  | 'name'
+  | 'sourceCreatedTime'
+  | 'geoLocation'
+  | 'uploaded'
+  | 'createdTime'
 > & {
   menuActions: FileActions; // menu: FileActions;
   rowKey: string; // unique key;

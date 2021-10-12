@@ -22,6 +22,7 @@ import { FileListTableProps, PaginatedTableProps } from './types';
 const rendererMap = {
   name: NameRenderer,
   mimeType: StringRenderer,
+  createdTime: DateRenderer,
   sourceCreatedTime: DateRenderer,
   annotations: AnnotationRenderer,
   action: ActionRendererExplorer,
@@ -30,6 +31,7 @@ const rendererMap = {
 const sorters = {
   name: NameSorter,
   mimeType: MimeTypeSorter,
+  createdTime: DateSorter,
   sourceCreatedTime: DateSorter,
   annotations: AnnotationSorter,
 };
@@ -55,9 +57,9 @@ export function FileTableExplorer(props: FileListTableProps) {
     ...(!props.modalView
       ? [
           {
-            key: 'sourceCreatedTime',
-            title: 'Source Created Time',
-            dataKey: 'sourceCreatedTime',
+            key: 'createdTime',
+            title: 'Created Time',
+            dataKey: 'createdTime',
             align: Column.Alignment.LEFT,
             width: 250,
             sortable: true,

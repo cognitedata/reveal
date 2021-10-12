@@ -3,4 +3,5 @@ export const VALID_MIME_TYPES: { type: string; extention: string }[] = [
   { type: 'image/jpeg', extention: '.jpeg' },
   { type: 'image/png', extention: '.png' },
   { type: 'video/mp4', extention: '.mp4' },
+  { type: 'video/webm', extention: '.webm' },
 ];
