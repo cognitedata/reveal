@@ -30,7 +30,7 @@ describe('MetaData', () => {
   });
   test('Should render metadata', async () => {
     sdkv3.get.mockResolvedValue({ data: { ...mock, metadata } });
-    render(<MetaData />, {
+    render(<MetaData canEdit={false} />, {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
