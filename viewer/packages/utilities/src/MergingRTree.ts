@@ -185,10 +185,22 @@ export class RTreeNode {
       const expand1 = wouldExtendBy(this.children[0].bounds, box);
       const expand2 = wouldExtendBy(this.children[1].bounds, box);
 
+      let newNode;
+      let preservedChild;
+      
       if (expand1 < expand2) {
-        return new RTreeNode(this.children[0].insert(box), this.children[1]);
+        newNode = this.children[0].insert(box);
+        preservedChild = this.children[1];
       } else {
-        return new RTreeNode(this.children[0], this.children[1].insert(box));
+        newNode = this.children[1].insert(box);
+        preservedChild = this.children[0];
+      }
+
+      if (intersectionOverUnion(newNode.bounds, preservedChild.bounds) > 0.3) {
+        // TODO: Find a more optimal way of returning this (e.g. insert at root of tree)
+        return new RTreeNode(newNode.bounds.clone().union(preservedChild.bounds));
+      } else {
+        return new RTreeNode(newNode, preservedChild);
       }
     }
   }
