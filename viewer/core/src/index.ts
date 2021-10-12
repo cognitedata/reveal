@@ -10,17 +10,15 @@
  * @module @cognite/reveal
  */
 
+export { NodeAppearanceProvider, NodeAppearance, NodeOutlineColor } from '@reveal/cad-styling';
+
 export {
   NodeCollectionBase,
   TreeIndexNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
-  NodeAppearanceProvider,
-  SerializedNodeCollection,
-  NodeAppearance,
-  NodeOutlineColor,
-  DefaultNodeAppearance
-} from '@reveal/cad-geometry-loaders';
+  SerializedNodeCollection
+} from '@reveal/cad-styling';
 
 export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
 

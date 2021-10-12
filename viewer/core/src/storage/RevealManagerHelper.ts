@@ -7,9 +7,10 @@ import { AddModelOptions } from '../public/migration/types';
 import { RevealOptions } from '../public/types';
 import { createRevealManager } from '../public/createRevealManager';
 
-import { CadNode, createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
+import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
 
-import { CdfModelIdentifier, LocalModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, File3dFormat, LocalModelIdentifier } from '@reveal/modeldata-api';
+import { CadNode } from '@reveal/cad-geometry-loaders';
 import { DataSource } from '@reveal/data-source';
 import { assertNever } from '@reveal/utilities';
 

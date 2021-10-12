@@ -6,21 +6,6 @@ export { CdfModelIdentifier, LocalModelIdentifier, ModelIdentifier, File3dFormat
 export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 
-export { CadModelMetadata, SectorMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
-export {
-  CadLoadingHints,
-  CadNode,
-  SuggestedCameraConfig,
-  SectorCuller,
-  DetermineSectorsInput,
-  ByVisibilityGpuSectorCuller,
-  GpuOrderSectorsByVisibilityCoverage,
-  NodeAppearance,
-  DefaultNodeAppearance,
-  NodeAppearanceProvider
-} from '@reveal/cad-geometry-loaders';
-export { revealEnv } from '@reveal/utilities';
-
 // CAD
 export { intersectCadNodes } from './datamodels/cad/picking';
 export { CadModelSectorLoadStatistics } from './datamodels/cad/CadModelSectorLoadStatistics';
