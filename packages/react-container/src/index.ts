@@ -6,7 +6,7 @@ export type {
   DecodedIdToken,
   AuthHeaders,
 } from './auth';
-export * from './utils';
-export * from './providers';
 export * from './components';
 export * from './Container';
+export * from './providers';
+export * from './utils';

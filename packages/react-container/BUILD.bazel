@@ -205,12 +205,15 @@ append_deps(
 rollup(
     name = "dist",
     args = [
+        "--package=react-container",
+        "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
         "rollup.config.js",
     ],
     data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         ":chdir.js",
+        "//scripts:log.js",
         ":copy_static_files",
         ":package-json",
         "//packages:tsconfig",

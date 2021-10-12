@@ -140,11 +140,14 @@ copy_to_bin(
 rollup(
     name = "dist",
     args = [
+        "--package=sidecar",
+        "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
         "rollup.config.js",
     ],
     data = DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "//scripts:log.js",
         ":chdir.js",
         ":copy_static_files",
         ":package-json",
