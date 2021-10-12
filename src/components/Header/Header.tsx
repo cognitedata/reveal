@@ -60,7 +60,7 @@ export const Header = () => {
 };
 
 const StyledTopBarItemLogo = styled(TopBar.Item)`
-  padding: 0 1.6rem;
+  padding: 0 2rem;
   cursor: pointer;
   &:hover {
     background-color: ${Colors['midblue-8'].hex()};
@@ -68,13 +68,15 @@ const StyledTopBarItemLogo = styled(TopBar.Item)`
 `;
 
 const StyledLogo = styled.div`
-  width: 80px;
+  width: 70px;
   height: 35px;
-  background: transparent url('/images/logos/cognite-platypus.svg') center
-    center repeat-y;
+  background: transparent url('/images/logos/cognite-platypus.png') center
+    center no-repeat;
+  background-size: 63px;
 `;
 
 const StyledTitleLogo = styled(Title)`
   font-weight: 700;
   font-size: 1.4rem;
+  margin-left: 0.5rem;
 `;
