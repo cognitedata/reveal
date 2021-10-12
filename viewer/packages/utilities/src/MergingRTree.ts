@@ -187,7 +187,7 @@ export class RTreeNode {
 
       let newNode;
       let preservedChild;
-      
+
       if (expand1 < expand2) {
         newNode = this.children[0].insert(box);
         preservedChild = this.children[1];
