@@ -114,7 +114,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
 
   if (!canEdit) {
     return (
-      <div css="padding: 0 1rem">
+      <div css="padding: 0 1rem; margin-bottom: 1rem">
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
           {TableHeadings.DATA_SET}
         </StyledLabel>
