@@ -5,13 +5,7 @@
 export { CadNode, SuggestedCameraConfig } from './src/CadNode';
 export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
 
-export { NodeCollectionBase, SerializedNodeCollection } from './src/material-manager/styling/NodeCollectionBase';
 export { NodeTransformProvider } from './src/material-manager/styling/NodeTransformProvider';
-export { TreeIndexNodeCollection } from './src/material-manager/styling/TreeIndexNodeCollection';
-export { IntersectionNodeCollection } from './src/material-manager/styling/IntersectionNodeCollection';
-export { UnionNodeCollection } from './src/material-manager/styling/UnionNodeCollection';
-export { NodeAppearanceProvider } from './src/material-manager/styling/NodeAppearanceProvider';
-export { NodeAppearance, NodeOutlineColor, DefaultNodeAppearance } from './src/material-manager/NodeAppearance';
 
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 

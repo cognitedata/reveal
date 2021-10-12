@@ -1,16 +1,16 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
-import ComboControls from '@reveal/camera-manager';
-import { NodeAppearance } from '@reveal/cad-geometry-loaders';
+import * as THREE from 'three';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { CogniteClient } from '@cognite/sdk';
-
-import * as THREE from 'three';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
+
+import ComboControls from '@reveal/camera-manager';
+import { NodeAppearance } from '@reveal/cad-styling';
+
+import { CogniteClient } from '@cognite/sdk';
 
 export type ViewerState = {
   camera: {
