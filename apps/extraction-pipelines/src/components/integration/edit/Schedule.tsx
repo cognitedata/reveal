@@ -154,24 +154,12 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
       return schedule == null ? (
         <span css="color: grey; padding: 0 1rem">No schedule set</span>
       ) : (
-        <span css="padding: 0 1rem">{schedule}</span>
-      );
-    }
-    if (!schedule) {
-      return (
-        <EditButton
-          onClick={onEditClick}
-          disabled={!canEdit}
-          title="Toggle edit row"
-          aria-expanded={isEdit}
-          aria-controls={name}
-          data-testid={`${ContactBtnTestIds.EDIT_BTN}schedule`}
-          $full
-        >
-          <AddFieldInfoText>
-            {TableHeadings.SCHEDULE.toLowerCase()}
-          </AddFieldInfoText>
-        </EditButton>
+        <div css="padding: 0 1rem">
+          <DisplaySchedule
+            id="display-schedule"
+            schedule={integration.schedule}
+          />
+        </div>
       );
     }
     return (
@@ -184,10 +172,16 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
         data-testid={`${ContactBtnTestIds.EDIT_BTN}schedule`}
         $full
       >
-        <DisplaySchedule
-          id="display-schedule"
-          schedule={integration.schedule}
-        />
+        {!schedule ? (
+          <AddFieldInfoText>
+            {TableHeadings.SCHEDULE.toLowerCase()}
+          </AddFieldInfoText>
+        ) : (
+          <DisplaySchedule
+            id="display-schedule"
+            schedule={integration.schedule}
+          />
+        )}
       </EditButton>
     );
   }
