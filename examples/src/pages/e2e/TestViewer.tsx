@@ -7,7 +7,7 @@ import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/internals';
 
-import { defaultRenderOptions, RenderOptions } from '@cognite/reveal';
+import { defaultRenderOptions, RenderOptions } from '@cognite/reveal/internals';
 
 type CadModelEnv = {
   modelType: 'cad';
