@@ -34,3 +34,27 @@ export const isFileOfType = (file?: FileInfo, type?: string[]) => {
 };
 
 export const isVideo = (file?: FileInfo) => isFileOfType(file, ['mp4', 'webm']);
+
+export const renameDuplicates = (filenames: string[]) => {
+  const count: any = {};
+  const uniqueFilenames = [...filenames];
+  filenames.forEach((filename, i) => {
+    if (filenames.indexOf(filename) !== i) {
+      const c =
+        filename in count
+          ? // eslint-disable-next-line operator-assignment
+            (count[filename] = count[filename] + 1)
+          : (count[filename] = 1);
+      const ext = filename.includes('.')
+        ? filename.substr(filename.lastIndexOf('.'))
+        : '';
+      const name = filename.includes('.')
+        ? filename.substr(0, filename.lastIndexOf('.'))
+        : filename;
+      const k = ext ? `${name}(${c})${ext}` : `${name}(${c})`;
+
+      uniqueFilenames[i] = k;
+    }
+  });
+  return uniqueFilenames;
+};

@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 export const dateformat = (date: Date): string => {
   let dateString = `____-__-__ __:__`;
   try {
-    dateString = format(date, 'yyyy-MM-dd HH:mm');
+    dateString = format(date, 'yyyy-MM-dd HH:mm:ss');
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error('Error occured parsing date', date);
