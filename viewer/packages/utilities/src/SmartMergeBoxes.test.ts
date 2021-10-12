@@ -5,6 +5,25 @@ import { SmartMergeBoxes } from './SmartMergeBoxes';
 import { Box3, Vector3 } from 'three';
 
 describe('SmartMergeBoxes', () => {
+  function createRandomBoxes(n: number, maxDim: number, maxPos: number): Box3[] {
+    const boxes: Box3[] = [];
+
+    for (let i = 0; i < n; i++) {
+      const sx = Math.random() * maxPos;
+      const sy = Math.random() * maxPos;
+      const sz = Math.random() * maxPos;
+
+      const dx = Math.random() * maxDim;
+      const dy = Math.random() * maxDim;
+      const dz = Math.random() * maxDim;
+
+      const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
+      boxes.push(box);
+    }
+
+    return boxes;
+  }
+
   test('add non-intersecting bboxes', () => {
     const mergeBoxes = new SmartMergeBoxes();
 
@@ -52,5 +71,80 @@ describe('SmartMergeBoxes', () => {
     const result = mergeBoxes.squashAndGetBoxes();
 
     expect(result.length == 1);
+  });
+
+  test('union of two trees contains all inserted boxes', () => {
+    const smartBoxes0 = new SmartMergeBoxes();
+    const smartBoxes1 = new SmartMergeBoxes();
+
+    const n = 500;
+    const d = 10;
+    const ms = 100;
+
+    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+
+    smartBoxes0.addBoxes(boxes0);
+    smartBoxes1.addBoxes(boxes1);
+
+    const union = smartBoxes0.union(smartBoxes1);
+
+    const unionBoxes = union.getBoxes();
+
+    const allBoxes = boxes0.concat(boxes1);
+
+    for (const box of allBoxes) {
+      let isInUnion = false;
+      for (const unionBox of unionBoxes) {
+        if (unionBox.containsBox(box)) {
+          isInUnion = true;
+          break;
+        }
+      }
+
+      expect(isInUnion).toEqual(true);
+    }
+  });
+
+  test('intersection of two trees contains intersection between all boxes', () => {
+    const smartBoxes0 = new SmartMergeBoxes();
+    const smartBoxes1 = new SmartMergeBoxes();
+
+    const n = 500;
+    const d = 10;
+    const ms = 100;
+
+    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+
+    smartBoxes0.addBoxes(boxes0);
+    smartBoxes1.addBoxes(boxes1);
+
+    const intersection = smartBoxes0.intersection(smartBoxes1);
+
+    const treeIntersectionBoxes = intersection.getBoxes();
+
+    const allIntersectionBoxes: Box3[] = [];
+
+    for (const box0 of boxes0) {
+      for (const box1 of boxes1) {
+        const boxIntersection = box0.clone().intersect(box1);
+        if (!boxIntersection.isEmpty()) {
+          allIntersectionBoxes.push(boxIntersection);
+        }
+      }
+    }
+
+    for (const box of allIntersectionBoxes) {
+      let isInIntersection = false;
+      for (const treeIntersectionBox of treeIntersectionBoxes) {
+        if (treeIntersectionBox.containsBox(box)) {
+          isInIntersection = true;
+          break;
+        }
+      }
+
+      expect(isInIntersection).toEqual(true);
+    }
   });
 });

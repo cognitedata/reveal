@@ -13,6 +13,14 @@ import { intersectionOverUnion } from './MergingRTree';
 export class SmartMergeBoxes {
   private readonly resultBoxes: Box3[] = [];
 
+  constructor();
+  constructor(boxes: Box3[]);
+  constructor(boxes: Box3[] | undefined = undefined) {
+    if (boxes) {
+      this.resultBoxes = boxes;
+    }
+  }
+
   addBoxes(boxes: Box3[]): void {
     for (const box of boxes) {
       let merged = false;
@@ -27,7 +35,7 @@ export class SmartMergeBoxes {
       }
 
       if (!merged) {
-        this.resultBoxes.push(box);
+        this.resultBoxes.push(box.clone());
       }
     }
   }
@@ -53,5 +61,43 @@ export class SmartMergeBoxes {
     this.squashBoxes();
 
     return this.resultBoxes;
+  }
+
+  getBoxes(): Box3[] {
+    return this.resultBoxes;
+  }
+
+  union(other: SmartMergeBoxes): SmartMergeBoxes {
+    const resClone = [];
+    for (const resBox of this.resultBoxes) {
+      resClone.push(resBox.clone());
+    }
+
+    const newSMB = new SmartMergeBoxes(resClone);
+
+    const otherBoxes = other.getBoxes();
+    newSMB.addBoxes(otherBoxes);
+
+    return newSMB;
+  }
+
+  intersection(other: SmartMergeBoxes): SmartMergeBoxes {
+    const otherBoxes = other.getBoxes();
+    const thisBoxes = this.resultBoxes;
+
+    const newResultBoxes: Box3[] = [];
+
+    for (const box0 of thisBoxes) {
+      for (const box1 of otherBoxes) {
+        const inter = box0.clone().intersect(box1);
+        if (!inter.isEmpty()) {
+          newResultBoxes.push(inter);
+        }
+      }
+    }
+
+    const newSMB = new SmartMergeBoxes(newResultBoxes);
+    newSMB.squashBoxes();
+    return newSMB;
   }
 }
