@@ -29,7 +29,7 @@
     "build:prod": "yarn run clean && webpack --env.production",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
-    "test": "yarn workspaces foreach run test",
+    "test": "jest",
     "coverage": "jest --coverage",
     "lint": "yarn workspaces foreach -p run lint",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
@@ -48,7 +48,7 @@
     "@gltf-transform/core": "^0.12.11",
     "@gltf-transform/extensions": "^0.12.11",
     "@tweenjs/tween.js": "^18.6.4",
-    "@types/three": "0.131.0",
+    "@types/three": "0.133.0",
     "assert": "^2.0.0",
     "comlink": "4.3.1",
     "geo-three": "^0.0.15",
@@ -59,7 +59,7 @@
     "mixpanel-browser": "^2.39.0",
     "rxjs": "^7.1.0",
     "skmeans": "^0.11.3",
-    "three": "0.131.0"
+    "three": "0.133.0"
   },
   "devDependencies": {
     "@cognite/sdk": "^5.0.0",

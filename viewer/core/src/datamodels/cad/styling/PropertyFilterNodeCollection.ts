@@ -4,15 +4,14 @@
 
 import { CogniteClient, Node3D } from '@cognite/sdk';
 
-import { IndexSet } from '../../../utilities/IndexSet';
-import { NumericRange } from '../../../utilities/NumericRange';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
-import range from 'lodash/range';
+import { NodeCollectionBase } from '@reveal/cad-styling';
+import { IndexSet, NumericRange } from '@reveal/utilities';
 
+import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
-import { NodeCollectionBase } from './NodeCollectionBase';
 
 /**
  * Options for {@link PropertyFilterNodeCollection}.

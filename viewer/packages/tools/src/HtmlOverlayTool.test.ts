@@ -8,8 +8,7 @@ import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
 
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
-import { SectorCuller } from '@reveal/core/internals';
-import { createGlContext } from '@reveal/core/__testutilities__';
+import { createGlContext } from '../../../test-utilities';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;
@@ -29,11 +28,6 @@ describe('HtmlOverlayTool', () => {
     getBoundingClientRectSpy.mockReturnValue(rect);
 
     renderer = new THREE.WebGLRenderer({ context, canvas });
-    const _sectorCuller: SectorCuller = {
-      determineSectors: jest.fn(),
-      filterSectorsToLoad: jest.fn(),
-      dispose: jest.fn()
-    };
 
     canvasContainer = document.createElement('div');
     canvasContainer.style.width = '640px';
@@ -47,7 +41,7 @@ describe('HtmlOverlayTool', () => {
     camera.updateProjectionMatrix();
     camera.updateMatrix();
 
-    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer, _sectorCuller });
+    viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
     jest.spyOn(viewer, 'getCamera').mockReturnValue(camera);
 
     renderer.setSize(128, 128);

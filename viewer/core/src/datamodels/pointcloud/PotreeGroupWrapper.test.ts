@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import * as THREE from 'three';
 
 import { PotreeGroupWrapper, PotreeNodeWrapper } from '../../internals';
-import { yieldProcessing } from '../../__testutilities__/wait';
+import { yieldProcessing } from '../../../../test-utilities';
 
 describe('PotreeGroupWrapper', () => {
   const pollLoadingStatusInterval = 1;

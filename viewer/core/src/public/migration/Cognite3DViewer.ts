@@ -9,6 +9,16 @@ import omit from 'lodash/omit';
 import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
+import {
+  defaultRenderOptions,
+  SsaoParameters,
+  SsaoSampleQuality,
+  AntiAliasingMode,
+  LoadingState
+} from '@reveal/cad-geometry-loaders';
+
+import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
 
@@ -18,7 +28,8 @@ import {
   Intersection,
   CameraChangeDelegate,
   PointerEventDelegate,
-  CadModelBudget
+  CadModelBudget,
+  PointCloudBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -26,38 +37,27 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import {
-  defaultRenderOptions,
-  DisposedDelegate,
-  PointCloudBudget,
-  SceneRenderedDelegate,
-  SsaoParameters,
-  SsaoSampleQuality
-} from '../types';
+import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { assertNever, File3dFormat, LoadingState } from '../../utilities';
 import { Spinner } from '../../utilities/Spinner';
-import { trackError, trackEvent } from '../../utilities/metrics';
-import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
-import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import {
-  AntiAliasingMode,
-  CadIntersection,
-  IntersectionFromPixelOptions,
-  PointCloudIntersection,
-  RevealOptions
-} from '../..';
+import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
-import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
 import { RevealManagerHelper } from './RevealManagerHelper';
+
+import ComboControls from '@reveal/camera-manager';
+import {
+  CdfModelIdentifier,
+  LocalModelIdentifier,
+  File3dFormat,
+  CdfModelMetadataProvider
+} from '@reveal/modeldata-api';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -670,8 +670,8 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    const clientExt = new CdfModelDataClient(this.sdkClient);
-    const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
+    const metadataProvider = new CdfModelMetadataProvider(this.sdkClient);
+    const outputs = await metadataProvider.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return 'cad';
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {

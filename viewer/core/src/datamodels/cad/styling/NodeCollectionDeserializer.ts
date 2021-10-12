@@ -4,18 +4,21 @@
 
 import assert from 'assert';
 import { CogniteClient } from '@cognite/sdk';
+import { NumericRange, IndexSet } from '@reveal/utilities';
+
 import { Cognite3DModel } from '../../../migration';
-import { IndexSet } from '../../../utilities/IndexSet';
-import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeCollectionBase } from './NodeCollectionBase';
 import { AssetNodeCollection } from './AssetNodeCollection';
 import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
-import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 
 import { InvertedNodeCollection } from './InvertedNodeCollection';
-import { IntersectionNodeCollection } from './IntersectionNodeCollection';
-import { UnionNodeCollection } from './UnionNodeCollection';
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
+
+import {
+  NodeCollectionBase,
+  TreeIndexNodeCollection,
+  IntersectionNodeCollection,
+  UnionNodeCollection
+} from '@reveal/cad-styling';
 
 export type TypeName = string;
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: Cognite3DModel };

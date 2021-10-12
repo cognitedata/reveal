@@ -7,18 +7,16 @@ import { CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
+import { SupportedModelTypes } from '../types';
+import { WellKnownUnit } from './types';
 
-import { NumericRange } from '../../utilities';
-import { CadNode } from '../../internals';
-import { trackError } from '../../utilities/metrics';
-
-import { SupportedModelTypes, CadModelMetadata, WellKnownUnit } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
-import { NodeCollectionBase } from '../../datamodels/cad/styling';
-import { NodeAppearance } from '../../datamodels/cad';
-import { NodeTransformProvider } from '../../datamodels/cad/styling/NodeTransformProvider';
+
 import { NodesApiClient } from '@reveal/nodes-api';
-import { WellKnownDistanceToMeterConversionFactors } from '../../datamodels/cad/sector/types';
+import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
+import { NumericRange, trackError } from '@reveal/utilities';
+import { CadNode, NodeTransformProvider } from '@reveal/cad-geometry-loaders';
+import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -165,6 +163,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    const index = this._styledNodeCollections.findIndex(x => x.nodes === nodeCollection);
+    if (index !== -1) {
+      this._styledNodeCollections.splice(index, 1);
+    }
     this.cadNode.nodeAppearanceProvider.unassignStyledNodeCollection(nodeCollection);
   }
 
@@ -366,7 +368,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
-      trackError(error, {
+      trackError(error as Error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });
