@@ -64,7 +64,7 @@ export default class ComboControls extends EventDispatcher {
   public keyboardSpeedFactor: number = 3; // how much quicker keyboard navigation will be with 'shift' pressed
   public pinchEpsilon: number = 2;
   public pinchPanSpeed: number = 1;
-  public EPSILON: number = 0.001;
+  public EPSILON: number = 0.006;
   public dispose: () => void;
   public minZoom: number = 0;
   public maxZoom: number = Infinity;
@@ -159,19 +159,25 @@ export default class ComboControls extends EventDispatcher {
       this.rotate(this._accumulatedMouseMove.x, this._accumulatedMouseMove.y);
       this._accumulatedMouseMove.set(0, 0);
     }
-    let rawDeltaTheta = (this.firstPersonMode ? (sphericalEnd.theta % (2*Math.PI)) - (((spherical.theta) % (2*Math.PI))) : sphericalEnd.theta - spherical.theta );
-    
-    
-    let deltaTheta = Math.min(Math.abs(rawDeltaTheta), 2 * Math.PI - Math.abs(rawDeltaTheta));
-    const thetaSign = ((deltaTheta === Math.abs(rawDeltaTheta)) ? 1 : -1) * Math.sign(rawDeltaTheta);
-    deltaTheta *= thetaSign;
-    
+
+    let deltaTheta = 0;
+
+    if (this.firstPersonMode) {
+      const rawDeltaTheta = (sphericalEnd.theta % (2 * Math.PI)) - (spherical.theta % (2 * Math.PI));
+
+      deltaTheta = Math.min(Math.abs(rawDeltaTheta), 2 * Math.PI - Math.abs(rawDeltaTheta));
+      const thetaSign = (deltaTheta === Math.abs(rawDeltaTheta) ? 1 : -1) * Math.sign(rawDeltaTheta);
+      deltaTheta *= thetaSign;
+    } else {
+      deltaTheta = sphericalEnd.theta - spherical.theta;
+    }
+
     const deltaPhi = sphericalEnd.phi - spherical.phi;
     const deltaRadius = sphericalEnd.radius - spherical.radius;
     deltaTarget.subVectors(targetEnd, target);
 
     let changed = false;
-    console.log('Updated with:', spherical.theta);
+    //console.log('Theta:', spherical.theta, deltaTheta, this.firstPersonMode);
 
     const wantDamping = enableDamping && !this.temporarilyDisableDamping;
     const deltaFactor = wantDamping ? Math.min(dampingFactor * this.targetFPSOverActualFPS, 1) : 1;
@@ -190,11 +196,10 @@ export default class ComboControls extends EventDispatcher {
         spherical.phi + deltaPhi * deltaFactor,
         spherical.theta + deltaTheta * deltaFactor
       );
-      //spherical.theta = spherical.theta % (2.0 * Math.PI);
       target.add(deltaTarget.multiplyScalar(deltaFactor));
       changed = true;
     } else {
-      spherical.copy(sphericalEnd);
+      sphericalEnd.copy(spherical);
       target.copy(targetEnd);
     }
 
@@ -243,6 +248,8 @@ export default class ComboControls extends EventDispatcher {
     if (!this.enabled) {
       return;
     }
+
+    this.firstPersonMode = false;
 
     switch (event.button) {
       case MOUSE.LEFT: {
@@ -306,6 +313,8 @@ export default class ComboControls extends EventDispatcher {
     }
     event.preventDefault();
 
+    this.firstPersonMode = false;
+
     switch (event.touches.length) {
       case 1: {
         this.startTouchRotation(event);
@@ -326,8 +335,6 @@ export default class ComboControls extends EventDispatcher {
       event.type !== 'blur' && (event.target === this.domElement || document.activeElement === this.domElement);
 
     this.keyboard.disabled = !this.isFocused;
-    this.firstPersonMode = false;
-
   };
 
   private onContextMenu = (event: MouseEvent) => {
@@ -490,6 +497,7 @@ export default class ComboControls extends EventDispatcher {
     let polarAngle =
       this.keyboardRotationSpeedPolar * (Number(keyboard.isPressed('up')) - Number(keyboard.isPressed('down')));
     if (azimuthAngle !== 0 || polarAngle !== 0) {
+      this.firstPersonMode = true;
       const { sphericalEnd } = this;
       const oldPhi = sphericalEnd.phi;
       sphericalEnd.phi += polarAngle;
@@ -502,16 +510,16 @@ export default class ComboControls extends EventDispatcher {
     const speedFactor = keyboard.isPressed('shift') ? keyboardSpeedFactor : 1;
     const moveForward = keyboard.isPressed('w') ? true : keyboard.isPressed('s') ? false : undefined;
     if (moveForward !== undefined) {
-      this.dolly(0, 0, this.getDollyDeltaDistance(moveForward, keyboardDollySpeed * speedFactor));
       this.firstPersonMode = true;
+      this.dolly(0, 0, this.getDollyDeltaDistance(moveForward, keyboardDollySpeed * speedFactor));
     }
 
     // pan
     const horizontalMovement = Number(keyboard.isPressed('a')) - Number(keyboard.isPressed('d'));
     const verticalMovement = Number(keyboard.isPressed('e')) - Number(keyboard.isPressed('q'));
     if (horizontalMovement !== 0 || verticalMovement !== 0) {
-      this.pan(speedFactor * keyboardPanSpeed * horizontalMovement, speedFactor * keyboardPanSpeed * verticalMovement);
       this.firstPersonMode = true;
+      this.pan(speedFactor * keyboardPanSpeed * horizontalMovement, speedFactor * keyboardPanSpeed * verticalMovement);
     }
   };
 
