@@ -177,7 +177,6 @@ export default class ComboControls extends EventDispatcher {
     deltaTarget.subVectors(targetEnd, target);
 
     let changed = false;
-    //console.log('Theta:', spherical.theta, deltaTheta, this.firstPersonMode);
 
     const wantDamping = enableDamping && !this.temporarilyDisableDamping;
     const deltaFactor = wantDamping ? Math.min(dampingFactor * this.targetFPSOverActualFPS, 1) : 1;
