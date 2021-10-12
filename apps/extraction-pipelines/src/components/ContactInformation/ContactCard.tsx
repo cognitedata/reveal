@@ -49,7 +49,7 @@ export const ContactCard = (user: User) => {
       <AvatarWithTooltip user={user} />
       <InfoList>
         <DivFlex align="baseline">
-          <Name>ABC {name}</Name>
+          <Name>{name}</Name>
           <Role isOwner={role?.toLowerCase() === 'owner'}>{role}</Role>
         </DivFlex>
         <EmailLink email={email} />
