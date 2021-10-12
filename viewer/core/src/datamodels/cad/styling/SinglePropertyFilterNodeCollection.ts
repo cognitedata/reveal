@@ -31,8 +31,6 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   private _indexSet = new IndexSet();
   private _areas: AreaCollection = EmptyAreaCollection.instance();
 
-  private readonly _modelId: number;
-  private readonly _revisionId: number;
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
   private readonly _filter = {
@@ -80,7 +78,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
         const box = new THREE.Box3();
         if (node.boundingBox !== undefined) {
           toThreeBox3(node.boundingBox, box);
-          this._model.mapBoxFromModelToCdfCoordinates;
+          this._model.mapBoxFromCdfToModelCoordinates(box, box);
         }
         return box;
       },

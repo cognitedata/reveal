@@ -8,7 +8,7 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { NodeCollectionBase, SerializedNodeCollection, EmptyAreaCollection, AreaCollection } from '@reveal/cad-styling';
 
 import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
@@ -25,6 +25,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
 
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
+  private _areas: AreaCollection = EmptyAreaCollection.instance();
   private readonly _model: Cognite3DModel;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
   private _filter: any;
@@ -56,6 +57,10 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
       assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
+      () => {
+        // TODO 2021-10-12 larsmoa: Handle bounding boxes for assets in AssetNodeCollection
+        throw new Error('Not implemented yet');
+      },
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -76,13 +81,13 @@ export class AssetNodeCollection extends NodeCollectionBase {
       limit: 1000
     };
 
-    const indexSet = new IndexSet();
-    this._indexSet = indexSet;
+    this._indexSet = fetchResultHelper.indexSet;
+    this._areas = fetchResultHelper.areas;
 
     this._filter = filter;
 
     const request = this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
-    const completed = await fetchResultHelper.pageResults(indexSet, request);
+    const completed = await fetchResultHelper.pageResults(request);
 
     if (completed) {
       // Completed without being interrupted
@@ -103,6 +108,10 @@ export class AssetNodeCollection extends NodeCollectionBase {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  getAreas(): AreaCollection {
+    return this._areas;
   }
 
   serialize(): SerializedNodeCollection {

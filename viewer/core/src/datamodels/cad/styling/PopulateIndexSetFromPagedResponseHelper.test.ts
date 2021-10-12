@@ -32,7 +32,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeFalse();
     expect(helper.indexSet.count).toBe(0);
-    expect(helper.areas).toBeEmpty();
+    expect(helper.areas.isEmpty).toBeTrue();
     expect(helper.isLoading).toBeFalse();
   });
 
@@ -42,7 +42,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeTrue();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(helper.areas).not.toBeEmpty();
+    expect(helper.areas.isEmpty).toBeFalse();
     expect(helper.isLoading).toBeFalse();
   });
 
@@ -57,7 +57,7 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeFalse();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
-    expect(helper.areas).not.toBeEmpty();
+    expect(helper.areas.isEmpty).toBeFalse();
     expect(helper.isLoading).toBeFalse();
     expect(notifyChangedCallback).toBeCalledTimes(1);
   });
@@ -82,11 +82,12 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     const completed1 = await operation1;
     expect(completed1).toBeTrue();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(helper.areas).not.toBeEmpty();
+    expect(helper.areas.isEmpty).toBeFalse();
     expect(helper.isLoading).toBeTrue();
     const completed2 = await operation2;
     expect(completed2).toBeTrue();
     expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(helper.areas.isEmpty).toBeFalse();
     expect(helper.areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
 

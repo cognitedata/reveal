@@ -2,7 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 export interface AreaCollection {
+  readonly isEmpty: boolean;
   areas(): Generator<THREE.Box3>;
+  intersectsBox(box: THREE.Box3): boolean;
 }
 
 export class SimpleAreaCollection {
@@ -14,6 +16,19 @@ export class SimpleAreaCollection {
 
   *areas(): Generator<THREE.Box3> {
     return this._areas;
+  }
+
+  get isEmpty(): boolean {
+    return this._areas.length === 0;
+  }
+
+  intersectsBox(box: THREE.Box3): boolean {
+    for (const area of this.areas()) {
+      if (area.intersectsBox(box)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
@@ -32,4 +47,12 @@ export class EmptyAreaCollection {
   private constructor() {}
 
   *areas(): Generator<THREE.Box3> {}
+
+  intersectsBox(_box: THREE.Box3): boolean {
+    return false;
+  }
+
+  get isEmpty(): boolean {
+    return true;
+  }
 }

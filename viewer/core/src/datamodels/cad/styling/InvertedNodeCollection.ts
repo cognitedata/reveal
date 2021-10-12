@@ -4,7 +4,7 @@
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { NumericRange, IndexSet } from '@reveal/utilities';
 
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { AreaCollection, NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
 
 /**
  * Node collection that inverts the result from another node collection.
@@ -40,6 +40,11 @@ export class InvertedNodeCollection extends NodeCollectionBase {
       this._cachedIndexSet = invertedIndices;
     }
     return this._cachedIndexSet;
+  }
+
+  getAreas(): AreaCollection {
+    // TODO 2021-10-12 larsmoa: Implement InvertedNodeCollection.getAreas()
+    throw new Error('Not implemented yet');
   }
 
   serialize(): SerializedNodeCollection {
