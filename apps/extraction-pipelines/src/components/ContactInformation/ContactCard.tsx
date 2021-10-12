@@ -48,8 +48,8 @@ export const ContactCard = (user: User) => {
     <StyledContactCard>
       <AvatarWithTooltip user={user} />
       <InfoList>
-        <DivFlex>
-          <Name>{name}</Name>
+        <DivFlex align="baseline">
+          <Name>ABC {name}</Name>
           <Role isOwner={role?.toLowerCase() === 'owner'}>{role}</Role>
         </DivFlex>
         <EmailLink email={email} />
