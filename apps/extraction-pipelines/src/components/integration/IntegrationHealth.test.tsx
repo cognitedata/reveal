@@ -91,7 +91,9 @@ describe('IntegrationHealth', () => {
 
     expect(screen.getAllByText(RunStatusUI.FAILURE).length > 0).toEqual(true);
     expect(screen.getAllByText(RunStatusUI.SUCCESS).length > 0).toEqual(true);
-    expect(screen.getAllByRole('row').length).toEqual(PAGE_SIZE_DEFAULT + 1); // rows + heading
+    expect(screen.getAllByRole('row').length).toEqual(
+      Math.min(12, PAGE_SIZE_DEFAULT + 1)
+    ); // rows + heading
   });
 
   it('interact with filter', async () => {

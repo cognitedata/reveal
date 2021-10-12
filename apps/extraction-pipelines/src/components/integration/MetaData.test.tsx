@@ -44,7 +44,7 @@ describe('MetaData', () => {
 
   test('Should render add metadata meta does not exist', () => {
     sdkv3.get.mockResolvedValue({ data: { ...mock, metadata: undefined } });
-    render(<MetaData />, { wrapper: wrapper.wrapper });
+    render(<MetaData canEdit />, { wrapper: wrapper.wrapper });
     expect(
       screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
     ).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe('MetaData', () => {
         },
       },
     });
-    render(<MetaData />, { wrapper: wrapper.wrapper });
+    render(<MetaData canEdit />, { wrapper: wrapper.wrapper });
     expect(
       screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
     ).toBeInTheDocument();

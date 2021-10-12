@@ -54,6 +54,7 @@ describe('Schedule', () => {
           id: mock.id,
           externalId: mock.externalId,
         }}
+        canEdit
         name="schedule"
         label={TableHeadings.SCHEDULE}
       />,
