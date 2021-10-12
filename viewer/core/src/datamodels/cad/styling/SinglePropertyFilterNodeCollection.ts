@@ -2,12 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
-import { IndexSet, NumericRange } from '@reveal/utilities';
-import { AreaCollection, NodeCollectionBase, SimpleAreaCollection } from '@reveal/cad-styling';
+import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
+import { AreaCollection, EmptyAreaCollection, NodeCollectionBase } from '@reveal/cad-styling';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
@@ -24,7 +26,11 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   public static readonly classToken = 'SinglePropertyNodeCollection';
 
   private readonly _client: CogniteClient;
+  private readonly _model: Cognite3DModel;
+
   private _indexSet = new IndexSet();
+  private _areas: AreaCollection = EmptyAreaCollection.instance();
+
   private readonly _modelId: number;
   private readonly _revisionId: number;
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
@@ -43,8 +49,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
     super(SinglePropertyFilterNodeCollection.classToken);
     this._client = client;
-    this._modelId = model.modelId;
-    this._revisionId = model.revisionId;
+    this._model = model;
     this._options = { requestPartitions: 1, ...options };
   }
 
@@ -63,8 +68,6 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
    * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
    */
   async executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
-    const indexSet = new IndexSet();
-    const areas = new SimpleAreaCollection();
     const { requestPartitions } = this._options;
 
     if (this._fetchResultHelper !== undefined) {
@@ -76,15 +79,19 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
       node => {
         const box = new THREE.Box3();
         if (node.boundingBox !== undefined) {
-          box.set(node.boundingBox.min.indexOf, )
+          toThreeBox3(node.boundingBox, box);
+          this._model.mapBoxFromModelToCdfCoordinates;
         }
-        node.boundingBox || new THREE.Box3(),
+        return box;
+      },
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
-    this._indexSet = indexSet;
+    this._indexSet = fetchResultHelper.indexSet;
+    this._areas = fetchResultHelper.areas;
     const outputsUrl = this.buildUrl();
     const batches = Array.from(splitQueryToBatches(propertyValues));
+
     const requests = batches.flatMap(batch => {
       const filter = { properties: { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } } };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
@@ -96,7 +103,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
           }
         });
 
-        return fetchResultHelper.pageResults(indexSet, response);
+        return fetchResultHelper.pageResults(response);
       });
       return batchRequests;
     });
@@ -121,13 +128,13 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
   }
 
   getAreas(): AreaCollection {
-    throw new Error(`${this.getAreas.name}() not supported by ${this.constructor.name}`);
+    return this._areas;
   }
 
   private buildUrl(): string {
-    return `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/3d/models/${this._modelId}/revisions/${
-      this._revisionId
-    }/nodes/list`;
+    return `${this._client.getBaseUrl()}/api/v1/projects/${this._client.project}/3d/models/${
+      this._model.modelId
+    }/revisions/${this._model.revisionId}/nodes/list`;
   }
 
   serialize() {

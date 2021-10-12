@@ -16,3 +16,20 @@ export class SimpleAreaCollection {
     return this._areas;
   }
 }
+
+/**
+ * Convenience implementation to represent an empty collection of areas.
+ * that can be shared among several instances.
+ */
+export class EmptyAreaCollection {
+  private static _instance: EmptyAreaCollection | undefined;
+
+  public static instance(): AreaCollection {
+    EmptyAreaCollection._instance = EmptyAreaCollection._instance || new EmptyAreaCollection();
+    return EmptyAreaCollection._instance;
+  }
+
+  private constructor() {}
+
+  *areas(): Generator<THREE.Box3> {}
+}

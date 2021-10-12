@@ -249,6 +249,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Maps from a 3D position in "CDF space" to coordinates in "ThreeJS model space".
+   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
+   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
+   * applied to the model.
+   * @param box     The box in CDF model coordinates.
+   * @param out     Optional preallocated buffer for storing the result. May be `box`.
+   * @returns       Transformed box.
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
+    out = out ?? new THREE.Box3();
+    if (out !== box) {
+      out.copy(box);
+    }
+    out.applyMatrix4(this.cadModel.modelMatrix);
+    return out;
+  }
+
+  /**
    * Cleans up used resources.
    */
   dispose() {

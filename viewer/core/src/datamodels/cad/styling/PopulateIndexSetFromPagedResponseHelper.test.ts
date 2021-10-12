@@ -4,10 +4,13 @@
 
 import * as THREE from 'three';
 
-import { NumericRange } from '@reveal/utilities';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
-import { ListResponse } from '@cognite/sdk-core';
+
 import { sleep } from '../../../../../test-utilities';
+
+import { NumericRange } from '@reveal/utilities';
+
+import { ListResponse } from '@cognite/sdk-core';
 
 describe('PopulateIndexSetFromPagedResponseHelper', () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
@@ -26,20 +29,20 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     const response = createResponse<number>([], 1000);
 
     helper.interrupt();
-    const { completed, indexSet, areas } = await helper.pageResults(Promise.resolve(response));
+    const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeFalse();
-    expect(indexSet.count).toBe(0);
-    expect(areas).toBeEmpty();
+    expect(helper.indexSet.count).toBe(0);
+    expect(helper.areas).toBeEmpty();
     expect(helper.isLoading).toBeFalse();
   });
 
   test('is not interrupted, fetches all pages and populates set', async () => {
     const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
-    const { completed, indexSet, areas } = await helper.pageResults(Promise.resolve(response));
+    const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeTrue();
-    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(areas).not.toBeEmpty();
+    expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(helper.areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
   });
 
@@ -51,10 +54,10 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
       return originalNext();
     };
 
-    const { completed, indexSet, areas } = await helper.pageResults(Promise.resolve(response));
+    const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeFalse();
-    expect(indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
-    expect(areas).not.toBeEmpty();
+    expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5]);
+    expect(helper.areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
     expect(notifyChangedCallback).toBeCalledTimes(1);
   });
@@ -64,27 +67,27 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
 
     const operation = helper.pageResults(Promise.resolve(response));
     expect(helper.isLoading).toBeTrue();
-    const { completed } = await operation;
+    const completed = await operation;
     expect(completed).toBeTrue();
     expect(helper.isLoading).toBeFalse();
   });
 
-  test('two concurrent load operations, both populate indexset', async () => {
+  test('two concurrent load operations, both populate collections', async () => {
     const response1 = createResponse([1, 2, 3, 4], 2, () => sleep(50));
     const response2 = createResponse([5, 6, 7, 8], 2, () => sleep(100));
 
     const operation1 = helper.pageResults(Promise.resolve(response1));
     const operation2 = helper.pageResults(Promise.resolve(response2));
     expect(helper.isLoading).toBeTrue();
-    const { completed: completed1, indexSet: indexSet1, areas: areas1 } = await operation1;
+    const completed1 = await operation1;
     expect(completed1).toBeTrue();
-    expect(indexSet1.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(areas1).not.toBeEmpty();
+    expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(helper.areas).not.toBeEmpty();
     expect(helper.isLoading).toBeTrue();
-    const { completed: completed2, indexSet: indexSet2, areas: areas2 } = await operation2;
+    const completed2 = await operation2;
     expect(completed2).toBeTrue();
-    expect(indexSet2.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
-    expect(areas2).not.toBeEmpty();
+    expect(helper.indexSet.toIndexArray()).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(helper.areas).not.toBeEmpty();
     expect(helper.isLoading).toBeFalse();
 
     expect(notifyChangedCallback).toBeCalledTimes(4);

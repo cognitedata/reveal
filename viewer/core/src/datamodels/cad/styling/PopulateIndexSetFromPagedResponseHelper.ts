@@ -18,6 +18,8 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
 
   private _ongoingOperations = 0;
   private _interrupted = false;
+  private _indexSet = new IndexSet();
+  private _areas = new SimpleAreaCollection();
 
   constructor(
     itemToTreeIndexRangeCallback: (item: T) => NumericRange,
@@ -37,20 +39,20 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
     return !this._interrupted && this._ongoingOperations > 0;
   }
 
+  public get indexSet(): IndexSet {
+    return this._indexSet;
+  }
+
+  public get areas(): AreaCollection {
+    return this._areas;
+  }
+
   /**
    * Loops through all the pages of the provided response and populated the IndexSet provided.
-   * @param indexSet
    * @param request
    * @returns True if the operation was completed, false if it was interrupted using {@link interrupt}.
    */
-  public async pageResults(request: Promise<ListResponse<T[]>>): Promise<{
-    indexSet: IndexSet;
-    areas: AreaCollection;
-    completed: boolean;
-  }> {
-    const indexSet = new IndexSet();
-    const areas = new SimpleAreaCollection();
-
+  public async pageResults(request: Promise<ListResponse<T[]>>): Promise<boolean> {
     const itemToTreeIndexRangeCallback = this._itemToTreeIndexRangeCallback;
     const notifyChangedCallback = this._notifyChangedCallback;
     this._ongoingOperations++;
@@ -60,10 +62,10 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
         const nextRequest = response.next ? response.next() : undefined;
         response.items.forEach(x => {
           const range = itemToTreeIndexRangeCallback(x);
-          indexSet.addRange(range);
+          this._indexSet.addRange(range);
 
           const area = this._itemToAreaCallback(x);
-          areas.addArea(area);
+          this._areas.addArea(area);
         });
         notifyChangedCallback();
 
@@ -74,7 +76,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
         }
       }
 
-      return { indexSet, areas, completed: !this._interrupted };
+      return !this._interrupted;
     } finally {
       this._ongoingOperations--;
     }
