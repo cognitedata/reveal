@@ -61,13 +61,9 @@ export class MergingRTree {
     }
   }
 
-  getBoxes(): Box3[] {
+  *getBoxes(): Generator<Box3> {
     if (this.root != null) {
-      const result: Box3[] = [];
-      this.root.getBoxes(result);
-      return result;
-    } else {
-      return [];
+      yield* this.root.getBoxes();
     }
   }
 
@@ -205,12 +201,12 @@ class RTreeNode {
     }
   }
 
-  getBoxes(result: Box3[]) {
+  *getBoxes(): Generator<Box3> {
     if (this.children != null) {
-      this.children[0].getBoxes(result);
-      this.children[1].getBoxes(result);
+      yield* this.children[0].getBoxes();
+      yield* this.children[1].getBoxes();
     } else {
-      result.push(this.bounds.clone());
+      yield this.bounds.clone();
     }
   }
 

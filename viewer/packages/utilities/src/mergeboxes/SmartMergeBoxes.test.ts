@@ -5,9 +5,7 @@ import { SmartMergeBoxes } from './SmartMergeBoxes';
 import { Box3, Vector3 } from 'three';
 
 describe('SmartMergeBoxes', () => {
-  function createRandomBoxes(n: number, maxDim: number, maxPos: number): Box3[] {
-    const boxes: Box3[] = [];
-
+  function* createRandomBoxes(n: number, maxDim: number, maxPos: number): Generator<Box3> {
     for (let i = 0; i < n; i++) {
       const sx = Math.random() * maxPos;
       const sy = Math.random() * maxPos;
@@ -18,10 +16,8 @@ describe('SmartMergeBoxes', () => {
       const dz = Math.random() * maxDim;
 
       const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
-      boxes.push(box);
+      yield box;
     }
-
-    return boxes;
   }
 
   test('add non-intersecting bboxes', () => {
@@ -29,21 +25,26 @@ describe('SmartMergeBoxes', () => {
 
     const n = 10;
     const s = 10;
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n; j++) {
-        for (let k = 0; k < n; k++) {
-          const box = new Box3(
-            new Vector3(i * s, j * s, k * s),
-            new Vector3(i * s + s - 1, j * s + s - 1, k * s + s - 1)
-          );
-          mergeBoxes.addBoxes([box]);
+
+    function* generator() {
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+          for (let k = 0; k < n; k++) {
+            const box = new Box3(
+              new Vector3(i * s, j * s, k * s),
+              new Vector3(i * s + s - 1, j * s + s - 1, k * s + s - 1)
+            );
+
+            yield box;
+          }
         }
       }
     }
 
+    mergeBoxes.addBoxes(generator());
     const result = mergeBoxes.getBoxes();
 
-    expect(result.length == n * n * n);
+    expect([...result].length == n * n * n);
   });
 
   test('add intersecting bboxes', () => {
@@ -67,10 +68,16 @@ describe('SmartMergeBoxes', () => {
       boxes[i] = temp;
     }
 
-    mergeBoxes.addBoxes(boxes);
+    function* generator() {
+      for (const b of boxes) {
+        yield b;
+      }
+    }
+
+    mergeBoxes.addBoxes(generator());
     const result = mergeBoxes.getBoxes();
 
-    expect(result.length == 1);
+    expect([...result].length == 1);
   });
 
   test('union of two trees contains all inserted boxes', () => {
@@ -81,8 +88,8 @@ describe('SmartMergeBoxes', () => {
     const d = 10;
     const ms = 100;
 
-    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
-    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes0 = createRandomBoxes(n, d, ms);
+    const boxes1 = createRandomBoxes(n, d, ms);
 
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);
@@ -91,7 +98,7 @@ describe('SmartMergeBoxes', () => {
 
     const unionBoxes = union.getBoxes();
 
-    const allBoxes = boxes0.concat(boxes1);
+    const allBoxes = [...boxes0, ...boxes1];
 
     for (const box of allBoxes) {
       let isInUnion = false;
@@ -114,8 +121,8 @@ describe('SmartMergeBoxes', () => {
     const d = 10;
     const ms = 100;
 
-    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
-    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes0 = createRandomBoxes(n, d, ms);
+    const boxes1 = createRandomBoxes(n, d, ms);
 
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);

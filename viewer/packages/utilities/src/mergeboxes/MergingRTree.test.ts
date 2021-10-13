@@ -38,7 +38,7 @@ describe('RTree', () => {
       rtree.insert(box);
     }
 
-    const mergedBoxes = rtree.getBoxes();
+    const mergedBoxes = [...rtree.getBoxes()];
 
     for (const box of boxes) {
       let isInMergedBoxes = false;
@@ -74,7 +74,7 @@ describe('RTree', () => {
 
     const unionTree = rtree0.union(rtree1);
 
-    const unionBoxes = unionTree.getBoxes();
+    const unionBoxes = [...unionTree.getBoxes()];
 
     const allBoxes = boxes0.concat(boxes1);
 
@@ -112,7 +112,8 @@ describe('RTree', () => {
 
     const intersection = rtree0.intersection(rtree1);
 
-    const treeIntersectionBoxes = intersection.getBoxes();
+    // Make into list so we can iterate through it several times
+    const treeIntersectionBoxes = [...intersection.getBoxes()];
 
     const allIntersectionBoxes: Box3[] = [];
 

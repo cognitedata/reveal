@@ -15,14 +15,14 @@ export class RTreeMergeBoxes implements BoxClustererBase {
     this.rtree = rtree ?? new MergingRTree();
   }
 
-  addBoxes(boxes: Box3[]): void {
+  addBoxes(boxes: Generator<Box3>): void {
     for (const box of boxes) {
       this.rtree.insert(box);
     }
   }
 
-  getBoxes(): Box3[] {
-    return this.rtree.getBoxes();
+  *getBoxes(): Generator<Box3> {
+    yield* this.rtree.getBoxes();
   }
 
   union(otherRtree: BoxClustererBase): BoxClustererBase {

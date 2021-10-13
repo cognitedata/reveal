@@ -23,7 +23,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     }
   }
 
-  addBoxes(boxes: Box3[]): void {
+  addBoxes(boxes: Generator<Box3>): void {
     for (const box of boxes) {
       let merged = false;
 
@@ -39,9 +39,9 @@ export class SmartMergeBoxes implements BoxClustererBase {
       if (!merged) {
         this.resultBoxes.push(box.clone());
       }
-    }
 
-    this.addedSinceSquash += boxes.length;
+      this.addedSinceSquash += 1;
+    }
   }
 
   squashBoxes(): void {
@@ -61,7 +61,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     }
   }
 
-  getBoxes(): Box3[] {
+  *getBoxes(): Generator<Box3> {
     if (this.addedSinceSquash > 0.3 * this.resultBoxes.length) {
       this.squashBoxes();
       this.addedSinceSquash = 0;
@@ -110,9 +110,5 @@ export class SmartMergeBoxes implements BoxClustererBase {
     const newSMB = new SmartMergeBoxes(newResultBoxes);
     newSMB.squashBoxes();
     return newSMB;
-  }
-
-  getValue() {
-    return this;
   }
 }
