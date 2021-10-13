@@ -46,7 +46,7 @@ module.exports = env => {
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: true
+      symlinks: false
     },
     module: {
       rules: [
@@ -57,6 +57,7 @@ module.exports = env => {
             options: {
               configFile: 'tsconfig.webpack.json',
               onlyCompileBundledFiles: true,
+              allowTsInNodeModules: true,
               compilerOptions: !development
                 ? {
                     declarationDir: path.resolve(__dirname, 'dist')
@@ -85,7 +86,11 @@ module.exports = env => {
         }
       ]
     },
-    externals: [nodeExternals()],
+    externals: [
+      nodeExternals({
+        allowlist: [/^@reveal/]
+      })
+    ],
     output: {
       filename: '[name].js',
       publicPath: publicPathViewer,

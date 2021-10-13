@@ -12,7 +12,10 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "*": ["*", "core/src/@types/*"]
+      "*": [
+        "*",
+        "core/src/@types/*"
+      ]
     },
     // do not add path aliases. They'll end up in generated declaration files.
   },
