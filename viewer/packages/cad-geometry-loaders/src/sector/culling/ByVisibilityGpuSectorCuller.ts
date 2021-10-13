@@ -6,15 +6,11 @@ import * as THREE from 'three';
 
 import { SectorMetadata, CadModelMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 
-import {
-  GpuOrderSectorsByVisibilityCoverage,
-  OrderSectorsByVisibilityCoverage
-} from './OrderSectorsByVisibilityCoverage';
+import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
 import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorCost, SectorLoadingSpent } from './types';
 
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 import { TakenSectorMap } from './TakenSectorMap';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 
@@ -221,12 +217,4 @@ function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): Sector
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }
-}
-
-export function createDefaultSectorCuller(
-  renderer: THREE.WebGLRenderer,
-  occludingGeometryProvider: OccludingGeometryProvider
-): SectorCuller {
-  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
-  return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 }

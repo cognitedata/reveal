@@ -31,10 +31,9 @@ export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 export { LoadingState } from './src/utilities/types';
 
 export { SectorCuller } from './src/sector/culling/SectorCuller';
-export {
-  createDefaultSectorCuller,
-  ByVisibilityGpuSectorCuller
-} from './src/sector/culling/ByVisibilityGpuSectorCuller';
-export { GpuOrderSectorsByVisibilityCoverage } from './src/sector/culling/OrderSectorsByVisibilityCoverage';
+export { ByVisibilityGpuSectorCuller } from './src/sector/culling/ByVisibilityGpuSectorCuller';
+export { ByScreenSizeSectorCuller } from './src/sector/culling/ByScreenSizeSectorCuller';
+export { createDefaultSectorCuller } from './src/sector/culling/createDefaultSectorCuller';
+
 export { OccludingGeometryProvider } from './src/sector/culling/OccludingGeometryProvider';
 export { DetermineSectorsInput } from './src/sector/culling/types';

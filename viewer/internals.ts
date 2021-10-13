@@ -12,7 +12,6 @@ export {
   SectorCuller,
   DetermineSectorsInput,
   ByVisibilityGpuSectorCuller,
-  GpuOrderSectorsByVisibilityCoverage,
   RenderOptions,
   defaultRenderOptions
 } from './packages/cad-geometry-loaders';
