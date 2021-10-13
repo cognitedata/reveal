@@ -11,7 +11,7 @@ import { intersectionOverUnion } from './MergingRTree';
  * clusters them together in larger bounding boxes. The union of the larger
  * boxes contains all boxes that have been inserted
  */
-export class SmartMergeBoxes implements BoxClustererBase<SmartMergeBoxes> {
+export class SmartMergeBoxes implements BoxClustererBase {
   private readonly resultBoxes: Box3[] = [];
   private addedSinceSquash: number = 0;
 
@@ -70,7 +70,11 @@ export class SmartMergeBoxes implements BoxClustererBase<SmartMergeBoxes> {
     return this.resultBoxes;
   }
 
-  union(other: BoxClustererBase<SmartMergeBoxes>): BoxClustererBase<SmartMergeBoxes> {
+  union(other: BoxClustererBase): BoxClustererBase {
+    if (!(other instanceof SmartMergeBoxes)) {
+      throw Error('Expected SmartMergeBoxes in union operation');
+    }
+
     const resClone = [];
     for (const resBox of this.resultBoxes) {
       resClone.push(resBox.clone());
@@ -84,7 +88,11 @@ export class SmartMergeBoxes implements BoxClustererBase<SmartMergeBoxes> {
     return newSMB;
   }
 
-  intersection(other: BoxClustererBase<SmartMergeBoxes>): BoxClustererBase<SmartMergeBoxes> {
+  intersection(other: BoxClustererBase): BoxClustererBase {
+    if (!(other instanceof SmartMergeBoxes)) {
+      throw Error('Expected SmartMergeBoxes in intersection operation');
+    }
+
     const otherBoxes = other.getBoxes();
     const thisBoxes = this.resultBoxes;
 

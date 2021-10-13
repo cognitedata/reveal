@@ -4,13 +4,11 @@
 
 import { Box3 } from 'three';
 
-export interface BoxClustererBase<T> {
+export interface BoxClustererBase {
   addBoxes: (boxes: Box3[]) => void;
 
   getBoxes: () => Box3[];
 
-  getValue: () => T;
-
-  union: (otherClusterer: BoxClustererBase<T>) => BoxClustererBase<T>;
-  intersection: (otherClusterer: BoxClustererBase<T>) => BoxClustererBase<T>;
+  union: (otherClusterer: BoxClustererBase) => BoxClustererBase;
+  intersection: (otherClusterer: BoxClustererBase) => BoxClustererBase;
 }
