@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
 import omit from 'lodash/omit';
-import { Button } from '@cognite/cogs.js';
+import { Button, toast, ToastContainer } from '@cognite/cogs.js';
 import { saveToLocalStorage } from '@cognite/storage';
 import { CogniteAuth } from '@cognite/auth-utils';
 import { FakeIdp } from '@cognite/sidecar';
@@ -42,16 +42,18 @@ const LoginWithFakeIDP: React.FC<Props> = ({
       })
       .catch((error) => {
         setLoading(false);
-        // eslint-disable-next-line no-console
-        console.error(
-          'There has been an error, do you have the FakeIdP service running?',
-          error
+        toast.error(
+          <div>
+            <h3>{error.message}</h3>
+            <div>Do you have the FakeIdP service running?</div>
+          </div>
         );
       });
   };
 
   return (
     <>
+      <ToastContainer />
       <Button
         style={{ height: 40, width: '100%', marginTop: 10 }}
         size="default"
