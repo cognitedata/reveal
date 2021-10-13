@@ -9,7 +9,7 @@
 ## - e2e from jenkins
 ##
 
-SERVE_PORT=3000
+SERVE_PORT=$1
 
 echo "Server using port: $SERVE_PORT"
 
