@@ -25,6 +25,11 @@ export const MetadataList = ({ timeseriesId }: MetadataListProps) => {
     <>
       <MetadataItem label="Name" value={timeseries?.name} copyable />
       <MetadataItem
+        label="Description"
+        value={timeseries?.description}
+        copyable
+      />
+      <MetadataItem
         label="External ID"
         value={timeseries?.externalId}
         copyable
