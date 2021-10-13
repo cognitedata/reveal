@@ -133,4 +133,3 @@ consult [parser-worker/README.md](parser-worker/README.md)
 
 See [RELEASING.md](RELEASING.md) for details on how to releasing NPM packages and update
 documentation on release.
-
