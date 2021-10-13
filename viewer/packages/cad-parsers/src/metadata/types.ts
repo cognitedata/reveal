@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 export interface SectorMetadataIndexFileSection {
   readonly fileName: string;
   readonly peripheralFiles: string[];
