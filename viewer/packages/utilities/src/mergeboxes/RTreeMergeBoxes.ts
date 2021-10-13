@@ -6,7 +6,7 @@ import { Box3 } from 'three';
 import { MergingRTree } from './MergingRTree';
 
 export class RTreeMergeBoxes {
-  rtree: MergingRTree = new MergingRTree();
+  private rtree: MergingRTree = new MergingRTree();
 
   addBoxes(boxes: Box3[]): void {
     for (const box of boxes) {
