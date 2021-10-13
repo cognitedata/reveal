@@ -28,6 +28,8 @@ export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
 
+export { ViewerState, ModelState } from './utilities/ViewStateHelper';
+
 export * from './public/types';
 export {
   PropertyFilterNodeCollection,
