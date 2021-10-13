@@ -47,10 +47,7 @@ describe('<DetailsValueView />', () => {
     test(`${desc}`, () => {
       const data = createCases(0, fieldName);
       render(
-        <DetailsValueView
-          fieldValue={data.value as number}
-          fieldName={data.name}
-        />
+        <DetailsValueView fieldValue={data.value} fieldName={data.name} />
       );
       const view = screen.getByText(moment(data.value).fromNow());
       expect(view).toBeInTheDocument();
@@ -74,7 +71,7 @@ describe('<DetailsValueView />', () => {
   });
 });
 
-const createCases = (mockResNumber: number, fieldName: string) => {
+const createCases = (mockResNumber, fieldName) => {
   const integration = {
     ...getMockResponse()[mockResNumber],
     dataSet: mockDataSetResponse()[mockResNumber],

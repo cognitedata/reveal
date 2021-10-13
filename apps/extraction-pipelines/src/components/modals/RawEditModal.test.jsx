@@ -26,7 +26,7 @@ jest.mock('hooks/useRawDBAndTables', () => {
 describe('RawEditModal', () => {
   const mockData = databaseListMock;
   let wrapper = null;
-  let client: QueryClient;
+  let client;
   const integration = getMockResponse()[0];
   const dataSetMock = mockDataSetResponse()[0];
   const cancelMock = jest.fn();

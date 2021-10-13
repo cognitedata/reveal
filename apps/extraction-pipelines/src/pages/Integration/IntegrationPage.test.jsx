@@ -128,10 +128,10 @@ describe('IntegrationPage', () => {
     expect(runsLink).toBeInTheDocument();
     // check some details are renderd
     expect(screen.getAllByText(mockData.name).length).toEqual(2); // heading + breadcrumb
-    expect(screen.getByText(mockData.description!)).toBeInTheDocument();
+    expect(screen.getByText(mockData.description)).toBeInTheDocument();
     expect(screen.getByText(mockData.externalId)).toBeInTheDocument();
-    expect(screen.getAllByText(mockData.dataSet.name!).length).toEqual(2); // breadcrumb and side bar
-    expect(screen.getAllByText(mockIntegration.source!).length).toEqual(1); // side bar
+    expect(screen.getAllByText(mockData.dataSet.name).length).toEqual(2); // breadcrumb and side bar
+    expect(screen.getAllByText(mockIntegration.source).length).toEqual(1); // side bar
     // navigate to runs
     fireEvent.click(runsLink);
     expect(
@@ -167,7 +167,7 @@ describe('IntegrationPage', () => {
   });
 
   const getInputFieldForDeleteConfirm = () =>
-    screen.getByLabelText('Type DELETE to confirm') as HTMLInputElement;
+    screen.getByLabelText('Type DELETE to confirm');
 
   test('Delete button should only be enabled when DELETE is written', async () => {
     renderIntegrationPage();
@@ -176,7 +176,7 @@ describe('IntegrationPage', () => {
     const confirmTextField = getInputFieldForDeleteConfirm();
     const deleteButtonInsideDialog = screen.getByText('Delete', {
       selector: '.cogs-btn-primary',
-    }) as HTMLButtonElement;
+    });
 
     expect(deleteButtonInsideDialog.disabled).toBe(true);
     fireEvent.change(confirmTextField, { target: { value: 'DELETE' } });

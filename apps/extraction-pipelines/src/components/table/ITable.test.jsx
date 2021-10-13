@@ -42,17 +42,11 @@ describe('<ITable/>', () => {
   test('render and interact with row selection', () => {
     const sapLabel = screen.getByText(getMockResponse()[1].name);
     fireEvent.click(sapLabel);
-    expect(
-      (sapLabel as HTMLButtonElement).getAttribute('aria-selected')
-    ).toEqual('true');
+    expect(sapLabel.getAttribute('aria-selected')).toEqual('true');
     const azureLabel = screen.getByText(getMockResponse()[0].name);
     fireEvent.click(azureLabel);
-    expect(
-      (azureLabel as HTMLButtonElement).getAttribute('aria-selected')
-    ).toEqual('true');
-    expect(
-      (sapLabel as HTMLButtonElement).getAttribute('aria-selected')
-    ).toEqual('false');
+    expect(azureLabel.getAttribute('aria-selected')).toEqual('true');
+    expect(sapLabel.getAttribute('aria-selected')).toEqual('false');
   });
 
   test('render and interact with sort on header: Name', () => {

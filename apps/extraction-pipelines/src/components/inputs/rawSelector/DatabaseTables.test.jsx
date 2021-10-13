@@ -14,9 +14,7 @@ describe('DatabaseTables', () => {
   test('Renders message when no db is selected', () => {
     const selectedDb = '';
     const databaseTables = [{ name: 'db' }];
-    const selectedTables: SelectedTable[] = [
-      { databaseName: 'db', tableName: 'tablename' },
-    ];
+    const selectedTables = [{ databaseName: 'db', tableName: 'tablename' }];
     render(
       <DatabaseTables
         selectedDb={selectedDb}
@@ -30,8 +28,8 @@ describe('DatabaseTables', () => {
 
   test('Renders message there are no table for db', () => {
     const selectedDb = 'db';
-    const databaseTables: RawDBTable[] = [];
-    const selectedTables: SelectedTable[] = [];
+    const databaseTables = [];
+    const selectedTables = [];
     render(
       <DatabaseTables
         selectedDb={selectedDb}
@@ -44,12 +42,12 @@ describe('DatabaseTables', () => {
   });
   test('Renders tables', () => {
     const selectedDb = 'db';
-    const databaseTables: RawDBTable[] = [
+    const databaseTables = [
       { name: 'table foo' },
       { name: 'bar' },
       { name: 'baz' },
     ];
-    const selectedTables: SelectedTable[] = [];
+    const selectedTables = [];
     render(
       <DatabaseTables
         selectedDb={selectedDb}
@@ -67,12 +65,12 @@ describe('DatabaseTables', () => {
   });
   test('Displays selected', () => {
     const selectedDb = 'db';
-    const databaseTables: RawDBTable[] = [
+    const databaseTables = [
       { name: 'table foo' },
       { name: 'bar' },
       { name: 'baz' },
     ];
-    const selectedTables: SelectedTable[] = [
+    const selectedTables = [
       { databaseName: selectedDb, tableName: databaseTables[1].name },
     ];
     render(

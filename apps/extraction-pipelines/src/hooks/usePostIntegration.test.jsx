@@ -1,8 +1,8 @@
 import { QueryClient } from 'react-query';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
-import { mockError, getMockResponse } from 'utils/mockResponse';
+import { getMockResponse, mockError } from 'utils/mockResponse';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -11,7 +11,7 @@ import {
 import { usePostIntegration } from 'hooks/usePostIntegration';
 
 describe('usePostIntegration', () => {
-  let client: QueryClient;
+  let client;
   let wrapper;
 
   const integration = {

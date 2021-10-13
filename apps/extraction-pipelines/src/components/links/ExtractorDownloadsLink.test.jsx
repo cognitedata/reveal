@@ -13,7 +13,7 @@ import {
 import ExtractorDownloadsLink from './ExtractorDownloadsLink';
 
 describe('ExtractorDownloadsTab', () => {
-  let client: QueryClient;
+  let client;
   let wrapper;
   beforeEach(() => {
     client = new QueryClient();

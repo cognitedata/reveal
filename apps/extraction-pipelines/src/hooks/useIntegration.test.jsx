@@ -1,11 +1,11 @@
 import { QueryClient } from 'react-query';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import {
-  mockError,
   getMockResponse,
   mockDataSetResponse,
+  mockError,
 } from 'utils/mockResponse';
 import {
   CDF_ENV_GREENFIELD,

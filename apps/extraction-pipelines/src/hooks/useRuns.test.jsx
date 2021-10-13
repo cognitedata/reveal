@@ -3,14 +3,14 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { QueryClient } from 'react-query';
 import { DEFAULT_RUN_LIMIT } from 'utils/RunsAPI';
 import { createRunsFilter, useFilteredRuns, useRuns } from 'hooks/useRuns';
-import { mockError, mockDataRunsResponse } from 'utils/mockResponse';
+import { mockDataRunsResponse, mockError } from 'utils/mockResponse';
 import { renderWithQueryClient } from 'utils/test/render';
 import { RunStatusAPI, RunStatusUI } from 'model/Status';
 import { getBaseUrl } from 'utils/baseURL';
 
 describe('useRuns', () => {
   const externalId = 'dataIntegration000-1';
-  let client: QueryClient;
+  let client;
   let wrapper;
   beforeEach(() => {
     client = new QueryClient({
@@ -47,7 +47,7 @@ describe('useRuns', () => {
 });
 
 describe('useFilteredRuns', () => {
-  let client: QueryClient;
+  let client;
   let wrapper;
   beforeEach(() => {
     client = new QueryClient({

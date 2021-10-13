@@ -9,7 +9,7 @@ describe('IntegrationTableCol', () => {
   });
 
   test('createSearchStringForContacts - should handle empty contacts', () => {
-    const contacts: User[] = [];
+    const contacts = [];
     const res = createSearchStringForContacts(contacts);
     expect(res).toEqual('');
   });
