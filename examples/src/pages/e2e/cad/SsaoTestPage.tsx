@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
-import { defaultRenderOptions } from '@cognite/reveal';
+import { defaultRenderOptions } from '@cognite/reveal/internals';
 import { registerVisualTest } from '../../../visual_tests';
 
 function SsaoTestPage() {

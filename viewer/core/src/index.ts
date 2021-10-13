@@ -10,17 +10,15 @@
  * @module @cognite/reveal
  */
 
+export { NodeAppearanceProvider, NodeAppearance, NodeOutlineColor } from '@reveal/cad-styling';
+
 export {
   NodeCollectionBase,
   TreeIndexNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
-  NodeAppearanceProvider,
-  SerializedNodeCollection,
-  NodeAppearance,
-  NodeOutlineColor,
-  DefaultNodeAppearance
-} from '@reveal/cad-geometry-loaders';
+  SerializedNodeCollection
+} from '@reveal/cad-styling';
 
 export { revealEnv, IndexSet, NumericRange } from '@reveal/utilities';
 
@@ -29,6 +27,8 @@ export { BoundingBoxClipper } from './utilities';
 export { Cognite3DModel } from './public/migration/Cognite3DModel';
 export { Cognite3DViewer } from './public/migration/Cognite3DViewer';
 export { CognitePointCloudModel } from './public/migration/CognitePointCloudModel';
+
+export { ViewerState, ModelState } from './utilities/ViewStateHelper';
 
 export * from './public/types';
 export {

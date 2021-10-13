@@ -23,6 +23,18 @@
     "core",
     "packages/*"
   ],
+  "bundledDependencies": [
+    "@reveal/cad-geometry-loaders",
+    "@reveal/cad-parsers",
+    "@reveal/cad-styling",
+    "@reveal/camera-manager",
+    "@reveal/core",
+    "@reveal/logger",
+    "@reveal/modeldata-api",
+    "@reveal/nodes-api",
+    "@reveal/tools",
+    "@reveal/utilities"
+  ],
   "scripts": {
     "build": "yarn run clean && webpack --env.development",
     "build:watch": "yarn run clean && webpack --env.development --watch",
