@@ -37,6 +37,7 @@ import { OptionTypeBase } from 'react-select';
 import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
+import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -153,7 +154,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const whenNotEditing = () => {
     if (!canEdit) {
       return schedule == null ? (
-        <span css="color: grey; padding: 0 1rem">No schedule set</span>
+        <NoDataAdded>No schedule set</NoDataAdded>
       ) : (
         <div css="padding: 0 1rem">
           <DisplaySchedule id="display-schedule" schedule={schedule} />

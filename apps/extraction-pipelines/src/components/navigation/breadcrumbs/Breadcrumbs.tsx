@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
 
-const greyscaleGrey = (n: number) => Colors[`greyscale-grey${n}`].hex();
+export const greyscaleGrey = (n: number) => Colors[`greyscale-grey${n}`].hex();
 const BreadcrumbsWrapper = styled.nav`
   grid-area: breadcrumbs;
   padding: 0.875rem 2rem;
