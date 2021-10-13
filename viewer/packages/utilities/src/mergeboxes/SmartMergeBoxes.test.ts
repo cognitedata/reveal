@@ -41,7 +41,7 @@ describe('SmartMergeBoxes', () => {
       }
     }
 
-    const result = mergeBoxes.squashAndGetBoxes();
+    const result = mergeBoxes.getBoxes();
 
     expect(result.length == n * n * n);
   });

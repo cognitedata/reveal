@@ -3,6 +3,7 @@
  */
 
 import { Box3 } from 'three';
+import { BoxClustererBase } from './BoxClustererBase';
 import { intersectionOverUnion } from './MergingRTree';
 
 /**
@@ -10,8 +11,9 @@ import { intersectionOverUnion } from './MergingRTree';
  * clusters them together in larger bounding boxes. The union of the larger
  * boxes contains all boxes that have been inserted
  */
-export class SmartMergeBoxes {
+export class SmartMergeBoxes implements BoxClustererBase<SmartMergeBoxes> {
   private readonly resultBoxes: Box3[] = [];
+  private addedSinceSquash: number = 0;
 
   constructor();
   constructor(boxes: Box3[]);
@@ -38,6 +40,8 @@ export class SmartMergeBoxes {
         this.resultBoxes.push(box.clone());
       }
     }
+
+    this.addedSinceSquash += boxes.length;
   }
 
   squashBoxes(): void {
@@ -57,17 +61,16 @@ export class SmartMergeBoxes {
     }
   }
 
-  squashAndGetBoxes(): Box3[] {
-    this.squashBoxes();
-
-    return this.resultBoxes;
-  }
-
   getBoxes(): Box3[] {
+    if (this.addedSinceSquash > 0.3 * this.resultBoxes.length) {
+      this.squashBoxes();
+      this.addedSinceSquash = 0;
+    }
+
     return this.resultBoxes;
   }
 
-  union(other: SmartMergeBoxes): SmartMergeBoxes {
+  union(other: BoxClustererBase<SmartMergeBoxes>): BoxClustererBase<SmartMergeBoxes> {
     const resClone = [];
     for (const resBox of this.resultBoxes) {
       resClone.push(resBox.clone());
@@ -81,7 +84,7 @@ export class SmartMergeBoxes {
     return newSMB;
   }
 
-  intersection(other: SmartMergeBoxes): SmartMergeBoxes {
+  intersection(other: BoxClustererBase<SmartMergeBoxes>): BoxClustererBase<SmartMergeBoxes> {
     const otherBoxes = other.getBoxes();
     const thisBoxes = this.resultBoxes;
 
@@ -99,5 +102,9 @@ export class SmartMergeBoxes {
     const newSMB = new SmartMergeBoxes(newResultBoxes);
     newSMB.squashBoxes();
     return newSMB;
+  }
+
+  getWrappedInstance() {
+    return this;
   }
 }
