@@ -6,17 +6,13 @@ import { Box3 } from 'three';
 import { BoxClustererBase } from './BoxClustererBase';
 import { MergingRTree } from './MergingRTree';
 
-export class RTreeMergeBoxes implements BoxClustererBase<RTreeMergeBoxes> {
-  private rtree: MergingRTree;
+export class RTreeMergeBoxes implements BoxClustererBase {
+  private readonly rtree: MergingRTree;
 
   constructor(rtree: MergingRTree);
   constructor();
-  constructor(rtree: MergingRTree | undefined = undefined) {
-    if (rtree) {
-      this.rtree = rtree;
-    } else {
-      this.rtree = new MergingRTree();
-    }
+  constructor(rtree?: MergingRTree) {
+    this.rtree = rtree ?? new MergingRTree();
   }
 
   addBoxes(boxes: Box3[]): void {
