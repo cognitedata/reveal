@@ -93,7 +93,7 @@ describe('SmartMergeBoxes', () => {
 
     const union = smartBoxes0.union(smartBoxes1);
 
-    const unionBoxes = union.getBoxes();
+    const unionBoxes = [...union.getBoxes()];
 
     const allBoxes = [...boxes0, ...boxes1];
 
@@ -126,7 +126,7 @@ describe('SmartMergeBoxes', () => {
 
     const intersection = smartBoxes0.intersection(smartBoxes1);
 
-    const treeIntersectionBoxes = intersection.getBoxes();
+    const treeIntersectionBoxes = [...intersection.getBoxes()];
 
     const allIntersectionBoxes: Box3[] = [];
 

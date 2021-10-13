@@ -23,7 +23,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     }
   }
 
-  addBoxes(boxes: Box3[]): void {
+  addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
       let merged = false;
 
@@ -67,7 +67,9 @@ export class SmartMergeBoxes implements BoxClustererBase {
       this.addedSinceSquash = 0;
     }
 
-    return this.resultBoxes;
+    for (const box of this.resultBoxes) {
+      yield box.clone();
+    }
   }
 
   union(other: BoxClustererBase): BoxClustererBase {
@@ -83,7 +85,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     const newSMB = new SmartMergeBoxes(resClone);
 
     const otherBoxes = other.getBoxes();
-    newSMB.addBoxes([...otherBoxes]);
+    newSMB.addBoxes(otherBoxes);
 
     return newSMB;
   }
@@ -93,7 +95,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
       throw Error('Expected SmartMergeBoxes in intersection operation');
     }
 
-    const otherBoxes = other.getBoxes();
+    const otherBoxes = [...other.getBoxes()];
     const thisBoxes = this.resultBoxes;
 
     const newResultBoxes: Box3[] = [];
