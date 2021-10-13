@@ -7,6 +7,23 @@ import { render } from 'utils/test';
 import { calculateStatus } from 'utils/integrationUtils';
 import { NO_DATA_SET_ID_SET } from 'utils/constants';
 
+const createCases = (mockResNumber, fieldName) => {
+  const integration = {
+    ...getMockResponse()[mockResNumber],
+    dataSet: mockDataSetResponse()[mockResNumber],
+  };
+  const value = integration[`${fieldName}`];
+  if (fieldName === 'latestRun') {
+    const latest = {
+      lastSuccess: integration?.lastSuccess,
+      lastFailure: integration?.lastFailure,
+    };
+    const status = calculateStatus(latest);
+    return { value: status.time, name: fieldName };
+  }
+  return { value, name: fieldName };
+};
+
 describe('<DetailsValueView />', () => {
   test('Display name for data set when data set exist', () => {
     const data = createCases(0, 'dataSet');
@@ -70,20 +87,3 @@ describe('<DetailsValueView />', () => {
     expect(view).toBeInTheDocument();
   });
 });
-
-const createCases = (mockResNumber, fieldName) => {
-  const integration = {
-    ...getMockResponse()[mockResNumber],
-    dataSet: mockDataSetResponse()[mockResNumber],
-  };
-  const value = integration[`${fieldName}`];
-  if (fieldName === 'latestRun') {
-    const latest = {
-      lastSuccess: integration?.lastSuccess,
-      lastFailure: integration?.lastFailure,
-    };
-    const status = calculateStatus(latest);
-    return { value: status.time, name: fieldName };
-  }
-  return { value, name: fieldName };
-};

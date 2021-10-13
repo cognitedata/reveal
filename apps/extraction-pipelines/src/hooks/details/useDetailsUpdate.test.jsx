@@ -9,7 +9,6 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import { getMockResponse, mockError } from 'utils/mockResponse';
-import { IntegrationUpdateSpec } from 'utils/IntegrationsAPI';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
