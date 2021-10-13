@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { User } from 'model/User';
 import { RunStatusUI } from 'model/Status';
 import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
 import {
@@ -97,7 +96,7 @@ describe('partition', () => {
       { name: 'foo', role: 'Owner' },
       { name: 'owner', role: 'developer' },
     ];
-    const { pass: owner, fail: other } = partition<User>(contacts, isOwner);
+    const { pass: owner, fail: other } = partition(contacts, isOwner);
     expect(owner[0]).toEqual(contacts[1]);
     expect(other[0]).toEqual(contacts[0]);
     expect(other[1]).toEqual(contacts[2]);
