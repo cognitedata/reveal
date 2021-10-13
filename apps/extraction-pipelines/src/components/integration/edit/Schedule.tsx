@@ -91,6 +91,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const [errorVisible, setErrorVisible] = useState(false);
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
+  const { schedule } = integration;
   const methods = useForm<ScheduleFormInput>({
     resolver: yupResolver(scheduleSchema),
     defaultValues: mapModelToInput(integration?.schedule),
@@ -113,11 +114,11 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 
   const onSave = async (field: ScheduleFormInput) => {
     if (integration && project) {
-      const schedule = mapScheduleInputToScheduleValue(field);
+      const updatedSchedule = mapScheduleInputToScheduleValue(field);
       const items = createUpdateSpec({
         project,
         id: integration.id,
-        fieldValue: schedule,
+        fieldValue: updatedSchedule,
         fieldName: 'schedule',
       });
       await mutate(items, {
@@ -149,16 +150,13 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     setValue('schedule', selected.value);
   };
 
-  function renderSchedule(schedule?: string) {
+  const whenNotEditing = () => {
     if (!canEdit) {
       return schedule == null ? (
         <span css="color: grey; padding: 0 1rem">No schedule set</span>
       ) : (
         <div css="padding: 0 1rem">
-          <DisplaySchedule
-            id="display-schedule"
-            schedule={integration.schedule}
-          />
+          <DisplaySchedule id="display-schedule" schedule={schedule} />
         </div>
       );
     }
@@ -177,14 +175,11 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
             {TableHeadings.SCHEDULE.toLowerCase()}
           </AddFieldInfoText>
         ) : (
-          <DisplaySchedule
-            id="display-schedule"
-            schedule={integration.schedule}
-          />
+          <DisplaySchedule id="display-schedule" schedule={schedule} />
         )}
       </EditButton>
     );
-  }
+  };
 
   const whenEditing = (
     <>
@@ -231,7 +226,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     <FormProvider {...methods}>
       <ColumnForm onSubmit={handleSubmit(onSave)}>
         <StyledLabel htmlFor="schedule-selector">{label}</StyledLabel>
-        {isEdit ? whenEditing : renderSchedule(integration.schedule)}
+        {isEdit ? whenEditing : whenNotEditing()}
       </ColumnForm>
     </FormProvider>
   );
