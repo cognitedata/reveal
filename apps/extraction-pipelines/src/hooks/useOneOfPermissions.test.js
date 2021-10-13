@@ -1,10 +1,10 @@
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 // eslint-disable-next-line @cognite/no-sdk-submodule-imports
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
-import { AclAction, EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
+import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 describe('useOneOfPermissions', () => {
-  function testPermission(perms: AclAction[], expected: boolean) {
+  function testPermission(perms, expected) {
     useCapabilities.mockReturnValue({
       isLoading: false,
       data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],

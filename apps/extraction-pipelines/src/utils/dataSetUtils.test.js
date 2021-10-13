@@ -1,5 +1,3 @@
-import { DataSet } from '@cognite/sdk';
-import { Integration } from 'model/Integration';
 import {
   getDataSetsLink,
   mapDataSetResponse,
@@ -7,7 +5,7 @@ import {
   mapUniqueDataSetIds,
   parseDataSetMeta,
 } from './dataSetUtils';
-import { mockDataSetResponse, getMockResponse } from './mockResponse';
+import { getMockResponse, mockDataSetResponse } from './mockResponse';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -33,7 +31,7 @@ describe('Data set util', () => {
   test('mapUniqueDataSetIds - Returns uniq ids', () => {
     const res = mapUniqueDataSetIds([
       ...getMockResponse(),
-      { id: 12, name: 'no dataset' } as Integration,
+      { id: 12, name: 'no dataset' },
     ]);
     expect(res.length).toEqual(3);
   });
@@ -111,7 +109,7 @@ describe('Data set util', () => {
   });
 
   test('mapDataSetToIntegration - maps dataset to integration', () => {
-    const dataSetsResponse: DataSet[] = mockDataSetResponse();
+    const dataSetsResponse = mockDataSetResponse();
     const result = mapDataSetToIntegration(getMockResponse(), dataSetsResponse);
     expect(result.length).toEqual(getMockResponse().length);
     result.forEach((res) => {
@@ -122,7 +120,7 @@ describe('Data set util', () => {
   });
 
   test('mapDataSetToIntegration - should not fail when dataset response is empty', () => {
-    const dataSetsResponse: DataSet[] = [];
+    const dataSetsResponse = [];
     const result = mapDataSetToIntegration(getMockResponse(), dataSetsResponse);
     expect(result.length).toEqual(getMockResponse().length);
     result.forEach((res) => {
