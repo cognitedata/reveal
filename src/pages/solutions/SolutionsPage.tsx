@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
-import { Title } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Route, Switch } from 'react-router-dom';
+import styled from 'styled-components/macro';
 import { Spinner } from '../../components/Spinner/Spinner';
 
 const SolutionsList = lazy(() =>
@@ -9,19 +9,31 @@ const SolutionsList = lazy(() =>
   }))
 );
 
+const Solution = lazy(() =>
+  import('./Solution').then((module) => ({
+    default: module.Solution,
+  }))
+);
+
 export const SolutionsPage = () => (
-  <Suspense fallback={<Spinner />}>
-    <StyledWrapper>
-      <Title level={3}>Solutions</Title>
-      <SolutionsList />
-    </StyledWrapper>
-  </Suspense>
+  <StyledWrapper>
+    <Switch>
+      <Route exact path={['/', '/solutions']}>
+        <Suspense fallback={<Spinner />}>
+          <SolutionsList />
+        </Suspense>
+      </Route>
+      <Route exact path="/solutions/:solutionId?/:tabKey?">
+        <Suspense fallback={<Spinner />}>
+          <Solution />
+        </Suspense>
+      </Route>
+    </Switch>
+  </StyledWrapper>
 );
 
 const StyledWrapper = styled.div`
   display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-  padding: 53px 200px 0 200px;
+  flex: 1;
+  overflow: auto;
 `;
