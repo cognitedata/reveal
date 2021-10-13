@@ -160,8 +160,8 @@ class RTreeNode {
 
   constructor(child0: RTreeNode, child1: RTreeNode);
   constructor(box: Box3);
-  constructor(a1: Box3 | RTreeNode, a2: RTreeNode | undefined = undefined) {
-    if (a1 instanceof Box3 && a2 === undefined) {
+  constructor(a1: Box3 | RTreeNode, a2?: RTreeNode) {
+    if (a1 instanceof Box3 && !a2) {
       this.children = null;
       this.bounds = a1.clone();
       this.numBoxes = 1;
