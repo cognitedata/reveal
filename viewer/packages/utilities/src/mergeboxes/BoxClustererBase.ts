@@ -9,7 +9,7 @@ export interface BoxClustererBase<T> {
 
   getBoxes: () => Box3[];
 
-  getWrappedInstance: () => T;
+  getValue: () => T;
 
   union: (otherClusterer: BoxClustererBase<T>) => BoxClustererBase<T>;
   intersection: (otherClusterer: BoxClustererBase<T>) => BoxClustererBase<T>;

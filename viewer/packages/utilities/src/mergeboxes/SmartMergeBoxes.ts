@@ -104,7 +104,7 @@ export class SmartMergeBoxes implements BoxClustererBase<SmartMergeBoxes> {
     return newSMB;
   }
 
-  getWrappedInstance() {
+  getValue() {
     return this;
   }
 }

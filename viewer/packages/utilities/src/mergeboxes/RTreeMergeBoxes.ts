@@ -30,14 +30,14 @@ export class RTreeMergeBoxes implements BoxClustererBase<RTreeMergeBoxes> {
   }
 
   union(otherRtree: BoxClustererBase<RTreeMergeBoxes>): BoxClustererBase<RTreeMergeBoxes> {
-    return new RTreeMergeBoxes(this.rtree.union(otherRtree.getWrappedInstance().rtree));
+    return new RTreeMergeBoxes(this.rtree.union(otherRtree.getValue().rtree));
   }
 
   intersection(otherRtree: BoxClustererBase<RTreeMergeBoxes>): BoxClustererBase<RTreeMergeBoxes> {
-    return new RTreeMergeBoxes(this.rtree.intersection(otherRtree.getWrappedInstance().rtree));
+    return new RTreeMergeBoxes(this.rtree.intersection(otherRtree.getValue().rtree));
   }
 
-  getWrappedInstance() {
+  getValue() {
     return this;
   }
 }
