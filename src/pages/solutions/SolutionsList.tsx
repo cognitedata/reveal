@@ -38,7 +38,6 @@ const StyledWrapper = styled.div`
   display: flex;
   margin-top: 1rem;
   flex-wrap: wrap;
-  /* border: solid 20px blue; */
 `;
 
 const Card = styled.div`

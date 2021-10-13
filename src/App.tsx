@@ -6,7 +6,6 @@ import { Header } from './components/Header/Header';
 import { SolutionsPage } from './pages/solutions/SolutionsPage';
 import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
 import { StatusPage } from './pages/statusboard/StatusboardPage';
-// import './AppGlobalStyles.tsx';
 import { GlobalStyle } from './AppGlobalStyles';
 
 function App() {
