@@ -1,7 +1,7 @@
 import { useMutation } from 'react-query';
-import { ErrorVariations } from '../model/SDKErrors';
-import { Integration, RegisterIntegrationInfo } from '../model/Integration';
-import { registerIntegration } from '../utils/IntegrationsAPI';
+import { ErrorVariations } from 'model/SDKErrors';
+import { Integration, RegisterIntegrationInfo } from 'model/Integration';
+import { registerIntegration } from 'utils/IntegrationsAPI';
 import { useAppEnv } from './useAppEnv';
 
 interface Props {

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Route } from 'react-router-dom';
-import { createIntegrationRoutes } from '../../routing/CreateRouteConfig';
-import { RegisterIntegrationProvider } from '../../hooks/useStoredRegisterIntegration';
+import { createIntegrationRoutes } from 'routing/CreateRouteConfig';
+import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
 
 interface CreateProps {}
 

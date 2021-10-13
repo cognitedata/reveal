@@ -1,5 +1,5 @@
+import { User } from 'model/User';
 import { createSearchStringForContacts } from './IntegrationTableCol';
-import { User } from '../../model/User';
 
 describe('IntegrationTableCol', () => {
   test('createSearchStringForContacts - should handle missing contacts', () => {

@@ -1,6 +1,6 @@
 import { DataSet, IdEither, ListResponse } from '@cognite/sdk';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { DataSetModel } from '../model/DataSetModel';
+import { DataSetModel } from 'model/DataSetModel';
 import { mapDataSetResponse } from './dataSetUtils';
 
 export const getDataSets = async (ids: IdEither[]): Promise<DataSetModel[]> => {

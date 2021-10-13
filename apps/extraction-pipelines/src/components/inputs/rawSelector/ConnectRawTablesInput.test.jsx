@@ -1,12 +1,12 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithReactHookForm } from '../../../utils/test/render';
+import { renderWithReactHookForm } from 'utils/test/render';
+import { databaseListMock } from 'utils/mockResponse';
+import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import ConnectRawTablesInput, {
   CONNECT_RAW_TABLES_HINT,
 } from './ConnectRawTablesInput';
 import { DBS_LABEL, TABLES_LABEL } from './RawSelector';
-import { databaseListMock } from '../../../utils/mockResponse';
-import { useRawDBAndTables } from '../../../hooks/useRawDBAndTables';
 
 jest.mock('../../../hooks/useRawDBAndTables', () => {
   return {

@@ -1,9 +1,8 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithReactHookForm } from '../../../utils/test/render';
+import { renderWithReactHookForm } from 'utils/test/render';
+import { parseCron } from 'utils/cronUtils';
 import CronInput, { CRON_LABEL, CRON_TIP } from './CronInput';
-
-import { parseCron } from '../../../utils/cronUtils';
 
 describe('CronInput', () => {
   beforeEach(() => {

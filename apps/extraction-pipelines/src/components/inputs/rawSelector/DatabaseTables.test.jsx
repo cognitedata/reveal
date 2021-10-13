@@ -1,13 +1,11 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { RawDBTable } from '@cognite/sdk';
 import {
   DatabaseTables,
   NO_TABLES_IN_DB,
   SELECT_DB_MESSAGE,
 } from './DatabaseTables';
 import { render } from '../../../utils/test';
-import { SelectedTable } from './RawSelector';
 
 describe('DatabaseTables', () => {
   const onChangeTablesList = jest.fn();

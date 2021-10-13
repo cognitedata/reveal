@@ -1,12 +1,12 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
+import { NO_DATA_SET_ID_SET } from 'utils/constants';
 import {
   DATA_SET_ID_LABEL,
   DATA_SET_NAME_LABEL,
   DataSetView,
 } from './DataSetView';
 import { render } from '../../utils/test';
-import { NO_DATA_SET_ID_SET } from '../../utils/constants';
 
 describe('DataSetView', () => {
   test('Should render name and id', () => {
