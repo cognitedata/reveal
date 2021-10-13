@@ -51,6 +51,7 @@ updates:
       - dependency-name: react-scripts
         versions:
           - 4.0.2
+      - dependency-name: pdfjs-dist
     commit-message:
       prefix: chore
       include: scope
