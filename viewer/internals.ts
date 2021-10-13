@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-export * from './core/internals';
+export * from '@reveal/core/internals';
 
-export { CadModelMetadata, SectorMetadata, LevelOfDetail, WantedSector } from './packages/cad-parsers';
+export { CadModelMetadata, SectorMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 export {
   CadLoadingHints,
   CadNode,
@@ -15,6 +15,6 @@ export {
   GpuOrderSectorsByVisibilityCoverage,
   RenderOptions,
   defaultRenderOptions
-} from './packages/cad-geometry-loaders';
-export { NodeAppearanceProvider } from './packages/cad-styling';
-export { revealEnv } from './packages/utilities';
+} from '@reveal/cad-geometry-loaders';
+export { NodeAppearanceProvider } from '@reveal/cad-styling';
+export { revealEnv } from '@reveal/utilities';
