@@ -153,7 +153,7 @@ export class MergingRTree {
   }
 }
 
-export class RTreeNode {
+class RTreeNode {
   readonly bounds: Box3;
   readonly children: [RTreeNode, RTreeNode] | null;
   readonly numBoxes: number;
