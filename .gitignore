@@ -25,3 +25,4 @@ yarn-error.log*
 cli/lib
 
 storybook-static
+junit.xml

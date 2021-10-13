@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import { useLocation, useHistory } from 'react-router-dom';
 import { TopBar, Title, Colors } from '@cognite/cogs.js';
 import { NavigationLink } from '@cognite/cogs.js/dist/Components/TopBar/Modules/Navigation';
-import PlatypusLogo from './cognite-platypus.svg';
+import PlatypusLogo from 'assets/cognite-platypus.svg';
 
 const tabs: Array<{
   slug: string;
