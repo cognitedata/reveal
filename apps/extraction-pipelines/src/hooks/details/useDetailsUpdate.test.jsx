@@ -9,7 +9,6 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import { getMockResponse, mockError } from 'utils/mockResponse';
-import { IntegrationUpdateSpec } from 'utils/IntegrationsAPI';
 import {
   CDF_ENV_GREENFIELD,
   ORIGIN_DEV,
@@ -17,7 +16,7 @@ import {
 } from 'utils/baseURL';
 
 describe('useDetailsUpdate', () => {
-  let client: QueryClient;
+  let client;
   let wrapper;
   beforeEach(() => {
     client = new QueryClient();
@@ -44,7 +43,7 @@ describe('useDetailsUpdate', () => {
     });
     const { mutateAsync } = result.current;
     const id = 1;
-    const items: IntegrationUpdateSpec[] = [
+    const items = [
       {
         id,
         update: {},
@@ -66,7 +65,7 @@ describe('useDetailsUpdate', () => {
     });
     const { mutateAsync } = result.current;
     const id = 1;
-    const items: IntegrationUpdateSpec[] = [
+    const items = [
       {
         id,
         update: {},

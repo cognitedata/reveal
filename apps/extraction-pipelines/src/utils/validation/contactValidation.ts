@@ -1,4 +1,4 @@
-import { Integration } from '../../model/Integration';
+import { Integration } from 'model/Integration';
 
 const moreThanOneContact = (integration: Integration | null) => {
   return (

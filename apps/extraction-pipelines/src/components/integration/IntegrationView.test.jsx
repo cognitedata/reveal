@@ -19,7 +19,7 @@ import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 describe('IntegrationView', () => {
   const mockIntegration = getMockResponse()[0];
   const mockDataSet = mockDataSetResponse()[0];
-  let wrapper: any;
+  let wrapper;
   beforeEach(() => {
     wrapper = renderWithReQueryCacheSelectedIntegrationContext(
       new QueryClient(),

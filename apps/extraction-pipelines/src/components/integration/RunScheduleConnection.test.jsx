@@ -74,7 +74,7 @@ describe('RunScheduleConnection', () => {
   });
 
   test('On run history page, get an error box if you lack permissions', async () => {
-    const err: any = new Error('Failed because its forbidden');
+    const err = new Error('Failed because its forbidden');
     err.status = 403;
     render(renderError(err));
     expect(
@@ -85,7 +85,7 @@ describe('RunScheduleConnection', () => {
   });
 
   test('Not see error if its a different code than 403', async () => {
-    const err: any = new Error('Failed because its forbidden');
+    const err = new Error('Failed because its forbidden');
     err.status = 404;
     render(renderError(err));
     expect(

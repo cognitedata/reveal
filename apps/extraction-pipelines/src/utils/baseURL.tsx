@@ -8,7 +8,7 @@ export const ORIGIN_DEV: Readonly<string> = 'dev';
 export const CDF_ENV_GREENFIELD: Readonly<string> = 'greenfield';
 
 const getBaseUrl = (project: string): string => {
-  return `/api/playground/projects/${project}/${EXTRACTION_PIPELINES_PATH}`;
+  return `/api/v1/projects/${project}/${EXTRACTION_PIPELINES_PATH}`;
 };
 const createExtPipePath = (
   path: string = '',

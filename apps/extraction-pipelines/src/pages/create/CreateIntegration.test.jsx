@@ -58,13 +58,11 @@ describe('CreateIntegration', () => {
     const name = 'Preset name';
     const withName = { ...props, initRegisterIntegration: { name } };
     renderRegisterContext(<CreateIntegration />, { ...withName });
-    const nameInput = screen.getByLabelText(
-      EXT_PIPE_NAME_HEADING
-    ) as HTMLInputElement;
+    const nameInput = screen.getByLabelText(EXT_PIPE_NAME_HEADING);
     expect(nameInput).toBeInTheDocument();
     const externalIdInput = screen.getByLabelText(
       INTEGRATION_EXTERNAL_ID_HEADING
-    ) as HTMLInputElement;
+    );
     expect(externalIdInput).toBeInTheDocument();
     const descriptionInput = screen.getByLabelText(DESCRIPTION_LABEL);
     expect(descriptionInput).toBeInTheDocument();
