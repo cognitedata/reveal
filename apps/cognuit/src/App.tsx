@@ -5,6 +5,7 @@ import { Loader, ToastContainer } from '@cognite/cogs.js';
 import GlobalStyles from 'global-styles';
 import sidecar from 'configs/sidecar';
 import { Providers } from 'Providers';
+import { mainPages } from 'configs/navigation';
 
 import Configurations from './pages/Configurations';
 import DataTransfers from './pages/DataTransfers';
@@ -40,21 +41,24 @@ const App = () => {
                           <Switch>
                             <Route exact path="/">
                               {/* <Home /> */}
-                              <Redirect to="/configurations" />
+                              <Redirect to={mainPages.configurations.url} />
                             </Route>
-                            <Route exact path="/configurations">
+                            <Route exact path={mainPages.configurations.url}>
                               <Configurations />
                             </Route>
-                            <Route exact path="/configurations/new/:type">
+                            <Route
+                              exact
+                              path={mainPages.configurations.pages.new}
+                            >
                               <New />
                             </Route>
-                            <Route exact path="/data-transfers">
+                            <Route exact path={mainPages.dataTransfers.url}>
                               <DataTransfers />
                             </Route>
-                            <Route exact path="/status">
+                            <Route exact path={mainPages.status.url}>
                               <Status />
                             </Route>
-                            <Redirect from="*" to="/configurations" />
+                            <Redirect from="*" to="/" />
                           </Switch>
                         );
                       }}

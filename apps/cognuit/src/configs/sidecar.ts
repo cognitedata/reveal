@@ -4,6 +4,7 @@ import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 type CognuitSidecarConfig = SidecarConfig & {
   cognuitApiBaseUrl: string;
   cognuitCdfProject: string;
+  cogniteSupportUrl: string;
 };
 
 // we are overwriting the window.__cogniteSidecar object because the tenant-selector
@@ -23,8 +24,12 @@ type CognuitSidecarConfig = SidecarConfig & {
   cognuitApiBaseUrl: 'https://cognuit-cognitedata-development.cognite.ai',
   cognuitCdfProject: 'subsurface-test',
 
+  cogniteSupportUrl: 'https://cognite.zendesk.com',
+
+  disableIntercom: true,
   disableTranslations: true,
   enableUserManagement: true,
+
   ...((window as any).__cogniteSidecar || {}),
 };
 

@@ -35,7 +35,7 @@ export function curateTableColumns<T extends { id: number }>(
       accessor: column.key,
       Cell: rule?.render,
       disableSortBy: column.sorter,
-    } as TableProps<T>['columns'][number];
+    } as any;
 
     if (rule?.width) {
       curateColumns.width = rule.width;

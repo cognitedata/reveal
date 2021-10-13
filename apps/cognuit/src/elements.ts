@@ -17,7 +17,6 @@ export const Main = styled.div`
 export const Content = styled.main`
   /* padding: 32px 48px; */
   padding: 1rem;
-  margin-top: 56px; // Height of header
 `;
 
 export const ContentContainer = styled.div`
