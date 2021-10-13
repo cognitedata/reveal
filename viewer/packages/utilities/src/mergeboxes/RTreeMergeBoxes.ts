@@ -15,7 +15,7 @@ export class RTreeMergeBoxes implements BoxClustererBase {
     this.rtree = rtree ?? new MergingRTree();
   }
 
-  addBoxes(boxes: Generator<Box3>): void {
+  addBoxes(boxes: Box3[]): void {
     for (const box of boxes) {
       this.rtree.insert(box);
     }

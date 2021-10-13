@@ -5,7 +5,7 @@
 import { Box3 } from 'three';
 
 export interface BoxClustererBase {
-  addBoxes: (boxes: Generator<Box3>) => void;
+  addBoxes: (boxes: Box3[]) => void;
 
   getBoxes: () => Generator<Box3>;
 

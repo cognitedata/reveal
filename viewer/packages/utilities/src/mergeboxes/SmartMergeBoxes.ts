@@ -23,7 +23,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     }
   }
 
-  addBoxes(boxes: Generator<Box3>): void {
+  addBoxes(boxes: Box3[]): void {
     for (const box of boxes) {
       let merged = false;
 
@@ -83,7 +83,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     const newSMB = new SmartMergeBoxes(resClone);
 
     const otherBoxes = other.getBoxes();
-    newSMB.addBoxes(otherBoxes);
+    newSMB.addBoxes([...otherBoxes]);
 
     return newSMB;
   }

@@ -5,7 +5,8 @@ import { SmartMergeBoxes } from './SmartMergeBoxes';
 import { Box3, Vector3 } from 'three';
 
 describe('SmartMergeBoxes', () => {
-  function* createRandomBoxes(n: number, maxDim: number, maxPos: number): Generator<Box3> {
+  function createRandomBoxes(n: number, maxDim: number, maxPos: number): Box3[] {
+    const boxes: Box3[] = [];
     for (let i = 0; i < n; i++) {
       const sx = Math.random() * maxPos;
       const sy = Math.random() * maxPos;
@@ -16,32 +17,34 @@ describe('SmartMergeBoxes', () => {
       const dz = Math.random() * maxDim;
 
       const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
-      yield box;
+      boxes.push(box);
     }
+
+    return boxes;
   }
 
   test('add non-intersecting bboxes', () => {
     const mergeBoxes = new SmartMergeBoxes();
 
+    const boxes: Box3[] = [];
+
     const n = 10;
     const s = 10;
 
-    function* generator() {
-      for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-          for (let k = 0; k < n; k++) {
-            const box = new Box3(
-              new Vector3(i * s, j * s, k * s),
-              new Vector3(i * s + s - 1, j * s + s - 1, k * s + s - 1)
-            );
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        for (let k = 0; k < n; k++) {
+          const box = new Box3(
+            new Vector3(i * s, j * s, k * s),
+            new Vector3(i * s + s - 1, j * s + s - 1, k * s + s - 1)
+          );
 
-            yield box;
-          }
+          boxes.push(box);
         }
       }
     }
 
-    mergeBoxes.addBoxes(generator());
+    mergeBoxes.addBoxes(boxes);
     const result = mergeBoxes.getBoxes();
 
     expect([...result].length == n * n * n);
@@ -68,13 +71,7 @@ describe('SmartMergeBoxes', () => {
       boxes[i] = temp;
     }
 
-    function* generator() {
-      for (const b of boxes) {
-        yield b;
-      }
-    }
-
-    mergeBoxes.addBoxes(generator());
+    mergeBoxes.addBoxes(boxes);
     const result = mergeBoxes.getBoxes();
 
     expect([...result].length == 1);
