@@ -175,7 +175,7 @@ class RTreeNode {
   }
 
   insert(box: Box3): RTreeNode {
-    if (this.children == null) {
+    if (this.children === null) {
       if (canMergeOnSameNode(this.bounds, box)) {
         return new RTreeNode(this.bounds.clone().union(box));
       } else {
