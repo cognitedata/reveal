@@ -17,7 +17,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
 
   constructor();
   constructor(boxes: Box3[]);
-  constructor(boxes: Box3[] | undefined = undefined) {
+  constructor(boxes?: Box3[]) {
     if (boxes) {
       this.resultBoxes = boxes;
     }
