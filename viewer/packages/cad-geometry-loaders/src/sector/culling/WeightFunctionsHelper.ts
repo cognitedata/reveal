@@ -70,7 +70,6 @@ export class WeightFunctionsHelper {
 
   /**
    * Computes a weight in range [0-1], where 1 means close to camera and 0 means far away.
-   * @param sector
    */
   computeDistanceToCameraWeight(transformedSectorBounds: THREE.Box3): number {
     const minSectorDistance = this._minSectorDistance;
