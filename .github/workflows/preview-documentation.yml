@@ -34,7 +34,7 @@ jobs:
           exclude: ".git"
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@master
+        uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
