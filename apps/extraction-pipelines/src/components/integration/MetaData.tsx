@@ -3,7 +3,6 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { DetailFieldNames } from 'model/Integration';
 import styled from 'styled-components';
-import { bottomSpacing } from 'styles/StyledVariables';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { MetaData as MetaDataModel } from 'model/MetaData';
 import { MetaField } from 'components/integration/MetaDataField';
@@ -17,10 +16,11 @@ const MetaWrapper = styled.section`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  .meta-field {
-    margin-left: 1rem;
-    margin-bottom: ${bottomSpacing};
-  }
+`;
+const RowsWithGaps = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 `;
 interface MetaProps {
   testId?: string;
@@ -45,19 +45,18 @@ export const MetaData = ({
 
   const renderMeta = (meta: MetaDataModel) => {
     return (
-      <>
+      <RowsWithGaps>
         {Object.entries(meta).map(([k, v], index) => {
           return (
-            <React.Fragment key={`${testId}-${k}-${v}`}>
-              <MetaField
-                fieldKey={k}
-                fieldValue={v}
-                testId={`${testId}-${index}`}
-              />
-            </React.Fragment>
+            <MetaField
+              key={`${testId}-${k}-${v}`}
+              fieldKey={k}
+              fieldValue={v}
+              testId={`${testId}-${index}`}
+            />
           );
         })}
-      </>
+      </RowsWithGaps>
     );
   };
 

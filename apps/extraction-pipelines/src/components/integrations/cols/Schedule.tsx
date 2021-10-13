@@ -11,6 +11,9 @@ export const InteractiveCopyWrapper = styled.span`
     margin-left: 0.5rem;
   }
 `;
+const ScheduleSpan = styled.span`
+  line-height: 1.5em;
+`;
 
 interface OwnProps {
   id: string;
@@ -29,17 +32,17 @@ const Schedule: FunctionComponent<Props> = ({
   ...rest
 }: PropsWithoutRef<Props>) => {
   if (!schedule) {
-    return <span>{SupportedScheduleStrings.NOT_DEFINED}</span>;
+    return <ScheduleSpan>{SupportedScheduleStrings.NOT_DEFINED}</ScheduleSpan>;
   }
   if (
     schedule.toLowerCase() === SupportedScheduleStrings.ON_TRIGGER.toLowerCase()
   ) {
-    return <span>{SupportedScheduleStrings.ON_TRIGGER}</span>;
+    return <ScheduleSpan>{SupportedScheduleStrings.ON_TRIGGER}</ScheduleSpan>;
   }
   if (
     schedule.toLowerCase() === SupportedScheduleStrings.CONTINUOUS.toLowerCase()
   ) {
-    return <span>{SupportedScheduleStrings.CONTINUOUS}</span>;
+    return <ScheduleSpan>{SupportedScheduleStrings.CONTINUOUS}</ScheduleSpan>;
   }
   let parsedExpression = schedule;
   try {

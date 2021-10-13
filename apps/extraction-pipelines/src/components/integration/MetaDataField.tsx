@@ -18,15 +18,17 @@ export const MetaField = ({ fieldKey, fieldValue, testId }: MetaFieldProps) => {
         </a>
       );
     }
-    return <span id={fieldKey}>{value}</span>;
+    return value;
   }
 
   return (
-    <DivFlex direction="column" align="flex-start" className="meta-field">
+    <DivFlex direction="column" align="flex-start">
       <StyledLabel htmlFor={fieldKey} data-testid={testId}>
         {uppercaseFirstWord(fieldKey)}
       </StyledLabel>
-      {renderValue(fieldValue)}
+      <div css="line-height: 1.5rem" id={fieldKey}>
+        {renderValue(fieldValue)}
+      </div>
     </DivFlex>
   );
 };

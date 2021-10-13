@@ -10,10 +10,9 @@ import {
 } from 'model/Integration';
 
 const FieldWrapper = styled.div`
-  margin: 1rem;
-  margin-bottom: ${(props: { marginBottom?: string }) =>
-    props.marginBottom ?? '0'};
   display: flex;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
   flex-direction: column;
   align-items: start;
 `;
@@ -21,17 +20,15 @@ interface FieldVerticalDisplayProps {
   label: TableHeadings | DetailFieldNames;
   fieldValue: IntegrationFieldValue;
   fieldName: IntegrationFieldName;
-  marginBottom?: string;
 }
 
 export const FieldVerticalDisplay: FunctionComponent<FieldVerticalDisplayProps> = ({
   label,
   fieldName,
   fieldValue,
-  marginBottom,
 }: PropsWithChildren<FieldVerticalDisplayProps>) => {
   return (
-    <FieldWrapper marginBottom={marginBottom}>
+    <FieldWrapper>
       <StyledLabel htmlFor={fieldName}>{label}</StyledLabel>
       <DetailsValueView fieldName={fieldName} fieldValue={fieldValue} />
     </FieldWrapper>

@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   #name {
     flex: 1;
   }
-  padding: 1em;
+  padding: 1rem;
 `;
 
 const StyledTitle = styled(Title)`
@@ -68,7 +68,7 @@ export const IntegrationHeading: FunctionComponent = () => {
             viewComp={<StyledTitle level={1}>{integration.name}</StyledTitle>}
             canEdit={canEdit}
           />
-          <span style={{ marginRight: '1em' }}>Last reported status:</span>{' '}
+          <span style={{ marginRight: '1rem' }}>Last reported status:</span>{' '}
           <StatusMarker status={lastRun.status} />
         </DivFlex>
       </Wrapper>

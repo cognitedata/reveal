@@ -10,8 +10,6 @@ import { NotificationIcon } from 'components/icons/NotificationIcon';
 const StyledContactCard = styled.section`
   display: flex;
   align-items: center;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   span {
     display: flex;
     align-items: center;
@@ -25,7 +23,7 @@ const InfoList = styled.div`
 
 const Name = styled.h4`
   font-size: 0.875rem;
-  margin: 0;
+  margin-bottom: 0.25rem;
 `;
 const Role = styled.div<{ isOwner: boolean }>`
   margin-left: 1rem;
@@ -50,7 +48,7 @@ export const ContactCard = (user: User) => {
     <StyledContactCard>
       <AvatarWithTooltip user={user} />
       <InfoList>
-        <DivFlex>
+        <DivFlex align="baseline">
           <Name>{name}</Name>
           <Role isOwner={role?.toLowerCase() === 'owner'}>{role}</Role>
         </DivFlex>

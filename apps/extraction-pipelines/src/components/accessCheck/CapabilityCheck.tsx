@@ -15,13 +15,13 @@ export interface CapabilityCheckProps {
 }
 
 const Padded = styled.div`
-  padding: 1.5em;
+  padding: 1.5rem;
   grid-column: 2;
 `;
 
 const MissingCapabilityList = styled.ul`
   li {
-    margin: 1em 0;
+    margin: 1rem 0;
   }
 `;
 

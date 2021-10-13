@@ -61,7 +61,7 @@ const itemsPrPageOptions: OptionType<unknown>[] = [
 ];
 const InlineBlockDiv = styled.div`
   display: inline-block;
-  width: 5em;
+  width: 5rem;
 `;
 interface LogsTableProps {
   data: RunUI[];
@@ -138,7 +138,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   const reasonForNoRows = pipelineNotActivated ? (
     <>
       <p style={{ fontWeight: 'bold' }}>
-        Activate the extraction pipeline to monitor its status.
+        Activate the extraction pipeline to monitor the status.
       </p>
       <p>
         Learn how to activate an extraction pipeline in the{' '}
@@ -154,7 +154,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
 
   return rows.length === 0 ? (
     <DivFlex align="center" direction="column">
-      <Graphic style={{ margin: '2em 0' }} type="Search" />
+      <Graphic style={{ margin: '2rem 0' }} type="Search" />
       {reasonForNoRows}
       <p>&nbsp;</p>
     </DivFlex>

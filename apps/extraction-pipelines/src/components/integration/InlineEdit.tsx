@@ -17,7 +17,8 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import { AnyObjectSchema } from 'yup';
 import { ColumnForm, StyledInput, StyledLabel } from 'styles/StyledForm';
-import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
+import { Colors } from '@cognite/cogs.js';
 import { AddInfo } from './AddInfo';
 
 export interface InlineEditProps<Fields> {
@@ -81,6 +82,7 @@ const InlineEdit = <Fields extends FieldValues>({
     setIsEdit(false);
   };
 
+  const actualValue = defaultValues[name];
   return (
     <ColumnForm onSubmit={handleSubmit(onSave)} marginBottom={marginBottom}>
       {showLabel && (
@@ -95,7 +97,7 @@ const InlineEdit = <Fields extends FieldValues>({
             <Controller
               name={name}
               control={control}
-              defaultValue={defaultValues[name]}
+              defaultValue={actualValue}
               render={({ field, fieldState }) => {
                 return (
                   <StyledInput
@@ -129,19 +131,39 @@ const InlineEdit = <Fields extends FieldValues>({
           </DivFlex>
         </DivFlex>
       ) : (
-        <EditButton
-          onClick={onEditClick}
-          title="Toggle edit row"
-          aria-expanded={isEdit}
-          aria-controls={name}
-          disabled={!canEdit}
-          data-testid={`${ContactBtnTestIds.EDIT_BTN}${name}`}
-          $full={!!fullWidth}
-        >
-          {viewComp ?? (
-            <AddInfo fieldValue={defaultValues[name]} fieldName={name} />
+        <>
+          {canEdit ? (
+            <EditButton
+              onClick={onEditClick}
+              title="Toggle edit row"
+              aria-expanded={isEdit}
+              aria-controls={name}
+              disabled={!canEdit}
+              data-testid={`${ContactBtnTestIds.EDIT_BTN}${name}`}
+              $full={!!fullWidth}
+            >
+              {viewComp ?? (
+                <AddInfo fieldValue={actualValue} fieldName={name} />
+              )}
+            </EditButton>
+          ) : (
+            <div css="padding: 0 1rem">
+              {viewComp != null ? (
+                viewComp
+              ) : (
+                <>
+                  {actualValue && actualValue !== '' ? (
+                    <span>{actualValue}</span>
+                  ) : (
+                    <span style={{ color: Colors['greyscale-grey6'] }}>
+                      No {name} added.
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           )}
-        </EditButton>
+        </>
       )}
     </ColumnForm>
   );

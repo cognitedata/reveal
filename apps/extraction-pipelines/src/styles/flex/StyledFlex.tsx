@@ -13,10 +13,10 @@ export interface DivFlexProps {
   self?: 'flex-end' | 'flex-start' | 'center' | 'baseline' | 'stretch';
 }
 
-export const DivFlex = styled.div`
+export const DivFlex = styled.div<DivFlexProps>`
   display: flex;
-  flex-direction: ${(props: DivFlexProps) => props.direction || 'row'};
-  justify-content: ${(props: DivFlexProps) => props.justify || 'start'};
-  align-items: ${(props: DivFlexProps) => props.align || 'center'};
-  align-content: ${(props: DivFlexProps) => props.content || 'center'};
+  flex-direction: ${(props) => props.direction || 'row'};
+  justify-content: ${(props) => props.justify || 'start'};
+  align-items: ${(props) => props.align || 'center'};
+  align-content: ${(props) => props.content || 'center'};
 `;

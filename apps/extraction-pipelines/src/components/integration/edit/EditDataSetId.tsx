@@ -19,12 +19,13 @@ import {
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
-import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { AddInfo } from 'components/integration/AddInfo';
 import { ColumnForm, StyledLabel } from 'styles/StyledForm';
 import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
+import DetailsValueView from 'components/table/details/DetailsValueView';
 
 const Wrapper = styled.div`
   display: grid;
@@ -110,6 +111,20 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   const onCancel = () => {
     setIsEdit(false);
   };
+
+  if (!canEdit) {
+    return (
+      <div css="padding: 0 1rem; margin-bottom: 1rem">
+        <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
+          {TableHeadings.DATA_SET}
+        </StyledLabel>
+        <DetailsValueView
+          fieldName="dataSet"
+          fieldValue={integration?.dataSet}
+        />
+      </div>
+    );
+  }
 
   return (
     <FormProvider {...methods}>

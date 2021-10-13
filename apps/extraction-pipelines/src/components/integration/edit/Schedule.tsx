@@ -34,9 +34,10 @@ import { ColumnForm, Hint, StyledLabel } from 'styles/StyledForm';
 import { scheduleSchema } from 'utils/validation/integrationSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
-import { CloseButton, SaveButton, EditButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
+import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -91,6 +92,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const [errorVisible, setErrorVisible] = useState(false);
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
+  const { schedule } = integration;
   const methods = useForm<ScheduleFormInput>({
     resolver: yupResolver(scheduleSchema),
     defaultValues: mapModelToInput(integration?.schedule),
@@ -113,11 +115,11 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 
   const onSave = async (field: ScheduleFormInput) => {
     if (integration && project) {
-      const schedule = mapScheduleInputToScheduleValue(field);
+      const updatedSchedule = mapScheduleInputToScheduleValue(field);
       const items = createUpdateSpec({
         project,
         id: integration.id,
-        fieldValue: schedule,
+        fieldValue: updatedSchedule,
         fieldName: 'schedule',
       });
       await mutate(items, {
@@ -149,76 +151,83 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     setValue('schedule', selected.value);
   };
 
-  function renderSchedule(schedule?: string) {
-    if (!schedule) {
-      return (
-        <AddFieldInfoText>
-          {TableHeadings.SCHEDULE.toLowerCase()}
-        </AddFieldInfoText>
+  const whenNotEditing = () => {
+    if (!canEdit) {
+      return schedule == null ? (
+        <NoDataAdded>No schedule set</NoDataAdded>
+      ) : (
+        <div css="padding: 0 1rem">
+          <DisplaySchedule id="display-schedule" schedule={schedule} />
+        </div>
       );
     }
     return (
-      <DisplaySchedule id="display-schedule" schedule={integration.schedule} />
+      <EditButton
+        onClick={onEditClick}
+        disabled={!canEdit}
+        title="Toggle edit row"
+        aria-expanded={isEdit}
+        aria-controls={name}
+        data-testid={`${ContactBtnTestIds.EDIT_BTN}schedule`}
+        $full
+      >
+        {!schedule ? (
+          <AddFieldInfoText>
+            {TableHeadings.SCHEDULE.toLowerCase()}
+          </AddFieldInfoText>
+        ) : (
+          <DisplaySchedule id="display-schedule" schedule={schedule} />
+        )}
+      </EditButton>
     );
-  }
+  };
 
+  const whenEditing = (
+    <>
+      <HintStyled>{INTEGRATION_SCHEDULE_HINT}</HintStyled>
+      <ScheduleWrapper>
+        <ScheduleSelector
+          inputId="schedule-selector"
+          schedule={scheduleValue}
+          onSelectChange={selectChanged}
+        />
+        {showCron && (
+          <CronWrapper
+            id="cron-expression"
+            role="region"
+            direction="column"
+            align="flex-start"
+          >
+            <CronInput />
+          </CronWrapper>
+        )}
+        <ButtonWrapper>
+          <MessageDialog
+            visible={errorVisible}
+            handleClickError={handleClickError}
+            title={SERVER_ERROR_TITLE}
+            contentText={SERVER_ERROR_CONTENT}
+          >
+            <SaveButton
+              htmlType="submit"
+              aria-controls={name}
+              data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
+            />
+          </MessageDialog>
+          <CloseButton
+            onClick={onCancel}
+            aria-controls={name}
+            data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
+          />
+        </ButtonWrapper>
+      </ScheduleWrapper>
+    </>
+  );
   return (
     <FormProvider {...methods}>
       <ColumnForm onSubmit={handleSubmit(onSave)}>
         <StyledLabel htmlFor="schedule-selector">{label}</StyledLabel>
-        {isEdit ? (
-          <>
-            <HintStyled>{INTEGRATION_SCHEDULE_HINT}</HintStyled>
-            <ScheduleWrapper>
-              <ScheduleSelector
-                inputId="schedule-selector"
-                schedule={scheduleValue}
-                onSelectChange={selectChanged}
-              />
-              {showCron && (
-                <CronWrapper
-                  id="cron-expression"
-                  role="region"
-                  direction="column"
-                  align="flex-start"
-                >
-                  <CronInput />
-                </CronWrapper>
-              )}
-              <ButtonWrapper>
-                <MessageDialog
-                  visible={errorVisible}
-                  handleClickError={handleClickError}
-                  title={SERVER_ERROR_TITLE}
-                  contentText={SERVER_ERROR_CONTENT}
-                >
-                  <SaveButton
-                    htmlType="submit"
-                    aria-controls={name}
-                    data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
-                  />
-                </MessageDialog>
-                <CloseButton
-                  onClick={onCancel}
-                  aria-controls={name}
-                  data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
-                />
-              </ButtonWrapper>
-            </ScheduleWrapper>
-          </>
-        ) : (
-          <EditButton
-            onClick={onEditClick}
-            disabled={!canEdit}
-            title="Toggle edit row"
-            aria-expanded={isEdit}
-            aria-controls={name}
-            data-testid={`${ContactBtnTestIds.EDIT_BTN}schedule`}
-            $full
-          >
-            {renderSchedule(integration.schedule)}
-          </EditButton>
-        )}
+        {isEdit ? whenEditing : whenNotEditing()}
       </ColumnForm>
     </FormProvider>
   );
