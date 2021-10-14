@@ -13,6 +13,7 @@ export enum ChangeType {
   TAGS,
   DATATYPES,
   DATASTATUS,
+  AUTHOR,
 }
 
 export enum Origin {

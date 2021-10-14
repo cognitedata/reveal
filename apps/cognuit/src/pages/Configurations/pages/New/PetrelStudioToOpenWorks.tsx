@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState, useMemo, FC } from 'react';
 import { Button, Modal } from '@cognite/cogs.js';
-import { NewConfiguration, Source } from 'typings/interfaces';
-import { AuthProvider, AuthContext } from '@cognite/react-container';
+import { Source } from 'typings/interfaces';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import { CustomError } from 'services/CustomError';
@@ -30,33 +29,19 @@ import {
   makeConnectorLines,
 } from './utils';
 import ConfigArrow from './components/ConfigArrow';
-import { ChangeType, ConfigUIState, Origin } from './types';
+import { ConfigUIState, Origin } from './types';
+import { useSourceConfiguration } from './hooks/useSourceConfiguration';
 
 interface Props {
   name: string | null;
 }
 
 const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
-  const { authState } = useContext<AuthContext>(AuthProvider);
   const { addError } = useContext(APIErrorContext);
   const history = useHistory();
 
-  const user = authState?.email;
-
-  const [configuration, setConfiguration] = useState<NewConfiguration>({
+  const { configuration, onConfigurationChange } = useSourceConfiguration({
     name,
-    source: {
-      external_id: '',
-      source: Source.STUDIO,
-    },
-    target: {
-      external_id: '',
-      source: Source.OPENWORKS,
-    },
-    business_tags: [],
-    author: String(user),
-    datatypes: [],
-    data_status: [],
   });
 
   const [configurationIsComplete, setConfigurationIsComplete] =
@@ -110,58 +95,6 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
     enabled: !!repoId,
   });
 
-  function updateSourceRepository(value: any) {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      source: { ...prevState.source, external_id: (value || '').toString() },
-      business_tags: [],
-      datatypes: [],
-      data_status: [],
-    }));
-  }
-
-  function updateTargetProject(value: any) {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      target: { ...prevState.target, external_id: (value || '').toString() },
-    }));
-  }
-
-  function updateBusinessTags(value: any) {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      business_tags: value,
-    }));
-  }
-
-  function updateDataTypes(value: any) {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      datatypes: value,
-    }));
-  }
-
-  function updateDataStatus(value: any) {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      data_status: value,
-    }));
-  }
-
-  function handleChange(type: ChangeType, value: any) {
-    if (type === ChangeType.REPO) {
-      updateSourceRepository(value);
-    } else if (type === ChangeType.PROJECT) {
-      updateTargetProject(value);
-    } else if (type === ChangeType.TAGS) {
-      updateBusinessTags(value);
-    } else if (type === ChangeType.DATATYPES) {
-      updateDataTypes(value);
-    } else if (type === ChangeType.DATASTATUS) {
-      updateDataStatus(value);
-    }
-  }
-
   const handleUiStateChange = (origin: Origin, newState: ConfigUIState) => {
     const setStateFn =
       origin === Origin.SOURCE ? setSourceUIState : setTargetUIState;
@@ -191,7 +124,9 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
   useEffect(() => {
     if (
       configuration.source.external_id.trim() !== '' &&
-      configuration.datatypes.length > 0
+      configuration.datatypes.length > 0 &&
+      configuration.business_tags.length > 0 &&
+      configuration.data_status.length > 0
     ) {
       setSourceComplete(true);
     } else {
@@ -223,18 +158,6 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
     }
   }, [configurationIsComplete]);
 
-  useEffect(() => {
-    // clear the selected date types when the users change "state"
-    updateDataTypes([]);
-  }, [configuration.source.external_id]);
-
-  useEffect(() => {
-    setConfiguration((prevState) => ({
-      ...prevState,
-      author: String(user),
-    }));
-  }, [user]);
-
   return (
     <>
       <ConfigurationsMainContainer>
@@ -250,6 +173,7 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
             {isSaving ? 'Saving configuration...' : 'Save Configuration'}
           </SaveButton>
         </Header>
+
         <ThreeColsLayout>
           <SourceOrigin
             sourceComplete={sourceComplete}
@@ -261,7 +185,7 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
             availableDataTypes={availableDataTypes}
             availableDataStatus={availableDataStatus}
             onUiStateChange={handleUiStateChange}
-            handleChange={handleChange}
+            handleChange={onConfigurationChange}
           />
 
           <ConfigArrow />
@@ -272,7 +196,7 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
             configuration={configuration}
             availableProjects={availableProjects}
             onUiStateChange={handleUiStateChange}
-            handleChange={handleChange}
+            handleChange={onConfigurationChange}
           />
         </ThreeColsLayout>
       </ConfigurationsMainContainer>
