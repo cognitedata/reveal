@@ -23,7 +23,7 @@ export class SmartMergeBoxes implements BoxClusterer {
 
   private mergeBoxesAtIndices(mini: number, maxi: number): void {
     // Need to assert mini < maxi? Naah
-    
+
     this.resultBoxes[mini].union(this.resultBoxes[maxi]);
 
     // Remove resultBoxes[maxi], replace by last box in list
@@ -45,7 +45,7 @@ export class SmartMergeBoxes implements BoxClusterer {
         if (!box.intersectsBox(resultBox)) {
           continue;
         }
-        
+
         resultBox.union(box);
 
         merged = true;
@@ -61,7 +61,6 @@ export class SmartMergeBoxes implements BoxClusterer {
   }
 
   squashBoxes(): void {
-
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
         const shouldMerge = this.shouldMergeBoxesAtIndices(i, j);
@@ -78,7 +77,7 @@ export class SmartMergeBoxes implements BoxClusterer {
   *getBoxes(): Generator<Box3> {
     // Squash if number of boxes has grown by at least this ratio since last squash
     const GROWTH_RATIO_BEFORE_SQUASH = 0.3;
-    
+
     if (this.addedSinceSquash > GROWTH_RATIO_BEFORE_SQUASH * this.resultBoxes.length) {
       this.squashBoxes();
       this.addedSinceSquash = 0;

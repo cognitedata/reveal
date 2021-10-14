@@ -20,10 +20,9 @@ describe('RTree', () => {
       const dy = rand.random() * maxDim;
       const dz = rand.random() * maxDim;
 
-
-      const minCorner= new Vector3(sx, sy, sz);
+      const minCorner = new Vector3(sx, sy, sz);
       const maxCorner = new Vector3(sx + dx, sy + dy, sz + dz);
-      
+
       const box = new Box3(minCorner, maxCorner);
       boxes.push(box);
     }
@@ -32,9 +31,8 @@ describe('RTree', () => {
   }
 
   test('add bounding boxes and check that result contains them', () => {
-    
     const random = SeededRandom.create('someseed');
-    
+
     const rtree = new MergingRTree();
 
     const n = 1000;
@@ -63,9 +61,8 @@ describe('RTree', () => {
   });
 
   test('union of two trees contains all inserted boxes', () => {
-    
     const random = SeededRandom.create('someseed');
-    
+
     const rtree0 = new MergingRTree();
     const rtree1 = new MergingRTree();
 
@@ -104,9 +101,8 @@ describe('RTree', () => {
   });
 
   test('intersection of two trees contains intersection between all boxes', () => {
-    
     const random = SeededRandom.create('someseed');
-    
+
     const rtree0 = new MergingRTree();
     const rtree1 = new MergingRTree();
 
@@ -155,9 +151,8 @@ describe('RTree', () => {
   });
 
   test('findOverlappingBoxes returns all overlapping boxes', () => {
-    
     const random = SeededRandom.create('someseed');
-    
+
     const rtree0 = new MergingRTree();
 
     const n = 1000;

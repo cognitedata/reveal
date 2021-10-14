@@ -80,9 +80,7 @@ export class MergingRTree {
    * union - Returns the union of two MergingRTree. Does not mutate this object nor the input object
    */
   union(inTree: MergingRTree): MergingRTree {
-
     const [unionTree, otherTree] = this.getSize() < inTree.getSize() ? [inTree.clone(), this] : [this.clone(), inTree];
-    
 
     const insertBoxes = otherTree.getBoxes();
     for (const insertBox of insertBoxes) {
@@ -112,7 +110,7 @@ export class MergingRTree {
     const rtree = new MergingRTree();
 
     this.addAllIntersections(rtree, biggestTree, smallestTree);
-    
+
     return rtree;
   }
 }
@@ -150,12 +148,14 @@ class RTreeNode {
     if (this.children === null) {
       throw Error('Null children at insertBoxInBestSubtree');
     }
-    
+
     const expand1 = wouldExtendBy(this.children[0].bounds, box);
     const expand2 = wouldExtendBy(this.children[1].bounds, box);
 
-    const [newNode, preservedChild] = expand1 < expand2 ? [this.children[0].insert(box), this.children[1]] :
-      [this.children[1].insert(box), this.children[0]];
+    const [newNode, preservedChild] =
+      expand1 < expand2
+        ? [this.children[0].insert(box), this.children[1]]
+        : [this.children[1].insert(box), this.children[0]];
 
     if (intersectionOverUnion(newNode.bounds, preservedChild.bounds) > 0.3) {
       // TODO: Find a more optimal way of returning this (e.g. insert at root of tree)
@@ -201,11 +201,9 @@ class RTreeNode {
       this.findOverlappingBoxesIfIntersecting(box, results, this.children[0]);
       this.findOverlappingBoxesIfIntersecting(box, results, this.children[1]);
     } else {
-      
       if (this.bounds.intersectsBox(box)) {
         results.push(this.bounds.clone());
       }
-      
     }
   }
 }
