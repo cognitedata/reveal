@@ -1,62 +1,134 @@
 import React from 'react';
 
+import classNames from 'classnames';
+import get from 'lodash/get';
 import map from 'lodash/map';
+import reduce from 'lodash/reduce';
 import some from 'lodash/some';
 
-import { Flex, Collapse } from '@cognite/cogs.js';
+import { Flex, Collapse, Body, CollapsePanelProps } from '@cognite/cogs.js';
 
-import { Metadata } from './types';
+import { ConfigIcon, CollapseWrapper, LeafField } from './elements';
+import { Config, Metadata, MetadataValue } from './types';
 
 type Props = {
-  metadata: Metadata;
+  metadata?: Metadata;
   selected: string;
   setSelected: React.Dispatch<React.SetStateAction<string>>;
-  prefix: string;
-  defaultActiveKey?: string;
+  prefixPath: string;
+  config?: Config;
+};
+
+const expandIcon = ({ isActive }: CollapsePanelProps) => {
+  return <ConfigIcon type="ChevronDownMicro" active={`${isActive}`} />;
+};
+
+const getMetadataFromValue = (
+  value: Config[keyof Config],
+  currentMetadata: MetadataValue
+): Metadata => {
+  return reduce<Config[keyof Config], Metadata>(
+    value as [],
+    (acc, _datum, index) => {
+      const accumulator = { ...acc };
+      accumulator[`${index}`] = {
+        label: `${currentMetadata.label} ${index + 1}`,
+        children: currentMetadata.children,
+      };
+      return accumulator;
+    },
+    {}
+  );
 };
 
 export const ConfigFields: React.FC<Props> = ({
-  prefix,
+  prefixPath,
   selected,
   setSelected,
   metadata,
-  defaultActiveKey,
+  config,
 }) => {
-  const hasChildren = some(metadata, 'children');
-  // @TODO(PP-678) refactor for better collapsible
-  if (!hasChildren) {
-    return null;
-  }
   return (
-    <Collapse
-      defaultActiveKey={defaultActiveKey}
-      accordion
-      ghost
-      onChange={(keys) => {
-        setSelected(`${prefix}${keys}`);
-      }}
-    >
-      {map(metadata, (datum, key) => {
-        if (!datum.children) {
+    <>
+      {map(metadata, (currentMetadata, path) => {
+        if (!(currentMetadata.children || currentMetadata.dataAsChildren)) {
           return null;
         }
+        const currentPath = `${prefixPath}${path}`;
+
+        const isCurrentPathActive = selected.indexOf(currentPath) === 0;
+
+        const isLeaf =
+          !some(currentMetadata.children, 'children') &&
+          !currentMetadata.dataAsChildren;
+
+        if (isLeaf) {
+          return (
+            <LeafField
+              key={currentPath}
+              className={classNames({
+                'config-item-active': isCurrentPathActive,
+              })}
+              onClick={() => setSelected(currentPath)}
+            >
+              <ConfigIcon type="Dot" active="true" />
+              <Body level={2} strong>
+                {currentMetadata.label}
+              </Body>
+            </LeafField>
+          );
+        }
+
+        const handleCollapseChange = React.useCallback((newPath) => {
+          if (!newPath) {
+            setSelected(currentPath);
+          } else {
+            setSelected((existingPath) => {
+              if (newPath) return newPath;
+              return existingPath;
+            });
+          }
+        }, []);
+
+        const childrenMetadata = currentMetadata.dataAsChildren
+          ? getMetadataFromValue(get(config, currentPath), currentMetadata)
+          : currentMetadata.children;
+
         return (
-          <Collapse.Panel
-            key={`${prefix}${key}`}
-            className="cogs-detail strong"
-            header={datum.label}
-          >
-            <Flex direction="column">
-              <ConfigFields
-                prefix={`${prefix}${key}.children.`}
-                metadata={datum.children}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            </Flex>
-          </Collapse.Panel>
+          <CollapseWrapper key={currentPath}>
+            <Collapse
+              activeKey={isCurrentPathActive ? currentPath : selected}
+              expandIcon={expandIcon}
+              className="config-field-item"
+              accordion
+              ghost
+              onChange={handleCollapseChange}
+            >
+              <Collapse.Panel
+                key={currentPath}
+                headerClass={classNames({
+                  'config-item-active': currentPath === selected,
+                })}
+                header={
+                  <Body level={2} strong>
+                    {currentMetadata.label}
+                  </Body>
+                }
+              >
+                <Flex direction="column">
+                  <ConfigFields
+                    prefixPath={`${currentPath}.`}
+                    metadata={childrenMetadata}
+                    selected={selected}
+                    setSelected={setSelected}
+                    config={config}
+                  />
+                </Flex>
+              </Collapse.Panel>
+            </Collapse>
+          </CollapseWrapper>
         );
       })}
-    </Collapse>
+    </>
   );
 };

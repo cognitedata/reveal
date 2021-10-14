@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { CollapsablePanel } from '@cognite/cogs.js';
+
 import { BaseButton } from 'components/buttons/BaseButton';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
 import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocument';
@@ -9,7 +11,6 @@ import { RelatedDocumentFilters } from 'pages/authorized/search/search/SideBar/f
 import { FlexGrow, FlexRow } from 'styles/layout';
 
 import {
-  Container,
   FlexContainer,
   Header,
   HeaderSearchWrapper,
@@ -28,7 +29,11 @@ export const RelatedDocument: React.FC = () => {
   const [showDocTypeFilter, setShowDocTypeFilter] = useState<boolean>(true);
 
   return (
-    <Container>
+    <CollapsablePanel
+      sidePanelRight={<RelatedDocumentTypeFilter />}
+      sidePanelRightVisible={showDocTypeFilter}
+      sidePanelLeftWidth={268}
+    >
       <ResultsContainer fullWidth={!showDocTypeFilter}>
         <Header>
           <FlexRow>
@@ -66,8 +71,7 @@ export const RelatedDocument: React.FC = () => {
         </Header>
         <RelatedDocumentTable />
       </ResultsContainer>
-      {showDocTypeFilter && <RelatedDocumentTypeFilter />}
-    </Container>
+    </CollapsablePanel>
   );
 };
 

@@ -4,19 +4,19 @@ import App from '../../__pages__/App';
 import { deleteFavorites } from '../../fixtures/favorites';
 import { logErrors, progress, startTest, testRunId } from '../../utils';
 
-const FAV_SET_NAME = `TESTCAFE_${testRunId}`;
+const FAV_SET_NAME = `fav_${testRunId}`;
 
 fixture('Favorites adding new set')
   .meta({ page: 'favorites:newSets', tenant: App.tenant }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());
-
-    progress('Delete All the favorite Items beforeEach');
-    await deleteFavorites();
-
     progress('Go to favorite page');
     await App.topbar.clickNavigationTab('Favorites');
+  })
+  .before(async () => {
+    progress('Delete all the favorite items');
+    await deleteFavorites();
   })
   .afterEach(async () => logErrors());
 

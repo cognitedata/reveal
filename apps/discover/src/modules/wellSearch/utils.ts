@@ -4,9 +4,14 @@ import set from 'lodash/set';
 import proj4 from 'proj4';
 
 import { Asset, Sequence } from '@cognite/sdk';
-import { WaterDepthLimits } from '@cognite/sdk-wells';
+import { SpudDateLimits, WaterDepthLimits } from '@cognite/sdk-wells-v2';
 
-import { getDateByMatchingRegex } from '_helpers/date';
+import {
+  endOf,
+  getDateByMatchingRegex,
+  isValidDate,
+  startOf,
+} from '_helpers/date';
 import { log } from '_helpers/log';
 import { UnitConverterItem } from '_helpers/units/interfaces';
 import {
@@ -165,16 +170,27 @@ export const getPrestineWellIds = (
 };
 
 export const getWaterDepthLimitsInFeet = (
-  waterDepthLimits: WaterDepthLimits
+  waterDepthLimits: WaterDepthLimits,
+  preferredUnit: string
 ) => {
   const config = {
     accessor: 'value',
     fromAccessor: 'unit',
-    to: 'ft',
+    to: preferredUnit,
   };
   const min = changeUnit(waterDepthLimits.min, config).value;
   const max = changeUnit(waterDepthLimits.max, config).value;
   return [Math.floor(min), Math.ceil(max)];
+};
+
+export const processSpudDateLimits = (spudDateLimits: SpudDateLimits) => {
+  const minDate = spudDateLimits.min;
+  const maxDate = spudDateLimits.max;
+
+  return [
+    isValidDate(minDate) ? startOf(minDate, 'day') : undefined,
+    isValidDate(maxDate) ? endOf(maxDate, 'day') : undefined,
+  ];
 };
 
 export const mapWellsToThreeD = (wells: Well[]) => {

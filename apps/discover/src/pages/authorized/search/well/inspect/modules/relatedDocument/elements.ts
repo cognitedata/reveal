@@ -12,8 +12,6 @@ import {
   FlexAlignJustifyContent,
 } from 'styles/layout';
 
-const DOC_TYPE_FILTER_WIDTH = '268px';
-
 export const FlexContainer = styled(Flex)`
   gap: 8px;
 `;
@@ -29,14 +27,8 @@ export const Header = styled.div`
   }
 `;
 
-export const Container = styled(FlexRow)`
-  height: 100%;
-  overflow: hidden;
-`;
-
 export const ResultsContainer = styled(FlexColumn)`
-  width: ${(props: { fullWidth: boolean }) =>
-    props.fullWidth ? '100%' : `calc(100% - ${DOC_TYPE_FILTER_WIDTH})`};
+  height: 100%;
   padding-right: ${(props: { fullWidth: boolean }) =>
     props.fullWidth ? '0' : sizes.normal};
 `;
@@ -50,17 +42,14 @@ export const IconSeparator = styled(Flex)`
   align-self: center;
 `;
 
-export const DocTypeFilter = styled(Flex)`
+export const WidgetContainer = styled(Flex)`
   border-left: 1px solid var(--cogs-color-strokes-default);
-  min-width: ${DOC_TYPE_FILTER_WIDTH};
-  max-width: ${DOC_TYPE_FILTER_WIDTH};
-  padding: ${sizes.normal};
-  padding-right: 0;
-  margin-top: -${sizes.normal};
-  margin-bottom: -${sizes.normal};
+  height: 100%;
+  padding-left: ${sizes.normal};
+  overflow-y: auto;
 `;
 
-export const DocTypeFilterBody = styled(FlexColumn)`
+export const DocumentTypeWidget = styled(FlexColumn)`
   background: var(--cogs-greyscale-grey1);
   border: 2px solid rgba(51, 51, 51, 0.02);
   box-sizing: border-box;

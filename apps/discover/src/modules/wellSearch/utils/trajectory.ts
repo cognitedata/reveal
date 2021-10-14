@@ -1,7 +1,12 @@
+import convert from 'convert-units';
 import get from 'lodash/get';
 import head from 'lodash/head';
 
-import { Sequence } from '@cognite/sdk';
+import { Sequence, SequenceColumn } from '@cognite/sdk';
+
+import { UNITS_TO_STANDARD } from '_helpers/units/constants';
+import { FEET } from 'constants/units';
+import { WellConfig } from 'tenants/types';
 
 import {
   SequenceRow,
@@ -79,4 +84,30 @@ export const findIndexByName = (
   return head(selectedTrajectoryData)?.columns?.findIndex(
     (col) => col.name === normalizedTrajectoryColumnName[name]
   );
+};
+
+export const getDataPointInPreferredUnit = (
+  row: TrajectoryRow,
+  accessor: string,
+  selectedTrajectoryData: (TrajectoryRows | undefined)[],
+  prefferedUnit: string,
+  columnData?: SequenceColumn[],
+  config?: WellConfig
+) => {
+  const dataPoint = get(
+    row.values,
+    findIndexByName(
+      accessor,
+      selectedTrajectoryData,
+      config?.trajectory?.normalizeColumns
+    ) || -1
+  );
+  const columnMetaData = columnData?.find(
+    (column) => column.name === accessor
+  )?.metadata;
+  return convert(dataPoint)
+    .from(
+      columnMetaData ? get(UNITS_TO_STANDARD, columnMetaData.unit, FEET) : FEET
+    )
+    .to(prefferedUnit as any);
 };

@@ -9,7 +9,6 @@ import { Body, Icon } from '@cognite/cogs.js';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { DocumentPayload } from 'modules/api/documents/types';
 import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
-import { useSetIsolatedDocumentResultFacets } from 'modules/documentSearch/hooks/useSetIsolatedDocumentResultFacets';
 import {
   DocumentQueryFacet,
   DocumentQueryFacets,
@@ -90,8 +89,6 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
     const { data: hideFilterCount } =
       useTenantConfigByKey<boolean>('hideFilterCount');
     const setDocumentFilters = useSetDocumentFilters();
-    const setIsolatedDocumentResultFacets =
-      useSetIsolatedDocumentResultFacets();
 
     const currentFilterStateFacets = get(
       appliedFilters.documents,
@@ -112,7 +109,6 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
         ...appliedFilters.documents,
         [docQueryFacetType]: value,
       });
-      setIsolatedDocumentResultFacets({ [docQueryFacetType]: value });
       setShowApplyButton(false);
     };
 

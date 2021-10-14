@@ -29,7 +29,6 @@ const defaultConfig: TenantConfig = {
     name: 'BP',
     logo: 'owa-test.png',
   },
-  hideFilterCount: true,
   azureConfig: {
     enabled: true,
     instrumentationKey: '27e0a856-2390-4089-9f91-6282d3ef6d29',

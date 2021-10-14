@@ -1,14 +1,12 @@
 import groupBy from 'lodash/groupBy';
 
-import { getWellSDKClient } from 'modules/wellSearch/sdk';
+import { getWellboresFromWells } from 'modules/wellSearch/sdk';
 import { Wellbore } from 'modules/wellSearch/types';
 
 export async function getWellboresByWellIds(
   wellIds: number[]
 ): Promise<Wellbore[]> {
-  return getWellSDKClient()
-    .wellbores.getFromWells(wellIds)
-    .then((response) => response as Wellbore[]);
+  return getWellboresFromWells(wellIds);
 }
 
 export async function getGroupedWellboresByWellIds(wellIds: number[]) {

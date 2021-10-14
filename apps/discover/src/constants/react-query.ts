@@ -26,8 +26,6 @@ export const FAVORITE_KEY = {
   FAVORITES: ['favorites'],
 };
 
-export const PROJECT_CONFIG_KEY = ['projectConfig'];
-
 export const SURVEYS_QUERY_KEY = ['surveys'];
 
 // start: Should be an object (just like STATS)
@@ -75,4 +73,18 @@ export const WELL_QUERY_KEY = {
 const SEARCH_HISTORY = 'searchHistory';
 export const SEARCH_HISTORY_KEY = {
   LIST: [SEARCH_HISTORY, 'list'],
+};
+
+export const DOCUMENTS_AGGREGATES = {
+  labels: 'DOCUMENTS_LABELS_AGGREGATE',
+  filetype: 'DOCUMENTS_FILE_TYPE_AGGREGATE',
+  location: 'DOCUMENTS_LOCATION_AGGREGATE',
+  lastcreated: 'DOCUMENTS_LASTCREATED_AGGREGATE',
+  lastUpdatedTime: 'DOCUMENTS_LASTUPDATED_AGGREGATE',
+};
+
+const PROJECT_CONFIG = 'projectConfig';
+export const PROJECT_CONFIG_QUERY_KEY = {
+  CONFIG: [PROJECT_CONFIG, 'config'],
+  METADATA: [PROJECT_CONFIG, 'metadata'],
 };

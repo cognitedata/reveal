@@ -6,6 +6,7 @@ import sortBy from 'lodash/sortBy';
 
 import { ITimer } from '@cognite/metrics';
 
+import { UnitConverterItem } from '_helpers/units/interfaces';
 import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { FEET } from 'constants/units';
 import {
@@ -14,6 +15,7 @@ import {
   useStopTimeLogger,
   TimeLogStages,
 } from 'hooks/useTimeLog';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { convertObject } from 'modules/wellSearch/utils';
 import { CasingData } from 'pages/authorized/search/well/inspect/modules/casing/interfaces';
@@ -131,12 +133,31 @@ export const useSelectedWellboresCasingsData = () => {
 
 export const useCasingsForTable = () => {
   const { casings, isLoading } = useSelectedWellboresCasingsData();
+  const prefferedUnit = useUserPreferencesMeasurement();
   return useMemo(() => {
     const casingList = casings.map((casingdata) =>
       convertObject(casingdata)
+        .changeUnits(getCasingUnitChangeAccessors(prefferedUnit))
         .toFixedDecimals(casingAccessorsToFixedDecimal)
         .get()
     );
     return { casings: casingList, isLoading };
   }, [casings, isLoading]);
 };
+
+export const getCasingUnitChangeAccessors = (
+  toUnit: string
+): UnitConverterItem[] => [
+  {
+    id: 'id',
+    accessor: 'topMD',
+    fromAccessor: 'mdUnit',
+    to: toUnit,
+  },
+  {
+    id: 'id',
+    accessor: 'bottomMD',
+    fromAccessor: 'mdUnit',
+    to: toUnit,
+  },
+];

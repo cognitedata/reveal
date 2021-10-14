@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 
-import { WellFilter } from '@cognite/sdk-wells';
+import { WellFilter } from '@cognite/sdk-wells-v2';
 
-import { getWellSDKClient } from 'modules/wellSearch/sdk';
+import { getWellById, getWellItemssByFilter } from 'modules/wellSearch/sdk';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
 export interface SpatialSearchItemResponse {
@@ -14,13 +14,13 @@ export interface SpatialSearchItemResponse {
 }
 
 export function getByFilters(wellFilter: WellFilter) {
-  return getWellSDKClient()
-    .wells.filter(wellFilter)
-    .then((response) => normalizeWells(get(response, 'items', [])));
+  return getWellItemssByFilter(wellFilter).then((response) =>
+    normalizeWells(get(response, 'items', []))
+  );
 }
 
 export function getWellByWellId(wellId: number) {
-  return getWellSDKClient().wells.getById(wellId);
+  return getWellById(wellId);
 }
 
 export function getWellByWellIds(wellIds: number[]) {

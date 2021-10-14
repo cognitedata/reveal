@@ -5,16 +5,18 @@ import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
 import { Modules } from 'modules/sidebar/types';
 import { FilterConfig } from 'modules/wellSearch/types';
+import { filterConfigs } from 'modules/wellSearch/utils/sidebarFilters';
 import { WellConfig } from 'tenants/types';
-
-import { filterConfigs } from '../constants';
 
 export const useFilterConfigByCategory = () => {
   const { data: config } = useTenantConfigByKey<WellConfig>(Modules.WELLS);
   return useMemo(() => {
-    const filteredConfigData = filterConfigs.filter((item) => {
+    const filteredConfigData = filterConfigs(
+      useUserPreferencesMeasurement()
+    ).filter((item) => {
       if (!item.key) return true;
       const filterItem = get(config, item.key);
       return filterItem?.enabled;

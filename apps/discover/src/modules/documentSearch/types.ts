@@ -9,14 +9,11 @@ import {
 } from '@cognite/sdk-playground';
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
-import { DocumentCategory } from '../../modules/api/documents/types';
-
 // Document state
 
 export interface DocumentState {
   currentDocumentQuery: DocumentQuery;
   result: DocumentResult;
-  isolatedDocumentResultFacets: DocumentResultFacets;
   selectedDocumentIds: string[];
   hoveredDocumentId?: string;
   isSearching: boolean;
@@ -196,10 +193,6 @@ export interface FormattedFacet {
 export type DocumentsAggregatesResponse = DocumentsAggregatesSDKResponse<
   DocumentsSearchWrapper[]
 >;
-
-export type DocumentCategoryToDocumentQueryFacetsKeyMap = {
-  [x in keyof DocumentCategory]: keyof DocumentQueryFacets;
-};
 
 export type DocumentRowType = Row<DocumentTypeDataModel>;
 

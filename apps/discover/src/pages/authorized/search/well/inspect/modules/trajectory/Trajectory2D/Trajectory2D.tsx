@@ -2,19 +2,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo } from 'react';
 
-import get from 'lodash/get';
+import template from 'lodash/template';
 
-import { Sequence } from '@cognite/sdk';
+import { Sequence, SequenceColumn } from '@cognite/sdk';
 
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import {
   TrajectoryRow,
   TrajectoryRows,
   Wellbore,
 } from 'modules/wellSearch/types';
-import { findIndexByName } from 'modules/wellSearch/utils/trajectory';
+import { getDataPointInPreferredUnit } from 'modules/wellSearch/utils/trajectory';
 import { FlexGrow } from 'styles/layout';
-import { ChartDataConfig } from 'tenants/types';
+import { ChartDataConfig, ChartVizDataConfig } from 'tenants/types';
 
 import { WellboreSelectionWrapper } from '../../../elements';
 import { Chart } from '../../common/Chart';
@@ -39,6 +40,7 @@ export const Trajectory2D: React.FC<Props> = ({
   onSelectWellbore,
 }) => {
   const { data: config } = useWellConfig();
+  const userPreferredUnit = useUserPreferencesMeasurement();
 
   const getWellboreNameForTraj = (trajId = '') =>
     getWellboreNameForTrajectory(trajId, selectedTrajectories);
@@ -69,10 +71,14 @@ export const Trajectory2D: React.FC<Props> = ({
       if (traj) {
         traj.rows.forEach((row) => {
           chartObjs.forEach((chartObj, index) => {
+            const columnData = selectedTrajectories.find(
+              (trajectory) => trajectory.id === traj.id
+            )?.columns;
             getAddDataFn(chartConfigs[index].type)(
               chartObj,
               row,
-              chartConfigs[index].chartData
+              chartConfigs[index].chartData,
+              columnData
             );
           });
         });
@@ -116,26 +122,27 @@ export const Trajectory2D: React.FC<Props> = ({
   const addLineData = (
     lineObj: any,
     row: TrajectoryRow,
-    chartData: ChartDataConfig
+    chartData: ChartDataConfig,
+    columnData?: SequenceColumn[]
   ) => {
     lineObj.x.push(
-      get(
-        row.values,
-        findIndexByName(
-          chartData.x,
-          selectedTrajectoryData,
-          config?.trajectory?.normalizeColumns
-        ) || -1
+      getDataPointInPreferredUnit(
+        row,
+        chartData.x,
+        selectedTrajectoryData,
+        userPreferredUnit,
+        columnData,
+        config
       )
     );
     lineObj.y.push(
-      get(
-        row.values,
-        findIndexByName(
-          chartData.y,
-          selectedTrajectoryData,
-          config?.trajectory?.normalizeColumns
-        ) || -1
+      getDataPointInPreferredUnit(
+        row,
+        chartData.y,
+        selectedTrajectoryData,
+        userPreferredUnit,
+        columnData,
+        config
       )
     );
   };
@@ -143,36 +150,37 @@ export const Trajectory2D: React.FC<Props> = ({
   const add3DLineData = (
     lineObj: any,
     row: TrajectoryRow,
-    chartData: ChartDataConfig
+    chartData: ChartDataConfig,
+    columnData?: SequenceColumn[]
   ) => {
     lineObj.x.push(
-      get(
-        row.values,
-        findIndexByName(
-          chartData.x,
-          selectedTrajectoryData,
-          config?.trajectory?.normalizeColumns
-        ) || -1
+      getDataPointInPreferredUnit(
+        row,
+        chartData.x,
+        selectedTrajectoryData,
+        userPreferredUnit,
+        columnData,
+        config
       )
     );
     lineObj.y.push(
-      get(
-        row.values,
-        findIndexByName(
-          chartData.y,
-          selectedTrajectoryData,
-          config?.trajectory?.normalizeColumns
-        ) || -1
+      getDataPointInPreferredUnit(
+        row,
+        chartData.y,
+        selectedTrajectoryData,
+        userPreferredUnit,
+        columnData,
+        config
       )
     );
     lineObj.z.push(
-      get(
-        row.values,
-        findIndexByName(
-          chartData.z || '',
-          selectedTrajectoryData,
-          config?.trajectory?.normalizeColumns
-        ) || -1
+      getDataPointInPreferredUnit(
+        row,
+        chartData.z || '',
+        selectedTrajectoryData,
+        userPreferredUnit,
+        columnData,
+        config
       )
     );
   };
@@ -207,6 +215,25 @@ export const Trajectory2D: React.FC<Props> = ({
 
   const isLegend = (index: number) => chartConfigs[index].type === 'legend';
 
+  const getChartVizDataConfig = (
+    chartVizDataConfig: ChartVizDataConfig
+  ): ChartVizDataConfig => {
+    return {
+      ...chartVizDataConfig,
+      axisNames: {
+        x: template(chartVizDataConfig.axisNames.x)({
+          unit: userPreferredUnit,
+        }),
+        y: template(chartVizDataConfig.axisNames.x)({
+          unit: userPreferredUnit,
+        }),
+        z: template(chartVizDataConfig.axisNames.x)({
+          unit: userPreferredUnit,
+        }),
+      },
+    };
+  };
+
   if (!config) {
     return null;
   }
@@ -235,7 +262,7 @@ export const Trajectory2D: React.FC<Props> = ({
                 isTrajectory
                 data={chartMap.chart}
                 showLegend={isLegend(index)}
-                {...chartConfigs[index].chartVizData}
+                {...getChartVizDataConfig(chartConfigs[index].chartVizData)}
                 axisAutorange={{
                   y: 'reversed',
                   z: chartConfigs[index].type === '3d' ? 'reversed' : undefined,

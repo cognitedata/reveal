@@ -8,7 +8,7 @@ import {
   useStartTimeLogger,
   useStopTimeLogger,
 } from 'hooks/useTimeLog';
-import { getWellSDKClient } from 'modules/wellSearch/sdk';
+import { getNPTItems } from 'modules/wellSearch/sdk';
 import { WellboreExternalIdMap } from 'modules/wellSearch/types';
 
 import { EVENT_PER_PAGE } from './common';
@@ -26,9 +26,8 @@ export async function getNptEventsByWellboreIds(
     );
   }
 
-  const service = getWellSDKClient().events.listNPT;
   const wellboreIds = Object.values(wellboreExternalIdMap);
-  let { items, nextCursor } = await service(
+  let { items, nextCursor } = await getNPTItems(
     { wellboreIds },
     undefined,
     EVENT_PER_PAGE
@@ -36,7 +35,11 @@ export async function getNptEventsByWellboreIds(
 
   while (nextCursor) {
     // eslint-disable-next-line no-await-in-loop
-    const response = await service({ wellboreIds }, nextCursor, EVENT_PER_PAGE);
+    const response = await getNPTItems(
+      { wellboreIds },
+      nextCursor,
+      EVENT_PER_PAGE
+    );
     nextCursor = response.nextCursor;
     items = [...items, ...response.items];
   }

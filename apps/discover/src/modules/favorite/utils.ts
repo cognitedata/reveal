@@ -5,4 +5,8 @@ const getFavoriteLastUpdateByUserName = (data: LastUpdatedBy[]) => {
   return getFullNameOrDefaultText(data[data.length - 1]);
 };
 
-export { getFavoriteLastUpdateByUserName };
+const getFavoriteLastUpdatedByDateTime = (data: LastUpdatedBy[]) => {
+  return data[data.length - 1]?.dateTime;
+};
+
+export { getFavoriteLastUpdateByUserName, getFavoriteLastUpdatedByDateTime };

@@ -38,7 +38,7 @@ trap cleanup EXIT
 echo '-------------'
 echo "Current user: $USER_ID" 
 echo '-------------'
-PORT=3000 REACT_APP_USER_ID=$USER_ID yarn start
+PORT=3000 REACT_APP_USER_ID=$USER_ID yarn start:old
 EXIT_CODE=$?
 
 exit $EXIT_CODE

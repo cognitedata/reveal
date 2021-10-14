@@ -88,7 +88,10 @@ export const defaultWellsConfig: TenantConfig = {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'East West (ft)', y: 'North South (ft)' },
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'North South (<%= unit %>)',
+            },
             title: 'NS vs EW',
           },
         },
@@ -99,7 +102,10 @@ export const defaultWellsConfig: TenantConfig = {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'North South (ft)', y: 'True Vertical Depth (ft)' },
+            axisNames: {
+              x: 'North South (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
+            },
             title: 'TVD vs NS',
           },
         },
@@ -110,7 +116,10 @@ export const defaultWellsConfig: TenantConfig = {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'East West (ft)', y: 'True Vertical Depth (ft)' },
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
+            },
             title: 'TVD vs EW',
           },
         },
@@ -122,8 +131,8 @@ export const defaultWellsConfig: TenantConfig = {
           },
           chartVizData: {
             axisNames: {
-              x: 'Equivalent_Departure (ft)',
-              y: 'True Vertical Depth (ft)',
+              x: 'Equivalent_Departure (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
             },
             title: 'TVD vs ED',
           },
@@ -136,9 +145,9 @@ export const defaultWellsConfig: TenantConfig = {
           },
           chartVizData: {
             axisNames: {
-              x: 'East West (ft)',
-              y: 'North South (ft)',
-              z: 'TVD (ft)',
+              x: 'East West (<%= unit %>)',
+              y: 'North South (<%= unit %>)',
+              z: 'TVD (%{unit})',
             },
             title: 'TVD 3D view',
           },
@@ -331,36 +340,45 @@ export const defaultWellsConfig: TenantConfig = {
       enabled: true,
     },
     digitalRocks: {
-      enabled: false,
+      enabled: true,
       metaInfo: {
         createdTmeFormat: 'YYYYMMDD_HHmmss',
       },
       fetch: (client, filters = {}) => {
         return client.assets.search({
           filter: {
-            metadata: {
-              type: 'Digital Rock',
-            },
+            dataSetIds: [
+              {
+                externalId: 'ds-BP-digital-rocks',
+              },
+              {
+                externalId: 'ds-BP-digital-rocks-worldwide',
+              },
+            ],
+            source: 'DigitalRocks',
             ...filters,
           },
         });
       },
-      digitalRockSampleFetch: (client, filters = {}) => {
+      digitalRockSampleFetch: (client, filter = {}) => {
         return client.assets.search({
-          filter: {
-            metadata: {
-              type: 'Digital Rock Sample',
-            },
-            ...filters,
-          },
+          filter,
         });
       },
       gpartFetch: (client, filters = {}) => {
         return client.sequences.search({
           filter: {
             metadata: {
-              type: 'Grain Partitioning',
+              WI: 'GPART',
             },
+            dataSetIds: [
+              {
+                externalId: 'ds-BP-digital-rocks',
+              },
+              {
+                externalId: 'ds-BP-digital-rocks-worldwide',
+              },
+            ],
             ...filters,
           },
         });
@@ -401,6 +419,8 @@ const defaultConfig: TenantConfig = {
   azureConfig: {
     enabled: true,
   },
+  hideFilterCount: false,
+  showDynamicResultCount: true,
 };
 
 export default defaultConfig;

@@ -1,4 +1,4 @@
-import { DoubleWithUnit } from '@cognite/sdk-wells/dist/src/client/model/DoubleWithUnit';
+import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/DoubleWithUnit';
 
 import { Wellbore } from 'modules/wellSearch/types';
 

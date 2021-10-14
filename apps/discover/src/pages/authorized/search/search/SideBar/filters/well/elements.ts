@@ -20,6 +20,7 @@ export const WellDateRangeWrapper = styled.div`
 export const MultiSelectWrapper = styled.div`
   padding-top: ${sizes.small};
   padding-bottom: ${sizes.small};
+  margin-bottom: ${sizes.normal};
 `;
 
 export const DateRangeTitle = styled(FlexColumn)`

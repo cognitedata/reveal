@@ -2,14 +2,20 @@ import React, { useState, useMemo, useEffect } from 'react';
 
 import get from 'lodash/get';
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 import sortBy from 'lodash/sortBy';
 
 import { Sequence, CogniteEvent } from '@cognite/sdk';
 
-import { PPG } from 'constants/units';
+import { changeUnitTo } from '_helpers/units/utils';
+import { FEET, PPG } from 'constants/units';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
 import { TRACK_CONFIG } from 'modules/wellSearch/constants';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
+import { ndsAccessorsToFixedDecimal } from 'modules/wellSearch/selectors/event/constants';
+import { getNdsUnitChangeAccessors } from 'modules/wellSearch/selectors/event/helper';
 import { SequenceRow, SequenceData } from 'modules/wellSearch/types';
+import { convertObject } from 'modules/wellSearch/utils';
 import { convertToPpg } from 'modules/wellSearch/utils/common';
 import { TrackConfig } from 'tenants/types';
 
@@ -53,6 +59,8 @@ export const LogViewer: React.FC<Props> = ({
     {}
   );
 
+  const userPreferredUnit = useUserPreferencesMeasurement();
+
   const tracks = useMemo(() => {
     return get(config, 'logs.tracks', [])
       .filter((track: TrackConfig) => track.enabled)
@@ -63,7 +71,7 @@ export const LogViewer: React.FC<Props> = ({
   const setConvertedRowData = (log: Sequence, data: SequenceRow[]) => {
     const logData: LogViewerData = {};
 
-    if (data.length > 0) {
+    if (!isEmpty(data)) {
       const firstRow = head(data);
 
       // Create columns map with index
@@ -74,48 +82,75 @@ export const LogViewer: React.FC<Props> = ({
 
       // find MD column index
       const mdColIndex = columnsIndexMap[MD_COL_NAME];
+      const mdUnit = log.columns[mdColIndex].metadata?.unit || FEET;
 
       // Continues only if dataset has MD column
-      if (mdColIndex !== undefined) {
-        // Get only the configured columns
-        TRACK_CONFIG.forEach((track) => {
-          if (track.type === 'DepthLogs') {
-            const dataIndex = columnsIndexMap[track.column];
-            const unit = log ? getTrackUnit(log, track.column) : '';
-            if (track.name === 'MD') {
-              // if the track name is 'MD', set the values as number list
-              logData[track.name] = {
-                values: data.map((row) => row[mdColIndex] as number),
-                unit,
-              };
-            } else {
-              // if the track name is not 'MD', set the values as Tuplet by setting the first value as MD value
-              // if all the values are null, then track data will be deleted from the logData
-              let valuesExist = false;
-              const values = data.map((row) => {
-                if (row[dataIndex] || row[dataIndex] === 0) {
-                  valuesExist = true;
-                }
-                return [row[mdColIndex], row[dataIndex]] as Tuplet;
-              });
+      if (mdColIndex === undefined) return;
 
-              if (valuesExist) {
-                logData[track.name] = {
-                  values,
-                  unit,
-                  domain: domains[track.name],
-                };
-              }
+      // Get only the configured columns
+      TRACK_CONFIG.forEach((track) => {
+        if (track.type !== 'DepthLogs') return;
+
+        const dataIndex = columnsIndexMap[track.column];
+        const unit = log ? getTrackUnit(log, track.column) : '';
+        if (track.name === 'MD') {
+          // if the track name is 'MD', set the values as number list
+          logData[track.name] = {
+            values: data
+              .map((row) => row[mdColIndex] as number)
+              .map(
+                (value) => changeUnitTo(value, unit, userPreferredUnit) || 0
+              ),
+            unit: userPreferredUnit,
+          };
+        } else {
+          // if the track name is not 'MD', set the values as Tuplet by setting the first value as MD value
+          // if all the values are null, then track data will be deleted from the logData
+          let valuesExist = false;
+          const values = data.map((row) => {
+            if (row[dataIndex] || row[dataIndex] === 0) {
+              valuesExist = true;
             }
+            return [
+              unit !== ''
+                ? changeUnitTo(
+                    row[mdColIndex] as number,
+                    mdUnit,
+                    userPreferredUnit
+                  )
+                : row[mdColIndex],
+              row[dataIndex],
+            ] as Tuplet;
+          });
+
+          if (valuesExist) {
+            logData[track.name] = {
+              values,
+              unit,
+              domain: domains[track.name],
+            };
           }
-        });
-      }
+        }
+      });
     }
 
-    if (Object.keys(logData).length === 0) {
+    if (isEmpty(Object.keys(logData))) {
       const unit = getTrackUnit(log, MD_COL_NAME);
-      const startDepth = Number(get(log, 'metadata.startDepth'));
-      const endDepth = Number(get(log, 'metadata.endDepth'));
+      const startDepth =
+        changeUnitTo(
+          Number(get(log, 'metadata.startDepth')),
+          unit,
+          userPreferredUnit
+        ) || 0;
+      const endDepth =
+        changeUnitTo(
+          Number(get(log, 'metadata.endDepth')),
+          unit,
+          userPreferredUnit
+        ) || 0;
+
+      console.log('startDepth, endDepth', startDepth, endDepth);
+
       logData.MD = {
         values: [startDepth, endDepth],
         unit,
@@ -145,34 +180,34 @@ export const LogViewer: React.FC<Props> = ({
     if (mdColIndex !== undefined) {
       // Get only the configured columns
       TRACK_CONFIG.forEach((track) => {
-        if (track.type === 'FormationTops') {
-          const dataIndex = columnsIndexMap[track.column];
-          const unit = log ? getTrackUnit(log, track.column) : '';
-          // do nothing with MD column! We'll bake MD into the tuplet as usual and
-          // then let videx map to the logsData MD instead
-          if (track.name !== 'MD') {
-            // if the track name is not 'MD', set the values as Tuplet by setting the first value as MD value
-            // if all the values are null, then track data will be deleted from the logData
-            let valuesExist = false;
-            const values = data.map((row) => {
-              if (row[dataIndex] !== null) {
-                valuesExist = true;
-              }
-              return [row[mdColIndex], row[dataIndex]] as Tuplet;
-            });
+        if (track.type !== 'FormationTops') return;
 
-            if (valuesExist) {
-              const sortedValues = sortTuples(values);
-
-              const filteredValues = sortedValues.filter((tuplet) => {
-                return (
-                  tuplet[1].toString().includes('Mudline') ||
-                  tuplet[1].toString().includes('Top') ||
-                  tuplet[1].toString().includes('Base')
-                );
-              });
-              logFrmTopsData[track.name] = { values: filteredValues, unit };
+        const dataIndex = columnsIndexMap[track.column];
+        const unit = log ? getTrackUnit(log, track.column) : '';
+        // do nothing with MD column! We'll bake MD into the tuplet as usual and
+        // then let videx map to the logsData MD instead
+        if (track.name !== 'MD') {
+          // if the track name is not 'MD', set the values as Tuplet by setting the first value as MD value
+          // if all the values are null, then track data will be deleted from the logData
+          let valuesExist = false;
+          const values = data.map((row) => {
+            if (row[dataIndex] !== null) {
+              valuesExist = true;
             }
+            return [row[mdColIndex], row[dataIndex]] as Tuplet;
+          });
+
+          if (valuesExist) {
+            const sortedValues = sortTuples(values);
+
+            const filteredValues = sortedValues.filter((tuplet) => {
+              return (
+                tuplet[1].toString().includes('Mudline') ||
+                tuplet[1].toString().includes('Top') ||
+                tuplet[1].toString().includes('Base')
+              );
+            });
+            logFrmTopsData[track.name] = { values: filteredValues, unit };
           }
         }
       });
@@ -187,7 +222,7 @@ export const LogViewer: React.FC<Props> = ({
 
   // This set formatted ppfg data in the state
   const setConvertedPPFGRowData = (log: Sequence, data: SequenceRow[]) => {
-    if (data.length === 0) return;
+    if (isEmpty(data)) return;
 
     const firstRow = head(data);
 
@@ -203,47 +238,68 @@ export const LogViewer: React.FC<Props> = ({
     // Continues only if dataset has MD column
     if (mdColIndex === undefined) return;
 
-    const topDepth = firstRow ? (firstRow[mdColIndex] as number) : null;
-    const baseDepth = data[data.length - 1][mdColIndex] as number;
+    const mdUnit = log.columns[mdColIndex].metadata?.unit || FEET;
+    const topDepth = firstRow
+      ? changeUnitTo(
+          firstRow[mdColIndex] as number,
+          mdUnit,
+          userPreferredUnit
+        ) || 0
+      : null;
+    const baseDepth =
+      changeUnitTo(
+        data[data.length - 1][mdColIndex] as number,
+        mdUnit,
+        userPreferredUnit
+      ) || 0;
 
     const ppfgData: LogViewerData = {};
     // Get only the configured columns
     TRACK_CONFIG.forEach((track) => {
-      if (track.type === 'PPFG') {
-        const dataIndex = columnsIndexMap[track.column];
-        const unit = log ? getTrackUnit(log, track.column) : '';
-        const depthUnit = log ? getTrackUnit(log, PPFG_MD_COL_NAME) : '';
+      if (track.type !== 'PPFG') return;
 
-        // do nothing with MD column! We'll bake MD into the tuplet as usual and
-        // then let videx map to the logsData MD instead
-        if (track.name !== 'MD' && unit && depthUnit) {
-          // if the track name is not 'MD', set the values as Tuplet by setting the first value as MD value
-          // if all the values are null, then track data will be deleted from the logData
-          let valuesExist = false;
-          const values = data.map((row) => {
-            let value = null;
-            if (row[dataIndex] !== null) {
-              valuesExist = true;
-              value = convertToPpg(
-                row[dataIndex] as number,
-                unit,
-                row[mdColIndex] as number,
-                depthUnit
-              );
-            }
-            return [row[mdColIndex], value] as Tuplet;
-          });
-          if (valuesExist) {
-            ppfgData[track.name] = {
-              values,
-              unit: PPG,
-              domain: domains[track.name],
-            };
+      const dataIndex = columnsIndexMap[track.column];
+      const unit = log ? getTrackUnit(log, track.column) : '';
+      const depthUnit = log ? getTrackUnit(log, PPFG_MD_COL_NAME) : '';
+
+      // do nothing with MD column! We'll bake MD into the tuplet as usual and
+      // then let videx map to the logsData MD instead
+      if (track.name !== 'MD' && unit && depthUnit) {
+        // if the track name is not 'MD', set the values as Tuplet by setting the first value as MD value
+        // if all the values are null, then track data will be deleted from the logData
+        let valuesExist = false;
+        const values = data.map((row) => {
+          let value = null;
+          if (row[dataIndex] !== null) {
+            valuesExist = true;
+            value = convertToPpg(
+              row[dataIndex] as number,
+              unit,
+              row[mdColIndex] as number,
+              depthUnit
+            );
           }
+          return [
+            unit !== ''
+              ? changeUnitTo(
+                  row[mdColIndex] as number,
+                  'ft', // TODO(CM-6) problem
+                  userPreferredUnit
+                )
+              : row[mdColIndex],
+            value,
+          ] as Tuplet;
+        });
+        if (valuesExist) {
+          ppfgData[track.name] = {
+            values,
+            unit: PPG,
+            domain: domains[track.name],
+          };
         }
       }
     });
-    if (Object.keys(ppfgData).length > 0) {
+    if (!isEmpty(Object.keys(ppfgData))) {
       setPPFGsData((r) => ({ ...r, ...{ [log.assetId as number]: ppfgData } }));
 
       // This is added to extend logs data ranges based on the ppfg top and base depth.
@@ -308,6 +364,14 @@ export const LogViewer: React.FC<Props> = ({
       Number(get(event, 'metadata.md_hole_start'))
     )
       .filter((event) => !overlappingEvents[event.id])
+      .map((event) =>
+        convertObject(event)
+          .changeUnits(
+            getNdsUnitChangeAccessors(useUserPreferencesMeasurement())
+          )
+          .toClosestInteger(ndsAccessorsToFixedDecimal)
+          .get()
+      )
       .flatMap((event) => [
         [
           Number(get(event, 'metadata.md_hole_start')),

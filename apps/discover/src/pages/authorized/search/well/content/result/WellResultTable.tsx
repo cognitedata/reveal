@@ -15,8 +15,8 @@ import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import { Options, Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
-import { FEET } from 'constants/units';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import {
   wellSearchActions,
@@ -26,9 +26,10 @@ import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
 import { getGroupedWellboresByWellIds } from 'modules/wellSearch/service/asset/wellbore';
 import { Well, InspectWellboreContext } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
-import { wellColumns, WellResultTableOptions } from 'pages/authorized/constant';
+import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { SearchTableResultActionContainer } from 'pages/authorized/search/elements';
+import { useWellResultColumns } from 'pages/authorized/search/well/hooks/useWellUtils';
 import { FlexRow } from 'styles/layout';
 
 import { WellOptionPanel } from '../WellOptionPanel';
@@ -55,6 +56,12 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     dispatchSetInspectContext,
   } = props;
 
+  const userPreferredUnit = useUserPreferencesMeasurement();
+  /**
+   * Columns with user preffered unit in the header
+   */
+  const wellColumns = useWellResultColumns();
+
   const dispatch = useDispatch();
   const [options] = useState<Options>(WellResultTableOptions);
 
@@ -73,7 +80,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     {
       accessor: 'waterDepth.value',
       fromAccessor: 'waterDepth.unit',
-      to: FEET,
+      to: userPreferredUnit,
     },
   ]);
 

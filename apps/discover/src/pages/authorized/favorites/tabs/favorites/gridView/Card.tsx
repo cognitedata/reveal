@@ -10,7 +10,10 @@ import { Card } from 'components/card';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { FavoriteSummary } from 'modules/favorite/types';
-import { getFavoriteLastUpdateByUserName } from 'modules/favorite/utils';
+import {
+  getFavoriteLastUpdateByUserName,
+  getFavoriteLastUpdatedByDateTime,
+} from 'modules/favorite/utils';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { FlexColumn, FlexRow, FlexAlignItems } from 'styles/layout';
 import { useTheme } from 'styles/useTheme';
@@ -124,7 +127,9 @@ export const FavouriteCard: React.FC<Props> = ({
             <Value>
               {`${getFavoriteLastUpdateByUserName(
                 favorite.lastUpdatedBy
-              )} on ${shortDate(favorite?.lastUpdatedTime)}`}
+              )} on ${shortDate(
+                getFavoriteLastUpdatedByDateTime(favorite.lastUpdatedBy)
+              )}`}
             </Value>
           </ContentRow>
           <ContentRow>

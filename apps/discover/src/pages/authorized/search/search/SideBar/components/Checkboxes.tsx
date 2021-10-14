@@ -6,7 +6,6 @@ import { v1 } from 'uuid';
 import { Checkbox } from '@cognite/cogs.js';
 
 import { formatBigNumbersWithSuffix } from '_helpers/number';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { DocumentQueryFacet } from 'modules/documentSearch/types';
 
 import {
@@ -40,10 +39,6 @@ export const Checkboxes: React.FC<Props> = ({
   onValueChange,
   hideResultsCount,
 }) => {
-  const { data: showDynamicResultCount } = useTenantConfigByKey<boolean>(
-    'showDynamicResultCount'
-  );
-
   const onChange = (selected: boolean, option: CheckboxState) => {
     const selectedValues = data
       .filter(
@@ -59,12 +54,11 @@ export const Checkboxes: React.FC<Props> = ({
   const renderBadgeContent = (row: CheckboxState) => {
     if (!isUndefined(row.count)) {
       const totalRowCountFormatted = formatBigNumbersWithSuffix(row.count);
-      const isResultsCountBadgeDisabled = showDynamicResultCount && !row.count;
 
       return (
         <ResultsCountBadge
           text={`${totalRowCountFormatted}`}
-          disabled={isResultsCountBadgeDisabled}
+          disabled={!row.count}
         />
       );
     }
@@ -83,21 +77,19 @@ export const Checkboxes: React.FC<Props> = ({
       )}
       <CheckboxContainer>
         {data.map((row) => {
-          const isCheckboxDisabled = !isUndefined(row.count) && !row.count;
-          const isCheckboxTextDisabed =
-            showDynamicResultCount && isCheckboxDisabled;
+          const isDisabled = !isUndefined(row.count) && !row.count;
 
           return (
             <Checkbox
               name={`${groupId}_${row.name}`}
               key={row.name}
               checked={row.selected}
-              disabled={isCheckboxDisabled}
+              disabled={isDisabled}
               onChange={(selected) => onChange(selected, row)}
             >
               <CheckboxItemContainer>
                 <CheckboxFacetText
-                  disabled={isCheckboxTextDisabed}
+                  disabled={isDisabled}
                   data-testid="filter-checkbox-label"
                   level={2}
                 >

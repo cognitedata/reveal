@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
@@ -170,7 +171,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     }
   };
 
-  if (!selectedLogType && logTypeSelections.length > 0) {
+  if (!selectedLogType && !isEmpty(logTypeSelections)) {
     onLogTypeSelection(logTypeSelections[0]);
   }
 
@@ -184,6 +185,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     const { logType, logTypeId, webId } = selectedLogType;
 
     if (logType === PPFG_LOG_TYPE) {
+      console.log(PPFG_LOG_TYPE);
       return ppfgIdMapping[logTypeId] && ppfgIdMapping[logTypeId].rows ? (
         <PPFGViewer ppfgData={ppfgIdMapping[logTypeId]} />
       ) : (
@@ -192,6 +194,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     }
 
     if (logType === GEOMECHANIC_LOG_TYPE) {
+      console.log(GEOMECHANIC_LOG_TYPE);
       return geomechanicIdMapping[logTypeId] &&
         geomechanicIdMapping[logTypeId].rows ? (
         <GeomechanicViewer geomechanicData={geomechanicIdMapping[logTypeId]} />
@@ -201,6 +204,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     }
 
     if (logType === PETREL_LOG_TYPE) {
+      console.log(PETREL_LOG_TYPE);
       if (ndsLoading || !ndsData) return <WhiteLoader />;
       if (ppfgWellboreIdMapping[webId] && !ppfgWellboreIdMapping[webId].rows)
         return <WhiteLoader />;
@@ -303,7 +307,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
         >
           <ExpandButton text={selectedLogType?.title || DATE_NOT_AVAILABLE} />
         </Dropdown>
-        {markersFilters.length > 0 && (
+        {!isEmpty(markersFilters) && (
           <MarkersFilterWrapper>
             <ManageColumnsPanel
               columns={markersFilters}

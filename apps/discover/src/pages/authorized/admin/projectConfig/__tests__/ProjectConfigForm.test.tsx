@@ -1,12 +1,20 @@
 import { cleanup, fireEvent, screen, act } from '@testing-library/react';
 
+import {
+  mockProjectConfigMetadata,
+  mockConfigDataWithLayers,
+} from '__test-utils/fixtures/projectConfigMetadata';
 import { testRenderer } from '__test-utils/renderer';
 
-import { ProjectConfigForm } from '../ProjectConfigForm';
+import {
+  ProjectConfigForm,
+  adaptedSelectedPathToMetadataPath,
+} from '../ProjectConfigForm';
 
 const defaultProps = {
   config: {},
   onChange: jest.fn(),
+  metadata: mockProjectConfigMetadata,
 };
 
 describe('ProjectConfigForm', () => {
@@ -42,6 +50,53 @@ describe('ProjectConfigForm', () => {
       fireEvent.click(screen.getByText('Documents'));
 
       expect(screen.queryByText('Disabled')).toBeInTheDocument();
+    });
+  });
+
+  test('should show layers 1 data as children for truthy dataAsChildren metadata & trigger onChange on blurring json input', async () => {
+    await act(async () => {
+      await defaultTestInit({
+        ...defaultProps,
+        config: mockConfigDataWithLayers,
+      });
+      const map = screen.getByText('Map');
+      fireEvent.click(map);
+      const layers = screen.getByText('Layers');
+      fireEvent.click(layers);
+
+      expect(screen.queryByText('Layers 1')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('Layers 1'));
+
+      const mockFilters = { a: 1 };
+
+      fireEvent.focusOut(screen.getByPlaceholderText('Filters'), {
+        target: { value: JSON.stringify(mockFilters) },
+      });
+
+      expect(defaultProps.onChange).toHaveBeenCalled();
+      const onChangeArgs = defaultProps.onChange.mock.calls[0];
+      expect(onChangeArgs[0]).toBe('map.layers.0.filters');
+      expect(onChangeArgs[1]).toStrictEqual(mockFilters);
+    });
+  });
+
+  describe('adaptedSelectedPathToMetadataPath', () => {
+    test('should inject selected path with children keyword at each level for accessing nested metadata', () => {
+      expect(
+        adaptedSelectedPathToMetadataPath('wells.trajectory.enabled')
+      ).toBe('wells.children.trajectory.children.enabled');
+    });
+    test('should replace number accessor with children for accessing dataAsChildren metadata', () => {
+      expect(adaptedSelectedPathToMetadataPath('map.layers.0.filters')).toBe(
+        'map.children.layers.children.filters'
+      );
+    });
+    test('should return empty string when selected path is empty', () => {
+      expect(adaptedSelectedPathToMetadataPath('')).toBe('');
+    });
+    test('should return empty path when no path is sent', () => {
+      expect(adaptedSelectedPathToMetadataPath()).toBe('');
     });
   });
 });

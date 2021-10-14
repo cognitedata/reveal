@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 
-import get from 'lodash/get';
-import head from 'lodash/head';
-
 import { Asset } from '@cognite/sdk';
 
 import EmptyState from 'components/emptyState';
 import { Table } from 'components/tablev2';
+import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
 
 import DialogPopup from '../common/DialogPopup';
@@ -14,47 +12,44 @@ import DialogPopup from '../common/DialogPopup';
 import { DigitalRocksSampleWrapper, TableButton } from './elements';
 import GrainAnalysis from './GrainAnalysis';
 
-const columns = (rMedianTraskUnit = '', rMeanTraskUnit = '') =>
-  [
-    {
-      Header: 'Name',
-      accessor: 'name',
-    },
-    {
-      Header: 'Description',
-      accessor: 'description',
-    },
-    {
-      Header: 'Source',
-      accessor: 'source',
-    },
-    {
-      Header: 'Uncertainty',
-      accessor: 'metadata.uncertainty',
-    },
-    {
-      Header: 'Volume',
-      accessor: 'metadata.volume_id',
-    },
-    {
-      Header: 'Orientation',
-      accessor: 'metadata.orientation',
-    },
-    {
-      Header: `Median grain diameter${
-        rMedianTraskUnit && `(${rMedianTraskUnit})`
-      }`,
-      accessor: 'metadata.r_median_trask',
-    },
-    {
-      Header: `Mean grain diameter${rMeanTraskUnit && `(${rMeanTraskUnit})`}`,
-      accessor: 'metadata.r_mean_trask',
-    },
-    {
-      Header: 'Dimension(voxels) - (X,Y,Z)',
-      accessor: 'metadata.dimensionXYZ',
-    },
-  ].map((row) => ({ ...row, width: 'auto' }));
+const columns = [
+  {
+    Header: 'Name',
+    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.NAME,
+  },
+  {
+    Header: 'Description',
+    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.DESCRIPTION,
+  },
+  {
+    Header: 'Source',
+    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.SOURCE,
+  },
+  {
+    Header: 'Uncertainty',
+    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.UNCERTAINTY,
+  },
+  {
+    Header: 'Volume',
+    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.VOLUME_ID,
+  },
+  {
+    Header: 'Orientation',
+    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.ORIENTATION,
+  },
+  {
+    Header: 'Median grain diameter(microns)',
+    accessor: 'metadata.rMedianTrask',
+  },
+  {
+    Header: 'Mean grain diameter(microns)',
+    accessor: 'metadata.rMeanTrask',
+  },
+  {
+    Header: 'Dimension(voxels) - (X,Y,Z)',
+    accessor: 'metadata.dimensionXYZ',
+  },
+].map((row) => ({ ...row, width: 'auto' }));
 
 export type Props = {
   digitalRock: Asset;
@@ -102,14 +97,8 @@ const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
     return <EmptyState isLoading={isLoading} />;
   }
 
-  const rMedianTraskUnit = digitalRockSamples.length
-    ? get(head(digitalRockSamples), 'metadata.r_median_trask_unit', '')
-    : '';
-  const rMeanTraskUnit = digitalRockSamples.length
-    ? get(head(digitalRockSamples), 'metadata.r_mean_trask_unit', '')
-    : '';
   const extendedColumns = [
-    ...columns(rMedianTraskUnit, rMeanTraskUnit),
+    ...columns,
     {
       id: 'grain-analysis-column',
       accessor: (asset: Asset) => (

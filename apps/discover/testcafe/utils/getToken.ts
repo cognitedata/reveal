@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import os from 'os';
 
 import fetch, { Request, Response, Headers } from 'cross-fetch';
 
@@ -48,13 +49,13 @@ if (!globalThis.fetch) {
 
 // make sure we get the same token as the one we use locally
 export const getTokenHeaders = (): Promise<Record<string, string>> => {
-  let userId = process.env.REACT_APP_USER_ID;
-  if (!userId) {
-    try {
-      userId = execSync('git config user.email').toString().trim();
-    } catch {
-      console.error('Cannot decide on a user ID to run the tests with.');
-    }
+  let userId;
+  try {
+    // local
+    userId = execSync('git config user.email').toString().trim();
+  } catch {
+    // CI
+    userId = os.hostname().split('-').slice(-1).join('');
   }
 
   progress(' ');

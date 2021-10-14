@@ -1,53 +1,61 @@
 import { useMemo } from 'react';
-import { useQueryClient } from 'react-query';
 
-import get from 'lodash/get';
-import set from 'lodash/set';
+import isUndefined from 'lodash/isUndefined';
 
-import { DOCUMENT_CATEGORIES_QUERY_KEY } from 'constants/react-query';
+import { DocumentCategory } from 'modules/api/documents/types';
 import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
-import { DOCUMENT_CATEGORY_TO_DOCUMENT_QUERY_FACETS_KEY_MAP } from 'modules/documentSearch/constants';
-import { useDocumentPayloadWithAvailableResultsCount } from 'modules/documentSearch/hooks/useDocumentPayloadWithAvailableResultsCount';
-import {
-  useFacets,
-  useDocumentResultCount,
-} from 'modules/documentSearch/selectors';
-import { useSearchPhrase } from 'modules/sidebar/selectors';
+
+import { patchDocumentPayloadCount } from '../utils/availableDocumentResultsCount';
+
+import { useDocumentsCategories } from './useDocumentsCategories';
+
+let documentCategoryData: DocumentCategory;
 
 export const useDocumentQueryFacets = () => {
-  const queryClient = useQueryClient();
   const { isLoading, error, data } = useDocumentCategoryQuery();
-  const facetsState = useFacets();
-  const documentResultCount = useDocumentResultCount();
-  const searchPhrase = useSearchPhrase();
-  const getDocumentPayloadWithAvailableResultsCount =
-    useDocumentPayloadWithAvailableResultsCount();
-  const categoryDataKeys = Object.keys(
-    DOCUMENT_CATEGORY_TO_DOCUMENT_QUERY_FACETS_KEY_MAP
-  );
+
+  const { data: filetypeResponse } = useDocumentsCategories('filetype');
+  const { data: labelsResponse } = useDocumentsCategories('labels');
+  const { data: locationResponse } = useDocumentsCategories('location');
+
+  const isDocumentsCategoriesDataUndefined =
+    isUndefined(filetypeResponse) ||
+    isUndefined(labelsResponse) ||
+    isUndefined(locationResponse);
+
+  const aggregateResponse = {
+    filetype: filetypeResponse?.facets,
+    labels: labelsResponse?.facets,
+    location: locationResponse?.facets,
+  };
 
   return useMemo(() => {
-    if (!data || 'error' in data || (!documentResultCount && !searchPhrase)) {
+    if (!data || 'error' in data) {
       return { isLoading, error, data };
     }
 
-    const categoryData = data;
-
-    categoryDataKeys.forEach((key) => {
-      const documentQueryFacetsKey = get(
-        DOCUMENT_CATEGORY_TO_DOCUMENT_QUERY_FACETS_KEY_MAP,
-        key
-      );
-      const documentPayload = getDocumentPayloadWithAvailableResultsCount(
-        documentQueryFacetsKey
-      );
-      set(categoryData, key, documentPayload);
-    });
-
-    if (documentResultCount) {
-      queryClient.setQueryData(DOCUMENT_CATEGORIES_QUERY_KEY, categoryData);
+    if (
+      !isUndefined(documentCategoryData) &&
+      isDocumentsCategoriesDataUndefined
+    ) {
+      return { isLoading, error, data: documentCategoryData };
     }
 
-    return { isLoading, error, data: categoryData };
-  }, [data, facetsState]);
+    documentCategoryData = {
+      fileCategory: patchDocumentPayloadCount(
+        data.fileCategory,
+        aggregateResponse.filetype || data.fileCategory
+      ),
+      labels: patchDocumentPayloadCount(
+        data.labels,
+        aggregateResponse.labels || data.labels
+      ),
+      location: patchDocumentPayloadCount(
+        data.location,
+        aggregateResponse.location || data.location
+      ),
+    };
+
+    return { isLoading, error, data: documentCategoryData };
+  }, [data, aggregateResponse]);
 };

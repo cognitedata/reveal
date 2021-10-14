@@ -157,6 +157,7 @@ export const BarTooltip = styled(Tooltip)`
   white-space: nowrap;
   text-align: center;
   top: ${BAR_HEIGHT}px;
+  transform: translateX(-50%);
 `;
 
 export const ChartLegend = styled(Menu)`

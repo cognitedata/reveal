@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { act } from 'react-dom/test-utils';
 
 import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
+import { FEET } from 'constants/units';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
 import { useOverviewData } from '../useOverviewData';
@@ -22,6 +23,12 @@ jest.mock('react-redux', () => ({
 
 jest.mock('../../../hooks/useTrajectoriesQuery', () => ({
   useTrajectoriesQuery: () => ({ isLoading: true, trajectories: [] }),
+}));
+
+const mockPrefferedUnit = FEET;
+
+jest.mock('hooks/useUserPreference', () => ({
+  useUserPreferencesMeasurement: () => mockPrefferedUnit,
 }));
 
 describe('Overview hook', () => {

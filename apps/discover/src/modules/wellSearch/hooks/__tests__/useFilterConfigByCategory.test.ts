@@ -11,8 +11,8 @@ import {
 } from '../useFilterConfigByCategory';
 
 const mockFilterConfigs = jest.fn();
-jest.mock('../../constants', () => ({
-  get filterConfigs() {
+jest.mock('modules/wellSearch/utils/sidebarFilters', () => ({
+  filterConfigs: () => {
     return mockFilterConfigs();
   },
 }));

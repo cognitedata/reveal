@@ -1,4 +1,16 @@
 import navigation from 'constants/navigation';
+import { WellConfig } from 'tenants/types';
+
+type KeyOfType<T, U> = {
+  [P in keyof T]-?: T[P] extends U ? P : never;
+}[keyof T];
+
+type Tab = {
+  key: KeyOfType<Required<WellConfig>, { enabled?: boolean }>;
+  name: string;
+  path: string;
+  standalone?: boolean;
+};
 
 export const MAX_3D_WELLBORES_COUNT = 20;
 
@@ -25,7 +37,7 @@ export const COMMON_COLUMN_WIDTHS = {
 
 export const TOP_BAR_HEIGHT = 68; // px
 
-export const TAB_ITEMS = [
+export const TAB_ITEMS: Tab[] = [
   {
     key: 'overview',
     name: 'Overview',

@@ -92,7 +92,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
       }
     });
     useStopTimeLogger(preperationTimer);
-    return { isLoading: false, digitalRocks: normalize(digitalRocks, config) };
+    return { isLoading: false, digitalRocks: normalize(digitalRocks) };
   }, [wells, wellboreData, digitalRocksPristineIds]);
 };
 

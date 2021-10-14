@@ -1,5 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { getEmptyFacets } from 'modules/documentSearch/utils';
+
 import {
   toggleFilterBar,
   setCategoryPage,
@@ -16,13 +18,7 @@ export const initialState = {
   category: 'landing',
   activeKeys: { documents: [], seismic: [], wells: [], landing: [] },
   appliedFilters: {
-    documents: {
-      filetype: [],
-      labels: [],
-      lastmodified: [],
-      lastcreated: [],
-      location: [],
-    },
+    documents: getEmptyFacets(),
     seismic: {},
     wells: {},
     landing: {},

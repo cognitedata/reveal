@@ -1,31 +1,30 @@
-import { CogniteEvent } from '@cognite/sdk';
+import { UnitConverterItem } from '_helpers/units/interfaces';
 
-import { EventsType } from 'modules/wellSearch/types';
-import { convertObject } from 'modules/wellSearch/utils';
-
-import {
-  ndsUnitChangeAcceessors,
-  ndsAccessorsToFixedDecimal,
-} from './constants';
-// add any convert function here if there is new events or table changes
-export const getConverFunctionForEvents = (
-  eventType: EventsType,
-  errorHandler?: (error: string) => void
-) => {
-  switch (eventType) {
-    case 'nds':
-      if (errorHandler) {
-        if (ndsUnitChangeAcceessors.length)
-          ndsUnitChangeAcceessors[0].errorHandler = errorHandler;
-        if (ndsUnitChangeAcceessors.length > 1)
-          ndsUnitChangeAcceessors[1].errorHandler = errorHandler;
-      }
-      return (event: CogniteEvent) =>
-        convertObject(event)
-          .changeUnits(ndsUnitChangeAcceessors)
-          .toClosestInteger(ndsAccessorsToFixedDecimal)
-          .get();
-    default:
-      return (event: CogniteEvent) => event;
-  }
-};
+export const getNdsUnitChangeAccessors = (
+  toUnit: string
+): UnitConverterItem[] => [
+  {
+    id: 'id',
+    accessor: 'metadata.md_hole_start',
+    fromAccessor: 'metadata.md_hole_start_unit',
+    to: toUnit,
+  },
+  {
+    id: 'id',
+    accessor: 'metadata.md_hole_end',
+    fromAccessor: 'metadata.md_hole_end_unit',
+    to: toUnit,
+  },
+  {
+    id: 'id',
+    accessor: 'metadata.tvd_offset_hole_start',
+    fromAccessor: 'metadata.tvd_offset_hole_start_unit',
+    to: toUnit,
+  },
+  {
+    id: 'id',
+    accessor: 'metadata.tvd_offset_hole_end',
+    fromAccessor: 'metadata.tvd_offset_hole_end_unit',
+    to: toUnit,
+  },
+];

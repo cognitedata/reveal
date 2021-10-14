@@ -3,14 +3,15 @@ import groupBy from 'lodash/groupBy';
 
 import { storage } from '@cognite/react-container';
 import { CogniteError, Sequence, Asset } from '@cognite/sdk';
-import { Polygon, WellFilter } from '@cognite/sdk-wells';
+import { Polygon, WellFilter } from '@cognite/sdk-wells-v2';
 
 import { log } from '_helpers/log';
 import { showWarningMessage } from 'components/toast';
 import { ThunkResult } from 'core/types';
 import { Column } from 'modules/documentSearch/types';
+import { WELL_SEARCH_ACCESS_ERROR } from 'modules/wellSearch/constants';
+import { filterConfigsById } from 'modules/wellSearch/utils/sidebarFilters';
 
-import { filterConfigsById, WELL_SEARCH_ACCESS_ERROR } from './constants';
 import {
   wellSearchService,
   getByFilters,
@@ -106,6 +107,7 @@ export const WELL_SELECTED_COLUMNS = 'WELL_SELECTED_COLUMNS';
 
 export function search(filters: WellFilterMap): ThunkResult<void> {
   return (dispatch, getState) => {
+    console.log('filters:', filters);
     dispatch({
       type: SET_HAS_SEARCHED,
       hasSearched: true,

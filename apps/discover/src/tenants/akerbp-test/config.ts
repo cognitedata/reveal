@@ -188,7 +188,7 @@ const defaultConfig: TenantConfig = {
     ppfg: {
       enabled: false,
     },
-    geomechanics: {
+    geomechanic: {
       enabled: false,
     },
     nds: {

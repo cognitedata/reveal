@@ -25,7 +25,12 @@ export const useSelectedWellboresCasingsQuery = () => {
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.CASINGS, () =>
-    service(wellboreIds, wellboreAssetIdMap, config?.casing?.queries[0], metric)
+    service(
+      wellboreIds,
+      wellboreAssetIdMap,
+      config?.casing?.queries?.[0],
+      metric
+    )
   );
 
   if (isLoading || !data) {
@@ -44,7 +49,7 @@ export const useSelectedWellboresCasingsQuery = () => {
     service(
       newIds,
       wellboreAssetIdMap,
-      config?.casing?.queries[0],
+      config?.casing?.queries?.[0],
       metric
     ).then((response) => {
       cache.setQueryData(WELL_QUERY_KEY.CASINGS, {

@@ -57,7 +57,6 @@ const defaultConfig: TenantConfig = {
   azureConfig: {
     instrumentationKey: 'b90f62cf-5eee-45e8-839a-2c3e84f82399',
   },
-  showDynamicResultCount: true,
 };
 
 export default defaultConfig;

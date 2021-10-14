@@ -39,66 +39,66 @@ const defaultConfig: TenantConfig = {
     trajectory: {
       enabled: true,
       normalizeColumns: {
-        Depth: 'Depth',
-        Inclination: 'Inclination',
-        Azimuth: 'Azimuth',
-        X_offset: 'X_offset',
-        Y_offset: 'Y_offset',
+        MD: 'MD',
+        Inc: 'Inc',
+        Azim: 'Azim',
+        X_Offset: 'X-Offset (E/W)',
+        Y_Offset: 'Y-Offset (N/S)',
         TVD: 'TVD',
       },
 
       charts: [
         {
           type: 'line',
-          chartData: { x: 'X_offset', y: 'Y_offset' },
+          chartData: { x: 'X_Offset', y: 'Y_Offset' },
           chartExtraData: {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'East West (ft)', y: 'North South (ft)' },
+            axisNames: { x: 'East West (m)', y: 'North South (m)' },
             title: 'NS vs EW',
           },
         },
         {
           type: 'line',
-          chartData: { x: 'Y_offset', y: 'TVD' },
+          chartData: { x: 'Y_Offset', y: 'TVD' },
           chartExtraData: {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'North South (ft)', y: 'True Vertical Depth (ft)' },
+            axisNames: { x: 'North South (m)', y: 'True Vertical Depth (m)' },
             title: 'TVD vs NS',
           },
         },
         {
           type: 'line',
-          chartData: { x: 'X_offset', y: 'TVD' },
+          chartData: { x: 'X_Offset', y: 'TVD' },
           chartExtraData: {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'East West (ft)', y: 'True Vertical Depth (ft)' },
+            axisNames: { x: 'East West (m)', y: 'True Vertical Depth (m)' },
             title: 'TVD vs EW',
           },
         },
         {
           type: '3d',
-          chartData: { x: 'X_offset', y: 'Y_offset', z: 'TVD' },
+          chartData: { x: 'X_Offset', y: 'Y_Offset', z: 'TVD' },
           chartExtraData: {
             hovertemplate: `EW: %{x}<br>NS: %{y}<br>TVD: %{z}`,
           },
           chartVizData: {
             axisNames: {
-              x: 'East West (ft)',
-              y: 'North South (ft)',
-              z: 'TVD (ft)',
+              x: 'East West (m)',
+              y: 'North South (m)',
+              z: 'TVD (m)',
             },
             title: 'TVD 3D view',
           },
         },
         {
           type: 'legend',
-          chartData: { x: 'X_offset', y: 'Y_offset' },
+          chartData: { x: 'X_Offset', y: 'Y_Offset' },
           chartExtraData: {
             hovertemplate: `%{y}`,
           },
@@ -109,19 +109,30 @@ const defaultConfig: TenantConfig = {
         },
       ],
       columns: [
-        { externalId: 'Depth', valueType: 'DOUBLE', name: 'Depth' },
-        { externalId: 'Azimuth', valueType: 'DOUBLE', name: 'Azimuth' },
-        { externalId: 'Inclination', valueType: 'DOUBLE', name: 'Inclination' },
-        { externalId: 'X_offset', valueType: 'DOUBLE', name: 'X_offset' },
-        { externalId: 'Y_offset', valueType: 'DOUBLE', name: 'Y_offset' },
+        {
+          externalId: 'measured_depth',
+          valueType: 'DOUBLE',
+          name: 'measured_depth',
+        },
+        { externalId: 'Azim', valueType: 'DOUBLE', name: 'Azim' },
+        { externalId: 'Inc', valueType: 'DOUBLE', name: 'Inc' },
+        {
+          externalId: 'X-Offset (E/W)',
+          valueType: 'DOUBLE',
+          name: 'X-Offset (E/W)',
+        },
+        {
+          externalId: 'Y-Offset (N/S)',
+          valueType: 'DOUBLE',
+          name: 'Y-Offset (N/S)',
+        },
         { externalId: 'TVD', valueType: 'DOUBLE', name: 'TVD' },
       ],
       queries: [
         {
           filter: {
             metadata: {
-              type: 'Trajectory',
-              object_state: 'ACTUAL',
+              type: 'trajectory',
             },
           },
         },

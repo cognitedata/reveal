@@ -11,7 +11,7 @@ import { Range } from '@cognite/cogs.js';
 // DATE FORMATS
 export const SHORT_DATE_FORMAT = 'DD.MMM.YYYY';
 export const TIME_AND_DATE_FORMAT = 'DD.MMM.YY hh:mm:ss';
-const DOCUMENT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+export const DOCUMENT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 export const DATE_NOT_AVAILABLE = 'N/A';
 
 const dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;

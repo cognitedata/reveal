@@ -2,36 +2,56 @@ import * as React from 'react';
 
 import get from 'lodash/get';
 
-import { Flex } from '@cognite/cogs.js';
-
+import { FullContainer } from './elements';
 import { LeftPanel } from './LeftPanel';
-import { projectConfigMetadata } from './metadata';
 import { RightPanel } from './RightPanel';
-import { Config, HandleMetadataChange } from './types';
+import { Config, HandleMetadataChange, Metadata } from './types';
 
 interface Props {
   config: Config;
   onChange: HandleMetadataChange;
+  onUpdate: () => void;
+  onReset: () => void;
+  hasChanges: boolean;
+  metadata: Metadata;
 }
 
-export const ProjectConfigForm: React.FC<Props> = ({ onChange, config }) => {
+export const adaptedSelectedPathToMetadataPath = (selectedPath = '') =>
+  selectedPath.replace(/\.\d+/g, '').replace(/\./g, '.children.');
+
+export const ProjectConfigForm: React.FC<Props> = ({
+  onChange,
+  onUpdate,
+  onReset,
+  hasChanges,
+  config,
+  metadata,
+}) => {
   const [selectedPath, setSelectedPath] = React.useState<string>('general');
-  const selectedMetadata = get(projectConfigMetadata, selectedPath);
-  const valuePath = selectedPath.replace(/\.children/g, '');
+  const metadataPath = React.useMemo(
+    () => adaptedSelectedPathToMetadataPath(selectedPath),
+    [selectedPath]
+  );
+  const selectedMetadata = get(metadata, metadataPath);
+  const valuePath = selectedPath;
 
   return (
-    <Flex gap={10}>
+    <FullContainer>
       <LeftPanel
-        metadata={projectConfigMetadata}
+        metadata={metadata}
         selected={selectedPath}
         setSelected={setSelectedPath}
+        config={config}
       />
       <RightPanel
         metadataConfig={selectedMetadata}
         onChange={onChange}
+        onUpdate={onUpdate}
+        onReset={onReset}
+        hasChanges={hasChanges}
         value={get(config, valuePath)}
         valuePath={valuePath}
       />
-    </Flex>
+    </FullContainer>
   );
 };

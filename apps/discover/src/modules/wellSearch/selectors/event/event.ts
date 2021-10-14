@@ -5,8 +5,15 @@ import pickBy from 'lodash/pickBy';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { log } from '_helpers/log';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import {
+  useSecondarySelectedOrHoveredWellbores,
+  useSecondarySelectedOrHoveredWells,
+  useSelectedSecondaryWellAndWellboreIds,
+} from 'modules/wellSearch//selectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
+import { useGetConverFunctionForEvents } from 'modules/wellSearch/selectors/event/hooks/useHelpers';
 import { getDummyNptEventForWellbore } from 'modules/wellSearch/utils';
 import {
   mapWellInfo,
@@ -14,16 +21,9 @@ import {
   convertTo3DNPTEvents,
 } from 'modules/wellSearch/utils/events';
 
-import {
-  useSecondarySelectedOrHoveredWellbores,
-  useSecondarySelectedOrHoveredWells,
-  useSelectedSecondaryWellAndWellboreIds,
-} from '../../selectors';
-
-import { getConverFunctionForEvents } from './helper';
-
 export const useNdsEventsForTable = () => {
   const wells = useSecondarySelectedOrHoveredWells();
+  const getConverFunctionsForEvents = useGetConverFunctionForEvents();
   const { data, isLoading } = useNdsEventsQuery();
   return useMemo(() => {
     if (isLoading || !data) {
@@ -32,7 +32,7 @@ export const useNdsEventsForTable = () => {
     const events = ([] as CogniteEvent[]).concat(...Object.values(data));
     const errorList: string[] = [];
     const convertedEvents = mapWellInfo(events, wells).map(
-      getConverFunctionForEvents('nds', (error) => errorList.push(error))
+      getConverFunctionsForEvents('nds', (error) => errorList.push(error))
     );
     if (errorList.length > 0) {
       log('error occured while converting the units', errorList);
@@ -50,14 +50,15 @@ export const useNdsEventsForTable = () => {
 
 export const useNptEventsForTable = () => {
   const wells = useSecondarySelectedOrHoveredWells();
+  const userPrefferedUnit = useUserPreferencesMeasurement();
   const { data, isLoading } = useNptEventsQuery();
   return useMemo(() => {
     if (isLoading || !data) {
       return { isLoading, events: [] };
     }
-    const events = mapWellInfoToNPTEvents(data, wells);
+    const events = mapWellInfoToNPTEvents(data, wells, userPrefferedUnit);
     return { isLoading: false, events };
-  }, [data]);
+  }, [data, userPrefferedUnit]);
 };
 
 export const useNptEventsForGraph = () => {

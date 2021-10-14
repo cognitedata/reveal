@@ -4,22 +4,21 @@ import { useTranslation } from 'react-i18next';
 import { Map } from 'immutable';
 import cloneDeep from 'lodash/cloneDeep';
 
-import { Button, Title } from '@cognite/cogs.js';
-
 import EmptyState from 'components/emptyState';
-import { SearchBox } from 'components/filters';
 import {
   useProjectConfigGetQuery,
   useProjectConfigUpdateMutate,
+  useProjectConfigMetadataGetQuery,
 } from 'modules/api/projectConfig/useProjectConfigQuery';
 
-import { ProjectConfigContainer, ProjectConfigFooter } from './elements';
 import { ProjectConfigForm } from './ProjectConfigForm';
 import { Config } from './types';
 
 export const ProjectConfig = () => {
   const { t } = useTranslation();
   const { data, isLoading } = useProjectConfigGetQuery();
+  const { data: metadata, isLoading: isMetadataLoading } =
+    useProjectConfigMetadataGetQuery();
   const { mutateAsync: updateConfig } = useProjectConfigUpdateMutate();
   const [config, setConfig] = useState<Config>({});
 
@@ -40,39 +39,25 @@ export const ProjectConfig = () => {
     setHasChanges(true);
   }, []);
 
-  const [searchText, handleSearch] = useState<string>('');
-
   const handleReset = useCallback(() => {
     setConfig(data);
     setHasChanges(false);
   }, [data]);
 
-  if (isLoading) {
+  if (isLoading || isMetadataLoading) {
     return (
-      <EmptyState
-        isLoading={isLoading}
-        loadingTitle={t('Loading Project Configuration')}
-      />
+      <EmptyState isLoading loadingTitle={t('Loading Project Configuration')} />
     );
   }
 
   return (
-    <ProjectConfigContainer direction="column" gap={16}>
-      <Title level={3}>{t('Project Configuration')}</Title>
-      <SearchBox
-        placeholder={t('Search')}
-        onSearch={handleSearch}
-        value={searchText}
-      />
-      <ProjectConfigForm config={config} onChange={handleChange} />
-      <ProjectConfigFooter gap={8} justifyContent="end">
-        <Button type="secondary" disabled={!hasChanges} onClick={handleReset}>
-          {t('Revert')}
-        </Button>
-        <Button type="primary" onClick={handleUpdate}>
-          {t('Update')}
-        </Button>
-      </ProjectConfigFooter>
-    </ProjectConfigContainer>
+    <ProjectConfigForm
+      metadata={metadata}
+      config={config}
+      onChange={handleChange}
+      onUpdate={handleUpdate}
+      onReset={handleReset}
+      hasChanges={hasChanges}
+    />
   );
 };

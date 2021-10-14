@@ -6,10 +6,13 @@ import { FlexAlignItems, FlexColumn, sizes } from 'styles/layout';
 
 export const CheckboxContainer = styled(FlexColumn)`
   width: 100%;
-  margin-bottom: ${sizes.small};
+  margin-bottom: ${sizes.normal};
 
   & > label {
     margin-bottom: ${sizes.normal};
+  }
+  & > label:last-child {
+    margin-bottom: 0px;
   }
 `;
 

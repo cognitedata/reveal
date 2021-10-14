@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
+import orderBy from 'lodash/orderBy';
 
 import Histogram from 'components/histogram/Histogram';
 import Skeleton from 'components/skeleton';
@@ -10,8 +11,8 @@ import { useRelatedDocumentDataStats } from 'modules/wellSearch/selectors/sequen
 import { FlexGrow } from 'styles/layout';
 
 import {
-  DocTypeFilter,
-  DocTypeFilterBody,
+  WidgetContainer,
+  DocumentTypeWidget,
   DocTypeHeader,
   DocTypeCount,
   DocTypeHeaderLabel,
@@ -24,7 +25,7 @@ export const RelatedDocumentTypeFilter = () => {
   const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
-    if (facets?.labels) setOptions(facets.labels);
+    if (facets?.labels) setOptions(orderBy(facets.labels, 'count', 'desc'));
   }, [JSON.stringify(facets?.labels)]);
 
   useEffect(() => {
@@ -47,8 +48,8 @@ export const RelatedDocumentTypeFilter = () => {
   };
 
   return (
-    <DocTypeFilter>
-      <DocTypeFilterBody>
+    <WidgetContainer>
+      <DocumentTypeWidget>
         {!options ? (
           <Skeleton.List lines={10} />
         ) : (
@@ -67,8 +68,8 @@ export const RelatedDocumentTypeFilter = () => {
             ))}
           </>
         )}
-      </DocTypeFilterBody>
-    </DocTypeFilter>
+      </DocumentTypeWidget>
+    </WidgetContainer>
   );
 };
 

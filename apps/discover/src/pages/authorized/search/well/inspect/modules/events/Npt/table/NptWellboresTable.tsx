@@ -10,9 +10,9 @@ import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
 
-import { nptWellboresTableColumns } from './columns';
 import { PAGE_SIZE } from './constants';
 import { WellboreNptEventsTableWrapper } from './elements';
+import { useNptWellboresTableColumns } from './hooks/useHelpers';
 import { NptEventsTable } from './NptEventsTable';
 import { NPTWellbore } from './types';
 
@@ -21,6 +21,8 @@ export const NptWellboresTable: React.FC<{ events: NPTEvent[] }> = ({
 }) => {
   const [wellbores, setWellbores] = useState<NPTWellbore[]>([]);
   const [expandedWellbores, setExpandedWellbores] = useState<TableResults>({});
+
+  const nptWellboresTableColumns = useNptWellboresTableColumns();
 
   const tableOptions = {
     expandable: true,

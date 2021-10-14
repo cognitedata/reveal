@@ -3,62 +3,28 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/emptyState';
 import { Table } from 'components/tablev2';
 import { showErrorMessage } from 'components/toast';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataCasing } from 'modules/filterData/selectors';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
 
-import {
-  COMMON_COLUMN_WIDTHS,
-  NO_WELLBORE_ERROR_MESSAGE,
-} from '../../constants';
+import { NO_WELLBORE_ERROR_MESSAGE } from '../../constants';
 import DialogPopup from '../common/DialogPopup';
 import PreviewSelector from '../common/PreviewSelector';
 
 import CasingView from './CasingView/CasingView';
 import { CasingViewListWrapper } from './CasingView/elements';
 import { getFortmattedCasingData } from './helper';
+import { useGetCasingTableColumns } from './hooks/useHelpers';
 import { FormattedCasings, CasingData } from './interfaces';
 
-const columns = [
-  {
-    Header: 'Well',
-    accessor: 'wellName',
-    width: COMMON_COLUMN_WIDTHS.WELL_NAME,
-  },
-  {
-    Header: 'Wellbore',
-    accessor: 'wellboreName',
-    width: COMMON_COLUMN_WIDTHS.WELLBORE_NAME,
-  },
-  {
-    Header: 'Casing Type',
-    accessor: 'casingNames',
-  },
-  {
-    Header: 'Top MD',
-    accessor: 'topMD',
-  },
-  {
-    Header: 'Bottom MD',
-    accessor: 'bottomMD',
-  },
-  {
-    Header: 'OD Min',
-    accessor: 'odMin',
-  },
-  {
-    Header: 'OD Max',
-    accessor: 'odMax',
-  },
-  {
-    Header: 'ID Min',
-    accessor: 'idMin',
-  },
-];
+const prefferedUnit = useUserPreferencesMeasurement();
+const columns = useGetCasingTableColumns();
 
 const tableOptions = {
   height: '100%',
@@ -80,10 +46,10 @@ export const Casing: React.FC = () => {
   const { casings: data, isLoading } = useCasingsForTable();
 
   const onApplyChanges = ({ selected }: { selected: CasingData[] }) => {
-    if (selected.length === 0) showErrorMessage(t(NO_WELLBORE_ERROR_MESSAGE));
+    if (isEmpty(selected)) showErrorMessage(t(NO_WELLBORE_ERROR_MESSAGE));
     else {
       // Set formatted casing data in the state
-      setFormattedCasings(getFortmattedCasingData(selected));
+      setFormattedCasings(getFortmattedCasingData(selected, prefferedUnit));
       setIsDialogOpen(true);
     }
   };
@@ -108,15 +74,9 @@ export const Casing: React.FC = () => {
 
   const Preview = PreviewSelector({ onApplyChanges });
 
-  if (data.length > 0) {
+  if (!isEmpty(data)) {
     columns.forEach((column) => {
       switch (column.accessor) {
-        case 'topMD':
-          column.Header = `Top MD (${head(data)?.mdUnit})`; // eslint-disable-line no-param-reassign
-          break;
-        case 'bottomMD':
-          column.Header = `Bottom MD (${head(data)?.mdUnit})`; // eslint-disable-line no-param-reassign
-          break;
         case 'odMin':
           column.Header = `OD Min (${head(data)?.odUnit})`; // eslint-disable-line no-param-reassign
           break;

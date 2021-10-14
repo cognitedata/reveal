@@ -14,4 +14,7 @@ export const projectConfig = {
     fetchGet(`${getProjectConfigEndpoint(project)}`, {
       headers,
     }),
+
+  getMetadata: async (headers: FetchHeaders, project: string) =>
+    fetchGet(`${getProjectConfigEndpoint(project)}/metadata`, { headers }),
 };

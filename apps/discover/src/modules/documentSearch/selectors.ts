@@ -18,14 +18,6 @@ export const useFacets = () => {
   return useMemo(() => state.result.facets, [state.result]);
 };
 
-export const useIsolatedDocumentResultFacets = () => {
-  const state = useDocuments();
-  return useMemo(
-    () => state.isolatedDocumentResultFacets,
-    [state.isolatedDocumentResultFacets]
-  );
-};
-
 export const useViewMode = () => {
   return useDocuments().viewMode;
 };

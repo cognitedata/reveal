@@ -4,7 +4,6 @@ import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
 import { isValidDate, shortDate } from '_helpers/date';
-import { filterConfigsById } from 'modules/wellSearch/constants';
 import {
   FilterTypes,
   WellFilterMap,
@@ -12,6 +11,7 @@ import {
   FilterValues,
   FilterCategoricalData,
 } from 'modules/wellSearch/types';
+import { filterConfigsById } from 'modules/wellSearch/utils/sidebarFilters';
 
 export const reomveAppliedFilterValue = (
   appliedFilters: WellFilterMap,

@@ -1,19 +1,11 @@
-import get from 'lodash/get';
-import invert from 'lodash/invert';
-import set from 'lodash/set';
+import isUndefined from 'lodash/isUndefined';
 
-import { DocumentCategory, DocumentPayload } from 'modules/api/documents/types';
-import { DOCUMENT_CATEGORY_TO_DOCUMENT_QUERY_FACETS_KEY_MAP } from 'modules/documentSearch/constants';
-import {
-  DocumentQueryFacet,
-  DocumentResultFacets,
-} from 'modules/documentSearch/types';
-import { getEmptyDocumentStateFacets } from 'modules/documentSearch/utils';
+import { DocumentPayload } from 'modules/api/documents/types';
+import { DocumentQueryFacet } from 'modules/documentSearch/types';
 
 export const patchDocumentPayloadCount = (
   currentContent: DocumentPayload[],
-  patchContent: (DocumentPayload | DocumentQueryFacet)[],
-  shouldUseCurrentItemCount?: boolean
+  patchContent: (DocumentPayload | DocumentQueryFacet)[]
 ): DocumentPayload[] => {
   return currentContent.map((currentItem) => {
     const itemToPatch = patchContent.find((patchItem) =>
@@ -22,34 +14,10 @@ export const patchDocumentPayloadCount = (
         : patchItem.name === currentItem.name
     );
 
-    if (!itemToPatch) {
-      const count = shouldUseCurrentItemCount ? currentItem.count : 0;
-      return { ...currentItem, count };
-    }
+    const patchedItem = isUndefined(itemToPatch)
+      ? { ...currentItem, count: 0 }
+      : { ...currentItem, count: itemToPatch.count };
 
-    return { ...currentItem, count: itemToPatch.count };
+    return patchedItem;
   });
-};
-
-export const mapDocumentCategoryToDocumentResultFacets = (
-  documentCategory: DocumentCategory
-): DocumentResultFacets => {
-  const documentResultFacets = getEmptyDocumentStateFacets();
-  const documentQueryFacetsToDocumentCategoryKeyMap = invert(
-    DOCUMENT_CATEGORY_TO_DOCUMENT_QUERY_FACETS_KEY_MAP
-  );
-  const documentQueryFacetsKeys = Object.keys(
-    documentQueryFacetsToDocumentCategoryKeyMap
-  );
-
-  documentQueryFacetsKeys.forEach((key) => {
-    const documentCategoryKey = get(
-      documentQueryFacetsToDocumentCategoryKeyMap,
-      key
-    );
-    const documentPayload = get(documentCategory, documentCategoryKey);
-    set(documentResultFacets, key, documentPayload);
-  });
-
-  return documentResultFacets;
 };

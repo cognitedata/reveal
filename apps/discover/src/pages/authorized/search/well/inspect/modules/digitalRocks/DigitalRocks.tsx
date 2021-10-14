@@ -7,8 +7,10 @@ import uniq from 'lodash/uniq';
 
 import { Asset } from '@cognite/sdk';
 
+import { shortDateTime } from '_helpers/date';
 import EmptyState from 'components/emptyState';
-import { Table } from 'components/tablev2';
+import { Table } from 'components/tablev3';
+import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
 import { useSelectedWellbores } from 'modules/wellSearch/selectors';
 import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
 import { Wellbore } from 'modules/wellSearch/types';
@@ -22,23 +24,23 @@ const columns = (depthUnit = '', dimensionUnit = '') =>
   [
     {
       Header: 'Digital Rock identifier',
-      accessor: 'metadata.parent_image_id',
+      accessor: DIGITAL_ROCKS_ACCESSORS.IDENTIFIER,
     },
     {
       Header: 'Timestamp',
-      accessor: 'metadata.created_date',
+      accessor: (digitalRock: Asset) => shortDateTime(digitalRock.createdTime),
     },
     {
       Header: 'Core identifier',
-      accessor: 'metadata.core_id',
+      accessor: DIGITAL_ROCKS_ACCESSORS.CORE_IDENTIFIER,
     },
     {
       Header: 'Plug identifier',
-      accessor: 'metadata.plug_id',
+      accessor: DIGITAL_ROCKS_ACCESSORS.PLUG_IDENTIFIER,
     },
     {
       Header: 'Source of material',
-      accessor: 'metadata.plug_type',
+      accessor: DIGITAL_ROCKS_ACCESSORS.SOURCE_OF_METRIAL,
     },
     {
       Header: `MD Depth${depthUnit && `(${depthUnit})`} / Depth Datum`,
@@ -52,7 +54,7 @@ const columns = (depthUnit = '', dimensionUnit = '') =>
       Header: `Dimension${dimensionUnit && `(${dimensionUnit})`} - (X,Y,Z)`,
       accessor: 'metadata.dimensionXYZ',
     },
-  ].map((row) => ({ ...row, width: 'auto' }));
+  ].map((row) => ({ ...row, width: '250px' }));
 
 const tableOptions = {
   height: '100%',
@@ -101,13 +103,14 @@ export const DigitalRocks: React.FC = () => {
     [digitalRocks, selectedWellboreIdsMap]
   );
 
-  const depthUnit = filteredDigitalRocks.length
-    ? get(head(filteredDigitalRocks), 'metadata.plug_depth_unit', '')
-    : '';
-
-  const dimensionUnit = filteredDigitalRocks.length
-    ? get(head(filteredDigitalRocks), 'metadata.image_resolution_unit', '')
-    : '';
+  const depthUnit = get(
+    head(filteredDigitalRocks),
+    DIGITAL_ROCKS_ACCESSORS.DEPTH_UNIT
+  );
+  const dimensionUnit = get(
+    head(filteredDigitalRocks),
+    DIGITAL_ROCKS_ACCESSORS.DIMENSION_UNIT
+  );
 
   const onSelectWellbore = (selectedWellboreList: Wellbore[]) => {
     setSelectedWellbores(selectedWellboreList);

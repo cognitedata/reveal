@@ -1,6 +1,6 @@
 import { TenantConfig } from 'tenants/types';
 
-import config from '../test-config';
+import config from '../discover-e2e-config';
 
 const defaultConfig: TenantConfig = config;
 

@@ -1,4 +1,4 @@
-import { Well } from '@cognite/sdk-wells';
+import { Well } from '@cognite/sdk-wells-v2';
 
 import {
   InspectWellboreContext,

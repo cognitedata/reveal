@@ -57,14 +57,14 @@ const TopBarLogo = styled(TopBar.Logo)`
 //   }
 // `;
 
-const PATHNAMES = {
+export const PATHNAMES = {
   SEARCH: 1,
   FAVORITES: 2,
   ADMIN: 3, // Default admin base path
   'ADMIN/FEEDBACK': 3,
   'ADMIN/USER': 4,
   'ADMIN/LAYERS': 5,
-  'ADMIN/PROJECT_CONFIG': 5,
+  'ADMIN/PROJECT_CONFIG': 6,
 };
 
 export const Topbar: React.FC = React.memo(() => {

@@ -112,8 +112,8 @@ jest.mock('@cognite/react-container', () => {
   return { ...rest, getCogniteSDKClient, getAuthHeaders };
 });
 
-jest.mock('@cognite/sdk-wells', () => {
-  const { ...rest } = jest.requireActual('@cognite/sdk-wells');
+jest.mock('@cognite/sdk-wells-v2', () => {
+  const { ...rest } = jest.requireActual('@cognite/sdk-wells-v2');
   const createWellsClient = () => new MockedSDKWells();
   return { ...rest, createWellsClient };
 });

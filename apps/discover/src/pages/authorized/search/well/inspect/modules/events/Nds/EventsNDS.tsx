@@ -16,64 +16,12 @@ import {
 } from 'hooks/useTimeLog';
 import { useNdsEventsForTable } from 'modules/wellSearch/selectors';
 
-import {
-  COMMON_COLUMN_ACCESSORS,
-  COMMON_COLUMN_WIDTHS,
-} from '../../../constants';
-import { accessors, widths } from '../constants';
 import { NdsFilterContent, NdsFilterWrapper, ResizeHandle } from '../elements';
 
 import FilterContainer from './FilterContainer';
+import { useGetNdsTableColumns } from './hooks/useHelpers';
 
-const columns = [
-  {
-    Header: 'Well',
-    accessor: COMMON_COLUMN_ACCESSORS.WELL_NAME,
-    width: COMMON_COLUMN_WIDTHS.WELL_NAME,
-  },
-  {
-    Header: 'Wellbore',
-    accessor: COMMON_COLUMN_ACCESSORS.WELLBORE_NAME,
-    width: COMMON_COLUMN_WIDTHS.WELLBORE_NAME,
-  },
-  {
-    Header: 'Risk Type',
-    accessor: accessors.RISK_TYPE,
-  },
-  {
-    Header: 'Severity',
-    accessor: accessors.SEVERITY,
-  },
-  {
-    Header: 'Probability',
-    accessor: accessors.PROBABILITY,
-  },
-  {
-    Header: 'Risk Subtype',
-    accessor: accessors.RISK_SUB_CATEGORY,
-    width: widths.RISK_SUB_CATEGORY,
-  },
-  {
-    Header: 'Diameter Hole (in)',
-    accessor: accessors.DIAMETER_HOLE,
-  },
-  {
-    Header: 'MD Hole Start (ft)',
-    accessor: accessors.MD_HOLE_START,
-  },
-  {
-    Header: 'MD Hole End (ft)',
-    accessor: accessors.MD_HOLE_END,
-  },
-  {
-    Header: 'TVD Offset Hole Start (ft)',
-    accessor: accessors.TVD_OFFSET_HOLE_START,
-  },
-  {
-    Header: 'TVD Offset Hole End (ft)',
-    accessor: accessors.TVD_OFFSET_HOLE_END,
-  },
-];
+const columns = useGetNdsTableColumns();
 
 const tableOptions = {
   flex: false,

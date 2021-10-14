@@ -40,7 +40,6 @@ import {
   REMOVE_ALL_DOCUMENT_IDS,
   SET_HOVERED_DOCUMENT,
   UNSET_HOVERED_DOCUMENT,
-  SET_ISOLATED_DOCUMENT_RESULT_FACETS,
 } from 'modules/documentSearch/types.actions';
 
 import {
@@ -89,13 +88,6 @@ export const initialState: DocumentState = {
     count: 0,
     facets: getEmptyDocumentStateFacets(),
   },
-
-  /**
-   * This is to store the aggregates (processed) received once an isolated search is done.
-   * This property is added initially for the requirement of display available document results count (PP-1042).
-   */
-  isolatedDocumentResultFacets: getEmptyDocumentStateFacets(),
-
   selectedDocumentIds: [],
   isSearching: false,
   isLoading: false,
@@ -209,13 +201,6 @@ export function search(
           hasSearched: true,
         },
       };
-
-    case SET_ISOLATED_DOCUMENT_RESULT_FACETS: {
-      return {
-        ...state,
-        isolatedDocumentResultFacets: action.facets,
-      };
-    }
 
     // case SET_SIMILAR: {
     //   return {

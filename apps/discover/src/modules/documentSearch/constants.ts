@@ -1,5 +1,3 @@
-import { DocumentCategoryToDocumentQueryFacetsKeyMap } from 'modules/documentSearch/types';
-
 export const FILE_TYPE_KEY = 'type';
 export const LAST_UPDATED_KEY = 'sourceFile.lastUpdatedTime';
 export const LAST_CREATED_KEY = 'sourceFile.createdTime';
@@ -40,10 +38,3 @@ export const aggregates = [
     interval: 'year',
   },
 ];
-
-export const DOCUMENT_CATEGORY_TO_DOCUMENT_QUERY_FACETS_KEY_MAP: DocumentCategoryToDocumentQueryFacetsKeyMap =
-  {
-    fileCategory: 'filetype',
-    labels: 'labels',
-    location: 'location',
-  };

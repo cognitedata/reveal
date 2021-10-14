@@ -11,9 +11,9 @@ import { SortBy } from 'pages/types';
 
 import { accessors } from '../constants';
 
-import { nptWellsTableColumns } from './columns';
 import { PAGE_SIZE } from './constants';
 import { WellNptEventsTableWrapper } from './elements';
+import { useNptWellsTableColumns } from './hooks/useHelpers';
 import { NptWellboresTable } from './NptWellboresTable';
 import { NPTWell } from './types';
 import { sortEvents } from './utils';
@@ -22,6 +22,8 @@ export const NptWellsTable: React.FC<{ events: NPTEvent[] }> = ({ events }) => {
   const [wells, setWells] = useState<NPTWell[]>([]);
   const [expandedWells, setExpandedWells] = useState<TableResults>({});
   const [sortBy, setSortBy] = useState<SortBy[]>([]);
+
+  const nptWellsTableColumns = useNptWellsTableColumns();
 
   const tableOptions = {
     expandable: true,

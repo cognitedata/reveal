@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { getAppInsights } from '@cognite/react-azure-telemetry';
 import { getTenantInfo, AuthContext } from '@cognite/react-container';
-import { Cluster } from '@cognite/sdk-wells';
+import { Cluster } from '@cognite/sdk-wells-v2';
 
 import { setClient, setEmail, setReAuth } from '_helpers/getCogniteSDKClient';
 import { SIDECAR } from 'constants/app';
@@ -49,6 +49,8 @@ export const ProvideAuthSetup: React.FC<{
 
         if (tenant && !tenantConfig?.wells?.disabled) {
           authenticateWellSDK(
+            SIDECAR.applicationId,
+            SIDECAR.cdfApiBaseUrl,
             tenant,
             SIDECAR.cdfCluster as Cluster,
             tokenToUse
@@ -83,6 +85,8 @@ export const ProvideAuthSetup: React.FC<{
             authenticateGeospatialSDK(tenant, tokenToUse);
             if (tenant && !tenantConfig?.wells?.disabled) {
               authenticateWellSDK(
+                SIDECAR.applicationId,
+                SIDECAR.cdfApiBaseUrl,
                 tenant,
                 SIDECAR.cdfCluster as Cluster,
                 authState.authState?.token

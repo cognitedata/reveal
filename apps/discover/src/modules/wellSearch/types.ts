@@ -6,7 +6,7 @@ import {
   Well as SDKWell,
   Wellbore as SDKWellbore,
   WellFilter,
-} from '@cognite/sdk-wells';
+} from '@cognite/sdk-wells-v2';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { PossibleDateRangeDate } from '../../_helpers/date';

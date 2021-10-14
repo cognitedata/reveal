@@ -24,8 +24,6 @@ import {
   DocumentType,
   ViewMode,
   DocumentResult,
-  SearchQueryFull,
-  DocumentResultFacets,
 } from 'modules/documentSearch/types';
 import {
   ADD_PREVIEW_ENTITY,
@@ -57,14 +55,12 @@ import {
   ClearPreviewResults,
   ClearTypeahead,
   SetResults,
-  SetIsolatedDocumentResultFacets,
   ADD_SELECTED_DOCUMENT_ID,
   REMOVE_SELECTED_DOCUMENT_ID,
   ADD_ALL_DOCUMENT_IDS,
   REMOVE_ALL_DOCUMENT_IDS,
   SET_HOVERED_DOCUMENT,
   UNSET_HOVERED_DOCUMENT,
-  SET_ISOLATED_DOCUMENT_RESULT_FACETS,
 } from 'modules/documentSearch/types.actions';
 import { getPreparedQuery } from 'modules/documentSearch/utils';
 
@@ -96,13 +92,6 @@ const startSearching = (dispatch: Dispatch) => {
 const stopSearching = (dispatch: Dispatch) => {
   dispatch({ type: SET_LOADING, isLoading: false });
 };
-
-const setIsolatedDocumentResultFacets = (
-  facets: DocumentResultFacets
-): SetIsolatedDocumentResultFacets => ({
-  type: SET_ISOLATED_DOCUMENT_RESULT_FACETS,
-  facets,
-});
 
 export const search = (
   {
@@ -211,31 +200,6 @@ export const search = (
         });
         showErrorMessage(knownError || DEFAULT_ERROR_MESSAGE);
       });
-  };
-};
-
-/**
- * This function can do an isolated search in the background according to a given search query.
- * Since the search done by this function is isolated, this does not affect any other primary search queries made.
- * This function is added initially for the requirement of display available document results count (PP-1042).
- */
-const isolatedSearch = (
-  query: SearchQueryFull,
-  options?: { filters?: Record<string, unknown>; sort?: string[] },
-  limit?: number
-): ThunkResult<Promise<any>> => {
-  const searchOptions = {
-    sort: [],
-    ...options,
-  };
-
-  return (dispatch) => {
-    return documentSearchService
-      .search(query, searchOptions, limit)
-      .then((results) => {
-        dispatch(setIsolatedDocumentResultFacets(results.facets));
-      })
-      .catch(() => showErrorMessage(DEFAULT_ERROR_MESSAGE));
   };
 };
 
@@ -527,7 +491,6 @@ const toggleDocumentSelection = (
 export const documentSearchActions = {
   search,
   // toggleDuplicatesDisplay,
-  isolatedSearch,
 
   initialize,
 

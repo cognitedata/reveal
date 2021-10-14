@@ -110,7 +110,7 @@ export const AdminSettings: React.FC<props> = (props) => {
 
   return (
     <Admin>
-      <Dropdown content={MenuContent}>
+      <Dropdown content={MenuContent} appendTo={document.body}>
         <TopBar.Action
           onClick={() => {
             setShowDropdown(true);

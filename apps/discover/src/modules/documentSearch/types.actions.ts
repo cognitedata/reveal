@@ -1,10 +1,4 @@
-import {
-  DocumentType,
-  DocumentResult,
-  ViewMode,
-  Labels,
-  DocumentResultFacets,
-} from './types';
+import { DocumentType, DocumentResult, ViewMode, Labels } from './types';
 
 // Query
 export const SET_SEARCH_FOR_SENSITIVE = 'SEARCH_SET_SEARCH_FOR_SENSITIVE';
@@ -94,11 +88,6 @@ export interface SetResults {
 
 interface ResetResults {
   type: typeof RESET_RESULTS;
-}
-
-export interface SetIsolatedDocumentResultFacets {
-  type: typeof SET_ISOLATED_DOCUMENT_RESULT_FACETS;
-  facets: DocumentResultFacets;
 }
 
 interface SetSearching {
@@ -253,7 +242,6 @@ export type DocumentAction =
   | ClearPreviewResults
   | RemoveDocumentFromResults
   | ResetResults
-  | SetIsolatedDocumentResultFacets
   | SetPreviewEntities
   | SetAddSelectedDocumentId
   | SetRemoveSelectedDocumentId

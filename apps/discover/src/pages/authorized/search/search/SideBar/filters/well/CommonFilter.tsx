@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray';
+import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 
@@ -27,7 +28,7 @@ export const CommonFilter = ({
   filterConfig,
   onValueChange,
   selectedOptions,
-  options,
+  options: originalOptions,
   displayFilterTitle = true,
 }: Props) => {
   const {
@@ -38,6 +39,14 @@ export const CommonFilter = ({
   } = filterConfig;
 
   let returnElement: JSX.Element | undefined;
+
+  /**
+   * This issue was introduced when integrating the new wells SDK.
+   * @TODO: Filter types should be typed properly and casting to `any` should be removed.
+   */
+  const options = originalOptions.map((option: any) =>
+    isUndefined(option.value.value) ? option : option.value
+  );
 
   const createDateRangeElement = () => (
     <DateRangeFilter
@@ -66,7 +75,7 @@ export const CommonFilter = ({
   );
 
   const createCheckboxElement = () => {
-    const data = sortBy(options as any[], 'value').map((option) => ({
+    const data = sortBy(options, 'value').map((option) => ({
       name: option.value,
       count: option.count,
       selected:

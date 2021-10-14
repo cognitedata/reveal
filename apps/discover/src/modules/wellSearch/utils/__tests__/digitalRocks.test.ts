@@ -1,5 +1,4 @@
 import { createdAndLastUpdatedTime } from '__test-utils/fixtures/log';
-import { WellConfig } from 'tenants/types';
 
 import { normalize, normalizeSamples } from '../digitalRocks';
 
@@ -11,39 +10,26 @@ describe('digital rocks utils', () => {
         name: 'asset 1',
         rootId: 1123123,
         ...createdAndLastUpdatedTime,
+        createdTime: new Date(1396357617000),
         metadata: {
-          created_date: '20200218_225825',
-          image_resolution: '1.460832',
-          plug_depth: '23366.45',
-          plug_depth_datum: 'RKB-MSL',
-          xdim: '800',
-          ydim: '1090',
-          zdim: '2650',
+          IMAGE_RESOLUTION: '1.460832',
+          PLUG_DEPTH: '23366.45',
+          DEPTH_DATUM: 'RKB-MSL',
+          SIM_XDIM: '800',
+          SIM_YDIM: '1090',
+          SIM_ZDIM: '2650',
         },
       },
     ];
-    const config: WellConfig = {
-      digitalRocks: {
-        metaInfo: { createdTmeFormat: 'YYYYMMDD_HHmmss' },
-        enabled: true,
-      },
-    };
-    expect(normalize(digitalRocks, config)).toEqual([
+
+    expect(normalize(digitalRocks)).toEqual([
       {
-        id: 1,
-        name: 'asset 1',
-        rootId: 1123123,
-        ...createdAndLastUpdatedTime,
+        ...digitalRocks[0],
         metadata: {
-          created_date: '18.Feb.20 10:58:25',
+          ...digitalRocks[0].metadata,
           dimensionXYZ: '800, 1090, 2650',
           image_resolution: '1.46',
           plugDepthAndDatum: '23366.45 / RKB-MSL',
-          plug_depth: '23366.45',
-          plug_depth_datum: 'RKB-MSL',
-          xdim: '800',
-          ydim: '1090',
-          zdim: '2650',
         },
       },
     ]);
@@ -57,11 +43,11 @@ describe('digital rocks utils', () => {
         rootId: 1123123,
         ...createdAndLastUpdatedTime,
         metadata: {
-          r_median_trask: '1.460832',
-          r_mean_trask: '2.460832',
-          xdim: '800',
-          ydim: '1090',
-          zdim: '2650',
+          R_MEDIAN_TRASK: '1.460832',
+          R_MEAN_TRASK: '2.460832',
+          IMAGE_XDIM: '800',
+          IMAGE_YDIM: '1090',
+          IMAGE_ZDIM: '2650',
         },
       },
     ];
@@ -72,12 +58,10 @@ describe('digital rocks utils', () => {
         rootId: 1123123,
         ...createdAndLastUpdatedTime,
         metadata: {
+          ...digitalRockSamples[0].metadata,
           dimensionXYZ: '800, 1090, 2650',
-          r_mean_trask: '2.46',
-          r_median_trask: '1.46',
-          xdim: '800',
-          ydim: '1090',
-          zdim: '2650',
+          rMeanTrask: '2.46',
+          rMedianTrask: '1.46',
         },
       },
     ]);

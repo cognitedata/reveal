@@ -1,7 +1,7 @@
-import { filterConfigs } from 'modules/wellSearch/constants';
+import { filterConfigs } from 'modules/wellSearch/utils/sidebarFilters';
 
-export function getFilterOptions(): Promise<any> {
-  const filterFetchers = filterConfigs.filter(
+export function getFilterOptions(prefferedUnit: string): Promise<any> {
+  const filterFetchers = filterConfigs(prefferedUnit).filter(
     (filterConfig) => filterConfig.fetcher
   );
   return Promise.all(

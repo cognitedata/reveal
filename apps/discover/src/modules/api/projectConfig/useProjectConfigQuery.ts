@@ -9,7 +9,7 @@ import merge from 'lodash/merge';
 
 import { getTenantInfo } from '@cognite/react-container';
 
-import { PROJECT_CONFIG_KEY } from 'constants/react-query';
+import { PROJECT_CONFIG_QUERY_KEY } from 'constants/react-query';
 import { discoverAPI, getJsonHeaders } from 'modules/api/service';
 
 export function useProjectConfigUpdateMutate() {
@@ -20,10 +20,12 @@ export function useProjectConfigUpdateMutate() {
   return useMutation(
     (newProjectConfig: any) => {
       // optimistic update
-      const oldProjectConfig = queryClient.getQueryData(PROJECT_CONFIG_KEY);
+      const oldProjectConfig = queryClient.getQueryData(
+        PROJECT_CONFIG_QUERY_KEY.CONFIG
+      );
 
       if (oldProjectConfig) {
-        queryClient.setQueryData(PROJECT_CONFIG_KEY, [
+        queryClient.setQueryData(PROJECT_CONFIG_QUERY_KEY.CONFIG, [
           merge({}, oldProjectConfig, newProjectConfig),
         ]);
       }
@@ -37,10 +39,10 @@ export function useProjectConfigUpdateMutate() {
 
     {
       onSuccess: () => {
-        return queryClient.invalidateQueries(PROJECT_CONFIG_KEY);
+        return queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
       },
       onError: (_error) => {
-        return queryClient.invalidateQueries(PROJECT_CONFIG_KEY);
+        return queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
       },
     }
   );
@@ -50,7 +52,16 @@ export function useProjectConfigGetQuery(): UseQueryResult<any> {
   const headers = getJsonHeaders({}, true);
   const [project] = getTenantInfo();
 
-  return useQuery(PROJECT_CONFIG_KEY, () =>
+  return useQuery(PROJECT_CONFIG_QUERY_KEY.CONFIG, () =>
     discoverAPI.projectConfig.getConfig(headers, project)
+  );
+}
+
+export function useProjectConfigMetadataGetQuery(): UseQueryResult<any> {
+  const headers = getJsonHeaders({}, true);
+  const [project] = getTenantInfo();
+
+  return useQuery(PROJECT_CONFIG_QUERY_KEY.METADATA, () =>
+    discoverAPI.projectConfig.getMetadata(headers, project)
   );
 }

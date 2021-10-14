@@ -8,7 +8,7 @@ import {
 } from '../../fixtures/favorites';
 import { logErrors, progress, startTest, testRunId } from '../../utils';
 
-const FAV_SET_NAME = `TESTCAFE_${testRunId}`;
+const FAV_SET_NAME = `fav_${testRunId}`;
 const documentsSearchPhrase = 'sample-pdf.pdf';
 const documentId = 5974419898633335; // id for 'sample-pdf.pdf'
 const wellId = 6412202718083235; // id for Well F-1
@@ -19,7 +19,11 @@ fixture('Favorites detail page')
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());
 
-    progress('Delete All the favorite Items beforeEach');
+    progress('Go to favorite page');
+    await App.topbar.clickNavigationTab('Favorites');
+  })
+  .before(async () => {
+    progress('Delete all the favorite items');
     await deleteFavorites().catch((error: any) => {
       progress(error);
     });
@@ -36,9 +40,6 @@ fixture('Favorites detail page')
       id: response,
       updateData: { addDocumentIds: [documentId], addWellIds: [wellId] },
     });
-
-    progress('Go to favorite page');
-    await App.topbar.clickNavigationTab('Favorites');
   })
   .afterEach(async () => {
     logErrors();
@@ -52,7 +53,6 @@ startTest('Add a document to the favorite set', async () => {
 
 startTest('Add a well to the favorite set', async () => {
   await App.favoritesPage.openFavoriteSet(FAV_SET_NAME);
-
   await App.favoritesPage.goToWellTab();
   await App.resultTable.hasResults();
   await App.favoritesPage.clickBackButton();

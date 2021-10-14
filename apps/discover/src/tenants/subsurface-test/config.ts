@@ -30,7 +30,6 @@ const defaultConfig: TenantConfig = {
   favorites: {
     showDownloadAllDocumentsButton: true,
   },
-  showDynamicResultCount: true,
   showProjectConfig: true,
 };
 

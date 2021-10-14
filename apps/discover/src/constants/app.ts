@@ -1,3 +1,5 @@
+import os from 'os';
+
 import {
   Service,
   SidecarConfig,
@@ -57,7 +59,8 @@ const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
             ...fakeIdp,
             userId:
               (isAdmin ? 'admin-' : '') +
-              (process.env.REACT_APP_USER_ID || 'Error'),
+              (os.hostname().split('-').slice(-1).join('') || 'Error'),
+            // (process.env.REACT_APP_USER_ID || 'Error'),
           };
         })
       : [],

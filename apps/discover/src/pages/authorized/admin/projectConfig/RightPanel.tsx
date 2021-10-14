@@ -1,105 +1,91 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import get from 'lodash/get';
 import map from 'lodash/map';
 
-import { Input, Switch, Flex } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 
+import { Layers } from './configComponents/Layers';
+import { ConfigInputField } from './ConfigInputField';
 import {
-  MetadataKey,
-  MetadataValue,
-  HandleMetadataChange,
-  Config,
-} from './types';
+  ProjectConfigFooter,
+  RightPanelContainer,
+  FormContainer,
+} from './elements';
+import { MetadataValue, HandleMetadataChange, Config } from './types';
 
 interface Props {
   metadataConfig?: MetadataValue;
   onChange: HandleMetadataChange;
+  onUpdate: () => void;
+  onReset: () => void;
+  hasChanges: boolean;
   valuePath: string;
   value?: Config[keyof Config];
 }
 
-const InputField: React.FC<{
-  field: MetadataValue;
-  fieldKey: MetadataKey;
-  prefix: string;
-  onChange: HandleMetadataChange;
-  value?: unknown;
-}> = ({ field, onChange, prefix, fieldKey, value }) => {
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange(
-      `${prefix}.${fieldKey}`,
-      field.type === 'number' ? Number(event.target.value) : event.target.value
-    );
-  };
-
-  const handleSwitchChange = (switchValue: boolean) => {
-    onChange(`${prefix}.${fieldKey}`, switchValue);
-  };
-
-  switch (field.type) {
-    case 'string':
-      return (
-        <Input
-          id={`${prefix}.${fieldKey}`}
-          name={field.label}
-          placeholder={field.label}
-          title={field.label}
-          value={value as string}
-          onChange={handleInputChange}
-          data-testid={`${fieldKey}-value`}
-        />
-      );
-    case 'number':
-      return (
-        <Input
-          id={`${prefix}.${fieldKey}`}
-          name={field.label}
-          type="number"
-          placeholder={field.label}
-          title={field.label}
-          value={value as number}
-          onChange={handleInputChange}
-          data-testid={`${fieldKey}-value`}
-        />
-      );
-    case 'boolean':
-      return (
-        <Switch
-          name={`${prefix}.${fieldKey}`}
-          value={Boolean(value) as boolean}
-          onChange={handleSwitchChange}
-        >
-          {field.label}
-        </Switch>
-      );
-    case 'object':
-    case 'array':
-    default:
-      return null;
-  }
+const ConfigComponent: React.FC = () => {
+  return <Layers />;
 };
 
-export const RightPanel = (props: Props) => {
+const FormFields: React.FC<Omit<Props, 'hasChanges' | 'onUpdate'>> = ({
+  metadataConfig,
+  value,
+  valuePath,
+  onChange,
+  onReset,
+}) => {
   return (
-    <Flex direction="column" gap={16}>
-      {props.metadataConfig?.label}
-      {props.metadataConfig?.children &&
-        map(props.metadataConfig.children, (child, childKey) => {
-          if (child.children) {
-            return null;
-          }
-          return (
-            <InputField
-              key={`${props.valuePath}${childKey}`}
-              value={get(props.value, childKey)}
-              field={child}
-              fieldKey={childKey}
-              prefix={props.valuePath}
-              onChange={props.onChange}
-            />
-          );
-        })}
-    </Flex>
+    <>
+      {metadataConfig?.dataAsChildren && <ConfigComponent />}
+      {map(metadataConfig?.children, (child, childKey) => {
+        if (child.children) {
+          return null;
+        }
+        return (
+          <ConfigInputField
+            key={`${valuePath}${childKey}`}
+            value={get(value, childKey)}
+            field={child}
+            fieldKey={childKey}
+            prefix={valuePath}
+            onChange={onChange}
+            onReset={onReset}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+export const RightPanel = ({
+  metadataConfig,
+  valuePath,
+  value,
+  onReset,
+  onChange,
+  onUpdate,
+  hasChanges,
+}: Props) => {
+  const { t } = useTranslation();
+  return (
+    <RightPanelContainer direction="column" justifyContent="space-between">
+      <FormContainer direction="column" gap={24}>
+        <Title level={1}>{metadataConfig?.label}</Title>
+        <FormFields
+          metadataConfig={metadataConfig}
+          value={value}
+          valuePath={valuePath}
+          onReset={onReset}
+          onChange={onChange}
+        />
+      </FormContainer>
+      <ProjectConfigFooter>
+        <Button type="primary" onClick={onUpdate} disabled={!hasChanges}>
+          {t('Save')}
+        </Button>
+      </ProjectConfigFooter>
+    </RightPanelContainer>
   );
 };

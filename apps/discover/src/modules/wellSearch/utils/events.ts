@@ -91,7 +91,8 @@ const getIdWellboreMap = (wells: Well[]): IdWellboreMap => {
 
 export const mapWellInfoToNPTEvents = (
   eventsMap: WellboreNPTEventsMap,
-  wells: Well[]
+  wells: Well[],
+  userPrefferedUnit: string
 ): NPTEvent[] => {
   const wellbores = getIdWellboreMap(wells);
 
@@ -111,7 +112,7 @@ export const mapWellInfoToNPTEvents = (
                     event.measuredDepth.unit
                   )
                 )
-                .to(FEET),
+                .to(userPrefferedUnit as any),
             }
           : undefined,
         nptCode: isEmpty(event.nptCode) ? UNKNOWN_NPT_CODE : event.nptCode,

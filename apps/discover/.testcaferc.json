@@ -1,7 +1,7 @@
 {
   "selectorTimeout": 20000,
   "assertionTimeout": 20000,
-  "pageLoadTimeout": 10000,
+  "pageLoadTimeout": 20000,
   "color": true,
   "skipJsErrors": true,
   "screenshots": {

@@ -8,7 +8,7 @@ import {
   NO_RESULTS_TEXT,
 } from 'components/emptyState/constants';
 import FeedbackPanel from 'components/modals/entity-feedback';
-import { Table, Options, TableResults } from 'components/tablev2';
+import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import {
   LOG_RELATED_DOCUMENTS,
@@ -111,10 +111,10 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
     metrics.track('click-close-document-preview-button');
   };
 
-  const handleRowSelect = useCallback((doc: DocumentType) => {
+  const handleRowSelect = useCallback((row: RowProps<DocumentType>) => {
     setSelectedIds((state) => ({
       ...state,
-      [doc.id]: !state[doc.id],
+      [row.id]: !state[row.id],
     }));
   }, []);
 

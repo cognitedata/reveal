@@ -1,17 +1,24 @@
 export type PrimitiveValue = string | number | boolean;
 
 export type Config = {
-  [key: string]: PrimitiveValue | Config | undefined;
+  [key: string]:
+    | PrimitiveValue
+    | Config
+    | PrimitiveValue[]
+    | Config[]
+    | undefined;
 };
-
-export type ValueTypes = 'string' | 'number' | 'boolean' | 'object';
 
 export type Metadata = {
   [key: string]: {
-    label: string;
-    helpText?: string;
     children?: Metadata;
+    dataAsChildren?: boolean;
+    enums?: string[];
+    helpText?: string;
+    label: string;
+    placeholder?: string;
     type?: 'boolean' | 'string' | 'number' | 'object' | 'array';
+    renderAsJSON?: boolean;
   };
 };
 

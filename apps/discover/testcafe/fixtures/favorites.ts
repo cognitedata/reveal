@@ -3,7 +3,7 @@ import { UpdateFavoriteContentData } from '../../src/modules/favorite/types';
 import App from '../__pages__/App';
 import { getTokenHeaders, progress, testRunId } from '../utils';
 
-const FAV_SET_FOR_TEST_RUN = `TESTCAFE_${testRunId}`;
+const FAV_SET_FOR_TEST_RUN = testRunId;
 
 export const deleteAllAndCreateSetForTestRun = async () => {
   return deleteFavorites()
@@ -21,6 +21,7 @@ export const deleteFavorites = async () => {
   });
 
   await Promise.all(deleting);
+  progress(`Deletion of all favorites complete`);
 };
 
 export const addFavorite = async (

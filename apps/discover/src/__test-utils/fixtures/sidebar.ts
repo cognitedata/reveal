@@ -5,7 +5,7 @@ import {
   AppliedFiltersType,
   ActiveKeysType,
 } from 'modules/sidebar/types';
-import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constants';
+import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
 import { FilterValues, WellFilterMap } from 'modules/wellSearch/types';
 
 export const DEFAULT_SEARCH_PHRASE = 'Well A';

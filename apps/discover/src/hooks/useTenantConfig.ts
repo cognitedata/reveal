@@ -1,5 +1,7 @@
 import { UseQueryResult, useQuery } from 'react-query';
 
+import isUndefined from 'lodash/isUndefined';
+
 import { getTenantInfo } from '@cognite/react-container';
 
 import defaultConfig from 'tenants/config';
@@ -38,7 +40,16 @@ export const useTenantConfigByKey = <T>(key: keyof TenantConfig) => {
   return {
     ...result,
     data: result.data
-      ? (result.data[key] as T) || (defaultConfig[key] as T)
+      ? getTenantConfigKeyValue<T>(
+          result.data[key] as T,
+          defaultConfig[key] as T
+        )
       : undefined,
   };
+};
+
+export const getTenantConfigKeyValue = <T>(value: T, defaultValue: T) => {
+  if (!isUndefined(value)) return value;
+  if (!isUndefined(defaultValue)) return defaultValue;
+  return undefined;
 };

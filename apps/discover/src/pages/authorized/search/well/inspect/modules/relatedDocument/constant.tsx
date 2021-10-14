@@ -1,6 +1,6 @@
 import { AllIconTypes, Icon } from '@cognite/cogs.js';
 
-import { getDateOrDefaultText } from '_helpers/date';
+import { DOCUMENT_DATE_FORMAT, getDateOrDefaultText } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import { DocumentTypeDataModel } from 'modules/documentSearch/types';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
@@ -41,14 +41,16 @@ export const columns: ColumnMap<DocumentTypeDataModel> = {
   },
   created: {
     Header: 'Created',
-    accessor: (row) => getDateOrDefaultText(row.created),
+    accessor: (row) =>
+      getDateOrDefaultText(row.doc.creationdate, DOCUMENT_DATE_FORMAT),
     sortType: (rowA, rowB) =>
       sortDates(rowA.original.created, rowB.original.created),
     width: '140px',
   },
   modified: {
     Header: 'Modified',
-    accessor: (row) => getDateOrDefaultText(row.modified),
+    accessor: (row) =>
+      getDateOrDefaultText(row.doc.lastmodified, DOCUMENT_DATE_FORMAT),
     sortType: (rowA, rowB) =>
       sortDates(rowA.original.modified, rowB.original.modified),
     width: '140px',

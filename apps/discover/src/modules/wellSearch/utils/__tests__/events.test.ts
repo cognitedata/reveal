@@ -6,6 +6,7 @@ import { CogniteEvent } from '@cognite/sdk';
 import { mockCogniteEvent } from '__test-utils/fixtures/events';
 import { mockNpt, mockNptEvents } from '__test-utils/fixtures/npt';
 import { mockedWellStateFixture } from '__test-utils/fixtures/well';
+import { FEET } from 'constants/units';
 import {
   UNKNOWN_NPT_CODE,
   UNKNOWN_NPT_DETAIL_CODE,
@@ -71,7 +72,8 @@ describe('Events utils', () => {
 
     const results = mapWellInfoToNPTEvents(
       events,
-      mockedWellStateFixture.wellSearch.wells
+      mockedWellStateFixture.wellSearch.wells,
+      FEET
     );
     expect(results).toEqual([
       {

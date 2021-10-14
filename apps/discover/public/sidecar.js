@@ -19,7 +19,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-azure-dev',
       roles: [],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-azure-dev-user', // this is overwritten by REACT_APP_USER_ID
+      userId: 'discover-e2e-azure-dev-user', // this is overwritten by os.hostname()
     },
     {
       cluster: 'azure-dev',
@@ -33,7 +33,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-azure-dev',
       roles: ['administer'],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-azure-dev-admin', // this is overwritten by REACT_APP_USER_ID
+      userId: 'discover-e2e-azure-dev-admin', // this is overwritten by os.hostname()
     },
     {
       cluster: 'bluefield',
@@ -47,7 +47,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-bluefield',
       roles: [],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-bluefield-user', // this is overwritten by REACT_APP_USER_ID
+      userId: 'discover-e2e-bluefield-user', // this is overwritten by os.hostname()
       // if you need to test expired tokens:
       // customExpiry: Math.floor(new Date().getTime() / 1000) + 10,
     },
@@ -63,7 +63,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-bluefield',
       roles: ['administer'],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-bluefield-admin', // this is overwritten by REACT_APP_USER_ID
+      userId: 'discover-e2e-bluefield-admin', // this is overwritten by os.hostname()
     },
   ],
   disableIntercom: false,

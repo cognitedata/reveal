@@ -5,7 +5,7 @@ export const find = (testid: string) => Selector(`[data-testid="${testid}"]`);
 
 // Unique id that changes for each instance. Useful when creating unique
 // entries that are used over multiple tests
-export const testRunId = `TESTCAFE_RUN_${v1()}`;
+export const testRunId = `CI_${v1()}`;
 
 export const title = (msg: string) =>
   // eslint-disable-next-line no-console

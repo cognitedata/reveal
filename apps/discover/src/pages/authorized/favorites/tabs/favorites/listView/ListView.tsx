@@ -10,7 +10,10 @@ import { sortDates } from '_helpers/dateConversion';
 import { Table } from 'components/tablev2';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteSummary } from 'modules/favorite/types';
-import { getFavoriteLastUpdateByUserName } from 'modules/favorite/utils';
+import {
+  getFavoriteLastUpdateByUserName,
+  getFavoriteLastUpdatedByDateTime,
+} from 'modules/favorite/utils';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
 
@@ -79,7 +82,8 @@ const ListView: React.FC<Props> = ({
       },
       {
         Header: t('Date updated'),
-        accessor: (row: FavoriteSummary) => shortDate(row.lastUpdatedTime),
+        accessor: (row: FavoriteSummary) =>
+          shortDate(getFavoriteLastUpdatedByDateTime(row.lastUpdatedBy)),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
           sortDates(
             shortDate(rowA.original.lastUpdatedTime),

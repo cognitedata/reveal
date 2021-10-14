@@ -67,9 +67,10 @@ export const Feedback: React.FC<Props> = ({ feedbackOnClick }) => {
   );
 
   return (
-    <Dropdown content={MenuContent}>
+    <Dropdown content={MenuContent} appendTo={document.body}>
       <TopBar.Action
         data-test-id="feedback-options"
+        data-testid="feedback-options"
         icon="Help"
         onClick={handleFeedbackIconClick}
         aria-label="Help"

@@ -5,7 +5,7 @@ import App from '../../__pages__/App';
 import { addFavorite, deleteFavorites } from '../../fixtures/favorites';
 import { progress, testRunId, startTest, logErrors } from '../../utils';
 
-const FAV_SET_NAME = `TESTCAFE_${testRunId}`;
+const FAV_SET_NAME = `fav_${testRunId}`;
 const DUPLICATE_SET_NAME = `${FAV_SET_NAME}_DUPLICATED`;
 const EDITED_SET_NAME = `${FAV_SET_NAME}_EDITED_NAME`;
 const EDITED_SET_DESCRIPTION = `${FAV_SET_NAME}_EDITED_DESCRIPTION`;
@@ -15,20 +15,18 @@ fixture('Favorites overview page')
   .meta({ page: 'favorites:overview', tenant: App.tenant }) // Used to run a single test file
   .page(App.baseUrl)
   .beforeEach(async () => {
-    // Login with admin first to trigger /sync call
-    await t.useRole(App.getAdminRole());
-    await App.logout();
-
     await t.useRole(App.getUserRole());
-
-    progress('Delete All the favorite Items beforeEach');
+    progress('Go to favorite page');
+    await App.topbar.clickNavigationTab('Favorites');
+  })
+  .before(async () => {
+    progress('Delete all the favorite items');
     await deleteFavorites();
 
     progress(`Add ${FAV_SET_NAME} favorite set`);
     await addFavorite(FAV_SET_NAME);
 
-    progress('Go to favorite page');
-    await App.topbar.clickNavigationTab('Favorites');
+    // await t.wait(2000); // for cdf
   })
   .afterEach(async () => logErrors());
 

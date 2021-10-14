@@ -1,3 +1,7 @@
+/* eslint-disable camelcase */
+
+// Todo(PP-678): refactor camelcase ids eslint disable while refactoring config structure
+
 import { FeatureCollection } from '@turf/helpers';
 import type {
   MapboxOptions,
@@ -6,7 +10,13 @@ import type {
 } from 'maplibre-gl';
 
 import { AzureTelemetryOptions } from '@cognite/react-azure-telemetry';
-import { Asset, CogniteClient, ListResponse, Sequence } from '@cognite/sdk';
+import {
+  Asset,
+  CogniteClient,
+  ListResponse,
+  Sequence,
+  SequenceFilter as SdkSequenceFilter,
+} from '@cognite/sdk';
 
 import { Modules } from 'modules/sidebar/types';
 import { SequenceFilter } from 'modules/wellSearch/service';
@@ -84,11 +94,18 @@ export interface ChartConfig {
   chartVizData: ChartVizDataConfig;
 }
 
+export interface TrajectoryColumns {
+  name: string;
+  externalId: string;
+  valueType: string;
+}
+
 export interface WellConfig {
   disabled?: boolean;
 
   filters?: {
-    [s: string]: string | string[];
+    parentExternalIds?: string | string[];
+    source?: string | string[];
   };
 
   wellbores?: {
@@ -113,7 +130,7 @@ export interface WellConfig {
   trajectory?: {
     enabled: boolean;
     normalizeColumns?: Record<string, string>;
-    columns?: any[];
+    columns?: TrajectoryColumns[];
     charts?: ChartConfig[];
     // queries?: SequenceFilter[]; // <- upgrade to this
     queries?: any[];
@@ -160,8 +177,67 @@ export interface WellConfig {
     gpartFetch?: (client: CogniteClient, filters: any) => Promise<Sequence[]>;
   };
 
-  // let's go random for now:
-  [s: string]: any;
+  casing?: {
+    enabled?: boolean;
+    queries?: SdkSequenceFilter['filter'][];
+  };
+
+  nds?: {
+    enabled?: boolean;
+  };
+
+  npt?: {
+    enabled?: boolean;
+  };
+
+  nds_filter?: {
+    enabled?: boolean;
+  };
+
+  npt_filter?: {
+    enabled?: boolean;
+  };
+
+  data_source_filter?: {
+    enabled?: boolean;
+  };
+
+  field_block_operator_filter?: {
+    field?: {
+      enabled?: boolean;
+    };
+    operator?: {
+      enabled?: boolean;
+    };
+    block?: {
+      enabled?: boolean;
+    };
+  };
+
+  well_characteristics_filter?: {
+    well_type?: {
+      enabled?: boolean;
+    };
+    kb_elevation?: {
+      enabled?: boolean;
+    };
+    tvd?: {
+      enabled?: boolean;
+    };
+    maximum_inclination_angle?: {
+      enabled?: boolean;
+    };
+    spud_date?: {
+      enabled?: boolean;
+    };
+    water_depth?: {
+      enabled?: boolean;
+    };
+  };
+
+  measurements_filter?: {
+    enabled?: boolean;
+  };
 }
 
 interface SeismicMetadataField {
@@ -180,12 +256,12 @@ export interface MapConfig {
   zoom?: MapboxOptions['zoom'];
   center: MapboxOptions['center'];
   maxBounds?: MapboxOptions['maxBounds'];
+  cluster?: boolean;
   seismic?: {
     zoom: MapboxOptions['zoom']; // deprecated
     center: MapboxOptions['center']; // deprecated
     maxBounds?: MapboxOptions['maxBounds']; // deprecated
   };
-  cluster?: boolean;
 }
 
 export enum AdminAuthMode {
@@ -224,12 +300,134 @@ type ModuleConfig = {
 export interface TenantConfig extends ModuleConfig {
   sideBar?: number;
   searchableLayerTitle?: string;
-  map?: MapConfig;
-  companyInfo?: CompanyInfoConfig;
-  externalLinks?: ExternalLinksConfig;
-  azureConfig?: AzureConfig;
   hideFilterCount?: boolean;
-  favorites?: FavoritesConfig;
   showDynamicResultCount?: boolean;
+  companyInfo?: CompanyInfoConfig;
+  map?: MapConfig;
+  azureConfig?: AzureConfig;
+  favorites?: FavoritesConfig;
+  externalLinks?: ExternalLinksConfig;
   showProjectConfig?: boolean;
+  enableWellSDKV3?: boolean;
 }
+
+/*
+ * general
+ *    |- sideBar
+ *    |- searchableLayerTitle
+ *    |- hideFilterCount
+ *    |- showDynamicResultCount
+ *    |- companyInfo
+ *        |- name
+ *        |- logo
+ * map
+ *    |- zoom
+ *    |- center
+ *    |- maxBounds
+ *    |- cluster
+ * azureConfig
+ *    |- enabled
+ *    |- instrumentationKey
+ *    |- options
+ *        |-enableDebug
+ *        |-loggingLevelConsole
+ *        |-loggingLevelTelemetry
+ *        |-enableAutoRouteTracking
+ *        |-enableAjaxPerfTracking
+ *        |-autoTrackPageVisitTime
+ * documents
+ *    |- disabled
+ *    |- defaultLimit
+ *    |- extractByFilepath
+ *    |- wellboreSchematics
+ *    |- showGeometryOnMap
+ * wells
+ *    |- disabled
+ *    |- overview
+ *        |- enabled
+ *    |- ppfg
+ *        |- enabled
+ *        |- tvdColumn
+ *        |- defaultCurves
+ *    |- geomechanic
+ *        |- enabled
+ *    |- trajectory
+ *        |- enabled
+ *        |- normalizeColumns
+ *        |- columns
+ *        |- charts
+ *        |- queries
+ *    |- logs
+ *        |- enabled
+ *        |- types
+ *        |- queries
+ *        |- tracks
+ *    |- fit
+ *        |- enabled
+ *        |- fieldInfo
+ *    |- lot
+ *        |- enabled
+ *        |- fieldInfo
+ *    |- digitalRocks
+ *        |- enabled
+ *        |- metaInfo
+ *    |- casing
+ *        |- enabled
+ *    |- nds
+ *        |- enabled
+ *    |- npt
+ *        |- enabled
+ *    |- nds_filter
+ *        |- enabled
+ *    |- npt_filter
+ *        |- enabled
+ *    |- data_source_filter
+ *        |- enabled
+ *    |- measurements_filter
+ *        |- enabled
+ *    |- field_block_operator_filter
+ *        |- field
+ *            |- enabled
+ *        |- operator
+ *            |- enabled
+ *        |- block
+ *             |- enabled
+ *    |- well_characteristics_filter
+ *        |- well_type
+ *            |- enabled
+ *        |- kb_elevation
+ *            |- enabled
+ *        |- tvd
+ *            |- enabled
+ *        |- maximum_inclination_angle
+ *            |- enabled
+ *        |- spud_date
+ *            |- enabled
+ *        |- water_depth
+ *            |- enabled
+ * seismic
+ *    |- disabled
+ *    |- metadata
+ *
+ * Todo(PP-678) To be fixed
+ * array based
+ *    |- map => layers
+ *    |- wells => trajectory => charts
+ *    |- wells => trajectory => charts
+ * fetch based
+ *    | - wells => ppfg => fetch
+ *    | - wells => wellbores => fetch
+ *    | - wells => geomechanic => fetch
+ *    | - wells => fit => fetch
+ *    | - wells => lot => fetch
+ *    | - wells => digitalRocks => fetch
+ *    | - wells => digitalRocks => digitalRockSampleFetch
+ *    | - wells => digitalRocks => gpartFetch
+ * data based options
+ *    |-  externalLinks
+ *    |-  map => layers
+ *    |-  documents => filters
+ *    |-  wells => trajectory => charts
+ *    |-  wells => trajectory => columns
+ *    |-  wells => trajectory => queries
+ */

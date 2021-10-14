@@ -1,3 +1,4 @@
+import sortBy from 'lodash/sortBy';
 import { Data } from 'plotly.js';
 
 import { SequenceRow, SequenceData } from '../types';
@@ -27,7 +28,7 @@ export const convertToPlotly = (
         if (columnIndex > -1 && yIndex > -1) {
           const x = [] as number[];
           const y = [] as number[];
-          (rows as SequenceRow[]).forEach((row) => {
+          sortBy(rows as SequenceRow[], (row) => row[0]).forEach((row) => {
             y.push(row[yIndex] as number);
             x.push(row[columnIndex] as number);
           });
