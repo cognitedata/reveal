@@ -47,9 +47,9 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
   autoFocus = false,
 }: PropsWithChildren<SelectorProps>) => {
   const selectedValue = (scheduleValue?: string) => {
-    return options.filter(({ value }) => {
+    return options.find(({ value }) => {
       return value === scheduleValue;
-    })[0];
+    })!;
   };
 
   const handleChange = (selected: OptionTypeBase) => {

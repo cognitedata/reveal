@@ -28,11 +28,11 @@ describe('Cron Utils', () => {
   });
   const mapCases = [
     {
-      desc: 'not defined to undefined',
+      desc: 'not defined to null',
       field: {
         schedule: SupportedScheduleStrings.NOT_DEFINED,
       },
-      expected: '',
+      expected: null,
     },
     {
       desc: 'scheduled cron to cron',
@@ -68,7 +68,7 @@ describe('Cron Utils', () => {
     },
   ];
   mapCases.forEach(({ desc, field, expected }) => {
-    test(`mapScheduleInputToModel - ${desc}`, () => {
+    test(`mapScheduleInputToScheduleValue - ${desc}`, () => {
       const res = mapScheduleInputToScheduleValue(field);
       expect(res).toEqual(expected);
     });

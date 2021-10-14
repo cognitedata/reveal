@@ -15,7 +15,7 @@ export const mapScheduleInputToScheduleValue = (field: ScheduleFormInput) => {
       return field.cron;
     }
     case SupportedScheduleStrings.NOT_DEFINED: {
-      return '';
+      return null;
     }
     default:
       return undefined;
