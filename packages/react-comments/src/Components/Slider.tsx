@@ -12,6 +12,7 @@ type Props = {
     setCommentTarget,
   }: {
     setCommentTarget: SetCommentTarget;
+    commentTarget?: CommentTarget;
   }) => React.ReactElement | null;
 } & Omit<ListCommentsProps, 'target'>;
 export const Slider: React.FC<Props> = ({ children, ...rest }) => {
@@ -33,7 +34,7 @@ export const Slider: React.FC<Props> = ({ children, ...rest }) => {
       }
       sidePanelRightVisible={!!commentTarget}
     >
-      {children({ setCommentTarget })}
+      {children({ setCommentTarget, commentTarget })}
     </CollapsablePanel>
   );
 };

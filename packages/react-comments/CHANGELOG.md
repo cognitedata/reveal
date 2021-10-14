@@ -1,3 +1,7 @@
+## 1.0.1 Oct 12 2021
+
+- Add return for commentTarget
+
 ## 1.0.1 Oct 06 2021
 
 - Change UMS endpoints

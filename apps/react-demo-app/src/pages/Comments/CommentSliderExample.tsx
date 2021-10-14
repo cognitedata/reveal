@@ -25,10 +25,11 @@ export const CommentSliderExample: React.FC<Props> = ({
         userManagementServiceBaseUrl={userManagementServiceBaseUrl}
         fasAppId={fasAppId}
       >
-        {({ setCommentTarget }) => {
+        {({ setCommentTarget, commentTarget }) => {
           return (
             <Container>
               <Title>Comments in a slider:</Title>
+              {commentTarget && <p>Active comments: {commentTarget.id}</p>}
               <Cards setCommentTarget={setCommentTarget} assets={data} />
             </Container>
           );
