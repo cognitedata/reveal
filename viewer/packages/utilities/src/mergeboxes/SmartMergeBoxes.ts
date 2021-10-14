@@ -12,28 +12,44 @@ import { intersectionOverUnion } from './MergingRTree';
  * boxes contains all boxes that have been inserted
  */
 export class SmartMergeBoxes implements BoxClusterer {
-  private readonly resultBoxes: Box3[] = [];
+  private readonly resultBoxes: Box3[];
   private addedSinceSquash: number = 0;
 
   constructor();
   constructor(boxes: Box3[]);
   constructor(boxes?: Box3[]) {
-    if (boxes) {
-      this.resultBoxes = boxes;
-    }
+    this.resultBoxes = boxes ?? [];
+  }
+
+  private mergeBoxesAtIndices(mini: number, maxi: number): void {
+    // Need to assert mini < maxi? Naah
+    
+    this.resultBoxes[mini].union(this.resultBoxes[maxi]);
+
+    // Remove resultBoxes[maxi], replace by last box in list
+    this.resultBoxes[maxi] = this.resultBoxes[this.resultBoxes.length - 1];
+    this.resultBoxes.pop();
+  }
+
+  private shouldMergeBoxesAtIndices(i: number, j: number): boolean {
+    const BOX_MERGE_MIN_IOU = 0.15;
+    const overlap = intersectionOverUnion(this.resultBoxes[i], this.resultBoxes[j]);
+    return overlap >= BOX_MERGE_MIN_IOU;
   }
 
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
       let merged = false;
 
-      for (let i = 0; i < this.resultBoxes.length; i++) {
-        if (box.intersectsBox(this.resultBoxes[i])) {
-          this.resultBoxes[i].union(box);
-
-          merged = true;
-          break;
+      for (const resultBox of this.resultBoxes) {
+        if (!box.intersectsBox(resultBox)) {
+          continue;
         }
+        
+        resultBox.union(box);
+
+        merged = true;
+        break;
       }
 
       if (!merged) {
@@ -45,24 +61,25 @@ export class SmartMergeBoxes implements BoxClusterer {
   }
 
   squashBoxes(): void {
-    const BOX_MERGE_MIN_IOU = 0.15;
 
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
-        const overlap = intersectionOverUnion(this.resultBoxes[i], this.resultBoxes[j]);
-        if (overlap >= BOX_MERGE_MIN_IOU) {
-          this.resultBoxes[i].union(this.resultBoxes[j]);
+        const shouldMerge = this.shouldMergeBoxesAtIndices(i, j);
+        if (shouldMerge) {
+          this.mergeBoxesAtIndices(i, j);
 
-          // Remove resultBoxes[j], replace by last box in list
-          this.resultBoxes[j] = this.resultBoxes[this.resultBoxes.length - 1];
-          this.resultBoxes.pop();
+          // Decrement to reiterate on index j, as it has changed
+          j--;
         }
       }
     }
   }
 
   *getBoxes(): Generator<Box3> {
-    if (this.addedSinceSquash > 0.3 * this.resultBoxes.length) {
+    // Squash if number of boxes has grown by at least this ratio since last squash
+    const GROWTH_RATIO_BEFORE_SQUASH = 0.3;
+    
+    if (this.addedSinceSquash > GROWTH_RATIO_BEFORE_SQUASH * this.resultBoxes.length) {
       this.squashBoxes();
       this.addedSinceSquash = 0;
     }
@@ -90,6 +107,13 @@ export class SmartMergeBoxes implements BoxClusterer {
     return newSMB;
   }
 
+  private addIntersectionIfNonempty(box0: Box3, box1: Box3, result: Box3[]): void {
+    const inter = box0.clone().intersect(box1);
+    if (!inter.isEmpty()) {
+      result.push(inter);
+    }
+  }
+
   intersection(other: BoxClusterer): BoxClusterer {
     if (!(other instanceof SmartMergeBoxes)) {
       throw Error('Expected SmartMergeBoxes in intersection operation');
@@ -102,10 +126,7 @@ export class SmartMergeBoxes implements BoxClusterer {
 
     for (const box0 of thisBoxes) {
       for (const box1 of otherBoxes) {
-        const inter = box0.clone().intersect(box1);
-        if (!inter.isEmpty()) {
-          newResultBoxes.push(inter);
-        }
+        this.addIntersectionIfNonempty(box0, box1, newResultBoxes);
       }
     }
 

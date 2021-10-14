@@ -5,20 +5,26 @@
 import { MergingRTree } from './MergingRTree';
 import { Box3, Vector3 } from 'three';
 
+import * as SeededRandom from 'random-seed';
+
 describe('RTree', () => {
-  function createRandomBoxes(n: number, maxDim: number, maxPos: number): Box3[] {
+  function createRandomBoxes(n: number, maxDim: number, maxPos: number, rand: SeededRandom.RandomSeed): Box3[] {
     const boxes: Box3[] = [];
 
     for (let i = 0; i < n; i++) {
-      const sx = Math.random() * maxPos;
-      const sy = Math.random() * maxPos;
-      const sz = Math.random() * maxPos;
+      const sx = rand.random() * maxPos;
+      const sy = rand.random() * maxPos;
+      const sz = rand.random() * maxPos;
 
-      const dx = Math.random() * maxDim;
-      const dy = Math.random() * maxDim;
-      const dz = Math.random() * maxDim;
+      const dx = rand.random() * maxDim;
+      const dy = rand.random() * maxDim;
+      const dz = rand.random() * maxDim;
 
-      const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
+
+      const minCorner= new Vector3(sx, sy, sz);
+      const maxCorner = new Vector3(sx + dx, sy + dy, sz + dz);
+      
+      const box = new Box3(minCorner, maxCorner);
       boxes.push(box);
     }
 
@@ -26,13 +32,16 @@ describe('RTree', () => {
   }
 
   test('add bounding boxes and check that result contains them', () => {
+    
+    const random = SeededRandom.create('someseed');
+    
     const rtree = new MergingRTree();
 
     const n = 1000;
     const d = 10; // Max size for each box, in each dimension
     const ms = 100; // Max min value for each box, in each dimension
 
-    const boxes: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes: Box3[] = createRandomBoxes(n, d, ms, random);
 
     for (const box of boxes) {
       rtree.insert(box);
@@ -54,6 +63,9 @@ describe('RTree', () => {
   });
 
   test('union of two trees contains all inserted boxes', () => {
+    
+    const random = SeededRandom.create('someseed');
+    
     const rtree0 = new MergingRTree();
     const rtree1 = new MergingRTree();
 
@@ -61,8 +73,8 @@ describe('RTree', () => {
     const d = 10;
     const ms = 100;
 
-    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
-    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes0: Box3[] = createRandomBoxes(n, d, ms, random);
+    const boxes1: Box3[] = createRandomBoxes(n, d, ms, random);
 
     for (const box of boxes0) {
       rtree0.insert(box);
@@ -92,6 +104,9 @@ describe('RTree', () => {
   });
 
   test('intersection of two trees contains intersection between all boxes', () => {
+    
+    const random = SeededRandom.create('someseed');
+    
     const rtree0 = new MergingRTree();
     const rtree1 = new MergingRTree();
 
@@ -99,8 +114,8 @@ describe('RTree', () => {
     const d = 10;
     const ms = 100;
 
-    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
-    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes0: Box3[] = createRandomBoxes(n, d, ms, random);
+    const boxes1: Box3[] = createRandomBoxes(n, d, ms, random);
 
     for (const box of boxes0) {
       rtree0.insert(box);
@@ -140,15 +155,18 @@ describe('RTree', () => {
   });
 
   test('findOverlappingBoxes returns all overlapping boxes', () => {
+    
+    const random = SeededRandom.create('someseed');
+    
     const rtree0 = new MergingRTree();
 
     const n = 1000;
     const d = 10;
     const ms = 100;
 
-    const boxes0: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes0: Box3[] = createRandomBoxes(n, d, ms, random);
 
-    const boxes1: Box3[] = createRandomBoxes(n, d, ms);
+    const boxes1: Box3[] = createRandomBoxes(n, d, ms, random);
 
     for (const box of boxes0) {
       rtree0.insert(box);

@@ -4,17 +4,19 @@
 import { SmartMergeBoxes } from './SmartMergeBoxes';
 import { Box3, Vector3 } from 'three';
 
+import * as SeededRandom from 'random-seed';
+
 describe('SmartMergeBoxes', () => {
-  function createRandomBoxes(n: number, maxDim: number, maxPos: number): Box3[] {
+  function createRandomBoxes(n: number, maxDim: number, maxPos: number, rand: SeededRandom.RandomSeed): Box3[] {
     const boxes: Box3[] = [];
     for (let i = 0; i < n; i++) {
-      const sx = Math.random() * maxPos;
-      const sy = Math.random() * maxPos;
-      const sz = Math.random() * maxPos;
+      const sx = rand.random() * maxPos;
+      const sy = rand.random() * maxPos;
+      const sz = rand.random() * maxPos;
 
-      const dx = Math.random() * maxDim;
-      const dy = Math.random() * maxDim;
-      const dz = Math.random() * maxDim;
+      const dx = rand.random() * maxDim;
+      const dy = rand.random() * maxDim;
+      const dz = rand.random() * maxDim;
 
       const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
       boxes.push(box);
@@ -23,20 +25,16 @@ describe('SmartMergeBoxes', () => {
     return boxes;
   }
 
-  test('add non-intersecting bboxes', () => {
-    const mergeBoxes = new SmartMergeBoxes();
-
+  function createNonTouchingBoxesInRegularGrid(numberInEachDirection: number, size: number): Box3[] {
+    
     const boxes: Box3[] = [];
 
-    const n = 10;
-    const s = 10;
-
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n; j++) {
-        for (let k = 0; k < n; k++) {
+    for (let i = 0; i < numberInEachDirection; i++) {
+      for (let j = 0; j < numberInEachDirection; j++) {
+        for (let k = 0; k < numberInEachDirection; k++) {
           const box = new Box3(
-            new Vector3(i * s, j * s, k * s),
-            new Vector3(i * s + s - 1, j * s + s - 1, k * s + s - 1)
+            new Vector3(i * (size + 1), j * (size + 1), k * (size + 1)),
+            new Vector3(i * size + size, j * size + size, k * size + size)
           );
 
           boxes.push(box);
@@ -44,33 +42,55 @@ describe('SmartMergeBoxes', () => {
       }
     }
 
-    mergeBoxes.addBoxes(boxes);
-    const result = mergeBoxes.getBoxes();
+    return boxes
+  }
 
-    expect([...result].length === n * n * n);
-  });
-
-  test('add intersecting bboxes', () => {
-    const mergeBoxes = new SmartMergeBoxes();
-
+  function createOverlappingBoxes(n: number, size: number): Box3[] {
     const boxes: Box3[] = [];
-
-    const n = 100;
-    const s = 10;
-
+    
     for (let i = 0; i < n; i++) {
-      const box = new Box3(new Vector3(0, 0, i * s), new Vector3(1, 1, i * (s + 1)));
+      const box = new Box3(new Vector3(0, 0, i * size), new Vector3(1, 1, i * (size + 1)));
       boxes.push(box);
     }
 
-    // Scramble the boxes
+    return boxes;
+  }
+
+  function scrambleBoxes(boxes: Box3[], rand: SeededRandom.RandomSeed): void {
     for (let i = 0; i < boxes.length; i++) {
-      const num = Math.floor(Math.random() * (boxes.length - i)) + i;
+      const num = Math.floor(rand.random() * (boxes.length - i)) + i;
       const temp = boxes[num];
       boxes[num] = boxes[i];
       boxes[i] = temp;
     }
+  }
 
+  test('add non-intersecting bboxes', () => {
+    
+    const mergeBoxes = new SmartMergeBoxes();
+
+    const numberInEachDirection = 10;
+    const size = 10;
+    const boxes = createNonTouchingBoxesInRegularGrid(numberInEachDirection, size);
+
+    mergeBoxes.addBoxes(boxes);
+    const result = mergeBoxes.getBoxes();
+
+    expect([...result].length === Math.pow(numberInEachDirection, 3));
+  });
+
+  test('add intersecting bboxes', () => {
+    const rand = SeededRandom.create('someseed');
+    
+    const mergeBoxes = new SmartMergeBoxes();
+
+    const n = 100;
+    const s = 10;
+    
+    const boxes = createOverlappingBoxes(n, s);
+
+    scrambleBoxes(boxes, rand);
+    
     mergeBoxes.addBoxes(boxes);
     const result = mergeBoxes.getBoxes();
 
@@ -78,6 +98,9 @@ describe('SmartMergeBoxes', () => {
   });
 
   test('union of two trees contains all inserted boxes', () => {
+
+    const random = SeededRandom.create('someseed');
+    
     const smartBoxes0 = new SmartMergeBoxes();
     const smartBoxes1 = new SmartMergeBoxes();
 
@@ -85,8 +108,8 @@ describe('SmartMergeBoxes', () => {
     const d = 10;
     const ms = 100;
 
-    const boxes0 = createRandomBoxes(n, d, ms);
-    const boxes1 = createRandomBoxes(n, d, ms);
+    const boxes0 = createRandomBoxes(n, d, ms, random);
+    const boxes1 = createRandomBoxes(n, d, ms, random);
 
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);
@@ -111,6 +134,9 @@ describe('SmartMergeBoxes', () => {
   });
 
   test('intersection of two trees contains intersection between all boxes', () => {
+    
+    const random = SeededRandom.create('someseed');
+    
     const smartBoxes0 = new SmartMergeBoxes();
     const smartBoxes1 = new SmartMergeBoxes();
 
@@ -118,8 +144,8 @@ describe('SmartMergeBoxes', () => {
     const d = 10;
     const ms = 100;
 
-    const boxes0 = createRandomBoxes(n, d, ms);
-    const boxes1 = createRandomBoxes(n, d, ms);
+    const boxes0 = createRandomBoxes(n, d, ms, random);
+    const boxes1 = createRandomBoxes(n, d, ms, random);
 
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);
