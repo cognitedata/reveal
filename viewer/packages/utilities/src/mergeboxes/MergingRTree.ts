@@ -206,7 +206,7 @@ class RTreeNode {
       yield* this.children[0].getBoxes();
       yield* this.children[1].getBoxes();
     } else {
-      yield this.bounds.clone();
+      yield this.bounds;
     }
   }
 
