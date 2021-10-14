@@ -118,7 +118,7 @@ export async function checkWorkerVersion(worker: RevealParserWorker) {
   const [majorMin, minorMin, patchMin] = minWorkerVersion.split('.').map(i => parseInt(i, 10));
   const [majorWorker, minorWorker, patchWorker] = actualWorkerVersion.split('.').map(i => parseInt(i, 10));
 
-  const errorMessage = `Update your local copy of @cognitre/reveal-parser-worker. Required version is ${minWorkerVersion}. Received ${actualWorkerVersion}.`;
+  const errorMessage = `Update your local copy of @cognite/reveal-parser-worker. Required version is ${minWorkerVersion}. Received ${actualWorkerVersion}.`;
 
   if (majorMin !== majorWorker) {
     throw new Error(errorMessage);
