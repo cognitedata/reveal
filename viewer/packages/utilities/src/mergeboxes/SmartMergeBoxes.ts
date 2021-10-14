@@ -3,7 +3,7 @@
  */
 
 import { Box3 } from 'three';
-import { BoxClustererBase } from './BoxClustererBase';
+import { BoxClusterer } from './BoxClustererBase';
 import { intersectionOverUnion } from './MergingRTree';
 
 /**
@@ -11,7 +11,7 @@ import { intersectionOverUnion } from './MergingRTree';
  * clusters them together in larger bounding boxes. The union of the larger
  * boxes contains all boxes that have been inserted
  */
-export class SmartMergeBoxes implements BoxClustererBase {
+export class SmartMergeBoxes implements BoxClusterer {
   private readonly resultBoxes: Box3[] = [];
   private addedSinceSquash: number = 0;
 
@@ -72,7 +72,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     }
   }
 
-  union(other: BoxClustererBase): BoxClustererBase {
+  union(other: BoxClusterer): BoxClusterer {
     if (!(other instanceof SmartMergeBoxes)) {
       throw Error('Expected SmartMergeBoxes in union operation');
     }
@@ -90,7 +90,7 @@ export class SmartMergeBoxes implements BoxClustererBase {
     return newSMB;
   }
 
-  intersection(other: BoxClustererBase): BoxClustererBase {
+  intersection(other: BoxClusterer): BoxClusterer {
     if (!(other instanceof SmartMergeBoxes)) {
       throw Error('Expected SmartMergeBoxes in intersection operation');
     }

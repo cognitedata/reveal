@@ -3,10 +3,10 @@
  */
 
 import { Box3 } from 'three';
-import { BoxClustererBase } from './BoxClustererBase';
+import { BoxClusterer } from './BoxClustererBase';
 import { MergingRTree } from './MergingRTree';
 
-export class RTreeMergeBoxes implements BoxClustererBase {
+export class RTreeMergeBoxes implements BoxClusterer {
   private readonly rtree: MergingRTree;
 
   constructor(rtree: MergingRTree);
@@ -25,7 +25,7 @@ export class RTreeMergeBoxes implements BoxClustererBase {
     yield* this.rtree.getBoxes();
   }
 
-  union(otherRtree: BoxClustererBase): BoxClustererBase {
+  union(otherRtree: BoxClusterer): BoxClusterer {
     if (!(otherRtree instanceof RTreeMergeBoxes)) {
       throw Error('Expected RTreeMergeBoxes in union operation');
     }
@@ -33,7 +33,7 @@ export class RTreeMergeBoxes implements BoxClustererBase {
     return new RTreeMergeBoxes(this.rtree.union(otherRtree.rtree));
   }
 
-  intersection(otherRtree: BoxClustererBase): BoxClustererBase {
+  intersection(otherRtree: BoxClusterer): BoxClusterer {
     if (!(otherRtree instanceof RTreeMergeBoxes)) {
       throw Error('Expected RTreeMergeBoxes in intersection operation');
     }
