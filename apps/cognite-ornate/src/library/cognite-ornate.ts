@@ -27,8 +27,8 @@ import { PDFDocument } from 'pdf-lib';
 
 import { downloadURL, pdfToImage } from './utils';
 
-const sceneBaseWidth = window.innerWidth;
-const sceneBaseHeight = window.innerHeight;
+const sceneBaseWidth = window.innerWidth * 2;
+const sceneBaseHeight = window.innerHeight * 2;
 
 const SCALE_SENSITIVITY = 0.96;
 const SCALE_MAX = 5;
@@ -37,7 +37,6 @@ const SCALE_MIN = 0.05;
 export type CogniteOrnateOptions = {
   container: string;
 };
-
 export class CogniteOrnate {
   host: HTMLDivElement;
   documents: OrnatePDFDocument[] = [];
@@ -67,6 +66,7 @@ export class CogniteOrnate {
       width: sceneBaseWidth,
       height: sceneBaseHeight,
       scale: { x: 0.2, y: 0.2 },
+      draggable: true,
     });
 
     // Add layers to stage
@@ -151,7 +151,6 @@ export class CogniteOrnate {
         this.currentTool = new DefaultTool(this);
         throw new Error(`${tool} is not an available tool.`);
     }
-
     this.currentTool.onInit();
     this.stage.container().style.cursor = this.currentTool.cursor;
     this.stage.on('mouseenter', () => {
@@ -287,7 +286,21 @@ export class CogniteOrnate {
 
   onStageMouseWheel = (e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
-    this.onZoom(e.evt.deltaY, true);
+    if (e.evt.ctrlKey) {
+      this.onZoom(e.evt.deltaY, true);
+      return;
+    }
+    const dx = e.evt.deltaX;
+    const dy = e.evt.deltaY;
+
+    const minX = -this.stage.width();
+    const x = Math.max(minX, Math.min(this.stage.x() - dx));
+
+    const minY = -this.stage.height();
+    const y = Math.max(minY, Math.min(this.stage.y() - dy));
+
+    this.stage.x(x);
+    this.stage.y(y);
   };
 
   onZoom = (scale: number, pointer: boolean) => {
@@ -342,7 +355,9 @@ export class CogniteOrnate {
     documentEnd: OrnatePDFDocument,
     startPoint: { x: number; y: number },
     instanceA: Konva.Node,
-    instanceB?: Konva.Node
+    instanceB?: Konva.Node,
+    zoomToDocument = true,
+    repositionDocs = true
   ) {
     // Determine where to render (up, down, left or right) (renderDirection = [x, y])
     const normalizedX = startPoint.x - documentStart.kImage.x();
@@ -379,8 +394,11 @@ export class CogniteOrnate {
     const newY =
       documentStart.group.y() +
       renderDirection[1] * (documentStart.group.height() + distanceBetween);
-    documentEnd.group.x(newX);
-    documentEnd.group.y(newY);
+
+    if (repositionDocs) {
+      documentEnd.group.x(newX);
+      documentEnd.group.y(newY);
+    }
     this.baseLayer.draw();
 
     const connectedLine = new ConnectedLine(
@@ -391,7 +409,9 @@ export class CogniteOrnate {
     this.baseLayer.add(connectedLine.line);
     this.connectedLineGroup.push(connectedLine);
 
-    this.zoomToDocument(documentEnd);
+    if (zoomToDocument) {
+      this.zoomToDocument(documentEnd);
+    }
   }
 
   zoomTo(node: Konva.Node, duration = 0.35) {
@@ -489,6 +509,7 @@ export class CogniteOrnate {
     this.stage.destroy();
     this.isDrawing = false;
     this.documents = [];
+    this.connectedLineGroup = [];
     this.init();
   };
 
@@ -517,6 +538,18 @@ export class CogniteOrnate {
   };
 
   removeDocument(doc: OrnatePDFDocument) {
+    const fileId = doc.group.attrs.id;
+
+    this.connectedLineGroup = this.connectedLineGroup.filter((lineGroup) => {
+      if (
+        lineGroup.nodeA.parent?.attrs.id === fileId ||
+        lineGroup.nodeB.parent?.attrs.id === fileId
+      ) {
+        lineGroup.line.destroy();
+        return false;
+      }
+      return true;
+    });
     doc.group.destroy();
     doc.kImage.destroy();
 
@@ -536,6 +569,20 @@ export class CogniteOrnate {
           type: x.attrs.type,
           attrs: x.attrs,
         })),
+      })),
+      connectedLines: this.connectedLineGroup.map((lineGroup) => ({
+        nodeA: {
+          x: lineGroup.nodeA.attrs.x,
+          y: lineGroup.nodeA.attrs.y,
+          groupId: lineGroup.nodeA.parent?.attrs.id,
+          metadata: lineGroup.nodeA.attrs.metadata,
+        },
+        nodeB: {
+          x: lineGroup.nodeB.attrs.x,
+          y: lineGroup.nodeB.attrs.y,
+          groupId: lineGroup.nodeB.parent?.attrs.id || lineGroup.nodeB.attrs.id,
+          metadata: lineGroup.nodeB.attrs.metadata,
+        },
       })),
     };
   };

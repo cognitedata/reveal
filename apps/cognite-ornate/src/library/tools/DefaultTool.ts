@@ -31,6 +31,9 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
 
   onKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Backspace') {
+      const evt = new CustomEvent('onDelete', { detail: this.selectedNode });
+
+      document.dispatchEvent(evt);
       this.onDelete();
     }
   };

@@ -36,12 +36,25 @@ export type Drawing = {
   groupId?: string;
 };
 
+export type OrnateJsonDocument = {
+  metadata: Record<string, string>;
+  x: number;
+  y: number;
+  drawings: Drawing[];
+};
+
+export type OrnateConnectedDocumentLine = {
+  groupId: string;
+  x: number;
+  y: number;
+  metadata: Record<string, string>;
+};
+
 export type OrnateJSON = {
-  documents: {
-    metadata: Record<string, string>;
-    x: number;
-    y: number;
-    drawings: Drawing[];
+  documents: OrnateJsonDocument[];
+  connectedLines: {
+    nodeA: OrnateConnectedDocumentLine;
+    nodeB: OrnateConnectedDocumentLine;
   }[];
 };
 

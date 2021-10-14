@@ -95,6 +95,7 @@ export class WorkspaceService {
           ),
         };
       }),
+      connectedLines: contents.connectedLines,
     };
     this.storage.setItem(
       `${this.workspaceStoragePrefix}${workspaceId}`,

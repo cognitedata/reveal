@@ -54,7 +54,40 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     });
   }, []);
 
-  const onAnnotationClick = async (data: OrnateAnnotationInstance) => {
+  const onDelete = useCallback(
+    (e: Event) => {
+      const deletedNode = (e as CustomEvent).detail;
+      if (deletedNode && deletedNode.getType() === 'Group') {
+        const doc = ornateViewer.current?.documents.find(
+          (d) => d.group.attrs.id === deletedNode.attrs.id
+        );
+
+        if (doc) {
+          onDeleteDocument({
+            documentId: doc?.metadata!.fileId,
+            documentName: doc?.metadata!.fileName,
+          });
+        }
+      }
+    },
+    [workspaceDocuments]
+  );
+
+  useEffect(() => {
+    document.addEventListener('onDelete', onDelete);
+    document.addEventListener('onAnnotationClick', onAnnotationClick as any);
+
+    return () => {
+      document.removeEventListener('onDelete', onDelete);
+      document.removeEventListener(
+        'onAnnotationClick',
+        onAnnotationClick as any
+      );
+    };
+  }, [workspaceDocuments]);
+
+  const onAnnotationClick = async (event: CustomEvent) => {
+    const data = event.detail as OrnateAnnotationInstance;
     if (data.annotation?.metadata?.type === 'file') {
       const { resourceId } = data.annotation.metadata;
       if (!resourceId) {
@@ -71,9 +104,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         return;
       }
       const { doc, instances = [] } = fileInfo;
+      const docFileId = data.document?.metadata?.fileId;
       const endPointAnnotation = instances.find(
-        (x) =>
-          x.annotation.metadata?.resourceId === data.document?.metadata?.fileId
+        (x) => x.annotation.metadata?.resourceId === docFileId
       );
       if (!doc) {
         return;
@@ -134,6 +167,51 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         })
       );
       setWorkspaceDocuments(documents);
+
+      if (contents!.connectedLines) {
+        contents!.connectedLines.forEach((connectedLine) => {
+          const docStart = ornateViewer.current?.documents.find(
+            (d) => d.metadata!.fileId === connectedLine.nodeA.groupId
+          );
+          const docEnd = ornateViewer.current?.documents.find(
+            (d) => d.metadata!.fileId === connectedLine.nodeB.groupId
+          );
+
+          const annotationA = (docStart?.group.children || []).find(
+            (a) =>
+              a.attrs.x === connectedLine.nodeA.x &&
+              a.attrs.y === connectedLine.nodeA.y &&
+              a.attrs.metadata!.type === 'file' &&
+              a.attrs.metadata!.resourceId ===
+                connectedLine.nodeA.metadata!.resourceId
+          );
+          let annotationB = (docEnd?.group.children || []).find(
+            (a) =>
+              a.attrs.x === connectedLine.nodeB.x &&
+              a.attrs.y === connectedLine.nodeB.y &&
+              a.attrs.metadata!.type === 'file' &&
+              a.attrs.metadata!.resourceId ===
+                connectedLine.nodeB.metadata!.resourceId
+          );
+
+          // when the connection made to a group
+          if (!connectedLine.nodeB.metadata) {
+            annotationB = docEnd?.group;
+          }
+
+          if (annotationA && annotationB && docStart && docEnd) {
+            ornateViewer.current?.connectDocuments(
+              docStart,
+              docEnd,
+              { x: annotationA.x(), y: annotationA.y() },
+              annotationA,
+              annotationB,
+              false,
+              false
+            );
+          }
+        });
+      }
       setShowLoader(false);
     } catch (err) {
       console.error(err);
@@ -212,7 +290,11 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
             ? 'rgba(74, 103, 251, 0.8)'
             : 'rgba(255, 184, 0, 0.8)',
         strokeWidth: 2,
-        onClick: onAnnotationClick,
+        onClick: (data) => {
+          const evt = new CustomEvent('onAnnotationClick', { detail: data });
+
+          document.dispatchEvent(evt);
+        },
         metadata: {
           type,
           resourceId: event.metadata?.CDF_ANNOTATION_resource_id || '',
