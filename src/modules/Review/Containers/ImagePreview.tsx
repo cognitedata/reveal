@@ -10,15 +10,15 @@ import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardSho
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
   currentCollection,
-  deleteCurrentCollection,
   nextKeyPoint,
   nextShape,
+  setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
   showCollectionSettingsModel,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
-import { AnnotationTableItem } from 'src/modules/Review/types';
+import { AnnotationTableItem, Tool } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -56,6 +56,11 @@ export const ImagePreview = ({
 
   const nextPoint = useSelector(({ annotationLabelReducer }: RootState) =>
     nextKeyPoint(annotationLabelReducer)
+  );
+
+  const currentTool = useSelector(
+    ({ annotationLabelReducer }: RootState) =>
+      annotationLabelReducer.currentTool
   );
 
   const currentKeypointCollection = useSelector(
@@ -117,9 +122,8 @@ export const ImagePreview = ({
     scrollIntoView(annotation.id);
   };
 
-  const onSelectTool = () => {
-    dispatch(deleteCurrentCollection());
-    dispatch(deselectAllSelectionsReviewPage());
+  const onSelectTool = (tool: Tool) => {
+    dispatch(setSelectedTool(tool));
   };
 
   const onOpenCollectionSettings = () => {
@@ -144,6 +148,7 @@ export const ImagePreview = ({
         nextKeyPoint={nextPoint}
         currentCollection={currentKeypointCollection}
         isLoading={isLoading}
+        selectedTool={currentTool}
         onSelectTool={onSelectTool}
         focusIntoView={onFocus}
       />

@@ -1,6 +1,7 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { OptionType } from '@cognite/cogs.js';
 import { ReactElement, ReactText } from 'react';
+import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import { AnnotationStatus, KeypointItem } from 'src/utils/AnnotationUtils';
 
@@ -57,10 +58,11 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   handleAddToFile?: () => void;
   collection: AnnotationCollection;
   currentShape: string;
+  selectedTool: Tool;
   nextKeyPoint: { collectionName: string; orderNumber: number };
   currentCollection: KeypointItemCollection | null;
   isLoading: (status: boolean) => void;
-  onSelectTool: (tool: string) => void;
+  onSelectTool: (tool: Tool) => void;
   focusIntoView: (annotation: AnnotationTableItem) => void;
 };
 
@@ -69,10 +71,7 @@ export type AnnotationTableRowProps = {
   onSelect: (id: ReactText, state: boolean) => void;
   onDelete: (id: ReactText) => void;
   onVisibilityChange: (id: ReactText) => void;
-  onApprove: (
-    annotation: AnnotationTableItem,
-    status: AnnotationStatus
-  ) => void;
+  onApprove: (id: ReactText, status: AnnotationStatus) => void;
   iconComponent?: ReactElement;
   borderColor?: string;
   expandByDefault?: boolean;
@@ -92,3 +91,5 @@ export type KeypointCollection = {
   lastUpdated?: number;
   id?: number;
 };
+
+export type Tool = typeof tools[keyof typeof tools];

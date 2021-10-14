@@ -76,11 +76,11 @@ export const AnnotationTableRow = ({
           onButtonClicked={(key) => {
             if (key === 'verified') {
               pushMetric('Vision.Review.Annotation.Verified');
-              onApprove(annotation, AnnotationStatus.Verified);
+              onApprove(annotation.id, AnnotationStatus.Verified);
             }
             if (key === 'rejected') {
               pushMetric('Vision.Review.Annotation.Rejected');
-              onApprove(annotation, AnnotationStatus.Rejected);
+              onApprove(annotation.id, AnnotationStatus.Rejected);
             }
           }}
         >

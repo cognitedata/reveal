@@ -1,4 +1,4 @@
-import React, { ReactText, useEffect, useMemo, useState } from 'react';
+import React, { ReactText, useEffect, useMemo, useRef, useState } from 'react';
 import {
   deleteCurrentCollection,
   keypointSelectStatusChange,
@@ -36,6 +36,7 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
+import { tools } from './Tools';
 
 export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps> =
   ({
@@ -49,11 +50,12 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
     currentShape,
     currentCollection,
     isLoading,
+    selectedTool,
     onSelectTool,
     focusIntoView,
   }: ReactImageAnnotateWrapperProps) => {
+    const annotationEditPopupRef = useRef<HTMLDivElement | null>(null);
     const [imageUrl, setImageUrl] = useState<string>();
-    const [selectedTool, setSelectedTool] = useState<AnnotatorTool>();
     const regions: any[] = useMemo(() => {
       const currentCollectionAsRegions = currentCollection
         ? convertCollectionToRegions(currentCollection)
@@ -215,6 +217,7 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
             nextShape={currentShape!}
             nextCollection={nextKeyPoint!.collectionName}
             onOpenCollectionSettings={onOpenCollectionSettings}
+            popupReference={annotationEditPopupRef}
           />
         );
       };
@@ -271,11 +274,25 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
 
     const onToolChange = (tool: AnnotatorTool) => {
       onSelectTool(tool);
-      setSelectedTool(tool);
     };
 
     const onImageOrVideoLoaded = () => {
       isLoading(false);
+    };
+
+    // todo: use hotkeys implementation once https://github.com/greena13/react-hotkeys/issues/237 is fixed
+    const onKeyPressSubmit = (evt: Partial<KeyboardEvent>) => {
+      if (evt.key === 'Enter') {
+        if (annotationEditPopupRef.current) {
+          const submitBtn = annotationEditPopupRef.current?.querySelector(
+            '.annotation-submit-btn'
+          ) as HTMLButtonElement;
+          if (submitBtn) {
+            submitBtn.focus();
+            submitBtn.click();
+          }
+        }
+      }
     };
 
     useEffect(() => {
@@ -284,14 +301,19 @@ export const ReactImageAnnotateWrapper: React.FC<ReactImageAnnotateWrapperProps>
       };
     }, []);
 
+    useEffect(() => {
+      dispatch(deleteCurrentCollection());
+      dispatch(deselectAllSelectionsReviewPage());
+    }, [fileInfo, selectedTool]);
+
     return (
-      <Container>
+      <Container onKeyPress={onKeyPressSubmit}>
         <Annotator
           onExit={() => {}}
           hideHeader
           images={images}
           keypointDefinitions={{}}
-          enabledTools={['create-box', 'create-polygon', 'create-point']}
+          enabledTools={Object.values(tools)}
           RegionEditLabel={NewRegionEditLabel}
           showTags
           onSelectRegion={onRegionSelect}

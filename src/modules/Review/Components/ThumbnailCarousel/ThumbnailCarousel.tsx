@@ -80,6 +80,7 @@ export const ThumbnailCarousel = (props: {
     } else if (+keyCode === 39) {
       selectNextOrPrevItem();
     }
+    return true;
   };
 
   const slides = files.map((data, index) => {
@@ -220,7 +221,7 @@ const CarouselContainer = styled.div`
   position: relative;
 
   .swiper-slide.active {
-    transition: all 0.2s ease-in-out;
+    transition: height 0.5s ease-in-out, width 0.2s ease-in-out;
     transform: scaleY(1.1) scaleX(1.04);
   }
   .swiper-container {

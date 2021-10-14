@@ -62,7 +62,7 @@ export const KeyboardShortcutModalContent = () => {
             <Shortcut>
               <Micro>Panning Tool (hand)</Micro>
               <CommandAndIcon>
-                <CommandText>H / SPACE (hold)</CommandText>
+                <CommandText>H</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>

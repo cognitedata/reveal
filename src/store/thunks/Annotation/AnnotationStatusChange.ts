@@ -8,11 +8,11 @@ import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
 
-export const ApproveAnnotation = createAsyncThunk<
+export const AnnotationStatusChange = createAsyncThunk<
   void,
-  VisionAnnotation,
+  { id: number; status: AnnotationStatus },
   ThunkConfig
->('ApproveAnnotation', async (annotation, { getState, dispatch }) => {
+>('AnnotationStatusChange', async (payload, { getState, dispatch }) => {
   const updateFileAndAnnotation = async (
     file: FileState,
     updatedAnnotation: VisionAnnotation
@@ -48,7 +48,7 @@ export const ApproveAnnotation = createAsyncThunk<
             ])
           );
         }
-      } else if (annotation.status === AnnotationStatus.Rejected) {
+      } else if (unSavedAnnotation.status === AnnotationStatus.Rejected) {
         if (file.assetIds && file.assetIds.includes(asset.id)) {
           // if file linked to asset
 
@@ -82,12 +82,12 @@ export const ApproveAnnotation = createAsyncThunk<
   };
 
   const annotationState =
-    getState().annotationReducer.annotations.byId[annotation.id];
+    getState().annotationReducer.annotations.byId[payload.id];
   const file =
     getState().filesSlice.files.byId[annotationState.annotatedResourceId];
 
   await updateFileAndAnnotation(file, {
     ...annotationState,
-    ...annotation,
+    status: payload.status,
   });
 });

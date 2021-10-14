@@ -1,23 +1,24 @@
+import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import { Title } from '@cognite/cogs.js';
+import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
 import { Spin } from 'antd';
 import React, { ReactText, useEffect, useRef, useState } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
+import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
+import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
 import {
   selectAllReviewFiles,
   selectOtherAnnotationsForFile,
   selectTagAnnotationsForFile,
   selectVisibleNonRejectedAnnotationsForFile,
 } from 'src/modules/Review/store/reviewSlice';
+import { RootState } from 'src/store/rootReducer';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
-import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
-import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { FileInfo, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
-import { Title } from '@cognite/cogs.js';
 import { ImageContextualization } from './ImageContextualization';
 
 const queryClient = new QueryClient();
@@ -83,9 +84,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
   const scrollToItem = (id: ReactText) => {
     tabChange('context');
     if (contextElement.current) {
-      const rowElement = contextElement.current.querySelector(
-        `#annotation-table-row-${id}`
-      );
+      const rowElement = contextElement.current.querySelector(`#row-${id}`);
       if (rowElement) {
         rowElement.scrollIntoView(true);
       }
@@ -93,7 +92,11 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
   };
 
   return (
-    <>
+    <ImageKeyboardShortKeys
+      scrollToItem={scrollToItem}
+      contextElement={contextElement}
+      file={file}
+    >
       <QueryClientProvider client={queryClient}>
         <AnnotationContainer id="annotationContainer">
           <FilePreviewContainer>
@@ -162,9 +165,10 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
               </Tabs>
             </TabsContainer>
           </RightPanelContainer>
+          <div aria-hidden="true" className="confirm-delete-modal-anchor" />
         </AnnotationContainer>
       </QueryClientProvider>
-    </>
+    </ImageKeyboardShortKeys>
   );
 };
 export default ImageReview;
