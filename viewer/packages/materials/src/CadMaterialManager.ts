@@ -4,10 +4,8 @@
 
 import * as THREE from 'three';
 
-import { NodeAppearanceTextureBuilder } from './styling/NodeAppearanceTextureBuilder';
+import { NodeAppearanceTextureBuilder, NodeTransformTextureBuilder, NodeTransformProvider } from '@reveal/materials';
 import { NodeAppearance } from '@reveal/cad-styling';
-import { NodeTransformTextureBuilder } from './styling/NodeTransformTextureBuilder';
-import { NodeTransformProvider } from './styling/NodeTransformProvider';
 
 import { createMaterials, Materials, RenderMode } from '@reveal/cad-parsers';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';

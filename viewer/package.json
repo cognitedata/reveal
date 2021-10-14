@@ -31,6 +31,7 @@
     "@reveal/core",
     "@reveal/logger",
     "@reveal/modeldata-api",
+    "@reveal/materials",
     "@reveal/nodes-api",
     "@reveal/tools",
     "@reveal/utilities"

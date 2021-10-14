@@ -4,12 +4,12 @@
 
 import * as THREE from 'three';
 
-import { RootSectorNode } from '../../sector/RootSectorNode';
-import { SectorNode } from '../../sector/SectorNode';
+import { RootSectorNode } from '../sector/RootSectorNode';
+import { SectorNode } from '../sector/SectorNode';
 
 import { CadMaterialManager } from '../CadMaterialManager';
-import { CogniteColors, RevealColors } from '../../utilities/types';
-import { CadNode } from '../../CadNode';
+import { CogniteColors, RevealColors } from '../utilities/types';
+import { CadNode } from '../sector/CadNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
 
 import { NodeOutlineColor } from '@reveal/cad-styling';

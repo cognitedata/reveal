@@ -15,15 +15,9 @@ import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLo
 import { GeometryFilter } from '..';
 
 import { RenderMode } from '@reveal/cad-parsers';
-import {
-  RenderOptions,
-  CadModelSectorBudget,
-  EffectRenderManager,
-  LoadingState,
-  CadNode,
-  defaultRenderOptions
-} from '@reveal/cad-geometry-loaders';
+import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
+import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions } from '@reveal/materials';
 import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
 
 /* eslint-disable jsdoc/require-jsdoc */

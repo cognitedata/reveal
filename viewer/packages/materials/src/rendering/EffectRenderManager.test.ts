@@ -6,8 +6,8 @@ import * as THREE from 'three';
 
 import { RenderMode } from '@reveal/cad-parsers';
 
-import { RenderOptions } from '../../..';
-import { createGlContext } from '../../../../../test-utilities';
+import { RenderOptions } from '../rendering/types';
+import { createGlContext } from '../../../../test-utilities';
 
 import { CadMaterialManager } from '../CadMaterialManager';
 import { EffectRenderManager } from './EffectRenderManager';

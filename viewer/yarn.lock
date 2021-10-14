@@ -926,6 +926,7 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/materials": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
@@ -972,6 +973,14 @@ __metadata:
 "@reveal/logger@workspace:*, @reveal/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@reveal/logger@workspace:packages/logger"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/materials@workspace:*, @reveal/materials@workspace:packages/materials":
+  version: 0.0.0-use.local
+  resolution: "@reveal/materials@workspace:packages/materials"
+  dependencies:
+    "@reveal/cad-parsers": "workspace:*"
   languageName: unknown
   linkType: soft
 

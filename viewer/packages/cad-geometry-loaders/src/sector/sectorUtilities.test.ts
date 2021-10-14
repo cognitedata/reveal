@@ -7,7 +7,7 @@ import { SectorMetadata, SectorGeometry, TriangleMesh, createMaterials, RenderMo
 
 import { createEmptySector } from '../../../../test-utilities/src/emptySector';
 import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
-import { SectorQuads } from '../material-manager/rendering/types';
+import { SectorQuads } from '@reveal/materials';
 
 import 'jest-extended';
 

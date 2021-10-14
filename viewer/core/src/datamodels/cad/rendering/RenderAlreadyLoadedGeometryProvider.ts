@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { OccludingGeometryProvider, EffectRenderManager } from '@reveal/cad-geometry-loaders';
+import { OccludingGeometryProvider } from '@reveal/cad-geometry-loaders';
+import { EffectRenderManager } from '@reveal/materials';
 
 export class RenderAlreadyLoadedGeometryProvider implements OccludingGeometryProvider {
   private readonly _renderManager: EffectRenderManager;

@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { InstancedMesh, InstancedMeshFile } from '@reveal/cad-parsers';
 
 import { InstancedMeshManager } from './InstancedMeshManager';
-import { CadMaterialManager } from './material-manager/CadMaterialManager';
+import { CadMaterialManager } from '@reveal/materials';
 
 jest.mock('./material-manager/CadMaterialManager', () => {
   return {

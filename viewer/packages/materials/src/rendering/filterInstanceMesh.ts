@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { InstancedMesh } from '@reveal/cad-parsers';
 
-import { float32BufferToMatrix } from '../../utilities/float32BufferToMatrix';
+import { float32BufferToMatrix } from '../utilities/float32BufferToMatrix';
 
 const filterInstanceMeshVars = {
   p: new THREE.Vector3(),

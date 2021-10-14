@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { initMetrics } from '@reveal/utilities';
-import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/cad-geometry-loaders';
+import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/materials';
 
 import { createCadManager } from '../datamodels/cad/createCadManager';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';

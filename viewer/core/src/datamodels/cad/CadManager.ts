@@ -10,13 +10,9 @@ import {
   LevelOfDetail,
   ConsumedSector
 } from '@reveal/cad-parsers';
-import {
-  CadNode,
-  CadModelUpdateHandler,
-  CadMaterialManager,
-  CadModelSectorBudget,
-  LoadingState
-} from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+
+import { CadNode, CadMaterialManager } from '@reveal/materials';
 
 import { trackError } from '@reveal/utilities';
 

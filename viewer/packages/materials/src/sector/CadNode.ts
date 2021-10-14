@@ -1,15 +1,13 @@
-/*!
+/**
  * Copyright 2021 Cognite AS
  */
 
 import * as THREE from 'three';
 
-import { SectorQuads } from './material-manager/rendering/types';
-import { RootSectorNode } from './sector/RootSectorNode';
-import { CadMaterialManager } from './material-manager/CadMaterialManager';
-import { suggestCameraConfig } from './cameraconfig';
-import { NodeTransformProvider } from './material-manager/styling/NodeTransformProvider';
-import { InstancedMeshManager } from './InstancedMeshManager';
+import { SectorQuads, CadMaterialManager, NodeTransformProvider } from '@reveal/materials';
+import { RootSectorNode } from '../sector/RootSectorNode';
+import { suggestCameraConfig } from '../cameraconfig';
+import { InstancedMeshManager } from '../InstancedMeshManager';
 
 import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
 import { NodeAppearanceProvider, NodeAppearance } from '@reveal/cad-styling';
