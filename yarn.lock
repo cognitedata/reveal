@@ -2330,33 +2330,6 @@
   dependencies:
     query-string "^6.13.7"
 
-"@cognite/cogs.js@^3.23.0":
-  version "3.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.33.0.tgz#17f7c1b951c9b197af91d03a6378cb0891fa58ed"
-  integrity sha512-zRVorDF1sbVZTn53A8jXLPY3rr0l+bBKevqOrF6q9JQ34UbvDLaXjns1yOz75vfXssGhxXORP6lDy0P8vORD1w==
-  dependencies:
-    "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
-    classnames "^2.3.1"
-    color "^3.1.2"
-    dayjs "^1.9.7"
-    eslint-config-stylelint "^13.1.1"
-    focus-visible "^5.1.0"
-    lorem-ipsum "^2.0.3"
-    match-sorter "^6.3.0"
-    rc-collapse "^1.11.8"
-    rc-drawer "^4.1.0"
-    rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
-    react-date-range "^1.1.3"
-    react-modal "^3.11.2"
-    react-select "^3.1.0"
-    react-table "^7.6.0"
-    react-toastify "^6.0.9"
-    stylelint "^13.13.1"
-    tippy.js "6.2.0"
-    ts-dedent "^2.2.0"
-
 "@cognite/cogs.js@^3.32.1":
   version "3.32.1"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.32.1.tgz#ea88082829c2f2cf8bea9a3ef547b56c4cc5f3f2"
@@ -2385,17 +2358,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-0.8.1.tgz#fab2cd60abeaccc20a52818e9bcf2d2f4fd0960b"
-  integrity sha512-Rtl4Rxhm0oicE9HZhPi+bphnTO7Uqo8x+WYfSc4DDPX58lpekBJcehMUV1KvB/xXbGO9QZ1gBqpo7AJ1QjEzZQ==
+"@cognite/data-exploration@^1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.6.4.tgz#12eaa567a859ab8b3e18cf07cb085d36954e97f4"
+  integrity sha512-U6/fKJE09nfvTP9NzJ8JSdv9mJI0aql7TpNxTo+nr+94HuWg2z6gSZkefB/bsALp3QFNbzR1cevzopNJHBhcOA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^3.23.0"
+    "@cognite/cogs.js" "^3.32.1"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^1.13.3"
+    "@cognite/react-picture-annotation" "^2.0.0"
     "@cognite/sdk" "^3.3.6"
     "@cognite/sdk-provider" "^1.0.0"
     "@cognite/sdk-react-query-hooks" "^5.0.1"
@@ -2508,10 +2481,26 @@
     use-event-callback "^0.1.0"
     use-key-hook "^1.3.0"
 
-"@cognite/react-picture-annotation@^1.13.3":
-  version "1.16.2"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.16.2.tgz#c44d5d422040405028deccba7ff1503a2f3659e5"
-  integrity sha512-uPLD4o4GfLXxECsskqrbhI4ol545Dux+gI4XRal7aM8kbHSl2ZVvf0dCssr0L5K5Id6YUXCCYnLLb83i/Cg2Dw==
+"@cognite/react-picture-annotation@^1.15.1":
+  version "1.15.1"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.15.1.tgz#874206cfd4ede8ab899d4cd651b980c33543ab47"
+  integrity sha512-gg9vZTZSTO4RJLcTnsdvJxh67c5OD+AT/q3JS9L+CQQ54YCWBqoMHafw31qR8TbYToIVSJE2mxqeiF05AVZCJA==
+  dependencies:
+    "@cognite/annotations" "^1.1.0"
+    "@cognite/sdk" "^3.3.0"
+    lodash "^4.17.21"
+    parse-color "^1.0.0"
+    pdf-lib "^1.12.0"
+    pdfjs-dist "2.6.347"
+    react-archer "^3.0.0"
+    react-is "^17.0.1"
+    react-splitter-layout "^4.0.0"
+    styled-components "^5.2.0"
+
+"@cognite/react-picture-annotation@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.0.tgz#181f0bd90192a3892c4f9b5ad59584aa8fd5f80d"
+  integrity sha512-/lHq0JMrNkYyJL+8SZfJbW8btW0g5l7XYyTgx+3XSYOKUxDDGlGAAWTW9KgBsdyqc5CjtWPXphJko937Wp7UQg==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^3.3.0"
@@ -2537,22 +2526,6 @@
     styled-components "^5.2.0"
     typescript "^4.1.2"
     uuid "^8.3.0"
-
-"@cognite/react-picture-annotation@^1.15.1":
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-1.15.1.tgz#874206cfd4ede8ab899d4cd651b980c33543ab47"
-  integrity sha512-gg9vZTZSTO4RJLcTnsdvJxh67c5OD+AT/q3JS9L+CQQ54YCWBqoMHafw31qR8TbYToIVSJE2mxqeiF05AVZCJA==
-  dependencies:
-    "@cognite/annotations" "^1.1.0"
-    "@cognite/sdk" "^3.3.0"
-    lodash "^4.17.21"
-    parse-color "^1.0.0"
-    pdf-lib "^1.12.0"
-    pdfjs-dist "2.6.347"
-    react-archer "^3.0.0"
-    react-is "^17.0.1"
-    react-splitter-layout "^4.0.0"
-    styled-components "^5.2.0"
 
 "@cognite/sdk-core@^1.2.2":
   version "1.2.2"
