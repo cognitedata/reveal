@@ -1,3 +1,7 @@
+## 2.0.1 Oct 15 2021
+
+- Logout.tsx: redirect to '/' after calling logout instead of constructing incorrect URL
+
 ## 2.0.0 Oct 05 2021
 
 - bump version for auth-utils

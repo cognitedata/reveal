@@ -14,7 +14,6 @@ import { useAuthContext } from './AuthContainer';
 
 export const Logout: React.FC = () => {
   const { client } = useAuthContext();
-  const redirectUrl = `https://${window.location.host}/`;
 
   React.useEffect(() => {
     storage.removeItem(AUTH_RESULT_STORAGE_KEY);
@@ -23,7 +22,7 @@ export const Logout: React.FC = () => {
     saveFlow('UNKNOWN');
     // Avoid calling azure when using Fake Idp
     if (!client || flow.flow === 'FAKE_IDP') {
-      window.location.pathname = redirectUrl;
+      window.location.pathname = '/';
       return;
     }
     // @ts-expect-error azureAdClient is private?
@@ -38,7 +37,7 @@ export const Logout: React.FC = () => {
       } catch (err) {
         log(err, undefined, 3);
       } finally {
-        window.location.pathname = redirectUrl;
+        window.location.pathname = '/';
       }
     } else {
       legacyLogout(client);
@@ -54,7 +53,7 @@ export const Logout: React.FC = () => {
     } catch (err) {
       log(err, undefined, 3);
     } finally {
-      window.location.pathname = redirectUrl;
+      window.location.pathname = '/';
     }
   };
 
