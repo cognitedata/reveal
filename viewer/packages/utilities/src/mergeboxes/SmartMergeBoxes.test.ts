@@ -47,7 +47,7 @@ describe('SmartMergeBoxes', () => {
     mergeBoxes.addBoxes(boxes);
     const result = mergeBoxes.getBoxes();
 
-    expect([...result].length == n * n * n);
+    expect([...result].length === n * n * n);
   });
 
   test('add intersecting bboxes', () => {
@@ -74,7 +74,7 @@ describe('SmartMergeBoxes', () => {
     mergeBoxes.addBoxes(boxes);
     const result = mergeBoxes.getBoxes();
 
-    expect([...result].length == 1);
+    expect([...result].length === 1);
   });
 
   test('union of two trees contains all inserted boxes', () => {

@@ -54,7 +54,7 @@ export class MergingRTree {
   }
 
   insert(box: Box3) {
-    if (this.root != null) {
+    if (this.root !== null) {
       this.root = this.root.insert(box);
     } else {
       this.root = new RTreeNode(box);
@@ -62,13 +62,13 @@ export class MergingRTree {
   }
 
   *getBoxes(): Generator<Box3> {
-    if (this.root != null) {
+    if (this.root !== null) {
       yield* this.root.getBoxes();
     }
   }
 
   getSize(): number {
-    if (this.root != null) {
+    if (this.root !== null) {
       return this.root.numBoxes;
     } else {
       return 0;
@@ -78,7 +78,7 @@ export class MergingRTree {
   clone(): MergingRTree {
     const newTree = new MergingRTree();
 
-    if (this.root != null) {
+    if (this.root !== null) {
       newTree.root = this.root.clone();
     } else {
       newTree.root = null;
@@ -88,7 +88,7 @@ export class MergingRTree {
   }
 
   findOverlappingBoxes(box: Box3): Box3[] {
-    if (this.root != null) {
+    if (this.root !== null) {
       const results: Box3[] = [];
       this.root.findOverlappingBoxes(box, results);
       return results;
@@ -202,7 +202,7 @@ class RTreeNode {
   }
 
   *getBoxes(): Generator<Box3> {
-    if (this.children != null) {
+    if (this.children !== null) {
       yield* this.children[0].getBoxes();
       yield* this.children[1].getBoxes();
     } else {
@@ -211,7 +211,7 @@ class RTreeNode {
   }
 
   clone(): RTreeNode {
-    if (this.children != null) {
+    if (this.children !== null) {
       return new RTreeNode(this.children[0].clone(), this.children[1].clone());
     } else {
       return new RTreeNode(this.bounds.clone());
@@ -219,7 +219,7 @@ class RTreeNode {
   }
 
   findOverlappingBoxes(box: Box3, results: Box3[]): void {
-    if (this.children != null) {
+    if (this.children !== null) {
       if (this.children[0].bounds.intersectsBox(box)) {
         this.children[0].findOverlappingBoxes(box, results);
       }
