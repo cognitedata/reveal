@@ -379,10 +379,10 @@ export default function WorkflowRow({
           >
             <Popconfirm
               onConfirm={remove}
+              okText="Remove"
               content={
                 <div style={{ textAlign: 'left' }}>
-                  Are you sure that you want to
-                  <br /> remove this calculation?
+                  Remove this calculation?
                 </div>
               }
             >

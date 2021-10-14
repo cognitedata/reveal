@@ -95,13 +95,13 @@ export const units = [
   },
   // Temperature
   {
-    label: 'F',
+    label: '°F',
     value: 'f',
     conversions: ['f', 'c', 'k'],
     type: UnitTypes.TEMPERATURE,
   },
   {
-    label: 'C',
+    label: '°C',
     value: 'c',
     conversions: ['f', 'c', 'k'],
     type: UnitTypes.TEMPERATURE,
@@ -117,25 +117,25 @@ export const units = [
   //  https://petroleumoffice.com/unitconverter/volume%20flow%20rate
   //  https://github.com/cognitedata/inso-toolbox/blob/master/inso_toolbox/units/units.py
   {
-    label: 'm^3/s',
+    label: 'm³/s',
     value: 'm3s',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
     type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
-    label: 'm^3/min',
+    label: 'm³/min',
     value: 'm3min',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
     type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
-    label: 'm^3/hr',
+    label: 'm³/hr',
     value: 'm3hr',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
     type: UnitTypes.VOLUMETRIC_FLOW,
   },
   {
-    label: 'm^3/d',
+    label: 'm³/d',
     value: 'm3d',
     conversions: ['m3s', 'm3min', 'm3hr', 'm3d', 'bbld', 'mbbld', 'mmscfd'],
     type: UnitTypes.VOLUMETRIC_FLOW,

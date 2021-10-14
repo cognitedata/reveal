@@ -49,7 +49,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
             <Input
               fullWidth
               icon="Search"
-              placeholder="Find time series to plot"
+              placeholder="Find time series"
               onChange={handleSearchInputChange}
               value={searchInputValue}
               size="large"
@@ -83,7 +83,7 @@ const Search = ({ visible, onClose }: SearchProps) => {
               Tag number
             </SegmentedControl.Button>
             <SegmentedControl.Button key="timeseries">
-              Timeseries ID
+              Timeseries
             </SegmentedControl.Button>
           </SegmentedControl>
           {/* {searchType === 'assets' && (

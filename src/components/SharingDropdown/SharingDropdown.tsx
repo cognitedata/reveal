@@ -60,7 +60,7 @@ const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
             <SharingMenuBody level={1}>
               {chart.public
                 ? 'This is a public chart. Copy the link to share it. Viewers will have to duplicate the chart in order to make changes.'
-                : 'This is a private chart. It must be public to share it.'}
+                : 'This is a private chart. Make it public if you want to share it.'}
             </SharingMenuBody>
             <SharingSwitchContainer>
               <Switch

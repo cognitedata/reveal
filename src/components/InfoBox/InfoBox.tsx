@@ -25,10 +25,10 @@ const InfoBox = ({ infoType, query }: InfoBoxProps) => {
             />
             <div style={{ marginTop: 20 }}>
               {infoType === 'TagHelpBox'
-                ? 'Search for Tag numbers or Asset names'
+                ? 'Search for tag numbers or asset names'
                 : 'Search for Time series ID'}
             </div>
-            <div>those might look like this:</div>
+            <div> - they may look like this:</div>
             <EmptyResultsExample>
               {infoType === 'TagHelpBox' ? '21PT1019' : 'IA_21PT1019.PV'}
             </EmptyResultsExample>

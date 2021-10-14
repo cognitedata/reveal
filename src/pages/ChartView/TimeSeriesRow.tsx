@@ -296,12 +296,10 @@ export default function TimeSeriesRow({
           className="downloadChartHide"
         >
           <Popconfirm
-            onConfirm={() => remove()}
+            onConfirm={remove}
+            okText="Remove"
             content={
-              <div style={{ textAlign: 'left' }}>
-                Are you sure that you want to
-                <br /> remove this time series?
-              </div>
+              <div style={{ textAlign: 'left' }}>Remove this time series?</div>
             }
           >
             <Button
