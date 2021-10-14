@@ -23,20 +23,8 @@
     "core",
     "packages/*"
   ],
-  "bundledDependencies": [
-    "@reveal/cad-geometry-loaders",
-    "@reveal/cad-parsers",
-    "@reveal/cad-styling",
-    "@reveal/camera-manager",
-    "@reveal/core",
-    "@reveal/logger",
-    "@reveal/modeldata-api",
-    "@reveal/nodes-api",
-    "@reveal/tools",
-    "@reveal/utilities"
-  ],
   "scripts": {
-    "build": "yarn run clean && webpack --env.development",
+    "build": "yarn run clean && webpack --env.development && tsc-alias -p tsconfig.webpack.json",
     "build:watch": "yarn run clean && webpack --env.development --watch",
     "build:prod": "yarn run clean && webpack --env.production",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
@@ -115,6 +103,7 @@
     "shx": "^0.3.3",
     "ts-jest": "^26.4.3",
     "ts-loader": "8.0.7",
+    "tsc-alias": "^1.3.10",
     "typescript": "^4.3.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",

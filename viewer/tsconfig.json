@@ -15,6 +15,19 @@
     // Module Resolution Options
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "declaration": true
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@reveal/core/*": [
+        "core/*"
+      ],
+      "@reveal/*": [
+        "packages/*"
+      ],
+      "*": [
+        "*",
+        "core/src/@types/*"
+      ]
+    },
   }
 }
