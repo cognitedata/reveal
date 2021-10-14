@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import { useLocation, useHistory } from 'react-router-dom';
 import { TopBar, Title, Colors } from '@cognite/cogs.js';
 import { NavigationLink } from '@cognite/cogs.js/dist/Components/TopBar/Modules/Navigation';
-import PlatypusLogo from 'assets/cognite-platypus.svg';
+import { PlatypusLogo } from './PlatypusLogo';
 
 const tabs: Array<{
   slug: string;
@@ -50,12 +50,11 @@ export const Header = () => {
             history.push('/');
           }}
         >
-          <img
-            src={PlatypusLogo}
-            alt="Platypus Logo"
-            width="65"
-            style={{ marginRight: '0.3rem' }}
-          />
+          <div
+            style={{ marginRight: '0.3rem', position: 'relative', width: 65 }}
+          >
+            <PlatypusLogo />
+          </div>
           <StyledTitleLogo level={6}>Platypus</StyledTitleLogo>
         </StyledTopBarItemLogo>
         {renderLinks()}
