@@ -8,6 +8,6 @@
  * @module @cognite/reveal
  */
 
-export * from '@reveal/core/src/index';
+export * from './core/src/index';
 
-export { NodeAppearance, DefaultNodeAppearance } from '@reveal/cad-styling';
+export { NodeAppearance, DefaultNodeAppearance } from './packages/cad-styling';
