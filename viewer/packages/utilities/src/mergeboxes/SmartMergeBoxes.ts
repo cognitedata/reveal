@@ -55,10 +55,10 @@ export class SmartMergeBoxes implements BoxClusterer {
 
     this.addedSinceSquash += 1;
   }
-  
+
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
-      this.addBox(box)
+      this.addBox(box);
     }
   }
 

@@ -90,10 +90,7 @@ export class MergingRTree {
     return unionTree;
   }
 
-  private addIntersectionsFromTree(constructingTree: MergingRTree,
-                                   box: Box3,
-                                   tree: MergingRTree) {
-    
+  private addIntersectionsFromTree(constructingTree: MergingRTree, box: Box3, tree: MergingRTree) {
     const overlappingBoxes = tree.findOverlappingBoxes(box);
     for (const overlappingBox of overlappingBoxes) {
       const intersection = box.clone().intersect(overlappingBox);
