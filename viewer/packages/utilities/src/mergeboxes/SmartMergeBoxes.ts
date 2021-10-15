@@ -22,8 +22,6 @@ export class SmartMergeBoxes implements BoxClusterer {
   }
 
   private mergeBoxesAtIndices(mini: number, maxi: number): void {
-    // Need to assert mini < maxi? Naah
-
     this.resultBoxes[mini].union(this.resultBoxes[maxi]);
 
     // Remove resultBoxes[maxi], replace by last box in list
@@ -67,7 +65,7 @@ export class SmartMergeBoxes implements BoxClusterer {
         if (shouldMerge) {
           this.mergeBoxesAtIndices(i, j);
 
-          // Decrement to reiterate on index j, as it has changed
+          // Decrement to iterate again on index j, as it has changed
           j--;
         }
       }
