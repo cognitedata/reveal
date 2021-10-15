@@ -90,21 +90,28 @@ export class MergingRTree {
     return unionTree;
   }
 
+  private addIntersectionsFromTree(constructingTree: MergingRTree,
+                                   box: Box3,
+                                   tree: MergingRTree) {
+    
+    const overlappingBoxes = tree.findOverlappingBoxes(box);
+    for (const overlappingBox of overlappingBoxes) {
+      const intersection = box.clone().intersect(overlappingBox);
+      if (!intersection.isEmpty()) {
+        constructingTree.insert(intersection);
+      }
+    }
+  }
+
   private addAllIntersections(
     constructingTree: MergingRTree,
     biggestTree: MergingRTree,
     smallestTree: MergingRTree
   ): void {
-    const boxes0 = smallestTree.getBoxes();
+    const boxesOfSmallestTree = smallestTree.getBoxes();
 
-    for (const box0 of boxes0) {
-      const overlappingBoxes = biggestTree.findOverlappingBoxes(box0);
-      for (const box1 of overlappingBoxes) {
-        const intersection = box0.clone().intersect(box1);
-        if (!intersection.isEmpty()) {
-          constructingTree.insert(intersection);
-        }
-      }
+    for (const box of boxesOfSmallestTree) {
+      this.addIntersectionsFromTree(constructingTree, box, biggestTree);
     }
   }
 
