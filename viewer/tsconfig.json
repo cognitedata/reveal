@@ -18,7 +18,7 @@
     "declaration": true,
     "baseUrl": ".",
     "paths": {
-      "@reveal/core/*": [
+      "@reveal/core": [
         "core/*"
       ],
       "@reveal/*": [
