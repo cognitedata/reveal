@@ -6,7 +6,8 @@ import * as Potree from '@cognite/potree-core';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 
 import { PointCloudMetadata } from './PointCloudMetadata';
-import { HttpHeadersProvider } from '../../utilities/networking/HttpHeadersProvider';
+
+import { HttpHeadersProvider } from '@reveal/modeldata-api';
 
 export class PointCloudFactory {
   private readonly _httpHeadersProvider: HttpHeadersProvider;

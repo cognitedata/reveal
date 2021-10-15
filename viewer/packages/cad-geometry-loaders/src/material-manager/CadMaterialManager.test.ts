@@ -3,12 +3,14 @@
  */
 
 import * as THREE from 'three';
-import range from 'lodash/range';
+
+import { CadMaterialManager } from './CadMaterialManager';
+
 import { IndexSet, NumericRange } from '@reveal/utilities';
 import { RenderMode, Materials } from '@reveal/cad-parsers';
+import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 
-import { TreeIndexNodeCollection } from './styling';
-import { CadMaterialManager } from './CadMaterialManager';
+import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
 
 describe('CadMaterialManager', () => {

@@ -4,7 +4,6 @@
 
 import { assertNever, trackError, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
 import {
-  BinaryFileProvider,
   CadSectorParser,
   LevelOfDetail,
   WantedSector,
@@ -18,10 +17,11 @@ import {
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
 import { Repository } from './Repository';
 
-import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
-
 import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
 import { createOffsetsArray } from '../utilities/arrays';
+
+import { BinaryFileProvider } from '@reveal/modeldata-api';
+import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {
