@@ -985,6 +985,7 @@ __metadata:
     "@reveal/cad-styling": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/materials": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/utilities": "workspace:*"
@@ -1002,6 +1003,8 @@ __metadata:
   resolution: "@reveal/materials@workspace:packages/materials"
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
+    "@reveal/cad-styling": "workspace:*"
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 

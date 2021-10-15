@@ -8,6 +8,8 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/cad-parsers": "workspace:*",
+    "@reveal/cad-styling": "workspace:*",
+    "@reveal/utilities": "workspace:*"
   }
 }
