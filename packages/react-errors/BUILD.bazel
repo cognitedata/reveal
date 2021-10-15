@@ -185,7 +185,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=react-errors",
+        "--banner=//react-errors",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

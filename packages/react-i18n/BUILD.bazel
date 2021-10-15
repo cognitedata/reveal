@@ -189,7 +189,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=react-i18n",
+        "--banner=//react-i18n",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

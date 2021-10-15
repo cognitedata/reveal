@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Dict } from 'mixpanel-browser';
 
 export type Callback = () => void;

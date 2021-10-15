@@ -1,3 +1,7 @@
+## 1.1.0 Oct 15 2021
+
+- Bumps version for react-container
+
 ## 1.0.1 Oct 12 2021
 
 - Add return for commentTarget

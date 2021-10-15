@@ -1,3 +1,7 @@
+## 2.0.2 Oct 15 2021
+
+- Re-build
+
 ## 2.0.1 Oct 13 2021
 
 - Add better warning when fake IDP is not started

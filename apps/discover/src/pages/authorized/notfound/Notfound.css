@@ -1,29 +1,27 @@
 ﻿#notfound-content {
-    top: 0;
-    left: 0;
-    right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
 
-    bottom: 0;
-    position:fixed;
-    /*background-color: #0055ff;*/
-    z-index: 500;
-    display: flex;
-    justify-content: center;
-    align-items:center;
+  bottom: 0;
+  position: fixed;
+  /*background-color: #0055ff;*/
+  z-index: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-
-
 #notfound * #notfound-box {
-    width: 491px;
-    height: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 25px;
-    padding-bottom: 54px;
-    padding-left: 60px;
-    padding-right: 60px;
-    text-align: center;
-    border-radius: 15px;
+  width: 491px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 25px;
+  padding-bottom: 54px;
+  padding-left: 60px;
+  padding-right: 60px;
+  text-align: center;
+  border-radius: 15px;
 }

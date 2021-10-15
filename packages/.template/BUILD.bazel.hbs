@@ -140,7 +140,7 @@ copy_to_bin(
 rollup(
     name = "dist",
     args = [
-        "--package={{ name }}",
+        "--banner=//{{ name }}",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

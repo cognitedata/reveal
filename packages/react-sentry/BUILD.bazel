@@ -56,7 +56,11 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@sentry/browser",
+    "@npm//@sentry/react",
+    "@npm//@sentry/rrweb",
+    "@npm//@sentry/tracing",
     "@npm//react",
+    "//packages/react-errors",
 ]
 
 # Type dependencies from package.json
@@ -68,6 +72,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/react",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
@@ -173,15 +178,15 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=react-sentry",
+        "--banner=//react-sentry",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
         "rollup.config.js",
     ],
     data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "//scripts:log.js",
         ":chdir.js",
+        "//scripts:log.js",
         ":copy_static_files",
         ":package-json",
         "//packages:tsconfig",

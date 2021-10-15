@@ -205,7 +205,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=react-container",
+        "--banner=//react-container",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

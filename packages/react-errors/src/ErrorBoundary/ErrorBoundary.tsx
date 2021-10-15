@@ -1,34 +1,10 @@
 import React, { ErrorInfo } from 'react';
-import styled from 'styled-components';
 import { withTranslation, Trans, WithTranslation } from 'react-i18next';
 import { Metrics } from '@cognite/metrics';
 import { A, Button } from '@cognite/cogs.js';
 
 import { reportException, ReportedError } from '../reportException';
-
-const ErrorPage = styled.div`
-  color: var(--cogs-greyscale-grey5);
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-  height: 100%;
-  padding: 10vw;
-
-  header {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 24px;
-  }
-
-  p {
-    font-size: 24px;
-  }
-
-  button {
-    font-size: inherit;
-  }
-`;
+import { ErrorPageContainer } from '../ErrorPage';
 
 type State = {
   reportedError: ReportedError | null;
@@ -80,7 +56,7 @@ class ErrorBoundary extends React.Component<Props, State> {
     if (hasError && reportedError) {
       const { errorId } = reportedError;
       return (
-        <ErrorPage>
+        <ErrorPageContainer>
           <header>
             <Trans t={t} i18nKey="ohNo">
               Oh no!
@@ -109,7 +85,7 @@ class ErrorBoundary extends React.Component<Props, State> {
             </Trans>
           </p>
           <footer>{errorId}</footer>
-        </ErrorPage>
+        </ErrorPageContainer>
       );
     }
 

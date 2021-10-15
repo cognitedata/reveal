@@ -1,18 +1,12 @@
-
 # Typography
 
 ```js
 import { Typography } from 'eureka-webcomponents/typography';
 ```
 
-
 <!-- Brief summary of what the component is, and what it's for. -->
 
-
-
 <!-- STORY -->
-
-
 
 #### Example
 
@@ -37,9 +31,6 @@ render() {
 }
 ```
 
-
 <!-- STORY HIDE START -->
-
-
 
 <!-- STORY HIDE END -->

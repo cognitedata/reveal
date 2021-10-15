@@ -106,7 +106,7 @@ const RawContainer: React.FC<Props> = ({
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
       <ConditionalQueryClientProvider disabled={disableReactQuery}>
-        <ConditionalSentry disabled={disableSentry}>
+        <ConditionalSentry disabled={disableSentry} history={history}>
           <ChosenAuthContainer
             sidecar={sidecar}
             sdkClient={client}

@@ -1,16 +1,16 @@
-
 # Cards
 
 ```js
-import {Card} from 'eureka-webcomponents/card';
+import { Card } from 'eureka-webcomponents/card';
 ```
+
 <!-- Brief summary of what the component is, and what it's for. -->
 
-Cards are surfaces that display content and actions on a single topic. They should be easy to scan for relevant and actionable information. Elements, like text and images, should be placed on them in a way that clearly indicates hierarchy. 
-            
-The card container is the only required element in a card. All other elements are optional. Card layouts can vary to support the types of content they contain. 
-<!-- STORY -->
+Cards are surfaces that display content and actions on a single topic. They should be easy to scan for relevant and actionable information. Elements, like text and images, should be placed on them in a way that clearly indicates hierarchy.
 
+The card container is the only required element in a card. All other elements are optional. Card layouts can vary to support the types of content they contain.
+
+<!-- STORY -->
 
 #### Example
 
@@ -27,7 +27,7 @@ render() {
                     <div style={{display:"flex", flexDirection:"row"}}>
                         <div>
                             <Typography>
-                                Members! 
+                                Members!
                             </Typography>
                         </div>
                         <div style={{flexGrow:1}} />
@@ -46,9 +46,6 @@ render() {
 }
 ```
 
-
 <!-- STORY HIDE START -->
-
-
 
 <!-- STORY HIDE END -->

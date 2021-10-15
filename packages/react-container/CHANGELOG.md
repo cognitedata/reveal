@@ -1,10 +1,14 @@
+## 2.1.0 Oct 15 2021
+
+- Bump to update Sentry deps (to get 0.2.0 rrweb)
+
 ## 2.0.1 Oct 15 2021
 
 - Logout.tsx: redirect to '/' after calling logout instead of constructing incorrect URL
 
 ## 2.0.0 Oct 05 2021
 
-- bump version for auth-utils
+- Bump version for auth-utils
 
 ## 1.8.5 Oct 01 2021
 

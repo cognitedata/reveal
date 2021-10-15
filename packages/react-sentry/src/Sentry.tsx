@@ -1,4 +1,6 @@
-import React from 'react';
+import * as React from 'react';
+import * as ReactSentry from '@sentry/react';
+import { ErrorPage } from '@cognite/react-errors';
 
 import { SentryProps, initSentry } from './utils';
 
@@ -14,5 +16,13 @@ export const Sentry: React.FC<SentryComponentProps> = ({
     initSentry(rest);
   }, []);
 
-  return children;
+  if (rest.disableAdvancedTracking) {
+    return children;
+  }
+
+  return (
+    <ReactSentry.ErrorBoundary fallback={<ErrorPage />} showDialog>
+      {children}
+    </ReactSentry.ErrorBoundary>
+  );
 };

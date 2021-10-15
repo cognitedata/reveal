@@ -150,7 +150,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=intercom-helper",
+        "--banner=//intercom-helper",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

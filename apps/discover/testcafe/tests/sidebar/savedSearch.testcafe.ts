@@ -21,7 +21,8 @@ const FIELD_BLOCK_OPERATOR = 'Field / Block / Operator';
  * for saved searches from the 'Favorites' page, use the 'favories/savedSearches.testcafe.ts' file
  *
  */
-fixture('Saved searches')
+fixture
+  .skip('Saved searches')
   .meta({ page: 'savedSearches', tenant: App.tenant }) // Used to run a single test file
   .page(App.baseApp)
   .requestHooks(logger) // <-- log network requests

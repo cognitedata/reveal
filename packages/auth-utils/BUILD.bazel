@@ -161,7 +161,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=auth-utils",
+        "--banner=//auth-utils",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

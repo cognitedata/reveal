@@ -180,7 +180,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=react-azure-telemetry",
+        "--banner=//react-azure-telemetry",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

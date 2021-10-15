@@ -177,7 +177,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=react-feature-flags",
+        "--banner=//react-feature-flags",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

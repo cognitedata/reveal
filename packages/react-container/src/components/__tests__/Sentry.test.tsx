@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
+import { createBrowserHistory } from '../../internal';
 import { ConditionalSentry } from '../Sentry';
+
+const history = createBrowserHistory('test');
 
 describe('Sentry', () => {
   it('should render conditionally', () => {
@@ -8,7 +11,7 @@ describe('Sentry', () => {
     global.console = { warn: jest.fn(), log: jest.fn() };
 
     const Test = () => (
-      <ConditionalSentry disabled={false}>
+      <ConditionalSentry disabled={false} history={history}>
         <div>test-content</div>
       </ConditionalSentry>
     );
@@ -28,7 +31,7 @@ describe('Sentry', () => {
     global.console = { warn: jest.fn(), log: jest.fn() };
 
     const Test = () => (
-      <ConditionalSentry disabled>
+      <ConditionalSentry disabled history={history}>
         <div>test-content</div>
       </ConditionalSentry>
     );

@@ -1,3 +1,7 @@
+## 1.0.1 Oct 11 2021
+
+- Add generic ErrorPage
+
 ## 1.0.0 Oct 12 2021
 
 - Bump to change deps from sdk v4 -> sdk v5

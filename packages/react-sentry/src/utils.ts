@@ -1,4 +1,7 @@
 import { BrowserOptions, init, setUser } from '@sentry/browser';
+import * as Sentry from '@sentry/react';
+import SentryRRWeb from '@sentry/rrweb';
+import { Integrations } from '@sentry/tracing';
 
 import { log } from './log';
 import { isLocalhost } from './env';
@@ -24,11 +27,18 @@ export interface SentryProps {
   //   'Resource not found. This may also be due to insufficient access rights. | code: 403',
   //   'Model not found | code: 404',
   // ],
-  ignoreErrors?: string[];
+  disableAdvancedTracking?: boolean;
   dsn?: string;
+  history?: History;
+  ignoreErrors?: string[];
 }
 
-export const initSentry = ({ ignoreErrors, dsn }: SentryProps) => {
+export const initSentry = ({
+  disableAdvancedTracking,
+  ignoreErrors,
+  dsn,
+  history,
+}: SentryProps) => {
   const chosenDsn = dsn || process.env.REACT_APP_SENTRY_DSN;
   if (!chosenDsn) {
     log('Sentry DSN not found. Not initializing Sentry.', [], 2);
@@ -54,10 +64,26 @@ export const initSentry = ({ ignoreErrors, dsn }: SentryProps) => {
     ignoreErrors,
   };
 
+  if (!disableAdvancedTracking) {
+    if (history) {
+      config.integrations = [
+        new Integrations.BrowserTracing({
+          routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
+        }),
+        new SentryRRWeb(),
+      ];
+    } else {
+      config.integrations = [new SentryRRWeb()];
+    }
+
+    config.tracesSampleRate = 1;
+    Sentry.setTag('rrweb.active', 'yes');
+  }
+
   init(config);
 };
 
-export const identifySentry = (email: string, id?: string) => {
+export const identifySentry = (email: string, id: string) => {
   setUser({
     email,
     id,

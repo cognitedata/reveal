@@ -151,7 +151,7 @@ append_deps(
 rollup(
     name = "dist",
     args = [
-        "--package=griff-loader",
+        "--banner=//griff-loader",
         "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",

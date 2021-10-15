@@ -1,11 +1,8 @@
 console.log('');
-console.log('##############################################');
+console.log('##################################################');
 console.log(
-  `# --> Building package: ${process.argv[2].replace(
-    '--package=',
-    ''
-  )} complete`
+  `---> Build finished for: ${process.argv[2].replace('--banner=//', '')}`
 );
-console.log('##############################################');
+console.log('##################################################');
 console.log('');
 console.log('');
