@@ -58,7 +58,7 @@ static final String VERSIONING_STRATEGY = "multi-branch"
 
 // == End of customization. Everything below here is common. == \\
 
-static final String NODE_VERSION = 'node:16'
+static final String NODE_VERSION = 'node:12'
 
 static final Map<String, String> CONTEXTS = [
   checkout: "continuous-integration/jenkins/checkout",
@@ -170,8 +170,6 @@ pods {
 
         'Preview': {
           dir('preview') {
-            sh('npm config set user 0')
-            sh('npm config set unsafe-perm true')
             stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
               fas.build(
                 appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
@@ -185,8 +183,6 @@ pods {
 
         'Staging': {
           dir('staging') {
-            sh('npm config set user 0')
-            sh('npm config set unsafe-perm true')
             stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
               fas.build(
                 appId: STAGING_APP_ID,
@@ -200,8 +196,6 @@ pods {
 
         'Production': {
           dir('production') {
-            sh('npm config set user 0')
-            sh('npm config set unsafe-perm true')
             stageWithNotify('Build for production', CONTEXTS.buildProduction) {
               fas.build(
                 appId: PRODUCTION_APP_ID,
