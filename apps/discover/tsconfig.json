@@ -16,6 +16,7 @@
     "sourceMap": false,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
+    "forceConsistentCasingInFileNames": false,
     "plugins": [
       {
         "name": "typescript-styled-plugin"
