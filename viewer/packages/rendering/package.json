@@ -11,5 +11,11 @@
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
+  },
+  "sideEffects": false,
+  "glslify": {
+    "transform": [
+      "glslify-import"
+    ]
   }
 }
