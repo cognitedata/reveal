@@ -79,6 +79,7 @@ export type AnnotationTableRowProps = {
 
 export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {
   id: ReactText;
+  remainingKeypoints?: KeypointItem[];
 };
 
 export type VisionOptionType<T> = OptionType<T> & {

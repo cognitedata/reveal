@@ -355,12 +355,14 @@ export const currentCollection = createSelector(
   (state: State) => state.collections.selectedIds,
   (state: State) => state.keypointMap.byId,
   (state: State) => state.keypointMap.selectedIds,
+  (state: State) => state.predefinedCollections.predefinedKeypoints,
   (
     lastCollection,
     allCollections,
     selectedCollectionIds,
     allKeypoints,
-    selectedKeypointIds
+    selectedKeypointIds,
+    collectionTemplate
   ) => {
     if (lastCollection) {
       const collection = allCollections[lastCollection];
@@ -371,10 +373,18 @@ export const currentCollection = createSelector(
             selected: selectedKeypointIds.includes(id),
           } as KeypointItem)
       );
+      const predefinedKeypoints = collectionTemplate.find(
+        (template) => template.collectionName === collection.name
+      )?.keypoints as KeypointItem[];
+      const remainingKeypoints = predefinedKeypoints?.filter(
+        (point) => !keypoints.some((k) => k.caption === point.caption)
+      );
+
       return {
         ...collection,
         selected: selectedCollectionIds.includes(collection.id),
         keypoints,
+        remainingKeypoints,
       };
     }
     return null;

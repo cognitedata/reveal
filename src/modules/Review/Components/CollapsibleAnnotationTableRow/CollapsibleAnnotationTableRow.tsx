@@ -1,47 +1,40 @@
+import React from 'react';
 import {
   AnnotationTableItem,
   AnnotationTableRowProps,
 } from 'src/modules/Review/types';
 import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotatationTableRow/AnnotationTableRow';
-import React from 'react';
 import { Col, Collapse, Row } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { KeypointVertex } from 'src/utils/AnnotationUtils';
 
-const StyledRow = styled(Row)`
-  width: 100%;
-  padding-left: 5px;
-  padding-right: 5px;
-  gap: 12px !important;
-`;
-
-const StyledCol = styled(Col)`
-  align-self: center;
-  justify-self: center;
-
-  &.label {
-    align-self: center;
-    justify-self: self-start;
-  }
-`;
-
-const AnnotationTextContainer = styled.div`
-  padding: 10px 10px;
-  box-sizing: content-box;
-`;
-
-const AnnotationText = styled.div`
-  padding: 0 10px;
-`;
-
-const ColorBox = styled.div<{ color: string }>`
-  width: 16px;
-  height: 16px;
-  background: ${(props) => props.color};
-  border: 0.5px solid #d9d9d9;
-  box-sizing: border-box;
-  border-radius: 2px;
-`;
+const KeypointRow = ({
+  keypoint,
+  remaining = false,
+}: {
+  keypoint: KeypointVertex;
+  remaining?: boolean;
+}) => (
+  <StyledRow cols={12}>
+    <StyledCol span={1}>
+      <ColorBox
+        color={remaining ? '#F5F5F5' : (keypoint as KeypointVertex).color}
+      />
+    </StyledCol>
+    <StyledCol span={1}>
+      <div style={{ color: remaining ? '#8C8C8C' : undefined }}>
+        {(keypoint as KeypointVertex).order}
+      </div>
+    </StyledCol>
+    <StyledCol span={10} className="label">
+      <AnnotationTextContainer>
+        <AnnotationText style={{ color: remaining ? '#8C8C8C' : undefined }}>
+          {(keypoint as KeypointVertex).caption}
+        </AnnotationText>
+      </AnnotationTextContainer>
+    </StyledCol>
+  </StyledRow>
+);
 
 export const CollapsibleAnnotationTableRow = ({
   annotation,
@@ -119,23 +112,26 @@ export const CollapsibleAnnotationTableRow = ({
                   (keypoint as KeypointVertex).selected ? 'active' : ''
                 }`}
               >
-                <StyledRow cols={12}>
-                  <StyledCol span={1}>
-                    <ColorBox color={(keypoint as KeypointVertex).color} />
-                  </StyledCol>
-                  <StyledCol span={1}>
-                    <div>{(keypoint as KeypointVertex).order}</div>
-                  </StyledCol>
-                  <StyledCol span={10} className="label">
-                    <AnnotationTextContainer>
-                      <AnnotationText>
-                        {(keypoint as KeypointVertex).caption}
-                      </AnnotationText>
-                    </AnnotationTextContainer>
-                  </StyledCol>
-                </StyledRow>
+                <KeypointRow keypoint={keypoint as KeypointVertex} />
               </CollapseRowContainer>
             ))}
+            {
+              // Remaining Keypoints
+              annotation.remainingKeypoints &&
+                annotation.remainingKeypoints.map((keypoint) => (
+                  <CollapseRowContainer
+                    id={`annotation-table-row-${
+                      (keypoint as KeypointVertex).id
+                    }`}
+                    key={(keypoint as KeypointVertex).id}
+                  >
+                    <KeypointRow
+                      keypoint={keypoint as KeypointVertex}
+                      remaining
+                    />
+                  </CollapseRowContainer>
+                ))
+            }
           </StyledCollapsePanel>
         </Collapse>
       </div>
@@ -197,4 +193,39 @@ const StyledCollapsePanel = styled(Collapse.Panel)`
   &.active {
     background-color: var(--cogs-midblue-6);
   }
+`;
+
+const StyledRow = styled(Row)`
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  gap: 12px !important;
+`;
+
+const StyledCol = styled(Col)`
+  align-self: center;
+  justify-self: center;
+
+  &.label {
+    align-self: center;
+    justify-self: self-start;
+  }
+`;
+
+const AnnotationTextContainer = styled.div`
+  padding: 10px 10px;
+  box-sizing: content-box;
+`;
+
+const AnnotationText = styled.div`
+  padding: 0 10px;
+`;
+
+const ColorBox = styled.div<{ color: string }>`
+  width: 16px;
+  height: 16px;
+  background: ${(props) => props.color};
+  border: 0.5px solid #d9d9d9;
+  box-sizing: border-box;
+  border-radius: 2px;
 `;

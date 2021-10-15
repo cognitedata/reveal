@@ -1,14 +1,12 @@
 import { Title } from '@cognite/cogs.js';
 import React, { ReactText } from 'react';
-import { VisibleAnnotation } from 'src/modules/Review/store/reviewSlice';
 import styled from 'styled-components';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { AssetLinkWarning } from 'src/modules/Review/Components/AnnotationsTable/AssetLinkWarning';
 import { CollapsibleAnnotationTableRow } from 'src/modules/Review/Components/CollapsibleAnnotationTableRow/CollapsibleAnnotationTableRow';
-
-type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & { id: ReactText };
+import { AnnotationTableItem } from 'src/modules/Review/types';
 
 export interface AnnotationTableProps {
   title: string;
