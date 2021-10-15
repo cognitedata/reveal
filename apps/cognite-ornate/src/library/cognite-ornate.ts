@@ -66,7 +66,6 @@ export class CogniteOrnate {
       width: sceneBaseWidth,
       height: sceneBaseHeight,
       scale: { x: 0.2, y: 0.2 },
-      draggable: true,
     });
 
     // Add layers to stage
