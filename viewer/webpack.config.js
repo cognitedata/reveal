@@ -27,7 +27,6 @@ module.exports = env => {
 
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });
-
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
@@ -44,7 +43,7 @@ module.exports = env => {
     target: 'web',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      symlinks: false
+      symlinks: true
     },
     module: {
       rules: [
@@ -55,7 +54,6 @@ module.exports = env => {
             options: {
               configFile: 'tsconfig.webpack.json',
               onlyCompileBundledFiles: true,
-              allowTsInNodeModules: true,
               compilerOptions: !development
                 ? {
                     declarationDir: path.resolve(__dirname, 'dist')
