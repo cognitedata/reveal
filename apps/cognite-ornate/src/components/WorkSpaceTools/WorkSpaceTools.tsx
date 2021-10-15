@@ -34,6 +34,9 @@ const WorkSpaceTools = ({
       if (e.key === 'c') {
         onToolChange('circle');
       }
+      if (e.key === 'i') {
+        onToolChange('list');
+      }
       if (e.key === 's') {
         onToolChange('default');
       }
@@ -116,6 +119,18 @@ const WorkSpaceTools = ({
         disabled={activeTool === 'text'}
       >
         <Icon type="TextTool" />
+      </Button>
+      <ToolboxSeparator />
+      <Button
+        type="ghost"
+        size="small"
+        title="List I"
+        onClick={() => {
+          onToolChange('list');
+        }}
+        disabled={activeTool === 'list'}
+      >
+        <Icon type="Checklist" />
       </Button>
     </WorkSpaceToolsWrapper>
   );

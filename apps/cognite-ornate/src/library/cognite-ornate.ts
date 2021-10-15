@@ -10,14 +10,7 @@ import {
   Drawing,
   ShapeSettings,
 } from 'library/types';
-import {
-  MoveTool,
-  LineTool,
-  RectTool,
-  TextTool,
-  DefaultTool,
-  CircleTool,
-} from 'library/tools';
+import { DefaultTool } from 'library/tools';
 import { Tool } from 'library/tools/Tool';
 import { ConnectedLine } from 'library/connectedLine';
 import bgImage from 'library/assets/bg.png';
@@ -49,6 +42,7 @@ export class CogniteOrnate {
   currentTool: Tool = new DefaultTool(this);
   connectedLineGroup: ConnectedLine[] = [];
   shapeSettings: ShapeSettings = defaultShapeSettings;
+  tools: Record<string, Tool> = {};
 
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
@@ -123,39 +117,17 @@ export class CogniteOrnate {
     this.currentTool.shapeSettings = newSettings;
   };
 
-  handleToolChange(tool: ToolType) {
+  handleToolChange = (tool: ToolType) => {
     if (this.currentTool) {
       this.currentTool.onDestroy();
     }
-    switch (tool) {
-      case 'move':
-        this.currentTool = new MoveTool(this);
-        break;
-      case 'line':
-        this.currentTool = new LineTool(this);
-        break;
-      case 'rect':
-        this.currentTool = new RectTool(this);
-        break;
-      case 'circle':
-        this.currentTool = new CircleTool(this);
-        break;
-      case 'text':
-        this.currentTool = new TextTool(this);
-        break;
-      case 'default':
-        this.currentTool = new DefaultTool(this);
-        break;
-      default:
-        this.currentTool = new DefaultTool(this);
-        throw new Error(`${tool} is not an available tool.`);
-    }
+    this.currentTool = this.tools[tool] || this.tools.default;
     this.currentTool.onInit();
     this.stage.container().style.cursor = this.currentTool.cursor;
     this.stage.on('mouseenter', () => {
       this.stage.container().style.cursor = this.currentTool.cursor;
     });
-  }
+  };
 
   isCurrentToolUsingShapeSettings = () => {
     return this.currentTool.isToolUsingShapeSettings;
@@ -246,10 +218,15 @@ export class CogniteOrnate {
   ): OrnateAnnotationInstance[] => {
     const rects: OrnateAnnotationInstance[] = annotations.map((annotation) => ({
       annotation,
-      instance: this.annotationToRect(annotation, doc, {
-        width: doc.group.width(),
-        height: doc.group.height(),
-      }),
+      instance: this.annotationToRect(
+        annotation,
+        doc,
+        {
+          width: doc.group.width(),
+          height: doc.group.height(),
+        },
+        doc.group.id()
+      ),
       document: doc,
     }));
 
@@ -472,9 +449,11 @@ export class CogniteOrnate {
   annotationToRect(
     annotation: OrnateAnnotation,
     doc: OrnatePDFDocument,
-    image: { width: number; height: number }
+    image: { width: number; height: number },
+    groupId?: string
   ) {
     const rect = new Konva.Rect({
+      id: annotation.id,
       x: annotation.x * image.width,
       y: annotation.y * image.height,
       width: annotation.width * image.width,
@@ -484,15 +463,17 @@ export class CogniteOrnate {
       fill: annotation.fill,
       unselectable: true,
       metadata: annotation.metadata,
+      attachedToGroup: groupId,
     });
     if (annotation.onClick) {
-      rect.on('click', () =>
+      rect.on('click', (e) => {
+        this.currentTool.onAnnotationClick(e, rect);
         annotation.onClick!({
           instance: rect,
           annotation,
           document: doc,
-        })
-      );
+        });
+      });
       rect.on('mouseenter', () => {
         this.stage.container().style.cursor = 'pointer';
       });

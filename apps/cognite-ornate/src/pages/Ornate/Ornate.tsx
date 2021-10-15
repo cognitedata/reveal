@@ -18,9 +18,24 @@ import { Workspace, WorkspaceDocument } from 'types';
 import { WorkspaceDocsPanel } from 'components/WorkspaceDocsPanel';
 import { useTranslation } from 'hooks/useTranslation';
 import { RecentWorkspaces } from 'components/Workspace/WorkspacesList';
+import ListToolSidebar from 'components/ListToolSidebar';
 import WorkSpaceSearch from 'components/WorkspaceDocsPanel/WorkspaceSearch';
 import { WorkspaceHeader } from 'components/Workspace/WorkspaceHeader';
 import { toDisplayDate } from 'utils/date';
+import {
+  ListItem,
+  ListToolStatus,
+  LIST_TOOL_STATUSES,
+} from 'components/ListToolSidebar/ListToolSidebar';
+import {
+  MoveTool,
+  LineTool,
+  RectTool,
+  TextTool,
+  DefaultTool,
+  CircleTool,
+  ListTool,
+} from 'library/tools';
 
 import {
   Loader,
@@ -45,14 +60,52 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const [workspaceDocuments, setWorkspaceDocuments] = useState<
     WorkspaceDocument[]
   >([]);
+  const [listItems, setListItems] = useState<ListItem[]>([]);
+
   const [workspaceDocumentAnnotations, setWorkSpaceDocumentAnnotations] =
     useState<Record<string, OrnateAnnotationInstance[]>>();
 
   useEffect(() => {
+    if (ornateViewer.current) {
+      return;
+    }
     ornateViewer.current = new CogniteOrnate({
       container: '#container',
     });
+    loadTools();
   }, []);
+
+  const loadTools = () => {
+    if (ornateViewer.current) {
+      // Reset the list tool
+      setListItems([]);
+      const listTool = new ListTool(ornateViewer.current);
+      listTool.onMarkersChange = (markers) => {
+        // Transform markers into list items
+        const nextListItems: ListItem[] = markers.map((marker) => ({
+          marker,
+          order: marker.order,
+          text: marker.metadata?.text || '',
+          assetId:
+            marker.metadata?.assetId ||
+            marker.shape.attrs?.metadata?.resourceId,
+          status: marker.metadata?.status as ListToolStatus,
+        }));
+        setListItems(nextListItems);
+      };
+      ornateViewer.current.tools = {
+        move: new MoveTool(ornateViewer.current),
+        line: new LineTool(ornateViewer.current),
+        rect: new RectTool(ornateViewer.current),
+        circle: new CircleTool(ornateViewer.current),
+        text: new TextTool(ornateViewer.current),
+        list: listTool,
+        default: new DefaultTool(ornateViewer.current),
+      };
+      onToolChange('default');
+      ornateViewer.current.currentTool = ornateViewer.current.tools.default;
+    }
+  };
 
   const onDelete = useCallback(
     (e: Event) => {
@@ -119,10 +172,6 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         endPointAnnotation?.instance
       );
     }
-
-    if (data.annotation?.metadata?.type === 'asset') {
-      console.log('asset');
-    }
   };
 
   const onToolChange = (tool: ToolType) => {
@@ -142,8 +191,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       setWorkspaceDocuments([]);
       onToolChange('default');
       const contents = await workspaceService.loadWorkspaceContents(workspace);
-
       ornateViewer.current!.restart();
+      loadTools();
 
       const documents = [] as WorkspaceDocument[];
       await Promise.all(
@@ -166,6 +215,12 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
           ornateViewer.current!.addDrawings(...parsedDrawings);
         })
       );
+      contents.markers.forEach((marker) => {
+        (ornateViewer.current!.tools.list as ListTool).addMarker({
+          ...marker,
+          shape: ornateViewer.current!.stage.findOne(`#${marker.shapeId}`),
+        });
+      });
       setWorkspaceDocuments(documents);
 
       if (contents!.connectedLines) {
@@ -276,6 +331,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       };
       const type = event.metadata?.CDF_ANNOTATION_resource_type || 'unknown';
       const newAnnotation: OrnateAnnotation = {
+        id: `${fileId}_${event.metadata?.CDF_ANNOTATION_resource_id}`,
         type: 'pct',
         x: box.xMin,
         y: box.yMin,
@@ -332,7 +388,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       }
       setShowLoader(true);
       const json = ornateViewer.current!.exportToJSON();
-      workspaceService.saveWorkspaceContents(workspace.id, json);
+      workspaceService.saveWorkspaceContents(workspace.id, {
+        ...json,
+        markers: (ornateViewer.current!.tools.list as ListTool).markers,
+      });
       workspaceService.saveWorkspace(workspace);
       toast.success(t('save_success', 'Workspace was saved'), {
         position: 'top-right',
@@ -405,12 +464,14 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     setWorkspaceDocuments([]);
     setActiveTool('default');
     ornateViewer.current!.restart();
+    loadTools();
   };
 
   const showWorkspaces = () => {
     setWorkspace(null);
     setWorkspaceDocuments([]);
     ornateViewer.current!.restart();
+    loadTools();
   };
 
   const deleteWorkspace = async (workspace: Workspace) => {
@@ -418,6 +479,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     setWorkspace(null);
     setWorkspaceDocuments([]);
     ornateViewer.current!.restart();
+    loadTools();
   };
 
   const onZoom = (scale: number) => {
@@ -488,6 +550,28 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         content={sidebarContent}
         footer={sidebarFooter}
       />
+      {activeTool === 'list' && (
+        <ListToolSidebar
+          listItems={listItems}
+          onItemChange={(nextListItems) => {
+            setListItems(nextListItems);
+            (ornateViewer.current!.tools.list as ListTool).renderMarkers(
+              nextListItems.map((x) => ({
+                ...x.marker,
+                order: x.order,
+                metadata: {
+                  status: x.status,
+                  text: x.text,
+                  assetId: x.assetId ? String(x.assetId) : undefined,
+                },
+                styleOverrides: x.status
+                  ? LIST_TOOL_STATUSES[x.status].styleOverrides
+                  : undefined,
+              }))
+            );
+          }}
+        />
+      )}
 
       {shapeSettingsComponent}
 

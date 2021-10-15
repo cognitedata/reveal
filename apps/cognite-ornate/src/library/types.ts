@@ -1,6 +1,7 @@
 import ShapeSettings from 'components/ShapeSettings';
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
+import { Shape } from 'konva/lib/Shape';
 
 import { CogniteOrnate } from './cognite-ornate';
 
@@ -13,6 +14,7 @@ export type OrnatePDFDocument = {
   metadata?: Record<string, string>;
 };
 export type OrnateAnnotation = {
+  id: string;
   type: 'pct' | 'px';
   width: number;
   height: number;
@@ -58,7 +60,14 @@ export type OrnateJSON = {
   }[];
 };
 
-export type ToolType = 'move' | 'line' | 'rect' | 'text' | 'default' | 'circle';
+export type ToolType =
+  | 'move'
+  | 'line'
+  | 'rect'
+  | 'text'
+  | 'default'
+  | 'circle'
+  | 'list';
 
 export type ShapeSettings = {
   [key: string]: string | number | undefined;
@@ -84,4 +93,6 @@ export interface ICogniteOrnateTool {
   onMouseMove: (e: KonvaEventObject<MouseEvent>) => void;
   /** Mouse up, use to stop activity */
   onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
+  /** Called when a shape of any kind is clicked */
+  onAnnotationClick: (e: KonvaEventObject<MouseEvent>, shape: Shape) => void;
 }

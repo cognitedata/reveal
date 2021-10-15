@@ -2,6 +2,7 @@ import { OrnateAnnotation } from '../types';
 
 export const mockAnnotations: OrnateAnnotation[] = [
   {
+    id: '1',
     type: 'pct',
     width: 0.1,
     height: 0.1,
@@ -14,6 +15,7 @@ export const mockAnnotations: OrnateAnnotation[] = [
     },
   },
   {
+    id: '2',
     type: 'pct',
     width: 0.2,
     height: 0.2,

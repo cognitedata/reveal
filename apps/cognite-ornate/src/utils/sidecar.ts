@@ -34,6 +34,7 @@ const getAadApplicationId = (cluster: string) => {
     bluefield: '245a8a64-4142-4226-86fa-63d590de14c9',
     'azure-dev': '5a262178-942b-4c8f-ac15-f96642b73b56',
     ew1: 'd584f014-5fa9-4b0b-953d-cc4837d093f3',
+    'az-eastus-1': '685cada6-524c-49f1-95c6-4b96eebe4b5b',
   };
 
   const aadApplicationId = ids[cluster] || '';

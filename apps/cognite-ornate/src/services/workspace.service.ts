@@ -1,8 +1,13 @@
+import { Marker } from 'library/tools/ListTool';
 import { OrnateJSON } from 'library/types';
 import { Workspace, WorkspaceDocument } from 'types';
 import { v4 as uuid } from 'uuid';
 
 import { StorageProvider } from './storage-provider';
+
+export type WorkspaceContent = OrnateJSON & {
+  markers: Marker[];
+};
 
 export class WorkspaceService {
   private storage: StorageProvider;
@@ -78,15 +83,16 @@ export class WorkspaceService {
     return true;
   }
 
-  async loadWorkspaceContents(workspace: Workspace): Promise<OrnateJSON> {
+  async loadWorkspaceContents(workspace: Workspace): Promise<WorkspaceContent> {
     return this.storage.getItem(
       `${this.workspaceStoragePrefix}${workspace.id}`,
-      { documents: [] }
-    ) as Promise<OrnateJSON>;
+      { documents: [], markers: [] }
+    ) as Promise<WorkspaceContent>;
   }
 
-  saveWorkspaceContents(workspaceId: string, contents: OrnateJSON): void {
+  saveWorkspaceContents(workspaceId: string, contents: WorkspaceContent): void {
     const parsedJson = {
+      ...contents,
       documents: contents.documents.map((doc) => {
         return {
           ...doc,

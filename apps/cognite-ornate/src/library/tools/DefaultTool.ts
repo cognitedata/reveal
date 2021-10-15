@@ -86,8 +86,13 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
       this.selectedNode = this.ornateInstance.stage.findOne(
         `#${e.target.attrs.attachedToGroup}`
       );
-      this.transformer?.rotateEnabled(false);
-      this.transformer?.resizeEnabled(false);
+      if (e.target.attrs.resizableGroup) {
+        this.transformer?.rotateEnabled(false);
+        this.transformer?.resizeEnabled(false);
+      } else {
+        this.transformer?.rotateEnabled(false);
+        this.transformer?.resizeEnabled(false);
+      }
     } else {
       this.selectedNode = e.target;
       this.transformer?.rotateEnabled(true);

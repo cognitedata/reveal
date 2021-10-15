@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'library/types';
+import { v4 as uuid } from 'uuid';
 
 import { Tool } from './Tool';
 
@@ -34,6 +35,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
 
     const translatedMousePosition = this.getPosition();
     this.newRect = new Konva.Rect({
+      id: uuid(),
       x: translatedMousePosition.x,
       y: translatedMousePosition.y,
       width: 1,
@@ -43,6 +45,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
       opacity: this.shapeSettings.opacity,
       userGenerated: true,
       type: 'rect',
+      attachedToGroup: groupName,
     });
 
     // If we get scaled by the transform tool - correct ourselves.
