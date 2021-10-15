@@ -9,15 +9,7 @@
     "typeRoots": [
       "node_modules/@types",
       "core/src/@types"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "*",
-        "core/src/@types/*"
-      ]
-    },
-    // do not add path aliases. They'll end up in generated declaration files.
+    ]
   },
   // include is also used for eslint to understand which files should be linted
   "include": [
