@@ -1,5 +1,5 @@
+import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
-import { Keypoint } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
 
 export enum VisionAPIType {
   OCR = 1,

@@ -3,12 +3,14 @@ import { Modal } from 'antd';
 import { getContainer } from 'src/utils';
 import { CollectionSettingsModalContent } from './CollectionSettingsModalContent';
 
-export type FileUploadModalProps = {
+export type CollectionSettingsModalProps = {
   showModal: boolean;
   onCancel: () => void;
 };
 
-export const CollectionSettingsModal = (props: FileUploadModalProps) => {
+export const CollectionSettingsModal = (
+  props: CollectionSettingsModalProps
+) => {
   return (
     <Modal
       getContainer={getContainer}

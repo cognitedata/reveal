@@ -1,4 +1,4 @@
-import { KeypointCollection, Shape } from './CollectionSettingsTypes';
+import { KeypointCollection, Shape } from 'src/modules/Review/types';
 
 export const predefinedKeypoints: KeypointCollection[] = [
   {

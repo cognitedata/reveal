@@ -14,7 +14,7 @@ import {
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { ApproveAnnotation } from 'src/store/thunks/Annotation/ApproveAnnotation';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
@@ -23,8 +23,7 @@ import { VisionAPIType } from 'src/api/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { convertKeyPointCollectionToAnnotationStub } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ConversionUtils';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { AnnotationTableItem } from 'src/modules/Review/types';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 export const ImageContextualization = (props: {
   file: FileInfo;
@@ -59,15 +58,10 @@ export const ImageContextualization = (props: {
   };
 
   const handleApprovalState = async (
-    annotation: AnnotationTableItem,
+    id: ReactText,
     status: AnnotationStatus
   ) => {
-    await dispatch(
-      ApproveAnnotation({
-        ...(annotation as VisionAnnotation),
-        status,
-      })
-    );
+    await dispatch(AnnotationStatusChange({ id: +id, status }));
   };
 
   const handleOnAnnotationSelect = (id: ReactText, nextState: boolean) => {
@@ -95,10 +89,10 @@ export const ImageContextualization = (props: {
   };
 
   const onKeypointCollectionApprovalStateChange = (
-    annotation: AnnotationTableItem,
+    id: ReactText,
     status: AnnotationStatus
   ) => {
-    dispatch(setCollectionStatus({ id: annotation.id.toString(), status }));
+    dispatch(setCollectionStatus({ id: id.toString(), status }));
   };
 
   const onKeypointSelect = (id: ReactText) => {

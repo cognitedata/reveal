@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, Title } from '@cognite/cogs.js';
+import { AnnotationCollection } from 'src/modules/Review/types';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { Shapes } from './Body/Shapes';
-import { AnnotationCollection } from './CollectionSettingsTypes';
 import { Keypoints } from './Body/Keypoints';
 
 export const CollectionSettingsModalContent = ({

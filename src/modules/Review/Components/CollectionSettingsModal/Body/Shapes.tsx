@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { Input } from 'antd';
-import {
-  AnnotationCollection,
-  Shape,
-} from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
-import { getRandomColor } from 'src/modules/Common/Components/CollectionSettingsModal/utill';
+import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
+import { getRandomColor } from 'src/modules/Review/Components/CollectionSettingsModal/utill';
+import { AnnotationCollection, Shape } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/CollectionSettings';
 import { Header } from './Header';
-import { ColorPicker } from './ColorPicker';
 
 const validNewShapes = (newShapes: { [key: string]: Shape }) => {
   const shapeNames = Object.keys(newShapes).map(

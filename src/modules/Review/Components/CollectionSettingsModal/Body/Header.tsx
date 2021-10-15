@@ -41,7 +41,7 @@ const Container = styled.div`
   grid-auto-flow: column;
   height: 50px;
   align-items: center;
-  padding: 0px 12px;
+  padding: 0 12px;
   justify-content: space-between;
   border-bottom: 1px solid #d9d9d9;
 `;

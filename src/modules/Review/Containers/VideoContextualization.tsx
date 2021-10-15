@@ -7,15 +7,14 @@ import {
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { ApproveAnnotation } from 'src/store/thunks/Annotation/ApproveAnnotation';
+import { AnnotationStatusChange } from 'src/store/thunks/Annotation/AnnotationStatusChange';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import styled from 'styled-components';
 import { AnnotationsTable } from 'src/modules/Review/Components/AnnotationsTable/AnnotationsTable';
 import { VisionAPIType } from 'src/api/types';
 import { useDispatch } from 'react-redux';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
-import { AnnotationTableItem } from 'src/modules/Review/types';
+import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 export const VideoContextualization = (props: {
   file: FileInfo;
@@ -44,15 +43,10 @@ export const VideoContextualization = (props: {
   };
 
   const handleApprovalState = async (
-    annotation: AnnotationTableItem,
+    id: ReactText,
     status: AnnotationStatus
   ) => {
-    await dispatch(
-      ApproveAnnotation({
-        ...(annotation as VisionAnnotation),
-        status,
-      })
-    );
+    await dispatch(AnnotationStatusChange({ id: +id, status }));
   };
 
   const handleOnAnnotationSelect = (id: ReactText, nextState: boolean) => {

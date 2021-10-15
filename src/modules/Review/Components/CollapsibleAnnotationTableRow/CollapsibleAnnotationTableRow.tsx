@@ -1,4 +1,7 @@
-import { AnnotationTableRowProps } from 'src/modules/Review/types';
+import {
+  AnnotationTableItem,
+  AnnotationTableRowProps,
+} from 'src/modules/Review/types';
 import { AnnotationTableRow } from 'src/modules/Review/Components/AnnotatationTableRow/AnnotationTableRow';
 import React from 'react';
 import { Col, Collapse, Row } from '@cognite/cogs.js';
@@ -53,12 +56,20 @@ export const CollapsibleAnnotationTableRow = ({
 }: AnnotationTableRowProps & {
   onKeyPointSelect?: (id: string) => void;
 }) => {
+  const onChange = (ann: AnnotationTableItem, key: string) => {
+    if (+key === 1) {
+      onSelect(ann.id, true);
+    } else {
+      onSelect(ann.id, false);
+    }
+  };
   if (
     annotation.region?.shape === 'points' &&
     annotation.region.vertices.length
   ) {
     const expanded =
       expandByDefault ||
+      annotation.selected ||
       annotation.region.vertices.some(
         (vertex) => (vertex as KeypointVertex).selected
       );
@@ -67,10 +78,19 @@ export const CollapsibleAnnotationTableRow = ({
       collapsible: undefined,
     };
     if (expanded) options = { ...options, activeKey: 1 };
+    else options = { ...options, activeKey: 0 };
 
     return (
-      <div id={`annotation-table-row-${annotation.id}`}>
-        <Collapse {...options}>
+      <div
+        id={`row-${annotation.id}`}
+        className={`annotation-table-row ${
+          annotation.selected ? 'active' : ''
+        }`}
+      >
+        <Collapse
+          {...options}
+          onChange={(nextKey) => onChange(annotation, nextKey)}
+        >
           <StyledCollapsePanel
             header={
               <AnnotationTableRow
@@ -88,16 +108,16 @@ export const CollapsibleAnnotationTableRow = ({
           >
             {annotation.region.vertices.map((keypoint) => (
               <CollapseRowContainer
-                id={`annotation-table-row-${(keypoint as KeypointVertex).id}`}
+                id={`row-${(keypoint as KeypointVertex).id}`}
                 key={(keypoint as KeypointVertex).id}
                 onClick={() => {
                   if (onKeyPointSelect) {
                     onKeyPointSelect((keypoint as KeypointVertex).id);
                   }
                 }}
-                className={
+                className={`annotation-table-expand-row ${
                   (keypoint as KeypointVertex).selected ? 'active' : ''
-                }
+                }`}
               >
                 <StyledRow cols={12}>
                   <StyledCol span={1}>
@@ -113,19 +133,6 @@ export const CollapsibleAnnotationTableRow = ({
                       </AnnotationText>
                     </AnnotationTextContainer>
                   </StyledCol>
-                  {/* <StyledCol span={1}> */}
-                  {/*  <AnnotationActionMenuExtended */}
-                  {/*    showPolygon={annotation.show} */}
-                  {/*    disableShowPolygon={false} */}
-                  {/*    handleAnnotationDelete={() => { */}
-                  {/*      if (onKeyPointDelete) { */}
-                  {/*        onKeyPointDelete((keypoint as KeypointVertex).id); */}
-                  {/*      } */}
-                  {/*    }} */}
-                  {/*    deleteMenuText="Delete keypoint" */}
-                  {/*    deleteConfirmText="Are you sure you want to delete this keypoint?" */}
-                  {/*  /> */}
-                  {/* </StyledCol> */}
                 </StyledRow>
               </CollapseRowContainer>
             ))}
@@ -136,8 +143,8 @@ export const CollapsibleAnnotationTableRow = ({
   }
   return (
     <TableRowContainer
-      className={annotation.selected ? 'active' : ''}
-      id={`annotation-table-row-${annotation.id}`}
+      className={`annotation-table-row ${annotation.selected ? 'active' : ''}`}
+      id={`row-${annotation.id}`}
     >
       <AnnotationTableRow
         annotation={annotation}

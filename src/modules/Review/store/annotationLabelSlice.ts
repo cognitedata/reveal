@@ -4,7 +4,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { AnnotationCollection } from 'src/modules/Common/Components/CollectionSettingsModal/CollectionSettingsTypes';
+import { AnnotationCollection, Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
@@ -46,6 +46,7 @@ type State = {
   lastCollection: string | undefined;
   lastShape: string | undefined;
   lastKeyPoint: string | undefined;
+  currentTool: Tool;
   keypointMap: {
     byId: Record<string, KeyPointState>;
     allIds: string[];
@@ -71,6 +72,7 @@ const initialState: State = {
   lastCollection: undefined,
   lastShape: undefined,
   lastKeyPoint: undefined,
+  currentTool: 'select',
 };
 
 const annotationLabelSlice = createSlice({
@@ -117,6 +119,9 @@ const annotationLabelSlice = createSlice({
     },
     onCreateOrUpdateShape(state, action: PayloadAction<string>) {
       state.lastShape = action.payload;
+    },
+    setSelectedTool(state, action: PayloadAction<Tool>) {
+      state.currentTool = action.payload;
     },
     onCreateKeyPoint: {
       reducer: (
@@ -259,6 +264,7 @@ export const {
   toggleCollectionVisibility,
   setCollectionStatus,
   keypointSelectStatusChange,
+  setSelectedTool,
   onCreateOrUpdateShape,
   onCreateKeyPoint,
   onUpdateKeyPoint,

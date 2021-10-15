@@ -49,6 +49,7 @@ export const AnnotationEditPopup = (props: {
   nextShape: string;
   nextCollection: string;
   onOpenCollectionSettings: () => void;
+  popupReference: any;
 }) => {
   const {
     region,
@@ -66,6 +67,7 @@ export const AnnotationEditPopup = (props: {
     nextShape,
     nextCollection,
     onOpenCollectionSettings,
+    popupReference,
   } = props;
 
   const dispatch = useDispatch();
@@ -245,9 +247,23 @@ export const AnnotationEditPopup = (props: {
     }
   }, [keyPointValue, editing]);
 
+  // focus to submit buttons
+  useEffect(() => {
+    if (editing) {
+      if (popupReference.current) {
+        const submitBtn = popupReference.current?.querySelector(
+          '.annotation-submit-btn'
+        ) as HTMLButtonElement;
+        if (submitBtn) {
+          submitBtn.focus();
+        }
+      }
+    }
+  }, [editing]);
+
   if (editing) {
     return (
-      <Container>
+      <Container ref={popupReference}>
         <OptionContainer>
           <Row
             cols={6}
@@ -318,21 +334,25 @@ export const AnnotationEditPopup = (props: {
             <Col span={3}>
               {!alreadyCreated && (
                 <Button
+                  className="annotation-submit-btn"
                   type="primary"
                   icon="PlusCompact"
                   size="small"
                   onClick={handleOnCreate}
                   disabled={disabledCreationOrUpdate}
+                  tabIndex={0}
                 >
                   Create
                 </Button>
               )}
               {alreadyCreated && (
                 <Button
+                  className="annotation-submit-btn"
                   type="primary"
                   icon="Upload"
                   size="small"
                   onClick={handleOnUpdate}
+                  tabIndex={0}
                 >
                   Update
                 </Button>

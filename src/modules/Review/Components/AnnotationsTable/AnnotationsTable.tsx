@@ -17,10 +17,7 @@ export interface AnnotationTableProps {
   mode?: number;
   onDelete: (id: ReactText) => void;
   onVisibilityChange: (id: ReactText) => void;
-  onApproveStateChange: (
-    annotation: AnnotationTableItem,
-    status: AnnotationStatus
-  ) => void;
+  onApproveStateChange: (id: ReactText, status: AnnotationStatus) => void;
   onSelect: (id: ReactText, nextState: boolean) => void;
   onKeypointSelect?: (id: string) => void;
   expandAllRowsByDefault?: boolean;
