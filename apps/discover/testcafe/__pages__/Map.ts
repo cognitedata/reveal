@@ -10,8 +10,6 @@ export const startingY = 100;
 export const boxWidth = 600;
 export const boxHeight = 450;
 
-const MAP_CANVAS_DEFAULT_WIDTH = '800';
-
 class Map {
   public readonly mapCanvas = Selector('canvas').withAttribute(
     'class',

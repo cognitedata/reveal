@@ -224,10 +224,10 @@ export const Trajectory2D: React.FC<Props> = ({
         x: template(chartVizDataConfig.axisNames.x)({
           unit: userPreferredUnit,
         }),
-        y: template(chartVizDataConfig.axisNames.x)({
+        y: template(chartVizDataConfig.axisNames.y)({
           unit: userPreferredUnit,
         }),
-        z: template(chartVizDataConfig.axisNames.x)({
+        z: template(chartVizDataConfig.axisNames.z)({
           unit: userPreferredUnit,
         }),
       },

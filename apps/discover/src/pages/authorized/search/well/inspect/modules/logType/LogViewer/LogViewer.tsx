@@ -149,8 +149,6 @@ export const LogViewer: React.FC<Props> = ({
           userPreferredUnit
         ) || 0;
 
-      console.log('startDepth, endDepth', startDepth, endDepth);
-
       logData.MD = {
         values: [startDepth, endDepth],
         unit,

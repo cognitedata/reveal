@@ -107,7 +107,6 @@ export const WELL_SELECTED_COLUMNS = 'WELL_SELECTED_COLUMNS';
 
 export function search(filters: WellFilterMap): ThunkResult<void> {
   return (dispatch, getState) => {
-    console.log('filters:', filters);
     dispatch({
       type: SET_HAS_SEARCHED,
       hasSearched: true,

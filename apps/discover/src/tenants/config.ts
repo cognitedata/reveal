@@ -147,7 +147,7 @@ export const defaultWellsConfig: TenantConfig = {
             axisNames: {
               x: 'East West (<%= unit %>)',
               y: 'North South (<%= unit %>)',
-              z: 'TVD (%{unit})',
+              z: 'TVD (<%= unit %>)',
             },
             title: 'TVD 3D view',
           },

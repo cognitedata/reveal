@@ -185,7 +185,6 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     const { logType, logTypeId, webId } = selectedLogType;
 
     if (logType === PPFG_LOG_TYPE) {
-      console.log(PPFG_LOG_TYPE);
       return ppfgIdMapping[logTypeId] && ppfgIdMapping[logTypeId].rows ? (
         <PPFGViewer ppfgData={ppfgIdMapping[logTypeId]} />
       ) : (
@@ -194,7 +193,6 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     }
 
     if (logType === GEOMECHANIC_LOG_TYPE) {
-      console.log(GEOMECHANIC_LOG_TYPE);
       return geomechanicIdMapping[logTypeId] &&
         geomechanicIdMapping[logTypeId].rows ? (
         <GeomechanicViewer geomechanicData={geomechanicIdMapping[logTypeId]} />
@@ -204,7 +202,6 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     }
 
     if (logType === PETREL_LOG_TYPE) {
-      console.log(PETREL_LOG_TYPE);
       if (ndsLoading || !ndsData) return <WhiteLoader />;
       if (ppfgWellboreIdMapping[webId] && !ppfgWellboreIdMapping[webId].rows)
         return <WhiteLoader />;

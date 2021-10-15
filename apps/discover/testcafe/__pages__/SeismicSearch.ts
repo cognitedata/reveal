@@ -7,9 +7,8 @@ import { BaseSearchPage } from './BaseSearch';
 class SeismicSearchPage extends BaseSearchPage {
   public readonly seismicColorbandButton = find('seismic-color-button');
 
-  public readonly seismicColorbandButtonRed = Selector('li').withText(
-    'Red to black'
-  );
+  public readonly seismicColorbandButtonRed =
+    Selector('li').withText('Red to black');
 
   public readonly seismicTabClose = find('seismic-modal-close');
 
