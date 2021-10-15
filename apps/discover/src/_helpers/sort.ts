@@ -48,5 +48,5 @@ export const sortObjectsDecending = <T>(list: T[], path: keyof T) =>
 const getValueFromKey = <T>(object: T, path: keyof T) => {
   const value = get(object, path, '');
   if (isNumber(value)) return Number(value);
-  return value;
+  return String(value);
 };

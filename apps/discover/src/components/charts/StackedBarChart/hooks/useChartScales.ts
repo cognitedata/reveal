@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { scaleBand, scaleLinear } from 'd3-scale';
-import get from 'lodash/get';
 
 import { Dimensions, Margins } from '../types';
 
@@ -28,7 +27,7 @@ export const useChartScales = <T>({
 
   const yScale = useMemo(() => {
     const domain =
-      yScaleDomain || data.map((dataElement) => get(dataElement, yAccessor));
+      yScaleDomain || data.map((dataElement) => String(dataElement[yAccessor]));
 
     return scaleBand()
       .domain(domain.slice().reverse())
