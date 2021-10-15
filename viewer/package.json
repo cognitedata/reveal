@@ -29,7 +29,7 @@
     "build:prod": "yarn run clean && webpack --env.production && tsc-alias -p tsconfig.webpack.json",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
-    "test": "jest",
+    "test": "jest --maxWorkers=4",
     "coverage": "jest --coverage",
     "lint": "yarn workspaces foreach -p run lint",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
@@ -39,7 +39,7 @@
     "bump:push": "git push -u origin head && git push --tags",
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
     "ws:start": "cd $INIT_CWD && webpack-dev-server --open --env.dir=$INIT_CWD",
-    "ws:test": "cd $INIT_CWD && jest --maxWorkers=1",
+    "ws:test": "cd $INIT_CWD && jest --runInBand",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
