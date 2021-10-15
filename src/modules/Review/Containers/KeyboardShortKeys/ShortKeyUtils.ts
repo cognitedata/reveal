@@ -43,7 +43,7 @@ export const getActiveRowSelection = (
   return null;
 };
 
-export const getActiveAnnotationOrKeypointIdOnRowSelect = (
+export const getAnnotationIdOrKeypointIdForRowSelect = (
   parentElement: HTMLElement | null,
   getRowIndex: (
     row: HTMLCollectionOf<Element>,

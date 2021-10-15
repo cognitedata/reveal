@@ -123,5 +123,10 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/!node_modules\\/lodash-es/"
+    ]
   }
 }

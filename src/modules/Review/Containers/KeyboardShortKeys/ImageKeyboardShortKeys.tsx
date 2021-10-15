@@ -15,10 +15,10 @@ import { hotKeyMap } from 'src/modules/Review/Components/ReactImageAnnotateWrapp
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import {
   extractAnnotationIdFromElement,
-  getActiveAnnotationOrKeypointIdOnRowSelect,
   getActiveKeypointSelection,
   getActiveRowIndex,
   getActiveRowSelection,
+  getAnnotationIdOrKeypointIdForRowSelect,
 } from 'src/modules/Review/Containers/KeyboardShortKeys/ShortKeyUtils';
 import {
   keypointSelectStatusChange,
@@ -72,7 +72,7 @@ export const ImageKeyboardShortKeys = ({
 
   const selectPrevRow = useCallback(() => {
     const [annotationOrKeypointId, isActiveKeypoint] =
-      getActiveAnnotationOrKeypointIdOnRowSelect(
+      getAnnotationIdOrKeypointIdForRowSelect(
         contextElement.current,
         (rows, currentActiveRowIndex) => {
           if (rows.length) {
@@ -95,7 +95,7 @@ export const ImageKeyboardShortKeys = ({
 
   const selectNextRow = useCallback(() => {
     const [annotationOrKeypointId, isActiveKeypoint] =
-      getActiveAnnotationOrKeypointIdOnRowSelect(
+      getAnnotationIdOrKeypointIdForRowSelect(
         contextElement.current,
         (rows, currentActiveRowIndex) => {
           if (rows.length) {
