@@ -127,6 +127,10 @@ export class CogniteOrnate {
     this.stage.on('mouseenter', () => {
       this.stage.container().style.cursor = this.currentTool.cursor;
     });
+    const event = new CustomEvent('ornate_toolChange', { detail: tool });
+
+    // Dispatch the event.
+    document.dispatchEvent(event);
   };
 
   isCurrentToolUsingShapeSettings = () => {

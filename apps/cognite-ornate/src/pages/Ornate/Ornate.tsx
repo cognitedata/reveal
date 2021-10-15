@@ -73,6 +73,11 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     ornateViewer.current = new CogniteOrnate({
       container: '#container',
     });
+    document.addEventListener('ornate_toolChange', ((
+      e: CustomEvent<ToolType>
+    ) => {
+      setActiveTool(e.detail);
+    }) as EventListener);
     loadTools();
   }, []);
 

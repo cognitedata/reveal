@@ -70,7 +70,6 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     if (e.target.attrs.unselectable) {
       return;
     }
-
     // If we clicked a text element already selected, swap to 'text' tool and edit
     if (this.selectedNode?.attrs.type === 'text') {
       this.ornateInstance.handleToolChange('text');

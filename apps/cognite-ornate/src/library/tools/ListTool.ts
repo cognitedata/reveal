@@ -125,7 +125,7 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
     this.addMarker({
       order: this.markers.length + 1,
       position: { x: shape.x(), y: shape.y() },
-      groupId: shape.attrs.attachedToGroup,
+      groupId: shape.attrs.inGroup,
       shape,
       shapeId: shape.id(),
       metadata: {},
@@ -140,7 +140,7 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
       this.addMarker({
         order: this.markers.length + 1,
         position: { x: e.target.x(), y: e.target.y() },
-        groupId: e.target.attrs.attachedToGroup,
+        groupId: e.target.attrs.inGroup,
         shape: e.target as Shape,
         shapeId: e.target.id(),
         metadata: {},
