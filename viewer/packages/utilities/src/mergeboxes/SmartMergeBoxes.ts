@@ -35,26 +35,30 @@ export class SmartMergeBoxes implements BoxClusterer {
     return overlap >= BOX_MERGE_MIN_IOU;
   }
 
+  private addBox(box: Box3): void {
+    let merged = false;
+
+    for (const resultBox of this.resultBoxes) {
+      if (!box.intersectsBox(resultBox)) {
+        continue;
+      }
+
+      resultBox.union(box);
+
+      merged = true;
+      break;
+    }
+
+    if (!merged) {
+      this.resultBoxes.push(box.clone());
+    }
+
+    this.addedSinceSquash += 1;
+  }
+  
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
-      let merged = false;
-
-      for (const resultBox of this.resultBoxes) {
-        if (!box.intersectsBox(resultBox)) {
-          continue;
-        }
-
-        resultBox.union(box);
-
-        merged = true;
-        break;
-      }
-
-      if (!merged) {
-        this.resultBoxes.push(box.clone());
-      }
-
-      this.addedSinceSquash += 1;
+      this.addBox(box)
     }
   }
 
