@@ -30,7 +30,7 @@ export { SectorNode } from './src/sector/SectorNode';
 export { EffectRenderManager } from './src/rendering/EffectRenderManager';
 
 export { RenderMode } from './src/rendering/RenderMode';
-export { coverageShaders} from './src/rendering/shaders';
+export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials, createMaterials } from './src/rendering/materials';
 export { createPrimitives } from './src/rendering/primitives';

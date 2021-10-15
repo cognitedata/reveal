@@ -13,12 +13,7 @@ import { CadNode } from '../sector/CadNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
 
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import {
-  outlineDetectionShaders,
-  fxaaShaders,
-  ssaoShaders,
-  ssaoBlurCombineShaders
-} from './shaders';
+import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
 
 import { RenderMode } from './RenderMode';
 import { LevelOfDetail } from '@reveal/cad-parsers';

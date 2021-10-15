@@ -3,12 +3,7 @@
  */
 
 import * as THREE from 'three';
-import {
-  CadModelMetadataRepository,
-  CadModelMetadata,
-  LevelOfDetail,
-  ConsumedSector
-} from '@reveal/cad-parsers';
+import { CadModelMetadataRepository, CadModelMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
