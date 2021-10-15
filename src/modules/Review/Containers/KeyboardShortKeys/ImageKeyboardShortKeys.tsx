@@ -246,6 +246,7 @@ export const ImageKeyboardShortKeys = ({
       create_bounding_box: () =>
         dispatch(setSelectedTool(tools.RECTANGLE_TOOL)),
       create_polygon: () => dispatch(setSelectedTool(tools.POLYGON_TOOL)),
+      create_line: () => dispatch(setSelectedTool(tools.LINE_TOOL)),
       move_up_annotation_list: selectPrevRow,
       move_down_annotation_list: selectNextRow,
       move_into_annotation_collection: moveIntoAnnotationCollection,

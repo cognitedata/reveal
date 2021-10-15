@@ -123,6 +123,7 @@ export const convertAnnotationsToCOCO = async (
         const isRectangle = annotation.region?.shape === 'rectangle';
         const isPolygon = annotation.region?.shape === 'polygon';
         const isPoints = annotation.region?.shape === 'points';
+        const isLine = annotation.region?.shape === 'polyline';
 
         return {
           id: annotationId,
@@ -136,6 +137,7 @@ export const convertAnnotationsToCOCO = async (
           ...(isPoints && { keypoints: vertices }),
           ...(isPoints && { num_keypoints: vertices.length / 2 }), // each keypoint consist of (x, y)
           ...(isPolygon && { segmentation: [vertices] }),
+          ...(isLine && { polyline: [vertices] }),
         };
       });
     })

@@ -29,6 +29,11 @@ const shortcuts: {
     binding: 'p',
   },
   {
+    id: 'create_line',
+    description: 'Create a Line',
+    binding: 'l',
+  },
+  {
     id: 'move_up_annotation_list',
     description: 'Move up in annotation list',
     binding: 'ArrowUp',

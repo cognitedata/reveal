@@ -83,6 +83,12 @@ export const KeyboardShortcutModalContent = () => {
                 <CommandText>R</CommandText>
               </CommandAndIcon>
             </Shortcut>
+            <Shortcut>
+              <Micro>Line</Micro>
+              <CommandAndIcon>
+                <CommandText>L</CommandText>
+              </CommandAndIcon>
+            </Shortcut>
           </SectionBody>
         </Section>
         <Section>

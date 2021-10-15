@@ -90,6 +90,9 @@ export const ImagePreview = ({
     if (annotation?.region?.shape === 'polygon') {
       pushMetric('Vision.Review.CreateAnnotation.Polygon');
     }
+    if (annotation?.region?.shape === 'polyline') {
+      pushMetric('Vision.Review.CreateAnnotation.Line');
+    }
     const res = await dispatch(
       CreateAnnotations({ fileId: file.id, annotation })
     );

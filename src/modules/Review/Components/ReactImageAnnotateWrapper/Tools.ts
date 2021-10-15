@@ -4,4 +4,5 @@ export const tools = {
   KEYPOINT_TOOL: 'create-point',
   RECTANGLE_TOOL: 'create-box',
   POLYGON_TOOL: 'create-polygon',
+  LINE_TOOL: 'create-line',
 };

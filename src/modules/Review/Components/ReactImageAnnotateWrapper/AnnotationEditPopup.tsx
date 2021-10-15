@@ -83,6 +83,9 @@ export const AnnotationEditPopup = (props: {
       case 'polygon': {
         return 'Polygon';
       }
+      case 'line': {
+        return 'Line';
+      }
       default:
         return 'Other';
     }
