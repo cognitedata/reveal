@@ -49,7 +49,7 @@ function canMergeOnSameNode(box1: Box3, box2: Box3): boolean {
 export class MergingRTree {
   private root: RTreeNode | undefined = undefined;
 
-  insert(box: Box3) {
+  insert(box: Box3): void {
     this.root = this.root?.insert(box) ?? new RTreeNode(box);
   }
 
@@ -90,7 +90,7 @@ export class MergingRTree {
     return unionTree;
   }
 
-  private addAllIntersections(constructingTree: MergingRTree, biggestTree: MergingRTree, smallestTree: MergingRTree) {
+  private addAllIntersections(constructingTree: MergingRTree, biggestTree: MergingRTree, smallestTree: MergingRTree): void {
     const boxes0 = smallestTree.getBoxes();
 
     for (const box0 of boxes0) {
@@ -192,7 +192,7 @@ class RTreeNode {
     }
   }
 
-  private getOverlappingBoxesIfIntersecting(box: Box3, node: RTreeNode, results: Box3[]) {
+  private getOverlappingBoxesIfIntersecting(box: Box3, node: RTreeNode, results: Box3[]): void {
     if (node.bounds.intersectsBox(box)) {
       node.findOverlappingBoxes(box, results);
     }
