@@ -1,3 +1,4 @@
+import { useMetrics } from '@cognite/metrics';
 import { ShapeSettings } from 'library/types';
 import { CirclePicker, ColorResult } from 'react-color';
 
@@ -12,8 +13,11 @@ export default function ColorPicker({
   color = PRESET_COLORS[0],
   onSettingsChange,
 }: ColorPickerProps) {
-  const onBrushColorChange = (color: ColorResult) =>
+  const metrics = useMetrics('ColorPicker');
+  const onBrushColorChange = (color: ColorResult) => {
+    metrics.track('onBrushColorChange', { color: color.hex });
     onSettingsChange({ strokeColor: color.hex, fill: color.hex });
+  };
 
   return (
     <div style={{ marginBottom: '10px' }}>

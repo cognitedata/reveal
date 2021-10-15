@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
-import { Metrics } from '@cognite/metrics';
 import '@cognite/cogs.js/dist/cogs.css';
 import config from 'utils/config';
 import { storage } from '@cognite/storage';
@@ -17,15 +16,6 @@ if (process.env.REACT_APP_SENTRY_DSN) {
     release: process.env.REACT_APP_RELEASE_ID,
     // This is populated by react-scripts. However, this can be overridden by
     // the app's build process if you wish.
-    environment: config.env,
-  });
-}
-
-if (process.env.REACT_APP_MIXPANEL_TOKEN) {
-  // Instantiate Mixpanel project
-  Metrics.init({
-    mixpanelToken: process.env.REACT_APP_MIXPANEL_TOKEN || '',
-    debug: process.env.REACT_APP_MIXPANEL_DEBUG === 'true',
     environment: config.env,
   });
 }

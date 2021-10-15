@@ -4,6 +4,7 @@ import { useTranslation } from 'hooks/useTranslation';
 import { Workspace } from 'types';
 import { useAuthContext } from '@cognite/react-container';
 import WorkspaceService from 'services/workspace.service';
+import { useMetrics } from '@cognite/metrics';
 
 import { Header, RecentWorkspacesContainer } from './elements';
 import { RecentWorkspaceItem } from './RecentWorkspaceItem';
@@ -17,15 +18,18 @@ export const RecentWorkspaces = ({
   onLoadWorkspace,
   onDeleteWorkspace,
 }: RecentWorkspacesProps) => {
+  const metrics = useMetrics('RecentWorkspaces');
   const { client } = useAuthContext();
   const workspaceService = new WorkspaceService(client!);
   const { t } = useTranslation('recent_workspaces');
   const [recentWorkspaces, setRecentWorkspaces] = useState<Workspace[]>([]);
 
   const loadWorkspaces = async () => {
+    const timer = metrics.start('loadWorkspaces');
     const workspaces = await workspaceService.loadWorkspaces();
     workspaces.sort((a, b) => b.dateModified - a.dateModified);
     setRecentWorkspaces(workspaces);
+    timer.stop({ workspacesLength: workspaces.length });
   };
 
   useEffect(() => {
@@ -33,6 +37,7 @@ export const RecentWorkspaces = ({
   }, []);
 
   const onWorkspaceDelete = useCallback((workspace: Workspace) => {
+    metrics.track('onWorkspaceDelete');
     onDeleteWorkspace(workspace);
     setRecentWorkspaces(
       recentWorkspaces.filter((space) => space.id !== workspace.id)

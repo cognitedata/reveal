@@ -90,6 +90,7 @@ DEPENDENCIES = [
     "@npm//react-router-dom",
     "@npm//styled-components",
     "@npm//uuid",
+    "@npm//web-vitals",
     "//packages/react-container",
     "//packages/metrics",
     "//packages/storage",

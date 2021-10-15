@@ -6,6 +6,7 @@ import { ShapeConfig } from 'konva/lib/Shape';
 import { Marker } from 'library/tools/ListTool';
 import uniq from 'lodash/uniq';
 import { NullView } from 'components/NullView/NullView';
+import { useMetrics } from '@cognite/metrics';
 
 import ListToolSidebarAsset from './ListToolSidebarAsset';
 import { ListToolSidebarWrapper, ListToolItem } from './elements';
@@ -49,6 +50,7 @@ type ListToolSidebarProps = {
 
 const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
   const { client } = useAuthContext();
+  const metrics = useMetrics('ListToolSidebar');
   const [assetData, setAssetData] = useState<Record<string, Asset>>({});
 
   useEffect(() => {
@@ -94,6 +96,7 @@ const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
   };
 
   const onMove = (listItem: ListItem, movement: number) => {
+    metrics.track('onMove', { movement });
     const { order } = listItem;
     if (movement < 0 && order === listItems.length) {
       return;
@@ -120,6 +123,7 @@ const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
   };
 
   const onRemove = (listItem: ListItem) => {
+    metrics.track('onRemove');
     let hasBeenRemoved = false;
     const nextListItems = listItems
       .map((item) => {
@@ -185,6 +189,7 @@ const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
   };
 
   const onExport = () => {
+    metrics.track('onExport');
     const rows = [
       ['Order', 'Task', 'Equipment'],
       ...listItems.map((item) => [

@@ -1,4 +1,5 @@
 import { Menu } from '@cognite/cogs.js';
+import { useMetrics } from '@cognite/metrics';
 import { ChangeEvent } from 'react';
 
 import { ShapeSettings as ShapeSettingsType } from '../../library/types';
@@ -17,15 +18,19 @@ const ShapeSettings = ({
   isSidebarExpanded,
   onSettingsChange,
 }: ShapeSettingsProps) => {
+  const metrics = useMetrics('ShapeSettings');
   const onThicknessSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
+    metrics.track('onThicknessSliderChange', { value: e.target.value });
     onSettingsChange({ strokeWidth: Number(e.target.value) });
   };
 
   const onOpacitySliderChange = (e: ChangeEvent<HTMLInputElement>) => {
+    metrics.track('onOpacitySliderChange', { value: e.target.value });
     onSettingsChange({ opacity: Number(e.target.value) });
   };
 
   const onFontSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    metrics.track('onFontSizeChange', { value: e.target.value });
     onSettingsChange({ fontSize: Number(e.target.value) });
   };
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { ToolType } from 'library/types';
 import { Button, Icon } from '@cognite/cogs.js';
+import { useMetrics } from '@cognite/metrics';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 
@@ -17,9 +18,11 @@ const WorkSpaceTools = ({
   isSidebarExpanded,
   onToolChange,
 }: WorkSpaceToolsProps) => {
+  const metrics = useMetrics('WorkSpaceTools');
   useEffect(() => {
     document.addEventListener('keydown', (e) => {
       if (!isDisabled) {
+        metrics.track('onHotkey', { key: e.key });
         if (e.key === 'm') {
           onToolChange('move');
         }
@@ -45,6 +48,11 @@ const WorkSpaceTools = ({
     });
   }, []);
 
+  const onToolClick = (type: ToolType) => {
+    metrics.track('onToolClick', { type });
+    onToolChange(type);
+  };
+
   const toolbarWrapperClasses = isDisabled ? 'disabled' : '';
 
   return (
@@ -59,7 +67,7 @@ const WorkSpaceTools = ({
         type="ghost"
         size="small"
         onClick={() => {
-          onToolChange('default');
+          onToolClick('default');
         }}
         title="Select S"
         disabled={activeTool === 'default'}
@@ -71,7 +79,7 @@ const WorkSpaceTools = ({
         size="small"
         title="Move M"
         onClick={() => {
-          onToolChange('move');
+          onToolClick('move');
         }}
         disabled={activeTool === 'move'}
       >
@@ -83,7 +91,7 @@ const WorkSpaceTools = ({
         size="small"
         title="Line L"
         onClick={() => {
-          onToolChange('line');
+          onToolClick('line');
         }}
         disabled={activeTool === 'line'}
       >
@@ -94,7 +102,7 @@ const WorkSpaceTools = ({
         size="small"
         title="Rectangle R"
         onClick={() => {
-          onToolChange('rect');
+          onToolClick('rect');
         }}
         disabled={activeTool === 'rect'}
       >
@@ -105,7 +113,7 @@ const WorkSpaceTools = ({
         size="small"
         title="Circle C"
         onClick={() => {
-          onToolChange('circle');
+          onToolClick('circle');
         }}
         disabled={activeTool === 'circle'}
       >
@@ -116,7 +124,7 @@ const WorkSpaceTools = ({
         size="small"
         title="Text T"
         onClick={() => {
-          onToolChange('text');
+          onToolClick('text');
         }}
         disabled={activeTool === 'text'}
       >
@@ -128,7 +136,7 @@ const WorkSpaceTools = ({
         size="small"
         title="List I"
         onClick={() => {
-          onToolChange('list');
+          onToolClick('list');
         }}
         disabled={activeTool === 'list'}
       >

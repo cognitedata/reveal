@@ -12,6 +12,7 @@ interface Sidecar extends SidecarConfig {
   intercom: string;
   nomaApiBaseUrl: string;
   mpServiceBaseURL: string;
+  mixpanel: string;
 }
 
 // # -------------------------------------
@@ -100,6 +101,7 @@ const getmpServiceBaseURL = (cluster?: string) => {
     projectId: '1ee63b21-27c7-44ad-891f-4bd9af378b72', // <- move this to release-configs
     version: 'Production', // <- move this to release-configs
   },
+  mixpanel: 'aab612b6f57003d2947a929bae33869a',
   intercomSettings: {
     app_id: 'ou1uyk2p',
     hide_default_launcher: true,
