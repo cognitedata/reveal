@@ -90,7 +90,11 @@ export class MergingRTree {
     return unionTree;
   }
 
-  private addAllIntersections(constructingTree: MergingRTree, biggestTree: MergingRTree, smallestTree: MergingRTree): void {
+  private addAllIntersections(
+    constructingTree: MergingRTree,
+    biggestTree: MergingRTree,
+    smallestTree: MergingRTree
+  ): void {
     const boxes0 = smallestTree.getBoxes();
 
     for (const box0 of boxes0) {
