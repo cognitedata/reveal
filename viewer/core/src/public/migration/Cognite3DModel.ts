@@ -4,20 +4,19 @@
 import * as THREE from 'three';
 import { CogniteInternalId } from '@cognite/sdk';
 
-import { CadModelMetadata } from '@reveal/cad-parsers';
-import { NumericRange, trackError } from '@reveal/utilities';
-import { NodeCollectionBase, CadNode, NodeTransformProvider, NodeAppearance } from '@reveal/cad-geometry-loaders';
-
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
+import { SupportedModelTypes } from '../types';
+import { WellKnownUnit } from './types';
 
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 
 import { NodesApiClient } from '@reveal/nodes-api';
-import { SupportedModelTypes } from '../types';
-import { WellKnownUnit } from './types';
-import { WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers/src/utilities/types';
+import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
+import { NumericRange, trackError } from '@reveal/utilities';
+import { CadNode, NodeTransformProvider } from '@reveal/cad-geometry-loaders';
+import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
 /**
  * Represents a single 3D CAD model loaded from CDF.
@@ -164,6 +163,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    const index = this._styledNodeCollections.findIndex(x => x.nodes === nodeCollection);
+    if (index !== -1) {
+      this._styledNodeCollections.splice(index, 1);
+    }
     this.cadNode.nodeAppearanceProvider.unassignStyledNodeCollection(nodeCollection);
   }
 

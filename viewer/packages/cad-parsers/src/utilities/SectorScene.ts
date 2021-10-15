@@ -8,9 +8,6 @@ import { SectorScene } from './types';
 import { SectorMetadata } from '../metadata/types';
 import skmeans from 'skmeans';
 
-/**
- * @internal
- */
 export class SectorSceneImpl implements SectorScene {
   readonly version: number;
   readonly maxTreeIndex: number;

@@ -4,8 +4,6 @@
 
 import * as THREE from 'three';
 
-export { File3dFormat } from '@reveal/cad-parsers';
-
 /**
  * Colors from the Cognite theme.
  */

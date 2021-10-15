@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@reveal/cad-parsers": "workspace:*",
+    "@reveal/cad-styling": "workspace:*",
     "@reveal/logger": "workspace:*",
+    "@reveal/modeldata-api": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

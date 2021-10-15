@@ -2,11 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { HttpHeadersProvider } from './HttpHeadersProvider';
+import * as THREE from 'three';
 import { SectorMetadata } from '../metadata/types';
-
-import { CameraConfiguration } from '@reveal/utilities';
-
 /**
  * Conversion factors from a given unit to meters.
  */
@@ -75,44 +72,4 @@ export interface SectorScene {
   // readonly revisionId: number;
   // readonly subRevisionId: number;
   // readonly unit: string | null;
-}
-
-export interface JsonFileProvider {
-  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
-}
-
-export interface BinaryFileProvider {
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
-}
-
-export interface ModelMetadataProvider<TModelIdentifier> {
-  getModelUrl(identifier: TModelIdentifier): Promise<string>;
-  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
-  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
-}
-
-export interface ModelDataClient<TModelIdentifier>
-  extends HttpHeadersProvider,
-    ModelMetadataProvider<TModelIdentifier>,
-    JsonFileProvider,
-    BinaryFileProvider {
-  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
-
-  /**
-   * Returns an identifier that can be used to identify the application Reveal is used in.
-   */
-  getApplicationIdentifier(): string;
-}
-
-export enum File3dFormat {
-  EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory',
-  AnyFormat = 'all-outputs'
-}
-
-export interface BlobOutputMetadata {
-  blobId: number;
-  format: File3dFormat | string;
-  version: number;
 }

@@ -3,13 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { IndexSet } from '@reveal/utilities';
 
-import { NodeAppearance, NodeOutlineColor } from '../NodeAppearance';
-import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
-
-import { NodeAppearanceProvider } from './NodeAppearanceProvider';
+import { NodeAppearance, NodeOutlineColor } from '@reveal/cad-styling';
 import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
+
+import { TreeIndexNodeCollection, NodeAppearanceProvider } from '@reveal/cad-styling';
+
+import { IndexSet } from '@reveal/utilities';
 
 describe('NodeAppearanceTextureBuilder', () => {
   let styleProvider: NodeAppearanceProvider;
