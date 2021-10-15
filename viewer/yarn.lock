@@ -991,7 +991,6 @@ __metadata:
   resolution: "@reveal/utilities@workspace:packages/utilities"
   dependencies:
     "@reveal/logger": "workspace:*"
-    "@types/random-seed": ^0.3.3
   languageName: unknown
   linkType: soft
 
