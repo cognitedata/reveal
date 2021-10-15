@@ -8,6 +8,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/logger": "workspace:*"
+    "@reveal/logger": "workspace:*",
+    "@types/random-seed": "^0.3.3"
   }
 }

@@ -484,6 +484,7 @@ __metadata:
     "@types/lodash": ^4.14.170
     "@types/mixpanel-browser": ^2.35.4
     "@types/node": ^14.14.5
+    "@types/random-seed": ^0.3.3
     "@types/skmeans": ^0.11.1
     "@types/three": 0.133.0
     "@types/tween.js": ^18.5.1
@@ -521,6 +522,7 @@ __metadata:
     moq.ts: ^7.3.4
     nock: ^13.0.4
     prettier: ^2.1.2
+    random-seed: ^0.3.0
     raw-loader: ^4.0.2
     rimraf: ^3.0.2
     run-script-os: ^1.1.3
@@ -989,6 +991,7 @@ __metadata:
   resolution: "@reveal/utilities@workspace:packages/utilities"
   dependencies:
     "@reveal/logger": "workspace:*"
+    "@types/random-seed": ^0.3.3
   languageName: unknown
   linkType: soft
 
@@ -1223,6 +1226,13 @@ __metadata:
   version: 2.3.2
   resolution: "@types/prettier@npm:2.3.2"
   checksum: c4313e16650811f47b07a0fa7ac0742e966f61283a7292eb667fd4626d760bf3b7d896be3eaabb3354ad45fdbe3a340299b018dd3bcce1ff753d030a8cd2479c
+  languageName: node
+  linkType: hard
+
+"@types/random-seed@npm:^0.3.3":
+  version: 0.3.3
+  resolution: "@types/random-seed@npm:0.3.3"
+  checksum: de0f4ce70d47af68424b9bfdb27fd07e2be31cbbafee1ef7f4e661b94576b2cf6a2f1f479697d5b79186bf70bad0988485a7d2ce76084fe7c0544d32b2ec0a67
   languageName: node
   linkType: hard
 
@@ -10269,6 +10279,15 @@ fsevents@^1.2.7:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: b676f8c040cdc5b12723ad2f91414d267605b26419d5c821ff03befa817ddd10e238d22b25d604920340fd73efd8ba795465a0377c4adf45a4a41e4234e42dc4
+  languageName: node
+  linkType: hard
+
+"random-seed@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "random-seed@npm:0.3.0"
+  dependencies:
+    json-stringify-safe: ^5.0.1
+  checksum: 0a82692fc8d830bc26259dad78a911969343c247afb4be5d578c30fd9fbe76c7ce3f6900422310fc90fe05d6baa12e84a1b9ff93b0b7fda757ecfa40645a1f72
   languageName: node
   linkType: hard
 
