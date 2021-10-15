@@ -146,6 +146,11 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
         icon={filesState?.status === 'LOADING' ? 'Loading' : 'Search'}
         iconPlacement="right"
         fullWidth
+        onFocus={() => {
+          if (query && query.length > 0) {
+            setShowResults(true);
+          }
+        }}
         onKeyDown={(event) => {
           event.stopPropagation();
           if (event.key === 'Escape') {
