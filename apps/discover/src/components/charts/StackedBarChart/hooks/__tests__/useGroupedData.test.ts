@@ -16,8 +16,8 @@ describe('useGroupedData hook', () => {
     const { waitForNextUpdate, result } = renderHook(() =>
       useGroupedData<Data>({
         data,
-        xAxis,
-        yAxis,
+        xAccessor: xAxis.accessor,
+        yAccessor: yAxis.accessor,
         ...args,
       })
     );

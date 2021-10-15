@@ -6,6 +6,7 @@ import { now, fromNow } from '_helpers/date';
 import { StackedBarChart } from 'components/charts';
 import { StackedBarChartOptions } from 'components/charts/StackedBarChart/types';
 import { useInspectSidebarWidth } from 'modules/wellInspect/selectors';
+import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
@@ -22,6 +23,7 @@ import { formatTooltip } from './utils';
 
 export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
   ({ events }) => {
+    const selectedSecondaryWellbores = useSecondarySelectedOrHoveredWellbores();
     const inspectSidebarWidth = useInspectSidebarWidth();
 
     const [lastUpdatedTime, setLastUpdatedTime] = useState<number>();
@@ -51,6 +53,14 @@ export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
       }));
     }, [events]);
 
+    const yScaleDomain = useMemo(
+      () =>
+        selectedSecondaryWellbores.map(
+          (wellbore) => wellbore.description || ''
+        ),
+      [events]
+    );
+
     const options: StackedBarChartOptions<NPTEvent> = useMemo(
       () => ({
         barColorConfig: {
@@ -79,12 +89,13 @@ export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
         data={data}
         xAxis={{ accessor: accessors.DURATION, label: GRAPH_X_AXIS_LABEL }}
         yAxis={{ accessor: accessors.WELLBORE_NAME }}
+        yScaleDomain={yScaleDomain}
         groupDataInsideBarsBy={accessors.NPT_CODE}
         title={GRAPH_TITLE}
         subtitle={chartSubtitle}
         options={options}
-        onUpdate={handleOnUpdateGraph}
         offsetLeftDependencies={[inspectSidebarWidth]}
+        onUpdate={handleOnUpdateGraph}
       />
     );
   }

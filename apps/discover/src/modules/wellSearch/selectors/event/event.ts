@@ -14,6 +14,7 @@ import {
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
 import { useGetConverFunctionForEvents } from 'modules/wellSearch/selectors/event/hooks/useHelpers';
+import { NPTEvent } from 'modules/wellSearch/types';
 import { getDummyNptEventForWellbore } from 'modules/wellSearch/utils';
 import {
   mapWellInfo,
@@ -71,7 +72,7 @@ export const useNptEventsForGraph = () => {
 
   return useMemo(() => {
     if (isLoading) return { isLoading, events: [] };
-    return { isLoading, events: dummyNptEvents.concat(events) };
+    return { isLoading, events: (events as NPTEvent[]).concat(dummyNptEvents) };
   }, [events, wellboresWithoutNptData]);
 };
 

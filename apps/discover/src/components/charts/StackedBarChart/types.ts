@@ -13,14 +13,16 @@ export enum AxisPlacement {
 
 export interface StackedBarChartProps<T> {
   data: T[];
-  xAxis: Axis;
+  xAxis: Axis & XAxisPlacement;
   yAxis: Axis;
+  yScaleDomain?: string[];
   groupDataInsideBarsBy?: string;
   title?: string;
   subtitle?: string;
   options?: StackedBarChartOptions<T>;
-  onUpdate?: () => void;
   offsetLeftDependencies?: any[];
+  onUpdate?: () => void;
+  onClickBarLabel?: (props: ClickedBarLabelCallbackProps<T>) => void;
 }
 
 export interface AxesProps {
@@ -31,7 +33,6 @@ export interface AxesProps {
   ticks: number;
   margins: Margins;
   chartDimensions: Dimensions;
-  hideXAxisValues?: boolean;
 }
 
 export interface BarsProps<T> {
@@ -49,6 +50,7 @@ export interface BarsProps<T> {
   barComponentDimensions: Dimensions;
   options?: StackedBarChartOptions<T>;
   formatTooltip?: (data: T) => string;
+  onClickBarLabel?: (props: ClickedBarLabelCallbackProps<T>) => void;
 }
 
 export interface AxisProps {
@@ -66,9 +68,14 @@ export interface Axis {
   ticks?: number;
 }
 
+export interface XAxisPlacement {
+  placement?: AxisPlacement.Top | AxisPlacement.Bottom;
+}
+
 export interface StackedBarChartOptions<T> {
   barColorConfig?: ColorConfig;
   legendAccessor?: string;
+  isolateLegend?: boolean;
   margins?: Margins;
   formatTooltip?: (data: T) => string;
   legendTitle?: string;
@@ -100,11 +107,22 @@ export interface ColorConfig {
 export interface LegendProps {
   checkboxState: LegendCheckboxState;
   barColorConfig: ColorConfig;
-  offsetleft: number;
   onChange: (option: string, checked: boolean) => void;
+  offset?: {
+    bottom: number;
+    left: number;
+  };
   title?: string;
+  isolateLegend?: boolean;
 }
 
 export interface LegendCheckboxState {
   [option: string]: boolean;
+}
+
+export interface ClickedBarLabelCallbackProps<T> {
+  key: string;
+  index: number;
+  data: T[];
+  groupedData: GroupedData<T>;
 }

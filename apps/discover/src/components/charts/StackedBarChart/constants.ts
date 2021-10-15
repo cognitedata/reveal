@@ -1,19 +1,27 @@
 import { Margins, AxisPlacement, Dimensions } from './types';
 
 export const BAR_HEIGHT = 32;
+export const CHART_HEIGHT_CORRECTION = -25;
 export const CHART_BACKGROUND_COLOR = 'var(--cogs-bg-accent)';
 export const DEFAULT_BAR_COLOR = '#808080';
 export const DEFAULT_NO_DATA_BAR_COLOR = '#00000010';
 
-export const AXIS_PLACEMENT = AxisPlacement;
-export const X_AXIS_LABELS_HEIGHT = 14;
 export const TICK_PADDING = 12;
 
-export const LEGEND_BOTTOM_SPACING = 42;
+export const LEGEND_BOTTOM_SPACING = {
+  regular: 24,
+  isolated: 32,
+};
+
+export const X_AXIS_LABELS_HEIGHT = {
+  [AxisPlacement.Top]: 14,
+  [AxisPlacement.Bottom]: 28,
+};
 
 export const DEFAULT_X_AXIS_SPACING = 100;
 export const DEFAULT_Y_AXIS_SPACING = 100;
 export const DEFAULT_X_AXIS_TICKS = 15;
+export const DEFAULT_X_AXIS_PLACEMENT = AxisPlacement.Top;
 
 export const DEFAULT_MARGINS: Margins = {
   top: 20,

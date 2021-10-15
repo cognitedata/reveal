@@ -4,15 +4,16 @@ import { Checkbox } from '@cognite/cogs.js';
 
 import { FlexColumn, FlexRow } from 'styles/layout';
 
-import { ChartLegend, LegendTitle } from '../elements';
+import { ChartLegend, ChartLegendIsolated, LegendTitle } from '../elements';
 import { LegendProps } from '../types';
 
 export const Legend = ({
   checkboxState,
   barColorConfig,
-  offsetleft,
+  offset,
   onChange,
   title,
+  isolateLegend = true,
 }: LegendProps) => {
   const { colors, defaultColor } = barColorConfig;
 
@@ -35,12 +36,20 @@ export const Legend = ({
     [legendCheckboxOptions, checkboxState]
   );
 
+  const LegendContent = (
+    <FlexColumn>
+      {title && <LegendTitle>{title}</LegendTitle>}
+      <FlexRow>{checkboxes}</FlexRow>
+    </FlexColumn>
+  );
+
+  const LegendInsideIsolatedBox = (
+    <ChartLegendIsolated>{LegendContent}</ChartLegendIsolated>
+  );
+
   return (
-    <ChartLegend offsetleft={offsetleft}>
-      <FlexColumn>
-        {title && <LegendTitle>{title}</LegendTitle>}
-        <FlexRow>{checkboxes}</FlexRow>
-      </FlexColumn>
+    <ChartLegend offset={offset}>
+      {isolateLegend ? LegendInsideIsolatedBox : LegendContent}
     </ChartLegend>
   );
 };

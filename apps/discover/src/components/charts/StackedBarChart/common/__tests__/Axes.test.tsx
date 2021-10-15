@@ -2,9 +2,9 @@ import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
-import { DEFAULT_MARGINS, AXIS_PLACEMENT } from '../../constants';
+import { DEFAULT_MARGINS } from '../../constants';
 import { ChartSVG } from '../../elements';
-import { AxesProps } from '../../types';
+import { AxesProps, AxisPlacement } from '../../types';
 import { Axes } from '../Axes';
 
 jest.mock('d3-axis', () => ({
@@ -36,11 +36,9 @@ describe('StackedBarChart -> Axes', () => {
   it('should render axes as expected', async () => {
     testInit();
 
+    expect(screen.getByTestId(`axis-${AxisPlacement.Top}`)).toBeInTheDocument();
     expect(
-      screen.getByTestId(`axis-${AXIS_PLACEMENT.Top}`)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByTestId(`axis-${AXIS_PLACEMENT.Left}`)
+      screen.getByTestId(`axis-${AxisPlacement.Left}`)
     ).toBeInTheDocument();
   });
 });

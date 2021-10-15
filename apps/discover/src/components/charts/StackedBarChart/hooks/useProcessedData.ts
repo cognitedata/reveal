@@ -1,22 +1,22 @@
 import { useMemo } from 'react';
 
-import { Axis, StackedBarChartOptions } from '../types';
+import { StackedBarChartOptions } from '../types';
 import { fixValuesToDecimalPlaces } from '../utils';
 
 export const useProcessedData = <T>({
   data,
-  xAxis,
+  xAccessor,
   options,
 }: {
   data: T[];
-  xAxis: Axis;
+  xAccessor: keyof T;
   options?: StackedBarChartOptions<T>;
 }) => {
   return useMemo(() => {
     if (options?.fixXValuesToDecimalPlaces) {
       return fixValuesToDecimalPlaces<T>(
         data,
-        xAxis.accessor as keyof T,
+        xAccessor,
         options?.fixXValuesToDecimalPlaces
       );
     }

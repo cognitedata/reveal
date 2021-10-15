@@ -23,7 +23,6 @@ describe('StackedBarChart -> Legend', () => {
   const defaultProps: LegendProps = {
     checkboxState,
     barColorConfig,
-    offsetleft: 0,
     onChange: onChangeCheckbox,
     title: 'Legend Title',
   };

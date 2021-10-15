@@ -7,7 +7,7 @@ import { useProcessedData } from '../useProcessedData';
 describe('useProcessedData hook', () => {
   const getHookResult = () => {
     const { waitForNextUpdate, result } = renderHook(() =>
-      useProcessedData<Data>({ data, xAxis })
+      useProcessedData<Data>({ data, xAccessor: xAxis.accessor as keyof Data })
     );
     waitForNextUpdate();
     return result.current;

@@ -30,6 +30,7 @@ export const Bars = <T extends DataObject<T>>({
   barComponentDimensions,
   options,
   formatTooltip,
+  onClickBarLabel,
 }: BarsProps<T>) => {
   const barColorConfig =
     options?.barColorConfig || getDefaultBarColorConfig(legendAccessor);
@@ -50,7 +51,7 @@ export const Bars = <T extends DataObject<T>>({
 
   return (
     <g>
-      {Object.keys(groupedData).map((key) => {
+      {Object.keys(groupedData).map((key, index) => {
         const data = groupedData[key];
         const maxValue = Math.max(
           ...data.map((dataElement) => dataElement[xAccessor])
@@ -63,6 +64,11 @@ export const Bars = <T extends DataObject<T>>({
           stackedData,
           'stackedWidth'
         );
+        const handleOnClickBarLabel = () => {
+          if (onClickBarLabel) {
+            onClickBarLabel({ key, index, data, groupedData });
+          }
+        };
 
         return (
           <BarComponent
@@ -72,7 +78,13 @@ export const Bars = <T extends DataObject<T>>({
             width={barComponentDimensions.width}
             height={barComponentDimensions.height}
           >
-            <BarLabel level={2} default strong data-testid="bar-label">
+            <BarLabel
+              level={2}
+              default
+              strong
+              data-testid="bar-label"
+              onClick={handleOnClickBarLabel}
+            >
               {key}
               <Icon type="ChevronRightCompact" size={14} />
             </BarLabel>

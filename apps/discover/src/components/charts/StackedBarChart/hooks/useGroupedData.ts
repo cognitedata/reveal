@@ -2,24 +2,24 @@ import { useMemo } from 'react';
 
 import groupBy from 'lodash/groupBy';
 
-import { Axis, GroupedData, StackedBarChartOptions } from '../types';
+import { GroupedData, StackedBarChartOptions } from '../types';
 import { sumObjectsByKey } from '../utils';
 
 export const useGroupedData = <T>({
   data,
-  xAxis,
-  yAxis,
+  xAccessor,
+  yAccessor,
   groupDataInsideBarsBy,
   options,
 }: {
   data: T[];
-  xAxis: Axis;
-  yAxis: Axis;
+  xAccessor: keyof T;
+  yAccessor: keyof T;
   groupDataInsideBarsBy?: string;
   options?: StackedBarChartOptions<T>;
 }) => {
   return useMemo(() => {
-    const groupedDataWithoutSummedValues = groupBy(data, yAxis.accessor);
+    const groupedDataWithoutSummedValues = groupBy(data, yAccessor);
 
     if (!groupDataInsideBarsBy) return groupedDataWithoutSummedValues;
 
@@ -29,7 +29,7 @@ export const useGroupedData = <T>({
       dataWithSummedValues[key] = sumObjectsByKey<T>(
         groupedDataWithoutSummedValues[key],
         groupDataInsideBarsBy as keyof T,
-        xAxis.accessor as keyof T,
+        xAccessor,
         options?.fixXValuesToDecimalPlaces
       );
     });

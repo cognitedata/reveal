@@ -34,7 +34,7 @@ export const sortObjectsAscending = <T>(list: T[], path: keyof T) =>
     const firstValue = getValueFromKey(first, path);
     const secondValue = getValueFromKey(second, path);
 
-    return firstValue > secondValue ? 1 : -1;
+    return caseInsensitiveSort(firstValue, secondValue);
   });
 
 export const sortObjectsDecending = <T>(list: T[], path: keyof T) =>
@@ -42,7 +42,7 @@ export const sortObjectsDecending = <T>(list: T[], path: keyof T) =>
     const firstValue = getValueFromKey(first, path);
     const secondValue = getValueFromKey(second, path);
 
-    return firstValue < secondValue ? 1 : -1;
+    return caseInsensitiveSort(secondValue, firstValue);
   });
 
 const getValueFromKey = <T>(object: T, path: keyof T) => {

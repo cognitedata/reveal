@@ -5,11 +5,7 @@ import { Body, Tooltip, Menu } from '@cognite/cogs.js';
 import layers from '_helpers/zindex';
 import { Center, FlexColumn, sizes } from 'styles/layout';
 
-import {
-  BAR_HEIGHT,
-  CHART_BACKGROUND_COLOR,
-  LEGEND_BOTTOM_SPACING,
-} from './constants';
+import { BAR_HEIGHT, CHART_BACKGROUND_COLOR } from './constants';
 
 export const StackedBarChartWrapper = styled.div`
   background: ${CHART_BACKGROUND_COLOR};
@@ -18,9 +14,10 @@ export const StackedBarChartWrapper = styled.div`
   height: calc(100vh - 208px);
 `;
 
-export const ChartStickyElement = styled.g`
+export const ChartStickyElement = styled.svg`
   position: sticky;
   top: 0px;
+  bottom: 0px;
   background: ${CHART_BACKGROUND_COLOR};
   z-index: ${layers.TABLE_HEADER};
 `;
@@ -61,6 +58,7 @@ export const ChartTitle = styled.span`
 export const ChartSubtitle = styled.span`
   color: var(--cogs-text-hint);
   font-size: 10px;
+  margin-bottom: ${sizes.normal};
 `;
 
 export const AxisLabel = styled(Body)`
@@ -68,13 +66,15 @@ export const AxisLabel = styled(Body)`
   font-size: 12px !important;
   font-weight: 500;
   margin: ${sizes.small};
+  margin-top: 0px;
 `;
 
 export const ChartContainer = styled.div`
   overflow: scroll;
-  padding-bottom: ${(props: { paddingBottom: number }) =>
-    `${props.paddingBottom}px`};
-  max-height: calc(100vh - 322px);
+  ${(props: { offsetbottom: number; enableFullHeight: boolean }) => `
+    padding-bottom: ${props.enableFullHeight ? props.offsetbottom : 0}px;
+    max-height: calc(100vh - ${props.enableFullHeight ? 320 : 400}px);
+  `}
   .domain {
     display: none;
   }
@@ -112,7 +112,7 @@ export const ChartContainer = styled.div`
 export const ChartSVG = styled.svg``;
 
 export const BarComponent = styled.foreignObject`
-  padding-top: ${sizes.medium};
+  padding-top: ${sizes.small};
 `;
 
 export const BarLabel = styled(Body)`
@@ -160,15 +160,15 @@ export const BarTooltip = styled(Tooltip)`
   transform: translateX(-50%);
 `;
 
-export const ChartLegend = styled(Menu)`
+export const ChartLegend = styled.div`
   flex-direction: row;
   width: fit-content;
   position: fixed;
-  bottom: ${LEGEND_BOTTOM_SPACING}px;
-  left: ${(props: { offsetleft: number }) =>
-    `calc(${props.offsetleft}px + calc(100% - ${props.offsetleft}px) / 2)`};
+  ${(props: { offset?: { bottom: number; left: number } }) => `
+    bottom: ${props.offset?.bottom}px;
+    left: calc(${props.offset?.left}px + calc(100% - ${props.offset?.left}px) / 2);
+  `}
   transform: translateX(-50%);
-  padding: ${sizes.normal} !important;
   color: var(--cogs-text-secondary);
   border-radius: ${sizes.small};
 
@@ -182,6 +182,10 @@ export const ChartLegend = styled(Menu)`
   }
 `;
 
+export const ChartLegendIsolated = styled(Menu)`
+  padding: ${sizes.normal} !important;
+`;
+
 export const LegendTitle = styled.span`
   font-size: 13px;
   text-align: center;
@@ -190,7 +194,8 @@ export const LegendTitle = styled.span`
 
 export const ResetToDefaultContainer = styled(FlexColumn)`
   position: relative;
-  margin-top: 60px;
+  margin-top: calc(calc(100vh - 430px) / 2);
+  transform: translateY(-50%);
 `;
 
 export const ResetToDefaultButtonWrapper = styled(Center)`
