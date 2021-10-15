@@ -147,9 +147,9 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
         iconPlacement="right"
         fullWidth
         onKeyDown={(event) => {
+          event.stopPropagation();
           if (event.key === 'Escape') {
             event.preventDefault();
-            event.stopPropagation();
             setShowResults(false);
           }
         }}

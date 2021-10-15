@@ -19,26 +19,28 @@ const WorkSpaceTools = ({
 }: WorkSpaceToolsProps) => {
   useEffect(() => {
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'm') {
-        onToolChange('move');
-      }
-      if (e.key === 'r') {
-        onToolChange('rect');
-      }
-      if (e.key === 'l') {
-        onToolChange('line');
-      }
-      if (e.key === 't') {
-        onToolChange('text');
-      }
-      if (e.key === 'c') {
-        onToolChange('circle');
-      }
-      if (e.key === 'i') {
-        onToolChange('list');
-      }
-      if (e.key === 's') {
-        onToolChange('default');
+      if (!isDisabled) {
+        if (e.key === 'm') {
+          onToolChange('move');
+        }
+        if (e.key === 'r') {
+          onToolChange('rect');
+        }
+        if (e.key === 'l') {
+          onToolChange('line');
+        }
+        if (e.key === 't') {
+          onToolChange('text');
+        }
+        if (e.key === 'c') {
+          onToolChange('circle');
+        }
+        if (e.key === 'i') {
+          onToolChange('list');
+        }
+        if (e.key === 's') {
+          onToolChange('default');
+        }
       }
     });
   }, []);

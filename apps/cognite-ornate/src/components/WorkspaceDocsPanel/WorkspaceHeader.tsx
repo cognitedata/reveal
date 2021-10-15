@@ -39,13 +39,13 @@ export const WorkspaceHeader = ({
   );
 
   const handleKeyboardKeys = (event: KeyboardEvent) => {
+    event.stopPropagation();
     if (event.key === 'Enter') {
       setIsInputVisible(false);
       onTitleUpdated(workspaceTitle);
     }
     if (event.key === 'Escape') {
       event.preventDefault();
-      event.stopPropagation();
       setIsInputVisible(false);
       setWorkspaceTitle(title);
     }

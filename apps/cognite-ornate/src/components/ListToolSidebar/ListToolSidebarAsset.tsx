@@ -117,24 +117,23 @@ const ListToolSidebarAsset = ({
     );
   }
 
+  const assetResultsDropdown = options.length > 0 && (
+    <Menu>
+      {options.map((asset) => (
+        <Menu.Item
+          key={asset.id}
+          onClick={() => {
+            onConfirm(asset);
+          }}
+        >
+          {asset.name}
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
+
   return (
-    <Dropdown
-      visible={isDropdownOpen}
-      content={
-        <Menu>
-          {options.map((asset) => (
-            <Menu.Item
-              key={asset.id}
-              onClick={() => {
-                onConfirm(asset);
-              }}
-            >
-              {asset.name}
-            </Menu.Item>
-          ))}
-        </Menu>
-      }
-    >
+    <Dropdown visible={isDropdownOpen} content={assetResultsDropdown}>
       <input
         ref={inputRef}
         className="list-item__text"
