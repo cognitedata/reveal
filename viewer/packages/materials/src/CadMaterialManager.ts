@@ -7,8 +7,10 @@ import * as THREE from 'three';
 import { NodeAppearanceTextureBuilder } from './rendering/NodeAppearanceTextureBuilder';
 import { NodeTransformTextureBuilder } from './transform/NodeTransformTextureBuilder';
 import { NodeTransformProvider } from './transform/NodeTransformProvider';
+import { createMaterials, Materials } from './rendering/materials';
+import { RenderMode } from './rendering/RenderMode';
+
 import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
-import { createMaterials, Materials, RenderMode } from '@reveal/cad-parsers';
 import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
 
 import throttle from 'lodash/throttle';

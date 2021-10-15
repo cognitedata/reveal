@@ -14,10 +14,9 @@ import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { GeometryFilter } from '..';
 
-import { RenderMode } from '@reveal/cad-parsers';
 import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
-import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions } from '@reveal/materials';
+import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/materials';
 import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
 
 /* eslint-disable jsdoc/require-jsdoc */

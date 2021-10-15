@@ -15,8 +15,6 @@ export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorM
 
 export { CadSectorParser } from './src/cad/CadSectorParser';
 
-export { RenderMode } from './src/cad/RenderMode';
-
 export { LevelOfDetail } from './src/cad/LevelOfDetail';
 
 export {
@@ -28,15 +26,4 @@ export {
   ConsumedSector
 } from './src/cad/types';
 
-export { createMaterials, Materials } from './src/cad/materials';
-export { createPrimitives } from './src/cad/primitives';
-export { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './src/cad/filterPrimitives';
 export { WellKnownDistanceToMeterConversionFactors } from './src/utilities/types';
-
-export {
-  outlineDetectionShaders,
-  fxaaShaders,
-  ssaoShaders,
-  ssaoBlurCombineShaders,
-  coverageShaders
-} from './src/cad/shaders';

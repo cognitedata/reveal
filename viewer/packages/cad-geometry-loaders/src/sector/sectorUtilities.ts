@@ -11,15 +11,13 @@ import {
   SectorGeometry,
   WantedSector,
   ConsumedSector,
-  InstancedMeshFile,
-  Materials,
-  createPrimitives
+  InstancedMeshFile
 } from '@reveal/cad-parsers';
 
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
-import { createTriangleMeshes, createSimpleGeometryMesh, filterInstanceMesh } from '@reveal/materials';
+import { createTriangleMeshes, createSimpleGeometryMesh, filterInstanceMesh, Materials, createPrimitives } from '@reveal/materials';
 
 export function consumeSectorSimple(
   sector: SectorQuads,

@@ -18,8 +18,10 @@ import {
 } from './primitiveGeometries';
 
 import { Materials } from './materials';
-import { SectorGeometry } from './types';
-import { disposeAttributeArrayOnUpload } from '@reveal/utilities';
+
+import { SectorGeometry } from '@reveal/cad-parsers';
+import { BoundingBoxLOD, disposeAttributeArrayOnUpload } from '@reveal/utilities';
+
 import assert from 'assert';
 import {
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
@@ -27,7 +29,6 @@ import {
   filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
 } from './filterPrimitives';
-import { BoundingBoxLOD } from '@reveal/utilities';
 
 export function* createPrimitives(
   sector: SectorGeometry,

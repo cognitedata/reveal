@@ -10,9 +10,10 @@ import { NodeTransformProvider } from '../transform/NodeTransformProvider';
 import { RootSectorNode } from '../sector/RootSectorNode';
 import { suggestCameraConfig } from '../cameraconfig';
 import { InstancedMeshManager } from '../InstancedMeshManager';
+import { RenderMode } from '../rendering/RenderMode';
 
 import { NodeAppearanceProvider, NodeAppearance } from '@reveal/cad-styling';
-import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
+import { SectorScene, CadModelMetadata, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

@@ -17,10 +17,12 @@ import {
   outlineDetectionShaders,
   fxaaShaders,
   ssaoShaders,
-  ssaoBlurCombineShaders,
-  LevelOfDetail,
-  RenderMode
-} from '@reveal/cad-parsers';
+  ssaoBlurCombineShaders
+} from './shaders';
+
+import { RenderMode } from './RenderMode';
+import { LevelOfDetail } from '@reveal/cad-parsers';
+
 import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
 
 export class EffectRenderManager {
