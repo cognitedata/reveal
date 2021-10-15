@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 import { createGlContext } from '../../../../../test-utilities';
-import { CadMaterialManager, EffectRenderManager } from '@reveal/materials';
+import { CadMaterialManager, EffectRenderManager } from '@reveal/rendering';
 
 import { RenderAlreadyLoadedGeometryProvider } from './RenderAlreadyLoadedGeometryProvider';
 

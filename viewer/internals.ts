@@ -13,6 +13,6 @@ export {
   GpuOrderSectorsByVisibilityCoverage
 } from './packages/cad-geometry-loaders';
 
-export { CadNode, SuggestedCameraConfig, RenderOptions, defaultRenderOptions } from './packages/materials';
+export { CadNode, SuggestedCameraConfig, RenderOptions, defaultRenderOptions } from './packages/rendering';
 export { NodeAppearanceProvider } from './packages/cad-styling';
 export { revealEnv } from './packages/utilities';

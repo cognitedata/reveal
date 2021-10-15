@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { LevelOfDetail } from '@reveal/cad-parsers';
-import { CadMaterialManager, CadNode } from '@reveal/materials';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
 
 import { DetermineSectorsInput, SectorCost } from './types';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';

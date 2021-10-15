@@ -3,4 +3,4 @@
  */
 
 export { LevelOfDetail } from '@reveal/cad-parsers';
-export { SectorNode } from '@reveal/materials';
+export { SectorNode } from '@reveal/rendering';

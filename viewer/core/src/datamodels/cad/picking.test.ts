@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { CadNode } from '@reveal/materials';
+import { CadNode } from '@reveal/rendering';
 
 import { intersectCadNodes } from './picking';
 import { IntersectInput } from '../base/types';

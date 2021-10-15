@@ -3,7 +3,7 @@
  */
 
 import { LoadingState, SectorCuller } from '@reveal/cad-geometry-loaders';
-import { SectorQuads, RenderOptions } from '@reveal/materials';
+import { SectorQuads, RenderOptions } from '@reveal/rendering';
 import { SectorGeometry } from '@reveal/cad-parsers';
 
 /**

@@ -5,9 +5,10 @@
 import * as THREE from 'three';
 
 import { CadMaterialManager } from './CadMaterialManager';
+import { Materials } from './rendering/materials';
+import { RenderMode } from './rendering/RenderMode';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { RenderMode, Materials } from '@reveal/cad-parsers';
 import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 import range from 'lodash/range';

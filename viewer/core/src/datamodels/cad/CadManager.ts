@@ -11,7 +11,7 @@ import {
 } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 
-import { CadNode, CadMaterialManager, RenderMode } from '@reveal/materials';
+import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
 
 import { trackError } from '@reveal/utilities';
 

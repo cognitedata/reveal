@@ -14,9 +14,9 @@
     "@reveal/cad-styling": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/materials": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*",
+    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

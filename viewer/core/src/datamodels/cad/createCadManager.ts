@@ -15,7 +15,7 @@ import {
   OccludingGeometryProvider
 } from '@reveal/cad-geometry-loaders';
 
-import { CadMaterialManager } from '@reveal/materials';
+import { CadMaterialManager } from '@reveal/rendering';
 
 import { RevealOptions } from '../../public/types';
 

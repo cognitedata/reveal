@@ -3,7 +3,7 @@
  */
 
 import { OccludingGeometryProvider } from '@reveal/cad-geometry-loaders';
-import { EffectRenderManager } from '@reveal/materials';
+import { EffectRenderManager } from '@reveal/rendering';
 
 export class RenderAlreadyLoadedGeometryProvider implements OccludingGeometryProvider {
   private readonly _renderManager: EffectRenderManager;

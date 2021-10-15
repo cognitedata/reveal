@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { RenderMode } from '@reveal/cad-parsers';
+import { RenderMode } from './RenderMode';
 
 import { RenderOptions } from '../rendering/types';
 import { createGlContext } from '../../../../test-utilities';

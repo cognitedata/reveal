@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
 import { SectorMetadata, CadModelMetadata, WantedSector } from '@reveal/cad-parsers';
-import { coverageShaders } from '@reveal/materials';
+import { coverageShaders } from '@reveal/rendering';
 
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 

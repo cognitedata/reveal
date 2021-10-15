@@ -11,7 +11,7 @@ import { Subscription, fromEventPattern } from 'rxjs';
 
 import { LoadingState } from '@reveal/cad-geometry-loaders';
 
-import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/materials';
+import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
 import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
 

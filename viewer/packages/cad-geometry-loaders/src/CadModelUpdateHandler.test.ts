@@ -8,7 +8,7 @@ import { CachedRepository } from './sector/CachedRepository';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 
-import { CadMaterialManager } from '@reveal/materials';
+import { CadMaterialManager } from '@reveal/rendering';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 describe('CadModelUpdateHandler', () => {

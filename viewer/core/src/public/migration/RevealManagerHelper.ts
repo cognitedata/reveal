@@ -12,7 +12,7 @@ import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
 
 import { assertNever } from '@reveal/utilities';
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
-import { CadNode } from '@reveal/materials';
+import { CadNode } from '@reveal/rendering';
 
 import { CogniteClient } from '@cognite/sdk';
 
