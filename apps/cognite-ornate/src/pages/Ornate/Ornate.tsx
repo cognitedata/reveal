@@ -13,7 +13,7 @@ import WorkSpaceTools from 'components/WorkSpaceTools';
 import ShapeSettings from 'components/ShapeSettings';
 import { defaultShapeSettings } from 'components/ShapeSettings/constants';
 import { Button, Icon, toast, ToastContainer } from '@cognite/cogs.js';
-import { workspaceService } from 'services';
+import WorkspaceService from 'services/workspace.service';
 import { Workspace, WorkspaceDocument } from 'types';
 import { WorkspaceDocsPanel } from 'components/WorkspaceDocsPanel';
 import { useTranslation } from 'hooks/useTranslation';
@@ -49,6 +49,7 @@ interface OrnateProps {
 }
 
 const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
+  const workspaceService = new WorkspaceService(client);
   const ornateViewer = useRef<CogniteOrnate>();
   const [activeTool, setActiveTool] = useState<ToolType>('default');
   const [shapeSettings, setShapeSettings] =
@@ -190,7 +191,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       setWorkspace(workspace);
       setWorkspaceDocuments([]);
       onToolChange('default');
-      const contents = await workspaceService.loadWorkspaceContents(workspace);
+      const contents = await workspaceService
+        .loadWorkspace(workspace.id)
+        .then((space) => space.content);
       ornateViewer.current!.restart();
       loadTools();
 
@@ -388,11 +391,21 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       }
       setShowLoader(true);
       const json = ornateViewer.current!.exportToJSON();
-      workspaceService.saveWorkspaceContents(workspace.id, {
-        ...json,
-        markers: (ornateViewer.current!.tools.list as ListTool).markers,
+      workspaceService.saveWorkspace({
+        ...workspace,
+        content: {
+          connectedLines: json.connectedLines,
+          documents: json.documents.map((doc) => {
+            return {
+              ...doc,
+              drawings: doc.drawings.filter(
+                (drawing) => drawing.attrs.userGenerated
+              ),
+            };
+          }),
+          markers: (ornateViewer.current!.tools.list as ListTool).markers,
+        },
       });
-      workspaceService.saveWorkspace(workspace);
       toast.success(t('save_success', 'Workspace was saved'), {
         position: 'top-right',
         autoClose: 3000,

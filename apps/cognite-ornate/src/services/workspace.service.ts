@@ -1,3 +1,4 @@
+import { CogniteClient } from '@cognite/sdk';
 import { Marker } from 'library/tools/ListTool';
 import { OrnateJSON } from 'library/types';
 import { Workspace, WorkspaceDocument } from 'types';
@@ -11,18 +12,22 @@ export type WorkspaceContent = OrnateJSON & {
 
 export class WorkspaceService {
   private storage: StorageProvider;
-  private workspacesStorageKey = 'ornate_workspaces';
-  private workspaceStoragePrefix = 'ornate_workspace_';
 
-  constructor() {
-    this.storage = new StorageProvider();
+  constructor(client: CogniteClient) {
+    this.storage = new StorageProvider(client);
   }
+
   create(): Workspace {
     return {
       id: uuid(),
       name: 'Untitled Workspace',
       dateCreated: Date.now(),
       dateModified: Date.now(),
+      content: {
+        documents: [],
+        connectedLines: [],
+        markers: [],
+      },
     };
   }
 
@@ -42,70 +47,22 @@ export class WorkspaceService {
   }
 
   async saveWorkspace(workspace: Workspace): Promise<boolean> {
-    let savedWorkspaces = (await this.storage.getItem(
-      this.workspacesStorageKey,
-      []
-    )) as Workspace[];
-
-    if (!savedWorkspaces) {
-      savedWorkspaces = [];
-    }
-
-    const updatedWorkspacesList = [
-      ...savedWorkspaces?.filter((ws) => ws.id !== workspace.id),
-      { ...workspace, dateModified: Date.now() },
-    ];
-    await this.storage.setItem(
-      this.workspacesStorageKey,
-      updatedWorkspacesList
-    );
-
+    await this.storage.saveWorkspace(workspace.id, workspace);
     return true;
   }
 
-  loadWorkspaces(): Promise<Workspace[]> {
-    return this.storage.getItem(this.workspacesStorageKey, []) as Promise<
-      Workspace[]
-    >;
+  async loadWorkspaces(): Promise<Workspace[]> {
+    return this.storage.getWorkspaces() as Promise<Workspace[]>;
+  }
+
+  async loadWorkspace(workspaceId: string): Promise<Workspace> {
+    return this.storage.getWorkspace(workspaceId) as Promise<Workspace>;
   }
 
   async deleteWorkspace(workspace: Workspace): Promise<boolean> {
-    let savedWorkspaces = (await this.storage.getItem(
-      this.workspacesStorageKey,
-      []
-    )) as Workspace[];
-
-    savedWorkspaces = savedWorkspaces.filter((ws) => ws.id !== workspace.id);
-    await this.storage.setItem(this.workspacesStorageKey, savedWorkspaces);
-    await this.storage.removeItem(
-      `${this.workspaceStoragePrefix}${workspace.id}`
-    );
+    await this.storage.deleteWorkspace(workspace.id);
     return true;
   }
-
-  async loadWorkspaceContents(workspace: Workspace): Promise<WorkspaceContent> {
-    return this.storage.getItem(
-      `${this.workspaceStoragePrefix}${workspace.id}`,
-      { documents: [], markers: [] }
-    ) as Promise<WorkspaceContent>;
-  }
-
-  saveWorkspaceContents(workspaceId: string, contents: WorkspaceContent): void {
-    const parsedJson = {
-      ...contents,
-      documents: contents.documents.map((doc) => {
-        return {
-          ...doc,
-          drawings: doc.drawings.filter(
-            (drawing) => drawing.attrs.userGenerated
-          ),
-        };
-      }),
-      connectedLines: contents.connectedLines,
-    };
-    this.storage.setItem(
-      `${this.workspaceStoragePrefix}${workspaceId}`,
-      parsedJson
-    );
-  }
 }
+
+export default WorkspaceService;

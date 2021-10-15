@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { NullView } from 'components/NullView/NullView';
 import { useTranslation } from 'hooks/useTranslation';
 import { Workspace } from 'types';
-import { workspaceService } from 'services';
+import { useAuthContext } from '@cognite/react-container';
+import WorkspaceService from 'services/workspace.service';
 
 import { Header, RecentWorkspacesContainer } from './elements';
 import { RecentWorkspaceItem } from './RecentWorkspaceItem';
@@ -16,6 +17,8 @@ export const RecentWorkspaces = ({
   onLoadWorkspace,
   onDeleteWorkspace,
 }: RecentWorkspacesProps) => {
+  const { client } = useAuthContext();
+  const workspaceService = new WorkspaceService(client!);
   const { t } = useTranslation('recent_workspaces');
   const [recentWorkspaces, setRecentWorkspaces] = useState<Workspace[]>([]);
 
@@ -31,6 +34,9 @@ export const RecentWorkspaces = ({
 
   const onWorkspaceDelete = useCallback((workspace: Workspace) => {
     onDeleteWorkspace(workspace);
+    setRecentWorkspaces(
+      recentWorkspaces.filter((space) => space.id !== workspace.id)
+    );
     setTimeout(() => {
       loadWorkspaces();
     });

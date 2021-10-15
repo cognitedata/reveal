@@ -11,6 +11,7 @@ interface Sidecar extends SidecarConfig {
   docsSiteBaseUrl: string;
   intercom: string;
   nomaApiBaseUrl: string;
+  mpServiceBaseURL: string;
 }
 
 // # -------------------------------------
@@ -66,6 +67,19 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   }
 };
 
+const getmpServiceBaseURL = (cluster?: string) => {
+  if (process.env.REACT_APP_MP_SERVICE_BASE_URL) {
+    return process.env.REACT_APP_MP_SERVICE_BASE_URL;
+  }
+  if (cluster === 'ew1') {
+    return 'https://maintenance-planner-service.staging.cognite.ai';
+  }
+  if (cluster) {
+    return `https://maintenance-planner-service.staging.${cluster}.cognite.ai`;
+  }
+  return 'https://maintenance-planner-service.staging.cognite.ai';
+};
+
 // we are overwriting the window.__cogniteSidecar object because the tenant-selector
 // reads from this variable, so when you test on localhost, it (TSA) will not access via this file
 // but via the window.__cogniteSidecar global
@@ -80,6 +94,7 @@ const generateBaseUrls = (cluster: string, prod = false) => {
   applicationName: 'Cognite Ornate',
   docsSiteBaseUrl: 'https://docs.cognite.com',
   nomaApiBaseUrl: 'https://noma.development.cognite.ai',
+  mpServiceBaseURL: getmpServiceBaseURL(CLUSTER),
   locize: {
     keySeparator: false,
     projectId: '1ee63b21-27c7-44ad-891f-4bd9af378b72', // <- move this to release-configs
