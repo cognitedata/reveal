@@ -1,1 +1,3 @@
-export const GuideTools = () => <div>Guide & Tools</div>;
+import { Title } from '@cognite/cogs.js';
+
+export const GuideTools = () => <Title level={3}>Guide & Tools</Title>;
