@@ -47,7 +47,7 @@ describe('Integrations', () => {
     });
   });
 
-  test('Should render no integrations message when no integrations', async () => {
+  test('Should render "No extraction pipelines have been added yet." message when no integrations', async () => {
     sdkv3.get.mockResolvedValue({ data: { items: [] } });
     const queryCache = new QueryClient({
       defaultOptions: { queries: { retry: false } },
@@ -60,7 +60,9 @@ describe('Integrations', () => {
         CDF_ENV_GREENFIELD
       );
       render(<Integrations />, { wrapper });
-      const errorMessage = await screen.findByText(/No integration/i);
+      const errorMessage = await screen.findByText(
+        /No extraction pipelines have been added yet./i
+      );
       expect(errorMessage).toBeInTheDocument();
     });
   });

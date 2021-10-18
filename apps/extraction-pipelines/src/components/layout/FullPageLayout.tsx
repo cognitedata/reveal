@@ -8,6 +8,7 @@ interface LayoutProps {
   pageHeading?: ReactNode;
   headingSide?: ReactNode;
   breadcrumbs?: ReactNode;
+  hideDividerLine?: boolean;
 }
 
 export const FullPageLayout: FunctionComponent<LayoutProps> = ({
@@ -15,6 +16,7 @@ export const FullPageLayout: FunctionComponent<LayoutProps> = ({
   pageHeading,
   headingSide,
   breadcrumbs,
+  hideDividerLine,
   children,
 }: PropsWithChildren<LayoutProps>) => {
   const renderHeading = () => {
@@ -28,7 +30,9 @@ export const FullPageLayout: FunctionComponent<LayoutProps> = ({
       {breadcrumbs}
       {renderHeading()}
       {headingSide}
-      <MainFullWidthGrid>{children}</MainFullWidthGrid>
+      <MainFullWidthGrid hideDividerLine={hideDividerLine}>
+        {children}
+      </MainFullWidthGrid>
     </PageWrapper>
   );
 };

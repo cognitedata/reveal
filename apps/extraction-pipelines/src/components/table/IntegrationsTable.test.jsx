@@ -9,9 +9,9 @@ import {
   TableHeadings,
 } from 'components/table/IntegrationTableCol';
 import { renderWithSelectedIntegrationContext } from 'utils/test/render';
-import ITable from 'components/table/ITable';
+import IntegrationsTable from 'components/table/IntegrationsTable';
 
-describe('<ITable/>', () => {
+describe('<IntegrationsTable/>', () => {
   const mockIntegration = {
     ...getMockResponse()[0],
     dataSet: mockDataSetResponse()[0],
@@ -19,12 +19,15 @@ describe('<ITable/>', () => {
   beforeEach(() => {
     sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
     sdkv3.datasets.retrieve.mockResolvedValue(mockDataSetResponse());
-    const data = mapDataSetToIntegration(
+    const integrations = mapDataSetToIntegration(
       getMockResponse(),
       mockDataSetResponse()
     );
     renderWithSelectedIntegrationContext(
-      <ITable data={data} columns={integrationTableColumns} />,
+      <IntegrationsTable
+        integrations={integrations}
+        columns={integrationTableColumns}
+      />,
       { initIntegration: mockIntegration, client: new QueryClient() }
     );
   });

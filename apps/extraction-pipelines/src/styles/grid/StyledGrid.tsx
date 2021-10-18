@@ -75,11 +75,11 @@ export const GridRowStyle = styled(PaddedGridDiv)`
   }
 `;
 
-export const MainFullWidthGrid = styled.div`
+export const MainFullWidthGrid = styled.div<{ hideDividerLine?: boolean }>`
   grid-area: main;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
-  border-top: 1px solid #ccc;
+  border-top: ${(props) => (props.hideDividerLine ? '0' : '1px')} solid #ccc;
 `;
 
 export const Span3 = css`

@@ -1,4 +1,4 @@
-import React, { ReactText, useMemo, useState } from 'react';
+import React, { ReactNode, ReactText, useMemo } from 'react';
 import {
   ActionType,
   Cell,
@@ -20,15 +20,13 @@ import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useAppEnv } from 'hooks/useAppEnv';
 import IntegrationTableSearch from 'components/table/IntegrationTableSearch';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
-import { Button, Colors, Modal } from '@cognite/cogs.js';
-import { ids } from 'cogs-variables';
-import { CreateIntegration } from 'pages/create/CreateIntegration';
+import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Span3 } from 'styles/grid/StyledGrid';
 import { mainContentSpaceAround } from 'styles/StyledVariables';
 import Layers from 'utils/zindex';
 import { StyledTable } from 'styles/StyledTable';
-import { StyledTooltip } from 'styles/StyledToolTip';
+import { Integration } from 'model/Integration';
 
 const selectReducer = (
   newState: TableState,
@@ -46,11 +44,6 @@ const selectReducer = (
   }
 };
 
-interface ITableProps<T extends object> {
-  data: T[];
-  columns: Column<T>[];
-  canEdit: boolean;
-}
 const fuzzyTextFilterFn = <T extends { values: any }>(
   rows: ReadonlyArray<T>,
   id: string,
@@ -67,32 +60,6 @@ const TableTop = styled.div`
   justify-content: space-between;
   align-items: flex-start;
 `;
-
-const VerticalSpace = styled.div`
-  height: 16px;
-`;
-const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
-  return (
-    <Modal
-      visible={props.visible}
-      width={600}
-      closable
-      onCancel={props.close}
-      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
-      getContainer={() =>
-        document.getElementsByClassName(ids.styleScope).item(0) as any
-      }
-      footer={null}
-      title="Create extraction pipeline"
-    >
-      <VerticalSpace />
-      <CreateIntegration
-        showAdditionalFields={false}
-        customCancelCallback={props.close}
-      />
-    </Modal>
-  );
-};
 
 const StyledIntegrationsTable = styled(StyledTable)`
   ${Span3};
@@ -120,15 +87,19 @@ const StyledTable2 = styled.table`
   }
 `;
 
-const ITable = <T extends { id: ReactText }>({
-  data,
+interface Props {
+  integrations: Integration[];
+  columns: Column<Integration>[];
+  tableActionButtons: ReactNode;
+}
+const IntegrationsTable = <T extends { id: ReactText }>({
+  integrations,
   columns,
-  canEdit,
-}: ITableProps<T>) => {
+  tableActionButtons,
+}: Props) => {
   const { setIntegration } = useSelectedIntegration();
   const { project } = useAppEnv();
   const history = useHistory();
-  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const filterTypes = React.useMemo(
     () => ({
@@ -148,8 +119,8 @@ const ITable = <T extends { id: ReactText }>({
   );
 
   const dataSource = useMemo(() => {
-    return data;
-  }, [data]);
+    return integrations;
+  }, [integrations]);
   const headerCols = useMemo(() => {
     return columns;
   }, [columns]);
@@ -163,7 +134,7 @@ const ITable = <T extends { id: ReactText }>({
     state,
     setGlobalFilter,
     preGlobalFilteredRows,
-  } = useTable<T>(
+  } = useTable<Integration>(
     {
       columns: headerCols,
       data: dataSource,
@@ -182,32 +153,13 @@ const ITable = <T extends { id: ReactText }>({
 
   return (
     <StyledIntegrationsTable>
-      <CreateExtpipeModal
-        visible={createModalOpen}
-        close={() => setCreateModalOpen(false)}
-      />
       <TableTop>
         <IntegrationTableSearch
           globalFilter={state.globalFilter}
           preGlobalFilteredRows={preGlobalFilteredRows}
           setGlobalFilter={setGlobalFilter}
         />
-        <StyledTooltip
-          disabled={canEdit}
-          content="You have insufficient access rights to create an extraction pipeline."
-        >
-          <Button
-            variant="default"
-            type="primary"
-            icon="PlusCompact"
-            disabled={!canEdit}
-            onClick={() => {
-              setCreateModalOpen(canEdit);
-            }}
-          >
-            Create extraction pipeline
-          </Button>
-        </StyledTooltip>
+        <div>{tableActionButtons}</div>
       </TableTop>
       <StyledTable2
         {...getTableProps()}
@@ -234,7 +186,7 @@ const ITable = <T extends { id: ReactText }>({
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row: Row<T>) => {
+          {rows.map((row: Row<Integration>) => {
             prepareRow(row);
             const handleClickOnRow = () => {
               row.toggleRowSelected(true);
@@ -249,7 +201,7 @@ const ITable = <T extends { id: ReactText }>({
                 }`}
                 onClick={handleClickOnRow}
               >
-                {row.cells.map((cell: Cell<T>) => {
+                {row.cells.map((cell: Cell<Integration>) => {
                   const handleCellClick = (
                     e: React.MouseEvent<HTMLTableDataCellElement>
                   ) => {
@@ -281,4 +233,4 @@ const ITable = <T extends { id: ReactText }>({
     </StyledIntegrationsTable>
   );
 };
-export default ITable;
+export default IntegrationsTable;
