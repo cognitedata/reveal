@@ -10,15 +10,16 @@ import { useIntegrations } from 'hooks/useIntegrations';
 import NoIntegrations from 'components/error/NoIntegrations';
 import { Loader } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
-import IntegrationsTable from 'components/integrations/IntegrationsTable';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
 import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
 import { useAppEnv } from 'hooks/useAppEnv';
-import { Integration } from 'model/Integration';
 import { LinkWrapper } from 'styles/StyledLinks';
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
-import { EXTPIPES_READS } from 'model/AclAction';
+import { EXTPIPES_READS, EXTPIPES_WRITES } from 'model/AclAction';
+import ITable from 'components/table/ITable';
+import { integrationTableColumns } from 'components/table/IntegrationTableCol';
+import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -38,6 +39,8 @@ const Integrations: FunctionComponent<Props> = () => {
     error: errorIntegrations,
     refetch,
   } = useIntegrations();
+  const permissions = useOneOfPermissions(EXTPIPES_WRITES);
+  const canEdit = permissions.data;
   if (data && data.length === 0) {
     return (
       <MainFullWidthGrid>
@@ -66,7 +69,9 @@ const Integrations: FunctionComponent<Props> = () => {
     );
   }
 
-  return <IntegrationsTable tableData={data as Integration[]} />;
+  return (
+    <ITable canEdit={canEdit} columns={integrationTableColumns} data={data!} />
+  );
 };
 
 export default function CombinedComponent() {

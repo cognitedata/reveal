@@ -24,6 +24,11 @@ import { Button, Colors, Modal } from '@cognite/cogs.js';
 import { ids } from 'cogs-variables';
 import { CreateIntegration } from 'pages/create/CreateIntegration';
 import styled from 'styled-components';
+import { Span3 } from 'styles/grid/StyledGrid';
+import { mainContentSpaceAround } from 'styles/StyledVariables';
+import Layers from 'utils/zindex';
+import { StyledTable } from 'styles/StyledTable';
+import { StyledTooltip } from 'styles/StyledToolTip';
 
 const selectReducer = (
   newState: TableState,
@@ -44,6 +49,7 @@ const selectReducer = (
 interface ITableProps<T extends object> {
   data: T[];
   columns: Column<T>[];
+  canEdit: boolean;
 }
 const fuzzyTextFilterFn = <T extends { values: any }>(
   rows: ReadonlyArray<T>,
@@ -88,7 +94,25 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
   );
 };
 
-const StyledTable = styled.table`
+const StyledIntegrationsTable = styled(StyledTable)`
+  ${Span3};
+  margin: ${mainContentSpaceAround};
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    th,
+    td {
+      padding: 0.5rem 1rem;
+    }
+    th {
+      background: ${Colors.white.hex()};
+      z-index: ${Layers.MINIMUM};
+    }
+  }
+`;
+
+const StyledTable2 = styled.table`
   table-layout: fixed;
   tbody td {
     word-break: break-word;
@@ -99,6 +123,7 @@ const StyledTable = styled.table`
 const ITable = <T extends { id: ReactText }>({
   data,
   columns,
+  canEdit,
 }: ITableProps<T>) => {
   const { setIntegration } = useSelectedIntegration();
   const { project } = useAppEnv();
@@ -156,7 +181,7 @@ const ITable = <T extends { id: ReactText }>({
   );
 
   return (
-    <>
+    <StyledIntegrationsTable>
       <CreateExtpipeModal
         visible={createModalOpen}
         close={() => setCreateModalOpen(false)}
@@ -167,18 +192,24 @@ const ITable = <T extends { id: ReactText }>({
           preGlobalFilteredRows={preGlobalFilteredRows}
           setGlobalFilter={setGlobalFilter}
         />
-        <Button
-          variant="default"
-          type="primary"
-          icon="PlusCompact"
-          onClick={() => {
-            setCreateModalOpen(true);
-          }}
+        <StyledTooltip
+          disabled={canEdit}
+          content="You have insufficient access rights to create an extraction pipeline."
         >
-          Create extraction pipeline
-        </Button>
+          <Button
+            variant="default"
+            type="primary"
+            icon="PlusCompact"
+            disabled={!canEdit}
+            onClick={() => {
+              setCreateModalOpen(canEdit);
+            }}
+          >
+            Create extraction pipeline
+          </Button>
+        </StyledTooltip>
       </TableTop>
-      <StyledTable
+      <StyledTable2
         {...getTableProps()}
         className="cogs-table integrations-table"
         role="grid"
@@ -246,8 +277,8 @@ const ITable = <T extends { id: ReactText }>({
             );
           })}
         </tbody>
-      </StyledTable>
-    </>
+      </StyledTable2>
+    </StyledIntegrationsTable>
   );
 };
 export default ITable;
