@@ -25,8 +25,6 @@ export {
   AntiAliasingMode
 } from './src/rendering/types';
 
-export { SectorNode } from './src/sector/SectorNode';
-
 export { EffectRenderManager } from './src/rendering/EffectRenderManager';
 
 export { RenderMode } from './src/rendering/RenderMode';
