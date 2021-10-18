@@ -163,6 +163,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    const index = this._styledNodeCollections.findIndex(x => x.nodes === nodeCollection);
+    if (index !== -1) {
+      this._styledNodeCollections.splice(index, 1);
+    }
     this.cadNode.nodeAppearanceProvider.unassignStyledNodeCollection(nodeCollection);
   }
 

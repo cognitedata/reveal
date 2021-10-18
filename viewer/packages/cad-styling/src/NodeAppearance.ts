@@ -70,6 +70,7 @@ export type NodeAppearance = {
 };
 
 const OutlinedAppearance: NodeAppearance = {
+  visible: true,
   outlineColor: NodeOutlineColor.White
 };
 
@@ -78,10 +79,12 @@ const HiddenAppearance: NodeAppearance = {
 };
 
 const InFrontAppearance: NodeAppearance = {
+  visible: true,
   renderInFront: true
 };
 
 const HighlightedColorAppearance: NodeAppearance = {
+  visible: true,
   color: [100, 100, 255]
 };
 
@@ -90,17 +93,19 @@ const GhostedAppearance: NodeAppearance = {
   renderGhosted: true
 };
 
+const DefaultAppearance: NodeAppearance = {
+  visible: true,
+  renderGhosted: false,
+  renderInFront: false,
+  outlineColor: NodeOutlineColor.NoOutline,
+  color: [0, 0, 0] as [number, number, number]
+};
+
 /**
  * A set of default node appearances used in Reveal.
  */
 export const DefaultNodeAppearance = {
-  Default: {
-    visible: true,
-    renderGhosted: false,
-    renderInFront: false,
-    outlineColor: NodeOutlineColor.NoOutline,
-    color: [0, 0, 0] as [number, number, number]
-  },
+  Default: DefaultAppearance,
   Outlined: OutlinedAppearance,
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
