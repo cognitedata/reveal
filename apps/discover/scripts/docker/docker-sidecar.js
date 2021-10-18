@@ -28,7 +28,7 @@ const generateBaseUrls = (cluster, prod = false) => {
 (function () {
   window.__cogniteSidecar = {
     __sidecarFormatVersion: 1,
-    applicationId: 'pp-dev',
+    applicationId: 'discover-staging',
     applicationName: 'Discover',
     aadApplicationId: '',
     docsSiteBaseUrl: 'https://docs.cognite.com',

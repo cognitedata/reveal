@@ -102,7 +102,7 @@ export const SIDECAR = {
   },
   mixpanel: 'disabled', // required
   unleash: process.env.REACT_APP_UNLEASH || '',
-  applicationId: PROD ? 'prettypoly' : 'pp-dev',
+  applicationId: PROD ? 'discover' : 'discover-staging',
   applicationName: 'Discover',
   ...sidecarOverridesWithCustomFakeIdpUser, // these will be populated from the server - MUST BE AT BOTTOM!
 } as DiscoverSidecarConfig;

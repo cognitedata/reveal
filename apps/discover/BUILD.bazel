@@ -619,12 +619,12 @@ publish_fas(
     # Subdomain name used for the pull requests preview.
     preview_subdomain = "discover",
     # FAS production app id
-    production_app_id = "prettypoly",
+    production_app_id = "discover",
     # FAS app identifier (repo) shared across both production and staging apps
-    repo_id = "prettypoly",
+    repo_id = "discover",
     # Sentry project name
     sentry_project_name = "discover",
     # FAS staging app id
-    staging_app_id = "pp-dev",
+    staging_app_id = "discover-staging",
     versioning_strategy = "multi-branch",
 )
