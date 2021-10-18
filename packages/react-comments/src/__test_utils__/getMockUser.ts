@@ -1,6 +1,9 @@
-import { UMSUser } from '@cognite/user-management-service-types';
+import {
+  UMSUser,
+  UMSUserProfile,
+} from '@cognite/user-management-service-types';
 
-export const getMockUser = (extras: Partial<UMSUser> = {}): UMSUser => {
+export const getMockUser = (extras: Partial<UMSUser> = {}): UMSUserProfile => {
   return {
     id: '1',
     displayName: 'test name',

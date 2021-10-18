@@ -21,6 +21,7 @@ import { SEARCH_LINK_TEXT_KEY, FAVORITES_LINK_TEXT_KEY } from './constants';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
 import { UserProfileButton } from './UserProfileButton';
+import { UserSettings } from './userSettings/UserSettings';
 
 const Container = styled.div`
   position: sticky;
@@ -167,6 +168,7 @@ export const Topbar: React.FC = React.memo(() => {
             handleNavigate(navigation, path)();
           }}
         />
+        <UserSettings />
         <Feedback feedbackOnClick={setFeedbackIsVisible} />
         <UserProfileButton />
 

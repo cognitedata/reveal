@@ -1711,10 +1711,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/subsurface-interfaces/-/subsurface-interfaces-0.0.3.tgz#9a6651c75cf42d568080ceb36c825972768df228"
   integrity sha512-HI8vFbmTqBMilaTOyH8L/r3Y8x2HHCVq1yZzaulcUXfh4sA7S2AojEDwgKosXAXm91mo0U0GtqpdjnRvlo8y+Q==
 
-"@cognite/user-management-service-types@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@cognite/user-management-service-types/-/user-management-service-types-0.0.4.tgz#ef9c3f0969a5da6d2781f7de73474db8195ad4eb"
-  integrity sha512-3xctBx2PSfCXwdIpLxqQFYC+YAw9JkrbMxL3zdipzBp6IBxRvr4a2HNpiXntKDIUAGrMQ0ovRwJoP9Dfyuj8BA==
+"@cognite/user-management-service-types@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@cognite/user-management-service-types/-/user-management-service-types-0.1.2.tgz#02b5c561450759690d06f52d4be0d1f5546a9a39"
+  integrity sha512-elYTxBDzBFHEwmY6setApJC+Qs2y9Tzny9gLYsOUZK4nANAKMLEio0bnymNOU0KrdnlHAmh5KgumyTnzBuLTtg==
 
 "@cognite/videx-wellog@^0.2.16-alpha3":
   version "0.2.16-alpha4"

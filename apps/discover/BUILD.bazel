@@ -107,6 +107,7 @@ DEPENDENCIES = [
     "@npm//@cognite/seismic-sdk-js",
     "@npm//@cognite/subsurface-interfaces",
     "@npm//@cognite/videx-wellog",
+    "@npm//@cognite/user-management-service-types",
     "@npm//@fontsource/inter",
     "@npm//@mapbox/mapbox-gl-draw",
     "@npm//@material-ui/core",

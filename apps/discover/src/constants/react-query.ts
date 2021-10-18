@@ -75,6 +75,11 @@ export const SEARCH_HISTORY_KEY = {
   LIST: [SEARCH_HISTORY, 'list'],
 };
 
+const USER_PREFERENCES = 'userPreferences';
+export const USER_PREFERENCES_KEY = {
+  ME: [USER_PREFERENCES, 'me'],
+};
+
 export const DOCUMENTS_AGGREGATES = {
   labels: 'DOCUMENTS_LABELS_AGGREGATE',
   filetype: 'DOCUMENTS_FILE_TYPE_AGGREGATE',
