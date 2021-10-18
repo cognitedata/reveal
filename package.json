@@ -7,7 +7,7 @@
     "@monaco-editor/react": "^4.3.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.2.1",
+    "@testing-library/user-event": "^13.4.1",
     "@types/d3": "^7.0.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.3",
