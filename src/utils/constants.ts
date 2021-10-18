@@ -1,0 +1,2 @@
+export const DATABASE_LIST_WIDTH = 276;
+export const DATABASE_LIST_MARGIN_RIGHT = 24;
