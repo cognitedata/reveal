@@ -37,6 +37,10 @@ Keyboard actions:
   - w & s to zoom
   - a, d, q & e to pan
   - Arrows to rotate (first person)
+  
+For tests:
+  - c, b for only target change 
+  - f to reset target position
 
 ## Usage (advance)
 

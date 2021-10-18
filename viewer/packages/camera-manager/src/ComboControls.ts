@@ -43,7 +43,7 @@ export default class ComboControls extends EventDispatcher {
   public enabled: boolean = true;
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.4;
-  public dynamicTarget: boolean = false;
+  public dynamicTarget: boolean = true;
   public minDistance: number = 0.1;
   public maxDistance: number = Infinity;
   public dollyFactor: number = 0.98;
@@ -69,7 +69,8 @@ export default class ComboControls extends EventDispatcher {
   public minZoom: number = 0;
   public maxZoom: number = Infinity;
   public orthographicCameraDollyFactor: number = 0.3;
-  public newClickTarget = false; // flag for enabling different camera rotation when target is changed by click
+  public lookAtViewTarget = false; 
+  public useScrollTarget = false;
 
   private temporarilyDisableDamping: boolean = false;
   private camera: PerspectiveCamera | OrthographicCamera;
@@ -204,7 +205,7 @@ export default class ComboControls extends EventDispatcher {
 
     spherical.makeSafe();
     camera.position.setFromSpherical(spherical).add(target);
-    camera.lookAt(this.newClickTarget ? this.viewTarget : target);
+    camera.lookAt(this.lookAtViewTarget ? this.viewTarget : target);
 
     if (changed) {
       this.triggerCameraChangeEvent();
@@ -287,7 +288,7 @@ export default class ComboControls extends EventDispatcher {
     // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
     if (event.wheelDelta) {
       // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-      delta = -event.wheelDelta / 40; // Why division by 40?
+      delta = -event.wheelDelta / 40;
     } else if (event.detail) {
       // Firefox
       delta = event.detail;
@@ -579,68 +580,114 @@ export default class ComboControls extends EventDispatcher {
     camera.updateProjectionMatrix();
   };
 
-  private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveTarget: boolean = false) => {
-    const { dynamicTarget, minDistance, raycaster, reusableVector3, sphericalEnd, targetEnd, camera, reusableCamera } =
-      this;
+  private calculateTargetOfssetLerp = (x:number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
+    const { dynamicTarget, minDistance, sphericalEnd, raycaster, targetEnd, reusableCamera } = this;
 
-    const distToTarget = reusableVector3.setFromSpherical(sphericalEnd).length();
+    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - (this.camera as PerspectiveCamera).fov * 0.5));
+    const distFromCameraToCursor = Math.sqrt(
+      distFromCameraToScreenCenter * distFromCameraToScreenCenter + x * x + y * y
+    );
 
-    // @ts-ignore
+    const ratio = distFromCameraToCursor / distFromCameraToScreenCenter;
+    const distToTarget = cameraDirection.length();
+
+    raycaster.setFromCamera({ x, y }, reusableCamera);
+
+    let radius = distToTarget + deltaDistance;
+
+    if (radius < minDistance) {
+      radius = minDistance;
+      if (dynamicTarget) {
+        // push targetEnd forward
+        reusableCamera.getWorldDirection(cameraDirection);
+        targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
+      } else {
+        // stops camera from moving forward
+        deltaDistance = distToTarget - radius;
+      }
+    }
+
+    const distFromRayOrigin = -deltaDistance * ratio;
+
+    sphericalEnd.radius = radius;
+
+    reusableCamera.getWorldDirection(cameraDirection);
+    cameraDirection.normalize().multiplyScalar(deltaDistance);
+    const rayDirection = raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
+    const targetOffset = rayDirection.add(cameraDirection);
+    
+    return targetOffset;
+  } 
+
+  private calculateTargetOfssetScrollTarget = (deltaDistance: number, cameraDirection: THREE.Vector3) => {
+    const {minDistance, reusableVector3, sphericalEnd, target, scrollTarget, camera } = this;
+    
+    const distToTarget = cameraDirection.length();
+    
+    // Here we use the law of sines to determine how far we want to move the target.
+    // Direction is always determined by scrollTarget-target vector
+    const targetToScrollTargetVec = reusableVector3.subVectors(scrollTarget, target).normalize(),
+    cameraToTargetVec = new Vector3().subVectors(target, camera.position),
+    cameraToScrollTargetVec = new Vector3().subVectors(scrollTarget, camera.position);
+    
+    const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec),
+    targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
+    
+    let targetOffsetDistance = deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
+    
+    const targetOffsetToDeltaratio = Math.abs(targetOffsetDistance / deltaDistance);
+    
+    // if target movement is too fast we want to slow it down a bit
+    const downscaleCoefficient = targetOffsetToDeltaratio > 4 ? (targetOffsetToDeltaratio > 10 ? 0.4 : 0.2) : 1;
+    deltaDistance *= downscaleCoefficient;
+    targetOffsetDistance *= downscaleCoefficient;
+
+    let radius = distToTarget + deltaDistance;
+
+    // behaviour for scrolling with mouse wheel
+    if (radius < minDistance) {
+      this.temporarilyDisableDamping = true;
+
+      // stops camera from moving forward only if target became close to scroll target
+      if (scrollTarget.distanceTo(target) < (2*minDistance)) { 
+        radius = minDistance;
+        targetOffsetDistance = 0;
+      }
+    } 
+    
+    sphericalEnd.radius = radius;
+    
+    // if we scroll out, we don't change the target
+    const targetOffset = targetToScrollTargetVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0);
+
+    return targetOffset;
+  } 
+
+  private dollyWithWheelScroll = (x:number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
+    const { targetEnd, useScrollTarget } = this;
+    
+    const targetOffset = useScrollTarget ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection) :
+      this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection);
+
+    targetEnd.add(targetOffset); 
+  }
+
+  private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveOnlyTarget: boolean = false) => {
+    const { reusableVector3, targetEnd, reusableCamera, sphericalEnd, camera} = this;
+
+    //@ts-ignore
     reusableCamera.copy(camera);
     reusableCamera.position.setFromSpherical(sphericalEnd).add(targetEnd);
     reusableCamera.lookAt(targetEnd);
-    raycaster.setFromCamera({ x, y }, reusableCamera);
 
-    const cameraDirection = reusableVector3;
-    let radius = distToTarget + deltaDistance;
-
-    if (moveTarget) {
-      // move target together with the camera (for 'w' and 's' keys movement)
+    const cameraDirection = reusableVector3.setFromSpherical(sphericalEnd);
+  
+    if (moveOnlyTarget) {
+      // move only target together with the camera, radius is constant (for 'w' and 's' keys movement)
       reusableCamera.getWorldDirection(cameraDirection);
       targetEnd.add(cameraDirection.normalize().multiplyScalar(-deltaDistance));
-    } else {
-      // behaviour for scrolling with mouse wheel
-      if (radius < minDistance) {
-        radius = minDistance;
-        if (dynamicTarget) {
-          // push targetEnd forward
-          reusableCamera.getWorldDirection(cameraDirection);
-          targetEnd.add(cameraDirection.normalize().multiplyScalar(Math.abs(deltaDistance)));
-        } else {
-          // stops camera from moving forward only if target became close to scroll target
-          if (this.scrollTarget.clone().sub(this.target).length() < 0.2) deltaDistance = distToTarget - radius;
-        }
-      }
 
-      // Here we use the law of sines to determine how far we want to move the target.
-      // Direction is always determined by scrollTarget-target vector
-      const tarSTarVec = reusableVector3.subVectors(this.scrollTarget, this.target).normalize(),
-        camTarVec = new Vector3().subVectors(this.target, this.camera.position),
-        camSTarVec = new Vector3().subVectors(this.scrollTarget, this.camera.position);
-
-      const tarCamSTarAngle = camTarVec.angleTo(camSTarVec),
-        tarSTarCamAngle = tarSTarVec.negate().angleTo(camSTarVec.negate());
-
-      let targetOffsetDistance = deltaDistance * (Math.sin(tarCamSTarAngle) / Math.sin(tarSTarCamAngle));
-
-      const ratio = Math.abs(targetOffsetDistance / deltaDistance);
-
-      if (ratio > 4)
-        if (ratio > 10) {
-          deltaDistance *= 0.1;
-          targetOffsetDistance *= 0.1;
-        } else {
-          deltaDistance *= 0.4;
-          targetOffsetDistance *= 0.4;
-        }
-
-      sphericalEnd.radius = radius;
-
-      // if we scroll out, we don't change the target
-      const targetOffset = tarSTarVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0);
-
-      targetEnd.add(targetOffset);
-    }
+    } else this.dollyWithWheelScroll(x, y, deltaDistance, cameraDirection);
   };
 
   private dolly = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {

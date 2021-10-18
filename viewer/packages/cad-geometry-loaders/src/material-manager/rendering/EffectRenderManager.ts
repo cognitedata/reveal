@@ -190,7 +190,7 @@ export class EffectRenderManager {
     this._customObjectRenderTarget.depthTexture.format = THREE.DepthFormat;
     this._customObjectRenderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false }); // Final depth buffer
+    this._compositionTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
     this._compositionTarget.depthTexture = new THREE.DepthTexture(0, 0);
     this._compositionTarget.depthTexture.format = THREE.DepthFormat;
     this._compositionTarget.depthTexture.type = THREE.UnsignedIntType;

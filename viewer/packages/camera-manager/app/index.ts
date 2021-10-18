@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { Vector3 } from 'three';
 import ComboControls from '../';
 import Keyboard from '../src/Keyboard';
 
@@ -46,8 +45,10 @@ function init() {
   renderer.setAnimationLoop(render);
 
   controls = new ComboControls(camera, renderer.domElement);
-  controls.dynamicTarget = false;
+  controls.dynamicTarget = true;
   controls.minDistance = 0.1;
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.2
   controls.enabled = true;
 
   controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());
@@ -61,13 +62,13 @@ function render(time: number) {
   cuState = controls.getState();
 
   if (keyboard.isPressed('c')) {
-    controls.setState(cuState.position, cuState.target.add(new Vector3(-0.05, 0, 0)));
+    controls.setState(cuState.position, cuState.target.add(new THREE.Vector3(-0.1, 0, 0)));
   }
   if (keyboard.isPressed('b')) {
-    controls.setState(cuState.position, cuState.target.add(new Vector3(0.05, 0, 0)));
+    controls.setState(cuState.position, cuState.target.add(new THREE.Vector3(0.1, 0, 0)));
   }
   if (keyboard.isPressed('f')) {
-    controls.setState(cuState.position, cuState.target.copy(new Vector3(3, 2, 0)));
+    controls.setState(cuState.position, cuState.target.copy(new THREE.Vector3(3, 2, 0)));
   }
 
   controls.update(time);
