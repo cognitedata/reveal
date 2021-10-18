@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { SectorSceneImpl } from './SectorScene';
-import { SectorMetadata } from './types';
+import { SectorMetadata } from '../metadata/types';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 
