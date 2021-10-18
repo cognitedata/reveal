@@ -84,5 +84,7 @@ controls.keyboardRotationSpeedPolar = 10 * Math.PI / 360; // rotation speed for 
 controls.minZoom = 0; // minimum zoom distance, only available when camera is orthographic
 controls.maxZoom = Infinity; // maximum zoom distance, only available when camera is orthographic
 controls.orthographicCameraDollyFactor = 0.3; // dolly factor of orthographic camera
+controls.lookAtViewTarget = false; // toggles use of view target for camera 'lookAt' method. Used for zooming and playing animations at the same time.
+controls.useScrollTarget = false; // enables usage of new controls mechanics that relies on scrollTarget that is set when user initiate wheel scroll.
 ```
 
