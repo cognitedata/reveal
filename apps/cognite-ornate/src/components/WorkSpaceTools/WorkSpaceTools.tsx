@@ -1,15 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ToolType } from 'library/types';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
+import {
+  AnnotationIcon,
+  DrawingIcon,
+  MarkerIcon,
+} from 'components/CustomIcons';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
+
+type Layer = 'ANNOTATIONS' | 'DRAWINGS' | 'MARKERS';
 
 type WorkSpaceToolsProps = {
   activeTool: ToolType;
   isSidebarExpanded: boolean;
   isDisabled: boolean;
   onToolChange: (nextTool: ToolType) => void;
+  onSetLayerVisibility: (layer: Layer, visible: boolean) => void;
 };
 
 const WorkSpaceTools = ({
@@ -17,8 +25,14 @@ const WorkSpaceTools = ({
   isDisabled,
   isSidebarExpanded,
   onToolChange,
+  onSetLayerVisibility,
 }: WorkSpaceToolsProps) => {
   const metrics = useMetrics('WorkSpaceTools');
+  const [layerStatus, setLayerStatus] = useState<Record<Layer, boolean>>({
+    ANNOTATIONS: true,
+    DRAWINGS: true,
+    MARKERS: true,
+  });
   useEffect(() => {
     document.addEventListener('keydown', (e) => {
       if (!isDisabled) {
@@ -53,7 +67,28 @@ const WorkSpaceTools = ({
     onToolChange(type);
   };
 
+  const onToggleLayer = (layer: Layer) => {
+    onSetLayerVisibility(layer, !layerStatus[layer]);
+    setLayerStatus((prev) => ({
+      ...prev,
+      [layer]: !layerStatus[layer],
+    }));
+  };
+
   const toolbarWrapperClasses = isDisabled ? 'disabled' : '';
+
+  const styleItem = (visible: boolean) => {
+    const style = {
+      marginRight: 16,
+      filter: '',
+      opacity: 1,
+    };
+    if (!visible) {
+      style.filter = 'grayscale(1)';
+      style.opacity = 0.66;
+    }
+    return style;
+  };
 
   return (
     <WorkSpaceToolsWrapper
@@ -63,6 +98,53 @@ const WorkSpaceTools = ({
           : toolbarWrapperClasses
       }
     >
+      <Dropdown
+        content={
+          <Menu>
+            <Menu.Header>Click to turn on / off</Menu.Header>
+            <Menu.Item
+              onClick={() => {
+                onToggleLayer('ANNOTATIONS');
+              }}
+              style={styleItem(layerStatus.ANNOTATIONS)}
+            >
+              <AnnotationIcon style={{ marginRight: 8 }} />
+              Annotations
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => {
+                onToggleLayer('DRAWINGS');
+              }}
+              style={styleItem(layerStatus.DRAWINGS)}
+            >
+              <DrawingIcon style={{ marginRight: 8 }} />
+              Drawings
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => {
+                onToggleLayer('MARKERS');
+              }}
+              style={styleItem(layerStatus.MARKERS)}
+            >
+              <MarkerIcon style={{ marginRight: 8 }} />
+              Markers
+            </Menu.Item>
+          </Menu>
+        }
+        placement="auto-end"
+      >
+        <Button
+          type="ghost"
+          size="small"
+          onClick={() => {
+            onToolClick('default');
+          }}
+          title="Layers"
+        >
+          <Icon type="Layers" />
+        </Button>
+      </Dropdown>
+      <ToolboxSeparator />
       <Button
         type="ghost"
         size="small"

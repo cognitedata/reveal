@@ -37,6 +37,7 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
       strokeWidth: this.shapeSettings.strokeWidth,
       opacity: this.shapeSettings.opacity,
       userGenerated: true,
+      name: 'drawing',
       type: 'line',
     });
 

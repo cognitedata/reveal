@@ -36,6 +36,8 @@ import {
   CircleTool,
   ListTool,
 } from 'library/tools';
+import Konva from 'konva';
+import { Theme } from 'utils/theme';
 
 import {
   Loader,
@@ -347,12 +349,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         height: box.yMax - box.yMin,
         fill:
           type === 'asset'
-            ? 'rgba(74, 103, 251, 0.25)'
-            : 'rgba(255, 184, 0, 0.25)',
-        stroke:
-          type === 'asset'
-            ? 'rgba(74, 103, 251, 0.8)'
-            : 'rgba(255, 184, 0, 0.8)',
+            ? Theme.annotationAssetFill
+            : Theme.annotationFileFill,
         strokeWidth: 2,
         onClick: (data) => {
           const evt = new CustomEvent('onAnnotationClick', { detail: data });
@@ -605,6 +603,29 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       </Button>
       <WorkSpaceTools
         onToolChange={onToolChange}
+        onSetLayerVisibility={(layer, visible) => {
+          const shapes: Konva.Node[] = [];
+          if (layer === 'ANNOTATIONS') {
+            shapes.push(
+              ...(ornateViewer.current?.stage.find('.annotation') || [])
+            );
+          }
+          if (layer === 'DRAWINGS') {
+            shapes.push(
+              ...(ornateViewer.current?.stage.find('.drawing') || [])
+            );
+          }
+          if (layer === 'MARKERS') {
+            shapes.push(...(ornateViewer.current?.stage.find('.marker') || []));
+          }
+          shapes.forEach((shape) => {
+            if (visible) {
+              shape.show();
+            } else {
+              shape.hide();
+            }
+          });
+        }}
         isDisabled={!workspaceDocuments.length}
         isSidebarExpanded={isSidebarOpen}
         activeTool={activeTool}

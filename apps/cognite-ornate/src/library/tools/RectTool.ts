@@ -45,6 +45,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
       opacity: this.shapeSettings.opacity,
       userGenerated: true,
       type: 'rect',
+      name: 'drawing',
       // TO DO: Refactor how we do this
       inGroup: groupName,
     });

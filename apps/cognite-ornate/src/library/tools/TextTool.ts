@@ -175,6 +175,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       fill: this.shapeSettings.fill || this.shapeSettings.strokeColor,
       userGenerated: true,
       type: 'text',
+      name: 'drawing',
     });
 
     if (!this.group) {

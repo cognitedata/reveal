@@ -468,6 +468,7 @@ export class CogniteOrnate {
       unselectable: true,
       metadata: annotation.metadata,
       attachedToGroup: groupId,
+      name: 'annotation',
     });
     if (annotation.onClick) {
       rect.on('click', (e) => {

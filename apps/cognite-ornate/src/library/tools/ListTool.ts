@@ -58,6 +58,7 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
     const { x, y } = marker.position;
     const numberGroup = new Konva.Group({
       id: uuid(),
+      name: 'marker',
     });
     const number = String(marker.order);
     const containerRect = new Konva.Rect({

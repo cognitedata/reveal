@@ -31,6 +31,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       opacity: this.shapeSettings.opacity,
       userGenerated: true,
       type: 'circle',
+      name: 'drawing',
     });
 
     // If we get scaled by the transform tool - correct ourselves.
