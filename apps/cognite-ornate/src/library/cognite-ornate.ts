@@ -350,7 +350,7 @@ export class CogniteOrnate {
     const inBottomRight = xPct + yPct > 1;
     const inTopLeft = xPct + yPct < 1;
     let renderDirection: [number, number] = [0, 0];
-    const distanceBetween = 256;
+    const distanceBetween = 64;
     // Up
     if (inTopLeft && inTopRight) {
       renderDirection = [0, -1];
