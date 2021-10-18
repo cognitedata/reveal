@@ -9,6 +9,7 @@ import EventsNds from './modules/events/Nds';
 import EventsNpt from './modules/events/Npt';
 import Geomechanics from './modules/geomechanics';
 import LogType from './modules/logType';
+import Measurements from './modules/measurements';
 import MultiplePPFG from './modules/multiplePPFG';
 import Overview from './modules/overview';
 import RelatedDocument from './modules/relatedDocument';
@@ -41,6 +42,10 @@ export const InspectRouter = () => (
     <Route
       path={navigation.SEARCH_WELLS_INSPECT_DIGITALROCKS}
       render={DigitalRocks}
+    />
+    <Route
+      path={navigation.SEARCH_WELLS_INSPECT_MEASUREMENTS}
+      render={Measurements}
     />
     <Route path={navigation.SEARCH_WELLS_INSPECT_THREEDEE} render={ThreeDee} />
     <Route

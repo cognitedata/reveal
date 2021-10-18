@@ -29,6 +29,9 @@ export const LOG_EVENTS_NDS = 'events_nds';
 export const LOG_EVENTS_NPT = 'events_npt';
 export const LOG_WELLS_EVENTS_NDS_NAMESPACE = 'wells:nds_events';
 
+export const LOG_MEASUREMENTS = 'measurements';
+export const LOG_WELLS_MEASUREMENTS_NAMESPACE = 'wells:measurements';
+
 export const LOG_WELL_DIGITAL_ROCKS = 'digital_rocks';
 export const LOG_WELL_DIGITAL_ROCKS_NAMESPACE = 'well:digitalrocks';
 export const LOG_WELL_DIGITAL_ROCKS_SAMPLES_NAMESPACE =

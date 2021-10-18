@@ -1,0 +1,66 @@
+import React, { useState } from 'react';
+
+import { WhiteLoader } from 'components/loading';
+import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
+import { FlexGrow } from 'styles/layout';
+
+import {
+  DEFAULT_MEASUREMENTS_REFERENCE,
+  DEFAULT_PRESSURE_UNIT,
+} from './constants';
+import { MeasurementsTopBar, MeasurementsWrapper } from './elements';
+import { GeomechanicsCurveFilter } from './filters/GeomechanicsCurveFilter';
+import { OtherFilter } from './filters/OtherFilter';
+import { PPFGCurveFilter } from './filters/PPFGCurveFilter';
+import { UnitSelector } from './filters/UnitSelector';
+import { ViewModeSelector } from './filters/ViewModeSelector';
+import WellCentricView from './wellCentricView/WellCentricView';
+
+export const Measurements: React.FC = () => {
+  const [viewMode, setViewMode] = useState<string>('Wells');
+  const [geomechanicsCurves, setGeomechanicsCurves] = useState<string[]>([]);
+  const [ppfgCurves, setPPFGCurves] = useState<string[]>([]);
+  const [otherTypes, setOtherTypes] = useState<string[]>([]);
+  const [pressureUnit, setPressureUnit] = useState<string>(
+    DEFAULT_PRESSURE_UNIT
+  );
+  const [measurementReference, setMeasurementReference] = useState<string>(
+    DEFAULT_MEASUREMENTS_REFERENCE
+  );
+
+  const { isLoading } = useMeasurementsQuery();
+
+  if (isLoading) {
+    return <WhiteLoader />;
+  }
+
+  return (
+    <MeasurementsWrapper>
+      <MeasurementsTopBar>
+        <ViewModeSelector onChange={setViewMode} activeViewMode={viewMode} />
+        <FlexGrow />
+        <GeomechanicsCurveFilter
+          selectedCurves={geomechanicsCurves}
+          onChange={setGeomechanicsCurves}
+        />
+        <PPFGCurveFilter selectedCurves={ppfgCurves} onChange={setPPFGCurves} />
+        <OtherFilter selectedCurves={otherTypes} onChange={setOtherTypes} />
+        <UnitSelector
+          unit={pressureUnit}
+          reference={measurementReference}
+          onUnitChange={setPressureUnit}
+          onReferenceChange={setMeasurementReference}
+        />
+      </MeasurementsTopBar>
+      <WellCentricView
+        geomechanicsCurves={geomechanicsCurves}
+        ppfgCurves={ppfgCurves}
+        otherTypes={otherTypes}
+        pressureUnit={pressureUnit}
+        measurementReference={measurementReference}
+      />
+    </MeasurementsWrapper>
+  );
+};
+
+export default Measurements;

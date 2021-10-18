@@ -79,6 +79,11 @@ export const TAB_ITEMS: Tab[] = [
     path: navigation.SEARCH_WELLS_INSPECT_DIGITALROCKS,
   },
   {
+    key: 'measurements',
+    name: 'Geomechanics & PPFG',
+    path: navigation.SEARCH_WELLS_INSPECT_MEASUREMENTS,
+  },
+  {
     key: 'geomechanic',
     name: 'Geomechanic',
     path: navigation.SEARCH_WELLS_INSPECT_GEOMECHANIC,

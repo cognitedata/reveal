@@ -68,6 +68,7 @@ export const WELL_QUERY_KEY = {
   TRAJECTORIES: ['trajectories'],
   NDS_EVENTS: ['ndsEvents'],
   NPT_EVENTS: ['nptEvents'],
+  MEASUREMENTS: ['measurements'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

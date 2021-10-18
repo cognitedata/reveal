@@ -94,6 +94,11 @@ export interface ChartConfig {
   chartVizData: ChartVizDataConfig;
 }
 
+export type SequenceFetcher = (
+  client: CogniteClient,
+  filters: any
+) => Promise<Sequence[]>;
+
 export interface TrajectoryColumns {
   name: string;
   externalId: string;
@@ -119,12 +124,12 @@ export interface WellConfig {
     enabled: boolean;
     tvdColumn?: string;
     defaultCurves?: string[];
-    fetch?: (client: CogniteClient, filters: any) => Promise<Sequence[]>;
+    fetch?: SequenceFetcher;
   };
 
   geomechanic?: {
     enabled: boolean;
-    fetch?: (_client: CogniteClient, filters: any) => Promise<Sequence[]>;
+    fetch?: SequenceFetcher;
   };
 
   trajectory?: {
@@ -146,13 +151,13 @@ export interface WellConfig {
   fit?: {
     enabled: boolean;
     fieldInfo?: { [key: string]: string };
-    fetch?: (client: CogniteClient, filters: any) => Promise<Sequence[]>;
+    fetch?: SequenceFetcher;
   };
 
   lot?: {
     enabled: boolean;
     fieldInfo?: { [key: string]: string };
-    fetch?: (client: CogniteClient, filters: any) => Promise<Sequence[]>;
+    fetch?: SequenceFetcher;
   };
 
   relatedDocument?: {
@@ -174,7 +179,7 @@ export interface WellConfig {
       client: CogniteClient,
       filters: any
     ) => Promise<Asset[]>;
-    gpartFetch?: (client: CogniteClient, filters: any) => Promise<Sequence[]>;
+    gpartFetch?: SequenceFetcher;
   };
 
   casing?: {
@@ -187,6 +192,10 @@ export interface WellConfig {
   };
 
   npt?: {
+    enabled?: boolean;
+  };
+
+  measurements?: {
     enabled?: boolean;
   };
 

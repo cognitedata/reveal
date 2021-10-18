@@ -8,8 +8,11 @@ import {
   FilterTypes,
   FilterCategoricalData,
   Wellbore,
+  Measurement,
 } from 'modules/wellSearch/types';
 import { toWellSequence } from 'modules/wellSearch/utils';
+
+import { createdAndLastUpdatedTime } from './log';
 
 export const WELL_TRAJ_COLUMNS = [
   { name: 'MD_DSDSUNIT', externalId: 'MD_DSDSUNIT', valueType: 'STRING' },
@@ -442,3 +445,74 @@ export const getMockWellFilterConfig = () => ({
   },
   measurements_filter: { enabled: true },
 });
+
+export const mockedMeasurementsResultFixture: Measurement[] = [
+  {
+    assetId: 75915540932488339,
+    externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
+    id: 23891231812,
+    columns: [
+      {
+        name: 'SHMIN_SHALE_ML_PRE',
+        valueType: 'STRING',
+        ...createdAndLastUpdatedTime,
+        id: 1,
+      },
+      {
+        name: 'FRICTION_ANGLE_PRE',
+        valueType: 'STRING',
+        ...createdAndLastUpdatedTime,
+        id: 2,
+      },
+      {
+        name: 'CP_POST',
+        valueType: 'STRING',
+        ...createdAndLastUpdatedTime,
+        id: 3,
+      },
+    ],
+    lastUpdatedTime: new Date('01-01-1970'),
+    createdTime: new Date('01-01-1980'),
+    metadata: {
+      fileType: 'MUDLOG',
+      source: 'unknown',
+      subType: 'Exploration',
+      type: 'unknown',
+      wellboreName: 'wellbore a',
+    },
+  },
+  {
+    assetId: 123214123312,
+    externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
+    id: 123213123,
+    columns: [
+      {
+        name: 'SHMIN_SHALE_ML_PRE',
+        valueType: 'STRING',
+        ...createdAndLastUpdatedTime,
+        id: 1,
+      },
+      {
+        name: 'PP_COMPOSITE_POST',
+        valueType: 'STRING',
+        ...createdAndLastUpdatedTime,
+        id: 2,
+      },
+      {
+        name: 'CP_ZERO_PRE',
+        valueType: 'STRING',
+        ...createdAndLastUpdatedTime,
+        id: 3,
+      },
+    ],
+    lastUpdatedTime: new Date('01-01-1970'),
+    createdTime: new Date('01-01-1980'),
+    metadata: {
+      fileType: 'MUDLOG',
+      source: 'unknown',
+      subType: 'Exploration',
+      type: 'unknown',
+      wellboreName: 'wellbore b',
+    },
+  },
+];
