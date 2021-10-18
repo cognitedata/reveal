@@ -69,7 +69,7 @@ export default class ComboControls extends EventDispatcher {
   public minZoom: number = 0;
   public maxZoom: number = Infinity;
   public orthographicCameraDollyFactor: number = 0.3;
-  public lookAtViewTarget = false; 
+  public lookAtViewTarget = false;
   public useScrollTarget = false;
 
   private temporarilyDisableDamping: boolean = false;
@@ -580,10 +580,12 @@ export default class ComboControls extends EventDispatcher {
     camera.updateProjectionMatrix();
   };
 
-  private calculateTargetOfssetLerp = (x:number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
+  private calculateTargetOfssetLerp = (x: number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
     const { dynamicTarget, minDistance, sphericalEnd, raycaster, targetEnd, reusableCamera } = this;
 
-    const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - (this.camera as PerspectiveCamera).fov * 0.5));
+    const distFromCameraToScreenCenter = Math.tan(
+      MathUtils.degToRad(90 - (this.camera as PerspectiveCamera).fov * 0.5)
+    );
     const distFromCameraToCursor = Math.sqrt(
       distFromCameraToScreenCenter * distFromCameraToScreenCenter + x * x + y * y
     );
@@ -615,28 +617,29 @@ export default class ComboControls extends EventDispatcher {
     cameraDirection.normalize().multiplyScalar(deltaDistance);
     const rayDirection = raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
     const targetOffset = rayDirection.add(cameraDirection);
-    
+
     return targetOffset;
-  } 
+  };
 
   private calculateTargetOfssetScrollTarget = (deltaDistance: number, cameraDirection: THREE.Vector3) => {
-    const {minDistance, reusableVector3, sphericalEnd, target, scrollTarget, camera } = this;
-    
+    const { minDistance, reusableVector3, sphericalEnd, target, scrollTarget, camera } = this;
+
     const distToTarget = cameraDirection.length();
-    
+
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
     const targetToScrollTargetVec = reusableVector3.subVectors(scrollTarget, target).normalize(),
-    cameraToTargetVec = new Vector3().subVectors(target, camera.position),
-    cameraToScrollTargetVec = new Vector3().subVectors(scrollTarget, camera.position);
-    
+      cameraToTargetVec = new Vector3().subVectors(target, camera.position),
+      cameraToScrollTargetVec = new Vector3().subVectors(scrollTarget, camera.position);
+
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec),
-    targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
-    
-    let targetOffsetDistance = deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
-    
+      targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
+
+    let targetOffsetDistance =
+      deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
+
     const targetOffsetToDeltaratio = Math.abs(targetOffsetDistance / deltaDistance);
-    
+
     // if target movement is too fast we want to slow it down a bit
     const downscaleCoefficient = targetOffsetToDeltaratio > 4 ? (targetOffsetToDeltaratio > 10 ? 0.4 : 0.2) : 1;
     deltaDistance *= downscaleCoefficient;
@@ -649,31 +652,32 @@ export default class ComboControls extends EventDispatcher {
       this.temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (scrollTarget.distanceTo(target) < (2*minDistance)) { 
+      if (scrollTarget.distanceTo(target) < 2 * minDistance) {
         radius = minDistance;
         targetOffsetDistance = 0;
       }
-    } 
-    
+    }
+
     sphericalEnd.radius = radius;
-    
+
     // if we scroll out, we don't change the target
     const targetOffset = targetToScrollTargetVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0);
 
     return targetOffset;
-  } 
+  };
 
-  private dollyWithWheelScroll = (x:number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
+  private dollyWithWheelScroll = (x: number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
     const { targetEnd, useScrollTarget } = this;
-    
-    const targetOffset = useScrollTarget ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection) :
-      this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection);
 
-    targetEnd.add(targetOffset); 
-  }
+    const targetOffset = useScrollTarget
+      ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
+      : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection);
+
+    targetEnd.add(targetOffset);
+  };
 
   private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveOnlyTarget: boolean = false) => {
-    const { reusableVector3, targetEnd, reusableCamera, sphericalEnd, camera} = this;
+    const { reusableVector3, targetEnd, reusableCamera, sphericalEnd, camera } = this;
 
     //@ts-ignore
     reusableCamera.copy(camera);
@@ -681,12 +685,11 @@ export default class ComboControls extends EventDispatcher {
     reusableCamera.lookAt(targetEnd);
 
     const cameraDirection = reusableVector3.setFromSpherical(sphericalEnd);
-  
+
     if (moveOnlyTarget) {
       // move only target together with the camera, radius is constant (for 'w' and 's' keys movement)
       reusableCamera.getWorldDirection(cameraDirection);
       targetEnd.add(cameraDirection.normalize().multiplyScalar(-deltaDistance));
-
     } else this.dollyWithWheelScroll(x, y, deltaDistance, cameraDirection);
   };
 

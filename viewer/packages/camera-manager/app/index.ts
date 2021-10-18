@@ -48,7 +48,7 @@ function init() {
   controls.dynamicTarget = true;
   controls.minDistance = 0.1;
   controls.enableDamping = true;
-  controls.dampingFactor = 0.2
+  controls.dampingFactor = 0.2;
   controls.enabled = true;
 
   controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());

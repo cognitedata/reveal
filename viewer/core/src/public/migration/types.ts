@@ -96,14 +96,14 @@ export interface Cognite3DViewerOptions {
   canInterruptAnimations?: boolean;
 
   /**
-   * Enables or disables the usage of new controls mechanics that is based on so-called scroll target notion. When mouse wheel scroll is 
+   * Enables or disables the usage of new controls mechanics that is based on so-called scroll target notion. When mouse wheel scroll is
    * initiated scroll target is set to the point on the model where cursor is hovering over. Then when zooming is happening camera target moves towards
    * scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation, keyboard navigation
    * still allows to go through the model.
-   * 
+   *
    * Default is true.
    */
-   useScrollTargetControls?: boolean;
+  useScrollTargetControls?: boolean;
 
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;

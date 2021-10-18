@@ -132,7 +132,7 @@ export class Cognite3DViewer {
   private readonly _minDefaultAnimationDuration: number = 600;
   private readonly _maxDefaultAnimationDuration: number = 2500;
   private readonly _minDistanceDefault: number = 0.1;
-  private readonly raycaster: THREE.Raycaster = new THREE.Raycaster;
+  private readonly raycaster: THREE.Raycaster = new THREE.Raycaster();
 
   private isDisposed = false;
 
@@ -170,37 +170,42 @@ export class Cognite3DViewer {
   };
 
   /**
-   * Calculates new target when raycaster doesn't have any intersections with the model
-   * @param cursorPosition cursor position for desired calculations
+   * Calculates new target when raycaster doesn't have any intersections with the model.
+   * @param cursorPosition Cursor position for desired calculations.
+   * @param cursorPosition.x
+   * @param cursorPosition.y
    */
-  private calculateMissedRaycast = (cursorPosition: { x: number, y: number }): THREE.Vector3 => {
+  private calculateMissedRaycast = (cursorPosition: { x: number; y: number }): THREE.Vector3 => {
     const modelBB = this._models[0].getModelBoundingBox(new THREE.Box3()),
       modelSize = modelBB.min.distanceTo(modelBB.max);
 
     this.raycaster.setFromCamera(cursorPosition, this.camera);
 
-    const farPoint = this.raycaster.ray.direction.clone().normalize().multiplyScalar(
-      Math.max(this.camera.position.distanceTo(modelBB.getCenter(new THREE.Vector3())), modelSize)).add(this.camera.position);
+    const farPoint = this.raycaster.ray.direction
+      .clone()
+      .normalize()
+      .multiplyScalar(Math.max(this.camera.position.distanceTo(modelBB.getCenter(new THREE.Vector3())), modelSize))
+      .add(this.camera.position);
 
     return farPoint;
-  }
+  };
 
-    /**
-     * Changes controls target based on current cursor position.
-     * @param event MouseEvent that contains pointer location data.
-     */
-    private changeTarget = async (event: any) => {
-      const { offsetX, offsetY } = event;
-  
-      const x = (offsetX / this.domElement.clientWidth) * 2 - 1,
-          y = (offsetY / this.domElement.clientHeight) * -2 + 1;
-  
-      const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
-  
-      const newTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
-  
-      this.setCameraTarget(newTarget, true);
-    };
+  /**
+   * Changes controls target based on current cursor position.
+   * @param event MouseEvent that contains pointer location data.
+   */
+  private changeTarget = async (event: any) => {
+    const { offsetX, offsetY } = event;
+
+    const x = (offsetX / this.domElement.clientWidth) * 2 - 1,
+      y = (offsetY / this.domElement.clientHeight) * -2 + 1;
+
+    const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+
+    const newTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
+
+    this.setCameraTarget(newTarget, true);
+  };
 
   /**
    * Gets the current budget for downloading geometry for CAD models. Note that this
@@ -303,14 +308,12 @@ export class Cognite3DViewer {
         const newScrollTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
 
         this.controls.setScrollTarget(newScrollTarget);
-
       } else {
         if (timeDelta > 0.1) {
           startedScroll = true;
         }
       }
     });
-    
 
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
@@ -1268,12 +1271,12 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration} = this;
+    const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration } = this;
 
     if (duration == null) {
       const distance = target.distanceTo(this.controls.getState().target);
       duration = distance * 125; // 125ms per unit distance
-      duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration); 
+      duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration);
     }
 
     raycaster.setFromCamera(new THREE.Vector2(), camera);
@@ -1303,14 +1306,14 @@ export class Cognite3DViewer {
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
         this.canvas.removeEventListener('pointerdown', stopTween);
-        
+
         if (this._canInterruptAnimations) {
           this.canvas.removeEventListener('wheel', stopTween);
           document.removeEventListener('keydown', stopTween);
         }
       }
     };
-    
+
     this.canvas.addEventListener('pointerdown', stopTween);
 
     if (this._canInterruptAnimations) {
@@ -1355,14 +1358,14 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration} = this;
+    const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration } = this;
 
     if (duration == null) {
       const distance = position.distanceTo(camera.position);
       duration = distance * 125; // 125ms per unit distance
-      duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration); 
+      duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration);
     }
-    
+
     raycaster.setFromCamera(new THREE.Vector2(), camera);
     const distanceToTarget = target.distanceTo(camera.position);
     const scaledDirection = raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
