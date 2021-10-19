@@ -34,7 +34,7 @@ export class RTreeMergeBoxes implements BoxClusterer {
       throw Error('Expected RTreeMergeBoxes in union operation');
     }
 
-    return new RTreeMergeBoxes(this._rtree.union(otherRtree._rtree));
+    return new RTreeMergeBoxes(this._rtree.union(otherRtree._rtree.getBoxes()));
   }
 
   intersection(otherRtree: Iterable<Box3>): BoxClusterer {
