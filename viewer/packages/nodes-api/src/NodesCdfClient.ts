@@ -76,27 +76,29 @@ export class NodesCdfClient implements NodesApiClient {
     return { treeIndex: ancestor.treeIndex, subtreeSize: ancestor.subtreeSize };
   }
 
-  async getBoundingBoxByNodeId(
+  async getBoundingBoxesByNodeIds(
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
-    nodeId: CogniteInternalId,
-    box?: THREE.Box3
-  ): Promise<THREE.Box3> {
-    const response = await this._client.revisions3D.retrieve3DNodes(modelId, revisionId, [{ id: nodeId }]);
-    if (response.length < 1) {
-      throw new Error('NodeId not found');
-    }
-    const boundingBox3D = response[0].boundingBox;
-    if (boundingBox3D === undefined) {
-      throw new Error(`Node ${nodeId} doesn't have a defined bounding box`);
-    }
+    nodeIds: CogniteInternalId[]
+  ): Promise<THREE.Box3[]> {
 
-    const min = boundingBox3D.min;
-    const max = boundingBox3D.max;
-    const result = box || new THREE.Box3();
-    result.min.set(min[0], min[1], min[2]);
-    result.max.set(max[0], max[1], max[2]);
-    return result;
+    const chunks = chunkInputItems(nodeIds, NodesCdfClient.MaxItemsPerRequest);
+    const mappedBoundingBoxPromises = [...chunks].map(async chunk => {
+      return this._client.revisions3D.retrieve3DNodes(modelId, revisionId, chunk.map(id => { return { id } }));
+    });
+    
+    const mappedBoundingBoxes = await Promise.all(mappedBoundingBoxPromises);
+    const resultBoxes = mappedBoundingBoxes.flat().filter(node => node.boundingBox).map(node =>
+      {
+        const result = new THREE.Box3();
+        const min = node.boundingBox!.min;
+        const max = node.boundingBox!.max;
+        result.min.set(min[0], min[1], min[2]);
+        result.max.set(max[0], max[1], max[2]);
+        return result;
+      });
+
+    return resultBoxes;
   }
 
   private async postByTreeIndicesRequest(

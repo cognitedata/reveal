@@ -63,10 +63,9 @@ export interface NodesApiClient {
    * @param nodeId        Node ID of node
    * @param box           Pre-allocated THREE.Box3 (optional).
    */
-  getBoundingBoxByNodeId(
+  getBoundingBoxesByNodeIds(
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
-    nodeId: CogniteInternalId,
-    box?: THREE.Box3
-  ): Promise<THREE.Box3>;
+    nodeId: CogniteInternalId[]
+  ): Promise<THREE.Box3[]>;
 }
