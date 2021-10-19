@@ -950,6 +950,7 @@ __metadata:
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
+    "@reveal/rendering": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -988,6 +989,7 @@ __metadata:
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
+    "@reveal/rendering": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1007,6 +1009,16 @@ __metadata:
 "@reveal/nodes-api@workspace:*, @reveal/nodes-api@workspace:packages/nodes-api":
   version: 0.0.0-use.local
   resolution: "@reveal/nodes-api@workspace:packages/nodes-api"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/rendering@workspace:*, @reveal/rendering@workspace:packages/rendering":
+  version: 0.0.0-use.local
+  resolution: "@reveal/rendering@workspace:packages/rendering"
+  dependencies:
+    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/cad-styling": "workspace:*"
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 

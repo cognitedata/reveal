@@ -14,20 +14,19 @@ import {
   boxGeometryBoundingBox,
   quadGeometryBoundingBox,
   torusGeometryBoundingBox,
-  nutGeometryBoundingBox
-} from './primitiveGeometries';
-
-import { Materials } from './materials';
-import { SectorGeometry } from './types';
-import { disposeAttributeArrayOnUpload } from '@reveal/utilities';
-import assert from 'assert';
-import {
+  nutGeometryBoundingBox,
+  SectorGeometry,
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
   filterPrimitivesOutsideClipBoxByCenterAndRadius,
   filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
-} from './filterPrimitives';
-import { BoundingBoxLOD } from '@reveal/utilities';
+} from '@reveal/cad-parsers';
+
+import { BoundingBoxLOD, disposeAttributeArrayOnUpload } from '@reveal/utilities';
+
+import { Materials } from './materials';
+
+import assert from 'assert';
 
 export function* createPrimitives(
   sector: SectorGeometry,
