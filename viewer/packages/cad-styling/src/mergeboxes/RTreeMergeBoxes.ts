@@ -3,40 +3,48 @@
  */
 
 import { Box3 } from 'three';
-import { BoxClusterer } from './BoxClustererBase';
+import { BoxClusterer } from './BoxClusterer';
 import { MergingRTree } from './MergingRTree';
 
 export class RTreeMergeBoxes implements BoxClusterer {
-  private readonly rtree: MergingRTree;
+  private readonly _rtree: MergingRTree;
 
   constructor(rtree: MergingRTree);
   constructor();
   constructor(rtree?: MergingRTree) {
-    this.rtree = rtree ?? new MergingRTree();
+    this._rtree = rtree ?? new MergingRTree();
+  }
+
+  get boxCount(): number {
+    return this._rtree?.getSize() ?? 0;
   }
 
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
-      this.rtree.insert(box);
+      this._rtree.insert(box);
     }
   }
 
   *getBoxes(): Generator<Box3> {
-    yield* this.rtree.getBoxes();
+    yield* this._rtree.getBoxes();
   }
 
-  union(otherRtree: BoxClusterer): BoxClusterer {
+  union(otherRtree: Iterable<Box3>): BoxClusterer {
     if (!(otherRtree instanceof RTreeMergeBoxes)) {
       throw Error('Expected RTreeMergeBoxes in union operation');
     }
 
-    return new RTreeMergeBoxes(this.rtree.union(otherRtree.rtree));
+    return new RTreeMergeBoxes(this._rtree.union(otherRtree._rtree));
   }
 
-  intersection(otherRtree: BoxClusterer): BoxClusterer {
+  intersection(otherRtree: Iterable<Box3>): BoxClusterer {
     if (!(otherRtree instanceof RTreeMergeBoxes)) {
       throw Error('Expected RTreeMergeBoxes in intersection operation');
     }
-    return new RTreeMergeBoxes(this.rtree.intersection(otherRtree.rtree));
+    return new RTreeMergeBoxes(this._rtree.intersection(otherRtree._rtree));
+  }
+
+  intersectsBox(box: Box3): boolean {
+    return this._rtree.intersectsBox(box);
   }
 }

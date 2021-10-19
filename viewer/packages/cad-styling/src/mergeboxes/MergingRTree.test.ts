@@ -81,7 +81,7 @@ describe('RTree', () => {
       rtree1.insert(box);
     }
 
-    const unionTree = rtree0.union(rtree1);
+    const unionTree = rtree0.union(rtree1.getBoxes());
 
     const unionBoxes = [...unionTree.getBoxes()];
 

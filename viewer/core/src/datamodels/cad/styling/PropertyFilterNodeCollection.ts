@@ -68,7 +68,6 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
       [key: string]: string;
     };
   }): Promise<void> {
-    const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
 
     if (this._fetchResultHelper !== undefined) {

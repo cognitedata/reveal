@@ -63,6 +63,10 @@ export class MergingRTree {
     return this.root?.numBoxes ?? 0;
   }
 
+  intersectsBox(box: Box3): boolean {
+    return this.root?.intersectsBox(box) ?? false;
+  }
+
   clone(): MergingRTree {
     const newTree = new MergingRTree();
     newTree.root = this.root?.clone();
@@ -79,15 +83,14 @@ export class MergingRTree {
   /**
    * union - Returns the union of two MergingRTree. Does not mutate this object nor the input object
    */
-  union(inTree: MergingRTree): MergingRTree {
-    const [unionTree, otherTree] = this.getSize() < inTree.getSize() ? [inTree.clone(), this] : [this.clone(), inTree];
+  union(boxes: Iterable<Box3>): MergingRTree {
+    const newTree = this.clone();
 
-    const insertBoxes = otherTree.getBoxes();
-    for (const insertBox of insertBoxes) {
-      unionTree.insert(insertBox);
+    for (const insertBox of boxes) {
+      newTree.insert(insertBox);
     }
 
-    return unionTree;
+    return newTree;
   }
 
   private addIntersectionsFromTree(constructingTree: MergingRTree, box: Box3, tree: MergingRTree) {
@@ -189,6 +192,21 @@ class RTreeNode {
       yield* this.children[1].getBoxes();
     } else {
       yield this.bounds;
+    }
+  }
+
+  intersectsBox(box: Box3): boolean {
+    if (!this.bounds.intersectsBox(box))  {
+      return false;
+    }
+    
+    if (this.children !== null) {
+      return this.children[0].intersectsBox(box) ||
+        this.children[1].intersectsBox(box);
+    } else {
+      // At leaf node and we already did intersection test in the
+      // beginning of this method
+      return true;
     }
   }
 

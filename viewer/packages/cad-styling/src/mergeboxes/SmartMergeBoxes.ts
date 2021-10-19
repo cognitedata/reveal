@@ -3,7 +3,7 @@
  */
 
 import { Box3 } from 'three';
-import { BoxClusterer } from './BoxClustererBase';
+import { BoxClusterer } from './BoxClusterer';
 import { intersectionOverUnion } from './MergingRTree';
 
 /**
@@ -56,6 +56,10 @@ export class SmartMergeBoxes implements BoxClusterer {
     this.addedSinceSquash += 1;
   }
 
+  get boxCount(): number {
+    return this.resultBoxes.length;
+  }
+
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
       this.addBox(box);
@@ -90,10 +94,17 @@ export class SmartMergeBoxes implements BoxClusterer {
     }
   }
 
-  union(other: BoxClusterer): BoxClusterer {
-    if (!(other instanceof SmartMergeBoxes)) {
-      throw Error('Expected SmartMergeBoxes in union operation');
+  intersectsBox(box: Box3): boolean {
+    for (const internalBox of this.resultBoxes) {
+      if (box.intersectsBox(internalBox)) {
+        return true;
+      }
     }
+
+    return false;
+  }
+
+  union(boxes: Iterable<Box3>): BoxClusterer {
 
     const resClone = [];
     for (const resBox of this.resultBoxes) {
@@ -102,8 +113,7 @@ export class SmartMergeBoxes implements BoxClusterer {
 
     const newSMB = new SmartMergeBoxes(resClone);
 
-    const otherBoxes = other.getBoxes();
-    newSMB.addBoxes(otherBoxes);
+    newSMB.addBoxes(boxes);
 
     return newSMB;
   }
@@ -115,12 +125,9 @@ export class SmartMergeBoxes implements BoxClusterer {
     }
   }
 
-  intersection(other: BoxClusterer): BoxClusterer {
-    if (!(other instanceof SmartMergeBoxes)) {
-      throw Error('Expected SmartMergeBoxes in intersection operation');
-    }
+  intersection(other: Iterable<THREE.Box3>): BoxClusterer {
 
-    const otherBoxes = [...other.getBoxes()];
+    const otherBoxes = [...other];
     const thisBoxes = this.resultBoxes;
 
     const newResultBoxes: Box3[] = [];
