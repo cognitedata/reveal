@@ -1,10 +1,11 @@
-import { Button, Title } from '@cognite/cogs.js';
-import { Container, Header } from 'pages/elements';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Button, CollapsablePanel, Title } from '@cognite/cogs.js';
+import { CollapsableContainer, Container, Header } from 'pages/elements';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ModelSource } from 'components/forms/ModelForm/constants';
 import { FileInfo } from '@cognite/sdk';
+import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionContent';
 import ModelTable from 'components/tables/ModelTable/ModelTable';
 
 import { LinkWithID } from './types';
@@ -17,8 +18,10 @@ export default function ModelLibrary() {
   const { url, params } = useRouteMatch<Params>();
   const { modelName } = params;
   const history = useHistory();
+  const location = useLocation();
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [links, setLinks] = useState<LinkWithID[]>();
+  const [selectedRow, setSelectedRow] = useState(undefined);
   const cdfClient = useContext(CdfClientContext);
   const getFilter = () => {
     if (modelName) {
@@ -47,12 +50,17 @@ export default function ModelLibrary() {
       files.items.map(({ externalId = '' }) => ({ externalId }))
     );
     setLinks(urls);
+    setSelectedRow(undefined);
     setFiles(files.items);
   }
 
   useEffect(() => {
     loadData();
   }, [modelName]);
+
+  useEffect(() => {
+    setSelectedRow(undefined);
+  }, [location]);
 
   const getLatestFile = (items: FileInfo[]) =>
     items.sort(
@@ -81,7 +89,7 @@ export default function ModelLibrary() {
     const fileUrl = await (await fetch(matchingLink.downloadUrl)).blob();
     const blob = new File([fileUrl], modelName);
     history.push({
-      pathname: `${url}/version-new`,
+      pathname: `${url}/file-new`,
       state: {
         fileInfo: latestFile,
         file: blob,
@@ -89,15 +97,37 @@ export default function ModelLibrary() {
     });
   };
 
+  const onClosePanel = () => {
+    setSelectedRow(undefined);
+  };
+
   return (
-    <Container>
-      <Header>
-        <Title>{modelName || 'Model library'}</Title>
-        <Button onClick={onClick} type="primary" icon="PlusCompact">
-          {!modelName ? 'New model' : 'New Version'}
-        </Button>
-      </Header>
-      <ModelTable data={files} modelName={modelName} links={links} />
-    </Container>
+    <CollapsableContainer>
+      <CollapsablePanel
+        sidePanelRightWidth={330}
+        sidePanelRight={
+          <BoundaryConditionContent
+            onClosePanel={onClosePanel}
+            data={selectedRow}
+          />
+        }
+        sidePanelRightVisible={Boolean(selectedRow)}
+      >
+        <Container>
+          <Header>
+            <Title>{modelName || 'Model library'}</Title>
+            <Button onClick={onClick} type="primary" icon="PlusCompact">
+              {!modelName ? 'New model' : 'New version'}
+            </Button>
+          </Header>
+          <ModelTable
+            data={files}
+            modelName={modelName}
+            links={links}
+            setSelectedRow={setSelectedRow}
+          />
+        </Container>
+      </CollapsablePanel>
+    </CollapsableContainer>
   );
 }

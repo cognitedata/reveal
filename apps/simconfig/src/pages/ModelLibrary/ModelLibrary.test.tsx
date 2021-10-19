@@ -3,3 +3,4 @@ describe('<ModelLibrary />', () => {
     // fix later
   });
 });
+export {};

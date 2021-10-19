@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { simulatorReducer } from './simulator';
 import { groupReducer } from './group';
 import { datasetReducer } from './dataset';
+import { fileReducer } from './file';
 
 export const store = configureStore({
   reducer: {
     dataset: datasetReducer,
     group: groupReducer,
     simulator: simulatorReducer,
+    file: fileReducer,
   },
 });
 

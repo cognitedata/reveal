@@ -14,6 +14,11 @@ export interface ModelMetadata extends Metadata {
   version: string;
 }
 
+export interface CreatedAndUpdatedTime {
+  createdTime: Date;
+  updatedTime: Date;
+}
+
 export interface FileInfo extends ExternalFileInfo {
   metadata: ModelMetadata;
   source: keyof typeof ModelSource;
