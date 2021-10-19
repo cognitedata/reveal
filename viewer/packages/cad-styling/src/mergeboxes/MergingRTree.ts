@@ -196,13 +196,12 @@ class RTreeNode {
   }
 
   intersectsBox(box: Box3): boolean {
-    if (!this.bounds.intersectsBox(box))  {
+    if (!this.bounds.intersectsBox(box)) {
       return false;
     }
-    
+
     if (this.children !== null) {
-      return this.children[0].intersectsBox(box) ||
-        this.children[1].intersectsBox(box);
+      return this.children[0].intersectsBox(box) || this.children[1].intersectsBox(box);
     } else {
       // At leaf node and we already did intersection test in the
       // beginning of this method

@@ -4,7 +4,7 @@
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
-import { AreaCollection, ClusteredAreaCollection } from './AreaCollection'
+import { AreaCollection, ClusteredAreaCollection } from './AreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
 
@@ -13,7 +13,7 @@ import { IndexSet } from '@reveal/utilities';
  */
 export class IntersectionNodeCollection extends CombineNodeCollectionBase {
   private _cachedNodeAreas: AreaCollection | undefined = undefined;
-  
+
   public static readonly classToken = 'IntersectionNodeCollection';
 
   constructor(nodeCollections?: NodeCollectionBase[]) {
@@ -50,7 +50,7 @@ export class IntersectionNodeCollection extends CombineNodeCollectionBase {
     if (this._cachedNodeAreas) {
       return this._cachedNodeAreas;
     }
-    
+
     const newAreaCollection = new ClusteredAreaCollection();
     newAreaCollection.addAreas(this._nodeCollections[0].getAreas().areas());
     for (let i = 1; i < this._nodeCollections.length; ++i) {

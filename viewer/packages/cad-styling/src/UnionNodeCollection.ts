@@ -13,7 +13,7 @@ import { IndexSet } from '@reveal/utilities';
 
 export class UnionNodeCollection extends CombineNodeCollectionBase {
   private _cachedNodeAreas: AreaCollection | undefined = undefined;
-  
+
   public static readonly classToken = 'UnionNodeCollection';
 
   constructor(nodeCollections?: NodeCollectionBase[]) {
@@ -39,14 +39,14 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
     }
     return set;
   }
-  
+
   public getAreas(): AreaCollection {
     if (this._cachedNodeAreas) {
       return this._cachedNodeAreas;
     }
-    
+
     const newAreaCollection = new ClusteredAreaCollection();
-    
+
     for (let i = 1; i < this._nodeCollections.length; ++i) {
       newAreaCollection.addAreas(this._nodeCollections[i].getAreas().areas());
     }

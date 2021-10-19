@@ -42,10 +42,10 @@ export class SimpleAreaCollection implements AreaCollection {
     for (const area of inAreas) {
       this._areas.push(area);
     }
-    
+
     return this;
   }
-  
+
   intersectWith(inAreas: Iterable<THREE.Box3>): AreaCollection {
     const newAreas: THREE.Box3[] = [];
     for (const inArea of inAreas) {
@@ -56,9 +56,9 @@ export class SimpleAreaCollection implements AreaCollection {
         }
       }
     }
-    
+
     this._areas = newAreas;
-    
+
     return this;
   }
 }
@@ -84,11 +84,11 @@ export class EmptyAreaCollection {
   }
 
   addAreas(_: Iterable<THREE.Box3>): AreaCollection {
-    throw new Error("addAreas() not defined for EmptyAreaCollection");
+    throw new Error('addAreas() not defined for EmptyAreaCollection');
   }
 
   intersectWith(_: Iterable<THREE.Box3>): AreaCollection {
-    throw new Error("intersectWith() not defined for EmptyAreaCollection");
+    throw new Error('intersectWith() not defined for EmptyAreaCollection');
   }
 
   get isEmpty(): boolean {
@@ -101,9 +101,8 @@ export class EmptyAreaCollection {
  * BoxClusterer will probably be obsolete in the not-too-distant future
  */
 export class ClusteredAreaCollection implements AreaCollection {
-
   private _clusterer: BoxClusterer = new SmartMergeBoxes();
-  
+
   get isEmpty(): boolean {
     return this._clusterer.boxCount == 0;
   }
@@ -131,4 +130,4 @@ export class ClusteredAreaCollection implements AreaCollection {
     this._clusterer.intersection(boxes);
     return this;
   }
-};
+}

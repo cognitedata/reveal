@@ -105,7 +105,6 @@ export class SmartMergeBoxes implements BoxClusterer {
   }
 
   union(boxes: Iterable<Box3>): BoxClusterer {
-
     const resClone = [];
     for (const resBox of this.resultBoxes) {
       resClone.push(resBox.clone());
@@ -126,7 +125,6 @@ export class SmartMergeBoxes implements BoxClusterer {
   }
 
   intersection(other: Iterable<THREE.Box3>): BoxClusterer {
-
     const otherBoxes = [...other];
     const thisBoxes = this.resultBoxes;
 

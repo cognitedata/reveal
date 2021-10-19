@@ -5,9 +5,8 @@
 import { Box3 } from 'three';
 
 export interface BoxClusterer {
-
   get boxCount(): number;
-  
+
   addBoxes(boxes: Iterable<Box3>): void;
 
   getBoxes(): Generator<Box3>;
