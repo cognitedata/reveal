@@ -239,7 +239,7 @@ export default class ComboControls extends EventDispatcher {
     });
   };
 
-  private calculateShortestDeltaTheta(theta1: number, theta2:number) {
+  private calculateShortestDeltaTheta(theta1: number, theta2: number) {
     const rawDeltaTheta = (theta1 % (2 * Math.PI)) - (theta2 % (2 * Math.PI));
 
     let deltaTheta = Math.min(Math.abs(rawDeltaTheta), 2 * Math.PI - Math.abs(rawDeltaTheta));
