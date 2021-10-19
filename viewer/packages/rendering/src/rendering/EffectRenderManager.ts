@@ -4,23 +4,17 @@
 
 import * as THREE from 'three';
 
-import { RootSectorNode } from '../../sector/RootSectorNode';
-import { SectorNode } from '../../sector/SectorNode';
-
 import { CadMaterialManager } from '../CadMaterialManager';
-import { CogniteColors, RevealColors } from '../../utilities/types';
-import { CadNode } from '../../CadNode';
+import { CogniteColors, RevealColors } from '../utilities/types';
+import { CadNode } from '../sector/CadNode';
 import { AntiAliasingMode, defaultRenderOptions, RenderOptions, SsaoParameters, SsaoSampleQuality } from './types';
 
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import {
-  outlineDetectionShaders,
-  fxaaShaders,
-  ssaoShaders,
-  ssaoBlurCombineShaders,
-  LevelOfDetail,
-  RenderMode
-} from '@reveal/cad-parsers';
+import { outlineDetectionShaders, fxaaShaders, ssaoShaders, ssaoBlurCombineShaders } from './shaders';
+
+import { RenderMode } from './RenderMode';
+
+import { LevelOfDetail, RootSectorNode, SectorNode } from '@reveal/cad-parsers';
 import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
 
 export class EffectRenderManager {

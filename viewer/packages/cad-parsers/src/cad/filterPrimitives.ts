@@ -11,7 +11,7 @@ import {
   computeBoundingBoxFromEllipseAttributes,
   computeBoundingBoxFromInstanceMatrixAttributes,
   computeBoundingBoxFromVertexAttributes
-} from './computeBoundingBoxFromAttributes';
+} from '../utilities/computeBoundingBoxFromAttributes';
 
 function filterPrimitivesOutsideClipBox(
   attributesByteValues: Uint8Array,

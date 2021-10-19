@@ -4,11 +4,11 @@
 import * as THREE from 'three';
 
 import { LevelOfDetail } from '@reveal/cad-parsers';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
+
 import { DetermineSectorsInput, SectorCost } from './types';
-import { CadMaterialManager } from '../../material-manager';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
-import { CadNode } from '../../CadNode';
 import { SectorMetadata, CadModelMetadata } from '@reveal/cad-parsers';
 
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
