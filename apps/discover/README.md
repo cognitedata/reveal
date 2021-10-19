@@ -9,13 +9,13 @@
 Clone the repo:
 
 ```sh
-git clone https://github.com/cognitedata/discover.git
+git clone https://github.com/cognitedata/applications.git
 ```
 
 Move to the right folder and get ready to start:
 
 ```sh
-cd discover && yarn
+cd applications/apps/discover && yarn
 ```
 
 # Development
@@ -73,7 +73,7 @@ yarn test:coverage                                  # To generate a test coverag
 1. Then start your test server:
 
 ```sh
-yarn testcafe:local-server
+yarn start:local
 ```
 
 ### Run tests
@@ -186,6 +186,33 @@ If the container is a bit old, check if there were any changes:
 ```
 docker pull eu.gcr.io/cognitedata/fake-idp:latest
 ```
+
+#### Bazel not found error
+
+```
+.husky/pre-commit: 6: bazel: not found
+husky - pre-commit hook exited with code 127 (error)
+```
+
+Try `bazel version`,
+
+If result: `bazel: command not found`,
+Try,
+
+Install Bazelisk and Bazel watcher (ibazel) globally:
+
+```
+npm install -g @bazel/bazelisk
+yarn global add @bazel/ibazel
+```
+
+#### Permission denied while installing global packages
+
+Could get `Error: EACCES: permission denied, access '/usr/local/lib/node_modules'`
+
+It is not encouraged to install `node` or `npm` using `apt-get`. If you already have uninstall them `apt-get remove` and reinstall using `nvm`. [3rd option of this guide](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04)
+
+After that try installing global package again.
 
 ## Running E2E tests in the Docker container
 
