@@ -1,5 +1,5 @@
 {
-  "name": "@reveal/sector-loader",
+  "name": "@reveal/rendering",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -9,8 +9,13 @@
   },
   "dependencies": {
     "@reveal/cad-parsers": "workspace:*",
-    "@reveal/modeldata-api": "workspace:*",
-    "@reveal/rendering": "workspace:*",
+    "@reveal/cad-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
+  },
+  "sideEffects": false,
+  "glslify": {
+    "transform": [
+      "glslify-import"
+    ]
   }
 }

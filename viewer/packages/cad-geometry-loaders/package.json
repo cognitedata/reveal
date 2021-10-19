@@ -12,6 +12,7 @@
     "@reveal/cad-styling": "workspace:*",
     "@reveal/logger": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
+    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

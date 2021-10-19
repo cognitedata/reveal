@@ -6,8 +6,8 @@ import { CadSectorParser } from '@reveal/cad-parsers';
 import { CachedRepository } from '../../sector-loader/src/CachedRepository';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
-import { CadMaterialManager } from './material-manager/CadMaterialManager';
 
+import { CadMaterialManager } from '@reveal/rendering';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 describe('CadModelUpdateHandler', () => {

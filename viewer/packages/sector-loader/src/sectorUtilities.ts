@@ -5,12 +5,12 @@
 import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
-import { AutoDisposeGroup } from '@reveal/utilities';
-import { SectorMetadata, SectorGeometry, InstancedMeshFile, Materials, createPrimitives } from '@reveal/cad-parsers';
 
-import { createTriangleMeshes } from '../../cad-geometry-loaders/src/material-manager/rendering/triangleMeshes';
-import { createSimpleGeometryMesh } from '../../cad-geometry-loaders/src/material-manager/rendering/createSimpleGeometryMesh';
-import { filterInstanceMesh } from '../../cad-geometry-loaders/src/material-manager/rendering/filterInstanceMesh';
+import { createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
+import { AutoDisposeGroup } from '@reveal/utilities';
+import { InstancedMeshFile, SectorGeometry, SectorMetadata } from '@reveal/cad-parsers';
+import { createTriangleMeshes } from '@reveal/cad-parsers/src/cad/triangleMeshes';
+import { filterInstanceMesh } from '@reveal/cad-parsers/src/cad/filterInstanceMesh';
 
 export function consumeSectorSimple(
   sector: SectorQuads,

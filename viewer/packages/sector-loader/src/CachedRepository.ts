@@ -22,7 +22,7 @@ import { createOffsetsArray } from './arrays';
 
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
-import { CadMaterialManager } from '../../cad-geometry-loaders';
+import { CadMaterialManager } from '@reveal/rendering';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class CachedRepository implements Repository {

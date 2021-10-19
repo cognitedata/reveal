@@ -13,11 +13,34 @@ export { SectorScene } from './src/utilities/types';
 
 export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
 
+export { SectorNode } from './src/sector/SectorNode';
+export { RootSectorNode } from './src/sector/RootSectorNode';
+
 export { CadSectorParser } from './src/cad/CadSectorParser';
 
-export { RenderMode } from './src/cad/RenderMode';
-
 export { LevelOfDetail } from './src/cad/LevelOfDetail';
+
+export {
+  filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
+  filterPrimitivesOutsideClipBoxByCenterAndRadius,
+  filterPrimitivesOutsideClipBoxByEllipse,
+  filterPrimitivesOutsideClipBoxByVertices
+} from './src/cad/filterPrimitives';
+
+export { filterInstanceMesh } from './src/cad/filterInstanceMesh';
+
+export {
+  boxGeometry,
+  quadGeometry,
+  coneGeometry,
+  trapeziumGeometry,
+  nutGeometry,
+  torusLodGeometries,
+  boxGeometryBoundingBox,
+  quadGeometryBoundingBox,
+  torusGeometryBoundingBox,
+  nutGeometryBoundingBox
+} from './src/cad/primitiveGeometries';
 
 export {
   SectorGeometry,
@@ -28,15 +51,6 @@ export {
   ConsumedSector
 } from './src/cad/types';
 
-export { createMaterials, Materials } from './src/cad/materials';
-export { createPrimitives } from './src/cad/primitives';
-export { filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix } from './src/cad/filterPrimitives';
 export { WellKnownDistanceToMeterConversionFactors } from './src/utilities/types';
 
-export {
-  outlineDetectionShaders,
-  fxaaShaders,
-  ssaoShaders,
-  ssaoBlurCombineShaders,
-  coverageShaders
-} from './src/cad/shaders';
+export { createTriangleMeshes } from './src/cad/triangleMeshes';

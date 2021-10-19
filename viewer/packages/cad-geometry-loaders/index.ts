@@ -2,29 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadNode, SuggestedCameraConfig } from './src/CadNode';
-
-export { NodeTransformProvider } from './src/material-manager/styling/NodeTransformProvider';
-
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
-
-export { SectorNode } from './src/sector/SectorNode';
 
 export { CachedRepository } from '../sector-loader/src/CachedRepository';
 
-export {
-  defaultRenderOptions,
-  SsaoParameters,
-  SsaoSampleQuality,
-  AntiAliasingMode,
-  SectorQuads,
-  RenderOptions
-} from './src/material-manager/rendering/types';
-
 export { CadLoadingHints } from './src/CadLoadingHints';
 
-export { EffectRenderManager } from './src/material-manager/rendering/EffectRenderManager';
-export { CadMaterialManager } from './src/material-manager/CadMaterialManager';
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 
 export { LoadingState } from './src/utilities/types';

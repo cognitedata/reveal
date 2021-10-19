@@ -6,9 +6,9 @@ import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
 import { ConsumedSector } from '@reveal/cad-parsers';
+import { CadNode } from '@reveal/rendering';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
-import { CadNode } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';

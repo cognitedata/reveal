@@ -8,7 +8,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { CdfModelDataClient } from '@reveal/modeldata-api';
 import { CachedRepository } from '../src/CachedRepository';
 import { CadSectorParser } from '@reveal/cad-parsers';
-import { CadMaterialManager } from '../../cad-geometry-loaders/src/material-manager/CadMaterialManager';
+import { CadMaterialManager } from '@reveal/rendering';
 
 init();
 
