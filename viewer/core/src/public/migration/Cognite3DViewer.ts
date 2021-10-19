@@ -241,7 +241,7 @@ export class Cognite3DViewer {
 
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
-    this.controls.minDistance = 0.15;
+    this.controls.minDistance = 1.0;
     this.controls.maxDistance = 100.0;
 
     this.controls.addEventListener('cameraChange', event => {

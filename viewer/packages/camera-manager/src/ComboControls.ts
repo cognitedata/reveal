@@ -64,7 +64,7 @@ export default class ComboControls extends EventDispatcher {
   public keyboardSpeedFactor: number = 3; // how much quicker keyboard navigation will be with 'shift' pressed
   public pinchEpsilon: number = 2;
   public pinchPanSpeed: number = 1;
-  public EPSILON: number = 0.006;
+  public EPSILON: number = 0.003;
   public dispose: () => void;
   public minZoom: number = 0;
   public maxZoom: number = Infinity;
@@ -163,11 +163,7 @@ export default class ComboControls extends EventDispatcher {
     let deltaTheta = 0;
 
     if (this.firstPersonMode) {
-      const rawDeltaTheta = (sphericalEnd.theta % (2 * Math.PI)) - (spherical.theta % (2 * Math.PI));
-
-      deltaTheta = Math.min(Math.abs(rawDeltaTheta), 2 * Math.PI - Math.abs(rawDeltaTheta));
-      const thetaSign = (deltaTheta === Math.abs(rawDeltaTheta) ? 1 : -1) * Math.sign(rawDeltaTheta);
-      deltaTheta *= thetaSign;
+      deltaTheta += this.calculateShortestDeltaTheta(sphericalEnd.theta, spherical.theta);
     } else {
       deltaTheta = sphericalEnd.theta - spherical.theta;
     }
@@ -177,7 +173,6 @@ export default class ComboControls extends EventDispatcher {
     deltaTarget.subVectors(targetEnd, target);
 
     let changed = false;
-    //console.log('Theta:', spherical.theta, deltaTheta, this.firstPersonMode);
 
     const wantDamping = enableDamping && !this.temporarilyDisableDamping;
     const deltaFactor = wantDamping ? Math.min(dampingFactor * this.targetFPSOverActualFPS, 1) : 1;
@@ -244,12 +239,23 @@ export default class ComboControls extends EventDispatcher {
     });
   };
 
+  private calculateShortestDeltaTheta(theta1: number, theta2:number) {
+    const rawDeltaTheta = (theta1 % (2 * Math.PI)) - (theta2 % (2 * Math.PI));
+
+    let deltaTheta = Math.min(Math.abs(rawDeltaTheta), 2 * Math.PI - Math.abs(rawDeltaTheta));
+    const thetaSign = (deltaTheta === Math.abs(rawDeltaTheta) ? 1 : -1) * Math.sign(rawDeltaTheta);
+    deltaTheta *= thetaSign;
+
+    return deltaTheta;
+  }
+
   private onMouseDown = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
     }
 
     this.firstPersonMode = false;
+    this.sphericalEnd.copy(this.spherical);
 
     switch (event.button) {
       case MOUSE.LEFT: {
@@ -314,6 +320,7 @@ export default class ComboControls extends EventDispatcher {
     event.preventDefault();
 
     this.firstPersonMode = false;
+    this.sphericalEnd.copy(this.spherical);
 
     switch (event.touches.length) {
       case 1: {
