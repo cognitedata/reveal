@@ -122,6 +122,7 @@
     "react-sanitized-html": "^2.0.0",
     "react-scripts": "^4.0.3",
     "react-sizeme": "^2.6.12",
+    "react-svg": "^14.0.16",
     "react-table": "^7.2.2",
     "react-transition-group": "^4.4.1",
     "redux": "^4.1.1",

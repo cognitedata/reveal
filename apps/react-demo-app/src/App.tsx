@@ -7,6 +7,7 @@ import Info from 'pages/Info';
 import Home from 'pages/Home';
 import CogniteSDK from 'pages/CogniteSDK';
 import Intercom from 'pages/Intercom';
+import PID from 'pages/PID';
 import Comments from 'pages/Comments';
 import CommentDrawer from 'pages/Comments/CommentDrawerPage';
 import CommentSlider from 'pages/Comments/CommentSliderPage';
@@ -26,6 +27,7 @@ const App = () => (
         <Route path={PAGES.SDK} render={() => <CogniteSDK />} />
         <Route path={PAGES.INTERCOM} render={() => <Intercom />} />
         <Route path={PAGES.LOGOUT} render={() => <Logout />} />
+        <Route path={PAGES.PID} exact render={() => <PID />} />
         <Route path={PAGES.COMMENTS} exact render={() => <Comments />} />
         <Route path={PAGES.COMMENTS_DRAWER} render={() => <CommentDrawer />} />
         <Route path={PAGES.COMMENTS_SLIDER} render={() => <CommentSlider />} />

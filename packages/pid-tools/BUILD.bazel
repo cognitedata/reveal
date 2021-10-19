@@ -87,7 +87,7 @@ jest_test(
     ],
     jest_args = [],
     jest_config = "jest.config.js",
-    service_name = "{{ name }}",
+    service_name = "pid-tools",
     deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
 )
 
@@ -140,14 +140,11 @@ copy_to_bin(
 rollup(
     name = "dist",
     args = [
-        "--banner=//{{ name }}",
-        "--node_options=--require=./$(execpath //scripts:log.js)",
         "--node_options=--require=./$(execpath chdir.js)",
         "-c",
         "rollup.config.js",
     ],
     data = DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "//scripts:log.js",
         ":chdir.js",
         ":copy_static_files",
         ":package-json",
@@ -168,8 +165,8 @@ _mappings = module_mappings(
 )
 
 js_library(
-    name = "{{ name }}",
-    package_name = "@cognite/{{ name }}",
+    name = "pid-tools",
+    package_name = "@cognite/pid-tools",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
     deps = DEPENDENCIES + ["dist"],
@@ -184,7 +181,7 @@ append_deps(
 
 pkg_npm(
     name = "npm-package",
-    package_name = "@cognite/{{ name }}",
+    package_name = "@cognite/pid-tools",
     visibility = ["//visibility:public"],
     deps = [
         "dist",
@@ -199,6 +196,6 @@ is_published(
 
 package_info(
     name = "package_info",
-    display_name = "{{ name }}",
+    display_name = "pid-tools",
     package = ":npm-package",
 )

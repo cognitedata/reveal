@@ -1381,7 +1381,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.14.5", "@babel/runtime@^7.6.0", "@babel/runtime@^7.8.3":
+"@babel/runtime@^7.14.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.6.0", "@babel/runtime@^7.8.3":
   version "7.15.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.4.tgz#fd17d16bfdf878e6dd02d19753a39fa8a8d9c84a"
   integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
@@ -5512,6 +5512,15 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
+"@tanem/svg-injector@^10.1.7":
+  version "10.1.7"
+  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-10.1.7.tgz#9571b8ec32145f5429044148d1e09599d725fa2e"
+  integrity sha512-dS5QJ/p1HATAWnC5ysCyOPL/QLpqtHOQnRpS+FcYCznBEb/lMORwFeXhnUODcHt/Yo0XyRrtFIFNIYzXAVdZmA==
+  dependencies:
+    "@babel/runtime" "^7.15.4"
+    content-type "^1.0.4"
+    tslib "^2.3.1"
+
 "@testing-library/dom@^7.27.1", "@testing-library/dom@^7.28.1":
   version "7.31.2"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.31.2.tgz#df361db38f5212b88555068ab8119f5d841a8c4a"
@@ -6469,6 +6478,11 @@
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
+
+"@types/prop-types@^15.7.4":
+  version "15.7.4"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
+  integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
 
 "@types/q@^1.5.1":
   version "1.5.4"
@@ -10193,7 +10207,7 @@ content-disposition@0.5.3:
   dependencies:
     safe-buffer "5.1.2"
 
-content-type@~1.0.4:
+content-type@^1.0.4, content-type@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
   integrity sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA==
@@ -23378,6 +23392,16 @@ react-style-proptype@^3.2.2:
   integrity sha512-ywYLSjNkxKHiZOqNlso9PZByNEY+FTyh3C+7uuziK0xFXu9xzdyfHwg4S9iyiRRoPCR4k2LqaBBsWVmSBwCWYQ==
   dependencies:
     prop-types "^15.5.4"
+
+react-svg@^14.0.16:
+  version "14.0.16"
+  resolved "https://registry.yarnpkg.com/react-svg/-/react-svg-14.0.16.tgz#312b323bf3e4fd66370e6f9cfbb6d15275539770"
+  integrity sha512-alGqI6fxVEZ+t2gQQm8EjjUomuid7WYdosDf6g7euBBVrsbuanaj/8i4PH+3aWKdeYtHZZstFAlg30DDiug7Pw==
+  dependencies:
+    "@babel/runtime" "^7.15.4"
+    "@tanem/svg-injector" "^10.1.7"
+    "@types/prop-types" "^15.7.4"
+    prop-types "^15.7.2"
 
 react-syntax-highlighter@^13.5.3:
   version "13.5.3"
