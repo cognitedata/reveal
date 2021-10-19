@@ -10,4 +10,3 @@ export { NodeAppearance, DefaultNodeAppearance, NodeOutlineColor } from './src/N
 export { NodeAppearanceProvider } from './src/NodeAppearanceProvider';
 
 export { AreaCollection, EmptyAreaCollection, ClusteredAreaCollection } from './src/AreaCollection';
-

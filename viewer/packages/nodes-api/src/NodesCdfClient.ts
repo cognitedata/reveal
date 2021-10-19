@@ -81,15 +81,22 @@ export class NodesCdfClient implements NodesApiClient {
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
   ): Promise<THREE.Box3[]> {
-
     const chunks = chunkInputItems(nodeIds, NodesCdfClient.MaxItemsPerRequest);
     const mappedBoundingBoxPromises = [...chunks].map(async chunk => {
-      return this._client.revisions3D.retrieve3DNodes(modelId, revisionId, chunk.map(id => { return { id } }));
+      return this._client.revisions3D.retrieve3DNodes(
+        modelId,
+        revisionId,
+        chunk.map(id => {
+          return { id };
+        })
+      );
     });
-    
+
     const mappedBoundingBoxes = await Promise.all(mappedBoundingBoxPromises);
-    const resultBoxes = mappedBoundingBoxes.flat().filter(node => node.boundingBox).map(node =>
-      {
+    const resultBoxes = mappedBoundingBoxes
+      .flat()
+      .filter(node => node.boundingBox)
+      .map(node => {
         const result = new THREE.Box3();
         const min = node.boundingBox!.min;
         const max = node.boundingBox!.max;
