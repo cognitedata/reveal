@@ -406,13 +406,11 @@ export class CogniteOrnate {
 
     // Scale the location, and center it to the screen
     const location = {
-      x:
-        -node.x() * scale + this.stage.width() / 2 - (node.width() * scale) / 2,
+      x: -rect.x * scale + this.stage.width() / 2 - (node.width() * scale) / 2,
       y:
-        -node.y() * scale +
-        this.stage.height() / 2 -
-        (node.height() * scale) / 2,
+        -rect.y * scale + this.stage.height() / 2 - (node.height() * scale) / 2,
     };
+
     const { x, y } = location;
     const tween = new Konva.Tween({
       duration,
@@ -469,6 +467,7 @@ export class CogniteOrnate {
       metadata: annotation.metadata,
       attachedToGroup: groupId,
       name: 'annotation',
+      inGroup: groupId,
     });
     if (annotation.onClick) {
       rect.on('click', (e) => {
