@@ -21,6 +21,28 @@ export { CadSectorParser } from './src/cad/CadSectorParser';
 export { LevelOfDetail } from './src/cad/LevelOfDetail';
 
 export {
+  filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
+  filterPrimitivesOutsideClipBoxByCenterAndRadius,
+  filterPrimitivesOutsideClipBoxByEllipse,
+  filterPrimitivesOutsideClipBoxByVertices
+} from './src/cad/filterPrimitives';
+
+export { filterInstanceMesh } from './src/cad/filterInstanceMesh';
+
+export {
+  boxGeometry,
+  quadGeometry,
+  coneGeometry,
+  trapeziumGeometry,
+  nutGeometry,
+  torusLodGeometries,
+  boxGeometryBoundingBox,
+  quadGeometryBoundingBox,
+  torusGeometryBoundingBox,
+  nutGeometryBoundingBox
+} from './src/cad/primitiveGeometries';
+
+export {
   SectorGeometry,
   InstancedMeshFile,
   InstancedMesh,

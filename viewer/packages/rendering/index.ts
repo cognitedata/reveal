@@ -8,7 +8,6 @@ export { CadMaterialManager } from './src/CadMaterialManager';
 
 export { createTriangleMeshes } from './src/rendering/triangleMeshes';
 export { createSimpleGeometryMesh } from './src/rendering/createSimpleGeometryMesh';
-export { filterInstanceMesh } from './src/rendering/filterInstanceMesh';
 
 export { NodeAppearanceTextureBuilder } from './src/rendering/NodeAppearanceTextureBuilder';
 export { NodeTransformTextureBuilder } from './src/transform/NodeTransformTextureBuilder';

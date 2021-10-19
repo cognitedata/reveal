@@ -6,18 +6,19 @@ import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
 import { traverseDepthFirst, AutoDisposeGroup } from '@reveal/utilities';
-import { SectorMetadata, SectorGeometry, WantedSector, ConsumedSector, InstancedMeshFile } from '@reveal/cad-parsers';
+import {
+  SectorMetadata,
+  SectorGeometry,
+  WantedSector,
+  ConsumedSector,
+  InstancedMeshFile,
+  filterInstanceMesh
+} from '@reveal/cad-parsers';
 
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
-import {
-  createTriangleMeshes,
-  createSimpleGeometryMesh,
-  filterInstanceMesh,
-  Materials,
-  createPrimitives
-} from '@reveal/rendering';
+import { createTriangleMeshes, createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
 
 export function consumeSectorSimple(
   sector: SectorQuads,
