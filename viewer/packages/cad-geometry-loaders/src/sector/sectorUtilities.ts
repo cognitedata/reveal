@@ -18,7 +18,8 @@ import {
 import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
-import { createTriangleMeshes, createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
+import { createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
+import { createTriangleMeshes } from '@reveal/cad-parsers';
 
 export function consumeSectorSimple(
   sector: SectorQuads,

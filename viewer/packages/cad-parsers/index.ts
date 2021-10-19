@@ -52,3 +52,5 @@ export {
 } from './src/cad/types';
 
 export { WellKnownDistanceToMeterConversionFactors } from './src/utilities/types';
+
+export { createTriangleMeshes } from './src/cad/triangleMeshes';
