@@ -3,27 +3,21 @@
  */
 
 import * as THREE from 'three';
-
-import { RenderMode } from '@reveal/cad-parsers';
-import {
-  RenderOptions,
-  NodeAppearanceProvider,
-  CadModelSectorBudget,
-  EffectRenderManager,
-  LoadingState
-} from '@reveal/cad-geometry-loaders';
-import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
+import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
+import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { CadManager } from '../datamodels/cad/CadManager';
 import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
-import { LoadingStateChangeListener, defaultRenderOptions, PointCloudBudget } from './types';
-import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
-import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-import { CadNode } from '../datamodels/cad';
+import { LoadingStateChangeListener, PointCloudBudget } from './types';
 import { SupportedModelTypes } from '../datamodels/base';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
 import { GeometryFilter } from '..';
+
+import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { NodeAppearanceProvider } from '@reveal/cad-styling';
+import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
+import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
 
 /* eslint-disable jsdoc/require-jsdoc */
 

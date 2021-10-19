@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { CadMaterialManager, CadNode } from '@reveal/cad-geometry-loaders';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
 import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
 

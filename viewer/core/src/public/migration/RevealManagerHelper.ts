@@ -3,17 +3,17 @@
  */
 import * as THREE from 'three';
 
-import { assertNever } from '@reveal/utilities';
-
 import { AddModelOptions } from './types';
 import { RevealManager } from '../RevealManager';
 import { createCdfRevealManager, createLocalRevealManager } from '../createRevealManager';
 
 import { RevealOptions } from '../..';
-import { CadNode } from '../../datamodels/cad';
 import { PointCloudNode } from '../../datamodels/pointcloud/PointCloudNode';
 
+import { assertNever } from '@reveal/utilities';
 import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
+import { CadNode } from '@reveal/rendering';
+
 import { CogniteClient } from '@cognite/sdk';
 
 /**
