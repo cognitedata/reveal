@@ -9,4 +9,5 @@ export { UnionNodeCollection } from './src/UnionNodeCollection';
 export { NodeAppearance, DefaultNodeAppearance, NodeOutlineColor } from './src/NodeAppearance';
 export { NodeAppearanceProvider } from './src/NodeAppearanceProvider';
 
-export { AreaCollection, EmptyAreaCollection, SimpleAreaCollection } from './src/AreaCollection';
+export { AreaCollection, EmptyAreaCollection, ClusteredAreaCollection } from './src/AreaCollection';
+

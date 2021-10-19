@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { ListResponse } from '@cognite/sdk';
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { AreaCollection, SimpleAreaCollection } from '@reveal/cad-styling';
+import { AreaCollection, ClusteredAreaCollection } from '@reveal/cad-styling';
 
 /**
  * Helper class that populates an IndexSet based on a paged results from the Cognite SDK.
@@ -19,7 +19,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
   private _ongoingOperations = 0;
   private _interrupted = false;
   private _indexSet = new IndexSet();
-  private _areas = new SimpleAreaCollection();
+  private _areas = new ClusteredAreaCollection();
 
   constructor(
     itemToTreeIndexRangeCallback: (item: T) => NumericRange,
@@ -65,7 +65,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
           this._indexSet.addRange(range);
 
           const area = this._itemToAreaCallback(x);
-          this._areas.addArea(area);
+          this._areas.addAreas([area]);
         });
         notifyChangedCallback();
 
