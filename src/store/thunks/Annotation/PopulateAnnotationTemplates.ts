@@ -21,10 +21,11 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
   };
   const annotationListRequest = {
     filter: filterPayload,
+    limit: 1000,
   };
   const savedConfigurationResponse = await AnnotationApi.list(
     annotationListRequest
-  );
+  ); // TODO: use pagination
   const keypointCollections: KeypointCollection[] = [];
   const shapes: Shape[] = [];
 

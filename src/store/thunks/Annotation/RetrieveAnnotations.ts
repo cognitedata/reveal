@@ -18,8 +18,9 @@ export const RetrieveAnnotations = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
+      limit: 1000,
     };
-    return AnnotationApi.list(annotationListRequest);
+    return AnnotationApi.list(annotationListRequest); // TODO: use pagination
   });
 
   if (requests.length) {

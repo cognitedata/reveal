@@ -25,7 +25,7 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
       filter: filterPayload,
       limit: 1000,
     };
-    return AnnotationApi.list(annotationListRequest);
+    return AnnotationApi.list(annotationListRequest); // TODO: use pagination
   });
 
   if (requests.length) {
