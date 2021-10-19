@@ -1,18 +1,18 @@
-/*!
+/**
  * Copyright 2021 Cognite AS
  */
 
 import * as THREE from 'three';
 
-import { SectorQuads } from './material-manager/rendering/types';
-import { RootSectorNode } from './sector/RootSectorNode';
-import { CadMaterialManager } from './material-manager/CadMaterialManager';
-import { suggestCameraConfig } from './cameraconfig';
-import { NodeTransformProvider } from './material-manager/styling/NodeTransformProvider';
-import { InstancedMeshManager } from './InstancedMeshManager';
+import { CadMaterialManager } from '../CadMaterialManager';
+import { SectorQuads } from '../rendering/types';
+import { NodeTransformProvider } from '../transform/NodeTransformProvider';
+import { suggestCameraConfig } from '../cameraconfig';
+import { InstancedMeshManager } from '../InstancedMeshManager';
+import { RenderMode } from '../rendering/RenderMode';
 
-import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
 import { NodeAppearanceProvider, NodeAppearance } from '@reveal/cad-styling';
+import { SectorScene, CadModelMetadata, SectorGeometry, InstancedMeshFile, RootSectorNode } from '@reveal/cad-parsers';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
