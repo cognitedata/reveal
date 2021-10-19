@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { WhiteLoader } from 'components/loading';
 import { NoUnmountShowHide } from 'components/no-unmount-show-hide';
+import { clearNPTGraphSelectedWellboreData } from 'modules/wellInspect/actions';
 import {
   useNptEventsForGraph,
   useNptEventsForTable,
@@ -10,15 +12,21 @@ import {
 import { VIEW_MODES, DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NPTEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
-import { NPTGraph } from './graph';
+import { NPTGraph, SelectedWellboreView } from './graph';
 import { SwitchViewMode } from './SwitchViewMode';
 import { NPTTable } from './table';
 
 export const NPTEvents: React.FC = () => {
+  const dispatch = useDispatch();
+
   const { isLoading: isLoadingGraph, events: eventsGraph } =
     useNptEventsForGraph();
   const { isLoading: isLoadingTable, events: eventsTable } =
     useNptEventsForTable();
+
+  useEffect(() => {
+    dispatch(clearNPTGraphSelectedWellboreData());
+  }, []);
 
   const [activeViewMode, setActiveViewMode] = useState<string>(
     DEFAULT_ACTIVE_VIEW_MODE
@@ -53,11 +61,13 @@ export const NPTEvents: React.FC = () => {
         />
       </NPTEventsDataControlArea>
 
-      <NoUnmountShowHide show={isGraphViewModeActive}>
+      <NoUnmountShowHide show={isGraphViewModeActive} fullHeight>
         <NPTGraph events={eventsGraph} />
       </NoUnmountShowHide>
 
       {isTableViewModeActive && <NPTTable events={eventsTable} />}
+
+      <SelectedWellboreView />
     </>
   );
 };

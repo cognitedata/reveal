@@ -1,30 +1,28 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import get from 'lodash/get';
 
 import { now, fromNow } from '_helpers/date';
 import { StackedBarChart } from 'components/charts';
-import { StackedBarChartOptions } from 'components/charts/StackedBarChart/types';
-import { useInspectSidebarWidth } from 'modules/wellInspect/selectors';
-import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
+import { SelectedBarData } from 'components/charts/StackedBarChart/types';
+import { setNPTGraphSelectedWellboreData } from 'modules/wellInspect/actions';
+import { useSecondarySelectedOrHoveredWellboreNames } from 'modules/wellSearch/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';
 
-import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
+import { accessors } from '../constants';
 
 import {
   GRAPH_TITLE,
   GRAPH_X_AXIS_LABEL,
-  GRAPH_LEGEND_TITLE,
-  NO_NPT_DATA_BAR_COLOR,
-  NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT,
-  NO_DATA_TEXT,
+  NPT_GRAPH_OPTIONS,
 } from './constants';
-import { formatTooltip } from './utils';
 
 export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
   ({ events }) => {
-    const selectedSecondaryWellbores = useSecondarySelectedOrHoveredWellbores();
-    const inspectSidebarWidth = useInspectSidebarWidth();
+    const dispatch = useDispatch();
+    const selectedSecondaryWellboreNames =
+      useSecondarySelectedOrHoveredWellboreNames();
 
     const [lastUpdatedTime, setLastUpdatedTime] = useState<number>();
     const [chartSubtitle, setChartSubtitle] = useState<string>(
@@ -53,34 +51,14 @@ export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
       }));
     }, [events]);
 
-    const yScaleDomain = useMemo(
-      () =>
-        selectedSecondaryWellbores.map(
-          (wellbore) => wellbore.description || ''
-        ),
-      [events]
-    );
-
-    const options: StackedBarChartOptions<NPTEvent> = useMemo(
-      () => ({
-        barColorConfig: {
-          colors,
-          accessor: accessors.NPT_CODE,
-          defaultColor: DEFAULT_NPT_COLOR,
-          noDataBarColor: NO_NPT_DATA_BAR_COLOR,
-        },
-        formatTooltip,
-        legendTitle: GRAPH_LEGEND_TITLE,
-        fixXValuesToDecimalPlaces: 1,
-        noDataAmongSelectedCheckboxesText:
-          NO_DATA_AMONG_SELECTED_NPT_CODES_TEXT,
-        noDataText: NO_DATA_TEXT,
-      }),
+    const handleOnUpdateGraph = useCallback(
+      () => setLastUpdatedTime(now()),
       []
     );
 
-    const handleOnUpdateGraph = useCallback(
-      () => setLastUpdatedTime(now()),
+    const handleOnSelectBar = useCallback(
+      (selectedBarData: SelectedBarData<NPTEvent>) =>
+        dispatch(setNPTGraphSelectedWellboreData(selectedBarData)),
       []
     );
 
@@ -89,13 +67,13 @@ export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
         data={data}
         xAxis={{ accessor: accessors.DURATION, label: GRAPH_X_AXIS_LABEL }}
         yAxis={{ accessor: accessors.WELLBORE_NAME }}
-        yScaleDomain={yScaleDomain}
+        yScaleDomain={selectedSecondaryWellboreNames}
         groupDataInsideBarsBy={accessors.NPT_CODE}
         title={GRAPH_TITLE}
         subtitle={chartSubtitle}
-        options={options}
-        offsetLeftDependencies={[inspectSidebarWidth]}
+        options={NPT_GRAPH_OPTIONS}
         onUpdate={handleOnUpdateGraph}
+        onSelectBar={handleOnSelectBar}
       />
     );
   }

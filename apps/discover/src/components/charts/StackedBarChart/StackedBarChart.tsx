@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
 
 import { ZoomOutButton, ZoomInButton, ResetZoomButton } from './Buttons';
@@ -15,9 +16,8 @@ import {
   DEFAULT_X_AXIS_TICKS,
   DEFAULT_ZOOM_STEP_SIZE,
   DEFAULT_X_AXIS_PLACEMENT,
-  LEGEND_BOTTOM_SPACING,
   X_AXIS_LABELS_HEIGHT,
-  CHART_HEIGHT_CORRECTION,
+  LEGEND_FLOATING_HEIGHT,
 } from './constants';
 import {
   StackedBarChartWrapper,
@@ -32,7 +32,6 @@ import {
 } from './elements';
 import { useChartScales } from './hooks/useChartScales';
 import { useGroupedData } from './hooks/useGroupedData';
-import { useProcessedData } from './hooks/useProcessedData';
 import { useXScaleMaxValue } from './hooks/useXScaleMaxValue';
 import { useZoomableChart } from './hooks/useZoomableChart';
 import { ResetToDefault } from './ResetToDefault';
@@ -43,7 +42,6 @@ import {
   StackedBarChartProps,
 } from './types';
 import {
-  getAbsoluteOffsetLeft,
   getCheckedLegendCheckboxOptions,
   getDefaultBarColorConfig,
   getFilteredData,
@@ -54,25 +52,22 @@ export const StackedBarChart = <T extends DataObject<T>>({
   data,
   xAxis,
   yAxis,
-  yScaleDomain,
+  yScaleDomain: yScaleDomainOriginal,
   groupDataInsideBarsBy,
   title,
   subtitle,
   options,
-  offsetLeftDependencies,
   onUpdate,
-  onClickBarLabel,
+  onSelectBar,
 }: StackedBarChartProps<T>) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [legendCheckboxState, setLegendCheckboxState] =
     useState<LegendCheckboxState>({});
-  const [initialParentElementOffsetLeft, setInitialParentElementOffsetLeft] =
-    useState<number>();
 
   const stringifiedData = JSON.stringify(data);
-  const margins = options?.margins || DEFAULT_MARGINS;
+  const margins = { ...DEFAULT_MARGINS, ...options?.margins };
 
   const xAccessor = xAxis.accessor;
   const yAccessor = yAxis.accessor;
@@ -82,10 +77,10 @@ export const StackedBarChart = <T extends DataObject<T>>({
 
   const barColorConfig =
     options?.barColorConfig ||
-    getDefaultBarColorConfig(options?.legendAccessor);
+    getDefaultBarColorConfig(options?.legendOptions?.accessor);
 
-  const isolateLegend = !isUndefined(options?.isolateLegend)
-    ? options?.isolateLegend
+  const isolateLegend = !isUndefined(options?.legendOptions?.isolate)
+    ? options?.legendOptions?.isolate
     : true;
 
   const initialCheckboxState: LegendCheckboxState = useMemo(() => {
@@ -105,32 +100,21 @@ export const StackedBarChart = <T extends DataObject<T>>({
     setLegendCheckboxState(initialCheckboxState);
   }, [stringifiedData, initialCheckboxState]);
 
-  useEffect(() => {
-    setInitialParentElementOffsetLeft(
-      chartRef.current?.parentElement?.offsetLeft
-    );
-  }, offsetLeftDependencies);
-
-  const chartAbsoluteOffsetLeft = getAbsoluteOffsetLeft(
-    chartRef,
-    margins,
-    chartRef.current?.parentElement?.offsetLeft ||
-      initialParentElementOffsetLeft
-  );
-
   const spacings = {
     x: xAxis.spacing || DEFAULT_X_AXIS_SPACING,
     y: yAxis.spacing || DEFAULT_Y_AXIS_SPACING,
   };
 
-  const processedDataWithFilters = useProcessedData<T>({
-    data: filteredData,
+  const initialGroupedData = useGroupedData<T>({
+    data,
     xAccessor,
+    yAccessor,
+    groupDataInsideBarsBy,
     options,
   });
 
   const groupedData = useGroupedData<T>({
-    data: processedDataWithFilters,
+    data: filteredData,
     xAccessor,
     yAccessor,
     groupDataInsideBarsBy,
@@ -159,13 +143,13 @@ export const StackedBarChart = <T extends DataObject<T>>({
     zoomStepSize: options?.zoomStepSize || DEFAULT_ZOOM_STEP_SIZE,
   });
 
-  const { xScale, yScale } = useChartScales<T>({
+  const { xScale, yScale, yScaleDomain } = useChartScales<T>({
     data: filteredData,
     chartDimensions,
     margins,
     xScaleMaxValue,
     yAccessor,
-    yScaleDomain,
+    yScaleDomain: yScaleDomainOriginal,
   });
 
   const xAxisTicks = useMemo(
@@ -204,6 +188,20 @@ export const StackedBarChart = <T extends DataObject<T>>({
     setLegendCheckboxState(initialCheckboxState);
     if (onUpdate) onUpdate();
   }, [stringifiedData]);
+
+  const handleSelectBar = useCallback(
+    (key: string, index: number) => {
+      if (onSelectBar) {
+        onSelectBar({
+          key,
+          index,
+          data: initialGroupedData[key],
+          groupedData: initialGroupedData,
+        });
+      }
+    },
+    [stringifiedData]
+  );
 
   const ChartDetails = useMemo(
     () => (
@@ -252,8 +250,9 @@ export const StackedBarChart = <T extends DataObject<T>>({
   const ChartContent = useMemo(
     () => (
       <ChartSVG
+        className="chart-content"
         width={chartDimensions.width}
-        height={chartDimensions.height + CHART_HEIGHT_CORRECTION}
+        height={chartDimensions.height}
       >
         <Axes
           scales={{ x: xScale, y: yScale }}
@@ -265,6 +264,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
         <Bars
           groupedData={groupedData}
           scales={{ x: xScale, y: yScale }}
+          yScaleDomain={yScaleDomain}
           accessors={{ x: xAccessor, y: yAccessor }}
           margins={margins}
           barComponentDimensions={{
@@ -272,8 +272,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
             height: spacings.y,
           }}
           options={options}
-          formatTooltip={options?.formatTooltip}
-          onClickBarLabel={onClickBarLabel}
+          onSelectBar={handleSelectBar}
         />
       </ChartSVG>
     ),
@@ -283,72 +282,74 @@ export const StackedBarChart = <T extends DataObject<T>>({
   const ChartLegend = useMemo(() => {
     if (isEmpty(data) || isUndefined(barColorConfig)) return null;
 
-    const offsetBottom =
-      isolateLegend && !isXAxisOnTop
-        ? LEGEND_BOTTOM_SPACING.regular
-        : LEGEND_BOTTOM_SPACING.isolated;
+    const floatingHeight = options?.legendOptions?.overlay
+      ? LEGEND_FLOATING_HEIGHT
+      : undefined;
 
     return (
       <Legend
         checkboxState={legendCheckboxState}
         barColorConfig={barColorConfig}
-        offset={{
-          bottom: offsetBottom,
-          left: chartAbsoluteOffsetLeft,
-        }}
         onChange={handleOnChangeLegendCheckbox}
-        title={options?.legendTitle}
+        title={options?.legendOptions?.title}
         isolateLegend={isolateLegend}
+        floatingHeight={floatingHeight}
       />
     );
-  }, [legendCheckboxState, chartAbsoluteOffsetLeft]);
+  }, [legendCheckboxState]);
 
   const checkedLegendCheckboxOptions =
     getCheckedLegendCheckboxOptions(legendCheckboxState);
 
-  const renderChart = () => (
-    <>
-      {isXAxisOnTop && xAxis.label && (
-        <ChartDetailsContainer>
-          <AxisLabel>{xAxis.label}</AxisLabel>
-        </ChartDetailsContainer>
-      )}
+  const renderChart = () => {
+    const height = isNumber(options?.chartHeight)
+      ? options?.chartHeight
+      : undefined;
 
-      <ChartContainer
-        offsetbottom={spacings.y}
-        enableFullHeight={isolateLegend && isXAxisOnTop}
-      >
-        {isXAxisOnTop && ChartXAxisSticky}
-        {ChartContent}
-        {!isXAxisOnTop && ChartXAxisSticky}
-      </ChartContainer>
+    const offsetbottom =
+      isolateLegend && options?.legendOptions?.overlay && isXAxisOnTop
+        ? spacings.y
+        : undefined;
 
-      {!isXAxisOnTop && xAxis.label && (
-        <ChartDetailsContainer>
-          <AxisLabel>{xAxis.label}</AxisLabel>
-        </ChartDetailsContainer>
-      )}
-    </>
-  );
+    return (
+      <>
+        {isXAxisOnTop && xAxis.label && (
+          <ChartDetailsContainer>
+            <AxisLabel>{xAxis.label}</AxisLabel>
+          </ChartDetailsContainer>
+        )}
+
+        <ChartContainer height={height} offsetbottom={offsetbottom}>
+          {isXAxisOnTop && ChartXAxisSticky}
+          {ChartContent}
+          {!isXAxisOnTop && ChartXAxisSticky}
+        </ChartContainer>
+
+        {!isXAxisOnTop && xAxis.label && (
+          <ChartDetailsContainer>
+            <AxisLabel>{xAxis.label}</AxisLabel>
+          </ChartDetailsContainer>
+        )}
+      </>
+    );
+  };
 
   const renderNoResultsPage = () => (
     <ResetToDefault handleResetToDefault={handleResetToDefault} />
   );
 
   return (
-    <>
-      <StackedBarChartWrapper ref={chartRef}>
-        <ChartDetailsContainer>
-          {ChartDetails}
-          {ChartActions}
-        </ChartDetailsContainer>
+    <StackedBarChartWrapper ref={chartRef} className="stacked-bar-chart">
+      <ChartDetailsContainer className="chart-details">
+        {ChartDetails}
+        {ChartActions}
+      </ChartDetailsContainer>
 
-        {isEmpty(checkedLegendCheckboxOptions)
-          ? renderNoResultsPage()
-          : renderChart()}
-      </StackedBarChartWrapper>
+      {isEmpty(checkedLegendCheckboxOptions)
+        ? renderNoResultsPage()
+        : renderChart()}
 
       {ChartLegend}
-    </>
+    </StackedBarChartWrapper>
   );
 };

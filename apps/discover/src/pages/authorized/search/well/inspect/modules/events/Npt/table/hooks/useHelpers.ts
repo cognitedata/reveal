@@ -38,10 +38,11 @@ export const useNptWellboresTableColumns = () => {
   ];
 };
 
-export const useNptEventsTableColumns = () => {
+export const useNptEventsTableColumns = (withHeader = false) => {
   return [
     {
       id: accessors.NPT_CODE,
+      Header: withHeader && 'NPT code',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original),
     },

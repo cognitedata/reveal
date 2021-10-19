@@ -1,7 +1,7 @@
 import { Margins, AxisPlacement, Dimensions } from './types';
 
 export const BAR_HEIGHT = 32;
-export const CHART_HEIGHT_CORRECTION = -25;
+export const LEGEND_FLOATING_HEIGHT = 24;
 export const CHART_BACKGROUND_COLOR = 'var(--cogs-bg-accent)';
 export const DEFAULT_BAR_COLOR = '#808080';
 export const DEFAULT_NO_DATA_BAR_COLOR = '#00000010';
@@ -10,7 +10,7 @@ export const TICK_PADDING = 12;
 
 export const LEGEND_BOTTOM_SPACING = {
   regular: 24,
-  isolated: 32,
+  isolated: 44,
 };
 
 export const X_AXIS_LABELS_HEIGHT = {

@@ -128,3 +128,19 @@ export const useNptEventsFor3D = () => {
     return { isLoading: false, events };
   }, [data]);
 };
+
+export const useSecondarySelectedOrHoveredWellboreNames = () => {
+  const wellbores = useSecondarySelectedOrHoveredWellbores();
+  return useMemo(
+    () => wellbores.map((wellbore) => wellbore.description || ''),
+    [wellbores]
+  );
+};
+
+export const useSelectedSecondaryWellboreNamesWithoutNptData = () => {
+  const wellbores = useSelectedSecondaryWellboresWithoutNptData();
+  return useMemo(
+    () => wellbores.map((wellbore) => wellbore.description || ''),
+    [wellbores]
+  );
+};

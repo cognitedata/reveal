@@ -8,10 +8,11 @@ import { Center, FlexColumn, sizes } from 'styles/layout';
 import { BAR_HEIGHT, CHART_BACKGROUND_COLOR } from './constants';
 
 export const StackedBarChartWrapper = styled.div`
+  position: relative;
+  height: 100%;
   background: ${CHART_BACKGROUND_COLOR};
   border-radius: ${sizes.small};
   padding: ${sizes.normal};
-  height: calc(100vh - 208px);
 `;
 
 export const ChartStickyElement = styled.svg`
@@ -51,29 +52,29 @@ export const ChartActionButtonsContainer = styled.div`
 export const ChartTitle = styled.span`
   color: var(--cogs-text-primary);
   font-size: ${sizes.normal};
-  font-weight: 600;
-  margin-bottom: ${sizes.extraSmall};
+  font-weight: 500;
 `;
 
 export const ChartSubtitle = styled.span`
   color: var(--cogs-text-hint);
   font-size: 10px;
-  margin-bottom: ${sizes.normal};
 `;
 
 export const AxisLabel = styled(Body)`
   color: var(--cogs-text-hint) !important;
   font-size: 12px !important;
   font-weight: 500;
-  margin: ${sizes.small};
-  margin-top: 0px;
+  margin-top: ${sizes.small};
+  margin-bottom: -${sizes.small};
 `;
 
 export const ChartContainer = styled.div`
   overflow: scroll;
-  ${(props: { offsetbottom: number; enableFullHeight: boolean }) => `
-    padding-bottom: ${props.enableFullHeight ? props.offsetbottom : 0}px;
-    max-height: calc(100vh - ${props.enableFullHeight ? 320 : 400}px);
+  margin-top: ${sizes.normal};
+  margin-bottom: -${sizes.extraSmall};
+  ${(props: { height: number; offsetbottom: number }) => `
+    height: ${props.height}px;
+    padding-bottom: ${props.offsetbottom}px;
   `}
   .domain {
     display: none;
@@ -112,20 +113,30 @@ export const ChartContainer = styled.div`
 export const ChartSVG = styled.svg``;
 
 export const BarComponent = styled.foreignObject`
-  padding-top: ${sizes.small};
+  padding-top: ${sizes.normal};
 `;
 
 export const BarLabel = styled(Body)`
   display: flex;
   align-items: center;
-  color: var(--cogs-text-secondary) !important;
+  color: var(--cogs-text-primary) !important;
   padding: ${sizes.extraSmall} ${sizes.small};
   margin-bottom: ${sizes.extraSmall};
-  cursor: pointer;
   width: fit-content;
+  transition: 0.3s all;
+  cursor: default;
   i {
     margin-left: ${sizes.small};
   }
+  ${(props: { disabled: boolean }) =>
+    props.disabled
+      ? `color: var(--cogs-text-secondary) !important;`
+      : `
+    cursor: pointer;
+    :hover {
+      opacity: 0.7 !important;
+    }
+  `}
 `;
 
 export const Bar = styled(Center)`
@@ -136,12 +147,16 @@ export const Bar = styled(Center)`
   border-width: 2px 0px;
   border-style: solid;
   border-color: ${CHART_BACKGROUND_COLOR};
-  cursor: pointer;
-  ${(props: { fill: string; width: number; rounded: boolean }) => `
+  ${(props: {
+    fill: string;
+    width: number;
+    rounded: boolean;
+    disabled: boolean;
+  }) => `
     background: ${props.fill};
     width: ${props.width}px;
-
     ${props.rounded && `border-radius: ${sizes.extraSmall}`};
+    ${!props.disabled && `cursor: pointer`};
   `};
 `;
 
@@ -163,11 +178,15 @@ export const BarTooltip = styled(Tooltip)`
 export const ChartLegend = styled.div`
   flex-direction: row;
   width: fit-content;
-  position: fixed;
-  ${(props: { offset?: { bottom: number; left: number } }) => `
-    bottom: ${props.offset?.bottom}px;
-    left: calc(${props.offset?.left}px + calc(100% - ${props.offset?.left}px) / 2);
+  position: relative;
+  ${(props: { floatingHeight?: number }) =>
+    props.floatingHeight &&
+    `
+    position: absolute;
+    bottom: ${props.floatingHeight}px;
   `}
+  left: 50%;
+  margin-top: ${sizes.medium};
   transform: translateX(-50%);
   color: var(--cogs-text-secondary);
   border-radius: ${sizes.small};
@@ -193,11 +212,11 @@ export const LegendTitle = styled.span`
 `;
 
 export const ResetToDefaultContainer = styled(FlexColumn)`
-  position: relative;
-  margin-top: calc(calc(100vh - 430px) / 2);
-  transform: translateY(-50%);
+  justify-content: center;
+  align-items: center;
+  height: calc(100% - 120px);
 `;
 
-export const ResetToDefaultButtonWrapper = styled(Center)`
-  margin-top: 40px;
+export const EmptyStateContainer = styled.div`
+  margin-bottom: 40px;
 `;

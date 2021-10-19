@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import uniqueId from 'lodash/uniqueId';
+
 import { Checkbox } from '@cognite/cogs.js';
 
 import { FlexColumn, FlexRow } from 'styles/layout';
@@ -10,21 +12,19 @@ import { LegendProps } from '../types';
 export const Legend = ({
   checkboxState,
   barColorConfig,
-  offset,
   onChange,
   title,
   isolateLegend = true,
+  floatingHeight,
 }: LegendProps) => {
   const { colors, defaultColor } = barColorConfig;
 
-  const legendCheckboxOptions = Object.keys(checkboxState);
-
   const checkboxes = useMemo(
     () =>
-      legendCheckboxOptions.map((option) => (
+      Object.keys(checkboxState).map((option) => (
         <Checkbox
           key={option}
-          name={option}
+          name={uniqueId(option)}
           checked={checkboxState[option]}
           color={colors[option] || defaultColor}
           onChange={(checked: boolean) => onChange(option, checked)}
@@ -33,7 +33,7 @@ export const Legend = ({
           {option}
         </Checkbox>
       )),
-    [legendCheckboxOptions, checkboxState]
+    [checkboxState]
   );
 
   const LegendContent = (
@@ -48,7 +48,7 @@ export const Legend = ({
   );
 
   return (
-    <ChartLegend offset={offset}>
+    <ChartLegend className="chart-legend" floatingHeight={floatingHeight}>
       {isolateLegend ? LegendInsideIsolatedBox : LegendContent}
     </ChartLegend>
   );

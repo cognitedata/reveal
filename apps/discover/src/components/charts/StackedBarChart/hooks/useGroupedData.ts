@@ -5,6 +5,8 @@ import groupBy from 'lodash/groupBy';
 import { GroupedData, StackedBarChartOptions } from '../types';
 import { sumObjectsByKey } from '../utils';
 
+import { useProcessedData } from './useProcessedData';
+
 export const useGroupedData = <T>({
   data,
   xAccessor,
@@ -18,8 +20,14 @@ export const useGroupedData = <T>({
   groupDataInsideBarsBy?: string;
   options?: StackedBarChartOptions<T>;
 }) => {
+  const processedData = useProcessedData<T>({
+    data,
+    xAccessor,
+    options,
+  });
+
   return useMemo(() => {
-    const groupedDataWithoutSummedValues = groupBy(data, yAccessor);
+    const groupedDataWithoutSummedValues = groupBy(processedData, yAccessor);
 
     if (!groupDataInsideBarsBy) return groupedDataWithoutSummedValues;
 
@@ -35,5 +43,5 @@ export const useGroupedData = <T>({
     });
 
     return dataWithSummedValues;
-  }, [data]);
+  }, [processedData]);
 };

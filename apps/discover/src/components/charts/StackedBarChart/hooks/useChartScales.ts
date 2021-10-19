@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { scaleBand, scaleLinear } from 'd3-scale';
+import uniq from 'lodash/uniq';
 
 import { Dimensions, Margins } from '../types';
 
@@ -10,7 +11,7 @@ export const useChartScales = <T>({
   margins,
   xScaleMaxValue,
   yAccessor,
-  yScaleDomain,
+  yScaleDomain: yScaleDomainOriginal,
 }: {
   data: T[];
   chartDimensions: Dimensions;
@@ -19,20 +20,25 @@ export const useChartScales = <T>({
   yAccessor: keyof T;
   yScaleDomain?: string[];
 }) => {
+  const xScaleDomain = [0, xScaleMaxValue];
+
+  const yScaleDomainData =
+    yScaleDomainOriginal ||
+    data.map((dataElement) => String(dataElement[yAccessor]));
+
+  const yScaleDomain = uniq(yScaleDomainData);
+
   const xScale = useMemo(() => {
     return scaleLinear()
-      .domain([0, xScaleMaxValue])
+      .domain(xScaleDomain)
       .range([margins.left, chartDimensions.width - margins.right]);
   }, [xScaleMaxValue, margins, chartDimensions]);
 
   const yScale = useMemo(() => {
-    const domain =
-      yScaleDomain || data.map((dataElement) => String(dataElement[yAccessor]));
-
     return scaleBand()
-      .domain(domain.slice().reverse())
+      .domain(yScaleDomain.slice().reverse())
       .range([chartDimensions.height - margins.bottom, margins.top]);
   }, [data, chartDimensions]);
 
-  return { xScale, yScale };
+  return { xScale, yScale, xScaleDomain, yScaleDomain };
 };

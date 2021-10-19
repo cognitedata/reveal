@@ -20,9 +20,8 @@ export interface StackedBarChartProps<T> {
   title?: string;
   subtitle?: string;
   options?: StackedBarChartOptions<T>;
-  offsetLeftDependencies?: any[];
   onUpdate?: () => void;
-  onClickBarLabel?: (props: ClickedBarLabelCallbackProps<T>) => void;
+  onSelectBar?: (selectedBarData: SelectedBarData<T>) => void;
 }
 
 export interface AxesProps {
@@ -41,6 +40,7 @@ export interface BarsProps<T> {
     x: AxisScale;
     y: AxisScale;
   };
+  yScaleDomain: string[];
   accessors: {
     x: keyof T;
     y: keyof T;
@@ -49,8 +49,7 @@ export interface BarsProps<T> {
   margins: Margins;
   barComponentDimensions: Dimensions;
   options?: StackedBarChartOptions<T>;
-  formatTooltip?: (data: T) => string;
-  onClickBarLabel?: (props: ClickedBarLabelCallbackProps<T>) => void;
+  onSelectBar: (key: string, index: number) => void;
 }
 
 export interface AxisProps {
@@ -73,16 +72,23 @@ export interface XAxisPlacement {
 }
 
 export interface StackedBarChartOptions<T> {
+  chartHeight?: number | 'fit-content';
   barColorConfig?: ColorConfig;
-  legendAccessor?: string;
-  isolateLegend?: boolean;
-  margins?: Margins;
+  legendOptions?: LegendOptions;
+  margins?: Partial<Margins>;
+  hideBarLabels?: boolean;
   formatTooltip?: (data: T) => string;
-  legendTitle?: string;
   fixXValuesToDecimalPlaces?: number;
   zoomStepSize?: number;
   noDataAmongSelectedCheckboxesText?: string;
   noDataText?: string;
+}
+
+export interface LegendOptions {
+  title?: string;
+  accessor?: string;
+  isolate?: boolean;
+  overlay?: boolean;
 }
 
 export interface Margins {
@@ -108,19 +114,16 @@ export interface LegendProps {
   checkboxState: LegendCheckboxState;
   barColorConfig: ColorConfig;
   onChange: (option: string, checked: boolean) => void;
-  offset?: {
-    bottom: number;
-    left: number;
-  };
   title?: string;
   isolateLegend?: boolean;
+  floatingHeight?: number;
 }
 
 export interface LegendCheckboxState {
   [option: string]: boolean;
 }
 
-export interface ClickedBarLabelCallbackProps<T> {
+export interface SelectedBarData<T> {
   key: string;
   index: number;
   data: T[];

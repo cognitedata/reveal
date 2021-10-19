@@ -8,7 +8,7 @@ import pickBy from 'lodash/pickBy';
 import { caseInsensitiveSort, sortObjectsAscending } from '_helpers/sort';
 
 import { DEFAULT_BAR_COLOR, DEFAULT_NO_DATA_BAR_COLOR } from './constants';
-import { ColorConfig, DataObject, LegendCheckboxState, Margins } from './types';
+import { ColorConfig, DataObject, LegendCheckboxState } from './types';
 
 export const getStylePropertyValue = (
   ref: RefObject<HTMLElement>,
@@ -20,26 +20,6 @@ export const getStylePropertyValue = (
     return propertyValue;
   }
   return '';
-};
-
-export const getAbsoluteOffsetLeft = (
-  chartRef: RefObject<HTMLElement>,
-  chartMargins: Margins,
-  relativeRefX?: number
-) => {
-  if (chartRef.current) {
-    const chartPadding = parseFloat(getStylePropertyValue(chartRef, 'padding'));
-    const chartActualPaddingLeft = chartPadding + chartMargins.left;
-    const chartOffsetLeft = chartRef.current.offsetLeft;
-    const totalOffsetLeft = chartOffsetLeft + chartActualPaddingLeft;
-
-    const absoluteOffsetLeft = relativeRefX
-      ? relativeRefX - totalOffsetLeft
-      : totalOffsetLeft;
-
-    return absoluteOffsetLeft;
-  }
-  return 0;
 };
 
 export const sumObjectsByKey = <T>(
@@ -209,4 +189,10 @@ export const getDefaultBarColorConfig = (
     defaultColor: DEFAULT_BAR_COLOR,
     noDataBarColor: DEFAULT_NO_DATA_BAR_COLOR,
   };
+};
+
+export const isNoDataAvailable = <T>(data: T[], accessor: keyof T) => {
+  if (!data.length) return true;
+  if (data.length > 1) return false;
+  return isUndefined(data[0][accessor]);
 };

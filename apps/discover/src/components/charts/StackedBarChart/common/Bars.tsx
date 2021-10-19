@@ -1,6 +1,4 @@
-import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import isUndefined from 'lodash/isUndefined';
 import uniqueId from 'lodash/uniqueId';
 import { followCursor } from 'tippy.js';
 
@@ -19,18 +17,19 @@ import {
   getBarFillColorForDataElement,
   getDefaultBarColorConfig,
   getStackedData,
+  isNoDataAvailable,
 } from '../utils';
 
 export const Bars = <T extends DataObject<T>>({
   groupedData,
   scales,
+  yScaleDomain,
   accessors,
   legendAccessor,
   margins,
   barComponentDimensions,
   options,
-  formatTooltip,
-  onClickBarLabel,
+  onSelectBar,
 }: BarsProps<T>) => {
   const barColorConfig =
     options?.barColorConfig || getDefaultBarColorConfig(legendAccessor);
@@ -51,7 +50,7 @@ export const Bars = <T extends DataObject<T>>({
 
   return (
     <g>
-      {Object.keys(groupedData).map((key, index) => {
+      {yScaleDomain.map((key, index) => {
         const data = groupedData[key];
         const maxValue = Math.max(
           ...data.map((dataElement) => dataElement[xAccessor])
@@ -64,9 +63,13 @@ export const Bars = <T extends DataObject<T>>({
           stackedData,
           'stackedWidth'
         );
-        const handleOnClickBarLabel = () => {
-          if (onClickBarLabel) {
-            onClickBarLabel({ key, index, data, groupedData });
+        const noDataAvailable = isNoDataAvailable<T>(
+          orderedData,
+          barColorConfig?.accessor
+        );
+        const handleSelectBar = () => {
+          if (!noDataAvailable) {
+            onSelectBar(key, index);
           }
         };
 
@@ -77,17 +80,22 @@ export const Bars = <T extends DataObject<T>>({
             y={yScale(data[0][yAccessor])}
             width={barComponentDimensions.width}
             height={barComponentDimensions.height}
+            onClick={handleSelectBar}
           >
-            <BarLabel
-              level={2}
-              default
-              strong
-              data-testid="bar-label"
-              onClick={handleOnClickBarLabel}
-            >
-              {key}
-              <Icon type="ChevronRightCompact" size={14} />
-            </BarLabel>
+            {!options?.hideBarLabels && (
+              <BarLabel
+                level={2}
+                default
+                strong
+                disabled={noDataAvailable}
+                data-testid="bar-label"
+              >
+                {key}
+                {!noDataAvailable && (
+                  <Icon type="ChevronRightCompact" size={14} />
+                )}
+              </BarLabel>
+            )}
 
             {orderedData.map((dataElement) => {
               const { stackedWidth } = dataElement;
@@ -99,8 +107,8 @@ export const Bars = <T extends DataObject<T>>({
 
               const rounded = noDataToStack || parseFloat(xValue) === maxValue;
 
-              const tooltip = formatTooltip
-                ? formatTooltip(dataElement)
+              const tooltip = options?.formatTooltip
+                ? options.formatTooltip(dataElement)
                 : xValue;
 
               const barFillColor = getBarFillColorForDataElement(
@@ -109,11 +117,9 @@ export const Bars = <T extends DataObject<T>>({
                 noDataToStack
               );
 
-              let barText = noDataAmongSelectedCheckboxesText;
-
-              if (isUndefined(get(dataElement, barColorConfig?.accessor))) {
-                barText = noDataText;
-              }
+              const barText = noDataAvailable
+                ? noDataText
+                : noDataAmongSelectedCheckboxesText;
 
               if (!stackedWidth && !noDataToStack) return null;
 
@@ -130,6 +136,7 @@ export const Bars = <T extends DataObject<T>>({
                     width={width}
                     fill={barFillColor}
                     rounded={rounded}
+                    disabled={noDataToStack}
                     data-testid="bar"
                   >
                     {noDataToStack && (

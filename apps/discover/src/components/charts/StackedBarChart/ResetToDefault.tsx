@@ -6,10 +6,7 @@ import { BaseButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 
 import { EMPTY_STATE_TEXT, RESET_TO_DEFAULT_BUTTON_TEXT } from './constants';
-import {
-  ResetToDefaultContainer,
-  ResetToDefaultButtonWrapper,
-} from './elements';
+import { ResetToDefaultContainer, EmptyStateContainer } from './elements';
 
 export interface Props {
   handleResetToDefault?: () => void;
@@ -21,15 +18,15 @@ export const ResetToDefault: React.FC<Props> = React.memo(
 
     return (
       <ResetToDefaultContainer>
-        <EmptyState emptySubtitle={t(EMPTY_STATE_TEXT)} />
+        <EmptyStateContainer>
+          <EmptyState emptySubtitle={t(EMPTY_STATE_TEXT)} />
+        </EmptyStateContainer>
 
-        <ResetToDefaultButtonWrapper>
-          <BaseButton
-            type="primary"
-            onClick={handleResetToDefault}
-            text={t(RESET_TO_DEFAULT_BUTTON_TEXT)}
-          />
-        </ResetToDefaultButtonWrapper>
+        <BaseButton
+          type="primary"
+          onClick={handleResetToDefault}
+          text={t(RESET_TO_DEFAULT_BUTTON_TEXT)}
+        />
       </ResetToDefaultContainer>
     );
   }

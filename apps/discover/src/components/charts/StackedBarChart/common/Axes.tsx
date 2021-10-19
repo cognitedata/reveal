@@ -14,7 +14,7 @@ export const Axes = ({
     placement: AxisPlacement.Top,
     scale: xScale,
     translate: `translate(0, 0)`,
-    tickSize: chartDimensions.height - margins.top - margins.bottom,
+    tickSize: chartDimensions.height,
     ticks,
   };
 

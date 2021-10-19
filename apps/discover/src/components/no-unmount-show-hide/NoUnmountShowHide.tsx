@@ -4,12 +4,13 @@ import { NoUnmountShowHideContainer } from './elements';
 
 export interface NoUnmountShowHideProps {
   show: boolean;
+  fullHeight?: boolean;
 }
 
 export const NoUnmountShowHide: React.FC<NoUnmountShowHideProps> = React.memo(
-  ({ show, children }) => {
+  ({ show, fullHeight, children }) => {
     return (
-      <NoUnmountShowHideContainer show={show}>
+      <NoUnmountShowHideContainer show={show} fullHeight={fullHeight}>
         {children}
       </NoUnmountShowHideContainer>
     );

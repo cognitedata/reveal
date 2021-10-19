@@ -58,5 +58,5 @@ export const ChildrenContainer = styled.div`
 `;
 
 export const SubtitleContainer = styled.div`
-  padding: 0px 41%;
+  width: 250px;
 `;
