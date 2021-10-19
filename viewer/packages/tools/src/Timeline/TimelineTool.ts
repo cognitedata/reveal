@@ -14,7 +14,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _timelineKeyframes: TimelineKeyframe[];
   private _intervalId: any = 0;
-  private _activeTimelineKeyframes: TimelineKeyframe[];
+  private _activeTimelineKeyframesCount: number;
   private _allDates: Date[];
   private _activeIndex: number;
 
@@ -23,7 +23,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
     this._model = cadModel;
     this._timelineKeyframes = new Array<TimelineKeyframe>();
-    this._activeTimelineKeyframes = new Array<TimelineKeyframe>();
+    this._activeTimelineKeyframesCount = 0;
     this._allDates = new Array<Date>();
     this._activeIndex = 0;
   }
@@ -37,6 +37,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
     this._timelineKeyframes.push(new TimelineKeyframe(this._model, date, nodeCollection, nodeAppearance));
     this._allDates.push(date);
+    this.sortTimelineKeyframesByDates();
   }
 
   /**
@@ -55,12 +56,23 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
   /**
    * Overrides styling of cadModel to match styling
-   * @param index - Index of the TimelineKeyframe to apply the styling on the CAD Model
+   * @param date - Date of the TimelineKeyframe to apply the styling on the CAD Model
    */
-  private styleByDate(index: number) {
-    if (this._activeTimelineKeyframes.length > 0) {
-      const currentTimeframe = this._activeTimelineKeyframes[index];
-      const previousTimeframe = this._activeTimelineKeyframes[index - 1];
+  private styleByDate(date: Date) {
+    if (this._timelineKeyframes.length > 0) {
+      this._activeIndex = this._timelineKeyframes.findIndex(obj => obj.getTimelineKeyframeDate() === date);
+
+      // Date provided not found than get the closest downward date
+      // e.g if you have keyframes "1000, 2000, 3000" the result from styleByDate(2500) should be styles from 2000
+      if (this._activeIndex === -1) {
+        const timelineframe = this._timelineKeyframes.reduce((prev, curr) =>
+          date >= curr.getTimelineKeyframeDate() ? curr : prev
+        );
+        this._activeIndex = this._timelineKeyframes.findIndex(obj => obj === timelineframe);
+      }
+
+      const currentTimeframe = this._timelineKeyframes[this._activeIndex];
+      const previousTimeframe = this._timelineKeyframes[this._activeIndex - 1];
 
       if (previousTimeframe) {
         previousTimeframe.deactivate();
@@ -77,19 +89,18 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    */
   public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
     this.stopPlayback();
-    this.sortTimelineKeyframesByDates();
-    this.calculateAllAnimateDates(startDate, endDate);
-    this.styleByDate(this._activeIndex);
+    this.calculateTimelineKeyframeCount(startDate, endDate);
+    this.styleByDate(startDate);
     this._activeIndex++;
 
     this._intervalId = setInterval(() => {
-      if (this._activeTimelineKeyframes.length >= this._activeIndex) {
-        this.styleByDate(this._activeIndex);
+      if (this._allDates[this._activeIndex] <= endDate) {
+        this.styleByDate(this._allDates[this._activeIndex]);
         this._activeIndex++;
       } else {
         this.stopPlayback();
       }
-    }, totalDurationInMilliSeconds / this._activeTimelineKeyframes.length);
+    }, totalDurationInMilliSeconds / this._activeTimelineKeyframesCount);
   }
 
   /**
@@ -116,9 +127,11 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Sort the Timeline Keyframe by their Date
    */
   private sortTimelineKeyframesByDates() {
-    this._timelineKeyframes.sort((a: TimelineKeyframe, b: TimelineKeyframe) => {
-      return a.getTimelineKeyframeDate().getTime() - b.getTimelineKeyframeDate().getTime();
-    });
+    if (this._timelineKeyframes.length > 1) {
+      this._timelineKeyframes.sort((a: TimelineKeyframe, b: TimelineKeyframe) => {
+        return a.getTimelineKeyframeDate().getTime() - b.getTimelineKeyframeDate().getTime();
+      });
+    }
   }
 
   /**
@@ -129,7 +142,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
     if (this._allDates.length > 0) {
       return this._allDates;
     }
-    return [] as Date[];
+    return [];
   }
 
   /**
@@ -140,29 +153,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
     if (this._timelineKeyframes.length > 0) {
       return this._timelineKeyframes;
     }
-    return [] as TimelineKeyframe[];
-  }
-
-  /**
-   * Set Styles for Set of nodes by Dates
-   * @param dates List of TimelineKeyframe Dates or a Date to apply Style
-   * @param nodeCollection Node set to apply the Styles
-   * @param nodeAppearance Style to assign to the node collection
-   */
-  public setNodeCollectionAndAppearanceByDates(
-    dates: Date | Date[],
-    nodeCollection: NodeCollectionBase,
-    nodeAppearance: NodeAppearance
-  ) {
-    let dateList = new Array<Date>();
-    dateList = dateList.concat(dates);
-
-    for (const date of dateList) {
-      const timelineKeyframe = this._timelineKeyframes.find(obj => obj.getTimelineKeyframeDate() === date);
-      if (timelineKeyframe) {
-        timelineKeyframe.assignStyledNodeCollection(nodeCollection, nodeAppearance);
-      }
-    }
+    return [];
   }
 
   /**
@@ -171,7 +162,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param nodeCollection Node set to apply the Styles
    * @param nodeAppearance Style to assign to the node collection
    */
-  public setNodeCollectionAndAppearanceByTimelineKeyframes(
+  public assignStyledNodeCollection(
     timelineKeyframes: TimelineKeyframe | TimelineKeyframe[],
     nodeCollection: NodeCollectionBase,
     nodeAppearance: NodeAppearance
@@ -185,15 +176,15 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Calculate the TimelineKeyframes list from the given start date to end date
+   * Calculate the TimelineKeyframes Count from the given start date to end date
    * @param startDate TimelineKeyframe date to start the Playback of TimelineKeyframes
    * @param endDate TimelineKeyframe date to stop the Playback of TimelineKeyframes
    */
-  private calculateAllAnimateDates(startDate: Date, endDate: Date) {
+  private calculateTimelineKeyframeCount(startDate: Date, endDate: Date) {
     if (this._timelineKeyframes.length > 1) {
-      this._activeTimelineKeyframes = this._timelineKeyframes.filter(
+      this._activeTimelineKeyframesCount = this._timelineKeyframes.filter(
         obj => obj.getTimelineKeyframeDate() >= startDate && obj.getTimelineKeyframeDate() <= endDate
-      );
+      ).length;
     }
   }
 

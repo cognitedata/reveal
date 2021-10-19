@@ -91,21 +91,10 @@ const allTimelineKeyframes = timeline.getAllTimelineKeyframes();
 
 ### Assign Styles to additional Nodes
 Tool provides feature to add additional styles to a TimelineKeyframe or number of TimelineKeyframes or to all of the TimelineKeyframes.
-We have two options to set additional styles to nodes. First through Dates and through TimelineKeyframes.
+We can set additional styles to nodes by TimelineKeyframes.
 
-#### Set additional Styles for Node through Dates
-`setNodeCollectionAndAppearanceByDates(dates: Date | Date[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
-- `dates` - Date of a TimelineKeyFrame or list of Dates from any existing TimelineKeyframes.
-- `nodeCollection` - Set of nodes to be rendered for the TimelineKeyframe.
-- `nodeAppearance` - Styling of the nodes.
-
-```js runnable
-const allDates = timeline.getAllDateInTimelineFrames();
-
-timeline.setNodeCollectionAndAppearanceByDates(allDates, stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
-```
 #### Set additional Styles for Node through TimelineKeyframes
-`setNodeCollectionAndAppearanceByTimelineKeyframes(timelineKeyframes: TimelineKeyframe | TimelineKeyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+`assignStyledNodeCollection(timelineKeyframes: TimelineKeyframe | TimelineKeyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
 - `timelineKeyframes` - Date of a TimelineKeyFrame or list of Dates from any existing TimelineKeyframes.
 - `nodeCollection` - Set of nodes to be rendered for the TimelineKeyframe.
 - `nodeAppearance` - Styling of the nodes.
@@ -113,5 +102,5 @@ timeline.setNodeCollectionAndAppearanceByDates(allDates, stuMechNodes, { renderG
 ```js runnable
 const allTimelineKeyframes = timeline.getAllTimelineKeyframes();
 
-timeline.setNodeCollectionAndAppearanceByTimelineKeyframes(allTimelineKeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
+timeline.assignStyledNodeCollection(allTimelineKeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
 ```
