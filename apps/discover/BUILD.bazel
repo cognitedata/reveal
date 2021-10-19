@@ -340,6 +340,7 @@ react_scripts(
         "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
         "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
         "INLINE_RUNTIME_CHUNK": "false",
+        "REACT_APP_VERSION": "$npm_package_version",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
@@ -417,6 +418,7 @@ react_scripts(
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
+        "REACT_APP_VERSION": "$npm_package_version",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
@@ -455,6 +457,7 @@ react_scripts(
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
+        "REACT_APP_VERSION": "$npm_package_version",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },

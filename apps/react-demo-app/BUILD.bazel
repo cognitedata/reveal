@@ -227,6 +227,7 @@ react_scripts(
         "REACT_APP_RELEASE_ID": "REACT_APP_RELEASE_ID_VALUE",
         "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
         "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
+        "REACT_APP_VERSION": "$npm_package_version",
         "INLINE_RUNTIME_CHUNK": "false",
         ### END
     },
@@ -301,6 +302,8 @@ react_scripts(
         "REACT_APP_MIXPANEL_DEBUG": "false",
         # Specify your Mixpanel project token used in users analytics
         "REACT_APP_MIXPANEL_TOKEN": "1cc1cdc82fb93ec9a20a690216de41e4",
+        "REACT_APP_VERSION": "$npm_package_version",
+        "NODE_OPTIONS": "--max_old_space_size=4096",
     },
     tags = [
         # This tag instructs ibazel to pipe into stdin a event describing actions.

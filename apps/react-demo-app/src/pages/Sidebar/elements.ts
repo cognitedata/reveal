@@ -3,8 +3,7 @@ import { sizes } from 'styles/layout';
 
 export const SettingsContent = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 20px;
   width: 100%;
 `;
 

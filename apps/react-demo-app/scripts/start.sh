@@ -42,7 +42,7 @@ function cleanup {
 
 trap cleanup EXIT
 
-../../node_modules/.bin/react-scripts start
+../../node_modules/.bin/react-scripts --max-old-space-size=4096 start
 
 EXIT_CODE=$?
 
