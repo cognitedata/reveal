@@ -99,7 +99,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(generateSectorTree(2, 2));
-    const cadNode = new CadNode(model, materialManager);
+    const cadNode = new CadNode(model, materialManager, { prioritizedAreasUpdatedCallback: () => {} });
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
     // culler.(model);
     coverageUtil.orderSectorsByVisibility = () => {
@@ -141,7 +141,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(generateSectorTree(2, 2));
-    const cadNode = new CadNode(model, materialManager);
+    const cadNode = new CadNode(model, materialManager, { prioritizedAreasUpdatedCallback: () => {} });
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
     // culler.(model);
     coverageUtil.orderSectorsByVisibility = () => {

@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadNode, SuggestedCameraConfig } from './src/CadNode';
+export { CadNode, ModelUpdateCallbackCollection, SuggestedCameraConfig } from './src/CadNode';
 export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
 
 export { NodeTransformProvider } from './src/material-manager/styling/NodeTransformProvider';
@@ -27,6 +27,8 @@ export { CadLoadingHints } from './src/CadLoadingHints';
 export { EffectRenderManager } from './src/material-manager/rendering/EffectRenderManager';
 export { CadMaterialManager } from './src/material-manager/CadMaterialManager';
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
+
+export { PrioritizedArea } from './src/sector/culling/types';
 
 export { LoadingState } from './src/utilities/types';
 

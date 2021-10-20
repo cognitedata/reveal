@@ -200,6 +200,16 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Specifies a set of prioritized nodes
+   * Will delete previously added sets for this model.
+   * @param nodeCollection
+   * @param priority
+   */
+  setPrioritizedNodes(nodeCollection: NodeCollectionBase, priority: number = 2) {
+    this.cadNode.setPrioritizedNodes(nodeCollection, priority);
+  }
+
+  /**
    * Maps a position retrieved from the CDF API (e.g. 3D node information) to
    * coordinates in "ThreeJS model space". This is necessary because CDF has a right-handed
    * Z-up coordinate system while ThreeJS uses a right-hand Y-up coordinate system.

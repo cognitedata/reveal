@@ -8,7 +8,7 @@ import { assertNever } from '@reveal/utilities';
 import { ConsumedSector } from '@reveal/cad-parsers';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
-import { CadNode } from './CadNode';
+import { CadNode, ModelUpdateCallbackCollection } from './CadNode';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
@@ -170,6 +170,12 @@ export class CadModelUpdateHandler {
 
   getLoadingStateObserver(): Observable<LoadingState> {
     return this._progressSubject;
+  }
+
+  getUpdateCallbacks(): ModelUpdateCallbackCollection {
+    return {
+      prioritizedAreasUpdatedCallback: areas => (this.prioritizedAreas = areas)
+    };
   }
 
   /**
