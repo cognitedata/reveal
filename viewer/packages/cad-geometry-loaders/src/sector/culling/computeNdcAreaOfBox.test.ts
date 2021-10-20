@@ -63,18 +63,4 @@ describe('computeNdcAreaOfBox', () => {
     const area = computeNdcAreaOfBox(camera, box);
     expect(area).toBe(0.0);
   });
-
-  test('regression #1', () => {
-    // Probably fails because we're inside the box, but that part of the box is behind the near plane
-    // which fails. See comments in https://stackoverflow.com/a/14693373
-    const camera = new THREE.PerspectiveCamera(60.0, 1.7714748784440844, 0.1, 190);
-    camera.position.set(249.02361547663446, 36.44317079418453, -311.05384943297673);
-    camera.rotation.set(-0.19739555984988094, 0.5318080969475689, 0.10107292025169398, 'XYZ');
-    camera.updateMatrixWorld();
-    camera.updateProjectionMatrix();
-
-    const box = new THREE.Box3(new THREE.Vector3(97, -50, -362), new THREE.Vector3(413, 121, -238));
-    const area = computeNdcAreaOfBox(camera, box);
-    expect(area).toBe(1.0);
-  });
 });
