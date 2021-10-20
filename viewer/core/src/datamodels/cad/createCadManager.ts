@@ -8,12 +8,13 @@ import { CadManager } from './CadManager';
 import { CadModelFactory } from './CadModelFactory';
 import {
   CadModelUpdateHandler,
-  CadMaterialManager,
   CachedRepository,
   SimpleAndDetailedToSector3D,
   createDefaultSectorCuller,
   OccludingGeometryProvider
 } from '@reveal/cad-geometry-loaders';
+
+import { CadMaterialManager } from '@reveal/rendering';
 
 import { RevealOptions } from '../../public/types';
 

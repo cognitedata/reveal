@@ -27,7 +27,6 @@ module.exports = env => {
 
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });
-
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
@@ -83,7 +82,11 @@ module.exports = env => {
         }
       ]
     },
-    externals: [nodeExternals()],
+    externals: [
+      nodeExternals({
+        allowlist: [/^@reveal/]
+      })
+    ],
     output: {
       filename: '[name].js',
       publicPath: publicPathViewer,

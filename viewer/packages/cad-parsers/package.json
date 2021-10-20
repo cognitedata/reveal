@@ -10,11 +10,5 @@
   "dependencies": {
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/utilities": "workspace:*"
-  },
-  "sideEffects": false,
-  "glslify": {
-    "transform": [
-      "glslify-import"
-    ]
   }
 }

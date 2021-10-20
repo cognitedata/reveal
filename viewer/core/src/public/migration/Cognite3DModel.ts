@@ -15,7 +15,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
 import { NumericRange, trackError } from '@reveal/utilities';
-import { CadNode, NodeTransformProvider } from '@reveal/cad-geometry-loaders';
+import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
 /**
@@ -163,6 +163,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    const index = this._styledNodeCollections.findIndex(x => x.nodes === nodeCollection);
+    if (index !== -1) {
+      this._styledNodeCollections.splice(index, 1);
+    }
     this.cadNode.nodeAppearanceProvider.unassignStyledNodeCollection(nodeCollection);
   }
 

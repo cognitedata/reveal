@@ -4,16 +4,15 @@
 import * as THREE from 'three';
 
 import { DetermineSectorsInput, SectorCost } from './types';
-import { CadMaterialManager } from '../../material-manager';
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { CadNode } from '../../CadNode';
 import { PropType } from '../../utilities/reflection';
 
-import { createGlContext, generateSectorTree, createCadModelMetadata } from '../../../../../test-utilities';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
 
-import { CadModelMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import { createGlContext, generateSectorTree, createCadModelMetadata } from '../../../../../test-utilities';
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();
