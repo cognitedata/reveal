@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
-import { ConsumedSector } from '@reveal/cad-parsers';
-import { CadNode } from '@reveal/rendering';
+import { CadSectorParser, ConsumedSector } from '@reveal/cad-parsers';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
 import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
@@ -21,6 +21,8 @@ import { SectorLoader } from './sector/SectorLoader';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
 import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
+import { CachedRepository } from '@reveal/sector-loader';
+import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
 
@@ -40,8 +42,9 @@ export class CadModelUpdateHandler {
 
   private readonly _updateObservable: Observable<ConsumedSector>;
 
-  constructor(sectorRepository: Repository, sectorCuller: SectorCuller) {
-    this._sectorRepository = sectorRepository;
+  constructor(modelDataClient: BinaryFileProvider, materialManager: CadMaterialManager, sectorCuller: SectorCuller) {
+    const modelDataParser = new CadSectorParser();
+    this._sectorRepository = new CachedRepository(modelDataClient, modelDataParser, materialManager);
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelSectorBudget;
@@ -91,7 +94,7 @@ export class CadModelUpdateHandler {
       this._progressSubject.next(state);
     };
     const determineSectorsHandler = new SectorLoader(
-      sectorRepository,
+      this._sectorRepository,
       sectorCuller,
       this._modelStateHandler,
       collectStatisticsCallback,

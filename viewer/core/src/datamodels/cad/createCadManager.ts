@@ -2,14 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CadMetadataParser, CadModelMetadataRepository, CadSectorParser } from '@reveal/cad-parsers';
+import { CadMetadataParser, CadModelMetadataRepository } from '@reveal/cad-parsers';
 
 import { CadManager } from './CadManager';
 import { CadModelFactory } from './CadModelFactory';
 
 import {
   CadModelUpdateHandler,
-  CachedRepository,
   createDefaultSectorCuller,
   OccludingGeometryProvider
 } from '@reveal/cad-geometry-loaders';
@@ -79,13 +78,11 @@ export function createCadManager<T>(
     cadMetadataParser
   );
   const cadModelFactory = new CadModelFactory(materialManager);
-  const modelDataParser = new CadSectorParser();
-  const cachedSectorRepository = new CachedRepository(modelDataClient, modelDataParser, materialManager);
   const { internal } = options;
   const sectorCuller =
     internal && internal.sectorCuller
       ? internal.sectorCuller
       : createDefaultSectorCuller(renderer, occludingGeometryProvider);
-  const cadModelUpdateHandler = new CadModelUpdateHandler(cachedSectorRepository, sectorCuller);
+  const cadModelUpdateHandler = new CadModelUpdateHandler(modelDataClient, materialManager, sectorCuller);
   return new CadManager(materialManager, cadModelMetadataRepository, cadModelFactory, cadModelUpdateHandler);
 }

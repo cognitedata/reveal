@@ -13,14 +13,16 @@ import { BinaryFileProvider } from '@reveal/modeldata-api';
 describe('CadModelUpdateHandler', () => {
   let repository: CachedRepository;
   let mockCuller: SectorCuller;
+  let modelSectorProvider: BinaryFileProvider;
+  let materialManager: CadMaterialManager;
 
   beforeEach(() => {
     jest.useFakeTimers();
 
-    const modelSectorProvider: BinaryFileProvider = {
+    modelSectorProvider = {
       getBinaryFile: jest.fn()
     };
-    const materialManager = new CadMaterialManager();
+    materialManager = new CadMaterialManager();
     const modelDataParser = new CadSectorParser();
 
     repository = new CachedRepository(modelSectorProvider, modelDataParser, materialManager);
@@ -36,7 +38,7 @@ describe('CadModelUpdateHandler', () => {
   });
 
   test('dipose() disposes culler', () => {
-    const updateHandler = new CadModelUpdateHandler(repository, mockCuller);
+    const updateHandler = new CadModelUpdateHandler(modelSectorProvider, materialManager, mockCuller);
     updateHandler.dispose();
     expect(mockCuller.dispose).toBeCalledTimes(1);
   });

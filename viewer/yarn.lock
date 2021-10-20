@@ -951,6 +951,7 @@ __metadata:
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1022,7 +1023,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reveal/sector-loader@workspace:packages/sector-loader":
+"@reveal/sector-loader@workspace:*, @reveal/sector-loader@workspace:packages/sector-loader":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-loader@workspace:packages/sector-loader"
   dependencies:
