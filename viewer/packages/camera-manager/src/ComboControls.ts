@@ -228,6 +228,7 @@ export default class ComboControls extends EventDispatcher {
     this._targetEnd.copy(target);
     this._sphericalEnd.setFromVector3(offset);
     this._target.copy(this._targetEnd);
+    this._scrollTarget.copy(target);
     this._spherical.copy(this._sphericalEnd);
     this.update(1000 / this._targetFPS);
     this.triggerCameraChangeEvent();
@@ -628,12 +629,12 @@ export default class ComboControls extends EventDispatcher {
 
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
-    const targetToScrollTargetVec = _reusableVector3.subVectors(_scrollTarget, _target).normalize(),
-      cameraToTargetVec = new Vector3().subVectors(_target, _camera.position),
-      cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
+    const targetToScrollTargetVec = _reusableVector3.subVectors(_scrollTarget, _target).normalize();
+    const cameraToTargetVec = new Vector3().subVectors(_target, _camera.position);
+    const cameraToScrollTargetVec = new Vector3().subVectors(_scrollTarget, _camera.position);
 
-    const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec),
-      targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
+    const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
+    const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
 
     let targetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
@@ -652,7 +653,7 @@ export default class ComboControls extends EventDispatcher {
       this._temporarilyDisableDamping = true;
 
       // stops camera from moving forward only if target became close to scroll target
-      if (_scrollTarget.distanceTo(_target) < 2 * minDistance) {
+      if (_scrollTarget.distanceTo(_target) < minDistance) {
         radius = minDistance;
         targetOffsetDistance = 0;
       }

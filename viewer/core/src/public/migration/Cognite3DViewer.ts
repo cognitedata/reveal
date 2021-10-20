@@ -124,6 +124,7 @@ export class Cognite3DViewer {
   private readonly _automaticControlsSensitivity: boolean;
   private readonly _canInterruptAnimations: boolean;
   private readonly _useScrollTargetControls: boolean;
+  private readonly _useOnClickTargetChange: boolean;
   private readonly _animationDuration: number = 600;
   private readonly _minDefaultAnimationDuration: number = 600;
   private readonly _maxDefaultAnimationDuration: number = 2500;
@@ -185,6 +186,51 @@ export class Cognite3DViewer {
 
     return farPoint;
   };
+
+  /**
+   * Adds event listeners for change of target when user clicks the mouse.
+   */
+  private addOnClickTargetChange = () => {
+    let startedScroll = false,
+      newTargetUpdate = false;
+    let timeAfterClick = 0;
+    const wheelClock = new THREE.Clock(),
+      clickClock = new THREE.Clock();
+
+    this.on('click', e => {
+      newTargetUpdate = true;
+      timeAfterClick = 0;
+      clickClock.getDelta();
+      
+      this.controls.enableKeyboardNavigation = false;
+      this.changeTarget(e);
+    });
+
+    this.canvas.addEventListener('wheel', async (e: any) => {
+      const timeDelta = wheelClock.getDelta();
+      timeAfterClick += clickClock.getDelta()
+      const { offsetX, offsetY } = e;
+      const x = (offsetX / this.domElement.clientWidth) * 2 - 1;
+      const y = (offsetY / this.domElement.clientHeight) * -2 + 1;
+
+      if (timeAfterClick > 0.3) newTargetUpdate = false;
+
+      const wantNewScrollTarget = startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
+
+      if (wantNewScrollTarget) {
+        startedScroll = false;
+
+        const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+
+        const newScrollTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
+
+        this.controls.setScrollTarget(newScrollTarget);
+      } else {
+        if (timeDelta > 0.1) startedScroll = true;
+        
+      }
+    });
+  }
 
   /**
    * Changes controls target based on current cursor position.
@@ -260,7 +306,8 @@ export class Cognite3DViewer {
     this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
     this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? false;
     this._canInterruptAnimations = options.canInterruptAnimations ?? false;
-    this._useScrollTargetControls = options.useScrollTargetControls ?? true;
+    this._useScrollTargetControls = options.useScrollTargetControls ?? false;
+    this._useOnClickTargetChange = options.useOnClickTargetChange ?? false;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -280,36 +327,8 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
-
-    // camera controls
-    let startedScroll = false;
-    const wheelClock = new THREE.Clock();
-
-    this.on('click', e => {
-      this.controls.enableKeyboardNavigation = false;
-      this.changeTarget(e);
-    });
-
-    this.canvas.addEventListener('wheel', async (e: any) => {
-      const timeDelta = wheelClock.getDelta();
-      const { offsetX, offsetY } = e;
-      const x = (offsetX / this.domElement.clientWidth) * 2 - 1,
-        y = (offsetY / this.domElement.clientHeight) * -2 + 1;
-
-      if (startedScroll && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0)) {
-        startedScroll = false;
-
-        const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
-
-        const newScrollTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
-
-        this.controls.setScrollTarget(newScrollTarget);
-      } else {
-        if (timeDelta > 0.1) {
-          startedScroll = true;
-        }
-      }
-    });
+  
+    if (this._useOnClickTargetChange) this.addOnClickTargetChange();
 
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;

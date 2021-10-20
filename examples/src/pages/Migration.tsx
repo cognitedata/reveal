@@ -61,6 +61,8 @@ export function Migration() {
         sdk: client,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
+        useScrollTargetControls: true,
+        useOnClickTargetChange: true,
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
