@@ -1,4 +1,4 @@
-import { SidecarConfig } from '@cognite/sidecar';
+import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 
 /* eslint-disable no-underscore-dangle */
 interface Sidecar extends SidecarConfig {
@@ -46,28 +46,6 @@ const getAadApplicationId = (cluster: string) => {
   };
 };
 
-const generateBaseUrls = (cluster: string, prod = false) => {
-  switch (cluster) {
-    case 'ew1': {
-      return {
-        appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
-        cdfApiBaseUrl: 'https://api.cognitedata.com',
-        cdfCluster: '',
-      };
-    }
-    default: {
-      return {
-        aadApplicationId: '245a8a64-4142-4226-86fa-63d590de14c9', // bluefield staging
-        appsApiBaseUrl: prod
-          ? `https://apps-api.${cluster}.cognite.ai`
-          : `https://apps-api.staging.${cluster}.cognite.ai`,
-        cdfApiBaseUrl: `https://${cluster}.cognitedata.com`,
-        cdfCluster: cluster,
-      };
-    }
-  }
-};
-
 const getmpServiceBaseURL = (cluster?: string) => {
   if (process.env.REACT_APP_MP_SERVICE_BASE_URL) {
     return process.env.REACT_APP_MP_SERVICE_BASE_URL;
@@ -86,8 +64,13 @@ const getmpServiceBaseURL = (cluster?: string) => {
 // but via the window.__cogniteSidecar global
 // now that this var is updated, all should work as expected.
 (window as any).__cogniteSidecar = {
+  ...getDefaultSidecar({
+    prod: PROD,
+    cluster: CLUSTER,
+    localServices: [],
+  }),
   ...getAadApplicationId(CLUSTER),
-  ...generateBaseUrls(CLUSTER, PROD),
+
   __sidecarFormatVersion: 1,
   // to be used only locally as a sidecar placeholder
   // when deployed with FAS the values below are partly overriden

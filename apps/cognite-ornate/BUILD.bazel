@@ -76,17 +76,19 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
+    "@npm//@cognite/comment-service-types",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
     "@npm//@types/pdfjs-dist",
+    "@npm//@types/react-color",
     "@npm//eslint-config-react-app",
     "@npm//konva",
     "@npm//lodash",
-    "@npm//pdfjs-dist",
     "@npm//pdf-lib",
+    "@npm//pdfjs-dist",
     "@npm//react",
-    "@npm//react-dom",
     "@npm//react-color",
+    "@npm//react-dom",
     "@npm//react-router-dom",
     "@npm//styled-components",
     "@npm//uuid",
@@ -97,13 +99,13 @@ DEPENDENCIES = [
     "//packages/sidecar",
     "//packages/z-index",
     "//packages/react-i18n",
+    "//packages/react-comments",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
     "@npm//@types/react",
-    "@npm//@types/react-color",
     "@npm//@types/react-dom",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
@@ -117,6 +119,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/testcafe",
+    "@npm//@typescript-eslint/eslint-plugin",
     "@npm//babel-eslint",
     "@npm//eslint-plugin-import",
     "@npm//eslint-plugin-jsx-a11y",

@@ -5,3 +5,4 @@ export { TextTool } from './TextTool';
 export { CircleTool } from './CircleTool';
 export { ListTool } from './ListTool';
 export { DefaultTool } from './DefaultTool';
+export { CommentTool } from './CommentTool';

@@ -10,7 +10,7 @@ import {
   Drawing,
   ShapeSettings,
 } from 'library/types';
-import { DefaultTool } from 'library/tools';
+import { CommentTool, DefaultTool } from 'library/tools';
 import { Tool } from 'library/tools/Tool';
 import { ConnectedLine } from 'library/connectedLine';
 import bgImage from 'library/assets/bg.png';
@@ -60,6 +60,7 @@ export class CogniteOrnate {
       width: sceneBaseWidth,
       height: sceneBaseHeight,
       scale: { x: 0.2, y: 0.2 },
+      draggable: true,
     });
 
     // Add layers to stage
@@ -511,6 +512,9 @@ export class CogniteOrnate {
       }
       if (drawing.type === 'circle') {
         shape = new Konva.Circle(drawing.attrs);
+      }
+      if (drawing.attrs.image) {
+        shape = CommentTool.create(drawing.attrs);
       }
       if (drawing.groupId) {
         const group = this.stage.findOne<Konva.Group>(`#${drawing.groupId}`);

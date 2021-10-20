@@ -33,7 +33,7 @@ export type OrnateAnnotationInstance = {
 };
 
 export type Drawing = {
-  type: 'rect' | 'line' | 'text' | 'circle';
+  type: 'rect' | 'line' | 'text' | 'circle' | 'comment';
   attrs: any;
   groupId?: string;
 };
@@ -67,6 +67,7 @@ export type ToolType =
   | 'text'
   | 'default'
   | 'circle'
+  | 'comment'
   | 'list';
 
 export type ShapeSettings = {

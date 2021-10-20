@@ -22,6 +22,9 @@ import ListToolSidebar from 'components/ListToolSidebar';
 import WorkSpaceSearch from 'components/WorkspaceDocsPanel/WorkspaceSearch';
 import { WorkspaceHeader } from 'components/Workspace/WorkspaceHeader';
 import { toDisplayDate } from 'utils/date';
+import { CommentTarget } from '@cognite/comment-service-types';
+import { Drawer as CommentDrawer } from '@cognite/react-comments';
+import sidecar from 'utils/sidecar';
 import {
   ListItem,
   ListToolStatus,
@@ -35,6 +38,7 @@ import {
   DefaultTool,
   CircleTool,
   ListTool,
+  CommentTool,
 } from 'library/tools';
 import Konva from 'konva';
 import { Theme } from 'utils/theme';
@@ -63,6 +67,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const [workspaceDocuments, setWorkspaceDocuments] = useState<
     WorkspaceDocument[]
   >([]);
+  const [target, setTarget] = React.useState<CommentTarget | undefined>();
   const [listItems, setListItems] = useState<ListItem[]>([]);
 
   const [workspaceDocumentAnnotations, setWorkSpaceDocumentAnnotations] =
@@ -107,6 +112,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         rect: new RectTool(ornateViewer.current),
         circle: new CircleTool(ornateViewer.current),
         text: new TextTool(ornateViewer.current),
+        comment: new CommentTool(ornateViewer.current),
         list: listTool,
         default: new DefaultTool(ornateViewer.current),
       };
@@ -137,6 +143,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   useEffect(() => {
     document.addEventListener('onDelete', onDelete);
     document.addEventListener('onAnnotationClick', onAnnotationClick as any);
+    document.addEventListener('onCommentClick', onCommentClick as any);
 
     return () => {
       document.removeEventListener('onDelete', onDelete);
@@ -144,8 +151,15 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         'onAnnotationClick',
         onAnnotationClick as any
       );
+      document.removeEventListener('onCommentClick', onCommentClick as any);
     };
   }, [workspaceDocuments]);
+
+  const onCommentClick = (event: CustomEvent) => {
+    const commentNode = event.detail;
+    const id = commentNode.attrs.id.toString();
+    setTarget({ id, targetType: 'comments' });
+  };
 
   const onAnnotationClick = async (event: CustomEvent) => {
     const data = event.detail as OrnateAnnotationInstance;
@@ -502,6 +516,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     ornateViewer.current?.onZoom(scale, false);
   };
 
+  const handleClose = () => {
+    setTarget(undefined);
+  };
+
   const sidebarHeader = (
     <WorkspaceHeader
       setIsOpen={setIsSidebarOpen}
@@ -661,6 +679,19 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
           <Icon type="ZoomOut" />
         </Button>
       </ZoomButtonsToolbar>
+
+      {target && (
+        <CommentDrawer
+          visible={!!target}
+          target={target}
+          handleClose={handleClose}
+          scope={['fas-demo']}
+          commentServiceBaseUrl={sidecar.commentServiceBaseUrl}
+          userManagementServiceBaseUrl={sidecar.userManagementServiceBaseUrl}
+          fasAppId={sidecar.aadApplicationId}
+        />
+      )}
+
       <Loader className={showLoader ? 'visible' : ''}>
         <Icon type="Loading" className="loading-icon" size={40} />
       </Loader>

@@ -212,6 +212,17 @@ const WorkSpaceTools = ({
       >
         <Icon type="TextTool" />
       </Button>
+      <Button
+        type="ghost"
+        size="small"
+        title="Comment"
+        onClick={() => {
+          onToolChange('comment');
+        }}
+        disabled={activeTool === 'comment'}
+      >
+        <Icon type="Comment" />
+      </Button>
       <ToolboxSeparator />
       <Button
         type="ghost"

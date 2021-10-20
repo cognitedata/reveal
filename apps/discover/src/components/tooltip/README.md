@@ -14,7 +14,6 @@ short, descriptive text.
     - Tooltips describe differences between similar elements.
     - Tooltips distinguish actions with related iconography
 
-
 <!-- STORY -->
 
 #### Example
