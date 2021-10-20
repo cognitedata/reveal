@@ -49,7 +49,7 @@ async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefin
   for (let i = 0; i < retries; i++) {
     try {
       return await fetch(input, options);
-    } catch (err) {
+    } catch (err: any) {
       // Keep first error only
       if (error !== undefined) {
         error = err;

@@ -27,12 +27,11 @@ export class CadModelMetadataRepository<TModelIdentifier>
   constructor(
     modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
     modelDataClient: ModelDataClient,
-    cadMetadataParser: CadMetadataParser,
     blobFileName: string = 'scene.json'
   ) {
     this._modelMetadataProvider = modelMetadataProvider;
     this._modelDataClient = modelDataClient;
-    this._cadSceneParser = cadMetadataParser;
+    this._cadSceneParser = new CadMetadataParser();
     this._blobFileName = blobFileName;
   }
 
