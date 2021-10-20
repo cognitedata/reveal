@@ -2,12 +2,16 @@
 
 set -e
 
+project="${1:-platypus}"
+
 cd "$(dirname "$0")"
 
-yarn react-scripts test "$@" \
+nx run ${project}:test "$@" \
   --collectCoverageFrom='!*/**/*.stories.tsx' \
   --ci \
   --verbose \
   --runInBand \
+  --codeCoverage \
   --detectOpenHandles \
-  "$@"
+  --reporters=default \
+  --watchAll=false

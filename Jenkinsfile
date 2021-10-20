@@ -149,7 +149,7 @@ pods {
           stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
             dir('unit-tests') {
               container('fas') {
-                sh('yarn test:ci')
+                sh('yarn test')
                 junit(allowEmptyResults: true, testResults: '**/junit.xml')
                 if (isPullRequest) {
                   summarizeTestResults()

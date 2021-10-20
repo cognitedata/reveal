@@ -1,14 +1,49 @@
-export REACT_APP_I18N_PSEUDO="${REACT_APP_I18N_PSEUDO:-false}"
-export REACT_APP_I18N_DEBUG="${REACT_APP_I18N_DEBUG:-true}"
-export REACT_APP_LANGUAGE="${REACT_APP_LANGUAGE:-en}"
+#!/usr/bin/env sh
 
-export REACT_APP_LOCIZE_PROJECT_ID="${REACT_APP_LOCIZE_PROJECT_ID:-}"
-export REACT_APP_LOCIZE_API_KEY="${REACT_APP_LOCIZE_API_KEY:-}" # pragma: allowlist secret
+# Note: Insert values for these tokens, like so:
+#  export FOO="${FOO:-[some-default-value-here]}"
+# The leading - is important.
 
-export REACT_APP_MIXPANEL_TOKEN="${REACT_APP_MIXPANEL_TOKEN:-}"
-export REACT_APP_MIXPANEL_DEBUG="${REACT_APP_MIXPANEL_DEBUG:-false}"
-export HTTPS=${HTTPS:-true}
+variant="${1:-development}"
+project="${2:-platypus}"
+configuration=""
 
-react-scripts start
+case "$variant": in
+  dev*) # development
+    configuration=""
+    export REACT_APP_ENV="development"
+    ;;
 
-$SHELL
+  s*) # staging
+    configuration="--configuration=staging"
+    export REACT_APP_ENV="staging"
+    ;;
+
+  prod*) # production
+  configuration="--configuration=production"
+    export REACT_APP_ENV="production"
+    ;;
+
+  pr*) # Preview server builds
+    configuration="--configuration=preview"
+    export REACT_APP_ENV="preview"
+    ;;
+
+  test*)
+    configuration="--configuration=staging"
+    export REACT_APP_ENV="staging"
+    ;;
+
+  *)
+    echo "Unknown build type: ${variant}"
+    exit 1
+esac
+
+export NX_REACT_APP_I18N_PSEUDO="${REACT_APP_I18N_PSEUDO:-false}"
+export NX_REACT_APP_APP_ID="${REACT_APP_APP_ID:-}"
+export NX_REACT_APP_RELEASE_ID="${REACT_APP_RELEASE_ID:-}"
+export NX_REACT_APP_VERSION_SHA="${REACT_APP_VERSION_SHA:-}"
+export NX_REACT_APP_VERSION_NAME="${REACT_APP_VERSION_NAME:-}"
+export NX_PUBLIC_URL="${PUBLIC_URL:-}"
+
+nx serve ${project} ${configuration} --ssl=true --port=3000 --publicHost=${PUBLIC_URL:-}
