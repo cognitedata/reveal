@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { compact } from 'lodash';
 import { nanoid } from 'nanoid';
-import { Chart } from 'reducers/charts/types';
+import { Chart, ChartTimeSeries } from 'reducers/charts/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
@@ -148,78 +148,86 @@ export const OpenInCharts: FC = () => {
       return;
     }
 
-    if (currentValue === options[0]) {
-      const chartId = nanoid();
-      const newChart: Chart = {
-        id: chartId,
-        user: login?.id,
-        userInfo: login,
-        name: chartName,
-        updatedAt: Date.now(),
-        createdAt: Date.now(),
-        timeSeriesCollection: [],
-        workflowCollection: [],
-        dateFrom: new Date(+startTime).toJSON(),
-        dateTo: new Date(+endTime).toJSON(),
-        public: false,
-        version: CHART_VERSION,
-      };
-
-      await updateChart(newChart);
-
-      await Promise.all(
-        selectedIds.map(async (id) => {
-          const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
-          if (!timeSeries) {
-            return;
-          }
-          const range = await calculateDefaultYAxis({
-            chart: newChart,
-            sdk,
-            timeSeriesExternalId: timeSeries.externalId || '',
-          });
-          const newTs = covertTSToChartTS(timeSeries, newChart.id, range);
-          updateChart(addTimeseries(newChart, newTs));
-          newChart.timeSeriesCollection?.push(newTs);
-        })
-      );
-
-      clearSearchParams();
-      move(`/${newChart.id}`, false);
-    } else {
-      if (!existingChart) {
-        return;
-      }
-
-      existingChart.dateFrom = new Date(+startTime).toJSON();
-      existingChart.dateTo = new Date(+endTime).toJSON();
-
-      await Promise.all(
-        selectedIds.map(async (id) => {
-          const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
-          if (!timeSeries) {
-            return;
-          }
-          const existingTimeSeries = existingChart.timeSeriesCollection?.find(
-            (timeSerie) => timeSerie.tsId === id
-          );
-          if (existingTimeSeries) {
-            return;
-          }
-          const range = await calculateDefaultYAxis({
-            chart: existingChart,
-            sdk,
-            timeSeriesExternalId: timeSeries.externalId || '',
-          });
-          const newTs = covertTSToChartTS(timeSeries, existingChart.id, range);
-          updateChart(addTimeseries(existingChart, newTs));
-          existingChart.timeSeriesCollection?.push(newTs);
-        })
-      );
-
-      clearSearchParams();
-      move(`/${existingChart.id}`, false);
+    const shouldBeAddedToExistingChart = currentValue === options[1];
+    if (shouldBeAddedToExistingChart && !existingChart) {
+      return;
     }
+
+    /**
+     * Either use an existing chart or create a new one
+     */
+    const chartToUpdate: Chart =
+      shouldBeAddedToExistingChart && existingChart
+        ? existingChart
+        : {
+            id: nanoid(),
+            user: login?.id,
+            userInfo: login,
+            name: chartName,
+            updatedAt: Date.now(),
+            createdAt: Date.now(),
+            dateFrom: new Date(+startTime).toJSON(),
+            dateTo: new Date(+endTime).toJSON(),
+            timeSeriesCollection: [],
+            workflowCollection: [],
+            public: false,
+            version: CHART_VERSION,
+          };
+
+    /**
+     * Filter out and keep only the timeseries we want to add
+     * and make sure we don't add any duplicates
+     */
+    const timeseriesToAdd: Timeseries[] = selectedIds
+      .map((id) => {
+        const timeSeries = ts.find((timeSerie) => timeSerie.id === id);
+        if (!timeSeries) {
+          return undefined;
+        }
+        const existingTimeSeries = chartToUpdate.timeSeriesCollection?.find(
+          (timeSerie) => timeSerie.tsId === id
+        );
+        if (existingTimeSeries) {
+          return undefined;
+        }
+        return timeSeries;
+      })
+      .filter(Boolean) as Timeseries[];
+
+    /**
+     * Convert the list of specified timeseries from CDF
+     * to timeseries specifications that we can add to the chart
+     * (calculate range etc..)
+     */
+    const chartTimeseriesToAdd: ChartTimeSeries[] = await Promise.all(
+      timeseriesToAdd.map(async (validTs) => {
+        const range = await calculateDefaultYAxis({
+          chart: chartToUpdate,
+          sdk,
+          timeSeriesExternalId: validTs.externalId || '',
+        });
+        return covertTSToChartTS(validTs, chartToUpdate.id, range);
+      })
+    );
+
+    /**
+     * Add all the timeseries to the chart
+     */
+    const chartWithAddedTimeseries: Chart = chartTimeseriesToAdd.reduce(
+      (chart, chartTsToAdd) => addTimeseries(chart, chartTsToAdd!),
+      chartToUpdate
+    );
+
+    /**
+     * Write back the changes of the chart
+     */
+    await updateChart(chartWithAddedTimeseries);
+
+    /**
+     * Move to the new or updated chart
+     */
+    clearSearchParams();
+    move(`/${chartToUpdate.id}`, false);
   }, [
     selectedIds,
     currentValue,
