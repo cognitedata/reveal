@@ -152,8 +152,8 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         ...takenPriorities
       )}, mean: ${meanPriority}, first not accepted: ${notAcceptedPriority}`
     );
-    Log.debug('Budget:', { ...input.budget }, 'Spent:', { ...spentBudget });
-
+    Log.debug('Budget:', { ...input.budget });
+    Log.debug('Spent:', { ...spentBudget });
     return { spentBudget, wantedSectors: wanted };
   }
 
