@@ -15,7 +15,7 @@ export const trackUsage = (
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
 
   if (!host.includes('localhost')) {
-    trackEvent(`unified-cdf-demo-app.${event}`, {
+    trackEvent(`data-sets.${event}`, {
       ...metadata,
       project: sdk.project,
       version: 1,
