@@ -38,7 +38,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
@@ -60,7 +60,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
@@ -82,7 +82,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
@@ -95,6 +95,17 @@
                 }
               ]
             }
+          }
+        },
+        "postbuild": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+              "commands": [
+                "mkdir -p scripts/js",
+                "cp *.map scripts/js"
+              ],
+              "cwd": "build",
+              "parallel": false
           }
         },
         "serve": {
