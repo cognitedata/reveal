@@ -1320,7 +1320,7 @@ export class Cognite3DViewer {
     this.controls.lookAtViewTarget = true;
     this.controls.setState(this.getCameraPosition(), target);
 
-    const tmpTarget = new THREE.Vector3();
+    const tempTarget = new THREE.Vector3();
     const tween = animation
       .to(to, duration)
       .easing((x: number) => TWEEN.Easing.Circular.Out(x))
@@ -1328,11 +1328,11 @@ export class Cognite3DViewer {
         if (this.isDisposed) {
           return;
         }
-        tmpTarget.set(from.targetX, from.targetY, from.targetZ);
+        tempTarget.set(from.targetX, from.targetY, from.targetZ);
         if (!this.camera) {
           return;
         }
-        this.controls.setViewTarget(tmpTarget);
+        this.controls.setViewTarget(tempTarget);
       })
       .onComplete(() => {
         if (this.isDisposed) {
@@ -1340,7 +1340,7 @@ export class Cognite3DViewer {
         }
         this.controls.lookAtViewTarget = false;
         this.controls.enableKeyboardNavigation = true;
-        this.controls.setState(this.getCameraPosition(), tmpTarget);
+        this.controls.setState(this.getCameraPosition(), tempTarget);
 
         this.canvas.removeEventListener('pointerdown', stopTween);
       })
@@ -1404,7 +1404,7 @@ export class Cognite3DViewer {
       this.canvas.addEventListener('wheel', stopTween);
       document.addEventListener('keydown', stopTween);
     }
-    const tmpTarget = new THREE.Vector3();
+    const tempTarget = new THREE.Vector3();
     const tmpPosition = new THREE.Vector3();
     const tween = animation
       .to(to, duration)
@@ -1414,13 +1414,13 @@ export class Cognite3DViewer {
           return;
         }
         tmpPosition.set(from.x, from.y, from.z);
-        tmpTarget.set(from.targetX, from.targetY, from.targetZ);
+        tempTarget.set(from.targetX, from.targetY, from.targetZ);
         if (!this.camera) {
           return;
         }
 
         this.setCameraPosition(tmpPosition);
-        this.setCameraTarget(tmpTarget);
+        this.setCameraTarget(tempTarget);
       })
       .onComplete(() => {
         if (this.isDisposed) {
