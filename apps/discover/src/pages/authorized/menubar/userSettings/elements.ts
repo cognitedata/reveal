@@ -16,6 +16,7 @@ export const SettingsHeader = styled.div`
   height: 52px;
   align-items: center;
   padding: 8px;
+  padding-right: 16px;
 `;
 
 export const SettingsContent = styled.div`

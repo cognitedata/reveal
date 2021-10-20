@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Dropdown, Title, Menu, TopBar } from '@cognite/cogs.js';
+import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
 import { USER_PREFERENCES_KEY } from 'constants/react-query';
@@ -13,6 +13,9 @@ import { MeasurementSetting } from './settings';
 export const UserSettings: React.FC = () => {
   const { t } = useTranslation();
   const { mutate } = useUserPreferencesMutate(USER_PREFERENCES_KEY.ME);
+
+  const [visible, setVisible] = React.useState(false);
+  const toggleVisibility = () => setVisible((prevState) => !prevState);
 
   const handleTabClick = (
     nextTab: string,
@@ -28,6 +31,7 @@ export const UserSettings: React.FC = () => {
       <Menu>
         <SettingsHeader>
           <Title level={5}>{t('Settings')}</Title>
+          <Icon type="LargeClose" onClick={toggleVisibility} />
         </SettingsHeader>
 
         <Menu.Divider />
@@ -40,8 +44,16 @@ export const UserSettings: React.FC = () => {
   );
 
   return (
-    <Dropdown content={MenuContent}>
-      <TopBar.Action icon="Settings" aria-label="Settings" />
+    <Dropdown
+      content={MenuContent}
+      visible={visible}
+      onClickOutside={toggleVisibility}
+    >
+      <TopBar.Action
+        icon="Settings"
+        aria-label="Settings"
+        onClick={toggleVisibility}
+      />
     </Dropdown>
   );
 };
