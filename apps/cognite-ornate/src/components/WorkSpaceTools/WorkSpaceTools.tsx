@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ToolType } from 'library/types';
+import { ToolType } from '@cognite/ornate';
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
 import {

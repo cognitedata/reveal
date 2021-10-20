@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { ICogniteOrnateTool } from 'library/types';
+import { ICogniteOrnateTool } from 'types';
 import { v4 as uuid } from 'uuid';
 
 import { Tool } from './Tool';

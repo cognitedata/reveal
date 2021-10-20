@@ -1,7 +1,6 @@
-import ShapeSettings from 'components/ShapeSettings';
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Shape } from 'konva/lib/Shape';
+import { Shape, ShapeConfig } from 'konva/lib/Shape';
 
 import { CogniteOrnate } from './cognite-ornate';
 
@@ -77,6 +76,19 @@ export type ShapeSettings = {
   opacity: number;
   fontSize?: number;
   fill?: string;
+};
+
+export type Marker = {
+  order: number;
+  position: {
+    x: number;
+    y: number;
+  };
+  groupId: string;
+  shape: Shape;
+  shapeId: string;
+  metadata: Record<string, string | undefined>;
+  styleOverrides?: ShapeConfig;
 };
 
 export interface ICogniteOrnateTool {

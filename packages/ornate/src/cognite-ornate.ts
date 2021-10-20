@@ -1,6 +1,9 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { v4 as uuid } from 'uuid';
+import { Vector2d } from 'konva/lib/types';
+import { PDFDocument } from 'pdf-lib';
+
 import {
   OrnateAnnotation,
   ToolType,
@@ -9,16 +12,18 @@ import {
   OrnateJSON,
   Drawing,
   ShapeSettings,
-} from 'library/types';
-import { CommentTool, DefaultTool } from 'library/tools';
-import { Tool } from 'library/tools/Tool';
-import { ConnectedLine } from 'library/connectedLine';
-import bgImage from 'library/assets/bg.png';
-import { Vector2d } from 'konva/lib/types';
-import { defaultShapeSettings } from 'components/ShapeSettings/constants';
-import { PDFDocument } from 'pdf-lib';
+} from './types';
+import { DefaultTool, CommentTool } from './tools';
+import { Tool } from './tools/Tool';
+import bgImage from './assets/bg.png';
+import { downloadURL, pdfToImage, ConnectedLine } from './utils';
 
-import { downloadURL, pdfToImage } from './utils';
+export const defaultShapeSettings = {
+  strokeWidth: 10,
+  strokeColor: '#FFDC7F',
+  opacity: 1,
+  fontSize: 32,
+};
 
 const sceneBaseWidth = window.innerWidth * 2;
 const sceneBaseHeight = window.innerHeight * 2;
@@ -33,6 +38,7 @@ export type CogniteOrnateOptions = {
 export class CogniteOrnate {
   host: HTMLDivElement;
   documents: OrnatePDFDocument[] = [];
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   stage: Konva.Stage;
   backgroundLayer: Konva.Layer = new Konva.Layer();
@@ -47,6 +53,7 @@ export class CogniteOrnate {
   constructor(options: CogniteOrnateOptions) {
     const host = document.querySelector(options.container) as HTMLDivElement;
     if (!host) {
+      // eslint-disable-next-line no-console
       console.error('ORNATE: Failed to get HTML element to attach to');
     }
     this.host = host;
@@ -396,6 +403,7 @@ export class CogniteOrnate {
   }
 
   zoomTo(node: Konva.Node, duration = 0.35) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - relativeTo DOES accept this.stage just fine.
     const rect = node.getClientRect({ relativeTo: this.stage });
     const rawScale = Math.min(

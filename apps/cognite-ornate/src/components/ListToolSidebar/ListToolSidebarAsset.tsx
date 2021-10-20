@@ -2,7 +2,7 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Asset } from '@cognite/sdk';
 import { ShapeConfig } from 'konva/lib/Shape';
-import { Marker } from 'library/tools/ListTool';
+import { Marker } from '@cognite/ornate';
 import debounce from 'lodash/debounce';
 import { useEffect, useState, createRef, useCallback } from 'react';
 

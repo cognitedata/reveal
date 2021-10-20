@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/cognite-ornate-app",
+  "name": "@cognite/ornate-app",
   "version": "1.1.0",
   "private": true,
   "scripts": {

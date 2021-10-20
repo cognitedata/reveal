@@ -1,8 +1,7 @@
 import { Menu } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
 import { ChangeEvent } from 'react';
-
-import { ShapeSettings as ShapeSettingsType } from '../../library/types';
+import { ShapeSettings as ShapeSettingsType } from '@cognite/ornate';
 
 import ColorPicker from './ColorPicker/ColorPicker';
 import { ShapeSettingsWrapper } from './elements';

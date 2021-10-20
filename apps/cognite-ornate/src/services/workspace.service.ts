@@ -1,6 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { Marker } from 'library/tools/ListTool';
-import { OrnateJSON } from 'library/types';
+import { Marker, OrnateJSON } from '@cognite/ornate';
 import { Workspace, WorkspaceDocument } from 'types';
 import { v4 as uuid } from 'uuid';
 

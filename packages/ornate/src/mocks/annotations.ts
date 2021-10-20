@@ -8,6 +8,7 @@ export const mockAnnotations: OrnateAnnotation[] = [
     height: 0.1,
     x: 0.1,
     y: 0.1,
+    // eslint-disable-next-line no-console
     onClick: () => console.log('haa'),
     stroke: 'orange',
     metadata: {
@@ -21,6 +22,7 @@ export const mockAnnotations: OrnateAnnotation[] = [
     height: 0.2,
     x: 0.5,
     y: 0.5,
+    // eslint-disable-next-line no-console
     onClick: () => console.log('hoo'),
     stroke: 'blue',
     metadata: {

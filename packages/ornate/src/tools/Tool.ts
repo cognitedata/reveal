@@ -1,8 +1,8 @@
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Shape } from 'konva/lib/Shape';
-import { ICogniteOrnateTool, ShapeSettings } from 'library/types';
 import noop from 'lodash/noop';
 
+import { ICogniteOrnateTool, ShapeSettings } from '../types';
 import { CogniteOrnate } from '../cognite-ornate';
 
 export class Tool implements ICogniteOrnateTool {

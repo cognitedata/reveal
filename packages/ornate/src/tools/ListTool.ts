@@ -1,28 +1,16 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Shape, ShapeConfig } from 'konva/lib/Shape';
-import { CogniteOrnate } from 'library/cognite-ornate';
-import { ICogniteOrnateTool } from 'library/types';
+import { Shape } from 'konva/lib/Shape';
+import { ICogniteOrnateTool, Marker } from 'types';
 import noop from 'lodash/noop';
 import { v4 as uuid } from 'uuid';
+
+import { CogniteOrnate } from '../cognite-ornate';
 
 import { Tool } from './Tool';
 
 const SQUARE_WIDTH = 32;
 const SQUARE_HEIGHT = 32;
-
-export type Marker = {
-  order: number;
-  position: {
-    x: number;
-    y: number;
-  };
-  groupId: string;
-  shape: Shape;
-  shapeId: string;
-  metadata: Record<string, string | undefined>;
-  styleOverrides?: ShapeConfig;
-};
 
 export class ListTool extends Tool implements ICogniteOrnateTool {
   cursor = 'default';

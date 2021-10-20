@@ -58,8 +58,11 @@ export class ConnectedLine {
     }
   };
   calculateDirection() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const A = this.nodeA.getClientRect({ relativeTo: this.stage });
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const B = this.nodeB.getClientRect({ relativeTo: this.stage });
 

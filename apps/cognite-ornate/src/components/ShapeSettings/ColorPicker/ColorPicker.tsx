@@ -1,5 +1,5 @@
 import { useMetrics } from '@cognite/metrics';
-import { ShapeSettings } from 'library/types';
+import { ShapeSettings } from '@cognite/ornate';
 import { CirclePicker, ColorResult } from 'react-color';
 
 import { PRESET_COLORS } from '../constants';

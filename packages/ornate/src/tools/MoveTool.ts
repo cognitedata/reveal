@@ -1,4 +1,4 @@
-import { ICogniteOrnateTool, OrnatePDFDocument } from 'library/types';
+import { ICogniteOrnateTool, OrnatePDFDocument } from 'types';
 
 import { Tool } from './Tool';
 

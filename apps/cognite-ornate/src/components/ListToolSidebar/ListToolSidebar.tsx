@@ -3,7 +3,7 @@ import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Asset } from '@cognite/sdk';
 import { ShapeConfig } from 'konva/lib/Shape';
-import { Marker } from 'library/tools/ListTool';
+import { Marker } from '@cognite/ornate';
 import uniq from 'lodash/uniq';
 import { NullView } from 'components/NullView/NullView';
 import { useMetrics } from '@cognite/metrics';

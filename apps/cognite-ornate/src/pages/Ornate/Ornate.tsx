@@ -1,13 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Asset, CogniteClient } from '@cognite/sdk';
-import { CogniteOrnate } from 'library/cognite-ornate';
 import {
+  CogniteOrnate,
+  // Types
   Drawing,
   OrnateAnnotation,
   OrnateAnnotationInstance,
   ToolType,
   ShapeSettings as ShapeSettingsType,
-} from 'library/types';
+  // Tools
+  MoveTool,
+  LineTool,
+  RectTool,
+  TextTool,
+  DefaultTool,
+  CircleTool,
+  ListTool,
+  CommentTool,
+} from '@cognite/ornate';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
 import WorkSpaceTools from 'components/WorkSpaceTools';
 import ShapeSettings from 'components/ShapeSettings';
@@ -30,16 +40,6 @@ import {
   ListToolStatus,
   LIST_TOOL_STATUSES,
 } from 'components/ListToolSidebar/ListToolSidebar';
-import {
-  MoveTool,
-  LineTool,
-  RectTool,
-  TextTool,
-  DefaultTool,
-  CircleTool,
-  ListTool,
-  CommentTool,
-} from 'library/tools';
 import Konva from 'konva';
 import { Theme } from 'utils/theme';
 
