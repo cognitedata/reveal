@@ -21,7 +21,7 @@ import { Group } from '@cognite/sdk';
 import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
 
-import { useGroups } from 'hooks';
+import { useAuthConfiguration, useGroups } from 'hooks';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
 import { stringContains } from './utils';
@@ -56,6 +56,7 @@ export default function Groups() {
       refetchInterval: localDefaultGroup ? 1000 : false,
     }
   );
+  const { data: authSettings } = useAuthConfiguration();
   const { data: groups, isFetched: groupsFetched } = useGroups(true);
 
   const { data: serviceAccounts } = useQuery(
@@ -78,9 +79,9 @@ export default function Groups() {
       name: string;
       defaultGroupId: number;
     }) => {
-      await sdk.put(`api/playground/projects/${name}/defaultGroup`, {
-        data: {
-          items: [defaultGroupId],
+      await sdk.projects.updateProject(name, {
+        update: {
+          defaultGroupId: { set: defaultGroupId },
         },
       });
     },
@@ -150,7 +151,10 @@ export default function Groups() {
       },
       render(id: number) {
         let extra;
-        if (id === project?.defaultGroupId) {
+        if (
+          id === project?.defaultGroupId &&
+          authSettings?.isLegacyLoginFlowAndApiKeysEnabled
+        ) {
           extra = (
             <Tooltip
               key={id}

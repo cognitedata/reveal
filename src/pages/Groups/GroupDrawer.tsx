@@ -57,9 +57,9 @@ export default function GroupDrawer({ group, onClose }: Props) {
       }
 
       if (defaultGroup && project) {
-        await sdk.put(`api/playground/projects/${project.name}/defaultGroup`, {
-          data: {
-            items: [newGroup.id],
+        await sdk.projects.updateProject(project.name, {
+          update: {
+            defaultGroupId: { set: newGroup.id },
           },
         });
       }
