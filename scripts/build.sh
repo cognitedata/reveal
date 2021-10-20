@@ -45,3 +45,8 @@ export NX_PUBLIC_URL="${PUBLIC_URL:-}"
 
 nx build ${project} ${configuration} --deployUrl=${baseHref}
 
+# hack for now until this is properly solved
+if [ "$project" == "platypus" ]; then
+nx postbuild ${project}
+fi
+
