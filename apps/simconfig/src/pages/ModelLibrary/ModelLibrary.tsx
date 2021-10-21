@@ -1,14 +1,21 @@
 import { Button, CollapsablePanel, Title } from '@cognite/cogs.js';
 import { CollapsableContainer, Container, Header } from 'pages/elements';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ModelSource } from 'components/forms/ModelForm/constants';
-import { FileInfo } from '@cognite/sdk';
 import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionContent';
 import ModelTable from 'components/tables/ModelTable/ModelTable';
-
-import { LinkWithID } from './types';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { fetchDownloadLinks, fetchFiles } from 'store/file/thunks';
+import {
+  selectDownloadLinks,
+  selectFiles,
+  selectIsFilesInitialized,
+  selectSelectedFile,
+} from 'store/file/selectors';
+import { FileInfoSerializable } from 'store/file/types';
+import { setSelectedFile } from 'store/file';
 
 type Params = {
   modelName?: string;
@@ -16,12 +23,14 @@ type Params = {
 
 export default function ModelLibrary() {
   const { url, params } = useRouteMatch<Params>();
+  const selectedFileVersion = useAppSelector(selectSelectedFile);
   const { modelName } = params;
+  const dispatch = useAppDispatch();
+  const files = useAppSelector(selectFiles);
+  const links = useAppSelector(selectDownloadLinks);
+  const isFilesInitialized = useAppSelector(selectIsFilesInitialized);
   const history = useHistory();
   const location = useLocation();
-  const [files, setFiles] = useState<FileInfo[]>([]);
-  const [links, setLinks] = useState<LinkWithID[]>();
-  const [selectedRow, setSelectedRow] = useState(undefined);
   const { cdfClient } = useContext(CdfClientContext);
   const getFilter = () => {
     if (modelName) {
@@ -39,19 +48,22 @@ export default function ModelLibrary() {
   };
 
   async function loadData() {
-    const files = await cdfClient.files.list({
-      filter: getFilter(),
-    });
+    const filter = getFilter();
+    dispatch(fetchFiles({ client: cdfClient, filter }));
 
-    if (!files) {
+    dispatch(setSelectedFile(undefined));
+  }
+
+  async function loadUrls() {
+    if (!isFilesInitialized) {
       return;
     }
-    const urls = await cdfClient.files.getDownloadUrls(
-      files.items.map(({ externalId = '' }) => ({ externalId }))
+    dispatch(
+      fetchDownloadLinks({
+        client: cdfClient,
+        externalIds: files.map(({ externalId = '' }) => ({ externalId })),
+      })
     );
-    setLinks(urls);
-    setSelectedRow(undefined);
-    setFiles(files.items);
   }
 
   useEffect(() => {
@@ -59,10 +71,14 @@ export default function ModelLibrary() {
   }, [modelName]);
 
   useEffect(() => {
-    setSelectedRow(undefined);
+    loadUrls();
+  }, [files]);
+
+  useEffect(() => {
+    dispatch(setSelectedFile(undefined));
   }, [location]);
 
-  const getLatestFile = (items: FileInfo[]) =>
+  const getLatestFile = (items: FileInfoSerializable[]) =>
     items.sort(
       (a, b) =>
         parseInt(b.metadata?.version || '0', 10) -
@@ -98,7 +114,7 @@ export default function ModelLibrary() {
   };
 
   const onClosePanel = () => {
-    setSelectedRow(undefined);
+    dispatch(setSelectedFile(undefined));
   };
 
   return (
@@ -108,10 +124,10 @@ export default function ModelLibrary() {
         sidePanelRight={
           <BoundaryConditionContent
             onClosePanel={onClosePanel}
-            data={selectedRow}
+            data={selectedFileVersion}
           />
         }
-        sidePanelRightVisible={Boolean(selectedRow)}
+        sidePanelRightVisible={Boolean(selectedFileVersion)}
       >
         <Container>
           <Header>
@@ -120,12 +136,7 @@ export default function ModelLibrary() {
               {!modelName ? 'New model' : 'New version'}
             </Button>
           </Header>
-          <ModelTable
-            data={files}
-            modelName={modelName}
-            links={links}
-            setSelectedRow={setSelectedRow}
-          />
+          <ModelTable data={files} modelName={modelName} links={links} />
         </Container>
       </CollapsablePanel>
     </CollapsableContainer>

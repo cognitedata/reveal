@@ -2,25 +2,23 @@ import { MouseEvent } from 'react';
 import moment from 'moment';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Button, Table, TableRow } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
 import { forceDownloadDialog } from 'utils/fileDownload';
 import { LinkWithID } from 'pages/ModelLibrary/types';
+import { FileInfoSerializable } from 'store/file/types';
+import { useAppDispatch } from 'store/hooks';
+import { setSelectedFile } from 'store/file';
 
 type ComponentProps = {
-  data: FileInfo[];
+  data: FileInfoSerializable[];
   modelName?: string;
   links?: LinkWithID[];
-  setSelectedRow: (row: any) => void;
 };
 
-export default function ModelTable({
-  data,
-  modelName,
-  links,
-  setSelectedRow,
-}: ComponentProps) {
+export default function ModelTable({ data, modelName, links }: ComponentProps) {
   const { url } = useRouteMatch();
+
   const history = useHistory();
+  const dispatch = useAppDispatch();
 
   const onDownloadClicked = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -40,13 +38,13 @@ export default function ModelTable({
     forceDownloadDialog(value, downloadUrl);
   };
 
-  const onRowClicked = (row: TableRow<FileInfo>) => {
+  const onRowClicked = async (row: TableRow<FileInfoSerializable>) => {
     if (!modelName) {
-      setSelectedRow(undefined);
+      await dispatch(setSelectedFile(undefined));
       history.push(`${url}/${row.original.name}`);
       return;
     }
-    setSelectedRow(row.original);
+    await dispatch(setSelectedFile(row.original));
   };
 
   const getNameColumnDefinition = () => {
@@ -54,13 +52,13 @@ export default function ModelTable({
       return {
         id: 'description',
         Header: 'Description',
-        accessor: (row: FileInfo) => row.metadata?.description,
+        accessor: (row: FileInfoSerializable) => row.metadata?.description,
       };
     }
     return {
       id: 'name',
       Header: 'Name',
-      accessor: (row: FileInfo) => row.name,
+      accessor: (row: FileInfoSerializable) => row.name,
     };
   };
   const cols = [
@@ -78,14 +76,14 @@ export default function ModelTable({
           {value}
         </>
       ),
-      accessor: (row: FileInfo) => row.source,
+      accessor: (row: FileInfoSerializable) => row.source,
       disableSortBy: true,
       width: 200,
     },
     {
       id: 'userEmail',
       Header: 'User',
-      accessor: (row: FileInfo) => row.metadata?.userEmail,
+      accessor: (row: FileInfoSerializable) => row.metadata?.userEmail,
     },
     {
       ...getNameColumnDefinition(),
@@ -97,15 +95,15 @@ export default function ModelTable({
     {
       id: 'version',
       Header: 'Version',
-      accessor: (row: FileInfo) => row.metadata?.version,
+      accessor: (row: FileInfoSerializable) => row.metadata?.version,
       sortType: 'number',
       sorter: true,
     },
     {
       id: 'updated',
       Header: 'Updated',
-      accessor: (row: FileInfo) => row.lastUpdatedTime,
-      sortType: 'datetime',
+      accessor: (row: FileInfoSerializable) => row.lastUpdatedTime,
+      sortType: 'number',
       Cell: ({ cell: { value } }: any) => (
         <>{moment(value).format('YYYY-MM-DD HH:mm')}</>
       ),
@@ -116,13 +114,14 @@ export default function ModelTable({
       Cell: ({ cell: { value } }: any) => (
         <>
           <Button
+            aria-label="download"
             data-external-id={value}
             icon="Download"
             onClick={onDownloadClicked}
           />
         </>
       ),
-      accessor: (row: FileInfo) => row.externalId,
+      accessor: (row: FileInfoSerializable) => row.externalId,
       disableSortBy: true,
       width: 200,
     },
@@ -137,7 +136,7 @@ export default function ModelTable({
   };
 
   return (
-    <Table<FileInfo>
+    <Table<FileInfoSerializable>
       dataSource={data}
       filterable
       pagination
