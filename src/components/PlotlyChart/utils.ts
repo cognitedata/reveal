@@ -436,7 +436,7 @@ export function generateLayout({
   };
 
   const yAxisDefaults = {
-    hoverformat: '.2f',
+    hoverformat: '.3g',
     zeroline: false,
     type: 'linear', // IMPORTANT! missing causes more renders
     fixedrange: yAxisLocked,
