@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { CadModelMetadata } from '@reveal/cad-parsers';
-import { CadMaterialManager, PrioritizedArea } from '@reveal/cad-geometry-loaders';
+import { CadMaterialManager } from '@reveal/cad-geometry-loaders';
 
 import { Mutable } from '../../../../test-utilities/src/reflection';
 import { generateSectorTree, createCadModelMetadata } from '../../../../test-utilities';
@@ -21,7 +21,7 @@ describe('CadModelFactory', () => {
     const rootSector = generateSectorTree(2);
     modelMetadata = createCadModelMetadata(rootSector);
 
-    factory = new CadModelFactory(materialManager, { prioritizedAreasUpdatedCallback: (_: PrioritizedArea[]) => {} });
+    factory = new CadModelFactory(materialManager);
   });
 
   test('createModel() initializes model materials', () => {

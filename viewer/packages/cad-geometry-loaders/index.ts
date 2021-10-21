@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export { CadNode, ModelUpdateCallbackCollection, SuggestedCameraConfig } from './src/CadNode';
+export { CadNode, SuggestedCameraConfig } from './src/CadNode';
 export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
 
 export { NodeTransformProvider } from './src/material-manager/styling/NodeTransformProvider';
@@ -28,8 +28,6 @@ export { EffectRenderManager } from './src/material-manager/rendering/EffectRend
 export { CadMaterialManager } from './src/material-manager/CadMaterialManager';
 export { CadModelUpdateHandler } from './src/CadModelUpdateHandler';
 
-export { PrioritizedArea } from './src/sector/culling/types';
-
 export { LoadingState } from './src/utilities/types';
 
 export { SectorCuller } from './src/sector/culling/SectorCuller';
@@ -39,4 +37,4 @@ export {
 } from './src/sector/culling/ByVisibilityGpuSectorCuller';
 export { GpuOrderSectorsByVisibilityCoverage } from './src/sector/culling/OrderSectorsByVisibilityCoverage';
 export { OccludingGeometryProvider } from './src/sector/culling/OccludingGeometryProvider';
-export { DetermineSectorsInput } from './src/sector/culling/types';
+export { DetermineSectorsInput, PrioritizedArea } from './src/sector/culling/types';

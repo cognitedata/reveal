@@ -26,9 +26,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
     const cadModelMetadata: CadModelMetadata = createCadModelMetadata(generateSectorTree(3, 3));
-    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager(), {
-      prioritizedAreasUpdatedCallback: _ => {}
-    });
+    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager());
     const nodesClient: NodesApiClient = new NodesLocalClient('');
 
     model = new Cognite3DModel(1, 2, cadNode, nodesClient);

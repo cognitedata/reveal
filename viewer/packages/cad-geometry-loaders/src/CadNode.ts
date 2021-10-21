@@ -24,13 +24,6 @@ export interface SuggestedCameraConfig {
   far: number;
 }
 
-/**
- * @internal
- */
-export type ModelUpdateCallbackCollection = {
-  prioritizedAreasUpdatedCallback(prioritizedAreas: PrioritizedArea[]): void;
-};
-
 export class CadNode extends THREE.Object3D {
   private readonly _rootSector: RootSectorNode;
   private readonly _cadModelMetadata: CadModelMetadata;
@@ -38,19 +31,13 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _instancedMeshManager: InstancedMeshManager;
-  private readonly _updateCallbacks: ModelUpdateCallbackCollection;
+  private _prioritizedAreas: PrioritizedArea[] = [];
 
-  constructor(
-    model: CadModelMetadata,
-    materialManager: CadMaterialManager,
-    modelUpdateCallbackCollection: ModelUpdateCallbackCollection
-  ) {
+  constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
-
-    this._updateCallbacks = modelUpdateCallbackCollection;
 
     const instancedMeshGroup = new THREE.Group();
     instancedMeshGroup.name = 'InstancedMeshes';
@@ -146,8 +133,11 @@ export class CadNode extends THREE.Object3D {
     const areas: PrioritizedArea[] = [...nodeCollection.getAreas().areas()].map(box => {
       return { area: box, extraPriority: priority };
     });
+    this._prioritizedAreas = areas;
+  }
 
-    this._updateCallbacks.prioritizedAreasUpdatedCallback(areas);
+  get prioritizedAreas(): PrioritizedArea[] {
+    return this._prioritizedAreas;
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {

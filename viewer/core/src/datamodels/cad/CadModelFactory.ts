@@ -3,23 +3,21 @@
  */
 import * as THREE from 'three';
 
-import { CadMaterialManager, CadNode, ModelUpdateCallbackCollection } from '@reveal/cad-geometry-loaders';
+import { CadMaterialManager, CadNode } from '@reveal/cad-geometry-loaders';
 import { CadModelMetadata } from '@reveal/cad-parsers';
 
 import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
-  private readonly _modelUpdateCallbackCollection: ModelUpdateCallbackCollection;
 
-  constructor(materialManager: CadMaterialManager, modelUpdateCallbackCollection: ModelUpdateCallbackCollection) {
+  constructor(materialManager: CadMaterialManager) {
     this._materialManager = materialManager;
-    this._modelUpdateCallbackCollection = modelUpdateCallbackCollection;
   }
 
   createModel(modelMetadata: CadModelMetadata): CadNode {
     const { modelIdentifier, scene } = modelMetadata;
-    const cadModel = new CadNode(modelMetadata, this._materialManager, this._modelUpdateCallbackCollection);
+    const cadModel = new CadNode(modelMetadata, this._materialManager);
     this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);
