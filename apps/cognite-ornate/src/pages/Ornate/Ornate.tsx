@@ -42,6 +42,7 @@ import {
 } from 'components/ListToolSidebar/ListToolSidebar';
 import Konva from 'konva';
 import { Theme } from 'utils/theme';
+import { useMetrics } from '@cognite/metrics';
 
 import {
   Loader,
@@ -57,6 +58,7 @@ interface OrnateProps {
 const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const workspaceService = new WorkspaceService(client);
   const ornateViewer = useRef<CogniteOrnate>();
+  const metrics = useMetrics('Ornate');
   const [activeTool, setActiveTool] = useState<ToolType>('default');
   const [shapeSettings, setShapeSettings] =
     useState<ShapeSettingsType>(defaultShapeSettings);
@@ -98,7 +100,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         const nextListItems: ListItem[] = markers.map((marker) => ({
           marker,
           order: marker.order,
-          text: marker.metadata?.text || '',
+          text: marker.metadata?.text || marker.shape.attrs?.text || '',
           assetId:
             marker.metadata?.assetId ||
             marker.shape.attrs?.metadata?.resourceId,
@@ -123,6 +125,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const onDelete = useCallback(
     (e: Event) => {
+      metrics.track('onDeleteDocument');
       const deletedNode = (e as CustomEvent).detail;
       if (deletedNode && deletedNode.getType() === 'Group') {
         const doc = ornateViewer.current?.documents.find(
@@ -156,6 +159,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   }, [workspaceDocuments]);
 
   const onCommentClick = (event: CustomEvent) => {
+    metrics.track('onCommentClick');
     const commentNode = event.detail;
     const id = commentNode.attrs.id.toString();
     setTarget({ id, targetType: 'comments' });
@@ -163,6 +167,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const onAnnotationClick = async (event: CustomEvent) => {
     const data = event.detail as OrnateAnnotationInstance;
+    metrics.track('onAnnotationClick', {
+      type: data.annotation?.metadata?.type,
+    });
     if (data.annotation?.metadata?.type === 'file') {
       const { resourceId } = data.annotation.metadata;
       if (!resourceId) {
@@ -197,6 +204,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   };
 
   const onToolChange = (tool: ToolType) => {
+    metrics.track('toolChange', { tool });
     ornateViewer.current!.handleToolChange(tool);
     setActiveTool(tool);
     onShapeSettingsChange({ tool });
@@ -207,6 +215,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     setShapeSettings({ ...shapeSettings, ...nextSettings });
   };
   const loadWorkspace = async (workspace: Workspace) => {
+    metrics.track('loadWorkspace');
     try {
       setShowLoader(true);
       setWorkspace(workspace);
@@ -313,6 +322,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       showLoader?: boolean;
     }
   ) => {
+    metrics.track('loadFile');
     const { initialPosition = { x: 0, y: 0 }, zoomAfterLoad = true } =
       options || {};
     const existingDoc = ornateViewer.current!.documents.find(
@@ -398,10 +408,12 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   };
 
   const onExport = useCallback(() => {
+    metrics.track('onExportWorkspace');
     ornateViewer.current!.onExport(workspace?.name);
   }, [workspace?.name]);
 
   const onSave = () => {
+    metrics.track('onSave');
     try {
       if (!workspace) {
         return;
@@ -442,6 +454,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   };
 
   const toggleWorkSpaceSidebar = useCallback(() => {
+    metrics.track('toggleWorkSpaceSidebar');
     setIsSidebarOpen(!isSidebarOpen);
   }, [isSidebarOpen]);
 
@@ -450,6 +463,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       if (!workspace) {
         return;
       }
+      metrics.track('updateWorkspaceTitle', { newTitle });
       setWorkspace({
         ...workspace,
         name: newTitle,
@@ -460,6 +474,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const onDeleteDocument = useCallback(
     (workspaceDoc: WorkspaceDocument) => {
+      metrics.track('onDeleteDocument');
       const docToRemove = ornateViewer.current!.documents.find(
         (doc) => doc.metadata && doc.metadata.fileId === workspaceDoc.documentId
       );
@@ -478,6 +493,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const onAssetClick = useCallback(
     (fileId: string, asset: Asset) => {
+      metrics.track('onAssetClick');
       const instance = workspaceDocumentAnnotations?.[fileId].find(
         (x) => x.annotation.metadata?.resourceId === String(asset.id)
       );
@@ -490,6 +506,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const createNewWorkspace = () => {
     const ws = workspaceService.create();
+    metrics.track('createNewWorkspace');
     setWorkspace(ws);
     setWorkspaceDocuments([]);
     setActiveTool('default');
@@ -498,6 +515,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   };
 
   const showWorkspaces = () => {
+    metrics.track('returnToWorkspaces');
     setWorkspace(null);
     setWorkspaceDocuments([]);
     ornateViewer.current!.restart();
@@ -505,6 +523,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   };
 
   const deleteWorkspace = async (workspace: Workspace) => {
+    metrics.track('deleteWorkspace');
     await workspaceService.deleteWorkspace(workspace);
     setWorkspace(null);
     setWorkspaceDocuments([]);
@@ -624,13 +643,18 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         onSetLayerVisibility={(layer, visible) => {
           const shapes: Konva.Node[] = [];
           if (layer === 'ANNOTATIONS') {
+            // Get annotations. Then filter out the ones affected by the list tool
             shapes.push(
-              ...(ornateViewer.current?.stage.find('.annotation') || [])
+              ...(ornateViewer.current?.stage.find('.annotation') || []).filter(
+                (shape) => !shape.attrs.inList
+              )
             );
           }
           if (layer === 'DRAWINGS') {
             shapes.push(
-              ...(ornateViewer.current?.stage.find('.drawing') || [])
+              ...(ornateViewer.current?.stage.find('.drawing') || []).filter(
+                (shape) => !shape.attrs.inList
+              )
             );
           }
           if (layer === 'MARKERS') {

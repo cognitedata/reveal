@@ -34,7 +34,7 @@ const WorkSpaceTools = ({
     MARKERS: true,
   });
   useEffect(() => {
-    document.addEventListener('keydown', (e) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (!isDisabled) {
         metrics.track('onHotkey', { key: e.key });
         if (e.key === 'm') {
@@ -59,8 +59,12 @@ const WorkSpaceTools = ({
           onToolChange('default');
         }
       }
-    });
-  }, []);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isDisabled]);
 
   const onToolClick = (type: ToolType) => {
     metrics.track('onToolClick', { type });

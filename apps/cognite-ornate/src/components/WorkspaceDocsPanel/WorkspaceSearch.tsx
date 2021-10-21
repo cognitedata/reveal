@@ -151,6 +151,9 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
             setShowResults(true);
           }
         }}
+        onKeyUp={(event) => {
+          event.stopPropagation();
+        }}
         onKeyDown={(event) => {
           event.stopPropagation();
           if (event.key === 'Escape') {

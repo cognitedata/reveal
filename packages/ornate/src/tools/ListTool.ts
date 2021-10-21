@@ -70,6 +70,11 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
       attachedToGroup: numberGroup.id(),
     });
 
+    marker.shape.setAttrs({
+      ...marker.shape.attrs,
+      inList: true,
+    });
+
     if (marker.styleOverrides) {
       // Ensure if style was undefined before, that this is known.
       const emptyStyleKeys = Object.keys(marker.styleOverrides).reduce(
@@ -125,7 +130,8 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
     if (e.target.attrs.unselectable) {
       return;
     }
-    if (e.target.attrs.type === 'rect') {
+    const allowedShapes = ['rect', 'circle', 'text'];
+    if (allowedShapes.includes(e.target.attrs.type)) {
       this.addMarker({
         order: this.markers.length + 1,
         position: { x: e.target.x(), y: e.target.y() },

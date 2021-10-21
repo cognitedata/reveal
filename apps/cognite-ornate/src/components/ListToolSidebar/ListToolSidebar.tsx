@@ -21,7 +21,7 @@ export const LIST_TOOL_STATUSES: Record<
     display: 'CLOSE',
     styleOverrides: {
       fill: 'rgba(255, 0, 0, 0.2)',
-      stroke: 'red',
+      stroke: 'rgba(255, 0, 0, 0.4)',
       cornerRadius: 5,
     },
   },
@@ -29,7 +29,7 @@ export const LIST_TOOL_STATUSES: Record<
     display: 'OPEN',
     styleOverrides: {
       fill: 'rgba(0, 255, 0, 0.2)',
-      stroke: 'green',
+      stroke: 'rgba(0, 255, 0, 0.4)',
       cornerRadius: 50,
     },
   },
