@@ -76,7 +76,7 @@ export const LinkedAssetItem = ({
   );
   const link = useFusionLink(`/explore/asset/${timeseries?.assetId}`);
 
-  return <MetadataItem label="Linked asset" value={asset?.name} link={link} />;
+  return <MetadataItem label="Equipment Tag" value={asset?.name} link={link} />;
 };
 
 const MetadataItemContainer = styled.div`
