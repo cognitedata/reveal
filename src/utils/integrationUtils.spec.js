@@ -4,7 +4,7 @@ import {
 } from 'utils/integrationUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
 
-jest.mock('modules/Auth', () => {
+jest.mock('@cognite/cdf-sdk-singleton', () => {
   return {
     sdk: jest.fn(),
   };
