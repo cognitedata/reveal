@@ -16,7 +16,7 @@ import NewVersion from 'pages/ModelLibrary/NewVersion';
 
 export default function App() {
   const dispatch = useDispatch();
-  const cdfClient = useContext(CdfClientContext);
+  const { cdfClient } = useContext(CdfClientContext);
   const isAppInitialized = useSelector(selectIsAppInitialized);
 
   useEffect(() => {

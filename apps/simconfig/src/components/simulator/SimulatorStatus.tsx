@@ -16,7 +16,7 @@ import { SimulatorTag } from './elements';
 
 function SimulatorStatusComponent() {
   const dispatch = useAppDispatch();
-  const cdfClient = useContext(CdfClientContext);
+  const { cdfClient } = useContext(CdfClientContext);
   const simulators = useAppSelector(selectSimulators);
   const isSimulatorInitialized = useSelector(selectIsSimulatorInitialized);
   const availableSimulators = useSelector(selectAvailableSimulators);

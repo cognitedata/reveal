@@ -31,7 +31,7 @@ export const BoundaryConditionContent: React.FC<Props> = ({
   data,
   onClosePanel,
 }) => {
-  const cdfClient = useContext(CdfClientContext);
+  const { cdfClient } = useContext(CdfClientContext);
   const [displayValues, setDisplayValues] = useState<DisplayValue[]>([]);
 
   const getDataPointValue = (datapoint: Datapoints | DatapointAggregates) => {

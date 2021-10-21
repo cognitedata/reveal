@@ -49,7 +49,7 @@ const getSelectEntriesFromMap = (obj: { [key: string]: string }) =>
 
 export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
   const history = useHistory();
-  const cdfClient = useContext(CdfClientContext);
+  const { cdfClient, authState } = useContext(CdfClientContext);
 
   const datasets = useSelector(selectDatasets);
   const scopes = useSelector(selectUploadDatasetIds);
@@ -59,6 +59,10 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
     .reduce((datasets, { id, name }) => ({ ...datasets, [id]: name }), {});
 
   initialModelFormState.fileInfo.dataSetId = datasets[0]?.id;
+
+  if (authState?.authenticated && authState.email) {
+    initialModelFormState.fileInfo.metadata.userEmail = authState.email;
+  }
 
   return (
     <Formik

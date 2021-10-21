@@ -9,9 +9,9 @@ export default function AppRoot() {
   return (
     <Container sidecar={sidecar}>
       <AuthConsumer>
-        {({ client }: AuthContext) =>
+        {({ client, authState }: AuthContext) =>
           client ? (
-            <CdfClientProvider client={client}>
+            <CdfClientProvider client={client} authState={authState}>
               <ReduxProvider store={store}>
                 <App />
               </ReduxProvider>

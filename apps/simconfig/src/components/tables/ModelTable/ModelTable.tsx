@@ -83,6 +83,11 @@ export default function ModelTable({
       width: 200,
     },
     {
+      id: 'userEmail',
+      Header: 'User',
+      accessor: (row: FileInfo) => row.metadata?.userEmail,
+    },
+    {
       ...getNameColumnDefinition(),
       Cell: ({ cell: { value } }: any) => <strong>{value}</strong>,
       Filter: Table.InputFilter(),
@@ -123,12 +128,20 @@ export default function ModelTable({
     },
   ];
 
+  const getColumns = () => {
+    /* Email should be listed only in model version details. */
+    if (!modelName) {
+      return cols.filter((col) => col.id !== 'userEmail');
+    }
+    return cols;
+  };
+
   return (
     <Table<FileInfo>
       dataSource={data}
       filterable
       pagination
-      columns={cols}
+      columns={getColumns()}
       onRowClick={onRowClicked}
     />
   );

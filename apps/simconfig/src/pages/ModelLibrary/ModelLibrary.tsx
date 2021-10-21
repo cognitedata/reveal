@@ -22,7 +22,7 @@ export default function ModelLibrary() {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [links, setLinks] = useState<LinkWithID[]>();
   const [selectedRow, setSelectedRow] = useState(undefined);
-  const cdfClient = useContext(CdfClientContext);
+  const { cdfClient } = useContext(CdfClientContext);
   const getFilter = () => {
     if (modelName) {
       return {
