@@ -1,8 +1,6 @@
-import { execSync } from 'child_process';
-import os from 'os';
-
 import fetch, { Request, Response, Headers } from 'cross-fetch';
 
+import { getTestUserId } from '../../src/_helpers/getTestUserId';
 import App from '../__pages__/App';
 
 import { progress } from './utils';
@@ -49,14 +47,7 @@ if (!globalThis.fetch) {
 
 // make sure we get the same token as the one we use locally
 export const getTokenHeaders = (): Promise<Record<string, string>> => {
-  let userId;
-  try {
-    // local
-    userId = execSync('git config user.email').toString().trim();
-  } catch {
-    // CI
-    userId = os.hostname().split('-').slice(-1).join('');
-  }
+  const userId = getTestUserId();
 
   progress(' ');
   progress(`Using user id: ${userId}`);

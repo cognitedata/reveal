@@ -2,9 +2,21 @@ import { t } from 'testcafe';
 
 import App from '../../__pages__/App';
 import { deleteSavedSearches } from '../../fixtures/savedSearches';
-import { startTest, getNetworkLogger } from '../../utils';
+import {
+  startTest,
+  getNetworkLogger,
+  logNetworkLoggerResults,
+} from '../../utils';
 
-const logger = getNetworkLogger();
+const logger = getNetworkLogger('', {
+  logRequestBody: false,
+  logRequestHeaders: true,
+  stringifyRequestBody: false,
+
+  stringifyResponseBody: false,
+  logResponseHeaders: false,
+  logResponseBody: false,
+});
 
 const savedSearchName = 'TEST_SAVED_SEARCH';
 const savedSearchNameWells = 'TEST_SAVED_SEARCH_WELLS';
@@ -44,6 +56,7 @@ startTest('Add an empty and PDF saved search', async () => {
   await App.savedSearchesPage.checkIfSavedSearchExistsInPanel(
     savedSearchNameEmpty
   );
+  logNetworkLoggerResults(logger);
 });
 
 startTest('Load some basic saved searches', async () => {

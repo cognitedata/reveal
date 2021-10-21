@@ -3,4 +3,5 @@ exports_files([
     "jest.sh",
     "react_scripts_test.sh",
     "testcafe_test.sh",
+    "testcafe_user.sh",
 ])

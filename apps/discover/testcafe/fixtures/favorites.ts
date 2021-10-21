@@ -12,12 +12,12 @@ export const deleteAllAndCreateSetForTestRun = async () => {
 };
 
 export const deleteFavorites = async () => {
-  const token = await getTokenHeaders();
-  const favoritesList = await favorites.list(token, App.tenant);
+  const headers = await getTokenHeaders();
+  const favoritesList = await favorites.list(headers, App.tenant);
 
   const deleting = favoritesList.map((favorite) => {
     progress(`Deleting favorite: ${favorite.name}`);
-    return favorites.delete(favorite.id, token, App.tenant);
+    return favorites.delete(favorite.id, headers, App.tenant);
   });
 
   await Promise.all(deleting);
@@ -28,12 +28,12 @@ export const addFavorite = async (
   name: string,
   description = 'description'
 ) => {
-  const token = await getTokenHeaders();
+  const headers = await getTokenHeaders();
 
   try {
     const createdFavorite = await favorites.create(
       { name, description },
-      token,
+      headers,
       App.tenant
     );
     return createdFavorite;
@@ -47,10 +47,10 @@ export const addFavorite = async (
 export const updateFavoriteContent = async (
   data: UpdateFavoriteContentData
 ) => {
-  const token = await getTokenHeaders();
+  const headers = await getTokenHeaders();
   const updateContent = await favorites.updateFavoriteContent(
     data,
-    token,
+    headers,
     App.tenant
   );
 

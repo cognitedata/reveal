@@ -6,7 +6,7 @@ load("@npm//testcafe:index.bzl", _testcafe = "testcafe")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 
 def testcafe_test(name, app_name, data, args = [], timeout = "long", **kwargs):
-    """Creates a react-scripts test wrapper
+    """Creates a testcafe test wrapper
 
     Args:
         name: name of the target
@@ -14,7 +14,7 @@ def testcafe_test(name, app_name, data, args = [], timeout = "long", **kwargs):
         data: source files (tests and non-test files)
         args: extra arguments to pass
         timeout: How long the test is expected to run before returning.
-        **kwargs: rest of arguments passed to jest
+        **kwargs: rest of arguments passed to testcafe
     """
     chdir_name = "_chdir_%s" % name
     file_name = chdir_name + ".js"

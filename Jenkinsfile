@@ -97,7 +97,11 @@ def pods = { body ->
 def handleError = { err ->
   container('bazel') {
     sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo")
-    archiveArtifacts allowEmptyArchive: true, artifacts: 'test.outputs/**/screenshots/**/*.png,test.outputs/**/video/**/*.mp4'
+    def bazelTestLogPath = "\$(bazel info bazel-testlogs)"
+    // guessing this does not work because we need to preserve the sandbox?
+    def artifactPaths = "test.outputs/**/screenshots/**/*.png,test.outputs/**/video/**/*.mp4,${bazelTestLogPath}/**/testcafe_test_chunk*/*.log"
+    // sh("echo ${artifactPaths}")
+    archiveArtifacts allowEmptyArchive: true, artifacts: artifactPaths
   }
 }
 

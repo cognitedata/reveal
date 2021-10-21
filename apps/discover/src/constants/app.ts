@@ -1,5 +1,3 @@
-import os from 'os';
-
 import {
   Service,
   SidecarConfig,
@@ -7,8 +5,11 @@ import {
   getDefaultSidecar,
 } from '@cognite/sidecar';
 
+import { getTestUserId } from '../_helpers/getTestUserId';
+
 // More info: https://cog.link/discover-projects
-const CLUSTER: CDFCluster = 'bluefield';
+const CLUSTER: CDFCluster =
+  (process.env.REACT_APP_E2E_CLUSTER as CDFCluster) || 'bluefield';
 
 // Run in production mode
 const PROD = false;
@@ -48,7 +49,8 @@ const getAadApplicationId = (cluster: string) => {
   };
 };
 
-// add in the dyanmic USER_ID, which is unique per 'yarn start' (apart from local)
+// add in the dyanmic USER_ID, so the login page will have it
+// which is unique per 'yarn start' (apart from local, which users your git email)
 const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
   ...sidecarOverrides,
   fakeIdp:
@@ -57,10 +59,7 @@ const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
           const isAdmin = fakeIdp.name?.toLowerCase().includes('admin');
           return {
             ...fakeIdp,
-            userId:
-              (isAdmin ? 'admin-' : '') +
-              (os.hostname().split('-').slice(-1).join('') || 'Error'),
-            // (process.env.REACT_APP_USER_ID || 'Error'),
+            userId: (isAdmin ? 'admin-' : '') + (getTestUserId() || 'Error'),
           };
         })
       : [],
@@ -72,10 +71,10 @@ type DiscoverSidecarConfig = SidecarConfig & {
 };
 
 export const SIDECAR = {
-  ...getAadApplicationId(process.env.REACT_APP_E2E_CLUSTER || CLUSTER),
+  ...getAadApplicationId(CLUSTER),
   ...getDefaultSidecar({
     prod: PROD,
-    cluster: (process.env.REACT_APP_E2E_CLUSTER as CDFCluster) || CLUSTER,
+    cluster: CLUSTER,
     localServices,
   }),
   // disableLegacyLogin: true, // for testing

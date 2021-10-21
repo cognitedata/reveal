@@ -72,6 +72,8 @@ yarn test:coverage                                  # To generate a test coverag
 
 1. Then start your test server:
 
+(Make sure you always do this for bluefield)
+
 ```sh
 yarn start:local
 ```
@@ -81,12 +83,13 @@ yarn start:local
 2. Start TestCafé.
 
 ```sh
-yarn testcafe {TENANT} {PAGE}
+yarn testcafe:bazel-run-live
+```
 
-# Some examples:
-yarn testcafe                           # Test all pages on bluefield
-yarn testcafe favorites                 # Test favorites page on bluefield
-yarn testcafe well:inspect azure-dev    # Test well:inspect page on the azure-dev cluster
+or:
+
+```sh
+yarn testcafe:bazel-run-live-linux --fixture-meta page=savedSearches
 ```
 
 ### Generating Access Tokens for discover-e2e-bluefield tenant
@@ -109,7 +112,7 @@ Useful info: [Supported browsers](https://devexpress.github.io/testcafe/document
 
 Known bug: [Firefox cannot display maps](https://bugzilla.mozilla.org/show_bug.cgi?id=1375585)
 
-### Logging
+### Testcafe logging
 
 To enable extra logging in tests, do something like this:
 
@@ -394,7 +397,3 @@ BROWSER                         # true or false to open browser on `yarn start`
     ├── testcafe                            # E2E testing
     ├── Dockerfile                          # E2E testing container
     └── README.md
-
-# Authentication
-
-Discover expects authentication from an external AuthProvider.

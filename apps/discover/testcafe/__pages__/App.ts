@@ -23,7 +23,7 @@ import WellSearchPage from './WellSearch';
 
 // 'fixture inserting tests' need to know public readonly
 export const tenantPrefix = 'discover-e2e-';
-export const cluster = 'bluefield';
+export const cluster = process.env.REACT_APP_E2E_CLUSTER || 'bluefield';
 export const tenant = `${tenantPrefix}${cluster}`;
 export const wellsTenant = 'underground';
 export const filename = 'Test PDF file';

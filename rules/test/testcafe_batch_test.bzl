@@ -7,7 +7,7 @@ load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 
 def testcafe_batch_test(name, app_name, data, serve_script, starting_port = 11111, testcafe_files = [], args = [], env = {}, timeout = "long", **kwargs):
-    """Creates a react-scripts test wrapper
+    """Creates a testcafe test wrapper
 
     Args:
         name: name of the target
@@ -19,7 +19,7 @@ def testcafe_batch_test(name, app_name, data, serve_script, starting_port = 1111
         args: extra arguments to pass
         env: environment value for testcafe to use
         timeout: How long the test is expected to run before returning.
-        **kwargs: rest of arguments passed to cypress
+        **kwargs: rest of arguments passed to testcafe
     """
     chdir_name = "_chdir_%s" % name
     file_name = chdir_name + ".js"
