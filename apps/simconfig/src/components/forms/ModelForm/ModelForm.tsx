@@ -129,6 +129,8 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
                   as={Input}
                   title="Model name"
                   name="fileInfo.name"
+                  pattern="^[A-Za-z0-9_ -]*$"
+                  helpText="* No special characters are allowed."
                   maxLength={256}
                   fullWidth
                   disabled={!!formData}
