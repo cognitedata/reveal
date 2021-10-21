@@ -85,7 +85,7 @@
     "@types/react-highlight-words": "^0.16.2",
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "^5.1.6",
-    "@types/sinon": "^9.0.9",
+    "@types/sinon": "^10.0.4",
     "@types/styled-components": "^5.1.7",
     "babel-loader": "8.1.0",
     "eslint": "^7.27.0",
