@@ -17,6 +17,7 @@
     "@reveal/logger": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*",
+    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

@@ -10,9 +10,9 @@ import { createRevealManager } from '../public/createRevealManager';
 import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
 
 import { CdfModelIdentifier, File3dFormat, LocalModelIdentifier } from '@reveal/modeldata-api';
-import { CadNode } from '@reveal/cad-geometry-loaders';
 import { DataSource } from '@reveal/data-source';
 import { assertNever } from '@reveal/utilities';
+import { CadNode } from '@reveal/rendering';
 
 import { CogniteClient } from '@cognite/sdk';
 

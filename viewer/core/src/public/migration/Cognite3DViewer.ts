@@ -8,13 +8,9 @@ import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import {
-  defaultRenderOptions,
-  SsaoParameters,
-  SsaoSampleQuality,
-  AntiAliasingMode,
-  LoadingState
-} from '@reveal/cad-geometry-loaders';
+import { LoadingState } from '@reveal/cad-geometry-loaders';
+
+import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
 import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
 
