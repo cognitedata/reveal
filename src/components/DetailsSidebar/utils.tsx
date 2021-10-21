@@ -98,6 +98,10 @@ export const useStatistics = (
     debouncedPrevDatesAsString !== debouncedDatesAsString;
 
   useEffect(() => {
+    if (!sourceItem) {
+      return;
+    }
+
     if (!sourceChanged) {
       if (!datesChanged) {
         if (statistics) {
