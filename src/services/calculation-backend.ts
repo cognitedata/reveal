@@ -148,6 +148,6 @@ export const formatCalculationResult = (
 ): DoubleDatapoint[] => {
   return (result.datapoints || []).map(({ timestamp, value }) => ({
     timestamp: new Date(timestamp || 0),
-    value: value || NaN,
+    value: value ?? NaN,
   }));
 };
