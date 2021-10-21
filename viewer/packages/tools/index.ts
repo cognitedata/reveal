@@ -30,5 +30,6 @@ export {
   HereMapScheme,
   HereMapImageFormat
 } from './src/Geomap/MapConfig';
+export { ToolbarTool } from './src/Toolbar/ToolbarTool';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';

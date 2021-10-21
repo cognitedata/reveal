@@ -7,6 +7,7 @@ import { Simple } from './pages/Simple';
 import { Clipping } from './pages/Clipping';
 import { Migration } from './pages/Migration';
 import { Geomap } from './pages/Geomap';
+import { Toolbar } from './pages/Toolbar';
 import { SectorWithPointcloud } from './pages/SectorWithPointcloud';
 import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
@@ -81,6 +82,15 @@ export const exampleRoutes: Array<ExampleRoute> = [
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Geomap',
     component: <Geomap />,
+  },
+  {
+    name: 'toolbar',
+    path:
+      `/toolbar?project=${project}` +
+      `&modelId=${cadId}` +
+      `&revisionId=${cadRevisionId}`,
+    menuTitle: 'Toolbar',
+    component: <Toolbar />,
   },
   {
     name: 'cad-pointcloud',
