@@ -37,6 +37,24 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
     }
     forceDownloadDialog(value, downloadUrl);
   };
+  const getNewestFile = (items: FileInfoSerializable[]) =>
+    items.sort(
+      (a, b) => +(b.metadata?.version || '0') - +(a.metadata?.version || '0')
+    )[0];
+
+  const onCalculationsClicked = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const modelName = e.currentTarget.getAttribute('data-model') || '';
+
+    const latestFile = getNewestFile(
+      data.filter((file) => file.name === modelName)
+    );
+
+    dispatch(setSelectedFile(latestFile));
+
+    history.push(`/calculation-library/${modelName}`);
+  };
 
   const onRowClicked = async (row: TableRow<FileInfoSerializable>) => {
     if (!modelName) {
@@ -117,13 +135,33 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
             aria-label="download"
             data-external-id={value}
             icon="Download"
+            type="ghost"
             onClick={onDownloadClicked}
           />
         </>
       ),
       accessor: (row: FileInfoSerializable) => row.externalId,
       disableSortBy: true,
-      width: 200,
+      width: 20,
+    },
+    {
+      id: 'calculations',
+      Header: '',
+      Cell: ({ cell: { value } }: any) => (
+        <>
+          <Button
+            aria-label="calculations"
+            data-model={value}
+            icon="FlowChart"
+            type="ghost"
+            onClick={onCalculationsClicked}
+          />
+        </>
+      ),
+      accessor: (row: FileInfoSerializable) => row.name,
+      disableSortBy: true,
+      maxWidth: 50,
+      width: 20,
     },
   ];
 

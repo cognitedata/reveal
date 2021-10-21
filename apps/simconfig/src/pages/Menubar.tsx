@@ -10,6 +10,7 @@ export const PAGES = {
   MODEL_LIBRARY_NEW: '/model-library/new',
   MODEL_LIBRARY_VERSION: '/model-library/:modelName',
   MODEL_LIBRARY_VERSION_NEW: '/model-library/:modelName/file-new',
+  CALCULATION_LIBRARY: '/calculation-library/:modelName',
   LOGOUT: '/logout',
 };
 

@@ -13,6 +13,7 @@ import { Loader } from '@cognite/cogs.js';
 import { fetchDatasets } from 'store/dataset/thunks';
 import { selectIsAppInitialized } from 'store/selectors';
 import NewVersion from 'pages/ModelLibrary/NewVersion';
+import CalculationsLibrary from 'pages/Calculations';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,11 @@ export default function App() {
       <MenuBar />
       <Switch>
         <Route exact path={PAGES.MODEL_LIBRARY} component={ModelLibrary} />
+        <Route
+          exact
+          path={PAGES.CALCULATION_LIBRARY}
+          component={CalculationsLibrary}
+        />
         <Route path={PAGES.MODEL_LIBRARY_NEW} component={NewModel} />
         <Route
           exact
