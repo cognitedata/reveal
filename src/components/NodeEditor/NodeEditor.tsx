@@ -14,11 +14,11 @@ import {
 } from '@cognite/connect';
 import { Menu, Dropdown, Button } from '@cognite/cogs.js';
 import { nanoid } from 'nanoid';
-import workflowBackgroundSrc from 'assets/workflowBackground.png';
-import { Chart, ChartWorkflow, StorableNode } from 'reducers/charts/types';
+import { Chart, ChartWorkflow, StorableNode } from 'models/chart/types';
 import { getStepsFromWorkflow } from 'utils/transforms';
+import workflowBackgroundSrc from '../../assets/workflowBackground.png';
 import { pinTypes } from './utils';
-import defaultNodeOptions from '../../reducers/charts/Nodes';
+import defaultNodeOptions from '../Nodes';
 import ConfigPanel from './ConfigPanel';
 
 const WorkflowContainer = styled.div`

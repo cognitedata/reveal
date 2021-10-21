@@ -1,7 +1,7 @@
 import { Menu } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { availableColors } from 'utils/colors';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 
 type LineStyle = 'none' | 'solid' | 'dashed' | 'dotted';
 

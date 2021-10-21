@@ -1,4 +1,4 @@
-import configureStory from 'storybook/configureStory';
+import configureStory from '../../../.storybook/configureStory';
 
 import ChartList from './ChartList';
 

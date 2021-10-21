@@ -1,6 +1,6 @@
-import { node as TimeSeriesReferenceNode } from 'reducers/charts/Nodes/TimeSeriesReference';
-import { node as OutputSeriesNode } from 'reducers/charts//Nodes/OutputSeries';
-import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { node as TimeSeriesReferenceNode } from 'components/Nodes/TimeSeriesReference';
+import { node as OutputSeriesNode } from 'components/Nodes/OutputSeries';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { nanoid } from 'nanoid';
 import { getEntryColor } from './colors';
 

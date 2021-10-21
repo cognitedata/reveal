@@ -10,12 +10,12 @@ import {
   covertTSToChartTS,
   removeTimeseries,
   updateSourceAxisForChart,
-} from 'utils/charts';
+} from 'models/chart/updates';
 import { calculateDefaultYAxis } from 'utils/axis';
-import { trackUsage } from 'utils/metrics';
-import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import { trackUsage } from 'services/metrics';
+import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
@@ -26,7 +26,7 @@ type Props = {
 export default function SearchTimeseries({ query }: Props) {
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, isLoading, isError, fetchNextPage, hasNextPage } =
     useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {

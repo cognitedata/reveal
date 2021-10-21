@@ -4,7 +4,7 @@ import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
 import styled from 'styled-components/macro';
 import { SEARCH_KEY } from 'utils/constants';
-import { useSearchParam } from 'hooks';
+import { useSearchParam } from 'hooks/navigation';
 import debounce from 'lodash/debounce';
 import InfoBox from 'components/InfoBox';
 

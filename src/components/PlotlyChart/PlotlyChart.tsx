@@ -1,40 +1,26 @@
-import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
-import { useQuery } from 'react-query';
-import dayjs from 'dayjs';
-import isEqual from 'lodash/isEqual';
-import omit from 'lodash/omit';
 import {
   DatapointAggregate,
   DatapointAggregates,
   Datapoints,
   DatapointsMultiQuery,
 } from '@cognite/sdk';
-import { calculateGranularity } from 'utils/timeseries';
-import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly from 'plotly.js-basic-dist';
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  getFunctionResponseWhenDone,
-  transformSimpleCalcResult,
-} from 'utils/backendService';
-import {
-  CHART_POINTS_PER_SERIES,
-  updateSourceAxisForChart,
-} from 'utils/charts';
-import { trackUsage } from 'utils/metrics';
+import { chartAtom } from 'models/chart/atom';
+import { timeseriesAtom } from 'models/timeseries/atom';
+import { availableWorkflows } from 'models/workflows/selectors';
+import dayjs from 'dayjs';
+import isEqual from 'lodash/isEqual';
+import Plotly from 'plotly.js-basic-dist';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import createPlotlyComponent from 'react-plotly.js/factory';
+import { useQuery } from 'react-query';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { useDebounce } from 'use-debounce';
-import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
-import { timeseriesState } from 'atoms/timeseries';
-import { WorkflowResult, workflowState } from 'atoms/workflows';
-import {
-  calculateSeriesData,
-  formatPlotlyData,
-  getXaxisUpdateFromEventData,
-  getYaxisUpdatesFromEventData,
-  SeriesData,
-} from './utils';
+import { trackUsage } from 'services/metrics';
+import { calculateGranularity } from 'utils/timeseries';
+import { CHART_POINTS_PER_SERIES } from 'utils/constants';
+import { updateSourceAxisForChart } from 'models/chart/updates';
 import {
   cleanTimeseriesCollection,
   cleanWorkflowCollection,
@@ -48,6 +34,13 @@ import {
   LoadingIcon,
   PlotWrapper,
 } from './elements';
+import {
+  calculateSeriesData,
+  formatPlotlyData,
+  getXaxisUpdateFromEventData,
+  getYaxisUpdatesFromEventData,
+  SeriesData,
+} from './utils';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -89,7 +82,7 @@ const PlotlyChartComponent = ({
   /**
    * Get local chart context
    */
-  const [, setChart] = useRecoilState(chartState);
+  const [, setChart] = useRecoilState(chartAtom);
 
   const dateFrom = chart?.dateFrom;
   const dateTo = chart?.dateTo;
@@ -120,8 +113,8 @@ const PlotlyChartComponent = ({
     isSuccess: tsSuccess,
   } = useQuery(
     ['chart-data', 'timeseries', queries],
-    () =>
-      Promise.all(
+    () => {
+      return Promise.all(
         queries.map((q) =>
           sdk.datapoints
             .retrieve(q as DatapointsMultiQuery)
@@ -151,65 +144,23 @@ const PlotlyChartComponent = ({
             })
             .then((r) => r[0])
         )
-      ),
-    { enabled: !!chart }
+      );
+    },
+    {
+      enabled: !!chart,
+    }
   );
 
-  const callKeys = isPreview
-    ? []
-    : chart?.workflowCollection?.map((wf) =>
-        omit(wf.calls?.[0], ['callDate'])
-      ) || [];
-
-  const {
-    data: workflowsRaw,
-    isSuccess: wfSuccess,
-    isFetching: workflowsRunning,
-  } = useQuery(
-    ['chart-data', 'workflows', callKeys],
-    () =>
-      Promise.all(
-        (chart?.workflowCollection || []).map(async (wf) => {
-          const call = wf.calls?.[0];
-
-          if (!call || !call?.functionId || !call?.callId) {
-            return {
-              id: wf.id,
-              datapoints: [],
-            } as WorkflowResult;
-          }
-
-          const functionResult = await getFunctionResponseWhenDone(
-            sdk,
-            call?.functionId,
-            call?.callId
-          );
-
-          return {
-            id: wf.id,
-            datapoints: transformSimpleCalcResult(functionResult),
-          } as WorkflowResult;
-        })
-      ),
-    { enabled: !isPreview }
-  );
-
-  const [localTimeseries, setLocalTimeseries] = useRecoilState(timeseriesState);
-  const [localWorkflows, setLocalWorkflows] = useRecoilState(workflowState);
+  const [localTimeseries, setLocalTimeseries] = useRecoilState(timeseriesAtom);
+  const localWorkflows = useRecoilValue(availableWorkflows);
   const timeseries = isPreview ? tsRaw : localTimeseries;
-  const workflows = isPreview ? workflowsRaw : localWorkflows;
+  const workflows = localWorkflows;
 
   useEffect(() => {
     if (tsSuccess && tsRaw) {
       setLocalTimeseries(tsRaw);
     }
   }, [tsSuccess, tsRaw, setLocalTimeseries]);
-
-  useEffect(() => {
-    if (wfSuccess && workflowsRaw) {
-      setLocalWorkflows(workflowsRaw);
-    }
-  }, [wfSuccess, workflowsRaw, setLocalWorkflows]);
 
   const onAdjustButtonClick = useCallback(() => {
     trackUsage('ChartView.ToggleYAxisLock', {
@@ -256,7 +207,6 @@ const PlotlyChartComponent = ({
       timeseries,
       timeseriesFetching,
       workflows,
-      workflowsRunning,
       mergeUnits
     );
     return result;
@@ -265,7 +215,6 @@ const PlotlyChartComponent = ({
     wfCollectionAsString,
     timeseries,
     workflows,
-    workflowsRunning,
     timeseriesFetching,
     mergeUnits,
   ]);
@@ -365,8 +314,7 @@ const PlotlyChartComponent = ({
     return { width: '100%', height: '100%' };
   }, []);
 
-  const isLoadingChartData =
-    workflowsRunning || timeseriesFetching || !isAllowedToUpdate;
+  const isLoadingChartData = timeseriesFetching || !isAllowedToUpdate;
 
   return (
     <ChartingContainer ref={containerRef}>

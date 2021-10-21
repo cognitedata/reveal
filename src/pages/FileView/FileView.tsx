@@ -3,8 +3,8 @@ import { Body, Button, Icon, Title } from '@cognite/cogs.js';
 import { Asset, FileInfo as File } from '@cognite/sdk';
 import { FileViewer } from 'components/FileViewer';
 import { FileList } from 'components/FileList';
-import { useNavigate } from 'hooks';
-import { useAsset } from 'hooks/api';
+import { useNavigate } from 'hooks/navigation';
+import { useAsset } from 'hooks/cdf-assets';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
@@ -18,12 +18,12 @@ import TimeSeriesRows from 'pages/ChartView/TimeSeriesRows';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 export const FileView = () => {
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
 
   const { chartId, assetId } = useParams<{
     chartId: string;

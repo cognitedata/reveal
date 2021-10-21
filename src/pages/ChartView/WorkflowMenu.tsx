@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts/types';
-import { duplicateWorkflow } from 'utils/charts';
-import { trackUsage } from 'utils/metrics';
+import { Chart } from 'models/chart/types';
+import { duplicateWorkflow } from 'models/chart/updates';
+import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 type Props = {
   chart: Chart;
@@ -15,7 +15,7 @@ type Props = {
 
 export default function WorkflowMenu({ id, chart, children }: Props) {
   const { data: login } = useUserInfo();
-  const [, setChart] = useRecoilState(chartState);
+  const [, setChart] = useRecoilState(chartAtom);
 
   const wf = chart?.workflowCollection?.find((t) => t.id === id);
 

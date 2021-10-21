@@ -1,9 +1,8 @@
 import ReactDOM from 'react-dom';
 import config from 'config/config';
 import { Metrics } from '@cognite/metrics';
-import App from 'components/App';
-import { isDoNotTrackDomain } from 'utils/tracking';
-import * as serviceWorker from './serviceWorker';
+import { isDoNotTrackDomain } from 'utils/do-not-track';
+import App from './App';
 
 import '@cognite/cogs.js/dist/cogs.css';
 import 'antd/dist/antd.css';
@@ -20,8 +19,3 @@ if (process.env.REACT_APP_MIXPANEL_TOKEN && !isDoNotTrackDomain()) {
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

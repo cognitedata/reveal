@@ -1,15 +1,15 @@
 import { Menu } from '@cognite/cogs.js';
-import { convertTimeseriesToWorkflow } from 'utils/charts';
+import { convertTimeseriesToWorkflow } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 type Props = {
   id: string;
 };
 export default function TimeSeriesMenu({ id }: Props) {
   const { data: login } = useUserInfo();
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
 
   const ts = chart?.timeSeriesCollection?.find((t) => t.id === id);
 

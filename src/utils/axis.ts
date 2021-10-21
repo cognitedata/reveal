@@ -1,7 +1,6 @@
 import { Aggregate, CogniteClient, DatapointAggregate } from '@cognite/sdk';
-
 import { subDays } from 'date-fns';
-import { Chart } from 'reducers/charts/types';
+import { Chart } from 'models/chart/types';
 import { convertUnits } from 'utils/units';
 
 const OUTLIER_THRESHOLD = 1000;

@@ -1,13 +1,14 @@
 /* eslint camelcase: 0 */
 
+import { StatisticsStatusStatusEnum } from '@cognite/calculation-backend';
 import {
-  Icon,
   Button,
-  Tooltip,
+  Icon,
   SegmentedControl,
   Title,
+  Tooltip,
 } from '@cognite/cogs.js';
-import { Row, Col, List } from 'antd';
+import { Col, List, Row } from 'antd';
 import DetailsBlock from 'components/common/DetailsBlock';
 import {
   getDisplayUnit,
@@ -15,37 +16,34 @@ import {
   MetadataList,
   useStatistics,
 } from 'components/DetailsSidebar';
-import FunctionCall from 'components/FunctionCall';
-import { useState } from 'react';
+import StatisticsCallStatus from 'components/StatisticsCallStatus';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
-import {
-  FunctionCallStatus,
-  ChartTimeSeries,
-  ChartWorkflow,
-} from 'reducers/charts/types';
-import { convertValue } from 'utils/units';
+import { useState } from 'react';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/axis';
+import { convertValue } from 'utils/units';
 import {
+  Container,
+  ContentOverflowWrapper,
+  HistogramWrapper,
   Sidebar,
+  SourceItemName,
+  SourceItemWrapper,
   TopContainer,
   TopContainerAside,
   TopContainerTitle,
-  ContentOverflowWrapper,
-  Container,
-  SourceItemName,
-  SourceItemWrapper,
-  HistogramWrapper,
 } from './elements';
 
-const renderStatusIcon = (status?: FunctionCallStatus) => {
+const renderStatusIcon = (status?: StatisticsStatusStatusEnum) => {
   switch (status) {
-    case 'Running':
+    case StatisticsStatusStatusEnum.Pending:
+    case StatisticsStatusStatusEnum.Running:
       return <Icon type="Loading" />;
-    case 'Completed':
+    case StatisticsStatusStatusEnum.Success:
       return <Icon type="Checkmark" />;
-    case 'Failed':
-    case 'Timeout':
-      return <Icon type="Close" />;
+    case StatisticsStatusStatusEnum.Failed:
+    case StatisticsStatusStatusEnum.Error:
+      return <Icon type="ExclamationMark" title="Failed" />;
     default:
       return null;
   }
@@ -55,34 +53,6 @@ type Props = {
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
   onClose: () => void;
   visible?: boolean;
-};
-
-export type StatisticsResult = {
-  statistics: StatisticsData[];
-  // eslint-disable-next-line camelcase
-  histogram_data?: HistogramData[];
-};
-
-type StatisticsData = {
-  min: number;
-  max: number;
-  average: number;
-  mean: number;
-  kurtosis: number;
-  median: number;
-  q25: number;
-  q50: number;
-  q75: number;
-  raw: boolean;
-  skewness: number;
-  std: number;
-  tag: string;
-};
-
-type HistogramData = {
-  data: number[];
-  raw: boolean;
-  tag: string;
 };
 
 const menuOptions = [
@@ -167,108 +137,110 @@ const Statistics = ({
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined;
 }) => {
   const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
-  const { statistics, histogram } = useStatistics(sourceItem);
+  const { results: statistics } = useStatistics(sourceItem);
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
   const displayUnit = getDisplayUnit(preferredUnit);
 
   return (
     <>
-      {sourceItem?.type === 'timeseries' ? (
-        <>
-          <div>
-            <div>
-              <FunctionCall
-                id={statisticsCall?.functionId}
-                callId={statisticsCall?.callId}
-                renderLoading={() => renderStatusIcon('Running')}
-                renderCall={({ status }) => renderStatusIcon(status)}
-              />
-            </div>
-          </div>
-          <DetailsBlock title="Statistics">
-            <List
-              dataSource={[
-                { label: 'Mean', value: statistics?.mean },
-                { label: 'Median', value: statistics?.median },
-                {
-                  label: 'Standard Deviation',
-                  value: statistics?.std,
-                },
-                { label: 'Max', value: statistics?.max },
-                { label: 'Min', value: statistics?.min },
-                // Missing values from backend according to the sketch
-                // { label: 'Avg', value: statistics?.average },
-                // { label: 'Last', value: statistics?.last },
-              ]}
-              size="small"
-              renderItem={({ label, value }) => (
-                <Row className="ant-list-item">
-                  <Col span={14}>{label}</Col>
-                  <Col span={10} style={{ textAlign: 'right' }}>
-                    {typeof value === 'number'
-                      ? `${roundToSignificantDigits(
-                          convertValue(value, unit, preferredUnit),
-                          3
-                        )} ${displayUnit}`
-                      : '-'}
-                  </Col>
-                </Row>
-              )}
-            />
-          </DetailsBlock>
-          <DetailsBlock title="Percentiles">
-            <List
-              dataSource={[
-                { label: '25th Percentile', value: statistics?.q25 },
-                { label: '50th Percentile', value: statistics?.q50 },
-                { label: '75th Percentile', value: statistics?.q75 },
-              ]}
-              size="small"
-              renderItem={({ label, value }) => (
-                <Row className="ant-list-item">
-                  <Col span={14}>{label}</Col>
-                  <Col span={10} style={{ textAlign: 'right' }}>
-                    {typeof value === 'number'
-                      ? `${roundToSignificantDigits(
-                          convertValue(value, unit, preferredUnit),
-                          3
-                        )} ${displayUnit}`
-                      : '-'}
-                  </Col>
-                </Row>
-              )}
-            />
-          </DetailsBlock>
-          <DetailsBlock title="Shape">
-            <List
-              dataSource={[
-                { label: 'Skewness', value: statistics?.skewness },
-                { label: 'Kurtosis', value: statistics?.kurtosis },
-              ]}
-              size="small"
-              renderItem={({ label, value }) => (
-                <Row className="ant-list-item">
-                  <Col span={14}>{label}</Col>
-                  <Col span={10} style={{ textAlign: 'right' }}>
-                    {typeof value === 'number' ? value : '-'}
-                  </Col>
-                </Row>
-              )}
-            />
-          </DetailsBlock>
-          <DetailsBlock title="Histogram">
-            <HistogramWrapper>
-              <Histogram
-                sourceItem={sourceItem as ChartTimeSeries}
-                histogramData={histogram}
-              />
-            </HistogramWrapper>
-          </DetailsBlock>
-        </>
-      ) : (
-        <p>(currently unavailable for calculations)</p>
-      )}
+      <div>
+        <StatisticsCallStatus
+          id={statisticsCall?.callId}
+          renderLoading={() =>
+            renderStatusIcon(StatisticsStatusStatusEnum.Running)
+          }
+          renderStatus={({ status }) => renderStatusIcon(status)}
+        />
+      </div>
+      <DetailsBlock title="Statistics">
+        <List
+          dataSource={[
+            { label: 'Mean', value: statistics?.mean },
+            { label: 'Median', value: statistics?.median },
+            {
+              label: 'Standard Deviation',
+              value: statistics?.std,
+            },
+            { label: 'Max', value: statistics?.max },
+            { label: 'Min', value: statistics?.min },
+          ]}
+          size="small"
+          renderItem={({ label, value }) => (
+            <Row className="ant-list-item">
+              <Col span={14}>{label}</Col>
+              <Col span={10} style={{ textAlign: 'right' }}>
+                {typeof value === 'number'
+                  ? `${roundToSignificantDigits(
+                      convertValue(value, unit, preferredUnit),
+                      3
+                    )} ${displayUnit}`
+                  : '-'}
+              </Col>
+            </Row>
+          )}
+        />
+      </DetailsBlock>
+      <DetailsBlock title="Percentiles">
+        <List
+          dataSource={[
+            { label: '25th Percentile', value: statistics?.q25 },
+            { label: '50th Percentile', value: statistics?.q50 },
+            { label: '75th Percentile', value: statistics?.q75 },
+          ]}
+          size="small"
+          renderItem={({ label, value }) => (
+            <Row className="ant-list-item">
+              <Col span={14}>{label}</Col>
+              <Col span={10} style={{ textAlign: 'right' }}>
+                {typeof value === 'number'
+                  ? `${roundToSignificantDigits(
+                      convertValue(value, unit, preferredUnit),
+                      3
+                    )} ${displayUnit}`
+                  : '-'}
+              </Col>
+            </Row>
+          )}
+        />
+      </DetailsBlock>
+      <DetailsBlock title="Shape">
+        <List
+          dataSource={[
+            { label: 'Skewness', value: statistics?.skewness },
+            { label: 'Kurtosis', value: statistics?.kurtosis },
+          ]}
+          size="small"
+          renderItem={({ label, value }) => (
+            <Row className="ant-list-item">
+              <Col span={14}>{label}</Col>
+              <Col span={10} style={{ textAlign: 'right' }}>
+                {typeof value === 'number' ? value : '-'}
+              </Col>
+            </Row>
+          )}
+        />
+      </DetailsBlock>
+      <DetailsBlock title="Histogram">
+        <HistogramWrapper>
+          <Histogram
+            data={statistics?.histogram?.map(
+              ({ range_start, range_end, quantity }) => ({
+                range_start: range_start
+                  ? convertValue(range_start, unit, preferredUnit)
+                  : NaN,
+                range_end: range_end
+                  ? convertValue(range_end, unit, preferredUnit)
+                  : NaN,
+                quantity: quantity
+                  ? convertValue(quantity, unit, preferredUnit)
+                  : NaN,
+              })
+            )}
+            unit={preferredUnit || ''}
+          />
+        </HistogramWrapper>
+      </DetailsBlock>
     </>
   );
 };

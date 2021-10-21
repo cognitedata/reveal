@@ -9,11 +9,11 @@ import {
   Body,
   Input,
 } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts/types';
+import { Chart } from 'models/chart/types';
 
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 interface SharingDropdownProps {
   chart: Chart;
@@ -21,7 +21,7 @@ interface SharingDropdownProps {
 }
 
 const SharingDropdown = ({ chart, disabled = false }: SharingDropdownProps) => {
-  const [, setChart] = useRecoilState(chartState);
+  const [, setChart] = useRecoilState(chartAtom);
   const [shareIconType, setShareIconType] = useState<
     'Copy' | 'Checkmark' | 'ErrorStroked'
   >('Copy');

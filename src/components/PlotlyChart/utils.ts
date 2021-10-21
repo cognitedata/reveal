@@ -8,12 +8,13 @@ import {
 } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
-import { ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/axis';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, units } from 'utils/units';
 import { useDebouncedCallback } from 'use-debounce';
 import { useState, useEffect, useCallback } from 'react';
+import { WorkflowResult } from 'models/workflows/types';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -60,11 +61,7 @@ export function calculateSeriesData(
     | DoubleDatapoints
   )[] = [],
   timeseriesFetching: boolean,
-  workflows: {
-    id: string;
-    datapoints: DoubleDatapoint[];
-  }[] = [],
-  workflowsRunning: boolean,
+  workflows: WorkflowResult[] = [],
   mergeUnits: boolean
 ): SeriesData[] {
   const seriesData: SeriesData[] = [
@@ -95,7 +92,7 @@ export function calculateSeriesData(
       }))
       .filter((t) => t.enabled),
     ...workflowCollection
-      .map((workflow, i) => ({
+      .map((workflow) => ({
         enabled: workflow.enabled,
         range: workflow.range,
         unit: units.find(
@@ -105,7 +102,8 @@ export function calculateSeriesData(
         series: [
           {
             enabled: workflow.enabled,
-            outdatedData: workflowsRunning,
+            outdatedData: workflows?.find(({ id }) => id === workflow.id)
+              ?.loading,
             id: workflow?.id,
             type: 'workflow',
             name: workflow.name,
@@ -114,7 +112,7 @@ export function calculateSeriesData(
             width: workflow.lineWeight,
             dash: convertLineStyle(workflow.lineStyle),
             datapoints: convertUnits(
-              workflows?.[i]?.datapoints || [],
+              workflows?.find(({ id }) => id === workflow.id)?.datapoints || [],
               workflow.unit,
               workflow.preferredUnit
             ),

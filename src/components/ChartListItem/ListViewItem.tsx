@@ -1,13 +1,12 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
-
 import EditableText from 'components/EditableText';
 import PlotlyChart from 'components/PlotlyChart';
-import { Chart } from 'reducers/charts/types';
-import { useIsChartOwner, useProject } from 'hooks';
-
-import { trackUsage } from 'utils/metrics';
+import { Chart } from 'models/chart/types';
+import { trackUsage } from 'services/metrics';
+import { useProject } from 'hooks/config';
+import { useIsChartOwner } from 'hooks/user';
 import { formatOwner, formatDate } from './utils';
 
 interface ListViewItemProps {

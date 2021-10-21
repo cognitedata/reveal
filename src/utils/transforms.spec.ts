@@ -1,23 +1,23 @@
-import { Chart } from 'reducers/charts/types';
-import { Workflow } from 'reducers/workflows';
 import {
-  getStepsFromWorkflow,
-  getConfigFromDspFunction,
-  DSPFunction,
-} from './transforms';
+  Operation,
+  OperationInputsTypesEnum,
+  OperationParametersTypeEnum,
+} from '@cognite/calculation-backend';
+import { Chart, ChartWorkflow } from 'models/chart/types';
+import { getStepsFromWorkflow, getConfigFromDspFunction } from './transforms';
 
 describe('getConfigFromDspFunction', () => {
   it('generates correct config from dsp function description (case 1)', () => {
-    const dspFunctionDescription: DSPFunction = {
+    const dspFunctionDescription: Operation = {
+      name: 'Saviztky-Golay Filter',
+      category: 'SMOOTHERS',
       description: 'Data smoother - Saviztky-Golay Filter',
-      n_inputs: 1,
       inputs: [
         {
           param: 'a',
-          type: ['ts'],
+          types: [OperationInputsTypesEnum.Ts],
         },
       ],
-      n_outputs: 1,
       outputs: [
         {
           name: 'Result',
@@ -27,18 +27,17 @@ describe('getConfigFromDspFunction', () => {
       parameters: [
         {
           name: 'Window Length',
-          default: null,
+          default_value: null,
           param: 'window_length',
-          type: 'int',
+          type: OperationParametersTypeEnum.Int,
         },
         {
           name: 'Polynomial Order',
-          default: 1,
+          default_value: 1,
           param: 'polyorder',
-          type: 'int',
+          type: OperationParametersTypeEnum.Int,
         },
       ],
-      type_info: [['ts']],
     };
 
     const config = getConfigFromDspFunction(dspFunctionDescription);
@@ -75,33 +74,32 @@ describe('getConfigFromDspFunction', () => {
   });
 
   it('generates correct config from dsp function description (case 1,5)', () => {
-    const dspFunctionDescription: DSPFunction = {
+    const dspFunctionDescription: Operation = {
+      name: 'Saviztky-Golay Filter',
+      category: 'SMOOTHERS',
       description: 'Data smoother - Saviztky-Golay Filter',
-      n_inputs: 1,
       inputs: [
         {
           param: 'a',
-          type: ['ts'],
+          types: [OperationInputsTypesEnum.Ts],
         },
       ],
-      n_outputs: 1,
       outputs: [],
       op: 'SG_SMOOTHER',
       parameters: [
         {
           name: 'Window Length',
-          default: null,
+          default_value: null,
           param: 'window_length',
-          type: 'int',
+          type: OperationParametersTypeEnum.Int,
         },
         {
           name: 'Polynomial Order',
-          default: 1,
+          default_value: 1,
           param: 'polyorder',
-          type: 'int',
+          type: OperationParametersTypeEnum.Int,
         },
       ],
-      type_info: [['ts']],
     };
 
     const config = getConfigFromDspFunction(dspFunctionDescription);
@@ -138,20 +136,20 @@ describe('getConfigFromDspFunction', () => {
   });
 
   it('generates correct config from dsp function description (case 2)', () => {
-    const dspFunctionDescription: DSPFunction = {
+    const dspFunctionDescription: Operation = {
+      name: 'Saviztky-Golay Filter',
+      category: 'SMOOTHERS',
       description: 'Maximum function (element-wise)',
-      n_inputs: 2,
       inputs: [
         {
           param: 'a',
-          type: ['ts', 'const'],
+          types: [OperationInputsTypesEnum.Ts, OperationInputsTypesEnum.Const],
         },
         {
           param: 'b',
-          type: ['ts', 'const'],
+          types: [OperationInputsTypesEnum.Ts, OperationInputsTypesEnum.Const],
         },
       ],
-      n_outputs: 1,
       outputs: [
         {
           name: 'Result',
@@ -159,10 +157,6 @@ describe('getConfigFromDspFunction', () => {
       ],
       op: 'MAX',
       parameters: [],
-      type_info: [
-        ['ts', 'const'],
-        ['ts', 'const'],
-      ],
     };
 
     const config = getConfigFromDspFunction(dspFunctionDescription);
@@ -206,11 +200,13 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: Workflow = {
+    const workflow: ChartWorkflow = {
       id: 'abc123',
       name: 'Empty workflow',
       nodes: [],
       connections: {},
+      color: '#FFF',
+      enabled: true,
     };
 
     const steps = getStepsFromWorkflow(
@@ -234,8 +230,10 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: Workflow = {
+    const workflow: ChartWorkflow = {
       name: 'New Calculation',
+      color: '#FFF',
+      enabled: true,
       nodes: [
         {
           id: 'TIME SERIES-6TIY4YZcnjxIFv6pYjXEG',
@@ -463,7 +461,10 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: Workflow = {
+    const workflow: ChartWorkflow = {
+      name: 'New Calculation',
+      color: '#FFF',
+      enabled: true,
       nodes: [
         {
           inputPins: [],
@@ -694,12 +695,12 @@ describe('getStepsFromWorkflow', () => {
                 {
                   param: 'window_length',
                   type: 'int',
-                  default: null,
+                  default_value: null,
                 },
                 {
                   param: 'polyorder',
                   type: 'int',
-                  default: 1,
+                  default_value: 1,
                 },
               ],
               description: 'Data smoother - Saviztky-Golay Filter',
@@ -783,7 +784,6 @@ describe('getStepsFromWorkflow', () => {
           id: 'G4mvHmzd_QyUWH0lldbxg',
         },
       },
-      name: 'New Calculation',
     };
 
     const steps = getStepsFromWorkflow(
@@ -866,7 +866,9 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: Workflow = {
+    const workflow: ChartWorkflow = {
+      color: '#FFF',
+      enabled: true,
       nodes: [
         {
           inputPins: [],
@@ -965,8 +967,10 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: Workflow = {
+    const workflow: ChartWorkflow = {
       name: 'New Calculation',
+      color: '#FFF',
+      enabled: true,
       nodes: [
         {
           functionData: {
@@ -1178,11 +1182,11 @@ describe('getStepsFromWorkflow', () => {
               parameters: [
                 {
                   type: 'int',
-                  default: null,
+                  default_value: null,
                   param: 'window_length',
                 },
                 {
-                  default: 1,
+                  default_value: 1,
                   param: 'polyorder',
                   type: 'int',
                 },
@@ -1429,8 +1433,7 @@ describe('getStepsFromWorkflow', () => {
           statisticsCalls: [
             {
               callDate: 1621454563567,
-              functionId: 2461249888036755,
-              callId: 8389322454513388,
+              callId: '8389322454513388',
             },
           ],
           name: 'LOR_ARENDAL_WELL_21_Well_HYDROCARBON_BEST_DAY_PREDICTION',
@@ -1458,8 +1461,7 @@ describe('getStepsFromWorkflow', () => {
           statisticsCalls: [
             {
               callDate: 1621454281932,
-              callId: 3095317154202764,
-              functionId: 2461249888036755,
+              callId: '3095317154202764',
             },
           ],
           tsExternalId: 'LOR_ARENDAL_WELL_21_Well_GROSS_PRODUCTION',
@@ -1501,8 +1503,7 @@ describe('getStepsFromWorkflow', () => {
           enabled: true,
           calls: [
             {
-              functionId: 5350460198875767,
-              callId: 1546401397992188,
+              callId: '1546401397992188',
               callDate: 1621454563745,
               hash: -1992684405,
             },
@@ -1582,8 +1583,7 @@ describe('getStepsFromWorkflow', () => {
           color: '#1192e8',
           calls: [
             {
-              functionId: 5350460198875767,
-              callId: 8725109662036577,
+              callId: '8725109662036577',
               callDate: 1621454563651,
               hash: -1770418272,
             },
@@ -1782,8 +1782,7 @@ describe('getStepsFromWorkflow', () => {
           type: 'workflow',
           calls: [
             {
-              functionId: 222,
-              callId: 14326244388381856236,
+              callId: '14326244388381856236',
               callDate: 1631797963030,
               hash: -2059100973,
             },
@@ -1864,8 +1863,7 @@ describe('getStepsFromWorkflow', () => {
           type: 'workflow',
           calls: [
             {
-              functionId: 222,
-              callId: 14323333345447973356,
+              callId: '14323333345447973356',
               callDate: 1631797963014,
               hash: 1736938706,
             },
@@ -1950,8 +1948,7 @@ describe('getStepsFromWorkflow', () => {
           type: 'workflow',
           calls: [
             {
-              functionId: 222,
-              callId: 14322283655440830956,
+              callId: '14322283655440830956',
               callDate: 1631797962909,
               hash: -360731468,
             },

@@ -1,16 +1,16 @@
 import { useSDK } from '@cognite/sdk-provider';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
-import config, { CHART_VERSION, useAppsApiBaseUrl, useCluster } from 'config';
+import config, { CHART_VERSION } from 'config';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useProject, getProject } from 'hooks';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import { Chart } from 'reducers/charts/types';
+import { Chart } from 'models/chart/types';
 import { IdInfo } from '@cognite/sdk';
 import { getFlow } from '@cognite/auth-utils';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
+import { useAppsApiBaseUrl, useCluster, useProject } from './config';
 
 type EnvironmentConfig = {
   cognite: {
@@ -118,21 +118,22 @@ export const useFirebaseInit = (enabled: boolean) => {
   );
 };
 
-export const charts = () => {
+export const charts = (project: string) => {
   return firebase
     .firestore()
     .collection('tenants')
-    .doc(getProject())
+    .doc(project)
     .collection('charts');
 };
 
 export const useMyCharts = () => {
   const { data } = useUserInfo();
+  const project = useProject();
 
   return useQuery(
     ['charts', 'mine'],
     async () => {
-      const snapshot = await charts()
+      const snapshot = await charts(project)
         .where('version', '==', CHART_VERSION)
         .where('user', '==', data?.id)
         .get();
@@ -144,11 +145,12 @@ export const useMyCharts = () => {
 
 export const usePublicCharts = () => {
   const { data } = useUserInfo();
+  const project = useProject();
 
   return useQuery(
     ['charts', 'public'],
     async () => {
-      const snapshot = await charts()
+      const snapshot = await charts(project)
         .where('version', '==', CHART_VERSION)
         .where('public', '==', true)
         .get();
@@ -159,9 +161,11 @@ export const usePublicCharts = () => {
 };
 
 export const useChart = (id: string) => {
+  const project = useProject();
+
   return useQuery(
     ['chart', id],
-    async () => (await charts().doc(id).get()).data() as Chart,
+    async () => (await charts(project).doc(id).get()).data() as Chart,
     {
       enabled: !!id,
       staleTime: Infinity,
@@ -171,9 +175,11 @@ export const useChart = (id: string) => {
 
 export const useDeleteChart = () => {
   const cache = useQueryClient();
+  const project = useProject();
+
   return useMutation(
     async (chartId: string) => {
-      await charts().doc(chartId).delete();
+      await charts(project).doc(chartId).delete();
       return chartId;
     },
     {
@@ -188,6 +194,8 @@ export const useDeleteChart = () => {
 export const useUpdateChart = () => {
   const cache = useQueryClient();
   const { data } = useUserInfo();
+  const project = useProject();
+
   return useMutation(
     async (chart: Chart) => {
       const skipPersist = data?.id !== chart.user;
@@ -201,7 +209,7 @@ export const useUpdateChart = () => {
           },
           'dirty'
         );
-        await charts().doc(chart.id).set(updatedChart, { merge: true });
+        await charts(project).doc(chart.id).set(updatedChart, { merge: true });
       }
       return chart.id;
     },

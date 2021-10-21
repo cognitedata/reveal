@@ -1,52 +1,37 @@
 /* eslint camelcase: 0 */
-
-import { getProject } from 'hooks';
-import { useCluster } from 'config';
-import { useCallFunction, functionResponseKey } from 'utils/backendService';
 import { useCallback, useEffect } from 'react';
-import {
-  ChartTimeSeries,
-  ChartWorkflow,
-  FunctionCallStatus,
-} from 'reducers/charts/types';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { useSDK } from '@cognite/sdk-provider';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
-import { usePrevious } from 'hooks/usePrevious';
+import { chartAtom } from 'models/chart/atom';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
-import { getCallResponse } from 'utils/backendApi';
 import { units } from 'utils/units';
-import { CogniteClient } from '@cognite/sdk';
-import * as backendApi from 'utils/backendApi';
-import { StatisticsResult } from '.';
+import {
+  fetchStatisticsResult,
+  fetchStatisticsStatus,
+} from 'services/calculation-backend';
+import { useCreateStatistics } from 'hooks/calculation-backend';
+import { CreateStatisticsParams } from '@cognite/calculation-backend';
+import { getHash } from 'utils/hash';
+import { useCluster, useProject } from 'hooks/config';
+import { usePrevious } from 'react-use';
 
 export const useFusionLink = (path: string) => {
   const [cluster] = useCluster();
+  const project = useProject();
 
-  return `https://fusion.cognite.com/${getProject()}${path}${
+  return `https://fusion.cognite.com/${project}${path}${
     cluster && `?env=${cluster}`
   }`;
 };
-
-const key = ['functions', 'individual_calc'];
-
-const getCallStatus =
-  (sdk: CogniteClient, fnId: number, callId: number) => async () => {
-    const response = await backendApi.getCallStatus(sdk, fnId, callId);
-
-    if (response?.status) {
-      return response.status as FunctionCallStatus;
-    }
-    return Promise.reject(new Error('could not find call status'));
-  };
 
 export const useStatistics = (
   sourceItem: ChartWorkflow | ChartTimeSeries | undefined
 ) => {
   const sdk = useSDK();
-  const statisticsCall = (sourceItem?.statisticsCalls || [])[0];
-  const [chart, setChart] = useRecoilState(chartState);
+  const statisticsCall = sourceItem?.statisticsCalls?.[0];
+  const [chart, setChart] = useRecoilState(chartAtom);
   const { dateFrom, dateTo } = chart!;
   const sourceId = sourceItem?.id;
   const previousSourceId = usePrevious<string | undefined>(sourceId);
@@ -62,40 +47,26 @@ export const useStatistics = (
     debouncedDatesAsString
   );
 
-  const { data } = useQuery({
-    queryKey: functionResponseKey(
-      statisticsCall?.functionId,
-      statisticsCall?.callId
-    ),
-    queryFn: (): Promise<string | undefined> =>
-      getCallResponse(sdk, statisticsCall?.functionId, statisticsCall.callId),
+  const { data: statisticsData } = useQuery({
+    queryKey: ['statistics', 'result', statisticsCall?.callId],
+    queryFn: () => fetchStatisticsResult(sdk, statisticsCall?.callId || ''),
     retry: 1,
     retryDelay: 1000,
     enabled: !!statisticsCall,
   });
 
-  const { data: callStatus, error: callStatusError } =
-    useQuery<FunctionCallStatus>(
-      [...key, statisticsCall?.callId, 'call_status'],
-      getCallStatus(
-        sdk,
-        statisticsCall?.functionId as number,
-        statisticsCall?.callId as number
-      ),
-      {
-        enabled: !!statisticsCall?.callId,
-      }
-    );
+  const { data: callStatus, error: callStatusError } = useQuery({
+    queryKey: ['statistics', 'status', statisticsCall?.callId],
+    queryFn: () => fetchStatisticsStatus(sdk, String(statisticsCall?.callId)),
+    enabled: !!statisticsCall?.callId,
+  });
 
-  const { results } = (data as any) || {};
-  const { statistics = [], histogram_data: histogram = [] } =
-    (results as StatisticsResult) || {};
-  const statisticsForSource = statistics[0];
-  const { mutate: callFunction } = useCallFunction('individual_calc-master');
+  const { results: statistics } = statisticsData || {};
+  const { mutate: callFunction } = useCreateStatistics();
   const memoizedCallFunction = useCallback(callFunction, [callFunction]);
 
   const updateStatistics = useCallback(
-    (diff: Partial<ChartTimeSeries>) => {
+    (diff: Partial<ChartTimeSeries | ChartWorkflow>) => {
       if (!sourceItem) {
         return;
       }
@@ -109,6 +80,14 @@ export const useStatistics = (
               }
             : ts
         ),
+        workflowCollection: oldChart?.workflowCollection?.map((wf) =>
+          wf.id === sourceItem.id
+            ? {
+                ...wf,
+                ...diff,
+              }
+            : wf
+        ),
       }));
     },
     [setChart, sourceItem]
@@ -119,13 +98,9 @@ export const useStatistics = (
     debouncedPrevDatesAsString !== debouncedDatesAsString;
 
   useEffect(() => {
-    if (sourceItem?.type !== 'timeseries') {
-      return;
-    }
-
     if (!sourceChanged) {
       if (!datesChanged) {
-        if (statisticsForSource) {
+        if (statistics) {
           return;
         }
         if (statisticsCall && !callStatusError) {
@@ -134,42 +109,46 @@ export const useStatistics = (
       }
     }
 
-    memoizedCallFunction(
-      {
-        data: {
-          calculation_input: {
-            timeseries: [
-              {
-                tag: (sourceItem as ChartTimeSeries).tsExternalId,
-                histogram_data: { num_boxes: 10 },
-              },
-            ],
-            start_time: new Date(dateFrom).getTime(),
-            end_time: new Date(dateTo).getTime(),
-          },
-        },
+    const statisticsParameters: CreateStatisticsParams = {
+      start_time: new Date(dateFrom).getTime(),
+      end_time: new Date(dateTo).getTime(),
+      histogram_options: { num_boxes: 10 }, // (eiriklv): This should be chosen by user at some point
+      tag:
+        sourceItem?.type === 'timeseries'
+          ? (sourceItem as ChartTimeSeries).tsExternalId!
+          : undefined!,
+      calculation_id:
+        sourceItem?.type === 'workflow'
+          ? (sourceItem as ChartWorkflow).calls?.[0].callId
+          : undefined,
+    };
+
+    const hashOfParams = getHash(statisticsParameters);
+
+    if (hashOfParams === statisticsCall?.hash) {
+      return;
+    }
+
+    memoizedCallFunction(statisticsParameters, {
+      onSuccess({ id: callId }) {
+        updateStatistics({
+          statisticsCalls: [
+            {
+              callDate: Date.now(),
+              callId,
+              hash: hashOfParams,
+            },
+          ],
+        });
       },
-      {
-        onSuccess({ functionId, callId }) {
-          updateStatistics({
-            statisticsCalls: [
-              {
-                callDate: Date.now(),
-                functionId,
-                callId,
-              },
-            ],
-          });
-        },
-      }
-    );
+    });
   }, [
     memoizedCallFunction,
     dateFrom,
     dateTo,
     sourceItem,
     updateStatistics,
-    statisticsForSource,
+    statistics,
     statisticsCall,
     callStatus,
     callStatusError,
@@ -177,7 +156,9 @@ export const useStatistics = (
     sourceChanged,
   ]);
 
-  return { statistics: statisticsForSource, histogram: histogram[0]?.data };
+  return {
+    results: statisticsData?.results,
+  };
 };
 
 export const getDisplayUnit = (preferredUnit?: string) => {
@@ -190,15 +171,7 @@ export const getDisplayUnit = (preferredUnit?: string) => {
   );
 };
 
-export const getHistogramRange = (
-  min: number,
-  max: number,
-  nticks: number
-): number[] => {
-  const dtick = (max - min) / nticks;
-  const result: number[] = [min];
-  for (let i = 0; i < nticks; i++) {
-    result.push(min + dtick * (i + 1));
-  }
-  return result;
-};
+export const formatNumber = (number: number) =>
+  new Intl.NumberFormat(undefined, { notation: 'engineering' })
+    .format(number)
+    .replace('E0', '');

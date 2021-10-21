@@ -1,5 +1,6 @@
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
-import { getAzureAppId, useCluster } from 'config';
+import { getAzureAppId } from 'config';
+import { useCluster } from 'hooks/config';
 
 const clusters = [
   {

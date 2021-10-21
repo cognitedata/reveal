@@ -8,18 +8,18 @@ import {
   covertTSToChartTS,
   removeTimeseries,
   updateSourceAxisForChart,
-} from 'utils/charts';
+} from 'models/chart/updates';
 import { calculateDefaultYAxis } from 'utils/axis';
 import { useSDK } from '@cognite/sdk-provider';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import {
   useAddToRecentLocalStorage,
   useRecentViewLocalStorage,
-} from 'utils/recentViewLocalstorage';
-import { useCdfItems } from 'utils/cogniteFunctions';
+} from 'hooks/recently-used';
+import { useCdfItems } from 'hooks/cognite-functions';
 import { useQueryClient } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
@@ -32,7 +32,7 @@ const RecentViewSources = ({ viewType }: Props) => {
   const title = viewType === 'assets' ? 'tags / assets' : 'time series';
   const sdk = useSDK();
   const { chartId } = useParams<{ chartId: string }>();
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
   // Takes alot of time to load data
   const { data: rvResults } = useRecentViewLocalStorage(viewType, []);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();

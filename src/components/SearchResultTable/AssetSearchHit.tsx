@@ -11,13 +11,13 @@ import {
   covertTSToChartTS,
   removeTimeseries,
   updateSourceAxisForChart,
-} from 'utils/charts';
+} from 'models/chart/updates';
 import { calculateDefaultYAxis } from 'utils/axis';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import Highlighter from 'react-highlight-words';
-import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
 import { removeIllegalCharacters } from 'utils/text';
 import TimeseriesSearchHit from './TimeseriesSearchHit';
@@ -29,7 +29,7 @@ type Props = {
 
 export default function AssetSearchHit({ asset, query = '' }: Props) {
   const sdk = useSDK();
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
   const { addAssetToRecent } = useAddToRecentLocalStorage();
   const { data, hasNextPage, fetchNextPage } = useInfiniteList<Timeseries>(
     'timeseries',

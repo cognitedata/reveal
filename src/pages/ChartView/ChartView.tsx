@@ -24,19 +24,19 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   SourceCollectionData,
-} from 'reducers/charts/types';
+} from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
-import { useSearchParam } from 'hooks';
+import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY } from 'utils/constants';
-import { metrics, trackUsage } from 'utils/metrics';
+import { metrics, trackUsage } from 'services/metrics';
 import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { addWorkflow } from 'utils/charts';
+import { addWorkflow } from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 import SourceRows from './SourceRows';
 
 import {
@@ -78,7 +78,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   /**
    * Get local chart context
    */
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
 
   /**
    * Method for updating storage value of chart

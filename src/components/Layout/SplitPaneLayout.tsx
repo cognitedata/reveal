@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components/macro';
 import SplitPane from 'react-split-pane';
 import Layers from 'utils/z-index';
-import handle from './dragHandle.svg';
+import handle from '../../assets/dragHandle.svg';
 
 export const StyledSplitPane = styled(SplitPane)`
   .Pane {

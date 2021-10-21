@@ -1,4 +1,4 @@
-import { Chart } from 'reducers/charts/types';
+import { Chart } from 'models/chart/types';
 import { Modes } from 'pages/types';
 import TimeSeriesRow from './TimeSeriesRow';
 

@@ -1,12 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Chart,
-  ChartWorkflow,
-  FunctionCallStatus,
-  ChartTimeSeries,
-  Call,
-} from 'reducers/charts/types';
-import { useDebounce } from 'use-debounce';
+  CalculationStatusStatusEnum,
+  Calculation,
+} from '@cognite/calculation-backend';
 import {
   Button,
   Dropdown,
@@ -15,37 +10,49 @@ import {
   Popconfirm,
   Tooltip,
 } from '@cognite/cogs.js';
-import FunctionCall from 'components/FunctionCall';
-import { updateWorkflow, removeWorkflow } from 'utils/charts';
-import EditableText from 'components/EditableText';
-import { useCallFunction, useFunctionCall } from 'utils/backendService';
-import { getStepsFromWorkflow } from 'utils/transforms';
-import { calculateGranularity } from 'utils/timeseries';
-import { isWorkflowRunnable } from 'components/NodeEditor/utils';
+
+import { workflowsAtom } from 'models/workflows/atom';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
+import CalculationCallStatus from 'components/CalculationCallStatus';
+import EditableText from 'components/EditableText';
+import { isWorkflowRunnable } from 'components/NodeEditor/utils';
 import { UnitDropdown } from 'components/UnitDropdown';
-import { getHash } from 'utils/hash';
-import { DraggableProvided } from 'react-beautiful-dnd';
 import { flow, isEqual } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { DraggableProvided } from 'react-beautiful-dnd';
+import { useRecoilState } from 'recoil';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { useDebounce } from 'use-debounce';
+import { formatCalculationResult } from 'services/calculation-backend';
+import {
+  useCalculationResult,
+  useCalculationStatus,
+  useCreateCalculation,
+} from 'hooks/calculation-backend';
+import { removeWorkflow, updateWorkflow } from 'models/chart/updates';
+import { getHash } from 'utils/hash';
+import { calculateGranularity } from 'utils/timeseries';
+import { getStepsFromWorkflow } from 'utils/transforms';
 import { convertValue } from 'utils/units';
 import {
+  SourceDescription,
   SourceItem,
-  SourceSquare,
   SourceName,
   SourceRow,
-  SourceDescription,
+  SourceSquare,
 } from './elements';
 import WorkflowMenu from './WorkflowMenu';
 
-const renderStatusIcon = (status?: FunctionCallStatus) => {
+const renderStatusIcon = (status?: CalculationStatusStatusEnum) => {
   switch (status) {
-    case 'Running':
+    case CalculationStatusStatusEnum.Pending:
+    case CalculationStatusStatusEnum.Running:
       return <Icon type="Loading" />;
-    case 'Completed':
+    case CalculationStatusStatusEnum.Success:
       return <Icon type="Checkmark" />;
-    case 'Failed':
-    case 'Timeout':
-      return <Icon type="Close" />;
+    case CalculationStatusStatusEnum.Failed:
+    case CalculationStatusStatusEnum.Error:
+      return <Icon type="ExclamationMark" title="Failed" />;
     default:
       return null;
   }
@@ -63,6 +70,7 @@ type Props = {
   draggable?: boolean;
   provided?: DraggableProvided | undefined;
 };
+
 export default function WorkflowRow({
   chart,
   workflow,
@@ -75,10 +83,10 @@ export default function WorkflowRow({
   draggable = false,
   provided = undefined,
 }: Props) {
-  const { mutate: callFunction, isLoading: isCallLoading } =
-    useCallFunction('simple_calc-master');
+  const [, setWorkflowState] = useRecoilState(workflowsAtom);
+  const { mutate: createCalculation, isLoading: isCallLoading } =
+    useCreateCalculation();
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
-  const [lastSuccessfulCall, setLastSuccessfulCall] = useState<Call>();
   const { id, enabled, color, name, calls, unit, preferredUnit } = workflow;
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
@@ -88,6 +96,7 @@ export default function WorkflowRow({
   };
 
   const { nodes, connections } = workflow;
+
   const steps = useMemo(
     () =>
       isWorkflowRunnable(nodes)
@@ -104,7 +113,7 @@ export default function WorkflowRow({
     }
   );
 
-  const computation = useMemo(
+  const computation: Calculation = useMemo(
     () => ({
       steps,
       start_time: new Date(dateFrom).getTime(),
@@ -117,20 +126,33 @@ export default function WorkflowRow({
     [steps, dateFrom, dateTo]
   );
 
+  const stringifiedComputation = JSON.stringify(computation);
+
   const runComputation = useCallback(() => {
-    callFunction(
-      {
-        data: { computation_graph: computation },
-      },
+    const computationCopy: Calculation = JSON.parse(stringifiedComputation);
+
+    createCalculation(
+      { definition: computationCopy },
       {
         onSuccess(res) {
-          setLastSuccessfulCall(res);
+          mutate((oldChart) =>
+            updateWorkflow(oldChart!, workflow.id, {
+              calls: [
+                {
+                  ...res,
+                  callId: res.id, // (eiriklv): Clean this up
+                  callDate: Date.now(),
+                  hash: getHash(computationCopy),
+                },
+              ],
+            })
+          );
         },
       }
     );
-  }, [computation, callFunction, setLastSuccessfulCall]);
+  }, [stringifiedComputation, createCalculation, mutate, workflow.id]);
 
-  const currentCallStatus = useFunctionCall(call?.functionId!, call?.callId!);
+  const currentCallStatus = useCalculationStatus(call?.callId!);
 
   const handleRetries = useCallback(() => {
     if (isCallLoading) {
@@ -156,44 +178,38 @@ export default function WorkflowRow({
   }, [call, currentCallStatus, runComputation, isCallLoading]);
 
   const handleChanges = useCallback(() => {
-    if (!computation.steps.length) {
+    const computationCopy = JSON.parse(stringifiedComputation);
+
+    if (!computationCopy.steps.length) {
       return;
     }
 
-    if (call?.hash === getHash(computation)) {
+    if (call?.hash === getHash(computationCopy)) {
       return;
     }
 
     runComputation();
-  }, [computation, runComputation, call]);
-
-  const handleCallUpdates = useCallback(() => {
-    if (!computation) {
-      return;
-    }
-    if (!lastSuccessfulCall) {
-      return;
-    }
-    if (call?.callId === lastSuccessfulCall.callId) {
-      return;
-    }
-
-    const newCall = {
-      ...lastSuccessfulCall,
-      callDate: Date.now(),
-      hash: getHash(computation),
-    };
-
-    mutate((oldChart) =>
-      updateWorkflow(oldChart!, workflow.id, {
-        calls: [newCall],
-      })
-    );
-  }, [workflow.id, mutate, computation, lastSuccessfulCall, call]);
+  }, [stringifiedComputation, runComputation, call]);
 
   useEffect(handleRetries, [handleRetries]);
   useEffect(handleChanges, [handleChanges]);
-  useEffect(handleCallUpdates, [handleCallUpdates]);
+
+  const { data: calculationResult } = useCalculationResult(call?.callId, {
+    enabled: currentCallStatus.data?.status === 'Success',
+  });
+
+  useEffect(() => {
+    setWorkflowState((workflows) => ({
+      ...workflows,
+      [id]: {
+        id,
+        loading: currentCallStatus.data?.status !== 'Success',
+        datapoints: calculationResult
+          ? formatCalculationResult(calculationResult)
+          : workflows[id]?.datapoints || [],
+      },
+    }));
+  }, [id, calculationResult, setWorkflowState, currentCallStatus.data?.status]);
 
   const remove = () => mutate((oldChart) => removeWorkflow(oldChart!, id));
 
@@ -314,11 +330,12 @@ export default function WorkflowRow({
                 alignItems: 'center',
               }}
             >
-              <FunctionCall
-                id={call.functionId}
-                callId={call.callId}
-                renderLoading={() => renderStatusIcon('Running')}
-                renderCall={({ status }) => renderStatusIcon(status)}
+              <CalculationCallStatus
+                id={call.callId}
+                renderLoading={() =>
+                  renderStatusIcon(CalculationStatusStatusEnum.Running)
+                }
+                renderStatus={({ status }) => renderStatusIcon(status)}
               />
             </div>
           )}

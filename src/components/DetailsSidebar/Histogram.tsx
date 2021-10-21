@@ -1,41 +1,33 @@
+/* eslint camelcase: 0 */
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import { useRecoilValue } from 'recoil';
-import { timeseriesSummaryById } from 'atoms/timeseries';
-import { ChartTimeSeries } from 'reducers/charts/types';
-import { convertValue } from 'utils/units';
-import {
-  getDisplayUnit,
-  getHistogramRange,
-} from 'components/DetailsSidebar/utils';
+import { StatisticsResultResults } from '@cognite/calculation-backend';
+import { formatNumber, getDisplayUnit } from '.';
 
 const Plot = createPlotlyComponent(Plotly);
 
-export const Histogram = ({
-  sourceItem,
-  histogramData,
-}: {
-  sourceItem: ChartTimeSeries;
-  histogramData: number[];
-}) => {
-  const { tsExternalId, unit, preferredUnit } = sourceItem;
+type HistogramProps = {
+  data: StatisticsResultResults['histogram'];
+  unit: string;
+};
 
-  const summary = useRecoilValue(timeseriesSummaryById(tsExternalId));
-  const convertedMin = convertValue(summary?.min!, unit, preferredUnit);
-  const convertedMax = convertValue(summary?.max!, unit, preferredUnit);
-
-  if (!histogramData?.length) {
-    return <span>No data</span>;
-  }
-
-  return (
+export const Histogram = ({ data, unit }: HistogramProps) => {
+  return data && data.length <= 0 ? (
+    <span>No data</span>
+  ) : (
     <Plot
       data={[
         {
           type: 'bar',
-          x: getHistogramRange(convertedMin, convertedMax, 10),
-          y: histogramData,
-          hoverinfo: 'y',
+          x: data?.map(({ range_start }) => formatNumber(range_start || NaN)),
+          y: data?.map(({ quantity }) => quantity || NaN),
+          hovertext: data?.map(
+            ({ quantity, range_start, range_end }) =>
+              `${quantity} between ${formatNumber(
+                range_start || NaN
+              )} and ${formatNumber(range_end || NaN)}`
+          ),
+          hoverinfo: 'text',
           hoverlabel: {
             bgcolor: '#ffffff',
             font: {
@@ -48,19 +40,20 @@ export const Histogram = ({
         width: 300,
         height: 260,
         bargap: 0,
-        margin: { l: 30, r: 30, t: 30, b: 80 },
+        margin: { l: 30, r: 5, t: 0, b: 70 },
         xaxis: {
-          range: [convertedMin, convertedMax],
-          tickvals: getHistogramRange(convertedMin, convertedMax, 10),
+          tickvals: data?.map(({ range_start }) =>
+            formatNumber(range_start || NaN)
+          ),
           ticks: 'outside',
           tickangle: 45,
           title: {
-            text: `${getDisplayUnit(preferredUnit)}`,
-            standoff: 50,
-            font: {
-              family: 'sans-serif',
-            },
+            text: getDisplayUnit(unit),
+            standoff: 60,
           },
+        },
+        yaxis: {
+          ticks: 'outside',
         },
         dragmode: false,
       }}

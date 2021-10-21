@@ -1,47 +1,13 @@
 /* eslint camelcase: 0 */
 
-import { omit } from 'lodash';
+import {
+  ComputationStep,
+  Operation,
+  OperationParametersTypeEnum,
+} from '@cognite/calculation-backend';
+import { isNil, omit, omitBy } from 'lodash';
 import { nanoid } from 'nanoid';
-import { Chart, StorableNode } from 'reducers/charts/types';
-
-export type DSPFunction = {
-  category: string;
-  name: string;
-  description: string;
-  op: string;
-  n_inputs: number;
-  inputs: {
-    description?: string;
-    param: string;
-    name?: string;
-    type: string[];
-  }[];
-  n_outputs: number;
-  outputs: {
-    name?: string;
-  }[];
-  parameters: DSPFunctionParameter[];
-  type_info: string[][];
-};
-
-export enum DSPFunctionParameterType {
-  string = 'str',
-  int = 'int',
-  float = 'float',
-  boolean = 'bool',
-}
-
-export type DSPFunctionParameter = {
-  name: string;
-  description: string;
-  param: string;
-  type: DSPFunctionParameterType;
-  default?: any;
-  options?: {
-    value: string;
-    name: string;
-  }[];
-};
+import { Chart, StorableNode } from 'models/chart/types';
 
 export type DSPFunctionConfig = {
   input: {
@@ -58,25 +24,27 @@ export type DSPFunctionConfig = {
 };
 
 export function getConfigFromDspFunction(
-  dspFunction: DSPFunction
+  dspFunction: Operation
 ): DSPFunctionConfig {
-  const pins = dspFunction.inputs?.map((input, i) => {
+  const pins = dspFunction.inputs.map((input, i) => {
     return {
       name: input.name || `Input ${i + 1}`,
-      field: input.param,
-      types: input.type.map(getBlockTypeFromFunctionType),
+      field: input.param || 'unknown_field',
+      types: (input.types || []).map(getBlockTypeFromFunctionType),
       pin: true,
     };
   });
 
-  const parameters = dspFunction.parameters?.map(({ name, param, type }) => {
-    return {
-      name,
-      field: param,
-      types: [getBlockTypeFromParameterType(type)],
-      pin: false,
-    };
-  });
+  const parameters = dspFunction.parameters?.map(
+    ({ name = 'Unknown Parameter (!)', param, type }) => {
+      return {
+        name,
+        field: param,
+        types: [getBlockTypeFromParameterType(type)],
+        pin: false,
+      };
+    }
+  );
 
   const output = [
     {
@@ -93,16 +61,16 @@ export function getConfigFromDspFunction(
 }
 
 export function getBlockTypeFromParameterType(
-  parameterType: DSPFunctionParameterType
+  parameterType: OperationParametersTypeEnum
 ): string {
   switch (parameterType) {
-    case DSPFunctionParameterType.int:
+    case OperationParametersTypeEnum.Int:
       return 'CONSTANT';
-    case DSPFunctionParameterType.string:
+    case OperationParametersTypeEnum.Str:
       return 'STRING';
-    case DSPFunctionParameterType.float:
+    case OperationParametersTypeEnum.Float:
       return 'FLOAT';
-    case DSPFunctionParameterType.boolean:
+    case OperationParametersTypeEnum.Bool:
       return 'BOOLEAN';
     default:
       return 'UNKNOWN';
@@ -110,20 +78,20 @@ export function getBlockTypeFromParameterType(
 }
 
 export function transformParamInput(
-  type: DSPFunctionParameterType,
+  type: OperationParametersTypeEnum,
   value: string
 ): string | number {
   switch (type) {
-    case DSPFunctionParameterType.int:
+    case 'int':
       return value === '' ? '' : Number(value);
-    case DSPFunctionParameterType.float:
+    case 'float':
       // eslint-disable-next-line
       let parsedValue = null;
       if (value) {
         parsedValue = parseFloat(value);
       }
       return parsedValue && !Number.isNaN(parsedValue) ? parsedValue : value;
-    case DSPFunctionParameterType.string:
+    case 'str':
       return value;
     default:
       return value;
@@ -185,7 +153,7 @@ export function getStepsFromWorkflow(
   chart: Chart,
   nodes: StorableNode[] | undefined,
   connections: Record<string, any> | undefined
-) {
+): ComputationStep[] {
   const outputNode = nodes?.find(
     (node) => node.functionEffectReference === 'OUTPUT'
   );
@@ -312,7 +280,7 @@ export function getStepsFromWorkflow(
 
   resolveInputNodes(outputNode!);
 
-  const steps = validNodes
+  const steps: ComputationStep[] = validNodes
     .filter((node) =>
       ['TOOLBOX_FUNCTION', 'OUTPUT'].includes(
         node.functionEffectReference || ''
@@ -345,13 +313,20 @@ export function getStepsFromWorkflow(
         })
         .filter(Boolean);
 
-      const { toolFunction, ...parameters } = node.functionData || {};
+      const { toolFunction, attachTo, ...parameters } = node.functionData || {};
+
+      const filteredParameters = omitBy(
+        parameters,
+        (val) => isNil(val) || val === ''
+      );
 
       return {
         step: i,
         op: getOperationFromNode(node),
         inputs,
-        ...(Object.keys(parameters).length ? { params: parameters } : {}),
+        ...(Object.keys(filteredParameters).length
+          ? { params: filteredParameters }
+          : {}),
       };
     });
 

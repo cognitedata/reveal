@@ -8,18 +8,18 @@ import {
   SegmentedControl,
   Select,
 } from '@cognite/cogs.js';
-import { Chart } from 'reducers/charts/types';
+import { Chart } from 'models/chart/types';
 import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
 import { nanoid } from 'nanoid';
 import { subDays } from 'date-fns';
-import { useNavigate } from 'hooks';
+import { useNavigate } from 'hooks/navigation';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
 import { OpenInCharts } from 'components/OpenInCharts';
 import { CHART_VERSION } from 'config/';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useResetRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -51,7 +51,7 @@ const ChartList = () => {
   const { data: login } = useUserInfo();
   const myCharts = useMyCharts();
   const pubCharts = usePublicCharts();
-  const resetChart = useResetRecoilState(chartState);
+  const resetChart = useResetRecoilState(chartAtom);
 
   useEffect(() => {
     resetChart();

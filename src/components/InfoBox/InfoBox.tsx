@@ -1,6 +1,6 @@
 import { Graphic } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
-import { useRecentViewLocalStorage } from 'utils/recentViewLocalstorage';
+import { useRecentViewLocalStorage } from 'hooks/recently-used';
 
 interface InfoBoxProps {
   infoType: 'TagHelpBox' | 'TimeSeriesHelpBox';

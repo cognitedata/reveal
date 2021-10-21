@@ -2,9 +2,9 @@ import dayjs from 'dayjs';
 import styled from 'styled-components/macro';
 import { DateRange, Button } from '@cognite/cogs.js';
 import TimeSelector from 'components/TimeSelector';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 import { useState } from 'react';
 
 const relativeTimeOptions = [
@@ -41,7 +41,7 @@ const relativeTimeOptions = [
 ];
 
 const DateRangeSelector = () => {
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
   const [[selectedRange, selectedDateFrom, selectedDateTo], setSelectedRange] =
     useState<[string | undefined, string | undefined, string | undefined]>([
       undefined,

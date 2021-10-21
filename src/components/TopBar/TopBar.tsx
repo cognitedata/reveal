@@ -1,20 +1,20 @@
 import { Avatar, Menu, Title, TopBar, Icon } from '@cognite/cogs.js';
 import sidecar from 'config/sidecar';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
-import { useNavigate } from 'hooks';
+import { useNavigate } from 'hooks/navigation';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
-import useChat from 'hooks/useChat';
+import { useChat } from 'hooks/intercom';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();
   const move = useNavigate();
   const chat = useChat();
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
 
   return (
     <TopBarWrap>

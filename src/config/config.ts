@@ -1,6 +1,3 @@
-import { useSearchParam } from 'hooks';
-import { CLUSTER_KEY } from 'utils/constants';
-
 import sidecar from './sidecar';
 
 export const CHART_VERSION = 1;
@@ -33,21 +30,6 @@ export const getAppName = (): string => {
   return getSidecar().applicationId;
 };
 
-export const useCluster = (): [string, (s: string) => void] => {
-  const [searchParam, setSearchParam] = useSearchParam(CLUSTER_KEY);
-  const { cdfCluster } = getSidecar();
-
-  return [searchParam || cdfCluster, setSearchParam];
-};
-
-export const useAppsApiBaseUrl = (): string => {
-  const [cluster] = useCluster();
-  const prod = getEnvironment() === 'PRODUCTION';
-  return `https://apps-api${prod ? '' : '.staging'}${
-    cluster ? '.' : ''
-  }${cluster}.cognite.ai`;
-};
-
 export const getAzureAppId = () => {
   return getEnvironment() === 'PRODUCTION'
     ? '05aa256f-ba87-4e4c-902a-8e80ae5fb32e'
@@ -74,8 +56,10 @@ export const getBackendServiceBaseUrl = (
 ) => {
   let originCopy = origin;
 
-  if (originCopy.includes('localhost')) {
-    return `https://as.staging.${urlCluster ? `${urlCluster}.` : ''}cognite.ai`;
+  if (origin.includes('localhost')) {
+    return `https://calculation-backend.staging.${
+      urlCluster ? `${urlCluster}.` : ''
+    }cognite.ai`;
   }
 
   if (originCopy.includes('.pr.')) {
@@ -89,7 +73,7 @@ export const getBackendServiceBaseUrl = (
     .split('cogniteapp.com')[0];
   const cluster = urlCluster ? `${formattedUrlCluster}.` : parsedCluster;
 
-  return `https://as.${cluster}cognite.ai`;
+  return `https://calculation-backend.${cluster}cognite.ai`;
 };
 
 export default {

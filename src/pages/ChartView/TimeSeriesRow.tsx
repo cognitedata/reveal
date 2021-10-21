@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { Chart, ChartTimeSeries } from 'reducers/charts/types';
+import { Chart, ChartTimeSeries } from 'models/chart/types';
 import { Button, Dropdown, Tooltip, Popconfirm } from '@cognite/cogs.js';
-import { removeTimeseries, updateTimeseries } from 'utils/charts';
-import { useLinkedAsset } from 'hooks/api';
+import { removeTimeseries, updateTimeseries } from 'models/chart/updates';
+import { useLinkedAsset } from 'hooks/cdf-assets';
 import EditableText from 'components/EditableText';
 import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { UnitDropdown } from 'components/UnitDropdown';
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
 import { roundToSignificantDigits } from 'utils/axis';
 import { convertValue } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { useRecoilValue } from 'recoil';
-import { timeseriesSummaryById } from 'atoms/timeseries';
+import { timeseriesSummaryById } from 'models/timeseries/selectors';
 import flow from 'lodash/flow';
 import {
   SourceItem,

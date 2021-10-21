@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { compact } from 'lodash';
 import { nanoid } from 'nanoid';
-import { Chart, ChartTimeSeries } from 'reducers/charts/types';
+import { Chart, ChartTimeSeries } from 'models/chart/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
@@ -17,20 +17,22 @@ import { Modal, Select, Icon, Checkbox, Input } from '@cognite/cogs.js';
 import { CHART_VERSION } from 'config/';
 import DelayedComponent from 'components/DelayedComponent';
 import { TimeseriesChart } from '@cognite/data-exploration';
-import { useSearchParam, useNavigate, useClearSearchParams } from 'hooks';
+import {
+  useSearchParam,
+  useNavigate,
+  useClearSearchParams,
+} from 'hooks/navigation';
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/firebase';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
-import { addTimeseries, covertTSToChartTS } from 'utils/charts';
-import {
-  TIMESERIE_IDS_KEY,
-  TIMESERIE_EXTERNAL_IDS_KEY,
-  START_TIME_KEY,
-  END_TIME_KEY,
-  CHART_NAME_KEY,
-} from 'utils/constants';
+import { addTimeseries, covertTSToChartTS } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 
+const TIMESERIE_IDS_KEY = 'timeserieIds';
+const TIMESERIE_EXTERNAL_IDS_KEY = 'timeserieExternalIds';
+const START_TIME_KEY = 'startTime';
+const END_TIME_KEY = 'endTime';
+const CHART_NAME_KEY = 'chartName';
 const options = ['New chart', 'Add to chart'];
 
 export const sleep = (ms: number) =>

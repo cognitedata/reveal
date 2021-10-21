@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { Chart, ChartTimeSeries, ChartWorkflow } from 'reducers/charts/types';
-import { initializeSourceCollection } from 'utils/charts';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { initializeSourceCollection } from 'models/chart/updates';
 import TimeSeriesRow from './TimeSeriesRow';
 import WorkflowRow from './WorkflowRow';
 

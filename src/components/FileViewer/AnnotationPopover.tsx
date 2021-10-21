@@ -1,7 +1,7 @@
 import { CogniteAnnotation } from '@cognite/annotations';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
-import { useAsset, useAssetTimeseries } from 'hooks/api';
+import { useAsset, useAssetTimeseries } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
@@ -11,11 +11,11 @@ import {
   addTimeseries,
   removeTimeseries,
   covertTSToChartTS,
-} from 'utils/charts';
-import { trackUsage } from 'utils/metrics';
-import { useAddToRecentLocalStorage } from 'utils/recentViewLocalstorage';
+} from 'models/chart/updates';
+import { trackUsage } from 'services/metrics';
+import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
-import { chartState } from 'atoms/chart';
+import { chartAtom } from 'models/chart/atom';
 
 export const AnnotationPopover = ({
   annotations,
@@ -63,7 +63,7 @@ export const AnnotationPopover = ({
 
 export const TimeseriesList = ({ assetId }: { assetId: number }) => {
   const { chartId } = useParams<{ chartId: string }>();
-  const [chart, setChart] = useRecoilState(chartState);
+  const [chart, setChart] = useRecoilState(chartAtom);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
   const { data: timeseries = [], isLoading } = useAssetTimeseries(assetId);
 

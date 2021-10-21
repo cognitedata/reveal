@@ -1,13 +1,11 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components/macro';
 import { Link, useLocation } from 'react-router-dom';
-
-import { Chart } from 'reducers/charts/types';
+import { Chart } from 'models/chart/types';
 import EditableText from 'components/EditableText';
 import PlotlyChart from 'components/PlotlyChart';
-import { useProject } from 'hooks';
-
-import { trackUsage } from 'utils/metrics';
+import { trackUsage } from 'services/metrics';
+import { useProject } from 'hooks/config';
 import { formatOwner, formatDate } from './utils';
 
 interface GridViewItemProps {
