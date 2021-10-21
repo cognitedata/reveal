@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 
 import { SectorNode } from './SectorNode';
-import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata } from '../metadata/types';
+import { CadModelMetadata } from '../metadata/CadModelMetadata';
 
 export class RootSectorNode extends SectorNode {
   public readonly sectorNodeMap: Map<number, SectorNode>;

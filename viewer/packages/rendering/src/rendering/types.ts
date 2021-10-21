@@ -74,7 +74,7 @@ export type EdgeDetectionParameters = {
  */
 export type SsaoParameters = {
   /**
-   * Quality (Number of samples) to estimate occlusion factor.
+   * Quality (Number of samples) tond estimate occlusion factor.
    */
   sampleSize: SsaoSampleQuality;
   /**
