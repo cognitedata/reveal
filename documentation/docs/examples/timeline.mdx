@@ -19,9 +19,8 @@ The examples shown is therefore might not be a ideal model construction progress
 
 ## Timeline
 
-Timeline tool provides ablility to apply styles to nodes using Date as a property. It requires Time Keyframes to be created.
-Each timeframe consists of nodes which are the elements to be rendered, appearance/styles to be assigned to the nodes and
-lastly the date for the nodes as reference to be rendered.
+The timeline tool provides ability to apply styles by date. It works by creating a set of "keyframes"  for provided dates.
+Each keyframe has a set of associated styled node collections.
 
 ### Creating Keyframes
 To create Keyframes, use `createKeyframe(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
