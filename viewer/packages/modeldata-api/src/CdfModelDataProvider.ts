@@ -3,14 +3,13 @@
  */
 import { CogniteClient } from '@cognite/sdk';
 
-import { ModelDataClient } from './types';
+import { ModelDataProvider } from './types';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CdfModelDataClient implements ModelDataClient {
+export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
-  private appId: string | undefined;
 
   constructor(client: CogniteClient) {
     this.client = client;
@@ -35,13 +34,6 @@ export class CdfModelDataClient implements ModelDataClient {
     const response = await this.client.get(`${baseUrl}/${fileName}`);
     return response.data;
   }
-
-  public getApplicationIdentifier(): string {
-    if (this.appId === undefined) {
-      this.appId = getSdkApplicationId(this.client);
-    }
-    return this.appId;
-  }
 }
 
 async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefined, retries: number = 3) {
@@ -57,14 +49,4 @@ async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefin
     }
   }
   throw error;
-}
-
-/**
- * Determines the `appId` of the `CogniteClient` provided.
- * @param sdk Instance of `CogniteClient`.
- * @returns Application ID or 'unknown' if not found.
- */
-function getSdkApplicationId(sdk: CogniteClient): string {
-  const headers = sdk.getDefaultRequestHeaders();
-  return headers['x-cdp-app'] || 'unknown';
 }

@@ -3,6 +3,7 @@ id: datasource
 title: Use a custom data source
 description: Shows how to write a data source to customize how Reveal reads data.
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Reveal is designed to retrieve data from [Cognite Data Fusion (CDF)](https://docs.cognite.com/cdf/).
@@ -17,8 +18,8 @@ Note that certain features relies on connectivity to CDF and won't work without 
 
 ## Overview
 
-To implement a custom data source, [DataSource from @cognite/reveal/extensions/datasource](../API Reference.md#interfaces_cognite_reveal_extensions_datasourcedatasourcemd) must be implemented
-and provided to `Cognite3DViewer` on construction using the [`customDataSource`-option](../API Reference.md#customdatasource), which in turn
+To implement a custom data source, DataSource from `@cognite/reveal/extensions/datasource` must be implemented
+and provided to `Cognite3DViewer` on construction using the `customDataSource`-option, which in turn
 provides instances of three interfaces:
 
 | Interface               | Description                                                                                                   |
@@ -35,8 +36,8 @@ Some of the interface functions are required, some are optional at the cost of r
 `ModelMetadataProvider` is responsible for determining the "base URL" for a model, determine
 the "model transformation" and the default camera.
 
-Implementations can assume that all identifiers will be of type 
-[`CdfModelIdentifier`](../API Reference.md#class-cdfmodelidentifier):
+Implementations can assume that all identifiers will be of type `CdfModelIdentifier`:
+
 ```js
 class CdfModelIdentifier implements ModelIdentifier {
   readonly revealInternalId: symbol;
@@ -132,8 +133,6 @@ class MyModelMetaDataProvider implements ModelMetaDataProvider {
 | `getJsonFile()`         | Yes                                        | Retrieves JSON data. This is used to store some metadata about models |
 | `headers: HttpHeaders`  | Only used for point clouds.                | Headers used during point cloud streaming. Useful if you e.g. need to provide authentication headers to the requests |
 
-See [API documentation](../API Reference.md#interfaces_cognite_reveal_extensions_datasourcemodeldataprovidermd).
-
 ### Example implementation
 
 The following example simply downloads files using `fetch()`. Note that
@@ -177,9 +176,6 @@ The API client is responsible for providing metadata about 3D CAD nodes, includi
 | `determineTreeIndexAndSubtreeSizesByNodeIds()` | No                      | Determines the "span" of a node identified by a CDF node ID (i.e. the tree index and how many descendants it has including the node itself). |
 | `determineNodeAncestorsByNodeId()` | No                                  | Find "ancestor span" of a node identified by the CDF node ID. Returns data on same format as function above. |
 | `getBoundingBoxByNodeId()` | No                                          | Determines bounds of a node by its CDF node ID. |
-
-See [API documentation](../API Reference.md#interfaces_cognite_reveal_extensions_nodesapiclientmd).
-
 
 ### Example implementation
 
