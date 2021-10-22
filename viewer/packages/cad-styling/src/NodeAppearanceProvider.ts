@@ -24,6 +24,7 @@ type StyledNodeCollection = {
 export class NodeAppearanceProvider {
   private readonly _styledCollections = new Array<StyledNodeCollection>();
   private _lastFiredLoadingState?: boolean;
+  private _cachedPrioritizedAreas?: PrioritizedArea[] = undefined;
 
   private readonly _events = {
     changed: new EventTrigger<() => void>(),
@@ -99,6 +100,21 @@ export class NodeAppearanceProvider {
       const set = styledSet.nodeCollection.getIndexSet();
       applyCb(set, styledSet.appearance);
     });
+  }
+
+  getPrioritizedAreas(): PrioritizedArea[] {
+    if (this._cachedPrioritizedAreas) {
+      return this._cachedPrioritizedAreas;
+    }
+
+    const prioritizedCollections = this._styledCollections
+      .filter(collection => collection.appearance.prioritizedForLoadingHint);
+    const prioritizedAreas = 
+      prioritizedCollections.flatMap(collection =>
+        [...collection.nodeCollection.getAreas().areas()].map(area => { return { area, extraPriority: collection.appearance.prioritizedForLoadingHint } as PrioritizedArea }));
+    
+    this._cachedPrioritizedAreas = prioritizedAreas;
+    return this._cachedPrioritizedAreas;
   }
 
   clear() {

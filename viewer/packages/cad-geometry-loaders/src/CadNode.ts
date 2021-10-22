@@ -30,7 +30,6 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _instancedMeshManager: InstancedMeshManager;
-  private _prioritizedAreas: PrioritizedArea[] = [];
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
     super();
@@ -129,14 +128,13 @@ export class CadNode extends THREE.Object3D {
   }
 
   setPrioritizedNodes(nodeCollection: NodeCollectionBase, priority: number) {
-    const areas: PrioritizedArea[] = [...nodeCollection.getAreas().areas()].map(box => {
-      return { area: box, extraPriority: priority };
-    });
-    this._prioritizedAreas = areas;
+    const appearance: NodeAppearance = { prioritizedForLoadingHint: priority };
+    
+    this.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
   }
 
   get prioritizedAreas(): PrioritizedArea[] {
-    return this._prioritizedAreas;
+    return this.nodeAppearanceProvider.getPrioritizedAreas();
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {
