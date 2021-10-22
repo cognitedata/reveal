@@ -15,7 +15,7 @@ import {
 } from '@reveal/cad-parsers';
 
 import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { Repository } from './Repository';
+import { SectorRepository } from './Repository';
 
 import { groupMeshesByNumber } from './groupMeshesByNumber';
 import { createOffsetsArray } from './arrays';
@@ -25,7 +25,7 @@ import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker
 import { CadMaterialManager } from '@reveal/rendering';
 
 // TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
-export class CachedRepository implements Repository {
+export class V8SectorRepository implements SectorRepository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
   private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Promise<ParseCtmResult>>;
 
@@ -33,13 +33,9 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
 
-  constructor(
-    modelSectorProvider: BinaryFileProvider,
-    modelDataParser: CadSectorParser,
-    materialManager: CadMaterialManager
-  ) {
+  constructor(modelSectorProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._modelSectorProvider = modelSectorProvider;
-    this._modelDataParser = modelDataParser;
+    this._modelDataParser = new CadSectorParser();
     this._modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
 
     this._consumedSectorCache = new MemoryRequestCache(50, consumedSector => {

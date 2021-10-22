@@ -2,8 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { CadSectorParser } from '@reveal/cad-parsers';
-import { CachedRepository } from '../../sector-loader/src/CachedRepository';
+import { V8SectorRepository } from '../../sector-loader/src/CachedRepository';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 
@@ -11,7 +10,7 @@ import { CadMaterialManager } from '@reveal/rendering';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 describe('CadModelUpdateHandler', () => {
-  let repository: CachedRepository;
+  let repository: V8SectorRepository;
   let mockCuller: SectorCuller;
   let modelSectorProvider: BinaryFileProvider;
   let materialManager: CadMaterialManager;
@@ -23,9 +22,8 @@ describe('CadModelUpdateHandler', () => {
       getBinaryFile: jest.fn()
     };
     materialManager = new CadMaterialManager();
-    const modelDataParser = new CadSectorParser();
 
-    repository = new CachedRepository(modelSectorProvider, modelDataParser, materialManager);
+    repository = new V8SectorRepository(modelSectorProvider, materialManager);
     mockCuller = {
       determineSectors: jest.fn(),
       filterSectorsToLoad: jest.fn(),
@@ -38,7 +36,7 @@ describe('CadModelUpdateHandler', () => {
   });
 
   test('dipose() disposes culler', () => {
-    const updateHandler = new CadModelUpdateHandler(modelSectorProvider, materialManager, mockCuller);
+    const updateHandler = new CadModelUpdateHandler(mockCuller);
     updateHandler.dispose();
     expect(mockCuller.dispose).toBeCalledTimes(1);
   });

@@ -4,14 +4,14 @@
 
 import { ConsumedSector, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 
-import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
+import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 import { SectorCuller } from './culling/SectorCuller';
 import { ModelStateHandler } from './ModelStateHandler';
-import { Repository } from '../../../sector-loader/src/Repository';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import log from '@reveal/logger';
+import { CadNode } from '@reveal/rendering';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -31,31 +31,35 @@ const SectorLoadingBatchSize = 20;
 export class SectorLoader {
   private readonly _modelStateHandler: ModelStateHandler;
   private readonly _sectorCuller: SectorCuller;
-  private readonly _sectorRepository: Repository;
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
 
   constructor(
-    sectorRepository: Repository,
     sectorCuller: SectorCuller,
     modelStateHandler: ModelStateHandler,
     collectStatisticsCallback: (spent: SectorLoadingSpent) => void,
     progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
   ) {
-    this._sectorRepository = sectorRepository;
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;
   }
 
-  async *loadSectors(input: DetermineSectorsInput): AsyncIterable<ConsumedSector> {
+  async *loadSectors(input: DetermineSectorsPayload): AsyncIterable<ConsumedSector> {
     if (input.cameraInMotion) {
       return [];
     }
 
+    const cadModels = input.models;
+
+    const sectorCullerInput: DetermineSectorsInput = {
+      ...input,
+      cadModelsMetadata: cadModels.filter(x => x.visible).map(x => x.cadModelMetadata)
+    };
+
     // Initial prioritization
-    const prioritizedResult = this._sectorCuller.determineSectors(input);
+    const prioritizedResult = this._sectorCuller.determineSectors(sectorCullerInput);
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
@@ -65,9 +69,8 @@ export class SectorLoader {
     progressHelper.start(changedSectors.length);
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      const filtered = await this.filterSectors(input, batch, progressHelper);
-      const consumedPromises = this.startLoadingBatch(filtered, progressHelper);
-
+      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, progressHelper);
+      const consumedPromises = this.startLoadingBatch(filteredSectors, progressHelper, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         this._modelStateHandler.updateState(consumed);
         yield consumed;
@@ -86,10 +89,17 @@ export class SectorLoader {
     return filteredSectors;
   }
 
-  private startLoadingBatch(batch: WantedSector[], progressHelper: ProgressReportHelper): Promise<ConsumedSector>[] {
+  private startLoadingBatch(
+    batch: WantedSector[],
+    progressHelper: ProgressReportHelper,
+    models: CadNode[]
+  ): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(async wantedSector => {
       try {
-        return this._sectorRepository.loadSector(wantedSector);
+        const model = models.filter(
+          model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
+        )[0];
+        return model.loadSector(wantedSector);
       } catch (error) {
         log.error('Failed to load sector', wantedSector, 'error:', error);
         // Ignore error but mark sector as discarded since we didn't load any geometry

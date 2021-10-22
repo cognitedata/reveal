@@ -5,29 +5,25 @@
 import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';
-import { CadSectorParser, ConsumedSector } from '@reveal/cad-parsers';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { ConsumedSector } from '@reveal/cad-parsers';
+import { CadNode } from '@reveal/rendering';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
-import { scan, share, startWith, auditTime, filter, map, finalize, observeOn, mergeMap } from 'rxjs/operators';
+import { scan, share, startWith, auditTime, filter, map, observeOn, mergeMap } from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
-import { Repository } from '../../sector-loader/src/Repository';
 
 import { LoadingState } from './utilities/types';
 import { emissionLastMillis } from './utilities/rxOperations';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
 import { CadModelSectorBudget, defaultCadModelSectorBudget } from './CadModelSectorBudget';
-import { DetermineSectorsInput, SectorLoadingSpent } from './sector/culling/types';
+import { DetermineSectorsPayload, SectorLoadingSpent } from './sector/culling/types';
 import { ModelStateHandler } from './sector/ModelStateHandler';
-import { CachedRepository } from '@reveal/sector-loader';
-import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 const notLoadingState: LoadingState = { isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 };
 
 export class CadModelUpdateHandler {
-  private readonly _sectorRepository: Repository;
   private readonly _sectorCuller: SectorCuller;
   private readonly _modelStateHandler: ModelStateHandler;
   private _budget: CadModelSectorBudget;
@@ -42,9 +38,7 @@ export class CadModelUpdateHandler {
 
   private readonly _updateObservable: Observable<ConsumedSector>;
 
-  constructor(modelDataClient: BinaryFileProvider, materialManager: CadMaterialManager, sectorCuller: SectorCuller) {
-    const modelDataParser = new CadSectorParser();
-    this._sectorRepository = new CachedRepository(modelDataClient, modelDataParser, materialManager);
+  constructor(sectorCuller: SectorCuller) {
     this._sectorCuller = sectorCuller;
     this._modelStateHandler = new ModelStateHandler();
     this._budget = defaultCadModelSectorBudget;
@@ -94,14 +88,13 @@ export class CadModelUpdateHandler {
       this._progressSubject.next(state);
     };
     const determineSectorsHandler = new SectorLoader(
-      this._sectorRepository,
       sectorCuller,
       this._modelStateHandler,
       collectStatisticsCallback,
       reportProgressCallback
     );
 
-    async function* loadSectors(input: DetermineSectorsInput) {
+    async function* loadSectors(input: DetermineSectorsPayload) {
       for await (const sector of determineSectorsHandler.loadSectors(input)) {
         yield sector;
       }
@@ -113,10 +106,7 @@ export class CadModelUpdateHandler {
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
       mergeMap(async x => loadSectors(x)),
-      mergeMap(x => x),
-      finalize(() => {
-        this._sectorRepository.clear(); // clear the cache once this is unsubscribed from.
-      })
+      mergeMap(x => x)
     );
   }
 
@@ -217,11 +207,11 @@ function createDetermineSectorsInput([settings, camera, clipping, models]: [
   CameraInput,
   ClippingInput,
   CadNode[]
-]): DetermineSectorsInput {
+]): DetermineSectorsPayload {
   return {
     ...camera,
     ...settings,
     ...clipping,
-    cadModelsMetadata: models.filter(x => x.visible).map(x => x.cadModelMetadata)
+    models
   };
 }

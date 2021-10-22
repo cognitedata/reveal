@@ -2,5 +2,5 @@
  * Copyright 2021 Cognite AS
  */
 
-export { Repository } from './src/Repository';
-export { CachedRepository } from './src/CachedRepository';
+export { SectorRepository } from './src/Repository';
+export { V8SectorRepository } from './src/CachedRepository';

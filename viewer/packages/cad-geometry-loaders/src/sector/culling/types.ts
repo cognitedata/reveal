@@ -6,6 +6,7 @@ import { SectorMetadata, CadModelMetadata, LevelOfDetail, WantedSector } from '@
 
 import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { CadNode } from '@reveal/rendering';
 
 export interface DetermineSectorsInput {
   camera: THREE.PerspectiveCamera;
@@ -15,6 +16,15 @@ export interface DetermineSectorsInput {
   cameraInMotion: boolean;
   budget: CadModelSectorBudget;
 }
+
+export type DetermineSectorsPayload = {
+  camera: THREE.PerspectiveCamera;
+  clippingPlanes: THREE.Plane[];
+  models: CadNode[];
+  loadingHints: CadLoadingHints;
+  cameraInMotion: boolean;
+  budget: CadModelSectorBudget;
+};
 
 /**
  * Statistics for how much data is required to load set of sectors.

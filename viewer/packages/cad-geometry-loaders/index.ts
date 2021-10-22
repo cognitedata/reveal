@@ -4,7 +4,7 @@
 
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 
-export { CachedRepository } from '../sector-loader/src/CachedRepository';
+export { V8SectorRepository } from '../sector-loader/src/CachedRepository';
 
 export { CadLoadingHints } from './src/CadLoadingHints';
 

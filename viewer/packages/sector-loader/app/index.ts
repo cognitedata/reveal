@@ -6,8 +6,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelDataClient } from '@reveal/modeldata-api';
-import { CachedRepository } from '../src/CachedRepository';
-import { CadSectorParser } from '@reveal/cad-parsers';
+import { V8SectorRepository } from '../src/CachedRepository';
 import { CadMaterialManager } from '@reveal/rendering';
 
 init();
@@ -22,26 +21,23 @@ async function init() {
   await client.authenticate();
 
   const modelDataClient = new CdfModelDataClient(client);
-  const cadSectorParser = new CadSectorParser();
   const cadMaterialManager = new CadMaterialManager();
 
-  const detailedSectorLoader = new CachedRepository(modelDataClient, cadSectorParser, cadMaterialManager);
+  const detailedSectorLoader = new V8SectorRepository(modelDataClient, cadMaterialManager);
 
   const sceneJson = await modelDataClient.getJsonFile(
-    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8880879365302190',
+    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
     'scene.json'
   );
 
-  cadMaterialManager.addModelMaterials('8880879365302190', sceneJson.maxTreeIndex);
-
-  console.log(sceneJson);
+  cadMaterialManager.addModelMaterials('8077116380016442', sceneJson.maxTreeIndex);
 
   const testSector = sceneJson.sectors[0];
   testSector.bounds = new THREE.Box3(testSector.boundingBox.min, testSector.boundingBox.max);
 
   const test = await detailedSectorLoader.loadSector({
-    modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8880879365302190',
-    modelIdentifier: '8880879365302190',
+    modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
+    modelIdentifier: '8077116380016442',
     metadata: testSector,
     levelOfDetail: 2,
     geometryClipBox: null

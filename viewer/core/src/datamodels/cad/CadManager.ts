@@ -99,6 +99,7 @@ export class CadManager<TModelIdentifier> {
 
   dispose() {
     this._cadModelUpdateHandler.dispose();
+    this._cadModelFactory.dispose();
     this._subscription.unsubscribe();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);
   }
@@ -139,10 +140,6 @@ export class CadManager<TModelIdentifier> {
   }
 
   async addModel(modelIdentifier: TModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
-    // if (this._cadModelMap.has(metadata.modelIdentifier)) {
-    //   throw new Error(`Model ${modelIdentifier} has already been added`);
-    // }
-
     const model = await this._cadModelFactory.createModel(modelIdentifier, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(model.cadModelMetadata.modelIdentifier, model);

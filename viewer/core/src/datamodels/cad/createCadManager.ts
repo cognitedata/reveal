@@ -79,6 +79,6 @@ export function createCadManager<TModelIdentifier>(
     internal && internal.sectorCuller
       ? internal.sectorCuller
       : createDefaultSectorCuller(renderer, occludingGeometryProvider);
-  const cadModelUpdateHandler = new CadModelUpdateHandler(modelDataClient, materialManager, sectorCuller);
+  const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller);
   return new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 }
