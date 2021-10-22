@@ -268,6 +268,22 @@ export const useSecondarySelectedOrHoveredWells = () => {
   );
 };
 
+export const useSecondarySelectedWellsAndWellboresCount = () => {
+  const { selectedSecondaryWellIds, selectedSecondaryWellboreIds } =
+    useSelectedSecondaryWellAndWellboreIds();
+  return useMemo(
+    () => ({
+      secondaryWells: Object.entries(selectedSecondaryWellIds).filter(
+        ([, isSelected]) => isSelected
+      ).length,
+      secondaryWellbores: Object.entries(selectedSecondaryWellboreIds).filter(
+        ([, isSelected]) => isSelected
+      ).length,
+    }),
+    [selectedSecondaryWellIds, selectedSecondaryWellboreIds]
+  );
+};
+
 export const useActiveWellsWellboresIds = () => {
   const wells = useSelectedOrHoveredWells();
   return useMemo(

@@ -10,6 +10,7 @@ import {
   useSecondarySelectedOrHoveredWells,
   useSelectedSecondaryWellAndWellboreIds,
   useSelectedWellIds,
+  useSecondarySelectedWellsAndWellboresCount,
 } from '../asset/well';
 
 jest.mock('react-redux', () => ({
@@ -85,6 +86,21 @@ describe('Well hook', () => {
     expect(data).toEqual({
       wellIds: [1234],
       wellboreIds: [75915540932499340],
+    });
+  });
+
+  test('load secondary well and wellbore count', async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useSecondarySelectedWellsAndWellboresCount()
+    );
+    act(() => {
+      waitForNextUpdate();
+    });
+    const data = result.current;
+
+    expect(data).toEqual({
+      secondaryWells: 1,
+      secondaryWellbores: 1,
     });
   });
 });
