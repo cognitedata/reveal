@@ -2,7 +2,7 @@ import { METER } from 'constants/units';
 
 import { getNdsEventTableColumns } from '../utils';
 
-describe('Test NDS utils', () => {
+describe('getNdsEventTableColumns', () => {
   it('Should return NDS columns customized with unit', async () => {
     const columns = getNdsEventTableColumns(METER);
     expect(columns).toEqual(

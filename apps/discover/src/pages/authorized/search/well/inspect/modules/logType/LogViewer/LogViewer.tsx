@@ -9,7 +9,7 @@ import { Sequence, CogniteEvent } from '@cognite/sdk';
 
 import { changeUnitTo } from '_helpers/units/utils';
 import { FEET, PPG } from 'constants/units';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { TRACK_CONFIG } from 'modules/wellSearch/constants';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { ndsAccessorsToFixedDecimal } from 'modules/wellSearch/selectors/event/constants';

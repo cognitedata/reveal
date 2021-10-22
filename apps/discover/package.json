@@ -36,8 +36,8 @@
     "build-storybook:bazel": "bazel build :storybook-static",
     "test:debug": "../../node_modules/.bin/react-scripts --inspect-brk test --runInBand",
     "t": "yarn test:all",
-    "test": "./scripts/test.sh src",
-    "test:bazel": "ibazel test :test",
+    "test": "ibazel test :test",
+    "test:raw": "./scripts/test.sh src",
     "test:all": "../../node_modules/.bin/react-scripts test --env=jest-environment-jsdom-sixteen",
     "test:changed": "yarn test:all --detectOpenHandles --bail --colors --verbose --onlyChanged --coverageReporters=none --watchAll=false",
     "update-helpers": "bazel run :generate_package_json_helpers"
@@ -53,7 +53,7 @@
         "<rootDir>/../../packages/$1/src/mocks",
         "<rootDir>/../../packages/$1/dist/mocks"
       ],
-      "^@cognite/(?!cogs.js|sdk|seismic-sdk-js|gcs-browser-upload|geospatial-sdk-js|node-visualizer|sdk-wells|subsurface-interfaces|videx-wellog)(.*)$": [
+      "^@cognite/(?!cogs.js|sdk|user-management-service-types|seismic-sdk-js|gcs-browser-upload|geospatial-sdk-js|node-visualizer|sdk-wells|subsurface-interfaces|videx-wellog)(.*)$": [
         "../../../packages/$1/src",
         "../../../packages/$1/dist",
         "<rootDir>/../../packages/$1/src",

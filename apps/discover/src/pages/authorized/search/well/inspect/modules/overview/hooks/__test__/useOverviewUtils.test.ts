@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { METER } from 'constants/units';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { useOverviewResultColumns } from '../useOverviewUtils';
 
-jest.mock('hooks/useUserPreference', () => ({
+jest.mock('hooks/useUserPreferences', () => ({
   useUserPreferencesMeasurement: jest.fn(),
 }));
 
@@ -29,8 +29,6 @@ describe('useWellResultColumns hook', () => {
 
     expect(overViewHeaders).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ Header: 'TVD (m)' }),
-        expect.objectContaining({ Header: 'MD (m)' }),
         expect.objectContaining({ Header: 'Water depth (m)' }),
       ])
     );

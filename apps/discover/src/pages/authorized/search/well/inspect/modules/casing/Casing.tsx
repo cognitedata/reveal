@@ -8,7 +8,7 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/emptyState';
 import { Table } from 'components/tablev2';
 import { showErrorMessage } from 'components/toast';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataCasing } from 'modules/filterData/selectors';
 import { useCasingsForTable } from 'modules/wellSearch/selectors';
@@ -23,9 +23,6 @@ import { getFortmattedCasingData } from './helper';
 import { useGetCasingTableColumns } from './hooks/useHelpers';
 import { FormattedCasings, CasingData } from './interfaces';
 
-const prefferedUnit = useUserPreferencesMeasurement();
-const columns = useGetCasingTableColumns();
-
 const tableOptions = {
   height: '100%',
   checkable: true,
@@ -39,6 +36,9 @@ export const Casing: React.FC = () => {
     []
   );
   const { selectedIds } = useFilterDataCasing();
+
+  const prefferedUnit = useUserPreferencesMeasurement();
+  const columns = useGetCasingTableColumns();
   const { t } = useTranslation('WellData');
 
   const dispatch = useDispatch();

@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import { ColumnType } from 'components/tablev3';
+import { FEET } from 'constants/units';
 import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';
 
 import { OverviewModel } from './types';
@@ -49,12 +50,12 @@ export const generateOverviewColumns = (
       width: 'auto',
     },
     {
-      Header: `TVD (${userPrefferedUnit})`,
+      Header: `TVD (${FEET})`,
       accessor: (row) => row.tvd || '',
       width: 'auto',
     },
     {
-      Header: `MD (${userPrefferedUnit})`,
+      Header: `MD (${FEET})`,
       accessor: (row) => row.md || '',
       width: 'auto',
     },

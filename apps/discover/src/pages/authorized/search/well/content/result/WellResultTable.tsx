@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import { Options, Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import {
   wellSearchActions,
@@ -29,7 +29,7 @@ import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { SearchTableResultActionContainer } from 'pages/authorized/search/elements';
-import { useWellResultColumns } from 'pages/authorized/search/well/hooks/useWellUtils';
+import { generateWellColumns } from 'pages/authorized/search/well/utils';
 import { FlexRow } from 'styles/layout';
 
 import { WellOptionPanel } from '../WellOptionPanel';
@@ -57,10 +57,6 @@ const WellResult: React.FC<DispatchProps> = (props) => {
   } = props;
 
   const userPreferredUnit = useUserPreferencesMeasurement();
-  /**
-   * Columns with user preffered unit in the header
-   */
-  const wellColumns = useWellResultColumns();
 
   const dispatch = useDispatch();
   const [options] = useState<Options>(WellResultTableOptions);
@@ -68,23 +64,30 @@ const WellResult: React.FC<DispatchProps> = (props) => {
   const columns = React.useMemo(
     () =>
       sortBy(
-        compact(selectedColumns.map((column) => wellColumns[column])),
+        compact(
+          selectedColumns.map(
+            (column) => generateWellColumns(userPreferredUnit)[column]
+          )
+        ),
         'order'
       ),
-    [selectedColumns]
+    [selectedColumns, userPreferredUnit]
   );
 
   const [accessorsToFixedDecimal] = useState(['waterDepth.value']);
 
-  const [unitChangeAcceessors] = useState([
-    {
-      accessor: 'waterDepth.value',
-      fromAccessor: 'waterDepth.unit',
-      to: userPreferredUnit,
-    },
-  ]);
+  const unitChangeAcceessors = useMemo(
+    () => [
+      {
+        accessor: 'waterDepth.value',
+        fromAccessor: 'waterDepth.unit',
+        to: userPreferredUnit,
+      },
+    ],
+    [userPreferredUnit]
+  );
 
-  const data = React.useMemo(
+  const data = useMemo(
     () =>
       wells.map((well) => {
         const item = convertToFixedDecimal(
@@ -98,7 +101,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
         }
         return item;
       }),
-    [wells]
+    [wells, unitChangeAcceessors]
   );
 
   const handleDoubleClick = useCallback(

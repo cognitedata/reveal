@@ -21,8 +21,6 @@ import { NdsFilterContent, NdsFilterWrapper, ResizeHandle } from '../elements';
 import FilterContainer from './FilterContainer';
 import { useGetNdsTableColumns } from './hooks/useHelpers';
 
-const columns = useGetNdsTableColumns();
-
 const tableOptions = {
   flex: false,
   hideBorders: false,
@@ -44,6 +42,7 @@ export const EventsNds: React.FC = () => {
   );
   const [filteredEvents, setFilteredEvents] = useState<CogniteEvent[]>([]);
   const { events: ndsEvents, isLoading } = useNdsEventsForTable();
+  const columns = useGetNdsTableColumns();
 
   useStopTimeLogger(renderTimer);
   if (isLoading) return <WhiteLoader />;

@@ -3,15 +3,14 @@ import React from 'react';
 import { WhiteLoader } from 'components/loading';
 import { Table } from 'components/tablev2';
 import { useOverviewData } from 'modules/wellSearch/selectors/sequence/useOverviewData';
-import { useOverviewResultColumns } from 'pages/authorized/search/well/inspect/modules/overview/hooks/useOverviewUtils';
 
+import { useOverviewResultColumns } from './hooks/useOverviewUtils';
 import { OverviewModel } from './types';
-
-export const columns = useOverviewResultColumns();
 
 export const OverviewComponent: React.FC<{
   overviewData: OverviewModel[];
 }> = ({ overviewData }) => {
+  const columns = useOverviewResultColumns();
   const options = {
     checkable: false,
     expandable: false,

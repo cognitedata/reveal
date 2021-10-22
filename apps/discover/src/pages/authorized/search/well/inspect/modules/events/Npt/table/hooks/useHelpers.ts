@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { COMMON_COLUMN_WIDTHS } from '../../../../../constants';

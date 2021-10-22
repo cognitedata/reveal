@@ -6,7 +6,7 @@ import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { METER, FEET } from 'constants/units';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 
 import { useCasingsForTable, useSelectedWellboresCasingsData } from '../casing';
@@ -15,7 +15,7 @@ jest.mock('modules/wellSearch/hooks/useSelectedWellboresCasingsQuery', () => ({
   useSelectedWellboresCasingsQuery: jest.fn(),
 }));
 
-jest.mock('hooks/useUserPreference', () => ({
+jest.mock('hooks/useUserPreferences', () => ({
   useUserPreferencesMeasurement: jest.fn(),
 }));
 

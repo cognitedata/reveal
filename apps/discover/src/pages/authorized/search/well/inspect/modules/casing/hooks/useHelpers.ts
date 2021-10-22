@@ -1,4 +1,4 @@
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { getCasingColumnsWithPrefferedUnit } from '../helper';
 

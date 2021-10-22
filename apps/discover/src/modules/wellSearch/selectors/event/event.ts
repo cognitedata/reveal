@@ -5,7 +5,7 @@ import pickBy from 'lodash/pickBy';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { log } from '_helpers/log';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useSecondarySelectedOrHoveredWellbores,
   useSecondarySelectedOrHoveredWells,
@@ -13,7 +13,6 @@ import {
 } from 'modules/wellSearch//selectors';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useNptEventsQuery } from 'modules/wellSearch/hooks/useNptEventsQuery';
-import { useGetConverFunctionForEvents } from 'modules/wellSearch/selectors/event/hooks/useHelpers';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { getDummyNptEventForWellbore } from 'modules/wellSearch/utils';
 import {
@@ -22,14 +21,18 @@ import {
   convertTo3DNPTEvents,
 } from 'modules/wellSearch/utils/events';
 
+import { useGetConverFunctionForEvents } from './helper';
+
 export const useNdsEventsForTable = () => {
   const wells = useSecondarySelectedOrHoveredWells();
-  const getConverFunctionsForEvents = useGetConverFunctionForEvents();
+  const userPrefferedUnit = useUserPreferencesMeasurement();
   const { data, isLoading } = useNdsEventsQuery();
   return useMemo(() => {
     if (isLoading || !data) {
       return { isLoading, events: [] };
     }
+    const getConverFunctionsForEvents =
+      useGetConverFunctionForEvents(userPrefferedUnit);
     const events = ([] as CogniteEvent[]).concat(...Object.values(data));
     const errorList: string[] = [];
     const convertedEvents = mapWellInfo(events, wells).map(

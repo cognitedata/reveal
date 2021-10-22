@@ -27,7 +27,7 @@ jest.mock('../../../hooks/useTrajectoriesQuery', () => ({
 
 const mockPrefferedUnit = FEET;
 
-jest.mock('hooks/useUserPreference', () => ({
+jest.mock('hooks/useUserPreferences', () => ({
   useUserPreferencesMeasurement: () => mockPrefferedUnit,
 }));
 

@@ -1,4 +1,10 @@
+import { CogniteEvent } from '@cognite/sdk';
+
 import { UnitConverterItem } from '_helpers/units/interfaces';
+import { EventsType } from 'modules/wellSearch/types';
+import { convertObject } from 'modules/wellSearch/utils';
+
+import { ndsAccessorsToFixedDecimal } from './constants';
 
 export const getNdsUnitChangeAccessors = (
   toUnit: string
@@ -28,3 +34,26 @@ export const getNdsUnitChangeAccessors = (
     to: toUnit,
   },
 ];
+
+export const useGetConverFunctionForEvents = (unit: string) => {
+  return (eventType: EventsType, errorHandler?: (error: string) => void) => {
+    switch (eventType) {
+      case 'nds': {
+        const ndsUnitChangeAcceessors = getNdsUnitChangeAccessors(unit);
+        if (errorHandler) {
+          if (ndsUnitChangeAcceessors.length)
+            ndsUnitChangeAcceessors[0].errorHandler = errorHandler;
+          if (ndsUnitChangeAcceessors.length > 1)
+            ndsUnitChangeAcceessors[1].errorHandler = errorHandler;
+        }
+        return (event: CogniteEvent) =>
+          convertObject(event)
+            .changeUnits(ndsUnitChangeAcceessors)
+            .toClosestInteger(ndsAccessorsToFixedDecimal)
+            .get();
+      }
+      default:
+        return (event: CogniteEvent) => event;
+    }
+  };
+};

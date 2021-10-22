@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
 import template from 'lodash/template';
 
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import {
   TrajectoryRow,
@@ -85,10 +86,14 @@ export const Trajectory2D: React.FC<Props> = ({
       }
 
       chartObjs.forEach((obj, index) => {
-        charts[index].push(obj);
+        if (isEmpty(charts[index])) {
+          charts[index].push(obj);
+        } else {
+          charts[index] = [obj];
+        }
       });
     });
-  }, [selectedTrajectoryData, chartConfigs]);
+  }, [selectedTrajectoryData, chartConfigs, userPreferredUnit]);
 
   const getLineObject = (
     traj: TrajectoryRows | undefined,

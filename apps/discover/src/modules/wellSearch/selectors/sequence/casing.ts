@@ -15,7 +15,7 @@ import {
   useStopTimeLogger,
   TimeLogStages,
 } from 'hooks/useTimeLog';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { convertObject } from 'modules/wellSearch/utils';
 import { CasingData } from 'pages/authorized/search/well/inspect/modules/casing/interfaces';
@@ -142,7 +142,7 @@ export const useCasingsForTable = () => {
         .get()
     );
     return { casings: casingList, isLoading };
-  }, [casings, isLoading]);
+  }, [casings, isLoading, prefferedUnit]);
 };
 
 export const getCasingUnitChangeAccessors = (

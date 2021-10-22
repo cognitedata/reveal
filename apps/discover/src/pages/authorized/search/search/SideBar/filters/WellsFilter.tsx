@@ -5,6 +5,7 @@ import get from 'lodash/get';
 
 import Skeleton from 'components/skeleton';
 import { useSearchHasAnyAppliedFilters } from 'hooks/useSearchHasAnyAppliedFilters';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
   useClearWellsFilters,
   useSetWellsFiltersAsync,
@@ -24,7 +25,12 @@ import { CommonFilter } from './well/CommonFilter';
 import { TITLE, CATEGORY } from './well/constants';
 
 export const WellsFilter = () => {
-  const { isLoading, data: filterOptions } = useWellFilterOptions();
+  const usePreferredUnit = useUserPreferencesMeasurement();
+  const {
+    isFetching,
+    data: filterOptions,
+    refetch,
+  } = useWellFilterOptions(usePreferredUnit);
   const [selectedOptions, setSelectedOptions] = useState<WellFilterMap>({});
   // const [changedCategories, setChangedCategories] = useState<SelectedMap>({});
   const [filterCalled, setFilterCalled] = useState<boolean>(false);
@@ -34,6 +40,10 @@ export const WellsFilter = () => {
   const anyAppliedFilters = useSearchHasAnyAppliedFilters();
   const clearWellFilters = useClearWellsFilters();
   const filterConfigsByCategory = useFilterConfigByCategory();
+
+  useEffect(() => {
+    refetch();
+  }, [usePreferredUnit]);
 
   useEffect(() => {
     /**
@@ -96,7 +106,7 @@ export const WellsFilter = () => {
   };
 
   const renderFilters = React.useMemo(() => {
-    if (isLoading) {
+    if (isFetching) {
       return loader;
     }
 
@@ -111,7 +121,13 @@ export const WellsFilter = () => {
         <WellFilters filterConfigs={category.filterConfigs} index={index} />
       </FilterCollapse.Panel>
     ));
-  }, [isLoading, filterConfigsByCategory, selectedOptions, filters]);
+  }, [
+    isFetching,
+    filterConfigsByCategory,
+    selectedOptions,
+    filters,
+    filterOptions,
+  ]);
 
   return (
     <BaseFilter>

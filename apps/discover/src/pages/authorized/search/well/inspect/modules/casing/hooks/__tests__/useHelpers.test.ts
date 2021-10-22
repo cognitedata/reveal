@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import { METER } from 'constants/units';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { useGetCasingTableColumns } from '../useHelpers';
 
-jest.mock('hooks/useUserPreference', () => ({
+jest.mock('hooks/useUserPreferences', () => ({
   useUserPreferencesMeasurement: jest.fn(),
 }));
 

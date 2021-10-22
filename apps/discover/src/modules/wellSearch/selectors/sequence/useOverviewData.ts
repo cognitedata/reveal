@@ -3,25 +3,25 @@ import { useMemo, useState } from 'react';
 import flatten from 'lodash/flatten';
 
 import { changeUnits } from '_helpers/units/utils';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreference';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
 import { useSecondarySelectedOrHoveredWells } from 'modules/wellSearch/selectors';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
+
+const getUnitChangeAccessors = (unit: string) => [
+  {
+    accessor: 'waterDepth.value',
+    fromAccessor: 'waterDepth.unit',
+    to: unit,
+  },
+];
 
 export const useOverviewData = () => {
   const wells = useSecondarySelectedOrHoveredWells();
   const userPreferredUnit = useUserPreferencesMeasurement();
   const { trajectories, isLoading } = useTrajectoriesQuery();
   const [accessorsToFixedDecimal] = useState(['waterDepth.value', 'tvd', 'md']);
-
-  const [unitChangeAcceessors] = useState([
-    {
-      accessor: 'waterDepth.value',
-      fromAccessor: 'waterDepth.unit',
-      to: userPreferredUnit,
-    },
-  ]);
 
   return useMemo(() => {
     const overviewData = flatten(
@@ -47,7 +47,7 @@ export const useOverviewData = () => {
           }
 
           return convertToFixedDecimal(
-            changeUnits(overView, unitChangeAcceessors),
+            changeUnits(overView, getUnitChangeAccessors(userPreferredUnit)),
             accessorsToFixedDecimal
           );
         })
@@ -55,5 +55,5 @@ export const useOverviewData = () => {
     );
 
     return { overviewData, isLoading };
-  }, [wells, trajectories]);
+  }, [wells, trajectories, userPreferredUnit]);
 };
