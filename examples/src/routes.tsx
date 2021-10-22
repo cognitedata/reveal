@@ -13,6 +13,7 @@ import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { visualTests } from './pages/e2e/visualTests';
+import { CustomDataSource } from './pages/CustomDataSource';
 
 const cadTestBasePath = '/test/cad/';
 const pointcloudTestBasePath = '/test/pointcloud/';
@@ -120,6 +121,12 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/walkable-path',
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
+  },
+  {
+    name: 'customDatasource',
+    path: '/customDatasource',
+    menuTitle: 'Custom data source',
+    component: <CustomDataSource />,
   },
 ].sort(menuTitleAz);
 

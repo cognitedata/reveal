@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-export interface MetadataRepository<Input, Output> {
-  loadData(input: Input): Output;
+import { ModelIdentifier } from '@reveal/modeldata-api';
+
+export interface MetadataRepository<Output> {
+  loadData(modelIdentifier: ModelIdentifier): Output;
 }

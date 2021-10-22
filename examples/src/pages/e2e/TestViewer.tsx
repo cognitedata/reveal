@@ -6,6 +6,7 @@ import CameraControls from 'camera-controls';
 import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import * as reveal from '@cognite/reveal/internals';
+
 import { defaultRenderOptions, RenderOptions } from '@cognite/reveal/internals';
 
 type CadModelEnv = {
@@ -19,7 +20,7 @@ type PointCloudModelEnv = {
 
 export type TestEnv = {
   camera: THREE.PerspectiveCamera;
-  revealManager: reveal.RevealManager<unknown>;
+  revealManager: reveal.RevealManager;
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
 };
@@ -66,7 +67,7 @@ export function TestViewer(props: Props) {
   });
 
   const setupLoadingStateHandler = (
-    revealManager: reveal.RevealManager<unknown>
+    revealManager: reveal.RevealManager
   ) => {
     let skipFirstLoadingState = true;
     revealManager.on('loadingStateChanged', (loadingState) => {
@@ -106,7 +107,7 @@ export function TestViewer(props: Props) {
 
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
 
     async function main() {
       if (!canvas.current) {
@@ -141,12 +142,14 @@ export function TestViewer(props: Props) {
       let model: reveal.PointCloudNode | reveal.CadNode;
 
       if (props.modelType === 'pointcloud') {
-        model = await revealManager.addModel('pointcloud', modelUrl);
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
+        model = await revealManager.addModel('pointcloud', modelIdentifier);
         model.pointColorType = props.pointColorType ? props.pointColorType : reveal.PotreePointColorType.Rgb;
       } else {
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
         model = await revealManager.addModel(
           'cad',
-          modelUrl
+          modelIdentifier
         );
       }
 
