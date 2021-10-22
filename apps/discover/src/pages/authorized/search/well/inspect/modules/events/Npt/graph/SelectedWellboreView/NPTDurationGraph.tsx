@@ -23,7 +23,6 @@ export const NPTDurationGraph: React.FC = () => {
   const options: StackedBarChartOptions<NPTEvent> = useMemo(
     () => ({
       ...NPT_GRAPH_OPTIONS,
-      chartHeight: 'fit-content',
       legendOptions: {
         isolate: false,
       },

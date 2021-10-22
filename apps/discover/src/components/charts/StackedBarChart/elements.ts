@@ -9,7 +9,7 @@ import { BAR_HEIGHT, CHART_BACKGROUND_COLOR } from './constants';
 
 export const StackedBarChartWrapper = styled.div`
   position: relative;
-  height: 100%;
+  height: calc(100% - 50px);
   background: ${CHART_BACKGROUND_COLOR};
   border-radius: ${sizes.small};
   padding: ${sizes.normal};
@@ -72,8 +72,8 @@ export const ChartContainer = styled.div`
   overflow: scroll;
   margin-top: ${sizes.normal};
   margin-bottom: -${sizes.extraSmall};
+  height: calc(100% - 75px);
   ${(props: { height: number; offsetbottom: number }) => `
-    height: ${props.height}px;
     padding-bottom: ${props.offsetbottom}px;
   `}
   .domain {

@@ -1,6 +1,7 @@
 import { RefObject } from 'react';
 
 import groupBy from 'lodash/groupBy';
+import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 import pickBy from 'lodash/pickBy';
@@ -192,7 +193,7 @@ export const getDefaultBarColorConfig = (
 };
 
 export const isNoDataAvailable = <T>(data: T[], accessor: keyof T) => {
-  if (!data.length) return true;
+  if (isEmpty(data)) return true;
   if (data.length > 1) return false;
   return isUndefined(data[0][accessor]);
 };

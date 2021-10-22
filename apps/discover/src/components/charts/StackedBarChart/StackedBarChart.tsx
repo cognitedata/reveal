@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
 
 import { ZoomOutButton, ZoomInButton, ResetZoomButton } from './Buttons';
@@ -228,9 +227,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
    * This is to render the x-axis with sticky values
    */
   const ChartXAxisSticky = useMemo(() => {
-    const translate = isXAxisOnTop
-      ? `translate(0, ${margins.top})`
-      : `translate(0, 0)`;
+    const translate = isXAxisOnTop ? `translate(0, 22)` : `translate(0, 0)`;
 
     return (
       <ChartStickyElement
@@ -262,6 +259,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
         />
 
         <Bars
+          initialGroupedData={initialGroupedData}
           groupedData={groupedData}
           scales={{ x: xScale, y: yScale }}
           yScaleDomain={yScaleDomain}
@@ -302,10 +300,6 @@ export const StackedBarChart = <T extends DataObject<T>>({
     getCheckedLegendCheckboxOptions(legendCheckboxState);
 
   const renderChart = () => {
-    const height = isNumber(options?.chartHeight)
-      ? options?.chartHeight
-      : undefined;
-
     const offsetbottom =
       isolateLegend && options?.legendOptions?.overlay && isXAxisOnTop
         ? spacings.y
@@ -319,7 +313,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
           </ChartDetailsContainer>
         )}
 
-        <ChartContainer height={height} offsetbottom={offsetbottom}>
+        <ChartContainer offsetbottom={offsetbottom}>
           {isXAxisOnTop && ChartXAxisSticky}
           {ChartContent}
           {!isXAxisOnTop && ChartXAxisSticky}

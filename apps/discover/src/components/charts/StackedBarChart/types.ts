@@ -35,6 +35,7 @@ export interface AxesProps {
 }
 
 export interface BarsProps<T> {
+  initialGroupedData: GroupedData<T>;
   groupedData: GroupedData<T>;
   scales: {
     x: AxisScale;
@@ -72,7 +73,6 @@ export interface XAxisPlacement {
 }
 
 export interface StackedBarChartOptions<T> {
-  chartHeight?: number | 'fit-content';
   barColorConfig?: ColorConfig;
   legendOptions?: LegendOptions;
   margins?: Partial<Margins>;

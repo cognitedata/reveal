@@ -21,6 +21,7 @@ import {
 } from '../utils';
 
 export const Bars = <T extends DataObject<T>>({
+  initialGroupedData,
   groupedData,
   scales,
   yScaleDomain,
@@ -51,6 +52,7 @@ export const Bars = <T extends DataObject<T>>({
   return (
     <g>
       {yScaleDomain.map((key, index) => {
+        const initialData = initialGroupedData[key];
         const data = groupedData[key];
         const maxValue = Math.max(
           ...data.map((dataElement) => dataElement[xAccessor])
@@ -64,7 +66,7 @@ export const Bars = <T extends DataObject<T>>({
           'stackedWidth'
         );
         const noDataAvailable = isNoDataAvailable<T>(
-          orderedData,
+          initialData,
           barColorConfig?.accessor
         );
         const handleSelectBar = () => {

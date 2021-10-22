@@ -19,12 +19,14 @@ describe('StackedBarChart -> Bars', () => {
   const groupedData = groupBy(data, 'label');
 
   const defaultProps: BarsProps<Data> = {
+    initialGroupedData: groupedData,
     groupedData,
     scales: { x: jest.fn() as any, y: jest.fn() as any },
     yScaleDomain: Object.keys(groupedData),
     accessors: { x: 'count', y: 'label' },
     margins: DEFAULT_MARGINS,
     barComponentDimensions: { width: 100, height: 30 },
+    onSelectBar: jest.fn(),
   };
 
   const testInit = (props: BarsProps<Data> = defaultProps) =>

@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
+import difference from 'lodash/difference';
 import pickBy from 'lodash/pickBy';
+import uniq from 'lodash/uniq';
 
 import { CogniteEvent } from '@cognite/sdk';
 
@@ -109,13 +111,16 @@ export const useSelectedSecondaryWellboresWithoutNptData = () => {
   return useMemo(() => {
     if (isLoading) return [];
 
-    const wellboreIdsWithNptData = events.map((event) => event.wellboreId);
-    const wellboreIdsWithoutNptData = allWellboreIds.filter(
-      (wellboreId) => !wellboreIdsWithNptData.includes(Number(wellboreId))
+    const wellboreIdsWithNptData = uniq(
+      events.map((event) => String(event.wellboreId))
+    );
+    const wellboreIdsWithoutNptData = difference(
+      allWellboreIds,
+      wellboreIdsWithNptData
     );
 
     return selectedSecondaryWellbores.filter((wellbore) =>
-      wellboreIdsWithoutNptData.includes(wellbore.id.toString())
+      wellboreIdsWithoutNptData.includes(String(wellbore.id))
     );
   }, [isLoading, events]);
 };
