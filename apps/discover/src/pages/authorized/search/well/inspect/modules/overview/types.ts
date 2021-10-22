@@ -2,7 +2,7 @@ import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/Doub
 
 import { Wellbore } from 'modules/wellSearch/types';
 
-export interface OverviewModel extends Omit<Wellbore, 'wellbores'> {
+export interface OverviewModel extends Omit<Wellbore, 'wellbores' | 'sources'> {
   wellName?: string;
   source?: string;
   operator?: string;

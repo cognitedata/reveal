@@ -27,13 +27,15 @@ export const useOverviewData = () => {
     const overviewData = flatten(
       wells.map((well) =>
         well.wellbores.map((wellbore) => {
-          const overView: OverviewModel = { ...wellbore };
-          overView.wellName = `${well.description} / ${wellbore.description}`;
-          overView.operator = well.operator;
-          overView.spudDate = well.spudDate;
-          overView.waterDepth = well.waterDepth;
-          overView.sources = well.sources;
-          overView.field = well.field || wellbore.metadata?.field_name;
+          const overView: OverviewModel = {
+            ...wellbore,
+            wellName: `${well.description} / ${wellbore.description}`,
+            operator: well.operator,
+            spudDate: well.spudDate,
+            waterDepth: well.waterDepth,
+            sources: well.sources,
+            field: well.field || wellbore.metadata?.field_name,
+          };
 
           const trajectory = trajectories.find(
             (row) => row.assetId === wellbore.id

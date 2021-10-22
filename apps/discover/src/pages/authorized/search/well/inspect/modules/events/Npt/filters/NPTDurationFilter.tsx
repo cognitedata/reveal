@@ -1,6 +1,8 @@
 import React, { useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { NumericRangeDropdown } from 'components/filters';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataNpt } from 'modules/filterData/selectors';
@@ -20,10 +22,10 @@ export const NPTDurationFilter = React.memo(
     const dispatch = useDispatch();
 
     useEffect(() => {
-      if (isDurationEmpty(duration)) {
+      if (!isEmpty(events) && isDurationEmpty(duration)) {
         dispatch(filterDataActions.setNptDuration(minMaxDuration));
       }
-    }, [minMaxDuration]);
+    }, [events, minMaxDuration]);
 
     const handleChangeDuration = (durationVals: number[]) => {
       if (!durationVals || durationVals.length <= 1) return;

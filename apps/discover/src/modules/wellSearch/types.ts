@@ -5,9 +5,10 @@ import { Metadata, Sequence, Asset, CogniteEvent } from '@cognite/sdk';
 import {
   NPT,
   Well as SDKWell,
-  Wellbore as SDKWellbore,
+  Wellbore as WellboreV2,
   WellFilter,
 } from '@cognite/sdk-wells-v2';
+import { Wellbore as WellboreV3 } from '@cognite/sdk-wells-v3';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { PossibleDateRangeDate } from '../../_helpers/date';
@@ -379,7 +380,12 @@ export interface WellName {
   name: string;
 }
 
-export interface Wellbore extends Omit<SDKWellbore, 'wellId'> {
+// @sdk-wells-v3
+export interface Wellbore
+  extends Omit<WellboreV2, 'id' | 'wellId'>,
+    Partial<Omit<WellboreV3, 'name' | 'matchingId'>> {
+  id: any;
+  matchingId?: string;
   wellId?: number;
   sequences?: WellSequence[];
   metadata?: Metadata;

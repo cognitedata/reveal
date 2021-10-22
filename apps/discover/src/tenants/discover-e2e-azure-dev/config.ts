@@ -9,4 +9,11 @@ export default {
 
   // Enabling only for azure-dev since the wells SDK v2 only supports for azure-dev currently.
   enableWellSDKV3: true,
+
+  wells: {
+    ...config.wells,
+    npt: {
+      enabled: true,
+    },
+  },
 };

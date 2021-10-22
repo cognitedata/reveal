@@ -4,7 +4,7 @@ import { NPT } from '@cognite/sdk-wells-v2';
 import { log } from '_helpers/log';
 import { FEET, LBM_OVER_BBL, METER, PPG, PSI, SG } from 'constants/units';
 
-import { TrajectoryData, WellboreAssetIdMap } from '../types';
+import { TrajectoryData, Wellbore, WellboreAssetIdMap } from '../types';
 
 const PSI_TO_PPG_CONVERSION_FACTOR_FT = 0.052;
 const LBM_BBL_TO_PPG_CONVERSION_FACTOR = 1 / 42;
@@ -114,9 +114,9 @@ export const trimCachedData = (
       | ExternalEvent[]
       | NPT[];
   },
-  wellboreIds: number[]
+  wellboreIds: Wellbore['id'][]
 ) => {
-  const newIds: number[] = [];
+  const newIds: Wellbore['id'][] = [];
   const trimmedData = wellboreIds.reduce((results, wellboreId) => {
     if (data[wellboreId]) {
       return { ...results, [wellboreId]: data[wellboreId] };

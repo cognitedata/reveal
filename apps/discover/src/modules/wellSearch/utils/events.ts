@@ -89,6 +89,7 @@ const getIdWellboreMap = (wells: Well[]): IdWellboreMap => {
   );
 };
 
+// @sdk-wells-v3
 export const mapWellInfoToNPTEvents = (
   eventsMap: WellboreNPTEventsMap,
   wells: Well[],
@@ -98,7 +99,7 @@ export const mapWellInfoToNPTEvents = (
 
   return flatten(
     Object.keys(eventsMap).map((key) => {
-      const wellboreId = Number(key);
+      const wellboreId = key as any;
       return eventsMap[wellboreId].map((event) => ({
         ...event,
         measuredDepth: event.measuredDepth

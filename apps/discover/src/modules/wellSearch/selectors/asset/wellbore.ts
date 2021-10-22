@@ -315,6 +315,28 @@ export const useActiveWellboresExternalIdMap = () => {
   );
 };
 
+// @sdk-wells-v3
+export const useActiveWellboresMatchingIdMap = () => {
+  const selectedOrHoveredWellbores = useSecondarySelectedOrHoveredWellbores();
+  return useMemo(
+    () =>
+      selectedOrHoveredWellbores.reduce((idMap, wellbore) => {
+        if (wellbore.externalId) {
+          return { ...idMap, [wellbore.externalId]: wellbore.id };
+        }
+
+        const sourceMap = wellbore.sources
+          ?.map((source) => source.assetExternalId)
+          .reduce((sourceMap, assetExternalId) => {
+            return { ...sourceMap, [assetExternalId]: wellbore.matchingId };
+          }, {});
+
+        return sourceMap || idMap;
+      }, {}),
+    [selectedOrHoveredWellbores]
+  );
+};
+
 export const useWellboresFetchedWellIds = () => {
   return useSelector((state) =>
     useMemo(
