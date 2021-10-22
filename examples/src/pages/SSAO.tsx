@@ -40,7 +40,7 @@ export function SSAO() {
       });
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
-asdasd
+
       let model: reveal.CadNode;
       if (modelRevision) {
         revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
