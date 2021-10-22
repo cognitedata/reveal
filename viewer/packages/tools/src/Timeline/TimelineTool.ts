@@ -30,7 +30,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Create Key frame for the Timeline
    * @param date - date value by Date.now() since January 1, 1970
    */
-  public createKeyFrame(date: Date): Keyframe {
+  public createKeyframe(date: Date): Keyframe {
     const keyframe = new Keyframe(this._model, date);
     this._keyframes.push(keyframe);
     this._allDates.push(date);
@@ -43,7 +43,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Removes the Keyframe from the Timeline
    * @param keyframe - Keyframe to be removed from the Timeline
    */
-  public removeKeyFrame(keyframe: Keyframe) {
+  public removeKeyframe(keyframe: Keyframe) {
     if (this._keyframes.length > 0) {
       const index = this._keyframes.findIndex(obj => obj === keyframe);
 
