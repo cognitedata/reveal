@@ -162,7 +162,7 @@ export interface Cognite3DViewerOptions {
 }
 
 import { GeometryFilter } from '../../public/types';
-import { DataSource } from '../../../../packages/data-source';
+import { DataSource } from '@reveal/data-source';
 export { GeometryFilter };
 
 /**
