@@ -52,6 +52,8 @@ export class NodeCollectionDeserializer {
   }
 
   async deserialize(
+    // TODO 2021-10-01 larsmoa: Avoid forcing node collections to rely on CogniteClient
+    // to support more generic deployment scenarios.
     client: CogniteClient,
     model: Cognite3DModel,
     descriptor: NodeCollectionDescriptor

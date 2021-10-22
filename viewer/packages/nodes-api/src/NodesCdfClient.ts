@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
 import assert from 'assert';
 import { NodesApiClient } from './NodesApiClient';
-import { ByNodeIdsResponse, ByTreeIndicesResponse, NodeTreeIndexAndSubtreeSize } from './types';
+import { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';
 
 export class NodesCdfClient implements NodesApiClient {
   private static readonly MaxItemsPerRequest = 1000;
@@ -48,7 +48,7 @@ export class NodesCdfClient implements NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<NodeTreeIndexAndSubtreeSize[]> {
+  ): Promise<{ treeIndex: number; subtreeSize: number }[]> {
     const requests = nodeIds.map(id => ({ id }));
     const nodes = await this._client.revisions3D.retrieve3DNodes(modelId, revisionId, requests);
     return nodes.map(node => {
@@ -61,7 +61,7 @@ export class NodesCdfClient implements NodesApiClient {
     revisionId: CogniteInternalId,
     nodeId: CogniteInternalId,
     generation: number
-  ): Promise<NodeTreeIndexAndSubtreeSize> {
+  ): Promise<{ treeIndex: number; subtreeSize: number }> {
     const ancestors = await this._client.revisions3D.list3DNodeAncestors(modelId, revisionId, nodeId, {
       limit: 1000
     });

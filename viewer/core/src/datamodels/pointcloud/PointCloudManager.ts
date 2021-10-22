@@ -3,21 +3,24 @@
  */
 
 import * as THREE from 'three';
+
 import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { PointCloudFactory } from './PointCloudFactory';
+import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 
 import { Observable } from 'rxjs';
-import { PointCloudNode } from './PointCloudNode';
 
-export class PointCloudManager<TModelIdentifier> {
-  private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository<TModelIdentifier>;
+import { ModelIdentifier } from '@reveal/modeldata-api';
+
+export class PointCloudManager {
+  private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
 
-  constructor(metadataRepository: PointCloudMetadataRepository<TModelIdentifier>, modelFactory: PointCloudFactory) {
+  constructor(metadataRepository: PointCloudMetadataRepository, modelFactory: PointCloudFactory) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper();
@@ -60,7 +63,7 @@ export class PointCloudManager<TModelIdentifier> {
 
   updateCamera(_camera: THREE.PerspectiveCamera) {}
 
-  async addModel(modelIdentifier: TModelIdentifier): Promise<PointCloudNode> {
+  async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
     const nodeWrapper = this._pointCloudFactory.createModel(metadata);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);

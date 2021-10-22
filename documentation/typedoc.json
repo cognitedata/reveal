@@ -9,5 +9,10 @@
   "readme": "docs/API_Reference_header.md",
   "tsconfig": "../viewer/tsconfig.typedoc.json",
 
-  "out" : "./generated"
+  "out" : "./generated",
+  "entryPoints": [
+    "../viewer/index.ts",
+    "../viewer/tools.ts",
+    "../viewer/extensions/datasource.ts"
+  ]
 }

@@ -34,10 +34,12 @@ module.exports = env => {
       ? {
           index: './index.ts',
           tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts',
           internals: './internals.ts'
         }
       : {
           index: './index.ts',
+          'extensions/datasource': './extensions/datasource.ts',
           tools: './tools.ts'
         },
     target: 'web',
