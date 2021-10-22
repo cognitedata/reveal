@@ -12,8 +12,7 @@ import { NodeTransformProvider } from './material-manager/styling/NodeTransformP
 import { InstancedMeshManager } from './InstancedMeshManager';
 
 import { SectorScene, CadModelMetadata, RenderMode, SectorGeometry, InstancedMeshFile } from '@reveal/cad-parsers';
-import { NodeAppearanceProvider, NodeAppearance, NodeCollectionBase } from '@reveal/cad-styling';
-import { PrioritizedArea } from '@reveal/cad-geometry-loaders';
+import { NodeAppearanceProvider, NodeAppearance, NodeCollectionBase, PrioritizedArea } from '@reveal/cad-styling';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 

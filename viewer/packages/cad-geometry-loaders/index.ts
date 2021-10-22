@@ -37,4 +37,4 @@ export {
 } from './src/sector/culling/ByVisibilityGpuSectorCuller';
 export { GpuOrderSectorsByVisibilityCoverage } from './src/sector/culling/OrderSectorsByVisibilityCoverage';
 export { OccludingGeometryProvider } from './src/sector/culling/OccludingGeometryProvider';
-export { DetermineSectorsInput, PrioritizedArea } from './src/sector/culling/types';
+export { DetermineSectorsInput } from './src/sector/culling/types';

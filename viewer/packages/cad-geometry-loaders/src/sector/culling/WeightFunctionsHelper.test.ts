@@ -9,7 +9,7 @@ import { createSectorMetadata } from '../../../../../test-utilities';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import { SectorMetadata } from '@reveal/cad-parsers';
-import { PrioritizedArea } from './types';
+import { PrioritizedArea } from '@reveal/cad-styling';
 
 describe('WeightFunctionsHelper', () => {
   let camera: THREE.PerspectiveCamera;

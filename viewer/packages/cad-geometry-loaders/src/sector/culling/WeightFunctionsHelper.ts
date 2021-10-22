@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
 import { SectorMetadata } from '@reveal/cad-parsers';
-import { PrioritizedArea } from './types';
+import { PrioritizedArea } from '@reveal/cad-styling';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()
