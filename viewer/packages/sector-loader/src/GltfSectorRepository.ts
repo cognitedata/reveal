@@ -24,8 +24,6 @@ export class GltfSectorRepository implements SectorRepository {
 
     const parsedSectorGeometry = this._gltfSectorParser.parseSector(sectorByteBuffer);
 
-    console.log(parsedSectorGeometry);
-
     throw new Error('Method not implemented.');
   }
   clear(): void {

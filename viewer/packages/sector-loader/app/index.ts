@@ -23,7 +23,7 @@ async function init() {
   const modelDataClient = new CdfModelDataClient(client);
   const cadMaterialManager = new CadMaterialManager();
 
-  const detailedSectorLoader = new V8SectorRepository(modelDataClient, cadMaterialManager);
+  const v8SectorLoader = new V8SectorRepository(modelDataClient, cadMaterialManager);
 
   const sceneJson = await modelDataClient.getJsonFile(
     'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
@@ -35,15 +35,13 @@ async function init() {
   const testSector = sceneJson.sectors[0];
   testSector.bounds = new THREE.Box3(testSector.boundingBox.min, testSector.boundingBox.max);
 
-  const test = await detailedSectorLoader.loadSector({
+  const test = await v8SectorLoader.loadSector({
     modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
     modelIdentifier: '8077116380016442',
     metadata: testSector,
     levelOfDetail: 2,
     geometryClipBox: null
   });
-
-  console.log(test);
 
   //https://greenfield.cognitedata.com/api/v1/projects/3d-test/3d/files/4781617717819216/sector_0.i3d
 
