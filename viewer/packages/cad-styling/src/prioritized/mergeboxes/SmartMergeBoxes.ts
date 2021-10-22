@@ -64,6 +64,8 @@ export class SmartMergeBoxes implements BoxClusterer {
     for (const box of boxes) {
       this.addBox(box);
     }
+
+    console.log("Added more boxes. Total number of boxes is now " + this.resultBoxes.length);
   }
 
   squashBoxes(): void {

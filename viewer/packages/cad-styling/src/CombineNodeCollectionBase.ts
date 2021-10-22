@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { IndexSet } from '@reveal/utilities';
-import { AreaCollection } from './AreaCollection';
+import { AreaCollection } from './prioritized/AreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**

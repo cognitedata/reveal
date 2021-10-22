@@ -3,7 +3,7 @@
  */
 
 import { IndexSet } from '@reveal/utilities';
-import { AreaCollection, EmptyAreaCollection } from '../AreaCollection';
+import { AreaCollection, EmptyAreaCollection } from '../prioritized/AreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from '../NodeCollectionBase';
 
 export class StubNodeCollection extends NodeCollectionBase {

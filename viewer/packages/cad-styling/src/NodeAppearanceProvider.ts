@@ -6,6 +6,7 @@ import { NodeAppearance } from './NodeAppearance';
 import { NodeCollectionBase } from './NodeCollectionBase';
 
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+import { PrioritizedArea } from './prioritized/types';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.

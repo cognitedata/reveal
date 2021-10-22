@@ -4,7 +4,7 @@
 
 import assert from 'assert';
 import { EventTrigger, IndexSet } from '@reveal/utilities';
-import { AreaCollection } from './AreaCollection';
+import { AreaCollection } from './prioritized/AreaCollection';
 
 export type SerializedNodeCollection = {
   token: string;
