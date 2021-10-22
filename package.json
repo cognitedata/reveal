@@ -50,7 +50,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "7.12.13",
+    "@babel/core": "7.15.8",
     "@babel/preset-typescript": "7.12.13",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
