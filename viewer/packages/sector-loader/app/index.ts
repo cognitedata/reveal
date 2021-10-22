@@ -8,6 +8,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { CdfModelDataClient } from '@reveal/modeldata-api';
 import { V8SectorRepository } from '../src/V8SectorRepository';
 import { CadMaterialManager } from '@reveal/rendering';
+import { GltfSectorRepository } from '..';
 
 init();
 
@@ -24,24 +25,38 @@ async function init() {
   const cadMaterialManager = new CadMaterialManager();
 
   const v8SectorLoader = new V8SectorRepository(modelDataClient, cadMaterialManager);
+  const gltfSectorRepository = new GltfSectorRepository(modelDataClient, cadMaterialManager);
+
+  // const blobId = '8077116380016442';
+  const blobId = '4077087845736455';
 
   const sceneJson = await modelDataClient.getJsonFile(
-    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
+    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
     'scene.json'
   );
 
-  cadMaterialManager.addModelMaterials('8077116380016442', sceneJson.maxTreeIndex);
+  console.log(sceneJson);
+
+  cadMaterialManager.addModelMaterials(blobId, sceneJson.maxTreeIndex);
 
   const testSector = sceneJson.sectors[0];
   testSector.bounds = new THREE.Box3(testSector.boundingBox.min, testSector.boundingBox.max);
 
-  const test = await v8SectorLoader.loadSector({
-    modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
-    modelIdentifier: '8077116380016442',
+  const test = await gltfSectorRepository.loadSector({
+    modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
+    modelIdentifier: blobId,
     metadata: testSector,
     levelOfDetail: 2,
     geometryClipBox: null
   });
+
+  // const test = await v8SectorLoader.loadSector({
+  //   modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
+  //   modelIdentifier: '8077116380016442',
+  //   metadata: testSector,
+  //   levelOfDetail: 2,
+  //   geometryClipBox: null
+  // });
 
   //https://greenfield.cognitedata.com/api/v1/projects/3d-test/3d/files/4781617717819216/sector_0.i3d
 

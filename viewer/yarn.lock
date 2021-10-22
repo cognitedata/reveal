@@ -1031,11 +1031,12 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
+    "@reveal/sector-parser": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@reveal/sector-parser@workspace:packages/sector-parser":
+"@reveal/sector-parser@workspace:*, @reveal/sector-parser@workspace:packages/sector-parser":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-parser@workspace:packages/sector-parser"
   languageName: unknown
