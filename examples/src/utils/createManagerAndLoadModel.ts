@@ -57,12 +57,12 @@ export async function createManagerAndLoadModel(
     const revealManager = createLocalRevealManager(renderer, scene, { logMetrics: false });
     switch (modelType) {
       case 'cad': {
-          const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!, File3dFormat.RevealCadModel);
+          const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!);
           const model = await revealManager.addModel('cad', modelIdentifier);
           return { revealManager, model };
       }
       case 'pointcloud': {
-          const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!, File3dFormat.EptPointCloud);
+          const modelIdentifier = new LocalModelIdentifier(modelUrl.fileName!);
           const model = await revealManager.addModel('pointcloud', modelIdentifier);
           return { revealManager, model };
       }

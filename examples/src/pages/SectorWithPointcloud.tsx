@@ -155,7 +155,7 @@ export function SectorWithPointcloud() {
 
       let pointCloud
       if (pointCloudModelRevision) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId);
+        const modelIdentifier = new reveal.CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId, reveal.File3dFormat.EptPointCloud);
         pointCloud = await revealManager.addModel('pointcloud', modelIdentifier);
       } else if (pointCloudUrl) {
         const modelIdentifier = new reveal.LocalModelIdentifier(pointCloudUrl.fileName!);
