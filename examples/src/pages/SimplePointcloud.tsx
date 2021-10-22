@@ -14,6 +14,7 @@ import dat, { GUI } from 'dat.gui';
 import { getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { ClippingUI } from '../utils/ClippingUI';
+import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
@@ -66,7 +67,7 @@ export function SimplePointcloud() {
   const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
     if (!canvasRef.current) {
       return
     }
@@ -90,19 +91,7 @@ export function SimplePointcloud() {
       renderer.setClearColor('#444444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      let pointCloudNode: reveal.PointCloudNode;
-      if(modelRevision) {
-        await client.authenticate();
-        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
-        pointCloudNode = await revealManager.addModel('pointcloud', modelRevision);
-      } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        pointCloudNode = await revealManager.addModel('pointcloud', modelUrl);
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
+      const { revealManager, model: pointCloudNode } = await createManagerAndLoadModel(client, renderer, scene, 'pointcloud', modelRevision, modelUrl);
       scene.add(pointCloudNode);
       revealManager.on('loadingStateChanged', setLoadingState);
 

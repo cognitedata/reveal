@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+export { CdfModelIdentifier, LocalModelIdentifier, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 

@@ -19,9 +19,11 @@ import { GeometryFilter } from '../..';
 
 import { CadModelClipper } from './sector/CadModelClipper';
 
-export class CadManager<TModelIdentifier> {
+import { ModelIdentifier } from '@reveal/modeldata-api';
+
+export class CadManager {
   private readonly _materialManager: CadMaterialManager;
-  private readonly _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
+  private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
@@ -54,7 +56,7 @@ export class CadManager<TModelIdentifier> {
 
   constructor(
     materialManger: CadMaterialManager,
-    cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>,
+    cadModelMetadataRepository: CadModelMetadataRepository,
     cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
   ) {
@@ -143,7 +145,7 @@ export class CadManager<TModelIdentifier> {
     this._materialManager.setRenderMode(renderMode);
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
+  async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(modelIdentifier);
     if (this._cadModelMap.has(metadata.modelIdentifier)) {
       throw new Error(`Model ${modelIdentifier} has already been added`);
