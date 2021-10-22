@@ -1,13 +1,13 @@
 /* eslint camelcase: 0 */
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import { StatisticsResultResults } from '@cognite/calculation-backend';
+import { StatisticsResultResultsHistogram } from '@cognite/calculation-backend';
 import { formatNumber, getDisplayUnit } from '.';
 
 const Plot = createPlotlyComponent(Plotly);
 
 type HistogramProps = {
-  data: StatisticsResultResults['histogram'];
+  data?: StatisticsResultResultsHistogram[];
   unit: string;
 };
 

@@ -297,10 +297,10 @@ export const ConfigPanel = ({
             theme="dark"
             value={
               (functionData[param] &&
-                options.find(({ value }) => value === functionData[param])) ??
+                options?.find(({ value }) => value === functionData[param])) ??
               default_value
             }
-            options={options.map((option) => ({
+            options={(options || []).map((option) => ({
               label: option.label || option.value,
               value: option.value,
             }))}

@@ -1409,10 +1409,10 @@
     jwt-decode "^3.1.2"
     lodash "^4.17.20"
 
-"@cognite/calculation-backend@^2.0.0-alpha.14":
-  version "2.0.0-alpha.14"
-  resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-2.0.0-alpha.14.tgz#aec61ef728c867d3556fcb63c0776254ab4c3d20"
-  integrity sha512-kmdvnh3dl9wg0QxXwq49SADDydip7b1sRMuEwZSecLWQn8icWfRBtXpEU3XqVYzrKNnY22ODBjqHC6jJBUPt2g==
+"@cognite/calculation-backend@^2.0.0-alpha.15":
+  version "2.0.0-alpha.15"
+  resolved "https://registry.yarnpkg.com/@cognite/calculation-backend/-/calculation-backend-2.0.0-alpha.15.tgz#15380e32b8a3556c77a572f1c6b529dadebf1e96"
+  integrity sha512-jvZkyhJcZNBbUqy4KgTHAAQiEXVAEsRy3rYZbXDKygJoD6oWT+bwef2oczARAuIMtAgTpPPqaTD82Z3CItfp0A==
   dependencies:
     axios "^0.21.1"
 

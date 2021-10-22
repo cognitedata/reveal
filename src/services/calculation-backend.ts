@@ -143,7 +143,7 @@ export async function fetchStatisticsResult(
 
 export const formatCalculationResult = (
   result: {
-    datapoints?: CalculationResultDatapoints[];
+    datapoints?: CalculationResultDatapoints[] | null;
   } = {}
 ): DoubleDatapoint[] => {
   return (result.datapoints || []).map(({ timestamp, value }) => ({
