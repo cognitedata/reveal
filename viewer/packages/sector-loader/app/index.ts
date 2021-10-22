@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelDataClient } from '@reveal/modeldata-api';
-import { V8SectorRepository } from '../src/CachedRepository';
+import { V8SectorRepository } from '../src/V8SectorRepository';
 import { CadMaterialManager } from '@reveal/rendering';
 
 init();

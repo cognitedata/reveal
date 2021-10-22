@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { V8SectorRepository } from '../../sector-loader/src/CachedRepository';
+import { V8SectorRepository } from '../../sector-loader/src/V8SectorRepository';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 

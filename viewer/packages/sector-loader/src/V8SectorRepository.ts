@@ -14,11 +14,11 @@ import {
   InstancedMesh
 } from '@reveal/cad-parsers';
 
-import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { SectorRepository } from './Repository';
+import { SimpleAndDetailedToSector3D } from './v8/SimpleAndDetailedToSector3D';
+import { SectorRepository } from './SectorRepository';
 
-import { groupMeshesByNumber } from './groupMeshesByNumber';
-import { createOffsetsArray } from './arrays';
+import { groupMeshesByNumber } from './v8/groupMeshesByNumber';
+import { createOffsetsArray } from './v8/arrays';
 
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
