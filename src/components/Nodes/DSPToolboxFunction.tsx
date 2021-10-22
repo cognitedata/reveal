@@ -297,7 +297,7 @@ export const ConfigPanel = ({
             theme="dark"
             value={
               (functionData[param] &&
-                options.find(({ value }) => value === functionData[param])) ||
+                options.find(({ value }) => value === functionData[param])) ??
               default_value
             }
             options={options.map((option) => ({
@@ -318,7 +318,7 @@ export const ConfigPanel = ({
           <DSPToolboxFunctionInput
             key={param}
             id={param}
-            defaultValue={functionData[param] || default_value || ''}
+            defaultValue={functionData[param] ?? (default_value || '')}
             onChange={(value) => {
               onUpdateNode({
                 functionData: {
