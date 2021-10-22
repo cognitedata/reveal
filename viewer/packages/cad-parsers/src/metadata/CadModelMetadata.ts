@@ -10,6 +10,7 @@ export interface CadModelMetadata {
   /**
    * A unique identifier of the model.
    */
+  // TODO 2021-10-03 larsmoa: Change into a ModelIdentifier
   readonly modelIdentifier: string;
 
   /**

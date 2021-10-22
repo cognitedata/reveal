@@ -2,45 +2,49 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { CogniteClient, ItemsResponse } from '@cognite/sdk';
-import { File3dFormat, CameraConfiguration, ModelMetadataProvider, BlobOutputMetadata } from './types';
+import { BlobOutputMetadata } from './types';
+import { ModelMetadataProvider } from './ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 import { Model3DOutputList } from './Model3DOutputList';
 
+import { CogniteClient } from '@cognite/sdk';
+import { ItemsResponse } from '@cognite/sdk-core';
+import { ModelIdentifier } from './ModelIdentifier';
+import { CdfModelIdentifier } from './CdfModelIdentifier';
+
 // TODO 2020-06-25 larsmoa: Extend CogniteClient.files3d.retrieve() to support subpath instead of
 // using URLs directly. Also add support for listing outputs in the SDK.
-
-export class CdfModelMetadataProvider
-  implements ModelMetadataProvider<{ modelId: number; revisionId: number; format: File3dFormat }>
-{
+export class CdfModelMetadataProvider implements ModelMetadataProvider {
   private readonly _client: CogniteClient;
 
   constructor(client: CogniteClient) {
     this._client = client;
   }
 
-  public async getModelMatrix(modelIdentifier: {
-    modelId: number;
-    revisionId: number;
-    format: File3dFormat | string;
-  }): Promise<THREE.Matrix4> {
-    const { modelId, revisionId, format } = modelIdentifier;
+  public async getModelMatrix(modelIdentifier: ModelIdentifier): Promise<THREE.Matrix4> {
+    if (!(modelIdentifier instanceof CdfModelIdentifier)) {
+      throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+
+    const { modelId, revisionId, modelFormat } = modelIdentifier;
     const model = await this._client.revisions3D.retrieve(modelId, revisionId);
 
     const modelMatrix = new THREE.Matrix4();
     if (model.rotation) {
       modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
     }
-    applyDefaultModelTransformation(modelMatrix, format);
+    applyDefaultModelTransformation(modelMatrix, modelFormat);
     return modelMatrix;
   }
 
-  public async getModelCamera(modelIdentifier: {
-    modelId: number;
-    revisionId: number;
-    format: File3dFormat | string;
-  }): Promise<CameraConfiguration | undefined> {
+  public async getModelCamera(
+    modelIdentifier: ModelIdentifier
+  ): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
+    if (!(modelIdentifier instanceof CdfModelIdentifier)) {
+      throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+
     const { modelId, revisionId } = modelIdentifier;
     const model = await this._client.revisions3D.retrieve(modelId, revisionId);
     if (model.camera && model.camera.position && model.camera.target) {
@@ -53,31 +57,27 @@ export class CdfModelMetadataProvider
     return undefined;
   }
 
-  public async getModelUri(modelIdentifier: {
-    modelId: number;
-    revisionId: number;
-    format: File3dFormat | string;
-  }): Promise<string> {
-    const { modelId, revisionId, format } = modelIdentifier;
-    const outputs = await this.getOutputs({ modelId, revisionId, format });
-    const mostRecentOutput = outputs.findMostRecentOutput(format);
+  public async getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
+    if (!(modelIdentifier instanceof CdfModelIdentifier)) {
+      throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+
+    const { modelId, revisionId, modelFormat } = modelIdentifier;
+    const outputs = await this.getOutputs(modelIdentifier);
+    const mostRecentOutput = outputs.findMostRecentOutput(modelFormat);
     if (!mostRecentOutput) {
       throw new Error(
-        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal, because no outputs for format '(${format})' was found. If this model works with a previous version of Reveal it must be reprocessed to support this version.`
+        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal, because no outputs for format '(${modelFormat})' was found. If this model works with a previous version of Reveal it must be reprocessed to support this version.`
       );
     }
     const directoryId = mostRecentOutput.blobId;
     return `${this._client.getBaseUrl()}${this.getRequestPath(directoryId)}`;
   }
 
-  public async getOutputs(modelIdentifier: {
-    modelId: number;
-    revisionId: number;
-    format?: File3dFormat | string;
-  }): Promise<Model3DOutputList> {
-    const { modelId, revisionId, format } = modelIdentifier;
+  private async getOutputs(modelIdentifier: CdfModelIdentifier): Promise<Model3DOutputList> {
+    const { modelId, revisionId, modelFormat } = modelIdentifier;
     const url = `/api/v1/projects/${this._client.project}/3d/models/${modelId}/revisions/${revisionId}/outputs`;
-    const params = format !== undefined ? { params: { format } } : undefined;
+    const params = modelFormat !== undefined ? { params: { format: modelFormat } } : undefined;
     const response = await this._client.get<ItemsResponse<BlobOutputMetadata>>(url, params);
     if (response.status === 200) {
       return new Model3DOutputList(modelId, revisionId, response.data.items);

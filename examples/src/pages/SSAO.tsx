@@ -21,7 +21,7 @@ export function SSAO() {
   useEffect(() => {
     const gui = new dat.GUI();
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
 
     async function main() {
       const { project, modelUrl, modelRevision } = getParamsFromURL({
@@ -43,11 +43,13 @@ export function SSAO() {
 
       let model: reveal.CadNode;
       if (modelRevision) {
+        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId, reveal.File3dFormat.RevealCadModel);
         revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision);
+        model = await revealManager.addModel('cad', modelIdentifier);
       } else if (modelUrl) {
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl.fileName!);
         revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision);
+        model = await revealManager.addModel('cad', modelIdentifier);
       } else {
         throw new Error(
           'Need to provide either project & model OR modelUrl as query parameters'

@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
+
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
 import ComboControls from '@reveal/camera-manager';
@@ -30,11 +31,11 @@ export type ModelState = {
 export class ViewStateHelper {
   private readonly _cameraControls: ComboControls;
   private readonly _viewer: Cognite3DViewer;
-  private _client: CogniteClient;
+  private readonly _cdfClient: CogniteClient;
 
-  constructor(viewer: Cognite3DViewer, client: CogniteClient) {
+  constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
     this._viewer = viewer;
-    this._client = client;
+    this._cdfClient = cdfClient;
     this._cameraControls = viewer.cameraControls;
   }
 
@@ -107,7 +108,7 @@ export class ViewStateHelper {
 
           await Promise.all(
             state.styledSets.map(async styleFilter => {
-              const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._client, model, {
+              const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._cdfClient, model, {
                 token: styleFilter.token,
                 state: styleFilter.state,
                 options: styleFilter.options
