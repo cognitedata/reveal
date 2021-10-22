@@ -115,7 +115,7 @@ export class RevealManagerHelper {
     revealManager: RevealManager<CdfModelIdentifier>
   ): Promise<CadNode> {
     if (model.modelId === -1 || model.revisionId === -1) {
-      throw new Error('addCdfCadModel only works with local models');
+      throw new Error('addCdfCadModel only works with CDF hosted models');
     }
     return revealManager.addModel(
       'cad',
@@ -134,7 +134,7 @@ export class RevealManagerHelper {
     revealManager: RevealManager<CdfModelIdentifier>
   ): Promise<PointCloudNode> {
     if (model.modelId === -1 || model.revisionId === -1) {
-      throw new Error('addCdfPointCloudModel only works with local models');
+      throw new Error('addCdfPointCloudModel only works with CDF hosted models');
     }
     return revealManager.addModel('pointcloud', { modelId: model.modelId, revisionId: model.revisionId });
   }
