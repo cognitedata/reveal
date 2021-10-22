@@ -23,8 +23,15 @@ The timeline tool provides ability to apply styles by date. It works by creating
 Each keyframe has a set of associated styled node collections.
 
 ### Creating Keyframes
-To create Keyframes, use `createKeyframe(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+To create Keyframes, use `createKeyframe(date: Date)`
 - `date` - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
+
+### Add & Remove Node set & Styles to Keyframes
+Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
+
+### Set Styles for Node through Keyframes
+`assignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+- `keyframes` - List of Keyframe to apply Style.
 - `nodeCollection` - Set of nodes to be rendered for the Keyframe.
 - `nodeAppearance` - Styling of the nodes.
 
@@ -43,18 +50,22 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 const timeline = new TimelineTool(model);
 
 const nodes = new AssetNodeCollection(sdk, model);
-timeline.createKeyframe(new Date('2021-10-05'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
+const keyframeAssetNode = timeline.createKeyframe(new Date('2021-10-05'));
+keyframeAssetNode.assignStyledNodeCollection(nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
 
 nodes.executeFilter({ assetId: 4222791488928479 });
-timeline.createKeyframe(new Date('2021-10-06'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
+const keyframeAssetID = timeline.createKeyframe(new Date('2021-10-06'));
+keyframeAssetID.assignStyledNodeCollection(nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange };)
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
-timeline.createKeyframe(new Date('2021-10-07'), allPipes, { renderGhosted: false, color: [40, 200, 20] });
+const keyframeAllPipes = timeline.createKeyframe(new Date('2021-10-07'));
+keyframeAllPipes.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] });
 
 const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
-timeline.createKeyframe(new Date('2021-10-08'), stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
+const keyframeMechNodes = timeline.createKeyframe(new Date('2021-10-08'));
+keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
 timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
 
@@ -74,33 +85,11 @@ timeline.removeKeyframe(new Date('2021-10-07'));
 timeline.stopPlayback();
 ```
 
-### Dates in keyframes
-We can get all the dates added into the TimelineFrame
-
-```js runnable
-const allDates = timeline.getAllDateInTimelineKeyframes();
-```
-
 ### Keyframes in Timeline
 Gets all Keyframes in the Timeline
 
 ```js runnable
 const allKeyframes = timeline.getAllKeyframes();
-```
-
-### Add & Remove Node set & Styles to Keyframes
-Tool provides feature to add additional nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
-
-#### Set additional Styles for Node through Keyframes
-`assignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
-- `keyframes` - List of Keyframe to apply Style.
-- `nodeCollection` - Set of nodes to be rendered for the Keyframe.
-- `nodeAppearance` - Styling of the nodes.
-
-```js runnable
-const allkeyframes = timeline.getAllkeyframes();
-
-timeline.assignStyledNodeCollection(allkeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
 ```
 
 #### Remove Styles & Node in Keyframes

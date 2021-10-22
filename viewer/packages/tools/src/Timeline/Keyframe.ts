@@ -14,11 +14,9 @@ export class Keyframe {
   private _nodeCollection: NodeCollectionBase[] = new Array<NodeCollectionBase>();
   private _nodeAppearance: NodeAppearance[] = new Array<NodeAppearance>();
 
-  constructor(model: Cognite3DModel, date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
+  constructor(model: Cognite3DModel, date: Date) {
     this._model = model;
     this._date = date;
-    this._nodeCollection.push(nodeCollection);
-    this._nodeAppearance.push(nodeAppearance);
   }
 
   /**
@@ -33,7 +31,7 @@ export class Keyframe {
    * Assigns the styles for the node set for the model for this Keyframe
    */
   public activate() {
-    for(let i = 0; i < this._nodeCollection.length && this._nodeAppearance.length; i++) {
+    for (let i = 0; i < this._nodeCollection.length && this._nodeAppearance.length; i++) {
       this._model.assignStyledNodeCollection(this._nodeCollection[i], this._nodeAppearance[i]);
     }
   }
@@ -42,7 +40,7 @@ export class Keyframe {
    * Removes the style for the model
    */
   public deactivate() {
-    for(const nodeCollection of this._nodeCollection) {
+    for (const nodeCollection of this._nodeCollection) {
       this._model.unassignStyledNodeCollection(nodeCollection);
     }
   }
@@ -53,7 +51,7 @@ export class Keyframe {
    * @param nodeAppearance Style to assign to the node collection
    */
   public assignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
-    if(nodeCollection && nodeAppearance) {
+    if (nodeCollection && nodeAppearance) {
       this._nodeCollection.push(nodeCollection);
       this._nodeAppearance.push(nodeAppearance);
     }
@@ -79,5 +77,6 @@ export class Keyframe {
       if (index > -1) {
         this._nodeAppearance = this._nodeAppearance.splice(index, 1);
       }
+    }
   }
 }

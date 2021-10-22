@@ -29,22 +29,23 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   /**
    * Create Key frame for the Timeline
    * @param date - date value by Date.now() since January 1, 1970
-   * @param nodeCollection - Set of nodes to be rendered for the Keyframe
-   * @param nodeAppearance - Styling of the nodes
    */
-  public createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
-    this._keyframes.push(new Keyframe(this._model, date, nodeCollection, nodeAppearance));
+  public createKeyFrame(date: Date): Keyframe {
+    const keyframe = new Keyframe(this._model, date);
+    this._keyframes.push(keyframe);
     this._allDates.push(date);
     this.sortKeyframesByDates();
+
+    return keyframe;
   }
 
   /**
    * Removes the Keyframe from the Timeline
-   * @param date - Date of the Keyframe to be removed from the Timeline
+   * @param keyframe - Keyframe to be removed from the Timeline
    */
-  public removeKeyFrame(date: Date) {
+  public removeKeyFrame(keyframe: Keyframe) {
     if (this._keyframes.length > 0) {
-      const index = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
+      const index = this._keyframes.findIndex(obj => obj === keyframe);
 
       if (index > -1) {
         this._keyframes = this._keyframes.splice(index, 1);
