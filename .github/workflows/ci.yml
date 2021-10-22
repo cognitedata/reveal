@@ -84,6 +84,7 @@ jobs:
       id: visualtests
       working-directory: examples
       run: 'yarn ci:e2e'
+      continue-on-error: true
 
     - name: Check for failed visual test diffs
       if: (always() && steps.visualtests.outcome == 'failure')
