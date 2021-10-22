@@ -226,8 +226,6 @@ export class EffectRenderManager {
       }
     });
 
-    const noiseTexture = this.createNoiseTexture();
-
     const ssaoParameters = this.ssaoParameters(this._renderOptions);
 
     const numberOfSamples = ssaoParameters.sampleSize;
@@ -239,7 +237,6 @@ export class EffectRenderManager {
     this._ssaoMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDepth: { value: this._compositionTarget.depthTexture },
-        tNoise: { value: noiseTexture },
         kernel: { value: sampleKernel },
         sampleRadius: { value: sampleRadius },
         bias: { value: depthCheckBias },
@@ -749,32 +746,6 @@ export class EffectRenderManager {
     const geometry = this.createRenderTriangle();
     const mesh = new THREE.Mesh(geometry, this._ssaoBlurMaterial);
     this._ssaoBlurScene.add(mesh);
-  }
-
-  private createNoiseTexture() {
-    const width = 128;
-    const height = 128;
-
-    const size = width * height;
-    const data = new Float32Array(size * 4);
-
-    for (let i = 0; i < size; i++) {
-      const stride = i * 4;
-
-      const x = Math.random() * 2 - 1;
-      const y = Math.random() * 2 - 1;
-      const z = Math.random() * 2 - 1;
-
-      data[stride] = x;
-      data[stride + 1] = y;
-      data[stride + 2] = z;
-      data[stride + 3] = 1;
-    }
-
-    const result = new THREE.DataTexture(data, width, height, THREE.RGBAFormat, THREE.FloatType);
-    result.wrapS = THREE.RepeatWrapping;
-    result.wrapT = THREE.RepeatWrapping;
-    return result;
   }
 
   private createKernel(kernelSize: number) {
