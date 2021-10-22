@@ -23,16 +23,13 @@ export const DeleteAnnotationsForDeletedFiles = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
-      limit: 1000,
+      limit: -1,
     };
     return AnnotationApi.list(annotationListRequest); // TODO: use pagination
   });
 
   if (requests.length) {
-    const responses = await Promise.all(requests);
-    const annotationsPerResponse = responses.map(
-      (res) => res?.data?.items || []
-    );
+    const annotationsPerResponse = await Promise.all(requests);
     const annotations = annotationsPerResponse.reduce((acc, rs) => {
       return acc.concat(rs);
     });

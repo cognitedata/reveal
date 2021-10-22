@@ -9,6 +9,7 @@ import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 
 export interface AnnotationListRequest {
   limit?: number;
+  cursor?: string;
   filter?: Partial<
     Pick<
       LinkedAnnotation,
