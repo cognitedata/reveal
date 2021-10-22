@@ -50,7 +50,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
-    const fetchBoundingBoxesForAssetMappings = this.fetchBoundingBoxesForAssetMappings;
+    const fetchBoundingBoxesForAssetMappings = this._fetchBoundingBoxesForAssetMappings;
 
     if (this._fetchResultHelper !== undefined) {
       // Interrupt any ongoing operation to avoid fetching results unnecessary
@@ -93,7 +93,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
   }
 
-  private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
+  private async _fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
     const nodeList = await this._client.revisions3D.retrieve3DNodes(
       this._model.id,
       this._model.revisionId,
