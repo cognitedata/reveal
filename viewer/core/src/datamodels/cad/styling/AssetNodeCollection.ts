@@ -56,11 +56,8 @@ export class AssetNodeCollection extends NodeCollectionBase {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
-      () => {
-        // TODO 2021-10-12 larsmoa: Handle bounding boxes for assets in AssetNodeCollection
-        throw new Error('Not implemented yet');
-      },
+      assetMappings => assetMappings.map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
+      this.fetchBoundingBoxesForAssetMappings,
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -93,6 +90,22 @@ export class AssetNodeCollection extends NodeCollectionBase {
       // Completed without being interrupted
       this._fetchResultHelper = undefined;
     }
+  }
+
+  private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
+    const nodeList = await this._client.revisions3D.retrieve3DNodes(
+      this._model.id,
+      this._model.revisionId,
+      assetMappings.map(mapping => { return { id: mapping.nodeId } }));
+
+    const boundingBoxes = nodeList.filter(node => node.boundingBox)
+      .map(node =>  {
+        const bmin = node.boundingBox!.min;
+        const bmax = node.boundingBox!.max;
+        return new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]])
+      });
+
+    return boundingBoxes;
   }
 
   getFilter() {

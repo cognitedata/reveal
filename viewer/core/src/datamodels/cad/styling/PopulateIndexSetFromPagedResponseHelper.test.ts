@@ -19,8 +19,8 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
   beforeEach(() => {
     notifyChangedCallback = jest.fn();
     helper = new PopulateIndexSetFromPagedResponseHelper<number>(
-      x => new NumericRange(x, 1),
-      x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1]),
+      xs => xs.map(x => new NumericRange(x, 1)),
+      async xs => xs.map(x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1])),
       notifyChangedCallback
     );
   });
