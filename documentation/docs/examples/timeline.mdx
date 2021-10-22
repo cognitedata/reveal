@@ -24,7 +24,7 @@ Each keyframe has a set of associated styled node collections.
 
 ### Creating Keyframes
 To create Keyframes, use `createKeyframe(date: Date)`
-- `date` - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
+- `date` - Date reference for the Keyframe. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
 
 ### Add & Remove Node set & Styles to Keyframes
 Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
@@ -37,9 +37,9 @@ Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes
 
 ### Play timelines
 We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
-- `startDate` - TimelineFrame date to start the Playback of TimelineFrames.
-- `endDate` - TimelineFrame date to stop the Playback of TimelineFrames.
-- `durationInMilliSeconds` - Number of milli-seconds after which next TimelineFrame is rendered.
+- `startDate` - Keyframe date to start the Playback of TimelineFrames.
+- `endDate` - Keyframe date to stop the Playback of TimelineFrames.
+- `durationInMilliSeconds` - Number of milli-seconds after which next Keyframe is rendered.
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
@@ -55,7 +55,7 @@ keyframeAssetNode.assignStyledNodeCollection(nodes, { renderGhosted: false, outl
 
 nodes.executeFilter({ assetId: 4222791488928479 });
 const keyframeAssetID = timeline.createKeyframe(new Date('2021-10-06'));
-keyframeAssetID.assignStyledNodeCollection(nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange };)
+keyframeAssetID.assignStyledNodeCollection(nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
@@ -68,7 +68,6 @@ const keyframeMechNodes = timeline.createKeyframe(new Date('2021-10-08'));
 keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
 timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
-
 ```
 
 ### Removing Keyframes
