@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'types';
+import { v4 as uuid } from 'uuid';
 
 import { Tool } from './Tool';
 
@@ -168,6 +169,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
     const translatedMousePosition = this.getPosition();
 
     this.newText = new Konva.Text({
+      id: uuid(),
       text: '',
       x: translatedMousePosition.x,
       y: translatedMousePosition.y,
@@ -176,6 +178,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       userGenerated: true,
       type: 'text',
       name: 'drawing',
+      inGroup: groupName,
     });
 
     if (!this.group) {

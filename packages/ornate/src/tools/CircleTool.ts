@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'types';
+import { v4 as uuid } from 'uuid';
 
 import { Tool } from './Tool';
 
@@ -22,6 +23,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
 
     const translatedMousePosition = this.getPosition();
     this.newCircle = new Konva.Circle({
+      id: uuid(),
       x: translatedMousePosition.x,
       y: translatedMousePosition.y,
       width: 1,
@@ -32,6 +34,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       userGenerated: true,
       type: 'circle',
       name: 'drawing',
+      inGroup: groupName,
     });
 
     // If we get scaled by the transform tool - correct ourselves.
