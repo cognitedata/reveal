@@ -50,7 +50,6 @@ export class AssetNodeCollection extends NodeCollectionBase {
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
-    const fetchBoundingBoxesForAssetMappings = this._fetchBoundingBoxesForAssetMappings;
 
     if (this._fetchResultHelper !== undefined) {
       // Interrupt any ongoing operation to avoid fetching results unnecessary
@@ -58,7 +57,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
       assetMappings => assetMappings.map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
-      fetchBoundingBoxesForAssetMappings,
+      mappings => this._fetchBoundingBoxesForAssetMappings(mappings),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
