@@ -454,10 +454,7 @@ export class Cognite3DViewer {
    * @returns JSON object containing viewer state.
    */
   getViewState() {
-    if (this._cdfSdkClient === undefined) {
-      throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
-    }
-    const stateHelper = new ViewStateHelper(this, this._cdfSdkClient);
+    const stateHelper = this.createViewStateHelper();
     return stateHelper.getCurrentState();
   }
 
@@ -467,9 +464,7 @@ export class Cognite3DViewer {
    * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
   setViewState(state: ViewerState): Promise<void> {
-    if (this._cdfSdkClient === undefined) {
-      throw new Error(`${this.setViewState.name}() is only supported when connecting to Cognite Data Fusion`);
-    }
+    const stateHelper = this.createViewStateHelper();
 
     this.models
       .filter(model => model instanceof Cognite3DModel)
@@ -479,7 +474,6 @@ export class Cognite3DViewer {
         model.styledNodeCollections.splice(0);
       });
 
-    const stateHelper = new ViewStateHelper(this, this._cdfSdkClient);
     return stateHelper.setState(state);
   }
 
@@ -1272,6 +1266,16 @@ export class Cognite3DViewer {
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
+  }
+
+  /**
+   * Creates a helper for managing viewer state.
+   */
+  private createViewStateHelper(): ViewStateHelper {
+    if (this._cdfSdkClient === undefined) {
+      throw new Error(`${this.setViewState.name}() is only supported when connecting to Cognite Data Fusion`);
+    }
+    return new ViewStateHelper(this, this._cdfSdkClient);
   }
 
   /** @private */
