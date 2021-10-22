@@ -129,7 +129,7 @@ export class CadNode extends THREE.Object3D {
 
   setPrioritizedNodes(nodeCollection: NodeCollectionBase, priority: number) {
     const appearance: NodeAppearance = { prioritizedForLoadingHint: priority };
-    
+
     this.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
   }
 

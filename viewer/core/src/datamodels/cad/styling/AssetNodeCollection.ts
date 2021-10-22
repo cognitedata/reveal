@@ -50,6 +50,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
    */
   async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
     const model = this._model;
+    const fetchBoundingBoxesForAssetMappings = this.fetchBoundingBoxesForAssetMappings;
 
     if (this._fetchResultHelper !== undefined) {
       // Interrupt any ongoing operation to avoid fetching results unnecessary
@@ -57,7 +58,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
       assetMappings => assetMappings.map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
-      this.fetchBoundingBoxesForAssetMappings,
+      fetchBoundingBoxesForAssetMappings,
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -96,13 +97,17 @@ export class AssetNodeCollection extends NodeCollectionBase {
     const nodeList = await this._client.revisions3D.retrieve3DNodes(
       this._model.id,
       this._model.revisionId,
-      assetMappings.map(mapping => { return { id: mapping.nodeId } }));
+      assetMappings.map(mapping => {
+        return { id: mapping.nodeId };
+      })
+    );
 
-    const boundingBoxes = nodeList.filter(node => node.boundingBox)
-      .map(node =>  {
+    const boundingBoxes = nodeList
+      .filter(node => node.boundingBox)
+      .map(node => {
         const bmin = node.boundingBox!.min;
         const bmax = node.boundingBox!.max;
-        return new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]])
+        return new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
       });
 
     return boundingBoxes;

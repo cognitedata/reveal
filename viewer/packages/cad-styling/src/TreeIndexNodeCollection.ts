@@ -49,7 +49,9 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
 
   getAreas(): AreaCollection {
     if (!this._areaCollection) {
-      throw new Error(`The AreaCollection returned by getAreas() for ThreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints() or created through initializeAreaCollection()`);
+      throw new Error(
+        `The AreaCollection returned by getAreas() for ThreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints() or created through initializeAreaCollection()`
+      );
     }
 
     return this._areaCollection;
@@ -73,7 +75,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
     }
 
     const areas = points.map(p => new THREE.Box3().setFromCenterAndSize(p, new THREE.Vector3(1, 1, 1)));
-    
+
     this._areaCollection.addAreas(areas);
   }
 

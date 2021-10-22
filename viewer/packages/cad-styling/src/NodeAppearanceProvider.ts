@@ -107,12 +107,15 @@ export class NodeAppearanceProvider {
       return this._cachedPrioritizedAreas;
     }
 
-    const prioritizedCollections = this._styledCollections
-      .filter(collection => collection.appearance.prioritizedForLoadingHint);
-    const prioritizedAreas = 
-      prioritizedCollections.flatMap(collection =>
-        [...collection.nodeCollection.getAreas().areas()].map(area => { return { area, extraPriority: collection.appearance.prioritizedForLoadingHint } as PrioritizedArea }));
-    
+    const prioritizedCollections = this._styledCollections.filter(
+      collection => collection.appearance.prioritizedForLoadingHint
+    );
+    const prioritizedAreas = prioritizedCollections.flatMap(collection =>
+      [...collection.nodeCollection.getAreas().areas()].map(area => {
+        return { area, extraPriority: collection.appearance.prioritizedForLoadingHint } as PrioritizedArea;
+      })
+    );
+
     this._cachedPrioritizedAreas = prioritizedAreas;
     return this._cachedPrioritizedAreas;
   }

@@ -53,7 +53,8 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
    * @returns True if the operation was completed, false if it was interrupted using {@link interrupt}.
    */
   public async pageResults(request: Promise<ListResponse<T[]>>): Promise<boolean> {
-    const notifyChangedCallback = this._notifyChangedCallback;
+    const indexSet = this._indexSet;
+
     this._ongoingOperations++;
     try {
       let response: ListResponse<T[]> = await request;
@@ -61,12 +62,12 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
         const nextRequest = response.next ? response.next() : undefined;
 
         const ranges = this._itemsToTreeIndexRangesCallback(response.items);
-        ranges.forEach(this._indexSet.addRange);
+        ranges.forEach(range => indexSet.addRange(range));
 
         const areas = await this._itemsToAreasCallback(response.items);
         this._areas.addAreas(areas);
-        
-        notifyChangedCallback();
+
+        this._notifyChangedCallback();
 
         if (nextRequest) {
           response = await nextRequest;
