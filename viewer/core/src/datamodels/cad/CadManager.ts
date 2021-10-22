@@ -3,23 +3,22 @@
  */
 
 import * as THREE from 'three';
-import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
-
-import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-
-import { trackError } from '@reveal/utilities';
 
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
+import { GeometryFilter } from '../../public/types';
+
+import { ModelIdentifier } from '@reveal/modeldata-api';
+import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
+import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
+import { trackError } from '@reveal/utilities';
 
 import { Subscription, Observable } from 'rxjs';
-import { GeometryFilter } from '../..';
-
-export class CadManager<TModelIdentifier> {
+export class CadManager {
   private readonly _materialManager: CadMaterialManager;
-  private readonly _cadModelFactory: CadModelFactory<TModelIdentifier>;
+  private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
   private readonly _cadModelMap: Map<string, CadNode> = new Map();
@@ -51,7 +50,7 @@ export class CadManager<TModelIdentifier> {
 
   constructor(
     materialManger: CadMaterialManager,
-    cadModelFactory: CadModelFactory<TModelIdentifier>,
+    cadModelFactory: CadModelFactory,
     cadModelUpdateHandler: CadModelUpdateHandler
   ) {
     this._materialManager = materialManger;
@@ -139,7 +138,7 @@ export class CadManager<TModelIdentifier> {
     this._materialManager.setRenderMode(renderMode);
   }
 
-  async addModel(modelIdentifier: TModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
+  async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const model = await this._cadModelFactory.createModel(modelIdentifier, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
     this._cadModelMap.set(model.cadModelMetadata.modelIdentifier, model);

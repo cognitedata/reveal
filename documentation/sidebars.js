@@ -48,6 +48,14 @@ module.exports = {
       id: 'concepts',
     },
     {
+      type: 'category',
+      label: 'Extending Reveal',
+      collapsed: false,
+      items: [
+        'extending/datasource',
+      ],
+    },
+    {
       type: 'doc',
       id: 'API Reference' /* must be generated before start or build */,
     },

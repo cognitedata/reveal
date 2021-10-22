@@ -3,32 +3,30 @@
  */
 import * as THREE from 'three';
 
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
-import { CadModelMetadata, CadModelMetadataRepository } from '@reveal/cad-parsers';
 import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
 import { GeometryFilter } from '../..';
 import { CadModelClipper } from './sector/CadModelClipper';
-import { ModelDataClient, ModelMetadataProvider } from '@reveal/modeldata-api';
-import { V8SectorRepository } from '@reveal/sector-loader';
 
-export class CadModelFactory<TModelIdentifier> {
+import { V8SectorRepository } from '@reveal/sector-loader';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadModelMetadata, CadModelMetadataRepository } from '@reveal/cad-parsers';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+
+export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
-  private _cadModelMetadataRepository: CadModelMetadataRepository<TModelIdentifier>;
+  private _cadModelMetadataRepository: CadModelMetadataRepository;
   private _sectorRepository: V8SectorRepository;
   constructor(
     materialManager: CadMaterialManager,
-    modelMetadataProvider: ModelMetadataProvider<TModelIdentifier>,
-    modelDataClient: ModelDataClient
+    modelMetadataProvider: ModelMetadataProvider,
+    modelDataProvider: ModelDataProvider
   ) {
     this._materialManager = materialManager;
-    this._cadModelMetadataRepository = new CadModelMetadataRepository<TModelIdentifier>(
-      modelMetadataProvider,
-      modelDataClient
-    );
-    this._sectorRepository = new V8SectorRepository(modelDataClient, materialManager);
+    this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
+    this._sectorRepository = new V8SectorRepository(modelDataProvider, materialManager);
   }
 
-  async createModel(externalModelIdentifier: TModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
+  async createModel(externalModelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const metadata = await this._cadModelMetadataRepository.loadData(externalModelIdentifier);
 
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);

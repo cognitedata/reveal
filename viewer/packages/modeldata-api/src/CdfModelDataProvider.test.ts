@@ -3,11 +3,11 @@
  */
 
 import nock from 'nock';
-import { CdfModelDataClient } from './CdfModelDataClient';
+import { CdfModelDataProvider } from './CdfModelDataProvider';
 
 import { CogniteClient } from '@cognite/sdk';
 
-describe('CdfModelDataClient', () => {
+describe(CdfModelDataProvider.name, () => {
   const appId = 'reveal-CdfModelDataClient-test';
   const baseUrl = 'http://localhost';
   const client = new CogniteClient({
@@ -15,7 +15,7 @@ describe('CdfModelDataClient', () => {
     baseUrl
   });
   client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
-  const clientExt = new CdfModelDataClient(client);
+  const clientExt = new CdfModelDataProvider(client);
 
   test('getBinaryFile() with binary data returns valid ArrayBuffer', async () => {
     // Arrange

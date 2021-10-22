@@ -19,8 +19,8 @@
 //     const cadMetadata: CadModelMetadata = createCadModelMetadata(cadRoot);
 //     materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
-//     const cadNode = new CadNode(cadMetadata, materialManager);
-//     const apiClient = new NodesLocalClient('');
+//    const cadNode = new CadNode(cadMetadata, materialManager);
+//    const apiClient = new NodesLocalClient();
 
 //     model = new Cognite3DModel(1, 2, cadNode, apiClient);
 //   });

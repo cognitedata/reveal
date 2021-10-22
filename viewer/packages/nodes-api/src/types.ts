@@ -11,8 +11,3 @@ export type ByTreeIndicesResponse = {
 export type ByNodeIdsResponse = {
   items: number[];
 };
-
-export type NodeTreeIndexAndSubtreeSize = {
-  treeIndex: number;
-  subtreeSize: number;
-};
