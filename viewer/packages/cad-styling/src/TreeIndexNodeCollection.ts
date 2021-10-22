@@ -5,6 +5,8 @@ import { NumericRange, IndexSet } from '@reveal/utilities';
 import { AreaCollection, ClusteredAreaCollection } from './prioritized/AreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
+import * as THREE from 'three';
+
 /**
  * Node collection that holds a set of nodes defined by a set of tree indices.
  */
@@ -12,6 +14,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   public static readonly classToken = 'TreeIndexNodeCollection';
 
   private _treeIndices: IndexSet;
+  private _areaCollection: AreaCollection | undefined;
 
   constructor(treeIndexSet?: IndexSet);
   constructor(treeIndices?: Iterable<number>);
@@ -45,7 +48,37 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   }
 
   getAreas(): AreaCollection {
-    throw new Error(`${this.getAreas.name}() not supported by ${this.constructor.name}`);
+    if (!this._areaCollection) {
+      throw new Error(`The AreaCollection returned by getAreas() for ThreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints() or created through initializeAreaCollection()`);
+    }
+
+    return this._areaCollection;
+  }
+
+  initializeAreaCollection(): void {
+    this._areaCollection = new ClusteredAreaCollection();
+  }
+
+  addAreas(areas: THREE.Box3[]): void {
+    if (!this._areaCollection) {
+      this._areaCollection = new ClusteredAreaCollection();
+    }
+
+    this._areaCollection.addAreas(areas);
+  }
+
+  addAreaPoints(points: THREE.Vector3[]): void {
+    if (!this._areaCollection) {
+      this._areaCollection = new ClusteredAreaCollection();
+    }
+
+    const areas = points.map(p => new THREE.Box3().setFromCenterAndSize(p, new THREE.Vector3(1, 1, 1)));
+    
+    this._areaCollection.addAreas(areas);
+  }
+
+  clearAreas(): void {
+    this._areaCollection = undefined;
   }
 
   get isLoading(): boolean {
