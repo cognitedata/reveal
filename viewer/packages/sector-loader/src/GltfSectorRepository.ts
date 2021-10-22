@@ -30,7 +30,6 @@ export class GltfSectorRepository implements SectorRepository {
     const group = new AutoDisposeGroup();
 
     const parsedSectorGeometry = this._gltfSectorParser.parseSector(sectorByteBuffer);
-    console.log(parsedSectorGeometry);
 
     const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
@@ -78,7 +77,7 @@ export class GltfSectorRepository implements SectorRepository {
           this.createMesh(group, parsedGeometry.buffer, materials.instancedMesh);
           break;
         default:
-          console.log(RevealGeometryCollectionType[parsedGeometry.type]);
+          //Assert never
           break;
       }
     });

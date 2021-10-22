@@ -35,8 +35,6 @@ async function init() {
     'scene.json'
   );
 
-  console.log(sceneJson);
-
   cadMaterialManager.addModelMaterials(blobId, sceneJson.maxTreeIndex);
 
   const testSector = sceneJson.sectors[0];
