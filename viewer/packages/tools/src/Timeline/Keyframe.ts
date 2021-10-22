@@ -31,9 +31,9 @@ export class Keyframe {
    * Assigns the styles for the node set for the model for this Keyframe
    */
   public activate() {
-    for (let i = 0; i < this._nodeCollection.length && this._nodeAppearance.length; i++) {
-      this._model.assignStyledNodeCollection(this._nodeCollection[i], this._nodeAppearance[i]);
-    }
+    this._nodeCollection.forEach((nodeCollection, index) => {
+      this._model.assignStyledNodeCollection(nodeCollection, this._nodeAppearance[index]);
+    });
   }
 
   /**
