@@ -175,7 +175,8 @@ pods {
                 appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
                 repo: APPLICATION_REPO_ID,
                 buildCommand: 'yarn build preview',
-                shouldExecute: isPullRequest
+                shouldExecute: isPullRequest,
+                sourceMapPath: ''
               )
             }
           }
@@ -188,7 +189,8 @@ pods {
                 appId: STAGING_APP_ID,
                 repo: APPLICATION_REPO_ID,
                 buildCommand: 'yarn build staging',
-                shouldExecute: isStaging
+                shouldExecute: isStaging,
+                sourceMapPath: ''
               )
             }
           }
@@ -201,7 +203,8 @@ pods {
                 appId: PRODUCTION_APP_ID,
                 repo: APPLICATION_REPO_ID,
                 buildCommand: 'yarn build production',
-                shouldExecute: isProduction
+                shouldExecute: isProduction,
+                sourceMapPath: ''
               )
             }
           }
