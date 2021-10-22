@@ -46,4 +46,10 @@ export NX_REACT_APP_VERSION_SHA="${REACT_APP_VERSION_SHA:-}"
 export NX_REACT_APP_VERSION_NAME="${REACT_APP_VERSION_NAME:-}"
 export NX_PUBLIC_URL="${PUBLIC_URL:-}"
 
-nx serve ${project} ${configuration} --ssl=true --port=3000 --publicHost=${PUBLIC_URL:-}
+args=()
+
+if [[ -n "${PUBLIC_URL}" ]]; then
+  args=("--publicHost" "${PUBLIC_URL}")
+fi
+
+nx serve "${project}" "${configuration}" --ssl=true --port=3000 "${args[@]}"

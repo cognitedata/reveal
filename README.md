@@ -6,6 +6,8 @@
 
 First, Install Nx with npm:
 
+Make sure the nx is on version 13.x.x!
+
 ```
 npm install -g nx
 ```

@@ -8,9 +8,7 @@
       "targets": {
         "build": {
           "executor": "@nrwl/web:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "build",
             "index": "apps/platypus/src/index.html",
@@ -22,14 +20,12 @@
               "apps/platypus/src/manifest.json",
               "apps/platypus/src/assets"
             ],
-            "styles": [
-              "apps/platypus/src/styles.css"
-            ],
+            "styles": ["apps/platypus/src/styles.css"],
             "scripts": [],
             "webpackConfig": "@nrwl/react/plugins/webpack"
           },
           "configurations": {
-            "preview":  {
+            "preview": {
               "fileReplacements": [
                 {
                   "replace": "apps/platypus/src/environments/environment.ts",
@@ -51,7 +47,7 @@
                 }
               ]
             },
-            "staging":  {
+            "staging": {
               "fileReplacements": [
                 {
                   "replace": "apps/platypus/src/environments/environment.ts",
@@ -100,12 +96,9 @@
         "postbuild": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-              "commands": [
-                "mkdir -p scripts/js",
-                "cp *.map scripts/js"
-              ],
-              "cwd": "build",
-              "parallel": false
+            "commands": ["mkdir -p scripts/js", "cp *.map scripts/js"],
+            "cwd": "build",
+            "parallel": false
           }
         },
         "serve": {
@@ -131,20 +124,14 @@
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": [
-            "{options.outputFile}"
-          ],
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": [
-              "apps/platypus/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/platypus/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/platypus"
-          ],
+          "outputs": ["coverage/apps/platypus"],
           "options": {
             "jestConfig": "apps/platypus/jest.config.js",
             "passWithNoTests": true
@@ -167,9 +154,7 @@
         },
         "build-storybook": {
           "executor": "@nrwl/storybook:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "uiFramework": "@storybook/react",
             "outputPath": "storybook-static",
@@ -183,7 +168,8 @@
             }
           }
         }
-      }
+      },
+      "tags": []
     },
     "platypus-cli": {
       "root": "libs/platypus-cli",
@@ -192,20 +178,14 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "outputs": [
-            "{options.outputFile}"
-          ],
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": [
-              "libs/platypus-cli/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/platypus-cli/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/platypus-cli"
-          ],
+          "outputs": ["coverage/libs/platypus-cli"],
           "options": {
             "jestConfig": "libs/platypus-cli/jest.config.js",
             "passWithNoTests": true
@@ -213,9 +193,7 @@
         },
         "build": {
           "executor": "@nrwl/node:package",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/libs/platypus-cli",
             "tsConfig": "libs/platypus-cli/tsconfig.lib.json",
@@ -227,27 +205,8 @@
             ]
           }
         }
-      }
-    }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
-  "generators": {
-    "@nrwl/react": {
-      "application": {
-        "style": "css",
-        "linter": "eslint",
-        "babel": true
       },
-      "component": {
-        "style": "css"
-      },
-      "library": {
-        "style": "css",
-        "linter": "eslint"
-      }
+      "tags": []
     }
-  },
-  "defaultProject": "platypus"
+  }
 }
