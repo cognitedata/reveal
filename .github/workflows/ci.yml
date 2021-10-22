@@ -102,6 +102,12 @@ jobs:
         name: image-diffs-${{ github.sha }}
         path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
 
+    - name: Report failed visual tests
+      if: (always() && steps.visualtests.outcome == 'failure')
+      run: |
+        echo There are failed visual tests, please inspect test results.
+        exit 1
+
   # used to validate there is no fails for generated docs
   ci-documentation:
     name: Documentation
