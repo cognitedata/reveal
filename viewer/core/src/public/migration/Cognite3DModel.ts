@@ -205,7 +205,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection
    * @param priority
    */
-  setPrioritizedNodes(nodeCollection: NodeCollectionBase, priority: number = 2) {
+  setPrioritizedNodes(nodeCollection: NodeCollectionBase, priority: number = 4) {
     this.cadNode.setPrioritizedNodes(nodeCollection, priority);
   }
 
