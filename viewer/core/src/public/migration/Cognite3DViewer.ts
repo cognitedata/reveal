@@ -201,21 +201,22 @@ export class Cognite3DViewer {
       newTargetUpdate = true;
       timeAfterClick = 0;
       clickClock.getDelta();
-      
+
       this.controls.enableKeyboardNavigation = false;
       this.changeTarget(e);
     });
 
     this.canvas.addEventListener('wheel', async (e: any) => {
       const timeDelta = wheelClock.getDelta();
-      timeAfterClick += clickClock.getDelta()
+      timeAfterClick += clickClock.getDelta();
       const { offsetX, offsetY } = e;
       const x = (offsetX / this.domElement.clientWidth) * 2 - 1;
       const y = (offsetY / this.domElement.clientHeight) * -2 + 1;
 
-      if (timeAfterClick > 0.3) newTargetUpdate = false;
+      if (timeAfterClick > 3) newTargetUpdate = false;
 
-      const wantNewScrollTarget = startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
+      const wantNewScrollTarget =
+        startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
 
       if (wantNewScrollTarget) {
         startedScroll = false;
@@ -227,10 +228,9 @@ export class Cognite3DViewer {
         this.controls.setScrollTarget(newScrollTarget);
       } else {
         if (timeDelta > 0.1) startedScroll = true;
-        
       }
     });
-  }
+  };
 
   /**
    * Changes controls target based on current cursor position.
@@ -327,7 +327,7 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
-  
+
     if (this._useOnClickTargetChange) this.addOnClickTargetChange();
 
     this.controls = new ComboControls(this.camera, this.canvas);

@@ -95,15 +95,15 @@ export default class ComboControls extends EventDispatcher {
   private _targetFPSOverActualFPS: number = 1;
   private _isFocused = false;
 
-  constructor(_camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
+  constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
-    this._camera = _camera;
-    this._reusableCamera = _camera.clone() as typeof _camera;
+    this._camera = camera;
+    this._reusableCamera = camera.clone() as typeof camera;
     this._domElement = domElement;
 
     // rotation
 
-    this._spherical.setFromVector3(_camera.position);
+    this._spherical.setFromVector3(camera.position);
     this._sphericalEnd.copy(this._spherical);
 
     domElement.addEventListener('mousedown', this.onMouseDown);

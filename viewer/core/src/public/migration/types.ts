@@ -104,7 +104,7 @@ export interface Cognite3DViewerOptions {
    * Default is true.
    */
   useScrollTargetControls?: boolean;
-  
+
   /**
    * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
    *
