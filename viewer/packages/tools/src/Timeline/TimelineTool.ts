@@ -54,6 +54,20 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Removes the Keyframe from the Timeline
+   * @param date - Date of the Keyframe to be removed from the Timeline
+   */
+  public removeKeyframeByDate(date: Date) {
+    if (this._keyframes.length > 0) {
+      const index = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
+
+      if (index > -1) {
+        this._keyframes = this._keyframes.splice(index, 1);
+      }
+    }
+  }
+
+  /**
    * Overrides styling of cadModel to match styling
    * @param date - Date of the Keyframe to apply the styling on the CAD Model
    */

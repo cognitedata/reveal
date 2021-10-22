@@ -23,13 +23,13 @@ The timeline tool provides ability to apply styles by date. It works by creating
 Each keyframe has a set of associated styled node collections.
 
 ### Creating Keyframes
-To create Keyframes, use `createKeyframe(date: Date)`
-- `date` - Date reference for the Keyframe. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
+To create Keyframe, use `createKeyframe(date: Date)`
+- `date` - Date reference for the Keyframe. Should provide the date value by `Date.now()`/`new Date('2021-10-05')`.
 
-### Add & Remove Node set & Styles to Keyframes
+### Add Node collection & Styles to Keyframes
 Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
 
-### Set Styles for Node through Keyframes
+#### Set Styles for Node through Keyframes
 `assignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
 - `keyframes` - List of Keyframe to apply Style.
 - `nodeCollection` - Set of nodes to be rendered for the Keyframe.
@@ -37,9 +37,9 @@ Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes
 
 ### Play timelines
 We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
-- `startDate` - Keyframe date to start the Playback of TimelineFrames.
-- `endDate` - Keyframe date to stop the Playback of TimelineFrames.
-- `durationInMilliSeconds` - Number of milli-seconds after which next Keyframe is rendered.
+- `startDate` - Keyframe date to start the Playback of Timeline Keyframes.
+- `endDate` - Keyframe date to stop the Playback of Timeline Keyframes.
+- `durationInMilliSeconds` - Number of milli-seconds for the full plackback of Keyframes.
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
@@ -70,12 +70,32 @@ keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: fals
 timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
 ```
 
-### Removing Keyframes
-To remove any Keyframes, use `removeKeyframe(date: Date)`
-- `date` - Keyframes date to be removed from the Timeline in milliseconds.
+### Remove Styles & Node in Keyframes
+`unassignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+- `keyframes` - List of Keyframes where node set & styles to be removed
+- `nodeCollection` - Node set to be removed from keyframes.
+- `nodeAppearance` - Styles to be removed from keyframes.
 
 ```js runnable
-timeline.removeKeyframe(new Date('2021-10-07'));
+const allkeyframes = timeline.getAllkeyframes();
+
+timeline.unassignStyledNodeCollection(allkeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
+```
+
+### Removing Keyframe
+#### By Date
+To remove any Keyframe, use `removeKeyframeByDate(date: Date)`
+- `date` - Date of the Keyframe which needs to be removed from the Timeline.
+
+```js runnable
+timeline.removeKeyframeByDate(new Date('2021-10-07'));
+```
+#### By Keyframe
+To remove any Keyframe, use `removeKeyframe(keyframe: Keyframe)`
+- `date` - Keyframe to be removed from the Timeline.
+
+```js runnable
+timeline.removeKeyframe(keyframeMechNodes);
 ```
 
 ### Stop timeline playback
@@ -89,18 +109,6 @@ Gets all Keyframes in the Timeline
 
 ```js runnable
 const allKeyframes = timeline.getAllKeyframes();
-```
-
-#### Remove Styles & Node in Keyframes
-`unassignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
-- `keyframes` - List of Keyframes where node set & styles to be removed
-- `nodeCollection` - Node set to be removed from keyframes.
-- `nodeAppearance` - Styles to be removed from keyframes.
-
-```js runnable
-const allkeyframes = timeline.getAllkeyframes();
-
-timeline.unassignStyledNodeCollection(allkeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
 ```
 
 ### Reset Styles
