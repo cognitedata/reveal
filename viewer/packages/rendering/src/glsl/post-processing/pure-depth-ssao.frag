@@ -1,3 +1,5 @@
+#pragma glslify: rand2d = require('../math/rand2d.glsl')
+
 varying vec2 vUv;
 
 uniform mat4 projMatrix;
@@ -6,7 +8,6 @@ uniform mat4 inverseProjectionMatrix;
 uniform vec3 kernel[MAX_KERNEL_SIZE];
 
 uniform sampler2D tDepth;
-uniform sampler2D tNoise;
 
 uniform vec2 resolution;
 
@@ -68,8 +69,7 @@ void main(){
 
   vec3 viewPosition = viewPosFromDepth(d, vUv);
 
-  vec2 noiseScale = vec2( resolution.x / 128.0, resolution.y / 128.0 );
-  vec3 randomVec = normalize(texture2D(tNoise, vUv * noiseScale).xyz);
+  vec3 randomVec = normalize(vec3(rand2d(vUv), rand2d(vUv * 3.0), rand2d(vUv * 5.0)));
 
   vec3 tangent = normalize(randomVec - viewNormal * dot(randomVec, viewNormal));
 
