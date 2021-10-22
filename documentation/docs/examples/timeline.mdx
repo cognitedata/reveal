@@ -23,10 +23,10 @@ Timeline tool provides ablility to apply styles to nodes using Date as a propert
 Each timeframe consists of nodes which are the elements to be rendered, appearance/styles to be assigned to the nodes and
 lastly the date for the nodes as reference to be rendered.
 
-### Creating keyframes
-To create TimelineFrames, use `createKeyFrame(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+### Creating Keyframes
+To create Keyframes, use `createKeyframe(date: Date, nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
 - `date` - Date reference for the TimelineFrame. Should provide the date value by Date.now() or number of milliseconds elapsed since January 1, 1970.
-- `nodeCollection` - Set of nodes to be rendered for the TimelineKeyframe.
+- `nodeCollection` - Set of nodes to be rendered for the Keyframe.
 - `nodeAppearance` - Styling of the nodes.
 
 ### Play timelines
@@ -44,29 +44,29 @@ model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 const timeline = new TimelineTool(model);
 
 const nodes = new AssetNodeCollection(sdk, model);
-timeline.createKeyFrame(new Date('2021-10-05'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
+timeline.createKeyframe(new Date('2021-10-05'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Cyan });
 
 nodes.executeFilter({ assetId: 4222791488928479 });
-timeline.createKeyFrame(new Date('2021-10-06'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
+timeline.createKeyframe(new Date('2021-10-06'), nodes, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange });
 
 const allPipes = new PropertyFilterNodeCollection(sdk, model);
 allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
-timeline.createKeyFrame(new Date('2021-10-07'), allPipes, { renderGhosted: false, color: [40, 200, 20] });
+timeline.createKeyframe(new Date('2021-10-07'), allPipes, { renderGhosted: false, color: [40, 200, 20] });
 
 const stuMechNodes = new PropertyFilterNodeCollection(sdk, model);
 stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
-timeline.createKeyFrame(new Date('2021-10-08'), stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
+timeline.createKeyframe(new Date('2021-10-08'), stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
 timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
 
 ```
 
-### Removing keyframes
-To remove any TimelineFrame, use `removeKeyFrame(date: Date)`
-- `date` - TimelineFrame date to be removed from the Timeline in milliseconds.
+### Removing Keyframes
+To remove any Keyframes, use `removeKeyframe(date: Date)`
+- `date` - Keyframes date to be removed from the Timeline in milliseconds.
 
 ```js runnable
-timeline.removeKeyFrame(new Date('2021-10-07'));
+timeline.removeKeyframe(new Date('2021-10-07'));
 ```
 
 ### Stop timeline playback
@@ -79,28 +79,46 @@ timeline.stopPlayback();
 We can get all the dates added into the TimelineFrame
 
 ```js runnable
-const allDates = timeline.getAllDateInTimelineFrames();
+const allDates = timeline.getAllDateInTimelineKeyframes();
 ```
 
-### TimelineKeyframes in Timeline
-Gets all TimelineKeyframes in the Timeline
+### Keyframes in Timeline
+Gets all Keyframes in the Timeline
 
 ```js runnable
-const allTimelineKeyframes = timeline.getAllTimelineKeyframes();
+const allKeyframes = timeline.getAllKeyframes();
 ```
 
-### Assign Styles to additional Nodes
-Tool provides feature to add additional styles to a TimelineKeyframe or number of TimelineKeyframes or to all of the TimelineKeyframes.
-We can set additional styles to nodes by TimelineKeyframes.
+### Add & Remove Node set & Styles to Keyframes
+Tool provides feature to add additional nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
 
-#### Set additional Styles for Node through TimelineKeyframes
-`assignStyledNodeCollection(timelineKeyframes: TimelineKeyframe | TimelineKeyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
-- `timelineKeyframes` - Date of a TimelineKeyFrame or list of Dates from any existing TimelineKeyframes.
-- `nodeCollection` - Set of nodes to be rendered for the TimelineKeyframe.
+#### Set additional Styles for Node through Keyframes
+`assignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+- `keyframes` - List of Keyframe to apply Style.
+- `nodeCollection` - Set of nodes to be rendered for the Keyframe.
 - `nodeAppearance` - Styling of the nodes.
 
 ```js runnable
-const allTimelineKeyframes = timeline.getAllTimelineKeyframes();
+const allkeyframes = timeline.getAllkeyframes();
 
-timeline.assignStyledNodeCollection(allTimelineKeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
+timeline.assignStyledNodeCollection(allkeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
+```
+
+#### Remove Styles & Node in Keyframes
+`unassignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+- `keyframes` - List of Keyframes where node set & styles to be removed
+- `nodeCollection` - Node set to be removed from keyframes.
+- `nodeAppearance` - Styles to be removed from keyframes.
+
+```js runnable
+const allkeyframes = timeline.getAllkeyframes();
+
+timeline.unassignStyledNodeCollection(allkeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
+```
+
+### Reset Styles
+Restores the Style of the model to default style
+
+```js runnable
+timeline.resetStyles();
 ```

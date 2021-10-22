@@ -31,6 +31,6 @@ export {
   HereMapImageFormat
 } from './src/Geomap/MapConfig';
 export { TimelineTool } from './src/Timeline/TimelineTool';
-export { TimelineKeyframe } from './src/Timeline/TimelineKeyframe';
+export { Keyframe } from './src/Timeline/Keyframe';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
