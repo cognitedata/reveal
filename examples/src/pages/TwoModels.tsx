@@ -54,10 +54,10 @@ export function TwoModels() {
 
       let model2: reveal.CadNode;
       if (modelRevision2) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision2.modelId, modelRevision2.revisionId, reveal.File3dFormat.EptPointcloud);
+        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision2.modelId, modelRevision2.revisionId);
         model2 = await revealManager.addModel('cad', modelIdentifier);
       } else if (modelUrl2) {
-        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl2.fileName, reveal.File3dFormat.EptPointcloud);
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl2.fileName!);
         model2 = await revealManager.addModel('cad', modelIdentifier);
       } else {
         throw new Error(
