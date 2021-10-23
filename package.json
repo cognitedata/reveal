@@ -74,7 +74,7 @@
     "@storybook/react": "~6.3.12",
     "@svgr/webpack": "^5.4.0",
     "@testing-library/react": "11.2.6",
-    "@testing-library/react-hooks": "7.0.1",
+    "@testing-library/react-hooks": "7.0.2",
     "@types/jest": "26.0.24",
     "@types/node": "16.11.3",
     "@types/react": "17.0.3",
