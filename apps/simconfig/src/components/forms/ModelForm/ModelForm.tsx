@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useRef, ChangeEvent } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Input, Select } from '@cognite/cogs.js';
 import { FileInput } from 'components/forms/controls/FileInput';
@@ -7,6 +7,8 @@ import { Field, Form, Formik, FormikProps } from 'formik';
 import { useSelector } from 'react-redux';
 import { selectDatasets } from 'store/dataset/selectors';
 import { selectUploadDatasetIds } from 'store/group/selectors';
+
+import { HiddenInputFile } from '../controls/elements';
 
 import { InputRow } from './elements';
 import { ModelFormData } from './types';
@@ -49,6 +51,7 @@ const getSelectEntriesFromMap = (obj: { [key: string]: string }) =>
 
 export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
   const history = useHistory();
+  const inputFile = useRef<HTMLInputElement>(null);
   const { cdfClient, authState } = useContext(CdfClientContext);
 
   const datasets = useSelector(selectDatasets);
@@ -63,6 +66,12 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
   if (authState?.authenticated && authState.email) {
     initialModelFormState.fileInfo.metadata.userEmail = authState.email;
   }
+
+  const onButtonClick = () => {
+    if (inputFile.current) {
+      inputFile.current.click();
+    }
+  };
 
   return (
     <Formik
@@ -94,7 +103,6 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
       {({
         values: { fileInfo },
         setFieldValue,
-        resetForm,
         isSubmitting,
       }: FormikProps<ModelFormData>) => (
         <Form>
@@ -117,11 +125,17 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
                   icon="Document"
                   fullWidth
                   disabled
-                  postfix={
-                    <Button onClick={() => resetForm()}>
-                      Select other file...
-                    </Button>
-                  }
+                  postfix={<Button onClick={onButtonClick}>File</Button>}
+                />
+                <HiddenInputFile
+                  id="file-upload"
+                  type="file"
+                  ref={inputFile}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                    const file = event.currentTarget.files?.[0];
+                    setFieldValue('file', file);
+                    setFieldValue('fileInfo.metadata.fileName', file?.name);
+                  }}
                 />
               </InputRow>
               <InputRow>

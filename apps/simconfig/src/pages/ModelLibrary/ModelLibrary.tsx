@@ -16,6 +16,7 @@ import {
 } from 'store/file/selectors';
 import { FileInfoSerializable } from 'store/file/types';
 import { setSelectedFile } from 'store/file';
+import sortBy from 'lodash/sortBy';
 
 type Params = {
   modelName?: string;
@@ -78,12 +79,9 @@ export default function ModelLibrary() {
     dispatch(setSelectedFile(undefined));
   }, [location]);
 
-  const getLatestFile = (items: FileInfoSerializable[]) =>
-    items.sort(
-      (a, b) =>
-        parseInt(b.metadata?.version || '0', 10) -
-        parseInt(a.metadata?.version || '0', 10)
-    )[0];
+  const getLatestFile = (items: FileInfoSerializable[]) => {
+    return sortBy(items, 'metadata.version')[0];
+  };
 
   const onClick = async () => {
     if (!modelName) {
