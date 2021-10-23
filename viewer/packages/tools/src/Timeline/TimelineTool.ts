@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import TWEEN from '@tweenjs/tween.js';
+
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
@@ -13,17 +15,13 @@ import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _keyframes: Keyframe[];
-  private _intervalId: any = 0;
-  private _allDates: Date[];
-  private _activeIndex: number;
+  private _playback: TWEEN.Tween | undefined = undefined;
 
   constructor(cadModel: Cognite3DModel) {
     super();
 
     this._model = cadModel;
     this._keyframes = new Array<Keyframe>();
-    this._allDates = new Array<Date>();
-    this._activeIndex = 0;
   }
 
   /**
@@ -33,7 +31,6 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public createKeyframe(date: Date): Keyframe {
     const keyframe = new Keyframe(this._model, date);
     this._keyframes.push(keyframe);
-    this._allDates.push(date);
     this.sortKeyframesByDates();
 
     return keyframe;
@@ -68,31 +65,6 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Overrides styling of cadModel to match styling
-   * @param date - Date of the Keyframe to apply the styling on the CAD Model
-   */
-  private styleByDate(date: Date) {
-    if (this._keyframes.length > 0) {
-      this._activeIndex = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
-
-      // Date provided not found than get the closest downward date
-      // e.g if you have keyframes "1000, 2000, 3000" the result from styleByDate(2500) should be styles from 2000
-      if (this._activeIndex === -1) {
-        const timelineframe = this._keyframes.reduce((prev, curr) => (date >= curr.getKeyframeDate() ? curr : prev));
-        this._activeIndex = this._keyframes.findIndex(obj => obj === timelineframe);
-      }
-
-      const currentTimeframe = this._keyframes[this._activeIndex];
-      const previousTimeframe = this._keyframes[this._activeIndex - 1];
-
-      if (previousTimeframe) {
-        previousTimeframe.deactivate();
-      }
-      currentTimeframe.activate();
-    }
-  }
-
-  /**
    * Starts playback of Timeline
    * @param startDate - Keyframe date to start the Playback of Keyframes
    * @param endDate - Keyframe date to stop the Playback of Keyframes
@@ -100,34 +72,42 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    */
   public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
     this.stopPlayback();
-    this.styleByDate(startDate);
-    this._activeIndex++;
-    let keyframesCount = 0;
 
-    if (this._keyframes.length > 1) {
-      keyframesCount = this._keyframes.filter(
-        obj => obj.getKeyframeDate() >= startDate && obj.getKeyframeDate() <= endDate
-      ).length;
-    }
+    const playState = { dateInMs: startDate.getTime() };
+    const to = { dateInMs: endDate.getTime() };
+    const tween = new TWEEN.Tween(playState).to(to, totalDurationInMilliSeconds);
+    let currentKeyframeIndex = -1;
+    tween.onUpdate(() => {
+      const date = new Date(playState.dateInMs);
 
-    this._intervalId = setInterval(() => {
-      if (this._allDates[this._activeIndex] <= endDate) {
-        this.styleByDate(this._allDates[this._activeIndex]);
-        this._activeIndex++;
-      } else {
-        this.stopPlayback();
+      // Forward active keyframe to last keyframe that is before current date
+      const prevIndex = currentKeyframeIndex;
+      while (
+        currentKeyframeIndex < this._keyframes.length - 1 &&
+        this._keyframes[currentKeyframeIndex + 1].getKeyframeDate().getTime() <= date.getTime()
+      ) {
+        currentKeyframeIndex++;
       }
-    }, totalDurationInMilliSeconds / keyframesCount);
+
+      if (currentKeyframeIndex !== prevIndex) {
+        if (prevIndex !== -1) {
+          this._keyframes[prevIndex].deactivate();
+        }
+        this._keyframes[currentKeyframeIndex].activate();
+      }
+    });
+
+    this._playback = tween;
+    tween.start();
   }
 
   /**
    * Stops any ongoing playback
    */
   public stopPlayback() {
-    if (this._intervalId !== 0) {
-      clearInterval(this._intervalId);
-      this._intervalId = 0;
-      this._activeIndex = 0;
+    if (this._playback !== undefined) {
+      this._playback.stop();
+      this._playback = undefined;
     }
   }
 
@@ -156,10 +136,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @returns All Keyframes in Timeline
    */
   public getAllKeyframes(): Keyframe[] {
-    if (this._keyframes.length > 0) {
-      return this._keyframes;
-    }
-    return [];
+    return this._keyframes;
   }
 
   /**
