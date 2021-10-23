@@ -68,7 +68,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Starts playback of Timeline
    * @param startDate - Keyframe date to start the Playback of Keyframes
    * @param endDate - Keyframe date to stop the Playback of Keyframes
-   * @param totalDurationInMilliSeconds - Number of milli-seconds for all Keyframe within startDate & endDate to be rendered
+   * @param totalDurationInMilliSeconds - Number of milliseconds for all Keyframe within startDate & endDate to be rendered
    */
   public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
     this.stopPlayback();
