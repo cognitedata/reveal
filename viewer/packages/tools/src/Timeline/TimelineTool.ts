@@ -7,7 +7,6 @@ import TWEEN from '@tweenjs/tween.js';
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
-import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
@@ -121,6 +120,19 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Provides all Keyframes in the Timeline
+   * @returns All Keyframes in Timeline
+   */
+  public getAllKeyframes(): Keyframe[] {
+    return this._keyframes;
+  }
+
+  public dispose(): void {
+    super.dispose();
+    this.resetStyles();
+  }
+
+  /**
    * Sort the Timeline Keyframe by their Date
    */
   private sortKeyframesByDates() {
@@ -129,56 +141,5 @@ export class TimelineTool extends Cognite3DViewerToolBase {
         return a.getKeyframeDate().getTime() - b.getKeyframeDate().getTime();
       });
     }
-  }
-
-  /**
-   * Provides all Keyframes in the Timeline
-   * @returns All Keyframes in Timeline
-   */
-  public getAllKeyframes(): Keyframe[] {
-    return this._keyframes;
-  }
-
-  /**
-   * Set Styles for Set of nodes for a Keyframe or set of Keyframes
-   * @param keyframes List of Keyframe to apply Style
-   * @param nodeCollection Node set to apply the Styles
-   * @param nodeAppearance Style to assign to the node collection
-   */
-  public assignStyledNodeCollection(
-    keyframes: Keyframe | Keyframe[],
-    nodeCollection: NodeCollectionBase,
-    nodeAppearance: NodeAppearance
-  ) {
-    let keyframeList = new Array<Keyframe>();
-    keyframeList = keyframeList.concat(keyframes);
-
-    for (const keyframe of keyframeList) {
-      keyframe.assignStyledNodeCollection(nodeCollection, nodeAppearance);
-    }
-  }
-
-  /**
-   * Removes node set & styles from a keyframe or set of keyframes
-   * @param keyframes List of Keyframes where node set & styles to be removed
-   * @param nodeCollection Node set to be removed from keyframes
-   * @param nodeAppearance Styles to be removed from keyframes
-   */
-  public unassignStyledNodeCollection(
-    keyframes: Keyframe | Keyframe[],
-    nodeCollection: NodeCollectionBase,
-    nodeAppearance: NodeAppearance
-  ) {
-    let keyframeList = new Array<Keyframe>();
-    keyframeList = keyframeList.concat(keyframes);
-
-    for (const keyframe of keyframeList) {
-      keyframe.unassignStyledNodeCollection(nodeCollection, nodeAppearance);
-    }
-  }
-
-  public dispose(): void {
-    super.dispose();
-    this.resetStyles();
   }
 }
