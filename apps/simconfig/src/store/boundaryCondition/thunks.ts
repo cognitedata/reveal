@@ -69,15 +69,22 @@ export const fetchBoundaryConditions = createAsyncThunk(
         end: createdTime && createdTime + 1,
         ignoreUnknownIds: true,
       })
-    ).map(({ externalId, unit, datapoints }) => {
-      if (!externalId || !unit) {
-        throw new Error('No Datapoint information');
-      }
-      return {
-        unit,
-        value: 'value' in datapoints[0] ? datapoints[0].value : 'N/A',
-        label: getSensorName(externalId, sensors),
-      };
-    });
+    )
+      .map(({ externalId, unit, datapoints }) => {
+        if (!externalId) {
+          throw new Error('No Datapoint information');
+        }
+        const value =
+          'value' in datapoints[0] && typeof datapoints[0].value === 'number'
+            ? +datapoints[0].value.toFixed(4)
+            : 'N/A';
+
+        return {
+          unit: unit ?? '',
+          value,
+          label: getSensorName(externalId, sensors),
+        };
+      })
+      .filter(({ value }) => value !== 'N/A');
   }
 );

@@ -4,8 +4,12 @@ import { CdfClientContext } from 'providers/CdfClientProvider';
 import { BcContainer, BcLabel } from 'components/tables/ModelTable/elements';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { selectBoundaryConditions } from 'store/boundaryCondition/selectors';
+import {
+  selectBoundaryConditions,
+  selectBoundaryConditionsStatus,
+} from 'store/boundaryCondition/selectors';
 import { fetchBoundaryConditions } from 'store/boundaryCondition/thunks';
+import { RequestStatus } from 'store/types';
 
 import { SequenceDataType } from './constants';
 import { BodyWithSpacing, TitleWithSpacing } from './elements';
@@ -22,9 +26,10 @@ export const BoundaryConditionContent: React.FC<Props> = ({
   const { cdfClient } = useContext(CdfClientContext);
   const dispatch = useAppDispatch();
   const displayValues = useAppSelector(selectBoundaryConditions);
+  const displayValuesStatus = useAppSelector(selectBoundaryConditionsStatus);
 
   const fetchDisplayValues = async () => {
-    if (!data) {
+    if (!data || !data.name) {
       return;
     }
     const filter = {
@@ -49,6 +54,9 @@ export const BoundaryConditionContent: React.FC<Props> = ({
     fetchDisplayValues();
   }, [data]);
 
+  const failed = displayValuesStatus === RequestStatus.ERROR;
+  const success = displayValuesStatus === RequestStatus.SUCCESS;
+
   return (
     <BcContainer>
       <Button icon="Close" type="ghost" onClick={onClosePanel} />
@@ -67,12 +75,14 @@ export const BoundaryConditionContent: React.FC<Props> = ({
       </BodyWithSpacing>
       <Overline>BOUNDARY CONDITIONS</Overline>
       <BodyWithSpacing level={3}>
-        {displayValues.map((bc) => (
-          <div key={bc.label}>
-            <BcLabel>{bc.label}:</BcLabel>
-            {bc.value} {bc.unit}
-          </div>
-        ))}
+        {success &&
+          displayValues.map((bc) => (
+            <div key={bc.label}>
+              <BcLabel>{bc.label}:</BcLabel>
+              {bc.value} {bc.unit}
+            </div>
+          ))}
+        {failed && <span>No Boundary conditions</span>}
       </BodyWithSpacing>
     </BcContainer>
   );
