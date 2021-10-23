@@ -36,6 +36,15 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Returns the keyframe at the date given, or undefined if not found.
+   * @param date
+   * @returns
+   */
+  public getKeyframeByDate(date: Date): Keyframe | undefined {
+    return this._keyframes.find(candidate => candidate.getKeyframeDate() === date);
+  }
+
+  /**
    * Removes the Keyframe from the Timeline
    * @param keyframe - Keyframe to be removed from the Timeline
    */
