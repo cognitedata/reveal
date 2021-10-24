@@ -87,14 +87,14 @@ async function loadSector(
   cadMaterialManager: CadMaterialManager,
   client: CogniteClient
 ) {
-  const blobId = outputs.findMostRecentOutput(guiData.format)?.blobId.toString()!;
+  const blobId = outputs.findMostRecentOutput(guiData.format)?.blobId.toString();
 
   const sceneJson = await modelDataClient.getJsonFile(
     'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
     'scene.json'
   );
 
-  cadMaterialManager.addModelMaterials(blobId, sceneJson.maxTreeIndex);
+  cadMaterialManager.addModelMaterials(blobId!, sceneJson.maxTreeIndex);
 
   const sectorRepository: SectorRepository =
     guiData.format === File3dFormat.GltfCadModel
@@ -111,7 +111,7 @@ async function loadSector(
       sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
       const consumedSector = await sectorRepository.loadSector({
         modelBaseUrl: client.getBaseUrl() + '/api/v1/projects/3ddemo/3d/files/' + blobId,
-        modelIdentifier: blobId,
+        modelIdentifier: blobId!,
         metadata: sector,
         levelOfDetail: 2,
         geometryClipBox: null
