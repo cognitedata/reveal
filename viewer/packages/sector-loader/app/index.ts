@@ -3,12 +3,15 @@
  */
 
 import * as THREE from 'three';
+import * as dat from 'dat.gui';
+
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CogniteClient } from '@cognite/sdk';
-import { CdfModelDataClient } from '@reveal/modeldata-api';
+import { CdfModelDataProvider, CdfModelOutputsProvider, CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { V8SectorRepository } from '../src/V8SectorRepository';
 import { CadMaterialManager } from '@reveal/rendering';
-import { GltfSectorRepository } from '..';
+import { GltfSectorRepository, SectorRepository } from '..';
+import { Model3DOutputList } from '@reveal/modeldata-api/src/Model3DOutputList';
 
 init();
 
@@ -17,46 +20,28 @@ async function init() {
 
   const scene = new THREE.Scene();
 
+  const gui = new dat.GUI();
+  const guiData = { format: File3dFormat.GltfCadModel};
+  const formatGuiController = gui.add(guiData, 'format', {gltfCadModel: File3dFormat.GltfCadModel, v8CadModel: File3dFormat.RevealCadModel});
+
   const client = new CogniteClient({ appId: 'reveal.example.simple' });
   await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: '3ddemo' } });
   await client.authenticate();
 
-  const modelDataClient = new CdfModelDataClient(client);
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const modelId = parseInt(urlParams.get('modelId') ?? '2890599736800729');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '8160779262643447');
+
+  const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
+
+  const outputProvider = new CdfModelOutputsProvider(client);
+  const outputs = await outputProvider.getOutputs(modelIdentifier);
+
+  const modelDataClient = new CdfModelDataProvider(client);
   const cadMaterialManager = new CadMaterialManager();
-
-  const v8SectorLoader = new V8SectorRepository(modelDataClient, cadMaterialManager);
-  const gltfSectorRepository = new GltfSectorRepository(modelDataClient, cadMaterialManager);
-
-  // const blobId = '8077116380016442';
-  const blobId = '4077087845736455';
-
-  const sceneJson = await modelDataClient.getJsonFile(
-    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
-    'scene.json'
-  );
-
-  cadMaterialManager.addModelMaterials(blobId, sceneJson.maxTreeIndex);
-
-  const testSector = sceneJson.sectors[0];
-  testSector.bounds = new THREE.Box3(testSector.boundingBox.min, testSector.boundingBox.max);
-
-  const test = await gltfSectorRepository.loadSector({
-    modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
-    modelIdentifier: blobId,
-    metadata: testSector,
-    levelOfDetail: 2,
-    geometryClipBox: null
-  });
-
-  // const test = await v8SectorLoader.loadSector({
-  //   modelBaseUrl: 'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/8077116380016442',
-  //   modelIdentifier: '8077116380016442',
-  //   metadata: testSector,
-  //   levelOfDetail: 2,
-  //   geometryClipBox: null
-  // });
-
-  //https://greenfield.cognitedata.com/api/v1/projects/3d-test/3d/files/4781617717819216/sector_0.i3d
+  
+  let consumedModel = await loadSector(outputs, guiData, modelDataClient, cadMaterialManager, client);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -70,7 +55,13 @@ async function init() {
   group.applyMatrix4(cadFromCdfToThreeMatrix);
   scene.add(group);
 
-  group.add(test.group!);
+  group.add(consumedModel);
+
+  formatGuiController.onChange(async (_) => {
+    group.remove(consumedModel);
+    consumedModel = await loadSector(outputs, guiData, modelDataClient, cadMaterialManager, client);
+    group.add(consumedModel);
+  });
 
   const controls = new OrbitControls(camera, renderer.domElement);
   const target = new THREE.Vector3(10, 0, 0);
@@ -85,3 +76,39 @@ async function init() {
     renderer.render(scene, camera);
   });
 }
+
+async function loadSector(outputs: Model3DOutputList, guiData: { format: File3dFormat; }, modelDataClient: CdfModelDataProvider, cadMaterialManager: CadMaterialManager, client: CogniteClient) {
+  var blobId = outputs.findMostRecentOutput(guiData.format)?.blobId.toString()!;
+
+  const sceneJson = await modelDataClient.getJsonFile(
+    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
+    'scene.json'
+  );
+
+  cadMaterialManager.addModelMaterials(blobId, sceneJson.maxTreeIndex);
+  
+  const sectorRepository: SectorRepository = (guiData.format === File3dFormat.GltfCadModel)
+    ? new GltfSectorRepository(modelDataClient, cadMaterialManager)
+    : new V8SectorRepository(modelDataClient, cadMaterialManager);
+
+  const sector = sceneJson.sectors[0];
+  sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
+
+  var model = new THREE.Group();
+
+  await Promise.all(sceneJson.sectors.map(async (sector: any) => {
+    sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
+    const consumedSector = await sectorRepository.loadSector({
+      modelBaseUrl: client.getBaseUrl() + '/api/v1/projects/3ddemo/3d/files/' + blobId,
+      modelIdentifier: blobId,
+      metadata: sector,
+      levelOfDetail: 2,
+      geometryClipBox: null
+    });
+
+    model.add(consumedSector.group!);
+  }));
+
+  return model;
+}
+

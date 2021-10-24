@@ -33,6 +33,7 @@ export interface HttpHeadersProvider {
 export enum File3dFormat {
   EptPointCloud = 'ept-pointcloud',
   RevealCadModel = 'reveal-directory',
+  GltfCadModel = 'gltf-directory',
   AnyFormat = 'all-outputs'
 }
 
