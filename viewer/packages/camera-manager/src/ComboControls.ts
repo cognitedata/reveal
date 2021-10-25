@@ -64,7 +64,7 @@ export default class ComboControls extends EventDispatcher {
   public keyboardSpeedFactor: number = 3; // how much quicker keyboard navigation will be with 'shift' pressed
   public pinchEpsilon: number = 2;
   public pinchPanSpeed: number = 1;
-  public EPSILON: number = 0.003;
+  public EPSILON: number = 0.001;
   public dispose: () => void;
   public minZoom: number = 0;
   public maxZoom: number = Infinity;
@@ -269,8 +269,8 @@ export default class ComboControls extends EventDispatcher {
       return;
     }
 
-    this.firstPersonMode = false;
-    this.sphericalEnd.copy(this.spherical);
+    this._firstPersonMode = false;
+    this._sphericalEnd.copy(this._spherical);
 
     switch (event.button) {
       case MOUSE.LEFT: {
@@ -334,8 +334,8 @@ export default class ComboControls extends EventDispatcher {
     }
     event.preventDefault();
 
-    this.firstPersonMode = false;
-    this.sphericalEnd.copy(this.spherical);
+    this._firstPersonMode = false;
+    this._sphericalEnd.copy(this._spherical);
 
     switch (event.touches.length) {
       case 1: {
