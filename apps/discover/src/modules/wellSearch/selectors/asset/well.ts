@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
+import pickBy from 'lodash/pickBy';
 
 import useSelector from 'hooks/useSelector';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
@@ -96,16 +97,21 @@ export const useSelectedWells = () => {
   });
 };
 
+// @sdk-wells-v3
 export const useSelectedWellIds = () => {
+  const { data: enableWellSDKV3 } =
+    useTenantConfigByKey<boolean>('enableWellSDKV3');
+
   return useSelector((state) => {
     const { selectedWellIds } = state.wellSearch;
-    return useMemo(
-      () =>
-        Object.keys(selectedWellIds)
-          .filter((row) => selectedWellIds[row])
-          .map(Number),
-      [selectedWellIds]
-    );
+
+    return useMemo(() => {
+      const selectedIds = Object.keys(pickBy(selectedWellIds));
+
+      return enableWellSDKV3
+        ? (selectedIds as unknown as number[])
+        : selectedIds.map(Number);
+    }, [selectedWellIds]);
   });
 };
 

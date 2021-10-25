@@ -95,7 +95,7 @@ describe('convertObject builder', () => {
       mockedWellResultFixture
     );
 
-    expect(selectedIds[0]).toEqual(1234);
+    expect(selectedIds[0]).toEqual('1234');
 
     const deSelectedIds = getPrestineWellIds(
       { '1234': false },

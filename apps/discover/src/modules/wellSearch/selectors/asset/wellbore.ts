@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import difference from 'lodash/difference';
 import flatMap from 'lodash/flatMap';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 
 import useSelector from 'hooks/useSelector';
@@ -347,14 +349,14 @@ export const useWellboresFetchedWellIds = () => {
 };
 
 export const useWellboresFetching = () => {
-  const wellboresFetchedWellIds = useWellboresFetchedWellIds();
   const selectedWellIds = useSelectedWellIds();
+  const wellboresFetchedWellIds = useWellboresFetchedWellIds();
 
-  return useMemo(
-    () =>
-      selectedWellIds.some(
-        (wellId) => !wellboresFetchedWellIds.includes(wellId)
-      ),
-    [wellboresFetchedWellIds, selectedWellIds]
-  );
+  return useMemo(() => {
+    const wellboresNotFetchedWellIds = difference(
+      selectedWellIds,
+      wellboresFetchedWellIds
+    );
+    return !isEmpty(wellboresNotFetchedWellIds);
+  }, [wellboresFetchedWellIds, selectedWellIds]);
 };

@@ -153,20 +153,19 @@ export const convertObject = <Item>(object: Item) => {
   return allFunctions;
 };
 
+// @sdk-wells-v3
 export const getPrestineWellIds = (
   selectedWellIds: TableResults,
   wells: Well[]
 ) => {
-  return Object.keys(selectedWellIds)
-    .filter((wellId) => {
-      if (selectedWellIds[wellId]) {
-        // make sure to exclude already loaded wellbores
-        const resultWell = wells.find((well) => well.id === Number(wellId));
-        if (resultWell && !resultWell.wellbores) return true;
-      }
-      return false;
-    })
-    .map((id) => Number(id));
+  return Object.keys(selectedWellIds).filter((wellId) => {
+    if (selectedWellIds[wellId]) {
+      // make sure to exclude already loaded wellbores
+      const resultWell = wells.find((well) => String(well.id) === wellId);
+      if (resultWell && !resultWell.wellbores) return true;
+    }
+    return false;
+  }) as unknown as number[];
 };
 
 export const getWaterDepthLimitsInFeet = (
