@@ -10,8 +10,8 @@ import { SetCommentTarget } from '@cognite/react-comments';
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import { OKModal } from 'components/modal';
-import { Table } from 'components/tablev2/Table';
-import { Options, TableResults } from 'components/tablev2/types';
+import { Table } from 'components/tablev3/Table';
+import { Options, TableResults } from 'components/tablev3/types';
 import { showErrorMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
@@ -77,7 +77,8 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     markedAs: {
       Header: FIELDS.markedAs.display,
       accessor: 'markedAs',
-      width: '40%',
+      width: '100px',
+      maxWidth: '0.4fr',
       order: 0,
       Cell: (cell) => <DocumentFeedbackLabels feedback={cell.row.original} />,
       // sortType: (row1, row2) => row1.original.markedAs
@@ -115,7 +116,8 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     comment: {
       Header: 'User comment',
       accessor: 'comment',
-      width: '50%',
+      width: '100px',
+      maxWidth: '0.6fr',
       order: 3,
       Cell: (cell) => (
         <span>
@@ -181,7 +183,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     actions: {
       Header: ' ',
       accessor: 'actions',
-      width: '100px',
+      width: '150px',
       order: 6,
       Cell: (cell) => (
         <ActionColumn

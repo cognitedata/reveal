@@ -7,7 +7,7 @@ import { SetCommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
-import { Table } from 'components/tablev2';
+import { Table } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
@@ -43,7 +43,7 @@ const ListView: React.FC<Props> = ({
     () => [
       {
         id: 'Acronym',
-        width: 76,
+        width: '76px',
         disableSorting: true,
         Cell: ({ row: { original } }: RowType) => (
           <Avatar
@@ -53,21 +53,25 @@ const ListView: React.FC<Props> = ({
         ),
       },
       {
-        width: 'auto',
+        width: '100px',
+        maxWidth: '0.5fr',
         Header: t('Set Title'),
         accessor: (row: FavoriteSummary) => row.name || '-',
       },
       {
         Header: t('Description'),
-        width: 'auto',
+        width: '100px',
+        maxWidth: '0.5fr',
         accessor: (row: FavoriteSummary) => row.description || '-',
       },
       {
         Header: t('Created by'),
+        width: '170px',
         accessor: (row: FavoriteSummary) => getFullNameOrDefaultText(row.owner),
       },
       {
         Header: t('Date created'),
+        width: '170px',
         accessor: (row: FavoriteSummary) => shortDate(row.createdTime),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
           sortDates(
@@ -77,11 +81,13 @@ const ListView: React.FC<Props> = ({
       },
       {
         Header: t('Last update by'),
+        width: '170px',
         accessor: (row: FavoriteSummary) =>
           getFavoriteLastUpdateByUserName(row.lastUpdatedBy),
       },
       {
         Header: t('Date updated'),
+        width: '170px',
         accessor: (row: FavoriteSummary) =>
           shortDate(getFavoriteLastUpdatedByDateTime(row.lastUpdatedBy)),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>

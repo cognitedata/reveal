@@ -10,8 +10,8 @@ import { SetCommentTarget } from '@cognite/react-comments';
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import EmptyState from 'components/emptyState';
-import { Table } from 'components/tablev2/Table';
-import { Options, TableResults } from 'components/tablev2/types';
+import { Table } from 'components/tablev3/Table';
+import { Options, TableResults } from 'components/tablev3/types';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import {
   useFeedbackUpdateMutate,
@@ -56,6 +56,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: '',
       accessor: 'screenshotB64',
       width: '100px',
+      maxWidth: '0.1fr',
       order: 0,
       disableSorting: true,
       Cell: (cell) => (
@@ -70,6 +71,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: FIELDS.status.display,
       accessor: 'statusVal',
       width: '100px',
+      maxWidth: '0.1fr',
       order: 1,
       Cell: ({ row }) => (
         <StatusColumn
@@ -86,6 +88,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: FIELDS.assignedTo.display,
       accessor: 'assignedTo',
       width: '100px',
+      maxWidth: '0.1fr',
       order: 2,
       Cell: (cell) => (
         <span>{getFullNameOrDefaultText(cell.row.original.assignee)}</span>
@@ -99,6 +102,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: FIELDS.user.display,
       accessor: 'user',
       width: '100px',
+      maxWidth: '0.11fr',
       order: 3,
       Cell: (cell) => (
         <span>{getFullNameOrDefaultText(cell.row.original.user)}</span>
@@ -112,6 +116,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: FIELDS.date.display,
       accessor: 'timestamp',
       width: '100px',
+      maxWidth: '0.1fr',
       order: 4,
       Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
       sortType: (row1, row2) =>
@@ -124,6 +129,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: 'Comment',
       accessor: 'comment',
       width: '250px',
+      maxWidth: '0.29fr',
       order: 5,
       Cell: (cell) => (
         <span>
@@ -135,6 +141,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: 'Actions',
       accessor: 'actions',
       width: '180px',
+      maxWidth: '0.2fr',
       order: 6,
       Cell: (cell) => (
         <ActionColumn

@@ -41,3 +41,11 @@ export const SensitiveWarning = styled.div`
 export const SensitiveWarningText = styled.span`
   margin-right: ${sizes.normal};
 `;
+
+export const TableDropdown = styled.div`
+  width: 100%;
+`;
+
+export const FeedbackContent = styled.div`
+  overflow: hidden;
+`;

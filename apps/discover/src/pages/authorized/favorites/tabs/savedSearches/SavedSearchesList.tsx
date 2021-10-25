@@ -12,7 +12,7 @@ import { log } from '_helpers/log';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { Table } from 'components/tablev2';
+import { Table } from 'components/tablev3';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
@@ -112,7 +112,7 @@ export const SavedSearches: React.FC<{
       {
         id: 'launch-saved-search',
         disableSorting: true,
-        width: 50,
+        width: '50px',
         Cell: ({
           row: { original },
         }: {
@@ -130,11 +130,12 @@ export const SavedSearches: React.FC<{
       {
         Header: t('Title'),
         accessor: 'name',
-        width: '300',
+        width: '300px',
+        maxWidth: '1fr',
       },
       {
         Header: t('Created by'),
-        width: '300',
+        width: '300px',
         accessor: (row: SavedSearchItem) =>
           row.owner
             ? getFullNameOrDefaultText(row.owner)
@@ -148,12 +149,13 @@ export const SavedSearches: React.FC<{
             shortDate(rowA.original.value.createdTime),
             shortDate(rowB.original.value.createdTime)
           ),
-        width: 'auto',
+        width: '300px',
       },
       {
         id: 'saved-search-actions',
         Header: '  ',
         disableSorting: true,
+        width: 'auto',
       },
     ],
     []
