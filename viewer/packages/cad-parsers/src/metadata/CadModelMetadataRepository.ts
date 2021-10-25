@@ -11,7 +11,13 @@ import { CadModelMetadata } from './CadModelMetadata';
 import { MetadataRepository } from './MetadataRepository';
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+import {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  File3dFormat,
+  BlobOutputMetadata
+} from '@reveal/modeldata-api';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -32,8 +38,9 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   }
 
   async loadData(modelIdentifier: ModelIdentifier): Promise<CadModelMetadata> {
-    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier);
+    const cadOutput = await this.getSupportedOutput(modelIdentifier);
+    const blobBaseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, cadOutput);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, cadOutput.format);
     const modelCameraPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const blobBaseUrl = await blobBaseUrlPromise;
@@ -48,16 +55,32 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       modelBaseUrl: blobBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
+      format: cadOutput.format as File3dFormat,
       modelMatrix,
       inverseModelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };
   }
+
+  private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
+    const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
+
+    const cadModelOutput =
+      outputs.find(output => output.format === File3dFormat.GltfCadModel) ??
+      outputs.find(output => output.format === File3dFormat.RevealCadModel);
+
+    if (!cadModelOutput)
+      throw new Error(
+        `Model does not contain any supported cad model output [${File3dFormat.GltfCadModel}, ${File3dFormat.RevealCadModel}]`
+      );
+
+    return cadModelOutput;
+  }
 }
 
 function createScaleToMetersModelMatrix(unit: string, modelMatrix: THREE.Matrix4): THREE.Matrix4 {
-  const conversionFactor = WellKnownDistanceToMeterConversionFactors.get(unit);
+  const conversionFactor = WellKnownDistanceToMeterConversionFactors.get(unit) ?? 1;
   if (conversionFactor === undefined) {
     throw new Error(`Unknown model unit '${unit}'`);
   }

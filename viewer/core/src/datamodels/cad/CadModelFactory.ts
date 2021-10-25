@@ -7,15 +7,17 @@ import { BoundingBoxClipper } from '../../utilities/BoundingBoxClipper';
 import { GeometryFilter } from '../..';
 import { CadModelClipper } from './sector/CadModelClipper';
 
-import { V8SectorRepository } from '@reveal/sector-loader';
+import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@reveal/sector-loader';
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository } from '@reveal/cad-parsers';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
-  private _cadModelMetadataRepository: CadModelMetadataRepository;
-  private _sectorRepository: V8SectorRepository;
+  private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
+  private readonly _v8SectorRepository: V8SectorRepository;
+  private readonly _gltfSectorRepository: GltfSectorRepository;
+
   constructor(
     materialManager: CadMaterialManager,
     modelMetadataProvider: ModelMetadataProvider,
@@ -23,7 +25,8 @@ export class CadModelFactory {
   ) {
     this._materialManager = materialManager;
     this._cadModelMetadataRepository = new CadModelMetadataRepository(modelMetadataProvider, modelDataProvider);
-    this._sectorRepository = new V8SectorRepository(modelDataProvider, materialManager);
+    this._v8SectorRepository = new V8SectorRepository(modelDataProvider, materialManager);
+    this._gltfSectorRepository = new GltfSectorRepository(modelDataProvider, materialManager);
   }
 
   async createModel(externalModelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
@@ -32,8 +35,11 @@ export class CadModelFactory {
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const { modelIdentifier, scene } = modelMetadata;
-    const cadModel = new CadNode(modelMetadata, this._materialManager, this._sectorRepository);
+    const { modelIdentifier, scene, format } = modelMetadata;
+
+    const sectorRepository = this.getSectorRepository(format);
+
+    const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
     this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);
 
     if (modelMetadata.geometryClipBox !== null) {
@@ -45,8 +51,19 @@ export class CadModelFactory {
     return cadModel;
   }
 
+  private getSectorRepository(format: File3dFormat): SectorRepository {
+    switch (format) {
+      case File3dFormat.GltfCadModel:
+        return this._gltfSectorRepository;
+      case File3dFormat.RevealCadModel:
+        return this._v8SectorRepository;
+      default:
+        throw new Error(`Model format [${format}] is not a valied cad model format`);
+    }
+  }
+
   dispose() {
-    this._sectorRepository.clear();
+    this._v8SectorRepository.clear();
   }
 }
 

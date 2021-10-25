@@ -7,11 +7,16 @@ import * as dat from 'dat.gui';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CogniteClient } from '@cognite/sdk';
-import { CdfModelDataProvider, CdfModelOutputsProvider, CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import {
+  CdfModelDataProvider,
+  CdfModelIdentifier,
+  File3dFormat,
+  CdfModelMetadataProvider,
+  BlobOutputMetadata
+} from '@reveal/modeldata-api';
 import { V8SectorRepository } from '../src/V8SectorRepository';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorRepository, SectorRepository } from '..';
-import { Model3DOutputList } from '@reveal/modeldata-api/src/Model3DOutputList';
 
 init();
 
@@ -33,14 +38,16 @@ async function init() {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
+
   const modelId = parseInt(urlParams.get('modelId') ?? '2890599736800729');
   const revisionId = parseInt(urlParams.get('revisionId') ?? '8160779262643447');
 
-  const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
+  const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
 
-  const outputProvider = new CdfModelOutputsProvider(client);
-  const outputs = await outputProvider.getOutputs(modelIdentifier);
+  const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
+  cdfModelMetadataProvider.getModelOutputs(modelIdentifier);
 
+  const outputs = await cdfModelMetadataProvider.getModelOutputs(modelIdentifier);
   const modelDataClient = new CdfModelDataProvider(client);
   const cadMaterialManager = new CadMaterialManager();
 
@@ -81,20 +88,20 @@ async function init() {
 }
 
 async function loadSector(
-  outputs: Model3DOutputList,
+  outputs: BlobOutputMetadata[],
   guiData: { format: File3dFormat },
   modelDataClient: CdfModelDataProvider,
   cadMaterialManager: CadMaterialManager,
   client: CogniteClient
 ) {
-  const blobId = outputs.findMostRecentOutput(guiData.format)?.blobId.toString();
-
+  // const blobId = outputs.findMostRecentOutput(guiData.format)?.blobId.toString();
+  const output = outputs.find(output => output.format === guiData.format);
   const sceneJson = await modelDataClient.getJsonFile(
-    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + blobId,
+    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + output?.blobId,
     'scene.json'
   );
 
-  cadMaterialManager.addModelMaterials(blobId!, sceneJson.maxTreeIndex);
+  cadMaterialManager.addModelMaterials(output!.blobId.toString(), sceneJson.maxTreeIndex);
 
   const sectorRepository: SectorRepository =
     guiData.format === File3dFormat.GltfCadModel
@@ -110,8 +117,8 @@ async function loadSector(
     sceneJson.sectors.map(async (sector: any) => {
       sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
       const consumedSector = await sectorRepository.loadSector({
-        modelBaseUrl: client.getBaseUrl() + '/api/v1/projects/3ddemo/3d/files/' + blobId,
-        modelIdentifier: blobId!,
+        modelBaseUrl: client.getBaseUrl() + '/api/v1/projects/3ddemo/3d/files/' + output?.blobId,
+        modelIdentifier: output!.blobId.toString(),
         metadata: sector,
         levelOfDetail: 2,
         geometryClipBox: null

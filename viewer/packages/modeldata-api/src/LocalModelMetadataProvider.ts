@@ -7,9 +7,18 @@ import { applyDefaultModelTransformation } from './applyDefaultModelTransformati
 import { LocalModelIdentifier } from './LocalModelIdentifier';
 import { ModelIdentifier } from './ModelIdentifier';
 import { ModelMetadataProvider } from './ModelMetadataProvider';
-import { File3dFormat } from './types';
+import { BlobOutputMetadata, File3dFormat } from './types';
 
 export class LocalModelMetadataProvider implements ModelMetadataProvider {
+  getModelOutputs(_: ModelIdentifier): Promise<BlobOutputMetadata[]> {
+    return Promise.resolve([
+      {
+        blobId: -1,
+        format: File3dFormat.RevealCadModel,
+        version: 8
+      }
+    ]);
+  }
   getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
     if (!(modelIdentifier instanceof LocalModelIdentifier)) {
       throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
