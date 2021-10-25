@@ -1,0 +1,22 @@
+{
+  "plugins": ["promise"],
+  "extends": [
+    "@cognite"
+  ],
+  "rules": {
+    "react/jsx-props-no-spreading": "off",
+    "react/no-array-index-key": "warn",
+    "react/state-in-constructor": ["error", "never"],
+    "promise/catch-or-return": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.spec.js"
+      ],
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ]
+}
