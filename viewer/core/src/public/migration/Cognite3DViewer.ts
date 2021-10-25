@@ -1298,7 +1298,7 @@ export class Cognite3DViewer {
 
     const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration } = this;
 
-    if (duration == null) {
+    if (duration === undefined) {
       const distance = target.distanceTo(this.controls.getState().target);
       duration = distance * 125; // 125ms per unit distance
       duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration);
