@@ -16,8 +16,8 @@ interface ModelFileProps {
 }
 
 function getExternalId(fileInfo: FileInfo) {
-  const fileName = fileInfo.name || 'No Name';
   const sanitizeId = (id: string) => id.replace(/[^-.\w]+/g, '_');
+  const fileName = fileInfo.name || 'No Name';
   return {
     file: sanitizeId(
       `${fileInfo.source}-${fileName}-${
@@ -37,12 +37,16 @@ export async function uploadModelFile({
   boundaryConditions,
 }: ModelFileProps) {
   const externalId = getExternalId(fileInfo);
+  const sanitizeName = (name: string) => name.replace(/\/|\\/g, '_');
 
   await cdfUpload(cdfClient, file, {
     ...fileInfo,
+    name: sanitizeName(fileInfo.name),
     externalId: externalId.file,
     metadata: {
       ...fileInfo.metadata,
+      modelName: fileInfo.name,
+      fileName: fileInfo.metadata.fileName,
       dataType: DATA_TYPE_FILE,
     },
   });

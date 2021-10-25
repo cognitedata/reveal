@@ -23,6 +23,7 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
   const onDownloadClicked = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
+
     const value = e.currentTarget.getAttribute('data-external-id') || '';
     if (!links) {
       return;
@@ -35,7 +36,14 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
     if (!downloadUrl) {
       throw new Error('No Matching download url');
     }
-    forceDownloadDialog(value, downloadUrl);
+    const file = data.find((record) => record.externalId === value);
+    const fileName = file?.metadata?.fileName || value;
+    const downloadHasError = await forceDownloadDialog(fileName, downloadUrl);
+    if (downloadHasError) {
+      /* Here we could put a toast alert, but the probability
+      of this happening should be lower when the fix for SIM-102 is
+       implemented */
+    }
   };
   const getNewestFile = (items: FileInfoSerializable[]) =>
     items.sort(
@@ -76,7 +84,7 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
     return {
       id: 'name',
       Header: 'Name',
-      accessor: (row: FileInfoSerializable) => row.name,
+      accessor: (row: FileInfoSerializable) => row.metadata?.modelName,
     };
   };
   const cols = [

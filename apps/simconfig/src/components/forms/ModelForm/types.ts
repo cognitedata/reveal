@@ -12,6 +12,7 @@ export interface ModelMetadata extends Metadata {
   unitSystem: keyof typeof UnitSystem;
   userEmail: string;
   version: string;
+  modelName: string;
 }
 
 export interface CreatedAndUpdatedTime {

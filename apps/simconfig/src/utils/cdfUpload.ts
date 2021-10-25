@@ -21,7 +21,7 @@ const getUploadGCS = (file: Blob, url: string, { ...args } = {}) =>
 export async function cdfUpload(
   client: CogniteClient,
   file: File,
-  fileInfo: ExternalFileInfo = { name: file.name }
+  fileInfo: ExternalFileInfo
 ) {
   const ret = await client.files.upload(fileInfo);
   if (!('uploadUrl' in ret)) {

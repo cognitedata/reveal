@@ -32,6 +32,7 @@ const initialModelFormState: ModelFormData = {
     source: DEFAULT_MODEL_SOURCE,
     metadata: {
       dataType: '',
+      modelName: '',
       description: '',
       fileName: '',
       nextVersion: '',
