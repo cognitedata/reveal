@@ -6,6 +6,7 @@ export {
   trackLoadModel,
   trackCameraNavigation,
   trackEvent,
+  trackCreateTool,
   initMetrics,
   EventProps,
   TrackedEvents

@@ -92,6 +92,10 @@ export function trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
   mixpanel.track(eventName, combined);
 }
 
+export function trackCreateTool(toolName: string) {
+  trackEvent('toolCreated', { toolName });
+}
+
 export function trackLoadModel(eventProps: EventProps, modelIdentifier: any) {
   trackEvent('loadModel', { ...eventProps, modelIdentifier });
 }
