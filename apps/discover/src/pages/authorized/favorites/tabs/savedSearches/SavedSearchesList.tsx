@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
 import { Button } from '@cognite/cogs.js';
-import { SetCommentTarget } from '@cognite/react-comments';
+import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { shortDate } from '_helpers/date';
@@ -12,7 +12,7 @@ import { log } from '_helpers/log';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { Table } from 'components/tablev3';
+import { Table, TableResults } from 'components/tablev3';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
@@ -37,7 +37,8 @@ export type ModalType = 'Share' | 'Delete';
 
 export const SavedSearches: React.FC<{
   setCommentTarget: SetCommentTarget;
-}> = ({ setCommentTarget }) => {
+  commentTarget?: CommentTarget;
+}> = ({ setCommentTarget, commentTarget }) => {
   const { t } = useTranslation('Saved Searches');
   const options = { checkable: false, flex: false, disableSorting: true };
   const headers = getJsonHeaders({}, true);
@@ -47,6 +48,7 @@ export const SavedSearches: React.FC<{
     SavedSearchItem | undefined
   >();
   const [actionModal, setActionModal] = useState<ModalType | null>(null);
+  const [highlightedIds, setHighlightedIds] = useState<TableResults>();
 
   // close comment sidebar on page change
   React.useEffect(() => {
@@ -149,17 +151,20 @@ export const SavedSearches: React.FC<{
             shortDate(rowA.original.value.createdTime),
             shortDate(rowB.original.value.createdTime)
           ),
-        width: '300px',
+        width: '140px',
       },
       {
         id: 'saved-search-actions',
-        Header: '  ',
+        width: '140px',
         disableSorting: true,
-        width: 'auto',
       },
     ],
     []
   );
+
+  React.useEffect(() => {
+    setHighlightedIds(commentTarget ? { [commentTarget.id]: true } : {});
+  }, [commentTarget]);
 
   const renderRowHoverComponent: React.FC<{
     row: Row<SavedSearchItem>;
@@ -177,6 +182,7 @@ export const SavedSearches: React.FC<{
           handleOpenModal('Delete', item)
         }
         handleComment={(item: SavedSearchItem) => {
+          setHighlightedIds({ [row.original.value.id as string]: true });
           setCommentTarget({
             id: item.value.id as string,
             targetType: COMMENT_NAMESPACE.savedSearch,
@@ -204,6 +210,7 @@ export const SavedSearches: React.FC<{
             columns={columns}
             handleRowClick={handleRowClick}
             renderRowHoverComponent={renderRowHoverComponent}
+            highlightedIds={highlightedIds}
           />
         </PageContainer>
       )}

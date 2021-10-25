@@ -55,12 +55,14 @@ export const Feedback = () => {
       userManagementServiceBaseUrl={SIDECAR.userManagementServiceBaseUrl}
       fasAppId={SIDECAR.aadApplicationId}
     >
-      {({ setCommentTarget }) => {
+      {({ setCommentTarget, commentTarget }) => {
         const handleNavigation = (tabKey: string) => {
           const tabItem = navigationTabItems.find(
             (item) => item.key === tabKey
           );
+
           metrics.track(`click-navigate-to-${tabKey}-page-tab`);
+
           if (tabItem) {
             history.push(tabItem.path);
             setCommentTarget(undefined);
@@ -91,13 +93,19 @@ export const Feedback = () => {
                 <Route
                   path={navigation.ADMIN_FEEDBACK_GENERAL}
                   render={() => (
-                    <GeneralFeedback setCommentTarget={setCommentTarget} />
+                    <GeneralFeedback
+                      setCommentTarget={setCommentTarget}
+                      commentTarget={commentTarget}
+                    />
                   )}
                 />
                 <Route
                   path={navigation.ADMIN_FEEDBACK_DOCUMENT}
                   render={() => (
-                    <DocumentFeedback setCommentTarget={setCommentTarget} />
+                    <DocumentFeedback
+                      setCommentTarget={setCommentTarget}
+                      commentTarget={commentTarget}
+                    />
                   )}
                 />
                 <Redirect

@@ -5,13 +5,12 @@ import compact from 'lodash/compact';
 import isString from 'lodash/isString';
 import sortBy from 'lodash/sortBy';
 
-import { SetCommentTarget } from '@cognite/react-comments';
+import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import EmptyState from 'components/emptyState';
-import { Table } from 'components/tablev3/Table';
-import { Options, TableResults } from 'components/tablev3/types';
+import { Table, Options, TableResults } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import {
   useFeedbackUpdateMutate,
@@ -39,8 +38,12 @@ import { GeneralScreenshotModal } from './GeneralScreenshotModal';
 
 interface Props {
   setCommentTarget: SetCommentTarget;
+  commentTarget?: CommentTarget;
 }
-export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
+export const GeneralFeedbackTable: React.FC<Props> = ({
+  setCommentTarget,
+  commentTarget,
+}) => {
   const { data, isLoading, isError } =
     useFeedbackGetAllQuery<GeneralFeedbackItem[]>('general');
   const { mutateAsync: updateGeneralFeedback } =
@@ -50,6 +53,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
   const [feedback, setFeedback] = useState<GeneralFeedbackItem>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
   const { data: user } = useUserProfileQuery();
+  const [highlightedIds, setHighlightedIds] = useState<TableResults>();
 
   const feedbackColumns: ColumnMap<GeneralFeedbackItem> = {
     screenshot: {
@@ -87,7 +91,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
     assignedTo: {
       Header: FIELDS.assignedTo.display,
       accessor: 'assignedTo',
-      width: '100px',
+      width: '140px',
       maxWidth: '0.1fr',
       order: 2,
       Cell: (cell) => (
@@ -101,8 +105,8 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
     user: {
       Header: FIELDS.user.display,
       accessor: 'user',
-      width: '100px',
-      maxWidth: '0.11fr',
+      width: '140px',
+      maxWidth: '0.1fr',
       order: 3,
       Cell: (cell) => (
         <span>{getFullNameOrDefaultText(cell.row.original.user)}</span>
@@ -115,8 +119,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
     timestamp: {
       Header: FIELDS.date.display,
       accessor: 'timestamp',
-      width: '100px',
-      maxWidth: '0.1fr',
+      width: '140px',
       order: 4,
       Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
       sortType: (row1, row2) =>
@@ -129,7 +132,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       Header: 'Comment',
       accessor: 'comment',
       width: '250px',
-      maxWidth: '0.29fr',
+      maxWidth: '1fr',
       order: 5,
       Cell: (cell) => (
         <span>
@@ -148,12 +151,13 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
           feedbackRow={cell.row.original}
           showDeleted={generalFeedbackShowDeleted}
           setSelectedFeedback={setFeedback}
-          setCommentOpen={() =>
+          setCommentOpen={() => {
+            setHighlightedIds({ [cell.row.original.id]: true });
             setCommentTarget({
               id: cell.row.original.id,
               targetType: COMMENT_NAMESPACE.feedbackGeneral,
-            })
-          }
+            });
+          }}
           recoverFeedback={recoverFeedback}
           assignFeedback={(feedback: GeneralFeedbackItem) =>
             assignFeedback(feedback, user)
@@ -194,6 +198,10 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
       pageSize: 50,
     },
   });
+
+  React.useEffect(() => {
+    setHighlightedIds(commentTarget ? { [commentTarget.id]: true } : {});
+  }, [commentTarget]);
 
   const handleUpdateFeedbackStatus = (feedbackId: string, status: number) =>
     updateFeedbackStatus(feedbackId, status, updateGeneralFeedback);
@@ -275,6 +283,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({ setCommentTarget }) => {
         renderRowSubComponent={renderRowSubComponent}
         options={options}
         expandedIds={expandedIds}
+        highlightedIds={highlightedIds}
       />
     </>
   );

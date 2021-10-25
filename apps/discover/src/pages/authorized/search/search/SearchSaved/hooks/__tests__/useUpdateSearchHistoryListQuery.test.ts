@@ -48,6 +48,7 @@ describe('useUpdateSearchHistoryListQuery hook', () => {
     expect(setQueryData).toBeCalledWith(SEARCH_HISTORY_KEY.LIST, [
       {
         name: 'default-saved-search',
+        id: 'test-id',
         value: {
           filters: {
             documents: {

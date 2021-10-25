@@ -5,13 +5,12 @@ import { Row } from 'react-table';
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
 
-import { SetCommentTarget } from '@cognite/react-comments';
+import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import { OKModal } from 'components/modal';
-import { Table } from 'components/tablev3/Table';
-import { Options, TableResults } from 'components/tablev3/types';
+import { Table, Options, TableResults } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
@@ -44,10 +43,12 @@ import { DocumentFeedbackLabels } from './DocumentFeedbackLabels';
 interface Props {
   documentFeedbackItems: DocumentFeedbackItem[];
   setCommentTarget: SetCommentTarget;
+  commentTarget?: CommentTarget;
 }
 export const DocumentFeedbackTable: React.FC<Props> = ({
   documentFeedbackItems,
   setCommentTarget,
+  commentTarget,
 }) => {
   const { objectFeedbackShowDeleted } = useFeedback();
   const [_feedback, setFeedback] = useState<DocumentFeedbackItem>();
@@ -60,6 +61,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
   const { mutateAsync: updateDocumentFeedback } =
     useFeedbackUpdateMutate('object');
 
+  const [highlightedIds, setHighlightedIds] = useState<TableResults>();
   const [expandedIds, setExpandedIds] = useState<TableResults>({});
   const [isDeleteWarningOpen, setDeleteWarningOpen] = useState(false);
 
@@ -77,8 +79,8 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     markedAs: {
       Header: FIELDS.markedAs.display,
       accessor: 'markedAs',
-      width: '100px',
-      maxWidth: '0.4fr',
+      width: '300px',
+      maxWidth: '0.5fr',
       order: 0,
       Cell: (cell) => <DocumentFeedbackLabels feedback={cell.row.original} />,
       // sortType: (row1, row2) => row1.original.markedAs
@@ -116,8 +118,8 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     comment: {
       Header: 'User comment',
       accessor: 'comment',
-      width: '100px',
-      maxWidth: '0.6fr',
+      width: '300px',
+      maxWidth: '0.5fr',
       order: 3,
       Cell: (cell) => (
         <span>
@@ -191,6 +193,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
           showDeleted={objectFeedbackShowDeleted}
           setSelectedFeedback={setFeedback}
           setCommentOpen={() => {
+            setHighlightedIds({ [cell.row.original.id]: true });
             setCommentTarget({
               id: cell.row.original.id,
               targetType: COMMENT_NAMESPACE.feedbackDocument,
@@ -220,6 +223,10 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       payload: { assignedTo: user?.id || '' },
     });
   };
+
+  React.useEffect(() => {
+    setHighlightedIds(commentTarget ? { [commentTarget.id]: true } : {});
+  }, [commentTarget]);
 
   const columns = React.useMemo(
     () =>
@@ -316,6 +323,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
         renderRowSubComponent={renderRowSubComponent}
         options={options}
         expandedIds={expandedIds}
+        highlightedIds={highlightedIds}
       />
     </>
   );

@@ -11,6 +11,7 @@ export const getMockedEmptySavedSearch = (name?: string): SavedSearchItem => ({
     filters: {},
   },
   name: name || DEFAULT_MOCKED_SAVED_SEARCH_NAME,
+  id: 'test-id',
 });
 
 export const getMockedSavedSearchWithFilters = (

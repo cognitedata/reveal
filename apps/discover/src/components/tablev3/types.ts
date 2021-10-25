@@ -5,7 +5,6 @@ import { SortBy } from '../../pages/types';
 
 import { RowProps } from './index';
 
-type ExpandedIds = TableResults;
 type IndeterminateIds = TableResults;
 type SelectedIds = TableResults;
 export type HandleRowClick = (rowInformation: any) => void;
@@ -19,8 +18,9 @@ export interface TableProps<T extends Object> extends TableOptions<T> {
   checkIfCheckboxEnabled?: (row: any) => boolean;
   columns: any[];
   data: T[];
+  highlightedIds?: TableResults;
+  expandedIds?: TableResults;
   disabledRowClickCells?: string[];
-  expandedIds?: ExpandedIds;
   handleDoubleClick?: HandleRowClick;
   handleMouseEnter?: HandleRowMouseEnter;
   handleMouseLeave?: HandleRowMouseLeave;

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -54,6 +55,7 @@ const TableInner = <T extends Object>({
   options = {},
   selectedIds,
   expandedIds = {},
+  highlightedIds = {},
   indeterminateIds = {},
   disabledRowClickCells = [],
   hideHeaders,
@@ -144,29 +146,18 @@ const TableInner = <T extends Object>({
     ...hooks
   );
 
-  // override expanded state when expanded ids are provided from outside
-  if (expandedIds) {
+  // Expand, Highlight or Select rows, or show indeterminate checkboxes when needed
+  if (expandedIds || highlightedIds || selectedIds || indeterminateIds) {
     rows.forEach((row: any) => {
-      row.isExpanded = expandedIds[row.original.id]; // eslint-disable-line no-param-reassign
+      row.isExpanded = expandedIds[row.original.id];
+      row.isHighlighted = highlightedIds[row.original.id];
+      row.isSelected = selectedIds && selectedIds[row.original.id];
+      row.isIndeterminate = indeterminateIds[row.original.id];
     });
   }
 
-  // override selected state when selected ids are provided from outside
-  if (selectedIds) {
-    rows.forEach((row: any) => {
-      row.isSelected = selectedIds[row.original.id]; // eslint-disable-line no-param-reassign
-    });
-  }
-
-  // override indeterminate state when indeterminate ids are provided from outside
-  if (indeterminateIds) {
-    rows.forEach((row: any) => {
-      row.isIndeterminate = indeterminateIds[row.original.id]; // eslint-disable-line no-param-reassign
-    });
-  }
-
-  const CustomTableHead = TableHead; // || from props
-  const CustomTableRow = TableRow; // || from props
+  const CustomTableHead = TableHead;
+  const CustomTableRow = TableRow;
 
   // keep a nice track of the selected items so we can give them to the renderProps
   React.useEffect(() => {
@@ -317,7 +308,9 @@ const TableInner = <T extends Object>({
           ? expandedIds[get(row, 'original.id')]
           : get(row, 'isSelected');
 
+        const isHighlighted = get(row, 'isHighlighted');
         const expanded = renderRowSubComponent && isExpanded;
+
         return (
           <CustomRow<T>
             key={`table-${row.id || get(row, 'original.id')}`}
@@ -328,6 +321,7 @@ const TableInner = <T extends Object>({
             handleMouseLeave={handleMouseLeave}
             handleRowClick={handleRowClick}
             handleDoubleClick={handleDoubleClick}
+            highlighted={isHighlighted}
             renderRowSubComponent={renderRowSubComponent}
             rowOptions={rowOptions}
             expanded={expanded}

@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
 import { Avatar } from '@cognite/cogs.js';
-import { SetCommentTarget } from '@cognite/react-comments';
+import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
-import { Table } from 'components/tablev3';
+import { Table, TableResults } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
@@ -27,6 +27,7 @@ export interface Props {
   handleNavigateFavoriteSet: (item: FavoriteSummary) => void;
   isOwner: (userId: string) => boolean;
   setCommentTarget: SetCommentTarget;
+  commentTarget?: CommentTarget;
 }
 
 const ListView: React.FC<Props> = ({
@@ -35,9 +36,11 @@ const ListView: React.FC<Props> = ({
   handleNavigateFavoriteSet,
   handleOpenModal,
   setCommentTarget,
+  commentTarget,
 }) => {
   const { t } = useTranslation('Favorites');
   const options = { checkable: false, flex: false };
+  const [highlightedIds, setHighlightedIds] = React.useState<TableResults>();
 
   const columns = useMemo(
     () => [
@@ -105,6 +108,10 @@ const ListView: React.FC<Props> = ({
     []
   );
 
+  React.useEffect(() => {
+    setHighlightedIds(commentTarget ? { [commentTarget.id]: true } : {});
+  }, [commentTarget]);
+
   const data = useMemo(() => {
     return favorites.filter((favourite) => favourite);
   }, [favorites]);
@@ -113,12 +120,13 @@ const ListView: React.FC<Props> = ({
     <Actions
       set={original}
       handleOpenModal={handleOpenModal}
-      handleComment={() =>
+      handleComment={() => {
+        setHighlightedIds({ [original.id]: true });
         setCommentTarget({
           id: original.id,
           targetType: COMMENT_NAMESPACE.favorite,
-        })
-      }
+        });
+      }}
       showDeleteButton={isOwner(original.owner.id)}
       showShareButton={isOwner(original.owner.id)}
       showEditButton={isOwner(original.owner.id)}
@@ -138,6 +146,7 @@ const ListView: React.FC<Props> = ({
         columns={columns}
         renderRowHoverComponent={renderRowHoverComponent}
         handleRowClick={handleRowClick}
+        highlightedIds={highlightedIds}
       />
     </PageContainer>
   );

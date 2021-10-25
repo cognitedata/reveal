@@ -1,13 +1,19 @@
 import React from 'react';
 
-import { SetCommentTarget } from '@cognite/react-comments';
+import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import GeneralFeedbackTable from './GeneralFeedbackTable';
 
 export const GeneralFeedback: React.FC<{
   setCommentTarget: SetCommentTarget;
-}> = ({ setCommentTarget }) => {
-  return <GeneralFeedbackTable setCommentTarget={setCommentTarget} />;
+  commentTarget?: CommentTarget;
+}> = ({ setCommentTarget, commentTarget }) => {
+  return (
+    <GeneralFeedbackTable
+      setCommentTarget={setCommentTarget}
+      commentTarget={commentTarget}
+    />
+  );
 };
 
 export default GeneralFeedback;

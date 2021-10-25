@@ -23,7 +23,6 @@ export const DocumentFeedbackDetailsWrapper = styled.div`
 `;
 
 export const LabelContainer = styled.div`
-  padding: ${sizes.extraSmall} 0;
   line-height: var(--cogs-t2-line-height);
 `;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SetCommentTarget } from '@cognite/react-comments';
+import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import EmptyState from 'components/emptyState';
 import { useFeedbackGetAllQuery } from 'modules/api/feedback/useFeedbackQuery';
@@ -8,9 +8,10 @@ import { DocumentFeedbackItem } from 'modules/feedback/types';
 
 import { DocumentFeedbackTable } from './DocumentFeedbackTable';
 
-const DocumentFeedback: React.FC<{ setCommentTarget: SetCommentTarget }> = ({
-  setCommentTarget,
-}) => {
+const DocumentFeedback: React.FC<{
+  setCommentTarget: SetCommentTarget;
+  commentTarget?: CommentTarget;
+}> = ({ setCommentTarget, commentTarget }) => {
   const {
     isLoading,
     data,
@@ -33,6 +34,7 @@ const DocumentFeedback: React.FC<{ setCommentTarget: SetCommentTarget }> = ({
     <DocumentFeedbackTable
       documentFeedbackItems={data}
       setCommentTarget={setCommentTarget}
+      commentTarget={commentTarget}
     />
   );
 };

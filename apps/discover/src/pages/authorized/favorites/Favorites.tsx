@@ -17,7 +17,7 @@ export const Favorites: React.FC = () => {
       commentServiceBaseUrl={SIDECAR.commentServiceBaseUrl}
       userManagementServiceBaseUrl={SIDECAR.userManagementServiceBaseUrl}
     >
-      {({ setCommentTarget }) => {
+      {({ setCommentTarget, commentTarget }) => {
         return (
           <>
             <FavoriteHeader
@@ -30,7 +30,10 @@ export const Favorites: React.FC = () => {
                     exact
                     path={navigation.FAVORITES_SAVED_SEARCH}
                     render={() => (
-                      <SavedSearches setCommentTarget={setCommentTarget} />
+                      <SavedSearches
+                        setCommentTarget={setCommentTarget}
+                        commentTarget={commentTarget}
+                      />
                     )}
                   />
 
@@ -38,7 +41,10 @@ export const Favorites: React.FC = () => {
                     exact
                     path={navigation.FAVORITES}
                     render={() => (
-                      <FavoriteContent setCommentTarget={setCommentTarget} />
+                      <FavoriteContent
+                        setCommentTarget={setCommentTarget}
+                        commentTarget={commentTarget}
+                      />
                     )}
                   />
                 </Switch>

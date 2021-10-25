@@ -80,6 +80,7 @@ export const savedSearches = {
           ...result,
           {
             name,
+            id: value.id,
             value: values,
             owner,
           },

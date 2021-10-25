@@ -11,6 +11,7 @@ export interface SavedSearchItem {
   value: SavedSearchContent;
   name: string;
   owner?: BasicUserInfo;
+  id?: string;
 }
 
 export interface SavedSearchContent {

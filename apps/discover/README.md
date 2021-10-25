@@ -142,6 +142,7 @@ Then in the test:
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `gyp: No Xcode or CLT version detected!` | [Follow these steps](https://medium.com/flawless-app-stories/gyp-no-xcode-or-clt-version-detected-macos-catalina-anansewaa-38b536389e8d)        |
 | `Yarn cannot find ...........`           | <ol><li>Did you run `npm login`?</li><li>Are you [added](https://github.com/cognitedata/terraform-npm/blob/master/cogniters.tf) here?</li></ol> |
+| `iBazel ........... permission denied`   | Run `bazel clean --expunge` from the apps/discover directory.                                                                                   |
 
 #### Local debugging
 

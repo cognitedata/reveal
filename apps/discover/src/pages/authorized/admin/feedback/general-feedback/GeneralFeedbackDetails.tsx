@@ -11,6 +11,7 @@ import { GeneralFeedbackItem } from 'modules/feedback/types';
 import { Flex, sizes } from 'styles/layout';
 
 const FeedbackDetailsTableContainer = styled.div`
+  width: 100%;
   padding: ${sizes.medium};
   display: grid;
   row-gap: 15px;

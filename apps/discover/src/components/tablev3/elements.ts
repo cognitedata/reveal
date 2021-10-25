@@ -39,6 +39,7 @@ export const TableCell = styled.div`
   align-items: center;
   justify-content: flex-start;
   color: inherit;
+  background: inherit;
   border-bottom: 1px solid #e5e5e5;
 
   &:empty:after {
@@ -67,6 +68,7 @@ export const HoverCell = styled.div`
   pointer-events: none;
   position: sticky;
   right: 0;
+  background: inherit;
 `;
 
 export const HoverContentWrapper = styled.span`
@@ -79,7 +81,7 @@ export const HoverContentWrapper = styled.span`
   height: 100%;
   padding: 0 0 0 ${sizes.small};
   z-index: ${layers.TABLE_ROW_HOVER};
-  background: var(--cogs-greyscale-grey1);
+  background: inherit;
   border-bottom: 1px solid #e5e5e5;
 
   transform: translateX(-4px);
@@ -97,8 +99,9 @@ export const ExpandedRow = (maxWidth: string) => css`
     position: sticky;
     left: 0;
   }
+  background: var(--cogs-greyscale-grey1) !important;
+
   & > ${TableCell} {
-    background: var(--cogs-greyscale-grey1);
     padding: 0;
     grid-column: 1/-1;
 
@@ -116,15 +119,31 @@ export const ExpandedRow = (maxWidth: string) => css`
 export const TableRow = styled.div`
   display: contents;
 
+  /* Apply styling for expanded rows */
   ${(props: { expandedRow?: boolean; maxWidth: string }) =>
     props.expandedRow && ExpandedRow(props.maxWidth)}
 
+  /* Apply styling for highlighted rows */
+  ${(props: { highlighted?: boolean }) =>
+    props.highlighted &&
+    css`
+      background: var(--cogs-bg-control--toggled);
+
+      &:hover {
+        background: var(--cogs-bg-control--toggled-hover);
+      }
+    `}
+
   &:hover {
     z-index: ${layers.TABLE_ROW_HOVER};
+    background: var(--cogs-greyscale-grey1);
 
-    & > ${TableCell} {
-      background: var(--cogs-greyscale-grey1);
-    }
+    /* Apply styling for highlighted rows */
+    ${(props: { highlighted?: boolean }) =>
+      props.highlighted &&
+      css`
+        background: var(--cogs-bg-control--toggled-hover);
+      `}
 
     & > ${TableHead} {
       background: var(--cogs-white);

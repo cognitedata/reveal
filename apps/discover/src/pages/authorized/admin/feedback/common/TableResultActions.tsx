@@ -9,6 +9,7 @@ import { sizes } from 'styles/layout';
 import { ActionContainer } from './elements';
 
 export const ActionColumn = styled(ActionContainer)`
+  height: unset;
   padding-left: 0px;
   & > * {
     margin-right: ${sizes.normal};

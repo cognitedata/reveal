@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { SetCommentTarget } from '@cognite/react-comments';
+import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
 import navigation from 'constants/navigation';
 import {
@@ -28,8 +28,12 @@ import { ModalType } from './types';
 
 export interface Props {
   setCommentTarget: SetCommentTarget;
+  commentTarget?: CommentTarget;
 }
-export const FavoriteContent: React.FC<Props> = ({ setCommentTarget }) => {
+export const FavoriteContent: React.FC<Props> = ({
+  setCommentTarget,
+  commentTarget,
+}) => {
   const [actionModal, setActionModal] = useState<ModalType | null>(null);
   const [selectedItem, setSelectedItem] = useState<
     FavoriteSummary | undefined
@@ -108,6 +112,7 @@ export const FavoriteContent: React.FC<Props> = ({ setCommentTarget }) => {
               sets={favoriteSets || []}
               isOwner={isOwner}
               setCommentTarget={setCommentTarget}
+              commentTarget={commentTarget}
             />
           )}
 

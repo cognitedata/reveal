@@ -34,6 +34,7 @@ interface RowProps<T extends Object> {
   hideBorders?: boolean;
   expanded?: boolean;
   disabledRowClickCells?: string[];
+  highlighted?: boolean;
   /**
    * Used as a maximum size for a sub-table
    */
@@ -51,6 +52,7 @@ const CustomRowComp = <T extends Object>({
   renderRowHoverComponent,
   hideBorders = false,
   expanded = false,
+  highlighted = false,
   disabledRowClickCells = [],
   maxWidth,
 }: React.PropsWithChildren<RowProps<T>>) => {
@@ -105,6 +107,7 @@ const CustomRowComp = <T extends Object>({
         data-testid="table-row"
         onMouseEnter={handleRowMouseEnter}
         onMouseLeave={handleRowMouseLeave}
+        highlighted={highlighted}
       >
         {renderTableRow}
 
@@ -122,7 +125,12 @@ const CustomRowComp = <T extends Object>({
           then render whatever content is required
         */}
       {renderRowSubComponent && expanded && (
-        <RowComponent expandedRow maxWidth={maxWidth} data-testid="table-row">
+        <RowComponent
+          expandedRow
+          maxWidth={maxWidth}
+          highlighted={highlighted}
+          data-testid="table-row"
+        >
           <TableCell data-testid="table-cell-expanded">
             {renderRowSubComponent({ row })}
           </TableCell>
