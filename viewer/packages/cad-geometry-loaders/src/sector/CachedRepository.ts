@@ -2,7 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, trackError, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
+import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
+import { Repository } from './Repository';
+
+import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
+import { createOffsetsArray } from '../utilities/arrays';
+
+import { assertNever, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
+import { trackError } from '@reveal/metrics';
 import {
   CadSectorParser,
   LevelOfDetail,
@@ -13,13 +20,6 @@ import {
   InstancedMeshFile,
   InstancedMesh
 } from '@reveal/cad-parsers';
-
-import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { Repository } from './Repository';
-
-import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
-import { createOffsetsArray } from '../utilities/arrays';
-
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 
