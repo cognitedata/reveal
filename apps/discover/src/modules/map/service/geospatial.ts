@@ -5,78 +5,9 @@ import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
 import { SpatialSearchItemResponse } from 'modules/wellSearch/service';
 
+import { FetchHeaders } from '../../../_helpers/fetch';
+import { discoverAPI } from '../../api/service';
 import { getGeospatialSDKClient } from '../sdk';
-
-export const getGenericMapLayer = async () => {
-  const geospatialSDK = getGeospatialSDKClient();
-
-  return geospatialSDK
-    ?.findSpatial({
-      limit: 1000,
-      layer: 'custom',
-      source: 'custom',
-      outputGeometry: 'geojson',
-    })
-    .then((result) => {
-      // console.log('result', result);
-      return result;
-    });
-};
-
-export async function getWellHeads(tenant: string, cursor?: string) {
-  // This will be replaced by spatial search sdk when its ready to fetch without limit
-  const response = await getCogniteSDKClient().post(
-    `${API_PLAYGROUND_DOMAIN}/${tenant}/spatial/search?geometry=geojson`,
-    {
-      data: {
-        limit: 1000,
-        layer: 'wellhead',
-        source: 'well-data-layer',
-        attributes: ['head'],
-        cursor,
-      },
-    }
-  );
-
-  let items = response.data.items || [];
-
-  // This will send API requests recursively untill all the well heads are loaded.
-  // Commenting this for now due to performance impact.
-
-  let { nextCursor } = response.data;
-  while (nextCursor) {
-    // eslint-disable-next-line no-await-in-loop
-    const rows = await getCogniteSDKClient().post(
-      `${API_PLAYGROUND_DOMAIN}/${tenant}/spatial/search?geometry=geojson`,
-      {
-        data: {
-          limit: 1000,
-          layer: 'wellhead',
-          source: 'well-data-layer',
-          attributes: ['head'],
-          cursor: nextCursor,
-        },
-      }
-    );
-    items = [...items, ...rows.data.items];
-    nextCursor = rows.data.nextCursor;
-  }
-
-  const features = items.map((item: SpatialSearchItemResponse) => ({
-    type: 'Feature',
-    properties: {
-      id: head(item.assetIds),
-      highlight: 'true',
-    },
-    ...item.attributes,
-    geometry: item.attributes.head,
-  }));
-  return {
-    features,
-    type: 'FeatureCollection',
-    nextCursor: response.data.nextCursor,
-  };
-}
 
 const cache: {
   getLicenses?: Promise<{ features: any; type: string }>;
@@ -107,6 +38,53 @@ const cache: {
   getProspects: undefined,
   getTrajectories: undefined,
 };
+
+export const getGenericMapLayer = async () => {
+  const geospatialSDK = getGeospatialSDKClient();
+
+  return geospatialSDK
+    ?.findSpatial({
+      limit: 1000,
+      layer: 'custom',
+      source: 'custom',
+      outputGeometry: 'geojson',
+    })
+    .then((result) => {
+      // console.log('result', result);
+      return result;
+    });
+};
+
+export async function getWellHeads(tenant: string, headers: FetchHeaders) {
+  const response =
+    await discoverAPI.geospatial.search<SpatialSearchItemResponse>(
+      {
+        data: {
+          limit: 1000,
+          layer: 'wellhead',
+          source: 'well-data-layer',
+          attributes: ['head'],
+        },
+      },
+      headers,
+      tenant
+    );
+  const items = response || [];
+
+  const features = items.map((item: SpatialSearchItemResponse) => ({
+    type: 'Feature',
+    properties: {
+      id: head(item.assetIds),
+      highlight: 'true',
+    },
+    ...item.attributes,
+    geometry: item.attributes.head,
+  }));
+  return {
+    features,
+    type: 'FeatureCollection',
+  };
+}
 
 export async function getFields(tenant: string) {
   if (cache.getFields) {
@@ -608,42 +586,20 @@ export async function getTrajectories(tenant: string) {
   return cache.getTrajectories;
 }
 
-export async function getAllBlocks(tenant: string, cursor?: string) {
-  // This will be replaced by spatial search sdk when its ready to fetch without limit
-  const response = await getCogniteSDKClient().post(
-    `${API_PLAYGROUND_DOMAIN}/${tenant}/spatial/search?geometry=geojson`,
+export async function getAllBlocks(tenant: string, headers: FetchHeaders) {
+  const response = await discoverAPI.geospatial.search<NPDLayerItemResponse>(
     {
       data: {
         limit: 1000,
         layer: 'whereoil-blocks',
         attributes: ['geometry', 'name'],
-        cursor,
       },
-    }
+    },
+    headers,
+    tenant
   );
 
-  let items = response.data.items || [];
-
-  // This will send API requests recursively untill all the well heads are loaded.
-  // Commenting this for now due to performance impact.
-
-  let { nextCursor } = response.data;
-  while (nextCursor) {
-    // eslint-disable-next-line no-await-in-loop
-    const rows = await getCogniteSDKClient().post(
-      `${API_PLAYGROUND_DOMAIN}/${tenant}/spatial/search?geometry=geojson`,
-      {
-        data: {
-          limit: 1000,
-          layer: 'whereoil-blocks',
-          attributes: ['geometry', 'name'],
-          cursor: nextCursor,
-        },
-      }
-    );
-    items = [...items, ...rows.data.items];
-    nextCursor = rows.data.nextCursor;
-  }
+  const items = response || [];
 
   const features = items.map((item: NPDLayerItemResponse) => ({
     type: 'Feature',
@@ -656,46 +612,23 @@ export async function getAllBlocks(tenant: string, cursor?: string) {
   return {
     features,
     type: 'FeatureCollection',
-    nextCursor: response.data.nextCursor,
   };
 }
 
-export async function getAllWellbores(tenant: string, cursor?: string) {
-  // This will be replaced by spatial search sdk when its ready to fetch without limit
-  const response = await getCogniteSDKClient().post(
-    `${API_PLAYGROUND_DOMAIN}/${tenant}/spatial/search?geometry=geojson`,
+export async function getAllWellbores(tenant: string, headers: FetchHeaders) {
+  const response = await discoverAPI.geospatial.search<NPDLayerItemResponse>(
     {
       data: {
         limit: 1000,
         layer: 'whereoil-wellbores',
         attributes: ['geometry', 'name', 'type'],
-        cursor,
       },
-    }
+    },
+    headers,
+    tenant
   );
 
-  let items = response.data.items || [];
-
-  // This will send API requests recursively untill all the well heads are loaded.
-  // Commenting this for now due to performance impact.
-
-  let { nextCursor } = response.data;
-  while (nextCursor) {
-    // eslint-disable-next-line no-await-in-loop
-    const rows = await getCogniteSDKClient().post(
-      `${API_PLAYGROUND_DOMAIN}/${tenant}/spatial/search?geometry=geojson`,
-      {
-        data: {
-          limit: 1000,
-          layer: 'whereoil-wellbores',
-          attributes: ['geometry', 'name', 'type'],
-          cursor: nextCursor,
-        },
-      }
-    );
-    items = [...items, ...rows.data.items];
-    nextCursor = rows.data.nextCursor;
-  }
+  const items = response || [];
 
   const features = items.map((item: NPDLayerItemResponse) => ({
     type: 'Feature',
@@ -709,6 +642,5 @@ export async function getAllWellbores(tenant: string, cursor?: string) {
   return {
     features,
     type: 'FeatureCollection',
-    nextCursor: response.data.nextCursor,
   };
 }

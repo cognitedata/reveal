@@ -6,6 +6,7 @@ import { useIdToken as useIdTokenHook } from 'hooks/useIdToken';
 import { documents } from './documents';
 import { favorites } from './favorites';
 import { feedback } from './feedback';
+import { geospatial } from './geospatial';
 import { projectConfig } from './projectConfig';
 import { savedSearches } from './savedSearches';
 import { searchHistory } from './searchHistory';
@@ -44,4 +45,5 @@ export const discoverAPI = {
   feedback,
   projectConfig,
   searchHistory,
+  geospatial,
 };

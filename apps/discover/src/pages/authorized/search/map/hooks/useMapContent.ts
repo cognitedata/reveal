@@ -18,6 +18,7 @@ import { mapService } from 'modules/map/service';
 import { MapDataSource } from 'modules/map/types';
 import { RemoteServiceResponse } from 'tenants/types';
 
+import { getJsonHeaders } from '../../../../../modules/api/service';
 import { getAssetFilter, getAssetData } from '../utils';
 
 import { useLayers } from './useLayers';
@@ -27,6 +28,7 @@ export const useMapContent = () => {
   const [tenant] = getTenantInfo();
   const { sources } = useMap();
   const dispatch = useDispatch();
+  const headers = getJsonHeaders();
 
   const startLazyLoad = (lazyIds: [string, string][]) => {
     lazyIds.forEach(async (lazyId) => {
@@ -35,10 +37,7 @@ export const useMapContent = () => {
       let nextCursor: string | undefined = cursor;
       while (nextCursor && service) {
         // eslint-disable-next-line no-await-in-loop
-        const response: RemoteServiceResponse = await service(
-          tenant,
-          nextCursor
-        );
+        const response: RemoteServiceResponse = await service(tenant, headers);
         dispatch(
           patchSource({
             id,
@@ -86,11 +85,8 @@ export const useMapContent = () => {
 
         if (remoteService) {
           promises.push(
-            remoteService(tenant).then((content) => {
+            remoteService(tenant, headers).then((content) => {
               pushResponse(content);
-              if (content.nextCursor) {
-                lazyIds.push([id, content.nextCursor]);
-              }
             })
           );
         }

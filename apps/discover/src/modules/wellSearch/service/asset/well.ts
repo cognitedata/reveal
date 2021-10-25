@@ -1,3 +1,4 @@
+import { Geometry } from '@turf/helpers';
 import get from 'lodash/get';
 
 import { WellFilter } from '@cognite/sdk-wells-v2';
@@ -9,7 +10,7 @@ export interface SpatialSearchItemResponse {
   assetIds: number[];
   name: string;
   attributes: {
-    head: string;
+    head: Geometry;
   };
 }
 

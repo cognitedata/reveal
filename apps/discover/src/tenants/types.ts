@@ -22,6 +22,8 @@ import { Modules } from 'modules/sidebar/types';
 import { SequenceFilter } from 'modules/wellSearch/service';
 import { LogTypes, TrackType } from 'modules/wellSearch/types';
 
+import { FetchHeaders } from '../_helpers/fetch';
+
 export type MapLayer = (AnyLayer | CustomLayerInterface) & {
   weight?: number;
   source: string;
@@ -34,7 +36,7 @@ export interface Layer {
   remote?: string;
   remoteService?: (
     tenant: string,
-    cursor?: string
+    headers?: FetchHeaders
   ) => Promise<RemoteServiceResponse>;
   local?: string;
   color: string;
