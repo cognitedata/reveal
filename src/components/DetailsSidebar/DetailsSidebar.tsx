@@ -20,8 +20,8 @@ import StatisticsCallStatus from 'components/StatisticsCallStatus';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import { roundToSignificantDigits } from 'utils/axis';
-import { convertValue } from 'utils/units';
+import { formatValueForDisplay } from 'utils/numbers';
+import { getUnitConverter } from 'utils/units';
 import {
   Container,
   ContentOverflowWrapper,
@@ -141,6 +141,7 @@ const Statistics = ({
   const unit = sourceItem?.unit;
   const preferredUnit = sourceItem?.preferredUnit;
   const displayUnit = getDisplayUnit(preferredUnit);
+  const convertUnit = getUnitConverter(unit, preferredUnit);
 
   return (
     <>
@@ -170,12 +171,7 @@ const Statistics = ({
             <Row className="ant-list-item">
               <Col span={14}>{label}</Col>
               <Col span={10} style={{ textAlign: 'right' }}>
-                {typeof value === 'number'
-                  ? `${roundToSignificantDigits(
-                      convertValue(value, unit, preferredUnit),
-                      3
-                    )} ${displayUnit}`
-                  : '-'}
+                {formatValueForDisplay(convertUnit(value))} {displayUnit}
               </Col>
             </Row>
           )}
@@ -193,12 +189,7 @@ const Statistics = ({
             <Row className="ant-list-item">
               <Col span={14}>{label}</Col>
               <Col span={10} style={{ textAlign: 'right' }}>
-                {typeof value === 'number'
-                  ? `${roundToSignificantDigits(
-                      convertValue(value, unit, preferredUnit),
-                      3
-                    )} ${displayUnit}`
-                  : '-'}
+                {formatValueForDisplay(convertUnit(value))} {displayUnit}
               </Col>
             </Row>
           )}
@@ -224,20 +215,9 @@ const Statistics = ({
       <DetailsBlock title="Histogram">
         <HistogramWrapper>
           <Histogram
-            data={statistics?.histogram?.map(
-              ({ range_start, range_end, quantity }) => ({
-                range_start: range_start
-                  ? convertValue(range_start, unit, preferredUnit)
-                  : NaN,
-                range_end: range_end
-                  ? convertValue(range_end, unit, preferredUnit)
-                  : NaN,
-                quantity: quantity
-                  ? convertValue(quantity, unit, preferredUnit)
-                  : NaN,
-              })
-            )}
-            unit={preferredUnit || ''}
+            data={statistics?.histogram}
+            unit={unit}
+            preferredUnit={preferredUnit}
           />
         </HistogramWrapper>
       </DetailsBlock>

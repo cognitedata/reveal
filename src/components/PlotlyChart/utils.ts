@@ -9,7 +9,7 @@ import {
 import dayjs from 'dayjs';
 import groupBy from 'lodash/groupBy';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import { roundToSignificantDigits } from 'utils/axis';
+import { roundToSignificantDigits } from 'utils/numbers';
 import { hexToRGBA } from 'utils/colors';
 import { convertUnits, units } from 'utils/units';
 import { useDebouncedCallback } from 'use-debounce';

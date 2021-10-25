@@ -1,31 +1,38 @@
 /* eslint camelcase: 0 */
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-basic-dist';
-import { StatisticsResultResultsHistogram } from '@cognite/calculation-backend';
-import { formatNumber, getDisplayUnit } from '.';
+import { StatisticsResultResults } from '@cognite/calculation-backend';
+import { getUnitConverter } from 'utils/units';
+import { formatValueForDisplay } from 'utils/numbers';
+import { getDisplayUnit } from '.';
 
 const Plot = createPlotlyComponent(Plotly);
 
 type HistogramProps = {
-  data?: StatisticsResultResultsHistogram[];
-  unit: string;
+  data?: StatisticsResultResults['histogram'];
+  unit?: string;
+  preferredUnit?: string;
 };
 
-export const Histogram = ({ data, unit }: HistogramProps) => {
-  return data && data.length <= 0 ? (
-    <span>No data</span>
-  ) : (
+export const Histogram = ({ data, unit, preferredUnit }: HistogramProps) => {
+  if (!data || !data.length) {
+    return <span>No histogram data available</span>;
+  }
+
+  const convertUnit = getUnitConverter(unit, preferredUnit);
+
+  return (
     <Plot
       data={[
         {
           type: 'bar',
-          x: data?.map(({ range_start }) => formatNumber(range_start || NaN)),
-          y: data?.map(({ quantity }) => quantity || NaN),
-          hovertext: data?.map(
-            ({ quantity, range_start, range_end }) =>
-              `${quantity} between ${formatNumber(
-                range_start || NaN
-              )} and ${formatNumber(range_end || NaN)}`
+          x: data.map(({ range_start = NaN }) => range_start).map(convertUnit),
+          y: data.map(({ quantity = NaN }) => quantity),
+          hovertext: data.map(
+            ({ quantity = NaN, range_start = NaN, range_end = NaN }) =>
+              `${quantity} between ${formatValueForDisplay(
+                convertUnit(range_start)
+              )} and ${formatValueForDisplay(convertUnit(range_end))}`
           ),
           hoverinfo: 'text',
           hoverlabel: {
@@ -42,13 +49,14 @@ export const Histogram = ({ data, unit }: HistogramProps) => {
         bargap: 0,
         margin: { l: 30, r: 5, t: 0, b: 70 },
         xaxis: {
-          tickvals: data?.map(({ range_start }) =>
-            formatNumber(range_start || NaN)
-          ),
+          tickvals: data
+            .map(({ range_start = NaN }) => range_start)
+            .map(convertUnit)
+            .map((x) => formatValueForDisplay(x)),
           ticks: 'outside',
           tickangle: 45,
           title: {
-            text: getDisplayUnit(unit),
+            text: getDisplayUnit(preferredUnit),
             standoff: 60,
           },
         },

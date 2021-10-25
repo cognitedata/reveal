@@ -2,6 +2,7 @@ import { Aggregate, CogniteClient, DatapointAggregate } from '@cognite/sdk';
 import { subDays } from 'date-fns';
 import { Chart } from 'models/chart/types';
 import { convertUnits } from 'utils/units';
+import { roundToSignificantDigits } from './numbers';
 
 const OUTLIER_THRESHOLD = 1000;
 
@@ -28,10 +29,6 @@ const filterOutliers = (someArray: number[], threshold = 1.5) => {
   const minValue = q1 - iqr * threshold;
 
   return values.filter((x) => x >= minValue && x <= maxValue);
-};
-
-export const roundToSignificantDigits = (value: number, digits: number) => {
-  return Number(value.toPrecision(digits));
 };
 
 export async function calculateDefaultYAxis({

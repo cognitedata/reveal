@@ -8,8 +8,8 @@ import { AppearanceDropdown } from 'components/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { UnitDropdown } from 'components/UnitDropdown';
 import { trackUsage } from 'services/metrics';
-import { roundToSignificantDigits } from 'utils/axis';
-import { convertValue } from 'utils/units';
+import { formatValueForDisplay } from 'utils/numbers';
+import { getUnitConverter } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { useRecoilValue } from 'recoil';
 import { timeseriesSummaryById } from 'models/timeseries/selectors';
@@ -88,18 +88,16 @@ export default function TimeSeriesRow({
 
     const min = timeseries.range?.[0];
     const max = timeseries.range?.[1];
-    const hasValidRange = typeof min === 'number' && typeof max === 'number';
-
-    const convertFromTo =
-      (inputUnit?: string, outputUnit?: string) => (value: number) =>
-        convertValue(value, inputUnit, outputUnit);
 
     const convert = flow(
-      convertFromTo(currentOutputUnit, currentInputUnit),
-      convertFromTo(nextInputUnit, currentOutputUnit)
+      getUnitConverter(currentOutputUnit, currentInputUnit),
+      getUnitConverter(nextInputUnit, currentOutputUnit)
     );
 
-    const range = hasValidRange ? [convert(min!), convert(max!)] : [];
+    const range =
+      typeof min === 'number' && typeof max === 'number'
+        ? [convert(min), convert(max)]
+        : [];
 
     /**
      * Update unit and corresponding converted range
@@ -120,13 +118,9 @@ export default function TimeSeriesRow({
 
     const hasValidRange = typeof min === 'number' && typeof max === 'number';
 
-    const convertFromTo =
-      (inputUnit?: string, outputUnit?: string) => (value: number) =>
-        convertValue(value, inputUnit, outputUnit);
-
     const convert = flow(
-      convertFromTo(currentOutputUnit, currentInputUnit),
-      convertFromTo(currentInputUnit, nextOutputUnit)
+      getUnitConverter(currentOutputUnit, currentInputUnit),
+      getUnitConverter(currentInputUnit, nextOutputUnit)
     );
 
     const range = hasValidRange ? [convert(min!), convert(max!)] : [];
@@ -143,17 +137,13 @@ export default function TimeSeriesRow({
   const resetUnit = async () => {
     const currentInputUnit = timeseries.unit;
     const currentOutputUnit = timeseries.preferredUnit;
-
     const min = timeseries.range?.[0];
     const max = timeseries.range?.[1];
-    const hasValidRange = typeof min === 'number' && typeof max === 'number';
-
-    const range = hasValidRange
-      ? [
-          convertValue(min!, currentOutputUnit, currentInputUnit),
-          convertValue(max!, currentOutputUnit, currentInputUnit),
-        ]
-      : [];
+    const convertUnit = getUnitConverter(currentOutputUnit, currentInputUnit);
+    const range =
+      typeof min === 'number' && typeof max === 'number'
+        ? [convertUnit(min), convertUnit(max)]
+        : [];
 
     /**
      * Update units and corresponding converted range
@@ -167,6 +157,7 @@ export default function TimeSeriesRow({
 
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
   const summary = useRecoilValue(timeseriesSummaryById(tsExternalId));
+  const convertUnit = getUnitConverter(unit, preferredUnit);
 
   return (
     <SourceRow
@@ -227,30 +218,9 @@ export default function TimeSeriesRow({
       )}
       {isWorkspaceMode && (
         <>
-          <td>
-            {typeof summary?.min === 'number'
-              ? roundToSignificantDigits(
-                  convertValue(summary?.min, unit, preferredUnit),
-                  3
-                )
-              : '-'}
-          </td>
-          <td>
-            {typeof summary?.max === 'number'
-              ? roundToSignificantDigits(
-                  convertValue(summary?.max, unit, preferredUnit),
-                  3
-                )
-              : '-'}
-          </td>
-          <td>
-            {typeof summary?.mean === 'number'
-              ? roundToSignificantDigits(
-                  convertValue(summary?.mean, unit, preferredUnit),
-                  3
-                )
-              : '-'}
-          </td>
+          <td>{formatValueForDisplay(convertUnit(summary?.min))}</td>
+          <td>{formatValueForDisplay(convertUnit(summary?.max))}</td>
+          <td>{formatValueForDisplay(convertUnit(summary?.mean))}</td>
           <td style={{ textAlign: 'right', paddingRight: 8 }}>
             <UnitDropdown
               unit={unit}

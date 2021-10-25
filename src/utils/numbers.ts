@@ -5,7 +5,15 @@ export function modulo(n: number, m: number) {
   return ((n % m) + m) % m;
 }
 
-export function formatNumberForDisplay(value: number, decimals?: number) {
-  const decimalPoints = typeof decimals === 'number' ? decimals : Infinity;
-  return Number(value).toFixed(decimalPoints);
+export const roundToSignificantDigits = (
+  value: number,
+  significantDigits: number
+) => {
+  return Number(value.toPrecision(significantDigits));
+};
+
+export function formatValueForDisplay(value?: number, significantDigits = 3) {
+  return typeof value === 'number' && !Number.isNaN(value)
+    ? roundToSignificantDigits(value, significantDigits).toString()
+    : '-';
 }
