@@ -9,7 +9,7 @@ export const CreateKeypointAnnotation = createAsyncThunk<
   ThunkConfig
 >('CreateKeypointAnnotation', async (payload, { dispatch, getState }) => {
   const state = getState().annotationLabelReducer;
-  const currentCollectionId = state.lastCollection;
+  const currentCollectionId = state.lastCollectionId;
 
   if (currentCollectionId) {
     const allCollections = state.collections.byId;

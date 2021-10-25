@@ -10,7 +10,8 @@ import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardSho
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
   currentCollection,
-  nextKeyPoint,
+  nextCollection,
+  nextKeypoint,
   nextShape,
   setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
@@ -50,12 +51,18 @@ export const ImagePreview = ({
       annotationLabelReducer.predefinedCollections
   );
 
-  const currentShape = useSelector(({ annotationLabelReducer }: RootState) =>
+  const nextShapeName = useSelector(({ annotationLabelReducer }: RootState) =>
     nextShape(annotationLabelReducer)
   );
 
-  const nextPoint = useSelector(({ annotationLabelReducer }: RootState) =>
-    nextKeyPoint(annotationLabelReducer)
+  const nextKeypointCollection = useSelector(
+    ({ annotationLabelReducer }: RootState) =>
+      nextCollection(annotationLabelReducer)
+  );
+
+  const nextKeypointInCollection = useSelector(
+    ({ annotationLabelReducer }: RootState) =>
+      nextKeypoint(annotationLabelReducer)
   );
 
   const currentTool = useSelector(
@@ -146,10 +153,11 @@ export const ImagePreview = ({
         onUpdateAnnotation={handleModifyAnnotation}
         onDeleteAnnotation={handleDeleteAnnotation}
         handleInEditMode={handleInEditMode}
-        collection={definedCollection}
-        currentShape={currentShape}
-        nextKeyPoint={nextPoint}
-        currentCollection={currentKeypointCollection}
+        predefinedLabels={definedCollection}
+        lastShapeName={nextShapeName}
+        lastKeypointCollection={nextKeypointCollection}
+        nextToDoKeypointInCurrentCollection={nextKeypointInCollection}
+        currentKeypointCollection={currentKeypointCollection}
         isLoading={isLoading}
         selectedTool={currentTool}
         onSelectTool={onSelectTool}
