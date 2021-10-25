@@ -21,20 +21,13 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
   };
   const annotationListRequest = {
     filter: filterPayload,
-    limit: 1000,
+    limit: -1,
   };
-  const savedConfigurationResponse = await AnnotationApi.list(
-    annotationListRequest
-  ); // TODO: use pagination
+  const templateAnnotations = await AnnotationApi.list(annotationListRequest);
   const keypointCollections: KeypointCollection[] = [];
   const shapes: Shape[] = [];
 
-  if (
-    savedConfigurationResponse.data.items &&
-    savedConfigurationResponse.data.items.length
-  ) {
-    const templateAnnotations = savedConfigurationResponse.data.items;
-
+  if (templateAnnotations.length) {
     // eslint-disable-next-line no-restricted-syntax
     for (const templateAnnotation of templateAnnotations) {
       if (templateAnnotation.data?.keypoint) {

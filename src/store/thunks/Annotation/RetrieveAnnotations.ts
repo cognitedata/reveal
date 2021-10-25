@@ -18,17 +18,14 @@ export const RetrieveAnnotations = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
-      limit: 1000,
+      limit: -1,
     };
-    return AnnotationApi.list(annotationListRequest); // TODO: use pagination
-  });
 
+    return AnnotationApi.list(annotationListRequest);
+  });
   if (requests.length) {
     const responses = await Promise.all(requests);
-    const annotationsPerResponse = responses.map(
-      (res) => res?.data?.items || []
-    );
-    const annotations = annotationsPerResponse.reduce((acc, rs) => {
+    const annotations = responses.reduce((acc, rs) => {
       return acc.concat(rs);
     });
     const filteredAnnotations = annotations.filter((annotation: Annotation) => {
