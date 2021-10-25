@@ -2,10 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
+import TWEEN from '@tweenjs/tween.js';
+
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
-import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
@@ -13,17 +14,13 @@ import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _keyframes: Keyframe[];
-  private _intervalId: any = 0;
-  private _allDates: Date[];
-  private _activeIndex: number;
+  private _playback: TWEEN.Tween | undefined = undefined;
 
   constructor(cadModel: Cognite3DModel) {
     super();
 
     this._model = cadModel;
     this._keyframes = new Array<Keyframe>();
-    this._allDates = new Array<Date>();
-    this._activeIndex = 0;
   }
 
   /**
@@ -33,10 +30,18 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public createKeyframe(date: Date): Keyframe {
     const keyframe = new Keyframe(this._model, date);
     this._keyframes.push(keyframe);
-    this._allDates.push(date);
     this.sortKeyframesByDates();
 
     return keyframe;
+  }
+
+  /**
+   * Returns the keyframe at the date given, or undefined if not found.
+   * @param date
+   * @returns
+   */
+  public getKeyframeByDate(date: Date): Keyframe | undefined {
+    return this._keyframes.find(candidate => candidate.getKeyframeDate() === date);
   }
 
   /**
@@ -68,66 +73,49 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Overrides styling of cadModel to match styling
-   * @param date - Date of the Keyframe to apply the styling on the CAD Model
-   */
-  private styleByDate(date: Date) {
-    if (this._keyframes.length > 0) {
-      this._activeIndex = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
-
-      // Date provided not found than get the closest downward date
-      // e.g if you have keyframes "1000, 2000, 3000" the result from styleByDate(2500) should be styles from 2000
-      if (this._activeIndex === -1) {
-        const timelineframe = this._keyframes.reduce((prev, curr) => (date >= curr.getKeyframeDate() ? curr : prev));
-        this._activeIndex = this._keyframes.findIndex(obj => obj === timelineframe);
-      }
-
-      const currentTimeframe = this._keyframes[this._activeIndex];
-      const previousTimeframe = this._keyframes[this._activeIndex - 1];
-
-      if (previousTimeframe) {
-        previousTimeframe.deactivate();
-      }
-      currentTimeframe.activate();
-    }
-  }
-
-  /**
    * Starts playback of Timeline
    * @param startDate - Keyframe date to start the Playback of Keyframes
    * @param endDate - Keyframe date to stop the Playback of Keyframes
-   * @param totalDurationInMilliSeconds - Number of milli-seconds for all Keyframe within startDate & endDate to be rendered
+   * @param totalDurationInMilliSeconds - Number of milliseconds for all Keyframe within startDate & endDate to be rendered
    */
   public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
     this.stopPlayback();
-    this.styleByDate(startDate);
-    this._activeIndex++;
-    let keyframesCount = 0;
 
-    if (this._keyframes.length > 1) {
-      keyframesCount = this._keyframes.filter(
-        obj => obj.getKeyframeDate() >= startDate && obj.getKeyframeDate() <= endDate
-      ).length;
-    }
+    const playState = { dateInMs: startDate.getTime() };
+    const to = { dateInMs: endDate.getTime() };
+    const tween = new TWEEN.Tween(playState).to(to, totalDurationInMilliSeconds);
+    let currentKeyframeIndex = -1;
+    tween.onUpdate(() => {
+      const date = new Date(playState.dateInMs);
 
-    this._intervalId = setInterval(() => {
-      if (this._allDates[this._activeIndex] <= endDate) {
-        this.styleByDate(this._allDates[this._activeIndex]);
-        this._activeIndex++;
-      } else {
-        this.stopPlayback();
+      // Forward active keyframe to last keyframe that is before current date
+      const prevIndex = currentKeyframeIndex;
+      while (
+        currentKeyframeIndex < this._keyframes.length - 1 &&
+        this._keyframes[currentKeyframeIndex + 1].getKeyframeDate().getTime() <= date.getTime()
+      ) {
+        currentKeyframeIndex++;
       }
-    }, totalDurationInMilliSeconds / keyframesCount);
+
+      if (currentKeyframeIndex !== prevIndex) {
+        if (prevIndex !== -1) {
+          this._keyframes[prevIndex].deactivate();
+        }
+        this._keyframes[currentKeyframeIndex].activate();
+      }
+    });
+
+    this._playback = tween;
+    tween.start();
   }
 
   /**
    * Stops any ongoing playback
    */
   public stopPlayback() {
-    if (this._intervalId !== 0) {
-      clearInterval(this._intervalId);
-      this._intervalId = 0;
-      this._activeIndex = 0;
+    if (this._playback !== undefined) {
+      this._playback.stop();
+      this._playback = undefined;
     }
   }
 
@@ -141,6 +129,19 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Provides all Keyframes in the Timeline
+   * @returns All Keyframes in Timeline
+   */
+  public getAllKeyframes(): Keyframe[] {
+    return this._keyframes;
+  }
+
+  public dispose(): void {
+    super.dispose();
+    this.resetStyles();
+  }
+
+  /**
    * Sort the Timeline Keyframe by their Date
    */
   private sortKeyframesByDates() {
@@ -149,59 +150,5 @@ export class TimelineTool extends Cognite3DViewerToolBase {
         return a.getKeyframeDate().getTime() - b.getKeyframeDate().getTime();
       });
     }
-  }
-
-  /**
-   * Provides all Keyframes in the Timeline
-   * @returns All Keyframes in Timeline
-   */
-  public getAllKeyframes(): Keyframe[] {
-    if (this._keyframes.length > 0) {
-      return this._keyframes;
-    }
-    return [];
-  }
-
-  /**
-   * Set Styles for Set of nodes for a Keyframe or set of Keyframes
-   * @param keyframes List of Keyframe to apply Style
-   * @param nodeCollection Node set to apply the Styles
-   * @param nodeAppearance Style to assign to the node collection
-   */
-  public assignStyledNodeCollection(
-    keyframes: Keyframe | Keyframe[],
-    nodeCollection: NodeCollectionBase,
-    nodeAppearance: NodeAppearance
-  ) {
-    let keyframeList = new Array<Keyframe>();
-    keyframeList = keyframeList.concat(keyframes);
-
-    for (const keyframe of keyframeList) {
-      keyframe.assignStyledNodeCollection(nodeCollection, nodeAppearance);
-    }
-  }
-
-  /**
-   * Removes node set & styles from a keyframe or set of keyframes
-   * @param keyframes List of Keyframes where node set & styles to be removed
-   * @param nodeCollection Node set to be removed from keyframes
-   * @param nodeAppearance Styles to be removed from keyframes
-   */
-  public unassignStyledNodeCollection(
-    keyframes: Keyframe | Keyframe[],
-    nodeCollection: NodeCollectionBase,
-    nodeAppearance: NodeAppearance
-  ) {
-    let keyframeList = new Array<Keyframe>();
-    keyframeList = keyframeList.concat(keyframes);
-
-    for (const keyframe of keyframeList) {
-      keyframe.unassignStyledNodeCollection(nodeCollection, nodeAppearance);
-    }
-  }
-
-  public dispose(): void {
-    super.dispose();
-    this.resetStyles();
   }
 }
