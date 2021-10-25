@@ -7,6 +7,7 @@ import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
 
 import { SectorMetadata } from '../metadata/types';
 import * as THREE from 'three';
+
 /**
  * Conversion factors from a given unit to meters.
  */

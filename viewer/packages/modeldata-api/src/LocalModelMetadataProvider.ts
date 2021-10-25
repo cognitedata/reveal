@@ -2,22 +2,38 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { ModelMetadataProvider } from './types';
-import { File3dFormat, CameraConfiguration } from './types';
-import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
 
-export class LocalModelMetadataProvider implements ModelMetadataProvider<{ fileName: string }> {
-  getModelUri(params: { fileName: string }): Promise<string> {
-    return Promise.resolve(`${location.origin}/${params.fileName}`);
+import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
+import { LocalModelIdentifier } from './LocalModelIdentifier';
+import { ModelIdentifier } from './ModelIdentifier';
+import { ModelMetadataProvider } from './ModelMetadataProvider';
+import { File3dFormat } from './types';
+
+export class LocalModelMetadataProvider implements ModelMetadataProvider {
+  getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
+    if (!(modelIdentifier instanceof LocalModelIdentifier)) {
+      throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+    return Promise.resolve(`${location.origin}/${modelIdentifier.localPath}`);
   }
 
-  async getModelMatrix(_identifier: { fileName: string }): Promise<THREE.Matrix4> {
+  async getModelMatrix(modelIdentifier: ModelIdentifier): Promise<THREE.Matrix4> {
+    if (!(modelIdentifier instanceof LocalModelIdentifier)) {
+      throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+
     const matrix = new THREE.Matrix4();
     applyDefaultModelTransformation(matrix, File3dFormat.RevealCadModel);
     return matrix;
   }
 
-  getModelCamera(_identifier: { fileName: string }): Promise<CameraConfiguration | undefined> {
+  getModelCamera(
+    modelIdentifier: ModelIdentifier
+  ): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
+    if (!(modelIdentifier instanceof LocalModelIdentifier)) {
+      throw new Error(`Model must be a ${LocalModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+
     return Promise.resolve(undefined);
   }
 }

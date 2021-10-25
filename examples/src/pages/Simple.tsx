@@ -12,6 +12,8 @@ import { CanvasWrapper, Loader } from '../components/styled';
 import { resizeRendererToDisplaySize } from '../utils/sceneHelpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
+import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
+
 CameraControls.install({ THREE });
 
 export function Simple() {
@@ -19,7 +21,7 @@ export function Simple() {
   const [loadingState, setLoadingState] = useState<reveal.utilities.LoadingState>({ isLoading: false, itemsLoaded: 0, itemsRequested: 0, itemsCulled: 0 });
 
   useEffect(() => {
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     async function main() {
       if (!canvas.current) {
@@ -40,18 +42,7 @@ export function Simple() {
       renderer.setPixelRatio(window.devicePixelRatio);
 
       const scene = new THREE.Scene();
-      let model: reveal.CadNode;
-      if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision);
-      } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl);
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
 
       revealManager.on('loadingStateChanged', setLoadingState);
 

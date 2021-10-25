@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 
 import { CogniteInternalId } from '@cognite/sdk';
-import { NodeTreeIndexAndSubtreeSize } from './types';
 
 export interface NodesApiClient {
   /**
@@ -36,7 +35,7 @@ export interface NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<NodeTreeIndexAndSubtreeSize[]>;
+  ): Promise<{ treeIndex: number; subtreeSize: number }[]>;
 
   /**
    * Determine ancestor subtree span of a given node. If the node doesn't have an
@@ -51,7 +50,7 @@ export interface NodesApiClient {
     revisionId: CogniteInternalId,
     nodeId: CogniteInternalId,
     generation: number
-  ): Promise<NodeTreeIndexAndSubtreeSize>;
+  ): Promise<{ treeIndex: number; subtreeSize: number }>;
 
   /**
    * Determines the bounds of the node provided. Note that the returned

@@ -6,7 +6,7 @@ import { Cognite3DModel } from './Cognite3DModel';
 
 import { NodesLocalClient } from '@reveal/nodes-api';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
-import { CadMaterialManager, CadNode } from '@reveal/cad-geometry-loaders';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
 import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
 
@@ -20,7 +20,7 @@ describe(Cognite3DModel.name, () => {
     materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
     const cadNode = new CadNode(cadMetadata, materialManager);
-    const apiClient = new NodesLocalClient('');
+    const apiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, apiClient);
   });

@@ -6,16 +6,11 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
-import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
 
-import {
-  defaultRenderOptions,
-  SsaoParameters,
-  SsaoSampleQuality,
-  AntiAliasingMode,
-  LoadingState
-} from '@reveal/cad-geometry-loaders';
+import { LoadingState } from '@reveal/cad-geometry-loaders';
+
+import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
 import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
 
@@ -48,16 +43,13 @@ import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, 
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
-import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
-import { RevealManagerHelper } from './RevealManagerHelper';
+import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import {
-  CdfModelIdentifier,
-  LocalModelIdentifier,
-  File3dFormat,
-  CdfModelMetadataProvider
-} from '@reveal/modeldata-api';
+import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
+import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
+
+import { CogniteClient } from '@cognite/sdk';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -72,7 +64,6 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
-  private readonly _viewStateHelper: ViewStateHelper;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -102,10 +93,12 @@ export class Cognite3DViewer {
     return this._renderer;
   }
 
+  private readonly _cdfSdkClient: CogniteClient | undefined;
+  private readonly _dataSource: DataSource;
+
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
-  private readonly sdkClient: CogniteClient;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -136,7 +129,7 @@ export class Cognite3DViewer {
 
   private readonly spinner: Spinner;
 
-  private get revealManager(): RevealManager<CdfModelIdentifier> | RevealManager<LocalModelIdentifier> {
+  private get revealManager(): RevealManager {
     return this._revealManagerHelper.revealManager;
   }
 
@@ -247,23 +240,32 @@ export class Cognite3DViewer {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
-    this.sdkClient = options.sdk;
-    this.renderController = new RenderController(this.camera);
-
-    this._viewStateHelper = new ViewStateHelper(this, this.sdkClient);
-
     const revealOptions = createRevealManagerOptions(options);
-
     if (options._localModels === true) {
+      this._dataSource = new LocalDataSource();
+      this._cdfSdkClient = undefined;
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+    } else if (options.customDataSource !== undefined) {
+      this._dataSource = options.customDataSource;
+      this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
+        this._renderer,
+        this.scene,
+        revealOptions,
+        options.customDataSource
+      );
     } else {
+      // CDF - default mode
+      this._dataSource = new CdfDataSource(options.sdk);
+      this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this.scene,
         revealOptions,
-        this.sdkClient
+        options.sdk
       );
     }
+    this.renderController = new RenderController(this.camera);
+
     this.startPointerEventListeners();
 
     this.revealManager.setRenderTarget(
@@ -452,7 +454,8 @@ export class Cognite3DViewer {
    * @returns JSON object containing viewer state.
    */
   getViewState() {
-    return this._viewStateHelper.getCurrentState();
+    const stateHelper = this.createViewStateHelper();
+    return stateHelper.getCurrentState();
   }
 
   /**
@@ -461,6 +464,8 @@ export class Cognite3DViewer {
    * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
   setViewState(state: ViewerState): Promise<void> {
+    const stateHelper = this.createViewStateHelper();
+
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
@@ -469,7 +474,7 @@ export class Cognite3DViewer {
         model.styledNodeCollections.splice(0);
       });
 
-    return this._viewStateHelper.setState(state);
+    return stateHelper.setState(state);
   }
 
   /**
@@ -521,12 +526,7 @@ export class Cognite3DViewer {
    * ```
    */
   async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
-    let nodesApiClient: NodesApiClient;
-    if (options.localPath) {
-      nodesApiClient = new NodesLocalClient(options.localPath);
-    } else {
-      nodesApiClient = new NodesCdfClient(this.sdkClient);
-    }
+    const nodesApiClient = this._dataSource.getNodesApiClient();
 
     const { modelId, revisionId } = options;
     const cadNode = await this._revealManagerHelper.addCadModel(options);
@@ -626,8 +626,14 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    const metadataProvider = new CdfModelMetadataProvider(this.sdkClient);
-    const outputs = await metadataProvider.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
+    if (this._cdfSdkClient === undefined) {
+      throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
+    }
+
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
+    const outputsProvider = new CdfModelOutputsProvider(this._cdfSdkClient);
+    const outputs = await outputsProvider.getOutputs(modelIdentifier);
+
     if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
       return 'cad';
     } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
@@ -1260,6 +1266,16 @@ export class Cognite3DViewer {
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
+  }
+
+  /**
+   * Creates a helper for managing viewer state.
+   */
+  private createViewStateHelper(): ViewStateHelper {
+    if (this._cdfSdkClient === undefined) {
+      throw new Error(`${this.setViewState.name}() is only supported when connecting to Cognite Data Fusion`);
+    }
+    return new ViewStateHelper(this, this._cdfSdkClient);
   }
 
   /** @private */
