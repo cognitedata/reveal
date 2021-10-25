@@ -99,10 +99,17 @@ export function Migration() {
           });
         }
       };
-
+      
+      const prioritizedNodeCollection = new TreeIndexNodeCollection();
+      prioritizedNodeCollection.initializeAreaCollection();
+      
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
+
+          if (model instanceof Cognite3DModel) {
+            (model as Cognite3DModel).setPrioritizedNodes(prioritizedNodeCollection, 5.0);
+          }
 
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
@@ -445,7 +452,6 @@ export function Migration() {
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
 
-      const prioritizedBounds: THREE.Box3[] = [];
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -461,19 +467,15 @@ export function Migration() {
                 // overlayHtml.innerText = `Node ${treeIndex}`;
                 // overlayHtml.style.cssText = 'background: white; position: absolute;';
                 // overlayTool.add(overlayHtml, point);
-  
+                
                 // highlight the object
                 const highlights = selectedSet.getIndexSet();
                 highlights.add(treeIndex);
                 selectedSet.updateSet(highlights);
-                const nodeBounds = new THREE.Box3();
-                nodeBounds.setFromCenterAndSize(point, new THREE.Vector3(0.5, 0.5, 0.5));
-                prioritizedBounds.push(nodeBounds);
-                // @ts-expect-error
-                viewer._revealManagerHelper._revealManager._cadManager._cadModelUpdateHandler.prioritizedAreas = prioritizedBounds.map(x => ({
-                  area: x,
-                  extraPriority: 4.0
-                }));
+
+                // Make sure selected object is prioritized
+                prioritizedNodeCollection.addAreaPoints([point]);
+
               }
               break;
             case 'pointcloud':
