@@ -97,7 +97,7 @@
     "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^3.10.1",
-    "husky": "^7.0.1",
+    "husky": "^7.0.4",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "jest-junit": "^12.0.0",
     "jira-prepare-commit-msg": "^1.6.2",
