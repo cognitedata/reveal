@@ -13,7 +13,7 @@ export const ToolbarWrapper = styled.div`
 `;
 
 export const ChartWrapper = styled.div`
-  height: 100%;
+  min-height: 364px;
   position: relative;
   overflow: hidden !important;
   > .js-plotly-plot {

@@ -37,6 +37,8 @@ export const WellCentricCard: React.FC<Props> = ({
   axisNames,
 }) => {
   const [showAll, setShowAll] = useState<boolean>(false);
+  const legendsHolderRef = React.useRef<HTMLDivElement>(null);
+  const displayShowAll = (legendsHolderRef?.current?.scrollHeight || 0) > 16;
 
   return (
     <Wrapper>
@@ -58,7 +60,7 @@ export const WellCentricCard: React.FC<Props> = ({
         autosize
       />
       <Footer>
-        <LegendsHolder expanded={showAll}>
+        <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
           {(chartData as Partial<PlotData>[]).map((row) => (
             <CurveIndicator
               key={`${wellbore.description}-${
@@ -72,6 +74,7 @@ export const WellCentricCard: React.FC<Props> = ({
         </LegendsHolder>
 
         <BaseButton
+          hidden={!displayShowAll}
           type="ghost"
           size="small"
           icon={showAll ? 'ChevronUpCompact' : 'ChevronDownCompact'}

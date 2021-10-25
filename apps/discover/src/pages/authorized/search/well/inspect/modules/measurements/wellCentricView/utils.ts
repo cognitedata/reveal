@@ -1,8 +1,10 @@
 import get from 'lodash/get';
-import { Data } from 'plotly.js';
+import isEmpty from 'lodash/isEmpty';
+import { Data, PlotData } from 'plotly.js';
 
 import { Metadata } from '@cognite/sdk';
 
+import { changeUnitTo } from '_helpers/units/utils';
 import { MEASUREMENT_CURVE_CONFIG } from 'modules/wellSearch/constants';
 import { Measurement, MeasurementType } from 'modules/wellSearch/types';
 import { convertPressure } from 'modules/wellSearch/utils/common';
@@ -15,6 +17,8 @@ type ColumnsMetadata = {
 type OtherDataType = 'fit' | 'lot';
 
 const ANGLE_CURVES_UNIT = 'deg';
+const DEFAULT_REFERENCE_UNIT = 'ft';
+const CHART_BREAK_POINTS = [0, -9999];
 
 export const formatChartData = (
   measurements: Measurement[],
@@ -23,6 +27,7 @@ export const formatChartData = (
   otherTypes: string[],
   reference: string,
   pressureUnit: string,
+  referenceUnit: string,
   config?: WellConfig
 ) => {
   const chartData: Data[] = [];
@@ -44,7 +49,8 @@ export const formatChartData = (
         measurement,
         dataType as OtherDataType,
         config,
-        pressureUnit
+        pressureUnit,
+        referenceUnit
       );
       if (convertedData) chartData.push(convertedData);
       return;
@@ -78,8 +84,7 @@ export const formatChartData = (
       );
 
       // Update y axis name with unit
-      const tvdUnit = columnsMetadata[reference].unit || '';
-
+      const tvdUnit = columnsMetadata[reference].unit || DEFAULT_REFERENCE_UNIT;
       // Push curve data in to the chart data object
       enableCurves.forEach((curveName: string) => {
         const curveDescription = `${curveName} (${detailCardTitle})`;
@@ -97,10 +102,28 @@ export const formatChartData = (
           const xUnit = columnsMetadata[curveName].unit || '';
 
           const isAngleCurve = xUnit === ANGLE_CURVES_UNIT;
-          const x: number[] = [];
-          const y: number[] = [];
+          let x: number[] = [];
+          let y: number[] = [];
           rows.forEach((geomechanicRow) => {
-            y.push(geomechanicRow[referenceColIndex] as number);
+            const yvalue = geomechanicRow[referenceColIndex] as number;
+            if (CHART_BREAK_POINTS.includes(yvalue)) {
+              if (!isEmpty(x)) {
+                // Create the graph if next value is a breaking point value
+                pushCorveToChart(
+                  chartData,
+                  lineConfig,
+                  isAngleCurve,
+                  curveName,
+                  curveDescription,
+                  x,
+                  y
+                );
+                x = [];
+                y = [];
+              }
+              return;
+            }
+            y.push(changeUnitTo(yvalue, tvdUnit, referenceUnit) || yvalue);
             if (isAngleCurve) {
               x.push(geomechanicRow[columnIndex] as number);
             } else {
@@ -115,21 +138,16 @@ export const formatChartData = (
               );
             }
           });
-          const curveData: Data = {
-            ...lineConfig,
+
+          pushCorveToChart(
+            chartData,
+            lineConfig,
+            isAngleCurve,
+            curveName,
+            curveDescription,
             x,
-            y,
-            type: 'scatter',
-            mode: 'lines',
-            name: curveName,
-            customdata: [curveDescription],
-          };
-
-          if (isAngleCurve) {
-            curveData.xaxis = 'x2';
-          }
-
-          chartData.push(curveData);
+            y
+          );
         }
       });
     }
@@ -143,7 +161,8 @@ export const convertOtherDataToPlotly = (
   sequence: Measurement,
   type: OtherDataType,
   config: WellConfig,
-  pressureUnit: string
+  pressureUnit: string,
+  referenceUnit: string
 ): Data | null => {
   const requiredFields = ['pressure', 'tvd', 'tvdUnit', 'pressureUnit'];
 
@@ -172,10 +191,34 @@ export const convertOtherDataToPlotly = (
     x: [
       convertPressure(xVal, currentPressureUnit, yVal, tvdUnit, pressureUnit),
     ],
-    y: [yVal],
+    y: [changeUnitTo(yVal, tvdUnit, referenceUnit) || yVal],
     type: 'scatter',
     mode: 'markers',
     name,
     customdata: [name],
   };
+};
+
+const pushCorveToChart = (
+  chartData: Data[],
+  lineConfig: Partial<PlotData>,
+  isAngleCurve: boolean,
+  curveName: string,
+  curveDescription: string,
+  x: number[],
+  y: number[]
+) => {
+  const curveData: Data = {
+    ...lineConfig,
+    x,
+    y,
+    type: 'scatter',
+    mode: 'lines',
+    name: curveName,
+    customdata: [curveDescription],
+    xaxis: isAngleCurve ? 'x2' : undefined,
+  };
+  if (!isEmpty(x)) {
+    chartData.push(curveData);
+  }
 };

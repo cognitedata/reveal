@@ -1,8 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
+import { Data } from 'plotly.js';
+
+import { WhiteLoader } from 'components/loading';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
+import { Wellbore } from 'modules/wellSearch/types';
 
 import { WellCentricViewWrapper } from './elements';
 import { formatChartData } from './utils';
@@ -14,6 +19,11 @@ type Props = {
   otherTypes: string[];
   pressureUnit: string;
   measurementReference: string;
+};
+
+type WellboreChartData = {
+  wellbore: Wellbore;
+  chartData: Data[];
 };
 
 export const WellCentricView: React.FC<Props> = ({
@@ -29,29 +39,47 @@ export const WellCentricView: React.FC<Props> = ({
 
   const selectedOrHoveredWellbores = useSecondarySelectedOrHoveredWellbores();
 
-  const filteredWellboresData = useMemo(() => {
-    if (!data) {
-      return [];
-    }
-    return selectedOrHoveredWellbores
-      .map((wellbore) => {
-        const chartData = formatChartData(
-          data[wellbore.id],
-          geomechanicsCurves,
-          ppfgCurves,
-          otherTypes,
-          measurementReference,
-          pressureUnit.toLowerCase(),
-          config
-        );
-        return {
+  const userPreferredUnit = useUserPreferencesMeasurement();
+
+  const [wellboreChartData, setWellboreChartData] = useState<
+    WellboreChartData[]
+  >([]);
+
+  const [chartRendering, setChartRendering] = useState<boolean>(false);
+
+  const updateChartData = () => {
+    if (data) {
+      const filteredChartData = selectedOrHoveredWellbores
+        .map((wellbore) => ({
           wellbore,
-          chartData,
-        };
-      })
-      .filter((row) => row.chartData.length > 0);
+          chartData: formatChartData(
+            data[wellbore.id],
+            geomechanicsCurves,
+            ppfgCurves,
+            otherTypes,
+            measurementReference,
+            pressureUnit.toLowerCase(),
+            userPreferredUnit,
+            config
+          ),
+        }))
+        .filter((row) => row.chartData.length > 0);
+      setWellboreChartData(filteredChartData);
+    }
+  };
+
+  useEffect(() => {
+    setChartRendering(true);
+    // Use timeout to display loader before app get freezed with chart rendering
+    setTimeout(() => {
+      updateChartData();
+      setTimeout(() => {
+        // Use timeout to avoid hiding loader before chart renders
+        setChartRendering(false);
+      }, 100);
+    }, 1000);
   }, [
-    data,
+    JSON.stringify(data),
     isLoading,
     selectedOrHoveredWellbores,
     pressureUnit,
@@ -59,11 +87,12 @@ export const WellCentricView: React.FC<Props> = ({
     ppfgCurves,
     measurementReference,
     otherTypes,
+    userPreferredUnit,
   ]);
 
-  return (
-    <WellCentricViewWrapper>
-      {filteredWellboresData.map((row) => (
+  const wellCards = useMemo(
+    () =>
+      wellboreChartData.map((row) => (
         <WellCentricCard
           wellbore={row.wellbore}
           key={row.wellbore.id}
@@ -71,11 +100,20 @@ export const WellCentricView: React.FC<Props> = ({
           axisNames={{
             x2: `Pressure (${pressureUnit.toLowerCase()})`,
             x: 'Angle (deg)',
-            y: `${measurementReference} (ft)`,
+            y: `${measurementReference} (${userPreferredUnit})`,
           }}
         />
-      ))}
-    </WellCentricViewWrapper>
+      )),
+    [wellboreChartData]
+  );
+
+  return (
+    <>
+      {chartRendering && <WhiteLoader />}
+      <WellCentricViewWrapper visible={!chartRendering}>
+        {wellCards}
+      </WellCentricViewWrapper>
+    </>
   );
 };
 

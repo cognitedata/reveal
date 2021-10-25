@@ -1,6 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { withSize, SizeMeProps } from 'react-sizeme';
 
 import { LayoutAxis } from 'plotly.js';
 
@@ -22,7 +21,6 @@ type AxisConfig = {
 
 export type ChartProps = {
   data: Data[];
-  size: SizeMeProps['size'];
   axisNames?: { x?: string; y?: string; z?: string; x2?: string };
   axisAutorange?: {
     x?: Autorange;
@@ -43,7 +41,6 @@ const chartStyles = { display: 'flex !important' };
 
 const ChartV2 = ({
   data,
-  size,
   axisNames,
   axisAutorange,
   axisTicksuffixes,
@@ -98,8 +95,6 @@ const ChartV2 = ({
     },
     showlegend: showLegend,
     autosize,
-    height: size.height || undefined,
-    width: size.width || undefined,
     scene: {
       xaxis: { title: axisNames?.x || 'x Axis', autorange: axisAutorange?.x },
       yaxis: { title: axisNames?.y || 'y Axis', autorange: axisAutorange?.y },
@@ -163,4 +158,4 @@ const ChartV2 = ({
     </React.Suspense>
   );
 };
-export default withSize()(ChartV2);
+export default ChartV2;

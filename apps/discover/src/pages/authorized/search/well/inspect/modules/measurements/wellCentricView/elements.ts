@@ -6,6 +6,8 @@ export const WellCentricViewWrapper = styled(FlexColumn)`
   height: 100%;
   gap: ${sizes.normal};
   overflow: auto;
+  visibility: ${(props: { visible: boolean }) =>
+    props.visible ? 'visible' : 'hidden'};
 `;
 
 export const Wrapper = styled(FlexColumn)`
