@@ -43,7 +43,7 @@ We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
-// import { TimelineTool } from '@cognite/reveal/tools';
+// import { TimelineTool, Keyframe } from '@cognite/reveal/tools';
 
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
@@ -70,16 +70,23 @@ keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: fals
 timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
 ```
 
+### Get Keyframe by Date
+`getKeyframeByDate(date: Date)`
+- `date` - Date of the Keyframe which needs retrived.
+
+```jsx
+const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
+```
+
 ### Remove Styles & Node in Keyframes
-`unassignStyledNodeCollection(keyframes: Keyframe | Keyframe[], nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
-- `keyframes` - List of Keyframes where node set & styles to be removed
+`unassignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
 - `nodeCollection` - Node set to be removed from keyframes.
 - `nodeAppearance` - Styles to be removed from keyframes.
 
 ```js runnable
-const allkeyframes = timeline.getAllkeyframes();
+const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
 
-timeline.unassignStyledNodeCollection(allkeyframes, allPipes, { renderGhosted: false, color: [150, 200, 120] });
+keyframe.unassignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] })
 ```
 
 ### Removing Keyframe
@@ -107,7 +114,7 @@ timeline.stopPlayback();
 ### Keyframes in Timeline
 Gets all Keyframes in the Timeline
 
-```js runnable
+```jsx
 const allKeyframes = timeline.getAllKeyframes();
 ```
 
