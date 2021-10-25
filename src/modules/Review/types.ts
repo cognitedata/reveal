@@ -46,10 +46,6 @@ export type FilePreviewProps = {
   handleAddToFile?: () => void;
 };
 
-export type NextKeypointInCollection =
-  | (Keypoint & { collectionId?: string })
-  | null;
-
 export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   fileInfo: FileInfo;
   annotations: VisibleAnnotation[];
@@ -64,7 +60,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   lastShapeName: string;
   lastKeypointCollection: KeypointCollection;
   selectedTool: Tool;
-  nextToDoKeypointInCurrentCollection: NextKeypointInCollection;
+  nextToDoKeypointInCurrentCollection: Keypoint | null;
   currentKeypointCollection: KeypointItemCollection | null;
   isLoading: (status: boolean) => void;
   onSelectTool: (tool: Tool) => void;

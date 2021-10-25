@@ -13,8 +13,8 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
 import {
+  Keypoint,
   KeypointCollection,
-  NextKeypointInCollection,
   VisionOptionType,
 } from 'src/modules/Review/types';
 
@@ -33,7 +33,7 @@ export const AnnotationEditPopup = (props: {
   lastCollection: KeypointCollection;
   onOpenCollectionSettings: () => void;
   popupReference: any;
-  nextKeypoint: NextKeypointInCollection;
+  nextKeypoint: Keypoint | null;
 }) => {
   const {
     region,
