@@ -86,7 +86,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "^5.1.6",
     "@types/sinon": "^10.0.4",
-    "@types/styled-components": "^5.1.7",
+    "@types/styled-components": "^5.1.15",
     "babel-loader": "8.1.0",
     "eslint": "^7.27.0",
     "eslint-config-airbnb": "^18.2.1",
