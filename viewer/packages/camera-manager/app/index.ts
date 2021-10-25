@@ -19,7 +19,8 @@ let cuState: {
 init();
 
 function init() {
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
+
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000000);
 
   scene = new THREE.Scene();
 
@@ -45,10 +46,12 @@ function init() {
   renderer.setAnimationLoop(render);
 
   controls = new ComboControls(camera, renderer.domElement);
+
   controls.dynamicTarget = true;
   controls.minDistance = 0.1;
   controls.enableDamping = true;
   controls.dampingFactor = 0.2;
+
   controls.enabled = true;
 
   controls.setState(new THREE.Vector3(0, 20, 20), new THREE.Vector3());
