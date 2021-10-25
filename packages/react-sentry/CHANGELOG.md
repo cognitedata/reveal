@@ -1,3 +1,7 @@
+## 0.2.1 Oct 25 2021
+
+- Install `rrweb` as a direct dependency. _Before it was necessary to install it for the apps outside of the monorepo._
+
 ## 0.2.0 Sept 11 2021
 
 - Add support for rrweb (on by default)

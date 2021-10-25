@@ -1,3 +1,7 @@
+## 2.1.1 Oct 25 2021
+
+- Bump to have latest `@cognite/react-sentry` with `rrweb` installed.
+
 ## 2.1.0 Oct 15 2021
 
 - Bump to update Sentry deps (to get 0.2.0 rrweb)

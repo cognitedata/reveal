@@ -89,6 +89,11 @@ mappings_dict = {
 
 ### end of auto-generated helpers ###
 
+# resolve peer dependencies
+ADDED_PEER_DEPENDENCIES = [
+    "@npm//rrweb",
+]
+
 eslint_config(
     name = "eslint_config",
     src = ":.eslintrc.js",
@@ -126,7 +131,7 @@ jest_test(
     jest_args = [],
     jest_config = "jest.config.js",
     service_name = "react-sentry",
-    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ADDED_PEER_DEPENDENCIES,
 )
 
 jest(
@@ -170,7 +175,7 @@ copy_to_bin(
 
 append_deps(
     name = "package-json",
-    dependencies = DEPENDENCIES,
+    dependencies = DEPENDENCIES + ADDED_PEER_DEPENDENCIES,
     dev_dependencies = DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
     package = "package.json",
 )
@@ -184,7 +189,7 @@ rollup(
         "-c",
         "rollup.config.js",
     ],
-    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = DEPENDENCIES + ADDED_PEER_DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         ":chdir.js",
         "//scripts:log.js",
         ":copy_static_files",
@@ -208,7 +213,7 @@ js_library(
     package_name = "@cognite/react-sentry",
     srcs = ["package-json"],
     visibility = ["//visibility:public"],
-    deps = DEPENDENCIES + [":dist"],
+    deps = DEPENDENCIES + ADDED_PEER_DEPENDENCIES + [":dist"],
 )
 
 pkg_npm(
@@ -253,7 +258,7 @@ start_storybook(
         "-p",
         "6006",
     ],
-    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = DEPENDENCIES + ADDED_PEER_DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
         "chdir-workspace.js",
         "copy_static_files",
         "copy_storybook_files",
