@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Asset, CogniteClient } from '@cognite/sdk';
+import { Asset, CogniteClient, FileInfo } from '@cognite/sdk';
 import {
   CogniteOrnate,
   // Types
@@ -136,6 +136,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
           onDeleteDocument({
             documentId: doc?.metadata!.fileId,
             documentName: doc?.metadata!.fileName,
+            documentExId: doc?.metadata!.fileExternalId,
           });
         }
       }
@@ -181,7 +182,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         return;
       }
 
-      const fileInfo = await loadFile(file[0].id.toString(), file[0].name);
+      const fileInfo = await loadFile(
+        { id: file[0].id, externalId: file[0].externalId },
+        file[0].name
+      );
       if (!fileInfo) {
         return;
       }
@@ -230,18 +234,29 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       const documents = [] as WorkspaceDocument[];
       await Promise.all(
         contents.documents.map(async (doc) => {
-          const { fileId, fileName } = doc.metadata;
+          const { fileId, fileName, fileExternalId } = doc.metadata;
+          const workspaceDoc = await loadFile(
+            { id: +fileId, externalId: fileExternalId },
+            fileName,
+            {
+              initialPosition: { x: doc.x, y: doc.y },
+              zoomAfterLoad: false,
+            }
+          );
 
-          const workspaceDoc = await loadFile(fileId, fileName, {
-            initialPosition: { x: doc.x, y: doc.y },
-            zoomAfterLoad: false,
+          documents.push({
+            documentId: fileId,
+            documentName: fileName,
+            documentExId: fileExternalId,
           });
-
-          documents.push({ documentId: fileId, documentName: fileName });
 
           const parsedDrawings: Drawing[] = doc.drawings.map((drawing) => {
             return {
               ...drawing,
+              attrs: {
+                ...drawing.attrs,
+                inGroup: workspaceDoc.doc?.group.id(),
+              },
               groupId: workspaceDoc.doc?.group.id(),
             };
           });
@@ -255,14 +270,17 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         });
       });
       setWorkspaceDocuments(documents);
-
-      if (contents!.connectedLines) {
+      if (contents.connectedLines) {
         contents!.connectedLines.forEach((connectedLine) => {
           const docStart = ornateViewer.current?.documents.find(
-            (d) => d.metadata!.fileId === connectedLine.nodeA.groupId
+            (d) =>
+              d.metadata!.fileId === connectedLine.nodeA.groupId ||
+              d.metadata!.fileExternalId === connectedLine.nodeA.groupId
           );
           const docEnd = ornateViewer.current?.documents.find(
-            (d) => d.metadata!.fileId === connectedLine.nodeB.groupId
+            (d) =>
+              d.metadata!.fileId === connectedLine.nodeB.groupId ||
+              d.metadata!.fileExternalId === connectedLine.nodeB.groupId
           );
 
           const annotationA = (docStart?.group.children || []).find(
@@ -314,7 +332,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   };
 
   const loadFile = async (
-    fileId: string,
+    fileReference: { id: number; externalId?: string },
     fileName: string,
     options?: {
       initialPosition?: { x: number; y: number };
@@ -326,7 +344,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     const { initialPosition = { x: 0, y: 0 }, zoomAfterLoad = true } =
       options || {};
     const existingDoc = ornateViewer.current!.documents.find(
-      (doc) => doc.metadata?.fileId === String(fileId)
+      (doc) =>
+        doc.metadata?.fileExternalId === String(fileReference.externalId) ||
+        doc.metadata?.fileId === String(fileReference.id)
     );
     if (existingDoc) {
       console.log('document already exists!');
@@ -334,29 +354,55 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       return {};
     }
     setShowLoader(true);
-    const urls = await client.files.getDownloadUrls([{ id: +fileId }]);
-    if (!urls[0]) {
+    const file = await client.files.retrieve([{ id: +fileReference.id }]).then(
+      (res) =>
+        ({
+          ...res[0],
+          externalId: res[0].externalId || res[0].id,
+        } as FileInfo)
+    );
+    const url = await client.files
+      .getDownloadUrls([{ id: file.id }])
+      .then((res) => res[0]?.downloadUrl);
+    if (!url || !file) {
       console.error('Failed to get URL');
       throw new Error('Failed to get URL');
     }
 
     const newDoc = await ornateViewer.current!.addPDFDocument(
-      urls[0].downloadUrl,
+      url,
       1,
-      { fileId: String(fileId), fileName },
-      { initialPosition, zoomAfterLoad, groupId: String(fileId) }
+      {
+        fileId: String(file.id),
+        fileName,
+        fileExternalId: file.externalId || '',
+      },
+      { initialPosition, zoomAfterLoad, groupId: String(file.externalId) }
     );
 
-    const idEvents = await client.events.list({
-      filter: {
-        type: 'cognite_annotation',
-        metadata: {
-          CDF_ANNOTATION_file_id: String(fileId),
+    const idEvents = await client.events
+      .list({
+        filter: {
+          type: 'cognite_annotation',
+          metadata: {
+            CDF_ANNOTATION_file_id: String(file.id),
+          },
         },
-      },
-    });
+      })
+      .then((res) => res.items);
 
-    const annotations = idEvents.items.map((event) => {
+    const exIdEvents = await client.events
+      .list({
+        filter: {
+          type: 'cognite_annotation',
+          metadata: {
+            CDF_ANNOTATION_file_external_id: String(file.externalId),
+          },
+        },
+      })
+      .then((res) => res.items);
+
+    const annotations = [...idEvents, ...exIdEvents].map((event) => {
       const box = JSON.parse(event.metadata?.CDF_ANNOTATION_box || '') as {
         yMin: number;
         yMax: number;
@@ -365,7 +411,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       };
       const type = event.metadata?.CDF_ANNOTATION_resource_type || 'unknown';
       const newAnnotation: OrnateAnnotation = {
-        id: `${fileId}_${event.metadata?.CDF_ANNOTATION_resource_id}`,
+        id: `${file.id}_${event.metadata?.CDF_ANNOTATION_resource_id}`,
         type: 'pct',
         x: box.xMin,
         y: box.yMin,
@@ -394,10 +440,15 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     );
     setWorkSpaceDocumentAnnotations((prev) => ({
       ...prev,
-      [fileId]: instances,
+      [file.id]: instances,
     }));
     setWorkspaceDocuments(
-      workspaceService.addDocument(workspaceDocuments, fileId, fileName)
+      workspaceService.addDocument(
+        workspaceDocuments,
+        String(file.id),
+        fileName,
+        file.externalId
+      )
     );
 
     setShowLoader(false);

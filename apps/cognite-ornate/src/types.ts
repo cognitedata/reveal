@@ -2,6 +2,7 @@ import { WorkspaceContent } from 'services/workspace.service';
 
 export interface WorkspaceDocument {
   documentId: string;
+  documentExId?: string;
   documentName: string;
 }
 export type Workspace = {

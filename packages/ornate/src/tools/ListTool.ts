@@ -98,11 +98,13 @@ export class ListTool extends Tool implements ICogniteOrnateTool {
     }
     numberGroup.add(containerRect, text);
 
-    if (marker.groupId) {
+    if (marker.shape.attrs?.inGroup) {
       const group = this.ornateInstance.stage.findOne(
-        `#${marker.groupId}`
+        `#${marker.shape.attrs?.inGroup}`
       ) as Konva.Group;
-      group.add(numberGroup);
+      if (group) {
+        group.add(numberGroup);
+      }
     } else {
       this.listDrawingLayer.add(numberGroup);
     }

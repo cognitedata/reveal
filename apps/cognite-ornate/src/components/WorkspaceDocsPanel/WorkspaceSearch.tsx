@@ -11,7 +11,10 @@ import { Results, ResultsWrapper } from '../WorkSpaceSidebar/elements';
 import { WorkSpaceAssetListItem } from './WorkspaceAssetListItem';
 
 type WorkSpaceSearchProps = {
-  onLoadFile: (fileId: string, fileName: string) => void;
+  onLoadFile: (
+    fileReference: { id: number; externalId?: string },
+    fileName: string
+  ) => void;
   children?: React.ReactChild | React.ReactChild[];
 };
 
@@ -99,7 +102,10 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
                 asset={asset}
                 onClickFile={(file) => {
                   setShowResults(false);
-                  onLoadFile(file.id.toString(), file.name);
+                  onLoadFile(
+                    { id: file.id, externalId: file.externalId },
+                    file.name
+                  );
                 }}
               />
             ))}
@@ -123,7 +129,10 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
                 onClick={(e) => {
                   e.preventDefault();
                   setShowResults(false);
-                  onLoadFile(file.id.toString(), file.name);
+                  onLoadFile(
+                    { id: file.id, externalId: file.externalId },
+                    file.name
+                  );
                 }}
               >
                 {file.name}

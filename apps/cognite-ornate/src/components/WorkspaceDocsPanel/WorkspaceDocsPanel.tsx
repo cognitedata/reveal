@@ -12,7 +12,10 @@ import { AssetIcon } from './elements';
 export interface WorkspaceDocsPanelProps {
   workspace: Workspace;
   workspaceDocs: WorkspaceDocument[];
-  onLoadFile: (fileId: string, fileName: string) => void;
+  onLoadFile: (
+    fileRef: { id: number; externalId?: string },
+    fileName: string
+  ) => void;
   onWorkspaceTitleUpdated: (newTitle: string) => void;
   onDeleteDocument: (doc: WorkspaceDocument) => void;
   onAssetClick: (fileId: string, asset: Asset) => void;
@@ -79,7 +82,10 @@ export const WorkspaceDocsPanel = ({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  onLoadFile(doc.documentId.toString(), doc.documentName);
+                  onLoadFile(
+                    { id: +doc.documentId, externalId: doc.documentExId },
+                    doc.documentName
+                  );
                 }}
               >
                 <Icon
