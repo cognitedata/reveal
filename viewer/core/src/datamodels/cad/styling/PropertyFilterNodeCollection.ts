@@ -76,14 +76,15 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
       nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
-      async nodes => nodes.map(node => {
-        const bounds = new THREE.Box3();
-        if (node.boundingBox !== undefined) {
-          toThreeBox3(node.boundingBox, bounds);
-          this._model.mapBoxFromCdfToModelCoordinates(bounds, bounds);
-        }
-        return bounds;
-      }),
+      async nodes =>
+        nodes.map(node => {
+          const bounds = new THREE.Box3();
+          if (node.boundingBox !== undefined) {
+            toThreeBox3(node.boundingBox, bounds);
+            this._model.mapBoxFromCdfToModelCoordinates(bounds, bounds);
+          }
+          return bounds;
+        }),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
