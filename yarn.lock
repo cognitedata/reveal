@@ -7446,9 +7446,9 @@ data-urls@^2.0.0:
     whatwg-url "^8.0.0"
 
 date-fns@2.x, date-fns@^2.0.1, date-fns@^2.16.1, date-fns@^2.24.0:
-  version "2.24.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.24.0.tgz#7d86dc0d93c87b76b63d213b4413337cfd1c105d"
-  integrity sha512-6ujwvwgPID6zbI0o7UbURi2vlLDR9uP26+tW6Lg+Ji3w7dd0i3DOcjcClLjLPranT60SSEFBwdSyYwn/ZkPIuw==
+  version "2.25.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.25.0.tgz#8c5c8f1d958be3809a9a03f4b742eba894fc5680"
+  integrity sha512-ovYRFnTrbGPD4nqaEqescPEv1mNwvt+UTqI3Ay9SzNtey9NZnYu6E2qCcBBgJ6/2VF1zGGygpyTDITqpQQ5e+w==
 
 dayjs@1.x, dayjs@^1.10.7, dayjs@^1.9.7:
   version "1.10.7"
@@ -14805,9 +14805,9 @@ raw-loader@^4.0.2:
     schema-utils "^3.0.0"
 
 rc-align@^4.0.0:
-  version "4.0.10"
-  resolved "https://registry.yarnpkg.com/rc-align/-/rc-align-4.0.10.tgz#109f2639cd5d09e4380d4a46028bf5b7ff05df1c"
-  integrity sha512-4sd2pSrB/eJeHPuUHnoeM3ek/EJX4VaeYrkg4+T1Fm1U9Euz/AywRhSk4YSr9Dtcm6/DbmQ7m9CxgrkZkgdstA==
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/rc-align/-/rc-align-4.0.11.tgz#8198c62db266bc1b8ef05e56c13275bf72628a5e"
+  integrity sha512-n9mQfIYQbbNTbefyQnRHZPWuTEwG1rY4a9yKlIWHSTbgwI+XUMGRYd0uJ5pE2UbrNX0WvnMBA1zJ3Lrecpra/A==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "2.x"
@@ -15000,9 +15000,9 @@ rc-pagination@~3.1.9:
     classnames "^2.2.1"
 
 rc-picker@~2.5.10:
-  version "2.5.15"
-  resolved "https://registry.yarnpkg.com/rc-picker/-/rc-picker-2.5.15.tgz#7270c11815ca4be2ad931a9d9120099fc1820ab7"
-  integrity sha512-txKEj20LJuxKFlRKT727Qju7Xsek0WnB6xDaCrmSCiuEBGO5DlG57Wy8zhKgQgMY3+afVrQAzyg13mYonGuXyg==
+  version "2.5.19"
+  resolved "https://registry.yarnpkg.com/rc-picker/-/rc-picker-2.5.19.tgz#73d07546fac3992f0bfabf2789654acada39e46f"
+  integrity sha512-u6myoCu/qiQ0vLbNzSzNrzTQhs7mldArCpPHrEI6OUiifs+IPXmbesqSm0zilJjfzrZJLgYeyyOMSznSlh0GKA==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.1"
