@@ -42,7 +42,8 @@ const TitleOrnament = styled.div`
 `;
 
 const HeaderWrapper = styled.div`
-  display: inline;
+  display: flex;
+  justify-content: space-between;
 `;
 const RightPane = styled.div`
   text-align: right;
