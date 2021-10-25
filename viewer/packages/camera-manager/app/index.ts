@@ -19,7 +19,6 @@ let cuState: {
 init();
 
 function init() {
-
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000000);
 
   scene = new THREE.Scene();
