@@ -88,25 +88,20 @@ const renderDocumenation = (documentation: Documentation) => {
 
 const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
   const files =
-    (dataSet &&
-      dataSet.metadata.consoleAdditionalDocs &&
-      dataSet.metadata.consoleAdditionalDocs.filter(
-        (doc) => doc.type !== 'url'
-      )) ||
-    [];
+    dataSet?.metadata?.consoleAdditionalDocs?.filter(
+      (doc) => doc.type !== 'url'
+    ) || [];
   const links =
-    (dataSet &&
-      dataSet.metadata.consoleAdditionalDocs &&
-      dataSet.metadata.consoleAdditionalDocs.filter(
-        (doc) => doc.type === 'url' && isNotNilOrWhitespace(doc.id)
-      )) ||
-    [];
-  if (dataSet && dataSet.metadata) {
+    dataSet?.metadata?.consoleAdditionalDocs?.filter(
+      (doc) => doc.type === 'url' && isNotNilOrWhitespace(doc.id)
+    ) || [];
+
+  if (dataSet?.metadata) {
     return (
       <ContentView>
         <MiniInfoTitle>Files</MiniInfoTitle>
         <TitleOrnament />
-        {files && files.length ? (
+        {files?.length ? (
           files.map((doc) => renderDocumenation(doc))
         ) : (
           <NoDataText>No documentation files uploaded </NoDataText>
@@ -114,7 +109,7 @@ const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
 
         <MiniInfoTitle>Links</MiniInfoTitle>
         <TitleOrnament />
-        {links && links.length ? (
+        {links?.length ? (
           links.map((doc) => renderDocumenation(doc))
         ) : (
           <NoDataText>No documentation links</NoDataText>

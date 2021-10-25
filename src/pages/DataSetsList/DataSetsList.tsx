@@ -19,7 +19,6 @@ import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import isObject from 'lodash/isObject';
 import isArray from 'lodash/isArray';
 import getTableColumns, { DataSetRow } from './TableColumns';
 import {
@@ -81,7 +80,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const handleTableData = () => {
     let tableDataSets: DataSetRow[] = [];
-    if (dataSets.length && !loading) {
+    if (dataSets?.length && !loading) {
       const dataSetsList = handleDataSetsFilters(
         showArchived,
         searchValue,
@@ -94,7 +93,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
           key: dataSet.id,
           name: dataSet.name,
           description: dataSet.description,
-          labels: (dataSet.metadata && dataSet.metadata.consoleLabels) || [],
+          labels: dataSet?.metadata?.consoleLabels || [],
           quality: dataSet.metadata.consoleGoverned,
           integrations: dataSet.metadata.integrations ?? [],
           writeProtected: dataSet.writeProtected,
@@ -111,10 +110,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const getSourcesList = () => {
     const sourceNames: string[] = [];
     dataSets.forEach((dataSet) => {
-      if (
-        dataSet?.metadata?.consoleSource?.names &&
-        isObject(dataSet.metadata.consoleSource.names)
-      )
+      if (dataSet?.metadata?.consoleSource?.names?.length)
         dataSet.metadata.consoleSource.names.forEach((name: string) => {
           if (!sourceNames.includes(name)) {
             sourceNames.push(name);
