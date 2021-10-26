@@ -33,7 +33,15 @@ async function init() {
   });
 
   const client = new CogniteClient({ appId: 'reveal.example.simple' });
-  await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project: '3ddemo' } });
+  await client.loginWithOAuth({
+    type: 'AAD_OAUTH',
+    options: {
+      clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
+      cluster: 'api',
+      tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
+    }
+  });
+  client.setProject('3ddemo');
   await client.authenticate();
 
   const queryString = window.location.search;
