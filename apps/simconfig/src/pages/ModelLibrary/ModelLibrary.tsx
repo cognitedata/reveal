@@ -8,15 +8,22 @@ import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionCo
 import ModelTable from 'components/tables/ModelTable/ModelTable';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { fetchDownloadLinks, fetchFiles } from 'store/file/thunks';
+import { FileInfoSerializable } from 'store/file/types';
+import { setSelectedFile } from 'store/file';
+import sortBy from 'lodash/sortBy';
 import {
   selectDownloadLinks,
   selectFiles,
   selectIsFilesInitialized,
   selectSelectedFile,
 } from 'store/file/selectors';
-import { FileInfoSerializable } from 'store/file/types';
-import { setSelectedFile } from 'store/file';
-import sortBy from 'lodash/sortBy';
+
+import {
+  IndicatorTitle,
+  IndicatorTab,
+  IndicatorContainer,
+  IndicatorContainerImage,
+} from './elements';
 
 type Params = {
   modelName?: string;
@@ -115,6 +122,32 @@ export default function ModelLibrary() {
     dispatch(setSelectedFile(undefined));
   };
 
+  const Indicators = () => {
+    const lastFile = sortBy(files, 'metadata.version')[files.length - 1];
+    return (
+      <IndicatorContainer>
+        <IndicatorTab>
+          <IndicatorTitle>SIMULATOR</IndicatorTitle>
+          <IndicatorContainerImage>
+            <img
+              src={`${
+                process.env.PUBLIC_URL
+              }/simulators/${lastFile.source?.toLowerCase()}.png`}
+              alt={lastFile.source}
+              style={{ marginRight: 12 }}
+            />
+            <p>{lastFile.source}</p>
+          </IndicatorContainerImage>
+        </IndicatorTab>
+
+        <IndicatorTab>
+          <IndicatorTitle>VERSION</IndicatorTitle>
+          <p>{lastFile.metadata?.version}</p>
+        </IndicatorTab>
+      </IndicatorContainer>
+    );
+  };
+
   return (
     <CollapsableContainer>
       <CollapsablePanel
@@ -130,6 +163,7 @@ export default function ModelLibrary() {
         <Container>
           <Header>
             <Title>{modelName || 'Model library'}</Title>
+            {modelName && <Indicators />}
             <Button onClick={onClick} type="primary" icon="PlusCompact">
               {!modelName ? 'New model' : 'New version'}
             </Button>
