@@ -307,7 +307,7 @@ export class EffectRenderManager {
       this.traverseForRootSectorNode(this._originalScene);
       this.extractCadNodes(this._originalScene);
 
-      this.clearTarget(this._renderTarget);
+      this.clearTargetWithClearColor(this._renderTarget);
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
       if (hasBackElements && !hasGhostElements) {
@@ -355,13 +355,13 @@ export class EffectRenderManager {
       this.extractCadNodes(scene);
 
       // Clear targets
-      this.clearTarget(this._ghostObjectRenderTarget);
-      this.clearTarget(this._compositionTarget);
-      this.clearTarget(this._customObjectRenderTarget);
+      this.clearTargetWithTransparentBlack(this._ghostObjectRenderTarget);
+      this.clearTargetWithTransparentBlack(this._compositionTarget);
+      this.clearTargetWithTransparentBlack(this._customObjectRenderTarget);
       // We use alpha to store special state for the next targets
       renderer.setClearAlpha(0.0);
-      this.clearTarget(this._normalRenderedCadModelTarget);
-      this.clearTarget(this._inFrontRenderedCadModelTarget);
+      this.clearTargetWithTransparentBlack(this._normalRenderedCadModelTarget);
+      this.clearTargetWithTransparentBlack(this._inFrontRenderedCadModelTarget);
       renderer.setClearAlpha(original.clearAlpha);
 
       const lastFrameSceneState = { ...this._lastFrameSceneState };
@@ -478,7 +478,20 @@ export class EffectRenderManager {
     return this._autoSetTargetSize;
   }
 
-  private clearTarget(target: THREE.WebGLRenderTarget | null) {
+  private clearTargetWithTransparentBlack(target: THREE.WebGLRenderTarget) {
+    const oldColor = this._renderer.getClearColor(new THREE.Color());
+    const oldAlpha = this._renderer.getClearAlpha();
+    try {
+      this._renderer.setClearColor(new THREE.Color(0, 0, 0), 0);
+      this._renderer.setRenderTarget(target);
+      this._renderer.clear();
+    } finally {
+      this._renderer.setClearColor(oldColor);
+      this._renderer.setClearAlpha(oldAlpha);
+    }
+  }
+
+  private clearTargetWithClearColor(target: THREE.WebGLRenderTarget | null) {
     this._renderer.setRenderTarget(target);
     this._renderer.clear();
   }

@@ -57,5 +57,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'two-models-one-ghosted',
     category: 'cad'
+  },
+  {
+    testKey: 'transparentCustomObjectWithBackgroundColor',
+    category: 'cad'
   }
 ];
