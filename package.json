@@ -54,7 +54,7 @@
     "@babel/preset-typescript": "7.12.13",
     "@cognite/eslint-config": "^2.0.1",
     "@cognite/eslint-plugin": "^2.0.0",
-    "@nrwl/cli": "13.0.1",
+    "@nrwl/cli": "13.0.2",
     "@nrwl/cypress": "13.0.1",
     "@nrwl/eslint-plugin-nx": "13.0.2",
     "@nrwl/jest": "13.0.2",
