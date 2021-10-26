@@ -15,9 +15,9 @@ function TransparentCustomObjectWithBackgroundColor() {
   const modelUrl = 'primitives';
   
   function initializeViewer(viewer: Cognite3DViewer) {
-    const sphere = new THREE.BoxGeometry(7, 5, 7);
+    const sphere = new THREE.BoxGeometry(20, 5, 20);
     const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 'blue', transparent: true, opacity: 0.5 }));
-    sphereMesh.position.set(2, 0, -5);
+    sphereMesh.position.set(10, 0, -10);
     viewer.addObject3D(sphereMesh);
   }
 
@@ -29,27 +29,11 @@ function TransparentCustomObjectWithBackgroundColor() {
     model.assignStyledNodeCollection(ghostedNodes, DefaultNodeAppearance.Ghosted);
   }
 
-  function placeCamera(viewer: Cognite3DViewer) {
-    viewer.setBackgroundColor(new THREE.Color('darkGray'));
-    // Not sure why setting camera immediately wont work :s 
-    // *Probably* caused by fitCameraToModel() being deferred.
-    setTimeout(() => {
-      viewer.setCameraPosition(new THREE.Vector3(21.5, 15.3, -12.2));
-      viewer.setCameraTarget(new THREE.Vector3(5.8, 6.3, -6.87));
-    }, 50);
-  }
-
   return <Cognite3DTestViewer 
     modelUrls={[modelUrl]} 
     initializeCallback={initializeViewer} 
     modelAddedCallback={styleNodes} 
-    pageReadyCallback={placeCamera} 
-    viewerOptions={{
-      // Dont use any post-processing effects
-      antiAliasingHint: 'msaa2',
-      ssaoQualityHint: 'high',
-      enableEdges: true,
-    }} />;
+  />;
 }
 
 registerVisualTest('cad', 'transparentCustomObjectWithBackgroundColor', 'Transparent custom objects with overridden background color', <TransparentCustomObjectWithBackgroundColor />)
