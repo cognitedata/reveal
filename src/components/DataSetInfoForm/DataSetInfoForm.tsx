@@ -105,11 +105,13 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
               {label}
             </Option>
           ))}
-        {labelSuggestions?.map((suggestion: string) => (
-          <Option key={suggestion} value={suggestion}>
-            {suggestion}
-          </Option>
-        ))}
+        {labelSuggestions
+          ?.filter((label) => !props.selectedLabels?.includes(label))
+          ?.map((suggestion: string) => (
+            <Option key={suggestion} value={suggestion}>
+              {suggestion}
+            </Option>
+          ))}
       </Select>
       <FieldLabel>
         <InfoTooltip
