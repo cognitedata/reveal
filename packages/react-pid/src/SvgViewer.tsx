@@ -1,27 +1,77 @@
-import { useState } from 'react';
+/* eslint-disable no-param-reassign */
+import * as React from 'react';
 import { ReactSVG } from 'react-svg';
 
+import { ToolBar } from './ToolBar';
+
 export const SvgViewer = () => {
+  const [fileUrl, setFileUrl] = React.useState('');
+  const [currentMode, setCurrentMode] = React.useState<string>('');
+
+  const [selection, setSelection] = React.useState<string[]>([]);
+
+  // console.log('selection', selection);
+
+  const handleBeforeInjection = (svg?: SVGSVGElement) => {
+    // console.log('handleBeforeInjection svg', svg);
+
+    if (svg) {
+      const recursive = (
+        node: SVGElement,
+        action?: (node: SVGElement) => void
+      ) => {
+        if (node.children.length === 0) {
+          if (action && selection.includes(node.id)) {
+            action(node);
+          }
+        } else {
+          for (let j = 0; j < node.children.length; j++) {
+            const child = node.children[j] as SVGElement;
+            recursive(child, action);
+          }
+        }
+      };
+
+      const makeRed = (node: SVGElement) => {
+        node.style.stroke = 'red';
+      };
+
+      for (let j = 0; j < svg.children.length; j++) {
+        const child = svg.children[j] as SVGElement;
+        if (child.tagName === 'g') {
+          recursive(child, makeRed);
+        }
+      }
+    }
+  };
+
   const handleAfterInjection = (error: Error | null, svg?: SVGSVGElement) => {
     if (error) {
       return;
     }
 
+    // console.log('handleAfterInjection', svg);
+
     if (svg) {
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
-          const originalStorkeWidth = node.style.strokeWidth;
-          const originalStorke = node.style.stroke;
+          const originalStrokeWidth = node.style.strokeWidth;
+          const originalStroke = node.style.stroke;
 
           node.addEventListener('mouseenter', () => {
-            const val = 3 * parseInt(originalStorkeWidth, 10);
-            node.style.strokeWidth = val.toString(); // eslint-disable-line no-param-reassign
-            node.style.stroke = 'blue'; // eslint-disable-line no-param-reassign
+            const val = 3 * parseInt(originalStrokeWidth, 10);
+            node.style.strokeWidth = val.toString();
+            node.style.stroke = 'blue';
           });
 
           node.addEventListener('mouseleave', () => {
-            node.style.strokeWidth = originalStorkeWidth; // eslint-disable-line no-param-reassign
-            node.style.stroke = originalStorke; // eslint-disable-line no-param-reassign
+            node.style.strokeWidth = originalStrokeWidth;
+            node.style.stroke = originalStroke;
+          });
+          node.addEventListener('click', () => {
+            if (currentMode !== '') {
+              setSelection([...selection, node.id]);
+            }
           });
         } else {
           for (let j = 0; j < node.children.length; j++) {
@@ -48,12 +98,20 @@ export const SvgViewer = () => {
     setFileUrl('');
   };
 
-  const [fileUrl, setFileUrl] = useState('');
-
   return (
     <div>
+      <ToolBar
+        setMode={setCurrentMode}
+        mode={currentMode}
+        setSelected={setSelection}
+      />
       <input type="file" onChange={handleFileChange} />
-      <ReactSVG src={fileUrl} afterInjection={handleAfterInjection} />
+      <ReactSVG
+        renumerateIRIElements={false}
+        src={fileUrl}
+        afterInjection={handleAfterInjection}
+        beforeInjection={handleBeforeInjection}
+      />
     </div>
   );
 };
