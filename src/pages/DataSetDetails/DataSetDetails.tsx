@@ -78,20 +78,18 @@ const DataSetDetails = (): JSX.Element => {
   );
 
   const editButton = (
-    <Tooltip content="Archived data is not deleted. You can restore archived data sets later.">
-      <Button
-        disabled={!hasWritePermissions}
-        onClick={() => {
-          setSelectedDataSet(Number(dataSetId));
-          setEditDrawerVisible(true);
-        }}
-        style={{
-          marginLeft: '10px',
-        }}
-      >
-        Edit
-      </Button>
-    </Tooltip>
+    <Button
+      disabled={!hasWritePermissions}
+      onClick={() => {
+        setSelectedDataSet(Number(dataSetId));
+        setEditDrawerVisible(true);
+      }}
+      style={{
+        marginLeft: '10px',
+      }}
+    >
+      Edit
+    </Button>
   );
 
   const discardChangesButton = (

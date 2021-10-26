@@ -10,7 +10,6 @@ import { JetfireApi } from 'jetfire/JetfireApi';
 import { DataSet } from 'utils/types';
 import * as Sentry from '@sentry/browser';
 import { getJetfireUrl, getStringCdfEnv, getContainer } from 'utils/utils';
-import Search from 'antd/lib/input/Search';
 import Drawer from 'components/Drawer';
 import {
   InfoSubtitle,
@@ -123,10 +122,9 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
   const cdfTransformations = () => (
     <>
       <MiniInfoTitle>Select CDF SQL transformations used</MiniInfoTitle>
-      <Search
+      <Input
         placeholder="Search for transformations"
         value={searchValue}
-        allowClear
         onChange={(e) => setSearchValue(e.currentTarget.value)}
         style={{
           marginTop: '15px',

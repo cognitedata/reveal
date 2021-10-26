@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { History } from 'history';
 import NewHeader from 'components/NewHeader';
-import { Button } from '@cognite/cogs.js';
-import Input from 'antd/lib/input';
+import { Button, Input } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
 import Tag from 'antd/lib/tag';
 import notification from 'antd/lib/notification';
@@ -27,8 +26,6 @@ import {
 } from '../../actions/index';
 import { useWithIntegrations } from '../../hooks/useWithIntegrations';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
-
-const { Search } = Input;
 
 interface DataSetsListProps {
   history: History;
@@ -131,7 +128,9 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
           actions={[
             {
               label: 'Edit',
-              onClick: () => editDataSet(row.key),
+              onClick: () => {
+                editDataSet(row.key);
+              },
               disabled: !hasWritePermissions,
               loading: isUpdatingDataSetVisibility || loading,
               icon: 'Edit',
@@ -235,13 +234,12 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
     </Button>
   );
   const SearchBar = (
-    <Search
+    <Input
       placeholder="Search by name, description, or labels"
       value={searchValue}
       onChange={(e) => setSearchValue(e.currentTarget.value)}
-      style={{
-        width: '306px',
-      }}
+      icon="Search"
+      style={{ width: '300px' }}
     />
   );
 
