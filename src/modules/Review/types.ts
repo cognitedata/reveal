@@ -65,6 +65,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   isLoading: (status: boolean) => void;
   onSelectTool: (tool: Tool) => void;
   focusIntoView: (annotation: AnnotationTableItem) => void;
+  openCollectionSettings: () => void;
 };
 
 export type AnnotationTableRowProps = {

@@ -3,6 +3,9 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { deleteCollectionById } from 'src/modules/Review/store/annotationLabelSlice';
 import { KeypointItemCollection } from 'src/modules/Review/types';
 
+/**
+ * Will return keypoint item collection is it's complete else returns null
+ */
 export const CreateKeypointAnnotation = createAsyncThunk<
   KeypointItemCollection | null,
   void,

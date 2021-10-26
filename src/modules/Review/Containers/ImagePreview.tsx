@@ -162,6 +162,7 @@ export const ImagePreview = ({
         selectedTool={currentTool}
         onSelectTool={onSelectTool}
         focusIntoView={onFocus}
+        openCollectionSettings={onOpenCollectionSettings}
       />
       <ExtraToolbar>
         <Tooltip

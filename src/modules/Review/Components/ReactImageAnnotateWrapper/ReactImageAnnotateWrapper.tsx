@@ -6,10 +6,7 @@ import {
   onCreateOrUpdateShape,
   onUpdateKeyPoint,
 } from 'src/modules/Review/store/annotationLabelSlice';
-import {
-  selectAnnotation,
-  showCollectionSettingsModel,
-} from 'src/modules/Review/store/reviewSlice';
+import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
 import {
   AnnotationTableItem,
   ReactImageAnnotateWrapperProps,
@@ -52,6 +49,7 @@ export const ReactImageAnnotateWrapper = ({
   selectedTool,
   onSelectTool,
   focusIntoView,
+  openCollectionSettings,
 }: ReactImageAnnotateWrapperProps) => {
   const annotationEditPopupRef = useRef<HTMLDivElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -118,15 +116,16 @@ export const ReactImageAnnotateWrapper = ({
   }, [fileInfo, selectedTool]);
 
   const handleCreateRegion = async (region: Region) => {
-    const labelValue = region.tags && region.tags[RegionTagsIndex.label];
+    const annotationCollectionLabel =
+      region.tags && region.tags[RegionTagsIndex.label];
     const keyPointOrder =
       region.tags && region.tags[RegionTagsIndex.keypointOrder];
-    if (labelValue) {
+    if (annotationCollectionLabel) {
       if (region.type === 'point') {
         await dispatch(
           onCreateKeyPoint(
             region.id,
-            labelValue,
+            annotationCollectionLabel,
             region.x,
             region.y,
             keyPointOrder
@@ -140,21 +139,24 @@ export const ReactImageAnnotateWrapper = ({
           );
         }
       } else {
-        await dispatch(onCreateOrUpdateShape(labelValue));
+        await dispatch(onCreateOrUpdateShape(annotationCollectionLabel));
         onCreateAnnotation(convertToAnnotation(region));
       }
     }
   };
 
   const handleUpdateRegion = async (region: Region) => {
-    const labelValue = region.tags && region.tags[RegionTagsIndex.label];
+    const annotationLabel = region.tags && region.tags[RegionTagsIndex.label];
 
-    if (labelValue) {
+    if (annotationLabel) {
       if (region.type === 'point') {
         await dispatch(onUpdateKeyPoint(region));
-        if (region.tags && region.tags.length >= 3) {
+        // check for availability of CDF annotation id
+        if (region.tags && region.tags[RegionTagsIndex.parentAnnotationId]) {
           const thunkResponse = await dispatch(
-            RetrieveKeypointCollection(region.tags[2])
+            RetrieveKeypointCollection(
+              region.tags[RegionTagsIndex.parentAnnotationId]
+            )
           );
           const keypointCollection = unwrapResult(thunkResponse);
           if (keypointCollection) {
@@ -164,17 +166,13 @@ export const ReactImageAnnotateWrapper = ({
           }
         }
       } else {
-        await dispatch(onCreateOrUpdateShape(labelValue));
+        await dispatch(onCreateOrUpdateShape(annotationLabel));
         onUpdateAnnotation(convertToAnnotation(region));
       }
     }
   };
   const handleDeleteRegion = (region: Region) => {
     onDeleteAnnotation(convertToAnnotation(region));
-  };
-
-  const onOpenCollectionSettings = () => {
-    dispatch(showCollectionSettingsModel(true));
   };
 
   const NewRegionEditLabel = useMemo(() => {
@@ -206,7 +204,7 @@ export const ReactImageAnnotateWrapper = ({
           shapeOptions={shapeOptions}
           lastShape={lastShapeName!}
           lastCollection={lastKeypointCollection}
-          onOpenCollectionSettings={onOpenCollectionSettings}
+          onOpenCollectionSettings={openCollectionSettings}
           popupReference={annotationEditPopupRef}
           nextKeypoint={nextToDoKeypointInCurrentCollection}
         />
@@ -224,6 +222,7 @@ export const ReactImageAnnotateWrapper = ({
   const onRegionSelect = (region: Region) => {
     dispatch(deselectAllSelectionsReviewPage());
     let selectedAnnotationId: ReactText;
+    // keypoint regions will have a string id
     if (typeof region.id === 'string') {
       dispatch(keypointSelectStatusChange(region.id));
       selectedAnnotationId = region.tags![RegionTagsIndex.parentAnnotationId];
