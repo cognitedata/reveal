@@ -8,7 +8,7 @@ import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
-import ComboControls from '@reveal/camera-manager';
+import { ComboControls } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';

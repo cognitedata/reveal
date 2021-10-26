@@ -45,7 +45,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import ComboControls from '@reveal/camera-manager';
+import {ComboControls, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -99,6 +99,7 @@ export class Cognite3DViewer {
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
+  private readonly _cameraManager: CameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -327,11 +328,14 @@ export class Cognite3DViewer {
 
     if (this._useOnClickTargetChange) this.addOnClickTargetChange();
 
-    this.controls = new ComboControls(this.camera, this.canvas);
-    this.controls.dollyFactor = 0.992;
-    this.controls.minDistance = 0.15;
-    this.controls.maxDistance = 100.0;
-    this.controls.useScrollTarget = this._useScrollTargetControls;
+    this._cameraManager = new CameraManager(this.camera, this.canvas, this.getIntersectionFromPixel);
+
+    this.controls = this._cameraManager.controls;
+    // this.controls = new ComboControls(this.camera, this.canvas);
+    // this.controls.dollyFactor = 0.992;
+    // this.controls.minDistance = 0.15;
+    // this.controls.maxDistance = 100.0;
+    // this.controls.useScrollTarget = this._useScrollTargetControls;
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -896,7 +900,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
-    return this.controls.getState().position.clone();
+    return this.camera.position.clone();
   }
 
   /**
@@ -1042,22 +1046,7 @@ export class Cognite3DViewer {
    * ```
    */
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const center = new THREE.Vector3().lerpVectors(box.min, box.max, 0.5);
-    const radius = 0.5 * box.max.distanceTo(box.min);
-    const boundingSphere = new THREE.Sphere(center, radius);
-
-    // TODO 2020-03-15 larsmoa: Doesn't currently work :S
-    // const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
-
-    const target = boundingSphere.center;
-    const distance = boundingSphere.radius * radiusFactor;
-    const direction = new THREE.Vector3(0, 0, -1);
-    direction.applyQuaternion(this.camera.quaternion);
-
-    const position = new THREE.Vector3();
-    position.copy(direction).multiplyScalar(-distance).add(target);
-
-    this.moveCameraTo(position, target, duration);
+    this._cameraManager.fitCameraToBoundingBox(box, duration, radiusFactor);
   }
 
   /**

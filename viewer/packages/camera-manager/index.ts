@@ -1,4 +1,5 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { default } from './src/ComboControls';
+export { ComboControls } from './src/ComboControls';
+export { CameraManager } from './src/CameraManager';
