@@ -53,8 +53,15 @@ const RightPane = styled.div`
 const LeftPane = styled.div`
   text-align: left;
   float: left;
-  display: inline;
+  display: flex;
+  flex-direction: column;
 `;
+
+const ItemWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 interface NewHeaderProps {
   title: string | JSX.Element;
   subtitle?: string | JSX.Element;
@@ -129,8 +136,10 @@ const NewHeader = ({
         )}
         <HeaderWrapper>
           <LeftPane>
-            <Title>{title}</Title>
-            {leftItem && <span>{leftItem}</span>}
+            <ItemWrapper>
+              <Title>{title}</Title>
+              {leftItem && <span>{leftItem}</span>}
+            </ItemWrapper>
             <TitleOrnament
               style={{
                 backgroundColor: ornamentColor || theme.titleOrnamentColor,

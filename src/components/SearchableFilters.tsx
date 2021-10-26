@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Checkbox from 'antd/lib/checkbox';
-import { Button } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
 import Spin from 'antd/lib/spin';
 import Menu from 'antd/lib/menu';
-import Input from 'antd/lib/input';
 import styled from 'styled-components';
 import theme from 'styles/theme';
 import message from 'antd/lib/message';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
-
-const { Search } = Input;
 
 const StickyFooter = styled.div`
   bottom: 0;
@@ -72,7 +69,7 @@ const SearchableFilters = ({
           maxWidth: '200px',
         }}
       >
-        <Search
+        <Input
           style={{
             position: 'sticky',
             top: 0,
@@ -80,8 +77,8 @@ const SearchableFilters = ({
           }}
           placeholder="Find filter"
           value={searchValue}
-          allowClear
           onChange={(e) => setSearchValue(e.currentTarget.value)}
+          icon="Search"
         />
         <CheckboxGroup
           value={selectedKeys}

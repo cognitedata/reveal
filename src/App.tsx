@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Route, Router, Switch } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
+import { DataSetsContextProvider } from 'context';
 import DataSetsList from './pages/DataSetsList/DataSetsList';
 import DataSetDetails from './pages/DataSetDetails/DataSetDetails';
 
@@ -41,19 +42,21 @@ const App = () => {
               projectName={projectName()}
             >
               <SubAppWrapper>
-                <Router history={history}>
-                  <Switch>
-                    <Route
-                      path="/:tenant/new-data-sets"
-                      component={DataSetsList}
-                      exact
-                    />
-                    <Route
-                      path="/:tenant/new-data-sets/data-set/:dataSetId"
-                      component={DataSetDetails}
-                    />
-                  </Switch>
-                </Router>
+                <DataSetsContextProvider>
+                  <Router history={history}>
+                    <Switch>
+                      <Route
+                        path="/:tenant/new-data-sets"
+                        component={DataSetsList}
+                        exact
+                      />
+                      <Route
+                        path="/:tenant/new-data-sets/data-set/:dataSetId"
+                        component={DataSetDetails}
+                      />
+                    </Switch>
+                  </Router>
+                </DataSetsContextProvider>
               </SubAppWrapper>
             </FlagProvider>
           </SDKProvider>
