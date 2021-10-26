@@ -20,6 +20,7 @@ import {
   KeypointItem,
   KeypointVertex,
 } from 'src/utils/AnnotationUtils';
+import { ReactText } from 'react';
 
 type KeyPointState = {
   id: string;
@@ -43,7 +44,8 @@ type State = {
     allIds: string[];
     selectedIds: string[];
   };
-  lastCollection: string | undefined;
+  lastCollectionId: string | undefined;
+  lastCollectionName: string | undefined;
   lastShape: string | undefined;
   lastKeyPoint: string | undefined;
   currentTool: Tool;
@@ -69,7 +71,8 @@ const initialState: State = {
     allIds: [],
     selectedIds: [],
   },
-  lastCollection: undefined,
+  lastCollectionId: undefined,
+  lastCollectionName: undefined,
   lastShape: undefined,
   lastKeyPoint: undefined,
   currentTool: 'select',
@@ -127,30 +130,32 @@ const annotationLabelSlice = createSlice({
       reducer: (
         state,
         action: PayloadAction<{
-          region: Region;
+          id: string;
           collectionName: string;
-          orderNumber: string;
+          orderNumber?: string;
+          positionX: number;
+          positionY: number;
         }>
       ) => {
-        state.lastKeyPoint = action.payload.region.id.toString();
+        state.lastKeyPoint = action.payload.id;
+        state.lastCollectionName = action.payload.collectionName;
 
         const predefinedKeypoint =
           state.predefinedCollections.predefinedKeypoints
             .find(
               (col) => col.collectionName === action.payload.collectionName
             )!
-            .keypoints!.find((kp) => kp.order === action.payload.orderNumber);
+            .keypoints!.find(
+              (kp) => kp.order === (action.payload.orderNumber || '1')
+            );
 
         const keypoint = {
           ...predefinedKeypoint,
-          id: action.payload.region.id.toString(),
-          defaultPosition: [
-            (action.payload.region as Point).x,
-            (action.payload.region as Point).y,
-          ],
+          id: action.payload.id.toString(),
+          defaultPosition: [action.payload.positionX, action.payload.positionY],
         };
 
-        if (!state.lastCollection) {
+        if (!state.lastCollectionId) {
           const collectionId = `${action.payload.collectionName}-${uuidv4()}`;
 
           const collection = {
@@ -164,23 +169,34 @@ const annotationLabelSlice = createSlice({
 
           state.collections.byId[collectionId] = collection;
           state.collections.allIds = Object.keys(state.collections.byId);
-          state.lastCollection = collectionId;
+          state.lastCollectionId = collectionId;
           state.collections.selectedIds = [collectionId];
         }
-        state.collections.byId[state.lastCollection].keypointIds.push(
+        state.collections.byId[state.lastCollectionId].keypointIds.push(
           keypoint.id
         );
         state.keypointMap.byId[keypoint.id] = keypoint as KeyPointState;
         state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
       },
       prepare: (
-        region: Region,
+        id: ReactText,
         collectionName: string,
-        orderNumber: string
+        x: number,
+        y: number,
+        orderNumber?: string
       ) => {
-        return { payload: { region, collectionName, orderNumber } };
+        return {
+          payload: {
+            id: id.toString(),
+            collectionName,
+            positionX: x,
+            positionY: y,
+            orderNumber,
+          },
+        };
       },
     },
+
     onUpdateKeyPoint(state, action: PayloadAction<Region>) {
       const keypointItem = state.keypointMap.byId[action.payload.id];
       if (keypointItem) {
@@ -194,7 +210,7 @@ const annotationLabelSlice = createSlice({
       deleteCollection(state, action.payload);
     },
     deleteCurrentCollection(state) {
-      const currentCollectionId = state.lastCollection;
+      const currentCollectionId = state.lastCollectionId;
       if (currentCollectionId) {
         deleteCollection(state, currentCollectionId);
       }
@@ -276,33 +292,33 @@ export default annotationLabelSlice.reducer;
 
 // selectors
 
-export const nextKeyPoint = createSelector(
+export const nextKeypoint = createSelector(
   (state: State) => state.predefinedCollections.predefinedKeypoints,
   (state: State) => state.collections.byId,
   (state: State) => state.keypointMap.byId,
-  (state: State) => state.lastCollection,
+  (state: State) => state.lastCollectionName,
   (state: State) => state.lastKeyPoint,
   (
     keyPointCollectionTemplates,
     allCollections,
     allKeypoints,
-    lastCollectionId,
+    lastCollectionName,
     lastKeyPointId
   ) => {
-    const lastCollection = lastCollectionId
-      ? allCollections[lastCollectionId]
-      : null;
     const lastKeyPoint = lastKeyPointId ? allKeypoints[lastKeyPointId] : null;
     const template =
       keyPointCollectionTemplates.find(
-        (tmp) => tmp.collectionName === lastCollection?.name
+        (tmp) => tmp.collectionName === lastCollectionName
       ) || keyPointCollectionTemplates[0];
 
     if (template && template.keypoints && template.keypoints.length) {
       let nextPoint;
       if (lastKeyPoint) {
         const lastKeypointIndex = template.keypoints.findIndex(
-          (keyPoint) => keyPoint.order === lastKeyPoint.order
+          (keyPoint) =>
+            keyPoint.order === lastKeyPoint.order &&
+            keyPoint.caption === lastKeyPoint.caption &&
+            keyPoint.color === lastKeyPoint.color
         );
         const nextIndex = lastKeypointIndex >= 0 ? lastKeypointIndex + 1 : 0;
         if (nextIndex === template.keypoints.length) {
@@ -316,25 +332,9 @@ export const nextKeyPoint = createSelector(
         nextPoint = template.keypoints[0];
       }
 
-      if (nextPoint) {
-        return {
-          collectionName: template.collectionName,
-          orderNumber: parseInt(nextPoint.order, 10),
-        };
-      }
+      return nextPoint;
     }
-
-    if (template) {
-      return {
-        collectionName: template.collectionName,
-        orderNumber: Math.min(
-          ...(template.keypoints?.map((keyPoint) =>
-            parseInt(keyPoint.order, 10)
-          ) || [])
-        ),
-      };
-    }
-    return { collectionName: '', orderNumber: 0 };
+    return null;
   }
 );
 
@@ -349,23 +349,40 @@ export const nextShape = createSelector(
   }
 );
 
+export const nextCollection = createSelector(
+  (state: State) => state.predefinedCollections.predefinedKeypoints,
+  (state: State) => state.lastCollectionName,
+  (predefinedKeypointCollections, lastCollectionName) => {
+    let collection = predefinedKeypointCollections[0];
+    if (lastCollectionName) {
+      const template = predefinedKeypointCollections.find(
+        (c) => c.collectionName === lastCollectionName
+      );
+      if (template) {
+        collection = template;
+      }
+    }
+    return collection;
+  }
+);
+
 export const currentCollection = createSelector(
-  (state: State) => state.lastCollection,
+  (state: State) => state.lastCollectionId,
   (state: State) => state.collections.byId,
   (state: State) => state.collections.selectedIds,
   (state: State) => state.keypointMap.byId,
   (state: State) => state.keypointMap.selectedIds,
   (state: State) => state.predefinedCollections.predefinedKeypoints,
   (
-    lastCollection,
+    lastCollectionId,
     allCollections,
     selectedCollectionIds,
     allKeypoints,
     selectedKeypointIds,
     collectionTemplate
   ) => {
-    if (lastCollection) {
-      const collection = allCollections[lastCollection];
+    if (lastCollectionId) {
+      const collection = allCollections[lastCollectionId];
       const keypoints = collection.keypointIds.map(
         (id) =>
           ({
@@ -392,7 +409,7 @@ export const currentCollection = createSelector(
 );
 
 export const keypointsCompleteInCollection = createSelector(
-  (state: State) => state.lastCollection,
+  (state: State) => state.lastCollectionId,
   (state: State) => state.collections.byId,
   (state: State) => state.keypointMap.byId,
   (state: State) => state.predefinedCollections.predefinedKeypoints,
@@ -428,7 +445,7 @@ const deleteCollection = (state: State, collectionId: string) => {
       state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
     }
   }
-  if (state.lastCollection === collectionId) {
-    state.lastCollection = undefined;
+  if (state.lastCollectionId === collectionId) {
+    state.lastCollectionId = undefined;
   }
 };

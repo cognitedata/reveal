@@ -9,28 +9,22 @@ export type BodyContainerMode = 'point' | 'shape';
 export const BodyContainer = ({
   isKeypointMode,
   color,
-  disabledDropdown,
+  isSavedAnnotation,
   labelOption,
-  keypointLabelOption,
+  keypointLabel,
   labelOptions,
-  shapeOptions,
-  keypointLabelOptions,
   onSelectLabel,
-  onSelectKeypoint,
 }: {
   isKeypointMode: boolean;
   color: string;
-  disabledDropdown: boolean;
+  isSavedAnnotation: boolean;
   labelOption: OptionType<string>;
-  keypointLabelOption: OptionType<string>;
+  keypointLabel: string;
   labelOptions?: OptionType<string>[];
-  shapeOptions?: OptionType<string>[];
-  keypointLabelOptions: OptionType<string>[];
   onSelectLabel: (label: Required<OptionType<string>>) => void;
-  onSelectKeypoint: (keypointLabel: Required<OptionType<string>>) => void;
 }) => {
   if (isKeypointMode) {
-    if (disabledDropdown) {
+    if (isSavedAnnotation) {
       return (
         <>
           <Col span={2}>
@@ -40,32 +34,22 @@ export const BodyContainer = ({
           </Col>
           <Col span={3}>
             <PopupUIElementContainer title="Label">
-              <StyledLabel>{keypointLabelOption.label}</StyledLabel>
+              <StyledLabel>{keypointLabel}</StyledLabel>
             </PopupUIElementContainer>
           </Col>
         </>
       );
     }
-    if (labelOptions && labelOptions.length && keypointLabelOptions.length) {
+    if (labelOptions && labelOptions.length) {
       return (
         <>
-          <Col span={2}>
+          <Col span={3}>
             <PopupUIElementContainer title="Collection">
               <Select
                 closeMenuOnSelect
                 value={labelOption}
                 onChange={onSelectLabel}
                 options={labelOptions}
-              />
-            </PopupUIElementContainer>
-          </Col>
-          <Col span={3}>
-            <PopupUIElementContainer title="Label">
-              <Select
-                closeMenuOnSelect
-                value={keypointLabelOption}
-                onChange={onSelectKeypoint}
-                options={keypointLabelOptions}
               />
             </PopupUIElementContainer>
           </Col>
@@ -78,7 +62,7 @@ export const BodyContainer = ({
       </Col>
     );
   }
-  if (shapeOptions && shapeOptions.length) {
+  if (labelOptions && labelOptions.length) {
     return (
       <>
         <Col span={1}>
@@ -92,24 +76,8 @@ export const BodyContainer = ({
               closeMenuOnSelect
               value={labelOption}
               onChange={onSelectLabel}
-              options={shapeOptions}
+              options={labelOptions}
             />
-          </PopupUIElementContainer>
-        </Col>
-      </>
-    );
-  }
-  if (disabledDropdown) {
-    return (
-      <>
-        <Col span={1}>
-          <PopupUIElementContainer title="Color">
-            <ColorBadge color={color} />
-          </PopupUIElementContainer>
-        </Col>
-        <Col span={4}>
-          <PopupUIElementContainer title="Collection">
-            <StyledLabel>{labelOption.label}</StyledLabel>
           </PopupUIElementContainer>
         </Col>
       </>

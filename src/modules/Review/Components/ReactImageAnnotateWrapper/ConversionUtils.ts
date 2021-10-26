@@ -17,13 +17,13 @@ import {
 import {
   AnnotationTableItem,
   KeypointItemCollection,
-  VisionOptionType,
 } from 'src/modules/Review/types';
 
 export enum RegionTagsIndex {
   label,
   keypointOrder,
   parentAnnotationId,
+  keypointLabel,
 }
 
 export const convertAnnotations = (
@@ -62,15 +62,12 @@ export const convertAnnotations = (
   return regions;
 };
 
-export const convertToAnnotation = (
-  region: Region,
-  labelOption?: VisionOptionType<string>
-): any => {
+export const convertToAnnotation = (region: Region): any => {
   return {
     ...region,
     region: convertToAnnotationRegion(region),
     data: { color: region.color },
-    text: labelOption?.value || (region.tags && region.tags[0]) || '',
+    text: (region.tags && region.tags[0]) || '',
   };
 };
 

@@ -56,14 +56,16 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   editable?: boolean;
   creatable?: boolean;
   handleAddToFile?: () => void;
-  collection: AnnotationCollection;
-  currentShape: string;
+  predefinedLabels: AnnotationCollection;
+  lastShapeName: string;
+  lastKeypointCollection: KeypointCollection;
   selectedTool: Tool;
-  nextKeyPoint: { collectionName: string; orderNumber: number };
-  currentCollection: KeypointItemCollection | null;
+  nextToDoKeypointInCurrentCollection: Keypoint | null;
+  currentKeypointCollection: KeypointItemCollection | null;
   isLoading: (status: boolean) => void;
   onSelectTool: (tool: Tool) => void;
   focusIntoView: (annotation: AnnotationTableItem) => void;
+  openCollectionSettings: () => void;
 };
 
 export type AnnotationTableRowProps = {
@@ -90,7 +92,7 @@ export type KeypointCollection = {
   collectionName: string;
   keypoints?: Keypoint[];
   lastUpdated?: number;
-  id?: number;
+  id?: ReactText;
 };
 
 export type Tool = typeof tools[keyof typeof tools];
