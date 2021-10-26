@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { Checkbox } from 'antd';
 import { FileInfo } from '@cognite/sdk';
-import queryString from 'query-string';
 import { Table } from 'components/Common';
 import {
   ProgressType,
@@ -28,7 +26,6 @@ type ResultsTableProps = {
 
 export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const { selectionFilter, showLoadingSkeleton } = props;
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const [columns, setColumns] = useState();
@@ -44,8 +41,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
 
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
   const { svgConvert } = useSelector(getContextualizationJobs);
-  const { search } = history.location;
-  const { page = 1 } = queryString.parse(search, { parseNumbers: true });
 
   const didFileFail = (fileId: number): ProgressType => {
     const didFail = failedFiles?.find(
@@ -127,15 +122,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
     );
   };
 
-  const onPaginationChange = (newPage: number) => {
-    history.push({
-      search: queryString.stringify({
-        ...queryString.parse(search),
-        page: newPage,
-      }),
-    });
-  };
-
   useEffect(() => {
     const newColumns = getColumns(workflowId, showLoadingSkeleton);
     setColumns(newColumns);
@@ -165,7 +151,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
 
   return (
     <Table
-      rowKey="id"
       columns={columns}
       dataSource={adjustedDiagrams}
       rowSelection={{
@@ -176,14 +161,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
         getCheckboxProps: (record: any) => ({
           disabled: record.progress === 'failed',
         }),
-      }}
-      pagination={{
-        onChange: onPaginationChange,
-        current: Number(page),
-        position: ['bottomLeft'],
-        size: 'small',
-        showQuickJumper: true,
-        showSizeChanger: true,
       }}
       options={{
         narrow: true,

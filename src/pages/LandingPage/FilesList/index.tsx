@@ -8,8 +8,6 @@ import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { Table } from 'components/Common';
 import { getColumns } from './columns';
 
-const PAGE_SIZE = 8;
-
 type Props = {
   query: string;
   files?: FileWithAnnotations[];
@@ -65,15 +63,10 @@ export default function FilesList(props: Props) {
 
   return (
     <Table
-      rowKey="id"
-      // @ts-ignore
       columns={interactiveColumns}
       dataSource={diagrams}
       size="middle"
-      pagination={{
-        pageSize: PAGE_SIZE,
-        hideOnSinglePage: true,
-      }}
+      pagination={{ position: ['bottomRight'] }}
       rowSelection={{
         onSelectAll,
         onChange: onDiagramsSelect,
