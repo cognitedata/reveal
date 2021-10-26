@@ -59,7 +59,7 @@ export const startConvertFileToSvgJob = {
         });
         const {
           status: httpStatus,
-          data: { jobId, status, errorMessage },
+          data: { jobId, status, error, errorMessage },
         } = response;
         trackUsage(PNID_METRICS.convertingJob.start, {
           jobId,
@@ -72,7 +72,9 @@ export const startConvertFileToSvgJob = {
 
         if (httpStatus !== 200) {
           convertErrorNotification(
-            errorMessage ?? 'Something went wrong. Please try again'
+            errorMessage ??
+              error.message ??
+              'Something went wrong. Please try again'
           );
           dispatch(rejectJob({ jobId }));
           timer.stop({ success: false, jobId });
@@ -162,7 +164,14 @@ export const startConvertFileToSvgJob = {
             if (data.status !== 'Completed' && data.status !== 'Failed')
               dispatch(updateJob({ jobId, status: data.status }));
           },
-          undefined,
+          (e) => {
+            handleError({
+              status: e.status,
+              message: e.message ?? e,
+              errorMessage: e.errorMessage ?? e.message ?? e,
+            });
+            dispatch(rejectJob({ jobId, status: 'Failed', errorMessage: e }));
+          },
           3000
         );
       } catch (e) {

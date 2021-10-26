@@ -20,6 +20,7 @@ import {
   getIdFilter,
   getExternalIdFilter,
   updateAnnotations,
+  linkFileToAssetIds,
 } from '@cognite/annotations';
 import sdk from 'sdk-singleton';
 import { sleep } from 'utils/utils';
@@ -152,7 +153,7 @@ export const useReviewFiles = (fileIds: Array<number>) => {
     const unhandledAnnotations = annotations.filter(
       (annotation) => annotation.status === 'unhandled'
     );
-    if (unhandledAnnotations.length)
+    if (unhandledAnnotations.length) {
       await updateAnnotations(
         sdk,
         unhandledAnnotations.map((annotation) => ({
@@ -168,6 +169,10 @@ export const useReviewFiles = (fileIds: Array<number>) => {
           },
         }))
       );
+      if (approve) {
+        await linkFileToAssetIds(sdk, unhandledAnnotations);
+      }
+    }
   };
 
   const setFilesApproved = async (selectedFileIds: Array<number>) => {

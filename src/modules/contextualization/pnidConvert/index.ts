@@ -46,7 +46,7 @@ export const svgConvertSlice = createSlice({
           jobId,
           fileId,
           status: 'Failed',
-          errorMessage: file?.errorMessage ?? ERRORS.SVG_BAD,
+          errorMessage: file?.errorMessage ?? ERRORS.SVG_BAD.translation,
         };
       });
     },
@@ -59,7 +59,7 @@ export const svgConvertSlice = createSlice({
           jobId: job.jobId,
           fileId,
           status: file?.errorMessage ? 'Failed' : job.status,
-          errorMessage: file?.errorMessage,
+          errorMessage: file?.errorMessage ?? ERRORS.SVG_BAD.translation,
           svgId: !file?.errorMessage
             ? job.svgIds.find(
                 (ids: { fileId: number; svgId: number }) =>
