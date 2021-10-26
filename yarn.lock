@@ -1678,10 +1678,10 @@
     "@cognite/sdk-core" "^2.2.0"
     lodash "^4.17.11"
 
-"@cognite/z-index@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@cognite/z-index/-/z-index-0.1.0.tgz#7665935035859a906e6edda5e743158007cad7d3"
-  integrity sha512-WAE12qvyQmBpUacrnFdgYcq6Wn359FzVpgVzxMj9roA+cJTlnYdueMcfksBZRCX5HuNRksnOfRk8SrRFd9yeUw==
+"@cognite/z-index@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/z-index/-/z-index-0.2.1.tgz#50bd0eaea47b92931b15dda3d1efde2e93d9abb1"
+  integrity sha512-KE9qE6RU8Zde0rdG0huyOzqyLPPbhGGKNze09j8otViSA4ZgJFzuNFfGchuIAvZemYZC7/UXyeY0IwaipVUNug==
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
