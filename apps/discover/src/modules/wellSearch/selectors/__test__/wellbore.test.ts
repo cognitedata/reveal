@@ -8,6 +8,8 @@ import { Wellbore, WellboreAssetIdMap } from 'modules/wellSearch/types';
 
 import {
   useActiveWellboresExternalIdMap,
+  useActiveWellboresMatchingIdMap,
+  useActiveWellboresSourceExternalIdMap,
   useSecondarySelectedOrHoveredWellbores,
   useSelectedOrHoveredWellbores,
   useSelectedWellbores,
@@ -98,5 +100,31 @@ describe('Wellbore hook', () => {
 
     expect(data[0].name).toEqual('wellbore A');
     expect(data.length).toEqual(1);
+  });
+
+  test('load selected or hovered wellbores matching id map', async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useActiveWellboresMatchingIdMap()
+    );
+    act(() => {
+      waitForNextUpdate();
+    });
+
+    expect(result.current).toEqual({
+      'Wellbore A:75915540932499340': 75915540932499340,
+    });
+  });
+
+  test('load selected or hovered wellbores source external id map', async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useActiveWellboresSourceExternalIdMap()
+    );
+    act(() => {
+      waitForNextUpdate();
+    });
+
+    expect(result.current).toEqual({
+      'Wellbore A:75915540932499340': 75915540932499340,
+    });
   });
 });

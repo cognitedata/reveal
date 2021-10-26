@@ -82,7 +82,13 @@ export const mockedWellboreResultFixture: Wellbore[] = [
     externalId: 'Wellbore A:75915540932499340',
     wellId: 1234,
     description: 'wellbore A desc',
-    sourceWellbores: [],
+    sourceWellbores: [
+      {
+        id: 75915540932499340,
+        externalId: 'Wellbore A:75915540932499340',
+        source: 'Source A',
+      },
+    ],
     ...mockWellboreOptions,
   },
 ];

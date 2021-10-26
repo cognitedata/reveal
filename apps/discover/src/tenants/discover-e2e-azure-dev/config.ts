@@ -12,6 +12,9 @@ export default {
 
   wells: {
     ...config.wells,
+    nds: {
+      enabled: true,
+    },
     npt: {
       enabled: true,
     },

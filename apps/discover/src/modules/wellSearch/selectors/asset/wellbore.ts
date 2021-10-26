@@ -339,6 +339,24 @@ export const useActiveWellboresMatchingIdMap = () => {
   );
 };
 
+// @sdk-wells-v3
+export const useActiveWellboresSourceExternalIdMap = () => {
+  const selectedOrHoveredWellbores = useSecondarySelectedOrHoveredWellbores();
+  return useMemo(
+    () =>
+      selectedOrHoveredWellbores.reduce((externalIdMap, wellbore) => {
+        const sourceExternalIdMap = wellbore.sourceWellbores
+          .map((sourceWellbore) => sourceWellbore.externalId)
+          .reduce((map, sourceExternalId) => {
+            return { ...map, [sourceExternalId]: wellbore.id };
+          }, {});
+
+        return { ...externalIdMap, ...sourceExternalIdMap };
+      }, {}),
+    [selectedOrHoveredWellbores]
+  );
+};
+
 export const useWellboresFetchedWellIds = () => {
   return useSelector((state) =>
     useMemo(

@@ -243,7 +243,13 @@ describe('3D Component Utils', () => {
         externalId: 'Wellbore A:75915540932499340',
         wellId: 1234,
         description: 'wellbore A desc',
-        sourceWellbores: [],
+        sourceWellbores: [
+          {
+            externalId: 'Wellbore A:75915540932499340',
+            id: 75915540932499340,
+            source: 'Source A',
+          },
+        ],
         parentId: 1234,
         ...mockWellboreOptions,
       },

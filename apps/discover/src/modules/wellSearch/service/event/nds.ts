@@ -1,5 +1,13 @@
+import groupBy from 'lodash/groupBy';
+import invert from 'lodash/invert';
+
 import { ITimer, Metrics } from '@cognite/metrics';
 import { CogniteEvent } from '@cognite/sdk';
+import {
+  NdsItems,
+  TrajectoryInterpolationItems,
+  TrajectoryInterpolationRequest,
+} from '@cognite/sdk-wells-v3';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { LOG_EVENTS_NDS } from 'constants/logging';
@@ -8,70 +16,18 @@ import {
   useStartTimeLogger,
   useStopTimeLogger,
 } from 'hooks/useTimeLog';
-import {
-  Wellbore,
-  EventsType,
-  WellboreAssetIdMap,
-} from 'modules/wellSearch/types';
-import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
+import { toIdentifier } from 'modules/wellSearch/sdk/utils';
+import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
+import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
 
-import { getChunkNumberList } from '../sequence/common';
-
-import {
-  EVENT_LIMIT,
-  EVENT_PER_PAGE,
-  getFilterQueryForEvents,
-  groupEventsByAssetId,
-} from './common';
-
-/**
- * This was used while doing the data extraction for the temporary filtering solution and will be removed soon
- */
-export async function loadAllNdsEvents(
-  wellbores: Wellbore[],
-  eventType: EventsType
-) {
-  const wellboresIdList = wellbores.map((wellbore) => wellbore.id);
-  /**
-   * Only 100 assetids are alowed in sequence query.
-   * Hence wellbores id list is broken in to 100 pieces.
-   */
-
-  const wellboresIdChunkList = getChunkNumberList(wellboresIdList, 100);
-
-  const events = Promise.all(
-    wellboresIdChunkList.map((wellboresIdChunk: number[]) =>
-      getCogniteSDKClient()
-        .events.list({
-          filter: {
-            assetIds: wellboresIdChunk,
-            ...getFilterQueryForEvents(eventType),
-          },
-          limit: EVENT_PER_PAGE,
-        })
-        .autoPagingToArray({ limit: Infinity })
-    )
-  );
-  return ([] as any[]).concat(...(await events));
-}
+import { EVENT_LIMIT, EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 
 export function getNdsEventsByWellboreIds(
   wellboreIds: number[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  metric?: Metrics
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
+  metric?: Metrics,
+  enableWellSDKV3?: boolean
 ) {
-  const wellboreAssetIdReverseMap =
-    getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-  const body = {
-    filter: {
-      assetIds: wellboreIds.map((id) => wellboreAssetIdMap[id]),
-      source: 'NDS',
-      metadata: {
-        type: 'Risk',
-      },
-    },
-    limit: EVENT_PER_PAGE,
-  };
   let networkTimer: ITimer | undefined;
   if (metric) {
     networkTimer = useStartTimeLogger(
@@ -80,30 +36,148 @@ export function getNdsEventsByWellboreIds(
       LOG_EVENTS_NDS
     );
   }
-  return getCogniteSDKClient()
-    .events.list(body)
-    .autoPagingToArray({ limit: EVENT_LIMIT })
-    .then((response) => {
-      const events: CogniteEvent[] = response
-        .filter((event) => (event.assetIds || []).length)
-        .map((event) => ({
-          ...event,
-          assetIds: event.assetIds?.map(
-            (assetId) => wellboreAssetIdReverseMap[assetId]
-          ),
-        }));
-      const groupedEvents = groupEventsByAssetId(events);
 
-      wellboreIds.forEach((wellboreId) => {
-        if (!groupedEvents[wellboreId]) {
-          groupedEvents[wellboreId] = [];
-        }
-      });
-      return groupedEvents;
-    })
-    .finally(() => {
-      useStopTimeLogger(networkTimer, {
-        noOfWellbores: wellboreIds.length,
-      });
+  const fetchNdsEvents = () =>
+    enableWellSDKV3
+      ? fetchNdsEventsUsingWellsSDK(wellboreIds, wellboreSourceExternalIdMap)
+      : fetchNdsEventsCogniteSDK(wellboreIds, wellboreSourceExternalIdMap);
+
+  return fetchNdsEvents().finally(() => {
+    useStopTimeLogger(networkTimer, {
+      noOfWellbores: wellboreIds.length,
     });
+  });
 }
+
+export const fetchNdsEventsUsingWellsSDK = async (
+  wellboreIds: number[],
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
+) => {
+  const ndsEventsRequestBody = {
+    filter: {
+      wellboreIds: wellboreIds.map(toIdentifier),
+    },
+    limit: EVENT_PER_PAGE,
+  };
+
+  const ndsEvents = await getWellSDKClient().nds.list(ndsEventsRequestBody);
+  const ndsEventsAsCogniteEvents = await mapNdsItemsToCogniteEvents(
+    ndsEvents,
+    wellboreSourceExternalIdMap
+  );
+
+  return getGroupedNdsEvents(
+    ndsEventsAsCogniteEvents,
+    wellboreIds,
+    wellboreSourceExternalIdMap
+  );
+};
+
+export const fetchNdsEventsCogniteSDK = async (
+  wellboreIds: number[],
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
+) => {
+  const wellboresSourceExternalIdReverseMap = invert(
+    wellboreSourceExternalIdMap
+  );
+
+  const ndsEventsRequestBody = {
+    filter: {
+      assetExternalIds: wellboreIds.map(
+        (id) => wellboresSourceExternalIdReverseMap[id]
+      ),
+      source: 'NDS',
+      metadata: {
+        type: 'Risk',
+      },
+    },
+    limit: EVENT_PER_PAGE,
+  };
+
+  const ndsEvents = await getCogniteSDKClient()
+    .events.list(ndsEventsRequestBody)
+    .autoPagingToArray({ limit: EVENT_LIMIT });
+
+  return getGroupedNdsEvents(
+    ndsEvents,
+    wellboreIds,
+    wellboreSourceExternalIdMap
+  );
+};
+
+export const mapNdsItemsToCogniteEvents = async (
+  ndsItems: NdsItems,
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
+) => {
+  const trajectoryInterpolationRequests: TrajectoryInterpolationRequest[] =
+    ndsItems.items.map((event) => ({
+      wellboreId: { assetExternalId: event.wellboreAssetExternalId },
+      measuredDepths: [event.holeStart.value, event.holeEnd.value],
+      measuredDepthUnit: { unit: event.holeStart.unit },
+    }));
+
+  const trajectoryInterpolationItems =
+    (await getWellSDKClient().trajectories.interpolate(
+      trajectoryInterpolationRequests
+    )) as TrajectoryInterpolationItems;
+
+  const groupedTVD = groupBy(
+    trajectoryInterpolationItems.items,
+    'wellboreAssetExternalId'
+  );
+
+  return ndsItems.items.map((event) => {
+    const tvd = groupedTVD[event.wellboreAssetExternalId][0];
+
+    return {
+      id: wellboreSourceExternalIdMap[event.source.eventExternalId],
+      externalId: event.source.eventExternalId,
+      type: event.subtype || '',
+      subtype: event.riskType || '',
+      description: event.description,
+      source: event.source.sourceName,
+      metadata: {
+        parentExternalId: event.wellboreAssetExternalId,
+        diameter_hole: event.holeDiameter?.value,
+        diameter_hole_unit: event.holeDiameter?.unit,
+        md_hole_start: event.holeStart.value,
+        md_hole_start_unit: event.holeStart.unit,
+        md_hole_end: event.holeEnd.value,
+        md_hole_end_unit: event.holeEnd.unit,
+        risk_sub_category: event.subtype || '',
+        severity: String(event.severity),
+        probability: String(event.probability),
+        tvd_offset_hole_start: tvd.trueVerticalDepths[0],
+        tvd_offset_hole_start_unit: tvd.trueVerticalDepthUnit.unit,
+        tvd_offset_hole_end: tvd.trueVerticalDepths[1],
+        tvd_offset_hole_end_unit: tvd.trueVerticalDepthUnit.unit,
+      },
+      assetIds: [event.wellboreAssetExternalId],
+    } as unknown as CogniteEvent;
+  });
+};
+
+export const getGroupedNdsEvents = (
+  response: CogniteEvent[],
+  wellboreIds: number[],
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
+) => {
+  const events: CogniteEvent[] = response
+    .filter((event) => (event.assetIds || []).length)
+    .map((event) => ({
+      ...event,
+      assetIds: [
+        wellboreSourceExternalIdMap[event.metadata?.parentExternalId || ''],
+      ],
+    }));
+
+  const groupedEvents = groupEventsByAssetId(events);
+
+  wellboreIds.forEach((wellboreId) => {
+    if (!groupedEvents[wellboreId]) {
+      groupedEvents[wellboreId] = [];
+    }
+  });
+
+  return groupedEvents;
+};

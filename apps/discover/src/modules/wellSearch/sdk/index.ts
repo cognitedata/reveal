@@ -9,14 +9,14 @@ import { TenantConfig } from 'tenants/types';
 import {
   extractWellboresFromWells,
   mapStringItemsToStringArray,
-  mapV1toV2NPTFilter,
-  mapV2ToV1NPTItems,
-  mapV2ToV1SourceItems,
-  mapV2ToV1SpudDateLimits,
-  mapV2ToV1Well,
-  mapV2ToV1Wellbore,
-  mapV2ToV1WellItems,
-  mapV2ToV1WellsWaterDepthLimits,
+  mapV2toV3NPTFilter,
+  mapV3ToV2NPTItems,
+  mapV3ToV2SourceItems,
+  mapV3ToV2SpudDateLimits,
+  mapV3ToV2Well,
+  mapV3ToV2Wellbore,
+  mapV3ToV2WellItems,
+  mapV3ToV2WellsWaterDepthLimits,
   mapWellFilterToWellFilterRequest,
   toIdentifier,
   toIdentifierItems,
@@ -79,7 +79,7 @@ export const getWellsAPI = () => {
 
 export const getSources = () => {
   return enableWellSDKV3
-    ? getWellSDKClientV3().sources.list().then(mapV2ToV1SourceItems)
+    ? getWellSDKClientV3().sources.list().then(mapV3ToV2SourceItems)
     : getWellSDKClientV2().wells.sources();
 };
 
@@ -87,7 +87,7 @@ export const getWellsWaterDepthLimits = () => {
   return enableWellSDKV3
     ? getWellSDKClientV3()
         .wells.waterDepthLimits()
-        .then(mapV2ToV1WellsWaterDepthLimits)
+        .then(mapV3ToV2WellsWaterDepthLimits)
     : getWellSDKClientV2()
         .wells.limits()
         .then((response) => response.waterDepth);
@@ -95,7 +95,7 @@ export const getWellsWaterDepthLimits = () => {
 
 export const getWellsSpudDateLimits = () => {
   return enableWellSDKV3
-    ? getWellSDKClientV3().wells.spudDateLimits().then(mapV2ToV1SpudDateLimits)
+    ? getWellSDKClientV3().wells.spudDateLimits().then(mapV3ToV2SpudDateLimits)
     : getWellSDKClientV2()
         .wells.limits()
         .then((response) => response.spudDate);
@@ -132,15 +132,15 @@ export const getNDSRiskTypes = () => {
 
 export const getWellById = (wellId: number) => {
   return enableWellSDKV3
-    ? getWellByMatchingId(wellId).then(mapV2ToV1Well)
+    ? getWellByMatchingId(wellId).then(mapV3ToV2Well)
     : getWellSDKClientV2().wells.getById(wellId);
 };
 
-export const getWellItemssByFilter = (wellFilter: WellFilter) => {
+export const getWellItemsByFilter = (wellFilter: WellFilter) => {
   return enableWellSDKV3
     ? getWellSDKClientV3()
         .wells.list(mapWellFilterToWellFilterRequest(wellFilter))
-        .then(mapV2ToV1WellItems)
+        .then(mapV3ToV2WellItems)
     : getWellSDKClientV2().wells.filter(wellFilter);
 };
 
@@ -151,7 +151,7 @@ export const getWellboresFromWells = (wellIds: number[]) => {
           toIdentifierItems(wellIds.map(toIdentifier))
         )
         .then(extractWellboresFromWells)
-        .then((wellbores) => wellbores.map(mapV2ToV1Wellbore))
+        .then((wellbores) => wellbores.map(mapV3ToV2Wellbore))
     : getWellSDKClientV2().wellbores.getFromWells(wellIds);
 };
 
@@ -163,10 +163,10 @@ export const getNPTItems = (
   return enableWellSDKV3
     ? getWellSDKClientV3()
         .npt.list({
-          filter: mapV1toV2NPTFilter(filter),
+          filter: mapV2toV3NPTFilter(filter),
           cursor,
           limit,
         })
-        .then(mapV2ToV1NPTItems)
+        .then(mapV3ToV2NPTItems)
     : getWellSDKClientV2().events.listNPT(filter, cursor, limit);
 };

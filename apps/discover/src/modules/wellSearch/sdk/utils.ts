@@ -6,7 +6,7 @@ import pickBy from 'lodash/pickBy';
 import {
   WaterDepthLimits as WaterDepthLimitsV2,
   SpudDateLimits as SpudDateLimitsV2,
-  Well as WellV1,
+  Well as WellV2,
   WellFilter as WellFilterV2,
   WellItems as WellItemsV2,
   PolygonFilter as PolygonFilterV2,
@@ -47,11 +47,11 @@ export const DEFAULT_DOUBLE_WITH_UNIT: DoubleWithUnit = {
   unit: '',
 };
 
-export const mapV2ToV1SourceItems = (sourceItems: SourceItemsV3) => {
+export const mapV3ToV2SourceItems = (sourceItems: SourceItemsV3) => {
   return sourceItems.items.map((item) => String(item.name));
 };
 
-export const mapV2ToV1WellsWaterDepthLimits = (
+export const mapV3ToV2WellsWaterDepthLimits = (
   waterDepthLimits: WaterDepthLimitsV3
 ): WaterDepthLimitsV2 => {
   return {
@@ -60,7 +60,7 @@ export const mapV2ToV1WellsWaterDepthLimits = (
   };
 };
 
-export const mapV2ToV1SpudDateLimits = (
+export const mapV3ToV2SpudDateLimits = (
   spudDateLimits: SpudDateLimitsV3
 ): SpudDateLimitsV2 => {
   return {
@@ -75,7 +75,7 @@ export const mapStringItemsToStringArray = (
   return stringItems.items;
 };
 
-export const mapV2ToV1Well = (well: WellV3): WellV1 => {
+export const mapV3ToV2Well = (well: WellV3): WellV2 => {
   return {
     ...well,
     id: well.matchingId as any,
@@ -83,7 +83,7 @@ export const mapV2ToV1Well = (well: WellV3): WellV1 => {
     wellhead: { id: 0, ...well.wellhead },
     sources: well.sources.map((source) => source.sourceName),
     wellbores: () =>
-      Promise.resolve(well.wellbores?.map(mapV2ToV1Wellbore) || []),
+      Promise.resolve(well.wellbores?.map(mapV3ToV2Wellbore) || []),
     sourceAssets: () => Promise.resolve([]),
   };
 };
@@ -120,7 +120,7 @@ export const getGeometryAndGeometryType = (polygonFilter: PolygonFilterV2) => {
   };
 };
 
-export const mapV1ToV2PolygonFilter = (
+export const mapV2toV3PolygonFilter = (
   polygonFilter?: PolygonFilterV2
 ): PolygonFilterV3 | undefined => {
   if (isUndefined(polygonFilter)) return undefined;
@@ -134,7 +134,7 @@ export const mapV1ToV2PolygonFilter = (
   };
 };
 
-export const mapV1ToV2WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
+export const mapV2toV3WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
   return {
     quadrant: toPropertyFilter(wellFilter.quadrants),
     block: toPropertyFilter(wellFilter.blocks),
@@ -148,7 +148,7 @@ export const mapV1ToV2WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
       min: wellFilter.spudDate?.min?.toDateString(),
       max: wellFilter.spudDate?.max?.toDateString(),
     },
-    polygon: mapV1ToV2PolygonFilter(wellFilter.polygon),
+    polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
     npt: {
       ...wellFilter.npt,
       exists: !isEmpty(pickBy(wellFilter.npt)),
@@ -167,17 +167,17 @@ export const mapWellFilterToWellFilterRequest = (
   wellFilter: WellFilterV2
 ): WellFilterRequest => {
   return {
-    filter: mapV1ToV2WellFilter(wellFilter),
+    filter: mapV2toV3WellFilter(wellFilter),
     search: { query: wellFilter.stringMatching || '' },
     outputCrs: undefined,
     limit: undefined,
   };
 };
 
-export const mapV2ToV1WellItems = (wellItems: WellItemsV3): WellItemsV2 => {
+export const mapV3ToV2WellItems = (wellItems: WellItemsV3): WellItemsV2 => {
   return {
     ...wellItems,
-    items: wellItems.items.map(mapV2ToV1Well),
+    items: wellItems.items.map(mapV3ToV2Well),
   };
 };
 
@@ -212,7 +212,7 @@ export const extractWellboresFromWells = (response: WellItems) => {
   );
 };
 
-export const mapV2ToV1Wellbore = (wellbore: WellboreV3): WellboreV2 => {
+export const mapV3ToV2Wellbore = (wellbore: WellboreV3): WellboreV2 => {
   return {
     ...wellbore,
     id: wellbore.matchingId as any,
@@ -230,7 +230,7 @@ export const mapV2ToV1Wellbore = (wellbore: WellboreV3): WellboreV2 => {
   };
 };
 
-export const mapV1toV2NPTFilter = (nptFilter: NPTFilterV2): NPTFilterV3 => {
+export const mapV2toV3NPTFilter = (nptFilter: NPTFilterV2): NPTFilterV3 => {
   return {
     measuredDepth: nptFilter.measuredDepth,
     duration: mapDoubleRangeToDurationRange(nptFilter.duration),
@@ -240,14 +240,14 @@ export const mapV1toV2NPTFilter = (nptFilter: NPTFilterV2): NPTFilterV3 => {
   };
 };
 
-export const mapV2ToV1NPTItems = (nptItems: NPTItemsV3): NPTItemsV2 => {
+export const mapV3ToV2NPTItems = (nptItems: NPTItemsV3): NPTItemsV2 => {
   return {
     ...nptItems,
-    items: nptItems.items.map(mapV2ToV1NPT),
+    items: nptItems.items.map(mapV3ToV2NPT),
   };
 };
 
-export const mapV2ToV1NPT = (npt: NPTV3): NPTV2 => {
+export const mapV3ToV2NPT = (npt: NPTV3): NPTV2 => {
   return {
     ...npt,
     parentExternalId: npt.wellboreAssetExternalId,

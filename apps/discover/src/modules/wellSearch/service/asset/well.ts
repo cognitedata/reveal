@@ -3,7 +3,7 @@ import get from 'lodash/get';
 
 import { WellFilter } from '@cognite/sdk-wells-v2';
 
-import { getWellById, getWellItemssByFilter } from 'modules/wellSearch/sdk';
+import { getWellById, getWellItemsByFilter } from 'modules/wellSearch/sdk';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
 export interface SpatialSearchItemResponse {
@@ -15,7 +15,7 @@ export interface SpatialSearchItemResponse {
 }
 
 export function getByFilters(wellFilter: WellFilter) {
-  return getWellItemssByFilter(wellFilter).then((response) =>
+  return getWellItemsByFilter(wellFilter).then((response) =>
     normalizeWells(get(response, 'items', []))
   );
 }

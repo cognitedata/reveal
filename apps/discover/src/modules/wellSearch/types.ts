@@ -534,6 +534,10 @@ export type WellboreExternalIdMap = {
   [key: string]: number;
 };
 
+export type WellboreSourceExternalIdMap = {
+  [key: string]: number;
+};
+
 export type IdWellboreMap = {
   [key: number]: Wellbore;
 };
