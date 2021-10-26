@@ -56,7 +56,7 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -66,7 +66,16 @@ export function Migration() {
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
       if (project !== null) {
-        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
+        await client.loginWithOAuth(
+          { 
+            type: 'AAD_OAUTH', 
+            options: { 
+              clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
+              cluster: 'api',
+              tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
+            } 
+        });
+        client.setProject(project);
         await client.authenticate();
       } else if (baseUrl !== null) {
         viewerOptions = {
