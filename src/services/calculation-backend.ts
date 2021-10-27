@@ -86,7 +86,7 @@ export async function fetchCalculationResult(
   return data;
 }
 
-export async function fetchCalculationResultWhenDone(
+export async function waitForCalculationToFinish(
   sdk: CogniteClient,
   id: string
 ) {
@@ -103,7 +103,13 @@ export async function fetchCalculationResultWhenDone(
     // eslint-disable-next-line no-await-in-loop
     calculationStatus = await fetchCalculationStatus(sdk, id);
   }
+}
 
+export async function fetchCalculationResultWhenDone(
+  sdk: CogniteClient,
+  id: string
+) {
+  await waitForCalculationToFinish(sdk, id);
   const result = await fetchCalculationResult(sdk, id);
   return formatCalculationResult(result);
 }

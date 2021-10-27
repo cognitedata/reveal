@@ -10,6 +10,7 @@ import { units } from 'utils/units';
 import {
   fetchStatisticsResult,
   fetchStatisticsStatus,
+  waitForCalculationToFinish,
 } from 'services/calculation-backend';
 import { useCreateStatistics } from 'hooks/calculation-backend';
 import { CreateStatisticsParams } from '@cognite/calculation-backend';
@@ -133,20 +134,35 @@ export const useStatistics = (
       return;
     }
 
-    memoizedCallFunction(statisticsParameters, {
-      onSuccess({ id: callId }) {
-        updateStatistics({
-          statisticsCalls: [
-            {
-              callDate: Date.now(),
-              callId,
-              hash: hashOfParams,
-            },
-          ],
-        });
-      },
-    });
+    async function createStatistics() {
+      if (
+        'calculation_id' in statisticsParameters &&
+        statisticsParameters.calculation_id
+      ) {
+        await waitForCalculationToFinish(
+          sdk,
+          statisticsParameters.calculation_id
+        );
+      }
+
+      memoizedCallFunction(statisticsParameters, {
+        onSuccess({ id: callId }) {
+          updateStatistics({
+            statisticsCalls: [
+              {
+                callDate: Date.now(),
+                callId,
+                hash: hashOfParams,
+              },
+            ],
+          });
+        },
+      });
+    }
+
+    createStatistics();
   }, [
+    sdk,
     memoizedCallFunction,
     dateFrom,
     dateTo,
