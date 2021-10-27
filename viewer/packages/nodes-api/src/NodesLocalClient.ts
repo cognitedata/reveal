@@ -57,7 +57,7 @@ export class NodesLocalClient implements NodesApiClient {
   getBoundingBoxesByNodeIds(
     _modelId: CogniteInternalId,
     _revisionId: CogniteInternalId,
-    _nodeId: CogniteInternalId[]
+    _nodeIds: CogniteInternalId[]
   ): Promise<THREE.Box3[]> {
     throw new Error('Not supported for local models');
   }

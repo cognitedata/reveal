@@ -53,18 +53,17 @@ export interface NodesApiClient {
   ): Promise<{ treeIndex: number; subtreeSize: number }>;
 
   /**
-   * Determines the bounds of the node provided. Note that the returned
-   * box returned will be in "CDF coordinates" and not transformed using
+   * Determines the bounds of the individual nodes provided. Note that the returned
+   * boxes will be in "CDF coordinates" and not transformed using
    * the model transformation for the given model.
    *
    * @param modelId       ID of 3D model
    * @param revisionId    ID of 3D model revision
-   * @param nodeId        Node ID of node
-   * @param box           Pre-allocated THREE.Box3 (optional).
+   * @param nodeIds       Node IDs of nodes
    */
   getBoundingBoxesByNodeIds(
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
-    nodeId: CogniteInternalId[]
+    nodeIds: CogniteInternalId[]
   ): Promise<THREE.Box3[]>;
 }
