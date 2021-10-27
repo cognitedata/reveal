@@ -160,7 +160,7 @@ export const capabilityDescriptions = {
     'Sessions are used to maintain access to CDF resources for an extended period of time beyond the initial access granted to an internal service.',
   templategroups: 'Organize and structure your data',
   templateinstances: 'Access data organized in templategroups',
-  wells: 'Access Wells Data Layer',
+  wells: 'Access Well Data Layer',
 };
 
 export const getActionsFromCapability = (
