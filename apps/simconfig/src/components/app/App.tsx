@@ -14,6 +14,7 @@ import { fetchDatasets } from 'store/dataset/thunks';
 import { selectIsAppInitialized } from 'store/selectors';
 import NewVersion from 'pages/ModelLibrary/NewVersion';
 import CalculationsLibrary from 'pages/Calculations';
+import CalculationConfiguration from 'pages/Calculations/Configuration';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,11 @@ export default function App() {
       <MenuBar />
       <Switch>
         <Route exact path={PAGES.MODEL_LIBRARY} component={ModelLibrary} />
+        <Route
+          exact
+          path={PAGES.CALCULATION_LIBRARY_CONFIG}
+          component={CalculationConfiguration}
+        />
         <Route
           exact
           path={PAGES.CALCULATION_LIBRARY}

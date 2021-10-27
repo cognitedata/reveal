@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, MouseEvent } from 'react';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
@@ -23,9 +23,11 @@ export default function StatusCell({ data }: ComponentProps) {
   const simulators = useAppSelector(selectSimulators);
   const selectedEvent = useAppSelector(selectEventById(data.externalId || ''));
   const status = selectedEvent?.metadata?.status || 'none';
-  const isRunning = ['running'].includes(status);
-  const isReadyOrRunning = ['ready', 'running'].includes(status);
-  const pollingTime = isRunning ? POLLING_TIME.SHORT : POLLING_TIME.LONG;
+  const isCalculationRunning = ['running'].includes(status);
+  const isCalculationReadyOrRunning = ['ready', 'running'].includes(status);
+  const pollingTime = isCalculationRunning
+    ? POLLING_TIME.SHORT
+    : POLLING_TIME.LONG;
 
   const getStatus = async () => {
     if (!data.externalId || !data.source) {
@@ -45,7 +47,9 @@ export default function StatusCell({ data }: ComponentProps) {
   };
   usePolling(getStatus, pollingTime, true);
 
-  const onClickRun = () => {
+  const onClickRun = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
     const { metadata, source, dataSetId, externalId } = data;
     if (!metadata || !source || !dataSetId || !externalId) {
       throw new Error('Insufficient calculation data');
@@ -84,7 +88,9 @@ export default function StatusCell({ data }: ComponentProps) {
     return null;
   }
 
-  const buttonIcon = isReadyOrRunning ? 'LoadingSpinner' : 'CaretClosedDefault';
+  const buttonIcon = isCalculationReadyOrRunning
+    ? 'LoadingSpinner'
+    : 'CaretClosedDefault';
 
   return (
     <>
@@ -93,7 +99,7 @@ export default function StatusCell({ data }: ComponentProps) {
       </CapitalizedLabel>
       <RunCalculationButton
         aria-label={status}
-        disabled={isReadyOrRunning}
+        disabled={isCalculationReadyOrRunning}
         type="ghost"
         icon={buttonIcon}
         onClick={onClickRun}

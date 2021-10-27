@@ -1,10 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { RequestStatus } from '../types';
-import { partialUpdate } from '../utils';
+import { RequestStatus } from 'store/types';
+import { partialUpdate } from 'store/utils';
 
 import { initialState } from './constants';
-import { fetchDownloadLinks, fetchFiles } from './thunks';
+import { fetchCalculationFile, fetchDownloadLinks, fetchFiles } from './thunks';
 import { FileInfoSerializable } from './types';
 
 export const fileSlice = createSlice({
@@ -17,6 +16,13 @@ export const fileSlice = createSlice({
     ) =>
       partialUpdate(state, {
         selectedFile: action.payload,
+      }),
+    setSelectedCalculation: (
+      state,
+      action: PayloadAction<FileInfoSerializable | undefined>
+    ) =>
+      partialUpdate(state, {
+        selectedCalculation: action.payload,
       }),
   },
   extraReducers: (builder) => {
@@ -57,7 +63,13 @@ export const fileSlice = createSlice({
           requestStatus: RequestStatus.ERROR,
         })
       );
+
+    builder.addCase(fetchCalculationFile.fulfilled, (state, action) =>
+      partialUpdate(state, {
+        selectedCalculationConfig: action.payload,
+      })
+    );
   },
 });
-export const { setSelectedFile } = fileSlice.actions;
+export const { setSelectedFile, setSelectedCalculation } = fileSlice.actions;
 export const fileReducer = fileSlice.reducer;
