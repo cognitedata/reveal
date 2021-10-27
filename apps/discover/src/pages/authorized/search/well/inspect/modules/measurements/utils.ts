@@ -6,7 +6,11 @@ import { Metadata } from '@cognite/sdk';
 
 import { changeUnitTo } from '_helpers/units/utils';
 import { MEASUREMENT_CURVE_CONFIG } from 'modules/wellSearch/constants';
-import { Measurement, MeasurementType } from 'modules/wellSearch/types';
+import {
+  Measurement,
+  MeasurementChartData,
+  MeasurementType,
+} from 'modules/wellSearch/types';
 import { convertPressure } from 'modules/wellSearch/utils/common';
 import { WellConfig } from 'tenants/types';
 
@@ -30,7 +34,7 @@ export const formatChartData = (
   referenceUnit: string,
   config?: WellConfig
 ) => {
-  const chartData: Data[] = [];
+  const chartData: MeasurementChartData[] = [];
   const processedCurves: string[] = [];
 
   measurements.forEach((measurement) => {
@@ -52,7 +56,11 @@ export const formatChartData = (
         pressureUnit,
         referenceUnit
       );
-      if (convertedData) chartData.push(convertedData);
+      if (convertedData)
+        chartData.push({
+          ...convertedData,
+          measurementType: dataType,
+        });
       return;
     }
 
@@ -111,6 +119,7 @@ export const formatChartData = (
                 // Create the graph if next value is a breaking point value
                 pushCorveToChart(
                   chartData,
+                  dataType,
                   lineConfig,
                   isAngleCurve,
                   curveName,
@@ -141,6 +150,7 @@ export const formatChartData = (
 
           pushCorveToChart(
             chartData,
+            dataType,
             lineConfig,
             isAngleCurve,
             curveName,
@@ -200,7 +210,8 @@ export const convertOtherDataToPlotly = (
 };
 
 const pushCorveToChart = (
-  chartData: Data[],
+  chartData: MeasurementChartData[],
+  measurementType: MeasurementType,
   lineConfig: Partial<PlotData>,
   isAngleCurve: boolean,
   curveName: string,
@@ -208,7 +219,7 @@ const pushCorveToChart = (
   x: number[],
   y: number[]
 ) => {
-  const curveData: Data = {
+  const curveData: MeasurementChartData = {
     ...lineConfig,
     x,
     y,
@@ -217,6 +228,7 @@ const pushCorveToChart = (
     name: curveName,
     customdata: [curveDescription],
     xaxis: isAngleCurve ? 'x2' : undefined,
+    measurementType,
   };
   if (!isEmpty(x)) {
     chartData.push(curveData);

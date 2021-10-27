@@ -1,5 +1,5 @@
 import { Dictionary } from '@reduxjs/toolkit';
-import { PlotData } from 'plotly.js';
+import { Data, PlotData } from 'plotly.js';
 
 import { Metadata, Sequence, Asset, CogniteEvent } from '@cognite/sdk';
 import {
@@ -576,3 +576,5 @@ export type MeasurementCurveConfig = {
     [key: string]: Partial<PlotData>;
   };
 };
+
+export type MeasurementChartData = Data & { measurementType: MeasurementType };

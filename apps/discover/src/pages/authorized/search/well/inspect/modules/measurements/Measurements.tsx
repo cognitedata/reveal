@@ -8,6 +8,7 @@ import {
   DEFAULT_MEASUREMENTS_REFERENCE,
   DEFAULT_PRESSURE_UNIT,
 } from './constants';
+import CurveCentricView from './curveCentricView/CurveCentricView';
 import { MeasurementsTopBar, MeasurementsWrapper } from './elements';
 import { GeomechanicsCurveFilter } from './filters/GeomechanicsCurveFilter';
 import { OtherFilter } from './filters/OtherFilter';
@@ -52,13 +53,24 @@ export const Measurements: React.FC = () => {
           onReferenceChange={setMeasurementReference}
         />
       </MeasurementsTopBar>
-      <WellCentricView
-        geomechanicsCurves={geomechanicsCurves}
-        ppfgCurves={ppfgCurves}
-        otherTypes={otherTypes}
-        pressureUnit={pressureUnit}
-        measurementReference={measurementReference}
-      />
+
+      {viewMode === 'Wells' ? (
+        <WellCentricView
+          geomechanicsCurves={geomechanicsCurves}
+          ppfgCurves={ppfgCurves}
+          otherTypes={otherTypes}
+          pressureUnit={pressureUnit}
+          measurementReference={measurementReference}
+        />
+      ) : (
+        <CurveCentricView
+          geomechanicsCurves={geomechanicsCurves}
+          ppfgCurves={ppfgCurves}
+          otherTypes={otherTypes}
+          pressureUnit={pressureUnit}
+          measurementReference={measurementReference}
+        />
+      )}
     </MeasurementsWrapper>
   );
 };

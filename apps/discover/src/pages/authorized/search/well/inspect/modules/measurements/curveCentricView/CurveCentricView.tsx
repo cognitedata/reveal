@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Data } from 'plotly.js';
+import flatten from 'lodash/flatten';
+import groupBy from 'lodash/groupBy';
 
 import { WhiteLoader } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
-import { Wellbore } from 'modules/wellSearch/types';
+import { MeasurementChartData } from 'modules/wellSearch/types';
 
 import { formatChartData } from '../utils';
 
-import { WellCentricViewWrapper } from './elements';
-import WellCentricCard from './WellCentricCard';
+import CurveCentricCard from './CurveCentricCard';
+import { CurveCentricViewWrapper } from './elements';
 
 type Props = {
   geomechanicsCurves: string[];
@@ -22,12 +23,7 @@ type Props = {
   measurementReference: string;
 };
 
-type WellboreChartData = {
-  wellbore: Wellbore;
-  chartData: Data[];
-};
-
-export const WellCentricView: React.FC<Props> = ({
+export const CurveCentricView: React.FC<Props> = ({
   geomechanicsCurves,
   ppfgCurves,
   otherTypes,
@@ -42,30 +38,31 @@ export const WellCentricView: React.FC<Props> = ({
 
   const userPreferredUnit = useUserPreferencesMeasurement();
 
-  const [wellboreChartData, setWellboreChartData] = useState<
-    WellboreChartData[]
-  >([]);
+  const [charts, setCharts] = useState<MeasurementChartData[]>([]);
 
   const [chartRendering, setChartRendering] = useState<boolean>(false);
 
   const updateChartData = () => {
     if (data) {
-      const filteredChartData = selectedOrHoveredWellbores
-        .map((wellbore) => ({
-          wellbore,
-          chartData: formatChartData(
-            data[wellbore.id],
-            geomechanicsCurves,
-            ppfgCurves,
-            otherTypes,
-            measurementReference,
-            pressureUnit.toLowerCase(),
-            userPreferredUnit,
-            config
-          ),
+      const wellboreChartData = selectedOrHoveredWellbores.map((wellbore) =>
+        formatChartData(
+          data[wellbore.id],
+          geomechanicsCurves,
+          ppfgCurves,
+          otherTypes,
+          measurementReference,
+          pressureUnit.toLowerCase(),
+          userPreferredUnit,
+          config
+        ).map((row) => ({
+          ...row,
+          customdata: [
+            wellbore.metadata?.wellName || '',
+            `${wellbore.description} ${wellbore.name}`,
+          ],
         }))
-        .filter((row) => row.chartData.length > 0);
-      setWellboreChartData(filteredChartData);
+      );
+      setCharts(flatten(wellboreChartData));
     }
   };
 
@@ -91,31 +88,29 @@ export const WellCentricView: React.FC<Props> = ({
     userPreferredUnit,
   ]);
 
-  const wellCards = useMemo(
-    () =>
-      wellboreChartData.map((row) => (
-        <WellCentricCard
-          wellbore={row.wellbore}
-          key={row.wellbore.id}
-          chartData={row.chartData}
-          axisNames={{
-            x2: `Pressure (${pressureUnit.toLowerCase()})`,
-            x: 'Angle (deg)',
-            y: `${measurementReference} (${userPreferredUnit})`,
-          }}
-        />
-      )),
-    [wellboreChartData]
-  );
+  const wellCards = useMemo(() => {
+    const groupedData = groupBy(charts, 'name');
+    return Object.keys(groupedData).map((key) => (
+      <CurveCentricCard
+        key={key}
+        chartData={groupedData[key]}
+        axisNames={{
+          x2: `Pressure (${pressureUnit.toLowerCase()})`,
+          x: 'Angle (deg)',
+          y: `${measurementReference} (${userPreferredUnit})`,
+        }}
+      />
+    ));
+  }, [charts]);
 
   return (
     <>
       {chartRendering && <WhiteLoader />}
-      <WellCentricViewWrapper visible={!chartRendering}>
+      <CurveCentricViewWrapper visible={!chartRendering}>
         {wellCards}
-      </WellCentricViewWrapper>
+      </CurveCentricViewWrapper>
     </>
   );
 };
 
-export default WellCentricView;
+export default CurveCentricView;
