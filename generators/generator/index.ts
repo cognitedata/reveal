@@ -1,66 +1,72 @@
 /* eslint-disable no-console */
 
-import path from 'path';
+import { DynamicActionsFunction, ActionType } from 'node-plop';
+import { Answers } from 'inquirer';
 
-import { DynamicActionsFunction } from 'node-plop';
+import { appActions, appSteps } from './app';
+import { packageActions, packageSteps } from './package';
+import { LINE } from './constants';
 
-import { ROOT, LINE } from './constants';
+const actions: DynamicActionsFunction = (data?: Answers) => {
+  if (!data) {
+    throw new Error('Error processing answers.');
+  }
 
-const actions: DynamicActionsFunction = () => {
-  const root = path.join(ROOT, 'packages');
-
-  const commonActions = [
-    {
-      type: 'addMany',
-      destination: path.join(root, '{{ name }}'),
-      base: path.join(root, '.template'),
-      templateFiles: [path.join(root, '.template', '**/*')],
-      globOptions: {
-        dot: true,
-      },
-    },
-  ];
+  const commonActions: ActionType[] = [];
 
   const messages = [
     '',
     LINE,
-    ' Go ahead and get started with your new service or package:',
+    ' Go ahead and get started with your new app or package:',
     ' Happy hacking! Stop by #frontend for help :)',
     LINE,
   ];
 
+  if (data.type === 'app') {
+    messages.push(
+      'You can find more information about app registration and the actions executed here:'
+    );
+    messages.push(
+      'https://cognitedata.atlassian.net/wiki/spaces/FAS/pages/1003225162/How+to+deploy+on+Frontend+App+Server+FAS\n'
+    );
+    messages.push(
+      "Don't forget to create PRs for the affected repositories (`application-services`)"
+    );
+    messages.push(LINE);
+  }
+
   console.log(messages.join('\n'));
 
-  return [...commonActions];
+  return [
+    ...(data.type === 'app' ? [...commonActions, ...appActions] : []),
+    ...(data.type === 'package' ? [...commonActions, ...packageActions] : []),
+  ];
 };
 
-type PromptReturnType = string | boolean;
 const config = {
-  description: 'Create a new service or package',
+  description: 'Create a new app or package',
   prompts: [
     {
-      type: 'input',
-      name: 'name',
-      message: 'What is the name of this package?',
-      validate: (input: string): PromptReturnType => {
-        if (input.toLowerCase() !== input) {
-          return 'Name should be lower case';
-        }
-
-        if (!input.match(/^[a-z0-9-]+$/)) {
-          return 'Name should look like: @cognite/foo-bar';
-        }
-
-        return true;
-      },
-      transformer: (input: string): string => `@cognite/${input}`,
+      type: 'list',
+      name: 'type',
+      message: 'Do you want to create a app or a package?',
+      choices: [
+        {
+          short: 'Apps',
+          name: 'Create a new app',
+          value: 'app',
+        },
+        {
+          short: 'Package',
+          name: 'Create a new NPM package',
+          value: 'package',
+        },
+      ],
     },
-    {
-      type: 'input',
-      name: 'description',
-      message: 'A short package description:',
-    },
+    ...appSteps,
+    ...packageSteps,
   ],
+
   actions,
 };
 

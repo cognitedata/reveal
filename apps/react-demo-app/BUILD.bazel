@@ -234,30 +234,6 @@ react_scripts(
     output_dir = True,
 )
 
-sh_binary(
-    name = "build_sed_default",
-    srcs = ["//rules/build_sed:sed_linux.sh"],
-)
-
-sh_binary(
-    name = "build_sed_darwin",
-    srcs = ["//rules/build_sed:sed_darwin.sh"],
-)
-
-# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
-# If you need additional env vars being set during testcafe run add them into
-# :build target above and override here
-build_sed(
-    name = "build_sed",
-    app = "Demo App",
-    binary = select({
-        "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
-        "//conditions:default": ":build_sed_default",
-    }),
-    out_dir = "build_bazel",
-    src_dir = ":build",
-)
-
 ### react-scripts test ###
 
 copy_to_bin(
@@ -313,6 +289,34 @@ react_scripts(
     ],
 )
 
+### E2E Tests ###
+
+sh_binary(
+    name = "build_sed_default",
+    srcs = ["//rules/build_sed:sed_linux.sh"],
+)
+
+sh_binary(
+    name = "build_sed_darwin",
+    srcs = ["//rules/build_sed:sed_darwin.sh"],
+)
+
+# Replace PUBLIC_URL_VALUE placeholder with '' in order to run testcafe
+# If you need additional env vars being set during testcafe run add them into
+# :build target above and override here
+build_sed(
+    name = "build_sed",
+    app = "Demo App",
+    binary = select({
+        "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
+        "//conditions:default": ":build_sed_default",
+    }),
+    out_dir = "build_bazel",
+    src_dir = ":build",
+)
+
+### E2E Tests End ###
+
 ### Testcafe ###
 
 copy_to_bin(
@@ -361,6 +365,8 @@ testcafe(
         "BASE_URL": "https://localhost:3000",
     },
 )
+
+### Testcafe End ###
 
 ### Cypress ###
 
@@ -428,6 +434,8 @@ cypress(
         ":start",
     ],
 )
+
+### Cypress End ###
 
 ### Storybook ###
 
