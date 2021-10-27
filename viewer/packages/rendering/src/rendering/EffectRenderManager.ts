@@ -17,6 +17,8 @@ import { RenderMode } from './RenderMode';
 import { LevelOfDetail, RootSectorNode, SectorNode } from '@reveal/cad-parsers';
 import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
 
+const black = new THREE.Color('black');
+
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
@@ -229,7 +231,7 @@ export class EffectRenderManager {
     const ssaoParameters = this.ssaoParameters(this._renderOptions);
 
     const numberOfSamples = ssaoParameters.sampleSize;
-    const sampleKernel = this.createKernel(numberOfSamples);
+    const sampleKernel = this.createSsaoKernel(numberOfSamples);
 
     const sampleRadius = ssaoParameters.sampleRadius;
     const depthCheckBias = ssaoParameters.depthCheckBias;
@@ -307,7 +309,7 @@ export class EffectRenderManager {
       this.traverseForRootSectorNode(this._originalScene);
       this.extractCadNodes(this._originalScene);
 
-      this.clearTargetWithClearColor(this._renderTarget);
+      this.clearTarget(this._renderTarget);
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
 
       if (hasBackElements && !hasGhostElements) {
@@ -336,6 +338,7 @@ export class EffectRenderManager {
     const original = {
       autoClear: renderer.autoClear,
       clearAlpha: renderer.getClearAlpha(),
+      clearColor: renderer.getClearColor(new THREE.Color()),
       renderMode: this._materialManager.getRenderMode()
     };
 
@@ -355,14 +358,14 @@ export class EffectRenderManager {
       this.extractCadNodes(scene);
 
       // Clear targets
-      this.clearTargetWithTransparentBlack(this._ghostObjectRenderTarget);
-      this.clearTargetWithTransparentBlack(this._compositionTarget);
-      this.clearTargetWithTransparentBlack(this._customObjectRenderTarget);
+      renderStateHelper.setClearColor(black, 1.0);
+      this.clearTarget(this._ghostObjectRenderTarget);
+      this.clearTarget(this._compositionTarget);
       // We use alpha to store special state for the next targets
-      renderer.setClearAlpha(0.0);
-      this.clearTargetWithTransparentBlack(this._normalRenderedCadModelTarget);
-      this.clearTargetWithTransparentBlack(this._inFrontRenderedCadModelTarget);
-      renderer.setClearAlpha(original.clearAlpha);
+      renderStateHelper.setClearColor(black, 0.0);
+      this.clearTarget(this._customObjectRenderTarget);
+      this.clearTarget(this._normalRenderedCadModelTarget);
+      this.clearTarget(this._inFrontRenderedCadModelTarget);
 
       const lastFrameSceneState = { ...this._lastFrameSceneState };
       const { hasBackElements, hasInFrontElements, hasGhostElements } = this.splitToScenes();
@@ -409,6 +412,8 @@ export class EffectRenderManager {
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
           // Composite view
+          renderStateHelper.setClearColor(original.clearColor, original.clearAlpha);
+          this.clearTarget(this._compositionTarget);
           this.renderComposition(renderer, camera, this._compositionTarget);
 
           // Anti-aliased version to screen
@@ -440,7 +445,6 @@ export class EffectRenderManager {
     } finally {
       // Restore state
       renderStateHelper.resetState();
-      // renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
       this.restoreCadNodes();
     }
@@ -478,20 +482,7 @@ export class EffectRenderManager {
     return this._autoSetTargetSize;
   }
 
-  private clearTargetWithTransparentBlack(target: THREE.WebGLRenderTarget) {
-    const oldColor = this._renderer.getClearColor(new THREE.Color());
-    const oldAlpha = this._renderer.getClearAlpha();
-    try {
-      this._renderer.setClearColor(new THREE.Color(0, 0, 0), 0);
-      this._renderer.setRenderTarget(target);
-      this._renderer.clear();
-    } finally {
-      this._renderer.setClearColor(oldColor);
-      this._renderer.setClearAlpha(oldAlpha);
-    }
-  }
-
-  private clearTargetWithClearColor(target: THREE.WebGLRenderTarget | null) {
+  private clearTarget(target: THREE.WebGLRenderTarget | null) {
     this._renderer.setRenderTarget(target);
     this._renderer.clear();
   }
@@ -668,7 +659,7 @@ export class EffectRenderManager {
     if (params.sampleSize !== this.ssaoParameters(this._renderOptions).sampleSize) {
       const sampleSize = params?.sampleSize ?? defaultSsaoParameters.sampleSize!;
 
-      const kernel = this.createKernel(sampleSize);
+      const kernel = this.createSsaoKernel(sampleSize);
 
       this._fxaaMaterial.uniforms.tDiffuse.value =
         params.sampleSize !== SsaoSampleQuality.None ? this._ssaoBlurTarget.texture : this._compositionTarget.texture;
@@ -698,6 +689,7 @@ export class EffectRenderManager {
 
       const downSampleFactor = new THREE.Vector2(renderSize.x / canvasSize.x, renderSize.y / canvasSize.y);
 
+      const oldAutoClear = renderer.autoClear;
       renderer.autoClear = false;
       this._uiObjects.forEach(uiObject => {
         const renderScene = new THREE.Scene();
@@ -713,7 +705,7 @@ export class EffectRenderManager {
       });
 
       renderer.setViewport(0, 0, renderSize.x, renderSize.y);
-      renderer.autoClear = true;
+      renderer.autoClear = oldAutoClear;
     }
   }
 
@@ -761,7 +753,7 @@ export class EffectRenderManager {
     this._ssaoBlurScene.add(mesh);
   }
 
-  private createKernel(kernelSize: number) {
+  private createSsaoKernel(kernelSize: number) {
     const result = [];
     for (let i = 0; i < kernelSize; i++) {
       const sample = new THREE.Vector3();

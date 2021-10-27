@@ -15,6 +15,8 @@ function TransparentCustomObjectWithBackgroundColor() {
   const modelUrl = 'primitives';
   
   function initializeViewer(viewer: Cognite3DViewer) {
+    viewer.setBackgroundColor(new THREE.Color('gray'));
+    
     const sphere = new THREE.BoxGeometry(20, 5, 20);
     const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 'blue', transparent: true, opacity: 0.5 }));
     sphereMesh.position.set(10, 0, -10);
@@ -33,6 +35,7 @@ function TransparentCustomObjectWithBackgroundColor() {
     modelUrls={[modelUrl]} 
     initializeCallback={initializeViewer} 
     modelAddedCallback={styleNodes} 
+    viewerOptions={{antiAliasingHint: 'fxaa'}}
   />;
 }
 

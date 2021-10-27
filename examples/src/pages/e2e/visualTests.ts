@@ -61,5 +61,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'transparentCustomObjectWithBackgroundColor',
     category: 'cad'
+  },
+  {
+    testKey: 'customBackgroundColorAndFXAA',
+    category: 'cad'
   }
 ];
