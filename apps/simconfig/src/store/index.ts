@@ -5,6 +5,7 @@ import { groupReducer } from './group';
 import { datasetReducer } from './dataset';
 import { fileReducer } from './file';
 import { boundaryConditionReducer } from './boundaryCondition';
+import { eventReducer } from './event';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     simulator: simulatorReducer,
     file: fileReducer,
     boundaryCondition: boundaryConditionReducer,
+    event: eventReducer,
   },
 });
 

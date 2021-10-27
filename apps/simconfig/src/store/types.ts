@@ -5,6 +5,7 @@ import { GroupState } from './group/types';
 import { SimulatorState } from './simulator/types';
 import { FileState } from './file/types';
 import { BoundaryConditionState } from './boundaryCondition/types';
+import { EventState } from './event/types';
 
 export enum RequestStatus {
   IDLE,
@@ -20,4 +21,5 @@ export type StoreState = {
   simulator: SimulatorState;
   file: FileState;
   boundaryCondition: BoundaryConditionState;
+  event: EventState;
 };

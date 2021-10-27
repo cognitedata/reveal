@@ -13,8 +13,8 @@ export const selectIsSimulatorAvailable = (item: Simulator) =>
 export const selectIsSimulatorInitialized = (state: StoreState) =>
   state.simulator.initialized;
 
-export const selectSimulators = ({ simulator }: StoreState) => {
-  const simulators = [...simulator.simulators];
+export const selectSimulators = (state: StoreState) => {
+  const simulators = [...state.simulator.simulators];
   return (
     simulators.sort((a, b) => (a.heartbeat < b.heartbeat ? 1 : -1)) ?? null
   );

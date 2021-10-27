@@ -1,3 +1,4 @@
+import { Label } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const Container = styled.div`
@@ -13,4 +14,8 @@ export const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   margin: 0 0 24px 0;
+`;
+
+export const CapitalizedLabel = styled(Label)`
+  text-transform: capitalize;
 `;
