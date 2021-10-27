@@ -14,6 +14,7 @@ const CreateDatabase = (props: CreateDbProps) => {
         <Col span={6}> Unique name </Col>
         <Col span={16}>
           <Input
+            aria-label="Searched database name"
             value={props.name}
             autoFocus
             onChange={(e) => props.setName(e.currentTarget.value)}

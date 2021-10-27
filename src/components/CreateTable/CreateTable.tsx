@@ -14,6 +14,7 @@ const CreateTable = (props: CreateProps) => {
       <Col span={6}> Unique name </Col>
       <Col span={18}>
         <Input
+          aria-label="Table name"
           autoFocus
           value={props.name}
           onChange={(e) => props.setName(e.currentTarget.value)}

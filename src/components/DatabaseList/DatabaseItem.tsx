@@ -12,9 +12,9 @@ import { RawDBTable } from '@cognite/sdk';
 import { SubMenuProps } from 'antd/lib/menu/SubMenu';
 import theme from 'styles/theme';
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import Link from 'components/Link';
 import { History } from 'history';
 import { createLink } from '@cognite/cdf-utilities';
+import { Link } from 'react-router-dom';
 import { cleanUrl, getContainer, stringCompare } from 'utils/utils';
 import handleError from 'utils/handleError';
 import styled from 'styled-components';
@@ -129,7 +129,11 @@ const DatabaseItem = ({
           });
         }}
       >
-        <Link to={`/raw-explorer/${cleanUrl(currentDatabase, table.name)}`}>
+        <Link
+          to={createLink(
+            `/raw-explorer/${cleanUrl(currentDatabase, table.name)}`
+          )}
+        >
           <Tooltip
             placement="topLeft"
             title={`Table ${table.name}`}
@@ -228,7 +232,11 @@ const DatabaseItem = ({
                   }
                   getPopupContainer={getContainer}
                 >
-                  <StyledDeleteDatabaseButton icon="Trash" type="secondary" />
+                  <StyledDeleteDatabaseButton
+                    aria-label="Delete database"
+                    icon="Trash"
+                    type="secondary"
+                  />
                 </Tooltip>
               </Popconfirm>
             )}
@@ -240,6 +248,7 @@ const DatabaseItem = ({
         {tables.length ? (
           <StyledMenuItem $hasBackground={false} key="filterTables">
             <StyledMenuItemInput
+              aria-label="Searched table name"
               placeholder="Filter tables"
               onChange={(e) => setSearch(e.currentTarget.value)}
               onSearch={(value) => setSearch(value)}

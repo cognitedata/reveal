@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { createLink } from '@cognite/cdf-utilities';
@@ -49,10 +49,12 @@ const StyledRawExplorerTableContentWrapper = styled.div`
 
 const RawExplorer = (): JSX.Element => {
   const history = useHistory();
-  const { dbName, tableName } = useParams<{
+  const match = useRouteMatch<{
     dbName?: string;
     tableName?: string;
-  }>();
+  }>('/:project/raw-explorer/:dbName/:tableName');
+  const dbName = match?.params.dbName;
+  const tableName = match?.params.tableName;
 
   const [selectedTable, setSelectedTable] = useState<{
     database?: string;

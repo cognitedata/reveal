@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import sdk from 'utils/sdkSingleton';
-import { RawDBRow } from '@cognite/sdk';
 import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
 import Alert from 'antd/lib/alert';
@@ -12,6 +11,7 @@ import Typography from 'antd/lib/typography';
 import AccessButton from 'components/AccessButton';
 import moment from 'moment';
 import styled from 'styled-components';
+import isString from 'lodash/isString';
 import {
   stringCompare,
   escapeCSVValue,
@@ -24,6 +24,7 @@ import { CSVLink } from 'react-csv';
 import { dateSorter } from 'utils/typedUtils';
 import { useRouteMatch } from 'react-router-dom';
 import handleError from 'utils/handleError';
+import { RawExplorerContext } from 'contexts';
 import UploadCSV from '../UploadCSV';
 
 const { Text } = Typography;
@@ -64,11 +65,17 @@ const TableContent = ({
   const dbName = match?.params.dbName;
   const tableName = match?.params.tableName;
 
-  const [tableData, setTableData] = useState<RawDBRow[]>([]);
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
-  const [fetchingTable, setFetchingTable] = useState<boolean>(false);
-  const [fetchLimit, setFetchLimit] = useState<number>(100);
   const [limitExceeded, setLimitHasExceeded] = useState<boolean>(false);
+
+  const {
+    fetchLimit,
+    setFetchLimit,
+    isFetchingTableData,
+    setIsFetchingTableData,
+    tableData,
+    setTableData,
+  } = useContext(RawExplorerContext);
 
   const downloadData = useMemo(() => {
     if (tableData.length)
@@ -96,7 +103,7 @@ const TableContent = ({
         </TableTimeStamp>
       );
     }
-    if (isFetching || fetchingTable) {
+    if (isFetching || isFetchingTableData) {
       return (
         <span style={{ textAlign: 'right', float: 'right' }}>
           <Spin />
@@ -219,7 +226,12 @@ const TableContent = ({
         key: 'key',
         width: 250,
         columnWidth: 250,
-        sorter: (a: any, b: any) => a.key - b.key,
+        sorter: (a: any, b: any) => {
+          if (isString(a.key)) {
+            return a.key.localeCompare(b.key);
+          }
+          return a.key - b.key;
+        },
         render: (text: any) => (
           <div>
             <Tooltip title={text} getPopupContainer={getContainer}>
@@ -300,22 +312,22 @@ const TableContent = ({
   useEffect(() => {
     const fetchTableContent = async (db: string, tb: string) => {
       try {
-        setFetchingTable(true);
+        setIsFetchingTableData(true);
         const list = await sdk.raw
           .listRows(unescape(db), unescape(tb))
           .autoPagingToArray({ limit: fetchLimit });
         setTableData(list);
-        setFetchingTable(false);
+        setIsFetchingTableData(false);
       } catch (e) {
         handleError(e);
-        setFetchingTable(false);
+        setIsFetchingTableData(false);
       }
     };
 
     if (dbName && tableName) {
       fetchTableContent(dbName, tableName);
     }
-  }, [fetchLimit, tableName, dbName]);
+  }, [fetchLimit, tableName, dbName, setIsFetchingTableData, setTableData]);
 
   return (
     <div>
@@ -347,6 +359,7 @@ const TableContent = ({
             <Text>
               Number of rows to fetch{' '}
               <InputNumber
+                aria-label="Number of rows to fetch"
                 min={1}
                 max={10000}
                 defaultValue={fetchLimit}
@@ -412,7 +425,7 @@ const TableContent = ({
           </div>
 
           <Table
-            loading={isFetching || fetchingTable}
+            loading={isFetching || isFetchingTableData}
             bordered
             columns={tableData ? getColumns() : []}
             dataSource={tableData ? getData() : []}

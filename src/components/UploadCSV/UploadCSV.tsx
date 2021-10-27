@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import message from 'antd/lib/message';
 import Spin from 'antd/lib/spin';
@@ -12,10 +12,12 @@ import PapaParse from 'papaparse';
 import sdk from 'utils/sdkSingleton';
 import { RawDBRowInsert, RawDBRow } from '@cognite/sdk';
 import { Icon } from '@cognite/cogs.js';
-
+import uuid from 'uuid';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
+import { RawExplorerContext } from 'contexts';
+import handleError from 'utils/handleError';
 
 const { Dragger } = Upload;
 
@@ -43,6 +45,10 @@ const UploadCSV = ({
   const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
   const [parsingProgress, setParsingProgress] = useState<number>(0);
 
+  const { fetchLimit, setIsFetchingTableData, setTableData } = useContext(
+    RawExplorerContext
+  );
+
   const saveDataToApi = async () => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
     setIsFetching(true);
@@ -55,6 +61,8 @@ const UploadCSV = ({
         let key;
         if (selectedKeyIndex !== -1) {
           key = row[selectedKeyIndex];
+        } else {
+          key = uuid();
         }
         const rowObject: RawDBRowInsert = { key, columns: {} };
         row.forEach((value: any, currentIndex: number) => {
@@ -80,6 +88,19 @@ const UploadCSV = ({
       setCSVModalVisible(false);
       setIsFetching(false);
       setParsingProgress(100);
+
+      try {
+        setIsFetchingTableData(true);
+        const list = await sdk.raw
+          .listRows(unescape(database), unescape(table))
+          .autoPagingToArray({ limit: fetchLimit });
+        setTableData(list);
+        setIsFetchingTableData(false);
+      } catch (e) {
+        handleError(e);
+        setIsFetchingTableData(false);
+      }
+
       return message.success(
         `File ${fileName} has been successfully uploaded to table ${table}`
       );

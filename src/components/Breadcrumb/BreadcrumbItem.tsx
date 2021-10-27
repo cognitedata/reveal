@@ -39,7 +39,11 @@ const BreadcrumbItem = ({
   title,
 }: BreadcrumbItemProps): JSX.Element => {
   return path ? (
-    <StyledBreadcrumItemLink $isLastChild={isLastChild} to={createLink(path)}>
+    <StyledBreadcrumItemLink
+      aria-label="Breadcrumb link"
+      $isLastChild={isLastChild}
+      to={createLink(path)}
+    >
       {title}
     </StyledBreadcrumItemLink>
   ) : (
