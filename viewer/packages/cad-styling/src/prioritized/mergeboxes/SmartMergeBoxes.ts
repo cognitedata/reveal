@@ -2,9 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Box3 } from 'three';
+import { Box3, Vector3 } from 'three';
 import { BoxClusterer } from './BoxClusterer';
-import { intersectionOverUnion } from './MergingRTree';
 
 /**
  * SmartMergeBoxes - takes in batches of bounding boxes and
@@ -29,21 +28,37 @@ export class SmartMergeBoxes implements BoxClusterer {
     this.resultBoxes.pop();
   }
 
+  private surfaceArea(box: Box3) {
+    const size = box.getSize(new Vector3());
+
+    return 2 * (size.x * size.y + size.y * size.z + size.z * size.x);
+  }
+
+  private shouldMergeBoxes(box0: Box3, box1: Box3): boolean {
+    const MAX_SURFACE_INCREASE_RATIO = 1.0;
+    const MAX_SURFACE_INCREASE_ADDITIVE_TERM = 8.0; // Heuristic number of square meters to allow merging of smaller boxes
+    
+    const union = box0.clone().union(box1);
+
+    const unionSurfaceArea = this.surfaceArea(union);
+    const originalSurfaceArea = this.surfaceArea(box0);
+    const otherBoxSurfaceArea = this.surfaceArea(box1);
+
+    return unionSurfaceArea < MAX_SURFACE_INCREASE_RATIO * (originalSurfaceArea + otherBoxSurfaceArea) + MAX_SURFACE_INCREASE_ADDITIVE_TERM;
+  }
+
   private shouldMergeBoxesAtIndices(i: number, j: number): boolean {
-    const BOX_MERGE_MIN_IOU = 0.15;
-    const overlap = intersectionOverUnion(this.resultBoxes[i], this.resultBoxes[j]);
-    return overlap >= BOX_MERGE_MIN_IOU;
+    return this.shouldMergeBoxes(this.resultBoxes[i], this.resultBoxes[j]);
   }
 
   private addBox(box: Box3): void {
     let merged = false;
-
-    for (const resultBox of this.resultBoxes) {
-      if (!box.intersectsBox(resultBox)) {
+    
+    for (let i = 0; i < this.resultBoxes.length; i++) {
+      if (!this.shouldMergeBoxes(box, this.resultBoxes[i])) {
         continue;
       }
-
-      resultBox.union(box);
+      this.resultBoxes[i].union(box);
 
       merged = true;
       break;
@@ -62,14 +77,14 @@ export class SmartMergeBoxes implements BoxClusterer {
 
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
-      this.addBox(box);
+      this.addBox(box.expandByScalar(0.3));
     }
   }
 
   squashBoxes(): void {
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
-        const shouldMerge = this.shouldMergeBoxesAtIndices(i, j);
+        const shouldMerge = this.shouldMergeBoxes(this.resultBoxes[i], this.resultBoxes[j]);
         if (shouldMerge) {
           this.mergeBoxesAtIndices(i, j);
 
