@@ -78,7 +78,7 @@ export class SectorLoader {
     progressHelper.start(changedSectors.length);
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, progressHelper);
+      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, progressHelper);
       const consumedPromises = this.startLoadingBatch(filteredSectors, progressHelper, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         this._modelStateHandler.updateState(consumed);
@@ -96,6 +96,7 @@ export class SectorLoader {
         break;
       case 'gltf-directory':
         sectorCuller = this._gltfSectorCuller;
+        break;
       default:
         throw new Error(`No supported sector culler for format${sectorCullerInput.cadModelsMetadata[0].format}`);
     }
@@ -105,10 +106,11 @@ export class SectorLoader {
   private async filterSectors(
     input: DetermineSectorsInput,
     batch: WantedSector[],
+    sectorCuller: SectorCuller,
     progressHelper: ProgressReportHelper
   ): Promise<WantedSector[]> {
     // Determine if some of the sectors in the batch is culled by already loaded geometry
-    const filteredSectors = await this._v8SectorCuller.filterSectorsToLoad(input, batch);
+    const filteredSectors = await sectorCuller.filterSectorsToLoad(input, batch);
     progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
     return filteredSectors;
   }

@@ -14,7 +14,7 @@ export type CadSceneMetadata = {
   // readonly subRevisionId: number;
 };
 
-export type CadSectorMetadata = BaseCadSectorMetadata & (GltfSectorMetadata | V8CadSectorMetadata);
+export type CadSectorMetadata = BaseCadSectorMetadata & (GltfCadSectorMetadata | V8CadSectorMetadata);
 
 export type BaseCadSectorMetadata = {
   readonly id: number;
@@ -38,7 +38,8 @@ export type BaseCadSectorMetadata = {
   };
 };
 
-export type GltfSectorMetadata = {
+export type GltfCadSectorMetadata = {
+  readonly sectorFileName: string | null;
   readonly maxDiagonalLength: number;
   readonly downloadSize: number;
 };

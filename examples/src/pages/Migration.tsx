@@ -71,11 +71,11 @@ export function Migration() {
             type: 'AAD_OAUTH', 
             options: { 
               clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-              cluster: 'api',
+              cluster: 'greenfield',
               tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
             } 
         });
-        client.setProject(project);
+        client.setProject('3d-test');
         await client.authenticate();
       } else if (baseUrl !== null) {
         viewerOptions = {

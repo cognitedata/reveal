@@ -50,6 +50,7 @@ export type V8SectorMetadata = {
 };
 
 export type GltfSectorMetadata = {
-  readonly fileName: string;
+  readonly sectorFileName: string | null;
+  readonly maxDiagonalLength: number;
   readonly downloadSize: number;
 };
