@@ -29,7 +29,7 @@ export function worldToNormalizedViewportCoordinates(
 ): THREE.Vector3 {
   const { renderSize, position } = worldToViewportVars;
   const canvas = renderer.domElement;
-  const pixelRatio = 1; // renderer.getPixelRatio();
+  const pixelRatio = renderer.getPixelRatio();
   renderer.getSize(renderSize);
 
   // map to normalized device coordinate (NDC) space
@@ -42,8 +42,8 @@ export function worldToNormalizedViewportCoordinates(
   const scaleY = renderSize.height / canvasHeight;
 
   // map to 2D screen space
-  const x = (position.x + 1) / (scaleX * pixelRatio * 2);
-  const y = (-position.y + 1) / (scaleY * pixelRatio * 2);
+  const x = ((position.x + 1) / (scaleX * 2)) * pixelRatio;
+  const y = ((-position.y + 1) / (scaleY * 2)) * pixelRatio;
 
   return out.set(x, y, position.z);
 }
