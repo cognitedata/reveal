@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import { ITimer } from '@cognite/metrics';
 import { Asset } from '@cognite/sdk';
 
+import { UnitConverterItem } from '_helpers/units/interfaces';
 import {
   LOG_WELL_DIGITAL_ROCKS,
   LOG_WELL_DIGITAL_ROCKS_NAMESPACE,
@@ -19,9 +20,12 @@ import {
   useStartTimeLogger,
   useStopTimeLogger,
 } from 'hooks/useTimeLog';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { wellSearchActions } from 'modules/wellSearch/actions';
+import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { AssetData, DigitalRockSampleData } from 'modules/wellSearch/types';
+import { convertObject } from 'modules/wellSearch/utils';
 import {
   normalize,
   normalizeSamples,
@@ -30,6 +34,21 @@ import {
 import { useSecondarySelectedOrHoveredWells } from '../asset/well';
 import { useWellboreAssetIdMap, useWellboreData } from '../asset/wellbore';
 import { usePristineIds } from '../common';
+
+const getDigitalRockUnitChangeAccessors = (
+  toUnit: string
+): UnitConverterItem[] => [
+  {
+    id: 'id',
+    accessor: DIGITAL_ROCKS_ACCESSORS.PLUG_DEPTH,
+    fromAccessor: DIGITAL_ROCKS_ACCESSORS.DEPTH_UNIT,
+    to: toUnit,
+  },
+];
+
+export const digitalRockAccessorsToFixedDecimal = [
+  DIGITAL_ROCKS_ACCESSORS.PLUG_DEPTH,
+];
 
 export const useSelectedWellBoresDigitalRocks = () => {
   const dispatch = useDispatch();
@@ -40,6 +59,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
   const wellboreData = useWellboreData();
   const [isLoading, setIsLoading] = useState<boolean>();
   const metric = useGetCogniteMetric(LOG_WELL_DIGITAL_ROCKS);
+  const userPrefferedUnit = useUserPreferencesMeasurement();
   const [networkTimer, setNetworkTimer] = useState<ITimer>();
   let preperationTimer: ITimer;
   return useMemo(() => {
@@ -83,17 +103,26 @@ export const useSelectedWellBoresDigitalRocks = () => {
     wells.forEach((well) => {
       if (well.wellbores) {
         well.wellbores.forEach((wellbore) => {
-          (
-            get(wellboreData[wellbore.id], 'digitalRocks') as AssetData[]
-          ).forEach(({ asset }) => {
-            digitalRocks.push(asset);
-          });
+          (get(wellboreData[wellbore.id], 'digitalRocks') as AssetData[])
+            .map(({ asset }) => asset)
+            .map((asset) => {
+              const newObj = convertObject(asset)
+                .changeUnits(
+                  getDigitalRockUnitChangeAccessors(userPrefferedUnit)
+                )
+                .toFixedDecimals(digitalRockAccessorsToFixedDecimal)
+                .get();
+              return newObj;
+            })
+            .forEach((asset) => {
+              digitalRocks.push(asset);
+            });
         });
       }
     });
     useStopTimeLogger(preperationTimer);
     return { isLoading: false, digitalRocks: normalize(digitalRocks) };
-  }, [wells, wellboreData, digitalRocksPristineIds]);
+  }, [wells, wellboreData, digitalRocksPristineIds, userPrefferedUnit]);
 };
 
 // This returns digital rocks samples for given digital rocks list

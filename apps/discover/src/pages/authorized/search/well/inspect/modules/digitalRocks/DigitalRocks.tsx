@@ -10,6 +10,7 @@ import { Asset } from '@cognite/sdk';
 import { shortDateTime } from '_helpers/date';
 import EmptyState from 'components/emptyState';
 import { Table } from 'components/tablev3';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
 import { useSelectedWellbores } from 'modules/wellSearch/selectors';
 import { useSelectedWellBoresDigitalRocks } from 'modules/wellSearch/selectors/asset/digitalRocks';
@@ -71,6 +72,8 @@ type SelectedMap = {
 export const DigitalRocks: React.FC = () => {
   const { isLoading, digitalRocks } = useSelectedWellBoresDigitalRocks();
 
+  const userPrefferedUnit = useUserPreferencesMeasurement();
+
   const wellboreIdsWithDigitalRocks = uniq(
     digitalRocks.map((row) => row.parentId)
   ) as number[];
@@ -103,13 +106,15 @@ export const DigitalRocks: React.FC = () => {
     [digitalRocks, selectedWellboreIdsMap]
   );
 
-  const depthUnit = get(
-    head(filteredDigitalRocks),
-    DIGITAL_ROCKS_ACCESSORS.DEPTH_UNIT
+  const dimensionUnit = useMemo(
+    () =>
+      get(head(filteredDigitalRocks), DIGITAL_ROCKS_ACCESSORS.DIMENSION_UNIT),
+    [filteredDigitalRocks]
   );
-  const dimensionUnit = get(
-    head(filteredDigitalRocks),
-    DIGITAL_ROCKS_ACCESSORS.DIMENSION_UNIT
+
+  const columnsWithUserPrefferedUnits = useMemo(
+    () => columns(userPrefferedUnit, dimensionUnit),
+    [userPrefferedUnit, dimensionUnit]
   );
 
   const onSelectWellbore = (selectedWellboreList: Wellbore[]) => {
@@ -149,7 +154,7 @@ export const DigitalRocks: React.FC = () => {
         scrollTable
         id="digital-rocks-result-table"
         data={filteredDigitalRocks}
-        columns={columns(depthUnit, dimensionUnit)}
+        columns={columnsWithUserPrefferedUnits}
         options={tableOptions}
         expandedIds={expandedIds}
         handleRowClick={handleRowClick}
