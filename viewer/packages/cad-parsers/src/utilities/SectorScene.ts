@@ -3,9 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { traverseDepthFirst } from '@reveal/utilities';
+
 import { SectorScene } from './types';
-import { SectorMetadata } from '../metadata/types';
+
+import { traverseDepthFirst } from '@reveal/utilities';
+import { SectorMetadata } from '@reveal/cad-parsers';
+
 import skmeans from 'skmeans';
 
 export class SectorSceneImpl implements SectorScene {

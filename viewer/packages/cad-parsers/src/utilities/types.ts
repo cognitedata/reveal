@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { InstancedMeshFile, TriangleMesh } from '@reveal/cad-parsers';
+import { InstancedMeshFile, SectorMetadata, TriangleMesh } from '@reveal/cad-parsers';
 import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
 
 /**
@@ -73,50 +73,6 @@ export interface SectorScene {
   // readonly revisionId: number;
   // readonly subRevisionId: number;
   // readonly unit: string | null;
-}
-
-export interface SectorMetadataIndexFileSection {
-  readonly fileName: string;
-  readonly peripheralFiles: string[];
-  readonly downloadSize: number;
-}
-
-export interface SectorMetadataFacesFileSection {
-  readonly quadSize: number;
-  /**
-   * Coverage factors for the sector without children.
-   */
-  readonly coverageFactors: {
-    xy: number;
-    yz: number;
-    xz: number;
-  };
-  /**
-   * Coverage factor for the sectors including children.
-   */
-  readonly recursiveCoverageFactors: {
-    xy: number;
-    yz: number;
-    xz: number;
-  };
-  readonly fileName: string | null;
-  readonly downloadSize: number;
-}
-
-export interface SectorMetadata {
-  readonly id: number;
-  readonly path: string;
-  readonly depth: number;
-  readonly bounds: THREE.Box3;
-  readonly indexFile: SectorMetadataIndexFileSection;
-  readonly facesFile: SectorMetadataFacesFileSection;
-  readonly children: SectorMetadata[];
-  readonly estimatedDrawCallCount: number;
-  readonly estimatedRenderCost: number;
-  /**
-   * @version New in version 9 formats
-   */
-  readonly maxDiagonalLength?: number;
 }
 
 export interface SectorGeometry {

@@ -13,6 +13,7 @@ import { PromiseUtils } from '../utilities/PromiseUtils';
 import log from '@reveal/logger';
 import { CadNode } from '@reveal/rendering';
 import { PassThroughSectorCuller } from './culling/PassThroughSectorCuller';
+import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -43,7 +44,7 @@ export class SectorLoader {
     progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
   ) {
     this._v8SectorCuller = sectorCuller;
-    this._gltfSectorCuller = new PassThroughSectorCuller();
+    this._gltfSectorCuller = new ByScreenSizeSectorCuller();
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;

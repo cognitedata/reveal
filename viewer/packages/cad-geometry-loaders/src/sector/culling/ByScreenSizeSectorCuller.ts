@@ -12,13 +12,20 @@ import {
   SectorCost,
   SectorLoadingSpent
 } from './types';
-import { computeSectorCost } from './computeSectorCost';
+import { computeGltfSectorCost } from './computeSectorCost';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import { SectorCuller } from './SectorCuller';
 
 import Log from '@reveal/logger';
-import { CadModelMetadata, LevelOfDetail, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import {
+  BaseSectorMetadata,
+  CadModelMetadata,
+  GltfSectorMetadata,
+  LevelOfDetail,
+  SectorScene,
+  WantedSector
+} from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane, traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
@@ -35,7 +42,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   private readonly _determineSectorCost: DetermineSectorCostDelegate;
 
   constructor(options?: ByScreenSizeSectorCullerOptions) {
-    this._determineSectorCost = options?.determineSectorCost || computeSectorCost;
+    this._determineSectorCost = options?.determineSectorCost || computeGltfSectorCost;
   }
 
   determineSectors(input: DetermineSectorsInput): {
@@ -80,37 +87,43 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         input.clippingPlanes
       );
 
-      sectors.forEach(sector => {
-        weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
+      sectors
+        .filter(x => {
+          // TODO 2021-10-27 larsmoa: Implement sensible filtering of sectors without files
+          return (x as GltfSectorMetadata).sectorFileName != null;
+        })
+        .forEach(sectorMetadata => {
+          const sector = sectorMetadata as BaseSectorMetadata & GltfSectorMetadata;
+          weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
 
-        const levelWeightImportance = 2.0;
-        const distanceToImportance = 1.0;
-        const screenAreaImportance = 0.3;
-        const frustumDepthImportance = 0.2;
-        const nodeScreenSizeImportance = 1.0;
+          const levelWeightImportance = 2.0;
+          const distanceToImportance = 1.0;
+          const screenAreaImportance = 0.3;
+          const frustumDepthImportance = 0.2;
+          const nodeScreenSizeImportance = 1.0;
 
-        const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
-        const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
-        const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
-        const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
-        const nodeScreenSizeWeight =
-          sector.maxDiagonalLength !== undefined
-            ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
-            : 1.0;
+          const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
+          const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
+          const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
+          const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
+          const nodeScreenSizeWeight =
+            sector.maxDiagonalLength !== undefined
+              ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
+              : 1.0;
 
-        const priority =
-          levelWeightImportance * levelWeight +
-          distanceToImportance * distanceToCameraWeight +
-          screenAreaImportance * screenAreaWeight +
-          frustumDepthImportance * frustumDepthWeight +
-          nodeScreenSizeImportance * nodeScreenSizeWeight;
+          const priority =
+            levelWeightImportance * levelWeight +
+            distanceToImportance * distanceToCameraWeight +
+            screenAreaImportance * screenAreaWeight +
+            frustumDepthImportance * frustumDepthWeight +
+            nodeScreenSizeImportance * nodeScreenSizeWeight;
 
-        candidateSectors.push({
-          model,
-          sectorId: sector.id,
-          priority
+          candidateSectors.push({
+            model,
+            sectorId: sector.id,
+            priority
+          });
         });
-      });
     });
     candidateSectors.sort((left, right) => {
       return right.priority - left.priority;

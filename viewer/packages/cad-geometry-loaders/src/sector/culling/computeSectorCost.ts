@@ -3,23 +3,20 @@
  */
 import { SectorCost } from './types';
 
-import { LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
+import { BaseSectorMetadata, GltfSectorMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
 
-export function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
+export function computeGltfSectorCost(sectorMetadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
+  const metadata = sectorMetadata as BaseSectorMetadata & GltfSectorMetadata;
   switch (lod) {
     case LevelOfDetail.Detailed:
       return {
-        downloadSize: metadata.indexFile.downloadSize,
+        downloadSize: metadata.downloadSize,
         drawCalls: metadata.estimatedDrawCallCount,
         renderCost: metadata.estimatedRenderCost
       };
     case LevelOfDetail.Simple:
-      return {
-        downloadSize: metadata.facesFile.downloadSize,
-        drawCalls: 1,
-        // TODO 2021-09-23 larsmoa: Estimate for simple sector render cost is very arbitrary
-        renderCost: Math.ceil(metadata.facesFile.downloadSize / 100)
-      };
+      throw new Error('Not supported');
+
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }

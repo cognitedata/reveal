@@ -17,7 +17,8 @@ import {
   WantedSector,
   LevelOfDetail,
   BaseSectorMetadata,
-  V8SectorMetadata
+  V8SectorMetadata,
+  SectorMetadata
 } from '@reveal/cad-parsers';
 
 /**
@@ -205,7 +206,8 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 }
 
-function computeSectorCost(metadata: BaseSectorMetadata & V8SectorMetadata, lod: LevelOfDetail): SectorCost {
+function computeSectorCost(sectorMetadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
+  const metadata = sectorMetadata as BaseSectorMetadata & V8SectorMetadata;
   switch (lod) {
     case LevelOfDetail.Detailed:
       return {

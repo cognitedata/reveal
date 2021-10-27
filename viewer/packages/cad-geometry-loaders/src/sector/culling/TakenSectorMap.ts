@@ -11,7 +11,7 @@ import {
 } from './types';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
-import { CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import { BaseSectorMetadata, CadModelMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 
 import assert from 'assert';
 
@@ -35,7 +35,10 @@ export class TakenSectorMap {
 
   initializeScene(modelMetadata: CadModelMetadata) {
     this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost),
+      sectorTree: new TakenSectorTree(
+        modelMetadata.scene.root as BaseSectorMetadata & V8SectorMetadata,
+        this.determineSectorCost
+      ),
       modelMetadata
     });
   }
