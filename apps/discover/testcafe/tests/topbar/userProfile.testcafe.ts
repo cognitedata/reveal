@@ -19,12 +19,12 @@ startTest.skip('User is able to edit his first and last name', async () => {
 
 startTest('User can see the logout and version info', async () => {
   await App.userProfilePage.openUserProfileOverlay();
-  await App.userProfilePage.checkIfVersionInfoIsDisplayed();
+  // await App.userProfilePage.checkIfVersionInfoIsDisplayed();
   await App.userProfilePage.checkIfLogoutButtonIsDisplayed();
 });
 
 startTest('Hide user profile panel on close', async () => {
   await App.userProfilePage.openUserProfileOverlay();
-  await App.userProfilePage.checkIfVersionInfoIsDisplayed();
+  // await App.userProfilePage.checkIfVersionInfoIsDisplayed();
   await App.userProfilePage.closeUserProfileOverlay();
 });
