@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
 import template from 'lodash/template';
 
 import { Sequence, SequenceColumn } from '@cognite/sdk';
@@ -47,6 +46,7 @@ export const Trajectory2D: React.FC<Props> = ({
     getWellboreNameForTrajectory(trajId, selectedTrajectories);
 
   const chartConfigs = config?.trajectory?.charts || [];
+
   // empty ChartsArray
   const charts: any[] = useMemo(
     () =>
@@ -56,8 +56,7 @@ export const Trajectory2D: React.FC<Props> = ({
     [chartConfigs, selectedWellbores]
   );
 
-  // genrate chart data array
-  useEffect(() => {
+  const generateChartData = () => {
     selectedTrajectoryData.forEach((traj) => {
       const chartObjs: any[] = [];
       // data Object for the chart (object relavant to 1 line), including x,y,(z) data arrays.
@@ -86,14 +85,25 @@ export const Trajectory2D: React.FC<Props> = ({
       }
 
       chartObjs.forEach((obj, index) => {
-        if (isEmpty(charts[index])) {
-          charts[index].push(obj);
-        } else {
-          charts[index] = [obj];
-        }
+        charts[index].push(obj);
       });
     });
-  }, [selectedTrajectoryData, chartConfigs, userPreferredUnit]);
+  };
+
+  // genrate chart data array
+  useEffect(() => {
+    generateChartData();
+  }, [selectedTrajectoryData, chartConfigs]);
+
+  useEffect(() => {
+    /**
+     * On unit change need to reset chart arrays
+     */
+    charts.forEach((_, index) => {
+      charts[index] = [];
+    });
+    generateChartData();
+  }, [userPreferredUnit]);
 
   const getLineObject = (
     traj: TrajectoryRows | undefined,
