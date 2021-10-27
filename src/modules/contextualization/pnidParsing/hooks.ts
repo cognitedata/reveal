@@ -80,8 +80,11 @@ export const useJobStatus = (workflowId: number, jobInitiated?: boolean) => {
     if (parsingJobStatus === 'Failed') {
       return 'error';
     }
-    if (!jobId || !jobInitiated) {
-      return 'ready';
+    if (jobInitiated && !total) {
+      return 'loading';
+    }
+    if (parsingJobStatus === 'Queued') {
+      return 'running';
     }
     if (
       parsingJobStatus === 'Distributing' ||
@@ -89,8 +92,8 @@ export const useJobStatus = (workflowId: number, jobInitiated?: boolean) => {
     ) {
       return 'running';
     }
-    if (jobInitiated && !total) {
-      return 'loading';
+    if (!jobInitiated || !jobId) {
+      return 'ready';
     }
     if (running) {
       return 'running';

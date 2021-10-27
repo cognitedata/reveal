@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { AppStateContext } from 'context';
+import { setJobId } from 'modules/workflows';
 import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow';
 import {
   useParsingJob,
@@ -29,14 +30,20 @@ export default function RunModelButton(): JSX.Element {
   const onRunModelClick = () => {
     if (jobStarted) return;
     if (canEditFiles && canReadFiles) {
-      dispatch(startPnidParsingWorkflow.action(workflowId));
       setJobStarted(true);
+      dispatch(setJobId({ workflowId, jobId: undefined })); // remove the old, failed job ID
+      dispatch(startPnidParsingWorkflow.action(workflowId));
     } else setRenderFeedback(true);
   };
 
   useEffect(() => {
-    if (jobStatus === 'done' || jobStatus === 'error' || jobStatus === 'ready')
+    if (
+      jobStatus === 'done' ||
+      jobStatus === 'error' ||
+      jobStatus === 'ready'
+    ) {
       setJobStarted(false);
+    } else setJobStarted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobStatus]);
 
