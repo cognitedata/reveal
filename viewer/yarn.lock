@@ -479,6 +479,7 @@ __metadata:
     "@gltf-transform/core": ^0.12.11
     "@gltf-transform/extensions": ^0.12.11
     "@tweenjs/tween.js": ^18.6.4
+    "@types/dat.gui": ^0.7.7
     "@types/jest": ^26.0.15
     "@types/jsdom": ^16.2.10
     "@types/lodash": ^4.14.170
@@ -496,6 +497,7 @@ __metadata:
     copy-webpack-plugin: ^6.2.1
     core-js: ^3.6.5
     cross-var: ^1.1.0
+    dat.gui: ^0.7.7
     eslint: ^7.12.1
     eslint-config-prettier: ^6.14.0
     eslint-plugin-header: ^3.1.0
@@ -951,6 +953,7 @@ __metadata:
     "@reveal/logger": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -991,6 +994,7 @@ __metadata:
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1032,7 +1036,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reveal/sector-parser@workspace:packages/sector-parser":
+"@reveal/sector-loader@workspace:*, @reveal/sector-loader@workspace:packages/sector-loader":
+  version: 0.0.0-use.local
+  resolution: "@reveal/sector-loader@workspace:packages/sector-loader"
+  dependencies:
+    "@reveal/cad-parsers": "workspace:*"
+    "@reveal/modeldata-api": "workspace:*"
+    "@reveal/rendering": "workspace:*"
+    "@reveal/sector-parser": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/sector-parser@workspace:*, @reveal/sector-parser@workspace:packages/sector-parser":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-parser@workspace:packages/sector-parser"
   languageName: unknown
@@ -1126,6 +1142,13 @@ __metadata:
   dependencies:
     "@babel/types": ^7.3.0
   checksum: a797ea09c72307569e3ee08aa3900ca744ce3091114084f2dc59b67a45ee7d01df7865252790dbfa787a7915ce892cdc820c9b920f3683292765fc656b08dc63
+  languageName: node
+  linkType: hard
+
+"@types/dat.gui@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "@types/dat.gui@npm:0.7.7"
+  checksum: 0a20c10013c5d8595593b9d258f48c070a09601382e9cb0a4d03b98821a8373430747b31935f73434bf0c59122c43276c6763ca1e493eaeb05a9d74bf37a7b81
   languageName: node
   linkType: hard
 
@@ -4350,6 +4373,13 @@ __metadata:
   dependencies:
     assert-plus: ^1.0.0
   checksum: 3634c249570f7f34e3d34f866c93f866c5b417f0dd616275decae08147dcdf8fccfaa5947380ccfb0473998ea3a8057c0b4cd90c875740ee685d0624b2983598
+  languageName: node
+  linkType: hard
+
+"dat.gui@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "dat.gui@npm:0.7.7"
+  checksum: 0686df06c8cdb0ecb8d78653cbbce83081bfc19f833d659f2a64b6d9422fa3d9d35f05f5ea69adc269e723fce3449e4c0ced6f70da8e30e25bcb33c1e7cfd898
   languageName: node
   linkType: hard
 

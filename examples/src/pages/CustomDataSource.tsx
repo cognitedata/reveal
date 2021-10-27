@@ -19,6 +19,7 @@ import {
   ModelMetadataProvider, 
   NodesApiClient
 } from '@cognite/reveal/extensions/datasource';
+import { BlobOutputMetadata } from '@cognite/reveal/packages/modeldata-api';
 
 class MyDataSource implements DataSource {
   getNodesApiClient(): NodesApiClient {
@@ -33,6 +34,9 @@ class MyDataSource implements DataSource {
 }
 
 class MyModelMetadataProvider implements ModelMetadataProvider {
+  getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
+    throw new Error('Method not implemented.');
+  }
   getModelUri(identifier: ModelIdentifier): Promise<string> {
     // Note! identifier will always be a CdfModelIdentifier
     return Promise.resolve('/primitives');

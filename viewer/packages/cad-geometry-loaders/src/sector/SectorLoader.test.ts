@@ -9,21 +9,21 @@ import { generateSectorTree, asyncIteratorToArray, createCadModelMetadata } from
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 
 import { SectorCuller } from './culling/SectorCuller';
-import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
+import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 
 import { ModelStateHandler } from './ModelStateHandler';
-import { Repository } from './Repository';
+import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
-  let repository: Repository;
+  let repository: SectorRepository;
   let stateHandler: ModelStateHandler;
   let loader: SectorLoader;
   let collectStatisticsCallback: () => void;
   let progressCallback: () => void;
   let model: CadModelMetadata;
-  let input: DetermineSectorsInput;
+  let input: DetermineSectorsPayload;
 
   beforeAll(() => {
     const sectorRoot = generateSectorTree(2, 2);
@@ -46,17 +46,16 @@ describe('SectorLoader', () => {
         maximumRenderCost: 0
       },
       cameraInMotion: false,
-      cadModelsMetadata: [model],
+      models: [],
       clippingPlanes: [],
       loadingHints: {}
     };
     stateHandler.addModel(model.modelIdentifier);
-
-    loader = new SectorLoader(repository, culler, stateHandler, collectStatisticsCallback, progressCallback);
+    loader = new SectorLoader(culler, stateHandler, collectStatisticsCallback, progressCallback);
   });
 
   test('loadSectors with no models, completes with no sectors', async () => {
-    input.cadModelsMetadata = [];
+    // input.cadModelsMetadata = [];
     const result = await asyncIteratorToArray(loader.loadSectors(input));
     expect(result).toBeEmpty();
   });
@@ -114,7 +113,7 @@ describe('SectorLoader', () => {
   });
 });
 
-class StubRepository implements Repository {
+class StubRepository implements SectorRepository {
   loadSectorCallback: (sector: WantedSector) => ConsumedSector;
 
   constructor() {

@@ -46,7 +46,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, CdfModelOutputsProvider } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -231,10 +231,12 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
+
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 1.0;
     this.controls.maxDistance = 100.0;
+
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -630,16 +632,21 @@ export class Cognite3DViewer {
       throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
     }
 
-    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
     const outputsProvider = new CdfModelOutputsProvider(this._cdfSdkClient);
-    const outputs = await outputsProvider.getOutputs(modelIdentifier);
-
-    if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
-      return 'cad';
-    } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
-      return 'pointcloud';
-    }
-    return '';
+    const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
+    // console.log(test);
+    // const outputs = await outputsProvider.getOutputs(modelIdentifier, File3dFormat.AnyFormat);
+    return 'cad';
+    // if (
+    //   outputs.filter(output => output.) !== undefined ||
+    //   outputs.findMostRecentOutput(File3dFormat.GltfCadModel) !== undefined
+    // ) {
+    //   return 'cad';
+    // } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
+    //   return 'pointcloud';
+    // }
+    // return '';
   }
 
   /**

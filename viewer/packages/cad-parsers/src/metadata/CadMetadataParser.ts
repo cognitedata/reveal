@@ -4,6 +4,7 @@
 
 import { parseCadMetadataV8 } from './parsers/CadMetadataParserV8';
 import { SectorScene } from '../utilities/types';
+import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
 
 interface VersionHeader {
   readonly version: number;
@@ -15,6 +16,9 @@ export class CadMetadataParser {
     switch (version) {
       case 8:
         return parseCadMetadataV8(parsedJson);
+
+      case 1:
+        return parseCadMetadataGltf(parsedJson);
 
       case undefined:
         throw new Error('Metadata must contain a "version"-field');

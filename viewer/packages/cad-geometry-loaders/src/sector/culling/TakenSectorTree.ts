@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import { BaseSectorMetadata, SectorMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import {
   PrioritizedWantedSector,
   DetermineSectorCostDelegate,
@@ -20,7 +20,7 @@ export class TakenSectorTree {
     return this._totalCost;
   }
   private readonly sectors: {
-    sector: SectorMetadata;
+    sector: BaseSectorMetadata & V8SectorMetadata;
     parentIndex: number;
     priority: number;
     cost: SectorCost;
@@ -30,13 +30,13 @@ export class TakenSectorTree {
 
   private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
-  constructor(sectorRoot: SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
+  constructor(sectorRoot: BaseSectorMetadata & V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
     this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
-    traverseDepthFirst(sectorRoot, x => {
+    traverseDepthFirst(sectorRoot as SectorMetadata, x => {
       this.sectors.length = Math.max(this.sectors.length, x.id);
       this.sectors[x.id] = {
-        sector: x,
+        sector: x as BaseSectorMetadata & V8SectorMetadata,
         parentIndex: -1,
         priority: -1,
         cost: { downloadSize: 0, drawCalls: 0, renderCost: 0 },
@@ -56,7 +56,7 @@ export class TakenSectorTree {
     }
 
     // Default to load root
-    if (sectorRoot.facesFile.fileName) {
+    if (sectorRoot.facesFile!.fileName) {
       this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
     }
   }
@@ -133,7 +133,7 @@ export class TakenSectorTree {
       if (this.getSectorLod(child.id) === LevelOfDetail.Discarded) {
         // Note! When fileName is null the sector is so sparse that there is
         // no geometry in the F3D - we therefore skip such sectors.
-        if (child.facesFile.fileName !== null) {
+        if ((child as BaseSectorMetadata & V8SectorMetadata).facesFile!.fileName !== null) {
           this.setSectorLod(child.id, LevelOfDetail.Simple);
         }
       }
@@ -141,7 +141,7 @@ export class TakenSectorTree {
   }
 
   private setSectorLod(sectorId: number, lod: LevelOfDetail) {
-    assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile.fileName !== null);
+    assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile!.fileName !== null);
     this.sectors[sectorId].lod = lod;
     reduceSectorCost(this._totalCost, this.sectors[sectorId].cost);
     this.sectors[sectorId].cost = this.determineSectorCost(this.sectors[sectorId].sector, lod);

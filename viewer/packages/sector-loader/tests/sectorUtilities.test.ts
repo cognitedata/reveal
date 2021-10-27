@@ -5,8 +5,8 @@ import * as THREE from 'three';
 
 import { SectorMetadata, SectorGeometry, TriangleMesh } from '@reveal/cad-parsers';
 
-import { createEmptySector } from '../../../../test-utilities/src/emptySector';
-import { consumeSectorDetailed, consumeSectorSimple } from './sectorUtilities';
+import { createEmptySector } from '../../../test-utilities/src/emptySector';
+import { consumeSectorDetailed, consumeSectorSimple } from '../src/v8/sectorUtilities';
 import { SectorQuads, createMaterials, RenderMode } from '@reveal/rendering';
 
 import 'jest-extended';

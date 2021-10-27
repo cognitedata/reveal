@@ -32,15 +32,25 @@ export interface SectorMetadataFacesFileSection {
   readonly downloadSize: number;
 }
 
-export interface SectorMetadata {
+export type BaseSectorMetadata = {
   readonly id: number;
   readonly path: string;
   readonly depth: number;
   readonly bounds: THREE.Box3;
-  readonly indexFile: SectorMetadataIndexFileSection;
-  readonly facesFile: SectorMetadataFacesFileSection;
   readonly children: SectorMetadata[];
   readonly estimatedDrawCallCount: number;
   readonly estimatedRenderCost: number;
-  readonly maxDiagonalLength?: number;
-}
+};
+
+export type SectorMetadata = BaseSectorMetadata & (V8SectorMetadata | GltfSectorMetadata);
+
+export type V8SectorMetadata = {
+  readonly indexFile: SectorMetadataIndexFileSection;
+  readonly facesFile: SectorMetadataFacesFileSection;
+};
+
+export type GltfSectorMetadata = {
+  readonly sectorFileName: string | null;
+  readonly maxDiagonalLength: number;
+  readonly downloadSize: number;
+};
