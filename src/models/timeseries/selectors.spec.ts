@@ -26,9 +26,39 @@ describe('timeseries model', () => {
 
     it('works for id not present in collection', () => {
       const timeseriesCollection: TimeseriesCollection = [
-        { id: 123, externalId: 'abc-123', datapoints: [], isString: false },
-        { id: 124, externalId: 'abc-124', datapoints: [], isString: false },
-        { id: 125, externalId: 'abc-125', datapoints: [], isString: false },
+        {
+          externalId: 'abc-123',
+          loading: false,
+          series: {
+            id: 123,
+            externalId: 'abc-123',
+            datapoints: [],
+            isStep: false,
+            isString: false,
+          } as DatapointAggregates,
+        },
+        {
+          externalId: 'abc-124',
+          loading: false,
+          series: {
+            id: 124,
+            externalId: 'abc-124',
+            datapoints: [],
+            isStep: false,
+            isString: false,
+          } as DatapointAggregates,
+        },
+        {
+          externalId: 'abc-125',
+          loading: false,
+          series: {
+            id: 125,
+            externalId: 'abc-125',
+            datapoints: [],
+            isStep: false,
+            isString: false,
+          } as DatapointAggregates,
+        },
       ];
       const externalId: string = 'id-that-does-not-exist-in-list';
       const summary = getTimeseriesSummaryById(
@@ -41,36 +71,61 @@ describe('timeseries model', () => {
     it('calculates correct summary for found timeseries', () => {
       const timeseriesCollection: TimeseriesCollection = [
         {
-          id: 123,
           externalId: 'abc-123',
-          datapoints: [
-            {
-              timestamp: new Date(),
-              min: -10,
-              max: 10,
-              sum: 2,
-              count: 10,
-            },
-            {
-              timestamp: new Date(),
-              min: -20,
-              max: 20,
-              sum: 4,
-              count: 20,
-            },
-            {
-              timestamp: new Date(),
-              min: -7,
-              max: 8,
-              sum: 6,
-              count: 30,
-            },
-          ],
-          isString: false,
+          loading: false,
+          series: {
+            id: 123,
+            externalId: 'abc-123',
+            datapoints: [
+              {
+                timestamp: new Date(),
+                min: -10,
+                max: 10,
+                sum: 2,
+                count: 10,
+              },
+              {
+                timestamp: new Date(),
+                min: -20,
+                max: 20,
+                sum: 4,
+                count: 20,
+              },
+              {
+                timestamp: new Date(),
+                min: -7,
+                max: 8,
+                sum: 6,
+                count: 30,
+              },
+            ],
+            isStep: false,
+            isString: false,
+          } as DatapointAggregates,
         },
-        { id: 124, externalId: 'abc-124', datapoints: [], isString: false },
-        { id: 125, externalId: 'abc-125', datapoints: [], isString: false },
-      ] as DatapointAggregates[];
+        {
+          externalId: 'abc-124',
+          loading: false,
+          series: {
+            id: 124,
+            externalId: 'abc-124',
+            datapoints: [],
+            isStep: false,
+            isString: false,
+          } as DatapointAggregates,
+        },
+        {
+          externalId: 'abc-125',
+          loading: false,
+          series: {
+            id: 125,
+            externalId: 'abc-125',
+            datapoints: [],
+            isStep: false,
+            isString: false,
+          } as DatapointAggregates,
+        },
+      ];
 
       const externalId: string = 'abc-123';
 

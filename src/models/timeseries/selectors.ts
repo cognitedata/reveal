@@ -22,9 +22,10 @@ export function getTimeseriesSummaryById(
     return undefined;
   }
 
-  const ts = timeseriesCollection.find(
+  const entry = timeseriesCollection.find(
     (item) => item.externalId === externalId
-  ) as DatapointAggregates | DoubleDatapoints;
+  );
+  const ts = entry?.series;
 
   if (!ts) {
     return undefined;

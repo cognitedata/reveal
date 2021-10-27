@@ -48,3 +48,10 @@ export const AdjustButton = styled(Button)`
   z-index: ${Layers.MAXIMUM};
   background: white;
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+`;

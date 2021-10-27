@@ -15,6 +15,7 @@ import { convertUnits, units } from 'utils/units';
 import { useDebouncedCallback } from 'use-debounce';
 import { useState, useEffect, useCallback } from 'react';
 import { WorkflowResult } from 'models/workflows/types';
+import { TimeseriesEntry } from 'models/timeseries/types';
 
 export type PlotlyEventData = {
   [key: string]: any;
@@ -55,18 +56,13 @@ export function hasRawPoints(
 export function calculateSeriesData(
   timeSeriesCollection: ChartTimeSeries[] = [],
   workflowCollection: ChartWorkflow[] = [],
-  timeseries: (
-    | DatapointAggregates
-    | StringDatapoints
-    | DoubleDatapoints
-  )[] = [],
-  timeseriesFetching: boolean,
+  timeseries: TimeseriesEntry[],
   workflows: WorkflowResult[] = [],
   mergeUnits: boolean
 ): SeriesData[] {
   const seriesData: SeriesData[] = [
     ...timeSeriesCollection
-      .map((t, i) => ({
+      .map((t) => ({
         enabled: t.enabled,
         range: t.range,
         unit:
@@ -79,14 +75,23 @@ export function calculateSeriesData(
             type: 'timeseries',
             width: t.lineWeight,
             name: t.name,
-            outdatedData: timeseriesFetching,
+            outdatedData: timeseries.find(
+              (ts) => ts.externalId === t.tsExternalId
+            )?.loading,
             datapoints: convertUnits(
-              timeseries?.[i]?.datapoints || [],
+              timeseries.find((ts) => ts.externalId === t.tsExternalId)?.series
+                ?.datapoints || [],
               t.unit,
               t.preferredUnit
             ),
             dash: convertLineStyle(t.lineStyle),
-            mode: getMode(t.displayMode, hasRawPoints(timeseries?.[i])),
+            mode: getMode(
+              t.displayMode,
+              hasRawPoints(
+                timeseries.find((ts) => ts.externalId === t.tsExternalId)
+                  ?.series
+              )
+            ),
           },
         ],
       }))

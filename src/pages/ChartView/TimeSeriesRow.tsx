@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Chart, ChartTimeSeries } from 'models/chart/types';
 import { Button, Dropdown, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import { removeTimeseries, updateTimeseries } from 'models/chart/updates';
@@ -11,9 +11,24 @@ import { trackUsage } from 'services/metrics';
 import { formatValueForDisplay } from 'utils/numbers';
 import { getUnitConverter } from 'utils/units';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { timeseriesSummaryById } from 'models/timeseries/selectors';
 import flow from 'lodash/flow';
+import { chartAtom } from 'models/chart/atom';
+import { isEqual } from 'lodash';
+import { useDebounce } from 'use-debounce';
+import { useQuery } from 'react-query';
+import dayjs from 'dayjs';
+import { calculateGranularity } from 'utils/timeseries';
+import { CHART_POINTS_PER_SERIES } from 'utils/constants';
+import {
+  DatapointAggregate,
+  DatapointAggregates,
+  Datapoints,
+  DatapointsMultiQuery,
+} from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { timeseriesAtom } from 'models/timeseries/atom';
 import {
   SourceItem,
   SourceCircle,
@@ -62,6 +77,15 @@ export default function TimeSeriesRow({
     tsExternalId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
+  const [chart] = useRecoilState(chartAtom);
+  const [, setLocalTimeseries] = useRecoilState(timeseriesAtom);
+  const dateFrom = chart?.dateFrom;
+  const dateTo = chart?.dateTo;
+  const sdk = useSDK();
+
+  const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 50, {
+    equalityFn: (l, r) => isEqual(l, r),
+  });
 
   const update = (_tsId: string, diff: Partial<ChartTimeSeries>) =>
     mutate((oldChart) => ({
@@ -154,6 +178,82 @@ export default function TimeSeriesRow({
       range,
     });
   };
+
+  const query: DatapointsMultiQuery = {
+    items: [{ externalId: tsExternalId || '' }],
+    start: dayjs(debouncedRange.dateFrom!).toDate(),
+    end: dayjs(debouncedRange.dateTo!).toDate(),
+    granularity: calculateGranularity(
+      [
+        dayjs(debouncedRange.dateFrom!).valueOf(),
+        dayjs(debouncedRange.dateTo!).valueOf(),
+      ],
+      CHART_POINTS_PER_SERIES
+    ),
+    aggregates: ['average', 'min', 'max', 'count', 'sum'],
+    limit: CHART_POINTS_PER_SERIES,
+  };
+
+  const {
+    data: timeseriesData,
+    isFetching,
+    isSuccess,
+  } = useQuery(
+    ['chart-data', 'timeseries', timeseries.tsExternalId, query],
+    () => {
+      return sdk.datapoints
+        .retrieve(query)
+        .then((r: DatapointAggregates[] | Datapoints[]) => {
+          const RAW_DATA_POINTS_THRESHOLD = CHART_POINTS_PER_SERIES / 2;
+
+          const aggregatedCount = (
+            r[0]?.datapoints as DatapointAggregate[]
+          ).reduce((point: number, c: DatapointAggregate) => {
+            return point + (c.count || 0);
+          }, 0);
+
+          const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
+
+          return isRaw
+            ? sdk.datapoints.retrieve({
+                ...query,
+                granularity: undefined,
+                aggregates: undefined,
+                includeOutsidePoints: true,
+              } as DatapointsMultiQuery)
+            : r;
+        })
+        .then((r) => r[0]);
+    },
+    {
+      enabled: !!timeseries.tsExternalId && timeseries.enabled,
+    }
+  );
+
+  useEffect(() => {
+    setLocalTimeseries((timeseriesCollection) => {
+      const existingEntry = timeseriesCollection.find(
+        (entry) => entry.externalId === timeseries.tsExternalId
+      );
+
+      const output = timeseriesCollection
+        .filter((entry) => entry.externalId !== timeseries.tsExternalId)
+        .concat({
+          externalId: timeseries.tsExternalId || '',
+          loading: isFetching,
+          series: isSuccess ? timeseriesData : existingEntry?.series,
+        });
+
+      return output;
+    });
+  }, [
+    isSuccess,
+    isFetching,
+    timeseriesData,
+    setLocalTimeseries,
+    timeseries.id,
+    timeseries.tsExternalId,
+  ]);
 
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
   const summary = useRecoilValue(timeseriesSummaryById(tsExternalId));

@@ -1,26 +1,21 @@
-import {
-  DatapointAggregate,
-  DatapointAggregates,
-  Datapoints,
-  DatapointsMultiQuery,
-} from '@cognite/sdk';
+import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
 import { chartAtom } from 'models/chart/atom';
 import { timeseriesAtom } from 'models/timeseries/atom';
 import { availableWorkflows } from 'models/workflows/selectors';
 import dayjs from 'dayjs';
-import isEqual from 'lodash/isEqual';
 import Plotly from 'plotly.js-basic-dist';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import { useDebounce } from 'use-debounce';
 import { trackUsage } from 'services/metrics';
 import { calculateGranularity } from 'utils/timeseries';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';
 import { updateSourceAxisForChart } from 'models/chart/updates';
+import { TimeseriesEntry } from 'models/timeseries/types';
+import { Icon } from '@cognite/cogs.js';
 import {
   cleanTimeseriesCollection,
   cleanWorkflowCollection,
@@ -31,6 +26,7 @@ import {
 import {
   AdjustButton,
   ChartingContainer,
+  LoadingContainer,
   LoadingIcon,
   PlotWrapper,
 } from './elements';
@@ -83,84 +79,55 @@ const PlotlyChartComponent = ({
    * Get local chart context
    */
   const [, setChart] = useRecoilState(chartAtom);
-
   const dateFrom = chart?.dateFrom;
   const dateTo = chart?.dateTo;
-
-  const [debouncedRange] = useDebounce({ dateFrom, dateTo }, 1000, {
-    equalityFn: (l, r) => isEqual(l, r),
-  });
 
   const queries =
     chart?.timeSeriesCollection?.map(({ tsExternalId }) => ({
       items: [{ externalId: tsExternalId }],
-      start: dayjs(debouncedRange.dateFrom!).toDate(),
-      end: dayjs(debouncedRange.dateTo!).toDate(),
+      start: dayjs(dateFrom).toDate(),
+      end: dayjs(dateTo).toDate(),
       granularity: calculateGranularity(
-        [
-          dayjs(debouncedRange.dateFrom!).valueOf(),
-          dayjs(debouncedRange.dateTo!).valueOf(),
-        ],
+        [dayjs(dateFrom).valueOf(), dayjs(dateTo).valueOf()],
         pointsPerSeries
       ),
       aggregates: ['average', 'min', 'max', 'count', 'sum'],
       limit: pointsPerSeries,
     })) || [];
 
-  const {
-    data: tsRaw,
-    isFetching: timeseriesFetching,
-    isSuccess: tsSuccess,
-  } = useQuery(
-    ['chart-data', 'timeseries', queries],
-    () => {
-      return Promise.all(
-        queries.map((q) =>
-          sdk.datapoints
-            .retrieve(q as DatapointsMultiQuery)
-            .then((r: DatapointAggregates[] | Datapoints[]) => {
-              if (isPreview) {
-                return r;
-              }
+  /**
+   * This is only used for the overview preview mode
+   */
+  const { data: timeseriesPreview = [], isFetching: isFetchingPreview } =
+    useQuery(
+      ['chart-data', 'timeseries', queries],
+      () => {
+        return Promise.allSettled(
+          queries.map((q) =>
+            sdk.datapoints.retrieve(q as DatapointsMultiQuery).then((r) => r[0])
+          )
+        ).then((results) => {
+          return results
+            .map((result) => ('value' in result ? result.value : undefined))
+            .filter(Boolean)
+            .map((series) => {
+              return {
+                externalId: series?.externalId,
+                loading: false,
+                series,
+              } as TimeseriesEntry;
+            });
+        });
+      },
+      {
+        enabled: !!chart && !!isPreview,
+      }
+    );
 
-              const RAW_DATA_POINTS_THRESHOLD = pointsPerSeries / 2;
-
-              const aggregatedCount = (
-                r[0]?.datapoints as DatapointAggregate[]
-              ).reduce((point: number, c: DatapointAggregate) => {
-                return point + (c.count || 0);
-              }, 0);
-
-              const isRaw = aggregatedCount < RAW_DATA_POINTS_THRESHOLD;
-
-              return isRaw
-                ? sdk.datapoints.retrieve({
-                    ...q,
-                    granularity: undefined,
-                    aggregates: undefined,
-                    includeOutsidePoints: true,
-                  } as DatapointsMultiQuery)
-                : r;
-            })
-            .then((r) => r[0])
-        )
-      );
-    },
-    {
-      enabled: !!chart,
-    }
-  );
-
-  const [localTimeseries, setLocalTimeseries] = useRecoilState(timeseriesAtom);
+  const localTimeseries = useRecoilValue(timeseriesAtom);
   const localWorkflows = useRecoilValue(availableWorkflows);
-  const timeseries = isPreview ? tsRaw : localTimeseries;
+  const timeseries = isPreview ? timeseriesPreview : localTimeseries;
   const workflows = localWorkflows;
-
-  useEffect(() => {
-    if (tsSuccess && tsRaw) {
-      setLocalTimeseries(tsRaw);
-    }
-  }, [tsSuccess, tsRaw, setLocalTimeseries]);
 
   const onAdjustButtonClick = useCallback(() => {
     trackUsage('ChartView.ToggleYAxisLock', {
@@ -205,7 +172,6 @@ const PlotlyChartComponent = ({
       JSON.parse(tsCollectionAsString) as ChartTimeSeries[],
       JSON.parse(wfCollectionAsString) as ChartWorkflow[],
       timeseries,
-      timeseriesFetching,
       workflows,
       mergeUnits
     );
@@ -215,7 +181,6 @@ const PlotlyChartComponent = ({
     wfCollectionAsString,
     timeseries,
     workflows,
-    timeseriesFetching,
     mergeUnits,
   ]);
 
@@ -314,7 +279,14 @@ const PlotlyChartComponent = ({
     return { width: '100%', height: '100%' };
   }, []);
 
-  const isLoadingChartData = timeseriesFetching || !isAllowedToUpdate;
+  const isLoadingChartData = !isAllowedToUpdate;
+  const hasValidDates =
+    !Number.isNaN(new Date(dateFrom || '').getTime()) &&
+    !Number.isNaN(new Date(dateTo || '').getTime());
+
+  if (!hasValidDates) {
+    return null;
+  }
 
   return (
     <ChartingContainer ref={containerRef}>
@@ -333,16 +305,22 @@ const PlotlyChartComponent = ({
           </AdjustButton>
         </>
       )}
-      <PlotWrapper>
-        <MemoizedPlot
-          data={activeState.data as Plotly.Data[]}
-          layout={activeState.layout as unknown as Plotly.Layout}
-          config={config as unknown as Plotly.Config}
-          onRelayout={activeState.handleRelayout}
-          style={chartStyles}
-          useResizeHandler
-        />
-      </PlotWrapper>
+      {isFetchingPreview ? (
+        <LoadingContainer>
+          <Icon type="LoadingSpinner" />
+        </LoadingContainer>
+      ) : (
+        <PlotWrapper>
+          <MemoizedPlot
+            data={activeState.data as Plotly.Data[]}
+            layout={activeState.layout as unknown as Plotly.Layout}
+            config={config as unknown as Plotly.Config}
+            onRelayout={activeState.handleRelayout}
+            style={chartStyles}
+            useResizeHandler
+          />
+        </PlotWrapper>
+      )}
     </ChartingContainer>
   );
 };
