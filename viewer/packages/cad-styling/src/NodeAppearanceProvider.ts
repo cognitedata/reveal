@@ -110,6 +110,7 @@ export class NodeAppearanceProvider {
     const prioritizedCollections = this._styledCollections.filter(
       collection => collection.appearance.prioritizedForLoadingHint
     );
+
     const prioritizedAreas = prioritizedCollections.flatMap(collection =>
       [...collection.nodeCollection.getAreas().areas()].map(area => {
         return { area, extraPriority: collection.appearance.prioritizedForLoadingHint } as PrioritizedArea;
@@ -134,6 +135,7 @@ export class NodeAppearanceProvider {
   }
 
   private notifyChanged() {
+    this._cachedPrioritizedAreas = undefined;
     this._events.changed.fire();
   }
 
