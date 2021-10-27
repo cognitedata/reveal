@@ -25,11 +25,6 @@ describe('TimelineTool', () => {
     nock.cleanAll();
   });
 
-  test('Test tool creation', () => {
-    const timelineTool = new TimelineTool(model);
-    expect(timelineTool).toBeTruthy();
-  });
-
   test('Test keyframe creation', () => {
     const timelineTool = new TimelineTool(model);
     expect(timelineTool).toBeTruthy();

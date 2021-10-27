@@ -7,6 +7,8 @@ import TWEEN from '@tweenjs/tween.js';
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
+import { TimelineDateUpdateDelegate } from './Types';
+import { EventTrigger } from '@reveal/core/utilities';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
@@ -15,6 +17,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _keyframes: Keyframe[];
   private _playback: TWEEN.Tween | undefined = undefined;
+  private readonly _events = { dateUpdateDelegate: new EventTrigger<TimelineDateUpdateDelegate>() };
 
   constructor(cadModel: Cognite3DModel) {
     super();
@@ -102,6 +105,13 @@ export class TimelineTool extends Cognite3DViewerToolBase {
           this._keyframes[prevIndex].deactivate();
         }
         this._keyframes[currentKeyframeIndex].activate();
+
+        this._events.dateUpdateDelegate.fire({
+          currentDate: this._keyframes[currentKeyframeIndex].getKeyframeDate(),
+          activeKeyframe: this._keyframes[currentKeyframeIndex],
+          startDate: startDate,
+          endDate: endDate
+        });
       }
     });
 
