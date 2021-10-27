@@ -26,11 +26,12 @@ export class Toolbar {
     this._toolbarContainer.style.bottom = '10px';
     this._toolbarContainer.style.background = 'rgba(255, 255, 255, 255)';
     this._toolbarContainer.style.transform = 'translate(-50%, -50%)';
+    this._toolbarContainer.style.padding = '1px 2px 1px 2 px';
 
     controlDiv.appendChild(this._toolbarContainer);
   }
 
-  public addToolbarItem(text: string, backgroundImage: string, callback: () => void): void {
+  public addToolbarItem(text: string, backgroundImage: string, onClick: () => void): void {
     const element = document.createElement('BUTTON');
     element.className = 'toolbar';
 
@@ -39,15 +40,11 @@ export class Toolbar {
     element.textContent = text;
     element.style.backgroundImage = backgroundImage;
     element.style.background = 'rgba(255, 255, 255, 255)';
-    element.style.borderRadius = '8px';
-    element.style.marginLeft = '4px';
-    element.style.marginRight = '4px';
-    element.style.marginTop = '2px';
-    element.style.marginBottom = '2px';
     element.style.border = '1px solid black';
+    element.style.borderColor = 'rgba(0,0,0,0.15)';
 
     element.onclick = function () {
-      callback();
+      onClick();
     };
 
     this._toolbarContainer.appendChild(element);
