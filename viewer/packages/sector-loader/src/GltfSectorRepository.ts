@@ -83,7 +83,7 @@ export class GltfSectorRepository implements SectorRepository {
     });
 
     return {
-      levelOfDetail: 2,
+      levelOfDetail: sector.levelOfDetail,
       group: group,
       instancedMeshes: [],
       metadata: sector.metadata,
