@@ -37,14 +37,17 @@ export class SmartMergeBoxes implements BoxClusterer {
   private shouldMergeBoxes(box0: Box3, box1: Box3): boolean {
     const MAX_SURFACE_INCREASE_RATIO = 1.0;
     const MAX_SURFACE_INCREASE_ADDITIVE_TERM = 8.0; // Heuristic number of square meters to allow merging of smaller boxes
-    
+
     const union = box0.clone().union(box1);
 
     const unionSurfaceArea = this.surfaceArea(union);
     const originalSurfaceArea = this.surfaceArea(box0);
     const otherBoxSurfaceArea = this.surfaceArea(box1);
 
-    return unionSurfaceArea < MAX_SURFACE_INCREASE_RATIO * (originalSurfaceArea + otherBoxSurfaceArea) + MAX_SURFACE_INCREASE_ADDITIVE_TERM;
+    return (
+      unionSurfaceArea <
+      MAX_SURFACE_INCREASE_RATIO * (originalSurfaceArea + otherBoxSurfaceArea) + MAX_SURFACE_INCREASE_ADDITIVE_TERM
+    );
   }
 
   private shouldMergeBoxesAtIndices(i: number, j: number): boolean {
@@ -53,7 +56,7 @@ export class SmartMergeBoxes implements BoxClusterer {
 
   private addBox(box: Box3): void {
     let merged = false;
-    
+
     for (let i = 0; i < this.resultBoxes.length; i++) {
       if (!this.shouldMergeBoxes(box, this.resultBoxes[i])) {
         continue;
