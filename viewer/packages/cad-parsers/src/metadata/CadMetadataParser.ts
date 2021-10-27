@@ -17,7 +17,7 @@ export class CadMetadataParser {
         return parseCadMetadataV8(parsedJson);
 
       case 1:
-        return parseCadMetadataV8(parsedJson);
+        throw new Error('Not Implemented');
 
       case undefined:
         throw new Error('Metadata must contain a "version"-field');

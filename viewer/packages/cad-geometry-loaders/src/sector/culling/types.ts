@@ -2,7 +2,13 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { SectorMetadata, CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
+import {
+  CadModelMetadata,
+  LevelOfDetail,
+  WantedSector,
+  BaseSectorMetadata,
+  V8SectorMetadata
+} from '@reveal/cad-parsers';
 
 import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
@@ -93,4 +99,7 @@ export type PrioritizedWantedSector = WantedSector & { priority: number };
 /**
  * Delegates that computes 'cost' of loading/visualizing a given sector.
  */
-export type DetermineSectorCostDelegate = (sector: SectorMetadata, levelOfDetail: LevelOfDetail) => SectorCost;
+export type DetermineSectorCostDelegate = (
+  sector: BaseSectorMetadata & V8SectorMetadata,
+  levelOfDetail: LevelOfDetail
+) => SectorCost;

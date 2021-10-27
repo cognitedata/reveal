@@ -12,6 +12,7 @@ import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import log from '@reveal/logger';
 import { CadNode } from '@reveal/rendering';
+import { PassThroughSectorCuller } from './culling/PassThroughSectorCuller';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -30,9 +31,10 @@ const SectorLoadingBatchSize = 20;
  */
 export class SectorLoader {
   private readonly _modelStateHandler: ModelStateHandler;
-  private readonly _sectorCuller: SectorCuller;
+  private readonly _v8SectorCuller: SectorCuller;
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
+  private readonly _gltfSectorCuller: PassThroughSectorCuller;
 
   constructor(
     sectorCuller: SectorCuller,
@@ -40,7 +42,8 @@ export class SectorLoader {
     collectStatisticsCallback: (spent: SectorLoadingSpent) => void,
     progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
   ) {
-    this._sectorCuller = sectorCuller;
+    this._v8SectorCuller = sectorCuller;
+    this._gltfSectorCuller = new PassThroughSectorCuller();
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;
@@ -58,8 +61,14 @@ export class SectorLoader {
       cadModelsMetadata: cadModels.filter(x => x.visible).map(x => x.cadModelMetadata)
     };
 
+    if (sectorCullerInput.cadModelsMetadata.length <= 0) {
+      return [];
+    }
+
+    const sectorCuller = this.getSectorCuller(sectorCullerInput);
+
     // Initial prioritization
-    const prioritizedResult = this._sectorCuller.determineSectors(sectorCullerInput);
+    const prioritizedResult = sectorCuller.determineSectors(sectorCullerInput);
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
@@ -78,13 +87,28 @@ export class SectorLoader {
     }
   }
 
+  private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
+    let sectorCuller: SectorCuller;
+
+    switch (sectorCullerInput.cadModelsMetadata[0].format) {
+      case 'reveal-directory':
+        sectorCuller = this._v8SectorCuller;
+        break;
+      case 'gltf-directory':
+        sectorCuller = this._gltfSectorCuller;
+      default:
+        throw new Error(`No supported sector culler for format${sectorCullerInput.cadModelsMetadata[0].format}`);
+    }
+    return sectorCuller;
+  }
+
   private async filterSectors(
     input: DetermineSectorsInput,
     batch: WantedSector[],
     progressHelper: ProgressReportHelper
   ): Promise<WantedSector[]> {
     // Determine if some of the sectors in the batch is culled by already loaded geometry
-    const filteredSectors = await this._sectorCuller.filterSectorsToLoad(input, batch);
+    const filteredSectors = await this._v8SectorCuller.filterSectorsToLoad(input, batch);
     progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
     return filteredSectors;
   }
@@ -94,26 +118,28 @@ export class SectorLoader {
     progressHelper: ProgressReportHelper,
     models: CadNode[]
   ): Promise<ConsumedSector>[] {
-    const consumedPromises = batch.map(async wantedSector => {
-      try {
-        const model = models.filter(
-          model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
-        )[0];
-        return model.loadSector(wantedSector);
-      } catch (error) {
-        log.error('Failed to load sector', wantedSector, 'error:', error);
-        // Ignore error but mark sector as discarded since we didn't load any geometry
-        return {
-          modelIdentifier: wantedSector.modelIdentifier,
-          metadata: wantedSector.metadata,
-          levelOfDetail: LevelOfDetail.Discarded,
-          group: undefined,
-          instancedMeshes: undefined
-        };
-      } finally {
-        progressHelper.reportNewSectorsLoaded(1);
-      }
-    });
+    const consumedPromises = batch
+      // .filter(p => p.metadata.id !== 0)
+      .map(async wantedSector => {
+        try {
+          const model = models.filter(
+            model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
+          )[0];
+          return model.loadSector(wantedSector);
+        } catch (error) {
+          log.error('Failed to load sector', wantedSector, 'error:', error);
+          // Ignore error but mark sector as discarded since we didn't load any geometry
+          return {
+            modelIdentifier: wantedSector.modelIdentifier,
+            metadata: wantedSector.metadata,
+            levelOfDetail: LevelOfDetail.Discarded,
+            group: undefined,
+            instancedMeshes: undefined
+          };
+        } finally {
+          progressHelper.reportNewSectorsLoaded(1);
+        }
+      });
     return consumedPromises;
   }
 }

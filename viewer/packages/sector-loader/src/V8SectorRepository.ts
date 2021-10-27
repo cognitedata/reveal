@@ -11,7 +11,9 @@ import {
   ConsumedSector,
   TriangleMesh,
   InstancedMeshFile,
-  InstancedMesh
+  InstancedMesh,
+  V8SectorMetadata,
+  BaseSectorMetadata
 } from '@reveal/cad-parsers';
 
 import { SimpleAndDetailedToSector3D } from './v8/SimpleAndDetailedToSector3D';
@@ -99,15 +101,17 @@ export class V8SectorRepository implements SectorRepository {
   }
 
   private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
+    const metadata = wantedSector.metadata as BaseSectorMetadata & V8SectorMetadata;
+
     // TODO 2021-05-05 larsmoa: Retry
     const buffer = await this._modelSectorProvider.getBinaryFile(
       wantedSector.modelBaseUrl,
-      wantedSector.metadata.facesFile.fileName!
+      metadata.facesFile!.fileName!
     );
     const geometry = await this._modelDataParser.parseF3D(new Uint8Array(buffer));
     const transformed = await this._modelDataTransformer.transformSimpleSector(
       wantedSector.modelIdentifier,
-      wantedSector.metadata,
+      metadata,
       geometry,
       wantedSector.geometryClipBox
     );
@@ -136,10 +140,11 @@ export class V8SectorRepository implements SectorRepository {
   }
 
   private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
-    const indexFile = wantedSector.metadata.indexFile;
+    const metadata = wantedSector.metadata as BaseSectorMetadata & V8SectorMetadata;
+    const indexFile = metadata.indexFile;
 
-    const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile.fileName);
-    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.modelBaseUrl, indexFile.peripheralFiles);
+    const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile!.fileName);
+    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.modelBaseUrl, indexFile!.peripheralFiles);
 
     const i3d = await i3dPromise;
     const ctms = await ctmsPromise;
@@ -147,7 +152,7 @@ export class V8SectorRepository implements SectorRepository {
 
     const transformed = await this._modelDataTransformer.transformDetailedSector(
       wantedSector.modelIdentifier,
-      wantedSector.metadata,
+      metadata,
       geometry,
       wantedSector.geometryClipBox
     );

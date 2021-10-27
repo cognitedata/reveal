@@ -5,14 +5,14 @@
 import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
-import { SectorMetadata, CadModelMetadata, WantedSector } from '@reveal/cad-parsers';
+import { CadModelMetadata, WantedSector, V8SectorMetadata, BaseSectorMetadata } from '@reveal/cad-parsers';
 import { coverageShaders } from '@reveal/rendering';
 
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 type SectorContainer = {
   model: CadModelMetadata;
-  sectors: SectorMetadata[];
+  sectors: (BaseSectorMetadata & V8SectorMetadata)[];
   // Index is sectorId, value is sectorIndex
   sectorIndexById: number[];
   sectorIdOffset: number;
@@ -206,7 +206,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
         if (container === undefined) {
           throw new Error(`Model ${toBeFiltered.modelIdentifier} is not registered`);
         }
-        const isCameraInsideSector = isWithinSectorBounds(container.model, toBeFiltered.metadata, camera.position);
+        const metadata = toBeFiltered.metadata as BaseSectorMetadata & V8SectorMetadata;
+        const isCameraInsideSector = isWithinSectorBounds(container.model, metadata, camera.position);
         // Note! O(N), but N is number of input sectors (i.e. low)
         const found = ordered.some(
           x => x.model.modelIdentifier === toBeFiltered.modelIdentifier && x.sectorId === toBeFiltered.metadata.id
@@ -368,7 +369,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   }
 
   private addModel(model: CadModelMetadata) {
-    const sectors = model.scene.getAllSectors();
+    const sectors = model.scene.getAllSectors().map(p => p as BaseSectorMetadata & V8SectorMetadata);
     const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(this.sectorIdOffset, sectors);
 
     const group = new THREE.Group();
@@ -449,7 +450,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private createSectorTreeGeometry(
     sectorIdOffset: number,
-    sectors: SectorMetadata[]
+    sectors: (BaseSectorMetadata & V8SectorMetadata)[]
   ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
     const translation = new THREE.Vector3();
     const scale = new THREE.Vector3();
@@ -477,7 +478,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
       // Note! We always use the 'high detail' coverage factors, not recursiveCoverageFactors because we
       // don't know what detail level a sector will be loaded in. A better approach might be to choose this
       // runtime (either before rendering or in shader), but not sure how to solve this. -lars 2020-04-22
-      const { xy, xz, yz } = sector.facesFile.coverageFactors;
+      const { xy, xz, yz } = sector.facesFile!.coverageFactors;
       coverageFactors.set(yz, xz, xy);
       addSector(sector.bounds, sectorIndex, sector.id, coverageFactors);
     });
@@ -495,7 +496,11 @@ const isCameraInsideSectorVars = {
   sectorBounds: new THREE.Box3()
 };
 
-function isWithinSectorBounds(model: CadModelMetadata, metadata: SectorMetadata, point: THREE.Vector3) {
+function isWithinSectorBounds(
+  model: CadModelMetadata,
+  metadata: BaseSectorMetadata & V8SectorMetadata,
+  point: THREE.Vector3
+) {
   const { sectorBounds } = isCameraInsideSectorVars;
   sectorBounds.copy(metadata.bounds);
   sectorBounds.applyMatrix4(model.modelMatrix);

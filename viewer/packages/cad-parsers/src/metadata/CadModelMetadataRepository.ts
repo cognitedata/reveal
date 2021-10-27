@@ -66,9 +66,13 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
 
+    // const cadModelOutput =
+    //   outputs.find(output => output.format === File3dFormat.GltfCadModel) ??
+    //   outputs.find(output => output.format === File3dFormat.RevealCadModel);
+
     const cadModelOutput =
-      outputs.find(output => output.format === File3dFormat.GltfCadModel) ??
-      outputs.find(output => output.format === File3dFormat.RevealCadModel);
+      outputs.find(output => output.format === File3dFormat.RevealCadModel) ??
+      outputs.find(output => output.format === File3dFormat.GltfCadModel);
 
     if (!cadModelOutput)
       throw new Error(
