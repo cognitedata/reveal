@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { NavigationMain } from '../../components/Navigations/NavigationMain';
 import { Spinner } from '../../components/Spinner/Spinner';
 
 const Status = lazy(() =>
@@ -8,7 +9,10 @@ const Status = lazy(() =>
 );
 
 export const StatusPage = () => (
-  <Suspense fallback={<Spinner />}>
-    <Status />
-  </Suspense>
+  <>
+    <NavigationMain />
+    <Suspense fallback={<Spinner />}>
+      <Status />
+    </Suspense>
+  </>
 );

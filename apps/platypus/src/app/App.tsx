@@ -2,7 +2,6 @@ import styled from 'styled-components/macro';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import '@cognite/cogs.js/dist/cogs.css';
-import { Header } from './components/Header/Header';
 import { SolutionsPage } from './pages/solutions/SolutionsPage';
 import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
 import { StatusPage } from './pages/statusboard/StatusboardPage';
@@ -14,7 +13,6 @@ function App() {
       <GlobalStyle />
       <StyledWrapper>
         <Router>
-          <Header />
           <StyledPage>
             <Switch>
               <Route exact path={['/', '/solutions/:solutionId?/:tabKey?']}>
@@ -46,6 +44,6 @@ const StyledWrapper = styled.div`
 const StyledPage = styled.div`
   display: flex;
   flex: 1;
-  padding: 3rem;
+  flex-direction: column;
   overflow: hidden;
 `;

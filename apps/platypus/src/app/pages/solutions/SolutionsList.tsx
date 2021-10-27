@@ -2,12 +2,13 @@ import { Title, Detail, Body, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { solutions } from '../../mocks/solutions';
+import { StyledPageWrapper } from '../styles/SharedStyles';
 
 export const SolutionsList = () => {
   const history = useHistory();
 
   return (
-    <StyledPage>
+    <StyledPageWrapper>
       <Title level={3}>Solutions</Title>
       <StyledWrapper>
         <StyledNewCard onClick={() => history.push('/new')}>
@@ -25,14 +26,9 @@ export const SolutionsList = () => {
           </StyledSolutionCard>
         ))}
       </StyledWrapper>
-    </StyledPage>
+    </StyledPageWrapper>
   );
 };
-
-const StyledPage = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 
 const StyledWrapper = styled.div`
   display: flex;

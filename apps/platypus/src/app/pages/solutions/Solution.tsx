@@ -1,9 +1,10 @@
 import { lazy, Suspense } from 'react';
 import styled from 'styled-components/macro';
-import { Tabs, Title } from '@cognite/cogs.js';
-import { Route, Switch, useHistory, useParams } from 'react-router-dom';
+import { Title } from '@cognite/cogs.js';
+import { Route, Switch, useParams } from 'react-router-dom';
 import { solutions } from '../../mocks/solutions';
 import { Spinner } from '../../components/Spinner/Spinner';
+import { StyledPageWrapper } from '../styles/SharedStyles';
 
 const OverviewPage = lazy(() =>
   import('./Tabs/OverviewPage').then((module) => ({
@@ -17,14 +18,14 @@ const DataModelPage = lazy(() =>
   }))
 );
 
-const IntegrationsPage = lazy(() =>
-  import('./Tabs/IntegrationsPage').then((module) => ({
-    default: module.IntegrationsPage,
+const DevelopmentToolsPage = lazy(() =>
+  import('./Tabs/DevelopmentToolsPage').then((module) => ({
+    default: module.DevelopmentToolsPage,
   }))
 );
 
 const VersionsPage = lazy(() =>
-  import('./Tabs/VersionsPage').then((module) => ({
+  import('./Tabs/DeploymentsPage').then((module) => ({
     default: module.VersionsPage,
   }))
 );
@@ -35,42 +36,17 @@ const SettingsPage = lazy(() =>
   }))
 );
 
-type TabKeys =
-  | 'overview'
-  | 'data_model'
-  | 'integrations'
-  | 'versions'
-  | 'settings';
-
 export const Solution = () => {
-  const { solutionId, tabKey } = useParams<{
+  const { solutionId } = useParams<{
     solutionId: string;
-    tabKey: string;
   }>();
-  const history = useHistory();
-
-  const onNavigate = (tab: TabKeys) => {
-    history.push({
-      pathname: `/solutions/${solutionId}/${tab}`,
-    });
-  };
 
   return (
-    <StyledPage>
+    <StyledPageWrapper>
       <StyledHeader>
         <Title level={3} style={{ marginBottom: '1rem' }}>
           {solutions.find((s) => s.id.toString() === solutionId)?.name}
         </Title>
-        <Tabs
-          onChange={(key) => onNavigate(key as TabKeys)}
-          defaultActiveKey={tabKey}
-        >
-          <Tabs.TabPane key="overview" tab="Overview" />
-          <Tabs.TabPane key="data_model" tab="Data model" />
-          <Tabs.TabPane key="integrations" tab="Integrations" />
-          <Tabs.TabPane key="versions" tab="Versions" />
-          <Tabs.TabPane key="settings" tab="Settings" />
-        </Tabs>
       </StyledHeader>
       <StyledContent>
         <Switch>
@@ -85,17 +61,17 @@ export const Solution = () => {
               <OverviewPage />
             </Suspense>
           </Route>
-          <Route exact path="/solutions/:solutionId?/data_model">
+          <Route exact path="/solutions/:solutionId?/data-model">
             <Suspense fallback={<Spinner />}>
               <DataModelPage />
             </Suspense>
           </Route>
-          <Route exact path="/solutions/:solutionId?/integrations">
+          <Route exact path="/solutions/:solutionId?/development-tools">
             <Suspense fallback={<Spinner />}>
-              <IntegrationsPage />
+              <DevelopmentToolsPage />
             </Suspense>
           </Route>
-          <Route exact path="/solutions/:solutionId?/versions">
+          <Route exact path="/solutions/:solutionId?/deployments">
             <Suspense fallback={<Spinner />}>
               <VersionsPage />
             </Suspense>
@@ -107,18 +83,9 @@ export const Solution = () => {
           </Route>
         </Switch>
       </StyledContent>
-    </StyledPage>
+    </StyledPageWrapper>
   );
 };
-
-const StyledPage = styled.div`
-  display: flex;
-  flex: 1;
-  flex-grow: 1;
-  flex-direction: column;
-  overflow: hidden;
-  height: 100%;
-`;
 
 const StyledHeader = styled.div`
   width: 100%;
@@ -132,4 +99,5 @@ const StyledContent = styled.div`
   flex: 1;
   font-size: 3rem;
   overflow: auto;
+  position: relative;
 `;

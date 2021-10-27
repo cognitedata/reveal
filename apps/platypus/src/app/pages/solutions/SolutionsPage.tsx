@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import styled from 'styled-components/macro';
+import { NavigationMain } from '../../components/Navigations/NavigationMain';
+import { NavigationSolution } from '../../components/Navigations/NavigationSolution';
 import { Spinner } from '../../components/Spinner/Spinner';
 
 const SolutionsList = lazy(() =>
@@ -16,24 +17,18 @@ const Solution = lazy(() =>
 );
 
 export const SolutionsPage = () => (
-  <StyledWrapper>
-    <Switch>
-      <Route exact path={['/', '/solutions']}>
-        <Suspense fallback={<Spinner />}>
-          <SolutionsList />
-        </Suspense>
-      </Route>
-      <Route exact path="/solutions/:solutionId?/:tabKey?">
-        <Suspense fallback={<Spinner />}>
-          <Solution />
-        </Suspense>
-      </Route>
-    </Switch>
-  </StyledWrapper>
+  <Switch>
+    <Route exact path={['/', '/solutions']}>
+      <NavigationMain />
+      <Suspense fallback={<Spinner />}>
+        <SolutionsList />
+      </Suspense>
+    </Route>
+    <Route exact path="/solutions/:solutionId?/:tabKey?">
+      <NavigationSolution />
+      <Suspense fallback={<Spinner />}>
+        <Solution />
+      </Suspense>
+    </Route>
+  </Switch>
 );
-
-const StyledWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  overflow: auto;
-`;
