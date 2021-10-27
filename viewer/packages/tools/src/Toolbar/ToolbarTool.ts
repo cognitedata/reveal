@@ -17,8 +17,8 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
     this._toolbar = new Toolbar(this._viewer);
   }
 
-  public addToolbarItem(text: string, backgroundColor: string, backgroundImage: string) {
-    this._toolbar.addToolbarItem(text, backgroundColor, backgroundImage);
+  public addToolbarItem(text: string, backgroundImage: string, callback: () => void): void {
+    this._toolbar.addToolbarItem(text, backgroundImage, callback);
   }
 
   public dispose(): void {

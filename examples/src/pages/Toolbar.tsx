@@ -65,7 +65,16 @@ export function Toolbar() {
 
       // Login
       const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
+      await client.loginWithOAuth(
+        {
+          type: 'AAD_OAUTH',
+          options: {
+            clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
+            cluster: 'api',
+            tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
+          }
+      });
+      client.setProject(project);
       await client.authenticate();
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -170,14 +179,18 @@ export function Toolbar() {
 
       const selectedSet = new TreeIndexNodeCollection([]);
 
+      var callbackMsg = () : void => {
+        alert("result called");
+      }
+
       const toolbar = new ToolbarTool(viewer);
-      const bg = 'rgba(74, 103, 251, 0.75)';
-      toolbar.addToolbarItem('Add', bg, 'url("/icons/ancient-gate-fill.png")');
-      toolbar.addToolbarItem('Remove', bg, 'url("/icons/award-fill.png")');
-      toolbar.addToolbarItem('Moon', bg, 'url("/icons/building-fill.png")');
-      toolbar.addToolbarItem('Sub', bg, 'url("/icons/community-fill.png")');
-      toolbar.addToolbarItem('Earth', bg, 'url("/icons/global-fill.png")');
-      toolbar.addToolbarItem('Mars', bg, 'url("/icons/gps-line.png")');
+      toolbar.addToolbarItem('I1', 'url("/icons/ancient-gate-fill.png")', callbackMsg);
+      toolbar.addToolbarItem('I2', 'url("/icons/award-fill.png")', callbackMsg);
+      toolbar.addToolbarItem('I3', 'url("/icons/building-fill.png")', callbackMsg);
+      toolbar.addToolbarItem('I4', 'url("/icons/community-fill.png")', callbackMsg);
+      toolbar.addToolbarItem('I6', 'url("/icons/global-fill.png")', callbackMsg);
+      toolbar.addToolbarItem('I7', 'url("/icons/gps-line.png")', callbackMsg);
+      toolbar.addToolbarItem('I8', 'url("/icons/gps-line.png")', callbackMsg);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
