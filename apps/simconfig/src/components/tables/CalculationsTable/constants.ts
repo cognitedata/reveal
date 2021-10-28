@@ -14,6 +14,7 @@ export enum POLLING_TIME {
 }
 export enum EVENT_CONSTANTS {
   SIM_CALC = 'Simulation Calculation',
-  PROSPER_SIM_EVENT = 'PROSPER simulation event',
+  PROSPER_SIM_EVENT = 'simulation event',
   MANUAL = 'manual',
+  READY_STATUS_MESSAGE = 'Calculation ready to run',
 }

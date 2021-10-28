@@ -63,7 +63,7 @@ export default function StatusCell({ data }: ComponentProps) {
     }
     const item = {
       externalId: `${source}-SR-${calcType}-${modelName}-${new Date().getTime()}`,
-      dataSetId: 2858799267182482,
+      dataSetId,
       type: EVENT_CONSTANTS.SIM_CALC,
       subtype: calcName,
       metadata: {
@@ -71,7 +71,8 @@ export default function StatusCell({ data }: ComponentProps) {
         dataType: EVENT_CONSTANTS.SIM_CALC,
         runType: EVENT_CONSTANTS.MANUAL,
         status: 'ready',
-        description: EVENT_CONSTANTS.PROSPER_SIM_EVENT,
+        statusMessage: EVENT_CONSTANTS.READY_STATUS_MESSAGE,
+        description: `${source} ${EVENT_CONSTANTS.PROSPER_SIM_EVENT}`,
         modelName,
         simulator: source,
         calcType,
