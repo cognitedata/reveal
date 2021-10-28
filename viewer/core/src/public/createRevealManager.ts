@@ -3,15 +3,14 @@
  */
 import * as THREE from 'three';
 
-import { initMetrics } from '@reveal/utilities';
-import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
-
 import { createCadManager } from '../datamodels/cad/createCadManager';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
 import { RevealOptions } from './types';
 import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
+import { initMetrics } from '@reveal/metrics';
+import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
 import {
   ModelMetadataProvider,
   CdfModelMetadataProvider,
@@ -20,6 +19,7 @@ import {
   ModelDataProvider,
   CdfModelDataProvider
 } from '@reveal/modeldata-api';
+
 import { CogniteClient } from '@cognite/sdk';
 
 /**
@@ -95,8 +95,6 @@ export function createRevealManager(
   revealOptions: RevealOptions = {}
 ): RevealManager {
   initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
-    moduleName: 'createRevealManager',
-    methodName: 'createRevealManager',
     constructorOptions: revealOptions
   });
 
