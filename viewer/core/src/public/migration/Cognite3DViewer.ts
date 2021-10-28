@@ -12,7 +12,8 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
+import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -393,9 +394,14 @@ export class Cognite3DViewer {
     this.animate(0);
 
     trackEvent('construct3dViewer', {
-      moduleName: 'Cognite3DViewer',
-      methodName: 'constructor',
-      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+      constructorOptions: omit(options, [
+        'sdk',
+        'domElement',
+        'renderer',
+        'renderTargetOptions',
+        'onLoading',
+        '_sectorCuller'
+      ])
     });
   }
 

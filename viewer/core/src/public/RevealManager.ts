@@ -18,7 +18,9 @@ import { GeometryFilter } from '..';
 import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
-import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
+import { trackError, trackLoadModel, trackCameraNavigation } from '@reveal/metrics';
+import { assertNever, EventTrigger } from '@reveal/utilities';
+
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
 /* eslint-disable jsdoc/require-jsdoc */
@@ -193,10 +195,7 @@ export class RevealManager {
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
-        moduleName: 'RevealManager',
-        methodName: 'addModel',
-        type,
-        options
+        type
       },
       modelIdentifier
     );
