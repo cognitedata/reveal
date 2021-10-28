@@ -292,15 +292,15 @@ export class CogniteOrnate {
   };
 
   onZoom = (scale: number, pointer: boolean) => {
-    const oldScale = this.stage.scaleX();
+    const oldScale = this.stage.scale();
     let referencePoint = null;
 
     if (pointer) {
       referencePoint = this.stage.getPointerPosition();
     } else {
       referencePoint = {
-        x: this.stage.x() / 2,
-        y: this.stage.y(),
+        x: this.stage.container().clientWidth / 2,
+        y: this.stage.container().clientHeight / 2,
       } as Vector2d;
     }
 
@@ -309,26 +309,40 @@ export class CogniteOrnate {
     }
 
     const referencePointTo = {
-      x: (referencePoint.x - this.stage.x()) / oldScale,
-      y: (referencePoint.y - this.stage.y()) / oldScale,
+      x: (referencePoint.x - this.stage.x()) / oldScale.x,
+      y: (referencePoint.y - this.stage.y()) / oldScale.y,
     };
 
-    const newScale =
-      scale > 0 ? oldScale * SCALE_SENSITIVITY : oldScale / SCALE_SENSITIVITY;
-    if (newScale < SCALE_MIN || newScale > SCALE_MAX) {
+    const newScale = {
+      x:
+        scale > 0
+          ? oldScale.x * SCALE_SENSITIVITY
+          : oldScale.x / SCALE_SENSITIVITY,
+      y:
+        scale > 0
+          ? oldScale.y * SCALE_SENSITIVITY
+          : oldScale.y / SCALE_SENSITIVITY,
+    };
+
+    if (
+      newScale.x < SCALE_MIN ||
+      newScale.y < SCALE_MIN ||
+      newScale.x > SCALE_MAX ||
+      newScale.y > SCALE_MAX
+    ) {
       return;
     }
 
-    this.stage.scale({ x: newScale, y: newScale });
+    this.stage.scale({ x: newScale.x, y: newScale.y });
 
     const newPos = {
-      x: referencePoint.x - referencePointTo.x * newScale,
-      y: referencePoint.y - referencePointTo.y * newScale,
+      x: referencePoint.x - referencePointTo.x * newScale.x,
+      y: referencePoint.y - referencePointTo.y * newScale.y,
     };
     this.stage.position(newPos);
 
     // Show / Hide rectangles based on scale
-    const shouldShowRects = newScale > 0.1;
+    const shouldShowRects = newScale.x > 0.1 || newScale.y > 0.1;
     this.documents.forEach((doc) => {
       if (!shouldShowRects) {
         doc.kImage.hide();
