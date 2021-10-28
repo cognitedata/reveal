@@ -252,8 +252,15 @@ class ScheduledSectorTree {
       allSectorsInModel.forEach(x => allWanted.push(x));
     }
 
-    // Sort by priority
-    allWanted.sort((l, r) => r.priority - l.priority);
+    // Sort by state (discarded comes first), then priority
+    allWanted.sort((l, r) => {
+      if (l.levelOfDetail === LevelOfDetail.Discarded) {
+        return -1;
+      } else if (r.levelOfDetail === LevelOfDetail.Discarded) {
+        return 1;
+      }
+      return r.priority - l.priority;
+    });
     return allWanted;
   }
 
