@@ -101,6 +101,7 @@ export class CogniteOrnate {
       width: rectSize,
       height: rectSize,
       fillPatternImage: backgroundImage,
+      unselectable: true,
     });
     const group = new Konva.Group();
     group.add(backgroundRect);
