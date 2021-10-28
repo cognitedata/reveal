@@ -1,20 +1,24 @@
 import { DocumentType } from '../types';
 
-export const detectDuplicates = (originalList: DocumentType[]) => {
+// this function groups documents that are duplicates together
+export const detectDuplicates = (docs: DocumentType[]) => {
   const seen = new Map<string, DocumentType[]>();
-  originalList.forEach((originalDocument) => {
-    const metadata = originalDocument.doc;
+
+  docs.forEach((doc) => {
+    const metadata = doc.doc;
     if (metadata) {
-      const key = `${metadata.filename}|${metadata.filesize}|${metadata.lastmodified}`;
+      const key = `${metadata.filename}|${metadata.filesize}`;
       const val = seen.get(key);
       if (val) {
-        val.push(originalDocument);
+        val.push(doc);
       } else {
-        seen.set(key, [originalDocument]);
+        seen.set(key, [doc]);
       }
     }
   });
+
   const filtered: DocumentType[] = [];
+
   seen.forEach((list) => {
     if (list.length === 1) {
       filtered.push(list[0]);
@@ -27,5 +31,6 @@ export const detectDuplicates = (originalList: DocumentType[]) => {
       filtered.push(first);
     }
   });
+
   return filtered;
 };
