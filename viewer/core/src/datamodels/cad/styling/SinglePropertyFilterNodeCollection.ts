@@ -74,15 +74,16 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
       nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
-      async nodes =>
-        nodes.map(node => {
+      async nodes => {
+        return nodes.map(node => {
           const box = new THREE.Box3();
           if (node.boundingBox !== undefined) {
             toThreeBox3(node.boundingBox, box);
             this._model.mapBoxFromCdfToModelCoordinates(box, box);
           }
           return box;
-        }),
+        });
+      },
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;

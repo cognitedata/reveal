@@ -215,6 +215,7 @@ function createDetermineSectorsInput([settings, camera, clipping, models]: [
   CadNode[]
 ]): DetermineSectorsInput {
   const prioritizedAreas = models.map(model => model.prioritizedAreas).flat();
+
   return {
     ...camera,
     ...settings,
