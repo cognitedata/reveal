@@ -7,23 +7,20 @@ import { SectorCuller } from './SectorCuller';
 import { SectorLoadingSpent } from './types';
 
 export class PassThroughSectorCuller implements SectorCuller {
+  private _asd = false;
+
   determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
     const wantedSectors = input.cadModelsMetadata.flatMap(metadata => {
-      return metadata.scene
-        .getAllSectors()
-        .filter(p => p.id !== 0)
-        .map(sectorMetadata => {
-          return {
-            modelIdentifier: metadata.modelIdentifier,
-            modelBaseUrl: metadata.modelBaseUrl,
-            geometryClipBox: metadata.geometryClipBox,
-            levelOfDetail: 2,
-            metadata: sectorMetadata
-          } as WantedSector;
-        });
+      return metadata.scene.getAllSectors().map(sectorMetadata => {
+        return {
+          modelIdentifier: metadata.modelIdentifier,
+          modelBaseUrl: metadata.modelBaseUrl,
+          geometryClipBox: metadata.geometryClipBox,
+          levelOfDetail: this._asd ? (sectorMetadata.id % 2 ? 2 : 0) : sectorMetadata.id % 2 ? 0 : 2,
+          metadata: sectorMetadata
+        } as WantedSector;
+      });
     });
-
-    // wantedSectors.forEach(p => console.log(p.metadata.bounds));
 
     const spentBudget: SectorLoadingSpent = {
       accumulatedPriority: 0,
@@ -36,6 +33,8 @@ export class PassThroughSectorCuller implements SectorCuller {
       simpleSectorCount: 0,
       totalSectorCount: 0
     };
+
+    this._asd = !this._asd;
 
     return { wantedSectors, spentBudget };
   }
