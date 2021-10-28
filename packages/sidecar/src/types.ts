@@ -32,23 +32,29 @@ export type FakeIdp = {
   roles: string[];
 };
 
-export type SidecarConfig = {
+export type ApiBaseUrls = {
+  appsApiBaseUrl: string;
+  cdfApiBaseUrl: string;
+  commentServiceBaseUrl: string;
+  digitalCockpitApiBaseUrl: string;
+  discoverApiBaseUrl: string;
+  infieldApiBaseUrl: string;
+  infieldCacheApiBaseUrl: string;
+  userManagementServiceBaseUrl: string;
+};
+
+export type SidecarConfig = ApiBaseUrls & {
   __sidecarFormatVersion: number;
   aadApplicationId?: string;
   AADTenantID?: string;
   applicationId: string;
   applicationName: string;
-  appsApiBaseUrl: string;
   backgroundImage?: string;
-  cdfApiBaseUrl: string;
   cdfCluster: string;
-  commentServiceBaseUrl: string;
-  digitalCockpitApiBaseUrl: string;
   directoryTenantId?: string;
   disableAzureLogin?: boolean;
   disableLegacyLogin?: boolean;
   disableTranslations?: boolean;
-  discoverApiBaseUrl: string;
   docsSiteBaseUrl: string;
   enableUserManagement?: boolean;
   fakeIdp?: FakeIdp[];
@@ -62,5 +68,5 @@ export type SidecarConfig = {
     version?: string;
     keySeparator?: false | string;
   };
-  userManagementServiceBaseUrl: string;
+  privacyPolicyUrl: string;
 };

@@ -2,7 +2,7 @@ import { getDefaultSidecar } from './getDefaultSidecar';
 
 describe('getDefaultSidecar', () => {
   it('works for ew1', () => {
-    expect(getDefaultSidecar({ prod: true, cluster: 'ew1' })).toEqual({
+    expect(getDefaultSidecar({ prod: true, cluster: 'ew1' })).toMatchObject({
       appsApiBaseUrl: 'https://apps-api.cognite.ai',
       cdfApiBaseUrl: 'https://api.cognitedata.com',
       cdfCluster: '',
@@ -15,7 +15,7 @@ describe('getDefaultSidecar', () => {
   });
 
   it('works for ew1 + staging', () => {
-    expect(getDefaultSidecar({ prod: false, cluster: 'ew1' })).toEqual({
+    expect(getDefaultSidecar({ prod: false, cluster: 'ew1' })).toMatchObject({
       appsApiBaseUrl: 'https://apps-api.staging.cognite.ai',
       cdfApiBaseUrl: 'https://api.cognitedata.com',
       cdfCluster: '',
@@ -30,7 +30,9 @@ describe('getDefaultSidecar', () => {
   });
 
   it('works for bluefield', () => {
-    expect(getDefaultSidecar({ prod: true, cluster: 'bluefield' })).toEqual({
+    expect(
+      getDefaultSidecar({ prod: true, cluster: 'bluefield' })
+    ).toMatchObject({
       appsApiBaseUrl: 'https://apps-api.bluefield.cognite.ai',
       cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
       cdfCluster: 'bluefield',
@@ -45,7 +47,9 @@ describe('getDefaultSidecar', () => {
   });
 
   it('works for bluefield staging', () => {
-    expect(getDefaultSidecar({ prod: false, cluster: 'bluefield' })).toEqual({
+    expect(
+      getDefaultSidecar({ prod: false, cluster: 'bluefield' })
+    ).toMatchObject({
       appsApiBaseUrl: 'https://apps-api.staging.bluefield.cognite.ai',
       cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
       cdfCluster: 'bluefield',
@@ -67,7 +71,7 @@ describe('getDefaultSidecar', () => {
         cluster: 'bluefield',
         localServices: ['comment-service'],
       })
-    ).toEqual({
+    ).toMatchObject({
       appsApiBaseUrl: 'https://apps-api.staging.bluefield.cognite.ai',
       cdfApiBaseUrl: 'https://bluefield.cognitedata.com',
       cdfCluster: 'bluefield',

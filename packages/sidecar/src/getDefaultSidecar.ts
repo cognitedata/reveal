@@ -1,15 +1,19 @@
 import { generateUrl } from './generateUrl';
-import { SidecarConfig, CDFCluster } from './types';
+import { CDFCluster, ApiBaseUrls } from './types';
 
 export type Service =
   | 'discover-api'
   | 'comment-service'
   | 'user-management-service'
-  | 'digital-cockpit-api';
+  | 'digital-cockpit-api'
+  | 'infield-api'
+  | 'infield-cache-api';
+
+type LocalServices = Omit<ApiBaseUrls, 'appsApiBaseUrl' | 'cdfApiBaseUrl'>;
 
 export const services: Record<
   number,
-  { name: Service; key: keyof SidecarConfig }
+  { name: Service; key: keyof LocalServices }
 > = {
   8700: { name: 'discover-api', key: 'discoverApiBaseUrl' },
   8300: { name: 'comment-service', key: 'commentServiceBaseUrl' },
@@ -18,6 +22,8 @@ export const services: Record<
     key: 'userManagementServiceBaseUrl',
   },
   8001: { name: 'digital-cockpit-api', key: 'digitalCockpitApiBaseUrl' },
+  8011: { name: 'infield-api', key: 'infieldApiBaseUrl' },
+  8015: { name: 'infield-cache-api', key: 'infieldCacheApiBaseUrl' },
 };
 
 const getPort = (name: Service) => {
@@ -42,8 +48,8 @@ export const getDefaultSidecar = (
     cluster: 'azure-dev',
     localServices: [],
   }
-): Partial<SidecarConfig> => {
-  const generateBaseUrls = (cluster: string, prod = false) => {
+): ApiBaseUrls & { cdfCluster: string } => {
+  const generateBaseUrls = (cluster: string, prod = false): ApiBaseUrls => {
     const serviceUrls = Object.keys(services)?.reduce((result, port) => {
       const service = services[Number(port)];
       let localService: any =
@@ -61,7 +67,7 @@ export const getDefaultSidecar = (
       );
 
       return { ...result, [service.key]: url };
-    }, {});
+    }, {} as Record<keyof LocalServices, string>);
 
     const appsApiBaseUrl = generateUrl('https://apps-api.', prod, cluster);
 
@@ -71,11 +77,11 @@ export const getDefaultSidecar = (
       cdfApiBaseUrl: `https://${
         cluster === 'ew1' ? 'api' : cluster
       }.cognitedata.com`,
-      cdfCluster: cluster === 'ew1' ? '' : cluster,
     };
   };
 
   return {
     ...generateBaseUrls(cluster, prod),
+    cdfCluster: cluster === 'ew1' ? '' : cluster,
   };
 };

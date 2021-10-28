@@ -1,3 +1,7 @@
+## 0.2.0 Oct 27 2021
+
+- add infield and infield-cache APIs
+
 ## 0.1.0 Sept 23 2021
 
 - Change local service detection to be more generic
