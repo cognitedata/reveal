@@ -18,3 +18,20 @@ export interface RevealCameraControls {
      */
     getState: () => Object;
 }
+
+export type CallbackData = {
+    intersection: {
+        /**
+         * Coordinate of the intersection.
+         */
+        point: THREE.Vector3;
+        /**
+         * Distance from the camera to the intersection.
+         */
+        distanceToCamera: number;
+    } | null;
+    /**
+     * Bounding box for all models on the scene
+     */
+    modelsBB: THREE.Box3;
+  };
