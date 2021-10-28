@@ -110,6 +110,7 @@ export function Migration() {
           if (model instanceof Cognite3DModel) {
             (model as Cognite3DModel).assignStyledNodeCollection(prioritizedNodeCollection, { ...DefaultNodeAppearance.Highlighted,
                                                                                               prioritizedForLoadingHint: 5.0 });
+          }
 
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
