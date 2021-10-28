@@ -6,7 +6,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
-import { CadMaterialManager, CadNode } from '@reveal/cad-geometry-loaders';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
 import { NodesApiClient, NodesLocalClient } from '@reveal/nodes-api';
 import { IndexSet, NumericRange } from '@reveal/utilities';
