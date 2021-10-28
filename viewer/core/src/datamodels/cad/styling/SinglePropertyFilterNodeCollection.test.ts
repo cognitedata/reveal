@@ -27,7 +27,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
     const cadModelMetadata: CadModelMetadata = createCadModelMetadata(generateSectorTree(3, 3));
     const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager());
-    const nodesClient: NodesApiClient = new NodesLocalClient('');
+    const nodesClient: NodesApiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, nodesClient);
     model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
