@@ -41,6 +41,7 @@ export type ApiBaseUrls = {
   infieldApiBaseUrl: string;
   infieldCacheApiBaseUrl: string;
   userManagementServiceBaseUrl: string;
+  simconfigApiBaseUrl: string;
 };
 
 export type SidecarConfig = ApiBaseUrls & {
@@ -69,4 +70,5 @@ export type SidecarConfig = ApiBaseUrls & {
     keySeparator?: false | string;
   };
   privacyPolicyUrl: string;
+  simconfigApiBaseUrl: string;
 };

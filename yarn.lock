@@ -1705,6 +1705,13 @@
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
 
+"@cognite/simconfig-api-sdk@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-0.0.2.tgz#3e85cdfc10c1afdcb7e46eab6827fd636d709e4c"
+  integrity sha512-CdFdEnLdDhH3yLUZ5tPEDZ/beOGzwN8DPoSPG7MVYOdvqfLAT7bo9umd7p162XVOZChllAqNaYuLgHkIPcq0Pw==
+  dependencies:
+    axios "0.21.2"
+
 "@cognite/subsurface-interfaces@0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@cognite/subsurface-interfaces/-/subsurface-interfaces-0.0.3.tgz#9a6651c75cf42d568080ceb36c825972768df228"
@@ -8111,6 +8118,13 @@ axios@0.21.1:
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
+
+axios@0.21.2:
+  version "0.21.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.2.tgz#21297d5084b2aeeb422f5d38e7be4fbb82239017"
+  integrity sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==
+  dependencies:
+    follow-redirects "^1.14.0"
 
 axios@^0.19.2:
   version "0.19.2"

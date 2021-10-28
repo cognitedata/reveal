@@ -9,9 +9,11 @@ import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 // #
 // #
 const PROD = false;
-// examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp, westeurope-1
-// NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
+// examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp,
+// westeurope-1 NOTE: leave on 'azure-dev' for testing in the PR's since that
+// is the only place we have the FAKEIdp currently for this project:
 const CLUSTER = 'westeurope-1';
+const LOCAL_SERVICE = Boolean(process.env.REACT_APP_LOCAL_SERVICE) || false;
 // #
 // #
 // #
@@ -41,6 +43,7 @@ const getAadApplicationId = (cluster: string) => {
   ...getDefaultSidecar({
     prod: PROD,
     cluster: CLUSTER,
+    localServices: LOCAL_SERVICE ? ['simconfig-api'] : [],
   }),
   __sidecarFormatVersion: 1,
   // to be used only locally as a sidecar placeholder

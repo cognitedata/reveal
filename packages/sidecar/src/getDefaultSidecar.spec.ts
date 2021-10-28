@@ -9,6 +9,7 @@ describe('getDefaultSidecar', () => {
       commentServiceBaseUrl: 'https://comment-service.cognite.ai',
       digitalCockpitApiBaseUrl: 'https://digital-cockpit-api.cognite.ai',
       discoverApiBaseUrl: 'https://discover-api.cognite.ai',
+      simconfigApiBaseUrl: 'https://simconfig-api.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.cognite.ai',
     });
@@ -23,6 +24,7 @@ describe('getDefaultSidecar', () => {
       digitalCockpitApiBaseUrl:
         'https://digital-cockpit-api.staging.cognite.ai',
       discoverApiBaseUrl: 'https://discover-api.staging.cognite.ai',
+      simconfigApiBaseUrl: 'https://simconfig-api.staging.cognite.ai',
 
       userManagementServiceBaseUrl:
         'https://user-management-service.staging.cognite.ai',
@@ -40,6 +42,7 @@ describe('getDefaultSidecar', () => {
       digitalCockpitApiBaseUrl:
         'https://digital-cockpit-api.bluefield.cognite.ai',
       discoverApiBaseUrl: 'https://discover-api.bluefield.cognite.ai',
+      simconfigApiBaseUrl: 'https://simconfig-api.bluefield.cognite.ai',
 
       userManagementServiceBaseUrl:
         'https://user-management-service.bluefield.cognite.ai',
@@ -58,6 +61,7 @@ describe('getDefaultSidecar', () => {
       digitalCockpitApiBaseUrl:
         'https://digital-cockpit-api.staging.bluefield.cognite.ai',
       discoverApiBaseUrl: 'https://discover-api.staging.bluefield.cognite.ai',
+      simconfigApiBaseUrl: 'https://simconfig-api.staging.bluefield.cognite.ai',
 
       userManagementServiceBaseUrl:
         'https://user-management-service.staging.bluefield.cognite.ai',
@@ -79,6 +83,7 @@ describe('getDefaultSidecar', () => {
       digitalCockpitApiBaseUrl:
         'https://digital-cockpit-api.staging.bluefield.cognite.ai',
       discoverApiBaseUrl: 'https://discover-api.staging.bluefield.cognite.ai',
+      simconfigApiBaseUrl: 'https://simconfig-api.staging.bluefield.cognite.ai',
       userManagementServiceBaseUrl:
         'https://user-management-service.staging.bluefield.cognite.ai',
     });

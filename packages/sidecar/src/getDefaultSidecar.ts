@@ -7,7 +7,8 @@ export type Service =
   | 'user-management-service'
   | 'digital-cockpit-api'
   | 'infield-api'
-  | 'infield-cache-api';
+  | 'infield-cache-api'
+  | 'simconfig-api';
 
 type LocalServices = Omit<ApiBaseUrls, 'appsApiBaseUrl' | 'cdfApiBaseUrl'>;
 
@@ -24,6 +25,7 @@ export const services: Record<
   8001: { name: 'digital-cockpit-api', key: 'digitalCockpitApiBaseUrl' },
   8011: { name: 'infield-api', key: 'infieldApiBaseUrl' },
   8015: { name: 'infield-cache-api', key: 'infieldCacheApiBaseUrl' },
+  8800: { name: 'simconfig-api', key: 'simconfigApiBaseUrl' },
 };
 
 const getPort = (name: Service) => {

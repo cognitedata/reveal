@@ -7,9 +7,10 @@ import { Field, Form, Formik, FormikProps } from 'formik';
 import { useSelector } from 'react-redux';
 import { selectDatasets } from 'store/dataset/selectors';
 import { selectUploadDatasetIds } from 'store/group/selectors';
+import { ApiContext } from 'providers/ApiProvider';
+import { HiddenInputFile } from 'components/forms/controls/elements';
 
-import { HiddenInputFile } from '../controls/elements';
-
+import { uploadModelFile } from './utils';
 import { InputRow } from './elements';
 import { ModelFormData } from './types';
 import {
@@ -18,7 +19,6 @@ import {
   DEFAULT_UNIT_SYSTEM,
   UnitSystem,
 } from './constants';
-import { uploadModelFile } from './utils';
 
 interface ComponentProps {
   formData?: ModelFormData;
@@ -53,6 +53,7 @@ const getSelectEntriesFromMap = (obj: { [key: string]: string }) =>
 export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
   const history = useHistory();
   const inputFile = useRef<HTMLInputElement>(null);
+  const { api } = useContext(ApiContext);
   const { cdfClient, authState } = useContext(CdfClientContext);
 
   const datasets = useSelector(selectDatasets);
@@ -81,13 +82,17 @@ export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
         const { file, fileInfo } = values;
         const boundaryConditions = values.boundaryConditions.map(
           (boundaryCondition) => boundaryCondition.value
-        );
+        ) as (keyof typeof BoundaryCondition)[]; // (temporary) safe assertion, only converts BC keys to union type
 
         if (!file) {
           throw new Error('Model file is missing');
         }
 
+        const project = authState?.project || 'unknown';
+
         await uploadModelFile({
+          api,
+          project,
           cdfClient,
           file,
           fileInfo,
