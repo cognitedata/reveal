@@ -76,16 +76,17 @@ export const mapStringItemsToStringArray = (
 };
 
 export const mapV3ToV2Well = (well: WellV3): WellV2 => {
+  const wellbores = well.wellbores?.map(mapV3ToV2Wellbore) || [];
   return {
     ...well,
     id: well.matchingId as any,
     spudDate: new Date(well.spudDate || ''),
     wellhead: { id: 0, ...well.wellhead },
     sources: well.sources.map((source) => source.sourceName),
-    wellbores: () =>
-      Promise.resolve(well.wellbores?.map(mapV3ToV2Wellbore) || []),
+    wellbores: () => Promise.resolve(wellbores),
+    _wellbores: wellbores, // This is a backup of wellbores without making them into a promise.
     sourceAssets: () => Promise.resolve([]),
-  };
+  } as WellV2;
 };
 
 export const toPropertyFilter = (

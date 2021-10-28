@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Row } from 'react-table';
 
@@ -72,14 +72,16 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
 
   const handleRowsSelect = useCallback(
     (value: boolean) => {
-      dispatch(
-        wellSearchActions.setSelectedWellboresWithWell(
-          getWellboreIds(value),
-          well.id
-        )
-      );
-      // Select well selected on wellbore selection
-      dispatch(wellSearchActions.setSelectedWell(well, value));
+      batch(() => {
+        dispatch(
+          wellSearchActions.setSelectedWellboresWithWell(
+            getWellboreIds(value),
+            well.id
+          )
+        );
+        // Select well selected on wellbore selection
+        dispatch(wellSearchActions.setSelectedWell(well, value));
+      });
     },
     [wellbores]
   );
@@ -125,15 +127,17 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
   const handleViewClick = (row: Row) => {
     const wellboreId = (row.original as Wellbore).id;
     metrics.track('click-inspect-wellbore');
-    /**
-     * wellbore is already fetched when row is extracted so we have directly navigate to inspect view
-     */
-    dispatch(
-      wellSearchActions.setWellboreInspectContext(
-        InspectWellboreContext.HOVERED_WELLBORES
-      )
-    );
-    dispatch(wellSearchActions.setHoveredWellbores(well.id, wellboreId));
+    batch(() => {
+      /**
+       * wellbore is already fetched when row is extracted so we have directly navigate to inspect view
+       */
+      dispatch(
+        wellSearchActions.setWellboreInspectContext(
+          InspectWellboreContext.HOVERED_WELLBORES
+        )
+      );
+      dispatch(wellSearchActions.setHoveredWellbores(well.id, wellboreId));
+    });
     history.push(navigation.SEARCH_WELLS_INSPECT);
   };
 

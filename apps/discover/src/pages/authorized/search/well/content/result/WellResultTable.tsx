@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import { batch, connect, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import compact from 'lodash/compact';
@@ -54,12 +54,20 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     dispatchSetHoveredWellbores,
     dispatchSetWellbores,
     dispatchSetInspectContext,
+    dispatchSetWellboresFetched,
   } = props;
 
   const userPreferredUnit = useUserPreferencesMeasurement();
 
   const dispatch = useDispatch();
   const [options] = useState<Options>(WellResultTableOptions);
+
+  useEffect(() => {
+    const wellboresFetchedWellIds = wells
+      .filter((well) => well.wellbores)
+      .map((well) => well.id);
+    dispatchSetWellboresFetched(wellboresFetchedWellIds);
+  }, [wells]);
 
   const columns = React.useMemo(
     () =>
@@ -118,8 +126,10 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     (row: RowProps & { isSelected: boolean }) => {
       const well = row.original as Well;
       const point = well.geometry;
-      dispatch(moveToCoords(point));
-      dispatchToggleExpandedWell(well);
+      batch(() => {
+        dispatch(moveToCoords(point));
+        dispatchToggleExpandedWell(well);
+      });
     },
     []
   );
@@ -128,10 +138,12 @@ const WellResult: React.FC<DispatchProps> = (props) => {
    * Select or deselect all wells
    */
   const handleRowsSelect = (value: boolean) => {
-    dispatchToggleSelectedWells(value);
-    if (value) {
-      dispatchGetAllWellbores();
-    }
+    batch(() => {
+      dispatchToggleSelectedWells(value);
+      if (value) {
+        dispatchGetAllWellbores();
+      }
+    });
   };
 
   const renderRowSubComponent = useCallback(({ row }) => {
@@ -154,15 +166,19 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     );
     // If well head contain wellbores navigate to inspect if not fetch wellbores first and navigate to inspect
     if (!isWellContainWellbores) {
-      getGroupedWellboresByWellIds([currentWell.id]).then((data) => {
-        dispatchSetWellbores(data);
-        dispatchSetHoveredWellbores(currentWell.id);
-        dispatchSetInspectContext(InspectWellboreContext.HOVERED_WELLBORES);
+      getGroupedWellboresByWellIds([currentWell.id]).then((groupedData) => {
+        batch(() => {
+          dispatchSetWellbores(groupedData);
+          dispatchSetHoveredWellbores(currentWell.id);
+          dispatchSetInspectContext(InspectWellboreContext.HOVERED_WELLBORES);
+        });
         history.push(navigation.SEARCH_WELLS_INSPECT);
       });
     } else {
-      dispatchSetHoveredWellbores(currentWell.id);
-      dispatchSetInspectContext(InspectWellboreContext.HOVERED_WELLBORES);
+      batch(() => {
+        dispatchSetHoveredWellbores(currentWell.id);
+        dispatchSetInspectContext(InspectWellboreContext.HOVERED_WELLBORES);
+      });
       history.push(navigation.SEARCH_WELLS_INSPECT);
     }
   };
@@ -248,6 +264,8 @@ function dispatchToProps(dispatch: any) {
       dispatch(wellSearchActions.setWellbores(groupedData)),
     dispatchSetInspectContext: (context: InspectWellboreContext) =>
       dispatch(wellSearchActions.setWellboreInspectContext(context)),
+    dispatchSetWellboresFetched: (wellIds: number[]) =>
+      dispatch(wellSearchActions.setWellboresFetched(wellIds)),
   };
 }
 type DispatchProps = ReturnType<typeof dispatchToProps>;
