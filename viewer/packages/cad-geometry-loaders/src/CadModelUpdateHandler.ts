@@ -195,8 +195,8 @@ type ClippingInput = {
 function makeSettingsInput([loadingHints, budget]: [CadLoadingHints, CadModelSectorBudget]): SettingsInput {
   return { loadingHints, budget };
 }
-function makeCameraInput([camera, _cameraInMotion]: [THREE.PerspectiveCamera, boolean]): CameraInput {
-  return { camera, cameraInMotion: false };
+function makeCameraInput([camera, cameraInMotion]: [THREE.PerspectiveCamera, boolean]): CameraInput {
+  return { camera, cameraInMotion };
 }
 function makeClippingInput([clippingPlanes]: [THREE.Plane[]]): ClippingInput {
   return { clippingPlanes };
