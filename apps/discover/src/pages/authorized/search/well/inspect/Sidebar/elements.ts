@@ -83,6 +83,17 @@ export const SidebarContentBlock = styled(FlexColumn)`
 export const BlockHeader = styled(FlexColumn)`
   width: 100%;
   padding: ${sizes.normal} 12px;
+  > * .checkbox-ui {
+    margin-right: 12px;
+    background-color: var(--cogs-greyscale-grey7) !important;
+    border-color: var(--cogs-greyscale-grey7) !important;
+  }
+  > * .checkbox-ui.indeterminate {
+    background: var(--cogs-white) !important;
+  }
+  > * .checkbox-ui.indeterminate:before {
+    background: var(--cogs-greyscale-grey7) !important;
+  }
 `;
 
 export const WellLabel = styled(Flex)`
@@ -116,6 +127,12 @@ export const BlockContentItem = styled(Flex)`
   line-height: var(--cogs-t6-line-height);
   color: var(--cogs-greyscale-grey9);
   margin-bottom: 12px;
+  > * .checkbox-ui {
+    ${(props: { overlay: boolean }) =>
+      props.overlay
+        ? 'border-image: repeating-linear-gradient(45deg,rgba(0, 0, 0, 0.3) 0, rgba(0, 0, 0, 0.3) 1px,rgba(0, 0, 0, 0) 0,rgba(0, 0, 0, 0) 50%) !important;background-image: repeating-linear-gradient(45deg,rgba(0, 0, 0, 0.3) 0,rgba(0, 0, 0, 0.3) 1px,rgba(0, 0, 0, 0) 0,rgba(0, 0, 0, 0) 50%) !important;'
+        : ''};
+  }
 `;
 
 export const CheckboxContent = styled(Flex)`

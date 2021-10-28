@@ -1,6 +1,15 @@
-import { mockedMeasurementsResultFixture } from '__test-utils/fixtures/well';
+import {
+  mockedMeasurementsResultFixture,
+  mockedWellboreResultFixture,
+} from '__test-utils/fixtures/well';
+import { MeasurementType } from 'modules/wellSearch/types';
 
-import { convertOtherDataToPlotly } from '../utils';
+import {
+  convertOtherDataToPlotly,
+  filterByChartType,
+  filterByMainChartType,
+  mapToCurveCentric,
+} from '../utils';
 
 const tenantConfig = {
   fit: {
@@ -31,7 +40,8 @@ describe('Measurement filter utils', () => {
         },
         'fit',
         tenantConfig,
-        'ppg'
+        'ppg',
+        'ft'
       )
     ).toEqual({
       customdata: ['FIT - test name test description'],
@@ -47,5 +57,56 @@ describe('Measurement filter utils', () => {
       x: [10],
       y: [100],
     });
+  });
+
+  test('Should map chart data to curve centric data', () => {
+    const wellbore = {
+      ...mockedWellboreResultFixture[0],
+      metadata: {
+        wellName: 'Test Well Name',
+        color: '#FFFFFF',
+      },
+    };
+    const chart = {
+      measurementType: MeasurementType.ppfg,
+      line: {
+        color: '#000000',
+      },
+    };
+    expect(mapToCurveCentric([chart], wellbore)).toEqual([
+      {
+        ...chart,
+        customdata: ['Test Well Name', 'wellbore B desc wellbore B'],
+        line: {
+          color: '#FFFFFF',
+        },
+      },
+    ]);
+  });
+
+  test('Should return specific chart data', () => {
+    const charts = [
+      {
+        measurementType: MeasurementType.ppfg,
+      },
+      {
+        measurementType: MeasurementType.geomechanic,
+      },
+    ];
+    expect(filterByChartType(charts, [MeasurementType.ppfg])).toEqual([
+      charts[0],
+    ]);
+  });
+
+  test('Should return main chart data', () => {
+    const charts = [
+      {
+        measurementType: MeasurementType.ppfg,
+      },
+      {
+        measurementType: MeasurementType.fit,
+      },
+    ];
+    expect(filterByMainChartType(charts)).toEqual([charts[0]]);
   });
 });

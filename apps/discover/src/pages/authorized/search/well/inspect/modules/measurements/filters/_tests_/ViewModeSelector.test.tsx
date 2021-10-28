@@ -1,3 +1,5 @@
+import { useDispatch } from 'react-redux';
+
 import { screen, fireEvent } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -5,7 +7,15 @@ import { testRenderer } from '__test-utils/renderer';
 import { VIEW_MODES } from '../../constants';
 import { ViewModeSelector, Props } from '../ViewModeSelector';
 
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+}));
+
 describe('View Mode Selector', () => {
+  beforeEach(() => {
+    (useDispatch as jest.Mock).mockImplementation(() => jest.fn());
+  });
+
   const testInit = async (viewProps?: Props) =>
     testRenderer(ViewModeSelector, undefined, viewProps);
 

@@ -3,6 +3,7 @@ import { TableResults } from 'components/tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 export const SET_INSPECT_SIDEBAR_WIDTH = 'SET_INSPECT_SIDEBAR_WIDTH';
+export const SET_COLORED_WELLBORES = 'SET_COLORED_WELLBORES';
 
 export const SET_SELECTED_RELATED_DOCUMENT_COLUMNS =
   'SET_SELECTED_RELATED_DOCUMENT_COLUMNS';
@@ -18,6 +19,7 @@ export type BooleanSelection = {
 
 export interface WellInspectState {
   inspectSidebarWidth: number;
+  coloredWellbores: boolean;
   selectedRelatedDocumentsColumns: BooleanSelection;
   nptGraphSelectedWellboreData: SelectedBarData<NPTEvent>;
 }
@@ -25,6 +27,11 @@ export interface WellInspectState {
 interface SetInspectSidebarWidth {
   type: typeof SET_INSPECT_SIDEBAR_WIDTH;
   payload: number;
+}
+
+interface SetColoredWellbores {
+  type: typeof SET_COLORED_WELLBORES;
+  payload: boolean;
 }
 
 interface SetSelectedRelatedDoucmentColumns {
@@ -43,6 +50,7 @@ interface ClearNPTGraphSelectedWellboreData {
 
 export type WellInspectAction =
   | SetInspectSidebarWidth
+  | SetColoredWellbores
   | SetSelectedRelatedDoucmentColumns
   | SetNPTGraphSelectedWellboreData
   | ClearNPTGraphSelectedWellboreData;

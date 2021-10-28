@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 
-import { Data, PlotData } from 'plotly.js';
-
 import { BaseButton } from 'components/buttons';
-import { Wellbore } from 'modules/wellSearch/types';
+import {
+  MeasurementChartData,
+  MeasurementType,
+  Wellbore,
+} from 'modules/wellSearch/types';
 
 import { ChartV2 } from '../../common/ChartV2';
 import CurveColorCode from '../../common/ChartV2/CurveColorCode';
+import { filterByChartType, filterByMainChartType } from '../utils';
 
 import {
   CurveIndicator,
@@ -27,7 +30,7 @@ type AxisNames = {
 
 type Props = {
   wellbore: Wellbore;
-  chartData: Data[];
+  chartData: MeasurementChartData[];
   axisNames: AxisNames;
 };
 
@@ -39,6 +42,8 @@ export const WellCentricCard: React.FC<Props> = ({
   const [showAll, setShowAll] = useState<boolean>(false);
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
   const displayShowAll = (legendsHolderRef?.current?.scrollHeight || 0) > 16;
+  const fitChart = filterByChartType(chartData, [MeasurementType.fit])[0];
+  const lotChart = filterByChartType(chartData, [MeasurementType.lot])[0];
 
   return (
     <Wrapper>
@@ -61,16 +66,29 @@ export const WellCentricCard: React.FC<Props> = ({
       />
       <Footer>
         <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
-          {(chartData as Partial<PlotData>[]).map((row) => (
-            <CurveIndicator
-              key={`${wellbore.description}-${
-                (row?.customdata as string[])[0]
-              }`}
-            >
-              <CurveColorCode line={row.line} marker={row.marker} />
-              <span>{(row?.customdata as string[])[0]}</span>
+          {filterByMainChartType(chartData).map((row) => {
+            const customdata = row.customdata as string[];
+            return (
+              <CurveIndicator key={`${wellbore.description}-${customdata[0]}`}>
+                <CurveColorCode line={row.line} marker={row.marker} />
+                <span>{customdata[0]}</span>
+              </CurveIndicator>
+            );
+          })}
+
+          {fitChart && (
+            <CurveIndicator key={`${wellbore.description}-FIT`}>
+              <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
+              <span>FIT</span>
             </CurveIndicator>
-          ))}
+          )}
+
+          {lotChart && (
+            <CurveIndicator key={`${wellbore.description}-LOT`}>
+              <CurveColorCode line={lotChart.line} marker={lotChart.marker} />
+              <span>LOT</span>
+            </CurveIndicator>
+          )}
         </LegendsHolder>
 
         <BaseButton

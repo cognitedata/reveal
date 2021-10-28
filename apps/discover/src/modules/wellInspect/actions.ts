@@ -12,6 +12,7 @@ import {
   SET_NPT_GRAPH_SELECTED_WELLBORE_DATA,
   BooleanSelection,
   CLEAR_NPT_GRAPH_SELECTED_WELLBORE_DATA,
+  SET_COLORED_WELLBORES,
 } from './types';
 import { getInitialSelectedRelatedDocumentsColumns } from './utils';
 
@@ -21,6 +22,8 @@ export const WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS =
 export const setInspectSidebarWidth = createAction<number>(
   SET_INSPECT_SIDEBAR_WIDTH
 );
+
+export const setColoredWellbores = createAction<boolean>(SET_COLORED_WELLBORES);
 
 export const setSelectedRelatedDocumentColumnsAction =
   createAction<BooleanSelection>(SET_SELECTED_RELATED_DOCUMENT_COLUMNS);

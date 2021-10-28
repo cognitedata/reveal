@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Data } from 'plotly.js';
-
 import { WhiteLoader } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
-import { Wellbore } from 'modules/wellSearch/types';
+import { MeasurementChartData, Wellbore } from 'modules/wellSearch/types';
 
 import { formatChartData } from '../utils';
 
@@ -24,7 +22,7 @@ type Props = {
 
 type WellboreChartData = {
   wellbore: Wellbore;
-  chartData: Data[];
+  chartData: MeasurementChartData[];
 };
 
 export const WellCentricView: React.FC<Props> = ({

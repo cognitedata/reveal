@@ -6,6 +6,7 @@ import { Checkbox } from '@cognite/cogs.js';
 import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
 import Skeleton from 'components/skeleton';
 import useSelector from 'hooks/useSelector';
+import { useColoredWellbores } from 'modules/wellInspect/selectors';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import {
   useActiveWellsWellboresIds,
@@ -15,6 +16,7 @@ import {
 import { Well } from 'modules/wellSearch/types';
 import { toBooleanMap } from 'modules/wellSearch/utils';
 
+import { DEFAULT_WELLBORE_COLOR } from './constants';
 import {
   BlockContent,
   BlockContentItem,
@@ -32,6 +34,7 @@ export const Content = () => {
   }>({});
 
   const wells = useSelectedOrHoveredWells();
+  const isColoredWellbores = useColoredWellbores();
   const { wellIds, wellboreIds } = useActiveWellsWellboresIds();
   const { selectedSecondaryWellIds, selectedSecondaryWellboreIds } =
     useSelectedSecondaryWellAndWellboreIds();
@@ -128,8 +131,18 @@ export const Content = () => {
               <Skeleton.List />
             ) : (
               well.wellbores.map((wellbore) => (
-                <BlockContentItem key={wellbore.id}>
+                <BlockContentItem
+                  key={wellbore.id}
+                  overlay={
+                    isColoredWellbores && wellbore.metadata?.color.endsWith('_')
+                  }
+                >
                   <Checkbox
+                    color={
+                      isColoredWellbores
+                        ? wellbore.metadata?.color.replace('_', '')
+                        : DEFAULT_WELLBORE_COLOR
+                    }
                     checked={selectedSecondaryWellboreIds[wellbore.id]}
                     onChange={() => {
                       onWellboreClick(wellbore.id, well);

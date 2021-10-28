@@ -1,5 +1,6 @@
 ﻿import { initialState, wellInspect } from '../reducer';
 import {
+  SET_COLORED_WELLBORES,
   SET_INSPECT_SIDEBAR_WIDTH,
   SET_SELECTED_RELATED_DOCUMENT_COLUMNS,
 } from '../types';
@@ -21,5 +22,13 @@ describe('Well inspect Reducer', () => {
       payload,
     });
     expect(state.selectedRelatedDocumentsColumns.fileName).toBeTruthy();
+  });
+
+  it(`should set colored wellbores`, () => {
+    const state = wellInspect(initialState, {
+      type: SET_COLORED_WELLBORES,
+      payload: true,
+    });
+    expect(state.coloredWellbores).toEqual(true);
   });
 });

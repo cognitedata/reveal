@@ -7,6 +7,7 @@ import { SIDEBAR_SIZE } from 'pages/authorized/search/well/inspect/Sidebar/const
 
 import {
   setInspectSidebarWidth,
+  setColoredWellbores,
   setSelectedRelatedDocumentColumnsAction,
   setNPTGraphSelectedWellboreData,
   clearNPTGraphSelectedWellboreData,
@@ -15,6 +16,7 @@ import { WellInspectAction, WellInspectState } from './types';
 
 export const initialState: WellInspectState = {
   inspectSidebarWidth: SIDEBAR_SIZE.min,
+  coloredWellbores: false,
   selectedRelatedDocumentsColumns: {},
   nptGraphSelectedWellboreData: {} as SelectedBarData<NPTEvent>,
 };
@@ -23,6 +25,9 @@ const wellInspectReducerCreator = createReducer(initialState, (builder) => {
   builder
     .addCase(setInspectSidebarWidth, (state, action) => {
       state.inspectSidebarWidth = action.payload;
+    })
+    .addCase(setColoredWellbores, (state, action) => {
+      state.coloredWellbores = action.payload;
     })
     .addCase(setSelectedRelatedDocumentColumnsAction, (state, action) => {
       state.selectedRelatedDocumentsColumns = {

@@ -1,5 +1,5 @@
 import { Dictionary } from '@reduxjs/toolkit';
-import { Data, PlotData } from 'plotly.js';
+import { PlotData } from 'plotly.js';
 
 import { Metadata, Sequence, Asset, CogniteEvent } from '@cognite/sdk';
 import {
@@ -564,7 +564,13 @@ export interface FilterCategoricalData {
   filterConfigIds: number[];
 }
 
-export type MeasurementType = 'geomechanic' | 'ppfg' | 'fit' | 'lot';
+export enum MeasurementType {
+  geomechanic,
+  ppfg,
+  fit,
+  lot,
+}
+
 export interface Measurement extends Sequence {
   rows?: SequenceRow[];
 }
@@ -578,5 +584,6 @@ export type MeasurementCurveConfig = {
     [key: string]: Partial<PlotData>;
   };
 };
-
-export type MeasurementChartData = Data & { measurementType: MeasurementType };
+export type MeasurementChartData = Partial<PlotData> & {
+  measurementType: MeasurementType;
+};

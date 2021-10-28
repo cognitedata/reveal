@@ -4,6 +4,7 @@ import flatten from 'lodash/flatten';
 
 import { MEASUREMENT_CURVE_CONFIG } from 'modules/wellSearch/constants';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
+import { MeasurementType } from 'modules/wellSearch/types';
 
 import { getUniqCurves } from './utils';
 
@@ -15,7 +16,7 @@ export const useGeomechanicsFilterOptions = () => {
         (row) => row.metadata?.dataType === 'geomechanic'
       );
       const curves = getUniqCurves(squences).filter(
-        (curve) => MEASUREMENT_CURVE_CONFIG.geomechanic[curve]
+        (curve) => MEASUREMENT_CURVE_CONFIG[MeasurementType.geomechanic][curve]
       );
       return { curves };
     }

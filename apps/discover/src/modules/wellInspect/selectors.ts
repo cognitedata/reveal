@@ -18,3 +18,7 @@ export const useNPTGraphSelectedWellboreData = () => {
     [state.nptGraphSelectedWellboreData]
   );
 };
+
+export const useColoredWellbores = () => {
+  return useSelector((state) => state.wellInspect.coloredWellbores);
+};

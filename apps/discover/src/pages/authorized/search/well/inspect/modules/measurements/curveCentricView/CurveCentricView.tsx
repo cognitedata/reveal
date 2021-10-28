@@ -8,9 +8,17 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
-import { MeasurementChartData } from 'modules/wellSearch/types';
+import {
+  MeasurementChartData,
+  MeasurementType,
+} from 'modules/wellSearch/types';
 
-import { formatChartData } from '../utils';
+import {
+  filterByChartType,
+  filterByMainChartType,
+  formatChartData,
+  mapToCurveCentric,
+} from '../utils';
 
 import CurveCentricCard from './CurveCentricCard';
 import { CurveCentricViewWrapper } from './elements';
@@ -44,8 +52,8 @@ export const CurveCentricView: React.FC<Props> = ({
 
   const updateChartData = () => {
     if (data) {
-      const wellboreChartData = selectedOrHoveredWellbores.map((wellbore) =>
-        formatChartData(
+      const wellboreChartData = selectedOrHoveredWellbores.map((wellbore) => {
+        const chartData = formatChartData(
           data[wellbore.id],
           geomechanicsCurves,
           ppfgCurves,
@@ -54,14 +62,9 @@ export const CurveCentricView: React.FC<Props> = ({
           pressureUnit.toLowerCase(),
           userPreferredUnit,
           config
-        ).map((row) => ({
-          ...row,
-          customdata: [
-            wellbore.metadata?.wellName || '',
-            `${wellbore.description} ${wellbore.name}`,
-          ],
-        }))
-      );
+        );
+        return mapToCurveCentric(chartData, wellbore);
+      });
       setCharts(flatten(wellboreChartData));
     }
   };
@@ -87,10 +90,9 @@ export const CurveCentricView: React.FC<Props> = ({
     otherTypes,
     userPreferredUnit,
   ]);
-
   const wellCards = useMemo(() => {
-    const groupedData = groupBy(charts, 'name');
-    return Object.keys(groupedData).map((key) => (
+    const groupedData = groupBy(filterByMainChartType(charts), 'name');
+    const groupedCharts = Object.keys(groupedData).map((key) => (
       <CurveCentricCard
         key={key}
         chartData={groupedData[key]}
@@ -101,6 +103,37 @@ export const CurveCentricView: React.FC<Props> = ({
         }}
       />
     ));
+
+    const fitCharts = filterByChartType(charts, [MeasurementType.fit]);
+    if (fitCharts.length > 0) {
+      groupedCharts.push(
+        <CurveCentricCard
+          key="FIT"
+          chartData={fitCharts}
+          axisNames={{
+            x2: `Pressure (${pressureUnit.toLowerCase()})`,
+            x: 'Angle (deg)',
+            y: `${measurementReference} (${userPreferredUnit})`,
+          }}
+        />
+      );
+    }
+
+    const lotCharts = filterByChartType(charts, [MeasurementType.lot]);
+    if (lotCharts.length > 0) {
+      groupedCharts.push(
+        <CurveCentricCard
+          key="LOT"
+          chartData={lotCharts}
+          axisNames={{
+            x2: `Pressure (${pressureUnit.toLowerCase()})`,
+            x: 'Angle (deg)',
+            y: `${measurementReference} (${userPreferredUnit})`,
+          }}
+        />
+      );
+    }
+    return groupedCharts;
   }, [charts]);
 
   return (

@@ -23,6 +23,7 @@ import {
   useSelectedWellIds,
   useFavoriteWellResults,
   useSelectedSecondaryWellAndWellboreIds,
+  useSelectedOrHoveredWells,
 } from './well';
 
 // This returns wellbores for the given well
@@ -92,93 +93,14 @@ export const useSelectedWellbores = (filterByIds?: number[]) => {
 };
 
 export const useSelectedOrHoveredWellbores = (filterByIds?: number[]) => {
-  return useSelector((state) => {
-    const wellCardId = state.wellSearch.wellCardSelectedWellId;
-    const wellCardWellbores = useWellBoreResult(wellCardId);
-
-    // favorite wells
-    const favoriteHoveredIds =
-      state.wellSearch.wellFavoriteHoveredOrCheckedWells;
-    const { data: favoriteWellData } =
-      useFavoriteWellResults(favoriteHoveredIds);
-
-    return useMemo(() => {
-      const inspectContext = state.wellSearch.inspectWellboreContext;
-      // check wellbores coming from well card
-      if (inspectContext === InspectWellboreContext.WELL_CARD_WELLBORES) {
-        // if only wellbore is selected, then show filter others
-        const resultedWellbores = wellCardWellbores.filter(
-          (wellbore) => state.wellSearch.wellCardSelectedWellBoreId[wellbore.id]
-        );
-
-        if (filterByIds) {
-          return resultedWellbores.filter((row) =>
-            filterByIds.includes(row.id)
-          );
-        }
-        return resultedWellbores;
-      }
-
-      if (inspectContext === InspectWellboreContext.FAVORITE_HOVERED_WELL) {
-        const firstWell = head(favoriteWellData);
-
-        const resultedWellbores = firstWell?.wellbores || [];
-        if (filterByIds) {
-          return resultedWellbores.filter((row) =>
-            filterByIds.includes(row.id)
-          );
-        }
-        return resultedWellbores;
-      }
-
-      if (inspectContext === InspectWellboreContext.FAVORITE_CHECKED_WELLS) {
-        const resultedWellbores = flatten(
-          favoriteWellData?.map((well) =>
-            well.wellbores ? well.wellbores : []
-          )
-        );
-
-        if (filterByIds) {
-          return resultedWellbores.filter((row) =>
-            filterByIds.includes(row.id)
-          );
-        }
-        return resultedWellbores;
-      }
-
-      const wellbores = flatten(
-        state.wellSearch.wells
-          .filter((well) =>
-            state.wellSearch.inspectWellboreContext ===
-            InspectWellboreContext.CHECKED_WELLBORES
-              ? state.wellSearch.selectedWellIds[well.id]
-              : state.wellSearch.hoveredWellId === well.id
-          )
-          .map((well) =>
-            well.wellbores
-              ? well.wellbores.filter((wellbore) =>
-                  state.wellSearch.inspectWellboreContext ===
-                  InspectWellboreContext.CHECKED_WELLBORES
-                    ? state.wellSearch.selectedWellboreIds[wellbore.id]
-                    : state.wellSearch.hoveredWellboreIds[wellbore.id]
-                )
-              : []
-          )
-      );
-      if (filterByIds) {
-        return wellbores.filter((row) => filterByIds.includes(row.id));
-      }
-      return wellbores;
-    }, [
-      state.wellSearch.wells,
-      state.wellSearch.selectedWellIds,
-      state.wellSearch.selectedWellboreIds,
-      state.wellSearch.hoveredWellId,
-      state.wellSearch.hoveredWellboreIds,
-      state.wellSearch.wellFavoriteHoveredOrCheckedWells,
-      filterByIds,
-    ]);
-  });
+  const wells = useSelectedOrHoveredWells();
+  return useMemo(() => {
+    const wellbores = flatten(wells.map((well) => well.wellbores));
+    if (filterByIds) {
+      return wellbores.filter((row) => filterByIds.includes(row.id));
+    }
+    return wellbores;
+  }, [wells, filterByIds]);
 };
 
 export const useSecondarySelectedOrHoveredWellbores = () => {

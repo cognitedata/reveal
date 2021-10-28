@@ -11,7 +11,7 @@ export const DASH_CSS_MAP = {
 
 const CurveColorCode = ({ line, marker }: Partial<PlotData>) => {
   if (marker) {
-    const color = marker.color as string;
+    const color = (marker.color as string).replace('_', '');
     return (
       <svg height="16" width="24">
         <path
@@ -34,7 +34,7 @@ const CurveColorCode = ({ line, marker }: Partial<PlotData>) => {
           y1="8"
           x2="12"
           y2="8"
-          stroke={line.color as string}
+          stroke={(line.color as string).replace('_', '')}
           strokeWidth="3"
           strokeLinecap="round"
           strokeDasharray={DASH_CSS_MAP[line.dash as Dash]}

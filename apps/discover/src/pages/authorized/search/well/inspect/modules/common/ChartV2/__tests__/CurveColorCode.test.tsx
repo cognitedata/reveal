@@ -11,14 +11,14 @@ describe('View Mode Selector', () => {
 
   it('should display line', async () => {
     await testInit({
-      line: {},
+      line: { color: '#FFFFF' },
     });
     expect(screen.getByTestId('chart-line')).toBeInTheDocument();
   });
 
   it('should display triangle', async () => {
     await testInit({
-      marker: {},
+      marker: { color: '#FFFFF' },
     });
     expect(screen.getByTestId('chart-symbol')).toBeInTheDocument();
   });

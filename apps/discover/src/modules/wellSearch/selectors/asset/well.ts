@@ -7,6 +7,7 @@ import pickBy from 'lodash/pickBy';
 
 import useSelector from 'hooks/useSelector';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { WELLBORE_COLORS } from 'modules/wellInspect/constants';
 import {
   ASSETS_GROUPED_PROPERTY,
   WELL_FIELDS_WITH_PRODUCTION_DATA,
@@ -16,7 +17,11 @@ import {
   wellUseQuery,
 } from 'modules/wellSearch/hooks/useQueryWellCard';
 import { useWellsByIdForFavoritesQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
-import { InspectWellboreContext, Well } from 'modules/wellSearch/types';
+import {
+  InspectWellboreContext,
+  Well,
+  Wellbore,
+} from 'modules/wellSearch/types';
 import { ExternalLinksConfig } from 'tenants/types';
 
 export const useWells = () => {
@@ -193,7 +198,7 @@ export const useSelectedOrHoveredWells = () => {
     const { data: favoriteWellData } =
       useFavoriteWellResults(favoriteHoveredIds);
 
-    return useMemo(() => {
+    const wells = useMemo(() => {
       const inspectContext = state.wellSearch.inspectWellboreContext;
       if (inspectContext === InspectWellboreContext.WELL_CARD_WELLBORES) {
         if (well) {
@@ -253,6 +258,28 @@ export const useSelectedOrHoveredWells = () => {
       state.wellSearch.wellFavoriteHoveredOrCheckedWells,
       state.wellSearch.selectedWellboreIds,
     ]);
+
+    return useMemo(() => {
+      let wellboreIndex = -1;
+      const colors = [
+        ...WELLBORE_COLORS,
+        ...WELLBORE_COLORS.map((color) => `${color}_`),
+      ];
+      return wells.map((well) => ({
+        ...well,
+        wellbores: well.wellbores.map((wellbore) => {
+          wellboreIndex += 1;
+          const colorIndex = wellboreIndex % colors.length;
+          return {
+            ...wellbore,
+            metadata: {
+              ...wellbore.metadata,
+              color: colors[colorIndex],
+            },
+          } as Wellbore;
+        }),
+      }));
+    }, wells);
   });
 };
 

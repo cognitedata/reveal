@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { MeasurementChartData } from 'modules/wellSearch/types';
+import {
+  MeasurementChartData,
+  MeasurementType,
+} from 'modules/wellSearch/types';
 
 import { ChartV2 } from '../../common/ChartV2';
 
@@ -18,16 +21,32 @@ type Props = {
 };
 
 export const CurveCentricCard: React.FC<Props> = ({ chartData, axisNames }) => {
+  const { measurementType } = chartData[0];
+  const measurementTypeValue = MeasurementType[measurementType];
+  const isOtherType =
+    measurementType === MeasurementType.fit ||
+    measurementType === MeasurementType.lot;
+
   return (
     <Wrapper>
-      <SubHeader>{chartData[0].measurementType || ''}</SubHeader>
+      {!isOtherType && (
+        <SubHeader>
+          {measurementType === MeasurementType.geomechanic
+            ? 'Geomechanics'
+            : 'PPFG'}
+        </SubHeader>
+      )}
       <ChartV2
         data={chartData}
         axisNames={axisNames}
         axisAutorange={{
           y: 'reversed',
         }}
-        title={chartData[0].name || ''}
+        title={
+          isOtherType
+            ? measurementTypeValue.toUpperCase()
+            : chartData[0].name || ''
+        }
         autosize
       />
     </Wrapper>

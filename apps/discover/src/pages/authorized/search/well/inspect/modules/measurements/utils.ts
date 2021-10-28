@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import { Data, PlotData } from 'plotly.js';
+import { PlotData } from 'plotly.js';
 
 import { Metadata } from '@cognite/sdk';
 
@@ -10,6 +10,7 @@ import {
   Measurement,
   MeasurementChartData,
   MeasurementType,
+  Wellbore,
 } from 'modules/wellSearch/types';
 import { convertPressure } from 'modules/wellSearch/utils/common';
 import { WellConfig } from 'tenants/types';
@@ -46,12 +47,14 @@ export const formatChartData = (
 
     let detailCardTitle = '';
 
-    const dataType = metadata.dataType as MeasurementType;
+    const dataTypeStr = metadata.dataType as keyof typeof MeasurementType;
 
-    if (config && otherTypes.includes(dataType.toUpperCase())) {
+    const dataType = MeasurementType[dataTypeStr];
+
+    if (config && otherTypes.includes(dataTypeStr.toUpperCase())) {
       const convertedData = convertOtherDataToPlotly(
         measurement,
-        dataType as OtherDataType,
+        dataTypeStr as OtherDataType,
         config,
         pressureUnit,
         referenceUnit
@@ -66,10 +69,10 @@ export const formatChartData = (
 
     if (!rows || !rows.length) return;
 
-    if (dataType === 'geomechanic') {
+    if (dataType === MeasurementType.geomechanic) {
       enableCurves = geomechanicsCurves;
       detailCardTitle = 'Geomechanics';
-    } else if (dataType === 'ppfg') {
+    } else if (dataType === MeasurementType.ppfg) {
       enableCurves = ppfgCurves;
       detailCardTitle = 'PPFG';
     }
@@ -173,7 +176,7 @@ export const convertOtherDataToPlotly = (
   config: WellConfig,
   pressureUnit: string,
   referenceUnit: string
-): Data | null => {
+): Partial<PlotData> | null => {
   const requiredFields = ['pressure', 'tvd', 'tvdUnit', 'pressureUnit'];
 
   const fieldInfo = config[type]?.fieldInfo || {};
@@ -197,7 +200,7 @@ export const convertOtherDataToPlotly = (
   }`;
 
   return {
-    ...MEASUREMENT_CURVE_CONFIG[type].default,
+    ...MEASUREMENT_CURVE_CONFIG[MeasurementType[type]].default,
     x: [
       convertPressure(xVal, currentPressureUnit, yVal, tvdUnit, pressureUnit),
     ],
@@ -234,3 +237,40 @@ const pushCorveToChart = (
     chartData.push(curveData);
   }
 };
+
+export const mapToCurveCentric = (
+  data: MeasurementChartData[],
+  wellbore: Wellbore
+) =>
+  data.map((row) => ({
+    ...row,
+    customdata: [
+      wellbore.metadata?.wellName || '',
+      `${wellbore.description} ${wellbore.name}`,
+    ],
+    ...(row.marker
+      ? {
+          marker: {
+            ...row.marker,
+            color: wellbore.metadata?.color,
+          },
+        }
+      : {
+          line: {
+            ...row.line,
+            color: wellbore.metadata?.color,
+          },
+        }),
+  }));
+
+export const filterByChartType = (
+  charts: MeasurementChartData[],
+  types: MeasurementType[]
+) => charts.filter((chart) => types.includes(chart.measurementType));
+
+export const filterByMainChartType = (charts: MeasurementChartData[]) =>
+  charts.filter((chart) =>
+    [MeasurementType.geomechanic, MeasurementType.ppfg].includes(
+      chart.measurementType
+    )
+  );

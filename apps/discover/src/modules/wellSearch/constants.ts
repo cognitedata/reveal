@@ -1,4 +1,4 @@
-import { MeasurementCurveConfig } from './types';
+import { MeasurementCurveConfig, MeasurementType } from './types';
 
 export const WELL_SEARCH_ACCESS_ERROR =
   'Your account cannot search wells, please contact support.';
@@ -270,7 +270,7 @@ export const DIGITAL_ROCK_SAMPLES_ACCESSORS = {
 };
 
 export const MEASUREMENT_CURVE_CONFIG: MeasurementCurveConfig = {
-  geomechanic: {
+  [MeasurementType.geomechanic]: {
     SHMIN_SHALE_ML_PRE: { line: { color: '#C13670', dash: 'solid' } },
     SHMIN_SHALE_POST: { line: { color: '#C13670', dash: 'dashdot' } },
     FRICTION_ANGLE_PRE: { line: { color: '#18AF8E', dash: 'solid' } },
@@ -295,7 +295,7 @@ export const MEASUREMENT_CURVE_CONFIG: MeasurementCurveConfig = {
     CP_P10_PRE: { line: { color: '#642175', dash: 'solid' } },
     CP_P50_PRE: { line: { color: '#6ED8BE', dash: 'solid' } },
   },
-  ppfg: {
+  [MeasurementType.ppfg]: {
     SVERTICAL_PRE: { line: { color: '#B30539', dash: 'solid' } },
     SVERTICAL_POST: { line: { color: '#B30539', dash: 'dashdot' } },
     PNORM_PRE: { line: { color: '#50E0F1', dash: 'solid' } },
@@ -329,7 +329,7 @@ export const MEASUREMENT_CURVE_CONFIG: MeasurementCurveConfig = {
     FP_ACHIEVABLE_HIGH: { line: { color: '#1AA3C1', dash: 'dash' } },
     FP_ACHIEVABLE_POST: { line: { color: '#1AA3C1', dash: 'dashdot' } },
   },
-  fit: {
+  [MeasurementType.fit]: {
     default: {
       marker: {
         color: '#595959',
@@ -341,7 +341,7 @@ export const MEASUREMENT_CURVE_CONFIG: MeasurementCurveConfig = {
       },
     },
   },
-  lot: {
+  [MeasurementType.lot]: {
     default: {
       marker: {
         color: '#595959',
