@@ -7,6 +7,7 @@ import { Metrics } from '@cognite/metrics';
 import { storage } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 import { CogniteError } from '@cognite/sdk';
+import { DocumentsFilter } from '@cognite/sdk-playground';
 
 import { showErrorMessage } from 'components/toast';
 import {
@@ -100,7 +101,7 @@ export const search = (
     limit,
     searchPhraseOverride,
   }: {
-    filters: any; // This should be typed but leaving is till documents move to sdk
+    filters: DocumentsFilter; // This should be typed but leaving is till documents move to sdk
     sort: string[];
     limit?: number;
     searchPhraseOverride?: string;

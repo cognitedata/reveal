@@ -1,4 +1,5 @@
-import merge from 'lodash/merge';
+import isArray from 'lodash/isArray';
+import mergeWith from 'lodash/mergeWith';
 
 import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter, DocumentsSearch } from '@cognite/sdk-playground';
@@ -60,13 +61,19 @@ export const getDocument = (query: string, documentId: string) => {
 
 const search = (
   query: SearchQueryFull,
-  options: { filters?: Record<string, unknown>; sort: string[] },
+  options: { filters?: DocumentsFilter; sort: string[] },
   limit?: number
 ): Promise<DocumentResult> => {
   const queryInfo = getSearchQuery(query);
   return doSearch(
     queryInfo.query,
-    merge(queryInfo.filter, options.filters),
+    mergeWith(queryInfo.filter, options.filters, (objValue, srcValue) => {
+      if (isArray(objValue)) {
+        return Array.from(new Set(objValue.concat(srcValue)));
+      }
+
+      return undefined;
+    }),
     options.sort,
     limit
   )
@@ -135,7 +142,13 @@ const getCategoriesByQuery = (
     .documents.search({
       limit: 0,
       search: queryInfo.query,
-      filter: merge(queryInfo.filter, filters),
+      filter: mergeWith(queryInfo.filter, filters, (objValue, srcValue) => {
+        if (isArray(objValue)) {
+          return objValue.concat(srcValue);
+        }
+
+        return undefined;
+      }),
       aggregates: aggregates.filter((aggregate) => aggregate.name === category),
     })
     .then((result) => ({

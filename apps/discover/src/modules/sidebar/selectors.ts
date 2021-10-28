@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 
+import { DocumentsFilter } from '@cognite/sdk-playground';
+
 import useSelector from 'hooks/useSelector';
 import { DocumentsFacets } from 'modules/documentSearch/types';
 import { WellFilterMap } from 'modules/wellSearch/types';
 
-import { AppliedFiltersType } from './types';
+import { AppliedFiltersType, MapLayerGeoJsonFilter } from './types';
 
 export const useSidebar = () => {
   return useSelector((state) => {
@@ -41,6 +43,26 @@ export const useAppliedDocumentFilters = (): DocumentsFacets => {
   return useMemo(
     () => state.appliedFilters.documents,
     [state.appliedFilters.documents]
+  );
+};
+
+export const useAppliedDocumentMapLayerFilters = ():
+  | DocumentsFilter
+  | undefined => {
+  const state = useSidebar();
+  return useMemo(
+    () => state.appliedFilters.extraDocumentsFilters,
+    [state.appliedFilters.extraDocumentsFilters]
+  );
+};
+
+export const useAppliedMapGeoJsonFilters = ():
+  | MapLayerGeoJsonFilter[]
+  | undefined => {
+  const state = useSidebar();
+  return useMemo(
+    () => state.appliedFilters.extraGeoJsonFilters,
+    [state.appliedFilters.extraGeoJsonFilters]
   );
 };
 

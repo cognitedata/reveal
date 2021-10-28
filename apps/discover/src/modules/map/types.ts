@@ -67,6 +67,7 @@ export interface MapState {
   focusedAsset?: Asset;
   filterApplied: boolean;
   // moved from provider
+  cancelPolygonSearch?: boolean;
   zoomToCoords?: Point; // move map AND zoom
   moveToCoords?: Point; // move - don't change zoon
   zoomToFeature?: Geometry;

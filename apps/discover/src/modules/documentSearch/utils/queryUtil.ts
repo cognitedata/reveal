@@ -63,7 +63,15 @@ export const getSearchQuery = (query: SearchQueryFull) => {
   }
 
   // polygon
-  const geoLocation = generateGeoFilter(query.geoFilter);
+  const geoLocation =
+    query.extraGeoJsonFilters && query.extraGeoJsonFilters[0]
+      ? generateGeoFilter([
+          {
+            properties: {},
+            geometry: query.extraGeoJsonFilters[0].geoJson,
+          },
+        ])
+      : generateGeoFilter(query.geoFilter);
   if (geoLocation) {
     queryInfoResults.filter.geoLocation = geoLocation;
   }

@@ -15,7 +15,7 @@ export const GlobalStyles = createGlobalStyle`
   #root {
     min-height: 100%;
   }
-  
+
   #root * {
     font-family: 'Inter';
     font-feature-settings: 'ss04' on;
@@ -176,14 +176,23 @@ export const GlobalStyles = createGlobalStyle`
     color: white;
     border-radius: 4px;
   }
-  
+
   .map-hover-popup.mapboxgl-popup-anchor-top {
     color: black !important;
   }
-  
+
   .map-hover-popup .mapboxgl-popup-tip {
     border-top-color: black !important;
     border-bottom-color: black !important;
+  }
+
+  .map-layer-filter-menu .mapboxgl-popup-content {
+    padding: 0;
+    background: transparent;
+  }
+
+  .map-layer-filter-menu .mapboxgl-popup-tip {
+    display: none;
   }
 
   .mapboxgl-ctrl-bottom-left {
@@ -205,7 +214,7 @@ export const GlobalStyles = createGlobalStyle`
         display: block;
         transform: scale(0.9);
         transform-origin: bottom left;
-      } 
+      }
 
       &::after {
         content: '';

@@ -42,6 +42,7 @@ import {
   SET_SELECTED_FEATURE,
   CLEAR_SELECTED_FEATURE,
   SET_DRAW_MODE,
+  CLEAR_POLYGON,
 } from 'modules/map/types.actions';
 
 export function zoomToAsset(id: string, geo: Geometry): ZoomToAsset {
@@ -188,4 +189,9 @@ export const clearSelectedFeature = () => ({
 export const setDrawMode = (drawMode: DrawMode) => ({
   type: SET_DRAW_MODE,
   drawMode,
+});
+
+export const setClearPolygon = (cancelPolygonSearch: boolean) => ({
+  type: CLEAR_POLYGON,
+  cancelPolygonSearch,
 });

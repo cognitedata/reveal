@@ -31,6 +31,7 @@ describe('useClearAllDocumentFilters hook', () => {
         documents: {
           facets: documentFacetsStructure,
         },
+        extraGeoJsonFilters: [],
       },
       geoJson: [],
       query: '',

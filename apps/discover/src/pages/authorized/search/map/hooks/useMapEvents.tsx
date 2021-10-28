@@ -1,8 +1,14 @@
 import { useMemo } from 'react';
+import { render } from 'react-dom';
 import { useDispatch } from 'react-redux';
 
 import { TS_FIX_ME } from 'core';
-import { MapLayerMouseEvent, MapMouseEvent, Popup } from 'maplibre-gl';
+import {
+  MapboxGeoJSONFeature,
+  MapLayerMouseEvent,
+  MapMouseEvent,
+  Popup,
+} from 'maplibre-gl';
 
 import { log } from '_helpers/log';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -17,16 +23,21 @@ import {
 } from 'modules/map/actions';
 import { DrawMode } from 'modules/map/types';
 import { useMapContext } from 'modules/map/useMapCache';
+import { Modules } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellIds } from 'modules/wellSearch/selectors';
 
+import { useTenantConfigByKey } from '../../../../../hooks/useTenantConfig';
+import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
+import { DocumentConfig } from '../../../../../tenants/types';
 import {
   DOCUMENT_MARKER,
   GROUPED_CLUSTER_LAYER_ID,
   UNCLUSTERED_LAYER_ID,
   WELL_MARKER,
 } from '../constants';
-import { getAbsoluteCoordinates } from '../utils';
+import { MapLayerSearchModal } from '../map-overlay-actions/MapLayerSearchModal';
+import { extractDocumentMapLayers, getAbsoluteCoordinates } from '../utils';
 
 import { useLayers } from './useLayers';
 
@@ -35,6 +46,15 @@ const hoverPopup = new Popup({
   closeOnClick: false,
   className: 'map-hover-popup',
   anchor: 'top',
+});
+
+const filterPopup = new Popup({
+  closeButton: false,
+  closeOnClick: true,
+  className: 'map-layer-filter-menu',
+  anchor: 'top',
+  focusAfterOpen: true,
+  closeOnMove: true,
 });
 
 const getHoverPopupCoords = (e: MapLayerMouseEvent): [number, number] => {
@@ -131,6 +151,10 @@ export const UseMapEvents = () => {
   const wellIds = useWellIds();
   const dispatch = useDispatch();
   const [mapSettings, setMapSettings] = useMapContext();
+  const { data: documentConfig } = useTenantConfigByKey<DocumentConfig>(
+    Modules.DOCUMENTS
+  );
+  const patchSavedSearch = useSavedSearch();
 
   const clusterZoomOnClickEvent = (e: MapMouseEvent) => {
     const view: any = e.target.queryRenderedFeatures(e.point, {
@@ -216,6 +240,58 @@ export const UseMapEvents = () => {
     dispatch(clearSelectedDocument());
   };
 
+  const handleClick = (event: MapMouseEvent) => {
+    const view: MapboxGeoJSONFeature[] = event.target.queryRenderedFeatures(
+      event.point
+    );
+
+    // Don't show the filter popup if we click on one of our custom layers
+    if (view.find((f) => f.properties?.customLayer)) {
+      return;
+    }
+
+    const filteredFeatures = extractDocumentMapLayers(
+      view,
+      documentConfig?.mapLayerFilters
+    );
+
+    if (filteredFeatures.length) {
+      const placeholder = document.createElement('div');
+      render(
+        <MapLayerSearchModal
+          items={filteredFeatures.map((f) => f.geoFilter)}
+          onItemSelect={(item) => {
+            patchSavedSearch({
+              // TODO(PP-2162)(https://cognitedata.atlassian.net/browse/PP-2162)
+
+              /* filters: {
+                extraGeoJsonFilters: appliedFilters.extraGeoJsonFilters
+                  ? [
+                      ...appliedFilters.extraGeoJsonFilters.filter(
+                        (f) => f.label !== item.label
+                      ),
+                      item,
+                    ]
+                  : [item],
+              }, */
+              filters: {
+                extraGeoJsonFilters: [item],
+              },
+              geoJson: [],
+            });
+
+            filterPopup.remove();
+          }}
+        />,
+        placeholder
+      );
+      filterPopup
+        .setLngLat(event.lngLat)
+        .setDOMContent(placeholder)
+        .addTo(event.target);
+    }
+  };
+
   const handleMovedEnd = (event: MapMouseEvent) => {
     // is this necessary now that we've always displaying the map?
     const center = event.target.getCenter();
@@ -276,6 +352,10 @@ export const UseMapEvents = () => {
 
       // Map
 
+      {
+        type: 'click',
+        callback: handleClick,
+      },
       {
         type: 'mousedown',
         callback: handleMouseDown,

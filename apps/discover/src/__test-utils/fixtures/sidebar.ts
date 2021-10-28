@@ -8,8 +8,10 @@ import {
 import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
 import { FilterValues, WellFilterMap } from 'modules/wellSearch/types';
 
+import { Modules } from '../../modules/sidebar/types';
+
 export const DEFAULT_SEARCH_PHRASE = 'Well A';
-export const DEFAULT_OPEN_CATEGORY = 'wells';
+export const DEFAULT_OPEN_CATEGORY = Modules.WELLS;
 export const DEFAULT_CATEGORIES = [
   'Field / Block / Operator',
   'Well Characteristics',

@@ -31,6 +31,8 @@ jest.mock('modules/sidebar/selectors', () => ({
   useAppliedDocumentFilters: jest.fn(),
   useAppliedWellFilters: jest.fn(),
   useFilterAppliedFilters: jest.fn(),
+  useAppliedDocumentMapLayerFilters: jest.fn(),
+  useAppliedMapGeoJsonFilters: jest.fn(),
 }));
 
 jest.mock('../FilterCollapse', () => ({

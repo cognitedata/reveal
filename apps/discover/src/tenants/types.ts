@@ -17,6 +17,7 @@ import {
   Sequence,
   SequenceFilter as SdkSequenceFilter,
 } from '@cognite/sdk';
+import { DocumentsFilter } from '@cognite/sdk-playground/dist/src/types';
 
 import { Modules } from 'modules/sidebar/types';
 import { SequenceFilter } from 'modules/wellSearch/service';
@@ -63,14 +64,12 @@ export interface DocumentConfig {
   defaultLimit?: number;
   // This is used to decide whether extract documents by parent path field or directory field
   extractByFilepath?: boolean;
-  filters: {
-    // [s: string]: string | string[] | number;
-    [s: string]: any; // need to update to api types
-  };
+  filters: DocumentsFilter;
   wellboreSchematics?: {
     supportedFileTypes: Array<string>;
   };
   showGeometryOnMap?: boolean;
+  mapLayerFilters?: MapLayerFilters;
 }
 
 export interface TrackConfig {
@@ -300,6 +299,13 @@ export type ExternalLinksConfig = {
 export interface CompanyInfoConfig {
   name?: string;
   logo?: string; // The logo needs to be uploaded in the images/logo directory.
+}
+
+export interface MapLayerFilters {
+  [key: string]: {
+    labelAccessor: string;
+    filters?: Array<keyof DocumentsFilter>;
+  };
 }
 
 type ModuleConfig = {

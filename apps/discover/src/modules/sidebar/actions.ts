@@ -8,6 +8,7 @@ import {
   UPDATE_CATEGORY_APPLIED_FILTER,
   UPDATE_CATEGORY_APPLIED_FILTERS,
   SET_SEARCH_PHRASE,
+  UPDATE_EXTRA_GEO_APPLIED_FILTERS,
 } from './constants';
 import {
   CategoryTypes,
@@ -15,6 +16,7 @@ import {
   AppliedFiltersType,
   UpdateCategoryAppliedFilterType,
   AppliedFilterFacetValueUpdateType,
+  MapLayerGeoJsonFilter,
 } from './types';
 
 export const toggleFilterBar = createAction(TOGGLE_FILTER_BAR);
@@ -32,3 +34,6 @@ export const updateCategoryAppliedFilters =
     UPDATE_CATEGORY_APPLIED_FILTERS
   );
 export const setSearchPhrase = createAction<string>(SET_SEARCH_PHRASE);
+export const updateExtraGeoJsonAppliedFilters = createAction<
+  MapLayerGeoJsonFilter[]
+>(UPDATE_EXTRA_GEO_APPLIED_FILTERS);

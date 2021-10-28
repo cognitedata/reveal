@@ -2,7 +2,10 @@ import { useMutatePatchSavedSearch } from 'modules/api/savedSearches/useQuery';
 
 export const useClearQuery = () => {
   const { mutateAsync } = useMutatePatchSavedSearch();
-  return () => mutateAsync({ query: '' });
+  return () =>
+    mutateAsync({
+      query: '',
+    });
 };
 
 export const useSetQuery = () => {

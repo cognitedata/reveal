@@ -22,6 +22,10 @@ import {
   isDocumentDateFacet,
 } from 'modules/sidebar/utils';
 
+import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
+import { useAppliedMapGeoJsonFilters } from '../../../../../modules/sidebar/selectors';
+import { MapLayerGeoJsonFilter } from '../../../../../modules/sidebar/types';
+
 import { TagRow, TagWrapper } from './elements';
 
 export enum ClearAllScenarios {
@@ -41,6 +45,7 @@ interface Props {
 
 export const DocumentAppliedFilters: React.FC<Props> = (props) => {
   const documentFacets = useAppliedDocumentFilters();
+  const extraGeoJsonFilters = useAppliedMapGeoJsonFilters();
   const searchPhrase = useSearchPhrase();
   const { filterApplied: geoFiltersApplied } = useMap();
   const selectedFeature = useGetTypeFromGeometry();
@@ -49,15 +54,26 @@ export const DocumentAppliedFilters: React.FC<Props> = (props) => {
   const clearAllDocumentFilters = useClearAllDocumentFilters();
   const clearQuery = useClearQuery();
   const clearPolygon = useClearPolygon();
+  const patchSavedSearch = useSavedSearch();
 
   const actions = {
     setDocumentFilters,
     clearAllDocumentFilters,
     clearQuery,
     clearPolygon,
+    clearExtraGeoJsonFilter: (filter: MapLayerGeoJsonFilter) => {
+      patchSavedSearch({
+        filters: {
+          extraGeoJsonFilters: extraGeoJsonFilters?.filter(
+            (f) => f.label !== filter.label
+          ),
+        },
+      });
+    },
   };
   const data = {
     documentFacets,
+    extraGeoJsonFilters,
     searchPhrase,
     geoFiltersApplied,
     selectedFeature,
@@ -76,6 +92,7 @@ interface CoreProps {
   showClearTagForScenarios?: ClearAllScenarios;
   data: {
     documentFacets: DocumentsFacets;
+    extraGeoJsonFilters: MapLayerGeoJsonFilter[] | undefined;
     searchPhrase: string;
     selectedFeature?: GeoJsonGeometryTypes | null;
     geoFiltersApplied?: boolean;
@@ -84,7 +101,11 @@ interface CoreProps {
     clearAllDocumentFilters: () => void;
     clearQuery: () => void;
     clearPolygon?: () => void;
-    setDocumentFilters: (facets: DocumentsFacets) => void;
+    setDocumentFilters: (
+      facets: DocumentsFacets
+      // extraGeoJsonFilters?: MapLayerGeoJsonFilter[]
+    ) => void;
+    clearExtraGeoJsonFilter?: (filter: MapLayerGeoJsonFilter) => void;
   };
 }
 
@@ -103,6 +124,7 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
 
     const {
       documentFacets,
+      extraGeoJsonFilters,
       searchPhrase,
       selectedFeature,
       geoFiltersApplied = false,
@@ -113,6 +135,7 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
       clearAllDocumentFilters,
       clearPolygon,
       clearQuery,
+      clearExtraGeoJsonFilter,
     } = actions;
 
     const formatTag = useDocumentFormatFilter();
@@ -120,7 +143,8 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
 
     const hasFiltersApplied =
       (getDocumentFacetsflatValues(documentFacets) || []).length > 0 ||
-      geoFiltersApplied;
+      geoFiltersApplied ||
+      (extraGeoJsonFilters && extraGeoJsonFilters.length > 0);
 
     const handleClearFilterClicked = ({
       facet,
@@ -147,12 +171,20 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
         });
       }
 
-      setDocumentFilters({
-        ...documentFacets,
-        [facet]: filtered,
-      });
+      setDocumentFilters(
+        {
+          ...documentFacets,
+          [facet]: filtered,
+        }
+        // extraGeoJsonFilters
+      );
     };
 
+    const handleClearMapLayerFilter = (filter: MapLayerGeoJsonFilter) => {
+      if (clearExtraGeoJsonFilter) {
+        clearExtraGeoJsonFilter(filter);
+      }
+    };
     const handleClearAllClick = () => {
       metrics.track('click-documents-clear-all-tag');
       clearAllDocumentFilters();
@@ -229,6 +261,16 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
                     original: item,
                   })
               );
+            }
+          );
+        })}
+
+        {(extraGeoJsonFilters || []).map((filter) => {
+          return createFilterTagElement(
+            `map-layer-filter-${filter.label}`,
+            filter.label,
+            () => {
+              handleClearMapLayerFilter(filter);
             }
           );
         })}

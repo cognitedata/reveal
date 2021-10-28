@@ -21,14 +21,23 @@ export const useSetPolygon = () => {
   const { mutateAsync } = useMutatePatchSavedSearch();
   return (geometry: Geometry | GeoJson | GeoJson[]) => {
     if (isArray(geometry)) {
-      return mutateAsync({ geoJson: geometry });
+      return mutateAsync({
+        geoJson: geometry,
+        filters: { extraGeoJsonFilters: [] },
+      });
     }
 
     if (isOfType<GeoJson>(geometry, 'geometry')) {
-      return mutateAsync({ geoJson: [geometry] });
+      return mutateAsync({
+        geoJson: [geometry],
+        filters: { extraGeoJsonFilters: [] },
+      });
     }
 
     // old way:
-    return mutateAsync({ geoJson: [convertGeometryToGeoJson(geometry)] });
+    return mutateAsync({
+      geoJson: [convertGeometryToGeoJson(geometry)],
+      filters: { extraGeoJsonFilters: [] },
+    });
   };
 };

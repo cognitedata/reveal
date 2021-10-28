@@ -8,6 +8,8 @@ import { useSetRelatedDocumentFilters } from 'modules/filterData/hooks/useSetRel
 import { useRelatedDocumentFilterQuery } from 'modules/wellSearch/selectors/sequence/RelatedDocuments/useRelatedDocumentFilterQuery';
 import { DocumentAppliedFiltersCore } from 'pages/authorized/search/document/header/DocumentAppliedFilters';
 
+import { useAppliedMapGeoJsonFilters } from '../../../../../../../modules/sidebar/selectors';
+
 interface Props {
   showSearchPhraseTag?: boolean;
   showClearTag?: boolean;
@@ -15,6 +17,7 @@ interface Props {
 
 export const RelatedDocumentAppliedFilters: React.FC<Props> = (props) => {
   const { facets, phrase } = useRelatedDocumentFilterQuery();
+  const extraGeoJsonFilters = useAppliedMapGeoJsonFilters();
   const setRelatedDocumentFilters = useSetRelatedDocumentFilters();
 
   const setDocumentFilters = (docFacets: DocumentsFacets) => {
@@ -34,6 +37,7 @@ export const RelatedDocumentAppliedFilters: React.FC<Props> = (props) => {
   };
   const data = {
     documentFacets: facets,
+    extraGeoJsonFilters,
     searchPhrase: phrase,
   };
   return (

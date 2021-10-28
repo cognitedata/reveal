@@ -1,3 +1,4 @@
+import { Modules } from '../../../../../../modules/sidebar/types';
 import { BaseFilter } from '../components/BaseFilter';
 import { FilterCollapse } from '../components/FilterCollapse';
 
@@ -15,7 +16,7 @@ export const SeismicFilter = () => {
         displayBetaSymbol
         // handleClearFilters={}
       />
-      <FilterCollapse category="seismic">
+      <FilterCollapse category={Modules.SEISMIC}>
         <FilterCollapse.Panel title="Domain">
           <p>Coming Soon</p>
         </FilterCollapse.Panel>

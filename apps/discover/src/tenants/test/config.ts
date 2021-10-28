@@ -10,9 +10,7 @@ const defaultConfig: TenantConfig = {
     ],
   },
   documents: {
-    filters: {
-      test: true,
-    },
+    filters: {},
   },
   wells: {
     trajectory: {

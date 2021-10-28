@@ -10,6 +10,7 @@ import {
   updateCategoryAppliedFilter,
   updateCategoryAppliedFilters,
   setSearchPhrase,
+  updateExtraGeoJsonAppliedFilters,
 } from './actions';
 import { SidebarState, SidebarActions } from './types';
 
@@ -49,19 +50,28 @@ const runTimeConfigReducerCreator = createReducer(initialState, (builder) => {
        * There is no way this funciton to know secific types becase they are inferred by
        * where it is called.
        */
-      // eslint-disable-next-line no-param-reassign
-      (state as any).appliedFilters[action.payload.category][
-        action.payload.facet
-      ] = action.payload.value;
+      if (action.payload) {
+        // eslint-disable-next-line no-param-reassign
+        (state as any).appliedFilters[action.payload.category][
+          action.payload.facet
+        ] = action.payload.value;
+      }
     })
     .addCase(updateCategoryAppliedFilters, (state, action) => {
       // eslint-disable-next-line no-param-reassign
       (state as any).appliedFilters[action.payload.category] =
         action.payload.value;
+      if ('extraDocumentFilters' in action.payload) {
+        state.appliedFilters.extraDocumentsFilters =
+          action.payload.extraDocumentFilters;
+      }
     })
     .addCase(setSearchPhrase, (state, action) => {
       // eslint-disable-next-line no-param-reassign
       state.searchPhrase = action.payload;
+    })
+    .addCase(updateExtraGeoJsonAppliedFilters, (state, action) => {
+      state.appliedFilters.extraGeoJsonFilters = action.payload;
     });
 });
 

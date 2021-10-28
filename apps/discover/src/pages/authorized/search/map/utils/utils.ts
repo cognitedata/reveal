@@ -1,6 +1,9 @@
 import { Feature, FeatureCollection, Position } from '@turf/helpers';
 import isArray from 'lodash/isArray';
+import pick from 'lodash/pick';
+import { MapboxGeoJSONFeature } from 'maplibre-gl';
 
+import { DocumentsFilter } from '@cognite/sdk-playground';
 import { GeoJson, Geometry } from '@cognite/seismic-sdk-js';
 
 import { convertPolygonToPoint } from 'modules/map/helper';
@@ -13,6 +16,9 @@ import {
   SEISMIC_LAYER_ID,
   WELL_MARKER,
 } from 'pages/authorized/search/map/constants';
+
+import { MapLayerGeoJsonFilter } from '../../../../../modules/sidebar/types';
+import { MapLayerFilters } from '../../../../../tenants/types';
 
 export const clusterConfig = {
   cluster: true,
@@ -32,6 +38,7 @@ export const clusterConfig = {
       '+',
       ['case', ['==', ['get', 'isBlurred'], true], 1, 0],
     ],
+    customLayer: ['==', true, true],
   },
 };
 
@@ -133,10 +140,56 @@ const getAbsoluteCoordinates = (
   return position;
 };
 
+const extractDocumentMapLayers = (
+  features: MapboxGeoJSONFeature[],
+  tenantConfigMapLayerFilters?: MapLayerFilters
+): {
+  geoFilter: MapLayerGeoJsonFilter;
+  extraDocumentsFilter?: DocumentsFilter;
+}[] => {
+  return features.reduce(
+    (
+      previousValue: {
+        geoFilter: MapLayerGeoJsonFilter;
+        extraDocumentsFilter?: DocumentsFilter;
+      }[],
+      currentValue
+    ) => {
+      if (
+        tenantConfigMapLayerFilters &&
+        !!tenantConfigMapLayerFilters[currentValue.layer.id] &&
+        currentValue.properties
+      ) {
+        previousValue.push({
+          geoFilter: {
+            label:
+              currentValue.properties[
+                tenantConfigMapLayerFilters[currentValue.layer.id].labelAccessor
+              ],
+            geoJson: currentValue.geometry,
+          },
+          extraDocumentsFilter:
+            currentValue.properties.filter &&
+            tenantConfigMapLayerFilters[currentValue.layer.id]?.filters
+              ? pick(
+                  JSON.parse(currentValue.properties.filter),
+                  tenantConfigMapLayerFilters[currentValue.layer.id]
+                    .filters as string[]
+                )
+              : undefined,
+        });
+      }
+      return previousValue;
+    },
+    []
+  );
+};
+
 export {
   getAssetFilter,
   getAssetData,
   createSources,
   setSourceProperties,
   getAbsoluteCoordinates,
+  extractDocumentMapLayers,
 };

@@ -15,6 +15,7 @@ import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterCon
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
 import { WellFilterOptionValue, WellFilterMap } from 'modules/wellSearch/types';
 
+import { Modules } from '../../../../../../modules/sidebar/types';
 import { BaseFilter } from '../components/BaseFilter';
 import { FilterCollapse } from '../components/FilterCollapse';
 
@@ -136,7 +137,7 @@ export const WellsFilter = () => {
         category={CATEGORY}
         handleClearFilters={clearWellFilters}
       />
-      <FilterCollapse category="wells">
+      <FilterCollapse category={Modules.WELLS}>
         {/* Collapsable Panel Elements */}
         {renderFilters}
       </FilterCollapse>

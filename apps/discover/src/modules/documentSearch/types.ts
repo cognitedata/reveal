@@ -9,6 +9,8 @@ import {
 } from '@cognite/sdk-playground';
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
+import { MapLayerGeoJsonFilter } from '../sidebar/types';
+
 // Document state
 
 export interface DocumentState {
@@ -141,6 +143,8 @@ export interface SearchQueryFull {
   phrase: string;
   facets: DocumentsFacets;
   geoFilter: GeoJson[];
+  extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
+  extraDocumentFilters?: DocumentsFilter;
 }
 
 // we dont use most of these fields

@@ -2,6 +2,7 @@
 import {
   ADD_ARBITRARYLINE,
   ADD_SELECTABLE_LAYERS,
+  CLEAR_POLYGON,
   CLEAR_SELECTED_DOCUMENT,
   CLEAR_SELECTED_FEATURE,
   CLEAR_SELECTED_POINT,
@@ -159,7 +160,8 @@ export function map(
     case SET_SELECTED_FEATURE:
     case SET_DRAW_MODE:
     case SET_SELECTED_WELL:
-    case SET_SELECTED_DOCUMENT: {
+    case SET_SELECTED_DOCUMENT:
+    case CLEAR_POLYGON: {
       return { ...state, ...action };
     }
 

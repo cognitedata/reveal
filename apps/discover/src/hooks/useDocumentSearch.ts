@@ -10,6 +10,8 @@ import { toSort } from 'modules/documentSearch/utils/toSort';
 import { setSortByOptions } from 'modules/resultPanel/actions';
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
 
+import { updateExtraGeoJsonAppliedFilters } from '../modules/sidebar/actions';
+
 import { useTenantConfig } from './useTenantConfig';
 
 export const useDocumentSearch = () => {
@@ -42,7 +44,18 @@ export const useDocumentSearch = () => {
         updateCategoryAppliedFilters({
           category: 'documents',
           value: documentFilters.facets,
+          extraDocumentFilters:
+            searchQuery.filters?.documents?.extraDocumentFilters,
         })
+      );
+    }
+
+    // Set extra map geo filters
+    if (searchQuery.filters?.extraGeoJsonFilters) {
+      dispatch(
+        updateExtraGeoJsonAppliedFilters(
+          searchQuery.filters.extraGeoJsonFilters
+        )
       );
     }
 

@@ -105,10 +105,13 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
         value = value.map((id) => ({ externalId: id }));
       }
 
-      setDocumentFilters({
-        ...appliedFilters.documents,
-        [docQueryFacetType]: value,
-      });
+      setDocumentFilters(
+        {
+          ...appliedFilters.documents,
+          [docQueryFacetType]: value,
+        },
+        appliedFilters.extraDocumentsFilters
+      );
       setShowApplyButton(false);
     };
 

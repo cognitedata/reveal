@@ -118,16 +118,11 @@ export const useMutatePatchSavedSearch = (
     },
     {
       onSuccess: (data) => {
-        // eslint-disable-next-line no-debugger
-        // debugger;
-
         if ('error' in data) {
           log('Error from useMutatePatchSavedSearch', [data]);
           reportException('Error updating saved search');
           return;
         }
-
-        // console.log('Setting into current query state', data);
 
         // need to set here, because the data in the db-service is only 'eventually consistent'
         queryClient.setQueryData(SAVED_SEARCHES_QUERY_KEY_CURRENT, data);

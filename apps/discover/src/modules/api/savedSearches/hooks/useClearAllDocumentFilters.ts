@@ -10,7 +10,10 @@ export const useClearAllDocumentFilters = () => {
       normalizeSavedSearch({
         query: '',
         geoJson: [],
-        filters: { documents: { facets } },
+        filters: {
+          documents: { facets, extraDocumentFilters: undefined },
+          extraGeoJsonFilters: [],
+        },
       })
     );
   };

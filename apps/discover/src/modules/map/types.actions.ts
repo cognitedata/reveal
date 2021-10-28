@@ -39,6 +39,7 @@ export const CLEAR_SELECTED_POINT = 'mapProvider/clearSelectedPoint';
 export const SET_SELECTED_FEATURE = 'mapProvider/setSelectedFeature';
 export const CLEAR_SELECTED_FEATURE = 'mapProvider/clearSelectedFeature';
 export const SET_DRAW_MODE = 'mapProvider/drawMode';
+export const CLEAR_POLYGON = 'mapProvider/clearPolygon';
 
 export interface SetGeo {
   type: typeof SET_GEO_FILTERS;
@@ -166,6 +167,11 @@ interface SetDrawMode {
   drawMode: DrawMode;
 }
 
+interface SetClearPolygon {
+  type: typeof CLEAR_POLYGON;
+  cancelPolygonSearch: boolean;
+}
+
 export type MapAction =
   | SetGeo
   | ZoomToAsset
@@ -192,4 +198,5 @@ export type MapAction =
   | ClearSelectedWell
   | ClearSelectedPoint
   | SetSelectedPoint
-  | SetDrawMode;
+  | SetDrawMode
+  | SetClearPolygon;

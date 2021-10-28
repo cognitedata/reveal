@@ -50,6 +50,9 @@ describe('useSetPolygon hook', () => {
       geoJson: [
         { geometry: point, id: 'Feature', properties: {}, type: 'Feature' },
       ],
+      filters: {
+        extraGeoJsonFilters: [],
+      },
     });
   });
 
@@ -71,6 +74,9 @@ describe('useSetPolygon hook', () => {
     setPolygon(filter);
     expect(mutateAsync).toHaveBeenCalledWith({
       geoJson: [filter],
+      filters: {
+        extraGeoJsonFilters: [],
+      },
     });
   });
 
@@ -92,6 +98,9 @@ describe('useSetPolygon hook', () => {
     setPolygon([point]);
     expect(mutateAsync).toHaveBeenCalledWith({
       geoJson: [point],
+      filters: {
+        extraGeoJsonFilters: [],
+      },
     });
   });
 });

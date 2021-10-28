@@ -1,8 +1,10 @@
+import { DocumentsFilter } from '@cognite/sdk-playground';
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
 import { SortBy } from '../../../pages/types';
 import { DocumentsFacets } from '../../documentSearch/types';
 import { SharedWithData } from '../../favorite/types';
+import { MapLayerGeoJsonFilter } from '../../sidebar/types';
 import { BasicUserInfo } from '../../user/types';
 import { WellFilterMap } from '../../wellSearch/types';
 
@@ -29,8 +31,10 @@ export interface SavedSearchContent {
 export interface SearchOptionFilters {
   documents?: {
     facets: DocumentsFacets;
+    extraDocumentFilters?: DocumentsFilter;
   };
   wells?: WellFilterMap;
+  extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
 }
 
 export interface SearchOptionSortBy {

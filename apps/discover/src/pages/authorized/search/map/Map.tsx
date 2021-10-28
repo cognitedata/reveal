@@ -49,6 +49,7 @@ import { SEISMIC_NO_SURVEY_ERROR_MESSAGE } from 'modules/seismicSearch/constants
 import { useSelectedSurvey } from 'modules/seismicSearch/hooks';
 import { FlexGrow } from 'styles/layout';
 
+import { setClearPolygon } from '../../../../modules/map/actions';
 import { MS_TRANSITION_TIME } from '../search/SideBar/constants';
 
 import { SeismicCard, WellCard, DocumentCard } from './cards';
@@ -92,6 +93,7 @@ export const Map: React.FC = () => {
     moveToCoords,
     drawMode,
     selectedFeature,
+    cancelPolygonSearch,
   } = useMap();
   const { layers: allLayers, selectableLayers } = useLayers();
   const selectedLayers = useSelectedLayers(selectableLayers, selected);
@@ -113,6 +115,13 @@ export const Map: React.FC = () => {
 
   const setSavedPolygon = useSetPolygon();
   const clearPolygon = useClearPolygon();
+
+  useEffect(() => {
+    if (cancelPolygonSearch) {
+      deletePolygon();
+      dispatch(setClearPolygon(false));
+    }
+  }, [cancelPolygonSearch]);
 
   useEffect(() => {
     if (zoomToFeature) {

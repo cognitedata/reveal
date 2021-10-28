@@ -1,8 +1,8 @@
-import {
-  DocumentsFacetLabels,
-  DocumentsFacets,
-} from 'modules/documentSearch/types';
-import { WellFilterMap } from 'modules/wellSearch/types';
+import { GeoJSONGeometry } from '@cognite/geospatial-sdk-js';
+import { DocumentsFilter } from '@cognite/sdk-playground';
+
+import { DocumentsFacetLabels, DocumentsFacets } from '../documentSearch/types';
+import { WellFilterMap } from '../wellSearch/types';
 
 import {
   TOGGLE_FILTER_BAR,
@@ -25,19 +25,27 @@ export enum Modules {
   SEISMIC = 'seismic',
 }
 
-export type ModulesValueType = `${Modules}`;
-
-export type ModuleKeys = keyof typeof Modules;
+export type ModulesValueType =
+  | Modules.DOCUMENTS
+  | Modules.WELLS
+  | Modules.SEISMIC;
 
 export type CategoryTypes = ModulesValueType | 'landing';
 
 type FilterType = Record<string, string[]>;
+
+export interface MapLayerGeoJsonFilter {
+  label: string;
+  geoJson: GeoJSONGeometry;
+}
 
 export type AppliedFiltersType = {
   documents: DocumentsFacets;
   seismic: FilterType;
   wells: WellFilterMap;
   landing: FilterType;
+  extraDocumentsFilters?: DocumentsFilter;
+  extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
 };
 
 export type ActiveKeysType = {
@@ -86,11 +94,13 @@ export type UpdateWellAppliedFilters = {
 export type UpdateDocumentAppliedFilters = {
   category: 'documents';
   value: DocumentsFacets;
+  extraDocumentFilters?: DocumentsFilter;
 };
 
 export type UpdateCategoryAppliedFilterType =
   | UpdateWellAppliedFilters
   | UpdateDocumentAppliedFilters;
+
 interface ToggleFilterBar {
   type: typeof TOGGLE_FILTER_BAR;
 }

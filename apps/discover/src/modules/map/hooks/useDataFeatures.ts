@@ -71,6 +71,7 @@ export const useDataFeatures = (
           ? false
           : selectedDocumentsWithGeo.length > 0 ||
             selectedWellsWithGeo.length > 0,
+        customLayer: true,
       }) as Feature<any>;
     });
   }, [
@@ -94,6 +95,7 @@ export const useDataFeatures = (
               ? false
               : selectedWellsWithGeo.length > 0 ||
                 selectedDocumentsWithGeo.length > 0,
+            customLayer: true,
           }) as Feature<Geometry>;
 
           results.push(wellFeature);
@@ -136,6 +138,7 @@ export const useDataFeatures = (
           isBlurred:
             selectedWellsWithGeo.length > 0 ||
             selectedDocumentsWithGeo.length > 0,
+          customLayer: true,
         },
       }))
       .filter((well) => !wellIds.includes(well.properties.id));

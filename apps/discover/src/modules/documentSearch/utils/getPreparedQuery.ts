@@ -11,5 +11,7 @@ export const getPreparedQuery = (
     geoFilter: [...state.map.geoFilter],
     facets: state.sidebar.appliedFilters.documents,
     ...extras,
+    extraGeoJsonFilters: state.sidebar.appliedFilters.extraGeoJsonFilters,
+    extraDocumentFilters: state.sidebar.appliedFilters.extraDocumentsFilters,
   };
 };
