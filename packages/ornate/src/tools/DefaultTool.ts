@@ -58,8 +58,11 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     this.mouseMoved = false;
   };
 
-  onMouseMove = () => {
-    this.mouseMoved = true;
+  onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+    // Reduce the sensitivity
+    if (e.evt.movementX > 1 || e.evt.movementY > 1) {
+      this.mouseMoved = true;
+    }
   };
 
   onMouseUp = (e: KonvaEventObject<MouseEvent>) => {
