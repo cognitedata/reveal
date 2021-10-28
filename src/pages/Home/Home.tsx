@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Title, Icon } from '@cognite/cogs.js';
+import { Title, Icon, Loader } from '@cognite/cogs.js';
 import { Menu } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -46,7 +46,7 @@ export default function () {
   const { data: authConfiguration, isFetched } = useAuthConfiguration();
 
   if (!isFetched) {
-    return <Icon type="Loading" />;
+    return <Loader />;
   }
 
   return (
