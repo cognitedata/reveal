@@ -15,6 +15,7 @@
     "@reveal/camera-manager": "workspace:*",
     "@reveal/data-source": "workspace:*",
     "@reveal/logger": "workspace:*",
+    "@reveal/metrics": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*",
     "@reveal/rendering": "workspace:*",

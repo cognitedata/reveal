@@ -6,20 +6,9 @@ import mixpanel from 'mixpanel-browser';
 
 import log from '@reveal/logger';
 
-type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'cameraNavigated';
-type EventProps = {
+export type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'cameraNavigated' | 'toolCreated';
+export type EventProps = {
   [key: string]: any;
-  // names mentioned instead of just `string` type for typo protection,
-  // better than nothing, easier than anything else
-  moduleName:
-    | 'RevealManager'
-    | 'createRevealManager'
-    | 'Cognite3DViewer'
-    | 'CadManager'
-    | 'CachedRepository'
-    | 'Cognite3DModel'
-    | 'sectorUtilities';
-  methodName: string;
 };
 
 const { VERSION, MIXPANEL_TOKEN } = process.env;
@@ -101,6 +90,10 @@ export function trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
   }
   const combined = { ...globalProps, ...eventProps };
   mixpanel.track(eventName, combined);
+}
+
+export function trackCreateTool(toolName: string) {
+  trackEvent('toolCreated', { toolName });
 }
 
 export function trackLoadModel(eventProps: EventProps, modelIdentifier: any) {

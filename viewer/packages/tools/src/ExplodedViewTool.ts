@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+import { trackCreateTool } from '@reveal/metrics';
 
 export class ExplodedViewTool extends Cognite3DViewerToolBase {
   private readonly _cadModel: Cognite3DModel;
@@ -21,6 +22,8 @@ export class ExplodedViewTool extends Cognite3DViewerToolBase {
     this._rootTreeIndex = treeIndex;
 
     this.preloadBoundingBoxData(cadModel, treeIndex);
+
+    trackCreateTool('ExplodedViewTool');
   }
 
   public async expand(expandRadius: number): Promise<void> {
