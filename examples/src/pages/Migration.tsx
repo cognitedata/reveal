@@ -16,7 +16,7 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  DefaultNodeAppearance
+  IndexSet
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -56,7 +56,7 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -66,7 +66,16 @@ export function Migration() {
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
       if (project !== null) {
-        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
+        await client.loginWithOAuth(
+          { 
+            type: 'AAD_OAUTH', 
+            options: { 
+              clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
+              cluster: 'api',
+              tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
+            } 
+        });
+        client.setProject(project);
         await client.authenticate();
       } else if (baseUrl !== null) {
         viewerOptions = {
@@ -99,18 +108,10 @@ export function Migration() {
           });
         }
       };
-      
-      const prioritizedNodeCollection = new TreeIndexNodeCollection();
-      prioritizedNodeCollection.initializeAreaCollection();
 
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
-
-          if (model instanceof Cognite3DModel) {
-            (model as Cognite3DModel).assignStyledNodeCollection(prioritizedNodeCollection, { ...DefaultNodeAppearance.Highlighted,
-                                                                                              prioritizedForLoadingHint: 5.0 });
-          }
 
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
@@ -394,11 +395,6 @@ export function Migration() {
       }
 
       const selectedSet = new TreeIndexNodeCollection([]);
-      (viewer.models[0] as Cognite3DModel).assignStyledNodeCollection(selectedSet, 
-      {
-        ...DefaultNodeAppearance.Highlighted,
-        renderGhosted: false
-      });
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -452,7 +448,6 @@ export function Migration() {
 
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
-
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -464,19 +459,15 @@ export function Migration() {
               {
                 const { treeIndex, point, model } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                // const overlayHtml = document.createElement('div');
-                // overlayHtml.innerText = `Node ${treeIndex}`;
-                // overlayHtml.style.cssText = 'background: white; position: absolute;';
-                // overlayTool.add(overlayHtml, point);
-                
+                const overlayHtml = document.createElement('div');
+                overlayHtml.innerText = `Node ${treeIndex}`;
+                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                overlayTool.add(overlayHtml, point);
+  
                 // highlight the object
-                const highlights = selectedSet.getIndexSet();
-                highlights.add(treeIndex);
-                selectedSet.updateSet(highlights);
-
-                // Make sure selected object is prioritized
-                prioritizedNodeCollection.addAreaPoints([point]);
-                console.log(JSON.stringify(prioritizedNodeCollection.serialize()));
+                selectedSet.updateSet(new IndexSet([treeIndex]));
+                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+                viewer.fitCameraToBoundingBox(boundingBox, 1000);
               }
               break;
             case 'pointcloud':
