@@ -90,7 +90,8 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
-      state: this._treeIndices.toRangeArray()
+      state: this._treeIndices.toRangeArray(),
+      options: { areas: this._areaCollection ? [...this._areaCollection.areas()] : undefined }
     };
   }
 }

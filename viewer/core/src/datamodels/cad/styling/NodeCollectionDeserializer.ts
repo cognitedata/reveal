@@ -106,6 +106,10 @@ export class NodeCollectionDeserializer {
       const indexSet = new IndexSet();
       descriptor.state.forEach((range: NumericRange) => indexSet.addRange(new NumericRange(range.from, range.count)));
       const nodeCollection = new TreeIndexNodeCollection(indexSet);
+      if (descriptor.options && descriptor.options.areas) {
+        nodeCollection.addAreas(descriptor.options.areas);
+      }
+
       return Promise.resolve(nodeCollection);
     });
 
