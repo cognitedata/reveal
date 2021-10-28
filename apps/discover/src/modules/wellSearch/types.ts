@@ -125,7 +125,7 @@ export interface TrajectoryData {
 
 export interface TrajectoryRows {
   id: number;
-  wellboreId: number;
+  wellboreId: WellboreId;
   externalId: string;
   columns: TrajectoryColumnR[];
   rows: TrajectoryRow[];
@@ -381,10 +381,12 @@ export interface WellName {
 }
 
 // @sdk-wells-v3
+export type WellId = any;
+export type WellboreId = any;
 export interface Wellbore
   extends Omit<WellboreV2, 'id' | 'wellId'>,
     Partial<Omit<WellboreV3, 'name' | 'matchingId'>> {
-  id: any;
+  id: WellboreId;
   matchingId?: string;
   wellId?: number;
   sequences?: WellSequence[];

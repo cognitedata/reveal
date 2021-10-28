@@ -1,3 +1,5 @@
+import { defaultWellsConfig } from 'tenants/config';
+
 import config from '../discover-e2e-config';
 
 /**
@@ -18,5 +20,6 @@ export default {
     npt: {
       enabled: true,
     },
+    trajectory: defaultWellsConfig.wells?.trajectory,
   },
 };

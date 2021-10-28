@@ -5,12 +5,14 @@ import { Sequence } from '@cognite/sdk';
 
 import { LOG_TRAJECTORY } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
+import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
   useSelectedOrHoveredWellboreIds,
   useWellboreAssetIdMap,
   useSecondarySelectedOrHoveredWells,
+  useActiveWellboresSourceExternalIdMap,
 } from '../selectors';
 import { getTrajectoriesByWellboreIds as service } from '../service';
 import { TrajectoryData, TrajectoryRows } from '../types';
@@ -20,10 +22,13 @@ import { mapWellInfo } from '../utils/trajectory';
 import { useWellConfig } from './useWellConfig';
 
 export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
+  const { data: enableWellSDKV3 } =
+    useTenantConfigByKey<boolean>('enableWellSDKV3');
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const wells = useSecondarySelectedOrHoveredWells();
   const { data: config } = useWellConfig();
   const wellboreAssetIdMap = useWellboreAssetIdMap();
+  const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const metric = useGetCogniteMetric(LOG_TRAJECTORY);
@@ -38,7 +43,15 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.TRAJECTORIES, () =>
-    service(wellboreIds, wellboreAssetIdMap, query, columns, metric)
+    service(
+      wellboreIds,
+      wellboreAssetIdMap,
+      wellboresSourceExternalIdMap,
+      query,
+      columns,
+      metric,
+      enableWellSDKV3
+    )
   );
 
   return useMemo(() => {
@@ -76,15 +89,21 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
     // If there are ids not in the cached data, do a search for new ids and update the cache
     if (newIds.length && !fetchingNewData) {
       setFetchingNewData(true);
-      service(newIds, wellboreAssetIdMap, query, columns, metric).then(
-        (response) => {
-          queryClient.setQueryData(WELL_QUERY_KEY.TRAJECTORIES, {
-            ...response,
-            ...data,
-          });
-          setFetchingNewData(false);
-        }
-      );
+      service(
+        newIds,
+        wellboreAssetIdMap,
+        wellboresSourceExternalIdMap,
+        query,
+        columns,
+        metric,
+        enableWellSDKV3
+      ).then((response) => {
+        queryClient.setQueryData(WELL_QUERY_KEY.TRAJECTORIES, {
+          ...response,
+          ...data,
+        });
+        setFetchingNewData(false);
+      });
     }
 
     return { isLoading: true, trajectories, trajectoryRows };
