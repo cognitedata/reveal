@@ -91,7 +91,6 @@ DEPENDENCIES = [
     "@npm//uuid",
     "@npm//web-vitals",
     "//packages/react-container",
-    "//packages/storage",
     "//packages/metrics",
     "//packages/sidecar",
     "//packages/z-index",

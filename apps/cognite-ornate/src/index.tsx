@@ -2,7 +2,6 @@ import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
 import '@cognite/cogs.js/dist/cogs.css';
 import config from 'utils/config';
-import { storage } from '@cognite/storage';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -19,8 +18,6 @@ if (process.env.REACT_APP_SENTRY_DSN) {
     environment: config.env,
   });
 }
-
-storage.init({ appName: 'ornate' });
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
