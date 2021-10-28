@@ -50,10 +50,6 @@ export class SmartMergeBoxes implements BoxClusterer {
     );
   }
 
-  private shouldMergeBoxesAtIndices(i: number, j: number): boolean {
-    return this.shouldMergeBoxes(this.resultBoxes[i], this.resultBoxes[j]);
-  }
-
   private addBox(box: Box3): void {
     let merged = false;
 
