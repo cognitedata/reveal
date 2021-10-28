@@ -12,7 +12,6 @@ import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import log from '@reveal/logger';
 import { CadNode } from '@reveal/rendering';
-import { PassThroughSectorCuller } from './culling/PassThroughSectorCuller';
 import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders';
 
 /**
@@ -35,7 +34,7 @@ export class SectorLoader {
   private readonly _v8SectorCuller: SectorCuller;
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
-  private readonly _gltfSectorCuller: PassThroughSectorCuller;
+  private readonly _gltfSectorCuller: ByScreenSizeSectorCuller;
 
   constructor(
     sectorCuller: SectorCuller,
