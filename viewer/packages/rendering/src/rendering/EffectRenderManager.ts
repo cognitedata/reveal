@@ -359,10 +359,10 @@ export class EffectRenderManager {
 
       // Clear targets
       renderStateHelper.setClearColor(black, 1.0);
-      this.clearTarget(this._ghostObjectRenderTarget);
       this.clearTarget(this._compositionTarget);
       // We use alpha to store special state for the next targets
       renderStateHelper.setClearColor(black, 0.0);
+      this.clearTarget(this._ghostObjectRenderTarget);
       this.clearTarget(this._customObjectRenderTarget);
       this.clearTarget(this._normalRenderedCadModelTarget);
       this.clearTarget(this._inFrontRenderedCadModelTarget);
