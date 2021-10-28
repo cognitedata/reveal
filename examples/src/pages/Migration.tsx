@@ -102,14 +102,14 @@ export function Migration() {
       
       const prioritizedNodeCollection = new TreeIndexNodeCollection();
       prioritizedNodeCollection.initializeAreaCollection();
-      
+
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
 
           if (model instanceof Cognite3DModel) {
-            (model as Cognite3DModel).setPrioritizedNodes(prioritizedNodeCollection, 5.0);
-          }
+            (model as Cognite3DModel).assignStyledNodeCollection(prioritizedNodeCollection, { ...DefaultNodeAppearance.Highlighted,
+                                                                                              prioritizedForLoadingHint: 5.0 });
 
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
@@ -475,7 +475,7 @@ export function Migration() {
 
                 // Make sure selected object is prioritized
                 prioritizedNodeCollection.addAreaPoints([point]);
-
+                console.log(JSON.stringify(prioritizedNodeCollection.serialize()));
               }
               break;
             case 'pointcloud':
