@@ -114,7 +114,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
   const handleRowSelect = useCallback((row: RowProps<DocumentType>) => {
     setSelectedIds((state) => ({
       ...state,
-      [row.id]: !state[row.id],
+      [row.original.id]: !state[row.original.id],
     }));
   }, []);
 
