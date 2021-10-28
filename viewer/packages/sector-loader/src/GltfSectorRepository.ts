@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
+import { BaseSectorMetadata, ConsumedSector, GltfSectorMetadata, WantedSector } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
@@ -22,9 +22,33 @@ export class GltfSectorRepository implements SectorRepository {
   }
 
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+    const metadata = sector.metadata as BaseSectorMetadata & GltfSectorMetadata;
+
+    if (!metadata.sectorFileName) {
+      return Promise.resolve({
+        modelIdentifier: sector.modelIdentifier,
+        metadata: metadata,
+        levelOfDetail: 2,
+        group: undefined,
+        instancedMeshes: []
+      });
+    }
+
+    if (sector.levelOfDetail == 0) {
+      return Promise.resolve({
+        modelIdentifier: sector.modelIdentifier,
+        metadata: metadata,
+        levelOfDetail: sector.levelOfDetail,
+        instancedMeshes: [],
+        group: undefined
+      });
+    }
+
+    // console.log(metadata.sectorFileName);
+
     const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
       sector.modelBaseUrl,
-      sector.metadata.id.toString() + '.glb'
+      metadata.sectorFileName!
     );
 
     const group = new AutoDisposeGroup();
@@ -83,13 +107,14 @@ export class GltfSectorRepository implements SectorRepository {
     });
 
     return {
-      levelOfDetail: 2,
+      levelOfDetail: sector.levelOfDetail,
       group: group,
       instancedMeshes: [],
-      metadata: sector.metadata,
+      metadata: metadata,
       modelIdentifier: sector.modelIdentifier
     };
   }
+
   private createMesh(group: AutoDisposeGroup, geometry: THREE.BufferGeometry, material: THREE.ShaderMaterial) {
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
