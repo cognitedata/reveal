@@ -128,10 +128,6 @@ export const ChartActions = () => {
           />
         </Popconfirm>
       </Tooltip>
-      <Divider />
-      <Tooltip content="Settings">
-        <Button icon="Settings" type="ghost" disabled aria-label="settings" />
-      </Tooltip>
     </TopBar.Item>
   );
 };
