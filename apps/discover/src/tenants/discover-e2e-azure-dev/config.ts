@@ -21,5 +21,6 @@ export default {
       enabled: true,
     },
     trajectory: defaultWellsConfig.wells?.trajectory,
+    casing: defaultWellsConfig.wells?.casing,
   },
 };

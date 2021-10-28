@@ -1,3 +1,5 @@
+import { SequenceColumn } from '@cognite/sdk';
+
 import { TrajectoryColumnR } from 'modules/wellSearch/types';
 
 export const TRAJECTORY_COLUMNS: TrajectoryColumnR[] = [
@@ -46,4 +48,28 @@ export const TRAJECTORY_COLUMN_NAME_MAP = {
   x_offset: 'easting',
   y_offset: 'northing',
   equivalent_departure: 'equivalentDeparture',
+};
+
+export const SEQUENCE_COLUMNS = [
+  {
+    externalId: 'comp_md_top',
+    valueType: 'DOUBLE',
+    name: 'comp_md_top',
+  },
+  {
+    externalId: 'comp_body_outside_diameter',
+    valueType: 'DOUBLE',
+    name: 'comp_body_outside_diameter',
+  },
+  {
+    externalId: 'comp_body_inside_diameter',
+    valueType: 'DOUBLE',
+    name: 'comp_body_inside_diameter',
+  },
+] as SequenceColumn[];
+
+export const CASINGS_COLUMN_NAME_MAP = {
+  comp_md_top: 'originalMeasuredDepthTop',
+  comp_body_outside_diameter: 'minOutsideDiameter',
+  comp_body_inside_diameter: 'minInsideDiameter',
 };

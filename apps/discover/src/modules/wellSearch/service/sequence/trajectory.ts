@@ -86,9 +86,7 @@ export const fetchTrajectoriesUsingWellsSDK = async (
   columns: TrajectoryColumnR[] = []
 ) => {
   const trajectoriesList = (await getWellSDKClient().trajectories.list({
-    filter: {
-      wellboreIds: wellboreIds.map(toIdentifier),
-    },
+    filter: { wellboreIds: wellboreIds.map(toIdentifier) },
     limit: CHUNK_LIMIT,
   })) as TrajectoryItems;
 

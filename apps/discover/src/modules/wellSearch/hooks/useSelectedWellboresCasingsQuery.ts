@@ -3,9 +3,11 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import { LOG_CASING } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
+import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
+  useActiveWellboresSourceExternalIdMap,
   useSelectedOrHoveredWellboreIds,
   useWellboreAssetIdMap,
 } from '../selectors';
@@ -16,9 +18,12 @@ import { trimCachedData } from '../utils/common';
 import { useWellConfig } from './useWellConfig';
 
 export const useSelectedWellboresCasingsQuery = () => {
+  const { data: enableWellSDKV3 } =
+    useTenantConfigByKey<boolean>('enableWellSDKV3');
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const { data: config } = useWellConfig();
   const wellboreAssetIdMap = useWellboreAssetIdMap();
+  const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
   const cache = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const metric = useGetCogniteMetric(LOG_CASING);
@@ -28,8 +33,10 @@ export const useSelectedWellboresCasingsQuery = () => {
     service(
       wellboreIds,
       wellboreAssetIdMap,
+      wellboresSourceExternalIdMap,
       config?.casing?.queries?.[0],
-      metric
+      metric,
+      enableWellSDKV3
     )
   );
 
@@ -49,8 +56,10 @@ export const useSelectedWellboresCasingsQuery = () => {
     service(
       newIds,
       wellboreAssetIdMap,
+      wellboresSourceExternalIdMap,
       config?.casing?.queries?.[0],
-      metric
+      metric,
+      enableWellSDKV3
     ).then((response) => {
       cache.setQueryData(WELL_QUERY_KEY.CASINGS, {
         ...response,
