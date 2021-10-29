@@ -2,6 +2,7 @@ import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import pickBy from 'lodash/pickBy';
+import uniq from 'lodash/uniq';
 
 import {
   WaterDepthLimits as WaterDepthLimitsV2,
@@ -22,7 +23,6 @@ import {
   SourceItems as SourceItemsV3,
   WaterDepthLimits as WaterDepthLimitsV3,
   SpudDateLimits as SpudDateLimitsV3,
-  StringItems,
   Well as WellV3,
   WellFilter as WellFilterV3,
   WellFilterRequest,
@@ -40,6 +40,8 @@ import {
   NptItems as NPTItemsV3,
   Npt as NPTV3,
   DurationRange,
+  SummaryCount,
+  DepthMeasurementItems,
 } from '@cognite/sdk-wells-v3';
 
 export const DEFAULT_DOUBLE_WITH_UNIT: DoubleWithUnit = {
@@ -69,10 +71,22 @@ export const mapV3ToV2SpudDateLimits = (
   };
 };
 
-export const mapStringItemsToStringArray = (
-  stringItems: StringItems
+export const mapSummaryCountsToStringArray = (
+  summaryCounts: SummaryCount[]
 ): string[] => {
-  return stringItems.items;
+  return summaryCounts.map((summaryCount) => summaryCount.property);
+};
+
+export const getMeasurementsFromDepthMeasurementItems = (
+  depthMeasurementItems: DepthMeasurementItems
+): string[] => {
+  const allMeasurementTypes = depthMeasurementItems.items.map(
+    (depthMeasurement) =>
+      depthMeasurement.columns.map(
+        (depthMeasurementColumn) => depthMeasurementColumn.measurementType
+      )
+  );
+  return uniq(flatten(allMeasurementTypes));
 };
 
 export const mapV3ToV2Well = (well: WellV3): WellV2 => {

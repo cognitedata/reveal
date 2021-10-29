@@ -22,14 +22,14 @@ import {
   getNPTDetailCodes,
   getNPTDurationLimits,
   getSources,
-  getWellsAPI,
+  getWellFilterFetchers,
   getWellsSpudDateLimits,
   getWellsWaterDepthLimits,
 } from '../sdk';
 import { FilterConfig, FilterConfigMap, FilterTypes } from '../types';
 import { getWaterDepthLimitsInFeet, processSpudDateLimits } from '../utils';
 
-const wellSDKClientWells = getWellsAPI();
+const wellFilterFetchers = getWellFilterFetchers();
 
 export const filterConfigs = (unit = FEET): FilterConfig[] => [
   {
@@ -49,7 +49,7 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     key: 'field_block_operator_filter.field',
     category: FIELD_BLOCK_OPERATOR,
     type: FilterTypes.CHECKBOXES,
-    fetcher: wellSDKClientWells?.fields,
+    fetcher: wellFilterFetchers?.fields,
     filterParameters: (values): WellFilter => ({
       fields: values as string[],
     }),
@@ -60,7 +60,7 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     key: 'field_block_operator_filter.block',
     name: 'Block',
     type: FilterTypes.CHECKBOXES,
-    fetcher: wellSDKClientWells?.blocks,
+    fetcher: wellFilterFetchers?.blocks,
     filterParameters: (values): WellFilter => ({
       blocks: values as string[],
     }),
@@ -71,7 +71,7 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     key: 'field_block_operator_filter.operator',
     name: 'Operator',
     type: FilterTypes.CHECKBOXES,
-    fetcher: wellSDKClientWells?.operators,
+    fetcher: wellFilterFetchers?.operators,
     filterParameters: (values): WellFilter => ({
       operators: values as string[],
     }),
@@ -161,7 +161,7 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     category: MEASUREMENTS,
     type: FilterTypes.MULTISELECT,
     isTextCapitalized: false,
-    fetcher: wellSDKClientWells?.measurements,
+    fetcher: wellFilterFetchers?.measurements,
     filterParameters: (values): WellFilter => ({
       hasMeasurements: {
         containsAny: (values as MeasurementType[]).map((measurementType) => ({

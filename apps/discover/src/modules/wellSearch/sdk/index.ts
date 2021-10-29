@@ -8,7 +8,8 @@ import { TenantConfig } from 'tenants/types';
 
 import {
   extractWellboresFromWells,
-  mapStringItemsToStringArray,
+  getMeasurementsFromDepthMeasurementItems,
+  mapSummaryCountsToStringArray,
   mapV2toV3NPTFilter,
   mapV3ToV2NPTItems,
   mapV3ToV2SourceItems,
@@ -68,13 +69,34 @@ export const isWellSDKAuthenticated = () => {
     : getWellSDKClientV2().isLoggedIn;
 };
 
-export const getWellSDKClient = () => {
+export const getWellFilterFetchers = () => {
   if (!isWellSDKAuthenticated()) return null;
-  return enableWellSDKV3 ? getWellSDKClientV3() : getWellSDKClientV2();
-};
 
-export const getWellsAPI = () => {
-  return getWellSDKClient()?.wells;
+  if (!enableWellSDKV3) {
+    const { fields, blocks, operators, measurements } =
+      getWellSDKClientV2().wells;
+    return { fields, blocks, operators, measurements };
+  }
+
+  return {
+    fields: () =>
+      getWellSDKClientV3()
+        .summaries.fields()
+        .then(mapSummaryCountsToStringArray),
+    blocks: () =>
+      getWellSDKClientV3()
+        .summaries.blocks()
+        .then(mapSummaryCountsToStringArray),
+    operators: () =>
+      getWellSDKClientV3()
+        .summaries.operators()
+        .then(mapSummaryCountsToStringArray),
+    // To be fixed very soon and will be fetched using the `Summaries API`.
+    measurements: () =>
+      getWellSDKClientV3()
+        .measurements.list({})
+        .then(getMeasurementsFromDepthMeasurementItems),
+  };
 };
 
 export const getSources = () => {
@@ -86,7 +108,7 @@ export const getSources = () => {
 export const getWellsWaterDepthLimits = () => {
   return enableWellSDKV3
     ? getWellSDKClientV3()
-        .wells.waterDepthLimits()
+        .summaries.waterDepthLimits()
         .then(mapV3ToV2WellsWaterDepthLimits)
     : getWellSDKClientV2()
         .wells.limits()
@@ -95,7 +117,9 @@ export const getWellsWaterDepthLimits = () => {
 
 export const getWellsSpudDateLimits = () => {
   return enableWellSDKV3
-    ? getWellSDKClientV3().wells.spudDateLimits().then(mapV3ToV2SpudDateLimits)
+    ? getWellSDKClientV3()
+        .summaries.spudDateLimits()
+        .then(mapV3ToV2SpudDateLimits)
     : getWellSDKClientV2()
         .wells.limits()
         .then((response) => response.spudDate);
@@ -103,7 +127,12 @@ export const getWellsSpudDateLimits = () => {
 
 export const getNPTDurationLimits = () => {
   return enableWellSDKV3
-    ? Promise.resolve([]) // This feature is not added in the new wells SDK yet and to be added soon.
+    ? getWellSDKClientV3()
+        .summaries.nptDurations()
+        .then((response) => [
+          Math.ceil(Number(response.min)),
+          Math.floor(Number(response.max)),
+        ])
     : getWellSDKClientV2()
         .wells.limits()
         .then((response) => [
@@ -114,19 +143,25 @@ export const getNPTDurationLimits = () => {
 
 export const getNPTCodes = () => {
   return enableWellSDKV3
-    ? getWellSDKClientV3().npt.codes().then(mapStringItemsToStringArray)
+    ? getWellSDKClientV3()
+        .summaries.nptCodes()
+        .then(mapSummaryCountsToStringArray)
     : getWellSDKClientV2().events.nptCodes();
 };
 
 export const getNPTDetailCodes = () => {
   return enableWellSDKV3
-    ? getWellSDKClientV3().npt.detailCodes().then(mapStringItemsToStringArray)
+    ? getWellSDKClientV3()
+        .summaries.nptDetailCodes()
+        .then(mapSummaryCountsToStringArray)
     : getWellSDKClientV2().events.nptDetailCodes();
 };
 
 export const getNDSRiskTypes = () => {
   return enableWellSDKV3
-    ? getWellSDKClientV3().nds.riskTypes().then(mapStringItemsToStringArray)
+    ? getWellSDKClientV3()
+        .summaries.ndsRiskTypes()
+        .then(mapSummaryCountsToStringArray)
     : getWellSDKClientV2().events.ndsRiskTypes();
 };
 
