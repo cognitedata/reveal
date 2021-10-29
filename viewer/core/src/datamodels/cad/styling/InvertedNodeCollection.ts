@@ -43,8 +43,7 @@ export class InvertedNodeCollection extends NodeCollectionBase {
   }
 
   getAreas(): AreaCollection {
-    // TODO 2021-10-12 larsmoa: Implement InvertedNodeCollection.getAreas()
-    throw new Error('Not implemented yet');
+    throw new Error(`${this.getAreas.name} is not supported for ${this.prototype.name}`);
   }
 
   serialize(): SerializedNodeCollection {
