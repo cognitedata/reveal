@@ -42,20 +42,28 @@ describe('TimelineTool', () => {
 
   test('Test assign Node & style to the keyframe & Play the Timeline', () => {
     const timelineTool = new TimelineTool(model);
+    const assignStyledNodeCollection = jest.spyOn(model, 'assignStyledNodeCollection');
+    const unassignStyledNodeCollection = jest.spyOn(model, 'unassignStyledNodeCollection');
 
     const kf1 = timelineTool.createKeyframe(new Date('2021-10-25'));
     const kf2 = timelineTool.createKeyframe(new Date('2021-10-26'));
     const kf3 = timelineTool.createKeyframe(new Date('2021-10-27'));
-    const kf4 = timelineTool.createKeyframe(new Date('2021-10-28'));
 
     kf1.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
     kf2.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([4, 5, 6])), { renderGhosted: true });
-    kf3.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([2, 3, 5])), { renderGhosted: true });
-    kf4.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([6, 4, 2])), { renderGhosted: true });
+    kf3.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([7, 8, 9])), { renderGhosted: true });
 
-    expect((timelineTool as any).play(new Date('2021-10-25'), new Date('2021-10-28'), 50000)).toBeTrue();
-    expect((timelineTool as any).play(new Date('2021-11-26'), new Date('2021-11-30'), 30000)).toBeFalse();
-    TWEEN.update(TWEEN.now());
     expect(kf1).not.toBeEmpty();
+    expect(kf2).not.toBeEmpty();
+    expect(kf3).not.toBeEmpty();
+
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 20000);
+    const current = TWEEN.now();
+    expect(assignStyledNodeCollection).toBeCalled();
+    TWEEN.update(current + 500);
+    expect(assignStyledNodeCollection).toBeCalled();
+    TWEEN.update(current + 2000);
+    expect(assignStyledNodeCollection).toBeCalled();
+    TWEEN.update(current + 3000);
   });
 });
