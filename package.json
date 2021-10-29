@@ -5,7 +5,7 @@
   "scripts": {
     "start": "BROWSER=none WDS_SOCKET_PORT=3018 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3018 rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
-    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-raw-explorer-o index.js -d ./build",
+    "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-raw-explorer --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --passWithNoTests",
     "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",

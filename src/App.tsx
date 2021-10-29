@@ -16,17 +16,17 @@ import sdk from 'utils/sdkSingleton';
 
 setupMixpanel();
 
-const history = createBrowserHistory();
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      staleTime: 10 * 60 * 1000,
-    },
-  },
-});
-
 const App = () => {
+  const history = createBrowserHistory();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 10 * 60 * 1000,
+      },
+    },
+  });
+
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
     <SDKProvider sdk={sdk}>
