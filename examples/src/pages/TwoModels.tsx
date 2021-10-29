@@ -40,7 +40,7 @@ export function TwoModels() {
       
       const client = new CogniteClient({ appId: 'reveal.example.two-models' });
       if (project && environmentParam) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
 

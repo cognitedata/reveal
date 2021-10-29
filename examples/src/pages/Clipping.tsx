@@ -28,10 +28,10 @@ export function Clipping() {
         project: 'publicdata',
         modelUrl: 'primitives',
       });
-      
+
       const client = new CogniteClient({ appId: 'reveal.example.simple' });
       if (project && environmentParam) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
       const scene = new THREE.Scene();

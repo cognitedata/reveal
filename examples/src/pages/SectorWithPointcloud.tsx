@@ -133,7 +133,7 @@ export function SectorWithPointcloud() {
         appId: 'reveal.example.hybrid-cad-pointcloud',
       });
       if ((modelRevision || pointCloudModelRevision) && environmentParam) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
       const scene = new THREE.Scene();

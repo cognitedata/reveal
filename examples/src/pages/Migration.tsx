@@ -71,8 +71,8 @@ export function Migration() {
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
       
-      if (project !== null && environmentParam !== null) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+      if (project && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       } else if (modelUrl !== null) {
         viewerOptions = {
           ...viewerOptions,

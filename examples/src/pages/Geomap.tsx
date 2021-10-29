@@ -69,7 +69,7 @@ export function Geomap() {
       // Login
       const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       if (project && environmentParam) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {

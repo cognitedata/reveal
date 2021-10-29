@@ -83,7 +83,7 @@ export function SimplePointcloud() {
       });
 
       if (project && environmentParam) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
       
       const scene = new THREE.Scene();

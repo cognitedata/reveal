@@ -30,7 +30,7 @@ export function SSAO() {
       });
       const client = new CogniteClient({ appId: 'reveal.example.ssao' });
       if (project && environmentParam) {
-        authenticateSDKWithEnvironment(client, project, environmentParam);
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
       const scene = new THREE.Scene();
