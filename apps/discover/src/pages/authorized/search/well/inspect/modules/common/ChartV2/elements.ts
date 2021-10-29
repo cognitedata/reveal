@@ -40,6 +40,43 @@ export const ChartWrapper = styled.div`
     transform: translateY(20px);
   }
 
+  > * .xy {
+    .cursor-w-resize {
+      width: calc(100% - 120px);
+      cursor: ew-resize !important;
+    }
+    .cursor-e-resize {
+      display: none;
+    }
+    .cursor-ew-resize {
+      display: none;
+    }
+    .cursor-ns-resize {
+      display: none;
+    }
+    .cursor-n-resize {
+      height: calc(100% - 140px);
+      cursor: ns-resize !important;
+    }
+    .cursor-s-resize {
+      display: none;
+    }
+  }
+
+  > * .x2y {
+    .cursor-w-resize {
+      transform: translateY(40px);
+      width: calc(100% - 120px);
+      cursor: ew-resize !important;
+    }
+    .cursor-e-resize {
+      display: none;
+    }
+    .cursor-ew-resize {
+      display: none;
+    }
+  }
+
   > * .x2y-x {
     transform: translateY(42px);
   }
