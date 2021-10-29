@@ -44,7 +44,6 @@ export function Geomap() {
       const geometryFilterInput = urlParams.get('geometryFilter');
       const environmentParam = urlParams.get('env');
       const geometryFilter = createGeometryFilter(geometryFilterInput);
-      const baseUrl = urlParams.get('baseUrl') || undefined;
       if (!project) {
         throw new Error('Must provide "project"as URL parameter');
       }
