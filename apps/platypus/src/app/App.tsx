@@ -6,29 +6,33 @@ import { SolutionsPage } from './pages/solutions/SolutionsPage';
 import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
 import { StatusPage } from './pages/statusboard/StatusboardPage';
 import { GlobalStyle } from './AppGlobalStyles';
+import { Container } from '@cognite/react-container';
+import sidecar from './utils/sidecar';
 
 function App() {
   return (
-    <>
-      <GlobalStyle />
-      <StyledWrapper>
-        <Router>
-          <StyledPage>
-            <Switch>
-              <Route exact path={['/', '/solutions/:solutionId?/:tabKey?']}>
-                <SolutionsPage />
-              </Route>
-              <Route exact path="/guidetools">
-                <GuideToolsPage />
-              </Route>
-              <Route exact path="/statusboard">
-                <StatusPage />
-              </Route>
-            </Switch>
-          </StyledPage>
-        </Router>
-      </StyledWrapper>
-    </>
+    <Container sidecar={sidecar}>
+      <>
+        <GlobalStyle />
+        <StyledWrapper>
+          <Router basename="platypus">
+            <StyledPage>
+              <Switch>
+                <Route exact path={['/', '/solutions/:solutionId?/:tabKey?']}>
+                  <SolutionsPage />
+                </Route>
+                <Route exact path="/guidetools">
+                  <GuideToolsPage />
+                </Route>
+                <Route exact path="/statusboard">
+                  <StatusPage />
+                </Route>
+              </Switch>
+            </StyledPage>
+          </Router>
+        </StyledWrapper>
+      </>
+    </Container>
   );
 }
 
