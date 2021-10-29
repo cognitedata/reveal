@@ -14,6 +14,9 @@ import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } fr
 import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
+import { CadNode } from '@reveal/rendering';
+import { IMock, Mock } from 'moq.ts';
+import Log from '@reveal/logger';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
@@ -24,6 +27,7 @@ describe('SectorLoader', () => {
   let progressCallback: () => void;
   let model: CadModelMetadata;
   let input: DetermineSectorsPayload;
+  let cadNodeMock: IMock<CadNode>;
 
   beforeAll(() => {
     const sectorRoot = generateSectorTree(2, 2);
@@ -37,6 +41,14 @@ describe('SectorLoader', () => {
     collectStatisticsCallback = jest.fn();
     progressCallback = jest.fn();
 
+    cadNodeMock = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(model)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(value => repository.loadSector(value));
+
     input = {
       camera: new THREE.PerspectiveCamera(),
       budget: {
@@ -46,7 +58,7 @@ describe('SectorLoader', () => {
         maximumRenderCost: 0
       },
       cameraInMotion: false,
-      models: [],
+      models: [cadNodeMock.object()],
       clippingPlanes: [],
       loadingHints: {}
     };
@@ -55,7 +67,7 @@ describe('SectorLoader', () => {
   });
 
   test('loadSectors with no models, completes with no sectors', async () => {
-    // input.cadModelsMetadata = [];
+    input.models = [];
     const result = await asyncIteratorToArray(loader.loadSectors(input));
     expect(result).toBeEmpty();
   });
@@ -102,7 +114,25 @@ describe('SectorLoader', () => {
 
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
-    jest.spyOn(repository, 'loadSector').mockRejectedValueOnce(new Error('error'));
+
+    Log.setLevel('silent');
+
+    let first = true;
+
+    const cadNodeMock = new Mock<CadNode>()
+      .setup(p => p.cadModelMetadata)
+      .returns(model)
+      .setup(p => p.visible)
+      .returns(true)
+      .setup(p => p.loadSector)
+      .returns(value => {
+        if (first) {
+          first = false;
+          throw new Error('error');
+        } else return repository.loadSector(value);
+      });
+
+    input.models = [cadNodeMock.object()];
 
     // Act
     const result = await asyncIteratorToArray(loader.loadSectors(input));
