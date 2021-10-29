@@ -57,7 +57,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
       assetMappings => assetMappings.map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
-      mappings => this._fetchBoundingBoxesForAssetMappings(mappings),
+      mappings => this.fetchBoundingBoxesForAssetMappings(mappings),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -92,7 +92,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
   }
 
-  private async _fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
+  private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
     const nodeList = await this._client.revisions3D.retrieve3DNodes(
       this._model.id,
       this._model.revisionId,
