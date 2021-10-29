@@ -13,7 +13,7 @@ export const getMockFavoriteSummary = (
   content: {
     documentIds: [],
     seismicIds: [],
-    wellIds: [],
+    wells: {},
   },
   description: 'mock favorite description',
   name: 'Mock favorite',

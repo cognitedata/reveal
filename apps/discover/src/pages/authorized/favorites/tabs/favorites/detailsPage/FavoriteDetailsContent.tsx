@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 
 import flatten from 'lodash/flatten';
+import omit from 'lodash/omit';
 
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
@@ -60,7 +61,11 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   const [currentFetchPage, setCurrentFetchPage] = useState(0);
 
   const { isLoading: isWellsLoading, isIdle: isWellsIdle } =
-    useFavoriteWellResults(content?.wellIds || []);
+    useFavoriteWellResults(
+      content?.wells
+        ? Object.keys(content?.wells).map((key) => Number(key))
+        : []
+    );
 
   const [documentId, setDocumentId] = useState<string | undefined>(undefined);
   const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
@@ -141,7 +146,9 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
   const removeWell = (wellId: number) => {
     mutateFavoriteContent({
       id: favoriteId,
-      updateData: { removeWellIds: [wellId] },
+      updateData: {
+        wells: content?.wells ? omit(content.wells, [wellId]) : {},
+      },
     });
   };
 
@@ -171,7 +178,11 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
                   {isWellsIdle || isWellsLoading ? (
                     <Icon type="LoadingSpinner" style={{ marginLeft: 4 }} />
                   ) : (
-                    <Badge text={`${content?.wellIds.length || 0}`} />
+                    <Badge
+                      text={`${
+                        content?.wells ? Object.keys(content.wells).length : 0
+                      }`}
+                    />
                   )}
                 </span>
               }
@@ -215,7 +226,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
               render={() => (
                 <WellsTable
                   removeWell={removeWell}
-                  wellIds={content?.wellIds}
+                  wells={content?.wells}
                   favoriteId={favoriteId}
                 />
               )}

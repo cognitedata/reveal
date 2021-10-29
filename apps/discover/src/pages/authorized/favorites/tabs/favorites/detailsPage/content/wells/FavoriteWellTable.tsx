@@ -12,6 +12,7 @@ import { LOADING_TEXT } from 'components/emptyState/constants';
 import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import { Options, Table } from 'components/tablev2';
 import navigation from 'constants/navigation';
+import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import {
@@ -34,19 +35,19 @@ import { FavoriteWellsBulkActions } from './FavoriteWellsBulkActions';
 
 export interface Props {
   removeWell: (wellId: number) => void;
-  wellIds: number[] | undefined;
+  wells: FavoriteContentWells | undefined;
   favoriteId: string;
 }
 
 export const FavoriteWellsTable: React.FC<Props> = ({
-  wellIds,
+  wells,
   removeWell,
   favoriteId,
 }) => {
   const { t } = useTranslation('Favorites');
   const history = useHistory();
   const dispatch = useDispatch();
-
+  const [wellIds, setWellIds] = useState<number[]>([]);
   const { data, isLoading } = useFavoriteWellResults(wellIds);
   const { mutate } = useMutateFavoriteWellPatchWellbores();
   const { mutate: mutateWells } = useMutateFavoriteWellUpdate();
@@ -57,7 +58,12 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
   const [hoveredWell, setHoveredWell] = useState<Well>();
 
-  const wells = useMemo(() => data || [], [data]);
+  const wellsData = useMemo(() => data || [], [data]);
+
+  useEffect(() => {
+    setWellIds(wells ? Object.keys(wells).map((key) => Number(key)) : []);
+  }, [wells]);
+
   const columns = useMemo(
     () => Object.values(wellColumns || []),
     [wellColumns]
@@ -91,14 +97,17 @@ export const FavoriteWellsTable: React.FC<Props> = ({
 
   const handleRowsSelect = useCallback(
     (value: boolean) => {
-      const selectedWellIdsList: SelectedMap = wells.reduce((result, item) => {
-        const selectedWellMap: SelectedMap = { [item.id]: value };
-        return { ...result, ...selectedWellMap };
-      }, {});
+      const selectedWellIdsList: SelectedMap = wellsData.reduce(
+        (result, item) => {
+          const selectedWellMap: SelectedMap = { [item.id]: value };
+          return { ...result, ...selectedWellMap };
+        },
+        {}
+      );
 
       setSelectedIds(selectedWellIdsList);
     },
-    [wells]
+    [wellsData]
   );
 
   const renderRowSubComponent = useCallback(({ row }) => {
@@ -117,7 +126,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
 
   const handleHoverViewBtnClick = async (row: Row<Well>) => {
     const currentWell: Well = row.original;
-    const isWellboresLoadedForWell = wells.some(
+    const isWellboresLoadedForWell = wellsData.some(
       (well) => well.id === currentWell.id && well.wellbores
     );
 
@@ -205,7 +214,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     );
   };
 
-  const isWellsLoading = isLoading || !wells.length;
+  const isWellsLoading = isLoading || !wellsData.length;
 
   if (isWellsLoading) {
     return <EmptyState emptyTitle={getEmptyStateTitle()} />;
@@ -215,7 +224,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     <FavoriteWellWrapper>
       <Table<Well>
         id="well-result-table"
-        data={wells}
+        data={wellsData}
         columns={columns}
         renderRowSubComponent={renderRowSubComponent}
         handleRowClick={handleRowClick}
@@ -231,6 +240,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
         selectedWellIdsList={selectedIds}
         deselectAll={() => handleRowsSelect(false)}
         favoriteId={favoriteId}
+        favoriteWells={wells}
         handleUpdatingFavoriteWellState={handleUpdatingFavoriteWellState}
       />
 

@@ -76,7 +76,7 @@ const CreateFavoriteSetModal: React.FC = () => {
             id: res,
             updateData: {
               addDocumentIds: itemsToAddAfterFavoriteCreation?.documentIds,
-              addWellIds: itemsToAddAfterFavoriteCreation?.wellIds,
+              wells: itemsToAddAfterFavoriteCreation?.wells,
             },
           }).then(() => {
             showSuccessMessage(t(NOTIFICATION_MESSAGE));

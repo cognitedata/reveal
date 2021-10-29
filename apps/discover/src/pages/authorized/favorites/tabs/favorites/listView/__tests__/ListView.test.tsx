@@ -14,7 +14,7 @@ describe('Favorite List View', () => {
         {
           createdTime: '',
           assetCount: 1,
-          content: { documentIds: [], wellIds: [], seismicIds: [] },
+          content: { documentIds: [], wells: {}, seismicIds: [] },
           id: '12',
           name: 'test',
           description: 'test-desc',

@@ -31,7 +31,7 @@ describe('Use Favorite', () => {
       ...getMockFavoriteSummary(),
       ...{
         id: '12',
-        content: { documentIds: [12], seismicIds: [], wellIds: [] },
+        content: { documentIds: [12], seismicIds: [], wells: {} },
       },
     };
     const { result } = renderHook(
@@ -47,7 +47,7 @@ describe('Use Favorite', () => {
       ...getMockFavoriteSummary(),
       ...{
         id: '12',
-        content: { documentIds: [23], seismicIds: [], wellIds: [] },
+        content: { documentIds: [23], seismicIds: [], wells: {} },
       },
     };
     const { result } = renderHook(
@@ -63,7 +63,7 @@ describe('Use Favorite', () => {
       ...getMockFavoriteSummary(),
       ...{
         id: '12',
-        content: { documentIds: [], seismicIds: [], wellIds: [12] },
+        content: { documentIds: [], seismicIds: [], wells: { '12': [] } },
       },
     };
     const { result } = renderHook(
@@ -79,7 +79,7 @@ describe('Use Favorite', () => {
       ...getMockFavoriteSummary(),
       ...{
         id: '12',
-        content: { documentIds: [], seismicIds: [], wellIds: [23] },
+        content: { documentIds: [], seismicIds: [], wells: { '23': [] } },
       },
     };
     const { result } = renderHook(
@@ -108,14 +108,20 @@ describe('Use Favorite', () => {
 
   it(`should update favorites`, async () => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useHandleSelectFavourite([12], [32]),
+      () => useHandleSelectFavourite(),
       {}
     );
 
     const { handleFavoriteUpdate } = result.current;
     const documentCallback = jest.fn();
     const wellCallback = jest.fn();
-    handleFavoriteUpdate('12', documentCallback, wellCallback);
+    handleFavoriteUpdate(
+      '12',
+      [12],
+      { '32': [] },
+      documentCallback,
+      wellCallback
+    );
 
     waitForNextUpdate();
 
@@ -125,14 +131,14 @@ describe('Use Favorite', () => {
 
   it(`should not update favorites`, async () => {
     const { result, waitForNextUpdate } = renderHook(
-      () => useHandleSelectFavourite([], []),
+      () => useHandleSelectFavourite(),
       {}
     );
 
     const { handleFavoriteUpdate } = result.current;
     const documentCallback = jest.fn();
     const wellCallback = jest.fn();
-    handleFavoriteUpdate('12', documentCallback, wellCallback);
+    handleFavoriteUpdate('12', [], {}, documentCallback, wellCallback);
 
     waitForNextUpdate();
 

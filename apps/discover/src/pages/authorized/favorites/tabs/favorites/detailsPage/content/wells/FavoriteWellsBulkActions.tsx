@@ -2,12 +2,15 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
+import omit from 'lodash/omit';
+
 import { Button } from '@cognite/cogs.js';
 
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
 import navigation from 'constants/navigation';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
+import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useMutateFavoriteWellPatchWellbores } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
@@ -20,6 +23,7 @@ export interface Props {
   selectedWellIdsList: SelectedMap;
   deselectAll: () => void;
   favoriteId: string;
+  favoriteWells: FavoriteContentWells | undefined;
   handleUpdatingFavoriteWellState: (
     wellIds: number[],
     inspectWellboreContext: InspectWellboreContext
@@ -30,6 +34,7 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   allWellIds,
   deselectAll,
   favoriteId,
+  favoriteWells,
   handleUpdatingFavoriteWellState,
 }) => {
   const { t } = useTranslation('Search');
@@ -103,7 +108,9 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   const removeFromQueryCache = () => {
     mutateFavoriteContent({
       id: favoriteId,
-      updateData: { removeWellIds: selectedWellIds },
+      updateData: {
+        wells: favoriteWells ? omit(favoriteWells, selectedWellIds) : undefined,
+      },
     });
   };
 

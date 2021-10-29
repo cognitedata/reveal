@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
-import { FavoriteSummary } from 'modules/favorite/types';
+import { FavoriteContentWells, FavoriteSummary } from 'modules/favorite/types';
 
 export function useDocumentExistInFavorite(
   favorites: FavoriteSummary[],
@@ -23,7 +23,9 @@ export function useWellExistInFavorite(
 ) {
   return useMemo(() => {
     return favorites
-      .filter((favorite) => favorite.content.wellIds.includes(wellId))
+      .filter((favorite) =>
+        Object.keys(favorite.content.wells).includes(String(wellId))
+      )
       .map((favorite) => favorite.id);
   }, [favorites, wellId]);
 }
@@ -33,15 +35,14 @@ export const getWellIds = (wellId?: number) => (wellId ? [wellId] : []);
 export const getDocumentIds = (documentId?: number) =>
   documentId ? [documentId] : [];
 
-export const useHandleSelectFavourite = (
-  documentIds: number[],
-  wellIds: number[]
-) => {
+export const useHandleSelectFavourite = () => {
   const { mutateAsync } = useFavoriteUpdateContent();
   const metrics = useGlobalMetrics('favorites');
 
   const handleFavoriteUpdate = (
     setId: string,
+    documentIds: number[],
+    wells: FavoriteContentWells | undefined,
     documentSuccess: () => void,
     wellSuccess: () => void
   ) => {
@@ -58,13 +59,13 @@ export const useHandleSelectFavourite = (
       });
     }
 
-    if (wellIds && wellIds.length) {
+    if (wells) {
       metrics.track('click-add-wells-to-set');
 
       mutateAsync({
         id: setId,
         updateData: {
-          addWellIds: wellIds,
+          wells,
         },
       }).then(() => {
         wellSuccess();

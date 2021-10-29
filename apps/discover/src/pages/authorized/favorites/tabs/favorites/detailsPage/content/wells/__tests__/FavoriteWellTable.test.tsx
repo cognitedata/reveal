@@ -33,7 +33,7 @@ describe('Favorite Wellbore table', () => {
     }));
 
     await defaultTestInit({
-      wellIds: [],
+      wells: {},
       removeWell: jest.fn(),
       favoriteId: '1',
     });

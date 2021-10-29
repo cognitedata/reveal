@@ -36,12 +36,12 @@ describe('favourite reducer', () => {
       type: SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION,
       payload: {
         documentIds: [1],
-        wellIds: [1],
+        wells: { 1: [] },
       },
     });
     expect(state.itemsToAddAfterFavoriteCreation).toEqual({
       documentIds: [1],
-      wellIds: [1],
+      wells: { 1: [] },
     });
   });
 

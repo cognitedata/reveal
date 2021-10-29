@@ -35,6 +35,7 @@ describe('Favorite Bulk action bar', () => {
       selectedWellIdsList: { 1: true },
       deselectAll: jest.fn(),
       favoriteId: '1',
+      favoriteWells: {},
       handleUpdatingFavoriteWellState: jest.fn(),
     });
 
@@ -58,6 +59,7 @@ describe('Favorite Bulk action bar', () => {
       selectedWellIdsList: { 1: true },
       deselectAll,
       favoriteId: '1',
+      favoriteWells: {},
       handleUpdatingFavoriteWellState: jest.fn(),
     });
 

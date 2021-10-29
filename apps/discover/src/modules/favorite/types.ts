@@ -57,7 +57,7 @@ export interface FavouriteState {
   viewMode: ViewModeType;
   itemsToAddAfterFavoriteCreation?: {
     documentIds?: number[];
-    wellIds?: number[];
+    wells: FavoriteContentWells | undefined;
     seismicIds?: number[];
   };
 }
@@ -89,8 +89,12 @@ export interface FavoriteSummary {
 
 export interface FavoriteContent {
   documentIds: number[];
-  wellIds: number[];
+  wells: FavoriteContentWells;
   seismicIds: number[];
+}
+
+export interface FavoriteContentWells {
+  [key: string]: string[];
 }
 
 export interface FavouriteRowType<T> {

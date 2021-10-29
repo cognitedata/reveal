@@ -13,7 +13,7 @@ describe('Favorite Card', () => {
     const favorite: FavoriteSummary = {
       createdTime: '2021-06-08T15:00:11.161Z',
       assetCount: 1,
-      content: { documentIds: [], wellIds: [], seismicIds: [] },
+      content: { documentIds: [], wells: {}, seismicIds: [] },
       id: '12',
       name: 'test',
       description: 'test-desc',

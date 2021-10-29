@@ -38,7 +38,7 @@ fixture('Favorites detail page')
     progress(`Add document to the favorite set`);
     await updateFavoriteContent({
       id: response,
-      updateData: { addDocumentIds: [documentId], addWellIds: [wellId] },
+      updateData: { addDocumentIds: [documentId], wells: { [wellId]: [] } },
     });
   })
   .afterEach(async () => {

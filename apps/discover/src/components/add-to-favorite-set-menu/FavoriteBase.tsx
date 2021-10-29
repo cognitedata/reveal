@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import merge from 'lodash/merge';
+
 import { Icon, Menu } from '@cognite/cogs.js';
 
 import { CloseButton } from 'components/buttons';
@@ -37,14 +39,23 @@ export const FavoriteBase: React.FC<Props> = ({
   const dispatch = useDispatch();
   const { data: favorites } = useFavoritesGetAllQuery();
   const { t } = useTranslation();
-  const { handleFavoriteUpdate } = useHandleSelectFavourite(
-    documentIds,
-    wellIds
-  );
+  const { handleFavoriteUpdate } = useHandleSelectFavourite();
 
   const handleSelectFavourite = (setId: string) => {
+    const favorite = favorites?.find((favorite) => favorite.id === setId);
+
+    const wells =
+      favorite && wellIds.length
+        ? merge(
+            { ...favorite.content.wells },
+            ...wellIds.map((wellId) => ({ [wellId]: [] }))
+          )
+        : undefined;
+
     handleFavoriteUpdate(
       setId,
+      documentIds,
+      wells,
       () => showSuccessMessage(t(NOTIFICATION_MESSAGE)),
       () => showSuccessMessage(t(NOTIFICATION_MESSAGE))
     );
@@ -54,11 +65,21 @@ export const FavoriteBase: React.FC<Props> = ({
     if (callBackModal) {
       callBackModal();
     }
+
     dispatch(
       setItemsToAddAfterFavoriteCreation({
         documentIds:
           documentIds && documentIds.length ? documentIds : undefined,
-        wellIds: wellIds && wellIds.length ? wellIds : undefined,
+        wells:
+          wellIds && wellIds.length
+            ? wellIds.reduce(
+                (previousValue, currentValue) => ({
+                  ...previousValue,
+                  [currentValue]: [],
+                }),
+                {}
+              )
+            : undefined,
       })
     );
     dispatch(showCreateFavoriteSetModal());
