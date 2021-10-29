@@ -89,6 +89,26 @@ const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
 keyframe.unassignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] })
 ```
 
+### Timeline Data's while in Play
+While in Play state, the tool emits few data which will be helpful for the users to calculate the progression of the Playback of Timeline.
+Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to received below data.
+- `date` - Virtual Date which can be used to plot progression.
+- `activeKeyframe` - Current Keyframe in the Playback.
+- `startDate` - Keyframe date to start the Playback of Timeline Keyframes.
+- `endDate` - Keyframe date to stop the Playback of Timeline Keyframes.
+
+```jsx
+// import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';
+
+timeline.subscribe('dateChanged', (date, activeKeyframe, startDate, endDate) => {});
+```
+
+To unsubscribe from `TimelineDateUpdateDelegate` event
+
+```jsx
+timeline.unsubscribe('dateChanged', (date, activeKeyframe, startDate, endDate) => {});
+```
+
 ### Removing Keyframe
 #### By Date
 To remove any Keyframe, use `removeKeyframeByDate(date: Date)`

@@ -6,7 +6,7 @@ import { Keyframe } from './Keyframe';
  * Delegate for Timeline Date update
  */
 export type TimelineDateUpdateDelegate = (event: {
-  currentDate: Date;
+  date: Date;
   activeKeyframe: Keyframe;
   startDate: Date;
   endDate: Date;

@@ -8,7 +8,7 @@ import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
 import { TimelineDateUpdateDelegate } from './Types';
-import { EventTrigger } from '@reveal/core/utilities';
+import { EventTrigger, assertNever } from '@reveal/core/utilities';
 
 /**
  * Tool to applying styles to nodes based on date to play them over in Timeline
@@ -17,13 +17,43 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _keyframes: Keyframe[];
   private _playback: TWEEN.Tween | undefined = undefined;
-  private readonly _events = { dateUpdateDelegate: new EventTrigger<TimelineDateUpdateDelegate>() };
+  private readonly _events = { dateChanged: new EventTrigger<TimelineDateUpdateDelegate>() };
 
   constructor(cadModel: Cognite3DModel) {
     super();
 
     this._model = cadModel;
     this._keyframes = new Array<Keyframe>();
+  }
+
+  /**
+   * Subscribe to the Date changed event
+   * @param event `dateChanged` event
+   * @param listener Listen to Timeline date Update during Playback
+   */
+  public subscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
+    switch (event) {
+      case 'dateChanged':
+        this._events.dateChanged.subscribe(listener as TimelineDateUpdateDelegate);
+        break;
+      default:
+        assertNever(event, `Unsupported event: '${event}'`);
+    }
+  }
+
+  /**
+   * Unsubscribe to the Date changed event
+   * @param event `dateChanged` event
+   * @param listener Remove Listen to Timeline date Update
+   */
+  public unsubscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
+    switch (event) {
+      case 'dateChanged':
+        this._events.dateChanged.unsubscribe(listener as TimelineDateUpdateDelegate);
+        break;
+      default:
+        assertNever(event, `Unsupported event: '${event}'`);
+    }
   }
 
   /**
@@ -105,14 +135,14 @@ export class TimelineTool extends Cognite3DViewerToolBase {
           this._keyframes[prevIndex].deactivate();
         }
         this._keyframes[currentKeyframeIndex].activate();
-
-        this._events.dateUpdateDelegate.fire({
-          currentDate: this._keyframes[currentKeyframeIndex].getKeyframeDate(),
-          activeKeyframe: this._keyframes[currentKeyframeIndex],
-          startDate: startDate,
-          endDate: endDate
-        });
       }
+
+      this._events.dateChanged.fire({
+        date: new Date(Date.now()),
+        activeKeyframe: this._keyframes[currentKeyframeIndex],
+        startDate: startDate,
+        endDate: endDate
+      });
     });
 
     this._playback = tween;
