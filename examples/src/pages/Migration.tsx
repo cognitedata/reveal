@@ -27,6 +27,16 @@ import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
+type CredentialEnvironment = {
+  tenantId: string;
+  clientId: string;
+  cluster: string;
+}
+
+type CredentialEnvironmentList = {
+  environments: { [key:string]: CredentialEnvironment; };
+}
+
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -48,6 +58,11 @@ export function Migration() {
       const baseUrl = urlParams.get('baseUrl') || undefined;
       const modelUrl = urlParams.get('modelUrl');
 
+      const environmentParam = urlParams.get('env');
+      if (!modelUrl && !environmentParam) {
+        throw Error('Must specify URL parameter "env" or "modelUrl"');
+      }
+
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
         if (itemsLoaded === 0 || itemsLoaded === itemsRequested) {
@@ -65,15 +80,19 @@ export function Migration() {
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
-      if (project !== null) {
-        await client.loginWithOAuth(
-          { 
-            type: 'AAD_OAUTH', 
-            options: { 
-              clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-              cluster: 'api',
-              tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
-            } 
+      
+      if (project !== null && environmentParam !== null) {
+
+        const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+        const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+        
+        await client.loginWithOAuth({
+          type: 'AAD_OAUTH',
+          options: {
+            clientId: credentialEnvironment.clientId,
+            cluster: credentialEnvironment.cluster,
+            tenantId: credentialEnvironment.tenantId,
+          }
         });
         client.setProject(project);
         await client.authenticate();
@@ -84,10 +103,11 @@ export function Migration() {
           _localModels: true
         };
       } else {
-        throw new Error('Must either provide URL parameter "project", ' +
+        throw new Error('Must either provide URL parameters "env", "project", ' +
           '"modelId" and "revisionId" to load model from CDF ' +
           '"or "modelUrl" to load model from URL.');
       }
+      
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
