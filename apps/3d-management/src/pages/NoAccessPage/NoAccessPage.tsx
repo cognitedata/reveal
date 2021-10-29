@@ -33,7 +33,8 @@ const NoAccessPage = (): JSX.Element => {
             </p>
             <p>
               To upload a new 3D model or revision, you need the capabilities{' '}
-              <strong>3d:create</strong> and <strong>files:write</strong>.
+              <strong>3d:create</strong> and <strong>files:read</strong>
+              and <strong>files:write</strong>.
             </p>
             <p>
               To publish or unpublish a 3D model or a revision, you need the
@@ -41,7 +42,7 @@ const NoAccessPage = (): JSX.Element => {
             </p>
             <p>
               To delete a 3D model or a revision, you need the capabilities{' '}
-              <strong>3d:delete</strong> and <strong>files:write</strong>.
+              <strong>3d:delete</strong>.
             </p>
           </AccessInfo>
         </AccessInfoWrapper>
