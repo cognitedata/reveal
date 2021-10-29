@@ -23,19 +23,10 @@ import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
+import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
-
-type CredentialEnvironment = {
-  tenantId: string;
-  clientId: string;
-  cluster: string;
-}
-
-type CredentialEnvironmentList = {
-  environments: { [key:string]: CredentialEnvironment; };
-}
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
@@ -55,12 +46,11 @@ export function Migration() {
       const project = urlParams.get('project');
       const geometryFilterInput = urlParams.get('geometryFilter');
       const geometryFilter = createGeometryFilter(geometryFilterInput);
-      const baseUrl = urlParams.get('baseUrl') || undefined;
       const modelUrl = urlParams.get('modelUrl');
 
       const environmentParam = urlParams.get('env');
-      if (!modelUrl && !environmentParam) {
-        throw Error('Must specify URL parameter "env" or "modelUrl"');
+      if (!modelUrl && !(environmentParam && project)) {
+        throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -82,21 +72,8 @@ export function Migration() {
       };
       
       if (project !== null && environmentParam !== null) {
-
-        const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
-        const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
-        
-        await client.loginWithOAuth({
-          type: 'AAD_OAUTH',
-          options: {
-            clientId: credentialEnvironment.clientId,
-            cluster: credentialEnvironment.cluster,
-            tenantId: credentialEnvironment.tenantId,
-          }
-        });
-        client.setProject(project);
-        await client.authenticate();
-      } else if (baseUrl !== null) {
+        authenticateSDKWithEnvironment(client, project, environmentParam);
+      } else if (modelUrl !== null) {
         viewerOptions = {
           ...viewerOptions,
           // @ts-expect-error

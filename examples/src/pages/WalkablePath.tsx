@@ -9,7 +9,7 @@ import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import { GUI, GUIController } from 'dat.gui';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
@@ -62,15 +62,17 @@ export function WalkablePath() {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     let revealManager: reveal.RevealManager;
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
+      
       const client = new CogniteClient({
         appId: 'reveal.example.walkable-path',
       });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-      await client.authenticate();
+      if (project && environmentParam) {
+        authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
 
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({

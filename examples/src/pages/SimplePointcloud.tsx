@@ -11,7 +11,7 @@ import { CogniteClient } from '@cognite/sdk';
 
 import CameraControls from 'camera-controls';
 import dat, { GUI } from 'dat.gui';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { ClippingUI } from '../utils/ClippingUI';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
@@ -75,14 +75,16 @@ export function SimplePointcloud() {
     const gui = new dat.GUI();
 
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
       });
       const client = new CogniteClient({
         appId: 'reveal.example.simple-pointcloud',
       });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-      await client.authenticate();
+
+      if (project && environmentParam) {
+        authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
       
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({

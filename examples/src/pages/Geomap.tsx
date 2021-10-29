@@ -4,6 +4,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
+import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
@@ -41,6 +42,7 @@ export function Geomap() {
       const urlParams = url.searchParams;
       const project = urlParams.get('project');
       const geometryFilterInput = urlParams.get('geometryFilter');
+      const environmentParam = urlParams.get('env');
       const geometryFilter = createGeometryFilter(geometryFilterInput);
       const baseUrl = urlParams.get('baseUrl') || undefined;
       if (!project) {
@@ -65,9 +67,10 @@ export function Geomap() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
-      await client.authenticate();
+      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      if (project && environmentParam) {
+        authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
