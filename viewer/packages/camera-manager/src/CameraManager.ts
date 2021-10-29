@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
-import {ComboControls} from './ComboControls';
+import { ComboControls } from './ComboControls';
 import { CallbackData } from './types';
 
 export class CameraManager extends THREE.EventDispatcher {
@@ -16,13 +16,13 @@ export class CameraManager extends THREE.EventDispatcher {
     private modelRaycast: (x: number, y: number) => Promise<CallbackData>;
     
     private isDisposed = false;
+    public useOnClickTargetChange: boolean = false;
+    public automaticNearFarPlane: boolean = true;
     private readonly _animationDuration: number = 600;
     private readonly _minDefaultAnimationDuration: number = 600;
     private readonly _maxDefaultAnimationDuration: number = 2500;
     private readonly _minDistanceDefault: number = 0.1;
     private readonly _useScrollTargetControls: boolean = true;
-    public _useOnClickTargetChange: boolean = false;
-    private readonly _automaticNearFarPlane: boolean = true;
     private readonly _automaticControlsSensitivity: boolean = false;
     private readonly _canInterruptAnimations: boolean = false;
     private readonly _raycaster: THREE.Raycaster = new THREE.Raycaster();
@@ -71,7 +71,7 @@ export class CameraManager extends THREE.EventDispatcher {
    * Changes controls target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-   private changeTarget = async (event: any) => {
+   private changeTarget = async (event: MouseEvent) => {
     const { offsetX, offsetY } = event;
 
     const x = (offsetX / this._domElement.clientWidth) * 2 - 1,
@@ -94,46 +94,61 @@ export class CameraManager extends THREE.EventDispatcher {
     const wheelClock = new THREE.Clock(),
       clickClock = new THREE.Clock();
 
-    this._domElement.addEventListener('click', e => {
-      newTargetUpdate = true;
-      timeAfterClick = 0;
-      clickClock.getDelta();
+    const onClickTargetChange = (e: MouseEvent) => {
 
-      this.controls.enableKeyboardNavigation = false;
-      this.changeTarget(e);
-    });
+        if (this.isDisposed) {
+            this._domElement.removeEventListener('click', onClickTargetChange);
+            return;
+        }
 
-    this._domElement.addEventListener('wheel', async (e: any) => {
-      const timeDelta = wheelClock.getDelta();
-      timeAfterClick += clickClock.getDelta();
-      const { offsetX, offsetY } = e;
-      const x = (offsetX / this._domElement.clientWidth) * 2 - 1;
-      const y = (offsetY / this._domElement.clientHeight) * -2 + 1;
+        newTargetUpdate = true;
+        timeAfterClick = 0;
+        clickClock.getDelta();
+  
+        this.controls.enableKeyboardNavigation = false;
+        this.changeTarget(e);
+    };
 
-      if (timeAfterClick > 3) newTargetUpdate = false;
+    const onWheelTargetChange = async (e: any) => {
+        if (this.isDisposed) {
+            this._domElement.removeEventListener('wheel', onWheelTargetChange);
+            return;
+        }
 
-      const wantNewScrollTarget =
-        startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
+        const timeDelta = wheelClock.getDelta();
+        timeAfterClick += clickClock.getDelta();
+        const { offsetX, offsetY } = e;
+        const x = (offsetX / this._domElement.clientWidth) * 2 - 1;
+        const y = (offsetY / this._domElement.clientHeight) * -2 + 1;
+  
+        if (timeAfterClick > 3) newTargetUpdate = false;
+  
+        const wantNewScrollTarget =
+          startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
+  
+        if (wantNewScrollTarget) {
+          startedScroll = false;
+  
+          const callbackData = await this.modelRaycast(offsetX, offsetY);
+  
+          const newScrollTarget = callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBB);
+  
+          this.controls.setScrollTarget(newScrollTarget);
+        } else {
+          if (timeDelta > 0.1) startedScroll = true;
+        }
+    }
 
-      if (wantNewScrollTarget) {
-        startedScroll = false;
+    this._domElement.addEventListener('click', onClickTargetChange);
 
-        const callbackData = await this.modelRaycast(offsetX, offsetY);
-
-        const newScrollTarget = callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBB);
-
-        this.controls.setScrollTarget(newScrollTarget);
-      } else {
-        if (timeDelta > 0.1) startedScroll = true;
-      }
-    });
+    this._domElement.addEventListener('wheel', onWheelTargetChange);
   };
 
     constructor(camera: THREE.PerspectiveCamera,
         domElement: HTMLElement, raycastFunction: (x: number, y: number) => Promise<CallbackData>) {
 
         super();
-        this._camera = camera ?? new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+        this._camera = camera;
         this._domElement = domElement;
         this.modelRaycast = raycastFunction;
         this.controls = new ComboControls(camera, domElement);
@@ -142,9 +157,11 @@ export class CameraManager extends THREE.EventDispatcher {
         this.controls.maxDistance = 100.0;
         this.controls.useScrollTarget = this._useScrollTargetControls;
 
-        if (this._useOnClickTargetChange) this.addOnClickTargetChange();
+        if (this.useOnClickTargetChange) this.addOnClickTargetChange();
 
         if (!camera) {
+            this._camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+
             // TODO savokr 28-10-2021: Consider removing default camera position initialization 
             this._camera.position.x = 30;
             this._camera.position.y = 10;
@@ -352,7 +369,7 @@ export class CameraManager extends THREE.EventDispatcher {
         if (this.isDisposed) {
             return;
         }
-        // if (!this._automaticControlsSensitivity && !this._automaticNearFarPlane) {
+        // if (!this._automaticControlsSensitivity && !this.automaticNearFarPlane) {
         //     return;
         // }
 
@@ -388,7 +405,7 @@ export class CameraManager extends THREE.EventDispatcher {
         }
 
         // Apply
-        if (this._automaticNearFarPlane) {
+        if (this.automaticNearFarPlane) {
             camera.near = near;
             camera.far = far;
             camera.updateProjectionMatrix();
@@ -404,6 +421,7 @@ export class CameraManager extends THREE.EventDispatcher {
     }
 
     dispose(): void {
+        this.isDisposed = true;
         this.controls.dispose();
 
     }

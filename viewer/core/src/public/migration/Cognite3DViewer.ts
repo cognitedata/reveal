@@ -123,11 +123,7 @@ export class Cognite3DViewer {
   private readonly _useScrollTargetControls: boolean;
   private readonly _useOnClickTargetChange: boolean;
   private readonly _animationDuration: number = 600;
-  private readonly _minDefaultAnimationDuration: number = 600;
-  private readonly _maxDefaultAnimationDuration: number = 2500;
-  private readonly _minDistanceDefault: number = 0.1;
-  private readonly raycaster: THREE.Raycaster = new THREE.Raycaster();
-
+  
   private isDisposed = false;
 
   private readonly renderController: RenderController;
