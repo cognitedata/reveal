@@ -844,9 +844,6 @@ export class EffectRenderManager {
    * Assigns SpectorJS metadata to the current framebuffer (render target).
    * This is useful to assign e.g. names to framebuffers to easy debugging in SpectorJS. The metadata
    * will be visible in 'bindFramebuffer'-commands in the SpectorJS report.
-   *
-   * @param renderer
-   * @param metadata
    */
   private assignSpectorJsMetadataToRenderTarget(renderTarget: THREE.WebGLRenderTarget, metadata: any) {
     const currentRenderTarget = this._renderer.getRenderTarget();
