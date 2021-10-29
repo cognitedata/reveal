@@ -329,6 +329,8 @@ export class EffectRenderManager {
   }
 
   public render(camera: THREE.PerspectiveCamera) {
+    this.setupRenderTargetSpectorDebugging();
+
     const renderer = this._renderer;
     const scene = this._originalScene;
 
@@ -806,6 +808,53 @@ export class EffectRenderManager {
         x.visible = visible;
       }
     });
+  }
+
+  /**
+   * Assign SpectorJS metadata containing names for the render targets when running Reveal
+   * in development mode.
+   */
+  private setupRenderTargetSpectorDebugging() {
+    if (process.env.IS_DEVELOPMENT_MODE) {
+      this.assignSpectorJsMetadataToRenderTarget(this._inFrontRenderedCadModelTarget, {
+        name: 'inFrontRenderedCadModelTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._normalRenderedCadModelTarget, {
+        name: 'normalRenderedCadModelTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ghostObjectRenderTarget, {
+        name: 'ghostObjectRenderTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._customObjectRenderTarget, {
+        name: 'customObjectRenderTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._compositionTarget, {
+        name: 'compositionTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoTarget, {
+        name: 'ssaoTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoBlurTarget, {
+        name: 'ssaoBlurTarget'
+      });
+    }
+  }
+
+  /**
+   * Assigns SpectorJS metadata to the current framebuffer (render target).
+   * This is useful to assign e.g. names to framebuffers to easy debugging in SpectorJS. The metadata
+   * will be visible in 'bindFramebuffer'-commands in the SpectorJS report.
+   */
+  private assignSpectorJsMetadataToRenderTarget(renderTarget: THREE.WebGLRenderTarget, metadata: any) {
+    const currentRenderTarget = this._renderer.getRenderTarget();
+    try {
+      this._renderer.setRenderTarget(renderTarget);
+      const gl = this._renderer.getContext();
+      const framebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+      framebuffer.__SPECTOR_Metadata = metadata;
+    } finally {
+      this._renderer.setRenderTarget(currentRenderTarget);
+    }
   }
 }
 
