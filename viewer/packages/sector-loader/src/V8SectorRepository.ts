@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, trackError, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
+import { assertNever, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
+import { trackError } from '@reveal/metrics';
 import {
   CadSectorParser,
   LevelOfDetail,
