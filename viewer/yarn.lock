@@ -476,8 +476,8 @@ __metadata:
     "@cognite/reveal-parser-worker": 1.2.0
     "@cognite/sdk": ^5.0.0
     "@cognite/sdk-core": ^3.0.0
-    "@gltf-transform/core": ^0.12.11
-    "@gltf-transform/extensions": ^0.12.11
+    "@gltf-transform/core": ^1.0.0
+    "@gltf-transform/extensions": ^1.0.0
     "@tweenjs/tween.js": ^18.6.4
     "@types/dat.gui": ^0.7.7
     "@types/jest": ^26.0.15
@@ -591,22 +591,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gltf-transform/core@npm:^0.12.11":
-  version: 0.12.11
-  resolution: "@gltf-transform/core@npm:0.12.11"
+"@gltf-transform/core@npm:^1.0.0, @gltf-transform/core@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@gltf-transform/core@npm:1.0.1"
   dependencies:
-    gl-matrix: ^3.3.0
-  checksum: cfad73edd7bc67c8e3785b569a19b7108a96399738adb9018adca5db63261e678dd01d6268a98ffa25909af913fffc9478647bf813768cbaad68b85fde20df52
+    gl-matrix: ~3.3.0
+  checksum: 72f8a082e0c3fa3e865f6db4cbc1555439d7d3131290f19c1b21a7e1700025bc95b82ba1814cfabbb8ab6e10368a10173cb8916917dba1c95b0806ca6021bd7a
   languageName: node
   linkType: hard
 
-"@gltf-transform/extensions@npm:^0.12.11":
-  version: 0.12.11
-  resolution: "@gltf-transform/extensions@npm:0.12.11"
+"@gltf-transform/extensions@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "@gltf-transform/extensions@npm:1.0.1"
   dependencies:
-    "@gltf-transform/core": ^0.12.11
+    "@gltf-transform/core": ^1.0.1
     ktx-parse: ^0.2.1
-  checksum: ac9c4bccbbab79be45682d2f27333ed09f9c6d5dc0b58532c19da3984bb77b416ff4d15bc75216a280212f55ed467ea419f634a36b3b81fb817587672f69fa31
+  checksum: ee65d73c03ea69da57092ad0b0a6b8c14192610eb49dc85a9783d19291575aa5c8727bb35b76280d6b4867470b7e796bb9faf0ff67384b854ede677e519e7a97
   languageName: node
   linkType: hard
 
@@ -1051,6 +1051,7 @@ __metadata:
   resolution: "@reveal/sector-loader@workspace:packages/sector-loader"
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
+    "@reveal/metrics": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
     "@reveal/sector-parser": "workspace:*"
@@ -6113,7 +6114,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gl-matrix@npm:^3.3.0":
+"gl-matrix@npm:~3.3.0":
   version: 3.3.0
   resolution: "gl-matrix@npm:3.3.0"
   checksum: 4a1b475d2f726ccb6ad1727e8553d391fba613cfc9eded2fc9d2c2d9dc44e457b4f04a0a640ca18d949927c4444df67ff8498997d25f7cf542a84125cfc9c87a
