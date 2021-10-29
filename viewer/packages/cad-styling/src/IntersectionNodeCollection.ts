@@ -4,7 +4,7 @@
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
-import { AreaCollection, ClusteredAreaCollection } from './prioritized/AreaCollection';
+import { AreaCollection, ClusteredAreaCollection, EmptyAreaCollection } from './prioritized/AreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
 
@@ -48,6 +48,11 @@ export class IntersectionNodeCollection extends CombineNodeCollectionBase {
 
   public getAreas(): AreaCollection {
     if (this._cachedNodeAreas) {
+      return this._cachedNodeAreas;
+    }
+
+    if (this._nodeCollections.length === 0) {
+      this._cachedNodeAreas = EmptyAreaCollection.instance();
       return this._cachedNodeAreas;
     }
 
