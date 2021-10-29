@@ -44,8 +44,6 @@ export class GltfSectorRepository implements SectorRepository {
       });
     }
 
-    // console.log(metadata.sectorFileName);
-
     const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
       sector.modelBaseUrl,
       metadata.sectorFileName!

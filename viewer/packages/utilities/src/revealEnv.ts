@@ -7,5 +7,5 @@
  * in cases when you need the latest local files or CDN is blocked by CSP.
  */
 export const revealEnv = {
-  publicPath: '' // https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/
+  publicPath: ''
 };
