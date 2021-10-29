@@ -18,8 +18,8 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
 
   private _ongoingOperations = 0;
   private _interrupted = false;
-  private _indexSet = new IndexSet();
-  private _areas = new ClusteredAreaCollection();
+  private readonly _indexSet = new IndexSet();
+  private readonly _areas = new ClusteredAreaCollection();
 
   constructor(
     itemsToTreeIndexRangesCallback: (items: T[]) => NumericRange[],
