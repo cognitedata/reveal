@@ -80,10 +80,10 @@ const Search = ({ visible, onClose }: SearchProps) => {
             }
           >
             <SegmentedControl.Button key="assets">
-              Tag number
+              Equipment tag
             </SegmentedControl.Button>
             <SegmentedControl.Button key="timeseries">
-              Timeseries
+              Time series
             </SegmentedControl.Button>
           </SegmentedControl>
           {/* {searchType === 'assets' && (
