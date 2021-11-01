@@ -1,3 +1,7 @@
+## 0.2.2 Oct 29 2021
+
+- Extend `SentryProps.ignoreErrors` prop to allow RegExp
+
 ## 0.2.1 Oct 25 2021
 
 - Install `rrweb` as a direct dependency. _Before it was necessary to install it for the apps outside of the monorepo._

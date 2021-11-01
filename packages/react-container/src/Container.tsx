@@ -9,6 +9,7 @@ import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { Loader } from '@cognite/cogs.js';
 import '@cognite/cogs.js/dist/cogs.css';
 import merge from 'lodash/merge';
+import { SentryProps } from '@cognite/react-sentry';
 
 import { IntercomContainer } from './components/Intercom';
 import {
@@ -38,6 +39,7 @@ type Props = {
   store?: Store;
   children: React.ReactChild;
   intercomSettings?: IntercomBootSettings;
+  sentrySettings?: SentryProps;
   sidecar: ContainerSidecarConfig;
 };
 const RawContainer: React.FC<Props> = ({
@@ -45,6 +47,7 @@ const RawContainer: React.FC<Props> = ({
   store,
   sidecar,
   intercomSettings,
+  sentrySettings,
 }) => {
   const [possibleTenant, initialTenant] = getTenantInfo(window.location);
 
@@ -106,7 +109,11 @@ const RawContainer: React.FC<Props> = ({
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
       <ConditionalQueryClientProvider disabled={disableReactQuery}>
-        <ConditionalSentry disabled={disableSentry} history={history}>
+        <ConditionalSentry
+          disabled={disableSentry}
+          history={history}
+          {...sentrySettings}
+        >
           <ChosenAuthContainer
             sidecar={sidecar}
             sdkClient={client}

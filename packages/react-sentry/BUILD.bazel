@@ -59,6 +59,7 @@ DEPENDENCIES = [
     "@npm//@sentry/react",
     "@npm//@sentry/rrweb",
     "@npm//@sentry/tracing",
+    "@npm//@types/history",
     "@npm//react",
     "//packages/react-errors",
 ]

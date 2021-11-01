@@ -1,3 +1,21 @@
+## 2.2.0 Oct 25 2021
+
+- Add `sentrySettings` to react-container props.
+
+Usage example:
+
+```js
+<ReactContainer
+  sidecar={sidecar}
+  sentrySettings={{
+    disableAdvancedTracking: true,
+    ignoreErrors: [
+      /*...*/
+    ],
+  }}
+/>
+```
+
 ## 2.1.1 Oct 25 2021
 
 - Bump to have latest `@cognite/react-sentry` with `rrweb` installed.

@@ -57,11 +57,13 @@ generate_package_json_helpers(
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
+    "@npm//@types/history",
     "@npm//axios",
     "@npm//jwt-decode",
     "@npm//lodash",
     "@npm//react",
     "@npm//react-dom",
+    "@npm//react-i18next",
     "@npm//react-query",
     "@npm//react-redux",
     "@npm//react-router-dom",
@@ -70,20 +72,22 @@ DEPENDENCIES = [
     "//packages/react-i18n",
     "//packages/react-errors",
     "//packages/react-tenant-selector",
-    "//packages/intercom-helper",
-    "//packages/testing",
-    "//packages/auth-utils",
-    "//packages/react-loop-detector",
-    "//packages/react-sentry",
     "//packages/sidecar",
+    "//packages/intercom-helper",
+    "//packages/react-sentry",
+    "//packages/auth-utils",
+    "//packages/testing",
+    "//packages/react-loop-detector",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/axios",
     "@npm//@types/jwt-decode",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
+    "@npm//@types/react-i18next",
     "@npm//@types/react-redux",
     "@npm//@types/react-router-dom",
 ]
@@ -101,14 +105,13 @@ DEV_DEPENDENCIES = [
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "Container": "dist/Container",
-    "__mocks": "dist/__mocks",
     "__tests__": "dist/__tests__",
     "auth": "dist/auth",
-    "mocks": "dist/mocks",
     "components": "dist/components",
     "hooks": "dist/hooks",
     "index": "dist/index",
     "internal": "dist/internal",
+    "mocks": "dist/mocks",
     "providers": "dist/providers",
     "setupTests": "dist/setupTests",
     "utils": "dist/utils",

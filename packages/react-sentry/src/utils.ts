@@ -2,6 +2,7 @@ import { BrowserOptions, init, setUser } from '@sentry/browser';
 import * as Sentry from '@sentry/react';
 import SentryRRWeb from '@sentry/rrweb';
 import { Integrations } from '@sentry/tracing';
+import { History } from 'history';
 
 import { log } from './log';
 import { isLocalhost } from './env';
@@ -30,7 +31,7 @@ export interface SentryProps {
   disableAdvancedTracking?: boolean;
   dsn?: string;
   history?: History;
-  ignoreErrors?: string[];
+  ignoreErrors?: BrowserOptions['ignoreErrors'];
 }
 
 export const initSentry = ({

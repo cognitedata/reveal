@@ -60,6 +60,7 @@ DEPENDENCIES = [
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/history",
     "@npm//@types/react",
     "@npm//@types/react-router-dom",
 ]
