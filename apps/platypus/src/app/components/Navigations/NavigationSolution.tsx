@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { useLocation, useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { TopBar, Button, Dropdown, Body, Icon } from '@cognite/cogs.js';
 import { NavigationLink } from '@cognite/cogs.js/dist/Components/TopBar/Modules/Navigation';
 import { solutions } from '../../mocks/solutions';
@@ -31,18 +31,16 @@ const tabs: Array<{
 ];
 
 export const NavigationSolution = () => {
-  const { pathname } = useLocation();
-
   const { solutionId, tabKey } = useParams<{
     solutionId: string;
     tabKey: string;
   }>();
+
   const history = useHistory();
 
   const projectManagementLinks: NavigationLink[] = tabs.map((tab) => ({
     name: tab.title,
-    isActive:
-      pathname.endsWith(`/${tab.slug}`) || (tab.slug === 'overview' && !tabKey),
+    isActive: tabKey === tab.slug || (tab.slug === 'overview' && !tabKey),
     onClick: () => {
       history.push({
         pathname: `/solutions/${solutionId}/${tab.slug}`,

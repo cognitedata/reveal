@@ -24,7 +24,7 @@ export const SolutionsPage = () => (
         <SolutionsList />
       </Suspense>
     </Route>
-    <Route exact path="/solutions/:solutionId?/:tabKey?">
+    <Route exact path="/solutions/:solutionId?/:tabKey?/:solutionPage?">
       <NavigationSolution />
       <Suspense fallback={<Spinner />}>
         <Solution />

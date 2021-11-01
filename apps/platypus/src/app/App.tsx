@@ -18,7 +18,13 @@ function App() {
           <Router basename="platypus">
             <StyledPage>
               <Switch>
-                <Route exact path={['/', '/solutions/:solutionId?/:tabKey?']}>
+                <Route
+                  exact
+                  path={[
+                    '/',
+                    '/solutions/:solutionId?/:tabKey?/:solutionPage?',
+                  ]}
+                >
                   <SolutionsPage />
                 </Route>
                 <Route exact path="/guidetools">

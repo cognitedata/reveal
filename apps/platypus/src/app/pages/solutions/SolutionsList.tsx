@@ -8,7 +8,7 @@ export const SolutionsList = () => {
   const history = useHistory();
 
   return (
-    <StyledPageWrapper>
+    <StyledPageWrapper style={{ padding: '3rem' }}>
       <Title level={3}>Solutions</Title>
       <StyledWrapper>
         <StyledNewCard onClick={() => history.push('/new')}>

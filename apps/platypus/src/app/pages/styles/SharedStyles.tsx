@@ -7,5 +7,4 @@ export const StyledPageWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
   height: 100%;
-  padding: 3rem;
 `;
