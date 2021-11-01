@@ -37,6 +37,7 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "//packages/pid-tools",
     "@npm//@cognite/cogs.js",
     "@npm//react",
     "@npm//react-svg",
