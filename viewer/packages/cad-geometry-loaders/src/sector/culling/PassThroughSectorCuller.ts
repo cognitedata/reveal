@@ -38,7 +38,7 @@ export class PassThroughSectorCuller implements SectorCuller {
 
     return { wantedSectors, spentBudget };
   }
-  filterSectorsToLoad(input: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {
+  filterSectorsToLoad(_: DetermineSectorsInput, wantedSectorsBatch: WantedSector[]): Promise<WantedSector[]> {
     return Promise.resolve(wantedSectorsBatch);
   }
   dispose(): void {
