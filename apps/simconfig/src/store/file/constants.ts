@@ -7,7 +7,7 @@ export const initialState: FileState = {
   initialized: false,
   files: [],
   selectedFile: undefined,
-  selectedCalculation: undefined,
-  selectedCalculationConfig: undefined,
+  currentCalculation: undefined,
+  currentCalculationConfig: undefined,
   downloadLinks: [],
 };

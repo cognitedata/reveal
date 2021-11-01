@@ -82,6 +82,7 @@ DEPENDENCIES = [
     "@npm//@sentry/browser",
     "@npm//eslint-config-react-app",
     "@npm//formik",
+    "@npm//lodash",
     "@npm//moment",
     "@npm//react",
     "@npm//react-dom",
@@ -101,6 +102,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react-redux",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
+    "@npm//@types/lodash",
     "@npm//@types/styled-components",
 ]
 

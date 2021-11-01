@@ -1,19 +1,25 @@
 import { FileInfo } from '@cognite/sdk';
 import { RequestStatus } from 'store/types';
 import { LinkWithID } from 'pages/ModelLibrary/types';
+import { CalculationConfig } from 'components/forms/ConfigurationForm/types';
 
-type JSONPrimitive = string | number | boolean | JSONObject | null;
+type JSONPrimitive =
+  | string
+  | number
+  | boolean
+  | CalculationConfigJSONObject
+  | null;
 
-type JSONObject = { [key: string]: JSONPrimitive };
+export type CalculationConfigJSONObject = { [key: string]: JSONPrimitive };
 
 export interface FileState {
   requestStatus: RequestStatus;
   initialized: boolean;
   files: FileInfoSerializable[];
   selectedFile?: FileInfoSerializable;
-  selectedCalculation?: FileInfoSerializable;
+  currentCalculation?: FileInfoSerializable;
   downloadLinks?: LinkWithID[];
-  selectedCalculationConfig?: JSONObject;
+  currentCalculationConfig?: CalculationConfig;
 }
 
 export type FileInfoSerializable = Omit<

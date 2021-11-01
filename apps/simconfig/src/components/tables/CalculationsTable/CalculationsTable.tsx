@@ -18,13 +18,13 @@ export default function CalculationsTable({ data }: ComponentProps) {
   const { cdfClient } = useContext(CdfClientContext);
   const { url } = useRouteMatch();
   const history = useHistory();
-  const onRowClick = async (row: TableRow<FileInfoSerializable>) => {
+  const onRowClick = (row: TableRow<FileInfoSerializable>) => {
     const { original } = row;
     if (!original.externalId) {
       throw new Error('No external Id');
     }
-    await dispatch(setSelectedCalculation(original));
-    await dispatch(
+    dispatch(setSelectedCalculation(original));
+    dispatch(
       fetchCalculationFile({
         client: cdfClient,
         externalId: { externalId: original.externalId },

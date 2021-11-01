@@ -22,7 +22,11 @@ export const fileSlice = createSlice({
       action: PayloadAction<FileInfoSerializable | undefined>
     ) =>
       partialUpdate(state, {
-        selectedCalculation: action.payload,
+        currentCalculation: action.payload,
+      }),
+    resetSelectedCalculationConfig: (state) =>
+      partialUpdate(state, {
+        currentCalculationConfig: undefined,
       }),
   },
   extraReducers: (builder) => {
@@ -66,10 +70,14 @@ export const fileSlice = createSlice({
 
     builder.addCase(fetchCalculationFile.fulfilled, (state, action) =>
       partialUpdate(state, {
-        selectedCalculationConfig: action.payload,
+        currentCalculationConfig: action.payload,
       })
     );
   },
 });
-export const { setSelectedFile, setSelectedCalculation } = fileSlice.actions;
+export const {
+  setSelectedFile,
+  setSelectedCalculation,
+  resetSelectedCalculationConfig,
+} = fileSlice.actions;
 export const fileReducer = fileSlice.reducer;

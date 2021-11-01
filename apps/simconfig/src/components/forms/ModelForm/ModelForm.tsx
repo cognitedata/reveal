@@ -9,6 +9,7 @@ import { selectDatasets } from 'store/dataset/selectors';
 import { selectUploadDatasetIds } from 'store/group/selectors';
 import { ApiContext } from 'providers/ApiProvider';
 import { HiddenInputFile } from 'components/forms/controls/elements';
+import { getSelectEntriesFromMap } from 'utils/formUtils';
 
 import { uploadModelFile } from './utils';
 import { InputRow } from './elements';
@@ -43,12 +44,6 @@ const initialModelFormState: ModelFormData = {
     },
   },
 };
-
-const getSelectEntriesFromMap = (obj: { [key: string]: string }) =>
-  Object.entries(obj).map(([value, label]) => ({
-    label,
-    value,
-  }));
 
 export function ModelForm({ formData }: React.PropsWithoutRef<ComponentProps>) {
   const history = useHistory();
