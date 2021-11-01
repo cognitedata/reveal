@@ -22,6 +22,7 @@ const ROW_LIMIT_PER_REQ = 1000;
 const BINARY_SEARCH_START = 0;
 const BINARY_SEARCH_END = 2000000;
 const MIN_SEARCH_RANGE = 1000;
+const ORPHAN_SEARCH_RANGE = 2000;
 
 export const getRowData = async (logs: Sequence[], logsFrmTops: Sequence[]) => {
   return Promise.all([
@@ -77,7 +78,7 @@ const startLogRowDataFetch = async (log: Sequence) => {
   );
 
   // This finds end margin with not null values
-  const valuedEndMargin = await findValuedEndMargin(
+  let valuedEndMargin = await findValuedEndMargin(
     valuedStartMargin || startMargin,
     endMargin,
     log.id,
@@ -99,14 +100,11 @@ const startLogRowDataFetch = async (log: Sequence) => {
     );
   }
 
-  if (
-    (!valuedStartMargin && valuedStartMargin !== 0) ||
-    !valuedEndMargin ||
-    valuedEndMargin < valuedStartMargin
-  ) {
-    return new Promise((resolve) => {
-      resolve({ log, rows: [] });
-    });
+  if (!valuedStartMargin && valuedStartMargin !== 0) {
+    valuedStartMargin = startMargin;
+  }
+  if (!valuedEndMargin && valuedEndMargin !== 0) {
+    valuedEndMargin = valuedStartMargin + ORPHAN_SEARCH_RANGE;
   }
 
   // This sorts already fetched row data sets in binary search

@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 import { Button } from '@cognite/cogs.js';
 
 import layers from '_helpers/zindex';
-import { FlexRow, sizes } from 'styles/layout';
+import { Flex, FlexRow, sizes } from 'styles/layout';
 
 export const ModuleLoaderWrapper = styled.div`
   text-align: center;
@@ -26,7 +26,7 @@ export const PreviewButtonWrapper = styled.div`
   float: right;
 `;
 
-export const ModuleFilterDropdownWrapper = styled.div`
+export const ModuleFilterDropdownWrapper = styled(Flex)`
   margin: 10px 0;
   position: relative;
   z-index: ${layers.DROPDOWN_SELECT};
