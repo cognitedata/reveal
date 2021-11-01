@@ -127,12 +127,6 @@ export class CadNode extends THREE.Object3D {
     return this._rootSector.getModelTransformation(out);
   }
 
-  setPrioritizedNodes(nodeCollection: NodeCollectionBase, priority: number) {
-    const appearance: NodeAppearance = { prioritizedForLoadingHint: priority };
-
-    this.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
-  }
-
   get prioritizedAreas(): PrioritizedArea[] {
     return this.nodeAppearanceProvider.getPrioritizedAreas();
   }
