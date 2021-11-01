@@ -5,7 +5,6 @@ import {
   RevealManager, 
   CdfModelIdentifier,
   LocalModelIdentifier,
-  File3dFormat,
   createCdfRevealManager, 
   createLocalRevealManager
 } from "@cognite/reveal/internals";
