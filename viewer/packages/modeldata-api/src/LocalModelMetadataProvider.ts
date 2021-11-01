@@ -40,27 +40,59 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
 
   async getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
     const modelUri = await this.getModelUri(modelIdentifier);
-    const version: number = (await (await fetchWithStatusCheck(modelUri + '/scene.json')).json()).version;
 
-    switch (version) {
-      case 8:
-        return Promise.resolve([
-          {
+    const output = (await getCadOutput(modelUri)) ?? (await getPointCloudOutput(modelUri));
+
+    if (output) {
+      return [output];
+    }
+
+    throw new Error(`Only point cloud or cad models (version 8 and 9) are supported)`);
+
+    async function getCadOutput(modelUri: string): Promise<BlobOutputMetadata | undefined> {
+      let version: number;
+
+      try {
+        version = (await (await fetchWithStatusCheck(modelUri + '/scene.json')).json()).version;
+      } catch (error) {
+        return undefined;
+      }
+      switch (version) {
+        case 8:
+          return Promise.resolve({
             blobId: -1,
             format: File3dFormat.RevealCadModel,
             version: version
-          }
-        ]);
-      case 9:
-        return Promise.resolve([
-          {
+          });
+        case 9:
+          return Promise.resolve({
             blobId: -1,
             format: File3dFormat.GltfCadModel,
             version: version
-          }
-        ]);
-      default:
-        throw new Error(`Only versions 8, 9 are supported(not supported version: ${version})`);
+          });
+        default:
+          return undefined;
+      }
+    }
+
+    async function getPointCloudOutput(modelUri: string): Promise<BlobOutputMetadata | undefined> {
+      let scene: any;
+
+      try {
+        scene = await (await fetchWithStatusCheck(modelUri + '/ept.json')).json();
+      } catch (error) {
+        return undefined;
+      }
+
+      if (scene) {
+        return Promise.resolve({
+          blobId: -1,
+          format: File3dFormat.EptPointCloud,
+          version: -1
+        });
+      } else {
+        return undefined;
+      }
     }
   }
 }
