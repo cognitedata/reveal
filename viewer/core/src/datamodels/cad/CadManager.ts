@@ -4,18 +4,18 @@
 
 import * as THREE from 'three';
 
-import { CadModelFactory } from './CadModelFactory';
+import { Subscription, Observable } from 'rxjs';
 
+import { CadModelFactory } from './CadModelFactory';
 import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 import { GeometryFilter } from '../../public/types';
 
-import { ModelIdentifier } from '@reveal/modeldata-api';
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { trackError } from '@reveal/utilities';
+import { trackError } from '@reveal/metrics';
+import { ModelIdentifier } from '@reveal/modeldata-api';
 
-import { Subscription, Observable } from 'rxjs';
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModelFactory: CadModelFactory;

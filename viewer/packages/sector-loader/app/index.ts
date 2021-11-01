@@ -17,12 +17,14 @@ import {
 import { V8SectorRepository } from '../src/V8SectorRepository';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorRepository, SectorRepository } from '..';
+import { revealEnv } from '../../utilities';
+
+revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.2.0/';
 
 init();
 
 async function init() {
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
-
   const scene = new THREE.Scene();
 
   const gui = new dat.GUI();
@@ -37,18 +39,18 @@ async function init() {
     type: 'AAD_OAUTH',
     options: {
       clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-      cluster: 'api',
+      cluster: 'greenfield',
       tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
     }
   });
-  client.setProject('3ddemo');
+  client.setProject('3d-test');
   await client.authenticate();
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  const modelId = parseInt(urlParams.get('modelId') ?? '2890599736800729');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '8160779262643447');
+  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '502149125550840');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
 
@@ -102,10 +104,9 @@ async function loadSector(
   cadMaterialManager: CadMaterialManager,
   client: CogniteClient
 ) {
-  // const blobId = outputs.findMostRecentOutput(guiData.format)?.blobId.toString();
   const output = outputs.find(output => output.format === guiData.format);
   const sceneJson = await modelDataClient.getJsonFile(
-    'https://api.cognitedata.com/api/v1/projects/3ddemo/3d/files/' + output?.blobId,
+    `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
     'scene.json'
   );
 
@@ -125,7 +126,7 @@ async function loadSector(
     sceneJson.sectors.map(async (sector: any) => {
       sector.bounds = new THREE.Box3(sector.boundingBox.min, sector.boundingBox.max);
       const consumedSector = await sectorRepository.loadSector({
-        modelBaseUrl: client.getBaseUrl() + '/api/v1/projects/3ddemo/3d/files/' + output?.blobId,
+        modelBaseUrl: `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
         modelIdentifier: output!.blobId.toString(),
         metadata: sector,
         levelOfDetail: 2,

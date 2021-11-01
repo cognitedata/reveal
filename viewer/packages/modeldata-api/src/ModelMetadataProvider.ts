@@ -5,6 +5,10 @@ import * as THREE from 'three';
 import { ModelIdentifier } from './ModelIdentifier';
 import { BlobOutputMetadata, File3dFormat } from './types';
 
+/**
+ * Provides metadata for 3D models.
+ * @version New since 2.2
+ */
 export interface ModelMetadataProvider {
   getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
   getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string>;

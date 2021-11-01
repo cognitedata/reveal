@@ -17,7 +17,7 @@ export class CadMetadataParser {
       case 8:
         return parseCadMetadataV8(parsedJson);
 
-      case 1:
+      case 9:
         return parseCadMetadataGltf(parsedJson);
 
       case undefined:

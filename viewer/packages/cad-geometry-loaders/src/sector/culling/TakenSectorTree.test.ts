@@ -5,19 +5,25 @@
 import * as THREE from 'three';
 import { generateSectorTree, expectContainsSectorsWithLevelOfDetail, Mutable } from '../../../../../test-utilities';
 import { PropType } from '../../utilities/reflection';
-import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import {
+  SectorMetadata,
+  CadModelMetadata,
+  LevelOfDetail,
+  BaseSectorMetadata,
+  V8SectorMetadata
+} from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
 import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
 import { TakenSectorTree } from './TakenSectorTree';
 
-type FacesFile = PropType<SectorMetadata, 'facesFile'>;
+type FacesFile = PropType<BaseSectorMetadata & V8SectorMetadata, 'facesFile'>;
 
 describe('TakenSectorTree', () => {
   const model: CadModelMetadata = {} as any;
   const determineSectorCost: DetermineSectorCostDelegate = () => ({ downloadSize: 1, drawCalls: 1, renderCost: 1 }); // Flat cost
 
   test('default tree contains root as simple', () => {
-    const root = generateSectorTree(2);
+    const root = generateSectorTree(2) as BaseSectorMetadata & V8SectorMetadata;
     const tree = new TakenSectorTree(root, determineSectorCost);
     const wanted = tree.toWantedSectors(model.modelIdentifier, model.modelBaseUrl, null);
     expectContainsSectorsWithLevelOfDetail(wanted, [0], []);
@@ -25,7 +31,7 @@ describe('TakenSectorTree', () => {
 
   test('three levels, partial detailed at level 2', () => {
     // Arrange
-    const root = generateSectorTree(3, 2);
+    const root = generateSectorTree(3, 2) as BaseSectorMetadata & V8SectorMetadata;
     const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Act
@@ -42,7 +48,7 @@ describe('TakenSectorTree', () => {
 
   test('add detailed sectors out of order', () => {
     // Arrange
-    const root = generateSectorTree(5, 2);
+    const root = generateSectorTree(5, 2) as BaseSectorMetadata & V8SectorMetadata;
     const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Act
@@ -59,9 +65,9 @@ describe('TakenSectorTree', () => {
 
   test('Simple data is not added when sector has no f3d file', () => {
     // Arrange
-    const root = generateSectorTree(3, 2);
+    const root = generateSectorTree(3, 2) as BaseSectorMetadata & V8SectorMetadata;
 
-    const mutableFacesFile: Mutable<FacesFile> = root.children[0].facesFile;
+    const mutableFacesFile: Mutable<FacesFile> = (root.children[0] as BaseSectorMetadata & V8SectorMetadata).facesFile;
     mutableFacesFile.fileName = null;
     const tree = new TakenSectorTree(root, determineSectorCost);
 
@@ -76,7 +82,7 @@ describe('TakenSectorTree', () => {
 
   test('construct with model without F3D for root', () => {
     // Arrange
-    const root = generateSectorTree(3, 2);
+    const root = generateSectorTree(3, 2) as BaseSectorMetadata & V8SectorMetadata;
     const mutableFacesFile: Mutable<FacesFile> = root.facesFile;
     mutableFacesFile.fileName = null;
 
@@ -90,7 +96,7 @@ describe('TakenSectorTree', () => {
 
   test('toWantedSectors includes provided geometryFilterBox', () => {
     const box = new THREE.Box3();
-    const root = generateSectorTree(2);
+    const root = generateSectorTree(2) as BaseSectorMetadata & V8SectorMetadata;
     const tree = new TakenSectorTree(root, determineSectorCost);
     const wanted = tree.toWantedSectors(model.modelIdentifier, model.modelBaseUrl, box);
 
@@ -105,7 +111,7 @@ describe('TakenSectorTree', () => {
       return true;
     });
 
-    const tree = new TakenSectorTree(root, determineSectorCost);
+    const tree = new TakenSectorTree(root as BaseSectorMetadata & V8SectorMetadata, determineSectorCost);
     const wanted = tree.toWantedSectors(model.modelIdentifier, model.modelBaseUrl, null);
 
     expect(wanted.length).toBe(7);
@@ -118,7 +124,7 @@ describe('TakenSectorTree', () => {
       mutable.id = mutable.id * mutable.id;
       return true;
     });
-    expect(() => new TakenSectorTree(root, determineSectorCost)).not.toThrow();
+    expect(() => new TakenSectorTree(root as BaseSectorMetadata & V8SectorMetadata, determineSectorCost)).not.toThrow();
   });
 });
 

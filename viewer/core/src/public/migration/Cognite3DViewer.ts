@@ -12,7 +12,8 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
+import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -46,7 +47,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelIdentifier, CdfModelOutputsProvider } from '@reveal/modeldata-api';
+import { CdfModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -297,9 +298,14 @@ export class Cognite3DViewer {
     this.animate(0);
 
     trackEvent('construct3dViewer', {
-      moduleName: 'Cognite3DViewer',
-      methodName: 'constructor',
-      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+      constructorOptions: omit(options, [
+        'sdk',
+        'domElement',
+        'renderer',
+        'renderTargetOptions',
+        'onLoading',
+        '_sectorCuller'
+      ])
     });
   }
 
@@ -633,20 +639,17 @@ export class Cognite3DViewer {
     }
 
     const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
-    const outputsProvider = new CdfModelOutputsProvider(this._cdfSdkClient);
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
-    // console.log(test);
-    // const outputs = await outputsProvider.getOutputs(modelIdentifier, File3dFormat.AnyFormat);
-    return 'cad';
-    // if (
-    //   outputs.filter(output => output.) !== undefined ||
-    //   outputs.findMostRecentOutput(File3dFormat.GltfCadModel) !== undefined
-    // ) {
-    //   return 'cad';
-    // } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
-    //   return 'pointcloud';
-    // }
-    // return '';
+
+    if (
+      outputs.filter(output => output.format === 'gltf-directory') !== undefined ||
+      outputs.filter(output => output.format === 'reveal-directory') !== undefined
+    ) {
+      return 'cad';
+    } else if (outputs.filter(output => output.format === 'ept-pointcloud') !== undefined) {
+      return 'pointcloud';
+    }
+    return '';
   }
 
   /**
