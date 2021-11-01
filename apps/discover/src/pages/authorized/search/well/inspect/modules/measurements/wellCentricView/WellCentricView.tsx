@@ -97,8 +97,8 @@ export const WellCentricView: React.FC<Props> = ({
           key={row.wellbore.id}
           chartData={row.chartData}
           axisNames={{
-            x2: `Pressure (${pressureUnit.toLowerCase()})`,
-            x: 'Angle (deg)',
+            x: `Pressure (${pressureUnit.toLowerCase()})`,
+            x2: 'Angle (deg)',
             y: `${measurementReference} (${userPreferredUnit})`,
           }}
         />

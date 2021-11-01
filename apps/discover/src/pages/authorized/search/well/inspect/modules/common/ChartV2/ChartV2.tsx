@@ -47,7 +47,7 @@ const ChartV2 = ({
   title,
   autosize = false,
   showLegend = false,
-  hovermode = 'closest',
+  hovermode = 'y unified',
 }: ChartProps) => {
   const [detailCardData, setDetailCardData] = useState<Plotly.PlotMouseEvent>();
 
@@ -61,6 +61,7 @@ const ChartV2 = ({
       },
       spikemode: 'across',
       spikethickness: 1,
+      tickformat: 'digit',
     },
     yaxis: {
       autorange: axisAutorange?.y,
@@ -70,6 +71,7 @@ const ChartV2 = ({
       },
       spikemode: 'across',
       spikethickness: 1,
+      tickformat: 'digit',
     },
   };
 
@@ -85,6 +87,7 @@ const ChartV2 = ({
       spikethickness: 1,
       overlaying: 'x',
       side: 'bottom',
+      tickformat: 'digit',
     };
   }
 

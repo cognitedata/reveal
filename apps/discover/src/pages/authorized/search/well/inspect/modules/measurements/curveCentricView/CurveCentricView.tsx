@@ -92,15 +92,16 @@ export const CurveCentricView: React.FC<Props> = ({
   ]);
   const wellCards = useMemo(() => {
     const groupedData = groupBy(filterByMainChartType(charts), 'name');
+    const axisNames = {
+      x: `Pressure (${pressureUnit.toLowerCase()})`,
+      x2: 'Angle (deg)',
+      y: `${measurementReference} (${userPreferredUnit})`,
+    };
     const groupedCharts = Object.keys(groupedData).map((key) => (
       <CurveCentricCard
         key={key}
         chartData={groupedData[key]}
-        axisNames={{
-          x2: `Pressure (${pressureUnit.toLowerCase()})`,
-          x: 'Angle (deg)',
-          y: `${measurementReference} (${userPreferredUnit})`,
-        }}
+        axisNames={axisNames}
       />
     ));
 
@@ -110,11 +111,7 @@ export const CurveCentricView: React.FC<Props> = ({
         <CurveCentricCard
           key="FIT"
           chartData={fitCharts}
-          axisNames={{
-            x2: `Pressure (${pressureUnit.toLowerCase()})`,
-            x: 'Angle (deg)',
-            y: `${measurementReference} (${userPreferredUnit})`,
-          }}
+          axisNames={axisNames}
         />
       );
     }
@@ -125,11 +122,7 @@ export const CurveCentricView: React.FC<Props> = ({
         <CurveCentricCard
           key="LOT"
           chartData={lotCharts}
-          axisNames={{
-            x2: `Pressure (${pressureUnit.toLowerCase()})`,
-            x: 'Angle (deg)',
-            y: `${measurementReference} (${userPreferredUnit})`,
-          }}
+          axisNames={axisNames}
         />
       );
     }

@@ -120,6 +120,12 @@ export const ChartWrapper = styled.div`
     display: none;
   }
 
+  > * .hoverlayer {
+    .legend {
+      display: none;
+    }
+  }
+
   background-color: var(--cogs-greyscale-grey1);
 `;
 
