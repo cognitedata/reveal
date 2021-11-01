@@ -125,11 +125,10 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('getPrioritizedAreas returns areas that contain all boxes for all collections', () => {
-
     const rand = SeededRandom.create();
     const boxes0 = createRandomBoxes(100, 10, 100, rand);
     const boxes1 = createRandomBoxes(100, 10, 100, rand);
-    
+
     const nodeCollection0 = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
     const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([6, 9, 12]));
 
@@ -140,7 +139,6 @@ describe('NodeAppearanceProvider', () => {
     provider.assignStyledNodeCollection(nodeCollection1, { prioritizedForLoadingHint: 4 });
 
     const areas = provider.getPrioritizedAreas();
-
 
     const containedInSomeArea0 = new Array<boolean>(boxes0.length).fill(false);
     const containedInSomeArea1 = new Array<boolean>(boxes1.length).fill(false);

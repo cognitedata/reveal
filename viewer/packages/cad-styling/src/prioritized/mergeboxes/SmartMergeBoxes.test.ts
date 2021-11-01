@@ -3,12 +3,16 @@
  */
 import { SmartMergeBoxes } from './SmartMergeBoxes';
 import { Box3 } from 'three';
-import { createNonTouchingBoxesInRegularGrid, createOverlappingBoxes, createRandomBoxes, scrambleBoxes } from '../../../../../test-utilities/src/createBoxes';
+import {
+  createNonTouchingBoxesInRegularGrid,
+  createOverlappingBoxes,
+  createRandomBoxes,
+  scrambleBoxes
+} from '../../../../../test-utilities/src/createBoxes';
 
 import * as SeededRandom from 'random-seed';
 
 describe('SmartMergeBoxes', () => {
-
   test('add non-intersecting bboxes', () => {
     const mergeBoxes = new SmartMergeBoxes();
 
