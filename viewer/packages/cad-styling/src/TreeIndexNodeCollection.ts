@@ -2,7 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import { NumericRange, IndexSet } from '@reveal/utilities';
-import { AreaCollection, ClusteredAreaCollection } from './prioritized/AreaCollection';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 import * as THREE from 'three';

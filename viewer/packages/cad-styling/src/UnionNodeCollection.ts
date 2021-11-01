@@ -3,7 +3,8 @@
  */
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
-import { AreaCollection, ClusteredAreaCollection } from './prioritized/AreaCollection';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
 

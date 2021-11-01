@@ -22,10 +22,12 @@ describe('NodeCollectionDeserializer', () => {
     // Older TreeIndexNodeCollection in saved viewer state will have options undefined
     serializedCollection.options = undefined;
 
-    expect(await deserializer.deserialize(sdk, model, {
-      token: serializedCollection.token,
-      state: serializedCollection.state,
-      options: serializedCollection.options
-    })).toBeObject();
+    expect(
+      await deserializer.deserialize(sdk, model, {
+        token: serializedCollection.token,
+        state: serializedCollection.state,
+        options: serializedCollection.options
+      })
+    ).toBeTruthy();
   });
 });

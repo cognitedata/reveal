@@ -4,7 +4,9 @@
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
-import { AreaCollection, ClusteredAreaCollection, EmptyAreaCollection } from './prioritized/AreaCollection';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
+import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
 
