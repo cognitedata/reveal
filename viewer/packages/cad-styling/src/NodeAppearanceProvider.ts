@@ -113,7 +113,7 @@ export class NodeAppearanceProvider {
 
     const prioritizedAreas = prioritizedCollections.flatMap(collection =>
       [...collection.nodeCollection.getAreas().areas()].map(area => {
-        return { area, extraPriority: collection.appearance.prioritizedForLoadingHint } as PrioritizedArea;
+        return { area, extraPriority: collection.appearance.prioritizedForLoadingHint! };
       })
     );
 
