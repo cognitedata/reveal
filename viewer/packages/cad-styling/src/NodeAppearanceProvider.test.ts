@@ -125,9 +125,9 @@ describe('NodeAppearanceProvider', () => {
   });
 
   test('getPrioritizedAreas returns areas that contain all boxes for all collections', () => {
-    const rand = SeededRandom.create();
-    const boxes0 = createRandomBoxes(100, 10, 100, rand);
-    const boxes1 = createRandomBoxes(100, 10, 100, rand);
+    const rand = SeededRandom.create('someseed');
+    const boxes0 = createRandomBoxes(100, 10, 30, rand);
+    const boxes1 = createRandomBoxes(100, 10, 30, rand);
 
     const nodeCollection0 = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
     const nodeCollection1 = new TreeIndexNodeCollection(new IndexSet([6, 9, 12]));
@@ -147,14 +147,12 @@ describe('NodeAppearanceProvider', () => {
       for (let i = 0; i < boxes0.length; i++) {
         if (area.area.containsBox(boxes0[i])) {
           containedInSomeArea0[i] = true;
-          break;
         }
       }
 
       for (let i = 0; i < boxes1.length; i++) {
         if (area.area.containsBox(boxes1[i])) {
           containedInSomeArea1[i] = true;
-          break;
         }
       }
     }
