@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Icons, Colors } from '@cognite/cogs.js';
-import { trackUsage } from 'utils/Metrics';
-import { ACTION_COPY } from 'utils/constants';
+import { Colors, Icons } from '@cognite/cogs.js';
 import { CopyType } from 'components/InteractiveCopyWithText';
 import { StyledTooltip } from 'styles/StyledToolTip';
+
+import { trackUsage } from 'utils/Metrics';
 
 interface InteractiveCopyProps {
   text: string;
@@ -30,7 +30,7 @@ const InteractiveCopy = ({
 
   const onCopy = () => {
     const el = document.createElement('textarea');
-    trackUsage(ACTION_COPY, { copyType });
+    trackUsage({ t: 'Action.Copy', copyType });
     el.value = text;
     document.body.appendChild(el);
     el.select();
@@ -66,9 +66,11 @@ const IconWrapper = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 0.5rem;
+
   svg {
     height: 0.7rem;
     width: 0.7rem;
+
     path {
       fill: ${Colors.primary.hex()};
     }

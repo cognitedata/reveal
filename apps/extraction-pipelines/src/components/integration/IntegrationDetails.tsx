@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import { useParams } from 'react-router';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { RouterParams } from 'routing/RoutingConfig';
-import { trackUsage } from 'utils/Metrics';
-import { EXTRACTION_PIPELINE_LOWER, SINGLE_EXT_PIPE } from 'utils/constants';
+import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 import { PageWrapperColumn } from 'styles/StyledPage';
 import { DocumentationSection } from 'components/integration/DocumentationSection';
 import { RunScheduleConnection } from 'components/integration/RunScheduleConnection';
 import { IntegrationInformation } from 'components/integration/IntegrationInformation';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
+import { trackUsage } from 'utils/Metrics';
 
 const MiddleSectionGrid = styled.div`
   display: grid;
@@ -29,6 +29,7 @@ export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
   `Found no ${EXTRACTION_PIPELINE_LOWER} with id: ${id}`;
 
 interface IntegrationViewProps {}
+
 export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () => {
   const { id } = useParams<RouterParams>();
   // take as param??
@@ -39,7 +40,7 @@ export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () =>
 
   useEffect(() => {
     if (integrationId) {
-      trackUsage(SINGLE_EXT_PIPE, { id: integrationId });
+      trackUsage({ t: 'Extraction pipeline.Details', id: integrationId });
     }
   }, [integrationId]);
 

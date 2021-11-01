@@ -18,7 +18,6 @@ import { useFilteredRuns } from 'hooks/useRuns';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { RunTableHeading } from 'components/integration/RunLogsCols';
 import { trackUsage } from 'utils/Metrics';
-import { SINGLE_EXT_PIPE_RUNS } from 'utils/constants';
 import moment from 'moment';
 import { mapStatusRow } from 'utils/runsUtils';
 import { rangeToTwoDigitString } from 'components/inputs/dateTime/TimeSelectorUtils';
@@ -58,7 +57,8 @@ describe('IntegrationHealth', () => {
     expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
 
     // test tracking
-    expect(trackUsage).toHaveBeenCalledWith(SINGLE_EXT_PIPE_RUNS, {
+    expect(trackUsage).toHaveBeenCalledWith({
+      t: 'Extraction pipeline.Health',
       id: mockIntegration.id,
     });
   });

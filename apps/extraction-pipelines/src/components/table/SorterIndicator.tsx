@@ -2,9 +2,9 @@ import React, { AriaAttributes } from 'react';
 import { ColumnInstance } from 'react-table';
 import { Button } from '@cognite/cogs.js';
 import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon';
-import { trackUsage } from 'utils/Metrics';
-import { SORT } from 'utils/constants';
 import styled from 'styled-components';
+
+import { trackUsage } from 'utils/Metrics';
 
 const getSortOrder = <T extends object>(
   column: ColumnInstance<T>
@@ -25,14 +25,17 @@ const getSortOrder = <T extends object>(
     ariaSort: 'none',
   };
 };
+
 interface SorterIndicatorProps<T extends object> {
   column: ColumnInstance<T>;
   name: string;
 }
+
 const ButtonWithNoPadding = styled(Button)`
   && {
     padding: 0;
   }
+
   display: block;
   color: inherit;
 `;
@@ -42,7 +45,7 @@ const SorterIndicator = <T extends object>({
 }: SorterIndicatorProps<T>) => {
   const { icon, ariaSort } = getSortOrder(column);
   const onClickSort = () => {
-    trackUsage(SORT, { field: name });
+    trackUsage({ t: 'Sort', field: name });
   };
   return (
     <ButtonWithNoPadding

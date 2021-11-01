@@ -5,8 +5,6 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { trackUsage } from 'utils/Metrics';
-import { SINGLE_EXT_PIPE_RUNS } from 'utils/constants';
 import { useFilteredRuns } from 'hooks/useRuns';
 import { RunUI } from 'model/Runs';
 import { Integration } from 'model/Integration';
@@ -38,6 +36,7 @@ import { Span3 } from 'styles/grid/StyledGrid';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { SectionWithoutHeader } from 'components/integration/Section';
+import { trackUsage } from 'utils/Metrics';
 
 const TableWrapper = styled(PageWrapperColumn)`
   ${Span3};
@@ -119,7 +118,7 @@ export const IntegrationRunHistory: FunctionComponent<LogsViewProps> = ({
   const { id: integrationId } = integration ?? {};
   useEffect(() => {
     if (integrationId) {
-      trackUsage(SINGLE_EXT_PIPE_RUNS, { id: integrationId });
+      trackUsage({ t: 'Extraction pipeline.Health', id: integrationId });
     }
   }, [integrationId]);
   const { search: urlSearch, pathname } = useLocation();

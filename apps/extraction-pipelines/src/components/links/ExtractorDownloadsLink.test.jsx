@@ -3,7 +3,6 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { QueryClient } from 'react-query';
 import { trackUsage } from 'utils/Metrics';
-import { NAVIGATION } from 'utils/constants';
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
@@ -60,6 +59,6 @@ describe('ExtractorDownloadsTab', () => {
     expect(downloadLink).toBeInTheDocument();
     fireEvent.click(downloadLink);
     expect(trackUsage).toHaveBeenCalledTimes(1);
-    expect(trackUsage).toHaveBeenCalledWith(NAVIGATION, { href: url });
+    expect(trackUsage).toHaveBeenCalledWith({ t: 'Navigation', href: url });
   });
 });

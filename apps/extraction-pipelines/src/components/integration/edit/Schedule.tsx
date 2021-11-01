@@ -38,6 +38,7 @@ import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
+import { trackUsage } from 'utils/Metrics';
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -116,6 +117,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const onSave = async (field: ScheduleFormInput) => {
     if (integration && project) {
       const updatedSchedule = mapScheduleInputToScheduleValue(field);
+      trackUsage({ t: 'EditField.Save', field: 'schedule' });
       const items = createUpdateSpec({
         project,
         id: integration.id,
@@ -124,9 +126,11 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
       });
       await mutate(items, {
         onError: () => {
+          trackUsage({ t: 'EditField.Rejected', field: 'schedule' });
           setErrorVisible(true);
         },
         onSuccess: () => {
+          trackUsage({ t: 'EditField.Completed', field: 'schedule' });
           setIsEdit(false);
         },
       });
@@ -135,6 +139,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 
   const onEditClick = () => {
     if (canEdit) {
+      trackUsage({ t: 'EditField.Start', field: 'schedule' });
       setIsEdit(true);
     }
   };
@@ -144,6 +149,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   };
 
   const onCancel = () => {
+    trackUsage({ t: 'EditField.Cancel', field: 'schedule' });
     setIsEdit(false);
   };
 

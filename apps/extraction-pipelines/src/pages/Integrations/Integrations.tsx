@@ -1,11 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
-import { trackUsage } from 'utils/Metrics';
-import {
-  ERROR_NOT_GET_EXT_PIPE,
-  EXTRACTION_PIPELINES,
-  OVERVIEW,
-} from 'utils/constants';
+import { ERROR_NOT_GET_EXT_PIPE, EXTRACTION_PIPELINES } from 'utils/constants';
 import { useIntegrations } from 'hooks/useIntegrations';
 import NoIntegrations from 'components/error/NoIntegrations';
 import { Button, Loader, Modal } from '@cognite/cogs.js';
@@ -24,6 +19,8 @@ import styled from 'styled-components';
 import { ids } from 'cogs-variables';
 import { CreateIntegration } from 'pages/create/CreateIntegration';
 import { StyledTooltip } from 'styles/StyledToolTip';
+
+import { trackUsage } from 'utils/Metrics';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -55,12 +52,13 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
 };
 
 interface OwnProps {}
+
 type Props = OwnProps;
 
 const Integrations: FunctionComponent<Props> = () => {
   const { project } = useAppEnv();
   useEffect(() => {
-    trackUsage(OVERVIEW, { tenant: project });
+    trackUsage({ t: 'Overview', tenant: project! });
   }, [project]);
   const {
     data: integrations,
@@ -72,6 +70,17 @@ const Integrations: FunctionComponent<Props> = () => {
   const canEdit = permissions.data;
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
+  const onClickCreateButton = () => {
+    if (canEdit && !createModalOpen) {
+      trackUsage({ t: 'Create.DialogOpened' });
+      setCreateModalOpen(true);
+    }
+  };
+  const closeCreateDialog = () => {
+    trackUsage({ t: 'Create.DialogClosed' });
+    setCreateModalOpen(false);
+  };
+
   const createExtpipeButton = (
     <StyledTooltip
       disabled={canEdit}
@@ -82,9 +91,7 @@ const Integrations: FunctionComponent<Props> = () => {
         type="primary"
         icon="PlusCompact"
         disabled={!canEdit}
-        onClick={() => {
-          setCreateModalOpen(canEdit);
-        }}
+        onClick={onClickCreateButton}
       >
         Create extraction pipeline
       </Button>
@@ -125,10 +132,7 @@ const Integrations: FunctionComponent<Props> = () => {
 
   return (
     <>
-      <CreateExtpipeModal
-        visible={createModalOpen}
-        close={() => setCreateModalOpen(false)}
-      />
+      <CreateExtpipeModal visible={createModalOpen} close={closeCreateDialog} />
       <IntegrationsTable
         columns={integrationTableColumns}
         tableActionButtons={createExtpipeButton}

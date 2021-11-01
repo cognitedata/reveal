@@ -4,7 +4,7 @@ import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 export const LazyCreateIntegrationCreate = React.lazy(
   () =>
     import(
-      '../pages/create/CreateIntegration'
+      'pages/create/CreateIntegration'
       /* webpackChunkName: "pnid_integration_create" */
     )
 );

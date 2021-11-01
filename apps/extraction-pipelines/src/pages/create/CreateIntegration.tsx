@@ -70,6 +70,7 @@ import { createAddIntegrationInfo } from 'utils/integrationUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { ids } from 'cogs-variables';
+import { trackUsage } from 'utils/Metrics';
 
 const StyledCollapse = styled(Collapse)`
   background-color: red;
@@ -232,12 +233,14 @@ export const CreateIntegration = (props: {
   }, [scheduleValue]);
   const count = watch('documentation')?.length ?? 0;
 
-  const handleNext = (fields: AddIntegrationFormInput) => {
+  const onSubmit = (fields: AddIntegrationFormInput) => {
     const integrationInfo = createAddIntegrationInfo(fields, dataSet);
+    trackUsage({ t: 'Create.Submit' });
     mutate(
       { integrationInfo },
       {
         onSuccess: (response) => {
+          trackUsage({ t: 'Create.Completed' });
           const newIntegrationId = response.id;
           history.push(
             createExtPipePath(`/${EXT_PIPE_PATH}/${newIntegrationId}`)
@@ -248,6 +251,10 @@ export const CreateIntegration = (props: {
             errorRes?.data,
             variables.integrationInfo
           );
+          trackUsage({
+            t: 'Create.Rejected',
+            error: serverErrorMessage.message,
+          });
           if (errorRes.duplicated != null) {
             errorRes.duplicated.forEach((errorObject) => {
               const [fieldName, fieldValue] = Object.entries(errorObject)[0];
@@ -290,7 +297,7 @@ export const CreateIntegration = (props: {
         </InfoMessage>
       )}
       <FormProvider {...methods}>
-        <CreateFormWrapper onSubmit={handleSubmit(handleNext)}>
+        <CreateFormWrapper onSubmit={handleSubmit(onSubmit)}>
           {errors.server ? (
             <InfoMessage
               id="dataset-data"
@@ -471,7 +478,11 @@ export const CreateIntegration = (props: {
     </>
   );
 };
-export default function CombinedComponent() {
+
+export default function CreateIntegrationPage() {
+  useEffect(() => {
+    trackUsage({ t: 'Create.CreatePageLoaded' });
+  }, []);
   return (
     <RegisterIntegrationLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>

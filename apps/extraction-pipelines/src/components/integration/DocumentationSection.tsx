@@ -32,6 +32,7 @@ import { Graphic } from '@cognite/cogs.js';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 import { Section } from 'components/integration/Section';
 import { DivFlex } from 'styles/flex/StyledFlex';
+import { trackUsage } from 'utils/Metrics';
 
 const DocumentationForm = styled.form`
   display: grid;
@@ -99,6 +100,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
 
   const onValid = async (field: Fields) => {
     if (currentIntegration && project) {
+      trackUsage({ t: 'EditField.Save', field: 'documentation' });
       const mutateObj = createUpdateSpec({
         project,
         id: currentIntegration.id,
@@ -107,6 +109,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
       });
       await mutate(mutateObj, {
         onError: (error) => {
+          trackUsage({ t: 'EditField.Rejected', field: 'documentation' });
           setError('server', {
             type: 'server',
             message: error.data.message,
@@ -114,6 +117,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           });
         },
         onSuccess: () => {
+          trackUsage({ t: 'EditField.Completed', field: 'documentation' });
           setEdit(false);
         },
       });
@@ -122,6 +126,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
 
   const onEditClick = () => {
     if (canEdit) {
+      trackUsage({ t: 'EditField.Start', field: 'documentation' });
       setEdit(true);
     }
   };
@@ -130,6 +135,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   };
 
   const onCancel = () => {
+    trackUsage({ t: 'EditField.Cancel', field: 'documentation' });
     setEdit(false);
   };
   if (!currentIntegration) {

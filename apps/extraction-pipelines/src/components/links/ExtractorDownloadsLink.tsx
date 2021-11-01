@@ -1,9 +1,9 @@
 import { Icon } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import { trackUsage } from 'utils/Metrics';
-import { NAVIGATION } from 'utils/constants';
 import { useAppEnv } from 'hooks/useAppEnv';
+
+import { trackUsage } from 'utils/Metrics';
 
 const LinkIcon = styled((props) => <Icon {...props}>{props.children}</Icon>)`
   margin-left: 0.5rem;
@@ -35,7 +35,7 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
   const displayHref =
     url || `/${project}${path}${cdfEnv ? `?env=${cdfEnv}` : ''}`;
   const onLinkClick = () => {
-    trackUsage(NAVIGATION, { href: displayHref });
+    trackUsage({ t: 'Navigation', href: displayHref });
   };
   return (
     <>

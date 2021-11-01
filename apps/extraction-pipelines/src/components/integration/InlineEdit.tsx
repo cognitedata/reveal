@@ -19,6 +19,7 @@ import { AnyObjectSchema } from 'yup';
 import { ColumnForm, StyledInput, StyledLabel } from 'styles/StyledForm';
 import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { Colors } from '@cognite/cogs.js';
+import { trackUsage } from 'utils/Metrics';
 import { AddInfo } from './AddInfo';
 
 export interface InlineEditProps<Fields> {
@@ -60,18 +61,24 @@ const InlineEdit = <Fields extends FieldValues>({
   });
   const onSave = async (field: FieldValues) => {
     const items = updateFn(field);
+    trackUsage({ t: 'EditField.Save', field: name });
     await mutate(items, {
       onError: () => {
+        trackUsage({ t: 'EditField.Rejected', field: name });
         setErrorVisible(true);
       },
       onSuccess: () => {
+        trackUsage({ t: 'EditField.Completed', field: name });
         setIsEdit(false);
       },
     });
   };
 
   const onEditClick = () => {
-    if (canEdit) setIsEdit(true);
+    if (canEdit) {
+      trackUsage({ t: 'EditField.Start', field: name });
+      setIsEdit(true);
+    }
   };
 
   const handleClickError = () => {
@@ -79,6 +86,7 @@ const InlineEdit = <Fields extends FieldValues>({
   };
 
   const onCancel = () => {
+    trackUsage({ t: 'EditField.Cancel', field: name });
     setIsEdit(false);
   };
 

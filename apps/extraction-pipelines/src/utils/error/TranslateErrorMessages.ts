@@ -19,7 +19,7 @@ export const translateServerErrorMessage = <TFieldValues extends FieldValues>(
     };
   }
   return {
-    field: 'error',
+    field: 'server',
     message: data?.message ?? 'Ops an error occurred. Try again',
   };
 };

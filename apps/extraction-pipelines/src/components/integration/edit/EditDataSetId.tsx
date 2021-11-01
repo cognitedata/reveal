@@ -26,6 +26,7 @@ import styled from 'styled-components';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { TableHeadings } from 'components/table/IntegrationTableCol';
 import DetailsValueView from 'components/table/details/DetailsValueView';
+import { trackUsage } from 'utils/Metrics';
 
 const Wrapper = styled.div`
   display: grid;
@@ -81,6 +82,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
 
   const onSave = async (field: FormInput) => {
     if (integration && project) {
+      trackUsage({ t: 'EditField.Save', field: 'dataSet' });
       const items = createUpdateSpec({
         project,
         id: integration.id,
@@ -89,9 +91,11 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
       });
       await mutate(items, {
         onError: () => {
+          trackUsage({ t: 'EditField.Rejected', field: 'dataSet' });
           setErrorVisible(true);
         },
         onSuccess: () => {
+          trackUsage({ t: 'EditField.Completed', field: 'dataSet' });
           setIsEdit(false);
         },
       });
@@ -100,6 +104,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
 
   const onEditClick = () => {
     if (canEdit) {
+      trackUsage({ t: 'EditField.Start', field: 'dataSet' });
       setIsEdit(true);
     }
   };
@@ -109,6 +114,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   };
 
   const onCancel = () => {
+    trackUsage({ t: 'EditField.Cancel', field: 'dataSet' });
     setIsEdit(false);
   };
 
