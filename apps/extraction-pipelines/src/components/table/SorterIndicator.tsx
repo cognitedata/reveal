@@ -1,7 +1,6 @@
 import React, { AriaAttributes } from 'react';
 import { ColumnInstance } from 'react-table';
-import { Button } from '@cognite/cogs.js';
-import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon';
+import { AllIconTypes, Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { trackUsage } from 'utils/Metrics';

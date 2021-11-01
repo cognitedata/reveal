@@ -1493,10 +1493,10 @@
   dependencies:
     query-string "^6.13.7"
 
-"@cognite/cogs.js@^3.33.0":
-  version "3.33.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.33.0.tgz#17f7c1b951c9b197af91d03a6378cb0891fa58ed"
-  integrity sha512-zRVorDF1sbVZTn53A8jXLPY3rr0l+bBKevqOrF6q9JQ34UbvDLaXjns1yOz75vfXssGhxXORP6lDy0P8vORD1w==
+"@cognite/cogs.js@^3.38.4":
+  version "3.38.4"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.38.4.tgz#8f51d342e8509a0586d82e5ee0725226edc34ef9"
+  integrity sha512-trRyPklED6M58RBsf5/H1QPDPlHkTJ2lUsUG+4R7vZI0a4awxfVaiBwRMw7C21nhqMv8zBRo7L/0521inoxPDg==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"

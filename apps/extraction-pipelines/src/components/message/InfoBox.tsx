@@ -1,8 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { IconFilled } from 'styles/StyledIcon';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
-import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
+import { AllIconTypes, Colors } from '@cognite/cogs.js';
 
 const Box = styled.div`
   display: grid;

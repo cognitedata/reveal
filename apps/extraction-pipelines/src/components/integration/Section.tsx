@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import { AllIconTypes } from '@cognite/cogs.js/dist/Atoms/Icon/Icon';
-import { Icon } from '@cognite/cogs.js';
+import { AllIconTypes, Icon } from '@cognite/cogs.js';
 
 const SectionDiv = styled.div`
   background-color: white;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
   border-radius: 3px;
 `;
 const SectionHeader = styled.div`

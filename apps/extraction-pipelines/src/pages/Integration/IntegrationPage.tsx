@@ -47,33 +47,39 @@ import { ids } from 'cogs-variables';
 import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/IntegrationsAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
-import { DivFlex } from 'styles/flex/StyledFlex';
 
 const PageNav = styled.ul`
   ${Span3};
-  margin: 0;
+  && {
+    margin: 0;
+  }
   padding: 1rem 0 0.8rem 0;
   list-style: none;
   display: flex;
+  a,
   li {
     margin: 0;
     padding: 0;
-    &:first-child {
-      margin: 0 0 0 1rem;
-    }
     .tab-link {
       padding: 0.75rem 1rem;
-      margin: 0 1rem;
       color: ${Colors.black.hex()};
       font-weight: bold;
       &:hover {
         background-color: ${Colors['midblue-7'].hex()};
+        border-bottom: 5px solid ${Colors['midblue-7'].hex()};
       }
       &.active {
-        border-bottom: 3px solid ${Colors.primary.hex()};
+        border-bottom: 5px solid ${Colors.primary.hex()};
       }
     }
   }
+`;
+
+const TabsAndActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  align-self: flex-end;
 `;
 
 interface IntegrationPageProps {}
@@ -211,16 +217,8 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
         pageHeadingText={integration.name}
         pageHeading={<IntegrationHeading />}
         headingSide={
-          <DivFlex direction="row" align="flex-end" justify="flex-end">
-            <LinkWrapper>
-              <DeleteDialog
-                isOpen={isDeleteDialogOpen}
-                doDelete={deletePipeline}
-                pipelineName={integration.name}
-                close={() => {
-                  setIsDeleteDialogOpen(false);
-                }}
-              />
+          <LinkWrapper>
+            <TabsAndActions>
               <PageNav>
                 <li>
                   <NavLink
@@ -242,6 +240,7 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                 </li>
               </PageNav>
               <Dropdown
+                css="align-self: unset"
                 visible={dropdownVisible}
                 onClickOutside={() => setDropdownVisible(false)}
                 content={
@@ -268,8 +267,8 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
                   type="ghost"
                 />
               </Dropdown>
-            </LinkWrapper>
-          </DivFlex>
+            </TabsAndActions>
+          </LinkWrapper>
         }
         breadcrumbs={<IntegrationBreadcrumbs integration={integration} />}
       >
@@ -282,6 +281,14 @@ const IntegrationPage: FunctionComponent<IntegrationPageProps> = () => {
           </Route>
         </Switch>
       </FullPageLayout>
+      <DeleteDialog
+        isOpen={isDeleteDialogOpen}
+        doDelete={deletePipeline}
+        pipelineName={integration.name}
+        close={() => {
+          setIsDeleteDialogOpen(false);
+        }}
+      />
     </RunFilterProvider>
   );
 };

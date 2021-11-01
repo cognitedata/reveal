@@ -7,11 +7,8 @@ export const LinkWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  a,
-  span {
-    align-self: center;
-    margin-right: 2rem;
-  }
+  gap: 2rem;
+  margin-right: 2rem;
 `;
 
 export const StyledLink = styled((props) => <a {...props}>{props.children}</a>)`

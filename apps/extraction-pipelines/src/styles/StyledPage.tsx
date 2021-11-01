@@ -3,7 +3,6 @@ import { Colors, Title } from '@cognite/cogs.js';
 import React from 'react';
 import {
   mainContentSpaceAround,
-  pageDividerBorder,
   mainContentSpaceSides,
 } from 'styles/StyledVariables';
 import { StyledRouterLink } from 'components/integrations/cols/Name';
@@ -27,11 +26,6 @@ export const PageWrapper = styled.div`
     margin: 1.5rem 0 1.5rem 2rem;
     align-self: center;
   }
-`;
-
-export const GridBreadCrumbsWrapper = styled(StyledRouterLink)`
-  grid-area: breadcrumbs;
-  margin: 0.5rem 0 0 2rem;
 `;
 
 export const BackWrapper = styled(StyledRouterLink)`
@@ -73,16 +67,11 @@ export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
   }
 `;
 
-export const SideInfo = styled.aside`
-  padding: 1rem 1rem 1rem 0;
-  border-right: ${pageDividerBorder};
-  margin-right: 2rem;
-`;
-
 export const PageWrapperColumn = styled.div`
   ${Span3};
   min-height: calc(100vh - 15rem);
   display: flex;
+  gap: 1rem;
   flex-direction: column;
   padding: 0 ${mainContentSpaceSides};
   scroll-behavior: smooth;

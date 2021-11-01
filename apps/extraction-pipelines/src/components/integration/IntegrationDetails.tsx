@@ -15,14 +15,13 @@ import { trackUsage } from 'utils/Metrics';
 const MiddleSectionGrid = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
-  padding: 1rem;
   margin-bottom: 1rem;
-  grid-gap: 16px;
+  grid-gap: 1rem;
 `;
 const TopSection = styled.section`
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  margin-top: 1rem;
 `;
 
 export const createNoIntegrationFoundMessage = (id: string): Readonly<string> =>
