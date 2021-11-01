@@ -4,31 +4,13 @@ import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
 import { LoadingBar } from 'src/modules/Common/Components/LoadingBar/LoadingBar';
-import { ExplorationSearchBar } from './ExplorationSearchBar';
+import { ExplorationSearchBar } from 'src/modules/Explorer/Containers/ExplorationSearchBar';
+import { ExplorerToolbarContainerProps } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 
-export const ExplorerToolbar = ({
-  query,
-  selectedCount,
-  maxSelectCount,
-  isLoading,
-  percentageScanned,
-  onViewChange,
-  currentView,
-  onSearch,
-  onUpload,
-  onDownload,
-  onContextualise,
-  onReview,
-  onBulkEdit,
-  onDelete,
-}: {
-  query?: string;
-  selectedCount?: number;
+type ExplorerToolbarProps = ExplorerToolbarContainerProps & {
   maxSelectCount?: number;
-  isLoading: boolean;
   percentageScanned: number;
   onViewChange?: (view: string) => void;
-  currentView?: string;
   onSearch: (text: string) => void;
   onUpload: () => void;
   onDownload: () => void;
@@ -36,7 +18,24 @@ export const ExplorerToolbar = ({
   onReview: () => void;
   onBulkEdit: () => void;
   onDelete: () => void;
-}) => {
+};
+
+export const ExplorerToolbar = ({
+  query,
+  selectedCount,
+  maxSelectCount,
+  isLoading,
+  percentageScanned,
+  currentView,
+  onViewChange,
+  onSearch,
+  onUpload,
+  onDownload,
+  onContextualise,
+  onReview,
+  onBulkEdit,
+  onDelete,
+}: ExplorerToolbarProps) => {
   return (
     <>
       <TitleBar>

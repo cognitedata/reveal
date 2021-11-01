@@ -5,24 +5,15 @@ import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButt
 import {
   hideExplorerFileMetadata,
   selectExplorerSelectedFileIds,
-  setExplorerCurrentView,
   setExplorerFileSelectState,
-  setExplorerFileUploadModalVisibility,
   setExplorerFocusedFileId,
-  setExplorerQueryString,
   showExplorerFileMetadata,
   toggleExplorerFilterView,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
-import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
-import {
-  getLink,
-  getParamLink,
-  workflowRoutes,
-} from 'src/utils/workflowRoutes';
+import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { lightGrey } from 'src/utils/Colors';
@@ -30,22 +21,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { ExplorerSearchResults } from 'src/modules/Explorer/Containers/ExplorerSearchResults';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
-import { TableDataItem, ViewMode } from 'src/modules/Common/types';
-import { ExplorerToolbar } from 'src/modules/Explorer/Containers/ExplorerToolbar';
+import { TableDataItem } from 'src/modules/Common/types';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { useHistory } from 'react-router-dom';
-import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import { pushMetric } from 'src/utils/pushMetric';
 import isEqual from 'lodash-es/isEqual';
-import {
-  setBulkEditModalVisibility,
-  setFileDownloadModalVisibility,
-} from 'src/modules/Common/store/commonSlice';
 import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
 import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
 import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
-import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
 import { FilterSidePanel } from './FilterSidePanel';
+import { ExplorerToolbarContainer } from './ExplorerToolbarContainer';
 
 pushMetric('Vision.Explorer');
 
@@ -82,20 +67,12 @@ const Explorer = () => {
   const isLoading = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.isLoading
   );
-  const percentageScanned = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.percentageScanned
-  );
 
   useEffect(() => {
     return () => {
       dispatch(ClearExplorerStateOnTransition());
     };
   }, []);
-
-  const handleSearch = (text: string) => {
-    cancelFetch();
-    dispatch(setExplorerQueryString(text));
-  };
 
   const handleItemClick = (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,31 +94,6 @@ const Explorer = () => {
     dispatch(hideExplorerFileMetadata());
   };
 
-  const onUpload = () => {
-    dispatch(setExplorerFileUploadModalVisibility(true));
-  };
-
-  const onDownload = () => {
-    dispatch(setFileDownloadModalVisibility(true));
-  };
-
-  const onContextualise = () => {
-    dispatch(PopulateProcessFiles(selectedFileIds));
-    history.push(getLink(workflowRoutes.process));
-  };
-  const onReview = async () => {
-    dispatch(PopulateReviewFiles(selectedFileIds));
-    history.push(
-      // selecting first item in review
-      getParamLink(
-        workflowRoutes.review,
-        ':fileId',
-        String(selectedFileIds[0])
-      ),
-      { from: 'explorer' }
-    );
-  };
-
   const onFileDetailReview = () => {
     if (focusedFileId) {
       dispatch(PopulateReviewFiles([focusedFileId]));
@@ -150,10 +102,6 @@ const Explorer = () => {
         { from: 'explorer' }
       );
     }
-  };
-
-  const onDelete = () => {
-    dispatch(DeleteFilesById(selectedFileIds));
   };
 
   return (
@@ -186,23 +134,11 @@ const Explorer = () => {
             ) : undefined}
 
             <ViewContainer>
-              <ExplorerToolbar
+              <ExplorerToolbarContainer
                 query={query}
-                currentView={currentView}
                 selectedCount={selectedFileIds.length}
                 isLoading={isLoading}
-                percentageScanned={percentageScanned}
-                maxSelectCount={MAX_SELECT_COUNT}
-                onViewChange={(view) =>
-                  dispatch(setExplorerCurrentView(view as ViewMode))
-                }
-                onSearch={handleSearch}
-                onUpload={onUpload}
-                onDownload={onDownload}
-                onContextualise={onContextualise}
-                onReview={onReview}
-                onBulkEdit={() => dispatch(setBulkEditModalVisibility(true))}
-                onDelete={onDelete}
+                currentView={currentView}
               />
               <ExplorerSearchResults
                 currentView={currentView}
