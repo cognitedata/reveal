@@ -1,7 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'types';
-import noop from 'lodash/noop';
 
 import { CommentToolIcon } from './CommentToolUtils';
 import { Tool } from './Tool';
@@ -17,9 +16,10 @@ export interface CommentToolAtrs {
 }
 
 export class CommentTool extends Tool implements ICogniteOrnateTool {
-  cursor = 'crosshair';
+  cursor = 'default';
   group: Konva.Group | null = null;
   isToolUsingShapeSettings = false;
+  hoveringCommentIcon = false;
 
   static create(attrs: CommentToolAtrs): Konva.Image {
     const commentIconUrl = `data:image/svg+xml;base64,${window.btoa(
@@ -43,6 +43,8 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
       image.on('dblclick', (e) => {
         e.evt.preventDefault();
         e.evt.stopPropagation();
+        e.cancelBubble = true;
+
         const evt = new CustomEvent('onCommentClick', { detail: image });
 
         document.dispatchEvent(evt);
@@ -64,8 +66,9 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    if (this.hoveringCommentIcon) return;
+
     const { drawingLayer } = this.ornateInstance;
-    this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
     const groupName = e.target.attrs?.attachedToGroup;
@@ -84,6 +87,16 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
       y: translatedMousePosition.y,
     } as CommentToolAtrs;
     const image = CommentTool.create(imgAttrs);
+
+    image.on('mouseover', () => {
+      this.hoveringCommentIcon = true;
+      this.ornateInstance.stage.container().style.cursor = 'pointer';
+    });
+    image.on('mouseleave', () => {
+      this.hoveringCommentIcon = false;
+      this.ornateInstance.stage.container().style.cursor = this.cursor;
+    });
+
     if (!this.group) {
       drawingLayer.add(image);
       drawingLayer.draw();
@@ -93,11 +106,5 @@ export class CommentTool extends Tool implements ICogniteOrnateTool {
 
     const evt = new CustomEvent('onCommentClick', { detail: image });
     document.dispatchEvent(evt);
-  };
-
-  onMouseMove = noop;
-
-  onMouseUp = () => {
-    this.ornateInstance.isDrawing = false;
   };
 }

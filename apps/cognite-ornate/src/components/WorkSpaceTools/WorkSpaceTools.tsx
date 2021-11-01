@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ToolType } from '@cognite/ornate';
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
@@ -33,38 +33,6 @@ const WorkSpaceTools = ({
     DRAWINGS: true,
     MARKERS: true,
   });
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (!isDisabled) {
-        metrics.track('onHotkey', { key: e.key });
-        if (e.key === 'm') {
-          onToolChange('move');
-        }
-        if (e.key === 'r') {
-          onToolChange('rect');
-        }
-        if (e.key === 'l') {
-          onToolChange('line');
-        }
-        if (e.key === 't') {
-          onToolChange('text');
-        }
-        if (e.key === 'c') {
-          onToolChange('circle');
-        }
-        if (e.key === 'i') {
-          onToolChange('list');
-        }
-        if (e.key === 's') {
-          onToolChange('default');
-        }
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [isDisabled]);
 
   const onToolClick = (type: ToolType) => {
     metrics.track('onToolClick', { type });

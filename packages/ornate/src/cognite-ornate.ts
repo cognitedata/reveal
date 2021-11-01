@@ -69,6 +69,10 @@ export class CogniteOrnate {
       scale: { x: 0.2, y: 0.2 },
     });
 
+    const stageContainer = this.stage.container();
+    // make it focusable
+    stageContainer.tabIndex = 1;
+
     // Add layers to stage
     this.stage.add(this.backgroundLayer);
     this.stage.add(this.baseLayer);
@@ -278,14 +282,12 @@ export class CogniteOrnate {
       this.onZoom(e.evt.deltaY, true);
       return;
     }
+
     const dx = e.evt.deltaX;
     const dy = e.evt.deltaY;
 
-    const minX = -this.stage.width();
-    const x = Math.max(minX, Math.min(this.stage.x() - dx));
-
-    const minY = -this.stage.height();
-    const y = Math.max(minY, Math.min(this.stage.y() - dy));
+    const x = this.stage.x() - dx;
+    const y = this.stage.y() - dy;
 
     this.stage.x(x);
     this.stage.y(y);
@@ -339,6 +341,7 @@ export class CogniteOrnate {
       x: referencePoint.x - referencePointTo.x * newScale.x,
       y: referencePoint.y - referencePointTo.y * newScale.y,
     };
+
     this.stage.position(newPos);
 
     // Show / Hide rectangles based on scale

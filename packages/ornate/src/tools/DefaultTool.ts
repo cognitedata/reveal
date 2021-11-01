@@ -32,7 +32,6 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
   onKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Backspace') {
       const evt = new CustomEvent('onDelete', { detail: this.selectedNode });
-
       document.dispatchEvent(evt);
       this.onDelete();
     }
@@ -45,13 +44,17 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
       keepRatio: true,
       draggable: true,
     });
-    this.ornateInstance.baseLayer.add(this.transformer);
-    document.addEventListener('keyup', this.onKeyUp);
+
+    const stageContainer = this.ornateInstance.stage.container();
+    stageContainer.focus();
+    this.ornateInstance.drawingLayer.add(this.transformer);
+    stageContainer.addEventListener('keyup', this.onKeyUp);
   };
 
   onDestroy = () => {
     this.reset();
-    document.removeEventListener('keyup', this.onKeyUp);
+    const stageContainer = this.ornateInstance.stage.container();
+    stageContainer.removeEventListener('keyup', this.onKeyUp);
   };
 
   onMouseDown = () => {

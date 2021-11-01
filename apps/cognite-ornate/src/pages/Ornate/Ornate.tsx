@@ -33,8 +33,6 @@ import WorkSpaceSearch from 'components/WorkspaceDocsPanel/WorkspaceSearch';
 import { WorkspaceHeader } from 'components/Workspace/WorkspaceHeader';
 import { toDisplayDate } from 'utils/date';
 import { CommentTarget } from '@cognite/comment-service-types';
-import { Drawer as CommentDrawer } from '@cognite/react-comments';
-import sidecar from 'utils/sidecar';
 import {
   ListItem,
   ListToolStatus,
@@ -42,6 +40,7 @@ import {
 } from 'components/ListToolSidebar/ListToolSidebar';
 import Konva from 'konva';
 import { Theme } from 'utils/theme';
+import { Comments } from 'components/Comments/Comments';
 import { useMetrics } from '@cognite/metrics';
 
 import {
@@ -149,6 +148,41 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     document.addEventListener('onAnnotationClick', onAnnotationClick as any);
     document.addEventListener('onCommentClick', onCommentClick as any);
 
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!workspaceDocuments.length) {
+        return;
+      }
+      metrics.track('onHotkey', { key: e.key });
+      if (e.key === 'm') {
+        onToolChange('move');
+      }
+      if (e.key === 'r') {
+        onToolChange('rect');
+      }
+      if (e.key === 'l') {
+        onToolChange('line');
+      }
+      if (e.key === 't') {
+        onToolChange('text');
+      }
+      if (e.key === 'c') {
+        onToolChange('circle');
+      }
+      if (e.key === 'i') {
+        onToolChange('list');
+      }
+      if (e.key === 's') {
+        onToolChange('default');
+      }
+    };
+
+    const stageContainer = ornateViewer.current
+      ? ornateViewer.current.stage.container()
+      : null;
+    if (stageContainer) {
+      stageContainer.addEventListener('keydown', onKeyDown);
+    }
+
     return () => {
       document.removeEventListener('onDelete', onDelete);
       document.removeEventListener(
@@ -156,6 +190,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         onAnnotationClick as any
       );
       document.removeEventListener('onCommentClick', onCommentClick as any);
+
+      if (stageContainer) {
+        stageContainer.removeEventListener('keydown', onKeyDown);
+      }
     };
   }, [workspaceDocuments]);
 
@@ -163,7 +201,11 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     metrics.track('onCommentClick');
     const commentNode = event.detail;
     const id = commentNode.attrs.id.toString();
-    setTarget({ id, targetType: 'comments' });
+    onToolChange('default');
+    ornateViewer.current!.currentTool = ornateViewer.current!.tools.default;
+    setTimeout(() => {
+      setTarget({ id, targetType: 'comments' });
+    });
   };
 
   const onAnnotationClick = async (event: CustomEvent) => {
@@ -588,6 +630,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const handleClose = () => {
     setTarget(undefined);
+    onToolChange('default');
+    ornateViewer.current!.currentTool = ornateViewer.current!.tools.default;
   };
 
   const sidebarHeader = (
@@ -689,40 +733,45 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       >
         {t('my-workspace-title', 'My Workspace')}
       </Button>
-      <WorkSpaceTools
-        onToolChange={onToolChange}
-        onSetLayerVisibility={(layer, visible) => {
-          const shapes: Konva.Node[] = [];
-          if (layer === 'ANNOTATIONS') {
-            // Get annotations. Then filter out the ones affected by the list tool
-            shapes.push(
-              ...(ornateViewer.current?.stage.find('.annotation') || []).filter(
-                (shape) => !shape.attrs.inList
-              )
-            );
-          }
-          if (layer === 'DRAWINGS') {
-            shapes.push(
-              ...(ornateViewer.current?.stage.find('.drawing') || []).filter(
-                (shape) => !shape.attrs.inList
-              )
-            );
-          }
-          if (layer === 'MARKERS') {
-            shapes.push(...(ornateViewer.current?.stage.find('.marker') || []));
-          }
-          shapes.forEach((shape) => {
-            if (visible) {
-              shape.show();
-            } else {
-              shape.hide();
+      {ornateViewer.current && (
+        <WorkSpaceTools
+          onToolChange={onToolChange}
+          onSetLayerVisibility={(layer, visible) => {
+            const shapes: Konva.Node[] = [];
+            if (layer === 'ANNOTATIONS') {
+              // Get annotations. Then filter out the ones affected by the list tool
+              shapes.push(
+                ...(
+                  ornateViewer.current?.stage.find('.annotation') || []
+                ).filter((shape) => !shape.attrs.inList)
+              );
             }
-          });
-        }}
-        isDisabled={!workspaceDocuments.length}
-        isSidebarExpanded={isSidebarOpen}
-        activeTool={activeTool}
-      />
+            if (layer === 'DRAWINGS') {
+              shapes.push(
+                ...(ornateViewer.current?.stage.find('.drawing') || []).filter(
+                  (shape) => !shape.attrs.inList
+                )
+              );
+            }
+            if (layer === 'MARKERS') {
+              shapes.push(
+                ...(ornateViewer.current?.stage.find('.marker') || [])
+              );
+            }
+            shapes.forEach((shape) => {
+              if (visible) {
+                shape.show();
+              } else {
+                shape.hide();
+              }
+            });
+          }}
+          isDisabled={!workspaceDocuments.length}
+          isSidebarExpanded={isSidebarOpen}
+          activeTool={activeTool}
+        />
+      )}
+
       <div id="container" />
 
       <MainToolbar>
@@ -755,17 +804,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         </Button>
       </ZoomButtonsToolbar>
 
-      {target && (
-        <CommentDrawer
-          visible={!!target}
-          target={target}
-          handleClose={handleClose}
-          scope={['fas-demo']}
-          commentServiceBaseUrl={sidecar.commentServiceBaseUrl}
-          userManagementServiceBaseUrl={sidecar.userManagementServiceBaseUrl}
-          fasAppId={sidecar.aadApplicationId}
-        />
-      )}
+      {target && <Comments target={target} handleClose={handleClose} />}
 
       <Loader className={showLoader ? 'visible' : ''}>
         <Icon type="Loading" className="loading-icon" size={40} />
