@@ -160,11 +160,11 @@ describe('NodeAppearanceProvider', () => {
     }
 
     for (const isContained of containedInSomeArea0) {
-      expect(isContained);
+      expect(isContained).toBeTrue();
     }
 
     for (const isContained of containedInSomeArea1) {
-      expect(isContained);
+      expect(isContained).toBeTrue();
     }
   });
 });
