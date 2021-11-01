@@ -3,10 +3,7 @@ import styled from 'styled-components';
 import { RightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail } from '@cognite/cogs.js';
 import { StringFilter } from '@cognite/data-exploration';
-import {
-  DirectoryPrefixFilterProps,
-  VisionFileFilterProps,
-} from './filterItemProps';
+import { VisionFilterItemProps, VisionFileFilterProps } from './types';
 
 const extractSubDirectories = (subdirectoryPaths: string[]) => {
   const subDirectories = subdirectoryPaths
@@ -88,8 +85,7 @@ export const DirectoryPrefixFilter = ({
   availablePrefixes,
   filter,
   setFilter,
-}: { availablePrefixes: string[] } & DirectoryPrefixFilterProps) => {
-  // ToDo: use FilterItemProps for DirectoryPrefixFilterProps once fileFilterProps have been properly updated with directoryPrefix field
+}: { availablePrefixes: string[] } & VisionFilterItemProps) => {
   const currentDirectory = filter.directoryPrefix ?? '/';
   const [subDirectoryList, setSubDirectoryList] = useState<
     { directory: string; isParentDirectory: boolean }[]

@@ -12,6 +12,8 @@ import { ColumnShape } from 'react-base-table';
 import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { Tabs } from 'antd';
+import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
+import { NoData } from 'src/modules/Common/Components/NoData/NoData';
 
 const { TabPane } = Tabs;
 
@@ -89,6 +91,10 @@ export const MapFileTable = (props: MapTableProps) => {
     },
   };
 
+  const overlayRenderer = () =>
+    props.isLoading ? <LoadingTable columns={columns} /> : <></>;
+  const emptyRenderer = () => (props.isLoading ? <></> : <NoData />);
+
   return (
     <Container>
       <StyledTabs
@@ -109,6 +115,7 @@ export const MapFileTable = (props: MapTableProps) => {
             sorters={sorters}
             pagination
             sortPaginateControls={props.sortPaginateControlsLocation}
+            isLoading={props.isLoading}
           >
             {(paginationProps) => (
               <AnnotationLoader data={paginationProps.data}>
@@ -128,6 +135,8 @@ export const MapFileTable = (props: MapTableProps) => {
                   rowHeight={70}
                   rowClassNames={rowClassNames}
                   rowEventHandlers={rowEventHandlers}
+                  overlayRenderer={overlayRenderer}
+                  emptyRenderer={emptyRenderer}
                 />
               </AnnotationLoader>
             )}
@@ -141,6 +150,7 @@ export const MapFileTable = (props: MapTableProps) => {
             sorters={sorters}
             pagination
             sortPaginateControls={props.sortPaginateControlsNoLocation}
+            isLoading={props.isLoading}
           >
             {(paginationProps) => (
               <AnnotationLoader data={paginationProps.data}>
@@ -159,6 +169,8 @@ export const MapFileTable = (props: MapTableProps) => {
                   rowHeight={70}
                   rowClassNames={rowClassNames}
                   rowEventHandlers={rowEventHandlers}
+                  emptyRenderer={emptyRenderer}
+                  overlayRenderer={overlayRenderer}
                 />
               </AnnotationLoader>
             )}

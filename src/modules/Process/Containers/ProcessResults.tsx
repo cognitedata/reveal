@@ -72,6 +72,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     ({ processSlice }: RootState) => processSlice.sortPaginate
   );
 
+  const isLoading = useSelector(
+    ({ processSlice }: RootState) => processSlice.isLoading
+  );
+
   // todo: remove this hack to force a rerender when explorer model closes
   const showSelectFromExploreModal = useSelector(
     ({ processSlice }: RootState) => processSlice.showExploreModal
@@ -241,6 +245,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           totalCount={data.length}
           selectedIds={selectedFileIds}
           sortPaginateControls={gridSortPaginateControls}
+          isLoading={isLoading}
         />
       );
     }

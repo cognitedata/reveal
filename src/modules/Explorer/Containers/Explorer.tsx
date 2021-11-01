@@ -44,6 +44,7 @@ import {
 import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
 import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
 import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
+import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
 import { FilterSidePanel } from './FilterSidePanel';
 
 pushMetric('Vision.Explorer');
@@ -78,6 +79,13 @@ const Explorer = () => {
     isEqual
   );
 
+  const isLoading = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.isLoading
+  );
+  const percentageScanned = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.percentageScanned
+  );
+
   useEffect(() => {
     return () => {
       dispatch(ClearExplorerStateOnTransition());
@@ -85,6 +93,7 @@ const Explorer = () => {
   }, []);
 
   const handleSearch = (text: string) => {
+    cancelFetch();
     dispatch(setExplorerQueryString(text));
   };
 
@@ -181,6 +190,8 @@ const Explorer = () => {
                 query={query}
                 currentView={currentView}
                 selectedCount={selectedFileIds.length}
+                isLoading={isLoading}
+                percentageScanned={percentageScanned}
                 maxSelectCount={MAX_SELECT_COUNT}
                 onViewChange={(view) =>
                   dispatch(setExplorerCurrentView(view as ViewMode))
@@ -199,6 +210,7 @@ const Explorer = () => {
                 query={query}
                 focusedId={focusedFileId || undefined}
                 selectedFileIds={selectedFileIds}
+                isLoading={isLoading}
                 onClick={handleItemClick}
                 onRowSelect={handleRowSelect}
               />

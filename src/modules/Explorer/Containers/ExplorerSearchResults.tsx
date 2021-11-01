@@ -34,6 +34,7 @@ export const ExplorerSearchResults = ({
   filter = {},
   focusedId,
   selectedFileIds,
+  isLoading = false,
   onClick,
   onRowSelect,
 }: {
@@ -42,6 +43,7 @@ export const ExplorerSearchResults = ({
   filter?: FileFilterProps;
   focusedId?: number;
   selectedFileIds: number[];
+  isLoading?: boolean;
   onClick: (item: TableDataItem) => void;
   onRowSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
@@ -145,6 +147,7 @@ export const ExplorerSearchResults = ({
                       />
                     )}
                     sortPaginateControls={gridSortPaginateControls}
+                    isLoading={isLoading}
                   />
                 );
               }
@@ -164,6 +167,7 @@ export const ExplorerSearchResults = ({
                     }
                     mapTableTabKey={{ activeKey, setActiveKey }}
                     onSelectPage={handleSetSelectedFiles}
+                    isLoading={isLoading}
                   />
                 );
               }
@@ -185,6 +189,7 @@ export const ExplorerSearchResults = ({
                   }
                   onSelectPage={handleSetSelectedFiles}
                   rowKey="rowKey"
+                  isLoading={isLoading}
                 />
               );
             };

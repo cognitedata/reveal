@@ -1,17 +1,18 @@
-import {
-  FileFilterProps,
-  v3Client as client,
-} from '@cognite/cdf-sdk-singleton';
+import { v3Client as client } from '@cognite/cdf-sdk-singleton';
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
+import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 
-export const totalFileCount = async (filter: FileFilterProps) => {
+export const totalFileCount = async (filter: VisionFileFilterProps) => {
   const fileCounts: number[] = [];
   const validMimeTypes = VALID_MIME_TYPES.map((mimeType) => mimeType.type);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { annotation, ...validFilters } = filter;
+
   // if user specify a mime type
-  if (filter?.mimeType) {
+  if (validFilters?.mimeType) {
     const aggregates = await client.files.aggregate({
-      filter,
+      filter: validFilters,
     });
     fileCounts.push(aggregates[0].count);
   }
@@ -21,7 +22,7 @@ export const totalFileCount = async (filter: FileFilterProps) => {
     await Promise.all(
       validMimeTypes.map(async (mimeType) => {
         const aggregates = await client.files.aggregate({
-          filter: { ...filter, mimeType },
+          filter: { ...validFilters, mimeType },
         });
         fileCounts.push(aggregates[0].count);
       })

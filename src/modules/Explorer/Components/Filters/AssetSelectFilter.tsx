@@ -1,8 +1,11 @@
 import React from 'react';
 import { AssetSelect } from '@cognite/data-exploration';
-import { FilterItemProps } from './filterItemProps';
+import { VisionFilterItemProps } from './types';
 
-export const AssetSelectFilter = ({ filter, setFilter }: FilterItemProps) => (
+export const AssetSelectFilter = ({
+  filter,
+  setFilter,
+}: VisionFilterItemProps) => (
   <AssetSelect
     isMulti
     selectedAssetIds={filter.assetIds}

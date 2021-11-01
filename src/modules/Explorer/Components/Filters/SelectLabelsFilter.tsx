@@ -1,8 +1,11 @@
 import React from 'react';
 import { LabelFilter } from '@cognite/data-exploration';
-import { FilterItemProps } from './filterItemProps';
+import { VisionFilterItemProps } from './types';
 
-export const SelectLabelsFilter = ({ filter, setFilter }: FilterItemProps) => (
+export const SelectLabelsFilter = ({
+  filter,
+  setFilter,
+}: VisionFilterItemProps) => (
   <LabelFilter
     resourceType="file"
     value={((filter as any).labels || { containsAny: [] }).containsAny}

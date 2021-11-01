@@ -5,10 +5,16 @@ import styled from 'styled-components';
 import { GridViewProps } from 'src/modules/Common/Components/FileTable/types';
 
 export const GridView = (props: GridViewProps<TableDataItem>) => {
+  const { overlayRenderer, emptyRenderer, ...gridTableProps } = props;
+  const loading = gridTableProps.isLoading;
+  const noData = gridTableProps.data.length <= 0;
+
+  if (loading) return overlayRenderer();
+  if (noData) return emptyRenderer();
   return (
     <>
       <GridWrapper>
-        <GridTable {...props} />
+        <GridTable {...gridTableProps} />
       </GridWrapper>
       {props.tableFooter}
     </>

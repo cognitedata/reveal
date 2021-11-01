@@ -8,7 +8,6 @@ import {
 import { FileState } from 'src/modules/Common/store/filesSlice';
 import { SelectFilter, ViewMode } from 'src/modules/Common/types';
 import {
-  FileFilterProps,
   FileGeoLocation,
   FileInfo,
   Label,
@@ -22,6 +21,7 @@ import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
+import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 
 export enum ExploreSortPaginateType {
   list = 'LIST',
@@ -78,7 +78,7 @@ export type State = {
   query: string;
   currentView: ViewMode;
   mapTableTabKey: string;
-  filter: FileFilterProps;
+  filter: VisionFileFilterProps;
   showFilter: boolean;
   showFileUploadModal: boolean;
   files: {
@@ -91,10 +91,12 @@ export type State = {
   loadingAnnotations?: boolean;
   // Creating a separate state to make it not affected by preserved state in local storage
   exploreModal: {
-    filter: FileFilterProps;
+    filter: VisionFileFilterProps;
     query: string;
     focusedFileId: number | null;
   };
+  isLoading: boolean;
+  percentageScanned: number;
 };
 
 const initialState: State = {
@@ -119,6 +121,8 @@ const initialState: State = {
     query: '',
     focusedFileId: null,
   },
+  isLoading: false,
+  percentageScanned: 0,
 };
 
 export const setSelectedAllExplorerFiles = createAction<{
@@ -199,7 +203,7 @@ const explorerSlice = createSlice({
       if (state.exploreModal.query !== action.payload) resetSortKey(state);
       state.exploreModal.query = action.payload;
     },
-    setExplorerFilter(state, action: PayloadAction<FileFilterProps>) {
+    setExplorerFilter(state, action: PayloadAction<VisionFileFilterProps>) {
       if (state.filter !== action.payload) resetSortKey(state);
       state.filter = action.payload;
     },
@@ -270,6 +274,12 @@ const explorerSlice = createSlice({
       state.loadingAnnotations = false;
       resetFileState(state);
     },
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
+    setPercentageScanned(state, action: PayloadAction<number>) {
+      state.percentageScanned = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(UpdateFiles.fulfilled, (state, { payload }) => {
@@ -332,6 +342,8 @@ export const {
   setLoadingAnnotations,
   addExplorerUploadedFileId,
   resetExplorerTemporaryState,
+  setIsLoading,
+  setPercentageScanned,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;

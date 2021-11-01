@@ -4,11 +4,11 @@ import { DatePicker } from 'antd';
 import styled from 'styled-components';
 import moment from 'moment';
 import { DateRange } from '@cognite/cdf-sdk-singleton';
-import { FilterItemProps } from './filterItemProps';
+import { VisionFilterItemProps } from './types';
 
 const dateFormat = 'DD.MM.YYYY';
 
-export const DateFilter = ({ filter, setFilter }: FilterItemProps) => {
+export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
   const [action, setAction] = useState('created');
   const [time, setTime] = useState('before');
 

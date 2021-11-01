@@ -30,18 +30,13 @@ export type GridViewProps<T> = {
   onItemClicked: (item: T) => void;
   renderCell: (cellProps: any) => JSX.Element;
   tableFooter?: JSX.Element | null;
+  isLoading: boolean;
+  overlayRenderer: () => JSX.Element;
+  emptyRenderer: () => JSX.Element;
 };
 
 type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'data' | 'width'> &
   TableViewProps<TableDataItem>;
-
-type FileGridProps = Omit<BaseTableProps<TableDataItem>, 'data' | 'width'> &
-  GridViewProps<TableDataItem> & {
-    totalCount: number;
-    pagination?: boolean;
-    sortPaginateControls: SortPaginateControls;
-    onSelect?: (item: TableDataItem, selected: boolean) => void;
-  };
 
 export type SortPaginate = {
   sortKey?: string;
@@ -59,10 +54,20 @@ export type SortPaginateControls = SortPaginate & {
 
 export type FileListTableProps = FileTableProps & {
   sortPaginateControls: SortPaginateControls;
+  isLoading?: boolean;
 };
-export type FileGridTableProps = FileGridProps & {
-  sortPaginateControls: SortPaginateControls;
-};
+
+export type FileGridTableProps = Omit<
+  BaseTableProps<TableDataItem>,
+  'data' | 'width'
+> &
+  Omit<GridViewProps<TableDataItem>, 'overlayRenderer' | 'emptyRenderer'> & {
+    totalCount: number;
+    pagination?: boolean;
+    sortPaginateControls: SortPaginateControls;
+    onSelect?: (item: TableDataItem, selected: boolean) => void;
+  };
+
 export type MapTableTabKey = {
   activeKey: string;
   setActiveKey: (key: string) => void;

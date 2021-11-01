@@ -19,6 +19,8 @@ export const ExplorationSearchBar = (props: {
       variant="noBorder"
       fullWidth
       style={{
+        border: '2px solid #D9D9D9',
+        borderRadius: '6px',
         background: 'transparent',
       }}
       icon="Search"

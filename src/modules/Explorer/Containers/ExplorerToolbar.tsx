@@ -3,12 +3,15 @@ import React from 'react';
 import { Button, SegmentedControl, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BulkActionMenu } from 'src/modules/Common/Components/BulkActionMenu/BulkActionMenu';
+import { LoadingBar } from 'src/modules/Common/Components/LoadingBar/LoadingBar';
 import { ExplorationSearchBar } from './ExplorationSearchBar';
 
 export const ExplorerToolbar = ({
   query,
   selectedCount,
   maxSelectCount,
+  isLoading,
+  percentageScanned,
   onViewChange,
   currentView,
   onSearch,
@@ -22,6 +25,8 @@ export const ExplorerToolbar = ({
   query?: string;
   selectedCount?: number;
   maxSelectCount?: number;
+  isLoading: boolean;
+  percentageScanned: number;
   onViewChange?: (view: string) => void;
   currentView?: string;
   onSearch: (text: string) => void;
@@ -60,8 +65,13 @@ export const ExplorerToolbar = ({
       </TitleBar>
 
       <Container>
-        <ExplorationSearchBar searchString={query} onChange={onSearch} />
-
+        <Left>
+          <ExplorationSearchBar searchString={query} onChange={onSearch} />
+          <LoadingBar
+            isLoading={isLoading}
+            percentageScanned={percentageScanned}
+          />
+        </Left>
         <SegmentedControl
           onButtonClicked={onViewChange}
           currentKey={currentView}
@@ -103,7 +113,12 @@ const TitleBar = styled.div`
   grid-template-columns: auto auto;
 `;
 const Left = styled.div`
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 20px;
   align-self: center;
+  align-items: center;
+  z-index: 2;
 `;
 
 const Right = styled.div`

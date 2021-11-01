@@ -64,6 +64,7 @@ export type State = {
   sortPaginate: Record<FileSortPaginateType, SortPaginate>;
   currentView: ViewMode;
   mapTableTabKey: string;
+  isLoading: boolean;
 };
 
 const initialDetectionModelParameters = {
@@ -110,6 +111,7 @@ const initialState: State = {
   },
   currentView: 'list',
   mapTableTabKey: 'fileInMap',
+  isLoading: false,
 };
 
 const processSlice = createSlice({
@@ -242,6 +244,9 @@ const processSlice = createSlice({
     clearUploadedFiles(state) {
       state.uploadedFileIds = [];
     },
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
@@ -364,6 +369,7 @@ export const {
   setMapTableTabKey,
   addProcessUploadedFileId,
   clearUploadedFiles,
+  setIsLoading,
 } = processSlice.actions;
 
 export default processSlice.reducer;

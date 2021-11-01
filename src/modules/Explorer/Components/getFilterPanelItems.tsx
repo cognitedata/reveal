@@ -1,5 +1,4 @@
 import React from 'react';
-import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { DirectoryPrefixesProvider } from 'src/modules/Explorer/Containers/DirectoryPrefixesProvider';
 import { AssetSelectFilter } from './Filters/AssetSelectFilter';
 import { DateFilter } from './Filters/DateFilter';
@@ -8,6 +7,8 @@ import { SelectLabelsFilter } from './Filters/SelectLabelsFilter';
 import { MetadataSelectFilter } from './Filters/MetadataSelectFilter';
 import { ExternalIdFilter } from './Filters/ExternalIDFilter';
 import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
+import { AnnotationFilter } from './Filters/AnnotationFilter';
+import { VisionFileFilterProps } from './Filters/types';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -18,8 +19,8 @@ export type FilterPanelConfigItem = {
 };
 
 export const getFilterPanelItems = (
-  filter: FileFilterProps,
-  setFilter: (newFilter: FileFilterProps) => void
+  filter: VisionFileFilterProps,
+  setFilter: (newFilter: VisionFileFilterProps) => void
 ): FilterPanelConfigItem[] => [
   {
     key: '1',
@@ -111,5 +112,17 @@ export const getFilterPanelItems = (
       });
     },
     filterItem: <MetadataSelectFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '8',
+    headerText: 'Annotation',
+    disableClear: !filter.annotation,
+    clear: () => {
+      setFilter({
+        ...filter,
+        annotation: undefined,
+      });
+    },
+    filterItem: <AnnotationFilter filter={filter} setFilter={setFilter} />,
   },
 ];

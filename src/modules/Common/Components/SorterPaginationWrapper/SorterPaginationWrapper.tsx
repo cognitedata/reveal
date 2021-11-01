@@ -58,6 +58,7 @@ type SorterPaginationWrapperProps = {
   };
   pagination?: boolean;
   sortPaginateControls: SortPaginateControls;
+  isLoading: boolean;
   children: (tableProps: PaginatedTableProps<TableDataItem>) => React.ReactNode;
 };
 
@@ -67,6 +68,7 @@ export const SorterPaginationWrapper = ({
   sorters,
   pagination,
   sortPaginateControls,
+  isLoading,
   children,
 }: SorterPaginationWrapperProps) => {
   const {
@@ -130,7 +132,7 @@ export const SorterPaginationWrapper = ({
         })}
       </TableContainer>
       <PaginationContainer>
-        {pagination ? (
+        {pagination && !isLoading ? (
           <Paginator
             currentPage={currentPage}
             pageSize={pageSize}

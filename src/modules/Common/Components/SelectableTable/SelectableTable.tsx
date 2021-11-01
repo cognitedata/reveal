@@ -44,6 +44,8 @@ export type SelectableTableProps = Omit<
         event: React.SyntheticEvent;
       }) => void;
     };
+    overlayRenderer: () => JSX.Element;
+    emptyRenderer: () => JSX.Element;
   };
 
 const defaultCellRenderers = {

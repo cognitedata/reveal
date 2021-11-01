@@ -1,8 +1,11 @@
 import React from 'react';
 import { StringFilter } from '@cognite/data-exploration';
-import { FilterItemProps } from './filterItemProps';
+import { VisionFilterItemProps } from './types';
 
-export const ExternalIdFilter = ({ filter, setFilter }: FilterItemProps) => (
+export const ExternalIdFilter = ({
+  filter,
+  setFilter,
+}: VisionFilterItemProps) => (
   <StringFilter
     title="External ID"
     value={filter.externalIdPrefix || ''}

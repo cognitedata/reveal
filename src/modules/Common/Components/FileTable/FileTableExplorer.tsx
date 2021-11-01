@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoadingAnnotations } from 'src/modules/Explorer/store/explorerSlice';
 import { RootState } from 'src/store/rootReducer';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
+import { NoData } from 'src/modules/Common/Components/NoData/NoData';
 import { FileListTableProps, PaginatedTableProps } from './types';
 
 const rendererMap = {
@@ -108,6 +110,10 @@ export function FileTableExplorer(props: FileListTableProps) {
     ({ explorerReducer }: RootState) => explorerReducer.loadingAnnotations
   );
 
+  const overlayRenderer = () =>
+    props.isLoading ? <LoadingTable columns={columns} /> : <></>;
+  const emptyRenderer = () => (props.isLoading ? <></> : <NoData />);
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (props.sortPaginateControls.sortKey === 'annotations') {
@@ -124,6 +130,7 @@ export function FileTableExplorer(props: FileListTableProps) {
       sorters={sorters}
       pagination
       sortPaginateControls={props.sortPaginateControls}
+      isLoading={props.isLoading || false}
     >
       {(paginationProps: PaginatedTableProps<TableDataItem>) => {
         if (props.sortPaginateControls.sortKey === 'annotations') {
@@ -137,6 +144,8 @@ export function FileTableExplorer(props: FileListTableProps) {
               rowClassNames={rowClassNames}
               rowEventHandlers={rowEventHandlers}
               disabled={loadingAnnotations}
+              overlayRenderer={overlayRenderer}
+              emptyRenderer={emptyRenderer}
             />
           );
         }
@@ -151,6 +160,8 @@ export function FileTableExplorer(props: FileListTableProps) {
               rowClassNames={rowClassNames}
               rowEventHandlers={rowEventHandlers}
               disabled={loadingAnnotations}
+              overlayRenderer={overlayRenderer}
+              emptyRenderer={emptyRenderer}
             />
           </AnnotationLoader>
         );

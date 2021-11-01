@@ -1,9 +1,12 @@
 import React from 'react';
 import { DataSetFilter } from '@cognite/data-exploration';
-import { FilterItemProps } from './filterItemProps';
+import { VisionFilterItemProps } from './types';
 
 // ToDo(VIS-306): File count in DataSetFilter should count only the files with valid mime type
-export const DataSetSelectFilter = ({ filter, setFilter }: FilterItemProps) => (
+export const DataSetSelectFilter = ({
+  filter,
+  setFilter,
+}: VisionFilterItemProps) => (
   <DataSetFilter
     resourceType="file"
     value={filter.dataSetIds}

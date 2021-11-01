@@ -11,6 +11,8 @@ import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRende
 import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
+import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
+import { NoData } from 'src/modules/Common/Components/NoData/NoData';
 import { FileListTableProps } from './types';
 
 const rendererMap = {
@@ -82,6 +84,10 @@ export function FileTable(props: FileListTableProps) {
     },
   };
 
+  const overlayRenderer = () =>
+    props.isLoading ? <LoadingTable columns={columns} /> : <></>;
+  const emptyRenderer = () => (props.isLoading ? <></> : <NoData />);
+
   return (
     <SorterPaginationWrapper
       data={props.data}
@@ -89,6 +95,7 @@ export function FileTable(props: FileListTableProps) {
       pagination
       sorters={sorters}
       sortPaginateControls={props.sortPaginateControls}
+      isLoading={props.isLoading || false}
     >
       {(paginationProps) => (
         <AnnotationLoader data={paginationProps.data}>
@@ -103,6 +110,8 @@ export function FileTable(props: FileListTableProps) {
             rowEventHandlers={rowEventHandlers}
             allRowsSelected={props.allRowsSelected}
             onSelectAllRows={props.onSelectAllRows}
+            overlayRenderer={overlayRenderer}
+            emptyRenderer={emptyRenderer}
           />
         </AnnotationLoader>
       )}

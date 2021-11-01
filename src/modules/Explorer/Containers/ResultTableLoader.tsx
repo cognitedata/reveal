@@ -17,19 +17,21 @@ import { useHistory } from 'react-router-dom';
 import { FileActions } from 'src/modules/Common/types';
 import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   selectExplorerAllFiles,
   setExplorerFiles,
   setExplorerFocusedFileId,
   showExplorerFileMetadata,
+  setIsLoading,
+  setPercentageScanned,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
-import { searchFilesWithValidMimeTypes } from 'src/api/file/searchFilesWithValidMimeTypes';
 import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
+import { fetchFiles } from 'src/api/file/fetchFiles/fetchFiles';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -77,17 +79,24 @@ export const ResultTableLoader = <T extends Resource>({
     [explorerFiles, menuActions]
   );
 
+  const handleSetIsLoading = (loading: boolean) => {
+    dispatch(setIsLoading(loading));
+  };
+  const handleSetPercentageScanned = (percentComplete: number) => {
+    dispatch(setPercentageScanned(percentComplete));
+  };
+
   useEffect(() => {
     (async () => {
-      const fileSearchResult = await searchFilesWithValidMimeTypes(
+      dispatch(clearExplorerFileState(explorerFiles.map((file) => file.id)));
+      const fileSearchResult = await fetchFiles(
         props.filter,
         { name: props.query },
-        EXPLORER_FILE_FETCH_LIMIT
+        EXPLORER_FILE_FETCH_LIMIT,
+        handleSetIsLoading,
+        handleSetPercentageScanned
       );
-      batch(() => {
-        dispatch(clearExplorerFileState(explorerFiles.map((file) => file.id)));
-        dispatch(setExplorerFiles(fileSearchResult));
-      });
+      dispatch(setExplorerFiles(fileSearchResult));
     })();
 
     (async () => {

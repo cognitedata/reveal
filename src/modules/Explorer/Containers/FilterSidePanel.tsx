@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
 import { totalFileCount } from 'src/api/file/aggregate';
+import { cancelFetch } from 'src/api/file/fetchFiles/fetchFiles';
 
 const { Panel } = Collapse;
 
@@ -34,6 +35,7 @@ export const FilterSidePanel = () => {
   const filterCount = Object.values(filter).filter((f) => f).length;
 
   const setFilter = (newFilter: FileFilterProps) => {
+    cancelFetch();
     dispatch(setExplorerFilter(newFilter));
   };
 
