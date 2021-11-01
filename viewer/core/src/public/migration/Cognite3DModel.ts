@@ -14,7 +14,8 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
-import { NumericRange, trackError } from '@reveal/utilities';
+import { NumericRange } from '@reveal/utilities';
+import { trackError } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 

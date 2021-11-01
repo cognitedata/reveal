@@ -23,8 +23,6 @@ export { WorkerPool } from './src/workers/WorkerPool';
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
-export { trackError, trackLoadModel, trackCameraNavigation, trackEvent, initMetrics } from './src/metrics';
-
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
 
 export { revealEnv } from './src/revealEnv';
