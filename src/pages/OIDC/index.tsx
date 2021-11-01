@@ -92,24 +92,30 @@ export default function OIDCConfigContainer() {
         set: values.isOidcEnabled,
       },
       oidcConfiguration: {
-        set: {
-          jwksUrl: values.jwksUrl || null,
-          tokenUrl: values.tokenUrl || null,
-          issuer: values.issuer || null,
-          audience: values.audience || null,
-          scopeClaims:
-            values.scopeClaims?.map((claimName: string) => ({
-              claimName,
-            })) || [],
-          logClaims:
-            values.logClaims?.map((claimName: string) => ({
-              claimName,
-            })) || [],
-          accessClaims:
-            values.accessClaims?.map((claimName: string) => ({
-              claimName,
-            })) || [],
-          skewMs: values.skewMs,
+        modify: {
+          jwksUrl: { set: values.jwksUrl || null },
+          tokenUrl: { set: values.tokenUrl || null },
+          issuer: { set: values.issuer || null },
+          audience: { set: values.audience || null },
+          scopeClaims: {
+            set:
+              values.scopeClaims?.map((claimName: string) => ({
+                claimName,
+              })) || [],
+          },
+          logClaims: {
+            set:
+              values.logClaims?.map((claimName: string) => ({
+                claimName,
+              })) || [],
+          },
+          accessClaims: {
+            set:
+              values.accessClaims?.map((claimName: string) => ({
+                claimName,
+              })) || [],
+          },
+          skewMs: { set: values.skewMs },
         },
       },
     });
