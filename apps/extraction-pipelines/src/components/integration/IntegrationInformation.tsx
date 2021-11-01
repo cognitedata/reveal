@@ -30,7 +30,7 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
   }
 
   return (
-    <div>
+    <>
       <Section title="Basic information" icon="World">
         <InlineEdit
           name="description"
@@ -110,6 +110,6 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
           fieldValue={integration?.lastUpdatedTime}
         />
       </Section>
-    </div>
+    </>
   );
 };

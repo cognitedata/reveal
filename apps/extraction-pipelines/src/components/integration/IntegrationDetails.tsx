@@ -12,11 +12,10 @@ import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { trackUsage } from 'utils/Metrics';
 
-const MiddleSectionGrid = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+const MiddleSection = styled.div`
+  display: flex;
   margin-bottom: 1rem;
-  grid-gap: 1rem;
+  gap: 1rem;
 `;
 const TopSection = styled.section`
   display: flex;
@@ -51,10 +50,14 @@ export const IntegrationDetails: FunctionComponent<IntegrationViewProps> = () =>
       <TopSection>
         <RunScheduleConnection />
       </TopSection>
-      <MiddleSectionGrid>
-        <DocumentationSection canEdit={canEdit} />
-        <IntegrationInformation canEdit={canEdit} />
-      </MiddleSectionGrid>
+      <MiddleSection>
+        <div css="flex: 2;">
+          <DocumentationSection canEdit={canEdit} />
+        </div>
+        <div css="flex: 1; max-width: 35%">
+          <IntegrationInformation canEdit={canEdit} />
+        </div>
+      </MiddleSection>
     </PageWrapperColumn>
   );
 };

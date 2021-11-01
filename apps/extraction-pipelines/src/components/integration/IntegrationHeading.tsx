@@ -22,6 +22,7 @@ const Wrapper = styled.div`
     flex: 1;
   }
   padding: 1rem;
+  margin-left: 1rem;
 `;
 
 const StyledTitle = styled(Title)`
@@ -57,7 +58,9 @@ export const IntegrationHeading: FunctionComponent = () => {
               pathname: createExtPipePath(),
             }}
           >
-            <Icon type="ArrowBack" />
+            <div css="display: flex; align-items: center;">
+              <Icon type="ArrowBack" />
+            </div>
           </StyledNavLink>
           <InlineEdit
             name="name"

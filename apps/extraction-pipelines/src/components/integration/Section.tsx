@@ -17,6 +17,7 @@ const SectionHeader = styled.div`
 `;
 const SectionBody = styled.div`
   padding: 1em 0;
+  overflow-x: scroll;
 `;
 export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
   <SectionDiv className="z-2">{props.children}</SectionDiv>
