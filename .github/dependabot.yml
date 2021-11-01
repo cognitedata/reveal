@@ -4,11 +4,6 @@ registries:
     type: npm-registry
     url: https://registry.npmjs.org
     token: ${{secrets.NPM_DEPENDABOT_READONLY}}
-  gcr:
-    type: docker-registry
-    url: eu.gcr.io
-    username: _json_key
-    password: ${{secrets.GCR_READONLY_JSON_KEY}}
 updates:
   - package-ecosystem: npm
     directory: "/"
@@ -23,15 +18,3 @@ updates:
       include: scope
     registries:
       - npm
-  - package-ecosystem: docker
-    directory: "/"
-    schedule:
-      interval: weekly
-      day: saturday
-    labels:
-      - auto-merge
-    commit-message:
-      prefix: chore
-      include: scope
-    registries:
-      - gcr
