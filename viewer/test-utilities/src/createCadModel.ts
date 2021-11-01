@@ -3,8 +3,8 @@
  */
 
 import { Cognite3DModel } from '../../core/src/public/migration/Cognite3DModel';
-import { NodesLocalClient } from '@reveal/nodes-api';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { NodesLocalClient } from '../../packages/nodes-api';
+import { CadMaterialManager, CadNode } from '../../packages/rendering';
 
 import { createCadModelMetadata } from './createCadModelMetadata';
 import { generateSectorTree } from './createSectorMetadata';

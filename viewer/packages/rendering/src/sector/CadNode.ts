@@ -12,7 +12,7 @@ import { InstancedMeshManager } from '../InstancedMeshManager';
 import { RenderMode } from '../rendering/RenderMode';
 
 import { SectorScene, CadModelMetadata, SectorGeometry, InstancedMeshFile, RootSectorNode } from '@reveal/cad-parsers';
-import { NodeAppearanceProvider, NodeAppearance, NodeCollectionBase, PrioritizedArea } from '@reveal/cad-styling';
+import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
