@@ -59,7 +59,10 @@ const defaultConfig: TenantConfig = {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'East West (ft)', y: 'North South (ft)' },
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'North South (<%= unit %>)',
+            },
             title: 'NS vs EW',
           },
         },
@@ -70,7 +73,10 @@ const defaultConfig: TenantConfig = {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'North South (ft)', y: 'True Vertical Depth (ft)' },
+            axisNames: {
+              x: 'North South (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
+            },
             title: 'TVD vs NS',
           },
         },
@@ -81,7 +87,10 @@ const defaultConfig: TenantConfig = {
             hovertemplate: `%{y}`,
           },
           chartVizData: {
-            axisNames: { x: 'East West (ft)', y: 'True Vertical Depth (ft)' },
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
+            },
             title: 'TVD vs EW',
           },
         },
@@ -93,8 +102,8 @@ const defaultConfig: TenantConfig = {
           },
           chartVizData: {
             axisNames: {
-              x: 'Equivalent_Departure (ft)',
-              y: 'True Vertical Depth (ft)',
+              x: 'Equivalent_Departure (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
             },
             title: 'TVD vs ED',
           },
@@ -107,9 +116,9 @@ const defaultConfig: TenantConfig = {
           },
           chartVizData: {
             axisNames: {
-              x: 'East West (ft)',
-              y: 'North South (ft)',
-              z: 'TVD (ft)',
+              x: 'East West (<%= unit %>)',
+              y: 'North South (<%= unit %>)',
+              z: 'TVD (<%= unit %>)',
             },
             title: 'TVD 3D view',
           },
