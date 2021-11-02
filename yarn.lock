@@ -1580,6 +1580,25 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
+"@cognite/sdk-core@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.0.1.tgz#b25c700ab2779c401b941af0c04ef323b0a83c7a"
+  integrity sha512-rEo1KD5MqrkZtQjJq0OYd7ujnI7LHQTU6cWT0wxQ74IsueQFveEthCyTSJuCWVLfGDBOz7AF7S26rxno0QpAEA==
+  dependencies:
+    cross-fetch "^3.0.4"
+    is-buffer "^2.0.5"
+    lodash "^4.17.11"
+    query-string "^5.1.1"
+    url "^0.11.0"
+
+"@cognite/sdk-v6@npm:@cognite/sdk@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-6.1.1.tgz#79373c22d2086a77d9ecce212cc4d24419411266"
+  integrity sha512-uJRgkSj6FIuBYFwzbbworWvjCHauEVr/pxMQhzQvtcTQEIZaeDUfBUyrF0hYiGQeOBKWjKi3kH/c36/lrTxl5g==
+  dependencies:
+    "@cognite/sdk-core" "^4.0.1"
+    lodash "^4.17.11"
+
 "@cognite/sdk@5.4.0":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-5.4.0.tgz#e1ebd43fff2118aa393e0a266b88441198f3421d"
@@ -14539,7 +14558,7 @@ open@^7.0.2, open@^7.0.3, open@^7.4.2:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
 
-open@^8.0.9:
+open@^8.0.9, open@^8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/open/-/open-8.4.0.tgz#345321ae18f8138f82565a910fdc6b39e8c244f8"
   integrity sha512-XgFPPM+B28FtCCgSb9I+s9szOC1vZRSwgWsRUA5ylIxRTgKozqjOCrVOqGsYABPYK5qnfqClxZTFBa8PKt2v6Q==
