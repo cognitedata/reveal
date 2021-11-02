@@ -1,5 +1,5 @@
 import GlobalStyles from 'styles/GlobalStyles';
-import React from 'react';
+import React, { Suspense, useMemo } from 'react';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import { createHistory } from 'utils/history';
@@ -11,7 +11,6 @@ import { Route, Router, Switch } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
-import RootApp from './RootApp';
 
 const App = () => {
   const history = createHistory();
@@ -43,12 +42,32 @@ const App = () => {
               <SubAppWrapper>
                 <DataSetsContextProvider>
                   <Router history={history}>
-                    <Switch>
-                      <Route
-                        path="/:tenant/new-data-sets"
-                        component={RootApp}
-                      />
-                    </Switch>
+                    <Suspense fallback={<Loader />}>
+                      <Switch>
+                        <Route
+                          path="/:tenant/new-data-sets"
+                          component={useMemo(
+                            () =>
+                              React.lazy(
+                                () => import('pages/DataSetsList/DataSetsList')
+                              ),
+                            []
+                          )}
+                          exact
+                        />
+                        <Route
+                          path="/:tenant/new-data-sets/data-set/:dataSetId"
+                          component={useMemo(
+                            () =>
+                              React.lazy(
+                                () =>
+                                  import('pages/DataSetDetails/DataSetDetails')
+                              ),
+                            []
+                          )}
+                        />
+                      </Switch>
+                    </Suspense>
                   </Router>
                 </DataSetsContextProvider>
               </SubAppWrapper>
