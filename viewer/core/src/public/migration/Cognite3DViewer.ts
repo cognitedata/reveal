@@ -51,6 +51,7 @@ import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reve
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
+import { CameraControlsOptions } from 'index';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -195,39 +196,43 @@ export class Cognite3DViewer {
     const wheelClock = new THREE.Clock(),
       clickClock = new THREE.Clock();
 
-    this.on('click', e => {
-      newTargetUpdate = true;
-      timeAfterClick = 0;
-      clickClock.getDelta();
+    if (this._useOnClickTargetChange) {
+      this.on('click', e => {
+        newTargetUpdate = true;
+        timeAfterClick = 0;
+        clickClock.getDelta();
 
-      this.controls.enableKeyboardNavigation = false;
-      this.changeTarget(e);
-    });
+        this.controls.enableKeyboardNavigation = false;
+        this.changeTarget(e);
+      });
+    }
 
-    this.canvas.addEventListener('wheel', async (e: any) => {
-      const timeDelta = wheelClock.getDelta();
-      timeAfterClick += clickClock.getDelta();
-      const { offsetX, offsetY } = e;
-      const x = (offsetX / this.domElement.clientWidth) * 2 - 1;
-      const y = (offsetY / this.domElement.clientHeight) * -2 + 1;
+    if (this._useScrollTargetControls) {
+      this.canvas.addEventListener('wheel', async (e: any) => {
+        const timeDelta = wheelClock.getDelta();
+        timeAfterClick += clickClock.getDelta();
+        const { offsetX, offsetY } = e;
+        const x = (offsetX / this.domElement.clientWidth) * 2 - 1;
+        const y = (offsetY / this.domElement.clientHeight) * -2 + 1;
 
-      if (timeAfterClick > 3) newTargetUpdate = false;
+        if (timeAfterClick > 3) newTargetUpdate = false;
 
-      const wantNewScrollTarget =
-        startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
+        const wantNewScrollTarget =
+          startedScroll && !newTargetUpdate && (e?.wheelDeltaY > 0 || e?.wheelDelta > 0 || e?.deltaY > 0);
 
-      if (wantNewScrollTarget) {
-        startedScroll = false;
+        if (wantNewScrollTarget) {
+          startedScroll = false;
 
-        const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+          const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
 
-        const newScrollTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
+          const newScrollTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
 
-        this.controls.setScrollTarget(newScrollTarget);
-      } else {
-        if (timeDelta > 0.1) startedScroll = true;
-      }
-    });
+          this.controls.setScrollTarget(newScrollTarget);
+        } else {
+          if (timeDelta > 0.1) startedScroll = true;
+        }
+      });
+    }
   };
 
   /**
@@ -326,7 +331,7 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
-    if (this._useOnClickTargetChange) this.addOnClickTargetChange();
+    if (this._useOnClickTargetChange || this._useScrollTargetControls) this.addOnClickTargetChange();
 
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
@@ -550,6 +555,24 @@ export class Cognite3DViewer {
 
       default:
         assertNever(event);
+    }
+  }
+
+  setControlsMode(controlsOptions: CameraControlsOptions) {
+    switch (controlsOptions.zoomToCursor) {
+      case 'disable':
+        this.controls.zoomToCursor = false; 
+        break;
+      case 'basicLerp':
+        this.controls.useScrollTarget = false;
+        break;
+      case 'scrollTarget':
+        this.controls.useScrollTarget = true;
+        break;
+    }
+
+    if (controlsOptions.onClickTargetChange) {
+      // hui vo rtu
     }
   }
 

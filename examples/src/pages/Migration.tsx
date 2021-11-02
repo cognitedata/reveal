@@ -56,13 +56,13 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         useScrollTargetControls: true,
-        useOnClickTargetChange: true,
+        useOnClickTargetChange: false,
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
@@ -469,6 +469,9 @@ export function Migration() {
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
 
+                const clickedBB = await intersection.model.getBoundingBoxByTreeIndex(treeIndex, new THREE.Box3());
+
+                viewer.fitCameraToBoundingBox(clickedBB, 0);
               }
               break;
             case 'pointcloud':
