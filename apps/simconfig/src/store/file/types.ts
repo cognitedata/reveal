@@ -16,6 +16,8 @@ export interface FileState {
   requestStatus: RequestStatus;
   initialized: boolean;
   files: FileInfoSerializable[];
+  fileForDownload?: FileInfoSerializable;
+  processingDownload?: boolean;
   selectedFile?: FileInfoSerializable;
   currentCalculation?: FileInfoSerializable;
   downloadLinks?: LinkWithID[];

@@ -15,3 +15,9 @@ export const selectIsFilesInitialized = (state: StoreState) =>
 
 export const selectDownloadLinks = (state: StoreState) =>
   state.file.downloadLinks;
+
+export const selectFileForDownload = (state: StoreState) =>
+  state.file.fileForDownload;
+
+export const selectProcessingDownload = (state: StoreState) =>
+  state.file.processingDownload;

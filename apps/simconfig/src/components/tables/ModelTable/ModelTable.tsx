@@ -1,50 +1,80 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Button, Table, TableRow } from '@cognite/cogs.js';
-import { forceDownloadDialog } from 'utils/fileDownload';
-import { LinkWithID } from 'pages/ModelLibrary/types';
 import { FileInfoSerializable } from 'store/file/types';
-import { useAppDispatch } from 'store/hooks';
-import { setSelectedFile } from 'store/file';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { fetchDownloadLinks } from 'store/file/thunks';
+import {
+  selectDownloadLinks,
+  selectFileForDownload,
+  selectProcessingDownload,
+} from 'store/file/selectors';
+import {
+  setFileForDownload,
+  setSelectedFile,
+  setProcessingDownload,
+} from 'store/file';
+import { CdfClientContext } from 'providers/CdfClientProvider';
+import { forceDownloadDialog } from 'utils/fileDownload';
 
 type ComponentProps = {
   data: FileInfoSerializable[];
   modelName?: string;
-  links?: LinkWithID[];
 };
 
-export default function ModelTable({ data, modelName, links }: ComponentProps) {
+export default function ModelTable({ data, modelName }: ComponentProps) {
   const { url } = useRouteMatch();
 
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const links = useAppSelector(selectDownloadLinks);
+  const processingDownload = useAppSelector(selectProcessingDownload);
+  const fileForDownload = useAppSelector(selectFileForDownload);
+  const { cdfClient } = useContext(CdfClientContext);
+
+  useEffect(() => {
+    downloadFile();
+  }, [links]);
+
+  const downloadFile = async () => {
+    if (fileForDownload && links) {
+      const { externalId } = fileForDownload;
+      const fileName = fileForDownload.metadata?.fileName || '';
+      const { downloadUrl } =
+        links.find(
+          (url) => 'externalId' in url && externalId === url.externalId
+        ) || {};
+
+      if (!downloadUrl) {
+        throw new Error('No Matching download url');
+      }
+      const downloadHasError = await forceDownloadDialog(fileName, downloadUrl);
+      if (downloadHasError) {
+        /* TBD SIM-123 */
+      }
+      dispatch(setProcessingDownload(false));
+      dispatch(setFileForDownload(undefined));
+    }
+  };
 
   const onDownloadClicked = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const value = e.currentTarget.getAttribute('data-external-id') || '';
-    if (!links) {
-      return;
-    }
-
-    const { downloadUrl } =
-      links.find((url) => 'externalId' in url && value === url.externalId) ||
-      {};
-
-    if (!downloadUrl) {
-      throw new Error('No Matching download url');
-    }
-    const file = data.find((record) => record.externalId === value);
-    const fileName = file?.metadata?.fileName || value;
-    const downloadHasError = await forceDownloadDialog(fileName, downloadUrl);
-    if (downloadHasError) {
-      /* Here we could put a toast alert, but the probability
-      of this happening should be lower when the fix for SIM-102 is
-       implemented */
+    const externalId = e.currentTarget.getAttribute('data-external-id') || null;
+    if (externalId) {
+      const file = data.find((record) => record.externalId === externalId);
+      dispatch(setFileForDownload(file));
+      dispatch(setProcessingDownload(true));
+      dispatch(
+        fetchDownloadLinks({
+          client: cdfClient,
+          externalIds: [{ externalId }],
+        })
+      );
     }
   };
+
   const getNewestFile = (items: FileInfoSerializable[]) =>
     items.sort(
       (a, b) => +(b.metadata?.version || '0') - +(a.metadata?.version || '0')
@@ -53,15 +83,15 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
   const onCalculationsClicked = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    const modelName = e.currentTarget.getAttribute('data-model') || '';
-
-    const latestFile = getNewestFile(
-      data.filter((file) => file.name === modelName)
-    );
-
-    dispatch(setSelectedFile(latestFile));
-
-    history.push(`/calculation-library/${modelName}`);
+    const modelName = e.currentTarget.getAttribute('data-model') || null;
+    if (modelName) {
+      const files = data.filter((file) => file.name === modelName);
+      if (modelName !== '' && files.length > 0) {
+        const latestFile = getNewestFile(files);
+        dispatch(setSelectedFile(latestFile));
+        history.push(`/calculation-library/${modelName}`);
+      }
+    }
   };
 
   const onRowClicked = async (row: TableRow<FileInfoSerializable>) => {
@@ -87,6 +117,12 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
       accessor: (row: FileInfoSerializable) => row.metadata?.modelName,
     };
   };
+
+  const isFileLoading = (externalId: string) =>
+    processingDownload && fileForDownload?.externalId === externalId
+      ? 'Loading'
+      : 'Download';
+
   const cols = [
     {
       id: 'simulator',
@@ -142,7 +178,7 @@ export default function ModelTable({ data, modelName, links }: ComponentProps) {
           <Button
             aria-label="download"
             data-external-id={value}
-            icon="Download"
+            icon={isFileLoading(value)}
             type="ghost"
             onClick={onDownloadClicked}
           />

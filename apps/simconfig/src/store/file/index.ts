@@ -28,6 +28,17 @@ export const fileSlice = createSlice({
       partialUpdate(state, {
         currentCalculationConfig: undefined,
       }),
+    setFileForDownload: (
+      state,
+      action: PayloadAction<FileInfoSerializable | undefined>
+    ) =>
+      partialUpdate(state, {
+        fileForDownload: action.payload,
+      }),
+    setProcessingDownload: (state, action: PayloadAction<boolean | false>) =>
+      partialUpdate(state, {
+        processingDownload: action.payload,
+      }),
   },
   extraReducers: (builder) => {
     builder
@@ -78,6 +89,8 @@ export const fileSlice = createSlice({
 export const {
   setSelectedFile,
   setSelectedCalculation,
+  setFileForDownload,
+  setProcessingDownload,
   resetSelectedCalculationConfig,
 } = fileSlice.actions;
 export const fileReducer = fileSlice.reducer;

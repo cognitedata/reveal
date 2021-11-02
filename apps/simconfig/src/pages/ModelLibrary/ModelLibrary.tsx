@@ -7,14 +7,13 @@ import { ModelSource } from 'components/forms/ModelForm/constants';
 import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionContent';
 import ModelTable from 'components/tables/ModelTable/ModelTable';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
-import { fetchDownloadLinks, fetchFiles } from 'store/file/thunks';
+import { fetchFiles } from 'store/file/thunks';
 import { FileInfoSerializable } from 'store/file/types';
 import { setSelectedFile } from 'store/file';
 import sortBy from 'lodash/sortBy';
 import {
   selectDownloadLinks,
   selectFiles,
-  selectIsFilesInitialized,
   selectSelectedFile,
 } from 'store/file/selectors';
 
@@ -36,7 +35,6 @@ export default function ModelLibrary() {
   const dispatch = useAppDispatch();
   const files = useAppSelector(selectFiles);
   const links = useAppSelector(selectDownloadLinks);
-  const isFilesInitialized = useAppSelector(selectIsFilesInitialized);
   const history = useHistory();
   const location = useLocation();
   const { cdfClient } = useContext(CdfClientContext);
@@ -62,25 +60,9 @@ export default function ModelLibrary() {
     dispatch(setSelectedFile(undefined));
   }
 
-  async function loadUrls() {
-    if (!isFilesInitialized) {
-      return;
-    }
-    dispatch(
-      fetchDownloadLinks({
-        client: cdfClient,
-        externalIds: files.map(({ externalId = '' }) => ({ externalId })),
-      })
-    );
-  }
-
   useEffect(() => {
     loadData();
   }, [modelName]);
-
-  useEffect(() => {
-    loadUrls();
-  }, [files]);
 
   useEffect(() => {
     dispatch(setSelectedFile(undefined));
@@ -168,7 +150,7 @@ export default function ModelLibrary() {
               {!modelName ? 'New model' : 'New version'}
             </Button>
           </Header>
-          <ModelTable data={files} modelName={modelName} links={links} />
+          <ModelTable data={files} modelName={modelName} />
         </Container>
       </CollapsablePanel>
     </CollapsableContainer>
