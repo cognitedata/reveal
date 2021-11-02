@@ -48,10 +48,6 @@ const App = () => {
                         path="/:tenant/new-data-sets"
                         component={RootApp}
                       />
-                      <Route
-                        path="/:tenant/new-data-sets/data-set/:dataSetId"
-                        component={RootApp}
-                      />
                     </Switch>
                   </Router>
                 </DataSetsContextProvider>
