@@ -78,7 +78,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Removes the Keyframe from the Timeline
+   * Removes the Keyframe from the timeline. Does nothing if the keyframe isn't part of the timeline.
    * @param keyframe - Keyframe to be removed from the Timeline
    */
   public removeKeyframe(keyframe: Keyframe) {
