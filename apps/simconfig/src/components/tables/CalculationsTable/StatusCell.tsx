@@ -9,6 +9,7 @@ import {
   runNewCalculation,
 } from 'store/event/thunks';
 import { usePolling } from 'hooks/usePolling';
+import { sanitizeValue } from 'utils/stringUtils';
 import { CapitalizedLabel } from 'pages/elements';
 
 import { RunCalculationButton } from './elements';
@@ -61,8 +62,11 @@ export default function StatusCell({ data }: ComponentProps) {
     if (!authState?.email) {
       throw new Error('No logged in user data');
     }
+    const sanitizedExternalId = sanitizeValue(
+      `${source}-SR-${calcType}-${modelName}-${new Date().getTime()}`
+    );
     const item = {
-      externalId: `${source}-SR-${calcType}-${modelName}-${new Date().getTime()}`,
+      externalId: sanitizedExternalId,
       dataSetId,
       type: EVENT_CONSTANTS.SIM_CALC,
       subtype: calcName,

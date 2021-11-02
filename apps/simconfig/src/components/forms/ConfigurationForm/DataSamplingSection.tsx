@@ -1,4 +1,4 @@
-import { Button, Input, Title, Switch, Select } from '@cognite/cogs.js';
+import { Button, Input, Switch, Select } from '@cognite/cogs.js';
 import { Field, useFormikContext } from 'formik';
 import { getSelectEntriesFromMap } from 'utils/formUtils';
 import {
@@ -6,6 +6,7 @@ import {
   InputAreaTitle,
   InputFullWidth,
   InputRow,
+  SectionTitle,
   SelectContainer,
   SelectLabel,
 } from 'components/forms/elements';
@@ -17,7 +18,7 @@ export function DataSamplingSection() {
   const { values, setFieldValue } = useFormikContext<CalculationConfig>();
   return (
     <>
-      <Title level={2}>Data Sampling</Title>
+      <SectionTitle level={2}>Data Sampling</SectionTitle>
 
       <InputArea>
         <InputAreaTitle level={3}>Configuration</InputAreaTitle>

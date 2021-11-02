@@ -7,8 +7,13 @@ export const InputRow = styled.div`
   display: flex;
   gap: 12px;
 `;
+export const InputInfoRow = styled.div`
+  width: fit-content;
+  display: flex;
+  gap: 6px;
+`;
 export const InputFullWidth = styled(Input)`
-  width: 250px;
+  width: ${(props) => props.width || '300px'};
 `;
 export const InputArea = styled.div`
   margin: 20px 0;
@@ -24,6 +29,11 @@ export const InputAreaTitle = styled(Title)`
   top: -17px;
   background-color: white;
 `;
+export const SectionTitle = styled(Title)`
+  text-transform: uppercase;
+  margin-bottom: 30px;
+`;
+
 export const SelectContainer = styled.div`
   display: flex;
   flex-direction: column;

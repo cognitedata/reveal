@@ -1,4 +1,4 @@
-import { AGGREGATE_TYPE, CHECK_TYPE } from './constants';
+import { AGGREGATE_TYPE, CHECK_TYPE, UNIT_TYPE } from './constants';
 
 export interface CalculationConfig {
   simulator: string;
@@ -46,7 +46,7 @@ export interface ConfigInputTimeSeries {
   type: string;
   sensorExternalId: string;
   unit: string;
-  unitType: string;
+  unitType: keyof typeof UNIT_TYPE;
   aggregateType: keyof typeof AGGREGATE_TYPE;
 }
 export interface ConfigManualInput {
@@ -59,7 +59,8 @@ export interface ConfigOutputTimeSeries {
   name: string;
   type: string;
   unit: string;
-  unitType: string;
+  unitType: keyof typeof UNIT_TYPE;
+  externalId?: string;
 }
 export interface ConfigOutputSequence {
   name: string;
