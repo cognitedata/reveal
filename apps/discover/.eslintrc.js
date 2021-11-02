@@ -19,4 +19,14 @@ module.exports = {
     'import/no-anonymous-default-export': ['off'],
     'unicode-bom': ['off'],
   },
+  overrides: [
+    {
+      files: ['cypress/**'],
+      rules: {
+        'testing-library/prefer-screen-queries': 'off',
+        'testing-library/await-async-query': 'off',
+        'testing-library/await-async-utils': 'off',
+      },
+    },
+  ],
 };

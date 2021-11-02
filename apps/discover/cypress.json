@@ -1,0 +1,14 @@
+{
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
+  "screenshotOnRunFailure": true,
+  "videoUploadOnPasses": false,
+  "defaultCommandTimeout": 10000,
+  "pageLoadTimeout": 120000,
+  "responseTimeout": 120000,
+  "env": {
+    "BASE_URL": "https://localhost:3000"
+  },
+  "animationDistanceThreshold": 3,
+  "numTestsKeptInMemory": 0
+}
