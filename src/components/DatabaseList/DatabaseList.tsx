@@ -1,32 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Input, Spin } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import Alert from 'antd/lib/alert';
-import { History } from 'history';
 import { stringContains } from 'utils/typedUtils';
 import { stringCompare } from 'utils/utils';
 import styled from 'styled-components';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { useDatabases } from 'hooks/sdk-queries';
+import { RawDB } from '@cognite/sdk';
+import CreateDatabase from 'components/CreateDatabase/CreateDatabase';
 import DatabaseItem from './DatabaseItem';
-import { DatabaseWithTablesItem } from '../RawFunctions/types';
-import { getDatabasesWithTables } from '../RawFunctions';
 
 const { Search } = Input;
 
 interface DatabaseListProps {
-  selectedTable: {
-    database?: string;
-    table?: string;
-  };
-  setSelectedTable(value: { database?: string; table?: string }): void;
-  isFetching: boolean;
-  setIsFetching(value: boolean): void;
-  deleteDatabase(value: string): void;
-  hasWriteAccess: boolean;
-  setCreateModalVisible(value: boolean): void;
-  openKeys: string[];
-  setOpenKeys(values: string[]): void;
-  history: History;
+  database?: string;
+  table?: string;
 }
 
 export type SortingType = 'name-asc' | 'name-desc';
@@ -54,55 +43,58 @@ const StyledSearch = styled(Search)`
   margin-bottom: 8px;
 `;
 
-const DatabaseList = ({
-  selectedTable,
-  setSelectedTable,
-  isFetching,
-  setCreateModalVisible,
-  history,
-  openKeys,
-  setIsFetching,
-  hasWriteAccess,
-  deleteDatabase,
-  setOpenKeys,
-}: DatabaseListProps) => {
-  const [dbList, setDbList] = useState<DatabaseWithTablesItem[]>([]);
+const DatabaseList = ({ database }: DatabaseListProps) => {
+  const {
+    data: dbList,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+  } = useDatabases();
+
+  useEffect(() => {
+    if (hasNextPage && !isLoading) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isLoading, fetchNextPage]);
+
   const [searchWord, setSearch] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+
   const [sortingType, setSortingType] = useLocalStorage<SortingType>(
     'raw-sort',
     'name-asc'
   );
 
+  const dbs = useMemo(
+    () =>
+      dbList
+        ? dbList.pages.reduce(
+            (accl, page) => [...accl, ...page.items],
+            [] as RawDB[]
+          )
+        : ([] as RawDB[]),
+    [dbList]
+  );
+
   const renderDatabaseList = () => {
-    const newList = dbList
-      .filter((database) => stringContains(database.database.name, searchWord))
+    const newList = dbs
+      .filter((_database) => stringContains(_database.name, searchWord))
       .sort((a, b) => {
         switch (sortingType) {
           case 'name-asc':
-            return stringCompare(b.database.name, a.database.name);
+            return stringCompare(b.name, a.name);
           case 'name-desc':
-            return stringCompare(a.database.name, b.database.name);
+            return stringCompare(a.name, b.name);
           default:
-            return stringCompare(b.database.name, a.database.name);
+            return stringCompare(b.name, a.name);
         }
       });
 
     if (newList.length)
-      return newList.map((item: DatabaseWithTablesItem) => (
+      return newList.map((item: RawDB) => (
         <DatabaseItem
-          tables={item.tables}
-          selectedTable={selectedTable}
-          openKeys={openKeys}
-          setOpenKeys={setOpenKeys}
-          key={item.database.name}
-          currentDatabase={item.database.name}
-          setSelectedTable={setSelectedTable}
-          setIsFetching={setIsFetching}
-          isFetching={isFetching}
-          deleteDatabase={deleteDatabase}
-          hasWriteAccess={hasWriteAccess}
-          history={history}
+          database={item.name}
+          openItem={item.name === database}
+          key={item.name}
           sortingType={sortingType}
         />
       ));
@@ -115,16 +107,6 @@ const DatabaseList = ({
       />
     );
   };
-
-  useEffect(() => {
-    const fetchDatabaseList = async () => {
-      setLoading(true);
-      const list = await getDatabasesWithTables();
-      setDbList(list);
-      setLoading(false);
-    };
-    if (!isFetching) fetchDatabaseList();
-  }, [isFetching]);
 
   const SortingButton = () => {
     const handleSortChange = () => {
@@ -152,17 +134,8 @@ const DatabaseList = ({
         <StyledCardTitle>Databases</StyledCardTitle>
         <SortingButton />
       </StyledCardHeading>
-      {hasWriteAccess && (
-        <Button
-          style={{ width: '100%', marginBottom: '5px' }}
-          icon="PlusCompact"
-          type="primary"
-          onClick={() => setCreateModalVisible(true)}
-          disabled={!hasWriteAccess}
-        >
-          Create Database
-        </Button>
-      )}
+      <CreateDatabase />
+
       <StyledSearch
         placeholder="Filter databases"
         onChange={(e) => setSearch(e.currentTarget.value)}
@@ -170,8 +143,8 @@ const DatabaseList = ({
         style={{ width: '100%' }}
         allowClear
       />
-      <Spin spinning={loading}>
-        {dbList.length > 0 ? (
+      <Spin spinning={isLoading}>
+        {dbs.length > 0 ? (
           renderDatabaseList()
         ) : (
           <Alert message="Project contains no databases" type="info" showIcon />

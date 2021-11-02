@@ -1,27 +1,23 @@
-import React, { useState } from 'react';
-import { Input } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { message, Input } from 'antd';
 import Menu from 'antd/lib/menu';
 import Tooltip from 'antd/lib/tooltip';
-import Spin from 'antd/lib/spin';
 import Alert from 'antd/lib/alert';
-import message from 'antd/lib/message';
+
 import { Button, Icon } from '@cognite/cogs.js';
-import Modal from 'antd/lib/modal';
 import Popconfirm from 'antd/lib/popconfirm';
 import { RawDBTable } from '@cognite/sdk';
 import { SubMenuProps } from 'antd/lib/menu/SubMenu';
 import theme from 'styles/theme';
-import { trackEvent } from '@cognite/cdf-route-tracker';
-import { History } from 'history';
 import { createLink } from '@cognite/cdf-utilities';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { cleanUrl, getContainer, stringCompare } from 'utils/utils';
-import handleError from 'utils/handleError';
 import styled from 'styled-components';
 import { stringContains } from 'utils/typedUtils';
 import { DATABASE_LIST_WIDTH } from 'utils/constants';
+import { useDeleteDatabase, useTables } from 'hooks/sdk-queries';
+import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import CreateTable from '../CreateTable';
-import { createRawTable } from '../RawFunctions';
 import { SortingType } from './DatabaseList';
 
 const { SubMenu } = Menu;
@@ -30,17 +26,9 @@ const SUBMENU_MARGIN_LEFT = 24;
 const SUBMENU_WIDTH = DATABASE_LIST_WIDTH - SUBMENU_MARGIN_LEFT;
 
 type DatabaseItemProps = SubMenuProps & {
-  setSelectedTable(value: { database: string; table?: string }): void;
-  isFetching: boolean;
-  setIsFetching(value: boolean): void;
-  deleteDatabase(value: string): void;
-  hasWriteAccess: boolean;
-  setOpenKeys(value: string[]): void;
-  openKeys: string[];
-  selectedTable: { database?: string; table?: string };
-  tables: RawDBTable[];
-  history: History;
-  currentDatabase: string;
+  database: string;
+  table?: string;
+  openItem: boolean;
   sortingType: SortingType;
 };
 
@@ -58,10 +46,6 @@ const StyledMenuItemInput = styled(Input.Search)`
   width: ${SUBMENU_WIDTH}px;
 `;
 
-const StyledMenuItemButton = styled(Button)`
-  width: ${SUBMENU_WIDTH}px;
-`;
-
 const StyledAlert = styled(Alert)`
   margin-left: ${SUBMENU_MARGIN_LEFT}px;
   margin-top: 4px;
@@ -73,102 +57,69 @@ const StyledSubmenuTitle = styled.div`
   align-items: center;
 `;
 
-const StyledDeleteDatabaseButton = styled(Button)`
-  background-color: ${theme.backgroundColor};
-`;
-
 const StyledTableItemIcon = styled(Icon)`
   margin: 0 8px 0 ${SUBMENU_MARGIN_LEFT}px;
 `;
 
 const DatabaseItem = ({
-  currentDatabase,
-  setSelectedTable,
-  isFetching,
-  setIsFetching,
-  deleteDatabase,
-  hasWriteAccess,
-  setOpenKeys,
-  openKeys,
-  tables = [],
-  selectedTable,
-  history,
+  database,
+  table,
   sortingType,
+  openItem,
   ...subMenuProps
 }: DatabaseItemProps) => {
-  const [searchWord, setSearch] = useState<string>('');
-  const [createTableVisible, setCreateTableVisible] = useState<boolean>(false);
-  const [newTableName, setNewTableName] = useState<string>('');
+  const history = useHistory();
+  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { mutate: deleteDatabase } = useDeleteDatabase();
 
-  const handleMenuClick = (e: {
-    key: string;
-    domEvent: React.SyntheticEvent;
-  }) => {
-    if (
-      !(
-        e.domEvent.target instanceof Element && // eslint-disable-line
-        e.domEvent.target.tagName === 'fBUTTON'
-      )
-    ) {
-      if (openKeys.includes(e.key)) {
-        setOpenKeys([]);
-      } else {
-        setOpenKeys([e.key]);
-      }
+  const [searchWord, setSearch] = useState<string>('');
+
+  const { data, isLoading, hasNextPage, fetchNextPage } = useTables(
+    {
+      database,
+    },
+    { enabled: openItem }
+  );
+
+  useEffect(() => {
+    if (!isLoading && hasNextPage) {
+      fetchNextPage();
     }
-  };
+  }, [isLoading, hasNextPage, fetchNextPage]);
+
+  const tables = useMemo(
+    () =>
+      data
+        ? data.pages.reduce(
+            (accl, page) => [...accl, ...page.items],
+            [] as RawDBTable[]
+          )
+        : ([] as RawDBTable[]),
+    [data]
+  );
 
   const renderFilteredList = (filteredList: RawDBTable[]) => {
-    return filteredList.map((table) => (
-      <StyledMenuItem
-        key={`${currentDatabase}-${table.name}`}
-        onClick={() => {
-          setSelectedTable({
-            database: currentDatabase,
-            table: table.name,
-          });
-        }}
-      >
+    return filteredList.map((_table) => (
+      <StyledMenuItem key={`${database}-${_table.name}`}>
         <Link
-          to={createLink(
-            `/raw-explorer/${cleanUrl(currentDatabase, table.name)}`
-          )}
+          to={createLink(`/raw-explorer/${cleanUrl(database, _table.name)}`)}
         >
           <Tooltip
             placement="topLeft"
-            title={`Table ${table.name}`}
+            title={`Table ${_table.name}`}
             getPopupContainer={getContainer}
           >
             <StyledTableItemIcon type="Table" />
-            <span>{table.name}</span>
+            <span>{_table.name}</span>
           </Tooltip>
         </Link>
       </StyledMenuItem>
     ));
   };
-  const createTable = async () => {
-    setIsFetching(true);
-    try {
-      const tableName = await createRawTable(currentDatabase, newTableName);
-      setNewTableName('');
-      setIsFetching(false);
-      setCreateTableVisible(false);
-      setSearch('');
-      message.success(`Table ${tableName} has been created!`);
-      history.push(
-        createLink(`/raw-explorer/${cleanUrl(currentDatabase, tableName)}`)
-      );
-      trackEvent('RAW.Explorer.Table.Table.Create', {
-        tableName: newTableName,
-      });
-    } catch (e) {
-      handleError(e);
-      setIsFetching(false);
-    }
-  };
+
   const renderTables = () => {
     const filteredList = tables
-      .filter((table) => stringContains(table.name, searchWord))
+      .filter((_table) => stringContains(_table.name, searchWord))
       .sort((a, b) => {
         switch (sortingType) {
           case 'name-asc':
@@ -193,13 +144,9 @@ const DatabaseItem = ({
 
   return (
     <Menu
-      selectedKeys={
-        selectedTable?.table
-          ? [`${selectedTable?.database}-${selectedTable?.table}`]
-          : []
-      }
-      openKeys={openKeys}
-      key={currentDatabase}
+      selectedKeys={table ? [table] : []}
+      openKeys={openItem ? [database] : []}
+      key={database}
       mode="inline"
       style={{
         height: '100%',
@@ -209,8 +156,10 @@ const DatabaseItem = ({
     >
       <SubMenu
         {...subMenuProps}
-        onTitleClick={(domEvent: any) => handleMenuClick(domEvent)}
-        key={currentDatabase}
+        onTitleClick={(event) =>
+          history.push(createLink(`/raw-explorer/${event.key}`))
+        }
+        key={database}
         style={{
           background: theme.backgroundColor,
           textAlign: 'left',
@@ -220,7 +169,20 @@ const DatabaseItem = ({
             {hasWriteAccess && (
               <Popconfirm
                 title="Are you sure you want to delete this database? Once deleted, the database cannot be recovered."
-                onConfirm={() => deleteDatabase(currentDatabase)}
+                onConfirm={() =>
+                  deleteDatabase(
+                    { database },
+                    {
+                      onSuccess() {
+                        message.success(`Database ${database} deleted!`);
+                        history.replace(createLink(`/raw-explorer`));
+                      },
+                      onError() {
+                        message.error(`Database ${database} was not deleted!`);
+                      },
+                    }
+                  )
+                }
                 cancelButtonProps={{ type: 'default' }}
                 placement="right"
               >
@@ -232,16 +194,16 @@ const DatabaseItem = ({
                   }
                   getPopupContainer={getContainer}
                 >
-                  <StyledDeleteDatabaseButton
+                  <Button
                     aria-label="Delete database"
                     icon="Trash"
-                    type="secondary"
+                    type="ghost"
                   />
                 </Tooltip>
               </Popconfirm>
             )}
 
-            {currentDatabase}
+            {database}
           </StyledSubmenuTitle>
         }
       >
@@ -259,45 +221,9 @@ const DatabaseItem = ({
         ) : (
           <StyledAlert message="This database has no tables" type="info" />
         )}
-        {tables ? renderTables() : <Spin />}
+        {tables ? renderTables() : <Icon type="Loading" />}
 
-        {hasWriteAccess && (
-          <StyledMenuItem
-            key="createButton"
-            style={{
-              color: 'white',
-              marginBottom: '5px',
-              marginTop: '5px',
-            }}
-          >
-            <StyledMenuItemButton
-              type="primary"
-              key="createButton"
-              onClick={() => setCreateTableVisible(true)}
-              icon="PlusCompact"
-            >
-              Create Table
-            </StyledMenuItemButton>
-          </StyledMenuItem>
-        )}
-        <Modal
-          title="Create table"
-          visible={createTableVisible}
-          onCancel={() => setCreateTableVisible(false)}
-          okText="Create"
-          onOk={() => createTable()}
-          getContainer={getContainer}
-        >
-          {isFetching ? (
-            <Spin />
-          ) : (
-            <CreateTable
-              setName={setNewTableName}
-              name={newTableName}
-              createTable={createTable}
-            />
-          )}
-        </Modal>
+        <CreateTable database={database} />
       </SubMenu>
     </Menu>
   );

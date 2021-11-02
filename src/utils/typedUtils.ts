@@ -1,4 +1,3 @@
-import moment from 'moment';
 import handleError from './handleError';
 
 export const stringContains = (value?: string, searchText?: string) => {
@@ -11,10 +10,4 @@ export const stringContains = (value?: string, searchText?: string) => {
     handleError(e);
     return undefined;
   }
-};
-
-export const dateSorter = <A>(select: (x: A) => string) => {
-  return function compare(a: A, b: A) {
-    return moment(select(a)).diff(select(b));
-  };
 };
