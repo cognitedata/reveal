@@ -1,13 +1,13 @@
 ---
-id: cad-prioritized-areas
-title: Prioritize Areas for Loading
+id: cad-prioritized-nodes
+title: Prioritize nodes for loading
 describe: Reveal may be instructed to treat specific nodes or areas as "prioritized" with regards to geometry streaming.
 ---
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 A developer may assign nodes or areas of a model as "prioritized" in relation to geometry loading.
-By giving nodes or areas a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the user. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times; the loader will still account for the rendering budget.
+By giving nodes or areas a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the camera. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times; the loader will still account for the rendering budget.
 
 Nodes are given load priority through the node styling API. The `NodeAppearance` type (see [Cad Styling](cad-styling)) includes the optional field `prioritizedForLoadingHint` which can be used to provide a load priority to the node collection. Higher values will make the related geometry more likely to be loaded. While any number can be used as the load priority, it is recommended to use values between 1 and 10. 5 is considered a reasonable default value.
 
@@ -15,7 +15,7 @@ Not all node collection types support the priority hint. An overview of current 
 
 | NodeCollectionType                   | Supports `prioritizedForLoadingHint`? |
 | ------------------------------------ | ------------------------------------- |
-| `TreeIndexNodeCollection`            | Only through manual interference*     |
+| `TreeIndexNodeCollection`            | Must be manually provided, see below  |
 | `PropertyFilterNodeCollection`       | Yes                                   |
 | `SinglePropertyFilterNodeCollection` | Yes                                   |
 | `AssetNodeCollection`                | Yes                                   |
@@ -24,7 +24,7 @@ Not all node collection types support the priority hint. An overview of current 
 | `IntersectionNodeCollection`         | Yes                                   |
 
 :::note
-Currently, `TreeIndexNodeCollection` does not take responsibility to compute the location of the geometry it holds, which the loader needs to prioritize the geometry. Alternatively, the developer may supply this information themselves by using the `TreeIndexNodeCollection.addAreaPoints()` and `.addAreas()` methods on the `TreeIndexNodeCollection`.
+Currently, `TreeIndexNodeCollection` does not take responsibility to compute the location of the geometry it holds, which the loader needs to prioritize the geometry. Alternatively, the developer may supply this information themselves by using the `addAreaPoints()` and `addAreas()` methods on the `TreeIndexNodeCollection`.
 :::
 
 A node collection that is the result of an operation (e.g. a union) involving another node collection that does not support `prioritizedForLoadingHint`, will not support the `prioritizedForLoadingHint` field either.
