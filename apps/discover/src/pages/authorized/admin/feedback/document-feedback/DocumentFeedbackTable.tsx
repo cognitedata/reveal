@@ -86,9 +86,9 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       // sortType: (row1, row2) => row1.original.markedAs
       disableSorting: true,
     },
-    timestamp: {
+    createdOn: {
       Header: FIELDS.date.display,
-      accessor: 'timestamp',
+      accessor: 'createdTime',
       width: '140px',
       order: 1,
       Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
@@ -209,7 +209,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
 
   const selectedColumns: string[] = [
     'markedAs',
-    'timestamp',
+    'createdOn',
     'status',
     'comment',
     'user',

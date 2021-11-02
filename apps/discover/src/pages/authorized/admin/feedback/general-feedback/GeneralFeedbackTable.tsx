@@ -116,9 +116,9 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
           getFullNameOrDefaultText(row2.original.user)
         ),
     },
-    timestamp: {
+    createdOn: {
       Header: FIELDS.date.display,
-      accessor: 'timestamp',
+      accessor: 'createdTime',
       width: '140px',
       order: 4,
       Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
@@ -174,7 +174,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     'status',
     'assignedTo',
     'user',
-    'timestamp',
+    'createdOn',
     'comment',
     'actions',
   ];
