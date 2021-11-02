@@ -7,6 +7,7 @@ import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 import * as THREE from 'three';
+import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 
 /**
  * Node collection that holds a set of nodes defined by a set of tree indices.
@@ -50,16 +51,16 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
 
   getAreas(): AreaCollection {
     if (!this._areaCollection) {
+      if (this._treeIndices.count === 0) {
+        return EmptyAreaCollection.instance();
+      }
+
       throw new Error(
-        `The AreaCollection returned by getAreas() for ThreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints() or created through initializeAreaCollection()`
+        `The AreaCollection returned by getAreas() for ThreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints()`
       );
     }
 
     return this._areaCollection;
-  }
-
-  initializeAreaCollection(): void {
-    this._areaCollection = new ClusteredAreaCollection();
   }
 
   addAreas(areas: THREE.Box3[]): void {
