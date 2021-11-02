@@ -11,8 +11,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
-import DataSetsList from './pages/DataSetsList/DataSetsList';
-import DataSetDetails from './pages/DataSetDetails/DataSetDetails';
+import RootApp from './RootApp';
 
 const App = () => {
   const history = createHistory();
@@ -47,12 +46,11 @@ const App = () => {
                     <Switch>
                       <Route
                         path="/:tenant/new-data-sets"
-                        component={DataSetsList}
-                        exact
+                        component={RootApp}
                       />
                       <Route
                         path="/:tenant/new-data-sets/data-set/:dataSetId"
-                        component={DataSetDetails}
+                        component={RootApp}
                       />
                     </Switch>
                   </Router>
