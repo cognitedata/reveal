@@ -36,8 +36,8 @@ void updateFragmentColor(
         gl_FragColor = vec4(albedo.rgb * mc.rgb * 1.7, color.a);
     } else if (renderMode == RenderTypeGhost) {
         float amplitude = max(0.0, dot(normal, vec3(0.0, 0.0, 1.0)));
-        vec3 albedo = min(vec3(0.8) * (0.4 + 0.6 * amplitude), 1.0);
-        gl_FragColor = vec4(albedo, 0.2);
+        float s = 0.4 + 0.6 * amplitude;
+        gl_FragColor = vec4(s, s, s, 0.3);
     } else if (renderMode == RenderTypeDepthBufferOnly) {
         gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
     } else if (renderMode == RenderTypePackColorAndNormal) {
