@@ -10,6 +10,7 @@ import {
 } from '@turf/helpers';
 import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
+import isUndefined from 'lodash/isUndefined';
 import mapboxgl from 'maplibre-gl';
 import { v1 } from 'uuid';
 
@@ -38,6 +39,7 @@ import {
 import { getRightMostPoint, getFeature } from 'modules/map/helper';
 import { useMap } from 'modules/map/selectors';
 import { MapState } from 'modules/map/types';
+import { useActivePanel } from 'modules/resultPanel/selectors';
 import { hideResults, showResults } from 'modules/search/actions';
 import { useSearchState } from 'modules/search/selectors';
 import {
@@ -47,6 +49,9 @@ import {
 } from 'modules/seismicSearch/actions';
 import { SEISMIC_NO_SURVEY_ERROR_MESSAGE } from 'modules/seismicSearch/constants';
 import { useSelectedSurvey } from 'modules/seismicSearch/hooks';
+import { setCategoryPage } from 'modules/sidebar/actions';
+import { useFilterCategory } from 'modules/sidebar/selectors';
+import { CategoryTypes } from 'modules/sidebar/types';
 import { FlexGrow } from 'styles/layout';
 
 import { setClearPolygon } from '../../../../modules/map/actions';
@@ -107,6 +112,9 @@ export const Map: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchPending, setSearchPending] = useState(false);
   const { touched, touchedEvent } = useTouchedEvent();
+  const activePanel = useActivePanel();
+  const sidebarCategory = useFilterCategory();
+  const [sidebarCategoryUnset, setSidebarCategoryUnset] = useState(false);
 
   const isPolygonButtonActive =
     drawMode === 'draw_polygon' || polygon.length > 0;
@@ -328,8 +336,23 @@ export const Map: React.FC = () => {
       dispatch(hideResults());
     } else {
       dispatch(showResults());
+
+      if (sidebarCategory !== 'landing') return;
+
+      if (isUndefined(activePanel)) {
+        setSidebarCategoryUnset(true);
+      } else {
+        dispatch(setCategoryPage(activePanel as CategoryTypes));
+      }
     }
   };
+
+  useEffect(() => {
+    if (!isUndefined(activePanel) && sidebarCategoryUnset) {
+      setSidebarCategoryUnset(false);
+      dispatch(setCategoryPage(activePanel as CategoryTypes));
+    }
+  }, [activePanel]);
 
   useEffect(() => {
     setTimeout(() => {
