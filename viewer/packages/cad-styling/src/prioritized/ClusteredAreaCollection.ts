@@ -7,8 +7,9 @@ import { SmartMergeBoxes } from './mergeboxes/SmartMergeBoxes';
 import { BoxClusterer } from './mergeboxes/BoxClusterer';
 
 /**
- * AreaCollection based on a BoxClusterer implementation
- * BoxClusterer will probably be obsolete in the not-too-distant future
+ * AreaCollection that stores a representative box set by merging
+ * inserted boxes that are overlapping or close to each other.
+ * It uses simple heuristics to determine which boxes are to be merged.
  */
 export class ClusteredAreaCollection implements AreaCollection {
   private _clusterer: BoxClusterer = new SmartMergeBoxes();
