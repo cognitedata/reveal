@@ -5,9 +5,10 @@ import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider'; // eslint-disable-line
 import { createBrowserHistory } from 'history';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import RootApp from 'containers/App';
+import RawExplorer from 'containers/RawExplorer';
 import { setupMixpanel } from 'utils/config';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
@@ -41,14 +42,13 @@ const App = () => {
               >
                 <Router history={history}>
                   <Switch>
-                    <Route path="/:project/raw-explorer" component={RootApp} />
                     <Route
-                      path="/:project/raw-explorer/:dbName"
-                      component={RootApp}
-                    />
-                    <Route
-                      path="/:project/raw-explorer/:dbName/:tablaName"
-                      component={RootApp}
+                      path={[
+                        '/:project/raw-explorer/:database/:table',
+                        '/:project/raw-explorer/:database',
+                        '/:project/raw-explorer',
+                      ]}
+                      component={RawExplorer}
                     />
                   </Switch>
                 </Router>
@@ -56,6 +56,7 @@ const App = () => {
             </SubAppWrapper>
           </AntStyles>
         </GlobalStyles>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SDKProvider>
   );
