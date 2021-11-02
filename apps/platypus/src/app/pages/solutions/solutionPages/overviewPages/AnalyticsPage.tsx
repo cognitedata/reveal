@@ -7,7 +7,7 @@ export const AnalyticsPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>ANALYTICS PAGE is coming soon...</div>
+      <div>ANALYTICS (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };

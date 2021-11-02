@@ -7,7 +7,7 @@ export const DatamodelPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>DATAMODEL PAGE is coming soon...</div>
+      <div>DATA MODEL (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };

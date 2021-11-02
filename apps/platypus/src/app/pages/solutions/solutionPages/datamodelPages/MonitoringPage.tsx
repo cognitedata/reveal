@@ -7,7 +7,7 @@ export const MonitoringPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>MONITORING & PROFILING PAGE is coming soon...</div>
+      <div>MONITORING & PROFILING (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };

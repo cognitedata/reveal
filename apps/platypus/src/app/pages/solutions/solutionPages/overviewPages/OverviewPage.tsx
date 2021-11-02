@@ -7,7 +7,7 @@ export const OverviewPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>OVERVIEW PAGE is coming soon...</div>
+      <div>OVERVIEW (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };

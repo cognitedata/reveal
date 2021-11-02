@@ -7,7 +7,7 @@ export const DatapreviewPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>DATA PREVIEW PAGE is coming soon...</div>
+      <div>DATA PREVIEW (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };

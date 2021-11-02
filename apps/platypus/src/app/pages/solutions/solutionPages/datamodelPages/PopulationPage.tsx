@@ -7,7 +7,7 @@ export const PopulationPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>POPULATION PIPELINES PAGE is coming soon...</div>
+      <div>POPULATION PIPELINES (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };

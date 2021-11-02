@@ -7,7 +7,7 @@ export const QueryExplorerPage = () => {
   };
   return (
     <PageWithHeaderLayout header={renderHeader()}>
-      <div>QUERY EXPLORER PAGE is coming soon...</div>
+      <div>QUERY EXPLORER (WIP...)</div>
     </PageWithHeaderLayout>
   );
 };
