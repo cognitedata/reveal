@@ -4,19 +4,19 @@ describe('config', () => {
   describe('getBackendServiceBaseUrl', () => {
     it('provides correct base url for localhost', () => {
       const baseUrl = getBackendServiceBaseUrl('https://localhost:3000');
-      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai');
+      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v2');
     });
 
     it('provides correct base url for default staging', () => {
       const baseUrl = getBackendServiceBaseUrl(
         'https://charts.staging.cogniteapp.com'
       );
-      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai');
+      expect(baseUrl).toBe('https://calculation-backend.staging.cognite.ai/v2');
     });
 
     it('provides correct base url for default production', () => {
       const baseUrl = getBackendServiceBaseUrl('https://charts.cogniteapp.com');
-      expect(baseUrl).toBe('https://calculation-backend.cognite.ai');
+      expect(baseUrl).toBe('https://calculation-backend.cognite.ai/v2');
     });
 
     it('provides correct base url for alternative cluster staging', () => {
@@ -24,7 +24,7 @@ describe('config', () => {
         'https://charts.staging.greenfield.cogniteapp.com'
       );
       expect(baseUrl).toBe(
-        'https://calculation-backend.staging.greenfield.cognite.ai'
+        'https://calculation-backend.staging.greenfield.cognite.ai/v2'
       );
     });
 
@@ -32,7 +32,9 @@ describe('config', () => {
       const baseUrl = getBackendServiceBaseUrl(
         'https://charts.greenfield.cogniteapp.com'
       );
-      expect(baseUrl).toBe('https://calculation-backend.greenfield.cognite.ai');
+      expect(baseUrl).toBe(
+        'https://calculation-backend.greenfield.cognite.ai/v2'
+      );
     });
 
     it('provides correct base url for alternative cluster staging + cluster key', () => {
@@ -41,7 +43,7 @@ describe('config', () => {
         'greenfield'
       );
       expect(baseUrl).toBe(
-        'https://calculation-backend.staging.greenfield.cognite.ai'
+        'https://calculation-backend.staging.greenfield.cognite.ai/v2'
       );
     });
 
@@ -50,7 +52,9 @@ describe('config', () => {
         'https://charts.greenfield.cogniteapp.com',
         'greenfield'
       );
-      expect(baseUrl).toBe('https://calculation-backend.greenfield.cognite.ai');
+      expect(baseUrl).toBe(
+        'https://calculation-backend.greenfield.cognite.ai/v2'
+      );
     });
   });
 });
