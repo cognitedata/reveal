@@ -1,13 +1,13 @@
 ---
 cad-prioritized-areas
-title: Prioritized Areas
+title: Prioritize Areas for Loading
 describe: Reveal may be instructed to treat specific nodes or areas as "prioritized" with regards to geometry streaming.
 ---
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 A developer may assign nodes or areas of a model as "prioritized" in relation to geometry loading.
-By giving nodes or areas a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the user. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times, the loader will still make sure to respect the rendering budget.
+By giving nodes or areas a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the user. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times; the loader will still account for the rendering budget.
 
 Nodes are given load priority through the node styling API. The `NodeAppearance` type (see [Cad Styling](cad-styling)) includes the optional field `prioritizedForLoadingHint` which can be used to provide a load priority to the node collection. Higher values will make the related geometry more likely to be loaded. While any number can be used as the load priority, it is recommended to use values between 1 and 10. 5 is considered a reasonable default value.
 
@@ -29,22 +29,17 @@ Currently, `TreeIndexNodeCollection` does not take responsibility to compute the
 
 A node collection that is the result of an operation (e.g. a union) involving another node collection that does not support `prioritizedForLoadingHint`, will not support the `prioritizedForLoadingHint` field either.
 
+## Highlight a few nodes and ensure they are loaded
+
+Many use cases in Reveal involve highlighting a few nodes while the rest of the model is hidden or ghosted. These use cases can benefit from the prioritization feature. Assigning a priority to the nodes of interest in addition to the hightlighting, makes them more likely to be loaded even when the camera is far away:
+
 ```js
 // import { SinglePropertyFilterNodeCollection } from '@cognite/reveal'
 
-// you can start from binding styles to an empty set and populate it later
-const myNodes = new TreeIndexNodeCollection();
-model.assignStyledNodeCollection(myNodes, DefaultNodeAppearance.Highlighted);
+const nodeSet = new SinglePropertyFilterNodeCollection(sdk, model, { requestPartitions: 10 });
+const names = ['/60-EL-9016-Q200-E01', '/60-EL-9016-Q200-E02', '/60-EL-9016-Q200-E03'];
+nodeSet.executeFilter('Item', 'Name', names);
 
-// later you might want to update the set as user does something, for example, selects an asset
-// note that other styling sets might have different API for updates, for example `executeFilter`
-const nodeTreeIndex = 0;
-const nodeSubtreeSize = 100000;
-myNodes.updateSet(new IndexSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize)));
-
-// if you want to change appearance of your existing set you can assign a new style
-model.assignStyledNodeCollection(myNodes, DefaultNodeAppearance.Ghosted);
-
-// and when you don't need to style this set anymore, just remove it completely
-model.unassignStyledNodeCollection(myNodes);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(nodeSet, { ...DefaultNodeAppearance.Highlighted, prioritizedForLoadingHint: 5 });
 ```
