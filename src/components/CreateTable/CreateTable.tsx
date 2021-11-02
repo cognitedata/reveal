@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { message, Col, Input, Row, Modal, Alert } from 'antd';
+import { notification, Col, Input, Row, Modal, Alert } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
 
 import { getContainer } from 'utils/utils';
@@ -28,8 +28,8 @@ export default function CreateTable({ database }: { database: string }) {
   useEffect(() => {
     if (isSuccess) {
       reset();
-      message.success({
-        content: `Table was created!`,
+      notification.success({
+        message: `Table was created!`,
         key: 'create-table',
       });
       history.push(createLink(`/raw-explorer/${database}/${name}`));

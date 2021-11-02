@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { message, Input } from 'antd';
+import { notification, Input } from 'antd';
 import Menu from 'antd/lib/menu';
 import Tooltip from 'antd/lib/tooltip';
 import Alert from 'antd/lib/alert';
@@ -174,11 +174,22 @@ const DatabaseItem = ({
                     { database },
                     {
                       onSuccess() {
-                        message.success(`Database ${database} deleted!`);
+                        notification.success({
+                          message: `Database ${database} deleted!`,
+                          key: 'database-delete',
+                        });
                         history.replace(createLink(`/raw-explorer`));
                       },
-                      onError() {
-                        message.error(`Database ${database} was not deleted!`);
+                      onError(e: any) {
+                        notification.error({
+                          message: (
+                            <p>
+                              <p>Database ${database} was not deleted!</p>
+                              <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
+                            </p>
+                          ),
+                          key: 'database-delete',
+                        });
                       },
                     }
                   )

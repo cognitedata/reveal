@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { message, Col, Input, Row, Modal, Alert } from 'antd';
+import { notification, Col, Input, Row, Modal, Alert } from 'antd';
 import { Button, Icon } from '@cognite/cogs.js';
 import { useCreateDatabase } from 'hooks/sdk-queries';
 import { getContainer } from 'utils/utils';
@@ -27,8 +27,8 @@ export default function CreateDatabase() {
   useEffect(() => {
     if (isSuccess) {
       reset();
-      message.success({
-        content: `Database was created!`,
+      notification.success({
+        message: `Database was created!`,
         key: 'create-database',
       });
       history.push(createLink(`/raw-explorer/${name}`));

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 import {
-  message,
+  notification,
   Table,
   Alert,
   Popconfirm,
@@ -212,9 +212,10 @@ const TableContent = () => {
     if (limit > 10000) {
       setLimitHasExceeded(true);
       if (!limitExceeded) {
-        message.warning(
-          'Please note that the maximum allowed fetch limit is 10,000'
-        );
+        notification.warning({
+          message: 'Please note that the maximum allowed fetch limit is 10,000',
+          key: 'max-row-limit',
+        });
       }
       setFetchLimit(10000);
     } else {
@@ -400,17 +401,20 @@ const TableContent = () => {
                     { database: database!, table: table! },
                     {
                       onSuccess() {
-                        message.success(
-                          `Table ${table} in database ${database} deleted!`
-                        );
+                        notification.success({
+                          message: `Table ${table} in database ${database} deleted!`,
+                          key: 'table-created',
+                        });
                         history.replace(
                           createLink(`/raw-explorer/${database}`)
                         );
                       },
-                      onError() {
-                        message.error(
-                          `An error occured when deleting the table!`
-                        );
+                      onError(e) {
+                        notification.error({
+                          message: 'An error occured when deleting the table!',
+                          description: <pre>{JSON.stringify(e, null, 2)}</pre>,
+                          key: 'table-created',
+                        });
                       },
                     }
                   )

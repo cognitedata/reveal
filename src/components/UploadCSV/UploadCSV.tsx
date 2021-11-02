@@ -3,7 +3,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import uuid from 'uuid';
 import PapaParse from 'papaparse';
 
-import { message, Progress, Tag, Select, Alert, Modal, Upload } from 'antd';
+import {
+  notification,
+  Progress,
+  Tag,
+  Select,
+  Alert,
+  Modal,
+  Upload,
+} from 'antd';
 
 import { UploadChangeParam } from 'antd/lib/upload';
 
@@ -54,13 +62,13 @@ const UploadCSV = ({
     if (complete) {
       if (file) {
         if (networkError) {
-          message.error({
-            content: `${file.name} is not uploaded!`,
+          notification.error({
+            message: `${file.name} is not uploaded!`,
             key: 'file-upload',
           });
         } else {
-          message.success({
-            content: `${file.name} is uploaded!`,
+          notification.success({
+            message: `${file.name} is uploaded!`,
             key: 'file-upload',
           });
         }
@@ -133,8 +141,8 @@ const UploadCSV = ({
         },
 
         error() {
-          message.error({
-            content: `${file.name} could not be parsed!`,
+          notification.error({
+            message: `${file.name} could not be parsed!`,
             key: 'file-upload',
           });
           resetState();

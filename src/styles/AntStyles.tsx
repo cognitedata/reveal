@@ -8,7 +8,6 @@ import {
   notification,
   Dropdown,
   Spin,
-  message,
   TooltipProps,
 } from 'antd';
 
@@ -132,10 +131,6 @@ Tooltip.defaultProps = {
 };
 
 notification.config({
-  getContainer,
-});
-
-message.config({
   getContainer,
 });
 
