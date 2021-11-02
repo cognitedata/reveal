@@ -4,14 +4,14 @@ import { Spinner } from '../../components/Spinner/Spinner';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
 const OverviewPage = lazy(() =>
-  import('./solutionPages/OverviewPage').then((module) => ({
-    default: module.OverviewPage,
+  import('./solutionPages/OverviewLayout').then((module) => ({
+    default: module.OverviewLayout,
   }))
 );
 
 const DataModelPage = lazy(() =>
-  import('./solutionPages/DataModelPage').then((module) => ({
-    default: module.DataModelPage,
+  import('./solutionPages/DataModelLayout').then((module) => ({
+    default: module.DataModelLayout,
   }))
 );
 
