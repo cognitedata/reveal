@@ -2486,14 +2486,14 @@
     babel-plugin-syntax-jsx "^6.18.0"
     lodash "^4.17.11"
 
-"@cognite/cdf-ui-cli@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-1.0.0.tgz#590c2e8021925b44533e625c8146aa24a721214c"
-  integrity sha512-eCVLVWrHsHcv3d3vmGMo0OIKG78+D1p5E6uFr2ymLywwEJs3RKtl7KlYu8C1wRBLFn+htkMDC+aQ+2GNswvFHg==
+"@cognite/cdf-ui-cli@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-ui-cli/-/cdf-ui-cli-1.1.0.tgz#cf7b507d1a7920fd1acdcc4254fe7f6b35a36110"
+  integrity sha512-m4940R1+6LVBxEvbta7LQdnTZfdDgA3mDZQTJ2lKCryce+q8GnTxfrWQcPrcAvGJdsccxOiPirsgVcp9Ltil+Q==
   dependencies:
     "@google-cloud/storage" "^5.3.0"
     axios "^0.21.0"
-    commander "^6.2.0"
+    commander "^6.2.1"
     fs-extra "^9.0.1"
     mixpanel "^0.13.0"
 
@@ -7375,7 +7375,7 @@ commander@^5.0.0, commander@^5.1.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
 
-commander@^6.2.0:
+commander@^6.2.1:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
   integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
