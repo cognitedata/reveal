@@ -29,7 +29,7 @@ Currently, `TreeIndexNodeCollection` does not take responsibility to compute the
 
 A node collection that is the result of an operation (e.g. a union) involving another node collection that does not support `prioritizedForLoadingHint`, will not support the `prioritizedForLoadingHint` field either.
 
-## Highlight a few nodes and ensure they are loaded
+## Ensure highlighted nodes are loaded
 
 Many use cases in Reveal involve highlighting a few nodes while the rest of the model is hidden or ghosted. These use cases can benefit from the prioritization feature. Assigning a priority to the nodes of interest in addition to the hightlighting, makes them more likely to be loaded even when the camera is far away:
 
