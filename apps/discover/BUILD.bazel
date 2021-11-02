@@ -332,7 +332,6 @@ react_scripts(
         "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
         "REACT_APP_ENABLE_REDUX_LOGGER": "false",
         "REACT_APP_LOCIZE_VERSION": "production",
-        "GENERATE_SOURCEMAP": "false",
 
         ### DO NOT CHANGE: FAS placeholders
         # In order to build only once we set placeholders into dynamic variables
