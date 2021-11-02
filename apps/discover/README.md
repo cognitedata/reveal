@@ -78,9 +78,9 @@ yarn test:coverage                                  # To generate a test coverag
 yarn start:local
 ```
 
-### Run tests
+## Run tests
 
-2. Start TestCafé.
+###TestCafé.
 
 ```sh
 yarn testcafe:bazel-run-live
@@ -90,6 +90,40 @@ or:
 
 ```sh
 yarn testcafe:bazel-run-live-linux --fixture-meta page=savedSearches
+```
+
+###Cypress
+
+####INFO: For local development the frontend needs to be running at port 3000 with fakeIdp
+
+- #### Start Cypress dashboard (Practical for local development, takes a bit more memory I guess)
+
+```shell
+yarn cypress:open
+```
+
+- #### Run Cypress tests
+
+```shell
+yarn cypress:run-live
+```
+
+- #### Run Cypress tests through bazel
+
+```shell
+yarn cypress:bazel-run-live
+```
+
+- #### Run specific tests:
+  - Native Cypress: `yarn cypress:run-live cypress/integration/documents/**` or `yarn cypress:run-live "**/documents.spec.ts"`
+  - Bazel Cypress: `yarn cypress:bazel-run-live --spec cypress/integration/documents/**`
+
+Cypress has many other run options, they can be found here: https://docs.cypress.io/guides/guides/command-line#Options
+
+- #### Execute all the tests the same as it's done in Jenkins
+
+```shell
+yarn cypress:bazel-test
 ```
 
 ### Generating Access Tokens for discover-e2e-bluefield tenant

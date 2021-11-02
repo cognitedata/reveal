@@ -43,7 +43,8 @@
     "update-helpers": "bazel run :generate_package_json_helpers",
     "cypress:open": "../../node_modules/.bin/cypress open",
     "cypress:run-live": "./scripts/cypress/cypress-run-live.sh",
-    "cypress:bazel-run-live": "ibazel run :cypress"
+    "cypress:bazel-run-live": "ibazel run :cypress",
+    "cypress:bazel-test": "bazel test :cypress_test"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
