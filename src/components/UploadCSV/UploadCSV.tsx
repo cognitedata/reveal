@@ -1,23 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import message from 'antd/lib/message';
-import Spin from 'antd/lib/spin';
-import Progress from 'antd/lib/progress';
-import Tag from 'antd/lib/tag';
-import Select from 'antd/lib/select';
-import Alert from 'antd/lib/alert';
-import Modal from 'antd/lib/modal';
-import Upload, { UploadChangeParam } from 'antd/lib/upload';
-import PapaParse from 'papaparse';
-import sdk from 'utils/sdkSingleton';
-import { RawDBRowInsert, RawDBRow } from '@cognite/sdk';
-import { Icon } from '@cognite/cogs.js';
 import uuid from 'uuid';
+import PapaParse from 'papaparse';
+
+import { message, Progress, Tag, Select, Alert, Modal, Upload } from 'antd';
+
+import { UploadChangeParam } from 'antd/lib/upload';
+
+import { Icon } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
-import { RawExplorerContext } from 'contexts';
-import handleError from 'utils/handleError';
+import { useInsertRows } from 'hooks/sdk-queries';
 
 const { Dragger } = Upload;
 
@@ -26,9 +20,6 @@ interface UploadCsvProps {
   database: string;
   csvModalVisible: boolean;
   setCSVModalVisible(value: boolean): void;
-  isFetching: boolean;
-  setIsFetching(value: boolean): void;
-  tableData: RawDBRow[];
 }
 
 const UploadCSV = ({
@@ -36,205 +27,215 @@ const UploadCSV = ({
   setCSVModalVisible,
   database,
   table,
-  setIsFetching,
 }: UploadCsvProps) => {
-  const [fileName, setFileName] = useState<string>('');
-  const [dataUploaded, setDataUploaded] = useState<any[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [processingData, setProcessingData] = useState<boolean>(false);
-  const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
-  const [parsingProgress, setParsingProgress] = useState<number>(0);
+  const [file, setFile] = useState<File | undefined>();
+  const [upload, setUpload] = useState(false);
+  const [complete, setComplete] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
+  const [columns, setColumns] = useState<string[] | undefined>();
 
-  const { fetchLimit, setIsFetchingTableData, setTableData } = useContext(
-    RawExplorerContext
-  );
+  const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
+  const [parser, setParser] = useState<PapaParse.Parser | undefined>();
+  const [cursor, setCursor] = useState(0);
+
+  const { mutate, isLoading, reset } = useInsertRows();
+
+  const resetState = useCallback(() => {
+    setCSVModalVisible(false);
+    setComplete(false);
+    setCursor(0);
+    setFile(undefined);
+    setUpload(false);
+    setNetworkError(false);
+    reset();
+  }, [setCSVModalVisible, setComplete, setCursor, setFile, setUpload, reset]);
+
+  useEffect(() => {
+    if (complete) {
+      if (file) {
+        if (networkError) {
+          message.error({
+            content: `${file.name} is not uploaded!`,
+            key: 'file-upload',
+          });
+        } else {
+          message.success({
+            content: `${file.name} is uploaded!`,
+            key: 'file-upload',
+          });
+        }
+      }
+      resetState();
+    }
+  }, [complete, file, networkError, resetState]);
+
+  useEffect(() => {
+    if (!csvModalVisible && parser && parser.abort) {
+      parser.abort();
+    }
+  }, [csvModalVisible, parser]);
+
+  useEffect(() => {
+    if (file) {
+      PapaParse.parse(file, {
+        step(result, _parser) {
+          setColumns(result.data as string[]);
+          _parser.abort();
+        },
+        complete: () => {},
+      });
+    }
+  }, [file]);
+
+  useEffect(() => {
+    if (file && upload) {
+      PapaParse.parse<any>(file, {
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        chunk(results, _parser) {
+          setParser(_parser);
+          _parser.pause();
+          const items = results.data.map((row: string[]) => {
+            const rowcolumns = columns
+              ? columns.reduce(
+                  (accl, c, i) => ({
+                    ...accl,
+                    [c]: row[i],
+                  }),
+                  {}
+                )
+              : {};
+            return {
+              key:
+                selectedKeyIndex === -1
+                  ? uuid()
+                  : row[selectedKeyIndex].toString(),
+              columns: rowcolumns,
+            };
+          });
+
+          mutate(
+            { items, database, table },
+            {
+              onSuccess() {
+                setCursor(results.meta.cursor);
+                _parser.resume();
+              },
+              onError() {
+                setNetworkError(true);
+                _parser.abort();
+              },
+            }
+          );
+        },
+        beforeFirstChunk(chunk) {
+          return chunk.split('\n').splice(1).join('\n');
+        },
+
+        error() {
+          message.error({
+            content: `${file.name} could not be parsed!`,
+            key: 'file-upload',
+          });
+          resetState();
+        },
+        complete() {
+          setComplete(true);
+        },
+      });
+    }
+  }, [
+    file,
+    networkError,
+    upload,
+    columns,
+    mutate,
+    selectedKeyIndex,
+    database,
+    table,
+    resetState,
+    // setCSVModalVisible,
+  ]);
 
   const saveDataToApi = async () => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
-    setIsFetching(true);
-    setProcessingData(true);
-    const cols: any[] = dataUploaded.shift();
-    const parsedData: RawDBRowInsert[] = dataUploaded
-      .filter((item) => item[0])
-      .map((row, index) => {
-        setParsingProgress((100 * (index / (dataUploaded.length - 1))) / 2);
-        let key;
-        if (selectedKeyIndex !== -1) {
-          key = row[selectedKeyIndex];
-        } else {
-          key = uuid();
-        }
-        const rowObject: RawDBRowInsert = { key, columns: {} };
-        row.forEach((value: any, currentIndex: number) => {
-          rowObject.columns[cols[currentIndex]] = value;
-        });
-        return rowObject;
-      });
-
-    setIsFetching(true);
-    try {
-      if (selectedKeyIndex === -1) {
-        trackEvent('RAW.Explorer.CSVUpload.AutoGeneratedKey');
-        setParsingProgress(70);
-        await sdk.raw.deleteTables(database, [{ name: table }]);
-        setParsingProgress(80);
-        await sdk.raw.createTables(database, [{ name: table }]);
-      } else {
-        trackEvent('RAW.Explorer.CSVUpload.SelectedKey');
-      }
-      setParsingProgress(90);
-      await sdk.raw.insertRows(database, table, parsedData);
-      resetState();
-      setCSVModalVisible(false);
-      setIsFetching(false);
-      setParsingProgress(100);
-
-      try {
-        setIsFetchingTableData(true);
-        const list = await sdk.raw
-          .listRows(unescape(database), unescape(table))
-          .autoPagingToArray({ limit: fetchLimit });
-        setTableData(list);
-        setIsFetchingTableData(false);
-      } catch (e) {
-        handleError(e);
-        setIsFetchingTableData(false);
-      }
-
-      return message.success(
-        `File ${fileName} has been successfully uploaded to table ${table}`
-      );
-    } catch (e) {
-      resetState();
-      return message.error(`Failed to upload data ${e.reason}`);
-    }
-  };
-
-  const resetState = () => {
-    setFileName('');
-    setDataUploaded([]);
-    setUploadProgress(0);
-    setProcessingData(false);
+    setUpload(true);
   };
 
   const checkAndReturnCols = () => {
-    const cols: any[] = [];
-    // eslint-disable-next-line consistent-return
-    dataUploaded[0].forEach((col: string) => {
-      if (col !== '') {
-        cols.push(col);
-      } else {
-        resetState();
-        return message.error(
-          'A column name in the CSV file is empty, please fill and try again.',
-          10
-        );
-      }
-    });
-    return (
-      <div>
-        {cols.map((col) => (
-          <Tag style={{ margin: '5px' }} key={col}>
-            {col}
-          </Tag>
-        ))}
-        <div style={{ marginTop: '20px' }}>
-          <p>Select a column to use as a unique key for the table</p>
-          Unique Key Column :{' '}
-          <Select
-            defaultValue="-1"
-            style={{ width: '60%' }}
-            value={String(selectedKeyIndex)}
-            onChange={(val: string) => setSelectedKeyIndex(Number(val))}
-            getPopupContainer={getContainer}
-          >
-            <Select.Option value="-1" key="-1">
-              Generate a new Key Column
-            </Select.Option>
-            {cols.map((col, index) => (
-              <Select.Option key={String(index)} value={String(index)}>
-                {col}
+    if (columns && columns.length > 0) {
+      return (
+        <div>
+          {columns.map((col) => (
+            <Tag style={{ margin: '5px' }} key={col}>
+              {col}
+            </Tag>
+          ))}
+          <div style={{ marginTop: '20px' }}>
+            <p>Select a column to use as a unique key for the table</p>
+            Unique Key Column :{' '}
+            <Select
+              defaultValue="-1"
+              style={{ width: '60%' }}
+              value={String(selectedKeyIndex)}
+              onChange={(val: string) => setSelectedKeyIndex(Number(val))}
+              getPopupContainer={getContainer}
+            >
+              <Select.Option value="-1" key="-1">
+                Generate a new Key Column
               </Select.Option>
-            ))}
-          </Select>
-          {selectedKeyIndex === -1 && (
-            <Alert
-              style={{ marginTop: '20px' }}
-              type="info"
-              message="Please note that choosing the auto generated key column option, will clear all existing data in the table"
-            />
-          )}
+              {columns.map((col, index) => (
+                <Select.Option key={String(index)} value={String(index)}>
+                  {col}
+                </Select.Option>
+              ))}
+            </Select>
+            {selectedKeyIndex === -1 && (
+              <Alert
+                style={{ marginTop: '20px' }}
+                type="info"
+                message="Please note that choosing the auto generated key column option, will clear all existing data in the table"
+              />
+            )}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return undefined;
   };
   const fileProps = {
     name: 'file',
     multiple: false,
     handleManualRemove() {
-      setFileName('');
-    },
-    beforeUpload(file: { size: number }) {
-      if (file.size > Number(parseFloat('1e+8').toFixed(8))) {
-        resetState();
-        message.error(
-          'CSV file cannot be larger than 100 MB, please try again'
-        );
-        return false;
-      }
-      return true;
+      setFile(undefined);
     },
     accept: '.csv',
     onChange(info: UploadChangeParam) {
-      setUploadProgress(info.file.percent ? info.file.percent : 0);
-      const reader = new FileReader();
-      if ((info.file.size || 0) > Number(parseFloat('1e+8').toFixed(8))) {
-        resetState();
-        return;
-      }
-      if (info.file.name) {
-        setFileName(info.file.name);
-        reader.onload = (event: any) => {
-          const csvData = PapaParse.parse(event.target.result, {});
-
-          if (csvData && csvData.data) {
-            setDataUploaded(csvData.data);
-            setUploadProgress(100);
-            message.success(`${info.file.name} file uploaded successfully.`, 3);
-          }
-        };
-        if (info.file.originFileObj) {
-          reader.readAsText(info.file.originFileObj);
-        }
-      }
+      setFile(info.file.originFileObj);
     },
   };
 
   const renderModalContent = () => {
-    if (fileName !== '') {
-      if (processingData) {
-        return (
-          <ContentWrapper>
-            <p> Writing to CDF...</p>
-            <Progress type="line" percent={parsingProgress} />
-          </ContentWrapper>
-        );
-      }
-      if (uploadProgress && uploadProgress < 100) {
+    if (file) {
+      if (upload) {
         return (
           <ContentWrapper>
             <p> Uploading csv...</p>
-            <Progress type="line" percent={uploadProgress} />
+            <Progress
+              type="line"
+              percent={Math.floor((cursor / file.size) * 100)}
+              format={() => `${Math.floor(cursor / 2 ** 20)}MB`}
+            />
           </ContentWrapper>
         );
       }
       return (
         <ContentWrapper>
           <p>The file uploaded contains the following columns: </p>
-          {dataUploaded && dataUploaded[0] ? (
+          {columns && columns?.length > 0 ? (
             checkAndReturnCols()
           ) : (
-            <Spin tip="Parsing column names" />
+            <Icon type="Loading" />
           )}
         </ContentWrapper>
       );
@@ -252,9 +253,6 @@ const UploadCSV = ({
           <strong>table column names</strong>. <br />
           Each column with data must have a corresponding column title.
         </p>
-        <p className="ant-upload-hint">
-          <strong>File size must not exceed 100 MB</strong>
-        </p>
       </Dragger>
     );
   };
@@ -265,13 +263,12 @@ const UploadCSV = ({
       title="Upload CSV file"
       onCancel={() => {
         resetState();
-        setCSVModalVisible(false);
       }}
       okText="Confirm Upload"
       onOk={() => saveDataToApi()}
       okButtonProps={{
-        loading: processingData,
-        disabled: fileName === '' || (!dataUploaded && !dataUploaded[0]),
+        loading: upload,
+        disabled: !file || isLoading || upload,
       }}
       getContainer={getContainer}
     >
