@@ -471,7 +471,7 @@ export function Migration() {
 
                 const clickedBB = await intersection.model.getBoundingBoxByTreeIndex(treeIndex, new THREE.Box3());
 
-                viewer.fitCameraToBoundingBox(clickedBB, 0);
+                viewer.fitCameraToBoundingBox(clickedBB);
               }
               break;
             case 'pointcloud':

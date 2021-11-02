@@ -1315,6 +1315,14 @@ export class Cognite3DViewer {
   }
 
   /** @private */
+  private calculateDefaultDuration = (distanceToCamera: number) => {
+      let duration = distanceToCamera * 125; // 125ms per unit distance
+      duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
+
+      return duration;
+  }
+
+  /** @private */
   private moveCameraTargetTo(target: THREE.Vector3, duration?: number) {
     if (this.isDisposed) {
       return;
@@ -1325,13 +1333,9 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration } = this;
+    const { camera, raycaster } = this;
 
-    if (duration === undefined) {
-      const distance = target.distanceTo(this.controls.getState().target);
-      duration = distance * 125; // 125ms per unit distance
-      duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration);
-    }
+    if (duration === undefined) duration = this.calculateDefaultDuration(target.distanceTo(camera.position));
 
     raycaster.setFromCamera(new THREE.Vector2(), camera);
     const distanceToTarget = target.distanceTo(camera.position);
@@ -1412,13 +1416,9 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { camera, raycaster, _minDefaultAnimationDuration, _maxDefaultAnimationDuration } = this;
+    const { camera, raycaster } = this;
 
-    if (duration == null) {
-      const distance = position.distanceTo(camera.position);
-      duration = distance * 125; // 125ms per unit distance
-      duration = Math.min(Math.max(duration, _minDefaultAnimationDuration), _maxDefaultAnimationDuration);
-    }
+    if (duration === undefined) duration = this.calculateDefaultDuration(target.distanceTo(camera.position));
 
     raycaster.setFromCamera(new THREE.Vector2(), camera);
     const distanceToTarget = target.distanceTo(camera.position);
