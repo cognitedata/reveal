@@ -17,7 +17,7 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool, ToolbarPosition } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
 window.THREE = THREE;
@@ -163,9 +163,7 @@ export function Toolbar() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        providers: 'MapboxMap',
-        latitude: 0.000001,
-        longitude: 0.000001
+        toolbarPosition: 'Bottom'
       };
 
       // Load model if provided by URL
@@ -191,6 +189,26 @@ export function Toolbar() {
       toolbar.addToolbarItem('I6', 'url("/icons/global-fill.png")', callbackMsg);
       toolbar.addToolbarItem('I7', 'url("/icons/gps-line.png")', callbackMsg);
       toolbar.addToolbarItem('I8', 'url("/icons/gps-line.png")', callbackMsg);
+
+      const renderGui = gui.addFolder('Options');
+      const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];
+      renderGui.add(guiState, 'toolbarPosition', toolbarPosition).name('toolbarPosition').onFinishChange(value => {
+        switch(value) {
+          case 'Top':
+            toolbar.setPosition(ToolbarPosition.Top);
+            break;
+          case 'Left':
+            toolbar.setPosition(ToolbarPosition.Left);
+            break;
+          case 'Right':
+            toolbar.setPosition(ToolbarPosition.Right);
+            break;
+          case 'Bottom':
+          default:
+            toolbar.setPosition(ToolbarPosition.Bottom);
+            break;
+        }
+      });
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

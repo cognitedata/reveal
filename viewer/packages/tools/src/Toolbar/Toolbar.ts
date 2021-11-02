@@ -3,6 +3,13 @@
  */
 import { Cognite3DViewer } from '@reveal/core';
 
+export enum ToolbarPosition {
+  Top = 'Top',
+  Bottom = 'Bottom',
+  Left = 'Left',
+  Right = 'Right'
+}
+
 export class Toolbar {
   private _toolbarContainer: HTMLDivElement;
 
@@ -48,5 +55,43 @@ export class Toolbar {
     };
 
     this._toolbarContainer.appendChild(element);
+  }
+
+  public setPosition(position: ToolbarPosition) {
+    switch (position) {
+      case 'Top':
+        this._toolbarContainer.style.left = '50%';
+        this._toolbarContainer.style.right = '';
+        this._toolbarContainer.style.top = '20px';
+        this._toolbarContainer.style.bottom = '';
+        this._toolbarContainer.style.width = '';
+        this._toolbarContainer.style.maxWidth = '';
+        break;
+      case 'Left':
+        this._toolbarContainer.style.left = '30px';
+        this._toolbarContainer.style.right = '';
+        this._toolbarContainer.style.top = '50%';
+        this._toolbarContainer.style.bottom = '';
+        this._toolbarContainer.style.width = '35px';
+        this._toolbarContainer.style.maxWidth = '100%';
+        break;
+      case 'Right':
+        this._toolbarContainer.style.left = '';
+        this._toolbarContainer.style.right = '0px';
+        this._toolbarContainer.style.top = '50%';
+        this._toolbarContainer.style.bottom = '';
+        this._toolbarContainer.style.width = '35px';
+        this._toolbarContainer.style.maxWidth = '100%';
+        break;
+      case 'Bottom':
+      default:
+        this._toolbarContainer.style.left = '50%';
+        this._toolbarContainer.style.right = '';
+        this._toolbarContainer.style.top = '';
+        this._toolbarContainer.style.bottom = '10px';
+        this._toolbarContainer.style.width = '';
+        this._toolbarContainer.style.maxWidth = '';
+        break;
+    }
   }
 }
