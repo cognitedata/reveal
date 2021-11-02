@@ -23,7 +23,7 @@ Not all node collection types support the priority hint. An overview of current 
 | `UnionNodeCollection`                | Yes                                   |
 | `IntersectionNodeCollection`         | Yes                                   |
 
-:::node
+:::note
 Currently, `TreeIndexNodeCollection` does not take responsibility to compute the location of the geometry it holds, which the loader needs to prioritize the geometry. Alternatively, the developer may supply this information themselves by using the `TreeIndexNodeCollection.addAreaPoints()` and `.addAreas()` methods on the `TreeIndexNodeCollection`.
 :::
 
