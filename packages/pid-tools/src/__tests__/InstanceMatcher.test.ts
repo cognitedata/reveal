@@ -1,4 +1,4 @@
-import { newMatcher } from '../src/index';
+import { newMatcher } from '../index';
 
 describe('symbol-matching', () => {
   test('connectionSymbol from same file', () => {
