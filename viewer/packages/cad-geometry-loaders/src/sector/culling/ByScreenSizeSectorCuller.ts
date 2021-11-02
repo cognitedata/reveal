@@ -81,8 +81,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         input.clippingPlanes
       );
 
-      const numLargePri = 0;
-
       sectors.forEach(sector => {
         weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
 
