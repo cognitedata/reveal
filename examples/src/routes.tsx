@@ -74,7 +74,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
       `&env=${defaultEnvironmentParam}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
-    menuTitle: 'Abandon all hope ye who enter here',
+    menuTitle: 'Default',
     component: <Migration />,
   },
   {
