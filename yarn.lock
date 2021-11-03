@@ -5458,9 +5458,9 @@ ansi-to-html@^0.6.11:
   dependencies:
     entities "^1.1.2"
 
-antd@4.16:
+antd@^4.16.13:
   version "4.16.13"
-  resolved "https://registry.npmjs.org/antd/-/antd-4.16.13.tgz"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.16.13.tgz#e9b9b4a590db28747aae1cab98981649a35880af"
   integrity sha512-EMPD3fzKe7oayx9keD/GA1oKatcx7j5CGlkJj5eLS0/eEDDEkxVj3DFmKOPuHYt4BK7ltTzMFS+quSTmqUXPiw==
   dependencies:
     "@ant-design/colors" "^6.0.0"
