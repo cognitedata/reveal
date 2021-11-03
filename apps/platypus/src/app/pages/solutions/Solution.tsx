@@ -21,9 +21,9 @@ const DevelopmentToolsPage = lazy(() =>
   }))
 );
 
-const VersionsPage = lazy(() =>
+const DeploymentsPage = lazy(() =>
   import('./solutionPages/DeploymentsPage').then((module) => ({
-    default: module.VersionsPage,
+    default: module.DeploymentsPage,
   }))
 );
 
@@ -60,7 +60,7 @@ export const Solution = () => {
         </Route>
         <Route exact path="/solutions/:solutionId?/deployments">
           <Suspense fallback={<Spinner />}>
-            <VersionsPage />
+            <DeploymentsPage />
           </Suspense>
         </Route>
         <Route exact path="/solutions/:solutionId?/settings">

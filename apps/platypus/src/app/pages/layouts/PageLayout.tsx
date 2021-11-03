@@ -9,10 +9,7 @@ type PageLayoutProps = {
   children: JSX.Element;
 };
 
-export const SideBarMenuWithPageLayout = ({
-  sideBarMenuItems,
-  children,
-}: PageLayoutProps) => {
+export const PageLayout = ({ sideBarMenuItems, children }: PageLayoutProps) => {
   return (
     <StyledPage>
       {sideBarMenuItems && <SideBarMenu items={sideBarMenuItems} />}
@@ -25,6 +22,7 @@ const StyledPage = styled.div`
   display: flex;
   flex-direction: row;
   flex-grow: 1;
+  overflow: auto;
 `;
 
 const StyledPageContent = styled.div`

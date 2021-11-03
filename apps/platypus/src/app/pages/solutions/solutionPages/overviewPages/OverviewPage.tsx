@@ -1,13 +1,25 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { Button } from '@cognite/cogs.js';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const OverviewPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Overview" />;
+    return (
+      <PageToolbar title="Overview" backPathname="/">
+        <Button
+          onClick={() => {
+            alert('For demo purposes only.');
+          }}
+        >
+          Demo
+        </Button>
+      </PageToolbar>
+    );
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>OVERVIEW (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>OVERVIEW (WIP...)</PageContentLayout.Body>
+    </PageContentLayout>
   );
 };

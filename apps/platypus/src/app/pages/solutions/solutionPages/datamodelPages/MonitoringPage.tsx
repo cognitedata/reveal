@@ -1,13 +1,16 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const MonitoringPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Monitoring" />;
+    return <PageToolbar title="Monitoring" />;
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>MONITORING & PROFILING (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>
+        MONITORING & PROFILING (WIP...)
+      </PageContentLayout.Body>
+    </PageContentLayout>
   );
 };

@@ -1,13 +1,14 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const QueryExplorerPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Query explorer" />;
+    return <PageToolbar title="Query explorer" />;
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>QUERY EXPLORER (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>QUERY EXPLORER (WIP...)</PageContentLayout.Body>
+    </PageContentLayout>
   );
 };

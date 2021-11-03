@@ -1,13 +1,14 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const AnalyticsPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Analytics" />;
+    return <PageToolbar title="Analytics" />;
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>ANALYTICS (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>ANALYTICS (WIP...)</PageContentLayout.Body>
+    </PageContentLayout>
   );
 };

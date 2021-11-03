@@ -1,13 +1,16 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const PopulationPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Population pipelines" />;
+    return <PageToolbar title="Population pipelines" />;
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>POPULATION PIPELINES (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>
+        POPULATION PIPELINES (WIP...)
+      </PageContentLayout.Body>
+    </PageContentLayout>
   );
 };

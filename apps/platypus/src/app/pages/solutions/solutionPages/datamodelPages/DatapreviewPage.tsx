@@ -1,13 +1,14 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const DatapreviewPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Data preview" />;
+    return <PageToolbar title="Data preview" />;
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>DATA PREVIEW (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>DATA PREVIEW (WIP...)</PageContentLayout.Body>
+    </PageContentLayout>
   );
 };

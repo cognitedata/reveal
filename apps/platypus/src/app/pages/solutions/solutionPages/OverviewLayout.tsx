@@ -1,4 +1,4 @@
-import { SideBarMenuWithPageLayout } from '../../layouts/SideBarMenuWithPageLayout';
+import { PageLayout } from '../../layouts/PageLayout';
 
 import { ReactComponent as Home } from './icons/home.svg';
 import { ReactComponent as ChartPie } from './icons/chartpie.svg';
@@ -26,7 +26,7 @@ export const OverviewLayout = () => {
   };
 
   return (
-    <SideBarMenuWithPageLayout
+    <PageLayout
       sideBarMenuItems={[
         {
           icon: <Home />,
@@ -49,6 +49,6 @@ export const OverviewLayout = () => {
       ]}
     >
       {renderPageContent()}
-    </SideBarMenuWithPageLayout>
+    </PageLayout>
   );
 };

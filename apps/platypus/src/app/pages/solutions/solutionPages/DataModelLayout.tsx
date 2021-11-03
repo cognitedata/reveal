@@ -6,7 +6,7 @@ import { ReactComponent as QueryExplorer } from './icons/queryexplorer.svg';
 import { ReactComponent as PopulationPipelines } from './icons/populationpipelines.svg';
 import { ReactComponent as Monitoring } from './icons/monitoring.svg';
 
-import { SideBarMenuWithPageLayout } from '../../layouts/SideBarMenuWithPageLayout';
+import { PageLayout } from '../../layouts/PageLayout';
 import { DatamodelPage } from './datamodelPages/DatamodelPage';
 import { DatapreviewPage } from './datamodelPages/DatapreviewPage';
 import { QueryExplorerPage } from './datamodelPages/QueryExplorerPage';
@@ -37,7 +37,7 @@ export const DataModelLayout = () => {
   };
 
   return (
-    <SideBarMenuWithPageLayout
+    <PageLayout
       sideBarMenuItems={[
         {
           icon: <DataModel />,
@@ -72,6 +72,6 @@ export const DataModelLayout = () => {
       ]}
     >
       {renderPageContent()}
-    </SideBarMenuWithPageLayout>
+    </PageLayout>
   );
 };

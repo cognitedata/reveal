@@ -1,13 +1,14 @@
-import { Toolbar } from '../../../../components/Toolbar/Toolbar';
-import { PageWithHeaderLayout } from '../../../layouts/PageWithHeaderLayout';
+import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
+import { PageContentLayout } from '../../../layouts/PageContentLayout';
 
 export const DatamodelPage = () => {
   const renderHeader = () => {
-    return <Toolbar title="Data model" />;
+    return <PageToolbar title="Data model" />;
   };
   return (
-    <PageWithHeaderLayout header={renderHeader()}>
-      <div>DATA MODEL (WIP...)</div>
-    </PageWithHeaderLayout>
+    <PageContentLayout>
+      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Body>DATA MODEL (WIP...)</PageContentLayout.Body>
+    </PageContentLayout>
   );
 };
