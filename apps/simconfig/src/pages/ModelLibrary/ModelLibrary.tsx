@@ -8,7 +8,6 @@ import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionCo
 import ModelTable from 'components/tables/ModelTable/ModelTable';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { fetchFiles } from 'store/file/thunks';
-import { FileInfoSerializable } from 'store/file/types';
 import { setSelectedFile } from 'store/file';
 import sortBy from 'lodash/sortBy';
 import {
@@ -68,10 +67,6 @@ export default function ModelLibrary() {
     dispatch(setSelectedFile(undefined));
   }, [location]);
 
-  const getLatestFile = (items: FileInfoSerializable[]) => {
-    return sortBy(items, 'metadata.version')[0];
-  };
-
   const onClick = async () => {
     if (!modelName) {
       history.push(`${url}/new`);
@@ -81,7 +76,8 @@ export default function ModelLibrary() {
     if (!links || !files) {
       return;
     }
-    const latestFile = getLatestFile(files);
+
+    const latestFile = files[0];
     const matchingLink = links.find(
       (url) => 'externalId' in url && latestFile.externalId === url.externalId
     );
@@ -104,12 +100,21 @@ export default function ModelLibrary() {
     dispatch(setSelectedFile(undefined));
   };
 
+  const navigateToCalculation = () => {
+    const lastFile = sortBy(files, 'metadata.version')[0];
+    dispatch(setSelectedFile(lastFile));
+    history.push(`/calculation-library/${modelName}`);
+  };
+
   const Indicators = () => {
-    const lastFile = sortBy(files, 'metadata.version')[files.length - 1];
+    if (!files.length) {
+      return null;
+    }
+    const lastFile = files[0];
     return (
       <IndicatorContainer>
         <IndicatorTab>
-          <IndicatorTitle>SIMULATOR</IndicatorTitle>
+          <IndicatorTitle>Simulator</IndicatorTitle>
           <IndicatorContainerImage>
             <img
               src={`${
@@ -123,8 +128,13 @@ export default function ModelLibrary() {
         </IndicatorTab>
 
         <IndicatorTab>
-          <IndicatorTitle>VERSION</IndicatorTitle>
+          <IndicatorTitle>Version</IndicatorTitle>
           <p>{lastFile.metadata?.version}</p>
+        </IndicatorTab>
+
+        <IndicatorTab>
+          <IndicatorTitle>Calculations</IndicatorTitle>
+          <Button icon="FlowChart" onClick={navigateToCalculation} />
         </IndicatorTab>
       </IndicatorContainer>
     );

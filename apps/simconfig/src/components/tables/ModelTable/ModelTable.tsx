@@ -3,6 +3,7 @@ import moment from 'moment';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Button, Table, TableRow } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
+import { PAGES } from 'pages/Menubar';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { fetchDownloadLinks } from 'store/file/thunks';
 import {
@@ -24,7 +25,7 @@ type ComponentProps = {
 };
 
 export default function ModelTable({ data, modelName }: ComponentProps) {
-  const { url } = useRouteMatch();
+  const { path, url } = useRouteMatch();
 
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -210,11 +211,30 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
   ];
 
   const getColumns = () => {
-    /* Email should be listed only in model version details. */
-    if (!modelName) {
-      return cols.filter((col) => col.id !== 'userEmail');
+    const mapColumns = {
+      [PAGES.MODEL_LIBRARY]: [
+        'simulator',
+        'name',
+        'version',
+        'updated',
+        'download',
+        'calculations',
+      ],
+      [PAGES.MODEL_LIBRARY_VERSION]: [
+        'version',
+        'userEmail',
+        'description',
+        'updated',
+        'download',
+      ],
+    };
+    const routeColumns = mapColumns[path];
+    if (routeColumns === undefined) {
+      return cols;
     }
-    return cols;
+    return cols
+      .filter((column) => routeColumns.includes(column.id))
+      .sort((a, b) => routeColumns.indexOf(a.id) - routeColumns.indexOf(b.id));
   };
 
   return (

@@ -1,5 +1,6 @@
 import { CogniteClient, FileFilterProps, IdEither } from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import sortBy from 'lodash/sortBy';
 
 interface FilteredClient {
   client: CogniteClient;
@@ -16,17 +17,19 @@ interface ClientFilteredByCalculationId {
 
 export const fetchFiles = createAsyncThunk(
   'files/fetchFiles',
-  async ({ client, filter }: FilteredClient) =>
-    (
-      await client.files.list({
-        filter,
-      })
-    ).items.map((file) => ({
-      ...file,
-      createdTime: file.createdTime?.getTime(),
-      lastUpdatedTime: file.lastUpdatedTime?.getTime(),
-      uploadedTime: file.uploadedTime?.getTime(),
-    }))
+  async ({ client, filter }: FilteredClient) => {
+    const list = await client.files.list({ filter });
+    const files = list.items.map((file) => {
+      return {
+        ...file,
+        createdTime: file.createdTime?.getTime(),
+        lastUpdatedTime: file.lastUpdatedTime?.getTime(),
+        uploadedTime: file.uploadedTime?.getTime(),
+      };
+    });
+
+    return sortBy(files, 'metadata.version').reverse();
+  }
 );
 
 export const fetchDownloadLinks = createAsyncThunk(
