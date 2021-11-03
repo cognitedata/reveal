@@ -1,4 +1,4 @@
-import { defaultWellFilters } from 'tenants/config';
+import { defaultWellsConfig, testAzureConfig } from 'tenants/config';
 import { TenantConfig } from 'tenants/types';
 
 import config from '../config';
@@ -15,12 +15,6 @@ const defaultConfig: TenantConfig = {
     extractByFilepath: true,
     filters: {},
   },
-  seismic: {
-    metadata: {
-      // [field from api result]: [display value]
-      name: { displayName: 'Name', display: true },
-    },
-  },
   wells: {
     filters: {},
     wellbores: {
@@ -36,135 +30,41 @@ const defaultConfig: TenantConfig = {
         });
       },
     },
-    trajectory: {
+    overview: defaultWellsConfig.wells?.overview,
+    trajectory: defaultWellsConfig.wells?.trajectory,
+    logs: {
       enabled: true,
-      normalizeColumns: {
-        MD: 'MD',
-        Inc: 'Inc',
-        Azim: 'Azim',
-        X_Offset: 'X-Offset (E/W)',
-        Y_Offset: 'Y-Offset (N/S)',
-        TVD: 'TVD',
-      },
-
-      charts: [
-        {
-          type: 'line',
-          chartData: { x: 'X_Offset', y: 'Y_Offset' },
-          chartExtraData: {
-            hovertemplate: `%{y}`,
-          },
-          chartVizData: {
-            axisNames: {
-              x: 'East West (<%= unit %>)',
-              y: 'North South (<%= unit %>)',
-            },
-            title: 'NS vs EW',
-          },
-        },
-        {
-          type: 'line',
-          chartData: { x: 'Y_Offset', y: 'TVD' },
-          chartExtraData: {
-            hovertemplate: `%{y}`,
-          },
-          chartVizData: {
-            axisNames: {
-              x: 'North South (<%= unit %>)',
-              y: 'True Vertical Depth (<%= unit %>)',
-            },
-            title: 'TVD vs NS',
-          },
-        },
-        {
-          type: 'line',
-          chartData: { x: 'X_Offset', y: 'TVD' },
-          chartExtraData: {
-            hovertemplate: `%{y}`,
-          },
-          chartVizData: {
-            axisNames: {
-              x: 'East West (<%= unit %>)',
-              y: 'True Vertical Depth (<%= unit %>)',
-            },
-            title: 'TVD vs EW',
-          },
-        },
-        {
-          type: '3d',
-          chartData: { x: 'X_Offset', y: 'Y_Offset', z: 'TVD' },
-          chartExtraData: {
-            hovertemplate: `EW: %{x}<br>NS: %{y}<br>TVD: %{z}`,
-          },
-          chartVizData: {
-            axisNames: {
-              x: 'East West (<%= unit %>)',
-              y: 'North South (<%= unit %>)',
-              z: 'TVD (<%= unit %>)',
-            },
-            title: 'TVD 3D view',
-          },
-        },
-        {
-          type: 'legend',
-          chartData: { x: 'X_Offset', y: 'Y_Offset' },
-          chartExtraData: {
-            hovertemplate: `%{y}`,
-          },
-          chartVizData: {
-            axisNames: { x: 'East West', y: 'North South', z: 'TVD' },
-            title: '',
-          },
-        },
-      ],
-      columns: [
-        {
-          externalId: 'measured_depth',
-          valueType: 'DOUBLE',
-          name: 'measured_depth',
-        },
-        { externalId: 'Azim', valueType: 'DOUBLE', name: 'Azim' },
-        { externalId: 'Inc', valueType: 'DOUBLE', name: 'Inc' },
-        {
-          externalId: 'X-Offset (E/W)',
-          valueType: 'DOUBLE',
-          name: 'X-Offset (E/W)',
-        },
-        {
-          externalId: 'Y-Offset (N/S)',
-          valueType: 'DOUBLE',
-          name: 'Y-Offset (N/S)',
-        },
-        { externalId: 'TVD', valueType: 'DOUBLE', name: 'TVD' },
-      ],
+      types: ['logsFrmTops', 'logs'],
       queries: [
         {
           filter: {
             metadata: {
-              type: 'trajectory',
+              type: 'FormationTops',
+            },
+          },
+        },
+        {
+          filter: {
+            metadata: {
+              subtype: 'CompositeLog',
             },
           },
         },
       ],
+      tracks: [
+        { name: 'GR', enabled: true },
+        { name: 'MD', enabled: true },
+        { name: 'TVD', enabled: true },
+        { name: 'FRM', enabled: true },
+        { name: 'RDEEP', enabled: true },
+        { name: 'D&N', enabled: true },
+        { name: 'NDS', enabled: true },
+        { name: 'PPFG', enabled: true },
+      ],
     },
-    ...defaultWellFilters,
-    field_block_operator_filter: {
-      operator: {
-        enabled: true,
-      },
-      field: {
-        enabled: true,
-      },
-      block: {
-        enabled: true,
-      },
-    },
-    overview: {
-      enabled: true,
-    },
-    relatedDocument: {
-      enabled: true,
-    },
+  },
+  azureConfig: {
+    ...testAzureConfig,
   },
   sideBar: 2,
   externalLinks: {
