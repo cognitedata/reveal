@@ -178,6 +178,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * default appearance.
    */
   removeAllStyledNodeCollections() {
+    this._styledNodeCollections.splice(0);
     this.cadNode.nodeAppearanceProvider.clear();
   }
 
