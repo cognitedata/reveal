@@ -30,6 +30,42 @@ Note: if you want to run just one testcafe file, you can do that like this:
 yarn testcafe:run-live comments
 ```
 
+#### Batch testcafe testing
+
+```bazel
+copy_to_bin(
+    name = "copy_main_testcafe_files",
+    # Every files needed for all your testcafe tests (like utils)
+    srcs = FILES,
+)
+
+testcafe_batch_test(
+    name = "base_name_for_every_tests",
+    # folder name to store artifacts during CI run
+    app_name = "app-name",
+    # command line arguments to run testcafe
+    args = ARGS,
+    data = TESTCAFE_DEPS + [
+        ":my_build_target",
+        ":copy_main_testcafe_files",
+    ],
+    # Path to your script serving your build files
+    serve_script = "./scripts/testcafe-bazel-serve.sh",
+    # Make sure your starting port does not interfere with existing ones in other apps
+    starting_port = 11111,
+    # Insert as many globs here as you want runs of your tests
+    testcafe_files = [
+        glob(["testcafe/folder1/*.spec.ts"]),
+        glob(["testcafe/folder2/*.spec.ts"]),
+        glob(["testcafe/folder3/*.spec.ts"]),
+        glob([
+            "testcafe/folder4/*.spec.ts,
+            "testcafe/folder5/*.spec.ts,
+        "]),
+    ],
+)
+```
+
 ### Run e2e tests with cypress
 
 Tests are are stored in `/cypress`.
@@ -52,4 +88,33 @@ Note: if you want to run just one cypress file, you can do that like this:
 
 ```sh
 yarn cypress:run-live cypress/Comments.spec.ts
+```
+
+#### Batch cypress testing
+
+One special thing about this rule is that your cypress folder has to contain:
+
+- a `plugin.ts` file that serves your build files
+- a `tsconfig.json` for your cypress base config
+
+```bazel
+cypress_batch_test(
+    name = "base_name_for_every_tests",
+    build_src = ":my_build_target",
+    # Insert as many globs here as you want runs of your tests
+    cypress_files = [
+        glob(["cypress/folder1/*.spec.ts"]),
+        glob(["cypress/folder2/*.spec.ts"]),
+        glob(["cypress/folder3/*.spec.ts"]),
+        glob([
+            "cypress/folder4/*.spec.ts,
+            "cypress/folder5/*.spec.ts,
+        "]),
+    ],
+    cypress_folder = "cypress",
+    # Every files needed for all your cypress tests (like utils)
+    global_cypress_files = FILES,
+    # Make sure your starting port does not interfere with existing ones in other apps
+    starting_port = 12111,
+)
 ```

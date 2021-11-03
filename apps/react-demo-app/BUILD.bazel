@@ -1,6 +1,5 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
-load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
@@ -12,6 +11,7 @@ load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 load("//rules/test:testcafe_test.bzl", "testcafe_test")
+load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 
 # Filename conventions described at
@@ -33,7 +33,6 @@ _TESTS_TESTCAFE = [
 ]
 
 _TESTS_CYPRESS = [
-    "cypress/**/*.spec.ts",
     "cypress/**/*.test.ts",
 ]
 
@@ -370,25 +369,22 @@ testcafe(
 
 ### Cypress ###
 
-ts_project(
-    name = "plugin_file",
-    srcs = ["cypress/plugin.ts"],
-    extends = "cypress/tsconfig.json",
-    tsconfig = {
-        "compilerOptions": {
-            "types": ["node"],
-        },
-    },
-    deps = [
-        "@npm//@types/node",
-        "@npm//express",
+# The cypress folder has to have a "plugin.ts" file serving your files, as well as a "tsconfig.json"
+cypress_batch_test(
+    name = "cypress_test",
+    build_src = ":build_sed",
+    cypress_files = [
+        glob(["cypress/*.spec.ts"]),
     ],
+    cypress_folder = "cypress",
+    global_cypress_files = TESTS_CYPRESS,
+    starting_port = 12111,
 )
 
 # You can write your cypress tests a javascript files or in typescript.
 ts_project(
     name = "cypress_project",
-    srcs = TESTS_CYPRESS,
+    srcs = TESTS_CYPRESS + glob(["cypress/*.spec.ts"]),
     extends = "cypress/tsconfig.json",
     tsconfig = {
         "compilerOptions": {
@@ -398,25 +394,6 @@ ts_project(
     deps = [
         "@npm//cypress",
     ],
-)
-
-cypress_web_test(
-    # The name of your test target
-    name = "cypress_test",
-    srcs = [
-        ":build_sed",
-        # Load ts_library tests as a target to srcs
-        ":cypress_project",
-    ],
-    # A cypress config file is required
-    config_file = "cypress.json",
-    # Any runtime dependencies you need to boot your server or run your tests
-    data = [],
-    env = {
-        "PORT": "11112",
-    },
-    # Your cypress plugin used to configure cypress and boot your server
-    plugin_file = ":plugin_file",
 )
 
 cypress(
