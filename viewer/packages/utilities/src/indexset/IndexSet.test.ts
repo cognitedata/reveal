@@ -152,6 +152,27 @@ describe('IndexSet', () => {
     expect(Array.from(set1.toIndexArray()).sort()).toEqual([1, 2]);
   });
 
+  test('invertedRanges returns just ranges between added ranges', () => {
+    const set1 = new IndexSet();
+    set1.addRange(new NumericRange(1, 3));
+    set1.addRange(new NumericRange(5, 2));
+    set1.addRange(new NumericRange(10, 3));
+
+    const invertedRanges = set1.invertedRanges();
+
+    const expectedInvertedRanges = [new NumericRange(4, 1), new NumericRange(7, 3)];
+
+    expect(invertedRanges).toBeArrayOfSize(expectedInvertedRanges.length);
+    for (const expectedRange of expectedInvertedRanges) {
+      expect(invertedRanges).toSatisfy(ranges =>
+        ranges.some(
+          (invertedRange: NumericRange) =>
+            invertedRange.from === expectedRange.from && invertedRange.toInclusive === expectedRange.toInclusive
+        )
+      );
+    }
+  });
+
   function runAddTest(params: { ranges: [number, number][]; add: [number, number]; expected: [number, number][] }) {
     const { ranges, add, expected } = params;
     const set = new IndexSet();
