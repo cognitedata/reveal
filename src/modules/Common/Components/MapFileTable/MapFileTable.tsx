@@ -4,20 +4,17 @@ import {
   MapTableTabKey,
 } from 'src/modules/Common/Components/FileTable/types';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
-import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
-import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
 import { ColumnShape } from 'react-base-table';
 import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameAndAnnotation';
-import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { Tabs } from 'antd';
 import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
 import { NoData } from 'src/modules/Common/Components/NoData/NoData';
 
 const { TabPane } = Tabs;
 
-type MapTableProps = FileMapTableProps & {
+type MapTableProps = FileMapTableProps<TableDataItem> & {
   mapTableTabKey: MapTableTabKey;
   setMapActive: (active: boolean) => void;
   mapCallback: (fileId: number) => void;
@@ -25,10 +22,6 @@ type MapTableProps = FileMapTableProps & {
 
 const rendererMap = {
   name: NameAndAnnotationRenderer,
-};
-
-const sorters = {
-  name: NameSorter,
 };
 
 export const MapFileTable = (props: MapTableProps) => {
@@ -109,72 +102,45 @@ export const MapFileTable = (props: MapTableProps) => {
         }}
       >
         <TabPane tab="Files in map" key="fileInMap">
-          <SorterPaginationWrapper
+          <SelectableTable
+            {...props}
+            onSelectAllRows={(status) =>
+              props.onSelectAllRows(status, { geoLocation: true })
+            }
+            allRowsSelected={allWithGeoDataSelected}
+            selectedRowIds={selectedIdsWithGeoData}
             data={withGeoData}
-            totalCount={props.totalCount}
-            sorters={sorters}
-            pagination
-            sortPaginateControls={props.sortPaginateControlsLocation}
-            isLoading={props.isLoading}
-          >
-            {(paginationProps) => (
-              <AnnotationLoader data={paginationProps.data}>
-                <SelectableTable
-                  {...props}
-                  {...paginationProps}
-                  onSelectAllRows={(status) =>
-                    props.onSelectAllRows(status, { geoLocation: true })
-                  }
-                  allRowsSelected={allWithGeoDataSelected}
-                  selectedRowIds={selectedIdsWithGeoData}
-                  data={withGeoData}
-                  columns={columns}
-                  rendererMap={rendererMap}
-                  selectable
-                  onRowSelect={props.onRowSelect}
-                  rowHeight={70}
-                  rowClassNames={rowClassNames}
-                  rowEventHandlers={rowEventHandlers}
-                  overlayRenderer={overlayRenderer}
-                  emptyRenderer={emptyRenderer}
-                />
-              </AnnotationLoader>
-            )}
-          </SorterPaginationWrapper>
+            columns={columns}
+            rendererMap={rendererMap}
+            selectable
+            onRowSelect={props.onRowSelect}
+            rowHeight={70}
+            rowClassNames={rowClassNames}
+            rowEventHandlers={rowEventHandlers}
+            overlayRenderer={overlayRenderer}
+            emptyRenderer={emptyRenderer}
+          />
         </TabPane>
 
         <TabPane tab="Files without location" key="filesWithoutMap">
-          <SorterPaginationWrapper
+          <SelectableTable
+            {...props}
             data={withOutGeoData}
-            totalCount={props.totalCount}
-            sorters={sorters}
-            pagination
-            sortPaginateControls={props.sortPaginateControlsNoLocation}
-            isLoading={props.isLoading}
-          >
-            {(paginationProps) => (
-              <AnnotationLoader data={paginationProps.data}>
-                <SelectableTable
-                  {...props}
-                  {...paginationProps}
-                  onSelectAllRows={(status) =>
-                    props.onSelectAllRows(status, { geoLocation: false })
-                  }
-                  allRowsSelected={allWithoutGeoDataSelected}
-                  selectedRowIds={selectedIdsWithoutGeoData}
-                  columns={columns}
-                  rendererMap={rendererMap}
-                  selectable
-                  onRowSelect={props.onRowSelect}
-                  rowHeight={70}
-                  rowClassNames={rowClassNames}
-                  rowEventHandlers={rowEventHandlers}
-                  emptyRenderer={emptyRenderer}
-                  overlayRenderer={overlayRenderer}
-                />
-              </AnnotationLoader>
-            )}
-          </SorterPaginationWrapper>
+            onSelectAllRows={(status) =>
+              props.onSelectAllRows(status, { geoLocation: false })
+            }
+            allRowsSelected={allWithoutGeoDataSelected}
+            selectedRowIds={selectedIdsWithoutGeoData}
+            columns={columns}
+            rendererMap={rendererMap}
+            selectable
+            onRowSelect={props.onRowSelect}
+            rowHeight={70}
+            rowClassNames={rowClassNames}
+            rowEventHandlers={rowEventHandlers}
+            emptyRenderer={emptyRenderer}
+            overlayRenderer={overlayRenderer}
+          />
         </TabPane>
       </StyledTabs>
     </Container>

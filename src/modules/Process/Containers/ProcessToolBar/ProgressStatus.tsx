@@ -193,7 +193,7 @@ const Container = styled.div`
   padding: 10px;
   box-sizing: border-box;
   border-radius: 10px;
-  background: 'rgba(74, 103, 251, 0.1)';
+  background-color: rgba(74, 103, 251, 0.1);
   border: 0.5px solid #dcdcdc;
   min-width: 300px;
 

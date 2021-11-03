@@ -19,7 +19,7 @@ const Mapbox = ReactMapboxGl({
   trackResize: true,
 });
 
-export const MapView = (props: FileMapTableProps) => {
+export const MapView = (props: FileMapTableProps<TableDataItem>) => {
   const [selectedFile, setSelectedFile] = useState<ResultData | undefined>();
   const [popupState, setPopupState] =
     useState<'open' | 'hidden' | 'close'>('close');

@@ -6,34 +6,17 @@ import {
   SortPaginateControls,
   PaginatedTableProps,
 } from 'src/modules/Common/Components/FileTable/types';
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
-import { filesAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { Footer } from './Footer';
 import { Paginator } from './Paginator';
 
-const getData = (
+const getPage = (
   data: TableDataItem[],
-  sortKey?: string,
-  sorters?: {
-    [key: string]: (
-      data: TableDataItem[],
-      reverse: boolean,
-      args?: any
-    ) => TableDataItem[];
-  },
-  sorterArgs?: any,
-  reverse?: boolean,
   pagination?: boolean,
   pageNumber?: number,
   pageSize?: number
 ): TableDataItem[] => {
   let tableData = data;
-  // if sorting enabled
-  if (sorters && sortKey && reverse !== undefined) {
-    const sorter = sorters[sortKey];
-    tableData = sorter ? sorter(data, reverse, sorterArgs) : data;
-  }
+
   // if pagination enabled
   if (pagination && pageNumber && pageSize) {
     if (pageNumber > 0 && pageSize > 0) {
@@ -49,27 +32,23 @@ const getData = (
   return tableData;
 };
 
-type SorterPaginationWrapperProps = {
+type PaginationWrapperProps = {
   data: TableDataItem[];
   totalCount: number;
-  sorters?: {
-    [key: string]: (data: TableDataItem[], reverse: boolean) => TableDataItem[];
-  };
   pagination?: boolean;
   sortPaginateControls: SortPaginateControls;
   isLoading: boolean;
   children: (tableProps: PaginatedTableProps<TableDataItem>) => React.ReactNode;
 };
 
-export const SorterPaginationWrapper = ({
+export const PaginationWrapper = ({
   data,
   totalCount,
-  sorters,
   pagination,
   sortPaginateControls,
   isLoading,
   children,
-}: SorterPaginationWrapperProps) => {
+}: PaginationWrapperProps) => {
   const {
     sortKey,
     reverse,
@@ -91,25 +70,9 @@ export const SorterPaginationWrapper = ({
       <Footer fetchedCount={fetchedCount} totalCount={totalCount} />
     ) : null;
 
-  const sorterArgs = useSelector(({ annotationReducer }: RootState) =>
-    filesAnnotationCounts(
-      annotationReducer,
-      data.map((item) => item.id)
-    )
-  );
-
   const pagedData = useMemo(() => {
-    return getData(
-      data,
-      sortKey,
-      sorters,
-      sorterArgs,
-      reverse,
-      pagination,
-      currentPage,
-      pageSize
-    );
-  }, [data, sortKey, sorters, reverse, pagination, currentPage, pageSize]);
+    return getPage(data, pagination, currentPage, pageSize);
+  }, [data, pagination, currentPage, pageSize]);
 
   return (
     <Container>

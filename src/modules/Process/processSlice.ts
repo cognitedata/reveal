@@ -22,13 +22,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createFileInfo } from 'src/store/util/StateUtils';
-
-export enum FileSortPaginateType {
-  list = 'LIST',
-  grid = 'GRID',
-  mapLocation = 'LOCATION',
-  mapNoLocation = 'NO_LOCATION',
-}
+import { sortState } from 'src/modules/Common/Utils/SortUtils';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -61,7 +55,7 @@ export type State = {
   };
   showExploreModal: boolean;
   showSummaryModal: boolean;
-  sortPaginate: Record<FileSortPaginateType, SortPaginate>;
+  sortMeta: SortPaginate;
   currentView: ViewMode;
   mapTableTabKey: string;
   isLoading: boolean;
@@ -103,11 +97,11 @@ const initialState: State = {
   temporaryDetectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
   showSummaryModal: false,
-  sortPaginate: {
-    LIST: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    GRID: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
-    NO_LOCATION: { currentPage: 1, pageSize: DEFAULT_PAGE_SIZE },
+  sortMeta: {
+    sortKey: '',
+    reverse: false,
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
   },
   currentView: 'list',
   mapTableTabKey: 'fileInMap',
@@ -193,39 +187,21 @@ const processSlice = createSlice({
     setSummaryModalVisibility(state, action: PayloadAction<boolean>) {
       state.showSummaryModal = action.payload;
     },
-    setSortKey(
-      state,
-      action: PayloadAction<{ type: FileSortPaginateType; sortKey: string }>
-    ) {
-      const { type, sortKey } = action.payload;
-      state.sortPaginate[type] = { ...state.sortPaginate[type], sortKey };
+    setProcessSortKey(state, action: PayloadAction<string>) {
+      const sortKey = action.payload;
+      state.sortMeta.sortKey = sortKey;
     },
-    setReverse(
-      state,
-      action: PayloadAction<{ type: FileSortPaginateType; reverse: boolean }>
-    ) {
-      const { type, reverse } = action.payload;
-      state.sortPaginate[type] = { ...state.sortPaginate[type], reverse };
+    setProcessReverse(state, action: PayloadAction<boolean>) {
+      const reverse = action.payload;
+      state.sortMeta.reverse = reverse;
     },
-    setCurrentPage(
-      state,
-      action: PayloadAction<{
-        type: FileSortPaginateType;
-        currentPage: number;
-      }>
-    ) {
-      const { type, currentPage } = action.payload;
-      state.sortPaginate[type] = { ...state.sortPaginate[type], currentPage };
+    setProcessCurrentPage(state, action: PayloadAction<number>) {
+      const currentPage = action.payload;
+      state.sortMeta.currentPage = currentPage;
     },
-    setPageSize(
-      state,
-      action: PayloadAction<{
-        type: FileSortPaginateType;
-        pageSize: number;
-      }>
-    ) {
-      const { type, pageSize } = action.payload;
-      state.sortPaginate[type] = { ...state.sortPaginate[type], pageSize };
+    setProcessPageSize(state, action: PayloadAction<number>) {
+      const pageSize = action.payload;
+      state.sortMeta.pageSize = pageSize;
     },
     setProcessCurrentView(state, action: PayloadAction<ViewMode>) {
       state.currentView = action.payload;
@@ -361,10 +337,10 @@ export const {
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
   setSummaryModalVisibility,
-  setSortKey,
-  setReverse,
-  setCurrentPage,
-  setPageSize,
+  setProcessSortKey,
+  setProcessReverse,
+  setProcessCurrentPage,
+  setProcessPageSize,
   setProcessCurrentView,
   setMapTableTabKey,
   addProcessUploadedFileId,
@@ -521,19 +497,20 @@ export const makeSelectAnnotationStatuses = () =>
     return annotationBadgeProps as AnnotationsBadgeStatuses;
   });
 
-export const selectPageCount = (state: State): number => {
-  if (state.currentView === 'grid')
-    return Math.ceil(state.fileIds.length / state.sortPaginate.GRID.pageSize);
+export const selectPageCount = createSelector(
+  (state: State) => state.fileIds,
+  (state: State) => state.sortMeta,
+  (fileIds, sortMeta) => {
+    return Math.ceil(fileIds.length / sortMeta.pageSize);
+  }
+);
 
-  if (state.currentView === 'map')
-    return Math.ceil(
-      state.fileIds.length /
-        (state.sortPaginate.LOCATION.pageSize +
-          state.sortPaginate.NO_LOCATION.pageSize)
-    );
-
-  return Math.ceil(state.fileIds.length / state.sortPaginate.LIST.pageSize);
-};
+export const selectProcessSortedFiles = createSelector(
+  selectAllProcessFiles,
+  (rootState: RootState) => rootState.processSlice.sortMeta.sortKey,
+  (rootState: RootState) => rootState.processSlice.sortMeta.reverse,
+  sortState
+);
 
 // helpers
 export const isProcessingFile = (

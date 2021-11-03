@@ -1,25 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
-import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
-import { AnnotationSorter } from 'src/modules/Common/Containers/Sorters/AnnotationSorter';
-import { MimeTypeSorter } from 'src/modules/Common/Containers/Sorters/MimeTypeSorter';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 import { ActionRendererExplorer } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
-import { DateSorter } from 'src/modules/Common/Containers/Sorters/DateSorter';
 import { DateRenderer } from 'src/modules/Common/Containers/FileTableRenderers/DateRenderer';
-import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
-import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
-import { useDispatch, useSelector } from 'react-redux';
-import { setLoadingAnnotations } from 'src/modules/Explorer/store/explorerSlice';
+import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
 import { NoData } from 'src/modules/Common/Components/NoData/NoData';
-import { FileListTableProps, PaginatedTableProps } from './types';
+import { FileListTableProps } from './types';
 
 const rendererMap = {
   name: NameRenderer,
@@ -30,15 +22,7 @@ const rendererMap = {
   action: ActionRendererExplorer,
 };
 
-const sorters = {
-  name: NameSorter,
-  mimeType: MimeTypeSorter,
-  createdTime: DateSorter,
-  sourceCreatedTime: DateSorter,
-  annotations: AnnotationSorter,
-};
-
-export function FileTableExplorer(props: FileListTableProps) {
+export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -114,58 +98,17 @@ export function FileTableExplorer(props: FileListTableProps) {
     props.isLoading ? <LoadingTable columns={columns} /> : <></>;
   const emptyRenderer = () => (props.isLoading ? <></> : <NoData />);
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (props.sortPaginateControls.sortKey === 'annotations') {
-      const fileIds = props.data.map((item) => item.id);
-      dispatch(setLoadingAnnotations());
-      dispatch(RetrieveAnnotations(fileIds));
-    }
-  }, [props.sortPaginateControls.sortKey]);
-
   return (
-    <SorterPaginationWrapper
-      data={props.data}
-      totalCount={props.totalCount}
-      sorters={sorters}
-      pagination
-      sortPaginateControls={props.sortPaginateControls}
-      isLoading={props.isLoading || false}
-    >
-      {(paginationProps: PaginatedTableProps<TableDataItem>) => {
-        if (props.sortPaginateControls.sortKey === 'annotations') {
-          return (
-            <SelectableTable
-              {...props}
-              {...paginationProps}
-              columns={columns}
-              rendererMap={rendererMap}
-              selectable
-              rowClassNames={rowClassNames}
-              rowEventHandlers={rowEventHandlers}
-              disabled={loadingAnnotations}
-              overlayRenderer={overlayRenderer}
-              emptyRenderer={emptyRenderer}
-            />
-          );
-        }
-        return (
-          <AnnotationLoader data={paginationProps.data}>
-            <SelectableTable
-              {...props}
-              {...paginationProps}
-              columns={columns}
-              rendererMap={rendererMap}
-              selectable
-              rowClassNames={rowClassNames}
-              rowEventHandlers={rowEventHandlers}
-              disabled={loadingAnnotations}
-              overlayRenderer={overlayRenderer}
-              emptyRenderer={emptyRenderer}
-            />
-          </AnnotationLoader>
-        );
-      }}
-    </SorterPaginationWrapper>
+    <SelectableTable
+      {...props}
+      columns={columns}
+      rendererMap={rendererMap}
+      selectable
+      rowClassNames={rowClassNames}
+      rowEventHandlers={rowEventHandlers}
+      disabled={loadingAnnotations}
+      overlayRenderer={overlayRenderer}
+      emptyRenderer={emptyRenderer}
+    />
   );
 }
