@@ -32,6 +32,12 @@ export enum RevealGeometryCollectionType {
   InstanceMesh
 }
 
+export type TypedGeometry = {
+  type: RevealGeometryCollectionType;
+  buffer: THREE.BufferGeometry;
+  instanceId?: number;
+};
+
 export default class GltfSectorParser {
   private readonly _gltfReader: NodeIO;
   constructor() {
@@ -39,11 +45,11 @@ export default class GltfSectorParser {
     this._gltfReader.registerExtensions([MeshGPUInstancing]);
   }
 
-  public parseSector(data: ArrayBuffer) {
+  public parseSector(data: ArrayBuffer): TypedGeometry[] {
     const document: Document = this._gltfReader.readBinary(data);
 
     const defaultScene = document.getRoot().getDefaultScene();
-    const typedGeometryBuffers: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] = [];
+    const typedGeometryBuffers: TypedGeometry[] = [];
 
     defaultScene!.traverse((node: Node) => {
       const processedNode = this.processNode(node);
@@ -54,9 +60,10 @@ export default class GltfSectorParser {
     return typedGeometryBuffers;
   }
 
-  private processNode(node: Node): { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry } | null {
+  private processNode(node: Node): TypedGeometry | null {
     const instanced = node.getExtension<InstancedMesh>(MeshGPUInstancing.EXTENSION_NAME);
     const mesh = node.getMesh();
+    let instanceId: number | undefined;
 
     if (this.isEmptyNode(instanced, mesh)) return null;
 
@@ -69,6 +76,8 @@ export default class GltfSectorParser {
       const primitive = mesh.listPrimitives()[0];
       this.setMeshAttributes(primitive, bufferGeometry);
 
+      instanceId = mesh.getExtras()['InstanceId'] as number;
+
       if (!instanced) {
         this.setUniqueMeshAttributes(primitive, bufferGeometry);
         return { type: geometryType, buffer: bufferGeometry };
@@ -79,7 +88,7 @@ export default class GltfSectorParser {
 
     if (instanced) this.setInstancedAttributes(instanced, bufferGeometry);
 
-    return { type: geometryType, buffer: bufferGeometry };
+    return { type: geometryType, buffer: bufferGeometry, instanceId: instanceId } as TypedGeometry;
   }
 
   private isEmptyNode(instanced: InstancedMesh | null, mesh: Mesh | null) {
