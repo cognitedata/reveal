@@ -11,7 +11,6 @@ const dateFormat = 'DD.MM.YYYY';
 export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
   const [action, setAction] = useState('created');
   const [time, setTime] = useState('before');
-
   const [startDate, setStartDate] =
     useState<moment.Moment | undefined>(undefined);
   const [endDate, setEndDate] = useState<moment.Moment | undefined>(undefined);
@@ -21,6 +20,7 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
     setEndDate(undefined);
   };
 
+  // clear filter
   useEffect(() => {
     if (
       filter.createdTime === undefined &&
@@ -36,13 +36,16 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
     // set range according to time
     switch (time) {
       case 'before':
-        range = { max: startDate?.valueOf() };
+        range = startDate ? { max: startDate.valueOf() } : undefined;
         break;
       case 'after':
-        range = { min: startDate?.valueOf() };
+        range = startDate ? { min: startDate.valueOf() } : undefined;
         break;
       case 'range':
-        range = { min: startDate?.valueOf(), max: endDate?.valueOf() };
+        range =
+          startDate && endDate
+            ? { min: startDate.valueOf(), max: endDate.valueOf() }
+            : undefined;
         break;
     }
 
@@ -50,25 +53,41 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
     if (startDate?.valueOf() === undefined && endDate?.valueOf() === undefined)
       range = undefined;
 
-    switch (action) {
-      case 'created':
-        setFilter({
-          ...filter,
-          createdTime: range,
-        });
-        break;
-      case 'uploaded':
-        setFilter({
-          ...filter,
-          uploadedTime: range,
-        });
-        break;
-      case 'captured':
-        setFilter({
-          ...filter,
-          sourceCreatedTime: range,
-        });
-        break;
+    // to avoid setting filter when dates are undefined
+    if (range) {
+      switch (action) {
+        case 'created':
+          setFilter({
+            ...filter,
+            createdTime: range,
+          });
+          break;
+        case 'uploaded':
+          setFilter({
+            ...filter,
+            uploadedTime: range,
+          });
+          break;
+        case 'captured':
+          setFilter({
+            ...filter,
+            sourceCreatedTime: range,
+          });
+          break;
+      }
+    }
+    // if range is undefined clearing filter if and if only it was defined
+    else if (
+      filter.createdTime ||
+      filter.uploadedTime ||
+      filter.sourceCreatedTime
+    ) {
+      setFilter({
+        ...filter,
+        createdTime: undefined,
+        uploadedTime: undefined,
+        sourceCreatedTime: undefined,
+      });
     }
   }, [action, time, startDate, endDate]);
 

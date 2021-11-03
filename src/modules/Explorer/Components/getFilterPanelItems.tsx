@@ -72,7 +72,8 @@ export const getFilterPanelItems = (
   {
     key: '4',
     headerText: 'Date',
-    disableClear: !filter.createdTime,
+    disableClear:
+      !filter.createdTime && !filter.uploadedTime && !filter.sourceCreatedTime,
     clear: () => {
       setFilter({
         ...filter,
