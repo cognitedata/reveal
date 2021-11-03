@@ -64,6 +64,15 @@ or create `.env` file within the same folder and paste them there, then use sour
 source .env
 ```
 3. Run `yarn` again and be happy!
+
+## Environment for Credentials
+
+Connecting the Cognite SDK client to internal projects through the Cognite API now requires OICD login, meaning that it is no longer sufficient to supply an API key when connecting to these projects. Instead, you need to supply the `tenantId` for the tenant for which the project belongs, as well as the `clientId` for Reveal (or the derived app) within that tenant. This poses a problem when running the examples, which has relied the API keys for authentication.
+
+The examples are configured to run using any environment variables specified in the file `examples/.env`. Specifically, Reveal will use a variable called `REACT_APP_CREDENTIAL_ENVIRONMENT` for authentication. The file `examples/.env.example` shows the expected JSON format of the value contained in this variable. The JSON object may specify several environments. Note that the values provided in `examples/.env.example` are dummy values.
+
+When starting an example that uses the Cognite SDK Client, you can add e.g. `env=example_environment` to use the authentication credential stored in the `example_environment` environment specified in the JSON object.
+
 ## Hosting models locally
 
 If you have locally converted 3D models, these can be viewed locally using the "Simple" example by
