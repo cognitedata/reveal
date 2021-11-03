@@ -1,8 +1,20 @@
 import { CurveSegment, LineSegment, PathSegment, Point } from './PathSegments';
 import { InstanceMatcher } from './InstanceMatcher';
-import { Instance } from './Instance';
 
-export * from './Instance';
+export interface SvgPath {
+  svgCommands: string;
+  style?: string;
+}
+
+export interface DiagramSymbol {
+  symbolName: string;
+  svgPaths: SvgPath[];
+}
+
+export interface DiagramSymbolInstance {
+  symbolName: string;
+  svgElements: SVGElement[];
+}
 
 const getSvgCommands = (d: string) => {
   const regexStr: string[] = d.split(/(\D\s.+?(?=[a-zA-Z]))/);
@@ -118,22 +130,17 @@ export const newMatcher = (
   return new InstanceMatcher(segmentList, normalizationPoint);
 };
 
-export const findSimilar = (
-  allThingsIn: SVGElement[],
-  objectToFind: Instance
-): string[][] => {
-  const matches: string[][] = [];
-  const all: SVGElement[] = allThingsIn;
-  let curPathId = '';
-  let elem = null;
-  for (let j = 0; j < allThingsIn.length; j++) {
-    if (objectToFind.pathIds.includes(allThingsIn[j].id)) {
-      elem = allThingsIn[j];
-      curPathId += elem.getAttribute('d');
-    }
-  }
+export const findAllInstancesOfSymbol = (
+  all: SVGElement[],
+  symbol: DiagramSymbol
+): DiagramSymbolInstance[] => {
+  const matches: SVGElement[][] = [];
 
-  const matcher = newMatcher(curPathId);
+  const joinedSymbolSvgCommands = symbol.svgPaths
+    .map((svgPath) => svgPath.svgCommands)
+    .join(' ');
+
+  const matcher = newMatcher(joinedSymbolSvgCommands);
   for (let i = 0; i < all.length; i++) {
     if (all[i] instanceof SVGPathElement) {
       const potMatch = newMatcher(all[i].getAttribute('d') as string);
@@ -141,16 +148,16 @@ export const findSimilar = (
 
       if (matchCount === matcher.segmentList.length) {
         // a full match
-        matches.push([all[i].id]);
+        matches.push([all[i]]);
       } else if (matchCount === potMatch.segmentList.length) {
         // everything in this line segment matched -- lets find the remining pieces
         // loop through things.
-        const objs = [all[i].id];
+        const objs = [all[i]];
         let allPaths = `${all[i].getAttribute('d')}`;
         for (let j = 0; j < all.length; j++) {
           if (
             all[j] != null &&
-            !objs.includes(all[j].id) &&
+            !objs.map((obj) => obj.id).includes(all[j].id) &&
             all[j] instanceof SVGPathElement
           ) {
             const pMatch = newMatcher(
@@ -160,11 +167,11 @@ export const findSimilar = (
             const newMatchCount = matcher.matches(pMatch);
 
             if (newMatchCount === matcher.segmentList.length) {
-              objs.push(all[j].id);
+              objs.push(all[j]);
               matches.push(objs);
             } else if (newMatchCount === pMatch.segmentList.length) {
               // is a submatch
-              objs.push(all[j].id);
+              objs.push(all[j]);
               allPaths += `${all[j].getAttribute('d')}`;
             }
           }
@@ -173,5 +180,12 @@ export const findSimilar = (
     }
   }
 
-  return matches;
+  const symbolInstances = matches.map((match) => {
+    return {
+      symbolName: symbol.symbolName,
+      svgElements: match,
+    };
+  });
+
+  return symbolInstances;
 };

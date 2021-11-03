@@ -1,41 +1,201 @@
 /* eslint-disable no-param-reassign */
 import * as React from 'react';
 import { ReactSVG } from 'react-svg';
-import { findSimilar, Instance } from '@cognite/pid-tools';
+import {
+  findAllInstancesOfSymbol,
+  SvgPath,
+  DiagramSymbol,
+  DiagramSymbolInstance,
+} from '@cognite/pid-tools';
 
-import { ToolBar } from './ToolBar';
+import { SideView } from './SideView';
+
+const originalViewBox = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  isUpdated: false,
+};
+
+const viewBox = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  isUpdated: false,
+};
+
+let keydownEventListenerAdded = false;
+const scrollFactor = 0.15;
+const zoomFactor = 0.2;
+
+const updateSvgWithViewbox = () => {
+  document
+    .getElementById('svg-id')
+    ?.setAttribute(
+      'viewBox',
+      `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
+    );
+};
+
+const moveLeft = () => {
+  viewBox.x -= scrollFactor * viewBox.width;
+  updateSvgWithViewbox();
+};
+
+const moveRight = () => {
+  viewBox.x += scrollFactor * viewBox.width;
+  updateSvgWithViewbox();
+};
+
+const moveUp = () => {
+  viewBox.y -= scrollFactor * viewBox.height;
+  updateSvgWithViewbox();
+};
+
+const moveDown = () => {
+  viewBox.y += scrollFactor * viewBox.height;
+  updateSvgWithViewbox();
+};
+
+const zoomIn = () => {
+  const widthChange = zoomFactor * viewBox.width;
+  viewBox.width -= widthChange;
+  viewBox.x += widthChange / 2;
+
+  const heightChange = zoomFactor * viewBox.height;
+  viewBox.height -= heightChange;
+  viewBox.y += heightChange / 2;
+
+  updateSvgWithViewbox();
+};
+
+const zoomOut = () => {
+  const widthChange = zoomFactor * (viewBox.width * (1 / (1 - zoomFactor)));
+  viewBox.width += widthChange;
+  viewBox.x -= widthChange / 2;
+
+  const heightChange = zoomFactor * (viewBox.height * (1 / (1 - zoomFactor)));
+  viewBox.height += heightChange;
+  viewBox.y -= heightChange / 2;
+  updateSvgWithViewbox();
+};
+
+const resetZoom = () => {
+  viewBox.x = originalViewBox.x;
+  viewBox.y = originalViewBox.y;
+  viewBox.width = originalViewBox.width;
+  viewBox.height = originalViewBox.height;
+  updateSvgWithViewbox();
+};
 
 export const SvgViewer = () => {
   const [fileUrl, setFileUrl] = React.useState('');
-  const [currentMode, setCurrentMode] = React.useState<string>('');
+  const [active, setActive] = React.useState<string>('AddSymbol');
 
-  const [selection, setSelection] = React.useState<string[]>([]);
-  const [instances, setInstances] = React.useState<Instance[]>([]);
+  const [selection, setSelection] = React.useState<SVGElement[]>([]);
+  const [symbols, setSymbols] = React.useState<DiagramSymbol[]>([]);
+  const [symbolInstances, setSymbolInstances] = React.useState<
+    DiagramSymbolInstance[]
+  >([]);
   const all: SVGElement[] = [];
-  // console.log('selection', selection);
-  const saveSymbol = (symbolName: string) => {
-    const instance = new Instance(selection, symbolName);
-    const similar = findSimilar(all, instance);
-    const newInstances = [instance];
-    similar.forEach((e: any) => {
-      newInstances.push(new Instance(e, instance.symbolName));
-    });
-    setInstances([...instances, ...newInstances]);
-    setSelection([]);
+
+  const onkeydown = (e: KeyboardEvent) => {
+    if (document.activeElement === document.body) {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+        return;
+      }
+      switch (e.code) {
+        case 'KeyA':
+          moveLeft();
+          break;
+        case 'KeyD':
+          moveRight();
+          break;
+        case 'KeyW':
+          moveUp();
+          break;
+        case 'KeyS':
+          moveDown();
+          break;
+        case 'KeyE':
+          zoomIn();
+          break;
+        case 'KeyQ':
+          zoomOut();
+          break;
+        case 'KeyR':
+          resetZoom();
+          break;
+      }
+    }
   };
+
+  React.useEffect(() => {
+    if (!keydownEventListenerAdded) {
+      keydownEventListenerAdded = true;
+      document.addEventListener('keydown', onkeydown);
+    }
+  });
+
+  const loadSymbolsAsJson = (jsonData: any) => {
+    if ('symbols' in jsonData) {
+      const newSymbols = jsonData.symbols as DiagramSymbol[];
+      setSymbols([...symbols, ...newSymbols]);
+
+      let allNewSymbolInstances: DiagramSymbolInstance[] = [];
+      newSymbols.forEach((newSymbol) => {
+        const newSymbolInstances = findAllInstancesOfSymbol(all, newSymbol);
+        allNewSymbolInstances = [
+          ...allNewSymbolInstances,
+          ...newSymbolInstances,
+        ];
+      });
+      setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+    }
+  };
+
+  const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
+    const newSymbol = {
+      symbolName,
+      svgPaths: selection.map((svgElement) => {
+        return {
+          svgCommands: svgElement.getAttribute('d') as string,
+          style: svgElement.getAttribute('style'),
+        } as SvgPath;
+      }),
+    };
+
+    setSymbols([...symbols, newSymbol]);
+
+    setSelection([]);
+
+    const newSymbolInstances = findAllInstancesOfSymbol(all, newSymbol);
+    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+  };
+
   const handleBeforeInjection = (svg?: SVGSVGElement) => {
     // console.log('handleBeforeInjection svg', svg);
-
     if (svg) {
+      svg.id = 'svg-id';
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
           all.push(node);
-          if (selection.includes(node.id)) {
-            makeRed(node);
+
+          if (selection.some((svgPath) => svgPath.id === node.id)) {
+            node.style.stroke = 'red';
+            const val = 1.5 * parseInt(node.style.strokeWidth, 10);
+            node.style.strokeWidth = val.toString();
           }
 
           if (
-            instances.map((e) => e.pathIds.includes(node.id)).includes(true)
+            symbolInstances.some((symbolInst) =>
+              symbolInst.svgElements.some((path) => path.id === node.id)
+            )
           ) {
             node.style.stroke = 'pink';
           }
@@ -45,10 +205,6 @@ export const SvgViewer = () => {
             recursive(child);
           }
         }
-      };
-
-      const makeRed = (node: SVGElement) => {
-        node.style.stroke = 'red';
       };
 
       for (let j = 0; j < svg.children.length; j++) {
@@ -64,29 +220,59 @@ export const SvgViewer = () => {
     if (error) {
       return;
     }
-
     // console.log('handleAfterInjection', svg);
 
     if (svg) {
+      if (!viewBox.isUpdated) {
+        originalViewBox.x = svg.getBBox().x;
+        originalViewBox.y = svg.getBBox().y;
+        originalViewBox.width = svg.getBBox().width;
+        originalViewBox.height = svg.getBBox().height;
+        originalViewBox.isUpdated = true;
+
+        viewBox.x = originalViewBox.x;
+        viewBox.y = originalViewBox.y;
+        viewBox.width = originalViewBox.width;
+        viewBox.height = originalViewBox.height;
+        viewBox.isUpdated = true;
+      }
+
+      svg.setAttribute(
+        'viewBox',
+        `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
+      );
+
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
           const originalStrokeWidth = node.style.strokeWidth;
           const originalStroke = node.style.stroke;
-
           node.addEventListener('mouseenter', () => {
-            const val = 3 * parseInt(originalStrokeWidth, 10);
-            node.style.strokeWidth = val.toString();
-            node.style.stroke = 'blue';
+            if (selection.some((svgPath) => svgPath.id === node.id)) {
+              const val = 1.5 * parseInt(originalStrokeWidth, 10);
+              node.style.strokeWidth = val.toString();
+            } else {
+              const val = 1.5 * parseInt(originalStrokeWidth, 10);
+              node.style.strokeWidth = val.toString();
+              node.style.stroke = 'blue';
+            }
           });
 
           node.addEventListener('mouseleave', () => {
             node.style.strokeWidth = originalStrokeWidth;
             node.style.stroke = originalStroke;
           });
+
           node.addEventListener('click', () => {
-            if (currentMode !== '') {
-              // console.log(node.id);
-              setSelection([...selection, node.id]);
+            if (active === 'AddSymbol') {
+              if (selection.some((svgPath) => svgPath.id === node.id)) {
+                const index = selection.map((e) => e.id).indexOf(node.id);
+                setSelection([
+                  ...selection.slice(0, index),
+                  ...selection.slice(index + 1, selection.length),
+                ]);
+              } else {
+                setSelection([...selection, node]);
+              }
             }
           });
         } else {
@@ -116,19 +302,35 @@ export const SvgViewer = () => {
 
   return (
     <div>
-      <ToolBar
-        setMode={setCurrentMode}
-        mode={currentMode}
-        setSelected={setSelection}
-        saveSymbol={saveSymbol}
-      />
-      <input type="file" onChange={handleFileChange} />
-      <ReactSVG
-        renumerateIRIElements={false}
-        src={fileUrl}
-        afterInjection={handleAfterInjection}
-        beforeInjection={handleBeforeInjection}
-      />
+      {fileUrl === '' && (
+        <input type="file" accept=".svg" onChange={handleFileChange} />
+      )}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {fileUrl !== '' && (
+          <SideView
+            active={active}
+            symbols={symbols}
+            selection={selection}
+            setActive={setActive}
+            loadSymbolsAsJson={loadSymbolsAsJson}
+            saveSymbol={saveSymbol}
+          />
+        )}
+        <ReactSVG
+          style={{ borderStyle: 'solid', touchAction: 'none' }}
+          renumerateIRIElements={false}
+          src={fileUrl}
+          afterInjection={handleAfterInjection}
+          beforeInjection={handleBeforeInjection}
+        />
+      </div>
     </div>
   );
 };

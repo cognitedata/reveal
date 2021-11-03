@@ -41,10 +41,16 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//react",
     "@npm//react-svg",
+    "@npm//styled-components",
+    "@npm//file-saver",
 ]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = ["@npm//@types/react"]
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+    "@npm//@types/styled-components",
+    "@npm//@types/file-saver",
+]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = []
