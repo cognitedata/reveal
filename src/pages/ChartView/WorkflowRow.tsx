@@ -131,6 +131,10 @@ export default function WorkflowRow({
   const runComputation = useCallback(() => {
     const computationCopy: Calculation = JSON.parse(stringifiedComputation);
 
+    if (!computationCopy.steps.length) {
+      return;
+    }
+
     createCalculation(
       { definition: computationCopy },
       {
@@ -179,10 +183,6 @@ export default function WorkflowRow({
 
   const handleChanges = useCallback(() => {
     const computationCopy = JSON.parse(stringifiedComputation);
-
-    if (!computationCopy.steps.length) {
-      return;
-    }
 
     if (call?.hash === getHash(computationCopy)) {
       return;
