@@ -31,6 +31,7 @@ export type ExplorerToolbarContainerProps = {
   selectedCount?: number;
   isLoading: boolean;
   currentView?: string;
+  reFetch: () => void;
 };
 
 export const ExplorerToolbarContainer = (

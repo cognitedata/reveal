@@ -1,5 +1,5 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import {
@@ -39,6 +39,9 @@ const Explorer = () => {
   const dispatch = useDispatch();
 
   const queryClient = new QueryClient();
+
+  const [reFetchProp, setReFetchProp] = useState(false);
+  const reFetch = () => setReFetchProp((i) => !i);
 
   const showFilter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFilter
@@ -139,8 +142,10 @@ const Explorer = () => {
                 selectedCount={selectedFileIds.length}
                 isLoading={isLoading}
                 currentView={currentView}
+                reFetch={reFetch}
               />
               <ExplorerSearchResults
+                reFetchProp={reFetchProp}
                 currentView={currentView}
                 filter={filter}
                 query={query}

@@ -39,6 +39,7 @@ export const ResultTableLoader = <T extends Resource>({
   children,
   ...props
 }: {
+  reFetchProp?: boolean;
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SearchResultLoaderProps> &
   Partial<RelatedResourcesLoaderProps> &
@@ -104,7 +105,7 @@ export const ResultTableLoader = <T extends Resource>({
         setTotalCount(res);
       });
     })();
-  }, [props.query, props.filter]);
+  }, [props.query, props.filter, props.reFetchProp]);
 
   return <>{children({ data: tableData, totalCount })}</>;
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
 import { Spin } from 'antd';
@@ -10,21 +10,48 @@ const antIcon = <LoadingOutlined style={{ fontSize: 14 }} spin />;
 export const LoadingBar = ({
   isLoading,
   percentageScanned,
+  reFetch,
 }: {
   isLoading: boolean;
   percentageScanned: number;
+  reFetch: () => void;
 }) => {
-  return isLoading ? (
-    <Container>
-      <LoadingText level={2}>
-        {Math.ceil(percentageScanned)}% results loaded{' '}
-      </LoadingText>
-      <Spin indicator={antIcon} style={{ alignSelf: 'center' }} />
-      <Button onClick={() => cancelFetch()} type="ghost-danger">
-        Stop
-      </Button>
-    </Container>
-  ) : null;
+  const [fetchingInterrupted, setFetchingInterrupted] = useState(false);
+  const onStop = () => {
+    setFetchingInterrupted(true);
+    cancelFetch();
+  };
+  const onRefetch = () => {
+    setFetchingInterrupted(false);
+    reFetch();
+  };
+
+  if (isLoading) {
+    return (
+      <Container>
+        <LoadingText level={2}>
+          {Math.ceil(percentageScanned)}% of files scanned{' '}
+        </LoadingText>
+        <Spin indicator={antIcon} style={{ alignSelf: 'center' }} />
+        <Button onClick={onStop} type="ghost-danger">
+          Stop
+        </Button>
+      </Container>
+    );
+  }
+  if (fetchingInterrupted) {
+    return (
+      <Container>
+        <LoadingText level={2}>
+          {Math.ceil(percentageScanned)}% of files scanned{' '}
+        </LoadingText>
+        <Button onClick={onRefetch} type="ghost">
+          Re-Fetch
+        </Button>
+      </Container>
+    );
+  }
+  return null;
 };
 
 const Container = styled.div`

@@ -35,6 +35,7 @@ export const ExplorerToolbar = ({
   onReview,
   onBulkEdit,
   onDelete,
+  reFetch,
 }: ExplorerToolbarProps) => {
   return (
     <>
@@ -69,6 +70,7 @@ export const ExplorerToolbar = ({
           <LoadingBar
             isLoading={isLoading}
             percentageScanned={percentageScanned}
+            reFetch={reFetch}
           />
         </Left>
         <SegmentedControl

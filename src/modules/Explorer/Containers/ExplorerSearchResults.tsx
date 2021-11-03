@@ -29,6 +29,7 @@ import {
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 
 export const ExplorerSearchResults = ({
+  reFetchProp,
   currentView,
   query = '',
   filter = {},
@@ -38,6 +39,7 @@ export const ExplorerSearchResults = ({
   onClick,
   onRowSelect,
 }: {
+  reFetchProp?: boolean;
   currentView: ViewMode;
   query?: string;
   filter?: FileFilterProps;
@@ -126,6 +128,7 @@ export const ExplorerSearchResults = ({
       >
         <ResultTableLoader<FileInfo>
           css={{ height: '100%', width: '100%' }}
+          reFetchProp={reFetchProp}
           type="file"
           filter={filter}
           query={query}
