@@ -43,4 +43,17 @@ describe(Cognite3DModel.name, () => {
 
     expect(model.styledNodeCollections).toBeEmpty();
   });
+
+  test('removeAllStyledNodeCollections removes all styled node collections', () => {
+    const collection = new TreeIndexNodeCollection();
+    const collection2 = new TreeIndexNodeCollection();
+
+    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
+    model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
+    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
+
+    model.removeAllStyledNodeCollections();
+
+    expect(model.styledNodeCollections).toBeEmpty();
+  });
 });
