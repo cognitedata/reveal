@@ -1,7 +1,7 @@
 import GlobalStyles from 'styles/GlobalStyles';
-import React from 'react';
-import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import { AuthWrapper, getEnv, SubAppWrapper } from '@cognite/cdf-utilities';
+import React, { Suspense, useMemo } from 'react';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import { createHistory } from 'utils/history';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import { projectName } from 'utils/utils';
@@ -9,9 +9,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Route, Router, Switch } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
+import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
-import DataSetsList from './pages/DataSetsList/DataSetsList';
-import DataSetDetails from './pages/DataSetDetails/DataSetDetails';
 
 const App = () => {
   const history = createHistory();
@@ -25,16 +24,15 @@ const App = () => {
     },
   });
 
-  const onLogin = async () => {
-    await loginAndAuthIfNeeded(projectName(), getEnv());
-    await sdk.login.status();
-  };
-
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
     <QueryClientProvider client={queryClient}>
       <GlobalStyles>
-        <AuthWrapper login={onLogin}>
+        <AuthWrapper
+          loadingScreen={<Loader />}
+          showLoader
+          subAppName="data-sets"
+        >
           <SDKProvider sdk={sdk}>
             <FlagProvider
               apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
@@ -44,17 +42,32 @@ const App = () => {
               <SubAppWrapper>
                 <DataSetsContextProvider>
                   <Router history={history}>
-                    <Switch>
-                      <Route
-                        path="/:tenant/new-data-sets"
-                        component={DataSetsList}
-                        exact
-                      />
-                      <Route
-                        path="/:tenant/new-data-sets/data-set/:dataSetId"
-                        component={DataSetDetails}
-                      />
-                    </Switch>
+                    <Suspense fallback={<Loader />}>
+                      <Switch>
+                        <Route
+                          path="/:tenant/new-data-sets"
+                          component={useMemo(
+                            () =>
+                              React.lazy(
+                                () => import('pages/DataSetsList/DataSetsList')
+                              ),
+                            []
+                          )}
+                          exact
+                        />
+                        <Route
+                          path="/:tenant/new-data-sets/data-set/:dataSetId"
+                          component={useMemo(
+                            () =>
+                              React.lazy(
+                                () =>
+                                  import('pages/DataSetDetails/DataSetDetails')
+                              ),
+                            []
+                          )}
+                        />
+                      </Switch>
+                    </Suspense>
                   </Router>
                 </DataSetsContextProvider>
               </SubAppWrapper>
