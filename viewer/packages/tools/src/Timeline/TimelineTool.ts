@@ -17,7 +17,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
   private _keyframes: Keyframe[];
   private _playback: TWEEN.Tween | undefined = undefined;
-  private readonly _events = { TimelineUpdated: new EventTrigger<TimelineDateUpdateDelegate>() };
+  private readonly _events = { dateChanged: new EventTrigger<TimelineDateUpdateDelegate>() };
 
   constructor(cadModel: Cognite3DModel) {
     super();
@@ -28,13 +28,13 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
   /**
    * Subscribe to the Date changed event
-   * @param event `TimelineUpdated` event
+   * @param event `dateChanged` event
    * @param listener Listen to Timeline date Update during Playback
    */
-  public subscribe(event: 'TimelineUpdated', listener: TimelineDateUpdateDelegate): void {
+  public subscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
     switch (event) {
-      case 'TimelineUpdated':
-        this._events.TimelineUpdated.subscribe(listener);
+      case 'dateChanged':
+        this._events.dateChanged.subscribe(listener);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -43,13 +43,13 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
   /**
    * Unsubscribe to the Date changed event
-   * @param event `TimelineUpdated` event
+   * @param event `dateChanged` event
    * @param listener Remove Listen to Timeline date Update
    */
-  public unsubscribe(event: 'TimelineUpdated', listener: TimelineDateUpdateDelegate): void {
+  public unsubscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
     switch (event) {
-      case 'TimelineUpdated':
-        this._events.TimelineUpdated.unsubscribe(listener as TimelineDateUpdateDelegate);
+      case 'dateChanged':
+        this._events.dateChanged.unsubscribe(listener as TimelineDateUpdateDelegate);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -137,7 +137,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
         this._keyframes[currentKeyframeIndex].activate();
       }
 
-      this._events.TimelineUpdated.fire({
+      this._events.dateChanged.fire({
         date: new Date(Date.now()),
         activeKeyframe: this._keyframes[currentKeyframeIndex],
         startDate: startDate,
@@ -187,7 +187,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
   public dispose(): void {
     super.dispose();
-    this._events.TimelineUpdated.unsubscribeAll();
+    this._events.dateChanged.unsubscribeAll();
   }
 
   /**
