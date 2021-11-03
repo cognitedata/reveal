@@ -1042,6 +1042,7 @@ __metadata:
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
+    "@reveal/sector-loader": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft

@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { DetermineSectorsInput, WantedSector } from 'internals';
+import { WantedSector } from '@reveal/cad-parsers';
 import { SectorCuller } from './SectorCuller';
-import { SectorLoadingSpent } from './types';
+import { DetermineSectorsInput, SectorLoadingSpent } from './types';
 
 export class PassThroughSectorCuller implements SectorCuller {
   determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
