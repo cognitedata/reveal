@@ -6,7 +6,7 @@ import moment from 'moment';
 import { DateRange } from '@cognite/cdf-sdk-singleton';
 import { VisionFilterItemProps } from './types';
 
-const dateFormat = 'DD.MM.YYYY';
+const dateFormat = 'DD.MM.YYYY HH:mm:ss';
 
 export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
   const [action, setAction] = useState('created');
@@ -120,6 +120,7 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
 
       <DatePickersContainer>
         <DatePicker
+          showTime
           value={startDate}
           onChange={(date) => {
             if (date === null) setStartDate(undefined);
@@ -129,6 +130,7 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
           style={{ backgroundColor: '#ffffff' }}
         />
         <DatePicker
+          showTime
           value={endDate}
           onChange={(date) => {
             if (date === null) setEndDate(undefined);
@@ -154,6 +156,6 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 `;
 
 const DatePickersContainer = styled.div`
-  display: flex;
+  display: grid;
   gap: 6px;
 `;
