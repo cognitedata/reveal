@@ -26,7 +26,7 @@ module.exports = {
             'examples/cad-styling-custom',
           ]
         },
-        'examples/cad-prioritized-areas',
+        'examples/cad-prioritized-nodes',
         'examples/cad-transform-override',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
