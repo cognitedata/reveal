@@ -8,11 +8,11 @@ export const SelectLabelsFilter = ({
 }: VisionFilterItemProps) => (
   <LabelFilter
     resourceType="file"
-    value={((filter as any).labels || { containsAny: [] }).containsAny}
+    value={((filter as any).labels || { containsAll: [] }).containsAll}
     setValue={(newFilters) =>
       setFilter({
         ...filter,
-        labels: newFilters ? { containsAny: newFilters } : undefined,
+        labels: newFilters ? { containsAll: newFilters } : undefined,
       })
     }
   />
