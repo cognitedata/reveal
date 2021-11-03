@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { filesAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { Footer } from './Footer';
-import { Header } from './Header';
 import { Paginator } from './Paginator';
 
 const getData = (
@@ -87,11 +86,6 @@ export const SorterPaginationWrapper = ({
       ? Math.ceil(fetchedCount / pageSize)
       : Math.ceil(fetchedCount / CONST.DEFAULT_PAGE_SIZE);
 
-  const header =
-    totalCount > fetchedCount ? (
-      <Header fetchedCount={fetchedCount} totalCount={totalCount} />
-    ) : null;
-
   const tableFooter =
     totalCount > fetchedCount && totalPages === currentPage ? (
       <Footer fetchedCount={fetchedCount} totalCount={totalCount} />
@@ -119,7 +113,6 @@ export const SorterPaginationWrapper = ({
 
   return (
     <Container>
-      <HeaderContainer>{header}</HeaderContainer>
       <TableContainer>
         {children({
           sortKey,
@@ -148,7 +141,7 @@ export const SorterPaginationWrapper = ({
 
 const Container = styled.div`
   display: grid;
-  grid-template-rows: max-content auto max-content;
+  grid-template-rows: auto max-content;
   grid-template-columns: 100%;
   height: 100%;
   width: 100%;
@@ -157,9 +150,7 @@ const Container = styled.div`
 const TableContainer = styled.div`
   height: inherit;
 `;
-const HeaderContainer = styled.div`
-  height: inherit;
-`;
+
 const PaginationContainer = styled.div`
   height: inherit;
 `;
