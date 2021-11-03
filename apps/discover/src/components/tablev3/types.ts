@@ -36,6 +36,7 @@ export interface TableProps<T extends Object> extends TableOptions<T> {
   indeterminateIds?: IndeterminateIds;
   options?: Options;
   renderChildren?: ({ selected }: { selected: T[] }) => React.ReactNode;
+  renderRowOverlayComponent?: RenderRowSubComponent;
   renderRowHoverComponent?: RenderRowSubComponent;
   renderRowSubComponent?: RenderRowSubComponent;
   scrollTable?: boolean;

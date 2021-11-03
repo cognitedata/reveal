@@ -63,7 +63,7 @@ export const TableHead = styled(TableCell)`
 `;
 
 // Hover cell (the one that pops out from the right)
-export const HoverCell = styled.div`
+export const OverlayCell = styled.div`
   padding: 0 !important;
   pointer-events: none;
   position: sticky;
@@ -91,6 +91,10 @@ export const HoverContentWrapper = styled.span`
 
   opacity: 0;
   pointer-events: none;
+`;
+
+export const OverlayContentWrapper = styled(HoverContentWrapper)`
+  opacity: 1;
 `;
 
 export const ExpandedRow = (maxWidth: string) => css`
@@ -149,7 +153,7 @@ export const TableRow = styled.div`
       background: var(--cogs-white);
     }
 
-    & > ${HoverCell} > ${HoverContentWrapper} {
+    & > ${OverlayCell} > ${HoverContentWrapper} {
       opacity: 1;
       pointer-events: initial;
       transform: translateX(0);

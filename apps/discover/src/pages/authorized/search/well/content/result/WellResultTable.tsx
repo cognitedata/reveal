@@ -6,7 +6,7 @@ import compact from 'lodash/compact';
 import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 
-import { Menu } from '@cognite/cogs.js';
+import { Icon, Menu } from '@cognite/cogs.js';
 
 import { getDateOrDefaultText } from '_helpers/date';
 import { changeUnits } from '_helpers/units/utils';
@@ -22,13 +22,17 @@ import {
   wellSearchActions,
   setHoveredWellId,
 } from 'modules/wellSearch/actions';
+import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
 import { getGroupedWellboresByWellIds } from 'modules/wellSearch/service/asset/wellbore';
 import { Well, InspectWellboreContext } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
-import { SearchTableResultActionContainer } from 'pages/authorized/search/elements';
+import {
+  FavoriteIndicatorContainer,
+  SearchTableResultActionContainer,
+} from 'pages/authorized/search/elements';
 import { generateWellColumns } from 'pages/authorized/search/well/utils';
 import { FlexRow } from 'styles/layout';
 
@@ -42,6 +46,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
   const { selectedWellIds, expandedWellIds, selectedColumns, wells } =
     useWells();
   const indeterminateWellIds = useIndeterminateWells();
+  const favoriteWellIds = useFavoriteWellIds();
   const history = useHistory();
   const metrics = useGlobalMetrics('wells');
   const {
@@ -155,6 +160,23 @@ const WellResult: React.FC<DispatchProps> = (props) => {
     currentHits: (data || []).length,
   };
 
+  const renderRowOverlayComponent = useCallback(
+    ({ row }) => {
+      const isAlreadyInFavorite = favoriteWellIds.includes(
+        String(row.original.id)
+      );
+
+      if (!isAlreadyInFavorite) return null;
+
+      return (
+        <FavoriteIndicatorContainer>
+          <Icon type="FavoriteOn" />
+        </FavoriteIndicatorContainer>
+      );
+    },
+    [favoriteWellIds]
+  );
+
   /**
    * When 'View' button on well head row is clicked
    */
@@ -237,6 +259,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
         selectedIds={selectedWellIds}
         expandedIds={expandedWellIds}
         indeterminateIds={indeterminateWellIds}
+        renderRowOverlayComponent={renderRowOverlayComponent}
         renderRowHoverComponent={renderRowHoverComponent}
       />
       <WellsBulkActions />

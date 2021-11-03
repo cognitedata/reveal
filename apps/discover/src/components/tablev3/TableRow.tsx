@@ -6,8 +6,9 @@ import noop from 'lodash/noop';
 import {
   TableRow as DefaultTableRow,
   TableCell,
-  HoverCell,
+  OverlayCell,
   HoverContentWrapper,
+  OverlayContentWrapper,
 } from './elements';
 import { useClickPreventionOnDoubleClick } from './hooks/clickPreventionOnDoubleClick';
 import { TableCell as RenderTableCell } from './TableCell';
@@ -29,6 +30,7 @@ interface RowProps<T extends Object> {
   handleMouseLeave?: HandleRowMouseLeave;
   TableRow?: React.ReactElement;
   renderRowSubComponent?: RenderRowSubComponent;
+  renderRowOverlayComponent?: RenderRowSubComponent;
   renderRowHoverComponent?: RenderRowSubComponent;
   rowOptions?: RowOptions;
   hideBorders?: boolean;
@@ -49,6 +51,7 @@ const CustomRowComp = <T extends Object>({
   handleMouseEnter,
   handleMouseLeave,
   renderRowSubComponent,
+  renderRowOverlayComponent,
   renderRowHoverComponent,
   hideBorders = false,
   expanded = false,
@@ -111,13 +114,18 @@ const CustomRowComp = <T extends Object>({
       >
         {renderTableRow}
 
-        {renderRowHoverComponent && (
-          <HoverCell>
+        <OverlayCell>
+          {renderRowOverlayComponent && (
+            <OverlayContentWrapper>
+              {renderRowOverlayComponent({ row })}
+            </OverlayContentWrapper>
+          )}
+          {renderRowHoverComponent && (
             <HoverContentWrapper>
               {renderRowHoverComponent({ row })}
             </HoverContentWrapper>
-          </HoverCell>
-        )}
+          )}
+        </OverlayCell>
       </RowComponent>
       {/*
           If the row is in an expanded state, render a row with a

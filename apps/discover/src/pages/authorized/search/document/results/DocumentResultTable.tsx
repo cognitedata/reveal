@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 
 import compact from 'lodash/compact';
 import get from 'lodash/get';
@@ -22,6 +22,7 @@ import {
 import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useQuery';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
+import { useFavoriteDocumentIds } from 'modules/documentSearch/hooks/useFavoriteDocumentIds';
 import {
   useDocuments,
   useSelectedDocumentIds,
@@ -42,6 +43,8 @@ import {
   zoomToCoords,
 } from 'modules/map/actions';
 import { SortBy } from 'pages/types';
+
+import { FavoriteIndicatorContainer } from '../../elements';
 
 import { DocumentResultTableHoverComponent } from './DocumentResultTableHoverComponent';
 import { DocumentResultTableSubRow } from './DocumentResultTableSubRow';
@@ -134,6 +137,7 @@ export const DocumentResultTable: React.FC = () => {
   const metrics = useGlobalMetrics('documents');
   const { data: config } = useDocumentConfig();
   const selectedDocumentIds = useSelectedDocumentIds();
+  const favoriteDocumentIds = useFavoriteDocumentIds();
 
   const [documentToPreview, setDocumentToPreview] = useState<
     DocumentTypeDataModel | undefined
@@ -186,31 +190,37 @@ export const DocumentResultTable: React.FC = () => {
 
   const handleRowSelect = useCallback(
     (row: RowProps<DocumentType>, nextState: boolean) => {
-      if (row.original.geolocation && config?.showGeometryOnMap) {
-        dispatch(toggleOtherGeo(row.original.id, row.original.geolocation));
-      }
-      if (nextState) {
-        dispatch(documentSearchActions.addToPreviewedEntity(row.original));
-        dispatch(
-          documentSearchActions.addToSelectedDocumentId(row.original.id)
-        );
-      } else {
-        dispatch(documentSearchActions.removeFromPreviewedEntity(row.original));
-        dispatch(
-          documentSearchActions.removeFromSelectedDocument(row.original.id)
-        );
-      }
+      batch(() => {
+        if (row.original.geolocation && config?.showGeometryOnMap) {
+          dispatch(toggleOtherGeo(row.original.id, row.original.geolocation));
+        }
+        if (nextState) {
+          dispatch(documentSearchActions.addToPreviewedEntity(row.original));
+          dispatch(
+            documentSearchActions.addToSelectedDocumentId(row.original.id)
+          );
+        } else {
+          dispatch(
+            documentSearchActions.removeFromPreviewedEntity(row.original)
+          );
+          dispatch(
+            documentSearchActions.removeFromSelectedDocument(row.original.id)
+          );
+        }
+      });
     },
     []
   );
 
   const handleRowsSelect = useCallback((value: boolean) => {
-    dispatch(documentSearchActions.setPreviewedEntities(value ? data : []));
-    if (value) {
-      dispatch(documentSearchActions.addAllDocumentIds());
-    } else {
-      dispatch(documentSearchActions.removeAllDocumentIds());
-    }
+    batch(() => {
+      dispatch(documentSearchActions.setPreviewedEntities(value ? data : []));
+      if (value) {
+        dispatch(documentSearchActions.addAllDocumentIds());
+      } else {
+        dispatch(documentSearchActions.removeAllDocumentIds());
+      }
+    });
   }, []);
 
   const handleSort = useCallback((sortBy: SortBy[]) => {
@@ -284,6 +294,23 @@ export const DocumentResultTable: React.FC = () => {
     []
   );
 
+  const renderRowOverlayComponent = useCallback(
+    ({ row }) => {
+      const isAlreadyInFavorite = favoriteDocumentIds.includes(
+        Number(row.original.id)
+      );
+
+      if (!isAlreadyInFavorite) return null;
+
+      return (
+        <FavoriteIndicatorContainer>
+          <Icon type="FavoriteOn" />
+        </FavoriteIndicatorContainer>
+      );
+    },
+    [favoriteDocumentIds]
+  );
+
   const renderRowSubComponent = useCallback(DocumentResultTableSubRow, [
     expandedDocumentIds,
   ]);
@@ -303,6 +330,7 @@ export const DocumentResultTable: React.FC = () => {
         selectedIds={transformedSelectedDocumentIds}
         expandedIds={expandedDocumentIds}
         options={options}
+        renderRowOverlayComponent={renderRowOverlayComponent}
         renderRowHoverComponent={renderRowHoverComponent}
         renderRowSubComponent={renderRowSubComponent}
       />

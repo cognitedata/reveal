@@ -6,7 +6,7 @@ import noop from 'lodash/noop';
 import {
   TableRow as DefaultTableRow,
   TableCell,
-  HoverCell,
+  OverlayCell,
   HoverContentWrapper,
 } from './elements';
 import { useClickPreventionOnDoubleClick } from './hooks/clickPreventionOnDoubleClick';
@@ -101,11 +101,11 @@ const CustomRowComp = <T extends Record<string, unknown>>({
         {renderTableRow}
 
         {renderRowHoverComponent && (
-          <HoverCell>
+          <OverlayCell>
             <HoverContentWrapper>
               {renderRowHoverComponent({ row })}
             </HoverContentWrapper>
-          </HoverCell>
+          </OverlayCell>
         )}
       </RowComponent>
       {/*

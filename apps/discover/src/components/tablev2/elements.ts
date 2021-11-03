@@ -177,7 +177,7 @@ export const DefaultSortButton = styled(Button)`
   color: var(--cogs-greyscale-grey5) !important;
 `;
 
-export const HoverCell = styled.td`
+export const OverlayCell = styled.td`
   position: sticky;
   height: 49px;
   padding: 0 !important;

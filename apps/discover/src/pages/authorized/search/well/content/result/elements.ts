@@ -8,7 +8,7 @@ export const WellsContainer = styled.div`
   flex-direction: column;
 `;
 
-export const HoverCellPadding = styled.div`
+export const OverlayCellPadding = styled.div`
   padding-right: ${sizes.small};
 `;
 

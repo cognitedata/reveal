@@ -49,6 +49,7 @@ const TableInner = <T extends Object>({
   handleRowsSelect,
   renderChildren,
   renderRowSubComponent,
+  renderRowOverlayComponent,
   renderRowHoverComponent,
   checkIfCheckboxEnabled,
   handleSort,
@@ -327,6 +328,7 @@ const TableInner = <T extends Object>({
             expanded={expanded}
             maxWidth={`${tableWidth}px`}
             disabledRowClickCells={disabledRowClickCells}
+            renderRowOverlayComponent={renderRowOverlayComponent}
             renderRowHoverComponent={renderRowHoverComponent}
           />
         );

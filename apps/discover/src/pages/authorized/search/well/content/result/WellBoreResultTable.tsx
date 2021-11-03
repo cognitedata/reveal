@@ -8,11 +8,14 @@ import isUndefined from 'lodash/isUndefined';
 import sortBy from 'lodash/sortBy';
 import styled from 'styled-components/macro';
 
+import { Icon } from '@cognite/cogs.js';
+
 import { ViewButton } from 'components/buttons';
 import { Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { wellSearchActions } from 'modules/wellSearch/actions';
+import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
 import { useWells, useWellbores } from 'modules/wellSearch/selectors';
 import {
   Wellbore,
@@ -23,11 +26,12 @@ import {
   WellboreColumns,
   WellboreSubtableOptions,
 } from 'pages/authorized/constant';
+import { FavoriteIndicatorContainer } from 'pages/authorized/search/elements';
 import { FlexRow } from 'styles/layout';
 
 import { NO_WELLBORES_FOUND } from '../constants';
 
-import { HoverCellPadding } from './elements';
+import { OverlayCellPadding } from './elements';
 import { LoadingWellbores } from './LoadingWellbores';
 
 interface Props {
@@ -45,6 +49,7 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
   const { isLoading, wellbores } = useWellbores([well.id]);
 
   const { selectedWellboreIds, selectedWellIds } = useWells();
+  const favoriteWellIds = useFavoriteWellIds();
 
   const dispatch = useDispatch();
   const { t } = useTranslation('WellData');
@@ -144,7 +149,7 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
   const renderHoverRowSubComponent = ({ row }: { row: Row }) => {
     return (
       <FlexRow>
-        <HoverCellPadding>
+        <OverlayCellPadding>
           <ViewButton
             data-testid="button-view-wellbore"
             onClick={() => handleViewClick(row)}
@@ -159,11 +164,28 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
           />
         </Dropdown>
       </WellActionItem> */}
-        </HoverCellPadding>
+        </OverlayCellPadding>
       </FlexRow>
     );
   };
 
+  const renderRowOverlayComponent = ({ row }: { row: Row<Wellbore> }) => {
+    /**
+     * Currently, if the well ID is exists in a favorite, its all wellbores are considered as added to favorite.
+     * Hence, checking if the well id of the wellbore exists in a favorite set.
+     */
+    const isAlreadyInFavorite = favoriteWellIds.includes(
+      String(row.original.wellId)
+    );
+
+    if (!isAlreadyInFavorite) return null;
+
+    return (
+      <FavoriteIndicatorContainer>
+        <Icon type="FavoriteOn" />
+      </FavoriteIndicatorContainer>
+    );
+  };
   return (
     <Table<Wellbore>
       id="wellbore-result-table"
@@ -173,6 +195,7 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
       handleRowsSelect={handleRowsSelect}
       options={WellboreSubtableOptions}
       selectedIds={selectedWellboreIds}
+      renderRowOverlayComponent={renderRowOverlayComponent}
       renderRowHoverComponent={renderHoverRowSubComponent}
       hideHeaders
     />
