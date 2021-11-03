@@ -4,8 +4,8 @@ import {
   InputAreaTitle,
   InputFullWidth,
   InputRow,
-  SelectContainer,
-  SelectLabel,
+  InputWithLabelContainer,
+  InputLabel,
 } from 'components/forms/elements';
 import { UNIT_TYPE } from 'components/forms/ConfigurationForm/constants';
 import { getSelectEntriesFromMap } from 'utils/formUtils';
@@ -41,8 +41,8 @@ const OutputTimeSeriesEntry = ({
           fullWidth
           disabled
         />
-        <SelectContainer>
-          <SelectLabel>Unit</SelectLabel>
+        <InputWithLabelContainer>
+          <InputLabel>Unit</InputLabel>
           <Field
             as={Select}
             theme="grey "
@@ -60,7 +60,7 @@ const OutputTimeSeriesEntry = ({
             fullWidth
             disabled
           />
-        </SelectContainer>
+        </InputWithLabelContainer>
       </InputRow>
     </InputArea>
   );

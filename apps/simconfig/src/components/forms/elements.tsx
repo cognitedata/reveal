@@ -1,4 +1,4 @@
-import { Input, Title } from '@cognite/cogs.js';
+import { Input, Switch, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const InputRow = styled.div`
@@ -12,9 +12,21 @@ export const InputInfoRow = styled.div`
   display: flex;
   gap: 6px;
 `;
+export const DoubleInputRow = styled.div`
+  display: flex;
+  width: 300px;
+
+  > * {
+    &.cogs-select {
+      flex: 1;
+    }
+  }
+`;
+
 export const InputFullWidth = styled(Input)`
   width: ${(props) => props.width || '300px'};
 `;
+
 export const InputArea = styled.div`
   margin: 20px 0;
   padding: 24px;
@@ -34,13 +46,16 @@ export const SectionTitle = styled(Title)`
   margin-bottom: 30px;
 `;
 
-export const SelectContainer = styled.div`
+export const InputAreaSwitch = styled(Switch)`
+  margin-left: 5px;
+`;
+export const InputWithLabelContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 200px;
 `;
 
-export const SelectLabel = styled.div`
+export const InputLabel = styled.div`
   display: block;
   margin-bottom: 4px;
   color: var(--cogs-greyscale-grey8);

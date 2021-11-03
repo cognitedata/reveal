@@ -5,8 +5,8 @@ import {
   InputFullWidth,
   InputInfoRow,
   InputRow,
-  SelectContainer,
-  SelectLabel,
+  InputWithLabelContainer,
+  InputLabel,
 } from 'components/forms/elements';
 import {
   AGGREGATE_TYPE,
@@ -52,8 +52,8 @@ const InputTimeSeriesEntry = ({
           fullWidth
           disabled
         />
-        <SelectContainer>
-          <SelectLabel>Unit</SelectLabel>
+        <InputWithLabelContainer>
+          <InputLabel>Unit</InputLabel>
           <Field
             as={Select}
             theme="grey "
@@ -71,10 +71,10 @@ const InputTimeSeriesEntry = ({
             fullWidth
             disabled
           />
-        </SelectContainer>
+        </InputWithLabelContainer>
 
-        <SelectContainer>
-          <SelectLabel>Sampling Method</SelectLabel>
+        <InputWithLabelContainer>
+          <InputLabel>Sampling Method</InputLabel>
           <Field
             as={Select}
             theme="grey "
@@ -92,7 +92,7 @@ const InputTimeSeriesEntry = ({
             fullWidth
             disabled
           />
-        </SelectContainer>
+        </InputWithLabelContainer>
       </InputRow>
       <InputInfoRow>
         <Icon type="Info" />

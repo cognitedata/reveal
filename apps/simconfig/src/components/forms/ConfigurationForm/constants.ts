@@ -6,6 +6,12 @@ export enum CHECK_TYPE {
   lt = 'Less than',
   le = 'Less than or equal',
 }
+export enum INTERVAL_UNIT {
+  m = 'minute',
+  h = 'hour',
+  d = 'day',
+  w = 'week',
+}
 export enum AGGREGATE_TYPE {
   average = 'Average',
   max = 'Maximum',

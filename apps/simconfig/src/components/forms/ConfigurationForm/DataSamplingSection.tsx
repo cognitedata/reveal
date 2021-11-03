@@ -7,8 +7,8 @@ import {
   InputFullWidth,
   InputRow,
   SectionTitle,
-  SelectContainer,
-  SelectLabel,
+  InputWithLabelContainer,
+  InputLabel,
 } from 'components/forms/elements';
 
 import { AGGREGATE_TYPE, CHECK_TYPE } from './constants';
@@ -68,11 +68,11 @@ export function DataSamplingSection() {
             fullWidth
             disabled
           />
-          <SelectContainer>
-            <SelectLabel>Sampling method</SelectLabel>
+          <InputWithLabelContainer>
+            <InputLabel>Sampling method</InputLabel>
             <Field
               as={Select}
-              theme="grey "
+              theme="grey"
               isDisabled
               closeMenuOnSelect
               value={{
@@ -87,9 +87,9 @@ export function DataSamplingSection() {
               fullWidth
               disabled
             />
-          </SelectContainer>
-          <SelectContainer>
-            <SelectLabel>Check</SelectLabel>
+          </InputWithLabelContainer>
+          <InputWithLabelContainer>
+            <InputLabel>Check</InputLabel>
             <Field
               as={Select}
               theme="grey"
@@ -107,7 +107,7 @@ export function DataSamplingSection() {
               fullWidth
               disabled
             />
-          </SelectContainer>
+          </InputWithLabelContainer>
 
           <Field
             as={Input}
@@ -138,8 +138,8 @@ export function DataSamplingSection() {
             disabled
             fullWidth
           />
-          <SelectContainer>
-            <SelectLabel>Sampling method</SelectLabel>
+          <InputWithLabelContainer>
+            <InputLabel>Sampling method</InputLabel>
             <Field
               as={Select}
               theme="grey "
@@ -158,7 +158,7 @@ export function DataSamplingSection() {
               fullWidth
               disabled
             />
-          </SelectContainer>
+          </InputWithLabelContainer>
           <Field
             as={Input}
             title="Min Section Size"

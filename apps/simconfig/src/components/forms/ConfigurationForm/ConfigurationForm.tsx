@@ -5,6 +5,7 @@ import { DataSamplingSection } from './DataSamplingSection';
 import { CalculationConfig } from './types';
 import { InputSection } from './InputSection';
 import { OutputSection } from './OutputSection';
+import { ScheduleSection } from './ScheduleSection';
 
 interface ComponentProps {
   formData: CalculationConfig;
@@ -17,6 +18,7 @@ export function ConfigurationForm({
     <Formik initialValues={formData} onSubmit={() => noop()}>
       {() => (
         <Form>
+          <ScheduleSection />
           <DataSamplingSection />
           <InputSection />
           <OutputSection />
