@@ -2,12 +2,21 @@ import { Tag as CogsTag } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 
-const CustomTag = styled(CogsTag)`
+export type TagColor = 'error' | 'warning' | 'primary';
+export type TagColorTypes = {
+  color: string;
+  background: string;
+  border: string;
+};
+
+const CustomTag = styled(CogsTag)<{
+  $colors: TagColorTypes;
+}>`
   height: 1.75rem;
   border-radius: 0.25rem;
-  background-color: #f6f7ff !important;
-  border: 1px solid #dbe1fe !important;
-  color: #4255bb !important;
+  background-color: ${({ $colors }) => $colors.background} !important;
+  border: 1px solid ${({ $colors }) => $colors.border} !important;
+  color: ${({ $colors }) => $colors.color} !important;
   font-size: 14px;
 
   & > .cogs-icon {
@@ -15,6 +24,33 @@ const CustomTag = styled(CogsTag)`
   }
 `;
 
-export const Tag: React.FC = ({ children }) => {
-  return <CustomTag icon="Document">{children}</CustomTag>;
+export const Tag: React.FC<{ color?: TagColor }> = ({
+  children,
+  color = 'primary',
+}) => {
+  const colorMapper: {
+    [x in typeof color]: TagColorTypes;
+  } = {
+    warning: {
+      color: '#B25C00',
+      background: '#FFFBF2',
+      border: '#E08506',
+    },
+    error: {
+      color: '#AF1613',
+      background: 'transparent',
+      border: 'grey',
+    },
+    primary: {
+      color: '#4255BB',
+      background: '##F6F7FF',
+      border: '#DBE1FE',
+    },
+  };
+
+  return (
+    <CustomTag $colors={colorMapper[color]} icon="Document">
+      {children}
+    </CustomTag>
+  );
 };

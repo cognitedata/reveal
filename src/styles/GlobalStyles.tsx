@@ -26,10 +26,10 @@ const GlobalStyling = styled.div`
     background: white;
   }
 
-  .cogs-body-1,
+  /* .cogs-body-1,
   .cogs-body-2 {
     color: var(--cogs-text-color-secondary);
-  }
+  } */
   .cogs-detail {
     color: var(--cogs-greyscale-grey6);
   }

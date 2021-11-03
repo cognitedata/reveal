@@ -11,6 +11,11 @@ export const StepContainer = styled(motion.div)<{ $isActive: boolean }>`
   padding: 0.375rem 0.5rem;
   border-radius: 0.5rem;
   user-select: none;
+
+  .cogs-body-1,
+  .cogs-body-2 {
+    color: var(--cogs-text-color-secondary);
+  }
 `;
 
 export const StepBadge = styled(motion.div)`

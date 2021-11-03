@@ -5,7 +5,7 @@ import { ClassifierState } from 'machines/classifier/types';
 import React from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'services/query/classifier/query';
 import { ClassifierTrainingSet } from 'services/types';
-import { curateColumns } from './curate';
+import { curateColumns } from './curateLabelColumns';
 
 export const LabelTable: React.FC = () => {
   const { data, isLoading } = useClassifierManageTrainingSetsQuery();
@@ -34,7 +34,7 @@ export const LabelTable: React.FC = () => {
       pagination={false}
       filterable
       dataSource={data}
-      columns={columns}
+      columns={columns as any}
     />
   );
 };

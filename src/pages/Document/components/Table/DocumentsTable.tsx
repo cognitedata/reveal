@@ -2,7 +2,7 @@ import { Table } from '@cognite/cogs.js';
 import { Document } from '@cognite/sdk-playground';
 import React from 'react';
 import { DocumentPreview } from '../layover/DocumentPreview';
-import { curateColumns } from './curate';
+import { curateColumns } from './curateDocumentsColumns';
 import { DocumentsFilters } from './Filters';
 
 type DocumentPreview = {
@@ -65,7 +65,7 @@ export const DocumentsTable: React.FC<Props> = React.memo(
           defaultSelectedIds={selectedIds}
           pagination={false}
           dataSource={data}
-          columns={columns}
+          columns={columns as any}
           pageSize={0}
         />
 
