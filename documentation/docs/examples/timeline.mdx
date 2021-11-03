@@ -70,6 +70,24 @@ keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: fals
 timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
 ```
 
+### Stop timeline playback
+
+```js runnable
+timeline.stop();
+```
+
+### Pause timeline
+
+```js runnable
+timeline.pause();
+```
+
+### Resume timeline
+
+```js runnable
+timeline.resume();
+```
+
 ### Get Keyframe by Date
 `getKeyframeByDate(date: Date)`
 - `date` - Date of the Keyframe which needs retrived.
@@ -125,11 +143,7 @@ To remove any Keyframe, use `removeKeyframe(keyframe: Keyframe)`
 timeline.removeKeyframe(keyframeMechNodes);
 ```
 
-### Stop timeline playback
 
-```js runnable
-timeline.stopPlayback();
-```
 
 ### Keyframes in Timeline
 Gets all Keyframes in the Timeline
