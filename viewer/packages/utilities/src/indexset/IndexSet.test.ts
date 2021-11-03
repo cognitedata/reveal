@@ -160,7 +160,7 @@ describe('IndexSet', () => {
 
     const invertedRanges = set1.invertedRanges();
 
-    const expectedInvertedRanges = [new NumericRange(4, 4), new NumericRange(7, 9)];
+    const expectedInvertedRanges = [new NumericRange(4, 1), new NumericRange(7, 3)];
 
     expect(invertedRanges).toBeArrayOfSize(expectedInvertedRanges.length);
     for (const expectedRange of expectedInvertedRanges) {
