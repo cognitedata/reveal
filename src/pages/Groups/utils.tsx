@@ -364,6 +364,9 @@ export const getCapabilityScopes = (
       return ['idscope', 'all']; // ... idscope (lowercase s) are different
     case 'seismic':
       return ['partition', 'all'];
+    case 'labels': {
+      return ['datasetScope', 'all'];
+    }
     default:
       return ['all'];
   }
