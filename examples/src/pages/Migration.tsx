@@ -71,11 +71,11 @@ export function Migration() {
             type: 'AAD_OAUTH', 
             options: { 
               clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-              cluster: 'greenfield',
+              cluster: 'api',
               tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
             } 
         });
-        client.setProject('3d-test');
+        client.setProject(project);
         await client.authenticate();
       } else if (baseUrl !== null) {
         viewerOptions = {
@@ -112,6 +112,7 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
+          
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
