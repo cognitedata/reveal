@@ -524,7 +524,7 @@ export class CogniteOrnate {
   };
 
   addDrawings = (...drawings: Drawing[]) => {
-    drawings.forEach((drawing) => {
+    return drawings.map((drawing) => {
       let shape = new Konva.Shape();
       if (drawing.type === 'line') {
         shape = new Konva.Line(drawing.attrs);
@@ -547,6 +547,7 @@ export class CogniteOrnate {
           group.add(shape);
         }
       }
+      return shape;
     });
   };
 
