@@ -30,7 +30,7 @@
     "@types/history": "^4.7.9",
     "@types/lodash": "^4.14.175",
     "@types/react-router-dom": "^5.3.1",
-    "antd": "4.16",
+    "antd": "^4.16.13",
     "commander": "^8.2.0",
     "cronstrue": "^1.119.0",
     "eslint-plugin-promise": "^5.1.1",

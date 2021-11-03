@@ -6,6 +6,7 @@ import { DrawerHeader } from 'utils/styledComponents';
 import DataSetCreation from 'components/DataSetCreation';
 import useDebounce from 'hooks/useDebounce';
 
+import { message } from 'antd';
 import {
   useDataSet,
   useUpdateDataSetMutation,
@@ -36,17 +37,34 @@ const DataSetEditor = ({
 
   const { dataSet, isLoading: isFetchingDataSet } = useDataSet(selectedDataSet);
 
-  const { updateDataSet, isLoading: isUpdating } = useUpdateDataSetMutation();
+  const {
+    updateDataSet,
+    isLoading: isUpdating,
+    isSuccess: datasetUpdated,
+  } = useUpdateDataSetMutation();
   const {
     createDataSet,
     isLoading: isCreating,
     createdDataSetId,
+    isSuccess: datasetCreated,
   } = useCreateDataSetMutation();
   const { updateOwners, isLoading: isUpdatingOwners } =
     useUpdateDataSetOwners();
 
   const { owners, isLoading: isFetchingOwners } =
     useDataSetOwners(selectedDataSet);
+
+  useEffect(() => {
+    if (datasetUpdated) {
+      message.success('Dataset updated!');
+    }
+  }, [datasetUpdated]);
+
+  useEffect(() => {
+    if (datasetCreated) {
+      message.success('Dataset Created!');
+    }
+  }, [datasetCreated]);
 
   const [editedOwners, setEditedOwners] = useState<Group[]>(owners);
 

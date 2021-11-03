@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React from 'react';
+import { message } from 'antd';
 import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { getContainer, styleScope } from 'utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
@@ -12,6 +13,8 @@ CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,
 };
+
+message.config({ getContainer });
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
   useGlobalStyles([antdStyle, cogsStyles]);
