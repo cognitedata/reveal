@@ -13,5 +13,5 @@ export const initialState: SimulatorState = {
   simulators: [],
 };
 
-export const HEARTBEAT_TIMEOUT_SECONDS = 30; // 30 seconds
-export const HEARTBEAT_POLL_INTERVAL = 60; // 1 minute
+export const HEARTBEAT_TIMEOUT_SECONDS = 60; // 60 seconds
+export const HEARTBEAT_POLL_INTERVAL = 30; // 30 seconds

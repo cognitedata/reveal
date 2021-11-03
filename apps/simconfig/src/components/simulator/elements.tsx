@@ -14,6 +14,7 @@ const SimulatorItemNameContainer = styled.div`
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-right: 18px;
 `;
 
 interface SimulatorProps {
