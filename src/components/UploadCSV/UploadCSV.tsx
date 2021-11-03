@@ -49,6 +49,9 @@ const UploadCSV = ({
   const { mutate, isLoading, reset } = useInsertRows();
 
   const resetState = useCallback(() => {
+    if (parser) {
+      parser.abort();
+    }
     setCSVModalVisible(false);
     setComplete(false);
     setCursor(0);
@@ -56,7 +59,15 @@ const UploadCSV = ({
     setUpload(false);
     setNetworkError(false);
     reset();
-  }, [setCSVModalVisible, setComplete, setCursor, setFile, setUpload, reset]);
+  }, [
+    setCSVModalVisible,
+    setComplete,
+    setCursor,
+    setFile,
+    setUpload,
+    reset,
+    parser,
+  ]);
 
   useEffect(() => {
     if (complete) {
@@ -162,7 +173,6 @@ const UploadCSV = ({
     database,
     table,
     resetState,
-    // setCSVModalVisible,
   ]);
 
   const saveDataToApi = async () => {
