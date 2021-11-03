@@ -62,7 +62,7 @@ describe('TimelineTool', () => {
     jest.useRealTimers();
   });
 
-  test('Test assign Node & style to the keyframe & play() the Timeline', () => {
+  test('play() playback the Timeline', () => {
     const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
     const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
 
@@ -82,7 +82,7 @@ describe('TimelineTool', () => {
     expect(unassignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection);
   });
 
-  test('Test stop() the Timeline', () => {
+  test('stop() stops the Timeline playback', () => {
     const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
@@ -100,7 +100,7 @@ describe('TimelineTool', () => {
     expect(TWEEN.update()).toBeFalse();
   });
 
-  test('Test pause() & resume() Timeline', () => {
+  test('pause() & resume() pauses & resumes the Timeline', () => {
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
     const current = TWEEN.now();
     TWEEN.update(current + 10000);

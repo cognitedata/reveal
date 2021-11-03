@@ -100,13 +100,13 @@ Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to rece
 ```jsx
 // import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';
 
-timeline.subscribe('dateChanged', (date, activeKeyframe, startDate, endDate) => {});
+timeline.subscribe('TimelineUpdated', (date, activeKeyframe, startDate, endDate) => {});
 ```
 
 To unsubscribe from `TimelineDateUpdateDelegate` event
 
 ```jsx
-timeline.unsubscribe('dateChanged', (date, activeKeyframe, startDate, endDate) => {});
+timeline.unsubscribe('TimelineUpdated', (date, activeKeyframe, startDate, endDate) => {});
 ```
 
 ### Removing Keyframe
@@ -136,11 +136,4 @@ Gets all Keyframes in the Timeline
 
 ```jsx
 const allKeyframes = timeline.getAllKeyframes();
-```
-
-### Reset Styles
-Restores the Style of the model to default style
-
-```js runnable
-timeline.resetStyles();
 ```
