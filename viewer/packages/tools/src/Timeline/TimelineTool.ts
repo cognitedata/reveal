@@ -34,7 +34,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public subscribe(event: 'TimelineUpdated', listener: TimelineDateUpdateDelegate): void {
     switch (event) {
       case 'TimelineUpdated':
-        this._events.TimelineUpdated.subscribe(listener as TimelineDateUpdateDelegate);
+        this._events.TimelineUpdated.subscribe(listener);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
