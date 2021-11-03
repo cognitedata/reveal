@@ -1,5 +1,5 @@
-import { ClassifierState } from 'pages/Classifier/components/step/types';
 import { createModel } from 'xstate/lib/model';
+import { ClassifierState } from './types';
 
 export interface Model {
   status: { [state in ClassifierState]?: 'done' | 'failed' };
@@ -10,7 +10,9 @@ const model = createModel<Model, any>({
   /** Map of completed classifier states */
   status: {},
   /** Dynamic description for each state */
-  description: {},
+  description: {
+    train: 'Ready to run',
+  },
 });
 
 export const classifierMachine = model.createMachine({

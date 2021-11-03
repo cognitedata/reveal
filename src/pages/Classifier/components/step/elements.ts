@@ -1,7 +1,8 @@
 import { Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const StepContainer = styled.div<{ $isActive: boolean }>`
+export const StepContainer = styled(motion.div)<{ $isActive: boolean }>`
   background-color: ${(props) =>
     props.$isActive ? 'var(--cogs-greyscale-grey2)' : 'white'};
   margin-bottom: 1rem;
@@ -12,7 +13,7 @@ export const StepContainer = styled.div<{ $isActive: boolean }>`
   user-select: none;
 `;
 
-export const StepBadge = styled.div`
+export const StepBadge = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,15 +35,19 @@ export const StepBadgeComplete = styled(StepBadge)`
   color: white;
 `;
 
-export const StepBadgeActive = styled(StepBadge)`
+export const StepBadgeActive = styled(StepBadge).attrs({
+  animate: { scale: 1.2 },
+  transition: { type: 'spring', stiffness: 300, damping: 20 },
+})`
   background-color: var(--cogs-midblue-3);
   color: white;
 `;
 
-export const StepContent = styled.div`
+export const StepContent = styled(motion.div).attrs((props: any) => ({
+  animate: { height: props.$step ? '45px' : '25px' },
+}))<{ $step: boolean }>`
   display: flex;
   flex-direction: column;
-  height: 100%;
 `;
 export const Title = styled(Body).attrs({ level: 1 })<{ $isActive: boolean }>`
   font-weight: ${(props) => (props.$isActive ? '600' : '400')};

@@ -1,10 +1,8 @@
 import { useSelector } from '@xstate/react';
 import { classifierConfig } from 'configs';
 import { useClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
-import {
-  ClassifierState,
-  StepProps,
-} from 'pages/Classifier/components/step/types';
+import { StepProps } from 'pages/Classifier/components/step/types';
+import { ClassifierState } from 'machines/classifier/types';
 
 export const useClassifierStatus = (): { [x: string]: 'done' | 'failed' } => {
   const { classifierMachine } = useClassifierContext();

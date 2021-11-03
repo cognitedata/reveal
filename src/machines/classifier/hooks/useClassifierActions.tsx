@@ -1,4 +1,4 @@
-import { ClassifierState } from 'pages/Classifier/components/step/types';
+import { ClassifierState } from 'machines/classifier/types';
 import { useClassifierContext } from '../contexts/ClassifierContext';
 
 export const useClassifierActions = () => {

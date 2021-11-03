@@ -1,0 +1,80 @@
+import { Table } from '@cognite/cogs.js';
+import { Document } from '@cognite/sdk-playground';
+import React from 'react';
+import { DocumentPreview } from '../layover/DocumentPreview';
+import { curateColumns } from './curate';
+import { DocumentsFilters } from './Filters';
+
+type DocumentPreview = {
+  show: boolean;
+  documentId?: number;
+};
+
+interface Props {
+  data: Document[];
+  showFilters?: boolean;
+  selectedIds?: { [x: number]: boolean };
+  onSelectedIds?: (ids: { [x: number]: boolean }) => void;
+}
+export const DocumentsTable: React.FC<Props> = React.memo(
+  ({ data, showFilters, selectedIds, onSelectedIds }) => {
+    const [documentPreview, setDocumentPreview] =
+      React.useState<DocumentPreview>({
+        show: false,
+        documentId: undefined,
+      });
+
+    const toggleDocumentPreview = React.useCallback(
+      (documentId?: number) =>
+        setDocumentPreview((prevState) => ({
+          show: !prevState.show,
+          documentId,
+        })),
+      []
+    );
+
+    const handleSelectionChange = (event: Document[]) => {
+      const ids = event.reduce((accumulator, item) => {
+        return { ...accumulator, [item.id]: true };
+      }, {});
+
+      if (onSelectedIds) {
+        onSelectedIds(ids);
+      }
+    };
+
+    const columns = React.useMemo(
+      () => curateColumns({ toggleDocumentPreview }),
+      [toggleDocumentPreview]
+    );
+
+    const renderFilters = React.useMemo(() => {
+      if (showFilters) {
+        return <DocumentsFilters />;
+      }
+
+      return null;
+    }, [showFilters]);
+
+    return (
+      <>
+        {renderFilters}
+
+        <Table<Document>
+          onSelectionChange={handleSelectionChange}
+          defaultSelectedIds={selectedIds}
+          pagination={false}
+          dataSource={data}
+          columns={columns}
+          pageSize={0}
+        />
+
+        <DocumentPreview
+          documentId={documentPreview.documentId}
+          visible={documentPreview.show}
+          toggleVisibility={toggleDocumentPreview}
+        />
+      </>
+    );
+  }
+);

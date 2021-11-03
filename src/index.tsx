@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 // import config from 'utils/config';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';
-import { inspect } from '@xstate/inspect';
+// import { inspect } from '@xstate/inspect';
 import App from './App';
 
 // if (process.env.REACT_APP_SENTRY_DSN) {
@@ -19,11 +19,11 @@ import App from './App';
 //   });
 // }
 
-if (process.env.NODE_ENV === 'development') {
-  inspect({
-    iframe: false,
-  });
-}
+// if (process.env.NODE_ENV === 'development') {
+//   inspect({
+//     iframe: false,
+//   });
+// }
 
 const lifecycles = singleSpaReact({
   React,

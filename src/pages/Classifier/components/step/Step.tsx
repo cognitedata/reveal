@@ -5,6 +5,7 @@ import {
   useClassifierDescription,
   useClassifierStatus,
 } from 'machines/classifier/selectors/useClassifierSelectors';
+import { ClassifierState } from 'machines/classifier/types';
 import React, { FC } from 'react';
 import {
   StepContainer,
@@ -14,16 +15,15 @@ import {
   StepBadgeCount,
   Title,
 } from './elements';
-import { ClassifierState } from './types';
 
 export const Step: FC<{
   step: Exclude<ClassifierState, 'complete'>;
   index: number;
 }> = ({ step, index }) => {
   const status = useClassifierStatus();
-  const { subtitle, title } = useClassifierConfig(step);
+  const { title } = useClassifierConfig(step);
   const isCurrentStep = useClassifierCurrentStep(step);
-  const description = useClassifierDescription();
+  const description = useClassifierDescription()[step];
 
   const renderStepBadge = () => {
     if (isCurrentStep) {
@@ -45,19 +45,12 @@ export const Step: FC<{
     return <StepBadgeCount>{index + 1}</StepBadgeCount>;
   };
 
-  const renderSubtitle = () => {
-    if (!subtitle) {
-      return null;
-    }
-    return <Body level={2}>{description[step]}</Body>;
-  };
-
   return (
     <StepContainer $isActive={isCurrentStep}>
       {renderStepBadge()}
-      <StepContent>
+      <StepContent $step={!!description}>
         <Title $isActive={isCurrentStep}>{title}</Title>
-        {renderSubtitle()}
+        <Body level={2}>{description}</Body>
       </StepContent>
     </StepContainer>
   );
