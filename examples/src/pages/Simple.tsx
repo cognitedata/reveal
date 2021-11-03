@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import React, { useEffect, useRef, useState } from 'react';
@@ -27,13 +27,15 @@ export function Simple() {
       if (!canvas.current) {
         return;
       }
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
       const client = new CogniteClient({ appId: 'reveal.example.simple' });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-      await client.authenticate();
+
+      if (project && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,
