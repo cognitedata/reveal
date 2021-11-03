@@ -9,14 +9,20 @@ import { createCadModelMetadata, generateSectorTree } from '../../../../test-uti
 import { NodesLocalClient } from '@reveal/nodes-api';
 
 import { IndexSet } from '../../../../packages/utilities';
-import { TreeIndexNodeCollection } from '../../../../packages/cad-styling';
-import nock from 'nock';
+import { TreeIndexNodeCollection, NodeAppearance } from '../../../../packages/cad-styling';
 import { TimelineTool } from './TimelineTool';
 import TWEEN from '@tweenjs/tween.js';
 
 describe('TimelineTool', () => {
   let client: CogniteClient;
   let model: Cognite3DModel;
+  let timelineTool: TimelineTool;
+  let kf1Collection: TreeIndexNodeCollection;
+  let kf2Collection: TreeIndexNodeCollection;
+  let kf3Collection: TreeIndexNodeCollection;
+  let kf1Appearance: NodeAppearance;
+  let kf2Appearance: NodeAppearance;
+  let kf3Appearance: NodeAppearance;
 
   beforeEach(() => {
     client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
@@ -31,48 +37,34 @@ describe('TimelineTool', () => {
     const apiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, apiClient);
+
+    timelineTool = new TimelineTool(model);
+
+    kf1Collection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
+    kf1Appearance = { renderGhosted: false };
+    kf2Collection = new TreeIndexNodeCollection(new IndexSet([4, 5, 6]));
+    kf2Appearance = { renderGhosted: true };
+    kf3Collection = new TreeIndexNodeCollection(new IndexSet([7, 8, 9]));
+    kf3Appearance = { renderGhosted: false };
+
+    const kf1 = timelineTool.createKeyframe(new Date('2021-10-25'));
+    const kf2 = timelineTool.createKeyframe(new Date('2021-10-26'));
+    const kf3 = timelineTool.createKeyframe(new Date('2021-10-27'));
+
+    kf1.assignStyledNodeCollection(kf1Collection, kf1Appearance);
+    kf2.assignStyledNodeCollection(kf2Collection, kf2Appearance);
+    kf3.assignStyledNodeCollection(kf3Collection, kf3Appearance);
+
     jest.useFakeTimers();
   });
 
   afterEach(() => {
     jest.useRealTimers();
-    nock.cleanAll();
   });
 
-  test('Test keyframe creation', () => {
-    const timelineTool = new TimelineTool(model);
-    expect(timelineTool).toBeTruthy();
-
-    const kf1 = timelineTool.createKeyframe(new Date('2021-10-25'));
-    const kf2 = timelineTool.createKeyframe(new Date('2021-10-26'));
-    const kf3 = timelineTool.createKeyframe(new Date('2021-10-27'));
-    const kf4 = timelineTool.createKeyframe(new Date('2021-10-28'));
-
-    expect(kf1).not.toBeEmpty();
-    expect(kf2).not.toBeEmpty();
-    expect(kf3).not.toBeEmpty();
-    expect(kf4).not.toBeEmpty();
-  });
-
-  test('Test assign Node & style to the keyframe & Play the Timeline', () => {
-    const timelineTool = new TimelineTool(model);
+  test('Test assign Node & style to the keyframe & play() the Timeline', () => {
     const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
     const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
-
-    const kf1 = timelineTool.createKeyframe(new Date('2021-10-25'));
-    const kf2 = timelineTool.createKeyframe(new Date('2021-10-26'));
-    const kf3 = timelineTool.createKeyframe(new Date('2021-10-27'));
-
-    const kf1Collection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
-    const kf1Appearance = { renderGhosted: false };
-    const kf2Collection = new TreeIndexNodeCollection(new IndexSet([4, 5, 6]));
-    const kf2Appearance = { renderGhosted: true };
-    const kf3Collection = new TreeIndexNodeCollection(new IndexSet([7, 8, 9]));
-    const kf3Appearance = { renderGhosted: false };
-
-    kf1.assignStyledNodeCollection(kf1Collection, kf1Appearance);
-    kf2.assignStyledNodeCollection(kf2Collection, kf2Appearance);
-    kf3.assignStyledNodeCollection(kf3Collection, kf3Appearance);
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
     const current = TWEEN.now();
@@ -87,33 +79,13 @@ describe('TimelineTool', () => {
     expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf3Collection, kf3Appearance);
     TWEEN.update();
 
-    expect(unassignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection);
+    expect(unassignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection);
   });
 
-  test('Test Stop the Timeline', () => {
-    const timelineTool = new TimelineTool(model);
+  test('Test stop() the Timeline', () => {
     const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
 
-    const kf1 = timelineTool.createKeyframe(new Date('2021-10-25'));
-    const kf2 = timelineTool.createKeyframe(new Date('2021-10-26'));
-    const kf3 = timelineTool.createKeyframe(new Date('2021-10-27'));
-    const kf4 = timelineTool.createKeyframe(new Date('2021-10-28'));
-
-    const kf1Collection = new TreeIndexNodeCollection(new IndexSet([1, 2, 3]));
-    const kf1Appearance = { renderGhosted: false };
-    const kf2Collection = new TreeIndexNodeCollection(new IndexSet([4, 5, 6]));
-    const kf2Appearance = { renderGhosted: true };
-    const kf3Collection = new TreeIndexNodeCollection(new IndexSet([7, 8, 9]));
-    const kf3Appearance = { renderGhosted: false };
-    const kf4Collection = new TreeIndexNodeCollection(new IndexSet([10, 11, 12]));
-    const kf4Appearance = { renderGhosted: true };
-
-    kf1.assignStyledNodeCollection(kf1Collection, kf1Appearance);
-    kf2.assignStyledNodeCollection(kf2Collection, kf2Appearance);
-    kf3.assignStyledNodeCollection(kf3Collection, kf3Appearance);
-    kf4.assignStyledNodeCollection(kf4Collection, kf4Appearance);
-
-    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-28'), 40000);
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
     const current = TWEEN.now();
     TWEEN.update(current + 10000);
 
@@ -123,11 +95,24 @@ describe('TimelineTool', () => {
     expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection, kf2Appearance);
     TWEEN.update(current + 30000);
 
-    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf3Collection, kf3Appearance);
-    TWEEN.update(current + 40000);
-
-    timelineTool.stopPlayback();
+    timelineTool.stop();
 
     expect(TWEEN.update()).toBeFalse();
+  });
+
+  test('Test pause() & resume() Timeline', () => {
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
+    const current = TWEEN.now();
+    TWEEN.update(current + 10000);
+
+    expect(TWEEN.update()).toBeTrue();
+
+    timelineTool.pause();
+    expect(TWEEN.update()).toBeFalse();
+    TWEEN.update(current + 20000);
+
+    timelineTool.resume();
+    expect(TWEEN.update()).toBeTrue();
+    TWEEN.update(current + 30000);
   });
 });

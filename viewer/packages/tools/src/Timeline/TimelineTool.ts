@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
-import { TimelineDateUpdateDelegate } from './Types';
+import { TimelineDateUpdateDelegate } from './types';
 import { EventTrigger, assertNever } from '@reveal/core/utilities';
 
 /**
@@ -112,7 +112,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param totalDurationInMilliSeconds - Number of milliseconds for all Keyframe within startDate & endDate to be rendered
    */
   public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
-    this.stopPlayback();
+    this.stop();
 
     const playState = { dateInMs: startDate.getTime() };
     const to = { dateInMs: endDate.getTime() };
@@ -152,7 +152,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   /**
    * Stops any ongoing playback
    */
-  public stopPlayback() {
+  public stop() {
     if (this._playback !== undefined) {
       this._playback.stop();
       this._playback = undefined;
@@ -160,11 +160,20 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Restores the Style of the model to default style
+   * Pause any ongoing playback
    */
-  public resetStyles() {
-    for (const keyframe of this._keyframes) {
-      keyframe.deactivate();
+  public pause() {
+    if (this._playback !== undefined && this._playback.isPlaying) {
+      this._playback.pause();
+    }
+  }
+
+  /**
+   * Resume any paused playback
+   */
+  public resume() {
+    if (this._playback !== undefined && this._playback.isPaused) {
+      this._playback.resume();
     }
   }
 
@@ -173,12 +182,11 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @returns All Keyframes in Timeline
    */
   public getAllKeyframes(): Keyframe[] {
-    return this._keyframes;
+    return this._keyframes.slice();
   }
 
   public dispose(): void {
     super.dispose();
-    this.resetStyles();
   }
 
   /**
