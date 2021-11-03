@@ -18,7 +18,7 @@ import {
   createDefaultRenderOptions,
 } from '../utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
@@ -119,7 +119,7 @@ export function SectorWithPointcloud() {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
@@ -132,9 +132,8 @@ export function SectorWithPointcloud() {
       const client = new CogniteClient({
         appId: 'reveal.example.hybrid-cad-pointcloud',
       });
-      if (modelRevision || pointCloudModelRevision) {
-        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-        await client.authenticate()
+      if ((modelRevision || pointCloudModelRevision) && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
       const scene = new THREE.Scene();
