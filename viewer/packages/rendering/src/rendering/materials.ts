@@ -84,8 +84,7 @@ export function createMaterials(
     clippingPlanes,
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
-    side: THREE.DoubleSide,
-    transparent
+    side: THREE.DoubleSide
   });
 
   const generalRingMaterial = new THREE.ShaderMaterial({
