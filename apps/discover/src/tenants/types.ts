@@ -301,6 +301,11 @@ export interface CompanyInfoConfig {
   logo?: string; // The logo needs to be uploaded in the images/logo directory.
 }
 
+/**
+ * The key value needs to be the layer ID to enable it for that layer.
+ * The labelAccessor is also needed because that will be used as the Label of that filter
+ * Example: { discoveries: { labelAccessor: "Discovery" }}
+ * */
 export interface MapLayerFilters {
   [key: string]: {
     labelAccessor: string;
