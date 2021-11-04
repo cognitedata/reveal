@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react';
-import sdk from 'utils/sdkSingleton';
-import Table from 'antd/lib/table';
-import Spin from 'antd/lib/spin';
-import Alert from 'antd/lib/alert';
-import { Button } from '@cognite/cogs.js';
-import Popconfirm from 'antd/lib/popconfirm';
-import InputNumber from 'antd/lib/input-number';
-import message from 'antd/lib/message';
-import Typography from 'antd/lib/typography';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
+import {
+  notification,
+  Table,
+  Alert,
+  Popconfirm,
+  InputNumber,
+  Typography,
+  Tooltip,
+} from 'antd';
+
+import { Button, Icon } from '@cognite/cogs.js';
+
 import AccessButton from 'components/AccessButton';
-import moment from 'moment';
+
 import styled from 'styled-components';
 import isString from 'lodash/isString';
 import {
@@ -19,21 +23,16 @@ import {
   toLocalTime,
   getContainer,
 } from 'utils/utils';
-import Tooltip from 'antd/lib/tooltip';
 import { CSVLink } from 'react-csv';
-import { dateSorter } from 'utils/typedUtils';
-import { useRouteMatch } from 'react-router-dom';
-import handleError from 'utils/handleError';
-import { RawExplorerContext } from 'contexts';
+import { useHistory, useParams } from 'react-router-dom';
+
+import { useDeleteTable, useTableRows } from 'hooks/sdk-queries';
+import { RawDBRow } from '@cognite/sdk';
+import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { createLink } from '@cognite/cdf-utilities';
 import UploadCSV from '../UploadCSV';
 
 const { Text } = Typography;
-interface TableContentProps {
-  deleteTable(databaseName?: string, tableName?: string): void;
-  isFetching: boolean;
-  setIsFetching(value: boolean): void;
-  hasWriteAccess: boolean;
-}
 
 const showTotalItems = (total: number) => {
   return `Total ${total} rows`;
@@ -44,43 +43,97 @@ const CardHeading = styled.div`
   padding-left: 10px;
 `;
 
-const TableTimeStamp = styled.span`
-  font-size: 14px;
-  text-align: right;
-  float: right;
-  margin-right: 5px;
-  font-weight: initial;
-`;
+const TableContent = () => {
+  const history = useHistory();
+  const { database, table } = useParams<{
+    project: string;
+    table?: string;
+    database?: string;
+  }>();
 
-const TableContent = ({
-  deleteTable,
-  isFetching,
-  setIsFetching,
-  hasWriteAccess,
-}: TableContentProps) => {
-  const match = useRouteMatch<{
-    dbName?: string;
-    tableName?: string;
-  }>('/:project/raw-explorer/:dbName/:tableName');
-  const dbName = match?.params.dbName;
-  const tableName = match?.params.tableName;
+  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { mutate: deleteTable } = useDeleteTable();
+
+  const [fetchLimit, setFetchLimit] = useState(25);
+  const enabled = !!database && !!table;
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetched,
+    isFetching,
+    isError: rowError,
+    refetch,
+  } = useTableRows(
+    {
+      database: database!,
+      table: table!,
+      pageSize: 100,
+    },
+    { enabled }
+  );
+
+  const done: boolean =
+    !!data &&
+    data.pages.reduce((accl, p) => accl + p.items.length, 0) > fetchLimit;
+
+  const rows = useMemo(() => {
+    if (data) {
+      return data.pages
+        .reduce((accl, page) => [...accl, ...page.items], [] as RawDBRow[])
+        .slice(0, fetchLimit);
+    }
+    return [];
+  }, [data, fetchLimit]);
+
+  const flatRows = useMemo(
+    () =>
+      rows.map((row) => ({
+        ...row,
+        ...row.columns,
+      })),
+    [rows]
+  );
+
+  useEffect(() => {
+    if (
+      !done &&
+      !isFetching &&
+      isFetched &&
+      enabled &&
+      !rowError &&
+      hasNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [
+    done,
+    fetchNextPage,
+    isFetching,
+    isFetched,
+    enabled,
+    rowError,
+    hasNextPage,
+  ]);
 
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
   const [limitExceeded, setLimitHasExceeded] = useState<boolean>(false);
 
-  const {
-    fetchLimit,
-    setFetchLimit,
-    isFetchingTableData,
-    setIsFetchingTableData,
-    tableData,
-    setTableData,
-  } = useContext(RawExplorerContext);
+  useEffect(() => {
+    if (!csvModalVisible && isFetched && enabled) {
+      refetch();
+    }
+  }, [csvModalVisible, isFetched, refetch, enabled]);
 
   const downloadData = useMemo(() => {
-    if (tableData.length)
+    if (!done) {
+      return [];
+    }
+    if (rows.length)
       return (
-        tableData.map((item) => {
+        rows.map((item) => {
           const escapedColumns: Record<string, string> = {};
           Object.keys(item.columns).forEach((key) => {
             escapedColumns[key] = escapeCSVValue(item.columns[key]);
@@ -89,29 +142,7 @@ const TableContent = ({
         }) || []
       );
     return [];
-  }, [tableData]);
-
-  const getLatestUpdateTime = () => {
-    const dataCopy = tableData.slice(0);
-    dataCopy.sort(dateSorter((x) => x.lastUpdatedTime.toLocaleTimeString()));
-
-    if (dataCopy && dataCopy[0]) {
-      return (
-        <TableTimeStamp>
-          Last update time : {toLocalDate(dataCopy[0].lastUpdatedTime)}{' '}
-          {toLocalTime(dataCopy[0].lastUpdatedTime)}
-        </TableTimeStamp>
-      );
-    }
-    if (isFetching || isFetchingTableData) {
-      return (
-        <span style={{ textAlign: 'right', float: 'right' }}>
-          <Spin />
-        </span>
-      );
-    }
-    return <TableTimeStamp>Last update time : N/A</TableTimeStamp>;
-  };
+  }, [rows, done]);
 
   const renderNestedObject = (value: object) => {
     return (
@@ -125,56 +156,7 @@ const TableContent = ({
     );
   };
 
-  const renderArray = (value: any[]): React.ReactElement => {
-    return (
-      <Tooltip
-        title={
-          <div>
-            <strong>List: </strong>
-            {value.map((a) =>
-              typeof a === 'object' ? ( // eslint-disable-line
-                chooseRenderType(a)
-              ) : (
-                <span style={{ marginLeft: '2px' }}>{a}</span>
-              )
-            )}
-          </div>
-        }
-        getPopupContainer={getContainer}
-      >
-        <p
-          style={{ maxHeight: '150px', overflow: 'hidden' }}
-          key={value.toString()}
-        >
-          <strong>List: </strong>
-          {value.map((a) =>
-            typeof a === 'object' ? ( // eslint-disable-line
-              chooseRenderType(a)
-            ) : (
-              <span style={{ marginLeft: '2px' }}>{a}</span>
-            )
-          )}
-        </p>
-      </Tooltip>
-    );
-  };
-
-  const checkIfLimitIsMax = (limit: number) => {
-    if (limit > 10000) {
-      setLimitHasExceeded(true);
-      if (!limitExceeded) {
-        message.warning(
-          'Please note that the maximum allowed fetch limit is 10,000'
-        );
-      }
-      setFetchLimit(10000);
-    } else {
-      setFetchLimit(limit);
-    }
-  };
-
-  const chooseRenderType = (value: any) => {
-    // eslint-disable-next-line
+  const chooseRenderType = useCallback((value: any) => {
     if (typeof value === 'boolean') {
       return (
         <p style={{ maxHeight: '150px', overflow: 'hidden' }}>
@@ -185,7 +167,37 @@ const TableContent = ({
     // eslint-disable-next-line
     if (typeof value === 'object') {
       if (Array.isArray(value)) {
-        return renderArray(value);
+        return (
+          <Tooltip
+            title={
+              <div>
+                <strong>List: </strong>
+                {value.map((a) =>
+                  typeof a === 'object' ? ( // eslint-disable-line
+                    chooseRenderType(a)
+                  ) : (
+                    <span style={{ marginLeft: '2px' }}>{a}</span>
+                  )
+                )}
+              </div>
+            }
+            getPopupContainer={getContainer}
+          >
+            <p
+              style={{ maxHeight: '150px', overflow: 'hidden' }}
+              key={value.toString()}
+            >
+              <strong>List: </strong>
+              {value.map((a) =>
+                typeof a === 'object' ? ( // eslint-disable-line
+                  chooseRenderType(a)
+                ) : (
+                  <span style={{ marginLeft: '2px' }}>{a}</span>
+                )
+              )}
+            </p>
+          </Tooltip>
+        );
       }
       return renderNestedObject(value);
     }
@@ -194,6 +206,21 @@ const TableContent = ({
         <p style={{ maxHeight: '150px', overflow: 'hidden' }}>{value}</p>
       </Tooltip>
     );
+  }, []);
+
+  const checkIfLimitIsMax = (limit: number) => {
+    if (limit > 10000) {
+      setLimitHasExceeded(true);
+      if (!limitExceeded) {
+        notification.warning({
+          message: 'Please note that the maximum allowed fetch limit is 10,000',
+          key: 'max-row-limit',
+        });
+      }
+      setFetchLimit(10000);
+    } else {
+      setFetchLimit(limit);
+    }
   };
 
   const getSortFunction = (itemA: any, itemB: any) => {
@@ -204,8 +231,8 @@ const TableContent = ({
       }
       return stringCompare(itemA, itemB);
     }
-    if (itemA && itemA.getMonth) {
-      return moment(itemA).isBefore(itemB);
+    if (itemA instanceof Date && itemB instanceof Date) {
+      return itemA.getTime() - itemB.getTime();
     }
     // eslint-disable-next-line
     if (typeof itemA === 'object') {
@@ -217,9 +244,19 @@ const TableContent = ({
     return Number(itemA) - Number(itemB);
   };
 
-  const getColumns = () => {
-    const columns: any[] = [];
-    columns.push(
+  const columnSet = useMemo(() => {
+    return new Set(
+      data
+        ? data.pages[0].items
+            .map((row) => Object.keys(row.columns))
+            .reduce((accumulator, value) => accumulator.concat(value), [])
+        : []
+    );
+  }, [data]);
+
+  const columns = useMemo(() => {
+    const tmpColumns: any[] = [];
+    tmpColumns.push(
       {
         title: 'Key',
         dataIndex: 'key',
@@ -246,8 +283,8 @@ const TableContent = ({
         key: 'lastUpdatedTime',
         width: 250,
         columnWidth: 250,
-        sorter: (a: any, b: any) =>
-          moment(a.lastUpdatedTime).isBefore(b.lastUpdatedTime),
+        sorter: (a: RawDBRow, b: RawDBRow) =>
+          a.lastUpdatedTime.getTime() - b.lastUpdatedTime.getTime(),
         render: (text: any) => (
           <p>
             {toLocalDate(text)} <br /> {toLocalTime(text)}
@@ -256,17 +293,8 @@ const TableContent = ({
       }
     );
 
-    const rows = tableData.slice(
-      0,
-      tableData.length < 100 ? tableData.length : 100
-    );
-    const columnsSet = new Set(
-      rows
-        .map((row) => Object.keys(row.columns))
-        .reduce((accumulator, value) => accumulator.concat(value), [])
-    );
-    columnsSet.forEach((column) => {
-      columns.push({
+    columnSet.forEach((column) => {
+      tmpColumns.push({
         title: (
           <div
             style={{
@@ -294,44 +322,16 @@ const TableContent = ({
         sortDirections: ['descend', 'ascend'],
       });
     });
-    return columns;
-  };
+    return tmpColumns;
+  }, [chooseRenderType, columnSet]);
 
-  const getData = () => {
-    const data: any[] = [];
-    tableData.forEach((table) => {
-      data.push({
-        ...table.columns,
-        key: table.key,
-        lastUpdatedTime: table.lastUpdatedTime,
-      });
-    });
-    return data;
-  };
-
-  useEffect(() => {
-    const fetchTableContent = async (db: string, tb: string) => {
-      try {
-        setIsFetchingTableData(true);
-        const list = await sdk.raw
-          .listRows(unescape(db), unescape(tb))
-          .autoPagingToArray({ limit: fetchLimit });
-        setTableData(list);
-        setIsFetchingTableData(false);
-      } catch (e) {
-        handleError(e);
-        setIsFetchingTableData(false);
-      }
-    };
-
-    if (dbName && tableName) {
-      fetchTableContent(dbName, tableName);
-    }
-  }, [fetchLimit, tableName, dbName, setIsFetchingTableData, setTableData]);
+  if (rowError) {
+    return <Alert type="error" message="Table not found" />;
+  }
 
   return (
     <div>
-      {!tableName ? (
+      {!table ? (
         <CardHeading style={{ borderBottom: '0' }}>
           <Alert
             style={{ height: '35px' }}
@@ -344,9 +344,9 @@ const TableContent = ({
         <>
           <CardHeading>
             <h3>
-              Table: {unescape(tableName)}
-              <span style={{ textAlign: 'right' }}>
-                {getLatestUpdateTime()}
+              Table: {unescape(table)}
+              <span style={{ textAlign: 'right', float: 'right' }}>
+                {isFetching ? <Icon type="Loading" /> : undefined}
               </span>
             </h3>
           </CardHeading>
@@ -396,7 +396,29 @@ const TableContent = ({
             >
               <Popconfirm
                 title="Are you sure you want to delete this table? Once deleted, the table cannot be recovered."
-                onConfirm={() => deleteTable(dbName, tableName)}
+                onConfirm={() =>
+                  deleteTable(
+                    { database: database!, table: table! },
+                    {
+                      onSuccess() {
+                        notification.success({
+                          message: `Table ${table} in database ${database} deleted!`,
+                          key: 'table-created',
+                        });
+                        history.replace(
+                          createLink(`/raw-explorer/${database}`)
+                        );
+                      },
+                      onError(e) {
+                        notification.error({
+                          message: 'An error occured when deleting the table!',
+                          description: <pre>{JSON.stringify(e, null, 2)}</pre>,
+                          key: 'table-created',
+                        });
+                      },
+                    }
+                  )
+                }
                 okText="Yes"
                 cancelText="No"
                 disabled={!hasWriteAccess}
@@ -412,23 +434,21 @@ const TableContent = ({
                 </Button>
               </Popconfirm>
             </Tooltip>
-            {tableData.length > 0 && (
-              <CSVLink
-                filename={`cognite-${dbName}-${tableName}.csv`}
-                data={downloadData}
-              >
-                <Button type="primary" icon="Download">
-                  Download CSV
-                </Button>
-              </CSVLink>
-            )}
+            <CSVLink
+              filename={`cognite-${database}-${table}.csv`}
+              data={downloadData}
+            >
+              <Button type="primary" icon="Download">
+                Download CSV
+              </Button>
+            </CSVLink>
           </div>
 
           <Table
-            loading={isFetching || isFetchingTableData}
+            loading={isLoading}
             bordered
-            columns={tableData ? getColumns() : []}
-            dataSource={tableData ? getData() : []}
+            columns={columns}
+            dataSource={flatRows}
             scroll={{ x: 'max-content' }}
             pagination={{
               showSizeChanger: true,
@@ -450,15 +470,12 @@ const TableContent = ({
           />
         </>
       )}
-      {tableName && dbName && (
+      {table && database && (
         <UploadCSV
           csvModalVisible={csvModalVisible}
           setCSVModalVisible={setCSVModalVisible}
-          table={tableName}
-          database={dbName}
-          isFetching={isFetching}
-          setIsFetching={setIsFetching}
-          tableData={tableData}
+          table={table}
+          database={database}
         />
       )}
     </div>

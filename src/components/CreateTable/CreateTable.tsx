@@ -1,29 +1,106 @@
-import React from 'react';
-import Input from 'antd/lib/input';
-import Col from 'antd/lib/col';
-import Row from 'antd/lib/row';
+import React, { useEffect, useState } from 'react';
 
-interface CreateProps {
-  name: string;
-  setName(value: string): void;
-  createTable(): void;
-}
-const CreateTable = (props: CreateProps) => {
+import { notification, Col, Input, Row, Modal, Alert } from 'antd';
+import { Button, Icon } from '@cognite/cogs.js';
+
+import { getContainer } from 'utils/utils';
+import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { trackEvent } from '@cognite/cdf-route-tracker';
+import { useHistory } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
+import { useCreateTable } from 'hooks/sdk-queries';
+
+export default function CreateTable({ database }: { database: string }) {
+  const history = useHistory();
+  const [visible, setVisible] = useState(false);
+  const [name, setName] = useState('');
+
+  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const {
+    mutate,
+    isSuccess,
+    isLoading,
+    isError,
+    error,
+    reset,
+  } = useCreateTable();
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset();
+      notification.success({
+        message: `Table was created!`,
+        key: 'create-table',
+      });
+      history.push(createLink(`/raw-explorer/${database}/${name}`));
+      setName('');
+      trackEvent('RAW.Explorer.Table.Table.Create');
+      setVisible(false);
+    }
+  }, [name, isSuccess, reset, history, database]);
+
   return (
-    <Row>
-      <Col span={6}> Unique name </Col>
-      <Col span={18}>
-        <Input
-          aria-label="Table name"
-          autoFocus
-          value={props.name}
-          onChange={(e) => props.setName(e.currentTarget.value)}
-          placeholder="Please enter table name"
-          onPressEnter={() => props.createTable()}
-        />
-      </Col>
-    </Row>
-  );
-};
+    <>
+      {visible && (
+        <Modal
+          title={
+            isLoading ? (
+              <>
+                Creating table <Icon type="Loading" />
+              </>
+            ) : (
+              'Create table'
+            )
+          }
+          visible
+          onCancel={() => setVisible(false)}
+          okText="Create"
+          onOk={() => mutate({ database, table: name })}
+          okButtonProps={{ disabled: isLoading }}
+          cancelButtonProps={{ disabled: isLoading }}
+          getContainer={getContainer}
+        >
+          <Row>
+            <Col span={6}> Unique name</Col>
+            <Col span={16}>
+              <div>
+                <Input
+                  aria-label="Table name"
+                  value={name}
+                  autoFocus
+                  onChange={(e) => setName(e.currentTarget.value)}
+                  placeholder="Please enter table name"
+                  onPressEnter={() => mutate({ database, table: name })}
+                />
+              </div>
+            </Col>
+          </Row>
 
-export default CreateTable;
+          {isError && (
+            <>
+              <Alert
+                type="error"
+                message={
+                  <>
+                    An error ocurred:{' '}
+                    <pre>{JSON.stringify((error as any)?.errors, null, 2)}</pre>
+                  </>
+                }
+              />
+            </>
+          )}
+        </Modal>
+      )}
+
+      <Button
+        style={{ width: '100%', marginBottom: '5px' }}
+        icon="PlusCompact"
+        type="primary"
+        onClick={() => setVisible(true)}
+        disabled={!hasWriteAccess}
+      >
+        Create Table
+      </Button>
+    </>
+  );
+}

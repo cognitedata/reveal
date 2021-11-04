@@ -1,6 +1,6 @@
 {
   "name": "@cognite/cdf-raw-explorer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "BROWSER=none WDS_SOCKET_PORT=3018 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=3018 rescripts start",
@@ -8,10 +8,8 @@
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-raw-explorer --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
     "test": "rescripts test --passWithNoTests",
-    "lint": "concurrently \"yarn prettier\" \"yarn eslint\"",
-    "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
+    "lint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
@@ -63,7 +61,7 @@
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.176",
     "@types/node": "^14.14.20",
-    "@types/papaparse": "^5.2.6",
+    "@types/papaparse": "^5.3.1",
     "@types/react": "^16.9.53",
     "@types/react-csv": "^1.1.2",
     "@types/react-dom": "^16.9.8",
