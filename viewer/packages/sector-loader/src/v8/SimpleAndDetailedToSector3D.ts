@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { SectorQuads } from '@cognite/reveal-parser-worker';
 
-import { InstancedMeshFile, SectorGeometry, V8SectorMetadata, BaseSectorMetadata } from '@reveal/cad-parsers';
+import { InstancedMeshFile, SectorGeometry, V8SectorMetadata } from '@reveal/cad-parsers';
 import { AutoDisposeGroup } from '@reveal/utilities';
 import { CadMaterialManager } from '@reveal/rendering';
 
@@ -22,7 +22,7 @@ export class SimpleAndDetailedToSector3D {
 
   transformSimpleSector(
     modelIdentifier: string,
-    sector: BaseSectorMetadata & V8SectorMetadata,
+    sector: V8SectorMetadata,
     geometry: SectorQuads,
     geometryClipBox: THREE.Box3 | null
   ): Promise<{ sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }> {
@@ -33,7 +33,7 @@ export class SimpleAndDetailedToSector3D {
 
   transformDetailedSector(
     modelIdentifier: string,
-    sector: BaseSectorMetadata & V8SectorMetadata,
+    sector: V8SectorMetadata,
     geometry: SectorGeometry,
     geometryClipBox: THREE.Box3 | null
   ): Promise<{ sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] }> {

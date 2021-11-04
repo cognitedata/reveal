@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { BaseSectorMetadata, ConsumedSector, GltfSectorMetadata, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, V9SectorMetadata, WantedSector } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
@@ -22,7 +22,7 @@ export class GltfSectorRepository implements SectorRepository {
   }
 
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    const metadata = sector.metadata as BaseSectorMetadata & GltfSectorMetadata;
+    const metadata = sector.metadata as V9SectorMetadata;
 
     if (!metadata.sectorFileName) {
       return Promise.resolve({

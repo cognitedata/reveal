@@ -9,7 +9,7 @@ import { traverseDepthFirst } from '@reveal/utilities';
 
 import { Mutable } from '../../../../../test-utilities/src/reflection';
 import { BaseCadSectorMetadata, CadSceneMetadata, V8CadSectorMetadata } from './types';
-import { BaseSectorMetadata, V8SectorMetadata } from '../types';
+import { I3dF3dSectorMetadata } from '../types';
 
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {
@@ -191,7 +191,7 @@ describe('parseCadMetadataV8', () => {
     // Assert
     expect(result.getAllSectors().length).toBe(1);
 
-    const resultRoot = result.root as BaseSectorMetadata & V8SectorMetadata;
+    const resultRoot = result.root as V8SectorMetadata;
 
     expect(resultRoot.facesFile).toBeTruthy();
     expect(resultRoot.facesFile.fileName).toBeNull();
@@ -227,8 +227,8 @@ describe('parseCadMetadataV8', () => {
 
     // Assert
     {
-      const rootSector = result.getSectorById(0)! as BaseSectorMetadata & V8SectorMetadata;
-      const sector = result.getSectorById(2) as BaseSectorMetadata & V8SectorMetadata;
+      const rootSector = result.getSectorById(0)! as V8SectorMetadata;
+      const sector = result.getSectorById(2) as V8SectorMetadata;
       expect(sector).toBeTruthy();
       expect(sector!.facesFile).toBeDefined();
       expect(sector!.facesFile.coverageFactors).toEqual(rootSector.facesFile.recursiveCoverageFactors);
@@ -236,8 +236,8 @@ describe('parseCadMetadataV8', () => {
       expect(sector!.facesFile.fileName).toBeNull();
     }
     {
-      const sector1 = result.getSectorById(1)! as BaseSectorMetadata & V8SectorMetadata;
-      const sector = result.getSectorById(3) as BaseSectorMetadata & V8SectorMetadata;
+      const sector1 = result.getSectorById(1)! as V8SectorMetadata;
+      const sector = result.getSectorById(3) as V8SectorMetadata;
       expect(sector).toBeTruthy();
       expect(sector!.facesFile).toBeDefined();
       expect(sector!.facesFile.coverageFactors).toEqual(sector1.facesFile.recursiveCoverageFactors);
@@ -268,7 +268,7 @@ describe('parseCadMetadataV8', () => {
     // Assert
     expect(result.getAllSectors()).toBeArrayOfSize(4);
     for (let sector of result.getAllSectors()) {
-      sector = sector as BaseSectorMetadata & V8SectorMetadata;
+      sector = sector as V8SectorMetadata;
       expect(sector.facesFile).toBeTruthy();
       expect(sector.facesFile.fileName).toBeNull();
       expect(sector.facesFile.coverageFactors).not.toBeNull();

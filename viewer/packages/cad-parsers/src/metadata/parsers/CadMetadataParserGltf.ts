@@ -4,14 +4,14 @@
 
 import * as THREE from 'three';
 
-import { BaseSectorMetadata, GltfSectorMetadata } from '../types';
+import { V9SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
 import { BaseCadSectorMetadata, CadSceneMetadata, GltfCadSectorMetadata } from './types';
 
 export function parseCadMetadataGltf(metadata: CadSceneMetadata): SectorScene {
   // Create list of sectors and a map of child -> parent
-  const sectorsById = new Map<number, BaseSectorMetadata & GltfSectorMetadata>();
+  const sectorsById = new Map<number, V9SectorMetadata>();
   const parentIds: number[] = [];
   metadata.sectors.forEach(s => {
     const sector = createSectorMetadata(s as BaseCadSectorMetadata & GltfCadSectorMetadata);
@@ -39,9 +39,7 @@ export function parseCadMetadataGltf(metadata: CadSceneMetadata): SectorScene {
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-function createSectorMetadata(
-  metadata: BaseCadSectorMetadata & GltfCadSectorMetadata
-): BaseSectorMetadata & GltfSectorMetadata {
+function createSectorMetadata(metadata: BaseCadSectorMetadata & GltfCadSectorMetadata): V9SectorMetadata {
   const bb = metadata.boundingBox;
   const min_x = bb.min.x;
   const min_y = bb.min.y;

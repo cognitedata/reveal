@@ -15,8 +15,8 @@ export {
   SectorMetadataIndexFileSection,
   SectorMetadataFacesFileSection,
   SectorMetadata,
-  GltfSectorMetadata,
   V8SectorMetadata,
+  V9SectorMetadata,
   BaseSectorMetadata
 } from './src/metadata/types';
 

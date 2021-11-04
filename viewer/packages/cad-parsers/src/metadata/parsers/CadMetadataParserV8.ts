@@ -4,14 +4,14 @@
 
 import * as THREE from 'three';
 
-import { BaseSectorMetadata, SectorMetadataFacesFileSection, V8SectorMetadata } from '../types';
+import { SectorMetadataFacesFileSection, V8SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
 import { BaseCadSectorMetadata, CadSceneMetadata, V8CadSectorMetadata } from './types';
 
 export function parseCadMetadataV8(metadata: CadSceneMetadata): SectorScene {
   // Create list of sectors and a map of child -> parent
-  const sectorsById = new Map<number, BaseSectorMetadata & V8SectorMetadata>();
+  const sectorsById = new Map<number, V8SectorMetadata>();
   const parentIds: number[] = [];
   metadata.sectors.forEach(s => {
     const sector = createSectorMetadata(s as BaseCadSectorMetadata & V8CadSectorMetadata);
@@ -41,9 +41,7 @@ export function parseCadMetadataV8(metadata: CadSceneMetadata): SectorScene {
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-function createSectorMetadata(
-  metadata: BaseCadSectorMetadata & V8CadSectorMetadata
-): BaseSectorMetadata & V8SectorMetadata {
+function createSectorMetadata(metadata: BaseCadSectorMetadata & V8CadSectorMetadata): V8SectorMetadata {
   const facesFile = determineFacesFile(metadata);
 
   const bb = metadata.boundingBox;
@@ -96,12 +94,12 @@ function determineFacesFile(metadata: BaseCadSectorMetadata & V8CadSectorMetadat
   return facesFile;
 }
 
-function hasDummyFacesFileSection(metadata: BaseSectorMetadata & V8SectorMetadata): boolean {
+function hasDummyFacesFileSection(metadata: V8SectorMetadata): boolean {
   return metadata.facesFile.coverageFactors.xy === -1.0;
 }
 
 function populateCoverageFactorsFromAnchestors(
-  sector: BaseSectorMetadata & V8SectorMetadata,
+  sector: V8SectorMetadata,
   validFacesFileSection: SectorMetadataFacesFileSection
 ) {
   if (hasDummyFacesFileSection(sector)) {
@@ -112,11 +110,11 @@ function populateCoverageFactorsFromAnchestors(
     sector.facesFile.recursiveCoverageFactors.yz = validFacesFileSection.recursiveCoverageFactors.yz;
     sector.facesFile.recursiveCoverageFactors.xz = validFacesFileSection.recursiveCoverageFactors.xz;
     sector.children.forEach(child =>
-      populateCoverageFactorsFromAnchestors(child as BaseSectorMetadata & V8SectorMetadata, validFacesFileSection)
+      populateCoverageFactorsFromAnchestors(child as V8SectorMetadata, validFacesFileSection)
     );
   } else {
     sector.children.forEach(child =>
-      populateCoverageFactorsFromAnchestors(child as BaseSectorMetadata & V8SectorMetadata, sector.facesFile)
+      populateCoverageFactorsFromAnchestors(child as V8SectorMetadata, sector.facesFile)
     );
   }
 }

@@ -5,14 +5,14 @@
 import * as THREE from 'three';
 
 import { WebGLRendererStateHelper } from '@reveal/utilities';
-import { CadModelMetadata, WantedSector, V8SectorMetadata, BaseSectorMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-parsers';
 import { coverageShaders } from '@reveal/rendering';
 
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
 
 type SectorContainer = {
   model: CadModelMetadata;
-  sectors: (BaseSectorMetadata & V8SectorMetadata)[];
+  sectors: V8SectorMetadata[];
   // Index is sectorId, value is sectorIndex
   sectorIndexById: number[];
   sectorIdOffset: number;
@@ -206,7 +206,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
         if (container === undefined) {
           throw new Error(`Model ${toBeFiltered.modelIdentifier} is not registered`);
         }
-        const metadata = toBeFiltered.metadata as BaseSectorMetadata & V8SectorMetadata;
+        const metadata = toBeFiltered.metadata as V8SectorMetadata;
         const isCameraInsideSector = isWithinSectorBounds(container.model, metadata, camera.position);
         // Note! O(N), but N is number of input sectors (i.e. low)
         const found = ordered.some(
@@ -369,7 +369,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
   }
 
   private addModel(model: CadModelMetadata) {
-    const sectors = model.scene.getAllSectors().map(p => p as BaseSectorMetadata & V8SectorMetadata);
+    const sectors = model.scene.getAllSectors().map(p => p as V8SectorMetadata);
     const [mesh, attributesBuffer, attributesValues] = this.createSectorTreeGeometry(this.sectorIdOffset, sectors);
 
     const group = new THREE.Group();
@@ -450,7 +450,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
   private createSectorTreeGeometry(
     sectorIdOffset: number,
-    sectors: (BaseSectorMetadata & V8SectorMetadata)[]
+    sectors: V8SectorMetadata[]
   ): [THREE.Mesh, THREE.InstancedInterleavedBuffer, Float32Array] {
     const translation = new THREE.Vector3();
     const scale = new THREE.Vector3();
@@ -496,11 +496,7 @@ const isCameraInsideSectorVars = {
   sectorBounds: new THREE.Box3()
 };
 
-function isWithinSectorBounds(
-  model: CadModelMetadata,
-  metadata: BaseSectorMetadata & V8SectorMetadata,
-  point: THREE.Vector3
-) {
+function isWithinSectorBounds(model: CadModelMetadata, metadata: V8SectorMetadata, point: THREE.Vector3) {
   const { sectorBounds } = isCameraInsideSectorVars;
   sectorBounds.copy(metadata.bounds);
   sectorBounds.applyMatrix4(model.modelMatrix);

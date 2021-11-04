@@ -8,7 +8,7 @@ import { SectorQuads } from '@cognite/reveal-parser-worker';
 
 import { createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { BaseSectorMetadata, InstancedMeshFile, SectorGeometry, V8SectorMetadata } from '@reveal/cad-parsers';
+import { InstancedMeshFile, SectorGeometry, V8SectorMetadata } from '@reveal/cad-parsers';
 import { createTriangleMeshes } from '@reveal/cad-parsers/src/cad/triangleMeshes';
 import { filterInstanceMesh } from '@reveal/cad-parsers/src/cad/filterInstanceMesh';
 
@@ -34,7 +34,7 @@ export function consumeSectorSimple(
 
 export function consumeSectorDetailed(
   sector: SectorGeometry,
-  metadata: BaseSectorMetadata & V8SectorMetadata,
+  metadata: V8SectorMetadata,
   materials: Materials,
   geometryClipBox: THREE.Box3 | null
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {

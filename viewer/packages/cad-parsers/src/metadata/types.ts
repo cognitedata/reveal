@@ -42,9 +42,11 @@ export type BaseSectorMetadata = {
   readonly estimatedRenderCost: number;
 };
 
-export type SectorMetadata = BaseSectorMetadata & (V8SectorMetadata | GltfSectorMetadata);
+export type SectorMetadata = BaseSectorMetadata & (I3dF3dSectorMetadata | GltfSectorMetadata);
+export type V8SectorMetadata = BaseSectorMetadata & I3dF3dSectorMetadata;
+export type V9SectorMetadata = BaseSectorMetadata & GltfSectorMetadata;
 
-export type V8SectorMetadata = {
+export type I3dF3dSectorMetadata = {
   readonly indexFile: SectorMetadataIndexFileSection;
   readonly facesFile: SectorMetadataFacesFileSection;
 };

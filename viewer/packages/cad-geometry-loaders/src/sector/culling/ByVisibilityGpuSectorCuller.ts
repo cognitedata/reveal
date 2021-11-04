@@ -7,13 +7,7 @@
 // WebGL.
 import * as THREE from 'three';
 
-import {
-  CadModelMetadata,
-  WantedSector,
-  LevelOfDetail,
-  BaseSectorMetadata,
-  V8SectorMetadata
-} from '@reveal/cad-parsers';
+import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import { getBox3CornerPoints } from '@reveal/utilities';
 
 import {
@@ -84,10 +78,7 @@ class TakenSectorMap {
 
   initializeScene(modelMetadata: CadModelMetadata) {
     this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenSectorTree(
-        modelMetadata.scene.root as BaseSectorMetadata & V8SectorMetadata,
-        this.determineSectorCost
-      ),
+      sectorTree: new TakenSectorTree(modelMetadata.scene.root as V8SectorMetadata, this.determineSectorCost),
       modelMetadata
     });
   }
@@ -265,7 +256,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
       let intersectingSectors = model.scene
         .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse)
-        .map(p => p as BaseSectorMetadata & V8SectorMetadata);
+        .map(p => p as V8SectorMetadata);
 
       if (clippingPlanes != null && clippingPlanes.length > 0) {
         intersectingSectors = this.testForClippingOcclusion(intersectingSectors, clippingPlanes, model.modelMatrix);
@@ -276,10 +267,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   private testForClippingOcclusion(
-    intersectingSectors: (BaseSectorMetadata & V8SectorMetadata)[],
+    intersectingSectors: V8SectorMetadata[],
     clippingPlanes: THREE.Plane[],
     modelMatrix: THREE.Matrix4
-  ): (BaseSectorMetadata & V8SectorMetadata)[] {
+  ): V8SectorMetadata[] {
     const passingSectors = [];
 
     for (let i = 0; i < intersectingSectors.length; i++) {
@@ -308,7 +299,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   private markSectorsAsDetailed(
-    intersectingSectors: (BaseSectorMetadata & V8SectorMetadata)[],
+    intersectingSectors: V8SectorMetadata[],
     takenSectors: TakenSectorMap,
     model: CadModelMetadata
   ) {
@@ -322,7 +313,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 }
 
-function computeSectorCost(metadata: BaseSectorMetadata & V8SectorMetadata, lod: LevelOfDetail): SectorCost {
+function computeSectorCost(metadata: V8SectorMetadata, lod: LevelOfDetail): SectorCost {
   switch (lod) {
     case LevelOfDetail.Detailed:
       return {

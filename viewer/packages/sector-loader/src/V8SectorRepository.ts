@@ -13,8 +13,7 @@ import {
   TriangleMesh,
   InstancedMeshFile,
   InstancedMesh,
-  V8SectorMetadata,
-  BaseSectorMetadata
+  V8SectorMetadata
 } from '@reveal/cad-parsers';
 
 import { SimpleAndDetailedToSector3D } from './v8/SimpleAndDetailedToSector3D';
@@ -102,7 +101,7 @@ export class V8SectorRepository implements SectorRepository {
   }
 
   private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
-    const metadata = wantedSector.metadata as BaseSectorMetadata & V8SectorMetadata;
+    const metadata = wantedSector.metadata as V8SectorMetadata;
 
     // TODO 2021-05-05 larsmoa: Retry
     const buffer = await this._modelSectorProvider.getBinaryFile(
@@ -141,7 +140,7 @@ export class V8SectorRepository implements SectorRepository {
   }
 
   private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
-    const metadata = wantedSector.metadata as BaseSectorMetadata & V8SectorMetadata;
+    const metadata = wantedSector.metadata as V8SectorMetadata;
     const indexFile = metadata.indexFile;
 
     const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile!.fileName);

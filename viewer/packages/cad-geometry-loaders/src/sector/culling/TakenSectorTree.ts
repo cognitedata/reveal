@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { BaseSectorMetadata, SectorMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import {
   PrioritizedWantedSector,
   DetermineSectorCostDelegate,
@@ -20,7 +20,7 @@ export class TakenSectorTree {
     return this._totalCost;
   }
   private readonly sectors: {
-    sector: BaseSectorMetadata & V8SectorMetadata;
+    sector: V8SectorMetadata;
     parentIndex: number;
     priority: number;
     cost: SectorCost;
@@ -30,13 +30,13 @@ export class TakenSectorTree {
 
   private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
-  constructor(sectorRoot: BaseSectorMetadata & V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
+  constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
     this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
     traverseDepthFirst(sectorRoot as SectorMetadata, x => {
       this.sectors.length = Math.max(this.sectors.length, x.id);
       this.sectors[x.id] = {
-        sector: x as BaseSectorMetadata & V8SectorMetadata,
+        sector: x as V8SectorMetadata,
         parentIndex: -1,
         priority: -1,
         cost: { downloadSize: 0, drawCalls: 0, renderCost: 0 },
@@ -133,7 +133,7 @@ export class TakenSectorTree {
       if (this.getSectorLod(child.id) === LevelOfDetail.Discarded) {
         // Note! When fileName is null the sector is so sparse that there is
         // no geometry in the F3D - we therefore skip such sectors.
-        if ((child as BaseSectorMetadata & V8SectorMetadata).facesFile.fileName !== null) {
+        if ((child as V8SectorMetadata).facesFile.fileName !== null) {
           this.setSectorLod(child.id, LevelOfDetail.Simple);
         }
       }
