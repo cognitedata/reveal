@@ -76,7 +76,7 @@ export class SmartMergeBoxes implements BoxClusterer {
 
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
-      this.addBox(box.expandByScalar(0.3));
+      this.addBox(box);
     }
   }
 
