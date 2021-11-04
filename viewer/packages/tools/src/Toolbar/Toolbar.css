@@ -1,0 +1,41 @@
+.reveal-viewer-toolbar-container {
+	background: white;
+	color: white;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 1px 2px 1px 2px;
+}
+
+.reveal-viewer-toolbar-container--bottom {
+  left: 50%;
+  bottom: 10px;
+}
+
+.reveal-viewer-toolbar-container--top {
+  left: 50%;
+  top: 20px;
+}
+
+.reveal-viewer-toolbar-container--left {
+  left: 30px;
+  top: 50%;
+  width: 39px;
+  max-width: 100%;
+}
+
+.reveal-viewer-toolbar-container--right {
+  right: 0px;
+  top: 50%;
+  width: 39px;
+  max-width: 100%;
+}
+
+.reveal-viewer-toolbar-icon {
+  width: 35px;
+  height: 28px;
+  background: white;
+  border: 1px solid black;
+  border-color: rgba(0, 0, 0, 0.15);
+}
