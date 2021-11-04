@@ -364,9 +364,7 @@ export const LogViewer: React.FC<Props> = ({
       .filter((event) => !overlappingEvents[event.id])
       .map((event) =>
         convertObject(event)
-          .changeUnits(
-            getNdsUnitChangeAccessors(useUserPreferencesMeasurement())
-          )
+          .changeUnits(getNdsUnitChangeAccessors(userPreferredUnit))
           .toClosestInteger(ndsAccessorsToFixedDecimal)
           .get()
       )
@@ -377,7 +375,7 @@ export const LogViewer: React.FC<Props> = ({
         ],
         [Number(get(event, 'metadata.md_hole_end')), null],
       ]);
-  }, [events]);
+  }, [events, userPreferredUnit]);
 
   // This function is used to update domain values in logs data
   const updateDomainsInLogs = (stateLogsData: {
