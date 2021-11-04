@@ -15,7 +15,7 @@ import {
   OrderSectorsByVisibilityCoverage
 } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
-import { TakenSectorTree } from './TakenSectorTree';
+import { TakenV8SectorTree } from './TakenV8SectorTree';
 import {
   PrioritizedWantedSector,
   DetermineSectorCostDelegate,
@@ -59,7 +59,7 @@ function assert(condition: boolean, message: string = 'assertion hit') {
 }
 
 class TakenSectorMap {
-  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenSectorTree; modelMetadata: CadModelMetadata }> =
+  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenV8SectorTree; modelMetadata: CadModelMetadata }> =
     new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
@@ -78,7 +78,7 @@ class TakenSectorMap {
 
   initializeScene(modelMetadata: CadModelMetadata) {
     this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenSectorTree(modelMetadata.scene.root as V8SectorMetadata, this.determineSectorCost),
+      sectorTree: new TakenV8SectorTree(modelMetadata.scene.root as V8SectorMetadata, this.determineSectorCost),
       modelMetadata
     });
   }

@@ -15,7 +15,7 @@ import { traverseDepthFirst } from '@reveal/utilities';
 
 import log from '@reveal/logger';
 
-export class TakenSectorTree {
+export class TakenV8SectorTree {
   get totalCost(): SectorCost {
     return this._totalCost;
   }
