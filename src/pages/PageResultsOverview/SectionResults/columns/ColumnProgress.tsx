@@ -5,15 +5,11 @@ import StatusSquare from 'pages/PageResultsOverview/StatusSquare';
 import { useFileStatus } from 'hooks';
 
 type Props = {
-  workflowId: number;
   file: any;
 };
 
-export default function ColumnProgress({
-  workflowId,
-  file,
-}: Props): JSX.Element {
-  const { status, didFileFail } = useFileStatus(workflowId, file);
+export default function ColumnProgress({ file }: Props): JSX.Element {
+  const { status, didFileFail } = useFileStatus(file);
 
   if (status)
     return (

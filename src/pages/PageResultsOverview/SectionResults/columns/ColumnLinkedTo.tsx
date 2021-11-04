@@ -1,15 +1,12 @@
 import React from 'react';
-import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
 import { Body, Colors } from '@cognite/cogs.js';
+import { useParsingJob } from 'hooks';
 import DetectedTags from 'components/DetectedTags';
 
-type Props = { workflowId: number; fileId: number };
+type Props = { fileId: number };
 
-export default function ColumnLinkedTo({
-  workflowId,
-  fileId,
-}: Props): JSX.Element {
-  const parsingJob = useParsingJob(workflowId);
+export default function ColumnLinkedTo({ fileId }: Props): JSX.Element {
+  const parsingJob = useParsingJob();
 
   const { failedFiles } = parsingJob;
 

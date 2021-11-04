@@ -20,14 +20,14 @@ export const searchCountSelector = (type: ResourceType, filter: Filter) =>
     }
   );
 
-export const searchItemSelector = createSelector(
-  getItemListSelector,
-  getItemsSearchSelector,
-  (getItemsList: any, getItemsSearch: any) =>
-    (type: ResourceType, filter: Filter) => {
+export const searchItemSelector = (type: ResourceType, filter: Filter) =>
+  createSelector(
+    getItemListSelector,
+    getItemsSearchSelector,
+    (getItemsList: any, getItemsSearch: any) => {
       if (filter.search) {
         return getItemsSearch(type)(filter);
       }
       return getItemsList(type)(filter, false);
     }
-);
+  );

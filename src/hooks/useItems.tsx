@@ -36,8 +36,8 @@ export const useItemsAndFetching = (
     diagramsToContextualizeIds
   );
   const { items: defaultItems, fetching: fetchingDefaultItems } = useSelector(
-    searchItemSelector
-  )(type, filter);
+    searchItemSelector(type, filter)
+  );
 
   const getAndUpdateDiagrams = () => {
     const shouldDiagramsUpdate = shouldUpdate(
@@ -91,7 +91,7 @@ export const useIncludeSelectedDiagramInDiagramList = (
   diagramsToContextualizeIds?: number[]
 ) => {
   const [fixedDiagrams, setFixedDiagrams] = useState<FileInfo[]>([]);
-  const { items, fetching } = useSelector(searchItemSelector)(type, filter);
+  const { items, fetching } = useSelector(searchItemSelector(type, filter));
   const prevDiagrams = usePrevious(fixedDiagrams);
   const diagramsToContextualizeFromStore = useSelector(
     (state: RootState) =>

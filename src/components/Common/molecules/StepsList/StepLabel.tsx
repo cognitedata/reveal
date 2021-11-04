@@ -3,7 +3,7 @@ import { Label } from '@cognite/cogs.js';
 import { AppStateContext } from 'context';
 import { WorkflowStep } from 'modules/workflows';
 import { useJobStatusLabels } from 'hooks';
-import { capitalizeFirstLetter } from 'modules/contextualization/utils';
+import { capitalizeFirstLetter } from 'utils/utils';
 import { StyledAdditionalText } from './components';
 
 export const StepLabel = ({ step }: { step?: WorkflowStep }): JSX.Element => {

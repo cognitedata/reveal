@@ -1,5 +1,5 @@
 import { LabelVariants } from '@cognite/cogs.js';
-import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
+import { ApiStatusCount } from 'modules/types';
 
 export type MimeType = {
   label: 'PDF' | 'JPG' | 'PNG';

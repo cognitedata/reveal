@@ -4,6 +4,7 @@ import { RootState } from 'store';
 import { Body, Select, OptionType } from '@cognite/cogs.js';
 import { changeOptions, useSomeResources } from 'modules/workflows';
 import { getAllPossibleStringFields } from 'helpers';
+import { useJobStarted } from 'hooks';
 import { OptionWrapper } from 'pages/PageOptions/components';
 
 type ResourceType = 'assets' | 'files';
@@ -14,6 +15,7 @@ const defaultField: OptionType<React.ReactText> = {
 
 export const OptionFieldsToMatch = ({ workflowId }: { workflowId: number }) => {
   const dispatch = useDispatch();
+  const { setJobStarted } = useJobStarted();
 
   const resources = useSomeResources(workflowId);
 
@@ -59,6 +61,7 @@ export const OptionFieldsToMatch = ({ workflowId }: { workflowId: number }) => {
       [resourceType]: field?.value ?? defaultField.value,
     };
     dispatch(changeOptions({ matchFields: newFieldsToMatch }));
+    setJobStarted(false);
   };
 
   return (

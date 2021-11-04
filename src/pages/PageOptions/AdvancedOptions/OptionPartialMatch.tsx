@@ -3,17 +3,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { Body, Switch } from '@cognite/cogs.js';
 import { changeOptions } from 'modules/workflows';
+import { useJobStarted } from 'hooks';
 import { Flex } from 'components/Common';
 import { OptionWrapper } from 'pages/PageOptions/components';
 
 export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
   const dispatch = useDispatch();
+  const { setJobStarted } = useJobStarted();
   const { partialMatch } = useSelector(
     (state: RootState) => state.workflows.items[workflowId].options
   );
 
   const onPartialMatchesChange = (checked: boolean) => {
     dispatch(changeOptions({ partialMatch: checked }));
+    setJobStarted(false);
   };
 
   return (

@@ -57,6 +57,7 @@ export const useAnnotationsDetails = (fileId: number, refetch?: boolean) => {
     );
 
   const refetchAnnotations = () => {
+    if (refetchTime <= 0) return;
     client.resetQueries(['sdk-react-query-hooks', 'cdf', 'events', 'list']);
     setRefetchTime(refetchTime - 1);
   };

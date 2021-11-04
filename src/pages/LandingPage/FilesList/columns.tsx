@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FileInfo } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import { trackUsage, PNID_METRICS } from 'utils/Metrics';
-import { dateSorter, stringCompare } from 'modules/contextualization/utils';
+import { dateSorter, stringCompare } from 'utils/utils';
 import { Flex, IconButton, Popover, Dropdown } from 'components/Common';
 import { FileSmallPreview } from 'components/FileSmallPreview';
 import { FileWithAnnotations } from 'hooks';

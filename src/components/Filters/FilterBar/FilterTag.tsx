@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Tag, Body, Tooltip } from '@cognite/cogs.js';
-import { truncateString } from 'modules/contextualization/utils';
+import { truncateString } from 'utils/utils';
 
 type FilterProps = {
   id: string | number;

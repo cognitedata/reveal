@@ -1,42 +1,36 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LabelVariants } from '@cognite/cogs.js';
-import { AppStateContext } from 'context';
 import { JobStatus } from 'modules/types';
-import { useJobStatus } from 'modules/contextualization/pnidParsing';
-import { useActiveWorkflow } from 'hooks';
+import { useJobStatus } from 'hooks';
 import ResourcesLoaded from 'pages/PageResultsOverview/SectionResults/ResourcesLoaded';
 
 export const useJobStatusLabels = () => {
-  const { workflowId } = useActiveWorkflow();
-  const { jobStarted } = useContext(AppStateContext);
-  const jobStatus = useJobStatus(workflowId, jobStarted);
+  const jobStatus = useJobStatus();
+  const labels = jobStatus ? statusLabels[jobStatus] : defaultStatusLabel;
 
-  const [jobLabel, setJobLabel] = useState(statusLabels[jobStatus].jobLabel);
+  const [jobLabel, setJobLabel] = useState(labels.jobLabel);
   const [labelVariant, setLabelVariant] = useState<LabelVariants>(
-    statusLabels[jobStatus].labelVariant
+    labels.labelVariant
   );
-  const [buttonLabel, setButtonLabel] = useState(
-    statusLabels[jobStatus].buttonLabel
-  );
+  const [buttonLabel, setButtonLabel] = useState(labels.buttonLabel);
 
   useEffect(() => {
-    setJobLabel(statusLabels[jobStatus].jobLabel);
-    setLabelVariant(statusLabels[jobStatus].labelVariant);
-    setButtonLabel(statusLabels[jobStatus].buttonLabel);
+    setJobLabel(labels.jobLabel);
+    setLabelVariant(labels.labelVariant);
+    setButtonLabel(labels.buttonLabel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobStatus]);
 
   return { buttonLabel, jobLabel, labelVariant };
 };
 
-type StatusLabels = {
-  [key in JobStatus]: {
-    jobLabel: string;
-    labelVariant: LabelVariants;
-    buttonLabel: string | React.ReactNode;
-  };
+type StatusLabel = {
+  jobLabel: string;
+  labelVariant: LabelVariants;
+  buttonLabel: string | React.ReactNode;
 };
 
-const statusLabels: StatusLabels = {
+const statusLabels: { [key in JobStatus]: StatusLabel } = {
   incomplete: {
     jobLabel: 'Waiting',
     labelVariant: 'unknown',
@@ -62,9 +56,21 @@ const statusLabels: StatusLabels = {
     labelVariant: 'success',
     buttonLabel: 'Done',
   },
+  rejected: {
+    // [TODO] differentiate that from error
+    jobLabel: 'Failed',
+    labelVariant: 'warning',
+    buttonLabel: 'Re-run model',
+  },
   error: {
     jobLabel: 'Failed',
     labelVariant: 'warning',
     buttonLabel: 'Re-run model',
   },
+};
+
+const defaultStatusLabel: StatusLabel = {
+  jobLabel: 'Awaiting',
+  labelVariant: 'warning',
+  buttonLabel: 'Please wait...',
 };

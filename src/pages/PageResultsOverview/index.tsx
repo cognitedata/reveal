@@ -4,16 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 import { message } from 'antd';
 import { landingPage, diagramSelection } from 'routes/paths';
-import { useActiveWorkflow } from 'hooks';
+import { useActiveWorkflow, useJobStatus, useStartJobs } from 'hooks';
 import { AppStateContext } from 'context';
 import { DiagramsSettingsBar } from 'containers';
 import { Flex, PageTitle } from 'components/Common';
-import {
-  selectDiagrams,
-  useParsingJob,
-} from 'modules/contextualization/pnidParsing';
+import { selectInteractiveDiagrams, WorkflowStep } from 'modules/workflows';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
-import { WorkflowStep } from 'modules/workflows';
 import { getWorkflowItems, getSelectedDiagramsIds } from './selectors';
 import SectionProgress from './SectionProgress';
 import SectionSetup from './SectionSetup';
@@ -34,15 +30,17 @@ export default function PageResultsOverview(props: Props) {
   const { workflow } = useSelector(getWorkflowItems(workflowId));
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
 
-  const { status: parsingJobStatus } = useParsingJob(workflowId);
-  const isJobDone =
-    parsingJobStatus === 'Completed' || parsingJobStatus === 'Failed';
+  const jobStatus = useJobStatus();
+  const jobDone = ['done', 'error', 'rejected'];
+  const isJobDone = jobDone.includes(jobStatus);
+
+  useStartJobs();
 
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
   const onGoBackHomePage = () => history.push(landingPage.path(tenant));
   const onSelectionClose = () => {
-    dispatch(selectDiagrams({ workflowId, diagramIds: [] }));
+    dispatch(selectInteractiveDiagrams({ workflowId, diagramIds: [] }));
   };
 
   useEffect(() => {

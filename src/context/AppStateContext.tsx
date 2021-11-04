@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocalStorage } from '@cognite/cogs.js';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
-import { ModelSelected, ResourceCount, JobStatus } from 'modules/types';
+import { ModelSelected, ResourceCount } from 'modules/types';
 
 export type PrefixType = 'custom' | 'original';
 export type AppStateContextType = {
@@ -16,10 +16,6 @@ export type AppStateContextType = {
   setModelSelected: (modelSelected: ModelSelected) => void;
   resourceCount: ResourceCount;
   setResourceCount: (resourceCount: ResourceCount) => void;
-  jobStarted: boolean;
-  setJobStarted: (jobStarted: boolean) => void;
-  jobStatus: JobStatus;
-  setJobStatus: (jobStatus: JobStatus) => void;
   svgPrefix: string;
   setSvgPrefix: (svgPrefix: string) => void;
   prefixType: PrefixType;
@@ -35,8 +31,6 @@ export const AppStateProvider = ({ children }: AppStateType) => {
 
   const [tenant, setTenant] = useState<string>('');
   const [cdfEnv, setCdfEnv] = useState<string>('');
-  const [jobStarted, setJobStarted] = useState<boolean>(false);
-  const [jobStatus, setJobStatus] = useState<JobStatus>('ready');
   const [skipSettings, setSkipSettings] = useState<boolean>(
     () => savedSettings?.skip ?? false
   );
@@ -61,10 +55,6 @@ export const AppStateProvider = ({ children }: AppStateType) => {
         setModelSelected,
         resourceCount,
         setResourceCount,
-        jobStarted,
-        setJobStarted,
-        jobStatus,
-        setJobStatus,
         svgPrefix,
         setSvgPrefix,
         prefixType,

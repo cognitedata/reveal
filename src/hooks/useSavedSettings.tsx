@@ -4,13 +4,14 @@ import isEqual from 'lodash/isEqual';
 import { RootState } from 'store';
 import { AppStateContext } from 'context';
 import { changeOptions, standardModelOptions } from 'modules/workflows';
-import { useActiveWorkflow } from 'hooks';
+import { useActiveWorkflow, useJobStarted } from 'hooks';
 
 /**
  *
  */
 export const useSavedSettings = () => {
   const dispatch = useDispatch();
+  const { setJobStarted } = useJobStarted();
   const { workflowId } = useActiveWorkflow();
   const {
     setSavedSettings,
@@ -42,6 +43,7 @@ export const useSavedSettings = () => {
       !isEqual(standardModelOptions, options)
     ) {
       dispatch(changeOptions(standardModelOptions));
+      setJobStarted(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelSelected]);

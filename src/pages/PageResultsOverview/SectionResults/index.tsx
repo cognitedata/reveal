@@ -1,14 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Title } from '@cognite/cogs.js';
-import { AppStateContext } from 'context';
 import { Flex, TitledSection } from 'components/Common';
-import { useActiveWorkflow } from 'hooks';
+import { useActiveWorkflow, useJobStatus, useParsingJob } from 'hooks';
 import { useWorkflowTotalCounts } from 'modules/workflows';
-import {
-  useJobStatus,
-  useParsingJob,
-  JobStatus,
-} from 'modules/contextualization/pnidParsing';
+import { JobStatus } from 'modules/types';
 import ResultsTable from './ResultsTable';
 import ResultsTableEmpty from './ResultsTableEmpty';
 import DiagramActions from './DiagramActions';
@@ -16,16 +11,16 @@ import FilterBar from './FilterBar';
 import { SelectionFilter } from './types';
 
 export default function SectionResults() {
-  const { jobStarted } = useContext(AppStateContext);
   const [selectionFilter, setSelectionFilter] = useState<SelectionFilter>({});
   const [showResults, setShowResults] = useState(false);
-  const { workflowId } = useActiveWorkflow();
 
-  const jobStatus = useJobStatus(workflowId, jobStarted);
-  const parsingJob = useParsingJob(workflowId);
+  const jobStatus = useJobStatus();
+  const parsingJob = useParsingJob();
 
-  const isJobDone = jobStatus === 'done' || parsingJob?.status === 'Completed';
-  const shouldShowTable = parsingJob?.status || parsingJob?.annotationCounts;
+  const isJobDone = jobStatus === 'done' || jobStatus === 'error';
+  const shouldShowTable =
+    (jobStatus && (isJobDone || jobStatus === 'running')) ||
+    parsingJob?.annotationCounts;
 
   useEffect(() => {
     if (shouldShowTable) setShowResults(true);

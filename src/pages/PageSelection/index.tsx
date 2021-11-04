@@ -17,6 +17,7 @@ import {
   usePreviousFilter,
   useActiveWorkflow,
   useSteps,
+  useJobStarted,
 } from 'hooks';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
@@ -38,6 +39,7 @@ type Props = {
 
 export default function PageSelection(props: Props): JSX.Element {
   const dispatch = useDispatch();
+  const { setJobStarted } = useJobStarted();
   const { type, step, required, defaultFilters = DEFAULT_FILTERS } = props;
 
   useActiveWorkflow(step);
@@ -117,6 +119,7 @@ export default function PageSelection(props: Props): JSX.Element {
           endpoint: isSelectAll ? 'list' : 'retrieve',
         };
         dispatch(updateSelection(selection));
+        setJobStarted(false);
       }
     }
   };

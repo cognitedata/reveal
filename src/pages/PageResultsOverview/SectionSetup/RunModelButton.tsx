@@ -1,64 +1,37 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Body, Colors, Icon } from '@cognite/cogs.js';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { AppStateContext } from 'context';
-import { setJobId } from 'modules/workflows';
-import { startPnidParsingWorkflow } from 'modules/contextualization/pnidWorkflow';
+import { startPnidParsingWorkflow } from 'modules/workflows';
 import {
+  useJobStatusLabels,
+  useJobStarted,
   useParsingJob,
   useJobStatus,
-} from 'modules/contextualization/pnidParsing';
-import { useActiveWorkflow, useJobStatusLabels } from 'hooks';
-import MissingPermissionFeedback from 'components/MissingPermissionFeedback';
+} from 'hooks';
 import { Flex } from 'components/Common';
 
 export default function RunModelButton(): JSX.Element {
   const dispatch = useDispatch();
-  const { jobStarted, setJobStarted } = useContext(AppStateContext);
-  const { workflowId } = useActiveWorkflow();
+  const { jobStarted, setJobStarted } = useJobStarted();
 
-  const [renderFeedback, setRenderFeedback] = useState(false);
-
-  const canEditFiles = usePermissions('filesAcl', 'WRITE');
-  const canReadFiles = usePermissions('filesAcl', 'READ');
-  const { statusCount } = useParsingJob(workflowId);
-  const jobStatus = useJobStatus(workflowId, jobStarted);
+  const { statusCount } = useParsingJob();
+  const jobStatus = useJobStatus();
 
   const { buttonLabel } = useJobStatusLabels();
 
+  const isJobRejected = jobStatus === 'error' || jobStatus === 'rejected';
+  const isJobDone = jobStatus === 'done' || jobStatus === 'error';
+
   const onRunModelClick = () => {
     if (jobStarted) return;
-    if (canEditFiles && canReadFiles) {
-      setJobStarted(true);
-      dispatch(setJobId({ workflowId, jobId: undefined })); // remove the old, failed job ID
-      dispatch(startPnidParsingWorkflow.action(workflowId));
-    } else setRenderFeedback(true);
+    setJobStarted(true);
+    dispatch(startPnidParsingWorkflow.action());
   };
 
   useEffect(() => {
-    if (
-      jobStatus === 'done' ||
-      jobStatus === 'error' ||
-      jobStatus === 'ready'
-    ) {
-      setJobStarted(false);
-    } else setJobStarted(true);
+    if (isJobRejected || isJobDone) setJobStarted(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobStatus]);
-
-  if (renderFeedback) {
-    return (
-      <>
-        <MissingPermissionFeedback
-          key="eventsAcl"
-          acl="eventsAcl"
-          type="WRITE"
-        />
-        <MissingPermissionFeedback key="filesAcl" acl="filesAcl" type="WRITE" />
-      </>
-    );
-  }
 
   if (jobStatus === 'incomplete') return <span />;
   if (jobStatus === 'done')
@@ -82,12 +55,12 @@ export default function RunModelButton(): JSX.Element {
   return (
     <Flex>
       <Button
-        type={jobStatus === 'error' ? 'secondary' : 'primary'}
+        type={isJobRejected ? 'secondary' : 'primary'}
         onClick={onRunModelClick}
         disabled={jobStarted}
         icon={
           (jobStarted && 'LoadingSpinner') ||
-          (jobStatus === 'error' && 'Refresh') ||
+          (isJobRejected && 'Refresh') ||
           undefined
         }
         iconPlacement="right"

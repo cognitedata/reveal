@@ -3,7 +3,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk';
 import { Checkbox } from 'antd';
 import { FileWithAnnotations } from 'hooks';
-import { stringContains } from 'modules/contextualization/utils';
+import { stringContains } from 'utils/utils';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { Table } from 'components/Common';
 import { getColumns } from './columns';

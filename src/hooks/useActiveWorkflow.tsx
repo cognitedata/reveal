@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import isNumber from 'lodash/isNumber';
 import { useLoadStepOnMount } from 'hooks';
 import {
   setActiveWorkflowId,
@@ -26,7 +27,7 @@ export const useActiveWorkflow = (step?: WorkflowStep) => {
   const workflowId = Number(workflowIdString);
 
   useEffect(() => {
-    if (workflowId && workflowId !== activeWorkflowId) {
+    if (workflowId && workflowId !== activeWorkflowId && isNumber(workflowId)) {
       dispatch(setActiveWorkflowId(workflowId));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
