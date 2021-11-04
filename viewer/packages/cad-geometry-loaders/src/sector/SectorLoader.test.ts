@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { generateSectorTree, asyncIteratorToArray, createCadModelMetadata } from '../../../../test-utilities';
+import { asyncIteratorToArray, createCadModelMetadata, generateV8SectorTree } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 
 import { SectorCuller } from './culling/SectorCuller';
@@ -31,7 +31,7 @@ describe('SectorLoader', () => {
   let currentLogLevel: 0 | 1 | 2 | 3 | 4 | 5;
 
   beforeAll(() => {
-    const sectorRoot = generateSectorTree(2, 2);
+    const sectorRoot = generateV8SectorTree(2, 2);
     model = createCadModelMetadata(sectorRoot);
     currentLogLevel = Log.getLevel();
     Log.setLevel('silent');

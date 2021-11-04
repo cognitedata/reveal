@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { generateSectorTree, expectContainsSectorsWithLevelOfDetail, Mutable } from '../../../../../test-utilities';
+import { expectContainsSectorsWithLevelOfDetail, generateV8SectorTree, Mutable } from '../../../../../test-utilities';
 import { PropType } from '../../utilities/reflection';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
@@ -17,7 +17,7 @@ describe('TakenSectorTree', () => {
   const determineSectorCost: DetermineSectorCostDelegate = () => ({ downloadSize: 1, drawCalls: 1, renderCost: 1 }); // Flat cost
 
   test('default tree contains root as simple', () => {
-    const root = generateSectorTree(2) as V8SectorMetadata;
+    const root = generateV8SectorTree(2);
     const tree = new TakenSectorTree(root, determineSectorCost);
     const wanted = tree.toWantedSectors(model.modelIdentifier, model.modelBaseUrl, null);
     expectContainsSectorsWithLevelOfDetail(wanted, [0], []);
@@ -25,7 +25,7 @@ describe('TakenSectorTree', () => {
 
   test('three levels, partial detailed at level 2', () => {
     // Arrange
-    const root = generateSectorTree(3, 2) as V8SectorMetadata;
+    const root = generateV8SectorTree(3, 2);
     const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Act
@@ -42,7 +42,7 @@ describe('TakenSectorTree', () => {
 
   test('add detailed sectors out of order', () => {
     // Arrange
-    const root = generateSectorTree(5, 2) as V8SectorMetadata;
+    const root = generateV8SectorTree(5, 2);
     const tree = new TakenSectorTree(root, determineSectorCost);
 
     // Act
@@ -59,7 +59,7 @@ describe('TakenSectorTree', () => {
 
   test('Simple data is not added when sector has no f3d file', () => {
     // Arrange
-    const root = generateSectorTree(3, 2) as V8SectorMetadata;
+    const root = generateV8SectorTree(3, 2);
 
     const mutableFacesFile: Mutable<FacesFile> = (root.children[0] as V8SectorMetadata).facesFile;
     mutableFacesFile.fileName = null;
@@ -76,7 +76,7 @@ describe('TakenSectorTree', () => {
 
   test('construct with model without F3D for root', () => {
     // Arrange
-    const root = generateSectorTree(3, 2) as V8SectorMetadata;
+    const root = generateV8SectorTree(3, 2);
     const mutableFacesFile: Mutable<FacesFile> = root.facesFile;
     mutableFacesFile.fileName = null;
 
@@ -90,7 +90,7 @@ describe('TakenSectorTree', () => {
 
   test('toWantedSectors includes provided geometryFilterBox', () => {
     const box = new THREE.Box3();
-    const root = generateSectorTree(2) as V8SectorMetadata;
+    const root = generateV8SectorTree(2);
     const tree = new TakenSectorTree(root, determineSectorCost);
     const wanted = tree.toWantedSectors(model.modelIdentifier, model.modelBaseUrl, box);
 
@@ -98,7 +98,7 @@ describe('TakenSectorTree', () => {
   });
 
   test('toWantedSectors only returns actual sectors when sectorIds are "sparse"', () => {
-    const root = generateSectorTree(3, 2);
+    const root = generateV8SectorTree(3, 2) as SectorMetadata;
     traverseDepthFirst(root, x => {
       const mutableSector: Mutable<SectorMetadata> = x;
       mutableSector.id = mutableSector.id * mutableSector.id;
@@ -112,7 +112,7 @@ describe('TakenSectorTree', () => {
   });
 
   test('construct sparse tree, doesnt throw', () => {
-    const root = generateSectorTree(3, 2);
+    const root = generateV8SectorTree(3, 2) as SectorMetadata;
     traverseDepthFirst(root, x => {
       const mutable: Mutable<SectorMetadata> = x;
       mutable.id = mutable.id * mutable.id;

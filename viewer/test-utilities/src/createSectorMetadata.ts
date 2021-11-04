@@ -3,13 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
+import { SectorMetadata, V8SectorMetadata } from '../../packages/cad-parsers/src/metadata/types';
 
 export type SectorTree = [number, SectorTree[], THREE.Box3?];
 
 const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
-export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): SectorMetadata {
+export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V8SectorMetadata {
   const id = tree[0];
   const childIds = tree[1];
   const bounds = tree[2] || unitBox;
@@ -49,7 +49,7 @@ export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: 
   return root;
 }
 
-export function generateSectorTree(depth: number, childrenPerLevel: number = 4): SectorMetadata {
+export function generateV8SectorTree(depth: number, childrenPerLevel: number = 4): V8SectorMetadata {
   const bounds = unitBox.clone(); // Bounds doesnt matter for this test
 
   const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);

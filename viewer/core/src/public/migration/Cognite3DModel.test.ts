@@ -8,7 +8,7 @@ import { NodesLocalClient } from '@reveal/nodes-api';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
-import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
+import { createCadModelMetadata, generateV8SectorTree } from '../../../../test-utilities';
 import { V8SectorRepository } from '@reveal/sector-loader';
 import { Mock } from 'moq.ts';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
@@ -20,7 +20,7 @@ describe(Cognite3DModel.name, () => {
     const materialManager = new CadMaterialManager();
     const mockBinaryFileProvider = new Mock<BinaryFileProvider>();
     const sectorRepository = new V8SectorRepository(mockBinaryFileProvider.object(), materialManager);
-    const cadRoot = generateSectorTree(3, 3);
+    const cadRoot = generateV8SectorTree(3, 3);
     const cadMetadata: CadModelMetadata = createCadModelMetadata(cadRoot);
     materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
