@@ -198,6 +198,7 @@ export class CogniteOrnate {
           width: image.width,
           height: image.height,
           fill: '#E8E8E8',
+          attachedToGroup: group.id(),
         });
         group.add(baseRect);
         baseRect.zIndex(0);
