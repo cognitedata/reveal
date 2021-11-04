@@ -5,6 +5,6 @@ export const StyledPageWrapper = styled.div`
   flex: 1;
   flex-grow: 1;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
 `;

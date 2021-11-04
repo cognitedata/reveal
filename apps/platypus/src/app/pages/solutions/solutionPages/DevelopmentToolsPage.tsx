@@ -1,8 +1,10 @@
-import { Title } from '@cognite/cogs.js';
-import { StyledPageWrapper } from '../../styles/SharedStyles';
+import { PageContentLayout } from '../../../components/Layouts/PageContentLayout';
+import { PageLayout } from '../../../components/Layouts/PageLayout';
 
 export const DevelopmentToolsPage = () => (
-  <StyledPageWrapper style={{ padding: '3rem' }}>
-    <Title level={3}>Development tools</Title>
-  </StyledPageWrapper>
+  <PageLayout>
+    <PageContentLayout>
+      <PageContentLayout.Body>DEVELOPMENT TOOLS</PageContentLayout.Body>
+    </PageContentLayout>
+  </PageLayout>
 );
