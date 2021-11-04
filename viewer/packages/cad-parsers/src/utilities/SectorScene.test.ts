@@ -18,7 +18,7 @@ describe('SectorSceneImpl', () => {
       [2, [], new THREE.Box3(new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(1, 1, 1))]
     ],
     new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1))
-  ]);
+  ]) as SectorMetadata;
   const sectorsById = new Map<number, SectorMetadata>();
   traverseDepthFirst(root, x => {
     sectorsById.set(x.id, x);
@@ -98,7 +98,7 @@ describe('SectorSceneImpl', () => {
         [3, [], new THREE.Box3(new THREE.Vector3(1000.5, 1000, 1000), new THREE.Vector3(1001, 1001, 1001))]
       ],
       new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1001, 1001, 1001))
-    ]);
+    ]) as SectorMetadata;
     const sectorsById = new Map<number, SectorMetadata>();
     traverseDepthFirst(root, x => {
       sectorsById.set(x.id, x);
@@ -122,7 +122,7 @@ describe('SectorSceneImpl', () => {
       0,
       [[1, [], leafBounds]],
       new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10))
-    ]);
+    ]) as SectorMetadata;
     const sectorsById = new Map<number, SectorMetadata>();
     traverseDepthFirst(root, x => {
       sectorsById.set(x.id, x);
