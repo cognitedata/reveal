@@ -48,7 +48,7 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
 
     const newAreaCollection = new ClusteredAreaCollection();
 
-    for (let i = 1; i < this._nodeCollections.length; ++i) {
+    for (let i = 0; i < this._nodeCollections.length; ++i) {
       newAreaCollection.addAreas(this._nodeCollections[i].getAreas().areas());
     }
 
