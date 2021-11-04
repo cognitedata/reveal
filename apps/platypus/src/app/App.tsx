@@ -1,18 +1,18 @@
 import styled from 'styled-components/macro';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import '@cognite/cogs.js/dist/cogs.css';
 import { SolutionsPage } from './pages/solutions/SolutionsPage';
 import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
 import { StatusPage } from './pages/statusboard/StatusboardPage';
 import { GlobalStyle } from './AppGlobalStyles';
 import { Container } from '@cognite/react-container';
 import sidecar from './utils/sidecar';
+import { AuthContainer } from './AuthContainer';
 
 function App() {
   return (
     <Container sidecar={sidecar}>
-      <>
+      <AuthContainer>
         <GlobalStyle />
         <StyledWrapper>
           <Router basename="platypus">
@@ -37,7 +37,7 @@ function App() {
             </StyledPage>
           </Router>
         </StyledWrapper>
-      </>
+      </AuthContainer>
     </Container>
   );
 }

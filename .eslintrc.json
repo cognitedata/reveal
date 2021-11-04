@@ -28,7 +28,9 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": [
+              "@platypus-app"
+            ],
             "depConstraints": [
               {
                 "sourceTag": "*",
@@ -171,7 +173,10 @@
           }
         ],
         "no-shadow": "off",
-        "@typescript-eslint/no-shadow": "error"
+        "@typescript-eslint/no-shadow": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "react/jsx-no-useless-fragment": "off",
+        "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {
