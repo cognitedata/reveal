@@ -114,18 +114,21 @@ const CustomRowComp = <T extends Object>({
       >
         {renderTableRow}
 
-        <OverlayCell>
-          {renderRowOverlayComponent && (
+        {renderRowOverlayComponent && (
+          <OverlayCell>
             <OverlayContentWrapper>
               {renderRowOverlayComponent({ row })}
             </OverlayContentWrapper>
-          )}
-          {renderRowHoverComponent && (
+          </OverlayCell>
+        )}
+
+        {renderRowHoverComponent && (
+          <OverlayCell>
             <HoverContentWrapper>
               {renderRowHoverComponent({ row })}
             </HoverContentWrapper>
-          )}
-        </OverlayCell>
+          </OverlayCell>
+        )}
       </RowComponent>
       {/*
           If the row is in an expanded state, render a row with a

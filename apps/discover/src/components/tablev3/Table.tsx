@@ -255,8 +255,19 @@ const TableInner = <T extends Object>({
       )
       .join(' ');
 
+    let gridColumns = cssColumns;
+
+    // Add an extra cell if there is an OverlayComponent
+    if (renderRowOverlayComponent) {
+      gridColumns = `${gridColumns} 0`;
+    }
+
     // Add an extra cell if there is a HoverComponent
-    return renderRowHoverComponent ? `${cssColumns} 0` : cssColumns;
+    if (renderRowHoverComponent) {
+      gridColumns = `${gridColumns} 0`;
+    }
+
+    return gridColumns;
   };
 
   const tableContent = (
@@ -296,8 +307,9 @@ const TableInner = <T extends Object>({
               ))}
 
               {/* To keep the amount of cells correct, we need to render something
-                where the hover cell would be in the header
+                where the overlay cells would be in the header
               */}
+              {renderRowOverlayComponent && <div />}
               {renderRowHoverComponent && <div />}
             </TableRow>
           ))}
