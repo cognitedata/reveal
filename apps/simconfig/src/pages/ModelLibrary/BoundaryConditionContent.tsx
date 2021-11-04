@@ -72,6 +72,7 @@ export const BoundaryConditionContent: React.FC<Props> = ({
       </BodyWithSpacing>
       <BodyWithSpacing>
         <BcLabel>User:</BcLabel>
+        {data?.metadata?.userEmail}
       </BodyWithSpacing>
       <Overline>BOUNDARY CONDITIONS</Overline>
       <BodyWithSpacing level={3}>
