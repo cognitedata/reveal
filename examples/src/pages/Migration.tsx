@@ -16,7 +16,8 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  IndexSet,
+  CameraControlsOptions
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -61,8 +62,6 @@ export function Migration() {
         sdk: client,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
-        useScrollTargetControls: true,
-        useOnClickTargetChange: false,
         logMetrics: false,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
@@ -93,6 +92,13 @@ export function Migration() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
+
+      const controlsOptions: CameraControlsOptions = {
+        onClickTargetChange: true,
+        zoomToCursor: 'scrollTarget'
+      }
+
+      viewer.setCameraControlsMode(controlsOptions);
 
       const totalBounds = new THREE.Box3();
 
@@ -450,6 +456,7 @@ export function Migration() {
 
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -468,10 +475,7 @@ export function Migration() {
   
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
-
-                const clickedBB = await intersection.model.getBoundingBoxByTreeIndex(treeIndex, new THREE.Box3());
-
-                viewer.fitCameraToBoundingBox(clickedBB);
+                
               }
               break;
             case 'pointcloud':

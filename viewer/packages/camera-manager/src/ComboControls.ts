@@ -269,6 +269,13 @@ export default class ComboControls extends EventDispatcher {
     return deltaTheta;
   }
 
+  private convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
+    const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
+    const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
+
+    return { x, y };
+  }
+    
   private onMouseDown = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
@@ -318,11 +325,7 @@ export default class ComboControls extends EventDispatcher {
       delta = event.deltaY / factor;
     }
 
-    const { _domElement } = this;
-    let x = event.offsetX;
-    let y = event.offsetY;
-    x = (x / _domElement.clientWidth) * 2 - 1;
-    y = (y / _domElement.clientHeight) * -2 + 1;
+    const {x, y} = this.convertPixelCoordinatesToNormalized(event.offsetX, event.offsetY);
 
     const dollyIn = delta < 0;
     const deltaDistance =
@@ -679,7 +682,7 @@ export default class ComboControls extends EventDispatcher {
 
     // if target movement is too fast we want to slow it down a bit
     const deltaDownscaleCoefficient = this.clampedMap(targetOffsetToDeltaRatio, minDeltaRatio, maxDeltaRatio, maxDeltaDownscaleCoefficient, minDeltaDownscaleCoefficient);
-    console.log(deltaDownscaleCoefficient);
+   
     deltaDistance *= deltaDownscaleCoefficient;
     deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
 
@@ -710,7 +713,7 @@ export default class ComboControls extends EventDispatcher {
     const targetOffset = zoomToCursor ? (useScrollTarget
         ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
         : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)) 
-      : new Vector3();
+      : this.calculateTargetOfssetLerp(0, 0, deltaDistance, cameraDirection);
 
     _targetEnd.add(targetOffset);
   };
