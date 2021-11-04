@@ -871,8 +871,11 @@ export class EffectRenderManager {
       this.assignSpectorJsMetadataToRenderTarget(this._ssaoTarget, {
         name: 'ssaoTarget'
       });
-      this.assignSpectorJsMetadataToRenderTarget(this._ssaoBlurTarget, {
-        name: 'ssaoBlurTarget'
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoFirstBlurTarget, {
+        name: 'ssaoFirstBlurTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoSecondBlurTarget, {
+        name: 'ssaoSecondBlurTarget'
       });
     }
   }
