@@ -25,12 +25,12 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
     history.push(`/solutions/${solutionId}/${page}/${slug}`);
   };
 
-  const renderIcon = (item: SideBarItem, key: number) => {
+  const renderIcon = (item: SideBarItem, index: number) => {
     return (
       <StyledItem
         key={item.slug}
         onClick={() => onRoute(item.page, item.slug)}
-        active={solutionPage === item.slug || (!key && !solutionPage)}
+        active={solutionPage === item.slug || (!index && !solutionPage)}
       >
         {item.icon}
       </StyledItem>
@@ -40,7 +40,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
   return (
     <StyledSideBarMenu>
       <div>
-        {items.map((item, key) => {
+        {items.map((item, index) => {
           if (item.tooltip) {
             return (
               <Tooltip
@@ -48,12 +48,13 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
                 content={item.tooltip}
                 arrow={false}
                 delay={250}
+                key={item.slug}
               >
-                {renderIcon(item, key)}
+                {renderIcon(item, index)}
               </Tooltip>
             );
           }
-          return renderIcon(item, key);
+          return renderIcon(item, index);
         })}
       </div>
       <div>
