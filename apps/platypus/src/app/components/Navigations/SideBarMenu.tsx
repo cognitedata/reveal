@@ -39,7 +39,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
 
   return (
     <StyledSideBarMenu>
-      <StyledCustomIcons>
+      <div>
         {items.map((item, key) => {
           if (item.tooltip) {
             return (
@@ -47,7 +47,7 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
                 placement="right"
                 content={item.tooltip}
                 arrow={false}
-                delay={350}
+                delay={250}
               >
                 {renderIcon(item, key)}
               </Tooltip>
@@ -55,28 +55,25 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
           }
           return renderIcon(item, key);
         })}
-      </StyledCustomIcons>
-      <StyledCommonIcons>
+      </div>
+      <div>
         <StyledItem>
           <Icon type="Help" />
         </StyledItem>
-      </StyledCommonIcons>
+      </div>
     </StyledSideBarMenu>
   );
 };
 
 const StyledSideBarMenu = styled.div`
   display: flex;
+  height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  width: 5.6rem;
+  width: 6rem;
   padding: 0 1rem;
   border-right: solid 1px var(--cogs-greyscale-grey3);
 `;
-
-const StyledCustomIcons = styled.div``;
-
-const StyledCommonIcons = styled.div``;
 
 type StyledIconProps = {
   active?: boolean;

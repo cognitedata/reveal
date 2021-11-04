@@ -4,14 +4,14 @@ import { Spinner } from '../../components/Spinner/Spinner';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
 const OverviewPage = lazy(() =>
-  import('./solutionPages/OverviewPage').then((module) => ({
-    default: module.OverviewPage,
+  import('./solutionPages/OverviewLayout').then((module) => ({
+    default: module.OverviewLayout,
   }))
 );
 
 const DataModelPage = lazy(() =>
-  import('./solutionPages/DataModelPage').then((module) => ({
-    default: module.DataModelPage,
+  import('./solutionPages/DataModelLayout').then((module) => ({
+    default: module.DataModelLayout,
   }))
 );
 
@@ -21,9 +21,9 @@ const DevelopmentToolsPage = lazy(() =>
   }))
 );
 
-const VersionsPage = lazy(() =>
+const DeploymentsPage = lazy(() =>
   import('./solutionPages/DeploymentsPage').then((module) => ({
-    default: module.VersionsPage,
+    default: module.DeploymentsPage,
   }))
 );
 
@@ -60,7 +60,7 @@ export const Solution = () => {
         </Route>
         <Route exact path="/solutions/:solutionId?/deployments">
           <Suspense fallback={<Spinner />}>
-            <VersionsPage />
+            <DeploymentsPage />
           </Suspense>
         </Route>
         <Route exact path="/solutions/:solutionId?/settings">
