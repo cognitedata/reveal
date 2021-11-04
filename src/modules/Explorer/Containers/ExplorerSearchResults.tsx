@@ -34,21 +34,17 @@ export const ExplorerSearchResults = ({
   currentView,
   query = '',
   filter = {},
-  focusedId,
-  selectedFileIds,
-  isLoading = false,
-  onClick,
-  onRowSelect,
+  ...otherProps
 }: {
   reFetchProp?: boolean;
   currentView: ViewMode;
   query?: string;
   filter?: FileFilterProps;
-  focusedId?: number;
-  selectedFileIds: number[];
-  isLoading?: boolean;
-  onClick: (item: TableDataItem) => void;
-  onRowSelect: (item: TableDataItem, selected: boolean) => void;
+  focusedId: number | null;
+  selectedIds: number[];
+  isLoading: boolean;
+  onItemClick: (item: TableDataItem) => void;
+  onItemSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
 
@@ -99,64 +95,6 @@ export const ExplorerSearchResults = ({
     },
   };
 
-  const RenderView = (
-    props: {
-      data: ResultData[];
-      totalCount: number;
-    } & PaginatedTableProps<TableDataItem>
-  ) => {
-    if (currentView === 'grid') {
-      return (
-        <PageBasedGridView
-          selectedIds={selectedFileIds}
-          onItemClicked={onClick}
-          onSelect={onRowSelect}
-          {...props}
-          renderCell={(cellProps: any) => (
-            <FileGridPreview
-              mode={VisionMode.Explore}
-              actionDisabled={!!selectedFileIds.length}
-              {...cellProps}
-            />
-          )}
-          isLoading={isLoading}
-        />
-      );
-    }
-    if (currentView === 'map') {
-      return (
-        <MapView
-          onRowSelect={onRowSelect}
-          onRowClick={onClick}
-          focusedFileId={focusedId}
-          allRowsSelected={allFilesSelected}
-          onSelectAllRows={handleSelectAllFiles}
-          selectedRowIds={selectedFileIds}
-          {...props}
-          mapTableTabKey={{ activeKey, setActiveKey }}
-          onSelectPage={handleSetSelectedFiles}
-          isLoading={isLoading}
-        />
-      );
-    }
-
-    return (
-      <FileTableExplorer
-        modalView={currentView === 'modal'}
-        onRowSelect={onRowSelect}
-        onRowClick={onClick}
-        focusedFileId={focusedId}
-        allRowsSelected={allFilesSelected}
-        onSelectAllRows={handleSelectAllFiles}
-        selectedRowIds={selectedFileIds}
-        {...props}
-        onSelectPage={handleSetSelectedFiles}
-        rowKey="rowKey"
-        isLoading={isLoading}
-      />
-    );
-  };
-
   return (
     <ResultContainer>
       <EnsureNonEmptyResource
@@ -170,21 +108,72 @@ export const ExplorerSearchResults = ({
           query={query}
           reFetchProp={reFetchProp}
         >
-          {(props: { data: ResultData[]; totalCount: number }) => {
+          {(resultProps: { data: ResultData[]; totalCount: number }) => {
             return (
               <PaginationWrapper
-                data={props.data}
-                totalCount={props.totalCount}
+                data={resultProps.data}
+                totalCount={resultProps.totalCount}
                 pagination
                 sortPaginateControls={sortPaginateControls}
-                isLoading={isLoading}
+                isLoading={otherProps.isLoading}
               >
-                {(paginationProps) => (
-                  <RenderView
-                    {...paginationProps}
-                    totalCount={props.totalCount}
-                  />
-                )}
+                {(paginationProps) => {
+                  const renderView = (
+                    props: {
+                      data: ResultData[];
+                      totalCount: number;
+                    } & PaginatedTableProps<TableDataItem>
+                  ) => {
+                    if (currentView === 'grid') {
+                      return (
+                        <PageBasedGridView
+                          {...otherProps}
+                          {...props}
+                          renderCell={(cellProps: any) => (
+                            <FileGridPreview
+                              mode={VisionMode.Explore}
+                              actionDisabled={!!otherProps.selectedIds.length}
+                              {...cellProps}
+                            />
+                          )}
+                        />
+                      );
+                    }
+                    if (currentView === 'map') {
+                      return (
+                        <MapView
+                          {...otherProps}
+                          {...props}
+                          allRowsSelected={allFilesSelected}
+                          onSelectAllRows={handleSelectAllFiles}
+                          mapTableTabKey={{ activeKey, setActiveKey }}
+                          onSelectPage={handleSetSelectedFiles}
+                        />
+                      );
+                    }
+
+                    return (
+                      <FileTableExplorer
+                        modalView={currentView === 'modal'}
+                        {...otherProps}
+                        {...props}
+                        allRowsSelected={allFilesSelected}
+                        onSelectAllRows={handleSelectAllFiles}
+                        onSelectPage={handleSetSelectedFiles}
+                        rowKey="rowKey"
+                      />
+                    );
+                  };
+
+                  return (
+                    <>
+                      {renderView({
+                        ...paginationProps,
+                        totalCount: resultProps.totalCount,
+                      })}
+                    </>
+                  );
+                }}
               </PaginationWrapper>
             );
           }}

@@ -68,7 +68,7 @@ const Explorer = () => {
   );
 
   const isLoading = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.isLoading
+    ({ explorerReducer }: RootState) => explorerReducer.isLoading || false
   );
 
   useEffect(() => {
@@ -149,11 +149,11 @@ const Explorer = () => {
                 currentView={currentView}
                 filter={filter}
                 query={query}
-                focusedId={focusedFileId || undefined}
-                selectedFileIds={selectedFileIds}
+                focusedId={focusedFileId}
+                selectedIds={selectedFileIds}
                 isLoading={isLoading}
-                onClick={handleItemClick}
-                onRowSelect={handleRowSelect}
+                onItemClick={handleItemClick}
+                onItemSelect={handleRowSelect}
               />
             </ViewContainer>
           </TablePanel>

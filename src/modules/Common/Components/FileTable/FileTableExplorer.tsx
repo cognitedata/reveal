@@ -81,12 +81,12 @@ export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    return `clickable ${props.focusedFileId === rowData.id && 'active'}`;
+    return `clickable ${props.focusedId === rowData.id && 'active'}`;
   };
 
   const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData as ResultData);
+      props.onItemClick(rowData as ResultData);
     },
   };
 

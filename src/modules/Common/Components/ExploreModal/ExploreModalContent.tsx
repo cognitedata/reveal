@@ -9,12 +9,12 @@ import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
 
 export type ExploreModalContentProps = {
   onItemClick: (item: TableDataItem) => void;
-  onRowSelect: (item: TableDataItem, selected: boolean) => void;
+  onItemSelect: (item: TableDataItem, selected: boolean) => void;
   onCloseModal: () => void;
   onUseFiles: () => void;
   query?: string;
   onSearch: (text: string) => void;
-  focusedId?: number | null;
+  focusedId: number | null;
   selectedIds: number[];
   selectedCount: number;
   filter: FileFilterProps;
@@ -23,18 +23,15 @@ export type ExploreModalContentProps = {
 };
 
 export const ExploreModalContent = ({
-  onItemClick,
-  onRowSelect,
   query,
   onSearch,
-  focusedId,
-  selectedIds,
   onCloseModal,
   onUseFiles,
   selectedCount,
   filter,
   //  setFilter, TODO(VIS-276): Add filters
   processFileCount,
+  ...otherProps
 }: ExploreModalContentProps) => {
   const maxSelectCount = MAX_CID_FILE_COUNT;
   const count = selectedCount ? `[${selectedCount}]` : null;
@@ -56,10 +53,8 @@ export const ExploreModalContent = ({
           currentView="modal"
           filter={filter}
           query={query}
-          focusedId={focusedId || undefined}
-          selectedFileIds={selectedIds}
-          onClick={onItemClick}
-          onRowSelect={onRowSelect}
+          {...otherProps}
+          isLoading={false}
         />
       </ExploreTableContainer>
       <Footer>

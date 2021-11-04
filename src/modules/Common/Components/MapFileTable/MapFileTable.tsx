@@ -46,16 +46,16 @@ export const MapFileTable = (props: MapTableProps) => {
 
   const findSelectedItems = (items: ResultData[]): [boolean, number[]] => {
     const ids = items.map((file) => file.id);
-    const allSelected = ids.every((id) => props.selectedRowIds.includes(id));
+    const allSelected = ids.every((id) => props.selectedIds.includes(id));
     const selectedIds = allSelected
       ? ids
-      : ids.filter((id) => props.selectedRowIds.includes(id));
+      : ids.filter((id) => props.selectedIds.includes(id));
     return [allSelected, selectedIds];
   };
 
   const [allWithGeoDataSelected, selectedIdsWithGeoData] = useMemo(() => {
     return findSelectedItems(withGeoData);
-  }, [props.selectedRowIds, withGeoData]);
+  }, [props.selectedIds, withGeoData]);
 
   const withOutGeoData = useMemo(() => {
     return props.data.filter(
@@ -65,7 +65,7 @@ export const MapFileTable = (props: MapTableProps) => {
 
   const [allWithoutGeoDataSelected, selectedIdsWithoutGeoData] = useMemo(() => {
     return findSelectedItems(withOutGeoData);
-  }, [props.selectedRowIds, withOutGeoData]);
+  }, [props.selectedIds, withOutGeoData]);
 
   const rowClassNames = ({
     rowData,
@@ -74,12 +74,12 @@ export const MapFileTable = (props: MapTableProps) => {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    return `clickable ${props.focusedFileId === rowData.id && 'active'}`;
+    return `clickable ${props.focusedId === rowData.id && 'active'}`;
   };
 
   const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData as ResultData);
+      props.onItemClick(rowData as ResultData);
       props.mapCallback(rowData.id);
     },
   };
@@ -102,45 +102,49 @@ export const MapFileTable = (props: MapTableProps) => {
         }}
       >
         <TabPane tab="Files in map" key="fileInMap">
-          <SelectableTable
-            {...props}
-            onSelectAllRows={(status) =>
-              props.onSelectAllRows(status, { geoLocation: true })
-            }
-            allRowsSelected={allWithGeoDataSelected}
-            selectedRowIds={selectedIdsWithGeoData}
-            data={withGeoData}
-            columns={columns}
-            rendererMap={rendererMap}
-            selectable
-            onRowSelect={props.onRowSelect}
-            rowHeight={70}
-            rowClassNames={rowClassNames}
-            rowEventHandlers={rowEventHandlers}
-            overlayRenderer={overlayRenderer}
-            emptyRenderer={emptyRenderer}
-          />
+          <TableContainer>
+            <SelectableTable
+              {...props}
+              onSelectAllRows={(status) =>
+                props.onSelectAllRows(status, { geoLocation: true })
+              }
+              onItemSelect={props.onItemSelect}
+              allRowsSelected={allWithGeoDataSelected}
+              selectedIds={selectedIdsWithGeoData}
+              data={withGeoData}
+              columns={columns}
+              rendererMap={rendererMap}
+              selectable
+              rowHeight={70}
+              rowClassNames={rowClassNames}
+              rowEventHandlers={rowEventHandlers}
+              overlayRenderer={overlayRenderer}
+              emptyRenderer={emptyRenderer}
+            />
+          </TableContainer>
         </TabPane>
 
         <TabPane tab="Files without location" key="filesWithoutMap">
-          <SelectableTable
-            {...props}
-            data={withOutGeoData}
-            onSelectAllRows={(status) =>
-              props.onSelectAllRows(status, { geoLocation: false })
-            }
-            allRowsSelected={allWithoutGeoDataSelected}
-            selectedRowIds={selectedIdsWithoutGeoData}
-            columns={columns}
-            rendererMap={rendererMap}
-            selectable
-            onRowSelect={props.onRowSelect}
-            rowHeight={70}
-            rowClassNames={rowClassNames}
-            rowEventHandlers={rowEventHandlers}
-            emptyRenderer={emptyRenderer}
-            overlayRenderer={overlayRenderer}
-          />
+          <TableContainer>
+            <SelectableTable
+              {...props}
+              data={withOutGeoData}
+              onSelectAllRows={(status) =>
+                props.onSelectAllRows(status, { geoLocation: false })
+              }
+              onItemSelect={props.onItemSelect}
+              allRowsSelected={allWithoutGeoDataSelected}
+              selectedIds={selectedIdsWithoutGeoData}
+              columns={columns}
+              rendererMap={rendererMap}
+              selectable
+              rowHeight={70}
+              rowClassNames={rowClassNames}
+              rowEventHandlers={rowEventHandlers}
+              emptyRenderer={emptyRenderer}
+              overlayRenderer={overlayRenderer}
+            />
+          </TableContainer>
         </TabPane>
       </StyledTabs>
     </Container>
@@ -164,4 +168,8 @@ const StyledTabs = styled(Tabs)`
   .ant-tabs-content {
     height: 100%;
   }
+`;
+
+const TableContainer = styled.div`
+  height: 100%;
 `;
