@@ -12,7 +12,8 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
+import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -24,7 +25,7 @@ import {
   CameraChangeDelegate,
   PointerEventDelegate,
   CadModelBudget,
-  PointCloudBudget
+  PointCloudBudget,
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -45,7 +46,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { ComboControls, CameraManager } from '@reveal/camera-manager';
+import { ComboControls, CameraManager, CameraControlsOptions} from '@reveal/camera-manager';
 import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -114,14 +115,19 @@ export class Cognite3DViewer {
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
+  private readonly _cameraControlsOptions = {
+    canInterruptAnimations: false,
+    useScrollTargetControls: false,
+    useOnClickTargetChange: false,
+    scrollEventsAdded: false,
+    clickEventsAdded: false
+  };
+
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
 
   private readonly _automaticNearFarPlane: boolean;
   private readonly _automaticControlsSensitivity: boolean;
-  private readonly _canInterruptAnimations: boolean;
-  private readonly _useScrollTargetControls: boolean;
-  private readonly _useOnClickTargetChange: boolean;
   private readonly _animationDuration: number = 600;
 
   private isDisposed = false;
@@ -142,7 +148,7 @@ export class Cognite3DViewer {
    */
   private readonly _updateNearAndFarPlaneBuffers = {
     combinedBbox: new THREE.Box3(),
-    bbox: new THREE.Box3()
+    bbox: new THREE.Box3(),
   };
 
   /**
@@ -201,10 +207,7 @@ export class Cognite3DViewer {
 
     this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
     this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? false;
-    this._canInterruptAnimations = options.canInterruptAnimations ?? false;
-    this._useScrollTargetControls = options.useScrollTargetControls ?? false;
-    this._useOnClickTargetChange = options.useOnClickTargetChange ?? false;
-
+    
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
     this.canvas.style.minWidth = '100%';
@@ -287,9 +290,14 @@ export class Cognite3DViewer {
     this.animate(0);
 
     trackEvent('construct3dViewer', {
-      moduleName: 'Cognite3DViewer',
-      methodName: 'constructor',
-      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+      constructorOptions: omit(options, [
+        'sdk',
+        'domElement',
+        'renderer',
+        'renderTargetOptions',
+        'onLoading',
+        '_sectorCuller'
+      ])
     });
   }
 
@@ -440,6 +448,14 @@ export class Cognite3DViewer {
       default:
         assertNever(event);
     }
+  }
+
+  /**
+   * Sets camera controls mode anything allowed in CameraControlsOptions type.
+   * @param controlsOptions JSON object with camera controls options.
+   */
+  setCameraControlsMode(controlsOptions: CameraControlsOptions) {
+    this._cameraManager.setCameraControlsMode(controlsOptions);
   }
 
   /**
@@ -1165,7 +1181,7 @@ export class Cognite3DViewer {
     return this._models.filter(x => x.type === type);
   }
 
-  /**
+   /**
    * Creates a helper for managing viewer state.
    */
   private createViewStateHelper(): ViewStateHelper {

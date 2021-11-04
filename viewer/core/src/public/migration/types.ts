@@ -86,32 +86,6 @@ export interface Cognite3DViewerOptions {
    * and `viewer.cameraControls.maxDistance`.
    */
   automaticControlsSensitivity?: boolean;
-
-  /**
-   * When false, animations of the camera won't be stopped by movements of the camera/mouse/touches.
-   * This is useful when we don't want to interrupt the camera target change animation because then new target will be much more explicit.
-   *
-   * Default is false.
-   */
-  canInterruptAnimations?: boolean;
-
-  /**
-   * Enables or disables the usage of new controls mechanics that is based on so-called scroll target notion. When mouse wheel scroll is
-   * initiated scroll target is set to the point on the model where cursor is hovering over. Then when zooming is happening camera target moves towards
-   * scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation, keyboard navigation
-   * still allows to go through the model.
-   *
-   * Default is true.
-   */
-  useScrollTargetControls?: boolean;
-
-  /**
-   * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
-   *
-   * Default is false.
-   */
-  useOnClickTargetChange?: boolean;
-
   /** Renderer used to visualize model (optional). */
   renderer?: THREE.WebGLRenderer;
 
@@ -200,6 +174,36 @@ export interface AddModelOptions {
   localPath?: string;
   geometryFilter?: GeometryFilter;
 }
+
+export type CameraControlsOptions = {
+  /**
+   * Enables or disables the usage of "zoom-to-cursor" mechanics based on either lerping in the direction of the cursor or using so-called scroll target notion.
+   * When mouse wheel scroll is initiated scroll target is set to the point on the model where cursor is hovering over. Then when zooming is happening camera
+   * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation,
+   * keyboard navigation still allows to go through the model.
+   *
+   * Default is true.
+   *
+   */
+  zoomToCursor?:
+    | 'disable' // disables "zoom-to-cursor" mechanic, then mouse scroll zooms just to the current target of the camera
+    | 'basicLerp' // based on lerping in the direction of the ray coming from camera through cursor position
+    | 'scrollTarget'; // moves the target towards the point on the model where
+  /**
+   * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
+   *
+   * Default is false.
+   *
+   */
+  onClickTargetChange?: boolean;
+  /**
+   * When false, animations of the camera won't be stopped by movements of the camera/mouse/touches.
+   * This is useful when we don't want to interrupt the camera target change animation because then new target will be much more explicit.
+   *
+   * Default is false.
+   */
+  canInterruptAnimations?: boolean;
+};
 
 export type CadIntersection = {
   /**

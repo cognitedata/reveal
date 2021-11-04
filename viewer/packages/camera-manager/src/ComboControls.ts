@@ -71,6 +71,11 @@ export class ComboControls extends EventDispatcher {
   public orthographicCameraDollyFactor: number = 0.3;
   public lookAtViewTarget = false;
   public useScrollTarget = false;
+  public zoomToCursor = true;
+  public minDeltaRatio = 1;
+  public maxDeltaRatio = 8;
+  public minDeltaDownscaleCoefficient = 0.1;
+  public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
   private _camera: PerspectiveCamera | OrthographicCamera;
@@ -264,6 +269,13 @@ export class ComboControls extends EventDispatcher {
     return deltaTheta;
   }
 
+  private convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
+    const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
+    const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
+
+    return { x, y };
+  };
+
   private onMouseDown = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
@@ -313,11 +325,7 @@ export class ComboControls extends EventDispatcher {
       delta = event.deltaY / factor;
     }
 
-    const { _domElement } = this;
-    let x = event.offsetX;
-    let y = event.offsetY;
-    x = (x / _domElement.clientWidth) * 2 - 1;
-    y = (y / _domElement.clientHeight) * -2 + 1;
+    const { x, y } = this.convertPixelCoordinatesToNormalized(event.offsetX, event.offsetY);
 
     const dollyIn = delta < 0;
     const deltaDistance =
@@ -638,10 +646,34 @@ export class ComboControls extends EventDispatcher {
     return targetOffset;
   };
 
+  // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
+  private clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
+    if (value < xStart) value = yStart;
+    else if (value > xEnd) value = yEnd;
+    else value = MathUtils.mapLinear(value, xStart, xEnd, yStart, yEnd);
+
+    return value;
+  };
+
   private calculateTargetOfssetScrollTarget = (deltaDistance: number, cameraDirection: THREE.Vector3) => {
-    const { minDistance, _reusableVector3, _sphericalEnd, _target, _scrollTarget, _camera } = this;
+    const {
+      minDistance,
+      _reusableVector3,
+      _sphericalEnd,
+      _target,
+      _scrollTarget,
+      _camera,
+      minDeltaRatio,
+      maxDeltaRatio,
+      minDeltaDownscaleCoefficient,
+      maxDeltaDownscaleCoefficient
+    } = this;
 
     const distToTarget = cameraDirection.length();
+
+    const isDollyOut = deltaDistance > 0 ? true : false;
+
+    if (isDollyOut) this.setScrollTarget(_target);
 
     // Here we use the law of sines to determine how far we want to move the target.
     // Direction is always determined by scrollTarget-target vector
@@ -652,15 +684,22 @@ export class ComboControls extends EventDispatcher {
     const targetCameraScrollTargetAngle = cameraToTargetVec.angleTo(cameraToScrollTargetVec);
     const targetScrollTargetCameraAngle = targetToScrollTargetVec.negate().angleTo(cameraToScrollTargetVec.negate());
 
-    let targetOffsetDistance =
+    let deltaTargetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
 
-    const targetOffsetToDeltaratio = Math.abs(targetOffsetDistance / deltaDistance);
+    const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
     // if target movement is too fast we want to slow it down a bit
-    const downscaleCoefficient = targetOffsetToDeltaratio > 4 ? (targetOffsetToDeltaratio > 10 ? 0.4 : 0.2) : 1;
-    deltaDistance *= downscaleCoefficient;
-    targetOffsetDistance *= downscaleCoefficient;
+    const deltaDownscaleCoefficient = this.clampedMap(
+      targetOffsetToDeltaRatio,
+      minDeltaRatio,
+      maxDeltaRatio,
+      maxDeltaDownscaleCoefficient,
+      minDeltaDownscaleCoefficient
+    );
+
+    deltaDistance *= deltaDownscaleCoefficient;
+    deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
 
     let radius = distToTarget + deltaDistance;
 
@@ -671,24 +710,26 @@ export class ComboControls extends EventDispatcher {
       // stops camera from moving forward only if target became close to scroll target
       if (_scrollTarget.distanceTo(_target) < minDistance) {
         radius = minDistance;
-        targetOffsetDistance = 0;
+        deltaTargetOffsetDistance = 0;
       }
     }
 
     _sphericalEnd.radius = radius;
 
     // if we scroll out, we don't change the target
-    const targetOffset = targetToScrollTargetVec.multiplyScalar(deltaDistance < 0 ? targetOffsetDistance : 0);
+    const targetOffset = targetToScrollTargetVec.multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
 
     return targetOffset;
   };
 
   private dollyWithWheelScroll = (x: number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
-    const { _targetEnd, useScrollTarget } = this;
+    const { _targetEnd, useScrollTarget, zoomToCursor } = this;
 
-    const targetOffset = useScrollTarget
-      ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
-      : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection);
+    const targetOffset = zoomToCursor
+      ? useScrollTarget
+        ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
+        : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)
+      : this.calculateTargetOfssetLerp(0, 0, deltaDistance, cameraDirection);
 
     _targetEnd.add(targetOffset);
   };
