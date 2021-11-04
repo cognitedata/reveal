@@ -47,7 +47,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -640,16 +640,18 @@ export class Cognite3DViewer {
 
     const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
+    const outputFormats = outputs.map(output => output.format);
 
-    if (
-      outputs.filter(output => output.format === 'gltf-directory') !== undefined ||
-      outputs.filter(output => output.format === 'reveal-directory') !== undefined
-    ) {
+    if (includesOutput(File3dFormat.GltfCadModel) || includesOutput(File3dFormat.RevealCadModel)) {
       return 'cad';
-    } else if (outputs.filter(output => output.format === 'ept-pointcloud') !== undefined) {
+    } else if (includesOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
     }
     return '';
+
+    function includesOutput(format: File3dFormat) {
+      return outputFormats.includes(format);
+    }
   }
 
   /**
