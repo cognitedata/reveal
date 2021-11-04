@@ -11,6 +11,7 @@ import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@rev
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository } from '@reveal/cad-parsers';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { assertNever } from '@reveal/utilities';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
@@ -57,13 +58,18 @@ export class CadModelFactory {
         return this._gltfSectorRepository;
       case File3dFormat.RevealCadModel:
         return this._v8SectorRepository;
+      case File3dFormat.AnyFormat:
+        throw new Error(`Model format [${format}] is not a valid cad model format`);
+      case File3dFormat.EptPointCloud:
+        throw new Error(`Model format [${format}] is not a valid cad model format`);
       default:
-        throw new Error(`Model format [${format}] is not a valied cad model format`);
+        assertNever(format);
     }
   }
 
   dispose() {
     this._v8SectorRepository.clear();
+    this._gltfSectorRepository.clear();
   }
 }
 

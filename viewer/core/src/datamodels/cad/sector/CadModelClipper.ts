@@ -22,7 +22,7 @@ export class CadModelClipper {
 
   createClippedModel(model: CadModelMetadata): CadModelMetadata {
     // Create a clipped sector tree
-    const root = model.scene.root as SectorMetadata;
+    const root = model.scene.root;
     const newRoot = clipSector(root, this._geometryClipBox);
     if (newRoot === undefined) {
       throw new Error('No sectors inside provided geometry clip box');

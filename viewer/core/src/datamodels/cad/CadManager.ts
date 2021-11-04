@@ -152,6 +152,7 @@ export class CadManager {
       throw new Error(`Could not remove model ${metadata.modelIdentifier} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
+    model.clearCache();
     this._cadModelUpdateHandler.removeModel(model);
   }
 

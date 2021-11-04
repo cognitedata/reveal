@@ -42,8 +42,11 @@ export class SectorLoader {
     collectStatisticsCallback: (spent: SectorLoadingSpent) => void,
     progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
   ) {
+    // TODO: add runtime initialization of culler and inject
+    // the proper sector culler
     this._v8SectorCuller = sectorCuller;
     this._gltfSectorCuller = new PassThroughSectorCuller();
+
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;

@@ -168,4 +168,8 @@ export class CadNode extends THREE.Object3D {
   public discardInstancedMeshes(sectorId: number) {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
+
+  public clearCache(): void {
+    this._sectorRepository.clear();
+  }
 }

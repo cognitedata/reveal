@@ -28,10 +28,17 @@ describe('SectorLoader', () => {
   let model: CadModelMetadata;
   let input: DetermineSectorsPayload;
   let cadNodeMock: IMock<CadNode>;
+  let currentLogLevel: 0 | 1 | 2 | 3 | 4 | 5;
 
   beforeAll(() => {
     const sectorRoot = generateSectorTree(2, 2);
     model = createCadModelMetadata(sectorRoot);
+    currentLogLevel = Log.getLevel();
+    Log.setLevel('silent');
+  });
+
+  afterAll(() => {
+    Log.setLevel(currentLogLevel);
   });
 
   beforeEach(() => {
@@ -114,9 +121,6 @@ describe('SectorLoader', () => {
 
   test('loadSectors marks sectors with errors as discarded', async () => {
     // Arrange
-
-    Log.setLevel('silent');
-
     let first = true;
 
     const cadNodeMock = new Mock<CadNode>()

@@ -133,7 +133,7 @@ export class TakenSectorTree {
       if (this.getSectorLod(child.id) === LevelOfDetail.Discarded) {
         // Note! When fileName is null the sector is so sparse that there is
         // no geometry in the F3D - we therefore skip such sectors.
-        if ((child as BaseSectorMetadata & V8SectorMetadata).facesFile!.fileName !== null) {
+        if ((child as BaseSectorMetadata & V8SectorMetadata).facesFile.fileName !== null) {
           this.setSectorLod(child.id, LevelOfDetail.Simple);
         }
       }
