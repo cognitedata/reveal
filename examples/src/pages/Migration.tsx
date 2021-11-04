@@ -62,7 +62,7 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,

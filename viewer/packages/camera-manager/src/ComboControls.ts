@@ -74,7 +74,7 @@ export default class ComboControls extends EventDispatcher {
   public zoomToCursor = true;
   public minDeltaRatio = 1;
   public maxDeltaRatio = 8;
-  public minDeltaDownscaleCoefficient = 0.1
+  public minDeltaDownscaleCoefficient = 0.1;
   public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
@@ -274,8 +274,8 @@ export default class ComboControls extends EventDispatcher {
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
     return { x, y };
-  }
-    
+  };
+
   private onMouseDown = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
@@ -325,7 +325,7 @@ export default class ComboControls extends EventDispatcher {
       delta = event.deltaY / factor;
     }
 
-    const {x, y} = this.convertPixelCoordinatesToNormalized(event.offsetX, event.offsetY);
+    const { x, y } = this.convertPixelCoordinatesToNormalized(event.offsetX, event.offsetY);
 
     const dollyIn = delta < 0;
     const deltaDistance =
@@ -648,17 +648,26 @@ export default class ComboControls extends EventDispatcher {
 
   // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
   private clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
-    if (value < xStart) 
-      value = yStart;
-    else if (value > xEnd) 
-      value = yEnd;
+    if (value < xStart) value = yStart;
+    else if (value > xEnd) value = yEnd;
     else value = MathUtils.mapLinear(value, xStart, xEnd, yStart, yEnd);
 
     return value;
-  }
+  };
 
   private calculateTargetOfssetScrollTarget = (deltaDistance: number, cameraDirection: THREE.Vector3) => {
-    const { minDistance, _reusableVector3, _sphericalEnd, _target, _scrollTarget, _camera, minDeltaRatio, maxDeltaRatio, minDeltaDownscaleCoefficient, maxDeltaDownscaleCoefficient} = this;
+    const {
+      minDistance,
+      _reusableVector3,
+      _sphericalEnd,
+      _target,
+      _scrollTarget,
+      _camera,
+      minDeltaRatio,
+      maxDeltaRatio,
+      minDeltaDownscaleCoefficient,
+      maxDeltaDownscaleCoefficient
+    } = this;
 
     const distToTarget = cameraDirection.length();
 
@@ -678,11 +687,17 @@ export default class ComboControls extends EventDispatcher {
     let deltaTargetOffsetDistance =
       deltaDistance * (Math.sin(targetCameraScrollTargetAngle) / Math.sin(targetScrollTargetCameraAngle));
 
-    let targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
+    const targetOffsetToDeltaRatio = Math.abs(deltaTargetOffsetDistance / deltaDistance);
 
     // if target movement is too fast we want to slow it down a bit
-    const deltaDownscaleCoefficient = this.clampedMap(targetOffsetToDeltaRatio, minDeltaRatio, maxDeltaRatio, maxDeltaDownscaleCoefficient, minDeltaDownscaleCoefficient);
-   
+    const deltaDownscaleCoefficient = this.clampedMap(
+      targetOffsetToDeltaRatio,
+      minDeltaRatio,
+      maxDeltaRatio,
+      maxDeltaDownscaleCoefficient,
+      minDeltaDownscaleCoefficient
+    );
+
     deltaDistance *= deltaDownscaleCoefficient;
     deltaTargetOffsetDistance *= deltaDownscaleCoefficient;
 
@@ -710,9 +725,10 @@ export default class ComboControls extends EventDispatcher {
   private dollyWithWheelScroll = (x: number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
     const { _targetEnd, useScrollTarget, zoomToCursor } = this;
 
-    const targetOffset = zoomToCursor ? (useScrollTarget
+    const targetOffset = zoomToCursor
+      ? useScrollTarget
         ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
-        : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)) 
+        : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)
       : this.calculateTargetOfssetLerp(0, 0, deltaDistance, cameraDirection);
 
     _targetEnd.add(targetOffset);
