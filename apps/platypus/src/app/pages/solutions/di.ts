@@ -3,7 +3,7 @@ import {
   SolutionsTemplatesApiService,
 } from '@platypus/platypus-core';
 
-import { getCogniteSDKClient } from '@platypus-root/utils/cogniteSdk';
+import { getCogniteSDKClient } from '@platypus-app/utils/cogniteSdk';
 
 const client = getCogniteSDKClient();
 

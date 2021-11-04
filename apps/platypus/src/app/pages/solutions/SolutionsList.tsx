@@ -5,7 +5,8 @@ import { solutions } from '../../mocks/solutions';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
 import services from './di';
-import { useTranslation } from '@platypus-root/hooks/useTranslation';
+import { useTranslation } from '../../hooks/useTranslation';
+import { Solution } from '@platypus/platypus-core';
 
 export const SolutionsList = () => {
   const history = useHistory();
@@ -14,7 +15,7 @@ export const SolutionsList = () => {
   const solutionsHandler = services.solutionsHandler;
 
   const listSolutions = () => {
-    solutionsHandler.list().then((res) => console.log(res));
+    solutionsHandler.list().then((res: Solution[]) => console.log(res));
   };
 
   return (

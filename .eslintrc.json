@@ -29,7 +29,7 @@
           {
             "enforceBuildableLibDependency": true,
             "allow": [
-              "@platypus-root"
+              "@platypus-app"
             ],
             "depConstraints": [
               {
@@ -175,7 +175,8 @@
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "react/jsx-no-useless-fragment": "off"
+        "react/jsx-no-useless-fragment": "off",
+        "@typescript-eslint/no-explicit-any": "off"
       }
     },
     {

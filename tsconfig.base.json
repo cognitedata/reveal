@@ -34,7 +34,7 @@
       "@platypus/platypus-ui": [
         "libs/platypus-ui/src/index.ts"
       ],
-      "@platypus-root/*": [
+      "@platypus-app/*": [
         "apps/platypus/src/app/*"
       ]
     }
