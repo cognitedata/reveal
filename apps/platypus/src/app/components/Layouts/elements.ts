@@ -15,3 +15,19 @@ export const StyledPageContentLayout = styled.div`
     font-size: 3rem;
   }
 `;
+
+export const StyledPageLayout = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  flex: 1;
+  overflow: auto;
+
+  .page {
+    flex: 1;
+  }
+
+  .content {
+    flex: 1;
+  }
+`;

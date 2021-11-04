@@ -1,5 +1,5 @@
-import { PageContentLayout } from '../../layouts/PageContentLayout';
-import { PageLayout } from '../../layouts/PageLayout';
+import { PageLayout } from '../../../components/Layouts/PageLayout';
+import { PageContentLayout } from '../../../components/Layouts/PageContentLayout';
 
 export const DeploymentsPage = () => (
   <PageLayout>

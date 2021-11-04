@@ -1,12 +1,14 @@
-import { PageLayout } from '../../layouts/PageLayout';
+import { SideBarMenu } from '../../../components/Navigations/SideBarMenu';
+import { PageLayout } from '../../../components/Layouts/PageLayout';
 
-import { ReactComponent as Home } from './icons/home.svg';
-import { ReactComponent as ChartPie } from './icons/chartpie.svg';
-import { ReactComponent as Newspaper } from './icons/newspaper.svg';
 import { Route, Switch } from 'react-router-dom';
 import { OverviewPage } from './overviewPages/OverviewPage';
 import { UpdatesPage } from './overviewPages/UpdatesPage';
 import { AnalyticsPage } from './overviewPages/AnalyticsPage';
+
+import { ReactComponent as Home } from './icons/home.svg';
+import { ReactComponent as ChartPie } from './icons/chartpie.svg';
+import { ReactComponent as Newspaper } from './icons/newspaper.svg';
 
 export const OverviewLayout = () => {
   const renderPageContent = () => {
@@ -25,30 +27,33 @@ export const OverviewLayout = () => {
     );
   };
 
+  const sideBarMenuItems = [
+    {
+      icon: <Home />,
+      page: 'overview',
+      slug: '',
+      tooltip: 'Overview',
+    },
+    {
+      icon: <ChartPie />,
+      page: 'overview',
+      slug: 'analytics',
+      tooltip: 'Analytics',
+    },
+    {
+      icon: <Newspaper />,
+      page: 'overview',
+      slug: 'updates',
+      tooltip: 'Update',
+    },
+  ];
+
   return (
-    <PageLayout
-      sideBarMenuItems={[
-        {
-          icon: <Home />,
-          page: 'overview',
-          slug: ``,
-          tooltip: 'Overview',
-        },
-        {
-          icon: <ChartPie />,
-          page: 'overview',
-          slug: `analytics`,
-          tooltip: 'Analytics',
-        },
-        {
-          icon: <Newspaper />,
-          page: 'overview',
-          slug: `updates`,
-          tooltip: 'Update',
-        },
-      ]}
-    >
-      {renderPageContent()}
+    <PageLayout>
+      <PageLayout.Navigation>
+        <SideBarMenu items={sideBarMenuItems} />
+      </PageLayout.Navigation>
+      <PageLayout.Content>{renderPageContent()}</PageLayout.Content>
     </PageLayout>
   );
 };

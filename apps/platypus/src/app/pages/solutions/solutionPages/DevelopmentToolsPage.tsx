@@ -1,5 +1,5 @@
-import { PageContentLayout } from '../../layouts/PageContentLayout';
-import { PageLayout } from '../../layouts/PageLayout';
+import { PageContentLayout } from '../../../components/Layouts/PageContentLayout';
+import { PageLayout } from '../../../components/Layouts/PageLayout';
 
 export const DevelopmentToolsPage = () => (
   <PageLayout>

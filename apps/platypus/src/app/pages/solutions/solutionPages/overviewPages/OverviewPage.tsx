@@ -1,20 +1,9 @@
-import { Button } from '@cognite/cogs.js';
 import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
-import { PageContentLayout } from '../../../layouts/PageContentLayout';
+import { PageContentLayout } from '../../../../components/Layouts/PageContentLayout';
 
 export const OverviewPage = () => {
   const renderHeader = () => {
-    return (
-      <PageToolbar title="Overview" backPathname="/">
-        <Button
-          onClick={() => {
-            alert('For demo purposes only.');
-          }}
-        >
-          Demo
-        </Button>
-      </PageToolbar>
-    );
+    return <PageToolbar title="Overview" />;
   };
   return (
     <PageContentLayout>

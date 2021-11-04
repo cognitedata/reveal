@@ -1,5 +1,5 @@
 import { PageToolbar } from '../../../../components/PageToolbar/PageToolbar';
-import { PageContentLayout } from '../../../layouts/PageContentLayout';
+import { PageContentLayout } from '../../../../components/Layouts/PageContentLayout';
 
 export const DatamodelPage = () => {
   const renderHeader = () => {

@@ -67,9 +67,10 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
 
 const StyledSideBarMenu = styled.div`
   display: flex;
+  height: 100%;
   flex-direction: column;
   justify-content: space-between;
-  width: 5.6rem;
+  width: 6rem;
   padding: 0 1rem;
   border-right: solid 1px var(--cogs-greyscale-grey3);
 `;
