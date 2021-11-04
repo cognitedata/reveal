@@ -7,14 +7,14 @@ import * as THREE from 'three';
 import { SectorMetadataFacesFileSection, V8SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import { BaseCadSectorMetadata, CadSceneMetadata, V8CadSectorMetadata } from './types';
+import { CadSceneRootMetadata, V8SceneSectorMetadata } from './types';
 
-export function parseCadMetadataV8(metadata: CadSceneMetadata): SectorScene {
+export function parseCadMetadataV8(metadata: CadSceneRootMetadata): SectorScene {
   // Create list of sectors and a map of child -> parent
   const sectorsById = new Map<number, V8SectorMetadata>();
   const parentIds: number[] = [];
   metadata.sectors.forEach(s => {
-    const sector = createSectorMetadata(s as BaseCadSectorMetadata & V8CadSectorMetadata);
+    const sector = createSectorMetadata(s as V8SceneSectorMetadata);
     sectorsById.set(s.id, sector);
     parentIds[s.id] = s.parentId ?? -1;
   });
@@ -41,7 +41,7 @@ export function parseCadMetadataV8(metadata: CadSceneMetadata): SectorScene {
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-function createSectorMetadata(metadata: BaseCadSectorMetadata & V8CadSectorMetadata): V8SectorMetadata {
+function createSectorMetadata(metadata: V8SceneSectorMetadata): V8SectorMetadata {
   const facesFile = determineFacesFile(metadata);
 
   const bb = metadata.boundingBox;
@@ -69,7 +69,7 @@ function createSectorMetadata(metadata: BaseCadSectorMetadata & V8CadSectorMetad
   };
 }
 
-function determineFacesFile(metadata: BaseCadSectorMetadata & V8CadSectorMetadata): SectorMetadataFacesFileSection {
+function determineFacesFile(metadata: V8SceneSectorMetadata): SectorMetadataFacesFileSection {
   if (!metadata.facesFile) {
     return {
       quadSize: -1.0,

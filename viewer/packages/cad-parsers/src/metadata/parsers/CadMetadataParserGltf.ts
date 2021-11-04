@@ -7,14 +7,14 @@ import * as THREE from 'three';
 import { V9SectorMetadata } from '../types';
 import { SectorScene } from '../../utilities/types';
 import { SectorSceneImpl } from '../../utilities/SectorScene';
-import { BaseCadSectorMetadata, CadSceneMetadata, GltfCadSectorMetadata } from './types';
+import { CadSceneRootMetadata, V9SceneSectorMetadata } from './types';
 
-export function parseCadMetadataGltf(metadata: CadSceneMetadata): SectorScene {
+export function parseCadMetadataGltf(metadata: CadSceneRootMetadata): SectorScene {
   // Create list of sectors and a map of child -> parent
   const sectorsById = new Map<number, V9SectorMetadata>();
   const parentIds: number[] = [];
   metadata.sectors.forEach(s => {
-    const sector = createSectorMetadata(s as BaseCadSectorMetadata & GltfCadSectorMetadata);
+    const sector = createSectorMetadata(s as V9SceneSectorMetadata);
     sectorsById.set(s.id, sector);
     parentIds[s.id] = s.parentId ?? -1;
   });
@@ -39,7 +39,7 @@ export function parseCadMetadataGltf(metadata: CadSceneMetadata): SectorScene {
   return new SectorSceneImpl(metadata.version, metadata.maxTreeIndex, unit, rootSector, sectorsById);
 }
 
-function createSectorMetadata(metadata: BaseCadSectorMetadata & GltfCadSectorMetadata): V9SectorMetadata {
+function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata {
   const bb = metadata.boundingBox;
   const min_x = bb.min.x;
   const min_y = bb.min.y;

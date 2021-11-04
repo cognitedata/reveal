@@ -1,10 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export type CadSceneMetadata = {
+export type CadSceneRootMetadata = {
   readonly version: number;
   readonly maxTreeIndex: number;
-  readonly sectors: CadSectorMetadata[];
+  readonly sectors: SceneSectorMetadata[];
   readonly unit: string | null;
 
   // Available, but unused:
@@ -14,9 +14,11 @@ export type CadSceneMetadata = {
   // readonly subRevisionId: number;
 };
 
-export type CadSectorMetadata = BaseCadSectorMetadata & (GltfCadSectorMetadata | V8CadSectorMetadata);
+export type SceneSectorMetadata = BaseSceneSectorMetadata & (GltfSceneSectorMetadata | I3dF3dSceneSectorMetadata);
+export type V8SceneSectorMetadata = BaseSceneSectorMetadata & I3dF3dSceneSectorMetadata;
+export type V9SceneSectorMetadata = BaseSceneSectorMetadata & GltfSceneSectorMetadata;
 
-export type BaseCadSectorMetadata = {
+export type BaseSceneSectorMetadata = {
   readonly id: number;
   readonly parentId: number | null;
   readonly path: string;
@@ -38,13 +40,13 @@ export type BaseCadSectorMetadata = {
   };
 };
 
-export type GltfCadSectorMetadata = {
+export type GltfSceneSectorMetadata = {
   readonly sectorFileName: string | null;
   readonly maxDiagonalLength: number;
   readonly downloadSize: number;
 };
 
-export type V8CadSectorMetadata = {
+export type I3dF3dSceneSectorMetadata = {
   readonly indexFile: {
     readonly fileName: string;
     readonly peripheralFiles: string[];

@@ -8,12 +8,12 @@ import { SectorMetadata } from '../types';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 import { Mutable } from '../../../../../test-utilities/src/reflection';
-import { BaseCadSectorMetadata, CadSceneMetadata, V8CadSectorMetadata } from './types';
+import { BaseSceneSectorMetadata, CadSceneRootMetadata, I3dF3dSceneSectorMetadata } from './types';
 import { I3dF3dSectorMetadata } from '../types';
 
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 103350,
       unit: 'Meters',
@@ -23,7 +23,7 @@ describe('parseCadMetadataV8', () => {
   });
 
   test('Metadata has no root sector with id 0, throws', () => {
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 103350,
       unit: 'Meters',
@@ -35,7 +35,7 @@ describe('parseCadMetadataV8', () => {
   test('Metadata with single root, return valid scene', () => {
     // Arrange
     const sectorRoot = createSectorMetadata(0);
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 8000,
       unit: 'Meters',
@@ -72,7 +72,7 @@ describe('parseCadMetadataV8', () => {
   test('Metadata with missing recursiveCoverageFactors, falls back to coverageFactors', () => {
     // Arrange
     const sectorRoot = createSectorMetadata(0);
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 8000,
       unit: 'Meters',
@@ -106,7 +106,7 @@ describe('parseCadMetadataV8', () => {
 
   test('Multiple sectors, relations are established', () => {
     // Arrange
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 8000,
       unit: 'Meters',
@@ -133,7 +133,7 @@ describe('parseCadMetadataV8', () => {
 
   test('Children and parent relations are set', () => {
     // Arrange
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'Meters',
@@ -176,9 +176,9 @@ describe('parseCadMetadataV8', () => {
 
   test('Single sector without facesFile, creates dummy faces section', () => {
     // Arrange
-    const root: Mutable<BaseCadSectorMetadata & V8CadSectorMetadata> = createSectorMetadata(0, -1);
+    const root: Mutable<V8SceneSectorMetadata> = createSectorMetadata(0, -1);
     root.facesFile = null;
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'Meters',
@@ -199,11 +199,11 @@ describe('parseCadMetadataV8', () => {
 
   test('Metadata is missing facesFile from leafs, creates dummy facesFile with coverage factors from parent', () => {
     // Arrange
-    const leaf2: Mutable<BaseCadSectorMetadata & V8CadSectorMetadata> = createSectorMetadata(3, 1);
+    const leaf2: Mutable<V8SceneSectorMetadata> = createSectorMetadata(3, 1);
     leaf2.facesFile = null;
-    const leaf3: Mutable<BaseCadSectorMetadata & V8CadSectorMetadata> = createSectorMetadata(2, 0);
+    const leaf3: Mutable<V8SceneSectorMetadata> = createSectorMetadata(2, 0);
     leaf3.facesFile = null;
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'Meters',
@@ -248,14 +248,14 @@ describe('parseCadMetadataV8', () => {
 
   test('No sectors has faces files, provides dummy values for all', () => {
     // Arrange
-    const sectors: Mutable<BaseCadSectorMetadata & V8CadSectorMetadata>[] = [
+    const sectors: Mutable<V8SceneSectorMetadata>[] = [
       createSectorMetadata(2, 0),
       createSectorMetadata(0),
       createSectorMetadata(3, 1),
       createSectorMetadata(1, 0)
     ];
     sectors.forEach(x => (x.facesFile = null));
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'Meters',
@@ -278,7 +278,7 @@ describe('parseCadMetadataV8', () => {
 
   test('Unit is passed through', () => {
     // Arrange
-    const metadata: CadSceneMetadata = {
+    const metadata: CadSceneRootMetadata = {
       version: 8,
       maxTreeIndex: 4,
       unit: 'AU',
@@ -293,8 +293,8 @@ describe('parseCadMetadataV8', () => {
   });
 });
 
-function createSectorMetadata(id: number, parentId: number = -1): BaseCadSectorMetadata & V8CadSectorMetadata {
-  const metadata: BaseCadSectorMetadata & V8CadSectorMetadata = {
+function createSectorMetadata(id: number, parentId: number = -1): V8SceneSectorMetadata {
+  const metadata: V8SceneSectorMetadata = {
     id,
     parentId,
     path: '0/',
