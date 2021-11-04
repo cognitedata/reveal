@@ -131,7 +131,10 @@ export default function WorkflowRow({
   const runComputation = useCallback(() => {
     const computationCopy: Calculation = JSON.parse(stringifiedComputation);
 
-    if (!computationCopy.steps.length) {
+    const isComputationValid =
+      computationCopy.steps.length &&
+      computationCopy.steps.every((step) => step.inputs.length);
+    if (!isComputationValid) {
       return;
     }
 
