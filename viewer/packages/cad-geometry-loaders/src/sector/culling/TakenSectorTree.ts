@@ -56,7 +56,7 @@ export class TakenSectorTree {
     }
 
     // Default to load root
-    if (sectorRoot.facesFile!.fileName) {
+    if (sectorRoot.facesFile.fileName) {
       this.setSectorLod(sectorRoot.id, LevelOfDetail.Simple);
     }
   }
@@ -141,7 +141,7 @@ export class TakenSectorTree {
   }
 
   private setSectorLod(sectorId: number, lod: LevelOfDetail) {
-    assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile!.fileName !== null);
+    assert(lod !== LevelOfDetail.Simple || this.sectors[sectorId].sector.facesFile.fileName !== null);
     this.sectors[sectorId].lod = lod;
     reduceSectorCost(this._totalCost, this.sectors[sectorId].cost);
     this.sectors[sectorId].cost = this.determineSectorCost(this.sectors[sectorId].sector, lod);
