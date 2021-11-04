@@ -4,23 +4,38 @@ import { useHistory } from 'react-router-dom';
 import { solutions } from '../../mocks/solutions';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
+import services from './di';
+import { useTranslation } from '@platypus-root/hooks/useTranslation';
+
 export const SolutionsList = () => {
   const history = useHistory();
+  const { t } = useTranslation('solutions');
+
+  const solutionsHandler = services.solutionsHandler;
+
+  const listSolutions = () => {
+    solutionsHandler.list().then((res) => console.log(res));
+  };
 
   return (
     <StyledPageWrapper style={{ padding: '3rem' }}>
-      <Title level={3}>Solutions</Title>
+      <Title level={3}>{t('solutions_title', 'Solutions')}</Title>
+      <button type="button" onClick={listSolutions}>
+        Load
+      </button>
       <StyledWrapper>
         <StyledNewCard onClick={() => history.push('/new')}>
           <Icon type="PlusCompact" />
-          <Body level={2}>Create a solution</Body>
+          <Body level={2}>{t('create_solutuon', 'Create a solution')}</Body>
         </StyledNewCard>
         {solutions.map((solution) => (
           <StyledSolutionCard
             onClick={() => history.push(`solutions/${solution.id}`)}
           >
             <Title level={4}>{solution.name}</Title>
-            <Detail>Edited on {solution.lastEditedAt}</Detail>
+            <Detail>
+              {t('solution_edited_on', 'Edited on')} {solution.lastEditedAt}
+            </Detail>
             <Body level={2}>relevant info</Body>
             <StyledMoreActionsIcon type="MoreOverflowEllipsisHorizontal" />
           </StyledSolutionCard>

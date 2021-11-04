@@ -171,38 +171,124 @@
       },
       "tags": []
     },
-    "platypus-cli": {
-      "root": "libs/platypus-cli",
-      "sourceRoot": "libs/platypus-cli/src",
+    "platypus-cdf-cli": {
+      "root": "apps/platypus-cdf-cli",
+      "sourceRoot": "apps/platypus-cdf-cli/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/platypus-cdf-cli",
+            "main": "apps/platypus-cdf-cli/src/main.ts",
+            "tsConfig": "apps/platypus-cdf-cli/tsconfig.app.json",
+            "assets": ["apps/platypus-cdf-cli/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/platypus-cdf-cli/src/environments/environment.ts",
+                  "with": "apps/platypus-cdf-cli/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "platypus-cdf-cli:build",
+            "watch": false
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/platypus-cdf-cli/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/platypus-cdf-cli"],
+          "options": {
+            "jestConfig": "apps/platypus-cdf-cli/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "platypus-core": {
+      "root": "libs/platypus-core",
+      "sourceRoot": "libs/platypus-core/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["libs/platypus-cli/**/*.ts"]
+            "lintFilePatterns": ["libs/platypus-core/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/platypus-cli"],
+          "outputs": ["coverage/libs/platypus-core"],
           "options": {
-            "jestConfig": "libs/platypus-cli/jest.config.js",
+            "jestConfig": "libs/platypus-core/jest.config.js",
             "passWithNoTests": true
           }
-        },
-        "build": {
-          "executor": "@nrwl/node:package",
-          "outputs": ["{options.outputPath}"],
+        }
+      },
+      "tags": []
+    },
+    "platypus-infrastructure": {
+      "root": "libs/platypus-infrastructure",
+      "sourceRoot": "libs/platypus-infrastructure/src",
+      "projectType": "library",
+      "targets": {
+
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "outputPath": "dist/libs/platypus-cli",
-            "tsConfig": "libs/platypus-cli/tsconfig.lib.json",
-            "packageJson": "libs/platypus-cli/package.json",
-            "main": "libs/platypus-cli/src/index.ts",
-            "assets": [
-              "libs/platypus-cli/*.md",
-              "libs/platypus-cli/.platypusrc"
-            ]
+            "lintFilePatterns": ["libs/platypus-infrastructure/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/platypus-infrastructure"],
+          "options": {
+            "jestConfig": "libs/platypus-infrastructure/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "platypus-ui": {
+      "root": "libs/platypus-ui",
+      "sourceRoot": "libs/platypus-ui/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/platypus-ui/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/platypus-ui"],
+          "options": {
+            "jestConfig": "libs/platypus-ui/jest.config.js",
+            "passWithNoTests": true
           }
         }
       },
