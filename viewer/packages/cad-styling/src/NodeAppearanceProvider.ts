@@ -111,11 +111,13 @@ export class NodeAppearanceProvider {
       collection => collection.appearance.prioritizedForLoadingHint
     );
 
-    const prioritizedAreas = prioritizedCollections.flatMap(collection =>
-      [...collection.nodeCollection.getAreas().areas()].map(area => {
-        return { area, extraPriority: collection.appearance.prioritizedForLoadingHint! };
-      })
-    );
+    const prioritizedAreas = prioritizedCollections.flatMap(collection => {
+      const prioritizedAreaList: PrioritizedArea[] = [];
+      for (const area of collection.nodeCollection.getAreas().areas()) {
+        prioritizedAreaList.push({ area, extraPriority: collection.appearance.prioritizedForLoadingHint! });
+      }
+      return prioritizedAreaList;
+    });
 
     this._cachedPrioritizedAreas = prioritizedAreas;
     return this._cachedPrioritizedAreas;
