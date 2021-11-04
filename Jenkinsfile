@@ -163,15 +163,6 @@ pods {
           shouldPublishSourceMap: false
         )
       }
-
-      container('cloudsdk') {
-        stage('Deploy to cdf-hub') {
-            sh("gcloud auth activate-service-account jenkins-cdf-hub-deployment@cognitedata.iam.gserviceaccount.com --key-file=/jenkins-cdf-hub-deployer/credentials.json --project=${projectProduction}")
-            // Upload the root config js to the bundles bucket
-            sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/${gitCommit}/")
-            sh("gsutil cp -r build/. gs://${bucketBundles}/${APP_NAME}/latest/")
-        }
-      }
     }
   }
 }
