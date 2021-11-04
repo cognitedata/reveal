@@ -8,7 +8,7 @@ import { SectorScene, CadModelMetadata, SectorSceneFactory } from '@reveal/cad-p
 
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
-import { createSectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
+import { createV8SectorMetadata, SectorTree, createGlContext } from '../../../../../test-utilities';
 import { File3dFormat } from '@reveal/modeldata-api';
 
 describe('OrderSectorsByVisibilityCoverage', () => {
@@ -127,7 +127,7 @@ describe('OrderSectorsByVisibilityCoverage', () => {
 });
 
 function createStubScene(tree: SectorTree): SectorScene {
-  const root = createSectorMetadata(tree);
+  const root = createV8SectorMetadata(tree);
   const sceneFactory = new SectorSceneFactory();
   return sceneFactory.createSectorScene(8, 1, 'Meters', root);
 }

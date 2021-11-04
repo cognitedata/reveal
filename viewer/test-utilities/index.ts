@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export { generateV8SectorTree, createSectorMetadata, SectorTree } from './src/createSectorMetadata';
+export { generateV8SectorTree, createV8SectorMetadata, SectorTree } from './src/createSectorMetadata';
 
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 

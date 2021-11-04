@@ -9,12 +9,12 @@ export type SectorTree = [number, SectorTree[], THREE.Box3?];
 
 const unitBox = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
 
-export function createSectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V8SectorMetadata {
+export function createV8SectorMetadata(tree: SectorTree, depth: number = 0, path: string = '0/'): V8SectorMetadata {
   const id = tree[0];
   const childIds = tree[1];
   const bounds = tree[2] || unitBox;
   const children = childIds.map((x, i) => {
-    return createSectorMetadata(x, depth + 1, `${path}${i}/`);
+    return createV8SectorMetadata(x, depth + 1, `${path}${i}/`);
   });
 
   const root: SectorMetadata = {
@@ -55,7 +55,7 @@ export function generateV8SectorTree(depth: number, childrenPerLevel: number = 4
   const firstChildren = generateSectorTreeChildren(depth - 1, bounds, childrenPerLevel, 1);
   const root: SectorTree = [0, firstChildren.children, bounds];
 
-  return createSectorMetadata(root, depth);
+  return createV8SectorMetadata(root, depth);
 }
 
 function generateSectorTreeChildren(
