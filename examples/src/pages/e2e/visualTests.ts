@@ -65,5 +65,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'customBackgroundColorAndFXAA',
     category: 'cad'
+  },
+  {
+    testKey: 'reassign-node-style',
+    category: 'cad'
   }
 ];
