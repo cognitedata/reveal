@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import {ComboControls} from '../';
+import { ComboControls } from '../';
 import Keyboard from '../src/Keyboard';
 
 let renderer: THREE.WebGLRenderer;
@@ -19,7 +19,6 @@ let cuState: {
 init();
 
 function init() {
-
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000000);
 
   scene = new THREE.Scene();

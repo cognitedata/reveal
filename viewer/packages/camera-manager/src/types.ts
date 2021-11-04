@@ -3,35 +3,35 @@
  */
 
 export interface RevealCameraControls {
-    /**
-     * Method for updating controls state
-     */
-    update: () => void;
+  /**
+   * Method for updating controls state
+   */
+  update: () => void;
 
-    /**
-     * Sets new state for controls
-     */
-    setState: (...args: any[]) => Object;
+  /**
+   * Sets new state for controls
+   */
+  setState: (...args: any[]) => any;
 
-     /**
-     * Method for getting current controls state
-     */
-    getState: () => Object;
+  /**
+   * Method for getting current controls state
+   */
+  getState: () => any;
 }
 
 export type CallbackData = {
-    intersection: {
-        /**
-         * Coordinate of the intersection.
-         */
-        point: THREE.Vector3;
-        /**
-         * Distance from the camera to the intersection.
-         */
-        distanceToCamera: number;
-    } | null;
+  intersection: {
     /**
-     * Bounding box for all models on the scene
+     * Coordinate of the intersection.
      */
-    modelsBB: THREE.Box3;
-  };
+    point: THREE.Vector3;
+    /**
+     * Distance from the camera to the intersection.
+     */
+    distanceToCamera: number;
+  } | null;
+  /**
+   * Bounding box for all models on the scene
+   */
+  modelsBB: THREE.Box3;
+};

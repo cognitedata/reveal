@@ -45,7 +45,7 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import {ComboControls, CameraManager } from '@reveal/camera-manager';
+import { ComboControls, CameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
@@ -123,7 +123,7 @@ export class Cognite3DViewer {
   private readonly _useScrollTargetControls: boolean;
   private readonly _useOnClickTargetChange: boolean;
   private readonly _animationDuration: number = 600;
-  
+
   private isDisposed = false;
 
   private readonly renderController: RenderController;
@@ -142,7 +142,7 @@ export class Cognite3DViewer {
    */
   private readonly _updateNearAndFarPlaneBuffers = {
     combinedBbox: new THREE.Box3(),
-    bbox: new THREE.Box3(),
+    bbox: new THREE.Box3()
   };
 
   /**
@@ -216,7 +216,7 @@ export class Cognite3DViewer {
     this.spinner = new Spinner(this.domElement);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
-    // TODO savokr 28-10-2021: Consider removing default camera position initialization 
+    // TODO savokr 28-10-2021: Consider removing default camera position initialization
     this.camera.position.x = 30;
     this.camera.position.y = 10;
     this.camera.position.z = 50;
@@ -226,7 +226,7 @@ export class Cognite3DViewer {
     this.scene.autoUpdate = false;
 
     this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
-    
+
     this._cameraManager.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -1210,7 +1210,6 @@ export class Cognite3DViewer {
       }
     }
   }
-  
 
   /** @private */
   private async modelIntersectionCallback(offsetX: number, offsetY: number) {
@@ -1229,9 +1228,8 @@ export class Cognite3DViewer {
       return;
     }
 
-    const { combinedBbox, bbox } =
-      this._updateNearAndFarPlaneBuffers;
-   
+    const { combinedBbox, bbox } = this._updateNearAndFarPlaneBuffers;
+
     combinedBbox.makeEmpty();
     this._models.forEach(model => {
       model.getModelBoundingBox(bbox);

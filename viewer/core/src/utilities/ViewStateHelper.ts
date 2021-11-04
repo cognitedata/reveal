@@ -73,7 +73,6 @@ export class ViewStateHelper {
   }
 
   public async setState(viewerState: ViewerState): Promise<void> {
-  
     this._cameraControls.setState(viewerState.camera.position, viewerState.camera.target);
 
     const cadModels = this._viewer.models

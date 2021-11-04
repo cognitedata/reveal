@@ -1,1 +1,3 @@
-// Yay, we are handling input here!
+/*!
+ * Copyright 2021 Cognite AS
+ */
