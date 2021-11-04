@@ -59,6 +59,10 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
     forceRerender: true,
   });
 
+  const didRemoveNameOrDescription =
+    (props.dataSet?.name !== '' && dataSetName === '') ||
+    (props.dataSet?.description !== '' && dataSetDescription === '');
+
   useEffect(() => {
     if (saveSections) {
       updateDataSetFields();
@@ -359,7 +363,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         {props.dataSet && isEditing && (
           <CreateButton
             onClick={() => updateDataSetFields()}
-            disabled={props.changesSaved}
+            disabled={props.changesSaved || didRemoveNameOrDescription}
             type="primary"
           >
             Save
@@ -488,7 +492,11 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         </ChangesSavedWrapper>
       )}
       {!props.changesSaved && props.dataSet && (
-        <SaveButton type="primary" onClick={() => updateDataSetFields()}>
+        <SaveButton
+          disabled={didRemoveNameOrDescription}
+          type="primary"
+          onClick={() => updateDataSetFields()}
+        >
           Save All
         </SaveButton>
       )}
