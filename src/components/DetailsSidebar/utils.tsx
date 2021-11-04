@@ -114,18 +114,21 @@ export const useStatistics = (
       }
     }
 
+    const identifier =
+      sourceItem?.type === 'timeseries'
+        ? (sourceItem as ChartTimeSeries).tsExternalId
+        : (sourceItem as ChartWorkflow).calls?.[0].callId;
+    if (!identifier) {
+      return;
+    }
+
     const statisticsParameters: CreateStatisticsParams = {
       start_time: new Date(dateFrom).getTime(),
       end_time: new Date(dateTo).getTime(),
       histogram_options: { num_boxes: 10 }, // (eiriklv): This should be chosen by user at some point
-      tag:
-        sourceItem?.type === 'timeseries'
-          ? (sourceItem as ChartTimeSeries).tsExternalId!
-          : undefined!,
-      calculation_id:
-        sourceItem?.type === 'workflow'
-          ? (sourceItem as ChartWorkflow).calls?.[0].callId
-          : undefined,
+      ...(sourceItem?.type === 'timeseries'
+        ? { tag: identifier }
+        : { calculation_id: identifier }),
     };
 
     const hashOfParams = getHash(statisticsParameters);
