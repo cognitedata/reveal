@@ -1,16 +1,17 @@
+import React, { useEffect, useState } from 'react';
 import handleError from 'utils/handleError';
 import omit from 'lodash/omit';
 import { CreationDataSet, DataSet, TransformationDetails } from 'utils/types';
 import { DataSetPatch, Group } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { useWithIntegrations } from 'hooks/useWithIntegrations';
-import { useEffect, useState } from 'react';
 import {
   QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
 } from 'react-query';
+import { notification, Typography } from 'antd';
 import {
   getAllSetOwners,
   parseDataSet,
@@ -115,10 +116,32 @@ export const useUpdateDataSetMutation = () => {
       const [updateResponse] = await sdk.datasets.update([
         { update: updateObj, id: dataset.id },
       ]);
-      invalidateDataSetQueries(client, dataset.id);
+
       return parseDataSet(updateResponse);
     },
-    {}
+    {
+      onSuccess: (_, dataset: DataSet) => {
+        notification.success({
+          message: <p>Data set &quot;{dataset?.name}&quot; is updated</p>,
+        });
+      },
+      onError: (error: any, dataset: DataSet) => {
+        notification.error({
+          message: (
+            <>
+              <p>Data set &quot;{dataset?.name}&quot; is not updated</p>
+              <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
+                <pre>{JSON.stringify(error.errors, null, 2)}`</pre>
+              </Typography.Paragraph>
+            </>
+          ),
+          key: 'update-data-set-mutation',
+        });
+      },
+      onSettled: (_, __, dataset: DataSet) => {
+        invalidateDataSetQueries(client, dataset.id);
+      },
+    }
   );
   return { updateDataSet, ...rest };
 };
@@ -217,6 +240,7 @@ export const useDataSet = (id?: number) => {
     },
     { onError, enabled: !!id }
   );
+
   return { dataSet, ...rest };
 };
 

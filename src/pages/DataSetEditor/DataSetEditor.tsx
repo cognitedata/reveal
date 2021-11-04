@@ -37,11 +37,8 @@ const DataSetEditor = ({
 
   const { dataSet, isLoading: isFetchingDataSet } = useDataSet(selectedDataSet);
 
-  const {
-    updateDataSet,
-    isLoading: isUpdating,
-    isSuccess: datasetUpdated,
-  } = useUpdateDataSetMutation();
+  const { updateDataSet, isLoading: isUpdating } = useUpdateDataSetMutation();
+
   const {
     createDataSet,
     isLoading: isCreating,
@@ -53,12 +50,6 @@ const DataSetEditor = ({
 
   const { owners, isLoading: isFetchingOwners } =
     useDataSetOwners(selectedDataSet);
-
-  useEffect(() => {
-    if (datasetUpdated) {
-      message.success('Dataset updated!');
-    }
-  }, [datasetUpdated]);
 
   useEffect(() => {
     if (datasetCreated) {
