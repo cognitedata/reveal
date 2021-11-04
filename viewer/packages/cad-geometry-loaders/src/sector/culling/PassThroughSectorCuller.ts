@@ -6,6 +6,7 @@ import { WantedSector } from '@reveal/cad-parsers';
 import { SectorCuller } from './SectorCuller';
 import { DetermineSectorsInput, SectorLoadingSpent } from './types';
 
+// TODO: Remove this class or refactor and expose as an option to load full model
 export class PassThroughSectorCuller implements SectorCuller {
   determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
     const wantedSectors = input.cadModelsMetadata.flatMap(metadata => {

@@ -9,6 +9,7 @@ import { CadModelMetadata, V8SectorMetadata, WantedSector } from '@reveal/cad-pa
 import { coverageShaders } from '@reveal/rendering';
 
 import { OccludingGeometryProvider } from './OccludingGeometryProvider';
+import assert from 'assert';
 
 type SectorContainer = {
   model: CadModelMetadata;
@@ -207,6 +208,8 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
           throw new Error(`Model ${toBeFiltered.modelIdentifier} is not registered`);
         }
         const metadata = toBeFiltered.metadata as V8SectorMetadata;
+        assert(metadata !== undefined, `${metadata} is not of type supported type V8SectorMetadata`);
+
         const isCameraInsideSector = isWithinSectorBounds(container.model, metadata, camera.position);
         // Note! O(N), but N is number of input sectors (i.e. low)
         const found = ordered.some(
