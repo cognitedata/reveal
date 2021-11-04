@@ -4,12 +4,11 @@
 import * as THREE from 'three';
 
 import { parseCadMetadataV8 } from './CadMetadataParserV8';
-import { SectorMetadata } from '../types';
+import { SectorMetadata, V8SectorMetadata } from '../types';
 import { traverseDepthFirst } from '@reveal/utilities';
 
 import { Mutable } from '../../../../../test-utilities/src/reflection';
-import { BaseSceneSectorMetadata, CadSceneRootMetadata, I3dF3dSceneSectorMetadata } from './types';
-import { I3dF3dSectorMetadata } from '../types';
+import { CadSceneRootMetadata, V8SceneSectorMetadata } from './types';
 
 describe('parseCadMetadataV8', () => {
   test('Metadata without sectors, throws', () => {
