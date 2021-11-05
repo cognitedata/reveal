@@ -17,27 +17,8 @@ The package contains two implementations for this facade:
 - `GltfSectorRepository`: for Gltf-binary outputs
 
 
-Definitions for type dependencies from `@reveal/cad-parsers` are as follows:
+Definitions for type dependencies: `WantedSector` and `ConsumedSector` from `@reveal/cad-parsers` can be viewed [here](https://github.com/cognitedata/reveal/blob/master/viewer/packages/cad-parsers/src/cad/types.ts).
 
-```ts
-export interface WantedSector {
-  modelIdentifier: string;
-  modelBaseUrl: string;
-  geometryClipBox: THREE.Box3 | null;
-  levelOfDetail: LevelOfDetail;
-  metadata: SectorMetadata;
-}
-```
-
-```ts
-export interface ConsumedSector {
-  modelIdentifier: string;
-  metadata: SectorMetadata;
-  levelOfDetail: LevelOfDetail;
-  group: AutoDisposeGroup | undefined;
-  instancedMeshes: InstancedMeshFile[] | undefined;
-}
-```
 
 ## Sector loader test app
 The `/app/` folder contains a test app which can be used to test the sector parser in a browser context. The app can be started by running `yarn start` in the package root.
