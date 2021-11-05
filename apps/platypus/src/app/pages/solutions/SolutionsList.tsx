@@ -1,29 +1,42 @@
+import { useEffect, useState } from 'react';
 import { Title, Detail, Body, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { solutions } from '../../mocks/solutions';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
 import services from './di';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Solution } from '@platypus/platypus-core';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 export const SolutionsList = () => {
+  const [solutions, setSolutions] = useState<Array<Solution>>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const history = useHistory();
   const { t } = useTranslation('solutions');
 
-  const solutionsHandler = services.solutionsHandler;
+  useEffect(() => {
+    const solutionsHandler = services.solutionsHandler;
+    const listSolutions = () => {
+      solutionsHandler.list().then((res: Solution[]) => {
+        setLoading(false);
+        setSolutions(res);
+      });
+    };
+    listSolutions();
+  }, []);
 
-  const listSolutions = () => {
-    solutionsHandler.list().then((res: Solution[]) => console.log(res));
-  };
+  if (loading) {
+    return (
+      <StyledPageWrapper>
+        <Spinner />
+      </StyledPageWrapper>
+    );
+  }
 
   return (
     <StyledPageWrapper style={{ padding: '3rem' }}>
       <Title level={3}>{t('solutions_title', 'Solutions')}</Title>
-      <button type="button" onClick={listSolutions}>
-        Load
-      </button>
       <StyledWrapper>
         <StyledNewCard onClick={() => history.push('/new')}>
           <Icon type="PlusCompact" />
@@ -32,10 +45,11 @@ export const SolutionsList = () => {
         {solutions.map((solution) => (
           <StyledSolutionCard
             onClick={() => history.push(`solutions/${solution.id}`)}
+            key={solution.id}
           >
             <Title level={4}>{solution.name}</Title>
             <Detail>
-              {t('solution_edited_on', 'Edited on')} {solution.lastEditedAt}
+              {t('solution_edited_on', 'Edited on')} {solution.createdTime}
             </Detail>
             <Body level={2}>relevant info</Body>
             <StyledMoreActionsIcon type="MoreOverflowEllipsisHorizontal" />

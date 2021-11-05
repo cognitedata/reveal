@@ -2,7 +2,6 @@ import styled from 'styled-components/macro';
 import { useHistory, useParams } from 'react-router-dom';
 import { TopBar, Button, Dropdown, Body, Icon } from '@cognite/cogs.js';
 import { NavigationLink } from '@cognite/cogs.js/dist/Components/TopBar/Modules/Navigation';
-import { solutions } from '../../mocks/solutions';
 
 const tabs: Array<{
   slug: string;
@@ -51,7 +50,6 @@ export const NavigationSolution = () => {
   const renderLinks = () => (
     <TopBar.Navigation links={projectManagementLinks} />
   );
-  const solution = solutions.find((s) => s.id.toString() === solutionId);
 
   const renderTopBarRight = () => {
     return null;
@@ -105,7 +103,7 @@ export const NavigationSolution = () => {
                 style={{ alignItems: 'center' }}
               >
                 <Body level={2} style={{ color: '#fff' }}>
-                  {solution?.name}
+                  {solutionId}
                 </Body>
               </Button>
             </Dropdown>
