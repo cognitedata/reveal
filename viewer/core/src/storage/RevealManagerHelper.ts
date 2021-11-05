@@ -9,7 +9,7 @@ import { createRevealManager } from '../public/createRevealManager';
 
 import { createCdfRevealManager, createLocalRevealManager, PointCloudNode, RevealManager } from '../internals';
 
-import { CdfModelIdentifier, File3dFormat, LocalModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
 import { DataSource } from '@reveal/data-source';
 import { assertNever } from '@reveal/utilities';
 import { CadNode } from '@reveal/rendering';
@@ -130,7 +130,7 @@ export class RevealManagerHelper {
     if (model.modelId === -1 || model.revisionId === -1) {
       throw new Error('addCdfCadModel only works with local models');
     }
-    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId, File3dFormat.RevealCadModel);
+    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
     return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
   }
 
@@ -143,7 +143,7 @@ export class RevealManagerHelper {
     if (model.modelId === -1 || model.revisionId === -1) {
       throw new Error('addCdfPointCloudModel only works with local models');
     }
-    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId, File3dFormat.EptPointCloud);
+    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
     return revealManager.addModel('pointcloud', modelIdentifier);
   }
 }

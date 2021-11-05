@@ -19,6 +19,7 @@
     "@reveal/modeldata-api": "workspace:*",
     "@reveal/nodes-api": "workspace:*",
     "@reveal/rendering": "workspace:*",
+    "@reveal/sector-loader": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }
