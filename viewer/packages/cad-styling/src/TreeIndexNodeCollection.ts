@@ -64,9 +64,9 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   }
 
   /**
-   * Add areas to this node collection's representative area collection.
+   * Add areas to this node collection's area set.
    * Nearby areas may be clustered and merged together to keep
-   * the number of areas in the representative set small.
+   * the number of areas in the set small.
    */
   addAreas(areas: THREE.Box3[]): void {
     if (!this._areaCollection) {
@@ -77,8 +77,8 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   }
 
   /**
-   * Add points to this node collection's representative area collection.
-   * This effectively adds small bounding boxes with the points as their centers.
+   * Add points to this node collection's area set.
+   * This effectively adds boxes of size 1x1x1 meter with the points as their centers.
    */
   addAreaPoints(points: THREE.Vector3[]): void {
     if (!this._areaCollection) {
