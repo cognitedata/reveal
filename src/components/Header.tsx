@@ -12,6 +12,10 @@ const Wrapper = styled.div`
   display: flex;
   gap: 0.5rem;
   flex: 0.95;
+  .cogs-body-1,
+  .cogs-body-2 {
+    color: var(--cogs-text-color-secondary);
+  }
 `;
 
 interface Props {

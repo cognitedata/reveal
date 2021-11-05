@@ -17,8 +17,8 @@ export const ManageTrainingSets: FC = () => {
   return (
     <>
       <Header
-        title={modelName || 'No title'}
-        subtitle={classifierName}
+        title={classifierName}
+        subtitle={modelName}
         description={description}
         Action={
           <Flex alignItems="center" gap={8}>

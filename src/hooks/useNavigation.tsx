@@ -14,7 +14,11 @@ export const useNavigation = (): Navigation => {
   };
 
   const toClassifier = (classifier: string, name?: string) => {
-    history.push(`${baseUrl}/classifier/${classifier}/${name}`);
+    if (name) {
+      history.push(`${baseUrl}/classifier/${classifier}/${name}`);
+    } else {
+      history.push(`${baseUrl}/classifier/${classifier}`);
+    }
   };
 
   return {

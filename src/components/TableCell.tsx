@@ -2,12 +2,13 @@ import {
   Body,
   Button,
   formatDate,
+  formatDateTime,
   Label,
   LabelVariants,
   Tooltip,
 } from '@cognite/cogs.js';
 import { Document } from '@cognite/sdk-playground';
-import { Tag } from 'components';
+import { Tag } from 'components/Tag';
 import { globalConfig } from 'configs/global.config';
 import { Navigation } from 'hooks/useNavigation';
 import React from 'react';
@@ -28,19 +29,34 @@ export const TableCell = {
   Date: ({ value }: CellProps<any, number | undefined>) => {
     return <Body level={2}>{value ? formatDate(value) : '-'}</Body>;
   },
-  Tag: ({ value }: CellProps<any, number>) => {
-    let color: TagColor = 'primary';
-
-    if (value <= globalConfig.DOCUMENT_WARNING_THRESHOLD) {
-      color = 'warning';
-    }
-
-    if (value === globalConfig.DOCUMENT_ERROR_THRESHOLD) {
-      color = 'error';
-    }
-
-    return <Tag color={color}>{value}</Tag>;
+  DateTime: ({ value }: CellProps<any, number | undefined>) => {
+    return <Body level={2}>{value ? formatDateTime(value) : '-'}</Body>;
   },
+  Number: ({ value }: CellProps<any, number | undefined>) => {
+    return <Body level={2}>{value ? value.toFixed(3) : '-'}</Body>;
+  },
+  DocumentTag:
+    ({ disableTooltip } = { disableTooltip: false }) =>
+    ({ value }: CellProps<any, number>) => {
+      let color: TagColor = 'primary';
+
+      if (value <= globalConfig.DOCUMENT_WARNING_THRESHOLD) {
+        color = 'warning';
+      }
+
+      if (value === globalConfig.DOCUMENT_ERROR_THRESHOLD) {
+        color = 'error';
+      }
+
+      return (
+        <Tooltip
+          disabled={disableTooltip}
+          content={globalConfig.DOCUMENT_THRESHOLD_TOOLTIP[color]}
+        >
+          <Tag color={color}>{value}</Tag>
+        </Tooltip>
+      );
+    },
   Label:
     (variant?: LabelVariants) =>
     ({ value }: CellProps<any, string | undefined>) =>

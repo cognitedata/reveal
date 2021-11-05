@@ -8,6 +8,8 @@ export const DOCUMENTS_QUERY_KEYS = {
   search: 'search',
   preview: 'preview',
   aggregates: 'aggregates',
+  classifier: 'classifier',
+  pipelines: 'pipelines',
 };
 
 export const DOCUMENTS_AGGREGATES = {

@@ -16,10 +16,10 @@
   },
   "dependencies": {
     "@cognite/cdf-utilities": "^0.7.3",
-    "@cognite/cogs.js": "^3.38.6",
+    "@cognite/cogs.js": "^3.42.0",
     "@cognite/metrics": "^0.1.7",
     "@cognite/sdk": "^5.4.0",
-    "@cognite/sdk-playground": "^2.6.2",
+    "@cognite/sdk-playground": "^4.2.1",
     "@cognite/sdk-provider": "^1.0.0",
     "@google-cloud/storage": "^5.7.2",
     "@rescripts/cli": "^0.0.14",

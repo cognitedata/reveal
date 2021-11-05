@@ -1,5 +1,6 @@
 import { Body, Button, Drawer, Label } from '@cognite/cogs.js';
 import { Header } from 'components/Header';
+import { Loading } from 'components/states/Loading';
 import { documentConfig } from 'configs/global.config';
 import React from 'react';
 import {
@@ -69,7 +70,7 @@ export const DocumentPreview: React.FC<Props> = React.memo(
               <Image src={base64Image(preview)} alt="document preview" />
             )}
             {isError && <Body strong>{documentConfig.IMAGE_ERROR}</Body>}
-            {isLoading && <Body strong>{documentConfig.IMAGE_LOADING}</Body>}
+            {isLoading && <Loading title={documentConfig.IMAGE_LOADING} />}
           </ImageContent>
 
           <Header

@@ -5,11 +5,22 @@ import {
   Document,
   DocumentsSearchWrapper,
   ExternalDocumentsSearch,
+  Classifier,
 } from '@cognite/sdk-playground';
 import { DOCUMENTS_AGGREGATES } from 'services/constants';
 import { DocumentSearchQuery } from 'services/types';
 import { documentBuilder } from 'utils/builder';
 import { parseArrayBufferToBase64 } from 'utils/parser';
+
+export const fetchDocumentClassifiers = (sdk: CogniteClient) => {
+  return sdk
+    .get<ListResponse<Classifier[]>>(
+      `/api/playground/projects/${sdk.project}/documents/classifiers`
+    )
+    .then((result) => {
+      return result.data.items;
+    });
+};
 
 export const fetchDocumentPipelines = (sdk: CogniteClient) => {
   return sdk

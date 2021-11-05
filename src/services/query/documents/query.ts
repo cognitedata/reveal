@@ -3,7 +3,9 @@ import { useQuery } from 'react-query';
 import {
   doDocumentSearch,
   fetchDocumentById,
+  fetchDocumentClassifiers,
   fetchDocumentList,
+  fetchDocumentPipelines,
   previewDocument,
 } from 'services/api';
 import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
@@ -57,7 +59,7 @@ export const useDocumentPreviewQuery = (
 ) => {
   const sdk = useSDK();
 
-  const { data, ...rest } = useQuery(
+  return useQuery(
     [DOCUMENTS_QUERY_KEYS.preview, documentId],
     () => previewDocument(sdk, documentId, page),
     {
@@ -65,6 +67,23 @@ export const useDocumentPreviewQuery = (
       staleTime: Infinity,
     }
   );
+};
+
+export const useDocumentsClassifiersQuery = () => {
+  const sdk = useSDK();
+
+  const { data = [], ...rest } = useQuery(
+    [DOCUMENTS_QUERY_KEYS.classifier],
+    () => fetchDocumentClassifiers(sdk)
+  );
 
   return { data, ...rest };
+};
+
+export const useDocumentsPipelinesQuery = () => {
+  const sdk = useSDK();
+
+  return useQuery([DOCUMENTS_QUERY_KEYS.pipelines], () =>
+    fetchDocumentPipelines(sdk)
+  );
 };

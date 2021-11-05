@@ -6,12 +6,8 @@ import { CLASSIFIER_QUERY_KEYS } from 'services/constants';
 export const useClassifierManageTrainingSetsQuery = () => {
   const sdk = useSDK();
 
-  const { data = [], ...rest } = useQuery(
-    CLASSIFIER_QUERY_KEYS.list,
-    () => composeClassifierTrainingSets(sdk),
-    {
-      staleTime: Infinity,
-    }
+  const { data = [], ...rest } = useQuery(CLASSIFIER_QUERY_KEYS.list, () =>
+    composeClassifierTrainingSets(sdk)
   );
 
   return { data, ...rest };

@@ -48,13 +48,16 @@ export const documentBuilder = (
 
   if (query?.documentType) {
     // 'labels' is incorrectly typed in the SDK.. Removing type check.
-    filterBuilder = merge(filterBuilder, {
-      filter: {
-        labels: {
-          containsAny: [{ externalId: query.documentType }],
+    filterBuilder = merge<ExternalDocumentsSearch, ExternalDocumentsSearch>(
+      filterBuilder,
+      {
+        filter: {
+          labels: {
+            containsAny: [{ externalId: query.documentType }],
+          },
         },
-      },
-    });
+      }
+    );
   }
 
   return filterBuilder;

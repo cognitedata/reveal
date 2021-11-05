@@ -21,7 +21,7 @@ export const curateColumns = (navigate: Navigation) => {
     {
       Header: 'Files in label',
       accessor: 'count',
-      Cell: TableCell.Tag,
+      Cell: TableCell.DocumentTag(),
     },
     {
       Header: '',
