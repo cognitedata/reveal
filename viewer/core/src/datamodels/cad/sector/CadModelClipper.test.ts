@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 import { CadModelClipper } from './CadModelClipper';
 import { createCadModelMetadata } from '../../../../../test-utilities/src/createCadModelMetadata';
-import { generateSectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
+import { generateV8SectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
 import { Mutable } from '../../../../../test-utilities/src/reflection';
 
 describe('CadModelClipper', () => {
@@ -15,7 +15,7 @@ describe('CadModelClipper', () => {
   let modelDepth2: CadModelMetadata;
 
   beforeEach(() => {
-    const root = generateSectorTree(2, 8);
+    const root = generateV8SectorTree(2, 8);
     setBounds(root, [0, 0, 0], [2, 2, 2]);
     for (let x = 0; x < 2; x++) {
       for (let y = 0; y < 2; y++) {

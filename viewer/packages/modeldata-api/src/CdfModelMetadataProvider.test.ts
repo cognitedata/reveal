@@ -5,7 +5,6 @@
 import nock from 'nock';
 
 import { CogniteClient } from '@cognite/sdk';
-import { File3dFormat } from './types';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
 
@@ -15,7 +14,7 @@ describe(CdfModelMetadataProvider.name, () => {
   let apiPath: RegExp;
 
   beforeEach(async () => {
-    modelIdentifier = new CdfModelIdentifier(1337, 42, File3dFormat.AnyFormat);
+    modelIdentifier = new CdfModelIdentifier(1337, 42);
     apiPath = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
     const client = new CogniteClient({
@@ -41,6 +40,6 @@ describe(CdfModelMetadataProvider.name, () => {
     nock(/.*/).post(apiPath).reply(200, response);
 
     // Act & Assert
-    expect(provider.getModelUri(modelIdentifier)).rejects.toThrowError();
+    expect(provider.getModelUri(modelIdentifier, response.items[0])).rejects.toThrowError();
   });
 });

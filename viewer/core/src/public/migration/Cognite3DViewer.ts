@@ -47,7 +47,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import ComboControls from '@reveal/camera-manager';
-import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -641,16 +641,20 @@ export class Cognite3DViewer {
       throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
     }
 
-    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
-    const outputsProvider = new CdfModelOutputsProvider(this._cdfSdkClient);
-    const outputs = await outputsProvider.getOutputs(modelIdentifier);
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
+    const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
+    const outputFormats = outputs.map(output => output.format);
 
-    if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
+    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
       return 'cad';
-    } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
+    } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
     }
     return '';
+
+    function hasOutput(format: File3dFormat) {
+      return outputFormats.includes(format);
+    }
   }
 
   /**
