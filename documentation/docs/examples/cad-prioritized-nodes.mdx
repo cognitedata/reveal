@@ -1,13 +1,13 @@
 ---
 id: cad-prioritized-nodes
 title: Prioritize nodes for loading
-describe: Reveal may be instructed to treat specific nodes or areas as "prioritized" with regards to geometry streaming.
+describe: Reveal may be instructed to treat specific nodes as "prioritized" with regards to geometry streaming.
 ---
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-A developer may assign nodes or areas of a model as "prioritized" in relation to geometry loading.
-By giving nodes or areas a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the camera. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times; the loader will still account for the rendering budget.
+A developer may assign nodes of a model as "prioritized" in relation to geometry loading.
+By giving nodes a "prioritization weight", a developer can influence Reveal to load, or keep loaded, certain parts of a model when it would otherwise discard them in favor of e.g. geometry that is closer to the camera. Note that assigning prioritization weights to nodes does not guarantee that they will be loaded at all times; the loader will still account for the rendering budget.
 
 Nodes are given load priority through the node styling API. The `NodeAppearance` type (see [Cad Styling](cad-styling)) includes the optional field `prioritizedForLoadingHint` which can be used to provide a load priority to the node collection. Higher values will make the related geometry more likely to be loaded. While any number can be used as the load priority, it is recommended to use values between 1 and 10. 5 is considered a reasonable default value.
 
