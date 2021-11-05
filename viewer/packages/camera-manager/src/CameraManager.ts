@@ -14,7 +14,7 @@ export class CameraManager extends THREE.EventDispatcher {
   private _domElement: HTMLElement;
 
   private modelRaycast: (x: number, y: number) => Promise<CallbackData>;
-  
+
   public readonly _cameraControlsOptions = {
     canInterruptAnimations: false,
     useScrollTargetControls: false,
@@ -25,14 +25,13 @@ export class CameraManager extends THREE.EventDispatcher {
 
   private isDisposed = false;
   public automaticNearFarPlane: boolean = true;
-  
+
   private readonly _automaticControlsSensitivity = false;
   private readonly _animationDuration: number = 600;
   private readonly _minDefaultAnimationDuration: number = 600;
   private readonly _maxDefaultAnimationDuration: number = 2500;
   private readonly _minDistanceDefault: number = 0.1;
   private readonly _raycaster: THREE.Raycaster = new THREE.Raycaster();
-
 
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
@@ -59,7 +58,7 @@ export class CameraManager extends THREE.EventDispatcher {
    * @param pixelX
    * @param pixelY
    */
-   private convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
+  private convertPixelCoordinatesToNormalized (pixelX: number, pixelY: number) {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
@@ -72,7 +71,7 @@ export class CameraManager extends THREE.EventDispatcher {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateMissedRaycast = (cursorPosition: { x: number; y: number }, modelsBB: THREE.Box3): THREE.Vector3 => {
+  private calculateMissedRaycast (cursorPosition: { x: number; y: number }, modelsBB: THREE.Box3): THREE.Vector3 {
     const modelSize = modelsBB.min.distanceTo(modelsBB.max);
 
     this._raycaster.setFromCamera(cursorPosition, this._camera);
@@ -90,7 +89,7 @@ export class CameraManager extends THREE.EventDispatcher {
    * Changes controls target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private changeTarget = async (event: MouseEvent) => {
+  private async changeTarget (event: MouseEvent) {
     const { offsetX, offsetY } = event;
 
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
@@ -106,13 +105,14 @@ export class CameraManager extends THREE.EventDispatcher {
    * Changes controls scroll target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-   private changeScrollTarget = async (event: any) => {
+  private async changeScrollTarget (event: any) {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
     const callbackData = await this.modelRaycast(offsetX, offsetY);
 
-    const newScrollTarget = callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBB);
+    const newScrollTarget =
+      callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBB);
 
     this.controls.setScrollTarget(newScrollTarget);
   };
@@ -121,7 +121,7 @@ export class CameraManager extends THREE.EventDispatcher {
    * Adds or removes event listeners for additional features of camera controls.
    * @param removeListeners
    */
-   private setupOtherControlsModes = (removeListeners?: boolean) => {
+  private setupOtherControlsModes (removeListeners?: boolean) {
     let startedScroll = false,
       newTargetUpdate = false;
     let timeAfterClick = 0;
@@ -219,9 +219,9 @@ export class CameraManager extends THREE.EventDispatcher {
 
   setCameraControlsMode(controlsOptions: CameraControlsOptions) {
     this._cameraControlsOptions.useOnClickTargetChange =
-      controlsOptions?.onClickTargetChange ?? this._cameraControlsOptions.useOnClickTargetChange;
+      controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.useOnClickTargetChange;
     this._cameraControlsOptions.canInterruptAnimations =
-      controlsOptions?.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations;
+      controlsOptions.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations;
 
     switch (controlsOptions?.zoomToCursor) {
       case 'disable':
@@ -257,7 +257,7 @@ export class CameraManager extends THREE.EventDispatcher {
         this.setupOtherControlsModes();
       }
     } else {
-      if (this._cameraControlsOptions.clickEventsAdded) this.setupOtherControlsModes(true);
+      if (this._cameraControlsOptions.clickEventsAdded && (controlsOptions.onClickTargetChange !== undefined)) this.setupOtherControlsModes(true);
     }
   }
 
@@ -270,8 +270,8 @@ export class CameraManager extends THREE.EventDispatcher {
     this.moveCameraTargetTo(target, animationTime);
   }
 
-   /** @private */
-   private calculateDefaultDuration = (distanceToCamera: number) => {
+  /** @private */
+  private calculateDefaultDuration = (distanceToCamera: number) => {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
 
@@ -388,8 +388,6 @@ export class CameraManager extends THREE.EventDispatcher {
       //     animation.stop();
       //     return;
       //   }
-      this.controls.lookAtViewTarget = false;
-
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
         this._domElement.removeEventListener('pointerdown', stopTween);
@@ -408,13 +406,16 @@ export class CameraManager extends THREE.EventDispatcher {
       document.addEventListener('keydown', stopTween);
     }
 
-    this.controls.lookAtViewTarget = true;
-    this.controls.setState(this._camera.position, target);
-
+    
     const tempTarget = new THREE.Vector3();
     const tween = animation
       .to(to, duration)
       .easing((x: number) => TWEEN.Easing.Circular.Out(x))
+      .onStart(() => {
+        this.controls.lookAtViewTarget = true;
+        this.controls.setState(this._camera.position, target);
+        console.log('Started');
+      })
       .onUpdate(() => {
         // if (this.isDisposed) {
         //   return;
@@ -423,7 +424,13 @@ export class CameraManager extends THREE.EventDispatcher {
         if (!this._camera) {
           return;
         }
+        
+        if (this._cameraControlsOptions.useScrollTargetControls) this.controls.setScrollTarget(tempTarget);
         this.controls.setViewTarget(tempTarget);
+      }).onStop(() => {
+        this.controls.lookAtViewTarget = false;
+       
+        this.controls.setState(this._camera.position, tempTarget);
       })
       .onComplete(() => {
         // if (this.isDisposed) {

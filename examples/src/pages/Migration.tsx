@@ -17,7 +17,6 @@ import {
   PotreePointShape,
   TreeIndexNodeCollection,
   IndexSet,
-  CameraControlsOptions
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -90,9 +89,9 @@ export function Migration() {
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
 
-      const controlsOptions: CameraControlsOptions = {
+      const controlsOptions = {
         onClickTargetChange: true,
-        zoomToCursor: 'scrollTarget'
+        zoomToCursor: 'scrollTarget',
       }
 
       viewer.setCameraControlsMode(controlsOptions);
@@ -187,7 +186,12 @@ export function Migration() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        renderMode: 'Color'
+        renderMode: 'Color',
+        controls: {
+          zoomToCursorType: 'scrollTarget',
+          onClickTargetChange: true,
+          canInterruptAnimations: false
+        }
       };
       const guiActions = {
         addModel: () =>
@@ -451,6 +455,18 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
+      const controlsGui = gui.addFolder('Camera controls');
+      const zoomToCursorTypes = ['disable', 'basicLerp', 'scrollTarget'];
+      controlsGui.add(guiState.controls, 'zoomToCursorType', zoomToCursorTypes).name('Zoom to cursor type').onFinishChange(value => {
+        viewer.setCameraControlsMode({ zoomToCursor: value });
+      });
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
+        viewer.setCameraControlsMode({ onClickTargetChange: value });
+      });
+      controlsGui.add(guiState.controls, 'canInterruptAnimations').name('Controls actions stop animations:').onFinishChange(value => {
+        viewer.setCameraControlsMode({ canInterruptAnimations: value });
+      });
+
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
 
@@ -473,9 +489,9 @@ export function Migration() {
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
 
-                const clickedBB = await intersection.model.getBoundingBoxByTreeIndex(treeIndex, new THREE.Box3());
+                //const clickedBB = await intersection.model.getBoundingBoxByTreeIndex(treeIndex, new THREE.Box3());
 
-                viewer.fitCameraToBoundingBox(clickedBB, 0);
+                //viewer.fitCameraToBoundingBox(clickedBB, 0);
               }
               break;
             case 'pointcloud':

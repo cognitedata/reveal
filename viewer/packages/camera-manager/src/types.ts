@@ -41,12 +41,23 @@ export interface RevealCameraControls {
   /**
    * Sets new state for controls
    */
-  setState: (...args: any[]) => any;
+  setState: (position: THREE.Vector3, target: THREE.Vector3) => void;
 
   /**
    * Method for getting current controls state
    */
-  getState: () => any;
+  getState: () => { position: THREE.Vector3, target: THREE.Vector3 };
+
+  /**
+   * Sets view target (used for camera rotation animations) for controls.
+   */
+  setViewTarget: (target: THREE.Vector3) => void;
+
+  /**
+   * Sets scroll target (used for different scrolling mechanics) for controls.
+   */
+  setScrollTarget: (target: THREE.Vector3) => void;
+
 }
 
 export type CallbackData = {
