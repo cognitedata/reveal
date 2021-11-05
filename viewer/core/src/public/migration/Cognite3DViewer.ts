@@ -345,9 +345,6 @@ export class Cognite3DViewer {
 
     this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
     this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? false;
-    //this._canInterruptAnimations = options.canInterruptAnimations ?? false;
-    //this._useScrollTargetControls = options.useScrollTargetControls ?? false;
-    //this._useOnClickTargetChange = options.useOnClickTargetChange ?? false;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
