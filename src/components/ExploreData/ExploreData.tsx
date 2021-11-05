@@ -112,7 +112,10 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       <Spin spinning={loading}>
         <ContentView>
           <ItemLabel>Data profile</ItemLabel>
-          <Col span={24} style={{ marginBottom: '20px' }}>
+          <Col
+            span={24}
+            style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '20px' }}
+          >
             <ResourceCountBox
               count={timeseriesCount}
               resourceName="Time series"

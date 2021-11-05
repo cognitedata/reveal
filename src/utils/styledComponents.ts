@@ -319,7 +319,7 @@ export const BorderedBox = styled(Row)`
   display: flex;
   width: 76%;
   margin-bottom: 20px;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   font-weight: bold;
   font-size: 16px;
