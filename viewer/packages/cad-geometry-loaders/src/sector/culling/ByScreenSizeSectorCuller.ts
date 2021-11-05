@@ -12,30 +12,30 @@ import {
   SectorCost,
   SectorLoadingSpent
 } from './types';
-import { computeSectorCost } from './computeSectorCost';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import { SectorCuller } from './SectorCuller';
 
 import Log from '@reveal/logger';
-import { CadModelMetadata, LevelOfDetail, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import { CadModelMetadata, V9SectorMetadata, LevelOfDetail, SectorScene, WantedSector } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane, traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
+import { computeV9SectorCost } from './computeSectorCost';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
-  determineSectorCost?: DetermineSectorCostDelegate;
+  determineSectorCost?: DetermineSectorCostDelegate<V9SectorMetadata>;
 };
 
 export class ByScreenSizeSectorCuller implements SectorCuller {
-  private readonly _determineSectorCost: DetermineSectorCostDelegate;
+  private readonly _determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
 
   constructor(options?: ByScreenSizeSectorCullerOptions) {
-    this._determineSectorCost = options?.determineSectorCost || computeSectorCost;
+    this._determineSectorCost = options?.determineSectorCost || computeV9SectorCost;
   }
 
   determineSectors(input: DetermineSectorsInput): {
@@ -80,7 +80,8 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
         input.clippingPlanes
       );
 
-      sectors.forEach(sector => {
+      sectors.forEach(sectorMetadata => {
+        const sector = sectorMetadata as V9SectorMetadata;
         weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
 
         const levelWeightImportance = 2.0;
@@ -154,7 +155,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 }
 
 class ScheduledSectorTree {
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
+  private readonly determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
   private readonly _models = new Map<string, { model: CadModelMetadata; sectorIds: Map<number, number> }>();
 
@@ -162,7 +163,7 @@ class ScheduledSectorTree {
     return { ...this._totalCost };
   }
 
-  constructor(determineSectorCost: DetermineSectorCostDelegate) {
+  constructor(determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>) {
     this.determineSectorCost = determineSectorCost;
   }
 
@@ -188,7 +189,7 @@ class ScheduledSectorTree {
       const sectorMetadata = model.scene.getSectorById(sectorId);
       assert(sectorMetadata !== undefined);
 
-      const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
+      const sectorCost = this.determineSectorCost(sectorMetadata! as V9SectorMetadata, LevelOfDetail.Detailed);
       addSectorCost(this._totalCost, sectorCost);
 
       sectorIds.set(sectorId, priority);

@@ -44,7 +44,7 @@ export function SSAO() {
 
       let model: reveal.CadNode;
       if (modelRevision) {
-        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId, reveal.File3dFormat.RevealCadModel);
+        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
         revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
         model = await revealManager.addModel('cad', modelIdentifier);
       } else if (modelUrl) {

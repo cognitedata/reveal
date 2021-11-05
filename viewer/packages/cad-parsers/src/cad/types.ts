@@ -36,9 +36,6 @@ export type InstancedMesh = {
 };
 
 export interface SectorGeometry {
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
-
   readonly primitives: ParsedPrimitives;
 
   readonly instanceMeshes: InstancedMeshFile[];

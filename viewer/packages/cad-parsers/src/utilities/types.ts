@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { InstancedMeshFile, TriangleMesh } from '@reveal/cad-parsers';
-import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
+import * as THREE from 'three';
+import { SectorMetadata } from '../metadata/types';
 
 /**
  * Conversion factors from a given unit to meters.
@@ -101,30 +101,4 @@ export interface SectorMetadataFacesFileSection {
   };
   readonly fileName: string | null;
   readonly downloadSize: number;
-}
-
-export interface SectorMetadata {
-  readonly id: number;
-  readonly path: string;
-  readonly depth: number;
-  readonly bounds: THREE.Box3;
-  readonly indexFile: SectorMetadataIndexFileSection;
-  readonly facesFile: SectorMetadataFacesFileSection;
-  readonly children: SectorMetadata[];
-  readonly estimatedDrawCallCount: number;
-  readonly estimatedRenderCost: number;
-  /**
-   * @version New in version 9 formats
-   */
-  readonly maxDiagonalLength?: number;
-}
-
-export interface SectorGeometry {
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
-
-  readonly primitives: ParsedPrimitives;
-
-  readonly instanceMeshes: InstancedMeshFile[];
-  readonly triangleMeshes: TriangleMesh[];
 }

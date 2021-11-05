@@ -8,18 +8,23 @@ import { NodesLocalClient } from '@reveal/nodes-api';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
-import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
+import { createCadModelMetadata, generateV8SectorTree } from '../../../../test-utilities';
+import { V8SectorRepository } from '@reveal/sector-loader';
+import { Mock } from 'moq.ts';
+import { BinaryFileProvider } from '@reveal/modeldata-api';
 
 describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
 
   beforeEach(() => {
     const materialManager = new CadMaterialManager();
-    const cadRoot = generateSectorTree(3, 3);
+    const mockBinaryFileProvider = new Mock<BinaryFileProvider>();
+    const sectorRepository = new V8SectorRepository(mockBinaryFileProvider.object(), materialManager);
+    const cadRoot = generateV8SectorTree(3, 3);
     const cadMetadata: CadModelMetadata = createCadModelMetadata(cadRoot);
     materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
-    const cadNode = new CadNode(cadMetadata, materialManager);
+    const cadNode = new CadNode(cadMetadata, materialManager, sectorRepository);
     const apiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, apiClient);
