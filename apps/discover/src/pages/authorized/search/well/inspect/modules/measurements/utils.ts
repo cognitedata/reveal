@@ -1,4 +1,6 @@
+import flatten from 'lodash/flatten';
 import get from 'lodash/get';
+import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
 
@@ -263,6 +265,32 @@ export const mapToCurveCentric = (
         }),
   }));
 
+export const mapToCompareView = (
+  data: {
+    wellbore: Wellbore;
+    chartData: MeasurementChartData[];
+  }[]
+) =>
+  groupBy(
+    flatten(
+      data.map(({ wellbore, chartData }) =>
+        chartData.map((row) => {
+          const wellboreDescription = `${wellbore.description} ${wellbore.name}`;
+          const curveDescription = row.customdata
+            ? (row.customdata[0] as string)
+            : '';
+          const chart: MeasurementChartData = {
+            ...row,
+            xaxis: !row.xaxis ? 'x' : row.xaxis,
+            customdata: [curveDescription, wellboreDescription],
+          };
+          return chart;
+        })
+      )
+    ),
+    'xaxis'
+  );
+
 export const filterByChartType = (
   charts: MeasurementChartData[],
   types: MeasurementType[]
@@ -274,3 +302,9 @@ export const filterByMainChartType = (charts: MeasurementChartData[]) =>
       chart.measurementType
     )
   );
+
+export const getSelectedWellboresTitle = (count: number) =>
+  `${count} ${count > 1 ? 'wellbores' : 'wellbore'} selected`;
+
+export const getSelectedWellsTitle = (count: number) =>
+  `From ${count} ${count > 1 ? 'wells' : 'well'}`;

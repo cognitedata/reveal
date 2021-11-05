@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
 
-import { Checkbox } from '@cognite/cogs.js';
-
 import { BaseButton } from 'components/buttons';
 import {
   MeasurementChartData,
   MeasurementType,
-  Wellbore,
-  WellboreId,
 } from 'modules/wellSearch/types';
+import { FlexColumn, FlexRow } from 'styles/layout';
 
-import { ChartV2 } from '../../common/ChartV2';
-import CurveColorCode from '../../common/ChartV2/CurveColorCode';
-import { filterByChartType, filterByMainChartType } from '../utils';
+import { ChartV2 } from '../../../common/ChartV2';
+import CurveColorCode from '../../../common/ChartV2/CurveColorCode';
+import { filterByChartType, filterByMainChartType } from '../../utils';
 
 import {
-  CurveIndicator,
+  CardWrapper,
+  CurveName,
   Footer,
-  Header,
-  HeaderSubTitle,
-  HeaderTitle,
-  HeaderTitleContainer,
   LegendsHolder,
-  Wrapper,
+  WellboreName,
 } from './elements';
 
 type AxisNames = {
@@ -32,51 +26,34 @@ type AxisNames = {
 };
 
 type Props = {
-  wellbore: Wellbore;
+  title: string;
   chartData: MeasurementChartData[];
   axisNames: AxisNames;
-  selected: boolean;
-  onToggle: (id: WellboreId) => void;
 };
 
-export const WellCentricCard: React.FC<Props> = ({
-  wellbore,
+const FOOTER_MIN_HEIGHT = 32;
+
+export const CompareViewCard: React.FC<Props> = ({
+  title,
   chartData,
   axisNames,
-  selected,
-  onToggle,
 }) => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
-  const displayShowAll = (legendsHolderRef?.current?.scrollHeight || 0) > 16;
+  const displayShowAll =
+    (legendsHolderRef?.current?.scrollHeight || 0) > FOOTER_MIN_HEIGHT;
   const fitChart = filterByChartType(chartData, [MeasurementType.fit])[0];
   const lotChart = filterByChartType(chartData, [MeasurementType.lot])[0];
 
   return (
-    <Wrapper>
-      <Header>
-        <HeaderTitleContainer>
-          <Checkbox
-            checked={selected}
-            onChange={() => onToggle(wellbore.id)}
-            name={`wellcentric-card-${wellbore.id}`}
-          >
-            <div>
-              <HeaderTitle>{wellbore.metadata?.wellName}</HeaderTitle>
-              <HeaderSubTitle>
-                {wellbore.description} {wellbore.name}
-              </HeaderSubTitle>
-            </div>
-          </Checkbox>
-        </HeaderTitleContainer>
-      </Header>
+    <CardWrapper>
       <ChartV2
         data={chartData}
         axisNames={axisNames}
         axisAutorange={{
           y: 'reversed',
         }}
-        title="Internal Friction Angle & Pore Pressure Fracture Gradient"
+        title={title}
         autosize
       />
       <Footer>
@@ -84,25 +61,30 @@ export const WellCentricCard: React.FC<Props> = ({
           {filterByMainChartType(chartData).map((row) => {
             const customdata = row.customdata as string[];
             return (
-              <CurveIndicator key={`${wellbore.description}-${customdata[0]}`}>
+              <FlexRow key={`${customdata[0]}-${customdata[1]}`}>
                 <CurveColorCode line={row.line} marker={row.marker} />
-                <span>{customdata[0]}</span>
-              </CurveIndicator>
+                <FlexColumn>
+                  <CurveName>{customdata[0]}</CurveName>
+                  <WellboreName>{customdata[1]}</WellboreName>
+                </FlexColumn>
+              </FlexRow>
             );
           })}
 
-          {fitChart && (
-            <CurveIndicator key={`${wellbore.description}-FIT`}>
+          {fitChart && fitChart.customdata && (
+            <FlexRow key={`FIT-${fitChart.customdata[1]}`}>
               <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
-              <span>FIT</span>
-            </CurveIndicator>
+              <CurveName>FIT</CurveName>
+              <WellboreName>{fitChart.customdata[1]}</WellboreName>
+            </FlexRow>
           )}
 
-          {lotChart && (
-            <CurveIndicator key={`${wellbore.description}-LOT`}>
+          {lotChart && lotChart.customdata && (
+            <FlexRow key={`LOT-${lotChart.customdata[1]}`}>
               <CurveColorCode line={lotChart.line} marker={lotChart.marker} />
-              <span>LOT</span>
-            </CurveIndicator>
+              <CurveName>LOT</CurveName>
+              <WellboreName>{lotChart.customdata[1]}</WellboreName>
+            </FlexRow>
           )}
         </LegendsHolder>
 
@@ -116,8 +98,8 @@ export const WellCentricCard: React.FC<Props> = ({
           onClick={() => setShowAll(!showAll)}
         />
       </Footer>
-    </Wrapper>
+    </CardWrapper>
   );
 };
 
-export default WellCentricCard;
+export default CompareViewCard;

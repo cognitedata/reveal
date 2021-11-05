@@ -1,15 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+import uniqBy from 'lodash/uniqBy';
+
 import { WhiteLoader } from 'components/loading';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { BooleanSelection } from 'modules/wellInspect/types';
 import { useMeasurementsQuery } from 'modules/wellSearch/hooks/useMeasurementsQuery';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useSecondarySelectedOrHoveredWellbores } from 'modules/wellSearch/selectors';
-import { MeasurementChartData, Wellbore } from 'modules/wellSearch/types';
+import {
+  MeasurementChartData,
+  Wellbore,
+  WellboreId,
+} from 'modules/wellSearch/types';
 
 import { formatChartData } from '../utils';
 
-import { WellCentricViewWrapper } from './elements';
+import { CompareView } from './CompareView/CompareView';
+import { BulkActionsWrapper, WellCentricViewWrapper } from './elements';
+import { WellCentricBulkActions } from './WellCentricBulkActions';
 import WellCentricCard from './WellCentricCard';
 
 type Props = {
@@ -45,6 +55,23 @@ export const WellCentricView: React.FC<Props> = ({
   >([]);
 
   const [chartRendering, setChartRendering] = useState<boolean>(false);
+
+  const [selectedWellboresMap, setSelectedWellboresMap] =
+    useState<BooleanSelection>({});
+
+  const [compare, setCompare] = useState<boolean>(false);
+
+  const onToggle = (id: WellboreId) => {
+    setSelectedWellboresMap((state) => ({
+      ...state,
+      [id]: !state[id],
+    }));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedWellboresMap({});
+    setCompare(false);
+  };
 
   const updateChartData = () => {
     if (data) {
@@ -93,6 +120,7 @@ export const WellCentricView: React.FC<Props> = ({
     () =>
       wellboreChartData.map((row) => (
         <WellCentricCard
+          selected={selectedWellboresMap[row.wellbore.id]}
           wellbore={row.wellbore}
           key={row.wellbore.id}
           chartData={row.chartData}
@@ -101,9 +129,23 @@ export const WellCentricView: React.FC<Props> = ({
             x2: 'Angle (deg)',
             y: `${measurementReference} (${userPreferredUnit})`,
           }}
+          onToggle={onToggle}
         />
       )),
-    [wellboreChartData]
+    [wellboreChartData, selectedWellboresMap]
+  );
+
+  const selectedWellbores = useMemo(
+    () =>
+      selectedOrHoveredWellbores.filter(
+        (wellbore) => selectedWellboresMap[wellbore.id]
+      ),
+    [selectedWellboresMap]
+  );
+
+  const selectedWellsCounts = useMemo(
+    () => uniqBy(selectedWellbores, 'wellId').length,
+    [selectedWellbores]
   );
 
   return (
@@ -112,6 +154,22 @@ export const WellCentricView: React.FC<Props> = ({
       <WellCentricViewWrapper visible={!chartRendering}>
         {wellCards}
       </WellCentricViewWrapper>
+      {!isEmpty(selectedWellbores) && (
+        <BulkActionsWrapper>
+          <WellCentricBulkActions
+            wellsCount={selectedWellsCounts}
+            wellboresCount={selectedWellbores.length}
+            handleDeselectAll={handleDeselectAll}
+            compare={() => setCompare(true)}
+          />
+        </BulkActionsWrapper>
+      )}
+      {compare && (
+        <CompareView
+          onBack={() => setCompare(false)}
+          wellbores={selectedWellbores}
+        />
+      )}
     </>
   );
 };

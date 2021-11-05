@@ -8,6 +8,8 @@ import {
   convertOtherDataToPlotly,
   filterByChartType,
   filterByMainChartType,
+  getSelectedWellboresTitle,
+  getSelectedWellsTitle,
   mapToCurveCentric,
 } from '../utils';
 
@@ -108,5 +110,21 @@ describe('Measurement filter utils', () => {
       },
     ];
     expect(filterByMainChartType(charts)).toEqual([charts[0]]);
+  });
+
+  test('Should return one wellbore count title', () => {
+    expect(getSelectedWellboresTitle(1)).toEqual('1 wellbore selected');
+  });
+
+  test('Should return selected multiple wellbores count title', () => {
+    expect(getSelectedWellboresTitle(10)).toEqual('10 wellbores selected');
+  });
+
+  test('Should return one well count title', () => {
+    expect(getSelectedWellsTitle(1)).toEqual('From 1 well');
+  });
+
+  test('Should return selected multiple wells count title', () => {
+    expect(getSelectedWellsTitle(10)).toEqual('From 10 wells');
   });
 });

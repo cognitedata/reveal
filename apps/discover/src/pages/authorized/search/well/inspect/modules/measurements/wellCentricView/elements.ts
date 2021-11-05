@@ -38,6 +38,7 @@ export const HeaderTitle = styled(Flex)`
 
 export const HeaderSubTitle = styled(Flex)`
   font-weight: 500;
+  margin-top: ${sizes.extraSmall};
   font-size: var(--cogs-detail-font-size);
   line-height: var(--cogs-detail-line-height);
   letter-spacing: var(--cogs-micro-letter-spacing);
@@ -68,5 +69,15 @@ export const CurveIndicator = styled(FlexRow)`
     line-height: var(--cogs-detail-line-height);
     letter-spacing: var(--cogs-micro-letter-spacing);
     color: var(--cogs-greyscale-grey7);
+  }
+`;
+
+export const BulkActionsWrapper = styled.div`
+  position: relative;
+  > * {
+    &:first-child {
+      margin: 0;
+      width: 100%;
+    }
   }
 `;
