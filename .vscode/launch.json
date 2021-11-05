@@ -1,0 +1,24 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch CLI",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/dist/apps/platypus-cdf-cli/main.js",
+      "outFiles": [
+        "${workspaceFolder}/dist/apps/platypus-cdf-cli/**/*.js"
+      ],
+      "args": [
+        "login"
+      ],
+      "preLaunchTask": "build:cli"
+    }
+  ]
+}
