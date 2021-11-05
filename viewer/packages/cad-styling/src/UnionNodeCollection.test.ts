@@ -9,6 +9,10 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { StubNodeCollection } from './stubs/StubNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
 
+import * as SeededRandom from 'random-seed';
+
+import { createRandomBoxes } from '../../../test-utilities/src/createBoxes';
+
 describe('UnionNodeSetCollection', () => {
   test('empty set, returns empty index', () => {
     const set = new UnionNodeCollection();
@@ -43,5 +47,40 @@ describe('UnionNodeSetCollection', () => {
     setA.isLoading = false;
     setB.isLoading = false;
     expect(combinedSet.isLoading).toBeFalse();
+  });
+
+  test('union area collection contains all areas in the operand collections', () => {
+    const random = SeededRandom.create('someseed');
+
+    const n = 500;
+    const d = 10;
+    const ms = 200;
+
+    const boxes0 = createRandomBoxes(n, d, ms, random);
+    const boxes1 = createRandomBoxes(n, d, ms, random);
+
+    const collection0 = new TreeIndexNodeCollection();
+    const collection1 = new TreeIndexNodeCollection();
+
+    collection0.addAreas(boxes0);
+    collection1.addAreas(boxes1);
+
+    const union = new UnionNodeCollection([collection0, collection1]);
+
+    const unionBoxes = union.getAreas();
+
+    const allBoxes = [...boxes0, ...boxes1];
+
+    for (const box of allBoxes) {
+      let isInUnion = false;
+      for (const unionBox of unionBoxes.areas()) {
+        if (unionBox.containsBox(box)) {
+          isInUnion = true;
+          break;
+        }
+      }
+
+      expect(isInUnion).toEqual(true);
+    }
   });
 });
