@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 
 import { MoreOptionsButton } from 'components/buttons';
-import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 
 import { MEASUREMENTS_REFERENCES, PRESSURE_UNITS } from '../constants';
 
@@ -28,7 +27,8 @@ export const UnitSelector: React.FC<Props> = ({
 }) => {
   return (
     <UnitSelectorWrapper>
-      <HoverDropdown
+      <Dropdown
+        openOnHover
         content={
           <Menu id="mainMenu">
             <Menu.Submenu
@@ -77,7 +77,7 @@ export const UnitSelector: React.FC<Props> = ({
         }
       >
         <MoreOptionsButton data-testid="menu-button" size="large" />
-      </HoverDropdown>
+      </Dropdown>
     </UnitSelectorWrapper>
   );
 };

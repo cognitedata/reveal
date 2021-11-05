@@ -3,10 +3,6 @@ import styled from 'styled-components/macro';
 import { Menu } from '@cognite/cogs.js';
 
 import layers from '_helpers/zindex';
-import {
-  DropdownWrapper,
-  MenuWrapper,
-} from 'components/hover-dropdown/elements';
 import { Flex, FlexRow, sizes, FlexColumn } from 'styles/layout';
 
 import { TOP_BAR_HEIGHT } from './constants';
@@ -69,25 +65,6 @@ export const TabsWrapper = styled(Flex)`
     overflow: unset;
     > * .rc-tabs-nav-operations {
       display: none;
-    }
-  }
-
-  ${DropdownWrapper} {
-    overflow: visible;
-    & > * ${MenuWrapper} {
-      transition-property: transform, visibility, opacity;
-      transition-duration: 400ms;
-    }
-  }
-
-  ${DropdownWrapper}:hover {
-    background: var(--cogs-midblue-7) !important;
-    cursor: pointer;
-    & > * .cogs-icon-Up {
-      display: inline-block !important;
-    }
-    & > * .cogs-icon-Down {
-      display: none !important;
     }
   }
 

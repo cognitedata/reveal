@@ -79,7 +79,7 @@ export const HoverContentWrapper = styled.span`
   top: 0;
   right: 0;
   height: 100%;
-  padding: 0 0 0 ${sizes.small};
+  padding: 0 ${sizes.small} 0 ${sizes.small};
   z-index: ${layers.TABLE_ROW_HOVER};
   background: inherit;
   border-bottom: 1px solid #e5e5e5;

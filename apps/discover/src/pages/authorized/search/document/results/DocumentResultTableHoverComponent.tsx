@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 import { reportException } from '@cognite/react-errors';
 
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
@@ -9,7 +9,6 @@ import {
   PreviewButton,
   ViewButton,
 } from 'components/buttons';
-import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { openDocumentPreviewInNewTab } from 'modules/documentPreview/utils';
 import { DocumentRowType } from 'modules/documentSearch/types';
@@ -50,7 +49,8 @@ export const DocumentResultTableHoverComponent = ({
         data-testid="button-preview-document"
         onClick={() => onPreviewHandle(row)}
       />
-      <HoverDropdown
+      <Dropdown
+        openOnHover
         content={
           <Menu>
             {onExtractParentFolderHandle && (
@@ -80,7 +80,7 @@ export const DocumentResultTableHoverComponent = ({
         }
       >
         <MoreOptionsButton data-testid="menu-button" />
-      </HoverDropdown>
+      </Dropdown>
     </FlexRow>
   );
 };

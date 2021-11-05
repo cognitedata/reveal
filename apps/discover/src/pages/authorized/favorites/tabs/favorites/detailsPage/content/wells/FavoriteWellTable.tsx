@@ -4,12 +4,11 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Row } from 'react-table';
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import { LOADING_TEXT } from 'components/emptyState/constants';
-import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import { Options, Table } from 'components/tablev2';
 import navigation from 'constants/navigation';
 import { FavoriteContentWells } from 'modules/favorite/types';
@@ -192,7 +191,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({
           onClick={() => handleHoverViewBtnClick(row)}
           hideIcon
         />
-        <HoverDropdown
+        <Dropdown
+          openOnHover
           content={
             <Menu>
               <Menu.Item
@@ -209,7 +209,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
           }
         >
           <MoreOptionsButton data-testid="menu-button" />
-        </HoverDropdown>
+        </Dropdown>
       </FlexRow>
     );
   };

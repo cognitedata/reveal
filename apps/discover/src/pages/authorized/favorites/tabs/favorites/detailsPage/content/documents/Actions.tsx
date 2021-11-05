@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 import { reportException } from '@cognite/react-errors';
 
 import {
@@ -11,7 +11,6 @@ import {
   MoreOptionsButton,
 } from 'components/buttons';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
-import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import {
   showInfoMessageWithTitle,
   showErrorMessage,
@@ -128,7 +127,8 @@ export const Actions: React.FC<Props> = ({
           data-testid="button-preview-document"
           onClick={() => handlePreviewDocument(row.row.original.id?.toString())}
         />
-        <HoverDropdown
+        <Dropdown
+          openOnHover
           content={
             <Menu>
               <Menu.Item onClick={downloadDocument}>Download</Menu.Item>
@@ -156,7 +156,7 @@ export const Actions: React.FC<Props> = ({
           }
         >
           <MoreOptionsButton data-testid="menu-button" />
-        </HoverDropdown>
+        </Dropdown>
       </FlexRow>
     );
   };

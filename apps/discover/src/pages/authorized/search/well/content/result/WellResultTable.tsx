@@ -6,13 +6,12 @@ import compact from 'lodash/compact';
 import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 
-import { Icon, Menu } from '@cognite/cogs.js';
+import { Icon, Menu, Dropdown } from '@cognite/cogs.js';
 
 import { getDateOrDefaultText } from '_helpers/date';
 import { changeUnits } from '_helpers/units/utils';
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
-import { HoverDropdown } from 'components/hover-dropdown/HoverDropdown';
 import { Options, Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -215,7 +214,8 @@ const WellResult: React.FC<DispatchProps> = (props) => {
           onClick={() => onInspectWellheadClick(row)}
           hideIcon
         />
-        <HoverDropdown
+        <Dropdown
+          openOnHover
           content={
             <Menu>
               <Menu.Submenu
@@ -232,7 +232,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
           }
         >
           <MoreOptionsButton data-testid="menu-button" />
-        </HoverDropdown>
+        </Dropdown>
       </FlexRow>
     );
   };
