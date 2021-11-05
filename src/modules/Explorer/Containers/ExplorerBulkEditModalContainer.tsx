@@ -2,9 +2,8 @@ import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditMo
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { selectExplorerAllSelectedFiles } from 'src/modules/Explorer/store/explorerSlice';
+import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/explorerSlice';
 import { FileState } from 'src/modules/Common/store/filesSlice';
-import isEqual from 'lodash-es/isEqual';
 import {
   BulkEditTempState,
   setBulkEditModalVisibility,
@@ -19,11 +18,8 @@ export const ExplorerBulkEditModalContainer = () => {
     ({ commonReducer }: RootState) => commonReducer.showBulkEditModal
   );
 
-  const selectedFiles: FileState[] = useSelector(
-    ({ explorerReducer }: RootState) => {
-      return selectExplorerAllSelectedFiles(explorerReducer);
-    },
-    isEqual
+  const selectedFiles: FileState[] = useSelector((rootState: RootState) =>
+    selectExplorerAllSelectedFilesInSortedOrder(rootState)
   );
   const bulkEditTemp = useSelector(
     ({ commonReducer }: RootState) => commonReducer.bulkEditTemp

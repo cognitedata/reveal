@@ -196,14 +196,6 @@ export const selectAllFilesSelected = createSelector(
 
 const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 
-export const selectAllSelectedFiles = createDeepEqualSelector(
-  selectAllSelectedIds,
-  (state) => state.files.byId,
-  (selectedIds, allFiles) => {
-    return selectedIds.map((fileId) => allFiles[fileId]);
-  }
-);
-
 export const selectFileById = createDeepEqualSelector(
   (_: State, fileId: number) => fileId,
   (state) => state.files.byId,

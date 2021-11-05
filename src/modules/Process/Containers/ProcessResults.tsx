@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import {
   selectAllFilesSelected,
-  selectAllSelectedIds,
   setFileSelectState,
   setSelectedAllFiles,
   setSelectedFiles,
@@ -23,6 +22,7 @@ import {
   setProcessPageSize,
   setProcessCurrentPage,
   selectProcessSortedFiles,
+  selectProcessSelectedFileIdsInSortedOrder,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -65,7 +65,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   const selectedFileIds = useSelector((state: RootState) =>
-    selectAllSelectedIds(state.filesSlice)
+    selectProcessSelectedFileIdsInSortedOrder(state)
   );
 
   const sortPaginateState = useSelector(
