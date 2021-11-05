@@ -186,7 +186,8 @@ export const useDataSetsList = (): {
   error: any;
   isLoading: boolean;
 } => {
-  const withIntegrations = useWithIntegrations();
+  const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
+    useWithIntegrations();
   const { data: dataSets, ...rest } = useQuery(
     listDataSetsKey,
     async () => {
@@ -207,14 +208,15 @@ export const useDataSetsList = (): {
       }
       return parseDataSetsList(newDataSets);
     },
-    { onError }
+    { enabled: didFetchWithIntegrations, onError }
   );
 
   return { dataSets, ...rest };
 };
 
 export const useDataSet = (id?: number) => {
-  const withIntegrations = useWithIntegrations();
+  const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
+    useWithIntegrations();
 
   const { data: dataSet, ...rest } = useQuery(
     getRetrieveByDataSetIdKey(String(id)),
@@ -238,7 +240,7 @@ export const useDataSet = (id?: number) => {
         };
       }
     },
-    { onError, enabled: !!id }
+    { onError, enabled: !!id && didFetchWithIntegrations }
   );
 
   return { dataSet, ...rest };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { History } from 'history';
 import NewHeader from 'components/NewHeader';
-import { Button, Input } from '@cognite/cogs.js';
+import { Button, Icon, Input } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
 import Tag from 'antd/lib/tag';
 import notification from 'antd/lib/notification';
@@ -32,7 +32,8 @@ interface DataSetsListProps {
 }
 
 const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
-  const withInegrations = useWithIntegrations();
+  const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
+    useWithIntegrations();
 
   const [qualityFilter, setQualityFilter] = useState<string>('all');
   const [tableData, setTableData] = useState<DataSetRow[]>([]);
@@ -277,6 +278,10 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
     }
   };
 
+  if (!didFetchWithIntegrations) {
+    return <Icon type="Loading" />;
+  }
+
   return (
     <div>
       <NewHeader
@@ -299,7 +304,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         rowKey="key"
         loading={loading}
         columns={[
-          ...getTableColumns(dataSets, showArchived, withInegrations),
+          ...getTableColumns(dataSets, showArchived, withIntegrations),
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
         ]}
