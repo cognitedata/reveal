@@ -101,6 +101,10 @@ export class CadNode extends THREE.Object3D {
     return this._cadModelMetadata;
   }
 
+  get cadModelIdentifier() {
+    return this._cadModelMetadata.modelIdentifier;
+  }
+
   get sectorScene(): SectorScene {
     return this._sectorScene;
   }

@@ -141,15 +141,14 @@ export class CadManager {
   async addModel(modelIdentifier: ModelIdentifier, geometryFilter?: GeometryFilter): Promise<CadNode> {
     const model = await this._cadModelFactory.createModel(modelIdentifier, geometryFilter);
     model.addEventListener('update', this._markNeedsRedrawBound);
-    this._cadModelMap.set(model.cadModelMetadata.modelIdentifier, model);
+    this._cadModelMap.set(model.cadModelIdentifier, model);
     this._cadModelUpdateHandler.addModel(model);
     return model;
   }
 
   removeModel(model: CadNode): void {
-    const metadata = model.cadModelMetadata;
-    if (!this._cadModelMap.delete(metadata.modelIdentifier)) {
-      throw new Error(`Could not remove model ${metadata.modelIdentifier} because it's not added`);
+    if (!this._cadModelMap.delete(model.cadModelIdentifier)) {
+      throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     model.clearCache();
