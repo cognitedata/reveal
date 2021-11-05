@@ -91,19 +91,52 @@ export const CurveCentricView: React.FC<Props> = ({
     userPreferredUnit,
   ]);
   const wellCards = useMemo(() => {
-    const groupedData = groupBy(filterByMainChartType(charts), 'name');
     const axisNames = {
       x: `Pressure (${pressureUnit.toLowerCase()})`,
       x2: 'Angle (deg)',
       y: `${measurementReference} (${userPreferredUnit})`,
     };
-    const groupedCharts = Object.keys(groupedData).map((key) => (
+
+    const geomechanicsCharts = filterByChartType(charts, [
+      MeasurementType.geomechanic,
+    ]);
+    const groupedGeomechanicsData = groupBy(
+      filterByMainChartType(geomechanicsCharts),
+      'name'
+    );
+    const ppfgCharts = filterByChartType(charts, [MeasurementType.ppfg]);
+    const groupedPPFGData = groupBy(filterByMainChartType(ppfgCharts), 'name');
+
+    // 2D array logic is implemented to divide geomechanics and ppfgs in to two columns
+    const charts2DArray = Object.keys(groupedGeomechanicsData).map((key) => [
       <CurveCentricCard
         key={key}
-        chartData={groupedData[key]}
+        chartData={groupedGeomechanicsData[key]}
         axisNames={axisNames}
-      />
-    ));
+      />,
+    ]);
+
+    Object.keys(groupedPPFGData).forEach((key, index) => {
+      if (charts2DArray[index]) {
+        charts2DArray[index].push(
+          <CurveCentricCard
+            key={key}
+            chartData={groupedPPFGData[key]}
+            axisNames={axisNames}
+          />
+        );
+      } else {
+        charts2DArray.push([
+          <CurveCentricCard
+            key={key}
+            chartData={groupedPPFGData[key]}
+            axisNames={axisNames}
+          />,
+        ]);
+      }
+    });
+
+    const groupedCharts = flatten(charts2DArray);
 
     const fitCharts = filterByChartType(charts, [MeasurementType.fit]);
     if (fitCharts.length > 0) {

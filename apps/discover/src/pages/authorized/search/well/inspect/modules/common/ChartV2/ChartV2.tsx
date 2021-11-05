@@ -47,7 +47,7 @@ const ChartV2 = ({
   title,
   autosize = false,
   showLegend = false,
-  hovermode = 'y unified',
+  hovermode = 'closest',
 }: ChartProps) => {
   const [detailCardData, setDetailCardData] = useState<Plotly.PlotMouseEvent>();
 

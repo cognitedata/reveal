@@ -9,11 +9,15 @@ export const CurveCentricViewWrapper = styled(FlexColumn)`
   overflow: auto;
   visibility: ${(props: { visible: boolean }) =>
     props.visible ? 'visible' : 'hidden'};
+  flex-flow: row wrap;
 `;
 
-export const Wrapper = styled(FlexColumn)`
+export const Wrapper = styled.div`
   background: var(--cogs-greyscale-grey1);
   border-radius: 8px;
+  flex: 1 1 50%;
+  box-sizing: border-box;
+  max-width: calc(50% - 16px);
 `;
 
 export const SubHeader = styled(Flex)`
