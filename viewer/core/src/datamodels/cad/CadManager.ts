@@ -3,22 +3,18 @@
  */
 
 import * as THREE from 'three';
-import { CadModelMetadataRepository, CadModelMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
-import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
-
-import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-
-import { trackError } from '@reveal/utilities';
-
-import { CadModelFactory } from './CadModelFactory';
-
-import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
 
 import { Subscription, Observable } from 'rxjs';
-import { GeometryFilter } from '../..';
 
+import { CadModelFactory } from './CadModelFactory';
+import { CadModelSectorLoadStatistics } from './CadModelSectorLoadStatistics';
+import { GeometryFilter } from '../..';
 import { CadModelClipper } from './sector/CadModelClipper';
 
+import { CadModelMetadataRepository, CadModelMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
+import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
+import { trackError } from '@reveal/metrics';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
 export class CadManager {

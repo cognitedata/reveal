@@ -11,6 +11,10 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
+/**
+ * Provides data for 3D models.
+ * @version New since 2.2
+ */
 export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   /**
    * Download and parse a JSON file and return the resulting struct.

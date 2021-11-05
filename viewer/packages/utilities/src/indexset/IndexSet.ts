@@ -112,7 +112,9 @@ export class IndexSet {
         // Should not happen, but let's be safe
         continue;
       }
-      newRanges.push(NumericRange.createFromInterval(originalRanges[i].toInclusive + 1, originalRanges[i + 1].from));
+      newRanges.push(
+        NumericRange.createFromInterval(originalRanges[i].toInclusive + 1, originalRanges[i + 1].from - 1)
+      );
     }
 
     return newRanges;

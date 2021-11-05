@@ -23,6 +23,7 @@ import * as reveal from '@cognite/reveal';
 import { CadNode } from '@cognite/reveal/internals';
 import { ClippingUI } from '../utils/ClippingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
+import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
@@ -45,8 +46,12 @@ export function Migration() {
       const project = urlParams.get('project');
       const geometryFilterInput = urlParams.get('geometryFilter');
       const geometryFilter = createGeometryFilter(geometryFilterInput);
-      const baseUrl = urlParams.get('baseUrl') || undefined;
       const modelUrl = urlParams.get('modelUrl');
+
+      const environmentParam = urlParams.get('env');
+      if (!modelUrl && !(environmentParam && project)) {
+        throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
+      }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
         guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
@@ -56,7 +61,7 @@ export function Migration() {
       };
 
       // Login
-      const client = new CogniteClient({ appId: 'cognite.reveal.example', baseUrl });
+      const client = new CogniteClient({ appId: 'cognite.reveal.example' });
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -65,20 +70,21 @@ export function Migration() {
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
-      if (project !== null) {
-        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
-        await client.authenticate();
-      } else if (baseUrl !== null) {
+      
+      if (project && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      } else if (modelUrl !== null) {
         viewerOptions = {
           ...viewerOptions,
           // @ts-expect-error
           _localModels: true
         };
       } else {
-        throw new Error('Must either provide URL parameter "project", ' +
+        throw new Error('Must either provide URL parameters "env", "project", ' +
           '"modelId" and "revisionId" to load model from CDF ' +
           '"or "modelUrl" to load model from URL.');
       }
+      
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;

@@ -12,7 +12,8 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, clickOrTouchEventOffset, EventTrigger, trackError, trackEvent } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
+import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -160,7 +161,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public get cadBudget(): CadModelBudget {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     return this.revealManager.cadBudget;
   }
@@ -170,7 +171,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public set cadBudget(budget: CadModelBudget) {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
   }
@@ -221,7 +222,10 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this._domElement = options.domElement || createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
+
     this.spinner = new Spinner(this.domElement);
+    this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
+    this.spinner.opacity = options.loadingIndicatorStyle?.opacity ?? 1.0;
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -231,10 +235,12 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
+
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 1.0;
     this.controls.maxDistance = 100.0;
+
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -295,9 +301,14 @@ export class Cognite3DViewer {
     this.animate(0);
 
     trackEvent('construct3dViewer', {
-      moduleName: 'Cognite3DViewer',
-      methodName: 'constructor',
-      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+      constructorOptions: omit(options, [
+        'sdk',
+        'domElement',
+        'renderer',
+        'renderTargetOptions',
+        'onLoading',
+        '_sectorCuller'
+      ])
     });
   }
 
