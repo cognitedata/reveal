@@ -63,6 +63,20 @@ export interface Cognite3DViewerOptions {
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
   /**
+   * Style the loading indicator.
+   */
+  loadingIndicatorStyle?: {
+    /**
+     * What corner the spinner should be placed in. Defaults top topLeft.
+     */
+    placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+    /**
+     * Opacity of the spinner in fractions. Defaults to 1.0.
+     */
+    opacity: number;
+  };
+
+  /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
    * control the view frustum.
