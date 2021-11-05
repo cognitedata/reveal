@@ -14,11 +14,11 @@ export const SorterNames = {
 
 export const Sorters: {
   [key: string]: {
-    transform: (data: any, stateTransformValue?: any) => any;
+    transform: (data: any, transformParam?: any) => any;
     sort: (a: any, b: any, reverse: boolean) => any;
   };
 } = {
-  name: {
+  [SorterNames.name]: {
     transform: (data: ValueType) => data.name,
     sort: (a: string, b: string, reverse: boolean) => {
       if (reverse) {
@@ -27,7 +27,7 @@ export const Sorters: {
       return a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     },
   },
-  mimeType: {
+  [SorterNames.mimeType]: {
     transform: (data: ValueType) => data.mimeType,
     sort: (a: string, b: string, reverse: boolean) => {
       if (reverse) {
@@ -36,7 +36,7 @@ export const Sorters: {
       return a && b && a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     },
   },
-  annotations: {
+  [SorterNames.annotations]: {
     transform: (data: ValueType) => {
       return data.annotationCount;
     },
@@ -47,7 +47,7 @@ export const Sorters: {
       return a > b ? 1 : -1;
     },
   },
-  createdTime: {
+  [SorterNames.createdTime]: {
     transform: (data: ValueType) => data.createdTime,
     sort: (a: Date, b: Date, reverse: boolean) => {
       if (reverse) {
@@ -60,7 +60,7 @@ export const Sorters: {
       return a.valueOf() - b.valueOf();
     },
   },
-  indexInSortedArray: {
+  [SorterNames.indexInSortedArray]: {
     transform: (data: number, idIndexMapOfSortedArray: Map<number, number>) =>
       idIndexMapOfSortedArray.get(data),
     sort: (a: number, b: number) => {
