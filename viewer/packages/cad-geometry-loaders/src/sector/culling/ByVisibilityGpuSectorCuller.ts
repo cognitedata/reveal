@@ -7,7 +7,7 @@
 // WebGL.
 import * as THREE from 'three';
 
-import { SectorMetadata, CadModelMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import { getBox3CornerPoints } from '@reveal/utilities';
 
 import {
@@ -15,7 +15,7 @@ import {
   OrderSectorsByVisibilityCoverage
 } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
-import { TakenSectorTree } from './TakenSectorTree';
+import { TakenV8SectorTree } from './TakenV8SectorTree';
 import {
   PrioritizedWantedSector,
   DetermineSectorCostDelegate,
@@ -59,7 +59,7 @@ function assert(condition: boolean, message: string = 'assertion hit') {
 }
 
 class TakenSectorMap {
-  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenSectorTree; modelMetadata: CadModelMetadata }> =
+  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenV8SectorTree; modelMetadata: CadModelMetadata }> =
     new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
@@ -78,7 +78,7 @@ class TakenSectorMap {
 
   initializeScene(modelMetadata: CadModelMetadata) {
     this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost),
+      sectorTree: new TakenV8SectorTree(modelMetadata.scene.root as V8SectorMetadata, this.determineSectorCost),
       modelMetadata
     });
   }
@@ -254,10 +254,9 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
       // Apply model transformation to camera matrix
       transformedCameraMatrixWorldInverse.multiplyMatrices(cameraMatrixWorldInverse, model.modelMatrix);
 
-      let intersectingSectors = model.scene.getSectorsIntersectingFrustum(
-        cameraProjectionMatrix,
-        transformedCameraMatrixWorldInverse
-      );
+      let intersectingSectors = model.scene
+        .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse)
+        .map(p => p as V8SectorMetadata);
 
       if (clippingPlanes != null && clippingPlanes.length > 0) {
         intersectingSectors = this.testForClippingOcclusion(intersectingSectors, clippingPlanes, model.modelMatrix);
@@ -268,10 +267,10 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   private testForClippingOcclusion(
-    intersectingSectors: SectorMetadata[],
+    intersectingSectors: V8SectorMetadata[],
     clippingPlanes: THREE.Plane[],
     modelMatrix: THREE.Matrix4
-  ): SectorMetadata[] {
+  ): V8SectorMetadata[] {
     const passingSectors = [];
 
     for (let i = 0; i < intersectingSectors.length; i++) {
@@ -300,7 +299,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 
   private markSectorsAsDetailed(
-    intersectingSectors: SectorMetadata[],
+    intersectingSectors: V8SectorMetadata[],
     takenSectors: TakenSectorMap,
     model: CadModelMetadata
   ) {
@@ -314,20 +313,20 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   }
 }
 
-function computeSectorCost(metadata: SectorMetadata, lod: LevelOfDetail): SectorCost {
+function computeSectorCost(metadata: V8SectorMetadata, lod: LevelOfDetail): SectorCost {
   switch (lod) {
     case LevelOfDetail.Detailed:
       return {
-        downloadSize: metadata.indexFile.downloadSize,
+        downloadSize: metadata.indexFile!.downloadSize,
         drawCalls: metadata.estimatedDrawCallCount,
         renderCost: metadata.estimatedRenderCost
       };
     case LevelOfDetail.Simple:
       return {
-        downloadSize: metadata.facesFile.downloadSize,
+        downloadSize: metadata.facesFile!.downloadSize,
         drawCalls: 1,
         // TODO 2021-09-23 larsmoa: Estimate for simple sector render cost is very arbitrary
-        renderCost: Math.ceil(metadata.facesFile.downloadSize / 100)
+        renderCost: Math.ceil(metadata.facesFile!.downloadSize / 100)
       };
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);

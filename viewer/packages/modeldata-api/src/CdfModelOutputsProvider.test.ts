@@ -4,11 +4,11 @@
 
 import nock from 'nock';
 
-import { File3dFormat } from './types';
 import { CdfModelOutputsProvider } from './CdfModelOutputsProvider';
 
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
+import { File3dFormat } from './types';
 
 describe('CdfModelOutputsProvider', () => {
   let modelIdentifier: CdfModelIdentifier;
@@ -16,7 +16,7 @@ describe('CdfModelOutputsProvider', () => {
   let apiPath: RegExp;
 
   beforeEach(async () => {
-    modelIdentifier = new CdfModelIdentifier(1337, 42, File3dFormat.AnyFormat);
+    modelIdentifier = new CdfModelIdentifier(1337, 42);
     apiPath = /\/api\/v1\/projects\/unittest\/3d\/.*/;
 
     const client = new CogniteClient({
@@ -31,7 +31,7 @@ describe('CdfModelOutputsProvider', () => {
   test('getOutputs() throws error when server returns 400', async () => {
     const scope = nock(/.*/).get(apiPath).reply(400, {});
 
-    await expect(provider.getOutputs(modelIdentifier)).rejects.toThrowError();
+    await expect(provider.getOutputs(modelIdentifier, File3dFormat.AnyFormat)).rejects.toThrowError();
     expect(scope.isDone()).toBeTrue();
   });
 
@@ -43,7 +43,7 @@ describe('CdfModelOutputsProvider', () => {
     nock(/.*/).get(apiPath).reply(200, response);
 
     // Act
-    const result = await provider.getOutputs(modelIdentifier);
+    const result = await provider.getOutputs(modelIdentifier, File3dFormat.AnyFormat);
 
     // Assert
     expect(result).toEqual({ modelId: 1337, revisionId: 42, outputs: [] });
@@ -68,7 +68,7 @@ describe('CdfModelOutputsProvider', () => {
     nock(/.*/).get(apiPath).reply(200, response);
 
     // Act
-    const result = await provider.getOutputs(modelIdentifier);
+    const result = await provider.getOutputs(modelIdentifier, File3dFormat.AnyFormat);
 
     // Assert
     expect(result).toEqual({ modelId: 1337, revisionId: 42, outputs: response.items });

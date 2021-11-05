@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { createOffsets } from './arrays';
+import { createOffsets } from '../src/v8/arrays';
 import 'jest-extended';
 
 describe('createOffsets', () => {

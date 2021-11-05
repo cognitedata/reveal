@@ -58,12 +58,15 @@ class CdfModelIdentifier implements ModelIdentifier {
 | `getModelUri()`         | Yes                                        | Determine the base URL that will be used when download metadata and geometry using `ModelDataProvider`. |
 | `getModelCamera()`      | No - return `undefined` to use default     | Return an initial camera pose for the model                      |
 | `getModelMatrix()`      | Yes, but value can be hardcoded.           | Returns an transformation matrix for transforming from stored coordinates to Reveal coordinates (see below) |
+| `getModelOutputs()`     | Yes                                        | Returns an object describing the set of valid formats and version for the given model |
 
 `getModelUri()` returns a "base URL" that will be passed to `ModelDataProvider.getBinaryFile()` and `getJsonFile()`. Note that
 its up to `ModelDataProvider` how this base URL is handled for CAD models and it is possible to use this base URL as 
 some other identifier, e.g. a folder on disk or ID of a blob storage. For point clouds, however, this
 needs to be an actual URL as we base point cloud streaming on a third party library which manages it's own
-network layer.
+network layer. 
+It will require an instance of `BlobOutputMetadata` as input which defines the format, version, and if 
+applicable, the remote blob id of the output.
 
 `getModelMatrix()` is responsible for converting from stored geometry coordinates to Reveal coordinates (right-handed, Y up). This 
 is required for models stored in different orientation in CDF. For CAD models, most models are stored in a right-handed Z up coordinate system, and will need
@@ -84,6 +87,12 @@ the identity matrix should be returned instead:
 new THREE.Matrix4().identity();
 ```
 
+In addition to the model identifier, the methods can accept the format of the output which describes which output format that is used for the given model/revision.
+
+`getModelOutputs()` returns a list of supported outputs for a given model/revision.
+The `BlobOutputMetadata` type includes the format, version, and if applicable, the remote blob id of the model. 
+
+
 ### Example implementation
 
 This simple implementation provides metadata for models stored locally and provides 
@@ -100,7 +109,7 @@ import {
 } from '@cognite/reveal/extensions/datasource';
 
 class MyModelMetaDataProvider implements ModelMetaDataProvider {
-  getModelUri(identifier: ModelIdentifier): Promise<string> {
+  getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string> {
     if (!(identifier instanceof CdfModelIdentifier)) {
       throw new Error('Unexpected identifier');
     }
@@ -117,7 +126,7 @@ class MyModelMetaDataProvider implements ModelMetaDataProvider {
     return Promise.resolve(undefined);
   }
 
-  getModelMatrix(identifier: ModelIdentifier): Promise<THREE.Matrix4> {
+  getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE.Matrix4> {
     if (!(identifier instanceof CdfModelIdentifier)) {
       throw new Error('Unexpected identifier');
     }
@@ -125,6 +134,20 @@ class MyModelMetaDataProvider implements ModelMetaDataProvider {
     // we need to account for this
     const cadModelToReveal = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
     return Promise.resolve(cadModelToReveal);
+  }
+
+  getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
+    // Indicates that the supported output for this model is of type File3dFormat.RevealCadModel and version 8
+    
+    // BlobId refers to a remote identifier for a blob storage, but since this simply fetches
+    // the model locally, it can be set to -1
+    return Promise.resolve([
+      {
+        blobId: -1,
+        format: File3dFormat.RevealCadModel,
+        version: 8
+      }
+    ]);
   }
 }
 ```
