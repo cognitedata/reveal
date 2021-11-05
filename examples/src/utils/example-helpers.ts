@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import { CogniteClient } from '@cognite/sdk';
+
 export function withBasePath(path: string) {
   let basePath = (process.env.PUBLIC_URL || '').trim();
   console.log({ basePath, PUBLIC_URL: process.env.PUBLIC_URL });
@@ -38,6 +40,7 @@ export function getParamsFromURL(
     modelId: 'modelId',
     revisionId: 'revisionId',
     modelUrl: 'modelUrl',
+    environmentParam: 'env',
     ...queryParameters,
   };
   const url = new URL(window.location.href);
@@ -47,6 +50,7 @@ export function getParamsFromURL(
   const modelId = searchParams.get(params.modelId);
   const revisionId = searchParams.get(params.revisionId);
   const modelUrl = searchParams.get(params.modelUrl);
+  const environmentParam = searchParams.get(params.environmentParam);
 
   const modelRevision =
     modelId !== null && revisionId !== null
@@ -66,5 +70,33 @@ export function getParamsFromURL(
           ? withBasePath(defaults.modelUrl)
           : undefined,
     },
+    environmentParam
   };
+}
+
+type CredentialEnvironment = {
+  tenantId: string;
+  clientId: string;
+  cluster: string;
+}
+
+type CredentialEnvironmentList = {
+  environments: { [key:string]: CredentialEnvironment; };
+}
+
+export async function authenticateSDKWithEnvironment(client: CogniteClient, project: string, environmentParam: string) {
+  
+    const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+    const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+    
+    await client.loginWithOAuth({
+      type: 'AAD_OAUTH',
+      options: {
+        clientId: credentialEnvironment.clientId,
+        cluster: credentialEnvironment.cluster,
+        tenantId: credentialEnvironment.tenantId,
+      }
+    });
+  client.setProject(project);
+  await client.authenticate();
 }

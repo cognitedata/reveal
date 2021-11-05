@@ -949,6 +949,7 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/metrics": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
     "@reveal/utilities": "workspace:*"
@@ -988,6 +989,7 @@ __metadata:
     "@reveal/camera-manager": "workspace:*"
     "@reveal/data-source": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/metrics": "workspace:*"
     "@reveal/modeldata-api": "workspace:*"
     "@reveal/nodes-api": "workspace:*"
     "@reveal/rendering": "workspace:*"
@@ -1007,6 +1009,14 @@ __metadata:
 "@reveal/logger@workspace:*, @reveal/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@reveal/logger@workspace:packages/logger"
+  languageName: unknown
+  linkType: soft
+
+"@reveal/metrics@workspace:*, @reveal/metrics@workspace:packages/metrics":
+  version: 0.0.0-use.local
+  resolution: "@reveal/metrics@workspace:packages/metrics"
+  dependencies:
+    "@reveal/logger": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1045,6 +1055,7 @@ __metadata:
     "@reveal/camera-manager": "workspace:*"
     "@reveal/core": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/metrics": "workspace:*"
   languageName: unknown
   linkType: soft
 

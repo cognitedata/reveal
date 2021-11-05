@@ -40,10 +40,6 @@ export type ByVisibilityGpuSectorCullerOptions = {
   logCallback?: (message?: any, ...optionalParameters: any[]) => void;
 };
 
-export function assert(condition: boolean, message: string = 'assertion hit') {
-  console.assert(condition, message);
-}
-
 /**
  * SectorCuller that uses the GPU to determine an approximation
  * of how "visible" each sector is to get a priority for each sector

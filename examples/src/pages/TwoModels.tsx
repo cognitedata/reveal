@@ -7,7 +7,7 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 
 import CameraControls from 'camera-controls';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
@@ -32,14 +32,17 @@ export function TwoModels() {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
     let revealManager: reveal.RevealManager;
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
       const { modelUrl: modelUrl2, modelRevision: modelRevision2 } = getModel2Params();
+      
       const client = new CogniteClient({ appId: 'reveal.example.two-models' });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-      await client.authenticate();
+      if (project && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
+
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,

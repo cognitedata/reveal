@@ -6,6 +6,10 @@ import * as THREE from 'three';
 
 import { CogniteInternalId } from '@cognite/sdk';
 
+/**
+ * Client for retrieving metadata information about CAD nodes.
+ * @version New since 2.2
+ */
 export interface NodesApiClient {
   /**
    * Maps a set of "tree indexes" that identify nodes, to the respective

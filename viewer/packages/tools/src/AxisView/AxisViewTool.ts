@@ -3,9 +3,10 @@
  */
 
 import * as THREE from 'three';
+import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
 import TWEEN from '@tweenjs/tween.js';
 
-import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import {
   AxisBoxConfig,
@@ -16,8 +17,8 @@ import {
   RelativePosition
 } from './types';
 import ComboControls from '@reveal/camera-manager';
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
+import { Cognite3DViewer } from '@reveal/core';
+import { trackCreateTool } from '@reveal/metrics';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -57,6 +58,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     [this._updateClickDiv, this._disposeClickDiv] = this.createClickDiv(viewer);
     this.addAxisBoxToViewer(this._axisGroup, this._layoutConfig.position!);
+
+    trackCreateTool('AxisViewTool');
   }
 
   public dispose(): void {
