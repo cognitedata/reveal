@@ -1,16 +1,16 @@
 import { Arguments, Argv } from 'yargs';
 import { CogniteClient } from '@cognite/sdk-v6';
-import {
-  createSdkClient,
-  getCogniteSDKClient,
-  setCogniteSDKClient,
-} from '../utils/cogniteSdk';
-import { getAuthToken } from '../utils/auth';
-import { DefaultArgs } from '../types';
+import { PublicClientApplication } from '@azure/msal-node';
+import { LoginArgs } from '../types';
+import { AUTH_TYPE, CONFIG_KEY, LOGIN_STATUS } from '../constants';
+import { getAccessTokenForClientSecret } from '../common/auth';
+import { setProjectConfig, setProjectConfigItem } from '../utils/config';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const open = require('open');
 
 export const command = 'login';
 export const desc = 'Login to CDF for using Platypus';
-export const builder = (yargs: Argv<DefaultArgs>) => {
+export const builder = (yargs: Argv<LoginArgs>) => {
   yargs
     .usage('$0 login [project]')
     .example('platypus login cognite', 'Login to cognite tenant')
@@ -56,16 +56,67 @@ export const builder = (yargs: Argv<DefaultArgs>) => {
     });
 };
 
-export const handler = async (args: Arguments<DefaultArgs>) => {
-  try {
-    const client = createSdkClient(args);
+const getTokenForArg = (arg: Arguments<LoginArgs>) => async () => {
+  const { clientId, clientSecret, cluster, tenant } = arg;
 
+  const authority = `https://login.microsoftonline.com/${tenant}`;
+  const baseUrl = `https://${cluster}.cognitedata.com`;
+  const scopes = [`${baseUrl}/.default`];
+
+  if (arg.useClientSecret) {
+    return (
+      await getAccessTokenForClientSecret({
+        clientId,
+        clientSecret,
+        scopes,
+        authority,
+      })
+    ).accessToken;
+  }
+
+  return (
+    await new PublicClientApplication({
+      auth: { clientId, authority },
+    }).acquireTokenByDeviceCode({
+      scopes,
+      deviceCodeCallback: ({ verificationUri, userCode, message }) => {
+        open(verificationUri)
+          .then(() =>
+            console.log(`Please enter the code in browser: ${userCode}`)
+          )
+          .catch(() => console.log(`Failed to verify, ${message}`));
+      },
+    })
+  ).accessToken;
+};
+
+export const handler = async (arg: Arguments<LoginArgs>) => {
+  const { cluster, Conf, project, appId } = arg;
+  const baseUrl = `https://${cluster}.cognitedata.com`;
+
+  try {
+    const client = new CogniteClient({
+      appId,
+      project,
+      baseUrl,
+      getToken: getTokenForArg(arg),
+    });
     const token = await client.authenticate();
-    console.log('token = ', token);
-    await client.assets.list();
-    console.log('Login Success!');
+    if (token) {
+      await client.assets.list();
+
+      setProjectConfig(arg, token);
+
+      console.log('Login Success!');
+      return;
+    }
+
+    throw new Error(
+      'Received empty token, please try to login again with proper configs'
+    );
   } catch (error) {
     console.log('Error while trying to authenticate');
+    setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.FAILED);
   }
 };
 

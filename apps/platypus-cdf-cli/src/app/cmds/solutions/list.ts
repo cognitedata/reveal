@@ -4,7 +4,7 @@ import {
   SolutionsHandler,
   SolutionsTemplatesApiService,
 } from '@platypus/platypus-core';
-import { getCogniteSDKClient, createSdkClient } from '../../utils/cogniteSdk';
+import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const command = 'list';
 export const desc = 'List all solutions for current project';
@@ -22,13 +22,7 @@ export const builder: CommandBuilder = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function handler(args: any) {
-  let client = getCogniteSDKClient();
-
-  if (!client) {
-    client = createSdkClient(args);
-  }
-
-  await client.authenticate();
+  const client = getCogniteSDKClient();
 
   const solutionsHandler = new SolutionsHandler(
     new SolutionsTemplatesApiService(client as any)
