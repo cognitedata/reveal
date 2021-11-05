@@ -4,14 +4,15 @@
 
 import { ConsumedSector, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 
-import { DetermineSectorsInput, SectorLoadingSpent } from './culling/types';
+import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 import { SectorCuller } from './culling/SectorCuller';
 import { ModelStateHandler } from './ModelStateHandler';
-import { Repository } from './Repository';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
 import log from '@reveal/logger';
+import { CadNode } from '@reveal/rendering';
+import { PassThroughSectorCuller } from './culling/PassThroughSectorCuller';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -30,32 +31,47 @@ const SectorLoadingBatchSize = 20;
  */
 export class SectorLoader {
   private readonly _modelStateHandler: ModelStateHandler;
-  private readonly _sectorCuller: SectorCuller;
-  private readonly _sectorRepository: Repository;
+  private readonly _v8SectorCuller: SectorCuller;
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
+  private readonly _gltfSectorCuller: PassThroughSectorCuller;
 
   constructor(
-    sectorRepository: Repository,
     sectorCuller: SectorCuller,
     modelStateHandler: ModelStateHandler,
     collectStatisticsCallback: (spent: SectorLoadingSpent) => void,
     progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
   ) {
-    this._sectorRepository = sectorRepository;
-    this._sectorCuller = sectorCuller;
+    // TODO: add runtime initialization of culler and inject
+    // the proper sector culler
+    this._v8SectorCuller = sectorCuller;
+    this._gltfSectorCuller = new PassThroughSectorCuller();
+
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
     this._progressCallback = progressCallback;
   }
 
-  async *loadSectors(input: DetermineSectorsInput): AsyncIterable<ConsumedSector> {
+  async *loadSectors(input: DetermineSectorsPayload): AsyncIterable<ConsumedSector> {
     if (input.cameraInMotion) {
       return [];
     }
 
+    const cadModels = input.models;
+
+    const sectorCullerInput: DetermineSectorsInput = {
+      ...input,
+      cadModelsMetadata: cadModels.filter(x => x.visible).map(x => x.cadModelMetadata)
+    };
+
+    if (sectorCullerInput.cadModelsMetadata.length <= 0) {
+      return [];
+    }
+
+    const sectorCuller = this.getSectorCuller(sectorCullerInput);
+
     // Initial prioritization
-    const prioritizedResult = this._sectorCuller.determineSectors(input);
+    const prioritizedResult = sectorCuller.determineSectors(sectorCullerInput);
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
@@ -65,9 +81,8 @@ export class SectorLoader {
     progressHelper.start(changedSectors.length);
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      const filtered = await this.filterSectors(input, batch, progressHelper);
-      const consumedPromises = this.startLoadingBatch(filtered, progressHelper);
-
+      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, progressHelper);
+      const consumedPromises = this.startLoadingBatch(filteredSectors, progressHelper, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         this._modelStateHandler.updateState(consumed);
         yield consumed;
@@ -75,43 +90,61 @@ export class SectorLoader {
     }
   }
 
+  private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
+    let sectorCuller: SectorCuller;
+
+    switch (sectorCullerInput.cadModelsMetadata[0].format) {
+      case 'reveal-directory':
+        sectorCuller = this._v8SectorCuller;
+        break;
+      case 'gltf-directory':
+        sectorCuller = this._gltfSectorCuller;
+        break;
+      default:
+        throw new Error(`No supported sector culler for format${sectorCullerInput.cadModelsMetadata[0].format}`);
+    }
+    return sectorCuller;
+  }
+
   private async filterSectors(
     input: DetermineSectorsInput,
     batch: WantedSector[],
+    sectorCuller: SectorCuller,
     progressHelper: ProgressReportHelper
   ): Promise<WantedSector[]> {
     // Determine if some of the sectors in the batch is culled by already loaded geometry
-    const filteredSectors = await this._sectorCuller.filterSectorsToLoad(input, batch);
+    const filteredSectors = await sectorCuller.filterSectorsToLoad(input, batch);
     progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
     return filteredSectors;
   }
 
-  private startLoadingBatch(batch: WantedSector[], progressHelper: ProgressReportHelper): Promise<ConsumedSector>[] {
+  private startLoadingBatch(
+    batch: WantedSector[],
+    progressHelper: ProgressReportHelper,
+    models: CadNode[]
+  ): Promise<ConsumedSector>[] {
     const consumedPromises = batch.map(async wantedSector => {
       try {
-        const consumedSector = await this._sectorRepository.loadSector(wantedSector);
-        return consumedSector;
+        const model = models.filter(
+          model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier
+        )[0];
+        return model.loadSector(wantedSector);
       } catch (error) {
         log.error('Failed to load sector', wantedSector, 'error:', error);
         // Ignore error but mark sector as discarded since we didn't load any geometry
-        const errorSector = makeErrorSector(wantedSector);
-        return errorSector;
+        return {
+          modelIdentifier: wantedSector.modelIdentifier,
+          metadata: wantedSector.metadata,
+          levelOfDetail: LevelOfDetail.Discarded,
+          group: undefined,
+          instancedMeshes: undefined
+        };
       } finally {
         progressHelper.reportNewSectorsLoaded(1);
       }
     });
     return consumedPromises;
   }
-}
-
-function makeErrorSector(wantedSector: WantedSector): ConsumedSector {
-  return {
-    modelIdentifier: wantedSector.modelIdentifier,
-    metadata: wantedSector.metadata,
-    levelOfDetail: LevelOfDetail.Discarded,
-    group: undefined,
-    instancedMeshes: undefined
-  };
 }
 
 class ProgressReportHelper {

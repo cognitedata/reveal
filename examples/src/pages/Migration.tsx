@@ -118,7 +118,7 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
-
+          
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);

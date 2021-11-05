@@ -2,12 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SimpleAndDetailedToSector3D } from './SimpleAndDetailedToSector3D';
-import { Repository } from './Repository';
-
-import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
-import { createOffsetsArray } from '../utilities/arrays';
-
 import { assertNever, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
 import {
@@ -18,13 +12,21 @@ import {
   ConsumedSector,
   TriangleMesh,
   InstancedMeshFile,
-  InstancedMesh
+  InstancedMesh,
+  V8SectorMetadata
 } from '@reveal/cad-parsers';
+
+import { SimpleAndDetailedToSector3D } from './v8/SimpleAndDetailedToSector3D';
+import { SectorRepository } from './SectorRepository';
+
+import { groupMeshesByNumber } from './v8/groupMeshesByNumber';
+import { createOffsetsArray } from './v8/arrays';
+
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
+import { CadMaterialManager } from '@reveal/rendering';
 
-// TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
-export class CachedRepository implements Repository {
+export class V8SectorRepository implements SectorRepository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
   private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Promise<ParseCtmResult>>;
 
@@ -32,14 +34,10 @@ export class CachedRepository implements Repository {
   private readonly _modelDataParser: CadSectorParser;
   private readonly _modelDataTransformer: SimpleAndDetailedToSector3D;
 
-  constructor(
-    modelSectorProvider: BinaryFileProvider,
-    modelDataParser: CadSectorParser,
-    modelDataTransformer: SimpleAndDetailedToSector3D
-  ) {
+  constructor(modelSectorProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._modelSectorProvider = modelSectorProvider;
-    this._modelDataParser = modelDataParser;
-    this._modelDataTransformer = modelDataTransformer;
+    this._modelDataParser = new CadSectorParser();
+    this._modelDataTransformer = new SimpleAndDetailedToSector3D(materialManager);
 
     this._consumedSectorCache = new MemoryRequestCache(50, consumedSector => {
       if (consumedSector.group !== undefined) {
@@ -96,21 +94,23 @@ export class CachedRepository implements Repository {
       }
     } catch (error) {
       this._consumedSectorCache.remove(cacheKey);
-      MetricsLogger.trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
+      MetricsLogger.trackError(error as Error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
     }
   }
 
   private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
+    const metadata = wantedSector.metadata as V8SectorMetadata;
+
     // TODO 2021-05-05 larsmoa: Retry
     const buffer = await this._modelSectorProvider.getBinaryFile(
       wantedSector.modelBaseUrl,
-      wantedSector.metadata.facesFile.fileName!
+      metadata.facesFile.fileName!
     );
     const geometry = await this._modelDataParser.parseF3D(new Uint8Array(buffer));
     const transformed = await this._modelDataTransformer.transformSimpleSector(
       wantedSector.modelIdentifier,
-      wantedSector.metadata,
+      metadata,
       geometry,
       wantedSector.geometryClipBox
     );
@@ -139,7 +139,8 @@ export class CachedRepository implements Repository {
   }
 
   private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
-    const indexFile = wantedSector.metadata.indexFile;
+    const metadata = wantedSector.metadata as V8SectorMetadata;
+    const indexFile = metadata.indexFile;
 
     const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile.fileName);
     const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.modelBaseUrl, indexFile.peripheralFiles);
@@ -150,7 +151,7 @@ export class CachedRepository implements Repository {
 
     const transformed = await this._modelDataTransformer.transformDetailedSector(
       wantedSector.modelIdentifier,
-      wantedSector.metadata,
+      metadata,
       geometry,
       wantedSector.geometryClipBox
     );
@@ -281,8 +282,6 @@ export class CachedRepository implements Repository {
     })();
 
     const sector: SectorGeometry = {
-      treeIndexToNodeIdMap: i3dFile.treeIndexToNodeIdMap,
-      nodeIdToTreeIndexMap: i3dFile.nodeIdToTreeIndexMap,
       primitives: i3dFile.primitives,
       instanceMeshes: finalInstanceMeshes,
       triangleMeshes: finalTriangleMeshes

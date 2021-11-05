@@ -2,11 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
-
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 
-export { CachedRepository } from './src/sector/CachedRepository';
+export { V8SectorRepository } from '../sector-loader/src/V8SectorRepository';
 
 export { CadLoadingHints } from './src/CadLoadingHints';
 
