@@ -18,16 +18,18 @@ const getPage = (
   let tableData = data;
 
   // if pagination enabled
-  if (pagination && pageNumber && pageSize) {
-    if (pageNumber > 0 && pageSize > 0) {
-      const startIndex = (pageNumber - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
+  if (pagination) {
+    if (pageNumber && pageSize) {
+      if (pageNumber > 0 && pageSize > 0) {
+        const startIndex = (pageNumber - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        tableData = tableData.slice(startIndex, endIndex);
+      }
+    } else {
+      const startIndex = 0;
+      const endIndex = startIndex + CONST.DEFAULT_PAGE_SIZE;
       tableData = tableData.slice(startIndex, endIndex);
     }
-  } else {
-    const startIndex = 0;
-    const endIndex = startIndex + CONST.DEFAULT_PAGE_SIZE;
-    tableData = tableData.slice(startIndex, endIndex);
   }
   return tableData;
 };
@@ -73,6 +75,22 @@ export const PaginationWrapper = ({
   const pagedData = useMemo(() => {
     return getPage(data, pagination, currentPage, pageSize);
   }, [data, pagination, currentPage, pageSize]);
+
+  if (!pagination) {
+    return (
+      <>
+        {children({
+          sortKey,
+          reverse,
+          setSortKey,
+          setReverse,
+          data: pagedData,
+          tableFooter: null,
+          fetchedCount,
+        })}
+      </>
+    );
+  }
 
   return (
     <Container>

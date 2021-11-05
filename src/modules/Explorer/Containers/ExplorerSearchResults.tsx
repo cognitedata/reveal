@@ -113,7 +113,7 @@ export const ExplorerSearchResults = ({
               <PaginationWrapper
                 data={resultProps.data}
                 totalCount={resultProps.totalCount}
-                pagination
+                pagination={currentView !== 'map'}
                 sortPaginateControls={sortPaginateControls}
                 isLoading={otherProps.isLoading}
               >
@@ -148,6 +148,8 @@ export const ExplorerSearchResults = ({
                           onSelectAllRows={handleSelectAllFiles}
                           mapTableTabKey={{ activeKey, setActiveKey }}
                           onSelectPage={handleSetSelectedFiles}
+                          pageSize={sortPaginateState.pageSize}
+                          setPageSize={sortPaginateControls.setPageSize}
                         />
                       );
                     }

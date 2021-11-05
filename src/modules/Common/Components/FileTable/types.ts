@@ -68,6 +68,8 @@ export type MapTableTabKey = {
 };
 export type FileMapTableProps<T> = FileTableProps<T> &
   PaginatedTableProps<T> & {
-    isLoading?: boolean;
+    isLoading: boolean;
     mapTableTabKey: MapTableTabKey;
+    pageSize: number;
+    setPageSize: (size: number) => void;
   };

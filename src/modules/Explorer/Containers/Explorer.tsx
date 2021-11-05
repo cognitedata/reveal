@@ -159,7 +159,7 @@ const Explorer = () => {
           </TablePanel>
           {showMetadata && focusedFileId && (
             // eslint-disable-next-line  @cognite/no-number-z-index
-            <DrawerContainer style={{ zIndex: 1 }}>
+            <DrawerContainer style={{ zIndex: 2 }}>
               <QueryClientProvider client={queryClient}>
                 <FileDetails
                   fileId={focusedFileId}

@@ -226,6 +226,9 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           onSelectAllRows={handleSelectAllFiles}
           onSelectPage={handleSetSelectedFiles}
           mapTableTabKey={{ activeKey, setActiveKey }}
+          pageSize={sortPaginateState.pageSize}
+          setPageSize={sortPaginateControls.setPageSize}
+          isLoading={isLoading}
         />
       );
     }
