@@ -26,9 +26,27 @@ Each keyframe has a set of associated styled node collections.
 To create Keyframe, use `createKeyframe(date: Date)`
 - `date` - Date reference for the Keyframe, e.g. `new Date('2021-10-05')`.
 
+```jsx
+const keyframe = timeline.createKeyframe(new Date('2021-10-05'));
+```
+
 ### Add Node collection & Styles to Keyframes
 Tool provides feature to add nodes & styles to a Keyframe or number of Keyframes or to all of the Keyframes.
+For more information on assigning styles please refer [CAD Styling](cad-styling).
 
+```jsx
+const nodes = new AssetNodeCollection(sdk, model);
+keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] });
+```
+
+### Remove Styles & Node in Keyframes
+`unassignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+- `nodeCollection` - Node set to be removed from keyframes.
+- `nodeAppearance` - Styles to be removed from keyframes.
+
+```jsx
+keyframe.unassignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] });
+```
 
 ### Play timelines
 We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
@@ -40,9 +58,50 @@ We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
 // import { TimelineTool, Keyframe } from '@cognite/reveal/tools';
 
+function createProgressBarContainer() {
+  const container = document.createElement('div');
+  //container.innerText = `Progress`;
+  container.style.cssText = `
+    background: #333;
+    border-radius: 13px;
+    width: 500px;
+    height: 25px;
+    padding: 3px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    bottom: 20px;
+  `;
+  return container;
+}
+
+function createProgressBar() {
+  const progress = document.createElement('div');
+  progress.style.cssText = `
+    /* Progress after moving to next Keyframe */
+    content: '';
+    display: block;
+    background: DodgerBlue;
+    width: 0%;
+    height: 20px;
+    border-radius: 9px;
+    position: relative;
+  `;
+  return progress;
+}
+
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
 const timeline = new TimelineTool(model);
+
+// div element Cognite3DViewer to insert into the canvas
+const domElement = document.getElementById('demo-wrapper');
+const container = createProgressBarContainer();
+const progressBar = createProgressBar();
+container.appendChild(progressBar);
+domElement.appendChild(container);
 
 const nodes = new AssetNodeCollection(sdk, model);
 const keyframeAssetNode = timeline.createKeyframe(new Date('2021-10-05'));
@@ -62,7 +121,20 @@ stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 const keyframeMechNodes = timeline.createKeyframe(new Date('2021-10-08'));
 keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
-timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), 25000);
+const playLength = 25000;
+
+timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), playLength);
+
+let refDate = 0;
+
+timeline.subscribe('dateChanged', (data) => {
+  if(refDate === 0) {
+    refDate = data.date.getTime();
+  }
+  const width = ((data.date.getTime() - refDate) / playLength) * 100;
+  const widthPercentage = width.toString() + '%';
+  progressBar.style.width = widthPercentage;
+})
 ```
 
 ### Stop timeline playback
@@ -91,17 +163,6 @@ timeline.resume();
 const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
 ```
 
-### Remove Styles & Node in Keyframes
-`unassignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
-- `nodeCollection` - Node set to be removed from keyframes.
-- `nodeAppearance` - Styles to be removed from keyframes.
-
-```js runnable
-const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
-
-keyframe.unassignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] })
-```
-
 ### Timeline Data's while in Play
 While in Play state, the tool emits few data which will be helpful for the users to calculate the progression of the Playback of Timeline.
 Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to received below data.
@@ -113,13 +174,18 @@ Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to rece
 ```jsx
 // import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';
 
-timeline.subscribe('dateChanged', (date, activeKeyframe, startDate, endDate) => {});
+timeline.subscribe('dateChanged', (data) => {
+  const date = data.date;
+  const keyframe = data.keyframe;
+  const startDate = data.startDate;
+  const endDate = data.endDate;
+});
 ```
 
 To unsubscribe from `TimelineDateUpdateDelegate` event
 
 ```jsx
-timeline.unsubscribe('dateChanged', (date, activeKeyframe, startDate, endDate) => {});
+timeline.unsubscribe('dateChanged', (data) => {});
 ```
 
 ### Removing Keyframe
@@ -129,15 +195,15 @@ To remove any Keyframe, use `removeKeyframeByDate(date: Date)`
 
 ```js
 timeline.removeKeyframeByDate(new Date('2021-10-07'));
+```
+
 #### By Keyframe
 To remove any Keyframe, use `removeKeyframe(keyframe: Keyframe)`
-- `date` - Keyframe to be removed from the Timeline.
+- `keyframe` - Keyframe to be removed from the Timeline.
 
 ```js runnable
 timeline.removeKeyframe(keyframeMechNodes);
 ```
-
-
 
 ### Keyframes in Timeline
 Gets all Keyframes in the Timeline
