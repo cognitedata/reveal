@@ -56,7 +56,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
       }
 
       throw new Error(
-        `The AreaCollection returned by getAreas() for ThreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints()`
+        `The AreaCollection returned by getAreas() for TreeIndexNodeCollection must be constructed manually using addAreas() and addAreaPoints()`
       );
     }
 
