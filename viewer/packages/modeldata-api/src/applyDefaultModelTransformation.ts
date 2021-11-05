@@ -15,6 +15,7 @@ export function applyDefaultModelTransformation(matrix: THREE.Matrix4, format: F
       matrix.premultiply(cadFromCdfToThreeMatrix);
       break;
 
+    case File3dFormat.RevealCadModel:
     case File3dFormat.GltfCadModel:
       matrix.premultiply(cadFromCdfToThreeMatrix);
       break;
