@@ -69,6 +69,10 @@ export const OverlayCell = styled.div`
   position: sticky;
   right: 0;
   background: inherit;
+
+  &:hover {
+    z-index: ${layers.TABLE_ROW_HOVER};
+  }
 `;
 
 export const HoverContentWrapper = styled.span`
