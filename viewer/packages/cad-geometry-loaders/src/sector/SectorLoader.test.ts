@@ -17,6 +17,7 @@ import { SectorLoader } from './SectorLoader';
 import { CadNode } from '@reveal/rendering';
 import { IMock, Mock } from 'moq.ts';
 import Log from '@reveal/logger';
+import { LogLevelNumbers } from 'loglevel';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
@@ -28,7 +29,7 @@ describe('SectorLoader', () => {
   let model: CadModelMetadata;
   let input: DetermineSectorsPayload;
   let cadNodeMock: IMock<CadNode>;
-  let currentLogLevel: 0 | 1 | 2 | 3 | 4 | 5;
+  let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
     const sectorRoot = generateV8SectorTree(2, 2);
