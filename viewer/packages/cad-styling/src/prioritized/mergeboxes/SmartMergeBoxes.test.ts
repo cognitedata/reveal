@@ -44,7 +44,7 @@ describe('SmartMergeBoxes', () => {
     expect([...result].length === 1);
   });
 
-  test('union of two trees contains all inserted boxes', () => {
+  test('union of two box collections contains all inserted boxes', () => {
     const random = SeededRandom.create('someseed');
 
     const smartBoxes0 = new SmartMergeBoxes();
@@ -52,13 +52,21 @@ describe('SmartMergeBoxes', () => {
 
     const n = 500;
     const d = 10;
-    const ms = 100;
+    const ms = 200;
 
     const boxes0 = createRandomBoxes(n, d, ms, random);
     const boxes1 = createRandomBoxes(n, d, ms, random);
 
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);
+
+    // To ensure that this tests something meaningful
+    // e.g. doesn't put everything in one box, or everything
+    // in separate boxes
+    expect(smartBoxes0.boxCount).toBeGreaterThan(1);
+    expect(smartBoxes1.boxCount).toBeGreaterThan(1);
+    expect(smartBoxes0.boxCount).toBeLessThan(boxes0.length);
+    expect(smartBoxes1.boxCount).toBeLessThan(boxes1.length);
 
     const union = smartBoxes0.union(smartBoxes1.getBoxes());
 
@@ -77,6 +85,8 @@ describe('SmartMergeBoxes', () => {
 
       expect(isInUnion).toEqual(true);
     }
+
+    expect(union.boxCount).toBeGreaterThan(1);
   });
 
   test('intersection of two trees contains intersection between all boxes', () => {
