@@ -62,6 +62,8 @@ export interface Cognite3DViewerOptions {
    */
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
+  loadingIndicatorStyle?: { placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' };
+
   /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better

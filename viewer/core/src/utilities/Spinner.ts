@@ -6,10 +6,18 @@ import css from './spinnerStyles.css';
 import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
 import * as THREE from 'three';
 
+import { assertNever } from '@reveal/utilities';
+
+export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+
 export class Spinner {
   private static readonly stylesId = 'reveal-viewer-spinner-styles';
-  static classnames = {
+  private static classnames = {
     base: 'reveal-viewer-spinner',
+    topLeft: 'reveal-viewer-spinner-top-left',
+    topRight: 'reveal-viewer-spinner-top-right',
+    bottomLeft: 'reveal-viewer-spinner-bottom-left',
+    bottomRight: 'reveal-viewer-spinner-bottom-right',
     loading: 'reveal-viewer-spinner--loading',
     dark: 'reveal-viewer-spinner--dark'
   };
@@ -38,10 +46,49 @@ export class Spinner {
     this.el.title = Spinner.titles.idle;
 
     this.el.className = Spinner.classnames.base;
+    this.el.classList.add(Spinner.classnames.topLeft);
     this.el.innerHTML = svg;
 
     parent.style.position = 'relative';
     parent.appendChild(this.el);
+  }
+
+  get placement(): Corner {
+    if (this.el.classList.contains(Spinner.classnames.bottomRight)) {
+      return 'bottomRight';
+    } else if (this.el.classList.contains(Spinner.classnames.bottomLeft)) {
+      return 'bottomLeft';
+    } else if (this.el.classList.contains(Spinner.classnames.topRight)) {
+      return 'topRight';
+    } else {
+      return 'topLeft';
+    }
+  }
+
+  set placement(placement: Corner) {
+    this.el.classList.remove(
+      Spinner.classnames.bottomLeft,
+      Spinner.classnames.bottomRight,
+      Spinner.classnames.topLeft,
+      Spinner.classnames.topRight
+    );
+
+    switch (placement) {
+      case 'topLeft':
+        this.el.classList.add(Spinner.classnames.topLeft);
+        break;
+      case 'topRight':
+        this.el.classList.add(Spinner.classnames.topRight);
+        break;
+      case 'bottomLeft':
+        this.el.classList.add(Spinner.classnames.bottomLeft);
+        break;
+      case 'bottomRight':
+        this.el.classList.add(Spinner.classnames.bottomRight);
+        break;
+      default:
+        assertNever(placement, `Invalid placement: ${placement}`);
+    }
   }
 
   get loading() {
