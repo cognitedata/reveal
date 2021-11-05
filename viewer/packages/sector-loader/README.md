@@ -17,7 +17,8 @@ The package contains two implementations for this facade:
 - `GltfSectorRepository`: for Gltf-binary outputs
 
 
-Definitions for type dependencies from `@cad-parsers` are as follows:
+Definitions for type dependencies from `@reveal/cad-parsers` are as follows:
+
 ```ts
 export interface WantedSector {
   modelIdentifier: string;
