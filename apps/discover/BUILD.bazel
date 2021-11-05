@@ -207,6 +207,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/react-hooks",
     "@npm//@testing-library/react",
     "@npm//@testing-library/testcafe",
+    "@npm//@testing-library/user-event",
     "@npm//babel-eslint",
     "@npm//eslint-plugin-import",
     "@npm//eslint-plugin-jsx-a11y",

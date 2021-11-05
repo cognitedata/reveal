@@ -5,7 +5,8 @@ import { startTest, getNetworkLogger } from '../../utils';
 
 const logger = getNetworkLogger();
 
-fixture('Search History')
+fixture
+  .skip('Search History')
   .meta({ page: 'history:search', tenant: App.tenant }) // Used to run a single test file
   .page(App.baseApp)
   .requestHooks(logger) // <-- log network requests

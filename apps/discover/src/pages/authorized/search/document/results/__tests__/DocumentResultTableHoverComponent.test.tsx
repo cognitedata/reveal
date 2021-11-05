@@ -1,4 +1,5 @@
 import { screen, fireEvent, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
@@ -29,6 +30,8 @@ describe('DocumentResultTableHoverComponent', () => {
 
   it('should fire callbacks on click', () => {
     renderPage();
+
+    userEvent.hover(screen.getByTestId('menu-button'));
 
     act(() => {
       fireEvent.click(screen.getByTestId('button-preview-document'));

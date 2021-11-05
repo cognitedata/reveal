@@ -1,4 +1,5 @@
 import { screen, fireEvent, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
@@ -175,7 +176,7 @@ describe('Favorite Details Content', () => {
 
     fireEvent.mouseOver(screen.getByTestId('table-row'));
     expect(screen.getByTestId('menu-button')).toBeInTheDocument();
-    fireEvent.mouseOver(screen.getByTestId('menu-button'));
+    userEvent.hover(screen.getByTestId('menu-button'));
     expect(screen.getByTestId('remove-from-set')).toBeInTheDocument();
 
     // Modal is not initializing properly. Maybe need to think about moving to higherlevel

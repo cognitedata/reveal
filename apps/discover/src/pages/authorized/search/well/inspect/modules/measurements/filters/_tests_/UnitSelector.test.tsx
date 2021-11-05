@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -15,6 +16,9 @@ describe('View Mode Selector', () => {
       onUnitChange: jest.fn(),
       onReferenceChange: jest.fn(),
     });
+
+    userEvent.hover(screen.getByTestId('menu-button'));
+
     expect(screen.getByText('PPG')).toBeInTheDocument();
     expect(screen.getByText('MD')).toBeInTheDocument();
   });

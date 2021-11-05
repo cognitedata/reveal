@@ -3,7 +3,8 @@ import { t } from 'testcafe';
 import App from '../../__pages__/App';
 import { progress, logErrors } from '../../utils/utils';
 
-fixture('Search seismic page')
+fixture
+  .skip('Search seismic page')
   .meta({ page: 'seismic:search', tenant: App.tenant }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
