@@ -53,18 +53,6 @@ export class Spinner {
     parent.appendChild(this.el);
   }
 
-  get placement(): Corner {
-    if (this.el.classList.contains(Spinner.classnames.bottomRight)) {
-      return 'bottomRight';
-    } else if (this.el.classList.contains(Spinner.classnames.bottomLeft)) {
-      return 'bottomLeft';
-    } else if (this.el.classList.contains(Spinner.classnames.topRight)) {
-      return 'topRight';
-    } else {
-      return 'topLeft';
-    }
-  }
-
   set placement(placement: Corner) {
     this.el.classList.remove(
       Spinner.classnames.bottomLeft,
@@ -89,6 +77,10 @@ export class Spinner {
       default:
         assertNever(placement, `Invalid placement: ${placement}`);
     }
+  }
+
+  set opacity(fractionOpacity: number) {
+    this.el.style.opacity = `${fractionOpacity}`;
   }
 
   get loading() {
