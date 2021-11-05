@@ -128,18 +128,6 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
 
-    Log.debug(
-      'Scheduled sectors\n',
-      candidateSectors
-        .slice(0, takenSectorCount)
-        .map(x => ({ ...x, sector: x.model.scene.getSectorById(x.sectorId) }))
-        .sort(x => x.priority)
-    );
-    Log.log(
-      'Candidates:\n',
-      candidateSectors.slice().sort((left, right) => left.sectorId - right.sectorId)
-    );
-
     const takenPriorities = candidateSectors
       .slice(0, takenSectorCount)
       .map(x => x.priority)
