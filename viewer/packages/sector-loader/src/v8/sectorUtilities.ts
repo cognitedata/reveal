@@ -8,9 +8,13 @@ import { SectorQuads } from '@cognite/reveal-parser-worker';
 
 import { createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { InstancedMeshFile, SectorGeometry, V8SectorMetadata } from '@reveal/cad-parsers';
-import { createTriangleMeshes } from '@reveal/cad-parsers/src/cad/triangleMeshes';
-import { filterInstanceMesh } from '@reveal/cad-parsers/src/cad/filterInstanceMesh';
+import {
+  InstancedMeshFile,
+  SectorGeometry,
+  V8SectorMetadata,
+  filterInstanceMesh,
+  createTriangleMeshes
+} from '@reveal/cad-parsers';
 
 export function consumeSectorSimple(
   sector: SectorQuads,

@@ -105,7 +105,7 @@ export class V8SectorRepository implements SectorRepository {
     // TODO 2021-05-05 larsmoa: Retry
     const buffer = await this._modelSectorProvider.getBinaryFile(
       wantedSector.modelBaseUrl,
-      metadata.facesFile!.fileName!
+      metadata.facesFile.fileName!
     );
     const geometry = await this._modelDataParser.parseF3D(new Uint8Array(buffer));
     const transformed = await this._modelDataTransformer.transformSimpleSector(
@@ -142,8 +142,8 @@ export class V8SectorRepository implements SectorRepository {
     const metadata = wantedSector.metadata as V8SectorMetadata;
     const indexFile = metadata.indexFile;
 
-    const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile!.fileName);
-    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.modelBaseUrl, indexFile!.peripheralFiles);
+    const i3dPromise = this.loadI3DFromNetwork(wantedSector.modelBaseUrl, indexFile.fileName);
+    const ctmsPromise = this.loadCtmsFromNetwork(wantedSector.modelBaseUrl, indexFile.peripheralFiles);
 
     const i3d = await i3dPromise;
     const ctms = await ctmsPromise;
