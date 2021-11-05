@@ -1,7 +1,6 @@
 import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import pickBy from 'lodash/pickBy';
 import uniq from 'lodash/uniq';
 
 import {
@@ -150,7 +149,7 @@ export const mapV2toV3PolygonFilter = (
 };
 
 export const mapV2toV3WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
-  return {
+  const filters = {
     quadrant: toPropertyFilter(wellFilter.quadrants),
     block: toPropertyFilter(wellFilter.blocks),
     field: toPropertyFilter(wellFilter.fields),
@@ -164,18 +163,26 @@ export const mapV2toV3WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
       max: wellFilter.spudDate?.max?.toDateString(),
     },
     polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
-    npt: {
+  } as WellFilterV3;
+
+  if (wellFilter.npt && !isEmpty(wellFilter.npt)) {
+    filters.npt = {
       ...wellFilter.npt,
-      exists: !isEmpty(pickBy(wellFilter.npt)),
-      duration: mapDoubleRangeToDurationRange(wellFilter.npt?.duration),
-    },
-    nds: {
-      exists: !isEmpty(pickBy(wellFilter.nds)),
-      severities: toContainsAllOrAnyInt(wellFilter.nds?.severities),
-      probabilities: toContainsAllOrAnyInt(wellFilter.nds?.probabilities),
-      riskTypes: toContainsAllOrAny(wellFilter.nds?.riskTypes),
-    },
-  };
+      exists: true,
+      duration: mapDoubleRangeToDurationRange(wellFilter.npt.duration),
+    };
+  }
+
+  if (wellFilter.nds && !isEmpty(wellFilter.nds)) {
+    filters.nds = {
+      exists: true,
+      severities: toContainsAllOrAnyInt(wellFilter.nds.severities),
+      probabilities: toContainsAllOrAnyInt(wellFilter.nds.probabilities),
+      riskTypes: toContainsAllOrAny(wellFilter.nds.riskTypes),
+    };
+  }
+
+  return filters;
 };
 
 export const mapWellFilterToWellFilterRequest = (
