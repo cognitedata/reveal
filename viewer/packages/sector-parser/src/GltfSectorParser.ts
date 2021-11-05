@@ -15,6 +15,7 @@ import {
 
 //TODO: Move this utility our of core
 import { assertNever } from '../../../core/src/utilities';
+import assert from 'assert';
 
 export enum RevealGeometryCollectionType {
   BoxCollection,
@@ -72,23 +73,59 @@ export default class GltfSectorParser {
     // Casts the string (node.getName()) to a RevealGeometryCollectionType enum (e.g. BoxCollection)
     const geometryType = RevealGeometryCollectionType[node.getName() as keyof typeof RevealGeometryCollectionType];
 
-    if (mesh) {
-      const primitive = mesh.listPrimitives()[0];
-      this.setMeshAttributes(primitive, bufferGeometry);
-
-      instanceId = mesh.getExtras()['InstanceId'] as number;
-
-      if (!instanced) {
-        this.setUniqueMeshAttributes(primitive, bufferGeometry);
-        return { type: geometryType, buffer: bufferGeometry };
-      }
-    } else {
-      this.setPrimitiveTopology(geometryType, bufferGeometry);
+    switch (geometryType) {
+      case RevealGeometryCollectionType.InstanceMesh:
+        instanceId = this.processInstancedMesh(mesh, instanced, bufferGeometry);
+        break;
+      case RevealGeometryCollectionType.TriangleMesh:
+        this.processTriangleMesh(mesh, bufferGeometry);
+        break;
+      default:
+        this.processPrimitiveCollection(geometryType, bufferGeometry, instanced);
+        break;
     }
 
-    if (instanced) this.setInstancedAttributes(instanced, bufferGeometry);
-
     return { type: geometryType, buffer: bufferGeometry, instanceId: instanceId } as TypedGeometry;
+  }
+
+  private processPrimitiveCollection(
+    geometryType: RevealGeometryCollectionType,
+    bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
+    instanced: InstancedMesh | null
+  ) {
+    assert(instanced !== null, 'Primitive does not contain the instanced gltf extension');
+
+    this.setPrimitiveTopology(geometryType, bufferGeometry);
+    this.setInstancedAttributes(instanced, bufferGeometry);
+  }
+
+  private processTriangleMesh(mesh: Mesh | null, bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry) {
+    assert(mesh !== null, 'Triangle mesh node does not contain a mesh');
+
+    const primitive = mesh.listPrimitives()[0];
+    this.setMeshAttributes(primitive, bufferGeometry);
+
+    this.setUniqueMeshAttributes(primitive, bufferGeometry);
+  }
+
+  private processInstancedMesh(
+    mesh: Mesh | null,
+    instanced: InstancedMesh | null,
+    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+  ) {
+    assert(mesh !== null, 'Instanced mesh node does not contain a mesh');
+    assert(instanced !== null, 'Instanced mesh does not contain the instanced gltf extension');
+
+    const primitive = mesh.listPrimitives()[0];
+    this.setMeshAttributes(primitive, bufferGeometry);
+
+    const instanceId = mesh.getExtras()['InstanceId'] as number;
+
+    assert(instanceId !== undefined, 'Instanced mesh does not have an instance ID');
+
+    this.setInstancedAttributes(instanced, bufferGeometry);
+
+    return instanceId;
   }
 
   private isEmptyNode(instanced: InstancedMesh | null, mesh: Mesh | null) {
