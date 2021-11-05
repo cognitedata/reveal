@@ -32,7 +32,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { CameraControlsOptions, DisposedDelegate, SceneRenderedDelegate } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
@@ -45,8 +45,8 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { CameraManager, CameraControlsOptions, ComboControls } from '@reveal/camera-manager';
-import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
+import { CameraManager, ComboControls } from '@reveal/camera-manager';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -233,7 +233,7 @@ export class Cognite3DViewer {
     this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
     this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
 
-    this._cameraManager.on('cameraChange', event => {
+    this._cameraManager.on('cameraChange', (event: any) => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
@@ -665,16 +665,20 @@ export class Cognite3DViewer {
       throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
     }
 
-    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId, File3dFormat.AnyFormat);
-    const outputsProvider = new CdfModelOutputsProvider(this._cdfSdkClient);
-    const outputs = await outputsProvider.getOutputs(modelIdentifier);
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
+    const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
+    const outputFormats = outputs.map(output => output.format);
 
-    if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
+    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
       return 'cad';
-    } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
+    } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
     }
     return '';
+
+    function hasOutput(format: File3dFormat) {
+      return outputFormats.includes(format);
+    }
   }
 
   /**

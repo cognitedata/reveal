@@ -3,13 +3,15 @@
  */
 import * as THREE from 'three';
 import { ModelIdentifier } from './ModelIdentifier';
+import { BlobOutputMetadata, File3dFormat } from './types';
 
 /**
  * Provides metadata for 3D models.
  * @version New since 2.2
  */
 export interface ModelMetadataProvider {
-  getModelUri(identifier: ModelIdentifier): Promise<string>;
+  getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
+  getModelUri(identifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string>;
   getModelCamera(identifier: ModelIdentifier): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined>;
-  getModelMatrix(identifier: ModelIdentifier): Promise<THREE.Matrix4>;
+  getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE.Matrix4>;
 }

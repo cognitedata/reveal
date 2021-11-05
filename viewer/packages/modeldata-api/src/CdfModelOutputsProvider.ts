@@ -4,7 +4,7 @@
 
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 import { Model3DOutputList } from './Model3DOutputList';
-import { BlobOutputMetadata } from './types';
+import { BlobOutputMetadata, File3dFormat } from './types';
 
 import { CogniteClient } from '@cognite/sdk';
 import { ItemsResponse } from '@cognite/sdk-core';
@@ -20,8 +20,8 @@ export class CdfModelOutputsProvider {
     this._client = client;
   }
 
-  public async getOutputs(modelIdentifier: CdfModelIdentifier): Promise<Model3DOutputList> {
-    const { modelId, revisionId, modelFormat } = modelIdentifier;
+  public async getOutputs(modelIdentifier: CdfModelIdentifier, modelFormat: File3dFormat): Promise<Model3DOutputList> {
+    const { modelId, revisionId } = modelIdentifier;
     const url = `/api/v1/projects/${this._client.project}/3d/models/${modelId}/revisions/${revisionId}/outputs`;
     const params = modelFormat !== undefined ? { params: { format: modelFormat } } : undefined;
     const response = await this._client.get<ItemsResponse<BlobOutputMetadata>>(url, params);

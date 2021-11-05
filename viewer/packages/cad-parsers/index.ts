@@ -11,7 +11,7 @@ export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 
 export { SectorScene } from './src/utilities/types';
 
-export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
+export { SectorMetadata, V8SectorMetadata, V9SectorMetadata } from './src/metadata/types';
 
 export { SectorNode } from './src/sector/SectorNode';
 export { RootSectorNode } from './src/sector/RootSectorNode';
