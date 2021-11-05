@@ -14,7 +14,11 @@ type FacesFile = PropType<V8SectorMetadata, 'facesFile'>;
 
 describe('TakenV8SectorTree', () => {
   const model: CadModelMetadata = {} as any;
-  const determineSectorCost: DetermineSectorCostDelegate = () => ({ downloadSize: 1, drawCalls: 1, renderCost: 1 }); // Flat cost
+  const determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata> = () => ({
+    downloadSize: 1,
+    drawCalls: 1,
+    renderCost: 1
+  }); // Flat cost
 
   test('default tree contains root as simple', () => {
     const root = generateV8SectorTree(2);

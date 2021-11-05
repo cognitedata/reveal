@@ -12,7 +12,7 @@ import { CadModelSectorBudget } from '@reveal/cad-geometry-loaders';
 import {
   createCadModelMetadata,
   createDetermineSectorInput,
-  createSectorMetadata
+  createV9SectorMetadata
 } from '../../../../../test-utilities';
 
 describe('ByScreenSizeSectorCuller', () => {
@@ -24,7 +24,7 @@ describe('ByScreenSizeSectorCuller', () => {
   let culler: ByScreenSizeSectorCuller;
 
   beforeEach(() => {
-    const root = createSectorMetadata([
+    const root = createV9SectorMetadata([
       0,
       [
         [1, [], new THREE.Box3().setFromArray([-1, -1, 0, 0, 1])],
