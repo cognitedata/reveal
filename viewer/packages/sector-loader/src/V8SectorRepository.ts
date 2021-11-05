@@ -26,7 +26,6 @@ import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { CadMaterialManager } from '@reveal/rendering';
 
-// TODO: j-bjorne 16-04-2020: REFACTOR FINALIZE INTO SOME OTHER FILE PLEZ!
 export class V8SectorRepository implements SectorRepository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
   private readonly _ctmFileCache: MostFrequentlyUsedCache<string, Promise<ParseCtmResult>>;

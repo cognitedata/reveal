@@ -3,17 +3,17 @@
  */
 import * as THREE from 'three';
 
-import { ConsumedSector, V9SectorMetadata, WantedSector } from '@reveal/cad-parsers';
+import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
-import { AutoDisposeGroup } from '@reveal/utilities';
+import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
 
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorParser: GltfSectorParser;
   private readonly _sectorFileProvider: BinaryFileProvider;
-  private _materialManager: CadMaterialManager;
+  private readonly _materialManager: CadMaterialManager;
 
   constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
     this._gltfSectorParser = new GltfSectorParser();
@@ -24,21 +24,21 @@ export class GltfSectorRepository implements SectorRepository {
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
     const metadata = sector.metadata as V9SectorMetadata;
 
-    if (!metadata.sectorFileName) {
+    if (metadata.sectorFileName === undefined) {
       return Promise.resolve({
         modelIdentifier: sector.modelIdentifier,
         metadata: metadata,
-        levelOfDetail: 2,
+        levelOfDetail: LevelOfDetail.Detailed,
         group: undefined,
         instancedMeshes: []
       });
     }
 
-    if (sector.levelOfDetail == 0) {
+    if (sector.levelOfDetail === LevelOfDetail.Discarded) {
       return Promise.resolve({
         modelIdentifier: sector.modelIdentifier,
         metadata: metadata,
-        levelOfDetail: sector.levelOfDetail,
+        levelOfDetail: LevelOfDetail.Discarded,
         instancedMeshes: [],
         group: undefined
       });
@@ -99,8 +99,7 @@ export class GltfSectorRepository implements SectorRepository {
           this.createMesh(group, parsedGeometry.buffer, materials.instancedMesh);
           break;
         default:
-          //Assert never
-          break;
+          assertNever(type);
       }
     });
 
@@ -118,7 +117,7 @@ export class GltfSectorRepository implements SectorRepository {
     group.add(mesh);
     mesh.frustumCulled = false;
 
-    if (!material.uniforms.inverseModelMatrix) return;
+    if (material.uniforms.inverseModelMatrix === undefined) return;
 
     mesh.onBeforeRender = () => {
       const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
@@ -126,7 +125,5 @@ export class GltfSectorRepository implements SectorRepository {
     };
   }
 
-  clear(): void {
-    // do nothing
-  }
+  clear(): void {}
 }

@@ -642,14 +642,14 @@ export class Cognite3DViewer {
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
     const outputFormats = outputs.map(output => output.format);
 
-    if (includesOutput(File3dFormat.GltfCadModel) || includesOutput(File3dFormat.RevealCadModel)) {
+    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
       return 'cad';
-    } else if (includesOutput(File3dFormat.EptPointCloud)) {
+    } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
     }
     return '';
 
-    function includesOutput(format: File3dFormat) {
+    function hasOutput(format: File3dFormat) {
       return outputFormats.includes(format);
     }
   }
