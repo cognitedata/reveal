@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { GltfSectorParser, RevealGeometryCollectionType } from '../';
+import { RevealGlbParser } from '../src/RevealGlbParser';
 import * as TestMaterials from './testMaterials';
 
 init();
@@ -43,7 +44,7 @@ async function init() {
     [RevealGeometryCollectionType.InstanceMesh, TestMaterials.createInstancedMeshMaterial()]
   ]);
 
-  const loader = new GltfSectorParser();
+  const loader = new RevealGlbParser();
 
   const sceneJson = await (await fetch('test-models/scene.json')).json();
 
