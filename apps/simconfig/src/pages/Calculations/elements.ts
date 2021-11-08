@@ -16,6 +16,12 @@ export const TitleRowFlexEnd = styled.div`
   align-items: center;
   flex-flow: row-reverse;
 `;
+export const TitleRowFlexStart = styled.div`
+  margin: 0 24px 10px 24px;
+  display: flex;
+  align-items: center;
+  flex-flow: row;
+`;
 
 export const BLabel = styled.span`
   margin-bottom: 5px;

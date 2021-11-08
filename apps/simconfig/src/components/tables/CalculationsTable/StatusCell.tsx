@@ -1,6 +1,7 @@
 import { useContext, MouseEvent } from 'react';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { selectSimulators } from 'store/simulator/selectors';
 import { selectEventById } from 'store/event/selectors';
@@ -10,16 +11,19 @@ import {
 } from 'store/event/thunks';
 import { usePolling } from 'hooks/usePolling';
 import { sanitizeValue } from 'utils/stringUtils';
+import { setSelectedCalculation } from 'store/file';
 import { CapitalizedLabel } from 'pages/elements';
 
-import { RunCalculationButton } from './elements';
 import { EVENT_CONSTANTS, POLLING_TIME, STATUS_TYPE } from './constants';
+import { RunCalculationButton } from './elements';
 
 interface ComponentProps {
   data: FileInfoSerializable;
 }
 export default function StatusCell({ data }: ComponentProps) {
   const { cdfClient, authState } = useContext(CdfClientContext);
+  const history = useHistory();
+  const { url } = useRouteMatch();
   const dispatch = useAppDispatch();
   const simulators = useAppSelector(selectSimulators);
   const selectedEvent = useAppSelector(selectEventById(data.externalId || ''));
@@ -89,6 +93,20 @@ export default function StatusCell({ data }: ComponentProps) {
     dispatch(runNewCalculation({ client: cdfClient, item }));
   };
 
+  const onClickViewHistory = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    const { metadata, source, dataSetId, externalId } = data;
+    if (!metadata || !source || !dataSetId || !externalId) {
+      throw new Error('Insufficient calculation data');
+    }
+    const { calcName, modelName, calcType } = metadata;
+    if (!calcName || !modelName || !calcType) {
+      throw new Error('Insufficient calculation metadata');
+    }
+    dispatch(setSelectedCalculation(data));
+    history.push(`${url}/run-history/${calcName}`);
+  };
+
   if (!selectedEvent) {
     return null;
   }
@@ -108,6 +126,13 @@ export default function StatusCell({ data }: ComponentProps) {
         type="ghost"
         icon={buttonIcon}
         onClick={onClickRun}
+      />
+      <RunCalculationButton
+        aria-label={status}
+        disabled={isCalculationReadyOrRunning}
+        type="ghost"
+        icon="History"
+        onClick={onClickViewHistory}
       />
     </>
   );

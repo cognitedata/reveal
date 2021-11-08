@@ -15,6 +15,7 @@ import { selectIsAppInitialized } from 'store/selectors';
 import NewVersion from 'pages/ModelLibrary/NewVersion';
 import CalculationsLibrary from 'pages/Calculations';
 import CalculationConfiguration from 'pages/Calculations/Configuration';
+import RunHistory from 'pages/Calculations/RunHistory/RunHistory';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,11 @@ export default function App() {
           exact
           path={PAGES.CALCULATION_LIBRARY_CONFIG}
           component={CalculationConfiguration}
+        />
+        <Route
+          exact
+          path={PAGES.CALCULATION_LIBRARY_RUN_HISTORY}
+          component={RunHistory}
         />
         <Route
           exact

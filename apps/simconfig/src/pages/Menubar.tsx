@@ -12,6 +12,8 @@ export const PAGES = {
   MODEL_LIBRARY_VERSION_NEW: '/model-library/:modelName/file-new',
   CALCULATION_LIBRARY: '/calculation-library/:modelName',
   CALCULATION_LIBRARY_CONFIG: '/calculation-library/:modelName/configuration',
+  CALCULATION_LIBRARY_RUN_HISTORY:
+    '/calculation-library/:modelName/run-history/:calculationName',
   LOGOUT: '/logout',
 };
 

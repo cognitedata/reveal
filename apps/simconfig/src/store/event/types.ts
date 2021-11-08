@@ -6,6 +6,7 @@ export interface EventState {
   requestStatus: RequestStatus;
   initialized: boolean;
   events: EntityState<EventSerializable>;
+  eventHistory?: EventSerializable[];
 }
 
 export type EventSerializable = Omit<
@@ -15,4 +16,5 @@ export type EventSerializable = Omit<
   calculationId: string;
   createdTime?: number;
   lastUpdatedTime?: number;
+  lastRunTime?: number;
 };

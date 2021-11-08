@@ -3,7 +3,11 @@ import { RequestStatus } from 'store/types';
 import { partialUpdate } from 'store/utils';
 
 import { eventsAdapter, initialState } from './constants';
-import { fetchLatestEventByCalculationId, runNewCalculation } from './thunks';
+import {
+  fetchEventHistoryByCalculationId,
+  fetchLatestEventByCalculationId,
+  runNewCalculation,
+} from './thunks';
 
 export const eventSlice = createSlice({
   name: 'event',
@@ -30,6 +34,25 @@ export const eventSlice = createSlice({
         });
       })
       .addCase(fetchLatestEventByCalculationId.rejected, (state) =>
+        partialUpdate(state, {
+          requestStatus: RequestStatus.ERROR,
+        })
+      );
+
+    builder
+      .addCase(fetchEventHistoryByCalculationId.pending, (state) =>
+        partialUpdate(state, {
+          requestStatus: RequestStatus.LOADING,
+        })
+      )
+      .addCase(fetchEventHistoryByCalculationId.fulfilled, (state, action) => {
+        return partialUpdate(state, {
+          requestStatus: RequestStatus.SUCCESS,
+          initialized: true,
+          eventHistory: action.payload,
+        });
+      })
+      .addCase(fetchEventHistoryByCalculationId.rejected, (state) =>
         partialUpdate(state, {
           requestStatus: RequestStatus.ERROR,
         })
