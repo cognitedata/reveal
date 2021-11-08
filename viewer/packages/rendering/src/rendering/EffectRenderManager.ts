@@ -15,7 +15,8 @@ import {
   fxaaShaders,
   ssaoShaders,
   ssaoBlurHorizontalShaders,
-  ssaoBlurVerticalCombineShaders
+  ssaoBlurVerticalCombineShaders,
+  ssaoBlurFullCombineShaders
 } from './shaders';
 
 import { RenderMode } from './RenderMode';
@@ -49,6 +50,9 @@ export class EffectRenderManager {
   private readonly _ssaoFirstBlurScene: THREE.Scene;
   private readonly _ssaoSecondBlurScene: THREE.Scene;
 
+  private readonly _ssaoFullBlurScene0: THREE.Scene;
+  private readonly _ssaoFullBlurScene1: THREE.Scene;
+
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
 
@@ -75,6 +79,8 @@ export class EffectRenderManager {
   private _ssaoMaterial: THREE.ShaderMaterial;
   private _ssaoFirstBlurMaterial: THREE.ShaderMaterial;
   private _ssaoSecondBlurMaterial: THREE.ShaderMaterial;
+  private _ssaoFullBlurMaterial0: THREE.ShaderMaterial;
+  private _ssaoFullBlurMaterial1: THREE.ShaderMaterial;
 
   private _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
@@ -167,6 +173,10 @@ export class EffectRenderManager {
     this._ssaoFirstBlurScene.autoUpdate = false;
     this._ssaoSecondBlurScene = new THREE.Scene();
     this._ssaoSecondBlurScene.autoUpdate = false;
+    this._ssaoFullBlurScene0 = new THREE.Scene();
+    this._ssaoFullBlurScene0.autoUpdate = false;
+    this._ssaoFullBlurScene1 = new THREE.Scene();
+    this._ssaoFullBlurScene1.autoUpdate = false;
     this._emptyScene = new THREE.Scene();
     this._emptyScene.autoUpdate = false;
 
@@ -286,6 +296,26 @@ export class EffectRenderManager {
       },
       vertexShader: ssaoBlurVerticalCombineShaders.vertex,
       fragmentShader: ssaoBlurVerticalCombineShaders.fragment
+    });
+
+    this._ssaoFullBlurMaterial0 = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: this._compositionTarget.texture },
+        tAmbientOcclusion: { value: this._ssaoTarget.texture },
+        resolution: { value: new THREE.Vector2() }
+      },
+      vertexShader: ssaoBlurFullCombineShaders.vertex,
+      fragmentShader: ssaoBlurFullCombineShaders.fragment
+    });
+
+    this._ssaoFullBlurMaterial1 = new THREE.ShaderMaterial({
+      uniforms: {
+        tDiffuse: { value: this._compositionTarget.texture },
+        tAmbientOcclusion: { value: this._ssaoFirstBlurTarget.texture },
+        resolution: { value: new THREE.Vector2() }
+      },
+      vertexShader: ssaoBlurFullCombineShaders.vertex,
+      fragmentShader: ssaoBlurFullCombineShaders.fragment
     });
 
     const diffuseTexture = this.supportsSsao(ssaoParameters)
@@ -457,9 +487,11 @@ export class EffectRenderManager {
 
           if (supportsSsao) {
             this.renderComposition(renderer, camera, this._compositionTarget);
+
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderPostProcessStep(renderer, this._ssaoFirstBlurTarget, this._ssaoFirstBlurScene);
-            this.renderPostProcessStep(renderer, this._renderTarget, this._ssaoSecondBlurScene);
+
+            this.renderPostProcessStep(renderer, this._renderTarget, this._ssaoFullBlurScene0);
+
           } else {
             this.renderComposition(renderer, camera, this._renderTarget);
           }
@@ -661,6 +693,8 @@ export class EffectRenderManager {
 
       this._ssaoFirstBlurMaterial.uniforms.resolution.value = renderSize;
       this._ssaoSecondBlurMaterial.uniforms.resolution.value = renderSize;
+      this._ssaoFullBlurMaterial0.uniforms.resolution.value = renderSize;
+      this._ssaoFullBlurMaterial1.uniforms.resolution.value = renderSize;
 
       this._fxaaMaterial.uniforms.resolution.value = renderSize;
       this._fxaaMaterial.uniforms.inverseResolution.value = new THREE.Vector2(1.0 / renderSize.x, 1.0 / renderSize.y);
@@ -785,6 +819,12 @@ export class EffectRenderManager {
 
     const secondMesh = new THREE.Mesh(geometry, this._ssaoSecondBlurMaterial);
     this._ssaoSecondBlurScene.add(secondMesh);
+
+    const fullBlurMesh0 = new THREE.Mesh(geometry, this._ssaoFullBlurMaterial0);
+    this._ssaoFullBlurScene0.add(fullBlurMesh0);
+
+    const fullBlurMesh1 = new THREE.Mesh(geometry, this._ssaoFullBlurMaterial1);
+    this._ssaoFullBlurScene1.add(fullBlurMesh1);
   }
 
   private createKernel(kernelSize: number) {
