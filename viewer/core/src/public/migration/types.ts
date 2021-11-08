@@ -71,7 +71,8 @@ export interface Cognite3DViewerOptions {
      */
     placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
     /**
-     * Opacity of the spinner in fractions. Defaults to 1.0.
+     * Opacity of the spinner in fractions. Valid values are between
+     * 0.2 and 1.0. Defaults to 1.0.
      */
     opacity: number;
   };
