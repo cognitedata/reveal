@@ -5,8 +5,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { GltfSectorParser, RevealGeometryCollectionType } from '../';
 import { RevealGlbParser } from '../src/RevealGlbParser';
+import { RevealGeometryCollectionType } from '../src/types';
 import * as TestMaterials from './testMaterials';
 
 init();
