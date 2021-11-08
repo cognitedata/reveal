@@ -22,7 +22,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createFileInfo } from 'src/store/util/StateUtils';
-import { sortState } from 'src/modules/Common/Utils/SortUtils';
+import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -188,20 +188,16 @@ const processSlice = createSlice({
       state.showSummaryModal = action.payload;
     },
     setProcessSortKey(state, action: PayloadAction<string>) {
-      const sortKey = action.payload;
-      state.sortMeta.sortKey = sortKey;
+      state.sortMeta.sortKey = action.payload;
     },
     setProcessReverse(state, action: PayloadAction<boolean>) {
-      const reverse = action.payload;
-      state.sortMeta.reverse = reverse;
+      state.sortMeta.reverse = action.payload;
     },
     setProcessCurrentPage(state, action: PayloadAction<number>) {
-      const currentPage = action.payload;
-      state.sortMeta.currentPage = currentPage;
+      state.sortMeta.currentPage = action.payload;
     },
     setProcessPageSize(state, action: PayloadAction<number>) {
-      const pageSize = action.payload;
-      state.sortMeta.pageSize = pageSize;
+      state.sortMeta.pageSize = action.payload;
     },
     setProcessCurrentView(state, action: PayloadAction<ViewMode>) {
       state.currentView = action.payload;
@@ -509,7 +505,34 @@ export const selectProcessSortedFiles = createSelector(
   selectAllProcessFiles,
   (rootState: RootState) => rootState.processSlice.sortMeta.sortKey,
   (rootState: RootState) => rootState.processSlice.sortMeta.reverse,
-  sortState
+  GenericSort
+);
+
+export const selectProcessSelectedFileIdsInSortedOrder = createSelector(
+  selectProcessSortedFiles,
+  (rootState: RootState) => rootState.filesSlice.files.selectedIds,
+  (sortedFiles, selectedIds) => {
+    const indexMap = new Map<number, number>(
+      sortedFiles.map((item, index) => [item.id, index])
+    );
+
+    const sortedIds = GenericSort(
+      selectedIds,
+      SorterNames.indexInSortedArray,
+      false,
+      indexMap
+    );
+
+    return sortedIds;
+  }
+);
+
+export const selectProcessAllSelectedFilesInSortedOrder = createSelector(
+  selectProcessSelectedFileIdsInSortedOrder,
+  (rootState: RootState) => rootState.filesSlice.files.byId,
+  (sortedSelectedFileIds, allFiles) => {
+    return sortedSelectedFileIds.map((id) => allFiles[id]);
+  }
 );
 
 // helpers

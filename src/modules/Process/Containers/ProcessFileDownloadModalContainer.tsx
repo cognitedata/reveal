@@ -2,8 +2,8 @@ import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloade
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFileDownloadModalVisibility } from 'src/modules/Common/store/commonSlice';
-import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
 import { RootState } from 'src/store/rootReducer';
+import { selectProcessSelectedFileIdsInSortedOrder } from 'src/modules/Process/processSlice';
 
 export const ProcessFileDownloadModalContainer = () => {
   const dispatch = useDispatch();
@@ -12,13 +12,13 @@ export const ProcessFileDownloadModalContainer = () => {
     ({ commonReducer }: RootState) => commonReducer.showFileDownloadModal
   );
 
-  const selectedFiles = useSelector((state: RootState) =>
-    selectAllSelectedFiles(state.filesSlice)
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectProcessSelectedFileIdsInSortedOrder(state)
   );
 
   return (
     <FileDownloaderModal
-      fileIds={selectedFiles.map((file) => file.id)}
+      fileIds={selectedFileIds}
       showModal={showFileDownloadModal}
       onCancel={() => dispatch(setFileDownloadModalVisibility(false))}
     />

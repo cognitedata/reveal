@@ -11,12 +11,11 @@ import { ViewMode } from 'src/modules/Common/types';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import {
-  selectExplorerSelectedFileIds,
+  selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerCurrentView,
   setExplorerFileUploadModalVisibility,
   setExplorerQueryString,
 } from 'src/modules/Explorer/store/explorerSlice';
-import isEqual from 'lodash-es/isEqual';
 import {
   getLink,
   getParamLink,
@@ -43,9 +42,8 @@ export const ExplorerToolbarContainer = (
   const percentageScanned = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.percentageScanned
   );
-  const selectedFileIds = useSelector(
-    (state: RootState) => selectExplorerSelectedFileIds(state.explorerReducer),
-    isEqual
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectExplorerSelectedFileIdsInSortedOrder(state)
   );
 
   const handleViewChange = (view: string) => {

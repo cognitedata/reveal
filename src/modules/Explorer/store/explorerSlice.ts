@@ -21,9 +21,10 @@ import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
-import { sortState } from 'src/modules/Common/Utils/SortUtils';
+import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
 import { RootState } from 'src/store/rootReducer';
 import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
+import isEqual from 'lodash-es/isEqual';
 
 export type ExplorerFileState = {
   id: number;
@@ -171,15 +172,17 @@ const explorerSlice = createSlice({
       state.showFileMetadata = true;
     },
     setExplorerQueryString(state, action: PayloadAction<string>) {
-      if (state.query !== action.payload) resetSortKey(state);
+      if (state.query !== action.payload) resetSortPagination(state);
       state.query = action.payload;
     },
     setExplorerModalQueryString(state, action: PayloadAction<string>) {
-      if (state.exploreModal.query !== action.payload) resetSortKey(state);
+      if (state.exploreModal.query !== action.payload) {
+        resetSortPagination(state);
+      }
       state.exploreModal.query = action.payload;
     },
     setExplorerFilter(state, action: PayloadAction<VisionFileFilterProps>) {
-      if (state.filter !== action.payload) resetSortKey(state);
+      if (!isEqual(state.filter, action.payload)) resetSortPagination(state);
       state.filter = action.payload;
     },
     toggleExplorerFilterView(state) {
@@ -192,20 +195,16 @@ const explorerSlice = createSlice({
       state.showFileUploadModal = action.payload;
     },
     setSortKey(state, action: PayloadAction<string>) {
-      const sortKey = action.payload;
-      state.sortMeta.sortKey = sortKey;
+      state.sortMeta.sortKey = action.payload;
     },
     setReverse(state, action: PayloadAction<boolean>) {
-      const reverse = action.payload;
-      state.sortMeta.reverse = reverse;
+      state.sortMeta.reverse = action.payload;
     },
     setCurrentPage(state, action: PayloadAction<number>) {
-      const currentPage = action.payload;
-      state.sortMeta.currentPage = currentPage;
+      state.sortMeta.currentPage = action.payload;
     },
     setPageSize(state, action: PayloadAction<number>) {
-      const pageSize = action.payload;
-      state.sortMeta.pageSize = pageSize;
+      state.sortMeta.pageSize = action.payload;
     },
     setExplorerCurrentView(state, action: PayloadAction<ViewMode>) {
       state.currentView = action.payload;
@@ -306,7 +305,7 @@ export const {
 export default explorerSlice.reducer;
 
 // selectors
-const selectExplorerSelectedIds = (state: State): number[] =>
+export const selectExplorerSelectedIds = (state: State): number[] =>
   state.files.selectedIds;
 
 export const selectExploreFileCount = (state: State): number =>
@@ -330,19 +329,6 @@ export const selectExplorerAllFilesSelected = createSelector(
   }
 );
 
-export const selectExplorerAllSelectedFiles = createSelector(
-  selectExplorerSelectedIds,
-  (state) => state.files.byId,
-  (selectedIds, allFiles) => {
-    return selectedIds.map((fileId) => allFiles[fileId]);
-  }
-);
-
-export const selectExplorerSelectedFileIds = createSelector(
-  selectExplorerAllSelectedFiles,
-  (files) => files.map((file) => file.id)
-);
-
 export const selectExplorerFilesWithAnnotationCount = createSelector(
   (state: RootState) => selectExplorerAllFiles(state.explorerReducer),
   (state: RootState) => state.annotationReducer.files.byId,
@@ -362,7 +348,35 @@ export const selectExplorerSortedFiles = createSelector(
   selectExplorerFilesWithAnnotationCount,
   (rootState: RootState) => rootState.explorerReducer.sortMeta.sortKey,
   (rootState: RootState) => rootState.explorerReducer.sortMeta.reverse,
-  sortState
+  GenericSort
+);
+
+export const selectExplorerSelectedFileIdsInSortedOrder = createSelector(
+  selectExplorerSortedFiles,
+  (rootState: RootState) =>
+    selectExplorerSelectedIds(rootState.explorerReducer),
+  (sortedFiles, selectedIds) => {
+    const indexMap = new Map<number, number>(
+      sortedFiles.map((item, index) => [item.id, index])
+    );
+
+    const sortedIds = GenericSort(
+      selectedIds,
+      SorterNames.indexInSortedArray,
+      false,
+      indexMap
+    );
+
+    return sortedIds;
+  }
+);
+
+export const selectExplorerAllSelectedFilesInSortedOrder = createSelector(
+  selectExplorerSelectedFileIdsInSortedOrder,
+  (rootState: RootState) => rootState.explorerReducer.files.byId,
+  (sortedSelectedFileIds, allFiles) => {
+    return sortedSelectedFileIds.map((id) => allFiles[id]);
+  }
 );
 
 // state utility functions
@@ -392,7 +406,8 @@ const convertToExplorerFileState = (
   return { ...fileState };
 };
 
-const resetSortKey = (state: State) => {
+const resetSortPagination = (state: State) => {
   // Workaround: rest sortKey, since annotations need to be refetched
   state.sortMeta.sortKey = '';
+  state.sortMeta.currentPage = 1;
 };

@@ -6,15 +6,15 @@ import {
   setBulkEditModalVisibility,
   setBulkEditTemp,
 } from 'src/modules/Common/store/commonSlice';
-import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
 import { RootState } from 'src/store/rootReducer';
 import { updateBulk } from 'src/store/thunks/Files/updateBulk';
+import { selectProcessAllSelectedFilesInSortedOrder } from 'src/modules/Process/processSlice';
 
 export const ProcessBulkEditModalContainer = () => {
   const dispatch = useDispatch();
 
   const selectedFiles = useSelector((state: RootState) =>
-    selectAllSelectedFiles(state.filesSlice)
+    selectProcessAllSelectedFilesInSortedOrder(state)
   );
 
   const showBulkEditModal = useSelector(

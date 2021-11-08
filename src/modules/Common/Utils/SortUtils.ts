@@ -1,17 +1,24 @@
 import { TableDataItem } from 'src/modules/Common/types';
-import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 type ValueType = Omit<TableDataItem, 'menuActions' | 'rowKey'> & {
   annotationCount: number;
 };
 
+export const SorterNames = {
+  name: 'name',
+  mimeType: 'mimeType',
+  annotations: 'annotations',
+  createdTime: 'createdTime',
+  indexInSortedArray: 'indexInSortedArray',
+};
+
 export const Sorters: {
   [key: string]: {
-    transform: (data: ValueType, stateTransformValue?: any) => any;
+    transform: (data: any, transformParam?: any) => any;
     sort: (a: any, b: any, reverse: boolean) => any;
   };
 } = {
-  name: {
+  [SorterNames.name]: {
     transform: (data: ValueType) => data.name,
     sort: (a: string, b: string, reverse: boolean) => {
       if (reverse) {
@@ -20,7 +27,7 @@ export const Sorters: {
       return a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     },
   },
-  mimeType: {
+  [SorterNames.mimeType]: {
     transform: (data: ValueType) => data.mimeType,
     sort: (a: string, b: string, reverse: boolean) => {
       if (reverse) {
@@ -29,7 +36,7 @@ export const Sorters: {
       return a && b && a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     },
   },
-  annotations: {
+  [SorterNames.annotations]: {
     transform: (data: ValueType) => {
       return data.annotationCount;
     },
@@ -40,7 +47,7 @@ export const Sorters: {
       return a > b ? 1 : -1;
     },
   },
-  createdTime: {
+  [SorterNames.createdTime]: {
     transform: (data: ValueType) => data.createdTime,
     sort: (a: Date, b: Date, reverse: boolean) => {
       if (reverse) {
@@ -53,26 +60,43 @@ export const Sorters: {
       return a.valueOf() - b.valueOf();
     },
   },
+  [SorterNames.indexInSortedArray]: {
+    transform: (data: number, idIndexMapOfSortedArray: Map<number, number>) =>
+      idIndexMapOfSortedArray.get(data),
+    sort: (a: number, b: number) => {
+      if (a === undefined && b === undefined) {
+        return 0;
+      }
+      if (a === undefined) {
+        return 1;
+      }
+      if (b === undefined) {
+        return -1;
+      }
+      return a - b;
+    },
+  },
 };
 
-export const sortState = (
-  allFiles: any[],
+export const GenericSort = <T>(
+  allItems: T[],
   sortKey: string | undefined,
-  reverse: boolean | undefined
+  reverse: boolean | undefined,
+  transformParameter?: any
 ) => {
-  let sortedData: FileInfo[];
-  if (sortKey) {
+  let sortedItems: T[];
+  if (sortKey && allItems.length) {
     const sorter = Sorters[sortKey];
-    const dataArr = allFiles.map((value, index) => {
-      return { index, value: sorter.transform(value) };
+    const dataArr = allItems.map((value, index) => {
+      return { index, value: sorter.transform(value, transformParameter) };
     });
     const sortedTransformValues = dataArr.sort((a, b) =>
       sorter.sort(a.value, b.value, !!reverse)
     );
 
-    sortedData = sortedTransformValues.map((val) => allFiles[val.index]);
+    sortedItems = sortedTransformValues.map((val) => allItems[val.index]);
   } else {
-    sortedData = allFiles;
+    sortedItems = allItems;
   }
-  return sortedData;
+  return sortedItems;
 };

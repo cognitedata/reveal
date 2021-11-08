@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, { Column, ColumnShape, RowKey } from 'react-base-table';
@@ -119,22 +119,6 @@ export function SelectableTable(props: SelectableTableProps) {
     TableCell: Cell,
     TableHeaderCell: HeaderCell,
   };
-
-  useEffect(() => {
-    if (
-      props.data &&
-      props.data.length &&
-      props.focusedId &&
-      tableRef.current
-    ) {
-      const rowIndex = props.data?.findIndex(
-        (item: TableDataItem) => item.id === props.focusedId
-      );
-      if (rowIndex > 0) {
-        tableRef.current.scrollToRow(rowIndex);
-      }
-    }
-  }, [props.focusedId, props.data]);
 
   return (
     <TableWrapper>

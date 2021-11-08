@@ -1,14 +1,12 @@
 import React from 'react';
 import { ExploreModal } from 'src/modules/Common/Components/ExploreModal/ExploreModal';
-import { FileState } from 'src/modules/Common/store/filesSlice';
 import {
   selectAllProcessFiles,
   setProcessFileIds,
   setSelectFromExploreModalVisibility,
 } from 'src/modules/Process/processSlice';
 import {
-  selectExplorerAllSelectedFiles,
-  selectExplorerSelectedFileIds,
+  selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerFileSelectState,
   setExplorerModalFocusedFileId,
   setExplorerModalQueryString,
@@ -39,13 +37,8 @@ export const ExploreModalContainer = () => {
   const filter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.exploreModal.filter
   );
-  const selectedExploreModalFiles: FileState[] = useSelector(
-    (state: RootState) => {
-      return selectExplorerAllSelectedFiles(state.explorerReducer);
-    }
-  );
   const selectedExistingFileIds = useSelector((state: RootState) =>
-    selectExplorerSelectedFileIds(state.explorerReducer)
+    selectExplorerSelectedFileIdsInSortedOrder(state)
   );
   const handleExploreSearchChange = (text: string) => {
     dispatch(setExplorerModalQueryString(text));
@@ -73,11 +66,11 @@ export const ExploreModalContainer = () => {
   const handleUseFiles = () => {
     const availableFileIds = processFiles.map((file) => file.id);
     const allProcessFileIds = [...availableFileIds];
-    selectedExploreModalFiles.forEach((selectedExploreFile) => {
+    selectedExistingFileIds.forEach((selectedExistingFileId) => {
       if (
-        !availableFileIds.find((fileId) => fileId === selectedExploreFile.id)
+        !availableFileIds.find((fileId) => fileId === selectedExistingFileId)
       ) {
-        allProcessFileIds.push(selectedExploreFile.id);
+        allProcessFileIds.push(selectedExistingFileId);
       }
     });
 
