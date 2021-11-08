@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { ErrorResponse } from '@cognite/gearbox';
 import * as Sentry from '@sentry/browser';
 import notification from 'antd/lib/notification';
 import { Typography } from 'antd';
@@ -9,7 +8,7 @@ import { getContainer } from './utils';
 
 interface ApiError {
   duplicated: any[];
-  errors: ErrorResponse[];
+  errors: any[];
   failed: any[];
   missing: any[];
   requestId: undefined;
@@ -20,12 +19,12 @@ interface ApiError {
   succeeded: any[];
 }
 
-export interface ErrorNotificationProps extends ApiError {
+interface ErrorNotificationProps extends ApiError {
   message?: string;
   description?: string;
   duration?: number;
   sendToSentry?: boolean;
-  error?: ErrorResponse;
+  error?: any;
 }
 
 const generateStatusMessage = (errorCode: number): string => {
