@@ -45,6 +45,7 @@ keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 
 
 ```jsx
 keyframe.unassignStyledNodeCollection(nodes);
+```
 
 ### Play timelines
 We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
@@ -120,37 +121,36 @@ stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 const keyframeMechNodes = timeline.createKeyframe(new Date('2021-10-08'));
 keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
-const playLength = 25000;
+let initialDateReference = 0;
 
-timeline.play(new Date('2021-10-05'), new Date('2021-10-09'), playLength);
-
-let refDate = 0;
-
+const durationMs = 25000;
+const startDate = new Date('2021-10-05');
+const endDate = new Date('2021-10-09');
+timeline.play(startDate, endDate, durationMs);
 timeline.subscribe('dateChanged', (data) => {
-  if(refDate === 0) {
-    refDate = data.date.getTime();
-  }
-  const width = ((data.date.getTime() - refDate) / playLength) * 100;
-  const widthPercentage = width.toString() + '%';
-  progressBar.style.width = widthPercentage;
-})
+  if(initialDateReference === 0) {
+  initialDateReference = data.date.getTime();
+}
+const progress = ((data.date.getTime() - initialDateReference) / durationMs) * 100;
+progressBar.style.width = `${progress}%`;
+});
 ```
 
 ### Stop timeline playback
 
-```js runnable
+```jsx
 timeline.stop();
 ```
 
 ### Pause timeline
 
-```js runnable
+```jsx
 timeline.pause();
 ```
 
 ### Resume timeline
 
-```js runnable
+```jsx
 timeline.resume();
 ```
 
@@ -175,7 +175,7 @@ Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to rece
 
 timeline.subscribe('dateChanged', (data) => {
   const date = data.date;
-  const keyframe = data.keyframe;
+  const keyframe = data.activeKeyframe;
   const startDate = data.startDate;
   const endDate = data.endDate;
 });
@@ -192,7 +192,7 @@ timeline.unsubscribe('dateChanged', (data) => {});
 To remove any Keyframe, use `removeKeyframeByDate(date: Date)`
 - `date` - Date of the Keyframe which needs to be removed from the Timeline.
 
-```js
+```jsx
 timeline.removeKeyframeByDate(new Date('2021-10-07'));
 ```
 
@@ -200,7 +200,7 @@ timeline.removeKeyframeByDate(new Date('2021-10-07'));
 To remove any Keyframe, use `removeKeyframe(keyframe: Keyframe)`
 - `keyframe` - Keyframe to be removed from the Timeline.
 
-```js runnable
+```jsx
 timeline.removeKeyframe(keyframeMechNodes);
 ```
 

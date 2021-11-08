@@ -54,12 +54,6 @@ describe('TimelineTool', () => {
     kf1.assignStyledNodeCollection(kf1Collection, kf1Appearance);
     kf2.assignStyledNodeCollection(kf2Collection, kf2Appearance);
     kf3.assignStyledNodeCollection(kf3Collection, kf3Appearance);
-
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
   });
 
   test('play() playback the Timeline', () => {

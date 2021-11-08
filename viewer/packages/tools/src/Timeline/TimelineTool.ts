@@ -86,7 +86,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
       const index = this._keyframes.findIndex(obj => obj === keyframe);
 
       if (index > -1) {
-        this._keyframes = this._keyframes.splice(index, 1);
+        this._keyframes.splice(index, 1);
       }
     }
   }
@@ -100,7 +100,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
       const index = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
 
       if (index > -1) {
-        this._keyframes = this._keyframes.splice(index, 1);
+        this._keyframes.splice(index, 1);
       }
     }
   }

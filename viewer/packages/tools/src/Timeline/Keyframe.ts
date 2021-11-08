@@ -11,8 +11,7 @@ import { Cognite3DModel } from '@reveal/core';
 export class Keyframe {
   private readonly _date: Date;
   private readonly _model: Cognite3DModel;
-  private _nodeCollection: NodeCollectionBase[] = new Array<NodeCollectionBase>();
-  private _nodeAppearance: NodeAppearance[] = new Array<NodeAppearance>();
+  private _nodeCollectionAndAppearnace: { nodes: NodeCollectionBase; nodeAppearance: NodeAppearance }[] = [];
 
   constructor(model: Cognite3DModel, date: Date) {
     this._model = model;
@@ -31,8 +30,8 @@ export class Keyframe {
    * Assigns the styles for the node set for the model for this Keyframe
    */
   public activate() {
-    this._nodeCollection.forEach((nodeCollection, index) => {
-      this._model.assignStyledNodeCollection(nodeCollection, this._nodeAppearance[index]);
+    this._nodeCollectionAndAppearnace.forEach((node, _index) => {
+      this._model.assignStyledNodeCollection(node.nodes, node.nodeAppearance);
     });
   }
 
@@ -40,9 +39,9 @@ export class Keyframe {
    * Removes the style for the model
    */
   public deactivate() {
-    for (const nodeCollection of this._nodeCollection) {
-      this._model.unassignStyledNodeCollection(nodeCollection);
-    }
+    this._nodeCollectionAndAppearnace.forEach((node, _index) => {
+      this._model.unassignStyledNodeCollection(node.nodes);
+    });
   }
 
   /**
@@ -51,32 +50,18 @@ export class Keyframe {
    * @param nodeAppearance Style to assign to the node collection
    */
   public assignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
-    if (nodeCollection && nodeAppearance) {
-      this._nodeCollection.push(nodeCollection);
-      this._nodeAppearance.push(nodeAppearance);
-    }
+    this._nodeCollectionAndAppearnace.push({ nodes: nodeCollection, nodeAppearance });
   }
 
   /**
    * Remove Node & Style for this keyframe's nodeCollection and nodeAppearance
    * @param nodeCollection Nodes to be unassign from node collection
-   * @param nodeAppearance Style to be unassign from node appearance
    */
-  public unassignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
-    if (this._nodeCollection.length > 0) {
-      const index = this._nodeCollection.findIndex(obj => obj === nodeCollection);
-
-      if (index > -1) {
-        this._nodeCollection = this._nodeCollection.splice(index, 1);
-      }
-    }
-
-    if (this._nodeAppearance.length > 0) {
-      const index = this._nodeAppearance.findIndex(obj => obj === nodeAppearance);
-
-      if (index > -1) {
-        this._nodeAppearance = this._nodeAppearance.splice(index, 1);
-      }
+  public unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+    let index = this._nodeCollectionAndAppearnace.findIndex(x => x.nodes === nodeCollection);
+    while (index !== -1) {
+      this._nodeCollectionAndAppearnace.splice(index, 1);
+      index = this._nodeCollectionAndAppearnace.findIndex(x => x.nodes === nodeCollection);
     }
   }
 }
