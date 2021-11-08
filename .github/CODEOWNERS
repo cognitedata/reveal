@@ -26,3 +26,5 @@ packages/react-loop-detector         @cognitedata/frontend-react-container
 packages/react-sentry                @cognitedata/frontend-react-container
 packages/react-tenant-selector       @cognitedata/frontend-tenant-selector-team
 packages/storage                     @cognitedata/frontend-react-container
+packages/pid-tools                   @cognitedata/diagram-parsing-team
+packages/react-pid                   @cognitedata/diagram-parsing-team
