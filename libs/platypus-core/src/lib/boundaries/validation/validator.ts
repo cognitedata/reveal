@@ -56,7 +56,7 @@ export class Validator {
       }
 
       this.validators[key].forEach((validator) => {
-        const res = validator.validate(this.data[key]);
+        const res = validator.validate(key, this.data[key]);
 
         if (!res.valid) {
           result.errors = Object.assign(result.errors, res.errors);

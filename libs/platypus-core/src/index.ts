@@ -4,5 +4,4 @@ export * from './lib/boundaries/persistence';
 export * from './lib/boundaries/security';
 export * from './lib/boundaries/types';
 export * from './lib/boundaries/validation';
-export * from './lib/platypus-core';
 export * from './lib/domain/solution';
