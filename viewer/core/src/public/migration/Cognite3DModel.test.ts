@@ -8,10 +8,15 @@ import { NodesLocalClient } from '@reveal/nodes-api';
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
+import { initMetrics } from '@reveal/metrics';
 import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
 
 describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
+
+  beforeAll(() => {
+    initMetrics(false, '', '', {});
+  });
 
   beforeEach(() => {
     const materialManager = new CadMaterialManager();
