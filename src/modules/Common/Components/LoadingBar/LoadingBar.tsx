@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
 import { Spin } from 'antd';
@@ -25,6 +25,12 @@ export const LoadingBar = ({
     setFetchingInterrupted(false);
     reFetch();
   };
+
+  useEffect(() => {
+    if (isLoading && fetchingInterrupted) {
+      setFetchingInterrupted(false);
+    }
+  }, [isLoading, percentageScanned]);
 
   if (isLoading) {
     return (
