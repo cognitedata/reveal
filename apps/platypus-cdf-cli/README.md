@@ -14,11 +14,11 @@ Set the COGNITE_CREDENTIALS variable with an api key for the respective cdf proj
 ## How to run
 
 First build the library:
-`nx build platypus-cli`
+`nx build platypus-cdf-cli`
 
 Then run the cli:
 `node dist/libs/platypus-cli/src/index.js init <other-args>`
 
 ## Running unit tests
 
-Run `nx test platypus-cli` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test platypus-cdf-cli` to execute the unit tests via [Jest](https://jestjs.io).
