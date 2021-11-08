@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Tooltip } from '@cognite/cogs.js';
+import { Tooltip, Label } from '@cognite/cogs.js';
 
 import { getOverflownElementsInfo } from '_helpers/getOverflownElementsInfo';
-import { Label } from 'components/tmp-label';
 import { useDocumentAssetNames } from 'hooks/useDocumentAssetNames';
 import { FlexColumn } from 'styles/layout';
 

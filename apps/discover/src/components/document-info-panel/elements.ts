@@ -1,9 +1,8 @@
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Label as CogsLabel } from '@cognite/cogs.js';
 
 import { Label, TitleStyle } from 'components/metadataTable/elements';
-import { Label as TmpLabel } from 'components/tmp-label';
 import { Ellipsis, sizes } from 'styles/layout';
 
 export const PathContainer = styled.div`
@@ -69,7 +68,7 @@ export const DocumentAssetNamesContainer = styled.div`
   white-space: nowrap;
 `;
 
-export const DocumentAssetsHiddenCount = styled(TmpLabel)`
+export const DocumentAssetsHiddenCount = styled(CogsLabel)`
   position: absolute;
   left: ${(props: { left: number }) => props.left + 8}px;
   background-color: #e1e1e1 !important;

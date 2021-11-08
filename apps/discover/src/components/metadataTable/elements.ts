@@ -81,5 +81,5 @@ export const PathText = styled(TitleStyle)`
 
 export const EmptyCell = styled.span`
   user-select: none;
-  color: var(--cogs-greyscale-grey6);
+  color: var(--cogs-text-hint);
 `;

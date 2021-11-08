@@ -2,9 +2,10 @@ import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 
+import { Label } from '@cognite/cogs.js';
+
 import { shortDate } from '_helpers/date';
 import { getHumanReadableFileSize } from '_helpers/number';
-import { Label } from 'components/tmp-label';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 
 import { EMPTY_COMMENT_PLACEHOLDER, EMPTY_PATH_PLACEHOLDER } from './constants';
@@ -13,7 +14,7 @@ import { FilePath } from './formats/FilePath';
 import { Text } from './formats/Text';
 
 export interface FormatItemProps {
-  value?: string | string[] | number;
+  value?: string | string[] | number | false | null;
   type?: 'text' | 'path' | 'filesize' | 'date' | 'label';
 }
 
@@ -34,7 +35,11 @@ export const formatItem = ({ value, type }: FormatItemProps) => {
   }
 
   // If the value is empty, show the placeholder
-  if (!value || value === '') {
+  if (
+    !value ||
+    value === '' ||
+    (isString(value) && value.toLowerCase() === 'unknown')
+  ) {
     return <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>;
   }
 
@@ -43,7 +48,11 @@ export const formatItem = ({ value, type }: FormatItemProps) => {
     return (
       <>
         {value.length ? (
-          value.map((item) => <Label key={item}>{item}</Label>)
+          value.map((item) => (
+            <Label key={item} size="small" variant="unknown">
+              {item}
+            </Label>
+          ))
         ) : (
           <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
         )}
@@ -71,9 +80,17 @@ export const formatItem = ({ value, type }: FormatItemProps) => {
 
   // If it's a label, wrap it in <Label>
   if (type === 'label' && isString(value)) {
-    return <Label>{value}</Label>;
+    return (
+      <Label variant="unknown" size="small">
+        {value}
+      </Label>
+    );
   }
 
   // Otherwise, just return it
-  return <>{value}</> || <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>;
+  return value ? (
+    <>{value}</>
+  ) : (
+    <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
+  );
 };

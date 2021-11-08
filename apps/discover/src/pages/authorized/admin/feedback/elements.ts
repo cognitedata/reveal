@@ -22,10 +22,6 @@ export const DocumentFeedbackDetailsWrapper = styled.div`
   padding-left: ${sizes.large};
 `;
 
-export const LabelContainer = styled.div`
-  line-height: var(--cogs-t2-line-height);
-`;
-
 export const SensitiveWarning = styled.div`
   display: flex;
   width: 100%;

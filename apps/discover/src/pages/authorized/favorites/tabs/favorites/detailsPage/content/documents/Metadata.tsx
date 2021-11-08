@@ -50,16 +50,12 @@ export const Metadata: React.FC<Props> = ({ data }) => {
           },
           {
             label: 'Creation date',
-            value: data.created
-              ? new Date(data.created).toISOString()
-              : undefined,
+            value: data.created && new Date(data.created).toISOString(),
             type: 'date',
           },
           {
             label: 'Last modified',
-            value: data.lastUpdated
-              ? new Date(data.lastUpdated).toISOString()
-              : undefined,
+            value: data.lastUpdated && new Date(data.lastUpdated).toISOString(),
             type: 'date',
           },
         ]}

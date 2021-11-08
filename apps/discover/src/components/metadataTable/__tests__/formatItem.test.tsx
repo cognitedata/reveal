@@ -1,4 +1,4 @@
-import { Label } from 'components/tmp-label';
+import { Label } from '@cognite/cogs.js';
 
 import { EMPTY_FIELD_PLACEHOLDER } from '../../../constants/general';
 import {

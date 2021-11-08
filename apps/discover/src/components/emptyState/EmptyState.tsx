@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Illustration, IllustrationType } from 'components/Illustration';
+import { Illustration, IllustrationType } from 'components/illustration';
 
 import { LOADING_TEXT, NO_RESULTS_TEXT } from './constants';
 import {

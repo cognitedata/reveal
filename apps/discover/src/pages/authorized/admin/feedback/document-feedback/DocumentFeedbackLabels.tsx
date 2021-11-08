@@ -1,10 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Label } from 'components/tmp-label';
-import { DocumentFeedbackItem } from 'modules/feedback/types';
+import { Label, Flex } from '@cognite/cogs.js';
 
-import { LabelContainer } from '../elements';
+import { DocumentFeedbackItem } from 'modules/feedback/types';
 
 interface Props {
   feedback: DocumentFeedbackItem;
@@ -22,13 +21,27 @@ export const DocumentFeedbackLabels: React.FC<Props> = ({ feedback }) => {
     );
 
   return (
-    <LabelContainer>
+    <Flex gap={8} wrap="wrap">
       {feedback.isSensitiveData && (
-        <Label color="Danger">{t('Sensitive')}</Label>
+        <Label variant="danger" size="medium">
+          {t('Sensitive')}
+        </Label>
       )}
-      {feedback.suggestedType && <Label>{t('Incorrect document type')}</Label>}
-      {feedback.isIncorrectGeo && <Label>{t('Incorrect geo-Label')}</Label>}
-      {isOther && <Label>{t('Other')}</Label>}
-    </LabelContainer>
+      {feedback.suggestedType && (
+        <Label variant="unknown" size="medium">
+          {t('Incorrect document type')}
+        </Label>
+      )}
+      {feedback.isIncorrectGeo && (
+        <Label variant="unknown" size="medium">
+          {t('Incorrect geo-Label')}
+        </Label>
+      )}
+      {isOther && (
+        <Label variant="unknown" size="medium">
+          {t('Other')}
+        </Label>
+      )}
+    </Flex>
   );
 };
