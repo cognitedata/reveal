@@ -5,10 +5,7 @@ import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { Annotation } from 'src/api/types';
 import { validateAnnotation } from 'src/api/utils';
 import chunk from 'lodash-es/chunk';
-import {
-  ANNOTATION_FETCH_BULK_SIZE,
-  FETCH_ANNOTATION_LIMIT,
-} from 'src/constants/FetchConstants';
+import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation[],
@@ -23,7 +20,7 @@ export const RetrieveAnnotations = createAsyncThunk<
     };
     const annotationListRequest = {
       filter: filterPayload,
-      limit: FETCH_ANNOTATION_LIMIT,
+      limit: -1,
     };
 
     return AnnotationApi.list(annotationListRequest);
