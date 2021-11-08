@@ -12,7 +12,7 @@ export abstract class TakenSectorMapBase {
   computeSpentBudget(): SectorLoadingSpent {
     const models = this.models;
     const wanted = this.collectWantedSectors();
-    const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+    const nonDiscarded = wanted.filter(sector => sector.levelOfDetail !== LevelOfDetail.Discarded);
 
     const totalSectorCount = models.reduce((sum, x) => sum + x.scene.sectorCount, 0);
     const takenSectorCount = nonDiscarded.length;
