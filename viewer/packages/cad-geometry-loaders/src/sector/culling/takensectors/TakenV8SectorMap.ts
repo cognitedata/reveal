@@ -23,7 +23,7 @@ export class TakenV8SectorMap extends TakenSectorMapBase {
     return totalCost;
   }
 
-  get models(): CadModelMetadata[] {
+  get modelsMetadata(): CadModelMetadata[] {
     return Array.from(this._takenSectorTrees.values()).map(x => x.modelMetadata);
   }
 

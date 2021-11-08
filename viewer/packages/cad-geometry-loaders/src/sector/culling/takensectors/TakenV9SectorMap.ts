@@ -13,14 +13,14 @@ import assert from 'assert';
 export class TakenV9SectorMap extends TakenSectorMapBase {
   private readonly determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
-  private readonly _models = new Map<string, { model: CadModelMetadata; sectorIds: Map<number, number> }>();
+  private readonly _models = new Map<string, { modelMetadata: CadModelMetadata; sectorIds: Map<number, number> }>();
 
   get totalCost(): SectorCost {
     return { ...this._totalCost };
   }
 
-  get models(): CadModelMetadata[] {
-    return Array.from(this._models.values()).map(x => x.model);
+  get modelsMetadata(): CadModelMetadata[] {
+    return Array.from(this._models.values()).map(x => x.modelMetadata);
   }
 
   constructor(determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>) {
@@ -34,7 +34,10 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
       `Only sector version 9 is supported, but got ${modelMetadata.scene.version}`
     );
 
-    this._models.set(modelMetadata.modelIdentifier, { model: modelMetadata, sectorIds: new Map<number, number>() });
+    this._models.set(modelMetadata.modelIdentifier, {
+      modelMetadata: modelMetadata,
+      sectorIds: new Map<number, number>()
+    });
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
@@ -69,7 +72,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
 
     // Collect sectors
     for (const [modelIdentifier, sectorsContainer] of this._models) {
-      const { model, sectorIds } = sectorsContainer;
+      const { modelMetadata: model, sectorIds } = sectorsContainer;
 
       const allSectorsInModel = new Map<number, PrioritizedWantedSector>();
       traverseDepthFirst(model.scene.root, sector => {

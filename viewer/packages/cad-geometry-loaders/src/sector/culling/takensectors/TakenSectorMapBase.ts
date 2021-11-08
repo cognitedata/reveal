@@ -5,16 +5,16 @@ import { PrioritizedWantedSector, SectorCost, SectorLoadingSpent } from '../type
 import { CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
 
 export abstract class TakenSectorMapBase {
-  protected abstract get models(): CadModelMetadata[];
+  protected abstract get modelsMetadata(): CadModelMetadata[];
   abstract get totalCost(): SectorCost;
   abstract collectWantedSectors(): PrioritizedWantedSector[];
 
   computeSpentBudget(): SectorLoadingSpent {
-    const models = this.models;
+    const modelsMetadata = this.modelsMetadata;
     const wanted = this.collectWantedSectors();
     const nonDiscarded = wanted.filter(sector => sector.levelOfDetail !== LevelOfDetail.Discarded);
 
-    const totalSectorCount = models.reduce((sum, x) => sum + x.scene.sectorCount, 0);
+    const totalSectorCount = modelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
     const takenSectorCount = nonDiscarded.length;
     const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
     const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
