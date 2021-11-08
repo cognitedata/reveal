@@ -4,7 +4,7 @@
 
 import { assertNever } from '@reveal/utilities';
 import * as THREE from 'three';
-import { RevealGeometryCollectionType } from './types';
+import { RevealGeometryCollectionType } from '../types';
 
 /**
  * Generate a three-dimensional plane geometry,

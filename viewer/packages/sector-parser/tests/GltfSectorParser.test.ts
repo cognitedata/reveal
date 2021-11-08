@@ -5,13 +5,14 @@
 import fs from 'fs';
 
 import 'jest-extended';
-import GltfSectorParser, { RevealGeometryCollectionType } from '../src/GltfSectorParser';
+import { RevealGlbParser } from '../src/RevealGlbParser';
+import { RevealGeometryCollectionType } from '../src/types';
 
 describe('GltfSectorParser Tests', () => {
   let parsedResult: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[];
 
   beforeAll(() => {
-    const parser = new GltfSectorParser();
+    const parser = new RevealGlbParser();
     const buffer = fs.readFileSync(__dirname + '/test.glb');
 
     parsedResult = parser.parseSector(buffer.buffer);

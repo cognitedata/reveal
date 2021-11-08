@@ -4,13 +4,16 @@
 import * as THREE from 'three';
 
 import assert from 'assert';
-import { setPrimitiveTopology } from './primitiveGeometries';
+import { setPrimitiveTopology } from './reveal-glb-parser/primitiveGeometries';
 import {
   RevealGeometryCollectionType,
   Node,
   GlbHeaderData,
   GeometryProcessingPayload,
-  TypedArrayConstructor
+  TypedArrayConstructor,
+  Primitive,
+  BufferView,
+  GltfJson
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 
@@ -45,23 +48,27 @@ export class RevealGlbParser {
   public parseSector(data: ArrayBuffer) {
     const headers = this._glbMetadataParser.parseGlbMetadata(data);
 
-    const typedGeometryBuffers: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] = [];
-
     const json = headers.json;
 
-    json.scenes[json.scene].nodes.forEach(nodeId => {
-      const node = json.nodes[nodeId];
+    return this.traverseDefaultSceneNodes(json, headers, data);
+  }
 
-      const processedNode = this.processNode(node, headers, data)!;
+  private traverseDefaultSceneNodes(json: GltfJson, headers: GlbHeaderData, data: ArrayBuffer) {
+    const typedGeometryBuffers: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] = [];
 
-      if (processedNode === undefined) {
-        return;
-      }
+    const defaultSceneNodeIds = json.scenes[json.scene].nodes;
 
-      const { buffer, type } = processedNode;
+    defaultSceneNodeIds
+      .map(nodeId => json.nodes[nodeId])
+      .forEach(node => {
+        const processedNode = this.processNode(node, headers, data)!;
 
-      typedGeometryBuffers.push({ type, buffer });
-    });
+        if (processedNode === undefined) {
+          return;
+        }
+
+        typedGeometryBuffers.push(processedNode);
+      });
 
     return typedGeometryBuffers;
   }
@@ -101,7 +108,26 @@ export class RevealGlbParser {
 
     return { type: geometryType, buffer: bufferGeometry };
   }
-  processTriangleMesh(payload: GeometryProcessingPayload) {
+
+  private processPrimitiveCollection(payload: GeometryProcessingPayload) {
+    assert(payload.instancingExtension !== null, 'Primitive does not contain the instanced gltf extension');
+
+    setPrimitiveTopology(payload.geometryType, payload.bufferGeometry);
+
+    // Our shaders use an 'a' prefix for attribute names
+    const primitivesAttributeNameTransformer = (attributeName: string) => `a${attributeName}`;
+
+    this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
+      payload.glbHeaderData,
+      payload.instancingExtension!.attributes!,
+      payload.data,
+      primitivesAttributeNameTransformer,
+      payload.bufferGeometry,
+      THREE.InstancedInterleavedBuffer
+    );
+  }
+
+  private processTriangleMesh(payload: GeometryProcessingPayload) {
     const { bufferGeometry, glbHeaderData, meshId, data } = payload;
 
     const json = glbHeaderData.json;
@@ -114,140 +140,114 @@ export class RevealGlbParser {
 
     const primitive = mesh.primitives[0];
 
+    this.setIndexBuffer(payload, primitive, data, bufferGeometry);
+
+    this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
+      payload.glbHeaderData,
+      primitive.attributes,
+      payload.data,
+      attributeNameTransformer,
+      payload.bufferGeometry,
+      THREE.InterleavedBuffer
+    );
+
+    function attributeNameTransformer(attributeName: string) {
+      switch (attributeName) {
+        case 'COLOR_0':
+          return 'color';
+        case 'POSITION':
+          return 'position';
+        case '_treeIndex':
+          return 'a_treeIndex';
+        default:
+          throw new Error();
+      }
+    }
+  }
+
+  private setIndexBuffer(
+    payload: GeometryProcessingPayload,
+    primitive: Primitive,
+    data: ArrayBuffer,
+    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+  ) {
+    const json = payload.glbHeaderData.json;
+
     const offsetToBinChunk = payload.glbHeaderData.byteOffsetToBinContent;
 
     const indicesAccessor = json.accessors[primitive.indices];
     const indicesBufferView = json.bufferViews[indicesAccessor.bufferView];
+    indicesBufferView.byteOffset = indicesBufferView.byteOffset ?? 0;
 
     const IndicesTypedArrayConstructor = this.DATA_TYPE_BYTE_SIZES.get(indicesAccessor.componentType)!;
 
     const indicesTypedArray = new IndicesTypedArrayConstructor(
       data,
-      offsetToBinChunk + (indicesBufferView.byteOffset ?? 0),
+      offsetToBinChunk + indicesBufferView.byteOffset,
       indicesBufferView.byteLength / IndicesTypedArrayConstructor.BYTES_PER_ELEMENT
     );
 
     const elementSize = this.COLLECTION_TYPE_SIZES.get(indicesAccessor.type)!;
 
     bufferGeometry.setIndex(new THREE.BufferAttribute(indicesTypedArray, elementSize));
-
-    const uniqueBufferViews = [
-      ...new Set(Object.values(primitive.attributes).map(accessorId => json.accessors[accessorId].bufferView))
-    ];
-
-    assert(uniqueBufferViews.length === 1, 'Unexpected number of buffer views');
-
-    const bufferView = json.bufferViews[uniqueBufferViews[0]];
-
-    const componentTypes = Object.values(primitive.attributes).map(
-      accessorId => json.accessors[accessorId].componentType
-    );
-
-    const typedArrays = [...new Set(componentTypes)].map(componentType => {
-      const TypedArray = this.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-      const typedBuffer = new TypedArray(
-        data,
-        offsetToBinChunk + (bufferView.byteOffset ?? 0),
-        bufferView.byteLength / TypedArray.BYTES_PER_ELEMENT
-      );
-      const interleavedBuffer = new THREE.InterleavedBuffer(
-        typedBuffer,
-        bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT
-      );
-      return { componentType: componentType, interleavedBuffer: interleavedBuffer };
-    });
-
-    const typedArrayMap: { [key: string]: THREE.InterleavedBuffer } = Object.assign(
-      {},
-      ...typedArrays.map(p => ({ [p.componentType]: p.interleavedBuffer }))
-    );
-
-    Object.keys(primitive.attributes).forEach(attributeName => {
-      const accessor = json.accessors[primitive.attributes[attributeName]];
-      const interleavedBuffer = typedArrayMap[accessor.componentType!];
-      const size = this.COLLECTION_TYPE_SIZES.get(accessor.type)!;
-
-      const elementSize = this.DATA_TYPE_BYTE_SIZES.get(accessor.componentType!)?.BYTES_PER_ELEMENT;
-
-      assert(elementSize !== undefined);
-
-      const interleavedBufferAttribute = new THREE.InterleavedBufferAttribute(
-        interleavedBuffer,
-        size,
-        (accessor.byteOffset ?? 0) / elementSize
-      );
-
-      switch (attributeName) {
-        case 'COLOR_0':
-          attributeName = 'color';
-          break;
-        case 'POSITION':
-          attributeName = 'position';
-          break;
-        case '_treeIndex':
-          attributeName = 'a_treeIndex';
-        default:
-          break;
-      }
-
-      bufferGeometry.setAttribute(`${attributeName}`, interleavedBufferAttribute);
-    });
   }
 
-  private processPrimitiveCollection(payload: GeometryProcessingPayload) {
-    assert(payload.instancingExtension !== null, 'Primitive does not contain the instanced gltf extension');
-
-    setPrimitiveTopology(payload.geometryType, payload.bufferGeometry);
-
-    this.setInstancedAttributes(payload);
-  }
-
-  private setInstancedAttributes(payload: GeometryProcessingPayload) {
-    const { bufferGeometry, glbHeaderData, instancingExtension, data } = payload;
-
+  private setInterleavedBufferAttributes<T extends THREE.InterleavedBuffer>(
+    glbHeaderData: GlbHeaderData,
+    attributes: {
+      [key: string]: number;
+    },
+    data: ArrayBuffer,
+    transformAttributeName: (attributeName: string) => string,
+    bufferGeometry: THREE.BufferGeometry | THREE.InstancedBufferGeometry,
+    bufferType: { new (array: ArrayLike<number>, stride: number): T }
+  ) {
     const json = glbHeaderData.json;
 
-    const instancedAttributes = instancingExtension!.attributes;
-
     const uniqueBufferViews = [
-      ...new Set(Object.values(instancedAttributes).map(accessorId => json.accessors[accessorId].bufferView))
+      ...new Set(Object.values(attributes).map(accessorId => json.accessors[accessorId].bufferView))
     ];
 
     assert(uniqueBufferViews.length === 1, 'Unexpected number of buffer views');
 
     const bufferView = json.bufferViews[uniqueBufferViews[0]];
+    bufferView.byteOffset = bufferView.byteOffset ?? 0;
 
     const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
 
-    const componentTypes = Object.values(instancedAttributes).map(
-      accessorId => json.accessors[accessorId].componentType
+    const componentTypes = Object.values(attributes).map(accessorId => json.accessors[accessorId].componentType);
+
+    const typedArrayMap: { [key: string]: T } = this.getUniqueComponentViews<T>(
+      componentTypes,
+      data,
+      offsetToBinChunk,
+      bufferView,
+      bufferType
     );
 
-    const typedArrays = [...new Set(componentTypes)].map(componentType => {
-      const TypedArray = this.DATA_TYPE_BYTE_SIZES.get(componentType)!;
-      const typedBuffer = new TypedArray(
-        data,
-        offsetToBinChunk + (bufferView.byteOffset ?? 0),
-        bufferView.byteLength / TypedArray.BYTES_PER_ELEMENT
-      );
-      const interleavedBuffer = new THREE.InstancedInterleavedBuffer(
-        typedBuffer,
-        bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT
-      );
-      return { componentType: componentType, interleavedBuffer: interleavedBuffer };
-    });
+    this.setAttributes<T>(attributes, json, typedArrayMap, transformAttributeName, bufferGeometry);
+  }
 
-    const typedArrayMap: { [key: string]: THREE.InstancedInterleavedBuffer } = Object.assign(
-      {},
-      ...typedArrays.map(p => ({ [p.componentType]: p.interleavedBuffer }))
-    );
+  private setAttributes<T extends THREE.InterleavedBuffer>(
+    attributes: { [key: string]: number },
+    json: GltfJson,
+    typedArrayMap: { [key: string]: T },
+    transformAttributeName: (attributeName: string) => string,
+    bufferGeometry: THREE.InstancedBufferGeometry | THREE.BufferGeometry
+  ) {
+    Object.keys(attributes).forEach(attributeName => {
+      const accessor = json.accessors[attributes[attributeName]];
 
-    Object.keys(instancedAttributes).forEach(attributeName => {
-      const accessor = json.accessors[instancedAttributes[attributeName]];
-      const interleavedBuffer = typedArrayMap[accessor.componentType!];
-      const size = this.COLLECTION_TYPE_SIZES.get(accessor.type)!;
+      const interleavedBuffer = typedArrayMap[accessor.componentType];
+      const size = this.COLLECTION_TYPE_SIZES.get(accessor.type);
 
-      const elementSize = this.DATA_TYPE_BYTE_SIZES.get(accessor.componentType!)?.BYTES_PER_ELEMENT;
+      assert(size !== undefined);
+
+      const elementType = this.DATA_TYPE_BYTE_SIZES.get(accessor.componentType);
+
+      assert(elementType !== undefined);
+
+      const elementSize = elementType.BYTES_PER_ELEMENT;
 
       assert(elementSize !== undefined);
 
@@ -256,7 +256,35 @@ export class RevealGlbParser {
         size,
         (accessor.byteOffset ?? 0) / elementSize
       );
-      bufferGeometry.setAttribute(`a${attributeName}`, interleavedBufferAttribute);
+      const transformedAttributeName = transformAttributeName(attributeName);
+      bufferGeometry.setAttribute(transformedAttributeName, interleavedBufferAttribute);
     });
+  }
+
+  private getUniqueComponentViews<T extends THREE.InterleavedBuffer>(
+    componentTypes: number[],
+    data: ArrayBuffer,
+    offsetToBinChunk: number,
+    bufferView: BufferView,
+    bufferType: new (array: ArrayLike<number>, stride: number) => T
+  ) {
+    const byteOffset = bufferView.byteOffset ?? 0;
+
+    const typedArrays = [...new Set(componentTypes)].map(componentType => {
+      const TypedArray = this.DATA_TYPE_BYTE_SIZES.get(componentType)!;
+      const typedBuffer = new TypedArray(
+        data,
+        offsetToBinChunk + byteOffset,
+        bufferView.byteLength / TypedArray.BYTES_PER_ELEMENT
+      );
+      const interleavedBuffer = new bufferType(typedBuffer, bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT);
+      return { componentType: componentType, interleavedBuffer: interleavedBuffer };
+    });
+
+    const typedArrayMap: { [key: string]: T } = Object.assign(
+      {},
+      ...typedArrays.map(p => ({ [p.componentType]: p.interleavedBuffer }))
+    );
+    return typedArrayMap;
   }
 }

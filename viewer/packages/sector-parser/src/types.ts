@@ -38,7 +38,7 @@ export type Buffer = {
 export type BufferView = {
   buffer: number;
   byteLength: number;
-  byteOffset: number;
+  byteOffset: number | undefined;
   byteStride: number;
 };
 
