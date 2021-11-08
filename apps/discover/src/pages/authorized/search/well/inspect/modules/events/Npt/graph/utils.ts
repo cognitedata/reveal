@@ -1,10 +1,8 @@
 import get from 'lodash/get';
 
 import { caseInsensitiveSort } from '_helpers/sort';
-import {
-  DataObject,
-  LegendCheckboxState,
-} from 'components/charts/StackedBarChart/types';
+import { LegendCheckboxState } from 'components/charts/common/Legend';
+import { DataObject } from 'components/charts/types';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';

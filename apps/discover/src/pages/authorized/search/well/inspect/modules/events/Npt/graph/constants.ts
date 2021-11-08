@@ -1,4 +1,4 @@
-import { StackedBarChartOptions } from 'components/charts/StackedBarChart/types';
+import { StackedBarChartOptions } from 'components/charts/modules/StackedBarChart/types';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors, colors, DEFAULT_NPT_COLOR } from '../constants';
@@ -20,7 +20,7 @@ export const NPT_GRAPH_OPTIONS: StackedBarChartOptions<NPTEvent> = {
     colors,
     accessor: accessors.NPT_CODE,
     defaultColor: DEFAULT_NPT_COLOR,
-    noDataBarColor: NO_NPT_DATA_BAR_COLOR,
+    noDataColor: NO_NPT_DATA_BAR_COLOR,
   },
   legendOptions: {
     title: GRAPH_LEGEND_TITLE,

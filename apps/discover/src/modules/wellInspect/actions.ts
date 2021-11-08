@@ -3,7 +3,7 @@ import { ThunkResult } from 'core';
 
 import { storage } from '@cognite/react-container';
 
-import { SelectedBarData } from 'components/charts/StackedBarChart/types';
+import { SelectedBarData } from 'components/charts/modules/StackedBarChart/types';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import {

@@ -29,7 +29,7 @@ export const caseInsensitiveSort = (
   return Number(firstValue) > Number(secondValue) ? 1 : -1;
 };
 
-export const sortObjectsAscending = <T>(list: T[], path: keyof T) =>
+export const sortObjectsAscending = <T>(list: T[], path: string) =>
   list.slice().sort((first, second) => {
     const firstValue = getValueFromKey(first, path);
     const secondValue = getValueFromKey(second, path);
@@ -37,7 +37,7 @@ export const sortObjectsAscending = <T>(list: T[], path: keyof T) =>
     return caseInsensitiveSort(firstValue, secondValue);
   });
 
-export const sortObjectsDecending = <T>(list: T[], path: keyof T) =>
+export const sortObjectsDecending = <T>(list: T[], path: string) =>
   list.slice().sort((first, second) => {
     const firstValue = getValueFromKey(first, path);
     const secondValue = getValueFromKey(second, path);
@@ -45,7 +45,7 @@ export const sortObjectsDecending = <T>(list: T[], path: keyof T) =>
     return caseInsensitiveSort(secondValue, firstValue);
   });
 
-const getValueFromKey = <T>(object: T, path: keyof T) => {
+const getValueFromKey = <T>(object: T, path: string) => {
   const value = get(object, path, '');
   if (isNumber(value)) return Number(value);
   return String(value);

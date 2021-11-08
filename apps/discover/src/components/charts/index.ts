@@ -1,1 +1,1 @@
-export * from './StackedBarChart';
+export * from './modules';

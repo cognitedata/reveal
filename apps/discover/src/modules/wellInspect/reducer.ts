@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createReducer } from '@reduxjs/toolkit';
 
-import { SelectedBarData } from 'components/charts/StackedBarChart/types';
+import { SelectedBarData } from 'components/charts/modules/StackedBarChart/types';
 import { NPTEvent } from 'modules/wellSearch/types';
 import { SIDEBAR_SIZE } from 'pages/authorized/search/well/inspect/Sidebar/constants';
 

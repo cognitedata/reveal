@@ -1,0 +1,35 @@
+import { RefObject } from 'react';
+
+import get from 'lodash/get';
+
+export const getStylePropertyValue = (
+  ref: RefObject<HTMLElement>,
+  property: string
+) => {
+  if (ref.current) {
+    const chartStyles = window.getComputedStyle(ref.current);
+    const propertyValue = chartStyles.getPropertyValue(property);
+    return propertyValue;
+  }
+  return '';
+};
+
+export const getValuesOfObjectsByKey = <T>(data: T[], key: string) =>
+  data.map((dataElement) => get(dataElement, key));
+
+export const getSumOfValues = <T>(values: T[keyof T][]) => {
+  const sum = values.reduce((value1, value2) => {
+    return Number(value1) + Number(value2);
+  }, 0);
+
+  return parseFloat(sum.toFixed(2));
+};
+
+export const getSumOfValuesOfObjectsByKey = <T>(
+  data: T[],
+  xAccessor: string
+) => {
+  const barValues = getValuesOfObjectsByKey<T>(data, xAccessor);
+  const sumOfBarValues = getSumOfValues<T>(barValues);
+  return sumOfBarValues;
+};

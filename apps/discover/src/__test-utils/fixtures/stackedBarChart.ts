@@ -1,9 +1,5 @@
-import {
-  Axis,
-  Dimensions,
-  Margins,
-  GroupedData,
-} from 'components/charts/StackedBarChart/types';
+import { AxisBase } from 'components/charts/common/Axis';
+import { Dimensions, Margins, GroupedData } from 'components/charts/types';
 
 export type Data = { label: string; group: string; count: number };
 
@@ -46,5 +42,6 @@ export const spacings = { x: 100, y: 100 };
 
 export const xScaleMaxValue = 161;
 
-export const xAxis: Axis = { accessor: 'count' };
-export const yAxis: Axis = { accessor: 'label' };
+export const xAxis: AxisBase = { accessor: 'count' };
+export const yAxis: AxisBase = { accessor: 'label' };
+export const accessors = { x: xAxis.accessor, y: yAxis.accessor };

@@ -5,7 +5,7 @@ import get from 'lodash/get';
 
 import { now, fromNow } from '_helpers/date';
 import { StackedBarChart } from 'components/charts';
-import { SelectedBarData } from 'components/charts/StackedBarChart/types';
+import { SelectedBarData } from 'components/charts/modules/StackedBarChart/types';
 import { setNPTGraphSelectedWellboreData } from 'modules/wellInspect/actions';
 import { useSecondarySelectedOrHoveredWellboreNames } from 'modules/wellSearch/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';

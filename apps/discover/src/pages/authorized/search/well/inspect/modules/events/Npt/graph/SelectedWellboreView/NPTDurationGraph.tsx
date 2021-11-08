@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { StackedBarChart } from 'components/charts';
-import {
-  AxisPlacement,
-  StackedBarChartOptions,
-} from 'components/charts/StackedBarChart/types';
+import { AxisPlacement } from 'components/charts/common/Axis';
+import { StackedBarChartOptions } from 'components/charts/modules/StackedBarChart/types';
 import { useNPTGraphSelectedWellboreData } from 'modules/wellInspect/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';
 
