@@ -57,6 +57,30 @@ export const TableCell = {
         </Tooltip>
       );
     },
+  MatrixLabel:
+    (item: string) =>
+    ({
+      value,
+      row: {
+        original: { matrix },
+      },
+    }: CellProps<any, number>) => {
+      let variant: LabelVariants = 'success';
+
+      if (value === 0) {
+        variant = 'unknown';
+      }
+
+      if (matrix[item].outlier) {
+        variant = 'warning';
+      }
+
+      return (
+        <Label size="medium" variant={variant}>
+          {value}
+        </Label>
+      );
+    },
   Label:
     (variant?: LabelVariants) =>
     ({ value }: CellProps<any, string | undefined>) =>

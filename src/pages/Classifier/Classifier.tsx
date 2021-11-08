@@ -24,13 +24,14 @@ const ClassifierPage: FC = () => {
   };
 
   return (
-    <>
-      <Page Widget={renderStepsWidget()}>
-        <ClassifierRouter />
-      </Page>
-
-      <BottomNavigation onBackClick={previousPage} onNextClick={nextPage} />
-    </>
+    <Page
+      Widget={renderStepsWidget()}
+      BottomNavigation={
+        <BottomNavigation onBackClick={previousPage} onNextClick={nextPage} />
+      }
+    >
+      <ClassifierRouter />
+    </Page>
   );
 };
 
