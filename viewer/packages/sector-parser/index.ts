@@ -1,5 +1,5 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { RevealGlbParser } from './src/RevealGlbParser';
+export { GltfSectorParser } from './src/GltfSectorParser';
 export { RevealGeometryCollectionType } from './src/types';

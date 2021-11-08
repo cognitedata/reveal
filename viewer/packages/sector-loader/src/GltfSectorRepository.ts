@@ -6,17 +6,17 @@ import * as THREE from 'three';
 import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
-import { RevealGlbParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
 
 export class GltfSectorRepository implements SectorRepository {
-  private readonly _gltfSectorParser: RevealGlbParser;
+  private readonly _gltfSectorParser: GltfSectorParser;
   private readonly _sectorFileProvider: BinaryFileProvider;
   private readonly _materialManager: CadMaterialManager;
 
   constructor(sectorFileProvider: BinaryFileProvider, materialManager: CadMaterialManager) {
-    this._gltfSectorParser = new RevealGlbParser();
+    this._gltfSectorParser = new GltfSectorParser();
     this._sectorFileProvider = sectorFileProvider;
     this._materialManager = materialManager;
   }

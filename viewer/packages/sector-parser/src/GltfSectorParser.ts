@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-
 import assert from 'assert';
+
 import { setPrimitiveTopology } from './reveal-glb-parser/primitiveGeometries';
 import {
   RevealGeometryCollectionType,
@@ -17,7 +17,7 @@ import {
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 
-export class RevealGlbParser {
+export class GltfSectorParser {
   private _glbMetadataParser: GlbMetadataParser;
 
   // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessortype-white_check_mark
