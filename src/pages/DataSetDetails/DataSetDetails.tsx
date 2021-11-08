@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { getContainer } from 'utils/utils';
 
 import NewHeader from 'components/NewHeader';
@@ -17,7 +18,6 @@ import { SeperatorLine, DetailsPane } from 'utils/styledComponents';
 import DataSetEditor from 'pages/DataSetEditor';
 import notification from 'antd/lib/notification';
 import BasicInfoCard from 'components/BasicInfoCard';
-import { useParams } from 'react-router-dom';
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useDataSet, useUpdateDataSetVisibility } from '../../actions/index';
@@ -32,6 +32,8 @@ interface DataSetDetailsRouteParams {
 const DataSetDetails = (): JSX.Element => {
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
+
+  const { appPath } = useParams<{ appPath: string }>();
 
   const { dataSetId } = useParams<DataSetDetailsRouteParams>();
 
@@ -174,7 +176,7 @@ const DataSetDetails = (): JSX.Element => {
           title={dataSet.name}
           ornamentColor={theme.specificTitleOrnamentColor}
           breadcrumbs={[
-            { title: 'Data sets', path: '/new-data-sets' },
+            { title: 'Data sets', path: `/${appPath}` },
             { title: dataSet.name },
           ]}
           help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
@@ -224,7 +226,7 @@ const DataSetDetails = (): JSX.Element => {
         title="Data set details"
         ornamentColor={theme.specificTitleOrnamentColor}
         breadcrumbs={[
-          { title: 'Data sets', path: '/new-data-sets' },
+          { title: 'Data sets', path: `/${appPath}` },
           { title: 'Data set details' },
         ]}
       />

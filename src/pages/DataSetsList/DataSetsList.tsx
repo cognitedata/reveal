@@ -18,6 +18,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { useParams } from 'react-router';
 import isArray from 'lodash/isArray';
 import getTableColumns, { DataSetRow } from './TableColumns';
 import {
@@ -34,6 +35,8 @@ interface DataSetsListProps {
 const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
     useWithIntegrations();
+
+  const { appPath } = useParams<{ appPath: string }>();
 
   const [qualityFilter, setQualityFilter] = useState<string>('all');
   const [tableData, setTableData] = useState<DataSetRow[]>([]);
@@ -119,7 +122,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   };
 
   const handleRowInteraction = (value: DataSetRow) => {
-    history.push(createLink(`/new-data-sets/data-set/${value.key}`));
+    history.push(createLink(`/${appPath}/data-set/${value.key}`));
   };
 
   const actionsRender = (_: any, row: DataSetRow) => (
@@ -288,7 +291,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         title={title}
         leftItem={SearchBar}
         rightItem={ActionToolbar}
-        breadcrumbs={[{ title: 'Data sets', path: '/new-data-sets' }]}
+        breadcrumbs={[{ title: 'Data sets', path: `/${appPath}` }]}
         help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
       />
       <DataSetEditor

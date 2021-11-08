@@ -45,7 +45,7 @@ const App = () => {
                     <Suspense fallback={<Loader />}>
                       <Switch>
                         <Route
-                          path="/:tenant/new-data-sets"
+                          path="/:tenant/:appPath"
                           component={useMemo(
                             () =>
                               React.lazy(
@@ -56,7 +56,7 @@ const App = () => {
                           exact
                         />
                         <Route
-                          path="/:tenant/new-data-sets/data-set/:dataSetId"
+                          path="/:tenant/:appPath/data-set/:dataSetId"
                           component={useMemo(
                             () =>
                               React.lazy(
