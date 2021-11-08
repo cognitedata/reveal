@@ -1,4 +1,1 @@
-export interface MetaData {
-  sourceSystem?: string;
-  documentation?: string;
-}
+export type MetaData = Record<string, string>;

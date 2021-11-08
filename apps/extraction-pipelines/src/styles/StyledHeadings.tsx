@@ -20,11 +20,14 @@ export const StyledTitle2 = styled((props) => (
     {props.children}
   </Title>
 ))`
+  font-size: 1.25rem;
   margin-bottom: 1rem;
-  font-size: 1.2rem;
 `;
 export const StyledTitle3 = styled((props) => (
   <Title {...props} level={3}>
     {props.children}
   </Title>
-))``;
+))`
+  font-size: 1rem;
+  margin-bottom: 1rem;
+`;

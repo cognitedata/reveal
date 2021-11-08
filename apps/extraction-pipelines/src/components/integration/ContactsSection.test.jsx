@@ -6,9 +6,8 @@ import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import React from 'react';
-import { ContactsSection } from 'components/integration/ContactsSection';
+import { ContactsDialog } from 'components/integration/ContactsDialog';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { TableHeadings } from 'components/table/IntegrationTableCol';
 import { TestIds } from 'components/integration/EditPartContacts';
 import {
   EMAIL_LABEL,
@@ -35,7 +34,7 @@ describe('ContactSection', () => {
   test('Interact with component', async () => {
     sdkv3.get.mockResolvedValueOnce({ data: mock });
     sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
-    render(<ContactsSection />, {
+    render(<ContactsDialog />, {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
@@ -45,7 +44,7 @@ describe('ContactSection', () => {
     expect(screen.getAllByText(NOTIFICATION_LABEL).length).toEqual(1); // heading for owner and contacts
     expect(screen.getAllByText(NAME_LABEL).length).toEqual(1); // heading for owner and contacts
     expect(screen.getAllByText(EMAIL_LABEL).length).toEqual(1); // heading for owner and contacts
-    expect(screen.getByText(TableHeadings.CONTACTS)).toBeInTheDocument();
+    // expect(screen.getByText(TableHeadings.CONTACTS)).toBeInTheDocument();
     mock.contacts.forEach((c) => {
       expect(screen.getByText(c.name)).toBeInTheDocument();
       expect(screen.getByText(c.email)).toBeInTheDocument();

@@ -8,9 +8,9 @@ import { User } from 'model/User';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
 import {
-  ContactsSection,
+  ContactsDialog,
   isOwnerRole,
-} from 'components/integration/ContactsSection';
+} from 'components/integration/ContactsDialog';
 import styled from 'styled-components';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
@@ -47,7 +47,7 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
     setShowModal(canEdit);
   };
 
-  const hideModal = () => {
+  const closeModal = () => {
     setShowModal(false);
   };
 
@@ -68,8 +68,13 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
           </AddFieldValueBtn>
         )}
       </Wrapper>
-      <EditModal visible={showModal} onCancel={hideModal} width={1024}>
-        <ContactsSection />
+      <EditModal
+        title={TableHeadings.CONTACTS}
+        visible={showModal}
+        close={closeModal}
+        width={1024}
+      >
+        <ContactsDialog close={closeModal} />
       </EditModal>
     </>
   );

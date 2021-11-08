@@ -8,9 +8,9 @@ import { MetaData as MetaDataModel } from 'model/MetaData';
 import { MetaField } from 'components/integration/MetaDataField';
 import { EditModal } from 'components/modals/EditModal';
 import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
-import { StyledTitle2 } from 'styles/StyledHeadings';
 import { Hint } from 'styles/StyledForm';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
+import { StyledTitle3 } from 'styles/StyledHeadings';
 
 const MetaWrapper = styled.section`
   display: flex;
@@ -27,7 +27,7 @@ interface MetaProps {
   canEdit: boolean;
 }
 const META_HINT: Readonly<string> =
-  'Add metadata for the extraction pipeline in a key-value format.';
+  'Information specific to your organization can be added using metadata fields with key/value pairs.';
 
 export const MetaData = ({
   testId = 'meta-',
@@ -61,6 +61,7 @@ export const MetaData = ({
   };
 
   const meta = storedIntegration?.metadata;
+  const closeDialog = () => setShowMetaModal(false);
   return (
     <MetaWrapper>
       {meta == null ? (
@@ -77,14 +78,17 @@ export const MetaData = ({
         </EditableAreaButton>
       )}
       <EditModal
+        title={DetailFieldNames.META_DATA}
         visible={showMetaModal}
-        onCancel={() => setShowMetaModal(false)}
+        close={closeDialog}
       >
-        <StyledTitle2 id="edit-metadata-heading">
-          {DetailFieldNames.META_DATA}
-        </StyledTitle2>
-        <Hint>{META_HINT}</Hint>
-        <EditMetaData />
+        <StyledTitle3>
+          Document metadata associated with the extraction pipeline
+        </StyledTitle3>
+        <p>
+          <Hint>{META_HINT}</Hint>
+        </p>
+        <EditMetaData close={closeDialog} />
       </EditModal>
     </MetaWrapper>
   );

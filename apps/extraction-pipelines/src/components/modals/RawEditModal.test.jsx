@@ -1,8 +1,8 @@
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient } from 'react-query';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { RawEditModal } from 'components/modals/RawEditModal';
+import { RawEditModal, RawEditModalView } from 'components/modals/RawEditModal';
 import {
   databaseListMock,
   getMockResponse,
@@ -45,7 +45,42 @@ describe('RawEditModal', () => {
     wrapper = null;
   });
 
-  test('Renders stored raw tables', async () => {
+  test('Should call onSave with the new table as param', async () => {
+    const close = jest.fn();
+    const onSave = jest.fn();
+    render(
+      <RawEditModalView
+        close={close}
+        onSave={onSave}
+        initial={[]}
+        databases={[
+          {
+            database: { name: 'Good db' },
+            tables: [{ name: 'Table A' }, { name: 'Table B' }],
+          },
+        ]}
+      />
+    );
+
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'Table A' },
+    });
+
+    screen.getByText('Good db • Table A').click();
+
+    screen.getByText('Add new table').click();
+
+    screen.getByText('Confirm').click();
+
+    expect(onSave).toHaveBeenCalledWith([
+      {
+        dbName: 'Good db',
+        tableName: 'Table A',
+      },
+    ]);
+  });
+
+  test.skip('Renders stored raw tables', async () => {
     useRawDBAndTables.mockReturnValue({ isLoading: false, data: mockData });
     sdkv3.get.mockResolvedValue({ data: integration });
     sdkv3.datasets.retrieve.mockResolvedValue([dataSetMock]);

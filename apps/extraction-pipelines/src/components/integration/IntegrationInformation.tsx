@@ -82,10 +82,10 @@ export const IntegrationInformation: FunctionComponent<IntegrationInformationPro
       <Section title="Contacts" icon="Public">
         <ContactsView canEdit={canEdit} />
       </Section>
-      <Section title="Raw database • Raw table" icon="Table">
+      <Section title="RAW tables" icon="Table">
         <EditRawTable canEdit={canEdit} />
       </Section>
-      <Section title="Additional metadata" icon="DataTable">
+      <Section title="Metadata" icon="DataTable">
         <MetaData canEdit={canEdit} />
       </Section>
       <Section title="About extraction pipeline" icon="Info">

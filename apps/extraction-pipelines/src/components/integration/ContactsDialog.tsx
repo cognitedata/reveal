@@ -17,20 +17,19 @@ import {
   NOTIFICATION_LABEL,
   ROLE_LABEL,
 } from 'utils/constants';
-import { StyledTitle2 } from 'styles/StyledHeadings';
 import { Hint } from 'styles/StyledForm';
 import { NotificationUpdateSwitch } from 'components/inputs/NotificationUpdateSwitch';
 import { Integration } from 'model/Integration';
 import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
-import { bottomSpacing } from 'styles/StyledVariables';
 import { StyledTableNoRowColor2 } from 'styles/StyledTable';
 import { ErrorMessage } from 'components/error/ErrorMessage';
+import { Button } from '@cognite/cogs.js';
 import { AddContact } from './AddContact';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
-  margin-bottom: ${bottomSpacing};
+  gap: 1rem;
 `;
 export const OwnerWrapper = styled.div`
   margin-bottom: 2rem;
@@ -48,10 +47,14 @@ export const Row = styled.div`
 export const Heading = styled.span`
   padding: 0.5rem 0.75rem 0.5rem 1rem;
 `;
-interface ContactsSectionProps {}
+interface ContactsSectionProps {
+  close: () => void;
+}
 
 export const isOwnerRole = (role: string) => role.toLowerCase() === 'owner';
-export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
+export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
+  close,
+}) => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
   const contacts =
@@ -63,15 +66,18 @@ export const ContactsSection: FunctionComponent<ContactsSectionProps> = () => {
 
   return (
     <ContactsSectionWrapper role="grid">
-      <StyledTitle2 id="contacts-heading">
-        {TableHeadings.CONTACTS}
-      </StyledTitle2>
       <Hint>{CONTACTS_HINT}</Hint>
       {integration && contactTable(contacts, integration)}
 
       <AddContact isOwner={numOwners === 0} />
 
       {numOwners >= 2 && <ErrorMessage>Too many owners.</ErrorMessage>}
+
+      <div css="display: flex; justify-content: flex-end">
+        <Button onClick={close} type="primary">
+          Close
+        </Button>
+      </div>
     </ContactsSectionWrapper>
   );
 };

@@ -43,10 +43,7 @@ const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
       title="Create extraction pipeline"
     >
       <VerticalSpace />
-      <CreateIntegration
-        showAdditionalFields={false}
-        customCancelCallback={props.close}
-      />
+      <CreateIntegration customCancelCallback={props.close} />
     </Modal>
   );
 };

@@ -9,9 +9,21 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { TestIds } from 'components/integration/EditPartContacts';
 import { METADATA_DESC_HEADING } from 'utils/constants';
-import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
+import {
+  EditMetaData,
+  EditMetaDataView,
+} from 'components/inputs/metadata/EditMetaData';
 
-describe('ContactSection', () => {
+function fillKeyValue(key, value) {
+  fireEvent.change(screen.getAllByDisplayValue('')[0], {
+    target: { value: key },
+  });
+  fireEvent.change(screen.getByDisplayValue(''), {
+    target: { value },
+  });
+}
+
+describe('Edit metadata tests', () => {
   const mock = getMockResponse()[0];
   let wrapper;
   beforeEach(() => {
@@ -25,7 +37,67 @@ describe('ContactSection', () => {
     );
   });
 
-  test('Interact with component', async () => {
+  const clickAddFields = () => {
+    screen.getByText('Add fields').click();
+  };
+
+  test('Component testing', async () => {
+    const onConfirm = jest.fn();
+    const onCancel = jest.fn();
+    const initialMetadata = { weather: 'Sunny' };
+    render(
+      <EditMetaDataView
+        initialMetadata={initialMetadata}
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+      />
+    );
+    fireEvent.change(screen.getByDisplayValue('Sunny'), {
+      target: { value: 'Very rainy' },
+    });
+    clickAddFields();
+    fillKeyValue('Wind speed', '14 m/s');
+    clickAddFields();
+    screen.getByText('Confirm').click();
+    expect(onConfirm).toHaveBeenCalledWith({
+      weather: 'Very rainy',
+      windSpeed: '14 m/s',
+    });
+  });
+
+  test.todo('Should handle user writing same metadata field name twice');
+
+  test('Handle deleting row, and saving with no metadata-fields set', () => {
+    const onConfirm = jest.fn();
+    const onCancel = jest.fn();
+    render(
+      <EditMetaDataView
+        initialMetadata={{ weather: 'Sunny' }}
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+      />
+    );
+    screen.getByLabelText('Remove metadata row').click();
+    screen.getByText('Confirm').click();
+    expect(onConfirm).toHaveBeenCalledWith({});
+  });
+
+  test('Handle whitespaces in value & key gracefully', () => {
+    const onConfirm = jest.fn();
+    const onCancel = jest.fn();
+    render(
+      <EditMetaDataView
+        initialMetadata={{}}
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+      />
+    );
+    fillKeyValue(' temperature ', ' low ');
+    screen.getByText('Confirm').click();
+    expect(onConfirm).toHaveBeenCalledWith({ temperature: 'low' });
+  });
+
+  test.skip('Interact with component', async () => {
     sdkv3.get.mockResolvedValueOnce({ data: mock });
     render(<EditMetaData />, {
       wrapper: wrapper.wrapper,

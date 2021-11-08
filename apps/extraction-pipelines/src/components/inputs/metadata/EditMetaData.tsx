@@ -1,150 +1,169 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import {
-  metaContentSchema,
-  metaDescriptionSchema,
-} from 'utils/validation/integrationSchemas';
-import { Heading } from 'components/integration/ContactsSection';
+import React, { useState } from 'react';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
 import { toCamelCase, uppercaseFirstWord } from 'utils/primitivesUtils';
-import { EditField } from 'components/integration/EditField';
-import { createUpdateSpec } from 'hooks/details/useDetailsUpdate';
-import { Colors } from '@cognite/cogs.js';
-import { useAppEnv } from 'hooks/useAppEnv';
-import styled from 'styled-components';
-import { RemoveFromArrayButton } from 'components/integration/RemoveFromArrayButton';
 import {
-  EXTRACTION_PIPELINE_LOWER,
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
+import { Button, Input } from '@cognite/cogs.js';
+import { useAppEnv } from 'hooks/useAppEnv';
+import {
   METADATA_CONTENT_HEADING,
-  METADATA_CONTENT_LABEL,
   METADATA_DESC_HEADING,
-  METADATA_DESCRIPTION_LABEL,
 } from 'utils/constants';
-import { AddMetadata } from './AddMetadata';
+import { MetaData } from 'model/MetaData';
+import { ModalContent } from 'components/modals/ModalContent';
 
-export const Row = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 2fr 5rem;
-  grid-column-gap: 0.5rem;
-  align-items: center;
-  input {
-    width: 100%;
-  }
-  &:nth-child(even) {
-    background-color: ${Colors['greyscale-grey2'].hex()};
-    &:hover {
-      background-color: ${Colors['greyscale-grey3'].hex()};
-    }
-  }
-  [aria-expanded] {
-    padding: 0.5rem;
-    justify-self: end;
-  }
-`;
+type SuperProps = {
+  close: () => void;
+};
+type ViewProps = {
+  onConfirm: (updatedMetadata: MetaData) => void;
+  onCancel: () => void;
+  initialMetadata: MetaData;
+};
 
-type MetadataEditType = { description: string; content: string };
-export const EditMetaData: FunctionComponent = () => {
-  const { project } = useAppEnv();
-  const [metadata, setMetadata] = useState<MetadataEditType[]>([]);
-  const { integration } = useSelectedIntegration();
-  const { data: current } = useIntegrationById(integration?.id);
+type MetadataEditType = { key: string; value: string };
 
-  useEffect(() => {
-    if (current) {
-      const meta = current.metadata
-        ? Object.entries(current.metadata).map(([k, v]) => {
-            return { description: uppercaseFirstWord(k), content: v };
-          })
-        : [];
-      setMetadata(meta);
-    }
-  }, [current, setMetadata]);
+const objectToArray = (metadata: MetaData): MetadataEditType[] =>
+  metadata
+    ? Object.entries(metadata).map(([k, v]) => {
+        return { key: uppercaseFirstWord(k), value: v };
+      })
+    : [];
 
-  if (!current || !project) {
-    return <p>No {EXTRACTION_PIPELINE_LOWER} information</p>;
-  }
+const arrayToMeta = (updatedMetadata: MetadataEditType[]) =>
+  updatedMetadata
+    .filter((m) => m.key.trim().length >= 1)
+    .reduce((acc, curr) => {
+      const metaKey = toCamelCase(curr.key).trim();
+      return { ...acc, [metaKey]: curr.value.trim() };
+    }, {});
+
+function generateRandomId() {
+  return `x${Math.random()}`;
+}
+
+export const EditMetaDataView = ({
+  onConfirm,
+  onCancel,
+  initialMetadata,
+}: ViewProps) => {
+  const initialMetadataList = objectToArray(initialMetadata);
+  const [metadata, setMetadata] = useState(
+    (initialMetadataList.length >= 1
+      ? initialMetadataList
+      : [{ key: '', value: '' }]
+    ).map((meta) => ({
+      ...meta,
+      reactKey: generateRandomId(),
+    }))
+  );
+
+  const setValueAt = (index: number, v: string) => {
+    setMetadata(
+      metadata.map((mm, i) => (index === i ? { ...mm, value: v } : mm))
+    );
+  };
+  const setKeyAt = (index: number, v: string) => {
+    setMetadata(
+      metadata.map((mm, i) => (index === i ? { ...mm, key: v } : mm))
+    );
+  };
+  const deleteRow = (index: number) => {
+    setMetadata(metadata.filter((m, i) => i !== index));
+  };
+  const addRow = () => {
+    setMetadata([
+      ...metadata,
+      { key: '', value: '', reactKey: generateRandomId() },
+    ]);
+  };
+
   return (
     <>
-      <Row>
-        <Heading>{METADATA_DESC_HEADING}</Heading>
-        <Heading>{METADATA_CONTENT_HEADING}</Heading>
-      </Row>
-      {metadata.map((meta, index) => {
-        const key = `meta-${index}`;
-        return (
-          <Row key={key} className="row-style-even">
-            <EditField
-              name="metadata"
-              index={index}
-              field="description"
-              label={METADATA_DESCRIPTION_LABEL}
-              schema={metaDescriptionSchema}
-              defaultValues={{ description: meta?.description }}
-              updateFunction={(field: any) => {
-                const newMeta = metadata.reduce((acc, curr, i) => {
-                  if (i === index) {
-                    const metaKey = toCamelCase(field.description);
-                    return { ...acc, [metaKey]: curr.content };
-                  }
-                  const metaKey = toCamelCase(curr.description);
-                  return { ...acc, [metaKey]: curr.content };
-                }, {});
-                return createUpdateSpec({
-                  id: current.id,
-                  project,
-                  fieldName: 'metadata',
-                  fieldValue: newMeta,
-                });
-              }}
-            />
-            <EditField
-              name="contacts"
-              index={index}
-              field="content"
-              label={METADATA_CONTENT_LABEL}
-              schema={metaContentSchema}
-              defaultValues={{ content: meta?.content }}
-              updateFunction={(field: any) => {
-                const newMeta = metadata.reduce((acc, curr, i) => {
-                  if (i === index) {
-                    const metaKey = toCamelCase(curr.description);
-                    return { ...acc, [metaKey]: field.content };
-                  }
-                  const metaKey = toCamelCase(curr.description);
-                  return { ...acc, [metaKey]: curr.content };
-                }, {});
-                return createUpdateSpec({
-                  id: current.id,
-                  project,
-                  fieldName: 'metadata',
-                  fieldValue: newMeta,
-                });
-              }}
-            />
-
-            <RemoveFromArrayButton
-              name="metadata"
-              index={index}
-              updateFunction={() => {
-                const newMeta = metadata.reduce((acc, curr, i) => {
-                  if (i === index) {
-                    return { ...acc };
-                  }
-                  const metaKey = toCamelCase(curr.description);
-                  return { ...acc, [metaKey]: curr.content };
-                }, {});
-                return createUpdateSpec({
-                  id: current.id,
-                  project,
-                  fieldName: 'metadata',
-                  fieldValue: newMeta,
-                });
-              }}
-            />
-          </Row>
-        );
-      })}
-      <AddMetadata />
+      <ModalContent>
+        <div css="display: flex; flex-direction: column; gap: 1rem">
+          <div css="display: flex; flex-direction: column; gap: 0.3rem;">
+            <div css="display: flex; gap: 0.3rem; color: gray">
+              <div css="flex: 1">{METADATA_DESC_HEADING}</div>
+              <div css="flex: 2">{METADATA_CONTENT_HEADING}</div>
+            </div>
+            {metadata.map((meta, index) => {
+              return (
+                <div key={meta.reactKey} css="display: flex; gap: 0.3rem">
+                  <div css="flex: 1">
+                    <Input
+                      fullWidth
+                      value={meta.key}
+                      placeholder="Text"
+                      onChange={(ev) => setKeyAt(index, ev.target.value)}
+                    />
+                  </div>
+                  <div css="flex: 2">
+                    <Input
+                      fullWidth
+                      placeholder="Text"
+                      value={meta.value}
+                      onChange={(ev) => setValueAt(index, ev.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Button
+                      type="ghost"
+                      icon="Close"
+                      aria-label="Remove metadata row"
+                      onClick={() => deleteRow(index)}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div>
+            <Button icon="PlusCompact" onClick={addRow}>
+              Add fields
+            </Button>
+          </div>
+        </div>
+      </ModalContent>
+      <div key="modal-footer" className="cogs-modal-footer-buttons">
+        <Button type="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="primary" onClick={() => onConfirm(arrayToMeta(metadata))}>
+          Confirm
+        </Button>
+      </div>
     </>
+  );
+};
+
+export const EditMetaData = (props: SuperProps) => {
+  const { integration } = useSelectedIntegration();
+  const { data: current } = useIntegrationById(integration?.id);
+  const { mutate } = useDetailsUpdate();
+  const { project } = useAppEnv();
+
+  const onConfirm = (updatedMetadata: MetaData) => {
+    if (!current || !project) return;
+    const updateSpec = createUpdateSpec({
+      id: current.id,
+      project,
+      fieldName: 'metadata',
+      fieldValue: updatedMetadata,
+    });
+    mutate(updateSpec);
+    props.close();
+  };
+
+  if (!current) return null;
+  return (
+    <EditMetaDataView
+      onConfirm={onConfirm}
+      onCancel={props.close}
+      initialMetadata={current.metadata || {}}
+    />
   );
 };

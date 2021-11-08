@@ -11,7 +11,6 @@ import { IntegrationDetails } from 'components/integration/IntegrationDetails';
 import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { render } from 'utils/test';
-import { RAW_DB } from 'components/inputs/rawSelector/EditRawTable';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
@@ -73,7 +72,6 @@ describe('IntegrationView', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(mockDataSet.name)).toBeInTheDocument();
 
-    expect(screen.getByText(new RegExp(RAW_DB, 'i'))).toBeInTheDocument();
     // eslint-disable-next-line no-unused-expressions
     mockIntegration.rawTables?.forEach(({ dbName, tableName }) => {
       expect(screen.getByText(dbName)).toBeInTheDocument();

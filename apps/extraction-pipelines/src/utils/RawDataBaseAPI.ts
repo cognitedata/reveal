@@ -1,6 +1,6 @@
 import { ListResponse } from '@cognite/sdk';
 import { RawDB, RawDBTable, sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { DatabaseWithTablesItem } from 'components/inputs/rawSelector/RawSelector';
+import { DatabaseWithTablesItem } from 'hooks/useRawDBAndTables';
 
 export const getRawDatabaseList = async (
   limit: number = 500

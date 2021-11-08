@@ -1,22 +1,22 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { ModalContent } from 'components/modals/ModalContent';
 import { ids } from 'cogs-variables';
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { CloseButton } from 'styles/StyledButton';
 import Modal from 'components/modals/Modal';
-import DetailsFooter from 'components/modals/DetailsFooter';
+import { Button } from '@cognite/cogs.js';
+import { StyledTitle2 } from 'styles/StyledHeadings';
 
 interface EditModalProps {
   visible: boolean;
-  onCancel: () => void;
+  close: () => void;
   width?: number;
+  title: string;
 }
 
 export const EditModal: FunctionComponent<EditModalProps> = ({
   visible,
-  onCancel,
+  close,
   width = 872,
   children,
+  title,
 }: PropsWithChildren<EditModalProps>) => {
   return (
     <Modal
@@ -24,16 +24,16 @@ export const EditModal: FunctionComponent<EditModalProps> = ({
       width={width}
       appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
     >
-      <ModalContent
-        title={
-          <DivFlex justify="flex-end">
-            <CloseButton onClick={onCancel} />
-          </DivFlex>
-        }
-        footer={<DetailsFooter onPrimaryClick={onCancel} primaryText="Close" />}
-      >
-        {children}
-      </ModalContent>
+      <div css="display: flex; justify-content: space-between;">
+        <StyledTitle2>{title}</StyledTitle2>
+        <Button
+          icon="Close"
+          aria-label="Close dialog"
+          onClick={close}
+          type="ghost"
+        />
+      </div>
+      {children}
     </Modal>
   );
 };

@@ -38,7 +38,7 @@ export const mockDataSetResponse = (): DataSetModel[] => [
   } as DataSetModel,
 ];
 
-const mockResponseV2 = {
+const mockResponseV2: { nextCursor: string; items: Integration[] } = {
   items: [
     {
       createdTime: 1601589600000,
@@ -75,7 +75,6 @@ const mockResponseV2 = {
       ],
       metadata: {
         sourceSystem: 'Azure',
-        documentation: 'This is the documentation for this integration',
       },
       id: 825964439209154,
     },

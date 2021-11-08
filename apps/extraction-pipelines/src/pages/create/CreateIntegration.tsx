@@ -6,15 +6,11 @@ import {
   CREATE,
   DESCRIPTION_HINT,
   DESCRIPTION_LABEL,
-  DOCUMENTATION_HINT,
   EXT_PIPE_NAME_HEADING,
   EXTERNAL_ID_HINT,
-  EXTRACTION_PIPELINE,
   EXTRACTION_PIPELINE_LOWER,
   INTEGRATION_EXTERNAL_ID_HEADING,
   NAME_HINT,
-  SAVE,
-  SOURCE_HINT,
 } from 'utils/constants';
 import { RegisterIntegrationLayout } from 'components/layout/RegisterIntegrationLayout';
 import { CreateFormWrapper } from 'styles/StyledForm';
@@ -24,17 +20,14 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
-import { FullTextArea } from 'components/inputs/FullTextArea';
 import { usePostIntegration } from 'hooks/usePostIntegration';
-import { GridH2Wrapper } from 'styles/StyledPage';
 import styled from 'styled-components';
-import { Button, Collapse, Colors, Modal } from '@cognite/cogs.js';
-import { CountSpan, PriSecBtnWrapper } from 'styles/StyledWrapper';
+import { Button, Colors, Modal } from '@cognite/cogs.js';
+import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   descriptionRule,
   documentationRule,
   externalIdRule,
-  MAX_DOCUMENTATION_LENGTH,
   nameRule,
   scheduleRule,
   selectedRawTablesRule,
@@ -44,62 +37,20 @@ import DataSetIdInput, {
   DATASET_LIST_LIMIT,
 } from 'pages/create/DataSetIdInput';
 import { useDataSetsList } from 'hooks/useDataSetsList';
-import { RegisterMetaData } from 'components/inputs/metadata/RegisterMetaData';
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
-import CronInput from 'components/inputs/cron/CronInput';
-import {
-  CronWrapper,
-  ScheduleFormInput,
-} from 'components/integration/edit/Schedule';
-import { OptionTypeBase } from 'react-select';
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import { ScheduleFormInput } from 'components/integration/edit/Schedule';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
-import { TableHeadings } from 'components/table/IntegrationTableCol';
-import { DetailFieldNames, IntegrationRawTable } from 'model/Integration';
+import { IntegrationRawTable } from 'model/Integration';
 import { contactsRule } from 'utils/validation/contactsSchema';
-import { CreateContacts } from 'components/integration/create/CreateContacts';
 import { User } from 'model/User';
-import { HeadingLabel } from 'components/inputs/HeadingLabel';
 import { InfoIcon } from 'styles/StyledIcon';
-import { InfoBox } from 'components/message/InfoBox';
-import ConnectRawTablesInput from 'components/inputs/rawSelector/ConnectRawTablesInput';
 import { createAddIntegrationInfo } from 'utils/integrationUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { ids } from 'cogs-variables';
 import { trackUsage } from 'utils/Metrics';
 
-const StyledCollapse = styled(Collapse)`
-  background-color: red;
-  .rc-collapse-item {
-    .rc-collapse-header {
-      padding-left: 0;
-      padding-right: 0;
-      border-bottom: none;
-    }
-    .rc-collapse-content {
-      padding-left: 12px;
-      padding-right: 0;
-    }
-  }
-  .cogs-table-pagination {
-    margin-bottom: 2rem;
-    .cogs-input,
-    .cogs-btn {
-      margin-bottom: 0;
-    }
-  }
-`;
-
-const Panel = styled(Collapse.Panel)`
-  .rc-collapse-content-box {
-    display: flex;
-    flex-direction: column;
-  }
-`;
 const InfoMessage = styled.span`
   display: flex;
   align-items: center;
@@ -119,9 +70,6 @@ const InfoMessage = styled.span`
   }
 `;
 const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set trough edit later.`;
-export const ADD_MORE_INFO_HEADING: Readonly<string> = `Additional information`;
-const ADD_MORE_INFO_TEXT_1: Readonly<string> = `Add more information about the ${EXTRACTION_PIPELINE_LOWER}, such as pipeline schedule configuration details and configure notifications.`;
-const ADD_MORE_INFO_TEXT_2: Readonly<string> = `You may add this information later on the ${EXTRACTION_PIPELINE} overview page.`;
 
 export interface AddIntegrationFormInput
   extends ScheduleFormInput,
@@ -165,11 +113,9 @@ const CustomLabel = styled.label<{ required: boolean }>`
 `;
 
 export const CreateIntegration = (props: {
-  showAdditionalFields: boolean;
   customCancelCallback?: () => void;
 }) => {
   const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
-  const [showCron, setShowCron] = useState(false);
   const history = useHistory();
   const location = useLocation();
   const { search } = location;
@@ -201,8 +147,6 @@ export const CreateIntegration = (props: {
     setError,
     handleSubmit,
     register,
-    watch,
-    setValue,
   } = methods;
 
   useEffect(() => {
@@ -216,22 +160,8 @@ export const CreateIntegration = (props: {
     }
   }, [isLoading, setDataSetLoadError]);
   useEffect(() => {
-    register('schedule');
     register('dataSetId');
-    register('selectedRawTables');
   }, [register]);
-  useEffect(() => {
-    setValue('selectedRawTables', []);
-  }, [setValue]);
-  const scheduleValue = watch('schedule');
-  useEffect(() => {
-    if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
-      setShowCron(true);
-    } else {
-      setShowCron(false);
-    }
-  }, [scheduleValue]);
-  const count = watch('documentation')?.length ?? 0;
 
   const onSubmit = (fields: AddIntegrationFormInput) => {
     const integrationInfo = createAddIntegrationInfo(fields, dataSet);
@@ -276,10 +206,6 @@ export const CreateIntegration = (props: {
         },
       }
     );
-  };
-
-  const selectChanged = (selected: OptionTypeBase) => {
-    setValue('schedule', selected.value);
   };
 
   return (
@@ -382,97 +308,6 @@ export const CreateIntegration = (props: {
               {CREATE}
             </ButtonPlaced>
           </PriSecBtnWrapper>
-          {props.showAdditionalFields && (
-            <>
-              <InfoBox iconType="Info">
-                <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-                <p className="box-content">{ADD_MORE_INFO_TEXT_1}</p>
-                <p className="box-content">{ADD_MORE_INFO_TEXT_2}</p>
-              </InfoBox>
-              <StyledCollapse
-                accordion
-                ghost
-                data-testid="add-more-info-collapse"
-              >
-                <Panel
-                  header={
-                    <DivFlex direction="column" align="flex-start">
-                      <GridH2Wrapper>{ADD_MORE_INFO_HEADING}</GridH2Wrapper>
-                    </DivFlex>
-                  }
-                  key={1}
-                >
-                  <CreateContacts
-                    renderLabel={(labelText, inputId) => (
-                      <HeadingLabel labelFor={inputId}>
-                        {labelText}
-                      </HeadingLabel>
-                    )}
-                  />
-                  <HeadingLabel labelFor="schedule-selector">
-                    {TableHeadings.SCHEDULE}
-                  </HeadingLabel>
-                  <ScheduleSelector
-                    inputId="schedule-selector"
-                    schedule={scheduleValue}
-                    onSelectChange={selectChanged}
-                  />
-                  {showCron && (
-                    <CronWrapper
-                      id="cron-expression"
-                      role="region"
-                      direction="column"
-                      align="flex-start"
-                    >
-                      <CronInput />
-                    </CronWrapper>
-                  )}
-                  <HeadingLabel labelFor="raw-table">
-                    {DetailFieldNames.RAW_TABLE}
-                  </HeadingLabel>
-                  <ConnectRawTablesInput />
-                  <FullInput
-                    name="source"
-                    inputId="source-input"
-                    defaultValue=""
-                    control={control as any}
-                    errors={errors}
-                    labelText={DetailFieldNames.SOURCE}
-                    hintText={SOURCE_HINT}
-                    renderLabel={(labelText, inputId) => (
-                      <HeadingLabel labelFor={inputId}>
-                        {labelText}
-                      </HeadingLabel>
-                    )}
-                  />
-
-                  <FullTextArea
-                    name="documentation"
-                    inputId="documentation-input"
-                    labelText={DetailFieldNames.DOCUMENTATION}
-                    hintText={DOCUMENTATION_HINT}
-                    control={control as any}
-                    errors={errors}
-                    defaultValue=""
-                  />
-                  {MAX_DOCUMENTATION_LENGTH && (
-                    <CountSpan className="count bottom-spacing">
-                      {count}/{MAX_DOCUMENTATION_LENGTH}
-                    </CountSpan>
-                  )}
-
-                  <RegisterMetaData />
-                  <ButtonPlaced
-                    type="primary"
-                    htmlType="submit"
-                    marginbottom={5}
-                  >
-                    {SAVE}
-                  </ButtonPlaced>
-                </Panel>
-              </StyledCollapse>
-            </>
-          )}
         </CreateFormWrapper>
       </FormProvider>
     </>
@@ -498,7 +333,7 @@ export default function CreateIntegrationPage() {
           footer={null}
           title="Create extraction pipeline"
         >
-          <CreateIntegration showAdditionalFields={false} />
+          <CreateIntegration />
         </Modal>
       </CapabilityCheck>
     </RegisterIntegrationLayout>

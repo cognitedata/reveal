@@ -1,6 +1,6 @@
 import { RawDBTable } from '@cognite/sdk';
 import { IntegrationRawTable } from 'model/Integration';
-import { DatabaseWithTablesItem } from 'components/inputs/rawSelector/RawSelector';
+import { DatabaseWithTablesItem } from 'hooks/useRawDBAndTables';
 
 export enum RawTableOptions {
   YES = 'Yes',

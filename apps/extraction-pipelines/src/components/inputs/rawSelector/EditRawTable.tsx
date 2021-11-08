@@ -12,8 +12,7 @@ import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditableAreaButton } from 'components/integration/EditableAreaButton';
 
 const RawTableWrapper = styled.div``;
-export const RAW_DB: Readonly<string> = 'Raw database';
-export const RAW_TABLE: Readonly<string> = 'Raw table';
+
 const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const [showRawModal, setShowRawModal] = useState(false);
   const { integration: selected } = useSelectedIntegration();
@@ -85,7 +84,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   return (
     <>
       <div>{renderRaw(storedIntegration)}</div>
-      <RawEditModal visible={showRawModal} onCancel={toggleModal(false)} />
+      <RawEditModal visible={showRawModal} close={toggleModal(false)} />
     </>
   );
 };

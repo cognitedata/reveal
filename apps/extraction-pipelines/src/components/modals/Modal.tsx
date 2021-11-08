@@ -7,11 +7,12 @@ import { ModalFooterProps } from './ModalFooter';
 const StyledReactModal = styled((props) => (
   <ReactModal {...props}>{props.children}</ReactModal>
 ))`
+  padding: 1.5rem;
+  border-radius: 0.5rem;
   .cogs-modal-content {
-    height: 40rem;
-    overflow: auto;
     display: flex;
     flex-direction: column;
+    padding: 0;
   }
   .cogs-modal-footer {
     justify-content: normal;

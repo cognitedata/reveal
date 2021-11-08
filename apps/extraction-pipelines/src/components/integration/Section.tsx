@@ -16,7 +16,7 @@ const SectionHeader = styled.div`
   align-items: center;
 `;
 const SectionBody = styled.div`
-  padding: 1em 0;
+  padding: 1rem 0;
   overflow-x: scroll;
 `;
 export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
