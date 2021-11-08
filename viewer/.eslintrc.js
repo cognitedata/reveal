@@ -72,6 +72,7 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/prefer-readonly': 2,
     'unused-imports/no-unused-imports-ts': 'error',
 
     // TODO: maksnester 26-06-2020 we need to fix our codebase to play well with these rules
