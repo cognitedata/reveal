@@ -6,10 +6,11 @@ import { useCreateDatabase } from 'hooks/sdk-queries';
 import { getContainer } from 'utils/utils';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
 export default function CreateDatabase() {
+  const { appPath } = useParams<{ appPath: string }>();
   const history = useHistory();
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState('');
@@ -31,12 +32,12 @@ export default function CreateDatabase() {
         message: `Database was created!`,
         key: 'create-database',
       });
-      history.push(createLink(`/raw-explorer/${name}`));
+      history.push(createLink(`/${appPath}/${name}`));
       setName('');
       trackEvent('RAW.Explorer.Database.Create');
       setVisible(false);
     }
-  }, [name, isSuccess, reset, history]);
+  }, [name, isSuccess, reset, history, appPath]);
 
   return (
     <>

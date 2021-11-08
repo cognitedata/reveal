@@ -6,11 +6,12 @@ import { Button, Icon } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { useCreateTable } from 'hooks/sdk-queries';
 
 export default function CreateTable({ database }: { database: string }) {
+  const { appPath } = useParams<{ appPath: string }>();
   const history = useHistory();
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState('');
@@ -32,12 +33,12 @@ export default function CreateTable({ database }: { database: string }) {
         message: `Table was created!`,
         key: 'create-table',
       });
-      history.push(createLink(`/raw-explorer/${database}/${name}`));
+      history.push(createLink(`/${appPath}/${database}/${name}`));
       setName('');
       trackEvent('RAW.Explorer.Table.Table.Create');
       setVisible(false);
     }
-  }, [name, isSuccess, reset, history, database]);
+  }, [name, isSuccess, reset, history, database, appPath]);
 
   return (
     <>

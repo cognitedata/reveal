@@ -10,7 +10,7 @@ import { RawDBTable } from '@cognite/sdk';
 import { SubMenuProps } from 'antd/lib/menu/SubMenu';
 import theme from 'styles/theme';
 import { createLink } from '@cognite/cdf-utilities';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { cleanUrl, getContainer, stringCompare } from 'utils/utils';
 import styled from 'styled-components';
 import { stringContains } from 'utils/typedUtils';
@@ -71,7 +71,7 @@ const DatabaseItem = ({
   const history = useHistory();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
   const { mutate: deleteDatabase } = useDeleteDatabase();
-
+  const { appPath } = useParams<{ appPath: string }>();
   const [searchWord, setSearch] = useState<string>('');
 
   const { data, isLoading, hasNextPage, fetchNextPage } = useTables(
@@ -101,9 +101,7 @@ const DatabaseItem = ({
   const renderFilteredList = (filteredList: RawDBTable[]) => {
     return filteredList.map((_table) => (
       <StyledMenuItem key={`${database}-${_table.name}`}>
-        <Link
-          to={createLink(`/raw-explorer/${cleanUrl(database, _table.name)}`)}
-        >
+        <Link to={createLink(`/${appPath}/${cleanUrl(database, _table.name)}`)}>
           <Tooltip
             placement="topLeft"
             title={`Table ${_table.name}`}
@@ -116,7 +114,6 @@ const DatabaseItem = ({
       </StyledMenuItem>
     ));
   };
-
   const renderTables = () => {
     const filteredList = tables
       .filter((_table) => stringContains(_table.name, searchWord))
@@ -157,7 +154,7 @@ const DatabaseItem = ({
       <SubMenu
         {...subMenuProps}
         onTitleClick={(event) =>
-          history.push(createLink(`/raw-explorer/${event.key}`))
+          history.push(createLink(`/${appPath}/${event.key}`))
         }
         key={database}
         style={{
@@ -178,7 +175,7 @@ const DatabaseItem = ({
                           message: `Database ${database} deleted!`,
                           key: 'database-delete',
                         });
-                        history.replace(createLink(`/raw-explorer`));
+                        history.replace(createLink(`/${appPath}`));
                       },
                       onError(e: any) {
                         notification.error({

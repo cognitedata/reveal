@@ -45,7 +45,8 @@ const CardHeading = styled.div`
 
 const TableContent = () => {
   const history = useHistory();
-  const { database, table } = useParams<{
+  const { database, table, appPath } = useParams<{
+    appPath: string;
     project: string;
     table?: string;
     database?: string;
@@ -405,9 +406,7 @@ const TableContent = () => {
                           message: `Table ${table} in database ${database} deleted!`,
                           key: 'table-created',
                         });
-                        history.replace(
-                          createLink(`/raw-explorer/${database}`)
-                        );
+                        history.replace(createLink(`/${appPath}/${database}`));
                       },
                       onError(e) {
                         notification.error({

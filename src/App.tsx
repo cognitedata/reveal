@@ -44,9 +44,9 @@ const App = () => {
                   <Switch>
                     <Route
                       path={[
-                        '/:project/raw-explorer/:database/:table',
-                        '/:project/raw-explorer/:database',
-                        '/:project/raw-explorer',
+                        '/:project/:appPath/:database/:table',
+                        '/:project/:appPath/:database',
+                        '/:project/:appPath',
                       ]}
                       component={RawExplorer}
                     />
