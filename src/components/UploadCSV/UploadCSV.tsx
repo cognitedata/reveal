@@ -156,24 +156,13 @@ const UploadCSV = ({
             message: `${file.name} could not be parsed!`,
             key: 'file-upload',
           });
-          resetState();
         },
         complete() {
           setComplete(true);
         },
       });
     }
-  }, [
-    file,
-    networkError,
-    upload,
-    columns,
-    mutate,
-    selectedKeyIndex,
-    database,
-    table,
-    resetState,
-  ]);
+  }, [file, upload, columns, mutate, selectedKeyIndex, database, table]);
 
   const saveDataToApi = async () => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
