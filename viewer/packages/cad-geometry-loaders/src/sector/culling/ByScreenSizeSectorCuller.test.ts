@@ -12,6 +12,7 @@ import { CadModelSectorBudget } from '@reveal/cad-geometry-loaders';
 import {
   createCadModelMetadata,
   createDetermineSectorInput,
+  createV8SectorMetadata,
   createV9SectorMetadata
 } from '../../../../../test-utilities';
 
@@ -34,7 +35,7 @@ describe('ByScreenSizeSectorCuller', () => {
       ],
       new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1])
     ]);
-    model = createCadModelMetadata(root);
+    model = createCadModelMetadata(9, root);
     allSectorsRenderCost = model.scene.getAllSectors().reduce((sum, x) => sum + x.estimatedRenderCost, 0);
 
     camera = new THREE.PerspectiveCamera();
@@ -66,6 +67,11 @@ describe('ByScreenSizeSectorCuller', () => {
     expect(spentBudget.renderCost).toBeGreaterThanOrEqual(budget.maximumRenderCost);
     expect(scheduledSectors.length).toBeLessThan(model.scene.sectorCount);
     expect(scheduledSectors.length).not.toBeEmpty();
+  });
+
+  test('determineSectors throws if model is not v9', () => {
+    const v8input = createDetermineSectorInput(camera, createCadModelMetadata(8, createV8SectorMetadata([0, []])));
+    expect(() => culler.determineSectors(v8input)).toThrowError();
   });
 
   test('determineSectors doesnt return fully culled sectors', () => {
