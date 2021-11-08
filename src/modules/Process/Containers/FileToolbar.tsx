@@ -5,7 +5,7 @@ import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
 } from 'src/modules/Common/store/commonSlice';
-import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
+import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,8 +25,8 @@ export const FileToolbar = ({
 }) => {
   const dispatch = useDispatch();
 
-  const selectedFiles = useSelector((state: RootState) =>
-    selectAllSelectedFiles(state.filesSlice)
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectAllSelectedIds(state.filesSlice)
   );
 
   const processFilesLength = useSelector(
@@ -38,13 +38,7 @@ export const FileToolbar = ({
   });
 
   const onDelete = () => {
-    dispatch(
-      DeleteFilesById(
-        selectedFiles.map((file) => {
-          return file.id;
-        })
-      )
-    );
+    dispatch(DeleteFilesById(selectedFileIds));
   };
 
   const onDownload = () => {
@@ -61,7 +55,7 @@ export const FileToolbar = ({
         {!!processFilesLength && ( // Only show buttons if there are files available
           <ButtonContainer>
             <BulkActionMenu
-              selectedCount={selectedFiles.length}
+              selectedCount={selectedFileIds.length}
               maxSelectCount={processFilesLength}
               onBulkEdit={onBulkEdit}
               onDownload={onDownload}

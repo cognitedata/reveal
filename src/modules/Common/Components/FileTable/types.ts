@@ -11,32 +11,34 @@ export type PaginatedTableProps<T> = {
   fetchedCount?: number;
 };
 
-type TableViewProps<T> = {
+type FileTableProps<T> = Omit<BaseTableProps<T>, 'data' | 'width'> & {
   data: T[];
   totalCount: number;
-  onRowSelect: (item: T, selected: boolean) => void;
-  onRowClick: (item: T, showFileDetailsOnClick?: boolean) => void;
-  focusedFileId?: number | null;
-  selectedRowIds: number[];
+  onItemSelect: (item: T, selected: boolean) => void;
+  onItemClick: (item: T, showFileDetailsOnClick?: boolean) => void;
+  selectedIds: number[];
   allRowsSelected: boolean;
   onSelectAllRows: (value: boolean, filter?: SelectFilter) => void;
   onSelectPage: (fileIds: number[]) => void;
   modalView?: boolean;
+  focusedId?: number | null;
 };
+
+export type FileListTableProps<T> = FileTableProps<T> &
+  PaginatedTableProps<T> & {
+    isLoading?: boolean;
+  };
 
 export type GridViewProps<T> = {
   data: T[];
   selectedIds: number[];
-  onItemClicked: (item: T) => void;
+  onItemClick: (item: T) => void;
   renderCell: (cellProps: any) => JSX.Element;
   tableFooter?: JSX.Element | null;
   isLoading: boolean;
   overlayRenderer: () => JSX.Element;
   emptyRenderer: () => JSX.Element;
 };
-
-type FileTableProps = Omit<BaseTableProps<TableDataItem>, 'data' | 'width'> &
-  TableViewProps<TableDataItem>;
 
 export type SortPaginate = {
   sortKey?: string;
@@ -52,28 +54,22 @@ export type SortPaginateControls = SortPaginate & {
   setPageSize: (size: number) => void;
 };
 
-export type FileListTableProps = FileTableProps & {
-  sortPaginateControls: SortPaginateControls;
-  isLoading?: boolean;
-};
-
-export type FileGridTableProps = Omit<
-  BaseTableProps<TableDataItem>,
-  'data' | 'width'
-> &
+export type FileGridTableProps<T> = Omit<BaseTableProps<T>, 'data' | 'width'> &
+  PaginatedTableProps<T> &
   Omit<GridViewProps<TableDataItem>, 'overlayRenderer' | 'emptyRenderer'> & {
     totalCount: number;
     pagination?: boolean;
-    sortPaginateControls: SortPaginateControls;
-    onSelect?: (item: TableDataItem, selected: boolean) => void;
+    onItemSelect?: (item: TableDataItem, selected: boolean) => void;
   };
 
 export type MapTableTabKey = {
   activeKey: string;
   setActiveKey: (key: string) => void;
 };
-export type FileMapTableProps = FileTableProps & {
-  mapTableTabKey: MapTableTabKey;
-  sortPaginateControlsLocation: SortPaginateControls;
-  sortPaginateControlsNoLocation: SortPaginateControls;
-};
+export type FileMapTableProps<T> = FileTableProps<T> &
+  PaginatedTableProps<T> & {
+    isLoading: boolean;
+    mapTableTabKey: MapTableTabKey;
+    pageSize: number;
+    setPageSize: (size: number) => void;
+  };

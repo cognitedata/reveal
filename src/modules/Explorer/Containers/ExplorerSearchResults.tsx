@@ -19,7 +19,6 @@ import {
   selectExplorerAllFilesSelected,
   setReverse,
   setSortKey,
-  ExploreSortPaginateType,
   setCurrentPage,
   setPageSize,
   setMapTableTabKey,
@@ -27,27 +26,25 @@ import {
   setSelectedAllExplorerFiles,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
+import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
+import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 
 export const ExplorerSearchResults = ({
   reFetchProp,
   currentView,
   query = '',
   filter = {},
-  focusedId,
-  selectedFileIds,
-  isLoading = false,
-  onClick,
-  onRowSelect,
+  ...otherProps
 }: {
   reFetchProp?: boolean;
   currentView: ViewMode;
   query?: string;
   filter?: FileFilterProps;
-  focusedId?: number;
-  selectedFileIds: number[];
-  isLoading?: boolean;
-  onClick: (item: TableDataItem) => void;
-  onRowSelect: (item: TableDataItem, selected: boolean) => void;
+  focusedId: number | null;
+  selectedIds: number[];
+  isLoading: boolean;
+  onItemClick: (item: TableDataItem) => void;
+  onItemSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
 
@@ -60,7 +57,7 @@ export const ExplorerSearchResults = ({
   );
 
   const sortPaginateState = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.sortPaginate
+    ({ explorerReducer }: RootState) => explorerReducer.sortMeta
   );
 
   const handleSelectAllFiles = (
@@ -79,45 +76,23 @@ export const ExplorerSearchResults = ({
     dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
-  const getSortControls = (type: ExploreSortPaginateType) => ({
-    sortKey: sortPaginateState[type].sortKey,
-    reverse: sortPaginateState[type].reverse,
+  const sortPaginateControls = {
+    sortKey: sortPaginateState.sortKey,
+    reverse: sortPaginateState.reverse,
+    currentPage: sortPaginateState.currentPage,
+    pageSize: sortPaginateState.pageSize,
     setSortKey: (sortKey: string) => {
-      dispatch(setSortKey({ type, sortKey }));
+      dispatch(setSortKey(sortKey));
     },
     setReverse: (reverse: boolean) => {
-      dispatch(setReverse({ type, reverse }));
+      dispatch(setReverse(reverse));
     },
-  });
-  const getPaginationControls = (type: ExploreSortPaginateType) => ({
-    currentPage: sortPaginateState[type].currentPage,
-    pageSize: sortPaginateState[type].pageSize,
     setCurrentPage: (currentPage: number) => {
-      dispatch(setCurrentPage({ type, currentPage }));
+      dispatch(setCurrentPage(currentPage));
     },
     setPageSize: (pageSize: number) => {
-      dispatch(setPageSize({ type, pageSize }));
+      dispatch(setPageSize(pageSize));
     },
-  });
-
-  const listSortPaginateControls = {
-    ...getSortControls(ExploreSortPaginateType.list),
-    ...getPaginationControls(ExploreSortPaginateType.list),
-  };
-  const gridSortPaginateControls = {
-    ...getPaginationControls(ExploreSortPaginateType.grid),
-  };
-  const sortPaginateControlsLocation = {
-    ...getSortControls(ExploreSortPaginateType.mapLocation),
-    ...getPaginationControls(ExploreSortPaginateType.mapLocation),
-  };
-  const sortPaginateControlsNoLocation = {
-    ...getSortControls(ExploreSortPaginateType.mapNoLocation),
-    ...getPaginationControls(ExploreSortPaginateType.mapNoLocation),
-  };
-  const modalSortPaginateControls = {
-    ...getSortControls(ExploreSortPaginateType.modal),
-    ...getPaginationControls(ExploreSortPaginateType.modal),
   };
 
   return (
@@ -128,75 +103,81 @@ export const ExplorerSearchResults = ({
       >
         <ResultTableLoader<FileInfo>
           css={{ height: '100%', width: '100%' }}
-          reFetchProp={reFetchProp}
           type="file"
           filter={filter}
           query={query}
+          reFetchProp={reFetchProp}
         >
-          {(props: { data: ResultData[]; totalCount: number }) => {
-            const renderView = () => {
-              if (currentView === 'grid') {
-                return (
-                  <PageBasedGridView
-                    selectedIds={selectedFileIds}
-                    onItemClicked={onClick}
-                    onSelect={onRowSelect}
-                    {...props}
-                    renderCell={(cellProps: any) => (
-                      <FileGridPreview
-                        mode={VisionMode.Explore}
-                        actionDisabled={!!selectedFileIds.length}
-                        {...cellProps}
-                      />
-                    )}
-                    sortPaginateControls={gridSortPaginateControls}
-                    isLoading={isLoading}
-                  />
-                );
-              }
-              if (currentView === 'map') {
-                return (
-                  <MapView
-                    onRowSelect={onRowSelect}
-                    onRowClick={onClick}
-                    focusedFileId={focusedId}
-                    allRowsSelected={allFilesSelected}
-                    onSelectAllRows={handleSelectAllFiles}
-                    selectedRowIds={selectedFileIds}
-                    {...props}
-                    sortPaginateControlsLocation={sortPaginateControlsLocation}
-                    sortPaginateControlsNoLocation={
-                      sortPaginateControlsNoLocation
+          {(resultProps: { data: ResultData[]; totalCount: number }) => {
+            return (
+              <PaginationWrapper
+                data={resultProps.data}
+                totalCount={resultProps.totalCount}
+                pagination={currentView !== 'map'}
+                sortPaginateControls={sortPaginateControls}
+                isLoading={otherProps.isLoading}
+              >
+                {(paginationProps) => {
+                  const renderView = (
+                    props: {
+                      data: ResultData[];
+                      totalCount: number;
+                    } & PaginatedTableProps<TableDataItem>
+                  ) => {
+                    if (currentView === 'grid') {
+                      return (
+                        <PageBasedGridView
+                          {...otherProps}
+                          {...props}
+                          renderCell={(cellProps: any) => (
+                            <FileGridPreview
+                              mode={VisionMode.Explore}
+                              actionDisabled={!!otherProps.selectedIds.length}
+                              {...cellProps}
+                            />
+                          )}
+                        />
+                      );
                     }
-                    mapTableTabKey={{ activeKey, setActiveKey }}
-                    onSelectPage={handleSetSelectedFiles}
-                    isLoading={isLoading}
-                  />
-                );
-              }
+                    if (currentView === 'map') {
+                      return (
+                        <MapView
+                          {...otherProps}
+                          {...props}
+                          allRowsSelected={allFilesSelected}
+                          onSelectAllRows={handleSelectAllFiles}
+                          mapTableTabKey={{ activeKey, setActiveKey }}
+                          onSelectPage={handleSetSelectedFiles}
+                          pageSize={sortPaginateState.pageSize}
+                          setPageSize={sortPaginateControls.setPageSize}
+                        />
+                      );
+                    }
 
-              return (
-                <FileTableExplorer
-                  modalView={currentView === 'modal'}
-                  onRowSelect={onRowSelect}
-                  onRowClick={onClick}
-                  focusedFileId={focusedId}
-                  allRowsSelected={allFilesSelected}
-                  onSelectAllRows={handleSelectAllFiles}
-                  selectedRowIds={selectedFileIds}
-                  {...props}
-                  sortPaginateControls={
-                    currentView === 'modal'
-                      ? modalSortPaginateControls
-                      : listSortPaginateControls
-                  }
-                  onSelectPage={handleSetSelectedFiles}
-                  rowKey="rowKey"
-                  isLoading={isLoading}
-                />
-              );
-            };
-            return <>{renderView()}</>;
+                    return (
+                      <FileTableExplorer
+                        modalView={currentView === 'modal'}
+                        {...otherProps}
+                        {...props}
+                        allRowsSelected={allFilesSelected}
+                        onSelectAllRows={handleSelectAllFiles}
+                        onSelectPage={handleSetSelectedFiles}
+                        rowKey="rowKey"
+                      />
+                    );
+                  };
+
+                  return (
+                    <>
+                      {renderView({
+                        ...paginationProps,
+                        totalCount: resultProps.totalCount,
+                      })}
+                    </>
+                  );
+                }}
+              </PaginationWrapper>
+            );
           }}
         </ResultTableLoader>
       </EnsureNonEmptyResource>

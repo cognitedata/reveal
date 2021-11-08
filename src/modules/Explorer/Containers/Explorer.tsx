@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import {
   hideExplorerFileMetadata,
-  selectExplorerSelectedFileIds,
+  selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerFileSelectState,
   setExplorerFocusedFileId,
   showExplorerFileMetadata,
@@ -25,7 +25,6 @@ import { TableDataItem } from 'src/modules/Common/types';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { useHistory } from 'react-router-dom';
 import { pushMetric } from 'src/utils/pushMetric';
-import isEqual from 'lodash-es/isEqual';
 import { ExplorerFileUploadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileUploadModalContainer';
 import { ExplorerFileDownloadModalContainer } from 'src/modules/Explorer/Containers/ExplorerFileDownloadModalContainer';
 import { ExplorerBulkEditModalContainer } from 'src/modules/Explorer/Containers/ExplorerBulkEditModalContainer';
@@ -62,13 +61,12 @@ const Explorer = () => {
     ({ explorerReducer }: RootState) => explorerReducer.query
   );
 
-  const selectedFileIds = useSelector(
-    (state: RootState) => selectExplorerSelectedFileIds(state.explorerReducer),
-    isEqual
+  const selectedFileIds = useSelector((state: RootState) =>
+    selectExplorerSelectedFileIdsInSortedOrder(state)
   );
 
   const isLoading = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.isLoading
+    ({ explorerReducer }: RootState) => explorerReducer.isLoading || false
   );
 
   useEffect(() => {
@@ -149,17 +147,17 @@ const Explorer = () => {
                 currentView={currentView}
                 filter={filter}
                 query={query}
-                focusedId={focusedFileId || undefined}
-                selectedFileIds={selectedFileIds}
+                focusedId={focusedFileId}
+                selectedIds={selectedFileIds}
                 isLoading={isLoading}
-                onClick={handleItemClick}
-                onRowSelect={handleRowSelect}
+                onItemClick={handleItemClick}
+                onItemSelect={handleRowSelect}
               />
             </ViewContainer>
           </TablePanel>
           {showMetadata && focusedFileId && (
             // eslint-disable-next-line  @cognite/no-number-z-index
-            <DrawerContainer style={{ zIndex: 1 }}>
+            <DrawerContainer style={{ zIndex: 2 }}>
               <QueryClientProvider client={queryClient}>
                 <FileDetails
                   fileId={focusedFileId}

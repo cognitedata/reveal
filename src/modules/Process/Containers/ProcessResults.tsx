@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import {
   selectAllFilesSelected,
-  selectAllSelectedIds,
   setFileSelectState,
   setSelectedAllFiles,
   setSelectedFiles,
@@ -14,16 +13,16 @@ import {
   ViewMode,
 } from 'src/modules/Common/types';
 import {
-  FileSortPaginateType,
-  selectAllProcessFiles,
   selectIsPollingComplete,
-  setCurrentPage,
   setMapTableTabKey,
-  setPageSize,
-  setReverse,
   setFocusedFileId,
-  setSortKey,
   showFileMetadataPreview,
+  setProcessSortKey,
+  setProcessReverse,
+  setProcessPageSize,
+  setProcessCurrentPage,
+  selectProcessSortedFiles,
+  selectProcessSelectedFileIdsInSortedOrder,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -40,6 +39,7 @@ import { Detail } from '@cognite/cogs.js';
 import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBasedGridView';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
+import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -57,7 +57,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   const processFiles = useSelector((state: RootState) =>
-    selectAllProcessFiles(state)
+    selectProcessSortedFiles(state)
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
@@ -65,11 +65,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   const selectedFileIds = useSelector((state: RootState) =>
-    selectAllSelectedIds(state.filesSlice)
+    selectProcessSelectedFileIdsInSortedOrder(state)
   );
 
   const sortPaginateState = useSelector(
-    ({ processSlice }: RootState) => processSlice.sortPaginate
+    ({ processSlice }: RootState) => processSlice.sortMeta
   );
 
   const isLoading = useSelector(
@@ -155,57 +155,23 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     dispatch(setSelectedFiles(fileIds));
   };
 
-  const handleSetSortKey = (type: FileSortPaginateType, sortKey: string) => {
-    dispatch(setSortKey({ type, sortKey }));
-  };
-  const handleSetReverse = (type: FileSortPaginateType, reverse: boolean) => {
-    dispatch(setReverse({ type, reverse }));
-  };
-  const handleSetCurrentPage = (
-    type: FileSortPaginateType,
-    currentPage: number
-  ) => {
-    dispatch(setCurrentPage({ type, currentPage }));
-  };
-  const handleSetPageSize = (type: FileSortPaginateType, pageSize: number) => {
-    dispatch(setPageSize({ type, pageSize }));
-  };
-
-  const getSortControls = (type: FileSortPaginateType) => ({
-    sortKey: sortPaginateState[type].sortKey,
-    reverse: sortPaginateState[type].reverse,
+  const sortPaginateControls = {
+    sortKey: sortPaginateState.sortKey,
+    reverse: sortPaginateState.reverse,
+    currentPage: sortPaginateState.currentPage,
+    pageSize: sortPaginateState.pageSize,
     setSortKey: (sortKey: string) => {
-      handleSetSortKey(type, sortKey);
+      dispatch(setProcessSortKey(sortKey));
     },
     setReverse: (reverse: boolean) => {
-      handleSetReverse(type, reverse);
+      dispatch(setProcessReverse(reverse));
     },
-  });
-  const getPaginationControls = (type: FileSortPaginateType) => ({
-    currentPage: sortPaginateState[type].currentPage,
-    pageSize: sortPaginateState[type].pageSize,
     setCurrentPage: (currentPage: number) => {
-      handleSetCurrentPage(type, currentPage);
+      dispatch(setProcessCurrentPage(currentPage));
     },
     setPageSize: (pageSize: number) => {
-      handleSetPageSize(type, pageSize);
+      dispatch(setProcessPageSize(pageSize));
     },
-  });
-
-  const listSortPaginateControls = {
-    ...getSortControls(FileSortPaginateType.list),
-    ...getPaginationControls(FileSortPaginateType.list),
-  };
-  const gridSortPaginateControls = {
-    ...getPaginationControls(FileSortPaginateType.grid),
-  };
-  const sortPaginateControlsLocation = {
-    ...getSortControls(FileSortPaginateType.mapLocation),
-    ...getPaginationControls(FileSortPaginateType.mapLocation),
-  };
-  const sortPaginateControlsNoLocation = {
-    ...getSortControls(FileSortPaginateType.mapNoLocation),
-    ...getPaginationControls(FileSortPaginateType.mapNoLocation),
   };
 
   const activeKey = useSelector(
@@ -215,8 +181,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
-  const renderView = () => {
-    if (!data.length) {
+  const RenderView = (props: { data: TableDataItem[] }) => {
+    if (!props.data.length) {
       return (
         <EmptyContainer>
           <div className="header" />
@@ -231,55 +197,53 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     if (currentView === 'grid') {
       return (
         <PageBasedGridView
-          onItemClicked={handleItemClick}
-          onSelect={handleRowSelect}
-          data={data}
+          {...props}
+          onItemClick={handleItemClick}
+          onItemSelect={handleRowSelect}
+          totalCount={data.length}
+          selectedIds={selectedFileIds}
+          isLoading={isLoading}
           renderCell={(cellProps: any) => (
             <FileGridPreview
               mode={VisionMode.Contextualize}
               actionDisabled={!!selectedFileIds.length}
               {...cellProps}
-              sortPaginateControls={gridSortPaginateControls}
             />
           )}
-          totalCount={data.length}
-          selectedIds={selectedFileIds}
-          sortPaginateControls={gridSortPaginateControls}
-          isLoading={isLoading}
         />
       );
     }
     if (currentView === 'map') {
       return (
         <MapView
-          data={data}
-          onRowSelect={handleRowSelect}
-          onRowClick={handleItemClick}
-          focusedFileId={focusedFileId}
+          {...props}
+          onItemSelect={handleRowSelect}
+          onItemClick={handleItemClick}
+          focusedId={focusedFileId}
           totalCount={data.length}
+          selectedIds={selectedFileIds}
           allRowsSelected={allFilesSelected}
           onSelectAllRows={handleSelectAllFiles}
           onSelectPage={handleSetSelectedFiles}
-          selectedRowIds={selectedFileIds}
-          sortPaginateControlsLocation={sortPaginateControlsLocation}
-          sortPaginateControlsNoLocation={sortPaginateControlsNoLocation}
           mapTableTabKey={{ activeKey, setActiveKey }}
+          pageSize={sortPaginateState.pageSize}
+          setPageSize={sortPaginateControls.setPageSize}
+          isLoading={isLoading}
         />
       );
     }
 
     return (
       <FileTable
-        data={data}
-        onRowSelect={handleRowSelect}
-        onRowClick={handleItemClick}
-        focusedFileId={focusedFileId}
+        {...props}
+        onItemSelect={handleRowSelect}
+        onItemClick={handleItemClick}
+        focusedId={focusedFileId}
         totalCount={data.length}
+        selectedIds={selectedFileIds}
         allRowsSelected={allFilesSelected}
         onSelectAllRows={handleSelectAllFiles}
         onSelectPage={handleSetSelectedFiles}
-        selectedRowIds={selectedFileIds}
-        sortPaginateControls={listSortPaginateControls}
         rowKey="rowKey"
       />
     );
@@ -302,7 +266,15 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
             : promptMessage;
         }}
       />
-      {renderView()}
+      <PaginationWrapper
+        data={data}
+        totalCount={data.length}
+        pagination
+        sortPaginateControls={sortPaginateControls}
+        isLoading={isLoading}
+      >
+        {(paginationProps) => <RenderView {...paginationProps} />}
+      </PaginationWrapper>
     </>
   );
 };

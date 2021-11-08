@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import {
   SelectableItemsProps,
   TableStateProps,
@@ -19,12 +19,13 @@ import { EXPLORER_FILE_FETCH_LIMIT } from 'src/constants/ExplorerConstants';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  selectExplorerAllFiles,
   setExplorerFiles,
   setExplorerFocusedFileId,
   showExplorerFileMetadata,
   setIsLoading,
   setPercentageScanned,
+  selectExplorerSortedFiles,
+  setLoadingAnnotations,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -32,6 +33,7 @@ import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { fetchFiles } from 'src/api/file/fetchFiles/fetchFiles';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -40,7 +42,7 @@ export const ResultTableLoader = <T extends Resource>({
   ...props
 }: {
   reFetchProp?: boolean;
-  children: (tableProps: TableProps<T>) => React.ReactNode;
+  children: (tableProps: TableProps<T>) => ReactElement;
 } & Partial<SearchResultLoaderProps> &
   Partial<RelatedResourcesLoaderProps> &
   Partial<SelectableItemsProps> &
@@ -49,8 +51,8 @@ export const ResultTableLoader = <T extends Resource>({
   const dispatch = useDispatch();
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const explorerFiles = useSelector(({ explorerReducer }: RootState) =>
-    selectExplorerAllFiles(explorerReducer)
+  const explorerFiles = useSelector((rootState: RootState) =>
+    selectExplorerSortedFiles(rootState)
   );
 
   const menuActions: FileActions = {
@@ -97,6 +99,9 @@ export const ResultTableLoader = <T extends Resource>({
         handleSetIsLoading,
         handleSetPercentageScanned
       );
+      const fileIds = fileSearchResult.map((item) => item.id);
+      dispatch(setLoadingAnnotations());
+      dispatch(RetrieveAnnotations(fileIds));
       dispatch(setExplorerFiles(fileSearchResult));
     })();
 

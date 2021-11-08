@@ -19,7 +19,7 @@ const Mapbox = ReactMapboxGl({
   trackResize: true,
 });
 
-export const MapView = (props: FileMapTableProps) => {
+export const MapView = (props: FileMapTableProps<TableDataItem>) => {
   const [selectedFile, setSelectedFile] = useState<ResultData | undefined>();
   const [popupState, setPopupState] =
     useState<'open' | 'hidden' | 'close'>('close');
@@ -87,7 +87,7 @@ export const MapView = (props: FileMapTableProps) => {
   const handleOnClick = (fileId: number) => {
     showMapPopup(fileId);
     const item = files.find((file) => file.id === fileId);
-    if (item) props.onRowClick(item, false);
+    if (item) props.onItemClick(item, false);
   };
 
   // set popup visibility based on whether the selected file is within map bounds or not
@@ -175,7 +175,7 @@ export const MapView = (props: FileMapTableProps) => {
                   (element: TableDataItem) => element.id === selectedFile!.id
                 )}
                 onClose={() => setPopupState('close')}
-                actionDisabled={!!props.selectedRowIds.length}
+                actionDisabled={!!props.selectedIds.length}
               />
             </Popup>
           ) : undefined}

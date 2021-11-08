@@ -1,12 +1,7 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { TableWrapper } from 'src/modules/Common/Components/FileTable/FileTableWrapper';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import ReactBaseTable, {
-  BaseTableProps,
-  Column,
-  ColumnShape,
-  RowKey,
-} from 'react-base-table';
+import ReactBaseTable, { Column, ColumnShape, RowKey } from 'react-base-table';
 import {
   CellRenderer,
   SelectableTableColumnShape,
@@ -16,37 +11,27 @@ import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers
 import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectionRenderer';
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
 import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
-import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { FileListTableProps } from 'src/modules/Common/Components/FileTable/types';
 
-export type SelectableTableProps = Omit<
-  BaseTableProps<TableDataItem>,
-  'width'
-> &
-  PaginatedTableProps<TableDataItem> & {
-    selectedRowIds: number[];
-    allRowsSelected: boolean;
-    selectable: boolean;
-    selectedFileId?: number | null;
-    rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
-    onRowSelect: (item: TableDataItem, selected: boolean) => void;
-    onSelectAllRows: (val: boolean) => void;
-    onSelectPage: (fileIds: number[]) => void;
-    rowClassNames?: (data: {
-      columns: ColumnShape<TableDataItem>[];
+export type SelectableTableProps = FileListTableProps<TableDataItem> & {
+  selectable: boolean;
+  rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element };
+  rowClassNames?: (data: {
+    columns: ColumnShape<TableDataItem>[];
+    rowData: TableDataItem;
+    rowIndex: number;
+  }) => string;
+  rowEventHandlers?: {
+    [key: string]: (args: {
       rowData: TableDataItem;
       rowIndex: number;
-    }) => string;
-    rowEventHandlers?: {
-      [key: string]: (args: {
-        rowData: TableDataItem;
-        rowIndex: number;
-        rowKey: RowKey;
-        event: React.SyntheticEvent;
-      }) => void;
-    };
-    overlayRenderer: () => JSX.Element;
-    emptyRenderer: () => JSX.Element;
+      rowKey: RowKey;
+      event: React.SyntheticEvent;
+    }) => void;
   };
+  overlayRenderer: () => JSX.Element;
+  emptyRenderer: () => JSX.Element;
+};
 
 const defaultCellRenderers = {
   header: StringHeaderRenderer,
@@ -59,20 +44,20 @@ let rendererMap: { [key: string]: (props: CellRenderer) => JSX.Element } = {};
 export function SelectableTable(props: SelectableTableProps) {
   const tableRef = useRef<any>(null);
   const {
-    selectedRowIds,
-    allRowsSelected,
-    selectable,
     data,
+    selectedIds,
+    onItemSelect,
+    allRowsSelected,
+    onSelectAllRows,
+    onSelectPage,
     sortKey,
     reverse,
     fetchedCount,
     setSortKey,
     setReverse,
-    rowEventHandlers,
     tableFooter,
-    onRowSelect,
-    onSelectAllRows,
-    onSelectPage,
+    selectable,
+    rowEventHandlers,
     rowClassNames,
   } = props;
 
@@ -84,7 +69,7 @@ export function SelectableTable(props: SelectableTableProps) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    onRowSelect(rowData, selected);
+    onItemSelect(rowData, selected);
   };
 
   const fileIdsInCurrentPage = data.map((file) => file.id);
@@ -105,11 +90,10 @@ export function SelectableTable(props: SelectableTableProps) {
         align: Column.Alignment.LEFT,
         allSelected: allRowsSelected,
         onSelectAll: onSelectAllRows,
-        selectedIds: selectedRowIds,
+        selectedIds,
         onSelectPage,
         fileIdsInCurrentPage,
         fetchedCount,
-        selectedRowIds,
       };
       return [selectionColumn, ...props.columns];
     }
@@ -135,22 +119,6 @@ export function SelectableTable(props: SelectableTableProps) {
     TableCell: Cell,
     TableHeaderCell: HeaderCell,
   };
-
-  useEffect(() => {
-    if (
-      props.data &&
-      props.data.length &&
-      props.selectedFileId &&
-      tableRef.current
-    ) {
-      const rowIndex = props.data?.findIndex(
-        (item: TableDataItem) => item.id === props.selectedFileId
-      );
-      if (rowIndex > 0) {
-        tableRef.current.scrollToRow(rowIndex);
-      }
-    }
-  }, [props.selectedFileId, props.data]);
 
   return (
     <TableWrapper>

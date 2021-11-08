@@ -1,9 +1,9 @@
 import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloaderModal/FileDownloaderModal';
-import { selectExplorerSelectedFileIds } from 'src/modules/Explorer/store/explorerSlice';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { setFileDownloadModalVisibility } from 'src/modules/Common/store/commonSlice';
+import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/explorerSlice';
 
 export const ExplorerFileDownloadModalContainer = () => {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ export const ExplorerFileDownloadModalContainer = () => {
   );
 
   const selectedFileIds = useSelector((state: RootState) =>
-    selectExplorerSelectedFileIds(state.explorerReducer)
+    selectExplorerSelectedFileIdsInSortedOrder(state)
   );
 
   return (

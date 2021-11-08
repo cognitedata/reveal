@@ -1,7 +1,5 @@
 import React from 'react';
 import { Column, ColumnShape } from 'react-base-table';
-import { SorterPaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/SorterPaginationWrapper';
-import { MimeTypeSorter } from 'src/modules/Common/Containers/Sorters/MimeTypeSorter';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import { StringRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringRenderer';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
@@ -9,7 +7,6 @@ import { NameRenderer } from 'src/modules/Common/Containers/FileTableRenderers/N
 import { StatusRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StatusRenderer';
 import { AnnotationRenderer } from 'src/modules/Common/Containers/FileTableRenderers/AnnotationRenderer';
 import { ActionRendererProcess } from 'src/modules/Common/Containers/FileTableRenderers/ActionRenderer';
-import { NameSorter } from 'src/modules/Common/Containers/Sorters/NameSorter';
 import { AnnotationLoader } from 'src/modules/Common/Components/AnnotationLoader/AnnotationLoader';
 import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
 import { NoData } from 'src/modules/Common/Components/NoData/NoData';
@@ -23,12 +20,7 @@ const rendererMap = {
   action: ActionRendererProcess,
 };
 
-const sorters = {
-  name: NameSorter,
-  mimeType: MimeTypeSorter,
-};
-
-export function FileTable(props: FileListTableProps) {
+export function FileTable(props: FileListTableProps<TableDataItem>) {
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -75,12 +67,12 @@ export function FileTable(props: FileListTableProps) {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    return `clickable ${props.focusedFileId === rowData.id && 'active'}`;
+    return `clickable ${props.focusedId === rowData.id && 'active'}`;
   };
 
   const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData as ResultData);
+      props.onItemClick(rowData as ResultData);
     },
   };
 
@@ -89,32 +81,17 @@ export function FileTable(props: FileListTableProps) {
   const emptyRenderer = () => (props.isLoading ? <></> : <NoData />);
 
   return (
-    <SorterPaginationWrapper
-      data={props.data}
-      totalCount={props.totalCount}
-      pagination
-      sorters={sorters}
-      sortPaginateControls={props.sortPaginateControls}
-      isLoading={props.isLoading || false}
-    >
-      {(paginationProps) => (
-        <AnnotationLoader data={paginationProps.data}>
-          <SelectableTable
-            {...props}
-            {...paginationProps}
-            columns={columns}
-            rendererMap={rendererMap}
-            selectable
-            onRowSelect={props.onRowSelect}
-            rowClassNames={rowClassNames}
-            rowEventHandlers={rowEventHandlers}
-            allRowsSelected={props.allRowsSelected}
-            onSelectAllRows={props.onSelectAllRows}
-            overlayRenderer={overlayRenderer}
-            emptyRenderer={emptyRenderer}
-          />
-        </AnnotationLoader>
-      )}
-    </SorterPaginationWrapper>
+    <AnnotationLoader data={props.data}>
+      <SelectableTable
+        {...props}
+        columns={columns}
+        rendererMap={rendererMap}
+        selectable
+        rowClassNames={rowClassNames}
+        rowEventHandlers={rowEventHandlers}
+        overlayRenderer={overlayRenderer}
+        emptyRenderer={emptyRenderer}
+      />
+    </AnnotationLoader>
   );
 }

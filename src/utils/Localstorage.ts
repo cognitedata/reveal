@@ -10,7 +10,6 @@ import {
   reviewReducerInitialState,
   ReviewReducerState,
 } from 'src/modules/Review/store/reviewSlice';
-
 import { RootState } from 'src/store/rootReducer';
 
 export const loadState = (): Partial<RootState> | undefined => {
@@ -66,7 +65,7 @@ export type OfflineState = {
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
   explorerSlice: Pick<
     ExplorerReducerState,
-    'filter' | 'query' | 'sortPaginate' | 'focusedFileId'
+    'filter' | 'query' | 'sortMeta' | 'focusedFileId'
   >;
 };
 
@@ -81,7 +80,7 @@ const getOfflineState = (state: RootState): OfflineState => {
     explorerSlice: {
       filter: state.explorerReducer.filter,
       query: state.explorerReducer.query,
-      sortPaginate: state.explorerReducer.sortPaginate,
+      sortMeta: state.explorerReducer.sortMeta,
       focusedFileId: state.explorerReducer.focusedFileId,
     },
   };

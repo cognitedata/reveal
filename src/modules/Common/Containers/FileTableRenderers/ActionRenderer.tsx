@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
 import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
-import { selectAllSelectedFiles } from 'src/modules/Common/store/filesSlice';
+import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
 import { RootState } from 'src/store/rootReducer';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
@@ -13,7 +13,7 @@ import {
 } from 'src/modules/Process/processSlice';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { selectExplorerSelectedFileIds } from 'src/modules/Explorer/store/explorerSlice';
+import { selectExplorerSelectedIds } from 'src/modules/Explorer/store/explorerSlice';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 
 export function ActionRenderer(
@@ -78,14 +78,14 @@ export function ActionRenderer(
 export function ActionRendererExplorer({ rowData }: CellRenderer) {
   const filesSelected = useSelector(
     (state: RootState) =>
-      !!selectExplorerSelectedFileIds(state.explorerReducer).length
+      !!selectExplorerSelectedIds(state.explorerReducer).length
   );
   return ActionRenderer(rowData, VisionMode.Explore, filesSelected);
 }
 
 export function ActionRendererProcess({ rowData }: CellRenderer) {
   const filesSelected = useSelector(
-    (state: RootState) => !!selectAllSelectedFiles(state.filesSlice).length
+    (state: RootState) => !!selectAllSelectedIds(state.filesSlice).length
   );
   return ActionRenderer(rowData, VisionMode.Contextualize, filesSelected);
 }
