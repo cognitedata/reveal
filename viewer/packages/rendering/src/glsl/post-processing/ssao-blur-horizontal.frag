@@ -1,4 +1,4 @@
-// Copyright Cognite (C) 2019 Cognite
+// Copyright Cognite (C) 2021 Cognite
 //
 // Efficient Gaussian blur based on technique described by Daniel Rákos in
 // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
@@ -11,7 +11,7 @@ uniform sampler2D tAmbientOcclusion;
 uniform vec2 resolution;
 
 void main() {
-  float blurredAO = 
+  float blurredAO =
     texture2D(tAmbientOcclusion, vUv).r * 0.2270270270 +
     texture2D(tAmbientOcclusion, vUv + vec2(1.3746153846, 0.0) / resolution.x).r * 0.3162162162 +
     texture2D(tAmbientOcclusion, vUv + vec2(3.2307692308, 0.0) / resolution.x).r * 0.0702702703 +
@@ -20,4 +20,3 @@ void main() {
 
   gl_FragColor = vec4(blurredAO, vec3(1.0));
 }
-

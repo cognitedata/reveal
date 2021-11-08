@@ -118,6 +118,14 @@ export const ssaoBlurVerticalCombineShaders = {
 };
 
 /**
+ * Full one-pass SSAO blur shader
+ */
+export const ssaoBlurFullCombineShaders = {
+  fragment: glsl(require('../glsl/post-processing/ssao-full-blur.frag').default),
+  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
+};
+
+/**
  * Shaders use to estimate how many pixels a sector covers on screen.
  */
 export const coverageShaders = {
