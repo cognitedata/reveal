@@ -102,26 +102,10 @@ export const ssaoShaders = {
 };
 
 /**
- * Shader to blur ambient occlusion texture horizontally
- */
-export const ssaoBlurHorizontalShaders = {
-  fragment: glsl(require('../glsl/post-processing/ssao-blur-horizontal.frag').default),
-  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
-};
-
-/**
- * Shader to blur ambient occlusion texture vertically and combine with diffuse
- */
-export const ssaoBlurVerticalCombineShaders = {
-  fragment: glsl(require('../glsl/post-processing/ssao-blur-vertical-combine.frag').default),
-  vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
-};
-
-/**
  * Full one-pass SSAO blur shader
  */
-export const ssaoBlurFullCombineShaders = {
-  fragment: glsl(require('../glsl/post-processing/ssao-full-blur.frag').default),
+export const ssaoBlurCombineShaders = {
+  fragment: glsl(require('../glsl/post-processing/ssao-blur-combine.frag').default),
   vertex: glsl(require('../glsl/post-processing/passthrough.vert').default)
 };
 
