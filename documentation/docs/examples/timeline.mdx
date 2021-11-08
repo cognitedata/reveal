@@ -40,13 +40,11 @@ keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 
 ```
 
 ### Remove Styles & Node in Keyframes
-`unassignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance)`
+`unassignStyledNodeCollection(nodeCollection: NodeCollectionBase)`
 - `nodeCollection` - Node set to be removed from keyframes.
-- `nodeAppearance` - Styles to be removed from keyframes.
 
 ```jsx
-keyframe.unassignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] });
-```
+keyframe.unassignStyledNodeCollection(nodes);
 
 ### Play timelines
 We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
