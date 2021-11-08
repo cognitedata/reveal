@@ -13,7 +13,7 @@ import {
 const logger = getNetworkLogger();
 
 fixture('Admin - Document Feedback')
-  .meta({ page: 'admin:feedback:document', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'admin:feedback:document', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .before(async () => {
     await deleteFavorites();

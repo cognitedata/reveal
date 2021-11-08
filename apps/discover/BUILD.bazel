@@ -368,6 +368,7 @@ sh_binary(
 # :build target above and override here
 build_sed(
     name = "build_sed",
+    app = "Discover",
     binary = select({
         "@bazel_tools//src/conditions:darwin": ":build_sed_darwin",
         "//conditions:default": ":build_sed_default",
@@ -536,7 +537,8 @@ genrule(
     cmd = "echo 'export const USER_ID = \'$$RANDOM\';' > $@",
 )
 
-# for local:
+# for local (mac):
+# to use this, manually change the cluster and page fixtures inline here:
 testcafe(
     name = "testcafe",
     args = [
@@ -544,28 +546,7 @@ testcafe(
         "'chrome --no-sandbox --use-gl=swiftshader --window-size=\"1500,1040\"'",
         "testcafe",
         "--stop-on-first-fail",
-    ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
-        ":start",
-        "chdir-workspace.js",
-        ":copy_main_testcafe_files",
-        ":copy_testcafe_files",
-    ],
-    env = {
-        "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
-        "BASE_URL": "https://localhost:3000",
-    },
-)
-
-# to use this, manually change the cluster and page fixtures inline here:
-testcafe(
-    name = "testcafe_linux",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "chromium '--use-gl=swiftshader --disable-software-rasterizer --window-size=1500,1040'",
-        "testcafe",
-        "--stop-on-first-fail",
-        # "--fixture-meta page=savedSearches",
+        # "--fixture-meta page=search:documents",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
         ":start",
@@ -575,6 +556,31 @@ testcafe(
     ],
     env = {
         "REACT_APP_E2E_CLUSTER": "azure-dev",
+        "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
+        "BASE_URL": "https://localhost:3000",
+    },
+)
+
+# for local (linux):
+# to use this, manually change the cluster and page fixtures inline here:
+testcafe(
+    name = "testcafe_linux",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "chromium '--use-gl=swiftshader --disable-software-rasterizer --window-size=1920,1040'",
+        "testcafe",
+        "--stop-on-first-fail",
+        "--fixture-meta page=well:search",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
+        ":start",
+        "chdir-workspace.js",
+        ":copy_main_testcafe_files",
+        ":copy_testcafe_files",
+    ],
+    env = {
+        "REACT_APP_E2E_CLUSTER": "bluefield",
+        # "REACT_APP_E2E_CLUSTER": "azure-dev",
         "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
         "BASE_URL": "https://localhost:3000",
     },
@@ -701,7 +707,7 @@ ts_project(
 
 cypress_web_test(
     # The name of your test target
-    name = "cypress_test",
+    name = "cypress_disabled",
     srcs = [
         ":build_sed",
         # Load ts_library tests as a target to srcs

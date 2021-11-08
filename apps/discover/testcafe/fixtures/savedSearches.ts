@@ -14,18 +14,18 @@ export const deleteSavedSearches = async (
   // console.log('ID token:', token);
 
   progress(`Starting to delete all saved searches`);
-  const savedSearchesList = await savedSearches.list(headers, App.tenant);
+  const savedSearchesList = await savedSearches.list(headers, App.project);
 
   const deleting = savedSearchesList.map((savedSearch) => {
     progress(`Deleting saved search: ${savedSearch.value.name}`);
-    return savedSearches.delete(savedSearch.value.id, headers, App.tenant);
+    return savedSearches.delete(savedSearch.value.id, headers, App.project);
   });
 
   const normalizeResult = await normalizeSavedSearch(savedSearch);
   try {
     await Promise.all(deleting);
-    // await savedSearches.delete('current', token, App.tenant);
-    await savedSearches.save(normalizeResult, 'current', headers, App.tenant);
+    // await savedSearches.delete('current', token, App.project);
+    await savedSearches.save(normalizeResult, 'current', headers, App.project);
   } catch (error) {
     console.error(error);
   }
@@ -42,7 +42,7 @@ export const createSavedSearches = async (
 
   const normalizeResult = await normalizeSavedSearch(savedSearch);
   try {
-    await savedSearches.save(normalizeResult, name, headers, App.tenant);
+    await savedSearches.save(normalizeResult, name, headers, App.project);
   } catch (error) {
     console.error(error);
   }

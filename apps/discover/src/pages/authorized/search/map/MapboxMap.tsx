@@ -240,10 +240,23 @@ export const Map: React.FC<Props> = React.memo(
     // Add zoom if it exists. (note: cannot do zoom:0 with this)
     useEffect(() => {
       if (map && flyTo) {
-        map.flyTo({
-          ...(flyTo.zoom && { zoom: flyTo.zoom }),
-          center: [flyTo.center[0], flyTo.center[1]],
-        });
+        let safe = true;
+
+        if (flyTo.center[1] < -90 || flyTo.center[1] > 90) {
+          console.log('Error in y when changing map to:', flyTo);
+          safe = false;
+        }
+        if (flyTo.center[0] < -90 || flyTo.center[0] > 90) {
+          console.log('Error in x when changing map to:', flyTo);
+          safe = false;
+        }
+
+        if (safe) {
+          map.flyTo({
+            ...(flyTo.zoom && { zoom: flyTo.zoom }),
+            center: [flyTo.center[0], flyTo.center[1]],
+          });
+        }
       }
     }, [map, flyTo]);
 

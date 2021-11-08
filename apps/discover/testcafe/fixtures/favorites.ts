@@ -1,7 +1,7 @@
 import { favorites } from '../../src/modules/api/favorites';
 import { UpdateFavoriteContentData } from '../../src/modules/favorite/types';
 import App from '../__pages__/App';
-import { getTokenHeaders, progress, testRunId } from '../utils';
+import { getFullUserId, getTokenHeaders, progress, testRunId } from '../utils';
 
 const FAV_SET_FOR_TEST_RUN = testRunId;
 
@@ -13,11 +13,16 @@ export const deleteAllAndCreateSetForTestRun = async () => {
 
 export const deleteFavorites = async () => {
   const headers = await getTokenHeaders();
-  const favoritesList = await favorites.list(headers, App.tenant);
+  const favoritesList = await favorites.list(headers, App.project);
+  const userId = getFullUserId();
 
   const deleting = favoritesList.map((favorite) => {
-    progress(`Deleting favorite: ${favorite.name}`);
-    return favorites.delete(favorite.id, headers, App.tenant);
+    if (favorite.owner.id === userId) {
+      progress(`Deleting favorite: ${favorite.name}`);
+      return favorites.delete(favorite.id, headers, App.project);
+    }
+    progress(`Skipping delete on shared favorite: ${favorite.name}`);
+    return Promise.resolve();
   });
 
   await Promise.all(deleting);
@@ -34,7 +39,7 @@ export const addFavorite = async (
     const createdFavorite = await favorites.create(
       { name, description },
       headers,
-      App.tenant
+      App.project
     );
     return createdFavorite;
   } catch (error) {
@@ -51,7 +56,7 @@ export const updateFavoriteContent = async (
   const updateContent = await favorites.updateFavoriteContent(
     data,
     headers,
-    App.tenant
+    App.project
   );
 
   return updateContent;

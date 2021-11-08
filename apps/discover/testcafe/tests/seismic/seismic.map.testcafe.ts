@@ -6,7 +6,7 @@ import { progress, logErrors } from '../../utils';
 
 fixture
   .skip('Search seismic page - map tests')
-  .meta({ page: 'seismic:map', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'seismic:map', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .afterEach(async () => {
     logErrors();

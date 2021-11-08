@@ -22,27 +22,26 @@ import WellInspectPage from './WellInspect';
 import WellSearchPage from './WellSearch';
 
 // 'fixture inserting tests' need to know public readonly
-export const tenantPrefix = 'discover-e2e-';
+export const projectPrefix = 'discover-e2e-';
 export const cluster = process.env.REACT_APP_E2E_CLUSTER || 'bluefield';
-export const tenant = `${tenantPrefix}${cluster}`;
-export const wellsTenant = 'underground';
-export const filename = 'Test PDF file';
+export const project = `${projectPrefix}${cluster}`;
+export const filename = '15_9_19_A_1980_01_01';
 export const fileType = 'PDF';
 export const documentCategory = 'Unclassified';
-export const source = 'Test-Drive';
+export const source = 'Volve';
+export const duplicateFileName = 'Volve_Well_Summary_15_9-19.pdf';
+export const wellDataSearchPhrase = 'Well F';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
 class App {
   public readonly cluster = cluster;
 
-  public readonly tenant = tenant;
+  public readonly project = project;
 
   public readonly baseUrl = baseUrl;
 
-  public readonly baseApp = `${baseUrl}/${tenant}`;
-
-  public readonly undergroundBaseApp = `${baseUrl}/${wellsTenant}`;
+  public readonly baseApp = `${baseUrl}/${project}`;
 
   public readonly documentSearchPage = DocumentSearchPage;
 

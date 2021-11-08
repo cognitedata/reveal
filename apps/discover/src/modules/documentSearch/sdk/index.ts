@@ -2,7 +2,7 @@ import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 let client: CogniteClientPlayground;
 
-export const authenticateDocumentSDK = (
+export const authenticateDocumentSDK = async (
   appId: string,
   baseUrl: string,
   project: string,
@@ -13,7 +13,7 @@ export const authenticateDocumentSDK = (
     baseUrl,
   });
 
-  client.loginWithOAuth({
+  await client.loginWithOAuth({
     type: 'CDF_OAUTH',
     options: {
       project,

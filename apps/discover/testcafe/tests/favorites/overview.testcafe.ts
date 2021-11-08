@@ -1,23 +1,24 @@
 import { t } from 'testcafe';
 
 import { DUPLICATED_SET_SUFFIX } from '../../../src/pages/authorized/favorites/constants';
-import App from '../../__pages__/App';
+import { WELLS_TAB_TITLE_KEY } from '../../../src/pages/authorized/search/constants';
+import App, { wellDataSearchPhrase } from '../../__pages__/App';
 import { addFavorite, deleteFavorites } from '../../fixtures/favorites';
-import { progress, testRunId, startTest, logErrors } from '../../utils';
+import { progress, shortTestRunId, startTest, logErrors } from '../../utils';
 
-const FAV_SET_NAME = `fav_${testRunId}`;
+const FAV_SET_NAME = `f_${shortTestRunId}`;
 const DUPLICATE_SET_NAME = `${FAV_SET_NAME}_DUPLICATED`;
 const EDITED_SET_NAME = `${FAV_SET_NAME}_EDITED_NAME`;
 const EDITED_SET_DESCRIPTION = `${FAV_SET_NAME}_EDITED_DESCRIPTION`;
-const wellDataSearchPhrase = 'Well F';
 
 fixture('Favorites overview page')
-  .meta({ page: 'favorites:overview', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'favorites:overview', tenant: App.project }) // Used to run a single test file
   .page(App.baseUrl)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());
     progress('Go to favorite page');
     await App.topbar.clickNavigationTab('Favorites');
+    // await t.wait(2000); // for cdf
   })
   .before(async () => {
     progress('Delete all the favorite items');
@@ -25,8 +26,6 @@ fixture('Favorites overview page')
 
     progress(`Add ${FAV_SET_NAME} favorite set`);
     await addFavorite(FAV_SET_NAME);
-
-    // await t.wait(2000); // for cdf
   })
   .afterEach(async () => logErrors());
 
@@ -44,6 +43,7 @@ startTest(`Create a duplicate`, async () => {
   await App.favoritesPage.createDuplicateSet(FAV_SET_NAME, DUPLICATE_SET_NAME);
   await App.favoritesPage.checkIfFavoriteSetExists(FAV_SET_NAME);
   await App.favoritesPage.checkIfFavoriteSetExists(DUPLICATE_SET_NAME);
+  await App.favoritesPage.deleteFavoriteSet(DUPLICATE_SET_NAME);
 });
 
 startTest(`Cancel editing the duplicated set`, async () => {
@@ -56,15 +56,15 @@ startTest(`Cancel editing the duplicated set`, async () => {
   await App.favoritesPage.checkIfFavoriteSetExists(EDITED_SET_NAME, false);
 });
 
-startTest(`Edit the duplicated set`, async () => {
-  await App.favoritesPage.createDuplicateSet(FAV_SET_NAME, DUPLICATE_SET_NAME);
-  await App.favoritesPage.clickButtonInFavoriteSet(DUPLICATE_SET_NAME, 'Edit');
-  await App.createFavoriteDialog.checkIfNameFieldHasValue(DUPLICATE_SET_NAME);
-  await App.createFavoriteDialog.fillInNameAndDescription(EDITED_SET_NAME);
-  await App.createFavoriteDialog.clickSaveButton();
-  await App.favoritesPage.checkIfFavoriteSetExists(DUPLICATE_SET_NAME, false);
-  await App.favoritesPage.checkIfFavoriteSetExists(EDITED_SET_NAME);
-});
+// startTest(`Edit the duplicated set`, async () => {
+//   await App.favoritesPage.createDuplicateSet(FAV_SET_NAME, DUPLICATE_SET_NAME);
+//   await App.favoritesPage.clickButtonInFavoriteSet(DUPLICATE_SET_NAME, 'Edit');
+//   await App.createFavoriteDialog.checkIfNameFieldHasValue(DUPLICATE_SET_NAME);
+//   await App.createFavoriteDialog.fillInNameAndDescription(EDITED_SET_NAME);
+//   await App.createFavoriteDialog.clickSaveButton();
+//   await App.favoritesPage.checkIfFavoriteSetExists(DUPLICATE_SET_NAME, false);
+//   await App.favoritesPage.checkIfFavoriteSetExists(EDITED_SET_NAME);
+// });
 
 startTest(`Edit only the description of set`, async () => {
   await App.favoritesPage.clickButtonInFavoriteSet(FAV_SET_NAME, 'Edit');
@@ -88,8 +88,9 @@ startTest.skip(`Check that favorite set exists in both views`, async () => {
   await App.favoritesPage.checkIfFavoriteSetExists(FAV_SET_NAME);
 });
 
+// NOTE: this should NOT be here, it's a search result test.
 startTest('Add a well to the set', async () => {
-  await App.navigateToResultsPage('Wells');
+  await App.navigateToResultsPage(WELLS_TAB_TITLE_KEY);
   await App.wellSearchPage.doSearch(wellDataSearchPhrase);
   await App.resultTable.clickRowWithNthCheckbox(0);
   await App.wellSearchPage.addSelectedWellsToFavoriteSet(FAV_SET_NAME);

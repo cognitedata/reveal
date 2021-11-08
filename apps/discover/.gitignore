@@ -26,8 +26,6 @@ discover-e2e-*.jwk-key.json
 # PR Server builds
 build.tar.gz
 
-# testcafe
-testcafe/artifacts
 
 # storybook
 storybook-static/
@@ -43,6 +41,8 @@ testcafe/screenshots
 testcafe/logs
 testcafe/videos
 res.xml
+testcafe/artifacts
+cypress/videos
 
 # lint
 .eslintcache

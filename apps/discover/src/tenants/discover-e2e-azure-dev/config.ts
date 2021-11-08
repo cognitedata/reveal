@@ -9,7 +9,6 @@ import config from '../discover-e2e-config';
 export default {
   ...config,
 
-  // Enabling only for azure-dev since the wells SDK v2 only supports for azure-dev currently.
   enableWellSDKV3: true,
 
   wells: {

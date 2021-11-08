@@ -17,6 +17,7 @@ module.exports = (_, config) => {
   app.use(redirectUnmatched);
 
   app.listen(port);
+  // console.log('config', config);
 
   return {
     ...config,

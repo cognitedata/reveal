@@ -7,7 +7,7 @@ import { startTest } from '../../utils/utils';
  * THIS FILE IS FOR DEALING WITH THE SEARCH QUERY INFO PANEL
  */
 fixture('Search query info')
-  .meta({ page: 'searchQueryInfo', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'searchQueryInfo', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());

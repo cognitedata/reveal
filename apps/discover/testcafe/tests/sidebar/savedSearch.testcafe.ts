@@ -35,7 +35,7 @@ const FIELD_BLOCK_OPERATOR = 'Field / Block / Operator';
  */
 fixture
   .skip('Saved searches')
-  .meta({ page: 'savedSearches', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'savedSearches', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .requestHooks(logger) // <-- log network requests
   .before(async () => {

@@ -4,7 +4,7 @@ import App from '../../__pages__/App';
 import { startTest, logErrors } from '../../utils';
 
 fixture('Feedback - document')
-  .meta({ page: 'feedback:document', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'feedback:document', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());

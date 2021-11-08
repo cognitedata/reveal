@@ -11,18 +11,18 @@ import { logErrors, progress, startTest } from '../../utils';
 const SAVED_SEARCH_NAME = `TESTCAFE_SAVED_SEARCH`;
 
 fixture('Favorites saved search list')
-  .meta({ page: 'favorites:savedSearch', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'favorites:savedSearch', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());
 
-    progress('delete all');
+    progress('Delete all');
     await deleteSavedSearches();
 
-    progress('create a new set');
+    progress('Create a new set');
     await createSavedSearches(SAVED_SEARCH_NAME, { query: filename });
 
-    progress('refresh the page to load the newly added record from use query');
+    progress('Refresh the page to load the newly added record from use query');
 
     await t.eval(() => {
       // eslint-disable-next-line  no-restricted-globals
@@ -67,7 +67,7 @@ startTest('Close delete modal without deleting', async () => {
   await t.expect(App.resultTable.row.exists).ok();
 });
 
-startTest('load a saved search', async () => {
+startTest('Load a saved search', async () => {
   await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
 
   await App.resultTable.hoverRowWithNth(0);

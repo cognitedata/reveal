@@ -2,7 +2,7 @@ import App from '../../__pages__/App';
 import { startTest, logErrors } from '../../utils';
 
 fixture('User Profile')
-  .meta({ page: 'user:profile', tenant: App.tenant })
+  .meta({ page: 'user:profile', tenant: App.project })
   .page(App.baseApp)
   .beforeEach(async (t) => {
     await t.useRole(App.getUserRole());

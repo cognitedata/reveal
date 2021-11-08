@@ -1,14 +1,14 @@
 import { t } from 'testcafe';
 
 import { WELLS_TAB_TITLE_KEY } from '../../../src/pages/authorized/search/constants';
-import App from '../../__pages__/App';
+import App, { wellDataSearchPhrase } from '../../__pages__/App';
 import { deleteSavedSearches } from '../../fixtures/savedSearches';
 import { startTest, getPostLogger, logErrors, progress } from '../../utils';
 
 const loggerPost = getPostLogger();
 
 fixture('Well inspect')
-  .meta({ page: 'well:inspect', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'well:inspect', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .before(async () => {
     await deleteSavedSearches();
@@ -29,7 +29,8 @@ startTest('Assessing inspect navigation tab', async () => {
 });
 
 startTest('Inspect single wellbore', async () => {
-  await App.resultTable.hoverRowWithNth(1);
+  await App.wellSearchPage.doSearch(wellDataSearchPhrase);
+  await App.resultTable.clickRowWithNthCheckbox(0);
   await App.resultTable.clickRowWithNthButtonWithText(1, 'View');
   await App.wellInspectPage.checkIfWellInspectPageIsAvailable();
   await App.wellInspectPage.checkIfWellCountIsDisplayed(1);
@@ -101,7 +102,7 @@ startTest('Trajectory wellbore search from dropdown', async () => {
   progress('Do a search in the dropdown input');
   await App.wellInspectPage.doSearchInDropdown('Wellbore 19');
   progress('Should return at least one record', true);
-  await t.expect(App.wellInspectPage.wellboreDropdownMenuItems.count).eql(2); // including select all
+  await t.expect(App.wellInspectPage.wellboreDropdownMenuItems.count).gt(2); // including select all
 });
 
 startTest('Trajectory wellbore select all indeterminate', async () => {

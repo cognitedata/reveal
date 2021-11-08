@@ -62,6 +62,9 @@ const defaultConfig: TenantConfig = {
         { name: 'PPFG', enabled: true },
       ],
     },
+    relatedDocument: {
+      enabled: true,
+    },
   },
   azureConfig: {
     ...testAzureConfig,

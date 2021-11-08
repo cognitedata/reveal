@@ -142,7 +142,7 @@ export const mapV2toV3PolygonFilter = (
   const { geometry, geometryType } = getGeometryAndGeometryType(polygonFilter);
 
   return {
-    geometry: String(geometry),
+    geometry: JSON.stringify(geometry),
     crs: polygonFilter.crs,
     geometryType,
   };

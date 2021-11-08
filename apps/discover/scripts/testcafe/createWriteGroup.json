@@ -91,6 +91,38 @@
               "all": {}
             }
           }
+        },
+        {
+          "templateGroupsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "templateInstancesAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "wellsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "documentPipelinesAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
         }
       ]
     }

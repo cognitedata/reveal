@@ -1,11 +1,25 @@
-import { TenantConfig } from 'tenants/types';
+import { defaultWellsConfig } from 'tenants/config';
 
 import config from '../discover-e2e-config';
 
-const defaultConfig: TenantConfig = config;
-
 /**
- * This config should be sync with `discover-e2-azure-dev` tenant.
+ * This config should be sync with `discover-e2-bluefield` tenant.
  * If there are changes to be made, add them to '../test-config.ts'.
  */
-export default defaultConfig;
+export default {
+  ...config,
+
+  enableWellSDKV3: true,
+
+  wells: {
+    ...config.wells,
+    nds: {
+      enabled: true,
+    },
+    npt: {
+      enabled: true,
+    },
+    trajectory: defaultWellsConfig.wells?.trajectory,
+    casing: defaultWellsConfig.wells?.casing,
+  },
+};

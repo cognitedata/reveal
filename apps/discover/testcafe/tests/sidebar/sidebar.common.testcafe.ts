@@ -4,7 +4,7 @@ import App from '../../__pages__/App';
 import { startTest, logErrors } from '../../utils';
 
 fixture('Test side bar functionality')
-  .meta({ page: 'sidebar:common', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'sidebar:common', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());

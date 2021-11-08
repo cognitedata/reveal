@@ -5,6 +5,7 @@ import { doReAuth } from './getCogniteSDKClient';
 export type FetchHeaders = Record<string, string>;
 
 interface FetchOptions {
+  mode?: string;
   headers?: FetchHeaders;
 }
 

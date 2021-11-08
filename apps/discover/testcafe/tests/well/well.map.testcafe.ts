@@ -6,7 +6,7 @@ import { deleteSavedSearches } from '../../fixtures/savedSearches';
 import { startTest, logErrors } from '../../utils/utils';
 
 fixture('Search wells page - map based testing')
-  .meta({ page: 'well:map', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'well:map', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .before(async () => {
     await deleteSavedSearches();

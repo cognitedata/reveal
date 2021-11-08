@@ -21,6 +21,7 @@ import {
   InspectWellboreContext,
   Well,
   Wellbore,
+  WellId,
 } from 'modules/wellSearch/types';
 import { ExternalLinksConfig } from 'tenants/types';
 
@@ -40,12 +41,11 @@ export const useWellResult = (id?: number) => {
   return null;
 };
 
-export const useFavoriteWellResults = (ids?: number[]) => {
+export const useFavoriteWellResults = (ids?: WellId[]) => {
   const { data, isIdle, isLoading } = useWellsByIdForFavoritesQuery();
 
   return useMemo(() => {
     if (!ids || !ids.length) return { data: [], isIdle, isLoading };
-
     const resultData = ids.reduce((acc: Well[], id) => {
       if (data && data[id]) {
         return [...acc, data[id]];
@@ -54,7 +54,7 @@ export const useFavoriteWellResults = (ids?: number[]) => {
     }, []);
 
     return { data: resultData, isIdle, isLoading };
-  }, [data, isIdle, isLoading]);
+  }, [data, isIdle, isLoading, ids]);
 };
 
 export const useFavoriteWellResult = (id?: number) => {

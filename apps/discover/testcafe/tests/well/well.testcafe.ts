@@ -3,7 +3,7 @@ import { t } from 'testcafe';
 import { NOTIFICATION_MESSAGE } from '../../../src/components/add-to-favorite-set-menu/constants';
 import { CREATE_SET_MODAL_BUTTON_TEXT } from '../../../src/pages/authorized/favorites/constants';
 import { WELLS_TAB_TITLE_KEY } from '../../../src/pages/authorized/search/constants';
-import App from '../../__pages__/App';
+import App, { wellDataSearchPhrase, source } from '../../__pages__/App';
 import {
   deleteAllAndCreateSetForTestRun,
   deleteFavorites,
@@ -13,11 +13,11 @@ import { startTest, getPostLogger, progress, logErrors } from '../../utils';
 // There could be filters applied with existing records
 // To trigger clear all button, make sure to do a empty records search
 const loggerPost = getPostLogger();
-const wellDataSearchPhrase = 'Well F';
-const wellName = 'Well F-1 (well:F-1)';
+const wellName = 'F-1';
+const sourcePill = `Source : ${source.toLowerCase()}`;
 
 fixture('Search wells page - text and filter based testing')
-  .meta({ page: 'well:search', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'well:search', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());
@@ -74,7 +74,7 @@ startTest.skip('Apply Column Settings', async () => {
 startTest('apply source filter', async () => {
   const category = App.filterClearPage.dataSourceCaption;
   const columnName = 'Source';
-  const filterOptionText = 'EDM';
+  const filterOptionText = source;
 
   await App.resultTable.checkIfColumnExistsAndDisplayIfNotExists(columnName);
   await App.sidebar.clickFilterCategory('Wells');
@@ -429,7 +429,7 @@ startTest.skip(
 );
 
 startTest(
-  'Apply well filters and see if filter tags are available, clear all',
+  `Apply well filters and see if filter tags are available, clear ${sourcePill}`,
   async () => {
     await App.wellSearchPage.doSearch(wellDataSearchPhrase);
 
@@ -437,15 +437,15 @@ startTest(
     await App.sidebar.clickFilterSubCategory(
       App.filterClearPage.dataSourceCaption
     );
-    await App.sidebar.clickFilterOption('EDM');
+    await App.sidebar.clickFilterOption(source);
 
     await App.sidebar.clickGoBackArrow();
 
-    await App.sidebar.wellFilterTag.exists('Source : EDM', true);
+    await App.sidebar.wellFilterTag.exists(sourcePill, true);
 
-    await App.sidebar.wellFilterTag.clickRemove('Source : EDM');
+    await App.sidebar.wellFilterTag.clickRemove(sourcePill);
 
-    await App.sidebar.wellFilterTag.exists('Source : EDM', false);
+    await App.sidebar.wellFilterTag.exists(sourcePill, false);
   }
 );
 
@@ -458,15 +458,15 @@ startTest(
     await App.sidebar.clickFilterSubCategory(
       App.filterClearPage.dataSourceCaption
     );
-    await App.sidebar.clickFilterOption('EDM');
+    await App.sidebar.clickFilterOption(source);
 
     await App.sidebar.clickGoBackArrow();
 
-    await App.sidebar.wellFilterTag.exists('Source : EDM', true);
+    await App.sidebar.wellFilterTag.exists(sourcePill, true);
 
     await App.sidebar.wellFilterTag.clickClearAll();
 
-    await App.sidebar.wellFilterTag.exists('Source : EDM', false);
+    await App.sidebar.wellFilterTag.exists(sourcePill, false);
   }
 );
 
@@ -484,30 +484,30 @@ startTest(
     progress('Check if the bulk action bar is visible');
     await t.expect(App.resultTable.bulkActionBar.exists).ok();
 
-    progress('Check if the selected wells count is displayed');
+    const wellCountText = '1 well selected';
+    progress(
+      `Check if the selected wells count is displayed: ${wellCountText}`
+    );
     await t
-      .expect(App.resultTable.getBulkActionText('2 wells selected').exists)
+      .expect(App.resultTable.getBulkActionText(wellCountText).exists)
       .ok();
 
-    progress('Check if the selected wellbores count is displayed');
+    const wellBoreCount = 'With 3 wellbores inside';
+    progress(
+      `Check if the selected wellbores count is displayed as: ${wellBoreCount}`
+    );
     await t
-      .expect(
-        App.resultTable.getBulkActionText('With 2 wellbores inside').exists
-      )
+      .expect(App.resultTable.getBulkActionText(wellBoreCount).exists)
       .ok();
 
-    await App.resultTable.clickRowWithNthCheckbox(0);
+    await App.resultTable.clickRowWithNthCheckbox(4);
 
-    progress('Check if the selected wells count is updated');
+    const wellBoreCountFinal = 'With 2 wellbores inside';
+    progress(
+      `Check if the selected wellbores count is updated: ${wellBoreCountFinal}`
+    );
     await t
-      .expect(App.resultTable.getBulkActionText('1 well selected').exists)
-      .ok();
-
-    progress('Check if the selected wellbores count is updated');
-    await t
-      .expect(
-        App.resultTable.getBulkActionText('With 1 wellbore inside').exists
-      )
+      .expect(App.resultTable.getBulkActionText(wellBoreCountFinal).exists)
       .ok();
   }
 );
@@ -519,13 +519,13 @@ startTest('Apply well filters and click clear button', async () => {
   await App.sidebar.clickFilterSubCategory(
     App.filterClearPage.dataSourceCaption
   );
-  await App.sidebar.clickFilterOption('EDM');
+  await App.sidebar.clickFilterOption(source);
 
   await App.sidebar.clickGoBackArrow();
 
-  await App.sidebar.wellFilterTag.exists('Source : EDM', true);
+  await App.sidebar.wellFilterTag.exists(sourcePill, true);
 
   await App.sidebar.wellFilterTag.clickClearButton();
 
-  await App.sidebar.wellFilterTag.exists('Source : EDM', false);
+  await App.sidebar.wellFilterTag.exists(sourcePill, false);
 });

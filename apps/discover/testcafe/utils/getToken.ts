@@ -1,9 +1,11 @@
 import fetch, { Request, Response, Headers } from 'cross-fetch';
 
-import { getTestUserId } from '../../src/_helpers/getTestUserId';
 import App from '../__pages__/App';
 
+import { getTestUserId } from './getUserId';
 import { progress } from './utils';
+
+const TOKEN_PREFIX = 'discover-e2e';
 
 const rawHeaders = {
   'Content-Type': 'application/json',
@@ -45,13 +47,26 @@ if (!globalThis.fetch) {
   globalThis.fetch = fetch;
 }
 
-// make sure we get the same token as the one we use locally
-export const getTokenHeaders = (): Promise<Record<string, string>> => {
+export const getFullUserId = () => {
   const userId = getTestUserId();
 
-  progress(' ');
-  progress(`Using user id: ${userId}`);
-  progress(' ');
+  return `${TOKEN_PREFIX}-user-${userId}`;
+};
+
+// make sure we get the same token as the one we use locally
+export const getTokenHeaders = ({
+  access, // get access token
+}: {
+  access?: boolean;
+} = {}): Promise<Record<string, string>> => {
+  const userId = getTestUserId();
+
+  progress('');
+  progress('Info:');
+  progress(` - User id: ${userId}`);
+  // progress(` - Cluster: ${App.cluster}`);
+  // progress(` - Project: ${App.project}`);
+  progress('');
 
   return customFetch('http://localhost:8200/login/token', {
     method: 'POST',
@@ -61,14 +76,28 @@ export const getTokenHeaders = (): Promise<Record<string, string>> => {
         App.cluster === 'bluefield'
           ? '1f860e84-7353-4533-a088-8fbe3228400f' // bluefield
           : '808c3e2e-7bc1-4211-8d9e-66b4a7a37d48', // azure-dev
-      groups: ['defaultGroup'],
+      groups: ['defaultGroup', 'writeGroup'],
       roles: [],
-      project: App.tenant,
-      tokenId: 'discover-e2e',
+      project: App.project,
+      tokenId: TOKEN_PREFIX,
       userId,
     }),
     headers,
   }).then((response: any): Record<string, string> => {
+    if (!response) {
+      progress('--!!!!--');
+      progress('Invalid response from Fake IdP');
+      progress('--!!!!--');
+      return {};
+    }
+
+    // useful for debugging invalid tokens!
+    // console.log('Token response:', response);
+
+    if (access) {
+      return { token: response.access_token };
+    }
+
     return {
       ...rawHeaders,
       Authorization: `Bearer ${response.id_token}`,

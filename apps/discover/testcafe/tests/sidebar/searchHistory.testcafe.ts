@@ -7,7 +7,7 @@ const logger = getNetworkLogger();
 
 fixture
   .skip('Search History')
-  .meta({ page: 'history:search', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'history:search', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .requestHooks(logger) // <-- log network requests
   .beforeEach(async () => {

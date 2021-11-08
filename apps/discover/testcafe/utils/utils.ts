@@ -7,6 +7,8 @@ export const find = (testid: string) => Selector(`[data-testid="${testid}"]`);
 // entries that are used over multiple tests
 export const testRunId = `CI_${v1()}`;
 
+export const shortTestRunId = testRunId.split('-')[0];
+
 export const title = (msg: string) =>
   // eslint-disable-next-line no-console
   console.log(`Starting: ${msg}`);

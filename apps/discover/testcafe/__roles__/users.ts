@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/testcafe';
+import capitalize from 'lodash/capitalize';
 import { Role } from 'testcafe';
 
+import App from '../__pages__/App';
 import { progress } from '../utils';
 
 const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
@@ -10,7 +12,7 @@ export const regularUser = Role(
   async (t) => {
     progress('Attempting to perform fake IDP login');
     const loginButton = screen.getByText(
-      'Login with Fake IDP (Bluefield User)'
+      `Login with Fake IDP (${capitalize(App.cluster)} User)`
     );
     await t.click(loginButton);
     await t.click(screen.getByText('Accept'));
@@ -23,7 +25,7 @@ export const adminUser = Role(
   async (t) => {
     progress('Attempting to perform fake IDP login');
     const loginButton = screen.getByText(
-      'Login with Fake IDP (Bluefield Admin)'
+      `Login with Fake IDP (${capitalize(App.cluster)} Admin)`
     );
     await t.click(loginButton);
     await t.click(screen.getByText('Accept'));

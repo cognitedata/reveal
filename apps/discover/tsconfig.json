@@ -12,7 +12,6 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "forceConsistentCasingInFileNames": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,

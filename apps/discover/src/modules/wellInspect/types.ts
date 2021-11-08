@@ -1,4 +1,4 @@
-import { SelectedBarData } from 'components/charts/modules/StackedBarChart/types';
+import { SelectedBarData } from 'components/charts/modules/StackedBarChart';
 import { TableResults } from 'components/tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 

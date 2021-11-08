@@ -11,7 +11,7 @@ const loggerPost = getPostLogger();
 
 fixture('Feedback - General')
   .requestHooks(loggerPost)
-  .meta({ page: 'feedback:general', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'feedback:general', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(() => t.useRole(regularUser))
   .afterEach(() => logErrors());

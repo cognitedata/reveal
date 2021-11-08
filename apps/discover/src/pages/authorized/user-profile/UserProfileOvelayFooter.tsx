@@ -1,7 +1,7 @@
 // import { useTranslation } from 'react-i18next';
 
 // import { Graphic } from '@cognite/cogs.js';
-
+// import { fetchGet } from '_helpers/fetch';
 // import {
 //   UserProfileFooterContainer,
 //   VersionWrapper,
@@ -9,6 +9,14 @@
 
 export const UserProfileOverlayFooter: React.FC = () => {
   // const { t } = useTranslation('general');
+
+  // try and get version headers:
+  // fetchGet(window.location.origin, {
+  //   mode: 'no-cors',
+  //   headers: {},
+  // }).then((result) => {
+  //   console.log('result', result);
+  // });
 
   // NOTE: Temporarily disabled. Uncomment everything and remove the line below to enable
   return null;

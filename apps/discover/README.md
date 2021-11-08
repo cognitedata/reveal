@@ -20,10 +20,16 @@ cd applications/apps/discover && yarn
 
 # Development
 
-Starting the webapp locally using .env.local file on default port :3000
+Starting the app locally on azure-dev cluster
 
 ```sh
-yarn start
+yarn start:a
+```
+
+Starting the app locally on bluefield cluster
+
+```sh
+yarn start:b
 ```
 
 Starting with a different cluster
@@ -66,6 +72,8 @@ yarn test:coverage                                  # To generate a test coverag
 
 ## Running E2E tests manually
 
+We have two test systems at the moment. So you can run them in two modes. But we are trying to transition to Cypress.
+
 ### Start server
 
 0. Get the PK from last-pass for the testing project. Put it in the Discover root as `discover-e2e-<<cluster>>.jwk-key.json`
@@ -78,9 +86,42 @@ yarn test:coverage                                  # To generate a test coverag
 yarn start:local
 ```
 
-## Run tests
+### Cypress: Run tests
 
-###TestCafé.
+NOTE: to run on different clusters, change this file:
+
+- `apps/discover/cypress/support/constants.ts`
+
+#### Start Cypress dashboard (Practical for local development)
+
+```shell
+yarn cypress:open
+```
+
+#### Run Cypress tests (CI mode)
+
+```shell
+yarn cypress:ci
+```
+
+Run specific tests:
+
+- `yarn cypress:ci cypress/integration/documents/**`
+- `yarn cypress:ci "**/documents.spec.ts"`
+
+#### Run Cypress tests through bazel
+
+```shell
+yarn cypress
+```
+
+Run specific tests:
+
+- `yarn cypress --spec cypress/integration/documents/**`
+
+Cypress has many other run options, they can be found here: https://docs.cypress.io/guides/guides/command-line#Options
+
+### Testcafe: Run tests
 
 ```sh
 yarn testcafe:bazel-run-live
@@ -90,40 +131,6 @@ or:
 
 ```sh
 yarn testcafe:bazel-run-live-linux --fixture-meta page=savedSearches
-```
-
-###Cypress
-
-####INFO: For local development the frontend needs to be running at port 3000 with fakeIdp
-
-- #### Start Cypress dashboard (Practical for local development, takes a bit more memory I guess)
-
-```shell
-yarn cypress:open
-```
-
-- #### Run Cypress tests
-
-```shell
-yarn cypress:run-live
-```
-
-- #### Run Cypress tests through bazel
-
-```shell
-yarn cypress:bazel-run-live
-```
-
-- #### Run specific tests:
-  - Native Cypress: `yarn cypress:run-live cypress/integration/documents/**` or `yarn cypress:run-live "**/documents.spec.ts"`
-  - Bazel Cypress: `yarn cypress:bazel-run-live --spec cypress/integration/documents/**`
-
-Cypress has many other run options, they can be found here: https://docs.cypress.io/guides/guides/command-line#Options
-
-- #### Execute all the tests the same as it's done in Jenkins
-
-```shell
-yarn cypress:bazel-test
 ```
 
 ### Generating Access Tokens for discover-e2e-bluefield tenant

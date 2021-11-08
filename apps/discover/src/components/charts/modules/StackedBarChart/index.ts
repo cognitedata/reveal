@@ -1,1 +1,2 @@
-export { StackedBarChart } from './StackedBarChart';
+export * from './StackedBarChart';
+export * from './types';

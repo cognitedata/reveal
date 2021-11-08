@@ -10,6 +10,7 @@ const defaultConfig: TenantConfig = {
     defaultLimit: 100,
     filters: {},
   },
+  enableWellSDKV3: true,
   wells: {
     filters: {},
     wellbores: {

@@ -10,8 +10,8 @@ window.__cogniteSidecar = {
     {
       cluster: 'azure-dev',
       fakeApplicationId: '808c3e2e-7bc1-4211-8d9e-66b4a7a37d48',
-      groups: ['defaultGroup'],
-      name: 'Azure-dev',
+      groups: ['defaultGroup', 'writeGroup'],
+      name: 'Azure-dev User',
       otherAccessTokenFields: {
         given_name: 'Normal',
         family_name: 'User',
@@ -38,7 +38,7 @@ window.__cogniteSidecar = {
     {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
-      groups: ['defaultGroup', 'readGroup'],
+      groups: ['defaultGroup', 'readGroup', 'writeGroup'],
       name: 'Bluefield User',
       otherAccessTokenFields: {
         given_name: 'Normal',
@@ -48,6 +48,22 @@ window.__cogniteSidecar = {
       roles: [],
       tokenId: 'discover-e2e',
       userId: 'discover-e2e-bluefield-user', // this is overwritten by os.hostname()
+      // if you need to test expired tokens:
+      // customExpiry: Math.floor(new Date().getTime() / 1000) + 10,
+    },
+    {
+      cluster: 'bluefield',
+      fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
+      groups: ['defaultGroup', 'adminGroup'],
+      name: 'Bluefield Dev',
+      otherAccessTokenFields: {
+        given_name: 'Normal',
+        family_name: 'Dev',
+      },
+      project: 'discover-dev-bluefield',
+      roles: [],
+      tokenId: 'discover-dev',
+      userId: 'discover-dev-bluefield-user', // this is overwritten by os.hostname()
       // if you need to test expired tokens:
       // customExpiry: Math.floor(new Date().getTime() / 1000) + 10,
     },

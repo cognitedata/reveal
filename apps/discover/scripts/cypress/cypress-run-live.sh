@@ -41,7 +41,8 @@ echo "$PAGE_COMMAND"
 FINAL_COMMAND="run \
     --headed \
     --env BASE_URL=https://localhost:3000 \
-    $PAGE_COMMAND"
+    $PAGE_COMMAND ${@:2}"
+    
 
 echo "FINAL_COMMAND: $FINAL_COMMAND"
 

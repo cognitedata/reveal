@@ -19,7 +19,7 @@ import {
   useMutateFavoriteWellUpdate,
 } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
-import { InspectWellboreContext, Well } from 'modules/wellSearch/types';
+import { InspectWellboreContext, Well, WellId } from 'modules/wellSearch/types';
 import { wellColumns, WellResultTableOptions } from 'pages/authorized/constant';
 import {
   FAVORITE_SET_NO_WELLS,
@@ -46,7 +46,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const { t } = useTranslation('Favorites');
   const history = useHistory();
   const dispatch = useDispatch();
-  const [wellIds, setWellIds] = useState<number[]>([]);
+  const [wellIds, setWellIds] = useState<WellId[]>([]);
   const { data, isLoading } = useFavoriteWellResults(wellIds);
   const { mutate } = useMutateFavoriteWellPatchWellbores();
   const { mutate: mutateWells } = useMutateFavoriteWellUpdate();
@@ -59,8 +59,10 @@ export const FavoriteWellsTable: React.FC<Props> = ({
 
   const wellsData = useMemo(() => data || [], [data]);
 
+  // console.log('data', { data, isLoading });
+
   useEffect(() => {
-    setWellIds(wells ? Object.keys(wells).map((key) => Number(key)) : []);
+    setWellIds(wells ? Object.keys(wells) : []);
   }, [wells]);
 
   const columns = useMemo(
@@ -69,12 +71,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    loadWells(wellIds || []);
-  }, [wellIds]);
-
-  const loadWells = (wellIds: number[]) => {
     mutateWells(wellIds);
-  };
+  }, [wellIds]);
 
   const handleRowClick = useCallback(
     (row: Row<Well> & { isSelected: boolean }) => {

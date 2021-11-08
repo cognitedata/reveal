@@ -3,8 +3,8 @@ import { t } from 'testcafe';
 import App from '../../__pages__/App';
 import { startTest, logErrors, progress } from '../../utils';
 
-fixture('map interface')
-  .meta({ page: 'map', tenant: App.tenant }) // Used to run a single test file
+fixture('Map interface')
+  .meta({ page: 'map', tenant: App.project }) // Used to run a single test file
   .page(App.baseUrl)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());

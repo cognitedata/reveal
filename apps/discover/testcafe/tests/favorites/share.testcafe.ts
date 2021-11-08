@@ -3,12 +3,12 @@ import { t } from 'testcafe';
 import { SHARE_SUCCESS_TOAST } from '../../../src/pages/authorized/favorites/modals/constants';
 import App from '../../__pages__/App';
 import { deleteFavorites } from '../../fixtures/favorites';
-import { logErrors, progress, startTest, testRunId } from '../../utils';
+import { logErrors, progress, startTest, shortTestRunId } from '../../utils';
 
-const FAV_SET_NAME = `fav_${testRunId}`;
+const FAV_SET_NAME = `fav_${shortTestRunId}`;
 
 fixture('Favorites share')
-  .meta({ page: 'favorites:share', tenant: App.tenant }) // Used to run a single test file
+  .meta({ page: 'favorites:share', tenant: App.project }) // Used to run a single test file
   .page(App.baseApp)
   .beforeEach(async () => {
     await t.useRole(App.getUserRole());
