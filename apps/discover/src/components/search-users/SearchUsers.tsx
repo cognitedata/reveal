@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import debounce from 'lodash/debounce';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
-import { getTenantInfo } from '@cognite/react-container';
+import { UMSUser } from '@cognite/user-management-service-types';
 
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
-import { User } from 'modules/user/types';
+import { getJsonHeaders } from 'modules/api/service';
+
+import { UMSService } from '../../modules/api/ums/ums-service';
+import { showErrorMessage } from '../toast';
 
 export interface UserOption {
   value: string;
@@ -24,23 +26,24 @@ export interface Props {
 
 export const SearchUsers: React.FC<Props> = (props) => {
   const { t } = useTranslation();
-  const headers = getJsonHeaders();
-  const [tenant] = getTenantInfo();
+  const headers = getJsonHeaders({}, true);
 
   const searchUsers = (
     keyword: string,
     callback: (users: { value: string; label: string }[]) => void
   ) =>
-    discoverAPI.user.search(keyword, headers, tenant).then((users: User[]) => {
-      callback(
-        users
-          .filter((user) => user.firstname || user.lastname)
-          .map((user) => ({
+    UMSService.search(keyword, headers)
+      .then((users: UMSUser[]) => {
+        callback(
+          users.map((user) => ({
             value: user.id,
-            label: `${user.firstname || ''} ${user.lastname || ''}`,
+            label: user.displayName || user.email || 'Unknown',
           }))
-      );
-    });
+        );
+      })
+      .catch(() => {
+        showErrorMessage('Something went wrong, please try again.');
+      });
 
   const debouncedSearch = useCallback(
     debounce((input, callback) => {
