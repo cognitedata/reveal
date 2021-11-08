@@ -15,7 +15,6 @@ export const ToolbarWrapper = styled.div`
 export const ChartWrapper = styled.div`
   min-height: 364px;
   position: relative;
-  overflow: hidden !important;
   > .js-plotly-plot {
     min-height: 464px;
   }
@@ -134,6 +133,7 @@ export const DetailcardWrapper = styled(FlexColumn)`
   height: auto !important;
   display: flex !important;
   width: auto !important;
+  min-width: 342px;
   padding: ${sizes.small};
   background: var(--cogs-white);
   border: 2px solid rgba(0, 0, 0, 0.05);

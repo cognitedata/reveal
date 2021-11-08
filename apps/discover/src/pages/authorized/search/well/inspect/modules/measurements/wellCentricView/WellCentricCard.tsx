@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { v4 as uuid } from 'uuid';
+
 import { Checkbox } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/buttons';
@@ -84,7 +86,9 @@ export const WellCentricCard: React.FC<Props> = ({
           {filterByMainChartType(chartData).map((row) => {
             const customdata = row.customdata as string[];
             return (
-              <CurveIndicator key={`${wellbore.description}-${customdata[0]}`}>
+              <CurveIndicator
+                key={`${wellbore.description}-${customdata[0]}-${uuid()}`}
+              >
                 <CurveColorCode line={row.line} marker={row.marker} />
                 <span>{customdata[0]}</span>
               </CurveIndicator>

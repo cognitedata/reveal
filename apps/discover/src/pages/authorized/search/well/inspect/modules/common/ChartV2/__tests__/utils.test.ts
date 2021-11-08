@@ -37,7 +37,7 @@ describe('Chart utils', () => {
     expect(getChartPositionValues(plotMouseEvent)).toEqual({
       left: 158,
       show: true,
-      top: 10,
+      top: 20,
       width: 342,
     });
   });

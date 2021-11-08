@@ -15,6 +15,9 @@ export const DropdownWrapper = styled(Flex)`
       > * .cogs-menu-divider {
         width: 100%;
       }
+      > * .cogs-select__group-heading {
+        text-transform: unset;
+      }
     }
     > * .cogs-select__control--menu-is-open {
       border: 2px solid var(--cogs-midblue-4) !important;

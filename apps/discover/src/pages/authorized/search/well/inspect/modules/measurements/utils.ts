@@ -117,9 +117,13 @@ export const formatChartData = (
           const isAngleCurve = xUnit === ANGLE_CURVES_UNIT;
           let x: number[] = [];
           let y: number[] = [];
-          rows.forEach((geomechanicRow) => {
-            const yvalue = geomechanicRow[referenceColIndex] as number;
-            if (CHART_BREAK_POINTS.includes(yvalue)) {
+          rows.forEach((measurementRow) => {
+            const yValue = measurementRow[referenceColIndex] as number;
+            const xValue = measurementRow[columnIndex] as number;
+            if (
+              CHART_BREAK_POINTS.includes(xValue) ||
+              CHART_BREAK_POINTS.includes(yValue)
+            ) {
               if (!isEmpty(x)) {
                 // Create the graph if next value is a breaking point value
                 pushCorveToChart(
@@ -137,18 +141,12 @@ export const formatChartData = (
               }
               return;
             }
-            y.push(changeUnitTo(yvalue, tvdUnit, referenceUnit) || yvalue);
+            y.push(changeUnitTo(yValue, tvdUnit, referenceUnit) || yValue);
             if (isAngleCurve) {
-              x.push(geomechanicRow[columnIndex] as number);
+              x.push(xValue);
             } else {
               x.push(
-                convertPressure(
-                  geomechanicRow[columnIndex] as number,
-                  xUnit,
-                  geomechanicRow[referenceColIndex] as number,
-                  tvdUnit,
-                  pressureUnit
-                )
+                convertPressure(xValue, xUnit, yValue, tvdUnit, pressureUnit)
               );
             }
           });
@@ -235,7 +233,7 @@ const pushCorveToChart = (
     xaxis: isAngleCurve ? 'x2' : undefined,
     measurementType,
   };
-  if (!isEmpty(x)) {
+  if (x.length > 2) {
     chartData.push(curveData);
   }
 };

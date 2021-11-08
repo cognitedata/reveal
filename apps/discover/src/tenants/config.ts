@@ -339,6 +339,9 @@ export const defaultWellsConfig: TenantConfig = {
     multiplePPFG: {
       enabled: true,
     },
+    measurements: {
+      enabled: true,
+    },
     digitalRocks: {
       enabled: true,
       metaInfo: {

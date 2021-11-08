@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import { DataTitle, PlotMouseEvent } from 'plotly.js';
 import { DeepPartial } from 'redux';
 
@@ -19,13 +20,10 @@ export const getChartDisplayValues = (data?: DeepPartial<PlotMouseEvent>) => {
 
 export const getChartPositionValues = (data?: DeepPartial<PlotMouseEvent>) => {
   let left = data?.event?.offsetX || 0;
-  const top = data?.event?.offsetY;
-  if (
-    data &&
-    data.event &&
-    (data.event.view?.innerWidth || 0) - (data.event.x || 0) < DEFAULT_WIDTH
-  ) {
+  const top = data?.event?.offsetY || 0;
+  const chartWidth = get(data, 'event.target.viewportElement.clientWidth', 0);
+  if (data && data.event && chartWidth - left < DEFAULT_WIDTH) {
     left -= DEFAULT_WIDTH;
   }
-  return { left, top, show: !!data, width: DEFAULT_WIDTH };
+  return { left, top: top + 10, show: !!data, width: DEFAULT_WIDTH };
 };
