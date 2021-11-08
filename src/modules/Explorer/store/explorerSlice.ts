@@ -24,6 +24,7 @@ import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/t
 import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
 import { RootState } from 'src/store/rootReducer';
 import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
+import isEqual from 'lodash-es/isEqual';
 
 export type ExplorerFileState = {
   id: number;
@@ -171,15 +172,17 @@ const explorerSlice = createSlice({
       state.showFileMetadata = true;
     },
     setExplorerQueryString(state, action: PayloadAction<string>) {
-      if (state.query !== action.payload) resetSortKey(state);
+      if (state.query !== action.payload) resetSortPagination(state);
       state.query = action.payload;
     },
     setExplorerModalQueryString(state, action: PayloadAction<string>) {
-      if (state.exploreModal.query !== action.payload) resetSortKey(state);
+      if (state.exploreModal.query !== action.payload) {
+        resetSortPagination(state);
+      }
       state.exploreModal.query = action.payload;
     },
     setExplorerFilter(state, action: PayloadAction<VisionFileFilterProps>) {
-      if (state.filter !== action.payload) resetSortKey(state);
+      if (!isEqual(state.filter, action.payload)) resetSortPagination(state);
       state.filter = action.payload;
     },
     toggleExplorerFilterView(state) {
@@ -403,7 +406,8 @@ const convertToExplorerFileState = (
   return { ...fileState };
 };
 
-const resetSortKey = (state: State) => {
+const resetSortPagination = (state: State) => {
   // Workaround: rest sortKey, since annotations need to be refetched
   state.sortMeta.sortKey = '';
+  state.sortMeta.currentPage = 1;
 };

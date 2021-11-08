@@ -6,9 +6,9 @@ import { Annotation } from 'src/api/types';
 import { validateAnnotation } from 'src/api/utils';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
-  ANOTATION_FETCH_BULK_SIZE,
+  ANNOTATION_FETCH_BULK_SIZE,
   FETCH_ANNOTATION_LIMIT,
-} from 'src/api/file/fetchFiles/fetchFilesConsts';
+} from 'src/constants/FetchConstants';
 
 const getAnnotations = async (
   generatedBy?: string,
@@ -45,7 +45,7 @@ export const fileFilterByAnnotation = async (
   items: FileInfo[]
 ): Promise<FileInfo[]> => {
   const { generatedBy, annotationText, annotationState } = annotation;
-  const bulkedIds = chunkFileIds(items, ANOTATION_FETCH_BULK_SIZE);
+  const bulkedIds = chunkFileIds(items, ANNOTATION_FETCH_BULK_SIZE);
 
   const relatedAnnotations = await (
     await Promise.all(
