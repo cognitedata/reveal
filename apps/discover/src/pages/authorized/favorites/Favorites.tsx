@@ -1,17 +1,17 @@
 import React from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import { Slider as CommentSlider } from '@cognite/react-comments';
 
 import { SIDECAR } from 'constants/app';
 import navigation from 'constants/navigation';
 import FavoriteHeader from 'pages/authorized/favorites/header';
-import { PageBottomPaddingWrapper } from 'styles/layout';
+import { FlexColumn, PageBottomPaddingWrapper } from 'styles/layout';
 
 import { FavoriteContent, SavedSearches } from './tabs';
+import { FavoriteDetails } from './tabs/favorites/detailsPage';
 
 export const Favorites: React.FC = () => {
-  const { pathname } = useLocation();
   return (
     <CommentSlider
       commentServiceBaseUrl={SIDECAR.commentServiceBaseUrl}
@@ -19,13 +19,32 @@ export const Favorites: React.FC = () => {
     >
       {({ setCommentTarget, commentTarget }) => {
         return (
-          <>
-            <FavoriteHeader
-              hideActions={pathname === navigation.FAVORITES_SAVED_SEARCH}
-            />
+          <FlexColumn style={{ minHeight: '100%' }}>
+            <React.Suspense fallback="">
+              {/* header should NOT show for the FAVORITES_DETAILS route */}
+              <Switch>
+                <Route
+                  exact
+                  path={navigation.FAVORITES}
+                  render={() => <FavoriteHeader hideActions={false} />}
+                />
+                <Route
+                  exact
+                  path={navigation.FAVORITES_SAVED_SEARCH}
+                  render={() => <FavoriteHeader hideActions />}
+                />
+              </Switch>
+            </React.Suspense>
             <PageBottomPaddingWrapper>
               <React.Suspense fallback="">
                 <Switch>
+                  <Route
+                    exact
+                    path={navigation.FAVORITES_DETAILS}
+                    render={() => (
+                      <FavoriteDetails setCommentTarget={setCommentTarget} />
+                    )}
+                  />
                   <Route
                     exact
                     path={navigation.FAVORITES_SAVED_SEARCH}
@@ -36,7 +55,6 @@ export const Favorites: React.FC = () => {
                       />
                     )}
                   />
-
                   <Route
                     exact
                     path={navigation.FAVORITES}
@@ -50,7 +68,7 @@ export const Favorites: React.FC = () => {
                 </Switch>
               </React.Suspense>
             </PageBottomPaddingWrapper>
-          </>
+          </FlexColumn>
         );
       }}
     </CommentSlider>

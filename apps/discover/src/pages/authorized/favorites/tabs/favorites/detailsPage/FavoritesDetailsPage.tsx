@@ -1,11 +1,16 @@
 ﻿import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import styled from 'styled-components/macro';
+
+import { SetCommentTarget } from '@cognite/react-comments';
+
 import FeedbackPanel from 'components/modals/entity-feedback';
+import { COMMENT_NAMESPACE } from 'constants/comments';
 import { useFavoritesGetOneQuery } from 'modules/api/favorites/useFavoritesQuery';
 import { zipAndDownloadDocumentsByIds } from 'modules/documentPreview/utils';
 import { FavoriteDetailsContent } from 'pages/authorized/favorites/tabs/favorites/detailsPage/FavoriteDetailsContent';
-import { PageBottomPaddingWrapper } from 'styles/layout';
+import { FlexColumn, PageBottomPaddingWrapper } from 'styles/layout';
 
 import { ShareFavoriteSetModal, EditFavoriteSetModal } from '../../../modals';
 
@@ -13,13 +18,26 @@ import { FavoriteDetailsHeader } from './header';
 
 type openModalType = 'edit' | 'share' | 'preview' | null;
 
-export const FavoriteDetails: React.FC = () => {
+const ResetHeader = styled(FlexColumn)`
+  flex: 1;
+  margin: -40px;
+`;
+
+export const FavoriteDetails: React.FC<{
+  setCommentTarget: SetCommentTarget;
+}> = ({ setCommentTarget }) => {
   const [openModal, setOpenModal] = useState<openModalType>(null);
   const { favoriteId } = useParams<{
     favoriteId: string;
   }>();
 
   const { data: favorite, isFetching } = useFavoritesGetOneQuery(favoriteId);
+
+  const handleComment = () =>
+    setCommentTarget({
+      id: favoriteId,
+      targetType: COMMENT_NAMESPACE.favorite,
+    });
 
   const toggleModal = (modal: openModalType) =>
     setOpenModal(openModal ? null : modal);
@@ -29,6 +47,7 @@ export const FavoriteDetails: React.FC = () => {
       <FavoriteDetailsHeader
         favorite={favorite}
         isLoading={isFetching}
+        handleComment={handleComment}
         handleToggleShareModal={() => toggleModal('share')}
         handleToggleEditModal={() => toggleModal('edit')}
         handleDownloadAllDocuments={() => {
@@ -42,7 +61,7 @@ export const FavoriteDetails: React.FC = () => {
   );
 
   return (
-    <>
+    <ResetHeader>
       {Header}
       <PageBottomPaddingWrapper>
         <FavoriteDetailsContent
@@ -68,6 +87,6 @@ export const FavoriteDetails: React.FC = () => {
         )}
         <FeedbackPanel />
       </PageBottomPaddingWrapper>
-    </>
+    </ResetHeader>
   );
 };

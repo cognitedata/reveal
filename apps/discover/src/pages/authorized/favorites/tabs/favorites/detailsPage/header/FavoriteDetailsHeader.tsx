@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import {
   ShareButton,
+  CommentButton,
   DownloadButton,
   EditButton,
   BackButton,
@@ -25,11 +26,13 @@ interface ActionProps {
   favorite: FavoriteSummary;
   handleToggleShareModal: () => void;
   handleToggleEditModal: () => void;
+  handleComment: () => void;
   handleDownloadAllDocuments: () => void;
 }
 const Actions: React.FC<ActionProps> = ({
   favorite,
   handleDownloadAllDocuments,
+  handleComment,
   handleToggleEditModal,
   handleToggleShareModal,
 }) => {
@@ -74,6 +77,8 @@ const Actions: React.FC<ActionProps> = ({
           onClick={handleToggleEditModal}
         />
       )}
+
+      <CommentButton onClick={handleComment} type="tertiary" />
     </>
   );
 };
@@ -82,12 +87,14 @@ export interface Props {
   favorite: FavoriteSummary | undefined;
   handleToggleShareModal: () => void;
   handleToggleEditModal: () => void;
+  handleComment: () => void;
   handleDownloadAllDocuments: () => void;
   isLoading?: boolean;
 }
 export const FavoriteDetailsHeader: React.FC<Props> = React.memo((props) => {
   const {
     favorite,
+    handleComment,
     handleToggleShareModal,
     handleToggleEditModal,
     handleDownloadAllDocuments,
@@ -109,6 +116,7 @@ export const FavoriteDetailsHeader: React.FC<Props> = React.memo((props) => {
         !isLoading && favorite ? (
           <Actions
             favorite={favorite}
+            handleComment={handleComment}
             handleToggleEditModal={handleToggleEditModal}
             handleToggleShareModal={handleToggleShareModal}
             handleDownloadAllDocuments={handleDownloadAllDocuments}

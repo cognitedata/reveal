@@ -13,7 +13,6 @@ import AdminPageContainer from 'pages/authorized/admin';
 import { AppFrame } from 'pages/authorized/elements';
 import { Favorites } from 'pages/authorized/favorites';
 import { CreateFavoriteSetModal } from 'pages/authorized/favorites/modals';
-import { FavoriteDetails } from 'pages/authorized/favorites/tabs/favorites/detailsPage/FavoritesDetailsPage';
 import { NotFoundPage } from 'pages/authorized/notfound';
 import { Search } from 'pages/authorized/search';
 
@@ -36,11 +35,6 @@ const Content = () => {
           <React.Suspense fallback="">
             <Switch>
               <Route path={navigation.SEARCH} render={() => <Search />} />
-              <Route
-                exact
-                path={navigation.FAVORITES_DETAILS}
-                render={() => <FavoriteDetails />}
-              />
               <Route path={navigation.FAVORITES} render={() => <Favorites />} />
 
               <Route

@@ -47,9 +47,9 @@ describe('Favorite Details Header', () => {
     expect(title).toBeInTheDocument();
     expect(description).toBeInTheDocument();
 
-    // should display 3 action buttons since download button is not enabled in tenant config
+    // should display 4 action buttons since download button is not enabled in tenant config
     const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
-    expect(buttons).toHaveLength(3);
+    expect(buttons).toHaveLength(4);
   });
 
   it('should show skeletons if status isLoading is true', async () => {
@@ -78,7 +78,7 @@ describe('Favorite Details Header', () => {
     expect(skeletons).toHaveLength(2);
   });
 
-  it('should display 4 action buttons if download button is enabled in tenant settings', async () => {
+  it('should display 5 action buttons if download button is enabled in tenant settings', async () => {
     (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
       data: {
         showDownloadAllDocumentsButton: true,
@@ -91,12 +91,11 @@ describe('Favorite Details Header', () => {
 
     page();
 
-    // should display 4 action buttons
     const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
-    expect(buttons).toHaveLength(4);
+    expect(buttons).toHaveLength(5);
   });
 
-  it('should display only 2 action buttons if user is not owner', async () => {
+  it('should display only 3 action buttons if user is not owner', async () => {
     (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
       data: {
         showDownloadAllDocumentsButton: true,
@@ -109,8 +108,7 @@ describe('Favorite Details Header', () => {
 
     page();
 
-    // should display 4 action buttons
     const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
-    expect(buttons).toHaveLength(2);
+    expect(buttons).toHaveLength(3);
   });
 });
