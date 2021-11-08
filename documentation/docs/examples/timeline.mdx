@@ -23,8 +23,8 @@ The timeline tool provides ability to apply styles by date. It works by creating
 Each keyframe has a set of associated styled node collections.
 
 ### Creating keyframes
-To create Keyframe, use `createKeyframe(date: Date)`
-- `date` - Date reference for the Keyframe, e.g. `new Date('2021-10-05')`.
+To create a `Keyframe`, use `createKeyframe(date: Date)`
+- `date` - Date reference for the keyframe
 
 ```jsx
 const keyframe = timeline.createKeyframe(new Date('2021-10-05'));
@@ -39,7 +39,9 @@ const nodes = new AssetNodeCollection(sdk, model);
 keyframe.assignStyledNodeCollection(nodes, { renderGhosted: false, color: [150, 200, 120] });
 ```
 
-### Remove Styles & Node in Keyframes
+### Remove styled node collections from keyframes
+
+Styled node collections can be removed from keyframes.
 `unassignStyledNodeCollection(nodeCollection: NodeCollectionBase)`
 - `nodeCollection` - Node set to be removed from keyframes.
 
