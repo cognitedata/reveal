@@ -8,7 +8,7 @@ import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent 
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import { SectorCuller } from './SectorCuller';
 import { computeV9SectorCost } from './computeSectorCost';
-import { TakenV9SectorTree } from './TakenV9SectorTree';
+import { TakenV9SectorMap } from './takensectors';
 
 import Log from '@reveal/logger';
 import { CadModelMetadata, V9SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
@@ -33,7 +33,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
     wantedSectors: WantedSector[];
     spentBudget: SectorLoadingSpent;
   } {
-    const takenSectors = new TakenV9SectorTree(this._determineSectorCost);
+    const takenSectors = new TakenV9SectorMap(this._determineSectorCost);
     const { cadModelsMetadata, camera } = input;
     const cameraWorldInverseMatrix = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
@@ -72,7 +72,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
 }
 
 function takeSectorsWithinBudget(
-  takenSectors: TakenV9SectorTree,
+  takenSectors: TakenV9SectorMap,
   input: DetermineSectorsInput,
   candidateSectors: { model: CadModelMetadata; sectorId: number; priority: number }[]
 ) {
@@ -140,7 +140,7 @@ function determineCandidateSectorsByModel(
  */
 function initializeTakenSectorsAndWeightFunctions(
   modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
-  takenSectors: TakenV9SectorTree,
+  takenSectors: TakenV9SectorMap,
   weightFunctions: WeightFunctionsHelper
 ) {
   for (const [model, sectors] of modelsAndCandidateSectors) {

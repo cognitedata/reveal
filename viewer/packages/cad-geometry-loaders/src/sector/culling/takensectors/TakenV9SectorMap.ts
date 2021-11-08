@@ -1,19 +1,16 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import {
-  addSectorCost,
-  DetermineSectorCostDelegate,
-  PrioritizedWantedSector,
-  SectorCost,
-  SectorLoadingSpent
-} from './types';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { CadModelMetadata, V9SectorMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import { addSectorCost, DetermineSectorCostDelegate, PrioritizedWantedSector, SectorCost } from '../types';
+import { CadModelSectorBudget } from '../../../CadModelSectorBudget';
+import { TakenSectorMapBase } from './TakenSectorMapBase';
+
+import { CadModelMetadata, V9SectorMetadata, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
+
 import assert from 'assert';
 
-export class TakenV9SectorTree {
+export class TakenV9SectorMap extends TakenSectorMapBase {
   private readonly determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
   private readonly _models = new Map<string, { model: CadModelMetadata; sectorIds: Map<number, number> }>();
@@ -22,20 +19,22 @@ export class TakenV9SectorTree {
     return { ...this._totalCost };
   }
 
+  get models(): CadModelMetadata[] {
+    return Array.from(this._models.values()).map(x => x.model);
+  }
+
   constructor(determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>) {
+    super();
     this.determineSectorCost = determineSectorCost;
   }
 
   initializeScene(modelMetadata: CadModelMetadata) {
-    this._models.set(modelMetadata.modelIdentifier, { model: modelMetadata, sectorIds: new Map<number, number>() });
-  }
+    assert(
+      modelMetadata.scene.version === 9,
+      `Only sector version 9 is supported, but got ${modelMetadata.scene.version}`
+    );
 
-  getWantedSectorCount(): number {
-    let count = 0;
-    this._models.forEach(x => {
-      count += x.sectorIds.size;
-    });
-    return count;
+    this._models.set(modelMetadata.modelIdentifier, { model: modelMetadata, sectorIds: new Map<number, number>() });
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
@@ -74,26 +73,13 @@ export class TakenV9SectorTree {
 
       const allSectorsInModel = new Map<number, PrioritizedWantedSector>();
       traverseDepthFirst(model.scene.root, sector => {
-        allSectorsInModel.set(sector.id, {
-          modelIdentifier,
-          modelBaseUrl: model.modelBaseUrl,
-          geometryClipBox: null,
-          levelOfDetail: LevelOfDetail.Discarded,
-          metadata: sector,
-          priority: -1
-        });
+        allSectorsInModel.set(sector.id, toWantedSector(modelIdentifier, model, sector, LevelOfDetail.Discarded, -1));
         return true;
       });
+
       for (const [sectorId, priority] of sectorIds) {
         const sector = model.scene.getSectorById(sectorId)!;
-        const wantedSector: PrioritizedWantedSector = {
-          modelIdentifier,
-          modelBaseUrl: model.modelBaseUrl,
-          geometryClipBox: null,
-          levelOfDetail: LevelOfDetail.Detailed,
-          metadata: sector,
-          priority
-        };
+        const wantedSector = toWantedSector(modelIdentifier, model, sector, LevelOfDetail.Detailed, priority);
         allSectorsInModel.set(sectorId, wantedSector);
       }
 
@@ -112,35 +98,25 @@ export class TakenV9SectorTree {
     return allWanted;
   }
 
-  computeSpentBudget(): SectorLoadingSpent {
-    const wanted = this.collectWantedSectors();
-    const models = Array.from(this._models.values()).map(x => x.model);
-    const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
-
-    const totalSectorCount = models.reduce((sum, x) => sum + x.scene.sectorCount, 0);
-    const takenSectorCount = nonDiscarded.length;
-    const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
-    const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
-    const accumulatedPriority = nonDiscarded
-      .filter(x => Number.isFinite(x.priority) && x.priority > 0)
-      .reduce((sum, x) => sum + x.priority, 0);
-
-    const spentBudget: SectorLoadingSpent = {
-      drawCalls: this.totalCost.drawCalls,
-      downloadSize: this.totalCost.downloadSize,
-      renderCost: this.totalCost.renderCost,
-      totalSectorCount,
-      forcedDetailedSectorCount,
-      loadedSectorCount: takenSectorCount,
-      simpleSectorCount: takenSimpleCount,
-      detailedSectorCount: takenSectorCount - takenSimpleCount,
-      accumulatedPriority
-    };
-
-    return spentBudget;
-  }
-
   clear() {
     this._models.clear();
   }
+}
+
+function toWantedSector(
+  modelIdentifier: string,
+  model: CadModelMetadata,
+  sector: SectorMetadata,
+  levelOfDetail: LevelOfDetail,
+  priority: number
+): PrioritizedWantedSector {
+  const prioritizedSector: PrioritizedWantedSector = {
+    modelIdentifier,
+    modelBaseUrl: model.modelBaseUrl,
+    geometryClipBox: null,
+    levelOfDetail,
+    metadata: sector,
+    priority
+  };
+  return prioritizedSector;
 }

@@ -3,11 +3,15 @@
  */
 
 import * as THREE from 'three';
-import { expectContainsSectorsWithLevelOfDetail, generateV8SectorTree, Mutable } from '../../../../../test-utilities';
-import { PropType } from '../../utilities/reflection';
+import {
+  expectContainsSectorsWithLevelOfDetail,
+  generateV8SectorTree,
+  Mutable
+} from '../../../../../../test-utilities';
+import { PropType } from '../../../utilities/reflection';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
-import { DetermineSectorCostDelegate, PrioritizedWantedSector } from './types';
+import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '../types';
 import { TakenV8SectorTree } from './TakenV8SectorTree';
 
 type FacesFile = PropType<V8SectorMetadata, 'facesFile'>;

@@ -9,7 +9,7 @@ import {
   SectorCost,
   reduceSectorCost,
   addSectorCost
-} from './types';
+} from '../types';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 
@@ -61,7 +61,7 @@ export class TakenV8SectorTree {
     }
   }
 
-  determineWantedSectorCount(): number {
+  getWantedSectorCount(): number {
     return this.sectors.reduce((count, x) => {
       count = x.lod !== LevelOfDetail.Discarded ? count + 1 : count;
       return count;
