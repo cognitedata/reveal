@@ -3,29 +3,19 @@
  */
 import * as THREE from 'three';
 
-import { assertNever } from '../../../core/src/utilities';
 import assert from 'assert';
+import { setPrimitiveTopology } from './primitiveGeometries';
 import {
-  setBoxGeometry,
-  setConeGeometry,
-  setNutGeometry,
-  setQuadGeometry,
-  setTorusGeometry,
-  setTrapeziumGeometry
-} from './primitiveGeometries';
-import {
-  GltfJson,
   RevealGeometryCollectionType,
   Node,
   GlbHeaderData,
   GeometryProcessingPayload,
   TypedArrayConstructor
 } from './types';
+import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 
 export class RevealGlbParser {
-  private readonly _textDecoder: TextDecoder;
-  private readonly _gltfHeaderByteSize = 12;
-  private readonly _chunkHeaderByteSize = 8;
+  private _glbMetadataParser: GlbMetadataParser;
 
   // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessortype-white_check_mark
   private readonly COLLECTION_TYPE_SIZES = new Map<string, number>([
@@ -49,30 +39,20 @@ export class RevealGlbParser {
   ]);
 
   constructor() {
-    this._textDecoder = new TextDecoder();
+    this._glbMetadataParser = new GlbMetadataParser();
   }
 
   public parseSector(data: ArrayBuffer) {
-    const view = new DataView(data);
-
-    this.parseGlbHeaders(data, view);
-
-    const { length: jsonChunkLength, json } = this.parseJson(view, data);
-
-    this.parseBinHeaders(view, data, jsonChunkLength);
+    const headers = this._glbMetadataParser.parseGlbMetadata(data);
 
     const typedGeometryBuffers: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] = [];
 
-    const headers: GlbHeaderData = {
-      gltfHeaderByteSize: 12,
-      chunkHeaderByteSize: 8,
-      jsonChunkByteLength: jsonChunkLength
-    };
+    const json = headers.json;
 
     json.scenes[json.scene].nodes.forEach(nodeId => {
       const node = json.nodes[nodeId];
 
-      const processedNode = this.processNode(node, json, headers, data)!;
+      const processedNode = this.processNode(node, headers, data)!;
 
       if (processedNode === undefined) {
         return;
@@ -86,7 +66,7 @@ export class RevealGlbParser {
     return typedGeometryBuffers;
   }
 
-  private processNode(node: Node, json: GltfJson, glbHeaderData: GlbHeaderData, data: ArrayBuffer) {
+  private processNode(node: Node, glbHeaderData: GlbHeaderData, data: ArrayBuffer) {
     const instancingExtension = node.extensions?.EXT_mesh_gpu_instancing;
     const meshId = node.mesh;
 
@@ -102,7 +82,6 @@ export class RevealGlbParser {
       glbHeaderData,
       instancingExtension: instancingExtension,
       meshId,
-      json,
       data
     };
 
@@ -111,7 +90,6 @@ export class RevealGlbParser {
         //   instanceId = this.processInstancedMesh(mesh, instanced, bufferGeometry);
         break;
       case RevealGeometryCollectionType.TriangleMesh:
-        assert(payload.meshId !== undefined);
         assert(payload.instancingExtension === undefined);
         this.processTriangleMesh(payload);
         break;
@@ -124,16 +102,19 @@ export class RevealGlbParser {
     return { type: geometryType, buffer: bufferGeometry };
   }
   processTriangleMesh(payload: GeometryProcessingPayload) {
-    const { bufferGeometry, json, glbHeaderData, meshId, data } = payload;
+    const { bufferGeometry, glbHeaderData, meshId, data } = payload;
 
-    const mesh = json.meshes[meshId!];
+    const json = glbHeaderData.json;
+
+    assert(meshId !== undefined);
+
+    const mesh = json.meshes[meshId];
 
     assert(mesh.primitives.length === 1);
 
     const primitive = mesh.primitives[0];
 
-    const offsetToBinChunk =
-      glbHeaderData.gltfHeaderByteSize + glbHeaderData.chunkHeaderByteSize * 2 + glbHeaderData.jsonChunkByteLength;
+    const offsetToBinChunk = payload.glbHeaderData.byteOffsetToBinContent;
 
     const indicesAccessor = json.accessors[primitive.indices];
     const indicesBufferView = json.bufferViews[indicesAccessor.bufferView];
@@ -216,12 +197,15 @@ export class RevealGlbParser {
   private processPrimitiveCollection(payload: GeometryProcessingPayload) {
     assert(payload.instancingExtension !== null, 'Primitive does not contain the instanced gltf extension');
 
-    this.setPrimitiveTopology(payload.geometryType, payload.bufferGeometry);
+    setPrimitiveTopology(payload.geometryType, payload.bufferGeometry);
+
     this.setInstancedAttributes(payload);
   }
 
   private setInstancedAttributes(payload: GeometryProcessingPayload) {
-    const { bufferGeometry, json, glbHeaderData, instancingExtension, data } = payload;
+    const { bufferGeometry, glbHeaderData, instancingExtension, data } = payload;
+
+    const json = glbHeaderData.json;
 
     const instancedAttributes = instancingExtension!.attributes;
 
@@ -233,8 +217,7 @@ export class RevealGlbParser {
 
     const bufferView = json.bufferViews[uniqueBufferViews[0]];
 
-    const offsetToBinChunk =
-      glbHeaderData.gltfHeaderByteSize + glbHeaderData.chunkHeaderByteSize * 2 + glbHeaderData.jsonChunkByteLength;
+    const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
 
     const componentTypes = Object.values(instancedAttributes).map(
       accessorId => json.accessors[accessorId].componentType
@@ -275,83 +258,5 @@ export class RevealGlbParser {
       );
       bufferGeometry.setAttribute(`a${attributeName}`, interleavedBufferAttribute);
     });
-  }
-
-  private parseBinHeaders(view: DataView, data: ArrayBuffer, offset: number) {
-    const totOff = this._gltfHeaderByteSize + this._chunkHeaderByteSize + offset;
-    const binChunkLength = view.getUint32(totOff, true);
-    const binChunkType = this._textDecoder.decode(new Uint8Array(data, totOff + 4, 4));
-
-    assert(binChunkType.includes('BIN'));
-
-    return binChunkLength;
-  }
-
-  private parseJson(view: DataView, data: ArrayBuffer): { length: number; json: GltfJson } {
-    const jsonChunkLength = view.getUint32(12, true);
-    const jsonChunckType = this._textDecoder.decode(new Uint8Array(data, 16, 4));
-
-    assert(jsonChunckType === 'JSON');
-
-    const jsonBytes = new Uint8Array(data, 20, jsonChunkLength);
-    const json = JSON.parse(this._textDecoder.decode(jsonBytes));
-
-    const typedJson = json as GltfJson;
-
-    assert(typedJson !== undefined, 'Failed to assign types to gltf json');
-    return { length: jsonChunkLength, json: typedJson };
-  }
-
-  private parseGlbHeaders(data: ArrayBuffer, view: DataView) {
-    const magicBytes = this._textDecoder.decode(new Uint8Array(data, 0, 4));
-    const version = view.getUint32(4, true);
-    //const length = view.getUint32(8, true);
-
-    assert(magicBytes === 'glTF', 'Unknown file format');
-    assert(version === 2, `Unsupported glTF version{${version}}`);
-  }
-
-  private setPrimitiveTopology(primitiveCollectionName: RevealGeometryCollectionType, geometry: THREE.BufferGeometry) {
-    switch (primitiveCollectionName) {
-      case RevealGeometryCollectionType.BoxCollection:
-        setBoxGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.CircleCollection:
-        setQuadGeometry(geometry); // should use the position as normal
-        break;
-      case RevealGeometryCollectionType.ConeCollection:
-        setConeGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.EccentricConeCollection:
-        setConeGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.EllipsoidSegmentCollection:
-        setConeGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.GeneralCylinderCollection:
-        setConeGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.GeneralRingCollection:
-        setQuadGeometry(geometry, false);
-        break;
-      case RevealGeometryCollectionType.NutCollection:
-        setNutGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.QuadCollection:
-        setQuadGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.TrapeziumCollection:
-        setTrapeziumGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.TorusSegmentCollection:
-        setTorusGeometry(geometry);
-        break;
-      case RevealGeometryCollectionType.InstanceMesh:
-        break;
-      case RevealGeometryCollectionType.TriangleMesh:
-        break;
-      default:
-        assertNever(primitiveCollectionName);
-    }
   }
 }

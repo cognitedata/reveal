@@ -74,10 +74,9 @@ export enum RevealGeometryCollectionType {
 }
 
 export type GlbHeaderData = {
-  gltfHeaderByteSize: 12;
-  chunkHeaderByteSize: 8;
-
-  jsonChunkByteLength: number;
+  json: GltfJson;
+  binContentLength: number;
+  byteOffsetToBinContent: number;
 };
 
 export type GeometryProcessingPayload = {
@@ -91,7 +90,6 @@ export type GeometryProcessingPayload = {
       }
     | undefined;
   meshId: number | undefined;
-  json: GltfJson;
   glbHeaderData: GlbHeaderData;
   data: ArrayBuffer;
 };
