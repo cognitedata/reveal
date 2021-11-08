@@ -48,9 +48,11 @@ keyframe.unassignStyledNodeCollection(nodes);
 
 ### Play timelines
 We use `play(startDate: Date, endDate: Date, durationInMilliSeconds: number)`
-- `startDate` - Keyframe date to start the Playback of Timeline Keyframes.
-- `endDate` - Keyframe date to stop the Playback of Timeline Keyframes.
-- `durationInMilliSeconds` - Number of milli-seconds for the full plackback of Keyframes.
+- `startDate` - Keyframe date to start the playback of the timeline keyframes.
+- `endDate` - Keyframe date to stop the playback of the timeline keyframes.
+- `durationInMilliSeconds` - Number of milli-seconds for the full playback of keyframes.
+
+Note that the dates doesn't need to match the keyframe dates - the playback will be performed on a "virtual" timeline that is linear in time and update the styling whenever a new keyframe is activated. Only one keyframe will be active at any given time, i.e. the model will only have styling from one keyframe active at any time.
 
 ```js runnable
 // import { NodeCollectionBase, DefaultNodeAppearance, PropertyFilterNodeCollection } from '@cognite/reveal';
