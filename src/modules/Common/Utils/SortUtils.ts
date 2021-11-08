@@ -12,6 +12,7 @@ export const SorterNames = {
   indexInSortedArray: 'indexInSortedArray',
 };
 
+// todo: add tests
 export const Sorters: {
   [key: string]: {
     transform: (data: any, transformParam?: any) => any;
