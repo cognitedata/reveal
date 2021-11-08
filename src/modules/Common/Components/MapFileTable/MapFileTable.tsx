@@ -1,8 +1,5 @@
-import React, { useMemo } from 'react';
-import {
-  FileMapTableProps,
-  MapTableTabKey,
-} from 'src/modules/Common/Components/FileTable/types';
+import React, { useMemo, useState } from 'react';
+import { FileMapTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
@@ -11,11 +8,11 @@ import { NameAndAnnotationRenderer } from 'src/modules/Common/Containers/FileTab
 import { Tabs } from 'antd';
 import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
 import { NoData } from 'src/modules/Common/Components/NoData/NoData';
+import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 
 const { TabPane } = Tabs;
 
 type MapTableProps = FileMapTableProps<TableDataItem> & {
-  mapTableTabKey: MapTableTabKey;
   setMapActive: (active: boolean) => void;
   mapCallback: (fileId: number) => void;
 };
@@ -38,6 +35,11 @@ export const MapFileTable = (props: MapTableProps) => {
 
   const { activeKey, setActiveKey } = props.mapTableTabKey;
 
+  const [currentPageFilesWithLocation, setCurrentPageFilesWithLocation] =
+    useState(1);
+  const [currentPageFilesWithNoLocation, setCurrentPageFilesWithNoLocation] =
+    useState(1);
+
   const withGeoData = useMemo(() => {
     return props.data.filter(
       (item: ResultData) => item.geoLocation !== undefined
@@ -46,16 +48,16 @@ export const MapFileTable = (props: MapTableProps) => {
 
   const findSelectedItems = (items: ResultData[]): [boolean, number[]] => {
     const ids = items.map((file) => file.id);
-    const allSelected = ids.every((id) => props.selectedRowIds.includes(id));
+    const allSelected = ids.every((id) => props.selectedIds.includes(id));
     const selectedIds = allSelected
       ? ids
-      : ids.filter((id) => props.selectedRowIds.includes(id));
+      : ids.filter((id) => props.selectedIds.includes(id));
     return [allSelected, selectedIds];
   };
 
   const [allWithGeoDataSelected, selectedIdsWithGeoData] = useMemo(() => {
     return findSelectedItems(withGeoData);
-  }, [props.selectedRowIds, withGeoData]);
+  }, [props.selectedIds, withGeoData]);
 
   const withOutGeoData = useMemo(() => {
     return props.data.filter(
@@ -65,7 +67,7 @@ export const MapFileTable = (props: MapTableProps) => {
 
   const [allWithoutGeoDataSelected, selectedIdsWithoutGeoData] = useMemo(() => {
     return findSelectedItems(withOutGeoData);
-  }, [props.selectedRowIds, withOutGeoData]);
+  }, [props.selectedIds, withOutGeoData]);
 
   const rowClassNames = ({
     rowData,
@@ -74,14 +76,47 @@ export const MapFileTable = (props: MapTableProps) => {
     rowData: TableDataItem;
     rowIndex: number;
   }) => {
-    return `clickable ${props.focusedFileId === rowData.id && 'active'}`;
+    return `clickable ${props.focusedId === rowData.id && 'active'}`;
   };
 
   const rowEventHandlers = {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
-      props.onRowClick(rowData as ResultData);
+      props.onItemClick(rowData as ResultData);
       props.mapCallback(rowData.id);
     },
+  };
+
+  const handleSetSortKey = (key: string) => {
+    setCurrentPageFilesWithLocation(1);
+    setCurrentPageFilesWithNoLocation(1);
+    if (props.setSortKey) {
+      props.setSortKey(key);
+    }
+  };
+
+  const handleSetReverse = (reverse: boolean) => {
+    setCurrentPageFilesWithLocation(1);
+    setCurrentPageFilesWithNoLocation(1);
+    if (props.setReverse) {
+      props.setReverse(reverse);
+    }
+  };
+
+  const handleSetPageSize = (pageSize: number) => {
+    setCurrentPageFilesWithLocation(1);
+    setCurrentPageFilesWithNoLocation(1);
+    if (props.setPageSize) {
+      props.setPageSize(pageSize);
+    }
+  };
+
+  const sortPaginateControls = {
+    sortKey: props.sortKey,
+    reverse: props.reverse,
+    pageSize: props.pageSize,
+    setSortKey: handleSetSortKey,
+    setReverse: handleSetReverse,
+    setPageSize: handleSetPageSize,
   };
 
   const overlayRenderer = () =>
@@ -102,45 +137,73 @@ export const MapFileTable = (props: MapTableProps) => {
         }}
       >
         <TabPane tab="Files in map" key="fileInMap">
-          <SelectableTable
-            {...props}
-            onSelectAllRows={(status) =>
-              props.onSelectAllRows(status, { geoLocation: true })
-            }
-            allRowsSelected={allWithGeoDataSelected}
-            selectedRowIds={selectedIdsWithGeoData}
+          <PaginationWrapper
             data={withGeoData}
-            columns={columns}
-            rendererMap={rendererMap}
-            selectable
-            onRowSelect={props.onRowSelect}
-            rowHeight={70}
-            rowClassNames={rowClassNames}
-            rowEventHandlers={rowEventHandlers}
-            overlayRenderer={overlayRenderer}
-            emptyRenderer={emptyRenderer}
-          />
+            totalCount={props.totalCount}
+            pagination
+            sortPaginateControls={{
+              ...sortPaginateControls,
+              currentPage: currentPageFilesWithLocation,
+              setCurrentPage: setCurrentPageFilesWithLocation,
+            }}
+            isLoading={props.isLoading}
+          >
+            {(paginationProps) => (
+              <SelectableTable
+                {...props}
+                {...paginationProps}
+                onSelectAllRows={(status) =>
+                  props.onSelectAllRows(status, { geoLocation: true })
+                }
+                onItemSelect={props.onItemSelect}
+                allRowsSelected={allWithGeoDataSelected}
+                selectedIds={selectedIdsWithGeoData}
+                columns={columns}
+                rendererMap={rendererMap}
+                selectable
+                rowHeight={70}
+                rowClassNames={rowClassNames}
+                rowEventHandlers={rowEventHandlers}
+                overlayRenderer={overlayRenderer}
+                emptyRenderer={emptyRenderer}
+              />
+            )}
+          </PaginationWrapper>
         </TabPane>
 
         <TabPane tab="Files without location" key="filesWithoutMap">
-          <SelectableTable
-            {...props}
+          <PaginationWrapper
             data={withOutGeoData}
-            onSelectAllRows={(status) =>
-              props.onSelectAllRows(status, { geoLocation: false })
-            }
-            allRowsSelected={allWithoutGeoDataSelected}
-            selectedRowIds={selectedIdsWithoutGeoData}
-            columns={columns}
-            rendererMap={rendererMap}
-            selectable
-            onRowSelect={props.onRowSelect}
-            rowHeight={70}
-            rowClassNames={rowClassNames}
-            rowEventHandlers={rowEventHandlers}
-            emptyRenderer={emptyRenderer}
-            overlayRenderer={overlayRenderer}
-          />
+            totalCount={props.totalCount}
+            pagination
+            sortPaginateControls={{
+              ...sortPaginateControls,
+              currentPage: currentPageFilesWithNoLocation,
+              setCurrentPage: setCurrentPageFilesWithNoLocation,
+            }}
+            isLoading={props.isLoading}
+          >
+            {(paginationProps) => (
+              <SelectableTable
+                {...props}
+                {...paginationProps}
+                onSelectAllRows={(status) =>
+                  props.onSelectAllRows(status, { geoLocation: false })
+                }
+                onItemSelect={props.onItemSelect}
+                allRowsSelected={allWithoutGeoDataSelected}
+                selectedIds={selectedIdsWithoutGeoData}
+                columns={columns}
+                rendererMap={rendererMap}
+                selectable
+                rowHeight={70}
+                rowClassNames={rowClassNames}
+                rowEventHandlers={rowEventHandlers}
+                emptyRenderer={emptyRenderer}
+                overlayRenderer={overlayRenderer}
+              />
+            )}
+          </PaginationWrapper>
         </TabPane>
       </StyledTabs>
     </Container>

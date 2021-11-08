@@ -14,7 +14,7 @@ export const PageBasedGridView = (props: FileGridTableProps<TableDataItem>) => {
   return (
     <GridView
       {...props}
-      onItemClicked={(item: any) => onItemClicked(item)}
+      onItemClick={(item: any) => onItemClicked(item)}
       renderCell={({ item, ...cellProps }: any) => {
         const selected = selectedIds.includes(item.id);
         return renderCell({ item, ...cellProps, selected });

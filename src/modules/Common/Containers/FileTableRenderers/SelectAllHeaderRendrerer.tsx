@@ -11,7 +11,7 @@ export function SelectAllHeaderRenderer({
     fetchedCount,
     allSelected,
     onSelectPage,
-    selectedRowIds,
+    selectedIds,
     onSelectAll,
   } = column;
   const handleSelectAllFiles = () => {
@@ -20,7 +20,7 @@ export function SelectAllHeaderRenderer({
     }
   };
   const pageSelected: boolean = fileIdsInCurrentPage.every((val: any) =>
-    selectedRowIds.includes(val)
+    selectedIds?.includes(val)
   );
   const MenuContent = (
     <Menu

@@ -198,8 +198,11 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       return (
         <PageBasedGridView
           {...props}
-          onItemClicked={handleItemClick}
-          onSelect={handleRowSelect}
+          onItemClick={handleItemClick}
+          onItemSelect={handleRowSelect}
+          totalCount={data.length}
+          selectedIds={selectedFileIds}
+          isLoading={isLoading}
           renderCell={(cellProps: any) => (
             <FileGridPreview
               mode={VisionMode.Contextualize}
@@ -207,9 +210,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
               {...cellProps}
             />
           )}
-          totalCount={data.length}
-          selectedIds={selectedFileIds}
-          isLoading={isLoading}
         />
       );
     }
@@ -217,16 +217,18 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       return (
         <MapView
           {...props}
-          onRowSelect={handleRowSelect}
-          onRowClick={handleItemClick}
-          focusedFileId={focusedFileId}
+          onItemSelect={handleRowSelect}
+          onItemClick={handleItemClick}
+          focusedId={focusedFileId}
           totalCount={data.length}
+          selectedIds={selectedFileIds}
           allRowsSelected={allFilesSelected}
           onSelectAllRows={handleSelectAllFiles}
-          {...props}
           onSelectPage={handleSetSelectedFiles}
-          selectedRowIds={selectedFileIds}
           mapTableTabKey={{ activeKey, setActiveKey }}
+          pageSize={sortPaginateState.pageSize}
+          setPageSize={sortPaginateControls.setPageSize}
+          isLoading={isLoading}
         />
       );
     }
@@ -234,14 +236,14 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     return (
       <FileTable
         {...props}
-        onRowSelect={handleRowSelect}
-        onRowClick={handleItemClick}
-        focusedFileId={focusedFileId}
+        onItemSelect={handleRowSelect}
+        onItemClick={handleItemClick}
+        focusedId={focusedFileId}
         totalCount={data.length}
+        selectedIds={selectedFileIds}
         allRowsSelected={allFilesSelected}
         onSelectAllRows={handleSelectAllFiles}
         onSelectPage={handleSetSelectedFiles}
-        selectedRowIds={selectedFileIds}
         rowKey="rowKey"
       />
     );

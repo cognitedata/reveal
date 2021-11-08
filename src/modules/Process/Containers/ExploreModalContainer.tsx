@@ -97,7 +97,7 @@ export const ExploreModalContainer = () => {
       setFilter={setFilter}
       onSearch={handleExploreSearchChange}
       onItemClick={handleExplorerModalItemClick}
-      onRowSelect={handleExploreModalRowSelect}
+      onItemSelect={handleExploreModalRowSelect}
       onCloseModal={() => {
         dispatch(setSelectFromExploreModalVisibility(false));
         dispatch(ClearExplorerStateOnTransition());

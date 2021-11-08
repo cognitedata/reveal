@@ -68,7 +68,7 @@ const Explorer = () => {
   );
 
   const isLoading = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.isLoading
+    ({ explorerReducer }: RootState) => explorerReducer.isLoading || false
   );
 
   useEffect(() => {
@@ -149,17 +149,17 @@ const Explorer = () => {
                 currentView={currentView}
                 filter={filter}
                 query={query}
-                focusedId={focusedFileId || undefined}
-                selectedFileIds={selectedFileIds}
+                focusedId={focusedFileId}
+                selectedIds={selectedFileIds}
                 isLoading={isLoading}
-                onClick={handleItemClick}
-                onRowSelect={handleRowSelect}
+                onItemClick={handleItemClick}
+                onItemSelect={handleRowSelect}
               />
             </ViewContainer>
           </TablePanel>
           {showMetadata && focusedFileId && (
             // eslint-disable-next-line  @cognite/no-number-z-index
-            <DrawerContainer style={{ zIndex: 1 }}>
+            <DrawerContainer style={{ zIndex: 2 }}>
               <QueryClientProvider client={queryClient}>
                 <FileDetails
                   fileId={focusedFileId}
