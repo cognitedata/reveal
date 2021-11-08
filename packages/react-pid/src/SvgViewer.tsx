@@ -7,8 +7,20 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
 } from '@cognite/pid-tools';
+import styled from 'styled-components';
 
 import { SideView } from './SideView';
+
+const SvgViewerWrapper = styled.div`
+  height: 100%;
+  overflow: hidden;
+`;
+
+const ReactSVGWrapper = styled.div`
+  height: 100%;
+  overflow: scroll;
+  border: 2px solid;
+`;
 
 const originalViewBox = {
   x: 0,
@@ -157,6 +169,23 @@ export const SvgViewer = () => {
   };
 
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
+    const bBoxes = selection.map((svgElement) =>
+      (
+        document.querySelector(`#${svgElement.id}`) as unknown as SVGPathElement
+      ).getBBox()
+    );
+    const coords = {
+      minX: Infinity,
+      minY: Infinity,
+      maxX: -Infinity,
+      maxY: -Infinity,
+    };
+    bBoxes.forEach((bBox) => {
+      coords.minX = Math.min(coords.minX, bBox.x);
+      coords.minY = Math.min(coords.minY, bBox.y);
+      coords.maxX = Math.max(coords.maxX, bBox.x + bBox.width);
+      coords.maxY = Math.max(coords.maxY, bBox.y + bBox.height);
+    });
     const newSymbol = {
       symbolName,
       svgPaths: selection.map((svgElement) => {
@@ -165,6 +194,12 @@ export const SvgViewer = () => {
           style: svgElement.getAttribute('style'),
         } as SvgPath;
       }),
+      boundingBox: {
+        x: coords.minX,
+        y: coords.minY,
+        width: coords.maxX - coords.minX,
+        height: coords.maxY - coords.minY,
+      },
     };
 
     setSymbols([...symbols, newSymbol]);
@@ -301,36 +336,41 @@ export const SvgViewer = () => {
   };
 
   return (
-    <div>
+    <SvgViewerWrapper>
       {fileUrl === '' && (
         <input type="file" accept=".svg" onChange={handleFileChange} />
       )}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: 'grid',
+          gridTemplateColumns: '300px auto',
+          gridAutoRows: '100%',
+          height: '100%',
         }}
       >
         {fileUrl !== '' && (
           <SideView
             active={active}
             symbols={symbols}
+            symbolInstances={symbolInstances}
             selection={selection}
             setActive={setActive}
             loadSymbolsAsJson={loadSymbolsAsJson}
             saveSymbol={saveSymbol}
           />
         )}
-        <ReactSVG
-          style={{ borderStyle: 'solid', touchAction: 'none' }}
-          renumerateIRIElements={false}
-          src={fileUrl}
-          afterInjection={handleAfterInjection}
-          beforeInjection={handleBeforeInjection}
-        />
+        {fileUrl !== '' && (
+          <ReactSVGWrapper>
+            <ReactSVG
+              style={{ touchAction: 'none' }}
+              renumerateIRIElements={false}
+              src={fileUrl}
+              afterInjection={handleAfterInjection}
+              beforeInjection={handleBeforeInjection}
+            />
+          </ReactSVGWrapper>
+        )}
       </div>
-    </div>
+    </SvgViewerWrapper>
   );
 };

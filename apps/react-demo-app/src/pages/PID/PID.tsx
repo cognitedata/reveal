@@ -1,7 +1,11 @@
 import { Title } from '@cognite/cogs.js';
 import { SvgViewer } from '@cognite/react-pid';
+import styled from 'styled-components';
 
-import { Container } from '../elements';
+const Container = styled.div`
+  height: calc(100vh - 56px);
+  text-align: center;
+`;
 
 const Info = () => {
   return (

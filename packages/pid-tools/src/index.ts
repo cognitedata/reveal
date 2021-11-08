@@ -6,9 +6,17 @@ export interface SvgPath {
   style?: string;
 }
 
+export interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface DiagramSymbol {
   symbolName: string;
   svgPaths: SvgPath[];
+  boundingBox: BoundingBox;
 }
 
 export interface DiagramSymbolInstance {
