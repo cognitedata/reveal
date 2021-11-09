@@ -31,7 +31,117 @@ const defaultConfig: TenantConfig = {
       },
     },
     overview: defaultWellsConfig.wells?.overview,
-    trajectory: defaultWellsConfig.wells?.trajectory,
+    trajectory: {
+      enabled: true,
+      normalizeColumns: {
+        MD: 'MD',
+        Inc: 'Inc',
+        Azim: 'Azim',
+        X_Offset: 'X-Offset (E/W)',
+        Y_Offset: 'Y-Offset (N/S)',
+        TVD: 'TVD',
+      },
+      queries: [
+        {
+          filter: {
+            metadata: {
+              type: 'Trajectory',
+              object_state: 'ACTUAL',
+            },
+          },
+        },
+      ],
+      charts: [
+        {
+          type: 'line',
+          chartData: { x: 'X_Offset', y: 'Y_Offset' },
+          chartExtraData: {
+            hovertemplate: `%{y}`,
+          },
+          chartVizData: {
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'North South (<%= unit %>)',
+            },
+            title: 'NS vs EW',
+          },
+        },
+        {
+          type: 'line',
+          chartData: { x: 'Y_Offset', y: 'TVD' },
+          chartExtraData: {
+            hovertemplate: `%{y}`,
+          },
+          chartVizData: {
+            axisNames: {
+              x: 'North South (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
+            },
+            title: 'TVD vs NS',
+          },
+        },
+        {
+          type: 'line',
+          chartData: { x: 'X_Offset', y: 'TVD' },
+          chartExtraData: {
+            hovertemplate: `%{y}`,
+          },
+          chartVizData: {
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'True Vertical Depth (<%= unit %>)',
+            },
+            title: 'TVD vs EW',
+          },
+        },
+        {
+          type: '3d',
+          chartData: { x: 'X_Offset', y: 'Y_Offset', z: 'TVD' },
+          chartExtraData: {
+            hovertemplate: `EW: %{x}<br>NS: %{y}<br>TVD: %{z}`,
+          },
+          chartVizData: {
+            axisNames: {
+              x: 'East West (<%= unit %>)',
+              y: 'North South (<%= unit %>)',
+              z: 'TVD (<%= unit %>)',
+            },
+            title: 'TVD 3D view',
+          },
+        },
+        {
+          type: 'legend',
+          chartData: { x: 'X_Offset', y: 'Y_Offset' },
+          chartExtraData: {
+            hovertemplate: `%{y}`,
+          },
+          chartVizData: {
+            axisNames: { x: 'East West', y: 'North South', z: 'TVD' },
+            title: '',
+          },
+        },
+      ],
+      columns: [
+        {
+          externalId: 'measured_depth',
+          valueType: 'DOUBLE',
+          name: 'measured_depth',
+        },
+        { externalId: 'Azim', valueType: 'DOUBLE', name: 'Azim' },
+        { externalId: 'Inc', valueType: 'DOUBLE', name: 'Inc' },
+        {
+          externalId: 'X-Offset (E/W)',
+          valueType: 'DOUBLE',
+          name: 'X-Offset (E/W)',
+        },
+        {
+          externalId: 'Y-Offset (N/S)',
+          valueType: 'DOUBLE',
+          name: 'Y-Offset (N/S)',
+        },
+        { externalId: 'TVD', valueType: 'DOUBLE', name: 'TVD' },
+      ],
+    },
     logs: {
       enabled: true,
       types: ['logsFrmTops', 'logs'],
@@ -62,9 +172,7 @@ const defaultConfig: TenantConfig = {
         { name: 'PPFG', enabled: true },
       ],
     },
-    relatedDocument: {
-      enabled: true,
-    },
+    relatedDocument: defaultWellsConfig.wells?.relatedDocument,
   },
   azureConfig: {
     ...testAzureConfig,
