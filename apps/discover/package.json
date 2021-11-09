@@ -44,7 +44,7 @@
     "cypress:open": "../../node_modules/.bin/cypress open",
     "cypress:ci": "./scripts/cypress/cypress-run-live.sh",
     "cypress": "ibazel run :cypress",
-    "cypress:bazel-test": "bazel test :cypress_test"
+    "cypress:bazel": "bazel test :cypress_test"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

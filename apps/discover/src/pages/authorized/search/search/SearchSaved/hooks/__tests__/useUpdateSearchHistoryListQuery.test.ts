@@ -58,6 +58,7 @@ describe('useUpdateSearchHistoryListQuery hook', () => {
                 lastcreated: [],
                 lastmodified: [],
                 location: ['Bp-Blob'],
+                pageCount: ['2', '3'],
               },
             },
           },

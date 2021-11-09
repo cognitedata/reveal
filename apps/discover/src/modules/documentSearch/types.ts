@@ -122,7 +122,8 @@ export type DocumentQueryFacetsNames =
   | 'location'
   | 'filetype'
   | 'lastcreated'
-  | 'lastmodified';
+  | 'lastmodified'
+  | 'pageCount';
 
 // officialy facets for unstructured search
 export type DocumentQueryFacets = Record<AggregateNames, DocumentQueryFacet[]>;
@@ -132,7 +133,8 @@ export type AggregateNames =
   | 'location'
   | 'filetype'
   | 'lastcreated'
-  | 'lastUpdatedTime'; // this is the backup for lastmodified, incase its not set
+  | 'lastUpdatedTime' // this is the backup for lastmodified, incase its not set;
+  | 'pageCount';
 
 export type DocumentResultFacets = Record<AggregateNames, DocumentQueryFacet[]>;
 
@@ -180,6 +182,7 @@ export interface DocumentsFacets {
   lastmodified: string[];
   lastcreated: string[];
   location: string[];
+  pageCount: string[];
 }
 
 export type DocumentFacet = keyof DocumentsFacets;
@@ -211,6 +214,7 @@ export enum DocumentFilterCategoryTitles {
   location = 'Source',
   lastmodified = 'Last Modified',
   lastcreated = 'Created',
+  pageCount = 'Page Count',
 }
 
 export type FacetsCounts = {

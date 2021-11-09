@@ -32,6 +32,7 @@ export const getEmptyAppliedFilterType = (): AppliedFiltersType => {
       lastmodified: [],
       lastcreated: [],
       location: [],
+      pageCount: [],
     },
     seismic: {},
     wells: {},
@@ -63,6 +64,7 @@ export const getMockDocumentFilter: (
     lastmodified: [],
     lastcreated: [],
     location: ['Bp-Blob'],
+    pageCount: ['2', '3'],
     ...extras,
   };
 };

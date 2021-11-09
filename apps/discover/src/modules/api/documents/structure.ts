@@ -9,6 +9,7 @@ export const documentFacetsStructure: DocumentsFacets = {
   location: [],
   lastmodified: [],
   lastcreated: [],
+  pageCount: [],
 };
 
 export const documentFacetsPayload = (

@@ -11,6 +11,7 @@ import {
   DocumentTypeFilter,
   DateRangeFilter,
   SourceFilter,
+  PageCountFilter,
 } from './document';
 import { TITLE, CATEGORY } from './document/constants';
 import { DocumentServiceWrapper } from './document/DocumentServiceWrapper';
@@ -27,7 +28,7 @@ export const DocumentFilter = () => {
         handleClearFilters={clearDocumentFilters}
       />
       <DocumentServiceWrapper>
-        {({ fileCategory, labels, location }) => (
+        {({ fileCategory, labels, location, pageCount }) => (
           <FilterCollapse category={CATEGORY}>
             <SourceFilter category={CATEGORY} title="Source" data={location} />
             <FileTypeFilter
@@ -41,6 +42,11 @@ export const DocumentFilter = () => {
               category={CATEGORY}
             />
             <DateRangeFilter />
+            <PageCountFilter
+              title={DocumentFilterCategoryTitles.pageCount}
+              data={pageCount}
+              category={CATEGORY}
+            />
           </FilterCollapse>
         )}
       </DocumentServiceWrapper>

@@ -165,6 +165,16 @@ export const mockAggregateResponse: DocumentsAggregatesResponse = {
       ],
       total: 500,
     },
+    {
+      name: 'pageCount',
+      groups: [
+        {
+          group: [{ pageCount: '1' }],
+          value: 10,
+        },
+      ],
+      total: 10,
+    },
   ],
 };
 
@@ -211,6 +221,23 @@ export const getMockDocumentFacets = (
       selected: false,
     },
   ],
+  pageCount: [
+    {
+      name: '1',
+      key: '1',
+      count: 4,
+    },
+    {
+      name: '2',
+      key: '2',
+      count: 2,
+    },
+    {
+      name: '3',
+      key: '3',
+      count: 2,
+    },
+  ],
   ...extras,
 });
 
@@ -222,6 +249,7 @@ export const getMockDocumentResultsEmptyFacets = (
   lastUpdatedTime: [],
   lastcreated: [],
   location: [],
+  pageCount: [],
   ...extras,
 });
 
@@ -233,5 +261,6 @@ export const getMockDocumentEmptyFacets = (
   lastcreated: [],
   location: [],
   lastmodified: [],
+  pageCount: [],
   ...extras,
 });

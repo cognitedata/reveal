@@ -11,6 +11,7 @@ describe('processFacets', () => {
       lastUpdatedTime: [],
       lastcreated: [],
       location: [],
+      pageCount: [],
     });
   });
   it('should return facets from document response', () => {
@@ -53,6 +54,14 @@ describe('processFacets', () => {
           count: 300,
           key: 'TestSource',
           name: 'TestSource',
+          selected: false,
+        },
+      ],
+      pageCount: [
+        {
+          count: 10,
+          key: '1',
+          name: '1',
           selected: false,
         },
       ],

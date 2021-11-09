@@ -10,6 +10,7 @@ describe('convert Facets To API Structure test', () => {
       lastcreated: [],
       lastmodified: [],
       location: ['location'],
+      pageCount: [],
     };
 
     const apiStructure = convertFacetsToAPIStructure(facets);

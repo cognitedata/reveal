@@ -38,6 +38,7 @@ describe('useClearDocumentFilters hook', () => {
             lastcreated: [],
             lastmodified: [],
             location: [],
+            pageCount: [],
           },
         },
       },

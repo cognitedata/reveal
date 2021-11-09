@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 import set from 'lodash/set';
 
 import {
@@ -14,6 +15,7 @@ import {
   LAST_UPDATED_KEY,
   LAST_CREATED_KEY,
   SOURCE_KEY,
+  PAGE_COUNT_KEY,
 } from 'modules/documentSearch/constants';
 import {
   SearchQueryFull,
@@ -88,28 +90,30 @@ export const getSearchQuery = (query: SearchQueryFull) => {
 
   const lastcreatedFacets = query.facets.lastcreated || [];
 
+  const pageCount = query.facets.pageCount || [];
+
   // eg: pdf, image
-  if (filetypeFacets.length > 0) {
+  if (!isEmpty(filetypeFacets)) {
     set(queryFilters, FILE_TYPE_KEY, {
       in: filetypeFacets,
     });
   }
 
   // source
-  if (locationFacets.length > 0) {
+  if (!isEmpty(locationFacets)) {
     set(queryFilters, SOURCE_KEY, {
       in: locationFacets,
     });
   }
 
   // document types, eg: drilling report
-  if (labelFacets.length > 0) {
+  if (!isEmpty(labelFacets)) {
     set(queryFilters, LABELS_KEY, {
       containsAny: labelFacets,
     });
   }
 
-  if (lastmodifiedFacets.length > 0) {
+  if (!isEmpty(lastmodifiedFacets)) {
     const timeFilters: DateRange = {
       min: Number(lastmodifiedFacets[0]),
       max: Number(lastmodifiedFacets[1]),
@@ -119,7 +123,7 @@ export const getSearchQuery = (query: SearchQueryFull) => {
     }
   }
 
-  if (lastcreatedFacets.length > 0) {
+  if (!isEmpty(lastcreatedFacets)) {
     const timeFilters: DateRange = {
       min: Number(lastcreatedFacets[0]),
       max: Number(lastcreatedFacets[1]),
@@ -127,6 +131,14 @@ export const getSearchQuery = (query: SearchQueryFull) => {
     if (timeFilters.min && timeFilters.max) {
       set(queryFilters, LAST_CREATED_KEY, timeFilters);
     }
+  }
+
+  if (!isEmpty(pageCount)) {
+    const pageCountFilters = {
+      min: Number(pageCount[0]),
+      max: Number(pageCount[1]),
+    };
+    set(queryFilters, PAGE_COUNT_KEY, pageCountFilters);
   }
 
   queryInfoResults.filter = {

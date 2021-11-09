@@ -147,6 +147,23 @@ describe('related document util', () => {
             selected: false,
           },
         ],
+        pageCount: [
+          {
+            count: 0,
+            key: '1',
+            name: '1',
+          },
+          {
+            count: 0,
+            key: '2',
+            name: '2',
+          },
+          {
+            count: 0,
+            key: '3',
+            name: '3',
+          },
+        ],
       });
     });
   });

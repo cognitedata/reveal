@@ -181,6 +181,7 @@ describe('Saved search utils', () => {
               lastcreated: [],
               lastmodified: [],
               location: [],
+              pageCount: [],
             },
           },
         },

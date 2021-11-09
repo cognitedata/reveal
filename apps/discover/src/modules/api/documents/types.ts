@@ -12,7 +12,11 @@ export interface DocumentPayloadLabel extends DocumentPayloadBase {
 export type DocumentPayload = DocumentPayloadBase | DocumentPayloadLabel;
 
 export type DocumentCategory = {
-  [x in 'labels' | 'fileCategory' | 'location']: DocumentPayload[];
+  [x in
+    | 'labels'
+    | 'fileCategory'
+    | 'location'
+    | 'pageCount']: DocumentPayload[];
 };
 export interface DocumentCategoryResult extends BaseAPIResult {
   data: DocumentCategory;

@@ -567,10 +567,10 @@ testcafe(
     name = "testcafe_linux",
     args = [
         "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "chromium '--use-gl=swiftshader --disable-software-rasterizer --window-size=1920,1040'",
+        "chromium --use-gl=swiftshader --disable-software-rasterizer --window-size=1920,1040",
         "testcafe",
         "--stop-on-first-fail",
-        "--fixture-meta page=well:search",
+        "--fixture-meta page=well:map",
     ],
     data = _RUNTIME_DEPS + DEPENDENCIES + SCRIPTS + [
         ":start",
@@ -707,7 +707,7 @@ ts_project(
 
 cypress_web_test(
     # The name of your test target
-    name = "cypress_disabled",
+    name = "cypress_test",
     srcs = [
         ":build_sed",
         # Load ts_library tests as a target to srcs

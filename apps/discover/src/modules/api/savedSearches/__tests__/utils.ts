@@ -23,6 +23,7 @@ export const getMockQuery = (
           location: ['subsurfaceconnectors'],
           lastmodified: ['2020'],
           lastcreated: ['2020'],
+          pageCount: [],
         },
       },
     },

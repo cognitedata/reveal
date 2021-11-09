@@ -15,6 +15,7 @@ describe('ClearButton', () => {
     lastmodified: [],
     lastcreated: [],
     location: [],
+    pageCount: [],
   };
 
   const handleClearDate = jest.fn();

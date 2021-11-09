@@ -15,6 +15,7 @@ describe('filter provider helper test', () => {
       lastcreated: [],
       lastmodified: [],
       location: [],
+      pageCount: [],
     };
 
     const result = getDocumentFacetsflatValues(documentFacets);

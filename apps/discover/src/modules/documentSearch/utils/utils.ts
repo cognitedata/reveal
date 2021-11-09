@@ -1,4 +1,4 @@
-import { DocumentsFilter } from '@cognite/sdk-playground';
+// import { DocumentsFilter } from '@cognite/sdk-playground';
 
 import {
   DocumentResultFacets,
@@ -31,6 +31,7 @@ export const getEmptyDocumentStateFacets = (): DocumentResultFacets => ({
   lastcreated: [],
   location: [],
   lastUpdatedTime: [],
+  pageCount: [],
 });
 
 export const getEmptyFacets = (): DocumentsFacets => ({
@@ -39,6 +40,7 @@ export const getEmptyFacets = (): DocumentsFacets => ({
   lastmodified: [],
   lastcreated: [],
   location: [],
+  pageCount: [],
 });
 
 export const getFacets = (
@@ -48,30 +50,30 @@ export const getFacets = (
   ...facets,
 });
 
-export const extractFacetsFromDocumentsFilter = (
-  filters: DocumentsFilter
-): DocumentsFacets => {
-  return {
-    labels:
-      filters?.sourceFile?.labels && 'containsAny' in filters.sourceFile.labels
-        ? filters.sourceFile.labels.containsAny
-        : [],
-    location:
-      filters?.sourceFile?.source && 'in' in filters.sourceFile.source
-        ? filters.sourceFile.source.in
-        : [],
-    filetype: filters?.type && 'in' in filters.type ? filters.type.in : [],
-    lastmodified: filters?.sourceFile?.lastUpdatedTime
-      ? [
-          String(filters.sourceFile.lastUpdatedTime.min),
-          String(filters.sourceFile.lastUpdatedTime.max),
-        ]
-      : [],
-    lastcreated: filters?.sourceFile?.createdTime
-      ? [
-          String(filters.sourceFile.createdTime.min),
-          String(filters.sourceFile.createdTime.max),
-        ]
-      : [],
-  };
-};
+// export const extractFacetsFromDocumentsFilter = (
+//   filters: DocumentsFilter
+// ): DocumentsFacets => {
+//   return {
+//     labels:
+//       filters?.sourceFile?.labels && 'containsAny' in filters.sourceFile.labels
+//         ? filters.sourceFile.labels.containsAny
+//         : [],
+//     location:
+//       filters?.sourceFile?.source && 'in' in filters.sourceFile.source
+//         ? filters.sourceFile.source.in
+//         : [],
+//     filetype: filters?.type && 'in' in filters.type ? filters.type.in : [],
+//     lastmodified: filters?.sourceFile?.lastUpdatedTime
+//       ? [
+//           String(filters.sourceFile.lastUpdatedTime.min),
+//           String(filters.sourceFile.lastUpdatedTime.max),
+//         ]
+//       : [],
+//     lastcreated: filters?.sourceFile?.createdTime
+//       ? [
+//           String(filters.sourceFile.createdTime.min),
+//           String(filters.sourceFile.createdTime.max),
+//         ]
+//       : [],
+//   };
+// };

@@ -7,6 +7,7 @@ import {
   LABELS_KEY,
   LAST_CREATED_KEY,
   LAST_UPDATED_KEY,
+  PAGE_COUNT_KEY,
   SOURCE_KEY,
 } from '../constants';
 import {
@@ -123,12 +124,25 @@ export const processFacets = (
     };
   });
 
+  const pageCount = findResult('pageCount').map((item) => {
+    const name = (item.group as { [PAGE_COUNT_KEY]: string }[])
+      .map((group) => group[PAGE_COUNT_KEY])
+      .join(' ');
+    return {
+      name,
+      key: name,
+      count: item.value,
+      selected: false,
+    };
+  });
+
   const finalFacets = {
     labels,
     lastcreated,
     lastUpdatedTime,
     location,
     filetype: groupMimetypesTogether,
+    pageCount,
   };
 
   return finalFacets;

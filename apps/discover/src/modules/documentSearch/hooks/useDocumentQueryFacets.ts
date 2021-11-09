@@ -17,6 +17,7 @@ export const useDocumentQueryFacets = () => {
   const { data: filetypeResponse } = useDocumentsCategories('filetype');
   const { data: labelsResponse } = useDocumentsCategories('labels');
   const { data: locationResponse } = useDocumentsCategories('location');
+  const { data: pageCountResponse } = useDocumentsCategories('pageCount');
 
   const isDocumentsCategoriesDataUndefined =
     isUndefined(filetypeResponse) ||
@@ -27,6 +28,7 @@ export const useDocumentQueryFacets = () => {
     filetype: filetypeResponse?.facets,
     labels: labelsResponse?.facets,
     location: locationResponse?.facets,
+    pageCount: pageCountResponse?.facets,
   };
 
   return useMemo(() => {
@@ -53,6 +55,10 @@ export const useDocumentQueryFacets = () => {
       location: patchDocumentPayloadCount(
         data.location,
         aggregateResponse.location || data.location
+      ),
+      pageCount: patchDocumentPayloadCount(
+        data.pageCount,
+        aggregateResponse.pageCount || data.pageCount
       ),
     };
 

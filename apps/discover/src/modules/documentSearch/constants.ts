@@ -3,6 +3,7 @@ export const LAST_UPDATED_KEY = 'sourceFile.lastUpdatedTime';
 export const LAST_CREATED_KEY = 'sourceFile.createdTime';
 export const LABELS_KEY = 'labels';
 export const SOURCE_KEY = 'sourceFile.source';
+export const PAGE_COUNT_KEY = 'pageCount';
 
 export const DOCUMENT_FALLBACK_SEARCH_LIMIT = 100;
 export const DEFAULT_FILTER_ITEM_LIMIT = 7;

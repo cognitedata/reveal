@@ -55,6 +55,7 @@ export const getFilterQuery = (searchOption?: SavedSearchContent) => ({
     lastcreated: searchOption?.filters.documents?.facets.lastcreated || [],
     lastmodified: searchOption?.filters.documents?.facets.lastmodified || [],
     location: searchOption?.filters.documents?.facets.location || [],
+    pageCount: searchOption?.filters.documents?.facets.pageCount || [],
   },
 });
 
