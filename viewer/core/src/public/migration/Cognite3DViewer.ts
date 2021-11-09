@@ -480,10 +480,7 @@ export class Cognite3DViewer {
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
-      .forEach(model => {
-        model.styledNodeCollections.forEach(nodeCollection => model.unassignStyledNodeCollection(nodeCollection.nodes));
-        model.styledNodeCollections.splice(0);
-      });
+      .forEach(model => model.removeAllStyledNodeCollections());
 
     return stateHelper.setState(state);
   }
