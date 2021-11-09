@@ -1,5 +1,9 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 
+exports_files([
+    "baker_bake.template.bash",
+])
+
 write_file(
     name = "write_chdir_script",
     out = "chdir.js",

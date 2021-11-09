@@ -1,0 +1,91 @@
+load("@io_bazel_rules_docker//docker/package_managers:install_pkgs.bzl", "install_pkgs")
+load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "download_pkgs")
+load("@io_bazel_rules_docker//docker/package_managers:apt_key.bzl", "add_apt_key")
+load("@io_bazel_rules_docker//container:container.bzl", "container_layer")
+
+download_pkgs(
+    name = "buster_cert",
+    image_tar = "@buster_base//image",
+    packages = [
+        "ca-certificates",
+    ],
+    tags = ["manual"],
+    visibility = ["//visibility:private"],
+)
+
+install_pkgs(
+    name = "buster_cert_base",
+    image_tar = "@buster_base//image",
+    installables_tar = ":buster_cert.tar",
+    output_image_name = "buster_cert_base",
+    tags = ["manual"],
+    visibility = ["//visibility:private"],
+)
+
+add_apt_key(
+    name = "caddy_gpg_layer",
+    image = ":buster_cert_base.tar",
+    keys = [
+        "@caddy_gpg//file",
+    ],
+    tags = ["manual"],
+    visibility = ["//visibility:private"],
+)
+
+download_pkgs(
+    name = "caddy_package",
+    additional_repos = [
+        "deb https://dl.cloudsmith.io/public/caddy/stable/deb/debian buster main",
+    ],
+    image_tar = ":caddy_gpg_layer.tar",
+    packages = [
+        "caddy",
+        "curl",
+        "openssl",
+    ],
+    tags = ["manual"],
+    visibility = ["//visibility:private"],
+)
+
+install_pkgs(
+    name = "caddy_package_layer",
+    image_tar = "@buster_base//image",
+    installables_tar = ":caddy_package.tar",
+    output_image_name = "caddy_package_layer",
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+container_layer(
+    name = "caddy_folders",
+    empty_dirs = [
+        "/data/caddy",
+        "/config/caddy",
+    ],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+container_layer(
+    name = "caddy_config",
+    directory = "/etc/caddy",
+    files = [":Caddyfile"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+container_layer(
+    name = "entrypoint",
+    directory = "/usr/share/bin",
+    files = [":entrypoint.sh"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "google_application_credentials",
+    outs = ["google_application_credentials.json"],
+    cmd_bash = "cat $$GOOGLE_APPLICATION_CREDENTIALS>$@",
+    tags = ["manual"],
+    visibility = ["//apps:__subpackages__"],
+)

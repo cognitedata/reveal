@@ -12,7 +12,7 @@ workspace(
 
 # Install the nodejs "bootstrap" package
 # This provides the basic tools for running and packaging nodejs programs in Bazel
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
 http_archive(
     name = "build_bazel_rules_nodejs",
@@ -62,6 +62,24 @@ load(
 
 container_deps()
 
+load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
+
+container_pull(
+    name = "buster_base",
+    digest = "sha256:f6ed7ce6e3264649e1d4f40585247c50e32faaf268984c5c5cbf0e67cf7f0ec7",
+    registry = "index.docker.io",
+    repository = "library/debian",
+    tag = "buster-slim",
+)
+
+# Caddy pgp key
+
+http_file(
+    name = "caddy_gpg",
+    sha256 = "5791c2fb6b6e82feb5a69834dd2131f4bcc30af0faec37783b2dc1c5c224a82a",
+    urls = ["https://dl.cloudsmith.io/public/caddy/stable/gpg.key"],
+)
+
 # Blazier
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -81,9 +99,9 @@ blazier_dependencies()
 
 git_repository(
     name = "com_github_cognitedata_bazel_tools",
-    commit = "3369d775258b19aea6a6ccfd2616ed39eb72e9ed",
+    commit = "531018e619981451386506f89a324f25f3e3ce73",
     remote = "git@github.com:cognitedata/bazel-tools.git",
-    shallow_since = "1618568907 +0200",
+    shallow_since = "1626257493 +0200",
 )
 
 load("@com_github_cognitedata_bazel_tools//:deps.bzl", "cognitedata_bazel_tools_deps")

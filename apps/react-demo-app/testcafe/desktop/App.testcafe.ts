@@ -21,7 +21,7 @@ test('Check sidecar page content', async () => {
   await t.click(sidecarInfo);
 
   log('Checking for page content');
-  await t.click(screen.getByText('What is the Sidecar', { exact: false }));
+  await t.click(screen.getByText('What is the sidecar', { exact: false }));
 });
 
 test('Checking sdk setup', async () => {

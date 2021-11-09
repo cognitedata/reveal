@@ -89,6 +89,7 @@ build --workspace_status_command="bash workspace_status.sh"
 
 # Set shared environment variables for all tests
 build --action_env=NODE_OPTIONS="--max-old-space-size=12288"
+build --action_env=GOOGLE_APPLICATION_CREDENTIALS
 
 # Load any settings specific to the current user.
 # .user.bazelrc should appear in .gitignore so that settings are not shared with team members

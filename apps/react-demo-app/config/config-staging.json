@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "aker-bp": {
+      "versionSpec": "<=0.4.8"
+    }
+  },
+  "apps": {
+    "versionSpec": "^0.4.0"
+  }
+}

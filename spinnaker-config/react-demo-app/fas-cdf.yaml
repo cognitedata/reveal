@@ -1,0 +1,19 @@
+schema: '1'
+id: 'react-demo-app-cdf'
+pipeline:
+  application: react-demo-app
+  name: deploy-react-demo-app-cdf
+  template:
+    source: spinnaker://deployInClusterStagingMulticloudCoreFromPubsub
+  variables:
+    service: 'react-demo-app'
+    pipeline: 'cdf'
+    githubRepository: applications
+    dockerImageName: react-demo-app
+    manualJudgementDev: true
+configuration:
+  description: 'Deploy react-demo-app to CDF clusters'
+  inherit:
+    - triggers
+    - expectedArtifacts
+    - notifications

@@ -13,6 +13,11 @@ static final Map<String, String> CONTEXTS = [
   publishStorybook: "continuous-integration/jenkins/publish-storybook",
   publishFAS: "continuous-integration/jenkins/publish-fas",
   publishPackages: "continuous-integration/jenkins/publish-packages",
+  baker_bake: "cicd/jenkins/baker-bake",
+  spinnaker_deployments: 'cicd/jenkins/spinnaker-deployments',
+  spinnaker_pipeline: 'cicd/jenkins/spinnaker-pipeline',
+  docker_push: 'cicd/jenkins/docker-push',
+
 ]
 
 void bazelPod(Map params = new HashMap(), body) {
@@ -23,16 +28,29 @@ void bazelPod(Map params = new HashMap(), body) {
           containerTemplate(
               name: 'bazel',
               // TODO: Define custom docker image to include bazel instead of installing
-              image: "docker.io/timbru31/node-chrome:latest",
+              image: "eu.gcr.io/cognitedata/apps-tools/bazel-applications:4.2.1-1",
               command: '/bin/cat -',
               resourceRequestCpu: '3000m',
               resourceLimitCpu: '16000m',
               resourceRequestMemory: '24000Mi',
               resourceLimitMemory: '24000Mi',
-              ttyEnabled: true
-          )
+              ttyEnabled: true,
+              envVars: [
+                envVar(key: 'GOOGLE_APPLICATION_CREDENTIALS', value: '/inapp-ci-cd-service-account-credentials/credentials.json'),
+              ]
+          ),
+          containerTemplate(name: 'dockerd',
+              image: 'docker:20.10-dind',
+              resourceRequestCpu: '1000m',
+              resourceLimitCpu: '3000m',
+              resourceRequestMemory: '3000Mi',
+              resourceLimitMemory: '3000Mi',
+              privileged: true,
+              command: 'dockerd-entrypoint.sh --host=unix:///var/run/docker/docker.sock --ip 0.0.0.0'
+          ),
       ],
       volumes: [
+          secretVolume(secretName: 'jenkins-docker-builder', mountPath: '/bazel-docker'),
           secretVolume(secretName: 'jenkins-bazel-build-cache-member', mountPath: '/jenkins-bazel-build-cache-member'),
       ],
   ) {
@@ -55,35 +73,49 @@ def pods = { body ->
     ],
     volumes: [
       secretVolume(
+        secretName: 'jenkins-docker-builder',
+        mountPath: '/jenkins-docker-builder',
+      ),
+      secretVolume(
+        secretName: 'inapp-ci-cd-service-account-credentials',
+        mountPath: '/inapp-ci-cd-service-account-credentials',
+      ),
+      secretVolume(
         secretName: 'npm-credentials',
         mountPath: '/npm-credentials',
+      ),
+      emptyDirVolume(
+        mountPath: '/var/run/docker',
+        memory: false
       ),
     ]
   ) {
     bazelPod(bazelVersion: '4.2.1') {
-      yarn.pod(nodeVersion: NODE_VERSION) {
-        previewServer.pod(nodeVersion: NODE_VERSION) {
-          fas.pod(
-            nodeVersion: NODE_VERSION,
-            envVars: [
-              envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
-              envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
-            ]
-          ) {
-            codecov.pod {
-              fakeIdp.pod(
-                fakeIdpEnvVars: fakeIdpEnvVars,
-              ) {
-                properties([
-                  buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
-                ])
+      spinnaker.pod() {
+        yarn.pod(nodeVersion: NODE_VERSION) {
+          previewServer.pod(nodeVersion: NODE_VERSION) {
+            fas.pod(
+              nodeVersion: NODE_VERSION,
+              envVars: [
+                envVar(key: 'BRANCH_NAME', value: env.BRANCH_NAME),
+                envVar(key: 'CHANGE_ID', value: env.CHANGE_ID)
+              ]
+            ) {
+              codecov.pod {
+                fakeIdp.pod(
+                  fakeIdpEnvVars: fakeIdpEnvVars,
+                ) {
+                  properties([
+                    buildDiscarder(logRotator(daysToKeepStr: '30', numToKeepStr: '100'))
+                  ])
 
-                node(POD_LABEL) {
-                    stageWithNotify('Checkout code', CONTEXTS.checkout) {
-                      checkout(scm)
-                      sh('./rules/test/version_info.sh > ./rules/test/version_info.bzl')
-                    }
-                  body()
+                  node(POD_LABEL) {
+                      stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                        checkout(scm)
+                        sh('./rules/test/version_info.sh > ./rules/test/version_info.bzl')
+                      }
+                    body()
+                  }
                 }
               }
             }
@@ -111,6 +143,7 @@ def handleError = { err ->
 
 pods {
   final boolean isPullRequest = versioning.getEnv().isPullRequest
+  final boolean isProduction = versioning.getEnv().isProduction
   final String hasChangedRef = isPullRequest ?
     // for PRs use the commit hash on the master branch that the PR branch is originated from
     "\$(git merge-base refs/remotes/origin/master HEAD)" :
@@ -128,18 +161,10 @@ pods {
         deleteComments(PR_COMMENT_MARKER)
         deleteComments(STORYBOOK_COMMENT_MARKER)
       }
-            
+      bazel.dockerAuth()
       container('bazel') {
-        // TODO: Define custom docker image to include bazel instead of installing
-        // We are using custom docker.io/timbru31/node-chrome:latest
-        // since we need an image which has both bazel and chromium
-        // it seems installing bazel on ubuntu is easier than installing
-        // bazel on alpine (linux for testcafe image)
-        sh('npm install -g @bazel/bazelisk')
-        // zip is needed for Bazel to archive test artifacts
-        sh('apt update && apt --assume-yes install g++ unzip zip xvfb')
-
         sh("cp .ci.bazelrc ~/.bazelrc")
+        sh("cd /var/run && ln -s /var/run/docker/docker.sock")
         sh(label: 'Set up NPM', script: 'cp /npm-credentials/npm-public-credentials.txt ~/.npmrc')
         // For cloning Blazier and fetching master
         withCredentials([usernamePassword(credentialsId: scm.userRemoteConfigs[0].credentialsId, passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GH_USER')]) {
@@ -154,6 +179,41 @@ pods {
     stageWithNotify("Bazel build", CONTEXTS.bazelBuild) {
       container('bazel') {
         sh(label: 'bazel build //...', script: "bazel --bazelrc=.ci.bazelrc build //...")
+      }
+    }
+
+    if (!isProduction) {
+      stageWithNotify("Baker bake", CONTEXTS.baker_bake) {
+        container('bazel') {
+          def changedManifests = sh(
+            label: "Which manifests were changed?",
+            // Find the commit hash on the master branch that the PR branch is originated from
+            // If we would want to also run this check in cd.jenkins we would need to change ref to HEAD^1
+            script: "bazel run //:has-changed -- -ref=\$(git merge-base refs/remotes/origin/master HEAD) 'kind(baker_bake, //...)'",
+            returnStdout: true
+          )
+          print(changedManifests)
+          if (changedManifests) {
+            def serviceNames = []
+            changedManifests.split('\n').each {
+              def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
+              def params = readJSON text: jsonString
+              print(params)
+              serviceNames.add(params.name)
+            }
+            def serviceNamesStr = serviceNames.join(',')
+            sh(label: './bake_manifests.sh bake --services', script: "./bake_manifests.sh bake --services ${serviceNamesStr} --parallel 32")
+            try {
+              def gitStatus = sh(
+                script: 'test -z "$(git status -s .baker/manifests --porcelain)"',
+                returnStdout: true
+              ).trim()
+            } catch(ex) {
+              exMessage = "There are some untracked changes to .baker/manifests files. Run ./bake_manifests.sh locally and check in the changes."
+              throw new Exception("${exMessage}\n${ex}")
+            }
+          }
+        }
       }
     }
 
@@ -349,6 +409,71 @@ pods {
                 }
               }
             }
+          }
+        }
+      }
+    }
+
+    if (isProduction) {
+      stageWithNotify("Spinnaker deployments", CONTEXTS.spinnaker_deployments) {
+        container('bazel') {
+          def changedApps = sh(label: "Which apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_deployment, //...)'", returnStdout: true)
+          print(changedApps)
+          if (changedApps) {
+            changedApps.split('\n').each {
+              def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
+              def params = readJSON text: jsonString
+              print(params)
+              def target = it.split(':')[0]
+              def nameTag = ""
+              if (params.docker_repository) {
+                nameTag = sh(
+                  label: "Push ${target} Docker image",
+                  script: "bazel --bazelrc=.ci.bazelrc run ${target}:push 2>&1 | grep 'Successfully pushed Docker image to' | awk '{ print \$NF }'",
+                  returnStdout: true
+                ).trim()
+                print("Pushed Docker image $nameTag")
+              }
+
+              if (params.manifest) {
+                // Not Baker
+                def (imageName, imageTag) = nameTag.split(':')
+                print("imageName ${imageName} imageTag ${imageTag} params.manifest ${params.manifest}")
+                deployToSpinnaker(
+                  dockerImageName: imageName,
+                  dockerImageTag: imageTag,
+                  kubernetesManifests: params.manifest,
+                )
+              } else {
+                // Use Baker
+                params.pipelines.each({ pipeline ->
+                  print("Spinnaker deploy ${params.name} ${pipeline} ${nameTag}")
+                  spinnaker.deploy(params.name, pipeline, nameTag ? [nameTag] : [])
+                })
+              }
+
+              slackMessages.add("- `${params.name}` (<https://spinnaker.cognite.ai/#/applications/${params.name}/executions|pipeline>)")
+            }
+          }
+        }
+      }
+    }
+
+    if (isProduction) {
+      stageWithNotify("Spinnaker pipelines", CONTEXTS.spinnaker_pipeline) {
+        container('bazel') {
+          def changedApps = sh(label: "Which spinnaker apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_pipeline, //...)'", returnStdout: true)
+          print(changedApps)
+          if (changedApps) {
+            def tobeDeployedApp = []
+            changedApps.split('\n').each {
+              def file = sh(script: "bazel run ${it}", returnStdout: true)
+              print(file)
+              tobeDeployedApp.add(file)
+            }
+            deploySpinnakerPipelineConfigs.upload(
+              tobeDeployedApp: tobeDeployedApp // ['spinnaker-config/<app>/app-config.yaml']
+            )
           }
         }
       }
