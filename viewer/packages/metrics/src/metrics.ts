@@ -6,7 +6,14 @@ import mixpanel from 'mixpanel-browser';
 
 import log from '@reveal/logger';
 
-export type TrackedEvents = 'init' | 'construct3dViewer' | 'loadModel' | 'error' | 'cameraNavigated' | 'toolCreated';
+export type TrackedEvents =
+  | 'init'
+  | 'construct3dViewer'
+  | 'loadModel'
+  | 'error'
+  | 'cameraNavigated'
+  | 'toolCreated'
+  | 'cadModelStyleAssigned';
 export type EventProps = {
   [key: string]: any;
 };
@@ -98,6 +105,10 @@ export function trackCreateTool(toolName: string) {
 
 export function trackLoadModel(eventProps: EventProps, modelIdentifier: any) {
   trackEvent('loadModel', { ...eventProps, modelIdentifier });
+}
+
+export function trackCadModelStyled(nodeCollectionClassToken: string, appearance: any) {
+  trackEvent('cadModelStyleAssigned', { nodeCollectionClassToken, style: appearance });
 }
 
 export function trackError(error: Error, eventProps: EventProps) {
