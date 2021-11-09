@@ -82,10 +82,11 @@ export const LogViewer: React.FC<Props> = ({
 
       // find MD column index
       const mdColIndex = columnsIndexMap[MD_COL_NAME];
-      const mdUnit = log.columns[mdColIndex].metadata?.unit || FEET;
 
       // Continues only if dataset has MD column
       if (mdColIndex === undefined) return;
+
+      const mdUnit = log.columns[mdColIndex]?.metadata?.unit || FEET;
 
       // Get only the configured columns
       TRACK_CONFIG.forEach((track) => {
