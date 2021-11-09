@@ -106,6 +106,7 @@ def handleError = { err ->
 
     archiveArtifacts allowEmptyArchive: true, artifacts: artifactPaths
   }
+  throw err
 }
 
 pods {
