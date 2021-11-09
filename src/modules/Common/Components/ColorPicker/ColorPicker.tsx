@@ -1,5 +1,5 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
 import styled from 'styled-components';
 
@@ -13,15 +13,30 @@ export const ColorPicker = ({
   onChange: (newColor: string) => void;
 }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  const colorBoxElm = useRef<HTMLDivElement | null>(null);
+  const colorPicker = useRef<HTMLDivElement | null>(null);
 
   const handleChange = (newColor: any) => {
     onChange(newColor.hex);
   };
 
+  useEffect(() => {
+    if (displayColorPicker) {
+      if (colorBoxElm.current && colorPicker.current) {
+        const pos = (
+          colorBoxElm.current as HTMLDivElement
+        ).getBoundingClientRect();
+        colorPicker.current.style.top = `${pos.top + 30}px`;
+        colorPicker.current.style.left = `${pos.left}px`;
+      }
+    }
+  }, [displayColorPicker]);
+
   return (
     <div>
       <ColorBoxContainer>
         <ColorBox
+          ref={colorBoxElm}
           size={size}
           color={color}
           onClick={() => {
@@ -30,7 +45,7 @@ export const ColorPicker = ({
         />
       </ColorBoxContainer>
       {displayColorPicker ? (
-        <Popover>
+        <Popover ref={colorPicker}>
           <ColorPickerCover
             onClick={() => {
               setDisplayColorPicker(false);
@@ -52,7 +67,7 @@ const ColorBox = styled.div<{ size: string; color: string }>`
 `;
 
 const Popover = styled.div`
-  position: absolute;
+  position: fixed;
   z-index: 2;
 `;
 
