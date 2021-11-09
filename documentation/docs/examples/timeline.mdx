@@ -166,13 +166,13 @@ timeline.resume();
 const keyframe = timeline.getKeyframeByDate(new Date('2021-10-06'));
 ```
 
-### Timeline Data's while in Play
-While in Play state, the tool emits few data which will be helpful for the users to calculate the progression of the Playback of Timeline.
-Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to received below data.
-- `date` - Virtual Date which can be used to plot progression.
-- `activeKeyframe` - Current Keyframe in the Playback.
-- `startDate` - Keyframe date to start the Playback of Timeline Keyframes.
-- `endDate` - Keyframe date to stop the Playback of Timeline Keyframes.
+### Reacting to date changes while in playback mode
+While in the play state, the tool emits events which will be helpful for the users to calculate the progression of the playback of the timeline.
+The tool provides a `TimelineDateUpdateDelegate` event which can be subscribed to received below data.
+- `date` - Virtual date which can be used to calculate progression.
+- `activeKeyframe` - Current active `Keyframe` in the playback.
+- `startDate` - Virtual date to start the playback of the timeline.
+- `endDate` - Virtual date to stop the playback of the timeline.
 
 :::note
 If we have subscribed to `dateChanged` event and if there are no active Keyframe during Timeline playback, than `activeKeyframe` data will be `undefined` value.
