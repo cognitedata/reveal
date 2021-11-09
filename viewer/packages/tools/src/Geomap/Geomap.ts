@@ -9,7 +9,7 @@ import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
 
 export class Geomap {
   private readonly _viewer: Cognite3DViewer;
-  private _map: GEOTHREE.MapView;
+  private readonly _map: GEOTHREE.MapView;
   private _intervalId: any = 0;
   private readonly _onCameraChange = this.handleCameraChange.bind(this);
 

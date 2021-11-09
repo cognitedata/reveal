@@ -73,23 +73,23 @@ export default class ComboControls extends EventDispatcher {
   public orthographicCameraDollyFactor: number = 0.3;
 
   private temporarilyDisableDamping: boolean = false;
-  private camera: PerspectiveCamera | OrthographicCamera;
+  private readonly camera: PerspectiveCamera | OrthographicCamera;
   private firstPersonMode: boolean = false;
-  private reusableCamera: PerspectiveCamera | OrthographicCamera;
-  private reusableVector3: Vector3 = new Vector3();
-  private _accumulatedMouseMove: Vector2 = new Vector2();
-  private domElement: HTMLElement;
-  private target: Vector3 = new Vector3();
-  private targetEnd: Vector3 = new Vector3();
-  private spherical: Spherical = new Spherical();
+  private readonly reusableCamera: PerspectiveCamera | OrthographicCamera;
+  private readonly reusableVector3: Vector3 = new Vector3();
+  private readonly _accumulatedMouseMove: Vector2 = new Vector2();
+  private readonly domElement: HTMLElement;
+  private readonly target: Vector3 = new Vector3();
+  private readonly targetEnd: Vector3 = new Vector3();
+  private readonly spherical: Spherical = new Spherical();
   private sphericalEnd: Spherical = new Spherical();
-  private deltaTarget: Vector3 = new Vector3();
+  private readonly deltaTarget: Vector3 = new Vector3();
   private keyboard: Keyboard = new Keyboard();
 
-  private offsetVector: Vector3 = new Vector3();
-  private panVector: Vector3 = new Vector3();
-  private raycaster: Raycaster = new Raycaster();
-  private targetFPS: number = 30;
+  private readonly offsetVector: Vector3 = new Vector3();
+  private readonly panVector: Vector3 = new Vector3();
+  private readonly raycaster: Raycaster = new Raycaster();
+  private readonly targetFPS: number = 30;
   private targetFPSOverActualFPS: number = 1;
   private isFocused = false;
 
@@ -251,7 +251,7 @@ export default class ComboControls extends EventDispatcher {
     return deltaTheta;
   }
 
-  private onMouseDown = (event: MouseEvent) => {
+  private readonly onMouseDown = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
     }
@@ -276,11 +276,11 @@ export default class ComboControls extends EventDispatcher {
     }
   };
 
-  private onMouseUp = (_event: MouseEvent) => {
+  private readonly onMouseUp = (_event: MouseEvent) => {
     this._accumulatedMouseMove.set(0, 0);
   };
 
-  private onMouseWheel = (event: WheelEvent) => {
+  private readonly onMouseWheel = (event: WheelEvent) => {
     if (!this.enabled) {
       return;
     }
@@ -315,7 +315,7 @@ export default class ComboControls extends EventDispatcher {
     this.dolly(x, y, deltaDistance);
   };
 
-  private onTouchStart = (event: TouchEvent) => {
+  private readonly onTouchStart = (event: TouchEvent) => {
     if (!this.enabled) {
       return;
     }
@@ -339,21 +339,21 @@ export default class ComboControls extends EventDispatcher {
     }
   };
 
-  private onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
+  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     this.isFocused =
       event.type !== 'blur' && (event.target === this.domElement || document.activeElement === this.domElement);
 
     this.keyboard.disabled = !this.isFocused;
   };
 
-  private onContextMenu = (event: MouseEvent) => {
+  private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.enabled) {
       return;
     }
     event.preventDefault();
   };
 
-  private rotate = (deltaX: number, deltaY: number) => {
+  private readonly rotate = (deltaX: number, deltaY: number) => {
     if (deltaX === 0 && deltaY === 0) {
       return;
     }
@@ -371,7 +371,7 @@ export default class ComboControls extends EventDispatcher {
     }
   };
 
-  private startMouseRotation = (initialEvent: MouseEvent) => {
+  private readonly startMouseRotation = (initialEvent: MouseEvent) => {
     let previousOffset = getHTMLOffset(this.domElement, initialEvent.clientX, initialEvent.clientY);
     const onMouseMove = (event: MouseEvent) => {
       const newOffset = getHTMLOffset(this.domElement, event.clientX, event.clientY);
@@ -389,7 +389,7 @@ export default class ComboControls extends EventDispatcher {
     window.addEventListener('mouseup', onMouseUp, { passive: false });
   };
 
-  private startMousePan = (initialEvent: MouseEvent) => {
+  private readonly startMousePan = (initialEvent: MouseEvent) => {
     let previousOffset = getHTMLOffset(this.domElement, initialEvent.clientX, initialEvent.clientY);
 
     const onMouseMove = (event: MouseEvent) => {
@@ -409,7 +409,7 @@ export default class ComboControls extends EventDispatcher {
     window.addEventListener('mouseup', onMouseUp, { passive: false });
   };
 
-  private startTouchRotation = (initialEvent: TouchEvent) => {
+  private readonly startTouchRotation = (initialEvent: TouchEvent) => {
     const { domElement } = this;
 
     let previousOffset = getHTMLOffset(domElement, initialEvent.touches[0].clientX, initialEvent.touches[0].clientY);
@@ -445,7 +445,7 @@ export default class ComboControls extends EventDispatcher {
     document.addEventListener('touchend', onTouchEnd, { passive: false });
   };
 
-  private startTouchPinch = (initialEvent: TouchEvent) => {
+  private readonly startTouchPinch = (initialEvent: TouchEvent) => {
     const { domElement } = this;
     let previousPinchInfo = getPinchInfo(domElement, initialEvent.touches);
     const initialPinchInfo = getPinchInfo(domElement, initialEvent.touches);
@@ -493,7 +493,7 @@ export default class ComboControls extends EventDispatcher {
     document.addEventListener('touchend', onTouchEnd);
   };
 
-  private handleKeyboard = () => {
+  private readonly handleKeyboard = () => {
     if (!this.enabled || !this.enableKeyboardNavigation || !this.isFocused) {
       return;
     }
@@ -532,7 +532,7 @@ export default class ComboControls extends EventDispatcher {
     }
   };
 
-  private rotateSpherical = (azimuthAngle: number, polarAngle: number) => {
+  private readonly rotateSpherical = (azimuthAngle: number, polarAngle: number) => {
     const { sphericalEnd } = this;
     const theta = MathUtils.clamp(sphericalEnd.theta + azimuthAngle, this.minAzimuthAngle, this.maxAzimuthAngle);
     const phi = MathUtils.clamp(sphericalEnd.phi + polarAngle, this.minPolarAngle, this.maxPolarAngle);
@@ -541,7 +541,7 @@ export default class ComboControls extends EventDispatcher {
     sphericalEnd.makeSafe();
   };
 
-  private rotateFirstPersonMode = (azimuthAngle: number, polarAngle: number) => {
+  private readonly rotateFirstPersonMode = (azimuthAngle: number, polarAngle: number) => {
     const { firstPersonRotationFactor, reusableCamera, reusableVector3, sphericalEnd, targetEnd } = this;
     reusableCamera.position.setFromSpherical(sphericalEnd).add(targetEnd);
     reusableCamera.lookAt(targetEnd);
@@ -556,7 +556,7 @@ export default class ComboControls extends EventDispatcher {
     sphericalEnd.makeSafe();
   };
 
-  private pan = (deltaX: number, deltaY: number) => {
+  private readonly pan = (deltaX: number, deltaY: number) => {
     const { domElement, camera, offsetVector, target } = this;
 
     offsetVector.copy(camera.position).sub(target);
@@ -574,14 +574,14 @@ export default class ComboControls extends EventDispatcher {
     this.panUp((2 * deltaY * targetDistance) / domElement.clientHeight);
   };
 
-  private dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
+  private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
     const camera = this.camera as OrthographicCamera;
     camera.zoom *= 1 - deltaDistance;
     camera.zoom = MathUtils.clamp(camera.zoom, this.minZoom, this.maxZoom);
     camera.updateProjectionMatrix();
   };
 
-  private dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number) => {
+  private readonly dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number) => {
     const { dynamicTarget, minDistance, raycaster, reusableVector3, sphericalEnd, targetEnd, camera, reusableCamera } =
       this;
 
@@ -624,7 +624,7 @@ export default class ComboControls extends EventDispatcher {
     targetEnd.add(targetOffset);
   };
 
-  private dolly = (x: number, y: number, deltaDistance: number) => {
+  private readonly dolly = (x: number, y: number, deltaDistance: number) => {
     const { camera } = this;
     // @ts-ignore
     if (camera.isOrthographicCamera) {
@@ -635,7 +635,7 @@ export default class ComboControls extends EventDispatcher {
     }
   };
 
-  private getDollyDeltaDistance = (dollyIn: boolean, steps: number = 1) => {
+  private readonly getDollyDeltaDistance = (dollyIn: boolean, steps: number = 1) => {
     const { sphericalEnd, dollyFactor } = this;
     const zoomFactor = dollyFactor ** steps;
     const factor = dollyIn ? zoomFactor : 1 / zoomFactor;
@@ -643,14 +643,14 @@ export default class ComboControls extends EventDispatcher {
     return distance * (factor - 1);
   };
 
-  private panLeft = (distance: number) => {
+  private readonly panLeft = (distance: number) => {
     const { camera, targetEnd, panVector } = this;
     panVector.setFromMatrixColumn(camera.matrix, 0); // get X column of objectMatrix
     panVector.multiplyScalar(-distance);
     targetEnd.add(panVector);
   };
 
-  private panUp = (distance: number) => {
+  private readonly panUp = (distance: number) => {
     const { camera, targetEnd, panVector } = this;
     panVector.setFromMatrixColumn(camera.matrix, 1); // get X column of objectMatrix
     panVector.multiplyScalar(distance);

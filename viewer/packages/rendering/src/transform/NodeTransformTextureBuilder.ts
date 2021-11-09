@@ -13,7 +13,7 @@ export class NodeTransformTextureBuilder {
   private readonly _transformOverrideBuffer: TransformOverrideBuffer;
   private readonly _transformOverrideIndexTexture: THREE.DataTexture;
   private _needsUpdate = false;
-  private _handleTransformChangedBound = this.handleTransformChanged.bind(this);
+  private readonly _handleTransformChangedBound = this.handleTransformChanged.bind(this);
 
   constructor(treeIndexCount: number, transformProvider: NodeTransformProvider) {
     const textures = allocateTextures(treeIndexCount);
