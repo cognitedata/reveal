@@ -18,10 +18,10 @@ import {
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 
 export class GltfSectorParser {
-  private _glbMetadataParser: GlbMetadataParser;
+  private readonly _glbMetadataParser: GlbMetadataParser;
 
   // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessortype-white_check_mark
-  private readonly COLLECTION_TYPE_SIZES = new Map<string, number>([
+  private static readonly COLLECTION_TYPE_SIZES = new Map<string, number>([
     ['SCALAR', 1],
     ['VEC2', 2],
     ['VEC3', 3],
@@ -32,7 +32,7 @@ export class GltfSectorParser {
   ]);
 
   // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessorcomponenttype-white_check_mark
-  private readonly DATA_TYPE_BYTE_SIZES = new Map<number, TypedArrayConstructor>([
+  private static readonly DATA_TYPE_BYTE_SIZES = new Map<number, TypedArrayConstructor>([
     [5120, Int8Array],
     [5121, Uint8Array],
     [5122, Int16Array],
@@ -47,9 +47,7 @@ export class GltfSectorParser {
 
   public parseSector(data: ArrayBuffer) {
     const headers = this._glbMetadataParser.parseGlbMetadata(data);
-
     const json = headers.json;
-
     return this.traverseDefaultSceneNodes(json, headers, data);
   }
 
@@ -62,7 +60,6 @@ export class GltfSectorParser {
       .map(nodeId => json.nodes[nodeId])
       .forEach(node => {
         const processedNode = this.processNode(node, headers, data)!;
-
         if (processedNode === undefined) {
           return;
         }
@@ -94,7 +91,6 @@ export class GltfSectorParser {
 
     switch (geometryType) {
       case RevealGeometryCollectionType.InstanceMesh:
-        //   instanceId = this.processInstancedMesh(mesh, instanced, bufferGeometry);
         break;
       case RevealGeometryCollectionType.TriangleMesh:
         assert(payload.instancingExtension === undefined);
@@ -179,7 +175,7 @@ export class GltfSectorParser {
     const indicesBufferView = json.bufferViews[indicesAccessor.bufferView];
     indicesBufferView.byteOffset = indicesBufferView.byteOffset ?? 0;
 
-    const IndicesTypedArrayConstructor = this.DATA_TYPE_BYTE_SIZES.get(indicesAccessor.componentType)!;
+    const IndicesTypedArrayConstructor = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(indicesAccessor.componentType)!;
 
     const indicesTypedArray = new IndicesTypedArrayConstructor(
       data,
@@ -187,7 +183,7 @@ export class GltfSectorParser {
       indicesBufferView.byteLength / IndicesTypedArrayConstructor.BYTES_PER_ELEMENT
     );
 
-    const elementSize = this.COLLECTION_TYPE_SIZES.get(indicesAccessor.type)!;
+    const elementSize = GltfSectorParser.COLLECTION_TYPE_SIZES.get(indicesAccessor.type)!;
 
     bufferGeometry.setIndex(new THREE.BufferAttribute(indicesTypedArray, elementSize));
   }
@@ -238,12 +234,14 @@ export class GltfSectorParser {
     Object.keys(attributes).forEach(attributeName => {
       const accessor = json.accessors[attributes[attributeName]];
 
+      const byteOffset = accessor.byteOffset ?? 0;
+
       const interleavedBuffer = typedArrayMap[accessor.componentType];
-      const size = this.COLLECTION_TYPE_SIZES.get(accessor.type);
+      const size = GltfSectorParser.COLLECTION_TYPE_SIZES.get(accessor.type);
 
       assert(size !== undefined);
 
-      const elementType = this.DATA_TYPE_BYTE_SIZES.get(accessor.componentType);
+      const elementType = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(accessor.componentType);
 
       assert(elementType !== undefined);
 
@@ -254,7 +252,7 @@ export class GltfSectorParser {
       const interleavedBufferAttribute = new THREE.InterleavedBufferAttribute(
         interleavedBuffer,
         size,
-        (accessor.byteOffset ?? 0) / elementSize
+        byteOffset / elementSize
       );
       const transformedAttributeName = transformAttributeName(attributeName);
       bufferGeometry.setAttribute(transformedAttributeName, interleavedBufferAttribute);
@@ -271,7 +269,7 @@ export class GltfSectorParser {
     const byteOffset = bufferView.byteOffset ?? 0;
 
     const typedArrays = [...new Set(componentTypes)].map(componentType => {
-      const TypedArray = this.DATA_TYPE_BYTE_SIZES.get(componentType)!;
+      const TypedArray = GltfSectorParser.DATA_TYPE_BYTE_SIZES.get(componentType)!;
       const typedBuffer = new TypedArray(
         data,
         offsetToBinChunk + byteOffset,

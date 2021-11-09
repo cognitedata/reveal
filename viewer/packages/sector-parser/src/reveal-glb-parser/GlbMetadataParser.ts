@@ -6,10 +6,10 @@ import assert from 'assert';
 import { GlbHeaderData, GltfJson } from '../types';
 
 export class GlbMetadataParser {
-  private _textDecoder: TextDecoder;
+  private readonly _textDecoder: TextDecoder;
 
-  private readonly GLB_HEADER_BYTE_SIZE = 12;
-  private readonly CHUNK_HEADER_BYTE_SIZE = 8;
+  private static readonly GLB_HEADER_BYTE_SIZE = 12;
+  private static readonly CHUNK_HEADER_BYTE_SIZE = 8;
 
   constructor() {
     this._textDecoder = new TextDecoder();
@@ -22,7 +22,7 @@ export class GlbMetadataParser {
 
     const { length: binContentLength, byteOffsetToBinContent } = this.parseBinHeaders(
       glbByteData,
-      this.CHUNK_HEADER_BYTE_SIZE + jsonLength
+      GlbMetadataParser.CHUNK_HEADER_BYTE_SIZE + jsonLength
     );
 
     return {
@@ -33,7 +33,7 @@ export class GlbMetadataParser {
   }
 
   private parseGlbHeaders(data: ArrayBuffer) {
-    const dataView = new DataView(data, 0, this.GLB_HEADER_BYTE_SIZE);
+    const dataView = new DataView(data, 0, GlbMetadataParser.GLB_HEADER_BYTE_SIZE);
 
     const fileTypeIdentifier = this._textDecoder.decode(new Uint8Array(data, 0, 4));
     const version = dataView.getUint32(4, true);
@@ -46,14 +46,22 @@ export class GlbMetadataParser {
   }
 
   private parseJson(data: ArrayBuffer): { type: string; length: number; json: GltfJson } {
-    const dataView = new DataView(data, this.GLB_HEADER_BYTE_SIZE, this.CHUNK_HEADER_BYTE_SIZE);
+    const dataView = new DataView(
+      data,
+      GlbMetadataParser.GLB_HEADER_BYTE_SIZE,
+      GlbMetadataParser.CHUNK_HEADER_BYTE_SIZE
+    );
 
     const length = dataView.getUint32(0, true);
-    const type = this._textDecoder.decode(new Uint8Array(data, this.GLB_HEADER_BYTE_SIZE + 4, 4));
+    const type = this._textDecoder.decode(new Uint8Array(data, GlbMetadataParser.GLB_HEADER_BYTE_SIZE + 4, 4));
 
     assert(type === 'JSON');
 
-    const jsonBytes = new Uint8Array(data, this.GLB_HEADER_BYTE_SIZE + this.CHUNK_HEADER_BYTE_SIZE, length);
+    const jsonBytes = new Uint8Array(
+      data,
+      GlbMetadataParser.GLB_HEADER_BYTE_SIZE + GlbMetadataParser.CHUNK_HEADER_BYTE_SIZE,
+      length
+    );
     const json = JSON.parse(this._textDecoder.decode(jsonBytes)) as GltfJson;
 
     assert(json !== undefined, 'Failed to assign types to gltf json');
@@ -62,14 +70,23 @@ export class GlbMetadataParser {
   }
 
   private parseBinHeaders(data: ArrayBuffer, offset: number) {
-    const dataView = new DataView(data, this.GLB_HEADER_BYTE_SIZE + offset, this.CHUNK_HEADER_BYTE_SIZE);
+    const dataView = new DataView(
+      data,
+      GlbMetadataParser.GLB_HEADER_BYTE_SIZE + offset,
+      GlbMetadataParser.CHUNK_HEADER_BYTE_SIZE
+    );
 
     const length = dataView.getUint32(0, true);
 
-    const type = this._textDecoder.decode(new Uint8Array(data, this.GLB_HEADER_BYTE_SIZE + offset + 4, 4));
+    const type = this._textDecoder.decode(new Uint8Array(data, GlbMetadataParser.GLB_HEADER_BYTE_SIZE + offset + 4, 4));
 
     assert(type.includes('BIN'));
 
-    return { type, byteOffsetToBinContent: this.GLB_HEADER_BYTE_SIZE + offset + this.CHUNK_HEADER_BYTE_SIZE, length };
+    return {
+      type,
+      byteOffsetToBinContent:
+        GlbMetadataParser.GLB_HEADER_BYTE_SIZE + offset + GlbMetadataParser.CHUNK_HEADER_BYTE_SIZE,
+      length
+    };
   }
 }

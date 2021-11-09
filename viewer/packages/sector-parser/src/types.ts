@@ -19,7 +19,7 @@ export type Scene = {
 
 export type Accessor = {
   bufferView: number;
-  byteOffset: number;
+  byteOffset: number | undefined;
   componentType: number;
   count: number;
   type: string;
