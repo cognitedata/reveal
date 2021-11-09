@@ -11,7 +11,7 @@ import { Cognite3DModel } from '@reveal/core';
 export class Keyframe {
   private readonly _date: Date;
   private readonly _model: Cognite3DModel;
-  private _nodeCollectionAndAppearnace: { nodes: NodeCollectionBase; nodeAppearance: NodeAppearance }[] = [];
+  private readonly _nodeCollectionAndAppearnace: { nodes: NodeCollectionBase; nodeAppearance: NodeAppearance }[] = [];
 
   constructor(model: Cognite3DModel, date: Date) {
     this._model = model;

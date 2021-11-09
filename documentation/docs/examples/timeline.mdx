@@ -130,11 +130,13 @@ const startDate = new Date('2021-10-05');
 const endDate = new Date('2021-10-09');
 timeline.play(startDate, endDate, durationMs);
 timeline.subscribe('dateChanged', (data) => {
-  if(initialDateReference === 0) {
-  initialDateReference = data.date.getTime();
-}
-const progress = ((data.date.getTime() - initialDateReference) / durationMs) * 100;
-progressBar.style.width = `${progress}%`;
+  if(data.activeKeyframe) {
+    if(initialDateReference === 0) {
+    initialDateReference = data.date.getTime();
+  }
+  const progress = ((data.date.getTime() - initialDateReference) / durationMs) * 100;
+  progressBar.style.width = `${progress}%`;
+  }
 });
 ```
 
@@ -171,6 +173,10 @@ Tool provides `TimelineDateUpdateDelegate` event which can be subscribed to rece
 - `activeKeyframe` - Current Keyframe in the Playback.
 - `startDate` - Keyframe date to start the Playback of Timeline Keyframes.
 - `endDate` - Keyframe date to stop the Playback of Timeline Keyframes.
+
+:::note
+If we have subscribed to `dateChanged` event and if there are no active Keyframe during Timeline playback, than `activeKeyframe` data will be `undefined` value.
+:::
 
 ```jsx
 // import { TimelineDateUpdateDelegate } from '@cognite/reveal/tools';

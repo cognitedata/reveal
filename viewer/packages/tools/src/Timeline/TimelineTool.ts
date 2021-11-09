@@ -15,7 +15,7 @@ import { EventTrigger, assertNever } from '@reveal/core/utilities';
  */
 export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: Cognite3DModel;
-  private _keyframes: Keyframe[];
+  private readonly _keyframes: Keyframe[];
   private _playback: TWEEN.Tween | undefined = undefined;
   private readonly _events = { dateChanged: new EventTrigger<TimelineDateUpdateDelegate>() };
 
@@ -49,7 +49,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   public unsubscribe(event: 'dateChanged', listener: TimelineDateUpdateDelegate): void {
     switch (event) {
       case 'dateChanged':
-        this._events.dateChanged.unsubscribe(listener as TimelineDateUpdateDelegate);
+        this._events.dateChanged.unsubscribe(listener);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -82,12 +82,10 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param keyframe - Keyframe to be removed from the timeline
    */
   public removeKeyframe(keyframe: Keyframe) {
-    if (this._keyframes.length > 0) {
-      const index = this._keyframes.findIndex(obj => obj === keyframe);
+    const index = this._keyframes.findIndex(obj => obj === keyframe);
 
-      if (index > -1) {
-        this._keyframes.splice(index, 1);
-      }
+    if (index > -1) {
+      this._keyframes.splice(index, 1);
     }
   }
 
@@ -96,12 +94,10 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param date - Date of the Keyframe to be removed from the Timeline
    */
   public removeKeyframeByDate(date: Date) {
-    if (this._keyframes.length > 0) {
-      const index = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
+    const index = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
 
-      if (index > -1) {
-        this._keyframes.splice(index, 1);
-      }
+    if (index > -1) {
+      this._keyframes.splice(index, 1);
     }
   }
 
