@@ -13,20 +13,20 @@ export class CameraManager extends THREE.EventDispatcher {
   private _camera: THREE.PerspectiveCamera;
   private _domElement: HTMLElement;
 
-  private modelRaycast: (x: number, y: number) => Promise<CallbackData>;
+  private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CallbackData>;
 
-  public readonly _cameraControlsOptions = {
+  public readonly _cameraControlsOptions: CameraControlsOptions = {
+    zoomToCursor: 'basicLerp',
+    onClickTargetChange: false,
     canInterruptAnimations: false,
-    useScrollTargetControls: false,
-    useOnClickTargetChange: false,
-    scrollEventsAdded: false,
-    clickEventsAdded: false
   };
 
   private isDisposed = false;
   public automaticNearFarPlane: boolean = true;
 
   private readonly _automaticControlsSensitivity = false;
+  private _scrollEventsAdded = false;
+  private _clickEventsAdded = false;
   private readonly _animationDuration: number = 600;
   private readonly _minDefaultAnimationDuration: number = 600;
   private readonly _maxDefaultAnimationDuration: number = 2500;
@@ -71,15 +71,15 @@ export class CameraManager extends THREE.EventDispatcher {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateMissedRaycast(cursorPosition: { x: number; y: number }, modelsBB: THREE.Box3): THREE.Vector3 {
-    const modelSize = modelsBB.min.distanceTo(modelsBB.max);
+  private calculateMissedRaycast(cursorPosition: { x: number; y: number }, modelsBoundingBox: THREE.Box3): THREE.Vector3 {
+    const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
 
     this._raycaster.setFromCamera(cursorPosition, this._camera);
 
     const farPoint = this._raycaster.ray.direction
       .clone()
       .normalize()
-      .multiplyScalar(Math.max(this._camera.position.distanceTo(modelsBB.getCenter(new THREE.Vector3())), modelSize))
+      .multiplyScalar(Math.max(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize))
       .add(this._camera.position);
 
     return farPoint;
@@ -94,9 +94,9 @@ export class CameraManager extends THREE.EventDispatcher {
 
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
-    const callbackData = await this.modelRaycast(offsetX, offsetY);
+    const callbackData = await this._modelRaycastCallback(offsetX, offsetY);
 
-    const newTarget = callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBB);
+    const newTarget = callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBoundingBox);
 
     this.setCameraTarget(newTarget, true);
   }
@@ -109,10 +109,10 @@ export class CameraManager extends THREE.EventDispatcher {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
-    const callbackData = await this.modelRaycast(offsetX, offsetY);
+    const callbackData = await this._modelRaycastCallback(offsetX, offsetY);
 
     const newScrollTarget =
-      callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBB);
+      callbackData?.intersection?.point ?? this.calculateMissedRaycast({ x, y }, callbackData.modelsBoundingBox);
 
     this.controls.setScrollTarget(newScrollTarget);
   }
@@ -121,7 +121,13 @@ export class CameraManager extends THREE.EventDispatcher {
    * Adds or removes event listeners for additional features of camera controls.
    * @param removeListeners
    */
-  private setupOtherControlsModes(removeListeners?: boolean) {
+  private setupControls(controlsOptions: CameraControlsOptions, removeListeners?: boolean) {
+    const localControlsOptions = {
+      zoomToCursor: controlsOptions.zoomToCursor ?? this._cameraControlsOptions.zoomToCursor,
+      onClickTargetChange: controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.onClickTargetChange,
+      canInterruptAnimations: controlsOptions.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations
+    }
+
     let startedScroll = false,
       newTargetUpdate = false;
     let timeAfterClick = 0;
@@ -129,9 +135,9 @@ export class CameraManager extends THREE.EventDispatcher {
       clickClock = new THREE.Clock();
 
     const onClick = (e: any) => {
-      if (this._cameraControlsOptions.clickEventsAdded && !this._cameraControlsOptions.useOnClickTargetChange) {
+      if ((!localControlsOptions.onClickTargetChange || removeListeners) && this._clickEventsAdded) {
         this._domElement.removeEventListener('click', onClick);
-        this._cameraControlsOptions.clickEventsAdded = false;
+        this._clickEventsAdded = false;
         return;
       }
 
@@ -160,20 +166,21 @@ export class CameraManager extends THREE.EventDispatcher {
       }
     };
 
-    if (this._cameraControlsOptions.useOnClickTargetChange) {
+    if (localControlsOptions.onClickTargetChange && !this._clickEventsAdded) {
       this._domElement.addEventListener('click', onClick);
-      this._cameraControlsOptions.clickEventsAdded = true;
+      this._clickEventsAdded = true;
     }
 
-    if (this._cameraControlsOptions.useScrollTargetControls) {
+    if ((localControlsOptions.zoomToCursor === 'scrollTarget') && !this._scrollEventsAdded) {
       this._domElement.addEventListener('wheel', onWheel);
-      this._cameraControlsOptions.scrollEventsAdded = true;
-    } else {
-      if (removeListeners) {
-        this._domElement.removeEventListener('wheel', onWheel);
-        this._cameraControlsOptions.scrollEventsAdded = false;
-      }
+      this._scrollEventsAdded = true;
     }
+
+    if (((localControlsOptions.zoomToCursor !== 'scrollTarget') || removeListeners) && this._scrollEventsAdded) {
+      this._domElement.removeEventListener('wheel', onWheel);
+      this._scrollEventsAdded = false;
+    }
+
   }
 
   constructor(
@@ -184,13 +191,14 @@ export class CameraManager extends THREE.EventDispatcher {
     super();
     this._camera = camera;
     this._domElement = domElement;
-    this.modelRaycast = raycastFunction;
+    this._modelRaycastCallback = raycastFunction;
     this.controls = new ComboControls(camera, domElement);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
 
-    this.setCameraControlsMode({ zoomToCursor: 'basicLerp', onClickTargetChange: false });
+    const {zoomToCursor, onClickTargetChange} = this._cameraControlsOptions;
+    this.setCameraControlsMode({zoomToCursor, onClickTargetChange});
 
     if (!camera) {
       this._camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -218,47 +226,29 @@ export class CameraManager extends THREE.EventDispatcher {
   }
 
   setCameraControlsMode(controlsOptions: CameraControlsOptions) {
-    this._cameraControlsOptions.useOnClickTargetChange =
-      controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.useOnClickTargetChange;
+    this._cameraControlsOptions.onClickTargetChange =
+      controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.onClickTargetChange;
     this._cameraControlsOptions.canInterruptAnimations =
       controlsOptions.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations;
+    this._cameraControlsOptions.zoomToCursor = controlsOptions.zoomToCursor ?? this._cameraControlsOptions.zoomToCursor;
+
+    this.setupControls(controlsOptions);
 
     switch (controlsOptions?.zoomToCursor) {
       case 'disable':
-        this._cameraControlsOptions.useScrollTargetControls = false;
         this.controls.zoomToCursor = false;
 
-        if (this._cameraControlsOptions.scrollEventsAdded) {
-          this.setupOtherControlsModes(true);
-        }
         break;
       case 'basicLerp':
-        this._cameraControlsOptions.useScrollTargetControls = false;
         this.controls.useScrollTarget = false;
 
-        if (this._cameraControlsOptions.scrollEventsAdded) {
-          this.setupOtherControlsModes(true);
-        }
         break;
       case 'scrollTarget':
-        this._cameraControlsOptions.useScrollTargetControls = true;
         this.controls.useScrollTarget = true;
 
-        if (!this._cameraControlsOptions.scrollEventsAdded) {
-          this.setupOtherControlsModes();
-        }
         break;
       default:
         break;
-    }
-
-    if (controlsOptions.onClickTargetChange) {
-      if (!this._cameraControlsOptions.clickEventsAdded) {
-        this.setupOtherControlsModes();
-      }
-    } else {
-      if (this._cameraControlsOptions.clickEventsAdded && controlsOptions.onClickTargetChange !== undefined)
-        this.setupOtherControlsModes(true);
     }
   }
 
@@ -307,11 +297,11 @@ export class CameraManager extends THREE.EventDispatcher {
 
     const animation = new TWEEN.Tween(from);
     const stopTween = (event: Event) => {
-      // if (this.isDisposed) {
-      //     document.removeEventListener('keydown', stopTween);
-      //     animation.stop();
-      //     return;
-      // }
+      if (this.isDisposed) {
+          document.removeEventListener('keydown', stopTween);
+          animation.stop();
+          return;
+      }
 
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
@@ -332,9 +322,9 @@ export class CameraManager extends THREE.EventDispatcher {
       .to(to, duration)
       .easing((x: number) => TWEEN.Easing.Circular.Out(x))
       .onUpdate(() => {
-        // if (this.isDisposed) {
-        //     return;
-        // }
+        if (this.isDisposed) {
+            return;
+        }
         tempPosition.set(from.x, from.y, from.z);
         tempTarget.set(from.targetX, from.targetY, from.targetZ);
         if (!this._camera) {
@@ -344,9 +334,9 @@ export class CameraManager extends THREE.EventDispatcher {
         this.controls.setState(tempPosition, tempTarget);
       })
       .onComplete(() => {
-        // if (this.isDisposed) {
-        //     return;
-        // }
+        if (this.isDisposed) {
+            return;
+        }
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
@@ -354,9 +344,9 @@ export class CameraManager extends THREE.EventDispatcher {
   }
 
   public moveCameraTargetTo(target: THREE.Vector3, duration?: number) {
-    // if (this.isDisposed) {
-    //   return;
-    // }
+    if (this.isDisposed) {
+      return;
+    }
 
     if (duration === 0) {
       this.controls.setState(this._camera.position, target);
@@ -384,11 +374,11 @@ export class CameraManager extends THREE.EventDispatcher {
 
     const animation = new TWEEN.Tween(from);
     const stopTween = (event: Event) => {
-      //   if (this.isDisposed) {
-      //     document.removeEventListener('keydown', stopTween);
-      //     animation.stop();
-      //     return;
-      //   }
+      if (this.isDisposed) {
+        document.removeEventListener('keydown', stopTween);
+        animation.stop();
+        return;
+      }
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
         this._domElement.removeEventListener('pointerdown', stopTween);
@@ -416,15 +406,15 @@ export class CameraManager extends THREE.EventDispatcher {
         this.controls.setState(this._camera.position, target);
       })
       .onUpdate(() => {
-        // if (this.isDisposed) {
-        //   return;
-        // }
+        if (this.isDisposed) {
+          return;
+        }
         tempTarget.set(from.targetX, from.targetY, from.targetZ);
         if (!this._camera) {
           return;
         }
 
-        if (this._cameraControlsOptions.useScrollTargetControls) this.controls.setScrollTarget(tempTarget);
+        if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') this.controls.setScrollTarget(tempTarget);
         this.controls.setViewTarget(tempTarget);
       })
       .onStop(() => {
@@ -433,9 +423,9 @@ export class CameraManager extends THREE.EventDispatcher {
         this.controls.setState(this._camera.position, tempTarget);
       })
       .onComplete(() => {
-        // if (this.isDisposed) {
-        //   return;
-        // }
+        if (this.isDisposed) {
+          return;
+        }
         this.controls.lookAtViewTarget = false;
         this.controls.enableKeyboardNavigation = true;
         this.controls.setState(this._camera.position, tempTarget);
@@ -505,6 +495,7 @@ export class CameraManager extends THREE.EventDispatcher {
   dispose(): void {
     this.isDisposed = true;
     this.controls.dispose();
+    this.setupControls(this._cameraControlsOptions, true);
   }
 }
 

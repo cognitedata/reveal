@@ -1231,7 +1231,7 @@ export class Cognite3DViewer {
   private async modelIntersectionCallback(offsetX: number, offsetY: number) {
     const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
 
-    return { intersection, modelsBB: this._updateNearAndFarPlaneBuffers.combinedBbox };
+    return { intersection, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
   }
 
   /** @private */

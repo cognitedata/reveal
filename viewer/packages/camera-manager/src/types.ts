@@ -73,5 +73,5 @@ export type CallbackData = {
   /**
    * Bounding box for all models on the scene
    */
-  modelsBB: THREE.Box3;
+  modelsBoundingBox: THREE.Box3;
 };
