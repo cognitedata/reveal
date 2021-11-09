@@ -91,17 +91,21 @@ export const StyledTableNoRowColor2 = styled((props) => (
   <StyledTable {...props}>{props.children}</StyledTable>
 ))`
   .cogs-table {
+    thead,
     tbody {
       tr {
         &:hover,
         &:nth-child(2n):hover {
           background-color: unset;
-          cursor: pointer;
+          cursor: auto;
         }
         &:nth-child(2n) {
           background-color: white;
         }
       }
+    }
+    tbody td {
+      text-align: center;
     }
   }
 `;

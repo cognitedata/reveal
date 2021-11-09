@@ -23,7 +23,7 @@ import 'utils/test/windowLocation';
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
-describe('Register', () => {
+describe.skip('Register', () => {
   window.location.href =
     'https://dev.fusion.cogniteapp.com/itera-int-green/integrations/create?env=greenfield';
 

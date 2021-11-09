@@ -17,7 +17,7 @@ export interface RegisterIntegrationInfo {
   documentation?: string;
   source?: string;
   metadata?: MetaData;
-  contacts: User[];
+  contacts?: User[];
   rawTables?: IntegrationRawTable[];
 }
 export interface Integration extends Omit<RegisterIntegrationInfo, 'id'> {

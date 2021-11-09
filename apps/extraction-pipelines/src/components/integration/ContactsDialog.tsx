@@ -1,14 +1,6 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
 import { useIntegrationById } from 'hooks/useIntegration';
-import { TableHeadings } from 'components/table/IntegrationTableCol';
-import {
-  contactEmailSchema,
-  contactNameSchema,
-  contactRoleSchema,
-} from 'utils/validation/integrationSchemas';
-import { EditPartContacts } from 'components/integration/EditPartContacts';
-import { RemoveContactButton } from 'components/integration/RemoveContactButton';
 import styled from 'styled-components';
 import {
   CONTACTS_HINT,
@@ -18,14 +10,16 @@ import {
   ROLE_LABEL,
 } from 'utils/constants';
 import { Hint } from 'styles/StyledForm';
-import { NotificationUpdateSwitch } from 'components/inputs/NotificationUpdateSwitch';
-import { Integration } from 'model/Integration';
 import { User } from 'model/User';
 import { Grid } from 'styles/grid/StyledGrid';
 import { StyledTableNoRowColor2 } from 'styles/StyledTable';
+import { Button, Input, Switch } from '@cognite/cogs.js';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
+import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
-import { Button } from '@cognite/cogs.js';
-import { AddContact } from './AddContact';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -57,113 +51,185 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
 }) => {
   const { integration } = useSelectedIntegration();
   const { data: current } = useIntegrationById(integration?.id);
-  const contacts =
-    (current?.contacts || []).map((u, index) => ({ ...u, index })) ?? [];
-  const numOwners = contacts.reduce(
-    (count, contact) => count + (isOwnerRole(contact.role ?? '') ? 1 : 0),
-    0
-  );
+  const { project } = useAppEnv();
+  const { mutate } = useDetailsUpdate();
+  const [showErrors, setShowErrors] = useState(false);
+  const onConfirm = async (updatedContacts: User[]) => {
+    if (!current || !project) return;
+    const items = createUpdateSpec({
+      project,
+      id: current.id,
+      fieldValue: updatedContacts,
+      fieldName: 'contacts',
+    });
+    await mutate(items, {
+      onError: () => {
+        setShowErrors(true);
+      },
+      onSuccess: () => {
+        close();
+      },
+    });
+  };
 
   return (
     <ContactsSectionWrapper role="grid">
       <Hint>{CONTACTS_HINT}</Hint>
-      {integration && contactTable(contacts, integration)}
-
-      <AddContact isOwner={numOwners === 0} />
-
-      {numOwners >= 2 && <ErrorMessage>Too many owners.</ErrorMessage>}
-
-      <div css="display: flex; justify-content: flex-end">
-        <Button onClick={close} type="primary">
-          Close
-        </Button>
-      </div>
+      {current && (
+        <ContactsDialogView
+          initialContacts={current.contacts || []}
+          onCancel={close}
+          onConfirm={onConfirm}
+          showErrors={showErrors}
+        />
+      )}
     </ContactsSectionWrapper>
   );
 };
 
-function contactTable(
-  contacts: (User & { index: number })[],
-  integration: Integration
-) {
-  const contactsSorted = [...contacts].sort(
-    (a, b) =>
-      (isOwnerRole(a.role ?? '') ? -1000 : a.index) -
-      (isOwnerRole(b.role ?? '') ? -1000 : b.index)
-  );
-  return (
-    <StyledTableNoRowColor2>
-      <table className="cogs-table">
-        <thead>
-          <tr>
-            <td>{ROLE_LABEL}</td>
-            <td>{NOTIFICATION_LABEL}</td>
-            <td>{NAME_LABEL}</td>
-            <td>{EMAIL_LABEL}</td>
-            <td />
-          </tr>
-        </thead>
-        <tbody>
-          {contactsSorted.map((contact) => {
-            return (
-              <tr key={contact.email} className="row-style-even row-height-4">
-                <td>
-                  <EditPartContacts
-                    integration={integration}
-                    name="contacts"
-                    index={contact.index}
-                    field="role"
-                    label="Role"
-                    schema={contactRoleSchema}
-                    defaultValues={{ role: contact.role }}
-                  />
-                </td>
-                <td>
-                  <NotificationUpdateSwitch
-                    integration={integration}
-                    name="contacts"
-                    index={contact.index}
-                    field="sendNotification"
-                    defaultValues={{
-                      sendNotification: contact.sendNotification,
-                    }}
-                  />
-                </td>
-                <td>
-                  <EditPartContacts
-                    integration={integration}
-                    name="contacts"
-                    index={contact.index}
-                    field="name"
-                    label={TableHeadings.NAME}
-                    schema={contactNameSchema}
-                    defaultValues={{ name: contact.name }}
-                  />
-                </td>
-                <td>
-                  <EditPartContacts
-                    integration={integration}
-                    name="contacts"
-                    index={contact.index}
-                    field="email"
-                    label="Email"
-                    schema={contactEmailSchema}
-                    defaultValues={{ email: contact.email }}
-                  />
-                </td>
+const isValidEmail = (email: string) => {
+  // @Email(regexp = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-zA-Z]{2,})$")
+  //     @Size(min = 1, max = 254)
+  return /^[\w-+]+(\.[\w]+)*@[\w-]+(\.[\w]+)*(\.[a-zA-Z]{2,})$/.test(email);
+};
 
-                <td>
-                  <RemoveContactButton
-                    integration={integration}
-                    name="contacts"
-                    index={contact.index}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </StyledTableNoRowColor2>
+type ViewProps = {
+  initialContacts: User[];
+  onCancel: () => void;
+  onConfirm: (updatedContacts: User[]) => void;
+  showErrors: boolean;
+};
+export const ContactsDialogView = ({
+  initialContacts,
+  onCancel,
+  onConfirm,
+  showErrors,
+}: ViewProps) => {
+  const [contacts, setContacts] = useState(
+    [...initialContacts].sort(
+      (a, b) =>
+        (isOwnerRole(a.role ?? '') ? -1000 : 0) -
+        (isOwnerRole(b.role ?? '') ? -1000 : 0)
+    )
   );
-}
+  const onEdit = (
+    index: number,
+    field: 'role' | 'name' | 'email' | 'sendNotification',
+    newValue: any
+  ) => {
+    setContacts(
+      contacts.map((contact, i) =>
+        index === i
+          ? {
+              ...contact,
+              [field]: newValue,
+            }
+          : contact
+      )
+    );
+  };
+  const deleteRow = (index: number) => {
+    setContacts(contacts.filter((m, i) => i !== index));
+  };
+  const addRow = () => {
+    setContacts([
+      ...contacts,
+      {
+        name: '',
+        email: '',
+        role: contacts.length === 0 ? 'Owner' : '',
+        sendNotification: false,
+      },
+    ]);
+  };
+  return (
+    <>
+      <StyledTableNoRowColor2>
+        <table className="cogs-table">
+          <thead>
+            <tr>
+              <td>{ROLE_LABEL}</td>
+              <td>{NAME_LABEL}</td>
+              <td>{EMAIL_LABEL}</td>
+              <td>{NOTIFICATION_LABEL}</td>
+              <td />
+            </tr>
+          </thead>
+          <tbody>
+            {contacts.map((contact, index) => {
+              return (
+                <tr className="row-style-even row-height-4">
+                  <td>
+                    <Input
+                      fullWidth
+                      placeholder="E.g. Data engineer"
+                      disabled={index === 0 && contact.role === 'Owner'}
+                      value={contact.role}
+                      onChange={(ev) => onEdit(index, 'role', ev.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <Input
+                      fullWidth
+                      placeholder="Firstname Lastname"
+                      value={contact.name}
+                      onChange={(ev) => onEdit(index, 'name', ev.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <Input
+                      fullWidth
+                      placeholder="name@example.com"
+                      value={contact.email}
+                      onChange={(ev) => onEdit(index, 'email', ev.target.value)}
+                    />
+
+                    {showErrors && !isValidEmail(contact.email) && (
+                      <div css="font-size: 0.8rem">
+                        <ErrorMessage>
+                          Enter a valid email: name@example.com
+                        </ErrorMessage>
+                      </div>
+                    )}
+                  </td>
+                  <td>
+                    <Switch
+                      name={`notification-switch-${index}`}
+                      value={contact.sendNotification}
+                      onChange={(newValue) =>
+                        onEdit(index, 'sendNotification', newValue)
+                      }
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      type="ghost"
+                      icon="Close"
+                      aria-label="Remove contact"
+                      onClick={() => deleteRow(index)}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </StyledTableNoRowColor2>
+
+      <div>
+        <Button icon="PlusCompact" onClick={addRow}>
+          Add contact
+        </Button>
+      </div>
+
+      <div css="display: flex; justify-content: flex-end; gap: 0.5rem">
+        <Button onClick={onCancel} type="ghost">
+          Cancel
+        </Button>
+        <Button onClick={() => onConfirm(contacts)} type="primary">
+          Confirm
+        </Button>
+      </div>
+    </>
+  );
+};
