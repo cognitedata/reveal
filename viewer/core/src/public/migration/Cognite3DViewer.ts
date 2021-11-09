@@ -1449,7 +1449,7 @@ export class Cognite3DViewer {
     return true;
   }
 
-  private startPointerEventListeners = () => {
+  private readonly startPointerEventListeners = () => {
     const canvas = this.canvas;
     const maxMoveDistance = 4;
     const maxClickDuration = 250;
