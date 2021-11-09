@@ -57,16 +57,16 @@ const ShapeSettings = ({
               max="101"
               value={strokeWidth}
               onChange={onThicknessSliderChange}
-              step="10"
+              step="1"
             />
             <p>Thickness</p>
             <input
               type="range"
-              min="0.1"
+              min="0.01"
               max="1"
               value={opacity}
               onChange={onOpacitySliderChange}
-              step="0.1"
+              step="0.01"
             />
             <p>Opacity</p>
           </>
