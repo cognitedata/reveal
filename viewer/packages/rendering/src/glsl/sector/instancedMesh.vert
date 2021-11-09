@@ -1,4 +1,3 @@
-#pragma glslify: constructMatrix = require('../base/constructMatrix.glsl')
 #pragma glslify: determineMatrixOverride = require('../base/determineMatrixOverride.glsl')
 
 attribute mat4 a_instanceMatrix;
