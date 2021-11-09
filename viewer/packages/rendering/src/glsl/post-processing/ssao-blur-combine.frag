@@ -1,8 +1,8 @@
-// Copyright Cognite (C) 2019 Cognite
+// Copyright Cognite (C) 2021 Cognite
 //
 // Efficient Gaussian blur based on technique described by Daniel Rákos in
 // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
-//
+// generalized for two dimensions
 
 varying vec2 vUv;
 
@@ -12,18 +12,32 @@ uniform sampler2D tAmbientOcclusion;
 uniform vec2 resolution;
 
 void main() {
-  float blurredAO = 0.5 * (
-    2.0 * texture2D(tAmbientOcclusion, vUv).r * 0.2270270270 +
-    texture2D(tAmbientOcclusion, vUv + vec2(1.3746153846, 0.0) / resolution.x).r * 0.3162162162 +
-    texture2D(tAmbientOcclusion, vUv + vec2(3.2307692308, 0.0) / resolution.x).r * 0.0702702703 +
-    texture2D(tAmbientOcclusion, vUv - vec2(1.3746153846, 0.0) / resolution.x).r * 0.3162162162 +
-    texture2D(tAmbientOcclusion, vUv - vec2(3.2307692308, 0.0) / resolution.x).r * 0.0702702703 +
-    texture2D(tAmbientOcclusion, vUv + vec2(0.0, 1.3746153846) / resolution.y).r * 0.3162162162 +
-    texture2D(tAmbientOcclusion, vUv + vec2(0.0, 3.2307692308) / resolution.y).r * 0.0702702703 +
-    texture2D(tAmbientOcclusion, vUv - vec2(0.0, 1.3746153846) / resolution.y).r * 0.3162162162 +
-    texture2D(tAmbientOcclusion, vUv - vec2(0.0, 3.2307692308) / resolution.y).r * 0.0702702703
-  );
+  float blurredAO =
+      texture2D(tAmbientOcclusion, vUv + vec2(-3.1111111, -3.1111111) / resolution).r * 0.0012360 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-1.3333333, -3.1111111) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-3.1111111, -1.3333333) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-1.3333333, -1.3333333) / resolution).r * 0.1076660 +
+      texture2D(tAmbientOcclusion, vUv + vec2(0.0000000, -3.1111111) / resolution).r * 0.0096130 +
+      texture2D(tAmbientOcclusion, vUv + vec2(0.0000000, -1.3333333) / resolution).r * 0.0897217 +
+      texture2D(tAmbientOcclusion, vUv + vec2(1.3333333, -3.1111111) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(3.1111111, -3.1111111) / resolution).r * 0.0012360 +
+      texture2D(tAmbientOcclusion, vUv + vec2(1.3333333, -1.3333333) / resolution).r * 0.1076660 +
+      texture2D(tAmbientOcclusion, vUv + vec2(3.1111111, -1.3333333) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-3.1111111, 0.0000000) / resolution).r * 0.0096130 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-1.3333333, 0.0000000) / resolution).r * 0.0897217 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-3.1111111, 1.3333333) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-1.3333333, 1.3333333) / resolution).r * 0.1076660 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-3.1111111, 3.1111111) / resolution).r * 0.0012360 +
+      texture2D(tAmbientOcclusion, vUv + vec2(-1.3333333, 3.1111111) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(0.0000000, 1.3333333) / resolution).r * 0.0897217 +
+      texture2D(tAmbientOcclusion, vUv + vec2(0.0000000, 3.1111111) / resolution).r * 0.0096130 +
+      texture2D(tAmbientOcclusion, vUv + vec2(1.3333333, 1.3333333) / resolution).r * 0.1076660 +
+      texture2D(tAmbientOcclusion, vUv + vec2(3.1111111, 1.3333333) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(1.3333333, 3.1111111) / resolution).r * 0.0115356 +
+      texture2D(tAmbientOcclusion, vUv + vec2(3.1111111, 3.1111111) / resolution).r * 0.0012360 +
+      texture2D(tAmbientOcclusion, vUv + vec2(1.3333333, 0.0000000) / resolution).r * 0.0897217 +
+      texture2D(tAmbientOcclusion, vUv + vec2(3.1111111, 0.0000000) / resolution).r * 0.0096130 +
+      texture2D(tAmbientOcclusion, vUv).r * 0.0747681;
 
   gl_FragColor = vec4(texture2D(tDiffuse, vUv).rgb * blurredAO, 1.0);
 }
-

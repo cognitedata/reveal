@@ -28,7 +28,7 @@ export class TakenV8SectorTree {
   }[] = [];
   private readonly determineSectorCost: DetermineSectorCostDelegate;
 
-  private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
+  private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
   constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
     this.determineSectorCost = determineSectorCost;
