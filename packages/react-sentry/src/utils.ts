@@ -8,12 +8,10 @@ import { log } from './log';
 import { isLocalhost } from './env';
 
 export const getReleaseSha = () =>
-  (
-    process.env.REACT_APP_RELEASE_ID ||
-    process.env.REACT_APP_VERSION_SHA ||
-    process.env.REACT_APP_RELEASE ||
-    ''
-  ).substring(0, 8);
+  process.env.REACT_APP_RELEASE_ID ||
+  process.env.REACT_APP_VERSION_SHA ||
+  process.env.REACT_APP_RELEASE ||
+  '';
 
 export interface SentryProps {
   // EG:

@@ -1,3 +1,7 @@
+## 0.2.3 Nov 9 2021
+
+- Don't cut releaseId used by sentry.
+
 ## 0.2.2 Oct 29 2021
 
 - Extend `SentryProps.ignoreErrors` prop to allow RegExp

@@ -1,3 +1,7 @@
+## 2.2.1 Nov 9 2021
+
+- Bump to have latest `@cognite/react-sentry` with sentry releaseId fixed.
+
 ## 2.2.0 Oct 25 2021
 
 - Add `sentrySettings` to react-container props.
