@@ -13,7 +13,7 @@ export const ColorPicker = ({
   onChange: (newColor: string) => void;
 }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const element = useRef<HTMLDivElement | null>(null);
+  const colorBoxElm = useRef<HTMLDivElement | null>(null);
   const colorPicker = useRef<HTMLDivElement | null>(null);
 
   const handleChange = (newColor: any) => {
@@ -22,8 +22,10 @@ export const ColorPicker = ({
 
   useEffect(() => {
     if (displayColorPicker) {
-      if (element.current && colorPicker.current) {
-        const pos = (element.current as HTMLDivElement).getBoundingClientRect();
+      if (colorBoxElm.current && colorPicker.current) {
+        const pos = (
+          colorBoxElm.current as HTMLDivElement
+        ).getBoundingClientRect();
         colorPicker.current.style.top = `${pos.top + 30}px`;
         colorPicker.current.style.left = `${pos.left}px`;
       }
@@ -34,7 +36,7 @@ export const ColorPicker = ({
     <div>
       <ColorBoxContainer>
         <ColorBox
-          ref={element}
+          ref={colorBoxElm}
           size={size}
           color={color}
           onClick={() => {
