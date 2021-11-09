@@ -84,6 +84,19 @@ export const TabsWrapper = styled(Flex)`
   #link-tabs:hover {
     background: var(--cogs-midblue-7) !important;
   }
+
+  #single-link-tabs {
+    padding: 0 ${sizes.normal};
+    height: 100%;
+    border-radius: 0;
+    color: var(--cogs-midblue-3);
+    .cogs-icon {
+      margin-left: ${sizes.small};
+    }
+  }
+  #single-link-tabs:hover {
+    background: var(--cogs-midblue-7) !important;
+  }
 `;
 
 export const TabsScrollWrapper = styled(FlexRow)`

@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import isEmpty from 'lodash/isEmpty';
-
 import { Button, Icon, Menu, Tabs } from '@cognite/cogs.js';
 
 import { TabsHoverDropdown } from 'components/tabs-hover-dropdown/TabsHoverDropdown';
@@ -187,7 +185,7 @@ export const WellInspect: React.FC = () => {
                 >
                   {tabs}
                 </Tabs>
-                {!standalone && !isEmpty(standaloneItems) && (
+                {!standalone && standaloneItems.length > 1 && (
                   <TabsHoverDropdown
                     content={links}
                     onHoverChange={setIsVisible}
@@ -205,6 +203,20 @@ export const WellInspect: React.FC = () => {
                       {isVisible && <Icon type="ChevronUpCompact" size={16} />}
                     </Button>
                   </TabsHoverDropdown>
+                )}
+                {!standalone && standaloneItems.length === 1 && (
+                  <Button
+                    type="ghost"
+                    size="small"
+                    id="single-link-tabs"
+                    aria-label={standaloneItems[0].name}
+                    onClick={() => {
+                      onNavigateToStandaloneItemsClick(standaloneItems[0].key);
+                    }}
+                  >
+                    <span>{standaloneItems[0].name}</span>
+                    <Icon type="OpenExternal" size={16} />
+                  </Button>
                 )}
               </TabsScrollWrapper>
               <StandaloneHeader
