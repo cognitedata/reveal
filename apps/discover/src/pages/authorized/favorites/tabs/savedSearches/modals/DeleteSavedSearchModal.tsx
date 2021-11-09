@@ -7,7 +7,7 @@ import { Modal } from 'components/modal';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { SavedSearchItem } from 'modules/api/savedSearches/types';
 
-import { DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT } from '../../../constants';
+import { DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT } from '../constants';
 
 export const getModalText = (savedSearchName: string | undefined) =>
   `Are you sure you want to delete the "${savedSearchName}" saved search from the list?`;
@@ -69,7 +69,9 @@ export const DeleteSavedSearchModal: React.FC<Props> = ({
       footer={footer}
       onCancel={handleCancel}
     >
-      {t(modalText)}
+      <div data-testid="delete-saved-search-modal-container">
+        {t(modalText)}
+      </div>
     </Modal>
   );
 };

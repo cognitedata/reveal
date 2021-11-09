@@ -45,6 +45,11 @@ class ResultTable {
   getRowWithText = (text: string) =>
     Selector('[data-testid="table-row"]').withText(text).nth(0);
 
+  getCellWithText = (text: string) =>
+    Selector('[data-testid="table-cell"]').withText(text).nth(0);
+
+  getHoverDropdownMenu = () => Selector('.tippy-content');
+
   /**
    * ???
    */
@@ -86,7 +91,6 @@ class ResultTable {
    */
   hoverRowWithText = async (text: string) => {
     progress(`Hover the row with text: "${text}"`);
-
     await this.hoverRow(Selector('[data-testid="table-row"]').withText(text));
   };
 
@@ -269,6 +273,49 @@ class ResultTable {
       await this.clickColumnSettingsOption(columnName);
       await this.clickColumnSettingButton('Close');
     }
+  };
+
+  rowWithTextIsVisible = async (text: string) => {
+    progress(`Expect ${text} in result table`);
+    await t.expect(App.resultTable.getCellWithText(text).exists).ok();
+  };
+
+  /**
+   * `View` button which appear on hover
+   */
+  clickViewButton = async (text: string) => {
+    progress(`Click view button on line with text ${text}`);
+    await t.click(
+      this.getRowWithText(text).find('[data-testid="button-view-saved-search"]')
+    );
+  };
+
+  hoverThreeDotsIcon = async (text: string) => {
+    progress(`Click three dots on line with text ${text}`);
+    await t.hover(
+      this.getRowWithText(text).find('[data-testid="menu-button"]')
+    );
+  };
+
+  clickHoverMenuItem = async (menuItem: string) => {
+    progress(`Click ${menuItem} of menu`);
+    await t.click(
+      this.getHoverDropdownMenu().find('button').withText(menuItem)
+    );
+  };
+
+  clickHoverViewButtonofRow = async (text: string) => {
+    await this.hoverRowWithText(text);
+    await this.clickViewButton(text);
+  };
+
+  hoverThreeDotHoverIconofRowAndClickMenuItem = async (
+    text: string,
+    item: string
+  ) => {
+    await this.hoverRowWithText(text);
+    await this.hoverThreeDotsIcon(text);
+    await this.clickHoverMenuItem(item);
   };
 }
 

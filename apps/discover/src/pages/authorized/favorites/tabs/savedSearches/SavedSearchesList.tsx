@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
-import { Button } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
 import { log } from '_helpers/log';
+import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';
 import { UserOption } from 'components/search-users/SearchUsers';
@@ -29,8 +30,17 @@ import { getJsonHeaders } from 'modules/api/service';
 import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
+import { FlexRow } from 'styles/layout';
+
+import { VertSeperator, DangerDiv, HoverMenuItem } from '../../elements';
 
 import { Actions } from './Actions';
+import {
+  SAVED_SEARCH_TABLE_MENU_REMOVE_OPTION,
+  SAVED_SEARCH_TABLE_MENU_SHARE_OPTION,
+  SAVED_SEARCH_DELETED_MESSAGE,
+  SAVED_SEARCH_SHARED_MESSAGE,
+} from './constants';
 import { DeleteSavedSearchModal, ShareSavedSearchModal } from './modals';
 
 export type ModalType = 'Share' | 'Delete';
@@ -79,7 +89,7 @@ export const SavedSearches: React.FC<{
 
     addShare({ id: selectedItem.value.id, users: shareWithUsers })
       .then(() => {
-        showSuccessMessage(t('Successfully shared'));
+        showSuccessMessage(t(SAVED_SEARCH_SHARED_MESSAGE));
       })
       .catch((error) => {
         log(`Error in saved search share: ${error}`);
@@ -90,7 +100,7 @@ export const SavedSearches: React.FC<{
   const handleSavedSearchDelete = () => {
     if (!selectedItem?.value.id) return;
 
-    showSuccessMessage(t('Deleting saved search'));
+    showSuccessMessage(t(SAVED_SEARCH_DELETED_MESSAGE));
     deleteMutate({ id: selectedItem.value.id, headers, tenant });
     closeActionModal();
   };
@@ -111,24 +121,6 @@ export const SavedSearches: React.FC<{
 
   const columns = React.useMemo(
     () => [
-      {
-        id: 'launch-saved-search',
-        disableSorting: true,
-        width: '50px',
-        Cell: ({
-          row: { original },
-        }: {
-          row: { original: SavedSearchItem };
-        }) => (
-          <Button
-            type="ghost"
-            icon="ArrowUpRight"
-            onClick={handleLaunch(original)}
-            aria-label="Launch saved search"
-            data-testid="launch-saved-search"
-          />
-        ),
-      },
       {
         Header: t('Title'),
         accessor: 'name',
@@ -153,11 +145,6 @@ export const SavedSearches: React.FC<{
           ),
         width: '140px',
       },
-      {
-        id: 'saved-search-actions',
-        width: '140px',
-        disableSorting: true,
-      },
     ],
     []
   );
@@ -171,24 +158,51 @@ export const SavedSearches: React.FC<{
   }> = ({ row }) => {
     const isOwner = user.data?.id === row.original?.owner?.id;
     return (
-      <Actions
-        row={row}
-        handleShare={
-          isOwner
-            ? (item: SavedSearchItem) => handleOpenModal('Share', item)
-            : undefined
-        }
-        handleDelete={(item: SavedSearchItem) =>
-          handleOpenModal('Delete', item)
-        }
-        handleComment={(item: SavedSearchItem) => {
-          setHighlightedIds({ [row.original.value.id as string]: true });
-          setCommentTarget({
-            id: item.value.id as string,
-            targetType: COMMENT_NAMESPACE.savedSearch,
-          });
-        }}
-      />
+      <FlexRow>
+        <ViewButton
+          data-testid="button-view-saved-search"
+          onClick={handleLaunch(row.original)}
+          hideIcon
+        />
+        <Dropdown
+          openOnHover
+          content={
+            <Menu>
+              <Menu.Item
+                disabled={!isOwner}
+                onClick={() => {
+                  handleOpenModal('Share', row.original);
+                }}
+              >
+                <HoverMenuItem>
+                  {SAVED_SEARCH_TABLE_MENU_SHARE_OPTION}
+                </HoverMenuItem>
+              </Menu.Item>
+              <Menu.Divider data-testid="menu-divider" />
+              <Menu.Item
+                onClick={() => {
+                  handleOpenModal('Delete', row.original);
+                }}
+              >
+                <DangerDiv>{SAVED_SEARCH_TABLE_MENU_REMOVE_OPTION}</DangerDiv>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <MoreOptionsButton data-testid="menu-button" />
+        </Dropdown>
+        <VertSeperator />
+        <Actions
+          row={row}
+          handleComment={(item: SavedSearchItem) => {
+            setHighlightedIds({ [row.original.value.id as string]: true });
+            setCommentTarget({
+              id: item.value.id as string,
+              targetType: COMMENT_NAMESPACE.savedSearch,
+            });
+          }}
+        />
+      </FlexRow>
     );
   };
 

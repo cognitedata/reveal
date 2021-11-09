@@ -26,3 +26,19 @@ export const TableBulkActionsWrapper = styled.div`
   max-width: 80%;
   bottom: 0;
 `;
+
+export const VertSeperator = styled.div`
+  display: flex;
+  border-right: 1px solid var(--cogs-color-strokes-default);
+  margin: 0 8px;
+`;
+
+export const HoverMenuItem = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  width: 156px;
+`;
+
+export const DangerDiv = styled(HoverMenuItem)`
+  color: var(--cogs-red-2);
+`;

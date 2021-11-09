@@ -2,11 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
-import { Avatar } from '@cognite/cogs.js';
+import { Avatar, Menu, Dropdown } from '@cognite/cogs.js';
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/dateConversion';
+import { MoreOptionsButton, CommentButton } from 'components/buttons';
 import { Table, TableResults } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteSummary } from 'modules/favorite/types';
@@ -16,10 +17,18 @@ import {
 } from 'modules/favorite/utils';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
+import { FlexRow } from 'styles/layout';
 
 import { FAVORITE_LIST_CONTAINER } from '../../../constants';
-import Actions from '../Actions';
+import { VertSeperator, DangerDiv, HoverMenuItem } from '../../../elements';
 import { ModalType, RowType } from '../types';
+
+import {
+  HOVER_MENU_ITEM_DUPLICATE,
+  HOVER_MENU_ITEM_DELETE,
+  HOVER_MENU_ITEM_EDIT,
+  HOVER_MENU_ITEM_SHARE,
+} from './constants';
 
 export interface Props {
   sets: FavoriteSummary[];
@@ -99,11 +108,6 @@ const ListView: React.FC<Props> = ({
             shortDate(rowB.original.lastUpdatedTime)
           ),
       },
-      {
-        disableSorting: true,
-        id: 'Actions',
-        width: '240px',
-      },
     ],
     []
   );
@@ -116,26 +120,68 @@ const ListView: React.FC<Props> = ({
     return favorites.filter((favourite) => favourite);
   }, [favorites]);
 
-  const renderRowHoverComponent = ({ row: { original } }: RowType) => (
-    <Actions
-      set={original}
-      handleOpenModal={handleOpenModal}
-      handleComment={() => {
-        setHighlightedIds({ [original.id]: true });
-        setCommentTarget({
-          id: original.id,
-          targetType: COMMENT_NAMESPACE.favorite,
-        });
-      }}
-      showDeleteButton={isOwner(original.owner.id)}
-      showShareButton={isOwner(original.owner.id)}
-      showEditButton={isOwner(original.owner.id)}
-    />
-  );
-
   const handleRowClick = useCallback((row: Row) => {
     handleNavigateFavoriteSet(row.original as FavoriteSummary);
   }, []);
+
+  const renderRowHoverComponent = ({ row: { original } }: RowType) => {
+    const _isOwner = isOwner(original.owner.id);
+    return (
+      <FlexRow>
+        <Dropdown
+          openOnHover
+          content={
+            <Menu>
+              <Menu.Item
+                disabled={!isOwner}
+                onClick={() => {
+                  handleOpenModal('Share', original);
+                }}
+              >
+                <HoverMenuItem>{HOVER_MENU_ITEM_DUPLICATE}</HoverMenuItem>
+              </Menu.Item>
+              <Menu.Item
+                disabled={!isOwner}
+                onClick={() => {
+                  handleOpenModal('Share', original);
+                }}
+              >
+                <HoverMenuItem>{HOVER_MENU_ITEM_EDIT}</HoverMenuItem>
+              </Menu.Item>
+              <Menu.Item
+                disabled={!isOwner}
+                onClick={() => {
+                  handleOpenModal('Share', original);
+                }}
+              >
+                <HoverMenuItem>{HOVER_MENU_ITEM_SHARE}</HoverMenuItem>
+              </Menu.Item>
+              <Menu.Divider data-testid="menu-divider" />
+              <Menu.Item
+                onClick={() => {
+                  handleOpenModal('Delete', original);
+                }}
+              >
+                <DangerDiv>{HOVER_MENU_ITEM_DELETE}</DangerDiv>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <MoreOptionsButton data-testid="menu-button" />
+        </Dropdown>
+        <VertSeperator />
+        <CommentButton
+          onClick={() => {
+            setHighlightedIds({ [original.id]: true });
+            setCommentTarget({
+              id: original.id,
+              targetType: COMMENT_NAMESPACE.favorite,
+            });
+          }}
+        />
+      </FlexRow>
+    );
+  };
 
   return (
     <PageContainer data-testid={FAVORITE_LIST_CONTAINER}>

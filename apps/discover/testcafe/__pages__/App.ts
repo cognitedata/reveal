@@ -20,6 +20,7 @@ import Topbar from './Topbar';
 import UserProfilePage from './UserProfile';
 import WellInspectPage from './WellInspect';
 import WellSearchPage from './WellSearch';
+import DeleteSavedSearchDialog from './DeleteSavedSearchDialog';
 
 // 'fixture inserting tests' need to know public readonly
 export const projectPrefix = 'discover-e2e-';
@@ -78,6 +79,8 @@ class App {
   public readonly avatar = Selector('#user-avatar');
 
   public readonly logoutButton = screen.getByRole('button', { name: 'Logout' });
+
+  public readonly deleteSavedSearchDialog = DeleteSavedSearchDialog;
 
   getUserRole = () => regularUser;
 

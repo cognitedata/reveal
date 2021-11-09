@@ -34,55 +34,19 @@ fixture('Favorites saved search list')
   })
   .afterEach(async () => logErrors());
 
-startTest('Delete a saved search', async () => {
+startTest('load a saved search', async () => {
   await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
-
-  await App.resultTable.hoverRowWithNth(0);
-  await App.resultTable.clickRowWithNthIconWithTestId(
-    0,
-    'saved-search-action-delete'
-  );
-
-  await t.click(App.createFavoriteDialog.deleteButton());
-
-  await t
-    .expect(App.favoritesPage.favoriteSavedSearchEmptyContainer.exists)
-    .ok();
-});
-
-startTest('Close delete modal without deleting', async () => {
-  await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
-
-  await App.resultTable.hoverRowWithNth(0);
-  await App.resultTable.clickRowWithNthIconWithTestId(
-    0,
-    'saved-search-action-delete'
-  );
-
-  await t.click(App.createFavoriteDialog.closeIcon());
-
-  await t
-    .expect(App.favoritesPage.favoriteSavedSearchEmptyContainer.exists)
-    .notOk();
-  await t.expect(App.resultTable.row.exists).ok();
-});
-
-startTest('Load a saved search', async () => {
-  await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
-
-  await App.resultTable.hoverRowWithNth(0);
-  await App.resultTable.clickRowWithNthIconWithTestId(0, 'launch-saved-search');
-
+  await App.resultTable.clickHoverViewButtonofRow(SAVED_SEARCH_NAME);
   await App.filterClearPage.checkIfTagExists(filename, true);
+  await App.resultTable.rowWithTextIsVisible('Test PDF file');
 });
 
 startTest('Share saved search', async () => {
   await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
 
-  await App.resultTable.hoverRowWithNth(0);
-  await App.resultTable.clickRowWithNthIconWithTestId(
-    0,
-    'saved-search-action-share'
+  await App.resultTable.hoverThreeDotHoverIconofRowAndClickMenuItem(
+    SAVED_SEARCH_NAME,
+    'Share'
   );
 
   await App.favoritesPage.shareFavoriteDialog.checkIfOwnerIsDisplayed();
@@ -95,11 +59,11 @@ startTest('Share saved search', async () => {
 startTest('Unshare saved search', async () => {
   await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
 
-  await App.resultTable.hoverRowWithNth(0);
-  await App.resultTable.clickRowWithNthIconWithTestId(
-    0,
-    'saved-search-action-share'
+  await App.resultTable.hoverThreeDotHoverIconofRowAndClickMenuItem(
+    SAVED_SEARCH_NAME,
+    'Share'
   );
+
   await App.favoritesPage.shareFavoriteDialog.checkIfOwnerIsDisplayed();
   await App.favoritesPage.shareFavoriteDialog.shareFavoriteWithUser(
     'Admin User'
@@ -111,4 +75,33 @@ startTest('Unshare saved search', async () => {
   );
   await App.favoritesPage.shareFavoriteDialog.unshareFavorite();
   await App.checkifToasterAppears(SHARE_SUCCESS_TOAST);
+});
+
+startTest('Remove a saved search', async () => {
+  await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
+
+  await App.resultTable.hoverThreeDotHoverIconofRowAndClickMenuItem(
+    SAVED_SEARCH_NAME,
+    'Remove'
+  );
+
+  await App.deleteSavedSearchDialog.checkIfModalIsOpen();
+
+  await App.deleteSavedSearchDialog.clickDeleteButton();
+});
+
+startTest('Close delete modal without deleting', async () => {
+  await t.click(App.favoritesPage.favoriteSetTitle('Saved Searches'));
+
+  await App.resultTable.hoverThreeDotHoverIconofRowAndClickMenuItem(
+    SAVED_SEARCH_NAME,
+    'Remove'
+  );
+
+  await t.click(App.createFavoriteDialog.closeIcon());
+
+  await t
+    .expect(App.favoritesPage.favoriteSavedSearchEmptyContainer.exists)
+    .notOk();
+  await t.expect(App.resultTable.row.exists).ok();
 });

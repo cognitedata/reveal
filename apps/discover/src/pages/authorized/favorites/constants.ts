@@ -23,6 +23,7 @@ export const CREATE_SET_MODAL_BUTTON_TEXT = 'Create';
 
 export const EDIT_SET_MODAL_BUTTON_TEXT = 'Save changes';
 export const DUPLICATE_SET_MODAL_BUTTON_TEXT = 'Create';
+export const DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT = 'Remove';
 
 export const FAVORITE_SET_INFO_DESCRIPTION = 'Description';
 export const FAVORITE_SET_INFO_CREATED_BY = 'Created by';
@@ -35,7 +36,5 @@ export const DUPLICATED_SET_SUFFIX = ' (Duplicate)';
 export const DELETE_SET_CONFIRM_BUTTON = 'Delete set';
 export const DELETE_FAVORITE_MODAL_TEXT =
   'Are you sure you want to delete this set?';
-
-export const DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT = 'Delete';
 
 export const REMOVE_FROM_SET_TEXT = 'Remove from set';
