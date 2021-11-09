@@ -61,18 +61,18 @@ export class EffectRenderManager {
 
   private _renderOptions: RenderOptions;
 
-  private _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
-  private _fxaaMaterial: THREE.ShaderMaterial;
+  private readonly _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
+  private readonly _fxaaMaterial: THREE.ShaderMaterial;
   private _ssaoMaterial: THREE.ShaderMaterial;
-  private _ssaoBlurCombineMaterial: THREE.ShaderMaterial;
+  private readonly _ssaoBlurCombineMaterial: THREE.ShaderMaterial;
 
-  private _customObjectRenderTarget: THREE.WebGLRenderTarget;
-  private _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
-  private _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private _compositionTarget: THREE.WebGLRenderTarget;
-  private _ssaoTarget: THREE.WebGLRenderTarget;
-  private _ssaoBlurCombineTarget: THREE.WebGLRenderTarget;
+  private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _compositionTarget: THREE.WebGLRenderTarget;
+  private readonly _ssaoTarget: THREE.WebGLRenderTarget;
+  private readonly _ssaoBlurCombineTarget: THREE.WebGLRenderTarget;
 
   /**
    * Holds state of how the last frame was rendered by `render()`. This is used to explicit clear
