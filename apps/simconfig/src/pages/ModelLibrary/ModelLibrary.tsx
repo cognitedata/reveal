@@ -3,18 +3,13 @@ import { CollapsableContainer, Container, Header } from 'pages/elements';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { ModelSource } from 'components/forms/ModelForm/constants';
 import { BoundaryConditionContent } from 'pages/ModelLibrary/BoundaryConditionContent';
 import ModelTable from 'components/tables/ModelTable/ModelTable';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { fetchFiles } from 'store/file/thunks';
 import { setSelectedFile } from 'store/file';
-import sortBy from 'lodash/sortBy';
-import {
-  selectDownloadLinks,
-  selectFiles,
-  selectSelectedFile,
-} from 'store/file/selectors';
+import { selectFiles, selectSelectedFile } from 'store/file/selectors';
+import { DEFAULT_MODEL_SOURCE } from 'components/forms/ModelForm/constants';
 
 import {
   IndicatorTitle,
@@ -33,24 +28,27 @@ export default function ModelLibrary() {
   const { modelName } = params;
   const dispatch = useAppDispatch();
   const files = useAppSelector(selectFiles);
-  const links = useAppSelector(selectDownloadLinks);
   const history = useHistory();
   const location = useLocation();
   const { cdfClient } = useContext(CdfClientContext);
   const getFilter = () => {
     if (modelName) {
       return {
-        source: ModelSource.PROSPER,
+        source: DEFAULT_MODEL_SOURCE,
         name: modelName,
       };
     }
     return {
-      source: ModelSource.PROSPER,
+      source: DEFAULT_MODEL_SOURCE,
       metadata: {
         nextVersion: '',
       },
     };
   };
+
+  // XXX needs to be refactored
+  const getLatestFileInfo = () =>
+    files.find((file) => !file.metadata?.nextVersion);
 
   async function loadData() {
     const filter = getFilter();
@@ -73,25 +71,10 @@ export default function ModelLibrary() {
       return;
     }
 
-    if (!links || !files) {
-      return;
-    }
-
-    const latestFile = files[0];
-    const matchingLink = links.find(
-      (url) => 'externalId' in url && latestFile.externalId === url.externalId
-    );
-    if (!matchingLink) {
-      return;
-    }
-
-    const fileUrl = await (await fetch(matchingLink.downloadUrl)).blob();
-    const blob = new File([fileUrl], modelName);
     history.push({
       pathname: `${url}/file-new`,
       state: {
-        fileInfo: latestFile,
-        file: blob,
+        fileInfo: getLatestFileInfo(),
       },
     });
   };
@@ -101,16 +84,15 @@ export default function ModelLibrary() {
   };
 
   const navigateToCalculation = () => {
-    const lastFile = sortBy(files, 'metadata.version')[0];
-    dispatch(setSelectedFile(lastFile));
+    dispatch(setSelectedFile(getLatestFileInfo()));
     history.push(`/calculation-library/${modelName}`);
   };
 
   const Indicators = () => {
-    if (!files.length) {
+    const latestFileInfo = getLatestFileInfo();
+    if (!latestFileInfo) {
       return null;
     }
-    const lastFile = files[0];
     return (
       <IndicatorContainer>
         <IndicatorTab>
@@ -119,17 +101,17 @@ export default function ModelLibrary() {
             <img
               src={`${
                 process.env.PUBLIC_URL
-              }/simulators/${lastFile.source?.toLowerCase()}.png`}
-              alt={lastFile.source}
+              }/simulators/${latestFileInfo.source?.toLowerCase()}.png`}
+              alt={latestFileInfo.source}
               style={{ marginRight: 12 }}
             />
-            <p>{lastFile.source}</p>
+            <p>{latestFileInfo.source}</p>
           </IndicatorContainerImage>
         </IndicatorTab>
 
         <IndicatorTab>
           <IndicatorTitle>Version</IndicatorTitle>
-          <p>{lastFile.metadata?.version}</p>
+          <p>{latestFileInfo.metadata?.version}</p>
         </IndicatorTab>
 
         <IndicatorTab>

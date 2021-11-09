@@ -2,7 +2,6 @@ import { Container } from 'pages/elements';
 import { useRouteMatch } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { ModelSource } from 'components/forms/ModelForm/constants';
 import CalculationsTable from 'components/tables/CalculationsTable/CalculationsTable';
 import { fetchFiles } from 'store/file/thunks';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -24,7 +23,7 @@ export default function CalculationsLibrary() {
   const { cdfClient } = useContext(CdfClientContext);
   const getFilter = () => {
     return {
-      source: latestFile?.source || ModelSource.PROSPER,
+      source: latestFile?.source,
       metadata: {
         dataType: FileDataType.SimConfig,
         modelName: modelName || 'Test-Model',

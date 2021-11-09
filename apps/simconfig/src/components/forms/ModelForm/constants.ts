@@ -1,4 +1,7 @@
+import { ModelSourceKey, UnitSystemKey } from '@cognite/simconfig-api-sdk';
+
 export enum ModelSource {
+  UNKNOWN = 'Unknown',
   PROSPER = 'PROSPER',
 }
 
@@ -23,7 +26,5 @@ export enum BoundaryCondition {
   ResThick = 'Reservoir thickness',
 }
 
-export const DEFAULT_MODEL_SOURCE: keyof typeof ModelSource = 'PROSPER';
-export const DEFAULT_UNIT_SYSTEM: keyof typeof UnitSystem = 'OilField';
-export const DATA_TYPE_FILE = 'Simulator File';
-export const DATA_TYPE_SEQUENCE = 'Boundary Condition Time Series Map';
+export const DEFAULT_MODEL_SOURCE: ModelSourceKey = 'PROSPER';
+export const DEFAULT_UNIT_SYSTEM: UnitSystemKey = 'OilField';
