@@ -44,7 +44,10 @@ export const fetchEventHistoryByCalculationId = createAsyncThunk(
       calculationId: filter.metadata.calcConfig,
       createdTime: event.createdTime?.getTime(),
       lastUpdatedTime: event.lastUpdatedTime?.getTime(),
-      lastRunTime: parseInt(event.metadata?.calcTime || '', 10),
+      lastRunTime:
+        event.startTime instanceof Date
+          ? event.startTime.getTime()
+          : event.startTime,
     }));
     return sortBy(files, 'lastRunTime').reverse();
   }

@@ -15,7 +15,7 @@ import { setSelectedCalculation } from 'store/file';
 import { CapitalizedLabel } from 'pages/elements';
 
 import { EVENT_CONSTANTS, POLLING_TIME, STATUS_TYPE } from './constants';
-import { RunCalculationButton } from './elements';
+import { RunCalculationButton, ViewRunHistoryButton } from './elements';
 
 interface ComponentProps {
   data: FileInfoSerializable;
@@ -107,10 +107,6 @@ export default function StatusCell({ data }: ComponentProps) {
     history.push(`${url}/run-history/${calcName}`);
   };
 
-  if (!selectedEvent) {
-    return null;
-  }
-
   const buttonIcon = isCalculationReadyOrRunning
     ? 'LoadingSpinner'
     : 'CaretClosedDefault';
@@ -127,7 +123,7 @@ export default function StatusCell({ data }: ComponentProps) {
         icon={buttonIcon}
         onClick={onClickRun}
       />
-      <RunCalculationButton
+      <ViewRunHistoryButton
         aria-label={status}
         disabled={isCalculationReadyOrRunning}
         type="ghost"
