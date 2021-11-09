@@ -16,8 +16,11 @@
         "${workspaceFolder}/dist/apps/platypus-cdf-cli/**/*.js"
       ],
       "args": [
-        "login"
+        "login",
+        "--client-secret",
+        "${env:PLATYPUS_CLI_CLIENT_SECRET}"
       ],
+      "envFile": "${workspaceFolder}/.env",
       "preLaunchTask": "build:cli"
     }
   ]

@@ -1,6 +1,4 @@
-import { CogniteClient } from '@cognite/sdk-v6';
 import { Arguments } from 'yargs';
-import { getAccessTokenForClientSecret, isTokenExpired } from '../common/auth';
 import { AUTH_TYPE, CONFIG_KEY, LOGIN_STATUS } from '../constants';
 import { BaseArgs } from '../types';
 import {
@@ -39,15 +37,10 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     await client.authenticate();
     setCogniteSDKClient(client);
   } else {
-    if (!isTokenExpired(projectConfig.authToken)) {
-      console.log('existing token is valid continuing with the same');
-      return;
-    }
-
-    setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.FAILED);
+    setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.UNAUTHENTICATED);
 
     throw new Error(
-      'Currently only able to refresh token for --use-client-secret based login please login again with $ platypus login --use-client-secret --client-secret=<secret>'
+      'Currently only able to refresh token for client_secret  based login please login again with $ platypus login --client-secret=<secret>'
     );
   }
 }
