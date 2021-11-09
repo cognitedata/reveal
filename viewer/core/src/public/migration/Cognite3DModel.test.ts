@@ -36,7 +36,6 @@ describe(Cognite3DModel.name, () => {
 
     model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
     model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
-    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
 
     expect(model.styledNodeCollections).not.toBeEmpty();
 
@@ -49,13 +48,30 @@ describe(Cognite3DModel.name, () => {
     expect(model.styledNodeCollections).toBeEmpty();
   });
 
+  test('assignStyledNodeCollection same collection twice throws', () => {
+    const collection = new TreeIndexNodeCollection();
+    model.assignStyledNodeCollection(collection, { renderGhosted: true });
+    expect(() => model.assignStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
+  });
+
+  test('updateStyledNodeCollection throw is collection has not been added', () => {
+    const collection = new TreeIndexNodeCollection();
+
+    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
+
+    model.assignStyledNodeCollection(collection, { renderGhosted: true });
+    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).not.toThrowError();
+
+    model.unassignStyledNodeCollection(collection);
+    expect(() => model.updateStyledNodeCollection(collection, { renderInFront: false })).toThrowError();
+  });
+
   test('removeAllStyledNodeCollections removes all styled node collections', () => {
     const collection = new TreeIndexNodeCollection();
     const collection2 = new TreeIndexNodeCollection();
 
     model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
     model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
-    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
 
     model.removeAllStyledNodeCollections();
 
