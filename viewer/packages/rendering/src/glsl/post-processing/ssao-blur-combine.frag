@@ -1,6 +1,8 @@
 // Copyright Cognite (C) 2021 Cognite
 //
-//
+// Efficient Gaussian blur based on technique described by Daniel Rákos in
+// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+// generalized for two dimensions
 
 varying vec2 vUv;
 
