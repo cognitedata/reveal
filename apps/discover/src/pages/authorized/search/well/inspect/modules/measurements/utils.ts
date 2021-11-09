@@ -253,6 +253,9 @@ export const mapToCurveCentric = (
           marker: {
             ...row.marker,
             color: wellbore.metadata?.color,
+            line: {
+              color: wellbore.metadata?.color,
+            },
           },
         }
       : {

@@ -333,7 +333,7 @@ export const MEASUREMENT_CURVE_CONFIG: MeasurementCurveConfig = {
     default: {
       marker: {
         color: '#595959',
-        size: 16,
+        size: 2,
         symbol: 'triangle-up-open',
         line: {
           width: 2,
@@ -345,7 +345,7 @@ export const MEASUREMENT_CURVE_CONFIG: MeasurementCurveConfig = {
     default: {
       marker: {
         color: '#595959',
-        size: 16,
+        size: 2,
         symbol: 'triangle-up',
         line: {
           width: 2,

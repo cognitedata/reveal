@@ -50,7 +50,7 @@ describe('Measurement filter utils', () => {
       marker: {
         color: '#595959',
         line: { width: 2 },
-        size: 16,
+        size: 2,
         symbol: 'triangle-up-open',
       },
       mode: 'markers',
