@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { Button, Icon, Menu, Tabs } from '@cognite/cogs.js';
 
 import { TabsHoverDropdown } from 'components/tabs-hover-dropdown/TabsHoverDropdown';
@@ -12,6 +14,7 @@ import { setInspectSidebarWidth } from 'modules/wellInspect/actions';
 import { useInspectSidebarWidth } from 'modules/wellInspect/selectors';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { useActiveWellsWellboresCount } from 'modules/wellSearch/selectors';
+import { useSelectedOrHoveredWellboreIds } from 'modules/wellSearch/selectors/asset/wellbore';
 
 import { TAB_ITEMS } from './constants';
 import {
@@ -28,6 +31,10 @@ import { ScrollButtons } from './ScrollButtons';
 import { SIDEBAR_SIZE } from './Sidebar/constants';
 import { InspectSidebar } from './Sidebar/InspectSidebar';
 import StandaloneHeader from './StandaloneHeader';
+import { WarningModal3D } from './WarningModal3D';
+
+const THREEDEE_TAB_KEY = 'threeDee';
+const WARNING_MODAL_LIMIT = 10;
 
 export const WellInspect: React.FC = () => {
   const { t } = useTranslation();
@@ -38,10 +45,12 @@ export const WellInspect: React.FC = () => {
   const { data: config } = useWellConfig();
   const { wells } = useActiveWellsWellboresCount();
   const inspectSidebarWidth = useInspectSidebarWidth();
+  const selectedOrHoveredWellboreIds = useSelectedOrHoveredWellboreIds();
 
   const [isOpen, setIsOpen] = useState(true);
   const scrollRef = useHorizontalScroll();
   const [isVisible, setIsVisible] = useState(false);
+  const [show3dWarningModal, setShow3dWarningModal] = useState(false);
 
   const handleBackToSearch = () => history.push(navigation.SEARCH_WELLS);
 
@@ -65,12 +74,29 @@ export const WellInspect: React.FC = () => {
     [location.pathname]
   );
 
+  const hasTooManyWellboresSelected = useMemo(
+    () => selectedOrHoveredWellboreIds.length > WARNING_MODAL_LIMIT,
+    [selectedOrHoveredWellboreIds]
+  );
+
   const standalone = selectedItem?.standalone || false;
 
   const handleNavigation = (tabKey: string) => {
     const tabItem = items.find((item) => item.key === tabKey);
     if (tabItem) {
       history.push(tabItem.path);
+    }
+  };
+
+  const onNavigateToStandaloneItemsClick = (tabKey: string) => {
+    if (tabKey !== THREEDEE_TAB_KEY) {
+      handleNavigation(tabKey);
+      return;
+    }
+    if (hasTooManyWellboresSelected) {
+      setShow3dWarningModal(true);
+    } else {
+      handleNavigation(THREEDEE_TAB_KEY);
     }
   };
 
@@ -81,6 +107,15 @@ export const WellInspect: React.FC = () => {
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 1000);
+  };
+
+  const onOpenThreedeeConfirm = () => {
+    setShow3dWarningModal(false);
+    handleNavigation(THREEDEE_TAB_KEY);
+  };
+
+  const onCloseThreedeeWarningModal = () => {
+    setShow3dWarningModal(false);
   };
 
   // Standard tabs
@@ -102,7 +137,7 @@ export const WellInspect: React.FC = () => {
           <Menu.Item
             key={item.key}
             onClick={() => {
-              handleNavigation(item.key);
+              onNavigateToStandaloneItemsClick(item.key);
             }}
           >
             <LinkNode>
@@ -126,53 +161,69 @@ export const WellInspect: React.FC = () => {
   );
 
   return (
-    <InspectContainer>
-      <InspectSidebar
-        hidden={standalone}
-        isOpen={isOpen}
-        width={inspectSidebarWidth}
-        onToggle={handleSidebarToggle}
-        onResize={handleOnResizeInspectSidebar}
-      />
+    <>
+      <InspectContainer>
+        <InspectSidebar
+          hidden={standalone}
+          isOpen={isOpen}
+          width={inspectSidebarWidth}
+          onToggle={handleSidebarToggle}
+          onResize={handleOnResizeInspectSidebar}
+        />
 
-      <InspectContent standalone={standalone} fullWidth={!isOpen} width={width}>
-        <ScrollButtons scrollRef={scrollRef}>
-          <TabsWrapper>
-            <TabsScrollWrapper ref={scrollRef}>
-              <Tabs
-                hidden={standalone}
-                activeKey={selectedItem?.key}
-                onChange={handleNavigation}
-                data-testid="well-inspect-navigation-tabs"
-              >
-                {tabs}
-              </Tabs>
-              {!standalone && standaloneItems.length > 0 && (
-                <TabsHoverDropdown content={links} onHoverChange={setIsVisible}>
-                  <Button
-                    type="ghost"
-                    size="small"
-                    id="link-tabs"
-                    aria-label="Other"
+        <InspectContent
+          standalone={standalone}
+          fullWidth={!isOpen}
+          width={width}
+        >
+          <ScrollButtons scrollRef={scrollRef}>
+            <TabsWrapper>
+              <TabsScrollWrapper ref={scrollRef}>
+                <Tabs
+                  hidden={standalone}
+                  activeKey={selectedItem?.key}
+                  onChange={handleNavigation}
+                  data-testid="well-inspect-navigation-tabs"
+                >
+                  {tabs}
+                </Tabs>
+                {!standalone && !isEmpty(standaloneItems) && (
+                  <TabsHoverDropdown
+                    content={links}
+                    onHoverChange={setIsVisible}
                   >
-                    <span>{t('Other')}</span>
-                    {!isVisible && <Icon type="ChevronDownCompact" size={16} />}
-                    {isVisible && <Icon type="ChevronUpCompact" size={16} />}
-                  </Button>
-                </TabsHoverDropdown>
-              )}
-            </TabsScrollWrapper>
-            <StandaloneHeader
-              title={selectedItem?.name || ''}
-              hidden={!standalone}
-            />
-          </TabsWrapper>
-        </ScrollButtons>
-        <TabsContent>
-          <InspectRouter />
-        </TabsContent>
-      </InspectContent>
-    </InspectContainer>
+                    <Button
+                      type="ghost"
+                      size="small"
+                      id="link-tabs"
+                      aria-label="Other"
+                    >
+                      <span>{t('Other')}</span>
+                      {!isVisible && (
+                        <Icon type="ChevronDownCompact" size={16} />
+                      )}
+                      {isVisible && <Icon type="ChevronUpCompact" size={16} />}
+                    </Button>
+                  </TabsHoverDropdown>
+                )}
+              </TabsScrollWrapper>
+              <StandaloneHeader
+                title={selectedItem?.name || ''}
+                hidden={!standalone}
+              />
+            </TabsWrapper>
+          </ScrollButtons>
+          <TabsContent>
+            <InspectRouter />
+          </TabsContent>
+        </InspectContent>
+      </InspectContainer>
+      <WarningModal3D
+        show3dWarningModal={show3dWarningModal}
+        onConfirm={onOpenThreedeeConfirm}
+        onCancel={onCloseThreedeeWarningModal}
+      />
+    </>
   );
 };
 

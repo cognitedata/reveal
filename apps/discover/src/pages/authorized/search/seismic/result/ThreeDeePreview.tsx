@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { ThreeDee } from 'components/3d';
 import { BlankModal } from 'components/modal';
 import { useSelectedFiles } from 'modules/seismicSearch/selectors';
@@ -15,7 +17,7 @@ export const ThreeDeePreview: React.FC<Props> = ({ onClose }: Props) => {
 
   const selectedFiles = useSelectedFiles();
 
-  const fileId = selectedFiles.length > 0 ? selectedFiles[0].fileId : undefined;
+  const fileId = !isEmpty(selectedFiles) ? selectedFiles[0].fileId : undefined;
 
   if (!fileId) return null;
 

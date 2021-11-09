@@ -153,3 +153,7 @@ export const LinksMenu = styled(Menu)`
   line-height: var(--cogs-t6-line-height);
   margin-top: 20px;
 `;
+
+export const ThreeDeeWarningContentQuestion = styled.p`
+  margin-top: 20px;
+`;

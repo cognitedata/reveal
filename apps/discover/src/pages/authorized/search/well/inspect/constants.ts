@@ -101,3 +101,9 @@ export const TAB_ITEMS: Tab[] = [
     standalone: true,
   },
 ];
+
+export const WARNING_MODAL_EXPLANATION =
+  '3D is currently optimised for viewing 10 wellbores or fewer. Viewing more than 10 wellbores may cause performance problems.';
+export const WARNING_MODAL_QUESTION =
+  'Do you want to proceed with the current selection?';
+export const WARNING_MODAL_TITLE = 'Notice';

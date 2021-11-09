@@ -58,5 +58,6 @@ export const ChildrenContainer = styled.div`
 `;
 
 export const SubtitleContainer = styled.div`
-  width: 250px;
+  align-items: center;
+  justify-content: center;
 `;

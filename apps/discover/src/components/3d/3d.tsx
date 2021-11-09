@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
 import {
   NodeVisualizerProvider,
   SubSurfaceModule,
@@ -86,7 +88,7 @@ const ThreeDee: React.FC<Props> = ({
       subsurfaceModule.addSeismicCube(getSeismicSDKClient(), fileId);
     }
 
-    if (wells && wells.length > 0) {
+    if (wells && !isEmpty(wells)) {
       subsurfaceModule.addWellData(
         normalizeWellsData({
           wells,
