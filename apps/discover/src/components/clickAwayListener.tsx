@@ -7,9 +7,10 @@ interface Props {
   onClickAway: (ev: Event) => void;
 }
 
-export const ClickAwayListener: React.FC<Props> = (props) => {
-  const { onClickAway: clickOutside, children } = props;
-
+export const ClickAwayListener: React.FC<Props> = ({
+  onClickAway: clickOutside,
+  children,
+}) => {
   const wrapperRef = useRef<HTMLHeadingElement | null>(null);
   useClickAwayListener(wrapperRef, clickOutside);
 

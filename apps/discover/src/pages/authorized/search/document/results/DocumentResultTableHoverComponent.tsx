@@ -14,6 +14,12 @@ import { openDocumentPreviewInNewTab } from 'modules/documentPreview/utils';
 import { DocumentRowType } from 'modules/documentSearch/types';
 import { FlexRow } from 'styles/layout';
 
+import {
+  ADD_TO_FAVORITES_OPTION_TEXT,
+  LEAVE_FEEDBACK_OPTION_TEXT,
+  OPEN_PARENT_FOLDER_OPTION_TEXT,
+} from '../constants';
+
 type SelectionHandle = (row: DocumentRowType) => void;
 
 export type Props = {
@@ -58,14 +64,14 @@ export const DocumentResultTableHoverComponent = ({
                 data-testid="menu-item-extract-parent-folder"
                 onClick={() => onExtractParentFolderHandle(row)}
               >
-                Open parent folder
+                {OPEN_PARENT_FOLDER_OPTION_TEXT}
               </Menu.Item>
             )}
             <Menu.Item
               data-testid="menu-item-open-feedback"
               onClick={() => onOpenFeedbackHandle(row)}
             >
-              Leave feedback
+              {LEAVE_FEEDBACK_OPTION_TEXT}
             </Menu.Item>
             <Menu.Submenu
               content={
@@ -74,7 +80,7 @@ export const DocumentResultTableHoverComponent = ({
                 />
               }
             >
-              <span>Add to favorites</span>
+              <span>{ADD_TO_FAVORITES_OPTION_TEXT}</span>
             </Menu.Submenu>
           </Menu>
         }

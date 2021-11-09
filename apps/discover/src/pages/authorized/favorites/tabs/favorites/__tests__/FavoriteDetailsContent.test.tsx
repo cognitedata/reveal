@@ -7,6 +7,7 @@ import { getMockWellOld } from '__test-utils/fixtures/well';
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { defaultTestUser } from '__test-utils/testdata.utils';
+import { LOADING_TEXT } from 'components/emptyState/constants';
 import navigation from 'constants/navigation';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
 import {
@@ -64,22 +65,20 @@ describe('Favorite Details Content', () => {
     });
 
   // set location url correctly so child elements get rendered
-  beforeEach(() =>
+  beforeEach(() => {
+    jest.clearAllMocks();
     window.history.pushState(
       {},
       'Test page',
       navigation.FAVORITE_TAB_DOCUMENTS(mockFavorite.id)
-    )
-  );
+    );
 
-  beforeEach(() => {
     (useMutateFavoriteWellPatchWellbores as jest.Mock).mockImplementation(
       () => ({
         mutate: jest.fn(),
       })
     );
-  });
-  beforeEach(() => {
+
     (useMutateFavoriteWellUpdate as jest.Mock).mockImplementation(() => ({
       mutate: jest.fn(),
     }));
@@ -105,11 +104,12 @@ describe('Favorite Details Content', () => {
     const wellTab = screen.getByRole('tab', { name: /Wells/ });
 
     // loading state
-    expect(screen.getByText('Loading results')).toBeVisible();
+    expect(screen.getByText(LOADING_TEXT)).toBeVisible();
     fireEvent.click(wellTab);
-    // @todo(PP-2044)
-    // eslint-disable-next-line testing-library/await-async-utils
-    waitFor(() => expect(screen.getByText('Loading results')).toBeVisible());
+
+    await waitFor(() =>
+      expect(screen.queryAllByText(LOADING_TEXT).length).toBe(2)
+    );
   });
 
   it('should render empty state correctly', async () => {
@@ -134,7 +134,7 @@ describe('Favorite Details Content', () => {
     expect(within(documentsTab).getByText('0')).toBeInTheDocument();
     expect(within(wellTab).getByText('0')).toBeInTheDocument();
 
-    expect(screen.getByText('Loading results')).not.toBeVisible();
+    expect(screen.getByText(LOADING_TEXT)).not.toBeVisible();
     expect(screen.getByText(FAVORITE_SET_NO_DOCUMENTS)).toBeVisible();
     wellTab.click();
     expect(screen.getByText(FAVORITE_SET_NO_WELLS)).toBeVisible();
@@ -206,9 +206,7 @@ describe('Favorite Details Content', () => {
       content: { ...mockFavorite.content, documentIds: [1, 2] },
     });
 
-    // @todo(PP-2044)
-    // eslint-disable-next-line testing-library/await-async-utils
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByRole('table')).toBeInTheDocument();
       const loadMoreButton = screen.getByRole('button', { name: 'Load more' });
       expect(loadMoreButton).toBeInTheDocument();

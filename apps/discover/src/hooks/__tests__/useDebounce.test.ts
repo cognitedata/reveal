@@ -1,5 +1,3 @@
-// @todo(PP-2044)
-/* eslint-disable testing-library/await-async-utils */
 import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 
@@ -10,10 +8,10 @@ describe('useDebounce hook', () => {
   const waitTime = 1000;
 
   const getDebouncedFunction = async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useDebounce(functionToDebounce, waitTime)
     );
-    waitForNextUpdate();
+
     return result.current;
   };
 
@@ -23,7 +21,9 @@ describe('useDebounce hook', () => {
     debouncedFunction();
     debouncedFunction();
 
-    waitFor(() => expect(functionToDebounce).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(functionToDebounce).toHaveBeenCalledTimes(1), {
+      timeout: 1500,
+    });
   });
 
   it('should call debounced function again when it is called after the debounce wait time', async () => {
@@ -32,6 +32,8 @@ describe('useDebounce hook', () => {
     debouncedFunction();
     setTimeout(() => debouncedFunction(), waitTime + 1);
 
-    waitFor(() => expect(functionToDebounce).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(functionToDebounce).toHaveBeenCalledTimes(2), {
+      timeout: 2500,
+    });
   });
 });

@@ -1,5 +1,3 @@
-// @todo(PP-2044)
-/* eslint-disable testing-library/await-async-utils */
 import { MutableRefObject, useRef } from 'react';
 
 import { screen, fireEvent, waitFor } from '@testing-library/react';
@@ -13,10 +11,8 @@ describe('useClickAwayListener hook', () => {
     ref: MutableRefObject<HTMLHeadingElement | null>,
     clickOutside: (ev: Event) => void
   ) => {
-    const { waitForNextUpdate } = renderHook(() =>
-      useClickAwayListener(ref, clickOutside)
-    );
-    waitForNextUpdate();
+    renderHook(() => useClickAwayListener(ref, clickOutside));
+
     return {
       ...testRenderer(() => <div data-testid="test-component" ref={ref} />),
     };
@@ -25,10 +21,11 @@ describe('useClickAwayListener hook', () => {
   const clickOutside = jest.fn();
 
   beforeEach(() => {
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useRef<HTMLHeadingElement | null>(null)
     );
-    waitForNextUpdate();
+
+    clickOutside.mockClear();
     renderTestComponent(result.current, clickOutside);
   });
 
@@ -38,7 +35,7 @@ describe('useClickAwayListener hook', () => {
   });
 
   it('should call `clickOutside` once when click outside of the component', async () => {
-    fireEvent.click(document);
-    waitFor(() => expect(clickOutside).toHaveBeenCalledTimes(1));
+    fireEvent.mouseDown(document);
+    await waitFor(() => expect(clickOutside).toHaveBeenCalledTimes(1));
   });
 });

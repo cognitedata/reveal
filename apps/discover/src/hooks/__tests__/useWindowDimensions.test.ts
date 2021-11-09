@@ -1,15 +1,9 @@
-// @todo(PP-2044)
-/* eslint-disable testing-library/await-async-utils */
-import { act, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { useWindowDimensions } from '../useWindowDimensions';
 
 describe('useWindowDimensions hook', () => {
-  beforeEach(() => {
-    window.resizeTo = jest.fn();
-  });
-
   const getWindowDimensions = async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useWindowDimensions()
@@ -26,28 +20,27 @@ describe('useWindowDimensions hook', () => {
   });
 
   it('should return updated window dimensions on window resize', async () => {
-    act(() => {
-      window.resizeTo(1600, 1200);
+    await waitFor(() => {
+      Object.assign(window, { innerHeight: 1200, innerWidth: 1600 });
     });
 
     const { width: widthBefore, height: heightBefore } =
       await getWindowDimensions();
 
-    waitFor(() => {
-      expect(widthBefore).toEqual(1600);
-      expect(heightBefore).toEqual(1200);
-    });
+    expect(widthBefore).toEqual(1600);
+    expect(heightBefore).toEqual(1200);
 
-    act(() => {
-      window.resizeTo(500, 500);
+    await waitFor(() => {
+      Object.assign(window, {
+        innerHeight: 500,
+        innerWidth: 500,
+      }).dispatchEvent(new Event('resize'));
     });
 
     const { width: widthAfter, height: heightAfter } =
       await getWindowDimensions();
 
-    waitFor(() => {
-      expect(widthAfter).toEqual(500);
-      expect(heightAfter).toEqual(500);
-    });
+    expect(widthAfter).toEqual(500);
+    expect(heightAfter).toEqual(500);
   });
 });
