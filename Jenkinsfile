@@ -96,9 +96,13 @@ def pods = { body ->
 
 def handleError = { err ->
   container('bazel') {
+    sh("mkdir -p artifacts")
     sh("find -L `readlink dist/testlogs` -type f -name '*.zip' | xargs -n1 unzip -uo -d artifacts")
+    // We execute the find command in a subcommand to actually preserve directory structure
+    sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*testcafe_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
+    sh("CURRENTDIR=\$(pwd) && (cd `readlink dist/testlogs` && find -type f -wholename '*cypress_test*/*.log' | xargs cp --parents -t \$CURRENTDIR/artifacts)")
 
-    def artifactPaths = "artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4"
+    def artifactPaths = "artifacts/**/screenshots/**/*.png,artifacts/**/video/**/*.mp4,artifacts/**/cypress/**/*.mp4,artifacts/**/*testcafe_test*/**/*.log,artifacts/**/*cypress_test*/**/*.log"
 
     archiveArtifacts allowEmptyArchive: true, artifacts: artifactPaths
   }
