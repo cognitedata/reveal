@@ -9,10 +9,6 @@ const defaultConfig: TenantConfig = {
   map: {
     zoom: 6,
     center: [-90, 27],
-    maxBounds: [
-      [-101, 18],
-      [-70, 40],
-    ],
   },
   documents: {
     defaultLimit: 100,
