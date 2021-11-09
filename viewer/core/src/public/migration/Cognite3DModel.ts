@@ -190,6 +190,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Removes styling for previously added styled collection, resetting the style to the default (or
    * the style imposed by other styled collections).
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
+   * @throws Error if node collection isn't assigned to the model.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
