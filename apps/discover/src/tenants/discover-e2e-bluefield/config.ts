@@ -22,4 +22,14 @@ export default {
     trajectory: defaultWellsConfig.wells?.trajectory,
     casing: defaultWellsConfig.wells?.casing,
   },
+  documents: config.documents
+    ? {
+        ...config.documents,
+        mapLayerFilters: {
+          discoveries: {
+            labelAccessor: 'Discovery',
+          },
+        },
+      }
+    : undefined,
 };

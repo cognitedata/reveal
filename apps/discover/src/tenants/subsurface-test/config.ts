@@ -31,6 +31,16 @@ const defaultConfig: TenantConfig = {
     showDownloadAllDocumentsButton: true,
   },
   showProjectConfig: true,
+  documents: config?.documents
+    ? {
+        ...config.documents,
+        mapLayerFilters: {
+          fields: {
+            labelAccessor: 'Field',
+          },
+        },
+      }
+    : undefined,
 };
 
 export default defaultConfig;

@@ -9,6 +9,11 @@ const defaultConfig: TenantConfig = {
   documents: {
     defaultLimit: 100,
     filters: {},
+    mapLayerFilters: {
+      discoveries: {
+        labelAccessor: 'Discovery',
+      },
+    },
   },
   enableWellSDKV3: true,
   wells: {
