@@ -73,7 +73,7 @@ export const FileGridPreview = ({
   const showReviewButton = mode === VisionMode.Contextualize;
 
   return (
-    <PreviewCell style={style}>
+    <PreviewCell style={style} onClick={handleFileDetails}>
       <div className="preview">
         <Thumbnail fileInfo={fileInfo as FileInfo} />
         {onSelect && (
@@ -186,6 +186,7 @@ const PreviewCell = styled.div`
     }
     :hover {
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
     }
   }
 
