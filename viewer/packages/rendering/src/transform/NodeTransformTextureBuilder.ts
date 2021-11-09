@@ -24,13 +24,13 @@ export class NodeTransformTextureBuilder {
     this._transformProvider.on('changed', this._handleTransformChangedBound);
   }
 
-  dispose() {
+  dispose(): void {
     this._transformOverrideBuffer.dispose();
     this._transformOverrideIndexTexture.dispose();
     this._transformProvider.off('changed', this._handleTransformChangedBound);
   }
 
-  get needsUpdate() {
+  get needsUpdate(): boolean {
     return this._needsUpdate;
   }
 
@@ -42,7 +42,7 @@ export class NodeTransformTextureBuilder {
     return this._transformOverrideBuffer.dataTexture;
   }
 
-  build() {
+  build(): void {
     this._needsUpdate = false;
   }
 

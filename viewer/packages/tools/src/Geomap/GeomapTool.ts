@@ -30,8 +30,8 @@ export class GeomapTool extends Cognite3DViewerToolBase {
    * Converts Latitude & Longitude into Vector2 World coordinates on the Map
    * @param latLong Latitude & Longitude
    */
-  public latLongToWorldCoordinates(latLong: LatLongPosition) {
-    this._maps.latLongToWorldCoordinates(latLong);
+  public latLongToWorldCoordinates(latLong: LatLongPosition): { x: number; y: number } {
+    return this._maps.latLongToWorldCoordinates(latLong);
   }
 
   public dispose(): void {

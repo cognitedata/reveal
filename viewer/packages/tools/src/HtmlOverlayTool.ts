@@ -120,7 +120,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * @param position3D
    * @param options
    */
-  add(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}) {
+  add(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}): void {
     this.ensureNotDisposed();
 
     if (this.viewerDomElement.contains(htmlElement)) {
@@ -145,7 +145,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Removes a overlay and removes it from the DOM.
    * @param htmlElement
    */
-  remove(htmlElement: HTMLElement) {
+  remove(htmlElement: HTMLElement): void {
     this.ensureNotDisposed();
     if (!this.viewerDomElement.contains(htmlElement) || !this._htmlOverlays.has(htmlElement)) {
       throw new Error(`Element is not attached to viewer`);
@@ -157,7 +157,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   /**
    * Removes all attached HTML overlay elements.
    */
-  clear() {
+  clear(): void {
     const overlays = Array.from(this._htmlOverlays.keys());
     for (const element of overlays) {
       this.remove(element);

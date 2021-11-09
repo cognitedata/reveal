@@ -50,7 +50,7 @@ export class CachedRepository implements Repository {
     this._ctmFileCache = new MostFrequentlyUsedCache(10);
   }
 
-  clear() {
+  clear(): void {
     this._consumedSectorCache.clear();
     this._ctmFileCache.clear();
   }
@@ -96,7 +96,7 @@ export class CachedRepository implements Repository {
       }
     } catch (error) {
       this._consumedSectorCache.remove(cacheKey);
-      trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
+      trackError(error as Error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
     }
   }

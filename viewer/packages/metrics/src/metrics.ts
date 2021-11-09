@@ -43,7 +43,7 @@ function generateUuidv4(): string {
   });
 }
 
-export function initMetrics(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
+export function initMetrics(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): void {
   // Even though mixpanel has an opt out property, the mixpanel object
   // used by Metrics is not available here, so we have our own way of opting out.
   globalLogMetrics = logMetrics;
@@ -91,7 +91,7 @@ export function initMetrics(logMetrics: boolean, project: string, applicationId:
   trackEvent('init', eventProps);
 }
 
-export function trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
+export function trackEvent(eventName: TrackedEvents, eventProps: EventProps): void {
   if (!globalLogMetrics) {
     return;
   }
@@ -99,19 +99,19 @@ export function trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
   mixpanel.track(eventName, combined);
 }
 
-export function trackCreateTool(toolName: string) {
+export function trackCreateTool(toolName: string): void {
   trackEvent('toolCreated', { toolName });
 }
 
-export function trackLoadModel(eventProps: EventProps, modelIdentifier: any) {
+export function trackLoadModel(eventProps: EventProps, modelIdentifier: any): void {
   trackEvent('loadModel', { ...eventProps, modelIdentifier });
 }
 
-export function trackCadModelStyled(nodeCollectionClassToken: string, appearance: any) {
+export function trackCadModelStyled(nodeCollectionClassToken: string, appearance: any): void {
   trackEvent('cadModelStyleAssigned', { nodeCollectionClassToken, style: appearance });
 }
 
-export function trackError(error: Error, eventProps: EventProps) {
+export function trackError(error: Error, eventProps: EventProps): void {
   log.error(error);
 
   trackEvent('error', {
@@ -122,6 +122,6 @@ export function trackError(error: Error, eventProps: EventProps) {
   });
 }
 
-export function trackCameraNavigation(eventProps: EventProps) {
+export function trackCameraNavigation(eventProps: EventProps): void {
   trackEvent('cameraNavigated', eventProps);
 }

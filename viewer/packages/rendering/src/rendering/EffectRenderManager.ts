@@ -101,11 +101,11 @@ export class EffectRenderManager {
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
   }
 
-  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
+  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
     this._uiObjects.push({ object: object, screenPos, width: size.x, height: size.y });
   }
 
-  public removeUiObject(object: THREE.Object3D) {
+  public removeUiObject(object: THREE.Object3D): void {
     this._uiObjects = this._uiObjects.filter(p => {
       const filteredObject = p.object;
       return object !== filteredObject;
@@ -294,7 +294,7 @@ export class EffectRenderManager {
     );
   }
 
-  public renderDetailedToDepthOnly(camera: THREE.PerspectiveCamera) {
+  public renderDetailedToDepthOnly(camera: THREE.PerspectiveCamera): void {
     const original = {
       renderMode: this._materialManager.getRenderMode()
     };
@@ -328,7 +328,7 @@ export class EffectRenderManager {
     }
   }
 
-  public render(camera: THREE.PerspectiveCamera) {
+  public render(camera: THREE.PerspectiveCamera): void {
     this.setupRenderTargetSpectorDebugging();
 
     const renderer = this._renderer;
@@ -464,7 +464,7 @@ export class EffectRenderManager {
     });
   }
 
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null) {
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null): void {
     this._renderTarget = target;
   }
 
@@ -472,7 +472,7 @@ export class EffectRenderManager {
     return this._renderTarget;
   }
 
-  public setRenderTargetAutoSize(autoSize: boolean) {
+  public setRenderTargetAutoSize(autoSize: boolean): void {
     this._autoSetTargetSize = autoSize;
   }
 

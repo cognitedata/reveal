@@ -464,7 +464,7 @@ export class Cognite3DViewer {
    * Gets the current viewer state which includes the camera pose as well as applied styling.
    * @returns JSON object containing viewer state.
    */
-  getViewState() {
+  getViewState(): ViewerState {
     const stateHelper = this.createViewStateHelper();
     return stateHelper.getCurrentState();
   }
@@ -586,7 +586,7 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: Cognite3DModel | CognitePointCloudModel) {
+  removeModel(model: Cognite3DModel | CognitePointCloudModel): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
@@ -714,7 +714,7 @@ export class Cognite3DViewer {
   /** Removes the UI object from the viewer.
    * @param object
    */
-  removeUiObject(object: THREE.Object3D) {
+  removeUiObject(object: THREE.Object3D): void {
     if (this.isDisposed) return;
 
     this.revealManager.removeUiObject(object);
@@ -724,7 +724,7 @@ export class Cognite3DViewer {
    * Sets the color used as the clear color of the renderer.
    * @param color
    */
-  setBackgroundColor(color: THREE.Color) {
+  setBackgroundColor(color: THREE.Color): void {
     if (this.isDisposed) {
       return;
     }

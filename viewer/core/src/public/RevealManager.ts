@@ -96,7 +96,7 @@ export class RevealManager {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
   }
 
-  public update(camera: THREE.PerspectiveCamera) {
+  public update(camera: THREE.PerspectiveCamera): void {
     const hasCameraChanged =
       this._lastCamera.zoom !== camera.zoom ||
       !this._lastCamera.position.equals(camera.position) ||
@@ -171,7 +171,7 @@ export class RevealManager {
     }
   }
 
-  public render(camera: THREE.PerspectiveCamera) {
+  public render(camera: THREE.PerspectiveCamera): void {
     this._effectRenderManager.render(camera);
     this.resetRedraw();
   }
@@ -181,7 +181,7 @@ export class RevealManager {
    * @param target New rendering target.
    * @param autoSetTargetSize Auto size target to fit canvas.
    */
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true): void {
     this._effectRenderManager.setRenderTarget(target);
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
@@ -231,12 +231,12 @@ export class RevealManager {
     }
   }
 
-  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
+  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
     this._effectRenderManager.addUiObject(object, screenPos, size);
     this.requestRedraw();
   }
 
-  public removeUiObject(object: THREE.Object3D) {
+  public removeUiObject(object: THREE.Object3D): void {
     this._effectRenderManager.removeUiObject(object);
     this.requestRedraw();
   }
