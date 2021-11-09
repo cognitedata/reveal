@@ -12,7 +12,7 @@ export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 export class Spinner {
   private static readonly stylesId = 'reveal-viewer-spinner-styles';
-  private static classnames = {
+  private static readonly classnames = {
     base: 'reveal-viewer-spinner',
     topLeft: 'reveal-viewer-spinner-top-left',
     topRight: 'reveal-viewer-spinner-top-right',
