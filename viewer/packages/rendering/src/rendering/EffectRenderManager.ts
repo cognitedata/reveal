@@ -750,6 +750,9 @@ export class EffectRenderManager {
 
     const context = this._renderer.getContext();
     const renderTarget = this._renderer.getRenderTarget();
+    // Note! Not sure why, but flush/finish doesn't block
+    // and we therefore use renderTargetPixels() which
+    // ensures the GPU pipeline is flushed
     context.flush();
     context.finish();
     if (renderTarget !== null) {
