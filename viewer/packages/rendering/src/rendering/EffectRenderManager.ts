@@ -38,9 +38,9 @@ export class EffectRenderManager {
   // used for generating ambient occlusion map (screen space)
   private readonly _ssaoScene: THREE.Scene;
 
-  // Simple scene with a single triangle with UVs [0,1] in both directions
-  // used for bluring and applying the ambient occlusion map (screen space)
-  private readonly _ssaoBlurScene: THREE.Scene;
+  // Simple scene used for blurring SSAO result and
+  // combining with rendered frame
+  private readonly _ssaoBlurCombineScene: THREE.Scene;
 
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
@@ -66,7 +66,7 @@ export class EffectRenderManager {
   private readonly _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
   private readonly _fxaaMaterial: THREE.ShaderMaterial;
   private _ssaoMaterial: THREE.ShaderMaterial;
-  private readonly _ssaoBlurMaterial: THREE.ShaderMaterial;
+  private readonly _ssaoBlurCombineMaterial: THREE.ShaderMaterial;
 
   private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
   private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
@@ -74,7 +74,7 @@ export class EffectRenderManager {
   private readonly _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
   private readonly _compositionTarget: THREE.WebGLRenderTarget;
   private readonly _ssaoTarget: THREE.WebGLRenderTarget;
-  private readonly _ssaoBlurTarget: THREE.WebGLRenderTarget;
+  private readonly _ssaoBlurCombineTarget: THREE.WebGLRenderTarget;
 
   /**
    * Holds state of how the last frame was rendered by `render()`. This is used to explicit clear
@@ -154,8 +154,8 @@ export class EffectRenderManager {
     this._fxaaScene.autoUpdate = false;
     this._ssaoScene = new THREE.Scene();
     this._ssaoScene.autoUpdate = false;
-    this._ssaoBlurScene = new THREE.Scene();
-    this._ssaoBlurScene.autoUpdate = false;
+    this._ssaoBlurCombineScene = new THREE.Scene();
+    this._ssaoBlurCombineScene.autoUpdate = false;
     this._emptyScene = new THREE.Scene();
     this._emptyScene.autoUpdate = false;
 
@@ -196,10 +196,10 @@ export class EffectRenderManager {
     this._ssaoTarget.depthTexture.format = THREE.DepthFormat;
     this._ssaoTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ssaoBlurTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._ssaoBlurTarget.depthTexture = new THREE.DepthTexture(0, 0);
-    this._ssaoBlurTarget.depthTexture.format = THREE.DepthFormat;
-    this._ssaoBlurTarget.depthTexture.type = THREE.UnsignedIntType;
+    this._ssaoBlurCombineTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._ssaoBlurCombineTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ssaoBlurCombineTarget.depthTexture.format = THREE.DepthFormat;
+    this._ssaoBlurCombineTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._combineOutlineDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: outlineDetectionShaders.vertex,
@@ -253,7 +253,7 @@ export class EffectRenderManager {
       fragmentShader: ssaoShaders.fragment
     });
 
-    this._ssaoBlurMaterial = new THREE.ShaderMaterial({
+    this._ssaoBlurCombineMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDiffuse: { value: this._compositionTarget.texture },
         tAmbientOcclusion: { value: this._ssaoTarget.texture },
@@ -264,7 +264,7 @@ export class EffectRenderManager {
     });
 
     const diffuseTexture = this.supportsSsao(ssaoParameters)
-      ? this._ssaoBlurTarget.texture
+      ? this._ssaoBlurCombineTarget.texture
       : this._compositionTarget.texture;
 
     this._fxaaMaterial = new THREE.ShaderMaterial({
@@ -423,7 +423,7 @@ export class EffectRenderManager {
 
           if (supportsSsao) {
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderPostProcessStep(renderer, this._ssaoBlurTarget, this._ssaoBlurScene);
+            this.renderPostProcessStep(renderer, this._ssaoBlurCombineTarget, this._ssaoBlurCombineScene);
           }
 
           this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
@@ -434,8 +434,9 @@ export class EffectRenderManager {
 
           if (supportsSsao) {
             this.renderComposition(renderer, camera, this._compositionTarget);
+
             this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderPostProcessStep(renderer, this._renderTarget, this._ssaoBlurScene);
+            this.renderPostProcessStep(renderer, this._renderTarget, this._ssaoBlurCombineScene);
           } else {
             this.renderComposition(renderer, camera, this._renderTarget);
           }
@@ -622,7 +623,7 @@ export class EffectRenderManager {
       this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._compositionTarget.setSize(renderSize.x, renderSize.y);
       this._ssaoTarget.setSize(renderSize.x, renderSize.y);
-      this._ssaoBlurTarget.setSize(renderSize.x, renderSize.y);
+      this._ssaoBlurCombineTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineOutlineDetectionMaterial.uniforms.texelSize.value = new THREE.Vector2(
         this._outlineTexelSize / renderSize.x,
@@ -633,7 +634,7 @@ export class EffectRenderManager {
 
       this._ssaoMaterial.uniforms.resolution.value = renderSize;
 
-      this._ssaoBlurMaterial.uniforms.resolution.value = renderSize;
+      this._ssaoBlurCombineMaterial.uniforms.resolution.value = renderSize;
 
       this._fxaaMaterial.uniforms.resolution.value = renderSize;
       this._fxaaMaterial.uniforms.inverseResolution.value = new THREE.Vector2(1.0 / renderSize.x, 1.0 / renderSize.y);
@@ -664,7 +665,9 @@ export class EffectRenderManager {
       const kernel = this.createSsaoKernel(sampleSize);
 
       this._fxaaMaterial.uniforms.tDiffuse.value =
-        params.sampleSize !== SsaoSampleQuality.None ? this._ssaoBlurTarget.texture : this._compositionTarget.texture;
+        params.sampleSize !== SsaoSampleQuality.None
+          ? this._ssaoBlurCombineTarget.texture
+          : this._compositionTarget.texture;
 
       this._ssaoMaterial.uniforms.kernel.value = kernel;
 
@@ -751,8 +754,9 @@ export class EffectRenderManager {
 
   private setupSsaoBlurCombineScene() {
     const geometry = this.createRenderTriangle();
-    const mesh = new THREE.Mesh(geometry, this._ssaoBlurMaterial);
-    this._ssaoBlurScene.add(mesh);
+
+    const ssaoBlurCombineMesh = new THREE.Mesh(geometry, this._ssaoBlurCombineMaterial);
+    this._ssaoBlurCombineScene.add(ssaoBlurCombineMesh);
   }
 
   private createSsaoKernel(kernelSize: number) {
@@ -839,8 +843,8 @@ export class EffectRenderManager {
       this.assignSpectorJsMetadataToRenderTarget(this._ssaoTarget, {
         name: 'ssaoTarget'
       });
-      this.assignSpectorJsMetadataToRenderTarget(this._ssaoBlurTarget, {
-        name: 'ssaoBlurTarget'
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoBlurCombineTarget, {
+        name: 'ssaoBlurCombineTarget'
       });
     }
   }

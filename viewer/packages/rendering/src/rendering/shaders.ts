@@ -102,7 +102,7 @@ export const ssaoShaders = {
 };
 
 /**
- * Shader to blur ambient occlusion texture and combine with diffuse
+ * Full one-pass SSAO blur shader
  */
 export const ssaoBlurCombineShaders = {
   fragment: glsl(require('../glsl/post-processing/ssao-blur-combine.frag').default),
