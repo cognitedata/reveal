@@ -91,6 +91,8 @@ export class GltfSectorParser {
 
     switch (geometryType) {
       case RevealGeometryCollectionType.InstanceMesh:
+        assert(payload.instancingExtension !== undefined);
+        this.processInstancedTriangleMesh(payload);
         break;
       case RevealGeometryCollectionType.TriangleMesh:
         assert(payload.instancingExtension === undefined);
@@ -103,6 +105,50 @@ export class GltfSectorParser {
     }
 
     return { type: geometryType, buffer: bufferGeometry };
+  }
+  processInstancedTriangleMesh(payload: GeometryProcessingPayload) {
+    const { bufferGeometry, glbHeaderData, meshId, data } = payload;
+
+    const json = glbHeaderData.json;
+
+    assert(meshId !== undefined);
+
+    const mesh = json.meshes[meshId];
+
+    assert(mesh.primitives.length === 1);
+
+    const primitive = mesh.primitives[0];
+
+    this.setIndexBuffer(payload, primitive, data, bufferGeometry);
+
+    this.setInterleavedBufferAttributes<THREE.InterleavedBuffer>(
+      payload.glbHeaderData,
+      primitive.attributes,
+      payload.data,
+      attributeNameTransformer,
+      payload.bufferGeometry,
+      THREE.InterleavedBuffer
+    );
+
+    const primitivesAttributeNameTransformer = (attributeName: string) => `a${attributeName}`;
+
+    this.setInterleavedBufferAttributes<THREE.InstancedInterleavedBuffer>(
+      payload.glbHeaderData,
+      payload.instancingExtension!.attributes,
+      payload.data,
+      primitivesAttributeNameTransformer,
+      payload.bufferGeometry,
+      THREE.InstancedInterleavedBuffer
+    );
+
+    function attributeNameTransformer(attributeName: string) {
+      switch (attributeName) {
+        case 'POSITION':
+          return 'position';
+        default:
+          throw new Error();
+      }
+    }
   }
 
   private processPrimitiveCollection(payload: GeometryProcessingPayload) {

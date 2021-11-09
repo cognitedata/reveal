@@ -127,16 +127,13 @@ export class InstancedMeshManager {
     const colorAttribute = new THREE.InstancedBufferAttribute(colorBuffer.buffer, 4, true);
     instanceGeometry.setAttribute('a_color', colorAttribute);
 
-    const instanceMatrixInterleavedBuffer = new THREE.InstancedInterleavedBuffer(instanceMatrixBuffer.buffer, 16);
-    for (let column = 0; column < 4; column++) {
-      const attribute = new THREE.InterleavedBufferAttribute(instanceMatrixInterleavedBuffer, 4, column * 4);
-      instanceGeometry.setAttribute(`a_instanceMatrix_column_${column}`, attribute);
-    }
+    const instanceMatrixAttribute = new THREE.InstancedBufferAttribute(instanceMatrixBuffer.buffer, 16);
+    instanceGeometry.setAttribute('a_instanceMatrix', instanceMatrixAttribute);
 
     const updateAttributes = () => {
       treeIndexAttribute.needsUpdate = true;
       colorAttribute.needsUpdate = true;
-      instanceMatrixInterleavedBuffer.needsUpdate = true;
+      instanceMatrixAttribute.needsUpdate = true;
     };
 
     return [instanceGeometry, updateAttributes];
