@@ -28,11 +28,20 @@ export async function handler(args: any) {
     new SolutionsTemplatesApiService(client as any)
   );
 
-  const solutions = await solutionsHandler.list();
+  const result = await solutionsHandler.list();
+
+  if (!result.isSuccess) {
+    return console.error(result.errorValue());
+  }
 
   if (args.full) {
-    console.log(solutions);
+    console.log(result.getValue());
   } else {
-    console.log(solutions.map((solution) => solution.name).join('\n'));
+    console.log(
+      result
+        .getValue()
+        .map((solution) => solution.name)
+        .join('\n')
+    );
   }
 }

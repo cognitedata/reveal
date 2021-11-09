@@ -6,7 +6,7 @@ import { StyledPageWrapper } from '../styles/SharedStyles';
 
 import services from './di';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Solution } from '@platypus/platypus-core';
+import { Result, Solution } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 export const SolutionsList = () => {
@@ -18,9 +18,9 @@ export const SolutionsList = () => {
   useEffect(() => {
     const solutionsHandler = services.solutionsHandler;
     const listSolutions = () => {
-      solutionsHandler.list().then((res: Solution[]) => {
+      solutionsHandler.list().then((res: Result<Solution[]>) => {
         setLoading(false);
-        setSolutions(res);
+        setSolutions(res.getValue());
       });
     };
     listSolutions();

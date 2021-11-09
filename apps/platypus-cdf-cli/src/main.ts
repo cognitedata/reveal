@@ -20,13 +20,13 @@ let cli = scriptName('platypus')
 cli = cli.command(
   loginCmd.command,
   loginCmd.desc,
-  loginCmd.builder as any,
+  loginCmd.builder,
   loginCmd.handler
 );
 cli = cli.command(
   solutionsCmd.command,
   solutionsCmd.desc,
-  solutionsCmd.builder as any,
+  solutionsCmd.builder,
   solutionsCmd.handler
 );
 cli.parse();
