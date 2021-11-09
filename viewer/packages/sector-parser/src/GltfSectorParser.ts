@@ -246,13 +246,17 @@ export class GltfSectorParser {
   ) {
     const json = glbHeaderData.json;
 
-    const uniqueBufferViews = [
-      ...new Set(Object.values(attributes).map(accessorId => json.accessors[accessorId].bufferView))
-    ];
+    const bufferViewIds = Object.values(attributes).map(accessorId => json.accessors[accessorId].bufferView);
 
-    assert(uniqueBufferViews.length === 1, 'Unexpected number of buffer views');
+    assert(bufferViewIds.length > 0);
 
-    const bufferView = json.bufferViews[uniqueBufferViews[0]];
+    const bufferViewId = bufferViewIds[0];
+
+    for (let i = 1; i < bufferViewIds.length; i++) {
+      assert(bufferViewIds[i] === bufferViewId, 'Unexpected number of unique buffer views');
+    }
+
+    const bufferView = json.bufferViews[bufferViewId];
     bufferView.byteOffset = bufferView.byteOffset ?? 0;
 
     const offsetToBinChunk = glbHeaderData.byteOffsetToBinContent;
