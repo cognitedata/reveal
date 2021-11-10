@@ -17,6 +17,7 @@ import {
   IndicatorContainer,
   IndicatorContainerImage,
 } from './elements';
+import { DATA_TYPE_FILE } from './constants';
 
 type Params = {
   modelName?: string;
@@ -42,13 +43,14 @@ export default function ModelLibrary() {
       source: DEFAULT_MODEL_SOURCE,
       metadata: {
         nextVersion: '',
+        dataType: DATA_TYPE_FILE,
       },
     };
   };
 
   // XXX needs to be refactored
   const getLatestFileInfo = () =>
-    files.find((file) => !file.metadata?.nextVersion);
+    files.find((file) => !file.metadata.nextVersion);
 
   async function loadData() {
     const filter = getFilter();

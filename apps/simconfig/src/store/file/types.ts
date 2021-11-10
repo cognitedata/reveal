@@ -2,6 +2,7 @@ import { FileInfo } from '@cognite/sdk';
 import { RequestStatus } from 'store/types';
 import { LinkWithID } from 'pages/ModelLibrary/types';
 import { CalculationConfig } from 'components/forms/ConfigurationForm/types';
+import { CreateMetadataModel } from '@cognite/simconfig-api-sdk';
 
 type JSONPrimitive =
   | string
@@ -28,6 +29,7 @@ export type FileInfoSerializable = Omit<
   FileInfo,
   'createdTime' | 'lastUpdatedTime' | 'uploadedTime'
 > & {
+  metadata: CreateMetadataModel;
   createdTime?: number;
   lastUpdatedTime?: number;
   uploadedTime?: number;

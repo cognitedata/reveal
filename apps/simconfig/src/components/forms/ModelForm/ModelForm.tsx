@@ -23,17 +23,17 @@ import {
 const getInitialModelFormState = (): ModelFormState => ({
   boundaryConditions: [],
   file: undefined,
+  metadata: {
+    modelName: '',
+    simulator: DEFAULT_MODEL_SOURCE,
+    description: '',
+    fileName: '',
+    unitSystem: DEFAULT_UNIT_SYSTEM,
+    userEmail: '',
+  },
   fileInfo: {
     name: '',
     source: DEFAULT_MODEL_SOURCE,
-    metadata: {
-      modelName: '',
-      simulator: DEFAULT_MODEL_SOURCE,
-      description: '',
-      fileName: '',
-      unitSystem: DEFAULT_UNIT_SYSTEM,
-      userEmail: '',
-    },
   },
 });
 
@@ -74,24 +74,26 @@ export function ModelForm({
   const onSubmit = async ({
     file,
     fileInfo: formFileInfo,
+    metadata,
     boundaryConditions: formBoundaryConditions,
   }: ModelFormState) => {
     if (!file) {
       throw new Error('Model file is missing');
     }
+    if (!authState?.project || !authState?.authenticated) {
+      throw new Error('User is not authenticated');
+    }
 
     const fileInfo = {
       ...formFileInfo,
       metadata: {
-        ...formFileInfo.metadata,
+        ...metadata,
         // User e-mail is always set to the currently logged in user, incuding for new versions
-        userEmail:
-          (authState?.authenticated && authState.email) ||
-          'unknown-user@example.org',
+        userEmail: authState.email,
       },
       // Override linked values from metadata
-      name: formFileInfo.metadata.modelName,
-      source: formFileInfo.metadata.simulator,
+      name: metadata.modelName,
+      source: metadata.simulator,
     };
 
     const boundaryConditions = formBoundaryConditions.map(
@@ -99,26 +101,25 @@ export function ModelForm({
     );
 
     if (isNewModel) {
-      await api.modelLibrary.createModel(authState?.project || 'unknown', {
+      await api.modelLibrary.createModel(authState.project, {
         boundaryConditions,
         file,
         fileInfo,
+        metadata,
       });
     } else {
-      const { description, fileName, userEmail } = fileInfo.metadata;
-      await api.modelLibrary.updateModelVersion(
-        authState?.project || 'unknown',
-        fileInfo.metadata.modelName,
-        {
-          file,
-          metadata: {
-            simulator: formFileInfo.metadata.simulator,
-            description,
-            fileName,
-            userEmail,
-          },
-        }
-      );
+      const { modelName, simulator, description, fileName, userEmail } =
+        metadata;
+      await api.modelLibrary.updateModelVersion(authState.project, {
+        file,
+        metadata: {
+          modelName,
+          simulator,
+          description,
+          fileName,
+          userEmail,
+        },
+      });
     }
 
     history.push(`/model-library/${modelFormState.fileInfo.name}`);
@@ -127,7 +128,7 @@ export function ModelForm({
   return (
     <Formik initialValues={modelFormState} onSubmit={onSubmit}>
       {({
-        values: { file, fileInfo },
+        values: { file, fileInfo, metadata },
         setFieldValue,
         isSubmitting,
       }: FormikProps<ModelFormState>) => (
@@ -137,7 +138,7 @@ export function ModelForm({
               <Field
                 as={Input}
                 title="File name"
-                name="fileInfo.metadata.fileName"
+                name="metadata.fileName"
                 maxLength={512}
                 icon="Document"
                 fullWidth
@@ -149,7 +150,7 @@ export function ModelForm({
                 as={FileInput}
                 onFileSelected={(file?: File) => {
                   setFieldValue('file', file);
-                  setFieldValue('fileInfo.metadata.fileName', file?.name);
+                  setFieldValue('metadata.fileName', file?.name);
                 }}
               />
             )}
@@ -160,7 +161,7 @@ export function ModelForm({
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 const file = event.currentTarget.files?.[0];
                 setFieldValue('file', file);
-                setFieldValue('fileInfo.metadata.fileName', file?.name);
+                setFieldValue('metadata.fileName', file?.name);
               }}
             />
           </InputRow>
@@ -168,7 +169,7 @@ export function ModelForm({
             <Field
               as={Input}
               title="Model name"
-              name="fileInfo.metadata.modelName"
+              name="metadata.modelName"
               pattern="^[A-Za-z0-9_ -]*$"
               helpText="Only alphanumeric characters, spaces ( ), underscores (_) and dashes (-) are allowed."
               maxLength={256}
@@ -181,7 +182,7 @@ export function ModelForm({
             <Field
               as={Input}
               title="Description"
-              name="fileInfo.metadata.description"
+              name="metadata.description"
               maxLength={512}
               fullWidth
             />
@@ -190,7 +191,7 @@ export function ModelForm({
           {!isNewModel ? (
             <InputRow>
               <Input
-                value={UnitSystem[fileInfo.metadata.unitSystem]}
+                value={UnitSystem[metadata.unitSystem]}
                 disabled
                 title="Unit system"
                 fullWidth
@@ -215,14 +216,14 @@ export function ModelForm({
                 <Field
                   as={Select}
                   title="Unit system"
-                  name="fileInfo.metadata.unitSystem"
+                  name="metadata.unitSystem"
                   options={getSelectEntriesFromMap(UnitSystem)}
                   value={{
-                    value: fileInfo.metadata.unitSystem,
-                    label: UnitSystem[fileInfo.metadata.unitSystem],
+                    value: metadata.unitSystem,
+                    label: UnitSystem[metadata.unitSystem],
                   }}
                   onChange={({ value }: { value: string }) =>
-                    setFieldValue('fileInfo.metadata.unitSystem', value)
+                    setFieldValue('metadata.unitSystem', value)
                   }
                   closeMenuOnSelect
                 />
