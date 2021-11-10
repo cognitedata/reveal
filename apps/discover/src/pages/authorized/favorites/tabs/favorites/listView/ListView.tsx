@@ -133,23 +133,23 @@ const ListView: React.FC<Props> = ({
           content={
             <Menu>
               <Menu.Item
-                disabled={!isOwner}
+                disabled={!_isOwner}
                 onClick={() => {
-                  handleOpenModal('Share', original);
+                  handleOpenModal('Create', original);
                 }}
               >
                 <HoverMenuItem>{HOVER_MENU_ITEM_DUPLICATE}</HoverMenuItem>
               </Menu.Item>
               <Menu.Item
-                disabled={!isOwner}
+                disabled={!_isOwner}
                 onClick={() => {
-                  handleOpenModal('Share', original);
+                  handleOpenModal('Edit', original);
                 }}
               >
                 <HoverMenuItem>{HOVER_MENU_ITEM_EDIT}</HoverMenuItem>
               </Menu.Item>
               <Menu.Item
-                disabled={!isOwner}
+                disabled={!_isOwner}
                 onClick={() => {
                   handleOpenModal('Share', original);
                 }}
