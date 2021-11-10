@@ -1,10 +1,6 @@
-#pragma glslify: constructMatrix = require('../base/constructMatrix.glsl')
 #pragma glslify: determineMatrixOverride = require('../base/determineMatrixOverride.glsl')
 
-attribute vec4 a_instanceMatrix_column_0;
-attribute vec4 a_instanceMatrix_column_1;
-attribute vec4 a_instanceMatrix_column_2;
-attribute vec4 a_instanceMatrix_column_3;
+attribute mat4 a_instanceMatrix;
 
 attribute float a_treeIndex;
 attribute vec3 a_color;
@@ -22,13 +18,6 @@ uniform sampler2D transformOverrideTexture;
 
 void main()
 {
-    mat4 instanceMatrix = constructMatrix(
-        a_instanceMatrix_column_0,
-        a_instanceMatrix_column_1,
-        a_instanceMatrix_column_2,
-        a_instanceMatrix_column_3
-    );
-
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex, 
       treeIndexTextureSize, 
@@ -39,7 +28,7 @@ void main()
 
     v_color = a_color;
 
-    vec3 transformed = (instanceMatrix * vec4(position, 1.0)).xyz;
+    vec3 transformed = (a_instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 modelViewPosition = viewMatrix * modelMatrix * vec4(transformed, 1.0);
     v_viewPosition = modelViewPosition.xyz;
     v_treeIndex = a_treeIndex;
