@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Flex, Icon } from '@cognite/cogs.js';
+import { Flex, Icon, Body } from '@cognite/cogs.js';
 
 import { sizes } from 'styles/layout';
 
@@ -35,7 +35,7 @@ export const ProjectConfigFooter = styled(Flex)`
   background-color: var(--cogs-greyscale-grey1);
 `;
 
-export const SearchBoxWrapper = styled.div`
+export const PaddingBottomBorder = styled.div`
   border-bottom: 1px solid var(--cogs-color-strokes-default);
   padding: ${sizes.normal};
 `;
@@ -102,4 +102,8 @@ export const LeafField = styled(Flex)`
   &.config-item-active {
     background-color: var(--cogs-bg-control--toggled);
   }
+`;
+
+export const ItemWrapper = styled(Body)`
+  width: 150px;
 `;

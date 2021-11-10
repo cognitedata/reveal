@@ -2,15 +2,17 @@ import * as React from 'react';
 
 import get from 'lodash/get';
 
+import { ProjectConfig } from '@cognite/discover-api-types';
+
 import { FullContainer } from './elements';
 import { LeftPanel } from './LeftPanel';
 import { RightPanel } from './RightPanel';
-import { Config, HandleMetadataChange, Metadata } from './types';
+import { HandleConfigChange, HandleConfigUpdate, Metadata } from './types';
 
 interface Props {
-  config: Config;
-  onChange: HandleMetadataChange;
-  onUpdate: () => void;
+  config: ProjectConfig;
+  onChange: HandleConfigChange;
+  onUpdate: HandleConfigUpdate;
   onReset: () => void;
   hasChanges: boolean;
   metadata: Metadata;

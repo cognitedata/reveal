@@ -1,10 +1,13 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Map } from 'immutable';
-import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
+
+import { ProjectConfig as ProjectConfigTypes } from '@cognite/discover-api-types';
 
 import EmptyState from 'components/emptyState';
+import { showErrorMessage } from 'components/toast';
 import {
   useProjectConfigGetQuery,
   useProjectConfigUpdateMutate,
@@ -12,52 +15,77 @@ import {
 } from 'modules/api/projectConfig/useProjectConfigQuery';
 
 import { ProjectConfigForm } from './ProjectConfigForm';
-import { Config } from './types';
+import { ProjectConfigSetupWrapper } from './ProjectConfigSetupWrapper';
 
 export const ProjectConfig = () => {
   const { t } = useTranslation();
-  const { data, isLoading } = useProjectConfigGetQuery();
+  const { data: existingConfig = {}, isLoading } = useProjectConfigGetQuery();
+
   const { data: metadata, isLoading: isMetadataLoading } =
     useProjectConfigMetadataGetQuery();
-  const { mutateAsync: updateConfig } = useProjectConfigUpdateMutate();
-  const [config, setConfig] = useState<Config>({});
 
-  useEffect(() => {
-    setConfig(cloneDeep(data));
-  }, [data]);
+  const { mutate: updateConfig, isLoading: isUpdating } =
+    useProjectConfigUpdateMutate();
+
+  const [configChanges, setConfigChanges] = useState<ProjectConfigTypes>({});
+
+  const config = useMemo(
+    () => merge({}, existingConfig, configChanges),
+    [existingConfig, configChanges]
+  );
 
   const [hasChanges, setHasChanges] = useState<boolean>(false);
 
-  const handleUpdate = useCallback(async () => {
-    await updateConfig(config);
-  }, [updateConfig, config]);
+  const handleUpdate = useCallback(
+    async (overridingConfig) => {
+      const configToUpdate = overridingConfig ?? configChanges;
+      try {
+        await updateConfig({ ...configToUpdate, hasCustomConfig: true });
+        setConfigChanges({});
+        setHasChanges(false);
+      } catch (e) {
+        showErrorMessage('Could not update config!');
+      }
+    },
+    [updateConfig, configChanges]
+  );
 
   const handleChange = useCallback((key: string, value: unknown) => {
-    setConfig(
-      (state) => Map(state).setIn(key.split('.'), value).toJS() as Config
-    );
+    setConfigChanges((state) => Map(state).setIn(key.split('.'), value).toJS());
     setHasChanges(true);
   }, []);
 
   const handleReset = useCallback(() => {
-    setConfig(data);
+    setConfigChanges({});
     setHasChanges(false);
-  }, [data]);
+  }, []);
 
-  if (isLoading || isMetadataLoading) {
+  if (isLoading || isMetadataLoading || isUpdating) {
     return (
       <EmptyState isLoading loadingTitle={t('Loading Project Configuration')} />
     );
   }
 
+  if (!metadata) {
+    return (
+      <EmptyState isLoading={false} emptyTitle={t('No Metadata Found!')} />
+    );
+  }
+
   return (
-    <ProjectConfigForm
-      metadata={metadata}
-      config={config}
+    <ProjectConfigSetupWrapper
       onChange={handleChange}
       onUpdate={handleUpdate}
-      onReset={handleReset}
-      hasChanges={hasChanges}
-    />
+      config={config}
+    >
+      <ProjectConfigForm
+        metadata={metadata}
+        config={config}
+        onChange={handleChange}
+        onUpdate={handleUpdate}
+        onReset={handleReset}
+        hasChanges={hasChanges}
+      />
+    </ProjectConfigSetupWrapper>
   );
 };

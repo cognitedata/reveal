@@ -7,16 +7,17 @@ import reduce from 'lodash/reduce';
 import some from 'lodash/some';
 
 import { Flex, Collapse, Body, CollapsePanelProps } from '@cognite/cogs.js';
+import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { ConfigIcon, CollapseWrapper, LeafField } from './elements';
-import { Config, Metadata, MetadataValue } from './types';
+import { Metadata, MetadataValue } from './types';
 
 type Props = {
   metadata?: Metadata;
   selected: string;
   setSelected: React.Dispatch<React.SetStateAction<string>>;
   prefixPath: string;
-  config?: Config;
+  config?: ProjectConfig;
 };
 
 const expandIcon = ({ isActive }: CollapsePanelProps) => {
@@ -24,15 +25,17 @@ const expandIcon = ({ isActive }: CollapsePanelProps) => {
 };
 
 const getMetadataFromValue = (
-  value: Config[keyof Config],
+  value: ProjectConfig[keyof ProjectConfig],
   currentMetadata: MetadataValue
 ): Metadata => {
-  return reduce<Config[keyof Config], Metadata>(
+  return reduce<ProjectConfig[keyof ProjectConfig], Metadata>(
     value as [],
-    (acc, _datum, index) => {
+    (acc, datum, index) => {
       const accumulator = { ...acc };
-      accumulator[`${index}`] = {
-        label: `${currentMetadata.label} ${index + 1}`,
+      accumulator[index] = {
+        label:
+          get(datum, currentMetadata?.dataLabelIdentifier || '') ??
+          `${currentMetadata.label} ${index + 1}`,
         children: currentMetadata.children,
       };
       return accumulator;

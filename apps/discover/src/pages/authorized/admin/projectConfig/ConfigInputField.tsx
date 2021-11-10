@@ -4,14 +4,14 @@ import { Input, Switch, Textarea, toast } from '@cognite/cogs.js';
 
 import { showErrorMessage } from 'components/toast';
 
-import { HandleMetadataChange, MetadataKey, MetadataValue } from './types';
+import { HandleConfigChange, MetadataKey, MetadataValue } from './types';
 
 export const ConfigInputField: React.FC<{
   field: MetadataValue;
   fieldKey: MetadataKey;
   prefix: string;
   onReset?: () => void;
-  onChange: HandleMetadataChange;
+  onChange: HandleConfigChange;
   value?: unknown;
 }> = ({ field, onChange, prefix, fieldKey, value }) => {
   const changeKey = `${prefix}.${fieldKey}`;

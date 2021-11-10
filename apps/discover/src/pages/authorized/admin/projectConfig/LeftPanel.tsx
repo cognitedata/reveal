@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ProjectConfig } from '@cognite/discover-api-types';
+
 import { SearchBox } from 'components/filters';
 
 import { ConfigFields } from './ConfigFields';
 import {
   ProjectConfigSidebar,
-  SearchBoxWrapper,
+  PaddingBottomBorder,
   ConfigFieldsWrapper,
 } from './elements';
-import { Config, Metadata } from './types';
+import { Metadata } from './types';
 
 type Props = {
   metadata: Metadata;
   selected: string;
   setSelected: React.Dispatch<React.SetStateAction<string>>;
-  config?: Config;
+  config?: ProjectConfig;
 };
 
 export const LeftPanel: React.FC<Props> = ({
@@ -29,13 +31,13 @@ export const LeftPanel: React.FC<Props> = ({
 
   return (
     <ProjectConfigSidebar direction="column">
-      <SearchBoxWrapper>
+      <PaddingBottomBorder>
         <SearchBox
           placeholder={t('Search')}
           onSearch={handleSearch}
           value={searchText}
         />
-      </SearchBoxWrapper>
+      </PaddingBottomBorder>
       <ConfigFieldsWrapper direction="column" gap={8}>
         <ConfigFields
           prefixPath=""
