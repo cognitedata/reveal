@@ -8,7 +8,7 @@ describe('App tests', () => {
     cy.contains('Sidecar Info').click();
 
     cy.log('Checking for page content');
-    cy.contains('What is the sidecar').click();
+    cy.contains('What is the Sidecar').click();
   });
 
   it('Checking sdk setup', () => {

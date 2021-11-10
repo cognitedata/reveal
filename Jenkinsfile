@@ -422,8 +422,8 @@ pods {
           if (changedApps) {
             changedApps.split('\n').each {
               def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
+              print(jsonString)
               def params = readJSON text: jsonString
-              print(params)
               def target = it.split(':')[0]
               def nameTag = ""
               if (params.docker_repository) {
@@ -435,22 +435,10 @@ pods {
                 print("Pushed Docker image $nameTag")
               }
 
-              if (params.manifest) {
-                // Not Baker
-                def (imageName, imageTag) = nameTag.split(':')
-                print("imageName ${imageName} imageTag ${imageTag} params.manifest ${params.manifest}")
-                deployToSpinnaker(
-                  dockerImageName: imageName,
-                  dockerImageTag: imageTag,
-                  kubernetesManifests: params.manifest,
-                )
-              } else {
-                // Use Baker
-                params.pipelines.each({ pipeline ->
-                  print("Spinnaker deploy ${params.name} ${pipeline} ${nameTag}")
-                  spinnaker.deploy(params.name, pipeline, nameTag ? [nameTag] : [])
-                })
-              }
+              params.pipelines.each({ pipeline ->
+                print("Spinnaker deploy ${params.name} ${pipeline} ${nameTag}")
+                spinnaker.deploy(params.name, pipeline, nameTag ? [nameTag] : [])
+              })
 
               slackMessages.add("- `${params.name}` (<https://spinnaker.cognite.ai/#/applications/${params.name}/executions|pipeline>)")
             }

@@ -11,7 +11,7 @@ const Info = () => {
 
   return (
     <Container>
-      <Title>What is the sidecar?</Title>
+      <Title>What is the Sidecar?</Title>
       <Body>
         <Trans t={t} i18nKey="cdfBaseUrl_paragraph">
           The CDF base URL for this cluster is <Code>{baseURL}</Code>

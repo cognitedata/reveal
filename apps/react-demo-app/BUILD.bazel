@@ -585,7 +585,7 @@ spinnaker_deployment(
     spinnaker_pipeline = "//spinnaker-config/react-demo-app:spinnaker-config",
     tags = ["manual"],
     deps = [
-        ":publish_fas",
+        ":build",
     ],
 )
 
