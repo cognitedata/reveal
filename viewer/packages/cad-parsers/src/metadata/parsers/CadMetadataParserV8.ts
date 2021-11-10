@@ -56,7 +56,7 @@ function createSectorMetadata(metadata: V8SceneSectorMetadata): V8SectorMetadata
     path: metadata.path,
     depth: metadata.depth,
     bounds: new THREE.Box3(new THREE.Vector3(min_x, min_y, min_z), new THREE.Vector3(max_x, max_y, max_z)),
-    estimatedDrawCallCount: metadata.estimatedDrawCallCount,
+    estimatedDrawCallCount: metadata.estimatedDrawCallCount || 0,
     estimatedRenderCost: metadata.estimatedTriangleCount || 0,
 
     // I3D

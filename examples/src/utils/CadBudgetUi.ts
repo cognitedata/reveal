@@ -27,7 +27,7 @@ export function initialCadBudgetUi(viewer: Cognite3DViewer, uiFolder: dat.GUI) {
       maximumRenderCost: limitRenderCost ? defaultCadBudget.maximumRenderCost * scale : Infinity,
     };
   };
-  uiFolder.add(state, 'factor', 1, 500, 5).name('Budget factor (%)').onChange(onCadBudgetSettingsChanged);
+  uiFolder.add(state, 'factor', 1, 500, 1).name('Budget factor (%)').onChange(onCadBudgetSettingsChanged);
   uiFolder.add(state, 'limitDownloadedBytes').name('Limit bytesize').onChange(onCadBudgetSettingsChanged);
   uiFolder.add(state, 'limitDrawCalls').name('Limit draw calls').onChange(onCadBudgetSettingsChanged);
   uiFolder.add(state, 'limitRenderCost').name('Limit render cost').onChange(onCadBudgetSettingsChanged);

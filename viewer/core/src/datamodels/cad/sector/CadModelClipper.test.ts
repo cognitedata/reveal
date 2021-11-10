@@ -3,11 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 import { CadModelClipper } from './CadModelClipper';
-import { createCadModelMetadata } from '../../../../../test-utilities/src/createCadModelMetadata';
-import { generateV8SectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
-import { Mutable } from '../../../../../test-utilities/src/reflection';
+import { Mutable, generateV8SectorTree, createCadModelMetadata } from '../../../../../test-utilities';
+
+import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
 
 describe('CadModelClipper', () => {
   // Model with depth 2 where root has 8 children. Bounds is <[0,0,0], [2,2,2]>
@@ -25,7 +24,7 @@ describe('CadModelClipper', () => {
         }
       }
     }
-    modelDepth2 = createCadModelMetadata(root);
+    modelDepth2 = createCadModelMetadata(8, root);
   });
 
   test('createClippedModel() throws when there are no sectors inside clip box', () => {
