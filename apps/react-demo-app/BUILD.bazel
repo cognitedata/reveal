@@ -548,7 +548,7 @@ container_layer(
 )
 
 container_image(
-    name = "docker_image",
+    name = "staging_image",
     base = "//apps:caddy_package_layer",
     entrypoint = [
         "/usr/share/bin/entrypoint.sh",
@@ -570,7 +570,7 @@ container_image(
 container_push(
     name = "push",
     format = "Docker",
-    image = ":docker_image",
+    image = ":staging_image",
     registry = "eu.gcr.io",
     repository = "cognitedata/apps/react-demo-app",
     tag = "{BUILD_USER}-{BUILD_TIMESTAMP}",
@@ -596,7 +596,7 @@ kubeval_test(
 
 docker_smoke_test(
     name = "docker_smoke_test",
-    image = ":staging_react_demo_app",
+    image = ":staging_image",
     log_statement = "serving initial configuration",
     tags = ["manual"],
 )
