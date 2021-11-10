@@ -12,7 +12,7 @@ import { RootState } from 'src/store/rootReducer';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import {
   selectExplorerSelectedFileIdsInSortedOrder,
-  setExplorerCurrentView,
+  setCurrentView,
   setExplorerFileUploadModalVisibility,
   setExplorerQueryString,
 } from 'src/modules/Explorer/store/explorerSlice';
@@ -47,7 +47,7 @@ export const ExplorerToolbarContainer = (
   );
 
   const handleViewChange = (view: string) => {
-    dispatch(setExplorerCurrentView(view as ViewMode));
+    dispatch(setCurrentView(view as ViewMode));
   };
   const handleSearch = (text: string) => {
     cancelFetch();
