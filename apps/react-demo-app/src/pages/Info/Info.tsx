@@ -18,6 +18,11 @@ const Info = () => {
         </Trans>
       </Body>
       <Body>
+        <div>
+          The sidecar contains constants that is useful for the application, and
+          the values contained in the sidecar are dynamically assigned based on
+          cluster specific configuration.
+        </div>
         <Trans t={t} i18nKey="info-sidecar">
           Learn more about{' '}
           <A

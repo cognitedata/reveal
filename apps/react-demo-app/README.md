@@ -2,6 +2,11 @@
 
 This app is served as an example [React]-based application served using frontend-app-server (FAS).
 
+## Requirements to run and test locally
+
+Copy react-demo-app-e2e-azure-dev.jwk-key.json from Lastpass -> Shared Demo App into the file:
+private-keys/react-demo-app-e2e-azure-dev.jwk-key.json
+
 ## e2e tests
 
 End-to-end tests can be written with either [Testcafe](https://github.com/DevExpress/testcafe) or [Cypress](https://github.com/cypress-io/cypress)
