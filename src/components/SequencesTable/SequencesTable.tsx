@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Sequence } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Button } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import { handleError } from 'utils/handleError';
 import { getContainer } from 'utils/utils';
-import { ExploreViewConfig } from '../../utils/types';
+import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 
 interface sequencesTableProps {
   dataSetId: number;
-  setExploreView(value: ExploreViewConfig): void;
 }
 
-const SequencesTable = ({ setExploreView, dataSetId }: sequencesTableProps) => {
+const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
   const [sequences, setSequences] = useState<Sequence[]>();
 
   const sequencesColumns = [
@@ -39,18 +39,7 @@ const SequencesTable = ({ setExploreView, dataSetId }: sequencesTableProps) => {
       title: 'Actions',
       render: (record: Sequence) => (
         <span>
-          <Button
-            type="link"
-            onClick={() =>
-              setExploreView({
-                type: 'sequence',
-                id: record.id,
-                visible: true,
-              })
-            }
-          >
-            Preview
-          </Button>
+          <Link to={createLink(`/explore/sequence/${record.id}`)}>View</Link>
         </span>
       ),
     },
@@ -73,7 +62,7 @@ const SequencesTable = ({ setExploreView, dataSetId }: sequencesTableProps) => {
         rowKey="id"
         columns={sequencesColumns}
         dataSource={sequences}
-        pagination={{ pageSize: 5 }}
+        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
         getPopupContainer={getContainer}
       />
     </div>

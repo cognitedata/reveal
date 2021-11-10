@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Timeseries } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
 import { getContainer } from 'utils/utils';
+import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { ExploreViewConfig } from '../../utils/types';
 import ColumnWrapper from '../ColumnWrapper';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
-  setExploreView(value: ExploreViewConfig): void;
 }
 
-const TimeseriesPreview = ({
-  setExploreView,
-  dataSetId,
-}: TimeseriesPreviewProps) => {
+const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {
   const [timeseries, setTimeseries] = useState<Timeseries[]>();
 
   useEffect(() => {
@@ -61,22 +58,15 @@ const TimeseriesPreview = ({
     },
     {
       title: 'Actions',
-      render: (record: Timeseries) => (
-        <span>
-          <Button
-            type="link"
-            onClick={() =>
-              setExploreView({
-                type: 'ts',
-                id: record.id,
-                visible: true,
-              })
-            }
-          >
-            Preview
-          </Button>
-        </span>
-      ),
+      render: (record: Timeseries) => {
+        return (
+          <span>
+            <Link to={createLink(`/explore/timeSeries/${record.id}`)}>
+              View
+            </Link>
+          </span>
+        );
+      },
     },
   ];
 
@@ -87,7 +77,7 @@ const TimeseriesPreview = ({
         rowKey="id"
         columns={timeseriesColumns}
         dataSource={timeseries}
-        pagination={{ pageSize: 5 }}
+        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
         getPopupContainer={getContainer}
       />
     </div>

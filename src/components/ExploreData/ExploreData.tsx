@@ -130,33 +130,11 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
             <ResourceCountBox count={sequencesCount} resourceName="Sequences" />
             <ResourceCountBox count={filesCount} resourceName="Files" />
           </Col>
-          {timeseriesCount > 0 && (
-            <TimeseriesTable
-              dataSetId={dataSetId}
-              setExploreView={setExploreView}
-            />
-          )}
-          {assetCount > 0 && (
-            <AssetsTable
-              dataSetId={dataSetId}
-              setExploreView={setExploreView}
-            />
-          )}
-          {eventsCounts > 0 && (
-            <EventsTable
-              dataSetId={dataSetId}
-              setExploreView={setExploreView}
-            />
-          )}
-          {filesCount > 0 && (
-            <FilesTable dataSetId={dataSetId} setExploreView={setExploreView} />
-          )}
-          {sequencesCount > 0 && (
-            <SequencesTable
-              dataSetId={dataSetId}
-              setExploreView={setExploreView}
-            />
-          )}
+          {timeseriesCount > 0 && <TimeseriesTable dataSetId={dataSetId} />}
+          {assetCount > 0 && <AssetsTable dataSetId={dataSetId} />}
+          {eventsCounts > 0 && <EventsTable dataSetId={dataSetId} />}
+          {filesCount > 0 && <FilesTable dataSetId={dataSetId} />}
+          {sequencesCount > 0 && <SequencesTable dataSetId={dataSetId} />}
 
           {exploreView.visible && renderExploreView()}
         </ContentView>

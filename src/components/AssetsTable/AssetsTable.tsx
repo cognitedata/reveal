@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Asset } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { ExploreViewConfig } from 'utils/types';
-import { Button } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
 import { getContainer } from 'utils/utils';
+import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 
 interface assetsTableProps {
   dataSetId: number;
-  setExploreView(value: ExploreViewConfig): void;
 }
 
-const AssetsTable = ({ setExploreView, dataSetId }: assetsTableProps) => {
+const AssetsTable = ({ dataSetId }: assetsTableProps) => {
   const [assets, setAssets] = useState<Asset[]>();
 
   const assetColumns = [
@@ -44,18 +44,7 @@ const AssetsTable = ({ setExploreView, dataSetId }: assetsTableProps) => {
       title: 'Actions',
       render: (record: Asset) => (
         <span>
-          <Button
-            type="link"
-            onClick={() =>
-              setExploreView({
-                type: 'asset',
-                id: record.id,
-                visible: true,
-              })
-            }
-          >
-            Preview
-          </Button>
+          <Link to={createLink(`/explore/asset/${record.id}`)}>View</Link>
         </span>
       ),
     },
@@ -79,7 +68,7 @@ const AssetsTable = ({ setExploreView, dataSetId }: assetsTableProps) => {
         rowKey="id"
         columns={assetColumns}
         dataSource={assets}
-        pagination={{ pageSize: 5 }}
+        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
         expandIcon={() => <span />}
         getPopupContainer={getContainer}
       />

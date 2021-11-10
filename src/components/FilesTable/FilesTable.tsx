@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { FileInfo } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { Button } from '@cognite/cogs.js';
+import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
+import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import handleError from 'utils/handleError';
-import { ExploreViewConfig } from '../../utils/types';
 import ColumnWrapper from '../ColumnWrapper';
 
 interface filesTableProps {
   dataSetId: number;
-  setExploreView(value: ExploreViewConfig): void;
 }
 
-const FilesTable = ({ setExploreView, dataSetId }: filesTableProps) => {
+const FilesTable = ({ dataSetId }: filesTableProps) => {
   const [files, setFiles] = useState<FileInfo[]>();
 
   useEffect(() => {
@@ -50,18 +50,7 @@ const FilesTable = ({ setExploreView, dataSetId }: filesTableProps) => {
       title: 'Actions',
       render: (record: FileInfo) => (
         <span>
-          <Button
-            type="link"
-            onClick={() =>
-              setExploreView({
-                type: 'file',
-                id: record.id,
-                visible: true,
-              })
-            }
-          >
-            Preview
-          </Button>
+          <Link to={createLink(`/explore/file/${record.id}`)}>View</Link>
         </span>
       ),
     },
@@ -74,7 +63,7 @@ const FilesTable = ({ setExploreView, dataSetId }: filesTableProps) => {
         rowKey="id"
         columns={filesColumns}
         dataSource={files}
-        pagination={{ pageSize: 5 }}
+        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
         getPopupContainer={getContainer}
       />
     </div>
