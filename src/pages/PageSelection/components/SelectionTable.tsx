@@ -37,8 +37,6 @@ export default function SelectionTable<T extends RecordType>(
     diagramsToContextualizeIds,
     showSelected,
   } = props;
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [canSelectAll, setCanSelectAll] = useState(true);
   const prevIsSelectAll = usePrevious(isSelectAll);
   const prevFilter = usePrevious(filter);
@@ -60,12 +58,6 @@ export default function SelectionTable<T extends RecordType>(
     selectedRowKeys
   );
 
-  const onPaginationChange = (newPage: number, newPageSize?: number) => {
-    setPage(newPage);
-    if (newPageSize) {
-      setPageSize(newPageSize);
-    }
-  };
   const tooltipSelectAll = () => {
     if (isDataEmpty) return 'There are no items in the list to select';
     if (!canSelectAll) return 'You cannot select all with a search query';
@@ -112,7 +104,6 @@ export default function SelectionTable<T extends RecordType>(
       columns={getColumns(type)}
       dataSource={showSelected ? selectedItems : items}
       loading={fetching}
-      rowKey="id"
       rowSelection={{
         columnWidth: '5%',
         columnTitle: (
@@ -126,19 +117,9 @@ export default function SelectionTable<T extends RecordType>(
         ),
         selectedRowKeys,
         getCheckboxProps,
-        // @ts-ignore
         onSelect: onRowSelect,
       }}
-      pagination={{
-        position: ['bottomLeft'],
-        showQuickJumper: true,
-        showSizeChanger: true,
-        size: 'small',
-        pageSize,
-        current: page,
-        onChange: onPaginationChange,
-        onShowSizeChange: onPaginationChange,
-      }}
+      pagination={{ showQuickJumper: true }}
       style={{ width: '100%', borderRadius: '8px' }}
       options={{ narrow: true, bordered: true }}
     />

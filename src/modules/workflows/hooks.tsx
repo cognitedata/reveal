@@ -1,13 +1,13 @@
 import { useMemo, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { useLocalStorage } from '@cognite/cogs.js';
+import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, FileInfo, IdEither } from '@cognite/sdk';
+import { useLocalStorage } from '@cognite/cogs.js';
 import { diagramSelection } from 'routes/paths';
 import { AppStateContext } from 'context';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
-import { selectParsingJob } from 'modules/contextualization/pnidParsing';
 import {
   standardModelOptions,
   createNewWorkflow,
@@ -21,9 +21,9 @@ import {
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
-import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
-import { RootState } from '../../store/reducer';
-import { NUM_OF_RESOURCES_CHECKED } from '../../utils/config';
+import { selectParsingJobs } from 'hooks';
+import { RootState } from 'store/reducer';
+import { NUM_OF_RESOURCES_CHECKED } from 'utils/config';
 
 /**
  * Creates a new workflow.
@@ -92,7 +92,7 @@ export const useWorkflowDiagramsIds = (
   all: boolean = false,
   ignoreFailed: boolean = false
 ) => {
-  const parsingJob = useSelector(selectParsingJob)(workflowId);
+  const parsingJob = useSelector(selectParsingJobs);
   const failedFiles =
     parsingJob?.failedFiles?.map((file: any) => file.fileId) ?? [];
   const getDiagrams = useMemo(

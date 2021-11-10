@@ -14,9 +14,7 @@ export default function ColumnSVGStatus({ fileId }: Props) {
     errorMessage,
     status = 'N/A',
     svgId,
-  } = useSelector(
-    (state: RootState) => state.contextualization.svgConvert[fileId] ?? {}
-  );
+  } = useSelector((state: RootState) => state.svgConvert[fileId] ?? {});
 
   const onSVGViewClick = () => {
     const url = createLink(`/explore/file/${svgId}`);

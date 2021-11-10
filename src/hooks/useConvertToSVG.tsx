@@ -12,11 +12,9 @@ import { AppStateContext } from 'context';
 import { useAnnotationsForFiles } from 'hooks';
 import { itemSelector as assetSelector } from 'modules/assets';
 import { itemSelector as fileSelector } from 'modules/files';
-import { startConvertFileToSvgJob } from 'modules/contextualization/pnidConvert';
-import {
-  Vertices,
-  boundingBoxToVertices,
-} from 'modules/contextualization/pnidParsing';
+import { boundingBoxToVertices } from 'modules/workflows';
+import { startConvertFileToSvgJob } from 'modules/svgConvert';
+import { Vertices } from 'modules/types';
 
 type DiagramToConvert = {
   fileName: string;
@@ -35,7 +33,7 @@ export const useConvertToSVG = (fileIds: number[]) => {
   const { diagramsToConvert, nrOfPendingDiagramsToConvert } =
     useDiagramsToConvert(fileIds);
   const { status: convertStatus, svgId } = useSelector(
-    (state: RootState) => state.contextualization.svgConvert[fileIds[0]] ?? {}
+    (state: RootState) => state.svgConvert[fileIds[0]] ?? {}
   );
 
   useEffect(() => {

@@ -1,8 +1,11 @@
-import React from 'react';
-import { TableProps as AntdTableProps } from 'antd/lib/table';
+import React, { useState } from 'react';
+import { TableProps as AntdTableProps } from 'antd/es/table';
 import { Table as AntdTable } from 'antd';
 import { Colors, Icon as CogsIcon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+const PAGE_SIZE = 8;
+const DEFAULT_PAGE = 1;
 
 export interface CustomTableProps extends AntdTableProps<any> {
   options?: {
@@ -14,7 +17,35 @@ export interface CustomTableProps extends AntdTableProps<any> {
   };
 }
 
-export const Table = styled(AntdTable)<CustomTableProps>`
+export const Table = styled((props: CustomTableProps) => {
+  const { options: _options, ...antProps } = props;
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(DEFAULT_PAGE);
+
+  const onPaginationChange = (newPage: number, newPageSize?: number) => {
+    setPage(newPage);
+    if (newPageSize) {
+      setPageSize(newPageSize);
+      setPage(DEFAULT_PAGE);
+    }
+  };
+
+  const defaultProps = {
+    rowKey: 'id',
+    pagination: {
+      position: ['bottomLeft'] as ['bottomLeft'],
+      hideOnSinglePage: false,
+      showSizeChanger: true,
+      pageSize,
+      size: 'small' as 'small',
+      current: page,
+      onChange: onPaginationChange,
+      onShowSizeChange: onPaginationChange,
+      ...props.pagination,
+    },
+  };
+  return <AntdTable {...antProps} {...defaultProps} />;
+})`
   .ant-table {
     background: ${(props) =>
       props.options?.secondary

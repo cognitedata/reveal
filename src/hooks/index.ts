@@ -16,6 +16,8 @@ export * from './useConvertToSVG';
 export * from './useAnnotationsDetails';
 export * from './useJobStatusLabels';
 export * from './useFileStatus';
+export * from './useJobStarted';
+export * from './useJobs';
 
 // dev
 export * from './useTraceRerender';

@@ -1,28 +1,15 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Colors, Title, Detail } from '@cognite/cogs.js';
 import { Flex, DoughnutChart } from 'components/Common';
-import {
-  ApiStatusCount,
-  useParsingJob,
-} from 'modules/contextualization/pnidParsing';
-import { useResourceCount, useInterval, useActiveWorkflow } from 'hooks';
-import { pollJobResults } from 'modules/contextualization/pnidParsing/actions';
+import { ApiStatusCount } from 'modules/types';
+import { useResourceCount, useParsingJob } from 'hooks';
 import { progressData } from 'components/Filters';
 import StatusSquare from '../StatusSquare';
 
 const SectionProgress = (): JSX.Element => {
-  const dispatch = useDispatch();
-
-  const { workflowId } = useActiveWorkflow();
   const { diagrams: total = 0 } = useResourceCount();
-
-  const {
-    statusCount: parsingJobStatusCount = {},
-    status: parsingJobStatus,
-    jobId,
-  } = useParsingJob(workflowId);
+  const { statusCount: parsingJobStatusCount = {} } = useParsingJob();
   const progressCount = {
     completed: 0,
     running: 0,
@@ -30,15 +17,6 @@ const SectionProgress = (): JSX.Element => {
     failed: 0,
     ...parsingJobStatusCount,
   };
-  const isJobDone =
-    parsingJobStatus === 'Completed' || parsingJobStatus === 'Failed';
-
-  const pollJobIfRunning = () => {
-    if (jobId && !isJobDone) {
-      dispatch(pollJobResults.action({ jobId, workflowId }));
-    }
-  };
-  useInterval(pollJobIfRunning, isJobDone ? null : 5000);
 
   const successPercentage = total
     ? Math.ceil((100 * progressCount.completed) / total)
@@ -55,7 +33,6 @@ const SectionProgress = (): JSX.Element => {
     labels: progressData.map((progress) => progress.label),
     datasets: [
       {
-        label: 'test',
         data: progressData.map((progress) => {
           const statusProgress =
             progress.type === 'idle' ? idle : progressCount?.[progress.type];

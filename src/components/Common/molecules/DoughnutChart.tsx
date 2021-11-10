@@ -43,10 +43,11 @@ export const DoughnutChart = (props: Props) => {
   }, [chartContainer]);
 
   useEffect(() => {
-    if (chart && !isEqual(chart.data, data)) {
+    if (!chart) return;
+    if (!isEqual(chart.data, data)) {
       chart.data = data;
-      chart.update('none');
     }
+    chart.update('none');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 

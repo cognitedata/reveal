@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { JobStatus } from 'modules/contextualization/pnidParsing';
+import { JobStatus } from 'modules/types';
 
 export const SetUpWrapper = styled.div.attrs(
   ({ jobStatus }: { jobStatus: JobStatus }) => {
@@ -12,7 +12,11 @@ export const SetUpWrapper = styled.div.attrs(
       style.border = `1px solid ${Colors['greyscale-grey4'].hex()}`;
       style.backgroundColor = Colors.white.hex();
     }
-    if (jobStatus === 'incomplete' || jobStatus === 'error') {
+    if (
+      jobStatus === 'incomplete' ||
+      jobStatus === 'error' ||
+      jobStatus === 'rejected'
+    ) {
       style.border = `1px solid ${Colors['yellow-5'].hex()}`;
       style.backgroundColor = `${Colors['yellow-8'].hex()}`;
     }

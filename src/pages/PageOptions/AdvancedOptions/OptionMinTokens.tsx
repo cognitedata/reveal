@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { Body, Input } from '@cognite/cogs.js';
 import { changeOptions } from 'modules/workflows';
+import { useJobStarted } from 'hooks';
 import { Flex } from 'components/Common';
 import { OptionWrapper } from 'pages/PageOptions/components';
 
 export const OptionMinTokens = ({ workflowId }: { workflowId: number }) => {
   const dispatch = useDispatch();
+  const { setJobStarted } = useJobStarted();
   const { minTokens } = useSelector(
     (state: RootState) => state.workflows.items[workflowId].options
   );
@@ -18,7 +20,10 @@ export const OptionMinTokens = ({ workflowId }: { workflowId: number }) => {
   };
 
   useEffect(() => {
-    dispatch(changeOptions({ minTokens: value }));
+    if (value !== minTokens) {
+      dispatch(changeOptions({ minTokens: value }));
+      setJobStarted(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 

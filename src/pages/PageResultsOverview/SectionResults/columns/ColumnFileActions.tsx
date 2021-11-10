@@ -2,10 +2,10 @@ import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { message } from 'antd';
 import { Tooltip } from '@cognite/cogs.js';
-import { Flex, IconButton, Dropdown } from 'components/Common';
-import { MenuSingle } from 'containers';
 import { diagramPreview } from 'routes/paths';
-import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
+import { MenuSingle } from 'containers';
+import { Flex, IconButton, Dropdown } from 'components/Common';
+import { useParsingJob, useJobStatus } from 'hooks';
 
 type Props = { file: any };
 
@@ -17,15 +17,14 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
     workflowId: string;
   }>();
 
-  const { status: parsingJobStatus, failedFiles } = useParsingJob(
-    Number(workflowId)
-  );
+  const { failedFiles } = useParsingJob();
+  const jobStatus = useJobStatus();
 
   const didFileFail = failedFiles?.find(
     (failedFile) => failedFile.fileId === file?.id
   );
 
-  const jobFinished = parsingJobStatus === 'Completed';
+  const jobFinished = jobStatus === 'done';
   const isFileDisabled = !file || Boolean(didFileFail);
   const isButtonDisabled = !jobFinished || Boolean(didFileFail);
 

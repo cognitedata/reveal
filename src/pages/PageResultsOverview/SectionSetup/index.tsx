@@ -1,14 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Body, Title, Label } from '@cognite/cogs.js';
-import { AppStateContext } from 'context';
 import { ResourceType } from 'modules/types';
-import { useJobStatus } from 'modules/contextualization/pnidParsing';
 import {
-  useActiveWorkflow,
+  useJobStatus,
   useGoToStep,
   useSavedSettings,
   useResourceCount,
   useJobStatusLabels,
+  useJobStarted,
 } from 'hooks';
 import { Flex } from 'components/Common';
 import { DetailsWrapper, SetUpWrapper } from './components';
@@ -17,12 +16,11 @@ import SelectionInfo from './SelectionInfo';
 import RunModelButton from './RunModelButton';
 
 export default function SectionSetup(): JSX.Element {
-  const { jobStarted } = useContext(AppStateContext);
+  const { jobStarted } = useJobStarted();
   const { goToStep } = useGoToStep();
   const { jobLabel, labelVariant } = useJobStatusLabels();
   const { modelSelected } = useSavedSettings();
-  const { workflowId } = useActiveWorkflow();
-  const jobStatus = useJobStatus(workflowId, jobStarted);
+  const jobStatus = useJobStatus();
   const allCounts = useResourceCount();
 
   const optionalResources = ['files', 'assets'];

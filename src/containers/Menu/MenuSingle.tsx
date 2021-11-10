@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   useReviewFiles,
   useConvertToSVG,
-  useActiveWorkflow,
   isFileApproved,
   useFileStatus,
 } from 'hooks';
@@ -14,7 +13,6 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 // Context menu for a single diagram
 export const MenuSingle = ({ file }: { file: FileInfo }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const { workflowId } = useActiveWorkflow();
   const { isConverting } = useConvertToSVG([file.id]);
   const {
     onApproveDiagrams,
@@ -27,7 +25,7 @@ export const MenuSingle = ({ file }: { file: FileInfo }) => {
   const { data: diagram } = useCdfItem<FileInfo>('files', {
     id: Number(file.id!),
   });
-  const { didFileFail } = useFileStatus(workflowId, diagram);
+  const { didFileFail } = useFileStatus(diagram);
   const isLoading = isOnApprovedLoading || isOnRejectedLoading;
   const isApproved = isFileApproved(diagram);
   const isFailed = Boolean(didFileFail);

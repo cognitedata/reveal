@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Colors, Input } from '@cognite/cogs.js';
 import { useWorkflowItems } from 'modules/workflows';
-import { stringContains } from 'modules/contextualization/utils';
+import { stringContains } from 'utils/utils';
 import ItemsList from './ItemsList';
 
 export default function JobDiagrams() {

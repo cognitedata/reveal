@@ -1,8 +1,8 @@
 import React from 'react';
 import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
-import { stringCompare } from 'modules/contextualization/utils';
+import { ApiStatusCount } from 'modules/types';
+import { stringCompare } from 'utils/utils';
 import { Flex, LoadingSkeleton } from 'components/Common';
 import { StatusType } from 'components/Filters';
 import DiagramReviewStatus from 'components/DiagramReviewStatus';
@@ -47,7 +47,7 @@ export const getColumns: any = (
         stringCompare(a?.status, b?.status),
       render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
-          <ColumnProgress file={file} workflowId={workflowId} />
+          <ColumnProgress file={file} />
         </LoadingSkeleton>
       ),
     },
@@ -68,7 +68,7 @@ export const getColumns: any = (
         (a?.links ?? 0) - (b?.links ?? 0),
       render: (_: any, file: FileInfo) => (
         <LoadingSkeleton loading={showLoadingSkeleton}>
-          <ColumnLinkedTo fileId={file.id} workflowId={workflowId} />
+          <ColumnLinkedTo fileId={file.id} />
         </LoadingSkeleton>
       ),
     },

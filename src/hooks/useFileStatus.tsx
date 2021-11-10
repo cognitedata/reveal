@@ -1,22 +1,20 @@
-import { useParsingJob } from 'modules/contextualization/pnidParsing/hooks';
-import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
+import { useParsingJob } from 'hooks';
+import { ApiStatusCount } from 'modules/types';
 
-export const useFileStatus = (workflowId: number, file: any) => {
-  const {
-    status: parsingJobStatus,
-    jobId,
-    failedFiles,
-  } = useParsingJob(workflowId);
+export const useFileStatus = (file: any) => {
+  const d = useParsingJob();
+  const { status: jobStatus, failedFiles } = d;
 
   const didFileFail = failedFiles?.find(
     (failedFile) => failedFile.fileId === file?.id
   );
 
   const getStatus = (): keyof ApiStatusCount | 'idle' => {
-    if (!jobId) return 'idle';
-    if (didFileFail || parsingJobStatus === 'Failed') return 'failed';
-    if (parsingJobStatus === 'Queued') return 'queued';
-    if (parsingJobStatus === 'Completed') return 'completed';
+    if (jobStatus === 'incomplete') return 'idle';
+    if (didFileFail || jobStatus === 'error' || jobStatus === 'rejected')
+      return 'failed';
+    if (jobStatus === 'loading' || jobStatus === 'running') return 'queued';
+    if (jobStatus === 'done') return 'completed';
     return 'running';
   };
   const status = getStatus();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
 import { Body } from '@cognite/cogs.js';
-import { ApiStatusCount } from 'modules/contextualization/pnidParsing';
+import { ApiStatusCount } from 'modules/types';
 import { Flex } from 'components/Common';
 import { progressData, ProgressData } from 'components/Filters';
 import { Square } from './Square';

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { Checkbox } from 'antd';
 import { FileInfo } from '@cognite/sdk';
-import queryString from 'query-string';
 import { Table } from 'components/Common';
 import {
   ProgressType,
@@ -11,13 +9,17 @@ import {
   approvalDetails,
 } from 'components/Filters';
 import {
+  selectInteractiveDiagrams,
+  useWorkflowDiagramsIds,
+} from 'modules/workflows';
+import {
+  useActiveWorkflow,
   useParsingJob,
-  selectDiagrams,
-} from 'modules/contextualization/pnidParsing';
-import { useWorkflowDiagramsIds } from 'modules/workflows';
-import { useActiveWorkflow, isFileApproved, isFilePending } from 'hooks';
+  isFileApproved,
+  isFilePending,
+} from 'hooks';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { getContextualizationJobs, getSelectedDiagramsIds } from '../selectors';
+import { getSvgConvertJobs, getSelectedDiagramsIds } from '../selectors';
 import { getColumns, AdjustedFileInfo } from './columns';
 import { SelectionFilter } from './types';
 
@@ -28,14 +30,13 @@ type ResultsTableProps = {
 
 export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const { selectionFilter, showLoadingSkeleton } = props;
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const [columns, setColumns] = useState();
 
   const { workflowId } = useActiveWorkflow();
   const diagramIds = useWorkflowDiagramsIds(workflowId, true);
-  const { failedFiles } = useParsingJob(workflowId);
+  const { failedFiles } = useParsingJob();
   const { data: diagrams = [] } = useCdfItems<FileInfo>(
     'files',
     diagramIds.map((id) => ({ id })),
@@ -43,9 +44,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   );
 
   const selectedDiagramsIds = useSelector(getSelectedDiagramsIds);
-  const { svgConvert } = useSelector(getContextualizationJobs);
-  const { search } = history.location;
-  const { page = 1 } = queryString.parse(search, { parseNumbers: true });
+  const svgConvert = useSelector(getSvgConvertJobs);
 
   const didFileFail = (fileId: number): ProgressType => {
     const didFail = failedFiles?.find(
@@ -108,7 +107,7 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   const onRowChange = (keys: any) => {
     const selectedIds = [...keys];
     dispatch(
-      selectDiagrams({
+      selectInteractiveDiagrams({
         workflowId,
         diagramIds: selectedIds,
       })
@@ -120,20 +119,11 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
         ? []
         : adjustedDiagrams.map((d) => d.id);
     dispatch(
-      selectDiagrams({
+      selectInteractiveDiagrams({
         workflowId,
         diagramIds: selectedIds,
       })
     );
-  };
-
-  const onPaginationChange = (newPage: number) => {
-    history.push({
-      search: queryString.stringify({
-        ...queryString.parse(search),
-        page: newPage,
-      }),
-    });
   };
 
   useEffect(() => {
@@ -143,12 +133,14 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
   }, [showLoadingSkeleton]);
 
   useEffect(() => {
-    dispatch(selectDiagrams({ workflowId, diagramIds: selectedDiagramsIds }));
+    dispatch(
+      selectInteractiveDiagrams({ workflowId, diagramIds: selectedDiagramsIds })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDiagramsIds]);
 
   useEffect(() => {
-    dispatch(selectDiagrams({ workflowId, diagramIds: [] }));
+    dispatch(selectInteractiveDiagrams({ workflowId, diagramIds: [] }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionFilter]);
 
@@ -165,7 +157,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
 
   return (
     <Table
-      rowKey="id"
       columns={columns}
       dataSource={adjustedDiagrams}
       rowSelection={{
@@ -176,14 +167,6 @@ export default function ResultsTable(props: ResultsTableProps): JSX.Element {
         getCheckboxProps: (record: any) => ({
           disabled: record.progress === 'failed',
         }),
-      }}
-      pagination={{
-        onChange: onPaginationChange,
-        current: Number(page),
-        position: ['bottomLeft'],
-        size: 'small',
-        showQuickJumper: true,
-        showSizeChanger: true,
       }}
       options={{
         narrow: true,

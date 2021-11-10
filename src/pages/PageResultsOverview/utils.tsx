@@ -1,9 +1,6 @@
 import React from 'react';
 import { notification, Typography } from 'antd';
-import {
-  PnidsConvertJobSchema,
-  ApiStatusCount,
-} from 'modules/contextualization/pnidParsing';
+import { PnidsConvertJobSchema, ApiStatusCount } from 'modules/types';
 import { ERRORS } from 'stringConstants';
 import { getContainer } from 'utils/utils';
 

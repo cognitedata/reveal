@@ -3,12 +3,10 @@ import { createLink } from '@cognite/cdf-utilities';
 import { FileInfo } from '@cognite/sdk';
 import { Checkbox } from 'antd';
 import { FileWithAnnotations } from 'hooks';
-import { stringContains } from 'modules/contextualization/utils';
+import { stringContains } from 'utils/utils';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
 import { Table } from 'components/Common';
 import { getColumns } from './columns';
-
-const PAGE_SIZE = 8;
 
 type Props = {
   query: string;
@@ -65,15 +63,10 @@ export default function FilesList(props: Props) {
 
   return (
     <Table
-      rowKey="id"
-      // @ts-ignore
       columns={interactiveColumns}
       dataSource={diagrams}
       size="middle"
-      pagination={{
-        pageSize: PAGE_SIZE,
-        hideOnSinglePage: true,
-      }}
+      pagination={{ position: ['bottomRight'] }}
       rowSelection={{
         onSelectAll,
         onChange: onDiagramsSelect,

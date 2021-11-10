@@ -24,5 +24,6 @@ export const useInterval = (callback: () => void, delay: number | null) => {
 
     // eslint-disable-next-line consistent-return
     return () => clearInterval(id);
-  }, [delay]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 };

@@ -1,5 +1,4 @@
 import { FileInfo } from '@cognite/sdk';
-import { PnidResponseEntity } from 'modules/contextualization/pnidParsing/types';
 import {
   CogniteAnnotation,
   PendingCogniteAnnotation,
@@ -8,6 +7,7 @@ import {
   AnnotationBoundingBox,
   ANNOTATION_EVENT_TYPE,
 } from '@cognite/annotations';
+import { PnidResponseEntity } from 'modules/types';
 
 const findSimilarMatches = (
   entities: CogniteAnnotation[],

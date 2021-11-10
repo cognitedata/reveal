@@ -8,7 +8,6 @@ import {
   Workflow,
   Filter,
 } from 'modules/types';
-
 import {
   countSelector as countFileSelector,
   listSelector as listFileSelector,
@@ -79,11 +78,23 @@ export const getActiveWorkflowResourcesByResourceType = createSelector(
     }
 );
 
-export const getActiveWorkflowJobId = createSelector(
+export const getWorkflowJobs = createSelector(
   (state: RootState) => state.workflows.active,
   (state: RootState) => state.workflows.items,
-  (workflowId: number, items: { [id: number]: Workflow }) =>
-    items[workflowId]?.jobId
+  (workflowId: number, workflows: Record<number, Workflow>) => {
+    const activeWorkflow = workflows[workflowId];
+    return activeWorkflow?.jobs;
+  }
+);
+
+export const getWorkflowJobStatus = createSelector(
+  (state: RootState) => state.workflows.active,
+  (state: RootState) => state.workflows.items,
+  (workflowId: number, workflows: Record<number, Workflow>) => {
+    const activeWorkflow = workflows[workflowId];
+    if (!activeWorkflow) return 'incomplete';
+    return activeWorkflow.jobs?.status ?? 'incomplete';
+  }
 );
 
 export const getCountsSelector = createSelector(

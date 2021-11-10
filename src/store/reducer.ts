@@ -3,7 +3,7 @@ import { reducer as filesReducer } from 'modules/files';
 import { reducer as assetsReducer } from 'modules/assets';
 import { reducer as datasetsReducer } from 'modules/datasets';
 import { reducer as workflowsReducer } from 'modules/workflows';
-import { reducer as contextualizationReducer } from 'modules/contextualization';
+import { reducer as svgConvertReducer } from 'modules/svgConvert';
 
 const createRootReducer = () =>
   combineReducers({
@@ -11,7 +11,7 @@ const createRootReducer = () =>
     files: filesReducer,
     datasets: datasetsReducer,
     workflows: workflowsReducer,
-    contextualization: contextualizationReducer,
+    svgConvert: svgConvertReducer,
   });
 
 export default createRootReducer;

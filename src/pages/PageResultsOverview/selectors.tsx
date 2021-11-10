@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'store';
+import { Workflow } from 'modules/types';
 
 export const getWorkflowItems = (workflowId: number) =>
   createSelector(
@@ -7,29 +8,18 @@ export const getWorkflowItems = (workflowId: number) =>
     (workflow: any) => ({ workflow })
   );
 
-export const getPnidOptions = createSelector(
-  (state: RootState) => state.workflows.active,
-  (state: RootState) => state.workflows.items,
-  (workflowId: number, items: any) => {
-    const { partialMatch } = items[workflowId].options;
-    return { partialMatch };
-  }
-);
-
-export const getContextualizationJobs = createSelector(
-  (state: RootState) => state.contextualization,
-  (contextualization: any) => {
-    const { parsingJobs, svgConvert } = contextualization;
-    return {
-      parsingJobs,
-      svgConvert,
-    };
+export const getSvgConvertJobs = createSelector(
+  (state: RootState) => state.svgConvert,
+  (svgConvert: any) => {
+    return svgConvert;
   }
 );
 
 export const getSelectedDiagramsIds = createSelector(
   (state: RootState) => state.workflows.active,
-  (state: RootState) => state.contextualization.pnidParsing,
-  (workflowId: number, pnidParsing: any) =>
-    pnidParsing[workflowId]?.selectedDiagramIds ?? []
+  (state: RootState) => state.workflows.items,
+  (workflowId: number, items: { [id: number]: Workflow }) => {
+    const activeWorkflow = items[workflowId];
+    return activeWorkflow?.jobs.selectedDiagramIds;
+  }
 );
