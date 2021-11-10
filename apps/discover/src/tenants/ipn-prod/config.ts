@@ -14,6 +14,23 @@ const defaultConfig: TenantConfig = {
     showGeometryOnMap: true,
     extractByFilepath: true,
     filters: {},
+    mapLayerFilters: {
+      discoveries: {
+        labelAccessor: 'name',
+      },
+      prospects: {
+        labelAccessor: 'name',
+      },
+      simpleFields: {
+        labelAccessor: 'name',
+      },
+      complexFields: {
+        labelAccessor: 'name',
+      },
+      licenses: {
+        labelAccessor: 'name',
+      },
+    },
   },
   wells: {
     filters: {},

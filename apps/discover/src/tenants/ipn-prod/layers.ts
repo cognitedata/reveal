@@ -361,7 +361,7 @@ export default {
       },
     ],
   },
-  Fields: {
+  fields: {
     remoteService: mapService.getFields,
     name: 'Fields',
     color: 'rgba(0, 172, 79, 0.8)',
@@ -388,7 +388,7 @@ export default {
     mapLayers: [
       {
         id: 'simpleFields',
-        source: 'Fields',
+        source: 'fields',
         type: 'fill',
         layout: {},
         filter: ['in', ['get', 'dctype'], ['literal', ['OIL', 'GAS']]],
@@ -408,7 +408,7 @@ export default {
       },
       {
         id: 'complexFields',
-        source: 'Fields',
+        source: 'fields',
         type: 'fill',
         layout: {},
         filter: [
@@ -432,7 +432,7 @@ export default {
       },
       {
         id: 'FieldsLabel',
-        source: 'Fields',
+        source: 'fields',
         type: 'symbol',
         minzoom: 6,
         layout: {
@@ -444,15 +444,15 @@ export default {
       },
     ],
   },
-  IdemitsuLicenses: {
+  idemitsuLicenses: {
     remoteService: mapService.getIdemitsuLicenses,
     name: 'Idemitsu Licenses',
     color: 'rgba(255, 190, 190, 1)',
     defaultOn: false,
     mapLayers: [
       {
-        id: 'IdemitsuLicenses',
-        source: 'IdemitsuLicenses',
+        id: 'idemitsuLicenses',
+        source: 'idemitsuLicenses',
         type: 'fill',
         layout: {},
         paint: {
@@ -462,8 +462,8 @@ export default {
         weight: weights.idemitsuLicenses,
       },
       {
-        id: 'IdemitsuLicensesLabel',
-        source: 'IdemitsuLicenses',
+        id: 'idemitsuLicensesLabel',
+        source: 'idemitsuLicenses',
         type: 'symbol',
         minzoom: 8,
         layout: {
@@ -475,15 +475,15 @@ export default {
       },
     ],
   },
-  Licenses: {
+  licenses: {
     remoteService: mapService.getLicenses,
     name: 'Licenses',
     color: 'rgba(211, 211, 211, 0.6)',
     defaultOn: true,
     mapLayers: [
       {
-        id: 'Licenses',
-        source: 'Licenses',
+        id: 'licenses',
+        source: 'licenses',
         type: 'fill',
         layout: {},
         paint: {
@@ -493,8 +493,8 @@ export default {
         weight: weights.licenses,
       },
       {
-        id: 'LicensesOpLabel',
-        source: 'Licenses',
+        id: 'licensesOpLabel',
+        source: 'licenses',
         type: 'symbol',
         minzoom: 8,
         layout: {
@@ -506,15 +506,15 @@ export default {
       },
     ],
   },
-  LicensesByOperators: {
+  licensesByOperators: {
     remoteService: mapService.getLicenses,
     name: 'Licenses by Operator',
     color: 'transparent',
     defaultOn: false,
     mapLayers: [
       {
-        id: 'LicensesByOperators',
-        source: 'LicensesByOperators',
+        id: 'licensesByOperators',
+        source: 'licensesByOperators',
         type: 'fill',
         layout: {},
         paint: {
@@ -548,8 +548,8 @@ export default {
         weight: weights.licensesByOperators,
       },
       {
-        id: 'LicensesByOperatorsOpLabel',
-        source: 'LicensesByOperators',
+        id: 'licensesByOperatorsOpLabel',
+        source: 'licensesByOperators',
         type: 'symbol',
         minzoom: 8,
         layout: {
