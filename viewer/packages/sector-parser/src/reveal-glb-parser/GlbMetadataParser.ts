@@ -37,7 +37,6 @@ export class GlbMetadataParser {
 
     const fileTypeIdentifier = this._textDecoder.decode(new Uint8Array(data, 0, 4));
     const version = dataView.getUint32(4, true);
-    const length = dataView.getUint32(8, true);
 
     assert(fileTypeIdentifier === 'glTF', 'Unknown file format');
     assert(version === 2, `Unsupported glTF version{${version}}`);
