@@ -12,6 +12,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import { Header } from './Header';
+import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 
 const { Panel } = Collapse;
 
@@ -141,7 +142,7 @@ export const Keypoints = ({
             />
           )}
         >
-          {predefinedKeypoints &&
+          {predefinedKeypoints.length ? (
             predefinedKeypoints.map(
               (keypointCollection: KeypointCollection) => (
                 <Panel
@@ -169,16 +170,22 @@ export const Keypoints = ({
                   </PanelBody>
                 </Panel>
               )
-            )}
+            )
+          ) : (
+            <div style={{ padding: '10px', background: '#ffffff' }}>
+              {!newKeypoints && renderEmptyAnnotationMessage('point')}
+            </div>
+          )}
           {/* New Keypoint Collection */}
           {newKeypoints && (
             <Panel
+              style={{ background: '#4a67fb14' }}
               header={
                 <PanelHeader>
                   <PanelHeaderInput
                     onClick={handleClick}
                     value={newKeypoints.collectionName}
-                    placeholder="Type label"
+                    placeholder="Create a point group"
                     onChange={(e) => {
                       const { value } = e.target;
                       setNewKeypoints({
@@ -188,7 +195,7 @@ export const Keypoints = ({
                     }}
                   />
                   <Button
-                    icon="Delete"
+                    icon="Trash"
                     onClick={() => setNewKeypoints(undefined)}
                     size="small"
                     type="ghost-danger"
@@ -206,7 +213,7 @@ export const Keypoints = ({
                   <Body level={3}>Keypoint</Body>
                 </Row>
                 {newKeypoints.keypoints.map((keypoint, index) => (
-                  <Row>
+                  <Row key={index.toString()}>
                     <ColorPicker
                       size="16px"
                       color={keypoint.color}
@@ -218,14 +225,14 @@ export const Keypoints = ({
                     <KeypointInput
                       size="small"
                       value={keypoint.caption}
-                      placeholder="Type label"
+                      placeholder="Create individual point"
                       onChange={(e) => {
                         const { value } = e.target;
                         updateCaption(index, value);
                       }}
                     />
                     <Button
-                      icon="Delete"
+                      icon="Trash"
                       onClick={() => onDeleteKeypoint(index)}
                       size="small"
                       type="ghost-danger"
@@ -240,7 +247,7 @@ export const Keypoints = ({
                     icon="PlusCompact"
                     onClick={addNewKeypoint}
                   >
-                    Add Key Point
+                    Add Point
                   </Button>
                   <Tooltip
                     content={
@@ -272,7 +279,7 @@ export const Keypoints = ({
 
 const CollapsePanel = styled.div`
   overflow: auto;
-  max-height: 500px;
+  height: 500px;
   .ant-collapse-header {
     padding: 12px 12px 12px 33px;
   }
