@@ -41,6 +41,16 @@ const SuiteOverviewGrid: ForwardRefRenderFunction<GridCallbacks, Props> = (
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
 
+  const delays: Record<string, number> = boards
+    .filter((board) => board.embedTag)
+    .reduce(
+      (acc, board, index) => ({
+        ...acc,
+        [board.key]: index,
+      }),
+      {}
+    );
+
   const { color } = suite;
   forEach(layout, (_val, key) => {
     if (tileRefs && !tileRefs.current[key]) {
@@ -123,6 +133,7 @@ const SuiteOverviewGrid: ForwardRefRenderFunction<GridCallbacks, Props> = (
                 dataItem={board}
                 color={color}
                 view="board"
+                delayOrder={delays[board.key]}
                 menu={<BoardMenu suiteItem={suite} boardItem={board} />}
               />
             </a>
