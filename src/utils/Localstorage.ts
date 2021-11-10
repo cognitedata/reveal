@@ -60,7 +60,7 @@ export const saveState = (state: any): void => {
 export type OfflineState = {
   annotationLabelReducer: Pick<
     AnnotationLabelReducerState,
-    'predefinedCollections'
+    'predefinedAnnotations'
   >;
   reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
   explorerSlice: Pick<
@@ -72,7 +72,7 @@ export type OfflineState = {
 const getOfflineState = (state: RootState): OfflineState => {
   const offState: OfflineState = {
     annotationLabelReducer: {
-      predefinedCollections: state.annotationLabelReducer.predefinedCollections,
+      predefinedAnnotations: state.annotationLabelReducer.predefinedAnnotations,
     },
     reviewSlice: {
       fileIds: state.reviewSlice.fileIds,

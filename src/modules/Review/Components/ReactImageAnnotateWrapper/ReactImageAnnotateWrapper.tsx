@@ -49,7 +49,7 @@ export const ReactImageAnnotateWrapper = ({
   selectedTool,
   onSelectTool,
   focusIntoView,
-  openCollectionSettings,
+  openAnnotationSettings,
 }: ReactImageAnnotateWrapperProps) => {
   const annotationEditPopupRef = useRef<HTMLDivElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -204,7 +204,7 @@ export const ReactImageAnnotateWrapper = ({
           shapeOptions={shapeOptions}
           lastShape={lastShapeName!}
           lastCollection={lastKeypointCollection}
-          onOpenCollectionSettings={openCollectionSettings}
+          onOpenAnnotationSettings={openAnnotationSettings}
           popupReference={annotationEditPopupRef}
           nextKeypoint={nextToDoKeypointInCurrentCollection}
         />

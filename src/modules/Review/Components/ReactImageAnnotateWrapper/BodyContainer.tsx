@@ -1,4 +1,14 @@
-import { Col, Label, OptionType, Select } from '@cognite/cogs.js';
+import {
+  Body,
+  Col,
+  Row,
+  Icon,
+  Label,
+  OptionType,
+  Select,
+  Title,
+  Button,
+} from '@cognite/cogs.js';
 import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/TitleContainer';
 import React from 'react';
 import { ColorBadge } from 'src/modules/Review/Components/ColorBadge/ColorBadge';
@@ -14,6 +24,7 @@ export const BodyContainer = ({
   keypointLabel,
   labelOptions,
   onSelectLabel,
+  onOpenAnnotationSettings,
 }: {
   isKeypointMode: boolean;
   color: string;
@@ -22,7 +33,36 @@ export const BodyContainer = ({
   keypointLabel: string;
   labelOptions?: OptionType<string>[];
   onSelectLabel: (label: Required<OptionType<string>>) => void;
+  onOpenAnnotationSettings: () => void;
 }) => {
+  const renderEmptyAnnotationMessage = () => {
+    return (
+      <Row
+        cols={10}
+        style={{
+          background: '#6E85FC0F',
+          borderRadius: '8px',
+          alignItems: 'flex-start',
+          padding: '5px',
+        }}
+      >
+        <StyledCol span={1}>
+          <Icon type="InfoFilled" style={{ color: '#4A67FB' }} />
+        </StyledCol>
+
+        <StyledCol span={9}>
+          <Title level={5}>No existing annotations</Title>
+          <Body level={2} style={{ paddingBottom: '15px', paddingTop: '8px' }}>
+            Create a pre-defined list of annotations in Annotation Settings
+          </Body>
+          <Button type="tertiary" onClick={onOpenAnnotationSettings}>
+            Create annotations
+          </Button>
+        </StyledCol>
+      </Row>
+    );
+  };
+
   if (isKeypointMode) {
     if (isSavedAnnotation) {
       return (
@@ -56,11 +96,7 @@ export const BodyContainer = ({
         </>
       );
     }
-    return (
-      <Col span={5}>
-        <Label variant="warning">Please create a keypoint collection</Label>
-      </Col>
-    );
+    return <Col span={5}>{renderEmptyAnnotationMessage()}</Col>;
   }
   if (labelOptions && labelOptions.length) {
     return (
@@ -83,13 +119,14 @@ export const BodyContainer = ({
       </>
     );
   }
-  return (
-    <Col span={5}>
-      <StyledLabel variant="warning">Please create a shape</StyledLabel>
-    </Col>
-  );
+  return <Col span={5}>{renderEmptyAnnotationMessage()}</Col>;
 };
 
 const StyledLabel = styled(Label)`
   width: 100%;
+`;
+
+const StyledCol = styled(Col)`
+  padding: 5px;
+  padding-left: '14px';
 `;

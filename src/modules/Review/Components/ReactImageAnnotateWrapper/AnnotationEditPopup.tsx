@@ -31,7 +31,7 @@ export const AnnotationEditPopup = (props: {
   shapeOptions?: VisionOptionType<string>[];
   lastShape?: string;
   lastCollection: KeypointCollection;
-  onOpenCollectionSettings: () => void;
+  onOpenAnnotationSettings: () => void;
   popupReference: any;
   nextKeypoint: Keypoint | null;
 }) => {
@@ -48,7 +48,7 @@ export const AnnotationEditPopup = (props: {
     shapeOptions,
     lastShape,
     lastCollection,
-    onOpenCollectionSettings,
+    onOpenAnnotationSettings,
     popupReference,
     nextKeypoint,
   } = props;
@@ -207,8 +207,16 @@ export const AnnotationEditPopup = (props: {
     }
   }, [editing]);
 
-  if (editing && (!isKeypoint || (isKeypoint && +nextKeypoint!.order === 1))) {
-    // don't show popup for intermediate keypoints
+  const showFooter = (isShape: boolean) => {
+    return isShape ? !!shapeOptions?.length : !!collectionOptions?.length;
+  };
+
+  if (
+    editing &&
+    (!isKeypoint ||
+      (isKeypoint && !nextKeypoint?.order) || // no predefined keypoints
+      (isKeypoint && +nextKeypoint!.order === 1)) // don't show popup for intermediate keypoints
+  ) {
     return (
       <Container ref={popupReference}>
         <OptionContainer>
@@ -229,9 +237,9 @@ export const AnnotationEditPopup = (props: {
                 icon="Settings"
                 iconPlacement="right"
                 style={{ textTransform: 'capitalize' }}
-                onClick={onOpenCollectionSettings}
+                onClick={onOpenAnnotationSettings}
               >
-                Collection Settings
+                Annotation Settings
               </Button>
             </Col>
           </Row>
@@ -246,62 +254,65 @@ export const AnnotationEditPopup = (props: {
                 handleSelect(val);
               }}
               labelOptions={isKeypoint ? collectionOptions : shapeOptions}
+              onOpenAnnotationSettings={onOpenAnnotationSettings}
             />
           </Row>
-          <Row style={{ paddingTop: '30px' }} cols={12} gutter={0}>
-            <Col span={3}>
-              <Popconfirm
-                icon="WarningFilled"
-                placement="bottom-end"
-                onConfirm={handleOnDelete}
-                content="Are you sure you want to permanently delete this annotation?"
-              >
-                <Button
-                  size="small"
-                  icon="Trash"
-                  disabled={!alreadyCreated || isKeypoint}
+          {showFooter(!isKeypoint) && (
+            <Row style={{ paddingTop: '30px' }} cols={12} gutter={0}>
+              <Col span={3}>
+                <Popconfirm
+                  icon="WarningFilled"
+                  placement="bottom-end"
+                  onConfirm={handleOnDelete}
+                  content="Are you sure you want to permanently delete this annotation?"
                 >
-                  Delete
+                  <Button
+                    size="small"
+                    icon="Trash"
+                    disabled={!alreadyCreated || isKeypoint}
+                  >
+                    Delete
+                  </Button>
+                </Popconfirm>
+              </Col>
+              <Col span={3}>
+                <div />
+              </Col>
+              <Col span={3}>
+                <Button size="small" onClick={handleOnCancel}>
+                  Cancel
                 </Button>
-              </Popconfirm>
-            </Col>
-            <Col span={3}>
-              <div />
-            </Col>
-            <Col span={3}>
-              <Button size="small" onClick={handleOnCancel}>
-                Cancel
-              </Button>
-            </Col>
-            <Col span={3}>
-              {!alreadyCreated && (
-                <Button
-                  className="annotation-submit-btn"
-                  type="primary"
-                  icon="PlusCompact"
-                  size="small"
-                  onClick={handleOnCreate}
-                  disabled={disabledCreationOrUpdate}
-                  tabIndex={0}
-                >
-                  Create
-                </Button>
-              )}
-              {alreadyCreated && (
-                <Button
-                  className="annotation-submit-btn"
-                  type="primary"
-                  icon="Upload"
-                  size="small"
-                  disabled={disabledCreationOrUpdate}
-                  onClick={handleOnUpdate}
-                  tabIndex={0}
-                >
-                  Update
-                </Button>
-              )}
-            </Col>
-          </Row>
+              </Col>
+              <Col span={3}>
+                {!alreadyCreated && (
+                  <Button
+                    className="annotation-submit-btn"
+                    type="primary"
+                    icon="PlusCompact"
+                    size="small"
+                    onClick={handleOnCreate}
+                    disabled={disabledCreationOrUpdate}
+                    tabIndex={0}
+                  >
+                    Create
+                  </Button>
+                )}
+                {alreadyCreated && (
+                  <Button
+                    className="annotation-submit-btn"
+                    type="primary"
+                    icon="Upload"
+                    size="small"
+                    disabled={disabledCreationOrUpdate}
+                    onClick={handleOnUpdate}
+                    tabIndex={0}
+                  >
+                    Update
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          )}
         </OptionContainer>
       </Container>
     );

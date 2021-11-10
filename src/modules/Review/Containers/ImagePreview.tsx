@@ -5,7 +5,7 @@ import React, { ReactText, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { Annotation } from 'src/api/types';
-import { CollectionSettingsModal } from 'src/modules/Review/Components/CollectionSettingsModal/CollectionSettingsModal';
+import { AnnotationSettingsModal } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
 import {
@@ -16,7 +16,7 @@ import {
   setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
-  showCollectionSettingsModel,
+  showAnnotationSettingsModel,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
 import { AnnotationTableItem, Tool } from 'src/modules/Review/types';
@@ -48,7 +48,7 @@ export const ImagePreview = ({
 
   const definedCollection = useSelector(
     ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.predefinedCollections
+      annotationLabelReducer.predefinedAnnotations
   );
 
   const nextShapeName = useSelector(({ annotationLabelReducer }: RootState) =>
@@ -75,8 +75,8 @@ export const ImagePreview = ({
       currentCollection(annotationLabelReducer)
   );
 
-  const showCollectionSettingsModal = useSelector(
-    ({ reviewSlice }: RootState) => reviewSlice.showCollectionSettings
+  const showAnnotationSettingsModal = useSelector(
+    ({ reviewSlice }: RootState) => reviewSlice.showAnnotationSettings
   );
 
   useEffect(() => {
@@ -136,8 +136,8 @@ export const ImagePreview = ({
     dispatch(setSelectedTool(tool));
   };
 
-  const onOpenCollectionSettings = () => {
-    dispatch(showCollectionSettingsModel(true));
+  const onOpenAnnotationSettings = () => {
+    dispatch(showAnnotationSettingsModel(true));
   };
 
   const onOpenKeyboardShortcuts = () => {
@@ -162,7 +162,7 @@ export const ImagePreview = ({
         selectedTool={currentTool}
         onSelectTool={onSelectTool}
         focusIntoView={onFocus}
-        openCollectionSettings={onOpenCollectionSettings}
+        openAnnotationSettings={onOpenAnnotationSettings}
       />
       <ExtraToolbar>
         <Tooltip
@@ -205,20 +205,20 @@ export const ImagePreview = ({
           </ExtraToolItem>
         </Tooltip>
         <Tooltip
-          content={<span data-testid="text-content">Collection settings</span>}
+          content={<span data-testid="text-content">Annotation settings</span>}
         >
           <ExtraToolItem
             type="ghost"
             icon="Settings"
-            aria-label="open collection settings"
-            onClick={onOpenCollectionSettings}
-            toggled={showCollectionSettingsModal}
+            aria-label="open annotation settings"
+            onClick={onOpenAnnotationSettings}
+            toggled={showAnnotationSettingsModal}
           />
         </Tooltip>
       </ExtraToolbar>
-      <CollectionSettingsModal
-        showModal={showCollectionSettingsModal}
-        onCancel={() => dispatch(showCollectionSettingsModel(false))}
+      <AnnotationSettingsModal
+        showModal={showAnnotationSettingsModal}
+        onCancel={() => dispatch(showAnnotationSettingsModel(false))}
       />
       <KeyboardShortcutModal
         showModal={showKeyboardShortcutModal}

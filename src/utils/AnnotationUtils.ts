@@ -263,7 +263,7 @@ const populateKeyPoints = (annotation: VisionAnnotation) => {
   }
   // Populate keypoint data
 
-  // const keypointCollections = predefinedCollections?.predefinedKeyPoints;
+  // const keypointCollections = predefinedAnnotations?.predefinedKeyPoints;
   // let keypointCollection: KeypointCollection | undefined;
   // if (keypointCollections && keypointCollections.length) {
   //   keypointCollection = keypointCollections.find(

@@ -30,14 +30,14 @@ type State = {
   fileIds: number[];
   selectedAnnotationIds: number[];
   hiddenAnnotationIds: number[];
-  showCollectionSettings: boolean;
+  showAnnotationSettings: boolean;
 };
 
 const initialState: State = {
   fileIds: [],
   selectedAnnotationIds: [],
   hiddenAnnotationIds: [],
-  showCollectionSettings: false,
+  showAnnotationSettings: false,
 };
 
 const reviewSlice = createSlice({
@@ -67,8 +67,8 @@ const reviewSlice = createSlice({
       const annotationId = action.payload;
       state.selectedAnnotationIds = [annotationId];
     },
-    showCollectionSettingsModel(state, action: PayloadAction<boolean>) {
-      state.showCollectionSettings = action.payload;
+    showAnnotationSettingsModel(state, action: PayloadAction<boolean>) {
+      state.showAnnotationSettings = action.payload;
     },
     resetPreview(state) {
       state.selectedAnnotationIds = [];
@@ -112,7 +112,7 @@ export const {
   setReviewFileIds,
   toggleAnnotationVisibility,
   selectAnnotation,
-  showCollectionSettingsModel,
+  showAnnotationSettingsModel,
   resetPreview,
 } = reviewSlice.actions;
 

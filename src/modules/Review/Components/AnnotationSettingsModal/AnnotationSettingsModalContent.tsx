@@ -8,7 +8,7 @@ import { RootState } from 'src/store/rootReducer';
 import { Shapes } from './Body/Shapes';
 import { Keypoints } from './Body/Keypoints';
 
-export const CollectionSettingsModalContent = ({
+export const AnnotationSettingsModalContent = ({
   onCancel,
 }: {
   onCancel: () => void;
@@ -16,7 +16,7 @@ export const CollectionSettingsModalContent = ({
   const dispatch = useDispatch();
   const collections = useSelector(
     ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.predefinedCollections
+      annotationLabelReducer.predefinedAnnotations
   );
 
   const setCollections = (collection: AnnotationCollection) => {
@@ -26,7 +26,7 @@ export const CollectionSettingsModalContent = ({
   return (
     <>
       <Title level={4} as="h1">
-        Collection settings
+        Annotation settings
       </Title>
       <Body>
         <LeftBody>

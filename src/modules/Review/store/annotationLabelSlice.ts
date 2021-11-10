@@ -38,7 +38,7 @@ type KeypointCollectionState = {
 };
 
 type State = {
-  predefinedCollections: AnnotationCollection;
+  predefinedAnnotations: AnnotationCollection;
   collections: {
     byId: Record<string, KeypointCollectionState>;
     allIds: string[];
@@ -57,7 +57,7 @@ type State = {
 };
 
 const initialState: State = {
-  predefinedCollections: {
+  predefinedAnnotations: {
     predefinedKeypoints: [],
     predefinedShapes: [],
   },
@@ -141,7 +141,7 @@ const annotationLabelSlice = createSlice({
         state.lastCollectionName = action.payload.collectionName;
 
         const predefinedKeypoint =
-          state.predefinedCollections.predefinedKeypoints
+          state.predefinedAnnotations.predefinedKeypoints
             .find(
               (col) => col.collectionName === action.payload.collectionName
             )!
@@ -266,7 +266,7 @@ const annotationLabelSlice = createSlice({
         SaveAnnotationTemplates.fulfilled
       ),
       (state, action) => {
-        state.predefinedCollections = action.payload;
+        state.predefinedAnnotations = action.payload;
       }
     );
   },
@@ -293,7 +293,7 @@ export default annotationLabelSlice.reducer;
 // selectors
 
 export const nextKeypoint = createSelector(
-  (state: State) => state.predefinedCollections.predefinedKeypoints,
+  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
   (state: State) => state.collections.byId,
   (state: State) => state.keypointMap.byId,
   (state: State) => state.lastCollectionName,
@@ -339,7 +339,7 @@ export const nextKeypoint = createSelector(
 );
 
 export const nextShape = createSelector(
-  (state: State) => state.predefinedCollections.predefinedShapes,
+  (state: State) => state.predefinedAnnotations.predefinedShapes,
   (state: State) => state.lastShape,
   (predefinedShapes, lastShape) => {
     if (lastShape) {
@@ -350,7 +350,7 @@ export const nextShape = createSelector(
 );
 
 export const nextCollection = createSelector(
-  (state: State) => state.predefinedCollections.predefinedKeypoints,
+  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
   (state: State) => state.lastCollectionName,
   (predefinedKeypointCollections, lastCollectionName) => {
     let collection = predefinedKeypointCollections[0];
@@ -372,7 +372,7 @@ export const currentCollection = createSelector(
   (state: State) => state.collections.selectedIds,
   (state: State) => state.keypointMap.byId,
   (state: State) => state.keypointMap.selectedIds,
-  (state: State) => state.predefinedCollections.predefinedKeypoints,
+  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
   (
     lastCollectionId,
     allCollections,
@@ -412,7 +412,7 @@ export const keypointsCompleteInCollection = createSelector(
   (state: State) => state.lastCollectionId,
   (state: State) => state.collections.byId,
   (state: State) => state.keypointMap.byId,
-  (state: State) => state.predefinedCollections.predefinedKeypoints,
+  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
   (lastCollectionId, allCollections, allKeyPoints, collectionTemplate) => {
     if (lastCollectionId) {
       const collection = allCollections[lastCollectionId];

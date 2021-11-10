@@ -1,15 +1,15 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { getContainer } from 'src/utils';
-import { CollectionSettingsModalContent } from './CollectionSettingsModalContent';
+import { AnnotationSettingsModalContent } from './AnnotationSettingsModalContent';
 
-export type CollectionSettingsModalProps = {
+export type AnnotationSettingsModalProps = {
   showModal: boolean;
   onCancel: () => void;
 };
 
-export const CollectionSettingsModal = (
-  props: CollectionSettingsModalProps
+export const AnnotationSettingsModal = (
+  props: AnnotationSettingsModalProps
 ) => {
   return (
     <Modal
@@ -26,7 +26,7 @@ export const CollectionSettingsModal = (
         maxHeight: '710px',
       }}
     >
-      <CollectionSettingsModalContent onCancel={props.onCancel} />
+      <AnnotationSettingsModalContent onCancel={props.onCancel} />
     </Modal>
   );
 };
