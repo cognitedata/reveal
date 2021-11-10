@@ -26,7 +26,7 @@ describe(Cognite3DModel.name, () => {
     const mockBinaryFileProvider = new Mock<BinaryFileProvider>();
     const sectorRepository = new V8SectorRepository(mockBinaryFileProvider.object(), materialManager);
     const cadRoot = generateV8SectorTree(3, 3);
-    const cadMetadata: CadModelMetadata = createCadModelMetadata(cadRoot);
+    const cadMetadata: CadModelMetadata = createCadModelMetadata(8, cadRoot);
     materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
     const cadNode = new CadNode(cadMetadata, materialManager, sectorRepository);

@@ -8,7 +8,7 @@ import { SectorMetadata } from '../metadata/types';
 import { SectorSceneImpl } from './SectorScene';
 import { traverseDepthFirst } from '@reveal/utilities';
 
-import { createV8SectorMetadata } from '../../../../test-utilities/src/createSectorMetadata';
+import { createV8SectorMetadata } from '../../../../test-utilities';
 
 describe('SectorSceneImpl', () => {
   const root = createV8SectorMetadata([

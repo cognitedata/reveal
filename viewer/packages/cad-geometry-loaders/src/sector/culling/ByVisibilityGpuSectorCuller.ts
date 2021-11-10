@@ -2,34 +2,19 @@
  * Copyright 2021 Cognite AS
  */
 
-// Note! We introduce ThreeJS as a dependency here, but it's not exposed.
-// If we add other rendering engines, we should consider to implement this in 'pure'
-// WebGL.
 import * as THREE from 'three';
 
-import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
-import { getBox3CornerPoints } from '@reveal/utilities';
-
-import {
-  GpuOrderSectorsByVisibilityCoverage,
-  OrderSectorsByVisibilityCoverage
-} from './OrderSectorsByVisibilityCoverage';
+import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
-import { TakenV8SectorTree } from './TakenV8SectorTree';
-import {
-  PrioritizedWantedSector,
-  DetermineSectorCostDelegate,
-  DetermineSectorsInput,
-  SectorCost,
-  addSectorCost,
-  SectorLoadingSpent
-} from './types';
-
+import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorCost, SectorLoadingSpent } from './types';
+import { TakenV8SectorMap } from './takensectors';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { OccludingGeometryProvider } from './OccludingGeometryProvider';
+
+import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
+import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 
 /**
- * Options for creating GpuBasedSectorCuller.
+ * Options for creating {@link ByVisibilityGpuSectorCuller}.
  */
 export type ByVisibilityGpuSectorCullerOptions = {
   /**
@@ -41,7 +26,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
-  determineSectorCost?: DetermineSectorCostDelegate;
+  determineSectorCost?: DetermineSectorCostDelegate<V8SectorMetadata>;
 
   /**
    * Use a custom coverage utility to determine how "visible" each sector is.
@@ -54,83 +39,6 @@ export type ByVisibilityGpuSectorCullerOptions = {
   logCallback?: (message?: any, ...optionalParameters: any[]) => void;
 };
 
-function assert(condition: boolean, message: string = 'assertion hit') {
-  console.assert(condition, message);
-}
-
-class TakenSectorMap {
-  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenV8SectorTree; modelMetadata: CadModelMetadata }> =
-    new Map();
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
-
-  get totalCost(): SectorCost {
-    const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
-    this._takenSectorTrees.forEach(({ sectorTree }) => {
-      addSectorCost(totalCost, sectorTree.totalCost);
-    });
-    return totalCost;
-  }
-
-  // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
-  constructor(determineSectorCost: DetermineSectorCostDelegate) {
-    this.determineSectorCost = determineSectorCost;
-  }
-
-  initializeScene(modelMetadata: CadModelMetadata) {
-    this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenV8SectorTree(modelMetadata.scene.root as V8SectorMetadata, this.determineSectorCost),
-      modelMetadata
-    });
-  }
-
-  getWantedSectorCount(): number {
-    let count = 0;
-    this._takenSectorTrees.forEach(({ sectorTree }) => {
-      count += sectorTree.determineWantedSectorCount();
-    });
-    return count;
-  }
-
-  markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    const entry = this._takenSectorTrees.get(model.modelIdentifier);
-    assert(
-      !!entry,
-      `Could not find sector tree for ${model.modelIdentifier} (have trees ${Array.from(
-        this._takenSectorTrees.keys()
-      ).join(', ')})`
-    );
-    const { sectorTree } = entry!;
-    sectorTree!.markSectorDetailed(sectorId, priority);
-  }
-
-  isWithinBudget(budget: CadModelSectorBudget): boolean {
-    return (
-      this.totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
-      this.totalCost.renderCost < budget.maximumRenderCost
-    );
-  }
-
-  collectWantedSectors(): PrioritizedWantedSector[] {
-    const allWanted = new Array<PrioritizedWantedSector>();
-
-    // Collect sectors
-    for (const [modelIdentifier, { sectorTree, modelMetadata }] of this._takenSectorTrees) {
-      allWanted.push(
-        ...sectorTree.toWantedSectors(modelIdentifier, modelMetadata.modelBaseUrl, modelMetadata.geometryClipBox)
-      );
-    }
-
-    // Sort by priority
-    allWanted.sort((l, r) => r.priority - l.priority);
-    return allWanted;
-  }
-
-  clear() {
-    this._takenSectorTrees.clear();
-  }
-}
-
 /**
  * SectorCuller that uses the GPU to determine an approximation
  * of how "visible" each sector is to get a priority for each sector
@@ -138,7 +46,7 @@ class TakenSectorMap {
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
-  private readonly takenSectors: TakenSectorMap;
+  private readonly takenSectors: TakenV8SectorMap;
 
   constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
@@ -151,7 +59,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
             () => {},
       coverageUtil: options.coverageUtil
     };
-    this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
+    this.takenSectors = new TakenV8SectorMap(this.options.determineSectorCost);
   }
 
   dispose(): void {
@@ -161,32 +69,18 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
   determineSectors(input: DetermineSectorsInput): { wantedSectors: WantedSector[]; spentBudget: SectorLoadingSpent } {
     const takenSectors = this.update(input.camera, input.cadModelsMetadata, input.clippingPlanes, input.budget);
     const wanted = takenSectors.collectWantedSectors();
-    const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+    const spentBudget = takenSectors.computeSpentBudget();
 
-    const totalSectorCount = input.cadModelsMetadata.reduce((sum, x) => sum + x.scene.sectorCount, 0);
-    const takenSectorCount = nonDiscarded.length;
-    const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
-    const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
-    const accumulatedPriority = nonDiscarded
-      .filter(x => Number.isFinite(x.priority) && x.priority > 0)
-      .reduce((sum, x) => sum + x.priority, 0);
-    const takenDetailedPercent = ((100.0 * (takenSectorCount - takenSimpleCount)) / totalSectorCount).toPrecision(3);
-    const takenPercent = ((100.0 * takenSectorCount) / totalSectorCount).toPrecision(3);
+    const takenDetailedPercent = (
+      (100.0 * (spentBudget.loadedSectorCount - spentBudget.loadedSectorCount)) /
+      spentBudget.totalSectorCount
+    ).toPrecision(3);
+    const takenPercent = ((100.0 * spentBudget.loadedSectorCount) / spentBudget.totalSectorCount).toPrecision(3);
 
     this.log(
-      `Scene: ${takenSectorCount} (${forcedDetailedSectorCount} required, ${totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
+      `Scene: ${spentBudget.loadedSectorCount} (${spentBudget.forcedDetailedSectorCount} required, ${spentBudget.totalSectorCount} sectors, ${takenPercent}% of all sectors - ${takenDetailedPercent}% detailed)`
     );
-    const spentBudget: SectorLoadingSpent = {
-      drawCalls: takenSectors.totalCost.drawCalls,
-      downloadSize: takenSectors.totalCost.downloadSize,
-      renderCost: takenSectors.totalCost.renderCost,
-      totalSectorCount,
-      forcedDetailedSectorCount,
-      loadedSectorCount: takenSectorCount,
-      simpleSectorCount: takenSimpleCount,
-      detailedSectorCount: takenSectorCount - takenSimpleCount,
-      accumulatedPriority
-    };
+
     return { spentBudget, wantedSectors: wanted };
   }
 
@@ -200,7 +94,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
     budget: CadModelSectorBudget
-  ): TakenSectorMap {
+  ): TakenV8SectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -240,7 +134,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     budget: CadModelSectorBudget,
-    takenSectors: TakenSectorMap,
+    takenSectors: TakenV8SectorMap,
     clippingPlanes: THREE.Plane[] | null
   ) {
     const shortRangeCamera = camera.clone(true) as THREE.PerspectiveCamera;
@@ -272,25 +166,12 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     modelMatrix: THREE.Matrix4
   ): V8SectorMetadata[] {
     const passingSectors = [];
-
+    const bounds = new THREE.Box3();
     for (let i = 0; i < intersectingSectors.length; i++) {
-      const boundPoints = getBox3CornerPoints(intersectingSectors[i].bounds).map(p => {
-        const outvec = p.clone();
-        outvec.applyMatrix4(modelMatrix);
-        return outvec;
-      });
+      bounds.copy(intersectingSectors[i].bounds);
+      bounds.applyMatrix4(modelMatrix);
 
-      let shouldKeep = true;
-      for (let k = 0; k < clippingPlanes.length; k++) {
-        let planeAccepts = false;
-
-        for (let j = 0; j < boundPoints.length; j++) {
-          planeAccepts = clippingPlanes[k].distanceToPoint(boundPoints[j]) >= 0 || planeAccepts;
-        }
-
-        shouldKeep = shouldKeep && planeAccepts;
-      }
-
+      const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
       if (shouldKeep) {
         passingSectors.push(intersectingSectors[i]);
       }
@@ -300,7 +181,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   private markSectorsAsDetailed(
     intersectingSectors: V8SectorMetadata[],
-    takenSectors: TakenSectorMap,
+    takenSectors: TakenV8SectorMap,
     model: CadModelMetadata
   ) {
     for (let i = 0; i < intersectingSectors.length; i++) {
@@ -331,12 +212,4 @@ function computeSectorCost(metadata: V8SectorMetadata, lod: LevelOfDetail): Sect
     default:
       throw new Error(`Can't compute cost for lod ${lod}`);
   }
-}
-
-export function createDefaultSectorCuller(
-  renderer: THREE.WebGLRenderer,
-  occludingGeometryProvider: OccludingGeometryProvider
-): SectorCuller {
-  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, occludingGeometryProvider });
-  return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
 }
