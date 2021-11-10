@@ -19,8 +19,8 @@ export abstract class TakenSectorMapBase {
     const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
     const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
     const accumulatedPriority = nonDiscarded
-      .filter(x => Number.isFinite(x.priority) && x.priority > 0)
-      .reduce((sum, x) => sum + x.priority, 0);
+      .filter(sector => Number.isFinite(sector.priority) && sector.priority > 0)
+      .reduce((sum, sector) => sum + sector.priority, 0);
 
     const spentBudget: SectorLoadingSpent = {
       drawCalls: this.totalCost.drawCalls,
