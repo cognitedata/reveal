@@ -11,6 +11,9 @@ export const PRESET_COLORS = [
   Colors['green-5'].hex(),
   Colors.success.hex(),
   Colors['greyscale-grey6'].hex(),
+  Colors['red-3'].hex(),
+  Colors['green-3'].hex(),
+  Colors['midblue-3'].hex(),
 ];
 
 export const defaultShapeSettings = {
