@@ -16,7 +16,7 @@ export class GlbMetadataParser {
   }
 
   public parseGlbMetadata(glbByteData: ArrayBuffer): GlbHeaderData {
-    this.parseGlbHeaders(glbByteData);
+    this.verifyGlbHeaders(glbByteData);
 
     const { length: jsonLength, json } = this.parseJson(glbByteData);
 
@@ -32,7 +32,7 @@ export class GlbMetadataParser {
     };
   }
 
-  private parseGlbHeaders(data: ArrayBuffer) {
+  private verifyGlbHeaders(data: ArrayBuffer) {
     const dataView = new DataView(data, 0, GlbMetadataParser.GLB_HEADER_BYTE_SIZE);
 
     const fileTypeIdentifier = this._textDecoder.decode(new Uint8Array(data, 0, 4));
@@ -41,8 +41,6 @@ export class GlbMetadataParser {
 
     assert(fileTypeIdentifier === 'glTF', 'Unknown file format');
     assert(version === 2, `Unsupported glTF version{${version}}`);
-
-    return { fileTypeIdentifier, version, length };
   }
 
   private parseJson(data: ArrayBuffer): { type: string; length: number; json: GltfJson } {

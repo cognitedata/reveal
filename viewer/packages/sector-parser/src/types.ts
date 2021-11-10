@@ -6,7 +6,7 @@ export type GltfJson = {
   asset: Asset;
   bufferViews: BufferView[];
   buffers: Buffer[];
-  extensionsUsed: [string];
+  extensionsUsed: string[];
   meshes: Mesh[];
   nodes: Node[];
   scene: number;
