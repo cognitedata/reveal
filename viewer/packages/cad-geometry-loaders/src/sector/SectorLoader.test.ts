@@ -33,7 +33,7 @@ describe('SectorLoader', () => {
 
   beforeAll(() => {
     const sectorRoot = generateV8SectorTree(2, 2);
-    model = createCadModelMetadata(sectorRoot);
+    model = createCadModelMetadata(8, sectorRoot);
     currentLogLevel = Log.getLevel();
     Log.setLevel('silent');
   });

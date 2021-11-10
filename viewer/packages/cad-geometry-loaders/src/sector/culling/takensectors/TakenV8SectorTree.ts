@@ -9,7 +9,7 @@ import {
   SectorCost,
   reduceSectorCost,
   addSectorCost
-} from './types';
+} from '../types';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 
@@ -26,11 +26,11 @@ export class TakenV8SectorTree {
     cost: SectorCost;
     lod: LevelOfDetail;
   }[] = [];
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
+  private readonly determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata>;
 
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
-  constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
+  constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata>) {
     this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
     traverseDepthFirst(sectorRoot as SectorMetadata, x => {
@@ -61,7 +61,7 @@ export class TakenV8SectorTree {
     }
   }
 
-  determineWantedSectorCount(): number {
+  getWantedSectorCount(): number {
     return this.sectors.reduce((count, x) => {
       count = x.lod !== LevelOfDetail.Discarded ? count + 1 : count;
       return count;

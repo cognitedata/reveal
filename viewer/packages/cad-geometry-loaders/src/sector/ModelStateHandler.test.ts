@@ -5,7 +5,6 @@
 import * as THREE from 'three';
 
 import { WantedSector, ConsumedSector, LevelOfDetail, SectorMetadata } from '@reveal/cad-parsers';
-
 import { ModelStateHandler } from './ModelStateHandler';
 
 describe('ModelStateHandler', () => {

@@ -9,10 +9,10 @@ import { SectorCuller } from './culling/SectorCuller';
 import { ModelStateHandler } from './ModelStateHandler';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
+import { ByScreenSizeSectorCuller } from './culling/ByScreenSizeSectorCuller';
 
 import log from '@reveal/logger';
 import { CadNode } from '@reveal/rendering';
-import { PassThroughSectorCuller } from './culling/PassThroughSectorCuller';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -34,7 +34,7 @@ export class SectorLoader {
   private readonly _v8SectorCuller: SectorCuller;
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
-  private readonly _gltfSectorCuller: PassThroughSectorCuller;
+  private readonly _gltfSectorCuller: SectorCuller;
 
   constructor(
     sectorCuller: SectorCuller,
@@ -43,9 +43,9 @@ export class SectorLoader {
     progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void
   ) {
     // TODO: add runtime initialization of culler and inject
-    // the proper sector culler
+    // the proper sector culler (create factory)
     this._v8SectorCuller = sectorCuller;
-    this._gltfSectorCuller = new PassThroughSectorCuller();
+    this._gltfSectorCuller = new ByScreenSizeSectorCuller();
 
     this._modelStateHandler = modelStateHandler;
     this._collectStatisticsCallback = collectStatisticsCallback;
