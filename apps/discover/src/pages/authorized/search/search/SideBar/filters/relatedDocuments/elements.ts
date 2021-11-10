@@ -10,6 +10,11 @@ export const DropdownWrapper = styled(Flex)`
   }
   > * .cogs-select__menu {
     z-index: ${layers.DROPDOWN_SELECT};
+    width: auto;
+    min-width: 100%;
+    .cogs-select__menu-list {
+      overflow-x: hidden;
+    }
   }
   > * .cogs-select__control--menu-is-open {
     border: 2px solid var(--cogs-midblue-4) !important;
@@ -35,7 +40,6 @@ export const DateRangeButtonWrapper = styled(Flex)`
   > * button:hover {
     border-color: var(--cogs-midblue-4) !important;
     box-sizing: border-box;
-    background-color: ${(props: { active: boolean }) =>
-      props.active ? 'white;' : 'var(--cogs-bg-control--secondary)'};
+    background-color: white;
   }
 `;

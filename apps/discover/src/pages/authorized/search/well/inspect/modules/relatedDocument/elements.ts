@@ -31,6 +31,7 @@ export const ResultsContainer = styled(FlexColumn)`
   height: 100%;
   padding-right: ${(props: { fullWidth: boolean }) =>
     props.fullWidth ? '0' : sizes.normal};
+  overflow: hidden;
 `;
 
 export const IconSeparator = styled(Flex)`
