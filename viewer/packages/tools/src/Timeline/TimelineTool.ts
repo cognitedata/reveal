@@ -159,7 +159,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Pause any ongoing playback
    */
   public pause() {
-    if (this._playback !== undefined && this._playback.isPlaying) {
+    if (this._playback !== undefined && this._playback.isPlaying()) {
       this._playback.pause();
     }
   }
@@ -168,7 +168,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Resume any paused playback
    */
   public resume() {
-    if (this._playback !== undefined && this._playback.isPaused) {
+    if (this._playback !== undefined && this._playback.isPaused()) {
       this._playback.resume();
     }
   }
