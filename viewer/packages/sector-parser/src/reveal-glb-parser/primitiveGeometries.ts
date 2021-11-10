@@ -2,7 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
+import { assertNever } from '@reveal/utilities';
 import * as THREE from 'three';
+import { RevealGeometryCollectionType } from '../types';
 
 /**
  * Generate a three-dimensional plane geometry,
@@ -141,4 +143,50 @@ export function setNutGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   geometry.setAttribute('normal', nutGeometry.getAttribute('normal'));
 
   return new THREE.Box3().setFromArray(nutGeometry.getAttribute('position').array);
+}
+
+export function setPrimitiveTopology(
+  primitiveCollectionName: RevealGeometryCollectionType,
+  geometry: THREE.BufferGeometry
+) {
+  switch (primitiveCollectionName) {
+    case RevealGeometryCollectionType.BoxCollection:
+      setBoxGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.CircleCollection:
+      setQuadGeometry(geometry); // should use the position as normal
+      break;
+    case RevealGeometryCollectionType.ConeCollection:
+      setConeGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.EccentricConeCollection:
+      setConeGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.EllipsoidSegmentCollection:
+      setConeGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.GeneralCylinderCollection:
+      setConeGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.GeneralRingCollection:
+      setQuadGeometry(geometry, false);
+      break;
+    case RevealGeometryCollectionType.NutCollection:
+      setNutGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.QuadCollection:
+      setQuadGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.TrapeziumCollection:
+      setTrapeziumGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.TorusSegmentCollection:
+      setTorusGeometry(geometry);
+      break;
+    case RevealGeometryCollectionType.InstanceMesh:
+    case RevealGeometryCollectionType.TriangleMesh:
+      break;
+    default:
+      assertNever(primitiveCollectionName);
+  }
 }

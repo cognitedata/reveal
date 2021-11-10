@@ -1066,6 +1066,8 @@ __metadata:
 "@reveal/sector-parser@workspace:*, @reveal/sector-parser@workspace:packages/sector-parser":
   version: 0.0.0-use.local
   resolution: "@reveal/sector-parser@workspace:packages/sector-parser"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 

@@ -5,9 +5,10 @@
 import fs from 'fs';
 
 import 'jest-extended';
-import GltfSectorParser, { RevealGeometryCollectionType } from '../src/GltfSectorParser';
+import { GltfSectorParser } from '../src/GltfSectorParser';
+import { RevealGeometryCollectionType } from '../src/types';
 
-describe('GltfSectorParser Tests', () => {
+describe(GltfSectorParser.name, () => {
   let parsedResult: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[];
 
   beforeAll(() => {
