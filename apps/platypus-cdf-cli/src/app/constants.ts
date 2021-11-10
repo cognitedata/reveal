@@ -1,11 +1,10 @@
 export enum AUTH_TYPE {
-  DEVICE_CODE = 'oauth',
   CLIENT_SECRET = 'clientSecret',
 }
 
 export enum LOGIN_STATUS {
   SUCCESS = 'success',
-  FAILED = 'failed',
+  UNAUTHENTICATED = 'unauthenticated',
 }
 
 export enum CONFIG_KEY {

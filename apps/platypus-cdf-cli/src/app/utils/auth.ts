@@ -1,12 +1,7 @@
-import {
-  ConfidentialClientApplication,
-  PublicClientApplication,
-} from '@azure/msal-node';
+import { getAccessTokenForClientSecret } from '../common/auth';
 import { AUTH_TYPE, CONFIG_KEY, LOGIN_STATUS } from '../constants';
 import { ProjectConfig } from '../types';
 import { setProjectConfigItem } from './config';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const open = require('open');
 
 export const getAuthToken = (arg: ProjectConfig) => async () => {
   const authority = `https://login.microsoftonline.com/${arg.tenant}`;
@@ -14,13 +9,13 @@ export const getAuthToken = (arg: ProjectConfig) => async () => {
   const baseUrl = `https://${arg.cluster}.cognitedata.com`;
   const scopes = [`${baseUrl}/.default`];
 
-  if (arg.authType.toString() === AUTH_TYPE.CLIENT_SECRET.toString()) {
+  if (arg.authType === AUTH_TYPE.CLIENT_SECRET) {
     const token = (
-      await new ConfidentialClientApplication({
-        auth: { clientId, authority, clientSecret: arg.clientSecret },
-      }).acquireTokenByClientCredential({
+      await getAccessTokenForClientSecret({
+        authority,
+        clientId,
+        clientSecret: arg.clientSecret,
         scopes,
-        skipCache: true,
       })
     ).accessToken;
 
@@ -30,25 +25,15 @@ export const getAuthToken = (arg: ProjectConfig) => async () => {
       setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.SUCCESS);
       return token;
     } else {
-      setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.FAILED);
+      setProjectConfigItem(
+        CONFIG_KEY.LOGIN_STATUS,
+        LOGIN_STATUS.UNAUTHENTICATED
+      );
       throw new Error(
         'Unable to refresh token based on your login, you need to retrigger login once again, try $ platypus login'
       );
     }
+  } else {
+    throw new Error('Only client_secret flow is supported now');
   }
-
-  return (
-    await new PublicClientApplication({
-      auth: { clientId, authority },
-    }).acquireTokenByDeviceCode({
-      scopes,
-      deviceCodeCallback: ({ verificationUri, userCode, message }) => {
-        open(verificationUri)
-          .then(() =>
-            console.log(`Please enter the code in browser: ${userCode}`)
-          )
-          .catch(() => console.log(`Failed to verify, ${message}`));
-      },
-    })
-  ).accessToken;
 };

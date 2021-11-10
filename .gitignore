@@ -29,4 +29,6 @@ cli/lib
 storybook-static
 junit.xml
 
+.env
+
 /.docz

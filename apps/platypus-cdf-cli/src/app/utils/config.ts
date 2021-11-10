@@ -27,8 +27,7 @@ export const getProjectConfig = () => {
 
 // TODO: refactor this, use project config instead
 export const setProjectConfig = (arg: Arguments<LoginArgs>, token: string) => {
-  const { clientId, clientSecret, useClientSecret, cluster, tenant, project } =
-    arg;
+  const { clientId, clientSecret, cluster, tenant, project } = arg;
   config.set(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.SUCCESS);
   config.set(CONFIG_KEY.AUTH_TOKEN, token);
   config.set(CONFIG_KEY.CLIENT_SECRET, clientSecret ?? '');
@@ -36,10 +35,7 @@ export const setProjectConfig = (arg: Arguments<LoginArgs>, token: string) => {
   config.set(CONFIG_KEY.CLUSTER, cluster);
   config.set(CONFIG_KEY.TENANT, tenant);
   config.set(CONFIG_KEY.PROJECT, project);
-  config.set(
-    CONFIG_KEY.AUTH_TYPE,
-    useClientSecret ? AUTH_TYPE.CLIENT_SECRET : AUTH_TYPE.DEVICE_CODE
-  );
+  config.set(CONFIG_KEY.AUTH_TYPE, AUTH_TYPE.CLIENT_SECRET);
 };
 
 export const setProjectConfigItem = (key: string, value: unknown): void => {

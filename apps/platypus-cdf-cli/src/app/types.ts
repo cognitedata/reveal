@@ -6,11 +6,11 @@ export type BaseArgs = {
 
 export type LoginArgs = BaseArgs & {
   project: string;
-  useClientSecret: boolean;
   clientId: string;
   clientSecret: string;
   tenant: string;
   cluster: string;
+  authType: AUTH_TYPE;
 };
 
 export interface ProjectConfig {
