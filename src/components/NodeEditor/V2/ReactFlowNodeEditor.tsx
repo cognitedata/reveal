@@ -13,18 +13,25 @@ import ReactFlow, {
   OnLoadParams as RFInstance,
   removeElements,
   updateEdge,
+  useStoreActions,
 } from 'react-flow-renderer';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
-import { NodeTypes } from 'models/node-editor/types';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
-import { initializeFunctionData, restoreSavedFlow } from './utils';
-import CustomControls from './CustomControls';
+import { NodeTypes } from 'models/node-editor/types';
+import {
+  duplicateNode,
+  initializeFunctionData,
+  restoreSavedFlow,
+  updateNodeData,
+  updatePosition,
+} from './utils';
 import AddButton, { AddMenu } from './AddButton';
-import SourceNode from './CustomElements/SourceNode';
-import FunctionNode from './CustomElements/FunctionNode/FunctionNode';
+import CustomControls from './CustomControls';
 import ConstantNode from './CustomElements/ConstantNode';
+import FunctionNode from './CustomElements/FunctionNode/FunctionNode';
 import OutputNode from './CustomElements/OutputNode';
+import SourceNode from './CustomElements/SourceNode';
 
 export type ReactFlowNodeEditorProps = {
   sources: (ChartTimeSeries | ChartWorkflow)[];
@@ -52,13 +59,18 @@ const ReactFlowNodeEditor = ({
     React.MouseEvent | undefined
   >();
 
-  const onElementsRemove = (elementsToRemove: Elements) =>
+  const setSelectedElements = useStoreActions(
+    (actions) => actions.setSelectedElements
+  );
+
+  const onElementsRemove = (elementsToRemove: Elements) => {
     setElements((els) =>
       removeElements(
         elementsToRemove.filter((el) => el.type !== NodeTypes.OUTPUT),
         els
       )
     );
+  };
 
   const onConnect = (connection: Edge | Connection) => {
     const targetNode = elements.find((el) => el.id === connection.target);
@@ -81,17 +93,7 @@ const ReactFlowNodeEditor = ({
     setElements((els) => updateEdge(oldEdge, newConnection, els));
 
   const onNodeDragStop = (_: React.MouseEvent, node: Node) => {
-    setElements((els) =>
-      els.map((el) => {
-        if (el.id === node.id) {
-          return {
-            ...el,
-            position: node.position,
-          };
-        }
-        return el;
-      })
-    );
+    setElements((els) => updatePosition(els, node));
   };
 
   const getPosition = (event: React.MouseEvent): { x: number; y: number } => {
@@ -110,24 +112,37 @@ const ReactFlowNodeEditor = ({
   /*
     DATA CHANGE HANDLERS
   */
+  const handleDuplicateNode = (nodeId: string, nodeType: NodeTypes) => {
+    const newNodeId = nanoid();
+    setElements((els) => duplicateNode(els, nodeId, newNodeId));
+    setSelectedElements([{ id: newNodeId, type: nodeType }]);
+  };
+
+  const handleRemoveNode = (nodeId: string) => {
+    setElements((els) => {
+      const elementsToRemove = els.filter(
+        (el) =>
+          el.id === nodeId ||
+          (el as Edge).target === nodeId ||
+          (el as Edge).source === nodeId
+      );
+
+      return removeElements(
+        elementsToRemove.filter((el) => el.type !== NodeTypes.OUTPUT),
+        els
+      );
+    });
+  };
+
   const handleSourceItemChange = (
     nodeId: string,
     newSourceId: string,
     newType: string
   ) => {
     setElements((els) =>
-      els.map((el) => {
-        if (el.id === nodeId) {
-          return {
-            ...el,
-            data: {
-              ...el.data,
-              selectedSourceId: newSourceId,
-              type: newType,
-            },
-          };
-        }
-        return el;
+      updateNodeData(els, nodeId, {
+        selectedSourceId: newSourceId,
+        type: newType,
       })
     );
   };
@@ -136,61 +151,30 @@ const ReactFlowNodeEditor = ({
     nodeId: string,
     newCalculationName: string
   ) => {
-    setElements((els) => {
-      const res = els.map((el) => {
-        if (el.id === nodeId) {
-          return {
-            ...el,
-            data: {
-              ...el.data,
-              name: newCalculationName,
-            },
-          };
-        }
-        return el;
-      });
-      return res;
-    });
+    setElements((els) =>
+      updateNodeData(els, nodeId, {
+        name: newCalculationName,
+      })
+    );
   };
 
   const handleFunctionDataChange = (
     nodeId: string,
     formData: { [key: string]: any }
   ) => {
-    setElements((els) =>
-      els.map((el) => {
-        if (el.id === nodeId) {
-          return {
-            ...el,
-            data: {
-              ...el.data,
-              functionData: {
-                ...el.data.functionData,
-                ...formData,
-              },
-            },
-          };
-        }
-        return el;
-      })
-    );
+    setElements((els) => {
+      const node = els.find((el) => el.id === nodeId) as Node;
+      return updateNodeData(els, nodeId, {
+        functionData: {
+          ...node?.data?.functionData,
+          ...formData,
+        },
+      });
+    });
   };
 
   const handleConstantChange = (nodeId: string, value: number) => {
-    setElements((els) =>
-      els.map((el) => {
-        if (el.id === nodeId) {
-          return {
-            ...el,
-            data: {
-              ...el.data,
-              value,
-            },
-          };
-        }
-        return el;
-      })
-    );
+    setElements((els) => updateNodeData(els, nodeId, { value }));
   };
 
   /*
@@ -213,6 +197,8 @@ const ReactFlowNodeEditor = ({
           value: s.id,
         })),
         onSourceItemChange: handleSourceItemChange,
+        onDuplicateNode: handleDuplicateNode,
+        onRemoveNode: handleRemoveNode,
       },
       position: getPosition(contextMenuPosition || event),
     };
@@ -231,6 +217,8 @@ const ReactFlowNodeEditor = ({
         toolFunction,
         functionData: initializeFunctionData(toolFunction),
         onFunctionDataChange: handleFunctionDataChange,
+        onDuplicateNode: handleDuplicateNode,
+        onRemoveNode: handleRemoveNode,
       },
       position: getPosition(contextMenuPosition || event),
     };
@@ -245,6 +233,8 @@ const ReactFlowNodeEditor = ({
       data: {
         value: 1,
         onConstantChange: handleConstantChange,
+        onDuplicateNode: handleDuplicateNode,
+        onRemoveNode: handleRemoveNode,
       },
       position: getPosition(contextMenuPosition || event),
     };
@@ -290,6 +280,8 @@ const ReactFlowNodeEditor = ({
       onConstantChange: handleConstantChange,
       onFunctionDataChange: handleFunctionDataChange,
       onOutputNameChange: handleOutputNameChange,
+      onDuplicateNode: handleDuplicateNode,
+      onRemoveNode: handleRemoveNode,
       saveOutputName,
     };
 
@@ -363,6 +355,10 @@ const NodeEditorContainer = styled.div`
   flex-grow: 9;
   overflow-y: hidden;
   background: var(--cogs-greyscale-grey2);
+
+  path.react-flow__edge-path {
+    stroke-width: 2;
+  }
 `;
 
 const ContextMenu = styled.div`

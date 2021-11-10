@@ -1,7 +1,57 @@
 import { Operation } from '@cognite/calculation-backend';
 import { NodeTypes } from 'models/node-editor/types';
-import { Elements, FlowExportObject } from 'react-flow-renderer';
+import { Elements, FlowExportObject, Node } from 'react-flow-renderer';
 import { transformParamInput } from 'utils/transforms';
+
+export const updatePosition = (els: Elements, node: Node): Elements => {
+  return els.map((el) => {
+    if (el.id === node.id) {
+      return {
+        ...el,
+        position: node.position,
+      };
+    }
+    return el;
+  });
+};
+
+export const updateNodeData = (
+  els: Elements,
+  nodeId: string,
+  diff: any
+): Elements => {
+  return els.map((el) => {
+    if (el.id === nodeId) {
+      return {
+        ...el,
+        data: {
+          ...el.data,
+          ...diff,
+        },
+      };
+    }
+    return el;
+  });
+};
+
+export const duplicateNode = (
+  els: Elements,
+  nodeId: string,
+  newNodeId: string
+) => {
+  const elementToDuplicate = els.find((el) => el.id === nodeId) as Node;
+  if (!elementToDuplicate) {
+    return els;
+  }
+  return els.concat({
+    ...elementToDuplicate,
+    id: newNodeId,
+    position: {
+      x: elementToDuplicate.position.x + 50,
+      y: elementToDuplicate.position.y + 50,
+    },
+  });
+};
 
 export const initializeFunctionData = (
   toolFunction: Operation
@@ -30,6 +80,8 @@ export const restoreSavedFlow = (
     onFunctionDataChange,
     onOutputNameChange,
     saveOutputName,
+    onDuplicateNode,
+    onRemoveNode,
   } = callbacks;
 
   return flow.elements.map((el) => {
@@ -40,12 +92,14 @@ export const restoreSavedFlow = (
           data: {
             ...el.data,
             onSourceItemChange,
+            onDuplicateNode,
+            onRemoveNode,
           },
         };
       case NodeTypes.CONSTANT:
         return {
           ...el,
-          data: { ...el.data, onConstantChange },
+          data: { ...el.data, onConstantChange, onDuplicateNode, onRemoveNode },
         };
       case NodeTypes.FUNCTION:
         return {
@@ -53,6 +107,8 @@ export const restoreSavedFlow = (
           data: {
             ...el.data,
             onFunctionDataChange,
+            onDuplicateNode,
+            onRemoveNode,
           },
         };
       case NodeTypes.OUTPUT:

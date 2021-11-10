@@ -1,13 +1,15 @@
 import { Operation } from '@cognite/calculation-backend';
+import { NodeTypes } from 'models/node-editor/types';
 import { memo, useEffect, useState } from 'react';
 import { Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { NodeWrapper } from '../elements';
 import NodeHandle from '../NodeHandle';
+import NodeWithActionBar from '../NodeWithActionBar';
 import FunctionParameterForm from './FunctionParameterForm/FunctionParameterForm';
 
 // Arbitrary min height a pin should span
-const PIN_HEIGHT = 22;
+const PIN_HEIGHT = 24;
 
 type FunctionNodeProps = {
   id: string;
@@ -18,12 +20,20 @@ type FunctionNodeProps = {
       nodeId: string,
       formData: { [key: string]: any }
     ) => void;
+    onDuplicateNode: (nodeId: string, nodeType: NodeTypes) => void;
+    onRemoveNode: (nodeId: string) => void;
   };
   selected: boolean;
 };
 
 const FunctionNode = memo(({ id, data, selected }: FunctionNodeProps) => {
-  const { toolFunction, functionData, onFunctionDataChange } = data;
+  const {
+    toolFunction,
+    functionData,
+    onFunctionDataChange,
+    onDuplicateNode,
+    onRemoveNode,
+  } = data;
   const nodeHeight = toolFunction.inputs.length * PIN_HEIGHT;
 
   const [areParamsVisible, setAreParamsVisible] = useState<boolean>(false);
@@ -33,58 +43,69 @@ const FunctionNode = memo(({ id, data, selected }: FunctionNodeProps) => {
   }, [selected]);
 
   return (
-    <NodeWrapper
-      className={selected ? 'selected' : ''}
-      style={{
-        minHeight: nodeHeight,
-        position: 'relative',
-        padding: 10,
+    <NodeWithActionBar
+      nodeType={NodeTypes.FUNCTION}
+      toolFunction={toolFunction}
+      isActionBarVisible={selected}
+      onEditClick={() => {
+        setAreParamsVisible((isVisible) => !isVisible);
       }}
-      onDoubleClick={() =>
-        !!toolFunction.parameters.length &&
-        setAreParamsVisible(!areParamsVisible)
-      }
+      onDuplicateClick={() => onDuplicateNode(id, NodeTypes.CONSTANT)}
+      onRemoveClick={() => onRemoveNode(id)}
     >
-      <HandleContainer height={nodeHeight} position="left">
-        {toolFunction.inputs.map((input) => (
-          <FunctionNodeHandle
-            key={input.param}
-            id={`${input.param}`}
-            type="target"
-            position={Position.Left}
+      <NodeWrapper
+        className={selected ? 'selected' : ''}
+        style={{
+          minHeight: nodeHeight,
+          position: 'relative',
+          padding: 10,
+        }}
+        onDoubleClick={() =>
+          !!toolFunction.parameters.length &&
+          setAreParamsVisible((isVisible) => !isVisible)
+        }
+      >
+        <HandleContainer height={nodeHeight} position="left">
+          {toolFunction.inputs.map((input) => (
+            <FunctionNodeHandle
+              key={input.param}
+              id={`${input.param}`}
+              type="target"
+              position={Position.Left}
+            />
+          ))}
+        </HandleContainer>
+        <FunctionName>{toolFunction.name}</FunctionName>
+        {!areParamsVisible &&
+          toolFunction.inputs.map((input, i) => (
+            <InputName key={input.name}>
+              {input.name || `Input ${i + 1}`}
+            </InputName>
+          ))}
+        {areParamsVisible && !!toolFunction.parameters.length && (
+          <FunctionParameterForm
+            nodeId={id}
+            parameters={toolFunction.parameters}
+            functionData={functionData}
+            onFunctionDataChange={(nodeId, formData) => {
+              onFunctionDataChange(nodeId, formData);
+              setAreParamsVisible(false);
+            }}
           />
-        ))}
-      </HandleContainer>
-      <FunctionName>{toolFunction.name}</FunctionName>
-      {!areParamsVisible &&
-        toolFunction.inputs.map((input, i) => (
-          <InputName key={input.name}>
-            {input.name || `Input ${i + 1}`}
-          </InputName>
-        ))}
-      {areParamsVisible && !!toolFunction.parameters.length && (
-        <FunctionParameterForm
-          nodeId={id}
-          parameters={toolFunction.parameters}
-          functionData={functionData}
-          onFunctionDataChange={(nodeId, formData) => {
-            onFunctionDataChange(nodeId, formData);
-            setAreParamsVisible(false);
-          }}
-        />
-      )}
-      {/*
-       * TODO: Support multiple outputs
-       * Assuming all functions have only one output for now
-       */}
-      <HandleContainer height={nodeHeight} position="right">
-        <FunctionNodeHandle
-          id="out-result"
-          type="source"
-          position={Position.Right}
-        />
-      </HandleContainer>
-    </NodeWrapper>
+        )}
+        {/*
+         * TODO: Support multiple outputs
+         * Assuming all functions have only one output for now
+         */}
+        <HandleContainer height={nodeHeight} position="right">
+          <FunctionNodeHandle
+            id="out-result"
+            type="source"
+            position={Position.Right}
+          />
+        </HandleContainer>
+      </NodeWrapper>
+    </NodeWithActionBar>
   );
 });
 
@@ -94,7 +115,7 @@ const HandleContainer = styled.div`
   justify-content: space-around;
   justify-items: center;
   position: absolute;
-  bottom: 2px;
+  bottom: -3px;
   height: ${(props: { height?: number; position: 'left' | 'right' }) =>
     props.height}px;
   left: ${(props: { height?: number; position: 'left' | 'right' }) =>
@@ -115,7 +136,7 @@ const FunctionName = styled.span`
 const InputName = styled.span`
   font-size: 10px;
   font-weight: 400;
-  line-height: 22px;
+  line-height: 24px;
   color: var(--cogs-text-color-secondary);
 `;
 

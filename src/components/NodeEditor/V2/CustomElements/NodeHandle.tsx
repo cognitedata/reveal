@@ -12,8 +12,8 @@ const NodeHandle = (props: HandleProps) => {
 export const HandleContainer = styled(Handle)`
   background: transparent;
   border: none;
-  min-width: 15px;
-  min-height: 15px;
+  min-width: 24px;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: ${(props: HandleProps) =>
@@ -23,8 +23,8 @@ export const HandleContainer = styled(Handle)`
 
 export const StyledHandle = styled.div`
   background: white;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border: 1px solid var(--cogs-text-hint);
   border-radius: 50%;
   pointer-events: none;
