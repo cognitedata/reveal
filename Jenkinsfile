@@ -443,7 +443,7 @@ pods {
               ).trim()
               print("Pushed Docker image $nameTag")
 
-              def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
+              def jsonString = sh(script: "bazel run ${it}", returnStdout: true).split('\n').pop()
               print(jsonString)
               def params = readJSON text: jsonString
               params.pipelines.each({ pipeline ->
