@@ -6,6 +6,7 @@ import { AnnotationCollection, Shape } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
+import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
 import { Header } from './Header';
 
 const validNewShapes = (newShapes: { [key: string]: Shape }) => {
@@ -70,22 +71,33 @@ export const Shapes = ({
         title="Shapes"
         count={predefinedShapes.length}
         onClickNew={addNewShape}
+        disabledMessage={
+          Object.keys(newShapes).length
+            ? 'Finish before creating a new one'
+            : undefined
+        }
       />
       <ShapePanel>
-        {predefinedShapes &&
+        {predefinedShapes.length ? (
           predefinedShapes.map((shape) => (
             <ShapeWrapper key={`${shape.shapeName}-${shape.color}`}>
               <ShapeName level={2}>{shape.shapeName}</ShapeName>
               <ColorBox color={shape.color} />
             </ShapeWrapper>
-          ))}
+          ))
+        ) : (
+          <div style={{ padding: '10px' }}>
+            {!Object.keys(newShapes).length &&
+              renderEmptyAnnotationMessage('shape')}
+          </div>
+        )}
         {Object.keys(newShapes).map((key) => (
-          <ShapeWrapper key={`${key}`}>
+          <ShapeWrapper key={`${key}`} style={{ background: '#4a67fb14' }}>
             <>
               <RawInput
                 onClick={handleClick}
                 value={newShapes[key].shapeName}
-                placeholder="Type label"
+                placeholder="Create annotation"
                 onChange={(event) => {
                   const { value } = event.target;
                   updateCaption(key, value);
@@ -100,7 +112,7 @@ export const Shapes = ({
               />
             </>
             <Button
-              icon="Delete"
+              icon="Trash"
               onClick={() => deleteShape(key)}
               size="small"
               type="ghost-danger"
@@ -137,14 +149,14 @@ export const Shapes = ({
 
 const ShapePanel = styled.div`
   overflow: auto;
-  max-height: 500px;
+  height: 500px;
 `;
 
 const ShapeWrapper = styled.div`
   display: grid;
   grid-auto-flow: column;
   align-items: center;
-  justify-content: start;
+  justify-content: space-between;
   gap: 5px;
   padding: 12px;
   border-bottom: 1px solid #d9d9d9;
@@ -159,7 +171,7 @@ const ShapeName = styled(Body)`
   padding-left: 12px;
 `;
 const RawInput = styled(Input)`
-  width: 220px;
+  width: 423px;
   background: #ffffff;
 `;
 
