@@ -84,6 +84,14 @@ export class RevealManager {
     this._pointCloudManager.resetRedraw();
   }
 
+  public get debugRenderTiming(): boolean {
+    return this._effectRenderManager.debugRenderTimings;
+  }
+
+  public set debugRenderTiming(enable: boolean) {
+    this._effectRenderManager.debugRenderTimings = enable;
+  }
+
   public get renderOptions(): RenderOptions {
     return this._effectRenderManager.renderOptions;
   }
