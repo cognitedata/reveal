@@ -1,4 +1,10 @@
-import { CogniteClient, FileFilterProps, IdEither } from '@cognite/sdk';
+import {
+  CogniteClient,
+  ExternalFileInfo,
+  FileContent,
+  FileFilterProps,
+  IdEither,
+} from '@cognite/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import sortBy from 'lodash/sortBy';
 
@@ -13,6 +19,15 @@ interface ClientFilteredByIds {
 interface ClientFilteredByCalculationId {
   client: CogniteClient;
   externalId: IdEither;
+}
+interface ClientFilteredUpdatedFile {
+  client: CogniteClient;
+  file: {
+    fileInfo: ExternalFileInfo & {
+      id?: number;
+    };
+    fileContent: FileContent;
+  };
 }
 
 export const fetchFiles = createAsyncThunk(
@@ -44,4 +59,11 @@ export const fetchCalculationFile = createAsyncThunk(
     (await client.files.getDownloadUrls([externalId])).map(async (url) => {
       return (await fetch(url.downloadUrl)).json();
     })[0]
+);
+
+export const updateCalculationFile = createAsyncThunk(
+  'files/updateCalculationFile',
+  async ({ client, file }: ClientFilteredUpdatedFile) => {
+    return client.files.upload(file.fileInfo, file.fileContent, true);
+  }
 );

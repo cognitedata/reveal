@@ -1,11 +1,8 @@
-import { useContext } from 'react';
 import { Table, TableRow } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch } from 'store/hooks';
 import { setSelectedCalculation } from 'store/file';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { fetchCalculationFile } from 'store/file/thunks';
-import { CdfClientContext } from 'providers/CdfClientProvider';
 
 import StatusCell from './StatusCell';
 
@@ -15,7 +12,7 @@ type ComponentProps = {
 
 export default function CalculationsTable({ data }: ComponentProps) {
   const dispatch = useAppDispatch();
-  const { cdfClient } = useContext(CdfClientContext);
+
   const { url } = useRouteMatch();
   const history = useHistory();
   const onRowClick = (row: TableRow<FileInfoSerializable>) => {
@@ -24,12 +21,7 @@ export default function CalculationsTable({ data }: ComponentProps) {
       throw new Error('No external Id');
     }
     dispatch(setSelectedCalculation(original));
-    dispatch(
-      fetchCalculationFile({
-        client: cdfClient,
-        externalId: { externalId: original.externalId },
-      })
-    );
+
     history.push(`${url}/configuration`);
   };
 

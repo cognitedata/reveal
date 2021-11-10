@@ -6,8 +6,8 @@ import { INTERVAL_UNIT } from 'components/forms/ConfigurationForm/constants';
 import { Input, Select } from '@cognite/cogs.js';
 import {
   DoubleInputRow,
-  InputWithLabelContainer,
   InputLabel,
+  InputWithLabelContainerWide,
 } from 'components/forms/elements';
 
 interface ComponentProps {
@@ -49,7 +49,7 @@ function ValidationWindowInput({
 
   return (
     <>
-      <InputWithLabelContainer>
+      <InputWithLabelContainerWide>
         <InputLabel>{title}</InputLabel>
         <DoubleInputRow>
           <Field
@@ -76,7 +76,7 @@ function ValidationWindowInput({
             fullWidth
           />
         </DoubleInputRow>
-      </InputWithLabelContainer>
+      </InputWithLabelContainerWide>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { Input, Switch, Title } from '@cognite/cogs.js';
+import { Button, Input, Switch, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const InputRow = styled.div`
@@ -6,6 +6,7 @@ export const InputRow = styled.div`
   width: fit-content;
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 `;
 export const InputInfoRow = styled.div`
   width: fit-content;
@@ -45,6 +46,10 @@ export const SectionTitle = styled(Title)`
   text-transform: uppercase;
   margin-bottom: 30px;
 `;
+export const ConfigurationEditButton = styled(Button)`
+  margin-top: 24px;
+  float: right;
+`;
 
 export const InputAreaSwitch = styled(Switch)`
   margin-left: 5px;
@@ -53,6 +58,11 @@ export const InputWithLabelContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 200px;
+`;
+export const InputWithLabelContainerWide = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 300px;
 `;
 
 export const InputLabel = styled.div`

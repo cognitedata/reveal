@@ -2,6 +2,7 @@ import { Input } from '@cognite/cogs.js';
 import moment from 'moment';
 import { Field, useFormikContext } from 'formik';
 import {
+  ConfigurationEditButton,
   InputArea,
   InputAreaSwitch,
   InputRow,
@@ -11,7 +12,14 @@ import ValidationWindowInput from 'components/forms/controls/ValidationWindowInp
 
 import { CalculationConfig } from './types';
 
-export function ScheduleSection() {
+interface ComponentProps {
+  isEditing: boolean;
+  onEditClick: () => void;
+}
+export function ScheduleSection({
+  isEditing,
+  onEditClick,
+}: React.PropsWithoutRef<ComponentProps>) {
   const { values, setFieldValue } = useFormikContext<CalculationConfig>();
 
   const datetime = moment(values.schedule?.start).format('YYYY-MM-DDTHH:mm:ss');
@@ -27,7 +35,7 @@ export function ScheduleSection() {
         <InputAreaSwitch
           value={values.schedule?.enabled}
           name="schedule.enabled"
-          disabled
+          disabled={!isEditing}
           onChange={(value: boolean) =>
             setFieldValue('schedule.enabled', value)
           }
@@ -43,14 +51,24 @@ export function ScheduleSection() {
             name="schedule.start"
             type="datetime-local"
             onChange={onDateChange}
-            disabled
+            disabled={!isEditing}
           />
           <ValidationWindowInput
             title="Repeat every"
             name="schedule.repeat"
-            disabled
+            disabled={!isEditing}
             type="number"
           />
+          <ConfigurationEditButton
+            aria-label={isEditing ? 'Save' : 'Edit'}
+            type="primary"
+            toggled={!isEditing}
+            icon={isEditing ? 'Save' : 'Edit'}
+            htmlType={isEditing ? 'button' : 'submit'}
+            onClick={onEditClick}
+          >
+            {isEditing ? 'Save changes' : 'Edit Configuration'}
+          </ConfigurationEditButton>
         </InputRow>
       </InputArea>
     </>

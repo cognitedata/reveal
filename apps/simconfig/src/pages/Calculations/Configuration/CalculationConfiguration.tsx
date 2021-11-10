@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { Container } from 'pages/elements';
@@ -8,6 +8,8 @@ import {
 } from 'store/file/selectors';
 import { ConfigurationForm } from 'components/forms/ConfigurationForm/ConfigurationForm';
 import { resetSelectedCalculationConfig } from 'store/file';
+import { fetchCalculationFile } from 'store/file/thunks';
+import { CdfClientContext } from 'providers/CdfClientProvider';
 
 import TitleArea from './TitleArea';
 
@@ -16,6 +18,7 @@ export default function CalculationConfiguration() {
   const dispatch = useAppDispatch();
   const selectedCalculation = useAppSelector(selectSelectedCalculation);
   const selectedConfig = useAppSelector(selectSelectedCalculationConfig);
+  const { cdfClient } = useContext(CdfClientContext);
 
   const resetConfigFile = () => {
     dispatch(resetSelectedCalculationConfig());
@@ -23,6 +26,15 @@ export default function CalculationConfiguration() {
   useEffect(() => {
     resetConfigFile();
   }, [history.location]);
+
+  useEffect(() => {
+    dispatch(
+      fetchCalculationFile({
+        client: cdfClient,
+        externalId: { externalId: selectedCalculation?.externalId || '' },
+      })
+    );
+  }, [selectedCalculation]);
 
   return (
     <Container>
