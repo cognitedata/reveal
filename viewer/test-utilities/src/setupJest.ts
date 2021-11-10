@@ -4,6 +4,7 @@
 
 // fetch() polyfill
 import 'whatwg-fetch';
+import { TextDecoder } from 'util';
 
 // Create document.currentScript required by potree-core
 Object.defineProperty(document, 'currentScript', {
@@ -29,6 +30,8 @@ const consoleWarn = console.warn.bind(console);
     consoleWarn(message, ...optionalParams);
   }
 };
+
+(window as any).TextDecoder = TextDecoder;
 
 Object.assign(process.env, {
   VERSION: require('../../package.json').version,
