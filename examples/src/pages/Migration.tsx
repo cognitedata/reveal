@@ -458,13 +458,13 @@ export function Migration() {
       const controlsGui = gui.addFolder('Camera controls');
       const zoomToCursorTypes = ['disable', 'basicLerp', 'scrollTarget'];
       controlsGui.add(guiState.controls, 'zoomToCursorType', zoomToCursorTypes).name('Zoom to cursor type').onFinishChange(value => {
-        viewer.setCameraControlsMode({ zoomToCursor: value });
+        viewer.setCameraControlsMode({ ...viewer.getCameraControlsMode(), zoomToCursor: value });
       });
       controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
-        viewer.setCameraControlsMode({ onClickTargetChange: value });
+        viewer.setCameraControlsMode({ ...viewer.getCameraControlsMode(), onClickTargetChange: value });
       });
       controlsGui.add(guiState.controls, 'canInterruptAnimations').name('Controls actions stop animations:').onFinishChange(value => {
-        viewer.setCameraControlsMode({ canInterruptAnimations: value });
+        viewer.setCameraControlsMode({ ...viewer.getCameraControlsMode(), canInterruptAnimations: value });
       });
 
       const overlayTool = new HtmlOverlayTool(viewer);

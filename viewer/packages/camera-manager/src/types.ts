@@ -9,7 +9,7 @@ export type CameraControlsOptions = {
    * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation,
    * keyboard navigation still allows to go through the model.
    *
-   * Default is true.
+   * Default is 'basicLerp'.
    *
    */
   zoomToCursor?:

@@ -115,14 +115,6 @@ export class Cognite3DViewer {
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
-  private readonly _cameraControlsOptions = {
-    canInterruptAnimations: false,
-    useScrollTargetControls: false,
-    useOnClickTargetChange: false,
-    scrollEventsAdded: false,
-    clickEventsAdded: false
-  };
-
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
 
@@ -456,6 +448,10 @@ export class Cognite3DViewer {
    */
   setCameraControlsMode(controlsOptions: CameraControlsOptions) {
     this._cameraManager.setCameraControlsMode(controlsOptions);
+  }
+
+  getCameraControlsMode(): CameraControlsOptions {
+    return this._cameraManager.getCameraControlsMode();
   }
 
   /**

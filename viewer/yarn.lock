@@ -976,6 +976,8 @@ __metadata:
 "@reveal/camera-manager@workspace:*, @reveal/camera-manager@workspace:packages/camera-manager":
   version: 0.0.0-use.local
   resolution: "@reveal/camera-manager@workspace:packages/camera-manager"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 

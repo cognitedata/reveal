@@ -6,6 +6,13 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
 import { CallbackData, CameraControlsOptions } from './types';
+import { assertNever } from '@reveal/utilities';
+
+const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
+  zoomToCursor: 'basicLerp',
+  onClickTargetChange: false,
+  canInterruptAnimations: false,
+};
 
 export class CameraManager extends THREE.EventDispatcher {
   public controls: ComboControls;
@@ -15,23 +22,19 @@ export class CameraManager extends THREE.EventDispatcher {
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CallbackData>;
 
-  public readonly _cameraControlsOptions: CameraControlsOptions = {
-    zoomToCursor: 'basicLerp',
-    onClickTargetChange: false,
-    canInterruptAnimations: false,
-  };
+  private _cameraControlsOptions: Required<CameraControlsOptions> = {...DefaultCameraControlsOptions};
 
-  private isDisposed = false;
   public automaticNearFarPlane: boolean = true;
-
-  private readonly _automaticControlsSensitivity = false;
-  private _scrollEventsAdded = false;
-  private _clickEventsAdded = false;
+  public automaticControlsSensitivity = false;
+  
+  private isDisposed = false;
   private readonly _animationDuration: number = 600;
   private readonly _minDefaultAnimationDuration: number = 600;
   private readonly _maxDefaultAnimationDuration: number = 2500;
   private readonly _minDistanceDefault: number = 0.1;
   private readonly _raycaster: THREE.Raycaster = new THREE.Raycaster();
+  private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
+  private _onWheel: ((event: MouseEvent) => void) | undefined = undefined;
 
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
@@ -117,17 +120,18 @@ export class CameraManager extends THREE.EventDispatcher {
     this.controls.setScrollTarget(newScrollTarget);
   }
 
-  /**
-   * Adds or removes event listeners for additional features of camera controls.
-   * @param removeListeners
-   */
-  private setupControls(controlsOptions: CameraControlsOptions, removeListeners?: boolean) {
-    const localControlsOptions = {
-      zoomToCursor: controlsOptions.zoomToCursor ?? this._cameraControlsOptions.zoomToCursor,
-      onClickTargetChange: controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.onClickTargetChange,
-      canInterruptAnimations: controlsOptions.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations
+  private teardownControls() {
+    if (this._onClick !== undefined) {
+      this._domElement.removeEventListener('click', this._onClick);
+      this._onClick = undefined;
     }
+    if (this._onWheel !== undefined) {
+      this._domElement.removeEventListener('wheel', this._onWheel);
+      this._onWheel = undefined;
+    }
+  }
 
+  private setupControls() {
     let startedScroll = false,
       newTargetUpdate = false;
     let timeAfterClick = 0;
@@ -135,16 +139,10 @@ export class CameraManager extends THREE.EventDispatcher {
       clickClock = new THREE.Clock();
 
     const onClick = (e: any) => {
-      if ((!localControlsOptions.onClickTargetChange || removeListeners) && this._clickEventsAdded) {
-        this._domElement.removeEventListener('click', onClick);
-        this._clickEventsAdded = false;
-        return;
-      }
-
       newTargetUpdate = true;
       timeAfterClick = 0;
       clickClock.getDelta();
-
+      console.log('changed');
       this.controls.enableKeyboardNavigation = false;
       this.changeTarget(e);
     };
@@ -166,23 +164,102 @@ export class CameraManager extends THREE.EventDispatcher {
       }
     };
 
-    if (localControlsOptions.onClickTargetChange && !this._clickEventsAdded) {
+    switch (this._cameraControlsOptions.zoomToCursor) {
+      case 'disable':
+        this.controls.zoomToCursor = false;
+        break;
+
+        case 'basicLerp':
+        this.controls.useScrollTarget = false;
+        this.controls.zoomToCursor = true;
+
+        break;
+      case 'scrollTarget':
+        this.controls.useScrollTarget = true;
+        this.controls.zoomToCursor = true;
+        break;
+      
+      default:
+        assertNever(this._cameraControlsOptions.zoomToCursor);
+    }
+
+    if (this._cameraControlsOptions.onClickTargetChange) {
       this._domElement.addEventListener('click', onClick);
-      this._clickEventsAdded = true;
+      this._onClick = onClick;
     }
-
-    if ((localControlsOptions.zoomToCursor === 'scrollTarget') && !this._scrollEventsAdded) {
+    if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') {
       this._domElement.addEventListener('wheel', onWheel);
-      this._scrollEventsAdded = true;
+      this._onWheel = onWheel;
+    }
+  }
+
+  /**
+   * Adds or removes event listeners for additional features of camera controls.
+   * @param removeListeners
+   * /
+  private setupControls(controlsOptions: CameraControlsOptions, removeListeners?: boolean) {
+    const localControlsOptions = {
+      zoomToCursor: controlsOptions.zoomToCursor ?? this._cameraControlsOptions.zoomToCursor,
+      onClickTargetChange: controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.onClickTargetChange,
+      canInterruptAnimations: controlsOptions.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations
     }
 
-    if (((localControlsOptions.zoomToCursor !== 'scrollTarget') || removeListeners) && this._scrollEventsAdded) {
-      this._domElement.removeEventListener('wheel', onWheel);
-      this._scrollEventsAdded = false;
+    let startedScroll = false,
+      newTargetUpdate = false;
+    let timeAfterClick = 0;
+    const wheelClock = new THREE.Clock(),
+      clickClock = new THREE.Clock();
+
+    const onClick = (e: any) => {
+      newTargetUpdate = true;
+      timeAfterClick = 0;
+      clickClock.getDelta();
+      console.log('changed');
+      this.controls.enableKeyboardNavigation = false;
+      this.changeTarget(e);
+    };
+    
+
+    const onWheel = async (e: any) => {
+      const timeDelta = wheelClock.getDelta();
+      timeAfterClick += clickClock.getDelta();
+
+      if (timeAfterClick > 3) newTargetUpdate = false;
+
+      const wantNewScrollTarget = startedScroll && !newTargetUpdate && e.deltaY < 0;
+
+      if (wantNewScrollTarget) {
+        startedScroll = false;
+
+        this.changeScrollTarget(e);
+      } else {
+        if (timeDelta > 0.1) startedScroll = true;
+      }
+    };
+
+    if (localControlsOptions.onClickTargetChange && !this._onClick) {
+      this._domElement.addEventListener('click', onClick);
+      this._onClick = onClick;
+    }
+
+    if ((!localControlsOptions.onClickTargetChange || removeListeners) && this._onClick) {
+      this._domElement.removeEventListener('click', this._onClick);
+      this._onClick = undefined;
+      return;
+    }
+
+    if ((localControlsOptions.zoomToCursor === 'scrollTarget') && !this._onWheel) {
+      this._domElement.addEventListener('wheel', onWheel);
+      this._onWheel = onWheel;
+    }
+
+    if (((localControlsOptions.zoomToCursor !== 'scrollTarget') || removeListeners) && this._onWheel) {
+      this._domElement.removeEventListener('wheel', this._onWheel);
+      this._onWheel = undefined;
     }
 
   }
-
+*/
   constructor(
     camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
@@ -225,31 +302,15 @@ export class CameraManager extends THREE.EventDispatcher {
     this.moveCameraTo(position, target, duration);
   }
 
+  getCameraControlsMode(): CameraControlsOptions {
+    return this._cameraControlsOptions;
+  }
+
   setCameraControlsMode(controlsOptions: CameraControlsOptions) {
-    this._cameraControlsOptions.onClickTargetChange =
-      controlsOptions.onClickTargetChange ?? this._cameraControlsOptions.onClickTargetChange;
-    this._cameraControlsOptions.canInterruptAnimations =
-      controlsOptions.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations;
-    this._cameraControlsOptions.zoomToCursor = controlsOptions.zoomToCursor ?? this._cameraControlsOptions.zoomToCursor;
-
-    this.setupControls(controlsOptions);
-
-    switch (controlsOptions?.zoomToCursor) {
-      case 'disable':
-        this.controls.zoomToCursor = false;
-
-        break;
-      case 'basicLerp':
-        this.controls.useScrollTarget = false;
-
-        break;
-      case 'scrollTarget':
-        this.controls.useScrollTarget = true;
-
-        break;
-      default:
-        break;
-    }
+    this._cameraControlsOptions = { ...DefaultCameraControlsOptions, ...controlsOptions };
+    
+    this.teardownControls();
+    this.setupControls();
   }
 
   setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
@@ -441,9 +502,9 @@ export class CameraManager extends THREE.EventDispatcher {
     if (this.isDisposed) {
       return;
     }
-    // if (!this._automaticControlsSensitivity && !this.automaticNearFarPlane) {
-    //     return;
-    // }
+    if (!this.automaticControlsSensitivity && !this.automaticNearFarPlane) {
+        return;
+    }
 
     const { cameraPosition, cameraDirection, corners, nearPlane, nearPlaneCoplanarPoint } =
       this._updateNearAndFarPlaneBuffers;
@@ -482,7 +543,7 @@ export class CameraManager extends THREE.EventDispatcher {
       camera.far = far;
       camera.updateProjectionMatrix();
     }
-    if (this._automaticControlsSensitivity) {
+    if (this.automaticControlsSensitivity) {
       // The minDistance of the camera controller determines at which distance
       // we will stop when zooming with mouse wheel.
       // This is also used to determine the speed of the camera when flying with ASDW.
@@ -495,7 +556,7 @@ export class CameraManager extends THREE.EventDispatcher {
   dispose(): void {
     this.isDisposed = true;
     this.controls.dispose();
-    this.setupControls(this._cameraControlsOptions, true);
+    this.teardownControls();
   }
 }
 
