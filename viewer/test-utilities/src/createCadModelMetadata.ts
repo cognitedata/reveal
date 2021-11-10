@@ -9,9 +9,9 @@ import { SectorMetadata, CadModelMetadata, SectorSceneFactory } from '../../pack
 
 let modelIdRunningNumber = 0;
 
-export function createCadModelMetadata(root: SectorMetadata): CadModelMetadata {
+export function createCadModelMetadata(sceneVersion: number, root: SectorMetadata): CadModelMetadata {
   const factory = new SectorSceneFactory();
-  const scene = factory.createSectorScene(8, 1, 'Meters', root);
+  const scene = factory.createSectorScene(sceneVersion, 1, 'Meters', root);
   const modelId = `testModel_${modelIdRunningNumber++}`;
   const model: CadModelMetadata = {
     modelIdentifier: modelId,

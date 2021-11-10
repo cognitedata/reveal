@@ -4,12 +4,7 @@
 
 import { CadManager } from './CadManager';
 import { CadModelFactory } from './CadModelFactory';
-
-import {
-  CadModelUpdateHandler,
-  createDefaultSectorCuller,
-  OccludingGeometryProvider
-} from '@reveal/cad-geometry-loaders';
+import { CadModelUpdateHandler, createV8SectorCuller, OccludingGeometryProvider } from '@reveal/cad-geometry-loaders';
 
 import { CadMaterialManager } from '@reveal/rendering';
 
@@ -30,7 +25,7 @@ export function createCadManager(
   const sectorCuller =
     internal && internal.sectorCuller
       ? internal.sectorCuller
-      : createDefaultSectorCuller(renderer, occludingGeometryProvider);
+      : createV8SectorCuller(renderer, occludingGeometryProvider);
   const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller);
   return new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 }
