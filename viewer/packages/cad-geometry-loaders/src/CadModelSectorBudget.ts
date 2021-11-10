@@ -36,12 +36,12 @@ export const defaultCadModelSectorBudget: CadModelSectorBudget = isMobileOrTable
       highDetailProximityThreshold: 5,
       geometryDownloadSizeBytes: 20 * 1024 * 1024,
       maximumNumberOfDrawCalls: 700,
-      maximumRenderCost: Infinity
+      maximumRenderCost: 10_000_000
     }
   : // Desktop
     {
       highDetailProximityThreshold: 10,
       geometryDownloadSizeBytes: 35 * 1024 * 1024,
       maximumNumberOfDrawCalls: 2000,
-      maximumRenderCost: Infinity
+      maximumRenderCost: 20_000_000
     };
