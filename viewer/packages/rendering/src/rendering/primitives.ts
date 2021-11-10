@@ -124,27 +124,6 @@ function hasAny(collection: Uint8Array) {
   return collection.length > 0;
 }
 
-function splitMatrix(attributes: Map<string, ParsePrimitiveAttribute>) {
-  const matrixColumns = 4;
-
-  const matrixAttribute = attributes.get('instanceMatrix');
-
-  if (!matrixAttribute) {
-    return;
-  }
-
-  const size = matrixAttribute.size / matrixColumns;
-  for (let i = 0; i < matrixColumns; i++) {
-    const columnAttribute: ParsePrimitiveAttribute = {
-      size,
-      offset: matrixAttribute.offset + size * i
-    };
-    attributes.set('instanceMatrix_column_' + i, columnAttribute);
-  }
-
-  attributes.delete('instanceMatrix');
-}
-
 function setAttributes(
   geometry: THREE.InstancedBufferGeometry,
   collection: Uint8Array,
