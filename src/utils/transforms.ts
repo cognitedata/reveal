@@ -7,7 +7,22 @@ import {
 } from '@cognite/calculation-backend';
 import { isNil, omit, omitBy } from 'lodash';
 import { nanoid } from 'nanoid';
-import { Chart, StorableNode } from 'models/chart/types';
+import {
+  Node,
+  FlowElement,
+  FlowExportObject,
+  getIncomers,
+  Edge,
+  Elements,
+} from 'react-flow-renderer';
+import {
+  Chart,
+  ChartWorkflow,
+  ChartWorkflowV1,
+  ChartWorkflowV2,
+  StorableNode,
+} from 'models/chart/types';
+import { NodeTypes } from 'models/node-editor/types';
 
 export type DSPFunctionConfig = {
   input: {
@@ -149,7 +164,21 @@ export function getOperationFromNode(node: StorableNode) {
   }
 }
 
-export function getStepsFromWorkflow(
+export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
+  if (!workflow.version) {
+    return getStepsFromWorkflowConnect(
+      chart,
+      workflow.nodes,
+      workflow.connections
+    );
+  }
+  if (workflow.version === 'v2') {
+    return getStepsFromWorkflowReactFlow(chart, workflow.flow);
+  }
+  return [];
+}
+
+export function getStepsFromWorkflowConnect(
   chart: Chart,
   nodes: StorableNode[] | undefined,
   connections: Record<string, any> | undefined
@@ -203,7 +232,7 @@ export function getStepsFromWorkflow(
           if (isCalculationReference) {
             const referencedWorkflow = chart.workflowCollection?.find(
               ({ id }) => id === nodeCandidate.functionData.sourceId
-            );
+            ) as ChartWorkflowV1;
 
             const wfOutputNode = referencedWorkflow?.nodes?.find(
               (nd) => nd.functionEffectReference === 'OUTPUT'
@@ -332,3 +361,174 @@ export function getStepsFromWorkflow(
 
   return steps;
 }
+
+const fillReferencedCalculations = (
+  chart: Chart,
+  elements: Elements
+): Elements => {
+  const transformedElements = [...elements];
+  const hasCalculationReference = transformedElements.some(
+    (node) => node.type === NodeTypes.SOURCE && node.data.type === 'workflow'
+  );
+  let shouldTerminate = false;
+
+  if (!hasCalculationReference) {
+    return transformedElements;
+  }
+
+  // Handle calculation references by adding their nodes & connections to current workflow
+  const calculationReferences = transformedElements.filter(
+    (node) => node.type === NodeTypes.SOURCE && node.data.type === 'workflow'
+  );
+
+  calculationReferences.forEach((ref) => {
+    const referencedWorkflow = chart.workflowCollection?.find(
+      ({ id }) => id === ref.data.selectedSourceId
+    ) as ChartWorkflowV2;
+
+    const referencedWorkflowOutput = referencedWorkflow.flow?.elements.find(
+      (el) => el.type === NodeTypes.OUTPUT
+    );
+    const outputEdge = referencedWorkflow.flow?.elements.find(
+      (el) =>
+        referencedWorkflowOutput &&
+        (el as Edge).target === referencedWorkflowOutput.id
+    );
+    const sourceEdge = transformedElements.find(
+      (el) => (el as Edge).source === ref.id
+    ) as Edge;
+
+    if (!referencedWorkflowOutput || !outputEdge || !sourceEdge) {
+      shouldTerminate = true;
+      return;
+    }
+
+    // Remove source reference node
+    transformedElements.splice(
+      transformedElements.findIndex((el) => el.id === ref.id),
+      1
+    );
+    // Add nodes and edges from referenced calculation
+    transformedElements.push(
+      ...(referencedWorkflow.flow?.elements || []).filter(
+        (el) => el.id !== referencedWorkflowOutput.id && el.id !== outputEdge.id
+      ),
+      {
+        ...outputEdge,
+        target: sourceEdge.target,
+        targetHandle: sourceEdge.targetHandle,
+      }
+    );
+  });
+
+  if (shouldTerminate) {
+    return transformedElements;
+  }
+
+  return fillReferencedCalculations(chart, transformedElements);
+};
+
+const getOperationFromReactFlowNode = (node: FlowElement) => {
+  switch (node.type) {
+    case NodeTypes.FUNCTION:
+      return node.data.toolFunction.op;
+    case NodeTypes.OUTPUT:
+      return 'PASSTHROUGH';
+    default:
+      return 'PASSTHROUGH';
+  }
+};
+
+const getInputFromReactFlowNode = (
+  chart: Chart,
+  node: FlowElement,
+  nodes: FlowElement[]
+) => {
+  switch (node.type) {
+    case NodeTypes.FUNCTION:
+      return {
+        type: 'result',
+        value: nodes.findIndex((n) => n.id === node.id),
+      };
+    case NodeTypes.OUTPUT:
+      return {
+        type: 'result',
+        value: nodes.findIndex((n) => n.id === node.id),
+      };
+    case NodeTypes.CONSTANT:
+      return { type: 'const', value: node.data.value };
+    case NodeTypes.SOURCE:
+      return {
+        type: 'ts',
+        value:
+          node.data.type === 'timeseries'
+            ? chart.timeSeriesCollection?.find(
+                (ts) => ts.id === node.data.selectedSourceId
+              )?.tsExternalId
+            : '',
+      };
+    default:
+      return { type: 'unknown', value: 'could not resolve' };
+  }
+};
+
+export const getStepsFromWorkflowReactFlow = (
+  chart: Chart,
+  flow: FlowExportObject | undefined
+) => {
+  const elements = fillReferencedCalculations(chart, flow?.elements || []);
+  const outputNode = elements.find(
+    (node) => node.type === NodeTypes.OUTPUT
+  ) as Node;
+
+  if (!outputNode || elements.length === 0) {
+    return [];
+  }
+
+  const validNodes: Node[] = [outputNode];
+  // traversing from output node and all incomers and add it to validNodes until none left.
+  function findInputNodes(node: Node) {
+    const incomers = getIncomers(node as Node, elements);
+    incomers.forEach((n) => {
+      validNodes.unshift(n);
+      findInputNodes(n);
+    });
+    return null;
+  }
+  findInputNodes(outputNode);
+
+  const parsedValidNodes = validNodes
+    .filter(
+      (node) =>
+        node.type &&
+        [NodeTypes.FUNCTION, NodeTypes.OUTPUT].includes(node.type as NodeTypes)
+    )
+    .map((node) => {
+      return {
+        ...node,
+        incomers: getIncomers(node as Node, elements),
+        parameters: node.data.functionData || {},
+      };
+    });
+
+  const steps = parsedValidNodes
+    .map((node, i) => {
+      const inputs = node.incomers
+        .map((incomer) => {
+          return getInputFromReactFlowNode(chart, incomer, parsedValidNodes);
+        })
+        .filter(Boolean);
+
+      return {
+        step: i,
+        op: getOperationFromReactFlowNode(node),
+        inputs,
+        ...(Object.keys(node.parameters).length
+          ? { params: node.parameters }
+          : {}),
+      };
+    })
+    .filter(Boolean);
+
+  return steps;
+};

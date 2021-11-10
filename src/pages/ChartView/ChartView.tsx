@@ -13,7 +13,7 @@ import {
 } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { useParams } from 'react-router-dom';
-import NodeEditor from 'components/NodeEditor';
+import NodeEditor from 'components/NodeEditor/NodeEditor';
 import SplitPaneLayout from 'components/Layout/SplitPaneLayout';
 import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
@@ -23,6 +23,7 @@ import { nanoid } from 'nanoid';
 import {
   ChartTimeSeries,
   ChartWorkflow,
+  ChartWorkflowV2,
   SourceCollectionData,
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
@@ -170,7 +171,15 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const openNodeEditor = () => {
     setWorkspaceMode('editor');
     if (!editorTimer) {
-      setEditorTimer(metrics.start('NodeEditor.ViewTime'));
+      setEditorTimer(
+        metrics.start('NodeEditor.ViewTime', {
+          editor:
+            chart?.workflowCollection?.find((wf) => wf.id === selectedSourceId)
+              ?.version === 'v2'
+              ? 'React Flow'
+              : 'Connect',
+        })
+      );
     }
   };
 
@@ -188,19 +197,20 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
 
     const newWorkflowId = nanoid();
+
     const newWorkflow = {
+      version: 'v2',
       id: newWorkflowId,
       name: 'New Calculation',
       color: getEntryColor(chart.id, newWorkflowId),
+      flow: { elements: [], position: [0, 0], zoom: 1 },
       lineWeight: 1,
       lineStyle: 'solid',
       enabled: true,
-      nodes: [],
-      connections: [],
       createdAt: Date.now(),
       unit: '',
       preferredUnit: '',
-    } as ChartWorkflow;
+    } as ChartWorkflowV2;
 
     setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));
     setSelectedSourceId(newWorkflowId);
@@ -268,7 +278,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }));
   };
 
-  const selectedSourceItem = [
+  const sources = [
     ...(chart.timeSeriesCollection || []).map(
       (ts) =>
         ({
@@ -283,7 +293,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
           ...wf,
         } as ChartWorkflow)
     ),
-  ].find(({ id }) => id === selectedSourceId);
+  ];
+  const selectedSourceItem = sources.find((s) => s.id === selectedSourceId);
 
   const sourceTableHeaderRow = (
     <tr>

@@ -1,4 +1,5 @@
 import { Node, Connection } from '@cognite/connect';
+import { FlowExportObject } from 'react-flow-renderer';
 
 export type Chart = {
   version: number;
@@ -51,7 +52,7 @@ export type ChartTimeSeries = {
   createdAt: number;
 };
 
-export type ChartWorkflow = {
+type ChartWorkflowBase = {
   type?: string;
   id: string;
   name: string;
@@ -63,13 +64,30 @@ export type ChartWorkflow = {
   color: string;
   enabled: boolean;
   range?: number[];
-  nodes?: StorableNode[]; // We don't need these functions until we 'compile'/run the workflow.
-  connections?: Record<string, Connection>;
   calls?: CalculationCallRef[];
   statisticsCalls?: StatisticsCallRef[];
   createdAt?: number;
   attachTo?: string;
 };
+
+/**
+ * Format used for @cognite/connect
+ */
+export type ChartWorkflowV1 = ChartWorkflowBase & {
+  version: '' | undefined;
+  nodes?: StorableNode[];
+  connections?: Record<string, Connection>;
+};
+
+/**
+ * Format used for react-flow
+ */
+export type ChartWorkflowV2 = ChartWorkflowBase & {
+  version: 'v2';
+  flow?: FlowExportObject;
+};
+
+export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;
 
 export type StorableNode = Omit<Node, 'functionEffect'> & {
   functionEffectReference?: string;

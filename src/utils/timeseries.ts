@@ -1,6 +1,10 @@
 import { node as TimeSeriesReferenceNode } from 'components/Nodes/TimeSeriesReference';
 import { node as OutputSeriesNode } from 'components/Nodes/OutputSeries';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  ChartTimeSeries,
+  ChartWorkflow,
+  ChartWorkflowV1,
+} from 'models/chart/types';
 import { nanoid } from 'nanoid';
 import { getEntryColor } from './colors';
 
@@ -42,7 +46,12 @@ export const convertTsToWorkFlow = (
   const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
   const connectionId = nanoid();
 
-  const workflow: ChartWorkflow = {
+  /**
+   * TODO: This needs to be updated when React Flow has been implemented.
+   * Version needs to be set to 'v2' with the corresponding format of ChartWorkflowV2
+   */
+  const workflow: ChartWorkflowV1 = {
+    version: '',
     id: workflowId,
     name: `${ts.name} (workflow)`,
     nodes: [

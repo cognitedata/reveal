@@ -3,8 +3,12 @@ import {
   OperationInputsTypesEnum,
   OperationParametersTypeEnum,
 } from '@cognite/calculation-backend';
-import { Chart, ChartWorkflow } from 'models/chart/types';
-import { getStepsFromWorkflow, getConfigFromDspFunction } from './transforms';
+import { Chart, ChartWorkflowV1, ChartWorkflowV2 } from 'models/chart/types';
+import {
+  getConfigFromDspFunction,
+  getStepsFromWorkflowConnect,
+  getStepsFromWorkflowReactFlow,
+} from './transforms';
 
 describe('getConfigFromDspFunction', () => {
   it('generates correct config from dsp function description (case 1)', () => {
@@ -187,7 +191,7 @@ describe('getConfigFromDspFunction', () => {
   });
 });
 
-describe('getStepsFromWorkflow', () => {
+describe('getStepsFromWorkflowConnect', () => {
   it('generates correct steps (empty workflow)', () => {
     const chart: Chart = {
       id: 'chart-1',
@@ -200,7 +204,8 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: ChartWorkflow = {
+    const workflow: ChartWorkflowV1 = {
+      version: '',
       id: 'abc123',
       name: 'Empty workflow',
       nodes: [],
@@ -209,7 +214,7 @@ describe('getStepsFromWorkflow', () => {
       enabled: true,
     };
 
-    const steps = getStepsFromWorkflow(
+    const steps = getStepsFromWorkflowConnect(
       chart,
       workflow.nodes,
       workflow.connections
@@ -230,7 +235,8 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: ChartWorkflow = {
+    const workflow: ChartWorkflowV1 = {
+      version: '',
       name: 'New Calculation',
       color: '#FFF',
       enabled: true,
@@ -440,7 +446,7 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(
+    const steps = getStepsFromWorkflowConnect(
       chart,
       workflow.nodes,
       workflow.connections
@@ -461,7 +467,8 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: ChartWorkflow = {
+    const workflow: ChartWorkflowV1 = {
+      version: '',
       name: 'New Calculation',
       color: '#FFF',
       enabled: true,
@@ -786,7 +793,7 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(
+    const steps = getStepsFromWorkflowConnect(
       chart,
       workflow.nodes,
       workflow.connections
@@ -866,7 +873,8 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: ChartWorkflow = {
+    const workflow: ChartWorkflowV1 = {
+      version: '',
       color: '#FFF',
       enabled: true,
       nodes: [
@@ -935,7 +943,7 @@ describe('getStepsFromWorkflow', () => {
       name: 'New Calculation',
     };
 
-    const steps = getStepsFromWorkflow(
+    const steps = getStepsFromWorkflowConnect(
       chart,
       workflow.nodes,
       workflow.connections
@@ -967,7 +975,8 @@ describe('getStepsFromWorkflow', () => {
       dateTo: new Date().toJSON(),
     };
 
-    const workflow: ChartWorkflow = {
+    const workflow: ChartWorkflowV1 = {
+      version: '',
       name: 'New Calculation',
       color: '#FFF',
       enabled: true,
@@ -1357,7 +1366,7 @@ describe('getStepsFromWorkflow', () => {
       },
     };
 
-    const steps = getStepsFromWorkflow(
+    const steps = getStepsFromWorkflowConnect(
       chart,
       workflow.nodes,
       workflow.connections
@@ -1485,6 +1494,7 @@ describe('getStepsFromWorkflow', () => {
       createdAt: 1619778109118,
       workflowCollection: [
         {
+          version: '',
           connections: {
             AT6AsmkNvU9Ar78xSRsri: {
               inputPin: {
@@ -1563,6 +1573,7 @@ describe('getStepsFromWorkflow', () => {
           lineStyle: 'solid',
         },
         {
+          version: '',
           lineStyle: 'solid',
           id: 'j9xhfVh8kvNU3pgq8PYPM',
           connections: {
@@ -1643,10 +1654,10 @@ describe('getStepsFromWorkflow', () => {
       dirty: false,
     };
 
-    const steps = getStepsFromWorkflow(
+    const steps = getStepsFromWorkflowConnect(
       chart,
-      chart.workflowCollection?.[1].nodes,
-      chart.workflowCollection?.[1].connections
+      (chart.workflowCollection?.[1] as ChartWorkflowV1).nodes,
+      (chart.workflowCollection?.[1] as ChartWorkflowV1).connections
     );
 
     expect(steps).toEqual([
@@ -1708,6 +1719,7 @@ describe('getStepsFromWorkflow', () => {
       ],
       workflowCollection: [
         {
+          version: '',
           id: '0YWZdy2MeFv0ccqtO6c7q',
           name: 'Passthrough level 1',
           color: '#1192e8',
@@ -1790,6 +1802,7 @@ describe('getStepsFromWorkflow', () => {
           range: [22.989529137718534, 34.19063239524058],
         },
         {
+          version: '',
           id: 'HSkEktNr8Mvj_qfNFJFko',
           name: 'Passthrough level 2',
           color: '#005d5d',
@@ -1871,6 +1884,7 @@ describe('getStepsFromWorkflow', () => {
           range: [21.214651360265208, 31.295644292035046],
         },
         {
+          version: '',
           id: 'VC7Q4qlNe92CTivk2Ww1N',
           name: 'Passthrough level 3',
           color: '#9f1853',
@@ -1987,10 +2001,10 @@ describe('getStepsFromWorkflow', () => {
       ],
     };
 
-    const firstLevelSteps = getStepsFromWorkflow(
+    const firstLevelSteps = getStepsFromWorkflowConnect(
       chart,
-      chart.workflowCollection?.[1].nodes,
-      chart.workflowCollection?.[1].connections
+      (chart.workflowCollection?.[1] as ChartWorkflowV1).nodes,
+      (chart.workflowCollection?.[1] as ChartWorkflowV1).connections
     );
 
     expect(firstLevelSteps).toEqual([
@@ -2016,10 +2030,10 @@ describe('getStepsFromWorkflow', () => {
       },
     ]);
 
-    const secondLevelSteps = getStepsFromWorkflow(
+    const secondLevelSteps = getStepsFromWorkflowConnect(
       chart,
-      chart.workflowCollection?.[2].nodes,
-      chart.workflowCollection?.[2].connections
+      (chart.workflowCollection?.[2] as ChartWorkflowV1).nodes,
+      (chart.workflowCollection?.[2] as ChartWorkflowV1).connections
     );
 
     expect(secondLevelSteps).toEqual([
@@ -2050,6 +2064,1077 @@ describe('getStepsFromWorkflow', () => {
           {
             type: 'result',
             value: 1,
+          },
+        ],
+      },
+    ]);
+  });
+});
+
+describe('getStepsFromWorkflowReactFlow', () => {
+  it('generates correct steps (empty workflow)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: { elements: [], position: [0, 0], zoom: 1 },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+
+    expect(steps).toEqual([]);
+  });
+
+  it('generates correct steps (only output node)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: {
+        elements: [
+          {
+            data: {
+              color: '#1192e8',
+              name: 'New Calculation',
+            },
+            type: 'CalculationOutput',
+            position: {
+              x: 394,
+              y: 127,
+            },
+            id: 'DJ57sdlcczCoc9--uOF2_',
+          },
+        ],
+        position: [0, 0],
+        zoom: 1,
+      },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+    expect(steps).toEqual([{ step: 0, op: 'PASSTHROUGH', inputs: [] }]);
+  });
+
+  it('generates correct steps (multistep computation)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+      timeSeriesCollection: [
+        {
+          id: 'j350Z4nwnOfk212Nu3bks',
+          type: 'timeseries',
+          name: 'Pressure 1019',
+          tsExternalId: 'VAL_21_PT_1019_04:Z.X.Value',
+          tsId: 4470513466595936,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+        {
+          id: 'RvXihRaJJujRDDFKC4D1-',
+          tsExternalId: 'VAL_21_PT_1017_04:Z.X.Value',
+          name: 'Pressure 1017',
+          type: 'timeseries',
+          tsId: 1561976339625775,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+      ],
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: {
+        elements: [
+          {
+            id: 'w5ivU9w58jxfUz7htTPUe',
+            type: 'CalculationOutput',
+            data: {
+              color: '#6929c4',
+              name: 'New Calculation',
+            },
+            position: {
+              x: 1031,
+              y: 108,
+            },
+          },
+          {
+            id: 'ZNyEwM0gqzMpXaSd_GPKW',
+            type: 'CalculationInput',
+            position: {
+              x: 96,
+              y: 84,
+            },
+            data: {
+              type: 'timeseries',
+              sourceOptions: [],
+              selectedSourceId: 'j350Z4nwnOfk212Nu3bks',
+            },
+          },
+          {
+            data: {
+              sourceOptions: [],
+              type: 'timeseries',
+              selectedSourceId: 'RvXihRaJJujRDDFKC4D1-',
+            },
+            id: 'x1Psfywpu3O2BXwHkqH-K',
+            type: 'CalculationInput',
+            position: {
+              x: 99,
+              y: 228,
+            },
+          },
+          {
+            type: 'ToolboxFunction',
+            data: {
+              functionData: {
+                granularity: '1h',
+                aggregate: 'mean',
+              },
+              toolFunction: {
+                name: 'Resample to granularity',
+                op: 'resample_to_granularity',
+              },
+            },
+            position: {
+              x: 517,
+              y: 74,
+            },
+            id: 'a_HOVHQ71v5pXYvV7usq_',
+          },
+          {
+            position: {
+              x: 517.3818181818183,
+              y: 220.9057851239669,
+            },
+            id: '9-RiktpSALNrlmwqoUPkt',
+            type: 'ToolboxFunction',
+            data: {
+              toolFunction: {
+                name: 'Resample to granularity',
+                op: 'resample_to_granularity',
+              },
+              functionData: {
+                granularity: '1h',
+                aggregate: 'mean',
+              },
+            },
+          },
+          {
+            type: 'ToolboxFunction',
+            data: {
+              toolFunction: {
+                name: 'Subtraction',
+                op: 'sub',
+              },
+              functionData: {},
+            },
+            id: 'I3ezdixmgmf1ux-DRVZvs',
+            position: {
+              x: 806.6793388429753,
+              y: 112.2545454545454,
+            },
+          },
+          {
+            id: 'fBeMz6erfK4zd0FnJDO9M',
+            type: 'ToolboxFunction',
+            data: {
+              toolFunction: {
+                name: 'Saviztky-Golay',
+                op: 'sg',
+              },
+              functionData: {
+                polyorder: 1,
+              },
+            },
+            position: {
+              x: 903,
+              y: 229,
+            },
+          },
+          {
+            type: 'default',
+            id: 'reactflow__edge-ZNyEwM0gqzMpXaSd_GPKWresult-a_HOVHQ71v5pXYvV7usq_series',
+            target: 'a_HOVHQ71v5pXYvV7usq_',
+            source: 'ZNyEwM0gqzMpXaSd_GPKW',
+            sourceHandle: 'result',
+            targetHandle: 'series',
+          },
+          {
+            type: 'default',
+            id: 'reactflow__edge-x1Psfywpu3O2BXwHkqH-Kresult-9-RiktpSALNrlmwqoUPktseries',
+            target: '9-RiktpSALNrlmwqoUPkt',
+            sourceHandle: 'result',
+            source: 'x1Psfywpu3O2BXwHkqH-K',
+            targetHandle: 'series',
+          },
+          {
+            type: 'default',
+            target: 'I3ezdixmgmf1ux-DRVZvs',
+            sourceHandle: 'out-result',
+            id: 'reactflow__edge-9-RiktpSALNrlmwqoUPktout-result-I3ezdixmgmf1ux-DRVZvsb',
+            source: '9-RiktpSALNrlmwqoUPkt',
+            targetHandle: 'b',
+          },
+          {
+            id: 'reactflow__edge-a_HOVHQ71v5pXYvV7usq_out-result-I3ezdixmgmf1ux-DRVZvsa',
+            sourceHandle: 'out-result',
+            source: 'a_HOVHQ71v5pXYvV7usq_',
+            type: 'default',
+            target: 'I3ezdixmgmf1ux-DRVZvs',
+            targetHandle: 'a',
+          },
+          {
+            source: 'I3ezdixmgmf1ux-DRVZvs',
+            sourceHandle: 'out-result',
+            target: 'fBeMz6erfK4zd0FnJDO9M',
+            targetHandle: 'data',
+            id: 'reactflow__edge-I3ezdixmgmf1ux-DRVZvsout-result-fBeMz6erfK4zd0FnJDO9Mdata',
+            type: 'default',
+          },
+          {
+            source: 'fBeMz6erfK4zd0FnJDO9M',
+            sourceHandle: 'out-result',
+            target: 'w5ivU9w58jxfUz7htTPUe',
+            targetHandle: 'datapoints',
+            id: 'reactflow__edge-fBeMz6erfK4zd0FnJDO9Mout-result-w5ivU9w58jxfUz7htTPUedatapoints',
+            type: 'default',
+          },
+        ],
+        position: [0, 0],
+        zoom: 1,
+      },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1017_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 1,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1019_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 2,
+        op: 'sub',
+        inputs: [
+          {
+            type: 'result',
+            value: 1,
+          },
+          {
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+      {
+        step: 3,
+        op: 'sg',
+        inputs: [
+          {
+            type: 'result',
+            value: 2,
+          },
+        ],
+        params: {
+          polyorder: 1,
+        },
+      },
+      {
+        step: 4,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 3,
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('generates correct steps (noop computation)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+      timeSeriesCollection: [
+        {
+          id: 'j350Z4nwnOfk212Nu3bks',
+          type: 'timeseries',
+          name: 'Pressure 1019',
+          tsExternalId: 'VAL_21_PT_1019_04:Z.X.Value',
+          tsId: 4470513466595936,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+        {
+          id: 'RvXihRaJJujRDDFKC4D1-',
+          tsExternalId: 'VAL_21_PT_1017_04:Z.X.Value',
+          name: 'Pressure 1017',
+          type: 'timeseries',
+          tsId: 1561976339625775,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+      ],
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: {
+        elements: [
+          {
+            id: 'KCTPlxTWTiTDsYFn3GOhK',
+            type: 'CalculationOutput',
+            data: {
+              color: '#6929c4',
+              name: 'New Calculation',
+            },
+            position: {
+              x: 588,
+              y: 268,
+            },
+          },
+          {
+            id: 'w1qgICaIFEShPAyEow5lz',
+            type: 'CalculationInput',
+            data: {
+              type: 'timeseries',
+              selectedSourceId: 'RvXihRaJJujRDDFKC4D1-',
+              sourceOptions: [],
+            },
+            position: {
+              x: 82,
+              y: 149,
+            },
+          },
+          {
+            source: 'w1qgICaIFEShPAyEow5lz',
+            sourceHandle: 'result',
+            target: 'KCTPlxTWTiTDsYFn3GOhK',
+            targetHandle: 'datapoints',
+            id: 'reactflow__edge-w1qgICaIFEShPAyEow5lzresult-KCTPlxTWTiTDsYFn3GOhKdatapoints',
+            type: 'default',
+          },
+        ],
+        position: [0, 0],
+        zoom: 1,
+      },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1017_04:Z.X.Value',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('generates correct steps (dangling nodes)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+      timeSeriesCollection: [
+        {
+          id: 'j350Z4nwnOfk212Nu3bks',
+          type: 'timeseries',
+          name: 'Pressure 1019',
+          tsExternalId: 'VAL_21_PT_1019_04:Z.X.Value',
+          tsId: 4470513466595936,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+        {
+          id: 'RvXihRaJJujRDDFKC4D1-',
+          tsExternalId: 'VAL_21_PT_1017_04:Z.X.Value',
+          name: 'Pressure 1017',
+          type: 'timeseries',
+          tsId: 1561976339625775,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+      ],
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: {
+        elements: [
+          {
+            id: 'w5ivU9w58jxfUz7htTPUe',
+            data: {
+              name: 'New Calculation',
+              color: '#6929c4',
+            },
+            type: 'CalculationOutput',
+            position: {
+              x: 1031,
+              y: 108,
+            },
+          },
+          {
+            data: {
+              type: 'timeseries',
+              sourceOptions: [],
+              selectedSourceId: 'j350Z4nwnOfk212Nu3bks',
+            },
+            id: 'ZNyEwM0gqzMpXaSd_GPKW',
+            position: {
+              x: 96,
+              y: 84,
+            },
+            type: 'CalculationInput',
+          },
+          {
+            data: {
+              selectedSourceId: 'RvXihRaJJujRDDFKC4D1-',
+              sourceOptions: [],
+              type: 'timeseries',
+            },
+            id: 'x1Psfywpu3O2BXwHkqH-K',
+            position: {
+              x: 99,
+              y: 228,
+            },
+            type: 'CalculationInput',
+          },
+          {
+            position: {
+              x: 517,
+              y: 74,
+            },
+            data: {
+              toolFunction: {
+                name: 'Resample to granularity',
+                op: 'resample_to_granularity',
+              },
+              functionData: {
+                granularity: '1h',
+                aggregate: 'mean',
+              },
+            },
+            type: 'ToolboxFunction',
+            id: 'a_HOVHQ71v5pXYvV7usq_',
+          },
+          {
+            data: {
+              functionData: {
+                aggregate: 'mean',
+                granularity: '1h',
+              },
+              toolFunction: {
+                op: 'resample_to_granularity',
+                name: 'Resample to granularity',
+              },
+            },
+            id: '9-RiktpSALNrlmwqoUPkt',
+            position: {
+              x: 517.3818181818183,
+              y: 220.9057851239669,
+            },
+            type: 'ToolboxFunction',
+          },
+          {
+            id: 'I3ezdixmgmf1ux-DRVZvs',
+            data: {
+              toolFunction: {
+                op: 'sub',
+                name: 'Subtraction',
+              },
+              functionData: {},
+            },
+            position: {
+              x: 806.6793388429753,
+              y: 112.2545454545454,
+            },
+            type: 'ToolboxFunction',
+          },
+          {
+            id: 'I-2qBwiQJP4ZRtuKauySd',
+            type: 'ToolboxFunction',
+            data: {
+              toolFunction: {
+                name: 'Saviztky-Golay',
+                op: 'sg',
+              },
+              functionData: {
+                polyorder: 1,
+              },
+            },
+            position: {
+              x: 911.5,
+              y: 1,
+            },
+          },
+          {
+            id: 'CxTLwnn3oXdVWOMWfxrSt',
+            type: 'CalculationInput',
+            data: {
+              type: 'timeseries',
+              selectedSourceId: 'j350Z4nwnOfk212Nu3bks',
+              sourceOptions: [],
+            },
+            position: {
+              x: 467.5,
+              y: 347,
+            },
+          },
+          {
+            id: 'riQbFoJDGKLu_Rth60WVF',
+            type: 'ToolboxFunction',
+            data: {
+              toolFunction: {
+                name: 'Add',
+                op: 'add',
+              },
+              functionData: {},
+            },
+            position: {
+              x: 837.5,
+              y: 323,
+            },
+          },
+          {
+            id: 'reactflow__edge-ZNyEwM0gqzMpXaSd_GPKWresult-a_HOVHQ71v5pXYvV7usq_series',
+            target: 'a_HOVHQ71v5pXYvV7usq_',
+            targetHandle: 'series',
+            type: 'default',
+            source: 'ZNyEwM0gqzMpXaSd_GPKW',
+            sourceHandle: 'result',
+          },
+          {
+            type: 'default',
+            target: '9-RiktpSALNrlmwqoUPkt',
+            id: 'reactflow__edge-x1Psfywpu3O2BXwHkqH-Kresult-9-RiktpSALNrlmwqoUPktseries',
+            sourceHandle: 'result',
+            targetHandle: 'series',
+            source: 'x1Psfywpu3O2BXwHkqH-K',
+          },
+          {
+            target: 'I3ezdixmgmf1ux-DRVZvs',
+            type: 'default',
+            targetHandle: 'b',
+            id: 'reactflow__edge-9-RiktpSALNrlmwqoUPktout-result-I3ezdixmgmf1ux-DRVZvsb',
+            source: '9-RiktpSALNrlmwqoUPkt',
+            sourceHandle: 'out-result',
+          },
+          {
+            type: 'default',
+            source: 'a_HOVHQ71v5pXYvV7usq_',
+            targetHandle: 'a',
+            sourceHandle: 'out-result',
+            target: 'I3ezdixmgmf1ux-DRVZvs',
+            id: 'reactflow__edge-a_HOVHQ71v5pXYvV7usq_out-result-I3ezdixmgmf1ux-DRVZvsa',
+          },
+          {
+            targetHandle: 'data',
+            type: 'default',
+            source: 'I3ezdixmgmf1ux-DRVZvs',
+            target: 'I-2qBwiQJP4ZRtuKauySd',
+            sourceHandle: 'out-result',
+            id: 'reactflow__edge-I3ezdixmgmf1ux-DRVZvsout-result-I-2qBwiQJP4ZRtuKauySddata',
+          },
+          {
+            source: 'I-2qBwiQJP4ZRtuKauySd',
+            sourceHandle: 'out-result',
+            target: 'w5ivU9w58jxfUz7htTPUe',
+            targetHandle: 'datapoints',
+            id: 'reactflow__edge-I-2qBwiQJP4ZRtuKauySdout-result-w5ivU9w58jxfUz7htTPUedatapoints',
+            type: 'default',
+          },
+          {
+            source: 'CxTLwnn3oXdVWOMWfxrSt',
+            sourceHandle: 'result',
+            target: 'riQbFoJDGKLu_Rth60WVF',
+            targetHandle: 'a',
+            id: 'reactflow__edge-CxTLwnn3oXdVWOMWfxrStresult-riQbFoJDGKLu_Rth60WVFa',
+            type: 'default',
+          },
+        ],
+        position: [0, 0],
+        zoom: 1,
+      },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1017_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 1,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1019_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 2,
+        op: 'sub',
+        inputs: [
+          {
+            type: 'result',
+            value: 1,
+          },
+          {
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+      {
+        step: 3,
+        op: 'sg',
+        inputs: [
+          {
+            type: 'result',
+            value: 2,
+          },
+        ],
+        params: {
+          polyorder: 1,
+        },
+      },
+      {
+        step: 4,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 3,
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('generates correct steps (another calculation as input)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+      timeSeriesCollection: [
+        {
+          id: 'j350Z4nwnOfk212Nu3bks',
+          type: 'timeseries',
+          name: 'Pressure 1019',
+          tsExternalId: 'VAL_21_PT_1019_04:Z.X.Value',
+          tsId: 4470513466595936,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+        {
+          id: 'RvXihRaJJujRDDFKC4D1-',
+          tsExternalId: 'VAL_21_PT_1017_04:Z.X.Value',
+          name: 'Pressure 1017',
+          type: 'timeseries',
+          tsId: 1561976339625775,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+      ],
+      workflowCollection: [
+        {
+          version: 'v2',
+          type: 'workflow',
+          name: 'ΔP',
+          createdAt: 1635243137501,
+          color: '#005d5d',
+          flow: {
+            elements: [
+              {
+                id: 'w5ivU9w58jxfUz7htTPUe',
+                data: {
+                  name: 'New Calculation',
+                  color: '#6929c4',
+                },
+                type: 'CalculationOutput',
+                position: {
+                  x: 1031,
+                  y: 108,
+                },
+              },
+              {
+                data: {
+                  type: 'timeseries',
+                  sourceOptions: [],
+                  selectedSourceId: 'j350Z4nwnOfk212Nu3bks',
+                },
+                id: 'ZNyEwM0gqzMpXaSd_GPKW',
+                position: {
+                  x: 96,
+                  y: 84,
+                },
+                type: 'CalculationInput',
+              },
+              {
+                data: {
+                  selectedSourceId: 'RvXihRaJJujRDDFKC4D1-',
+                  sourceOptions: [],
+                  type: 'timeseries',
+                },
+                id: 'x1Psfywpu3O2BXwHkqH-K',
+                position: {
+                  x: 99,
+                  y: 228,
+                },
+                type: 'CalculationInput',
+              },
+              {
+                position: {
+                  x: 517,
+                  y: 74,
+                },
+                data: {
+                  toolFunction: {
+                    name: 'Resample to granularity',
+                    op: 'resample_to_granularity',
+                  },
+                  functionData: {
+                    granularity: '1h',
+                    aggregate: 'mean',
+                  },
+                },
+                type: 'ToolboxFunction',
+                id: 'a_HOVHQ71v5pXYvV7usq_',
+              },
+              {
+                data: {
+                  functionData: {
+                    aggregate: 'mean',
+                    granularity: '1h',
+                  },
+                  toolFunction: {
+                    op: 'resample_to_granularity',
+                    name: 'Resample to granularity',
+                  },
+                },
+                id: '9-RiktpSALNrlmwqoUPkt',
+                position: {
+                  x: 517.3818181818183,
+                  y: 220.9057851239669,
+                },
+                type: 'ToolboxFunction',
+              },
+              {
+                id: 'I3ezdixmgmf1ux-DRVZvs',
+                data: {
+                  toolFunction: {
+                    op: 'sub',
+                    name: 'Subtraction',
+                  },
+                  functionData: {},
+                },
+                position: {
+                  x: 806.6793388429753,
+                  y: 112.2545454545454,
+                },
+                type: 'ToolboxFunction',
+              },
+              {
+                id: 'reactflow__edge-ZNyEwM0gqzMpXaSd_GPKWresult-a_HOVHQ71v5pXYvV7usq_series',
+                target: 'a_HOVHQ71v5pXYvV7usq_',
+                targetHandle: 'series',
+                type: 'default',
+                source: 'ZNyEwM0gqzMpXaSd_GPKW',
+                sourceHandle: 'result',
+              },
+              {
+                type: 'default',
+                target: '9-RiktpSALNrlmwqoUPkt',
+                id: 'reactflow__edge-x1Psfywpu3O2BXwHkqH-Kresult-9-RiktpSALNrlmwqoUPktseries',
+                sourceHandle: 'result',
+                targetHandle: 'series',
+                source: 'x1Psfywpu3O2BXwHkqH-K',
+              },
+              {
+                target: 'I3ezdixmgmf1ux-DRVZvs',
+                type: 'default',
+                targetHandle: 'b',
+                id: 'reactflow__edge-9-RiktpSALNrlmwqoUPktout-result-I3ezdixmgmf1ux-DRVZvsb',
+                source: '9-RiktpSALNrlmwqoUPkt',
+                sourceHandle: 'out-result',
+              },
+              {
+                type: 'default',
+                source: 'a_HOVHQ71v5pXYvV7usq_',
+                targetHandle: 'a',
+                sourceHandle: 'out-result',
+                target: 'I3ezdixmgmf1ux-DRVZvs',
+                id: 'reactflow__edge-a_HOVHQ71v5pXYvV7usq_out-result-I3ezdixmgmf1ux-DRVZvsa',
+              },
+              {
+                source: 'I3ezdixmgmf1ux-DRVZvs',
+                sourceHandle: 'out-result',
+                target: 'w5ivU9w58jxfUz7htTPUe',
+                targetHandle: 'datapoints',
+                id: 'reactflow__edge-I3ezdixmgmf1ux-DRVZvsout-result-w5ivU9w58jxfUz7htTPUedatapoints',
+                type: 'default',
+              },
+            ],
+            position: [-17.75, 111.5],
+            zoom: 0.5,
+          },
+          enabled: false,
+          id: 'gAYbR4eVz12AwuTvLeIxR',
+        },
+      ],
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: {
+        elements: [
+          {
+            position: {
+              x: 1682,
+              y: 262,
+            },
+            type: 'CalculationOutput',
+            data: {
+              name: 'New Calculation',
+              color: '#9f1853',
+            },
+            id: 'JrFD5yxRA9dJcnpAs48pp',
+          },
+          {
+            position: {
+              x: 964.75,
+              y: 252.37890625,
+            },
+            data: {
+              selectedSourceId: 'gAYbR4eVz12AwuTvLeIxR',
+              type: 'workflow',
+              sourceOptions: [],
+            },
+            id: 'rg-495YhO5rAAqjyD1X-Z',
+            type: 'CalculationInput',
+          },
+          {
+            type: 'ToolboxFunction',
+            id: 'Tzcchda282s2PTA-84dMa',
+            data: {
+              toolFunction: {
+                name: 'Saviztky-Golay',
+                category: 'Smooth',
+                op: 'sg',
+              },
+              functionData: {
+                window_length: 3,
+                polyorder: 50,
+              },
+            },
+            position: {
+              x: 1374.042894261608,
+              y: 247.5634556695561,
+            },
+          },
+          {
+            target: 'Tzcchda282s2PTA-84dMa',
+            targetHandle: 'data',
+            sourceHandle: 'result',
+            source: 'rg-495YhO5rAAqjyD1X-Z',
+            type: 'default',
+            id: 'reactflow__edge-rg-495YhO5rAAqjyD1X-Zresult-Tzcchda282s2PTA-84dMadata',
+          },
+          {
+            sourceHandle: 'out-result',
+            id: 'reactflow__edge-Tzcchda282s2PTA-84dMaout-result-JrFD5yxRA9dJcnpAs48ppdatapoints',
+            type: 'default',
+            source: 'Tzcchda282s2PTA-84dMa',
+            targetHandle: 'datapoints',
+            target: 'JrFD5yxRA9dJcnpAs48pp',
+          },
+        ],
+        position: [0, 0],
+        zoom: 1,
+      },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1017_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 1,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1019_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 2,
+        op: 'sub',
+        inputs: [
+          {
+            type: 'result',
+            value: 1,
+          },
+          {
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+      {
+        step: 3,
+        op: 'sg',
+        inputs: [
+          {
+            type: 'result',
+            value: 2,
+          },
+        ],
+        params: {
+          polyorder: 50,
+          window_length: 3,
+        },
+      },
+      {
+        step: 4,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 3,
           },
         ],
       },

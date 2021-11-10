@@ -1,34 +1,24 @@
 /* eslint camelcase: 0 */
 
+import { useState } from 'react';
+import styled from 'styled-components';
+import { Icon, Select, Checkbox, Tooltip } from '@cognite/cogs.js';
 import {
   Operation,
   OperationParameters,
   OperationParametersTypeEnum,
 } from '@cognite/calculation-backend';
 import {
-  Button,
-  Checkbox,
-  Dropdown,
-  Icon,
-  Input,
-  Menu,
-  Modal,
-  Select,
-  Tooltip,
-} from '@cognite/cogs.js';
-import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
-import * as React from 'react';
-import { useState } from 'react';
-import { StorableNode } from 'models/chart/types';
-import styled from 'styled-components';
-import { trackUsage } from 'services/metrics';
-import {
   getConfigFromDspFunction,
   transformParamInput,
 } from 'utils/transforms';
-import Layers from 'utils/z-index';
-import { DSPToolboxFunctionInput } from './DSPToolboxFunctionInput';
+import { StorableNode } from 'models/chart/types';
+import { trackUsage } from 'services/metrics';
+import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
+import ToolboxFunctionDropdown from 'components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
 import { ConfigPanelComponentProps } from '.';
+import { DSPToolboxFunctionInput } from './DSPToolboxFunctionInput';
+import { getCategoriesFromToolFunctions } from './utils';
 
 type FunctionData = {
   [key: string]: any;
@@ -54,20 +44,11 @@ export const ConfigPanel = ({
   onUpdateNode,
 }: ConfigPanelComponentProps) => {
   const { functionData } = node;
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [phrase, setPhrase] = useState<string>('');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>();
-  const [selectedFunction, setSelectedFunction] = useState<Operation>();
-
+  const [selectedOperation, setSelectedOperation] = useState<Operation>();
   const [isLoading, error, operations] = useAvailableOps();
 
   const getCategories = (availableOperations: Operation[]) => {
     const categories: { [key: string]: Operation[] } = {};
-
     categories.Recent = [];
 
     nodes?.forEach((n) => {
@@ -90,201 +71,45 @@ export const ConfigPanel = ({
       }
     });
 
-    availableOperations.forEach((func) => {
-      if (Array.isArray(func.category)) {
-        func.category.forEach((category) => {
-          if (!categories[category]) {
-            categories[category] = [];
-          }
-          categories[category].push(func);
-        });
-      } else {
-        if (!categories[func.category]) {
-          categories[func.category] = [];
-        }
-        categories[func.category].push(func);
-      }
+    return {
+      ...categories,
+      ...getCategoriesFromToolFunctions(availableOperations),
+    };
+  };
+
+  const onFunctionSelected = (func: Operation) => {
+    const { ...storableNextFunc } = func;
+
+    const inputPins = (getConfigFromDspFunction(func).input || [])
+      .filter((input) => input.pin)
+      .map((input) => ({
+        id: input.field,
+        title: input.name,
+        types: input.types,
+      }));
+
+    const outputPins = (getConfigFromDspFunction(func).output || []).map(
+      (output) => ({
+        id: `out-${output.field}`,
+        title: output.name,
+        type: output.type,
+      })
+    );
+
+    onUpdateNode({
+      inputPins,
+      outputPins,
+      title: func.name,
+      functionData: {
+        ...functionData,
+        toolFunction: storableNextFunc,
+      },
     });
+    setSelectedOperation(func);
 
-    return categories;
-  };
-
-  const renderFunctionsList = (
-    category: string,
-    toolFunctions: Operation[]
-  ) => {
-    return (
-      <>
-        <Menu.Header>{category}</Menu.Header>
-        {toolFunctions.filter(Boolean).map((func) => (
-          <Menu.Item
-            key={func.name}
-            onClick={() => {
-              const { ...storableNextFunc } = func;
-
-              const inputPins = (getConfigFromDspFunction(func).input || [])
-                .filter((input) => input.pin)
-                .map((input) => ({
-                  id: input.field,
-                  title: input.name,
-                  types: input.types,
-                }));
-
-              const outputPins = (
-                getConfigFromDspFunction(func).output || []
-              ).map((output) => ({
-                id: `out-${output.field}`,
-                title: output.name,
-                type: output.type,
-              }));
-
-              onUpdateNode({
-                inputPins,
-                outputPins,
-                title: func.name,
-                functionData: {
-                  ...functionData,
-                  toolFunction: storableNextFunc,
-                },
-              });
-              setIsDropdownVisible(false);
-              trackUsage('ChartView.SelectFunction', {
-                function: func.name,
-              });
-            }}
-          >
-            <FunctionNameWrapper>
-              <span style={{ textAlign: 'left' }}>{func.name}</span>
-              {func.description && (
-                <InfoButton
-                  type="Info"
-                  id={`${func.op}-info-button`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedFunction(func);
-                    setIsModalVisible(true);
-                  }}
-                />
-              )}
-            </FunctionNameWrapper>
-          </Menu.Item>
-        ))}
-      </>
-    );
-  };
-
-  const renderSearchResultMenu = (categories: {
-    [key: string]: Operation[];
-  }) => (
-    <Menu>
-      {Object.keys(categories).map((category: string) => {
-        const filtered = categories[category].filter(({ name }) =>
-          name?.toLowerCase().includes(phrase?.toLowerCase())
-        );
-
-        return !!filtered.length && renderFunctionsList(category, filtered);
-      })}
-    </Menu>
-  );
-
-  const renderCategoryMenu = (categories: { [key: string]: Operation[] }) => {
-    return (
-      <Menu style={{ boxShadow: 'none' }}>
-        {/* Recent category */}
-        {!!categories.Recent.length && (
-          <>
-            <Menu.Submenu
-              content={
-                <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
-                  {renderFunctionsList('Recent', categories.Recent)}
-                </Menu>
-              }
-            >
-              <span>Recent</span>
-            </Menu.Submenu>
-            <Menu.Divider />
-          </>
-        )}
-        {/* Toolbox function categories */}
-        {Object.entries(categories)
-          .filter(([category]) => category !== 'Recent')
-          .map(
-            ([category, toolFunctions]) =>
-              !!toolFunctions.length && (
-                <Menu.Submenu
-                  key={category}
-                  visible={selectedCategory === category}
-                  trigger={undefined}
-                  content={
-                    <Menu style={{ maxHeight: 615, overflowY: 'auto' }}>
-                      {renderFunctionsList(category, toolFunctions)}
-                    </Menu>
-                  }
-                >
-                  <CategoryItem
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setSelectedCategory(category)}
-                    onKeyDown={() => setSelectedCategory(category)}
-                    style={{ width: '100%', textAlign: 'left' }}
-                  >
-                    {category}
-                  </CategoryItem>
-                </Menu.Submenu>
-              )
-          )}
-      </Menu>
-    );
-  };
-
-  const renderAvailableOperations = (availableOperations: Operation[]) => {
-    const categories = getCategories(availableOperations);
-
-    return (
-      <ToolboxFunctionsDropdown
-        visible={isDropdownVisible}
-        // Prevent dropdown from closing on modal click
-        onClickOutside={
-          !isModalVisible ? () => setIsDropdownVisible(false) : () => {}
-        }
-        zIndex={Layers.DROPDOWN}
-        content={
-          <>
-            <Input
-              id="phrase"
-              value={phrase}
-              icon="Search"
-              onChange={(newValue: React.ChangeEvent<HTMLInputElement>) =>
-                setPhrase(newValue.target.value || '')
-              }
-              placeholder="Search"
-              fullWidth
-            />
-            {phrase
-              ? renderSearchResultMenu(categories)
-              : renderCategoryMenu(categories)}
-          </>
-        }
-      >
-        <Button
-          icon="ChevronDownCompact"
-          iconPlacement="right"
-          onClick={() => {
-            setIsDropdownVisible(!isDropdownVisible);
-            setSelectedCategory(undefined);
-            setTimeout(() => {
-              const phraseEl = document.getElementById('phrase');
-              if (phraseEl) {
-                phraseEl.focus();
-              }
-            }, 300);
-          }}
-          style={{ width: '100%' }}
-        >
-          {functionData?.toolFunction?.name || 'Select tool function'}
-        </Button>
-      </ToolboxFunctionsDropdown>
-    );
+    trackUsage('ChartView.SelectFunction', {
+      function: func.name,
+    });
   };
 
   const renderParameter = (parameters: OperationParameters[]) => {
@@ -363,10 +188,6 @@ export const ConfigPanel = ({
     );
   };
 
-  const selectedOperation = operations?.find(
-    (dspFunction) => dspFunction.op === functionData?.toolFunction?.op
-  );
-
   const parameters = (selectedOperation?.parameters ||
     functionData?.toolFunction?.parameters) as
     | OperationParameters[]
@@ -377,20 +198,14 @@ export const ConfigPanel = ({
       <h4>Tool Function</h4>
       {error && <Icon style={{ color: 'white' }} type="XLarge" />}
       {isLoading && <Icon style={{ color: 'white' }} type="Loading" />}
-      {operations && renderAvailableOperations(operations)}
+      {operations && (
+        <ToolboxFunctionDropdown
+          categories={getCategories(operations)}
+          initialFunction={functionData?.toolFunction}
+          onFunctionSelected={onFunctionSelected}
+        />
+      )}
       {!!parameters?.length && renderParameter(parameters)}
-      <InfoModal
-        appElement={document.getElementsByTagName('body')}
-        title={selectedFunction?.name}
-        visible={isModalVisible}
-        footer={null}
-        onCancel={() => {
-          setIsModalVisible(false);
-        }}
-        width={750}
-      >
-        <p>{selectedFunction?.description}</p>
-      </InfoModal>
     </>
   );
 };
@@ -402,51 +217,6 @@ const ParameterTitle = styled.h4`
 
 const ParameterIcon = styled(Icon)`
   margin-left: 5px;
-`;
-
-const ToolboxFunctionsDropdown = styled(Dropdown)`
-  width: 275px;
-
-  .cogs-input-container {
-    padding: 8px;
-
-    input,
-    input:hover,
-    input:focus {
-      color: var(--cogs-greyscale-grey7);
-      background: var(--cogs-greyscale-grey2) !important;
-      box-shadow: none;
-    }
-  }
-`;
-
-const FunctionNameWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  span {
-    line-height: 28px;
-  }
-`;
-
-const InfoButton = styled(Icon)`
-  margin-left: 10px;
-`;
-
-const InfoModal = styled(Modal)`
-  .cogs-modal-header {
-    border-bottom: none;
-    font-size: var(--cogs-t3-font-size);
-  }
-`;
-
-const CategoryItem = styled.div`
-  height: 100%;
-  width: 100%;
-  text-align: left;
 `;
 
 export const node = {
