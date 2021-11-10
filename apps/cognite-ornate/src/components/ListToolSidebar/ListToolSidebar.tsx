@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Asset } from '@cognite/sdk';
-import { ShapeConfig } from 'konva/lib/Shape';
 import { Marker } from '@cognite/ornate';
 import uniq from 'lodash/uniq';
 import { NullView } from 'components/NullView/NullView';
@@ -10,30 +9,10 @@ import { useMetrics } from '@cognite/metrics';
 
 import ListToolSidebarAsset from './ListToolSidebarAsset';
 import { ListToolSidebarWrapper, ListToolItem } from './elements';
+import Task from './Task';
 
 export type ListToolStatus = 'CLOSE' | 'OPEN';
 
-export const LIST_TOOL_STATUSES: Record<
-  ListToolStatus,
-  { display: string; styleOverrides: ShapeConfig }
-> = {
-  CLOSE: {
-    display: 'CLOSE',
-    styleOverrides: {
-      fill: 'rgba(255, 0, 0, 0.2)',
-      stroke: 'rgba(255, 0, 0, 0.4)',
-      cornerRadius: 5,
-    },
-  },
-  OPEN: {
-    display: 'OPEN',
-    styleOverrides: {
-      fill: 'rgba(0, 255, 0, 0.2)',
-      stroke: 'rgba(0, 255, 0, 0.4)',
-      cornerRadius: 50,
-    },
-  },
-};
 export type ListItem = {
   marker: Marker;
   order: number;
@@ -139,54 +118,6 @@ const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
       .filter(Boolean) as ListItem[];
     onItemChange(nextListItems);
   };
-  const renderStatus = (listItem: ListItem) => {
-    return (
-      <Dropdown
-        content={
-          <Menu>
-            {Object.keys(LIST_TOOL_STATUSES).map((statusKey) => (
-              <Menu.Item
-                key={statusKey}
-                onClick={() =>
-                  onChange({
-                    ...listItem,
-                    status: statusKey as ListToolStatus,
-                  })
-                }
-              >
-                {LIST_TOOL_STATUSES[statusKey as ListToolStatus].display}
-              </Menu.Item>
-            ))}
-
-            <Menu.Item
-              onClick={() =>
-                onChange({
-                  ...listItem,
-                  status: undefined,
-                })
-              }
-            >
-              EXAMINE
-            </Menu.Item>
-          </Menu>
-        }
-      >
-        <Button
-          unstyled
-          className="list-item__status"
-          style={{
-            color: listItem.status
-              ? String(
-                  LIST_TOOL_STATUSES[listItem.status].styleOverrides.stroke
-                )
-              : 'var(--cogsr-greyscale-grey6',
-          }}
-        >
-          {listItem.status || 'EXAMINE'}
-        </Button>
-      </Dropdown>
-    );
-  };
 
   const onExport = () => {
     metrics.track('onExport');
@@ -278,7 +209,7 @@ const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
               });
             }}
           />
-          {renderStatus(listItem)}
+          <Task listItem={listItem} onChange={onChange} />
           <Icon
             className="list-item__remove"
             onClick={() => onRemove(listItem)}

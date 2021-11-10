@@ -31,12 +31,12 @@ import { RecentWorkspaces } from 'components/Workspace/WorkspacesList';
 import ListToolSidebar from 'components/ListToolSidebar';
 import WorkSpaceSearch from 'components/WorkspaceDocsPanel/WorkspaceSearch';
 import { WorkspaceHeader } from 'components/Workspace/WorkspaceHeader';
+import { LIST_TOOL_STATUSES } from 'components/ListToolSidebar/Task';
 import { toDisplayDate } from 'utils/date';
 import { CommentTarget } from '@cognite/comment-service-types';
 import {
   ListItem,
   ListToolStatus,
-  LIST_TOOL_STATUSES,
 } from 'components/ListToolSidebar/ListToolSidebar';
 import Konva from 'konva';
 import { Theme } from 'utils/theme';
