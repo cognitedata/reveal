@@ -169,17 +169,18 @@ function determineCandidateSectors(
     .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse)
     .map(x => x as V9SectorMetadata);
 
-  if (clippingPlanes.length > 0) {
-    const bounds = new THREE.Box3();
-    return sectors.filter(sector => {
-      bounds.copy(sector.bounds);
-      bounds.applyMatrix4(modelMatrix);
-
-      const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
-      return shouldKeep;
-    });
+  if (clippingPlanes.length <= 0) {
+    return sectors;
   }
-  return sectors;
+
+  const bounds = new THREE.Box3();
+  return sectors.filter(sector => {
+    bounds.copy(sector.bounds);
+    bounds.applyMatrix4(modelMatrix);
+
+    const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
+    return shouldKeep;
+  });
 }
 
 /**
