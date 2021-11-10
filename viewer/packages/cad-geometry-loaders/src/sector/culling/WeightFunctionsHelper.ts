@@ -6,8 +6,7 @@ import * as THREE from 'three';
 
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
-import { V9SceneSectorMetadata } from '@reveal/cad-parsers/src/metadata/parsers/types';
+import { SectorMetadata, V9SectorMetadata } from '@reveal/cad-parsers';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()
@@ -112,7 +111,7 @@ export class WeightFunctionsHelper {
    * sectors right below root sector.
    * @param sector
    */
-  computeSectorTreePlacementWeight(sector: V9SceneSectorMetadata): number {
+  computeSectorTreePlacementWeight(sector: V9SectorMetadata): number {
     // Prioritize sectors directly under the root. These contains large structures
     // in V9 format and is therefore a low-detail version of the full model.
     return sector.depth === 2 ? 1.0 : 1.0 / 3.0;
