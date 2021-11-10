@@ -26,6 +26,7 @@ export const Table = styled((props: CustomTableProps) => {
     setPage(newPage);
     if (newPageSize) {
       setPageSize(newPageSize);
+      setPage(DEFAULT_PAGE);
     }
   };
 
