@@ -9,7 +9,7 @@ pipeline:
     service: 'react-demo-app'
     pipeline: 'cdf'
     githubRepository: applications
-    dockerImageName: react-demo-app
+    dockerImageName: apps/react-demo-app
     manualJudgementDev: true
 configuration:
   description: 'Deploy react-demo-app to CDF clusters'

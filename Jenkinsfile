@@ -238,6 +238,20 @@ pods {
       }
     }
 
+    stageWithNotify("Docker smoketests", CONTEXTS.spinnaker_deployments) {
+      container('bazel') {
+        def changedApps = sh(label: "Which apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_deployment, //...)'", returnStdout: true)
+        print(changedApps)
+        if (changedApps) {
+          changedApps.split('\n').each {
+            def target = it.split(':')[0]
+            def testOutput = sh(script: "bazel run ${target}:docker_smoke_test", returnStdout: true)
+            print(testOutput)
+          }
+        }
+      }
+    }
+
     if (isPullRequest) {
       stageWithNotify('Publish storybook', CONTEXTS.publishStorybook) {
         container('bazel') {
@@ -421,20 +435,17 @@ pods {
           print(changedApps)
           if (changedApps) {
             changedApps.split('\n').each {
+              def target = it.split(':')[0]
+              def nameTag = sh(
+                label: "Push ${target} Docker image",
+                script: "bazel --bazelrc=.ci.bazelrc run ${target}:push 2>&1 | grep 'Successfully pushed Docker image to' | awk '{ print \$NF }'",
+                returnStdout: true
+              ).trim()
+              print("Pushed Docker image $nameTag")
+
               def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
               print(jsonString)
               def params = readJSON text: jsonString
-              def target = it.split(':')[0]
-              def nameTag = ""
-              if (params.docker_repository) {
-                nameTag = sh(
-                  label: "Push ${target} Docker image",
-                  script: "bazel --bazelrc=.ci.bazelrc run ${target}:push 2>&1 | grep 'Successfully pushed Docker image to' | awk '{ print \$NF }'",
-                  returnStdout: true
-                ).trim()
-                print("Pushed Docker image $nameTag")
-              }
-
               params.pipelines.each({ pipeline ->
                 print("Spinnaker deploy ${params.name} ${pipeline} ${nameTag}")
                 spinnaker.deploy(params.name, pipeline, nameTag ? [nameTag] : [])
