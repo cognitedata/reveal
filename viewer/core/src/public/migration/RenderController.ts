@@ -11,9 +11,9 @@ import * as THREE from 'three';
  */
 export default class RenderController {
   private _needsRedraw: boolean;
-  private _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
-  private _lastCameraPosition: THREE.Vector3;
-  private _lastCameraRotation: THREE.Euler;
+  private readonly _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+  private readonly _lastCameraPosition: THREE.Vector3;
+  private readonly _lastCameraRotation: THREE.Euler;
   private _lastCameraZoom: number;
 
   constructor(camera: THREE.PerspectiveCamera | THREE.OrthographicCamera) {
