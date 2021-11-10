@@ -8,7 +8,7 @@ type DCSidecarConfig = SidecarConfig & {
 const PROD = false;
 const CLUSTER = 'ew1';
 // const CLUSTER = 'westeurope-1';
-const localDigitalCockpit = false;
+const localDigitalCockpit = !!process.env.REACT_APP_DC_API_URL;
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {

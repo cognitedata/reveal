@@ -6,6 +6,11 @@ export const SuitbarContainer = styled.div`
   button {
     margin-left: 15px;
   }
+  .action-button-text {
+    @media (max-width: 1190px) {
+      display: none;
+    }
+  }
 `;
 
 export const MainContent = styled.div`

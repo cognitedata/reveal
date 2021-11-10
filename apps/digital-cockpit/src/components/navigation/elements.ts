@@ -162,3 +162,25 @@ export const MenuItemWrapper = styled(Menu)`
     }
   }
 `;
+
+export const SuiteBreadcrumbContainer = styled.div`
+  display: contents;
+  & .cogs-title-5 {
+    font-feature-settings: unset;
+    padding-left: 8px;
+  }
+`;
+
+export const SuiteBreadcrumbMenu = styled.div`
+  padding: 15px 10px 10px;
+  cursor: pointer;
+`;
+
+export const SuiteBreadcrumbMenuItem = styled.div`
+  & .cogs-title-6 {
+    display: flex;
+  }
+  & .cogs-title-6 > i {
+    display: flex;
+  }
+`;

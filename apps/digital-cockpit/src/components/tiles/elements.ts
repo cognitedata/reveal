@@ -27,6 +27,11 @@ export const ApplicationTileContainer = styled(SmallTileContainer)`
   margin: 0 48px 24px 0;
 `;
 
+export const SubSuiteTileContainer = styled(SmallTileContainer)`
+  padding: 10px;
+  margin: 0 48px 24px 0;
+`;
+
 export const TileContainer = styled(TileBasic)<{
   isBoard?: boolean;
 }>`

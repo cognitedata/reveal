@@ -13,7 +13,7 @@ describe('LeftSidebar', () => {
   it('should render  correctly', async () => {
     const { expectByText } = render(<Base />);
     expectByText('Applications');
-    expectByText('Maintenance Planner');
+    expectByText('Maintain');
     expectByText('Suites');
     expectByText('Operations');
     expectByText('Operations');

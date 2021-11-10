@@ -145,3 +145,33 @@ export function retrieveFileInfo(
     }
   };
 }
+
+// adds a child suite key to the parent suite and save
+export function addChildSuite(
+  apiClient: ApiClient,
+  parent: Suite,
+  childKey: CogniteExternalId
+) {
+  return async (dispatch: RootDispatcher) => {
+    const updatedParent: Suite = {
+      ...parent,
+      suites: [...(parent.suites || []), childKey],
+    } as Suite;
+    await dispatch(insertSuite(apiClient, updatedParent, false));
+  };
+}
+
+// deletes a child suite key from the parent suite and save
+export function deleteChildSuite(
+  apiClient: ApiClient,
+  parent: Suite,
+  childKey: CogniteExternalId
+) {
+  return async (dispatch: RootDispatcher) => {
+    const updatedParent: Suite = {
+      ...parent,
+      suites: [...(parent?.suites || [])].filter((key) => key !== childKey),
+    } as Suite;
+    await dispatch(insertSuite(apiClient, updatedParent, false));
+  };
+}

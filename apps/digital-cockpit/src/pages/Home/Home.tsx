@@ -21,7 +21,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { RootDispatcher } from 'store/types';
 import { Suite, Board } from 'store/suites/types';
-import { getSuitesTableState } from 'store/suites/selectors';
+import { getRootSuites, getSuitesTableState } from 'store/suites/selectors';
 import { getLastVisitedItems, getUserSpace } from 'store/userSpace/selectors';
 import { modalOpen } from 'store/modals/actions';
 import { ModalType } from 'store/modals/types';
@@ -44,11 +44,9 @@ const Home = () => {
   const itemsToDisplay = 6;
   const glideItemWidth = 348;
   const dispatch = useDispatch<RootDispatcher>();
-  const {
-    loading: suitesLoading,
-    loaded: suitesLoaded,
-    suites,
-  } = useSelector(getSuitesTableState);
+  const { loading: suitesLoading, loaded: suitesLoaded } =
+    useSelector(getSuitesTableState);
+  const suites = useSelector(getRootSuites);
   const isAdmin = useSelector(isAdminSelector);
   const { filter: groupsFilter } = useSelector(getGroupsState);
   const canEdit = isAdmin && !groupsFilter?.length;

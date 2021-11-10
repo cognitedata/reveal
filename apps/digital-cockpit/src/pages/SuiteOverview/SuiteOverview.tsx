@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
-import { Button, Graphic, Loader, Title } from '@cognite/cogs.js';
+import { Button, Graphic, Loader, Title, Tooltip } from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { SuiteMenu } from 'components/menus';
 import { OverviewContainer, NoItemsContainer } from 'styles/common';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBoardsBySuite, getSuitesTableState } from 'store/suites/selectors';
+import { getSuiteByKey, getSuitesTableState } from 'store/suites/selectors';
 import { getGroupsState, isAdmin } from 'store/groups/selectors';
 import { RootDispatcher } from 'store/types';
 import { modalOpen } from 'store/modals/actions';
@@ -22,7 +22,9 @@ import { getBoardsGridLayoutItems } from 'store/layout/selectors';
 import { getModalState } from 'store/modals/selectors';
 import { GridLayout } from 'store/layout/types';
 import isEmpty from 'lodash/isEmpty';
-import { StyledTitle } from './elements';
+import SuiteBreadcrumb from 'components/navigation/SuiteBreadcrumb';
+import { SubSuiteTile } from 'components/tiles';
+import { ContainerTitle, StyledTitle } from './elements';
 
 import SuiteOverviewGrid from './SuiteOverviewGrid';
 
@@ -52,11 +54,17 @@ const SuiteOverview: React.FC = () => {
     modalConfig: { modalType: currentOpenedModal },
   } = useSelector(getModalState);
 
-  const suite: Suite = useSelector(getBoardsBySuite(id)) as Suite;
+  const suite: Suite = useSelector(getSuiteByKey(id)) as Suite;
 
   const metrics = useMetrics('SuiteOverview');
 
-  const { title, color, boards = [] } = suite || {};
+  const {
+    title,
+    color,
+    boards = [],
+    suites: childSuites,
+    parent: parentSuite,
+  } = suite || {};
   const [sidebarToggled, setSidebarToggled] = useState(false);
 
   const boardLayout = useSelector(getBoardsGridLayoutItems(boards));
@@ -136,22 +144,28 @@ const SuiteOverview: React.FC = () => {
 
   const handleOpenModal = (
     modalType: ModalType,
-    modalProps: { suiteItem: Suite }
+    modalProps: { suiteItem?: Suite; parentSuiteItem?: Suite }
   ) => {
-    const { suiteItem } = modalProps;
-    metrics.track(`Select_${modalType}`, {
-      suiteKey: suiteItem.key,
-      suite: suiteItem.title,
+    const { suiteItem, parentSuiteItem } = modalProps;
+    metrics.track(`Select_${modalType}:Create_Subsuite`, {
+      suiteKey: ((suiteItem || parentSuiteItem) as Suite).key,
+      suite: ((suiteItem || parentSuiteItem) as Suite).title,
     });
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
   const Header = () => (
     <>
-      <SuiteAvatar color={color} title={title} />
-      <Title as={StyledTitle} level={5}>
-        {title}
-      </Title>
+      {parentSuite ? (
+        <SuiteBreadcrumb suiteKey={suite.key} />
+      ) : (
+        <>
+          <SuiteAvatar color={color} title={title} />
+          <Title as={StyledTitle} level={5}>
+            {title}
+          </Title>
+        </>
+      )}
       {canEdit && <SuiteMenu suiteItem={suite} />}
     </>
   );
@@ -160,54 +174,75 @@ const SuiteOverview: React.FC = () => {
     const actionButtons = [];
     if (canEdit) {
       actionButtons.push(
-        <Button
-          key="add-board"
-          type="ghost"
-          icon="PlusCompact"
-          iconPlacement="left"
-          onClick={() => handleOpenModal('EditBoard', { suiteItem: suite })}
-        >
-          Add board
-        </Button>
+        <Tooltip content="Add subsuite">
+          <Button
+            key="add-subsuite"
+            type="ghost"
+            icon="FolderLineAlt"
+            iconPlacement="left"
+            onClick={() =>
+              handleOpenModal('EditSuite', { parentSuiteItem: suite })
+            }
+          >
+            <span className="action-button-text">Add subsuite</span>
+          </Button>
+        </Tooltip>
+      );
+      actionButtons.push(
+        <Tooltip content="Add board">
+          <Button
+            key="add-board"
+            type="ghost"
+            icon="PlusCompact"
+            iconPlacement="left"
+            onClick={() => handleOpenModal('EditBoard', { suiteItem: suite })}
+          >
+            <span className="action-button-text">Add board</span>
+          </Button>
+        </Tooltip>
       );
     }
     if (canEdit) {
       if (editingLayout) {
         actionButtons.push(
-          <Button
-            key="save-layout"
-            type="primary"
-            icon="Grid"
-            iconPlacement="left"
-            onClick={() => {
-              saveCurrentLayout();
-              setEditingLayout(false);
-              metrics.track('Save_Layout', {
-                suiteKey: suite.key,
-                suite: suite.title,
-              });
-            }}
-          >
-            Save layout
-          </Button>
+          <Tooltip content="Save layout">
+            <Button
+              key="save-layout"
+              type="primary"
+              icon="Grid"
+              iconPlacement="left"
+              onClick={() => {
+                saveCurrentLayout();
+                setEditingLayout(false);
+                metrics.track('Save_Layout', {
+                  suiteKey: suite.key,
+                  suite: suite.title,
+                });
+              }}
+            >
+              <span className="action-button-text">Save layout</span>
+            </Button>
+          </Tooltip>
         );
       } else {
         actionButtons.push(
-          <Button
-            key="edit-layout"
-            type="ghost"
-            icon="Grid"
-            iconPlacement="left"
-            onClick={() => {
-              setEditingLayout(true);
-              metrics.track('Edit_Layout', {
-                suiteKey: suite.key,
-                suite: suite.title,
-              });
-            }}
-          >
-            Edit layout
-          </Button>
+          <Tooltip content="Edit layout">
+            <Button
+              key="edit-layout"
+              type="ghost"
+              icon="Grid"
+              iconPlacement="left"
+              onClick={() => {
+                setEditingLayout(true);
+                metrics.track('Edit_Layout', {
+                  suiteKey: suite.key,
+                  suite: suite.title,
+                });
+              }}
+            >
+              <span className="action-button-text">Edit layout</span>
+            </Button>
+          </Tooltip>
         );
       }
     }
@@ -221,19 +256,43 @@ const SuiteOverview: React.FC = () => {
         actionsPanel={renderActionButtons()}
       />
       <OverviewContainer key={`${sidebarToggled}`}>
+        {childSuites?.length ? (
+          <>
+            <ContainerTitle>
+              <Title level={6}>Subsuites</Title>
+            </ContainerTitle>
+            {childSuites?.map((suiteKey) => (
+              <SubSuiteTile
+                suiteKey={suiteKey}
+                key={suiteKey}
+                handleClick={() =>
+                  metrics.track('Suite_Click:Subsuite', {
+                    suiteKey,
+                    suite: suite.title,
+                  })
+                }
+              />
+            ))}
+          </>
+        ) : null}
         {!boards?.length ? (
           <NoItemsContainer>
             <Graphic type="DataKits" />
             <Title level={5}>No boards added to suite yet</Title>
           </NoItemsContainer>
         ) : (
-          <SuiteOverviewGrid
-            boards={boards}
-            suite={suite}
-            layout={layout}
-            editingLayout={editingLayout}
-            ref={gridComponentRef}
-          />
+          <>
+            <ContainerTitle>
+              <Title level={6}>Boards</Title>
+            </ContainerTitle>
+            <SuiteOverviewGrid
+              boards={boards}
+              suite={suite}
+              layout={layout}
+              editingLayout={editingLayout}
+              ref={gridComponentRef}
+            />
+          </>
         )}
       </OverviewContainer>
     </>

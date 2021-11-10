@@ -22,7 +22,7 @@ export const allApplications: ApplicationItem[] = [
   {
     key: 'maintain',
     iconKey: 'Maintain',
-    title: 'Maintenance Planner',
+    title: 'Maintain',
     url: 'https://mp.cogniteapp.com',
   },
 ];

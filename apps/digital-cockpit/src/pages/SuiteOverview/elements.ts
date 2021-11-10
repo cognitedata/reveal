@@ -9,3 +9,11 @@ export const LargeTilesContainer = styled.div`
   display: flex;
   margin-bottom: 24px;
 `;
+
+export const ContainerTitle = styled.div`
+  & > h6 {
+    border-bottom: 1px solid var(--cogs-greyscale-grey4);
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+  }
+`;

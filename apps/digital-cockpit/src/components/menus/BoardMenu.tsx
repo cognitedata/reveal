@@ -104,6 +104,21 @@ export const BoardMenu: React.FC<Props> = ({ boardItem, suiteItem }) => {
                 Remove board
               </MenuItemContent>
             </Menu.Item>
+            <Menu.Item>
+              <MenuItemContent
+                role="button"
+                tabIndex={0}
+                onClick={(event) =>
+                  handleOpenModal(event, 'MoveBoard', {
+                    boardItem,
+                    suiteItem,
+                  })
+                }
+              >
+                <Icon type="FolderLineAlt" />
+                Move to..
+              </MenuItemContent>
+            </Menu.Item>
           </>
         )}
       </Menu>

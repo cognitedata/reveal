@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/browser';
 import { CogniteExternalId } from '@cognite/sdk';
 import { Metrics } from '@cognite/metrics';
 import { updateSuitesOrder } from 'utils/suitesTable';
-import { Suite } from './types';
+import { Board, Suite } from './types';
 import * as actions from './actions';
 
 export const fetchSuites =
@@ -29,12 +29,14 @@ export const fetchSuites =
   };
 
 export const insertSuite =
-  (apiClient: ApiClient, suite: Suite) => async (dispatch: RootDispatcher) => {
+  (apiClient: ApiClient, suite: Suite, showNotification = true) =>
+  async (dispatch: RootDispatcher) => {
     dispatch(actions.saveSuite());
     try {
       await apiClient.saveSuite(suite);
-      dispatch(fetchSuites(apiClient));
-      dispatch(setNotification(['Saved.', 'Please edit & save the layout']));
+      await dispatch(fetchSuites(apiClient));
+      showNotification &&
+        dispatch(setNotification(['Saved.', 'Please edit & save the layout']));
     } catch (e) {
       dispatch(actions.suiteError());
       dispatch(setHttpError('Failed to save a suite', e));
@@ -103,6 +105,33 @@ function saveSuitesSilently(apiClient: ApiClient, suites: Suite[]) {
   return async (dispatch: RootDispatcher) => {
     try {
       await apiClient.updateSuites(suites);
+    } catch (e) {
+      dispatch(setHttpError(`Failed to update suites`, e));
+      Sentry.captureException(e);
+    }
+  };
+}
+
+// moves a board from a source suite to a target suite
+export function moveBoard(
+  apiClient: ApiClient,
+  board: Board,
+  source: Suite,
+  target: Suite
+) {
+  return async (dispatch: RootDispatcher) => {
+    const updatedSource = {
+      ...source,
+      boards: source.boards.filter(({ key }: Board) => board.key !== key),
+    };
+    const updatedTarget = {
+      ...target,
+      boards: [...target.boards, board],
+    };
+    const suitesToUpdate = [updatedSource, updatedTarget];
+    try {
+      await apiClient.updateSuites(suitesToUpdate);
+      dispatch(actions.replaceSuites(suitesToUpdate));
     } catch (e) {
       dispatch(setHttpError(`Failed to update suites`, e));
       Sentry.captureException(e);

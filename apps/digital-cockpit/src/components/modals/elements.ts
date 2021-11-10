@@ -91,3 +91,16 @@ export const SwitchContainer = styled.div`
     margin: 8px 16px;
   }
 `;
+
+export const RadioItemsContainer = styled.div`
+  & > h6 {
+    padding-bottom: 8px;
+  }
+  border-bottom: 1px solid var(--cogs-greyscale-grey4);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  & > .cogs-radio {
+    display: flex;
+    margin-bottom: 5px;
+  }
+`;

@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { A, Icon, Overline } from '@cognite/cogs.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSuitesTableState } from 'store/suites/selectors';
+import { getRootSuites } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import { ApplicationItem } from 'store/config/types';
@@ -63,7 +63,7 @@ const SortableSuiteNavigationItem: React.FC<SuiteItemProps> = ({
 const LeftSidebar: React.FC = () => {
   const dispatch = useDispatch();
   const apiClient = useContext(ApiClientContext);
-  const { suites } = useSelector(getSuitesTableState);
+  const suites = useSelector(getRootSuites);
   const tenant = useContext(TenantContext);
   const applications = useSelector(getApplications(tenant));
   const metrics = useMetrics('LeftSidebar');

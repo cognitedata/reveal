@@ -9,18 +9,24 @@ import { modalClose } from 'store/modals/actions';
 import Modal from 'components/modals/simpleModal/Modal';
 import { BoardForm } from 'components/forms';
 import { ModalContainer } from 'components/modals/elements';
-import { saveForm } from 'store/forms/thunks';
+import { saveForm, addChildSuite } from 'store/forms/thunks';
 import { useMetrics } from 'utils/metrics';
 import { getConfigState } from 'store/config/selectors';
 import { getLayoutDeleteQueue } from 'store/layout/selectors';
 import { resetLayoutDeleteQueue } from 'store/layout/actions';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   suiteItem: Suite;
+  parentSuiteItem?: Suite;
   boardItem?: Board;
 }
 
-const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
+const EditBoardModal: React.FC<Props> = ({
+  suiteItem,
+  parentSuiteItem,
+  boardItem,
+}: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
@@ -29,10 +35,12 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
   const [filesUploadQueue] = useState(new Map());
   const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
+  const history = useHistory();
 
   const handleCloseModal = () => {
     filesUploadQueue.clear();
     dispatch(resetLayoutDeleteQueue());
+    history.push(`/suites/${suiteItem.key}`);
     dispatch(modalClose());
   };
 
@@ -48,6 +56,12 @@ const EditBoardModal: React.FC<Props> = ({ suiteItem, boardItem }: Props) => {
         dataSetId,
       })
     );
+    if (parentSuiteItem) {
+      // add a child suite key to the parent suite and save
+      await dispatch(
+        addChildSuite(apiClient, parentSuiteItem, updatedSuite.key)
+      );
+    }
     metrics.track('Saved', {
       suiteKey: updatedSuite.key,
       suite: updatedSuite.title,

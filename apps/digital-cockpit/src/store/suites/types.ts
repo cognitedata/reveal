@@ -37,6 +37,8 @@ export type Suite = {
   boards: Board[];
   color: string;
   order: number;
+  parent?: string | null;
+  suites?: string[];
 };
 
 export type ImgUrlLink = FileLink & IdEither;

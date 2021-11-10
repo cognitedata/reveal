@@ -17,11 +17,11 @@ export type ModalType =
   | 'UploadLogo'
   | 'SelectApplications'
   | 'AppConfig'
+  | 'MoveBoard'
   | null;
 
 export type Modal = {
   modalType: ModalType;
-  // TODO(dtc-255)
   modalProps?: any;
 };
 

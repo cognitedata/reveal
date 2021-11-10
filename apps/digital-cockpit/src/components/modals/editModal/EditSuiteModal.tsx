@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { RootDispatcher } from 'store/types';
 import { useMetrics } from 'utils/metrics';
 import { ApiClientContext } from 'providers/ApiClientProvider';
-import { saveForm } from 'store/forms/thunks';
+import { saveForm, addChildSuite } from 'store/forms/thunks';
 import { getNextSuiteOrder } from 'store/suites/selectors';
 import { getEmptySuite } from 'utils/forms';
 import { ModalContainer } from '../elements';
@@ -15,9 +15,13 @@ import Modal from '../simpleModal/Modal';
 
 interface Props {
   suiteItem?: Suite;
+  parentSuiteItem?: Suite;
 }
 
-const EditSuiteModal: React.FC<Props> = ({ suiteItem }: Props) => {
+const EditSuiteModal: React.FC<Props> = ({
+  suiteItem,
+  parentSuiteItem,
+}: Props) => {
   const dispatch = useDispatch<RootDispatcher>();
   const apiClient = useContext(ApiClientContext);
   const history = useHistory();
@@ -44,18 +48,26 @@ const EditSuiteModal: React.FC<Props> = ({ suiteItem }: Props) => {
     const updatedSuite = {
       ...suite,
       ...values,
+      ...(parentSuiteItem ? { parent: parentSuiteItem.key } : []),
     } as Suite;
+    // save updated suite
     await dispatch(
       saveForm({
         apiClient,
         suite: updatedSuite,
       })
     );
+
+    if (parentSuiteItem) {
+      // add a child suite key to the parent suite and save
+      await dispatch(
+        addChildSuite(apiClient, parentSuiteItem, updatedSuite.key)
+      );
+    }
     trackMetrics('Saved', {
       suiteKey: updatedSuite.key,
       suite: updatedSuite.title,
     });
-    dispatch(modalClose());
     history.push(`/suites/${updatedSuite.key}`);
   };
 
@@ -63,13 +75,14 @@ const EditSuiteModal: React.FC<Props> = ({ suiteItem }: Props) => {
     const updatedSuite = {
       ...suite,
       ...values,
+      ...(parentSuiteItem ? { parent: parentSuiteItem.key } : []),
     } as Suite;
     dispatch(modalClose());
     setTimeout(() =>
       dispatch(
         modalOpen({
           modalType: 'EditBoard',
-          modalProps: { suiteItem: updatedSuite },
+          modalProps: { suiteItem: updatedSuite, parentSuiteItem },
         })
       )
     );
@@ -79,7 +92,11 @@ const EditSuiteModal: React.FC<Props> = ({ suiteItem }: Props) => {
     <Modal
       visible
       onCancel={cancel}
-      headerText={isNew ? 'Create a new suite' : 'Edit suite'}
+      headerText={
+        !isNew
+          ? 'Edit suite'
+          : `Create a new ${parentSuiteItem ? 'subsuite' : 'suite'}`
+      }
       width={536}
       footer={<></>}
     >

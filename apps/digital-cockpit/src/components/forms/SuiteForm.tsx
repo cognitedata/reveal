@@ -46,10 +46,10 @@ export const SuiteForm: React.FC<Props> = ({
     const { submitBtn } = values;
     const suiteValues = omit(values, 'submitBtn');
     if (submitBtn === 'save') {
-      handleSave(suiteValues);
+      await handleSave(suiteValues);
       resetForm();
     } else if (submitBtn === 'editBoards') {
-      handleEditBoards(suiteValues);
+      await handleEditBoards(suiteValues);
       resetForm();
     }
   };
@@ -94,29 +94,31 @@ export const SuiteForm: React.FC<Props> = ({
               Cancel
             </Button>
             <div>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={() => {
-                  setFieldValue('submitBtn', 'editBoards', false);
-                }}
-                disabled={!isValid || (isNew && !dirty)}
-              >
-                {isNew ? 'Add boards' : 'Edit boards'}
-              </Button>
               {isSubmitting ? (
                 <Icon type="Loading" />
               ) : (
-                <Button
-                  type="secondary"
-                  htmlType="submit"
-                  onClick={() => {
-                    setFieldValue('submitBtn', 'save', false);
-                  }}
-                  disabled={!isValid || (isNew && !dirty)}
-                >
-                  {isNew ? 'Create' : 'Save'}
-                </Button>
+                <>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => {
+                      setFieldValue('submitBtn', 'editBoards', false);
+                    }}
+                    disabled={!isValid || (isNew && !dirty)}
+                  >
+                    {isNew ? 'Add boards' : 'Edit boards'}
+                  </Button>
+                  <Button
+                    type="secondary"
+                    htmlType="submit"
+                    onClick={() => {
+                      setFieldValue('submitBtn', 'save', false);
+                    }}
+                    disabled={!isValid || (isNew && !dirty)}
+                  >
+                    {isNew ? 'Create' : 'Save'}
+                  </Button>
+                </>
               )}
             </div>
           </FormFooter>
