@@ -1,16 +1,13 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { CdfModelDataClient } from './src/CdfModelDataClient';
+export { CdfModelDataProvider } from './src/CdfModelDataProvider';
+export { CdfModelIdentifier } from './src/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/CdfModelMetadataProvider';
-export { LocalModelDataClient } from './src/LocalModelDataClient';
+export { CdfModelOutputsProvider } from './src/CdfModelOutputsProvider';
+export { LocalModelDataProvider } from './src/LocalModelDataProvider';
+export { LocalModelIdentifier } from './src/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
-export {
-  ModelDataClient,
-  LocalModelIdentifier,
-  CdfModelIdentifier,
-  BinaryFileProvider,
-  HttpHeadersProvider,
-  ModelMetadataProvider,
-  File3dFormat
-} from './src/types';
+export { ModelIdentifier } from './src/ModelIdentifier';
+export { ModelMetadataProvider } from './src/ModelMetadataProvider';
+export { BinaryFileProvider, File3dFormat, HttpHeadersProvider, ModelDataProvider } from './src/types';

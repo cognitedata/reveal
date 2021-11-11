@@ -1,19 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import * as THREE from 'three';
 
 import { HttpHeaders } from '@cognite/sdk-core';
-
-export interface LocalModelIdentifier {
-  fileName: string;
-}
-
-export interface CdfModelIdentifier {
-  modelId: number;
-  revisionId: number;
-}
-
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
 }
@@ -22,24 +11,23 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
-export interface ModelMetadataProvider<TModelIdentifier> {
+/**
+ * Provides data for 3D models.
+ * @version New since 2.2
+ */
+export interface ModelDataProvider extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   /**
-   * Returns an URI that identifies the resource where model geometry and metadata files are stored.
-   * @param identifier Identifier of the model
+   * Download and parse a JSON file and return the resulting struct.
+   * @param baseUrl     Base URL of the model.
+   * @param fileName    Filename of JSON file.
    */
-  getModelUri(identifier: TModelIdentifier): Promise<string>;
-  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
-  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
-}
-
-export interface ModelDataClient extends HttpHeadersProvider, JsonFileProvider, BinaryFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
-  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
-
   /**
-   * Returns an identifier that can be used to identify the application Reveal is used in.
+   * Downloads a binary blob.
+   * @param baseUrl     Base URL of the model.
+   * @param fileName    Filename of binary file.
    */
-  getApplicationIdentifier(): string;
+  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
 }
 
 export interface HttpHeadersProvider {
@@ -51,14 +39,6 @@ export enum File3dFormat {
   RevealCadModel = 'reveal-directory',
   AnyFormat = 'all-outputs'
 }
-
-/**
- * Represents a camera configuration, consisting of a camera position and target.
- */
-export type CameraConfiguration = {
-  readonly position: THREE.Vector3;
-  readonly target: THREE.Vector3;
-};
 
 export interface BlobOutputMetadata {
   blobId: number;

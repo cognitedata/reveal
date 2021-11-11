@@ -7,10 +7,11 @@ import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 
 import CameraControls from 'camera-controls';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { authenticateSDKWithEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import * as reveal from '@cognite/reveal/internals';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
@@ -29,16 +30,19 @@ export function TwoModels() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
       const { modelUrl: modelUrl2, modelRevision: modelRevision2 } = getModel2Params();
+      
       const client = new CogniteClient({ appId: 'reveal.example.two-models' });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-      await client.authenticate();
+      if (project && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
+
 
       const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.current!,
@@ -48,30 +52,21 @@ export function TwoModels() {
 
       const scene = new THREE.Scene();
 
-      let model: reveal.CadNode;
-      if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl);
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
+
       let model2: reveal.CadNode;
-      if(modelRevision2) {
-        model2 = await revealManager.addModel('cad', modelRevision2);
-      } else if(modelUrl2) {
-        revealManager = reveal.createLocalRevealManager(renderer, scene);
-        model2 = await revealManager.addModel('cad', modelUrl2);
+      if (modelRevision2) {
+        const modelIdentifier = new reveal.CdfModelIdentifier(modelRevision2.modelId, modelRevision2.revisionId, reveal.File3dFormat.RevealCadModel);
+        model2 = await revealManager.addModel('cad', modelIdentifier);
+      } else if (modelUrl2) {
+        const modelIdentifier = new reveal.LocalModelIdentifier(modelUrl2.fileName!);
+        model2 = await revealManager.addModel('cad', modelIdentifier);
       } else {
         throw new Error(
-          'Need to provide either project & model2 OR modelUrl2 as query parameters'
+          'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
-      }
+      }      
       scene.add(model2);
 
       const { position, target, near, far } = model.suggestCameraConfig();

@@ -17,6 +17,8 @@ import { RenderMode } from './RenderMode';
 import { LevelOfDetail, RootSectorNode, SectorNode } from '@reveal/cad-parsers';
 import { isMobileOrTablet, WebGLRendererStateHelper } from '@reveal/utilities';
 
+import log from '@reveal/logger';
+
 export class EffectRenderManager {
   private readonly _materialManager: CadMaterialManager;
   private readonly _orthographicCamera: THREE.OrthographicCamera;
@@ -36,9 +38,9 @@ export class EffectRenderManager {
   // used for generating ambient occlusion map (screen space)
   private readonly _ssaoScene: THREE.Scene;
 
-  // Simple scene with a single triangle with UVs [0,1] in both directions
-  // used for bluring and applying the ambient occlusion map (screen space)
-  private readonly _ssaoBlurScene: THREE.Scene;
+  // Simple scene used for blurring SSAO result and
+  // combining with rendered frame
+  private readonly _ssaoBlurCombineScene: THREE.Scene;
 
   // Holds all CAD models
   private readonly _cadScene: THREE.Scene;
@@ -61,18 +63,18 @@ export class EffectRenderManager {
 
   private _renderOptions: RenderOptions;
 
-  private _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
-  private _fxaaMaterial: THREE.ShaderMaterial;
+  private readonly _combineOutlineDetectionMaterial: THREE.ShaderMaterial;
+  private readonly _fxaaMaterial: THREE.ShaderMaterial;
   private _ssaoMaterial: THREE.ShaderMaterial;
-  private _ssaoBlurMaterial: THREE.ShaderMaterial;
+  private readonly _ssaoBlurCombineMaterial: THREE.ShaderMaterial;
 
-  private _customObjectRenderTarget: THREE.WebGLRenderTarget;
-  private _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
-  private _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
-  private _compositionTarget: THREE.WebGLRenderTarget;
-  private _ssaoTarget: THREE.WebGLRenderTarget;
-  private _ssaoBlurTarget: THREE.WebGLRenderTarget;
+  private readonly _customObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _ghostObjectRenderTarget: THREE.WebGLRenderTarget;
+  private readonly _normalRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _inFrontRenderedCadModelTarget: THREE.WebGLRenderTarget;
+  private readonly _compositionTarget: THREE.WebGLRenderTarget;
+  private readonly _ssaoTarget: THREE.WebGLRenderTarget;
+  private readonly _ssaoBlurCombineTarget: THREE.WebGLRenderTarget;
 
   /**
    * Holds state of how the last frame was rendered by `render()`. This is used to explicit clear
@@ -91,6 +93,7 @@ export class EffectRenderManager {
   private readonly _renderer: THREE.WebGLRenderer;
   private _renderTarget: THREE.WebGLRenderTarget | null;
   private _autoSetTargetSize: boolean = false;
+  private _debugRenderTimings: boolean = false;
 
   private _uiObjects: { object: THREE.Object3D; screenPos: THREE.Vector2; width: number; height: number }[] = [];
 
@@ -99,6 +102,14 @@ export class EffectRenderManager {
     const inputSsaoOptions = { ...ssaoParameters };
     this.setSsaoParameters(inputSsaoOptions);
     this._renderOptions = { ...options, ssaoRenderParameters: { ...ssaoParameters } };
+  }
+
+  public set debugRenderTimings(logTimings: boolean) {
+    this._debugRenderTimings = logTimings;
+  }
+
+  public get debugRenderTimings(): boolean {
+    return this._debugRenderTimings;
   }
 
   public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
@@ -152,8 +163,8 @@ export class EffectRenderManager {
     this._fxaaScene.autoUpdate = false;
     this._ssaoScene = new THREE.Scene();
     this._ssaoScene.autoUpdate = false;
-    this._ssaoBlurScene = new THREE.Scene();
-    this._ssaoBlurScene.autoUpdate = false;
+    this._ssaoBlurCombineScene = new THREE.Scene();
+    this._ssaoBlurCombineScene.autoUpdate = false;
     this._emptyScene = new THREE.Scene();
     this._emptyScene.autoUpdate = false;
 
@@ -194,10 +205,10 @@ export class EffectRenderManager {
     this._ssaoTarget.depthTexture.format = THREE.DepthFormat;
     this._ssaoTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this._ssaoBlurTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
-    this._ssaoBlurTarget.depthTexture = new THREE.DepthTexture(0, 0);
-    this._ssaoBlurTarget.depthTexture.format = THREE.DepthFormat;
-    this._ssaoBlurTarget.depthTexture.type = THREE.UnsignedIntType;
+    this._ssaoBlurCombineTarget = new THREE.WebGLRenderTarget(0, 0, { stencilBuffer: false });
+    this._ssaoBlurCombineTarget.depthTexture = new THREE.DepthTexture(0, 0);
+    this._ssaoBlurCombineTarget.depthTexture.format = THREE.DepthFormat;
+    this._ssaoBlurCombineTarget.depthTexture.type = THREE.UnsignedIntType;
 
     this._combineOutlineDetectionMaterial = new THREE.ShaderMaterial({
       vertexShader: outlineDetectionShaders.vertex,
@@ -226,8 +237,6 @@ export class EffectRenderManager {
       }
     });
 
-    const noiseTexture = this.createNoiseTexture();
-
     const ssaoParameters = this.ssaoParameters(this._renderOptions);
 
     const numberOfSamples = ssaoParameters.sampleSize;
@@ -239,7 +248,6 @@ export class EffectRenderManager {
     this._ssaoMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDepth: { value: this._compositionTarget.depthTexture },
-        tNoise: { value: noiseTexture },
         kernel: { value: sampleKernel },
         sampleRadius: { value: sampleRadius },
         bias: { value: depthCheckBias },
@@ -254,7 +262,7 @@ export class EffectRenderManager {
       fragmentShader: ssaoShaders.fragment
     });
 
-    this._ssaoBlurMaterial = new THREE.ShaderMaterial({
+    this._ssaoBlurCombineMaterial = new THREE.ShaderMaterial({
       uniforms: {
         tDiffuse: { value: this._compositionTarget.texture },
         tAmbientOcclusion: { value: this._ssaoTarget.texture },
@@ -265,7 +273,7 @@ export class EffectRenderManager {
     });
 
     const diffuseTexture = this.supportsSsao(ssaoParameters)
-      ? this._ssaoBlurTarget.texture
+      ? this._ssaoBlurCombineTarget.texture
       : this._compositionTarget.texture;
 
     this._fxaaMaterial = new THREE.ShaderMaterial({
@@ -332,6 +340,11 @@ export class EffectRenderManager {
   }
 
   public render(camera: THREE.PerspectiveCamera) {
+    this.setupRenderTargetSpectorDebugging();
+    if (this._debugRenderTimings) {
+      log.debug('============== RENDER BEGIN ==============');
+    }
+
     const renderer = this._renderer;
     const scene = this._originalScene;
 
@@ -412,28 +425,29 @@ export class EffectRenderManager {
       switch (this.antiAliasingMode) {
         case AntiAliasingMode.FXAA:
           // Composite view
-          this.renderComposition(renderer, camera, this._compositionTarget);
+          this.renderComposition(camera, this._compositionTarget);
 
           // Anti-aliased version to screen
           renderStateHelper.autoClear = original.autoClear;
 
           if (supportsSsao) {
-            this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderPostProcessStep(renderer, this._ssaoBlurTarget, this._ssaoBlurScene);
+            this.renderSsao(this._ssaoTarget, camera);
+            this.renderPostProcessStep('ssao-blur-combine', this._ssaoBlurCombineTarget, this._ssaoBlurCombineScene);
           }
 
-          this.renderPostProcessStep(renderer, this._renderTarget, this._fxaaScene);
+          this.renderPostProcessStep('fxaa', this._renderTarget, this._fxaaScene);
           break;
 
         case AntiAliasingMode.NoAA:
           renderer.autoClear = original.autoClear;
 
           if (supportsSsao) {
-            this.renderComposition(renderer, camera, this._compositionTarget);
-            this.renderSsao(renderer, this._ssaoTarget, camera);
-            this.renderPostProcessStep(renderer, this._renderTarget, this._ssaoBlurScene);
+            this.renderComposition(camera, this._compositionTarget);
+
+            this.renderSsao(this._ssaoTarget, camera);
+            this.renderPostProcessStep('ssao-blur-combine', this._renderTarget, this._ssaoBlurCombineScene);
           } else {
-            this.renderComposition(renderer, camera, this._renderTarget);
+            this.renderComposition(camera, this._renderTarget);
           }
           break;
 
@@ -446,6 +460,10 @@ export class EffectRenderManager {
       // renderer.setRenderTarget(original.renderTarget);
       this._materialManager.setRenderMode(original.renderMode);
       this.restoreCadNodes();
+
+      if (this._debugRenderTimings) {
+        log.debug('=============== RENDER END ===============');
+      }
     }
   }
 
@@ -488,7 +506,7 @@ export class EffectRenderManager {
 
   private explicitFlushRender(camera: THREE.Camera, target: THREE.WebGLRenderTarget | null) {
     this._renderer.setRenderTarget(target);
-    this._renderer.render(this._emptyScene, camera);
+    this.renderStep('flushRender', this._emptyScene, camera);
   }
 
   private splitToScenes(): { hasBackElements: boolean; hasInFrontElements: boolean; hasGhostElements: boolean } {
@@ -564,7 +582,7 @@ export class EffectRenderManager {
   ) {
     this._normalSceneBuilder.populateTemporaryScene();
     this._renderer.setRenderTarget(target);
-    this._renderer.render(this._normalScene, camera);
+    this.renderStep('normal', this._normalScene, camera);
   }
 
   private renderNormalCadModelsFromBaseScene(
@@ -572,7 +590,7 @@ export class EffectRenderManager {
     target: THREE.WebGLRenderTarget | null = this._normalRenderedCadModelTarget
   ) {
     this._renderer.setRenderTarget(target);
-    this._renderer.render(this._cadScene, camera);
+    this.renderStep('normalCadModelsFromBaseScene', this._cadScene, camera);
   }
 
   private renderInFrontCadModels(
@@ -582,18 +600,18 @@ export class EffectRenderManager {
     this._inFrontSceneBuilder.populateTemporaryScene();
     this._renderer.setRenderTarget(target);
     this._materialManager.setRenderMode(RenderMode.Effects);
-    this._renderer.render(this._inFrontScene, camera);
+    this.renderStep('infront', this._inFrontScene, camera);
   }
 
   private renderGhostedCadModelsFromBaseScene(camera: THREE.PerspectiveCamera) {
     this._renderer.setRenderTarget(this._ghostObjectRenderTarget);
     this._materialManager.setRenderMode(RenderMode.Ghost);
-    this._renderer.render(this._cadScene, camera);
+    this.renderStep('ghosted', this._cadScene, camera);
   }
 
   private renderCustomObjects(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
     this._renderer.setRenderTarget(this._customObjectRenderTarget);
-    this._renderer.render(scene, camera);
+    this.renderStep('customobjects', scene, camera);
   }
 
   private updateRenderSize(renderer: THREE.WebGLRenderer) {
@@ -619,7 +637,7 @@ export class EffectRenderManager {
       this._ghostObjectRenderTarget.setSize(renderSize.x, renderSize.y);
       this._compositionTarget.setSize(renderSize.x, renderSize.y);
       this._ssaoTarget.setSize(renderSize.x, renderSize.y);
-      this._ssaoBlurTarget.setSize(renderSize.x, renderSize.y);
+      this._ssaoBlurCombineTarget.setSize(renderSize.x, renderSize.y);
 
       this._combineOutlineDetectionMaterial.uniforms.texelSize.value = new THREE.Vector2(
         this._outlineTexelSize / renderSize.x,
@@ -630,7 +648,7 @@ export class EffectRenderManager {
 
       this._ssaoMaterial.uniforms.resolution.value = renderSize;
 
-      this._ssaoBlurMaterial.uniforms.resolution.value = renderSize;
+      this._ssaoBlurCombineMaterial.uniforms.resolution.value = renderSize;
 
       this._fxaaMaterial.uniforms.resolution.value = renderSize;
       this._fxaaMaterial.uniforms.inverseResolution.value = new THREE.Vector2(1.0 / renderSize.x, 1.0 / renderSize.y);
@@ -638,15 +656,11 @@ export class EffectRenderManager {
     return renderSize;
   }
 
-  private renderComposition(
-    renderer: THREE.WebGLRenderer,
-    camera: THREE.PerspectiveCamera,
-    target: THREE.WebGLRenderTarget | null
-  ) {
+  private renderComposition(camera: THREE.PerspectiveCamera, target: THREE.WebGLRenderTarget | null) {
     this._combineOutlineDetectionMaterial.uniforms.cameraNear.value = camera.near;
     this._combineOutlineDetectionMaterial.uniforms.cameraFar.value = camera.far;
 
-    this.renderPostProcessStep(renderer, target, this._compositionScene);
+    this.renderPostProcessStep('composition', target, this._compositionScene);
   }
 
   private setSsaoParameters(params: SsaoParameters) {
@@ -661,7 +675,9 @@ export class EffectRenderManager {
       const kernel = this.createKernel(sampleSize);
 
       this._fxaaMaterial.uniforms.tDiffuse.value =
-        params.sampleSize !== SsaoSampleQuality.None ? this._ssaoBlurTarget.texture : this._compositionTarget.texture;
+        params.sampleSize !== SsaoSampleQuality.None
+          ? this._ssaoBlurCombineTarget.texture
+          : this._compositionTarget.texture;
 
       this._ssaoMaterial.uniforms.kernel.value = kernel;
 
@@ -673,14 +689,11 @@ export class EffectRenderManager {
     }
   }
 
-  private renderPostProcessStep(
-    renderer: THREE.WebGLRenderer,
-    target: THREE.WebGLRenderTarget | null,
-    scene: THREE.Scene
-  ) {
+  private renderPostProcessStep(renderStage: string, target: THREE.WebGLRenderTarget | null, scene: THREE.Scene) {
+    const renderer = this._renderer;
     renderer.setRenderTarget(target);
 
-    renderer.render(scene, this._orthographicCamera);
+    this.renderStep(renderStage, scene, this._orthographicCamera);
 
     if (target === this._renderTarget) {
       const renderSize = renderer.getSize(new THREE.Vector2());
@@ -707,11 +720,44 @@ export class EffectRenderManager {
     }
   }
 
-  private renderSsao(renderer: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null, camera: THREE.Camera) {
+  private renderSsao(target: THREE.WebGLRenderTarget | null, camera: THREE.Camera) {
     this._ssaoMaterial.uniforms.inverseProjectionMatrix.value = camera.projectionMatrixInverse;
     this._ssaoMaterial.uniforms.projMatrix.value = camera.projectionMatrix;
 
-    this.renderPostProcessStep(renderer, target, this._ssaoScene);
+    this.renderPostProcessStep('ssao', target, this._ssaoScene);
+  }
+
+  private renderStep(renderStage: string, scene: THREE.Scene, camera: THREE.Camera) {
+    if (!this._debugRenderTimings) {
+      this._renderer.render(scene, camera);
+      return;
+    }
+
+    this.deepFlushRenderer();
+    const now = performance.now();
+    this._renderer.render(scene, camera);
+    this.deepFlushRenderer();
+
+    log.log(`Render stage '${renderStage}' took ${performance.now() - now} ms`);
+  }
+
+  private readonly _deepFlushRendererArgs = {
+    buffer: new ArrayBuffer(4)
+  };
+
+  private deepFlushRenderer() {
+    const { buffer } = this._deepFlushRendererArgs;
+
+    const context = this._renderer.getContext();
+    const renderTarget = this._renderer.getRenderTarget();
+    // Note! Not sure why, but flush/finish doesn't block
+    // and we therefore use renderTargetPixels() which
+    // ensures the GPU pipeline is flushed
+    context.flush();
+    context.finish();
+    if (renderTarget !== null) {
+      this._renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, buffer);
+    }
   }
 
   private createOutlineColorTexture(): THREE.DataTexture {
@@ -747,34 +793,9 @@ export class EffectRenderManager {
 
   private setupSsaoBlurCombineScene() {
     const geometry = this.createRenderTriangle();
-    const mesh = new THREE.Mesh(geometry, this._ssaoBlurMaterial);
-    this._ssaoBlurScene.add(mesh);
-  }
 
-  private createNoiseTexture() {
-    const width = 128;
-    const height = 128;
-
-    const size = width * height;
-    const data = new Float32Array(size * 4);
-
-    for (let i = 0; i < size; i++) {
-      const stride = i * 4;
-
-      const x = Math.random() * 2 - 1;
-      const y = Math.random() * 2 - 1;
-      const z = Math.random() * 2 - 1;
-
-      data[stride] = x;
-      data[stride + 1] = y;
-      data[stride + 2] = z;
-      data[stride + 3] = 1;
-    }
-
-    const result = new THREE.DataTexture(data, width, height, THREE.RGBAFormat, THREE.FloatType);
-    result.wrapS = THREE.RepeatWrapping;
-    result.wrapT = THREE.RepeatWrapping;
-    return result;
+    const ssaoBlurCombineMesh = new THREE.Mesh(geometry, this._ssaoBlurCombineMaterial);
+    this._ssaoBlurCombineScene.add(ssaoBlurCombineMesh);
   }
 
   private createKernel(kernelSize: number) {
@@ -835,6 +856,53 @@ export class EffectRenderManager {
         x.visible = visible;
       }
     });
+  }
+
+  /**
+   * Assign SpectorJS metadata containing names for the render targets when running Reveal
+   * in development mode.
+   */
+  private setupRenderTargetSpectorDebugging() {
+    if (process.env.IS_DEVELOPMENT_MODE) {
+      this.assignSpectorJsMetadataToRenderTarget(this._inFrontRenderedCadModelTarget, {
+        name: 'inFrontRenderedCadModelTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._normalRenderedCadModelTarget, {
+        name: 'normalRenderedCadModelTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ghostObjectRenderTarget, {
+        name: 'ghostObjectRenderTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._customObjectRenderTarget, {
+        name: 'customObjectRenderTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._compositionTarget, {
+        name: 'compositionTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoTarget, {
+        name: 'ssaoTarget'
+      });
+      this.assignSpectorJsMetadataToRenderTarget(this._ssaoBlurCombineTarget, {
+        name: 'ssaoBlurCombineTarget'
+      });
+    }
+  }
+
+  /**
+   * Assigns SpectorJS metadata to the current framebuffer (render target).
+   * This is useful to assign e.g. names to framebuffers to easy debugging in SpectorJS. The metadata
+   * will be visible in 'bindFramebuffer'-commands in the SpectorJS report.
+   */
+  private assignSpectorJsMetadataToRenderTarget(renderTarget: THREE.WebGLRenderTarget, metadata: any) {
+    const currentRenderTarget = this._renderer.getRenderTarget();
+    try {
+      this._renderer.setRenderTarget(renderTarget);
+      const gl = this._renderer.getContext();
+      const framebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+      framebuffer.__SPECTOR_Metadata = metadata;
+    } finally {
+      this._renderer.setRenderTarget(currentRenderTarget);
+    }
   }
 }
 

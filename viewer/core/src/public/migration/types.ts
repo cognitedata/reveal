@@ -63,6 +63,21 @@ export interface Cognite3DViewerOptions {
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
 
   /**
+   * Style the loading indicator.
+   */
+  loadingIndicatorStyle?: {
+    /**
+     * What corner the spinner should be placed in. Defaults top topLeft.
+     */
+    placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+    /**
+     * Opacity of the spinner in fractions. Valid values are between
+     * 0.2 and 1.0. Defaults to 1.0.
+     */
+    opacity: number;
+  };
+
+  /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
    * This can be useful when you have custom content in the 3D view and need to better
    * control the view frustum.
@@ -133,6 +148,18 @@ export interface Cognite3DViewerOptions {
   onLoading?: OnLoadingCallback;
 
   /**
+   * Allows providing a custom data source that Reveal will
+   * use to load model data. Note that some features might not
+   * work when implementing a custom data source. Please refer
+   * to the Reveal documentation for details.
+   *
+   * Note that the data source must support {@link CdfModelIdentifier}.
+   *
+   * This cannot be used together with {@link _localModels}.
+   */
+  customDataSource?: DataSource;
+
+  /**
    * Utility used to determine what parts of the model will be visible on screen and loaded.
    * This is only meant for unit testing.
    * @internal
@@ -150,6 +177,7 @@ export interface Cognite3DViewerOptions {
 }
 
 import { GeometryFilter } from '../../public/types';
+import { DataSource } from '@reveal/data-source';
 export { GeometryFilter };
 
 /**

@@ -14,6 +14,7 @@ import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
 import { visualTests } from './pages/e2e/visualTests';
+import { CustomDataSource } from './pages/CustomDataSource';
 
 const cadTestBasePath = '/test/cad/';
 const pointcloudTestBasePath = '/test/pointcloud/';
@@ -48,6 +49,8 @@ const cad2RevisionId = getEnv('REACT_APP_CAD_2_REVISION_ID');
 const pointCloudId = getEnv('REACT_APP_POINTCLOUD_ID');
 const pointCloudRevisionId = getEnv('REACT_APP_POINTCLOUD_REVISION_ID');
 
+const defaultEnvironmentParam = 'europewest11-3d';
+
 function menuTitleAz(a: ExampleRoute, b: ExampleRoute): number {
   return a.menuTitle < b.menuTitle ? -1 : a.menuTitle === b.menuTitle ? 0 : 1;
 }
@@ -69,6 +72,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     name: 'default',
     path:
       `/migration?project=${project}` +
+      `&env=${defaultEnvironmentParam}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Default',
@@ -78,6 +82,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     name: 'geomap',
     path:
       `/geomap?project=${project}` +
+      `&env=${defaultEnvironmentParam}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}`,
     menuTitle: 'Geomap',
@@ -96,6 +101,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     name: 'cad-pointcloud',
     path:
       `/sector-with-pointcloud?project=${project}` +
+      `&env=${defaultEnvironmentParam}` +
       `&modelId=${cadId}` +
       `&revisionId=${cadRevisionId}` +
       `&pointCloudModelId=${pointCloudId}` +
@@ -105,7 +111,11 @@ export const exampleRoutes: Array<ExampleRoute> = [
   },
   {
     name: 'pointcloud',
-    path: `/simple-point-cloud?project=${project}&modelId=${pointCloudId}&revisionId=${pointCloudRevisionId}`,
+    path:
+      `/simple-point-cloud?project=${project}` +
+      `&env=${defaultEnvironmentParam}` +
+      `&modelId=${pointCloudId}` +
+      `&revisionId=${pointCloudRevisionId}`,
     menuTitle: 'Simple Point Cloud',
     component: <SimplePointcloud />,
   },
@@ -120,6 +130,7 @@ export const exampleRoutes: Array<ExampleRoute> = [
     // not really good defaults, provide something more meaningful
     path:
       `/two-models?project=${project}` +
+      `&env=${defaultEnvironmentParam}` +
       `&modelId=${cadId}&revisionId=${cadRevisionId}` +
       `&modelId2=${cad2Id}&revisionId2=${cad2RevisionId}`,
     menuTitle: 'Two models',
@@ -130,6 +141,12 @@ export const exampleRoutes: Array<ExampleRoute> = [
     path: '/walkable-path',
     menuTitle: 'Walkable Path',
     component: <WalkablePath />,
+  },
+  {
+    name: 'customDatasource',
+    path: '/customDatasource',
+    menuTitle: 'Custom data source',
+    component: <CustomDataSource />,
   },
 ].sort(menuTitleAz);
 

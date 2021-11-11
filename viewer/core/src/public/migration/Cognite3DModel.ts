@@ -14,7 +14,8 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
-import { NumericRange, trackError } from '@reveal/utilities';
+import { NumericRange } from '@reveal/utilities';
+import { trackCadModelStyled, trackError } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
@@ -31,11 +32,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   private get nodeTransformProvider(): NodeTransformProvider {
     return this.cadNode.nodeTransformProvider;
-  }
-
-  /** @internal */
-  get styledNodeCollections(): { nodes: NodeCollectionBase; appearance: NodeAppearance }[] {
-    return this._styledNodeCollections;
   }
 
   /**
@@ -73,7 +69,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   private readonly cadModel: CadModelMetadata;
   private readonly nodesApiClient: NodesApiClient;
   private readonly nodeIdAndTreeIndexMaps: NodeIdAndTreeIndexMaps;
-  private readonly _styledNodeCollections: { nodes: NodeCollectionBase; appearance: NodeAppearance }[] = [];
+  private readonly _styledNodeCollections: { nodeCollection: NodeCollectionBase; appearance: NodeAppearance }[] = [];
 
   /**
    * @param modelId
@@ -126,6 +122,13 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   }
 
   /**
+   * Returns all currently registered node collections and associated appearance.
+   */
+  get styledNodeCollections(): { nodeCollection: NodeCollectionBase; appearance: NodeAppearance }[] {
+    return [...this._styledNodeCollections];
+  }
+
+  /**
    * Customizes rendering style for a set of nodes, e.g. to highlight, hide
    * or color code a set of 3D objects. This allows for custom look and feel
    * of the 3D model which is useful to highlight certain parts or to
@@ -151,22 +154,51 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
    * model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
    * ```
+   * @throws Error if node collection already has been assigned to the model.
    */
   assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
-    this._styledNodeCollections.push({ nodes: nodeCollection, appearance });
+    trackCadModelStyled(nodeCollection.classToken, appearance);
+
+    const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
+    if (index !== -1) {
+      throw new Error(
+        'Node collection as already been assigned, use updateStyledNodeCollection() to update the appearance'
+      );
+    }
+
+    this._styledNodeCollections.push({ nodeCollection: nodeCollection, appearance });
     this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, appearance);
+  }
+
+  /**
+   * Updates styled node collections with a new appearance.
+   * @param nodeCollection    A node collection previously assigned using {@link assignStyledNodeCollection}.
+   * @param newAppearance     New appearance for the nodes in the collection.
+   * @throws Error if node collection hasn't previously been assigned using {@link assignStyledNodeCollection}.
+   */
+  updateStyledNodeCollection(nodeCollection: NodeCollectionBase, newAppearance: NodeAppearance): void {
+    const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
+    if (index === -1) {
+      throw new Error('The node collection provide has not been assigned previously');
+    }
+
+    this._styledNodeCollections[index].appearance = newAppearance;
+    this.cadNode.nodeAppearanceProvider.assignStyledNodeCollection(nodeCollection, newAppearance);
   }
 
   /**
    * Removes styling for previously added styled collection, resetting the style to the default (or
    * the style imposed by other styled collections).
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
+   * @throws Error if node collection isn't assigned to the model.
    */
   unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
-    const index = this._styledNodeCollections.findIndex(x => x.nodes === nodeCollection);
-    if (index !== -1) {
-      this._styledNodeCollections.splice(index, 1);
+    const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
+    if (index === -1) {
+      throw new Error('Node collection has not been assigned to model');
     }
+
+    this._styledNodeCollections.splice(index, 1);
     this.cadNode.nodeAppearanceProvider.unassignStyledNodeCollection(nodeCollection);
   }
 
@@ -175,6 +207,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * default appearance.
    */
   removeAllStyledNodeCollections() {
+    this._styledNodeCollections.splice(0);
     this.cadNode.nodeAppearanceProvider.clear();
   }
 

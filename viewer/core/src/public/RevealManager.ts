@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -17,7 +18,10 @@ import { GeometryFilter } from '..';
 import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
-import { assertNever, EventTrigger, trackError, trackLoadModel, trackCameraNavigation } from '@reveal/utilities';
+import { trackError, trackLoadModel, trackCameraNavigation } from '@reveal/metrics';
+import { assertNever, EventTrigger } from '@reveal/utilities';
+
+import { ModelIdentifier } from '@reveal/modeldata-api';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -26,9 +30,9 @@ export type AddCadModelOptions = {
   geometryFilter?: GeometryFilter;
 };
 
-export class RevealManager<TModelIdentifier> {
-  private readonly _cadManager: CadManager<TModelIdentifier>;
-  private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
+export class RevealManager {
+  private readonly _cadManager: CadManager;
+  private readonly _pointCloudManager: PointCloudManager;
   private readonly _effectRenderManager: EffectRenderManager;
 
   private readonly _lastCamera = {
@@ -45,11 +49,7 @@ export class RevealManager<TModelIdentifier> {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(
-    cadManager: CadManager<TModelIdentifier>,
-    renderManager: EffectRenderManager,
-    pointCloudManager: PointCloudManager<TModelIdentifier>
-  ) {
+  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
@@ -82,6 +82,14 @@ export class RevealManager<TModelIdentifier> {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
+  }
+
+  public get debugRenderTiming(): boolean {
+    return this._effectRenderManager.debugRenderTimings;
+  }
+
+  public set debugRenderTiming(enable: boolean) {
+    this._effectRenderManager.debugRenderTimings = enable;
   }
 
   public get renderOptions(): RenderOptions {
@@ -186,19 +194,16 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  public addModel(type: 'cad', modelIdentifier: TModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
+  public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
+  public addModel(type: 'pointcloud', modelIdentifier: ModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
-    modelIdentifier: TModelIdentifier,
+    modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
-        moduleName: 'RevealManager',
-        methodName: 'addModel',
-        type,
-        options
+        type
       },
       modelIdentifier
     );
@@ -248,10 +253,7 @@ export class RevealManager<TModelIdentifier> {
     this._events.loadingStateChanged.fire(loadingState);
   }
 
-  private initLoadingStateObserver(
-    cadManager: CadManager<TModelIdentifier>,
-    pointCloudManager: PointCloudManager<TModelIdentifier>
-  ) {
+  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager) {
     this._subscriptions.add(
       combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(
