@@ -74,23 +74,24 @@ export function ModelForm({
   const onSubmit = async ({
     file,
     fileInfo: formFileInfo,
-    metadata,
+    metadata: formMetadata,
     boundaryConditions: formBoundaryConditions,
   }: ModelFormState) => {
     if (!file) {
       throw new Error('Model file is missing');
     }
-    if (!authState?.project || !authState?.authenticated) {
+    if (!authState?.project || !authState?.authenticated || !authState?.email) {
       throw new Error('User is not authenticated');
     }
 
+    // User e-mail is always set to the currently logged in user, incuding for new versions
+    const metadata = {
+      ...formMetadata,
+      userEmail: authState.email,
+    };
+
     const fileInfo = {
       ...formFileInfo,
-      metadata: {
-        ...metadata,
-        // User e-mail is always set to the currently logged in user, incuding for new versions
-        userEmail: authState.email,
-      },
       // Override linked values from metadata
       name: metadata.modelName,
       source: metadata.simulator,
