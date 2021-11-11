@@ -1,16 +1,21 @@
 import React from 'react';
-import { Flex } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { Colors, Flex } from '@cognite/cogs.js';
 import { Header, FilterBar, Table } from './components';
 
 const TableContent = () => {
   return (
-    <Flex direction="column">
+    <Wrapper direction="column">
       <TableContent.Header />
       <TableContent.FilterBar />
       <TableContent.Table />
-    </Flex>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Flex)`
+  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+`;
 
 TableContent.Header = Header;
 TableContent.FilterBar = FilterBar;
