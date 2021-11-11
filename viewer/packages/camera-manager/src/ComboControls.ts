@@ -79,28 +79,27 @@ export class ComboControls extends EventDispatcher {
   public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
-  private _camera: PerspectiveCamera | OrthographicCamera;
+  private readonly _camera: PerspectiveCamera | OrthographicCamera;
   private _firstPersonMode: boolean = false;
-  private _reusableCamera: PerspectiveCamera | OrthographicCamera;
-  private _reusableVector3: Vector3 = new Vector3();
-  private _accumulatedMouseMove: Vector2 = new Vector2();
-  private _domElement: HTMLElement;
-  private _target: Vector3 = new Vector3();
-  private _viewTarget: Vector3 = new Vector3();
-  private _scrollTarget: Vector3 = new Vector3();
-  private _targetEnd: Vector3 = new Vector3();
-  private _spherical: Spherical = new Spherical();
+  private readonly _reusableCamera: PerspectiveCamera | OrthographicCamera;
+  private readonly _reusableVector3: Vector3 = new Vector3();
+  private readonly _accumulatedMouseMove: Vector2 = new Vector2();
+  private readonly _domElement: HTMLElement;
+  private readonly _target: Vector3 = new Vector3();
+  private readonly _viewTarget: Vector3 = new Vector3();
+  private readonly _scrollTarget: Vector3 = new Vector3();
+  private readonly _targetEnd: Vector3 = new Vector3();
+  private readonly _spherical: Spherical = new Spherical();
   private _sphericalEnd: Spherical = new Spherical();
-  private _deltaTarget: Vector3 = new Vector3();
+  private readonly _deltaTarget: Vector3 = new Vector3();
   private _keyboard: Keyboard = new Keyboard();
 
-  private _offsetVector: Vector3 = new Vector3();
-  private _panVector: Vector3 = new Vector3();
-  private _raycaster: Raycaster = new Raycaster();
-  private _targetFPS: number = 30;
+  private readonly _offsetVector: Vector3 = new Vector3();
+  private readonly _panVector: Vector3 = new Vector3();
+  private readonly _raycaster: Raycaster = new Raycaster();
+  private readonly _targetFPS: number = 30;
   private _targetFPSOverActualFPS: number = 1;
   private _isFocused = false;
-
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
@@ -271,7 +270,7 @@ export class ComboControls extends EventDispatcher {
     return deltaTheta;
   }
 
-  private convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
+  private readonly convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
@@ -279,7 +278,6 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-
     if (!this.enabled) {
       return;
     }
@@ -366,7 +364,7 @@ export class ComboControls extends EventDispatcher {
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     this._isFocused =
       event.type !== 'blur' && (event.target === this._domElement || document.activeElement === this._domElement);
-    
+
     this._keyboard.disabled = !this._isFocused;
   };
 
@@ -395,7 +393,6 @@ export class ComboControls extends EventDispatcher {
     }
   };
 
-
   private readonly startMouseRotation = (initialEvent: MouseEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
 
@@ -414,7 +411,6 @@ export class ComboControls extends EventDispatcher {
     window.addEventListener('mousemove', onMouseMove, { passive: false });
     window.addEventListener('mouseup', onMouseUp, { passive: false });
   };
-
 
   private readonly startMousePan = (initialEvent: MouseEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
@@ -435,7 +431,6 @@ export class ComboControls extends EventDispatcher {
     window.addEventListener('mousemove', onMouseMove, { passive: false });
     window.addEventListener('mouseup', onMouseUp, { passive: false });
   };
-
 
   private readonly startTouchRotation = (initialEvent: TouchEvent) => {
     const { _domElement } = this;
@@ -473,12 +468,11 @@ export class ComboControls extends EventDispatcher {
     document.addEventListener('touchend', onTouchEnd, { passive: false });
   };
 
-private readonly startTouchPinch = (initialEvent: TouchEvent) => {
+  private readonly startTouchPinch = (initialEvent: TouchEvent) => {
     const { _domElement } = this;
     let previousPinchInfo = getPinchInfo(_domElement, initialEvent.touches);
     const initialPinchInfo = getPinchInfo(_domElement, initialEvent.touches);
     const initialRadius = this._spherical.radius;
-
 
     const onTouchMove = (event: TouchEvent) => {
       if (event.touches.length !== 2) {
@@ -522,7 +516,7 @@ private readonly startTouchPinch = (initialEvent: TouchEvent) => {
     document.addEventListener('touchend', onTouchEnd);
   };
 
-private readonly handleKeyboard = () => {
+  private readonly handleKeyboard = () => {
     if (!this.enabled || !this.enableKeyboardNavigation || !this._isFocused) {
       return;
     }
@@ -589,7 +583,7 @@ private readonly handleKeyboard = () => {
     _sphericalEnd.makeSafe();
   };
 
-private readonly pan = (deltaX: number, deltaY: number) => {
+  private readonly pan = (deltaX: number, deltaY: number) => {
     const { _domElement, _camera, _offsetVector, _target } = this;
 
     _offsetVector.copy(_camera.position).sub(_target);
@@ -606,7 +600,7 @@ private readonly pan = (deltaX: number, deltaY: number) => {
     this.panUp((2 * deltaY * targetDistance) / _domElement.clientHeight);
   };
 
-private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
+  private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
     const camera = this._camera as OrthographicCamera;
 
     camera.zoom *= 1 - deltaDistance;
@@ -614,7 +608,12 @@ private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistanc
     camera.updateProjectionMatrix();
   };
 
-private readonly calculateTargetOfssetLerp = (x: number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
+  private readonly calculateTargetOfssetLerp = (
+    x: number,
+    y: number,
+    deltaDistance: number,
+    cameraDirection: THREE.Vector3
+  ) => {
     const { dynamicTarget, minDistance, _sphericalEnd, _raycaster, _targetEnd, _reusableCamera } = this;
 
     const distFromCameraToScreenCenter = Math.tan(
@@ -656,7 +655,7 @@ private readonly calculateTargetOfssetLerp = (x: number, y: number, deltaDistanc
   };
 
   // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
-  private clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
+  private readonly clampedMap = (value: number, xStart: number, xEnd: number, yStart: number, yEnd: number) => {
     if (value < xStart) value = yStart;
     else if (value > xEnd) value = yEnd;
     else value = MathUtils.mapLinear(value, xStart, xEnd, yStart, yEnd);
@@ -731,7 +730,12 @@ private readonly calculateTargetOfssetLerp = (x: number, y: number, deltaDistanc
     return targetOffset;
   };
 
-  private readonly dollyWithWheelScroll = (x: number, y: number, deltaDistance: number, cameraDirection: THREE.Vector3) => {
+  private readonly dollyWithWheelScroll = (
+    x: number,
+    y: number,
+    deltaDistance: number,
+    cameraDirection: THREE.Vector3
+  ) => {
     const { _targetEnd, useScrollTarget, zoomToCursor } = this;
 
     const targetOffset = zoomToCursor
@@ -743,7 +747,12 @@ private readonly calculateTargetOfssetLerp = (x: number, y: number, deltaDistanc
     _targetEnd.add(targetOffset);
   };
 
-  private readonly dollyPerspectiveCamera = (x: number, y: number, deltaDistance: number, moveOnlyTarget: boolean = false) => {
+  private readonly dollyPerspectiveCamera = (
+    x: number,
+    y: number,
+    deltaDistance: number,
+    moveOnlyTarget: boolean = false
+  ) => {
     const { _reusableVector3, _targetEnd, _reusableCamera, _sphericalEnd, _camera } = this;
 
     //@ts-ignore
@@ -760,7 +769,7 @@ private readonly calculateTargetOfssetLerp = (x: number, y: number, deltaDistanc
     } else this.dollyWithWheelScroll(x, y, deltaDistance, cameraDirection);
   };
 
-private readonly dolly = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
+  private readonly dolly = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
     const { _camera } = this;
 
     // @ts-ignore
@@ -772,7 +781,7 @@ private readonly dolly = (x: number, y: number, deltaDistance: number, moveTarge
     }
   };
 
-private readonly getDollyDeltaDistance = (dollyIn: boolean, steps: number = 1) => {
+  private readonly getDollyDeltaDistance = (dollyIn: boolean, steps: number = 1) => {
     const { _sphericalEnd, dollyFactor } = this;
 
     const zoomFactor = dollyFactor ** steps;
@@ -781,18 +790,17 @@ private readonly getDollyDeltaDistance = (dollyIn: boolean, steps: number = 1) =
     return distance * (factor - 1);
   };
 
-private readonly panLeft = (distance: number) => {
+  private readonly panLeft = (distance: number) => {
     const { _camera, _targetEnd, _panVector } = this;
     _panVector.setFromMatrixColumn(_camera.matrix, 0); // get X column of objectMatrix
     _panVector.multiplyScalar(-distance);
     _targetEnd.add(_panVector);
   };
 
-private readonly panUp = (distance: number) => {
+  private readonly panUp = (distance: number) => {
     const { _camera, _targetEnd, _panVector } = this;
     _panVector.setFromMatrixColumn(_camera.matrix, 1); // get Y column of objectMatrix
     _panVector.multiplyScalar(distance);
     _targetEnd.add(_panVector);
-
   };
 }

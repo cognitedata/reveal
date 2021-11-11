@@ -191,7 +191,7 @@ export function Migration() {
           zoomToCursorType: 'scrollTarget',
           onClickTargetChange: true,
           canInterruptAnimations: false
-        }
+        },
         debugRenderStageTimings: false
       };
       const guiActions = {

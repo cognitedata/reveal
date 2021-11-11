@@ -17,8 +17,8 @@ const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
 export class CameraManager extends THREE.EventDispatcher {
   public controls: ComboControls;
 
-  private _camera: THREE.PerspectiveCamera;
-  private _domElement: HTMLElement;
+  private readonly _camera: THREE.PerspectiveCamera;
+  private readonly _domElement: HTMLElement;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CallbackData>;
 
@@ -268,7 +268,7 @@ export class CameraManager extends THREE.EventDispatcher {
   }
 
   /** @private */
-  private calculateDefaultDuration = (distanceToCamera: number) => {
+  private readonly calculateDefaultDuration = (distanceToCamera: number) => {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
 
