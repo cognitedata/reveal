@@ -64,10 +64,6 @@ export const useTables = (
   );
 };
 
-type RowResponse = {
-  items: RawDBRow[];
-  nextCursor: string | undefined;
-};
 export const useTableRows = (
   {
     database,

@@ -34,9 +34,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
   const [modalVisibilityStates, setModalVisibilityStates] = useState<
     Record<RawExplorerModal, boolean>
   >({} as Record<RawExplorerModal, boolean>);
-  const [isFetchingTableData, setIsFetchingTableData] = useState<boolean>(
-    false
-  );
+  const [isFetchingTableData, setIsFetchingTableData] =
+    useState<boolean>(false);
   const [tableData, setTableData] = useState<RawDBRow[]>([]);
   const [fetchLimit, setFetchLimit] = useState<number>(100);
 

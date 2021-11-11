@@ -7,7 +7,8 @@ const addLoaders = (config) => {
 
   //Matchers to find the array of rules and css-file loader
   const loadersMatcher = (inQuestion) =>
-    inQuestion.rules &&
+        inQuestion.rules &&
+        inQuestion.rules.find &&
     inQuestion.rules.find((rule) => Array.isArray(rule.oneOf));
   const cssMatcher = (inQuestion) =>
     inQuestion.test && inQuestion.test.toString() === cssRegex.toString();

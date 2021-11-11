@@ -43,13 +43,16 @@ const CardHeading = styled.div`
   padding-left: 10px;
 `;
 
-const TableContent = () => {
+type TableProps = {
+  table: string;
+  database: string;
+};
+
+const TableContent = ({ database, table }: TableProps) => {
   const history = useHistory();
-  const { database, table, appPath } = useParams<{
+  const { appPath } = useParams<{
     appPath: string;
     project: string;
-    table?: string;
-    database?: string;
   }>();
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
@@ -469,14 +472,12 @@ const TableContent = () => {
           />
         </>
       )}
-      {table && database && (
-        <UploadCSV
-          csvModalVisible={csvModalVisible}
-          setCSVModalVisible={setCSVModalVisible}
-          table={table}
-          database={database}
-        />
-      )}
+      <UploadCSV
+        csvModalVisible={csvModalVisible}
+        setCSVModalVisible={setCSVModalVisible}
+        table={table}
+        database={database}
+      />
     </div>
   );
 };
