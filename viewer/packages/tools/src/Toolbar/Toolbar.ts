@@ -15,7 +15,7 @@ export class Toolbar {
   private _toolbarContainer: HTMLDivElement;
   private static readonly stylesId = 'reveal-viewer-toolbar-styles';
 
-  private static classnames = {
+  private static readonly classnames = {
     container: 'reveal-viewer-toolbar-container',
     bottom: 'reveal-viewer-toolbar-container--bottom',
     top: 'reveal-viewer-toolbar-container--top',

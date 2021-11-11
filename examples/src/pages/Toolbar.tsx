@@ -181,14 +181,16 @@ export function Toolbar() {
         alert("result called");
       }
 
-      const cameraIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-12.png');
-      const axisIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-14.png');
-      const doorIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-19.png');
-      const earthIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-30.png');
-      const timelineIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-32.png');
-      const keyIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-42.png');
-      const mapIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-54.png');
-      const settingsIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-63.png');
+      const fileLoader = '!file-loader!';
+
+      const cameraIcon = await import(fileLoader + './icons/Cognite_Icon_Set-12.png');
+      const axisIcon = await import(fileLoader + './icons/Cognite_Icon_Set-14.png');
+      const doorIcon = await import(fileLoader + './icons/Cognite_Icon_Set-19.png');
+      const earthIcon = await import(fileLoader + './icons/Cognite_Icon_Set-30.png');
+      const timelineIcon = await import(fileLoader + './icons/Cognite_Icon_Set-32.png');
+      const keyIcon = await import(fileLoader + './icons/Cognite_Icon_Set-42.png');
+      const mapIcon = await import(fileLoader + './icons/Cognite_Icon_Set-54.png');
+      const settingsIcon = await import(fileLoader + './icons/Cognite_Icon_Set-63.png');
 
 
       const toolbar = new ToolbarTool(viewer);

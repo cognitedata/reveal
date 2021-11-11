@@ -19,7 +19,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
 
   /**
    * Add a Icon button into the Toolbar container
-   * @param text Text to be on Icon button
+   * @param toolTip Tooltip for the Icon button
    * @param backgroundImage background image to be placed onto icon
    * @param onClick Click event callback function which will be used to perform custom functionlity of the user
    */
