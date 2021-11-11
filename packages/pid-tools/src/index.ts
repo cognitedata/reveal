@@ -1,4 +1,5 @@
-import { CurveSegment, LineSegment, PathSegment, Point } from './PathSegments';
+import { Point } from './PathSegments';
+import { svgCommandToSegments } from './utils/svgPath';
 import { InstanceMatcher } from './InstanceMatcher';
 
 export * from './utils/boundingBox';
@@ -30,117 +31,11 @@ export interface DiagramSymbolInstance {
   svgElements: SVGElement[];
 }
 
-const getSvgCommands = (d: string) => {
-  const regexStr: string[] = d.split(/(\D\s.+?(?=[a-zA-Z]))/);
-  const commands: string[] = regexStr.filter((path) => path.length > 0);
-  const commandsWithArgs = commands.map((e) => {
-    if (e.length === 0) {
-      return [];
-    }
-    const allArgs: string[] = [];
-    const args = e.split(' ');
-    for (let i = 1; i < args.length; i++) {
-      const res = args[i].split(',').filter((e) => e.length > 0);
-
-      allArgs.push(...res);
-    }
-    return [args[0], allArgs];
-  });
-  return commandsWithArgs;
-};
-
-/* https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths */
-const getEndPosition = (
-  curPointer: Point,
-  curCommand: any[],
-  startPosition: Point
-) => {
-  let endPosition = null;
-  switch (curCommand[0]) {
-    case 'M': {
-      // Move to
-      endPosition = new Point(curCommand[1][0], curCommand[1][1]);
-      break;
-    }
-    case 'L': {
-      // line to
-      endPosition = new Point(curCommand[1][0], curCommand[1][1]);
-      break;
-    }
-    case 'H': {
-      //
-      endPosition = new Point(curCommand[1][0], curPointer.y);
-      break;
-    }
-    case 'V': {
-      endPosition = new Point(curPointer.x, curCommand[1][0]);
-      break;
-    }
-    case 'C': {
-      endPosition = new Point(curCommand[1][4], curCommand[1][5]);
-      return {
-        endPosition,
-        curvePoint1: new Point(curCommand[1][0], curCommand[1][1]),
-        curvePoint2: new Point(curCommand[1][2], curCommand[1][3]),
-      };
-    }
-    case 'Z': {
-      endPosition = startPosition;
-      break;
-    }
-    default: {
-      // console.log('Failed to parse, curCommand', curCommand);
-      endPosition = null;
-    }
-  }
-  return { endPosition };
-};
-const getSegments = (commands: (string | string[])[][]) => {
-  const segments: PathSegment[] = [];
-  let curPointer: Point = new Point(0, 0);
-  let newStartPosition: Point = new Point(0, 0);
-
-  for (let i = 0; i < commands.length; i++) {
-    const curCommand = commands[i];
-    const { endPosition, curvePoint1, curvePoint2 } = getEndPosition(
-      curPointer,
-      curCommand,
-      newStartPosition
-    );
-    if (endPosition == null) {
-      // This shouldnt happen...
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-    // Move commands does not create segments..
-    if (curCommand[0] !== 'M') {
-      if (curCommand[0] === 'C') {
-        if (curvePoint1 && curvePoint2) {
-          segments.push(
-            new CurveSegment(curvePoint1, curvePoint2, curPointer, endPosition)
-          );
-        }
-      } else {
-        segments.push(new LineSegment(curPointer, endPosition));
-      }
-    }
-    if (endPosition) {
-      curPointer = endPosition;
-    }
-
-    if (curCommand[0] === 'M') {
-      newStartPosition = endPosition;
-    }
-  }
-  return segments;
-};
-
 export const newMatcher = (
   path: string,
   normalizationPoint: Point | null = null
 ) => {
-  const commands: (string | string[])[][] = getSvgCommands(path as string);
-  const segmentList = getSegments(commands);
+  const segmentList = svgCommandToSegments(path);
   return new InstanceMatcher(segmentList, normalizationPoint);
 };
 

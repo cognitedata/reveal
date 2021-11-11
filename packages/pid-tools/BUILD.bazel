@@ -36,18 +36,28 @@ generate_package_json_helpers(
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = []
+DEPENDENCIES = [
+    "@npm//svg-path-parser",
+]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = []
+TYPE_DEPENDENCIES = ["@npm//@types/svg-path-parser"]
 
 # Dev dependencies from package.json
-DEV_DEPENDENCIES = []
+DEV_DEPENDENCIES = [
+    "@npm//rollup-plugin-json",
+    "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
+]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "index.spec": "dist/index.spec",
+    "Instance": "dist/Instance",
+    "InstanceMatcher": "dist/InstanceMatcher",
+    "PathSegments": "dist/PathSegments",
+    "__tests__": "dist/__tests__",
     "index": "dist/index",
+    "svgUtils": "dist/svgUtils",
 }
 
 ### end of auto-generated helpers ###
