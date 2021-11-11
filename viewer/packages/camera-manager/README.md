@@ -12,7 +12,7 @@ $ yarn run start
 ## Usage
 ```js
 
-import ComboControls from '@cognite/three-combo-controls';
+import { ComboControls } from '@cognite/three-combo-controls';
 import * as THREE from 'three';
 
 const controls = new ComboControls(camera, domElement);
