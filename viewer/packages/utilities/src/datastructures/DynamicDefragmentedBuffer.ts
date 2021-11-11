@@ -22,9 +22,9 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
 
   private _buffer: T;
   private _numFilled: number;
-  private _type: new (length: number) => T;
+  private readonly _type: new (length: number) => T;
 
-  private _batchMap: Map<number, Batch>;
+  private readonly _batchMap: Map<number, Batch>;
   private _currentTail: Batch | undefined;
 
   private _batchIdCounter: number;
