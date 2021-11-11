@@ -243,10 +243,12 @@ export const Map: React.FC<Props> = React.memo(
         let safe = true;
 
         if (flyTo.center[1] < -90 || flyTo.center[1] > 90) {
+          // eslint-disable-next-line no-console
           console.log('Error in y when changing map to:', flyTo);
           safe = false;
         }
         if (flyTo.center[0] < -90 || flyTo.center[0] > 90) {
+          // eslint-disable-next-line no-console
           console.log('Error in x when changing map to:', flyTo);
           safe = false;
         }

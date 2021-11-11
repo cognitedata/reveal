@@ -1,8 +1,10 @@
 import { screen } from '@testing-library/testcafe';
 import { t, Selector } from 'testcafe';
 
-import { SAVED_SEARCH_DELETED_MESSAGE } from '../../src/pages/authorized/favorites/tabs/savedSearches/constants';
-import { DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT } from '../../src/pages/authorized/favorites/tabs/savedSearches/constants';
+import {
+  SAVED_SEARCH_DELETED_MESSAGE,
+  DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT,
+} from '../../src/pages/authorized/favorites/tabs/savedSearches/constants';
 import { progress } from '../utils';
 
 import App from './App';

@@ -6,6 +6,7 @@ import { progress } from '../utils';
 
 import BaseSearchPage from './BaseSearch';
 import CreateFavoriteDialog from './CreateFavoriteDialog';
+import DeleteSavedSearchDialog from './DeleteSavedSearchDialog';
 import DocumentSearchPage from './DocumentSearch';
 import FavoritesPage from './Favourites';
 import FilterClearPage from './FilterClear';
@@ -20,7 +21,6 @@ import Topbar from './Topbar';
 import UserProfilePage from './UserProfile';
 import WellInspectPage from './WellInspect';
 import WellSearchPage from './WellSearch';
-import DeleteSavedSearchDialog from './DeleteSavedSearchDialog';
 
 // 'fixture inserting tests' need to know public readonly
 export const projectPrefix = 'discover-e2e-';

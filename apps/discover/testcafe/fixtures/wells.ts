@@ -3,7 +3,7 @@ import {
   getWellSDKClient,
 } from '../../src/modules/wellSearch/sdk/v3';
 import App from '../__pages__/App';
-import { getTokenHeaders, progress } from '../utils';
+import { getTokenHeaders } from '../utils';
 
 export const getOneWell = async () => {
   const headers = await getTokenHeaders({ access: true });
