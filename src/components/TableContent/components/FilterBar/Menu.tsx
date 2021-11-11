@@ -15,11 +15,26 @@ export const Menu = (): JSX.Element => {
 
   return (
     <Bar alignItems="center" justifyContent="space-between">
-      <Button icon="Filter" variant="ghost" onClick={onFiltersClick}>
+      <Button
+        icon="Filter"
+        size="small"
+        variant="ghost"
+        onClick={onFiltersClick}
+      >
         Filters
       </Button>
-      <Button icon="ExpandMax" variant="ghost" onClick={onExpandClick} />
-      <Button icon="HorizontalEllipsis" variant="ghost" onClick={onMenuClick} />
+      <Button
+        icon="ExpandMax"
+        size="small"
+        variant="ghost"
+        onClick={onExpandClick}
+      />
+      <Button
+        icon="HorizontalEllipsis"
+        size="small"
+        variant="ghost"
+        onClick={onMenuClick}
+      />
     </Bar>
   );
 };

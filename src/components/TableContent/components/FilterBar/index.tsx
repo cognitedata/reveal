@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Input } from '@cognite/cogs.js';
 import { activeFilters } from './mock';
 import { Menu, Pagination } from './Menu';
 
 export type FilterType = { type: string; value: number };
 
 export const FilterBar = (): JSX.Element => {
-  const [isColumnActive, setIsColumnActive] = useState<boolean>(true);
+  const [isColumnActive] = useState<boolean>(true);
 
   const onFilterClick = (_filter: FilterType) => {
     /** do something */

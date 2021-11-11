@@ -15,7 +15,9 @@ export const Header = (): JSX.Element => {
           onClick={onMenuButtonClick}
           style={{ marginRight: '8px' }}
         />
-        <Title level={3}>{tableHeaderTitle}</Title>
+        <Title level={3} style={{ fontWeight: 700 }}>
+          {tableHeaderTitle}
+        </Title>
       </Flex>
       <Flex justifyContent="center" alignItems="center">
         <Tabs>
@@ -44,5 +46,6 @@ export const Header = (): JSX.Element => {
 };
 
 const Bar = styled(Flex)`
+  padding-left: 8px;
   border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
 `;
