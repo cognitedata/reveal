@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button, Colors, Flex, Input } from '@cognite/cogs.js';
-import { activeFilters } from './mock';
+import { activeFilters } from 'components/TableContent/mock';
 import { Menu, Pagination } from './Menu';
 
 export type FilterType = { type: string; value: number };
