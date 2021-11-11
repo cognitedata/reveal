@@ -12,6 +12,7 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
+  CameraControlsOptions,
   CognitePointCloudModel,
   PotreePointColorType,
   PotreePointShape,
@@ -89,7 +90,7 @@ export function Migration() {
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
 
-      const controlsOptions = {
+      const controlsOptions: CameraControlsOptions = {
         onClickTargetChange: true,
         zoomToCursor: 'scrollTarget',
       }
