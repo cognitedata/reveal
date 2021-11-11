@@ -138,7 +138,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
                 }}
               >
                 <Tabs.Pane
-                  title="Contextualization"
+                  title="Annotations"
                   key="context"
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                 >
