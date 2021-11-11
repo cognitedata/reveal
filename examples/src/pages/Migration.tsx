@@ -92,7 +92,8 @@ export function Migration() {
 
       const controlsOptions: CameraControlsOptions = {
         onClickTargetChange: true,
-        zoomToCursor: 'scrollTarget'
+        zoomToCursor: 'scrollTarget',
+        canInterruptAnimations: false
       }
 
       viewer.setCameraControlsMode(controlsOptions);
