@@ -10,6 +10,7 @@
     "**/*.spec.tsx",
     "**/*.spec.js",
     "**/*.spec.jsx",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "../platypus-infrastructure/src/utils/date-utils.spec.ts"
   ]
 }

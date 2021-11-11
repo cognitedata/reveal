@@ -1,27 +1,22 @@
-export const solutions = [
+import { Solution } from '@platypus/platypus-core';
+
+export const Solutions: Solution[] = [
   {
-    id: 0,
+    id: '1',
     name: 'BestDay',
-    lastEditedAt: '02.05.2021',
+    description: 'This is a description.',
+    createdTime: 1636107405779,
+    updatedTime: 1636107405779,
+    owners: ['Ola Nordmann'],
+    version: '1.2',
   },
   {
-    id: 1,
-    name: 'InField',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 2,
-    name: 'Solution',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 3,
-    name: 'Another solution',
-    lastEditedAt: '02.05.2021',
-  },
-  {
-    id: 4,
-    name: 'Yet another solution',
-    lastEditedAt: '02.05.2021',
+    id: '1',
+    name: 'BestDay',
+    description: 'This is a description.',
+    createdTime: 1636107405779,
+    updatedTime: 1636107405779,
+    owners: [],
+    version: '',
   },
 ];
