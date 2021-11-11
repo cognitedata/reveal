@@ -10,24 +10,17 @@ export interface AnnotationPreview
   modelType: VisionAPIType;
 }
 
-export type AnnotationCounts = {
-  modelGenerated?: number;
-  manuallyGenerated?: number;
-  verified?: number;
-  rejected?: number;
-  unhandled?: number;
-};
-
 export type AnnotationStatuses = {
   status: JobStatus;
   statusTime: number;
 };
 
 export interface AnnotationsBadgeCounts {
-  gdpr?: AnnotationCounts;
-  tag?: AnnotationCounts;
-  text?: AnnotationCounts;
-  objects?: AnnotationCounts;
+  gdpr?: number;
+  assets?: number;
+  text?: number;
+  objects?: number;
+  mostFrequentObject?: [string, number];
 }
 export interface AnnotationsBadgeStatuses {
   gdpr?: AnnotationStatuses;

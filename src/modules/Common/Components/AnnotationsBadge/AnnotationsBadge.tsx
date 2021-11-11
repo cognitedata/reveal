@@ -1,14 +1,13 @@
 import React from 'react';
 import { Body, Button, Icon } from '@cognite/cogs.js';
 import {
-  AnnotationCounts,
   AnnotationsBadgeCounts,
   AnnotationsBadgeStatuses,
   AnnotationStatuses,
 } from 'src/modules/Common/types';
-import { showBadge, showGDPRBadge } from './common';
+import { showBadge, showGDPRBadge } from './utils';
 
-const setBadge = (counts: AnnotationCounts, statuses?: AnnotationStatuses) => {
+const setBadge = (count: number, statuses?: AnnotationStatuses) => {
   if (statuses?.status === 'Running') {
     return <Icon type="Loading" />;
   }
@@ -16,11 +15,8 @@ const setBadge = (counts: AnnotationCounts, statuses?: AnnotationStatuses) => {
     return <Icon type="ErrorStroked" />;
   }
 
-  const countList = [counts.modelGenerated, counts.manuallyGenerated].filter(
-    (x) => x !== undefined
-  );
-  if (countList.length && statuses?.status !== 'Queued') {
-    return String(countList.reduce((a, b) => (a || 0) + (b || 0)));
+  if (count !== undefined && statuses?.status !== 'Queued') {
+    return String(count);
   }
   return '–';
 };
@@ -33,13 +29,13 @@ export function AnnotationsBadge(
   badgeCounts: AnnotationsBadgeCounts,
   badgeStatuses: AnnotationsBadgeStatuses
 ) {
-  const showTag = showBadge(badgeCounts.tag, badgeStatuses.tag);
+  const showTag = showBadge(badgeCounts.assets, badgeStatuses.tag);
   const showText = showBadge(badgeCounts.text, badgeStatuses.text);
   const showObjects = showBadge(badgeCounts.objects, badgeStatuses.objects);
   const showGdpr = showGDPRBadge(badgeCounts.gdpr);
   return (
     <>
-      {badgeCounts.tag && showTag && (
+      {badgeCounts.assets !== undefined && showTag && (
         <Button
           icon="ResourceAssets"
           size="small"
@@ -50,10 +46,10 @@ export function AnnotationsBadge(
             opacity: setOpacity(badgeStatuses.tag?.status),
           }}
         >
-          {setBadge(badgeCounts.tag, badgeStatuses.tag)}
+          {setBadge(badgeCounts.assets, badgeStatuses.tag)}
         </Button>
       )}
-      {badgeCounts.text && showText && (
+      {badgeCounts.text !== undefined && showText && (
         <Button
           icon="TextScan"
           size="small"
@@ -67,7 +63,7 @@ export function AnnotationsBadge(
           {setBadge(badgeCounts.text, badgeStatuses.text)}
         </Button>
       )}
-      {badgeCounts.objects && showObjects && (
+      {badgeCounts.objects !== undefined && showObjects && (
         <Button
           icon="Scan"
           size="small"
@@ -81,7 +77,7 @@ export function AnnotationsBadge(
           {setBadge(badgeCounts.objects, badgeStatuses.objects)}
         </Button>
       )}
-      {badgeCounts.gdpr && showGdpr && (
+      {badgeCounts.gdpr !== undefined && showGdpr && (
         <Button
           icon="Personrounded"
           size="small"

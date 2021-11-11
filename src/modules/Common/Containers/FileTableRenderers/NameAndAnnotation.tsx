@@ -1,6 +1,3 @@
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { Popover } from 'src/modules/Common/Components/Popover';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
@@ -10,6 +7,7 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
+import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export function NameAndAnnotationRenderer({
   rowData: { name, id, geoLocation },
@@ -20,7 +18,7 @@ export function NameAndAnnotationRenderer({
   );
 
   const selectAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
-  const annotationStatus = useSelector(({ processSlice }: RootState) =>
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     selectAnnotationStatuses(processSlice, id)
   );
 
@@ -36,16 +34,7 @@ export function NameAndAnnotationRenderer({
           </Tooltip>
         )}
       </FileRow>
-      <Popover
-        placement="bottom"
-        trigger="mouseenter click"
-        content={AnnotationsBadgePopoverContent(
-          annotationCounts,
-          annotationStatus
-        )}
-      >
-        <>{AnnotationsBadge(annotationCounts, annotationStatus)}</>
-      </Popover>
+      {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
     </Container>
   );
 }
