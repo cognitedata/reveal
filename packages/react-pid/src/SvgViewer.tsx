@@ -1,18 +1,24 @@
 /* eslint-disable no-param-reassign */
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import {
   findAllInstancesOfSymbol,
   SvgPath,
   DiagramSymbol,
   DiagramSymbolInstance,
+  SvgRepresentation,
+  getSvgBoundingBox,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
+import { Modal, Input, Button } from '@cognite/cogs.js';
 
 import { SideView } from './SideView';
 
+const appElement = document.querySelector('#root') || undefined;
+
 const SvgViewerWrapper = styled.div`
-  height: 100%;
+  height: calc(100% - 56px);
   overflow: hidden;
 `;
 
@@ -21,6 +27,19 @@ const ReactSVGWrapper = styled.div`
   overflow: scroll;
   border: 2px solid;
 `;
+
+const ModalFooterWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: end;
+  gap: 1rem;
+`;
+
+type ExistingSymbolPromptData = {
+  symbolName: string;
+  SVGElements: SVGElement[];
+  resolution?: 'add' | 'rename';
+} | null;
 
 const originalViewBox = {
   x: 0,
@@ -111,6 +130,18 @@ export const SvgViewer = () => {
   const [symbolInstances, setSymbolInstances] = React.useState<
     DiagramSymbolInstance[]
   >([]);
+  const [existingSymbolPromptData, setExistingSymbolPromptData] =
+    useState<ExistingSymbolPromptData>(null);
+
+  useEffect(() => {
+    if (existingSymbolPromptData?.resolution === 'add') {
+      saveSymbol(
+        existingSymbolPromptData.symbolName,
+        existingSymbolPromptData.SVGElements
+      );
+    }
+  }, [existingSymbolPromptData]);
+
   const all: SVGElement[] = [];
 
   const onkeydown = (e: KeyboardEvent) => {
@@ -169,45 +200,54 @@ export const SvgViewer = () => {
   };
 
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
-    const bBoxes = selection.map((svgElement) =>
-      (
-        document.querySelector(`#${svgElement.id}`) as unknown as SVGPathElement
-      ).getBBox()
+    const existingSymbolIndex = symbols.findIndex(
+      (symbol) => symbol.symbolName === symbolName
     );
-    const coords = {
-      minX: Infinity,
-      minY: Infinity,
-      maxX: -Infinity,
-      maxY: -Infinity,
-    };
-    bBoxes.forEach((bBox) => {
-      coords.minX = Math.min(coords.minX, bBox.x);
-      coords.minY = Math.min(coords.minY, bBox.y);
-      coords.maxX = Math.max(coords.maxX, bBox.x + bBox.width);
-      coords.maxY = Math.max(coords.maxY, bBox.y + bBox.height);
-    });
-    const newSymbol = {
+    if (
+      existingSymbolIndex !== -1 &&
+      existingSymbolPromptData?.resolution !== 'add'
+    ) {
+      setExistingSymbolPromptData({
+        symbolName,
+        SVGElements: selection,
+      });
+      return;
+    }
+    const existingSvgRepresentations: SvgRepresentation[] =
+      existingSymbolIndex !== -1
+        ? symbols[existingSymbolIndex].svgRepresentations
+        : [];
+    const newSymbol: DiagramSymbol = {
+      ...(existingSymbolIndex !== -1 ? symbols[existingSymbolIndex] : {}),
       symbolName,
-      svgPaths: selection.map((svgElement) => {
-        return {
-          svgCommands: svgElement.getAttribute('d') as string,
-          style: svgElement.getAttribute('style'),
-        } as SvgPath;
-      }),
-      boundingBox: {
-        x: coords.minX,
-        y: coords.minY,
-        width: coords.maxX - coords.minX,
-        height: coords.maxY - coords.minY,
-      },
+      svgRepresentations: [
+        ...existingSvgRepresentations,
+        {
+          boundingBox: getSvgBoundingBox(selection),
+          svgPaths: selection.map(
+            (svgElement) =>
+              ({
+                svgCommands: svgElement.getAttribute('d') as string,
+                style: svgElement.getAttribute('style'),
+              } as SvgPath)
+          ),
+        },
+      ],
     };
 
-    setSymbols([...symbols, newSymbol]);
+    if (existingSymbolPromptData?.resolution === 'add') {
+      const newSymbols = [...symbols];
+      newSymbols.splice(existingSymbolIndex, 1, newSymbol);
+      setSymbols(newSymbols);
+    } else {
+      setSymbols([...symbols, newSymbol]);
+    }
 
     setSelection([]);
 
     const newSymbolInstances = findAllInstancesOfSymbol(all, newSymbol);
     setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+    setExistingSymbolPromptData(null);
   };
 
   const handleBeforeInjection = (svg?: SVGSVGElement) => {
@@ -371,6 +411,77 @@ export const SvgViewer = () => {
           </ReactSVGWrapper>
         )}
       </div>
+      {existingSymbolPromptData && !existingSymbolPromptData.resolution && (
+        <Modal
+          title="Symbol name exists"
+          visible={!!existingSymbolPromptData}
+          // onCancel={() => setExistingSymbolPromptData(null)}
+          footer={
+            <ModalFooterWrapper>
+              <Button
+                type="primary"
+                icon="Edit"
+                onClick={() =>
+                  setExistingSymbolPromptData({
+                    ...existingSymbolPromptData,
+                    resolution: 'rename',
+                  })
+                }
+              >
+                Rename
+              </Button>
+              <Button
+                type="primary"
+                icon="AddToList"
+                onClick={async () => {
+                  await setExistingSymbolPromptData({
+                    ...existingSymbolPromptData,
+                    resolution: 'add',
+                  });
+                }}
+              >
+                Add to {existingSymbolPromptData.symbolName}
+              </Button>
+            </ModalFooterWrapper>
+          }
+          onCancel={() => setExistingSymbolPromptData(null)}
+          appElement={appElement}
+        >
+          <p>
+            Do you want to rename or add this symbol as an instance to{' '}
+            {existingSymbolPromptData.symbolName}
+          </p>
+        </Modal>
+      )}
+      {existingSymbolPromptData &&
+        existingSymbolPromptData.resolution === 'rename' && (
+          <Modal
+            title="Provide a new name"
+            okDisabled={existingSymbolPromptData.symbolName === ''}
+            visible={!!existingSymbolPromptData}
+            onCancel={() => setExistingSymbolPromptData(null)}
+            onOk={() => {
+              saveSymbol(
+                existingSymbolPromptData.symbolName,
+                existingSymbolPromptData.SVGElements
+              );
+              setExistingSymbolPromptData(null);
+            }}
+            appElement={appElement}
+          >
+            <Input
+              title="Symbol name"
+              onChange={(event) =>
+                setExistingSymbolPromptData({
+                  ...existingSymbolPromptData,
+                  symbolName: event.target.value,
+                })
+              }
+              value={existingSymbolPromptData.symbolName}
+              fullWidth
+            />
+          </Modal>
+        )}
     </SvgViewerWrapper>
   );
 };

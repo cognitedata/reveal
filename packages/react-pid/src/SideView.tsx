@@ -45,7 +45,7 @@ const ToolBarWrapper = styled.div`
 
 const CollapseHeader = styled.div`
   display: grid;
-  grid-template-columns: auto 3rem;
+  grid-template-columns: auto 3rem max-content;
   align-items: center;
   width: 100%;
 `;
@@ -94,6 +94,9 @@ export const SideView = ({
   ];
 
   const symbolHeaderRenderer = (symbol: DiagramSymbol) => {
+    const { boundingBox } = symbol.svgRepresentations[0];
+    const viewboxPadding = 10;
+
     return (
       <CollapseHeader>
         <span>
@@ -104,12 +107,14 @@ export const SideView = ({
           })`}
         </span>
         <svg
-          viewBox={`${symbol.boundingBox.x - 10} ${symbol.boundingBox.y - 10} ${
-            symbol.boundingBox.width + 20
-          } ${symbol.boundingBox.height + 20}`}
+          viewBox={`${boundingBox.x - viewboxPadding} ${
+            boundingBox.y - viewboxPadding
+          } ${boundingBox.width + viewboxPadding * 2} ${
+            boundingBox.height + viewboxPadding * 2
+          }`}
           style={{ aspectRatio: '1 / 1', height: '2rem' }}
         >
-          {symbol.svgPaths.map((path) => {
+          {symbol.svgRepresentations[0].svgPaths.map((path) => {
             return (
               <path
                 key={path.svgCommands}
@@ -123,6 +128,7 @@ export const SideView = ({
             );
           })}
         </svg>
+        <span>({symbol.svgRepresentations.length})</span>
       </CollapseHeader>
     );
   };
@@ -159,7 +165,7 @@ export const SideView = ({
             return (
               <Collapse.Panel
                 header={symbolHeaderRenderer(symbol)}
-                key={symbol.svgPaths
+                key={symbol.svgRepresentations[0].svgPaths
                   .map((svgPath) => svgPath.svgCommands)
                   .join()}
               >
