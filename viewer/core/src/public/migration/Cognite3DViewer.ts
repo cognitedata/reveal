@@ -51,6 +51,7 @@ import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reve
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
+import log from '@reveal/logger';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -161,7 +162,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public get cadBudget(): CadModelBudget {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     return this.revealManager.cadBudget;
   }
@@ -171,7 +172,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public set cadBudget(budget: CadModelBudget) {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
   }
@@ -222,7 +223,10 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this._domElement = options.domElement || createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
+
     this.spinner = new Spinner(this.domElement);
+    this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
+    this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -314,6 +318,21 @@ export class Cognite3DViewer {
    */
   getVersion(): string {
     return process.env.VERSION;
+  }
+
+  /**
+   * Sets the log level. Used for debugging.
+   * Defaults to 'none' (which is identical to 'silent').
+   * @param level
+   */
+  setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none') {
+    switch (level) {
+      case 'none':
+        this.setLogLevel('silent');
+        break;
+      default:
+        log.setLevel(level);
+    }
   }
 
   /**
@@ -477,10 +496,7 @@ export class Cognite3DViewer {
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
-      .forEach(model => {
-        model.styledNodeCollections.forEach(nodeCollection => model.unassignStyledNodeCollection(nodeCollection.nodes));
-        model.styledNodeCollections.splice(0);
-      });
+      .forEach(model => model.removeAllStyledNodeCollections());
 
     return stateHelper.setState(state);
   }
@@ -1446,7 +1462,7 @@ export class Cognite3DViewer {
     return true;
   }
 
-  private startPointerEventListeners = () => {
+  private readonly startPointerEventListeners = () => {
     const canvas = this.canvas;
     const maxMoveDistance = 4;
     const maxClickDuration = 250;

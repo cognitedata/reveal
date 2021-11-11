@@ -179,7 +179,8 @@ export function Migration() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        renderMode: 'Color'
+        renderMode: 'Color',
+        debugRenderStageTimings: false
       };
       const guiActions = {
         addModel: () =>
@@ -268,6 +269,11 @@ export function Migration() {
         ]).name('SSAO').onFinishChange(v => {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
+        });
+      renderGui.add(guiState, 'debugRenderStageTimings')
+        .name('Debug timings')
+        .onChange(enabled => {
+          (viewer as any).revealManager.debugRenderTiming = enabled;
         });
 
       const debugGui = gui.addFolder('Debug');

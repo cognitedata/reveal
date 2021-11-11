@@ -14,11 +14,11 @@ export class TransformOverrideBuffer {
   private _dataTexture: THREE.DataTexture;
   private _textureBuffer: Uint8Array;
 
-  private _unusedIndices: number[];
+  private readonly _unusedIndices: number[];
 
-  private _treeIndexToOverrideIndex: Map<number, number>;
+  private readonly _treeIndexToOverrideIndex: Map<number, number>;
 
-  private _onGenerateNewDataTextureCallback: (datatexture: THREE.DataTexture) => void;
+  private readonly _onGenerateNewDataTextureCallback: (datatexture: THREE.DataTexture) => void;
 
   get dataTexture(): THREE.DataTexture {
     return this._dataTexture;
