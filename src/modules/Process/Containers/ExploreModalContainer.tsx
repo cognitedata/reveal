@@ -57,7 +57,7 @@ export const ExploreModalContainer = () => {
     item: TableDataItem,
     selected: boolean
   ) => {
-    dispatch(setExplorerFileSelectState(item.id, selected));
+    dispatch(setExplorerFileSelectState({ fileId: item.id, selected }));
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setFilter = (newFilter: FileFilterProps) => {

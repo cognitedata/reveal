@@ -16,13 +16,13 @@ import {
   selectIsPollingComplete,
   setMapTableTabKey,
   setFocusedFileId,
-  showFileMetadataPreview,
-  setProcessSortKey,
-  setProcessReverse,
-  setProcessPageSize,
-  setProcessCurrentPage,
   selectProcessSortedFiles,
   selectProcessSelectedFileIdsInSortedOrder,
+  showFileMetadata,
+  setSortKey,
+  setReverse,
+  setCurrentPage,
+  setPageSize,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -86,7 +86,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     onFileDetailsClicked: (fileInfo: FileInfo) => {
       dispatch(setFocusedFileId(fileInfo.id));
       dispatch(resetEditHistory());
-      dispatch(showFileMetadataPreview());
+      dispatch(showFileMetadata());
     },
     onReviewClick: (fileInfo: FileInfo) => {
       dispatch(PopulateReviewFiles(processFileIds));
@@ -118,7 +118,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   ) => {
     dispatch(setFocusedFileId(item.id));
     if (showFileDetailsOnClick) {
-      dispatch(showFileMetadataPreview());
+      dispatch(showFileMetadata());
     }
   };
 
@@ -161,16 +161,16 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     currentPage: sortPaginateState.currentPage,
     pageSize: sortPaginateState.pageSize,
     setSortKey: (sortKey: string) => {
-      dispatch(setProcessSortKey(sortKey));
+      dispatch(setSortKey(sortKey));
     },
     setReverse: (reverse: boolean) => {
-      dispatch(setProcessReverse(reverse));
+      dispatch(setReverse(reverse));
     },
     setCurrentPage: (currentPage: number) => {
-      dispatch(setProcessCurrentPage(currentPage));
+      dispatch(setCurrentPage(currentPage));
     },
     setPageSize: (pageSize: number) => {
-      dispatch(setProcessPageSize(pageSize));
+      dispatch(setPageSize(pageSize));
     },
   };
 

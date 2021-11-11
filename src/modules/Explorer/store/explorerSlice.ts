@@ -1,12 +1,11 @@
 import {
   createAction,
   createSelector,
-  createSlice,
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { FileState } from 'src/modules/Common/store/filesSlice';
-import { SelectFilter, ViewMode } from 'src/modules/Common/types';
+import { SelectFilter } from 'src/modules/Common/types';
 import {
   FileGeoLocation,
   FileInfo,
@@ -23,8 +22,11 @@ import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
 import { RootState } from 'src/store/rootReducer';
-import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
 import isEqual from 'lodash-es/isEqual';
+import {
+  createGenericTabularDataSlice,
+  GenericTabularState,
+} from 'src/store/genericTabularDataSlice';
 
 export type ExplorerFileState = {
   id: number;
@@ -43,12 +45,8 @@ export type ExplorerFileState = {
   geoLocation?: FileGeoLocation;
 };
 
-export type State = {
-  focusedFileId: number | null;
-  showFileMetadata: boolean;
+export type State = GenericTabularState & {
   query: string;
-  currentView: ViewMode;
-  mapTableTabKey: string;
   filter: VisionFileFilterProps;
   showFilter: boolean;
   showFileUploadModal: boolean;
@@ -58,7 +56,6 @@ export type State = {
     selectedIds: number[];
   };
   uploadedFileIds: number[];
-  sortMeta: SortPaginate;
   loadingAnnotations?: boolean;
   // Creating a separate state to make it not affected by preserved state in local storage
   exploreModal: {
@@ -66,16 +63,22 @@ export type State = {
     query: string;
     focusedFileId: number | null;
   };
-  isLoading: boolean;
   percentageScanned: number;
 };
 
 const initialState: State = {
   focusedFileId: null,
   showFileMetadata: false,
-  query: '',
   currentView: 'list',
   mapTableTabKey: 'fileInMap',
+  sortMeta: {
+    sortKey: '',
+    reverse: false,
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+  },
+  isLoading: false,
+  query: '',
   filter: {},
   showFilter: true,
   showFileUploadModal: false,
@@ -85,19 +88,12 @@ const initialState: State = {
     selectedIds: [],
   },
   uploadedFileIds: [],
-  sortMeta: {
-    sortKey: '',
-    reverse: false,
-    currentPage: 1,
-    pageSize: DEFAULT_PAGE_SIZE,
-  },
   loadingAnnotations: false,
   exploreModal: {
     filter: {},
     query: '',
     focusedFileId: null,
   },
-  isLoading: false,
   percentageScanned: 0,
 };
 
@@ -106,70 +102,43 @@ export const setSelectedAllExplorerFiles = createAction<{
   filter?: SelectFilter;
 }>('setSelectedAllExplorerFiles');
 
-const explorerSlice = createSlice({
+/* eslint-disable no-param-reassign */
+const explorerSlice = createGenericTabularDataSlice({
   name: 'explorerSlice',
-  initialState,
-  /* eslint-disable no-param-reassign */
+  initialState: initialState as State,
   reducers: {
-    setExplorerFiles: {
-      prepare: (files: FileInfo[]) => {
-        return {
-          payload: files.map(
-            (file) => createFileState(file) as ExplorerFileState
-          ),
-        };
-      },
-      reducer: (state, action: PayloadAction<ExplorerFileState[]>) => {
-        const files = action.payload;
-        resetFileState(state);
+    setExplorerFiles: (state, action: PayloadAction<FileInfo[]>) => {
+      const files = action.payload.map(
+        (file) => createFileState(file) as ExplorerFileState
+      );
+      resetFileState(state);
 
-        files.forEach((file) => {
-          updateFileState(state, file);
-        });
-      },
+      files.forEach((file) => {
+        updateFileState(state, file);
+      });
     },
-    setExplorerFileSelectState: {
-      prepare: (id: number, selected: boolean) => {
-        return { payload: { fileId: id, selectState: selected } };
-      },
-      reducer: (
-        state,
-        action: PayloadAction<{ fileId: number; selectState: boolean }>
-      ) => {
-        const { fileId } = action.payload;
-        if (fileId) {
-          const alreadySelected = state.files.selectedIds.includes(fileId);
-          if (alreadySelected) {
-            const index = state.files.selectedIds.findIndex(
-              (id) => id === fileId
-            );
-            state.files.selectedIds.splice(index, 1);
-          } else {
-            state.files.selectedIds.push(fileId);
-          }
+    setExplorerFileSelectState: (
+      state,
+      action: PayloadAction<{ fileId: number; selected: boolean }>
+    ) => {
+      const { fileId } = action.payload;
+      if (fileId) {
+        const alreadySelected = state.files.selectedIds.includes(fileId);
+        if (alreadySelected) {
+          const index = state.files.selectedIds.findIndex(
+            (id) => id === fileId
+          );
+          state.files.selectedIds.splice(index, 1);
+        } else {
+          state.files.selectedIds.push(fileId);
         }
-      },
+      }
     },
-    setExplorerSelectedFiles: {
-      prepare: (id: number[]) => {
-        return { payload: { fileIds: id } };
-      },
-      reducer: (state, action: PayloadAction<{ fileIds: number[] }>) => {
-        const { fileIds } = action.payload;
-        state.files.selectedIds = fileIds;
-      },
-    },
-    setExplorerFocusedFileId(state, action: PayloadAction<number | null>) {
-      state.focusedFileId = action.payload;
+    setExplorerSelectedFiles: (state, action: PayloadAction<number[]>) => {
+      state.files.selectedIds = action.payload;
     },
     setExplorerModalFocusedFileId(state, action: PayloadAction<number | null>) {
       state.exploreModal.focusedFileId = action.payload;
-    },
-    hideExplorerFileMetadata(state) {
-      state.showFileMetadata = false;
-    },
-    showExplorerFileMetadata(state) {
-      state.showFileMetadata = true;
     },
     setExplorerQueryString(state, action: PayloadAction<string>) {
       if (state.query !== action.payload) resetSortPagination(state);
@@ -194,31 +163,8 @@ const explorerSlice = createSlice({
     ) {
       state.showFileUploadModal = action.payload;
     },
-    setSortKey(state, action: PayloadAction<string>) {
-      state.sortMeta.sortKey = action.payload;
-    },
-    setReverse(state, action: PayloadAction<boolean>) {
-      state.sortMeta.reverse = action.payload;
-    },
-    setCurrentPage(state, action: PayloadAction<number>) {
-      state.sortMeta.currentPage = action.payload;
-    },
-    setPageSize(state, action: PayloadAction<number>) {
-      state.sortMeta.pageSize = action.payload;
-    },
-    setExplorerCurrentView(state, action: PayloadAction<ViewMode>) {
-      state.currentView = action.payload;
-    },
     setLoadingAnnotations(state) {
       state.loadingAnnotations = true;
-    },
-    setMapTableTabKey(
-      state,
-      action: PayloadAction<{
-        mapTableTabKey: string;
-      }>
-    ) {
-      state.mapTableTabKey = action.payload.mapTableTabKey;
     },
     addExplorerUploadedFileId(state, action: PayloadAction<number>) {
       state.uploadedFileIds.push(action.payload);
@@ -229,9 +175,6 @@ const explorerSlice = createSlice({
       state.showFileUploadModal = false;
       state.loadingAnnotations = false;
       resetFileState(state);
-    },
-    setIsLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
     },
     setPercentageScanned(state, action: PayloadAction<number>) {
       state.percentageScanned = action.payload;
@@ -280,10 +223,10 @@ export const {
   setExplorerFiles,
   setExplorerFileSelectState,
   setExplorerSelectedFiles,
-  setExplorerFocusedFileId,
+  setFocusedFileId,
   setExplorerModalFocusedFileId,
-  hideExplorerFileMetadata,
-  showExplorerFileMetadata,
+  hideFileMetadata,
+  showFileMetadata,
   setExplorerQueryString,
   setExplorerModalQueryString,
   setExplorerFilter,
@@ -293,7 +236,7 @@ export const {
   setReverse,
   setCurrentPage,
   setPageSize,
-  setExplorerCurrentView,
+  setCurrentView,
   setMapTableTabKey,
   setLoadingAnnotations,
   addExplorerUploadedFileId,
@@ -411,3 +354,5 @@ const resetSortPagination = (state: State) => {
   state.sortMeta.sortKey = '';
   state.sortMeta.currentPage = 1;
 };
+
+/* eslint-enable no-param-reassign */
