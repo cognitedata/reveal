@@ -86,7 +86,6 @@ export const AnnotationTableRow = ({
         >
           <SegmentedControl.Button
             type="primary"
-            icon="ThumbsUp"
             key="verified"
             aria-label="verify annotation"
             className="approveButton"
@@ -95,7 +94,6 @@ export const AnnotationTableRow = ({
           </SegmentedControl.Button>
           <SegmentedControl.Button
             type="primary"
-            icon="ThumbsDown"
             key="rejected"
             aria-label="reject annotation"
             className="rejectButton"

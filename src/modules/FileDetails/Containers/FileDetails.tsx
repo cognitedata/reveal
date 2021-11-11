@@ -114,7 +114,7 @@ export const FileDetails = ({
             }}
           >
             <Tabs.Pane
-              title="Contextualization"
+              title="Annotations"
               key="context"
               style={{ overflow: 'hidden' }}
             >
