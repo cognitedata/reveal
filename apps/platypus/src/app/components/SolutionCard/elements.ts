@@ -12,9 +12,9 @@ export const StyledSolutionCard = styled.div`
   cursor: pointer;
   position: relative;
   top: 0;
-  transition: top 150ms cubic-bezier(0.68, -0.55, 0.265, 1.55),
-    background-color 300ms linear;
-  transition-delay: 350ms;
+  transition: top 250ms cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    background-color 400ms linear;
+  transition-delay: 200ms;
   opacity: 1;
 
   :hover {
@@ -51,6 +51,7 @@ export const StyledSolutionCard = styled.div`
   }
 
   .avatar {
+    display: inline-flex;
     background: var(--cogs-black) !important;
   }
 `;

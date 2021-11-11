@@ -6,6 +6,7 @@ import {
   Menu,
   Avatar,
   Label,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 
@@ -86,7 +87,11 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
 
   const renderOwners = () => {
     return solution.owners?.map((owner) => {
-      return <Avatar text={owner} key={owner} className="avatar" />;
+      return (
+        <Tooltip content={owner} placement="bottom">
+          <Avatar text={owner} key={owner} className="avatar" />
+        </Tooltip>
+      );
     });
   };
 
