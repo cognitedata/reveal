@@ -50,7 +50,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: URL_PREFIX
-              value: react-demo-app.${account}
+              value: fas-demo.app.${account}
           ports:
             - containerPort: 80
               name: http
@@ -91,7 +91,7 @@ spec:
   acmeProvider:
     authority: none
   ambassador_id: ambassador-apps
-  hostname: react-demo.app.${account}.cogniteapp.com
+  hostname: fas-demo.app.${account}.cogniteapp.com
   tlsSecret:
     name: apps-certificate-cogniteapp-com-secret
 ---
@@ -106,7 +106,7 @@ spec:
   add_response_headers:
     Strict-Transport-Security: max-age=31536000
   ambassador_id: ambassador-apps
-  host: react-demo.app.${account}.cogniteapp.com
+  host: fas-demo.app.${account}.cogniteapp.com
   prefix: /
   rewrite: ''
   service: react-demo-app

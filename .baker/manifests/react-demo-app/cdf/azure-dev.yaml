@@ -4,7 +4,7 @@ metadata:
   labels:
     team: apps
   name: react-demo-app
-  namespace: apps-staging
+  namespace: apps
 spec:
   ports:
   - name: http
@@ -24,7 +24,7 @@ metadata:
     app: react-demo-app
     team: apps
   name: react-demo-app
-  namespace: apps-staging
+  namespace: apps
 spec:
   replicas: 1
   revisionHistoryLimit: 5
@@ -47,7 +47,7 @@ spec:
       containers:
       - env:
         - name: URL_PREFIX
-          value: fas-demo.app.staging.azure-dev
+          value: fas-demo.app.azure-dev
         image: eu.gcr.io/cognitedata/apps/react-demo-app
         imagePullPolicy: Always
         livenessProbe:
@@ -88,12 +88,12 @@ metadata:
     app: react-demo-app
     team: apps
   name: react-demo-app
-  namespace: apps-staging
+  namespace: apps
 spec:
   acmeProvider:
     authority: none
   ambassador_id: ambassador-apps
-  hostname: fas-demo.app.staging.azure-dev.cogniteapp.com
+  hostname: fas-demo.app.azure-dev.cogniteapp.com
   tlsSecret:
     name: apps-certificate-cogniteapp-com-secret
 ---
@@ -104,12 +104,12 @@ metadata:
     app: react-demo-app
     team: apps
   name: react-demo-app
-  namespace: apps-staging
+  namespace: apps
 spec:
   add_response_headers:
     Strict-Transport-Security: max-age=31536000
   ambassador_id: ambassador-apps
-  host: fas-demo.app.staging.azure-dev.cogniteapp.com
+  host: fas-demo.app.azure-dev.cogniteapp.com
   prefix: /
   rewrite: ""
   service: react-demo-app
