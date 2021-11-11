@@ -24,7 +24,7 @@ export class GltfSectorRepository implements SectorRepository {
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
     const metadata = sector.metadata as V9SectorMetadata;
 
-    if (metadata.sectorFileName === undefined) {
+    if (metadata.sectorFileName === undefined || metadata.downloadSize === 0) {
       return Promise.resolve({
         modelIdentifier: sector.modelIdentifier,
         metadata: metadata,
