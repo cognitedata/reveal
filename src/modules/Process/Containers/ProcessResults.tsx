@@ -40,6 +40,7 @@ import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBa
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
+import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -97,7 +98,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     },
   };
 
-  const data: ResultData[] = useMemo(
+  const processTableRowData: ResultData[] = useMemo(
     () =>
       processFiles.map((file) => ({
         ...file,
@@ -181,73 +182,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
-  const RenderView = (props: { data: TableDataItem[] }) => {
-    if (!props.data.length) {
-      return (
-        <EmptyContainer>
-          <div className="header" />
-          <div className="main">
-            <Detail strong>
-              First select from existing files or upload new
-            </Detail>
-          </div>
-        </EmptyContainer>
-      );
-    }
-    if (currentView === 'grid') {
-      return (
-        <PageBasedGridView
-          {...props}
-          onItemClick={handleItemClick}
-          onItemSelect={handleRowSelect}
-          totalCount={data.length}
-          selectedIds={selectedFileIds}
-          isLoading={isLoading}
-          renderCell={(cellProps: any) => (
-            <FileGridPreview
-              mode={VisionMode.Contextualize}
-              actionDisabled={!!selectedFileIds.length}
-              {...cellProps}
-            />
-          )}
-        />
-      );
-    }
-    if (currentView === 'map') {
-      return (
-        <MapView
-          {...props}
-          onItemSelect={handleRowSelect}
-          onItemClick={handleItemClick}
-          focusedId={focusedFileId}
-          totalCount={data.length}
-          selectedIds={selectedFileIds}
-          allRowsSelected={allFilesSelected}
-          onSelectAllRows={handleSelectAllFiles}
-          onSelectPage={handleSetSelectedFiles}
-          mapTableTabKey={{ activeKey, setActiveKey }}
-          pageSize={sortPaginateState.pageSize}
-          setPageSize={sortPaginateControls.setPageSize}
-          isLoading={isLoading}
-        />
-      );
-    }
-
-    return (
-      <FileTable
-        {...props}
-        onItemSelect={handleRowSelect}
-        onItemClick={handleItemClick}
-        focusedId={focusedFileId}
-        totalCount={data.length}
-        selectedIds={selectedFileIds}
-        allRowsSelected={allFilesSelected}
-        onSelectAllRows={handleSelectAllFiles}
-        onSelectPage={handleSetSelectedFiles}
-        rowKey="rowKey"
-      />
-    );
-  };
   return (
     <>
       <Prompt
@@ -267,13 +201,96 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         }}
       />
       <PaginationWrapper
-        data={data}
-        totalCount={data.length}
-        pagination
+        data={processTableRowData}
+        totalCount={processTableRowData.length}
+        pagination={currentView !== 'map'}
         sortPaginateControls={sortPaginateControls}
         isLoading={isLoading}
       >
-        {(paginationProps) => <RenderView {...paginationProps} />}
+        {(paginationProps) => {
+          const renderView = ({
+            data,
+            totalCount,
+          }: {
+            data: ResultData[];
+            totalCount: number;
+          } & PaginatedTableProps<TableDataItem>) => {
+            if (!data.length) {
+              return (
+                <EmptyContainer>
+                  <div className="header" />
+                  <div className="main">
+                    <Detail strong>
+                      First select from existing files or upload new
+                    </Detail>
+                  </div>
+                </EmptyContainer>
+              );
+            }
+            if (currentView === 'grid') {
+              return (
+                <PageBasedGridView
+                  data={data}
+                  totalCount={totalCount}
+                  onItemClick={handleItemClick}
+                  onItemSelect={handleRowSelect}
+                  selectedIds={selectedFileIds}
+                  isLoading={isLoading}
+                  renderCell={(cellProps: any) => (
+                    <FileGridPreview
+                      mode={VisionMode.Contextualize}
+                      actionDisabled={!!selectedFileIds.length}
+                      {...cellProps}
+                    />
+                  )}
+                />
+              );
+            }
+            if (currentView === 'map') {
+              return (
+                <MapView
+                  data={data}
+                  totalCount={totalCount}
+                  onItemSelect={handleRowSelect}
+                  onItemClick={handleItemClick}
+                  focusedId={focusedFileId}
+                  selectedIds={selectedFileIds}
+                  allRowsSelected={allFilesSelected}
+                  onSelectAllRows={handleSelectAllFiles}
+                  onSelectPage={handleSetSelectedFiles}
+                  mapTableTabKey={{ activeKey, setActiveKey }}
+                  pageSize={sortPaginateState.pageSize}
+                  setPageSize={sortPaginateControls.setPageSize}
+                  isLoading={isLoading}
+                />
+              );
+            }
+
+            return (
+              <FileTable
+                data={data}
+                totalCount={totalCount}
+                onItemSelect={handleRowSelect}
+                onItemClick={handleItemClick}
+                focusedId={focusedFileId}
+                selectedIds={selectedFileIds}
+                allRowsSelected={allFilesSelected}
+                onSelectAllRows={handleSelectAllFiles}
+                onSelectPage={handleSetSelectedFiles}
+                rowKey="rowKey"
+              />
+            );
+          };
+
+          return (
+            <>
+              {renderView({
+                ...paginationProps,
+                totalCount: processTableRowData.length,
+              })}
+            </>
+          );
+        }}
       </PaginationWrapper>
     </>
   );

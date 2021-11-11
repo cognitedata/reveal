@@ -221,7 +221,6 @@ const StyledTabs = styled(Tabs)`
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  padding-bottom: 13px;
   border: 0;
   height: 100%;
   .ant-tabs-content {
