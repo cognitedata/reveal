@@ -50,7 +50,7 @@ export default function ModelLibrary() {
 
   // XXX needs to be refactored
   const getLatestFileInfo = () =>
-    files.find((file) => !file.metadata.nextVersion);
+    files.find((file) => !file.metadata?.nextVersion);
 
   async function loadData() {
     const filter = getFilter();
@@ -73,12 +73,7 @@ export default function ModelLibrary() {
       return;
     }
 
-    history.push({
-      pathname: `${url}/file-new`,
-      state: {
-        fileInfo: getLatestFileInfo(),
-      },
-    });
+    history.push(`${url}/new-version`);
   };
 
   const onClosePanel = () => {

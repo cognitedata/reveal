@@ -10,6 +10,11 @@ import { selectUploadDatasetIds } from 'store/group/selectors';
 import { ApiContext } from 'providers/ApiProvider';
 import { HiddenInputFile } from 'components/forms/controls/elements';
 import { getSelectEntriesFromMap } from 'utils/formUtils';
+import {
+  CreateMetadataModel,
+  FileInfoModel,
+  UpdateMetadataModel,
+} from '@cognite/simconfig-api-sdk';
 
 import { InputRow } from './elements';
 import { ModelFormState } from './types';
@@ -85,16 +90,9 @@ export function ModelForm({
     }
 
     // User e-mail is always set to the currently logged in user, incuding for new versions
-    const metadata = {
+    const metadata: CreateMetadataModel | UpdateMetadataModel = {
       ...formMetadata,
       userEmail: authState.email,
-    };
-
-    const fileInfo = {
-      ...formFileInfo,
-      // Override linked values from metadata
-      name: metadata.modelName,
-      source: metadata.simulator,
     };
 
     const boundaryConditions = formBoundaryConditions.map(
@@ -102,6 +100,18 @@ export function ModelForm({
     );
 
     if (isNewModel) {
+      // Check for required property to narrow metadata type
+      if (!('unitSystem' in metadata)) {
+        throw new Error(`Missing required property: 'unitSystem'`);
+      }
+
+      const fileInfo: FileInfoModel = {
+        ...formFileInfo,
+        // Override linked values from metadata
+        name: metadata.modelName,
+        source: metadata.simulator,
+      };
+
       await api.modelLibrary.createModel(authState.project, {
         boundaryConditions,
         file,
