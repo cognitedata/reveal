@@ -13,4 +13,4 @@ See [cognitedata/charts-functions-dsp](https://github.com/cognitedata/charts-fun
 ### Using a custom calculation backend
 
 Add `backendServiceBaseUrl` query param to the URL to use a custom calculation backend.
-eg. `https://charts.staging.cogniteapp.com/fusion?backendServiceBaseUrl=http://localhost:5000`
+eg. `https://charts.staging.cogniteapp.com/fusion?backendServiceBaseUrl=http://localhost:5000/v2.1`
