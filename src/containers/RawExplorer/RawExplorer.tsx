@@ -22,7 +22,8 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 
 const StyledRawExplorerContent = styled.div`
   display: flex;
-  padding: 24px;
+  height: calc(100% - 50px);
+  box-sizing: border-box;
 `;
 
 const StyledRawExplorerDatabaseListWrapper = styled.div`
@@ -61,16 +62,14 @@ const RawExplorer = (): JSX.Element => {
     <>
       <Breadcrumb isFillingSpace items={breadcrumbs} />
       {hasReadAccess && hasListAccess ? (
-        <div>
-          <StyledRawExplorerContent>
-            <StyledRawExplorerDatabaseListWrapper>
-              <DatabaseList database={database} table={table} />
-            </StyledRawExplorerDatabaseListWrapper>
-            <StyledRawExplorerTableContentWrapper>
-              <TableContent />
-            </StyledRawExplorerTableContentWrapper>
-          </StyledRawExplorerContent>
-        </div>
+        <StyledRawExplorerContent>
+          <StyledRawExplorerDatabaseListWrapper>
+            <DatabaseList database={database} table={table} />
+          </StyledRawExplorerDatabaseListWrapper>
+          <StyledRawExplorerTableContentWrapper>
+            <TableContent />
+          </StyledRawExplorerTableContentWrapper>
+        </StyledRawExplorerContent>
       ) : (
         <NoAccessPage />
       )}

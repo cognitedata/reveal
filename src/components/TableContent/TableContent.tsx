@@ -14,7 +14,8 @@ const TableContent = () => {
 };
 
 const Wrapper = styled(Flex)`
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
+  height: 100%;
 `;
 
 TableContent.Header = Header;

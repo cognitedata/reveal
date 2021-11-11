@@ -15,26 +15,42 @@ export const activeFilters: FilterType[] = [
     value: 6,
   },
 ];
-
 const mockColumns = new Array(10).fill(0).map((_, i) => i);
 const mockData = new Array(50).fill(0).map((_, i) => i);
 
-export const columns: ColumnShape<unknown>[] = mockColumns.map((index) => ({
-  key: `column-${index}`,
-  dataKey: `column-${index}`,
-  title: `Column ${index}`,
-  // fixed: false,
-  width: 200,
-  // flexGrow: 1,
-}));
-
-export const data: unknown[] = mockData.map((index) => {
-  const row: Record<string, string | null> = {
-    id: `row-${index}`,
-    parentId: null,
+export const getColumns = (): ColumnShape<unknown>[] => {
+  const indexColumn = {
+    key: `column-index`,
+    dataKey: `column-index`,
+    title: '',
+    width: 36,
+    flexGrow: 1,
+    flexShrink: 0,
+    frozen: true,
   };
-  columns.forEach((column) => {
-    row[column.key] = `Row ${index}, ${column.title}`;
+  const otherColumns = mockColumns.map((index) => ({
+    key: `column-${index}`,
+    dataKey: `column-${index}`,
+    title: `Column ${index}`,
+    width: 200,
+    flexGrow: 1,
+    flexShrink: 0,
+  }));
+  return [indexColumn, ...otherColumns];
+};
+
+export const getRows = (): unknown[] => {
+  const rows = mockData.map((index) => {
+    const row: Record<string, unknown> = {
+      id: `row-${index}`,
+      parentId: null,
+    };
+    const columns = getColumns();
+    columns.forEach((column) => {
+      if (column.key === 'column-index') row[column.key] = index + 1;
+      else row[column.key] = `Row ${index}, ${column.title}`;
+    });
+    return row;
   });
-  return row;
-});
+  return rows;
+};
