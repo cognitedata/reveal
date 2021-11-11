@@ -1,10 +1,21 @@
-import React from 'react';
+import React /** , { useContext } */ from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button, Colors, Flex, Icon, Tabs, Title } from '@cognite/cogs.js';
+// import { RawExplorerContext } from 'contexts';
 
 export const Header = (): JSX.Element => {
-  const onMenuButtonClick = () => {};
-  const tableHeaderTitle = 'Database';
+  // const { isSidePanelOpen, setIsSidePanelOpen } = useContext(
+  //   RawExplorerContext
+  // );
+
+  const onMenuButtonClick = () => {}; // setIsSidePanelOpen(!isSidePanelOpen);
+  const { database, table } = useParams<{
+    table?: string;
+    database?: string;
+  }>();
+
+  const tableHeaderTitle = `${database}${table ? ` > ${table}` : ''}`;
 
   return (
     <Bar justifyContent="space-between" alignItems="center">
