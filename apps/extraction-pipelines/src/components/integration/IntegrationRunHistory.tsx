@@ -158,12 +158,8 @@ export const IntegrationRunHistory: FunctionComponent<LogsViewProps> = ({
       const { pass: runsData } = partition(data.runs, (item) => {
         return item.status !== RunStatusUI.SEEN;
       });
-      setAll((prev) => {
-        return [...prev, ...data.runs];
-      });
-      setRunsList((prev) => {
-        return [...prev, ...runsData];
-      });
+      setAll(data.runs);
+      setRunsList(runsData);
     }
   }, [data, isPreviousData]);
 

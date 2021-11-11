@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PropsWithChildren, useMemo } from 'react';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
 import {
   Cell,
   Column,
@@ -79,13 +79,6 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   pageSize: controlledPageSize,
   integration,
 }: PropsWithChildren<LogsTableProps>) => {
-  const dataSource = useMemo(() => {
-    return data;
-  }, [data]);
-  const headerCols = useMemo(() => {
-    return columns;
-  }, [columns]);
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -98,8 +91,8 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     state: { pageIndex, pageSize },
   } = useTable(
     {
-      columns: headerCols,
-      data: dataSource,
+      columns,
+      data,
       initialState: { pageIndex: 0, pageSize: controlledPageSize },
       pageCount: controlledPageCount,
     },
