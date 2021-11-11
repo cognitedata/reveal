@@ -5,7 +5,7 @@ import {
   TileDescription,
   StyledTitle,
 } from 'components/tiles/elements';
-import { CogniteExternalId } from '@cognite/sdk-core';
+import { CogniteExternalId } from '@cognite/sdk';
 import { getSuiteByKey } from 'store/suites/selectors';
 import { Suite } from 'store/suites/types';
 import { useSelector } from 'react-redux';

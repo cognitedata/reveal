@@ -44,6 +44,17 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     }),
   },
   {
+    id: FilterIDs.REGION,
+    category: FIELD_BLOCK_OPERATOR,
+    key: 'field_block_operator_filter.region',
+    name: 'Region',
+    type: FilterTypes.MULTISELECT,
+    fetcher: wellFilterFetchers?.regions,
+    filterParameters: (values): WellFilter => ({
+      regions: values as string[],
+    }),
+  },
+  {
     id: FilterIDs.FIELD,
     name: 'Field',
     key: 'field_block_operator_filter.field',

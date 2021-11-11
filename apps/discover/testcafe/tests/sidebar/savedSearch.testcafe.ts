@@ -1,5 +1,6 @@
 import { t } from 'testcafe';
 
+import { FIELD_BLOCK_OPERATOR } from '../../../src/modules/wellSearch/constantsSidebarFilters';
 import App from '../../__pages__/App';
 import { deleteSavedSearches } from '../../fixtures/savedSearches';
 import {
@@ -23,9 +24,6 @@ const savedSearchNameWells = 'TEST_SAVED_SEARCH_WELLS';
 const savedSearchNameEmpty = 'empty-via-save-button';
 const savedSearchNameDocumentsOnly = 'TEST_SAVED_SEARCH_DOCUMENTS_ONLY';
 const savedSearchNameWellsOnly = 'TEST_SAVED_SEARCH_WELLS_ONLY';
-
-// Cant import this from modules/wellSearch/constants because of all the imports in that file :(
-const FIELD_BLOCK_OPERATOR = 'Field / Block / Operator';
 
 /*
  * THIS FILE IS FOR DEALING WITH SAVED SEARCHES FROM THE SEARCH PAGE ONLY

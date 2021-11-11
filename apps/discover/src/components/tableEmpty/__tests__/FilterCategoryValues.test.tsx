@@ -4,6 +4,7 @@ import noop from 'lodash/noop';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useSetWellsFilters } from 'modules/api/savedSearches/hooks/useClearWellsFilters';
+import { FIELD_BLOCK_OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';
 
 import { FilterCategoryValues } from '../FilterCategoryValues';
 
@@ -23,9 +24,7 @@ describe('FilterCategoryValues', () => {
 
   it('should render category', async () => {
     await testInit();
-    expect(
-      await screen.findByText('Field / Block / Operator')
-    ).toBeInTheDocument();
+    expect(await screen.findByText(FIELD_BLOCK_OPERATOR)).toBeInTheDocument();
   });
 
   it('should render category values', async () => {

@@ -213,6 +213,9 @@ export interface WellConfig {
   };
 
   field_block_operator_filter?: {
+    region?: {
+      enabled?: boolean;
+    };
     field?: {
       enabled?: boolean;
     };

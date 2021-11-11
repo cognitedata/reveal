@@ -73,9 +73,9 @@ export const getWellFilterFetchers = () => {
   if (!isWellSDKAuthenticated()) return null;
 
   if (!enableWellSDKV3) {
-    const { fields, blocks, operators, measurements } =
+    const { fields, blocks, operators, measurements, regions } =
       getWellSDKClientV2().wells;
-    return { fields, blocks, operators, measurements };
+    return { fields, blocks, operators, measurements, regions };
   }
 
   return {

@@ -2,7 +2,7 @@ import { getCurrentFilter } from 'store/groups/selectors';
 import { StoreState } from 'store/types';
 import { filterSuitesByGroups } from 'utils/filters';
 import maxBy from 'lodash/maxBy';
-import { CogniteExternalId } from '@cognite/sdk-core/dist/src';
+import { CogniteExternalId } from '@cognite/sdk';
 import { createSelector } from 'reselect';
 import { ImgUrls, Suite, SuitesTableState } from './types';
 

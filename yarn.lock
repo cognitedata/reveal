@@ -1626,7 +1626,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^3.2.3", "@cognite/sdk-core@^3.2.5":
+"@cognite/sdk-core@^3.2.5":
   version "3.2.5"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.2.5.tgz#76b7b1632ed84fb2740ba69959bcebbce91251c7"
   integrity sha512-Jx77CQnKcLMLLuMLCYavLfpNgqrctUaoAaHyv3AP4IZfjGuJX9kTyAfkLCFmiMld9eXfCGNNgyBaDf6AUnsLxA==
@@ -1657,13 +1657,14 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-wells-v2@npm:@cognite/sdk-wells@2.0.9":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-wells/-/sdk-wells-2.0.9.tgz#ee329b570e6839c4fc1a7505261280335480f687"
-  integrity sha512-OQDgAeuOxHJdfm8yxRfYv7VrEe0JIItl+pvFBuzUfO/gq/VZ950r8b7mXs/mRWaYl4lECotinYpQK6whcrXWxA==
+"@cognite/sdk-wells-v2@npm:@cognite/sdk-wells@2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-wells/-/sdk-wells-2.0.13.tgz#4b6aa5c79e82a028e42da17a508cf2a378a17154"
+  integrity sha512-aJHz/czyKfZFf/Ss3hLpWuCZ5gGq/5wfb8yMk4rmuIc4dM4BCG+t34KhRBCoZCfGNWX01xJvaweHIGPI7zH5SQ==
   dependencies:
-    "@cognite/sdk" "^5.3.0"
-    "@cognite/sdk-core" "^3.2.3"
+    "@cognite/sdk" "^5.1.3"
+    "@cognite/sdk-core" "^3.2.0"
+    lodash "^4.17.11"
     wkt "^0.1.1"
 
 "@cognite/sdk-wells-v3@npm:@cognite/sdk-wells@3.1.11-beta.19":
@@ -1674,7 +1675,7 @@
     "@cognite/sdk" "^5.1.3"
     "@cognite/sdk-core" "^3.2.0"
 
-"@cognite/sdk@5.4.0", "@cognite/sdk@^5.3.0", "@cognite/sdk@^5.4.0":
+"@cognite/sdk@5.4.0", "@cognite/sdk@^5.4.0":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-5.4.0.tgz#e1ebd43fff2118aa393e0a266b88441198f3421d"
   integrity sha512-EgfpQzxJKv83wn5hWxQr04cqI9hp33Z1oeedhZiqJRJzsracHa+jeRtR3nOTHyfYfAt2BKu3yw1A9hFnZ3Q2tA==

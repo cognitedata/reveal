@@ -249,7 +249,7 @@ startTest.skip(
     progress('Clear source filters');
     await t.click(App.filterClearPage.getDataSourceCloseBtn());
 
-    progress('Clear Field / Block / Operator filters');
+    progress('Clear field etc filters');
     await t.click(App.filterClearPage.getFieldCloseBtn());
 
     const afterClearinFiltersCount = await App.resultTable.row.count;

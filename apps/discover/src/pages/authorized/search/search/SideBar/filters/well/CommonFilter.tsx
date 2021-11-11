@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
@@ -107,7 +108,7 @@ export const CommonFilter = ({
   if (
     filterType === FilterTypes.MULTISELECT ||
     (filterType === FilterTypes.CHECKBOXES &&
-      (options.length >= 10 || options.length === 0))
+      (options.length >= 10 || isEmpty(options)))
   ) {
     returnElement = createMultiSelectElement();
   } else if (filterType === FilterTypes.CHECKBOXES) {

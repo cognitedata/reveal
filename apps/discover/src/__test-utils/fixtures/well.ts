@@ -12,6 +12,8 @@ import {
 } from 'modules/wellSearch/types';
 import { toWellSequence } from 'modules/wellSearch/utils';
 
+import { FIELD_BLOCK_OPERATOR } from '../../../src/modules/wellSearch/constantsSidebarFilters';
+
 import { createdAndLastUpdatedTime } from './log';
 
 export const WELL_TRAJ_COLUMNS = [
@@ -317,18 +319,18 @@ export const getMockFilterConfig = (extras?: any): FilterConfig => ({
 
 export const getMockFilterConfigByCategory = (): FilterCategoricalData[] => [
   {
-    title: 'Field / Block / Operator',
+    title: FIELD_BLOCK_OPERATOR,
     filterConfigs: [
       {
         id: 2,
         name: 'Field',
         key: 'field_block_operator_filter.field',
-        category: 'Field / Block / Operator',
+        category: FIELD_BLOCK_OPERATOR,
         type: 0,
       },
       {
         id: 4,
-        category: 'Field / Block / Operator',
+        category: FIELD_BLOCK_OPERATOR,
         key: 'field_block_operator_filter.operator',
         name: 'Operator',
         type: 0,

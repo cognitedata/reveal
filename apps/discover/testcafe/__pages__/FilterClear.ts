@@ -7,10 +7,8 @@ import {
   SEARCH_VALUE_LABEL,
   DATA_SOURCE_LABEL,
 } from '../../src/components/tableEmpty/constants';
+import { FIELD_BLOCK_OPERATOR } from '../../src/modules/wellSearch/constantsSidebarFilters';
 import { progress } from '../utils';
-
-// Cant import this from modules/wellSearch/constants because of all the imports in that file :(
-const FIELD_BLOCK_OPERATOR = 'Field / Block / Operator';
 
 class FilterClearPage {
   public readonly fieldBlockOperatorCaption = FIELD_BLOCK_OPERATOR;

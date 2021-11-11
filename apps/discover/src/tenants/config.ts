@@ -17,6 +17,9 @@ export const defaultWellFilters: WellConfig = {
     operator: {
       enabled: true,
     },
+    region: {
+      enabled: true,
+    },
     field: {
       enabled: true,
     },

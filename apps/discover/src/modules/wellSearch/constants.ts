@@ -234,6 +234,7 @@ export enum FilterIDs {
   NPT_DETAIL_CODE = 17,
   FLUIDS = 18,
   WELL_TYPE = 19,
+  REGION = 20,
 }
 
 export const PETREL_LOG_TYPE = 'logType';
