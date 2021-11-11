@@ -215,6 +215,12 @@ const annotationLabelSlice = createSlice({
         deleteCollection(state, currentCollectionId);
       }
     },
+    removeLabels(state) {
+      state.predefinedAnnotations = {
+        predefinedKeypoints: [],
+        predefinedShapes: [],
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deselectAllSelectionsReviewPage, (state) => {
@@ -286,6 +292,7 @@ export const {
   onUpdateKeyPoint,
   deleteCollectionById,
   deleteCurrentCollection,
+  removeLabels,
 } = annotationLabelSlice.actions;
 
 export default annotationLabelSlice.reducer;
