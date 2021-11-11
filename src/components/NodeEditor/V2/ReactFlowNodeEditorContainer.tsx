@@ -12,6 +12,7 @@ import { trackUsage } from 'services/metrics';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 import ReactFlowNodeEditor from './ReactFlowNodeEditor';
+import { useAvailableOps } from '../AvailableOps';
 
 type NodeEditorProps = {
   workflow: ChartWorkflowV2;
@@ -25,6 +26,7 @@ const ReactFlowNodeEditorContainer = ({
   closeNodeEditor,
 }: NodeEditorProps) => {
   const [, setChart] = useRecoilState(chartAtom);
+  const operations = useAvailableOps();
 
   const saveOutputName = (newCalculationName: string) => {
     setChart((oldChart) =>
@@ -50,6 +52,7 @@ const ReactFlowNodeEditorContainer = ({
     <ReactFlowProvider>
       <ReactFlowNodeEditor
         sources={sources}
+        operations={operations}
         output={{
           id: workflow?.id,
           name: workflow?.name,

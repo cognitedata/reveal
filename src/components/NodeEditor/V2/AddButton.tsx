@@ -1,5 +1,4 @@
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import ToolboxFunctionDropdown from 'components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
@@ -11,6 +10,7 @@ import { Operation } from '@cognite/calculation-backend';
 
 interface AddButtonProps {
   sources: (ChartTimeSeries | ChartWorkflow)[];
+  operations: [boolean, (Error | undefined)?, (Operation[] | undefined)?];
   addSourceNode: (
     event: React.MouseEvent,
     source: ChartTimeSeries | ChartWorkflow
@@ -26,7 +26,10 @@ interface AddMenuProps extends AddButtonProps {
 export const SourceListDropdown = ({
   sources,
   addSourceNode,
-}: Omit<AddButtonProps, 'addFunctionNode' | 'addConstantNode'>) => {
+}: Omit<
+  AddButtonProps,
+  'operations' | 'addFunctionNode' | 'addConstantNode'
+>) => {
   return (
     <SourceDropdownMenu>
       <Menu.Header>Select wanted sources</Menu.Header>
@@ -49,12 +52,13 @@ export const SourceListDropdown = ({
 
 export const AddMenu = ({
   sources,
+  operations,
   addSourceNode,
   addFunctionNode,
   addConstantNode,
   onFunctionSelected = () => {},
 }: AddMenuProps) => {
-  const [isLoading, _, operations = []] = useAvailableOps();
+  const [isLoading, _, functions = []] = operations;
 
   return (
     <AddDropdownMenu>
@@ -66,11 +70,11 @@ export const AddMenu = ({
         <span>Source</span>
       </Menu.Submenu>
       {isLoading && <Icon type="Loading" />}
-      {!!operations.length && (
+      {!!functions.length && (
         <ToolboxFunctionDropdown
           categories={{
             Recent: [],
-            ...getCategoriesFromToolFunctions(operations),
+            ...getCategoriesFromToolFunctions(functions),
           }}
           onFunctionSelected={(func: Operation, event: React.MouseEvent) => {
             onFunctionSelected(func);
@@ -87,6 +91,7 @@ export const AddMenu = ({
 
 const AddButton = ({
   sources,
+  operations,
   addSourceNode,
   addFunctionNode,
   addConstantNode,
@@ -101,6 +106,7 @@ const AddButton = ({
         content={
           <AddMenu
             sources={sources}
+            operations={operations}
             addSourceNode={addSourceNode}
             addFunctionNode={addFunctionNode}
             addConstantNode={addConstantNode}

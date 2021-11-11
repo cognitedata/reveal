@@ -35,6 +35,7 @@ import SourceNode from './CustomElements/SourceNode';
 
 export type ReactFlowNodeEditorProps = {
   sources: (ChartTimeSeries | ChartWorkflow)[];
+  operations: [boolean, (Error | undefined)?, (Operation[] | undefined)?];
   output: { id?: string; name?: string; color?: string };
   getSavedFlow: () => FlowExportObject | undefined;
   saveFlow?: (flow: FlowExportObject) => void;
@@ -44,6 +45,7 @@ export type ReactFlowNodeEditorProps = {
 
 const ReactFlowNodeEditor = ({
   sources,
+  operations,
   output,
   getSavedFlow,
   saveFlow,
@@ -325,6 +327,7 @@ const ReactFlowNodeEditor = ({
       </ReactFlow>
       <AddButton
         sources={sources}
+        operations={operations}
         addSourceNode={addSourceNode}
         addFunctionNode={addFunctionNode}
         addConstantNode={addConstantNode}
@@ -338,6 +341,7 @@ const ReactFlowNodeEditor = ({
         >
           <AddMenu
             sources={sources}
+            operations={operations}
             addSourceNode={addSourceNode}
             addFunctionNode={addFunctionNode}
             addConstantNode={addConstantNode}
