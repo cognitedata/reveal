@@ -12,7 +12,7 @@ pipeline:
     dockerImageName: apps/react-demo-app
     manualJudgementDev: true
 configuration:
-  description: 'Deploy react-demo-app to CDF clusters'
+  description: 'Deploy fas-demo to CDF clusters'
   inherit:
     - triggers
     - expectedArtifacts
