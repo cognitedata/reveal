@@ -1,0 +1,34 @@
+name: Build and Deploy Docs to GH Pages
+on:
+  push:
+    branches:
+      - master
+    
+jobs:
+  build-and-deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      
+      - name: Set NPMKEY variable
+        run: |
+              export NPMKEY=$(echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_READONLY_TOKEN}}")
+              echo "::set-output name=NPMKEY::$NPMKEY"
+        id: npm_auth_key
+
+      - name: "Create .npmrc"
+        run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
+      
+      - name: Install Dependency & Build Docs
+        run: |
+          yarn
+          yarn docz:build
+
+      - name: Deploy Docs to GH Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: docs
+          folder: docs
