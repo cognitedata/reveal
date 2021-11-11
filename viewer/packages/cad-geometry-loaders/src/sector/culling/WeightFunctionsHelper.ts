@@ -114,7 +114,7 @@ export class WeightFunctionsHelper {
   computeSectorTreePlacementWeight(sector: V9SectorMetadata): number {
     // Prioritize sectors directly under the root. These contains large structures
     // in V9 format and is therefore a low-detail version of the full model.
-    return sector.depth === 2 ? 1.0 : 1.0 / 3.0;
+    return sector.depth === 1 ? 1.0 : 1.0 / 3.0;
   }
 
   /**
