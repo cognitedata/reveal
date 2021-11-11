@@ -25,7 +25,6 @@ import {
   DatabaseWithTablesItem,
   useRawDBAndTables,
 } from 'hooks/useRawDBAndTables';
-import { InfoBox } from 'components/message/InfoBox';
 import styled from 'styled-components';
 
 interface RawEditModalProps {
@@ -215,12 +214,6 @@ export const RawEditModalView = ({
           </div>
         </Col>
       </ModalContent>
-      <InfoBox iconType="Info">
-        <span>
-          <b>Pro Tip</b>: This can be changed at any point later by clicking the
-          edit button on the overview page.
-        </span>
-      </InfoBox>
       <div key="modal-footer" className="cogs-modal-footer-buttons">
         <Button type="ghost" onClick={close}>
           Cancel

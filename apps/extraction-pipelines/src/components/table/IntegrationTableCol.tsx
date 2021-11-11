@@ -169,7 +169,8 @@ export const integrationTableColumns: Column<Integration>[] = [
         (user) => user.role?.toLowerCase() === 'owner'
       );
       if (owner == null) return noOwner;
-      return owner.name;
+      const displayName = owner.name ?? owner.email;
+      return <span>{displayName}</span>;
     },
     sortType: 'basic',
     disableSortBy: false,
