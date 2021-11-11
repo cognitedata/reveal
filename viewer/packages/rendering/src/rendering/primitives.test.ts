@@ -20,10 +20,7 @@ function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   const mockAttribute2: ParsePrimitiveAttribute = { offset: 12, size: 12 };
 
   const treeIndexAttribute: ParsePrimitiveAttribute = { offset: 16, size: 4 };
-  const mockInstanceMatrix0: ParsePrimitiveAttribute = { offset: 20, size: 4 };
-  const mockInstanceMatrix1: ParsePrimitiveAttribute = { offset: 24, size: 4 };
-  const mockInstanceMatrix2: ParsePrimitiveAttribute = { offset: 28, size: 4 };
-  const mockInstanceMatrix3: ParsePrimitiveAttribute = { offset: 32, size: 4 };
+  const mockInstanceMatrix: ParsePrimitiveAttribute = { offset: 20, size: 16 };
 
   const mockVertex1: ParsePrimitiveAttribute = { offset: 36, size: 3 };
   const mockVertex2: ParsePrimitiveAttribute = { offset: 39, size: 3 };
@@ -34,10 +31,7 @@ function createMockAttributes(): Map<string, ParsePrimitiveAttribute> {
   map.set('attrTwo', mockAttribute1);
   map.set('attrThree', mockAttribute2);
 
-  map.set('instanceMatrix_column_0', mockInstanceMatrix0);
-  map.set('instanceMatrix_column_1', mockInstanceMatrix1);
-  map.set('instanceMatrix_column_2', mockInstanceMatrix2);
-  map.set('instanceMatrix_column_3', mockInstanceMatrix3);
+  map.set('instanceMatrix', mockInstanceMatrix);
 
   map.set('vertex1', mockVertex1);
   map.set('vertex2', mockVertex2);
