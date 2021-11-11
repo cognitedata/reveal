@@ -80,22 +80,21 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   };
 
   useEffect(() => {
-    dispatch(resetEditHistory());
-    dispatch(resetPreview());
-    if (
-      fileId &&
-      !file &&
-      (!reviewFileIds || (reviewFileIds && !reviewFileIds.length))
-    ) {
+    batch(() => {
+      dispatch(resetEditHistory());
+      dispatch(resetPreview());
+    });
+    if (fileId && !reviewFileIds.includes(+fileId)) {
       batch(() => {
         dispatch(PopulateReviewFiles([+fileId]));
         dispatch(FetchFilesById([+fileId]));
       });
     }
+
     if (file) {
       dispatch(RetrieveAnnotations([+fileId]));
     }
-  }, [file, reviewFileIds]);
+  }, [file, fileId, reviewFileIds]);
 
   useEffect(() => {
     dispatch(FetchFilesById(reviewFileIds));
