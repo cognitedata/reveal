@@ -443,9 +443,11 @@ pods {
               ).trim()
               print("Pushed Docker image $nameTag")
 
-              def jsonString = sh(script: "bazel run ${it}", returnStdout: true).split('\n').pop()
+              def jsonString = sh(script: "bazel run ${it}", returnStdout: true)
               print(jsonString)
-              def params = readJSON text: jsonString
+              // JSON object is on the last line
+              def params = readJSON text: jsonString.split('\n').last()
+              print(params)
               params.pipelines.each({ pipeline ->
                 print("Spinnaker deploy ${params.name} ${pipeline} ${nameTag}")
                 spinnaker.deploy(params.name, pipeline, nameTag ? [nameTag] : [])
