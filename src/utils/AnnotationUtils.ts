@@ -19,6 +19,7 @@ import {
   ColorsTextAndIconsSecondary,
 } from 'src/constants/Colors';
 import { Keypoint } from 'src/modules/Review/types';
+import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -308,6 +309,54 @@ const populateKeyPoints = (annotation: VisionAnnotation) => {
   //   );
   // }
   return keypointAnnotation;
+};
+
+export const getAnnotationCounts = (annotations: VisionAnnotation[]) => {
+  const counts: { [text: string]: number } = {};
+
+  annotations.forEach((item) => {
+    counts[item.label] = 1 + (counts[item.label] || 0);
+  });
+
+  return counts;
+};
+
+export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
+  const annotationsBadgeProps: AnnotationsBadgeCounts = {
+    objects: 0,
+    assets: 0,
+    text: 0,
+    gdpr: 0,
+    mostFrequentObject: undefined,
+  };
+  if (annotations) {
+    annotationsBadgeProps.text = annotations.filter(
+      (item) => item.modelType === VisionAPIType.OCR
+    ).length;
+
+    annotationsBadgeProps.assets = annotations.filter(
+      (item) => item.modelType === VisionAPIType.TagDetection
+    ).length;
+
+    annotationsBadgeProps.gdpr = annotations.filter(
+      (item) =>
+        item.modelType === VisionAPIType.ObjectDetection &&
+        item.label === 'person'
+    ).length;
+
+    const objects = annotations.filter(
+      (item) =>
+        item.modelType === VisionAPIType.ObjectDetection &&
+        item.label !== 'person'
+    );
+    annotationsBadgeProps.objects = objects.length;
+    const counts = getAnnotationCounts(objects);
+    annotationsBadgeProps.mostFrequentObject = Object.entries(counts).length
+      ? Object.entries(counts).reduce((a, b) => (a[1] > b[1] ? a : b))
+      : undefined;
+  }
+
+  return annotationsBadgeProps;
 };
 
 export const isAnnotation = (

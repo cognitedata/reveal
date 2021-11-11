@@ -1,12 +1,10 @@
+import { useMemo } from 'react';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { CellRenderer } from 'src/modules/Common/types';
-import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { Popover } from 'src/modules/Common/Components/Popover';
-import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
 import { makeSelectAnnotationStatuses } from 'src/modules/Process/processSlice';
+import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export function AnnotationRenderer({ rowData: { id } }: CellRenderer) {
   const selectAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
@@ -15,20 +13,9 @@ export function AnnotationRenderer({ rowData: { id } }: CellRenderer) {
   );
 
   const selectAnnotationStatuses = useMemo(makeSelectAnnotationStatuses, []);
-  const annotationStatus = useSelector(({ processSlice }: RootState) =>
+  const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     selectAnnotationStatuses(processSlice, id)
   );
 
-  return (
-    <Popover
-      placement="bottom"
-      trigger="mouseenter click"
-      content={AnnotationsBadgePopoverContent(
-        annotationCounts,
-        annotationStatus
-      )}
-    >
-      <>{AnnotationsBadge(annotationCounts, annotationStatus)}</>
-    </Popover>
-  );
+  return AnnotationsBadgePopover(annotationCounts, annotationStatuses);
 }

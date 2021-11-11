@@ -1,9 +1,6 @@
 import React, { useMemo } from 'react';
 import { Tooltip } from '@cognite/cogs.js';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { Popover } from 'src/modules/Common/Components/Popover';
 import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
 import { SelectionCheckbox } from 'src/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
@@ -21,6 +18,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
+import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const FileGridPreview = ({
   item,
@@ -108,16 +106,7 @@ export const FileGridPreview = ({
           </div>
 
           <div className="badge">
-            <Popover
-              placement="bottom"
-              trigger="mouseenter click"
-              content={AnnotationsBadgePopoverContent(
-                annotationCounts,
-                annotationStatuses
-              )}
-            >
-              <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
-            </Popover>
+            {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
           </div>
           {showReviewButton && (
             <div className="review">
