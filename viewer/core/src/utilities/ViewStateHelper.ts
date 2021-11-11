@@ -51,8 +51,8 @@ export class ViewStateHelper {
         const revisionId = model.revisionId;
 
         const styledCollections = model.styledNodeCollections.map(styledNodeCollection => {
-          const { nodes, appearance } = styledNodeCollection;
-          return { ...nodes.serialize(), appearance: appearance };
+          const { nodeCollection, appearance } = styledNodeCollection;
+          return { ...nodeCollection.serialize(), appearance: appearance };
         });
 
         return {

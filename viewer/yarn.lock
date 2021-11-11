@@ -1040,6 +1040,7 @@ __metadata:
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
+    "@reveal/logger": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft

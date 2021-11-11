@@ -38,7 +38,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _disposeClickDiv: () => void;
 
   private _dynamicUpdatePosition = () => {};
-  private _updateClickDiv = () => {};
+  private readonly _updateClickDiv = () => {};
 
   constructor(viewer: Cognite3DViewer, config?: AxisBoxConfig) {
     super();
