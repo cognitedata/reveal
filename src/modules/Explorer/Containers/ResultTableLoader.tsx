@@ -20,12 +20,12 @@ import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setExplorerFiles,
-  setExplorerFocusedFileId,
-  showExplorerFileMetadata,
   setIsLoading,
   setPercentageScanned,
   selectExplorerSortedFiles,
   setLoadingAnnotations,
+  setFocusedFileId,
+  showFileMetadata,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -59,8 +59,8 @@ export const ResultTableLoader = <T extends Resource>({
     // TODO: should onDelete be added here as well?
     onFileDetailsClicked: (fileInfo: FileInfo) => {
       dispatch(FetchFilesById([fileInfo.id]));
-      dispatch(setExplorerFocusedFileId(fileInfo.id));
-      dispatch(showExplorerFileMetadata());
+      dispatch(setFocusedFileId(fileInfo.id));
+      dispatch(showFileMetadata());
     },
     onReviewClick: (fileInfo: FileInfo) => {
       dispatch(PopulateReviewFiles([fileInfo.id]));

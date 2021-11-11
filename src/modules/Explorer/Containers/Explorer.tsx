@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import {
-  hideExplorerFileMetadata,
+  hideFileMetadata,
   selectExplorerSelectedFileIdsInSortedOrder,
   setExplorerFileSelectState,
-  setExplorerFocusedFileId,
-  showExplorerFileMetadata,
+  setFocusedFileId,
+  showFileMetadata,
   toggleExplorerFilterView,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { ClearExplorerStateOnTransition } from 'src/store/thunks/Explorer/ClearExplorerStateOnTransition';
@@ -81,18 +81,18 @@ const Explorer = () => {
     showFileDetailsOnClick: boolean = true
   ) => {
     dispatch(FetchFilesById([file.id]));
-    dispatch(setExplorerFocusedFileId(file.id));
+    dispatch(setFocusedFileId(file.id));
     if (showFileDetailsOnClick) {
-      dispatch(showExplorerFileMetadata());
+      dispatch(showFileMetadata());
     }
   };
 
   const handleRowSelect = (item: TableDataItem, selected: boolean) => {
-    dispatch(setExplorerFileSelectState(item.id, selected));
+    dispatch(setExplorerFileSelectState({ fileId: item.id, selected }));
   };
 
   const handleMetadataClose = () => {
-    dispatch(hideExplorerFileMetadata());
+    dispatch(hideFileMetadata());
   };
 
   const onFileDetailReview = () => {
@@ -245,7 +245,7 @@ const Deselect = () => {
     <DeselectContainer
       onClick={() => {
         if (focusedFileId) {
-          dispatch(setExplorerFocusedFileId(null));
+          dispatch(setFocusedFileId(null));
         }
       }}
     />

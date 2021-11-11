@@ -8,9 +8,9 @@ import { pushMetric } from 'src/utils/pushMetric';
 import { ProcessResults } from 'src/modules/Process/Containers/ProcessResults';
 import { ViewMode } from 'src/modules/Common/types';
 import {
-  setProcessCurrentView,
+  hideFileMetadata,
+  setCurrentView,
   setFocusedFileId,
-  hideFileMetadataPreview,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
@@ -42,7 +42,7 @@ export default function ProcessStep() {
 
   useEffect(() => {
     return () => {
-      dispatch(hideFileMetadataPreview());
+      dispatch(hideFileMetadata());
     };
   }, []);
   return (
@@ -57,9 +57,7 @@ export default function ProcessStep() {
         <ProcessToolBar />
         <FileToolbar
           currentView={currentView}
-          onViewChange={(view) =>
-            dispatch(setProcessCurrentView(view as ViewMode))
-          }
+          onViewChange={(view) => dispatch(setCurrentView(view as ViewMode))}
         />
         <ResultsContainer>
           <ProcessResults currentView={currentView as ViewMode} />
