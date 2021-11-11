@@ -64,6 +64,7 @@ export const DividerWrapper = styled.div`
 `;
 
 export const SearchWrapper = styled.div`
+  overflow: hidden;
   max-height: 100%;
   display: flex;
   flex-direction: column;
