@@ -15,7 +15,7 @@ export class Toolbar {
   private _toolbarContainer: HTMLDivElement;
   private static readonly stylesId = 'reveal-viewer-toolbar-styles';
 
-  static classnames = {
+  private static classnames = {
     container: 'reveal-viewer-toolbar-container',
     bottom: 'reveal-viewer-toolbar-container--bottom',
     top: 'reveal-viewer-toolbar-container--top',
@@ -56,11 +56,14 @@ export class Toolbar {
     controlDiv.appendChild(this._toolbarContainer);
   }
 
-  public addToolbarItem(text: string, backgroundImage: string, onClick: () => void): void {
+  public async addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void): Promise<void> {
     const element = document.createElement('BUTTON');
     element.className = Toolbar.classnames.icon;
-    element.style.backgroundImage = backgroundImage;
-    element.textContent = text;
+    element.title = toolTip;
+    const iconImage = new Image();
+    iconImage.src = backgroundImage;
+
+    element.appendChild(iconImage);
 
     element.onclick = function () {
       onClick();

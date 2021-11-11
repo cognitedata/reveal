@@ -23,8 +23,8 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * @param backgroundImage background image to be placed onto icon
    * @param onClick Click event callback function which will be used to perform custom functionlity of the user
    */
-  public addToolbarItem(text: string, backgroundImage: string, onClick: () => void): void {
-    this._toolbar.addToolbarItem(text, backgroundImage, onClick);
+  public addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void): void {
+    this._toolbar.addToolbarItem(toolTip, backgroundImage, onClick);
   }
 
   public setPosition(position: ToolbarPosition) {

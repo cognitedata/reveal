@@ -181,14 +181,26 @@ export function Toolbar() {
         alert("result called");
       }
 
+      const cameraIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-12.png');
+      const axisIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-14.png');
+      const doorIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-19.png');
+      const earthIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-30.png');
+      const timelineIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-32.png');
+      const keyIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-42.png');
+      const mapIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-54.png');
+      const settingsIcon = await import('!file-loader!' + './icons/Cognite_Icon_Set-63.png');
+
+
       const toolbar = new ToolbarTool(viewer);
-      toolbar.addToolbarItem('I1', 'url("/icons/ancient-gate-fill.png")', callbackMsg);
-      toolbar.addToolbarItem('I2', 'url("/icons/award-fill.png")', callbackMsg);
-      toolbar.addToolbarItem('I3', 'url("/icons/building-fill.png")', callbackMsg);
-      toolbar.addToolbarItem('I4', 'url("/icons/community-fill.png")', callbackMsg);
-      toolbar.addToolbarItem('I6', 'url("/icons/global-fill.png")', callbackMsg);
-      toolbar.addToolbarItem('I7', 'url("/icons/gps-line.png")', callbackMsg);
-      toolbar.addToolbarItem('I8', 'url("/icons/gps-line.png")', callbackMsg);
+      toolbar.addToolbarItem('Camera Switch', cameraIcon.default, callbackMsg);
+      toolbar.addToolbarItem('Axis Tool', axisIcon.default, callbackMsg);
+      toolbar.addToolbarItem('HTML Overlay', doorIcon.default, callbackMsg);
+      toolbar.addToolbarItem('Debug Camera', earthIcon.default, callbackMsg);
+      toolbar.addToolbarItem('Timeline', timelineIcon.default, callbackMsg);
+      toolbar.addToolbarItem('Explode View', keyIcon.default, callbackMsg);
+      toolbar.addToolbarItem('Maps', mapIcon.default, callbackMsg);
+      toolbar.addToolbarItem('Settings', settingsIcon.default, callbackMsg);
+
 
       const renderGui = gui.addFolder('Options');
       const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];
