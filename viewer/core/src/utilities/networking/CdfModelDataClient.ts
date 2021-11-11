@@ -6,9 +6,7 @@ import { CogniteClient, ItemsResponse } from '@cognite/sdk';
 import { ModelDataClient } from '@reveal/cad-parsers';
 import { CameraConfiguration } from '@reveal/utilities';
 
-import { Model3DOutputList } from './Model3DOutputList';
-import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
-import { getSdkApplicationId } from './utilities';
+import { applyDefaultModelTransformation, Model3DOutputList } from '@reveal/modeldata-api';
 import { File3dFormat } from '../types';
 import { BlobOutputMetadata } from './types';
 
@@ -139,4 +137,14 @@ async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefin
     }
   }
   throw error;
+}
+
+/**
+ * Determines the `appId` of the `CogniteClient` provided.
+ * @param sdk Instance of `CogniteClient`.
+ * @returns Application ID or 'unknown' if not found.
+ */
+export function getSdkApplicationId(sdk: CogniteClient): string {
+  const headers = sdk.getDefaultRequestHeaders();
+  return headers['x-cdp-app'] || 'unknown';
 }

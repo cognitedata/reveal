@@ -6,6 +6,8 @@ import { RevealParserWorker } from '@cognite/reveal-parser-worker';
 import { revealEnv } from '../revealEnv';
 import { isTheSameDomain } from '../networking/isTheSameDomain';
 
+import log from '@reveal/logger';
+
 type WorkDelegate<T> = (worker: RevealParserWorker) => Promise<T>;
 
 interface PooledWorker {
@@ -43,7 +45,7 @@ export class WorkerPool {
     }
 
     if (process.env.NODE_ENV !== 'test') {
-      checkWorkerVersion(this.workerList[0].worker).catch(console.error);
+      checkWorkerVersion(this.workerList[0].worker).catch(x => log.error(x));
     }
 
     if (this.workerObjUrl) {
@@ -116,7 +118,7 @@ export async function checkWorkerVersion(worker: RevealParserWorker) {
   const [majorMin, minorMin, patchMin] = minWorkerVersion.split('.').map(i => parseInt(i, 10));
   const [majorWorker, minorWorker, patchWorker] = actualWorkerVersion.split('.').map(i => parseInt(i, 10));
 
-  const errorMessage = `Update your local copy of @cognitre/reveal-parser-worker. Required version is ${minWorkerVersion}. Received ${actualWorkerVersion}.`;
+  const errorMessage = `Update your local copy of @cognite/reveal-parser-worker. Required version is ${minWorkerVersion}. Received ${actualWorkerVersion}.`;
 
   if (majorMin !== majorWorker) {
     throw new Error(errorMessage);

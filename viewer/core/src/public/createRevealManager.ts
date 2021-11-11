@@ -2,21 +2,27 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { ModelDataClient } from '@reveal/cad-parsers';
 
-import { LocalModelIdentifier, CdfModelIdentifier } from '../utilities/networking/types';
-import { CdfModelDataClient } from '../utilities/networking/CdfModelDataClient';
-import { CogniteClient } from '@cognite/sdk';
+import { getSdkApplicationId } from '../utilities/networking/CdfModelDataClient';
+
 import { createCadManager } from '../datamodels/cad/createCadManager';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
-import { LocalModelDataClient } from '../utilities/networking/LocalModelDataClient';
 import { RevealOptions } from './types';
-import { initMetrics } from '../utilities/metrics';
-import { RenderOptions } from '..';
-import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
-import { CadMaterialManager } from '../datamodels/cad/CadMaterialManager';
 import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
+
+import { initMetrics } from '@reveal/metrics';
+import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
+import {
+  ModelMetadataProvider,
+  CdfModelMetadataProvider,
+  LocalModelMetadataProvider,
+  LocalModelDataProvider,
+  ModelDataProvider,
+  CdfModelDataProvider
+} from '@reveal/modeldata-api';
+
+import { CogniteClient } from '@cognite/sdk';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -29,9 +35,18 @@ export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
-): RevealManager<LocalModelIdentifier> {
-  const modelDataClient = new LocalModelDataClient();
-  return createRevealManager('local', modelDataClient, renderer, scene, revealOptions);
+): RevealManager {
+  const modelMetadataProvider = new LocalModelMetadataProvider();
+  const modelDataProvider = new LocalModelDataProvider();
+  return createRevealManager(
+    'local',
+    'local-dataSource-appId',
+    modelMetadataProvider,
+    modelDataProvider,
+    renderer,
+    scene,
+    revealOptions
+  );
 }
 
 /**
@@ -46,31 +61,42 @@ export function createCdfRevealManager(
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
-): RevealManager<CdfModelIdentifier> {
-  const modelDataClient = new CdfModelDataClient(client);
-  return createRevealManager(client.project, modelDataClient, renderer, scene, revealOptions);
+): RevealManager {
+  const applicationId = getSdkApplicationId(client);
+  const modelMetadataProvider = new CdfModelMetadataProvider(client);
+  const modelDataProvider = new CdfModelDataProvider(client);
+  return createRevealManager(
+    client.project,
+    applicationId,
+    modelMetadataProvider,
+    modelDataProvider,
+    renderer,
+    scene,
+    revealOptions
+  );
 }
 
 /**
  * Used to create an instance of reveal manager.
  * @internal
  * @param project
- * @param client
+ * @param applicationId
+ * @param modelMetadataProvider
+ * @param modelDataProvider
  * @param renderer
  * @param scene
  * @param revealOptions
  */
-export function createRevealManager<T>(
+export function createRevealManager(
   project: string,
-  client: ModelDataClient<T>,
+  applicationId: string,
+  modelMetadataProvider: ModelMetadataProvider,
+  modelDataProvider: ModelDataProvider,
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
-): RevealManager<T> {
-  const applicationId = client.getApplicationIdentifier();
+): RevealManager {
   initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
-    moduleName: 'createRevealManager',
-    methodName: 'createRevealManager',
     constructorOptions: revealOptions
   });
 
@@ -78,7 +104,14 @@ export function createRevealManager<T>(
   const materialManager = new CadMaterialManager();
   const renderManager = new EffectRenderManager(renderer, scene, materialManager, renderOptions);
   const alreadyLoadedProvider = new RenderAlreadyLoadedGeometryProvider(renderManager);
-  const cadManager = createCadManager(client, renderer, materialManager, alreadyLoadedProvider, revealOptions);
-  const pointCloudManager = createPointCloudManager(client);
+  const cadManager = createCadManager(
+    modelMetadataProvider,
+    modelDataProvider,
+    renderer,
+    materialManager,
+    alreadyLoadedProvider,
+    revealOptions
+  );
+  const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
   return new RevealManager(cadManager, renderManager, pointCloudManager);
 }

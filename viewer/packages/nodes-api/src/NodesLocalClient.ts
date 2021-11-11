@@ -10,8 +10,6 @@ import { CogniteInternalId } from '@cognite/sdk';
 import { NodeTreeIndexAndSubtreeSize } from './types';
 
 export class NodesLocalClient implements NodesApiClient {
-  constructor(_modelBaseUrl: string) {}
-
   mapTreeIndicesToNodeIds(
     _modelId: CogniteInternalId,
     _revisionId: CogniteInternalId,

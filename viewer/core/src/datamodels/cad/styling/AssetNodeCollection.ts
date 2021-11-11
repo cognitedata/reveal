@@ -3,13 +3,15 @@
  */
 
 import * as THREE from 'three';
-import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
-import { IndexSet } from '../../../utilities/IndexSet';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
-import { NumericRange } from '../../../utilities/NumericRange';
-import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
+
+import { IndexSet, NumericRange } from '@reveal/utilities';
+import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+
+import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
+
 import cloneDeep from 'lodash/cloneDeep';
 
 /**

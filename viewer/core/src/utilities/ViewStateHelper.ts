@@ -1,16 +1,17 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-
-import ComboControls from '@reveal/camera-manager';
-import { NodeAppearance } from '../datamodels/cad/NodeAppearance';
+import * as THREE from 'three';
 
 import { Cognite3DModel } from '../public/migration/Cognite3DModel';
 import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
-import { CogniteClient } from '@cognite/sdk';
 
-import * as THREE from 'three';
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
+
+import ComboControls from '@reveal/camera-manager';
+import { NodeAppearance } from '@reveal/cad-styling';
+
+import { CogniteClient } from '@cognite/sdk';
 
 export type ViewerState = {
   camera: {
@@ -30,11 +31,11 @@ export type ModelState = {
 export class ViewStateHelper {
   private readonly _cameraControls: ComboControls;
   private readonly _viewer: Cognite3DViewer;
-  private _client: CogniteClient;
+  private readonly _cdfClient: CogniteClient;
 
-  constructor(viewer: Cognite3DViewer, client: CogniteClient) {
+  constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
     this._viewer = viewer;
-    this._client = client;
+    this._cdfClient = cdfClient;
     this._cameraControls = viewer.cameraControls;
   }
 
@@ -71,7 +72,7 @@ export class ViewStateHelper {
     };
   }
 
-  public setState(viewerState: ViewerState): void {
+  public async setState(viewerState: ViewerState): Promise<void> {
     const cameraPosition = new THREE.Vector3(
       viewerState.camera.position.x,
       viewerState.camera.position.y,
@@ -89,30 +90,34 @@ export class ViewStateHelper {
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel);
 
-    viewerState.models
-      .map(state => {
-        const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
-        if (model === undefined) {
-          throw new Error(
-            `Cannot apply model state. Model (modelId: ${state.modelId}, revisionId: ${state.revisionId}) has not been added to viewer.`
+    await Promise.all(
+      viewerState.models
+        .map(state => {
+          const model = cadModels.find(model => model.modelId == state.modelId && model.revisionId == state.revisionId);
+          if (model === undefined) {
+            throw new Error(
+              `Cannot apply model state. Model (modelId: ${state.modelId}, revisionId: ${state.revisionId}) has not been added to viewer.`
+            );
+          }
+
+          return { model: model, state: state };
+        })
+        .map(async modelState => {
+          const { model, state } = modelState;
+          model.setDefaultNodeAppearance(state.defaultNodeAppearance);
+
+          await Promise.all(
+            state.styledSets.map(async styleFilter => {
+              const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._cdfClient, model, {
+                token: styleFilter.token,
+                state: styleFilter.state,
+                options: styleFilter.options
+              });
+
+              model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
+            })
           );
-        }
-
-        return { model: model, state: state };
-      })
-      .forEach(modelState => {
-        const { model, state } = modelState;
-        model.setDefaultNodeAppearance(state.defaultNodeAppearance);
-
-        state.styledSets.forEach(async styleFilter => {
-          const nodeCollection = await NodeCollectionDeserializer.Instance.deserialize(this._client, model, {
-            token: styleFilter.token,
-            state: styleFilter.state,
-            options: styleFilter.options
-          });
-
-          model.assignStyledNodeCollection(nodeCollection, styleFilter.appearance);
-        });
-      });
+        })
+    );
   }
 }

@@ -6,8 +6,14 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
-import { CogniteClient } from '@cognite/sdk';
 import { Subscription, fromEventPattern } from 'rxjs';
+
+import { LoadingState } from '@reveal/cad-geometry-loaders';
+
+import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
+
+import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
+import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -18,7 +24,8 @@ import {
   Intersection,
   CameraChangeDelegate,
   PointerEventDelegate,
-  CadModelBudget
+  CadModelBudget,
+  PointCloudBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -26,38 +33,26 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import {
-  defaultRenderOptions,
-  DisposedDelegate,
-  SceneRenderedDelegate,
-  SsaoParameters,
-  SsaoSampleQuality
-} from '../types';
 
-import { CdfModelDataClient } from '../../utilities/networking/CdfModelDataClient';
-import { assertNever, LoadingState } from '../../utilities';
-import { File3dFormat } from '../../utilities/types';
+import { DisposedDelegate, SceneRenderedDelegate } from '../types';
+
 import { Spinner } from '../../utilities/Spinner';
-import { trackError, trackEvent } from '../../utilities/metrics';
-import { CdfModelIdentifier, LocalModelIdentifier } from '../../utilities/networking/types';
-import { clickOrTouchEventOffset, EventTrigger } from '../../utilities/events';
 
 import { IntersectInput, SupportedModelTypes } from '../../datamodels/base';
 import { intersectPointClouds } from '../../datamodels/pointcloud/picking';
 
-import {
-  AntiAliasingMode,
-  CadIntersection,
-  IntersectionFromPixelOptions,
-  PointCloudIntersection,
-  RevealOptions
-} from '../..';
+import { CadIntersection, IntersectionFromPixelOptions, PointCloudIntersection, RevealOptions } from '../..';
 import { PropType } from '../../utilities/reflection';
 import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSectorLoadStatistics';
-import ComboControls from '@reveal/camera-manager';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
-import { NodesApiClient, NodesCdfClient, NodesLocalClient } from '@reveal/nodes-api';
-import { RevealManagerHelper } from './RevealManagerHelper';
+
+import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
+
+import ComboControls from '@reveal/camera-manager';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
+
+import { CogniteClient } from '@cognite/sdk';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -72,7 +67,6 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
-  private readonly _viewStateHelper: ViewStateHelper;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -102,10 +96,12 @@ export class Cognite3DViewer {
     return this._renderer;
   }
 
+  private readonly _cdfSdkClient: CogniteClient | undefined;
+  private readonly _dataSource: DataSource;
+
   private readonly camera: THREE.PerspectiveCamera;
   private readonly scene: THREE.Scene;
   private readonly controls: ComboControls;
-  private readonly sdkClient: CogniteClient;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -132,11 +128,11 @@ export class Cognite3DViewer {
   private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
-  private _slicingNeedsUpdate: boolean = false;
+  private _clippingNeedsUpdate: boolean = false;
 
   private readonly spinner: Spinner;
 
-  private get revealManager(): RevealManager<CdfModelIdentifier> | RevealManager<LocalModelIdentifier> {
+  private get revealManager(): RevealManager {
     return this._revealManagerHelper.revealManager;
   }
 
@@ -167,7 +163,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public get cadBudget(): CadModelBudget {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     return this.revealManager.cadBudget;
   }
@@ -177,9 +173,25 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public set cadBudget(budget: CadModelBudget) {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
+  }
+
+  /**
+   * Returns the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public get pointCloudBudget(): PointCloudBudget {
+    return this.revealManager.pointCloudBudget;
+  }
+
+  /**
+   * Sets the point cloud budget. The budget is shared between all loaded
+   * point cloud models.
+   */
+  public set pointCloudBudget(budget: PointCloudBudget) {
+    this.revealManager.pointCloudBudget = budget;
   }
 
   /**
@@ -212,7 +224,10 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this._domElement = options.domElement || createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
+
     this.spinner = new Spinner(this.domElement);
+    this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
+    this.spinner.opacity = options.loadingIndicatorStyle?.opacity ?? 1.0;
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -222,32 +237,43 @@ export class Cognite3DViewer {
 
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
+
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 1.0;
     this.controls.maxDistance = 100.0;
+
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
-    this.sdkClient = options.sdk;
-    this.renderController = new RenderController(this.camera);
-
-    this._viewStateHelper = new ViewStateHelper(this, this.sdkClient);
-
     const revealOptions = createRevealManagerOptions(options);
-
     if (options._localModels === true) {
+      this._dataSource = new LocalDataSource();
+      this._cdfSdkClient = undefined;
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(this._renderer, this.scene, revealOptions);
+    } else if (options.customDataSource !== undefined) {
+      this._dataSource = options.customDataSource;
+      this._revealManagerHelper = RevealManagerHelper.createCustomDataSourceHelper(
+        this._renderer,
+        this.scene,
+        revealOptions,
+        options.customDataSource
+      );
     } else {
+      // CDF - default mode
+      this._dataSource = new CdfDataSource(options.sdk);
+      this._cdfSdkClient = options.sdk;
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this.scene,
         revealOptions,
-        this.sdkClient
+        options.sdk
       );
     }
+    this.renderController = new RenderController(this.camera);
+
     this.startPointerEventListeners();
 
     this.revealManager.setRenderTarget(
@@ -277,9 +303,14 @@ export class Cognite3DViewer {
     this.animate(0);
 
     trackEvent('construct3dViewer', {
-      moduleName: 'Cognite3DViewer',
-      methodName: 'constructor',
-      constructorOptions: omit(options, ['sdk', 'domElement', 'renderer', '_sectorCuller'])
+      constructorOptions: omit(options, [
+        'sdk',
+        'domElement',
+        'renderer',
+        'renderTargetOptions',
+        'onLoading',
+        '_sectorCuller'
+      ])
     });
   }
 
@@ -436,7 +467,8 @@ export class Cognite3DViewer {
    * @returns JSON object containing viewer state.
    */
   getViewState() {
-    return this._viewStateHelper.getCurrentState();
+    const stateHelper = this.createViewStateHelper();
+    return stateHelper.getCurrentState();
   }
 
   /**
@@ -444,16 +476,18 @@ export class Cognite3DViewer {
    * node collections and applies the `state` object.
    * @param state Viewer state retrieved from {@link Cognite3DViewer.getViewState}.
    */
-  setViewState(state: ViewerState) {
+  setViewState(state: ViewerState): Promise<void> {
+    const stateHelper = this.createViewStateHelper();
+
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
       .forEach(model => {
-        model.styledNodeCollections.forEach(nodeCollection => nodeCollection.nodes.clear());
+        model.styledNodeCollections.forEach(nodeCollection => model.unassignStyledNodeCollection(nodeCollection.nodes));
         model.styledNodeCollections.splice(0);
       });
 
-    this._viewStateHelper.setState(state);
+    return stateHelper.setState(state);
   }
 
   /**
@@ -505,12 +539,7 @@ export class Cognite3DViewer {
    * ```
    */
   async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
-    let nodesApiClient: NodesApiClient;
-    if (options.localPath) {
-      nodesApiClient = new NodesLocalClient(options.localPath);
-    } else {
-      nodesApiClient = new NodesCdfClient(this.sdkClient);
-    }
+    const nodesApiClient = this._dataSource.getNodesApiClient();
 
     const { modelId, revisionId } = options;
     const cadNode = await this._revealManagerHelper.addCadModel(options);
@@ -610,14 +639,24 @@ export class Cognite3DViewer {
    * ```
    */
   async determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''> {
-    const clientExt = new CdfModelDataClient(this.sdkClient);
-    const outputs = await clientExt.getOutputs({ modelId, revisionId, format: File3dFormat.AnyFormat });
-    if (outputs.findMostRecentOutput(File3dFormat.RevealCadModel) !== undefined) {
+    if (this._cdfSdkClient === undefined) {
+      throw new Error(`${this.determineModelType.name}() is only supported when connecting to Cognite Data Fusion`);
+    }
+
+    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
+    const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
+    const outputFormats = outputs.map(output => output.format);
+
+    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
       return 'cad';
-    } else if (outputs.findMostRecentOutput(File3dFormat.EptPointCloud) !== undefined) {
+    } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
     }
     return '';
+
+    function hasOutput(format: File3dFormat) {
+      return outputFormats.includes(format);
+    }
   }
 
   /**
@@ -702,38 +741,54 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Sets per-pixel slicing planes. Pixels behind any of the planes will be sliced away.
-   * @param slicingPlanes The planes to use for slicing.
+   * Sets per-pixel clipping planes. Pixels behind any of the planes will be sliced away.
+   * @param clippingPlanes The planes to use for clipping.
    * @example
    * ```js
    * // Hide pixels with values less than 0 in the x direction
    * const plane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values greater than 20 in the x direction
    *  const plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 20);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
    * // Hide pixels with values less than 0 in the x direction or greater than 0 in the y direction
    * const xPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
    * const yPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
-   * viewer.setSlicingPlanes([xPlane, yPlane]);
+   * viewer.setClippingPlanes([xPlane, yPlane]);
    * ```
    * ```js
    * // Hide pixels behind an arbitrary, non axis-aligned plane
    *  const plane = new THREE.Plane(new THREE.Vector3(1.5, 20, -19), 20);
-   * viewer.setSlicingPlanes([plane]);
+   * viewer.setClippingPlanes([plane]);
    * ```
    * ```js
-   * // Disable slicing planes
-   *  viewer.setSlicingPlanes([]);
+   * // Disable clipping planes
+   *  viewer.setClippingPlanes([]);
    * ```
    */
+  setClippingPlanes(clippingPlanes: THREE.Plane[]): void {
+    this.revealManager.clippingPlanes = clippingPlanes;
+    this._clippingNeedsUpdate = true;
+  }
+
+  /**
+   * @param slicingPlanes
+   * @deprecated Since version 2.1, will be removed in version 3.0. Use {@link setClippingPlanes}.
+   */
   setSlicingPlanes(slicingPlanes: THREE.Plane[]): void {
-    this.revealManager.clippingPlanes = slicingPlanes;
-    this._slicingNeedsUpdate = true;
+    this.setClippingPlanes(slicingPlanes);
+  }
+
+  /**
+   * Returns the current active clipping planes.
+   * @version New in 2.1
+   */
+  getClippingPlanes(): THREE.Plane[] {
+    return this.revealManager.clippingPlanes;
   }
 
   /**
@@ -1090,10 +1145,12 @@ export class Cognite3DViewer {
       x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
       y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
     };
+
     const input: IntersectInput = {
       normalizedCoords,
       camera: this.camera,
       renderer: this.renderer,
+      clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
     };
     const cadResults = intersectCadNodes(cadNodes, input);
@@ -1228,6 +1285,16 @@ export class Cognite3DViewer {
     tween.update(TWEEN.now());
   }
 
+  /**
+   * Creates a helper for managing viewer state.
+   */
+  private createViewStateHelper(): ViewStateHelper {
+    if (this._cdfSdkClient === undefined) {
+      throw new Error(`${this.setViewState.name}() is only supported when connecting to Cognite Data Fusion`);
+    }
+    return new ViewStateHelper(this, this._cdfSdkClient);
+  }
+
   /** @private */
   private async animate(time: number) {
     if (this.isDisposed) {
@@ -1249,14 +1316,14 @@ export class Cognite3DViewer {
       renderController.update();
       this.revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._slicingNeedsUpdate) {
+      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.updateCameraNearAndFar(this.camera);
         this.revealManager.render(this.camera);
         renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
-        this._slicingNeedsUpdate = false;
+        this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
         this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });

@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
+import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 
@@ -16,6 +16,23 @@ export type Color = {
   g: number;
   b: number;
 };
+
+/**
+ * Units supported by {@link Cognite3DModel}.
+ */
+export type WellKnownUnit =
+  | 'Meters'
+  | 'Centimeters'
+  | 'Millimeters'
+  | 'Micrometers'
+  | 'Kilometers'
+  | 'Feet'
+  | 'Inches'
+  | 'Yards'
+  | 'Miles'
+  | 'Mils'
+  | 'Microinches';
+
 /**
  * Callback to monitor loaded requests and progress.
  * Use OnLoadingCallback instead of onProgress/onComplete.
@@ -44,6 +61,20 @@ export interface Cognite3DViewerOptions {
    * Render to offscreen buffer instead of canvas.
    */
   renderTargetOptions?: { target: THREE.WebGLRenderTarget; autoSetSize?: boolean };
+
+  /**
+   * Style the loading indicator.
+   */
+  loadingIndicatorStyle?: {
+    /**
+     * What corner the spinner should be placed in. Defaults top topLeft.
+     */
+    placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+    /**
+     * Opacity of the spinner in fractions. Defaults to 1.0.
+     */
+    opacity: number;
+  };
 
   /**
    * When false, camera near and far planes will not be updated automatically (defaults to true).
@@ -116,6 +147,18 @@ export interface Cognite3DViewerOptions {
   onLoading?: OnLoadingCallback;
 
   /**
+   * Allows providing a custom data source that Reveal will
+   * use to load model data. Note that some features might not
+   * work when implementing a custom data source. Please refer
+   * to the Reveal documentation for details.
+   *
+   * Note that the data source must support {@link CdfModelIdentifier}.
+   *
+   * This cannot be used together with {@link _localModels}.
+   */
+  customDataSource?: DataSource;
+
+  /**
    * Utility used to determine what parts of the model will be visible on screen and loaded.
    * This is only meant for unit testing.
    * @internal
@@ -133,6 +176,7 @@ export interface Cognite3DViewerOptions {
 }
 
 import { GeometryFilter } from '../../public/types';
+import { DataSource } from '@reveal/data-source';
 export { GeometryFilter };
 
 /**
@@ -258,6 +302,24 @@ export type CadModelBudget = {
    * are very important for the framerate.
    */
   readonly maximumNumberOfDrawCalls: number;
+
+  /**
+   * Maximum render cost. This number can be thought of as triangle count, although the number
+   * doesn't match this directly.
+   */
+  readonly maximumRenderCost: number;
+};
+
+/**
+ * Represents a budget of how many point from point clouds can be
+ * loaded at the same time.
+ */
+export type PointCloudBudget = {
+  /**
+   * Total number of points that can be loaded for all point clouds models
+   * accumulated.
+   */
+  readonly numberOfPoints: number;
 };
 
 /**

@@ -25,18 +25,18 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@cognite/potree-core": "1.2.1",
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/sdk": "link:../viewer/node_modules/@cognite/sdk",
     "camera-controls": "^1.25.1",
     "dat.gui": "^0.7.7",
+    "geo-three": "^0.0.15",
     "hold-event": "^0.0.1",
     "install": "^0.13.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "styled-components": "^5.2.0",
-    "three": "0.131.0"
+    "three": "0.133.0"
   },
   "devDependencies": {
     "@actions/core": "^1.2.6",
@@ -54,7 +54,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.4",
-    "@types/three": "0.131.0",
+    "@types/three": "0.133.0",
     "@types/webpack-env": "^1.16.2",
     "copy-webpack-plugin": "^6.2.1",
     "cross-env": "^7.0.2",

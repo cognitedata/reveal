@@ -6,11 +6,12 @@ import * as THREE from 'three';
 import * as reveal from '@cognite/reveal/internals';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
 import { BoundingBoxClipper } from '@cognite/reveal';
 import { CanvasWrapper } from '../components/styled';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
@@ -19,17 +20,19 @@ export function Clipping() {
 
   useEffect(() => {
     const gui = new dat.GUI();
-    let revealManager: reveal.RevealManager<unknown>;
+    let revealManager: reveal.RevealManager;
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
 
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
+
       const client = new CogniteClient({ appId: 'reveal.example.simple' });
-      await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project } });
-      await client.authenticate();
+      if (project && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
+      }
 
       const scene = new THREE.Scene();
       const renderer = new THREE.WebGLRenderer({
@@ -39,20 +42,7 @@ export function Clipping() {
       renderer.setClearColor('#444');
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      const revealOptions = {  };
-      let model: reveal.CadNode;
-      if(modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, scene, revealOptions);
-        model = await revealManager.addModel('cad', modelRevision);
-      } else if(modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, scene, revealOptions);
-        model = await revealManager.addModel('cad', modelUrl);
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
-
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
 
       const { position, target, near, far } = model.suggestCameraConfig();

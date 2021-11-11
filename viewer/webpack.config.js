@@ -27,7 +27,6 @@ module.exports = env => {
 
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });
-
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
@@ -35,10 +34,12 @@ module.exports = env => {
       ? {
           index: './index.ts',
           tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts',
           internals: './internals.ts'
         }
       : {
           index: './index.ts',
+          'extensions/datasource': './extensions/datasource.ts',
           tools: './tools.ts'
         },
     target: 'web',
@@ -83,7 +84,11 @@ module.exports = env => {
         }
       ]
     },
-    externals: [nodeExternals()],
+    externals: [
+      nodeExternals({
+        allowlist: [/^@reveal/]
+      })
+    ],
     output: {
       filename: '[name].js',
       publicPath: publicPathViewer,
@@ -110,7 +115,8 @@ module.exports = env => {
         'process.env': JSON.stringify({
           VERSION: packageJSON.version,
           WORKER_VERSION: parserWorkerVersion,
-          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD
+          MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
+          IS_DEVELOPMENT_MODE: development
         })
       })
     ]

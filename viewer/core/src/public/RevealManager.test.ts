@@ -3,30 +3,38 @@
  */
 import * as THREE from 'three';
 
-import { ModelDataClient } from '@reveal/cad-parsers';
-import { SectorCuller } from '../internals';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 import { LoadingStateChangeListener } from '..';
 import { createGlContext } from '../../../test-utilities';
 
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { SectorCuller } from '@reveal/cad-geometry-loaders';
+
 describe('RevealManager', () => {
-  const mockClient: ModelDataClient<{ id: number }> = {
-    getApplicationIdentifier: () => {
-      return 'dummy';
-    }
-  } as any;
+  const stubMetadataProvider: ModelMetadataProvider = {} as any;
+  const stubDataProvider: ModelDataProvider = {} as any;
   const sectorCuller: SectorCuller = {
     determineSectors: jest.fn(),
     filterSectorsToLoad: jest.fn(),
     dispose: jest.fn()
   };
-  let manager: RevealManager<{ id: number }>;
+  let manager: RevealManager;
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager = createRevealManager('test', mockClient, renderer, new THREE.Scene(), { internal: { sectorCuller } });
+    manager = createRevealManager(
+      'test',
+      'myAppId',
+      stubMetadataProvider,
+      stubDataProvider,
+      renderer,
+      new THREE.Scene(),
+      {
+        internal: { sectorCuller }
+      }
+    );
   });
 
   beforeAll(() => {
@@ -86,7 +94,17 @@ describe('RevealManager', () => {
   });
 
   test('addUiObject() and removeUiObject() requests redraw', () => {
-    manager = createRevealManager('test', mockClient, renderer, new THREE.Scene(), { internal: { sectorCuller } });
+    manager = createRevealManager(
+      'test',
+      'myAppId',
+      stubMetadataProvider,
+      stubDataProvider,
+      renderer,
+      new THREE.Scene(),
+      {
+        internal: { sectorCuller }
+      }
+    );
     expect(manager).not.toBeUndefined();
     expect(manager.needsRedraw).toBeFalse();
     const uiObject = new THREE.Object3D();

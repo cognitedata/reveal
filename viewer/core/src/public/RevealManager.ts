@@ -4,22 +4,24 @@
 
 import * as THREE from 'three';
 
-import { CadManager } from '../datamodels/cad/CadManager';
-import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
-import { LoadingStateChangeListener, defaultRenderOptions } from './types';
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-import { trackError, trackLoadModel, trackCameraNavigation } from '../utilities/metrics';
-import { CadNode } from '../datamodels/cad';
-import { RenderMode } from '../datamodels/cad/rendering/RenderMode';
-import { EffectRenderManager } from '../datamodels/cad/rendering/EffectRenderManager';
+
+import { CadManager } from '../datamodels/cad/CadManager';
+import { PointCloudManager } from '../datamodels/pointcloud/PointCloudManager';
+import { LoadingStateChangeListener, PointCloudBudget } from './types';
 import { SupportedModelTypes } from '../datamodels/base';
-import { assertNever, LoadingState } from '../utilities';
 import { PointCloudNode } from '../datamodels/pointcloud/PointCloudNode';
-import { CadModelSectorBudget } from '../datamodels/cad/CadModelSectorBudget';
 import { CadModelSectorLoadStatistics } from '../datamodels/cad/CadModelSectorLoadStatistics';
-import { GeometryFilter, NodeAppearanceProvider, RenderOptions } from '..';
-import { EventTrigger } from '../utilities/events';
+import { GeometryFilter } from '..';
+
+import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
+import { NodeAppearanceProvider } from '@reveal/cad-styling';
+import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
+import { trackError, trackLoadModel, trackCameraNavigation } from '@reveal/metrics';
+import { assertNever, EventTrigger } from '@reveal/utilities';
+
+import { ModelIdentifier } from '@reveal/modeldata-api';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -28,9 +30,9 @@ export type AddCadModelOptions = {
   geometryFilter?: GeometryFilter;
 };
 
-export class RevealManager<TModelIdentifier> {
-  private readonly _cadManager: CadManager<TModelIdentifier>;
-  private readonly _pointCloudManager: PointCloudManager<TModelIdentifier>;
+export class RevealManager {
+  private readonly _cadManager: CadManager;
+  private readonly _pointCloudManager: PointCloudManager;
   private readonly _effectRenderManager: EffectRenderManager;
 
   private readonly _lastCamera = {
@@ -47,11 +49,7 @@ export class RevealManager<TModelIdentifier> {
 
   private readonly _updateSubject: Subject<void>;
 
-  constructor(
-    cadManager: CadManager<TModelIdentifier>,
-    renderManager: EffectRenderManager,
-    pointCloudManager: PointCloudManager<TModelIdentifier>
-  ) {
+  constructor(cadManager: CadManager, renderManager: EffectRenderManager, pointCloudManager: PointCloudManager) {
     this._effectRenderManager = renderManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
@@ -126,16 +124,25 @@ export class RevealManager<TModelIdentifier> {
     return this._cadManager.loadedStatistics;
   }
 
-  public get renderMode(): RenderMode {
+  public get cadRenderMode(): RenderMode {
     return this._cadManager.renderMode;
   }
 
-  public set renderMode(renderMode: RenderMode) {
+  public set cadRenderMode(renderMode: RenderMode) {
     this._cadManager.renderMode = renderMode;
+  }
+
+  public get pointCloudBudget(): PointCloudBudget {
+    return { numberOfPoints: this._pointCloudManager.pointBudget };
+  }
+
+  public set pointCloudBudget(budget: PointCloudBudget) {
+    this._pointCloudManager.pointBudget = budget.numberOfPoints;
   }
 
   public set clippingPlanes(clippingPlanes: THREE.Plane[]) {
     this._cadManager.clippingPlanes = clippingPlanes;
+    this._pointCloudManager.clippingPlanes = clippingPlanes;
   }
 
   public get clippingPlanes(): THREE.Plane[] {
@@ -166,6 +173,7 @@ export class RevealManager<TModelIdentifier> {
 
   public render(camera: THREE.PerspectiveCamera) {
     this._effectRenderManager.render(camera);
+    this.resetRedraw();
   }
 
   /**
@@ -178,19 +186,16 @@ export class RevealManager<TModelIdentifier> {
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
 
-  public addModel(type: 'cad', modelIdentifier: TModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel(type: 'pointcloud', modelIdentifier: TModelIdentifier): Promise<PointCloudNode>;
+  public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
+  public addModel(type: 'pointcloud', modelIdentifier: ModelIdentifier): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
-    modelIdentifier: TModelIdentifier,
+    modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
     trackLoadModel(
       {
-        moduleName: 'RevealManager',
-        methodName: 'addModel',
-        type,
-        options
+        type
       },
       modelIdentifier
     );
@@ -240,10 +245,7 @@ export class RevealManager<TModelIdentifier> {
     this._events.loadingStateChanged.fire(loadingState);
   }
 
-  private initLoadingStateObserver(
-    cadManager: CadManager<TModelIdentifier>,
-    pointCloudManager: PointCloudManager<TModelIdentifier>
-  ) {
+  private initLoadingStateObserver(cadManager: CadManager, pointCloudManager: PointCloudManager) {
     this._subscriptions.add(
       combineLatest([cadManager.getLoadingStateObserver(), pointCloudManager.getLoadingStateObserver()])
         .pipe(

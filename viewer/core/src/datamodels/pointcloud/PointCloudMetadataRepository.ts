@@ -6,34 +6,43 @@ import * as THREE from 'three';
 
 import { PointCloudMetadata } from './PointCloudMetadata';
 import { MetadataRepository } from '../base';
-import { File3dFormat } from '../../utilities/types';
-import { ModelDataClient } from '@reveal/cad-parsers';
+
 import { transformCameraConfiguration } from '@reveal/utilities';
 
-type ModelIdentifierWithFormat<T> = T & { format: File3dFormat };
+import {
+  ModelDataProvider,
+  ModelMetadataProvider,
+  ModelIdentifier,
+  File3dFormat,
+  BlobOutputMetadata
+} from '@reveal/modeldata-api';
 
 const identityMatrix = new THREE.Matrix4().identity();
 
-export class PointCloudMetadataRepository<TModelIdentifier>
-  implements MetadataRepository<TModelIdentifier, Promise<PointCloudMetadata>>
-{
-  private readonly _modelMetadataProvider: ModelDataClient<ModelIdentifierWithFormat<TModelIdentifier>>;
+export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
+  private readonly _modelMetadataProvider: ModelMetadataProvider;
+  private readonly _modelDataProvider: ModelDataProvider;
   private readonly _blobFileName: string;
 
-  constructor(modelMetadataProvider: ModelDataClient<TModelIdentifier>, blobFileName: string = 'ept.json') {
+  constructor(
+    modelMetadataProvider: ModelMetadataProvider,
+    modelDataProvider: ModelDataProvider,
+    blobFileName: string = 'ept.json'
+  ) {
     this._modelMetadataProvider = modelMetadataProvider;
+    this._modelDataProvider = modelDataProvider;
     this._blobFileName = blobFileName;
   }
 
-  async loadData(modelIdentifier: TModelIdentifier): Promise<PointCloudMetadata> {
-    const idWithFormat = { format: File3dFormat.EptPointCloud, ...modelIdentifier };
-    const baseUrlPromise = this._modelMetadataProvider.getModelUrl(idWithFormat);
-    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(idWithFormat);
-    const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(idWithFormat);
+  async loadData(modelIdentifier: ModelIdentifier): Promise<PointCloudMetadata> {
+    const output = await this.getSupportedOutput(modelIdentifier);
+    const baseUrlPromise = this._modelMetadataProvider.getModelUri(modelIdentifier, output);
+    const modelMatrixPromise = this._modelMetadataProvider.getModelMatrix(modelIdentifier, output.format);
+    const cameraConfigurationPromise = this._modelMetadataProvider.getModelCamera(modelIdentifier);
 
     const modelBaseUrl = await baseUrlPromise;
     const modelMatrix = await modelMatrixPromise;
-    const scene = await this._modelMetadataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
+    const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
       modelBaseUrl,
@@ -41,5 +50,15 @@ export class PointCloudMetadataRepository<TModelIdentifier>
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, identityMatrix),
       scene
     };
+  }
+
+  private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
+    const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
+    const pointCloudOutput = outputs.find(output => output.format === File3dFormat.EptPointCloud);
+
+    if (!pointCloudOutput)
+      throw new Error(`Model does not contain supported point cloud output [${File3dFormat.EptPointCloud}]`);
+
+    return pointCloudOutput;
   }
 }

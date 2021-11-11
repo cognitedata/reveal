@@ -4,10 +4,11 @@
 
 import * as THREE from 'three';
 import { CadModelMetadata, SectorMetadata } from '@reveal/cad-parsers';
-import { createCadModelMetadata } from '../../../../../test-utilities/src/createCadModelMetadata';
-import { generateSectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
+
 import { CadModelClipper } from './CadModelClipper';
-import { Mutable } from '../../../utilities/reflection';
+import { createCadModelMetadata } from '../../../../../test-utilities/src/createCadModelMetadata';
+import { generateV8SectorTree } from '../../../../../test-utilities/src/createSectorMetadata';
+import { Mutable } from '../../../../../test-utilities/src/reflection';
 
 describe('CadModelClipper', () => {
   // Model with depth 2 where root has 8 children. Bounds is <[0,0,0], [2,2,2]>
@@ -15,7 +16,7 @@ describe('CadModelClipper', () => {
   let modelDepth2: CadModelMetadata;
 
   beforeEach(() => {
-    const root = generateSectorTree(2, 8);
+    const root = generateV8SectorTree(2, 8);
     setBounds(root, [0, 0, 0], [2, 2, 2]);
     for (let x = 0; x < 2; x++) {
       for (let y = 0; y < 2; y++) {
@@ -48,7 +49,7 @@ describe('CadModelClipper', () => {
     });
   });
 
-  test('createClippedModel() reduces estimated draw calls for clipped sectors', () => {
+  test('createClippedModel() reduces estimated draw calls and render cost for clipped sectors', () => {
     const box = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 0.5, 0.5));
     const clipper = new CadModelClipper(box);
 
@@ -58,6 +59,7 @@ describe('CadModelClipper', () => {
     sectors.forEach(s => {
       const original = modelDepth2.scene.getSectorById(s.id)!;
       expect(s.estimatedDrawCallCount).toBeLessThan(original.estimatedDrawCallCount);
+      expect(s.estimatedRenderCost).toBeLessThan(original.estimatedRenderCost);
     });
   });
 });

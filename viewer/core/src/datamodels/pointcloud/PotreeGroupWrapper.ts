@@ -3,11 +3,11 @@
  */
 
 import * as Potree from '@cognite/potree-core';
+import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { combineLatest, interval, Observable, of, pipe, Subject } from 'rxjs';
 import { delay, distinctUntilChanged, map, share, startWith, switchMap } from 'rxjs/operators';
 import * as THREE from 'three';
-import { LoadingState } from '../../utilities';
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 
@@ -17,7 +17,7 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
  */
 export class PotreeGroupWrapper extends THREE.Object3D {
   private _needsRedraw: boolean = false;
-  private _lastDrawPointBuffersHash = -1;
+  private _lastDrawPointBuffersHash = 0;
   private readonly _forceLoadingSubject = new Subject<void>();
   private readonly _loadingObservable: Observable<LoadingState>;
 
@@ -60,6 +60,16 @@ export class PotreeGroupWrapper extends THREE.Object3D {
 
     this._loadingObservable = this.createLoadingStateObservable(pollLoadingStatusInterval);
     this._lastDrawPointBuffersHash = this.pointBuffersHash;
+
+    this.pointBudget = 2_000_000;
+  }
+
+  get pointBudget(): number {
+    return this.potreeGroup.pointBudget;
+  }
+
+  set pointBudget(points: number) {
+    this.potreeGroup.pointBudget = points;
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -119,11 +129,23 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     );
   }
 
+  /**
+   * Generates a hash for the current loaded points to allow determining if we have
+   * loaded data since last redraw.
+   */
   private get pointBuffersHash() {
-    const buffers: Map<THREE.BufferGeometry, any> = this.potreeGroup.buffers;
-    let pointHash = 0xbaadf00d;
-    for (const buffer of buffers.keys()) {
-      pointHash ^= buffer.id;
+    const pointClouds = this.potreeGroup.pointclouds;
+    let pointHash = 0xbaadf00d; // Kind of random bit pattern
+    for (const pointCloud of pointClouds) {
+      pointCloud.traverseVisible((x: THREE.Points) => {
+        // Note! We pretend everything in the scene graph is THREE.Points,
+        // but verify that we only visit Points nodes here.
+        if (x.isPoints) {
+          const geometry = x.geometry as THREE.BufferGeometry;
+          pointHash ^= geometry.getAttribute('position').count;
+        }
+      });
+      pointHash ^= pointCloud.id;
     }
     return pointHash;
   }

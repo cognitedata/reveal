@@ -44,21 +44,23 @@ export function intersectPointClouds(
   raycaster.params.Points = { threshold };
 
   const intersections = raycaster.intersectObjects(nodes, true);
-  return intersections.map(x => {
-    const pointCloudNode = determinePointCloudNode(x.object, nodes);
-    if (pointCloudNode === null) {
-      throw new Error(`Could not find PointCloudNode for intersected point`);
-    }
+  return intersections
+    .filter(x => isPointAcceptedByClippingPlanes(x.point, input.clippingPlanes))
+    .map(x => {
+      const pointCloudNode = determinePointCloudNode(x.object, nodes);
+      if (pointCloudNode === null) {
+        throw new Error(`Could not find PointCloudNode for intersected point`);
+      }
 
-    const result: IntersectPointCloudNodeResult = {
-      distance: x.distance,
-      point: x.point,
-      pointIndex: x.index!,
-      pointCloudNode,
-      object: x.object
-    };
-    return result;
-  });
+      const result: IntersectPointCloudNodeResult = {
+        distance: x.distance,
+        point: x.point,
+        pointIndex: x.index!,
+        pointCloudNode,
+        object: x.object
+      };
+      return result;
+    });
 }
 
 function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNode[]): PointCloudNode | null {
@@ -70,4 +72,12 @@ function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNod
     return candidates.find(x => root.pointcloud === x.potreeNode.octtree) || null;
   }
   return null;
+}
+
+function isPointAcceptedByClippingPlanes(point: THREE.Vector3, planes: THREE.Plane[]): boolean {
+  let accepted = true;
+  for (let i = 0; accepted && i < planes.length; ++i) {
+    accepted = planes[i].distanceToPoint(point) >= 0.0;
+  }
+  return accepted;
 }

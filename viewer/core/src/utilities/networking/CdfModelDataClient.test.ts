@@ -5,7 +5,7 @@
 import nock from 'nock';
 import { CdfModelDataClient } from './CdfModelDataClient';
 import { CogniteClient } from '@cognite/sdk';
-import { Model3DOutputList } from './Model3DOutputList';
+import { Model3DOutputList } from '@reveal/modeldata-api';
 import { File3dFormat } from '../types';
 
 describe('CdfModelDataClient', () => {

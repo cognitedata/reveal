@@ -18,8 +18,9 @@ import {
   createDefaultRenderOptions,
 } from '../utils/renderer-debug-widget';
 import { CogniteClient } from '@cognite/sdk';
-import { getParamsFromURL } from '../utils/example-helpers';
+import { getParamsFromURL, authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
+import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 
 CameraControls.install({ THREE });
 
@@ -116,10 +117,9 @@ export function SectorWithPointcloud() {
   useEffect(() => {
     const gui = new dat.GUI();
     const animationLoopHandler: AnimationLoopHandler = new AnimationLoopHandler();
-    let revealManager: reveal.RevealManager<unknown>;
 
     async function main() {
-      const { project, modelUrl, modelRevision } = getParamsFromURL({
+      const { project, modelUrl, modelRevision, environmentParam } = getParamsFromURL({
         project: 'publicdata',
         modelUrl: 'primitives',
       });
@@ -132,9 +132,8 @@ export function SectorWithPointcloud() {
       const client = new CogniteClient({
         appId: 'reveal.example.hybrid-cad-pointcloud',
       });
-      if (modelRevision || pointCloudModelRevision) {
-        await client.loginWithOAuth({ type: 'CDF_OAUTH', options: { project }});
-        await client.authenticate()
+      if ((modelRevision || pointCloudModelRevision) && environmentParam) {
+        await authenticateSDKWithEnvironment(client, project, environmentParam);
       }
 
       const scene = new THREE.Scene();
@@ -150,28 +149,16 @@ export function SectorWithPointcloud() {
         value: 'MyDummyValue',
       });
 
-      let model: reveal.CadNode;
-      if (modelRevision) {
-        revealManager = reveal.createCdfRevealManager(client, renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelRevision);
-      } else if (modelUrl) {
-        revealManager = reveal.createLocalRevealManager(renderer, scene, { logMetrics: false });
-        model = await revealManager.addModel('cad', modelUrl);
-      } else {
-        throw new Error(
-          'Need to provide either project & model OR modelUrl as query parameters'
-        );
-      }
+      const { revealManager, model } = await createManagerAndLoadModel(client, renderer, scene, 'cad', modelRevision, modelUrl);
       scene.add(model);
 
       let pointCloud
       if (pointCloudModelRevision) {
-        pointCloud = await revealManager.addModel(
-          'pointcloud',
-          pointCloudModelRevision
-        );
+        const modelIdentifier = new reveal.CdfModelIdentifier(pointCloudModelRevision.modelId, pointCloudModelRevision.revisionId);
+        pointCloud = await revealManager.addModel('pointcloud', modelIdentifier);
       } else if (pointCloudUrl) {
-        pointCloud = await revealManager.addModel('pointcloud', pointCloudUrl);
+        const modelIdentifier = new reveal.LocalModelIdentifier(pointCloudUrl.fileName!);
+        pointCloud = await revealManager.addModel('pointcloud', modelIdentifier);
       } else {
         throw new Error(
           'Need to provide either project & pointCloud OR pointCloudlUrl as query parameters'

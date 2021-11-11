@@ -6,8 +6,7 @@ import { ModelDataClient } from '@reveal/cad-parsers';
 import { File3dFormat } from '../types';
 import { CameraConfiguration } from '@reveal/utilities';
 
-import { fetchWithStatusCheck } from './utilities';
-import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
+import { applyDefaultModelTransformation, fetchWithStatusCheck } from '@reveal/modeldata-api';
 
 export class LocalModelDataClient implements ModelDataClient<{ fileName: string }> {
   getModelUrl(params: { fileName: string }): Promise<string> {

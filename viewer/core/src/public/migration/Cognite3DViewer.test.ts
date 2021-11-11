@@ -5,11 +5,11 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { CogniteClient } from '@cognite/sdk';
+import { SectorCuller } from '@reveal/cad-geometry-loaders';
 
 import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
-import { SectorCuller } from '../../datamodels/cad/sector/culling/SectorCuller';
 import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 import { createGlContext } from '../../../../test-utilities';
 

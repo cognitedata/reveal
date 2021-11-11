@@ -7,6 +7,12 @@ import { SectorMetadata } from '../metadata/types';
 
 import { CameraConfiguration } from '@reveal/utilities';
 
+import * as THREE from 'three';
+import * as THREEext from '../../../utilities/src/three';
+
+import { InstancedMeshFile, TriangleMesh, LevelOfDetail } from '@reveal/cad-parsers';
+import { ParsedPrimitives, ParseSectorResult, ParseCtmResult, SectorQuads } from '@cognite/reveal-parser-worker';
+
 /**
  * Conversion factors from a given unit to meters.
  */
@@ -105,8 +111,32 @@ export interface ModelDataClient<TModelIdentifier>
   getApplicationIdentifier(): string;
 }
 
-export enum File3dFormat {
-  EptPointCloud = 'ept-pointcloud',
-  RevealCadModel = 'reveal-directory',
-  AnyFormat = 'all-outputs'
+export interface ConsumedSector {
+  modelIdentifier: string;
+  metadata: SectorMetadata;
+  levelOfDetail: LevelOfDetail;
+  group: THREEext.AutoDisposeGroup | undefined;
+  instancedMeshes: InstancedMeshFile[] | undefined;
+}
+
+export interface ParsedSector {
+  modelIdentifier: string;
+  metadata: SectorMetadata;
+  data: null | ParseSectorResult | ParseCtmResult | SectorGeometry | SectorQuads;
+  levelOfDetail: LevelOfDetail;
+}
+
+export interface WantedSector {
+  modelIdentifier: string;
+  modelBaseUrl: string;
+  geometryClipBox: THREE.Box3 | null;
+  levelOfDetail: LevelOfDetail;
+  metadata: SectorMetadata;
+}
+
+export interface SectorGeometry {
+  readonly primitives: ParsedPrimitives;
+
+  readonly instanceMeshes: InstancedMeshFile[];
+  readonly triangleMeshes: TriangleMesh[];
 }

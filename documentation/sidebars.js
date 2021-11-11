@@ -39,12 +39,21 @@ module.exports = {
         'examples/antialiasing',
         'examples/cad-explode',
         'examples/axisviewtool',
+        'examples/geomaptool',
         'examples/combine-models'
       ],
     },
     {
       type: 'doc',
       id: 'concepts',
+    },
+    {
+      type: 'category',
+      label: 'Extending Reveal',
+      collapsed: false,
+      items: [
+        'extending/datasource',
+      ],
     },
     {
       type: 'doc',
