@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button, Colors, Flex, Input } from '@cognite/cogs.js';
+import { Button, Flex, Input } from '@cognite/cogs.js';
 import { activeFilters } from 'components/TableContent/mock';
 import { Menu, Pagination } from './Menu';
 
@@ -32,7 +32,6 @@ export const FilterBar = (): JSX.Element => {
 
 const Bar = styled(Flex)`
   padding: 16px;
-  border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
 `;
 
 const List = styled(Flex)`

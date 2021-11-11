@@ -23,7 +23,7 @@ export const getColumns = (): ColumnShape<unknown>[] => {
     key: `column-index`,
     dataKey: `column-index`,
     title: '',
-    width: 36,
+    width: 50,
     flexGrow: 1,
     flexShrink: 0,
     frozen: true,
@@ -35,6 +35,7 @@ export const getColumns = (): ColumnShape<unknown>[] => {
     width: 200,
     flexGrow: 1,
     flexShrink: 0,
+    resizable: true,
   }));
   return [indexColumn, ...otherColumns];
 };
