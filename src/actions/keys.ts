@@ -1,7 +1,5 @@
 export const baseKey = 'data-sets';
 
-export const listDataSetsKey = [baseKey, 'list'];
-
 export const rawKey = 'raw';
 export const rawDb = 'database';
 export const rawTables = 'tables';
@@ -11,5 +9,21 @@ export const listRawTablesKey = [rawKey, 'list', rawTables];
 
 export const listGroupsKey = ['groups', 'list'];
 
-export const getDataSetOwnersByIdKey = (id: string) => [baseKey, 'owners', id];
-export const getRetrieveByDataSetIdKey = (id: string) => [baseKey, 'byId', id];
+export const getListDatasetsKey = (...rest: any[]) => [
+  baseKey,
+  'list',
+  ...rest,
+];
+
+export const getDataSetOwnersByIdKey = (id: string, ...rest: any[]) => [
+  baseKey,
+  'owners',
+  id,
+  ...rest,
+];
+export const getRetrieveByDataSetIdKey = (id: string, ...rest: any[]) => [
+  baseKey,
+  'byId',
+  id,
+  ...rest,
+];

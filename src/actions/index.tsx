@@ -26,12 +26,12 @@ import {
   mapDataSetIntegration,
 } from 'utils/integrationUtils';
 import {
-  listDataSetsKey,
   getRetrieveByDataSetIdKey,
   getDataSetOwnersByIdKey,
   listRawDatabasesKey,
   listRawTablesKey,
   listGroupsKey,
+  getListDatasetsKey,
 } from './keys';
 
 export const invalidateDataSetQueries = (
@@ -40,7 +40,7 @@ export const invalidateDataSetQueries = (
   waitLonger?: boolean
 ) => {
   const invalidate = () => {
-    client.invalidateQueries(listDataSetsKey);
+    client.invalidateQueries(getListDatasetsKey());
     client.invalidateQueries(listGroupsKey);
     if (id) {
       client.invalidateQueries(getRetrieveByDataSetIdKey(String(id)));
@@ -189,7 +189,7 @@ export const useDataSetsList = (): {
   const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
     useWithIntegrations();
   const { data: dataSets, ...rest } = useQuery(
-    listDataSetsKey,
+    getListDatasetsKey(withIntegrations),
     async () => {
       const newDataSets = await sdk.datasets
         .list()
@@ -219,7 +219,7 @@ export const useDataSet = (id?: number) => {
     useWithIntegrations();
 
   const { data: dataSet, ...rest } = useQuery(
-    getRetrieveByDataSetIdKey(String(id)),
+    getRetrieveByDataSetIdKey(String(id), withIntegrations),
     // eslint-disable-next-line consistent-return
     async () => {
       if (id) {
