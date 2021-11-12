@@ -17,7 +17,7 @@ describe('Documents', () => {
 
   it('Show expanded metadata on row click', () => {
     cy.log('Search for duplicate document');
-    cy.doSearch(QUERY_DUPLICATED_FILENAME);
+    cy.performDocumentSearch(QUERY_DUPLICATED_FILENAME);
     cy.findAllByTestId('table-cell')
       .contains(`${QUERY_DUPLICATED_FILENAME} (2)`)
       .first()
@@ -50,19 +50,18 @@ describe('Documents', () => {
       .should('have.text', 'Search');
 
     cy.log('Open Documents filters');
-    cy.findByTestId('side-bar').within(() => {
-      cy.contains('Documents').click();
-    });
-
+    cy.findByTestId('side-bar')
+      .should('exist')
+      .within(() => {
+        cy.contains('Documents').should('be.visible').click();
+      });
     cy.wait('@getCategories');
 
     cy.log('Open all categories and check that all checkboxes are unchecked');
-    cy.contains('Source').click();
-    cy.wait(1000);
-    cy.contains('File Type').click();
-    cy.wait(1000);
-    cy.contains('Document Category').click();
-    cy.wait(1000);
+    cy.contains('Source').click({ force: true });
+    cy.contains('File Type').click({ force: true });
+    cy.contains('Document Category').click({ force: true });
+
     cy.findByTestId('side-bar')
       .get('input[type=checkbox]')
       .each((element) => {
@@ -70,7 +69,7 @@ describe('Documents', () => {
       });
 
     cy.log(`Perform input search for: ${filename}`);
-    cy.doSearch(filename);
+    cy.performDocumentSearch(filename);
     cy.log(`Search results should be shown in the table`);
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 0);
 
@@ -105,7 +104,7 @@ describe('Documents', () => {
     // cy.findAllByTestId('table-row').should('have.length', 9);
 
     cy.log('Apply input filter again');
-    cy.doSearch(filename);
+    cy.performDocumentSearch(filename);
     // cy.findAllByTestId('table-row').should('have.length.greaterThan', 26);
 
     cy.log('Apply other filters');
@@ -179,7 +178,7 @@ describe('Documents', () => {
   });
 
   it('Click Preview document hover button', () => {
-    cy.doSearch(filename);
+    cy.performDocumentSearch(filename);
     cy.findAllByTestId('table-row')
       .first()
       .children()

@@ -225,7 +225,7 @@
     "bundlesize": "^0.18.0",
     "concurrently": "^6.3.0",
     "crypto": "^1.0.1",
-    "cypress": "^8.5.0",
+    "cypress": "^9.0.0",
     "depcheck": "^1.4.2",
     "enzyme": "^3.9.0",
     "es-check": "^5.0.0",

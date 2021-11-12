@@ -1,31 +1,53 @@
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-import { Admin } from 'components/admin';
 import navigation from 'constants/navigation';
+
+import { ProtectedRoute } from '../../../core';
+import { useUserRoles } from '../../../modules/api/user/useUserQuery';
 
 import FeedbackPage from './feedback';
 import LayerPage from './layers';
 import { ProjectConfig } from './projectConfig';
 
 const AdminPage = () => {
+  const { data: roles, isFetched } = useUserRoles();
+  const isAuthenticated = !!roles && roles.isAdmin;
+
+  if (!isFetched) {
+    return null;
+  }
+
   return (
-    <Admin>
-      <Switch>
-        <Route
-          path={navigation.ADMIN_FEEDBACK}
-          render={() => <FeedbackPage />}
-        />
-        <Route path={navigation.ADMIN_LAYERS} render={() => <LayerPage />} />
+    <Switch>
+      <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        returnPath="/"
+        path={navigation.ADMIN_FEEDBACK}
+        render={() => <FeedbackPage />}
+      />
 
-        <Route
-          path={navigation.ADMIN_PROJECT_CONFIG}
-          render={() => <ProjectConfig />}
-        />
+      <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        returnPath="/"
+        path={navigation.ADMIN_LAYERS}
+        render={() => <LayerPage />}
+      />
 
-        {/* fallback, should be last: */}
-        <Route path={navigation.ADMIN} render={() => <FeedbackPage />} />
-      </Switch>
-    </Admin>
+      <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        returnPath="/"
+        path={navigation.ADMIN_PROJECT_CONFIG}
+        render={() => <ProjectConfig />}
+      />
+
+      {/* fallback, should be last: */}
+      <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        returnPath="/"
+        path={navigation.ADMIN}
+        render={() => <FeedbackPage />}
+      />
+    </Switch>
   );
 };
 

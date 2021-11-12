@@ -9,7 +9,7 @@ Cypress.Commands.add('clearAllFilters', () => {
 });
 
 Cypress.Commands.add(
-  'doSearch',
+  'performDocumentSearch',
   (searchString: string, clearFilters = false) => {
     if (clearFilters) {
       cy.log('Clearing all filters');
@@ -17,6 +17,7 @@ Cypress.Commands.add(
     }
 
     cy.log(`Searching for '${searchString}'`);
+
     cy.findByTestId('main-search-input')
       .click()
       .type('{selectall}')
@@ -25,9 +26,6 @@ Cypress.Commands.add(
 );
 
 export interface DocumentsCommands {
-  doSearch(
-    searchString: string,
-    clearAllFilters?: boolean
-  ): Cypress.Chainable<void>;
-  clearAllFilters(): Cypress.Chainable<void>;
+  performDocumentSearch(searchString: string, clearAllFilters?: boolean): void;
+  clearAllFilters(): void;
 }

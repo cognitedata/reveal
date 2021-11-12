@@ -26,6 +26,7 @@ module.exports = {
         'testing-library/prefer-screen-queries': 'off',
         'testing-library/await-async-query': 'off',
         'testing-library/await-async-utils': 'off',
+        '@typescript-eslint/no-namespace': 'off',
       },
     },
   ],

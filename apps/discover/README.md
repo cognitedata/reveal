@@ -119,6 +119,7 @@ Run specific tests:
 
 - `yarn cypress --spec cypress/integration/documents/**`
 
+To stop the Cypress window from closing after a finished test, use the `--no-exit` flag.
 Cypress has many other run options, they can be found here: https://docs.cypress.io/guides/guides/command-line#Options
 
 ### Testcafe: Run tests

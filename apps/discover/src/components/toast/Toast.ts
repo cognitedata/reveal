@@ -61,6 +61,9 @@ export const showWarningMessage = (content: string) => {
   CogniteToast.warning(content, defaultOption);
 };
 
-export const showErrorMessage = (content: string) => {
-  CogniteToast.error(content, defaultOption);
+export const showErrorMessage = (
+  content: string,
+  options?: Partial<ToastOptions>
+) => {
+  CogniteToast.error(content, { ...defaultOption, ...options });
 };

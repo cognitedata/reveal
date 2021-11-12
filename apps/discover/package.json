@@ -39,10 +39,9 @@
     "test:all": "../../node_modules/.bin/react-scripts test --env=jest-environment-jsdom-sixteen",
     "test:changed": "yarn test:all --detectOpenHandles --bail --colors --verbose --onlyChanged --coverageReporters=none --watchAll=false",
     "update-helpers": "bazel run :generate_package_json_helpers",
-    "cypress:open": "../../node_modules/.bin/cypress open",
-    "cypress:ci": "./scripts/cypress/cypress-run-live.sh",
     "cypress": "ibazel run :cypress",
-    "cypress:bazel": "bazel test :cypress_test"
+    "cypress:ci": "bazel test :cypress_test",
+    "cypress:open": "../../node_modules/.bin/cypress open"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
