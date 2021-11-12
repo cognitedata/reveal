@@ -10,4 +10,14 @@ export { LocalModelIdentifier } from './src/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/LocalModelMetadataProvider';
 export { ModelIdentifier } from './src/ModelIdentifier';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
-export { BinaryFileProvider, File3dFormat, HttpHeadersProvider, ModelDataProvider } from './src/types';
+export { Model3DOutputList } from './src/Model3DOutputList';
+export {
+  BinaryFileProvider,
+  File3dFormat,
+  HttpHeadersProvider,
+  ModelDataProvider,
+  BlobOutputMetadata
+} from './src/types';
+
+export { applyDefaultModelTransformation } from './src/applyDefaultModelTransformation';
+export { fetchWithStatusCheck } from './src/utilities';

@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { createGlContext } from '../../../test-utilities/src/createGlContext';
+import { createGlContext } from '../../../test-utilities';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './worldToViewport';
 

@@ -7,8 +7,14 @@ export { RevealManager } from './public/RevealManager';
 export { createLocalRevealManager, createCdfRevealManager } from './public/createRevealManager';
 
 // CAD
+export { CadLoadingHints } from '@reveal/cad-geometry-loaders';
 export { intersectCadNodes } from './datamodels/cad/picking';
 export { CadModelSectorLoadStatistics } from './datamodels/cad/CadModelSectorLoadStatistics';
+
+export { NodeAppearance, DefaultNodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
+
+export { CadNode, SuggestedCameraConfig } from '@reveal/rendering';
+export { CadModelMetadata, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 
 // Point cloud
 export { PointCloudMetadata } from './datamodels/pointcloud';

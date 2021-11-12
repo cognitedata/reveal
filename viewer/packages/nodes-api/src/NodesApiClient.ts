@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 
 import { CogniteInternalId } from '@cognite/sdk';
+import { NodeTreeIndexAndSubtreeSize } from './types';
 
 /**
  * Client for retrieving metadata information about CAD nodes.
@@ -39,7 +40,7 @@ export interface NodesApiClient {
     modelId: CogniteInternalId,
     revisionId: CogniteInternalId,
     nodeIds: CogniteInternalId[]
-  ): Promise<{ treeIndex: number; subtreeSize: number }[]>;
+  ): Promise<NodeTreeIndexAndSubtreeSize[]>;
 
   /**
    * Determine ancestor subtree span of a given node. If the node doesn't have an
@@ -54,7 +55,7 @@ export interface NodesApiClient {
     revisionId: CogniteInternalId,
     nodeId: CogniteInternalId,
     generation: number
-  ): Promise<{ treeIndex: number; subtreeSize: number }>;
+  ): Promise<NodeTreeIndexAndSubtreeSize>;
 
   /**
    * Determines the bounds of the individual nodes provided. Note that the returned

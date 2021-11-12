@@ -4,7 +4,7 @@
 
 import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
 
-import { SectorGeometry } from '../../packages/cad-parsers/src/cad/types';
+import { SectorGeometry } from '../../packages/cad-parsers/src/utilities/types';
 
 export function createEmptyPrimitive(): ParsedPrimitives {
   return {
@@ -37,8 +37,6 @@ export function createEmptyPrimitive(): ParsedPrimitives {
 
 export function createEmptySector(): SectorGeometry {
   return {
-    nodeIdToTreeIndexMap: new Map(),
-    treeIndexToNodeIdMap: new Map(),
     primitives: createEmptyPrimitive(),
     instanceMeshes: [],
     triangleMeshes: []

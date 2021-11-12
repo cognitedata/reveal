@@ -2,11 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { BlobOutputMetadata } from './types';
+import { BlobOutputMetadata, File3dFormat } from './types';
 import { ModelMetadataProvider } from './ModelMetadataProvider';
 
 import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
-import { Model3DOutputList } from './Model3DOutputList';
 
 import { CogniteClient } from '@cognite/sdk';
 import { ItemsResponse } from '@cognite/sdk-core';
@@ -22,19 +21,19 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     this._client = client;
   }
 
-  public async getModelMatrix(modelIdentifier: ModelIdentifier): Promise<THREE.Matrix4> {
+  public async getModelMatrix(modelIdentifier: ModelIdentifier, format: File3dFormat): Promise<THREE.Matrix4> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
 
-    const { modelId, revisionId, modelFormat } = modelIdentifier;
+    const { modelId, revisionId } = modelIdentifier;
     const model = await this._client.revisions3D.retrieve(modelId, revisionId);
 
     const modelMatrix = new THREE.Matrix4();
     if (model.rotation) {
       modelMatrix.makeRotationFromEuler(new THREE.Euler(...model.rotation));
     }
-    applyDefaultModelTransformation(modelMatrix, modelFormat);
+    applyDefaultModelTransformation(modelMatrix, format);
     return modelMatrix;
   }
 
@@ -57,31 +56,30 @@ export class CdfModelMetadataProvider implements ModelMetadataProvider {
     return undefined;
   }
 
-  public async getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
+  public async getModelUri(modelIdentifier: ModelIdentifier, formatMetadata: BlobOutputMetadata): Promise<string> {
+    if (!(modelIdentifier instanceof CdfModelIdentifier)) {
+      throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
+    }
+    return `${this._client.getBaseUrl()}${this.getRequestPath(formatMetadata.blobId)}`;
+  }
+
+  public async getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]> {
     if (!(modelIdentifier instanceof CdfModelIdentifier)) {
       throw new Error(`Model must be a ${CdfModelIdentifier.name}, but got ${modelIdentifier.toString()}`);
     }
 
-    const { modelId, revisionId, modelFormat } = modelIdentifier;
-    const outputs = await this.getOutputs(modelIdentifier);
-    const mostRecentOutput = outputs.findMostRecentOutput(modelFormat);
-    if (!mostRecentOutput) {
-      throw new Error(
-        `Model '${modelId}/${revisionId}' is not compatible with this version of Reveal, because no outputs for format '(${modelFormat})' was found. If this model works with a previous version of Reveal it must be reprocessed to support this version.`
-      );
-    }
-    const directoryId = mostRecentOutput.blobId;
-    return `${this._client.getBaseUrl()}${this.getRequestPath(directoryId)}`;
-  }
+    const { modelId, revisionId } = modelIdentifier;
 
-  private async getOutputs(modelIdentifier: CdfModelIdentifier): Promise<Model3DOutputList> {
-    const { modelId, revisionId, modelFormat } = modelIdentifier;
     const url = `/api/v1/projects/${this._client.project}/3d/models/${modelId}/revisions/${revisionId}/outputs`;
-    const params = modelFormat !== undefined ? { params: { format: modelFormat } } : undefined;
-    const response = await this._client.get<ItemsResponse<BlobOutputMetadata>>(url, params);
+
+    const response = await this._client.get<ItemsResponse<BlobOutputMetadata>>(url, {
+      params: { format: File3dFormat.AnyFormat }
+    });
+
     if (response.status === 200) {
-      return new Model3DOutputList(modelId, revisionId, response.data.items);
+      return response.data.items.filter(output => Object.values<string>(File3dFormat).includes(output.format));
     }
+
     throw new Error(`Unexpected response ${response.status} (payload: '${response.data})`);
   }
 

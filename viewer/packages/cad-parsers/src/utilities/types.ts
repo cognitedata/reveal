@@ -2,11 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import { InstancedMeshFile, TriangleMesh } from '@reveal/cad-parsers';
-import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
+
+import * as THREE from 'three';
+import * as THREEext from '../../../utilities/src/three';
 
 import { SectorMetadata } from '../metadata/types';
-import * as THREE from 'three';
+import { HttpHeadersProvider } from './HttpHeadersProvider';
+
+import { CameraConfiguration } from '@reveal/utilities';
+import { InstancedMeshFile, TriangleMesh, LevelOfDetail } from '@reveal/cad-parsers';
+import { ParsedPrimitives, ParseSectorResult, ParseCtmResult, SectorQuads } from '@cognite/reveal-parser-worker';
+
 
 /**
  * Conversion factors from a given unit to meters.
@@ -78,10 +84,58 @@ export interface SectorScene {
   // readonly unit: string | null;
 }
 
-export interface SectorGeometry {
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
+export interface JsonFileProvider {
+  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+}
 
+export interface BinaryFileProvider {
+  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+}
+
+export interface ModelMetadataProvider<TModelIdentifier> {
+  getModelUrl(identifier: TModelIdentifier): Promise<string>;
+  getModelCamera(identifier: TModelIdentifier): Promise<CameraConfiguration | undefined>;
+  getModelMatrix(identifier: TModelIdentifier): Promise<THREE.Matrix4>;
+}
+
+export interface ModelDataClient<TModelIdentifier>
+  extends HttpHeadersProvider,
+    ModelMetadataProvider<TModelIdentifier>,
+    JsonFileProvider,
+    BinaryFileProvider {
+  getJsonFile(baseUrl: string, fileName: string): Promise<any>;
+  getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer>;
+
+  /**
+   * Returns an identifier that can be used to identify the application Reveal is used in.
+   */
+  getApplicationIdentifier(): string;
+}
+
+export interface ConsumedSector {
+  modelIdentifier: string;
+  metadata: SectorMetadata;
+  levelOfDetail: LevelOfDetail;
+  group: THREEext.AutoDisposeGroup | undefined;
+  instancedMeshes: InstancedMeshFile[] | undefined;
+}
+
+export interface ParsedSector {
+  modelIdentifier: string;
+  metadata: SectorMetadata;
+  data: null | ParseSectorResult | ParseCtmResult | SectorGeometry | SectorQuads;
+  levelOfDetail: LevelOfDetail;
+}
+
+export interface WantedSector {
+  modelIdentifier: string;
+  modelBaseUrl: string;
+  geometryClipBox: THREE.Box3 | null;
+  levelOfDetail: LevelOfDetail;
+  metadata: SectorMetadata;
+}
+
+export interface SectorGeometry {
   readonly primitives: ParsedPrimitives;
 
   readonly instanceMeshes: InstancedMeshFile[];

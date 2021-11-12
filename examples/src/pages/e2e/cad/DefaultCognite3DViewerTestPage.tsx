@@ -9,7 +9,7 @@ import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
 
 function DefaultCognite3DViewerTestPage() {
   const modelUrl = 'primitives';
-  
+
   return <Cognite3DTestViewer modelUrls={[modelUrl]} />;
 }
 

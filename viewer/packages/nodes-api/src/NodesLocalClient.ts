@@ -7,10 +7,9 @@ import * as THREE from 'three';
 import { NodesApiClient } from './NodesApiClient';
 
 import { CogniteInternalId } from '@cognite/sdk';
+import { NodeTreeIndexAndSubtreeSize } from './types';
 
 export class NodesLocalClient implements NodesApiClient {
-  constructor() {}
-
   mapTreeIndicesToNodeIds(
     _modelId: CogniteInternalId,
     _revisionId: CogniteInternalId,
@@ -35,7 +34,7 @@ export class NodesLocalClient implements NodesApiClient {
     _modelId: CogniteInternalId,
     _revisionId: CogniteInternalId,
     _nodeIds: CogniteInternalId[]
-  ): Promise<{ treeIndex: number; subtreeSize: number }[]> {
+  ): Promise<NodeTreeIndexAndSubtreeSize[]> {
     throw new Error('Not supported for local models');
   }
 
@@ -47,7 +46,7 @@ export class NodesLocalClient implements NodesApiClient {
     _revisionId: CogniteInternalId,
     _nodeId: CogniteInternalId,
     _generation: number
-  ): Promise<{ treeIndex: number; subtreeSize: number }> {
+  ): Promise<NodeTreeIndexAndSubtreeSize> {
     throw new Error('Not supported for local models');
   }
 

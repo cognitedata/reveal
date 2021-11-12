@@ -7,9 +7,8 @@ import { CogniteInternalId } from '@cognite/sdk';
 import { NodeIdAndTreeIndexMaps } from './NodeIdAndTreeIndexMaps';
 import { CameraConfiguration } from './types';
 import { CogniteModelBase } from './CogniteModelBase';
-import { SupportedModelTypes } from '../types';
 import { WellKnownUnit } from './types';
-
+import { SupportedModelTypes } from '../types';
 import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndicesAsync';
 
 import { NodesApiClient } from '@reveal/nodes-api';

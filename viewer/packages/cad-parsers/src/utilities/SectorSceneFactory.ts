@@ -1,9 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { SectorMetadata } from '../../../../core/src/internals';
 import { SectorSceneImpl } from './SectorScene';
-import { SectorMetadata } from '../metadata/types';
-
 import { traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';

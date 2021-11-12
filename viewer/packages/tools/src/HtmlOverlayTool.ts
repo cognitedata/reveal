@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 import { trackCreateTool } from '@reveal/metrics';
@@ -26,8 +27,8 @@ type HtmlOverlayElement = {
 };
 
 /**
- * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
- * 3D position and updates it's position/visibility as user moves the camera. This is 
+ * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+ * 3D position and updates it's position/visibility as user moves the camera. This is
  * useful to create HTML overlays to highlight information about key positions in the 3D model.
  *
  * Attached elements *must* have CSS style 'position: absolute'. It's also recommended

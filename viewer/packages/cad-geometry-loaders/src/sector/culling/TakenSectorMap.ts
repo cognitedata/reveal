@@ -1,24 +1,24 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { TakenSectorTree } from './TakenSectorTree';
+import { TakenV8SectorTree } from './TakenV8SectorTree';
 import {
   PrioritizedWantedSector,
-  DetermineSectorCostDelegate,
+  DetermineSectorCostDelegateV8,
   SectorCost,
   addSectorCost,
   SectorLoadingSpent
 } from './types';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
-import { CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import { CadModelMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 
 import assert from 'assert';
 
 export class TakenSectorMap {
-  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenSectorTree; modelMetadata: CadModelMetadata }> =
+  private readonly _takenSectorTrees: Map<string, { sectorTree: TakenV8SectorTree; modelMetadata: CadModelMetadata }> =
     new Map();
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
+  private readonly determineSectorCost: DetermineSectorCostDelegateV8;
 
   get totalCost(): SectorCost {
     const totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
@@ -29,13 +29,13 @@ export class TakenSectorMap {
   }
 
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
-  constructor(determineSectorCost: DetermineSectorCostDelegate) {
+  constructor(determineSectorCost: DetermineSectorCostDelegateV8) {
     this.determineSectorCost = determineSectorCost;
   }
 
   initializeScene(modelMetadata: CadModelMetadata) {
     this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenSectorTree(modelMetadata.scene.root, this.determineSectorCost),
+      sectorTree: new TakenV8SectorTree((modelMetadata.scene.root as V8SectorMetadata), this.determineSectorCost),
       modelMetadata
     });
   }

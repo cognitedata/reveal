@@ -6,12 +6,12 @@ export { CadMetadataParser } from './src/metadata/CadMetadataParser';
 export { MetadataRepository } from './src/metadata/MetadataRepository';
 export { CadModelMetadataRepository } from './src/metadata/CadModelMetadataRepository';
 export { CadModelMetadata } from './src/metadata/CadModelMetadata';
+export { SectorScene, BinaryFileProvider, ModelDataClient } from './src/utilities/types';
+
 export { SectorSceneImpl } from './src/utilities/SectorScene';
 export { SectorSceneFactory } from './src/utilities/SectorSceneFactory';
 
-export { SectorScene } from './src/utilities/types';
-
-export { SectorMetadataIndexFileSection, SectorMetadataFacesFileSection, SectorMetadata } from './src/metadata/types';
+export { SectorMetadata, V8SectorMetadata, V9SectorMetadata } from './src/metadata/types';
 
 export { SectorNode } from './src/sector/SectorNode';
 export { RootSectorNode } from './src/sector/RootSectorNode';
@@ -42,14 +42,9 @@ export {
   nutGeometryBoundingBox
 } from './src/cad/primitiveGeometries';
 
-export {
-  SectorGeometry,
-  InstancedMeshFile,
-  InstancedMesh,
-  TriangleMesh,
-  WantedSector,
-  ConsumedSector
-} from './src/cad/types';
+export { InstancedMeshFile, InstancedMesh, TriangleMesh } from './src/cad/types';
+
+export { SectorGeometry, WantedSector, ConsumedSector } from './src/utilities/types';
 
 export { WellKnownDistanceToMeterConversionFactors } from './src/utilities/types';
 

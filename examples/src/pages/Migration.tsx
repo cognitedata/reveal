@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient } from '@cognite/sdk';
-import dat from 'dat.gui'; 
+import dat from 'dat.gui';
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -70,6 +70,7 @@ export function Migration() {
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
+
       if (project && environmentParam) {
         await authenticateSDKWithEnvironment(client, project, environmentParam);
       } else if (modelUrl !== null) {
@@ -80,10 +81,10 @@ export function Migration() {
         };
       } else {
         throw new Error('Must either provide URL parameters "env", "project", ' +
-          '"modelId" and "revisionId" to load model from CDF ' +
-          '"or "modelUrl" to load model from URL.');
+                        '"modelId" and "revisionId" to load model from CDF ' +
+                        '"or "modelUrl" to load model from URL.');
       }
-      
+
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
@@ -139,8 +140,8 @@ export function Migration() {
         revisionId: 0,
         geometryFilter:
           geometryFilter !== undefined
-            ? { ...geometryFilter, enabled: true }
-            : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
+          ? { ...geometryFilter, enabled: true }
+          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -254,20 +255,20 @@ export function Migration() {
         viewer.requestRedraw();
       });
       renderGui.add(guiState, 'antiAliasing',
-        [
-          'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
-          'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
-        ]).name('Anti-alias').onFinishChange(v => {
-          urlParams.set('antialias', v);
-          window.location.href = url.toString();
-        });
+                    [
+                      'disabled', 'fxaa', 'msaa4', 'msaa8', 'msaa16',
+                      'msaa4+fxaa', 'msaa8+fxaa', 'msaa16+fxaa'
+      ]).name('Anti-alias').onFinishChange(v => {
+        urlParams.set('antialias', v);
+        window.location.href = url.toString();
+      });
       renderGui.add(guiState, 'ssaoQuality',
-        [
-          'disabled', 'medium', 'high', 'veryhigh'
-        ]).name('SSAO').onFinishChange(v => {
-          urlParams.set('ssao', v);
-          window.location.href = url.toString();
-        });
+                    [
+                      'disabled', 'medium', 'high', 'veryhigh'
+      ]).name('SSAO').onFinishChange(v => {
+        urlParams.set('ssao', v);
+        window.location.href = url.toString();
+      });
 
       const debugGui = gui.addFolder('Debug');
       const debugStatsGui = debugGui.addFolder('Statistics');
@@ -293,7 +294,7 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'drawcalls', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');      
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
@@ -459,7 +460,7 @@ export function Migration() {
                 overlayHtml.innerText = `Node ${treeIndex}`;
                 overlayHtml.style.cssText = 'background: white; position: absolute;';
                 overlayTool.add(overlayHtml, point);
-  
+
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
                 const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
@@ -503,6 +504,7 @@ export function Migration() {
     }
 
     main();
+
 
     return () => {
       gui.destroy();

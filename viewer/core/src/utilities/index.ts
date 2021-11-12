@@ -3,6 +3,7 @@
  */
 
 export { worldToViewportCoordinates, worldToNormalizedViewportCoordinates } from './worldToViewport';
+
 export { BoundingBoxClipper } from './BoundingBoxClipper';
 
 export { assertNever, EventTrigger } from '@reveal/utilities';

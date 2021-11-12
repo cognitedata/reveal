@@ -24,6 +24,10 @@ module.exports = env => {
       contentBase: path.resolve(env.dir, './app'),
       disableHostCheck: true,
       watchContentBase: true,
+<<<<<<< HEAD
+=======
+      https: true,
+>>>>>>> release/3.0-alpha
       watchOptions: {
         poll: true
       }
@@ -52,6 +56,8 @@ module.exports = env => {
         }
       ]
     },
+
+    devtool: 'inline-source-map',
 
     plugins: [new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name })]
   };

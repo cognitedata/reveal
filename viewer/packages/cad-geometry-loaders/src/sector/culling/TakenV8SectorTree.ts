@@ -2,10 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
-import { SectorMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+import { SectorMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
+
 import {
   PrioritizedWantedSector,
-  DetermineSectorCostDelegate,
+  DetermineSectorCostDelegateV8,
   SectorCost,
   reduceSectorCost,
   addSectorCost
@@ -15,28 +16,28 @@ import { traverseDepthFirst } from '@reveal/utilities';
 
 import log from '@reveal/logger';
 
-export class TakenSectorTree {
+export class TakenV8SectorTree {
   get totalCost(): SectorCost {
     return this._totalCost;
   }
   private readonly sectors: {
-    sector: SectorMetadata;
+    sector: V8SectorMetadata;
     parentIndex: number;
     priority: number;
     cost: SectorCost;
     lod: LevelOfDetail;
   }[] = [];
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
+  private readonly determineSectorCost: DetermineSectorCostDelegateV8;
 
   private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
-  constructor(sectorRoot: SectorMetadata, determineSectorCost: DetermineSectorCostDelegate) {
+  constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegateV8) {
     this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
-    traverseDepthFirst(sectorRoot, x => {
+    traverseDepthFirst(sectorRoot as SectorMetadata, x => {
       this.sectors.length = Math.max(this.sectors.length, x.id);
       this.sectors[x.id] = {
-        sector: x,
+        sector: x as V8SectorMetadata,
         parentIndex: -1,
         priority: -1,
         cost: { downloadSize: 0, drawCalls: 0, renderCost: 0 },
@@ -133,7 +134,7 @@ export class TakenSectorTree {
       if (this.getSectorLod(child.id) === LevelOfDetail.Discarded) {
         // Note! When fileName is null the sector is so sparse that there is
         // no geometry in the F3D - we therefore skip such sectors.
-        if (child.facesFile.fileName !== null) {
+        if ((child as V8SectorMetadata).facesFile.fileName !== null) {
           this.setSectorLod(child.id, LevelOfDetail.Simple);
         }
       }

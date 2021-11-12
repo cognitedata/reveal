@@ -3,6 +3,8 @@
  */
 import * as THREE from 'three';
 
+import { getSdkApplicationId } from '../utilities/networking/CdfModelDataClient';
+
 import { createCadManager } from '../datamodels/cad/createCadManager';
 import { createPointCloudManager } from '../datamodels/pointcloud/createPointCloudManager';
 import { RevealManager } from './RevealManager';
@@ -112,14 +114,4 @@ export function createRevealManager(
   );
   const pointCloudManager = createPointCloudManager(modelMetadataProvider, modelDataProvider);
   return new RevealManager(cadManager, renderManager, pointCloudManager);
-}
-
-/**
- * Determines the `appId` of the `CogniteClient` provided.
- * @param sdk Instance of `CogniteClient`.
- * @returns Application ID or 'unknown' if not found.
- */
-function getSdkApplicationId(sdk: CogniteClient): string {
-  const headers = sdk.getDefaultRequestHeaders();
-  return headers['x-cdp-app'] || 'unknown';
 }

@@ -144,15 +144,15 @@ const cadTestPages: Record<string, { testDescription: string, testPage: JSX.Elem
 const pointcloudTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
 
 export function registerVisualTest(
-  category: 'cad' | 'pointcloud', 
-  testKey: string, 
-  testDescription: string, 
+  category: 'cad' | 'pointcloud',
+  testKey: string,
+  testDescription: string,
   testPage: JSX.Element) {
 
-  // Ensure test is registered in visualTests so it is actually part of the 
+  // Ensure test is registered in visualTests so it is actually part of the
   // test stage
   const found = visualTests.find(x => x.category === category && x.testKey === testKey) !== undefined;
-  if (!found) { 
+  if (!found) {
     throw new Error(`registerVisualTest() was invoked for test '${testKey}' (${category}), but has not been registered. Add the test to pages/e2e/visualTests.ts`);
   }
 
@@ -181,7 +181,7 @@ export function cadTestRoutes(): Array<ExampleRoute> {
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
 }
 
-export function pointCloudTestRoutes(): Array<ExampleRoute> { 
+export function pointCloudTestRoutes(): Array<ExampleRoute> {
   return Object.entries(pointcloudTestPages).map(([testName, test]) => {
     return {
       name: testName,

@@ -11,8 +11,18 @@ import { suggestCameraConfig } from '../cameraconfig';
 import { InstancedMeshManager } from '../InstancedMeshManager';
 import { RenderMode } from '../rendering/RenderMode';
 
-import { SectorScene, CadModelMetadata, SectorGeometry, InstancedMeshFile, RootSectorNode } from '@reveal/cad-parsers';
 import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
+
+import {
+  SectorScene,
+  CadModelMetadata,
+  SectorGeometry,
+  InstancedMeshFile,
+  RootSectorNode,
+  WantedSector,
+  ConsumedSector
+} from '@reveal/cad-parsers';
+import { SectorRepository } from '@reveal/sector-loader';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -30,12 +40,14 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _instancedMeshManager: InstancedMeshManager;
+  private readonly _sectorRepository: SectorRepository;
 
-  constructor(model: CadModelMetadata, materialManager: CadMaterialManager) {
+  constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
     this.type = 'CadNode';
     this.name = 'Sector model';
     this._materialManager = materialManager;
+    this._sectorRepository = sectorRepository;
 
     const instancedMeshGroup = new THREE.Group();
     instancedMeshGroup.name = 'InstancedMeshes';
@@ -90,6 +102,10 @@ export class CadNode extends THREE.Object3D {
     return this._cadModelMetadata;
   }
 
+  get cadModelIdentifier() {
+    return this._cadModelMetadata.modelIdentifier;
+  }
+
   get sectorScene(): SectorScene {
     return this._sectorScene;
   }
@@ -108,6 +124,10 @@ export class CadNode extends THREE.Object3D {
 
   get renderMode() {
     return this._materialManager.getRenderMode();
+  }
+
+  public loadSector(sector: WantedSector): Promise<ConsumedSector> {
+    return this._sectorRepository.loadSector(sector);
   }
 
   /**
@@ -156,5 +176,9 @@ export class CadNode extends THREE.Object3D {
 
   public discardInstancedMeshes(sectorId: number) {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
+  }
+
+  public clearCache(): void {
+    this._sectorRepository.clear();
   }
 }

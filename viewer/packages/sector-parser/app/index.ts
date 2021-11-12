@@ -45,11 +45,19 @@ async function init() {
 
   const loader = new GltfSectorParser();
 
-  const sceneJson = await (await fetch('test-models/scene.json')).json();
+  const domParser = new DOMParser();
+  const response = await (await fetch(`test-models/`)).text();
+  const doc = domParser.parseFromString(response, 'text/html');
 
-  const sectors = sceneJson.sectors as [{ sectorFileName: string }];
+  const elems = doc.getElementsByClassName('name');
 
-  const fileNames = sectors.map(p => p.sectorFileName);
+  const fileNames: string[] = [];
+  for (let i = 0; i < elems.length; i++) {
+    const name = elems.item(i)!.innerHTML;
+    if (name.endsWith('.glb')) {
+      fileNames.push(name);
+    }
+  }
 
   await Promise.all(
     fileNames.map(fileName =>

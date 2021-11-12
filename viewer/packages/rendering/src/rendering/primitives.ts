@@ -273,6 +273,7 @@ function createCones(
   geometry.setIndex(coneGeometry.index);
   geometry.setAttribute('position', coneGeometry.position);
   setAttributes(geometry, filteredCollection, coneAttributes, mesh);
+
   setBoundsFromBox(geometry, bounds);
 
   mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);

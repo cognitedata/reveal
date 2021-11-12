@@ -22,7 +22,7 @@ All information below is for developers.
 
 Install [Node](https://nodejs.org/en/download/) and [Rust](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 
-To test the viewer, you need to build the viewer and then start the examples. 
+To test the viewer, you need to build the viewer and then start the examples.
 
 ```
 cd viewer
@@ -48,7 +48,7 @@ try forcing GCC to build for C++14:
 
 There also could be an issue with puppeteer in `examples/` that is caused by it not finding a correct version of chromium for arm64. To solve it you should follow additional steps:
 
-1. Install chromium from Homebrew: 
+1. Install chromium from Homebrew:
 ```
 brew install chromium
 `which chromium`
@@ -88,8 +88,8 @@ cd viewer
 yarn run build
 ```
 
-2. Use the build from `viewer/dist`. 
-You can simply use it as a link dependency in the project that uses reveal if 
+2. Use the build from `viewer/dist`.
+You can simply use it as a link dependency in the project that uses reveal if
 the target project uses yarn as its package manager.
 
   * Replace reveal version with the link on `viewer/dist` in the project `package.json`
@@ -102,7 +102,7 @@ the target project uses yarn as its package manager.
 ```
   * After that, run `yarn` in the target project.
   * Don't forget you must not commit that change to the target project.
-    
+
 If you don't want to change package.json, you can use CLI utility [npm link](https://docs.npmjs.com/cli/link)
 or [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/). To do that:
 
@@ -111,7 +111,7 @@ or [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/). To do that:
 ```bash
 cd viewer/dist
 npm link
-``` 
+```
 
 2. Use the link in your target project
 
@@ -120,7 +120,7 @@ cd your-project-path
 npm link @cognite/reveal
 ```
 
-Now reveal should be replaced with the local build. 
+Now reveal should be replaced with the local build.
 
 When you don't need it linked in the target project anymore, run:
 
@@ -142,4 +142,3 @@ consult [parser-worker/README.md](parser-worker/README.md)
 
 See [RELEASING.md](RELEASING.md) for details on how to releasing NPM packages and update
 documentation on release.
-

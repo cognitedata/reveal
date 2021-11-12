@@ -6,6 +6,7 @@ export { traverseDepthFirst } from './src/objectTraversal';
 export { transformCameraConfiguration } from './src/transformCameraConfiguration';
 
 export { CameraConfiguration } from './src/CameraConfiguration';
+
 export { EventTrigger, clickOrTouchEventOffset } from './src/events';
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';

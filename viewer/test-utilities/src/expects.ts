@@ -5,7 +5,7 @@
 import 'jest-extended';
 
 import { LevelOfDetail } from '../../packages/cad-parsers/src/cad//LevelOfDetail';
-import { WantedSector } from '../../packages/cad-parsers/src/cad/types';
+import { WantedSector } from '../../packages/cad-parsers/src/utilities/types';
 
 interface Matrix4 {
   elements: Float32Array;

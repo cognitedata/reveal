@@ -18,7 +18,7 @@ import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import { SectorCuller } from './SectorCuller';
 
 import Log from '@reveal/logger';
-import { CadModelMetadata, LevelOfDetail, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import { CadModelMetadata, LevelOfDetail, SectorScene, WantedSector, V9SectorMetadata } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane, traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
@@ -99,7 +99,7 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
           sector.maxDiagonalLength !== undefined
             ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
             : 1.0;
-        const prioritizedAreaWeight = weightFunctions.computePrioritizedAreaWeight(transformedBounds, prioritizedAreas);
+t        const prioritizedAreaWeight = weightFunctions.computePrioritizedAreaWeight(transformedBounds, prioritizedAreas);
 
         const priority =
           levelWeightImportance * levelWeight +
@@ -192,7 +192,7 @@ class ScheduledSectorTree {
       const sectorMetadata = model.scene.getSectorById(sectorId);
       assert(sectorMetadata !== undefined);
 
-      const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
+      const sectorCost = this.determineSectorCost(sectorMetadata! as V9SectorMetadata, LevelOfDetail.Detailed);
       addSectorCost(this._totalCost, sectorCost);
 
       sectorIds.set(sectorId, priority);
@@ -295,10 +295,10 @@ function determineCandidateSectors(
   modelMatrix: THREE.Matrix4,
   modelScene: SectorScene,
   clippingPlanes: THREE.Plane[]
-) {
+): V9SectorMetadata[] {
   const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
   transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
-  const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
+  const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse) as V9SectorMetadata[];
 
   if (clippingPlanes.length > 0) {
     const bounds = new THREE.Box3();

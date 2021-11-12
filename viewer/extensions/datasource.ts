@@ -12,5 +12,7 @@ export {
   ModelIdentifier,
   CdfModelIdentifier,
   ModelMetadataProvider,
-  ModelDataProvider
+  ModelDataProvider,
+  BlobOutputMetadata,
+  File3dFormat
 } from '../packages/modeldata-api';
