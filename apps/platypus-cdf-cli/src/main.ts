@@ -10,6 +10,7 @@ const config = {
   appId: 'platypus-cli',
 };
 
+// commands
 scriptName('platypus')
   .config(config)
   .middleware([init, authenticate])

@@ -183,7 +183,11 @@
             "outputPath": "dist/apps/platypus-cdf-cli",
             "main": "apps/platypus-cdf-cli/src/main.ts",
             "tsConfig": "apps/platypus-cdf-cli/tsconfig.app.json",
-            "assets": ["apps/platypus-cdf-cli/src/assets"]
+            "assets": ["apps/platypus-cdf-cli/src/assets"],
+            "generatePackageJson": true,
+            "extractLicenses": true,
+            "sourceMap": true,
+            "webpackConfig": "tools/custom-webpack-configurations/platypus-cli-webpack-config.js"
           },
           "configurations": {
             "production": {

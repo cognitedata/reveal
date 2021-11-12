@@ -15,6 +15,7 @@
     "@types/react-router-dom": "^5.3.1",
     "@types/styled-components": "^5.1.14",
     "conf": "^10.0.3",
+    "copy-webpack-plugin": "^9.1.0",
     "core-js": "^3.6.5",
     "d3": "^7.1.1",
     "date-fns": "^2.25.0",
