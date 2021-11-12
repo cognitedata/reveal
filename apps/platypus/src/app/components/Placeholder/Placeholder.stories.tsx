@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
 import { Story } from '@storybook/react';
 import { Placeholder } from './Placeholder';
@@ -21,5 +22,6 @@ Default.args = {
   componentName: 'Overview page',
   componentDescription:
     'On the overview page we are envisioning main information about a solution.',
-  votingHandler: (vote: string) => {},
+  // eslint-disable-next-line lodash/prefer-noop
+  votingHandler: () => {},
 };
