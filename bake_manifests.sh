@@ -13,7 +13,7 @@ if [ $# -eq 0 ] || [ "${1#-}" != "$1" ]; then
 fi
 
 docker_args=""
-docker_args="${docker_args} run -e HOME=/tmp -u $(id -u):$(id -g)"
+docker_args="${docker_args} run --rm -e HOME=/tmp -u $(id -u):$(id -g)"
 if [ -d "$(pwd)/spinnaker-templates" ]; then
     docker_args="${docker_args} --mount type=bind,source=$(pwd)/spinnaker-templates,target=/templates/spinnaker-templates"
 fi
