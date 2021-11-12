@@ -11,9 +11,11 @@ import { CadModelMetadata } from '@reveal/cad-parsers';
 import { NodesApiClient, NodesLocalClient } from '@reveal/nodes-api';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import { createCadModelMetadata, generateSectorTree } from '../../../../../test-utilities';
+import { createCadModelMetadata, generateV8SectorTree } from '../../../../../test-utilities';
 
 import nock from 'nock';
+import { V8SectorRepository } from '@reveal/sector-loader';
+import { Mock } from 'moq.ts';
 
 describe('SinglePropertyFilterNodeCollection', () => {
   let set: SinglePropertyFilterNodeCollection;
@@ -25,8 +27,10 @@ describe('SinglePropertyFilterNodeCollection', () => {
     client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
-    const cadModelMetadata: CadModelMetadata = createCadModelMetadata(generateSectorTree(3, 3));
-    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager());
+    const mockV8SectorRepository = new Mock<V8SectorRepository>();
+
+    const cadModelMetadata: CadModelMetadata = createCadModelMetadata(8, generateV8SectorTree(3, 3));
+    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager(), mockV8SectorRepository.object());
     const nodesClient: NodesApiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, nodesClient);

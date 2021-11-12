@@ -2,10 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { InstancedMeshFile, TriangleMesh } from '@reveal/cad-parsers';
-import { ParsedPrimitives } from '@cognite/reveal-parser-worker';
-
 import { SectorMetadata } from '../metadata/types';
+
 import * as THREE from 'three';
 
 /**
@@ -77,13 +75,30 @@ export interface SectorScene {
   // readonly subRevisionId: number;
   // readonly unit: string | null;
 }
+export interface SectorMetadataIndexFileSection {
+  readonly fileName: string;
+  readonly peripheralFiles: string[];
+  readonly downloadSize: number;
+}
 
-export interface SectorGeometry {
-  readonly nodeIdToTreeIndexMap: Map<number, number>;
-  readonly treeIndexToNodeIdMap: Map<number, number>;
-
-  readonly primitives: ParsedPrimitives;
-
-  readonly instanceMeshes: InstancedMeshFile[];
-  readonly triangleMeshes: TriangleMesh[];
+export interface SectorMetadataFacesFileSection {
+  readonly quadSize: number;
+  /**
+   * Coverage factors for the sector without children.
+   */
+  readonly coverageFactors: {
+    xy: number;
+    yz: number;
+    xz: number;
+  };
+  /**
+   * Coverage factor for the sectors including children.
+   */
+  readonly recursiveCoverageFactors: {
+    xy: number;
+    yz: number;
+    xz: number;
+  };
+  readonly fileName: string | null;
+  readonly downloadSize: number;
 }

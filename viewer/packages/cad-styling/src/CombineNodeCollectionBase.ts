@@ -9,7 +9,7 @@ import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBa
  * Node collection that combines the result from multiple underlying node collections.
  */
 export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
-  private _changedUnderlyingNodeCollectionHandler: () => void;
+  private readonly _changedUnderlyingNodeCollectionHandler: () => void;
   private _cachedCombinedIndexSet: IndexSet | undefined = undefined;
   protected _nodeCollections: NodeCollectionBase[] = [];
 

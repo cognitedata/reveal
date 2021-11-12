@@ -4,146 +4,60 @@
 
 import * as THREE from 'three';
 
-import {
-  addSectorCost,
-  DetermineSectorCostDelegate,
-  DetermineSectorsInput,
-  PrioritizedWantedSector,
-  SectorCost,
-  SectorLoadingSpent
-} from './types';
-import { computeSectorCost } from './computeSectorCost';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorLoadingSpent } from './types';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 import { SectorCuller } from './SectorCuller';
+import { computeV9SectorCost } from './computeSectorCost';
+import { TakenV9SectorMap } from './takensectors';
 
 import Log from '@reveal/logger';
-import { CadModelMetadata, LevelOfDetail, SectorScene, WantedSector } from '@reveal/cad-parsers';
-import { isBox3OnPositiveSideOfPlane, traverseDepthFirst } from '@reveal/utilities';
-
-import assert from 'assert';
+import { CadModelMetadata, V9SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
-  determineSectorCost?: DetermineSectorCostDelegate;
+  determineSectorCost?: DetermineSectorCostDelegate<V9SectorMetadata>;
 };
 
 export class ByScreenSizeSectorCuller implements SectorCuller {
-  private readonly _determineSectorCost: DetermineSectorCostDelegate;
+  private readonly _determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>;
 
   constructor(options?: ByScreenSizeSectorCullerOptions) {
-    this._determineSectorCost = options?.determineSectorCost || computeSectorCost;
+    this._determineSectorCost = options?.determineSectorCost || computeV9SectorCost;
   }
 
   determineSectors(input: DetermineSectorsInput): {
     wantedSectors: WantedSector[];
     spentBudget: SectorLoadingSpent;
   } {
-    const takenSectors = new ScheduledSectorTree(this._determineSectorCost);
-
-    const { cadModelsMetadata, camera, prioritizedAreas } = input;
-
+    const takenSectors = new TakenV9SectorMap(this._determineSectorCost);
+    const { cadModelsMetadata, camera } = input;
     const cameraWorldInverseMatrix = camera.matrixWorldInverse;
     const cameraProjectionMatrix = camera.projectionMatrix;
-
     const weightFunctions = new WeightFunctionsHelper(camera);
-
     const transformedBounds = new THREE.Box3();
-    const candidateSectors = new Array<{
-      model: CadModelMetadata;
-      sectorId: number;
-      priority: number;
-    }>();
 
-    cadModelsMetadata.map(model => {
-      takenSectors.initializeScene(model);
+    // Determine potential candidates per model
+    const modelsAndCandidateSectors = determineCandidateSectorsByModel(
+      cadModelsMetadata,
+      cameraWorldInverseMatrix,
+      cameraProjectionMatrix,
+      input
+    );
 
-      const sectors = determineCandidateSectors(
-        cameraWorldInverseMatrix,
-        cameraProjectionMatrix,
-        model.modelMatrix,
-        model.scene,
-        input.clippingPlanes
-      );
+    // Setup helpers we need
+    initializeTakenSectorsAndWeightFunctions(modelsAndCandidateSectors, takenSectors, weightFunctions);
 
-      weightFunctions.addCandidateSectors(sectors, model.modelMatrix);
-    });
-
-    cadModelsMetadata.map(model => {
-      const sectors = determineCandidateSectors(
-        cameraWorldInverseMatrix,
-        cameraProjectionMatrix,
-        model.modelMatrix,
-        model.scene,
-        input.clippingPlanes
-      );
-
-      sectors.forEach(sector => {
-        weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
-
-        const levelWeightImportance = 20.0;
-        const distanceToImportance = 1.0;
-        const screenAreaImportance = 0.3;
-        const frustumDepthImportance = 0.2;
-        const nodeScreenSizeImportance = 1.0;
-        const prioritizedAreaImportance = 1.0;
-
-        const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
-        const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
-        const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
-        const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
-        const nodeScreenSizeWeight =
-          sector.maxDiagonalLength !== undefined
-            ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
-            : 1.0;
-        const prioritizedAreaWeight = weightFunctions.computePrioritizedAreaWeight(transformedBounds, prioritizedAreas);
-
-        const priority =
-          levelWeightImportance * levelWeight +
-          distanceToImportance * distanceToCameraWeight +
-          screenAreaImportance * screenAreaWeight +
-          frustumDepthImportance * frustumDepthWeight +
-          nodeScreenSizeImportance * nodeScreenSizeWeight +
-          prioritizedAreaImportance * prioritizedAreaWeight;
-
-        candidateSectors.push({
-          model,
-          sectorId: sector.id,
-          priority
-        });
-      });
-    });
-    candidateSectors.sort((left, right) => {
-      return right.priority - left.priority;
-    });
-
-    let takenSectorCount = 0;
-    for (let i = 0; takenSectors.isWithinBudget(input.budget) && i < candidateSectors.length; ++i) {
-      const { model, sectorId, priority } = candidateSectors[i];
-      takenSectors.markSectorDetailed(model, sectorId, priority);
-      takenSectorCount = i;
-    }
-
-    Log.debug('Scheduled', takenSectorCount, 'of', candidateSectors.length, 'candidates');
+    // Determine priorities of each candidate sector
+    const prioritizedSectors = sortSectorsByPriority(modelsAndCandidateSectors, weightFunctions, transformedBounds);
+    const takenSectorCount = takeSectorsWithinBudget(takenSectors, input, prioritizedSectors);
+    Log.debug('Scheduled', takenSectorCount, 'of', prioritizedSectors.length, 'candidates');
 
     const wanted = takenSectors.collectWantedSectors();
     const spentBudget = takenSectors.computeSpentBudget();
-
-    const takenPriorities = candidateSectors
-      .slice(0, takenSectorCount)
-      .map(x => x.priority)
-      .sort((a, b) => a - b);
-    const meanPriority = takenPriorities[Math.floor(takenPriorities.length / 2)];
-    const notAcceptedPriority =
-      candidateSectors.length > takenSectorCount ? candidateSectors[takenSectorCount].priority : -1;
-    Log.debug(
-      `Sector priority. Min: ${Math.min(...takenPriorities)}, max: ${Math.max(
-        ...takenPriorities
-      )}, mean: ${meanPriority}, first not accepted: ${notAcceptedPriority}`
-    );
     Log.debug('Budget:', { ...input.budget });
     Log.debug('Spent:', { ...spentBudget });
     return { spentBudget, wantedSectors: wanted };
@@ -157,158 +71,146 @@ export class ByScreenSizeSectorCuller implements SectorCuller {
   dispose(): void {}
 }
 
-class ScheduledSectorTree {
-  private readonly determineSectorCost: DetermineSectorCostDelegate;
-  private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
-  private readonly _models = new Map<string, { model: CadModelMetadata; sectorIds: Map<number, number> }>();
-
-  get totalCost(): SectorCost {
-    return { ...this._totalCost };
+function takeSectorsWithinBudget(
+  takenSectors: TakenV9SectorMap,
+  input: DetermineSectorsInput,
+  candidateSectors: { model: CadModelMetadata; sectorId: number; priority: number }[]
+) {
+  let takenSectorCount = 0;
+  for (let i = 0; takenSectors.isWithinBudget(input.budget) && i < candidateSectors.length; ++i) {
+    const { model, sectorId, priority } = candidateSectors[i];
+    takenSectors.markSectorDetailed(model, sectorId, priority);
+    takenSectorCount = i;
   }
+  return takenSectorCount;
+}
 
-  constructor(determineSectorCost: DetermineSectorCostDelegate) {
-    this.determineSectorCost = determineSectorCost;
-  }
-
-  initializeScene(modelMetadata: CadModelMetadata) {
-    this._models.set(modelMetadata.modelIdentifier, { model: modelMetadata, sectorIds: new Map<number, number>() });
-  }
-
-  getWantedSectorCount(): number {
-    let count = 0;
-    this._models.forEach(x => {
-      count += x.sectorIds.size;
-    });
-    return count;
-  }
-
-  markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
-    const entry = this._models.get(model.modelIdentifier);
-    assert(!!entry, `Could not find sector tree for ${model.modelIdentifier}`);
-
-    const { sectorIds } = entry!;
-    const existingPriority = sectorIds.get(sectorId);
-    if (existingPriority === undefined) {
-      const sectorMetadata = model.scene.getSectorById(sectorId);
-      assert(sectorMetadata !== undefined);
-
-      const sectorCost = this.determineSectorCost(sectorMetadata!, LevelOfDetail.Detailed);
-      addSectorCost(this._totalCost, sectorCost);
-
-      sectorIds.set(sectorId, priority);
-    } else {
-      sectorIds.set(sectorId, Math.max(priority, existingPriority));
-    }
-  }
-
-  isWithinBudget(budget: CadModelSectorBudget): boolean {
-    return (
-      this._totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this._totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
-      this._totalCost.renderCost < budget.maximumRenderCost
-    );
-  }
-
-  collectWantedSectors(): PrioritizedWantedSector[] {
-    const allWanted = new Array<PrioritizedWantedSector>();
-
-    // Collect sectors
-    for (const [modelIdentifier, sectorsContainer] of this._models) {
-      const { model, sectorIds } = sectorsContainer;
-
-      const allSectorsInModel = new Map<number, PrioritizedWantedSector>();
-      traverseDepthFirst(model.scene.root, sector => {
-        allSectorsInModel.set(sector.id, {
-          modelIdentifier,
-          modelBaseUrl: model.modelBaseUrl,
-          geometryClipBox: null,
-          levelOfDetail: LevelOfDetail.Discarded,
-          metadata: sector,
-          priority: -1
-        });
-        return true;
+function sortSectorsByPriority(
+  modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
+  weightFunctions: WeightFunctionsHelper,
+  transformedBounds: THREE.Box3
+): { model: CadModelMetadata; sectorId: number; priority: number }[] {
+  const candidateSectors = new Array<{
+    model: CadModelMetadata;
+    sectorId: number;
+    priority: number;
+  }>();
+  for (const [model, sectors] of modelsAndCandidateSectors) {
+    sectors.forEach(sectorMetadata => {
+      const sector = sectorMetadata;
+      weightFunctions.computeTransformedSectorBounds(sector.bounds, model.modelMatrix, transformedBounds);
+      const priority = determineSectorPriority(weightFunctions, sector, transformedBounds);
+      candidateSectors.push({
+        model,
+        sectorId: sector.id,
+        priority
       });
-      for (const [sectorId, priority] of sectorIds) {
-        const sector = model.scene.getSectorById(sectorId)!;
-        const wantedSector: PrioritizedWantedSector = {
-          modelIdentifier,
-          modelBaseUrl: model.modelBaseUrl,
-          geometryClipBox: null,
-          levelOfDetail: LevelOfDetail.Detailed,
-          metadata: sector,
-          priority
-        };
-        allSectorsInModel.set(sectorId, wantedSector);
-      }
-
-      allSectorsInModel.forEach(x => allWanted.push(x));
-    }
-
-    // Sort by state (discarded comes first), then priority
-    allWanted.sort((l, r) => {
-      if (l.levelOfDetail === LevelOfDetail.Discarded) {
-        return -1;
-      } else if (r.levelOfDetail === LevelOfDetail.Discarded) {
-        return 1;
-      }
-      return r.priority - l.priority;
     });
-    return allWanted;
   }
+  candidateSectors.sort((left, right) => {
+    return right.priority - left.priority;
+  });
+  return candidateSectors;
+}
 
-  computeSpentBudget(): SectorLoadingSpent {
-    const wanted = this.collectWantedSectors();
-    const models = Array.from(this._models.values()).map(x => x.model);
-    const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
+/**
+ * Determines candidate sectors per model, i.e. sectors within frustum.
+ */
+function determineCandidateSectorsByModel(
+  cadModelsMetadata: CadModelMetadata[],
+  cameraWorldInverseMatrix: THREE.Matrix4,
+  cameraProjectionMatrix: THREE.Matrix4,
+  input: DetermineSectorsInput
+) {
+  return cadModelsMetadata.reduce((result, model) => {
+    const sectors = determineCandidateSectors(
+      cameraWorldInverseMatrix,
+      cameraProjectionMatrix,
+      model.modelMatrix,
+      model.scene,
+      input.clippingPlanes
+    );
+    result.set(model, sectors);
+    return result;
+  }, new Map<CadModelMetadata, V9SectorMetadata[]>());
+}
 
-    const totalSectorCount = models.reduce((sum, x) => sum + x.scene.sectorCount, 0);
-    const takenSectorCount = nonDiscarded.length;
-    const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
-    const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
-    const accumulatedPriority = nonDiscarded
-      .filter(x => Number.isFinite(x.priority) && x.priority > 0)
-      .reduce((sum, x) => sum + x.priority, 0);
-
-    const spentBudget: SectorLoadingSpent = {
-      drawCalls: this.totalCost.drawCalls,
-      downloadSize: this.totalCost.downloadSize,
-      renderCost: this.totalCost.renderCost,
-      totalSectorCount,
-      forcedDetailedSectorCount,
-      loadedSectorCount: takenSectorCount,
-      simpleSectorCount: takenSimpleCount,
-      detailedSectorCount: takenSectorCount - takenSimpleCount,
-      accumulatedPriority
-    };
-
-    return spentBudget;
-  }
-
-  clear() {
-    this._models.clear();
+/**
+ * Prepares data structures with model and sectors
+ */
+function initializeTakenSectorsAndWeightFunctions(
+  modelsAndCandidateSectors: Map<CadModelMetadata, V9SectorMetadata[]>,
+  takenSectors: TakenV9SectorMap,
+  weightFunctions: WeightFunctionsHelper
+) {
+  for (const [model, sectors] of modelsAndCandidateSectors) {
+    takenSectors.initializeScene(model);
+    weightFunctions.addCandidateSectors(sectors, model.modelMatrix);
   }
 }
 
+/**
+ * Determines candidate sectors, i.e.
+ */
 function determineCandidateSectors(
   cameraWorldInverseMatrix: THREE.Matrix4,
   cameraProjectionMatrix: THREE.Matrix4,
   modelMatrix: THREE.Matrix4,
   modelScene: SectorScene,
   clippingPlanes: THREE.Plane[]
-) {
+): V9SectorMetadata[] {
+  if (modelScene.version !== 9) {
+    throw new Error(`Expected model version 9, but got ${modelScene.version}`);
+  }
+
   const transformedCameraMatrixWorldInverse = new THREE.Matrix4();
   transformedCameraMatrixWorldInverse.multiplyMatrices(cameraWorldInverseMatrix, modelMatrix);
-  const sectors = modelScene.getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse);
+  const sectors = modelScene
+    .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse)
+    .map(x => x as V9SectorMetadata);
 
-  if (clippingPlanes.length > 0) {
-    const bounds = new THREE.Box3();
-    return sectors.filter(sector => {
-      bounds.copy(sector.bounds);
-      bounds.applyMatrix4(modelMatrix);
-
-      const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
-      return shouldKeep;
-    });
+  if (clippingPlanes.length <= 0) {
+    return sectors;
   }
-  return sectors;
+
+  const bounds = new THREE.Box3();
+  return sectors.filter(sector => {
+    bounds.copy(sector.bounds);
+    bounds.applyMatrix4(modelMatrix);
+
+    const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
+    return shouldKeep;
+  });
+}
+
+/**
+ * Determines priority of a single sector.
+ */
+function determineSectorPriority(
+  weightFunctions: WeightFunctionsHelper,
+  sector: V9SectorMetadata,
+  transformedBounds: THREE.Box3
+) {
+  const levelWeightImportance = 2.0;
+  const distanceToImportance = 1.0;
+  const screenAreaImportance = 0.3;
+  const frustumDepthImportance = 0.2;
+  const nodeScreenSizeImportance = 1.0;
+
+  const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
+  const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
+  const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
+  const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
+  const nodeScreenSizeWeight =
+    sector.maxDiagonalLength !== undefined
+      ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
+      : 1.0;
+
+  const priority =
+    levelWeightImportance * levelWeight +
+    distanceToImportance * distanceToCameraWeight +
+    screenAreaImportance * screenAreaWeight +
+    frustumDepthImportance * frustumDepthWeight +
+    nodeScreenSizeImportance * nodeScreenSizeWeight;
+  return priority;
 }

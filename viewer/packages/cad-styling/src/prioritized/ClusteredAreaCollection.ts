@@ -12,7 +12,7 @@ import { BoxClusterer } from './mergeboxes/BoxClusterer';
  * It uses simple heuristics to determine which boxes are to be merged.
  */
 export class ClusteredAreaCollection implements AreaCollection {
-  private _clusterer: BoxClusterer = new SmartMergeBoxes();
+  private readonly _clusterer: BoxClusterer = new SmartMergeBoxes();
 
   get isEmpty(): boolean {
     return this._clusterer.boxCount == 0;

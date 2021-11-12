@@ -8,17 +8,17 @@ import { SectorMetadata } from '../metadata/types';
 import { SectorSceneImpl } from './SectorScene';
 import { traverseDepthFirst } from '@reveal/utilities';
 
-import { createSectorMetadata } from '../../../../test-utilities/src/createSectorMetadata';
+import { createV8SectorMetadata } from '../../../../test-utilities';
 
 describe('SectorSceneImpl', () => {
-  const root = createSectorMetadata([
+  const root = createV8SectorMetadata([
     0,
     [
       [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
       [2, [], new THREE.Box3(new THREE.Vector3(0.5, 0, 0), new THREE.Vector3(1, 1, 1))]
     ],
     new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1))
-  ]);
+  ]) as SectorMetadata;
   const sectorsById = new Map<number, SectorMetadata>();
   traverseDepthFirst(root, x => {
     sectorsById.set(x.id, x);
@@ -90,7 +90,7 @@ describe('SectorSceneImpl', () => {
 
   test('getBoundsOfMostGeometry of scene with junk geometry, returns filtered bounds', () => {
     // Arrange
-    const root = createSectorMetadata([
+    const root = createV8SectorMetadata([
       0,
       [
         [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
@@ -98,7 +98,7 @@ describe('SectorSceneImpl', () => {
         [3, [], new THREE.Box3(new THREE.Vector3(1000.5, 1000, 1000), new THREE.Vector3(1001, 1001, 1001))]
       ],
       new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1001, 1001, 1001))
-    ]);
+    ]) as SectorMetadata;
     const sectorsById = new Map<number, SectorMetadata>();
     traverseDepthFirst(root, x => {
       sectorsById.set(x.id, x);
@@ -118,11 +118,11 @@ describe('SectorSceneImpl', () => {
   test('getBoundsOfMostGeometry with root with only one child, result is child bounds', () => {
     // Arrange
     const leafBounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
-    const root = createSectorMetadata([
+    const root = createV8SectorMetadata([
       0,
       [[1, [], leafBounds]],
       new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10))
-    ]);
+    ]) as SectorMetadata;
     const sectorsById = new Map<number, SectorMetadata>();
     traverseDepthFirst(root, x => {
       sectorsById.set(x.id, x);

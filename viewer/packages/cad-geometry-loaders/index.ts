@@ -2,11 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-export { SimpleAndDetailedToSector3D } from './src/sector/SimpleAndDetailedToSector3D';
-
 export { CadModelSectorBudget } from './src/CadModelSectorBudget';
 
-export { CachedRepository } from './src/sector/CachedRepository';
+export { V8SectorRepository } from '../sector-loader/src/V8SectorRepository';
 
 export { CadLoadingHints } from './src/CadLoadingHints';
 
@@ -17,7 +15,8 @@ export { LoadingState } from './src/utilities/types';
 export { SectorCuller } from './src/sector/culling/SectorCuller';
 export { ByVisibilityGpuSectorCuller } from './src/sector/culling/ByVisibilityGpuSectorCuller';
 export { ByScreenSizeSectorCuller } from './src/sector/culling/ByScreenSizeSectorCuller';
-export { createDefaultSectorCuller } from './src/sector/culling/createDefaultSectorCuller';
+
+export { createV8SectorCuller } from './src/sector/culling/createV8SectorCuller';
 
 export { OccludingGeometryProvider } from './src/sector/culling/OccludingGeometryProvider';
 export { DetermineSectorsInput } from './src/sector/culling/types';

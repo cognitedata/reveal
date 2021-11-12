@@ -5,7 +5,6 @@ import {
   RevealManager, 
   CdfModelIdentifier,
   LocalModelIdentifier,
-  File3dFormat,
   createCdfRevealManager, 
   createLocalRevealManager
 } from "@cognite/reveal/internals";
@@ -41,12 +40,12 @@ export async function createManagerAndLoadModel(
     const revealManager = createCdfRevealManager(sdkClient, renderer, scene, { logMetrics: false });
     switch (modelType) {
       case 'cad': {
-          const modelIdentifier = new CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId, File3dFormat.RevealCadModel);
+          const modelIdentifier = new CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
           const model = await revealManager.addModel('cad', modelIdentifier);
           return { revealManager, model };
       }
       case 'pointcloud': {
-          const modelIdentifier = new CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId, File3dFormat.EptPointCloud);
+          const modelIdentifier = new CdfModelIdentifier(modelRevision.modelId, modelRevision.revisionId);
           const model = await revealManager.addModel('pointcloud', modelIdentifier);
           return { revealManager, model };
       }
