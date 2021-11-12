@@ -24,18 +24,20 @@ export const FileGridPreview = ({
   item,
   style,
   mode,
-  actionDisabled,
+  isActionDisabled,
   onItemSelect,
-  selected,
+  isSelected,
 }: {
-  selected: boolean;
   item: TableDataItem;
   style?: React.CSSProperties;
   mode: VisionMode;
-  actionDisabled: boolean;
+  isActionDisabled: () => boolean;
   onItemSelect?: (item: TableDataItem, selected: boolean) => void;
+  isSelected: (id: number) => boolean;
 }) => {
   const dispatch = useDispatch();
+  const selected = isSelected(item.id);
+  const actionDisabled = isActionDisabled();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = item;
 

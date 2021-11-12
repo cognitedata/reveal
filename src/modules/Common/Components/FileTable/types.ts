@@ -31,7 +31,6 @@ export type FileListTableProps<T> = FileTableProps<T> &
 
 export type GridViewProps<T> = {
   data: T[];
-  selectedIds: number[];
   onItemClick: (item: T) => void;
   renderCell: (cellProps: any) => JSX.Element;
   tableFooter?: JSX.Element | null;
@@ -59,7 +58,6 @@ export type FileGridTableProps<T> = Omit<BaseTableProps<T>, 'data' | 'width'> &
   Omit<GridViewProps<TableDataItem>, 'overlayRenderer' | 'emptyRenderer'> & {
     totalCount: number;
     pagination?: boolean;
-    onItemSelect?: (item: TableDataItem, selected: boolean) => void;
   };
 
 export type MapTableTabKey = {

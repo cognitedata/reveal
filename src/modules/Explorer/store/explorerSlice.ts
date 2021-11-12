@@ -27,6 +27,7 @@ import {
   createGenericTabularDataSlice,
   GenericTabularState,
 } from 'src/store/genericTabularDataSlice';
+import { useSelector } from 'react-redux';
 
 export type ExplorerFileState = {
   id: number;
@@ -356,3 +357,19 @@ const resetSortPagination = (state: State) => {
 };
 
 /* eslint-enable no-param-reassign */
+
+// hooks
+
+export const useIsSelectedInExplorer = (id: number) => {
+  const selectedIds = useSelector(({ explorerReducer }: RootState) =>
+    selectExplorerSelectedIds(explorerReducer)
+  );
+  return selectedIds.includes(id);
+};
+
+export const useExplorerFilesSelected = () => {
+  const selectedIds = useSelector(({ explorerReducer }: RootState) =>
+    selectExplorerSelectedIds(explorerReducer)
+  );
+  return !!selectedIds.length;
+};

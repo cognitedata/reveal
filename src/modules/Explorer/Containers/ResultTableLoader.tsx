@@ -55,21 +55,24 @@ export const ResultTableLoader = <T extends Resource>({
     selectExplorerSortedFiles(rootState)
   );
 
-  const menuActions: FileActions = {
-    // TODO: should onDelete be added here as well?
-    onFileDetailsClicked: (fileInfo: FileInfo) => {
-      dispatch(FetchFilesById([fileInfo.id]));
-      dispatch(setFocusedFileId(fileInfo.id));
-      dispatch(showFileMetadata());
-    },
-    onReviewClick: (fileInfo: FileInfo) => {
-      dispatch(PopulateReviewFiles([fileInfo.id]));
-      history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
-        { from: 'explorer' }
-      );
-    },
-  };
+  const menuActions: FileActions = useMemo(
+    () => ({
+      // TODO: should onDelete be added here as well?
+      onFileDetailsClicked: (fileInfo: FileInfo) => {
+        dispatch(FetchFilesById([fileInfo.id]));
+        dispatch(setFocusedFileId(fileInfo.id));
+        dispatch(showFileMetadata());
+      },
+      onReviewClick: (fileInfo: FileInfo) => {
+        dispatch(PopulateReviewFiles([fileInfo.id]));
+        history.push(
+          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
+          { from: 'explorer' }
+        );
+      },
+    }),
+    [dispatch, history]
+  );
 
   const tableData = useMemo(
     () =>
