@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import map from 'lodash/map';
 import max from 'lodash/max';
 import min from 'lodash/min';
 
@@ -45,7 +46,7 @@ export const NumericFacetRangeFilter: React.FC<Props> = React.memo(
     }, [categoryData]);
 
     useEffect(() => {
-      setSelectedRange(currentFilterStateFacets.map((value) => Number(value)));
+      setSelectedRange(map(currentFilterStateFacets, (value) => Number(value)));
     }, [currentFilterStateFacets]);
 
     const minPageCount =
