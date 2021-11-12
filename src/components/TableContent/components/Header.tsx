@@ -13,7 +13,7 @@ export const Header = (): JSX.Element => {
           {database}
         </Detail>
         <Title level={5} style={{ fontWeight: 700 }}>
-          {table}
+          {table}.csv
         </Title>
       </TitleSection>
       <TabsSection justifyContent="center" alignItems="center">

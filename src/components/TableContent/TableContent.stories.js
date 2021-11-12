@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 
 import Provider from 'subApp/../../.storybook/boilerplate';
 import { mockUserWithGroups } from 'utils/testResources/testUtils';
-import TableContent from './TableContent.old';
+import TableContent from './TableContent';
 
 storiesOf('subApp/explore|TableContent', module)
   .addDecorator((story) => <Provider story={story} />)

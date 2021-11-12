@@ -27,7 +27,6 @@ export const Table = (): JSX.Element => {
 
 const TABLE_PREFIX = 'BaseTable__';
 const StyledBaseTable = styled(BaseTable)`
-  box-shadow: none;
   .${TABLE_PREFIX}table {
     box-shadow: none;
     box-sizing: border-box;
