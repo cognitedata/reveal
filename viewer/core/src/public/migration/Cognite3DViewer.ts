@@ -294,7 +294,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public get cadBudget(): CadModelBudget {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     return this.revealManager.cadBudget;
   }
@@ -304,7 +304,7 @@ export class Cognite3DViewer {
    * budget is shared between all added CAD models and not a per-model budget.
    */
   public set cadBudget(budget: CadModelBudget) {
-    // Note! Type here differes from the one in RevealManager to expose a documentated
+    // Note! Type here differs from the one in RevealManager to expose a documented
     // type. This should map 1:1 with type in RevealManager
     this.revealManager.cadBudget = budget;
   }
@@ -345,9 +345,6 @@ export class Cognite3DViewer {
 
     this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
     this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? false;
-    //this._canInterruptAnimations = options.canInterruptAnimations ?? false;
-    //this._useScrollTargetControls = options.useScrollTargetControls ?? false;
-    //this._useOnClickTargetChange = options.useOnClickTargetChange ?? false;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';
@@ -357,7 +354,10 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
     this._domElement = options.domElement || createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
+
     this.spinner = new Spinner(this.domElement);
+    this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
+    this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
