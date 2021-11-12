@@ -4,8 +4,10 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import styled from 'styled-components';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
+import { Button, Colors } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import {
@@ -32,6 +34,15 @@ export const ADD_INTEGRATION: Readonly<string> = 'Add extraction pipeline';
 export const INTEGRATION_SUB_HEADING: Readonly<string> =
   'Use this section to create, troubleshoot and view details on extraction pipelines that ingest data from extractors into this data set.';
 const PERMISSION_TEXT: Readonly<string> = `You must have the 'extractionPipelinesAcl:read' permission to see extraction pipelines in your project`;
+
+const StyledButton = styled(Button)`
+  margin-top: 8px;
+
+  &:focus {
+    color: ${Colors.white};
+  }
+`;
+
 const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
   dataSet,
 }: PropsWithChildren<IntegrationTableProps>) => {
@@ -80,9 +91,9 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
             rowKey={(record: Integration) => `${record?.id}`}
             getPopupContainer={getContainer}
           />
-          <a href={addIntegrationLink()} className="cogs-btn cogs-btn-primary">
+          <StyledButton href={addIntegrationLink()} type="primary">
             {ADD_INTEGRATION}
-          </a>
+          </StyledButton>
         </>
       )}
     </Timeline.Item>
