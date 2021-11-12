@@ -7,7 +7,7 @@ import { getAuthToken } from '../utils/auth';
 
 export const command = 'login';
 export const desc = 'Login to CDF for using Platypus';
-export const builder = (yargs: Argv<LoginArgs>) => {
+export const builder = (yargs: Argv<LoginArgs>) =>
   yargs
     .usage('$0 login [project]')
     .example('platypus login cognite', 'Login to cognite tenant')
@@ -46,7 +46,6 @@ export const builder = (yargs: Argv<LoginArgs>) => {
       description: 'Auth type',
     })
     .choices('auth-type', ['clientSecret']);
-};
 
 export const handler = async (arg: Arguments<LoginArgs>) => {
   const { cluster, project, appId, authType, clientId, clientSecret, tenant } =
