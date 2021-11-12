@@ -1,58 +1,99 @@
-import { PathSegment, Point } from './PathSegments';
+import { approxeqrel, PathSegment, Point } from './PathSegments';
 
-const normalizePaths = (
-  paths: PathSegment[],
-  normalizationPoint: Point | null
-) => {
-  // just selecting the first one, creates some instances where the matching will fail.
-  // if obj1, path[0] is path[1] in object two, this will fail.
-  // this means that the symmetry obj1.matches(obj2) == obj2.matches(obj1) does not currently hold true.
-  const { x, y } = normalizationPoint || paths[0].start;
-  const scaleValue =
-    Math.abs(paths[0].start.x - paths[0].stop.x) +
-    Math.abs(paths[0].start.y - paths[0].stop.y);
-  for (let i = 0; i < paths.length; i++) {
-    const path = paths[i];
+export enum MatchResult {
+  Match,
+  SubMatch,
+  NotMatch,
+}
 
-    path.start = new Point(
-      (path.start.x - x) / scaleValue,
-      (path.start.y - y) / scaleValue
-    );
-    path.stop = new Point(
-      (path.stop.x - x) / scaleValue,
-      (path.stop.y - y) / scaleValue
-    );
-  }
-
-  return { normalizedSegmentList: paths, normalPoint: new Point(x, y) };
-};
+const errorMargin = 0.2;
 
 export class InstanceMatcher {
   segmentList: PathSegment[];
-  normalizationPoint: Point | null;
-  constructor(
-    segmentList: PathSegment[],
-    normalizationPoint: Point | null = null
-  ) {
-    const { normalizedSegmentList, normalPoint } = normalizePaths(
-      segmentList,
-      normalizationPoint
-    );
-    this.segmentList = normalizedSegmentList;
-    this.normalizationPoint = normalizationPoint || normalPoint;
+  constructor(segmentList: PathSegment[]) {
+    this.segmentList = segmentList;
   }
-  matches(instance: InstanceMatcher) {
-    let matchedLines = 0;
-    for (let i = 0; i < instance.segmentList.length; i++) {
+
+  normalizedMidPoints(): Point[] {
+    const minMidPointList = this.segmentList
+      .map((sL) => sL.midPoint)
+      .sort((a, b) => a.lessThan(b));
+
+    const minMidPoint = minMidPointList[0];
+    return minMidPointList.map((mp) => mp.minus(minMidPoint));
+  }
+
+  private midPointDistances(): number[] {
+    const localMidPointDistances: number[] = [];
+    for (let i = 0; i < this.segmentList.length - 1; ++i) {
+      const midPointI = this.segmentList[i].midPoint;
+      for (let j = i + 1; j < this.segmentList.length; ++j) {
+        const midPointJ = this.segmentList[j].midPoint;
+        localMidPointDistances.push(midPointI.distance(midPointJ));
+      }
+    }
+    return localMidPointDistances.sort((a, b) => a - b);
+  }
+
+  isTooSpreadOut(other: InstanceMatcher): boolean {
+    const myMidDistances = this.midPointDistances();
+    const otherMidDistances = other.midPointDistances();
+
+    if (myMidDistances.length === otherMidDistances.length) {
+      for (let i = 0; i < myMidDistances.length; ++i) {
+        if (
+          !approxeqrel(myMidDistances[i], otherMidDistances[i], errorMargin)
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    const myMaxDistance = myMidDistances[myMidDistances.length - 1];
+    const otherMaxDistance = otherMidDistances[otherMidDistances.length - 1];
+    return (1 + errorMargin) * myMaxDistance < otherMaxDistance;
+  }
+
+  matches(other: InstanceMatcher): MatchResult {
+    if (
+      other.segmentList.length > this.segmentList.length ||
+      this.isTooSpreadOut(other)
+    ) {
+      return MatchResult.NotMatch;
+    }
+
+    // this does not take orientation of the pathSegments into account
+    const matchedSegments = new Set<number>();
+
+    for (let i = 0; i < other.segmentList.length; i++) {
+      const otherPath = other.segmentList[i];
+      let foundMatch = false;
       for (let j = 0; j < this.segmentList.length; j++) {
-        const instancePath = instance.segmentList[i];
+        if (matchedSegments.has(j)) {
+          continue; // eslint-disable-line no-continue
+        }
         const myPath = this.segmentList[j];
-        if (instancePath.isSimilar(myPath)) {
-          matchedLines += 1;
+        if (myPath.isSimilar(otherPath)) {
+          matchedSegments.add(j);
+          foundMatch = true;
           break;
         }
       }
+
+      if (!foundMatch) {
+        return MatchResult.NotMatch;
+      }
     }
-    return matchedLines;
+
+    const numMathces = matchedSegments.size;
+    if (numMathces === this.segmentList.length) {
+      return MatchResult.Match;
+    }
+
+    if (numMathces > 0) {
+      return MatchResult.SubMatch;
+    }
+    return MatchResult.NotMatch;
   }
 }

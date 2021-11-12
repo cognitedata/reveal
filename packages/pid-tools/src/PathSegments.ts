@@ -1,3 +1,13 @@
+export const approxeq = (v1: number, v2: number, epsilon = 2) =>
+  Math.abs(v1 - v2) <= epsilon;
+
+export const approxeqrel = (v1: number, v2: number, epsilon = 0.2) => {
+  if (v2 === 0) {
+    return v1 === 0;
+  }
+  return Math.abs(1 - v1 / v2) <= epsilon;
+};
+
 export class Point {
   x: number;
   y: number;
@@ -5,50 +15,90 @@ export class Point {
     this.x = x;
     this.y = y;
   }
-  isSimilar(point: Point): boolean {
-    return Math.abs(this.x - point.x) < 2 && Math.abs(this.y - point.y) < 2;
+
+  distance(other: Point) {
+    return Math.sqrt((other.x - this.x) ** 2 + (this.y - other.y) ** 2);
   }
 
-  isSimilarNormalized(point: Point): boolean {
-    return (
-      Math.abs(this.x - point.x) < 0.01 && Math.abs(this.y - point.y) < 0.01
-    );
+  lessThan(other: Point): number {
+    const thisSum = this.x + this.y;
+    const otherSum = other.x + other.y;
+
+    if (thisSum < otherSum) {
+      return -1;
+    }
+    if (thisSum > otherSum) {
+      return 1;
+    }
+
+    if (this.y < other.y) {
+      return -1;
+    }
+    if (this.y === other.y) {
+      return 0;
+    }
+    return 1;
   }
 
-  setX(x: number) {
-    this.x = x;
+  translate(x: number, y: number) {
+    return new Point(this.x + x, this.y + y);
   }
 
-  setY(y: number) {
-    this.y = y;
+  minus(other: Point) {
+    return new Point(this.x - other.x, this.y - other.y);
+  }
+
+  average(other: Point) {
+    return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
   }
 }
 
-export class PathSegment {
+export abstract class PathSegment {
   start: Point;
   stop: Point;
   pathType: string;
-
   constructor(start: Point, stop: Point) {
     this.start = start;
     this.stop = stop;
     this.pathType = 'PathSegment';
   }
-  isSimilar(path: PathSegment): boolean {
-    return (
-      this.pathType === path.pathType &&
-      ((this.start.isSimilarNormalized(path.start) &&
-        this.stop.isSimilarNormalized(path.stop)) ||
-        (this.start.isSimilarNormalized(path.stop) &&
-          this.stop.isSimilarNormalized(path.start)))
-    );
-  }
+
+  abstract isSimilar(other: PathSegment): boolean;
+  abstract get midPoint(): Point;
+  abstract get length(): number;
 }
 
 export class LineSegment extends PathSegment {
   constructor(start: Point, stop: Point) {
     super(start, stop);
     this.pathType = 'LineSegment';
+  }
+
+  isSimilar(other: PathSegment): boolean {
+    if (this.pathType !== other.pathType) return false;
+
+    const thisDx = Math.abs(this.stop.x - this.start.x);
+    const thisDy = Math.abs(this.stop.y - this.start.y);
+    const otherDx = Math.abs(other.stop.x - other.start.x);
+    const otherDy = Math.abs(other.stop.y - other.start.y);
+
+    return approxeq(thisDx, otherDx) && approxeq(thisDy, otherDy);
+  }
+
+  get midPoint(): Point {
+    return this.start.average(this.stop);
+  }
+
+  get length() {
+    return this.start.distance(this.stop);
+  }
+
+  get angle() {
+    const dy = this.stop.y - this.start.y;
+    const dx = this.stop.x - this.start.x;
+    let theta = Math.atan2(dy, dx);
+    theta *= 180 / Math.PI; // rads to degs
+    return theta;
   }
 }
 
@@ -65,5 +115,27 @@ export class CurveSegment extends PathSegment {
     this.controlPoint1 = controlPoint1;
     this.controlPoint2 = controlPoint2;
     this.pathType = 'CurveSegment';
+  }
+
+  // true if it is a `CurveSegment` with same length and angle of `start` and `stop`
+  // Should `start` and `stop` be added in the comparison?
+  isSimilar(other: PathSegment): boolean {
+    if (this.pathType !== other.pathType) return false;
+
+    const dxThis = this.stop.x - this.start.x;
+    const dyThis = this.stop.y - this.start.y;
+    const dxOther = other.stop.x - other.start.x;
+    const dyOther = other.stop.y - other.start.y;
+
+    return approxeq(dxThis, dxOther) && approxeq(dyThis, dyOther);
+  }
+
+  // This is a naive implementation. The geometric mid point should include `start` and `stop`
+  get midPoint(): Point {
+    return this.start.average(this.stop);
+  }
+
+  get length(): number {
+    return this.start.distance(this.stop);
   }
 }
