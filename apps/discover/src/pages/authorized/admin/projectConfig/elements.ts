@@ -5,7 +5,7 @@ import { Flex, Icon, Body } from '@cognite/cogs.js';
 import { sizes } from 'styles/layout';
 
 export const ProjectConfigSidebar = styled(Flex)`
-  width: 352px;
+  width: 400px;
   height: 100%;
   border-right: 1px solid var(--cogs-color-strokes-default);
 `;

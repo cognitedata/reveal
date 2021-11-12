@@ -1,0 +1,1 @@
+export { customConfigComponent } from './customConfigComponent';

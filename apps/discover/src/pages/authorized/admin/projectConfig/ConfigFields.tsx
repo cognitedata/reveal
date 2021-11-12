@@ -82,56 +82,87 @@ export const ConfigFields: React.FC<Props> = ({
           );
         }
 
-        const handleCollapseChange = React.useCallback((newPath) => {
-          if (!newPath) {
-            setSelected(currentPath);
-          } else {
-            setSelected((existingPath) => {
-              if (newPath) return newPath;
-              return existingPath;
-            });
-          }
-        }, []);
-
-        const childrenMetadata = currentMetadata.dataAsChildren
-          ? getMetadataFromValue(get(config, currentPath), currentMetadata)
-          : currentMetadata.children;
-
         return (
-          <CollapseWrapper key={currentPath}>
-            <Collapse
-              activeKey={isCurrentPathActive ? currentPath : selected}
-              expandIcon={expandIcon}
-              className="config-field-item"
-              accordion
-              ghost
-              onChange={handleCollapseChange}
-            >
-              <Collapse.Panel
-                key={currentPath}
-                headerClass={classNames({
-                  'config-item-active': currentPath === selected,
-                })}
-                header={
-                  <Body level={2} strong>
-                    {currentMetadata.label}
-                  </Body>
-                }
-              >
-                <Flex direction="column">
-                  <ConfigFields
-                    prefixPath={`${currentPath}.`}
-                    metadata={childrenMetadata}
-                    selected={selected}
-                    setSelected={setSelected}
-                    config={config}
-                  />
-                </Flex>
-              </Collapse.Panel>
-            </Collapse>
-          </CollapseWrapper>
+          <NestedField
+            key={currentPath}
+            currentPath={currentPath}
+            currentMetadata={currentMetadata}
+            config={config}
+            selected={selected}
+            setSelected={setSelected}
+            isCurrentPathActive={isCurrentPathActive}
+          />
         );
       })}
     </>
+  );
+};
+
+const NestedField: React.FC<{
+  currentPath: string;
+  currentMetadata: MetadataValue;
+  config?: ProjectConfig;
+  selected: Props['selected'];
+  setSelected: Props['setSelected'];
+  isCurrentPathActive: boolean;
+}> = ({
+  currentPath,
+  currentMetadata,
+  config,
+  selected,
+  setSelected,
+  isCurrentPathActive,
+}) => {
+  const handleCollapseChange = React.useCallback(
+    (newPath) => {
+      if (!newPath) {
+        setSelected(currentPath);
+      } else {
+        setSelected((existingPath) => {
+          if (newPath) return newPath;
+          return existingPath;
+        });
+      }
+    },
+    [currentPath, setSelected]
+  );
+
+  const childrenMetadata = currentMetadata.dataAsChildren
+    ? getMetadataFromValue(get(config, currentPath), currentMetadata)
+    : currentMetadata.children;
+
+  return (
+    <CollapseWrapper key={currentPath}>
+      <Collapse
+        activeKey={isCurrentPathActive ? currentPath : selected}
+        expandIcon={expandIcon}
+        className="config-field-item"
+        accordion
+        ghost
+        onChange={handleCollapseChange}
+      >
+        <Collapse.Panel
+          key={currentPath}
+          headerClass={classNames({
+            'config-item-active': currentPath === selected,
+          })}
+          header={
+            <Body level={2} strong>
+              {currentMetadata.label}
+            </Body>
+          }
+        >
+          <Flex direction="column">
+            <ConfigFields
+              prefixPath={`${currentPath}.`}
+              metadata={childrenMetadata}
+              selected={selected}
+              setSelected={setSelected}
+              config={config}
+            />
+          </Flex>
+        </Collapse.Panel>
+      </Collapse>
+    </CollapseWrapper>
   );
 };

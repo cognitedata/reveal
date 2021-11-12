@@ -4,17 +4,15 @@ import { Input, Switch, Textarea, toast } from '@cognite/cogs.js';
 
 import { showErrorMessage } from 'components/toast';
 
-import { HandleConfigChange, MetadataKey, MetadataValue } from './types';
+import { HandleConfigChange, MetadataValue } from './types';
 
 export const ConfigInputField: React.FC<{
+  changeKey: string;
   field: MetadataValue;
-  fieldKey: MetadataKey;
-  prefix: string;
   onReset?: () => void;
   onChange: HandleConfigChange;
   value?: unknown;
-}> = ({ field, onChange, prefix, fieldKey, value }) => {
-  const changeKey = `${prefix}.${fieldKey}`;
+}> = ({ field, onChange, value, changeKey }) => {
   const handleTextChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       onChange(changeKey, event.target.value);
@@ -72,7 +70,7 @@ export const ConfigInputField: React.FC<{
           title={field.label}
           value={value as string}
           onChange={handleTextChange}
-          data-testid={`${fieldKey}-value`}
+          data-testid={`${changeKey}-value`}
         />
       );
     case 'number':
@@ -86,7 +84,7 @@ export const ConfigInputField: React.FC<{
           title={field.label}
           value={value as number}
           onChange={handleNumberChange}
-          data-testid={`${fieldKey}-value`}
+          data-testid={`${changeKey}-value`}
         />
       );
     case 'boolean':
@@ -117,7 +115,7 @@ export const ConfigInputField: React.FC<{
             value={jsonValue as string}
             onChange={handleJSONChange}
             onBlur={handleJSONBlur}
-            data-testid={`${fieldKey}-value`}
+            data-testid={`${changeKey}-value`}
           />
         );
       }

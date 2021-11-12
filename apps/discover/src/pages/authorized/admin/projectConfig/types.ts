@@ -1,3 +1,5 @@
+import { FC } from 'react';
+
 import { ProjectConfig } from '@cognite/discover-api-types';
 
 export type PrimitiveValue = string | number | boolean;
@@ -32,3 +34,10 @@ export type MetadataValue = Metadata[keyof Metadata];
 export type HandleConfigChange = (key: string, value: unknown) => void;
 
 export type HandleConfigUpdate = (overridingConfig?: ProjectConfig) => void;
+
+export type CustomComponent = FC<{
+  onClose: () => void;
+  type: string;
+  onOk: (datum: unknown) => void;
+  metadataValue?: MetadataValue;
+}>;

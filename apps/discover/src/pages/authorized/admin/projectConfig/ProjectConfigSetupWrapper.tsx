@@ -1,54 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import omit from 'lodash/omit';
-import pick from 'lodash/pick';
-
 import { Checkbox, Label, Flex } from '@cognite/cogs.js';
-import {
-  ProjectConfigGeneral,
-  ProjectConfig,
-} from '@cognite/discover-api-types';
+import { ProjectConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import EmptyState from 'components/emptyState';
-import { OKModal } from 'components/modal';
 import { fetchTenantFile } from 'hooks/useTenantConfig';
 import { TenantConfig, Layers } from 'tenants/types';
 
 import { FullContainer, PaddingBottomBorder } from './elements';
 import { HandleConfigChange, HandleConfigUpdate } from './types';
 
-const generalConfigKeys: Array<keyof ProjectConfigGeneral> = [
-  'sideBar',
-  'searchableLayerTitle',
-  'showProjectConfig',
-  'showDynamicResultCount',
-  'hideFilterCount',
-  'companyInfo',
-];
-
-const adaptConfigForBackend = (
-  config?: TenantConfig,
-  layers?: Layers
-): ProjectConfig => {
-  const newConfig = {
-    ...omit(config, generalConfigKeys),
-    general: pick(config, generalConfigKeys),
-    map: {
-      ...config?.map,
-      layers: Object.values(layers || {}),
-    },
-  };
-
-  return newConfig as ProjectConfig;
-};
-
 export const ProjectConfigSetupWrapper: React.FC<{
   config: ProjectConfig;
   onChange: HandleConfigChange;
   onUpdate: HandleConfigUpdate;
-}> = ({ children, config, onUpdate }) => {
+}> = ({ children, config }) => {
   const [tenant] = getTenantInfo();
   const { t } = useTranslation();
 
@@ -95,26 +63,6 @@ export const ProjectConfigSetupWrapper: React.FC<{
 
   if (config.hasCustomConfig) {
     return <FullContainer>{children}</FullContainer>;
-  }
-
-  if (configInfo.hasLocalConfig) {
-    return (
-      <OKModal
-        testId="project-config-setup-modal"
-        closable={false}
-        halfWidth
-        visible
-        title={t('Project Config Setup')}
-        okText={t('Save')}
-        onOk={() => {
-          onUpdate(adaptConfigForBackend(configInfo.config, configInfo.layers));
-        }}
-      >
-        {t(
-          'In order to use project config, please click save to save your existing config once.'
-        )}
-      </OKModal>
-    );
   }
 
   return (

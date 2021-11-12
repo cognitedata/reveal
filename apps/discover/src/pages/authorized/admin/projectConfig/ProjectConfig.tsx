@@ -14,6 +14,7 @@ import {
   useProjectConfigMetadataGetQuery,
 } from 'modules/api/projectConfig/useProjectConfigQuery';
 
+import { customConfigComponent } from './configComponents';
 import { ProjectConfigForm } from './ProjectConfigForm';
 import { ProjectConfigSetupWrapper } from './ProjectConfigSetupWrapper';
 
@@ -85,6 +86,7 @@ export const ProjectConfig = () => {
         onUpdate={handleUpdate}
         onReset={handleReset}
         hasChanges={hasChanges}
+        renderCustomComponent={customConfigComponent}
       />
     </ProjectConfigSetupWrapper>
   );

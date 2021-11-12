@@ -64,9 +64,7 @@ describe('ProjectConfigForm', () => {
       const layers = screen.getByText('Layers');
       fireEvent.click(layers);
 
-      expect(screen.queryByText('Layers 1')).toBeInTheDocument();
-
-      fireEvent.click(screen.getByText('Layers 1'));
+      fireEvent.click(screen.getAllByText('Layers 1')[0]);
 
       const mockFilters = { a: 1 };
 

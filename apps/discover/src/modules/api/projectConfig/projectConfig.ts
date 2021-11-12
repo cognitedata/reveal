@@ -1,4 +1,9 @@
-import { fetchGet, FetchHeaders, fetchPatch } from '../../../_helpers/fetch';
+import {
+  fetchGet,
+  FetchHeaders,
+  fetchPatch,
+  fetchDelete,
+} from '../../../_helpers/fetch';
 import { SIDECAR } from '../../../constants/app';
 
 const getProjectConfigEndpoint = (project: string) =>
@@ -17,4 +22,7 @@ export const projectConfig = {
 
   getMetadata: async (headers: FetchHeaders, project: string) =>
     fetchGet(`${getProjectConfigEndpoint(project)}/metadata`, { headers }),
+
+  delete: async (headers: FetchHeaders, project: string) =>
+    fetchDelete(`${getProjectConfigEndpoint(project)}/delete`, { headers }),
 };

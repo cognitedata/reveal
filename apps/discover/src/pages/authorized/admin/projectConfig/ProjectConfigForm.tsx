@@ -7,7 +7,12 @@ import { ProjectConfig } from '@cognite/discover-api-types';
 import { FullContainer } from './elements';
 import { LeftPanel } from './LeftPanel';
 import { RightPanel } from './RightPanel';
-import { HandleConfigChange, HandleConfigUpdate, Metadata } from './types';
+import {
+  HandleConfigChange,
+  HandleConfigUpdate,
+  Metadata,
+  CustomComponent,
+} from './types';
 
 interface Props {
   config: ProjectConfig;
@@ -16,6 +21,7 @@ interface Props {
   onReset: () => void;
   hasChanges: boolean;
   metadata: Metadata;
+  renderCustomComponent: CustomComponent;
 }
 
 export const adaptedSelectedPathToMetadataPath = (selectedPath = '') =>
@@ -28,6 +34,7 @@ export const ProjectConfigForm: React.FC<Props> = ({
   hasChanges,
   config,
   metadata,
+  renderCustomComponent,
 }) => {
   const [selectedPath, setSelectedPath] = React.useState<string>('general');
   const metadataPath = React.useMemo(
@@ -46,13 +53,15 @@ export const ProjectConfigForm: React.FC<Props> = ({
         config={config}
       />
       <RightPanel
-        metadataConfig={selectedMetadata}
+        metadataValue={selectedMetadata}
         onChange={onChange}
         onUpdate={onUpdate}
         onReset={onReset}
         hasChanges={hasChanges}
         value={get(config, valuePath)}
         valuePath={valuePath}
+        metadataPath={metadataPath}
+        renderCustomComponent={renderCustomComponent}
       />
     </FullContainer>
   );

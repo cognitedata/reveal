@@ -65,3 +65,23 @@ export function useProjectConfigMetadataGetQuery(): UseQueryResult<any> {
     discoverAPI.projectConfig.getMetadata(headers, project)
   );
 }
+
+export function useProjectConfigDeleteQuery() {
+  const headers = getJsonHeaders({}, true);
+  const [project] = getTenantInfo();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    () => {
+      return discoverAPI.projectConfig.delete(headers, project);
+    },
+    {
+      onSuccess: () => {
+        return queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
+      },
+      onError: (_error) => {
+        return queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
+      },
+    }
+  );
+}
