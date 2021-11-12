@@ -76,11 +76,11 @@ We have two test systems at the moment. So you can run them in two modes. But we
 
 ### Start server
 
-0. Get the PK from last-pass for the testing project. Put it in the Discover root as `discover-e2e-<<cluster>>.jwk-key.json`
+0. Get the PK from last-pass for the testing project. Put it in the Discover `private-keys` folder as `discover-e2e-<CLUSTER>.jwk-key.json`
 
 1. Then start your test server:
 
-(Make sure you always do this for bluefield)
+(Make sure you always do this for azure-dev or bluefield)
 
 ```sh
 yarn start:local
@@ -131,6 +131,30 @@ or:
 
 ```sh
 yarn testcafe:bazel-run-live-linux --fixture-meta page=savedSearches
+```
+
+### How to ingest data into the test tenants
+
+Checkout: https://github.com/cognitedata/fusion-demo-data
+
+For development:
+
+```
+yarn send --project discover-e2e-azure-dev --cluster azure-dev --generateToken -x infield
+```
+
+Only run this after tests are ready as this is the project our CI uses:
+
+```
+yarn send --project discover-e2e-bluefield --cluster bluefield --generateToken -x infield
+```
+
+Make sure you have the PK in the `private-keys` folder.
+
+For the demo project `discover-test-bluefield` that uses AAD, that is a bit different:
+
+```
+yarn send --wdl --project discover-test-bluefield --cluster bluefield --clientCreds '{ "client_id": "be51de09-e15c-4992-8390-b2ed6ee69f27", "client_secret": "get from lastpass", "scope": "https://bluefield.cognitedata.com/.default", "tenant_id": "b0a7758b-37a5-4176-a263-6f9b5e8b6b05" }' -x infield
 ```
 
 ### Generating Access Tokens for discover-e2e-bluefield tenant

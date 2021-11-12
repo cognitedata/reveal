@@ -19,7 +19,7 @@ export function getJsonOrText(text: string) {
 
 // type ResponseError = string;
 export async function handleResponse<T>(
-  response: any,
+  response: Response,
   options: FetchOptions = {}
 ): Promise<T> {
   if (response.status === 401) {
@@ -35,6 +35,7 @@ export async function handleResponse<T>(
       return Promise.reject(new Error('Unable to convert'));
     }
 
+    // @ts-expect-error 'T' could be instantiated with an arbitrary type which could be unrelated to 'string | 0 | T'
     return response
       .blob()
       .then((blob: Blob) => blob.size && URL.createObjectURL(blob));
@@ -106,16 +107,21 @@ export function fetchPatch<T>(url: string, body: any, options?: FetchOptions) {
   );
 }
 
-// interface GetOptions extends FetchOptions {}
-export function fetchGet<T>(url: string, options: FetchOptions = {}) {
+interface GetOptions extends FetchOptions {
+  handleRawResponse?: (response: Response) => void;
+}
+export function fetchGet<T>(url: string, options: GetOptions = {}) {
   const requestOptions = {
     method: 'GET',
     headers: options?.headers,
   };
 
-  return fetch(url, requestOptions).then((response) =>
-    handleResponse<T>(response, requestOptions)
-  );
+  return fetch(url, requestOptions).then((response) => {
+    if (options.handleRawResponse) {
+      options.handleRawResponse(response);
+    }
+    return handleResponse<T>(response, requestOptions);
+  });
 }
 
 // interface DeleteOptions extends FetchOptions {}
