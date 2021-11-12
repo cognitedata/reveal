@@ -1,24 +1,25 @@
-# platypus - A CLI for https://platypus.staging.cogniteapp.com/
+# Platypus CLI
 
-## Commands
+Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
 
-```bash
-# Just empty command, but it should creates a new solution and dumps details in .platypusgrc
-itg init
+# Install
+
+```
+npm install -g @cognite/platypus-cli
 ```
 
-## Global variables
+# Login
 
-Set the COGNITE_CREDENTIALS variable with an api key for the respective cdf project to get access
+You can obtain your personal `client_secret` by visiting `Azure > App registrations` and then go to certificate and secrets and generate your new `client_secret`.
 
-## How to run
+```
+platypus login --client-secret=<your-client-secret>
+```
 
-First build the library:
-`nx build platypus-cdf-cli`
+# Commands
 
-Then run the cli:
-`node dist/libs/platypus-cli/src/index.js init <other-args>`
-
-## Running unit tests
-
-Run `nx test platypus-cdf-cli` to execute the unit tests via [Jest](https://jestjs.io).
+```
+platypus templates list
+platypus templates create --name=some name --description=some description
+platypus templates delete --id=templateGroupId
+```
