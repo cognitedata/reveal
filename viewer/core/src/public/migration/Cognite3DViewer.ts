@@ -325,7 +325,7 @@ export class Cognite3DViewer {
    * Defaults to 'none' (which is identical to 'silent').
    * @param level
    */
-  setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none') {
+  setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void {
     switch (level) {
       case 'none':
         this.setLogLevel('silent');
