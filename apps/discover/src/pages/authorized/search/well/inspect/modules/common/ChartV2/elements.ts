@@ -6,10 +6,11 @@ import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 export const ToolbarWrapper = styled.div`
   position: absolute;
   text-align: right;
-  height: 28px;
+  height: 28px !important;
   margin-top: ${sizes.normal};
   padding-right: ${sizes.normal};
   width: 100%;
+  z-index: ${layers.FILTER};
 `;
 
 export const ChartWrapper = styled.div`

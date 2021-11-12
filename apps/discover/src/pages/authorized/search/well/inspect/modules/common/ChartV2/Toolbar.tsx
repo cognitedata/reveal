@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AllIconTypes, Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
 import { ToolbarWrapper } from './elements';
 
@@ -9,28 +9,23 @@ export type Props = {
 };
 
 const Toolbar = ({ chartRef }: Props) => {
-  const tools: AllIconTypes[] = [
-    // 'ZoomIn', 'ZoomOut',
-    'Refresh',
-  ];
-
   return (
     <ToolbarWrapper>
-      {tools.map((tool, index) => (
-        <Button
-          key={tool}
-          type="ghost"
-          icon={tool}
-          size="small"
-          aria-label={tool}
-          onClick={() => {
-            const inbuiltButtons = (
-              chartRef.current?.el as HTMLDivElement
-            ).getElementsByClassName('modebar-btn');
-            (inbuiltButtons[index] as HTMLAnchorElement).click();
-          }}
-        />
-      ))}
+      <Button
+        key="Refresh"
+        type="ghost"
+        icon="Refresh"
+        size="small"
+        aria-label="Refresh"
+        onClick={() => {
+          const inbuiltButtons = (
+            chartRef.current?.el as HTMLDivElement
+          ).querySelector("[data-attr='zoom']");
+
+          if (!inbuiltButtons) return;
+          (inbuiltButtons as HTMLAnchorElement).click();
+        }}
+      />
     </ToolbarWrapper>
   );
 };
