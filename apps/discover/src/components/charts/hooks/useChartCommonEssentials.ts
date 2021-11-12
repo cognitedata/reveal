@@ -100,12 +100,12 @@ export const useChartCommonEssentials = <T>({
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
     if (onUpdate) onUpdate();
-  }, [stringifiedData]);
+  }, [initialCheckboxState]);
 
   useEffect(() => {
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
-  }, [stringifiedData]);
+  }, [initialCheckboxState]);
 
   const legendProps: LegendProps = {
     legendCheckboxState,
