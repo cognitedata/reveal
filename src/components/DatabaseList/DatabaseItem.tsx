@@ -10,8 +10,8 @@ import { RawDBTable } from '@cognite/sdk';
 import { SubMenuProps } from 'antd/lib/menu/SubMenu';
 import theme from 'styles/theme';
 import { createLink } from '@cognite/cdf-utilities';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { cleanUrl, getContainer, stringCompare } from 'utils/utils';
+import { useHistory, useParams } from 'react-router-dom';
+import { getContainer, stringCompare } from 'utils/utils';
 import styled from 'styled-components';
 import { stringContains } from 'utils/typedUtils';
 import { DATABASE_LIST_WIDTH } from 'utils/constants';
@@ -19,6 +19,7 @@ import { useDeleteDatabase, useTables } from 'hooks/sdk-queries';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import CreateTable from '../CreateTable';
 import { SortingType } from './DatabaseList';
+import { useOpenTable } from 'hooks/table-tabs';
 
 const { SubMenu } = Menu;
 
@@ -74,6 +75,8 @@ const DatabaseItem = ({
   const { appPath } = useParams<{ appPath: string }>();
   const [searchWord, setSearch] = useState<string>('');
 
+  const openTab = useOpenTable();
+
   const { data, isLoading, hasNextPage, fetchNextPage } = useTables(
     {
       database,
@@ -101,7 +104,13 @@ const DatabaseItem = ({
   const renderFilteredList = (filteredList: RawDBTable[]) => {
     return filteredList.map((_table) => (
       <StyledMenuItem key={`${database}-${_table.name}`}>
-        <Link to={createLink(`/${appPath}/${cleanUrl(database, _table.name)}`)}>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            openTab([database, _table.name]);
+          }}
+        >
           <Tooltip
             placement="topLeft"
             title={`Table ${_table.name}`}
@@ -110,7 +119,7 @@ const DatabaseItem = ({
             <StyledTableItemIcon type="Table" />
             <span>{_table.name}</span>
           </Tooltip>
-        </Link>
+        </a>
       </StyledMenuItem>
     ));
   };

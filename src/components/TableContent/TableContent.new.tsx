@@ -1,50 +1,27 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  notification,
-  Table,
-  Alert,
-  Popconfirm,
-  InputNumber,
-  Typography,
-  Tooltip,
-} from 'antd';
-import { Button, Icon } from '@cognite/cogs.js';
-import AccessButton from 'components/AccessButton';
+import React from 'react';
 import styled from 'styled-components';
-import isString from 'lodash/isString';
-import {
-  stringCompare,
-  escapeCSVValue,
-  toLocalDate,
-  toLocalTime,
-  getContainer,
-} from 'utils/utils';
-import { CSVLink } from 'react-csv';
-import { useHistory, useParams } from 'react-router-dom';
-import { useDeleteTable, useTableRows } from 'hooks/sdk-queries';
-import { RawDBRow } from '@cognite/sdk';
-import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { createLink } from '@cognite/cdf-utilities';
-import UploadCSV from '../UploadCSV';
+import { Colors, Flex } from '@cognite/cogs.js';
+import { Header, FilterBar, Table } from './components';
 
-const { Text } = Typography;
-
-const showTotalItems = (total: number) => {
-  return `Total ${total} rows`;
-};
-const CardHeading = styled.div`
-  border-bottom: 1px solid #d8d8d8;
-  padding-top: 4px;
-  padding-left: 10px;
-`;
-
+<<<<<<< HEAD
 const TableContent = () => {
+  return (
+    <Wrapper direction="column">
+      <TableContent.Header />
+      <TableContent.FilterBar />
+      <TableContent.Table />
+    </Wrapper>
+=======
+type TableProps = {
+  table: string;
+  database: string;
+};
+
+const TableContent = ({ database, table }: TableProps) => {
   const history = useHistory();
-  const { database, table, appPath } = useParams<{
+  const { appPath } = useParams<{
     appPath: string;
     project: string;
-    table?: string;
-    database?: string;
   }>();
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
@@ -464,16 +441,24 @@ const TableContent = () => {
           />
         </>
       )}
-      {table && database && (
-        <UploadCSV
-          csvModalVisible={csvModalVisible}
-          setCSVModalVisible={setCSVModalVisible}
-          table={table}
-          database={database}
-        />
-      )}
+      <UploadCSV
+        csvModalVisible={csvModalVisible}
+        setCSVModalVisible={setCSVModalVisible}
+        table={table}
+        database={database}
+      />
     </div>
+>>>>>>> master
   );
 };
+
+const Wrapper = styled(Flex)`
+  border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
+  height: 100%;
+`;
+
+TableContent.Header = Header;
+TableContent.FilterBar = FilterBar;
+TableContent.Table = Table;
 
 export default TableContent;

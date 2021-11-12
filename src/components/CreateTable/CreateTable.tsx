@@ -17,14 +17,8 @@ export default function CreateTable({ database }: { database: string }) {
   const [name, setName] = useState('');
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const {
-    mutate,
-    isSuccess,
-    isLoading,
-    isError,
-    error,
-    reset,
-  } = useCreateTable();
+  const { mutate, isSuccess, isLoading, isError, error, reset } =
+    useCreateTable();
 
   useEffect(() => {
     if (isSuccess) {

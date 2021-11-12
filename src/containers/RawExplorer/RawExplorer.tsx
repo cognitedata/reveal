@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -13,6 +12,9 @@ import {
   DATABASE_LIST_MARGIN_RIGHT,
   DATABASE_LIST_WIDTH,
 } from 'utils/constants';
+import { useActiveTable } from 'hooks/table-tabs';
+import { useParams } from 'react-router-dom';
+import TableTabList from 'components/TableTabList';
 
 const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
   {
@@ -44,15 +46,12 @@ const RawExplorer = (): JSX.Element => {
     database?: string;
     table?: string;
   }>();
+  const [[tabDatabase, tabTable] = [undefined, undefined]] = useActiveTable();
 
-  const {
-    data: hasReadAccess,
-    isFetched: isReadAccessFetched,
-  } = useUserCapabilities('rawAcl', 'READ');
-  const {
-    data: hasListAccess,
-    isFetched: isListAccessFetched,
-  } = useUserCapabilities('rawAcl', 'LIST');
+  const { data: hasReadAccess, isFetched: isReadAccessFetched } =
+    useUserCapabilities('rawAcl', 'READ');
+  const { data: hasListAccess, isFetched: isListAccessFetched } =
+    useUserCapabilities('rawAcl', 'LIST');
 
   if (!isReadAccessFetched || !isListAccessFetched) {
     return <Loader />;
@@ -66,9 +65,13 @@ const RawExplorer = (): JSX.Element => {
           <StyledRawExplorerDatabaseListWrapper>
             <DatabaseList database={database} table={table} />
           </StyledRawExplorerDatabaseListWrapper>
-          <StyledRawExplorerTableContentWrapper>
-            <TableContent />
-          </StyledRawExplorerTableContentWrapper>
+
+          {tabDatabase && tabTable && (
+            <StyledRawExplorerTableContentWrapper>
+              <TableTabList />
+              <TableContent database={tabDatabase} table={tabTable} />
+            </StyledRawExplorerTableContentWrapper>
+          )}
         </StyledRawExplorerContent>
       ) : (
         <NoAccessPage />

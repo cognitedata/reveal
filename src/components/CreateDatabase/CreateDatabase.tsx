@@ -16,14 +16,8 @@ export default function CreateDatabase() {
   const [name, setName] = useState('');
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const {
-    mutate,
-    isSuccess,
-    isLoading,
-    isError,
-    error,
-    reset,
-  } = useCreateDatabase();
+  const { mutate, isSuccess, isLoading, isError, error, reset } =
+    useCreateDatabase();
 
   useEffect(() => {
     if (isSuccess) {
