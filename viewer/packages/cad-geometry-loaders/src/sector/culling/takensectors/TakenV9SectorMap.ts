@@ -20,7 +20,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
   }
 
   get modelsMetadata(): CadModelMetadata[] {
-    return Array.from(this._models.values()).map(x => x.modelMetadata);
+    return Array.from(this._models.values()).map(cadModel => cadModel.modelMetadata);
   }
 
   constructor(determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>) {
