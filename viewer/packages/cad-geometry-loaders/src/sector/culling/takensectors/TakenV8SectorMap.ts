@@ -1,21 +1,16 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { TakenV8SectorTree } from './takensectors/TakenV8SectorTree';
-import {
-  PrioritizedWantedSector,
-  DetermineSectorCostDelegate,
-  SectorCost,
-  addSectorCost,
-  SectorLoadingSpent
-} from './types';
-import { CadModelSectorBudget } from '../../CadModelSectorBudget';
+import { TakenV8SectorTree } from './TakenV8SectorTree';
+import { PrioritizedWantedSector, DetermineSectorCostDelegate, SectorCost, addSectorCost } from '../types';
+import { CadModelSectorBudget } from '../../../CadModelSectorBudget';
+import { TakenSectorMapBase } from './TakenSectorMapBase';
 
-import { CadModelMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
+import { CadModelMetadata, V8SectorMetadata } from '@reveal/cad-parsers';
 
 import assert from 'assert';
 
-export class TakenSectorMap {
+export class TakenV8SectorMap extends TakenSectorMapBase {
   private readonly _takenSectorTrees: Map<string, { sectorTree: TakenV8SectorTree; modelMetadata: CadModelMetadata }> =
     new Map();
   private readonly determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata>;
@@ -28,14 +23,25 @@ export class TakenSectorMap {
     return totalCost;
   }
 
+  get modelsMetadata(): CadModelMetadata[] {
+    return Array.from(this._takenSectorTrees.values()).map(x => x.modelMetadata);
+  }
+
   // TODO 2020-04-21 larsmoa: Unit test TakenSectorMap
   constructor(determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata>) {
+    super();
     this.determineSectorCost = determineSectorCost;
   }
 
   initializeScene(modelMetadata: CadModelMetadata) {
+    assert(
+      modelMetadata.scene.version === 8,
+      `Only sector version 8 is supported, but got ${modelMetadata.scene.version}`
+    );
+
+    const sectorRoot = modelMetadata.scene.root as V8SectorMetadata;
     this._takenSectorTrees.set(modelMetadata.modelIdentifier, {
-      sectorTree: new TakenV8SectorTree(modelMetadata.scene.root as V8SectorMetadata, this.determineSectorCost),
+      sectorTree: new TakenV8SectorTree(sectorRoot, this.determineSectorCost),
       modelMetadata
     });
   }
@@ -61,10 +67,11 @@ export class TakenSectorMap {
   }
 
   isWithinBudget(budget: CadModelSectorBudget): boolean {
+    const currentCost = this.totalCost;
     return (
-      this.totalCost.downloadSize < budget.geometryDownloadSizeBytes &&
-      this.totalCost.drawCalls < budget.maximumNumberOfDrawCalls &&
-      this.totalCost.renderCost < budget.maximumRenderCost
+      currentCost.downloadSize < budget.geometryDownloadSizeBytes &&
+      currentCost.drawCalls < budget.maximumNumberOfDrawCalls &&
+      currentCost.renderCost < budget.maximumRenderCost
     );
   }
 
@@ -81,34 +88,6 @@ export class TakenSectorMap {
     // Sort by priority
     allWanted.sort((l, r) => r.priority - l.priority);
     return allWanted;
-  }
-
-  computeSpentBudget(): SectorLoadingSpent {
-    const wanted = this.collectWantedSectors();
-    const models = Array.from(this._takenSectorTrees.values()).map(x => x.modelMetadata);
-    const nonDiscarded = wanted.filter(x => x.levelOfDetail !== LevelOfDetail.Discarded);
-
-    const totalSectorCount = models.reduce((sum, x) => sum + x.scene.sectorCount, 0);
-    const takenSectorCount = nonDiscarded.length;
-    const takenSimpleCount = nonDiscarded.filter(x => x.levelOfDetail === LevelOfDetail.Simple).length;
-    const forcedDetailedSectorCount = nonDiscarded.filter(x => !Number.isFinite(x.priority)).length;
-    const accumulatedPriority = nonDiscarded
-      .filter(x => Number.isFinite(x.priority) && x.priority > 0)
-      .reduce((sum, x) => sum + x.priority, 0);
-
-    const spentBudget: SectorLoadingSpent = {
-      drawCalls: this.totalCost.drawCalls,
-      downloadSize: this.totalCost.downloadSize,
-      renderCost: this.totalCost.renderCost,
-      totalSectorCount,
-      forcedDetailedSectorCount,
-      loadedSectorCount: takenSectorCount,
-      simpleSectorCount: takenSimpleCount,
-      detailedSectorCount: takenSectorCount - takenSimpleCount,
-      accumulatedPriority
-    };
-
-    return spentBudget;
   }
 
   clear() {

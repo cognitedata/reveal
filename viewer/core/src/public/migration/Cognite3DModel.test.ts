@@ -6,44 +6,44 @@ import { Cognite3DModel } from './Cognite3DModel';
 
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
-import { createCadModel } from '../../../../test-utilities/src/createCadModel';
+import { createV8CadModel } from '../../../../test-utilities/src/createCadModel';
 
 describe(Cognite3DModel.name, () => {
-  let model: Cognite3DModel;
+  let v8Model: Cognite3DModel;
 
   beforeEach(() => {
-    model = createCadModel(1, 2, 3, 3);
+    v8Model = createV8CadModel(1, 2, 3, 3);
   });
 
   test('(un)assignStyledNodeCollection maintains list of collections correctly', () => {
     const collection = new TreeIndexNodeCollection();
     const collection2 = new TreeIndexNodeCollection();
 
-    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
-    model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
-    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
+    v8Model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
+    v8Model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
+    v8Model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(v8Model.styledNodeCollections).not.toBeEmpty();
 
-    model.unassignStyledNodeCollection(collection2);
+    v8Model.unassignStyledNodeCollection(collection2);
 
-    expect(model.styledNodeCollections).not.toBeEmpty();
+    expect(v8Model.styledNodeCollections).not.toBeEmpty();
 
-    model.unassignStyledNodeCollection(collection);
+    v8Model.unassignStyledNodeCollection(collection);
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(v8Model.styledNodeCollections).toBeEmpty();
   });
 
   test('removeAllStyledNodeCollections removes all styled node collections', () => {
     const collection = new TreeIndexNodeCollection();
     const collection2 = new TreeIndexNodeCollection();
 
-    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
-    model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
-    model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
+    v8Model.assignStyledNodeCollection(collection, DefaultNodeAppearance.InFront);
+    v8Model.assignStyledNodeCollection(collection2, DefaultNodeAppearance.Ghosted);
+    v8Model.assignStyledNodeCollection(collection, DefaultNodeAppearance.Outlined);
 
-    model.removeAllStyledNodeCollections();
+    v8Model.removeAllStyledNodeCollections();
 
-    expect(model.styledNodeCollections).toBeEmpty();
+    expect(v8Model.styledNodeCollections).toBeEmpty();
   });
 });

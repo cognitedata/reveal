@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-
 import * as THREE from 'three';
 import * as THREEext from '../../../utilities/src/three';
 
@@ -12,7 +11,6 @@ import { HttpHeadersProvider } from './HttpHeadersProvider';
 import { CameraConfiguration } from '@reveal/utilities';
 import { InstancedMeshFile, TriangleMesh, LevelOfDetail } from '@reveal/cad-parsers';
 import { ParsedPrimitives, ParseSectorResult, ParseCtmResult, SectorQuads } from '@cognite/reveal-parser-worker';
-
 
 /**
  * Conversion factors from a given unit to meters.

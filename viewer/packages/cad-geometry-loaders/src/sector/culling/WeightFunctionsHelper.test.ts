@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 
-import { createSectorMetadata } from '../../../../../test-utilities';
+import { createV8SectorMetadata } from '../../../../../test-utilities';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import { SectorMetadata } from '@reveal/cad-parsers';
@@ -24,7 +24,7 @@ describe('WeightFunctionsHelper', () => {
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
 
-    const rootSector = createSectorMetadata([
+    const rootSector = createV8SectorMetadata([
       0,
       [
         [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
@@ -33,7 +33,7 @@ describe('WeightFunctionsHelper', () => {
       new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1))
     ]);
     sectors = [];
-    traverseDepthFirst(rootSector, x => {
+    traverseDepthFirst(rootSector as SectorMetadata, x => {
       sectors.push(x);
       return true;
     });

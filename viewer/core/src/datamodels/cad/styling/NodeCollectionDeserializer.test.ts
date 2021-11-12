@@ -5,7 +5,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import { TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { IndexSet } from '@reveal/utilities';
-import { createCadModel } from '../../../../../test-utilities/src/createCadModel';
+import { createV8CadModel } from '../../../../../test-utilities/src/createCadModel';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
 describe('NodeCollectionDeserializer', () => {
@@ -15,7 +15,7 @@ describe('NodeCollectionDeserializer', () => {
 
     const nodeCollection = new TreeIndexNodeCollection(new IndexSet([1, 3, 5]));
 
-    const model = createCadModel(1, 2, 3, 3);
+    const model = createV8CadModel(1, 2, 3, 3);
 
     const serializedCollection = nodeCollection.serialize();
 

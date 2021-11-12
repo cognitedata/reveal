@@ -6,11 +6,11 @@ import { SectorMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-par
 
 import {
   PrioritizedWantedSector,
-  DetermineSectorCostDelegateV8,
+  DetermineSectorCostDelegate,
   SectorCost,
   reduceSectorCost,
   addSectorCost
-} from './types';
+} from '../types';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 
@@ -27,11 +27,11 @@ export class TakenV8SectorTree {
     cost: SectorCost;
     lod: LevelOfDetail;
   }[] = [];
-  private readonly determineSectorCost: DetermineSectorCostDelegateV8;
+  private readonly determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata>;
 
   private _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
 
-  constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegateV8) {
+  constructor(sectorRoot: V8SectorMetadata, determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata>) {
     this.determineSectorCost = determineSectorCost;
     // Allocate space for all sectors
     traverseDepthFirst(sectorRoot as SectorMetadata, x => {
@@ -62,7 +62,7 @@ export class TakenV8SectorTree {
     }
   }
 
-  determineWantedSectorCount(): number {
+  getWantedSectorCount(): number {
     return this.sectors.reduce((count, x) => {
       count = x.lod !== LevelOfDetail.Discarded ? count + 1 : count;
       return count;

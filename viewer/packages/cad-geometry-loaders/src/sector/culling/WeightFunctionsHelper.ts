@@ -113,8 +113,7 @@ export class WeightFunctionsHelper {
    * @param sector
    */
   computeSectorTreePlacementWeight(sector: SectorMetadata): number {
-    const levelWeight = sector.depth === 2 ? 1.0 : 1.0 / 3.0;
-    return levelWeight;
+    return sector.depth === 2 ? 1.0 : 1.0 / 3.0;
   }
 
   /**
@@ -144,8 +143,7 @@ export class WeightFunctionsHelper {
     const screenCoverage = p1.distanceToSquared(p0) / 4.0;
 
     // Scale coverage such that 5% screen estate is 1.0 weight
-    const weight = Math.min(1.0, screenCoverage / 0.05);
-    return weight;
+    return Math.min(1.0, screenCoverage / 0.05);
   }
 
   /**

@@ -12,11 +12,15 @@ import { PropType } from '../../utilities/reflection';
 
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
-
-
-import { createGlContext, createCadModelMetadata, generateV8SectorTree } from '../../../../../test-utilities';
-import { Mock } from 'moq.ts';
 import { SectorRepository } from '@reveal/sector-loader';
+
+import {
+  createGlContext,
+  createCadModelMetadata,
+  generateV8SectorTree,
+  createV9SectorMetadata
+} from '../../../../../test-utilities';
+import { Mock } from 'moq.ts';
 
 describe('ByVisibilityGpuSectorCuller', () => {
   const materialManager = new CadMaterialManager();
@@ -45,9 +49,16 @@ describe('ByVisibilityGpuSectorCuller', () => {
     jest.resetAllMocks();
   });
 
+  test('determineSectors throws if model is not v9', () => {
+    const v8input = createDetermineSectorInput(camera, createCadModelMetadata(8, createV9SectorMetadata([0, []])));
+    const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
+
+    expect(() => culler.determineSectors(v8input)).toThrowError();
+  });
+
   test('determineSectors sets models to coverage utility', () => {
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
-    const model = createCadModelMetadata(generateV8SectorTree(1));
+    const model = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     culler.determineSectors(input);
     expect(setModelsMock).toBeCalled();
@@ -56,7 +67,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
   test('determineSectors sets clip planes to coverage utility', () => {
     const clippingPlanes = [new THREE.Plane(), new THREE.Plane()];
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
-    const model = createCadModelMetadata(generateV8SectorTree(1));
+    const model = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, model);
     input.clippingPlanes = clippingPlanes;
     culler.determineSectors(input);
@@ -66,8 +77,8 @@ describe('ByVisibilityGpuSectorCuller', () => {
   test('determineSectors returns sectors for all models', () => {
     // Arrange
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
-    const model1 = createCadModelMetadata(generateV8SectorTree(1));
-    const model2 = createCadModelMetadata(generateV8SectorTree(1));
+    const model1 = createCadModelMetadata(8, generateV8SectorTree(1));
+    const model2 = createCadModelMetadata(8, generateV8SectorTree(1));
     const input = createDetermineSectorInput(camera, [model1, model2]);
 
     // Act
@@ -101,7 +112,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
       }
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
-    const model = createCadModelMetadata(generateV8SectorTree(2, 2));
+    const model = createCadModelMetadata(8, generateV8SectorTree(2, 2));
     const mockV8SectorRepository = new Mock<SectorRepository>();
     const cadNode = new CadNode(model, materialManager, mockV8SectorRepository.object());
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
@@ -144,7 +155,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
       }
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
-    const model = createCadModelMetadata(generateV8SectorTree(2, 2));
+    const model = createCadModelMetadata(8, generateV8SectorTree(2, 2));
     const mockV8SectorRepository = new Mock<SectorRepository>();
     const cadNode = new CadNode(model, materialManager, mockV8SectorRepository.object());
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });

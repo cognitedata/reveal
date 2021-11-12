@@ -4,20 +4,15 @@
 
 import * as THREE from 'three';
 
-import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
+import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorCost, SectorLoadingSpent } from './types';
 
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
-
-import {
-  DetermineSectorCostDelegate,
-  DetermineSectorsInput,
-  SectorCost,
-  SectorLoadingSpent
-} from './types';
+import { TakenV8SectorMap } from './takensectors';
 
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
-import { TakenSectorMap } from './TakenSectorMap';
+
+import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 
 /**
@@ -33,7 +28,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
    * Optional callback for determining the cost of a sector. The default unit of the cost
    * function is bytes downloaded.
    */
-  determineSectorCost?: DetermineSectorCostDelegate;
+  determineSectorCost?: DetermineSectorCostDelegate<V8SectorMetadata>;
 
   /**
    * Use a custom coverage utility to determine how "visible" each sector is.
@@ -53,7 +48,7 @@ export type ByVisibilityGpuSectorCullerOptions = {
  */
 export class ByVisibilityGpuSectorCuller implements SectorCuller {
   private readonly options: Required<ByVisibilityGpuSectorCullerOptions>;
-  private readonly takenSectors: TakenSectorMap;
+  private readonly takenSectors: TakenV8SectorMap;
 
   constructor(options: ByVisibilityGpuSectorCullerOptions) {
     this.options = {
@@ -66,7 +61,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
             () => {},
       coverageUtil: options.coverageUtil
     };
-    this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
+    this.takenSectors = new TakenV8SectorMap(this.options.determineSectorCost);
   }
 
   dispose() {
@@ -101,7 +96,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     models: CadModelMetadata[],
     clippingPlanes: THREE.Plane[] | null,
     budget: CadModelSectorBudget
-  ): TakenSectorMap {
+  ): TakenV8SectorMap {
     const { coverageUtil } = this.options;
     const takenSectors = this.takenSectors;
     takenSectors.clear();
@@ -141,7 +136,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     camera: THREE.PerspectiveCamera,
     models: CadModelMetadata[],
     budget: CadModelSectorBudget,
-    takenSectors: TakenSectorMap,
+    takenSectors: TakenV8SectorMap,
     clippingPlanes: THREE.Plane[] | null
   ) {
     const shortRangeCamera = camera.clone(true) as THREE.PerspectiveCamera;
@@ -188,7 +183,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
 
   private markSectorsAsDetailed(
     intersectingSectors: V8SectorMetadata[],
-    takenSectors: TakenSectorMap,
+    takenSectors: TakenV8SectorMap,
     model: CadModelMetadata
   ) {
     for (let i = 0; i < intersectingSectors.length; i++) {

@@ -13,7 +13,7 @@ import assert from 'assert';
  */
 export class SectorSceneFactory {
   createSectorScene(version: number, maxTreeIndex: number, unit: string, root: SectorMetadata) {
-    assert(version === 8, 'Only version 8 is currently supported');
+    assert(version === 8 || version === 9, 'Only version 8 and 9 is currently supported');
 
     const sectorsById: Map<number, SectorMetadata> = new Map();
     traverseDepthFirst(root, x => {

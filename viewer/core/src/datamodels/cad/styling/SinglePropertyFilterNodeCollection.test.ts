@@ -6,12 +6,10 @@ import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
-import { CadMaterialManager, CadNode } from '@reveal/rendering';
-import { CadModelMetadata } from '@reveal/cad-parsers';
 import { NodesApiClient, NodesLocalClient } from '@reveal/nodes-api';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import { createCadModelMetadata, generateSectorTree } from '../../../../../test-utilities';
+import { createV8CadNode } from '../../../../../test-utilities';
 
 import nock from 'nock';
 
@@ -25,8 +23,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
     client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
-    const cadModelMetadata: CadModelMetadata = createCadModelMetadata(generateSectorTree(3, 3));
-    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager());
+    const cadNode = createV8CadNode(3, 3);
+
     const nodesClient: NodesApiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, nodesClient);

@@ -5,8 +5,7 @@ import * as THREE from 'three';
 
 import { PrioritizedArea } from '@reveal/cad-styling';
 
-import { CadModelMetadata, LevelOfDetail, SectorMetadata, WantedSector } from '@reveal/cad-parsers';
-
+import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
 import { CadLoadingHints } from '../../CadLoadingHints';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
@@ -99,4 +98,7 @@ export type PrioritizedWantedSector = WantedSector & { priority: number };
 /**
  * Delegates that computes 'cost' of loading/visualizing a given sector.
  */
-export type DetermineSectorCostDelegate = (sector: SectorMetadata, levelOfDetail: LevelOfDetail) => SectorCost;
+export type DetermineSectorCostDelegate<TSectorMetadata> = (
+  sector: TSectorMetadata,
+  levelOfDetail: LevelOfDetail
+) => SectorCost;

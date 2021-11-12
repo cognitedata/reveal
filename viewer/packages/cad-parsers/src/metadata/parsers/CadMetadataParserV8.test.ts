@@ -56,8 +56,7 @@ describe('parseCadMetadataV8', () => {
       },
       children: [],
       estimatedDrawCallCount: 10,
-      estimatedRenderCost: 10,
-      maxDiagonalLength: 1
+      estimatedRenderCost: 10
     };
 
     // Act
@@ -91,8 +90,7 @@ describe('parseCadMetadataV8', () => {
       facesFile: { ...sectorRoot.facesFile!, recursiveCoverageFactors: sectorRoot.facesFile!.coverageFactors },
       children: [],
       estimatedDrawCallCount: 10,
-      estimatedRenderCost: 10,
-      maxDiagonalLength: 1
+      estimatedRenderCost: 10
     };
 
     // Act
@@ -301,7 +299,6 @@ function createSectorMetadata(id: number, parentId: number = -1): V8SceneSectorM
     parentId,
     path: '0/',
     depth: 0,
-    maxDiagonalLength: 1.0,
     estimatedDrawCallCount: 10,
     estimatedTriangleCount: 10,
     boundingBox: {

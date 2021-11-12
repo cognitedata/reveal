@@ -4,19 +4,26 @@
 
 import * as THREE from 'three';
 
-import { DetermineSectorCostDelegateV8, PrioritizedWantedSector } from './types';
-import { expectContainsSectorsWithLevelOfDetail, generateV8SectorTree, Mutable } from '../../../../../test-utilities';
-import { PropType } from '../../utilities/reflection';
-import { TakenV8SectorTree } from './TakenV8SectorTree';
-
+import {
+  expectContainsSectorsWithLevelOfDetail,
+  generateV8SectorTree,
+  Mutable
+} from '../../../../../../test-utilities';
+import { PropType } from '../../../utilities/reflection';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
 import { traverseDepthFirst } from '@reveal/utilities';
+import { DetermineSectorCostDelegate, PrioritizedWantedSector } from '../types';
+import { TakenV8SectorTree } from './TakenV8SectorTree';
 
 type FacesFile = PropType<V8SectorMetadata, 'facesFile'>;
 
 describe('TakenV8SectorTree', () => {
   const model: CadModelMetadata = {} as any;
-  const determineSectorCost: DetermineSectorCostDelegateV8 = () => ({ downloadSize: 1, drawCalls: 1, renderCost: 1 }); // Flat cost
+  const determineSectorCost: DetermineSectorCostDelegate<V8SectorMetadata> = () => ({
+    downloadSize: 1,
+    drawCalls: 1,
+    renderCost: 1
+  }); // Flat cost
 
   test('default tree contains root as simple', () => {
     const root = generateV8SectorTree(2);
