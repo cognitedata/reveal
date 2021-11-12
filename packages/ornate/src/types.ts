@@ -32,7 +32,7 @@ export type OrnateAnnotationInstance = {
 };
 
 export type Drawing = {
-  type: 'rect' | 'line' | 'text' | 'circle' | 'comment';
+  type: 'rect' | 'line' | 'text' | 'circle' | 'comment' | 'stamp';
   attrs: any;
   groupId?: string;
 };
@@ -67,7 +67,8 @@ export type ToolType =
   | 'default'
   | 'circle'
   | 'comment'
-  | 'list';
+  | 'list'
+  | 'stamp';
 
 export type ShapeSettings = {
   [key: string]: string | number | undefined;
@@ -107,4 +108,6 @@ export interface ICogniteOrnateTool {
   onMouseUp: (e: KonvaEventObject<MouseEvent>) => void;
   /** Called when a shape of any kind is clicked */
   onAnnotationClick: (e: KonvaEventObject<MouseEvent>, shape: Shape) => void;
+  /** A preview displayed on the mouse cursor */
+  preview?: Konva.Node;
 }

@@ -17,6 +17,7 @@ import {
   CircleTool,
   ListTool,
   CommentTool,
+  StampTool,
   OrnateTransformer,
 } from '@cognite/ornate';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
@@ -30,6 +31,7 @@ import { WorkspaceDocsPanel } from 'components/WorkspaceDocsPanel';
 import { useTranslation } from 'hooks/useTranslation';
 import { RecentWorkspaces } from 'components/Workspace/WorkspacesList';
 import ListToolSidebar from 'components/ListToolSidebar';
+import StampToolSidebar from 'components/StampToolSidebar';
 import WorkSpaceSearch from 'components/WorkspaceDocsPanel/WorkspaceSearch';
 import { WorkspaceHeader } from 'components/Workspace/WorkspaceHeader';
 import { LIST_TOOL_STATUSES } from 'components/ListToolSidebar/Task';
@@ -73,9 +75,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   >([]);
   const [target, setTarget] = React.useState<CommentTarget | undefined>();
   const [listItems, setListItems] = useState<ListItem[]>([]);
-
+  const stampTool = useRef<StampTool>();
   const [workspaceDocumentAnnotations, setWorkSpaceDocumentAnnotations] =
     useState<Record<string, OrnateAnnotationInstance[]>>();
+  const [activeStamp, setActiveStamp] = useState<string>('');
 
   useEffect(() => {
     if (ornateViewer.current) {
@@ -111,6 +114,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         setListItems(nextListItems);
       };
 
+      stampTool.current = new StampTool(ornateViewer.current);
+
       const ornateTransfomer = new OrnateTransformer();
       ornateTransfomer.onSelectNodes = (nodes) => {
         setSelectedNode(nodes[0]);
@@ -126,6 +131,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         text: new TextTool(ornateViewer.current),
         comment: new CommentTool(ornateViewer.current),
         list: listTool,
+        stamp: stampTool.current,
         default: new DefaultTool(ornateViewer.current),
       };
       onToolChange('default');
@@ -744,6 +750,17 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
                   ? LIST_TOOL_STATUSES[x.status].styleOverrides
                   : undefined,
               }))
+            );
+          }}
+        />
+      )}
+      {activeTool === 'stamp' && (
+        <StampToolSidebar
+          activeStamp={activeStamp}
+          onSelectStamp={(nextStampURL) => {
+            setActiveStamp(nextStampURL);
+            (ornateViewer.current?.tools.stamp as StampTool).setImageURL(
+              nextStampURL
             );
           }}
         />

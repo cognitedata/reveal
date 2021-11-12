@@ -207,6 +207,17 @@ const WorkSpaceTools = ({
       >
         <Icon type="Checklist" />
       </Button>
+      <Button
+        type="ghost"
+        size="small"
+        title="Stamp k"
+        onClick={() => {
+          onToolClick('stamp');
+        }}
+        disabled={activeTool === 'stamp'}
+      >
+        <Icon type="QualityStamp" />
+      </Button>
     </WorkSpaceToolsWrapper>
   );
 };

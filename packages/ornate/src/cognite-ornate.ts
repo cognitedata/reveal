@@ -571,6 +571,15 @@ export class CogniteOrnate {
       if (drawing.type === 'circle') {
         shape = new Konva.Circle(drawing.attrs);
       }
+      if (drawing.type === 'stamp' && drawing.attrs.url) {
+        shape = new Konva.Image(drawing.attrs);
+
+        const imageObj = new Image();
+        imageObj.onload = () => {
+          (shape as Konva.Image).image(imageObj);
+        };
+        imageObj.src = drawing.attrs.url;
+      }
       if (drawing.attrs.image) {
         shape = CommentTool.create(drawing.attrs);
       }
