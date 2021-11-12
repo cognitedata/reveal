@@ -31,7 +31,7 @@ import {
   LoadMoreButton,
   FooterWrapper,
 } from './elements';
-import { selectionHook, expansionHook } from './hooks';
+import { selectionHook, expansionHook, indentationHook } from './hooks';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { CustomRow } from './TableRow';
 import { TableProps } from './types';
@@ -40,6 +40,7 @@ import { TableProps } from './types';
 const TableInner = <T extends Object>({
   id,
   data,
+  indent,
   columns,
   handleRowClick,
   handleMouseEnter,
@@ -109,6 +110,10 @@ const TableInner = <T extends Object>({
         checkIfCheckboxEnabled,
       })
     );
+  }
+
+  if (indent) {
+    hooks.push(indentationHook<T>(indent));
   }
 
   if (flex) {

@@ -17,6 +17,11 @@ export type RenderRowSubComponent = ({ row }: any) => React.ReactNode;
 export interface TableProps<T extends Object> extends TableOptions<T> {
   checkIfCheckboxEnabled?: (row: any) => boolean;
   columns: any[];
+  /**
+   * Add a padding to the left side of every row in the table.
+   * use a string like "30px" or set to true to space it under the checkbox.
+   */
+  indent?: string | true;
   data: T[];
   highlightedIds?: TableResults;
   expandedIds?: TableResults;

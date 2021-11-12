@@ -27,14 +27,12 @@ export const expansionHook = <T extends Object>(hooks: Hooks<T>) => {
       id: EXPANSION_COLUMN_ID,
       disableResizing: true,
       width: '30px',
-      Header: () => <></>,
-      Cell: ({ row }: CellProps<T>) => {
-        return (
-          <Expand
-            expanded={(row as Row<T> & { isExpanded: boolean }).isExpanded}
-          />
-        );
-      },
+      Header: () => ' ',
+      Cell: ({ row }: CellProps<T>) => (
+        <Expand
+          expanded={(row as Row<T> & { isExpanded: boolean }).isExpanded}
+        />
+      ),
     },
     ...restOfColumns,
   ]);

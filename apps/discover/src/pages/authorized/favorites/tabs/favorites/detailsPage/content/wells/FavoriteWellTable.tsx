@@ -2,14 +2,13 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Row } from 'react-table';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import { LOADING_TEXT } from 'components/emptyState/constants';
-import { Options, Table } from 'components/tablev2';
+import { Options, Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
@@ -75,7 +74,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   }, [wellIds]);
 
   const handleRowClick = useCallback(
-    (row: Row<Well> & { isSelected: boolean }) => {
+    (row: RowProps<Well> & { isSelected: boolean }) => {
       const wellRow: Well = row.original;
       setExpandedIds((state) => ({
         ...state,
@@ -85,10 +84,10 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     []
   );
 
-  const handleRowSelect = useCallback((well: Well) => {
+  const handleRowSelect = useCallback((row) => {
     setSelectedIds((state) => ({
       ...state,
-      [well.id]: !state[well.id],
+      [row.id]: !state[row.id],
     }));
   }, []);
 
@@ -121,7 +120,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     }
   };
 
-  const handleHoverViewBtnClick = async (row: Row<Well>) => {
+  const handleHoverViewBtnClick = async (row: RowProps<Well>) => {
     const currentWell: Well = row.original;
     const isWellboresLoadedForWell = wellsData.some(
       (well) => well.id === currentWell.id && well.wellbores
@@ -179,7 +178,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const wellIdsNotEmpty = wellIds && wellIds?.length > 0;
 
   const renderRowHoverComponent: React.FC<{
-    row: Row<Well>;
+    row: RowProps<Well>;
   }> = ({ row }) => {
     const wellRow = row.original;
     return (

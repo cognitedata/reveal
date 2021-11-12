@@ -6,7 +6,7 @@ import reduce from 'lodash/reduce';
 import { DownloadButton, CloseButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import TableBulkActions from 'components/table-bulk-actions';
-import { Table, TableResults } from 'components/tablev2';
+import { Table, TableResults, RowProps } from 'components/tablev3';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { FavoriteDocumentData, FavouriteRowType } from 'modules/favorite/types';
 import { FAVORITE_SET_NO_DOCUMENTS } from 'pages/authorized/favorites/constants';
@@ -61,18 +61,15 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
             }}
           />
         ),
-        width: 'auto',
+        width: '400px',
+        maxWidth: '0.5fr',
       },
       {
         Header: t('Metadata'),
         disableSortBy: true,
         Cell: (row: FavoriteRowData) => <Metadata data={row.row.original} />,
-        width: 600,
-      },
-      {
-        Header: ' ',
-        disableSorting: true,
-        width: 250,
+        width: '400px',
+        maxWidth: '0.5fr',
       },
     ],
     []
@@ -119,11 +116,14 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
     );
   };
 
-  const handleSelection = (doc: FavoriteDocumentData, value: boolean) => {
+  const handleSelection = (
+    row: RowProps<FavoriteDocumentData>,
+    value: boolean
+  ) => {
     setSelectedIds((prevState) => {
       return {
         ...prevState,
-        [doc.id]: value,
+        [row.id]: value,
       };
     });
   };

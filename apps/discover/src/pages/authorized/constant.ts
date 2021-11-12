@@ -98,6 +98,7 @@ export const WellboreColumns = [
   {
     Header: WELLBORE,
     accessor: 'description',
-    width: 'auto',
+    width: '100px',
+    maxWidth: '1fr',
   },
 ];

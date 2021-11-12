@@ -13,16 +13,7 @@ export const OverlayCellPadding = styled.div`
 `;
 
 export const WelboreResultsTableWrapper = styled.div`
-  & > * thead {
-    display: none;
-  }
-  & > * td {
-    padding: 3px 12px !important;
-  }
-  & > * td:first-child {
-    width: 90px;
-  }
-  & > * tr:last-child {
-    border-bottom: none;
+  & div[role='row'] > div:first-of-type {
+    width: 60px;
   }
 `;

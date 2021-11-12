@@ -86,7 +86,7 @@ export const HoverContentWrapper = styled.span`
   box-shadow: inset 0px -1px 0px var(--cogs-greyscale-grey2);
   right: 0;
   top: 0;
-  padding: 0 0 0 ${sizes.small};
+  padding: 0 ${sizes.small} 0 ${sizes.small};
   z-index: ${layers.TABLE_ROW_HOVER};
   background: var(--cogs-greyscale-grey1);
   transform: translateX(4px);

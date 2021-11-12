@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import sortBy from 'lodash/sortBy';
 
-import { Table } from 'components/tablev2';
+import { Table } from 'components/tablev3';
 import { useMutateWellBorePatch } from 'modules/wellSearch/hooks/useQueryWellCard';
 import { useWellBoreResult } from 'modules/wellSearch/selectors';
 import { Wellbore, Well } from 'modules/wellSearch/types';

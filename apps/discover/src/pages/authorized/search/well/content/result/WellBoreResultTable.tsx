@@ -155,15 +155,6 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
             onClick={() => handleViewClick(row)}
             hideIcon
           />
-          {/* <WellActionItem>
-        <Dropdown content={ActionMenuContent}>
-          <StyledIcon
-            type="VerticalEllipsis"
-            size={25}
-            data-testid="menu-button"
-          />
-        </Dropdown>
-      </WellActionItem> */}
         </OverlayCellPadding>
       </FlexRow>
     );
@@ -189,6 +180,7 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
   return (
     <Table<Wellbore>
       id="wellbore-result-table"
+      indent
       data={data}
       columns={columns}
       handleRowSelect={handleRowSelect}
