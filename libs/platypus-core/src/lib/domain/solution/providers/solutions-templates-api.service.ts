@@ -33,7 +33,6 @@ export class SolutionsTemplatesApiService implements ISolutionsApiService {
   }
   list(): Promise<Solution[]> {
     return this.cdfClient.templates.groups.list().then((templateGroups) => {
-      console.log('---===>', templateGroups);
       return templateGroups.items.map((templateGroup) =>
         this.templatesDataMapper.deserialize(templateGroup)
       );
