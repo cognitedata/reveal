@@ -15,41 +15,30 @@ export const PlaceholderWrapper = styled.div`
   .content {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    height: 35%;
 
     .placeholder-text {
       width: 480px;
+      margin-bottom: 20px;
       .cogs-title-3 {
         margin-bottom: 8px;
       }
       .cogs-body-1 {
         display: inline;
       }
-      .component-name {
-        display: inline-flex;
-        justify-content: space-around;
-        align-items: center;
-        width: 145px;
-        height: 24px;
+      .cogs-label {
         margin-right: 5px;
         background: rgba(50, 56, 83, 0.04);
-        border-radius: 6px;
+        font-size: 16px;
         color: var(--cogs-text-color-secondary);
 
         &:hover {
           color: var(--cogs-text-color);
           background: rgba(34, 42, 83, 0.1);
         }
-
-        .cogs-icon-Help {
-          width: 13.5px !important;
-        }
       }
     }
 
     .placeholder-actions {
-      height: 42%;
       .cogs-body-1 {
         &:first-child {
           margin-bottom: 15px;
