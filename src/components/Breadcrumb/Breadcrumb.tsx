@@ -3,6 +3,7 @@ import React from 'react';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
+import { BREADCRUMBS_HEIGHT } from 'utils/constants';
 import BreadcrumbItem, { BreadcrumbItemProps } from './BreadcrumbItem';
 
 type BreadcrumbProps = {
@@ -14,6 +15,8 @@ const StyledBreadcrumbWrapper = styled.div<{ $isFillingSpace?: boolean }>`
   border-bottom: ${({ $isFillingSpace }) =>
     $isFillingSpace && `1px solid ${Colors['border-default']}`};
   padding: ${({ $isFillingSpace }) => $isFillingSpace && '14px 42px'};
+  box-sizing: border-box;
+  height: ${BREADCRUMBS_HEIGHT}px;
 `;
 
 const StyledBreadcrumbContent = styled.div`

@@ -11,6 +11,8 @@ import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
   DATABASE_LIST_MARGIN_RIGHT,
   DATABASE_LIST_WIDTH,
+  TOPBAR_NAVIGATION_HEIGHT,
+  TAB_HEIGHT,
 } from 'utils/constants';
 import { useActiveTable } from 'hooks/table-tabs';
 import { useParams } from 'react-router-dom';
@@ -24,7 +26,8 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 
 const StyledRawExplorerContent = styled.div`
   display: flex;
-  padding: 24px;
+  box-sizing: border-box;
+  height: calc(100% - ${TAB_HEIGHT + TOPBAR_NAVIGATION_HEIGHT}px);
 `;
 
 const StyledRawExplorerDatabaseListWrapper = styled.div`
@@ -60,20 +63,18 @@ const RawExplorer = (): JSX.Element => {
     <>
       <Breadcrumb isFillingSpace items={breadcrumbs} />
       {hasReadAccess && hasListAccess ? (
-        <div>
-          <StyledRawExplorerContent>
-            <StyledRawExplorerDatabaseListWrapper>
-              <DatabaseList database={database} table={table} />
-            </StyledRawExplorerDatabaseListWrapper>
+        <StyledRawExplorerContent>
+          <StyledRawExplorerDatabaseListWrapper>
+            <DatabaseList database={database} table={table} />
+          </StyledRawExplorerDatabaseListWrapper>
 
-            {tabDatabase && tabTable && (
-              <StyledRawExplorerTableContentWrapper>
-                <TableTabList />
-                <TableContent database={tabDatabase} table={tabTable} />
-              </StyledRawExplorerTableContentWrapper>
-            )}
-          </StyledRawExplorerContent>
-        </div>
+          {tabDatabase && tabTable && (
+            <StyledRawExplorerTableContentWrapper>
+              <TableTabList />
+              <TableContent />
+            </StyledRawExplorerTableContentWrapper>
+          )}
+        </StyledRawExplorerContent>
       ) : (
         <NoAccessPage />
       )}

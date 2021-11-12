@@ -5,6 +5,7 @@ import {
   useTableTabList,
 } from 'hooks/table-tabs';
 import { Icon, Tooltip } from '@cognite/cogs.js';
+import { TAB_HEIGHT } from 'utils/constants';
 import styled from 'styled-components';
 
 const Tabs = styled.ul`
@@ -14,7 +15,7 @@ const Tabs = styled.ul`
   align-items: stretch;
   align-content: flex-start;
   padding: 0;
-  border-top: 1px solid var(--cogs-greyscale-grey3);
+  margin-bottom: 0;
   border-left: 1px solid var(--cogs-greyscale-grey3);
 `;
 
@@ -29,6 +30,8 @@ const Tab = styled.li<{ $active?: boolean }>`
   cursor: pointer;
   list-style: none;
   padding: 10px 20px;
+  box-sizing: border-box;
+  height: ${TAB_HEIGHT}px;
   max-width: 240px;
   min-width: 120px;
   border-right: 1px solid var(--cogs-greyscale-grey3);
