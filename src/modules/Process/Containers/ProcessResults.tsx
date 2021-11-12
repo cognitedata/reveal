@@ -43,6 +43,7 @@ import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -86,7 +87,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const menuActions: FileActions = useMemo(
     () => ({
-      // TODO: should onDelete be added here as well?
       onFileDetailsClicked: (fileInfo: FileInfo) => {
         dispatch(setFocusedFileId(fileInfo.id));
         dispatch(resetEditHistory());
@@ -98,6 +98,9 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
           { from: 'process' }
         );
+      },
+      onFileDelete: (id: number) => {
+        dispatch(DeleteFilesById([id]));
       },
     }),
     [dispatch]
