@@ -71,6 +71,16 @@ export interface DetectedAnnotation {
   confidence: number;
 }
 
+export type CDFResourceId = {
+  fileId: number;
+  fileExternalId?: string;
+};
+
+export type AnnotationJobFailedItem = {
+  errorMessage: string;
+  items: Array<CDFResourceId>;
+};
+
 export type AnnotationJobResultItem = {
   fileId: number;
   fileExternalId?: string;
@@ -92,6 +102,8 @@ export interface AnnotationJobQueued extends AnnotationJobBase {
 export interface AnnotationJobRunning extends AnnotationJobBase {
   startTime: number;
   status: 'Running';
+  items?: Array<AnnotationJobResultItem>;
+  failedItems?: Array<AnnotationJobFailedItem>;
 }
 export interface AnnotationJobCompleted extends AnnotationJobBase {
   status: 'Completed';
@@ -100,6 +112,7 @@ export interface AnnotationJobCompleted extends AnnotationJobBase {
   statusTime: number;
   jobId: number;
   items: Array<AnnotationJobResultItem>;
+  failedItems?: Array<AnnotationJobFailedItem>;
 }
 export interface AnnotationJobFailed extends AnnotationJobBase {
   status: 'Failed';
