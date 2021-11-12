@@ -22,8 +22,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@cognite/platypus-cli": [
-        "libs/platypus-cli/src/index.ts"
+      "@cognite/platypus-cdf-cli/*": [
+        "apps/platypus-cdf-cli/src/*"
       ],
       "@platypus/platypus-core": [
         "libs/platypus-core/src/index.ts"

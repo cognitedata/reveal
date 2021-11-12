@@ -1,4 +1,4 @@
-import { Arguments, Argv, CommandBuilder } from 'yargs';
+import { Arguments, Argv } from 'yargs';
 
 import {
   CreateSolutionDTO,
@@ -8,25 +8,15 @@ import {
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const command = 'create';
-export const desc = 'Create a solution';
-// export const builder: CommandBuilder = {
-//   full: {
-//     description: 'add --full for the full schema including generated types',
-//     default: false,
-//     type: 'boolean',
-//   },
-//   type: {
-//     description: 'see just a specific type',
-//     type: 'array',
-//   },
-// };
 
-export const builder = (yargs: Argv<CreateSolutionDTO>) => {
+export const desc = 'Create a solution';
+
+export const builder = (yargs: Argv<CreateSolutionDTO>): Argv =>
   yargs
     .positional('name', {
       type: 'string',
-      default: false,
       description: 'Solution name',
+      demandOption: true,
     })
     .option('description', {
       type: 'string',
@@ -38,13 +28,12 @@ export const builder = (yargs: Argv<CreateSolutionDTO>) => {
       default: '',
       description: 'Who is the owner of this solution',
     });
-};
 
 export const handler = async (args: Arguments<CreateSolutionDTO>) => {
   const client = getCogniteSDKClient();
 
   const solutionsHandler = new SolutionsHandler(
-    new SolutionsTemplatesApiService(client as any)
+    new SolutionsTemplatesApiService(client)
   );
 
   const dto = {
