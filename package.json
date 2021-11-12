@@ -120,7 +120,8 @@
     "url-loader": "^4.1.1"
   },
   "resolutions": {
-    "babel-loader": "8.2.2"
+    "babel-loader": "8.2.2",
+    "@cognite/sdk": "5.4.0"
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"

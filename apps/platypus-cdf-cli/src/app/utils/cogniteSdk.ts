@@ -1,13 +1,16 @@
-import { CogniteClient } from '@cognite/sdk-v6';
+import { CogniteClient as CogniteClientV6 } from '@cognite/sdk-v6';
+import { CogniteClient } from '@cognite/sdk';
 import { ProjectConfig } from '../types';
 import { getAuthToken } from './auth';
 
-let client: CogniteClient;
+let client: CogniteClientV6;
 
-export const getCogniteSDKClient = () => client;
+export const getCogniteSDKClient = () => client as unknown as CogniteClient;
 
-export const setCogniteSDKClient = (newClient: CogniteClient) => {
-  client = newClient;
+export const setCogniteSDKClient = (
+  newClient: CogniteClientV6 | CogniteClient
+) => {
+  client = newClient as unknown as CogniteClientV6;
 };
 
 export const createSdkClient = (authArgs: ProjectConfig) => {
@@ -15,7 +18,7 @@ export const createSdkClient = (authArgs: ProjectConfig) => {
   const appId = 'Platypus';
   const project = 'platypus';
 
-  const client = new CogniteClient({
+  const client = new CogniteClientV6({
     appId,
     project,
     baseUrl,
@@ -24,5 +27,5 @@ export const createSdkClient = (authArgs: ProjectConfig) => {
 
   setCogniteSDKClient(client);
 
-  return client;
+  return client as unknown as CogniteClient;
 };

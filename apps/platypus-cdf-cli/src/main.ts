@@ -10,25 +10,14 @@ const config = {
   appId: 'platypus-cli',
 };
 
-let cli = scriptName('platypus')
+scriptName('platypus')
   .config(config)
   .middleware([init, authenticate])
   .demandCommand(1)
+  .command(loginCmd)
+  .command(solutionsCmd)
   .version()
-  .help(true);
+  .help(true)
+  .parse();
 
-cli = cli.command(
-  loginCmd.command,
-  loginCmd.desc,
-  loginCmd.builder,
-  loginCmd.handler
-);
-cli = cli.command(
-  solutionsCmd.command,
-  solutionsCmd.desc,
-  solutionsCmd.builder,
-  solutionsCmd.handler
-);
-cli.parse();
-
-export default cli;
+export default yargs;
