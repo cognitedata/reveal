@@ -6,7 +6,6 @@ import { Pagination } from './Pagination';
 import { Menu } from './Menu';
 
 export type FilterType = { type: string; value: number };
-
 export const FilterBar = (): JSX.Element => {
   const [isColumnActive] = useState<boolean>(true);
 

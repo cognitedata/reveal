@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
 import {
   notification,
   Table,
@@ -8,8 +9,11 @@ import {
   Typography,
   Tooltip,
 } from 'antd';
+
 import { Button, Icon } from '@cognite/cogs.js';
+
 import AccessButton from 'components/AccessButton';
+
 import styled from 'styled-components';
 import isString from 'lodash/isString';
 import {
@@ -21,6 +25,7 @@ import {
 } from 'utils/utils';
 import { CSVLink } from 'react-csv';
 import { useHistory, useParams } from 'react-router-dom';
+
 import { useDeleteTable, useTableRows } from 'hooks/sdk-queries';
 import { RawDBRow } from '@cognite/sdk';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
@@ -38,13 +43,16 @@ const CardHeading = styled.div`
   padding-left: 10px;
 `;
 
-const TableContent = () => {
+type TableProps = {
+  table: string;
+  database: string;
+};
+
+const TableContent = ({ database, table }: TableProps) => {
   const history = useHistory();
-  const { database, table, appPath } = useParams<{
+  const { appPath } = useParams<{
     appPath: string;
     project: string;
-    table?: string;
-    database?: string;
   }>();
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
@@ -464,14 +472,12 @@ const TableContent = () => {
           />
         </>
       )}
-      {table && database && (
-        <UploadCSV
-          csvModalVisible={csvModalVisible}
-          setCSVModalVisible={setCSVModalVisible}
-          table={table}
-          database={database}
-        />
-      )}
+      <UploadCSV
+        csvModalVisible={csvModalVisible}
+        setCSVModalVisible={setCSVModalVisible}
+        table={table}
+        database={database}
+      />
     </div>
   );
 };

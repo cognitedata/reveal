@@ -22,7 +22,6 @@ const AccessButton = ({
   tooltipMessage,
   onClick,
   hasWriteAccess,
-  ...buttonProps
 }: AccessButtonProps) => {
   const accessRequired = (
     <p>

@@ -8,6 +8,7 @@ import Popconfirm from 'antd/lib/popconfirm';
 import styled from 'styled-components';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useDeleteTable } from 'hooks/sdk-queries';
+import { useActiveTable } from 'hooks/table-tabs';
 import AccessButton from 'components/AccessButton';
 import DropdownMenu from 'components/DropdownMenu';
 import MenuButton from 'components/MenuButton';
@@ -15,13 +16,12 @@ import UploadCSV from 'components/UploadCSV';
 
 export const Menu = (): JSX.Element => {
   const history = useHistory();
-  const { appPath, database, table } = useParams<{
+  const { appPath } = useParams<{
     appPath: string;
-    table?: string;
-    database?: string;
   }>();
   const { mutate: deleteTable } = useDeleteTable();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const [[database, table] = [undefined, undefined]] = useActiveTable();
 
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
@@ -116,14 +116,12 @@ export const Menu = (): JSX.Element => {
       >
         <Button icon="HorizontalEllipsis" size="small" variant="ghost" />
       </Dropdown>
-      {table && database && (
-        <UploadCSV
-          csvModalVisible={csvModalVisible}
-          setCSVModalVisible={setCSVModalVisible}
-          table={table}
-          database={database}
-        />
-      )}
+      <UploadCSV
+        csvModalVisible={csvModalVisible}
+        setCSVModalVisible={setCSVModalVisible}
+        table={table!}
+        database={database!}
+      />
     </Bar>
   );
 };
