@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 
-import { Button, Icon, Menu, Tabs } from '@cognite/cogs.js';
+import { Button, Icon, Menu, Tabs, Dropdown } from '@cognite/cogs.js';
 
-import { TabsHoverDropdown } from 'components/tabs-hover-dropdown/TabsHoverDropdown';
 import navigation from 'constants/navigation';
 import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
 import { setInspectSidebarWidth } from 'modules/wellInspect/actions';
@@ -47,7 +46,6 @@ export const WellInspect: React.FC = () => {
 
   const [isOpen, setIsOpen] = useState(true);
   const scrollRef = useHorizontalScroll();
-  const [isVisible, setIsVisible] = useState(false);
   const [show3dWarningModal, setShow3dWarningModal] = useState(false);
 
   const handleBackToSearch = () => history.push(navigation.SEARCH_WELLS);
@@ -186,23 +184,18 @@ export const WellInspect: React.FC = () => {
                   {tabs}
                 </Tabs>
                 {!standalone && standaloneItems.length > 1 && (
-                  <TabsHoverDropdown
-                    content={links}
-                    onHoverChange={setIsVisible}
-                  >
+                  <Dropdown content={links} openOnHover>
                     <Button
                       type="ghost"
                       size="small"
                       id="link-tabs"
                       aria-label="Other"
+                      iconPlacement="right"
+                      icon="ChevronDownCompact"
                     >
-                      <span>{t('Other')}</span>
-                      {!isVisible && (
-                        <Icon type="ChevronDownCompact" size={16} />
-                      )}
-                      {isVisible && <Icon type="ChevronUpCompact" size={16} />}
+                      {t('Other')}
                     </Button>
-                  </TabsHoverDropdown>
+                  </Dropdown>
                 )}
                 {!standalone && standaloneItems.length === 1 && (
                   <Button
