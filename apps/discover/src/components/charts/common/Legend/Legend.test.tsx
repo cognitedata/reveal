@@ -1,6 +1,6 @@
 import { screen, fireEvent } from '@testing-library/react';
 
-import { Data, data } from '__test-utils/fixtures/stackedBarChart';
+import { Data, data, yAccessor } from '__test-utils/fixtures/charts';
 import { testRenderer } from '__test-utils/renderer';
 import { ColorConfig } from 'components/charts/types';
 
@@ -8,24 +8,29 @@ import { Legend } from './Legend';
 import { LegendProps } from './types';
 import { getLegendInitialCheckboxState } from './utils';
 
-describe('StackedBarChart -> Legend', () => {
-  const checkboxState = getLegendInitialCheckboxState<Data>(data, 'label');
-  const barColorConfig: ColorConfig = {
+describe('Charts -> Legend', () => {
+  const legendCheckboxState = getLegendInitialCheckboxState<Data>(
+    data,
+    yAccessor
+  );
+  const colorConfig: ColorConfig = {
     colors: {
       Label1: '#333333',
       Label2: '#595959',
     },
-    accessor: 'label',
+    accessor: yAccessor,
     defaultColor: '#808080',
   };
 
-  const onChangeCheckbox = jest.fn();
+  const onChangeLegendCheckbox = jest.fn();
 
   const defaultProps: LegendProps = {
-    checkboxState,
-    barColorConfig,
-    onChange: onChangeCheckbox,
-    title: 'Legend Title',
+    legendCheckboxState,
+    colorConfig,
+    onChangeLegendCheckbox,
+    legendOptions: {
+      title: 'Legend Title',
+    },
   };
 
   const testInit = (props: LegendProps = defaultProps) =>
@@ -48,6 +53,6 @@ describe('StackedBarChart -> Legend', () => {
     testInit();
 
     fireEvent.click(screen.getByText('Label1'));
-    expect(onChangeCheckbox).toHaveBeenCalledTimes(1);
+    expect(onChangeLegendCheckbox).toHaveBeenCalledTimes(1);
   });
 });

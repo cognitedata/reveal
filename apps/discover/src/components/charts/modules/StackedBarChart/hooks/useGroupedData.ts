@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import groupBy from 'lodash/groupBy';
 
-import { GroupedData } from 'components/charts/types';
+import { Accessors, GroupedData } from 'components/charts/types';
 
 import { StackedBarChartOptions } from '../types';
 import { sumObjectsByKey } from '../utils';
@@ -16,7 +16,7 @@ export const useGroupedData = <T>({
   options,
 }: {
   data: T[];
-  accessors: { x: string; y: string };
+  accessors: Accessors;
   groupDataInsideBarsBy?: string;
   options?: StackedBarChartOptions<T>;
 }) => {

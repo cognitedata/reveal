@@ -18,7 +18,7 @@ export const DEFAULT_X_AXIS_PLACEMENT = 'Top';
 export const DEFAULT_MARGINS: Margins = {
   top: 20,
   right: 20,
-  bottom: 0,
+  bottom: 10,
   left: 5,
 };
 
@@ -28,3 +28,6 @@ export const UNINITIALIZED_CHART_DIMENTIONS: Dimensions = {
   height: 0,
   width: 0,
 };
+
+export const DEFAULT_COLOR = '#808080';
+export const DEFAULT_NO_DATA_COLOR = '#00000010';

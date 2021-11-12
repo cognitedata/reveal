@@ -16,7 +16,7 @@ import { accessors } from '../constants';
 
 import {
   GRAPH_TITLE,
-  GRAPH_X_AXIS_LABEL,
+  GRAPH_X_AXIS_TITLE,
   NPT_GRAPH_OPTIONS,
 } from './constants';
 
@@ -67,8 +67,8 @@ export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
     return (
       <StackedBarChart<NPTEvent>
         data={data}
-        xAxis={{ accessor: accessors.DURATION, label: GRAPH_X_AXIS_LABEL }}
-        yAxis={{ accessor: accessors.WELLBORE_NAME }}
+        xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
+        yAxis={{ accessor: accessors.WELLBORE_NAME, reverseScaleDomain: true }}
         yScaleDomain={selectedSecondaryWellboreNames}
         groupDataInsideBarsBy={accessors.NPT_CODE}
         title={GRAPH_TITLE}

@@ -16,14 +16,9 @@ export interface AxisProps {
   tickSize?: number;
   tickPadding?: number;
   ticks?: number;
+  hideAxisTicks?: boolean;
+  hideAxisLabels?: boolean;
   formatAxisLabel?: (value: number) => number | string;
-}
-
-export interface AxisBase {
-  accessor: string;
-  label?: string;
-  spacing?: number;
-  ticks?: number;
 }
 
 export interface XAxisPlacement {

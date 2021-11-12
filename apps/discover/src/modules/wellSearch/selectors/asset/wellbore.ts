@@ -255,7 +255,7 @@ export const useActiveWellboresMatchingIdMap = () => {
             return { ...sourceMap, [assetExternalId]: wellbore.matchingId };
           }, {});
 
-        return sourceMap || idMap;
+        return { ...idMap, ...sourceMap };
       }, {}),
     [selectedOrHoveredWellbores]
   );

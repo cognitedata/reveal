@@ -1,39 +1,51 @@
 import { useMemo } from 'react';
 
+import isUndefined from 'lodash/isUndefined';
 import uniqueId from 'lodash/uniqueId';
 
 import { Checkbox } from '@cognite/cogs.js';
 
+import { LEGEND_FLOATING_HEIGHT } from 'components/charts/constants';
 import { FlexColumn, FlexRow } from 'styles/layout';
 
 import { ChartLegend, ChartLegendIsolated, LegendTitle } from './elements';
 import { LegendProps } from './types';
 
 export const Legend = ({
-  checkboxState,
-  barColorConfig,
-  onChange,
-  title,
+  legendCheckboxState,
+  colorConfig,
+  onChangeLegendCheckbox,
   isolateLegend = true,
-  floatingHeight,
+  legendOptions,
 }: LegendProps) => {
-  const { colors, defaultColor } = barColorConfig;
+  if (isUndefined(colorConfig)) {
+    return null;
+  }
+
+  const { colors, defaultColor } = colorConfig;
+  const title = legendOptions?.title;
+
+  const floatingHeight = legendOptions?.overlay
+    ? LEGEND_FLOATING_HEIGHT
+    : undefined;
 
   const checkboxes = useMemo(
     () =>
-      Object.keys(checkboxState).map((option) => (
+      Object.keys(legendCheckboxState).map((option) => (
         <Checkbox
           key={option}
           name={uniqueId(option)}
-          checked={checkboxState[option]}
+          checked={legendCheckboxState[option]}
           color={colors[option] || defaultColor}
-          onChange={(checked: boolean) => onChange(option, checked)}
+          onChange={(checked: boolean) =>
+            onChangeLegendCheckbox(option, checked)
+          }
           data-testid="legend-checkbox"
         >
           {option}
         </Checkbox>
       )),
-    [checkboxState]
+    [legendCheckboxState]
   );
 
   const LegendContent = (

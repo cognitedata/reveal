@@ -6,7 +6,8 @@ import {
   margins,
   accessors,
   spacings,
-} from '__test-utils/fixtures/stackedBarChart';
+  xScaleMaxValue,
+} from '__test-utils/fixtures/charts';
 
 import { useZoomableChart } from '../useZoomableChart';
 
@@ -19,6 +20,7 @@ describe('useZoomableChart hook', () => {
         margins,
         accessors,
         spacings,
+        xScaleMaxValue,
         zoomStepSize: 100,
       })
     );

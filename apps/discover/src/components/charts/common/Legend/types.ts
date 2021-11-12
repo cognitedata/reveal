@@ -1,12 +1,11 @@
 import { ColorConfig } from 'components/charts/types';
 
 export interface LegendProps {
-  checkboxState: LegendCheckboxState;
-  barColorConfig: ColorConfig;
-  onChange: (option: string, checked: boolean) => void;
-  title?: string;
+  legendCheckboxState: LegendCheckboxState;
+  colorConfig?: ColorConfig;
+  onChangeLegendCheckbox: (option: string, checked: boolean) => void;
   isolateLegend?: boolean;
-  floatingHeight?: number;
+  legendOptions?: LegendOptions;
 }
 
 export interface LegendCheckboxState {

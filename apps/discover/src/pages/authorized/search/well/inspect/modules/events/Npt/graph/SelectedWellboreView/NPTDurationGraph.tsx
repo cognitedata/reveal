@@ -13,9 +13,9 @@ import { NPT_GRAPH_OPTIONS } from '../constants';
 
 import {
   NPT_DURATION_GRAPH_TITLE,
-  NPT_DURATION_GRAPH_X_AXIS_LABEL,
+  NPT_DURATION_GRAPH_X_AXIS_TITLE,
 } from './constants';
-import { NPTDurationGraphWrapper } from './elements';
+import { ChartWrapper } from './elements';
 
 export const NPTDurationGraph: React.FC = () => {
   const selectedWellboreData = useNPTGraphSelectedWellboreData();
@@ -33,12 +33,12 @@ export const NPTDurationGraph: React.FC = () => {
   );
 
   return (
-    <NPTDurationGraphWrapper>
+    <ChartWrapper>
       <StackedBarChart<NPTEvent>
         data={selectedWellboreData.data}
         xAxis={{
           accessor: accessors.DURATION,
-          label: NPT_DURATION_GRAPH_X_AXIS_LABEL,
+          title: NPT_DURATION_GRAPH_X_AXIS_TITLE,
           placement: AxisPlacement.Bottom,
         }}
         yAxis={{ accessor: accessors.WELLBORE_NAME, spacing: 50 }}
@@ -46,6 +46,6 @@ export const NPTDurationGraph: React.FC = () => {
         title={NPT_DURATION_GRAPH_TITLE}
         options={options}
       />
-    </NPTDurationGraphWrapper>
+    </ChartWrapper>
   );
 };

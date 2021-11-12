@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import uniqueId from 'lodash/uniqueId';
 import { followCursor } from 'tippy.js';
@@ -5,7 +6,6 @@ import { followCursor } from 'tippy.js';
 import { Icon } from '@cognite/cogs.js';
 
 import { sortObjectsDecending } from '_helpers/sort';
-import { useXScaleMaxValue } from 'components/charts/hooks/useXScaleMaxValue';
 import { DataObject } from 'components/charts/types';
 
 import {
@@ -16,27 +16,23 @@ import { BarComponent, BarLabel, Bar, BarTooltip, BarText } from './elements';
 import { BarsProps } from './types';
 import {
   getBarFillColorForDataElement,
-  getDefaultBarColorConfig,
   getStackedData,
   isNoDataAvailable,
 } from './utils';
 
 export const Bars = <T extends DataObject<T>>({
-  data,
   initialGroupedData,
   groupedData,
   scales,
+  xScaleMaxValue,
   yScaleDomain,
   accessors,
-  legendAccessor,
+  colorConfig,
   margins,
   barComponentDimensions,
   options,
   onSelectBar,
 }: BarsProps<T>) => {
-  const barColorConfig =
-    options?.barColorConfig || getDefaultBarColorConfig(legendAccessor);
-
   const noDataAmongSelectedCheckboxesText =
     options?.noDataAmongSelectedCheckboxesText ||
     DEFAULT_NO_DATA_AMONG_SELECTED_CHECKBOXES_TEXT;
@@ -44,18 +40,13 @@ export const Bars = <T extends DataObject<T>>({
   const noDataText = options?.noDataText || DEFAULT_NO_DATA_TEXT;
 
   const { x: xScale, y: yScale } = scales;
-  const { x: xAccessor, y: yAccessor } = accessors;
-
-  const xScaleMaxValue = useXScaleMaxValue<T>({
-    data,
-    accessors,
-  });
+  const { x: xAccessor } = accessors;
 
   return (
     <g>
       {yScaleDomain.map((key, index) => {
         const initialData = initialGroupedData[key];
-        const data = groupedData[key];
+        const data = get(groupedData, key, []);
         const maxValue = Math.max(
           ...data.map((dataElement) => dataElement[xAccessor])
         );
@@ -69,7 +60,7 @@ export const Bars = <T extends DataObject<T>>({
         );
         const noDataAvailable = isNoDataAvailable<T>(
           initialData,
-          barColorConfig?.accessor || ''
+          colorConfig?.accessor || ''
         );
         const handleSelectBar = () => {
           if (!noDataAvailable) {
@@ -81,7 +72,7 @@ export const Bars = <T extends DataObject<T>>({
           <BarComponent
             key={key}
             x={margins.left}
-            y={yScale(data[0][yAccessor])}
+            y={yScale(key as any)}
             width={barComponentDimensions.width}
             height={barComponentDimensions.height}
             onClick={handleSelectBar}
@@ -102,8 +93,8 @@ export const Bars = <T extends DataObject<T>>({
             )}
 
             {orderedData.map((dataElement) => {
-              const { stackedWidth } = dataElement;
-              const xValue = dataElement[xAccessor];
+              const stackedWidth = get(dataElement, 'stackedWidth');
+              const xValue = get(dataElement, xAccessor);
 
               const width = noDataToStack
                 ? xScale(xScaleMaxValue as any)
@@ -117,7 +108,7 @@ export const Bars = <T extends DataObject<T>>({
 
               const barFillColor = getBarFillColorForDataElement(
                 dataElement,
-                barColorConfig,
+                colorConfig,
                 noDataToStack
               );
 

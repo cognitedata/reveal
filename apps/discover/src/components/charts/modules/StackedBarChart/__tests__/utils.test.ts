@@ -1,4 +1,4 @@
-import { Data, data } from '__test-utils/fixtures/stackedBarChart';
+import { Data, data } from '__test-utils/fixtures/charts';
 
 import {
   sumObjectsByKey,

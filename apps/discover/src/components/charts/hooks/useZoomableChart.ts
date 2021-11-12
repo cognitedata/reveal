@@ -3,12 +3,10 @@ import { RefObject, useCallback, useEffect, useState } from 'react';
 import get from 'lodash/get';
 import uniq from 'lodash/uniq';
 
-import { Dimensions, Margins } from 'components/charts/types';
+import { Accessors, Dimensions, Margins } from 'components/charts/types';
 import { useDebounce } from 'hooks/useDebounce';
 
 import { getStylePropertyValue } from '../utils';
-
-import { useXScaleMaxValue } from './useXScaleMaxValue';
 
 const UNINITIALIZED_CHART_DIMENTIONS: Dimensions = { height: 0, width: 0 };
 
@@ -18,13 +16,15 @@ export const useZoomableChart = <T>({
   margins,
   accessors,
   spacings,
+  xScaleMaxValue,
   zoomStepSize,
 }: {
   data: T[];
   chartRef: RefObject<HTMLDivElement>;
   margins: Margins;
-  accessors: { x: string; y: string };
+  accessors: Accessors;
   spacings: { x: number; y: number };
+  xScaleMaxValue: number;
   zoomStepSize: number;
 }) => {
   const [initialChartDimensions, setInitialChartDimensions] =
@@ -35,11 +35,6 @@ export const useZoomableChart = <T>({
   const [disableZoomIn, setDisableZoomIn] = useState<boolean>(false);
   const [disableZoomOut, setDisableZoomOut] = useState<boolean>(false);
   const [zoomFactor, setZoomFactor] = useState<number>(1);
-
-  const xScaleMaxValue = useXScaleMaxValue<T>({
-    data,
-    accessors,
-  });
 
   const yAxisUniqueElementsCount = uniq(
     data.map((dataElement) => get(dataElement, accessors.y))

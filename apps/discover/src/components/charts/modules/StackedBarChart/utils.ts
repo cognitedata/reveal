@@ -5,12 +5,10 @@ import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
 import { sortObjectsAscending } from '_helpers/sort';
-import { LegendCheckboxState } from 'components/charts/common/Legend';
-import { getCheckedLegendCheckboxOptions } from 'components/charts/common/Legend/utils';
 
 import { ColorConfig, DataObject } from '../../types';
 
-import { DEFAULT_BAR_COLOR, DEFAULT_NO_DATA_BAR_COLOR } from './constants';
+import { DEFAULT_COLOR, DEFAULT_NO_DATA_COLOR } from './constants';
 
 export const sumObjectsByKey = <T>(
   data: T[],
@@ -84,36 +82,16 @@ export const getStackedData = <T>(data: T[], xAccessor: string) => {
   };
 };
 
-export const getFilteredData = <T extends DataObject<T>>(
-  data: T[],
-  xAccessor: string,
-  checkboxOptionAccessor: string,
-  checkboxState: LegendCheckboxState
-) => {
-  const checkedOptions = getCheckedLegendCheckboxOptions(checkboxState);
-  const filteredData = data.map((dataElement) => {
-    if (checkedOptions.includes(dataElement[checkboxOptionAccessor])) {
-      return dataElement;
-    }
-
-    return {
-      ...dataElement,
-      [xAccessor]: 0,
-    };
-  });
-  return filteredData;
-};
-
 export const getBarFillColorForDataElement = <T extends DataObject<T>>(
   dataElement: T,
-  barColorConfig?: ColorConfig,
+  colorConfig?: ColorConfig,
   noDataToStack = false
 ) => {
-  if (barColorConfig) {
-    const { colors, accessor, defaultColor, noDataColor } = barColorConfig;
+  if (colorConfig) {
+    const { colors, accessor, defaultColor, noDataColor } = colorConfig;
 
     if (noDataToStack) {
-      return noDataColor || defaultColor || DEFAULT_NO_DATA_BAR_COLOR;
+      return noDataColor || defaultColor || DEFAULT_NO_DATA_COLOR;
     }
 
     const colorKey = dataElement[accessor];
@@ -122,10 +100,10 @@ export const getBarFillColorForDataElement = <T extends DataObject<T>>(
     return color || defaultColor;
   }
 
-  return DEFAULT_BAR_COLOR;
+  return DEFAULT_COLOR;
 };
 
-export const getDefaultBarColorConfig = (
+export const getDefaultColorConfig = (
   accessor?: string
 ): ColorConfig | undefined => {
   if (isUndefined(accessor)) return undefined;
@@ -133,8 +111,8 @@ export const getDefaultBarColorConfig = (
   return {
     colors: {},
     accessor,
-    defaultColor: DEFAULT_BAR_COLOR,
-    noDataColor: DEFAULT_NO_DATA_BAR_COLOR,
+    defaultColor: DEFAULT_COLOR,
+    noDataColor: DEFAULT_NO_DATA_COLOR,
   };
 };
 

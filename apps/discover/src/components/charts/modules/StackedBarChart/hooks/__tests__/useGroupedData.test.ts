@@ -6,7 +6,7 @@ import {
   accessors,
   groupedData,
   groupedDataWithSummedValuesInsideBars,
-} from '__test-utils/fixtures/stackedBarChart';
+} from '__test-utils/fixtures/charts';
 
 import { useGroupedData } from '../useGroupedData';
 

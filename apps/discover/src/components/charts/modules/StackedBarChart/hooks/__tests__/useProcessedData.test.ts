@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { Data, data, xAxis } from '__test-utils/fixtures/stackedBarChart';
+import { Data, data, xAxis } from '__test-utils/fixtures/charts';
 
 import { useProcessedData } from '../useProcessedData';
 

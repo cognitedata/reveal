@@ -1,55 +1,89 @@
 import { useMemo } from 'react';
 
 import { scaleBand, scaleLinear } from 'd3-scale';
+import compact from 'lodash/compact';
 import get from 'lodash/get';
 import uniq from 'lodash/uniq';
 
-import { Dimensions, Margins } from 'components/charts/types';
+import {
+  Accessors,
+  Dimensions,
+  Margins,
+  ScaleRange,
+} from 'components/charts/types';
 
-import { useXScaleMaxValue } from './useXScaleMaxValue';
+const RANGE_MIN_SCALE_FACTOR = 0.98;
+const RANGE_MAX_SCALE_FACTOR = 1.02;
 
 export const useChartScales = <T>({
   data,
   chartDimensions,
   margins,
   accessors,
-  xScaleMinValue,
-  xScaleMaxValue,
-  yScaleDomain: yScaleDomainOriginal,
+  xScaleRange,
+  yScaleRange,
+  yScaleDomain: yScaleDomainCustom,
+  reverseXScaleDomain,
+  reverseYScaleDomain,
 }: {
   data: T[];
   chartDimensions: Dimensions;
   margins: Margins;
-  accessors: { x: string; y: string };
-  xScaleMinValue?: number;
-  xScaleMaxValue?: number;
+  accessors: Accessors;
+  xScaleRange: ScaleRange;
+  yScaleRange?: ScaleRange;
   yScaleDomain?: string[];
+  reverseXScaleDomain?: boolean;
+  reverseYScaleDomain?: boolean;
 }) => {
+  const [xScaleMinValue, xScaleMaxValue] = xScaleRange;
+
+  const getCalculatedYScaleDomain = () => {
+    const yScaleValues = data.map((dataElement) =>
+      get(dataElement, accessors.y)
+    );
+    const yScaleDomain = uniq(compact(yScaleValues));
+    return yScaleDomain;
+  };
+
+  const getYScaleLinear = () => {
+    return scaleLinear()
+      .domain(
+        reverseYScaleDomain ? yScaleDomain.slice().reverse() : yScaleDomain
+      )
+      .range([chartDimensions.height - margins.bottom, margins.top]);
+  };
+
+  const getYScaleBand = () => {
+    return scaleBand()
+      .domain(
+        reverseYScaleDomain ? yScaleDomain.slice().reverse() : yScaleDomain
+      )
+      .range([chartDimensions.height - margins.bottom, margins.top]);
+  };
+
   const xScaleDomain = [
-    xScaleMinValue || 0,
-    xScaleMaxValue ||
-      useXScaleMaxValue<T>({
-        data,
-        accessors,
-      }),
+    xScaleMinValue * RANGE_MIN_SCALE_FACTOR,
+    xScaleMaxValue * RANGE_MAX_SCALE_FACTOR,
   ];
 
-  const yScaleDomainData =
-    yScaleDomainOriginal ||
-    data.map((dataElement) => String(get(dataElement, accessors.y)));
-
-  const yScaleDomain = uniq(yScaleDomainData);
+  const yScaleDomain = yScaleRange
+    ? [
+        yScaleRange[0] * RANGE_MIN_SCALE_FACTOR,
+        yScaleRange[1] * RANGE_MAX_SCALE_FACTOR,
+      ]
+    : yScaleDomainCustom || getCalculatedYScaleDomain();
 
   const xScale = useMemo(() => {
     return scaleLinear()
-      .domain(xScaleDomain)
+      .domain(
+        reverseXScaleDomain ? xScaleDomain.slice().reverse() : xScaleDomain
+      )
       .range([margins.left, chartDimensions.width - margins.right]);
   }, [xScaleMaxValue, margins, chartDimensions]);
 
   const yScale = useMemo(() => {
-    return scaleBand()
-      .domain(yScaleDomain.slice().reverse())
-      .range([chartDimensions.height - margins.bottom, margins.top]);
+    return yScaleRange ? getYScaleLinear() : getYScaleBand();
   }, [data, chartDimensions]);
 
   return { xScale, yScale, xScaleDomain, yScaleDomain };

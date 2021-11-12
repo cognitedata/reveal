@@ -19,7 +19,7 @@ const AxisComponent = (props: AxisProps) => (
   </svg>
 );
 
-describe('StackedBarChart -> Axis', () => {
+describe('Axis', () => {
   const defaultProps: AxisProps = {
     placement: AxisPlacement.Top,
     scale: jest.fn() as any,
