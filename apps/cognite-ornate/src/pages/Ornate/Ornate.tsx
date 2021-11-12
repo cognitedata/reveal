@@ -305,6 +305,23 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
           ornateViewer.current!.addDrawings(...parsedDrawings);
         })
       );
+      const stage = ornateViewer.current && ornateViewer.current.stage;
+      if (ornateViewer.current && stage) {
+        const baseLayer = (stage?.children || []).find(
+          (child) => child.name() === 'baseLayer'
+        );
+        const boxSurroundingAllDocs =
+          // @ts-ignore
+          baseLayer && baseLayer.getClientRect({ relativeTo: stage });
+        const { x, y, height, width } = boxSurroundingAllDocs || {};
+        const group = new Konva.Group({
+          x,
+          y,
+          width,
+          height,
+        });
+        ornateViewer.current.zoomToGroup(group);
+      }
       contents.markers.forEach((marker) => {
         (ornateViewer.current!.tools.list as ListTool).addMarker({
           ...marker,
@@ -591,7 +608,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         (x) => x.annotation.metadata?.resourceId === String(asset.id)
       );
       if (instance) {
-        ornateViewer.current?.zoomTo(instance.instance);
+        ornateViewer.current?.zoomToNode(instance.instance);
       }
     },
     [workspaceDocumentAnnotations]

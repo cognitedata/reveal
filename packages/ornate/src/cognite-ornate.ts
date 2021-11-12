@@ -42,8 +42,12 @@ export class CogniteOrnate {
   // @ts-ignore
   stage: Konva.Stage;
   backgroundLayer: Konva.Layer = new Konva.Layer();
-  baseLayer: Konva.Layer = new Konva.Layer();
-  drawingLayer: Konva.Layer = new Konva.Layer();
+  baseLayer: Konva.Layer = new Konva.Layer({
+    name: 'baseLayer',
+  });
+  drawingLayer: Konva.Layer = new Konva.Layer({
+    name: 'drawingLayer',
+  });
   isDrawing = false;
   currentTool: Tool = new DefaultTool(this);
   connectedLineGroup: ConnectedLine[] = [];
@@ -204,12 +208,12 @@ export class CogniteOrnate {
         baseRect.zIndex(0);
 
         group.on('dblclick', () => {
-          this.zoomTo(group);
+          this.zoomToNode(group);
         });
 
         this.baseLayer.draw();
         if (zoomAfterLoad) {
-          this.zoomTo(group, 0);
+          this.zoomToNode(group, 0);
         }
         const newDocument: OrnatePDFDocument = {
           image,
@@ -420,7 +424,47 @@ export class CogniteOrnate {
     }
   }
 
-  zoomTo(node: Konva.Node, duration = 0.35) {
+  zoomToLocation(
+    location: { x: number; y: number },
+    scale: number,
+    duration = 0.35
+  ) {
+    const tween = new Konva.Tween({
+      duration,
+      easing: Konva.Easings.EaseInOut,
+      node: this.stage,
+      scaleX: scale,
+      scaleY: scale,
+      x: location.x,
+      y: location.y,
+    });
+    tween.onFinish = () => tween.destroy();
+
+    tween.play();
+    this.stage.batchDraw();
+  }
+
+  zoomToGroup(group: Konva.Group, duration = 0.35) {
+    const rawScale = Math.min(
+      this.stage.width() / group.width(),
+      this.stage.height() / group.height()
+    );
+    const scale = Math.min(Math.max(rawScale, SCALE_MIN), SCALE_MAX);
+    // Scale the location, and center it to the screen
+    const location = {
+      x:
+        -group.x() * scale +
+        this.stage.width() / 2 -
+        (group.width() * scale) / 2,
+      y:
+        -group.y() * scale +
+        this.stage.height() / 2 -
+        (group.height() * scale) / 2,
+    };
+    this.zoomToLocation(location, scale, duration);
+  }
+
+  zoomToNode(node: Konva.Node, duration = 0.35) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - relativeTo DOES accept this.stage just fine.
     const rect = node.getClientRect({ relativeTo: this.stage });
@@ -437,27 +481,13 @@ export class CogniteOrnate {
       y:
         -rect.y * scale + this.stage.height() / 2 - (node.height() * scale) / 2,
     };
-
-    const { x, y } = location;
-    const tween = new Konva.Tween({
-      duration,
-      easing: Konva.Easings.EaseInOut,
-      node: this.stage,
-      scaleX: scale,
-      scaleY: scale,
-      x,
-      y,
-    });
-    tween.onFinish = () => tween.destroy();
-
-    tween.play();
-    this.stage.batchDraw();
+    this.zoomToLocation(location, scale, duration);
   }
 
   zoomToDocument(doc: OrnatePDFDocument) {
     // get layers
     const node = doc.group;
-    this.zoomTo(node);
+    this.zoomToNode(node);
   }
 
   getTranslatedPointerPosition() {

@@ -4,7 +4,6 @@ import z from 'utils/z';
 export const WorkspaceContainer = styled.div`
   width: 100vw;
   height: 100vh;
-
   .workspace-toggle-button {
     position: fixed;
     top: 16px;
