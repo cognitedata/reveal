@@ -2,7 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-export { HtmlOverlayTool, HtmlOverlayOptions } from './src/HtmlOverlayTool';
+export {
+  HtmlOverlayTool,
+  HtmlOverlayOptions,
+  HtmlOverlayPositionUpdatedDelegate,
+  HtmlOverlayCreateClusterDelegate
+} from './src/HtmlOverlayTool';
 export { ExplodedViewTool } from './src/ExplodedViewTool';
 export { DebugCameraTool } from './src/DebugCameraTool';
 export { AxisViewTool } from './src/AxisView/AxisViewTool';

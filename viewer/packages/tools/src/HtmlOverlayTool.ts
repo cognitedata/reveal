@@ -16,6 +16,8 @@ export type HtmlOverlayPositionUpdatedDelegate = (
   distanceToCamera: number
 ) => void;
 
+export type HtmlOverlayCreateClusterDelegate = (elements: HTMLElement) => HTMLElement[];
+
 export type HtmlOverlayOptions = {
   positionUpdatedCallback?: HtmlOverlayPositionUpdatedDelegate;
 };
@@ -100,6 +102,15 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer.on('disposed', this._onViewerDisposedHandler);
 
     trackCreateTool('HtmlOverlayTool');
+  }
+
+  /**
+   * Returns all added HTML elements along with their 3D positions.
+   */
+  get elements(): { element: HTMLElement; position3D: THREE.Vector3 }[] {
+    return Array.from(this._htmlOverlays.entries()).map(([element, info]) => {
+      return { element, position3D: info.position3D };
+    });
   }
 
   /**
