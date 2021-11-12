@@ -1,4 +1,5 @@
-import { FileFilterProps } from '@cognite/cdf-sdk-singleton';
+import { FileFilterProps, DateRange } from '@cognite/cdf-sdk-singleton';
+import { DateActions, DateOptions } from './DateFilter';
 
 export type VisionFilterItemProps = {
   filter: VisionFileFilterProps;
@@ -9,10 +10,17 @@ export type VisionFilterItemProps = {
 export type VisionFileFilterProps = FileFilterProps & {
   directoryPrefix?: string;
   annotation?: AnnotationFilterType;
+  dateFilter?: DateFilterType;
+  timeRange?: DateRange;
 };
 
 export type AnnotationFilterType = {
   generatedBy?: string;
   annotationText?: string;
   annotationState?: string;
+};
+
+export type DateFilterType = {
+  action?: DateActions;
+  dateOption?: DateOptions;
 };

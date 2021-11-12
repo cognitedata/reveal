@@ -7,7 +7,7 @@ export const totalFileCount = async (filter: VisionFileFilterProps) => {
   const validMimeTypes = VALID_MIME_TYPES.map((mimeType) => mimeType.type);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { annotation, ...validFilters } = filter;
+  const { annotation, dateFilter, timeRange, ...validFilters } = filter;
 
   // if user specify a mime type
   if (validFilters?.mimeType) {
