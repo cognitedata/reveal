@@ -5,18 +5,16 @@ import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewB
 import { SelectionCheckbox } from 'src/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import {
   isProcessingFile,
   makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
@@ -35,7 +33,6 @@ export const FileGridPreview = ({
   onItemSelect?: (item: TableDataItem, selected: boolean) => void;
   isSelected: (id: number) => boolean;
 }) => {
-  const dispatch = useDispatch();
   const selected = isSelected(item.id);
   const actionDisabled = isActionDisabled();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,7 +49,7 @@ export const FileGridPreview = ({
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteFilesById([item.id]));
+    if (menuActions.onFileDelete) menuActions.onFileDelete(item.id);
   };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
@@ -66,9 +63,6 @@ export const FileGridPreview = ({
   );
 
   const reviewDisabled = isProcessingFile(annotationStatuses);
-  const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, item.id)
-  );
 
   const showReviewButton = mode === VisionMode.Contextualize;
 
@@ -90,7 +84,7 @@ export const FileGridPreview = ({
         <MenuContainer>
           <ActionMenu
             buttonType="primary"
-            showExifIcon={fileDetails?.geoLocation !== undefined}
+            showExifIcon={item?.geoLocation !== undefined}
             reviewDisabled={reviewDisabled}
             actionDisabled={actionDisabled}
             handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
@@ -101,7 +95,7 @@ export const FileGridPreview = ({
         <div className="footer">
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
-            {fileDetails?.geoLocation && (
+            {item?.geoLocation && (
               <Tooltip content="EXIF data added">
                 <div className="exif">
                   <img src={exifIcon} alt="exifIcon" />
