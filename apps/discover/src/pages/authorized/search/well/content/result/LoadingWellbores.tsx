@@ -1,18 +1,17 @@
 import { useTranslation } from 'react-i18next';
 
-import { CircularProgress } from '@material-ui/core';
+import { LoadingSpinner } from 'components/loading';
 
 import { LOADING_TEXT } from '../constants';
 
 import { Message } from './WellBoreResultTable';
 
-const iconStyle = { width: 12, height: 12, marginRight: 12 };
-
 export const LoadingWellbores = () => {
   const { t } = useTranslation('WellData');
+  console.log('loader on');
   return (
     <Message>
-      <CircularProgress style={iconStyle} />
+      <LoadingSpinner isLoading />
       {t(LOADING_TEXT)}
     </Message>
   );
