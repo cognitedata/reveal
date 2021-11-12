@@ -16,7 +16,6 @@ const Tabs = styled.ul`
   align-content: flex-start;
   padding: 0;
   margin-bottom: 0;
-  border-top: 1px solid var(--cogs-greyscale-grey3);
   border-left: 1px solid var(--cogs-greyscale-grey3);
 `;
 

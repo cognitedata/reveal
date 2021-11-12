@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { CSVLink } from 'react-csv';
-import { Button, Colors, Dropdown, Flex } from '@cognite/cogs.js';
+import { Button, Dropdown, Flex } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import notification from 'antd/lib/notification';
 import Popconfirm from 'antd/lib/popconfirm';
@@ -25,10 +25,7 @@ export const Menu = (): JSX.Element => {
 
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
-  const onFiltersClick = () => {
-    /** do something */
-  };
-  const onExpandClick = () => {
+  const onShareClick = () => {
     /** do something */
   };
   const onDownloadData = useMemo(() => {
@@ -39,19 +36,13 @@ export const Menu = (): JSX.Element => {
   return (
     <Bar alignItems="center" justifyContent="space-between">
       <Button
-        icon="Filter"
-        size="small"
-        variant="ghost"
-        onClick={onFiltersClick}
+        icon="Share"
+        iconPlacement="right"
+        type="secondary"
+        onClick={onShareClick}
       >
-        Filters
+        Share
       </Button>
-      <Button
-        icon="ExpandMax"
-        size="small"
-        variant="ghost"
-        onClick={onExpandClick}
-      />
       <Dropdown
         content={
           <DropdownMenu>
@@ -114,7 +105,7 @@ export const Menu = (): JSX.Element => {
           </DropdownMenu>
         }
       >
-        <Button icon="HorizontalEllipsis" size="small" variant="ghost" />
+        <Button icon="HorizontalEllipsis" type="secondary" />
       </Dropdown>
       <UploadCSV
         csvModalVisible={csvModalVisible}
@@ -127,7 +118,6 @@ export const Menu = (): JSX.Element => {
 };
 
 const Bar = styled(Flex)`
-  border-left: 1px solid ${Colors['greyscale-grey3'].hex()};
   & > * {
     margin: 0 4px;
   }

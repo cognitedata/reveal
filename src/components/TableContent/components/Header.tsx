@@ -1,43 +1,29 @@
-import React /** , { useContext } */ from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 import styled from 'styled-components';
-import { Button, Colors, Flex, Icon, Tabs, Title } from '@cognite/cogs.js';
-// import { RawExplorerContext } from 'contexts';
+import { Colors, Detail, Flex, Icon, Tabs, Title } from '@cognite/cogs.js';
+import { useActiveTable } from 'hooks/table-tabs';
 
 export const Header = (): JSX.Element => {
-  // const { isSidePanelOpen, setIsSidePanelOpen } = useContext(
-  //   RawExplorerContext
-  // );
-
-  const onMenuButtonClick = () => {}; // setIsSidePanelOpen(!isSidePanelOpen);
-  const { database, table } = useParams<{
-    table?: string;
-    database?: string;
-  }>();
-
-  const tableHeaderTitle = `${database}${table ? ` > ${table}` : ''}`;
+  const [[database, table] = [undefined, undefined]] = useActiveTable();
 
   return (
     <Bar justifyContent="space-between" alignItems="center">
-      <Flex justifyContent="center" alignItems="center">
-        <Button
-          icon="HamburgerMenu"
-          variant="ghost"
-          onClick={onMenuButtonClick}
-          style={{ marginRight: '8px' }}
-        />
-        <Title level={3} style={{ fontWeight: 700 }}>
-          {tableHeaderTitle}
+      <TitleSection direction="column">
+        <Detail className="detail--db-name" strong>
+          {database}
+        </Detail>
+        <Title level={5} style={{ fontWeight: 700 }}>
+          {table}
         </Title>
-      </Flex>
-      <Flex justifyContent="center" alignItems="center">
-        <Tabs>
+      </TitleSection>
+      <TabsSection justifyContent="center" alignItems="center">
+        <StyledTabs>
           <Tabs.TabPane
             key="1"
             tab={
               <span>
                 <Icon type="DataTable" />
-                Data
+                Table
               </span>
             }
           />
@@ -50,13 +36,31 @@ export const Header = (): JSX.Element => {
               </span>
             }
           />
-        </Tabs>
-      </Flex>
+        </StyledTabs>
+      </TabsSection>
     </Bar>
   );
 };
 
 const Bar = styled(Flex)`
-  padding-left: 8px;
+  height: 64px;
+  box-sizing: border-box;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+`;
+
+const TitleSection = styled(Flex)`
+  margin-left: 16px;
+  .detail--db-name {
+    color: ${Colors['greyscale-grey6'].hex()};
+  }
+`;
+const TabsSection = styled(Flex)`
+  height: 100%;
+`;
+
+const StyledTabs = styled(Tabs)`
+  height: 100%;
+  .rc-tabs-nav {
+    height: 100%;
+  }
 `;
