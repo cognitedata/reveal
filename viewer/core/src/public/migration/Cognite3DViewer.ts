@@ -51,6 +51,7 @@ import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reve
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
+import log from '@reveal/logger';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -317,6 +318,21 @@ export class Cognite3DViewer {
    */
   getVersion(): string {
     return process.env.VERSION;
+  }
+
+  /**
+   * Sets the log level. Used for debugging.
+   * Defaults to 'none' (which is identical to 'silent').
+   * @param level
+   */
+  setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none') {
+    switch (level) {
+      case 'none':
+        this.setLogLevel('silent');
+        break;
+      default:
+        log.setLevel(level);
+    }
   }
 
   /**
