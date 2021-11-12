@@ -240,10 +240,6 @@ const populateKeyPoints = (annotation: VisionAnnotation) => {
           };
         });
     } else {
-      console.error(
-        'keypoint metadata was not found for annotation!',
-        keypointAnnotation.id
-      );
       keypointAnnotation.region.vertices =
         keypointAnnotation.region.vertices.map((vertex, index) => {
           const keyPointData = {
