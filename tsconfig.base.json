@@ -10,12 +10,7 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2017",
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["es2017", "dom", "dom.iterable", "esnext"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -31,16 +26,9 @@
       "@platypus/platypus-infrastructure": [
         "libs/platypus-infrastructure/src/index.ts"
       ],
-      "@platypus/platypus-ui": [
-        "libs/platypus-ui/src/index.ts"
-      ],
-      "@platypus-app/*": [
-        "apps/platypus/src/app/*"
-      ]
+      "@platypus/platypus-ui": ["libs/platypus-ui/src/index.ts"],
+      "@platypus-app/*": ["apps/platypus/src/app/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

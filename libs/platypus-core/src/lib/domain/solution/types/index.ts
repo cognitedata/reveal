@@ -5,4 +5,5 @@ export interface Solution {
   createdTime: number;
   updatedTime: number;
   owners: string[];
+  version: string;
 }
