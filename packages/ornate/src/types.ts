@@ -71,9 +71,8 @@ export type ToolType =
 
 export type ShapeSettings = {
   [key: string]: string | number | undefined;
-  strokeColor: string;
-  strokeWidth: number;
-  opacity: number;
+  stroke?: string;
+  strokeWidth?: number;
   fontSize?: number;
   fill?: string;
 };

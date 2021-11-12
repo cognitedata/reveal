@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { Vector2d } from 'konva/lib/types';
 import { PDFDocument } from 'pdf-lib';
 
+import { OrnateTransformer } from './containers/Transformer';
 import {
   OrnateAnnotation,
   ToolType,
@@ -20,8 +21,8 @@ import { downloadURL, pdfToImage, ConnectedLine } from './utils';
 
 export const defaultShapeSettings = {
   strokeWidth: 10,
-  strokeColor: '#FFDC7F',
-  opacity: 1,
+  stroke: 'rgba(255,220,127,1)',
+  fill: 'rgba(255,220,127,1)',
   fontSize: 32,
 };
 
@@ -52,6 +53,7 @@ export class CogniteOrnate {
   currentTool: Tool = new DefaultTool(this);
   connectedLineGroup: ConnectedLine[] = [];
   shapeSettings: ShapeSettings = defaultShapeSettings;
+  transformer: OrnateTransformer | undefined;
   tools: Record<string, Tool> = {};
 
   constructor(options: CogniteOrnateOptions) {

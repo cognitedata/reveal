@@ -2,6 +2,14 @@ import { Menu } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
 import { ChangeEvent } from 'react';
 import { ShapeSettings as ShapeSettingsType } from '@cognite/ornate';
+import {
+  defaultColor,
+  defaultColorTransparent,
+  getOpacityFromRGBA,
+  hexToRGBA,
+  isHexColor,
+  setOpacityFromRGBA,
+} from 'components/ContextMenu/ContextMenuItems/utils';
 
 import ColorPicker from './ColorPicker/ColorPicker';
 import { ShapeSettingsWrapper } from './elements';
@@ -13,7 +21,13 @@ type ShapeSettingsProps = {
 };
 
 const ShapeSettings = ({
-  shapeSettings: { strokeColor, strokeWidth, opacity, fontSize, tool },
+  shapeSettings: {
+    stroke = defaultColorTransparent,
+    fill = defaultColor,
+    strokeWidth,
+    fontSize,
+    tool,
+  },
   isSidebarExpanded,
   onSettingsChange,
 }: ShapeSettingsProps) => {
@@ -25,7 +39,16 @@ const ShapeSettings = ({
 
   const onOpacitySliderChange = (e: ChangeEvent<HTMLInputElement>) => {
     metrics.track('onOpacitySliderChange', { value: e.target.value });
-    onSettingsChange({ opacity: Number(e.target.value) });
+    const strokeOpacity =
+      (stroke && isHexColor(stroke) && (hexToRGBA(stroke, true) as string)) ||
+      stroke;
+    const fillOpacity =
+      (fill && isHexColor(fill) && (hexToRGBA(fill, true) as string)) || fill;
+
+    onSettingsChange({
+      stroke: setOpacityFromRGBA(strokeOpacity, e.target.value),
+      fill: setOpacityFromRGBA(fillOpacity, e.target.value),
+    });
   };
 
   const onFontSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,9 +85,9 @@ const ShapeSettings = ({
             <p>Thickness</p>
             <input
               type="range"
-              min="0.01"
+              min="0"
               max="1"
-              value={opacity}
+              value={Number(getOpacityFromRGBA(stroke))}
               onChange={onOpacitySliderChange}
               step="0.01"
             />
@@ -72,7 +95,10 @@ const ShapeSettings = ({
           </>
         )}
         <Menu.Header>COLOR</Menu.Header>
-        <ColorPicker color={strokeColor} onSettingsChange={onSettingsChange} />
+        <ColorPicker
+          color={stroke || fill}
+          onSettingsChange={onSettingsChange}
+        />
       </Menu>
     </ShapeSettingsWrapper>
   );

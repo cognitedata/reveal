@@ -1,5 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
+import { DefaultTool } from 'tools';
 import { ICogniteOrnateTool } from 'types';
 import { v4 as uuid } from 'uuid';
 
@@ -82,6 +83,8 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       textarea.parentNode?.removeChild(textarea);
       window.removeEventListener('click', handleOutsideClick);
       textNode.show();
+      (this.ornateInstance.tools.default as DefaultTool).reset();
+      this.ornateInstance.transformer?.setSelectedNodes([textNode]);
     };
 
     const setTextareaWidth = (nextWidth?: number) => {
@@ -174,7 +177,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       x: translatedMousePosition.x,
       y: translatedMousePosition.y,
       fontSize: this.shapeSettings.fontSize || 32,
-      fill: this.shapeSettings.fill || this.shapeSettings.strokeColor,
+      fill: this.shapeSettings.fill || this.shapeSettings.stroke,
       userGenerated: true,
       type: 'text',
       name: 'drawing',

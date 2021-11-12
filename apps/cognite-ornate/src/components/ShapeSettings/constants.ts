@@ -18,7 +18,7 @@ export const PRESET_COLORS = [
 
 export const defaultShapeSettings = {
   strokeWidth: 10,
-  strokeColor: Colors['yellow-5'].hex(),
-  opacity: 1,
+  stroke: 'rgba(255,220,127,1)',
+  fill: 'rgba(255,220,127,0)',
   fontSize: 32,
 };

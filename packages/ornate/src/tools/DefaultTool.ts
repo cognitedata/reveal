@@ -8,24 +8,22 @@ import { Tool } from './Tool';
 export class DefaultTool extends Tool implements ICogniteOrnateTool {
   cursor = 'default';
   selectedNode: Konva.Node | null = null;
-  transformer: Konva.Transformer | null = null;
   mouseMoved = false;
 
   reset = () => {
     this.mouseMoved = false;
     if (this.selectedNode) {
       this.selectedNode.draggable(false);
+      this.selectedNode = null;
     }
-    if (this.transformer) {
-      this.transformer.nodes([]);
-    }
+    this.ornateInstance.transformer?.setSelectedNodes([]);
   };
 
   onDelete = () => {
     if (this.selectedNode) {
       this.selectedNode?.destroy();
       this.selectedNode = null;
-      this.transformer?.nodes([]);
+      this.ornateInstance.transformer?.setSelectedNodes([]);
     }
   };
 
@@ -38,16 +36,8 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
   };
 
   onInit = () => {
-    this.transformer = new Konva.Transformer({
-      rotateEnabled: false,
-      resizeEnabled: false,
-      keepRatio: true,
-      draggable: true,
-    });
-
     const stageContainer = this.ornateInstance.stage.container();
     stageContainer.focus();
-    this.ornateInstance.drawingLayer.add(this.transformer);
     stageContainer.addEventListener('keyup', this.onKeyUp);
   };
 
@@ -72,16 +62,16 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     if (this.mouseMoved) {
       return;
     }
-    this.reset();
-    if (e.target.attrs.unselectable) {
+
+    if (this.selectedNode?.attrs.type === 'text') {
+      const tempNode = this.selectedNode as Konva.Text;
+      (this.ornateInstance.tools.text as TextTool).onTextEdit(tempNode);
       return;
     }
-    // If we clicked a text element already selected, swap to 'text' tool and edit
-    if (this.selectedNode?.attrs.type === 'text') {
-      this.ornateInstance.handleToolChange('text');
-      (this.ornateInstance.currentTool as TextTool).onTextEdit(
-        this.selectedNode as Konva.Text
-      );
+
+    this.reset();
+
+    if (e.target.attrs.unselectable) {
       return;
     }
     // If this is defined, we dont select the original target, but the group instead
@@ -92,17 +82,15 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
         `#${e.target.attrs.attachedToGroup}`
       );
 
-      this.transformer?.rotateEnabled(false);
-      this.transformer?.resizeEnabled(false);
+      this.ornateInstance.transformer?.rotateEnabled(false);
+      this.ornateInstance.transformer?.resizeEnabled(false);
     } else {
       this.selectedNode = e.target;
-      this.transformer?.rotateEnabled(true);
-      this.transformer?.resizeEnabled(true);
+      this.ornateInstance.transformer?.rotateEnabled(true);
+      this.ornateInstance.transformer?.resizeEnabled(true);
     }
 
     this.selectedNode.draggable(true);
-    if (this.transformer) {
-      this.transformer.nodes([this.selectedNode]);
-    }
+    this.ornateInstance.transformer?.setSelectedNodes([this.selectedNode]);
   };
 }

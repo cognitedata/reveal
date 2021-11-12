@@ -63,6 +63,7 @@ DEV_DEPENDENCIES = [
 mappings_dict = {
     "assets": "dist/assets",
     "cognite-ornate": "dist/cognite-ornate",
+    "containers": "dist/containers",
     "index": "dist/index",
     "mocks": "dist/mocks",
     "tools": "dist/tools",

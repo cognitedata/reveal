@@ -33,9 +33,8 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
     const { x: startX, y: startY } = this.getPosition();
     this.newLine = new Konva.Line({
       points: [startX, startY, startX, startY],
-      stroke: this.shapeSettings.strokeColor,
+      stroke: this.shapeSettings.stroke,
       strokeWidth: this.shapeSettings.strokeWidth,
-      opacity: this.shapeSettings.opacity,
       userGenerated: true,
       name: 'drawing',
       type: 'line',

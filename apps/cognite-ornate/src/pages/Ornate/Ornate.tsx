@@ -17,6 +17,7 @@ import {
   CircleTool,
   ListTool,
   CommentTool,
+  OrnateTransformer,
 } from '@cognite/ornate';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
 import WorkSpaceTools from 'components/WorkSpaceTools';
@@ -42,6 +43,7 @@ import Konva from 'konva';
 import { Theme } from 'utils/theme';
 import { Comments } from 'components/Comments/Comments';
 import { useMetrics } from '@cognite/metrics';
+import ContextMenu from 'components/ContextMenu';
 
 import {
   Loader,
@@ -63,6 +65,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     useState<ShapeSettingsType>(defaultShapeSettings);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<Konva.Node | null>(null);
   const { t } = useTranslation('WorkspaceHeader');
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [workspaceDocuments, setWorkspaceDocuments] = useState<
@@ -107,6 +110,14 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         }));
         setListItems(nextListItems);
       };
+
+      const ornateTransfomer = new OrnateTransformer();
+      ornateTransfomer.onSelectNodes = (nodes) => {
+        setSelectedNode(nodes[0]);
+      };
+      ornateViewer.current.transformer = ornateTransfomer;
+      ornateViewer.current.drawingLayer.add(ornateViewer.current.transformer);
+
       ornateViewer.current.tools = {
         move: new MoveTool(ornateViewer.current),
         line: new LineTool(ornateViewer.current),
@@ -739,6 +750,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       )}
 
       {shapeSettingsComponent}
+
+      {selectedNode && <ContextMenu selectedNode={selectedNode} />}
 
       <Button
         icon="WorkSpace"

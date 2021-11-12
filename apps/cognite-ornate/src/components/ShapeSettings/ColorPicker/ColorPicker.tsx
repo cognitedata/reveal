@@ -1,5 +1,9 @@
 import { useMetrics } from '@cognite/metrics';
 import { ShapeSettings } from '@cognite/ornate';
+import {
+  defaultColor,
+  getRGBAString,
+} from 'components/ContextMenu/ContextMenuItems/utils';
 import { CirclePicker, ColorResult } from 'react-color';
 
 import { PRESET_COLORS } from '../constants';
@@ -10,13 +14,15 @@ type ColorPickerProps = {
 };
 
 export default function ColorPicker({
-  color = PRESET_COLORS[0],
+  color = defaultColor,
   onSettingsChange,
 }: ColorPickerProps) {
   const metrics = useMetrics('ColorPicker');
   const onBrushColorChange = (color: ColorResult) => {
-    metrics.track('onBrushColorChange', { color: color.hex });
-    onSettingsChange({ strokeColor: color.hex, fill: color.hex });
+    const { r, g, b, a = 1 } = color.rgb;
+    const colorString = getRGBAString(r, g, b, a);
+    metrics.track('onBrushColorChange', { color: colorString });
+    onSettingsChange({ stroke: colorString, fill: colorString });
   };
 
   return (
