@@ -8,6 +8,10 @@ export enum ModelSource {
   PROSPER = 'PROSPER',
 }
 
+export enum FileExtensionToSimulator {
+  '.out' = 'PROSPER',
+}
+
 export enum UnitSystem {
   OilField = 'Oil field units',
   NorSI = 'Norwegian SI units',

@@ -1,5 +1,9 @@
 import { DragEvent, ChangeEvent } from 'react';
 import { Flex, Icon } from '@cognite/cogs.js';
+import {
+  getFileExtensionFromFileName,
+  isValidExtension,
+} from 'utils/formUtils';
 
 import { DropTextWrapper, DropWrapper, HiddenInputFile } from './elements';
 
@@ -17,14 +21,27 @@ export function FileInput({
 
   const onDrop = (event: DragEvent) => {
     event.preventDefault();
-    onFileSelected(event.dataTransfer?.files?.[0]);
+    const file = event.dataTransfer?.files?.[0];
+    if (!file) {
+      return;
+    }
+    const ext = getFileExtensionFromFileName(file.name);
+
+    if (!isValidExtension(ext)) {
+      return;
+    }
+    if (!extensions || extensions.includes(ext)) {
+      onFileSelected(event.dataTransfer?.files?.[0]);
+    }
   };
 
   return (
     <>
       <DropWrapper
         onDrop={onDrop}
-        onDragOver={(event) => event.preventDefault()}
+        onDragOver={(event) => {
+          event.preventDefault();
+        }}
       >
         <DropTextWrapper>
           <Flex gap={10} justifyContent="center">

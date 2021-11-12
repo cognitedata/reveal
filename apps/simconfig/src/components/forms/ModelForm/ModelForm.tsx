@@ -9,7 +9,11 @@ import { selectDatasets } from 'store/dataset/selectors';
 import { selectUploadDatasetIds } from 'store/group/selectors';
 import { ApiContext } from 'providers/ApiProvider';
 import { HiddenInputFile } from 'components/forms/controls/elements';
-import { getSelectEntriesFromMap } from 'utils/formUtils';
+import {
+  getFileExtensionFromFileName,
+  getSelectEntriesFromMap,
+  isValidExtension,
+} from 'utils/formUtils';
 import {
   CreateMetadataModel,
   FileInfoModel,
@@ -22,6 +26,7 @@ import {
   BoundaryCondition,
   DEFAULT_MODEL_SOURCE,
   DEFAULT_UNIT_SYSTEM,
+  FileExtensionToSimulator,
   UnitSystem,
 } from './constants';
 
@@ -41,6 +46,13 @@ const getInitialModelFormState = (): ModelFormState => ({
     source: DEFAULT_MODEL_SOURCE,
   },
 });
+
+const getSimulatorFromFileName = (fileName: string) => {
+  const ext = getFileExtensionFromFileName(fileName);
+  return isValidExtension(ext) && FileExtensionToSimulator[ext];
+};
+
+const acceptedFileTypes = Object.keys(FileExtensionToSimulator);
 
 interface ComponentProps {
   initialModelFormState?: ModelFormState;
@@ -88,11 +100,18 @@ export function ModelForm({
     if (!authState?.project || !authState?.authenticated || !authState?.email) {
       throw new Error('User is not authenticated');
     }
+    // simulator name is chosen based on the extension of the filename
+    const simulator = getSimulatorFromFileName(formMetadata.fileName);
+
+    if (!simulator) {
+      throw new Error('Invalid file type');
+    }
 
     // User e-mail is always set to the currently logged in user, incuding for new versions
     const metadata: CreateMetadataModel | UpdateMetadataModel = {
       ...formMetadata,
       userEmail: authState.email,
+      simulator,
     };
 
     const boundaryConditions = formBoundaryConditions.map(
@@ -109,7 +128,7 @@ export function ModelForm({
         ...formFileInfo,
         // Override linked values from metadata
         name: metadata.modelName,
-        source: metadata.simulator,
+        source: simulator,
       };
 
       await api.modelLibrary.createModel(authState.project, {
@@ -136,38 +155,75 @@ export function ModelForm({
     history.push(`/model-library/${modelFormState.fileInfo.name}`);
   };
 
+  const validateFilename = (value: string) => {
+    if (!value) {
+      return undefined;
+    }
+    const ext = getFileExtensionFromFileName(value);
+
+    if (!isValidExtension(ext)) {
+      return 'Invalid file type';
+    }
+    return undefined;
+  };
+
+  const isValidFile = (fileName: string): boolean => {
+    const ext = getFileExtensionFromFileName(fileName);
+    return isValidExtension(ext);
+  };
+
   return (
     <Formik initialValues={modelFormState} onSubmit={onSubmit}>
       {({
         values: { file, fileInfo, metadata },
         setFieldValue,
         isSubmitting,
+        errors,
+        validateField,
       }: FormikProps<ModelFormState>) => (
         <Form>
           <InputRow>
             {file ? (
-              <Field
-                as={Input}
-                title="File name"
-                name="metadata.fileName"
-                maxLength={512}
-                icon="Document"
-                fullWidth
-                disabled
-                postfix={<Button onClick={onButtonClick}>File</Button>}
-              />
+              <>
+                <Field
+                  as={Input}
+                  title="File name"
+                  name="metadata.fileName"
+                  maxLength={512}
+                  icon="Document"
+                  validate={validateFilename}
+                  fullWidth
+                  error={
+                    errors?.metadata?.fileName
+                      ? errors.metadata.fileName
+                      : undefined
+                  }
+                  isValid={isValidFile(metadata.fileName)}
+                  helpText={
+                    isValidFile(metadata.fileName)
+                      ? `Simulator: ${metadata.simulator}`
+                      : undefined
+                  }
+                  disabled
+                  postfix={<Button onClick={onButtonClick}>File</Button>}
+                />
+              </>
             ) : (
               <Field
                 as={FileInput}
+                validate={validateFilename}
+                extensions={acceptedFileTypes}
                 onFileSelected={(file?: File) => {
                   setFieldValue('file', file);
                   setFieldValue('metadata.fileName', file?.name);
+                  validateField('metadata.fileName');
                 }}
               />
             )}
             <HiddenInputFile
               id="file-upload"
               type="file"
+              accept={acceptedFileTypes.join(',')}
               ref={inputFile}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 const file = event.currentTarget.files?.[0];
