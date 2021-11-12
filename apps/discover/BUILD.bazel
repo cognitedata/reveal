@@ -329,7 +329,6 @@ react_scripts(
     ],
     env = {
         "REACT_APP_SENTRY_DSN": "https://73501539810546ed8fd963457833f566@o124058.ingest.sentry.io/5208164",
-        "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
         "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
         "REACT_APP_ENABLE_REDUX_LOGGER": "false",
         "REACT_APP_LOCIZE_VERSION": "production",
@@ -346,7 +345,6 @@ react_scripts(
         "REACT_APP_VERSION_NAME": "REACT_APP_VERSION_NAME_VALUE",
         "REACT_APP_VERSION_SHA": "REACT_APP_VERSION_SHA_VALUE",
         "INLINE_RUNTIME_CHUNK": "false",
-        "REACT_APP_VERSION": "$npm_package_version",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
@@ -425,7 +423,6 @@ react_scripts(
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
-        "REACT_APP_VERSION": "$npm_package_version",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },
@@ -464,7 +461,6 @@ react_scripts(
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
         "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
-        "REACT_APP_VERSION": "$npm_package_version",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },

@@ -32,6 +32,7 @@ type ThingsToCheckAccessFor =
   | 'datasets'
   | 'assets'
   | 'groups'
+  | 'wells'
 
   // APIS:
   | 'discover-api'
@@ -41,6 +42,7 @@ type Access = {
   error?: string; // any extra error info we have found, eg: missing dataset
 };
 export type AllAccess = Record<ThingsToCheckAccessFor, Access>;
+type AccessCheckResult = [ThingsToCheckAccessFor, Access];
 type ActionScope = {
   actions: string[];
   scope:
@@ -69,6 +71,7 @@ type AclName =
   | 'geospatialAcl'
   | 'seismicAcl'
   | 'labelsAcl'
+  | 'wellsAcl'
   | 'datasetsAcl';
 
 type TokenCapabilities = {
@@ -138,13 +141,15 @@ export const UserAccessList: React.FC = () => {
   const headers = getJsonHeaders();
   // const idTokenHeaders = getJsonHeaders();
 
-  const [access, setAccess] = React.useState<AllAccess>();
+  const [access, setAccess] = React.useState<
+    [ThingsToCheckAccessFor, Access][]
+  >([]);
 
   const handleChange = (keys: string) => {
     log('Processed access: ', [keys, access], 1);
   };
 
-  const checkDiscoverAPIAccess = async () => {
+  const checkDiscoverAPIAccess = async (): Promise<Partial<AllAccess>> => {
     try {
       const result = await fetchGet<{ data: { message: string } }>(
         `${SIDECAR.discoverApiBaseUrl}/_status`,
@@ -161,7 +166,7 @@ export const UserAccessList: React.FC = () => {
     return { 'discover-api': { missing: ['NETWORK'] } };
   };
 
-  const checkWellsAPIAccess = async () => {
+  const checkWellsAPIAccess = async (): Promise<Partial<AllAccess>> => {
     try {
       const result = await fetchGet<string>(
         `https://well-service.${
@@ -295,6 +300,17 @@ export const UserAccessList: React.FC = () => {
             }),
           };
         }
+        if ('wellsAcl' in item) {
+          return {
+            ...checkACL({
+              result,
+              item,
+              aclName: 'wellsAcl',
+              acl: 'READ',
+              context: 'wells',
+            }),
+          };
+        }
 
         return result;
       },
@@ -307,6 +323,7 @@ export const UserAccessList: React.FC = () => {
         files: { missing: ['READ', 'WRITE'] },
         sequences: { missing: ['READ'] },
         assets: { missing: ['READ'] },
+        wells: { missing: ['READ'] },
         groups: { missing: ['LIST'] },
         'discover-api': { missing: ['NETWORK'] },
         'wells-api': { missing: ['NETWORK'] },
@@ -321,11 +338,25 @@ export const UserAccessList: React.FC = () => {
     const discoverAPIResults = await checkDiscoverAPIAccess();
     const wellsAPIAccess = await checkWellsAPIAccess();
 
-    setAccess({
+    const currentUserAccess: AllAccess = {
       ...tokenResults,
       ...discoverAPIResults,
       ...wellsAPIAccess,
+    };
+
+    const accessCheckResult = Object.entries(
+      currentUserAccess
+    ) as AccessCheckResult[];
+
+    const sortedAccess = accessCheckResult.sort((value) => {
+      if (value[1].missing.length > 0) {
+        return -1;
+      }
+
+      return 1;
     });
+
+    setAccess(sortedAccess);
   };
 
   React.useEffect(() => {
@@ -337,38 +368,36 @@ export const UserAccessList: React.FC = () => {
       <Collapse ghost onChange={handleChange}>
         <Collapse.Panel header="Show my access" key={1}>
           <>
-            {!access && 'Loading...'}
-            {access &&
-              Object.entries(access).map((value) => {
-                if (value[1].missing.length > 0) {
-                  return (
-                    <div key={value[0]}>
-                      <ErrorParagraph>
-                        <Icon type="ErrorFilled" style={{ color: '#D51A46' }} />
-                        <div>{startCase(value[0])}:</div>
-                      </ErrorParagraph>
-                      <div>
-                        <ErrorList>
-                          {isFunction(value[1].error)
-                            ? value[1].error()
-                            : value[1].error}
-                        </ErrorList>
-                        <ErrorList>
-                          <strong>Missing: </strong>-{' '}
-                          {value[1].missing.join(', ')}
-                        </ErrorList>
-                      </div>
-                    </div>
-                  );
-                }
-
+            {access.length === 0 && 'Loading...'}
+            {access.map((value) => {
+              if (value[1].missing.length > 0) {
                 return (
-                  <GoodParagraph key={value[0]}>
-                    <Icon type="CheckmarkFilled" style={{ color: '#18AF8E' }} />
-                    <div>{startCase(value[0])}</div>
-                  </GoodParagraph>
+                  <div key={value[0]}>
+                    <ErrorParagraph>
+                      <Icon type="ErrorFilled" style={{ color: '#D51A46' }} />
+                      <div>{startCase(value[0])}:</div>
+                    </ErrorParagraph>
+                    <div>
+                      <ErrorList>
+                        {isFunction(value[1].error)
+                          ? value[1].error()
+                          : value[1].error}
+                      </ErrorList>
+                      <ErrorList>
+                        <strong>Missing: </strong>-{' '}
+                        {value[1].missing.join(', ')}
+                      </ErrorList>
+                    </div>
+                  </div>
                 );
-              })}
+              }
+              return (
+                <GoodParagraph key={value[0]}>
+                  <Icon type="CheckmarkFilled" style={{ color: '#18AF8E' }} />
+                  <div>{startCase(value[0])}</div>
+                </GoodParagraph>
+              );
+            })}
           </>
         </Collapse.Panel>
       </Collapse>
