@@ -33,5 +33,5 @@ jobs:
         with:
           token: $(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}")
           tag: alpha
-          access: private
+          access: public
           package: ./dist/apps/platypus-cdf-cli/package.json
