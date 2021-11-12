@@ -3,10 +3,9 @@
  */
 import * as THREE from 'three';
 import { CogniteClient, ItemsResponse } from '@cognite/sdk';
-import { ModelDataClient } from '@reveal/cad-parsers';
 import { CameraConfiguration } from '@reveal/utilities';
 
-import { applyDefaultModelTransformation, Model3DOutputList } from '@reveal/modeldata-api';
+import { applyDefaultModelTransformation, Model3DOutputList, ModelDataProvider } from '@reveal/modeldata-api';
 import { File3dFormat } from '../types';
 import { BlobOutputMetadata } from './types';
 
@@ -16,9 +15,7 @@ import { BlobOutputMetadata } from './types';
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.
  */
-export class CdfModelDataClient
-  implements ModelDataClient<{ modelId: number; revisionId: number; format: File3dFormat }>
-{
+export class CdfModelDataClient implements ModelDataProvider {
   private readonly client: CogniteClient;
   private appId: string | undefined;
 

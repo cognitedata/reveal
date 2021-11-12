@@ -9,6 +9,7 @@ import { createV8SectorMetadata } from '../../../../../test-utilities';
 
 import { traverseDepthFirst } from '@reveal/utilities';
 import { SectorMetadata } from '@reveal/cad-parsers';
+
 import { PrioritizedArea } from '@reveal/cad-styling';
 
 describe('WeightFunctionsHelper', () => {

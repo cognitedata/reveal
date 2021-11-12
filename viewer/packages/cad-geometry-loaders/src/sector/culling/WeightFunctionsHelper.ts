@@ -6,8 +6,8 @@ import * as THREE from 'three';
 
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
 import { PrioritizedArea } from '@reveal/cad-styling';
+import { SectorMetadata, V9SectorMetadata } from '@reveal/cad-parsers';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()
@@ -38,19 +38,19 @@ export class WeightFunctionsHelper {
       { near, far: near + 0.05 * nearFarRange, weight: 0.1 }, // 0-5% of frustum
       { near: near + 0.05 * nearFarRange, far: near + 0.4 * nearFarRange, weight: 0.7 }, // 5-40% of frustum
       { near: near + 0.4 * nearFarRange, far: near + 1.0 * nearFarRange, weight: 0.2 } // 40-100% of frustum
-    ].map(x => {
-      const projectionMatrix = createModifiedProjectionMatrix(camera, x.near, x.far);
+    ].map(modifiedFrustum => {
+      const projectionMatrix = createModifiedProjectionMatrix(camera, modifiedFrustum.near, modifiedFrustum.far);
       const frustumMatrix = new THREE.Matrix4().multiplyMatrices(projectionMatrix, this._camera.matrixWorldInverse);
       const frustum = new THREE.Frustum().setFromProjectionMatrix(frustumMatrix);
       return {
-        ...x,
+        ...modifiedFrustum,
         frustum
       };
     });
   }
 
   addCandidateSectors(sectors: SectorMetadata[], modelMatrix: THREE.Matrix4) {
-    // Note! We compute distance to camera, not screen (which would probably better)
+    // Note! We compute distance to camera, not screen (which would probably be better)
     const { minDistance, maxDistance } = sectors.reduce(
       (minMax, sector) => {
         const distanceToCamera = this.distanceToCamera(sector, modelMatrix);
@@ -112,8 +112,10 @@ export class WeightFunctionsHelper {
    * sectors right below root sector.
    * @param sector
    */
-  computeSectorTreePlacementWeight(sector: SectorMetadata): number {
-    return sector.depth === 2 ? 1.0 : 1.0 / 3.0;
+  computeSectorTreePlacementWeight(sector: V9SectorMetadata): number {
+    // Prioritize sectors directly under the root. These contains large structures
+    // in V9 format and is therefore a low-detail version of the full model.
+    return sector.depth === 1 ? 1.0 : 1.0 / 3.0;
   }
 
   /**

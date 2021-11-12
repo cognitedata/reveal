@@ -5,21 +5,11 @@
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadModelUpdateHandler } from './CadModelUpdateHandler';
 
-import { CadMaterialManager } from '@reveal/rendering';
-import { BinaryFileProvider } from '@reveal/modeldata-api';
-
 describe('CadModelUpdateHandler', () => {
   let mockCuller: SectorCuller;
-  let modelSectorProvider: BinaryFileProvider;
-  let materialManager: CadMaterialManager;
 
   beforeEach(() => {
     jest.useFakeTimers();
-
-    modelSectorProvider = {
-      getBinaryFile: jest.fn()
-    };
-    materialManager = new CadMaterialManager();
 
     mockCuller = {
       determineSectors: jest.fn(),

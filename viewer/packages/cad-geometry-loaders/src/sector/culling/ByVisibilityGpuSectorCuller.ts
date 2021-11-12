@@ -4,12 +4,10 @@
 
 import * as THREE from 'three';
 
-import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorCost, SectorLoadingSpent } from './types';
-
 import { OrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 import { SectorCuller } from './SectorCuller';
+import { DetermineSectorCostDelegate, DetermineSectorsInput, SectorCost, SectorLoadingSpent } from './types';
 import { TakenV8SectorMap } from './takensectors';
-
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
 import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';

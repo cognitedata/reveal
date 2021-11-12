@@ -20,7 +20,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
   }
 
   get modelsMetadata(): CadModelMetadata[] {
-    return Array.from(this._models.values()).map(x => x.modelMetadata);
+    return Array.from(this._models.values()).map(cadModel => cadModel.modelMetadata);
   }
 
   constructor(determineSectorCost: DetermineSectorCostDelegate<V9SectorMetadata>) {
@@ -46,7 +46,9 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
 
     const { sectorIds } = entry!;
     const existingPriority = sectorIds.get(sectorId);
-    if (existingPriority === undefined) {
+    if (existingPriority !== undefined) {
+      sectorIds.set(sectorId, Math.max(priority, existingPriority));
+    } else {
       const sectorMetadata = model.scene.getSectorById(sectorId);
       assert(sectorMetadata !== undefined);
 
@@ -54,8 +56,6 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
       addSectorCost(this._totalCost, sectorCost);
 
       sectorIds.set(sectorId, priority);
-    } else {
-      sectorIds.set(sectorId, Math.max(priority, existingPriority));
     }
   }
 

@@ -11,8 +11,8 @@ import { computeV9SectorCost } from './computeSectorCost';
 import { TakenV9SectorMap } from './takensectors';
 
 import Log from '@reveal/logger';
-import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 import { CadModelMetadata, V9SectorMetadata, SectorScene, WantedSector } from '@reveal/cad-parsers';
+import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 
 export type ByScreenSizeSectorCullerOptions = {
   /**
@@ -170,17 +170,18 @@ function determineCandidateSectors(
     .getSectorsIntersectingFrustum(cameraProjectionMatrix, transformedCameraMatrixWorldInverse)
     .map(x => x as V9SectorMetadata);
 
-  if (clippingPlanes.length > 0) {
-    const bounds = new THREE.Box3();
-    return sectors.filter(sector => {
-      bounds.copy(sector.bounds);
-      bounds.applyMatrix4(modelMatrix);
-
-      const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
-      return shouldKeep;
-    });
+  if (clippingPlanes.length <= 0) {
+    return sectors;
   }
-  return sectors;
+
+  const bounds = new THREE.Box3();
+  return sectors.filter(sector => {
+    bounds.copy(sector.bounds);
+    bounds.applyMatrix4(modelMatrix);
+
+    const shouldKeep = clippingPlanes.every(plane => isBox3OnPositiveSideOfPlane(bounds, plane));
+    return shouldKeep;
+  });
 }
 
 /**

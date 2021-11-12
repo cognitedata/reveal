@@ -227,7 +227,7 @@ export class Cognite3DViewer {
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
-    this.spinner.opacity = options.loadingIndicatorStyle?.opacity ?? 1.0;
+    this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
     this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
     this.camera.position.x = 30;
@@ -482,10 +482,7 @@ export class Cognite3DViewer {
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
-      .forEach(model => {
-        model.styledNodeCollections.forEach(nodeCollection => model.unassignStyledNodeCollection(nodeCollection.nodes));
-        model.styledNodeCollections.splice(0);
-      });
+      .forEach(model => model.removeAllStyledNodeCollections());
 
     return stateHelper.setState(state);
   }
@@ -1455,7 +1452,7 @@ export class Cognite3DViewer {
     return true;
   }
 
-  private startPointerEventListeners = () => {
+  private readonly startPointerEventListeners = () => {
     const canvas = this.canvas;
     const maxMoveDistance = 4;
     const maxClickDuration = 250;

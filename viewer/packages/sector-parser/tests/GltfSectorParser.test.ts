@@ -5,9 +5,10 @@
 import fs from 'fs';
 
 import 'jest-extended';
-import GltfSectorParser, { RevealGeometryCollectionType } from '../src/GltfSectorParser';
+import { GltfSectorParser } from '../src/GltfSectorParser';
+import { RevealGeometryCollectionType } from '../src/types';
 
-describe('GltfSectorParser Tests', () => {
+describe(GltfSectorParser.name, () => {
   let parsedResult: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[];
 
   beforeAll(() => {
@@ -45,7 +46,7 @@ describe('GltfSectorParser Tests', () => {
     const circles = circleResult[0].buffer;
 
     for (const attribute in circles.attributes) {
-      if (attribute.startsWith('a_')) expect(circles.attributes[attribute].count).toBe(10);
+      if (attribute.startsWith('a_')) expect(circles.attributes[attribute].count).toBe(24);
     }
 
     //Quad geometry
@@ -62,7 +63,7 @@ describe('GltfSectorParser Tests', () => {
     const cones = coneResult[0].buffer;
 
     for (const attribute in cones.attributes) {
-      if (attribute.startsWith('a_')) expect(cones.attributes[attribute].count).toBe(20);
+      if (attribute.startsWith('a_')) expect(cones.attributes[attribute].count).toBe(32);
     }
 
     // Double quad geometry
@@ -80,7 +81,7 @@ describe('GltfSectorParser Tests', () => {
     const eccentricCones = eccentricConeResult[0].buffer;
 
     for (const attribute in eccentricCones.attributes) {
-      if (attribute.startsWith('a_')) expect(eccentricCones.attributes[attribute].count).toBe(2);
+      if (attribute.startsWith('a_')) expect(eccentricCones.attributes[attribute].count).toBe(4);
     }
 
     // Double quad geometry
@@ -98,7 +99,7 @@ describe('GltfSectorParser Tests', () => {
     const ellipsoidSegments = ellipsoidSegmentResult[0].buffer;
 
     for (const attribute in ellipsoidSegments.attributes) {
-      if (attribute.startsWith('a_')) expect(ellipsoidSegments.attributes[attribute].count).toBe(8);
+      if (attribute.startsWith('a_')) expect(ellipsoidSegments.attributes[attribute].count).toBe(12);
     }
 
     // Double quad geometry
@@ -116,7 +117,7 @@ describe('GltfSectorParser Tests', () => {
     const generalCylinders = generalCylinderResult[0].buffer;
 
     for (const attribute in generalCylinders.attributes) {
-      if (attribute.startsWith('a_')) expect(generalCylinders.attributes[attribute].count).toBe(10);
+      if (attribute.startsWith('a_')) expect(generalCylinders.attributes[attribute].count).toBe(36);
     }
 
     // Double quad geometry
@@ -132,7 +133,7 @@ describe('GltfSectorParser Tests', () => {
     const generalRings = generalRingResult[0].buffer;
 
     for (const attribute in generalRings.attributes) {
-      if (attribute.startsWith('a_')) expect(generalRings.attributes[attribute].count).toBe(20);
+      if (attribute.startsWith('a_')) expect(generalRings.attributes[attribute].count).toBe(58);
     }
 
     // Quad geometry
@@ -164,7 +165,7 @@ describe('GltfSectorParser Tests', () => {
     const tori = torusResult[0].buffer;
 
     for (const attribute in tori.attributes) {
-      if (attribute.startsWith('a_')) expect(tori.attributes[attribute].count).toBe(4);
+      if (attribute.startsWith('a_')) expect(tori.attributes[attribute].count).toBe(6);
     }
 
     // Torus geometry
@@ -180,7 +181,7 @@ describe('GltfSectorParser Tests', () => {
     const trapeziums = trapeziumResult[0].buffer;
 
     for (const attribute in trapeziums.attributes) {
-      if (attribute.startsWith('a_')) expect(trapeziums.attributes[attribute].count).toBe(8);
+      if (attribute.startsWith('a_')) expect(trapeziums.attributes[attribute].count).toBe(16);
     }
 
     // Quad geometry
