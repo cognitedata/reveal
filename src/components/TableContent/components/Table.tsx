@@ -41,7 +41,7 @@ const StyledBaseTable = styled(BaseTable)`
     box-shadow: none;
   }
   .${TABLE_PREFIX}header-cell {
-    border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-top: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
   .${TABLE_PREFIX}row-cell {
     justify-content: flex-end;
@@ -49,8 +49,8 @@ const StyledBaseTable = styled(BaseTable)`
   }
   .${TABLE_PREFIX}header-cell, .${TABLE_PREFIX}row-cell {
     padding: 8px 16px;
-    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
-    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
   .${TABLE_PREFIX}header-cell:first-child,
     .${TABLE_PREFIX}row-cell:first-child {

@@ -127,7 +127,7 @@ export const Menu = (): JSX.Element => {
 };
 
 const Bar = styled(Flex)`
-  border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-left: 1px solid ${Colors['greyscale-grey3'].hex()};
   & > * {
     margin: 0 4px;
   }

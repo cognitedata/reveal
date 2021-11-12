@@ -58,5 +58,5 @@ export const Header = (): JSX.Element => {
 
 const Bar = styled(Flex)`
   padding-left: 8px;
-  border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
 `;

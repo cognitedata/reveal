@@ -11,6 +11,8 @@ import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
   DATABASE_LIST_MARGIN_RIGHT,
   DATABASE_LIST_WIDTH,
+  TOPBAR_NAVIGATION_HEIGHT,
+  TAB_HEIGHT,
 } from 'utils/constants';
 import { useActiveTable } from 'hooks/table-tabs';
 import { useParams } from 'react-router-dom';
@@ -24,8 +26,8 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 
 const StyledRawExplorerContent = styled.div`
   display: flex;
-  height: calc(100% - 50px);
   box-sizing: border-box;
+  height: calc(100% - ${TAB_HEIGHT + TOPBAR_NAVIGATION_HEIGHT}px);
 `;
 
 const StyledRawExplorerDatabaseListWrapper = styled.div`
@@ -69,7 +71,7 @@ const RawExplorer = (): JSX.Element => {
           {tabDatabase && tabTable && (
             <StyledRawExplorerTableContentWrapper>
               <TableTabList />
-              <TableContent database={tabDatabase} table={tabTable} />
+              <TableContent />
             </StyledRawExplorerTableContentWrapper>
           )}
         </StyledRawExplorerContent>
