@@ -9,6 +9,7 @@ import { ExternalIdFilter } from './Filters/ExternalIDFilter';
 import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 import { AnnotationFilter } from './Filters/AnnotationFilter';
 import { VisionFileFilterProps } from './Filters/types';
+import { TimeFilter } from './Filters/TimeFilter';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -71,18 +72,29 @@ export const getFilterPanelItems = (
   },
   {
     key: '4',
-    headerText: 'Date',
+    headerText: 'Date and Time',
     disableClear:
-      !filter.createdTime && !filter.uploadedTime && !filter.sourceCreatedTime,
+      !filter.createdTime &&
+      !filter.uploadedTime &&
+      !filter.sourceCreatedTime &&
+      !filter.dateFilter &&
+      !filter.timeRange,
     clear: () => {
       setFilter({
         ...filter,
         createdTime: undefined,
         uploadedTime: undefined,
         sourceCreatedTime: undefined,
+        dateFilter: undefined,
+        timeRange: undefined,
       });
     },
-    filterItem: <DateFilter filter={filter} setFilter={setFilter} />,
+    filterItem: (
+      <>
+        <DateFilter filter={filter} setFilter={setFilter} />
+        <TimeFilter filter={filter} setFilter={setFilter} />
+      </>
+    ),
   },
   {
     key: '6',
