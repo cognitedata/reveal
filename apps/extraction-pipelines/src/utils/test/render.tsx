@@ -5,10 +5,10 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { useForm, FormProvider } from 'react-hook-form';
-import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
+import { SelectedExtpipeProvider } from 'hooks/useSelectedExtpipe';
 import { AppEnvProvider } from 'hooks/useAppEnv';
-import { Integration, RegisterIntegrationInfo } from 'model/Integration';
-import { RegisterIntegrationProvider } from 'hooks/useStoredRegisterIntegration';
+import { Extpipe, RegisterExtpipeInfo } from 'model/Extpipe';
+import { RegisterExtpipeProvider } from 'hooks/useStoredRegisterExtpipe';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import {
   RunFilterProvider,
@@ -35,14 +35,14 @@ export const renderWithRouter = (
   return render(<Router history={history}>{ui}</Router>, renderOptions);
 };
 
-export const renderWithSelectedIntegrationContext = (
+export const renderWithSelectedExtpipeContext = (
   ui: React.ReactNode,
   {
-    initIntegration,
+    initExtpipe,
     client,
     route = EXTRACTION_PIPELINES_PATH,
     ...renderOptions
-  }: { initIntegration: Integration; client: QueryClient; route: string }
+  }: { initExtpipe: Extpipe; client: QueryClient; route: string }
 ) => {
   const history = createMemoryHistory();
   history.push(route);
@@ -50,9 +50,9 @@ export const renderWithSelectedIntegrationContext = (
   return render(
     <QueryClientProvider client={client}>
       <Router history={history}>
-        <SelectedIntegrationProvider initIntegration={initIntegration}>
+        <SelectedExtpipeProvider initExtpipe={initExtpipe}>
           {ui}
-        </SelectedIntegrationProvider>
+        </SelectedExtpipeProvider>
       </Router>
     </QueryClientProvider>,
     renderOptions
@@ -76,7 +76,7 @@ export const renderWithReactQueryCacheProvider = (
   return wrapper;
 };
 
-export const renderQueryCacheIntegration = (
+export const renderQueryCacheExtpipe = (
   client: QueryClient,
   project: string,
   cdfEnv: string,
@@ -94,16 +94,16 @@ export const renderQueryCacheIntegration = (
 
 function addModalElements() {
   const modalRoot = document.createElement('div');
-  modalRoot.setAttribute('class', 'integrations-ui-style-scope');
+  modalRoot.setAttribute('class', 'extpipes-ui-style-scope');
   document.body.appendChild(modalRoot);
 }
 
-export const renderWithReQueryCacheSelectedIntegrationContext = (
+export const renderWithReQueryCacheSelectedExtpipeContext = (
   client: QueryClient,
   project: string,
   cdfEnv: string,
   origin: string,
-  initIntegration?: Integration,
+  initExtpipe?: Extpipe,
   route: string = EXTRACTION_PIPELINES_PATH,
   runFilter?: RunFilterProviderProps
 ) => {
@@ -114,9 +114,9 @@ export const renderWithReQueryCacheSelectedIntegrationContext = (
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
         <RunFilterProvider {...runFilter}>
           <Router history={history}>
-            <SelectedIntegrationProvider initIntegration={initIntegration}>
+            <SelectedExtpipeProvider initExtpipe={initExtpipe}>
               {children}
-            </SelectedIntegrationProvider>
+            </SelectedExtpipeProvider>
           </Router>
         </RunFilterProvider>
       </AppEnvProvider>
@@ -133,7 +133,7 @@ export const renderRegisterContext = (
     cdfEnv,
     origin,
     route = EXTRACTION_PIPELINES_PATH,
-    initRegisterIntegration = {},
+    initRegisterExtpipe = {},
     ...renderOptions
   }: {
     client: QueryClient;
@@ -141,7 +141,7 @@ export const renderRegisterContext = (
     cdfEnv: string;
     origin: string;
     route: string;
-    initRegisterIntegration: Partial<RegisterIntegrationInfo>;
+    initRegisterExtpipe: Partial<RegisterExtpipeInfo>;
   }
 ) => {
   const history = createMemoryHistory();
@@ -151,11 +151,9 @@ export const renderRegisterContext = (
     ...render(
       <QueryClientProvider client={client}>
         <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-          <RegisterIntegrationProvider
-            initIntegration={initRegisterIntegration}
-          >
+          <RegisterExtpipeProvider initExtpipe={initRegisterExtpipe}>
             <Router history={history}>{ui}</Router>
-          </RegisterIntegrationProvider>
+          </RegisterExtpipeProvider>
         </AppEnvProvider>
       </QueryClientProvider>,
       renderOptions

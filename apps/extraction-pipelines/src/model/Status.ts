@@ -1,4 +1,4 @@
-import { Integration } from './Integration';
+import { Extpipe } from './Extpipe';
 
 export enum RunStatusUI {
   SUCCESS = 'Success',
@@ -17,4 +17,4 @@ export interface StatusObj {
   status: RunStatusUI;
   time: number;
 }
-export type LastStatuses = Pick<Integration, 'lastSuccess' | 'lastFailure'>;
+export type LastStatuses = Pick<Extpipe, 'lastSuccess' | 'lastFailure'>;

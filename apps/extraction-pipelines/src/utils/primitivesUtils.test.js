@@ -58,7 +58,7 @@ describe('isUrl', () => {
     },
     {
       text:
-        'https://docs.cognite.com/cdf/integration/guides/extraction/changelog/pi_extractor_changelog.html',
+        'https://docs.cognite.com/cdf/extpipe/guides/extraction/changelog/pi_extractor_changelog.html',
       expected: true,
     },
   ];

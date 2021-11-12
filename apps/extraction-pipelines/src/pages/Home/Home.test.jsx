@@ -8,8 +8,8 @@ import { createMemoryHistory } from 'history';
 import Home from 'pages/Home';
 import { getMockResponse } from 'utils/mockResponse';
 import {
-  renderWithReQueryCacheSelectedIntegrationContext,
-  renderWithSelectedIntegrationContext,
+  renderWithReQueryCacheSelectedExtpipeContext,
+  renderWithSelectedExtpipeContext,
 } from 'utils/test/render';
 import {
   CDF_ENV_GREENFIELD,
@@ -38,7 +38,7 @@ describe('<Home />', () => {
     const route = `/${PROJECT_ITERA_INT_GREEN}/${EXTRACTION_PIPELINES_PATH}`;
     history.push(route);
     const client = new QueryClient();
-    const { wrapper } = renderWithReQueryCacheSelectedIntegrationContext(
+    const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
       client,
       ORIGIN_DEV,
       PROJECT_ITERA_INT_GREEN,
@@ -59,15 +59,15 @@ describe('<Home />', () => {
     expect(headings[0].textContent).toEqual(EXTRACTION_PIPELINES);
     expect(headings.length).toEqual(1);
   });
-  test('Redirects none existing route to integrations home page', async () => {
+  test('Redirects none existing route to extpipes home page', async () => {
     const history = createMemoryHistory();
     const nonExistingRoute = `nonexisting-route`;
     const route = `/${PROJECT_ITERA_INT_GREEN}/${EXTRACTION_PIPELINES_PATH}/${nonExistingRoute}`;
     history.push(route);
 
-    renderWithSelectedIntegrationContext(<Home />, {
+    renderWithSelectedExtpipeContext(<Home />, {
       client: new QueryClient(),
-      initIntegration: null,
+      initExtpipe: null,
     });
     expect(history.location.pathname).toEqual(route);
   });

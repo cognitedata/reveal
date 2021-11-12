@@ -5,12 +5,12 @@ import React, {
   useState,
 } from 'react';
 import { ModalContent } from 'components/modals/ModalContent';
-import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import { useIntegrationById } from 'hooks/useIntegration';
+import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
+import { useExtpipeById } from 'hooks/useExtpipe';
 import * as yup from 'yup';
 import { StyledTitle3 } from 'styles/StyledHeadings';
-import { DetailFieldNames, IntegrationRawTable } from 'model/Integration';
-import { selectedRawTablesRule } from 'utils/validation/integrationSchemas';
+import { DetailFieldNames, ExtpipeRawTable } from 'model/Extpipe';
+import { selectedRawTablesRule } from 'utils/validation/extpipeSchemas';
 import { useForm } from 'react-hook-form';
 import { mapStoredToDefault } from 'utils/raw/rawUtils';
 import {
@@ -34,7 +34,7 @@ interface RawEditModalProps {
 const pageSchema = yup.object().shape({ ...selectedRawTablesRule });
 
 interface ModalFormInput {
-  selectedRawTables: IntegrationRawTable[];
+  selectedRawTables: ExtpipeRawTable[];
 }
 
 export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
@@ -43,13 +43,13 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
 }: PropsWithChildren<RawEditModalProps>) => {
   const { project } = useAppEnv();
   const { data: databases } = useRawDBAndTables();
-  const { integration: selected } = useSelectedIntegration();
-  const { data: storedIntegration } = useIntegrationById(selected?.id);
+  const { extpipe: selected } = useSelectedExtpipe();
+  const { data: storedExtpipe } = useExtpipeById(selected?.id);
   const { mutate } = useDetailsUpdate();
   const methods = useForm<ModalFormInput>({
     resolver: yupResolver(pageSchema),
     defaultValues: {
-      selectedRawTables: mapStoredToDefault(storedIntegration?.rawTables)
+      selectedRawTables: mapStoredToDefault(storedExtpipe?.rawTables)
         .selectedRawTables,
     },
   });
@@ -60,15 +60,15 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   }, [register]);
 
   useEffect(() => {
-    setValue('selectedRawTables', storedIntegration?.rawTables ?? []);
-  }, [setValue, storedIntegration]);
+    setValue('selectedRawTables', storedExtpipe?.rawTables ?? []);
+  }, [setValue, storedExtpipe]);
 
-  const saveChanges = async (values: IntegrationRawTable[]) => {
+  const saveChanges = async (values: ExtpipeRawTable[]) => {
     clearErrors('selectedRawTables');
-    if (storedIntegration && project) {
+    if (storedExtpipe && project) {
       const t = createUpdateSpec({
         project,
-        id: storedIntegration.id,
+        id: storedExtpipe.id,
         fieldValue: values,
         fieldName: 'rawTables',
       });
@@ -112,7 +112,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
             close={close}
             databases={databases}
             onSave={(tables) => saveChanges(tables)}
-            initial={storedIntegration?.rawTables || []}
+            initial={storedExtpipe?.rawTables || []}
           />
         )}
       </ModalContent>
@@ -127,9 +127,9 @@ const Col = styled.div`
 `;
 
 type ViewProps = {
-  initial: IntegrationRawTable[];
+  initial: ExtpipeRawTable[];
   close: () => void;
-  onSave: (tables: IntegrationRawTable[]) => void;
+  onSave: (tables: ExtpipeRawTable[]) => void;
   databases: DatabaseWithTablesItem[];
 };
 export const RawEditModalView = ({
@@ -168,14 +168,14 @@ export const RawEditModalView = ({
       <ModalContent>
         <Col>
           <Col>
-            {tables.map((table: IntegrationRawTable, index) => (
+            {tables.map((table: ExtpipeRawTable, index) => (
               <div css="display: flex; gap: 0.5rem">
                 <div css="flex: 1">
                   <Select
                     closeMenuOnSelect
                     onChange={(selection: {
                       label: string;
-                      value: IntegrationRawTable;
+                      value: ExtpipeRawTable;
                     }) => {
                       if (selection == null) return;
                       setTables(

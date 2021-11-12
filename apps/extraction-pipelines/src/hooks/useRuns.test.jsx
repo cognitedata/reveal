@@ -9,7 +9,7 @@ import { RunStatusAPI, RunStatusUI } from 'model/Status';
 import { getBaseUrl } from 'utils/baseURL';
 
 describe('useRuns', () => {
-  const externalId = 'dataIntegration000-1';
+  const externalId = 'dataExtpipe000-1';
   let client;
   let wrapper;
   beforeEach(() => {

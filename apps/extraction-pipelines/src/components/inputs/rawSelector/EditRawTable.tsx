@@ -1,22 +1,22 @@
 import React, { FunctionComponent, useState } from 'react';
-import { DetailFieldNames, Integration } from 'model/Integration';
+import { DetailFieldNames, Extpipe } from 'model/Extpipe';
 import { RawEditModal } from 'components/modals/RawEditModal';
-import { TEST_ID_BTN_SAVE } from 'components/integration/DocumentationSection';
-import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import { useIntegrationById } from 'hooks/useIntegration';
+import { TEST_ID_BTN_SAVE } from 'components/extpipe/DocumentationSection';
+import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
+import { useExtpipeById } from 'hooks/useExtpipe';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
-import { EditableAreaButton } from 'components/integration/EditableAreaButton';
+import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
 
 const RawTableWrapper = styled.div``;
 
 const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const [showRawModal, setShowRawModal] = useState(false);
-  const { integration: selected } = useSelectedIntegration();
-  const { data: storedIntegration } = useIntegrationById(selected?.id);
+  const { extpipe: selected } = useSelectedExtpipe();
+  const { data: storedExtpipe } = useExtpipeById(selected?.id);
 
   const toggleModal = (show: boolean) => {
     return () => {
@@ -26,8 +26,8 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
     };
   };
 
-  const renderRaw = (integration?: Integration) => {
-    if (!integration?.rawTables?.length) {
+  const renderRaw = (extpipe?: Extpipe) => {
+    if (!extpipe?.rawTables?.length) {
       return (
         <AddFieldValueBtn canEdit={canEdit} onClick={toggleModal(true)}>
           {DetailFieldNames.RAW_TABLE.toLowerCase()}
@@ -51,7 +51,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
           $full
         >
           <div>
-            {integration.rawTables.map(({ dbName, tableName }) => {
+            {extpipe.rawTables.map(({ dbName, tableName }) => {
               return (
                 <DivFlex role="row" key={`${dbName}-${tableName}`}>
                   <a
@@ -83,7 +83,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
 
   return (
     <>
-      <div>{renderRaw(storedIntegration)}</div>
+      <div>{renderRaw(storedExtpipe)}</div>
       <RawEditModal visible={showRawModal} close={toggleModal(false)} />
     </>
   );

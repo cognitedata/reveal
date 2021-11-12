@@ -1,5 +1,5 @@
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
 import React from 'react';
 import { render } from 'utils/test';
 import { fireEvent, screen } from '@testing-library/react';

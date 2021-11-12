@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderWithReactHookForm } from 'utils/test/render';
 import { datasetMockResponse } from 'utils/mockResponse';
-import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { DATA_SET_ID_HINT } from 'utils/constants';
 import DataSetIdInput from 'pages/create/DataSetIdInput';
 

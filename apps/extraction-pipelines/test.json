@@ -1,8 +1,8 @@
 [
   {
-    "externalId": "dataIntegration0001",
-    "name": "Azure Integration",
-    "description": "Dummy integration to Azure",
+    "externalId": "dataExtpipe0001",
+    "name": "Azure Extpipe",
+    "description": "Dummy extpipe to Azure",
     "dataSetId": "DataSetExternalId10",
     "schedule": "0 0 9 1/1 * ? *",
     "owner": {

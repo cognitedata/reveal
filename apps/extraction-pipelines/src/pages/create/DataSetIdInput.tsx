@@ -8,7 +8,7 @@ import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOpti
 import { InputController } from 'components/inputs/InputController';
 import { Hint } from 'styles/StyledForm';
 import ValidationError from 'components/form/ValidationError';
-import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { DATA_SET_ID_HINT } from 'utils/constants';
 
 const StyledAutoComplete = styled(AutoComplete)`

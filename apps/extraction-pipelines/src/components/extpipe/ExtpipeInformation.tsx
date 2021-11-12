@@ -1,0 +1,115 @@
+import React, { FunctionComponent } from 'react';
+import InlineEdit from 'components/extpipe/InlineEdit';
+import { DetailFieldNames } from 'model/Extpipe';
+import * as yup from 'yup';
+import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
+import { useExtpipeById } from 'hooks/useExtpipe';
+import { TableHeadings } from 'components/table/ExtpipeTableCol';
+import { Schedule } from 'components/extpipe/edit/Schedule';
+import { rootUpdate } from 'hooks/details/useDetailsUpdate';
+import { useAppEnv } from 'hooks/useAppEnv';
+import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
+import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
+import { ContactsView } from 'components/extpipe/ContactsView';
+import { MetaData } from 'components/extpipe/MetaData';
+import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
+import { Section } from 'components/extpipe/Section';
+
+interface ExtpipeInformationProps {
+  canEdit: boolean;
+}
+
+export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
+  canEdit,
+}) => {
+  const { project } = useAppEnv();
+  const { extpipe: selected } = useSelectedExtpipe();
+  const { data: extpipe } = useExtpipeById(selected?.id);
+  if (!extpipe || !project) {
+    return null;
+  }
+
+  return (
+    <>
+      <Section title="Basic information" icon="World">
+        <InlineEdit
+          name="description"
+          label={DetailFieldNames.DESCRIPTION}
+          canEdit={canEdit}
+          schema={yup.object().shape({
+            description: yup.string(),
+          })}
+          defaultValues={{ description: extpipe?.description }}
+          fullWidth
+          updateFn={rootUpdate({ extpipe, name: 'description', project })}
+          marginBottom
+          showLabel
+        />
+        <EditDataSetId canEdit={canEdit} />
+        <InlineEdit
+          name="source"
+          label={DetailFieldNames.SOURCE}
+          canEdit={canEdit}
+          schema={yup.object().shape({})}
+          updateFn={rootUpdate({ extpipe, name: 'source', project })}
+          defaultValues={{
+            source: extpipe?.source,
+          }}
+          fullWidth
+          showLabel
+          marginBottom
+        />
+        <InlineEdit
+          name="externalId"
+          label={DetailFieldNames.EXTERNAL_ID}
+          canEdit={canEdit}
+          schema={yup.object().shape({
+            externalId: yup.string().required('ExternalId is required'),
+          })}
+          defaultValues={{ externalId: extpipe?.externalId }}
+          fullWidth
+          updateFn={rootUpdate({ extpipe, name: 'externalId', project })}
+          marginBottom
+          showLabel
+        />
+        <Schedule
+          name="schedule"
+          extpipe={extpipe}
+          label={TableHeadings.SCHEDULE}
+          canEdit={canEdit}
+        />
+      </Section>
+      <Section title="Contacts" icon="Public">
+        <ContactsView canEdit={canEdit} />
+      </Section>
+      <Section title="RAW tables" icon="Table">
+        <EditRawTable canEdit={canEdit} />
+      </Section>
+      <Section title="Metadata" icon="DataTable">
+        <MetaData canEdit={canEdit} />
+      </Section>
+      <Section title="About extraction pipeline" icon="Info">
+        <FieldVerticalDisplay
+          label={DetailFieldNames.ID}
+          fieldName="id"
+          fieldValue={extpipe?.id}
+        />
+        <FieldVerticalDisplay
+          label={DetailFieldNames.CREATED_BY}
+          fieldName="createdBy"
+          fieldValue={extpipe?.createdBy}
+        />
+        <FieldVerticalDisplay
+          label={DetailFieldNames.CREATED_TIME}
+          fieldName="createdTime"
+          fieldValue={extpipe?.createdTime}
+        />
+        <FieldVerticalDisplay
+          label={DetailFieldNames.LAST_UPDATED_TIME}
+          fieldName="lastUpdatedTime"
+          fieldValue={extpipe?.lastUpdatedTime}
+        />
+      </Section>
+    </>
+  );
+};

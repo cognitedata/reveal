@@ -1,16 +1,16 @@
 import { DataSet, ListResponse } from '@cognite/sdk';
-import { Integration } from 'model/Integration';
+import { Extpipe } from 'model/Extpipe';
 import { DataSetMetadata, DataSetModel } from 'model/DataSetModel';
-import { DataSetOptions } from 'utils/validation/integrationSchemas';
+import { DataSetOptions } from 'utils/validation/extpipeSchemas';
 
 export interface DataSetFormInput {
   dataset: string;
   dataSetId: string;
 }
 
-export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
-  return integrations
-    ? integrations.reduce((acc: { id: number }[], curr) => {
+export const mapUniqueDataSetIds = (extpipes?: Extpipe[]) => {
+  return extpipes
+    ? extpipes.reduce((acc: { id: number }[], curr) => {
         if (curr.dataSetId && !acc.find((v) => v.id === curr.dataSetId)) {
           return [...acc, { id: curr.dataSetId }];
         }
@@ -19,17 +19,17 @@ export const mapUniqueDataSetIds = (integrations?: Integration[]) => {
     : [];
 };
 
-export const mapDataSetToIntegration = (
-  integrations?: Integration[],
+export const mapDataSetToExtpipe = (
+  extpipes?: Extpipe[],
   dataSets?: DataSetModel[]
 ) => {
-  return integrations
-    ? integrations.map((integration) => {
+  return extpipes
+    ? extpipes.map((extpipe) => {
         const dataSetMatch = dataSets?.filter((data: DataSetModel) => {
-          return data.id === integration.dataSetId;
+          return data.id === extpipe.dataSetId;
         });
         return {
-          ...integration,
+          ...extpipe,
           dataSet: dataSetMatch ? dataSetMatch[0] : undefined,
         };
       })

@@ -2,29 +2,29 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
-const LazyIntegrations = React.lazy(
+const LazyExtpipes = React.lazy(
   () =>
     import(
-      '../pages/Integrations/Integrations'
-      /* webpackChunkName: "pnid_integrations" */
+      '../pages/Extpipes/Extpipes'
+      /* webpackChunkName: "pnid_extpipes" */
     )
 );
-const LazyIntegration = React.lazy(
+const LazyExtpipe = React.lazy(
   () =>
     import(
-      '../pages/Integration/IntegrationPage'
-      /* webpackChunkName: "pnid_integration" */
+      '../pages/Extpipe/ExtpipePage'
+      /* webpackChunkName: "pnid_extpipe" */
     )
 );
 
-const LazyCreateIntegrationCreateRoot = React.lazy(
+const LazyCreateExtpipeCreateRoot = React.lazy(
   () =>
     import(
       '../pages/create/Create'
-      /* webpackChunkName: "pnid_integration_create_create_routes" */
+      /* webpackChunkName: "pnid_extpipe_create_create_routes" */
     )
 );
-interface IntegrationsRoute {
+interface ExtpipesRoute {
   name: string;
   path: string;
   exact?: boolean;
@@ -37,23 +37,23 @@ export const HEALTH_PATH: Readonly<string> = 'health';
 export const CREATE_EXT_PIPE_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}/create`;
 export const EXT_PIPES_OVERVIEW_PAGE_PATH = `/${EXTRACTION_PIPELINES_PATH}`;
 
-export const routingConfig: IntegrationsRoute[] = [
+export const routingConfig: ExtpipesRoute[] = [
   {
-    name: 'Integrations',
+    name: 'Extpipes',
     path: `/:tenant${EXT_PIPES_OVERVIEW_PAGE_PATH}`,
     exact: true,
-    component: LazyIntegrations,
+    component: LazyExtpipes,
   },
   {
-    name: 'Create integration - create',
+    name: 'Create extpipe - create',
     path: `/:tenant${CREATE_EXT_PIPE_PAGE_PATH}`,
-    component: LazyCreateIntegrationCreateRoot,
+    component: LazyCreateExtpipeCreateRoot,
   },
   {
-    name: 'Integration',
+    name: 'Extpipe',
     path: `/:tenant/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/:id`,
     exact: false,
-    component: LazyIntegration,
+    component: LazyExtpipe,
   },
 ];
 

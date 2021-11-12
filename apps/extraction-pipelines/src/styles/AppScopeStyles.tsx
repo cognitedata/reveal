@@ -15,5 +15,5 @@ DateRange.defaultProps = {
 };
 
 export default function AppScopeStyles(props: { children: React.Node }) {
-  return <div className="integrations-ui-style-scope">{props.children}</div>;
+  return <div className="extpipes-ui-style-scope">{props.children}</div>;
 }

@@ -1,24 +1,24 @@
 import Schedule, {
   InteractiveCopyWrapper,
-} from 'components/integrations/cols/Schedule';
+} from 'components/extpipes/cols/Schedule';
 import React from 'react';
 import { DataSet } from '@cognite/sdk';
-import StatusMarker from 'components/integrations/cols/StatusMarker';
+import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { RunStatusUI } from 'model/Status';
 import InteractiveCopy from 'components/InteractiveCopy';
-import { DataSet as DataSetDisplay } from 'components/integrations/cols/DataSet';
-import RelativeTimeWithTooltip from 'components/integrations/cols/RelativeTimeWithTooltip';
+import { DataSet as DataSetDisplay } from 'components/extpipes/cols/DataSet';
+import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 import {
-  IntegrationFieldName,
-  IntegrationFieldValue,
-  IntegrationRawTable,
-} from 'model/Integration';
-import RawTable from 'components/integrations/cols/RawTable';
+  ExtpipeFieldName,
+  ExtpipeFieldValue,
+  ExtpipeRawTable,
+} from 'model/Extpipe';
+import RawTable from 'components/extpipes/cols/RawTable';
 import EmailLink from 'components/buttons/EmailLink';
 
 interface DetailsValueViewProps {
-  fieldValue: IntegrationFieldValue;
-  fieldName: IntegrationFieldName;
+  fieldValue: ExtpipeFieldValue;
+  fieldName: ExtpipeFieldName;
 }
 
 const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
@@ -61,7 +61,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       );
     }
     case 'rawTables': {
-      return <RawTable rawTables={fieldValue as IntegrationRawTable[]} />;
+      return <RawTable rawTables={fieldValue as ExtpipeRawTable[]} />;
     }
     case 'externalId':
       return (

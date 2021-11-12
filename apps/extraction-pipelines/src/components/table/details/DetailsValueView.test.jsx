@@ -4,19 +4,19 @@ import moment from 'moment';
 import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { render } from 'utils/test';
-import { calculateStatus } from 'utils/integrationUtils';
+import { calculateStatus } from 'utils/extpipeUtils';
 import { NO_DATA_SET_ID_SET } from 'utils/constants';
 
 const createCases = (mockResNumber, fieldName) => {
-  const integration = {
+  const extpipe = {
     ...getMockResponse()[mockResNumber],
     dataSet: mockDataSetResponse()[mockResNumber],
   };
-  const value = integration[`${fieldName}`];
+  const value = extpipe[`${fieldName}`];
   if (fieldName === 'latestRun') {
     const latest = {
-      lastSuccess: integration?.lastSuccess,
-      lastFailure: integration?.lastFailure,
+      lastSuccess: extpipe?.lastSuccess,
+      lastFailure: extpipe?.lastFailure,
     };
     const status = calculateStatus(latest);
     return { value: status.time, name: fieldName };
@@ -44,7 +44,7 @@ describe('<DetailsValueView />', () => {
     expect(copy).toBeInTheDocument();
   });
 
-  test('Display no data set when no data set is registered on integration', () => {
+  test('Display no data set when no data set is registered on extpipe', () => {
     render(<DetailsValueView fieldValue="" fieldName="dataSetId" />);
     const view = screen.getByText(NO_DATA_SET_ID_SET);
     expect(view).toBeInTheDocument();

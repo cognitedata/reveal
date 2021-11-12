@@ -1,11 +1,11 @@
 import { Select } from '@cognite/cogs.js';
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
-import { Integration } from 'model/Integration';
+import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
+import { Extpipe } from 'model/Extpipe';
 import { OptionTypeBase } from 'react-select';
 import { CSSObject } from '@emotion/serialize';
 
-type ScheduleValue = Pick<Integration, 'schedule'>;
+type ScheduleValue = Pick<Extpipe, 'schedule'>;
 const customStyles = {
   control: (styles: CSSObject) => ({
     ...styles,

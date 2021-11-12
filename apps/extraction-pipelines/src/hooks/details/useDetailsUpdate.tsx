@@ -1,67 +1,60 @@
 import { useMutation, useQueryClient } from 'react-query';
-import {
-  Integration,
-  IntegrationFieldName,
-  IntegrationFieldValue,
-} from 'model/Integration';
-import { IntegrationError } from 'model/SDKErrors';
-import { IntegrationUpdateSpec, saveUpdate } from 'utils/IntegrationsAPI';
+import { Extpipe, ExtpipeFieldName, ExtpipeFieldValue } from 'model/Extpipe';
+import { ExtpipeError } from 'model/SDKErrors';
+import { ExtpipeUpdateSpec, saveUpdate } from 'utils/ExtpipesAPI';
 import { FieldValues } from 'react-hook-form';
 
 export type UpdateSpec = {
   id: number;
   project: string;
-  fieldName: IntegrationFieldName;
-  fieldValue: IntegrationFieldValue;
+  fieldName: ExtpipeFieldName;
+  fieldValue: ExtpipeFieldValue;
 };
 
 export type DetailsUpdateContext = {
   project: string;
-  items: IntegrationUpdateSpec[];
+  items: ExtpipeUpdateSpec[];
   id: number;
 };
 export const useDetailsUpdate = () => {
   const queryClient = useQueryClient();
-  return useMutation<Integration, IntegrationError, DetailsUpdateContext>(
+  return useMutation<Extpipe, ExtpipeError, DetailsUpdateContext>(
     ({ project, items }) => {
       return saveUpdate(project, items);
     },
     {
       onMutate: (vars) => {
-        queryClient.cancelQueries(['integration', vars.id, vars.project]);
-        const previous: Integration | undefined = queryClient.getQueryData([
-          'integration',
+        queryClient.cancelQueries(['extpipe', vars.id, vars.project]);
+        const previous: Extpipe | undefined = queryClient.getQueryData([
+          'extpipe',
           vars.id,
           vars.project,
         ]);
         if (previous) {
-          const fields = mapUpdateToPartialIntegration(vars);
+          const fields = mapUpdateToPartialExtpipe(vars);
           const update = Object.assign({}, previous, ...fields);
-          queryClient.setQueryData(
-            ['integration', vars.id, vars.project],
-            update
-          );
+          queryClient.setQueryData(['extpipe', vars.id, vars.project], update);
         }
         return previous;
       },
       onError: (_, vars, previous) => {
         if (previous) {
           queryClient.setQueryData(
-            ['integration', vars.id, vars.project],
+            ['extpipe', vars.id, vars.project],
             previous
           );
         }
       },
       onSettled: (_, __, vars) => {
-        queryClient.invalidateQueries(['integration', vars.id, vars.project]);
+        queryClient.invalidateQueries(['extpipe', vars.id, vars.project]);
       },
     }
   );
 };
 
-export const mapUpdateToPartialIntegration = (
+export const mapUpdateToPartialExtpipe = (
   spec: DetailsUpdateContext
-): Partial<Integration>[] => {
+): Partial<Extpipe>[] => {
   const u = Object.entries(spec.items[0].update);
   return u.map(([k, v]) => {
     return { [k]: v.set };
@@ -86,18 +79,18 @@ export const createUpdateSpec = ({
   };
 };
 type RootUpdateParams = {
-  integration: Integration;
-  name: IntegrationFieldName;
+  extpipe: Extpipe;
+  name: ExtpipeFieldName;
   project: string;
 };
 export const rootUpdate = ({
-  integration,
+  extpipe,
   name,
   project,
 }: RootUpdateParams): ((field: FieldValues) => DetailsUpdateContext) => {
   return (field: FieldValues) => {
     return createUpdateSpec({
-      id: integration.id,
+      id: extpipe.id,
       project,
       fieldValue: field[name],
       fieldName: name,

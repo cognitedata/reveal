@@ -1,10 +1,10 @@
 import { FieldValues } from 'react-hook-form';
 import { ErrorObj } from 'model/SDKErrors';
-import { RegisterIntegrationInfo } from 'model/Integration';
+import { RegisterExtpipeInfo } from 'model/Extpipe';
 
 export const translateServerErrorMessage = <TFieldValues extends FieldValues>(
   data: ErrorObj | undefined,
-  info: Partial<RegisterIntegrationInfo>
+  info: Partial<RegisterExtpipeInfo>
 ): { field: keyof TFieldValues; message: string } => {
   if (data?.message === 'Some externalIds persist in database') {
     return {

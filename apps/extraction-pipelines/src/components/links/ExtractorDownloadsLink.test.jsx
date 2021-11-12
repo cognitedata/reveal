@@ -39,7 +39,7 @@ describe('ExtractorDownloadsTab', () => {
   });
 
   test('Render page and link with url', () => {
-    const url = 'https://docs.cognite.com/cdf/integration/';
+    const url = 'https://docs.cognite.com/cdf/extpipe/';
     render(
       <ExtractorDownloadsLink linkText="Download Extractors" link={{ url }} />,
       { wrapper }
@@ -50,7 +50,7 @@ describe('ExtractorDownloadsTab', () => {
   });
 
   test('Tracks click', () => {
-    const url = 'https://docs.cognite.com/cdf/integration/';
+    const url = 'https://docs.cognite.com/cdf/extpipe/';
     render(
       <ExtractorDownloadsLink linkText="Download Extractors" link={{ url }} />,
       { wrapper }

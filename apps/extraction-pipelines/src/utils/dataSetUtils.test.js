@@ -1,7 +1,7 @@
 import {
   getDataSetsLink,
   mapDataSetResponse,
-  mapDataSetToIntegration,
+  mapDataSetToExtpipe,
   mapUniqueDataSetIds,
   parseDataSetMeta,
 } from './dataSetUtils';
@@ -36,9 +36,9 @@ describe('Data set util', () => {
     expect(res.length).toEqual(3);
   });
 
-  test('mapDataSetToIntegration -', () => {
+  test('mapDataSetToExtpipe -', () => {
     const mockRes = getMockResponse();
-    const res = mapDataSetToIntegration(mockRes);
+    const res = mapDataSetToExtpipe(mockRes);
     expect(res.length).toEqual(mockRes.length);
   });
 
@@ -108,9 +108,9 @@ describe('Data set util', () => {
     expect(res[0].metadata.consoleOwners).toBeDefined();
   });
 
-  test('mapDataSetToIntegration - maps dataset to integration', () => {
+  test('mapDataSetToExtpipe - maps dataset to extpipe', () => {
     const dataSetsResponse = mockDataSetResponse();
-    const result = mapDataSetToIntegration(getMockResponse(), dataSetsResponse);
+    const result = mapDataSetToExtpipe(getMockResponse(), dataSetsResponse);
     expect(result.length).toEqual(getMockResponse().length);
     result.forEach((res) => {
       expect(res.dataSet).toBeDefined();
@@ -119,9 +119,9 @@ describe('Data set util', () => {
     });
   });
 
-  test('mapDataSetToIntegration - should not fail when dataset response is empty', () => {
+  test('mapDataSetToExtpipe - should not fail when dataset response is empty', () => {
     const dataSetsResponse = [];
-    const result = mapDataSetToIntegration(getMockResponse(), dataSetsResponse);
+    const result = mapDataSetToExtpipe(getMockResponse(), dataSetsResponse);
     expect(result.length).toEqual(getMockResponse().length);
     result.forEach((res) => {
       expect(res.dataSet).toBeUndefined();

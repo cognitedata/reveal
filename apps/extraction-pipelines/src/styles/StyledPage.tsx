@@ -5,7 +5,7 @@ import {
   mainContentSpaceAround,
   mainContentSpaceSides,
 } from 'styles/StyledVariables';
-import { StyledRouterLink } from 'components/integrations/cols/Name';
+import { StyledRouterLink } from 'components/extpipes/cols/Name';
 import { MainFullWidthGrid, Span3 } from 'styles/grid/StyledGrid';
 
 export const PageWrapper = styled.div`

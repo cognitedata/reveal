@@ -9,7 +9,7 @@ import {
 } from 'hooks/runs/RunsFilterContext';
 
 const Wrapper = styled(DivFlex)`
-  .integrations-ui-style-scope {
+  .extpipes-ui-style-scope {
     .tippy-box {
       background-color: transparent;
     }

@@ -50,7 +50,7 @@ interface StateType {
 
 type ContextActions = UpdateActions;
 
-interface IntegrationContextType {
+interface ExtpipeContextType {
   state: StateType;
   dispatch: React.Dispatch<ContextActions>;
 }
@@ -64,7 +64,7 @@ const initialState = {
   search: '',
 };
 
-const RunFilterContext = React.createContext<IntegrationContextType>({
+const RunFilterContext = React.createContext<ExtpipeContextType>({
   state: initialState,
   dispatch: () => null,
 });

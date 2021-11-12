@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import {
   createUpdateSpec,
-  mapUpdateToPartialIntegration,
+  mapUpdateToPartialExtpipe,
   rootUpdate,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
@@ -34,9 +34,9 @@ describe('useDetailsUpdate', () => {
     jest.resetAllMocks();
   });
 
-  test('Returns integrations on success', async () => {
-    const integrationsResponse = getMockResponse()[1];
-    sdkv3.post.mockResolvedValue({ data: { items: [integrationsResponse] } });
+  test('Returns extpipes on success', async () => {
+    const extpipesResponse = getMockResponse()[1];
+    sdkv3.post.mockResolvedValue({ data: { items: [extpipesResponse] } });
 
     const { result } = renderHook(() => useDetailsUpdate(), {
       wrapper,
@@ -53,7 +53,7 @@ describe('useDetailsUpdate', () => {
     await act(() => {
       return mutateAsync({ project: PROJECT_ITERA_INT_GREEN, items, id });
     });
-    expect(result.current.data.name).toEqual(integrationsResponse.name);
+    expect(result.current.data.name).toEqual(extpipesResponse.name);
     expect(client.invalidateQueries).toHaveBeenCalledTimes(1);
   });
 
@@ -84,16 +84,16 @@ describe('useDetailsUpdate', () => {
 });
 
 describe('createFieldData', () => {
-  const mockIntegration = getMockResponse()[0];
+  const mockExtpipe = getMockResponse()[0];
   const newDocumentationField = 'This is the new documentation';
   const meta = {
     project: '',
     fieldName: 'metadata',
     fieldValue: {
-      ...mockIntegration.metadata,
+      ...mockExtpipe.metadata,
       documentation: newDocumentationField,
     },
-    id: mockIntegration.id,
+    id: mockExtpipe.id,
   };
   const contacts = {
     project: '',
@@ -102,13 +102,13 @@ describe('createFieldData', () => {
       { name: 'test', email: 'test@test.no' },
       { name: 'foo', email: 'foo@test.no' },
     ],
-    id: mockIntegration.id,
+    id: mockExtpipe.id,
   };
   const externalId = {
     project: '',
     fieldName: 'externalId',
     fieldValue: 'my_external_id',
-    id: mockIntegration.id,
+    id: mockExtpipe.id,
   };
   const cases = [
     {
@@ -128,8 +128,8 @@ describe('createFieldData', () => {
     },
   ];
   cases.forEach(({ desc, fields, expected }) => {
-    test(`Maps update obj back to partial integration - ${desc}`, () => {
-      const res = mapUpdateToPartialIntegration(createUpdateSpec(fields));
+    test(`Maps update obj back to partial extpipe - ${desc}`, () => {
+      const res = mapUpdateToPartialExtpipe(createUpdateSpec(fields));
       const { fieldName } = fields;
       expect(res[0][fieldName]).toBeDefined();
       expect(res[0][fieldName]).toEqual(expected);
@@ -178,7 +178,7 @@ describe('rootUpdate', () => {
     {
       fieldName: 'externalId',
       value: {
-        integration: mock,
+        extpipe: mock,
         name: 'externalId',
         project: PROJECT_ITERA_INT_GREEN,
       },
@@ -189,7 +189,7 @@ describe('rootUpdate', () => {
     {
       fieldName: 'source',
       value: {
-        integration: mock,
+        extpipe: mock,
         name: 'source',
         project: PROJECT_ITERA_INT_GREEN,
       },

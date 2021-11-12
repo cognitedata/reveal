@@ -1,5 +1,5 @@
 import { RawDBTable } from '@cognite/sdk';
-import { IntegrationRawTable } from 'model/Integration';
+import { ExtpipeRawTable } from 'model/Extpipe';
 import { DatabaseWithTablesItem } from 'hooks/useRawDBAndTables';
 
 export enum RawTableOptions {
@@ -8,7 +8,7 @@ export enum RawTableOptions {
 }
 export interface RawTableFormInput {
   rawTable: RawTableOptions | '';
-  selectedRawTables: IntegrationRawTable[];
+  selectedRawTables: ExtpipeRawTable[];
 }
 
 interface Args {
@@ -36,7 +36,7 @@ export const getDatabaseTables = ({
 };
 
 export const mapStoredToDefault = (
-  rawTables: IntegrationRawTable[] | undefined
+  rawTables: ExtpipeRawTable[] | undefined
 ): RawTableFormInput => {
   if (!rawTables) {
     return {

@@ -4,7 +4,7 @@ import { Switch, Redirect, useLocation } from 'react-router-dom';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { Routes } from 'routing/RoutingConfig';
-import { SelectedIntegrationProvider } from 'hooks/useSelectedIntegration';
+import { SelectedExtpipeProvider } from 'hooks/useSelectedExtpipe';
 
 const Home = () => {
   const { search } = useLocation();
@@ -12,7 +12,7 @@ const Home = () => {
   return (
     <Suspense fallback={<Loader />}>
       <ToastContainer />
-      <SelectedIntegrationProvider>
+      <SelectedExtpipeProvider>
         <Switch>
           <Routes />
           <Redirect
@@ -22,7 +22,7 @@ const Home = () => {
             }}
           />
         </Switch>
-      </SelectedIntegrationProvider>
+      </SelectedExtpipeProvider>
     </Suspense>
   );
 };

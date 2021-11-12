@@ -1,7 +1,7 @@
-import { Integration } from 'model/Integration';
+import { Extpipe } from 'model/Extpipe';
 import { DataSetModel } from 'model/DataSetModel';
 import { RunApi } from 'model/Runs';
-import { mapDataSetToIntegration } from 'utils/dataSetUtils';
+import { mapDataSetToExtpipe } from 'utils/dataSetUtils';
 import moment from 'moment';
 
 export const mockDataSetResponse = (): DataSetModel[] => [
@@ -38,15 +38,15 @@ export const mockDataSetResponse = (): DataSetModel[] => [
   } as DataSetModel,
 ];
 
-const mockResponseV2: { nextCursor: string; items: Integration[] } = {
+const mockResponseV2: { nextCursor: string; items: Extpipe[] } = {
   items: [
     {
       createdTime: 1601589600000,
       lastUpdatedTime: 1584137100000,
-      externalId: 'dataIntegration0001',
-      name: 'Azure Integration',
+      externalId: 'dataExtpipe0001',
+      name: 'Azure Extpipe',
       createdBy: 'test@test.no',
-      description: 'Dummy integration to Azure',
+      description: 'Dummy extpipe to Azure',
       documentation: 'This is the new documentation field',
       source: 'My source system',
       dataSetId: 1398950266713987,
@@ -81,9 +81,9 @@ const mockResponseV2: { nextCursor: string; items: Integration[] } = {
     {
       createdTime: 1584065700000,
       lastUpdatedTime: 1584137100000,
-      externalId: 'dataIntegration0002',
-      name: 'SAP Integration',
-      description: 'Dummy integration to SAP',
+      externalId: 'dataExtpipe0002',
+      name: 'SAP Extpipe',
+      description: 'Dummy extpipe to SAP',
       dataSetId: 1469810437954362,
       rawTables: [
         {
@@ -113,9 +113,9 @@ const mockResponseV2: { nextCursor: string; items: Integration[] } = {
     {
       createdTime: 1584065700000,
       lastUpdatedTime: 1584137100000,
-      externalId: 'dataIntegration0003',
-      name: 'PI AF integration',
-      description: 'Dummy PI AF integration',
+      externalId: 'dataExtpipe0003',
+      name: 'PI AF extpipe',
+      description: 'Dummy PI AF extpipe',
       source: 'This is the source',
       dataSetId: 1469810437954369,
       rawTables: [
@@ -148,7 +148,7 @@ const mockResponseV2: { nextCursor: string; items: Integration[] } = {
     {
       createdTime: 1584065700000,
       lastUpdatedTime: 1584137100000,
-      externalId: 'dataIntegration0004',
+      externalId: 'dataExtpipe0004',
       name: 'PI Time Series',
       description: 'Dummy PI time series',
       lastSuccess: 1584064700000,
@@ -186,9 +186,9 @@ const mockResponseV2: { nextCursor: string; items: Integration[] } = {
     {
       createdTime: 1584065700000,
       lastUpdatedTime: 1584137100000,
-      externalId: 'dataIntegration0004',
-      name: 'Newly created integration',
-      description: 'This integration is created but not run',
+      externalId: 'dataExtpipe0004',
+      name: 'Newly created extpipe',
+      description: 'This extpipe is created but not run',
       lastSuccess: 0,
       lastFailure: 0,
       lastSeen: 0,
@@ -209,11 +209,11 @@ const mockResponseV2: { nextCursor: string; items: Integration[] } = {
   nextCursor: '',
 };
 
-export const getMockResponse = (): Integration[] => {
+export const getMockResponse = (): Extpipe[] => {
   return mockResponseV2.items;
 };
-export const getMockIntegrationsWithDataSets = () => {
-  return mapDataSetToIntegration(getMockResponse(), mockDataSetResponse());
+export const getMockExtpipesWithDataSets = () => {
+  return mapDataSetToExtpipe(getMockResponse(), mockDataSetResponse());
 };
 
 export const mockError = {

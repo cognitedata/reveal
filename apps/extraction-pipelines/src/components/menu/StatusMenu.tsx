@@ -1,9 +1,9 @@
 import { StyledDropdown } from 'styles/StyledDropdown';
 import { Badge, Button, Colors, Menu } from '@cognite/cogs.js';
-import { TableHeadings } from 'components/table/IntegrationTableCol';
+import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import React, { PropsWithoutRef } from 'react';
 import { RunStatusUI } from 'model/Status';
-import StatusMarker from 'components/integrations/cols/StatusMarker';
+import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import styled from 'styled-components';
 
 const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`

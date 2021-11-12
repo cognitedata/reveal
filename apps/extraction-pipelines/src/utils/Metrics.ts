@@ -39,6 +39,6 @@ export const trackUsage = (event: Event) => {
     pathname: pathWithoutTenant,
   };
   if (!host.includes('localhost')) {
-    trackEvent(`Integrations.${t}`, options);
+    trackEvent(`Extpipes.${t}`, options);
   }
 };

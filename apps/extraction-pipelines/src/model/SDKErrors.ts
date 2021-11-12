@@ -15,7 +15,7 @@ export interface ErrorVariations {
   duplicated?: Record<string, string>[];
 }
 
-export interface IntegrationError {
+export interface ExtpipeError {
   data: ErrorObj;
 }
 

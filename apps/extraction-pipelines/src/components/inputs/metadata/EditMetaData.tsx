@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useSelectedIntegration } from 'hooks/useSelectedIntegration';
-import { useIntegrationById } from 'hooks/useIntegration';
+import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
+import { useExtpipeById } from 'hooks/useExtpipe';
 import { toCamelCase, uppercaseFirstWord } from 'utils/primitivesUtils';
 import {
   createUpdateSpec,
@@ -141,8 +141,8 @@ export const EditMetaDataView = ({
 };
 
 export const EditMetaData = (props: SuperProps) => {
-  const { integration } = useSelectedIntegration();
-  const { data: current } = useIntegrationById(integration?.id);
+  const { extpipe } = useSelectedExtpipe();
+  const { data: current } = useExtpipeById(extpipe?.id);
   const { mutate } = useDetailsUpdate();
   const { project } = useAppEnv();
 

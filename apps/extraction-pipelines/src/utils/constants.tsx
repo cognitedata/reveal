@@ -47,7 +47,7 @@ export const DESCRIPTION_HINT: Readonly<string> =
   'Describe the extraction pipeline data. This field is optional.';
 export const DESCRIPTION_LABEL: Readonly<string> = 'Description';
 
-export const INTEGRATION_SCHEDULE_HINT: Readonly<string> =
+export const EXTPIPE_SCHEDULE_HINT: Readonly<string> =
   'Select the schedule for running the extraction pipeline.';
 export const NO_SCHEDULE: Readonly<string> = 'Not defined';
 
@@ -87,7 +87,7 @@ export const DOCUMENTATION_HINT: Readonly<ReactFragment> = (
 export const SOURCE_HINT: Readonly<string> =
   'Enter the name of the extraction pipeline source system.';
 
-export const INTEGRATION_EXTERNAL_ID_HEADING: Readonly<string> = 'External ID';
+export const EXTPIPE_EXTERNAL_ID_HEADING: Readonly<string> = 'External ID';
 export const EXTERNAL_ID_HINT: Readonly<string> = `Enter a unique identifier. Use this ID when setting up status and heartbeat reporting for extractors.`;
 
 // error msg

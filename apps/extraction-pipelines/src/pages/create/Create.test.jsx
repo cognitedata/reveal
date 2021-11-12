@@ -12,10 +12,10 @@ import {
 import {
   DESCRIPTION_LABEL,
   EXT_PIPE_NAME_HEADING,
-  INTEGRATION_EXTERNAL_ID_HEADING,
+  EXTPIPE_EXTERNAL_ID_HEADING,
 } from 'utils/constants';
 import {
-  CREATE_INTEGRATION_PAGE_PATH,
+  CREATE_EXTPIPE_PAGE_PATH,
   withTenant,
 } from 'routing/CreateRouteConfig';
 import 'utils/test/windowLocation';
@@ -25,19 +25,19 @@ import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
 describe.skip('Register', () => {
   window.location.href =
-    'https://dev.fusion.cogniteapp.com/itera-int-green/integrations/create?env=greenfield';
+    'https://dev.fusion.cogniteapp.com/itera-int-green/extpipes/create?env=greenfield';
 
   const props = {
     client: new QueryClient(),
     project: PROJECT_ITERA_INT_GREEN,
     cdfEnv: CDF_ENV_GREENFIELD,
     origin: ORIGIN_DEV,
-    route: withTenant(CREATE_INTEGRATION_PAGE_PATH),
-    initRegisterIntegration: {},
+    route: withTenant(CREATE_EXTPIPE_PAGE_PATH),
+    initRegisterExtpipe: {},
   };
   beforeEach(() => {
     sdkv3.post.mockResolvedValue({
-      data: { items: [{ name: 'My integration', id: 123 }] },
+      data: { items: [{ name: 'My extpipe', id: 123 }] },
     });
 
     useCapabilities.mockReturnValue({
@@ -61,11 +61,11 @@ describe.skip('Register', () => {
       screen.getByLabelText(EXT_PIPE_NAME_HEADING);
     });
     const nameInput = await screen.findByLabelText(EXT_PIPE_NAME_HEADING);
-    const name = 'My integration';
+    const name = 'My extpipe';
     fireEvent.change(nameInput, { target: { value: name } });
 
     expect(
-      screen.getByLabelText(INTEGRATION_EXTERNAL_ID_HEADING)
+      screen.getByLabelText(EXTPIPE_EXTERNAL_ID_HEADING)
     ).toBeInTheDocument();
     expect(screen.getByLabelText(DESCRIPTION_LABEL)).toBeInTheDocument();
   });

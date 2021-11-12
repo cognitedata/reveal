@@ -1,4 +1,4 @@
-import { SupportedScheduleStrings } from 'components/integrations/cols/Schedule';
+import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
 import {
   mapModelToInput,
   mapScheduleInputToScheduleValue,
