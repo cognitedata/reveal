@@ -25,7 +25,7 @@ export const FileGridPreview = ({
   style,
   mode,
   actionDisabled,
-  onSelect,
+  onItemSelect,
   selected,
 }: {
   selected: boolean;
@@ -33,7 +33,7 @@ export const FileGridPreview = ({
   style?: React.CSSProperties;
   mode: VisionMode;
   actionDisabled: boolean;
-  onSelect?: (item: TableDataItem, selected: boolean) => void;
+  onItemSelect?: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,12 +73,15 @@ export const FileGridPreview = ({
   return (
     <PreviewCell style={style} onClick={handleFileDetails}>
       <div className="preview">
-        <Thumbnail fileInfo={fileInfo as FileInfo} />
-        {onSelect && (
+        <Thumbnail
+          fileInfo={fileInfo as FileInfo}
+          onViewClicked={showReviewButton ? undefined : handleReview} // because view button should only be shown in explorer page
+        />
+        {onItemSelect && (
           <SelectionCheckbox
             dataItem={item}
             selected={selected}
-            handleItemSelect={onSelect}
+            handleItemSelect={onItemSelect}
           />
         )}
 
@@ -175,27 +178,9 @@ const PreviewCell = styled.div`
     }
     :hover {
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-      cursor: pointer;
     }
   }
 
-  .documentIconContainer {
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    display: inline-flex;
-    justify-content: center;
-  }
-
-  img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    background: #fff;
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
-    overflow: auto;
-  }
   .cogs-body-1 {
     overflow: hidden;
     text-overflow: ellipsis;

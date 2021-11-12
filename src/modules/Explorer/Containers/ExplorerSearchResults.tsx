@@ -133,6 +133,7 @@ export const ExplorerSearchResults = ({
                             <FileGridPreview
                               mode={VisionMode.Explore}
                               actionDisabled={!!otherProps.selectedIds.length}
+                              onItemSelect={otherProps.onItemSelect}
                               {...cellProps}
                             />
                           )}
