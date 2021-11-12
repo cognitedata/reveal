@@ -3,6 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { VisionAPIType } from 'src/api/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
+import { splitListIntoChunks } from 'src/utils/generalUtils';
 
 export const DetectAnnotations = createAsyncThunk<
   void,
@@ -17,14 +18,14 @@ export const DetectAnnotations = createAsyncThunk<
       );
     }
 
-    const batchSize = 10;
+    // API can handle 1000 files in one request
+    // Adding batching for future proofing
+    const batchSize = 1000;
     const { files, jobs } = getState().processSlice;
-    const batchFileIdsList: number[][] = fileIds.reduce((acc, _, i) => {
-      if (i % batchSize === 0) {
-        acc.push(fileIds.slice(i, i + batchSize));
-      }
-      return acc;
-    }, [] as number[][]);
+    const batchFileIdsList: number[][] = splitListIntoChunks(
+      fileIds,
+      batchSize
+    );
 
     batchFileIdsList.forEach((batchFileIds) => {
       detectionModels.forEach((modelType) => {

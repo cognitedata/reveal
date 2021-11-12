@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   AnnotationJob,
+  AnnotationJobFailedItem,
   DetectionModelParams,
   VisionAPIType,
 } from 'src/api/types';
@@ -28,6 +29,9 @@ export const postAnnotationJob = createAsyncThunk<
     const doesFileExist = (fileId: number) =>
       getState().filesSlice.files.byId[fileId];
 
+    let completedFileIds: number[] = [];
+    let failedJobs: AnnotationJobFailedItem[] = [];
+
     await fetchUntilComplete<AnnotationJob>(
       () => fetchJobById(createdJob.type, createdJob.jobId),
       {
@@ -37,9 +41,35 @@ export const postAnnotationJob = createAsyncThunk<
           !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
         onTick: async (latestJobVersion) => {
-          await dispatch(AnnotationDetectionJobUpdate(latestJobVersion));
-          if (latestJobVersion.status === 'Completed') {
-            await dispatch(RetrieveAnnotations(fileIds));
+          await dispatch(
+            AnnotationDetectionJobUpdate({
+              job: latestJobVersion,
+              completedFileIds,
+            })
+          );
+          if (
+            latestJobVersion.status === 'Running' ||
+            latestJobVersion.status === 'Completed'
+          ) {
+            const newCompeletedFileIds =
+              latestJobVersion.items
+                ?.map((item) => item.fileId)
+                .filter((item) => !completedFileIds.includes(item)) || [];
+            completedFileIds = [...completedFileIds, ...newCompeletedFileIds];
+
+            const newFailedJobs =
+              latestJobVersion.failedItems?.filter(
+                (newJobs) =>
+                  !failedJobs
+                    .map((jobs) => jobs.items[0].fileId)
+                    .includes(newJobs.items[0].fileId)
+              ) || [];
+            failedJobs = [...failedJobs, ...newFailedJobs];
+
+            if (newCompeletedFileIds.length) {
+              await dispatch(RetrieveAnnotations(newCompeletedFileIds));
+            }
+            // TODO: use failed job information
           }
           dispatch(
             fileProcessUpdate({
