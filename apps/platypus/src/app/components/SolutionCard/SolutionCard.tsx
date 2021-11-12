@@ -49,7 +49,7 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
                 onDuplicate();
               }}
             >
-              <span>Duplicate</span>
+              {t('duplicate', 'Duplicate')}
             </Menu.Item>
             <Menu.Item
               onClick={(e) => {
@@ -57,10 +57,10 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
                 onEdit();
               }}
             >
-              <span>Edit</span>
+              {t('edit', 'Edit')}
             </Menu.Item>
             <div className="cogs-menu-divider" />
-            <Menu.Header>Danger zone</Menu.Header>
+            <Menu.Header>{t('danger_zone', 'Danger zone')}</Menu.Header>
             <Menu.Item
               onClick={(e) => {
                 e.stopPropagation();
@@ -68,7 +68,7 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
               }}
               className="delete"
             >
-              Delete
+              {t('delete', 'Delete')}
             </Menu.Item>
           </Menu>
         }
@@ -88,8 +88,8 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
   const renderOwners = () => {
     return solution.owners?.map((owner) => {
       return (
-        <Tooltip content={owner} placement="bottom">
-          <Avatar text={owner} key={owner} className="avatar" />
+        <Tooltip content={owner} placement="bottom" key={owner}>
+          <Avatar text={owner} className="avatar" />
         </Tooltip>
       );
     });

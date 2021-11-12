@@ -2,7 +2,7 @@ import { DateUtilsImpl } from './DateUtilsImpl';
 
 test('Convert timestamp to string with default format', () => {
   const dateUtils = new DateUtilsImpl();
-  expect(dateUtils.parseTimestamp(1636107405779)).toBe('05.11.2021 11:16');
+  expect(dateUtils.parseTimestamp(1636107405779)).toBe('05.11.2021');
 });
 
 test('Convert timestamp to string with custom defined formats', () => {

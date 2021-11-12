@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Title, Row, Button, Flex } from '@cognite/cogs.js';
+import { Title, Row, Flex } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
 import services from './di';
@@ -46,9 +46,9 @@ export const SolutionsList = () => {
   const renderEmptyList = () => {
     return (
       <div className="emptyList">
-        <Title level={4}>No solutions yet.</Title>
+        <Title level={4}>{t('no_solution', 'No solutions yet.')}</Title>
         <br />
-        Design for the empty list of solutions needs to be updated...
+        (WIP) Design for the empty list of solutions needs to be updated...
       </div>
     );
   };
@@ -57,7 +57,6 @@ export const SolutionsList = () => {
     <StyledSolutionListWrapper>
       <Flex justifyContent="space-between" className="header">
         <Title level={3}>{t('solutions_title', 'Solutions')}</Title>
-        <Button>Create solution</Button>
       </Flex>
       <div className="solutions">
         {solutions.length ? renderList() : renderEmptyList()}

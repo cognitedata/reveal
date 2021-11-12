@@ -1,4 +1,3 @@
-import { Solutions } from '../../mocks/solutions';
 import {
   Wrapper,
   MainTitle,
@@ -8,6 +7,7 @@ import {
   List,
 } from '../Styles/storybook';
 
+import { Solutions } from './solutions.mock';
 import { SolutionCard } from './SolutionCard';
 
 export default {
