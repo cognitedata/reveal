@@ -10,7 +10,7 @@ export const feedback = {
     const [tenant] = getTenantInfo();
 
     return fetchGet<T>(
-      `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback-v2/${feedbackType}`,
+      `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback/${feedbackType}`,
       {
         headers,
       }
@@ -24,7 +24,7 @@ export const feedback = {
     const [tenant] = getTenantInfo();
 
     return fetchGet<T>(
-      `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback-v2/${feedbackType}/${id}`,
+      `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback/${feedbackType}/${id}`,
       {
         headers,
       }

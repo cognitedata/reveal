@@ -35,12 +35,12 @@ describe('Feedback page', () => {
   it('can be used to check reported feedback as Admin', () => {
     // intercept the feedback request so we can wait for the data
     cy.intercept({
-      url: '*/feedback-v2/general',
+      url: '*/feedback/general',
       method: 'GET',
     }).as('getGeneralFeedback');
 
     cy.intercept({
-      url: '*/feedback-v2/object',
+      url: '*/feedback/object',
       method: 'GET',
     }).as('getDocumentFeedback');
 
