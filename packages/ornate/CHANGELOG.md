@@ -1,3 +1,8 @@
+## 1.1.1
+
+- BUG: Only draw comments if type = comment
+- BUG: Don't insert image before its ready for stamp tool
+
 ## 1.1.0
 
 - Add stamp tool
