@@ -5,8 +5,7 @@
 export {
   HtmlOverlayTool,
   HtmlOverlayOptions,
-  HtmlOverlayPositionUpdatedDelegate,
-  HtmlOverlayCreateClusterDelegate
+  HtmlOverlayPositionUpdatedDelegate
 } from './src/HtmlOverlayTool';
 export { ExplodedViewTool } from './src/ExplodedViewTool';
 export { DebugCameraTool } from './src/DebugCameraTool';
