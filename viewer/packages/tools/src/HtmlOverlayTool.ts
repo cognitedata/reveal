@@ -16,8 +16,6 @@ export type HtmlOverlayPositionUpdatedDelegate = (
   distanceToCamera: number
 ) => void;
 
-export type HtmlOverlayCreateClusterDelegate = (elements: HTMLElement) => HTMLElement[];
-
 export type HtmlOverlayOptions = {
   positionUpdatedCallback?: HtmlOverlayPositionUpdatedDelegate;
 };
