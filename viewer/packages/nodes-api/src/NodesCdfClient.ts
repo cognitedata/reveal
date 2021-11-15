@@ -5,7 +5,10 @@
 import * as THREE from 'three';
 
 import { CogniteClient, CogniteInternalId, HttpError } from '@cognite/sdk';
+import { toThreeBox3 } from '@reveal/utilities';
+
 import assert from 'assert';
+
 import { NodesApiClient } from './NodesApiClient';
 import { ByNodeIdsResponse, ByTreeIndicesResponse } from './types';
 
@@ -96,14 +99,7 @@ export class NodesCdfClient implements NodesApiClient {
     const resultBoxes = mappedBoundingBoxes
       .flat()
       .filter(node => node.boundingBox)
-      .map(node => {
-        const result = new THREE.Box3();
-        const min = node.boundingBox!.min;
-        const max = node.boundingBox!.max;
-        result.min.set(min[0], min[1], min[2]);
-        result.max.set(max[0], max[1], max[2]);
-        return result;
-      });
+      .map(node => toThreeBox3(node.boundingBox!));
 
     return resultBoxes;
   }
