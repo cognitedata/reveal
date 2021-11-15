@@ -1473,10 +1473,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^3.38.6":
-  version "3.38.6"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.38.6.tgz#6cb944f5fca3b81f4dc8f32caaea30b9ffa53c16"
-  integrity sha512-9q1eOc2JlELMAnMQisqKsBXZScREBOHcH/FTB9mtY40f1n5eMglpxf6RANn+yOPtfMssTFyXQx1aLx1ErVhfYA==
+"@cognite/cogs.js@^3.42.1":
+  version "3.42.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.1.tgz#03d619cb0ecafb472051f0853dab4adb6984db76"
+  integrity sha512-BUErP/AFcdlMR3wxneqxK24ozvWvK1YNiRTcVkyFBK2ATdXhkxPmpEsn+e6ajigPc4aIZAJxsoYA5wUeel42LA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"

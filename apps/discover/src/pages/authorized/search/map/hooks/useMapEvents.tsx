@@ -37,6 +37,7 @@ import {
   WELL_MARKER,
 } from '../constants';
 import { MapLayerSearchModal } from '../map-overlay-actions/MapLayerSearchModal';
+import { MapEvent } from '../MapboxMap';
 import { extractDocumentMapLayers, getAbsoluteCoordinates } from '../utils';
 
 import { useLayers } from './useLayers';
@@ -145,6 +146,16 @@ const onMouseLeave = (e: MapMouseEvent) => {
   hoverPopup.remove();
 };
 
+const onMouseEnterFilterableMapLayer = (e: MapMouseEvent) => {
+  const canvas = e.target.getCanvas();
+  canvas.style.cursor = 'pointer';
+};
+
+const onMouseLeaveFilterableMapLayer = (e: MapMouseEvent) => {
+  const canvas = e.target.getCanvas();
+  canvas.style.cursor = '';
+};
+
 export const UseMapEvents = () => {
   const metrics = useGlobalMetrics('wells');
   const { layers: mapLayers, layersReady } = useLayers();
@@ -240,7 +251,7 @@ export const UseMapEvents = () => {
     dispatch(clearSelectedDocument());
   };
 
-  const handleClick = (event: MapMouseEvent) => {
+  const onClickFilterableMapLayer = (event: MapMouseEvent) => {
     const view: MapboxGeoJSONFeature[] = event.target.queryRenderedFeatures(
       event.point
     );
@@ -308,24 +319,24 @@ export const UseMapEvents = () => {
     }
   };
 
-  const events = useMemo(
-    () => [
+  const events: MapEvent[] = useMemo(
+    (): MapEvent[] => [
       // Cluster
 
       {
         type: 'mouseleave',
-        layer: GROUPED_CLUSTER_LAYER_ID,
+        layers: [GROUPED_CLUSTER_LAYER_ID],
         callback: onMouseLeave,
       },
       {
         type: 'click',
-        layer: GROUPED_CLUSTER_LAYER_ID,
+        layers: [GROUPED_CLUSTER_LAYER_ID],
         callback: clusterZoomOnClickEvent,
       },
       // NOTE: we use mousemove instead of mouseenter because the enter event is not triggered when clusters are close and we move from one to other
       {
         type: 'mousemove',
-        layer: GROUPED_CLUSTER_LAYER_ID,
+        layers: [GROUPED_CLUSTER_LAYER_ID],
         callback: (e: any) => {
           onMouseMove(e);
         },
@@ -335,27 +346,47 @@ export const UseMapEvents = () => {
 
       {
         type: 'mouseenter',
-        layer: UNCLUSTERED_LAYER_ID,
+        layers: [UNCLUSTERED_LAYER_ID],
         callback: onMouseEnter,
       },
       {
         type: 'mouseleave',
-        layer: UNCLUSTERED_LAYER_ID,
+        layers: [UNCLUSTERED_LAYER_ID],
         callback: onMouseLeave,
       },
 
       {
         type: 'click',
-        layer: UNCLUSTERED_LAYER_ID,
+        layers: [UNCLUSTERED_LAYER_ID],
         callback: markerClickEvent,
+      },
+
+      // Map Filter Layers
+      {
+        type: 'click',
+        layers: documentConfig?.mapLayerFilters
+          ? Object.keys(documentConfig.mapLayerFilters)
+          : undefined,
+        callback: onClickFilterableMapLayer,
+      },
+
+      {
+        type: 'mouseenter',
+        layers: documentConfig?.mapLayerFilters
+          ? Object.keys(documentConfig.mapLayerFilters)
+          : undefined,
+        callback: onMouseEnterFilterableMapLayer,
+      },
+      {
+        type: 'mouseleave',
+        layers: documentConfig?.mapLayerFilters
+          ? Object.keys(documentConfig.mapLayerFilters)
+          : undefined,
+        callback: onMouseLeaveFilterableMapLayer,
       },
 
       // Map
 
-      {
-        type: 'click',
-        callback: handleClick,
-      },
       {
         type: 'mousedown',
         callback: handleMouseDown,

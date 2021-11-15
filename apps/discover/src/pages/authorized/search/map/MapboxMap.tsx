@@ -36,9 +36,9 @@ import { choosePreviousSelectedLayer } from './utils/layers';
  * no app specific code is to go in here
  */
 
-interface Event {
+export interface MapEvent {
   type: string;
-  layer?: string;
+  layers?: string[];
   callback: any;
 }
 
@@ -49,7 +49,7 @@ export interface MapIcon {
 
 interface Props {
   drawMode: DrawMode;
-  events: Event[];
+  events: MapEvent[];
   features: FeatureCollection;
   flyTo: {
     zoom: number;
@@ -386,18 +386,22 @@ export const Map: React.FC<Props> = React.memo(
 
     useEffect(() => {
       if (!map) return noop;
-      events.forEach((event: any) => {
-        if (event.layer) {
-          map.on(event.type, event.layer, event.callback);
+      events.forEach((event: MapEvent) => {
+        if (event.layers) {
+          event.layers.forEach((layer) => {
+            map.on(event.type, layer, event.callback);
+          });
         } else {
           map.on(event.type, event.callback);
         }
       });
 
       return () => {
-        events.forEach((event: any) => {
-          if (event.layer) {
-            map.off(event.type, event.layer, event.callback);
+        events.forEach((event: MapEvent) => {
+          if (event.layers) {
+            event.layers.forEach((layer) => {
+              map.off(event.type, layer, event.callback);
+            });
           } else {
             map.off(event.type, event.callback);
           }
