@@ -1,8 +1,9 @@
+
 /*!
  * Copyright 2021 Cognite AS
  */
 
-import { V8SectorRepository } from '@reveal/sector-loader';
+import { V8SectorRepository } from '../../packages/sector-loader';
 import { Cognite3DModel } from '../../core/src/public/migration/Cognite3DModel';
 import { NodesLocalClient } from '../../packages/nodes-api';
 import { CadMaterialManager, CadNode } from '../../packages/rendering';
