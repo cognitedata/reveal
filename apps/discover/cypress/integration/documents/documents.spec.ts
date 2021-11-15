@@ -6,6 +6,8 @@ import {
 
 const QUERY_DUPLICATED_FILENAME = 'Volve_Well_Summary_15_9-19.pdf';
 const SOURCE_DRIVE = 'volve';
+const FILE_TYPE = 'PDF';
+const DOCUMENT_CATEGORY = 'unclassified';
 export const filename = '15_9_19_A_1980_01_01';
 
 describe('Documents', () => {
@@ -73,16 +75,16 @@ describe('Documents', () => {
     cy.log(`Search results should be shown in the table`);
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 0);
 
-    cy.log('Apply File Type filter: PDF');
+    cy.log(`Apply File Type filter: ${FILE_TYPE}`);
     cy.findAllByTestId('filter-checkbox-label')
-      .contains('PDF')
+      .contains(FILE_TYPE)
       .should('be.visible')
       .click();
 
     cy.log('Close/Open File Type category and check that filter stays applied');
     cy.contains('File Type').click();
     cy.contains('File Type').click();
-    cy.get('input[type=checkbox][id*="PDF"]').should('be.checked');
+    cy.get(`input[type=checkbox][id*="${FILE_TYPE}"]`).should('be.checked');
 
     cy.log('Remove input filter value by filter tag');
     cy.findAllByTestId('filter-tag')
@@ -95,7 +97,7 @@ describe('Documents', () => {
 
     cy.log('Remove File Type filter by filter tag');
     cy.findAllByTestId('filter-tag')
-      .contains('PDF')
+      .contains(FILE_TYPE)
       .findByTestId('close')
       .click();
 
@@ -109,13 +111,13 @@ describe('Documents', () => {
 
     cy.log('Apply other filters');
     cy.findAllByTestId('filter-checkbox-label')
-      .contains('PDF')
+      .contains(FILE_TYPE)
       .should('be.visible')
       .click();
 
     // cy.contains('Document Category').click();
     cy.findAllByTestId('filter-checkbox-label')
-      .contains('unclassified')
+      .contains(DOCUMENT_CATEGORY)
       .should('be.visible')
       .click();
 
@@ -148,19 +150,21 @@ describe('Documents', () => {
 
     cy.log('Go back to Search page');
     cy.findByTestId('top-bar').contains('Search').click();
-    cy.get('input[type=checkbox][id*="PDF"]').should('be.checked');
-    cy.get('input[type=checkbox][id*="unclassified"]').should('be.checked');
+    cy.get(`input[type=checkbox][id*="${FILE_TYPE}"]`).should('be.checked');
+    cy.get(`input[type=checkbox][id*="${DOCUMENT_CATEGORY}"]`).should(
+      'be.checked'
+    );
     cy.get(`input[type=checkbox][id*="${SOURCE_DRIVE}"]`).should('be.checked');
 
     cy.log(
       'Check that document filter tags are available and we can remove them'
     );
     cy.findByTestId('side-bar').findByLabelText('Go back').click();
-    cy.findAllByTestId('filter-tag').contains('PDF');
-    cy.findAllByTestId('filter-tag').contains('unclassified');
+    cy.findAllByTestId('filter-tag').contains(FILE_TYPE);
+    cy.findAllByTestId('filter-tag').contains(DOCUMENT_CATEGORY);
     cy.findAllByTestId('filter-tag').contains(SOURCE_DRIVE);
     cy.findAllByTestId('filter-tag')
-      .contains('PDF')
+      .contains(FILE_TYPE)
       .findByTestId('close')
       .click();
 

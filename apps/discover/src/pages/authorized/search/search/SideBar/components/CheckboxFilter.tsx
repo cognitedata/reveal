@@ -117,8 +117,8 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
 
     const handleSelectedFilterSelection = (data: string[]) => {
       handleApplyFilters(
-        activeFilters.map((f) => {
-          return { ...f, selected: data.includes(f.name) };
+        activeFilters.map((filter) => {
+          return { ...filter, selected: data.includes(filter.name) };
         })
       );
     };

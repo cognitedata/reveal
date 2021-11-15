@@ -4,6 +4,10 @@ import { FileInfo, FileLink, InternalId, ExternalId } from '@cognite/sdk';
 import { Document } from '@cognite/sdk-playground';
 
 import {
+  LAST_CREATED_KEY,
+  LAST_UPDATED_KEY,
+} from 'modules/documentSearch/constants';
+import {
   DocumentType,
   DocumentMetadata,
   DocumentsAggregatesResponse,
@@ -78,6 +82,7 @@ export const getMockApiResultItem = (
     assetIds: [1, 2, 3],
     directory: '/folder1/folder2',
     sourceCreatedTime: new Date(1396357617000),
+    sourceModifiedTime: new Date(1396357617334),
     lastUpdatedTime: new Date(1396357617334),
     metadata: {
       parentPath: '/folder1/folder2',
@@ -149,7 +154,7 @@ export const mockAggregateResponse: DocumentsAggregatesResponse = {
       name: 'lastUpdatedTime',
       groups: [
         {
-          group: [{ 'sourceFile.lastUpdatedTime': 1396357617334 }],
+          group: [{ [LAST_UPDATED_KEY]: 1396357617334 }],
           value: 400,
         },
       ],
@@ -159,7 +164,7 @@ export const mockAggregateResponse: DocumentsAggregatesResponse = {
       name: 'lastcreated',
       groups: [
         {
-          group: [{ 'sourceFile.createdTime': 1592472506240 }],
+          group: [{ [LAST_CREATED_KEY]: 1592472506240 }],
           value: 500,
         },
       ],

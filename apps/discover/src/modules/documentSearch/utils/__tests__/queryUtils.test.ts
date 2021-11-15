@@ -1,3 +1,8 @@
+import {
+  LAST_CREATED_KEY_VALUE,
+  LAST_UPDATED_KEY_VALUE,
+} from 'modules/documentSearch/constants';
+
 import { getMockSearchQueryWithFacets } from '../../__tests__/utils';
 import { getSearchQuery } from '../queryUtil';
 
@@ -24,7 +29,7 @@ describe('Test query builder', () => {
 
     it(`created data`, async () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
-      expect(result.filter.sourceFile?.createdTime).toEqual({
+      expect(result.filter.sourceFile?.[LAST_CREATED_KEY_VALUE]).toEqual({
         max: 1623695400000,
         min: 1622485800000,
       });
@@ -34,7 +39,7 @@ describe('Test query builder', () => {
       const result = getSearchQuery(getMockSearchQueryWithFacets());
 
       expect(result.filter.sourceFile).not.toBeNull();
-      expect(result.filter.sourceFile?.lastUpdatedTime).toEqual({
+      expect(result.filter.sourceFile?.[LAST_UPDATED_KEY_VALUE]).toEqual({
         max: 1623695400000,
         min: 1622485800000,
       });

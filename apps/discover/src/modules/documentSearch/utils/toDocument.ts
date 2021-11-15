@@ -1,6 +1,7 @@
 import { DocumentsSearchWrapper } from '@cognite/sdk-playground';
 
 import { getDocumentFormatFromDate } from '../../../_helpers/date';
+import { LAST_CREATED_KEY_VALUE, LAST_UPDATED_KEY_VALUE } from '../constants';
 import { DocumentType, SearchHighlight } from '../types';
 
 import { getFilepath } from './getFilepath';
@@ -106,9 +107,11 @@ export const toDocument = ({
       filename: item.sourceFile.name,
       filetype: item.type || '',
       labels: item.labels || [],
-      creationdate: safeDateFormat(new Date(item.sourceFile.createdTime || '')),
+      creationdate: safeDateFormat(
+        new Date(item.sourceFile[LAST_CREATED_KEY_VALUE] || '')
+      ),
       lastmodified: safeDateFormat(
-        new Date(item.sourceFile.lastUpdatedTime || '')
+        new Date(item.sourceFile[LAST_UPDATED_KEY_VALUE] || '')
       ),
       location: item.sourceFile.source || '',
       author: item.author || 'Unknown',

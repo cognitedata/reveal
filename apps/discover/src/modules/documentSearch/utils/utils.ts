@@ -1,5 +1,3 @@
-// import { DocumentsFilter } from '@cognite/sdk-playground';
-
 import {
   DocumentResultFacets,
   DocumentsFacets,
@@ -49,31 +47,3 @@ export const getFacets = (
   ...getEmptyFacets(),
   ...facets,
 });
-
-// export const extractFacetsFromDocumentsFilter = (
-//   filters: DocumentsFilter
-// ): DocumentsFacets => {
-//   return {
-//     labels:
-//       filters?.sourceFile?.labels && 'containsAny' in filters.sourceFile.labels
-//         ? filters.sourceFile.labels.containsAny
-//         : [],
-//     location:
-//       filters?.sourceFile?.source && 'in' in filters.sourceFile.source
-//         ? filters.sourceFile.source.in
-//         : [],
-//     filetype: filters?.type && 'in' in filters.type ? filters.type.in : [],
-//     lastmodified: filters?.sourceFile?.lastUpdatedTime
-//       ? [
-//           String(filters.sourceFile.lastUpdatedTime.min),
-//           String(filters.sourceFile.lastUpdatedTime.max),
-//         ]
-//       : [],
-//     lastcreated: filters?.sourceFile?.createdTime
-//       ? [
-//           String(filters.sourceFile.createdTime.min),
-//           String(filters.sourceFile.createdTime.max),
-//         ]
-//       : [],
-//   };
-// };
