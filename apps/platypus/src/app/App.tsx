@@ -3,24 +3,29 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { GlobalStyle } from './AppGlobalStyles';
 import { AuthContainer } from './AuthContainer';
+import { ToastContainer } from '@cognite/cogs.js';
+
 import Routes from './Routes';
 import sidecar from './utils/sidecar';
 import store from './redux/store';
 
 function App() {
   return (
-    <Container sidecar={sidecar} store={store}>
-      <AuthContainer>
-        <GlobalStyle />
-        <StyledWrapper>
-          <Router basename="platypus">
-            <StyledPage>
-              <Routes />
-            </StyledPage>
-          </Router>
-        </StyledWrapper>
-      </AuthContainer>
-    </Container>
+    <>
+      <ToastContainer />
+      <Container sidecar={sidecar} store={store}>
+        <AuthContainer>
+          <GlobalStyle />
+          <StyledWrapper>
+            <Router basename="platypus">
+              <StyledPage>
+                <Routes />
+              </StyledPage>
+            </Router>
+          </StyledWrapper>
+        </AuthContainer>
+      </Container>
+    </>
   );
 }
 
