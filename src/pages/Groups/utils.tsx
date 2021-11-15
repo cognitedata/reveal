@@ -1,7 +1,11 @@
 import { cognite } from '@cognite/acl-protos';
+import {
+  AclGroups,
+  CogniteCapability,
+  Group,
+  SingleCogniteCapability,
+} from '@cognite/sdk';
 import queryString from 'query-string';
-
-import { CogniteCapability, SingleCogniteCapability } from '@cognite/sdk';
 
 const capitalize = (s: string) =>
   s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
@@ -25,6 +29,8 @@ const nameToAclTypeMap = {
   users: 'usersAcl',
   projects: 'projectsAcl',
   datasets: 'datasetsAcl',
+  extractionpipelines: 'extractionPipelinesAcl',
+  extractionruns: 'extractionRunsAcl',
   labels: 'labelsAcl',
   seismic: 'seismicAcl',
   relationships: 'relationshipsAcl',
@@ -41,6 +47,10 @@ const nameToAclTypeMap = {
   analytics: 'analyticsAcl',
   functions: 'functionsAcl',
   geospatial: 'geospatialAcl',
+  sessions: 'sessionsAcl',
+  templategroups: 'templateGroupsAcl',
+  templateinstances: 'templateInstancesAcl',
+  wells: 'wellsAcl',
 };
 
 const nameToFormattedName = {
@@ -50,12 +60,17 @@ const nameToFormattedName = {
   timeseries: 'Time series',
   digitaltwin: 'Digital twin',
   datasets: 'Data sets',
+  extractionpipelines: 'Extraction pipelines',
+  extractionruns: 'Extraction pipeline runs',
   modelhosting: 'Model hosting',
   entitymatching: 'Entity matching',
   documentpipelines: 'Document pipelines',
   filepipelines: 'File pipelines',
   documentfeedback: 'Document feedback',
   annotations: 'Annotations',
+  sessions: 'Sessions',
+  templategroups: 'Template groups',
+  templateinstances: 'Template instances',
 };
 
 const capabilityTypeGroups = [
@@ -72,6 +87,8 @@ const capabilityTypeGroups = [
       'sequences',
       'timeseries',
       'types',
+      'templategroups',
+      'templateinstances',
     ],
   },
   {
@@ -80,11 +97,13 @@ const capabilityTypeGroups = [
   },
   {
     name: 'Permissions to access mgmt.',
-    items: ['apikeys', 'groups', 'users', 'projects'],
+    items: ['apikeys', 'groups', 'users', 'projects', 'sessions'],
   },
   {
     name: 'Other',
     items: [
+      'extractionpipelines',
+      'extractionruns',
       'digitaltwin',
       'modelhosting',
       'generic',
@@ -96,6 +115,7 @@ const capabilityTypeGroups = [
       'filepipelines',
       'documentfeedback',
       'annotations',
+      'wells',
     ],
   },
 ];
@@ -123,6 +143,9 @@ export const capabilityDescriptions = {
     'Relationships represent connections between pairs of CDF resources',
   datasets:
     'Data sets are groups of data based on origin, such as all SAP work orders',
+  extractionpipelines:
+    'Extraction pipelines are used to extract data from a source system',
+  extractionruns: 'Execution history for extraction pipelines',
   labels:
     'With labels you as an IT manager or data engineer can create a predefined set of managed terms that you can use to annotate and group assets',
   seismic: 'Seismic is a representation of cubes of seismic traces',
@@ -133,6 +156,11 @@ export const capabilityDescriptions = {
   modelhosting: 'Model hosting lets you deploy and schedule models',
   entitymatching: 'Match resources to their corresponding entity',
   annotations: 'Edit annotations in documents',
+  sessions:
+    'Sessions are used to maintain access to CDF resources for an extended period of time beyond the initial access granted to an internal service.',
+  templategroups: 'Organize and structure your data',
+  templateinstances: 'Access data organized in templategroups',
+  wells: 'Access Well Data Layer',
 };
 
 export const getActionsFromCapability = (
@@ -192,6 +220,12 @@ const getCapabilityKey = (
   if (capabilityName === '3d') {
     capabilityName = 'threed';
   }
+  if (capabilityName === 'templategroups') {
+    capabilityName = 'template_groups';
+  }
+  if (capabilityName === 'templateinstances') {
+    capabilityName = 'template_instances';
+  }
   if (capabilityName) {
     capabilityKey = `${capabilityName}_acl`;
   }
@@ -222,31 +256,43 @@ export const getCapabilityDescription = (
   return capabilityDescriptions[capabilityName] || '';
 };
 
-const SCOPE_LABELS = {
-  all: 'All',
-  currentuserscope: 'Current user',
-  assetIdScope: 'Assets',
-  idscope: {
-    timeseries: 'Time series',
-    securitycategories: 'Security categories',
-  },
-  assetRootIdScope: 'Root assets',
-  tableScope: 'Tables',
-  datasetScope: 'Data sets',
-  idScope: 'Data sets',
-  partition: 'Partition',
-};
-
 export const getScopeLabel = (
   scope: string,
   capability: CogniteCapability | string | SingleCogniteCapability
 ) => {
-  if (scope === 'idscope') {
-    // @ts-ignore
-    return SCOPE_LABELS[scope][getCapabilityName(capability)];
+  switch (scope) {
+    case 'all':
+      return 'All';
+    case 'currentuserscope':
+      return 'Current user';
+    case 'assetIdScope':
+      return 'Assets';
+    case 'assetRootIdScope':
+      return 'Root assets';
+    case 'tableScope':
+      return 'Tables';
+    case 'datasetScope':
+      return 'Data sets';
+    case 'idScope':
+      switch (getCapabilityName(capability)) {
+        case 'extractionpipelines':
+          return 'Extraction pipelines';
+        default:
+          return 'Data sets';
+      }
+    case 'extractionPipelineScope':
+      return 'Extraction pipelines';
+    case 'partition':
+      return 'Partition';
+    case 'idscope':
+      switch (getCapabilityName(capability)) {
+        case 'timeseries':
+          return 'Time series';
+        case 'securitycategories':
+          return 'Security categories';
+      }
   }
-  // @ts-ignore
-  return SCOPE_LABELS[scope];
+  return null;
 };
 
 export const getStringCdfEnv = () => {
@@ -305,13 +351,23 @@ export const getCapabilityScopes = (
     case 'events':
     case 'sequences':
     case 'relationships':
+    case 'templategroups':
+    case 'templateinstances':
+    case 'annotations':
       return ['datasetScope', 'all'];
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
+    case 'extractionpipelines':
+      return ['datasetScope', 'idScope', 'all'];
+    case 'extractionruns':
+      return ['datasetScope', 'extractionPipelineScope', 'all'];
     case 'securitycategories':
       return ['idscope', 'all']; // ... idscope (lowercase s) are different
     case 'seismic':
       return ['partition', 'all'];
+    case 'labels': {
+      return ['datasetScope', 'all'];
+    }
     default:
       return ['all'];
   }
@@ -332,4 +388,17 @@ export const stringContains = (
     // Error here means invalid character was used
     return false;
   }
+};
+
+export const hasAnyValidGroupForOIDC = (groups?: Group[]): boolean => {
+  return Boolean(
+    groups?.some(
+      ({ capabilities, sourceId }) =>
+        sourceId &&
+        capabilities?.some(capability => {
+          const { groupsAcl } = capability as { groupsAcl?: AclGroups };
+          return groupsAcl?.actions.includes('CREATE');
+        })
+    )
+  );
 };

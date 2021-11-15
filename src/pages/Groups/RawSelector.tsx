@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+import { Icon } from '@cognite/cogs.js';
+import { CogniteClient } from '@cognite/sdk';
+import { useSDK } from '@cognite/sdk-provider';
+import { TreeSelect, Tooltip } from 'antd';
 import styled from 'styled-components';
 import unionBy from 'lodash/unionBy';
 
-import TreeSelect from 'antd/lib/tree-select';
-import { Icon } from '@cognite/cogs.js';
-import Tooltip from 'antd/lib/tooltip';
-import { useSDK } from '@cognite/sdk-provider';
-import { CogniteClient } from '@cognite/sdk';
 import { getContainer } from 'utils/utils';
 
 const TreeLabel = styled.span`

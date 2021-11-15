@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Title, Icon } from '@cognite/cogs.js';
+import { Title, Icon, Loader } from '@cognite/cogs.js';
 import { Menu } from 'antd';
 
 import { createLink } from '@cognite/cdf-utilities';
@@ -19,9 +19,9 @@ import IDP from 'pages/IDP';
 import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
-import { useSDK } from '@cognite/sdk-provider';
 import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useAuthConfiguration } from 'hooks';
 
 export default function () {
   const client = useQueryClient();
@@ -34,9 +34,6 @@ export default function () {
   const { data: keysRead } = usePermissions('apikeysAcl', 'LIST');
 
   const history = useHistory();
-  const sdk = useSDK();
-  const flow = sdk.getOAuthFlowType();
-  const nativeTokens = flow === 'AAD_OAUTH' || flow === 'ADFS_OAUTH';
 
   const { params } =
     useRouteMatch<{
@@ -45,6 +42,12 @@ export default function () {
       page?: string;
     }>();
   const { pathname, search, hash } = history.location;
+
+  const { data: authConfiguration, isFetched } = useAuthConfiguration();
+
+  if (!isFetched) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -71,25 +74,27 @@ export default function () {
         <Menu.Item disabled={!groupsRead} key="groups">
           Groups
         </Menu.Item>
-        <Menu.Item
-          key="service-accounts"
-          disabled={!usersRead}
-          hidden={nativeTokens}
-        >
-          Service accounts
-        </Menu.Item>
-        <Menu.Item key="api-keys" disabled={!keysRead} hidden={nativeTokens}>
-          API keys
-        </Menu.Item>
+        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
+          <Menu.Item key="service-accounts" disabled={!usersRead}>
+            Service accounts
+          </Menu.Item>
+        )}
+        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
+          <Menu.Item key="api-keys" disabled={!keysRead}>
+            API keys
+          </Menu.Item>
+        )}
         <Menu.Item key="security-categories" disabled={!secCatRead}>
           Security categories
         </Menu.Item>
         <Menu.Item key="oidc" disabled={!projectsRead}>
           OpenID connect
         </Menu.Item>
-        <Menu.Item key="idp" disabled={!projectsRead} hidden={nativeTokens}>
-          Identity provider configuration
-        </Menu.Item>
+        {authConfiguration?.isLegacyLoginFlowAndApiKeysEnabled && (
+          <Menu.Item key="idp" disabled={!projectsRead}>
+            Identity provider configuration
+          </Menu.Item>
+        )}
       </StyledMeny>
       <Switch>
         <Redirect

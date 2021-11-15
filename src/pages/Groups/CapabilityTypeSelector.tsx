@@ -34,6 +34,7 @@ const Capability = styled.div`
 
 const CapabilityName = styled.div`
   width: 25%;
+  white-space: normal;
   padding-left: 10px;
 `;
 
@@ -72,6 +73,14 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
     );
   });
 
+  const handleFilter = (input: string, option: any) => {
+    const shouldBeIncluded =
+      option.children &&
+      (option.label.toLowerCase().includes(input.toLowerCase()) ||
+        option.value.toLowerCase().includes(input.toLowerCase()));
+    return shouldBeIncluded;
+  };
+
   return (
     <Select
       value={value}
@@ -79,6 +88,7 @@ const CapabilityTypeSelector = (props: CapabilityTypeSelectorProps) => {
       showSearch
       optionLabelProp="label"
       getPopupContainer={getContainer}
+      filterOption={handleFilter}
     >
       {optionGroups}
     </Select>
