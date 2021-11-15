@@ -19,6 +19,8 @@ export class BoxClusterer  {
     this.resultBoxes = boxes ?? [];
   }
 
+  private reusableBoundingBox = new Box3();
+
   private mergeBoxesAtIndices(mini: number, maxi: number): void {
     this.resultBoxes[mini].union(this.resultBoxes[maxi]);
 
@@ -37,7 +39,8 @@ export class BoxClusterer  {
     const MAX_SURFACE_INCREASE_RATIO = 1.0;
     const MAX_SURFACE_INCREASE_ADDITIVE_TERM = 8.0; // Heuristic number of square meters to allow merging of smaller boxes
 
-    const union = box0.clone().union(box1);
+    const box0Copy = this.reusableBoundingBox.copy(box0);
+    const union = box0Copy.union(box1);
 
     const unionSurfaceArea = this.surfaceArea(union);
     const originalSurfaceArea = this.surfaceArea(box0);
