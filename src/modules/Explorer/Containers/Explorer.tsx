@@ -1,5 +1,5 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import FilterToggleButton from 'src/modules/Explorer/Components/FilterToggleButton';
 import {
@@ -75,21 +75,23 @@ const Explorer = () => {
     };
   }, []);
 
-  const handleItemClick = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    { menuActions, rowKey, ...file }: TableDataItem,
-    showFileDetailsOnClick: boolean = true
-  ) => {
-    dispatch(FetchFilesById([file.id]));
-    dispatch(setFocusedFileId(file.id));
-    if (showFileDetailsOnClick) {
-      dispatch(showFileMetadata());
-    }
-  };
+  const handleItemClick = useCallback(
+    (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
+      dispatch(FetchFilesById([item.id]));
+      dispatch(setFocusedFileId(item.id));
+      if (showFileDetailsOnClick) {
+        dispatch(showFileMetadata());
+      }
+    },
+    []
+  );
 
-  const handleRowSelect = (item: TableDataItem, selected: boolean) => {
-    dispatch(setExplorerFileSelectState({ fileId: item.id, selected }));
-  };
+  const handleRowSelect = useCallback(
+    (item: TableDataItem, selected: boolean) => {
+      dispatch(setExplorerFileSelectState({ fileId: item.id, selected }));
+    },
+    [dispatch]
+  );
 
   const handleMetadataClose = () => {
     dispatch(hideFileMetadata());

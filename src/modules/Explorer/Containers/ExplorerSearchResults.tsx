@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { EnsureNonEmptyResource } from '@cognite/data-exploration';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
@@ -24,6 +24,8 @@ import {
   setMapTableTabKey,
   setExplorerSelectedFiles,
   setSelectedAllExplorerFiles,
+  useIsSelectedInExplorer,
+  useExplorerFilesSelected,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
@@ -34,6 +36,7 @@ export const ExplorerSearchResults = ({
   currentView,
   query = '',
   filter = {},
+  selectedIds,
   ...otherProps
 }: {
   reFetchProp?: boolean;
@@ -76,24 +79,40 @@ export const ExplorerSearchResults = ({
     dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
-  const sortPaginateControls = {
-    sortKey: sortPaginateState.sortKey,
-    reverse: sortPaginateState.reverse,
-    currentPage: sortPaginateState.currentPage,
-    pageSize: sortPaginateState.pageSize,
-    setSortKey: (sortKey: string) => {
-      dispatch(setSortKey(sortKey));
-    },
-    setReverse: (reverse: boolean) => {
-      dispatch(setReverse(reverse));
-    },
-    setCurrentPage: (currentPage: number) => {
-      dispatch(setCurrentPage(currentPage));
-    },
-    setPageSize: (pageSize: number) => {
-      dispatch(setPageSize(pageSize));
-    },
-  };
+  const sortPaginateControls = useMemo(
+    () => ({
+      sortKey: sortPaginateState.sortKey,
+      reverse: sortPaginateState.reverse,
+      currentPage: sortPaginateState.currentPage,
+      pageSize: sortPaginateState.pageSize,
+      setSortKey: (sortKey: string) => {
+        dispatch(setSortKey(sortKey));
+      },
+      setReverse: (reverse: boolean) => {
+        dispatch(setReverse(reverse));
+      },
+      setCurrentPage: (currentPage: number) => {
+        dispatch(setCurrentPage(currentPage));
+      },
+      setPageSize: (pageSize: number) => {
+        dispatch(setPageSize(pageSize));
+      },
+    }),
+    [sortPaginateState]
+  );
+
+  const renderCell = useCallback(
+    (cellProps: any) => (
+      <FileGridPreview
+        mode={VisionMode.Explore}
+        {...cellProps}
+        onItemSelect={otherProps.onItemSelect}
+        isSelected={useIsSelectedInExplorer}
+        isActionDisabled={useExplorerFilesSelected}
+      />
+    ),
+    [otherProps.onItemSelect]
+  );
 
   return (
     <ResultContainer>
@@ -129,14 +148,7 @@ export const ExplorerSearchResults = ({
                         <PageBasedGridView
                           {...otherProps}
                           {...props}
-                          renderCell={(cellProps: any) => (
-                            <FileGridPreview
-                              mode={VisionMode.Explore}
-                              actionDisabled={!!otherProps.selectedIds.length}
-                              onItemSelect={otherProps.onItemSelect}
-                              {...cellProps}
-                            />
-                          )}
+                          renderCell={renderCell}
                         />
                       );
                     }
@@ -145,6 +157,7 @@ export const ExplorerSearchResults = ({
                         <MapView
                           {...otherProps}
                           {...props}
+                          selectedIds={selectedIds}
                           allRowsSelected={allFilesSelected}
                           onSelectAllRows={handleSelectAllFiles}
                           mapTableTabKey={{ activeKey, setActiveKey }}
@@ -160,6 +173,7 @@ export const ExplorerSearchResults = ({
                         modalView={currentView === 'modal'}
                         {...otherProps}
                         {...props}
+                        selectedIds={selectedIds}
                         allRowsSelected={allFilesSelected}
                         onSelectAllRows={handleSelectAllFiles}
                         onSelectPage={handleSetSelectedFiles}
