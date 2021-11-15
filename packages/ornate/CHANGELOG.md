@@ -1,3 +1,7 @@
+## 1.1.2
+
+- BUG: Add high z index to text tool input field
+
 ## 1.1.1
 
 - BUG: Only draw comments if type = comment

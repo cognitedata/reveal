@@ -43,6 +43,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       textNode.fontSize() * this.ornateInstance.stage.scale().x
     }px`;
     textarea.style.border = 'none';
+    textarea.style.zIndex = '9999';
     textarea.style.padding = '0px';
     textarea.style.margin = '0px';
     textarea.style.overflow = 'hidden';
