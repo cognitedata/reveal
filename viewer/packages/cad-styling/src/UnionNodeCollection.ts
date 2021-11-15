@@ -3,6 +3,8 @@
  */
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 import { CombineNodeCollectionBase } from './CombineNodeCollectionBase';
+import { AreaCollection } from './prioritized/AreaCollection';
+import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 
 import { IndexSet } from '@reveal/utilities';
 
@@ -11,6 +13,8 @@ import { IndexSet } from '@reveal/utilities';
  */
 
 export class UnionNodeCollection extends CombineNodeCollectionBase {
+  private _cachedNodeAreas: AreaCollection | undefined = undefined;
+
   public static readonly classToken = 'UnionNodeCollection';
 
   constructor(nodeCollections?: NodeCollectionBase[]) {
@@ -35,5 +39,20 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
       set.unionWith(this._nodeCollections[i].getIndexSet());
     }
     return set;
+  }
+
+  public getAreas(): AreaCollection {
+    if (this._cachedNodeAreas) {
+      return this._cachedNodeAreas;
+    }
+
+    const newAreaCollection = new ClusteredAreaCollection();
+
+    for (let i = 0; i < this._nodeCollections.length; ++i) {
+      newAreaCollection.addAreas(this._nodeCollections[i].getAreas().areas());
+    }
+
+    this._cachedNodeAreas = newAreaCollection;
+    return newAreaCollection;
   }
 }

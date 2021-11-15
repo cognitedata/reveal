@@ -11,7 +11,7 @@ import { suggestCameraConfig } from '../cameraconfig';
 import { InstancedMeshManager } from '../InstancedMeshManager';
 import { RenderMode } from '../rendering/RenderMode';
 
-import { NodeAppearanceProvider, NodeAppearance } from '@reveal/cad-styling';
+import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
 import {
   SectorScene,
   CadModelMetadata,
@@ -144,6 +144,10 @@ export class CadNode extends THREE.Object3D {
    */
   getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4 {
     return this._rootSector.getModelTransformation(out);
+  }
+
+  get prioritizedAreas(): PrioritizedArea[] {
+    return this.nodeAppearanceProvider.getPrioritizedAreas();
   }
 
   public suggestCameraConfig(): SuggestedCameraConfig {

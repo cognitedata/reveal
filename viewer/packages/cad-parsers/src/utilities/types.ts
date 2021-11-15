@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+
 import { SectorMetadata } from '../metadata/types';
 
 /**
@@ -74,7 +75,6 @@ export interface SectorScene {
   // readonly subRevisionId: number;
   // readonly unit: string | null;
 }
-
 export interface SectorMetadataIndexFileSection {
   readonly fileName: string;
   readonly peripheralFiles: string[];

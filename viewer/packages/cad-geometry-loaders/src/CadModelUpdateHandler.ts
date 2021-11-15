@@ -126,7 +126,6 @@ export class CadModelUpdateHandler {
   get budget(): CadModelSectorBudget {
     return this._budget;
   }
-
   set budget(b: CadModelSectorBudget) {
     this._budget = b;
     this._budgetSubject.next(b);
@@ -208,10 +207,12 @@ function createDetermineSectorsInput([settings, camera, clipping, models]: [
   ClippingInput,
   CadNode[]
 ]): DetermineSectorsPayload {
+  const prioritizedAreas = models.flatMap(model => model.prioritizedAreas);
   return {
     ...camera,
     ...settings,
     ...clipping,
+    prioritizedAreas,
     models
   };
 }
