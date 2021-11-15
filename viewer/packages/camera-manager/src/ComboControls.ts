@@ -269,7 +269,7 @@ export default class ComboControls extends EventDispatcher {
 
     return deltaTheta;
   }
-  
+
   private readonly convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
@@ -395,7 +395,7 @@ export default class ComboControls extends EventDispatcher {
 
   private readonly startMouseRotation = (initialEvent: MouseEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
-    
+
     const onMouseMove = (event: MouseEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       const deltaOffset = previousOffset.clone().sub(newOffset);
