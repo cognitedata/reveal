@@ -8,6 +8,7 @@ import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
 
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
+
 import { createGlContext } from '../../../test-utilities';
 
 describe('HtmlOverlayTool', () => {

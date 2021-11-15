@@ -6,6 +6,7 @@ import { NodeAppearance } from './NodeAppearance';
 import { NodeCollectionBase } from './NodeCollectionBase';
 
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+import { PrioritizedArea } from './prioritized/types';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
@@ -23,6 +24,7 @@ type StyledNodeCollection = {
 export class NodeAppearanceProvider {
   private readonly _styledCollections = new Array<StyledNodeCollection>();
   private _lastFiredLoadingState?: boolean;
+  private _cachedPrioritizedAreas?: PrioritizedArea[] = undefined;
 
   private readonly _events = {
     changed: new EventTrigger<() => void>(),
@@ -100,6 +102,27 @@ export class NodeAppearanceProvider {
     });
   }
 
+  getPrioritizedAreas(): PrioritizedArea[] {
+    if (this._cachedPrioritizedAreas) {
+      return this._cachedPrioritizedAreas;
+    }
+
+    const prioritizedCollections = this._styledCollections.filter(
+      collection => collection.appearance.prioritizedForLoadingHint
+    );
+
+    const prioritizedAreas = prioritizedCollections.flatMap(collection => {
+      const prioritizedAreaList: PrioritizedArea[] = [];
+      for (const area of collection.nodeCollection.getAreas().areas()) {
+        prioritizedAreaList.push({ area, extraPriority: collection.appearance.prioritizedForLoadingHint! });
+      }
+      return prioritizedAreaList;
+    });
+
+    this._cachedPrioritizedAreas = prioritizedAreas;
+    return this._cachedPrioritizedAreas;
+  }
+
   clear() {
     for (const styledSet of this._styledCollections) {
       const nodeCollection = styledSet.nodeCollection;
@@ -114,6 +137,7 @@ export class NodeAppearanceProvider {
   }
 
   private notifyChanged() {
+    this._cachedPrioritizedAreas = undefined;
     this._events.changed.fire();
   }
 

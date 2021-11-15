@@ -11,6 +11,7 @@ import { TakenV8SectorMap } from './takensectors';
 import { CadModelSectorBudget } from '../../CadModelSectorBudget';
 
 import { CadModelMetadata, WantedSector, LevelOfDetail, V8SectorMetadata } from '@reveal/cad-parsers';
+
 import { isBox3OnPositiveSideOfPlane } from '@reveal/utilities';
 
 /**

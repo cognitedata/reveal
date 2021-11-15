@@ -9,13 +9,14 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 Reveal supports flexible styling of individual nodes (objects) in the 3D model. Styles can
 be compromised of several attributes to customize the visualization through the `NodeAppearance`-type:
 
-| Field           | Field type                  | Description                                           |
-| --------------- | --------------------------- | ----------------------------------------------------- |
-| `color`         | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override. |
-| `visible`       | `boolean?`                  | When false, the node(s) will be invisible             |
-| `renderInFront` | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
-| `renderGhosted` | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
-| `outlineColor`  | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
+| Field                       | Field type                  | Description                                           |
+| --------------------------- | --------------------------- | ----------------------------------------------------- |
+| `color`                     | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override.  |
+| `visible`                   | `boolean?`                  | When false, the node(s) will be invisible             |
+| `renderInFront`             | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
+| `renderGhosted`             | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
+| `outlineColor`              | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
+| `prioritizedForLoadingHint` | `number?`                   | Assigns a prioritization weight to this node collection, influencing load priority. See [Prioritize nodes for loading](cad-prioritized-nodes).
 
 These attributes can be combined to customize the look of nodes. For convinience, a set of default appearances are
 provided in the `DefaultNodeAppearance`-constant:
