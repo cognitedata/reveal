@@ -103,7 +103,7 @@ class MyNodesApiClient implements NodesApiClient {
   determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{treeIndex: number; subtreeSize: number }> {
     throw new Error('Not supported.');
   }
-  getBoundingBoxByNodeId(modelId: number, revisionId: number, nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  getBoundingBoxesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<THREE.Box3[]> {
     throw new Error('Not supported.');
   }
 }

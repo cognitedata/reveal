@@ -2,16 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Box3 } from 'three';
-import { BoxClusterer } from './BoxClustererBase';
-import { intersectionOverUnion } from './MergingRTree';
+import { Box3, Vector3 } from 'three';
 
 /**
  * SmartMergeBoxes - takes in batches of bounding boxes and
  * clusters them together in larger bounding boxes. The union of the larger
  * boxes contains all boxes that have been inserted
  */
-export class SmartMergeBoxes implements BoxClusterer {
+export class BoxClusterer {
   private readonly resultBoxes: Box3[];
   private addedSinceSquash: number = 0;
 
@@ -29,21 +27,47 @@ export class SmartMergeBoxes implements BoxClusterer {
     this.resultBoxes.pop();
   }
 
-  private shouldMergeBoxesAtIndices(i: number, j: number): boolean {
-    const BOX_MERGE_MIN_IOU = 0.15;
-    const overlap = intersectionOverUnion(this.resultBoxes[i], this.resultBoxes[j]);
-    return overlap >= BOX_MERGE_MIN_IOU;
+  private readonly _surfaceAreaVars = {
+    size: new Vector3()
+  };
+
+  private surfaceArea(box: Box3) {
+    const { size } = this._surfaceAreaVars;
+    box.getSize(size);
+
+    return 2 * (size.x * size.y + size.y * size.z + size.z * size.x);
+  }
+
+  private readonly _shouldMergeBoxesVars = {
+    inputBox: new Box3()
+  };
+
+  private shouldMergeBoxes(box0: Box3, box1: Box3): boolean {
+    const MAX_SURFACE_INCREASE_RATIO = 1.0;
+    const MAX_SURFACE_INCREASE_ADDITIVE_TERM = 8.0; // Heuristic number of square meters to allow merging of smaller boxes
+
+    const { inputBox } = this._shouldMergeBoxesVars;
+    inputBox.copy(box0);
+    const union = inputBox.union(box1);
+
+    const unionSurfaceArea = this.surfaceArea(union);
+    const originalSurfaceArea = this.surfaceArea(box0);
+    const otherBoxSurfaceArea = this.surfaceArea(box1);
+
+    return (
+      unionSurfaceArea <
+      MAX_SURFACE_INCREASE_RATIO * (originalSurfaceArea + otherBoxSurfaceArea) + MAX_SURFACE_INCREASE_ADDITIVE_TERM
+    );
   }
 
   private addBox(box: Box3): void {
     let merged = false;
 
-    for (const resultBox of this.resultBoxes) {
-      if (!box.intersectsBox(resultBox)) {
+    for (let i = 0; i < this.resultBoxes.length; i++) {
+      if (!this.shouldMergeBoxes(box, this.resultBoxes[i])) {
         continue;
       }
-
-      resultBox.union(box);
+      this.resultBoxes[i].union(box);
 
       merged = true;
       break;
@@ -56,6 +80,10 @@ export class SmartMergeBoxes implements BoxClusterer {
     this.addedSinceSquash += 1;
   }
 
+  get boxCount(): number {
+    return this.resultBoxes.length;
+  }
+
   addBoxes(boxes: Iterable<Box3>): void {
     for (const box of boxes) {
       this.addBox(box);
@@ -65,7 +93,7 @@ export class SmartMergeBoxes implements BoxClusterer {
   squashBoxes(): void {
     for (let i = 0; i < this.resultBoxes.length; i++) {
       for (let j = i + 1; j < this.resultBoxes.length; j++) {
-        const shouldMerge = this.shouldMergeBoxesAtIndices(i, j);
+        const shouldMerge = this.shouldMergeBoxes(this.resultBoxes[i], this.resultBoxes[j]);
         if (shouldMerge) {
           this.mergeBoxesAtIndices(i, j);
 
@@ -90,20 +118,25 @@ export class SmartMergeBoxes implements BoxClusterer {
     }
   }
 
-  union(other: BoxClusterer): BoxClusterer {
-    if (!(other instanceof SmartMergeBoxes)) {
-      throw Error('Expected SmartMergeBoxes in union operation');
+  intersectsBox(box: Box3): boolean {
+    for (const internalBox of this.resultBoxes) {
+      if (box.intersectsBox(internalBox)) {
+        return true;
+      }
     }
 
+    return false;
+  }
+
+  union(boxes: Iterable<Box3>): BoxClusterer {
     const resClone = [];
     for (const resBox of this.resultBoxes) {
       resClone.push(resBox.clone());
     }
 
-    const newSMB = new SmartMergeBoxes(resClone);
+    const newSMB = new BoxClusterer(resClone);
 
-    const otherBoxes = other.getBoxes();
-    newSMB.addBoxes(otherBoxes);
+    newSMB.addBoxes(boxes);
 
     return newSMB;
   }
@@ -115,12 +148,8 @@ export class SmartMergeBoxes implements BoxClusterer {
     }
   }
 
-  intersection(other: BoxClusterer): BoxClusterer {
-    if (!(other instanceof SmartMergeBoxes)) {
-      throw Error('Expected SmartMergeBoxes in intersection operation');
-    }
-
-    const otherBoxes = [...other.getBoxes()];
+  intersection(other: Iterable<THREE.Box3>): BoxClusterer {
+    const otherBoxes = [...other];
     const thisBoxes = this.resultBoxes;
 
     const newResultBoxes: Box3[] = [];
@@ -131,7 +160,7 @@ export class SmartMergeBoxes implements BoxClusterer {
       }
     }
 
-    const newSMB = new SmartMergeBoxes(newResultBoxes);
+    const newSMB = new BoxClusterer(newResultBoxes);
     newSMB.squashBoxes();
     return newSMB;
   }

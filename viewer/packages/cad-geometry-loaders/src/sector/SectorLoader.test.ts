@@ -68,6 +68,7 @@ describe('SectorLoader', () => {
       cameraInMotion: false,
       models: [cadNodeMock.object()],
       clippingPlanes: [],
+      prioritizedAreas: [],
       loadingHints: {}
     };
     stateHandler.addModel(model.modelIdentifier);

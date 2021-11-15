@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
 import { SectorMetadata, V9SectorMetadata } from '@reveal/cad-parsers';
+import { PrioritizedArea } from '@reveal/cad-styling';
 
 const preallocated = {
   transformedBounds: new THREE.Box3()
@@ -144,7 +145,23 @@ export class WeightFunctionsHelper {
     const screenCoverage = p1.distanceToSquared(p0) / 4.0;
 
     // Scale coverage such that 5% screen estate is 1.0 weight
-    return Math.min(1.0, screenCoverage / 0.05);
+    const weight = Math.min(1.0, screenCoverage / 0.05);
+    return weight;
+  }
+
+  /**
+   * Returns a weight that is the maximum of the extra priority in intersecting prioritized areas.
+   * @param transformedSectorBounds   Bounds of sectors in "Reveal coordinates".
+   * @param prioritizedAreas          Zero or more areas with associated priorities.
+   */
+  computePrioritizedAreaWeight(transformedSectorBounds: THREE.Box3, prioritizedAreas: PrioritizedArea[]): number {
+    const extraPriority = prioritizedAreas.reduce((maxExtraPriority, prioritizedArea) => {
+      if (transformedSectorBounds.intersectsBox(prioritizedArea.area)) {
+        return Math.max(prioritizedArea.extraPriority, maxExtraPriority);
+      }
+      return maxExtraPriority;
+    }, 0.0);
+    return extraPriority;
   }
 
   private distanceToCamera(sector: SectorMetadata, modelMatrix: THREE.Matrix4) {

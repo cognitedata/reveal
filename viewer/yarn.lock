@@ -1035,6 +1035,8 @@ __metadata:
 "@reveal/nodes-api@workspace:*, @reveal/nodes-api@workspace:packages/nodes-api":
   version: 0.0.0-use.local
   resolution: "@reveal/nodes-api@workspace:packages/nodes-api"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
