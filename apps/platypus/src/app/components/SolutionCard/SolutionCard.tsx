@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Detail,
   Title,
@@ -18,17 +19,15 @@ import { StyledSolutionCard } from './elements';
 
 type SoluionCardProps = {
   solution: Solution;
+  onDelete: (solution: Solution) => void;
 };
 
-export const SolutionCard = ({ solution }: SoluionCardProps) => {
+export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
   const history = useHistory();
+  const [visibleDropdown, setVisibleDropdown] = useState<boolean>(false);
   const { t } = useTranslation('solutions');
 
   const dataUtils = new DateUtilsImpl();
-
-  const onDelete = () => {
-    return false;
-  };
 
   const onDuplicate = () => {
     return false;
@@ -41,20 +40,24 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
   const renderMenu = () => {
     return (
       <Dropdown
+        visible={visibleDropdown}
+        onClickOutside={() => setVisibleDropdown(false)}
         content={
           <Menu>
             <Menu.Item
               onClick={(e) => {
-                e.stopPropagation();
                 onDuplicate();
+                setVisibleDropdown(false);
+                e.stopPropagation();
               }}
             >
               {t('duplicate', 'Duplicate')}
             </Menu.Item>
             <Menu.Item
               onClick={(e) => {
-                e.stopPropagation();
                 onEdit();
+                setVisibleDropdown(false);
+                e.stopPropagation();
               }}
             >
               {t('edit', 'Edit')}
@@ -63,8 +66,9 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
             <Menu.Header>{t('danger_zone', 'Danger zone')}</Menu.Header>
             <Menu.Item
               onClick={(e) => {
+                onDelete(solution);
+                setVisibleDropdown(false);
                 e.stopPropagation();
-                onDelete();
               }}
               className="delete"
             >
@@ -73,14 +77,9 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
           </Menu>
         }
       >
-        <Icon
-          type="HorizontalEllipsis"
-          size={18}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          className="menu"
-        />
+        <div className="menuContainer">
+          <Icon type="HorizontalEllipsis" size={18} className="menu" />
+        </div>
       </Dropdown>
     );
   };
@@ -111,13 +110,19 @@ export const SolutionCard = ({ solution }: SoluionCardProps) => {
               </Label>
             </span>
           </Title>
-
           <Detail>
             {t('solution_last_updated', 'Last updated')}{' '}
             {dataUtils.parseTimestamp(solution.createdTime)}
           </Detail>
         </div>
-        <div>{renderMenu()}</div>
+        <div
+          onClick={(e) => {
+            setVisibleDropdown(true);
+            e.stopPropagation();
+          }}
+        >
+          {renderMenu()}
+        </div>
       </div>
       <div>{renderOwners()}</div>
     </StyledSolutionCard>
