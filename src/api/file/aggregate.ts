@@ -2,12 +2,13 @@ import { v3Client as client } from '@cognite/cdf-sdk-singleton';
 import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 
-export const totalFileCount = async (filter: VisionFileFilterProps) => {
+export const totalFileCount = async (visionFilter: VisionFileFilterProps) => {
   const fileCounts: number[] = [];
   const validMimeTypes = VALID_MIME_TYPES.map((mimeType) => mimeType.type);
 
+  // remove additional VisionFileFilters to get FileFilterProps type filter for list request. (except directoryPrefix)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { annotation, dateFilter, timeRange, ...validFilters } = filter;
+  const { annotation, dateFilter, timeRange, ...validFilters } = visionFilter;
 
   // if user specify a mime type
   if (validFilters?.mimeType) {
