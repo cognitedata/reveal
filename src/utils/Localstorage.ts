@@ -3,6 +3,10 @@ import {
   ExplorerReducerState,
 } from 'src/modules/Explorer/store/explorerSlice';
 import {
+  processReducerInitialState,
+  ProcessReducerState,
+} from 'src/modules/Process/processSlice';
+import {
   annotationLabelReducerInitialState,
   AnnotationLabelReducerState,
 } from 'src/modules/Review/store/annotationLabelSlice';
@@ -30,6 +34,10 @@ export const loadState = (): Partial<RootState> | undefined => {
           ...explorerReducerInitialState,
           ...persistedState.explorerSlice,
         },
+        processSlice: {
+          ...processReducerInitialState,
+          ...persistedState.processSlice,
+        },
       };
     }
     return {
@@ -41,6 +49,9 @@ export const loadState = (): Partial<RootState> | undefined => {
       },
       explorerReducer: {
         ...explorerReducerInitialState,
+      },
+      processSlice: {
+        ...processReducerInitialState,
       },
     };
   } catch (err) {
@@ -67,6 +78,7 @@ export type OfflineState = {
     ExplorerReducerState,
     'filter' | 'query' | 'sortMeta' | 'focusedFileId'
   >;
+  processSlice: Pick<ProcessReducerState, 'fileIds'>;
 };
 
 const getOfflineState = (state: RootState): OfflineState => {
@@ -82,6 +94,9 @@ const getOfflineState = (state: RootState): OfflineState => {
       query: state.explorerReducer.query,
       sortMeta: state.explorerReducer.sortMeta,
       focusedFileId: state.explorerReducer.focusedFileId,
+    },
+    processSlice: {
+      fileIds: state.processSlice.fileIds,
     },
   };
   return offState;

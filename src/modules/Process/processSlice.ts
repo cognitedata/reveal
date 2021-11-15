@@ -317,6 +317,9 @@ const processSlice = createSlice({
   /* eslint-enable no-param-reassign */
 });
 
+export type { State as ProcessReducerState };
+export { initialState as processReducerInitialState };
+
 export const {
   setProcessFileIds,
   removeJobById,
