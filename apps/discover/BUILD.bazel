@@ -719,7 +719,9 @@ cypress_web_test(
     # Your cypress plugin used to configure cypress and boot your server
     plugin_file = ":plugin_file",
     templated_args = [
-        "--config supportFile=./apps/discover/cypress/support,integrationFolder=./apps/discover/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js",
+        "--config supportFile=./apps/discover/cypress/support,integrationFolder=./apps/discover/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js" +
+        ",videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video" +
+        ",screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
     ],
 )
 
