@@ -1,74 +1,9 @@
-import { defaultWellsConfig, testAzureConfig } from 'tenants/config';
-import { TenantConfig } from 'tenants/types';
+import config from '../discover-e2e-config';
 
-const defaultConfig: TenantConfig = {
-  map: {
-    zoom: 4,
-    center: [12, 55],
-  },
-  documents: {
-    defaultLimit: 100,
-    filters: {},
-    mapLayerFilters: {
-      discoveries: {
-        labelAccessor: 'Discovery',
-      },
-    },
-  },
-  enableWellSDKV3: true,
-  wells: {
-    filters: {},
-    wellbores: {
-      fetch: (client, filters = {}) => {
-        return client.assets.list({
-          filter: {
-            metadata: {
-              type: 'wellbore',
-            },
-            ...filters,
-          },
-          limit: 1000,
-        });
-      },
-    },
-    overview: defaultWellsConfig.wells?.overview,
-    trajectory: defaultWellsConfig.wells?.trajectory,
-    logs: {
-      enabled: true,
-      types: ['logsFrmTops', 'logs'],
-      queries: [
-        {
-          filter: {
-            metadata: {
-              source: 'Petrel',
-              type: 'FormationTops',
-            },
-          },
-          exclude: 'GOLD',
-        },
-        {
-          filter: {
-            metadata: {
-              subtype: 'CompositeLog',
-            },
-          },
-        },
-      ],
-      tracks: [
-        { name: 'GR', enabled: true },
-        { name: 'MD', enabled: true },
-        { name: 'TVD', enabled: true },
-        { name: 'FRM', enabled: true },
-        { name: 'RDEEP', enabled: true },
-        { name: 'D&N', enabled: true },
-        { name: 'NDS', enabled: true },
-        { name: 'PPFG', enabled: true },
-      ],
-    },
-  },
-  azureConfig: {
-    ...testAzureConfig,
-  },
+/**
+ * This config should be sync with `discover-e2-bluefield` tenant.
+ * If there are changes to be made, add them to '../discover-e2e-config.ts'.
+ */
+export default {
+  ...config,
 };
-
-export default defaultConfig;

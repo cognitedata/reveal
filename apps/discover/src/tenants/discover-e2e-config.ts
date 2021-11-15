@@ -1,6 +1,6 @@
 import { TenantConfig } from 'tenants/types';
 
-import config, { testAzureConfig } from './config';
+import config, { testAzureConfig, defaultWellsConfig } from './config';
 
 /**
  * Config changes for Discover e2e projects should be done here.
@@ -21,10 +21,13 @@ const defaultTestConfig: TenantConfig = {
     overview: {
       enabled: true,
     },
-    trajectory: {
+    data_source_filter: {
       enabled: true,
     },
-    data_source_filter: {
+    nds: {
+      enabled: true,
+    },
+    npt: {
       enabled: true,
     },
     field_block_operator_filter: {
@@ -38,7 +41,20 @@ const defaultTestConfig: TenantConfig = {
         enabled: true,
       },
     },
+    trajectory: defaultWellsConfig.wells?.trajectory,
+    casing: defaultWellsConfig.wells?.casing,
   },
+
+  documents: config.documents
+    ? {
+        ...config.documents,
+        mapLayerFilters: {
+          discoveries: {
+            labelAccessor: 'Discovery',
+          },
+        },
+      }
+    : undefined,
 
   showProjectConfig: true,
   showDynamicResultCount: false,
