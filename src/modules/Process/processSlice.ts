@@ -21,6 +21,8 @@ import {
   createGenericTabularDataSlice,
   GenericTabularState,
 } from 'src/store/genericTabularDataSlice';
+import { useSelector } from 'react-redux';
+import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
@@ -461,7 +463,7 @@ export const selectProcessSortedFiles = createSelector(
 
 export const selectProcessSelectedFileIdsInSortedOrder = createSelector(
   selectProcessSortedFiles,
-  (rootState: RootState) => rootState.filesSlice.files.selectedIds,
+  (rootState: RootState) => selectAllSelectedIds(rootState.filesSlice),
   (sortedFiles, selectedIds) => {
     const indexMap = new Map<number, number>(
       sortedFiles.map((item, index) => [item.id, index])
@@ -496,4 +498,20 @@ export const isProcessingFile = (
   return statuses.some((key) =>
     ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
   );
+};
+
+// hooks
+
+export const useIsSelectedInProcess = (id: number) => {
+  const selectedIds = useSelector(({ filesSlice }: RootState) =>
+    selectAllSelectedIds(filesSlice)
+  );
+  return selectedIds.includes(id);
+};
+
+export const useProcessFilesSelected = () => {
+  const selectedIds = useSelector(({ filesSlice }: RootState) =>
+    selectAllSelectedIds(filesSlice)
+  );
+  return !!selectedIds.length;
 };

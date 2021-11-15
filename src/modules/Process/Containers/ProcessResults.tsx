@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import {
   selectAllFilesSelected,
   setFileSelectState,
@@ -23,6 +23,8 @@ import {
   setReverse,
   setCurrentPage,
   setPageSize,
+  useIsSelectedInProcess,
+  useProcessFilesSelected,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -41,6 +43,7 @@ import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -82,21 +85,26 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     ({ processSlice }: RootState) => processSlice.showExploreModal
   );
 
-  const menuActions: FileActions = {
-    // TODO: should onDelete be added here as well?
-    onFileDetailsClicked: (fileInfo: FileInfo) => {
-      dispatch(setFocusedFileId(fileInfo.id));
-      dispatch(resetEditHistory());
-      dispatch(showFileMetadata());
-    },
-    onReviewClick: (fileInfo: FileInfo) => {
-      dispatch(PopulateReviewFiles(processFileIds));
-      history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
-        { from: 'process' }
-      );
-    },
-  };
+  const menuActions: FileActions = useMemo(
+    () => ({
+      onFileDetailsClicked: (fileInfo: FileInfo) => {
+        dispatch(setFocusedFileId(fileInfo.id));
+        dispatch(resetEditHistory());
+        dispatch(showFileMetadata());
+      },
+      onReviewClick: (fileInfo: FileInfo) => {
+        dispatch(PopulateReviewFiles(processFileIds));
+        history.push(
+          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
+          { from: 'process' }
+        );
+      },
+      onFileDelete: (id: number) => {
+        dispatch(DeleteFilesById([id]));
+      },
+    }),
+    [dispatch]
+  );
 
   const processTableRowData: ResultData[] = useMemo(
     () =>
@@ -113,19 +121,22 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     dispatch(FetchFilesById(processFileIds));
   }, [processFileIds]);
 
-  const handleItemClick = (
-    item: TableDataItem,
-    showFileDetailsOnClick: boolean = true
-  ) => {
-    dispatch(setFocusedFileId(item.id));
-    if (showFileDetailsOnClick) {
-      dispatch(showFileMetadata());
-    }
-  };
+  const handleItemClick = useCallback(
+    (item: TableDataItem, showFileDetailsOnClick: boolean = true) => {
+      dispatch(setFocusedFileId(item.id));
+      if (showFileDetailsOnClick) {
+        dispatch(showFileMetadata());
+      }
+    },
+    [dispatch]
+  );
 
-  const handleRowSelect = (item: TableDataItem, selected: boolean) => {
-    dispatch(setFileSelectState(item.id, selected));
-  };
+  const handleRowSelect = useCallback(
+    (item: TableDataItem, selected: boolean) => {
+      dispatch(setFileSelectState(item.id, selected));
+    },
+    [dispatch]
+  );
 
   const promptMessage =
     'Are you sure you want to leave or refresh this page? The session state and all unsaved processing data will be lost. Already saved processing data can be accessed from the Image explorer on the front page.';
@@ -182,6 +193,19 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     dispatch(setMapTableTabKey({ mapTableTabKey: key }));
   };
 
+  const renderCell = useCallback(
+    (cellProps: any) => (
+      <FileGridPreview
+        mode={VisionMode.Contextualize}
+        {...cellProps}
+        onItemSelect={handleRowSelect}
+        isSelected={useIsSelectedInProcess}
+        isActionDisabled={useProcessFilesSelected}
+      />
+    ),
+    []
+  );
+
   return (
     <>
       <Prompt
@@ -233,16 +257,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
                   data={data}
                   totalCount={totalCount}
                   onItemClick={handleItemClick}
-                  onItemSelect={handleRowSelect}
-                  selectedIds={selectedFileIds}
                   isLoading={isLoading}
-                  renderCell={(cellProps: any) => (
-                    <FileGridPreview
-                      mode={VisionMode.Contextualize}
-                      actionDisabled={!!selectedFileIds.length}
-                      {...cellProps}
-                    />
-                  )}
+                  renderCell={renderCell}
                 />
               );
             }

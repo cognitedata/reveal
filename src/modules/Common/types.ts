@@ -31,7 +31,8 @@ export interface AnnotationsBadgeStatuses {
 
 export type FileActions = {
   onFileDetailsClicked: (fileInfo: FileInfo) => void;
-  onReviewClick?: (fileInfo: FileInfo) => void;
+  onFileDelete: (id: number) => void;
+  onReviewClick: (fileInfo: FileInfo) => void;
 };
 
 export type TableDataItem = Pick<
