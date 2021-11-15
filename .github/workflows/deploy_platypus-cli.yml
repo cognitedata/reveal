@@ -25,7 +25,8 @@ jobs:
 
       - name: Install Dependency & Build
         run: |
-          yarn
+          yarn install --frozen-lockfile
+          rm .npmrc
           yarn build production platypus-cdf-cli
 
       - name: Deploy PlatypusCLI to npm 🚀
@@ -33,5 +34,6 @@ jobs:
         with:
           token: $(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}")
           tag: alpha
-          access: public
+          access: restricted
+          check-version: true
           package: ./dist/apps/platypus-cdf-cli/package.json
