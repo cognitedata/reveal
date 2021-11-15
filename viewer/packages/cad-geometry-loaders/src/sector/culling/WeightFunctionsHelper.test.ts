@@ -6,11 +6,10 @@ import * as THREE from 'three';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 
 import { PrioritizedArea } from '@reveal/cad-styling';
-
-import { createV8SectorMetadata } from '../../../../../test-utilities';
-
 import { traverseDepthFirst } from '@reveal/utilities';
 import { SectorMetadata } from '@reveal/cad-parsers';
+
+import { createV8SectorMetadata } from '../../../../../test-utilities';
 
 describe('WeightFunctionsHelper', () => {
   let camera: THREE.PerspectiveCamera;
