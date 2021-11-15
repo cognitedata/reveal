@@ -95,7 +95,7 @@ export function Migration() {
         zoomToCursor: 'scrollTarget',
       }
 
-      viewer.setCameraControlsMode(controlsOptions);
+      viewer.setCameraControlsOptions(controlsOptions);
 
       const totalBounds = new THREE.Box3();
 
@@ -465,13 +465,13 @@ export function Migration() {
       const controlsGui = gui.addFolder('Camera controls');
       const zoomToCursorTypes = ['disable', 'basicLerp', 'scrollTarget'];
       controlsGui.add(guiState.controls, 'zoomToCursorType', zoomToCursorTypes).name('Zoom to cursor type').onFinishChange(value => {
-        viewer.setCameraControlsMode({ ...viewer.getCameraControlsMode(), zoomToCursor: value });
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), zoomToCursor: value });
       });
       controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
-        viewer.setCameraControlsMode({ ...viewer.getCameraControlsMode(), onClickTargetChange: value });
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
       });
       controlsGui.add(guiState.controls, 'canInterruptAnimations').name('Controls actions stop animations:').onFinishChange(value => {
-        viewer.setCameraControlsMode({ ...viewer.getCameraControlsMode(), canInterruptAnimations: value });
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), canInterruptAnimations: value });
       });
 
       const overlayTool = new HtmlOverlayTool(viewer);

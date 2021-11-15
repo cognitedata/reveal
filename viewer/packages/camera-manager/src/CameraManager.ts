@@ -220,7 +220,7 @@ export class CameraManager extends THREE.EventDispatcher {
     this.controls.maxDistance = 100.0;
 
     const { zoomToCursor, onClickTargetChange } = this._cameraControlsOptions;
-    this.setCameraControlsMode({ zoomToCursor, onClickTargetChange });
+    this.setCameraControlsOptions({ zoomToCursor, onClickTargetChange });
 
     if (!camera) {
       this._camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -247,11 +247,11 @@ export class CameraManager extends THREE.EventDispatcher {
     this.moveCameraTo(position, target, duration);
   }
 
-  getCameraControlsMode(): CameraControlsOptions {
+  getCameraControlsOptions(): CameraControlsOptions {
     return this._cameraControlsOptions;
   }
 
-  setCameraControlsMode(controlsOptions: CameraControlsOptions) {
+  setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
     this._cameraControlsOptions = { ...DefaultCameraControlsOptions, ...controlsOptions };
 
     this.teardownControls();
@@ -267,12 +267,12 @@ export class CameraManager extends THREE.EventDispatcher {
     this.moveCameraTargetTo(target, animationTime);
   }
 
-  private calculateDefaultDuration (distanceToCamera: number): number {
+  private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
 
     return duration;
-  };
+  }
 
   public moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
     const { _camera, _raycaster } = this;
@@ -338,7 +338,7 @@ export class CameraManager extends THREE.EventDispatcher {
 
         this.controls.setState(tempPosition, tempTarget);
       })
-      .onStop(() => { 
+      .onStop(() => {
         this.controls.setState(tempPosition, tempTarget);
       })
       .onComplete(() => {

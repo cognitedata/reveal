@@ -465,15 +465,15 @@ export class Cognite3DViewer {
    * Sets camera controls mode to anything allowed in CameraControlsOptions type.
    * @param controlsOptions JSON object with camera controls options.
    */
-  setCameraControlsMode(controlsOptions: CameraControlsOptions) {
-    this._cameraManager.setCameraControlsMode(controlsOptions);
+  setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
+    this._cameraManager.setCameraControlsOptions(controlsOptions);
   }
 
   /**
    * Gets camera controls mode.
    */
-  getCameraControlsMode(): CameraControlsOptions {
-    return this._cameraManager.getCameraControlsMode();
+  getCameraControlsOptions(): CameraControlsOptions {
+    return this._cameraManager.getCameraControlsOptions();
   }
 
   /**
