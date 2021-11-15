@@ -28,7 +28,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-redux": "^7.2.6",
-    "react-refresh": "^0.10.0",
+    "react-refresh": "^0.11.0",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "redux": "^4.1.2",
@@ -48,10 +48,7 @@
     "storybook": "./scripts/storybook.sh",
     "sstorybook": "start-storybook -p 6006",
     "build-storybook": "nx run platypus:build-storybook",
-    "platypus": "node ./dist/apps/platypus-cdf-cli/main.js",
-    "docz:dev": "docz dev --config=apps/platypus-docs/doczrc.js --debug=true",
-    "docz:build": "docz build --config=apps/platypus-docs/doczrc.js",
-    "docz:serve": "docz build --config=apps/platypus-docs/doczrc.js && docz serve --port 3005"
+    "platypus": "node ./dist/apps/platypus-cdf-cli/main.js"
   },
   "browserslist": {
     "production": [
