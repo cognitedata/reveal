@@ -43,6 +43,7 @@ export const fetchFiles = async (
     expand(async (data) => {
       let newItems;
       let nextCursor;
+      let filteredItems: FileInfo[] = [];
 
       if (search.name) {
         newItems = await sdkv3.files.search({
@@ -57,15 +58,20 @@ export const fetchFiles = async (
         }));
       }
 
-      if (annotation) {
-        newItems = await fileFilterByAnnotation(annotation, newItems);
-      }
       if (timeRange) {
-        newItems = filterByTime(visionFilter, newItems);
+        // apply time range filter first because it is faster
+        filteredItems = filterByTime(visionFilter, newItems);
+      }
+      if (annotation) {
+        filteredItems = await fileFilterByAnnotation(annotation, filteredItems);
+      }
+      // if annotation and timeRange filters not defined, just pass the newItems as filteredItems
+      if (!annotation && !timeRange) {
+        filteredItems = newItems;
       }
 
       return {
-        items: [...data.items, ...newItems],
+        items: [...data.items, ...filteredItems],
         mimeTypeIndex: nextCursor ? data.mimeTypeIndex : data.mimeTypeIndex + 1,
         nextCursor,
         scannedCount: data.scannedCount + newItems.length,
