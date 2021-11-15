@@ -73,11 +73,9 @@ describe('Feedback page', () => {
     );
 
     cy.log(
-      'The loading icon should be visible in the beginning and disappear when we get back the data'
+      'Wait for results and check that empty-state-container is not there'
     );
-    cy.findByTestId('empty-state-container')
-      .contains('Loading results')
-      .should('be.visible');
+
     cy.wait('@getGeneralFeedback');
     cy.findByTestId('empty-state-container').should('not.exist');
 
