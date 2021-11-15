@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { IndexSet } from '@reveal/utilities';
+import { AreaCollection } from './prioritized/AreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
 /**
@@ -45,7 +46,7 @@ export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
     this._nodeCollections.forEach(collection => collection.clear());
   }
 
-  private makeDirty(): void {
+  protected makeDirty(): void {
     if (this._cachedCombinedIndexSet === undefined) return;
     this._cachedCombinedIndexSet = undefined;
     this.notifyChanged();
@@ -67,6 +68,8 @@ export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
   }
 
   public abstract serialize(): SerializedNodeCollection;
+
+  public abstract getAreas(): AreaCollection;
 
   protected abstract createCombinedIndexSet(): IndexSet;
 }

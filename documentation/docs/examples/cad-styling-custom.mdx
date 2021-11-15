@@ -17,7 +17,7 @@ be incrementally updated to avoid blocking the viewer.
 # Simple, static node collection
 
 ```js runnable
-// import { NodeCollectionBase, DefaultNodeAppearance } from '@cognite/reveal';
+// import { NodeCollectionBase, DefaultNodeAppearance, ClusteredAreaCollection } from '@cognite/reveal';
 
 class MyNodeCollection extends NodeCollectionBase {
   isLoading = false;
@@ -26,6 +26,7 @@ class MyNodeCollection extends NodeCollectionBase {
     super('MyNodeCollection'); // Token for (de)serialization
     this._nodeCount = model.nodeCount;
     this._indexSet = new IndexSet();
+
     for (let i = 0; i < model.nodeCount; i += 100) {
       this._indexSet.add(i);
     }
@@ -33,6 +34,23 @@ class MyNodeCollection extends NodeCollectionBase {
 
   getIndexSet() {
     return this._indexSet;
+  }
+
+  getAreas() {
+    if (this._areas) {
+      return this._areas;
+    }
+
+    const indices = this._indexSet.toIndexArray();
+
+    // getBoundingBoxesForIndices() may use the SDK or a NodesApiClient to fetch
+    // the bounding boxes of the relevant nodes
+    const boxes = getBoundingBoxesForIndices(indices);
+
+    this._areas = new ClusteredAreaCollection();
+    this._areas.addAreas(boxes);
+
+    return this._areas;
   }
 
   clear() {

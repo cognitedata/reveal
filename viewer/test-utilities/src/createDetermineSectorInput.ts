@@ -22,7 +22,8 @@ export function createDetermineSectorInput(
       highDetailProximityThreshold: 10,
       maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: Infinity
-    }
+    },
+    prioritizedAreas: []
   };
   return determineSectorsInput;
 }

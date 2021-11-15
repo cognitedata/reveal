@@ -2,13 +2,15 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { CogniteClient, Node3D } from '@cognite/sdk';
 
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
-import { IndexSet, NumericRange } from '@reveal/utilities';
+import { AreaCollection, EmptyAreaCollection, NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
 
 import range from 'lodash/range';
 import cloneDeep from 'lodash/cloneDeep';
@@ -34,8 +36,9 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
 
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
-  private readonly _modelId: number;
-  private readonly _revisionId: number;
+  private _areas: AreaCollection = EmptyAreaCollection.instance();
+
+  private readonly _model: Cognite3DModel;
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
   private _filter: {
@@ -47,8 +50,7 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
   constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
     super(PropertyFilterNodeCollection.classToken);
     this._client = client;
-    this._modelId = model.modelId;
-    this._revisionId = model.revisionId;
+    this._model = model;
     this._options = { requestPartitions: 1, ...options };
   }
 
@@ -70,7 +72,6 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
       [key: string]: string;
     };
   }): Promise<void> {
-    const indexSet = new IndexSet();
     const { requestPartitions } = this._options;
 
     if (this._fetchResultHelper !== undefined) {
@@ -78,21 +79,32 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      node => new NumericRange(node.treeIndex, node.subtreeSize),
+      nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
+      async nodes =>
+        nodes.map(node => {
+          const bounds = new THREE.Box3();
+          if (node.boundingBox !== undefined) {
+            toThreeBox3(node.boundingBox, bounds);
+            this._model.mapBoxFromCdfToModelCoordinates(bounds, bounds);
+          }
+          return bounds;
+        }),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
 
-    this._indexSet = indexSet;
+    this._indexSet = fetchResultHelper.indexSet;
+    this._areas = fetchResultHelper.areas;
 
+    const { modelId, revisionId } = this._model;
     const requests = range(1, requestPartitions + 1).map(async p => {
-      const response = this._client.revisions3D.list3DNodes(this._modelId, this._revisionId, {
+      const response = this._client.revisions3D.list3DNodes(modelId, revisionId, {
         properties: filter,
         limit: 1000,
         sortByNodeId: true,
         partition: `${p}/${requestPartitions}`
       });
-      return fetchResultHelper.pageResults(indexSet, response);
+      return fetchResultHelper.pageResults(response);
     });
 
     this._filter = filter;
@@ -114,6 +126,10 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  getAreas(): AreaCollection {
+    return this._areas;
   }
 
   serialize(): SerializedNodeCollection {

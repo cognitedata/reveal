@@ -8,7 +8,7 @@ import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
+import { NodeCollectionBase, SerializedNodeCollection, EmptyAreaCollection, AreaCollection } from '@reveal/cad-styling';
 
 import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
@@ -25,6 +25,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
 
   private readonly _client: CogniteClient;
   private _indexSet = new IndexSet();
+  private _areas: AreaCollection = EmptyAreaCollection.instance();
   private readonly _model: Cognite3DModel;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
   private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
@@ -55,7 +56,8 @@ export class AssetNodeCollection extends NodeCollectionBase {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
-      assetMapping => new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize),
+      assetMappings => assetMappings.map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
+      mappings => this.fetchBoundingBoxesForAssetMappings(mappings),
       () => this.notifyChanged()
     );
     this._fetchResultHelper = fetchResultHelper;
@@ -76,18 +78,42 @@ export class AssetNodeCollection extends NodeCollectionBase {
       limit: 1000
     };
 
-    const indexSet = new IndexSet();
-    this._indexSet = indexSet;
+    this._indexSet = fetchResultHelper.indexSet;
+    this._areas = fetchResultHelper.areas;
 
     this._filter = filter;
 
     const request = this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
-    const completed = await fetchResultHelper.pageResults(indexSet, request);
+    const completed = await fetchResultHelper.pageResults(request);
 
     if (completed) {
       // Completed without being interrupted
       this._fetchResultHelper = undefined;
     }
+  }
+
+  private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
+    const nodeList = await this._client.revisions3D.retrieve3DNodes(
+      this._model.id,
+      this._model.revisionId,
+      assetMappings.map(mapping => {
+        return { id: mapping.nodeId };
+      })
+    );
+
+    const boundingBoxes = nodeList
+      .filter(node => node.boundingBox)
+      .map(node => {
+        const bmin = node.boundingBox!.min;
+        const bmax = node.boundingBox!.max;
+        return new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
+      });
+
+    return boundingBoxes;
+  }
+
+  getFilter() {
+    return this._filter;
   }
 
   clear(): void {
@@ -99,6 +125,10 @@ export class AssetNodeCollection extends NodeCollectionBase {
 
   getIndexSet(): IndexSet {
     return this._indexSet;
+  }
+
+  getAreas(): AreaCollection {
+    return this._areas;
   }
 
   serialize(): SerializedNodeCollection {
