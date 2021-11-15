@@ -2,15 +2,16 @@ import React, { ReactNode } from 'react';
 
 import styled from 'styled-components/macro';
 
-import { Avatar } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
-import { FlexGrow, FlexColumn, FlexRow, Ellipsis } from 'styles/layout';
+import { FlexGrow, FlexColumn, FlexRow, Ellipsis, sizes } from 'styles/layout';
 
 const CardWrapper = styled(FlexColumn)`
   background-color: var(--cogs-white);
 `;
 
 const CardHeader = styled(FlexRow)`
+  height: 68px;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
@@ -20,35 +21,42 @@ const CardHeader = styled(FlexRow)`
 const HeaderLeft = styled(FlexRow)`
   overflow: hidden;
   flex: 1;
-  padding: 12px 0 12px 18px;
   cursor: pointer;
 `;
 
 const AvatarWrapper = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  background-color: #4cc96814;
+  margin-left: ${sizes.normal};
+  border-radius: 6px;
+`;
+
+const IconWrapper = styled(Icon)`
+  margin: 11px 10px;
+  color: #4cc968;
 `;
 
 const Title = styled.div`
   ${Ellipsis}
 
   flex:1;
-  margin-left: 20px;
-  font-weight: bold;
-  font-size: 16px;
+  margin-left: 12px;
+  font-weight: 600;
+  font-size: ${sizes.normal};
   position: relative;
-  top: 4px;
+  top: ${sizes.small};
 `;
 
 const CardContent = styled(FlexGrow)`
-  padding: 12px 18px;
+  height: 202px;
+  padding: ${sizes.normal} ${sizes.normal} 20px ${sizes.normal};
   cursor: pointer;
 `;
 
 const HeaderRight = styled(FlexRow)`
   flex-shrink: 0;
   margin-left: 12px;
-  padding: 12px 18px 12px 0;
 `;
 
 interface Props {
@@ -78,7 +86,7 @@ export const Card: React.FC<Props> = ({
       <CardHeader>
         <HeaderLeft onClick={clickHandler}>
           <AvatarWrapper>
-            <Avatar text={title || ''} maxLength={2} />
+            <IconWrapper type="FolderLine" />
           </AvatarWrapper>
           <Title>{title}</Title>
         </HeaderLeft>

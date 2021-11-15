@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styled from 'styled-components/macro';
+import { Dropdown, Menu } from '@cognite/cogs.js';
 
 import {
   DuplicateButton,
@@ -8,10 +8,20 @@ import {
   ShareButton,
   DeleteButton,
   CommentButton,
+  MoreOptionsButton,
 } from 'components/buttons';
+import { ViewMode } from 'modules/favorite/constants';
 import { FavoriteSummary } from 'modules/favorite/types';
-import { FlexRow, sizes } from 'styles/layout';
 
+import {
+  DELETE_FAVORITE_CARD_BUTTON,
+  DUPLICATE_FAVORITE_CARD_BUTTON,
+  DUPLICATE_SET_MODAL_BUTTON_TEXT,
+  EDIT_FAVORITE_CARD_BUTTON,
+  SHARE_FAVORITE_CARD_BUTTON,
+} from '../../constants';
+
+import { ActionPadding, DangerButton, DropDownMenu } from './elements';
 import { ModalType } from './types';
 
 interface Props {
@@ -21,11 +31,9 @@ interface Props {
   showDeleteButton: boolean;
   handleOpenModal: (modal: ModalType, set: FavoriteSummary) => void;
   handleComment: () => void;
+  viewMode: string;
 }
 
-export const ActionPadding = styled(FlexRow)`
-  margin-right: ${sizes.small};
-`;
 const Actions: React.FC<Props> = ({
   set,
   showShareButton,
@@ -33,36 +41,98 @@ const Actions: React.FC<Props> = ({
   showDeleteButton,
   handleOpenModal,
   handleComment,
+  viewMode,
 }) => {
   const openModal = (modal: ModalType) => {
     handleOpenModal(modal, set);
   };
 
+  const getRowModeAction = () => {
+    return (
+      <>
+        <DuplicateButton
+          onClick={() => openModal(DUPLICATE_SET_MODAL_BUTTON_TEXT)}
+          data-testid="favorite-set-action-duplicate"
+        />
+        <CommentButton onClick={handleComment} />
+        {showEditButton && (
+          <EditButton
+            onClick={() => openModal(EDIT_FAVORITE_CARD_BUTTON)}
+            data-testid="favorite-set-action-edit"
+          />
+        )}
+        {showShareButton && (
+          <ShareButton
+            onClick={() => openModal(SHARE_FAVORITE_CARD_BUTTON)}
+            data-testid="favorite-set-action-share"
+          />
+        )}
+        {showDeleteButton && (
+          <DeleteButton
+            data-testid="favorite-set-action-delete"
+            onClick={() => openModal(DELETE_FAVORITE_CARD_BUTTON)}
+          />
+        )}
+      </>
+    );
+  };
+
+  const getCardModeAction = () => {
+    return (
+      <>
+        <CommentButton size="default" onClick={handleComment} />
+        <Dropdown
+          openOnHover
+          placement="bottom-end"
+          content={
+            <DropDownMenu data-testid={`dropdown-menu-${set.name}`}>
+              <Menu.Item
+                onClick={() => {
+                  openModal(DUPLICATE_SET_MODAL_BUTTON_TEXT);
+                }}
+              >
+                {DUPLICATE_FAVORITE_CARD_BUTTON}
+              </Menu.Item>
+              {showEditButton && (
+                <Menu.Item onClick={() => openModal(EDIT_FAVORITE_CARD_BUTTON)}>
+                  {EDIT_FAVORITE_CARD_BUTTON}
+                </Menu.Item>
+              )}
+
+              {showShareButton && (
+                <Menu.Item
+                  onClick={() => openModal(SHARE_FAVORITE_CARD_BUTTON)}
+                >
+                  {SHARE_FAVORITE_CARD_BUTTON}
+                </Menu.Item>
+              )}
+
+              {showDeleteButton && (
+                <>
+                  <Menu.Divider />
+                  <DangerButton
+                    onClick={() => openModal(DELETE_FAVORITE_CARD_BUTTON)}
+                  >
+                    {DELETE_FAVORITE_CARD_BUTTON}
+                  </DangerButton>
+                </>
+              )}
+            </DropDownMenu>
+          }
+        >
+          <MoreOptionsButton
+            type="ghost"
+            size="default"
+            data-testid={`menu-button-${set.name}`}
+          />
+        </Dropdown>
+      </>
+    );
+  };
+
   return (
     <ActionPadding>
-      <DuplicateButton
-        onClick={() => openModal('Create')}
-        data-testid="favorite-set-action-duplicate"
-      />
-      <CommentButton onClick={handleComment} />
-      {showEditButton && (
-        <EditButton
-          onClick={() => openModal('Edit')}
-          data-testid="favorite-set-action-edit"
-        />
-      )}
-      {showShareButton && (
-        <ShareButton
-          onClick={() => openModal('Share')}
-          data-testid="favorite-set-action-share"
-        />
-      )}
-      {showDeleteButton && (
-        <DeleteButton
-          data-testid="favorite-set-action-delete"
-          onClick={() => openModal('Delete')}
-        />
-      )}
+      {viewMode === ViewMode.Row ? getRowModeAction() : getCardModeAction()}
     </ActionPadding>
   );
 };

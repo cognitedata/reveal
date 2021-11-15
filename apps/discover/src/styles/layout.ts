@@ -34,6 +34,7 @@ export const FlexAlignEnd = styled(Flex as any)`
 
 export const FlexColumn = styled(Flex as any)`
   flex-direction: column;
+  width: 100%;
 `;
 
 export const FlexRow = styled(Flex as any)`

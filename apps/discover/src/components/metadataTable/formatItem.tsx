@@ -1,6 +1,7 @@
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
+import uniqueId from 'lodash/uniqueId';
 
 import { Label } from '@cognite/cogs.js';
 
@@ -14,8 +15,8 @@ import { FilePath } from './formats/FilePath';
 import { Text } from './formats/Text';
 
 export interface FormatItemProps {
-  value?: string | string[] | number | false | null;
-  type?: 'text' | 'path' | 'filesize' | 'date' | 'label';
+  value?: string | string[] | number | React.ReactNode[] | false | null;
+  type?: 'text' | 'path' | 'filesize' | 'date' | 'label' | 'componentlist';
 }
 
 export const formatItem = ({ value, type }: FormatItemProps) => {
@@ -48,11 +49,15 @@ export const formatItem = ({ value, type }: FormatItemProps) => {
     return (
       <>
         {value.length ? (
-          value.map((item) => (
-            <Label key={item} size="small" variant="unknown">
-              {item}
-            </Label>
-          ))
+          value.map((item) =>
+            type === 'componentlist' ? (
+              <span key={uniqueId()}>{item}</span>
+            ) : (
+              <Label key={uniqueId()} size="small" variant="unknown">
+                {item}
+              </Label>
+            )
+          )
         ) : (
           <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
         )}

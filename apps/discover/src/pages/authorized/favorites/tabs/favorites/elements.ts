@@ -1,7 +1,10 @@
 import styled from 'styled-components/macro';
 
+import { Icon, Label, Menu } from '@cognite/cogs.js';
+
+import { Card } from 'components/card';
 import InlineLink from 'components/inlineLink';
-import { FlexColumn, sizes } from 'styles/layout';
+import { FlexAlignItems, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const ToggleContainer = styled.div`
   margin-right: 38px;
@@ -70,10 +73,96 @@ export const P = styled.span`
 export const TabBar = styled.div`
   margin-top: ${sizes.large};
   padding-left: ${sizes.extraLarge};
-  border-bottom: 1px solid var(--cogs-greyscale-grey3);
-  height: 48px;
+  border-bottom: 1px solid var(--cogs-border-default);
+  height: ${sizes.extraLarge};
 `;
 
 export const TabContent = styled.div`
   white-space: nowrap;
+`;
+
+export const StyledCard = styled(Card)`
+  width: 100%;
+  min-height: 258px;
+  box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.04),
+    0px 3px ${sizes.small} rgba(0, 0, 0, 0.06);
+
+  &:hover {
+    box-shadow: 0px ${sizes.small} ${sizes.normal} ${sizes.extraSmall}
+        rgba(0, 0, 0, 0.08),
+      0px 2px 10px rgba(0, 0, 0, 0.06);
+  }
+  border-radius: ${sizes.small};
+`;
+
+export const ContentRow = styled(FlexColumn)`
+  padding: ${sizes.normal} 0 0 0;
+`;
+
+export const LabelHeader = styled(FlexAlignItems)`
+  font-size: 14px;
+  min-width: 100px;
+  height: 20px;
+  font-weight: 500;
+  align-items: flex-start;
+  color: var(--cogs-text-primary);
+  position: relative;
+  margin-bottom: ${sizes.extraSmall};
+`;
+
+export const LabelDescription = styled(FlexAlignItems)`
+  font-size: 14px;
+  min-width: 100px;
+  font-weight: 500;
+  color: var(--cogs-text-primary);
+  margin-bottom: 6px;
+`;
+
+export const Value = styled(FlexAlignItems)`
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: var(--cogs-text-primary);
+`;
+
+export const AssetIcon = styled(Icon)`
+  color: var(--cogs-greyscale-grey7);
+  margin-right: 6px;
+`;
+
+export const SubLabel = styled(Label)`
+  margin-right: ${sizes.small};
+  cursor: pointer;
+`;
+
+export const Container = styled.div`
+  width: 100%;
+`;
+
+export const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  grid-auto-rows: minmax(100px, auto);
+  gap: ${sizes.large};
+  height: auto;
+  justify-items: center;
+`;
+
+export const DangerButton = styled(Menu.Item)`
+  color: var(--cogs-red-2);
+`;
+
+export const ActionPadding = styled(FlexRow)`
+  margin-right: ${sizes.small};
+`;
+
+export const DropDownMenu = styled(Menu)`
+  width: 172px;
+`;
+
+export const DescriptionField = styled.div`
+  .cogs-input {
+    background: var(--cogs-bg-control--secondary) !important;
+  }
+  margin-bottom: ${sizes.normal};
 `;

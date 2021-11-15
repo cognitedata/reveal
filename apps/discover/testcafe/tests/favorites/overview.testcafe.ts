@@ -1,6 +1,10 @@
 import { t } from 'testcafe';
 
-import { DUPLICATED_SET_SUFFIX } from '../../../src/pages/authorized/favorites/constants';
+import {
+  DUPLICATED_SET_SUFFIX,
+  DUPLICATE_FAVORITE_CARD_BUTTON,
+  EDIT_FAVORITE_CARD_BUTTON,
+} from '../../../src/pages/authorized/favorites/constants';
 import { WELLS_TAB_TITLE_KEY } from '../../../src/pages/authorized/search/constants';
 import App, { wellDataSearchPhrase } from '../../__pages__/App';
 import { addFavorite, deleteFavorites } from '../../fixtures/favorites';
@@ -30,7 +34,11 @@ fixture('Favorites overview page')
   .afterEach(async () => logErrors());
 
 startTest(`Cancel creating a duplicate`, async () => {
-  await App.favoritesPage.clickButtonInFavoriteSet(FAV_SET_NAME, 'Duplicate');
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
+  await App.favoritesPage.clickButtonInFavoriteSet(
+    FAV_SET_NAME,
+    DUPLICATE_FAVORITE_CARD_BUTTON
+  );
   await App.createFavoriteDialog.checkIfNameFieldHasValue(
     `${FAV_SET_NAME}${DUPLICATED_SET_SUFFIX}`
   );
@@ -40,6 +48,7 @@ startTest(`Cancel creating a duplicate`, async () => {
 });
 
 startTest(`Create a duplicate`, async () => {
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
   await App.favoritesPage.createDuplicateSet(FAV_SET_NAME, DUPLICATE_SET_NAME);
   await App.favoritesPage.checkIfFavoriteSetExists(FAV_SET_NAME);
   await App.favoritesPage.checkIfFavoriteSetExists(DUPLICATE_SET_NAME);
@@ -47,13 +56,33 @@ startTest(`Create a duplicate`, async () => {
 });
 
 startTest(`Cancel editing the duplicated set`, async () => {
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
   await App.favoritesPage.createDuplicateSet(FAV_SET_NAME, DUPLICATE_SET_NAME);
-  await App.favoritesPage.clickButtonInFavoriteSet(DUPLICATE_SET_NAME, 'Edit');
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(DUPLICATE_SET_NAME);
+  await App.favoritesPage.clickButtonInFavoriteSet(
+    DUPLICATE_SET_NAME,
+    EDIT_FAVORITE_CARD_BUTTON
+  );
   await App.createFavoriteDialog.checkIfNameFieldHasValue(DUPLICATE_SET_NAME);
   await App.createFavoriteDialog.clickSaveButton();
   await App.createFavoriteDialog.fillInNameAndDescription(EDITED_SET_NAME);
   await App.createFavoriteDialog.clickCancelButton();
   await App.favoritesPage.checkIfFavoriteSetExists(EDITED_SET_NAME, false);
+});
+
+startTest(`Edit the duplicated set`, async () => {
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
+  await App.favoritesPage.createDuplicateSet(FAV_SET_NAME, DUPLICATE_SET_NAME);
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(DUPLICATE_SET_NAME);
+  await App.favoritesPage.clickButtonInFavoriteSet(
+    DUPLICATE_SET_NAME,
+    EDIT_FAVORITE_CARD_BUTTON
+  );
+  await App.createFavoriteDialog.checkIfNameFieldHasValue(DUPLICATE_SET_NAME);
+  await App.createFavoriteDialog.fillInNameAndDescription(EDITED_SET_NAME);
+  await App.createFavoriteDialog.clickSaveButton();
+  await App.favoritesPage.checkIfFavoriteSetExists(DUPLICATE_SET_NAME, false);
+  await App.favoritesPage.checkIfFavoriteSetExists(EDITED_SET_NAME);
 });
 
 // startTest(`Edit the duplicated set`, async () => {
@@ -67,12 +96,20 @@ startTest(`Cancel editing the duplicated set`, async () => {
 // });
 
 startTest(`Edit only the description of set`, async () => {
-  await App.favoritesPage.clickButtonInFavoriteSet(FAV_SET_NAME, 'Edit');
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
+  await App.favoritesPage.clickButtonInFavoriteSet(
+    FAV_SET_NAME,
+    EDIT_FAVORITE_CARD_BUTTON
+  );
   await App.createFavoriteDialog.fillInDescription(EDITED_SET_DESCRIPTION);
   await App.createFavoriteDialog.clickSaveButton();
   await t.wait(3000);
   await App.favoritesPage.checkIfFavoriteSetExists(FAV_SET_NAME);
-  await App.favoritesPage.clickButtonInFavoriteSet(FAV_SET_NAME, 'Edit');
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
+  await App.favoritesPage.clickButtonInFavoriteSet(
+    FAV_SET_NAME,
+    EDIT_FAVORITE_CARD_BUTTON
+  );
   await App.createFavoriteDialog.checkIfDescriptionFieldHasValue(
     EDITED_SET_DESCRIPTION
   );

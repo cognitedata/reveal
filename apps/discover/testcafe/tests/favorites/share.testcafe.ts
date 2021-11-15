@@ -1,5 +1,6 @@
 import { t } from 'testcafe';
 
+import { SHARE_FAVORITE_CARD_BUTTON } from '../../../src/pages/authorized/favorites/constants';
 import { SHARE_SUCCESS_TOAST } from '../../../src/pages/authorized/favorites/modals/constants';
 import App from '../../__pages__/App';
 import { deleteFavorites } from '../../fixtures/favorites';
@@ -27,7 +28,11 @@ startTest('Share/Unshare favorite set', async () => {
   await App.createFavoriteDialog.clickCreateButton();
   await App.favoritesPage.checkIfFavoriteSetExists(FAV_SET_NAME);
 
-  await App.favoritesPage.clickShareButton();
+  await App.favoritesPage.hoverDropDownMenuInFavoriteSet(FAV_SET_NAME);
+  await App.favoritesPage.clickButtonInFavoriteSet(
+    FAV_SET_NAME,
+    SHARE_FAVORITE_CARD_BUTTON
+  );
   await App.favoritesPage.shareFavoriteDialog.checkIfOwnerIsDisplayed();
   await App.favoritesPage.shareFavoriteDialog.shareFavoriteWithUser(
     'Admin User'

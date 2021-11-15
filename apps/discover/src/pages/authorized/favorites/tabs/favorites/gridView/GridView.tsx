@@ -1,27 +1,14 @@
 ﻿import React from 'react';
 
-import styled from 'styled-components/macro';
-
 import { SetCommentTarget } from '@cognite/react-comments';
 
 import { FavoriteSummary } from 'modules/favorite/types';
 
 import { FAVORITE_CARD_CONTAINER } from '../../../constants';
+import { Container, Grid } from '../elements';
 import { ModalType } from '../types';
 
 import FavouriteCard from './Card';
-
-const Container = styled.div`
-  width: 100%;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
-  grid-auto-rows: minmax(100px, auto);
-  gap: 40px;
-  height: auto;
-`;
 
 interface Props {
   sets: FavoriteSummary[];
@@ -29,6 +16,7 @@ interface Props {
   handleNavigateFavoriteSet: (item: FavoriteSummary) => void;
   isOwner: (userId: string) => boolean;
   setCommentTarget: SetCommentTarget;
+  viewMode: string;
 }
 
 export const GridView: React.FC<Props> = ({
@@ -37,6 +25,7 @@ export const GridView: React.FC<Props> = ({
   sets,
   setCommentTarget,
   isOwner,
+  viewMode,
 }) => {
   return (
     <Container>
@@ -50,6 +39,7 @@ export const GridView: React.FC<Props> = ({
               onClick={handleNavigateFavoriteSet}
               handleOpenModal={handleOpenModal}
               setCommentTarget={setCommentTarget}
+              viewMode={viewMode}
             />
           );
         })}

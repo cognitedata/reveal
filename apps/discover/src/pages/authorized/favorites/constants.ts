@@ -27,9 +27,11 @@ export const DELETE_SAVED_SEARCH_CONFIRM_BUTTON_TEXT = 'Remove';
 
 export const FAVORITE_SET_INFO_DESCRIPTION = 'Description';
 export const FAVORITE_SET_INFO_CREATED_BY = 'Created by';
-export const FAVORITE_SET_INFO_UPDATED_BY = 'Last update by';
+export const FAVORITE_SET_INFO_UPDATED_BY = 'Updated by';
 export const FAVORITE_SET_INFO_ASSETS = 'Assets';
 export const FAVORITE_SET_EMPTY = 'Empty';
+export const FAVORITE_SET_INFO_DATE_CREATED = 'Date created';
+export const FAVORITE_SET_INFO_DATE_UPDATED = 'Date updated';
 
 export const DUPLICATED_SET_SUFFIX = ' (Duplicate)';
 
@@ -38,3 +40,10 @@ export const DELETE_FAVORITE_MODAL_TEXT =
   'Are you sure you want to delete this set?';
 
 export const REMOVE_FROM_SET_TEXT = 'Remove from set';
+
+export const EMPTY_DESCRIPTION_MESSAGE = 'No description available';
+
+export const DELETE_FAVORITE_CARD_BUTTON = 'Delete';
+export const EDIT_FAVORITE_CARD_BUTTON = 'Edit';
+export const SHARE_FAVORITE_CARD_BUTTON = 'Share';
+export const DUPLICATE_FAVORITE_CARD_BUTTON = 'Duplicate';

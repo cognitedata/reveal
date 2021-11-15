@@ -10,6 +10,7 @@ import {
   DUPLICATE_SET_MODAL_BUTTON_TEXT,
   FAVORITE_SET_NO_DOCUMENTS,
   FAVORITE_SET_NO_WELLS,
+  DUPLICATE_FAVORITE_CARD_BUTTON,
 } from '../../src/pages/authorized/favorites/constants';
 import { progress } from '../utils/utils';
 
@@ -96,6 +97,17 @@ class FavoritesPage extends BaseSearchPage {
     'Go back'
   );
 
+  public readonly favoriteDropdownMenu = (title: string) =>
+    Selector(`[data-testid="menu-button-${title}"]`);
+
+  public readonly favoriteDropdownMenuItem = (
+    setName: string,
+    itemTitle: string
+  ) =>
+    Selector(`[data-testid="dropdown-menu-${setName}"]`)
+      .find('button')
+      .withText(itemTitle);
+
   public readonly goToWellTab = async () => {
     progress('Go to well tab');
     await t.click(this.favoriteSetWellsTab);
@@ -156,7 +168,12 @@ class FavoritesPage extends BaseSearchPage {
     action: Action
   ) => {
     progress(`Click the '${action}' button in the set`);
-    await t.click(this.favoriteSetCardAction(setName, action));
+    await t.click(this.favoriteDropdownMenuItem(setName, action));
+  };
+
+  public readonly hoverDropDownMenuInFavoriteSet = async (setName: string) => {
+    progress(`Hover the menu in the set`);
+    await t.hover(this.favoriteDropdownMenu(setName));
   };
 
   public readonly checkIfFavoriteSetIsEmpty = async () => {
@@ -170,7 +187,10 @@ class FavoritesPage extends BaseSearchPage {
     setName: string,
     duplicateSetName: string
   ) => {
-    await this.clickButtonInFavoriteSet(setName, 'Duplicate');
+    await this.clickButtonInFavoriteSet(
+      setName,
+      DUPLICATE_FAVORITE_CARD_BUTTON
+    );
 
     await App.createFavoriteDialog.checkIfNameFieldHasValue(
       `${setName}${DUPLICATED_SET_SUFFIX}`
@@ -203,11 +223,6 @@ class FavoritesPage extends BaseSearchPage {
         App.favoritesPage.favoriteBulkActionButtons('Clear selection').exists
       )
       .eql(true);
-  };
-
-  public readonly clickShareButton = async () => {
-    progress(`Click share button`);
-    await t.click(this.favoriteShareButton);
   };
 }
 

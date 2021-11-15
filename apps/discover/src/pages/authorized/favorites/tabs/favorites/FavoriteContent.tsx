@@ -104,6 +104,7 @@ export const FavoriteContent: React.FC<Props> = ({
               sets={favoriteSets || []}
               isOwner={isOwner}
               setCommentTarget={setCommentTarget}
+              viewMode={ViewMode.Card}
             />
           ) : (
             <ListView

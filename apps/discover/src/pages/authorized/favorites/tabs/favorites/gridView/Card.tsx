@@ -1,12 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import styled from 'styled-components/macro';
-
+import { Input } from '@cognite/cogs.js';
 import { SetCommentTarget } from '@cognite/react-comments';
 
-import { shortDate } from '_helpers/date';
-import { Card } from 'components/card';
+import MetadataTable from 'components/metadataTable';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { FavoriteSummary } from 'modules/favorite/types';
@@ -15,50 +13,22 @@ import {
   getFavoriteLastUpdatedByDateTime,
 } from 'modules/favorite/utils';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
-import { FlexColumn, FlexRow, FlexAlignItems } from 'styles/layout';
 import { useTheme } from 'styles/useTheme';
 
 import {
-  FAVORITE_SET_EMPTY,
   FAVORITE_SET_INFO_ASSETS,
   FAVORITE_SET_INFO_CREATED_BY,
+  FAVORITE_SET_INFO_DATE_CREATED,
+  FAVORITE_SET_INFO_DATE_UPDATED,
   FAVORITE_SET_INFO_DESCRIPTION,
   FAVORITE_SET_INFO_UPDATED_BY,
+  EMPTY_DESCRIPTION_MESSAGE,
 } from '../../../constants';
 import Actions from '../Actions';
+import { StyledCard, LabelDescription, DescriptionField } from '../elements';
 import { ModalType } from '../types';
 
-const StyledCard = styled(Card)`
-  min-height: 258px;
-  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
-    0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
-
-  &:hover {
-    box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%),
-      0px 5px 8px 0px rgb(0 0 0 / 14%), 0px 1px 14px 0px rgb(0 0 0 / 12%);
-  }
-`;
-const Content = styled.div``;
-
-const ContentRow = styled(FlexRow)`
-  padding: 12px 0;
-`;
-
-const Label = styled(FlexAlignItems)`
-  font-size: 10px;
-  min-width: 100px;
-  font-weight: 600;
-  align-items: flex-start;
-  color: var(--cogs-greyscale-grey6);
-  position: relative;
-  top: 4px;
-`;
-
-const Value = styled(FlexAlignItems)`
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--cogs-greyscale-grey8);
-`;
+import { AssetLabel } from './AssetLabel';
 
 export interface Props {
   favorite: FavoriteSummary;
@@ -66,6 +36,7 @@ export interface Props {
   handleOpenModal: (modal: ModalType, set: FavoriteSummary) => void;
   isFavoriteSetOwner: boolean;
   setCommentTarget: SetCommentTarget;
+  viewMode: string;
 }
 
 export const FavouriteCard: React.FC<Props> = ({
@@ -74,6 +45,7 @@ export const FavouriteCard: React.FC<Props> = ({
   setCommentTarget,
   handleOpenModal,
   isFavoriteSetOwner,
+  viewMode,
 }) => {
   const metrics = useGlobalMetrics('favorites');
   const theme = useTheme();
@@ -83,6 +55,25 @@ export const FavouriteCard: React.FC<Props> = ({
     onClick(favorite!);
     metrics.track('click-favorite-set-card');
   };
+
+  const labelList = [
+    {
+      type: 'Document',
+      value: favorite.content.documentIds.length,
+      titleType: 'Document',
+    },
+    {
+      type: 'OilPlatform',
+      value: Object.keys(favorite.content.wells).length,
+      titleType: 'Well',
+    },
+    {
+      type: 'Cube',
+      value: favorite.content.seismicIds.length,
+      titleType: 'Seismic',
+    },
+  ];
+
   return (
     <StyledCard
       loading={!favorite}
@@ -104,40 +95,66 @@ export const FavouriteCard: React.FC<Props> = ({
             showEditButton={isFavoriteSetOwner}
             showDeleteButton={isFavoriteSetOwner}
             showShareButton={isFavoriteSetOwner}
+            viewMode={viewMode}
           />
         )
       }
     >
-      <Content data-testid="favourite-card">
-        <FlexColumn>
-          <ContentRow>
-            <Label theme={theme}>{t(FAVORITE_SET_INFO_DESCRIPTION)}</Label>
-            <Value>{favorite?.description || '-'}</Value>
-          </ContentRow>
-          <ContentRow>
-            <Label theme={theme}>{t(FAVORITE_SET_INFO_CREATED_BY)}</Label>
-            <Value>
-              {`${getFullNameOrDefaultText(favorite.owner)} on ${shortDate(
-                favorite?.createdTime
-              )}`}
-            </Value>
-          </ContentRow>
-          <ContentRow>
-            <Label theme={theme}>{t(FAVORITE_SET_INFO_UPDATED_BY)}</Label>
-            <Value>
-              {`${getFavoriteLastUpdateByUserName(
-                favorite.lastUpdatedBy
-              )} on ${shortDate(
-                getFavoriteLastUpdatedByDateTime(favorite.lastUpdatedBy)
-              )}`}
-            </Value>
-          </ContentRow>
-          <ContentRow>
-            <Label theme={theme}>{t(FAVORITE_SET_INFO_ASSETS)}</Label>
-            <Value>{favorite.assetCount || FAVORITE_SET_EMPTY}</Value>
-          </ContentRow>
-        </FlexColumn>
-      </Content>
+      <div data-testid="favourite-card">
+        <LabelDescription theme={theme}>
+          {t(FAVORITE_SET_INFO_DESCRIPTION)}
+        </LabelDescription>
+        <DescriptionField>
+          <Input
+            disabled
+            placeholder={EMPTY_DESCRIPTION_MESSAGE}
+            value={favorite?.description}
+            size="small"
+            variant="noBorder"
+            fullWidth
+          />
+        </DescriptionField>
+
+        <MetadataTable
+          columns={3}
+          metadata={[
+            {
+              label: t(FAVORITE_SET_INFO_DATE_CREATED),
+              value: favorite?.createdTime,
+              type: 'date',
+            },
+            {
+              label: t(FAVORITE_SET_INFO_CREATED_BY),
+              value: getFullNameOrDefaultText(favorite.owner),
+            },
+            {
+              label: t(FAVORITE_SET_INFO_ASSETS),
+              value: labelList
+                .filter((item) => item.value > 0)
+                .map((item) => {
+                  return (
+                    <AssetLabel
+                      key={item.type}
+                      type={item.type}
+                      value={item.value}
+                      titleType={item.titleType}
+                    />
+                  );
+                }),
+              type: 'componentlist',
+            },
+            {
+              label: t(FAVORITE_SET_INFO_DATE_UPDATED),
+              value: getFavoriteLastUpdatedByDateTime(favorite.lastUpdatedBy),
+              type: 'date',
+            },
+            {
+              label: t(FAVORITE_SET_INFO_UPDATED_BY),
+              value: getFavoriteLastUpdateByUserName(favorite.lastUpdatedBy),
+            },
+          ]}
+        />
+      </div>
     </StyledCard>
   );
 };
