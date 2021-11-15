@@ -9,7 +9,7 @@ import { Box3, Vector3 } from 'three';
  * clusters them together in larger bounding boxes. The union of the larger
  * boxes contains all boxes that have been inserted
  */
-export class BoxClusterer  {
+export class BoxClusterer {
   private readonly resultBoxes: Box3[];
   private addedSinceSquash: number = 0;
 
@@ -19,7 +19,7 @@ export class BoxClusterer  {
     this.resultBoxes = boxes ?? [];
   }
 
-  private reusableBoundingBox = new Box3();
+  private readonly reusableBoundingBox = new Box3();
 
   private mergeBoxesAtIndices(mini: number, maxi: number): void {
     this.resultBoxes[mini].union(this.resultBoxes[maxi]);

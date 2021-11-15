@@ -28,7 +28,7 @@ export class EmptyAreaCollection implements AreaCollection {
     throw new Error('addAreas() not defined for EmptyAreaCollection');
   }
 
-  intersectWith(_: Iterable<THREE.Box3>): void { }
+  intersectWith(_: Iterable<THREE.Box3>): void {}
 
   get isEmpty(): boolean {
     return true;
