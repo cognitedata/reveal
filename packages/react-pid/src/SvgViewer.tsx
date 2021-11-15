@@ -6,6 +6,7 @@ import {
   findAllInstancesOfSymbol,
   SvgPath,
   DiagramSymbol,
+  DiagramLineInstance,
   DiagramSymbolInstance,
   SvgRepresentation,
   getSvgBoundingBox,
@@ -126,6 +127,7 @@ export const SvgViewer = () => {
   const [active, setActive] = React.useState<string>('AddSymbol');
 
   const [selection, setSelection] = React.useState<SVGElement[]>([]);
+  const [lines, setLines] = React.useState<DiagramLineInstance[]>([]);
   const [symbols, setSymbols] = React.useState<DiagramSymbol[]>([]);
   const [symbolInstances, setSymbolInstances] = React.useState<
     DiagramSymbolInstance[]
@@ -250,6 +252,8 @@ export const SvgViewer = () => {
     setExistingSymbolPromptData(null);
   };
 
+  // const saveLine = (selection: SVGElement[]) => {};
+
   const handleBeforeInjection = (svg?: SVGSVGElement) => {
     // console.log('handleBeforeInjection svg', svg);
     if (svg) {
@@ -267,9 +271,13 @@ export const SvgViewer = () => {
             node.style.strokeWidth = val.toString();
           }
 
+          if (lines.some((line) => line.svgPathIds.includes(node.id))) {
+            node.style.stroke = 'magenta';
+          }
+
           if (
             symbolInstances.some((symbolInst) =>
-              symbolInst.svgElements.some((path) => path.id === node.id)
+              symbolInst.svgPathIds.includes(node.id)
             )
           ) {
             node.style.stroke = 'pink';
@@ -349,6 +357,25 @@ export const SvgViewer = () => {
                 setSelection([...selection, node]);
               }
             }
+            if (active === 'AddLine') {
+              // Remove a line if already selected
+              if (lines.some((line) => line.svgPathIds.includes(node.id))) {
+                const index = lines.findIndex((line) =>
+                  line.svgPathIds.includes(node.id)
+                );
+                const newLines = [...lines];
+                newLines.splice(index, 1);
+                setLines(newLines);
+              } else {
+                setLines([
+                  ...lines,
+                  {
+                    symbolName: 'Line',
+                    svgPathIds: [node.id],
+                  },
+                ]);
+              }
+            }
           });
         } else {
           for (let j = 0; j < node.children.length; j++) {
@@ -392,6 +419,7 @@ export const SvgViewer = () => {
           <SideView
             active={active}
             symbols={symbols}
+            lines={lines}
             symbolInstances={symbolInstances}
             selection={selection}
             setActive={setActive}

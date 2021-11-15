@@ -8,7 +8,11 @@ import {
   ToolBarButton,
   Collapse,
 } from '@cognite/cogs.js';
-import { DiagramSymbol, DiagramSymbolInstance } from '@cognite/pid-tools';
+import {
+  DiagramLineInstance,
+  DiagramSymbol,
+  DiagramSymbolInstance,
+} from '@cognite/pid-tools';
 
 const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   const jsonData = {
@@ -50,9 +54,14 @@ const CollapseHeader = styled.div`
   width: 100%;
 `;
 
+const CollapseSeperator = styled.div`
+  padding: 0.5rem 1rem;
+`;
+
 interface SideViewProps {
   active: string;
   symbols: DiagramSymbol[];
+  lines: DiagramLineInstance[];
   symbolInstances: DiagramSymbolInstance[];
   selection: SVGElement[];
   setActive: (arg0: string) => void;
@@ -63,6 +72,7 @@ interface SideViewProps {
 export const SideView = ({
   active,
   symbols,
+  lines,
   symbolInstances,
   selection,
   setActive,
@@ -88,7 +98,14 @@ export const SideView = ({
         onClick: () =>
           active === 'AddSymbol' ? setActive('') : setActive('AddSymbol'),
         className: `${active === 'AddSymbol' && 'active'}`,
-        'aria-label': 'Add symbol',
+        description: 'Add symbol',
+      },
+      {
+        icon: 'VectorLine',
+        onClick: () =>
+          active === 'AddLine' ? setActive('') : setActive('AddLine'),
+        className: `${active === 'AddLine' && 'active'}`,
+        description: 'Add line',
       },
     ],
   ];
@@ -141,9 +158,9 @@ export const SideView = ({
             return instance.symbolName === symbol.symbolName;
           })
           .map((instance) => (
-            <p key={instance.svgElements.map((path) => path.id).join('')}>
+            <p key={instance.svgPathIds.join('')}>
               {instance.symbolName}&nbsp;-&nbsp;
-              {instance.svgElements.map((path) => path.id).join(' . ')}
+              {instance.svgPathIds.join(' . ')}
             </p>
           ))}
       </div>
@@ -161,6 +178,16 @@ export const SideView = ({
       </div>
       <ScrollWrapper>
         <Collapse accordion ghost>
+          <CollapseSeperator>Lines</CollapseSeperator>
+          <Collapse.Panel header={`Flowlines (${lines?.length || 0})`}>
+            {lines?.map((line) => (
+              <p key={line.svgPathIds.join('')}>
+                {line.symbolName}&nbsp;-&nbsp;
+                {line.svgPathIds.join(' . ')}
+              </p>
+            ))}
+          </Collapse.Panel>
+          <CollapseSeperator>Symbols</CollapseSeperator>
           {symbols.map((symbol) => {
             return (
               <Collapse.Panel
@@ -203,7 +230,10 @@ export const SideView = ({
         </Button>
 
         <ToolBarWrapper>
-          <ToolBar buttonGroups={ActionWithCustomStyling} />
+          <ToolBar
+            direction="horizontal"
+            buttonGroups={ActionWithCustomStyling}
+          />
         </ToolBarWrapper>
       </div>
     </SidePanelWrapper>

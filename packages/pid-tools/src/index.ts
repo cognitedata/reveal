@@ -27,7 +27,11 @@ export interface DiagramSymbol {
 
 export interface DiagramSymbolInstance {
   symbolName: string;
-  svgElements: SVGElement[];
+  svgPathIds: string[];
+}
+
+export interface DiagramLineInstance extends DiagramSymbolInstance {
+  symbolName: 'Line';
 }
 
 export const newMatcher = (path: string) => {
@@ -57,7 +61,7 @@ export const findAllInstancesOfSymbol = (
   const symbolInstances = allMatches.map((match) => {
     return {
       symbolName: symbol.symbolName,
-      svgElements: match,
+      svgPathIds: match.map((el) => el.id),
     };
   });
 
