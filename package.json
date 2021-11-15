@@ -48,10 +48,7 @@
     "storybook": "./scripts/storybook.sh",
     "sstorybook": "start-storybook -p 6006",
     "build-storybook": "nx run platypus:build-storybook",
-    "platypus": "node ./dist/apps/platypus-cdf-cli/main.js",
-    "docz:dev": "docz dev --config=apps/platypus-docs/doczrc.js --debug=true",
-    "docz:build": "docz build --config=apps/platypus-docs/doczrc.js",
-    "docz:serve": "docz build --config=apps/platypus-docs/doczrc.js && docz serve --port 3005"
+    "platypus": "node ./dist/apps/platypus-cdf-cli/main.js"
   },
   "browserslist": {
     "production": [
@@ -75,7 +72,7 @@
     "@nrwl/eslint-plugin-nx": "13.0.2",
     "@nrwl/jest": "13.0.2",
     "@nrwl/linter": "13.0.2",
-    "@nrwl/node": "13.1.3",
+    "@nrwl/node": "13.1.4",
     "@nrwl/react": "13.0.2",
     "@nrwl/storybook": "13.0.2",
     "@nrwl/tao": "13.0.2",
