@@ -3,8 +3,6 @@
 [![Confluence](https://img.shields.io/badge/Confluence-blue)](https://cog.link/devx)
 [![API/CLI Docs](https://img.shields.io/badge/API/CLI-Docs-green)](https://cognitedata.github.io/platypus/)
 
-
-
 Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
 
 ## Setup
@@ -82,15 +80,15 @@ To test:
 
 # Platypus CLI
 
-You can find the code under `libs/platypus-cli`.
+You can find the code under `apps/platypus-cdf-cli`.
 
 To build:
 
-`nx build platypus-cli`
+`nx build platypus-cdf-cli`
 
 To test:
 
-`nx test platypus-cli`
+`nx test platypus-cdf-cli`
 
 To run:
 
