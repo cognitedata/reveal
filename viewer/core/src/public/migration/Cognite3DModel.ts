@@ -273,7 +273,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * uses a right-hand Y-up coordinate system. This function also accounts for transformation
    * applied to the model.
    * @param box     The box in ThreeJS/model coordinates.
-   * @param out     Optional preallocated buffer for storing the result. May be same input as  `box`.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
    * @returns       Transformed box.
    */
   mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
