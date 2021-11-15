@@ -102,21 +102,21 @@ export const setSelectedAllExplorerFiles = createAction<{
   filter?: SelectFilter;
 }>('setSelectedAllExplorerFiles');
 
+function withPayloadType() {
+  return (files: FileInfo[]) => ({
+    payload: files.map((file) => createFileState(file) as ExplorerFileState),
+  });
+}
+export const setExplorerFiles = createAction(
+  'setExplorerFiles',
+  withPayloadType()
+);
+
 /* eslint-disable no-param-reassign */
 const explorerSlice = createGenericTabularDataSlice({
   name: 'explorerSlice',
   initialState: initialState as State,
   reducers: {
-    setExplorerFiles: (state, action: PayloadAction<FileInfo[]>) => {
-      const files = action.payload.map(
-        (file) => createFileState(file) as ExplorerFileState
-      );
-      resetFileState(state);
-
-      files.forEach((file) => {
-        updateFileState(state, file);
-      });
-    },
     setExplorerFileSelectState: (
       state,
       action: PayloadAction<{ fileId: number; selected: boolean }>
@@ -181,6 +181,14 @@ const explorerSlice = createGenericTabularDataSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(setExplorerFiles, (state, { payload }) => {
+      resetFileState(state);
+
+      payload.forEach((file) => {
+        updateFileState(state, file);
+      });
+    });
+
     builder.addCase(UpdateFiles.fulfilled, (state, { payload }) => {
       payload.forEach((fileState) => {
         updateFileState(state, fileState);
@@ -220,7 +228,6 @@ export type { State as ExplorerReducerState };
 export { initialState as explorerReducerInitialState };
 
 export const {
-  setExplorerFiles,
   setExplorerFileSelectState,
   setExplorerSelectedFiles,
   setFocusedFileId,
