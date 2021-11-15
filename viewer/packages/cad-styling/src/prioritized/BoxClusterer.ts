@@ -32,7 +32,8 @@ export class BoxClusterer {
   };
 
   private surfaceArea(box: Box3) {
-    const size = box.getSize(this._surfaceAreaVars.size);
+    const { size } = this._surfaceAreaVars;
+    box.getSize(size);
 
     return 2 * (size.x * size.y + size.y * size.z + size.z * size.x);
   }
@@ -45,7 +46,8 @@ export class BoxClusterer {
     const MAX_SURFACE_INCREASE_RATIO = 1.0;
     const MAX_SURFACE_INCREASE_ADDITIVE_TERM = 8.0; // Heuristic number of square meters to allow merging of smaller boxes
 
-    const inputBox = this._shouldMergeBoxesVars.inputBox.copy(box0);
+    const { inputBox } = this._shouldMergeBoxesVars;
+    inputBox.copy(box0);
     const union = inputBox.union(box1);
 
     const unionSurfaceArea = this.surfaceArea(union);
