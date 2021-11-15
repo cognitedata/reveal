@@ -2,23 +2,25 @@ import styled from 'styled-components/macro';
 
 export const PlaceholderWrapper = styled.div`
   display: flex;
-  align-items: center;
   justify-content: center;
+  padding-top: 220px;
   width: 100%;
   height: 100%;
 
-  background: var(--cogs-greyscale-grey1);
-  border: 1px dashed rgba(0, 0, 0, 0.15);
+  background: var(--cogs-bg-accent);
+  border: 1px dashed var(--cogs-border-default);
   box-sizing: border-box;
   border-radius: 16px;
 
   .content {
     display: flex;
     flex-direction: column;
+    margin-right: 24px;
 
     .placeholder-text {
       width: 480px;
-      margin-bottom: 20px;
+      padding-top: 28px;
+      margin-bottom: 24px;
       .cogs-title-3 {
         margin-bottom: 8px;
       }
@@ -41,16 +43,16 @@ export const PlaceholderWrapper = styled.div`
     .placeholder-actions {
       .cogs-body-1 {
         &:first-child {
-          margin-bottom: 15px;
+          margin-bottom: 16px;
         }
         &:last-of-type {
           display: inline-block;
         }
       }
       button {
-        margin-right: 10px;
+        margin-right: 8px;
         &:last-of-type {
-          margin-left: 10px;
+          margin-left: 8px;
         }
         &:focus {
           color: var(--cogs-primary);
