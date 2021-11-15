@@ -12,12 +12,12 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
+  CameraControlsOptions,
   CognitePointCloudModel,
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
   IndexSet,
-  CameraControlsOptions
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -93,10 +93,9 @@ export function Migration() {
       const controlsOptions: CameraControlsOptions = {
         onClickTargetChange: true,
         zoomToCursor: 'scrollTarget',
-        canInterruptAnimations: false
       }
 
-      viewer.setCameraControlsMode(controlsOptions);
+      viewer.setCameraControlsOptions(controlsOptions);
 
       const totalBounds = new THREE.Box3();
 
@@ -188,7 +187,13 @@ export function Migration() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        renderMode: 'Color'
+        renderMode: 'Color',
+        controls: {
+          zoomToCursorType: 'scrollTarget',
+          onClickTargetChange: true,
+          canInterruptAnimations: false
+        },
+        debugRenderStageTimings: false
       };
       const guiActions = {
         addModel: () =>
@@ -277,6 +282,11 @@ export function Migration() {
         ]).name('SSAO').onFinishChange(v => {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
+        });
+      renderGui.add(guiState, 'debugRenderStageTimings')
+        .name('Debug timings')
+        .onChange(enabled => {
+          (viewer as any).revealManager.debugRenderTiming = enabled;
         });
 
       const debugGui = gui.addFolder('Debug');
@@ -451,6 +461,18 @@ export function Migration() {
       assetExplode.add(explodeActions, 'selectAssetTreeIndex').name('Inspect tree index');
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
+
+      const controlsGui = gui.addFolder('Camera controls');
+      const zoomToCursorTypes = ['disable', 'basicLerp', 'scrollTarget'];
+      controlsGui.add(guiState.controls, 'zoomToCursorType', zoomToCursorTypes).name('Zoom to cursor type').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), zoomToCursor: value });
+      });
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
+      });
+      controlsGui.add(guiState.controls, 'canInterruptAnimations').name('Controls actions stop animations:').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), canInterruptAnimations: value });
+      });
 
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);

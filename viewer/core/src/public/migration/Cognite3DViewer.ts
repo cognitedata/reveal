@@ -55,6 +55,12 @@ import { CogniteClient } from '@cognite/sdk';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
+const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
+  zoomToCursor: 'basicLerp',
+  onClickTargetChange: false,
+  canInterruptAnimations: false
+};
+
 /**
  * @example
  * ```js
@@ -107,6 +113,8 @@ export class Cognite3DViewer {
   private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly _boundAnimate = this.animate.bind(this);
+  private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
+  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
@@ -116,13 +124,7 @@ export class Cognite3DViewer {
     disposed: new EventTrigger<DisposedDelegate>()
   };
 
-  private readonly _cameraControlsOptions = {
-    canInterruptAnimations: false,
-    useScrollTargetControls: false,
-    useOnClickTargetChange: false,
-    scrollEventsAdded: false,
-    clickEventsAdded: false
-  };
+  private _cameraControlsOptions: Required<CameraControlsOptions> = { ...DefaultCameraControlsOptions };
 
   private readonly _models: CogniteModelBase[] = [];
   private readonly _extraObjects: THREE.Object3D[] = [];
@@ -174,7 +176,7 @@ export class Cognite3DViewer {
    * @param pixelX
    * @param pixelY
    */
-  private convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
+  private convertPixelCoordinatesToNormalized (pixelX: number, pixelY: number) {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
@@ -187,7 +189,7 @@ export class Cognite3DViewer {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateMissedRaycast = (cursorPosition: { x: number; y: number }): THREE.Vector3 => {
+  private calculateMissedRaycast (cursorPosition: { x: number; y: number }): THREE.Vector3 {
     const modelBB = this._models[0].getModelBoundingBox(new THREE.Box3()),
       modelSize = modelBB.min.distanceTo(modelBB.max);
 
@@ -203,23 +205,30 @@ export class Cognite3DViewer {
   };
 
   /**
-   * Adds or removes event listeners for additional features of camera controls.
-   * @param removeListeners
+  * Removes controls event listeners if they are defined.
+  */
+  private teardownControls() {
+    if (this._onClick !== undefined) {
+      this.off('click', this._onClick as PointerEventDelegate);
+      this._onClick = undefined;
+    }
+    if (this._onWheel !== undefined) {
+      this._domElement.removeEventListener('wheel', this._onWheel);
+      this._onWheel = undefined;
+    }
+  }
+
+  /**
+   * Method for setting up camera controls listeners and values inside current controls class.
    */
-  private setupOtherControlsModes = (removeListeners?: boolean) => {
+   private setupControls() {
     let startedScroll = false,
       newTargetUpdate = false;
     let timeAfterClick = 0;
     const wheelClock = new THREE.Clock(),
       clickClock = new THREE.Clock();
 
-    const onClick = (e: any) => {
-      if (this._cameraControlsOptions.clickEventsAdded && !this._cameraControlsOptions.useOnClickTargetChange) {
-        this.off('click', onClick);
-        this._cameraControlsOptions.clickEventsAdded = false;
-        return;
-      }
-
+    const onClick = (e: MouseEvent) => {
       newTargetUpdate = true;
       timeAfterClick = 0;
       clickClock.getDelta();
@@ -228,7 +237,7 @@ export class Cognite3DViewer {
       this.changeTarget(e);
     };
 
-    const onWheel = async (e: any) => {
+    const onWheel = async (e: WheelEvent) => {
       const timeDelta = wheelClock.getDelta();
       timeAfterClick += clickClock.getDelta();
 
@@ -240,32 +249,45 @@ export class Cognite3DViewer {
         startedScroll = false;
 
         this.changeScrollTarget(e);
-      } else {
-        if (timeDelta > 0.1) startedScroll = true;
+      } else if (timeDelta > 0.1) {
+        startedScroll = true;
       }
     };
 
-    if (this._cameraControlsOptions.useOnClickTargetChange) {
-      this.on('click', onClick);
-      this._cameraControlsOptions.clickEventsAdded = true;
+    switch (this._cameraControlsOptions.zoomToCursor) {
+      case 'disable':
+        this.controls.zoomToCursor = false;
+        break;
+
+      case 'basicLerp':
+        this.controls.useScrollTarget = false;
+        this.controls.zoomToCursor = true;
+
+        break;
+      case 'scrollTarget':
+        this.controls.useScrollTarget = true;
+        this.controls.zoomToCursor = true;
+        break;
+
+      default:
+        assertNever(this._cameraControlsOptions.zoomToCursor);
     }
 
-    if (this._cameraControlsOptions.useScrollTargetControls) {
-      this.canvas.addEventListener('wheel', onWheel);
-      this._cameraControlsOptions.scrollEventsAdded = true;
-    } else {
-      if (removeListeners) {
-        this.canvas.removeEventListener('wheel', onWheel);
-        this._cameraControlsOptions.scrollEventsAdded = false;
-      }
+    if (this._cameraControlsOptions.onClickTargetChange) {
+      this.on('click', onClick as PointerEventDelegate);
+      this._onClick = onClick;
     }
-  };
+    if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') {
+      this._domElement.addEventListener('wheel', onWheel);
+      this._onWheel = onWheel;
+    }
+  }
 
   /**
    * Changes controls target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private changeTarget = async (event: any) => {
+  private async changeTarget (event: MouseEvent) {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
@@ -279,7 +301,7 @@ export class Cognite3DViewer {
    * Changes controls scroll target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private changeScrollTarget = async (event: any) => {
+  private async changeScrollTarget (event: MouseEvent) {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
@@ -368,13 +390,12 @@ export class Cognite3DViewer {
     this.scene = new THREE.Scene();
     this.scene.autoUpdate = false;
 
-    //if (this._cameraControlsOptions.useOnClickTargetChange || this._cameraControlsOptions.useScrollTargetControls) this.addOtherControlsModes();
-
     this.controls = new ComboControls(this.camera, this.canvas);
     this.controls.dollyFactor = 0.992;
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
-    //this.controls.useScrollTarget = this._cameraControlsOptions.useScrollTargetControls;
+
+    this.setCameraControlsOptions(this._cameraControlsOptions);
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -599,48 +620,18 @@ export class Cognite3DViewer {
    * Sets camera controls mode anything allowed in CameraControlsOptions type.
    * @param controlsOptions JSON object with camera controls options.
    */
-  setCameraControlsMode(controlsOptions: CameraControlsOptions) {
-    this._cameraControlsOptions.useOnClickTargetChange =
-      controlsOptions?.onClickTargetChange ?? this._cameraControlsOptions.useOnClickTargetChange;
-    this._cameraControlsOptions.canInterruptAnimations =
-      controlsOptions?.canInterruptAnimations ?? this._cameraControlsOptions.canInterruptAnimations;
+  setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
+    this._cameraControlsOptions = { ...DefaultCameraControlsOptions, ...controlsOptions };
 
-    switch (controlsOptions?.zoomToCursor) {
-      case 'disable':
-        this._cameraControlsOptions.useScrollTargetControls = false;
-        this.controls.zoomToCursor = false;
+    this.teardownControls();
+    this.setupControls();
+  }
 
-        if (this._cameraControlsOptions.scrollEventsAdded) {
-          this.setupOtherControlsModes(true);
-        }
-        break;
-      case 'basicLerp':
-        this._cameraControlsOptions.useScrollTargetControls = false;
-        this.controls.useScrollTarget = false;
-
-        if (this._cameraControlsOptions.scrollEventsAdded) {
-          this.setupOtherControlsModes(true);
-        }
-        break;
-      case 'scrollTarget':
-        this._cameraControlsOptions.useScrollTargetControls = true;
-        this.controls.useScrollTarget = true;
-
-        if (!this._cameraControlsOptions.scrollEventsAdded) {
-          this.setupOtherControlsModes();
-        }
-        break;
-      default:
-        break;
-    }
-
-    if (controlsOptions.onClickTargetChange) {
-      if (!this._cameraControlsOptions.clickEventsAdded) {
-        this.setupOtherControlsModes();
-      }
-    } else {
-      if (this._cameraControlsOptions.clickEventsAdded) this.setupOtherControlsModes(true);
-    }
+  /**
+   * Gets camera controls mode.
+   */
+  getCameraControlsOptions(): CameraControlsOptions {
+    return this._cameraControlsOptions;
   }
 
   /**
@@ -1138,12 +1129,7 @@ export class Cognite3DViewer {
    * ```
    */
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const center = new THREE.Vector3().lerpVectors(box.min, box.max, 0.5);
-    const radius = 0.5 * box.max.distanceTo(box.min);
-    const boundingSphere = new THREE.Sphere(center, radius);
-
-    // TODO 2020-03-15 larsmoa: Doesn't currently work :S
-    // const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
+    const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
 
     const target = boundingSphere.center;
     const distance = boundingSphere.radius * radiusFactor;
@@ -1381,8 +1367,7 @@ export class Cognite3DViewer {
     return this._models.filter(x => x.type === type);
   }
 
-  /** @private */
-  private calculateDefaultDuration = (distanceToCamera: number) => {
+  private calculateDefaultDuration (distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
 
@@ -1402,7 +1387,7 @@ export class Cognite3DViewer {
 
     const { camera, raycaster } = this;
 
-    if (duration === undefined) duration = this.calculateDefaultDuration(target.distanceTo(camera.position));
+    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(camera.position));
 
     raycaster.setFromCamera(new THREE.Vector2(), camera);
     const distanceToTarget = target.distanceTo(camera.position);
@@ -1442,17 +1427,18 @@ export class Cognite3DViewer {
     this.canvas.addEventListener('pointerdown', stopTween);
 
     if (this._cameraControlsOptions.canInterruptAnimations) {
-      this.canvas.addEventListener('wheel', stopTween);
+      this._domElement.addEventListener('wheel', stopTween);
       document.addEventListener('keydown', stopTween);
     }
-
-    this.controls.lookAtViewTarget = true;
-    this.controls.setState(this.getCameraPosition(), target);
 
     const tempTarget = new THREE.Vector3();
     const tween = animation
       .to(to, duration)
       .easing((x: number) => TWEEN.Easing.Circular.Out(x))
+      .onStart(() => {
+        this.controls.lookAtViewTarget = true;
+        this.controls.setState(this.camera.position, target);
+      })
       .onUpdate(() => {
         if (this.isDisposed) {
           return;
@@ -1461,7 +1447,14 @@ export class Cognite3DViewer {
         if (!this.camera) {
           return;
         }
+
+        if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') this.controls.setScrollTarget(tempTarget);
         this.controls.setViewTarget(tempTarget);
+      })
+      .onStop(() => {
+        this.controls.lookAtViewTarget = false;
+
+        this.controls.setState(this.camera.position, tempTarget);
       })
       .onComplete(() => {
         if (this.isDisposed) {
@@ -1469,9 +1462,9 @@ export class Cognite3DViewer {
         }
         this.controls.lookAtViewTarget = false;
         this.controls.enableKeyboardNavigation = true;
-        this.controls.setState(this.getCameraPosition(), tempTarget);
+        this.controls.setState(this.camera.position, tempTarget);
 
-        this.canvas.removeEventListener('pointerdown', stopTween);
+        this._domElement.removeEventListener('pointerdown', stopTween);
       })
       .start(TWEEN.now());
     tween.update(TWEEN.now());
@@ -1530,7 +1523,7 @@ export class Cognite3DViewer {
       document.addEventListener('keydown', stopTween);
     }
     const tempTarget = new THREE.Vector3();
-    const tmpPosition = new THREE.Vector3();
+    const tempPosition = new THREE.Vector3();
     const tween = animation
       .to(to, duration)
       .easing((x: number) => TWEEN.Easing.Circular.Out(x))
@@ -1538,14 +1531,16 @@ export class Cognite3DViewer {
         if (this.isDisposed) {
           return;
         }
-        tmpPosition.set(from.x, from.y, from.z);
+        tempPosition.set(from.x, from.y, from.z);
         tempTarget.set(from.targetX, from.targetY, from.targetZ);
         if (!this.camera) {
           return;
         }
 
-        this.setCameraPosition(tmpPosition);
-        this.setCameraTarget(tempTarget);
+        this.controls.setState(tempPosition, tempTarget);
+      })
+      .onStop(() => { 
+        this.controls.setState(tempPosition, tempTarget);
       })
       .onComplete(() => {
         if (this.isDisposed) {

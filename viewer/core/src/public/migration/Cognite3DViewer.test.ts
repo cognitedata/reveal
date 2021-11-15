@@ -205,7 +205,7 @@ describe('Cognite3DViewer', () => {
   test('fitCameraToBoundingBox with zero duration updates camera immediatly', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
-    const box = new THREE.Box3(new THREE.Vector3(-1000, -1000, -1000), new THREE.Vector3(-1001, -1001, -1001));
+    const box = new THREE.Box3(new THREE.Vector3(-1001, -1001, -1001), new THREE.Vector3(-1000, -1000, -1000));
     const originalCameraPosition = viewer.getCameraPosition();
     const originalCameraTarget = viewer.getCameraTarget();
 
@@ -215,5 +215,18 @@ describe('Cognite3DViewer', () => {
     // Assert
     expect(viewer.getCameraPosition()).not.toEqual(originalCameraPosition);
     expect(viewer.getCameraTarget()).not.toEqual(originalCameraTarget);
+  });
+
+  test('setCameraControlsMode changes internal state of cameraControlsOptions', () => {
+    // Arrange
+    const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const originalCameraControlsOptions = viewer.getCameraControlsOptions();
+
+    // Act
+    viewer.setCameraControlsOptions({onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange});
+
+    // Assert
+    expect(viewer.getCameraControlsOptions()).not.toEqual(originalCameraControlsOptions);
+
   });
 });
