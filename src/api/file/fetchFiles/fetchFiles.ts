@@ -60,16 +60,14 @@ export const fetchFiles = async (
         }));
       }
 
+      filteredItems = newItems;
+
       if (timeRange) {
         // apply time range filter first because it is faster
-        filteredItems = filterByTime(visionFilter, newItems);
+        filteredItems = filterByTime(visionFilter, filteredItems);
       }
       if (annotation) {
         filteredItems = await fileFilterByAnnotation(annotation, filteredItems);
-      }
-      // if annotation and timeRange filters not defined, just pass the newItems as filteredItems
-      if (!annotation && !timeRange) {
-        filteredItems = newItems;
       }
 
       return {
