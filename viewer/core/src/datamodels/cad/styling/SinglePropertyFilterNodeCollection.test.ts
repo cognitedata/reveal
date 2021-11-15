@@ -4,10 +4,18 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
+
+import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
+import { CadMaterialManager, CadNode } from '@reveal/rendering';
+import { CadModelMetadata } from '@reveal/cad-parsers';
+import { NodesApiClient, NodesLocalClient } from '@reveal/nodes-api';
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
+import { createCadModelMetadata, generateV8SectorTree } from '../../../../../test-utilities';
+
 import nock from 'nock';
-import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
+import { V8SectorRepository } from '@reveal/sector-loader';
+import { Mock } from 'moq.ts';
 
 describe('SinglePropertyFilterNodeCollection', () => {
   let set: SinglePropertyFilterNodeCollection;
@@ -18,6 +26,14 @@ describe('SinglePropertyFilterNodeCollection', () => {
   beforeEach(() => {
     client = new CogniteClient({ appId: 'test', baseUrl: 'http://localhost' });
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
+
+    const mockV8SectorRepository = new Mock<V8SectorRepository>();
+
+    const cadModelMetadata: CadModelMetadata = createCadModelMetadata(8, generateV8SectorTree(3, 3));
+    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager(), mockV8SectorRepository.object());
+    const nodesClient: NodesApiClient = new NodesLocalClient();
+
+    model = new Cognite3DModel(1, 2, cadNode, nodesClient);
     model = { modelId: 112, revisionId: 113 } as Cognite3DModel;
     set = new SinglePropertyFilterNodeCollection(client, model);
   });
@@ -135,6 +151,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
     expectedSet.addRange(new NumericRange(30, 10));
     expectedSet.addRange(new NumericRange(50, 10));
     expect(set.getIndexSet()).toEqual(expectedSet);
+    expect(set.getAreas()).not.toBeEmpty();
     expect(set.isLoading).toBeFalse();
   });
 

@@ -1,71 +1,20 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { SmartMergeBoxes } from './SmartMergeBoxes';
-import { Box3, Vector3 } from 'three';
+import { BoxClusterer } from './BoxClusterer';
+import { Box3 } from 'three';
+import {
+  createNonTouchingBoxesInRegularGrid,
+  createOverlappingBoxes,
+  createRandomBoxes,
+  scrambleBoxes
+} from '../../../../test-utilities/src/createBoxes';
 
 import * as SeededRandom from 'random-seed';
 
 describe('SmartMergeBoxes', () => {
-  function createRandomBoxes(n: number, maxDim: number, maxPos: number, rand: SeededRandom.RandomSeed): Box3[] {
-    const boxes: Box3[] = [];
-    for (let i = 0; i < n; i++) {
-      const sx = rand.random() * maxPos;
-      const sy = rand.random() * maxPos;
-      const sz = rand.random() * maxPos;
-
-      const dx = rand.random() * maxDim;
-      const dy = rand.random() * maxDim;
-      const dz = rand.random() * maxDim;
-
-      const box = new Box3(new Vector3(sx, sy, sz), new Vector3(sx + dx, sy + dy, sz + dz));
-      boxes.push(box);
-    }
-
-    return boxes;
-  }
-
-  function createNonTouchingBoxesInRegularGrid(numberInEachDirection: number, size: number): Box3[] {
-    const boxes: Box3[] = [];
-
-    for (let i = 0; i < numberInEachDirection; i++) {
-      for (let j = 0; j < numberInEachDirection; j++) {
-        for (let k = 0; k < numberInEachDirection; k++) {
-          const box = new Box3(
-            new Vector3(i * (size + 1), j * (size + 1), k * (size + 1)),
-            new Vector3(i * size + size, j * size + size, k * size + size)
-          );
-
-          boxes.push(box);
-        }
-      }
-    }
-
-    return boxes;
-  }
-
-  function createOverlappingBoxes(n: number, size: number): Box3[] {
-    const boxes: Box3[] = [];
-
-    for (let i = 0; i < n; i++) {
-      const box = new Box3(new Vector3(0, 0, i * size), new Vector3(1, 1, i * (size + 1)));
-      boxes.push(box);
-    }
-
-    return boxes;
-  }
-
-  function scrambleBoxes(boxes: Box3[], rand: SeededRandom.RandomSeed): void {
-    for (let i = 0; i < boxes.length; i++) {
-      const num = Math.floor(rand.random() * (boxes.length - i)) + i;
-      const temp = boxes[num];
-      boxes[num] = boxes[i];
-      boxes[i] = temp;
-    }
-  }
-
   test('add non-intersecting bboxes', () => {
-    const mergeBoxes = new SmartMergeBoxes();
+    const mergeBoxes = new BoxClusterer();
 
     const numberInEachDirection = 10;
     const size = 10;
@@ -80,7 +29,7 @@ describe('SmartMergeBoxes', () => {
   test('add intersecting bboxes', () => {
     const rand = SeededRandom.create('someseed');
 
-    const mergeBoxes = new SmartMergeBoxes();
+    const mergeBoxes = new BoxClusterer();
 
     const n = 100;
     const s = 10;
@@ -95,15 +44,15 @@ describe('SmartMergeBoxes', () => {
     expect([...result].length === 1);
   });
 
-  test('union of two trees contains all inserted boxes', () => {
+  test('union of two box collections contains all inserted boxes', () => {
     const random = SeededRandom.create('someseed');
 
-    const smartBoxes0 = new SmartMergeBoxes();
-    const smartBoxes1 = new SmartMergeBoxes();
+    const smartBoxes0 = new BoxClusterer();
+    const smartBoxes1 = new BoxClusterer();
 
     const n = 500;
     const d = 10;
-    const ms = 100;
+    const ms = 200;
 
     const boxes0 = createRandomBoxes(n, d, ms, random);
     const boxes1 = createRandomBoxes(n, d, ms, random);
@@ -111,7 +60,15 @@ describe('SmartMergeBoxes', () => {
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);
 
-    const union = smartBoxes0.union(smartBoxes1);
+    // To ensure that this tests something meaningful
+    // e.g. doesn't put everything in one box, or everything
+    // in separate boxes
+    expect(smartBoxes0.boxCount).toBeGreaterThan(1);
+    expect(smartBoxes1.boxCount).toBeGreaterThan(1);
+    expect(smartBoxes0.boxCount).toBeLessThan(boxes0.length);
+    expect(smartBoxes1.boxCount).toBeLessThan(boxes1.length);
+
+    const union = smartBoxes0.union(smartBoxes1.getBoxes());
 
     const unionBoxes = [...union.getBoxes()];
 
@@ -128,13 +85,15 @@ describe('SmartMergeBoxes', () => {
 
       expect(isInUnion).toEqual(true);
     }
+
+    expect(union.boxCount).toBeGreaterThan(1);
   });
 
   test('intersection of two trees contains intersection between all boxes', () => {
     const random = SeededRandom.create('someseed');
 
-    const smartBoxes0 = new SmartMergeBoxes();
-    const smartBoxes1 = new SmartMergeBoxes();
+    const smartBoxes0 = new BoxClusterer();
+    const smartBoxes1 = new BoxClusterer();
 
     const n = 500;
     const d = 10;
@@ -146,7 +105,7 @@ describe('SmartMergeBoxes', () => {
     smartBoxes0.addBoxes(boxes0);
     smartBoxes1.addBoxes(boxes1);
 
-    const intersection = smartBoxes0.intersection(smartBoxes1);
+    const intersection = smartBoxes0.intersection(smartBoxes1.getBoxes());
 
     const treeIntersectionBoxes = [...intersection.getBoxes()];
 

@@ -273,7 +273,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * uses a right-hand Y-up coordinate system. This function also accounts for transformation
    * applied to the model.
    * @param box     The box in ThreeJS/model coordinates.
-   * @param out     Optional preallocated buffer for storing the result. May be `box`.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
    * @returns       Transformed box.
    */
   mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
@@ -282,6 +282,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       out.copy(box);
     }
     out.applyMatrix4(this.cadModel.inverseModelMatrix);
+    return out;
+  }
+
+  /**
+   * Maps from a 3D position in "CDF space" to coordinates in "ThreeJS model space".
+   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
+   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
+   * applied to the model.
+   * @param box     The box in CDF model coordinates.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
+   * @returns       Transformed box.
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
+    out = out ?? new THREE.Box3();
+    if (out !== box) {
+      out.copy(box);
+    }
+    out.applyMatrix4(this.cadModel.modelMatrix);
     return out;
   }
 
@@ -397,7 +415,10 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     try {
-      box = await this.nodesApiClient.getBoundingBoxByNodeId(this.modelId, this.revisionId, nodeId, box);
+      const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, [
+        nodeId
+      ]);
+      box = boxesResponse[0];
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {

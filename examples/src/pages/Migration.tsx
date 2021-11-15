@@ -72,7 +72,6 @@ export function Migration() {
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
-      
       if (project && environmentParam) {
         await authenticateSDKWithEnvironment(client, project, environmentParam);
       } else if (modelUrl !== null) {

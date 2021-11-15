@@ -4,6 +4,7 @@
 
 import assert from 'assert';
 import { EventTrigger, IndexSet } from '@reveal/utilities';
+import { AreaCollection } from './prioritized/AreaCollection';
 
 export type SerializedNodeCollection = {
   token: string;
@@ -54,6 +55,13 @@ export abstract class NodeCollectionBase {
    * of the nodes contained by the set.
    */
   abstract getIndexSet(): IndexSet;
+
+  /**
+   * Returns a set of areas that together contain all the nodes
+   * in the node collection. Note that this not necessarily is a minimum
+   * set of encapsulating areas.
+   */
+  abstract getAreas(): AreaCollection;
 
   /**
    * Clears the set, making it empty.

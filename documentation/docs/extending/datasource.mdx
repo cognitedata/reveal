@@ -204,7 +204,7 @@ The API client is responsible for providing metadata about 3D CAD nodes, includi
 | `mapNodeIdsToTreeIndices()` | No, but recommended to have a 1:1 mapping  | Reverse mapping of `mapTreeIndicesToNodeIds()`                   |
 | `determineTreeIndexAndSubtreeSizesByNodeIds()` | No                      | Determines the "span" of a node identified by a CDF node ID (i.e. the tree index and how many descendants it has including the node itself). |
 | `determineNodeAncestorsByNodeId()` | No                                  | Find "ancestor span" of a node identified by the CDF node ID. Returns data on same format as function above. |
-| `getBoundingBoxByNodeId()` | No                                          | Determines bounds of a node by its CDF node ID. |
+| `getBoundingBoxesByNodeIds()` | No                                          | Determines the individual bounds of each node, specified by their CDF node IDs. |
 
 ### Example implementation
 
@@ -224,7 +224,7 @@ class MyNodesApiClient implements NodesApiClient {
   determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{treeIndex: number; subtreeSize: number }> {
     throw new Error('Not supported.');
   }
-  getBoundingBoxByNodeId(modelId: number, revisionId: number, nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
+  getBoundingBoxesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<THREE.Box3[]> {
     throw new Error('Not supported.');
   }
 }

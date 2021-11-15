@@ -5,10 +5,11 @@
 import * as THREE from 'three';
 import { WeightFunctionsHelper } from './WeightFunctionsHelper';
 
-import { createV8SectorMetadata } from '../../../../../test-utilities';
-
+import { PrioritizedArea } from '@reveal/cad-styling';
 import { traverseDepthFirst } from '@reveal/utilities';
 import { SectorMetadata } from '@reveal/cad-parsers';
+
+import { createV8SectorMetadata } from '../../../../../test-utilities';
 
 describe('WeightFunctionsHelper', () => {
   let camera: THREE.PerspectiveCamera;
@@ -133,5 +134,22 @@ describe('WeightFunctionsHelper', () => {
     const bounds = new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1]);
     expect(helper.computeMaximumNodeScreenSizeWeight(bounds, 1e-10)).toBe(1);
     expect(helper.computeMaximumNodeScreenSizeWeight(bounds, 1e10)).toBe(1);
+  });
+
+  test('computePrioritizedAreaWeight returns 0 when sector doesnt intersect prioritized area', () => {
+    const bounds = new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1]);
+    const areas: PrioritizedArea[] = [
+      { area: new THREE.Box3().setFromArray([10, 10, 10, 11, 11, 11]), extraPriority: 10.0 }
+    ];
+    expect(helper.computePrioritizedAreaWeight(bounds, areas)).toBe(0.0);
+  });
+
+  test('computePrioritizedAreaWeight returns maximum extra priority when sector intersects several areas', () => {
+    const bounds = new THREE.Box3().setFromArray([-1, -1, -1, 1, 1, 1]);
+    const areas: PrioritizedArea[] = [
+      { area: new THREE.Box3().setFromArray([-0.5, -0.5, -0.5, 0, 0, 0]), extraPriority: 2.0 },
+      { area: new THREE.Box3().setFromArray([0, 0, 0, 0.5, 0.5, 0.5]), extraPriority: 4.0 }
+    ];
+    expect(helper.computePrioritizedAreaWeight(bounds, areas)).toBe(4.0);
   });
 });

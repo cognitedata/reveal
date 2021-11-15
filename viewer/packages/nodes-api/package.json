@@ -5,5 +5,8 @@
   "scripts": {
     "test": "yarn ws:test --config ./../../jest.config.js",
     "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/utilities": "workspace:*"
   }
 }

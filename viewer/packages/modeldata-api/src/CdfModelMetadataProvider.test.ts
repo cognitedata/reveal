@@ -7,6 +7,7 @@ import nock from 'nock';
 import { CogniteClient } from '@cognite/sdk';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
+import { Mock } from 'moq.ts';
 
 describe(CdfModelMetadataProvider.name, () => {
   let modelIdentifier: CdfModelIdentifier;
@@ -23,7 +24,9 @@ describe(CdfModelMetadataProvider.name, () => {
     });
     await client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
-    provider = new CdfModelMetadataProvider(client);
+    const mockedClient = new Mock<CogniteClient>();
+
+    provider = new CdfModelMetadataProvider(mockedClient.object());
   });
 
   test('getModelUri throw error if no compatible output is found', async () => {
