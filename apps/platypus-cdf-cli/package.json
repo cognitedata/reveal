@@ -5,7 +5,6 @@
   "repository": "https://github.com/cognitedata/platypus/apps/platypus-cdf-cli",
   "author": "Cognite",
   "license": "Apache-2.0",
-  "private": true,
   "main": "./main.js",
   "bin": {
     "platypus": "./main.js"

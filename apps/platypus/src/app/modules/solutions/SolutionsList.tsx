@@ -1,42 +1,42 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Title, Row, Flex, Checkbox } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
 import services from './di';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Result, Solution } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { SolutionCard } from '@platypus-app/components/SolutionCard/SolutionCard';
 import { StyledSolutionListWrapper } from './elements';
+import { useSolutions } from './hooks/useSolutions';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { ActionStatus } from '@platypus-app/types';
+import { Solution } from '@platypus/platypus-core';
+import { SolutionsState } from './redux/store';
 
 export const SolutionsList = () => {
-  const [solutions, setSolutions] = useState<Array<Solution>>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
   const [deleteSolution, setDeleteSolution] = useState<Solution | undefined>(
     undefined
   );
-  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
-  const [deleting, setDeleting] = useState<boolean>(false);
-
   const { t } = useTranslation('solutions');
+  const { solutionsStatus, solutions } = useSelector<SolutionsState>(
+    (state) => state.solutions
+  );
+  const { fetchSolutions } = useSolutions();
 
-  const solutionsHandler = services.solutionsHandler;
-
-  const listSolutions = useCallback(() => {
-    setLoading(true);
-    solutionsHandler.list().then((res: Result<Solution[]>) => {
-      setLoading(false);
-      setSolutions(res.getValue());
-    });
-  }, [solutionsHandler]);
+  const solutionsHandler = services().solutionsHandler;
 
   useEffect(() => {
-    listSolutions();
-  }, [listSolutions]);
+    fetchSolutions();
+  }, [fetchSolutions]);
 
-  if (loading) {
+  if (
+    solutionsStatus === ActionStatus.IDLE ||
+    solutionsStatus === ActionStatus.PROCESSING
+  ) {
     return (
       <StyledPageWrapper>
         <Spinner />
@@ -101,7 +101,7 @@ export const SolutionsList = () => {
           ),
         });
         setDeleteSolution(undefined);
-        listSolutions();
+        fetchSolutions();
       }
       setDeleting(false);
     });
