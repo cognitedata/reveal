@@ -57,6 +57,6 @@ describe('Test splitting list into chunks', () => {
   });
 
   it('should chunk list of empty into one part', () => {
-    expect(splitListIntoChunks([], 3)).toStrictEqual([[]]);
+    expect(splitListIntoChunks([], 3)).toStrictEqual([]);
   });
 });

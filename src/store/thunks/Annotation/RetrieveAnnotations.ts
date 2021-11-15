@@ -4,15 +4,18 @@ import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { Annotation } from 'src/api/types';
 import { validateAnnotation } from 'src/api/utils';
-import chunk from 'lodash-es/chunk';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
+import { splitListIntoChunks } from 'src/utils/generalUtils';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation[],
   number[],
   ThunkConfig
 >('RetrieveAnnotations', async (payload) => {
-  const fileIdBatches = chunk(payload, ANNOTATION_FETCH_BULK_SIZE);
+  const fileIdBatches = splitListIntoChunks(
+    payload,
+    ANNOTATION_FETCH_BULK_SIZE
+  );
   const requests = fileIdBatches.map((fileIds) => {
     const filterPayload: any = {
       annotatedResourceType: 'file',
