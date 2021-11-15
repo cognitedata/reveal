@@ -176,12 +176,12 @@ export class Cognite3DViewer {
    * @param pixelX
    * @param pixelY
    */
-  private convertPixelCoordinatesToNormalized (pixelX: number, pixelY: number) {
+  private convertPixelCoordinatesToNormalized(pixelX: number, pixelY: number) {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
     return { x, y };
-  };
+  }
 
   /**
    * Calculates new target when raycaster doesn't have any intersections with the model.
@@ -189,7 +189,7 @@ export class Cognite3DViewer {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateMissedRaycast (cursorPosition: { x: number; y: number }): THREE.Vector3 {
+  private calculateMissedRaycast(cursorPosition: { x: number; y: number }): THREE.Vector3 {
     const modelBB = this._models[0].getModelBoundingBox(new THREE.Box3()),
       modelSize = modelBB.min.distanceTo(modelBB.max);
 
@@ -202,11 +202,11 @@ export class Cognite3DViewer {
       .add(this.camera.position);
 
     return farPoint;
-  };
+  }
 
   /**
-  * Removes controls event listeners if they are defined.
-  */
+   * Removes controls event listeners if they are defined.
+   */
   private teardownControls() {
     if (this._onClick !== undefined) {
       this.off('click', this._onClick as PointerEventDelegate);
@@ -221,7 +221,7 @@ export class Cognite3DViewer {
   /**
    * Method for setting up camera controls listeners and values inside current controls class.
    */
-   private setupControls() {
+  private setupControls() {
     let startedScroll = false,
       newTargetUpdate = false;
     let timeAfterClick = 0;
@@ -287,7 +287,7 @@ export class Cognite3DViewer {
    * Changes controls target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private async changeTarget (event: MouseEvent) {
+  private async changeTarget(event: MouseEvent) {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
@@ -295,13 +295,13 @@ export class Cognite3DViewer {
 
     const newTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
     this.setCameraTarget(newTarget, true);
-  };
+  }
 
   /**
    * Changes controls scroll target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private async changeScrollTarget (event: MouseEvent) {
+  private async changeScrollTarget(event: MouseEvent) {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
@@ -309,7 +309,7 @@ export class Cognite3DViewer {
 
     const newScrollTarget = intersection?.point ?? this.calculateMissedRaycast({ x, y });
     this.controls.setScrollTarget(newScrollTarget);
-  };
+  }
 
   /**
    * Gets the current budget for downloading geometry for CAD models. Note that this
@@ -1367,12 +1367,16 @@ export class Cognite3DViewer {
     return this._models.filter(x => x.type === type);
   }
 
-  private calculateDefaultDuration (distanceToCamera: number): number {
+  /**
+   * Calculates default duration for camera animation based on distance from the camera to the object.
+   * @param distanceToCamera
+   */
+  private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
 
     return duration;
-  };
+  }
 
   /** @private */
   private moveCameraTargetTo(target: THREE.Vector3, duration?: number) {
@@ -1539,7 +1543,7 @@ export class Cognite3DViewer {
 
         this.controls.setState(tempPosition, tempTarget);
       })
-      .onStop(() => { 
+      .onStop(() => {
         this.controls.setState(tempPosition, tempTarget);
       })
       .onComplete(() => {

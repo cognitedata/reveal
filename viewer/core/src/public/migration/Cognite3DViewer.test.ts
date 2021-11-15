@@ -223,10 +223,9 @@ describe('Cognite3DViewer', () => {
     const originalCameraControlsOptions = viewer.getCameraControlsOptions();
 
     // Act
-    viewer.setCameraControlsOptions({onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange});
+    viewer.setCameraControlsOptions({ onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange });
 
     // Assert
     expect(viewer.getCameraControlsOptions()).not.toEqual(originalCameraControlsOptions);
-
   });
 });
