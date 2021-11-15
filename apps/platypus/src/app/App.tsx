@@ -8,37 +8,41 @@ import { GlobalStyle } from './AppGlobalStyles';
 import { Container } from '@cognite/react-container';
 import sidecar from './utils/sidecar';
 import { AuthContainer } from './AuthContainer';
+import { ToastContainer } from '@cognite/cogs.js';
 
 function App() {
   return (
-    <Container sidecar={sidecar}>
-      <AuthContainer>
-        <GlobalStyle />
-        <StyledWrapper>
-          <Router basename="platypus">
-            <StyledPage>
-              <Switch>
-                <Route
-                  exact
-                  path={[
-                    '/',
-                    '/solutions/:solutionId?/:tabKey?/:solutionPage?',
-                  ]}
-                >
-                  <SolutionsPage />
-                </Route>
-                <Route exact path="/guidetools">
-                  <GuideToolsPage />
-                </Route>
-                <Route exact path="/statusboard">
-                  <StatusPage />
-                </Route>
-              </Switch>
-            </StyledPage>
-          </Router>
-        </StyledWrapper>
-      </AuthContainer>
-    </Container>
+    <>
+      <ToastContainer />
+      <Container sidecar={sidecar}>
+        <AuthContainer>
+          <GlobalStyle />
+          <StyledWrapper>
+            <Router basename="platypus">
+              <StyledPage>
+                <Switch>
+                  <Route
+                    exact
+                    path={[
+                      '/',
+                      '/solutions/:solutionId?/:tabKey?/:solutionPage?',
+                    ]}
+                  >
+                    <SolutionsPage />
+                  </Route>
+                  <Route exact path="/guidetools">
+                    <GuideToolsPage />
+                  </Route>
+                  <Route exact path="/statusboard">
+                    <StatusPage />
+                  </Route>
+                </Switch>
+              </StyledPage>
+            </Router>
+          </StyledWrapper>
+        </AuthContainer>
+      </Container>
+    </>
   );
 }
 

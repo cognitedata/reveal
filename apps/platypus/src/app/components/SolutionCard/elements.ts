@@ -31,9 +31,13 @@ export const StyledSolutionCard = styled.div`
     color: var(--cogs-danger);
   }
 
-  .menu {
-    height: 30px;
+  .menuContainer {
+    display: flex;
+    justify-content: right;
+    padding: 3px 7px;
+  }
 
+  .menu {
     &:hover {
       color: var(--cogs-primary);
     }
