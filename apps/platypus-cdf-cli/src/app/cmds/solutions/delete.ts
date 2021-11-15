@@ -8,7 +8,7 @@ import {
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
-export const command = 'delete';
+export const command = 'delete <id>';
 
 export const desc = 'Delete a solution';
 
