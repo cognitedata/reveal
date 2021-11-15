@@ -207,7 +207,7 @@ function createDetermineSectorsInput([settings, camera, clipping, models]: [
   ClippingInput,
   CadNode[]
 ]): DetermineSectorsPayload {
-  const prioritizedAreas = models.map(model => model.prioritizedAreas).flat();
+  const prioritizedAreas = models.flatMap(model => model.prioritizedAreas);
   return {
     ...camera,
     ...settings,
