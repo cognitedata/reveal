@@ -5,7 +5,7 @@ import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { fileFilterByAnnotation } from 'src/api/annotation/fileFilterByAnnotation';
-import { filterByTime } from './filterByTimeUtils';
+import { filterByTime } from 'src/api/file/fetchFiles/filterByTimeUtils';
 
 const requestCancelSubject: Subject<boolean> = new Subject<boolean>();
 export const cancelFetch = () => {
@@ -23,9 +23,11 @@ export const fetchFiles = async (
   handleSetIsLoading: (loading: boolean) => void,
   handleSetPercentageScanned: (percentComplete: number) => void
 ): Promise<FileInfo[]> => {
+  // remove additional VisionFileFilters to get FileFilterProps type filter for list request. (except directoryPrefix)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { annotation, mimeType, dateFilter, timeRange, ...filter } =
+  const { annotation, dateFilter, timeRange, mimeType, ...filter } =
     visionFilter;
+
   // ToDo: add a validator to make sure that provided mimetype is valid
   const mimeTypes = mimeType ? [mimeType] : validMimeTypes;
 
