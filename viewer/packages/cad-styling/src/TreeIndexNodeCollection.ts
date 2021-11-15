@@ -1,13 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { NumericRange, IndexSet } from '@reveal/utilities';
+import * as THREE from 'three';
+
+import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 import { AreaCollection } from './prioritized/AreaCollection';
 import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
 import { NodeCollectionBase, SerializedNodeCollection } from './NodeCollectionBase';
 
-import * as THREE from 'three';
-import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
+import { NumericRange, IndexSet } from '@reveal/utilities';
 
 /**
  * Node collection that holds a set of nodes defined by a set of tree indices.
