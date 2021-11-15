@@ -29,11 +29,11 @@ export const Base = () => (
     </MainDescription>
     <Group>
       <GroupTitle>Default</GroupTitle>
-      <SolutionCard solution={Solutions[0]} />
+      <SolutionCard solution={Solutions[0]} onDelete={() => false} />
     </Group>
     <Group>
       <GroupTitle>Solution without owners and version</GroupTitle>
-      <SolutionCard solution={Solutions[1]} />
+      <SolutionCard solution={Solutions[1]} onDelete={() => false} />
     </Group>
   </Wrapper>
 );
