@@ -226,7 +226,7 @@ export default function TimeSeriesRow({
         .then((r) => r[0]);
     },
     {
-      enabled: !!timeseries.tsExternalId && timeseries.enabled,
+      enabled: !!timeseries.tsExternalId,
     }
   );
 
