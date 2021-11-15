@@ -7,7 +7,7 @@ import {
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
-export const command = 'create';
+export const command = 'create <name>';
 
 export const desc = 'Create a solution';
 
