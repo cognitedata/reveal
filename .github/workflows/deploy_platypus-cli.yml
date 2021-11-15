@@ -2,7 +2,7 @@ name: Deploy platypus-cli
 on:
   push:
     branches:
-      - bd-feat-cli-github-actions
+      - master
     paths:
       - 'apps/platypus-cdf-cli/**'
 jobs:
