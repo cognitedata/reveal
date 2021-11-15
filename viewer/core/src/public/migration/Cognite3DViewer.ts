@@ -52,6 +52,7 @@ import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reve
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
+import log from '@reveal/logger';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -476,6 +477,21 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Sets the log level. Used for debugging.
+   * Defaults to 'none' (which is identical to 'silent').
+   * @param level
+   */
+  setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none') {
+    switch (level) {
+      case 'none':
+        this.setLogLevel('silent');
+        break;
+      default:
+        log.setLevel(level);
+    }
+  }
+
+  /**
    * Dispose of WebGL resources. Can be used to free up memory when the viewer is no longer in use.
    * @see {@link https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects}
    * ```ts
@@ -654,10 +670,7 @@ export class Cognite3DViewer {
     this.models
       .filter(model => model instanceof Cognite3DModel)
       .map(model => model as Cognite3DModel)
-      .forEach(model => {
-        model.styledNodeCollections.forEach(nodeCollection => model.unassignStyledNodeCollection(nodeCollection.nodes));
-        model.styledNodeCollections.splice(0);
-      });
+      .forEach(model => model.removeAllStyledNodeCollections());
 
     return stateHelper.setState(state);
   }
@@ -1724,7 +1737,7 @@ export class Cognite3DViewer {
     return true;
   }
 
-  private startPointerEventListeners = () => {
+  private readonly startPointerEventListeners = () => {
     const canvas = this.canvas;
     const maxMoveDistance = 4;
     const maxClickDuration = 250;

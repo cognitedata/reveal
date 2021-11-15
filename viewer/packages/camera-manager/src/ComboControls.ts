@@ -269,7 +269,7 @@ export default class ComboControls extends EventDispatcher {
 
     return deltaTheta;
   }
-
+  
   private readonly convertPixelCoordinatesToNormalized = (pixelX: number, pixelY: number) => {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
@@ -395,7 +395,7 @@ export default class ComboControls extends EventDispatcher {
 
   private readonly startMouseRotation = (initialEvent: MouseEvent) => {
     let previousOffset = getHTMLOffset(this._domElement, initialEvent.clientX, initialEvent.clientY);
-
+    
     const onMouseMove = (event: MouseEvent) => {
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
       const deltaOffset = previousOffset.clone().sub(newOffset);
@@ -602,7 +602,6 @@ export default class ComboControls extends EventDispatcher {
 
   private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
     const camera = this._camera as OrthographicCamera;
-
     camera.zoom *= 1 - deltaDistance;
     camera.zoom = MathUtils.clamp(camera.zoom, this.minZoom, this.maxZoom);
     camera.updateProjectionMatrix();
@@ -771,7 +770,6 @@ export default class ComboControls extends EventDispatcher {
 
   private readonly dolly = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
     const { _camera } = this;
-
     // @ts-ignore
     if (_camera.isOrthographicCamera) {
       this.dollyOrthographicCamera(x, y, deltaDistance);

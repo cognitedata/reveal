@@ -53,7 +53,7 @@ export default class Keyboard {
     return p;
   };
 
-  private addEventListeners = () => {
+  private readonly addEventListeners = () => {
     this.clearPressedKeys();
 
     window.addEventListener('keydown', this.onKeydown);
@@ -61,13 +61,13 @@ export default class Keyboard {
     window.addEventListener('blur', this.clearPressedKeys);
   };
 
-  private removeEventListeners = () => {
+  private readonly removeEventListeners = () => {
     window.removeEventListener('keydown', this.onKeydown);
     window.removeEventListener('keyup', this.onKeyup);
     window.removeEventListener('blur', this.clearPressedKeys);
   };
 
-  private onKeydown = (event: KeyboardEvent) => {
+  private readonly onKeydown = (event: KeyboardEvent) => {
     if (event.metaKey || event.altKey || event.ctrlKey) {
       return;
     }
@@ -80,13 +80,13 @@ export default class Keyboard {
     }
   };
 
-  private onKeyup = (event: KeyboardEvent) => {
+  private readonly onKeyup = (event: KeyboardEvent) => {
     if (event.keyCode in keyMap) {
       this.keys[keyMap[event.keyCode]] = 0;
     }
   };
 
-  private clearPressedKeys = () => {
+  private readonly clearPressedKeys = () => {
     Object.keys(keyMap).forEach((key: string) => {
       this.keys[keyMap[key]] = 0;
     });
