@@ -8,7 +8,7 @@ import { AreaCollection } from './AreaCollection';
  * Convenience implementation to represent an empty collection of areas.
  * that can be shared among several instances.
  */
-export class EmptyAreaCollection {
+export class EmptyAreaCollection implements AreaCollection {
   private static _instance: EmptyAreaCollection | undefined;
 
   public static instance(): AreaCollection {
@@ -28,9 +28,7 @@ export class EmptyAreaCollection {
     throw new Error('addAreas() not defined for EmptyAreaCollection');
   }
 
-  intersectWith(_: Iterable<THREE.Box3>): void {
-    throw new Error('intersectWith() not defined for EmptyAreaCollection');
-  }
+  intersectWith(_: Iterable<THREE.Box3>): void { }
 
   get isEmpty(): boolean {
     return true;
