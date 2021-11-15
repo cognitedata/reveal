@@ -217,15 +217,25 @@ describe('Cognite3DViewer', () => {
     expect(viewer.getCameraTarget()).not.toEqual(originalCameraTarget);
   });
 
-  test('setCameraControlsMode changes internal state of cameraControlsOptions', () => {
+  test('setCameraControlsMode changes internal state of camera controls options', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const originalCameraControlsOptions = viewer.getCameraControlsOptions();
 
     // Act
-    viewer.setCameraControlsOptions({ onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange });
+    viewer.setCameraControlsOptions({
+      onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange,
+      canInterruptAnimations: !originalCameraControlsOptions.canInterruptAnimations,
+      zoomToCursor: 'disable'
+    });
 
     // Assert
-    expect(viewer.getCameraControlsOptions()).not.toEqual(originalCameraControlsOptions);
+    const newCameraControlsOptions = viewer.getCameraControlsOptions();
+
+    expect(newCameraControlsOptions.onClickTargetChange).not.toEqual(originalCameraControlsOptions.onClickTargetChange);
+    expect(newCameraControlsOptions.canInterruptAnimations).not.toEqual(
+      originalCameraControlsOptions.canInterruptAnimations
+    );
+    expect(newCameraControlsOptions.zoomToCursor).toEqual('disable');
   });
 });
