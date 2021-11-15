@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { TS_FIX_ME } from 'core';
 import noop from 'lodash/noop';
 
+import { Input } from '@cognite/cogs.js';
+
 import layers from '_helpers/zindex';
 import { Tooltip } from 'components/tooltip/TooltipSlowly';
 import { MarginRightSmallContainer } from 'styles/layout';
@@ -14,7 +16,7 @@ import { TypeaheadResult } from '../hooks/useLayers';
 import {
   SearchableAssetSuggestion,
   MapSearchContainer,
-  LicenseInput,
+  LicenseWrapper,
 } from './elements';
 
 const TOOLTIP_TEXT = 'Search by license';
@@ -110,7 +112,9 @@ export const SearchableAssets: React.FC<Props> = React.memo(
       const props = { ...other, inputprops };
       return (
         <Tooltip title={t(TOOLTIP_TEXT) as string}>
-          <LicenseInput placeholder={placeholder} {...props} />
+          <LicenseWrapper>
+            <Input placeholder={placeholder} {...props} />
+          </LicenseWrapper>
         </Tooltip>
       );
     };

@@ -8,11 +8,9 @@ import { Message } from './WellBoreResultTable';
 
 export const LoadingWellbores = () => {
   const { t } = useTranslation('WellData');
-  console.log('loader on');
   return (
     <Message>
-      <LoadingSpinner isLoading />
-      {t(LOADING_TEXT)}
+      <LoadingSpinner isLoading message={t(LOADING_TEXT)} />
     </Message>
   );
 };

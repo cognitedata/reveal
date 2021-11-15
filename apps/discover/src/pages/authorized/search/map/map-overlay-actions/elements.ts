@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro';
 
 import layers from '_helpers/zindex';
-import { Input } from 'components/input';
 import { Paper } from 'components/paper';
 import { Flex, FlexAlignItems, sizes } from 'styles/layout';
 
@@ -124,9 +123,12 @@ const LayerItem = styled(FlexAlignItems)`
   justify-content: space-between;
 `;
 
-const LicenseInput = styled(Input)`
-  height: 40px;
-  border-radius: ${sizes.small} !important;
+const LicenseWrapper = styled.div`
+  && input {
+    height: 40px;
+    border: 2px #eee !important;
+    background: #fff !important;
+  }
 `;
 
 export {
@@ -142,5 +144,5 @@ export {
   LayerWrapper,
   LayerItem,
   AssetListItemContainer,
-  LicenseInput,
+  LicenseWrapper,
 };

@@ -1,8 +1,11 @@
 ﻿import React, { useState } from 'react';
 
+import styled from 'styled-components/macro';
+
+import { Input } from '@cognite/cogs.js';
+
 import ClickAwayListener from 'components/clickAwayListener';
-import { Input } from 'components/input';
-import { Relative } from 'styles/layout';
+import { FlexRow, sizes, Relative } from 'styles/layout';
 
 import { Panel, Row, Seperator } from './elements';
 
@@ -11,6 +14,14 @@ export type Domain = {
   min: number;
   max: number;
 };
+
+export const NumberInputWrapper = styled(FlexRow)`
+  margin-right: ${sizes.small};
+  input {
+    width: 100px;
+  }
+  max-width: 101px;
+`;
 
 export type DomainMap = { [key: string]: number[] };
 
@@ -44,31 +55,35 @@ export const DomainConfig: React.FC<Props> = ({
               {domainList.map((item) => {
                 return (
                   <Row key={item.name}>
-                    <Input
-                      label={`${item.name}`}
-                      type="number"
-                      value={item.min}
-                      onChange={(event: any) =>
-                        handleChange(
-                          item.name,
-                          'min',
-                          Number(event.target.value)
-                        )
-                      }
-                    />
+                    <NumberInputWrapper>
+                      <Input
+                        title={item.name}
+                        type="number"
+                        value={item.min}
+                        onChange={(event: any) =>
+                          handleChange(
+                            item.name,
+                            'min',
+                            Number(event.target.value)
+                          )
+                        }
+                      />
+                    </NumberInputWrapper>
                     <Seperator />
-                    <Input
-                      label=" "
-                      type="number"
-                      value={item.max}
-                      onChange={(event: any) =>
-                        handleChange(
-                          item.name,
-                          'max',
-                          Number(event.target.value)
-                        )
-                      }
-                    />
+                    <NumberInputWrapper>
+                      <Input
+                        title="&nbsp;"
+                        type="number"
+                        value={item.max}
+                        onChange={(event: any) =>
+                          handleChange(
+                            item.name,
+                            'max',
+                            Number(event.target.value)
+                          )
+                        }
+                      />
+                    </NumberInputWrapper>
                   </Row>
                 );
               })}
