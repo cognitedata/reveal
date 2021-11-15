@@ -1,6 +1,6 @@
+import solutionsSlice from '@platypus-app/modules/solutions/redux/store';
 import { KeyValueStore } from '@platypus-app/types';
 import {
-  getDefaultMiddleware,
   configureStore,
   combineReducers,
   ThunkDispatch,
@@ -18,6 +18,7 @@ const createReducer = (asyncReducers: any) => {
 
 const reducersRegistry = {
   global: globalReducer.reducer,
+  solutions: solutionsSlice.reducer,
 };
 
 const rootReducer = combineReducers(reducersRegistry);
@@ -26,7 +27,9 @@ function createStore() {
   return configureStore({
     reducer: rootReducer,
     devTools: process.env.NODE_ENV !== 'production',
-    middleware: [...getDefaultMiddleware({ serializableCheck: false })],
+    middleware: (getDefaultMiddleware) => [
+      ...getDefaultMiddleware({ serializableCheck: false }),
+    ],
   });
 }
 

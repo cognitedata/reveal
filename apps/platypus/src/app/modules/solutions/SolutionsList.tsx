@@ -1,31 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Title, Row, Flex } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
-import services from './di';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Result, Solution } from '@platypus/platypus-core';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { SolutionCard } from '@platypus-app/components/SolutionCard/SolutionCard';
 import { StyledSolutionListWrapper } from './elements';
+import { useSolutions } from './hooks/useSolutions';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { ActionStatus } from '@platypus-app/types';
 
 export const SolutionsList = () => {
-  const [solutions, setSolutions] = useState<Array<Solution>>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const { t } = useTranslation('solutions');
+  const { solutionsStatus, solutions } = useSelector(
+    (state) => state.solutions
+  );
+  const { fetchSolutions } = useSolutions();
 
   useEffect(() => {
-    const solutionsHandler = services.solutionsHandler;
-    const listSolutions = () => {
-      solutionsHandler.list().then((res: Result<Solution[]>) => {
-        setLoading(false);
-        setSolutions(res.getValue());
-      });
-    };
-    listSolutions();
-  }, []);
+    fetchSolutions();
+  }, [fetchSolutions]);
 
-  if (loading) {
+  if (
+    solutionsStatus === ActionStatus.IDLE ||
+    solutionsStatus === ActionStatus.PROCESSING
+  ) {
     return (
       <StyledPageWrapper>
         <Spinner />

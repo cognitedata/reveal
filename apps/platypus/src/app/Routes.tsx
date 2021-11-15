@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { SolutionsPage } from './pages/solutions/SolutionsPage';
-import { GuideToolsPage } from './pages/guide&tools/GuideToolsPage';
-import { StatusPage } from './pages/statusboard/StatusboardPage';
+import { SolutionsPage } from './modules/solutions/SolutionsPage';
+import { GuideToolsPage } from './modules/guides/GuideToolsPage';
+import { StatusPage } from './modules/statusboard/StatusboardPage';
 
 const Routes = () => {
   return (

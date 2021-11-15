@@ -10,6 +10,10 @@ type AuthContainerProps = {
 export const AuthContainer = ({ children }: AuthContainerProps) => {
   const dispatch = useDispatch();
   const { client, authState } = useAuthContext();
+
+  if (!client || !authState) {
+    return null;
+  }
   setCogniteSDKClient(client!);
 
   if (authState !== undefined) {
