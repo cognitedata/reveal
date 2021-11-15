@@ -20,55 +20,56 @@ const Tabs = styled.ul`
 `;
 
 const Tab = styled.li<{ $active?: boolean }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   align-content: center;
-
+  align-items: center;
   align-self: auto;
-  cursor: pointer;
-  list-style: none;
-  padding: 10px 20px;
-  box-sizing: border-box;
   height: ${TAB_HEIGHT}px;
-  max-width: 240px;
-  min-width: 120px;
-  border-right: 1px solid var(--cogs-greyscale-grey3);
   background-color: ${(props) =>
     props.$active ? 'white' : 'var(--cogs-greyscale-grey1)'};
   border-bottom: ${(props) =>
     props.$active ? '' : '1px solid var(--cogs-greyscale-grey3)'};
+  border-right: 1px solid var(--cogs-greyscale-grey3);
+  cursor: pointer;
+  display: flex;
+  flex-basis: 240px;
+  flex-direction: row;
+  flex-shrink: ${(props) => (props.$active ? '0' : '1')};
+  justify-content: space-between;
+  list-style: none;
+  max-width: ${(props) => (props.$active ? 'unset' : '240px')};
+  min-width: 0;
+  padding: 10px 20px;
 `;
 
-const LeftIcon = styled(Icon)`
+const LeftIcon = styled.span`
   flex-grow: 0;
-  flex-shrink: 0;
-  margin-right: 10px;
+  flex-shrink: 2;
+  flex-basis: 30px;
   color: var(--cogs-green);
   vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
 `;
-const RightIcon = styled(Icon)`
+const RightIcon = styled.span`
   flex-grow: 0;
   flex-shrink: 0;
-  margin-left: 10px;
   color: var(--cogs-greyscale-grey6);
   vertical-align: middle;
+  padding-left: 10px;
 `;
 
 const TabContent = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-grow: 1;
-  flex-shrink: 1;
 `;
 
 const FillerTab = styled(Tab)`
   cursor: unset;
   max-width: unset;
   flex-grow: 1;
-  flex-shrink: 1;
+  flex-shrink: 99;
+  padding: 0 0;
 `;
 
 export default function TableTabList() {
@@ -87,25 +88,30 @@ export default function TableTabList() {
             setActive([db, table]);
           }}
         >
-          <Tooltip
-            content={table}
-            delay={300}
-            key={`${db}_${table}`}
-            placement="bottom-start"
-          >
-            <LeftIcon size={10} type="Table" />
-          </Tooltip>
+          <LeftIcon>
+            <Icon size={10} type="Table" />
+          </LeftIcon>
+
           <TabContent>{table}</TabContent>
 
-          <RightIcon
-            size={10}
-            type="Close"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              close([db, table]);
-            }}
-          />
+          <RightIcon>
+            <Tooltip
+              content={table}
+              delay={300}
+              key={`${db}_${table}`}
+              placement="bottom"
+            >
+              <Icon
+                size={10}
+                type="Close"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  close([db, table]);
+                }}
+              />
+            </Tooltip>
+          </RightIcon>
         </Tab>
       ))}
       <FillerTab key="filler-tab" />

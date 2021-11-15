@@ -1,5 +1,6 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
+import { StyleSheetManager } from 'styled-components';
 
 import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
@@ -30,35 +31,39 @@ const App = () => {
 
   return (
     // If styles are broken please check: .rescripts#PrefixWrap(
-    <SDKProvider sdk={sdk}>
-      <QueryClientProvider client={queryClient}>
-        <GlobalStyles>
-          <AntStyles>
-            <SubAppWrapper padding={false}>
-              <AuthWrapper
-                loadingScreen={<Loader />}
-                showLoader
-                subAppName="raw-explorer"
-              >
-                <Router history={history}>
-                  <Switch>
-                    <Route
-                      path={[
-                        '/:project/:appPath/:database/:table',
-                        '/:project/:appPath/:database',
-                        '/:project/:appPath',
-                      ]}
-                      component={RawExplorer}
-                    />
-                  </Switch>
-                </Router>
-              </AuthWrapper>
-            </SubAppWrapper>
-          </AntStyles>
-        </GlobalStyles>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </SDKProvider>
+    <StyleSheetManager
+      disableVendorPrefixes={process.env.NODE_ENV === 'development'}
+    >
+      <SDKProvider sdk={sdk}>
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <AntStyles>
+              <SubAppWrapper padding={false}>
+                <AuthWrapper
+                  loadingScreen={<Loader />}
+                  showLoader
+                  subAppName="raw-explorer"
+                >
+                  <Router history={history}>
+                    <Switch>
+                      <Route
+                        path={[
+                          '/:project/:appPath/:database/:table',
+                          '/:project/:appPath/:database',
+                          '/:project/:appPath',
+                        ]}
+                        component={RawExplorer}
+                      />
+                    </Switch>
+                  </Router>
+                </AuthWrapper>
+              </SubAppWrapper>
+            </AntStyles>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </SDKProvider>
+    </StyleSheetManager>
   );
 };
 
