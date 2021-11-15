@@ -114,7 +114,7 @@ export class CameraManager extends THREE.EventDispatcher {
    * Changes controls scroll target based on current cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private async changeScrollTarget(event: any) {
+  private async changeScrollTarget(event: MouseEvent) {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
@@ -171,8 +171,8 @@ export class CameraManager extends THREE.EventDispatcher {
         startedScroll = false;
 
         this.changeScrollTarget(e);
-      } else {
-        if (timeDelta > 0.1) startedScroll = true;
+      } else if (timeDelta > 0.1) {
+        startedScroll = true;
       }
     };
 
@@ -267,8 +267,7 @@ export class CameraManager extends THREE.EventDispatcher {
     this.moveCameraTargetTo(target, animationTime);
   }
 
-  /** @private */
-  private readonly calculateDefaultDuration = (distanceToCamera: number) => {
+  private calculateDefaultDuration (distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
 
@@ -278,7 +277,7 @@ export class CameraManager extends THREE.EventDispatcher {
   public moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
     const { _camera, _raycaster } = this;
 
-    if (duration === undefined) duration = this.calculateDefaultDuration(target.distanceTo(_camera.position));
+    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
 
     _raycaster.setFromCamera(new THREE.Vector2(), _camera);
     const distanceToTarget = target.distanceTo(_camera.position);
@@ -339,6 +338,9 @@ export class CameraManager extends THREE.EventDispatcher {
 
         this.controls.setState(tempPosition, tempTarget);
       })
+      .onStop(() => { 
+        this.controls.setState(tempPosition, tempTarget);
+      })
       .onComplete(() => {
         if (this.isDisposed) {
           return;
@@ -361,7 +363,7 @@ export class CameraManager extends THREE.EventDispatcher {
 
     const { _camera, _raycaster } = this;
 
-    if (duration === undefined) duration = this.calculateDefaultDuration(target.distanceTo(_camera.position));
+    duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
 
     _raycaster.setFromCamera(new THREE.Vector2(), _camera);
     const distanceToTarget = target.distanceTo(_camera.position);
