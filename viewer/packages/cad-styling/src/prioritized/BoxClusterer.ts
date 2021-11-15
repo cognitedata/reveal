@@ -3,14 +3,13 @@
  */
 
 import { Box3, Vector3 } from 'three';
-import { BoxClusterer } from './BoxClusterer';
 
 /**
  * SmartMergeBoxes - takes in batches of bounding boxes and
  * clusters them together in larger bounding boxes. The union of the larger
  * boxes contains all boxes that have been inserted
  */
-export class SmartMergeBoxes implements BoxClusterer {
+export class BoxClusterer  {
   private readonly resultBoxes: Box3[];
   private addedSinceSquash: number = 0;
 
@@ -124,7 +123,7 @@ export class SmartMergeBoxes implements BoxClusterer {
       resClone.push(resBox.clone());
     }
 
-    const newSMB = new SmartMergeBoxes(resClone);
+    const newSMB = new BoxClusterer(resClone);
 
     newSMB.addBoxes(boxes);
 
@@ -150,7 +149,7 @@ export class SmartMergeBoxes implements BoxClusterer {
       }
     }
 
-    const newSMB = new SmartMergeBoxes(newResultBoxes);
+    const newSMB = new BoxClusterer(newResultBoxes);
     newSMB.squashBoxes();
     return newSMB;
   }

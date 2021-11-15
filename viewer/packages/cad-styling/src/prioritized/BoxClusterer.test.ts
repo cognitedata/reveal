@@ -1,20 +1,20 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { SmartMergeBoxes } from './SmartMergeBoxes';
+import { BoxClusterer } from './BoxClusterer';
 import { Box3 } from 'three';
 import {
   createNonTouchingBoxesInRegularGrid,
   createOverlappingBoxes,
   createRandomBoxes,
   scrambleBoxes
-} from '../../../../../test-utilities/src/createBoxes';
+} from '../../../../test-utilities/src/createBoxes';
 
 import * as SeededRandom from 'random-seed';
 
 describe('SmartMergeBoxes', () => {
   test('add non-intersecting bboxes', () => {
-    const mergeBoxes = new SmartMergeBoxes();
+    const mergeBoxes = new BoxClusterer();
 
     const numberInEachDirection = 10;
     const size = 10;
@@ -29,7 +29,7 @@ describe('SmartMergeBoxes', () => {
   test('add intersecting bboxes', () => {
     const rand = SeededRandom.create('someseed');
 
-    const mergeBoxes = new SmartMergeBoxes();
+    const mergeBoxes = new BoxClusterer();
 
     const n = 100;
     const s = 10;
@@ -47,8 +47,8 @@ describe('SmartMergeBoxes', () => {
   test('union of two box collections contains all inserted boxes', () => {
     const random = SeededRandom.create('someseed');
 
-    const smartBoxes0 = new SmartMergeBoxes();
-    const smartBoxes1 = new SmartMergeBoxes();
+    const smartBoxes0 = new BoxClusterer();
+    const smartBoxes1 = new BoxClusterer();
 
     const n = 500;
     const d = 10;
@@ -92,8 +92,8 @@ describe('SmartMergeBoxes', () => {
   test('intersection of two trees contains intersection between all boxes', () => {
     const random = SeededRandom.create('someseed');
 
-    const smartBoxes0 = new SmartMergeBoxes();
-    const smartBoxes1 = new SmartMergeBoxes();
+    const smartBoxes0 = new BoxClusterer();
+    const smartBoxes1 = new BoxClusterer();
 
     const n = 500;
     const d = 10;

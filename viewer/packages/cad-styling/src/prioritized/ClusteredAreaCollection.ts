@@ -3,8 +3,7 @@
  */
 
 import { AreaCollection } from './AreaCollection';
-import { SmartMergeBoxes } from './mergeboxes/SmartMergeBoxes';
-import { BoxClusterer } from './mergeboxes/BoxClusterer';
+import { BoxClusterer } from './BoxClusterer';
 
 /**
  * AreaCollection that stores a representative box set by merging
@@ -12,7 +11,7 @@ import { BoxClusterer } from './mergeboxes/BoxClusterer';
  * It uses simple heuristics to determine which boxes are to be merged.
  */
 export class ClusteredAreaCollection implements AreaCollection {
-  private readonly _clusterer: BoxClusterer = new SmartMergeBoxes();
+  private readonly _clusterer: BoxClusterer = new BoxClusterer();
 
   get isEmpty(): boolean {
     return this._clusterer.boxCount == 0;
