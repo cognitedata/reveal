@@ -10,5 +10,9 @@
 
 export * from './core/src/index';
 
-export { NodeAppearance, DefaultNodeAppearance, AreaCollection,
-         ClusteredAreaCollection } from './packages/cad-styling';
+export {
+  NodeAppearance,
+  DefaultNodeAppearance,
+  AreaCollection,
+  ClusteredAreaCollection
+} from './packages/cad-styling';
