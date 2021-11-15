@@ -75,7 +75,8 @@ export class StampTool extends Tool implements ICogniteOrnateTool {
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
-    const groupName = e.target.attrs?.attachedToGroup;
+    const groupName =
+      e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
     this.group = this.ornateInstance.stage.findOne(
       `#${groupName}`
     ) as Konva.Group;

@@ -650,6 +650,11 @@ export class CogniteOrnate {
     // To do: instead of getting the PIDs from the canvas,
     // get the original PID and draw the annotations on the original ones.
     const annotatedPIDs = this.documents.map(async (doc) => {
+      const isHidden = !doc.kImage.visible();
+
+      if (isHidden) {
+        doc.kImage.show();
+      }
       const tempPrevScale = this.stage.scale();
       this.stage.scale({ x: 1, y: 1 });
       const dataURL = doc.group.toDataURL();
@@ -664,6 +669,9 @@ export class CogniteOrnate {
         width: doc.kImage.width(),
         height: doc.kImage.height(),
       });
+      if (isHidden) {
+        doc.kImage.hide();
+      }
     });
 
     await Promise.all(annotatedPIDs);

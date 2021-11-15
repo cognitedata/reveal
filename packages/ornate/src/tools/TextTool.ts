@@ -166,7 +166,8 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       return;
     }
     const { drawingLayer } = this.ornateInstance;
-    const groupName = e.target.attrs?.attachedToGroup;
+    const groupName =
+      e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
     this.group = this.ornateInstance.stage.findOne(
       `#${groupName}`
     ) as Konva.Group;

@@ -337,7 +337,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
           width,
           height,
         });
-        ornateViewer.current.zoomToGroup(group);
+        if (x && y && width && height) {
+          ornateViewer.current.zoomToGroup(group);
+        }
       }
       contents.markers.forEach((marker) => {
         (ornateViewer.current!.tools.list as ListTool).addMarker({

@@ -27,7 +27,8 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
-    const groupName = e.target?.attrs?.attachedToGroup;
+    const groupName =
+      e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
     const group = this.ornateInstance.stage.findOne(`#${groupName}`);
     this.group = group as Konva.Group;
     const { x: startX, y: startY } = this.getPosition();
@@ -38,6 +39,7 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
       userGenerated: true,
       name: 'drawing',
       type: 'line',
+      inGroup: groupName,
     });
 
     if (!group) {
