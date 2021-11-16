@@ -3,13 +3,12 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
+import { BucketGrid2D } from './BucketGrid2D';
 
 import { trackCreateTool } from '@reveal/metrics';
 import { assertNever, worldToViewportCoordinates } from '@reveal/core/utilities';
 import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
-
-import { BucketGrid2D } from './BucketGrid2D';
 
 export type HtmlOverlayPositionUpdatedDelegate = (
   element: HTMLElement,
