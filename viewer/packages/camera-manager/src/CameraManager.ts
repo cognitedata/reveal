@@ -10,8 +10,7 @@ import { assertNever } from '@reveal/utilities';
 
 const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
   zoomToCursor: 'basicLerp',
-  onClickTargetChange: false,
-  canInterruptAnimations: false
+  onClickTargetChange: false
 };
 
 export class CameraManager extends THREE.EventDispatcher {
@@ -144,28 +143,19 @@ export class CameraManager extends THREE.EventDispatcher {
    * Method for setting up camera controls listeners and values inside current controls class.
    */
   private setupControls() {
-    let startedScroll = false,
-      newTargetUpdate = false;
-    let timeAfterClick = 0;
-    const wheelClock = new THREE.Clock(),
-      clickClock = new THREE.Clock();
+    let startedScroll = false;
+
+    const wheelClock = new THREE.Clock();
 
     const onClick = (e: any) => {
-      newTargetUpdate = true;
-      timeAfterClick = 0;
-      clickClock.getDelta();
-
       this.controls.enableKeyboardNavigation = false;
       this.changeTarget(e);
     };
 
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
-      timeAfterClick += clickClock.getDelta();
 
-      if (timeAfterClick > 3) newTargetUpdate = false;
-
-      const wantNewScrollTarget = startedScroll && !newTargetUpdate && e.deltaY < 0;
+      const wantNewScrollTarget = startedScroll && e.deltaY < 0;
 
       if (wantNewScrollTarget) {
         startedScroll = false;
@@ -316,11 +306,10 @@ export class CameraManager extends THREE.EventDispatcher {
       }
     };
 
-    if (this._cameraControlsOptions.canInterruptAnimations) {
-      this._domElement.addEventListener('pointerdown', stopTween);
-      this._domElement.addEventListener('wheel', stopTween);
-      document.addEventListener('keydown', stopTween);
-    }
+    this._domElement.addEventListener('pointerdown', stopTween);
+    this._domElement.addEventListener('wheel', stopTween);
+    document.addEventListener('keydown', stopTween);
+
     const tempTarget = new THREE.Vector3();
     const tempPosition = new THREE.Vector3();
     const tween = animation
@@ -390,20 +379,14 @@ export class CameraManager extends THREE.EventDispatcher {
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
         this._domElement.removeEventListener('pointerdown', stopTween);
-
-        if (this._cameraControlsOptions.canInterruptAnimations) {
-          this._domElement.removeEventListener('wheel', stopTween);
-          document.removeEventListener('keydown', stopTween);
-        }
+        this._domElement.removeEventListener('wheel', stopTween);
+        document.removeEventListener('keydown', stopTween);
       }
     };
 
     this._domElement.addEventListener('pointerdown', stopTween);
-
-    if (this._cameraControlsOptions.canInterruptAnimations) {
-      this._domElement.addEventListener('wheel', stopTween);
-      document.addEventListener('keydown', stopTween);
-    }
+    this._domElement.addEventListener('wheel', stopTween);
+    document.addEventListener('keydown', stopTween);
 
     const tempTarget = new THREE.Vector3();
     const tween = animation

@@ -225,7 +225,6 @@ describe('Cognite3DViewer', () => {
     // Act
     viewer.setCameraControlsOptions({
       onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange,
-      canInterruptAnimations: !originalCameraControlsOptions.canInterruptAnimations,
       zoomToCursor: 'disable'
     });
 
@@ -233,9 +232,6 @@ describe('Cognite3DViewer', () => {
     const newCameraControlsOptions = viewer.getCameraControlsOptions();
 
     expect(newCameraControlsOptions.onClickTargetChange).not.toEqual(originalCameraControlsOptions.onClickTargetChange);
-    expect(newCameraControlsOptions.canInterruptAnimations).not.toEqual(
-      originalCameraControlsOptions.canInterruptAnimations
-    );
     expect(newCameraControlsOptions.zoomToCursor).toEqual('disable');
   });
 });
