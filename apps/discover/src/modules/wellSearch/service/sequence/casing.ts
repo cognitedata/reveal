@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import max from 'lodash/max';
 import min from 'lodash/min';
+import uniq from 'lodash/uniq';
 import uniqueId from 'lodash/uniqueId';
 
 import { Metrics } from '@cognite/metrics';
@@ -67,17 +68,23 @@ export const fetchCasingsUsingWellsSDK = async (
   wellboreIds: WellboreId[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
-  const casingItems = (await getWellSDKClient().casings.list({
-    filter: { wellboreIds: wellboreIds.map(toIdentifier) },
-    limit: CHUNK_LIMIT,
-  })) as CasingItems;
-
-  const sequences = mapCasingItemsToSequences(
-    casingItems,
-    wellboreSourceExternalIdMap
+  const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
+  const casings = Promise.all(
+    idChunkList.map((wellboreIdChunk) =>
+      getWellSDKClient()
+        .casings.list({
+          filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
+          limit: CHUNK_LIMIT,
+        })
+        .then((casingItems) =>
+          mapCasingItemsToSequences(casingItems, wellboreSourceExternalIdMap)
+        )
+    )
   );
 
-  return getGroupedSequenceData(sequences, wellboreIds);
+  const results = ([] as Sequence[]).concat(...(await casings));
+
+  return getGroupedSequenceData(results, wellboreIds);
 };
 
 export const mapCasingItemsToSequences = (
@@ -121,7 +128,7 @@ export const getSequenceMetadata = (casingAssemblies: CasingAssembly[]) => {
   const mdTops: number[] = [];
   const maxOutsideDiameters: number[] = [];
   const minInsideDiameters: number[] = [];
-  let casingType: string | undefined;
+  const casingTypes: string[] = [];
 
   casingAssemblies.forEach((casingAssembly) => {
     mdBases.push(casingAssembly.originalMeasuredDepthBase.value);
@@ -129,14 +136,14 @@ export const getSequenceMetadata = (casingAssemblies: CasingAssembly[]) => {
     maxOutsideDiameters.push(casingAssembly.maxOutsideDiameter.value);
     minInsideDiameters.push(casingAssembly.minInsideDiameter.value);
 
-    if (!casingType) {
-      casingType = casingAssembly.type;
+    if (casingAssembly.type) {
+      casingTypes.push(casingAssembly.type);
     }
   });
 
   return {
     assy_original_md_base: String(max(mdBases)),
-    assy_name: casingType,
+    assy_name: uniq(casingTypes).join(', '),
     assy_original_md_top: String(max(mdTops)),
     assy_size: String(max(maxOutsideDiameters)),
     assy_min_inside_diameter: String(min(minInsideDiameters)),
@@ -153,11 +160,11 @@ export const fetchCasingsUsingCogniteSDK = async (
   const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
 
   const casings = Promise.all(
-    idChunkList.map((wellIdChunk) =>
+    idChunkList.map((wellboreIdChunk) =>
       getCogniteSDKClient()
         .sequences.list({
           filter: {
-            assetIds: wellIdChunk.map((id) => wellboreAssetIdMap[id]),
+            assetIds: wellboreIdChunk.map((id) => wellboreAssetIdMap[id]),
             ...filter,
           },
         })
