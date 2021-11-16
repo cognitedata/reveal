@@ -25,53 +25,6 @@ export const getFilterPanelItems = (
 ): FilterPanelConfigItem[] => [
   {
     key: '1',
-    headerText: 'Data set',
-    disableClear: !filter.dataSetIds,
-    clear: () => {
-      setFilter({
-        ...filter,
-        dataSetIds: undefined,
-      });
-    },
-    filterItem: <DataSetSelectFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
-    key: '2',
-    headerText: 'Directory Prefix',
-    disableClear: !(filter as any).directoryPrefix,
-    clear: () => {
-      setFilter({
-        ...filter,
-        // @ts-ignore
-        directoryPrefix: undefined,
-      });
-    },
-    filterItem: (
-      <DirectoryPrefixesProvider>
-        {(availablePrefixes) => (
-          <DirectoryPrefixFilter
-            availablePrefixes={availablePrefixes}
-            filter={filter}
-            setFilter={setFilter}
-          />
-        )}
-      </DirectoryPrefixesProvider>
-    ),
-  },
-  {
-    key: '3',
-    headerText: 'Asset',
-    disableClear: !filter.assetIds,
-    clear: () => {
-      setFilter({
-        ...filter,
-        assetIds: undefined,
-      });
-    },
-    filterItem: <AssetSelectFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
-    key: '4',
     headerText: 'Date and Time',
     disableClear:
       !filter.createdTime &&
@@ -97,37 +50,19 @@ export const getFilterPanelItems = (
     ),
   },
   {
-    key: '6',
-    headerText: 'File data',
-    disableClear: !filter.externalIdPrefix && !filter.labels,
+    key: '2',
+    headerText: 'Asset',
+    disableClear: !filter.assetIds,
     clear: () => {
       setFilter({
         ...filter,
-        externalIdPrefix: undefined,
-        labels: undefined,
+        assetIds: undefined,
       });
     },
-    filterItem: (
-      <>
-        <ExternalIdFilter filter={filter} setFilter={setFilter} />
-        <SelectLabelsFilter filter={filter} setFilter={setFilter} />
-      </>
-    ),
+    filterItem: <AssetSelectFilter filter={filter} setFilter={setFilter} />,
   },
   {
-    key: '7',
-    headerText: 'Metadata',
-    disableClear: !filter.metadata,
-    clear: () => {
-      setFilter({
-        ...filter,
-        metadata: undefined,
-      });
-    },
-    filterItem: <MetadataSelectFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
-    key: '8',
+    key: '3',
     headerText: 'Annotation',
     disableClear: !filter.annotation,
     clear: () => {
@@ -137,5 +72,61 @@ export const getFilterPanelItems = (
       });
     },
     filterItem: <AnnotationFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '4',
+    headerText: 'Data set',
+    disableClear: !filter.dataSetIds,
+    clear: () => {
+      setFilter({
+        ...filter,
+        dataSetIds: undefined,
+      });
+    },
+    filterItem: <DataSetSelectFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '5',
+    headerText: 'Directory Prefix',
+    disableClear: !(filter as any).directoryPrefix,
+    clear: () => {
+      setFilter({
+        ...filter,
+        // @ts-ignore
+        directoryPrefix: undefined,
+      });
+    },
+    filterItem: (
+      <DirectoryPrefixesProvider>
+        {(availablePrefixes) => (
+          <DirectoryPrefixFilter
+            availablePrefixes={availablePrefixes}
+            filter={filter}
+            setFilter={setFilter}
+          />
+        )}
+      </DirectoryPrefixesProvider>
+    ),
+  },
+  {
+    key: '6',
+    headerText: 'Additional filters',
+    disableClear:
+      !filter.externalIdPrefix && !filter.labels && !filter.metadata,
+    clear: () => {
+      setFilter({
+        ...filter,
+        externalIdPrefix: undefined,
+        labels: undefined,
+        metadata: undefined,
+      });
+    },
+    filterItem: (
+      <>
+        <ExternalIdFilter filter={filter} setFilter={setFilter} />
+        <SelectLabelsFilter filter={filter} setFilter={setFilter} />
+        <MetadataSelectFilter filter={filter} setFilter={setFilter} />
+      </>
+    ),
   },
 ];
