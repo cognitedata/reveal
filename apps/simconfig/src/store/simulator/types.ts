@@ -9,6 +9,9 @@ export type Simulator = {
   simulator: SimulatorBackend;
   name: string;
   heartbeat: number;
+  modelLibraryDataSet: number;
+  configurationLibraryDataSet: number;
+  connectorVersion: string;
 };
 
 export interface SimulatorState {

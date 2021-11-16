@@ -4,11 +4,10 @@ import { Button, Input, Select } from '@cognite/cogs.js';
 import { FileInput } from 'components/forms/controls/FileInput';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { Field, Form, Formik, FormikProps } from 'formik';
-import { useSelector } from 'react-redux';
-import { selectDatasets } from 'store/dataset/selectors';
-import { selectUploadDatasetIds } from 'store/group/selectors';
 import { ApiContext } from 'providers/ApiProvider';
 import { HiddenInputFile } from 'components/forms/controls/elements';
+import { selectSimulators } from 'store/simulator/selectors';
+import { useAppSelector } from 'store/hooks';
 import {
   getFileExtensionFromFileName,
   getSelectEntriesFromMap,
@@ -65,22 +64,15 @@ export function ModelForm({
   const inputFile = useRef<HTMLInputElement>(null);
   const { api } = useContext(ApiContext);
   const { authState } = useContext(CdfClientContext);
-
-  const datasets = useSelector(selectDatasets);
-  const scopes = useSelector(selectUploadDatasetIds);
+  const simulators = useAppSelector(selectSimulators);
 
   const isNewModel = !initialModelFormState;
   const modelFormState = !initialModelFormState
     ? getInitialModelFormState()
     : initialModelFormState;
 
-  const formDatasets: { [key: number]: string } = datasets
-    .filter((it) => scopes.includes(it.id))
-    .reduce((datasets, { id, name }) => ({ ...datasets, [id]: name }), {});
-
-  if (!modelFormState.fileInfo.dataSetId) {
-    modelFormState.fileInfo.dataSetId = datasets[0]?.id;
-  }
+  const { modelLibraryDataSet } = simulators[0];
+  modelFormState.fileInfo.dataSetId = modelLibraryDataSet;
 
   const onButtonClick = () => {
     if (inputFile.current) {
@@ -140,6 +132,7 @@ export function ModelForm({
     } else {
       const { modelName, simulator, description, fileName, userEmail } =
         metadata;
+
       await api.modelLibrary.updateModelVersion(authState.project, {
         file,
         metadata: {
@@ -175,7 +168,7 @@ export function ModelForm({
   return (
     <Formik initialValues={modelFormState} onSubmit={onSubmit}>
       {({
-        values: { file, fileInfo, metadata },
+        values: { file, metadata },
         setFieldValue,
         isSubmitting,
         errors,
@@ -298,26 +291,6 @@ export function ModelForm({
             </>
           )}
 
-          {isNewModel && datasets.length > 1 && (
-            <InputRow>
-              <Field
-                as={Select}
-                title="Data set"
-                name="fileInfo.dataSetId"
-                value={
-                  fileInfo.dataSetId && {
-                    value: fileInfo.dataSetId,
-                    label: formDatasets[fileInfo.dataSetId],
-                  }
-                }
-                onChange={({ value }: { value: number }) =>
-                  setFieldValue('fileInfo.dataSetId', value)
-                }
-                options={getSelectEntriesFromMap(formDatasets)}
-                closeMenuOnSelect
-              />
-            </InputRow>
-          )}
           <div>
             <Button
               type="primary"

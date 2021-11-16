@@ -1,4 +1,4 @@
-import { Button, CollapsablePanel, Title } from '@cognite/cogs.js';
+import { Button, CollapsablePanel } from '@cognite/cogs.js';
 import { CollapsableContainer, Container, Header } from 'pages/elements';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
@@ -11,13 +11,8 @@ import { setSelectedFile } from 'store/file';
 import { selectFiles, selectSelectedFile } from 'store/file/selectors';
 import { DEFAULT_MODEL_SOURCE } from 'components/forms/ModelForm/constants';
 
-import {
-  IndicatorTitle,
-  IndicatorTab,
-  IndicatorContainer,
-  IndicatorContainerImage,
-} from './elements';
 import { DATA_TYPE_FILE } from './constants';
+import TitleArea from './TitleArea';
 
 type Params = {
   modelName?: string;
@@ -80,45 +75,6 @@ export default function ModelLibrary() {
     dispatch(setSelectedFile(undefined));
   };
 
-  const navigateToCalculation = () => {
-    dispatch(setSelectedFile(getLatestFileInfo()));
-    history.push(`/calculation-library/${modelName}`);
-  };
-
-  const Indicators = () => {
-    const latestFileInfo = getLatestFileInfo();
-    if (!latestFileInfo) {
-      return null;
-    }
-    return (
-      <IndicatorContainer>
-        <IndicatorTab>
-          <IndicatorTitle>Simulator</IndicatorTitle>
-          <IndicatorContainerImage>
-            <img
-              src={`${
-                process.env.PUBLIC_URL
-              }/simulators/${latestFileInfo.source?.toLowerCase()}.png`}
-              alt={latestFileInfo.source}
-              style={{ marginRight: 12 }}
-            />
-            <p>{latestFileInfo.source}</p>
-          </IndicatorContainerImage>
-        </IndicatorTab>
-
-        <IndicatorTab>
-          <IndicatorTitle>Version</IndicatorTitle>
-          <p>{latestFileInfo.metadata?.version}</p>
-        </IndicatorTab>
-
-        <IndicatorTab>
-          <IndicatorTitle>Calculations</IndicatorTitle>
-          <Button icon="FlowChart" onClick={navigateToCalculation} />
-        </IndicatorTab>
-      </IndicatorContainer>
-    );
-  };
-
   return (
     <CollapsableContainer>
       <CollapsablePanel
@@ -133,8 +89,11 @@ export default function ModelLibrary() {
       >
         <Container>
           <Header>
-            <Title>{modelName || 'Model library'}</Title>
-            {modelName && <Indicators />}
+            <TitleArea
+              modelName={modelName || 'Model library'}
+              showIndicators={!modelName}
+              latestFile={getLatestFileInfo()}
+            />
             <Button onClick={onClick} type="primary" icon="PlusCompact">
               {!modelName ? 'New model' : 'New version'}
             </Button>

@@ -8,13 +8,22 @@ const SimulatorItemContainer = styled.div`
   display: flex;
   margin: 5px 0;
   white-space: nowrap;
+  flex-direction: column;
 `;
 
-const SimulatorItemNameContainer = styled.div`
+const SimulatorItem = styled.p`
+  margin: 0;
+  margin-bottom: 0.25em;
+  padding: 0;
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-right: 18px;
+`;
+
+const HearBeatContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 interface SimulatorProps {
@@ -34,19 +43,23 @@ export function SimulatorTag({
       <Tooltip
         content={simulators.map((simulator) => (
           <SimulatorItemContainer key={simulator.name}>
-            <SimulatorItemNameContainer>
-              {simulator.name}
-            </SimulatorItemNameContainer>
-            <Tag
-              color={
-                selectIsSimulatorAvailable(simulator)
-                  ? Colors['graphics-success'].hex()
-                  : Colors['graphics-danger'].hex()
-              }
-            >
-              {moment.duration(moment().diff(simulator.heartbeat)).humanize()}{' '}
-              ago
-            </Tag>
+            <SimulatorItem>Name: {simulator.name}</SimulatorItem>
+            <SimulatorItem>
+              Connector Version: {simulator.connectorVersion}
+            </SimulatorItem>
+            <HearBeatContainer>
+              <SimulatorItem>Last Seen: </SimulatorItem>
+              <Tag
+                color={
+                  selectIsSimulatorAvailable(simulator)
+                    ? Colors['graphics-success'].hex()
+                    : Colors['graphics-danger'].hex()
+                }
+              >
+                {moment.duration(moment().diff(simulator.heartbeat)).humanize()}{' '}
+                ago
+              </Tag>
+            </HearBeatContainer>
           </SimulatorItemContainer>
         ))}
       >
