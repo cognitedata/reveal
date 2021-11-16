@@ -19,7 +19,7 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
       <FilterBar.List justifyContent="center" alignItems="center">
         {!isEmpty && (
           <>
-            <Input placeholder="Search columns, values" />
+            <Input placeholder="Search column name" />
             <Separator style={{ margin: '0 12px' }} />
             {activeFilters.map((filter: FilterType) => (
               <Button type="tertiary" onClick={() => onFilterClick(filter)}>
