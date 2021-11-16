@@ -1,9 +1,8 @@
 import React from 'react';
-import { ButtonProps } from '@cognite/cogs.js';
+import { Button, ButtonProps } from '@cognite/cogs.js';
 import { Popconfirm, Tooltip } from 'antd';
 import { getActionLabel, getContainer } from 'utils/utils';
 import { AccessPermission } from 'utils/types';
-import MenuButton from 'components/MenuButton';
 
 interface AccessButtonProps extends ButtonProps {
   permissions?: AccessPermission[];
@@ -67,9 +66,10 @@ const AccessButton = ({
         }
         getPopupContainer={getContainer}
       >
-        <MenuButton
-          type="ghost"
+        <Button
+          type="secondary"
           icon="Upload"
+          iconPlacement="right"
           disabled={!hasWriteAccess || !!disabledMessage}
           onClick={(e) => {
             if (!showConfirm && onClick) {
@@ -78,7 +78,7 @@ const AccessButton = ({
           }}
         >
           {children && children}
-        </MenuButton>
+        </Button>
       </Tooltip>
     </Popconfirm>
   );

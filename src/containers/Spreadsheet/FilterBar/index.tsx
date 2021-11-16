@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Flex, Input } from '@cognite/cogs.js';
+import { Body, Button, Flex, Input } from '@cognite/cogs.js';
 import { Separator } from 'components/Separator';
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
 import { activeFilters } from './mock';
-import { Menu } from './Menu';
+import { Actions } from './Actions';
 
 export type FilterType = { type: string; value: number };
 
@@ -31,7 +31,11 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
       </FilterBar.List>
       <Flex justifyContent="center" alignItems="center">
         <Separator style={{ margin: '0 12px' }} />
-        <FilterBar.Menu />
+        <Body level={2} strong>
+          12345 rows
+        </Body>
+        <Separator style={{ margin: '0 12px' }} />
+        <FilterBar.Actions />
       </Flex>
     </Bar>
   );
@@ -50,4 +54,4 @@ const List = styled(Flex)`
 `;
 
 FilterBar.List = List;
-FilterBar.Menu = Menu;
+FilterBar.Actions = Actions;
