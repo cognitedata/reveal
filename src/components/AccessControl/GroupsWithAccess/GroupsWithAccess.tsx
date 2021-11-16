@@ -41,6 +41,11 @@ const resourceType = (cap: SingleCogniteCapability) => {
   if ('sequencesAcl' in cap) {
     return 'sequences';
   }
+  const aclName = Object.keys(cap).find((keyName) => keyName.includes('Acl'));
+  if (aclName) {
+    const aclKeyIndex = aclName.indexOf('Acl');
+    return aclName.substr(0, aclKeyIndex);
+  }
   return 'NONE';
 };
 
