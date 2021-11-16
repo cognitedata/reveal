@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   useActiveTable,
   useCloseTable,
   useTableTabList,
 } from 'hooks/table-tabs';
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { TAB_HEIGHT } from 'utils/constants';
 import styled from 'styled-components';
+import { RawExplorerContext } from 'contexts';
 
 const Tabs = styled.ul`
   display: flex;
@@ -82,14 +83,32 @@ const FillerTab = styled(Tab)`
   padding: 0 0;
 `;
 
+const OpenNavTab = styled(Tab)`
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 0 10px;
+  flex-basis: auto;
+  background-color: white;
+`;
+
 export default function TableTabList() {
   const [list = []] = useTableTabList();
   const [[activeDb, activeTable] = [undefined, undefined], setActive] =
     useActiveTable();
   const close = useCloseTable();
-
+  const { isSidePanelOpen, setIsSidePanelOpen } =
+    useContext(RawExplorerContext);
   return (
     <Tabs>
+      {!isSidePanelOpen && (
+        <OpenNavTab>
+          <Button
+            size="small"
+            icon="PanelRight"
+            onClick={() => setIsSidePanelOpen(true)}
+          />
+        </OpenNavTab>
+      )}
       {list.map(([db, table]) => (
         <Tab
           key={`${db}_${table}`}
