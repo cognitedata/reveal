@@ -44,16 +44,16 @@ const TableContent = () => {
 };
 
 const TabSpreadsheet = (): JSX.Element => (
-  <Flex>
-    <Icon type="DataTable" />
+  <Tab>
+    <Icon type="Table" />
     Table
-  </Flex>
+  </Tab>
 );
 const TabProfiling = (): JSX.Element => (
-  <span>
+  <Tab>
     <Icon type="Profiling" />
     Profile
-  </span>
+  </Tab>
 );
 
 const Wrapper = styled(Flex)`
@@ -66,6 +66,12 @@ const TopBar = styled(Flex)`
   height: 64px;
   box-sizing: border-box;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+`;
+
+const Tab = styled.span`
+  font-weight: 500;
+  font-size: 14px;
+  color: ${Colors['greyscale-grey7'].hex()};
 `;
 
 const StyledTabs = styled(Tabs)`

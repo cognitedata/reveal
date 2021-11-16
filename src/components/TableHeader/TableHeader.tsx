@@ -14,7 +14,7 @@ export const TableHeader = (props: Props): JSX.Element => {
       <Detail className="detail--db-name" strong>
         {title}
       </Detail>
-      <Title level={5} style={{ fontWeight: 700 }}>
+      <Title level={5} style={{ fontWeight: 700, marginTop: '2px' }}>
         {subtitle}
       </Title>
     </TitleSection>
