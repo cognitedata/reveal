@@ -3,10 +3,15 @@ import BaseTable, { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Flex, Graphic } from '@cognite/cogs.js';
 
-type Props = { rows: any; columns: any; isEmpty?: boolean };
+type Props = {
+  rows: any;
+  columns: any;
+  isEmpty?: boolean;
+  onEndReach?: () => void;
+};
 
 export const Table = (props: Props): JSX.Element => {
-  const { rows, columns, isEmpty } = props;
+  const { rows, columns, isEmpty, onEndReach } = props;
 
   return (
     <Flex style={{ width: '100%', height: '100%' }}>
@@ -20,6 +25,7 @@ export const Table = (props: Props): JSX.Element => {
             data={rows}
             rowHeight={36}
             headerHeight={isEmpty ? 0 : 36}
+            onEndReached={() => onEndReach && onEndReach()}
             emptyRenderer={
               <EmptyTable>
                 <Graphic type="Search" />
