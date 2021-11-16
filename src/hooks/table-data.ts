@@ -10,6 +10,8 @@ const COLUMN_NAMES_MAPPED: Record<string, string> = {
   key: 'Key',
   lastUpdatedTime: 'Last update time',
 };
+const PAGE_SIZE = 100;
+const FETCH_LIMIT = 100;
 
 interface ColumnType extends Partial<ColumnShape> {
   key: string;
@@ -19,7 +21,7 @@ interface ColumnType extends Partial<ColumnShape> {
 
 export const useTableData = () => {
   const [[database, table] = [undefined, undefined]] = useActiveTable();
-  const [fetchLimit] = useState(50);
+  const [fetchLimit] = useState(FETCH_LIMIT);
 
   const enabled = !!database && !!table;
 
@@ -46,18 +48,20 @@ export const useTableData = () => {
     {
       database: database!,
       table: table!,
-      pageSize: 100,
+      pageSize: PAGE_SIZE,
     },
     { enabled }
   );
 
-  // TODO(CDFUX-968): this blocks the download
   const getIsDone = () => {
-    const d = data?.pages.reduce((a, c) => a + c.items.length, 0);
-    return !!d && d > fetchLimit;
+    if (!data) return false;
+    const wasFetchLimitReached =
+      data.pages.reduce((a, c) => a + c.items.length, 0) > fetchLimit;
+    const isAllRowsFetched = !data.pages[data.pages.length - 1]?.nextCursor;
+    return wasFetchLimitReached || isAllRowsFetched;
   };
-  const isDone: boolean = getIsDone();
 
+  const isDone: boolean = getIsDone();
   useEffect(() => {
     if (isFetched && enabled) refetch();
   }, [isFetched, enabled, refetch]);

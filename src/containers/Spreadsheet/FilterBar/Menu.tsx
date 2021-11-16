@@ -27,14 +27,13 @@ export const Menu = (): JSX.Element => {
   const [[database, table] = [undefined, undefined]] = useActiveTable();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
-  const canBeDownloaded = isDone && rows.length;
+  const canBeDownloaded = isDone && !!rows?.length;
 
   const onShareClick = () => {
     /** do something */
   };
 
   const onDownloadData = useMemo(() => {
-    if (!canBeDownloaded) return [];
     return (
       rows.map((item) => {
         const escapedColumns: Record<string, string> = {};
@@ -112,7 +111,7 @@ export const Menu = (): JSX.Element => {
                 type="ghost"
                 aria-label="Button download table"
                 icon="Download"
-                disabled={!isDone}
+                disabled={!canBeDownloaded}
               >
                 Download CSV
               </MenuButton>
