@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
@@ -14,10 +13,9 @@ import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
-import { Popover } from 'src/modules/Common/Components/Popover';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
+import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const MapPopup = ({
   item,
@@ -104,16 +102,7 @@ export const MapPopup = ({
       </div>
       <div className="footer">
         <div className="badge">
-          <Popover
-            placement="bottom"
-            trigger="mouseenter click"
-            content={AnnotationsBadgePopoverContent(
-              annotationCounts,
-              annotationStatuses
-            )}
-          >
-            <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
-          </Popover>
+          {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
         </div>
         <div className="action">
           <ActionMenu

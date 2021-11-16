@@ -1,43 +1,40 @@
 import React, { useMemo } from 'react';
 import { Tooltip } from '@cognite/cogs.js';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
-import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { AnnotationsBadgePopoverContent } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadgePopoverContent';
-import { Popover } from 'src/modules/Common/Components/Popover';
 import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
 import { SelectionCheckbox } from 'src/modules/Common/Components/SelectionCheckbox/SelectionCheckbox';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import exifIcon from 'src/assets/exifIcon.svg';
 import { RootState } from 'src/store/rootReducer';
 import {
   isProcessingFile,
   makeSelectAnnotationStatuses,
 } from 'src/modules/Process/processSlice';
-import { selectUpdatedFileDetails } from 'src/modules/FileDetails/fileDetailsSlice';
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
+import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const FileGridPreview = ({
   item,
   style,
   mode,
-  actionDisabled,
-  onSelect,
-  selected,
+  isActionDisabled,
+  onItemSelect,
+  isSelected,
 }: {
-  selected: boolean;
   item: TableDataItem;
   style?: React.CSSProperties;
   mode: VisionMode;
-  actionDisabled: boolean;
-  onSelect?: (item: TableDataItem, selected: boolean) => void;
+  isActionDisabled: () => boolean;
+  onItemSelect?: (item: TableDataItem, selected: boolean) => void;
+  isSelected: (id: number) => boolean;
 }) => {
-  const dispatch = useDispatch();
+  const selected = isSelected(item.id);
+  const actionDisabled = isActionDisabled();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = item;
 
@@ -52,7 +49,7 @@ export const FileGridPreview = ({
   };
 
   const handleFileDelete = () => {
-    dispatch(DeleteFilesById([item.id]));
+    if (menuActions.onFileDelete) menuActions.onFileDelete(item.id);
   };
 
   const getAnnotationCounts = useMemo(makeSelectAnnotationCounts, []);
@@ -66,28 +63,28 @@ export const FileGridPreview = ({
   );
 
   const reviewDisabled = isProcessingFile(annotationStatuses);
-  const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, item.id)
-  );
 
   const showReviewButton = mode === VisionMode.Contextualize;
 
   return (
     <PreviewCell style={style} onClick={handleFileDetails}>
       <div className="preview">
-        <Thumbnail fileInfo={fileInfo as FileInfo} />
-        {onSelect && (
+        <Thumbnail
+          fileInfo={fileInfo as FileInfo}
+          onViewClicked={showReviewButton ? undefined : handleReview} // because view button should only be shown in explorer page
+        />
+        {onItemSelect && (
           <SelectionCheckbox
             dataItem={item}
             selected={selected}
-            handleItemSelect={onSelect}
+            handleItemSelect={onItemSelect}
           />
         )}
 
         <MenuContainer>
           <ActionMenu
             buttonType="primary"
-            showExifIcon={fileDetails?.geoLocation !== undefined}
+            showExifIcon={item?.geoLocation !== undefined}
             reviewDisabled={reviewDisabled}
             actionDisabled={actionDisabled}
             handleReview={showReviewButton ? undefined : handleReview} // skip menu item if button is shown
@@ -98,7 +95,7 @@ export const FileGridPreview = ({
         <div className="footer">
           <div className="nameAndExif">
             <div className="name">{item.name}</div>
-            {fileDetails?.geoLocation && (
+            {item?.geoLocation && (
               <Tooltip content="EXIF data added">
                 <div className="exif">
                   <img src={exifIcon} alt="exifIcon" />
@@ -108,16 +105,7 @@ export const FileGridPreview = ({
           </div>
 
           <div className="badge">
-            <Popover
-              placement="bottom"
-              trigger="mouseenter click"
-              content={AnnotationsBadgePopoverContent(
-                annotationCounts,
-                annotationStatuses
-              )}
-            >
-              <>{AnnotationsBadge(annotationCounts, annotationStatuses)}</>
-            </Popover>
+            {AnnotationsBadgePopover(annotationCounts, annotationStatuses)}
           </div>
           {showReviewButton && (
             <div className="review">
@@ -186,27 +174,9 @@ const PreviewCell = styled.div`
     }
     :hover {
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-      cursor: pointer;
     }
   }
 
-  .documentIconContainer {
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    display: inline-flex;
-    justify-content: center;
-  }
-
-  img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    background: #fff;
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
-    overflow: auto;
-  }
   .cogs-body-1 {
     overflow: hidden;
     text-overflow: ellipsis;

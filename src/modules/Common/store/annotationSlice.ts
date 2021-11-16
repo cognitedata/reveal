@@ -1,17 +1,15 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { VisionAPIType } from 'src/api/types';
-import {
-  AnnotationCounts,
-  AnnotationPreview,
-  AnnotationsBadgeCounts,
-} from 'src/modules/Common/types';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
-import { AnnotationStatus, VisionAnnotation } from 'src/utils/AnnotationUtils';
+import {
+  getAnnotationsBadgeCounts,
+  VisionAnnotation,
+} from 'src/utils/AnnotationUtils';
 import {
   createSelector,
   createSelectorCreator,
@@ -216,12 +214,12 @@ export const filesAnnotationCounts = createDeepEqualSelector(
 
 export const makeSelectAnnotationCounts = () =>
   createDeepEqualSelector(selectFileAnnotations, (annotations) => {
-    return getBadgeProps(annotations);
+    return getAnnotationsBadgeCounts(annotations);
   });
 
 export const makeSelectTotalAnnotationCounts = () =>
   createDeepEqualSelector(selecAllAnnotations, (annotations) => {
-    return getBadgeProps(annotations);
+    return getAnnotationsBadgeCounts(annotations);
   });
 
 export const selectFileAnnotationsByType = createSelector(
@@ -234,71 +232,3 @@ export const selectFileAnnotationsByType = createSelector(
     return [];
   }
 );
-
-// helper functions
-const getSingleAnnotationCounts = (annotations: AnnotationPreview[]) => {
-  let [modelGenerated, manuallyGenerated, verified, unhandled, rejected] = [
-    0, 0, 0, 0, 0,
-  ];
-  annotations.forEach((annotation) => {
-    if (annotation.source === 'user') {
-      manuallyGenerated++;
-    } else {
-      modelGenerated++;
-    }
-    if (annotation.status === AnnotationStatus.Verified) {
-      verified++;
-    }
-    if (annotation.status === AnnotationStatus.Unhandled) {
-      unhandled++;
-    }
-    if (annotation.status === AnnotationStatus.Rejected) {
-      rejected++;
-    }
-  });
-
-  return {
-    modelGenerated,
-    manuallyGenerated,
-    verified,
-    unhandled,
-    rejected,
-  } as AnnotationCounts;
-};
-
-const getBadgeProps = (annotations: VisionAnnotation[]) => {
-  const annotationsBadgeProps: AnnotationsBadgeCounts = {
-    tag: {},
-    gdpr: {},
-    text: {},
-    objects: {},
-  };
-
-  if (annotations) {
-    annotationsBadgeProps.text = getSingleAnnotationCounts(
-      annotations.filter((item) => item.modelType === VisionAPIType.OCR)
-    );
-    annotationsBadgeProps.tag = getSingleAnnotationCounts(
-      annotations.filter(
-        (item) => item.modelType === VisionAPIType.TagDetection
-      )
-    );
-
-    annotationsBadgeProps.gdpr = getSingleAnnotationCounts(
-      annotations.filter(
-        (item) =>
-          item.modelType === VisionAPIType.ObjectDetection &&
-          item.text === 'person'
-      )
-    );
-
-    annotationsBadgeProps.objects = getSingleAnnotationCounts(
-      annotations.filter(
-        (item) =>
-          item.modelType === VisionAPIType.ObjectDetection &&
-          item.text !== 'person'
-      )
-    );
-  }
-  return annotationsBadgeProps;
-};

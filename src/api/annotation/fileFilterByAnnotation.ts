@@ -1,6 +1,5 @@
 import { AnnotationFilterType } from 'src/modules/Explorer/Components/Filters/types';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { chunkFileIds } from 'src/utils/fileUtils';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { Annotation } from 'src/api/types';
 import { validateAnnotation } from 'src/api/utils';
@@ -9,6 +8,7 @@ import {
   ANNOTATION_FETCH_BULK_SIZE,
   FETCH_ANNOTATION_LIMIT,
 } from 'src/constants/FetchConstants';
+import { splitListIntoChunks } from 'src/utils/generalUtils';
 
 const getAnnotations = async (
   generatedBy?: string,
@@ -45,9 +45,12 @@ export const fileFilterByAnnotation = async (
   items: FileInfo[]
 ): Promise<FileInfo[]> => {
   const { generatedBy, annotationText, annotationState } = annotation;
-  const bulkedIds = chunkFileIds(items, ANNOTATION_FETCH_BULK_SIZE);
+  const bulkedIds = splitListIntoChunks(
+    items.map((file) => file.id),
+    ANNOTATION_FETCH_BULK_SIZE
+  );
 
-  const relatedAnnotations = await (
+  const relatedAnnotations = (
     await Promise.all(
       bulkedIds.map((ids) =>
         getAnnotations(generatedBy, annotationText, annotationState, ids)

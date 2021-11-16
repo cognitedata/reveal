@@ -20,12 +20,12 @@ import { totalFileCount } from 'src/api/file/aggregate';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setExplorerFiles,
-  setExplorerFocusedFileId,
-  showExplorerFileMetadata,
   setIsLoading,
   setPercentageScanned,
   selectExplorerSortedFiles,
   setLoadingAnnotations,
+  setFocusedFileId,
+  showFileMetadata,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { clearExplorerFileState } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -34,6 +34,7 @@ import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import { fetchFiles } from 'src/api/file/fetchFiles/fetchFiles';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 type Resource = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -55,21 +56,26 @@ export const ResultTableLoader = <T extends Resource>({
     selectExplorerSortedFiles(rootState)
   );
 
-  const menuActions: FileActions = {
-    // TODO: should onDelete be added here as well?
-    onFileDetailsClicked: (fileInfo: FileInfo) => {
-      dispatch(FetchFilesById([fileInfo.id]));
-      dispatch(setExplorerFocusedFileId(fileInfo.id));
-      dispatch(showExplorerFileMetadata());
-    },
-    onReviewClick: (fileInfo: FileInfo) => {
-      dispatch(PopulateReviewFiles([fileInfo.id]));
-      history.push(
-        getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
-        { from: 'explorer' }
-      );
-    },
-  };
+  const menuActions: FileActions = useMemo(
+    () => ({
+      onFileDetailsClicked: (fileInfo: FileInfo) => {
+        dispatch(FetchFilesById([fileInfo.id]));
+        dispatch(setFocusedFileId(fileInfo.id));
+        dispatch(showFileMetadata());
+      },
+      onReviewClick: (fileInfo: FileInfo) => {
+        dispatch(PopulateReviewFiles([fileInfo.id]));
+        history.push(
+          getParamLink(workflowRoutes.review, ':fileId', String(fileInfo.id)),
+          { from: 'explorer' }
+        );
+      },
+      onFileDelete: (id: number) => {
+        dispatch(DeleteFilesById([id]));
+      },
+    }),
+    [dispatch, history]
+  );
 
   const tableData = useMemo(
     () =>

@@ -5,6 +5,7 @@ import { VALID_MIME_TYPES } from 'src/constants/validMimeTypes';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
 import { totalFileCount } from 'src/api/file/aggregate';
 import { fileFilterByAnnotation } from 'src/api/annotation/fileFilterByAnnotation';
+import { filterByTime } from 'src/api/file/fetchFiles/filterByTimeUtils';
 
 const requestCancelSubject: Subject<boolean> = new Subject<boolean>();
 export const cancelFetch = () => {
@@ -22,7 +23,11 @@ export const fetchFiles = async (
   handleSetIsLoading: (loading: boolean) => void,
   handleSetPercentageScanned: (percentComplete: number) => void
 ): Promise<FileInfo[]> => {
-  const { annotation, mimeType, ...filter } = visionFilter;
+  // remove additional VisionFileFilters to get FileFilterProps type filter for list request. (except directoryPrefix)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { annotation, dateFilter, timeRange, mimeType, ...filter } =
+    visionFilter;
+
   // ToDo: add a validator to make sure that provided mimetype is valid
   const mimeTypes = mimeType ? [mimeType] : validMimeTypes;
 
@@ -38,35 +43,38 @@ export const fetchFiles = async (
     scannedCount: 0,
   }).pipe(
     expand(async (data) => {
-      let items;
+      let newItems;
       let nextCursor;
-      let filteredItems;
+      let filteredItems: FileInfo[] = [];
 
       if (search.name) {
-        items = await sdkv3.files.search({
+        newItems = await sdkv3.files.search({
           filter: { ...filter, mimeType: mimeTypes[data.mimeTypeIndex] },
           search,
         });
       } else {
-        ({ items, nextCursor } = await sdkv3.files.list({
+        ({ items: newItems, nextCursor } = await sdkv3.files.list({
           filter: { ...filter, mimeType: mimeTypes[data.mimeTypeIndex] },
           limit: limit < 1000 ? limit : 1000,
           cursor: data.nextCursor,
         }));
       }
 
+      filteredItems = newItems;
+
+      if (timeRange) {
+        // apply time range filter first because it is faster
+        filteredItems = filterByTime(visionFilter, filteredItems);
+      }
       if (annotation) {
-        filteredItems = await fileFilterByAnnotation(annotation, items);
-      } else {
-        filteredItems = items;
+        filteredItems = await fileFilterByAnnotation(annotation, filteredItems);
       }
 
-      const newItems = [...data.items, ...filteredItems];
       return {
-        items: newItems,
+        items: [...data.items, ...filteredItems],
         mimeTypeIndex: nextCursor ? data.mimeTypeIndex : data.mimeTypeIndex + 1,
         nextCursor,
-        scannedCount: data.scannedCount + items.length,
+        scannedCount: data.scannedCount + newItems.length,
       };
     }),
     tap((results) => {

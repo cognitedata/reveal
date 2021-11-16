@@ -9,6 +9,7 @@ import { ExternalIdFilter } from './Filters/ExternalIDFilter';
 import { DirectoryPrefixFilter } from './Filters/DirectoryPrefixFilter';
 import { AnnotationFilter } from './Filters/AnnotationFilter';
 import { VisionFileFilterProps } from './Filters/types';
+import { TimeFilter } from './Filters/TimeFilter';
 
 export type FilterPanelConfigItem = {
   key: string;
@@ -24,6 +25,56 @@ export const getFilterPanelItems = (
 ): FilterPanelConfigItem[] => [
   {
     key: '1',
+    headerText: 'Date and Time',
+    disableClear:
+      !filter.createdTime &&
+      !filter.uploadedTime &&
+      !filter.sourceCreatedTime &&
+      !filter.dateFilter &&
+      !filter.timeRange,
+    clear: () => {
+      setFilter({
+        ...filter,
+        createdTime: undefined,
+        uploadedTime: undefined,
+        sourceCreatedTime: undefined,
+        dateFilter: undefined,
+        timeRange: undefined,
+      });
+    },
+    filterItem: (
+      <>
+        <DateFilter filter={filter} setFilter={setFilter} />
+        <TimeFilter filter={filter} setFilter={setFilter} />
+      </>
+    ),
+  },
+  {
+    key: '2',
+    headerText: 'Asset',
+    disableClear: !filter.assetIds,
+    clear: () => {
+      setFilter({
+        ...filter,
+        assetIds: undefined,
+      });
+    },
+    filterItem: <AssetSelectFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '3',
+    headerText: 'Annotation',
+    disableClear: !filter.annotation,
+    clear: () => {
+      setFilter({
+        ...filter,
+        annotation: undefined,
+      });
+    },
+    filterItem: <AnnotationFilter filter={filter} setFilter={setFilter} />,
+  },
+  {
+    key: '4',
     headerText: 'Data set',
     disableClear: !filter.dataSetIds,
     clear: () => {
@@ -35,7 +86,7 @@ export const getFilterPanelItems = (
     filterItem: <DataSetSelectFilter filter={filter} setFilter={setFilter} />,
   },
   {
-    key: '2',
+    key: '5',
     headerText: 'Directory Prefix',
     disableClear: !(filter as any).directoryPrefix,
     clear: () => {
@@ -58,72 +109,24 @@ export const getFilterPanelItems = (
     ),
   },
   {
-    key: '3',
-    headerText: 'Asset',
-    disableClear: !filter.assetIds,
-    clear: () => {
-      setFilter({
-        ...filter,
-        assetIds: undefined,
-      });
-    },
-    filterItem: <AssetSelectFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
-    key: '4',
-    headerText: 'Date',
-    disableClear:
-      !filter.createdTime && !filter.uploadedTime && !filter.sourceCreatedTime,
-    clear: () => {
-      setFilter({
-        ...filter,
-        createdTime: undefined,
-        uploadedTime: undefined,
-        sourceCreatedTime: undefined,
-      });
-    },
-    filterItem: <DateFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
     key: '6',
-    headerText: 'File data',
-    disableClear: !filter.externalIdPrefix && !filter.labels,
+    headerText: 'Additional filters',
+    disableClear:
+      !filter.externalIdPrefix && !filter.labels && !filter.metadata,
     clear: () => {
       setFilter({
         ...filter,
         externalIdPrefix: undefined,
         labels: undefined,
+        metadata: undefined,
       });
     },
     filterItem: (
       <>
         <ExternalIdFilter filter={filter} setFilter={setFilter} />
         <SelectLabelsFilter filter={filter} setFilter={setFilter} />
+        <MetadataSelectFilter filter={filter} setFilter={setFilter} />
       </>
     ),
-  },
-  {
-    key: '7',
-    headerText: 'Metadata',
-    disableClear: !filter.metadata,
-    clear: () => {
-      setFilter({
-        ...filter,
-        metadata: undefined,
-      });
-    },
-    filterItem: <MetadataSelectFilter filter={filter} setFilter={setFilter} />,
-  },
-  {
-    key: '8',
-    headerText: 'Annotation',
-    disableClear: !filter.annotation,
-    clear: () => {
-      setFilter({
-        ...filter,
-        annotation: undefined,
-      });
-    },
-    filterItem: <AnnotationFilter filter={filter} setFilter={setFilter} />,
   },
 ];

@@ -2,12 +2,12 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { hideFileMetadataPreview } from 'src/modules/Process/processSlice';
 import { FileDetails } from 'src/modules/FileDetails/Containers/FileDetails';
 import React from 'react';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import { hideFileMetadata } from 'src/modules/Process/processSlice';
 
 export const ProcessFileDetailsContainer = () => {
   const queryClient = new QueryClient();
@@ -17,11 +17,11 @@ export const ProcessFileDetailsContainer = () => {
     ({ processSlice }: RootState) => processSlice.focusedFileId
   );
   const showFileDetails = useSelector(
-    ({ processSlice }: RootState) => processSlice.showFileMetadataDrawer
+    ({ processSlice }: RootState) => processSlice.showFileMetadata
   );
 
   const onClose = () => {
-    dispatch(hideFileMetadataPreview());
+    dispatch(hideFileMetadata());
   };
 
   const onFileDetailReview = () => {

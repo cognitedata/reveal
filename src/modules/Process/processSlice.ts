@@ -1,9 +1,4 @@
-import {
-  createSelector,
-  createSlice,
-  isAnyOf,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createSelector, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationJob,
   ParamsObjectDetection,
@@ -12,8 +7,7 @@ import {
   VisionAPIType,
 } from 'src/api/types';
 import { getFakeQueuedJob } from 'src/api/utils';
-import { SortPaginate } from 'src/modules/Common/Components/FileTable/types';
-import { AnnotationsBadgeStatuses, ViewMode } from 'src/modules/Common/types';
+import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import isEqual from 'lodash-es/isEqual';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
@@ -23,14 +17,18 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createFileInfo } from 'src/store/util/StateUtils';
 import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
+import {
+  createGenericTabularDataSlice,
+  GenericTabularState,
+} from 'src/store/genericTabularDataSlice';
+import { useSelector } from 'react-redux';
+import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
 };
-export type State = {
+export type State = GenericTabularState & {
   fileIds: number[];
-  focusedFileId: number | null;
-  showFileMetadataDrawer: boolean;
   showFileUploadModal: boolean;
   selectedDetectionModels: Array<VisionAPIType>;
   error?: string;
@@ -55,10 +53,6 @@ export type State = {
   };
   showExploreModal: boolean;
   showSummaryModal: boolean;
-  sortMeta: SortPaginate;
-  currentView: ViewMode;
-  mapTableTabKey: string;
-  isLoading: boolean;
 };
 
 const initialDetectionModelParameters = {
@@ -76,11 +70,21 @@ const initialDetectionModelParameters = {
 };
 
 const initialState: State = {
-  fileIds: [],
   focusedFileId: null,
-  showFileMetadataDrawer: false,
+  showFileMetadata: false,
+  currentView: 'list',
+  mapTableTabKey: 'fileInMap',
+  sortMeta: {
+    sortKey: '',
+    reverse: false,
+    currentPage: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+  },
+  isLoading: false,
+  fileIds: [],
   showFileUploadModal: false,
   selectedDetectionModels: [VisionAPIType.OCR],
+  error: undefined,
   files: {
     byId: {},
     allIds: [],
@@ -90,44 +94,19 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
-  // eslint-disable-next-line global-require
-  // jobsByFileId: require('./fakeJobs.json'),
-  error: undefined,
   detectionModelParameters: initialDetectionModelParameters,
   temporaryDetectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
   showSummaryModal: false,
-  sortMeta: {
-    sortKey: '',
-    reverse: false,
-    currentPage: 1,
-    pageSize: DEFAULT_PAGE_SIZE,
-  },
-  currentView: 'list',
-  mapTableTabKey: 'fileInMap',
-  isLoading: false,
 };
 
-const processSlice = createSlice({
+/* eslint-disable no-param-reassign */
+const processSlice = createGenericTabularDataSlice({
   name: 'processSlice',
-  initialState,
-  /* eslint-disable no-param-reassign */
+  initialState: initialState as State,
   reducers: {
     setProcessFileIds(state, action: PayloadAction<number[]>) {
       state.fileIds = action.payload;
-    },
-    hideFileMetadataPreview(state) {
-      if (state.showFileMetadataDrawer) {
-        state.showFileMetadataDrawer = false;
-      }
-    },
-    showFileMetadataPreview(state) {
-      if (!state.showFileMetadataDrawer) {
-        state.showFileMetadataDrawer = true;
-      }
-    },
-    setFocusedFileId(state, action: PayloadAction<number | null>) {
-      state.focusedFileId = action.payload;
     },
     setSelectedDetectionModels(
       state,
@@ -187,37 +166,11 @@ const processSlice = createSlice({
     setSummaryModalVisibility(state, action: PayloadAction<boolean>) {
       state.showSummaryModal = action.payload;
     },
-    setProcessSortKey(state, action: PayloadAction<string>) {
-      state.sortMeta.sortKey = action.payload;
-    },
-    setProcessReverse(state, action: PayloadAction<boolean>) {
-      state.sortMeta.reverse = action.payload;
-    },
-    setProcessCurrentPage(state, action: PayloadAction<number>) {
-      state.sortMeta.currentPage = action.payload;
-    },
-    setProcessPageSize(state, action: PayloadAction<number>) {
-      state.sortMeta.pageSize = action.payload;
-    },
-    setProcessCurrentView(state, action: PayloadAction<ViewMode>) {
-      state.currentView = action.payload;
-    },
-    setMapTableTabKey(
-      state,
-      action: PayloadAction<{
-        mapTableTabKey: string;
-      }>
-    ) {
-      state.mapTableTabKey = action.payload.mapTableTabKey;
-    },
     addProcessUploadedFileId(state, action: PayloadAction<number>) {
       state.uploadedFileIds.push(action.payload);
     },
     clearUploadedFiles(state) {
       state.uploadedFileIds = [];
-    },
-    setIsLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -293,7 +246,7 @@ const processSlice = createSlice({
           if (state.focusedFileId === fileId) {
             // hide drawer and reset selected file if it's deleted
             state.focusedFileId = null;
-            state.showFileMetadataDrawer = false;
+            state.showFileMetadata = false;
           }
         });
         // clear upload state
@@ -324,8 +277,8 @@ export const {
   setProcessFileIds,
   removeJobById,
   setSelectedDetectionModels,
-  hideFileMetadataPreview,
-  showFileMetadataPreview,
+  hideFileMetadata,
+  showFileMetadata,
   setFocusedFileId,
   setParamsOCR,
   setParamsTagDetection,
@@ -336,11 +289,11 @@ export const {
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
   setSummaryModalVisibility,
-  setProcessSortKey,
-  setProcessReverse,
-  setProcessCurrentPage,
-  setProcessPageSize,
-  setProcessCurrentView,
+  setSortKey,
+  setReverse,
+  setCurrentPage,
+  setPageSize,
+  setCurrentView,
   setMapTableTabKey,
   addProcessUploadedFileId,
   clearUploadedFiles,
@@ -513,7 +466,7 @@ export const selectProcessSortedFiles = createSelector(
 
 export const selectProcessSelectedFileIdsInSortedOrder = createSelector(
   selectProcessSortedFiles,
-  (rootState: RootState) => rootState.filesSlice.files.selectedIds,
+  (rootState: RootState) => selectAllSelectedIds(rootState.filesSlice),
   (sortedFiles, selectedIds) => {
     const indexMap = new Map<number, number>(
       sortedFiles.map((item, index) => [item.id, index])
@@ -548,4 +501,20 @@ export const isProcessingFile = (
   return statuses.some((key) =>
     ['Queued', 'Running'].includes(annotationStatuses[key]?.status || '')
   );
+};
+
+// hooks
+
+export const useIsSelectedInProcess = (id: number) => {
+  const selectedIds = useSelector(({ filesSlice }: RootState) =>
+    selectAllSelectedIds(filesSlice)
+  );
+  return selectedIds.includes(id);
+};
+
+export const useProcessFilesSelected = () => {
+  const selectedIds = useSelector(({ filesSlice }: RootState) =>
+    selectAllSelectedIds(filesSlice)
+  );
+  return !!selectedIds.length;
 };
