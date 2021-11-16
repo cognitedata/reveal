@@ -3,7 +3,7 @@ import { Modal, Dropdown, Menu, notification } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { usePermissions } from 'hooks';
 
 export default function Actions({ id }: { id: number }) {
   const sdk = useSDK();

@@ -15,7 +15,7 @@ import {
 
 import { useMutation, useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { usePermissions } from 'hooks';
 import AzureADForm, {
   AzureADConfiguration,
   AzureADState,

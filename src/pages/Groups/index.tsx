@@ -1,7 +1,6 @@
 import { useSDK } from '@cognite/sdk-provider';
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Button, Icon } from '@cognite/cogs.js';
 import {
   notification,
@@ -21,7 +20,7 @@ import { Group } from '@cognite/sdk';
 import { useRouteMatch } from 'react-router';
 import { ColumnType } from 'antd/lib/table';
 
-import { useAuthConfiguration, useGroups } from 'hooks';
+import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import GroupDrawer from './GroupDrawer';
 import CapabilityTag from './CapabilityTag';
 import { stringContains } from './utils';

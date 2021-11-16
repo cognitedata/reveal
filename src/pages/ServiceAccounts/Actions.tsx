@@ -3,7 +3,7 @@ import { Modal, Dropdown, Menu, Typography, notification } from 'antd';
 import { Icon } from '@cognite/cogs.js';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { usePermissions } from 'hooks';
 
 const { Text } = Typography;
 
