@@ -30,7 +30,7 @@
     "@cognite/sdk-playground": "2.6.2",
     "@cognite/sdk-v2": "npm:@cognite/sdk@^2.33.0",
     "@cognite/sdk-wells-v2": "npm:@cognite/sdk-wells@2.0.13",
-    "@cognite/sdk-wells-v3": "npm:@cognite/sdk-wells@3.1.11-beta.19",
+    "@cognite/sdk-wells-v3": "npm:@cognite/sdk-wells@3.1.11-beta.22",
     "@cognite/seismic-sdk-js": "0.2.1",
     "@cognite/simconfig-api-sdk": "0.0.7",
     "@cognite/subsurface-interfaces": "0.0.3",

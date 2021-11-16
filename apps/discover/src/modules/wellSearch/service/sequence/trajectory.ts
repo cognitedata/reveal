@@ -8,8 +8,8 @@ import uniqueId from 'lodash/uniqueId';
 import { Metrics } from '@cognite/metrics';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import {
+  Trajectory,
   TrajectoryData as TrajectoryDataV3,
-  TrajectoryDataItems,
   TrajectoryDataRow,
   TrajectoryItems,
 } from '@cognite/sdk-wells-v3';
@@ -85,41 +85,44 @@ export const fetchTrajectoriesUsingWellsSDK = async (
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   columns: TrajectoryColumnR[] = []
 ) => {
-  const trajectoriesList = (await getWellSDKClient().trajectories.list({
-    filter: { wellboreIds: wellboreIds.map(toIdentifier) },
-    limit: CHUNK_LIMIT,
-  })) as TrajectoryItems;
-
-  const trajectoryData = (await getWellSDKClient().trajectories.listData(
-    trajectoriesList.items.map((item) => ({
-      sequenceExternalId: item.source.sequenceExternalId,
-    }))
-  )) as TrajectoryDataItems;
-
-  const groupedTrajectoryData = groupBy(
-    trajectoryData.items,
-    'wellboreAssetExternalId'
-  );
-
+  const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
   const availableColumnNames = Object.keys(TRAJECTORY_COLUMN_NAME_MAP);
   const existColumns = columns.filter((column) =>
     availableColumnNames.includes(column.name)
   );
 
-  const convertedTrajectoryData = Object.keys(groupedTrajectoryData).map(
-    (wellboreAssetExternalId) => {
-      const wellboreId = wellboreSourceExternalIdMap[wellboreAssetExternalId];
-      const trajectoryData = groupedTrajectoryData[wellboreAssetExternalId][0];
-
-      return convertToCustomTrajectoryData(
-        wellboreId,
-        trajectoryData,
-        existColumns
-      );
-    }
+  const trajectories = Promise.all(
+    idChunkList.map((wellboreIdChunk) =>
+      getWellSDKClient()
+        .trajectories.list({
+          filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
+          limit: CHUNK_LIMIT,
+        })
+        .then((trajectoryItems: TrajectoryItems) => trajectoryItems.items)
+    )
   );
 
-  return getGroupedTrajectoryData(convertedTrajectoryData, wellboreIds);
+  const processedTrajectoryData = Promise.all(
+    ([] as Trajectory[]).concat(...(await trajectories)).map((trajectory) =>
+      getWellSDKClient()
+        .trajectories.listData({
+          sequenceExternalId: trajectory.source.sequenceExternalId,
+        })
+        .then((trajectoryData: TrajectoryDataV3) =>
+          convertToCustomTrajectoryData(
+            wellboreSourceExternalIdMap[trajectoryData.wellboreAssetExternalId],
+            trajectoryData,
+            existColumns
+          )
+        )
+    )
+  );
+
+  const results = ([] as TrajectoryData[]).concat(
+    ...(await processedTrajectoryData)
+  );
+
+  return getGroupedTrajectoryData(results, wellboreIds);
 };
 
 export const convertToCustomTrajectoryData = (
@@ -224,6 +227,7 @@ export const fetchTrajectoriesUsingCogniteSDK = async (
         })
     )
   );
+
   const trajectoryData = ([] as TrajectoryData[]).concat(...(await sequences));
 
   return getGroupedTrajectoryData(trajectoryData, wellboreIds);
