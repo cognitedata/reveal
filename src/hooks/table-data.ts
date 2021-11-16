@@ -10,7 +10,7 @@ const COLUMN_NAMES_MAPPED: Record<string, string> = {
   key: 'Key',
   lastUpdatedTime: 'Last update time',
 };
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 50;
 const FETCH_LIMIT = 100;
 
 interface ColumnType extends Partial<ColumnShape> {

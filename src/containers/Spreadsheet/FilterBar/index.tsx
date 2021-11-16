@@ -1,15 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Body, Button, Flex, Input } from '@cognite/cogs.js';
-import { Separator } from 'components/Separator';
+import { Body, Button, Flex, Icon, Input } from '@cognite/cogs.js';
+
+import { useTableData } from 'hooks/table-data';
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
-import { activeFilters } from './mock';
+import { Separator } from 'components/Separator';
 import { Actions } from './Actions';
+
+import { activeFilters } from './mock';
 
 export type FilterType = { type: string; value: number };
 
 type Props = { isEmpty?: boolean };
 export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
+  const { rows, isDone } = useTableData();
+  const tableLength = isDone ? (
+    rows.length ?? 0
+  ) : (
+    <Icon type="LoadingSpinner" style={{ marginRight: '4px' }} />
+  );
+
   const onFilterClick = (_filter: FilterType) => {
     /** do something */
   };
@@ -31,8 +41,12 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
       </FilterBar.List>
       <Flex justifyContent="center" alignItems="center">
         <Separator style={{ margin: '0 12px' }} />
-        <Body level={2} strong>
-          12345 rows
+        <Body
+          level={2}
+          strong
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {tableLength} rows
         </Body>
         <Separator style={{ margin: '0 12px' }} />
         <FilterBar.Actions />
