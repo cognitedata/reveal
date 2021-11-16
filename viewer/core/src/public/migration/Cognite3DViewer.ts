@@ -59,7 +59,6 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
 const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
   zoomToCursor: 'basicLerp',
   onClickTargetChange: false,
-  canInterruptAnimations: false
 };
 
 /**
@@ -223,28 +222,19 @@ export class Cognite3DViewer {
    * Method for setting up camera controls listeners and values inside current controls class.
    */
   private setupControls() {
-    let startedScroll = false,
-      newTargetUpdate = false;
-    let timeAfterClick = 0;
-    const wheelClock = new THREE.Clock(),
-      clickClock = new THREE.Clock();
+    let startedScroll = false;
 
-    const onClick = (e: MouseEvent) => {
-      newTargetUpdate = true;
-      timeAfterClick = 0;
-      clickClock.getDelta();
+    const wheelClock = new THREE.Clock();
 
+    const onClick = (e: any) => {
       this.controls.enableKeyboardNavigation = false;
       this.changeTarget(e);
     };
 
-    const onWheel = async (e: WheelEvent) => {
+    const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
-      timeAfterClick += clickClock.getDelta();
 
-      if (timeAfterClick > 3) newTargetUpdate = false;
-
-      const wantNewScrollTarget = startedScroll && !newTargetUpdate && e.deltaY < 0;
+      const wantNewScrollTarget = startedScroll && e.deltaY < 0;
 
       if (wantNewScrollTarget) {
         startedScroll = false;
@@ -1433,20 +1423,15 @@ export class Cognite3DViewer {
       if (event.type !== 'keydown' || this.controls.enableKeyboardNavigation) {
         animation.stop();
         this.canvas.removeEventListener('pointerdown', stopTween);
-
-        if (this._cameraControlsOptions.canInterruptAnimations) {
-          this.canvas.removeEventListener('wheel', stopTween);
-          document.removeEventListener('keydown', stopTween);
-        }
+        this.canvas.removeEventListener('wheel', stopTween);
+        document.removeEventListener('keydown', stopTween);
       }
     };
 
     this.canvas.addEventListener('pointerdown', stopTween);
+    this._domElement.addEventListener('wheel', stopTween);
+    document.addEventListener('keydown', stopTween);
 
-    if (this._cameraControlsOptions.canInterruptAnimations) {
-      this._domElement.addEventListener('wheel', stopTween);
-      document.addEventListener('keydown', stopTween);
-    }
 
     const tempTarget = new THREE.Vector3();
     const tween = animation
@@ -1534,11 +1519,10 @@ export class Cognite3DViewer {
       }
     };
 
-    if (this._cameraControlsOptions.canInterruptAnimations) {
-      this.canvas.addEventListener('pointerdown', stopTween);
-      this.canvas.addEventListener('wheel', stopTween);
-      document.addEventListener('keydown', stopTween);
-    }
+    this.canvas.addEventListener('pointerdown', stopTween);
+    this.canvas.addEventListener('wheel', stopTween);
+    document.addEventListener('keydown', stopTween);
+
     const tempTarget = new THREE.Vector3();
     const tempPosition = new THREE.Vector3();
     const tween = animation

@@ -190,8 +190,7 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           zoomToCursorType: 'scrollTarget',
-          onClickTargetChange: true,
-          canInterruptAnimations: false
+          onClickTargetChange: true
         },
         debugRenderStageTimings: false
       };
@@ -470,10 +469,7 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
       });
-      controlsGui.add(guiState.controls, 'canInterruptAnimations').name('Controls actions stop animations:').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), canInterruptAnimations: value });
-      });
-
+      
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
 

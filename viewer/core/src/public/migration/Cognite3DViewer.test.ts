@@ -217,7 +217,7 @@ describe('Cognite3DViewer', () => {
     expect(viewer.getCameraTarget()).not.toEqual(originalCameraTarget);
   });
 
-  test('setCameraControlsMode changes internal state of camera controls options', () => {
+  test('setCameraControlsOptions changes internal state of camera controls options', () => {
     // Arrange
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const originalCameraControlsOptions = viewer.getCameraControlsOptions();
@@ -225,7 +225,6 @@ describe('Cognite3DViewer', () => {
     // Act
     viewer.setCameraControlsOptions({
       onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange,
-      canInterruptAnimations: !originalCameraControlsOptions.canInterruptAnimations,
       zoomToCursor: 'disable'
     });
 
@@ -233,9 +232,6 @@ describe('Cognite3DViewer', () => {
     const newCameraControlsOptions = viewer.getCameraControlsOptions();
 
     expect(newCameraControlsOptions.onClickTargetChange).not.toEqual(originalCameraControlsOptions.onClickTargetChange);
-    expect(newCameraControlsOptions.canInterruptAnimations).not.toEqual(
-      originalCameraControlsOptions.canInterruptAnimations
-    );
     expect(newCameraControlsOptions.zoomToCursor).toEqual('disable');
   });
 });
