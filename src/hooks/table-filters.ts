@@ -8,7 +8,7 @@ export const useFilters = () => {
     ...mockFilters.filter((mockFilter) => mockFilter.value),
   ];
 
-  const setActiveFilter = (type: string) => {
+  const setFilter = (type: string) => {
     if (type === DEFAULT_FILTER.type) {
       setActiveFilters([DEFAULT_FILTER.type]);
       return;
@@ -24,7 +24,7 @@ export const useFilters = () => {
     }
   };
 
-  return { filters, activeFilters, setActiveFilter };
+  return { filters, activeFilters, setFilter };
 };
 
 const DEFAULT_FILTER: FilterType = {
