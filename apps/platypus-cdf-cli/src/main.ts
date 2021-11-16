@@ -2,8 +2,9 @@
 import yargs, { scriptName } from 'yargs';
 import { authenticate } from './app/middlewares/auth';
 
-import * as loginCmd from './app/cmds/login';
-import * as solutionsCmd from './app/cmds/solutions';
+import * as login from './app/cmds/login';
+import * as solutions from './app/cmds/solutions';
+import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
 
 const config = {
@@ -15,8 +16,9 @@ scriptName('platypus')
   .config(config)
   .middleware([init, authenticate])
   .demandCommand(1)
-  .command(loginCmd)
-  .command(solutionsCmd)
+  .command(login)
+  .command(solutions)
+  .command(templates)
   .version()
   .help(true)
   .parse();
