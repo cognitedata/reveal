@@ -2,6 +2,10 @@ export const CLASSIFIER_QUERY_KEYS = {
   list: 'classifier',
 };
 
+export const LABELS_QUERY_KEYS = {
+  list: 'labels',
+};
+
 export const DOCUMENTS_QUERY_KEYS = {
   list: 'documents',
   byId: 'document',
@@ -10,6 +14,7 @@ export const DOCUMENTS_QUERY_KEYS = {
   aggregates: 'aggregates',
   classifier: 'classifier',
   pipelines: 'pipelines',
+  trainingSet: 'trainingSet',
 };
 
 export const DOCUMENTS_AGGREGATES = {

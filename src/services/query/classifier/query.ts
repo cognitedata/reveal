@@ -1,13 +1,14 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 import { composeClassifierTrainingSets } from 'services/compose';
-import { CLASSIFIER_QUERY_KEYS } from 'services/constants';
+import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
 
 export const useClassifierManageTrainingSetsQuery = () => {
   const sdk = useSDK();
 
-  const { data = [], ...rest } = useQuery(CLASSIFIER_QUERY_KEYS.list, () =>
-    composeClassifierTrainingSets(sdk)
+  const { data = [], ...rest } = useQuery(
+    DOCUMENTS_QUERY_KEYS.trainingSet,
+    () => composeClassifierTrainingSets(sdk)
   );
 
   return { data, ...rest };

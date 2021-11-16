@@ -8,14 +8,23 @@ const Container = styled.div`
   justify-content: space-between;
   margin-bottom: 1.25rem;
 `;
+
 const Wrapper = styled.div`
   display: flex;
-  gap: 0.5rem;
   flex: 0.95;
   .cogs-body-1,
   .cogs-body-2 {
     color: var(--cogs-text-color-secondary);
   }
+`;
+
+const Description = styled(Body).attrs({ level: 1, as: 'p' })`
+  margin-top: 0.5rem;
+  margin-bottom: 0%;
+`;
+
+const BackContainer = styled.div`
+  margin-right: 0.5rem;
 `;
 
 interface Props {
@@ -27,7 +36,7 @@ interface Props {
   onClose?: () => void;
   Action?: JSX.Element[] | JSX.Element;
 }
-export const Header: React.FC<Props> = React.memo(
+export const PageHeader: React.FC<Props> = React.memo(
   ({
     title,
     subtitle,
@@ -42,27 +51,27 @@ export const Header: React.FC<Props> = React.memo(
     const renderCloseAction = React.useMemo(() => {
       if (onClose) {
         return (
-          <div>
+          <BackContainer>
             <Button
               type="ghost"
               icon="Close"
               aria-label="Go to previous page"
               onClick={onClose}
             />
-          </div>
+          </BackContainer>
         );
       }
 
       if (showGoBack) {
         return (
-          <div>
+          <BackContainer>
             <Button
               type="ghost"
               icon="ArrowBack"
               aria-label="Go to previous page"
               onClick={() => history.goBack()}
             />
-          </div>
+          </BackContainer>
         );
       }
 
@@ -76,11 +85,7 @@ export const Header: React.FC<Props> = React.memo(
           <div>
             {subtitle && <Detail strong>{subtitle}</Detail>}
             <Title level={titleLevel}>{title}</Title>
-            {description && (
-              <Body as="p" level={1} style={{ marginTop: '0.5rem' }}>
-                {description}
-              </Body>
-            )}
+            {description && <Description>{description}</Description>}
           </div>
         </Wrapper>
 

@@ -4,7 +4,7 @@ import {
   useClassifierCurrentStep,
   useClassifierDescription,
   useClassifierStatus,
-} from 'machines/classifier/selectors/useClassifierSelectors';
+} from 'machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'machines/classifier/types';
 import React, { FC } from 'react';
 import {

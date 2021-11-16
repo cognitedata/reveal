@@ -10,9 +10,10 @@ interface Props {
 }
 
 const Container = styled.div`
-  border: 1px solid var(--cogs-greyscale-grey4);
-  border-radius: 8px;
-  padding: 0.15rem;
+  /* border: 1px solid var(--cogs-greyscale-grey4); */
+  /* border-radius: 8px; */
+  height: 100%;
+  width: 100%;
 `;
 
 export const MatrixTable: React.FC<Props> = ({ classifier }) => {

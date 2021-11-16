@@ -1,5 +1,4 @@
-import { CogniteClient, Label } from '@cognite/sdk';
-import { fetchLabels } from 'services/api';
+import { CogniteClient, Label, LabelDefinition } from '@cognite/sdk';
 import { LabelCount, LabelDescription } from 'services/types';
 import { composeAggregates } from './aggregates';
 
@@ -22,7 +21,7 @@ export const composeLabelsCount = async (
       //   classifier?.trainingLabels
       // );
 
-      return { ...accumulator, [externalId]: aggregate?.value || -1 };
+      return { ...accumulator, [externalId]: aggregate?.value || 0 };
     },
     {} as LabelCount
   );
@@ -31,11 +30,9 @@ export const composeLabelsCount = async (
 };
 
 export const composeLabelsDescription = async (
-  sdk: CogniteClient,
+  labels: LabelDefinition[],
   trainingLabels?: Label[]
 ): Promise<LabelDescription> => {
-  const labels = await fetchLabels(sdk);
-
   return (trainingLabels || []).reduce((accumulator, { externalId }) => {
     const matchingLabel = labels.find((item) => item.externalId === externalId);
 

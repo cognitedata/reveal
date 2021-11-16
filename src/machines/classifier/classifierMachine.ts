@@ -4,9 +4,12 @@ import { ClassifierState } from './types';
 export interface Model {
   status: { [state in ClassifierState]?: 'done' | 'failed' };
   description: { [state in ClassifierState]?: string };
+  classifierId?: number;
 }
 
 const model = createModel<Model, any>({
+  /** Current classifier id created upon training */
+  classifierId: undefined,
   /** Map of completed classifier states */
   status: {},
   /** Dynamic description for each state */
@@ -82,6 +85,11 @@ export const classifierMachine = model.createMachine({
           ...context.description,
           ...event.payload,
         }),
+      }),
+    },
+    setClassifierId: {
+      actions: model.assign({
+        classifierId: (_context, event) => event.payload,
       }),
     },
   },

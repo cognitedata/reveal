@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Body, Title } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 
 export const StatesContainer = styled.div`
   padding: 1rem;
@@ -12,11 +12,11 @@ export const StatesContainer = styled.div`
   width: 100%;
 `;
 
-export const StatesTitle = styled(Title).attrs({ level: 5 })`
-  margin-top: 2rem;
+export const StatesTitle = styled(Body).attrs({ level: 1, strong: true })`
+  margin-top: 1.5rem;
 `;
 
 export const StatesDescription = styled(Body).attrs({ level: 2 })`
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
   text-align: center;
 `;

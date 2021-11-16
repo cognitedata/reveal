@@ -1,26 +1,29 @@
+import { Classifier } from '@cognite/sdk-playground';
 import { TableCell } from 'components/TableCell';
 
-export const curateColumns = () => {
+export type ClassifierActions = (
+  event: 'delete' | 'confusion_matrix',
+  classifier: Classifier
+) => void;
+
+export const curateColumns = (
+  classifierActionsCallback?: ClassifierActions
+) => {
   return [
-    {
-      Header: 'Status',
-      accessor: 'status',
-      Cell: TableCell.Label(),
-    },
-    {
-      Header: 'Active',
-      accessor: 'active',
-      Cell: TableCell.Text(),
-    },
     {
       Header: 'Build time',
       accessor: 'createdAt',
-      Cell: TableCell.DateTime,
+      Cell: TableCell.Date,
     },
     {
       Header: 'Labels',
       accessor: 'metrics.labels.length',
       Cell: TableCell.Text(),
+    },
+    {
+      Header: 'Files in training sets',
+      accessor: 'trainingSetSize',
+      Cell: TableCell.DocumentTag({ disableTooltip: true }),
     },
     {
       Header: 'Accuracy',
@@ -37,5 +40,15 @@ export const curateColumns = () => {
       accessor: 'metrics.precision',
       Cell: TableCell.Number,
     },
-  ];
+    {
+      Header: '',
+      accessor: 'status',
+      Cell: TableCell.Label(),
+    },
+    classifierActionsCallback && {
+      Header: '',
+      accessor: 'classifierActions',
+      Cell: TableCell.ClassifierActions(classifierActionsCallback),
+    },
+  ].filter(Boolean);
 };

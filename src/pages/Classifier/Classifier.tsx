@@ -2,15 +2,18 @@ import React, { FC } from 'react';
 
 import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
 import { classifierConfig } from 'configs';
+import { Page } from 'components/page/Page';
 import { ClassifierState } from 'machines/classifier/types';
-import { Page } from 'components/Page';
+import { Loader } from '@cognite/cogs.js';
+import useValidatePipelineName from 'hooks/useValidatePipelineName';
 import { BottomNavigation } from './components/navigations/BottomNavigation';
 import { Step } from './components/step';
 import { ClassifierRouter } from './pages';
 
 const ClassifierPage: FC = () => {
-  const { steps } = classifierConfig();
+  const [isLoading] = useValidatePipelineName();
 
+  const { steps } = classifierConfig();
   const { nextPage, previousPage } = useClassifierActions();
 
   const renderStepsWidget = () => {
@@ -22,6 +25,10 @@ const ClassifierPage: FC = () => {
       />
     ));
   };
+
+  if (isLoading) {
+    return <Loader darkMode />;
+  }
 
   return (
     <Page

@@ -11,9 +11,13 @@ export const useClassifierActions = () => {
     payload: { [x in ClassifierState]?: string };
   }) => classifierMachine.send('updateDescription', description);
 
+  const setClassifierId = (id?: number) =>
+    classifierMachine.send('setClassifierId', { payload: id });
+
   return {
     nextPage,
     previousPage,
     updateDescription,
+    setClassifierId,
   };
 };

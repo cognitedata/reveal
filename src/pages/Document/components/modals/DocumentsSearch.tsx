@@ -3,6 +3,8 @@ import { Modal } from 'components/Modal';
 import React from 'react';
 import { useDocumentsSearchQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
+import { StickyTableHeadContainer } from 'styles/elements';
+import { getContainer } from 'utils/utils';
 import { DocumentsTable } from '../Table/DocumentsTable';
 
 interface Props {
@@ -14,7 +16,7 @@ export const DocumentsSearchModal: React.FC<Props> = React.memo(
   ({ visible, toggleVisibility, labelId }) => {
     const selectedIds = React.useRef({});
     const { data, isLoading } = useDocumentsSearchQuery(visible);
-    const { mutate } = useUpdateFileLabelsMutate('add');
+    const { mutateAsync } = useUpdateFileLabelsMutate('add');
 
     const handleSelectedIds = (ids: { [x: number]: boolean }) => {
       selectedIds.current = ids;
@@ -26,7 +28,9 @@ export const DocumentsSearchModal: React.FC<Props> = React.memo(
       );
 
       if (documentIds.length > 0) {
-        mutate({ label: { externalId: labelId }, documentIds });
+        mutateAsync({ label: { externalId: labelId }, documentIds }).then(() =>
+          toggleVisibility()
+        );
       }
     };
 
@@ -39,14 +43,18 @@ export const DocumentsSearchModal: React.FC<Props> = React.memo(
         title="Add new files"
         okText="Add files"
         visible={visible}
+        appElement={getContainer()}
         onCancel={() => toggleVisibility()}
         onOk={() => handleAddFilesClick()}
       >
-        <DocumentsTable
-          data={data}
-          showFilters
-          onSelectedIds={(ids) => handleSelectedIds(ids)}
-        />
+        <StickyTableHeadContainer>
+          <DocumentsTable
+            data={data}
+            showFilters
+            onSelectedIds={(ids) => handleSelectedIds(ids)}
+          />
+        </StickyTableHeadContainer>
+
         <ToastContainer />
       </Modal>
     );

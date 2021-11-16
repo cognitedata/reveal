@@ -16,6 +16,12 @@ export const useClassifierDescription = () => {
   return useSelector(classifierMachine, (store) => store.context.description);
 };
 
+export const useClassifierId = () => {
+  const { classifierMachine } = useClassifierContext();
+
+  return useSelector(classifierMachine, (store) => store.context.classifierId);
+};
+
 export const useClassifierCurrentState = () => {
   const { classifierMachine } = useClassifierContext();
 

@@ -1,4 +1,4 @@
-import { Body, Button, Detail, Title } from '@cognite/cogs.js';
+import { Body, Button, Detail, Title, Tooltip } from '@cognite/cogs.js';
 import { DocumentsPipelineClassifier } from '@cognite/sdk-playground';
 import { Loading } from 'components/states/Loading';
 import React from 'react';
@@ -36,9 +36,14 @@ const ClassifierList: React.FC<{ pipeline?: DocumentsPipelineClassifier }> = ({
 
 const ClassifierAdd: React.FC<{ disabled: boolean }> = ({ disabled }) => {
   return (
-    <Button icon="PlusCompact" type="ghost" disabled={disabled}>
-      New classifier
-    </Button>
+    <Tooltip
+      disabled={!disabled}
+      content="Currently, it is just possible to have one classifier in the pipeline"
+    >
+      <Button icon="PlusCompact" type="ghost" disabled={disabled}>
+        New classifier
+      </Button>
+    </Tooltip>
   );
 };
 

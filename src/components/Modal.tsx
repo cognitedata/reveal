@@ -30,6 +30,7 @@ const CustomModal = styled(CogsModal)`
     overflow-y: scroll;
     margin-bottom: 4.25rem;
     height: 100%;
+    padding-top: 0;
   }
 
   .cogs-modal-footer {

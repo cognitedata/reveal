@@ -3,6 +3,7 @@ import { useQuery } from 'react-query';
 import {
   doDocumentSearch,
   fetchDocumentById,
+  fetchDocumentClassifierById,
   fetchDocumentClassifiers,
   fetchDocumentList,
   fetchDocumentPipelines,
@@ -10,6 +11,7 @@ import {
 } from 'services/api';
 import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
 import { useParams } from 'react-router-dom';
+import React from 'react';
 
 export const useDocumentsSearchQuery = (enabled = true) => {
   const sdk = useSDK();
@@ -78,6 +80,28 @@ export const useDocumentsClassifiersQuery = () => {
   );
 
   return { data, ...rest };
+};
+
+export const useDocumentsClassifierByIdQuery = (id?: number) => {
+  const sdk = useSDK();
+
+  const [refetchInterval, setRefreshInterval] = React.useState(2000);
+  const disableRefreshInterval = () => setRefreshInterval(0);
+
+  return useQuery(
+    [DOCUMENTS_QUERY_KEYS.classifier, id],
+    () => fetchDocumentClassifierById(sdk, id!),
+    {
+      enabled: !!id,
+      refetchInterval,
+      onSuccess: (data) => {
+        if (data.status !== 'queuing') {
+          disableRefreshInterval();
+        }
+      },
+      onError: () => disableRefreshInterval(),
+    }
+  );
 };
 
 export const useDocumentsPipelinesQuery = () => {

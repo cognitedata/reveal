@@ -34,16 +34,16 @@ export const Tag: React.FC<{ color?: TagColor }> = ({
     warning: {
       color: '#B25C00',
       background: '#FFFBF2',
-      border: '#E08506',
+      border: 'rgba(255, 187, 0, 0.2)',
     },
     error: {
       color: '#AF1613',
-      background: 'transparent',
-      border: 'grey',
+      background: 'rgba(223, 58, 55, 0.06)',
+      border: 'rgba(223, 58, 55, 0.2)',
     },
     primary: {
       color: '#4255BB',
-      background: '##F6F7FF',
+      background: '#F6F7FF',
       border: '#DBE1FE',
     },
   };

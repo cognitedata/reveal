@@ -6,11 +6,10 @@ export const curateColumns = (navigate: Navigation) => {
   return [
     {
       Header: 'Label',
-      accessor: 'id',
+      accessor: 'label',
       Filter: Table.InputFilter(),
       filter: 'fuzzyText',
       filterIcon: 'Search',
-      disableSortBy: true,
       Cell: TableCell.Label(),
     },
     {
@@ -27,6 +26,7 @@ export const curateColumns = (navigate: Navigation) => {
       Header: '',
       accessor: 'settings',
       Cell: TableCell.ManageFilesButton(navigate),
+      disableSortBy: true,
     },
   ];
 };

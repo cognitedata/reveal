@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   width: 100%;
-  height: 3rem;
+  min-height: 3rem;
   background-color: var(--cogs-greyscale-grey1);
   border-bottom: 1px solid var(--cogs-greyscale-grey4);
   display: flex;

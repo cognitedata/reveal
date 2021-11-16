@@ -1,4 +1,4 @@
-import { CogniteClient, ListResponse } from '@cognite/sdk';
+import { CogniteClient, Label, ListResponse } from '@cognite/sdk';
 import {
   DocumentsAggregate,
   DocumentsPipeline,
@@ -6,11 +6,42 @@ import {
   DocumentsSearchWrapper,
   ExternalDocumentsSearch,
   Classifier,
+  UpdateDocumentsPipeline,
 } from '@cognite/sdk-playground';
 import { DOCUMENTS_AGGREGATES } from 'services/constants';
 import { DocumentSearchQuery } from 'services/types';
 import { documentBuilder } from 'utils/builder';
 import { parseArrayBufferToBase64 } from 'utils/parser';
+
+export const createDocumentClassifier = (sdk: CogniteClient, name: string) => {
+  return sdk
+    .post<ListResponse<Classifier[]>>(
+      `/api/playground/projects/${sdk.project}/documents/classifiers`,
+      {
+        data: {
+          items: [{ name }],
+        },
+      }
+    )
+    .then((result) => {
+      return result.data.items?.[0];
+    });
+};
+
+export const fetchDocumentClassifierById = (sdk: CogniteClient, id: number) => {
+  return sdk
+    .post<ListResponse<Classifier[]>>(
+      `/api/playground/projects/${sdk.project}/documents/classifiers/byids`,
+      {
+        data: {
+          items: [{ id }],
+        },
+      }
+    )
+    .then((result) => {
+      return result.data.items?.[0];
+    });
+};
 
 export const fetchDocumentClassifiers = (sdk: CogniteClient) => {
   return sdk
@@ -28,6 +59,33 @@ export const fetchDocumentPipelines = (sdk: CogniteClient) => {
       `/api/playground/projects/${sdk.project}/documents/pipelines`
     )
     .then((result) => result.data.items?.[0]);
+};
+
+export const updateDocumentPipelines = (
+  sdk: CogniteClient,
+  action: 'add' | 'remove',
+  trainingLabels: Label[]
+) => {
+  return sdk
+    .post<{ items: UpdateDocumentsPipeline[] }>(
+      `/api/playground/projects/${sdk.project}/documents/pipelines/update`,
+      {
+        data: {
+          items: [
+            {
+              classifier: {
+                trainingLabels: {
+                  [action]: trainingLabels,
+                },
+              },
+            },
+          ],
+        },
+      }
+    )
+    .then((result) => {
+      return result.data.items;
+    });
 };
 
 export const fetchDocumentAggregates = (sdk: CogniteClient) => {

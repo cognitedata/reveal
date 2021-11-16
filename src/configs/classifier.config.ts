@@ -17,6 +17,8 @@ export const classifierConfig = (): ClassifierConfig => {
       },
       [ClassifierState.TRAIN]: {
         title: 'Train classifier',
+        description:
+          'Please verify that the current setup is correct before training the classifier',
         subtitleStyle: 'badge',
         subtitle: 'test 2',
         nextText: 'Results',

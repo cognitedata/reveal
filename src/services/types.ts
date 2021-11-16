@@ -34,6 +34,11 @@ export type LabelFileUpdate = {
   label: Label;
   documentIds: number[];
 };
-export type FilesAPIError = {
+export type FilesApiError = {
   errors: { status: number; message: string }[];
 };
+
+export interface ApiError {
+  message?: string;
+  status?: number;
+}

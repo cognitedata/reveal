@@ -1,10 +1,6 @@
-import { CogniteClient, Label } from '@cognite/sdk';
-import {
-  ClassifierTrainingSet,
-  LabelCount,
-  LabelDescription,
-} from 'services/types';
-import { fetchDocumentPipelines } from '../api';
+import { CogniteClient } from '@cognite/sdk';
+import { ClassifierTrainingSet } from 'services/types';
+import { fetchDocumentPipelines, fetchLabels } from '../api';
 import { composeLabelsCount, composeLabelsDescription } from './labels';
 
 /**
@@ -22,29 +18,22 @@ export const composeClassifierTrainingSets = async (
   sdk: CogniteClient
 ): Promise<ClassifierTrainingSet[]> => {
   const { classifier } = await fetchDocumentPipelines(sdk); // Call "A"
+  const labels = await fetchLabels(sdk);
+
+  const labelName = (externalId: string) =>
+    labels.find((label) => label.externalId === externalId)?.name || externalId;
 
   const labelCount = await composeLabelsCount(sdk, classifier?.trainingLabels); // Call "B"
 
   const labelDescription = await composeLabelsDescription(
-    sdk,
+    labels,
     classifier?.trainingLabels
   ); // Call "C"
 
-  return constructClassifierTrainingSets(
-    classifier?.trainingLabels,
-    labelCount,
-    labelDescription
-  );
-};
-
-const constructClassifierTrainingSets = (
-  trainingLabels: Label[] | undefined,
-  labelCount: LabelCount,
-  labelDescription: LabelDescription
-): ClassifierTrainingSet[] => {
-  return (trainingLabels || []).map(({ externalId }) => ({
+  // Construct all together into training sets
+  return (classifier?.trainingLabels || []).map(({ externalId }) => ({
     id: externalId,
-    label: externalId,
+    label: labelName(externalId),
     count: labelCount[externalId],
     description: labelDescription[externalId],
   }));

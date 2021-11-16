@@ -4,7 +4,6 @@ import Home from 'pages/Home';
 import ClassifierPage from 'pages/Classifier/Classifier';
 import { createBrowserHistory } from 'history';
 import { ToastContainer } from '@cognite/cogs.js';
-import { Breadcrumb } from './Classifier/components/breadcrumb/Breadcrumb';
 import DocumentPage from './Document/Document';
 
 export const MainRouter = () => {
@@ -12,7 +11,6 @@ export const MainRouter = () => {
 
   return (
     <>
-      <Breadcrumb />
       <ToastContainer />
 
       <Router history={history}>

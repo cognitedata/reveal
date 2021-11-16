@@ -1,21 +1,22 @@
-import { Loader } from '@cognite/cogs.js';
-import { Header } from 'components/Header';
-import { Page } from 'components/Page';
+import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
+import TableBulkActions from 'components/BulkAction';
+import { PageHeader, Page, PageContent } from 'components/page';
+import { useLabelName } from 'hooks/useLabel';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useDocumentsQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
-import {
-  DocumentHeader,
-  DocumentHeaderAction,
-} from './components/DocumentHeader';
+import { StickyTableHeadContainer } from 'styles/elements';
 import { DocumentsSearchModal } from './components/modals/DocumentsSearch';
 import { DocumentsTable } from './components/Table/DocumentsTable';
 
 export const DocumentPage: React.FC = () => {
   const { externalId } = useParams<{ externalId: string }>();
+  const labelName = useLabelName(externalId);
+
   const { data, isLoading } = useDocumentsQuery();
-  const { mutate } = useUpdateFileLabelsMutate('remove');
+  const { mutate, isLoading: mutateLoading } =
+    useUpdateFileLabelsMutate('remove');
 
   const [selectedIds, setSelectedIds] = React.useState({});
   const [showDocumentsModal, setShowDocuments] = React.useState(false);
@@ -29,14 +30,9 @@ export const DocumentPage: React.FC = () => {
     setSelectedIds(ids);
   };
 
-  const handleHeaderActionClick = (action: DocumentHeaderAction) => {
-    if (action === 'add') {
-      toggleShowFiles();
-    }
-    if (action === 'remove') {
-      const documentIds = Object.keys(selectedIds).map((item) => Number(item));
-      mutate({ label: { externalId }, documentIds });
-    }
+  const handleRemoveDocumentsClick = () => {
+    const documentIds = Object.keys(selectedIds).map((item) => Number(item));
+    mutate({ label: { externalId }, documentIds });
   };
 
   const renderTable = React.useMemo(
@@ -65,20 +61,41 @@ export const DocumentPage: React.FC = () => {
 
   return (
     <Page>
-      <Header
-        title={externalId}
+      <PageHeader
+        title={labelName}
         subtitle="Label:"
         Action={
-          <DocumentHeader
-            dataLength={data.length}
-            selectedIdsLength={Object.keys(selectedIds).length}
-            onActionClick={handleHeaderActionClick}
-          />
+          <Flex alignItems="center" gap={8}>
+            <Body level="2">{data.length} files</Body>
+
+            <Button
+              icon="PlusCompact"
+              type="primary"
+              onClick={() => toggleShowFiles()}
+            >
+              Add files
+            </Button>
+          </Flex>
         }
         showGoBack
       />
 
-      {renderTable}
+      <PageContent>
+        <StickyTableHeadContainer>{renderTable}</StickyTableHeadContainer>
+      </PageContent>
+
+      <TableBulkActions
+        isVisible={Object.keys(selectedIds).length > 0}
+        title={`${Object.keys(selectedIds).length} documents selected`}
+      >
+        <Button
+          icon="Trash"
+          loading={mutateLoading}
+          onClick={() => handleRemoveDocumentsClick()}
+        >
+          Remove
+        </Button>
+      </TableBulkActions>
     </Page>
   );
 };

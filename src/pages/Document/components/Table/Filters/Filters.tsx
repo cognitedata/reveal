@@ -11,6 +11,7 @@ import { SourceFilter } from './actions/Source';
 const Container = styled.div`
   display: flex;
 
+  margin-top: 1rem;
   margin-bottom: 1rem;
 
   & > * {

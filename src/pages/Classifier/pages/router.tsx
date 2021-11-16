@@ -1,7 +1,8 @@
-import { useClassifierCurrentState } from 'machines/classifier/selectors/useClassifierSelectors';
+import { useClassifierCurrentState } from 'machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'machines/classifier/types';
 import React, { FC } from 'react';
 import { ManageTrainingSets } from './ManageTrainingSet/ManageTrainingSet';
+import TrainClassifier from './TrainClassifier/TrainClassifier';
 import { ReviewModel } from './ReviewModel/ReviewModel';
 
 export const ClassifierRouter: FC = () => {
@@ -11,7 +12,7 @@ export const ClassifierRouter: FC = () => {
     case ClassifierState.MANAGE:
       return <ManageTrainingSets />;
     case ClassifierState.TRAIN:
-      return <p>train</p>;
+      return <TrainClassifier />;
     case ClassifierState.DEPLOY:
       return <ReviewModel />;
     default:

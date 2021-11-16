@@ -1,5 +1,5 @@
 import { Body, Button, Drawer, Label } from '@cognite/cogs.js';
-import { Header } from 'components/Header';
+import { PageHeader } from 'components/page';
 import { Loading } from 'components/states/Loading';
 import { documentConfig } from 'configs/global.config';
 import React from 'react';
@@ -54,7 +54,7 @@ export const DocumentPreview: React.FC<Props> = React.memo(
         closeIcon={null}
       >
         <Container>
-          <Header
+          <PageHeader
             title={documentConfig.FILE_PREVIEW_TITLE}
             onClose={() => toggleVisibility()}
             Action={
@@ -73,14 +73,14 @@ export const DocumentPreview: React.FC<Props> = React.memo(
             {isLoading && <Loading title={documentConfig.IMAGE_LOADING} />}
           </ImageContent>
 
-          <Header
-            subtitle={document?.title || 'Unknown: Title'}
+          <PageHeader
+            subtitle={document?.title}
             title={document?.sourceFile?.name || 'Unknown: Filename'}
             titleLevel={5}
             description={documentDescription}
             Action={
-              <Label>
-                {document?.sourceFile?.labels?.length || 0} label(s)
+              <Label size="medium">
+                {document?.sourceFile?.labels?.length || 0} labels
               </Label>
             }
           />

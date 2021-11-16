@@ -1,5 +1,6 @@
 import { Table } from '@cognite/cogs.js';
 import { Document } from '@cognite/sdk-playground';
+import { Empty } from 'components/states/Empty';
 import React from 'react';
 import { DocumentPreview } from '../layover/DocumentPreview';
 import { curateColumns } from './curateDocumentsColumns';
@@ -66,7 +67,9 @@ export const DocumentsTable: React.FC<Props> = React.memo(
           pagination={false}
           dataSource={data}
           columns={columns as any}
-          pageSize={0}
+          locale={{
+            emptyText: <Empty />,
+          }}
         />
 
         <DocumentPreview

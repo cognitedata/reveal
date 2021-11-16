@@ -4,6 +4,7 @@ import { useBaseUrl } from './useBaseUrl';
 export type Navigation = {
   toDocument: (externalId: string) => void;
   toClassifier: (classifier: string, name?: string) => void;
+  toHome: () => void;
 };
 export const useNavigation = (): Navigation => {
   const history = useHistory();
@@ -21,7 +22,12 @@ export const useNavigation = (): Navigation => {
     }
   };
 
+  const toHome = () => {
+    history.push(baseUrl);
+  };
+
   return {
+    toHome,
     toDocument,
     toClassifier,
   };

@@ -1,8 +1,17 @@
 import { Classifier } from '@cognite/sdk-playground';
+import { PageContent, PageHeader } from 'components/page';
 import React from 'react';
+import styled from 'styled-components';
 import { MatrixTable } from './components';
 
 interface Props {}
+
+const Container = styled.div`
+  td {
+    text-align: center !important;
+    width: 50px !important;
+  }
+`;
 
 export const ReviewModel: React.FC<Props> = () => {
   const test: Classifier[] = [
@@ -26,6 +35,12 @@ export const ReviewModel: React.FC<Props> = () => {
           [0, 0, 0, 0, 0, 11, 0],
           [0, 0, 0, 0, 0, 0, 10],
           [0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 10],
         ],
         labels: [
           'CORE_DESCRIPTION',
@@ -40,5 +55,14 @@ export const ReviewModel: React.FC<Props> = () => {
     },
   ];
 
-  return <MatrixTable classifier={test[0]} />;
+  return (
+    <>
+      <PageHeader title="Review Model" />
+      <PageContent>
+        <Container>
+          <MatrixTable classifier={test[0]} />
+        </Container>
+      </PageContent>
+    </>
+  );
 };

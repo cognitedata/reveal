@@ -1,16 +1,19 @@
 import {
   Body,
   Button,
+  Dropdown,
   formatDate,
   formatDateTime,
   Label,
   LabelVariants,
+  Menu,
   Tooltip,
 } from '@cognite/cogs.js';
-import { Document } from '@cognite/sdk-playground';
+import { Classifier, Document } from '@cognite/sdk-playground';
 import { Tag } from 'components/Tag';
 import { globalConfig } from 'configs/global.config';
 import { Navigation } from 'hooks/useNavigation';
+import { ClassifierActions } from 'pages/Home/components/table/curateClassifierColumns';
 import React from 'react';
 import { CellProps } from 'react-table';
 import { ClassifierTrainingSet } from 'services/types';
@@ -27,7 +30,7 @@ export const TableCell = {
       );
     },
   Date: ({ value }: CellProps<any, number | undefined>) => {
-    return <Body level={2}>{value ? formatDate(value) : '-'}</Body>;
+    return <Body level={2}>{value ? formatDate(value, true) : '-'}</Body>;
   },
   DateTime: ({ value }: CellProps<any, number | undefined>) => {
     return <Body level={2}>{value ? formatDateTime(value) : '-'}</Body>;
@@ -38,13 +41,17 @@ export const TableCell = {
   DocumentTag:
     ({ disableTooltip } = { disableTooltip: false }) =>
     ({ value }: CellProps<any, number>) => {
+      if (value === undefined) {
+        return '-';
+      }
+
       let color: TagColor = 'primary';
 
       if (value <= globalConfig.DOCUMENT_WARNING_THRESHOLD) {
         color = 'warning';
       }
 
-      if (value === globalConfig.DOCUMENT_ERROR_THRESHOLD) {
+      if (value <= globalConfig.DOCUMENT_ERROR_THRESHOLD) {
         color = 'error';
       }
 
@@ -93,7 +100,7 @@ export const TableCell = {
     (navigate: Navigation) =>
     ({
       row: {
-        original: { label },
+        original: { id },
       },
     }: CellProps<ClassifierTrainingSet>) => {
       return (
@@ -103,7 +110,7 @@ export const TableCell = {
             icon="Edit"
             type="tertiary"
             aria-label="Add files"
-            onClick={() => navigate.toDocument(label)}
+            onClick={() => navigate.toDocument(id)}
           />
         </Tooltip>
       );
@@ -123,6 +130,40 @@ export const TableCell = {
         >
           Preview
         </Button>
+      );
+    },
+  ClassifierActions:
+    (classifierActionsCallback: ClassifierActions) =>
+    ({ row: { original } }: CellProps<Classifier>) => {
+      return (
+        <Dropdown
+          content={
+            <Menu style={{ width: '12rem' }}>
+              <Menu.Header>Classifier actions</Menu.Header>
+              {original.metrics && (
+                <>
+                  <Menu.Item
+                    onClick={() => {
+                      classifierActionsCallback('confusion_matrix', original);
+                    }}
+                  >
+                    Review/deploy model
+                  </Menu.Item>
+                  <Menu.Divider />
+                </>
+              )}
+              <Menu.Item
+                appendIcon="Trash"
+                aria-label="Test"
+                onClick={() => classifierActionsCallback('delete', original)}
+              >
+                Delete
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <Button type="ghost" icon="MoreOverflowEllipsisHorizontal" />
+        </Dropdown>
       );
     },
 };
