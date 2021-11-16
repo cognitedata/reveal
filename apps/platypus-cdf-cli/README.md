@@ -26,5 +26,4 @@ platypus login --client-secret=<your-client-secret>
 platypus templates list
 platypus templates create --name=some name --description=some description
 platypus templates delete --id=templateGroupId
-
 ```
