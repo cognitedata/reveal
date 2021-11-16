@@ -64,7 +64,6 @@ describe('TimelineTool', () => {
   test('play() playback the Timeline', () => {
     const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
     const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
-    const playSpy = jest.spyOn(timelineTool, 'play');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
     const current = TWEEN.now();
@@ -80,13 +79,71 @@ describe('TimelineTool', () => {
     TWEEN.update();
 
     expect(unassignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection);
-
-    expect(playSpy).toBeCalledTimes(1);
   });
 
   test('stop() stops the Timeline playback', () => {
     const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
+
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
+    const current = TWEEN.now();
+    TWEEN.update(current + 10000);
+
+    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection, kf1Appearance);
+    TWEEN.update(current + 20000);
+
+    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection, kf2Appearance);
+    TWEEN.update(current + 30000);
+
+    timelineTool.stop();
+
+    expect(TWEEN.update()).toBeFalse();
+  });
+
+  test('pause() & resume() pauses & resumes the Timeline', () => {
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
+    const current = TWEEN.now();
+    TWEEN.update(current + 10000);
+
+    expect(TWEEN.update()).toBeTrue();
+
+    timelineTool.pause();
+    expect(TWEEN.update()).toBeFalse();
+    TWEEN.update(current + 20000);
+
+    timelineTool.resume();
+    expect(TWEEN.update()).toBeTrue();
+    TWEEN.update(current + 30000);
+  });
+
+  test('play() while play is active', () => {
     const stopSpy = jest.spyOn(timelineTool, 'stop');
+    const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
+    const unassignStyledNodeCollectionSpy = jest.spyOn(model, 'unassignStyledNodeCollection');
+
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
+    const current = TWEEN.now();
+    TWEEN.update(current + 10000);
+
+    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 30000);
+
+    expect(stopSpy).toBeCalledTimes(2);
+
+    TWEEN.update(current + 20000);
+
+    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf1Collection, kf1Appearance);
+    TWEEN.update(current + 30000);
+
+    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection, kf2Appearance);
+    TWEEN.update(current + 40000);
+
+    expect(assignStyledNodeCollectionSpy).toBeCalledWith(kf3Collection, kf3Appearance);
+    TWEEN.update();
+
+    expect(unassignStyledNodeCollectionSpy).toBeCalledWith(kf2Collection);
+  });
+
+  test('stop() while in stopped', () => {
+    const assignStyledNodeCollectionSpy = jest.spyOn(model, 'assignStyledNodeCollection');
 
     timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
     const current = TWEEN.now();
@@ -102,26 +159,10 @@ describe('TimelineTool', () => {
 
     expect(TWEEN.update()).toBeFalse();
 
-    expect(stopSpy).toBeCalledTimes(2);
-  });
-
-  test('pause() & resume() pauses & resumes the Timeline', () => {
-    timelineTool.play(new Date('2021-10-25'), new Date('2021-10-27'), 40000);
-    const pauseSpy = jest.spyOn(timelineTool, 'pause');
-    const resumeSpy = jest.spyOn(timelineTool, 'resume');
-    const current = TWEEN.now();
-    TWEEN.update(current + 10000);
-
-    expect(TWEEN.update()).toBeTrue();
-
-    timelineTool.pause();
-    expect(TWEEN.update()).toBeFalse();
-    expect(pauseSpy).toBeCalledTimes(1);
     TWEEN.update(current + 20000);
 
-    timelineTool.resume();
-    expect(TWEEN.update()).toBeTrue();
-    expect(resumeSpy).toBeCalledTimes(1);
-    TWEEN.update(current + 30000);
+    timelineTool.stop();
+
+    expect(TWEEN.update()).toBeFalse();
   });
 });

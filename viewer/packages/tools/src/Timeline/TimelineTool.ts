@@ -134,7 +134,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
       }
 
       this._events.dateChanged.fire({
-        date: new Date(Date.now()),
+        date: date,
         activeKeyframe: this._keyframes[currentKeyframeIndex],
         startDate: startDate,
         endDate: endDate

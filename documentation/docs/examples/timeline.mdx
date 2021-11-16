@@ -123,18 +123,12 @@ stuMechNodes.executeFilter({'PDMS': {':capDisc': 'MECH', 'Purpose': 'STU' }});
 const keyframeMechNodes = timeline.createKeyframe(new Date('2021-10-08'));
 keyframeMechNodes.assignStyledNodeCollection(stuMechNodes, { renderGhosted: false, color: [80, 100, 120] });
 
-let initialDateReference = 0;
-
 const durationMs = 25000;
 const startDate = new Date('2021-10-05');
 const endDate = new Date('2021-10-09');
 timeline.play(startDate, endDate, durationMs);
 timeline.subscribe('dateChanged', (data) => {
-  if(data.activeKeyframe) {
-    if(initialDateReference === 0) {
-    initialDateReference = data.date.getTime();
-  }
-  const progress = ((data.date.getTime() - initialDateReference) / durationMs) * 100;
+  const progress = ((data.date.getTime() - data.startDate.getTime()) / (data.endDate.getTime() - data.startDate.getTime()) * 100);
   progressBar.style.width = `${progress}%`;
   }
 });

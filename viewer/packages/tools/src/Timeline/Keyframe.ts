@@ -4,6 +4,7 @@
 
 import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 import { Cognite3DModel } from '@reveal/core';
+import { trackCadModelStyled } from '@reveal/metrics';
 
 /**
  * Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
@@ -11,7 +12,7 @@ import { Cognite3DModel } from '@reveal/core';
 export class Keyframe {
   private readonly _date: Date;
   private readonly _model: Cognite3DModel;
-  private readonly _nodeCollectionAndAppearnace: { nodes: NodeCollectionBase; nodeAppearance: NodeAppearance }[] = [];
+  private readonly _nodeCollectionAndAppearance: { nodes: NodeCollectionBase; nodeAppearance: NodeAppearance }[] = [];
 
   constructor(model: Cognite3DModel, date: Date) {
     this._model = model;
@@ -30,7 +31,7 @@ export class Keyframe {
    * Assigns the styles for the node set for the model for this Keyframe
    */
   public activate() {
-    this._nodeCollectionAndAppearnace.forEach((node, _index) => {
+    this._nodeCollectionAndAppearance.forEach((node, _index) => {
       this._model.assignStyledNodeCollection(node.nodes, node.nodeAppearance);
     });
   }
@@ -39,7 +40,7 @@ export class Keyframe {
    * Removes the style for the model
    */
   public deactivate() {
-    this._nodeCollectionAndAppearnace.forEach((node, _index) => {
+    this._nodeCollectionAndAppearance.forEach((node, _index) => {
       this._model.unassignStyledNodeCollection(node.nodes);
     });
   }
@@ -50,7 +51,16 @@ export class Keyframe {
    * @param nodeAppearance Style to assign to the node collection
    */
   public assignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
-    this._nodeCollectionAndAppearnace.push({ nodes: nodeCollection, nodeAppearance });
+    trackCadModelStyled(nodeCollection.classToken, nodeAppearance);
+
+    const index = this._nodeCollectionAndAppearance.findIndex(x => x.nodes === nodeCollection);
+    if (index !== -1) {
+      throw new Error(
+        'Node collection as already been assigned, use updateStyledNodeCollection() to update the appearance'
+      );
+    }
+
+    this._nodeCollectionAndAppearance.push({ nodes: nodeCollection, nodeAppearance });
   }
 
   /**
@@ -58,10 +68,10 @@ export class Keyframe {
    * @param nodeCollection Nodes to be unassign from node collection
    */
   public unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
-    let index = this._nodeCollectionAndAppearnace.findIndex(x => x.nodes === nodeCollection);
-    while (index !== -1) {
-      this._nodeCollectionAndAppearnace.splice(index, 1);
-      index = this._nodeCollectionAndAppearnace.findIndex(x => x.nodes === nodeCollection);
+    const index = this._nodeCollectionAndAppearance.findIndex(x => x.nodes === nodeCollection);
+    if (index === -1) {
+      throw new Error('Node collection has not been assigned to model');
     }
+    this._nodeCollectionAndAppearance.splice(index, 1);
   }
 }
