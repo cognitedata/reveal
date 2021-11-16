@@ -3,9 +3,8 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     commit-message:
       prefix: "chore: "
     labels:
       - "auto-update"
-      - "auto-merge"
