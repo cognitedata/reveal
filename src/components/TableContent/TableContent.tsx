@@ -1,6 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
+
 import { Colors, Flex } from '@cognite/cogs.js';
+import styled from 'styled-components';
+
+import { TAB_HEIGHT } from 'utils/constants';
+
 import { Header, FilterBar, Table } from './components';
 
 const TableContent = () => {
@@ -15,7 +19,7 @@ const TableContent = () => {
 
 const Wrapper = styled(Flex)`
   border-left: 1px solid ${Colors['greyscale-grey3'].hex()};
-  height: 100%;
+  height: calc(100% - ${TAB_HEIGHT}px);
 `;
 
 TableContent.Header = Header;

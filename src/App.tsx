@@ -6,15 +6,15 @@ import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider'; // eslint-disable-line
 import { createBrowserHistory } from 'history';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
-import RawExplorer from 'containers/RawExplorer';
-import { setupMixpanel } from 'utils/config';
+import { RawExplorerProvider } from 'contexts';
 import GlobalStyles from 'styles/GlobalStyles';
 import { AntStyles } from 'styles/AntStyles';
-
+import { setupMixpanel } from 'utils/config';
 import sdk from 'utils/sdkSingleton';
+import RawExplorer from 'containers/RawExplorer';
 
 setupMixpanel();
 
@@ -45,16 +45,14 @@ const App = () => {
                   subAppName="raw-explorer"
                 >
                   <Router history={history}>
-                    <Switch>
-                      <Route
-                        path={[
-                          '/:project/:appPath/:database/:table',
-                          '/:project/:appPath/:database',
-                          '/:project/:appPath',
-                        ]}
-                        component={RawExplorer}
-                      />
-                    </Switch>
+                    <RawExplorerProvider>
+                      <Switch>
+                        <Route
+                          path={['/:project/:appPath']}
+                          component={RawExplorer}
+                        />
+                      </Switch>
+                    </RawExplorerProvider>
                   </Router>
                 </AuthWrapper>
               </SubAppWrapper>

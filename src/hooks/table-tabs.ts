@@ -65,6 +65,27 @@ export function useOpenTable() {
   };
 }
 
+export function useCloseDatabase() {
+  const [[activeDb] = [undefined], setActive] = useActiveTable();
+  const [tabs, setTabs] = useTableTabList();
+  return ([closeDb]: [database: string]) => {
+    if (tabs) {
+      const firstIndex = tabs.findIndex(([db]) => db === closeDb);
+      if (firstIndex) {
+        const filteredTabs = tabs.filter(([db]) => db !== closeDb);
+        setTabs(filteredTabs);
+        if (activeDb === closeDb) {
+          if (filteredTabs.length > 0) {
+            setActive(filteredTabs[Math.max(0, firstIndex - 1)]);
+          } else {
+            setActive(undefined);
+          }
+        }
+      }
+    }
+  };
+}
+
 export function useCloseTable() {
   const [[activeDb, activeTable] = [undefined, undefined], setActive] =
     useActiveTable();

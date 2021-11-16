@@ -1,22 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
+
 import { Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import { BreadcrumbItemProps } from 'components/Breadcrumb/BreadcrumbItem';
-import DatabaseList from 'components/DatabaseList';
 import NoAccessPage from 'components/NoAccessPage/NoAccessPage';
+import SidePanel from 'components/SidePanel/SidePanel';
 import TableContent from 'components/TableContent';
+import TableTabList from 'components/TableTabList';
+import { RawExplorerContext } from 'contexts';
+import { useActiveTable } from 'hooks/table-tabs';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
-  DATABASE_LIST_MARGIN_RIGHT,
+  BREADCRUMBS_HEIGHT,
   DATABASE_LIST_WIDTH,
-  TOPBAR_NAVIGATION_HEIGHT,
-  TAB_HEIGHT,
+  SIDE_PANEL_TRANSITION_DURATION,
+  SIDE_PANEL_TRANSITION_FUNCTION,
 } from 'utils/constants';
-import { useActiveTable } from 'hooks/table-tabs';
-import { useParams } from 'react-router-dom';
-import TableTabList from 'components/TableTabList';
 
 const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
   {
@@ -26,28 +27,26 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 
 const StyledRawExplorerContent = styled.div`
   display: flex;
+  padding: 0;
   box-sizing: border-box;
-  height: calc(100% - ${TAB_HEIGHT + TOPBAR_NAVIGATION_HEIGHT}px);
+  height: calc(100% - ${BREADCRUMBS_HEIGHT}px);
 `;
 
-const StyledRawExplorerDatabaseListWrapper = styled.div`
-  margin-right: ${DATABASE_LIST_MARGIN_RIGHT}px;
-  width: ${DATABASE_LIST_WIDTH}px;
-
-  .ant-menu-sub.ant-menu-inline {
-    background-color: white;
-  }
-`;
-
-const StyledRawExplorerTableContentWrapper = styled.div`
-  width: calc(100% - ${DATABASE_LIST_WIDTH + DATABASE_LIST_MARGIN_RIGHT}px);
+const StyledRawExplorerTableContentWrapper = styled.div<{
+  $isSidePanelOpen: boolean;
+}>`
+  transition: transform ${SIDE_PANEL_TRANSITION_DURATION}s
+    ${SIDE_PANEL_TRANSITION_FUNCTION};
+  width: calc(
+    100% -
+      ${({ $isSidePanelOpen }) =>
+        $isSidePanelOpen ? DATABASE_LIST_WIDTH : 0}px
+  );
 `;
 
 const RawExplorer = (): JSX.Element => {
-  const { database, table } = useParams<{
-    database?: string;
-    table?: string;
-  }>();
+  const { isSidePanelOpen } = useContext(RawExplorerContext);
+
   const [[tabDatabase, tabTable] = [undefined, undefined]] = useActiveTable();
 
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
@@ -64,12 +63,12 @@ const RawExplorer = (): JSX.Element => {
       <Breadcrumb isFillingSpace items={breadcrumbs} />
       {hasReadAccess && hasListAccess ? (
         <StyledRawExplorerContent>
-          <StyledRawExplorerDatabaseListWrapper>
-            <DatabaseList database={database} table={table} />
-          </StyledRawExplorerDatabaseListWrapper>
+          <SidePanel />
 
           {tabDatabase && tabTable && (
-            <StyledRawExplorerTableContentWrapper>
+            <StyledRawExplorerTableContentWrapper
+              $isSidePanelOpen={isSidePanelOpen}
+            >
               <TableTabList />
               <TableContent />
             </StyledRawExplorerTableContentWrapper>
