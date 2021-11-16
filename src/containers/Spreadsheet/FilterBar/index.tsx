@@ -13,7 +13,7 @@ import { Actions } from './Actions';
 type Props = { isEmpty?: boolean };
 export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
   const { rows, isDone } = useTableData();
-  const { filters, activeFilters, setActiveFilter } = useFilters();
+  const { filters, activeFilters, setFilter } = useFilters();
   const tableLength = isDone ? (
     rows.length ?? 0
   ) : (
@@ -21,7 +21,7 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
   );
 
   const onFilterClick = (filter: FilterType) => {
-    setActiveFilter(filter.type);
+    setFilter(filter.type);
   };
 
   return (
