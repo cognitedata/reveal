@@ -1,8 +1,8 @@
-import { Loader } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { StyledLoaderContainer } from './elements';
 
 export const Spinner = () => (
   <StyledLoaderContainer className="spinner">
-    <Loader width={150} darkMode={false} />
+    <Icon type="Loading" size={40} />
   </StyledLoaderContainer>
 );
