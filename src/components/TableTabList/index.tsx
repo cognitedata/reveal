@@ -39,13 +39,23 @@ const Tab = styled.li<{ $active?: boolean }>`
   max-width: ${(props) => (props.$active ? 'unset' : '240px')};
   min-width: 0;
   padding: 10px 20px;
+  font-weight: 600;
+  color: ${(props) =>
+    props.$active
+      ? 'var(--cogs-greyscale-grey9)'
+      : 'var(--cogs-greyscale-grey7)'};
+  .cogs-icon-Table {
+    color: ${(props) => (props.$active ? 'var(--cogs-green)' : 'unset')};
+  }
+  &:hover .cogs-icon-Table {
+    color: var(--cogs-green);
+  }
 `;
 
 const LeftIcon = styled.span`
   flex-grow: 0;
   flex-shrink: 2;
   flex-basis: 30px;
-  color: var(--cogs-green);
   vertical-align: middle;
   white-space: nowrap;
   overflow: hidden;
