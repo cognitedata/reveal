@@ -71,7 +71,7 @@
     "@cognite/eslint-plugin": "^2.0.0",
     "@nrwl/cli": "13.0.2",
     "@nrwl/cypress": "13.0.2",
-    "@nrwl/eslint-plugin-nx": "13.0.2",
+    "@nrwl/eslint-plugin-nx": "13.1.4",
     "@nrwl/jest": "13.0.2",
     "@nrwl/linter": "13.0.2",
     "@nrwl/node": "13.1.4",
