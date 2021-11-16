@@ -1,5 +1,7 @@
 # Platypus CLI
 
+[![npm version](https://badgen.net/npm/v/@cognite/platypus-cli)](https://www.npmjs.com/package/@cognite/platypus-cli)
+
 Our aim is to make it easier for application developer to develop app by reducing cost, friction and learning curve for them. Codename Platypus will help us achieve the same.
 
 `NOTE: This package is Alpha version is under active development. Use it on your own risk!`
