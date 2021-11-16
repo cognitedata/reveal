@@ -1,5 +1,5 @@
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
-import { getAzureAppId } from 'config';
+import { getAzureAppId, getEnvironment } from 'config';
 import { useCluster } from 'hooks/config';
 
 const clusters = [
@@ -42,13 +42,14 @@ export default function TenantSelectorView() {
         appName="Cognite Charts"
         clientId={getAzureAppId()}
         clusters={clusters}
-        getCluster={() => cluster}
-        updateCluster={(c) => setCluster(c)}
+        cluster={cluster}
+        setCluster={setCluster}
         move={(project: string) => {
           window.location.href = `/${project}${
             cluster ? `?cluster=${cluster}` : ''
           }`;
         }}
+        isProduction={getEnvironment() === 'PRODUCTION'}
       />
     </Background>
   );
