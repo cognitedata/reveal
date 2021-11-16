@@ -19,7 +19,8 @@ export const useNptWellsTableColumns = () => {
     {
       id: accessors.NPT_CODE,
       Header: 'Well / Wellbore / NPT code',
-      width: COMMON_COLUMN_WIDTHS.WELL_NAME,
+      width: `${COMMON_COLUMN_WIDTHS.WELL_NAME}px`,
+
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderAsBody2DefaultStrongText(get(original, accessors.WELL_NAME)),
     },
@@ -31,6 +32,7 @@ export const useNptWellboresTableColumns = () => {
   return [
     {
       id: accessors.WELLBORE_NAME,
+      width: '300px',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderAsBody2DefaultStrongText(get(original, accessors.WELLBORE_NAME)),
     },
@@ -43,6 +45,7 @@ export const useNptEventsTableColumns = (withHeader = false) => {
     {
       id: accessors.NPT_CODE,
       Header: withHeader && 'NPT code',
+      width: '330px',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original),
     },

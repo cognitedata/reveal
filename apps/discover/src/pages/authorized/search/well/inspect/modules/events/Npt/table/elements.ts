@@ -6,8 +6,10 @@ import { FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const WellNptEventsTableWrapper = styled(FlexColumn)`
   height: 100%;
-  td:empty {
-    color: var(--cogs-greyscale-grey5);
+  overflow-x: hidden;
+  white-space: nowrap;
+  div[role='row']:empty {
+    color: var(--cogs-bg-control--disabled-hover);
 
     &:after {
       content: '\u2014';
@@ -16,39 +18,27 @@ export const WellNptEventsTableWrapper = styled(FlexColumn)`
 `;
 
 export const WellboreNptEventsTableWrapper = styled.div`
-  thead {
-    display: none;
+  & > * {
+    overflow-x: hidden !important;
+    width: 100% !important;
   }
-  td {
-    width: 150px;
-    padding: 0px 12px !important;
-  }
-  td:first-child {
-    width: 70px;
-    padding-left: 0px !important;
 
-    & span {
-      margin-left: 50px;
-    }
+  .cogs-body-2 {
+    margin-left: ${sizes.large};
   }
-  td:nth-child(2) {
-    width: 260px;
+
+  div[role='cell']:first-child span {
+    margin-left: ${sizes.large};
   }
-  tr:last-child {
+
+  div[role='row']:last-child {
     border-bottom: none;
   }
 `;
 
 export const NptEventsTableWrapper = styled.div`
-  p {
-    margin-top: -2px !important;
-  }
-  td:first-child {
-    padding-left: 82px !important;
-    width: 330px;
-  }
-  td:nth-child(2) {
-    width: 150px;
+  div[role='cell']:first-child {
+    padding-left: 82px;
   }
 `;
 

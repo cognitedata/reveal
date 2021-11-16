@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 
-import { Table, TableResults } from 'components/tablev2';
+import { Options, Table, TableResults } from 'components/tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { accessors } from '../constants';
@@ -24,13 +24,14 @@ export const NptWellboresTable: React.FC<{ events: NPTEvent[] }> = ({
 
   const nptWellboresTableColumns = useNptWellboresTableColumns();
 
-  const tableOptions = {
+  const tableOptions: Options = {
     expandable: true,
     flex: false,
     pagination: {
       enabled: true,
       pageSize: PAGE_SIZE,
     },
+    hideScrollbars: true,
   };
 
   useEffect(() => {
@@ -84,6 +85,7 @@ export const NptWellboresTable: React.FC<{ events: NPTEvent[] }> = ({
         expandedIds={expandedWellbores}
         handleRowClick={handleRowClick}
         renderRowSubComponent={renderRowSubComponent}
+        hideHeaders
       />
     </WellboreNptEventsTableWrapper>
   );

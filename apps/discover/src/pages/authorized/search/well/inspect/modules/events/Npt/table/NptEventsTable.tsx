@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Table } from 'components/tablev2';
+import { Options, Table } from 'components/tablev3';
 import { NPTEvent } from 'modules/wellSearch/types';
 
 import { PAGE_SIZE } from './constants';
@@ -12,12 +12,13 @@ export const NptEventsTable: React.FC<{ events: NPTEvent[] }> = ({
 }) => {
   const nptEventsTableColumns = useNptEventsTableColumns();
 
-  const tableOptions = {
+  const tableOptions: Options = {
     flex: false,
     pagination: {
       enabled: true,
       pageSize: PAGE_SIZE,
     },
+    hideScrollbars: true,
   };
 
   return (
@@ -27,6 +28,7 @@ export const NptEventsTable: React.FC<{ events: NPTEvent[] }> = ({
         data={events || []}
         columns={nptEventsTableColumns}
         options={tableOptions}
+        hideHeaders
       />
     </NptEventsTableWrapper>
   );
