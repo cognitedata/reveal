@@ -22,6 +22,7 @@ interface ColumnType extends Partial<ColumnShape> {
 export const useTableData = () => {
   const [[database, table] = [undefined, undefined]] = useActiveTable();
   const [fetchLimit] = useState(FETCH_LIMIT);
+  const [tableFilters, setTableFilters] = useState([]);
 
   const enabled = !!database && !!table;
 
@@ -148,5 +149,14 @@ export const useTableData = () => {
   };
   const rows = useMemo(getRows, [rawRows]);
 
-  return { rows, columns, isLoading, isFetching, isFetched, isDone };
+  return {
+    rows,
+    columns,
+    isLoading,
+    isFetching,
+    isFetched,
+    isDone,
+    tableFilters,
+    setTableFilters,
+  };
 };

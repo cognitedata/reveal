@@ -1,15 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Body, Button, Flex, Icon, Input } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Input } from '@cognite/cogs.js';
 
 import { useTableData } from 'hooks/table-data';
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
+
 import { Separator } from 'components/Separator';
+import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
 
 import { activeFilters } from './mock';
-
-export type FilterType = { type: string; value: number };
 
 type Props = { isEmpty?: boolean };
 export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
@@ -32,9 +32,11 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
             <Input placeholder="Search column name" />
             <Separator style={{ margin: '0 12px' }} />
             {activeFilters.map((filter: FilterType) => (
-              <Button type="tertiary" onClick={() => onFilterClick(filter)}>
-                {filter.value} {filter.type}
-              </Button>
+              <FilterItem
+                filter={filter}
+                active={true}
+                onClick={onFilterClick}
+              />
             ))}
           </>
         )}
