@@ -415,7 +415,7 @@ export function Migration() {
           const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
           cadModels[0].setDefaultNodeAppearance({ visible: false });
           const explodeSet = new TreeIndexNodeCollection(treeIndices);
-          cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
+            cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
 
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
@@ -449,7 +449,26 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
-      const overlayTool = new HtmlOverlayTool(viewer);
+      const overlayTool = new HtmlOverlayTool(viewer,
+        { 
+          clusteringOptions: { 
+            mode: 'overlapInScreenspace', 
+            createClusterElementCallback: cluster => {
+              return createOverlay(`${cluster.length}`);
+            }
+          }
+        });
+      cadModels.forEach(x => {
+        const bounds = x.getModelBoundingBox();
+        for (let i = 0; i < 1000; i++) {
+          const position = new THREE.Vector3(
+            THREE.MathUtils.randFloat(bounds.min.x, bounds.max.x),
+            THREE.MathUtils.randFloat(bounds.min.y, bounds.max.y),
+            THREE.MathUtils.randFloat(bounds.min.z, bounds.max.z)
+          );
+          overlayTool.add(createOverlay(`Lorem`), position);
+        }
+      });
       new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -462,9 +481,7 @@ export function Migration() {
               {
                 const { treeIndex, point, model } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = document.createElement('div');
-                overlayHtml.innerText = `Node ${treeIndex}`;
-                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                const overlayHtml = createOverlay(`Node ${treeIndex}`);
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
@@ -531,4 +548,12 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
+}
+
+function createOverlay(text: string): HTMLElement {
+  const overlayHtml = document.createElement('div');
+  overlayHtml.innerText = text;
+  overlayHtml.style.cssText = 'background: white; position: absolute;';
+  return overlayHtml;
+
 }

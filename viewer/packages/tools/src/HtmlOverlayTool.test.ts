@@ -4,11 +4,12 @@
 
 import * as THREE from 'three';
 
-import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
+import { HtmlOverlayOptions, HtmlOverlayTool, HtmlOverlayToolOptions } from './HtmlOverlayTool';
 
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { createGlContext } from '../../../test-utilities';
+import { HtmlOverlayCreateClusterDelegate } from 'tools';
 
 describe('HtmlOverlayTool', () => {
   let canvasContainer: HTMLElement;
@@ -117,28 +118,34 @@ describe('HtmlOverlayTool', () => {
     const options: HtmlOverlayOptions = { positionUpdatedCallback: jest.fn() };
 
     // Act
-    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), options);
-    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), options);
-    helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), options);
+    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), { ...options, userData: 'behindCameraElement' });
+    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), { ...options, userData: 'behindFarPlaneElement' });
+    helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), {
+      ...options,
+      userData: 'withinNearAndFarPlaneElement'
+    });
 
     // Assert
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       behindCameraElement,
       expect.any(THREE.Vector2),
       expect.any(THREE.Vector3),
-      expect.anything()
+      expect.anything(),
+      'behindCameraElement'
     );
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       behindFarPlaneElement,
       expect.any(THREE.Vector2),
       expect.any(THREE.Vector3),
-      expect.anything()
+      expect.anything(),
+      'behindFarPlaneElement'
     );
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       withinNearAndFarPlaneElement,
       expect.any(THREE.Vector2),
       expect.any(THREE.Vector3),
-      expect.anything()
+      expect.anything(),
+      'withinNearAndFarPlaneElement'
     );
   });
 
@@ -175,5 +182,69 @@ describe('HtmlOverlayTool', () => {
 
     // Assert
     expect(canvasContainer.children.length).toBeLessThanOrEqual(initialNumberOfElements);
+  });
+
+  test('screenspace clustering combines overlapping elements', () => {
+    // Arrange
+    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest
+      .fn()
+      .mockReturnValue(document.createElement('div'));
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenspace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+    const div1 = document.createElement('div');
+    div1.getBoundingClientRect = jest.fn();
+    div1.style.position = 'absolute';
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+
+    // Act
+    helper.add(div1, new THREE.Vector3(0, 0, 5));
+    helper.add(div2, new THREE.Vector3(0, 0, 10));
+    helper.forceUpdate();
+
+    // Assert
+    expect(div1.style.visibility).toEqual('hidden');
+    expect(div2.style.visibility).toEqual('hidden');
+    expect(createClusterElementCallback).toBeCalledTimes(1);
+  });
+
+  test('screenspace clustering combines overlapping elements', () => {
+    // Arrange
+    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest
+      .fn()
+      .mockReturnValue(document.createElement('div'));
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenspace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    div1.getBoundingClientRect = jest.fn(
+      () =>
+        ({
+          width: 64,
+          height: 18
+        } as DOMRect)
+    );
+    div1.style.position = 'absolute';
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    div2.getBoundingClientRect = jest.fn(
+      () =>
+        ({
+          width: 64,
+          height: 18
+        } as DOMRect)
+    );
+    // Act
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.forceUpdate();
+
+    // Assert
+    expect(div1.style.visibility).toEqual('hidden');
+    expect(div2.style.visibility).toEqual('hidden');
   });
 });

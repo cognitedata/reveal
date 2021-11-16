@@ -6,26 +6,63 @@ import * as THREE from 'three';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
 import { trackCreateTool } from '@reveal/metrics';
-import { worldToViewportCoordinates } from '@reveal/core/utilities';
+import { assertNever, worldToViewportCoordinates } from '@reveal/core/utilities';
 import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
+
+import { BucketGrid2D } from './BucketGrid2D';
 
 export type HtmlOverlayPositionUpdatedDelegate = (
   element: HTMLElement,
   position2D: THREE.Vector2,
   position3D: THREE.Vector3,
-  distanceToCamera: number
+  distanceToCamera: number,
+  userData: any
 ) => void;
 
-export type HtmlOverlayCreateClusterDelegate = (elements: HTMLElement) => HTMLElement[];
+export type HtmlOverlayCreateClusterDelegate = (
+  overlayElements: {
+    htmlElement: HTMLElement;
+    userData: any;
+  }[]
+) => HTMLElement;
 
+/**
+ * Options for an overlay added using {@link HtmlOverlayTool.add}.
+ */
 export type HtmlOverlayOptions = {
+  /**
+   * Callback that is triggered whenever the position of the overlay is updated. Optional.
+   */
   positionUpdatedCallback?: HtmlOverlayPositionUpdatedDelegate;
+  /**
+   * Optional user specified data that is provided to the {@link HtmlOverlayCreateClusterDelegate} and
+   * {@link HtmlOverlayPositionUpdatedDelegate}.
+   */
+  userData?: any;
+};
+
+export type HtmlOverlayToolClusteringOptions = {
+  mode: 'overlapInScreenspace';
+  createClusterElementCallback: HtmlOverlayCreateClusterDelegate;
+};
+
+export type HtmlOverlayToolOptions = {
+  clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
 
 type HtmlOverlayElement = {
   position3D: THREE.Vector3;
   options: HtmlOverlayOptions;
+
+  state: {
+    visible: boolean;
+    position2D: THREE.Vector2;
+    width: number;
+    height: number;
+  };
 };
+
+const hiddenPosition = new THREE.Vector2();
 
 /**
  * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
@@ -66,7 +103,9 @@ type HtmlOverlayElement = {
  */
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
+  private readonly _options: HtmlOverlayToolOptions;
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
+  private readonly _compositeOverlays: HTMLElement[] = [];
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
@@ -92,11 +131,12 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     return this._viewer.renderer;
   }
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer, options?: HtmlOverlayToolOptions) {
     super();
 
     this._onSceneRenderedHandler = this.onSceneRendered.bind(this);
     this._onViewerDisposedHandler = this.onViewerDisposed.bind(this);
+    this._options = options ?? {};
     this._viewer = viewer;
     this._viewer.on('sceneRendered', this._onSceneRenderedHandler);
     this._viewer.on('disposed', this._onViewerDisposedHandler);
@@ -146,7 +186,16 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       throw new Error(`htmlElement style must have a position of absolute. but was '${style.position}'`);
     }
 
-    const element: HtmlOverlayElement = { position3D, options };
+    const element: HtmlOverlayElement = {
+      position3D,
+      options,
+      state: {
+        position2D: hiddenPosition.clone(),
+        width: 0,
+        height: 0,
+        visible: true
+      }
+    };
     this._htmlOverlays.set(htmlElement, element);
 
     this.forceUpdate();
@@ -182,6 +231,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    */
   forceUpdate(): void {
     this.ensureNotDisposed();
+    this.cleanupClusterElements();
     if (this._htmlOverlays.size === 0) {
       return;
     }
@@ -200,32 +250,151 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     point.copy(camPos).addScaledVector(camNormal, camera.far);
     farPlane.setFromNormalAndCoplanarPoint(camNormal, point);
 
+    // Determine bounds up front to avoid dealing with recomputed styles
+    this._htmlOverlays.forEach((_, htmlElement) => {
+      htmlElement.style.visibility = 'initial';
+    });
+    this._htmlOverlays.forEach((element, htmlElement) => {
+      const clientRect = htmlElement.getBoundingClientRect();
+      element.state.width = clientRect.width;
+      element.state.height = clientRect.height;
+    });
+
     this._htmlOverlays.forEach((element, htmlElement) => {
       const {
         position3D,
-        options: { positionUpdatedCallback }
+        options: { positionUpdatedCallback, userData },
+        state
       } = element;
-      const canvas = renderer.domElement;
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
       const { x, y } = worldToViewportCoordinates(renderer, camera, position3D);
 
       if (insideCameraPlanes) {
-        htmlElement.style.visibility = 'visible';
-        htmlElement.style.top = `${y + canvas.offsetTop}px`;
-        htmlElement.style.left = `${x + canvas.offsetLeft}px`;
+        state.position2D.set(x, y);
+        state.visible = true;
       } else {
         // Outside frustum - hide point
-        htmlElement.style.visibility = 'hidden';
+        state.visible = false;
       }
 
       if (positionUpdatedCallback) {
         position2D.set(x, y);
         const distanceToCamera = camPos.distanceTo(position3D);
-        positionUpdatedCallback(htmlElement, position2D, position3D, distanceToCamera);
+        positionUpdatedCallback(htmlElement, position2D, position3D, distanceToCamera, userData);
       }
     });
+    this.clusterElements();
+
+    this.commitDOMChanges();
+  }
+
+  private commitDOMChanges() {
+    const canvas = this.viewerRenderer.domElement;
+    // Compute once as updating styles below will cause (unnecessary)
+    // recomputation which slows down the process
+    const offsetLeft = canvas.offsetLeft;
+    const offsetTop = canvas.offsetTop;
+
+    this._htmlOverlays.forEach((element, htmlElement) => {
+      const { state } = element;
+      if (state.visible) {
+        htmlElement.style.visibility = 'visible';
+        htmlElement.style.left = `${state.position2D.x + offsetLeft}px`;
+        htmlElement.style.top = `${state.position2D.y + offsetTop}px`;
+      } else {
+        htmlElement.style.visibility = 'hidden';
+      }
+    });
+
+    this._compositeOverlays.forEach(htmlElement => {
+      this.viewerDomElement.appendChild(htmlElement);
+    });
+  }
+
+  private clusterElements() {
+    const options = this._options.clusteringOptions;
+    if (options === undefined) {
+      return;
+    }
+
+    switch (options.mode) {
+      case 'overlapInScreenspace':
+        this.clusterByOverlapInScreenSpace(options.createClusterElementCallback);
+        break;
+
+      default:
+        assertNever(options.mode, `Unsupported clustering mode: '${options.mode}`);
+    }
+  }
+
+  private cleanupClusterElements(): void {
+    this._compositeOverlays.forEach(element => {
+      this.viewerDomElement.removeChild(element);
+    });
+    this._compositeOverlays.splice(0);
+  }
+
+  private clusterByOverlapInScreenSpace(createClusterElementCallback: HtmlOverlayCreateClusterDelegate) {
+    type Element = HtmlOverlayElement & { htmlElement: HTMLElement };
+
+    const canvas = this.viewerRenderer.domElement;
+    const canvasBounds = domRectToBox2(canvas.getBoundingClientRect());
+    const canvasSize = canvasBounds.getSize(new THREE.Vector2());
+    canvasBounds.set(new THREE.Vector2(0, 0), canvasSize);
+    // Compute once as updating styles below will cause (unnecessary)
+    // recomputation which slows down the process
+    const elementBounds = new THREE.Box2();
+
+    const grid = new BucketGrid2D<Element>(new THREE.Vector2(10, 10), canvasBounds);
+    for (const [htmlElement, element] of this._htmlOverlays.entries()) {
+      const { state } = element;
+      elementBounds.min.set(state.position2D.x, state.position2D.y);
+      elementBounds.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
+      if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
+        continue;
+      }
+      grid.insert(elementBounds, { htmlElement, ...element });
+    }
+
+    for (const element of this._htmlOverlays.values()) {
+      const { state } = element;
+      elementBounds.min.set(state.position2D.x, state.position2D.y);
+      elementBounds.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
+      if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
+        continue;
+      }
+
+      const cluster = Array.from(grid.overlappingElements(elementBounds))
+        // Remove elements now marked as hidden
+        .filter(overlappingElement => overlappingElement.state.visible)
+        .map(overlappingElement => ({
+          htmlElement: overlappingElement.htmlElement,
+          userData: overlappingElement.options.userData,
+          position: elementBounds.min.clone(),
+          state: overlappingElement.state
+        }));
+
+      if (cluster.length > 1) {
+        const midpoint = cluster.reduce((position, element) => {
+          return position.addScaledVector(element.position, 1.0 / cluster.length);
+        }, new THREE.Vector2(0, 0));
+        const compositeElement = createClusterElementCallback(cluster);
+        // Hide all elements in cluster
+        cluster.forEach(element => (element.state.visible = false));
+
+        this.addComposite(compositeElement, midpoint);
+      }
+    }
+  }
+
+  private addComposite(htmlElement: HTMLElement, position: THREE.Vector2) {
+    const canvas = this.viewerRenderer.domElement;
+    htmlElement.style.visibility = 'visible';
+    htmlElement.style.left = `${position.x + canvas.offsetLeft}px`;
+    htmlElement.style.top = `${position.y + canvas.offsetTop}px`;
+    this._compositeOverlays.push(htmlElement);
   }
 
   private onSceneRendered(): void {
@@ -235,4 +404,11 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private onViewerDisposed(): void {
     this.dispose();
   }
+}
+
+function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
+  out = out ?? new THREE.Box2();
+  out.min.set(rect.left, rect.top);
+  out.max.set(rect.right, rect.bottom);
+  return out;
 }
