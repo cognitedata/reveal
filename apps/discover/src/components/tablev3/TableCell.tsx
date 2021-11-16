@@ -2,6 +2,7 @@ import React from 'react';
 import { Cell } from 'react-table';
 
 import isNil from 'lodash/isNil';
+import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import styled from 'styled-components/macro';
 
@@ -42,10 +43,16 @@ const CellText = ({ children }: any) => {
     return element.offsetWidth < element.scrollWidth;
   };
 
+  const isCellValueEmpty = (value: string | number): boolean => {
+    return !(
+      value &&
+      ((isString(value) && value.trim() !== '') || isNumber(value))
+    );
+  };
+
   // Render empty if the cell is empty
   const value = children.props.value.id || children.props.value;
-  const isEmpty = !(value && isString(value) && value.trim() !== '');
-  if (isEmpty) return null;
+  if (isCellValueEmpty(value)) return null;
 
   return (
     <CellContent ref={elementRef}>
