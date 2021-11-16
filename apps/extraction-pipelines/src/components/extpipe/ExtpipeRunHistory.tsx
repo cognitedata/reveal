@@ -179,27 +179,6 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
 
   const columns = getRunLogTableCol();
 
-  function renderContent(fetching: boolean) {
-    if (fetching) {
-      return <Loader />;
-    }
-    return (
-      <div style={{ margin: '1rem' }}>
-        {chartEnabled ? (
-          <RunChart allRuns={all} timeFormat={timeFormat} />
-        ) : null}
-        <RunLogsTable
-          data={runsList}
-          columns={columns}
-          pageCount={pageCount}
-          fetchData={fetchData}
-          pageSize={pageSize}
-          extpipe={extpipe}
-        />
-      </div>
-    );
-  }
-
   return (
     <TableWrapper>
       <div style={{ height: '2rem' }} />
@@ -214,7 +193,23 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
             placeholder={MESSAGE_SEARCH_PLACEHOLDER}
           />
         </FilterWrapper>
-        {renderContent(isFetching)}
+        {isFetching ? (
+          <Loader />
+        ) : (
+          <div style={{ margin: '1rem' }}>
+            {chartEnabled ? (
+              <RunChart allRuns={all} timeFormat={timeFormat} />
+            ) : null}
+            <RunLogsTable
+              data={runsList}
+              columns={columns}
+              pageCount={pageCount}
+              fetchData={fetchData}
+              pageSize={pageSize}
+              extpipe={extpipe}
+            />
+          </div>
+        )}
       </SectionWithoutHeader>
     </TableWrapper>
   );

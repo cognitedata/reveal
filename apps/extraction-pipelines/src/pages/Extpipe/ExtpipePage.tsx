@@ -164,11 +164,6 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
         );
         setIsDeleteDialogOpen(false);
         queryClient.invalidateQueries(['extpipes', project]).then(() => {
-          // queryClient.invalidateQueries([
-          //   'extpipe',
-          //   extpipe.id,
-          //   project,
-          // ]);
           history.push(createExtPipePath());
         });
       })

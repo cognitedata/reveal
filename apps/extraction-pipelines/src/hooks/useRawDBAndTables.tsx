@@ -8,7 +8,11 @@ export type DatabaseWithTablesItem = {
   tables: RawDBTable[];
 };
 export const useRawDBAndTables = () => {
-  return useQuery<DatabaseWithTablesItem[], SDKError>('raw-db-tables', () => {
-    return getRawDBsAndTables();
-  });
+  return useQuery<DatabaseWithTablesItem[], SDKError>(
+    'raw-db-tables',
+    () => {
+      return getRawDBsAndTables();
+    },
+    { staleTime: 10 * 60 * 1000 }
+  );
 };

@@ -58,7 +58,7 @@ const App = () => {
           }
           return failureCount < 3;
         },
-        staleTime: 10 * 60 * 1000, // Pretty long
+        refetchOnWindowFocus: false,
       },
     },
   });
