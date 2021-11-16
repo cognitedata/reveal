@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import get from 'lodash/get';
 
 import Skeleton from 'components/skeleton';
+import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useSearchHasAnyAppliedFilters } from 'hooks/useSearchHasAnyAppliedFilters';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import {
@@ -13,7 +14,11 @@ import {
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
-import { WellFilterOptionValue, WellFilterMap } from 'modules/wellSearch/types';
+import {
+  WellFilterOptionValue,
+  WellFilterMap,
+  FilterConfig,
+} from 'modules/wellSearch/types';
 
 import { Modules } from '../../../../../../modules/sidebar/types';
 import { BaseFilter } from '../components/BaseFilter';
@@ -41,6 +46,7 @@ export const WellsFilter = () => {
   const anyAppliedFilters = useSearchHasAnyAppliedFilters();
   const clearWellFilters = useClearWellsFilters();
   const filterConfigsByCategory = useFilterConfigByCategory();
+  const metrics = useGlobalMetrics('search');
 
   useEffect(() => {
     refetch();
@@ -60,10 +66,10 @@ export const WellsFilter = () => {
   }, [filters]);
 
   const onValueChange = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-    filterCategory: number,
+    _filterCategory: number,
     id: number,
-    selectedVals: WellFilterOptionValue[]
+    selectedVals: WellFilterOptionValue[],
+    filterGroupName: string
   ) => {
     setSelectedOptions({
       ...selectedOptions,
@@ -72,6 +78,10 @@ export const WellsFilter = () => {
 
     // setChangedCategories((state) => ({ ...state, [filterCategory]: true }));
     setFilterCalled(true);
+    metrics.track('click-sidebar-wells-filter', {
+      filter: filterGroupName,
+      value: selectedVals,
+    });
 
     const filtersToApply = { ...filters, ...{ [id]: selectedVals } };
     setWellsFilters(filtersToApply).then(() => {
@@ -83,25 +93,28 @@ export const WellsFilter = () => {
 
   const loader = <Skeleton.List lines={6} borders />;
 
-  const WellFilters: React.FC<{ filterConfigs: any; index: number }> = ({
-    filterConfigs,
-    index,
-  }) => {
+  const WellFilters: React.FC<{
+    filterConfigs: FilterConfig[];
+    index: number;
+  }> = ({ filterConfigs, index }) => {
     return React.useMemo(
-      () =>
-        filterConfigs.map((filterConfig: any) => (
-          <CommonFilter
-            key={filterConfig.id}
-            filterConfig={filterConfig}
-            onValueChange={(
-              id: number,
-              selectedVals: WellFilterOptionValue[]
-            ) => onValueChange(index, id, selectedVals)}
-            options={get(filterOptions, filterConfig.id, [])}
-            selectedOptions={selectedOptions[filterConfig.id]}
-            displayFilterTitle={filterConfigs.length > 1}
-          />
-        )),
+      () => (
+        <>
+          {filterConfigs.map((filterConfig) => (
+            <CommonFilter
+              key={filterConfig.id}
+              filterConfig={filterConfig}
+              onValueChange={(
+                id: number,
+                selectedVals: WellFilterOptionValue[]
+              ) => onValueChange(index, id, selectedVals, filterConfig.name)}
+              options={get(filterOptions, filterConfig.id, [])}
+              selectedOptions={selectedOptions[filterConfig.id]}
+              displayFilterTitle={filterConfigs.length > 1}
+            />
+          ))}
+        </>
+      ),
       [filterConfigs, index]
     );
   };

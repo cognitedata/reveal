@@ -6,6 +6,7 @@ import styled from 'styled-components/macro';
 
 import { Body, Icon } from '@cognite/cogs.js';
 
+import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { DocumentPayload } from 'modules/api/documents/types';
 import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
@@ -17,8 +18,8 @@ import { useFilterAppliedFilters } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
 import { FlexAlignItems, sizes } from 'styles/layout';
 
-import Checkboxes, { CheckboxState } from './Checkboxes';
-import { FilterCollapse } from './FilterCollapse';
+import Checkboxes, { CheckboxState } from '../../components/Checkboxes';
+import { FilterCollapse } from '../../components/FilterCollapse';
 
 const extractSelectedFiltersName = (
   filter: CheckboxState[],
@@ -82,7 +83,7 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
     ...rest
   }) => {
     const appliedFilters = useFilterAppliedFilters();
-
+    const metrics = useGlobalMetrics('search');
     const [showApplyButton, setShowApplyButton] = useState(false);
     const [activeFilters, setFilters] = useState<CheckboxState[]>([]);
     const [isShowMoreExpanded, setIsShowMoreExpanded] = useState(false);
@@ -99,6 +100,11 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
       // map the filters, because we need the special format for labels accepted
       let value: string[] | { externalId: string }[] =
         extractSelectedFiltersName(filters);
+
+      metrics.track('click-sidebar-document-filter', {
+        filter: title,
+        value,
+      });
 
       // map it going out so we save the right query in the api
       if (docQueryFacetType === 'labels') {

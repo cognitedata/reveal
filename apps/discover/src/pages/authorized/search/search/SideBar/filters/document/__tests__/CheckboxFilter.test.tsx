@@ -35,7 +35,7 @@ jest.mock('modules/sidebar/selectors', () => ({
   useAppliedMapGeoJsonFilters: jest.fn(),
 }));
 
-jest.mock('../FilterCollapse', () => ({
+jest.mock('../../../components/FilterCollapse', () => ({
   FilterCollapse: {
     Panel: ({ children }: any) => children,
   },
