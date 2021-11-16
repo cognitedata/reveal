@@ -1,23 +1,37 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import BaseTable, { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
-import { Colors, Flex } from '@cognite/cogs.js';
-import { getColumns, getRows } from 'components/TableContent/mock';
+import { Body, Colors, Flex, Graphic } from '@cognite/cogs.js';
 
-export const Table = (): JSX.Element => {
-  const columns = useMemo(() => getColumns(), []);
-  const rows = useMemo(() => getRows(), []);
+type Props = { rows: any; columns: any; isEmpty?: boolean };
+
+export const Table = (props: Props): JSX.Element => {
+  const { rows, columns, isEmpty } = props;
+
   return (
     <Flex style={{ width: '100%', height: '100%' }}>
       <AutoResizer>
         {({ width, height }) => (
           <StyledBaseTable
+            fixed
             width={width}
             height={height}
-            columns={columns}
+            columns={isEmpty ? [] : columns}
             data={rows}
             rowHeight={36}
-            headerHeight={36}
+            headerHeight={isEmpty ? 0 : 36}
+            emptyRenderer={
+              <EmptyTable>
+                <Graphic type="Search" />
+                <Body
+                  level={2}
+                  strong
+                  style={{ color: Colors['text-secondary'].hex() }}
+                >
+                  This table is empty.
+                </Body>
+              </EmptyTable>
+            }
           />
         )}
       </AutoResizer>
@@ -55,5 +69,17 @@ const StyledBaseTable = styled(BaseTable)`
     .${TABLE_PREFIX}row-cell:first-child {
     padding: 0 8px;
     background-color: ${Colors['greyscale-grey1'].hex()};
+  }
+`;
+
+const EmptyTable = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  & > * {
+    margin: 12px 0;
   }
 `;

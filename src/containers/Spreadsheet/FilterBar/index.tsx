@@ -1,12 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Flex, Input } from '@cognite/cogs.js';
-import { activeFilters } from 'components/TableContent/mock';
 import { Separator } from 'components/Separator';
+import { FILTER_BAR_HEIGHT } from 'utils/constants';
+import { activeFilters } from './mock';
 import { Menu } from './Menu';
 
 export type FilterType = { type: string; value: number };
-export const FilterBar = (): JSX.Element => {
+
+type Props = { isEmpty?: boolean };
+export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
   const onFilterClick = (_filter: FilterType) => {
     /** do something */
   };
@@ -14,13 +17,17 @@ export const FilterBar = (): JSX.Element => {
   return (
     <Bar justifyContent="space-between" alignItems="center">
       <FilterBar.List justifyContent="center" alignItems="center">
-        <Input placeholder="Search columns, values" />
-        <Separator style={{ margin: '0 12px' }} />
-        {activeFilters.map((filter: FilterType) => (
-          <Button type="tertiary" onClick={() => onFilterClick(filter)}>
-            {filter.value} {filter.type}
-          </Button>
-        ))}
+        {!isEmpty && (
+          <>
+            <Input placeholder="Search columns, values" />
+            <Separator style={{ margin: '0 12px' }} />
+            {activeFilters.map((filter: FilterType) => (
+              <Button type="tertiary" onClick={() => onFilterClick(filter)}>
+                {filter.value} {filter.type}
+              </Button>
+            ))}
+          </>
+        )}
       </FilterBar.List>
       <Flex justifyContent="center" alignItems="center">
         <Separator style={{ margin: '0 12px' }} />
@@ -32,6 +39,8 @@ export const FilterBar = (): JSX.Element => {
 
 const Bar = styled(Flex)`
   padding: 16px;
+  height: ${FILTER_BAR_HEIGHT}px;
+  box-sizing: border-box;
 `;
 
 const List = styled(Flex)`

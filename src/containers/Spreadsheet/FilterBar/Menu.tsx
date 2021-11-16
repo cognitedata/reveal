@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useDeleteTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
+import { useTableData } from 'hooks/table-data';
+import { escapeCSVValue } from 'utils/utils';
 import AccessButton from 'components/AccessButton';
 import DropdownMenu from 'components/DropdownMenu';
 import MenuButton from 'components/MenuButton';
@@ -21,17 +23,29 @@ export const Menu = (): JSX.Element => {
   }>();
   const { mutate: deleteTable } = useDeleteTable();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
+  const { rows, isDone } = useTableData();
   const [[database, table] = [undefined, undefined]] = useActiveTable();
-
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
+
+  const canBeDownloaded = isDone && rows.length;
 
   const onShareClick = () => {
     /** do something */
   };
+
   const onDownloadData = useMemo(() => {
-    /** do something */
-    return [];
-  }, []);
+    if (!canBeDownloaded) return [];
+    return (
+      rows.map((item) => {
+        const escapedColumns: Record<string, string> = {};
+        Object.keys(item).forEach((key) => {
+          escapedColumns[key] = escapeCSVValue(item[key]);
+        });
+        delete escapedColumns['column-index'];
+        return { key: item.key, ...escapedColumns };
+      }) || []
+    );
+  }, [rows]);
 
   return (
     <Bar alignItems="center" justifyContent="space-between">
@@ -98,6 +112,7 @@ export const Menu = (): JSX.Element => {
                 type="ghost"
                 aria-label="Button download table"
                 icon="Download"
+                disabled={!isDone}
               >
                 Download CSV
               </MenuButton>
