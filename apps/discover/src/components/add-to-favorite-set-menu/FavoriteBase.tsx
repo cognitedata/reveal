@@ -13,6 +13,7 @@ import {
   setItemsToAddAfterFavoriteCreation,
   showCreateFavoriteSetModal,
 } from 'modules/favorite/actions';
+import { WellId } from 'modules/wellSearch/types';
 import { InlineFlex, RightAlignedSmall } from 'styles/layout';
 
 import {
@@ -25,7 +26,7 @@ import { useHandleSelectFavourite } from './useFavorite';
 
 export interface Props {
   documentIds: number[];
-  wellIds: number[];
+  wellIds: WellId[];
   itemExistsInSets?: string[];
   callBackModal?: () => void;
 }

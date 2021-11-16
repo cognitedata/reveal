@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteContentWells, FavoriteSummary } from 'modules/favorite/types';
+import { WellId } from 'modules/wellSearch/types';
 
 export function useDocumentExistInFavorite(
   favorites: FavoriteSummary[],
@@ -19,7 +20,7 @@ export function useDocumentExistInFavorite(
 
 export function useWellExistInFavorite(
   favorites: FavoriteSummary[],
-  wellId: number
+  wellId: WellId
 ) {
   return useMemo(() => {
     return favorites
@@ -30,7 +31,7 @@ export function useWellExistInFavorite(
   }, [favorites, wellId]);
 }
 
-export const getWellIds = (wellId?: number) => (wellId ? [wellId] : []);
+export const getWellIds = (wellId?: WellId) => (wellId ? [wellId] : []);
 
 export const getDocumentIds = (documentId?: number) =>
   documentId ? [documentId] : [];

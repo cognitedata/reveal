@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
+import { WellId } from 'modules/wellSearch/types';
 
 import { FavoriteBase } from './FavoriteBase';
 import {
@@ -12,7 +13,7 @@ import {
 
 interface Props {
   documentId: number;
-  wellId: number;
+  wellId: WellId;
   callBackModal?: () => void;
 }
 export const AddSingleItem: React.FC<Props> = ({

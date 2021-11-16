@@ -28,6 +28,7 @@ import { Well, InspectWellboreContext } from 'modules/wellSearch/types';
 import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
+import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
 import {
   FavoriteIndicatorContainer,
   SearchTableResultActionContainer,
@@ -221,12 +222,12 @@ const WellResult: React.FC<DispatchProps> = (props) => {
               <Menu.Submenu
                 content={
                   <AddToFavoriteSetMenu
-                    wellIds={[Number((row.original as Well).id)]}
+                    wellIds={[(row.original as Well).id]}
                     setFavored={noop}
                   />
                 }
               >
-                <span>Add to favorites</span>
+                <span>{ADD_TO_FAVORITES_OPTION_TEXT}</span>
               </Menu.Submenu>
             </Menu>
           }

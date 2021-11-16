@@ -1,11 +1,13 @@
 import React from 'react';
 
+import { WellId } from 'modules/wellSearch/types';
+
 import { AddMultipleItems } from './AddMultipleItems';
 import { AddSingleItem } from './AddSingleItem';
 
 export interface Props {
   documentIds?: number[];
-  wellIds?: number[];
+  wellIds?: WellId[];
   setFavored?: React.Dispatch<React.SetStateAction<boolean>>;
   parentCallBack?: () => void;
 }
