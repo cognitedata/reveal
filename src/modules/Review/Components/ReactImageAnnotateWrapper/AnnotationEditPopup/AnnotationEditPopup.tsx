@@ -11,12 +11,12 @@ import {
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
 import {
   Keypoint,
   KeypointCollection,
   VisionOptionType,
 } from 'src/modules/Review/types';
+import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopupCustomComponents/AnnotationEditPopupBody';
 
 export const AnnotationEditPopup = (props: {
   region: Region;
@@ -244,7 +244,7 @@ export const AnnotationEditPopup = (props: {
             </Col>
           </Row>
           <Row cols={5} style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            <BodyContainer
+            <AnnotationEditPopupBody
               isKeypointMode={isKeypoint}
               color={region.color}
               isSavedAnnotation={alreadyCreated}

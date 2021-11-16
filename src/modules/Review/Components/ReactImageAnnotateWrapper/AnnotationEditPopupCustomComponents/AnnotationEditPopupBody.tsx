@@ -5,7 +5,6 @@ import {
   Icon,
   Label,
   OptionType,
-  Select,
   Title,
   Button,
 } from '@cognite/cogs.js';
@@ -13,10 +12,11 @@ import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImag
 import React from 'react';
 import { ColorBadge } from 'src/modules/Review/Components/ColorBadge/ColorBadge';
 import styled from 'styled-components';
+import { CustomAnnotationAutoComplete } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopupCustomComponents/CustomAnnotationAutoComplete';
 
 export type BodyContainerMode = 'point' | 'shape';
 
-export const BodyContainer = ({
+export const AnnotationEditPopupBody = ({
   isKeypointMode,
   color,
   isSavedAnnotation,
@@ -32,7 +32,7 @@ export const BodyContainer = ({
   labelOption: OptionType<string>;
   keypointLabel: string;
   labelOptions?: OptionType<string>[];
-  onSelectLabel: (label: Required<OptionType<string>>) => void;
+  onSelectLabel: (value: Required<OptionType<string>>) => void;
   onOpenAnnotationSettings: () => void;
 }) => {
   const renderEmptyAnnotationMessage = () => {
@@ -83,13 +83,15 @@ export const BodyContainer = ({
     if (labelOptions && labelOptions.length) {
       return (
         <>
-          <Col span={3}>
+          <Col span={4}>
             <PopupUIElementContainer title="Collection">
-              <Select
-                closeMenuOnSelect
+              <CustomAnnotationAutoComplete
                 value={labelOption}
-                onChange={onSelectLabel}
                 options={labelOptions}
+                onChange={onSelectLabel}
+                placeholder="Select Keypoint"
+                maxHeight={40 * 4}
+                onClickCreateNew={onOpenAnnotationSettings}
               />
             </PopupUIElementContainer>
           </Col>
@@ -108,11 +110,13 @@ export const BodyContainer = ({
         </Col>
         <Col span={4}>
           <PopupUIElementContainer title="Label">
-            <Select
-              closeMenuOnSelect
+            <CustomAnnotationAutoComplete
               value={labelOption}
-              onChange={onSelectLabel}
               options={labelOptions}
+              onChange={onSelectLabel}
+              placeholder="Select Shape"
+              maxHeight={40 * 4}
+              onClickCreateNew={onOpenAnnotationSettings}
             />
           </PopupUIElementContainer>
         </Col>
@@ -127,6 +131,5 @@ const StyledLabel = styled(Label)`
 `;
 
 const StyledCol = styled(Col)`
-  padding: 5px;
-  padding-left: '14px';
+  padding: 5px 5px 5px 14px;
 `;

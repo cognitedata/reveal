@@ -87,6 +87,7 @@ export type AnnotationTableItem = Omit<VisibleAnnotation, 'id'> & {
 export type VisionOptionType<T> = OptionType<T> & {
   order?: string;
   color?: string;
+  icon?: string;
 };
 export type KeypointCollection = {
   collectionName: string;

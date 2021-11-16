@@ -20,6 +20,7 @@ import {
 } from 'src/constants/Colors';
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
+import { AllIconTypes } from '@cognite/cogs.js';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -106,6 +107,15 @@ export class AnnotationUtils {
     }
     return ModelTypeStyleMap[modelType].color;
   }
+
+  public static getIconType = (annotation: {
+    text: string;
+    modelType: VisionAPIType;
+  }) => {
+    return annotation.text === 'person'
+      ? 'Personrounded'
+      : (ModelTypeIconMap[annotation.modelType] as AllIconTypes);
+  };
 
   public static convertToVisionAnnotations(
     annotations: Annotation[]
