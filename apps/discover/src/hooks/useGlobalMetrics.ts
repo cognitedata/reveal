@@ -13,7 +13,7 @@ export const useGlobalMetrics = (domain?: string) => {
   return {
     track: (eventName: string, eventData?: Properties) => {
       if (azureConfig?.enabled) {
-        appInsights?.trackEvent({ name: eventName });
+        appInsights?.trackEvent({ name: eventName }, eventData);
       }
       metrics.track(eventName, eventData);
     },
