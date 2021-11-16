@@ -16,6 +16,7 @@ import {
   getYearFromNumber,
   isValidDate,
   getDateByMatchingRegex,
+  getTimeDuration,
 } from '../date';
 
 describe('date helpers', () => {
@@ -155,6 +156,17 @@ describe('date helpers', () => {
 
           // we expect a warning to be thrown by momentjs
           expect(isValidDate('some test date')).toBeFalsy();
+        });
+      });
+
+      describe('getTimeDuration', () => {
+        test('should return time duration as expected', () => {
+          expect(getTimeDuration(5000)).toEqual('5s');
+          expect(getTimeDuration(17.8, 'days')).toEqual('17d 19h 12m');
+          expect(getTimeDuration(45.2, 'days')).toEqual('1M 15d 4h 48m');
+          expect(getTimeDuration(1425.2, 'days')).toEqual(
+            '3Y 10M 1125d 4h 48m'
+          );
         });
       });
     });

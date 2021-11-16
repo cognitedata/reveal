@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import get from 'lodash/get';
 
+import { getTimeDuration } from '_helpers/date';
 import { ScatterPlot } from 'components/charts';
 import { AxisPlacement } from 'components/charts/common/Axis';
 import { ScatterPlotOptions } from 'components/charts/modules/ScatterPlot/types';
@@ -129,8 +130,8 @@ export const NPTEventsGraph: React.FC = () => {
               value={getFormattedDate(get(nptEvent, accessors.END_TIME))}
             />
             <Card
-              title="Duration (hrs)"
-              value={get(nptEvent, accessors.DURATION)}
+              title="Duration"
+              value={getTimeDuration(get(nptEvent, accessors.DURATION), 'days')}
             />
             <Card
               title="Failre location"

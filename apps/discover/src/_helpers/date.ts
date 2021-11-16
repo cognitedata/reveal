@@ -131,3 +131,30 @@ export const isValidDate = (
   }
   return isDate(checkingDate) && !!checkingDate.getTime();
 };
+
+export const getTimeDuration = (
+  time: number,
+  unit: unitOfTime.DurationConstructor = 'milliseconds'
+) => {
+  const duration = moment.duration(time, unit);
+  const durationAsMilliseconds = moment.utc(duration.asMilliseconds());
+
+  const years = Math.floor(duration.asYears());
+  const months = Math.floor(duration.asMonths()) - 12 * years;
+  const days = Math.floor(duration.asDays()) - 30 * months;
+
+  const hours = durationAsMilliseconds.hours();
+  const minutes = durationAsMilliseconds.minutes();
+  const seconds = durationAsMilliseconds.seconds();
+
+  let timeDuration = '';
+
+  if (years) timeDuration += `${years}Y `;
+  if (months) timeDuration += `${months}M `;
+  if (days) timeDuration += `${days}d `;
+  if (hours) timeDuration += `${hours}h `;
+  if (minutes) timeDuration += `${minutes}m `;
+  if (seconds) timeDuration += `${seconds}s `;
+
+  return timeDuration.trim();
+};
