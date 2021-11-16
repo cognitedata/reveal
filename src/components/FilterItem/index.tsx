@@ -34,6 +34,7 @@ export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
 };
 
 const FilterContent = styled(Body)`
+  color: inherit;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -3,25 +3,25 @@ import styled from 'styled-components';
 import { Body, Flex, Icon, Input } from '@cognite/cogs.js';
 
 import { useTableData } from 'hooks/table-data';
+import { useFilters } from 'hooks/table-filters';
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
 
 import { Separator } from 'components/Separator';
 import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
 
-import { activeFilters } from './mock';
-
 type Props = { isEmpty?: boolean };
 export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
   const { rows, isDone } = useTableData();
+  const { filters, activeFilters, setActiveFilter } = useFilters();
   const tableLength = isDone ? (
     rows.length ?? 0
   ) : (
     <Icon type="LoadingSpinner" style={{ marginRight: '4px' }} />
   );
 
-  const onFilterClick = (_filter: FilterType) => {
-    /** do something */
+  const onFilterClick = (filter: FilterType) => {
+    setActiveFilter(filter.type);
   };
 
   return (
@@ -31,13 +31,16 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
           <>
             <Input placeholder="Search column name" />
             <Separator style={{ margin: '0 12px' }} />
-            {activeFilters.map((filter: FilterType) => (
-              <FilterItem
-                filter={filter}
-                active={true}
-                onClick={onFilterClick}
-              />
-            ))}
+            {filters.map((filter: FilterType) => {
+              const active = activeFilters.includes(filter.type);
+              return (
+                <FilterItem
+                  filter={filter}
+                  active={active}
+                  onClick={onFilterClick}
+                />
+              );
+            })}
           </>
         )}
       </FilterBar.List>
