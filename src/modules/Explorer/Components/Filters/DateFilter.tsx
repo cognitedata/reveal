@@ -23,6 +23,12 @@ export enum DateOptions {
   range = 'Range',
 }
 
+// Overriding time as date selector get current time as default
+const getValidMaxDate = (date: moment.Moment) =>
+  date?.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
+const getValidMinDate = (date: moment.Moment) =>
+  date?.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+
 const getValue = (filter: VisionFileFilterProps, index: number) => {
   const selectedAction = filter.dateFilter?.action;
   const selectedDateOption = filter.dateFilter?.dateOption;
@@ -176,24 +182,30 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
   };
   const handleFirstDateChange = (date: moment.Moment | null) => {
     let range: DateRange | undefined;
-    // set range according to time
+    // set range according to Date Option
     switch (dateOption) {
       case DateOptions.before:
       default:
-        range = date ? { max: date.valueOf() } : { max: undefined };
+        range = date
+          ? { max: getValidMaxDate(date).valueOf() }
+          : { max: undefined };
         break;
       case DateOptions.after:
-        range = date ? { min: date.valueOf() } : { min: undefined };
+        range = date
+          ? { min: getValidMinDate(date).valueOf() }
+          : { min: undefined };
         break;
       case DateOptions.range:
-        range = date ? { min: date.valueOf() } : { min: undefined };
+        range = date
+          ? { min: getValidMinDate(date).valueOf() }
+          : { min: undefined };
         break;
     }
     setDateFilter(range, action);
   };
   const handleSecondDateChange = (date: moment.Moment | null) => {
     const range: DateRange | undefined = date
-      ? { max: date.valueOf() }
+      ? { max: getValidMaxDate(date).valueOf() }
       : { max: undefined };
     setDateFilter(range, action);
   };
