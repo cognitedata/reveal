@@ -14,7 +14,6 @@ import RootApp from 'containers/App';
 import AntStyles from 'components/AntStyles';
 import { Loader } from 'components/Common';
 import theme from './styles/theme';
-import { setupSentry } from './utils/sentry';
 import rootStyles from './styles/index.css';
 
 export default () => {
@@ -32,7 +31,6 @@ export default () => {
   useEffect(() => {
     cogsStyles.use();
     rootStyles.use();
-    setupSentry();
     return () => {
       cogsStyles.unuse();
       rootStyles.unuse();
