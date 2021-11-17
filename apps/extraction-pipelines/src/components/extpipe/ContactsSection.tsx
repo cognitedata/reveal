@@ -24,7 +24,7 @@ interface ContactsViewProps {
   canEdit: boolean;
 }
 
-export const ContactsView: FunctionComponent<ContactsViewProps> = ({
+export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   canEdit,
 }) => {
   const { project } = useAppEnv();

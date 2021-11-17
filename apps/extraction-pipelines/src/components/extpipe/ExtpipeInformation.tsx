@@ -9,8 +9,8 @@ import { Schedule } from 'components/extpipe/edit/Schedule';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
-import EditRawTable from 'components/inputs/rawSelector/EditRawTable';
-import { ContactsView } from 'components/extpipe/ContactsView';
+import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
+import { ContactsSection } from 'components/extpipe/ContactsSection';
 import { MetaData } from 'components/extpipe/MetaData';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
@@ -79,10 +79,8 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           canEdit={canEdit}
         />
       </Section>
-      <ContactsView canEdit={canEdit} />
-      <Section title="RAW tables" icon="Table">
-        <EditRawTable canEdit={canEdit} />
-      </Section>
+      <ContactsSection canEdit={canEdit} />
+      <RawTablesSection canEdit={canEdit} />
       <Section title="Metadata" icon="DataTable">
         <MetaData canEdit={canEdit} />
       </Section>
