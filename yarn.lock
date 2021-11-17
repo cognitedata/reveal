@@ -16,19 +16,19 @@
   dependencies:
     "@azure/msal-common" "^5.0.1"
 
-"@azure/msal-common@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-5.0.1.tgz#234030b340cc63575e84190b96a8a336b69c7698"
-  integrity sha512-CmPR3XM9+CGUu7V/+bAwDxyN6XqWJJhVLmv7utT3sbgay4l5roVXsD1t4wURTs8PwzxmmnJOrhvvGhoDxUW69g==
+"@azure/msal-common@^5.0.1", "@azure/msal-common@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-5.1.0.tgz#e3a75a8ba1602da040698046161961d6dc59bbc4"
+  integrity sha512-4zHZ5Ec7jAgTIWZO3ap1ozgIPGAirF1wL8UhsmPF9QDoZz0cMHdaNmtov5i2+6Xq37YMzhN5s50EFHBuXd7sDQ==
   dependencies:
     debug "^4.1.1"
 
-"@azure/msal-node@^1.3.2":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@azure/msal-node/-/msal-node-1.3.2.tgz#17665397c04b9cad57b42eb6e21d5d6f35d9b83a"
-  integrity sha512-aKU2lVRKhZa1IJ/Za/Ir6qlythQ3FHz0g0px3SbM4iC1otyr3ANS4mIn/6fmkpZDIHc8eAgJh2KMep1Yn2zpig==
+"@azure/msal-node@^1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@azure/msal-node/-/msal-node-1.3.3.tgz#3b977fa371d0c5fcd63df2e458353044a1eb64a1"
+  integrity sha512-ZtVCVzr7V4xEeqICa7E9g6BY3noZv96XG11ENuqEiz/PA1OzPD1/x0QF6BPHVldST8wwoevXxPw+t/h3AFII7w==
   dependencies:
-    "@azure/msal-common" "^5.0.1"
+    "@azure/msal-common" "^5.1.0"
     axios "^0.21.4"
     jsonwebtoken "^8.5.1"
     uuid "^8.3.0"
