@@ -59,11 +59,12 @@ export function worldToViewportCoordinates(
 ): THREE.Vector3 {
   worldToNormalizedViewportCoordinates(camera, position3D, out);
 
-  const { renderSize } = worldToViewportVars;
-  renderer.getSize(renderSize);
+  const canvas = renderer.domElement;
+  const { width: canvasWidth, height: canvasHeight } = canvas.getBoundingClientRect();
+
   const pixelRatio = renderer.getPixelRatio();
 
-  out.x = Math.round((out.x * renderSize.width) / pixelRatio);
-  out.y = Math.round((out.y * renderSize.height) / pixelRatio);
+  out.x = Math.round((out.x * canvasWidth) / pixelRatio);
+  out.y = Math.round((out.y * canvasHeight) / pixelRatio);
   return out;
 }
