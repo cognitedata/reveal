@@ -1,11 +1,14 @@
 import React from 'react';
-import { AllIconTypes, Body, Button, Icon } from '@cognite/cogs.js';
+import { Body, Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import { IconType } from 'assets/icons';
+import { CustomIcon } from 'components/CustomIcon';
 
 export type FilterType = {
   type: string;
   value: number;
-  icon?: AllIconTypes;
+  icon?: IconType;
 };
 
 type Props = {
@@ -18,10 +21,15 @@ export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
   const { type, value, icon } = filter;
 
   return (
-    <Button type="tertiary" toggled={active} onClick={() => onClick(filter)}>
+    <Button
+      type="tertiary"
+      toggled={active}
+      onClick={() => onClick(filter)}
+      style={{ padding: '8px' }}
+    >
       {icon ? (
         <FilterContent level={2} strong>
-          <Icon type={icon} style={{ marginRight: '8px' }} />
+          <CustomIcon icon={icon} style={{ marginRight: '8px' }} />
           {value}
         </FilterContent>
       ) : (

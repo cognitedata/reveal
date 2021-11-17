@@ -37,31 +37,29 @@ const mockFilters: FilterType[] = [
   {
     type: 'number',
     value: 7,
-    icon: 'GridLines', // TEMP
+    icon: 'NumberIcon',
   },
   {
     type: 'string',
     value: 6,
-    icon: 'FontAwesomeFree', // TEMP
+    icon: 'StringIcon',
   },
   {
     type: 'boolean',
     value: 6,
-    icon: 'CheckmarkFilled', // TEMP
+    icon: 'BooleanIcon',
   },
   {
     type: 'vector',
     value: 0,
-    icon: 'ArrowDownRight', // TEMP
   },
   {
     type: 'object',
     value: 0,
-    icon: 'Code', // TEMP
   },
   {
     type: 'date',
     value: 6,
-    icon: 'Clock', // TEMP?
+    icon: 'DateIcon',
   },
 ];
