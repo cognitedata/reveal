@@ -1,14 +1,8 @@
-import { AnnotationStatus, ModelTypeIconMap } from 'src/utils/AnnotationUtils';
-import {
-  AllIconTypes,
-  Icon,
-  SegmentedControl,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
 import styled from 'styled-components';
-import { VisionAPIType } from 'src/api/types';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
 
@@ -34,15 +28,6 @@ const ApproveBtnContainer = styled.div`
   height: 100%;
   flex: 0 1 168px;
 `;
-
-const getIconType = (annotation: {
-  text: string;
-  modelType: VisionAPIType;
-}) => {
-  return annotation.text === 'person'
-    ? 'Personrounded'
-    : (ModelTypeIconMap[annotation.modelType] as AllIconTypes);
-};
 
 export const AnnotationTableRow = ({
   annotation,
@@ -103,7 +88,7 @@ export const AnnotationTableRow = ({
         </StyledSegmentedControl>
       </ApproveBtnContainer>
       <Icon
-        type={getIconType(annotation)}
+        type={AnnotationUtils.getIconType(annotation)}
         style={{
           color: annotation.color,
           height: '100%',

@@ -17,7 +17,6 @@ import {
   AnnotatorTool,
 } from '@cognite/react-image-annotate';
 import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
-import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup';
 import {
   convertAnnotations,
   convertCollectionToRegions,
@@ -32,6 +31,9 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
+import { AnnotationUtils } from 'src/utils/AnnotationUtils';
+import { VisionAPIType } from 'src/api/types';
+import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
 import { tools } from './Tools';
 
 export const ReactImageAnnotateWrapper = ({
@@ -40,7 +42,7 @@ export const ReactImageAnnotateWrapper = ({
   onDeleteAnnotation,
   annotations,
   fileInfo,
-  predefinedLabels,
+  predefinedAnnotations,
   nextToDoKeypointInCurrentCollection,
   lastShapeName,
   lastKeypointCollection,
@@ -63,15 +65,28 @@ export const ReactImageAnnotateWrapper = ({
 
   const dispatch: AppDispatch = useDispatch();
 
-  const collectionOptions = predefinedLabels?.predefinedKeypoints.map(
-    (keyPointCollection) => ({
-      value: keyPointCollection.collectionName,
-      label: keyPointCollection.collectionName,
+  const collectionOptions = predefinedAnnotations?.predefinedKeypoints.map(
+    (keypoint) => ({
+      value: keypoint.collectionName,
+      label: keypoint.collectionName,
+      icon: AnnotationUtils.getIconType({
+        text: keypoint.collectionName,
+        modelType: VisionAPIType.ObjectDetection,
+      }),
+      color: AnnotationUtils.getAnnotationColor(
+        keypoint.collectionName,
+        VisionAPIType.ObjectDetection,
+        { keypoint: true }
+      ),
     })
   );
-  const shapeOptions = predefinedLabels?.predefinedShapes.map((shape) => ({
+  const shapeOptions = predefinedAnnotations?.predefinedShapes.map((shape) => ({
     value: shape.shapeName,
     label: shape.shapeName,
+    icon: AnnotationUtils.getIconType({
+      text: shape.shapeName,
+      modelType: VisionAPIType.ObjectDetection,
+    }),
     color: shape.color,
   }));
 
@@ -214,7 +229,7 @@ export const ReactImageAnnotateWrapper = ({
   }, [
     onCreateAnnotation,
     onUpdateAnnotation,
-    predefinedLabels,
+    predefinedAnnotations,
     nextToDoKeypointInCurrentCollection,
     lastShapeName,
   ]);
