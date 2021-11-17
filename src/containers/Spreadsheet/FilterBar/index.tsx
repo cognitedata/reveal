@@ -10,8 +10,14 @@ import { Separator } from 'components/Separator';
 import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
 
-type Props = { isEmpty?: boolean };
-export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
+type Props = {
+  isEmpty?: boolean;
+  columnQuery: string;
+  setColumnQuery: (columnQuery: string) => void;
+};
+
+export const FilterBar = (props: Props): JSX.Element => {
+  const { isEmpty, columnQuery, setColumnQuery } = props;
   const { rows, isDone } = useTableData();
   const { filters, activeFilters, setFilter } = useFilters();
   const tableLength = isDone ? (
@@ -20,16 +26,20 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
     <Icon type="LoadingSpinner" style={{ marginRight: '4px' }} />
   );
 
-  const onFilterClick = (filter: FilterType) => {
-    setFilter(filter.type);
-  };
+  const onFilterClick = (filter: FilterType) => setFilter(filter.type);
+  const onColumnQueryChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setColumnQuery(e.target.value);
 
   return (
     <Bar justifyContent="space-between" alignItems="center">
       <FilterBar.List justifyContent="center" alignItems="center">
         {!isEmpty && (
           <>
-            <Input placeholder="Search column name" />
+            <Input
+              placeholder="Search column name"
+              value={columnQuery}
+              onChange={onColumnQueryChange}
+            />
             <Separator style={{ margin: '0 12px' }} />
             {filters.map((filter: FilterType) => {
               const active = activeFilters.includes(filter.type);
