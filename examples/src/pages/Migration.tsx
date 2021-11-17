@@ -92,7 +92,7 @@ export function Migration() {
 
       const controlsOptions: CameraControlsOptions = {
         onClickTargetChange: true,
-        zoomToCursor: 'scrollTarget',
+        mouseWheelAction: 'zoomToCursor',
       }
 
       viewer.setCameraControlsOptions(controlsOptions);
@@ -189,7 +189,7 @@ export function Migration() {
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
         controls: {
-          zoomToCursorType: 'scrollTarget',
+          mouseWheelAction: 'zoomToCursor',
           onClickTargetChange: true
         },
         debugRenderStageTimings: false
@@ -462,9 +462,9 @@ export function Migration() {
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
       const controlsGui = gui.addFolder('Camera controls');
-      const zoomToCursorTypes = ['disable', 'basicLerp', 'scrollTarget'];
-      controlsGui.add(guiState.controls, 'zoomToCursorType', zoomToCursorTypes).name('Zoom to cursor type').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), zoomToCursor: value });
+      const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
+      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
       });
       controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });

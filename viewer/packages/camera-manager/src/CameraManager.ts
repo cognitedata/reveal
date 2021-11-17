@@ -9,12 +9,12 @@ import { CallbackData, CameraControlsOptions } from './types';
 import { assertNever } from '@reveal/utilities';
 
 const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
-  zoomToCursor: 'basicLerp',
+  mouseWheelAction: 'zoomPastCursor',
   onClickTargetChange: false
 };
 
-export class CameraManager extends THREE.EventDispatcher {
-  public controls: ComboControls;
+export class CameraManager {
+  private readonly controls: ComboControls;
 
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
@@ -166,30 +166,31 @@ export class CameraManager extends THREE.EventDispatcher {
       }
     };
 
-    switch (this._cameraControlsOptions.zoomToCursor) {
-      case 'disable':
+    switch (this._cameraControlsOptions.mouseWheelAction) {
+      case 'zoomToTarget':
         this.controls.zoomToCursor = false;
         break;
 
-      case 'basicLerp':
+      case 'zoomPastCursor':
         this.controls.useScrollTarget = false;
         this.controls.zoomToCursor = true;
 
         break;
-      case 'scrollTarget':
+      case 'zoomToCursor':
+        this.controls.setScrollTarget(this.controls.getState().target);
         this.controls.useScrollTarget = true;
         this.controls.zoomToCursor = true;
         break;
 
       default:
-        assertNever(this._cameraControlsOptions.zoomToCursor);
+        assertNever(this._cameraControlsOptions.mouseWheelAction);
     }
 
     if (this._cameraControlsOptions.onClickTargetChange) {
       this._domElement.addEventListener('click', onClick);
       this._onClick = onClick;
     }
-    if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') {
+    if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
       this._domElement.addEventListener('wheel', onWheel);
       this._onWheel = onWheel;
     }
@@ -200,7 +201,6 @@ export class CameraManager extends THREE.EventDispatcher {
     domElement: HTMLElement,
     raycastFunction: (x: number, y: number) => Promise<CallbackData>
   ) {
-    super();
     this._camera = camera;
     this._domElement = domElement;
     this._modelRaycastCallback = raycastFunction;
@@ -209,8 +209,7 @@ export class CameraManager extends THREE.EventDispatcher {
     this.controls.minDistance = 0.15;
     this.controls.maxDistance = 100.0;
 
-    const { zoomToCursor, onClickTargetChange } = this._cameraControlsOptions;
-    this.setCameraControlsOptions({ zoomToCursor, onClickTargetChange });
+    this.setCameraControlsOptions(this._cameraControlsOptions);
 
     if (!camera) {
       this._camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -405,7 +404,7 @@ export class CameraManager extends THREE.EventDispatcher {
           return;
         }
 
-        if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') this.controls.setScrollTarget(tempTarget);
+        if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') this.controls.setScrollTarget(tempTarget);
         this.controls.setViewTarget(tempTarget);
       })
       .onStop(() => {
