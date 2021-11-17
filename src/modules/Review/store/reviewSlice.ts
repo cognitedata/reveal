@@ -84,28 +84,14 @@ const reviewSlice = createSlice({
     showAnnotationSettingsModel: {
       prepare: (
         show: boolean,
-        type = 'keypoint',
+        type = 'shape',
         text?: string,
         color?: string
       ) => {
-        if (
-          (type !== undefined &&
-            text !== null &&
-            ['keypoint', 'shape'].includes(type) &&
-            text !== undefined) ||
-          (color !== undefined && color !== null)
-        ) {
-          return {
-            payload: {
-              show,
-              options: { type, text, color },
-            },
-          };
-        }
-
         return {
           payload: {
             show,
+            options: { type, text, color },
           },
         };
       },
@@ -113,7 +99,7 @@ const reviewSlice = createSlice({
         state,
         action: PayloadAction<{
           show: boolean;
-          options?: {
+          options: {
             type: 'keypoint' | 'shape';
             text?: string;
             color?: string;
@@ -123,8 +109,7 @@ const reviewSlice = createSlice({
         state.annotationSettings.createNew.text = action.payload.options?.text;
         state.annotationSettings.createNew.color =
           action.payload.options?.color;
-        state.annotationSettings.activeView =
-          action.payload.options?.type || 'keypoint';
+        state.annotationSettings.activeView = action.payload.options.type;
         state.annotationSettings.show = action.payload.show;
       },
     },
