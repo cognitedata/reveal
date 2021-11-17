@@ -736,9 +736,10 @@ export default class ComboControls extends EventDispatcher {
     cameraDirection: THREE.Vector3
   ) => {
     const { _targetEnd, useScrollTarget, zoomToCursor } = this;
+    const isDollyOut = deltaDistance > 0 ? true : false;
 
     const targetOffset = zoomToCursor
-      ? useScrollTarget
+      ? useScrollTarget && !isDollyOut
         ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
         : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)
       : this.calculateTargetOfssetLerp(0, 0, deltaDistance, cameraDirection);
