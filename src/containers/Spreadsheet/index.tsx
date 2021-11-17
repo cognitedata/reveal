@@ -5,7 +5,8 @@ import { FilterBar } from './FilterBar';
 import { Table } from './Table';
 
 export const Spreadsheet = (): JSX.Element => {
-  const { rows, columns, isLoading, isFetched } = useTableData();
+  const { rows, columns, isLoading, isFetched, hasNextPage, fetchNextPage } =
+    useTableData();
   const isEmpty = isFetched && !rows?.length;
 
   return (
@@ -14,7 +15,16 @@ export const Spreadsheet = (): JSX.Element => {
       {isLoading ? (
         <Loader />
       ) : (
-        <Table isEmpty={isEmpty} rows={rows} columns={columns} />
+        <Table
+          isEmpty={isEmpty}
+          rows={rows}
+          columns={columns}
+          onEndReach={() => {
+            if (hasNextPage) {
+              fetchNextPage();
+            }
+          }}
+        />
       )}
     </Flex>
   );

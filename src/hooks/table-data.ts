@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { ColumnShape } from 'react-base-table';
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
@@ -11,7 +11,6 @@ const COLUMN_NAMES_MAPPED: Record<string, string> = {
   lastUpdatedTime: 'Last update time',
 };
 const PAGE_SIZE = 100;
-const FETCH_LIMIT = 100;
 
 interface ColumnType extends Partial<ColumnShape> {
   key: string;
@@ -21,7 +20,6 @@ interface ColumnType extends Partial<ColumnShape> {
 
 export const useTableData = () => {
   const [[database, table] = [undefined, undefined]] = useActiveTable();
-  const [fetchLimit] = useState(FETCH_LIMIT);
 
   const enabled = !!database && !!table;
 
@@ -35,16 +33,7 @@ export const useTableData = () => {
     return value;
   }, []);
 
-  const {
-    data,
-    hasNextPage,
-    isLoading,
-    isFetched,
-    isFetching,
-    isError,
-    refetch,
-    fetchNextPage,
-  } = useTableRows(
+  const rows = useTableRows(
     {
       database: database!,
       table: table!,
@@ -53,45 +42,14 @@ export const useTableData = () => {
     { enabled }
   );
 
-  const getIsDone = () => {
-    if (!data) return false;
-    const wasFetchLimitReached =
-      data.pages.reduce((a, c) => a + c.items.length, 0) > fetchLimit;
-    const isAllRowsFetched = !data.pages[data.pages.length - 1]?.nextCursor;
-    return wasFetchLimitReached || isAllRowsFetched;
-  };
-
-  const isDone: boolean = getIsDone();
   useEffect(() => {
-    if (isFetched && enabled) refetch();
-  }, [isFetched, enabled, refetch]);
-
-  useEffect(() => {
-    if (
-      !isDone &&
-      !isFetching &&
-      isFetched &&
-      enabled &&
-      !isError &&
-      hasNextPage
-    ) {
-      fetchNextPage();
-    }
-  }, [
-    isDone,
-    fetchNextPage,
-    isFetching,
-    isFetched,
-    enabled,
-    isError,
-    hasNextPage,
-  ]);
+    if (rows.isFetched && enabled) rows.refetch();
+  }, [rows.isFetched, enabled, rows.refetch]);
 
   const rawRows: Partial<RawDBRow>[] = useMemo(() => {
-    if (data) {
-      return data.pages
+    if (rows.data) {
+      return rows.data.pages
         .reduce((accl, page) => [...accl, ...page.items], [] as RawDBRow[])
-        .slice(0, fetchLimit)
         .map((row) => {
           const { columns, ...rest } = row;
           return {
@@ -101,7 +59,7 @@ export const useTableData = () => {
         });
     }
     return [];
-  }, [data, fetchLimit]);
+  }, [rows.data]);
 
   const getColumns = (): ColumnType[] => {
     const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
@@ -146,7 +104,10 @@ export const useTableData = () => {
     });
     return rows;
   };
-  const rows = useMemo(getRows, [rawRows]);
-
-  return { rows, columns, isLoading, isFetching, isFetched, isDone };
+  const allRows = useMemo(getRows, [rawRows]);
+  return {
+    ...rows,
+    rows: allRows,
+    columns,
+  };
 };
