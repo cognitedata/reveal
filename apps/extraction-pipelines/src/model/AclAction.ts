@@ -8,7 +8,7 @@ export const EXTRACTION_PIPELINES_ACL: 'extractionPipelinesAcl' =
 
 const aclAction = (
   acl: string,
-  action: 'READ' | 'WRITE'
+  action: 'READ' | 'WRITE' | 'LIST'
 ): Readonly<AclAction> => ({
   acl,
   action,

@@ -7,27 +7,51 @@ import { PageTitle } from 'styles/StyledHeadings';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { ErrorBox } from 'components/error/ErrorBox';
 
-export interface CapabilityCheckProps {
-  requiredPermissions: Readonly<AclAction>[];
+const MissingCapabilityList = styled.ul`
+  li {
+    margin: 1rem 0;
+  }
+`;
+const defaultHeading =
+  'You have insufficient access rights to access this feature';
+
+type MissingCapabilityBoxProps = {
   heading?: string;
   text?: string;
-  topLevelHeading?: string;
-}
+  requiredPermissions: Readonly<AclAction>[];
+};
+
+export const MissingCapabilityBox = ({
+  heading = defaultHeading,
+  text,
+  requiredPermissions,
+}: MissingCapabilityBoxProps) => (
+  <ErrorBox heading={heading}>
+    <p>{text}</p>
+    <MissingCapabilityList>
+      {requiredPermissions.map((requiredPermission) => {
+        const permissionName = `${requiredPermission.acl}:${requiredPermission.action}`;
+        return (
+          <li key={permissionName}>
+            <Code>{permissionName}</Code>
+          </li>
+        );
+      })}
+    </MissingCapabilityList>
+  </ErrorBox>
+);
 
 const Padded = styled.div`
   padding: 1.5rem;
   grid-column: 2;
 `;
 
-const MissingCapabilityList = styled.ul`
-  li {
-    margin: 1rem 0;
-  }
-`;
-
+export type CapabilityCheckProps = MissingCapabilityBoxProps & {
+  topLevelHeading?: string;
+};
 export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
   requiredPermissions,
-  heading = 'You have insufficient access rights to access this feature',
+  heading = defaultHeading,
   text = 'To access this page you must have one of the following capabilities:',
   topLevelHeading,
   children,
@@ -45,19 +69,11 @@ export const CapabilityCheck: FunctionComponent<CapabilityCheckProps> = ({
           <br />
         </>
       )}
-      <ErrorBox heading={heading}>
-        <p>{text}</p>
-        <MissingCapabilityList>
-          {requiredPermissions.map((requiredPermission) => {
-            const permissionName = `${requiredPermission.acl}:${requiredPermission.action}`;
-            return (
-              <li key={permissionName}>
-                <Code>{permissionName}</Code>
-              </li>
-            );
-          })}
-        </MissingCapabilityList>
-      </ErrorBox>
+      {MissingCapabilityBox({
+        heading,
+        text,
+        requiredPermissions,
+      })}
     </Padded>
   ) : (
     <>{children}</>

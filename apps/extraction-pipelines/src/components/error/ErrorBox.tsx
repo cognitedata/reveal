@@ -7,7 +7,6 @@ const Wrapper = styled.div`
   padding: 2rem;
 
   grid-column: 1 / span 3;
-  margin: 1.5rem;
   height: fit-content;
 `;
 
@@ -24,7 +23,7 @@ export const ErrorBox: FunctionComponent<
   PropsWithChildren<{ heading: string }>
 > = (props) => {
   return (
-    <Wrapper className="z-4">
+    <Wrapper className="z-1">
       <StyledErrorHeader>
         <Icon type="Warning" css="margin-right: 0.5rem" />
         {props.heading}

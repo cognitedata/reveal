@@ -26,6 +26,7 @@ import {
   useRawDBAndTables,
 } from 'hooks/useRawDBAndTables';
 import styled from 'styled-components';
+import { MissingCapabilityBox } from 'components/accessCheck/CapabilityCheck';
 
 interface RawEditModalProps {
   visible: boolean;
@@ -42,7 +43,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   close,
 }: PropsWithChildren<RawEditModalProps>) => {
   const { project } = useAppEnv();
-  const { data: databases } = useRawDBAndTables();
+  const { data: databases, isError } = useRawDBAndTables();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
   const { mutate } = useDetailsUpdate();
@@ -107,6 +108,17 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
           Note: This is for documentation only and does not affect operations.
           The selected tables appear in the data set lineage.
         </p>
+        <div css="height: 1rem" />
+        {isError &&
+          MissingCapabilityBox({
+            text:
+              'Cannot load list of tables. Make sure you have permission to read raw tables. Ask administrator for access.',
+            requiredPermissions: [
+              { acl: 'raw', action: 'READ' },
+              { acl: 'raw', action: 'LIST' },
+            ],
+          })}
+
         {databases != null && (
           <RawEditModalView
             close={close}
