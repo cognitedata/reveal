@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 
-import { trackCreateTool } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { worldToViewportCoordinates } from '@reveal/core/utilities';
 import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
 
@@ -26,8 +26,8 @@ type HtmlOverlayElement = {
 };
 
 /**
- * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
- * 3D position and updates it's position/visibility as user moves the camera. This is 
+ * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+ * 3D position and updates it's position/visibility as user moves the camera. This is
  * useful to create HTML overlays to highlight information about key positions in the 3D model.
  *
  * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
@@ -57,7 +57,6 @@ type HtmlOverlayElement = {
  * overlayTool.remove(el);
  * // or, to remove all attached elements
  * overlayTool.clear();
- 
  * // detach the tool from the viewer
  * overlayTool.dispose();
  * ```
@@ -99,7 +98,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer.on('sceneRendered', this._onSceneRenderedHandler);
     this._viewer.on('disposed', this._onViewerDisposedHandler);
 
-    trackCreateTool('HtmlOverlayTool');
+    MetricsLogger.trackCreateTool('HtmlOverlayTool');
   }
 
   /**
