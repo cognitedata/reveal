@@ -192,18 +192,18 @@ export interface AddModelOptions {
 
 export type CameraControlsOptions = {
   /**
-   * Enables or disables the usage of "zoom-to-cursor" mechanics based on either lerping in the direction of the cursor or using so-called scroll target notion.
+   * Sets mouse wheel initiated action based on either lerping in the direction of the cursor or using so-called scroll target notion.
    * When mouse wheel scroll is initiated scroll target is set to the point on the model where cursor is hovering over. Then when zooming is happening camera
-   * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation,
-   * keyboard navigation still allows to go through the model.
+   * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation, 
+   * but keyboard navigation still allows to go through the model.
    *
-   * Default is 'basicLerp'.
+   * Default is 'zoomPastCursor'.
    *
    */
-  zoomToCursor?:
-    | 'disable' // disables "zoom-to-cursor" mechanic, then mouse scroll zooms just to the current target of the camera
-    | 'basicLerp' // based on lerping in the direction of the ray coming from camera through cursor position
-    | 'scrollTarget'; // moves the target towards the point on the model where
+  mouseWheelAction?:
+    | 'zoomToTarget' // mouse wheel scroll zooms just to the current target (center of the screen) of the camera
+    | 'zoomPastCursor' // mouse wheel scroll zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects
+    | 'zoomToCursor'; // mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects
   /**
    * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
    *

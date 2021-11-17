@@ -57,8 +57,8 @@ import log from '@reveal/logger';
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
 const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
-  zoomToCursor: 'basicLerp',
-  onClickTargetChange: false,
+  mouseWheelAction: 'zoomPastCursor',
+  onClickTargetChange: false
 };
 
 /**
@@ -245,30 +245,31 @@ export class Cognite3DViewer {
       }
     };
 
-    switch (this._cameraControlsOptions.zoomToCursor) {
-      case 'disable':
+    switch (this._cameraControlsOptions.mouseWheelAction) {
+      case 'zoomToTarget':
         this.controls.zoomToCursor = false;
         break;
 
-      case 'basicLerp':
+      case 'zoomPastCursor':
         this.controls.useScrollTarget = false;
         this.controls.zoomToCursor = true;
 
         break;
-      case 'scrollTarget':
+      case 'zoomToCursor':
+        this.controls.setScrollTarget(this.controls.getState().target);
         this.controls.useScrollTarget = true;
         this.controls.zoomToCursor = true;
         break;
 
       default:
-        assertNever(this._cameraControlsOptions.zoomToCursor);
+        assertNever(this._cameraControlsOptions.mouseWheelAction);
     }
 
     if (this._cameraControlsOptions.onClickTargetChange) {
       this.on('click', onClick as PointerEventDelegate);
       this._onClick = onClick;
     }
-    if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') {
+    if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
       this._domElement.addEventListener('wheel', onWheel);
       this._onWheel = onWheel;
     }
@@ -1450,7 +1451,7 @@ export class Cognite3DViewer {
           return;
         }
 
-        if (this._cameraControlsOptions.zoomToCursor === 'scrollTarget') this.controls.setScrollTarget(tempTarget);
+        if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') this.controls.setScrollTarget(tempTarget);
         this.controls.setViewTarget(tempTarget);
       })
       .onStop(() => {
