@@ -32,7 +32,7 @@ jobs:
       - name: Deploy PlatypusCLI to npm 🚀
         uses: JS-DevTools/npm-publish@v1
         with:
-          token: $(echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}")
+          token: ${{ secrets.NPM_PUBLISH_TOKEN }}
           tag: alpha
           access: restricted
           check-version: true
