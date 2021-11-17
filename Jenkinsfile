@@ -138,8 +138,10 @@ pods {
         'Lint': {
           stageWithNotify('Check linting', CONTEXTS.lint) {
             dir('lint') {
-              container('fas') {
-                sh('yarn lint')
+              retry(3) {
+                container('fas') {
+                  sh('yarn lint')
+                }
               }
             }
           }
@@ -148,14 +150,16 @@ pods {
         'Unit tests': {
           stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
             dir('unit-tests') {
-              container('fas') {
-                sh('yarn test')
-                junit(allowEmptyResults: true, testResults: '**/junit.xml')
-                if (isPullRequest) {
-                  summarizeTestResults()
-                }
-                stage("Upload coverage reports") {
-                  codecov.uploadCoverageReport()
+              retry(3) {
+                container('fas') {
+                  sh('yarn test')
+                  junit(allowEmptyResults: true, testResults: '**/junit.xml')
+                  if (isPullRequest) {
+                    summarizeTestResults()
+                  }
+                  stage("Upload coverage reports") {
+                    codecov.uploadCoverageReport()
+                  }
                 }
               }
             }
@@ -163,21 +167,25 @@ pods {
         },
 
         'Storybook': {
-          previewServer.runStorybookStage(
-            shouldExecute: isPullRequest
-          )
+          retry(3) {
+            previewServer.runStorybookStage(
+              shouldExecute: isPullRequest
+            )
+          }
         },
 
         'Preview': {
           dir('preview') {
             stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
-              fas.build(
-                appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build preview',
-                shouldExecute: isPullRequest,
-                sourceMapPath: ''
-              )
+              retry(3) {
+                fas.build(
+                  appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
+                  repo: APPLICATION_REPO_ID,
+                  buildCommand: 'yarn build preview',
+                  shouldExecute: isPullRequest,
+                  sourceMapPath: ''
+                )
+              }
             }
           }
         },
@@ -185,28 +193,32 @@ pods {
         'Staging': {
           dir('staging') {
             stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-              fas.build(
-                appId: STAGING_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build staging',
-                shouldExecute: isStaging,
-                sourceMapPath: ''
-              )
+              retry(3) {
+                fas.build(
+                  appId: STAGING_APP_ID,
+                  repo: APPLICATION_REPO_ID,
+                  buildCommand: 'yarn build staging',
+                  shouldExecute: isStaging,
+                  sourceMapPath: ''
+                )
+              }
             }
           }
         },
 
         'Production': {
-          dir('production') {
-            stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-              fas.build(
-                appId: PRODUCTION_APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build production',
-                shouldExecute: isProduction,
-                sourceMapPath: ''
-              )
-            }
+            retry(3) {
+              dir('production') {
+                stageWithNotify('Build for production', CONTEXTS.buildProduction) {
+                  fas.build(
+                    appId: PRODUCTION_APP_ID,
+                    repo: APPLICATION_REPO_ID,
+                    buildCommand: 'yarn build production',
+                    shouldExecute: isProduction,
+                    sourceMapPath: ''
+                  )
+                }
+              }
           }
         },
 
