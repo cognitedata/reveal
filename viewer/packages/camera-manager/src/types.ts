@@ -6,7 +6,7 @@ export type CameraControlsOptions = {
   /**
    * Sets mouse wheel initiated action based on either lerping in the direction of the cursor or using so-called scroll target notion.
    * When mouse wheel scroll is initiated scroll target is set to the point on the model where cursor is hovering over. Then when zooming is happening camera
-   * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation, 
+   * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation,
    * but keyboard navigation still allows to go through the model.
    *
    * Default is 'zoomPastCursor'.
