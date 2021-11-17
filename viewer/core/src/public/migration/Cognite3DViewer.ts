@@ -1433,7 +1433,6 @@ export class Cognite3DViewer {
     this._domElement.addEventListener('wheel', stopTween);
     document.addEventListener('keydown', stopTween);
 
-
     const tempTarget = new THREE.Vector3();
     const tween = animation
       .to(to, duration)
