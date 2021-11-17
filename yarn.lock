@@ -3503,12 +3503,12 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@nrwl/cli@*":
-  version "13.1.2"
-  resolved "https://registry.yarnpkg.com/@nrwl/cli/-/cli-13.1.2.tgz#8058621770919d5772bb548afb36cb328e52e3fa"
-  integrity sha512-q89P57rTkDv5E/Kq+pqNk9W/6RU8vr/Z8gtvuruBhmRU2MjnTF31sZhPsAgMW0bjUwuMtaERGZX7Gs5IYcJ+lw==
+"@nrwl/cli@*", "@nrwl/cli@13.1.4":
+  version "13.1.4"
+  resolved "https://registry.yarnpkg.com/@nrwl/cli/-/cli-13.1.4.tgz#deb21c477eccbe0ea95f22bf74e63f30d275e374"
+  integrity sha512-X2mJwjXitBbY/zRkcVJCUI4Kwk7bPJ/ZJwZHQH5Sn9IAX3p13ELQ1eAanxpOpUakVLvkjlAJ1g5vzt1znzs8wA==
   dependencies:
-    "@nrwl/tao" "13.1.2"
+    "@nrwl/tao" "13.1.4"
     chalk "4.1.0"
     enquirer "~2.3.6"
     v8-compile-cache "2.3.0"
@@ -3521,18 +3521,6 @@
   integrity sha512-VUbkMxYDdMNZe3CP2AtQbSKyP1kwaebdJyCyQ4l7tsqcFyDAc+zDXbvM1MPYSsFi4DI5Sf11BEFMLfYxRLi6FA==
   dependencies:
     "@nrwl/tao" "13.0.2"
-    chalk "4.1.0"
-    enquirer "~2.3.6"
-    v8-compile-cache "2.3.0"
-    yargs "15.4.1"
-    yargs-parser "20.0.0"
-
-"@nrwl/cli@13.1.4":
-  version "13.1.4"
-  resolved "https://registry.yarnpkg.com/@nrwl/cli/-/cli-13.1.4.tgz#deb21c477eccbe0ea95f22bf74e63f30d275e374"
-  integrity sha512-X2mJwjXitBbY/zRkcVJCUI4Kwk7bPJ/ZJwZHQH5Sn9IAX3p13ELQ1eAanxpOpUakVLvkjlAJ1g5vzt1znzs8wA==
-  dependencies:
-    "@nrwl/tao" "13.1.4"
     chalk "4.1.0"
     enquirer "~2.3.6"
     v8-compile-cache "2.3.0"
@@ -3767,23 +3755,6 @@
     fs-extra "^9.1.0"
     jsonc-parser "3.0.0"
     nx "13.0.2"
-    rxjs "^6.5.4"
-    rxjs-for-await "0.0.2"
-    semver "7.3.4"
-    tmp "~0.2.1"
-    tslib "^2.0.0"
-    yargs-parser "20.0.0"
-
-"@nrwl/tao@13.1.2":
-  version "13.1.2"
-  resolved "https://registry.yarnpkg.com/@nrwl/tao/-/tao-13.1.2.tgz#80f381b5f6d17d7e4bf4f52bb2e572a5da9eaff2"
-  integrity sha512-OF/zWpj7pdlBHS1Mr6uk3mtz0QUWb4W3KqKxO3wjj2GtRDwSGb8XFC+VbsRTxh/w+hoEOut10tvQiqAuJtuLGA==
-  dependencies:
-    chalk "4.1.0"
-    enquirer "~2.3.6"
-    fs-extra "^9.1.0"
-    jsonc-parser "3.0.0"
-    nx "13.1.2"
     rxjs "^6.5.4"
     rxjs-for-await "0.0.2"
     semver "7.3.4"
@@ -19373,13 +19344,6 @@ nx@13.0.2:
   version "13.0.2"
   resolved "https://registry.yarnpkg.com/nx/-/nx-13.0.2.tgz#257cdf7899dc46dec683814fcf28008db47849d6"
   integrity sha512-8P+UWM1q6gMNZwAcCABNMl4IpHqYqWbC2HdCXAL10Y3oXmkDk0KcCp70UVuiVPouj+zSGnbqn9hc+8TizVukGw==
-  dependencies:
-    "@nrwl/cli" "*"
-
-nx@13.1.2:
-  version "13.1.2"
-  resolved "https://registry.yarnpkg.com/nx/-/nx-13.1.2.tgz#961e789432d3229748ff0133f9d537ea2e690244"
-  integrity sha512-zLJtPr/4OD4C/OgvSaqRtIhj9WvZzUJPBrgRxW6ho60TGfmSvzH5cB3MUcZq+FClL0DXzv9mCFTw5XqqesyuWA==
   dependencies:
     "@nrwl/cli" "*"
 
