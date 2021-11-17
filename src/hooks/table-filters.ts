@@ -2,26 +2,44 @@ import { useState } from 'react';
 import { FilterType } from 'components/FilterItem';
 
 export const useFilters = () => {
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [activeFilters, setActiveFilters] = useState<string[]>([
+    DEFAULT_FILTER.type,
+  ]);
+
   const filters = [
     DEFAULT_FILTER,
     ...mockFilters.filter((mockFilter) => mockFilter.value),
   ];
 
   const setFilter = (type: string) => {
-    if (type === DEFAULT_FILTER.type) {
+    const selectAllColumns = type === DEFAULT_FILTER.type;
+    const selectFirstFilter =
+      !selectAllColumns &&
+      !activeFilters.includes(type) &&
+      activeFilters.includes(DEFAULT_FILTER.type) &&
+      activeFilters.length === 1;
+    const selectAnotherFilter =
+      !selectAllColumns &&
+      !activeFilters.includes(type) &&
+      !activeFilters.includes(DEFAULT_FILTER.type) &&
+      activeFilters.length > 0;
+    const deselectFilter =
+      !selectAllColumns &&
+      activeFilters.includes(type) &&
+      activeFilters.length > 1;
+    const deselectLastFilter =
+      !selectAllColumns &&
+      activeFilters.includes(type) &&
+      activeFilters.length === 1;
+
+    if (selectAllColumns || deselectLastFilter)
       setActiveFilters([DEFAULT_FILTER.type]);
-      return;
-    } else {
-      // if filter is selected:
-      // // add that filter to array
-      // // remove columns filter
-      // if filter is deselected:
-      // // if that's the only selected filter:
-      // // // select columns filter
-      // // if it's not the only one:
-      // // // just deselect
-    }
+    if (selectFirstFilter) setActiveFilters([type]);
+    if (selectAnotherFilter) setActiveFilters([...activeFilters, type]);
+    if (deselectFilter)
+      setActiveFilters([...activeFilters.filter((active) => active !== type)]);
+    if (deselectFilter)
+      setActiveFilters([...activeFilters.filter((active) => active !== type)]);
   };
 
   return { filters, activeFilters, setFilter };
