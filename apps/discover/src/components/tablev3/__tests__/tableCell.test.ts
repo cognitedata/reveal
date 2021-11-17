@@ -18,6 +18,9 @@ describe('Table cell', () => {
         render: () => ({
           props: {
             value,
+            column: {
+              displayFullText: false,
+            },
           },
         }),
       },

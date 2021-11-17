@@ -4,17 +4,10 @@ import { Cell } from 'react-table';
 import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
-import styled from 'styled-components/macro';
 
 import { Tooltip } from 'components/tooltip';
 
-const CellContent = styled.div`
-  max-width: 100%;
-  white-space: nowrap;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  color: var(--cogs-text-color);
-`;
+import { CellContentWrapper } from './elements';
 
 interface Props {
   cell: Cell<any>;
@@ -55,10 +48,13 @@ const CellText = ({ children }: any) => {
   if (isCellValueEmpty(value)) return null;
 
   return (
-    <CellContent ref={elementRef}>
+    <CellContentWrapper
+      ref={elementRef}
+      whiteSpace={children.props.column.displayFullText ? 'normal' : 'nowrap'}
+    >
       <Tooltip title={children} enabled={overflowing}>
         {children}
       </Tooltip>
-    </CellContent>
+    </CellContentWrapper>
   );
 };

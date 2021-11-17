@@ -220,3 +220,13 @@ export const LoadMoreButton = styled(DefaultLoadMoreButton)`
     margin-right: 20px;
   }
 `;
+
+export const CellContentWrapper = styled.div`
+  max-width: 100%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  color: var(--cogs-text-color);
+
+  ${(props: { whiteSpace: string }) =>
+    props.whiteSpace && `white-space: ${props.whiteSpace}`}
+`;

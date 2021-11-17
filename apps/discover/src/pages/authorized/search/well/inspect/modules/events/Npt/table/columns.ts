@@ -55,9 +55,10 @@ export const getCommonColumns = (unit: string) => {
     {
       id: accessors.DESCRIPTION,
       Header: 'Description',
-      width: '150px',
+      width: '500px',
       maxWidth: '1fr',
       accessor: (row: NPTEvent) => processAccessor(row, accessors.DESCRIPTION),
+      displayFullText: true,
     },
     {
       id: accessors.ROOT_CAUSE,
