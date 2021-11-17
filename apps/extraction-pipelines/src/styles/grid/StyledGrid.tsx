@@ -51,10 +51,6 @@ export const Grid = styled.div`
   }
 `;
 
-export const GridWithTopMargin = styled(Grid)`
-  margin-top: 3rem;
-`;
-
 export const GridRowStyle = styled(PaddedGridDiv)`
   grid-template-columns: 7rem 5rem 1.5fr 2fr 5rem 4rem;
   height: 4rem;
@@ -84,12 +80,4 @@ export const MainFullWidthGrid = styled.div<{ hideDividerLine?: boolean }>`
 
 export const Span3 = css`
   grid-column: 1 / span 3;
-`;
-
-export const SimpleGrid = styled.div`
-  display: grid;
-`;
-
-export const TwoColGrid = styled(SimpleGrid)`
-  grid-template-columns: 8rem 1fr;
 `;

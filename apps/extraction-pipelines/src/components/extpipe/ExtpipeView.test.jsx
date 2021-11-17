@@ -6,7 +6,6 @@ import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { DetailFieldNames } from 'model/Extpipe';
-import { NO_SCHEDULE } from 'utils/constants';
 import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
 import { trackUsage } from 'utils/Metrics';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
@@ -116,7 +115,6 @@ describe('ExtpipeView', () => {
     });
     expect(screen.getByText(mock.externalId)).toBeInTheDocument();
     expect(screen.getByText(mock.id)).toBeInTheDocument();
-    expect(screen.getByText(NO_SCHEDULE)).toBeInTheDocument();
     expect(screen.getByText(/add raw tables/i)).toBeInTheDocument();
     expect(screen.getByText(/add schedule/i)).toBeInTheDocument();
     expect(screen.getByText(/add data set/i)).toBeInTheDocument();

@@ -7,7 +7,6 @@ import {
 import { QueryClient } from 'react-query';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import {
-  CONTACTS,
   EXT_PIPE_TAB_OVERVIEW,
   EXT_PIPE_TAB_RUN_HISTORY,
 } from 'utils/constants';
@@ -94,7 +93,7 @@ describe('ExtpipePage', () => {
     expect(
       screen.queryByText(EXT_PIPE_TAB_RUN_HISTORY)
     ).not.toBeInTheDocument();
-    expect(screen.queryByText(CONTACTS)).not.toBeInTheDocument();
+    expect(screen.queryByText('Contacts')).not.toBeInTheDocument();
   });
 
   const mockExtpipe = getMockResponse()[2];

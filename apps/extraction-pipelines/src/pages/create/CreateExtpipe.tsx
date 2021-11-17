@@ -8,8 +8,8 @@ import {
   DESCRIPTION_LABEL,
   EXT_PIPE_NAME_HEADING,
   EXTERNAL_ID_HINT,
-  EXTRACTION_PIPELINE_LOWER,
   EXTPIPE_EXTERNAL_ID_HEADING,
+  EXTRACTION_PIPELINE_LOWER,
   NAME_HINT,
 } from 'utils/constants';
 import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
@@ -26,12 +26,8 @@ import { Button, Colors, Modal } from '@cognite/cogs.js';
 import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   descriptionRule,
-  documentationRule,
   externalIdRule,
   nameRule,
-  scheduleRule,
-  selectedRawTablesRule,
-  sourceRule,
 } from 'utils/validation/extpipeSchemas';
 import DataSetIdInput, {
   DATASET_LIST_LIMIT,
@@ -42,7 +38,6 @@ import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { ExtpipeRawTable } from 'model/Extpipe';
-import { contactsRule } from 'utils/validation/contactsSchema';
 import { User } from 'model/User';
 import { InfoIcon } from 'styles/StyledIcon';
 import { createAddExtpipeInfo } from 'utils/extpipeUtils';
@@ -86,11 +81,6 @@ const pageSchema = yup.object().shape({
   ...nameRule,
   ...externalIdRule,
   ...descriptionRule,
-  ...contactsRule,
-  ...scheduleRule,
-  ...sourceRule,
-  ...selectedRawTablesRule,
-  ...documentationRule,
 });
 
 const findDataSetId = (search: string) => {

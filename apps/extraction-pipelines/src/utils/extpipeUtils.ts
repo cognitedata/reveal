@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { User } from 'model/User';
 import { DetailFieldNames } from 'model/Extpipe';
-import { FieldValues } from 'react-hook-form';
 import {
   LastStatuses,
   RunStatusAPI,
@@ -103,25 +102,6 @@ export const updateContactField = (
       return { ...c, ...{ [fieldName]: !c[fieldName] } };
     }
     return c;
-  });
-};
-
-export const updateContact = (
-  contacts: User[],
-  contactField: FieldValues,
-  index: number
-) => {
-  return contacts.map((c: User, i: number) => {
-    if (i === index) {
-      return { ...c, ...contactField };
-    }
-    return c;
-  });
-};
-
-export const removeContactByIdx = (contacts: User[], index: number) => {
-  return contacts.filter((c: User, i: number) => {
-    return i !== index;
   });
 };
 

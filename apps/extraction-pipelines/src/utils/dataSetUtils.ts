@@ -1,12 +1,6 @@
-import { DataSet, ListResponse } from '@cognite/sdk';
+import { DataSet } from '@cognite/sdk';
 import { Extpipe } from 'model/Extpipe';
 import { DataSetMetadata, DataSetModel } from 'model/DataSetModel';
-import { DataSetOptions } from 'utils/validation/extpipeSchemas';
-
-export interface DataSetFormInput {
-  dataset: string;
-  dataSetId: string;
-}
 
 export const mapUniqueDataSetIds = (extpipes?: Extpipe[]) => {
   return extpipes
@@ -71,22 +65,4 @@ export const getDataSetsLink = ({
   return `${origin}/${project}/data-sets/data-set/${dataSetId}${
     cdfEnv ? `?env=${cdfEnv}` : ''
   }`;
-};
-
-export const getDataSetPageValues = (
-  dataSetId?: string,
-  data?: ListResponse<DataSet[]>
-): DataSetFormInput => {
-  if (!data || !dataSetId) {
-    return { dataset: '', dataSetId: '' };
-  }
-  return hasDataSetId(data.items, dataSetId)
-    ? { dataset: DataSetOptions.YES, dataSetId }
-    : { dataset: '', dataSetId: '' };
-};
-
-const hasDataSetId = (data: DataSet[], dataSetId: string): boolean => {
-  return !!data.find(({ id }) => {
-    return id === parseInt(dataSetId, 10);
-  });
 };

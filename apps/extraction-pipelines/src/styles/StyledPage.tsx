@@ -5,7 +5,6 @@ import {
   mainContentSpaceAround,
   mainContentSpaceSides,
 } from 'styles/StyledVariables';
-import { StyledRouterLink } from 'components/extpipes/cols/Name';
 import { MainFullWidthGrid, Span3 } from 'styles/grid/StyledGrid';
 
 export const PageWrapper = styled.div`
@@ -26,13 +25,6 @@ export const PageWrapper = styled.div`
     margin: 1.5rem 0 1.5rem 2rem;
     align-self: center;
   }
-`;
-
-export const BackWrapper = styled(StyledRouterLink)`
-  grid-area: back;
-  display: flex;
-  align-items: center;
-  text-decoration: underline;
 `;
 
 export const GridH2Wrapper = styled((props) => (

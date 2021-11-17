@@ -5,13 +5,6 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 export const WrapperMargin = styled.div`
   margin: 1rem;
 `;
-export const WrapperMarginCenterVH = styled((props) => (
-  <WrapperMargin {...props}>{props.children}</WrapperMargin>
-))`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
 export const CenterFullVH = styled.div`
   position: fixed;

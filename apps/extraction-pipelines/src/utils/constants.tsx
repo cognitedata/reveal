@@ -5,17 +5,12 @@ export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
 export const EXTRACTION_PIPELINE_LOWER: Readonly<string> =
   'extraction pipeline';
 export const EXTRACTION_PIPELINES: Readonly<string> = 'Extraction pipelines';
-export const CONTACTS_DESCRIPTION: Readonly<string> = `Insert contact details for the source system owner and other stakeholders, such as a support team. Enable notification subscription to send e-mail alerts for pipeline issues.`;
 
 export const NAME_LABEL: Readonly<string> = 'Name';
 export const ROLE_LABEL: Readonly<string> = 'Role';
 export const EMAIL_LABEL: Readonly<string> = 'E-mail';
 
 export const NOTIFICATION_LABEL: Readonly<string> = 'Notifications';
-export const NOTIFICATION_HINT: Readonly<string> = `When turned on, the contact will receive an email if the ${EXTRACTION_PIPELINE_LOWER} fails`;
-export const CONTACT_NAME_TEST_ID: Readonly<string> = 'contacts-name-';
-export const CONTACT_EMAIL_TEST_ID: Readonly<string> = 'contacts-email-';
-export const ADD_CONTACT_TEST_ID: Readonly<string> = 'add-contact-btn';
 
 export const CANCEL: Readonly<string> = 'Cancel';
 export const CLOSE: Readonly<string> = 'Close';
@@ -25,17 +20,9 @@ export const CREATE: Readonly<string> = 'Create';
 export const OK: Readonly<string> = 'OK';
 export const BACK: Readonly<string> = 'Back';
 export const NEXT: Readonly<string> = 'Next';
-export const ADD_CONTACT: Readonly<string> = 'Add another contact';
-export const ADD_OWNER: Readonly<string> = 'Add owner';
 export const CONTACTS_HINT = `List other extraction pipeline stakeholders, for instance, a support team or the source system owner. Enable notification subscription to send e-mail alerts for pipeline issues.`;
 
 export const REGISTER: Readonly<string> = 'Register';
-export const ADD_ROW: Readonly<string> = 'Add row';
-export const REMOVE_ROW: Readonly<string> = 'Remove row';
-export const REMOVE_CONTACT: Readonly<string> = 'Remove contact';
-export const METADATA_DESCRIPTION_LABEL: Readonly<string> =
-  'Metadata description';
-export const METADATA_CONTENT_LABEL: Readonly<string> = 'Metadata content';
 export const METADATA_DESC_HEADING: Readonly<string> = 'Key';
 export const METADATA_CONTENT_HEADING: Readonly<string> = 'Value';
 
@@ -49,7 +36,6 @@ export const DESCRIPTION_LABEL: Readonly<string> = 'Description';
 
 export const EXTPIPE_SCHEDULE_HINT: Readonly<string> =
   'Select the schedule for running the extraction pipeline.';
-export const NO_SCHEDULE: Readonly<string> = 'Not defined';
 
 export const NO_RAW_TABLES_MESSAGE: Readonly<string> =
   'No raw tables registered';
@@ -61,7 +47,6 @@ export const SERVER_ERROR_CONTENT: Readonly<string> =
 
 export const EXT_PIPE_TAB_OVERVIEW: Readonly<string> = `Overview`;
 export const EXT_PIPE_TAB_RUN_HISTORY: Readonly<string> = `Run history`;
-export const CONTACTS: Readonly<string> = 'Contacts';
 
 // name
 export const NAME_HINT = `Enter a descriptive name for the ${EXTRACTION_PIPELINE_LOWER}.`;
@@ -82,10 +67,6 @@ export const DOCUMENTATION_HINT: Readonly<ReactFragment> = (
     .
   </>
 );
-
-// Source
-export const SOURCE_HINT: Readonly<string> =
-  'Enter the name of the extraction pipeline source system.';
 
 export const EXTPIPE_EXTERNAL_ID_HEADING: Readonly<string> = 'External ID';
 export const EXTERNAL_ID_HINT: Readonly<string> = `Enter a unique identifier. Use this ID when setting up status and heartbeat reporting for extractors.`;
