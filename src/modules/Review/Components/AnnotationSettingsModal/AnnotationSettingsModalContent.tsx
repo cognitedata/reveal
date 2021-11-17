@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
 import { AnnotationCollection } from 'src/modules/Review/types';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
@@ -10,18 +10,32 @@ import { Keypoints } from './Body/Keypoints';
 
 export const AnnotationSettingsModalContent = ({
   onCancel,
+  options,
 }: {
   onCancel: () => void;
+  options?: {
+    createNew: { text?: string; color?: string };
+    activeView: 'keypoint' | 'shape';
+  };
 }) => {
   const dispatch = useDispatch();
   const collections = useSelector(
     ({ annotationLabelReducer }: RootState) =>
       annotationLabelReducer.predefinedAnnotations
   );
+  const [activeView, setActiveView] = useState<string>(
+    options?.activeView || 'shape'
+  );
 
   const setCollections = (collection: AnnotationCollection) => {
     dispatch(SaveAnnotationTemplates(collection));
   };
+
+  useEffect(() => {
+    if (options && options.activeView !== activeView) {
+      setActiveView(options.activeView);
+    }
+  }, [options]);
 
   return (
     <>
@@ -32,17 +46,26 @@ export const AnnotationSettingsModalContent = ({
         Create pre-defined annotations that can be used when creating manual
         annotations. Individual points can be created under a shared group.
       </Detail>
-      <Tabs style={{ overflow: 'visible' }}>
-        <Tabs.TabPane tab="Pre-defined Shapes" key="pre-defined-shapes">
+      <Tabs
+        style={{ overflow: 'visible' }}
+        activeKey={activeView}
+        onChange={(activeKey) => setActiveView(activeKey)}
+      >
+        <Tabs.TabPane tab="Pre-defined Shapes" key="shape">
           <Body>
-            <Shapes collections={collections} setCollections={setCollections} />
+            <Shapes
+              collections={collections}
+              setCollections={setCollections}
+              options={options}
+            />
           </Body>
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Pre-defined Points" key="pre-defined-points">
+        <Tabs.TabPane tab="Pre-defined Points" key="keypoint">
           <Body>
             <Keypoints
               collections={collections}
               setCollections={setCollections}
+              options={options}
             />
           </Body>
         </Tabs.TabPane>

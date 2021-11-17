@@ -31,7 +31,11 @@ export const AnnotationEditPopup = (props: {
   shapeOptions?: VisionOptionType<string>[];
   lastShape?: string;
   lastCollection: KeypointCollection;
-  onOpenAnnotationSettings: () => void;
+  onOpenAnnotationSettings: (
+    type: string,
+    text?: string,
+    color?: string
+  ) => void;
   popupReference: any;
   nextKeypoint: Keypoint | null;
 }) => {
@@ -160,6 +164,14 @@ export const AnnotationEditPopup = (props: {
     setLabelValue(value);
   };
 
+  const handleAnnotationSettingsOpen = (text?: string, color?: string) => {
+    if (isKeypoint) {
+      onOpenAnnotationSettings('keypoint', text, color);
+    } else {
+      onOpenAnnotationSettings('shape', text, color);
+    }
+  };
+
   useEffect(() => {
     // on select and on label value state is set region is updated accordingly
     if (editing && labelValue?.color && labelValue.value) {
@@ -237,7 +249,7 @@ export const AnnotationEditPopup = (props: {
                 icon="Settings"
                 iconPlacement="right"
                 style={{ textTransform: 'capitalize' }}
-                onClick={onOpenAnnotationSettings}
+                onClick={() => handleAnnotationSettingsOpen()}
               >
                 Annotation Settings
               </Button>
@@ -254,7 +266,7 @@ export const AnnotationEditPopup = (props: {
                 handleSelect(val);
               }}
               labelOptions={isKeypoint ? collectionOptions : shapeOptions}
-              onOpenAnnotationSettings={onOpenAnnotationSettings}
+              onOpenAnnotationSettings={handleAnnotationSettingsOpen}
             />
           </Row>
           {showFooter(!isKeypoint) && (

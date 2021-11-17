@@ -30,14 +30,24 @@ type State = {
   fileIds: number[];
   selectedAnnotationIds: number[];
   hiddenAnnotationIds: number[];
-  showAnnotationSettings: boolean;
+  annotationSettings: {
+    show: boolean;
+    createNewText?: string;
+    createNewColor?: string;
+    createNewType: 'keypoint' | 'shape';
+  };
 };
 
 const initialState: State = {
   fileIds: [],
   selectedAnnotationIds: [],
   hiddenAnnotationIds: [],
-  showAnnotationSettings: false,
+  annotationSettings: {
+    show: false,
+    createNewText: undefined,
+    createNewColor: undefined,
+    createNewType: 'shape',
+  },
 };
 
 const reviewSlice = createSlice({
@@ -67,8 +77,51 @@ const reviewSlice = createSlice({
       const annotationId = action.payload;
       state.selectedAnnotationIds = [annotationId];
     },
-    showAnnotationSettingsModel(state, action: PayloadAction<boolean>) {
-      state.showAnnotationSettings = action.payload;
+    showAnnotationSettingsModel: {
+      prepare: (
+        show: boolean,
+        type = 'keypoint',
+        text?: string,
+        color?: string
+      ) => {
+        if (
+          (type !== undefined &&
+            text !== null &&
+            ['keypoint', 'shape'].includes(type) &&
+            text !== undefined) ||
+          (color !== undefined && color !== null)
+        ) {
+          return {
+            payload: {
+              show,
+              options: { type, text, color },
+            },
+          };
+        }
+
+        return {
+          payload: {
+            show,
+          },
+        };
+      },
+      reducer: (
+        state,
+        action: PayloadAction<{
+          show: boolean;
+          options?: {
+            type: 'keypoint' | 'shape';
+            text?: string;
+            color?: string;
+          };
+        }>
+      ) => {
+        state.annotationSettings.createNewText = action.payload.options?.text;
+        state.annotationSettings.createNewColor = action.payload.options?.color;
+        state.annotationSettings.createNewType =
+          action.payload.options?.type || 'keypoint';
+        state.annotationSettings.show = action.payload.show;
+      },
     },
     resetPreview(state) {
       state.selectedAnnotationIds = [];
