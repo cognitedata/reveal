@@ -6,7 +6,7 @@ import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render'
 import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { MetaData } from 'components/extpipe/MetaData';
+import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { DetailFieldNames } from 'model/Extpipe';
 
 describe('MetaData', () => {
@@ -30,7 +30,7 @@ describe('MetaData', () => {
   });
   test('Should render metadata', async () => {
     sdkv3.get.mockResolvedValue({ data: { ...mock, metadata } });
-    render(<MetaData canEdit={false} />, {
+    render(<MetaDataSection canEdit={false} />, {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
@@ -44,7 +44,7 @@ describe('MetaData', () => {
 
   test('Should render add metadata meta does not exist', () => {
     sdkv3.get.mockResolvedValue({ data: { ...mock, metadata: undefined } });
-    render(<MetaData canEdit />, { wrapper: wrapper.wrapper });
+    render(<MetaDataSection canEdit />, { wrapper: wrapper.wrapper });
     expect(
       screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
     ).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe('MetaData', () => {
         },
       },
     });
-    render(<MetaData canEdit />, { wrapper: wrapper.wrapper });
+    render(<MetaDataSection canEdit />, { wrapper: wrapper.wrapper });
     expect(
       screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
     ).toBeInTheDocument();

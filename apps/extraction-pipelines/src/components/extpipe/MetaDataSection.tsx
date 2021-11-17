@@ -11,6 +11,7 @@ import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
 import { Hint } from 'styles/StyledForm';
 import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
 import { StyledTitle3 } from 'styles/StyledHeadings';
+import { Section } from 'components/extpipe/Section';
 
 const MetaWrapper = styled.section`
   display: flex;
@@ -29,19 +30,13 @@ interface MetaProps {
 const META_HINT: Readonly<string> =
   'Information specific to your organization can be added using metadata fields with key/value pairs.';
 
-export const MetaData = ({
+export const MetaDataSection = ({
   testId = 'meta-',
   canEdit,
 }: PropsWithChildren<MetaProps>) => {
   const [showMetaModal, setShowMetaModal] = useState(false);
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
-
-  const toggleModal = (show: boolean) => {
-    return () => {
-      setShowMetaModal(show);
-    };
-  };
 
   const renderMeta = (meta: MetaDataModel) => {
     return (
@@ -62,34 +57,41 @@ export const MetaData = ({
 
   const meta = storedExtpipe?.metadata;
   const closeDialog = () => setShowMetaModal(false);
+  const openDialog = () => setShowMetaModal(true);
   return (
-    <MetaWrapper>
-      {meta == null ? (
-        <AddFieldValueBtn canEdit={canEdit} onClick={toggleModal(true)}>
-          {DetailFieldNames.META_DATA.toLowerCase()}
-        </AddFieldValueBtn>
-      ) : (
-        <EditableAreaButton
-          disabled={!canEdit}
-          onClick={() => canEdit && setShowMetaModal(true)}
-          $full
+    <Section
+      title="Metadata"
+      icon="DataTable"
+      editButton={{ onClick: openDialog, canEdit }}
+    >
+      <MetaWrapper>
+        {meta == null ? (
+          <AddFieldValueBtn canEdit={canEdit} onClick={openDialog}>
+            {DetailFieldNames.META_DATA.toLowerCase()}
+          </AddFieldValueBtn>
+        ) : (
+          <EditableAreaButton
+            disabled={!canEdit}
+            onClick={() => canEdit && setShowMetaModal(true)}
+            $full
+          >
+            <div>{renderMeta(meta)}</div>
+          </EditableAreaButton>
+        )}
+        <EditModal
+          title={DetailFieldNames.META_DATA}
+          visible={showMetaModal}
+          close={closeDialog}
         >
-          <div>{renderMeta(meta)}</div>
-        </EditableAreaButton>
-      )}
-      <EditModal
-        title={DetailFieldNames.META_DATA}
-        visible={showMetaModal}
-        close={closeDialog}
-      >
-        <StyledTitle3>
-          Document metadata associated with the extraction pipeline
-        </StyledTitle3>
-        <p>
-          <Hint>{META_HINT}</Hint>
-        </p>
-        <EditMetaData close={closeDialog} />
-      </EditModal>
-    </MetaWrapper>
+          <StyledTitle3>
+            Document metadata associated with the extraction pipeline
+          </StyledTitle3>
+          <p>
+            <Hint>{META_HINT}</Hint>
+          </p>
+          <EditMetaData close={closeDialog} />
+        </EditModal>
+      </MetaWrapper>
+    </Section>
   );
 };

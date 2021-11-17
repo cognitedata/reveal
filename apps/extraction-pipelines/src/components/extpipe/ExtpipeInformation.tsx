@@ -11,7 +11,7 @@ import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
 import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
 import { ContactsSection } from 'components/extpipe/ContactsSection';
-import { MetaData } from 'components/extpipe/MetaData';
+import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
 
@@ -81,9 +81,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
       </Section>
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
-      <Section title="Metadata" icon="DataTable">
-        <MetaData canEdit={canEdit} />
-      </Section>
+      <MetaDataSection canEdit={canEdit} />
       <Section title="About extraction pipeline" icon="Info">
         <FieldVerticalDisplay
           label={DetailFieldNames.ID}
