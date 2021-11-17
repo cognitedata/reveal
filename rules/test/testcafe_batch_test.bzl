@@ -61,6 +61,8 @@ def testcafe_batch_test(name, app_name, data, serve_script, starting_port = 1111
                 "--node_options=--require=./$(rootpath %s)" % file_name,
             ] + args + ["--app '%s %s'" % (serve_script, port)],
             data = [
+                "@npm//kill-port",
+                "@npm//serve",
                 file_name,
                 ":%s_base_%s" % (name, test_num),
             ],

@@ -11,12 +11,16 @@
 
 SERVE_PORT=11111
 
+# Temporary fix to use installed modules instead of installing them each run with npx
+KILL_PORT="$TEST_SRCDIR/npm/node_modules/kill-port/index.js"
+SERVE="$TEST_SRCDIR/npm/node_modules/serve/bin/serve.js"
+
 echo "Server using port: $SERVE_PORT"
 
-npx kill-port --port $SERVE_PORT
+$KILL_PORT --port $SERVE_PORT
 
 echo ' '
 echo '-> Starting testcafe server (from build)'
 echo ' '
 
-npx serve -s build_bazel -l $SERVE_PORT
+$SERVE -s build_bazel -l $SERVE_PORT

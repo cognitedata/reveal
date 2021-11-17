@@ -42,6 +42,8 @@ def testcafe_test(name, app_name, data, args = [], timeout = "long", **kwargs):
             "--node_options=--require=./$(rootpath %s)" % file_name,
         ] + args,
         data = [
+            "@npm//kill-port",
+            "@npm//serve",
             file_name,
             ":%s_base" % name,
         ],
