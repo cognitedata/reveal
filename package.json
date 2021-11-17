@@ -79,7 +79,7 @@
     "@nrwl/storybook": "13.0.2",
     "@nrwl/tao": "13.0.2",
     "@nrwl/web": "13.0.2",
-    "@nrwl/workspace": "13.0.2",
+    "@nrwl/workspace": "13.1.4",
     "@storybook/addon-actions": "^6.3.12",
     "@storybook/addon-essentials": "~6.3.12",
     "@storybook/addon-knobs": "^6.3.1",
