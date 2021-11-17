@@ -15,7 +15,7 @@ describe('RawTablePage', () => {
   test('Renders', () => {
     renderWithReactHookForm(
       <DataSetIdInput
-        data={{ items: [] }}
+        data={[]}
         status="success"
         renderLabel={(labelText, inputId) => (
           <label htmlFor={inputId}>{labelText}</label>
@@ -29,7 +29,7 @@ describe('RawTablePage', () => {
   test('Renders - "backup"-input on error', () => {
     renderWithReactHookForm(
       <DataSetIdInput
-        data={{ items: [] }}
+        data={[]}
         status="error"
         renderLabel={(labelText, inputId) => (
           <label htmlFor={inputId}>{labelText}</label>
@@ -47,7 +47,7 @@ describe('RawTablePage', () => {
   test('Interact with form', async () => {
     const mock = datasetMockResponse();
     const { container } = renderWithReactHookForm(
-      <DataSetIdInput data={mock} status="success" />,
+      <DataSetIdInput data={mock.items} status="success" />,
       {
         defaultValues: {},
       }
@@ -66,7 +66,7 @@ describe('RawTablePage', () => {
   test(`Show no data set exist when search does no find dataset`, async () => {
     const mock = datasetMockResponse();
     const { container } = renderWithReactHookForm(
-      <DataSetIdInput data={mock} status="success" />,
+      <DataSetIdInput data={mock.items} status="success" />,
       {
         defaultValues: {},
       }

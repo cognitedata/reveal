@@ -3,7 +3,7 @@ import { AutoComplete, Colors, Loader } from '@cognite/cogs.js';
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import { MutationStatus } from 'react-query';
-import { DataSet, ListResponse } from '@cognite/sdk';
+import { DataSet } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
 import { InputController } from 'components/inputs/InputController';
 import { Hint } from 'styles/StyledForm';
@@ -28,7 +28,7 @@ const StyledAutoComplete = styled(AutoComplete)`
 `;
 
 interface DataSetIdPageProps {
-  data?: ListResponse<DataSet[]>;
+  data?: DataSet[];
   renderLabel?: (labelText: string, inputId: string) => React.ReactNode;
   status: 'error' | 'success' | 'loading' | 'idle';
   autoFocus?: boolean;
@@ -52,7 +52,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
 
   const getOptions = (): SelectOption[] => {
     return data
-      ? data.items.map(({ id, name, externalId }) => {
+      ? data.map(({ id, name, externalId }) => {
           return { value: id, label: name, externalId };
         })
       : [];
