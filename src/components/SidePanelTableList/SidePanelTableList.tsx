@@ -12,6 +12,7 @@ import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
 import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
 import { useTables } from 'hooks/sdk-queries';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { useActiveTable } from 'hooks/table-tabs';
 
 const StyledSidePanelTableListHeaderWrapper = styled.div`
   align-items: center;
@@ -57,6 +58,8 @@ const SidePanelTableList = (): JSX.Element => {
     </>
   );
 
+  const [activeDatabase, activeTable] = useActiveTable();
+
   useEffect(() => {
     if (!isLoading && hasNextPage) {
       fetchNextPage();
@@ -98,6 +101,7 @@ const SidePanelTableList = (): JSX.Element => {
           </Tooltip>
           <StyledSidePanelTableListHeaderIconDivider />
           <Button
+            disabled={!(activeDatabase && activeTable)}
             icon="PanelLeft"
             onClick={() => setIsSidePanelOpen(false)}
             size="small"
