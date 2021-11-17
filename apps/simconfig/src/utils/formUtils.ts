@@ -14,5 +14,5 @@ export function isValidExtension(
 
 export const getFileExtensionFromFileName = (name: string) => {
   const lastDot = name?.lastIndexOf('.');
-  return name?.substring(lastDot);
+  return name?.substring(lastDot).toLowerCase();
 };
