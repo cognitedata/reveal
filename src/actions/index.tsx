@@ -302,10 +302,12 @@ export const useLabelSuggestions = () => {
     if (dataSets) {
       const suggestedLabels = dataSets.reduce(
         (acc: { [label: string]: string }, cur) => {
-          // eslint-disable-next-line no-unused-expressions
-          cur?.metadata?.consoleLabels?.forEach((label) => {
-            acc[label] = label;
-          });
+          if (Array.isArray(cur?.metadata?.consoleLabels)) {
+            // eslint-disable-next-line no-unused-expressions
+            cur?.metadata?.consoleLabels?.forEach((label) => {
+              acc[label] = label;
+            });
+          }
           return acc;
         },
         {}

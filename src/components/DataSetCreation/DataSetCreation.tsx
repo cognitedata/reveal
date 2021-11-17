@@ -341,7 +341,11 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
             id={props.dataSet?.id}
             name={props.dataSet.name}
             description={props.dataSet.description}
-            labels={props.dataSet.metadata.consoleLabels}
+            labels={
+              Array.isArray(props.dataSet.metadata.consoleLabels)
+                ? props.dataSet.metadata.consoleLabels
+                : []
+            }
           />
         ) : (
           <DataSetInfoForm

@@ -133,7 +133,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
           )}
           <ItemLabel>Labels</ItemLabel>
           <ItemValue>
-            {consoleLabels.length > 0 ? (
+            {Array.isArray(consoleLabels) && consoleLabels.length > 0 ? (
               <>
                 {consoleLabels.map((tag) => (
                   <LabelTag key={tag}>{tag}</LabelTag>
