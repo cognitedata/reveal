@@ -11,6 +11,7 @@ import {
   hideFileMetadata,
   setCurrentView,
   setFocusedFileId,
+  selectAllProcessFiles,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProcessToolBar } from 'src/modules/Process/Containers/ProcessToolBar/ProcessToolBar';
@@ -20,6 +21,8 @@ import { ProcessFileUploadModalContainer } from 'src/modules/Process/Containers/
 import { ProcessFileDownloadModalContainer } from 'src/modules/Process/Containers/ProcessFileDownloadModalContainer';
 import { ProcessBulkEditModalContainer } from 'src/modules/Process/Containers/ProcessBulkEditModalContainer';
 import { ExploreModalContainer } from 'src/modules/Process/Containers/ExploreModalContainer';
+import { pollJobs } from 'src/store/thunks/Process/pollJobs';
+import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 
 const ResultsContainer = styled.div`
   flex: 1;
@@ -40,7 +43,24 @@ export default function ProcessStep() {
     ({ processSlice }: RootState) => processSlice.currentView
   );
 
+  const processFiles = useSelector((state: RootState) =>
+    selectAllProcessFiles(state)
+  );
+  const poll = () => {
+    const ids = processFiles
+      .filter((file) => !isVideo(file))
+      .map(({ id }) => id);
+    console.log(processFiles);
+
+    dispatch(
+      pollJobs({
+        fileIds: ids,
+      })
+    );
+  };
+
   useEffect(() => {
+    poll();
     return () => {
       dispatch(hideFileMetadata());
     };

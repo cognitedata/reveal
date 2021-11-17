@@ -78,7 +78,10 @@ export type OfflineState = {
     ExplorerReducerState,
     'filter' | 'query' | 'sortMeta' | 'focusedFileId'
   >;
-  processSlice: Pick<ProcessReducerState, 'fileIds' | 'jobs'>;
+  processSlice: Pick<
+    ProcessReducerState,
+    'fileIds' | 'jobs' | 'files' | 'selectedDetectionModels'
+  >;
 };
 
 const getOfflineState = (state: RootState): OfflineState => {
@@ -98,6 +101,8 @@ const getOfflineState = (state: RootState): OfflineState => {
     processSlice: {
       fileIds: state.processSlice.fileIds,
       jobs: state.processSlice.jobs,
+      files: state.processSlice.files,
+      selectedDetectionModels: state.processSlice.selectedDetectionModels,
     },
   };
   return offState;
