@@ -42,7 +42,7 @@ export const ReactImageAnnotateWrapper = ({
   onDeleteAnnotation,
   annotations,
   fileInfo,
-  predefinedLabels,
+  predefinedAnnotations,
   nextToDoKeypointInCurrentCollection,
   lastShapeName,
   lastKeypointCollection,
@@ -65,7 +65,7 @@ export const ReactImageAnnotateWrapper = ({
 
   const dispatch: AppDispatch = useDispatch();
 
-  const collectionOptions = predefinedLabels?.predefinedKeypoints.map(
+  const collectionOptions = predefinedAnnotations?.predefinedKeypoints.map(
     (keypoint) => ({
       value: keypoint.collectionName,
       label: keypoint.collectionName,
@@ -80,7 +80,7 @@ export const ReactImageAnnotateWrapper = ({
       ),
     })
   );
-  const shapeOptions = predefinedLabels?.predefinedShapes.map((shape) => ({
+  const shapeOptions = predefinedAnnotations?.predefinedShapes.map((shape) => ({
     value: shape.shapeName,
     label: shape.shapeName,
     icon: AnnotationUtils.getIconType({
@@ -229,7 +229,7 @@ export const ReactImageAnnotateWrapper = ({
   }, [
     onCreateAnnotation,
     onUpdateAnnotation,
-    predefinedLabels,
+    predefinedAnnotations,
     nextToDoKeypointInCurrentCollection,
     lastShapeName,
   ]);

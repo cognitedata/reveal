@@ -56,7 +56,7 @@ export type ReactImageAnnotateWrapperProps = FilePreviewProps & {
   editable?: boolean;
   creatable?: boolean;
   handleAddToFile?: () => void;
-  predefinedLabels: AnnotationCollection;
+  predefinedAnnotations: AnnotationCollection;
   lastShapeName: string;
   lastKeypointCollection: KeypointCollection;
   selectedTool: Tool;
