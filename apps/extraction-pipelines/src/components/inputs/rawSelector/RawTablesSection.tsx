@@ -19,19 +19,12 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
 
-  const toggleModal = (show: boolean) => {
-    return () => {
-      if (canEdit) {
-        setShowRawModal(show);
-      }
-    };
-  };
-
-  const openEdit = toggleModal(true);
+  const openDialog = () => canEdit && setShowRawModal(true);
+  const closeDialog = () => setShowRawModal(false);
   const renderRaw = (extpipe?: Extpipe) => {
     if (!extpipe?.rawTables?.length) {
       return (
-        <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
+        <AddFieldValueBtn canEdit={canEdit} onClick={openDialog}>
           {DetailFieldNames.RAW_TABLE.toLowerCase()}
         </AddFieldValueBtn>
       );
@@ -40,7 +33,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
       <Section
         title="RAW tables"
         icon="Table"
-        editButton={{ onClick: openEdit, canEdit }}
+        editButton={{ onClick: openDialog, canEdit }}
       >
         <RawTableWrapper
           id="raw-table-grid"
@@ -52,7 +45,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
             icon="Edit"
             iconPlacement="right"
             disabled={!canEdit}
-            onClick={openEdit}
+            onClick={openDialog}
             title="Toggle raw table modal"
             data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
             $full
@@ -92,7 +85,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   return (
     <>
       <div>{renderRaw(storedExtpipe)}</div>
-      <RawEditModal visible={showRawModal} close={toggleModal(false)} />
+      <RawEditModal visible={showRawModal} close={closeDialog} />
     </>
   );
 };
