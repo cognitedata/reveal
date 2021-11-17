@@ -99,6 +99,7 @@ const OptionContainer = styled.div`
   grid-template-rows: 100%;
   grid-template-columns: auto auto;
   width: 100%;
+  place-items: center start;
 `;
 
 const InputTextLabel = styled.span`
