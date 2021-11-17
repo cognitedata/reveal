@@ -158,9 +158,9 @@ export const SideView = ({
             return instance.symbolName === symbol.symbolName;
           })
           .map((instance) => (
-            <p key={instance.svgPathIds.join('')}>
+            <p key={instance.pathIds.join('')}>
               {instance.symbolName}&nbsp;-&nbsp;
-              {instance.svgPathIds.join(' . ')}
+              {instance.pathIds.join(' ')}
             </p>
           ))}
       </div>
@@ -181,9 +181,9 @@ export const SideView = ({
           <CollapseSeperator>Lines</CollapseSeperator>
           <Collapse.Panel header={`Flowlines (${lines?.length || 0})`}>
             {lines?.map((line) => (
-              <p key={line.svgPathIds.join('')}>
+              <p key={line.pathIds.join('')}>
                 {line.symbolName}&nbsp;-&nbsp;
-                {line.svgPathIds.join(' . ')}
+                {line.pathIds.join(' . ')}
               </p>
             ))}
           </Collapse.Panel>

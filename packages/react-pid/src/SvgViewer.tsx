@@ -3,7 +3,8 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import {
-  findAllInstancesOfSymbol,
+  SvgDocument,
+  newInternalSvgPath,
   SvgPath,
   DiagramSymbol,
   DiagramLineInstance,
@@ -17,6 +18,8 @@ import { Modal, Input, Button } from '@cognite/cogs.js';
 import { SideView } from './SideView';
 
 const appElement = document.querySelector('#root') || undefined;
+
+let svgDocument: SvgDocument | undefined;
 
 const SvgViewerWrapper = styled.div`
   height: calc(100% - 56px);
@@ -144,8 +147,6 @@ export const SvgViewer = () => {
     }
   }, [existingSymbolPromptData]);
 
-  const all: SVGElement[] = [];
-
   const onkeydown = (e: KeyboardEvent) => {
     if (document.activeElement === document.body) {
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
@@ -189,15 +190,19 @@ export const SvgViewer = () => {
       const newSymbols = jsonData.symbols as DiagramSymbol[];
       setSymbols([...symbols, ...newSymbols]);
 
-      let allNewSymbolInstances: DiagramSymbolInstance[] = [];
-      newSymbols.forEach((newSymbol) => {
-        const newSymbolInstances = findAllInstancesOfSymbol(all, newSymbol);
-        allNewSymbolInstances = [
-          ...allNewSymbolInstances,
-          ...newSymbolInstances,
-        ];
-      });
-      setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+      if (svgDocument !== undefined) {
+        let allNewSymbolInstances: DiagramSymbolInstance[] = [];
+        newSymbols.forEach((newSymbol) => {
+          const newSymbolInstances = (
+            svgDocument as SvgDocument
+          ).findAllInstancesOfSymbol(newSymbol);
+          allNewSymbolInstances = [
+            ...allNewSymbolInstances,
+            ...newSymbolInstances,
+          ];
+        });
+        setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+      }
     }
   };
 
@@ -247,9 +252,12 @@ export const SvgViewer = () => {
 
     setSelection([]);
 
-    const newSymbolInstances = findAllInstancesOfSymbol(all, newSymbol);
-    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
-    setExistingSymbolPromptData(null);
+    if (svgDocument !== undefined) {
+      const newSymbolInstances =
+        svgDocument.findAllInstancesOfSymbol(newSymbol);
+      setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+      setExistingSymbolPromptData(null);
+    }
   };
 
   // const saveLine = (selection: SVGElement[]) => {};
@@ -261,9 +269,13 @@ export const SvgViewer = () => {
       svg.style.width = '100%';
       svg.style.height = '100%';
 
+      const all: SVGElement[] = [];
+
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
-          all.push(node);
+          if (svgDocument === undefined) {
+            all.push(node);
+          }
 
           if (selection.some((svgPath) => svgPath.id === node.id)) {
             node.style.stroke = 'red';
@@ -271,13 +283,13 @@ export const SvgViewer = () => {
             node.style.strokeWidth = val.toString();
           }
 
-          if (lines.some((line) => line.svgPathIds.includes(node.id))) {
+          if (lines.some((line) => line.pathIds.includes(node.id))) {
             node.style.stroke = 'magenta';
           }
 
           if (
             symbolInstances.some((symbolInst) =>
-              symbolInst.svgPathIds.includes(node.id)
+              symbolInst.pathIds.includes(node.id)
             )
           ) {
             node.style.stroke = 'pink';
@@ -295,6 +307,19 @@ export const SvgViewer = () => {
         if (child.tagName === 'g') {
           recursive(child);
         }
+      }
+
+      if (svgDocument === undefined) {
+        svgDocument = new SvgDocument(
+          all
+            .filter((svgElement) => svgElement.getAttribute('d'))
+            .map((svgElement) => {
+              return newInternalSvgPath(
+                svgElement.getAttribute('d') as string,
+                svgElement.id
+              );
+            })
+        );
       }
     }
   };
@@ -359,9 +384,9 @@ export const SvgViewer = () => {
             }
             if (active === 'AddLine') {
               // Remove a line if already selected
-              if (lines.some((line) => line.svgPathIds.includes(node.id))) {
+              if (lines.some((line) => line.pathIds.includes(node.id))) {
                 const index = lines.findIndex((line) =>
-                  line.svgPathIds.includes(node.id)
+                  line.pathIds.includes(node.id)
                 );
                 const newLines = [...lines];
                 newLines.splice(index, 1);
@@ -371,7 +396,7 @@ export const SvgViewer = () => {
                   ...lines,
                   {
                     symbolName: 'Line',
-                    svgPathIds: [node.id],
+                    pathIds: [node.id],
                   },
                 ]);
               }

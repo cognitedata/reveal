@@ -1,6 +1,6 @@
 import { parseSVG, makeAbsolute, CommandMadeAbsolute } from 'svg-path-parser';
 
-import { CurveSegment, LineSegment, PathSegment, Point } from '../PathSegments';
+import { CurveSegment, LineSegment, PathSegment, Point } from './PathSegments';
 
 export const getSegments = (commands: CommandMadeAbsolute[]): PathSegment[] => {
   const segments: PathSegment[] = [];

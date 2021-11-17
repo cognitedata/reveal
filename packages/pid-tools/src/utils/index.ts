@@ -1,0 +1,1 @@
+export { getSvgBoundingBox } from './getSvgBoundingBox';

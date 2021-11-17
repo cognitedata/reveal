@@ -1,13 +1,6 @@
-export interface SvgBoundingBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import { BoundingBox } from 'types';
 
-export const getSvgBoundingBox = (
-  svgElements: SVGElement[]
-): SvgBoundingBox => {
+export const getSvgBoundingBox = (svgElements: SVGElement[]): BoundingBox => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
