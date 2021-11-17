@@ -4,7 +4,7 @@ import { VisionOptionType } from 'src/modules/Review/types';
 import React from 'react';
 import styled from 'styled-components';
 
-export const CustomAnnotationCreateOption = (
+export const VisionSelectOption = (
   props: OptionProps<OptionType<VisionOptionType<string>>>
 ) => {
   return (

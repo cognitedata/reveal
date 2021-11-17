@@ -16,7 +16,7 @@ import {
   KeypointCollection,
   VisionOptionType,
 } from 'src/modules/Review/types';
-import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopupCustomComponents/AnnotationEditPopupBody';
+import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
 
 export const AnnotationEditPopup = (props: {
   region: Region;

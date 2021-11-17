@@ -12,7 +12,7 @@ import { PopupUIElementContainer } from 'src/modules/Review/Components/ReactImag
 import React from 'react';
 import { ColorBadge } from 'src/modules/Review/Components/ColorBadge/ColorBadge';
 import styled from 'styled-components';
-import { CustomAnnotationAutoComplete } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopupCustomComponents/CustomAnnotationAutoComplete';
+import { VisionAutoComplete } from 'src/modules/Common/Components/VisionAutoComplete/VisionAutoComplete';
 
 export type BodyContainerMode = 'point' | 'shape';
 
@@ -85,7 +85,7 @@ export const AnnotationEditPopupBody = ({
         <>
           <Col span={4}>
             <PopupUIElementContainer title="Collection">
-              <CustomAnnotationAutoComplete
+              <VisionAutoComplete
                 value={labelOption}
                 options={labelOptions}
                 onChange={onSelectLabel}
@@ -110,7 +110,7 @@ export const AnnotationEditPopupBody = ({
         </Col>
         <Col span={4}>
           <PopupUIElementContainer title="Label">
-            <CustomAnnotationAutoComplete
+            <VisionAutoComplete
               value={labelOption}
               options={labelOptions}
               onChange={onSelectLabel}

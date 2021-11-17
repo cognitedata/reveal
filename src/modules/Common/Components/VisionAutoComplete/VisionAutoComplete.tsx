@@ -1,13 +1,13 @@
 import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
-import { CustomAnnotationCreateOption } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopupCustomComponents/CustomAnnotationCreateOption';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { OptionProps } from 'react-select';
 import { VisionOptionType } from 'src/modules/Review/types';
 import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
+import { VisionSelectOption } from 'src/modules/Common/Components/SelectOption/VisionSelectOption';
 
-export const CustomAnnotationAutoComplete = ({
+export const VisionAutoComplete = ({
   value,
   options,
   onChange,
@@ -36,7 +36,7 @@ export const CustomAnnotationAutoComplete = ({
             <>
               <CustomMenuList>{props.children}</CustomMenuList>
               <CustomMenuFooter>
-                <CustomAnnotationCreateOption
+                <VisionSelectOption
                   {...props}
                   data={{
                     icon:
@@ -68,13 +68,13 @@ export const CustomAnnotationAutoComplete = ({
                       Create New
                     </CreateNewLabelBtn>
                   </OptionContainer>
-                </CustomAnnotationCreateOption>
+                </VisionSelectOption>
               </CustomMenuFooter>
             </>
           );
         },
         Option: (props: OptionProps<OptionType<VisionOptionType<string>>>) => {
-          return <CustomAnnotationCreateOption {...props} />;
+          return <VisionSelectOption {...props} />;
         },
         NoOptionsMessage: () => {
           return null;
