@@ -112,8 +112,6 @@ describe('worldToViewport', () => {
     const pixelRatio = 2.5;
     renderer.setPixelRatio(pixelRatio);
     const scaledRenderer = renderer.getSize(new THREE.Vector2()).multiplyScalar(pixelRatio);
-    canvasRect.width *= pixelRatio;
-    canvasRect.height *= pixelRatio;
     renderer.setSize(scaledRenderer.x, scaledRenderer.y);
     const absoluteWithPixelRatio2 = worldToViewportCoordinates(renderer, camera, p, new THREE.Vector3());
     const normalizedWithPixelRatio2 = worldToNormalizedViewportCoordinates(camera, p, new THREE.Vector3());
