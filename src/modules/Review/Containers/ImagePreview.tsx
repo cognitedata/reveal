@@ -223,13 +223,7 @@ export const ImagePreview = ({
       <AnnotationSettingsModal
         showModal={annotationSettingsState.show}
         onCancel={() => dispatch(showAnnotationSettingsModel(false))}
-        options={{
-          activeView: annotationSettingsState.createNewType,
-          createNew: {
-            text: annotationSettingsState.createNewText,
-            color: annotationSettingsState.createNewColor,
-          },
-        }}
+        options={annotationSettingsState}
       />
       <KeyboardShortcutModal
         showModal={showKeyboardShortcutModal}

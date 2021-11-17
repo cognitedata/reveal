@@ -56,7 +56,7 @@ export const AnnotationSettingsModalContent = ({
             <Shapes
               collections={collections}
               setCollections={setCollections}
-              options={options}
+              options={options?.activeView === 'shape' ? options : undefined}
             />
           </Body>
         </Tabs.TabPane>
@@ -65,7 +65,7 @@ export const AnnotationSettingsModalContent = ({
             <Keypoints
               collections={collections}
               setCollections={setCollections}
-              options={options}
+              options={options?.activeView === 'keypoint' ? options : undefined}
             />
           </Body>
         </Tabs.TabPane>

@@ -32,9 +32,11 @@ type State = {
   hiddenAnnotationIds: number[];
   annotationSettings: {
     show: boolean;
-    createNewText?: string;
-    createNewColor?: string;
-    createNewType: 'keypoint' | 'shape';
+    activeView: 'keypoint' | 'shape';
+    createNew: {
+      text?: string;
+      color?: string;
+    };
   };
 };
 
@@ -44,9 +46,11 @@ const initialState: State = {
   hiddenAnnotationIds: [],
   annotationSettings: {
     show: false,
-    createNewText: undefined,
-    createNewColor: undefined,
-    createNewType: 'shape',
+    activeView: 'shape',
+    createNew: {
+      text: undefined,
+      color: undefined,
+    },
   },
 };
 
@@ -116,9 +120,10 @@ const reviewSlice = createSlice({
           };
         }>
       ) => {
-        state.annotationSettings.createNewText = action.payload.options?.text;
-        state.annotationSettings.createNewColor = action.payload.options?.color;
-        state.annotationSettings.createNewType =
+        state.annotationSettings.createNew.text = action.payload.options?.text;
+        state.annotationSettings.createNew.color =
+          action.payload.options?.color;
+        state.annotationSettings.activeView =
           action.payload.options?.type || 'keypoint';
         state.annotationSettings.show = action.payload.show;
       },
