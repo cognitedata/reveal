@@ -15,11 +15,11 @@ export const PlaceholderWrapper = styled.div`
   .content {
     display: flex;
     flex-direction: column;
-    margin-right: 24px;
+    margin-right: 32px;
 
     .placeholder-text {
       width: 480px;
-      padding-top: 28px;
+      padding-top: 16px;
       margin-bottom: 24px;
       .cogs-title-3 {
         margin-bottom: 8px;
@@ -28,6 +28,7 @@ export const PlaceholderWrapper = styled.div`
         display: inline;
       }
       .cogs-label {
+        height: 24px;
         margin-right: 5px;
         background: rgba(50, 56, 83, 0.04);
         font-size: 16px;
