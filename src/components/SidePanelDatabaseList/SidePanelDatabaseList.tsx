@@ -9,6 +9,7 @@ import CreateDatabaseModal from 'components/CreateDatabaseModal/CreateDatabaseMo
 import { RawExplorerContext } from 'contexts';
 import { useDatabases } from 'hooks/sdk-queries';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { useActiveTable } from 'hooks/table-tabs';
 
 import SidePanelDatabaseListContent from './SidePanelDatabaseListContent';
 import SidePanelDatabaseListCreateDatabaseBanner from './SidePanelDatabaseListCreateDatabaseBanner';
@@ -48,6 +49,8 @@ const SidePanelDatabaseList = (): JSX.Element => {
     </>
   );
 
+  const [activeDatabase, activeTable] = useActiveTable();
+
   useEffect(() => {
     if (hasNextPage && !isLoading) {
       fetchNextPage();
@@ -85,6 +88,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
           </Tooltip>
           <StyledSidePanelDatabaseListHeaderIconDivider />
           <Button
+            disabled={!(activeDatabase && activeTable)}
             icon="PanelLeft"
             onClick={() => setIsSidePanelOpen(false)}
             size="small"
