@@ -20,8 +20,7 @@ import OIDC from 'pages/OIDC';
 import SecurityCategories from 'pages/SecurityCategories';
 import ServiceAccounts from 'pages/ServiceAccounts';
 import { useQueryClient, useIsFetching, useIsMutating } from 'react-query';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { useAuthConfiguration } from 'hooks';
+import { useAuthConfiguration, usePermissions } from 'hooks';
 
 export default function () {
   const client = useQueryClient();

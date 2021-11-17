@@ -6,8 +6,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
 import { ServiceAccount } from '@cognite/sdk';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { useGroups } from 'hooks';
+import { useGroups, usePermissions } from 'hooks';
 import { stringContains } from '../Groups/utils';
 
 function GroupTag({ id }: { id: number }) {
