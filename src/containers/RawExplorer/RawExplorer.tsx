@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Loader } from '@cognite/cogs.js';
+import { Body, Colors, Loader, Title } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
@@ -47,14 +47,26 @@ const RawExplorer = (): JSX.Element => {
       {hasReadAccess && hasListAccess ? (
         <StyledRawExplorerContent>
           <SidePanel />
-          {tabDatabase && tabTable && (
-            <StyledRawExplorerTableContentWrapper
-              $isSidePanelOpen={isSidePanelOpen}
-            >
-              <TableTabList />
-              <TableContent />
-            </StyledRawExplorerTableContentWrapper>
-          )}
+          <StyledRawExplorerTableContentWrapper
+            $isSidePanelOpen={isSidePanelOpen}
+          >
+            {tabDatabase && tabTable ? (
+              <>
+                <TableTabList />
+                <TableContent />
+              </>
+            ) : (
+              <StyledRawExplorerNotSelectedWrapper>
+                <StyledRawExplorerNotSelectedContent>
+                  <Title level={3}>Select a table to view raw data</Title>
+                  <StyledRawExplorerNotSelectedBody>
+                    Use the side menu to navigate between databases and open raw
+                    tables.
+                  </StyledRawExplorerNotSelectedBody>
+                </StyledRawExplorerNotSelectedContent>
+              </StyledRawExplorerNotSelectedWrapper>
+            )}
+          </StyledRawExplorerTableContentWrapper>
         </StyledRawExplorerContent>
       ) : (
         <NoAccessPage />
@@ -80,6 +92,23 @@ const StyledRawExplorerTableContentWrapper = styled.div<{
       ${({ $isSidePanelOpen }) =>
         $isSidePanelOpen ? DATABASE_LIST_WIDTH : 0}px
   );
+`;
+
+const StyledRawExplorerNotSelectedWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+`;
+
+const StyledRawExplorerNotSelectedContent = styled.div`
+  margin-bottom: 30px;
+  width: 400px;
+`;
+
+const StyledRawExplorerNotSelectedBody = styled(Body)`
+  color: ${Colors['text-hint'].hex()};
+  margin-top: 12px;
 `;
 
 export default RawExplorer;
