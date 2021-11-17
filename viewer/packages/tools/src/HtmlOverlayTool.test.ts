@@ -78,14 +78,15 @@ describe('HtmlOverlayTool', () => {
     expect(htmlElement.style.top).toBeEmpty();
     expect(htmlElement.style.left).toBeEmpty();
     const position = new THREE.Vector3(0, 0, 0.5);
+    const renderSize = renderer.getSize(new THREE.Vector2());
 
     // Act
     helper.add(htmlElement, position);
 
     // Assert
     expect(htmlElement.style.visibility).toBe('visible');
-    expect(htmlElement.style.top).toBe(`${renderer.domElement.height / 2}px`);
-    expect(htmlElement.style.left).toBe(`${renderer.domElement.width / 2}px`);
+    expect(htmlElement.style.left).toBe(`${renderSize.x / 2}px`);
+    expect(htmlElement.style.top).toBe(`${renderSize.y / 2}px`);
   });
 
   test('Hides overlay if behind camera or behind far plane', () => {
