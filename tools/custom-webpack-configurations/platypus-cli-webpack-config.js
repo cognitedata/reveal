@@ -1,4 +1,5 @@
 const CopyPlugin = require("copy-webpack-plugin");
+const webpack = require('webpack');
 
 // tools/custom-webpack-configurations/platypus-cli-webpack-config.js
 module.exports = (config, context) => {
@@ -7,6 +8,7 @@ module.exports = (config, context) => {
     ...config,
     plugins: [
       ...config.plugins,
+      new webpack.BannerPlugin({ banner: "#!/usr/bin/env node", raw: true }),
       new CopyPlugin({
         patterns: [
           {
