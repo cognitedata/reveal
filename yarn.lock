@@ -1214,10 +1214,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/acl-protos@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@cognite/acl-protos/-/acl-protos-0.14.0.tgz#320632d59ddf17517d5926ff53a50f005bc39ff5"
-  integrity sha512-1aNo9vBW9oZSefijwG45Gyuz4hD2EQYLwMZuXE5HE4mj8QAGdU61GfSa4SzDFy6QKM5HV224ZHd4hrJzIDvavw==
+"@cognite/acl-protos@^0.14.5":
+  version "0.14.5"
+  resolved "https://registry.yarnpkg.com/@cognite/acl-protos/-/acl-protos-0.14.5.tgz#4bf0bbbc87ac3c688f31d32e2c23848ae1df74fc"
+  integrity sha512-FWDFyVWsJ3KWiqYN/iO4rGcWbkmXMUjkKMWqWxcgd749RBYEhgxQI/dwXk/b+oewvO+vQZXoytqmt4ijali8/A==
   dependencies:
     protobufjs "^6.8.8"
 
