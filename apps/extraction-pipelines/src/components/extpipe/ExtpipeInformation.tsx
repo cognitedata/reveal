@@ -79,9 +79,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           canEdit={canEdit}
         />
       </Section>
-      <Section title="Contacts" icon="Public">
-        <ContactsView canEdit={canEdit} />
-      </Section>
+      <ContactsView canEdit={canEdit} />
       <Section title="RAW tables" icon="Table">
         <EditRawTable canEdit={canEdit} />
       </Section>

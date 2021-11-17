@@ -10,6 +10,7 @@ import { EditModal } from 'components/modals/EditModal';
 import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
+import { Section } from 'components/extpipe/Section';
 
 const Wrapper = styled.div``;
 
@@ -49,7 +50,11 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
   };
 
   return (
-    <>
+    <Section
+      title="Contacts"
+      icon="Public"
+      editButton={{ onClick: openEdit, canEdit }}
+    >
       <Wrapper>
         {contacts && contacts.length > 0 ? (
           <EditableAreaButton disabled={!canEdit} onClick={openEdit} $full>
@@ -73,6 +78,6 @@ export const ContactsView: FunctionComponent<ContactsViewProps> = ({
       >
         <ContactsDialog close={closeModal} />
       </EditModal>
-    </>
+    </Section>
   );
 };

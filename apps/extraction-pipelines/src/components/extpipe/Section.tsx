@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import { AllIconTypes, Icon } from '@cognite/cogs.js';
+import { AllIconTypes, Icon, Button } from '@cognite/cogs.js';
 
 const SectionDiv = styled.div`
   background-color: white;
@@ -22,16 +22,33 @@ const SectionBody = styled.div`
 export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
   <SectionDiv className="z-2">{props.children}</SectionDiv>
 );
-export const Section = (
-  props: PropsWithChildren<{ title: string; icon: AllIconTypes }>
-) => {
+type Props = {
+  title: string;
+  icon: AllIconTypes;
+  editButton?: { onClick: () => void; canEdit: boolean };
+};
+export const Section = ({
+  icon,
+  title,
+  editButton,
+  children,
+}: PropsWithChildren<Props>) => {
   return (
     <SectionDiv className="z-2">
       <SectionHeader>
-        <Icon type={props.icon} style={{ marginRight: '0.5rem' }} />{' '}
-        {props.title}
+        <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
+        {editButton && (
+          <Button
+            type="ghost"
+            css="margin-left: auto"
+            disabled={!editButton.canEdit}
+            onClick={editButton.onClick}
+          >
+            Edit
+          </Button>
+        )}
       </SectionHeader>
-      <SectionBody>{props.children}</SectionBody>
+      <SectionBody>{children}</SectionBody>
     </SectionDiv>
   );
 };
