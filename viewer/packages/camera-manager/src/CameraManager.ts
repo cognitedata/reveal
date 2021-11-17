@@ -14,7 +14,7 @@ const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
 };
 
 export class CameraManager {
-  private readonly controls: ComboControls;
+  public readonly controls: ComboControls;
 
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
