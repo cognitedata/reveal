@@ -6,7 +6,7 @@ import { Table } from './Table';
 
 export const Spreadsheet = (): JSX.Element => {
   const { rows, columns, isLoading, isFetched } = useTableData();
-  const [columnQuery, setColumnQuery] = useState('');
+  const [columnFilter, setColumnFilter] = useState('');
 
   const isEmpty = isFetched && !rows?.length;
 
@@ -15,7 +15,7 @@ export const Spreadsheet = (): JSX.Element => {
     ...columns
       .slice(1)
       .filter((column) =>
-        column.title.toLowerCase().includes(columnQuery.toLowerCase())
+        column.title.toLowerCase().includes(columnFilter.toLowerCase())
       ),
   ];
 
@@ -23,8 +23,8 @@ export const Spreadsheet = (): JSX.Element => {
     <Flex direction="column" style={{ width: '100%', height: '100%' }}>
       <FilterBar
         isEmpty={isEmpty}
-        columnQuery={columnQuery}
-        setColumnQuery={setColumnQuery}
+        columnFilter={columnFilter}
+        setColumnFilter={setColumnFilter}
       />
       {isLoading ? (
         <Loader />
