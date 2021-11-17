@@ -23,11 +23,11 @@ export const Menu = (): JSX.Element => {
   }>();
   const { mutate: deleteTable } = useDeleteTable();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const { rows, isDone } = useTableData();
+  const { rows, isFetched } = useTableData();
   const [[database, table] = [undefined, undefined]] = useActiveTable();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
-  const canBeDownloaded = isDone && !!rows?.length;
+  const canBeDownloaded = isFetched && !!rows?.length;
 
   const onShareClick = () => {
     /** do something */
