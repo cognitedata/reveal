@@ -14,10 +14,9 @@ import {
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { sleep } from 'utils/utils';
 
-import { useGroups } from 'hooks';
+import { useGroups, usePermissions } from 'hooks';
 import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
 import columns from './columns';
 import { stringContains } from '../Groups/utils';

@@ -4,10 +4,9 @@ import { useHistory, useRouteMatch } from 'react-router';
 
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { Alert as AntdAlert, Modal, notification } from 'antd';
 import styled from 'styled-components';
-import { useAuthConfiguration, useGroups } from 'hooks';
+import { useAuthConfiguration, useGroups, usePermissions } from 'hooks';
 import { hasAnyValidGroupForOIDC } from 'pages/Groups/utils';
 
 const NUMBER_OF_SECONDS_TO_ALLOW_DISABLING = 5;
