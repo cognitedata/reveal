@@ -34,6 +34,7 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 import { trackUsage } from 'utils/Metrics';
 
 const DocumentationForm = styled.form`
+  padding: 0 1rem;
   .hint {
     grid-area: hint;
   }
@@ -167,9 +168,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         {canEdit ? infoHowEdit : infoNoDocumentation}
       </DivFlex>
     ) : (
-      <div css="padding: 0 1rem">
-        <MarkdownView>{currentExtpipe.documentation ?? ''}</MarkdownView>
-      </div>
+      <MarkdownView>{currentExtpipe.documentation ?? ''}</MarkdownView>
     );
   const whenEditing = (
     <>
