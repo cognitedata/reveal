@@ -1,17 +1,10 @@
 import React, { MouseEvent, useState } from 'react';
 
-import {
-  Body,
-  Button,
-  Colors,
-  Dropdown,
-  Icon,
-  Menu,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, Button, Colors, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
+import Dropdown from 'components/Dropdown/Dropdown';
 import { useActiveTable, useOpenTable } from 'hooks/table-tabs';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 

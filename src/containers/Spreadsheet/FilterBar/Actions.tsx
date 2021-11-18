@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Dropdown, Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useActiveTable } from 'hooks/table-tabs';
 import AccessButton from 'components/AccessButton';
+import Dropdown from 'components/Dropdown/Dropdown';
 import UploadCSV from 'components/UploadCSV';
 import { Menu } from './Menu';
 

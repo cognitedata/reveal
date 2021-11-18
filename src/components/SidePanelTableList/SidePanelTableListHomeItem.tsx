@@ -1,18 +1,11 @@
 import React, { useContext, useState } from 'react';
 
-import {
-  Body,
-  Button,
-  Dropdown,
-  Colors,
-  Icon,
-  Menu,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Body, Button, Colors, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { RawExplorerContext } from 'contexts';
 import DeleteDatabaseModal from 'components/DeleteDatabaseModal/DeleteDatabaseModal';
+import Dropdown from 'components/Dropdown/Dropdown';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 
 type SidePanelTableListHomeItemProps = {
