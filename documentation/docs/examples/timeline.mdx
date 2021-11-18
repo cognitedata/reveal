@@ -130,8 +130,7 @@ timeline.play(startDate, endDate, durationMs);
 timeline.subscribe('dateChanged', (data) => {
   const progress = ((data.date.getTime() - data.startDate.getTime()) / (data.endDate.getTime() - data.startDate.getTime()) * 100);
   progressBar.style.width = `${progress}%`;
-  }
-});
+  });
 ```
 
 ### Stop timeline playback
