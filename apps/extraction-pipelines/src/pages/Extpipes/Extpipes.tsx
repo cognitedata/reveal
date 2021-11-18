@@ -23,7 +23,7 @@ import { StyledTooltip } from 'styles/StyledToolTip';
 import { trackUsage } from 'utils/Metrics';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
-  'https://docs.cognite.com/cdf/extpipe/guides/interfaces/about_extpipes.html';
+  'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
 
 const VerticalSpace = styled.div`
   height: 16px;
