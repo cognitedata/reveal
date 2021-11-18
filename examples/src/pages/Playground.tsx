@@ -6,16 +6,17 @@ import { useEffect, useState } from 'react';
 import { DragEvent } from 'react-router/node_modules/@types/react';
 
 interface RotationData {
-  a: number,
-  b: number,
-  c: number,
-  d: number
+  x: number,
+  y: number,
+  z: number,
+  w: number
 }
 
 interface PositionData {
   x: number,
   y: number,
-  z: number
+  z: number,
+  w: number
 }
 
 interface MatrixData {
@@ -37,7 +38,7 @@ interface MatrixData {
   15: number,
 }
 
-interface MotionData {
+export interface MotionData {
   rotation: RotationData,
   position: PositionData,
   matrix: MatrixData
@@ -66,11 +67,11 @@ const mockMatrixData = () => {
 }
 
 const mockRotationData = () => {
-  return { a: 0, b: 0, c: 0, d: 0 };
+  return { x: 0, y: 0, z: 0, w: 0 };
 }
 
 const mockPositionData = () => {
-  return { x: 0, y: 0, z: 0};
+  return { x: 0, y: 0, z: 0, w: 0};
 }
 
 const mockMotionData = (count : number) => {

@@ -26,13 +26,14 @@ import { ClippingUI } from '../utils/ClippingUI';
 import { initialCadBudgetUi } from '../utils/CadBudgetUi';
 import { authenticateSDKWithEnvironment } from '../utils/example-helpers';
 import Peer from 'peerjs';
+import { MotionData, Player } from './Playground';
 
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
-const phoneCameraData = [
+const phoneCameraData: MotionData[] = [
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -66,7 +67,6 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -100,7 +100,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -134,7 +134,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -168,7 +168,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -202,7 +202,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -236,7 +236,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -270,7 +270,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -304,7 +304,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -338,7 +338,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -372,7 +372,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -406,7 +406,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -440,7 +440,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -474,7 +474,7 @@ const phoneCameraData = [
       }
   },
   {
-      "postion": {},
+      
       "rotation": {
           "x": -0.315905558895528,
           "y": 0.02847011121817488,
@@ -1030,10 +1030,14 @@ export function Migration() {
       viewer?.dispose();
     };
   });
+  const handleCameraData = (data: MotionData) => {
+
+  };
+
   return (
   <div> 
       <CanvasWrapper ref={canvasWrapperRef} />
-      <button onClick={() => {}}>Start amazing thing that you've never seen!</button>
+      <Player isPlaying={false} startTime={1637246392977} seekTime={1637246392977} endTime={1637246392977} motionData={phoneCameraData} handleNewData={handleCameraData} ></Player>
   </div>);
 }
 
