@@ -812,7 +812,11 @@ export function Migration() {
             0,
             0,
             1);
-          model.setModelTransformation(mat);
+          const rotation = new THREE.Matrix4().makeRotationX(Math.PI / 2);
+          const transform = model.getModelTransformation();
+          transform.multiply(rotation);
+          model.setModelTransformation(transform);
+          //model.setModelTransformation(mat);
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
