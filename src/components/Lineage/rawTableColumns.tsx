@@ -96,13 +96,14 @@ export const rawTablesColumnsWithIntegration = () => {
         }
         return (
           <NoStyleList>
-            {integrations.map((integration) => {
-              return (
-                <li key={integration.id}>
-                  <IntegrationLink integration={integration} />
-                </li>
-              );
-            })}
+            {Array.isArray(integrations) &&
+              integrations.map((integration) => {
+                return (
+                  <li key={integration.id}>
+                    <IntegrationLink integration={integration} />
+                  </li>
+                );
+              })}
           </NoStyleList>
         );
       },

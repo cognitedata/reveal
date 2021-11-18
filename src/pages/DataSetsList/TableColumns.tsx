@@ -141,7 +141,7 @@ const integrationTableColumn = () => {
     render: (_value: string, record: DataSetRow) => {
       return (
         <NoStyleList>
-          {record.integrations &&
+          {Array.isArray(record.integrations) &&
             record.integrations.map((integration) => {
               return (
                 <li key={integration.id}>
