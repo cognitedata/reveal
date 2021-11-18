@@ -805,6 +805,13 @@ export class Cognite3DViewer {
   getCamera(): THREE.PerspectiveCamera {
     return this.camera;
   }
+  /**
+   * @obvious
+   * @returns ComboControls used for controlling the camera.
+   */
+  getControls(): ComboControls {
+    return this._cameraManager.controls;
+  }
 
   /**
    * @obvious
