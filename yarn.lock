@@ -1719,10 +1719,10 @@
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
 
-"@cognite/simconfig-api-sdk@0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-0.0.7.tgz#d388c1cd2d43e5f97f9d619fe2f68a1ab3183413"
-  integrity sha512-mIrMqO8FXFx3eU3z4oDdev1PVYoSmf50i+hKcwfdjXwONDahkch8WBYMxMRYzK13ibS8/n6l+TiDaLc36VBlsg==
+"@cognite/simconfig-api-sdk@^0.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-0.1.1.tgz#474debdb78b54b83695e3e84700d9424da2d7860"
+  integrity sha512-Bf0WgBRsZ427CRk4zX3sCnI3jLHf9t7YmSlPjMMA3i1CycpcWxkH7CLcOScJXVPEIYS03cc2ER5l/eCmfxvMPA==
   dependencies:
     axios "0.21.2"
 

@@ -62,7 +62,7 @@ export function ModelForm({
 }: React.PropsWithoutRef<ComponentProps>) {
   const history = useHistory();
   const inputFile = useRef<HTMLInputElement>(null);
-  const { api } = useContext(ApiContext);
+  const { api, project } = useContext(ApiContext);
   const { authState } = useContext(CdfClientContext);
   const simulators = useAppSelector(selectSimulators);
 
@@ -123,7 +123,7 @@ export function ModelForm({
         source: simulator,
       };
 
-      await api.modelLibrary.createModel(authState.project, {
+      await api.modelLibrary.createModel(project, {
         boundaryConditions,
         file,
         fileInfo,
@@ -133,7 +133,7 @@ export function ModelForm({
       const { modelName, simulator, description, fileName, userEmail } =
         metadata;
 
-      await api.modelLibrary.updateModelVersion(authState.project, {
+      await api.modelLibrary.updateModelVersion(project, {
         file,
         metadata: {
           modelName,
