@@ -177,87 +177,88 @@ const ConsumerPage = (props: ConsumerProps): JSX.Element => {
       cancelHidden
     >
       <form>
-        {consumers.map(({ name, contact, externalLinks }, consumersIndex) => {
-          const consumerKey = `consumer-${consumersIndex}`;
-          return (
-            <Wrapper key={consumerKey} role="group">
-              <Col span={24}>
-                <LocalCol span={18}>
-                  <Label htmlFor={`consumer-name-${consumersIndex}`}>
-                    Consumer name
-                  </Label>
-                  <Hint>The name of the consuming system or application</Hint>
-                  <InputField
-                    id={`consumer-name-${consumersIndex}`}
-                    style={{ width: '400px' }}
-                    value={name}
-                    type="text"
-                    placeholder="Name"
-                    onChange={(e) => {
-                      setConsumerName(e.target.value, consumersIndex);
-                    }}
-                  />
-                  <Label htmlFor={`consumer-contact-email-${consumersIndex}`}>
-                    Contact email
-                  </Label>
-                  <InputField
-                    style={{ width: '400px' }}
-                    value={contact?.email}
-                    type="email"
-                    id={`consumer-contact-email-${consumersIndex}`}
-                    placeholder="Contact email"
-                    onChange={(e) => {
-                      setConsumerContactEmail(e.target.value, consumersIndex);
-                    }}
-                  />
-                </LocalCol>
-                <ImgCol span={6}>
-                  <IconWrapper>
-                    <img
-                      style={{ width: '7rem' }}
-                      src={dataConsumerIcon}
-                      alt="Document icon"
+        {Array.isArray(consumers) &&
+          consumers.map(({ name, contact, externalLinks }, consumersIndex) => {
+            const consumerKey = `consumer-${consumersIndex}`;
+            return (
+              <Wrapper key={consumerKey} role="group">
+                <Col span={24}>
+                  <LocalCol span={18}>
+                    <Label htmlFor={`consumer-name-${consumersIndex}`}>
+                      Consumer name
+                    </Label>
+                    <Hint>The name of the consuming system or application</Hint>
+                    <InputField
+                      id={`consumer-name-${consumersIndex}`}
+                      style={{ width: '400px' }}
+                      value={name}
+                      type="text"
+                      placeholder="Name"
+                      onChange={(e) => {
+                        setConsumerName(e.target.value, consumersIndex);
+                      }}
                     />
-                  </IconWrapper>
+                    <Label htmlFor={`consumer-contact-email-${consumersIndex}`}>
+                      Contact email
+                    </Label>
+                    <InputField
+                      style={{ width: '400px' }}
+                      value={contact?.email}
+                      type="email"
+                      id={`consumer-contact-email-${consumersIndex}`}
+                      placeholder="Contact email"
+                      onChange={(e) => {
+                        setConsumerContactEmail(e.target.value, consumersIndex);
+                      }}
+                    />
+                  </LocalCol>
+                  <ImgCol span={6}>
+                    <IconWrapper>
+                      <img
+                        style={{ width: '7rem' }}
+                        src={dataConsumerIcon}
+                        alt="Document icon"
+                      />
+                    </IconWrapper>
+                    <Button
+                      type="secondary"
+                      onClick={() => removeConsumer(consumersIndex)}
+                    >
+                      {REMOVE_CONSUMER_BTN}
+                    </Button>
+                  </ImgCol>
+                </Col>
+                <LinksCol span={24}>
+                  <Label>Add external links</Label>
+                  <Hint>
+                    Links relating to the consuming system or application
+                  </Hint>
+                  {externalLinks.map(({ rel, href }, i) => {
+                    const listKey = `external-link-${i}`;
+                    return (
+                      <LinksList
+                        key={listKey}
+                        value={{ name: rel, id: href }}
+                        remove={(idx) => removeLink(idx, consumersIndex)}
+                        update={(value, idx) =>
+                          updateLink(value, idx, consumersIndex)
+                        }
+                        index={i}
+                        add={() => addLink(consumersIndex)}
+                      />
+                    );
+                  })}
                   <Button
                     type="secondary"
-                    onClick={() => removeConsumer(consumersIndex)}
+                    onClick={() => addLink(consumersIndex)}
                   >
-                    {REMOVE_CONSUMER_BTN}
+                    {' '}
+                    Add new external link
                   </Button>
-                </ImgCol>
-              </Col>
-              <LinksCol span={24}>
-                <Label>Add external links</Label>
-                <Hint>
-                  Links relating to the consuming system or application
-                </Hint>
-                {externalLinks.map(({ rel, href }, i) => {
-                  const listKey = `external-link-${i}`;
-                  return (
-                    <LinksList
-                      key={listKey}
-                      value={{ name: rel, id: href }}
-                      remove={(idx) => removeLink(idx, consumersIndex)}
-                      update={(value, idx) =>
-                        updateLink(value, idx, consumersIndex)
-                      }
-                      index={i}
-                      add={() => addLink(consumersIndex)}
-                    />
-                  );
-                })}
-                <Button
-                  type="secondary"
-                  onClick={() => addLink(consumersIndex)}
-                >
-                  {' '}
-                  Add new external link
-                </Button>
-              </LinksCol>
-            </Wrapper>
-          );
-        })}
+                </LinksCol>
+              </Wrapper>
+            );
+          })}
         <Button type="primary" variant="outline" onClick={addConsumer}>
           {ADD_CONSUMER_BTN}
         </Button>
