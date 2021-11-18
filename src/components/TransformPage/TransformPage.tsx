@@ -207,7 +207,10 @@ const TransformPage = (props: TransformPageProps): JSX.Element => {
   }, [searchValue]);
 
   useEffect(() => {
-    if (props.dataSet && props.dataSet.metadata.transformations) {
+    if (
+      props.dataSet &&
+      Array.isArray(props.dataSet.metadata.transformations)
+    ) {
       setSelectedTransforms(
         props.dataSet.metadata.transformations
           .filter((trans) => trans.type === 'jetfire')

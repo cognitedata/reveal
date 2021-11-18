@@ -61,7 +61,9 @@ const Lineage = ({ dataSet }: LineageProps) => {
   }, []);
 
   const getRawTableLastUpdateTime = useCallback(async () => {
-    const tablesList = dataSet?.metadata.rawTables ?? [];
+    const tablesList = Array.isArray(dataSet?.metadata.rawTables)
+      ? dataSet!.metadata.rawTables
+      : [];
 
     const rawTables = await Promise.all(
       tablesList.map(async (item) => {
@@ -95,7 +97,7 @@ const Lineage = ({ dataSet }: LineageProps) => {
   }, [dataSet]);
 
   const getExternalTransformations = () => {
-    if (dataSet && dataSet.metadata.transformations) {
+    if (dataSet && Array.isArray(dataSet.metadata.transformations)) {
       const externalTransformation = dataSet.metadata.transformations.filter(
         (trans) => trans.type === 'external'
       );
@@ -163,7 +165,10 @@ const Lineage = ({ dataSet }: LineageProps) => {
   if (dataSet && dataSet.metadata) {
     const { names: sourceNames } = dataSet.metadata.consoleSource || [];
     const extractorAccounts =
-      dataSet?.metadata?.consoleExtractors?.accounts || [];
+      dataSet.metadata.consoleExtractors &&
+      Array.isArray(dataSet.metadata.consoleExtractors.accounts)
+        ? dataSet.metadata.consoleExtractors.accounts
+        : [];
     const usedRawTables = dataSet.metadata.rawTables;
     const usedTransformations =
       dataSet.metadata.transformations &&

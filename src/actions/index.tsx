@@ -154,10 +154,12 @@ export const useUpdateDataSetTransformations = () => {
     transformation: TransformationDetails
   ) => {
     const newDataSet = { ...dataset };
-    newDataSet.metadata.transformations =
-      newDataSet.metadata.transformations?.filter(
-        (currentTransformation) => currentTransformation !== transformation
-      );
+    if (Array.isArray(newDataSet.metadata.transformations)) {
+      newDataSet.metadata.transformations =
+        newDataSet.metadata.transformations.filter(
+          (currentTransformation) => currentTransformation !== transformation
+        );
+    }
 
     updateDataSet(newDataSet);
   };
@@ -303,8 +305,7 @@ export const useLabelSuggestions = () => {
       const suggestedLabels = dataSets.reduce(
         (acc: { [label: string]: string }, cur) => {
           if (Array.isArray(cur?.metadata?.consoleLabels)) {
-            // eslint-disable-next-line no-unused-expressions
-            cur?.metadata?.consoleLabels?.forEach((label) => {
+            cur.metadata.consoleLabels.forEach((label) => {
               acc[label] = label;
             });
           }

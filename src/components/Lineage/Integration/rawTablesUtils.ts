@@ -33,37 +33,39 @@ const addIntegrationsRawTables = (
   allRawTablesMap: Map<string, RawTableWithIntegrations>,
   integrations: Integration[]
 ) => {
-  integrations.forEach((integration) => {
-    const { rawTables } = integration;
-    if (rawTables) {
-      rawTables.forEach(({ dbName, tableName }) => {
-        const mapKey = `${dbName}-${tableName}`;
-        if (allRawTablesMap.has(mapKey)) {
-          const tableWithIntegrations = allRawTablesMap.get(mapKey)!;
-          if (
-            !tableWithIntegrations.integrations.find(
-              ({ id }) => id === integration.id
-            )
-          ) {
+  if (Array.isArray(integrations)) {
+    integrations.forEach((integration) => {
+      const { rawTables } = integration;
+      if (rawTables) {
+        rawTables.forEach(({ dbName, tableName }) => {
+          const mapKey = `${dbName}-${tableName}`;
+          if (allRawTablesMap.has(mapKey)) {
+            const tableWithIntegrations = allRawTablesMap.get(mapKey)!;
+            if (
+              !tableWithIntegrations.integrations.find(
+                ({ id }) => id === integration.id
+              )
+            ) {
+              allRawTablesMap.set(mapKey, {
+                databaseName: dbName,
+                tableName,
+                integrations: [
+                  ...tableWithIntegrations.integrations,
+                  integration,
+                ],
+              });
+            }
+          } else {
             allRawTablesMap.set(mapKey, {
               databaseName: dbName,
               tableName,
-              integrations: [
-                ...tableWithIntegrations.integrations,
-                integration,
-              ],
+              integrations: [integration],
             });
           }
-        } else {
-          allRawTablesMap.set(mapKey, {
-            databaseName: dbName,
-            tableName,
-            integrations: [integration],
-          });
-        }
-      });
-    }
-  });
+        });
+      }
+    });
+  }
   return Array.from(allRawTablesMap.values());
 };
 
@@ -71,10 +73,12 @@ const addDataSetRawTables = (
   dataSet: DataSet | undefined
 ): Map<string, RawTableWithIntegrations> => {
   return new Map(
-    dataSet?.metadata.rawTables?.map(({ databaseName, tableName }) => {
-      const key = `${databaseName}-${tableName}`;
-      return [key, { databaseName, tableName, integrations: [] }];
-    })
+    Array.isArray(dataSet?.metadata.rawTables)
+      ? dataSet?.metadata.rawTables?.map(({ databaseName, tableName }) => {
+          const key = `${databaseName}-${tableName}`;
+          return [key, { databaseName, tableName, integrations: [] }];
+        })
+      : undefined
   );
 };
 

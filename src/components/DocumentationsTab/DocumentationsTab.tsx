@@ -87,14 +87,16 @@ const renderDocumenation = (documentation: Documentation) => {
 };
 
 const DocumentationsTab = ({ dataSet }: DocumentationsTabProps) => {
-  const files =
-    dataSet?.metadata?.consoleAdditionalDocs?.filter(
-      (doc) => doc.type !== 'url'
-    ) || [];
-  const links =
-    dataSet?.metadata?.consoleAdditionalDocs?.filter(
-      (doc) => doc.type === 'url' && isNotNilOrWhitespace(doc.id)
-    ) || [];
+  const files = Array.isArray(dataSet?.metadata?.consoleAdditionalDocs)
+    ? dataSet?.metadata?.consoleAdditionalDocs?.filter(
+        (doc) => doc.type !== 'url'
+      )
+    : [];
+  const links = Array.isArray(dataSet?.metadata?.consoleAdditionalDocs)
+    ? dataSet?.metadata?.consoleAdditionalDocs?.filter(
+        (doc) => doc.type === 'url' && isNotNilOrWhitespace(doc.id)
+      )
+    : [];
 
   if (dataSet?.metadata) {
     return (

@@ -27,8 +27,7 @@ const handleDataSetsSearch = (
         (set: DataSet) =>
           set.name?.match(searchRegex) ||
           set.description?.match(searchRegex) ||
-          (set.metadata.consoleLabels &&
-            Array.isArray(set.metadata.consoleLabels) &&
+          (Array.isArray(set.metadata.consoleLabels) &&
             set.metadata.consoleLabels.some(
               (label) => isString(label) && label.match(searchRegex)
             )) ||

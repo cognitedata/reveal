@@ -38,10 +38,7 @@ const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
     dataSetsList = dataSets.filter((set) => set.metadata.archived !== true);
   }
   dataSetsList.forEach((dataSet) => {
-    if (
-      dataSet.metadata.consoleLabels &&
-      isArray(dataSet.metadata.consoleLabels)
-    )
+    if (isArray(dataSet.metadata.consoleLabels))
       dataSet.metadata.consoleLabels.forEach((label) => {
         if (!labels.includes(label)) {
           labels.push(label);
@@ -144,7 +141,7 @@ const integrationTableColumn = () => {
     render: (_value: string, record: DataSetRow) => {
       return (
         <NoStyleList>
-          {record.integrations &&
+          {Array.isArray(record.integrations) &&
             record.integrations.map((integration) => {
               return (
                 <li key={integration.id}>
