@@ -9,7 +9,6 @@ import { MetaField } from 'components/extpipe/MetaDataField';
 import { EditModal } from 'components/modals/EditModal';
 import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
 import { Hint } from 'styles/StyledForm';
-import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
 import { StyledTitle3 } from 'styles/StyledHeadings';
 import { Section } from 'components/extpipe/Section';
 
@@ -21,7 +20,7 @@ const MetaWrapper = styled.section`
 const RowsWithGaps = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 `;
 interface MetaProps {
   testId?: string;

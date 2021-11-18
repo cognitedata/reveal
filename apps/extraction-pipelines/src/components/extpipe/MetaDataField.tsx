@@ -26,7 +26,10 @@ export const MetaField = ({ fieldKey, fieldValue, testId }: MetaFieldProps) => {
       <StyledLabel htmlFor={fieldKey} data-testid={testId}>
         {uppercaseFirstWord(fieldKey)}
       </StyledLabel>
-      <div css="line-height: 1.5rem" id={fieldKey}>
+      <div
+        css="line-height: 1.5rem; word-wrap: break-word; max-width: 100%"
+        id={fieldKey}
+      >
         {renderValue(fieldValue)}
       </div>
     </DivFlex>
