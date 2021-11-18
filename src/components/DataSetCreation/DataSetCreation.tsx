@@ -133,7 +133,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         return keyToStatus(key);
       case 'docs':
         if (
-          dataSet.metadata.consoleAdditionalDocs &&
+          Array.isArray(dataSet.metadata.consoleAdditionalDocs) &&
           getDocumentationLength(dataSet.metadata.consoleAdditionalDocs)
         )
           return (

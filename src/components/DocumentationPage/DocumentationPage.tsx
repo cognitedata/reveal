@@ -53,8 +53,8 @@ const DocumentationPage = (props: DocumentationProps): JSX.Element => {
 
       // docs
       if (props.dataSet.metadata.consoleAdditionalDocs) {
-        // files
-        if (props.dataSet.metadata.consoleAdditionalDocs) {
+        if (Array.isArray(props.dataSet.metadata.consoleAdditionalDocs)) {
+          // files
           setFileList(
             props.dataSet.metadata.consoleAdditionalDocs
               .filter((value) => value.type === 'file')
