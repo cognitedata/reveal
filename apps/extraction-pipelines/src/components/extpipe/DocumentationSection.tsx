@@ -29,16 +29,11 @@ import { DetailFieldNames } from 'model/Extpipe';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Graphic } from '@cognite/cogs.js';
-import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
 import { Section } from 'components/extpipe/Section';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { trackUsage } from 'utils/Metrics';
 
 const DocumentationForm = styled.form`
-  display: grid;
-  grid-template-areas: 'label . .' 'hint . .' 'error . .' 'text text text' 'count btn1 btn2';
-  grid-auto-columns: 1fr 3rem 3rem;
-  grid-column-gap: 0.2rem;
   .hint {
     grid-area: hint;
   }
@@ -172,23 +167,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         {canEdit ? infoHowEdit : infoNoDocumentation}
       </DivFlex>
     ) : (
-      <EditableAreaButton
-        onClick={onEditClick}
-        disabled={!canEdit}
-        className={`edit-button ${
-          currentExtpipe?.documentation && 'has-content'
-        }`}
-        title="Toggle edit documentation"
-        aria-expanded={isEdit}
-        aria-label="Edit documentation"
-        aria-controls="documentation"
-        data-testid={`${ContactBtnTestIds.EDIT_BTN}documentation`}
-        $full
-      >
-        {currentExtpipe.documentation ? (
-          <MarkdownView>{currentExtpipe.documentation ?? ''}</MarkdownView>
-        ) : null}
-      </EditableAreaButton>
+      <div css="padding: 0 1rem">
+        <MarkdownView>{currentExtpipe.documentation ?? ''}</MarkdownView>
+      </div>
     );
   const whenEditing = (
     <>
@@ -228,7 +209,11 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     </>
   );
   return (
-    <Section title={DetailFieldNames.DOCUMENTATION} icon="Documentation">
+    <Section
+      title={DetailFieldNames.DOCUMENTATION}
+      icon="Documentation"
+      editButton={{ onClick: onEditClick, canEdit }}
+    >
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         {isEdit ? whenEditing : whenNotEditing}
       </DocumentationForm>
