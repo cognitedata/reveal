@@ -5,7 +5,7 @@
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, Viewer3DAPI } from '@cognite/sdk';
 import dat from 'dat.gui'; 
 import {
   AddModelOptions,
@@ -795,7 +795,24 @@ export function Migration() {
       async function addModel(options: AddModelOptions) {
         try {
           const model = options.localPath !== undefined ? await viewer.addCadModel(options) : await viewer.addModel(options);
-
+                    const mat = new THREE.Matrix4();
+          mat.set(1,
+            0,
+            0,
+            0,
+            0,
+            2.220446049250313e-16,
+            -1,
+            0,
+            0,
+            1,
+            2.220446049250313e-16,
+            0,
+            0,
+            0,
+            0,
+            1);
+          model.setModelTransformation(mat);
           const bounds = model.getModelBoundingBox();
           totalBounds.expandByPoint(bounds.min);
           totalBounds.expandByPoint(bounds.max);
@@ -1151,6 +1168,12 @@ export function Migration() {
       const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
 
+      // add a cube!
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 'purple' });
+      const cube = new THREE.Mesh(geometry, material);
+      viewer.getScene().add(cube);
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -1215,6 +1238,7 @@ export function Migration() {
       viewer?.dispose();
     };
   });
+
   const handleCameraData = (data: MotionData) => {
 
   };
@@ -1222,7 +1246,7 @@ export function Migration() {
   return (
   <div> 
       <CanvasWrapper ref={canvasWrapperRef} />
-      <Player isPlaying={false} startTime={1637246392977} seekTime={1637246392977} endTime={1637246399977} motionData={phoneCameraData} handleNewData={handleCameraData} ></Player>
+      <Player isPlaying={false} startTime={1637248940856} seekTime={1637248940856} endTime={1637248946977} motionData={phoneCameraData} handleNewData={handleCameraData} ></Player>
   </div>);
 }
 
