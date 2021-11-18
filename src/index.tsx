@@ -50,9 +50,9 @@ configure({
       IGNORED_TAGS.includes(
         (keyEvent.target as HTMLElement).tagName.toLowerCase()
       );
-    const evtIsFromEditableText =
+    const eventIsFromEditableText =
       keyEvent.target && (keyEvent.target as HTMLElement).isContentEditable;
-    if (evtIsFromIgnoredInput || evtIsFromEditableText) {
+    if (eventIsFromIgnoredInput || eventIsFromEditableText) {
       return true;
     }
     return (
