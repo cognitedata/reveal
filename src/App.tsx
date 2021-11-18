@@ -14,7 +14,10 @@ import config from './config/config';
 
 const history = createBrowserHistory();
 
-if (process.env.REACT_APP_SENTRY_DSN) {
+if (
+  process.env.REACT_APP_SENTRY_DSN &&
+  ['staging', 'production'].includes(process.env.REACT_APP_ENV || '')
+) {
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_DSN,
     // This is populated by the FAS build process. Change it if you want to
