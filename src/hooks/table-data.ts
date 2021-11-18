@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ColumnShape } from 'react-base-table';
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
@@ -20,6 +20,7 @@ interface ColumnType extends Partial<ColumnShape> {
 
 export const useTableData = () => {
   const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [tableFilters, setTableFilters] = useState([]);
 
   const enabled = !!database && !!table;
 
@@ -105,9 +106,12 @@ export const useTableData = () => {
     return rows;
   };
   const allRows = useMemo(getRows, [rawRows]);
+
   return {
     ...rows,
     rows: allRows,
     columns,
+    tableFilters,
+    setTableFilters,
   };
 };
