@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
-import { Body, Button, Detail, Input, Title } from '@cognite/cogs.js';
+import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { notification } from 'antd';
 import styled from 'styled-components';
@@ -8,15 +8,14 @@ import styled from 'styled-components';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useOpenTable } from 'hooks/table-tabs';
+import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
+
+const CREATE_TABLE_MODAL_WIDTH = 600;
 
 type CreateTableModalProps = {
   databaseName: string;
   tables: RawDBTable[];
-} & Omit<ModalProps, 'children' | 'onOk' | 'title'>;
-
-const StyledCancelButton = styled(Button)`
-  margin-right: 8px;
-`;
+} & Omit<ModalProps, 'children' | 'onOk' | 'title' | 'width'>;
 
 const CreateTableModal = ({
   databaseName,
@@ -86,29 +85,38 @@ const CreateTableModal = ({
       title={<Title level={5}>Create table</Title>}
       visible={visible}
       {...modalProps}
+      width={CREATE_TABLE_MODAL_WIDTH}
     >
-      <Body level={2} strong>
-        Name
-      </Body>
-      <Input
-        disabled={isLoading}
-        fullWidth
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setTableName(e.target.value)
-        }
-        onKeyUp={(e) => {
-          if (!isDisabled && e.key === 'Enter') {
-            handleCreate();
+      <FormFieldWrapper isRequired title="Name">
+        <Input
+          disabled={isLoading}
+          fullWidth
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setTableName(e.target.value)
           }
-        }}
-        placeholder="Enter name"
-        value={tableName}
-      />
-      <Detail>
-        The name should be unique. You can not change this name later.
-      </Detail>
+          onKeyUp={(e) => {
+            if (!isDisabled && e.key === 'Enter') {
+              handleCreate();
+            }
+          }}
+          placeholder="Enter name"
+          value={tableName}
+        />
+        <StyledNameInputDetail>
+          The name should be unique. You can not change this name later.
+        </StyledNameInputDetail>
+      </FormFieldWrapper>
     </Modal>
   );
 };
+
+const StyledNameInputDetail = styled(Detail)`
+  color: ${Colors['text-secondary'].hex()};
+  margin-bottom: 16px;
+`;
+
+const StyledCancelButton = styled(Button)`
+  margin-right: 8px;
+`;
 
 export default CreateTableModal;
