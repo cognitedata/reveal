@@ -30,7 +30,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": 
-		"sudo apt-get -y update && sudo apt-get --fix-missing -y install xvfb libgl1-mesa-dev xserver-xorg-dev libxi-dev libxext-dev",
+		"sudo apt-get -y update && sudo apt-get --fix-missing -y install xserver-xorg-dev libxi-dev libxext-dev",
 
 	"postStartCommand": 
 		"yarn install",
