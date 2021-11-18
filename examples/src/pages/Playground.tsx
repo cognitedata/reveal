@@ -134,9 +134,10 @@ interface SeekBarProps {
   onSeek: (event: MouseEvent) => void
 }
 
+const BAR_WIDTH = window.innerWidth - 40
+
 const SeekBar = (props: SeekBarProps) => {
 
-  const BAR_WIDTH = 200
   const DURATION = props.endTime - props.startTime
   const REL_SEEK_TIME = props.seekTime - props.startTime
   const REL_SEEK_FRACTION = REL_SEEK_TIME / DURATION
@@ -174,6 +175,7 @@ const SeekBar = (props: SeekBarProps) => {
 }
 
 export const Player = (props: PlayerProps) => {
+
 
   const DURATION = props.endTime - props.startTime
 
@@ -245,7 +247,7 @@ export const Player = (props: PlayerProps) => {
   function onSeekMove() {}
 
   function onSeek(event: MouseEvent) {
-    const seekRatio = (event.clientX - 20) / 200;
+    const seekRatio = (event.clientX - 20) / BAR_WIDTH;
     const seekTime = state.startTime + DURATION * seekRatio;
     setState({
       ...state,
