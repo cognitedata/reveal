@@ -13,7 +13,7 @@ import { Icon } from '@cognite/cogs.js';
 
 const Wrapper = styled.div``;
 
-export const MarginedChildren = styled.div`
+export const Column = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -57,7 +57,7 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
       <Wrapper>
         {contacts && contacts.length > 0 ? (
           <div css="padding: 0 1rem;">
-            <MarginedChildren>
+            <Column>
               {contactsSorted.map((contact: User) => {
                 return (
                   <div
@@ -93,7 +93,7 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
                   </div>
                 );
               })}
-            </MarginedChildren>
+            </Column>
           </div>
         ) : (
           <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>

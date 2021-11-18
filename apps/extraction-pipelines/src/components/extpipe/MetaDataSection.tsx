@@ -11,16 +11,12 @@ import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
 import { Hint } from 'styles/StyledForm';
 import { StyledTitle3 } from 'styles/StyledHeadings';
 import { Section } from 'components/extpipe/Section';
+import { Column } from 'components/extpipe/ContactsSection';
 
 const MetaWrapper = styled.section`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-`;
-const RowsWithGaps = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 `;
 interface MetaProps {
   testId?: string;
@@ -39,7 +35,7 @@ export const MetaDataSection = ({
 
   const renderMeta = (meta: MetaDataModel) => {
     return (
-      <RowsWithGaps>
+      <Column>
         {Object.entries(meta).map(([k, v], index) => {
           return (
             <MetaField
@@ -50,7 +46,7 @@ export const MetaDataSection = ({
             />
           );
         })}
-      </RowsWithGaps>
+      </Column>
     );
   };
 

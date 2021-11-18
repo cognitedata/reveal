@@ -12,7 +12,6 @@ import {
 const FieldWrapper = styled.div`
   display: flex;
   padding: 0 1rem;
-  margin-bottom: 1rem;
   flex-direction: column;
   align-items: start;
 `;

@@ -10,7 +10,7 @@ import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
 import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
-import { ContactsSection } from 'components/extpipe/ContactsSection';
+import { ContactsSection, Column } from 'components/extpipe/ContactsSection';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
@@ -83,26 +83,28 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
       <RawTablesSection canEdit={canEdit} />
       <MetaDataSection canEdit={canEdit} />
       <Section title="About extraction pipeline" icon="Info">
-        <FieldVerticalDisplay
-          label={DetailFieldNames.ID}
-          fieldName="id"
-          fieldValue={extpipe?.id}
-        />
-        <FieldVerticalDisplay
-          label={DetailFieldNames.CREATED_BY}
-          fieldName="createdBy"
-          fieldValue={extpipe?.createdBy}
-        />
-        <FieldVerticalDisplay
-          label={DetailFieldNames.CREATED_TIME}
-          fieldName="createdTime"
-          fieldValue={extpipe?.createdTime}
-        />
-        <FieldVerticalDisplay
-          label={DetailFieldNames.LAST_UPDATED_TIME}
-          fieldName="lastUpdatedTime"
-          fieldValue={extpipe?.lastUpdatedTime}
-        />
+        <Column>
+          <FieldVerticalDisplay
+            label={DetailFieldNames.ID}
+            fieldName="id"
+            fieldValue={extpipe?.id}
+          />
+          <FieldVerticalDisplay
+            label={DetailFieldNames.CREATED_BY}
+            fieldName="createdBy"
+            fieldValue={extpipe?.createdBy}
+          />
+          <FieldVerticalDisplay
+            label={DetailFieldNames.CREATED_TIME}
+            fieldName="createdTime"
+            fieldValue={extpipe?.createdTime}
+          />
+          <FieldVerticalDisplay
+            label={DetailFieldNames.LAST_UPDATED_TIME}
+            fieldName="lastUpdatedTime"
+            fieldValue={extpipe?.lastUpdatedTime}
+          />
+        </Column>
       </Section>
     </>
   );
