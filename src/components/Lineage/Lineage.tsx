@@ -61,7 +61,9 @@ const Lineage = ({ dataSet }: LineageProps) => {
   }, []);
 
   const getRawTableLastUpdateTime = useCallback(async () => {
-    const tablesList = dataSet?.metadata.rawTables ?? [];
+    const tablesList = Array.isArray(dataSet?.metadata.rawTables)
+      ? dataSet!.metadata.rawTables
+      : [];
 
     const rawTables = await Promise.all(
       tablesList.map(async (item) => {

@@ -71,10 +71,12 @@ const addDataSetRawTables = (
   dataSet: DataSet | undefined
 ): Map<string, RawTableWithIntegrations> => {
   return new Map(
-    dataSet?.metadata.rawTables?.map(({ databaseName, tableName }) => {
-      const key = `${databaseName}-${tableName}`;
-      return [key, { databaseName, tableName, integrations: [] }];
-    })
+    Array.isArray(dataSet?.metadata.rawTables)
+      ? dataSet?.metadata.rawTables?.map(({ databaseName, tableName }) => {
+          const key = `${databaseName}-${tableName}`;
+          return [key, { databaseName, tableName, integrations: [] }];
+        })
+      : undefined
   );
 };
 
