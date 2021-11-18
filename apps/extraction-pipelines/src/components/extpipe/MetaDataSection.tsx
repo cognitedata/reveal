@@ -70,13 +70,7 @@ export const MetaDataSection = ({
             {DetailFieldNames.META_DATA.toLowerCase()}
           </AddFieldValueBtn>
         ) : (
-          <EditableAreaButton
-            disabled={!canEdit}
-            onClick={() => canEdit && setShowMetaModal(true)}
-            $full
-          >
-            <div>{renderMeta(meta)}</div>
-          </EditableAreaButton>
+          <div css="padding: 0 1rem">{renderMeta(meta)}</div>
         )}
         <EditModal
           title={DetailFieldNames.META_DATA}

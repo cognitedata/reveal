@@ -9,6 +9,7 @@ import { EditModal } from 'components/modals/EditModal';
 import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import { Section } from 'components/extpipe/Section';
+import { Icon } from '@cognite/cogs.js';
 
 const Wrapper = styled.div``;
 
@@ -69,6 +70,13 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
                       </div>
                       <div>
                         <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                        {contact.sendNotification && (
+                          <Icon
+                            type="BellNotification"
+                            size={12}
+                            css="margin-top:2px;margin-left:4px"
+                          />
+                        )}
                       </div>
                     </div>
                     <div

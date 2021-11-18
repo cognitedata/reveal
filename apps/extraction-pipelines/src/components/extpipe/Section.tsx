@@ -10,7 +10,7 @@ const SectionDiv = styled.div`
 const SectionHeader = styled.div`
   font-size: 1.1rem;
   font-weight: 500;
-  padding: 1rem;
+  padding: 1rem 0 1rem 1rem;
   border-bottom: 1px solid #eee;
   display: flex;
   align-items: center;
@@ -39,7 +39,7 @@ export const Section = ({
         <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
         {editButton && (
           <Button
-            type="ghost"
+            type="link"
             css="margin-left: auto"
             disabled={!editButton.canEdit}
             onClick={editButton.onClick}
