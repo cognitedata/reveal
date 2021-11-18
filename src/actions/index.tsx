@@ -154,10 +154,12 @@ export const useUpdateDataSetTransformations = () => {
     transformation: TransformationDetails
   ) => {
     const newDataSet = { ...dataset };
-    newDataSet.metadata.transformations =
-      newDataSet.metadata.transformations?.filter(
-        (currentTransformation) => currentTransformation !== transformation
-      );
+    if (Array.isArray(newDataSet.metadata.transformations)) {
+      newDataSet.metadata.transformations =
+        newDataSet.metadata.transformations.filter(
+          (currentTransformation) => currentTransformation !== transformation
+        );
+    }
 
     updateDataSet(newDataSet);
   };
