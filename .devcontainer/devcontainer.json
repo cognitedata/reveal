@@ -29,7 +29,11 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "yarn install",
+	"postCreateCommand": 
+		"sudo apt-get -y update && sudo apt-get --fix-missing -y install xvfb libgl1-mesa-dev xserver-xorg-dev libxi-dev libxext-dev",
+
+	"postStartCommand": 
+		"yarn install",
 
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "node",
