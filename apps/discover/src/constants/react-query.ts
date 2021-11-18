@@ -76,10 +76,11 @@ export const SEARCH_HISTORY_KEY = {
   LIST: [SEARCH_HISTORY, 'list'],
 };
 
-const USER_PREFERENCES = 'userPreferences';
-export const USER_PREFERENCES_KEY = {
-  ME: [USER_PREFERENCES, 'me'],
-};
+const USER_MANAGEMENT_SYSTEM = 'userManagementSystem';
+export const USER_MANAGEMENT_SYSTEM_KEY = {
+  ME: [USER_MANAGEMENT_SYSTEM, 'me'],
+  SEARCH: [USER_MANAGEMENT_SYSTEM, 'search'],
+} as const;
 
 export const DOCUMENTS_AGGREGATES = {
   labels: 'DOCUMENTS_LABELS_AGGREGATE',

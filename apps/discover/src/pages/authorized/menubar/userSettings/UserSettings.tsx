@@ -4,15 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
-import { USER_PREFERENCES_KEY } from 'constants/react-query';
-import { useUserPreferencesMutate } from 'modules/userManagementService/query';
+import { useUpdateMyPreferences } from 'modules/userManagementService/query';
 
 import { Content, SettingsContent, SettingsHeader } from './elements';
 import { MeasurementSetting } from './settings';
 
 export const UserSettings: React.FC = () => {
   const { t } = useTranslation();
-  const { mutate } = useUserPreferencesMutate(USER_PREFERENCES_KEY.ME);
+  const updatePreferences = useUpdateMyPreferences();
 
   const [visible, setVisible] = React.useState(false);
   const toggleVisibility = () => setVisible((prevState) => !prevState);
@@ -21,7 +20,7 @@ export const UserSettings: React.FC = () => {
     nextTab: string,
     field: keyof UMSUserProfilePreferences
   ) => {
-    mutate({
+    updatePreferences({
       [field]: nextTab,
     });
   };

@@ -5,30 +5,31 @@ import {
   within,
   waitFor,
 } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 
+import { getMockUserSearch } from '__mocks/mockUmsSearch';
 import { testRenderer } from '__test-utils/renderer';
 
-import { UMSService } from '../../../modules/api/ums/ums-service';
 import {
   SearchUsers,
   Props,
   SHARED_USER_INPUT_PLACEHOLDER,
 } from '../SearchUsers';
 
-jest.mock('modules/api/ums/ums-service', () => ({
-  UMSService: {
-    search: jest.fn(),
-  },
-  getJsonHeaders: jest.fn(),
-}));
+const mockServer = setupServer(getMockUserSearch());
 
 describe('SearchUsers Tests', () => {
+  beforeAll(() => {
+    mockServer.listen();
+  });
+  afterAll(() => {
+    mockServer.close();
+  });
+
   const testInit = async (viewProps?: Props) =>
     testRenderer(SearchUsers, undefined, viewProps);
+
   it('should load users and trigger callback once selected', async () => {
-    (UMSService.search as jest.Mock).mockImplementation(() =>
-      Promise.resolve([{ id: 1, displayName: 'John Doe' }])
-    );
     const onUsersSelectedChange = jest.fn();
     await testInit({
       onUsersSelectedChange,

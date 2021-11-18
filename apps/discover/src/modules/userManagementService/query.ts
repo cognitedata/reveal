@@ -5,7 +5,7 @@ import {
   UMSUserProfilePreferences,
 } from '@cognite/user-management-service-types';
 
-import { USER_PREFERENCES_KEY } from 'constants/react-query';
+import { USER_MANAGEMENT_SYSTEM_KEY } from 'constants/react-query';
 import { getJsonHeaders } from 'modules/api/service';
 
 import { userPreferences } from './endpoints';
@@ -13,12 +13,17 @@ import { userPreferences } from './endpoints';
 export const useUserPreferencesQuery = () => {
   const headers = getJsonHeaders({}, true);
 
-  return useQuery(USER_PREFERENCES_KEY.ME, () =>
+  return useQuery(USER_MANAGEMENT_SYSTEM_KEY.ME, () =>
     userPreferences(headers).get()
   );
 };
 
-export const useUserPreferencesMutate = (key: any) => {
+export const useUpdateMyPreferences = () =>
+  useUserPreferencesMutate(USER_MANAGEMENT_SYSTEM_KEY.ME).mutate;
+
+export const useUserPreferencesMutate = (
+  key: typeof USER_MANAGEMENT_SYSTEM_KEY[keyof typeof USER_MANAGEMENT_SYSTEM_KEY]
+) => {
   const headers = getJsonHeaders({}, true);
   const queryClient = useQueryClient();
 
@@ -61,7 +66,7 @@ export const useUserPreferencesMutate = (key: any) => {
         }
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(USER_PREFERENCES_KEY.ME);
+        queryClient.invalidateQueries(USER_MANAGEMENT_SYSTEM_KEY.ME);
       },
     }
   );

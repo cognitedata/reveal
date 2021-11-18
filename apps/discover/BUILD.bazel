@@ -132,6 +132,7 @@ DEPENDENCIES = [
     "@npm//immutable",
     "@npm//lodash",
     "@npm//maplibre-gl",
+    "@npm//msw",
     "@npm//moment",
     "@npm//plotly.js",
     "@npm//proj4",
