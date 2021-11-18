@@ -9,10 +9,14 @@ import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { createLink } from '@cognite/cdf-utilities';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
-import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
 import { Section } from 'components/extpipe/Section';
 
-const RawTableWrapper = styled.div``;
+const RawTableWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem;
+`;
 
 const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const [showRawModal, setShowRawModal] = useState(false);
@@ -30,48 +34,31 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
       );
     }
     return (
-      <RawTableWrapper
-        id="raw-table-grid"
-        role="grid"
-        aria-labelledby="raw-table-label"
-      >
-        <EditableAreaButton
-          type="ghost"
-          icon="Edit"
-          iconPlacement="right"
-          disabled={!canEdit}
-          onClick={openDialog}
-          title="Toggle raw table modal"
-          data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
-          $full
-        >
-          <div>
-            {extpipe.rawTables.map(({ dbName, tableName }) => {
-              return (
-                <DivFlex role="row" key={`${dbName}-${tableName}`}>
-                  <a
-                    role="gridcell"
-                    href={createLink(`/raw/${dbName}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {dbName}
-                  </a>
-                  <Icon type="Dot" aria-hidden />
-                  <a
-                    role="gridcell"
-                    data-testid="selected-table"
-                    href={createLink(`/raw/${dbName}/${tableName}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {tableName}
-                  </a>
-                </DivFlex>
-              );
-            })}
-          </div>
-        </EditableAreaButton>
+      <RawTableWrapper>
+        {extpipe.rawTables.map(({ dbName, tableName }) => {
+          return (
+            <DivFlex role="row" key={`${dbName}-${tableName}`}>
+              <a
+                role="gridcell"
+                href={createLink(`/raw/${dbName}`)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {dbName}
+              </a>
+              <Icon type="Dot" aria-hidden />
+              <a
+                role="gridcell"
+                data-testid="selected-table"
+                href={createLink(`/raw/${dbName}/${tableName}`)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {tableName}
+              </a>
+            </DivFlex>
+          );
+        })}
       </RawTableWrapper>
     );
   };
@@ -81,6 +68,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
       title="RAW tables"
       icon="Table"
       editButton={{ onClick: openDialog, canEdit }}
+      data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
     >
       <div>{renderRaw(storedExtpipe)}</div>
       <RawEditModal visible={showRawModal} close={closeDialog} />
