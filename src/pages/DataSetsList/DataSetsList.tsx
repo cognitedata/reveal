@@ -94,7 +94,9 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
           key: dataSet.id,
           name: dataSet.name,
           description: dataSet.description,
-          labels: dataSet?.metadata?.consoleLabels || [],
+          labels: Array.isArray(dataSet?.metadata?.consoleLabels)
+            ? dataSet.metadata.consoleLabels
+            : [],
           quality: dataSet.metadata.consoleGoverned,
           integrations: dataSet.metadata.integrations ?? [],
           writeProtected: dataSet.writeProtected,
