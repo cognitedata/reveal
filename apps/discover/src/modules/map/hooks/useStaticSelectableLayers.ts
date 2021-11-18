@@ -1,4 +1,4 @@
-import { useTenantConfig } from 'hooks/useTenantConfig';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 import { SelectableLayer } from 'modules/map/types';
 import {
   DOCUMENT_LAYER_ID,
@@ -6,10 +6,10 @@ import {
 } from 'pages/authorized/search/map/constants';
 
 export function useStaticSelectableLayers(): SelectableLayer[] {
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
   const layers = [];
 
-  if (!tenantConfig?.documents?.disabled) {
+  if (!projectConfig?.documents?.disabled) {
     layers.push({
       id: DOCUMENT_LAYER_ID,
       name: 'Documents',
@@ -18,7 +18,7 @@ export function useStaticSelectableLayers(): SelectableLayer[] {
     });
   }
 
-  if (!tenantConfig?.wells?.disabled) {
+  if (!projectConfig?.wells?.disabled) {
     layers.push({
       id: WELL_HEADS_LAYER_ID,
       name: 'Well heads',

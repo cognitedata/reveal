@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import { AzureTelemetryProvider } from '@cognite/react-azure-telemetry';
 
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { AzureConfig } from 'tenants/types';
 
 export const ProvideAzureTelemetry: React.FC = ({ children }) => {
   const { data: azureConfig } =
-    useTenantConfigByKey<AzureConfig>('azureConfig');
+    useProjectConfigByKey<AzureConfig>('azureConfig');
   if (!azureConfig) {
     return <>{children}</>;
   }

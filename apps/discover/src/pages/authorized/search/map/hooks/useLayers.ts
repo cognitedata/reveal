@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import get from 'lodash/get';
 import isString from 'lodash/isString';
 
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { convertToCancellablePromise } from '_helpers/cancellablePromise';
-import { fetchTenantFile, useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
+import { fetchTenantFile } from 'hooks/useTenantConfig';
 import { useStaticSelectableLayers } from 'modules/map/hooks/useStaticSelectableLayers';
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
 import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';
@@ -75,7 +77,9 @@ export const useSearchableConfig = (
   const [layers] = useSearchableLayers(allLayers, allLayerData);
   return {
     layers,
-    title: useTenantConfigByKey<string>('searchableLayerTitle')?.data,
+    title: useProjectConfigByKey<ProjectConfigGeneral['searchableLayerTitle']>(
+      'general.searchableLayerTitle'
+    )?.data,
   };
 };
 

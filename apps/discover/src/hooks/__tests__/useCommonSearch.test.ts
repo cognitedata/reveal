@@ -6,7 +6,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { FetchHeaders } from '_helpers/fetch';
-import { useTenantConfig } from 'hooks/useTenantConfig';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 import { convertGeometryToGeoJson } from 'modules/api/savedSearches/normalizeSavedSearch';
 import { setGeo } from 'modules/map/actions';
 import { SET_SEARCH_PHRASE } from 'modules/sidebar/constants';
@@ -20,8 +20,8 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfig: jest.fn(),
+jest.mock('hooks/useProjectConfig', () => ({
+  useProjectConfig: jest.fn(),
 }));
 
 jest.mock('modules/api/savedSearches/normalizeSavedSearch', () => ({
@@ -56,7 +56,7 @@ describe('useCommonSearch hook', () => {
 
   beforeEach(() => {
     (useDispatch as jest.Mock).mockImplementation(() => dispatch);
-    (useTenantConfig as jest.Mock).mockImplementation(() => ({}));
+    (useProjectConfig as jest.Mock).mockImplementation(() => ({}));
   });
 
   const getHookResult = async () => {
@@ -115,7 +115,7 @@ describe('useCommonSearch hook -> inner hook callbacks test', () => {
 
   beforeEach(() => {
     (useDispatch as jest.Mock).mockImplementation(() => dispatch);
-    (useTenantConfig as jest.Mock).mockImplementation(() => ({
+    (useProjectConfig as jest.Mock).mockImplementation(() => ({
       data: {
         documents: {},
         seismic: {},

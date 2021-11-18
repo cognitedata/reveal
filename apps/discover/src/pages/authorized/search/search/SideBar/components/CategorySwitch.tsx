@@ -8,7 +8,7 @@ import { Button, Dropdown, Icons, Menu } from '@cognite/cogs.js';
 
 import { Tooltip } from 'components/tooltip';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useTenantConfig } from 'hooks/useTenantConfig';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 import { setCategoryPage } from 'modules/sidebar/actions';
 import { FILTER_CATEGORIES } from 'modules/sidebar/constants';
 import { useFilterCategory } from 'modules/sidebar/selectors';
@@ -20,7 +20,7 @@ import { CategoryItem } from './elements';
 export const CategorySwitch: React.FC = React.memo(() => {
   const metrics = useGlobalMetrics('filters');
   const [isOpen, setIsOpen] = useState(false);
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
   const category = useFilterCategory();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -37,7 +37,7 @@ export const CategorySwitch: React.FC = React.memo(() => {
     () => (
       <Menu>
         {FILTER_CATEGORIES.filter(
-          (row) => !get(tenantConfig, `${row.module}.disabled`)
+          (row) => !get(projectConfig, `${row.module}.disabled`)
         ).map((row) => (
           <CategoryItem
             key={row.name}
@@ -58,7 +58,7 @@ export const CategorySwitch: React.FC = React.memo(() => {
         ))}
       </Menu>
     ),
-    [tenantConfig, category]
+    [projectConfig, category]
   );
 
   const renderDropdownContent = useMemo(

@@ -13,7 +13,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
 });
 
 Cypress.Commands.add('acceptCookies', () => {
-  cy.contains('Accept').click();
+  cy.contains('Accept').should('be.visible').click();
 });
 
 export interface LoginCommand {

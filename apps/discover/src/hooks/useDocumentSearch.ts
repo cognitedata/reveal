@@ -12,11 +12,11 @@ import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
 
 import { updateExtraGeoJsonAppliedFilters } from '../modules/sidebar/actions';
 
-import { useTenantConfig } from './useTenantConfig';
+import { useProjectConfig } from './useProjectConfig';
 
 export const useDocumentSearch = () => {
   const dispatch = useDispatch();
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
 
   const doDocumentSearch = (searchQuery: SavedSearchQuery) => {
     const { geoFilter, phrase } = searchQuery;
@@ -64,11 +64,11 @@ export const useDocumentSearch = () => {
     dispatch(
       documentSearchActions.search({
         filters: {
-          ...tenantConfig?.documents?.filters,
+          ...projectConfig?.documents?.filters,
         },
         sort,
         limit:
-          tenantConfig?.documents?.defaultLimit ||
+          projectConfig?.documents?.defaultLimit ||
           DOCUMENT_FALLBACK_SEARCH_LIMIT,
       })
     );

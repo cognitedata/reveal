@@ -5,7 +5,10 @@ import { storage } from '@cognite/react-container';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useTenantConfig, useTenantConfigByKey } from 'hooks/useTenantConfig';
+import {
+  useProjectConfig,
+  useProjectConfigByKey,
+} from 'hooks/useProjectConfig';
 import { WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS } from 'modules/wellInspect/actions';
 
 import { Search } from './Search';
@@ -14,9 +17,9 @@ jest.mock('modules/map/useMapCache', () => ({
   MapCache: () => <></>,
 }));
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfig: jest.fn(),
-  useTenantConfigByKey: jest.fn(),
+jest.mock('hooks/useProjectConfig', () => ({
+  useProjectConfig: jest.fn(),
+  useProjectConfigByKey: jest.fn(),
 }));
 
 const page = (store: Store) => testRenderer(Search, store);
@@ -28,19 +31,19 @@ const defaultTestInit = async () => {
   return { ...page(store) };
 };
 
-const mockUseTenantConfig = (returnValue: any) =>
-  (useTenantConfig as jest.Mock).mockImplementation(() => returnValue);
+const mockUseProjectConfig = (returnValue: any) =>
+  (useProjectConfig as jest.Mock).mockImplementation(() => returnValue);
 
-const mockUseTenantConfigByKey = (returnValue: any) =>
-  (useTenantConfigByKey as jest.Mock).mockImplementation(() => returnValue);
+const mockUseProjectConfigByKey = (returnValue: any) =>
+  (useProjectConfigByKey as jest.Mock).mockImplementation(() => returnValue);
 
-describe('Search -> !tenantConfig', () => {
+describe('Search -> !projectConfig', () => {
   beforeEach(() => {
-    mockUseTenantConfig({ data: undefined });
-    mockUseTenantConfigByKey({ data: {} });
+    mockUseProjectConfig({ data: undefined });
+    mockUseProjectConfigByKey({ data: {} });
   });
 
-  it('should not render the search content without `tenantConfig`', async () => {
+  it('should not render the search content without `projectConfig`', async () => {
     await defaultTestInit();
     expect(screen.queryByTestId('search-container')).not.toBeInTheDocument();
   });
@@ -48,8 +51,8 @@ describe('Search -> !tenantConfig', () => {
 
 describe('Search -> usual behaviour', () => {
   beforeEach(() => {
-    mockUseTenantConfig({ data: {} });
-    mockUseTenantConfigByKey({ data: {} });
+    mockUseProjectConfig({ data: {} });
+    mockUseProjectConfigByKey({ data: {} });
   });
 
   it('should render the search content as expected', async () => {

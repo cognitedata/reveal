@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockDocumentFilter } from '__test-utils/fixtures/sidebar';
-import { useTenantConfig } from 'hooks/useTenantConfig';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 
 import { useDocumentSearch } from '../useDocumentSearch';
 
@@ -11,8 +11,8 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfig: jest.fn(),
+jest.mock('hooks/useProjectConfig', () => ({
+  useProjectConfig: jest.fn(),
 }));
 
 describe('useDocumentSearch hook', () => {
@@ -20,7 +20,7 @@ describe('useDocumentSearch hook', () => {
 
   beforeEach(() => {
     (useDispatch as jest.Mock).mockImplementation(() => dispatch);
-    (useTenantConfig as jest.Mock).mockImplementation(() => ({}));
+    (useProjectConfig as jest.Mock).mockImplementation(() => ({}));
   });
 
   const getHookResult = async () => {

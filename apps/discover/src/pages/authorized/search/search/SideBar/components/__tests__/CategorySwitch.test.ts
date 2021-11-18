@@ -3,18 +3,21 @@ import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useTenantConfig, useTenantConfigByKey } from 'hooks/useTenantConfig';
+import {
+  useProjectConfig,
+  useProjectConfigByKey,
+} from 'hooks/useProjectConfig';
 import { initialState } from 'modules/sidebar/reducer';
+import { Modules } from 'modules/sidebar/types';
 import { CategorySwitch } from 'pages/authorized/search/search/SideBar/components/CategorySwitch';
-import defaultConfig from 'tenants/config';
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfig: jest.fn(() => {
+jest.mock('hooks/useProjectConfig', () => ({
+  useProjectConfig: jest.fn(() => {
     return {
       seismic: {},
     };
   }),
-  useTenantConfigByKey: jest.fn(() => {
+  useProjectConfigByKey: jest.fn(() => {
     return {
       azureConfig: {},
     };
@@ -26,14 +29,23 @@ describe('CategorySwitch', () => {
 
   const defaultTestInit = async () =>
     page(
-      getMockedStore({ sidebar: { ...initialState, category: 'documents' } })
+      getMockedStore({
+        sidebar: {
+          ...initialState,
+          category: 'documents' as Modules.DOCUMENTS,
+        },
+      })
     );
 
   it('should display the selected category with a check icon', async () => {
-    (useTenantConfig as jest.Mock).mockImplementation(() => ({
-      data: { ...defaultConfig, seismic: { disabled: true } },
+    (useProjectConfig as jest.Mock).mockImplementation(() => ({
+      data: {
+        documents: { disabled: false },
+        wells: { disabled: false },
+        seismic: { disabled: true },
+      },
     }));
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       azureConfig: {},
     }));
 
@@ -50,10 +62,14 @@ describe('CategorySwitch', () => {
   });
 
   it('should display correct number of options according to tenant config', async () => {
-    (useTenantConfig as jest.Mock).mockImplementation(() => ({
-      data: { ...defaultConfig, seismic: { disabled: true } },
+    (useProjectConfig as jest.Mock).mockImplementation(() => ({
+      data: {
+        documents: { disabled: false },
+        wells: { disabled: false },
+        seismic: { disabled: true },
+      },
     }));
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       azureConfig: {},
     }));
 

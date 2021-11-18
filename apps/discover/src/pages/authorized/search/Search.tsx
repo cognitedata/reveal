@@ -18,8 +18,8 @@ import { HorizontalResizableBox } from 'components/horizontal-resizable-box/Hori
 import navigation from 'constants/navigation';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useResponsive } from 'hooks/useResponsive';
-import { useTenantConfig } from 'hooks/useTenantConfig';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
 import { MapCache } from 'modules/map/useMapCache';
@@ -79,7 +79,7 @@ interface TabItem {
   path: string;
   title: string;
   total?: number;
-  tenantConfigKey: Modules;
+  projectConfigKey: Modules;
 }
 
 const TabPaneContent: React.FC<TabPaneContentProps> = ({
@@ -122,7 +122,7 @@ export const Search: React.FC = () => {
   const { t } = useTranslation();
   // const showDashboard = useFlag(DASHBOARD_TOTALS);
 
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
   const { showSearchResults } = useSearchState();
   const resultPanelWidth = useResultPanelWidth();
 
@@ -166,7 +166,7 @@ export const Search: React.FC = () => {
         {
           id: 1,
           name: 'Documents',
-          tenantConfigKey: Modules.DOCUMENTS,
+          projectConfigKey: Modules.DOCUMENTS,
           path: navigation.SEARCH_DOCUMENTS,
           title: t('Documents'),
           total: undefined,
@@ -174,7 +174,7 @@ export const Search: React.FC = () => {
         {
           id: 2,
           name: 'Seismic',
-          tenantConfigKey: Modules.SEISMIC,
+          projectConfigKey: Modules.SEISMIC,
           path: navigation.SEARCH_SEISMIC,
           title: t('Seismic'),
           total: undefined,
@@ -182,23 +182,23 @@ export const Search: React.FC = () => {
         {
           id: 3,
           name: 'Wells',
-          tenantConfigKey: Modules.WELLS,
+          projectConfigKey: Modules.WELLS,
           path: navigation.SEARCH_WELLS,
           title: t('Wells'),
           total: undefined,
         },
       ].filter((tab) =>
-        tenantConfig
+        projectConfig
           ? // only show tabs that are not disabled
-            !tenantConfig[tab.tenantConfigKey]?.disabled
-          : // hide all tabs till tenant config is loaded
+            !projectConfig[tab.projectConfigKey]?.disabled
+          : // hide all tabs till project config is loaded
             false
       ),
-    [tenantConfig]
+    [projectConfig]
   );
 
   const selectedItem = useMemo(
-    () => items.find((y) => y.path === location.pathname)?.tenantConfigKey,
+    () => items.find((y) => y.path === location.pathname)?.projectConfigKey,
     [items, location.pathname]
   );
 
@@ -230,7 +230,7 @@ export const Search: React.FC = () => {
   }, [showDashboard]); */
 
   const handleNavigation = (tabKey: string) => {
-    const tabItem = items.find((item) => item.tenantConfigKey === tabKey);
+    const tabItem = items.find((item) => item.projectConfigKey === tabKey);
     if (tabKey && tabItem) {
       metrics.track(`click-${tabKey.toLowerCase()}-tab`);
       history.push(tabItem.path);
@@ -276,11 +276,11 @@ export const Search: React.FC = () => {
   }; */
 
   const defaultPage = () => {
-    if (tenantConfig && !tenantConfig.documents?.disabled) {
+    if (projectConfig && !projectConfig.documents?.disabled) {
       return navigation.SEARCH_DOCUMENTS;
     }
 
-    if (tenantConfig && !tenantConfig.seismic?.disabled) {
+    if (projectConfig && !projectConfig.seismic?.disabled) {
       return navigation.SEARCH_SEISMIC;
     }
 
@@ -299,22 +299,25 @@ export const Search: React.FC = () => {
         {/* {anythingHasSearched && !inspectMode && <SearchReset />} */}
         {!inspectMode && (
           <TabsWrapper data-testid="result-panel-tabs">
-            {tenantConfig && (
+            {projectConfig && (
               <Tabs activeKey={selectedItem} onChange={handleNavigation}>
-                {!tenantConfig[Modules.DOCUMENTS]?.disabled && (
+                {!projectConfig[Modules.DOCUMENTS]?.disabled && (
                   <Tabs.TabPane
                     key={Modules.DOCUMENTS}
                     tab={
                       <TabPaneContent
                         text={t(DOCUMENT_TAB_TITLE_KEY)}
                         count={documentResultCount}
-                        displayCount={!tenantConfig.hideFilterCount}
+                        displayCount={
+                          projectConfig &&
+                          !projectConfig?.general?.hideFilterCount
+                        }
                       />
                     }
                   />
                 )}
 
-                {!tenantConfig[Modules.SEISMIC]?.disabled && (
+                {!projectConfig[Modules.SEISMIC]?.disabled && (
                   <Tabs.TabPane
                     key={Modules.SEISMIC}
                     tab={
@@ -326,7 +329,7 @@ export const Search: React.FC = () => {
                   />
                 )}
 
-                {!tenantConfig[Modules.WELLS]?.disabled && (
+                {!projectConfig[Modules.WELLS]?.disabled && (
                   <Tabs.TabPane
                     key={Modules.WELLS}
                     tab={<TabPaneContent text={t(WELLS_TAB_TITLE_KEY)} />}
@@ -361,7 +364,7 @@ export const Search: React.FC = () => {
   );
 
   // we need the config to be setup before we proceed
-  if (!tenantConfig) {
+  if (!projectConfig) {
     return null;
   }
 

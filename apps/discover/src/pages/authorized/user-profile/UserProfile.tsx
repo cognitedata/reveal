@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import { Drawer } from '@cognite/cogs.js';
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 
 import { showSuccessMessage } from 'components/toast';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { UserProfileUpdateQueryData } from 'modules/api/user/types';
 import { useUserUpdateMutate } from 'modules/api/user/useUserQuery';
-import { CompanyInfoConfig } from 'tenants/types';
 
 import { UserProfileOverlayFooter } from './UserProfileOvelayFooter';
 import { UserProfileOverlayContent } from './UserProfileOverlayContent';
@@ -22,8 +22,10 @@ export const UserProfile: React.FC<Props> = ({
   handleProfileUpdated,
   onCancel,
 }) => {
-  const { data: companyInfo } =
-    useTenantConfigByKey<CompanyInfoConfig>('companyInfo');
+  const { data: companyInfo } = useProjectConfigByKey<
+    ProjectConfigGeneral['companyInfo']
+  >('general.companyInfo');
+
   const mutateUpdateUser = useUserUpdateMutate();
 
   const updateUserDetails = (user: UserProfileUpdateQueryData) => {

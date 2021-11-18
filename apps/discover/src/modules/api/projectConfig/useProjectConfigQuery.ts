@@ -7,10 +7,12 @@ import {
 
 import merge from 'lodash/merge';
 
+import { ProjectConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { PROJECT_CONFIG_QUERY_KEY } from 'constants/react-query';
 import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { Metadata } from 'pages/authorized/admin/projectConfig/types';
 
 export function useProjectConfigUpdateMutate() {
   const headers = getJsonHeaders({}, true);
@@ -18,7 +20,7 @@ export function useProjectConfigUpdateMutate() {
   const [project] = getTenantInfo();
 
   return useMutation(
-    (newProjectConfig: any) => {
+    (newProjectConfig: ProjectConfig) => {
       // optimistic update
       const oldProjectConfig = queryClient.getQueryData(
         PROJECT_CONFIG_QUERY_KEY.CONFIG
@@ -48,7 +50,7 @@ export function useProjectConfigUpdateMutate() {
   );
 }
 
-export function useProjectConfigGetQuery(): UseQueryResult<any> {
+export function useProjectConfigGetQuery(): UseQueryResult<ProjectConfig> {
   const headers = getJsonHeaders({}, true);
   const [project] = getTenantInfo();
 
@@ -57,7 +59,7 @@ export function useProjectConfigGetQuery(): UseQueryResult<any> {
   );
 }
 
-export function useProjectConfigMetadataGetQuery(): UseQueryResult<any> {
+export function useProjectConfigMetadataGetQuery(): UseQueryResult<Metadata> {
   const headers = getJsonHeaders({}, true);
   const [project] = getTenantInfo();
 

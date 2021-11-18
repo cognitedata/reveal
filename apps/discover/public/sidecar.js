@@ -70,7 +70,7 @@ window.__cogniteSidecar = {
     {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
-      groups: ['defaultGroup', 'readGroup'],
+      groups: ['defaultGroup', 'readGroup', 'writeGroup'],
       name: 'Bluefield Admin',
       otherAccessTokenFields: {
         given_name: 'Admin',

@@ -5,10 +5,11 @@ import { useHistory } from 'react-router-dom';
 import noop from 'lodash/noop';
 
 import { Button, Input } from '@cognite/cogs.js';
+import { ProjectConfigAzureConfig } from '@cognite/discover-api-types';
 import { LogoutButton } from '@cognite/react-container';
 
 import { convertToCancellablePromise } from '_helpers/cancellablePromise';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { UserProfileUpdateQueryData } from 'modules/api/user/types';
 import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import {
@@ -21,7 +22,6 @@ import {
   SaveButtonContainer,
   UserProfileContainer,
 } from 'pages/authorized/user-profile/elements';
-import { AzureConfig } from 'tenants/types';
 
 import { CurrentUserAvatar } from './CurrentUserAvatar';
 import { UserAccessList } from './UserAccessList';
@@ -49,7 +49,7 @@ export const UserProfileOverlayContent: React.FC<Props> = ({
   const [lastname, setLastname] = useState<string>('');
   const [logo, setLogo] = useState<string | undefined>();
   const { data: azureConfig } =
-    useTenantConfigByKey<AzureConfig>('azureConfig');
+    useProjectConfigByKey<ProjectConfigAzureConfig>('azureConfig');
 
   useEffect(() => {
     setFirstname(user?.firstname || '');

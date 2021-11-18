@@ -1,14 +1,14 @@
+import { ProjectConfigAzureConfig } from '@cognite/discover-api-types';
 import { Properties, useMetrics } from '@cognite/metrics';
 import { getAppInsights } from '@cognite/react-azure-telemetry';
 
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
-import { AzureConfig } from 'tenants/types';
+import { useProjectConfigByKey } from './useProjectConfig';
 
 export const useGlobalMetrics = (domain?: string) => {
   const appInsights = getAppInsights();
   const metrics = useMetrics(domain);
   const { data: azureConfig } =
-    useTenantConfigByKey<AzureConfig>('azureConfig');
+    useProjectConfigByKey<ProjectConfigAzureConfig>('azureConfig');
 
   return {
     track: (eventName: string, eventData?: Properties) => {

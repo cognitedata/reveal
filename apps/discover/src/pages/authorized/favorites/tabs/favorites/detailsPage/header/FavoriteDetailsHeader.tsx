@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
+import { ProjectConfigFavorites } from '@cognite/discover-api-types';
+
 import {
   ShareButton,
   CommentButton,
@@ -13,14 +15,13 @@ import Header from 'components/header/Header';
 import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useIsOwner } from 'modules/api/user/utils';
 import { FavoriteSummary } from 'modules/favorite/types';
 import {
   DOWNLOAD_MESSAGE,
   DOWNLOADING,
 } from 'pages/authorized/search/document/inspect/constants';
-import { FavoritesConfig } from 'tenants/types';
 
 interface ActionProps {
   favorite: FavoriteSummary;
@@ -39,7 +40,7 @@ const Actions: React.FC<ActionProps> = ({
   const { t } = useTranslation('Favorites');
   const metrics = useGlobalMetrics('favorites');
   const { data: favoriteConfig } =
-    useTenantConfigByKey<FavoritesConfig>('favorites');
+    useProjectConfigByKey<ProjectConfigFavorites>('favorites');
 
   const { isOwner } = useIsOwner();
   const checkIfIsOwner = isOwner(favorite.owner.id);

@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components/macro';
 
-import { useTenantConfig } from 'hooks/useTenantConfig';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Flex, sizes } from 'styles/layout';
 
@@ -19,10 +19,10 @@ const FiltersContainer = styled(Flex)`
 `;
 
 export const LandingFilter: React.FC = React.memo(() => {
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
   const isOpen = useFilterBarIsOpen();
 
-  if (!tenantConfig) {
+  if (!projectConfig) {
     return null;
   }
 
@@ -32,8 +32,8 @@ export const LandingFilter: React.FC = React.memo(() => {
         {isOpen && (
           <>
             <DocumentFilter.Title />
-            {!tenantConfig?.wells?.disabled && <WellsFilter.Title />}
-            {!tenantConfig?.seismic?.disabled && <SeismicFilter.Title />}
+            {!projectConfig?.wells?.disabled && <WellsFilter.Title />}
+            {!projectConfig?.seismic?.disabled && <SeismicFilter.Title />}
           </>
         )}
       </FiltersContainer>

@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { testRenderer } from '__test-utils/renderer';
 import { defaultTestUser } from '__test-utils/testdata.utils';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { FavoriteDetailsHeader } from 'pages/authorized/favorites/tabs/favorites/detailsPage/header';
 import { Props } from 'pages/authorized/favorites/tabs/favorites/detailsPage/header/FavoriteDetailsHeader';
@@ -14,9 +14,9 @@ jest.mock('modules/api/user/useUserQuery.ts', () => ({
   useUserProfileQuery: jest.fn(),
 }));
 
-jest.mock('hooks/useTenantConfig.ts', () => ({
-  ...jest.requireActual('hooks/useTenantConfig.ts'),
-  useTenantConfigByKey: jest.fn(),
+jest.mock('hooks/useProjectConfig.ts', () => ({
+  ...jest.requireActual('hooks/useProjectConfig.ts'),
+  useProjectConfigByKey: jest.fn(),
 }));
 
 describe('Favorite Details Header', () => {
@@ -32,7 +32,7 @@ describe('Favorite Details Header', () => {
     });
 
   it('should render component', async () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: undefined,
     }));
 
@@ -47,13 +47,13 @@ describe('Favorite Details Header', () => {
     expect(title).toBeInTheDocument();
     expect(description).toBeInTheDocument();
 
-    // should display 4 action buttons since download button is not enabled in tenant config
+    // should display 4 action buttons since download button is not enabled in Project config
     const buttons = screen.queryAllByTestId('base-button-margin-wrapper');
     expect(buttons).toHaveLength(4);
   });
 
   it('should show skeletons if status isLoading is true', async () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: undefined,
     }));
 
@@ -78,8 +78,8 @@ describe('Favorite Details Header', () => {
     expect(skeletons).toHaveLength(2);
   });
 
-  it('should display 5 action buttons if download button is enabled in tenant settings', async () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+  it('should display 5 action buttons if download button is enabled in Project settings', async () => {
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: {
         showDownloadAllDocumentsButton: true,
       },
@@ -96,7 +96,7 @@ describe('Favorite Details Header', () => {
   });
 
   it('should display only 3 action buttons if user is not owner', async () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: {
         showDownloadAllDocumentsButton: true,
       },

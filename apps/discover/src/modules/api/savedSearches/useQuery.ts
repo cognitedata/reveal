@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
+import { ProjectConfigSeismic } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 
@@ -11,8 +12,8 @@ import {
   SURVEYS_QUERY_KEY,
 } from 'constants/react-query';
 import { useCurrentSavedSearchState } from 'hooks/useCurrentSavedSearchState';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useSearchActions } from 'hooks/useSearchActions';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import {
   SavedSearchItem,
   SavedSearchContent,
@@ -20,7 +21,6 @@ import {
 import { updateCurrentSearch } from 'modules/api/savedSearches/utils';
 import { discoverAPI, getJsonHeaders } from 'modules/api/service';
 import { Modules } from 'modules/sidebar/types';
-import { SeismicConfig } from 'tenants/types';
 
 import { GenericApiError } from '../types';
 
@@ -98,7 +98,7 @@ export const useMutatePatchSavedSearch = (
 ) => {
   const currentSavedSearch = useCurrentSavedSearchState();
   const headers = getJsonHeaders({}, true);
-  const { data: seismicConfig } = useTenantConfigByKey<SeismicConfig>(
+  const { data: seismicConfig } = useProjectConfigByKey<ProjectConfigSeismic>(
     Modules.SEISMIC
   );
   const { doCommonSearch } = useSearchActions();

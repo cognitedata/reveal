@@ -1,9 +1,10 @@
 import styled from 'styled-components/macro';
 
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { DocumentCategory } from 'modules/api/documents/types';
 import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
 import { useDocumentQueryFacets } from 'modules/documentSearch/hooks/useDocumentQueryFacets';
@@ -17,9 +18,10 @@ interface Props {
   children(data: DocumentCategory): React.ReactNode;
 }
 export const DocumentServiceWrapper: React.FC<Props> = ({ children }) => {
-  const { data: showDynamicResultCount } = useTenantConfigByKey<boolean>(
-    'showDynamicResultCount'
-  );
+  const { data: showDynamicResultCount } = useProjectConfigByKey<
+    ProjectConfigGeneral['showDynamicResultCount']
+  >('general.showDynamicResultCount');
+
   const { isLoading, error, data } = showDynamicResultCount
     ? useDocumentQueryFacets()
     : useDocumentCategoryQuery();

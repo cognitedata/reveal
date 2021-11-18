@@ -11,13 +11,13 @@ import { showResults, startSearching } from 'modules/search/actions';
 import { setSearchPhrase } from 'modules/sidebar/actions';
 
 import { useDocumentSearch } from './useDocumentSearch';
+import { useProjectConfig } from './useProjectConfig';
 import { useSeismicSearch } from './useSeismicSearch';
-import { useTenantConfig } from './useTenantConfig';
 import { useWellsSearch } from './useWellsSearch';
 
 export const useCommonSearch = () => {
   const dispatch = useDispatch();
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
 
   const doDocumentSearch = useDocumentSearch();
   const doSeismicSearch = useSeismicSearch();
@@ -53,15 +53,15 @@ export const useCommonSearch = () => {
       dispatch(setSearchPhrase(searchQuery.query));
     }
 
-    if (tenantConfig && !tenantConfig.documents?.disabled) {
+    if (projectConfig && !projectConfig.documents?.disabled) {
       doDocumentSearch(searchQuery);
     }
 
-    if (tenantConfig && !tenantConfig.wells?.disabled) {
+    if (projectConfig && !projectConfig.wells?.disabled) {
       doWellsSearch(searchQuery);
     }
 
-    if (tenantConfig && !tenantConfig.seismic?.disabled && headers) {
+    if (projectConfig && !projectConfig.seismic?.disabled && headers) {
       doSeismicSearch(searchQuery, headers, queryClient);
     }
   };

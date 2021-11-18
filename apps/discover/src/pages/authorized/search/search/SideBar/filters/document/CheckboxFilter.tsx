@@ -5,9 +5,10 @@ import isEqual from 'lodash/isEqual';
 import styled from 'styled-components/macro';
 
 import { Body, Icon } from '@cognite/cogs.js';
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { DocumentPayload } from 'modules/api/documents/types';
 import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
 import {
@@ -87,8 +88,9 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
     const [showApplyButton, setShowApplyButton] = useState(false);
     const [activeFilters, setFilters] = useState<CheckboxState[]>([]);
     const [isShowMoreExpanded, setIsShowMoreExpanded] = useState(false);
-    const { data: hideFilterCount } =
-      useTenantConfigByKey<boolean>('hideFilterCount');
+    const { data: hideFilterCount } = useProjectConfigByKey<
+      ProjectConfigGeneral['hideFilterCount']
+    >('general.hideFilterCount');
     const setDocumentFilters = useSetDocumentFilters();
 
     const currentFilterStateFacets = get(
