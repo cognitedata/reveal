@@ -1,32 +1,26 @@
-import React, { useMemo } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
-
 import { Colors, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
-
 import styled from 'styled-components';
-import notification from 'antd/lib/notification';
-import Popconfirm from 'antd/lib/popconfirm';
 
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { useDeleteTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 import { useTableData } from 'hooks/table-data';
 import { escapeCSVValue } from 'utils/utils';
+import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 
 export const Menu = (): JSX.Element => {
-  const history = useHistory();
-  const { appPath } = useParams<{
-    appPath: string;
-  }>();
-  const { mutate: deleteTable } = useDeleteTable();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
   const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;
   const canBeRenamed = false;
+
+  const stopPropagation = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLElement>
+  ) => e.stopPropagation();
 
   const onDownloadData = useMemo(() => {
     return (
@@ -65,46 +59,27 @@ export const Menu = (): JSX.Element => {
       </CSVLink>
       <CogsMenu.Divider />
       <CogsMenu.Header>Danger zone</CogsMenu.Header>
-      <Popconfirm
-        title="Are you sure you want to delete this table? Once deleted, the table cannot be recovered."
-        onConfirm={() =>
-          deleteTable(
-            { database: database!, table: table! },
-            {
-              onSuccess() {
-                notification.success({
-                  message: `Table ${table} in database ${database} deleted!`,
-                  key: 'table-created',
-                });
-                history.replace(createLink(`/${appPath}/${database}`));
-              },
-              onError(e) {
-                notification.error({
-                  message: 'An error occured when deleting the table!',
-                  description: <pre>{JSON.stringify(e, null, 2)}</pre>,
-                  key: 'table-created',
-                });
-              },
-            }
-          )
-        }
-        okText="Yes"
-        cancelText="No"
+      <CogsMenu.Item
+        aria-label="Button delete table"
         disabled={!hasWriteAccess}
-        cancelButtonProps={{ type: 'default' }}
+        onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+          stopPropagation(e);
+          setIsDeleteModalOpen(true);
+        }}
       >
-        <CogsMenu.Item
-          aria-label="Button delete table"
-          disabled={!hasWriteAccess}
-        >
-          <Item>
-            <Icon type="Trash" />
-            <span style={{ color: Colors['text-danger'].hex() }}>
-              Delete table
-            </span>
-          </Item>
-        </CogsMenu.Item>
-      </Popconfirm>
+        <Item>
+          <Icon type="Trash" />
+          <span style={{ color: Colors['text-danger'].hex() }}>
+            Delete table
+          </span>
+        </Item>
+      </CogsMenu.Item>
+      <DeleteTableModal
+        databaseName={database!}
+        tableName={table!}
+        visible={isDeleteModalOpen}
+        onCancel={() => setIsDeleteModalOpen(false)}
+      />
     </StyledMenu>
   );
 };
