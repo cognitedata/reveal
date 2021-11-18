@@ -68,13 +68,13 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
                       <div>
                         <span>{contact.name}</span>
                       </div>
-                      <div>
+                      <div css="line-height: 1.5rem">
                         <a href={`mailto:${contact.email}`}>{contact.email}</a>
                         {contact.sendNotification && (
                           <Icon
                             type="BellNotification"
                             size={12}
-                            css="margin-top:2px;margin-left:4px"
+                            css="margin-left: 6px; vertical-align: middle;"
                           />
                         )}
                       </div>
