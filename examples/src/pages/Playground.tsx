@@ -18,10 +18,51 @@ interface PositionData {
   z: number
 }
 
+interface MatrixData {
+  0: number,
+  1: number,
+  2: number,
+  3: number,
+  4: number,
+  5: number,
+  6: number,
+  7: number,
+  8: number,
+  9: number,
+  10: number,
+  11: number,
+  12: number,
+  13: number,
+  14: number,
+  15: number,
+}
+
 interface MotionData {
   rotation: RotationData,
   position: PositionData,
+  matrix: MatrixData
   timestamp: number
+}
+
+const mockMatrixData = () => {
+ return {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0,
+    14: 0,
+    15: 0,
+  }
 }
 
 const mockRotationData = () => {
@@ -37,8 +78,9 @@ const mockMotionData = (count : number) => {
   for(let i = 0; i < count; i++) {
     data.push(
       {
-        rotation: mockRotationData(),
         position: mockPositionData(),
+        rotation: mockRotationData(),
+        matrix: mockMatrixData(),
         timestamp: i * 1000
       }
     )
@@ -48,32 +90,32 @@ const mockMotionData = (count : number) => {
 
 const dataList: MotionData[] = mockMotionData(30)
 
-const TimeLine = (props: TimeState, live: boolean) => {
-  const [isLive, setIsLive] = useState(live);
-  const [timeState, setTimeState] = useState(props);
-  const [prevTime, setPrevTime] = useState(props.startTime);
+// const TimeLine = (props: TimeState, live: boolean) => {
+//   const [isLive, setIsLive] = useState(live);
+//   const [timeState, setTimeState] = useState(props);
+//   const [prevTime, setPrevTime] = useState(props.startTime);
 
 
-  function tick() {
-    const now = Date.now();
-    const deltaTime = now - prevTime;
-    setTimeState(timeState => ({
-      ...timeState,
-      playTime: timeState.playTime + deltaTime
-    }));
-    setPrevTime(now);
-  }
+//   function tick() {
+//     const now = Date.now();
+//     const deltaTime = now - prevTime;
+//     setTimeState(timeState => ({
+//       ...timeState,
+//       playTime: timeState.playTime + deltaTime
+//     }));
+//     setPrevTime(now);
+//   }
 
-  useEffect(() => {
-    const intervalHandle = setInterval(tick, 1000);
-    return () => {
-      clearInterval(intervalHandle)
-    }
-  })
+//   useEffect(() => {
+//     const intervalHandle = setInterval(tick, 1000);
+//     return () => {
+//       clearInterval(intervalHandle)
+//     }
+//   })
 
 
-  return timeState
-}
+//   return timeState
+// }
 
 interface PlayButtonProps {
   playing: boolean
@@ -130,7 +172,7 @@ const SeekBar = (props: SeekBarProps) => {
   )
 }
 
-const Player = (props: PlayerProps) => {
+export const Player = (props: PlayerProps) => {
 
   const [state, setState] = useState(props)
   const [previousTime, setPreviousTime] = useState(Date.now())
@@ -213,6 +255,8 @@ const Player = (props: PlayerProps) => {
   )
 }
 
+
+
 interface PlayerProps {
   isPlaying: boolean
   startTime: number
@@ -222,17 +266,17 @@ interface PlayerProps {
   handleNewData: (data: MotionData) => void
 }
 
-interface TimeState {
-  startTime: number,
-  playTime: number,
-  endTime: number,
+// interface TimeState {
+//   startTime: number,
+//   playTime: number,
+//   endTime: number,
 
-}
+// }
 
 export function Playground() {
   const now = Date.now();
   const duration = 30000;
-  const { startTime, playTime, endTime } = TimeLine({ startTime: now, playTime: now, endTime: now + duration}, false)
+  // const { startTime, playTime, endTime } = TimeLine({ startTime: now, playTime: now, endTime: now + duration}, false)
 
   useEffect(() => {
 
