@@ -1,22 +1,16 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
-import {
-  Body,
-  Button,
-  Colors,
-  Detail,
-  Icon,
-  Input,
-  Title,
-} from '@cognite/cogs.js';
+import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { notification } from 'antd';
 import styled from 'styled-components';
 
+import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useOpenTable } from 'hooks/table-tabs';
-import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
+
+import CreateEmptyTableOption from './CreateEmptyTableOption';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
@@ -134,21 +128,13 @@ const CreateTableModal = ({
       </FormFieldWrapper>
       <FormFieldWrapper isRequired title="Select one">
         <StyledCreateOptions>
-          <StyledCreateOption>left</StyledCreateOption>
-          <StyledCreateOption onClick={selectOption(CreateTableOption.Empty)}>
-            <StyledCreateEmptyTableWrapper
-              $isSelected={
-                selectedCreateTableOption === CreateTableOption.Empty
-              }
-            >
-              <StyledCreateEmptyTableIcon size={32} type="DataTable" />
-              <StyledCreateEmptyTableTitle level={6} strong>
-                Create an empty table
-              </StyledCreateEmptyTableTitle>
-              <StyledCreateEmptyTableDetail strong>
-                Upload files later or write data directly using the API.
-              </StyledCreateEmptyTableDetail>
-            </StyledCreateEmptyTableWrapper>
+          <StyledCreateOption>upload csv</StyledCreateOption>
+          <StyledCreateOption>
+            <CreateEmptyTableOption
+              isDisabled={isLoading}
+              isSelected={selectedCreateTableOption === CreateTableOption.Empty}
+              onClick={selectOption(CreateTableOption.Empty)}
+            />
           </StyledCreateOption>
         </StyledCreateOptions>
       </FormFieldWrapper>
@@ -178,61 +164,6 @@ const StyledCreateOption = styled.li`
   :not(:last-child) {
     margin-right: 16px;
   }
-`;
-
-const StyledCreateEmptyTableIcon = styled(Icon)`
-  color: ${Colors['border-default']};
-`;
-
-const StyledCreateEmptyTableWrapper = styled.div<{ $isSelected?: boolean }>`
-  align-items: center;
-  border: 1px solid ${Colors['border-default'].hex()};
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  padding: 36px;
-
-  &:hover {
-    background-color: ${Colors['bg-hover'].hex()};
-    border-color: ${Colors['bg-status-small--accent'].hex()};
-
-    ${StyledCreateEmptyTableIcon} {
-      color: ${Colors['bg-status-small--accent'].hex()};
-    }
-  }
-
-  &:active {
-    background-color: ${Colors['bg-selected'].hex()};
-    border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
-    padding: 35px;
-
-    ${StyledCreateEmptyTableIcon} {
-      color: ${Colors['bg-status-small--accent-hover'].hex()};
-    }
-  }
-
-  ${({ $isSelected }) =>
-    $isSelected
-      ? `
-      background-color: ${Colors['bg-selected'].hex()};
-      border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
-      padding: 35px;
-  
-      ${StyledCreateEmptyTableIcon} {
-        color: ${Colors['bg-status-small--accent-hover'].hex()};
-      }`
-      : ''};
-`;
-
-const StyledCreateEmptyTableTitle = styled(Body)`
-  color: ${Colors['text-primary']};
-  margin: 16px 0 8px;
-`;
-
-const StyledCreateEmptyTableDetail = styled(Detail)`
-  color: ${Colors['text-hint']};
-  text-align: center;
 `;
 
 export default CreateTableModal;
