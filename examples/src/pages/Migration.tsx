@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import * as THREE from 'three';
 import { CogniteClient, Viewer3DAPI } from '@cognite/sdk';
-import dat from 'dat.gui'; 
+import dat from 'dat.gui';
 import {
   AddModelOptions,
   Cognite3DViewer,
@@ -736,7 +736,7 @@ export function Migration() {
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
-      
+
       if (project && environmentParam) {
         await authenticateSDKWithEnvironment(client, project, environmentParam);
       } else if (modelUrl !== null) {
@@ -750,7 +750,7 @@ export function Migration() {
           '"modelId" and "revisionId" to load model from CDF ' +
           '"or "modelUrl" to load model from URL.');
       }
-      
+
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
@@ -1007,7 +1007,7 @@ export function Migration() {
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'random']).name('Color by');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');      
+      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
       debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
       debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
@@ -1189,7 +1189,7 @@ export function Migration() {
                 overlayHtml.innerText = `Node ${treeIndex}`;
                 overlayHtml.style.cssText = 'background: white; position: absolute; pointer-events: none; user-select: none;'; // possibly need to add other browsers prefixes
                 overlayTool.add(overlayHtml, point);
-  
+
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
 
@@ -1243,9 +1243,13 @@ export function Migration() {
 
   };
 
+  const canvasStyle = {
+    height: "1400px"
+  }
+
   return (
-  <div> 
-      <CanvasWrapper ref={canvasWrapperRef} />
+  <div>
+      <CanvasWrapper ref={canvasWrapperRef} style={canvasStyle}/>
       <Player isPlaying={false} startTime={1637248940856} seekTime={1637248940856} endTime={1637248946977} motionData={phoneCameraData} handleNewData={handleCameraData} ></Player>
   </div>);
 }
