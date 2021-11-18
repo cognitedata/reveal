@@ -1,6 +1,14 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
-import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Colors,
+  Detail,
+  Icon,
+  Input,
+  Title,
+} from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { notification } from 'antd';
 import styled from 'styled-components';
@@ -11,6 +19,11 @@ import { useOpenTable } from 'hooks/table-tabs';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
+
+enum CreateTableOption {
+  Empty = 'empty',
+  Upload = 'upload',
+}
 
 type CreateTableModalProps = {
   databaseName: string;
@@ -25,17 +38,24 @@ const CreateTableModal = ({
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const [tableName, setTableName] = useState('');
+  const [selectedCreateTableOption, setSelectedCreateTableOption] =
+    useState<CreateTableOption>();
 
   const { mutate: createDatabase, isLoading } = useCreateTable();
   const openTable = useOpenTable();
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isDisabled =
-    tableName.length === 0 || tableName.length > 64 || !isUnique || isLoading;
+    tableName.length === 0 ||
+    tableName.length > 64 ||
+    !selectedCreateTableOption ||
+    !isUnique ||
+    isLoading;
 
   useEffect(() => {
     if (!visible) {
       setTableName('');
+      setSelectedCreateTableOption(undefined);
     }
   }, [visible]);
 
@@ -65,6 +85,12 @@ const CreateTableModal = ({
       }
     );
   };
+
+  const selectOption =
+    (option: CreateTableOption): (() => void) =>
+    (): void => {
+      setSelectedCreateTableOption(option);
+    };
 
   return (
     <Modal
@@ -106,6 +132,26 @@ const CreateTableModal = ({
           The name should be unique. You can not change this name later.
         </StyledNameInputDetail>
       </FormFieldWrapper>
+      <FormFieldWrapper isRequired title="Select one">
+        <StyledCreateOptions>
+          <StyledCreateOption>left</StyledCreateOption>
+          <StyledCreateOption onClick={selectOption(CreateTableOption.Empty)}>
+            <StyledCreateEmptyTableWrapper
+              $isSelected={
+                selectedCreateTableOption === CreateTableOption.Empty
+              }
+            >
+              <StyledCreateEmptyTableIcon size={32} type="DataTable" />
+              <StyledCreateEmptyTableTitle level={6} strong>
+                Create an empty table
+              </StyledCreateEmptyTableTitle>
+              <StyledCreateEmptyTableDetail strong>
+                Upload files later or write data directly using the API.
+              </StyledCreateEmptyTableDetail>
+            </StyledCreateEmptyTableWrapper>
+          </StyledCreateOption>
+        </StyledCreateOptions>
+      </FormFieldWrapper>
     </Modal>
   );
 };
@@ -117,6 +163,76 @@ const StyledNameInputDetail = styled(Detail)`
 
 const StyledCancelButton = styled(Button)`
   margin-right: 8px;
+`;
+
+const StyledCreateOptions = styled.ul`
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const StyledCreateOption = styled.li`
+  flex: 1;
+
+  :not(:last-child) {
+    margin-right: 16px;
+  }
+`;
+
+const StyledCreateEmptyTableIcon = styled(Icon)`
+  color: ${Colors['border-default']};
+`;
+
+const StyledCreateEmptyTableWrapper = styled.div<{ $isSelected?: boolean }>`
+  align-items: center;
+  border: 1px solid ${Colors['border-default'].hex()};
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  padding: 36px;
+
+  &:hover {
+    background-color: ${Colors['bg-hover'].hex()};
+    border-color: ${Colors['bg-status-small--accent'].hex()};
+
+    ${StyledCreateEmptyTableIcon} {
+      color: ${Colors['bg-status-small--accent'].hex()};
+    }
+  }
+
+  &:active {
+    background-color: ${Colors['bg-selected'].hex()};
+    border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
+    padding: 35px;
+
+    ${StyledCreateEmptyTableIcon} {
+      color: ${Colors['bg-status-small--accent-hover'].hex()};
+    }
+  }
+
+  ${({ $isSelected }) =>
+    $isSelected
+      ? `
+      background-color: ${Colors['bg-selected'].hex()};
+      border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
+      padding: 35px;
+  
+      ${StyledCreateEmptyTableIcon} {
+        color: ${Colors['bg-status-small--accent-hover'].hex()};
+      }`
+      : ''};
+`;
+
+const StyledCreateEmptyTableTitle = styled(Body)`
+  color: ${Colors['text-primary']};
+  margin: 16px 0 8px;
+`;
+
+const StyledCreateEmptyTableDetail = styled(Detail)`
+  color: ${Colors['text-hint']};
+  text-align: center;
 `;
 
 export default CreateTableModal;
