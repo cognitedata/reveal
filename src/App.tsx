@@ -10,7 +10,6 @@ import { Loader } from '@cognite/cogs.js';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import debounce from 'lodash/debounce';
 import { createBrowserHistory } from 'history';
-import { setupSentry } from 'utils/setupSentry';
 import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
 import { AntStyles, GlobalStyles } from 'styles';
@@ -52,7 +51,6 @@ const App = () => {
 
   useEffect(() => {
     if (cogsStyles?.use) cogsStyles.use();
-    setupSentry();
     return () => {
       if (cogsStyles?.unuse) cogsStyles.unuse();
     };

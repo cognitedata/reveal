@@ -42,7 +42,6 @@
     "@reduxjs/toolkit": "^1.5.0",
     "@rescripts/cli": "^0.0.14",
     "@rescripts/utilities": "^0.0.7",
-    "@sentry/browser": "^5.29.2",
     "@types/enzyme": "^3.10.8",
     "@types/lodash": "^4.14.168",
     "@types/mime-types": "^2.1.0",
