@@ -113,6 +113,7 @@ export default function TableTabList() {
         <Tab
           key={`${db}_${table}`}
           $active={db === activeDb && table === activeTable}
+          onMouseDown={(event) => event.button === 1 && close([db, table])}
           onClick={() => {
             setActive([db, table]);
           }}
