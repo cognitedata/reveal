@@ -116,9 +116,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
           <ItemLabel>
             Owner
-            {consoleOwners.length > 1 && 's'}
+            {Array.isArray(consoleOwners) && consoleOwners.length > 1 && 's'}
           </ItemLabel>
-          {consoleOwners.length > 0 ? (
+          {Array.isArray(consoleOwners) && consoleOwners.length > 0 ? (
             consoleOwners.map((owner) => (
               <span key={owner.name}>
                 <ItemValue>{owner.name}</ItemValue>

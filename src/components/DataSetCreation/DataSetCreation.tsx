@@ -121,7 +121,7 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
         return keyToStatus(key);
       case 'owners':
         if (
-          dataSet.metadata.consoleOwners &&
+          Array.isArray(dataSet.metadata.consoleOwners) &&
           dataSet.metadata.consoleOwners.length > 0
         )
           return (
