@@ -2,17 +2,19 @@ import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
 import TableBulkActions from 'components/BulkAction';
 import { PageHeader, Page, PageContent } from 'components/page';
 import { useLabelName } from 'hooks/useLabel';
+import { useLabelParams } from 'hooks/useParams';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useDocumentsQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
 import { StickyTableHeadContainer } from 'styles/elements';
-import { DocumentsSearchModal } from './components/modals/DocumentsSearch';
-import { DocumentsTable } from './components/Table/DocumentsTable';
+import { DocumentsSearchModal } from './components/modals/DocumentsSearchModal';
+import { DocumentsTable } from './components/table/DocumentsTable';
 
-export const DocumentPage: React.FC = () => {
-  const { externalId } = useParams<{ externalId: string }>();
+export const LabelPage: React.FC = () => {
+  const externalId = useLabelParams();
   const labelName = useLabelName(externalId);
+  const history = useHistory();
 
   const { data, isLoading } = useDocumentsQuery();
   const { mutate, isLoading: mutateLoading } =
@@ -60,7 +62,19 @@ export const DocumentPage: React.FC = () => {
   }
 
   return (
-    <Page>
+    <Page
+      breadcrumbs={[
+        {
+          title: 'New classifier',
+          onClick: () => {
+            history.goBack();
+          },
+        },
+        {
+          title: labelName,
+        },
+      ]}
+    >
       <PageHeader
         title={labelName}
         subtitle="Label:"
@@ -100,4 +114,4 @@ export const DocumentPage: React.FC = () => {
   );
 };
 
-export default DocumentPage;
+export default LabelPage;

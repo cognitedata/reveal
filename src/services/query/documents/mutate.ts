@@ -1,7 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { Label } from '@cognite/sdk';
 import { useMutation, useQueryClient } from 'react-query';
-import { doDocumentSearch, updateDocumentPipelines } from 'services/api';
+import {
+  doDocumentSearch,
+  updateDocumentPipelinesActiveClassifier,
+  updateDocumentPipelinesTrainingLabels,
+} from 'services/api';
 import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
 import { ApiError, DocumentSearchQuery } from 'services/types';
 import { Toast } from 'components/Toast';
@@ -25,7 +29,8 @@ export const useDocumentsUpdatePipelineMutate = (action: 'add' | 'remove') => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    (labels: Label[]) => updateDocumentPipelines(sdk, action, labels),
+    (labels: Label[]) =>
+      updateDocumentPipelinesTrainingLabels(sdk, action, labels),
     {
       onSuccess: (_data, variable) => {
         queryClient.invalidateQueries(DOCUMENTS_QUERY_KEYS.trainingSet);
@@ -39,6 +44,33 @@ export const useDocumentsUpdatePipelineMutate = (action: 'add' | 'remove') => {
       onError: (error: ApiError) => {
         Toast.error({
           title: `Failed while updating labels`,
+          status: error?.status || 400,
+          message: error?.message,
+        });
+      },
+    }
+  );
+};
+
+export const useDocumentsActiveClassifierPipelineMutate = () => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (classifierId: number) =>
+      updateDocumentPipelinesActiveClassifier(sdk, classifierId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(DOCUMENTS_QUERY_KEYS.classifier);
+
+        Toast.success({
+          title: 'Deployed a new model',
+          message: 'Successfully deployed a new model to the classifier',
+        });
+      },
+      onError: (error: ApiError) => {
+        Toast.error({
+          title: `Failed while deploying new model`,
           status: error?.status || 400,
           message: error?.message,
         });

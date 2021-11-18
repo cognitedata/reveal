@@ -3,7 +3,7 @@ import React from 'react';
 import { useDocumentsUpdatePipelineMutate } from 'services/query/documents/mutate';
 import { StickyTableHeadContainer } from 'styles/elements';
 import { getContainer } from 'utils/utils';
-import { Labels, LabelsTable } from '../Table/LabelsTable';
+import { Labels, LabelsTable } from '../table/LabelsTable';
 
 interface Props {
   visible?: boolean;

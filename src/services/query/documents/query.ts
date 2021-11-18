@@ -10,8 +10,9 @@ import {
   previewDocument,
 } from 'services/api';
 import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
-import { useParams } from 'react-router-dom';
 import React from 'react';
+import { useLabelParams } from 'hooks/useParams';
+import { isClassifierTraining } from 'utils/classifier';
 
 export const useDocumentsSearchQuery = (enabled = true) => {
   const sdk = useSDK();
@@ -30,7 +31,7 @@ export const useDocumentsSearchQuery = (enabled = true) => {
 
 export const useDocumentsQuery = (enabled = true) => {
   const sdk = useSDK();
-  const { externalId } = useParams<{ externalId: string }>();
+  const externalId = useLabelParams();
 
   const { data = [], ...rest } = useQuery(
     [DOCUMENTS_QUERY_KEYS.list, externalId],
@@ -85,7 +86,7 @@ export const useDocumentsClassifiersQuery = () => {
 export const useDocumentsClassifierByIdQuery = (id?: number) => {
   const sdk = useSDK();
 
-  const [refetchInterval, setRefreshInterval] = React.useState(2000);
+  const [refetchInterval, setRefreshInterval] = React.useState(5000);
   const disableRefreshInterval = () => setRefreshInterval(0);
 
   return useQuery(
@@ -95,7 +96,7 @@ export const useDocumentsClassifierByIdQuery = (id?: number) => {
       enabled: !!id,
       refetchInterval,
       onSuccess: (data) => {
-        if (data.status !== 'queuing') {
+        if (!isClassifierTraining(data)) {
           disableRefreshInterval();
         }
       },

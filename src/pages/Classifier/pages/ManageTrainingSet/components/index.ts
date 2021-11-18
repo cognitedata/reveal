@@ -1,1 +1,1 @@
-export * from './Table/TrainingSetsTable';
+export * from './table/TrainingSetsTable';

@@ -6,7 +6,6 @@ import { useDocumentsPipelinesQuery } from 'services/query/documents/query';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  /* height: 3.25rem; */
   background-color: rgba(74, 103, 251, 0.1);
   border-radius: 6px;
   margin-bottom: 5px;

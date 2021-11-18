@@ -3,7 +3,6 @@ import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
 import GlobalStyles from 'styles/GlobalStyles';
 import { setupMixpanel } from 'utils/config';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -48,9 +47,7 @@ const App = () => {
             subAppName="document-search-ui"
           >
             <SDKProvider sdk={sdk}>
-              <ClassifierContext>
-                <MainRouter />
-              </ClassifierContext>
+              <MainRouter />
             </SDKProvider>
           </AuthWrapper>
         </SubAppWrapper>

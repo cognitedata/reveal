@@ -1,6 +1,11 @@
 import { Body } from '@cognite/cogs.js';
+import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
 import styled from 'styled-components';
+
+const BreadcrumbText = styled(Body).attrs({ level: 2 })`
+  cursor: pointer;
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -10,18 +15,38 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   padding: 0 2.5rem;
-
-  & > * {
-    margin-right: 0.5rem;
-  }
+  gap: 0.5rem;
 `;
 
-export const Breadcrumb: React.FC = () => {
+interface Props {
+  breadcrumbs?: { title: string; onClick?: () => void }[];
+}
+export const Breadcrumb: React.FC<Props> = ({ breadcrumbs }) => {
+  const { toHome } = useNavigation();
+
   return (
     <Container>
-      <Body level={2} strong>
+      <BreadcrumbText
+        strong={!breadcrumbs}
+        onClick={() => {
+          toHome();
+        }}
+      >
         Document Classifiers - Version: 1.0
-      </Body>
+      </BreadcrumbText>
+      {breadcrumbs?.map((item, index) => (
+        <React.Fragment key={item.title}>
+          <BreadcrumbText>/</BreadcrumbText>
+          <BreadcrumbText
+            strong={breadcrumbs.length === index + 1}
+            onClick={() => {
+              if (item.onClick) item.onClick();
+            }}
+          >
+            {item.title}
+          </BreadcrumbText>
+        </React.Fragment>
+      ))}
     </Container>
   );
 };

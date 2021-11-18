@@ -43,6 +43,21 @@ export const fetchDocumentClassifierById = (sdk: CogniteClient, id: number) => {
     });
 };
 
+export const deleteDocumentClassifier = (sdk: CogniteClient, id: number) => {
+  return sdk
+    .post(
+      `/api/playground/projects/${sdk.project}/documents/classifiers/delete`,
+      {
+        data: {
+          items: [{ id }],
+        },
+      }
+    )
+    .then((result) => {
+      return result.data;
+    });
+};
+
 export const fetchDocumentClassifiers = (sdk: CogniteClient) => {
   return sdk
     .get<ListResponse<Classifier[]>>(
@@ -61,7 +76,34 @@ export const fetchDocumentPipelines = (sdk: CogniteClient) => {
     .then((result) => result.data.items?.[0]);
 };
 
-export const updateDocumentPipelines = (
+export const updateDocumentPipelinesActiveClassifier = (
+  sdk: CogniteClient,
+  classifierId: number
+) => {
+  return sdk
+    .post<ListResponse<Classifier[]>>(
+      `/api/playground/projects/${sdk.project}/documents/pipelines/update`,
+      {
+        data: {
+          items: [
+            {
+              externalId: 'default',
+              classifier: {
+                activeClassifierId: {
+                  set: classifierId,
+                },
+              },
+            },
+          ],
+        },
+      }
+    )
+    .then((result) => {
+      return result.data.items?.[0];
+    });
+};
+
+export const updateDocumentPipelinesTrainingLabels = (
   sdk: CogniteClient,
   action: 'add' | 'remove',
   trainingLabels: Label[]

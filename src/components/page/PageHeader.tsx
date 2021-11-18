@@ -3,10 +3,10 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Container = styled.div`
+const Container = styled.div<{ $marginBottom?: string }>`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
+  margin-bottom: ${({ $marginBottom }) => $marginBottom || '1.5rem'};
 `;
 
 const Wrapper = styled.div`
@@ -30,6 +30,7 @@ const BackContainer = styled.div`
 interface Props {
   title: string;
   titleLevel?: number;
+  marginBottom?: string;
   subtitle?: string;
   description?: string;
   showGoBack?: boolean;
@@ -40,6 +41,7 @@ export const PageHeader: React.FC<Props> = React.memo(
   ({
     title,
     subtitle,
+    marginBottom,
     description,
     Action,
     showGoBack,
@@ -79,7 +81,7 @@ export const PageHeader: React.FC<Props> = React.memo(
     }, [showGoBack, onClose, history]);
 
     return (
-      <Container>
+      <Container $marginBottom={marginBottom}>
         <Wrapper>
           <Flex alignItems="flex-end">{renderCloseAction}</Flex>
           <div>

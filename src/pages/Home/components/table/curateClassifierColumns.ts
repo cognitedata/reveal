@@ -41,9 +41,9 @@ export const curateColumns = (
       Cell: TableCell.Number,
     },
     {
-      Header: '',
+      Header: 'Status',
       accessor: 'status',
-      Cell: TableCell.Label(),
+      Cell: TableCell.ClassifierStatusLabel,
     },
     classifierActionsCallback && {
       Header: '',

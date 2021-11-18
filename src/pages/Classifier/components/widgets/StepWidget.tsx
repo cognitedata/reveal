@@ -16,7 +16,7 @@ import {
   Title,
 } from './elements';
 
-export const Step: FC<{
+export const StepWidget: FC<{
   step: Exclude<ClassifierState, 'complete'>;
   index: number;
 }> = ({ step, index }) => {

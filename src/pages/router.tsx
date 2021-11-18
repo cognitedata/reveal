@@ -4,7 +4,8 @@ import Home from 'pages/Home';
 import ClassifierPage from 'pages/Classifier/Classifier';
 import { createBrowserHistory } from 'history';
 import { ToastContainer } from '@cognite/cogs.js';
-import DocumentPage from './Document/Document';
+import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
+import LabelPage from './Label/Label';
 
 export const MainRouter = () => {
   const history = createBrowserHistory();
@@ -15,16 +16,14 @@ export const MainRouter = () => {
 
       <Router history={history}>
         <Switch>
+          <Route path="/:project/documents/classifier/:classifierName">
+            <ClassifierContext>
+              <ClassifierPage />
+            </ClassifierContext>
+          </Route>
           <Route
-            path={[
-              '/:project/documents/classifier/:classifierName/:modelName',
-              '/:project/documents/classifier/:classifierName',
-            ]}
-            component={ClassifierPage}
-          />
-          <Route
-            path="/:project/documents/document/:externalId"
-            component={DocumentPage}
+            path="/:project/documents/label/:externalId"
+            component={LabelPage}
           />
           <Route path="/:project/documents" component={Home} />
         </Switch>

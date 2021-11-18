@@ -8,19 +8,22 @@ import { sortByDate } from 'utils/sort';
 import { ClassifierActions, curateColumns } from './curateClassifierColumns';
 
 interface Props {
-  classifier?: Classifier;
   classifierActionsCallback?: ClassifierActions;
 }
 export const ClassifierTable: React.FC<Props> = ({
-  classifier,
   classifierActionsCallback,
 }) => {
-  const { data, isLoading } = useDocumentsClassifiersQuery();
+  const { data: classifiers, isLoading } = useDocumentsClassifiersQuery();
 
   const columns = React.useMemo(
     () => curateColumns(classifierActionsCallback),
     [classifierActionsCallback]
   );
+
+  const data = React.useMemo(() => {
+    const nonActiveClassifiers = classifiers.filter((item) => !item.active);
+    return sortByDate(nonActiveClassifiers);
+  }, [classifiers]);
 
   if (isLoading) {
     return <Loader darkMode />;
@@ -29,7 +32,7 @@ export const ClassifierTable: React.FC<Props> = ({
   return (
     <Table<Classifier>
       pagination={false}
-      dataSource={classifier ? [classifier] : sortByDate(data)}
+      dataSource={data}
       columns={columns as any}
       locale={{
         emptyText: (

@@ -5,7 +5,7 @@ import { useDocumentsSearchQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
 import { StickyTableHeadContainer } from 'styles/elements';
 import { getContainer } from 'utils/utils';
-import { DocumentsTable } from '../Table/DocumentsTable';
+import { DocumentsTable } from '../table/DocumentsTable';
 
 interface Props {
   labelId: string;

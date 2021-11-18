@@ -1,4 +1,4 @@
-import { StepProps } from 'pages/Classifier/components/step/types';
+import { StepProps } from 'pages/Classifier/components/widgets/types';
 import { ClassifierState } from 'machines/classifier/types';
 
 interface ClassifierConfig {

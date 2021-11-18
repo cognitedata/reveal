@@ -1,7 +1,7 @@
 import React from 'react';
 import { AllIconTypes, AutoComplete } from '@cognite/cogs.js';
 import { DocumentSearchQuery } from 'services/types';
-import { FilterProps } from 'pages/Document/components/Table/Filters/types';
+import { FilterProps } from 'pages/Label/components/table/filters/types';
 
 interface Props extends FilterProps {
   title: string;

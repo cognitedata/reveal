@@ -42,3 +42,5 @@ export interface ApiError {
   message?: string;
   status?: number;
 }
+
+export type ClassifierStatus = 'queuing' | 'training' | 'finished' | 'failed';

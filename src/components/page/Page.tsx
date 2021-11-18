@@ -22,8 +22,9 @@ const BottomContainer = styled.div`
 const Wrapper = styled.div`
   display: flex;
   padding: 2.5rem;
+  padding-top: 3.5rem;
   padding-bottom: 0;
-  gap: 1.5rem;
+  gap: 2.5rem;
   height: 100%;
   overflow-y: hidden;
 `;
@@ -47,15 +48,17 @@ const Content = styled.section`
 interface Props {
   Widget?: JSX.Element[] | JSX.Element;
   BottomNavigation?: JSX.Element[] | JSX.Element;
+  breadcrumbs?: { title: string; onClick?: () => void }[];
 }
 export const Page: React.FC<Props> = ({
   children,
   BottomNavigation,
   Widget,
+  breadcrumbs,
 }) => {
   return (
     <Container>
-      <Breadcrumb />
+      <Breadcrumb breadcrumbs={breadcrumbs} />
       <Wrapper>
         {Widget && <WidgetContainer>{Widget}</WidgetContainer>}
         <Content>{children}</Content>

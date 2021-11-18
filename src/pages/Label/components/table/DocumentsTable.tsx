@@ -4,7 +4,7 @@ import { Empty } from 'components/states/Empty';
 import React from 'react';
 import { DocumentPreview } from '../layover/DocumentPreview';
 import { curateColumns } from './curateDocumentsColumns';
-import { DocumentsFilters } from './Filters';
+import { DocumentsFilters } from './filters';
 
 type DocumentPreview = {
   show: boolean;

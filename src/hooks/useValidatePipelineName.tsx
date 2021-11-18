@@ -1,16 +1,15 @@
 import React from 'react';
 import { Toast } from 'components/Toast';
 import { useDocumentsPipelinesQuery } from 'services/query/documents/query';
-import { useParams } from 'react-router-dom';
-import { ClassifierParams } from 'types/params';
 import { useNavigation } from 'hooks/useNavigation';
+import { useClassifierParams } from './useParams';
 
 /**
  * Hook validates  classifier name when creating a new model
  * is valid up against the backend
  */
 const useValidatePipelineName = () => {
-  const { classifierName } = useParams<ClassifierParams>();
+  const { classifierName } = useClassifierParams();
   const { toHome } = useNavigation();
 
   const { data, isLoading } = useDocumentsPipelinesQuery();

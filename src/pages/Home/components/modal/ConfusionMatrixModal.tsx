@@ -4,18 +4,20 @@ import { PageHeader } from 'components/page';
 import { MatrixTable } from 'pages/Classifier/pages/ReviewModel/components';
 import React from 'react';
 import { getContainer } from 'utils/utils';
-import { ClassifierTable } from '../table/ClassifierTable';
+import { ActiveModelContainer } from '../container/ActiveModelContainer';
 
 interface Props {
   classifier: Classifier;
   visible?: boolean;
   toggleVisibility: () => void;
+  onDeployClick: (classifier: Classifier) => void;
 }
 
 export const ConfusionMatrixModal: React.FC<Props> = ({
   classifier,
   visible,
   toggleVisibility,
+  onDeployClick,
 }) => {
   return (
     <Modal
@@ -24,11 +26,11 @@ export const ConfusionMatrixModal: React.FC<Props> = ({
       visible={visible}
       getContainer={getContainer}
       onCancel={() => toggleVisibility()}
-      onOk={() => toggleVisibility()}
+      onOk={() => onDeployClick(classifier)}
     >
-      <PageHeader title="Classifier info" />
-      <ClassifierTable classifier={classifier} />
-      <PageHeader title="Confusion matrix" />
+      <br />
+      <ActiveModelContainer classifier={classifier} />
+      <PageHeader title="Confusion matrix" titleLevel={5} />
       <MatrixTable classifier={classifier} />
     </Modal>
   );

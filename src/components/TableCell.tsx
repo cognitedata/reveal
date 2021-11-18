@@ -13,10 +13,11 @@ import { Classifier, Document } from '@cognite/sdk-playground';
 import { Tag } from 'components/Tag';
 import { globalConfig } from 'configs/global.config';
 import { Navigation } from 'hooks/useNavigation';
+import capitalize from 'lodash/capitalize';
 import { ClassifierActions } from 'pages/Home/components/table/curateClassifierColumns';
 import React from 'react';
 import { CellProps } from 'react-table';
-import { ClassifierTrainingSet } from 'services/types';
+import { ClassifierStatus, ClassifierTrainingSet } from 'services/types';
 import { TagColor } from './Tag';
 
 export const TableCell = {
@@ -96,6 +97,31 @@ export const TableCell = {
           {value || 'Unknown'}
         </Label>
       ),
+  ClassifierStatusLabel: ({ value }: CellProps<any, ClassifierStatus>) => {
+    const status = capitalize(value);
+
+    if (value === 'queuing' || value === 'training') {
+      return (
+        <Label size="medium" icon="LoadingSpinner" variant="default">
+          {status}
+        </Label>
+      );
+    }
+
+    if (value === 'failed') {
+      return (
+        <Label size="medium" variant="danger">
+          {status}
+        </Label>
+      );
+    }
+
+    return (
+      <Label size="medium" variant="success">
+        {status}
+      </Label>
+    );
+  },
   ManageFilesButton:
     (navigate: Navigation) =>
     ({
@@ -110,7 +136,7 @@ export const TableCell = {
             icon="Edit"
             type="tertiary"
             aria-label="Add files"
-            onClick={() => navigate.toDocument(id)}
+            onClick={() => navigate.toLabel(id)}
           />
         </Tooltip>
       );
@@ -140,6 +166,7 @@ export const TableCell = {
           content={
             <Menu style={{ width: '12rem' }}>
               <Menu.Header>Classifier actions</Menu.Header>
+
               {original.metrics && (
                 <>
                   <Menu.Item
@@ -152,9 +179,8 @@ export const TableCell = {
                   <Menu.Divider />
                 </>
               )}
+
               <Menu.Item
-                appendIcon="Trash"
-                aria-label="Test"
                 onClick={() => classifierActionsCallback('delete', original)}
               >
                 Delete
