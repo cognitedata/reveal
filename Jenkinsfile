@@ -138,8 +138,8 @@ pods {
         'Lint': {
           stageWithNotify('Check linting', CONTEXTS.lint) {
             dir('lint') {
-              retry(3) {
-                container('fas') {
+              container('fas') {
+                retry(3) {
                   sh('yarn lint')
                 }
               }
@@ -150,8 +150,8 @@ pods {
         'Unit tests': {
           stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
             dir('unit-tests') {
-              retry(3) {
-                container('fas') {
+              container('fas') {
+                retry(3) {
                   sh('yarn test')
                   junit(allowEmptyResults: true, testResults: '**/junit.xml')
                   if (isPullRequest) {
@@ -177,15 +177,13 @@ pods {
         'Preview': {
           dir('preview') {
             stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
-              retry(3) {
-                fas.build(
-                  appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
-                  repo: APPLICATION_REPO_ID,
-                  buildCommand: 'yarn build preview',
-                  shouldExecute: isPullRequest,
-                  sourceMapPath: ''
-                )
-              }
+              fas.build(
+                appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
+                repo: APPLICATION_REPO_ID,
+                buildCommand: 'yarn build preview',
+                shouldExecute: isPullRequest,
+                sourceMapPath: ''
+              )
             }
           }
         },
@@ -193,32 +191,28 @@ pods {
         'Staging': {
           dir('staging') {
             stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
-              retry(3) {
-                fas.build(
-                  appId: STAGING_APP_ID,
-                  repo: APPLICATION_REPO_ID,
-                  buildCommand: 'yarn build staging',
-                  shouldExecute: isStaging,
-                  sourceMapPath: ''
-                )
-              }
+              fas.build(
+                appId: STAGING_APP_ID,
+                repo: APPLICATION_REPO_ID,
+                buildCommand: 'yarn build staging',
+                shouldExecute: isStaging,
+                sourceMapPath: ''
+              )
             }
           }
         },
 
         'Production': {
-            retry(3) {
-              dir('production') {
-                stageWithNotify('Build for production', CONTEXTS.buildProduction) {
-                  fas.build(
-                    appId: PRODUCTION_APP_ID,
-                    repo: APPLICATION_REPO_ID,
-                    buildCommand: 'yarn build production',
-                    shouldExecute: isProduction,
-                    sourceMapPath: ''
-                  )
-                }
-              }
+          dir('production') {
+            stageWithNotify('Build for production', CONTEXTS.buildProduction) {
+              fas.build(
+                appId: PRODUCTION_APP_ID,
+                repo: APPLICATION_REPO_ID,
+                buildCommand: 'yarn build production',
+                shouldExecute: isProduction,
+                sourceMapPath: ''
+              )
+            }
           }
         },
 
@@ -253,7 +247,6 @@ pods {
       }
       dir('staging') {
         fas.publish()
-
       }
 
       // in 'single-branch' mode we always publish 'staging' and 'master' builds
