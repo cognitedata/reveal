@@ -696,6 +696,7 @@ const phoneCameraData: MotionData[] = [
 
 export function Migration() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
+  let threeScene: THREE.Scene;
   useEffect(() => {
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
@@ -755,7 +756,7 @@ export function Migration() {
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
 
-      const threeScene = viewer.getScene();
+      threeScene = viewer.getScene();
       // Configure connection to the phone
       const peer = new Peer('RevealHackathonTestPeerId1_1034')
 
@@ -1169,9 +1170,10 @@ export function Migration() {
       new AxisViewTool(viewer);
 
       // add a cube!
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const geometry = new THREE.BoxGeometry(2, 2, 2);
       const material = new THREE.MeshBasicMaterial({ color: 'purple' });
       const cube = new THREE.Mesh(geometry, material);
+      cube.name = 'cameraCube';
       viewer.getScene().add(cube);
 
       viewer.on('click', async event => {
@@ -1240,7 +1242,11 @@ export function Migration() {
   });
 
   const handleCameraData = (data: MotionData) => {
-
+    let obj: THREE.Object3D | undefined;
+    if (threeScene) obj = threeScene.getObjectByName('cameraCube');
+    const m = data.matrix;
+    obj?.matrix.set(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
+    console.log(data.position);
   };
 
   return (
