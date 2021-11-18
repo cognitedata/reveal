@@ -163,7 +163,10 @@ const Lineage = ({ dataSet }: LineageProps) => {
   if (dataSet && dataSet.metadata) {
     const { names: sourceNames } = dataSet.metadata.consoleSource || [];
     const extractorAccounts =
-      dataSet?.metadata?.consoleExtractors?.accounts || [];
+      dataSet.metadata.consoleExtractors &&
+      Array.isArray(dataSet.metadata.consoleExtractors.accounts)
+        ? dataSet.metadata.consoleExtractors.accounts
+        : [];
     const usedRawTables = dataSet.metadata.rawTables;
     const usedTransformations =
       dataSet.metadata.transformations &&
