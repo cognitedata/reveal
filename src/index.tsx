@@ -45,7 +45,7 @@ configure({
   ignoreEventsCondition: (keyEvent) => {
     const IGNORED_TAGS = ['input', 'select', 'textarea'];
 
-    const evtIsFromIgnoredInput =
+    const eventIsFromIgnoredInput =
       keyEvent.target &&
       IGNORED_TAGS.includes(
         (keyEvent.target as HTMLElement).tagName.toLowerCase()
