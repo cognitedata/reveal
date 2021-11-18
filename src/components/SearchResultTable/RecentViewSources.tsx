@@ -21,8 +21,8 @@ import { useQueryClient } from 'react-query';
 import { useRecoilState } from 'recoil';
 import { chartAtom } from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
-import TimeseriesSearchHit from './TimeseriesSearchHit';
 import AssetSearchHit from './AssetSearchHit';
+import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
 type Props = {
   viewType: 'assets' | 'timeseries';
@@ -108,27 +108,28 @@ const RecentViewSources = ({ viewType }: Props) => {
       </TitleWrapper>
 
       <div>
-        {viewType === 'assets' ? (
-          (sources || []).map((source) => (
-            <li key={source.id}>
-              <AssetSearchHit asset={source as Asset} />
-            </li>
-          ))
-        ) : (
-          <TimeseriesSearchHit
-            timeseries={sources as Timeseries[]}
-            renderCheckbox={(ts) => (
-              <Checkbox
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleTimeSeriesClick(ts);
-                }}
-                name={`${ts.id}`}
-                checked={selectedExternalIds?.includes(ts.externalId || '')}
+        {viewType === 'assets'
+          ? (sources || []).map((source) => (
+              <li key={source.id}>
+                <AssetSearchHit asset={source as Asset} />
+              </li>
+            ))
+          : (sources as Timeseries[])?.map((ts) => (
+              <TimeseriesSearchResultItem
+                key={ts.id}
+                timeseries={ts}
+                renderCheckbox={() => (
+                  <Checkbox
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTimeSeriesClick(ts);
+                    }}
+                    name={`${ts.id}`}
+                    checked={selectedExternalIds?.includes(ts.externalId || '')}
+                  />
+                )}
               />
-            )}
-          />
-        )}
+            ))}
       </div>
     </Container>
   );

@@ -3,7 +3,7 @@ import { useSDK } from '@cognite/sdk-provider';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
 import { useParams } from 'react-router-dom';
 import { Timeseries } from '@cognite/sdk';
-import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
+import { useCdfItems, useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 import {
   addTimeseries,
@@ -17,8 +17,8 @@ import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
 import { chartAtom } from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
-import TimeseriesSearchHit from './TimeseriesSearchHit';
 import RecentViewSources from './RecentViewSources';
+import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
 
 type Props = {
   query: string;
@@ -28,13 +28,38 @@ export default function SearchTimeseries({ query }: Props) {
   const { chartId } = useParams<{ chartId: string }>();
   const [chart, setChart] = useRecoilState(chartAtom);
   const { addTsToRecent, addAssetToRecent } = useAddToRecentLocalStorage();
-  const { data, isLoading, isError, fetchNextPage, hasNextPage } =
-    useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
-      enabled: !!query,
-    });
+
+  const {
+    data: resourcesBySearch,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteSearch<Timeseries>('timeseries', query, 20, undefined, {
+    enabled: !!query,
+  });
+
+  const { data: resourcesByExternalId } = useCdfItems<Timeseries>(
+    'timeseries',
+    [{ externalId: query }]
+  );
+
+  const timeseriesExactMatch = useMemo(
+    () =>
+      resourcesByExternalId?.filter(
+        ({ externalId }) => externalId === query
+      )[0],
+    [resourcesByExternalId, query]
+  );
+
   const timeseries = useMemo(
-    () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
-    [data]
+    () =>
+      resourcesBySearch?.pages
+        ?.reduce((accl, page) => accl.concat(page), [])
+        .filter(
+          ({ externalId }) => externalId !== timeseriesExactMatch?.externalId
+        ),
+    [resourcesBySearch, timeseriesExactMatch]
   );
 
   if (isError) {
@@ -44,6 +69,7 @@ export default function SearchTimeseries({ query }: Props) {
   if (isLoading) {
     return <Icon type="Loading" />;
   }
+
   if (timeseries?.length === 0) {
     return null;
   }
@@ -96,23 +122,50 @@ export default function SearchTimeseries({ query }: Props) {
     }
   };
 
+  const searchResultElements = timeseries?.map((ts) => (
+    <TimeseriesSearchResultItem
+      key={ts.id}
+      timeseries={ts}
+      query={query}
+      renderCheckbox={() => (
+        <Checkbox
+          onClick={(e) => {
+            e.preventDefault();
+            handleTimeSeriesClick(ts);
+          }}
+          name={`${ts.id}`}
+          checked={selectedExternalIds?.includes(ts.externalId || '')}
+        />
+      )}
+    />
+  ));
+
+  const exactMatchResult = timeseriesExactMatch && (
+    <TimeseriesSearchResultItem
+      isExact
+      key={timeseriesExactMatch.id}
+      timeseries={timeseriesExactMatch}
+      query={query}
+      renderCheckbox={() => (
+        <Checkbox
+          onClick={(e) => {
+            e.preventDefault();
+            handleTimeSeriesClick(timeseriesExactMatch);
+          }}
+          name={`${timeseriesExactMatch.id}`}
+          checked={selectedExternalIds?.includes(
+            timeseriesExactMatch.externalId || ''
+          )}
+        />
+      )}
+    />
+  );
+
   return (
     <TSList>
       {!query && <RecentViewSources viewType="timeseries" />}
-      <TimeseriesSearchHit
-        timeseries={timeseries}
-        query={query}
-        renderCheckbox={(ts) => (
-          <Checkbox
-            onClick={(e) => {
-              e.preventDefault();
-              handleTimeSeriesClick(ts);
-            }}
-            name={`${ts.id}`}
-            checked={selectedExternalIds?.includes(ts.externalId || '')}
-          />
-        )}
-      />
+      {exactMatchResult}
+      {searchResultElements}
       {hasNextPage && (
         <TSItem>
           <Button type="link" onClick={() => fetchNextPage()}>

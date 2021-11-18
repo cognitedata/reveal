@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Icon, Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
+import { useCdfItems, useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 
 import AssetSearchHit from './AssetSearchHit';
@@ -11,13 +11,34 @@ type Props = {
   query: string;
 };
 export default function SearchResultList({ query }: Props) {
-  const { data, isLoading, isError, fetchNextPage, hasNextPage } =
-    useInfiniteSearch<Asset>('assets', query, 20, undefined, {
-      enabled: !!query,
-    });
+  const {
+    data: resourcesBySearch,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteSearch<Asset>('assets', query, 20, undefined, {
+    enabled: !!query,
+  });
+
+  const { data: resourcesByExternalId } = useCdfItems<Asset>('assets', [
+    { externalId: query },
+  ]);
+
+  const assetExactMatch = useMemo(
+    () =>
+      resourcesByExternalId?.filter(
+        ({ externalId }) => externalId === query
+      )[0],
+    [resourcesByExternalId, query]
+  );
+
   const assets = useMemo(
-    () => data?.pages?.reduce((accl, page) => accl.concat(page), []),
-    [data]
+    () =>
+      resourcesBySearch?.pages
+        ?.reduce((accl, page) => accl.concat(page), [])
+        .filter(({ externalId }) => externalId !== query),
+    [resourcesBySearch, query]
   );
 
   if (isError) {
@@ -31,14 +52,23 @@ export default function SearchResultList({ query }: Props) {
     return null;
   }
 
+  const exactMatchElement = assetExactMatch && (
+    <li key={assetExactMatch.id}>
+      <AssetSearchHit asset={assetExactMatch} query={query} isExact />
+    </li>
+  );
+
+  const searchResultElements = assets?.map((asset) => (
+    <li key={asset.id}>
+      <AssetSearchHit asset={asset} query={query} />
+    </li>
+  ));
+
   return (
     <AssetList>
       {!query && <RecentViewSources viewType="assets" />}
-      {assets?.map((asset) => (
-        <li key={asset.id}>
-          <AssetSearchHit asset={asset} query={query} />
-        </li>
-      ))}
+      {exactMatchElement}
+      {searchResultElements}
       {hasNextPage && (
         <Button
           type="link"

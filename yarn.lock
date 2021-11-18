@@ -6115,7 +6115,7 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
-batch-processor@1.0.0:
+batch-processor@1.0.0, batch-processor@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
   integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
@@ -7203,6 +7203,11 @@ constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
   integrity sha1-wguW2MYXdIqvHBYCF2DNJ/y4y3U=
+
+container-query-toolkit@0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/container-query-toolkit/-/container-query-toolkit-0.1.3.tgz#79ece9fe491d9187b7051247067f1faac6ce00b0"
+  integrity sha512-B1EvYaLzFKz81vgWDm+zL0X7fzFUjlN6lF/RivDeNT4xW9mFsTh1oiC9rtvFFiwG52e3JUmYLXwPpqNBf2AXHA==
 
 content-disposition@0.5.2:
   version "0.5.2"
@@ -8530,6 +8535,13 @@ elegant-spinner@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
+
+element-resize-detector@1.1.13:
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.1.13.tgz#f61907e98a91b1ad215f92790bc15113df68444d"
+  integrity sha1-9hkH6YqRsa0hX5J5C8FRE99oRE0=
+  dependencies:
+    batch-processor "^1.0.0"
 
 element-resize-detector@^1.2.2:
   version "1.2.3"
@@ -16038,6 +16050,14 @@ react-colorful@^5.1.2:
   resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.5.0.tgz#8359f218984a927095477a190ab9927eaf865c0c"
   integrity sha512-BuzrlrM0ylg7coPkXOrRqlf2BgHLw5L44sybbr9Lg4xy7w9e5N7fGYbojOO0s8J0nvrM3PERN2rVFkvSa24lnQ==
 
+react-container-query@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/react-container-query/-/react-container-query-0.12.0.tgz#193322fc5b5e641535c89c9a02644285a23d9db6"
+  integrity sha512-KwHd1U7sobGcJ3tMqHASfQBTcXhsKIYEYCvrRGVv3mHxEKVHATnrrS9fMMAZ8623fTiHpV1FvtTY+KB30O56CA==
+  dependencies:
+    container-query-toolkit "0.1.3"
+    resize-observer-lite "0.2.3"
+
 react-date-range@^1.1.3:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/react-date-range/-/react-date-range-1.4.0.tgz#d2073b85bdb4185e4dde288ce29198dd90074045"
@@ -16992,6 +17012,13 @@ reselect@^4.0.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.1.tgz#7e2c110efbf3d70df3482604bcf2bc0ab571346a"
   integrity sha512-Jjt8Us6hAWJpjucyladHvUGR+q1mHHgWtGDXlhvvKyNyIeQ3bjuWLDX0bsTLhbm/gd4iXEACBlODUHBlLWiNnA==
+
+resize-observer-lite@0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/resize-observer-lite/-/resize-observer-lite-0.2.3.tgz#b557f378e2ce9b9aab1dc71a91047bd7ed1d8915"
+  integrity sha512-k/p+pjCTQkQ7x94bWsxcVwEJI5SrcO95j7czrCKMpHjXFQ+HmKRGLTdAkZoL3+wG1Pe/4L9Sl652zy9lU54dFg==
+  dependencies:
+    element-resize-detector "1.1.13"
 
 resize-observer-polyfill@1.5.0:
   version "1.5.0"

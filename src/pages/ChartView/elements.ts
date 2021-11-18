@@ -77,6 +77,8 @@ export const ContentWrapper = styled.div`
   max-height: 100%;
   width: ${(props: { showSearch: boolean }) =>
     props.showSearch ? '70%' : '100%'};
+  min-width: ${(props: { showSearch: boolean }) =>
+    props.showSearch ? '650px' : '900px'};
 `;
 
 export const ToolbarIcon = styled(Icon)`
