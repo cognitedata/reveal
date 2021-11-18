@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useState } from 'react';
-import { ContactCard } from 'components/ContactInformation/ContactCard';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
@@ -9,7 +8,6 @@ import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
 import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
-import { EditableAreaButton } from 'components/extpipe/EditableAreaButton';
 import { Section } from 'components/extpipe/Section';
 
 const Wrapper = styled.div``;
@@ -57,13 +55,38 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
     >
       <Wrapper>
         {contacts && contacts.length > 0 ? (
-          <EditableAreaButton disabled={!canEdit} onClick={openEdit} $full>
+          <div css="padding: 0 1rem;">
             <MarginedChildren>
               {contactsSorted.map((contact: User) => {
-                return <ContactCard key={contact.email} {...contact} />;
+                return (
+                  <div
+                    css="display: flex; align-items: center; justify-content: space-between; gap: 1rem"
+                    key={contact.email}
+                  >
+                    <div>
+                      <div>
+                        <span>{contact.name}</span>
+                      </div>
+                      <div>
+                        <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                      </div>
+                    </div>
+                    <div
+                      css={`
+                        color: #777;
+                        text-align: right;
+                        font-weight: ${contact.role === 'Owner'
+                          ? 'bold'
+                          : 'normal'};
+                      `}
+                    >
+                      {contact.role}
+                    </div>
+                  </div>
+                );
               })}
             </MarginedChildren>
-          </EditableAreaButton>
+          </div>
         ) : (
           <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
             {TableHeadings.CONTACTS.toLowerCase()}
