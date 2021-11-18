@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { DragEvent } from 'react-router/node_modules/@types/react';
+import { DragEvent, MouseEvent } from 'react-router/node_modules/@types/react';
 
 interface RotationData {
   x: number,
@@ -131,12 +131,13 @@ interface SeekBarProps {
   startTime: number
   seekTime: number
   endTime: number
-  onSeek: (event: DragEvent) => void
+  onSeek: (event: MouseEvent) => void
 }
+
+const BAR_WIDTH = window.innerWidth - 40
 
 const SeekBar = (props: SeekBarProps) => {
 
-  const BAR_WIDTH = 200
   const DURATION = props.endTime - props.startTime
   const REL_SEEK_TIME = props.seekTime - props.startTime
   const REL_SEEK_FRACTION = REL_SEEK_TIME / DURATION
@@ -165,9 +166,9 @@ const SeekBar = (props: SeekBarProps) => {
   }
 
   return (
-    <div style={backgroundStyle}>
+    <div style={backgroundStyle} onClick={props.onSeek}>
       <div style={fillStyle}>
-        <div style={buttonStyle} onDrag={props.onSeek}></div>
+        <div style={buttonStyle}></div>
       </div>
     </div>
   )
@@ -175,9 +176,12 @@ const SeekBar = (props: SeekBarProps) => {
 
 export const Player = (props: PlayerProps) => {
 
+
+  const DURATION = props.endTime - props.startTime
+
   const [state, setState] = useState(props)
   const [previousTime, setPreviousTime] = useState(Date.now())
-  const [dataPosition, setDataPosition] = useState(findPosition(0))
+  const [dataPosition, setDataPosition] = useState(findPosition(0, props.seekTime))
 
   function handlePlayPause() {
     setState({
@@ -186,14 +190,14 @@ export const Player = (props: PlayerProps) => {
     });
   }
 
-  function findPosition(initialPos: number) {
+  function findPosition(initialPos: number, seekTime: number) {
     for(let i = initialPos; i < props.motionData.length -1; ) {
-      if(state.seekTime < props.motionData[i].timestamp) {
+      if(seekTime < props.motionData[i].timestamp) {
         return i;
       }
       i++
     }
-    return 0;
+    return props.motionData.length -1;
   }
 
   function tick() {
@@ -213,7 +217,7 @@ export const Player = (props: PlayerProps) => {
       }
       if(dataPosition != undefined) {
         const oldPosition = dataPosition;
-        const newPosition = findPosition(dataPosition);
+        const newPosition = findPosition(dataPosition, seekTime);
         if(oldPosition != newPosition) {
           setDataPosition(newPosition)
           state.handleNewData(state.motionData[newPosition])
@@ -242,8 +246,16 @@ export const Player = (props: PlayerProps) => {
 
   function onSeekMove() {}
 
-  function onSeek(event: DragEvent) {
-    console.log(event)
+  function onSeek(event: MouseEvent) {
+    const seekRatio = (event.clientX - 20) / BAR_WIDTH;
+    const seekTime = state.startTime + DURATION * seekRatio;
+    setState({
+      ...state,
+      seekTime: seekTime
+    })
+    const newPosition = findPosition(0, seekTime)
+    state.handleNewData(state.motionData[newPosition]);
+    setDataPosition(newPosition)
   }
 
   function onSeekEnd() {}
