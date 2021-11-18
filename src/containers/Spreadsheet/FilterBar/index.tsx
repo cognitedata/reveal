@@ -1,37 +1,70 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Flex, Input } from '@cognite/cogs.js';
-import { Separator } from 'components/Separator';
+import { Body, Flex, Icon, Input } from '@cognite/cogs.js';
+
+import { useTableData } from 'hooks/table-data';
+import { useFilters } from 'hooks/table-filters';
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
-import { activeFilters } from './mock';
-import { Menu } from './Menu';
 
-export type FilterType = { type: string; value: number };
+import { Separator } from 'components/Separator';
+import { FilterItem, FilterType } from 'components/FilterItem';
+import { Actions } from './Actions';
 
-type Props = { isEmpty?: boolean };
-export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
-  const onFilterClick = (_filter: FilterType) => {
-    /** do something */
-  };
+type Props = {
+  isEmpty?: boolean;
+  columnFilter: string;
+  setColumnFilter: (columnQuery: string) => void;
+};
+
+export const FilterBar = (props: Props): JSX.Element => {
+  const { isEmpty, columnFilter, setColumnFilter } = props;
+  const { rows, isFetched } = useTableData();
+  const { filters, activeFilters, setFilter } = useFilters();
+  const tableLength = isFetched ? (
+    rows.length ?? 0
+  ) : (
+    <Icon type="LoadingSpinner" style={{ marginRight: '4px' }} />
+  );
+
+  const onFilterClick = (filter: FilterType) => setFilter(filter.type);
+  const onColumnFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setColumnFilter(e.target.value);
 
   return (
     <Bar justifyContent="space-between" alignItems="center">
       <FilterBar.List justifyContent="center" alignItems="center">
         {!isEmpty && (
           <>
-            <Input placeholder="Search columns, values" />
+            <Input
+              placeholder="Search column name"
+              value={columnFilter}
+              onChange={onColumnFilterChange}
+            />
             <Separator style={{ margin: '0 12px' }} />
-            {activeFilters.map((filter: FilterType) => (
-              <Button type="tertiary" onClick={() => onFilterClick(filter)}>
-                {filter.value} {filter.type}
-              </Button>
-            ))}
+            {filters.map((filter: FilterType) => {
+              const active = activeFilters.includes(filter.type);
+              return (
+                <FilterItem
+                  filter={filter}
+                  active={active}
+                  onClick={onFilterClick}
+                />
+              );
+            })}
           </>
         )}
       </FilterBar.List>
       <Flex justifyContent="center" alignItems="center">
         <Separator style={{ margin: '0 12px' }} />
-        <FilterBar.Menu />
+        <Body
+          level={2}
+          strong
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {tableLength} rows
+        </Body>
+        <Separator style={{ margin: '0 12px' }} />
+        <FilterBar.Actions />
       </Flex>
     </Bar>
   );
@@ -50,4 +83,4 @@ const List = styled(Flex)`
 `;
 
 FilterBar.List = List;
-FilterBar.Menu = Menu;
+FilterBar.Actions = Actions;

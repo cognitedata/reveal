@@ -1,37 +1,26 @@
 import React, { useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
 import { CSVLink } from 'react-csv';
-import { Button, Dropdown, Flex } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
-import notification from 'antd/lib/notification';
-import Popconfirm from 'antd/lib/popconfirm';
+import { Colors, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { useDeleteTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 import { useTableData } from 'hooks/table-data';
 import { escapeCSVValue } from 'utils/utils';
-import AccessButton from 'components/AccessButton';
-import DropdownMenu from 'components/DropdownMenu';
-import MenuButton from 'components/MenuButton';
-import UploadCSV from 'components/UploadCSV';
+import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 
 export const Menu = (): JSX.Element => {
-  const history = useHistory();
-  const { appPath } = useParams<{
-    appPath: string;
-  }>();
-  const { mutate: deleteTable } = useDeleteTable();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
   const [[database, table] = [undefined, undefined]] = useActiveTable();
-  const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;
+  const canBeRenamed = false;
 
-  const onShareClick = () => {
-    /** do something */
-  };
+  const stopPropagation = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLElement>
+  ) => e.stopPropagation();
 
   const onDownloadData = useMemo(() => {
     return (
@@ -47,92 +36,63 @@ export const Menu = (): JSX.Element => {
   }, [rows]);
 
   return (
-    <Bar alignItems="center" justifyContent="space-between">
-      <Button
-        icon="Share"
-        iconPlacement="right"
-        type="secondary"
-        onClick={onShareClick}
+    <StyledMenu>
+      <CogsMenu.Item aria-label="Button rename table" disabled={!canBeRenamed}>
+        <Item>
+          <Icon type="Edit" />
+          Rename table
+        </Item>
+      </CogsMenu.Item>
+      <CSVLink
+        filename={`cognite-${database}-${table}.csv`}
+        data={onDownloadData}
       >
-        Share
-      </Button>
-      <Dropdown
-        content={
-          <DropdownMenu>
-            <AccessButton
-              permissions={[{ acl: 'rawAcl', actions: ['WRITE'] }]}
-              hasWriteAccess={hasWriteAccess}
-              onClick={() => setCSVModalVisible(true)}
-            >
-              Upload CSV
-            </AccessButton>
-            <Popconfirm
-              title="Are you sure you want to delete this table? Once deleted, the table cannot be recovered."
-              onConfirm={() =>
-                deleteTable(
-                  { database: database!, table: table! },
-                  {
-                    onSuccess() {
-                      notification.success({
-                        message: `Table ${table} in database ${database} deleted!`,
-                        key: 'table-created',
-                      });
-                      history.replace(createLink(`/${appPath}/${database}`));
-                    },
-                    onError(e) {
-                      notification.error({
-                        message: 'An error occured when deleting the table!',
-                        description: <pre>{JSON.stringify(e, null, 2)}</pre>,
-                        key: 'table-created',
-                      });
-                    },
-                  }
-                )
-              }
-              okText="Yes"
-              cancelText="No"
-              disabled={!hasWriteAccess}
-              cancelButtonProps={{ type: 'default' }}
-            >
-              <MenuButton
-                type="ghost-danger"
-                aria-label="Button delete table"
-                icon="Trash"
-                disabled={!hasWriteAccess}
-              >
-                Delete Table
-              </MenuButton>
-            </Popconfirm>
-            <CSVLink
-              filename={`cognite-${database}-${table}.csv`}
-              data={onDownloadData}
-            >
-              <MenuButton
-                type="ghost"
-                aria-label="Button download table"
-                icon="Download"
-                disabled={!canBeDownloaded}
-              >
-                Download CSV
-              </MenuButton>
-            </CSVLink>
-          </DropdownMenu>
-        }
+        <CogsMenu.Item
+          aria-label="Button download table"
+          disabled={!canBeDownloaded}
+        >
+          <Item>
+            <Icon type="Download" />
+            Download table
+          </Item>
+        </CogsMenu.Item>
+      </CSVLink>
+      <CogsMenu.Divider />
+      <CogsMenu.Header>Danger zone</CogsMenu.Header>
+      <CogsMenu.Item
+        aria-label="Button delete table"
+        disabled={!hasWriteAccess}
+        onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+          stopPropagation(e);
+          setIsDeleteModalOpen(true);
+        }}
       >
-        <Button icon="HorizontalEllipsis" type="secondary" />
-      </Dropdown>
-      <UploadCSV
-        csvModalVisible={csvModalVisible}
-        setCSVModalVisible={setCSVModalVisible}
-        table={table!}
-        database={database!}
+        <Item>
+          <Icon type="Trash" />
+          <span style={{ color: Colors['text-danger'].hex() }}>
+            Delete table
+          </span>
+        </Item>
+      </CogsMenu.Item>
+      <DeleteTableModal
+        databaseName={database!}
+        tableName={table!}
+        visible={isDeleteModalOpen}
+        onCancel={() => setIsDeleteModalOpen(false)}
       />
-    </Bar>
+    </StyledMenu>
   );
 };
 
-const Bar = styled(Flex)`
-  & > * {
-    margin: 0 4px;
+const StyledMenu = styled(CogsMenu)`
+  width: 250px;
+  a {
+    color: inherit;
   }
+`;
+const Item = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-weight: 500;
 `;
