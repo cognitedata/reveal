@@ -24,11 +24,11 @@ import {
 import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
+import { EditButton } from 'styles/StyledButton';
 import { DetailFieldNames } from 'model/Extpipe';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { Graphic } from '@cognite/cogs.js';
+import { Button, Graphic } from '@cognite/cogs.js';
 import { Section } from 'components/extpipe/Section';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { trackUsage } from 'utils/Metrics';
@@ -183,28 +183,40 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         rows={30}
         cols={30}
       />
-      {MAX_DOCUMENTATION_LENGTH && (
-        <CountSpan className="count">
-          {count}/{MAX_DOCUMENTATION_LENGTH}
-        </CountSpan>
-      )}
-      <MessageDialog
-        visible={!!errors.server}
-        handleClickError={handleClickError}
-        title={SERVER_ERROR_TITLE}
-        contentText={SERVER_ERROR_CONTENT}
-      >
-        <SaveButton
-          htmlType="submit"
-          aria-controls="documentation"
-          data-testid={`${TEST_ID_BTN_SAVE}documentation`}
-        />
-      </MessageDialog>
-      <CloseButton
-        onClick={onCancel}
-        aria-controls="documentation"
-        data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
-      />
+      <div css="display: flex; justify-content: space-between; gap: 0.5rem; align-items: center">
+        <div>
+          {MAX_DOCUMENTATION_LENGTH && (
+            <CountSpan className="count">
+              {count}/{MAX_DOCUMENTATION_LENGTH}
+            </CountSpan>
+          )}
+        </div>
+        <div>
+          <Button
+            type="ghost"
+            onClick={onCancel}
+            aria-controls="documentation"
+            data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
+          >
+            Cancel
+          </Button>
+          <MessageDialog
+            visible={!!errors.server}
+            handleClickError={handleClickError}
+            title={SERVER_ERROR_TITLE}
+            contentText={SERVER_ERROR_CONTENT}
+          >
+            <Button
+              htmlType="submit"
+              type="primary"
+              aria-controls="documentation"
+              data-testid={`${TEST_ID_BTN_SAVE}documentation`}
+            >
+              Confirm
+            </Button>
+          </MessageDialog>
+        </div>
+      </div>
     </>
   );
   return (
