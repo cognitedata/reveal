@@ -62,7 +62,7 @@ const overlays = new HtmlOverlayTool(viewer);
 viewer.on('click', async event => {
   // Find 3D coordinate of what the user clicks
   const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
-  if (intersetion) {
+  if (intersection) {
     const el = createOverlay();
     overlays.add(el, intersection.point);
     // Remove overlay after 5 seconds
