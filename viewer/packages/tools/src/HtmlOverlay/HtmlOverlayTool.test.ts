@@ -11,7 +11,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { createGlContext } from '../../../../test-utilities';
 import { HtmlOverlayCreateClusterDelegate } from 'tools';
 
-describe('HtmlOverlayTool', () => {
+describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
   let camera: THREE.PerspectiveCamera;
@@ -21,12 +21,7 @@ describe('HtmlOverlayTool', () => {
     const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const canvas = document.createElement('canvas');
-    const getBoundingClientRectSpy = jest.spyOn(canvas, 'getBoundingClientRect');
-    const rect: DOMRect = {
-      width: 128,
-      height: 128
-    } as DOMRect;
-    getBoundingClientRectSpy.mockReturnValue(rect);
+    fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
     renderer = new THREE.WebGLRenderer({ context, canvas });
 
@@ -82,6 +77,7 @@ describe('HtmlOverlayTool', () => {
 
     // Act
     helper.add(htmlElement, position);
+    helper.forceUpdate();
 
     // Assert
     expect(htmlElement.style.visibility).toBe('visible');
@@ -100,6 +96,7 @@ describe('HtmlOverlayTool', () => {
     // Act
     helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1));
     helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10));
+    helper.forceUpdate();
 
     // Assert
     expect(behindCameraElement.style.visibility).toBe('hidden');
@@ -124,6 +121,7 @@ describe('HtmlOverlayTool', () => {
       ...options,
       userData: 'withinNearAndFarPlaneElement'
     });
+    helper.forceUpdate();
 
     // Assert
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
@@ -193,58 +191,37 @@ describe('HtmlOverlayTool', () => {
       clusteringOptions: { mode: 'overlapInScreenspace', createClusterElementCallback }
     };
     const helper = new HtmlOverlayTool(viewer, options);
+
     const div1 = document.createElement('div');
-    div1.getBoundingClientRect = jest.fn();
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
     div1.style.position = 'absolute';
     const div2 = document.createElement('div');
     div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
 
-    // Act
-    helper.add(div1, new THREE.Vector3(0, 0, 5));
-    helper.add(div2, new THREE.Vector3(0, 0, 10));
-    helper.forceUpdate();
-
-    // Assert
-    expect(div1.style.visibility).toEqual('hidden');
-    expect(div2.style.visibility).toEqual('hidden');
-    expect(createClusterElementCallback).toBeCalledTimes(1);
-  });
-
-  test('screenspace clustering combines overlapping elements', () => {
-    // Arrange
-    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest
-      .fn()
-      .mockReturnValue(document.createElement('div'));
-    const options: HtmlOverlayToolOptions = {
-      clusteringOptions: { mode: 'overlapInScreenspace', createClusterElementCallback }
-    };
-    const helper = new HtmlOverlayTool(viewer, options);
-
-    const div1 = document.createElement('div');
-    div1.getBoundingClientRect = jest.fn(
-      () =>
-        ({
-          width: 64,
-          height: 18
-        } as DOMRect)
-    );
-    div1.style.position = 'absolute';
-    const div2 = document.createElement('div');
-    div2.style.position = 'absolute';
-    div2.getBoundingClientRect = jest.fn(
-      () =>
-        ({
-          width: 64,
-          height: 18
-        } as DOMRect)
-    );
     // Act
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
     helper.forceUpdate();
 
     // Assert
+    expect(createClusterElementCallback).toBeCalledTimes(1);
     expect(div1.style.visibility).toEqual('hidden');
     expect(div2.style.visibility).toEqual('hidden');
   });
 });
+
+function fakeGetBoundingClientRect(element: HTMLElement, x: number, y: number, width: number, height: number) {
+  const rect: DOMRect = {
+    left: x,
+    right: x + width,
+    top: y,
+    bottom: y + height,
+    width: width,
+    height: height,
+    x,
+    y,
+    toJSON: () => {}
+  };
+  element.getBoundingClientRect = jest.fn(() => rect);
+}

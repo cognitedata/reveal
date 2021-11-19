@@ -553,7 +553,7 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
 function createOverlay(text: string): HTMLElement {
   const overlayHtml = document.createElement('div');
   overlayHtml.innerText = text;
-  overlayHtml.style.cssText = 'background: white; position: absolute; border-radius: 10px; border-color: black;';
+  overlayHtml.style.cssText = 'background: white; position: absolute; border-radius: 5px; border-color: black; pointer-events: none; touch-action: none;';
   return overlayHtml;
 
 }

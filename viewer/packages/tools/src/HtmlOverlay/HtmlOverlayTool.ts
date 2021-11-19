@@ -9,6 +9,7 @@ import { BucketGrid2D } from './BucketGrid2D';
 import { trackCreateTool } from '@reveal/metrics';
 import { assertNever, worldToViewportCoordinates } from '@reveal/core/utilities';
 import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
+import debounce from 'lodash/debounce';
 
 export type HtmlOverlayPositionUpdatedDelegate = (
   element: HTMLElement,
@@ -60,8 +61,6 @@ type HtmlOverlayElement = {
     height: number;
   };
 };
-
-const hiddenPosition = new THREE.Vector2();
 
 /**
  * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
@@ -118,6 +117,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     position2D: new THREE.Vector2()
   };
 
+  private readonly scheduleUpdate: () => void;
+
   private get viewerDomElement(): HTMLElement {
     return this._viewer.domElement;
   }
@@ -139,6 +140,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this._viewer = viewer;
     this._viewer.on('sceneRendered', this._onSceneRenderedHandler);
     this._viewer.on('disposed', this._onViewerDisposedHandler);
+
+    this.scheduleUpdate = debounce(() => this.forceUpdate(), 20);
 
     trackCreateTool('HtmlOverlayTool');
   }
@@ -189,15 +192,15 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       position3D,
       options,
       state: {
-        position2D: hiddenPosition.clone(),
-        width: 0,
-        height: 0,
+        position2D: new THREE.Vector2(),
+        width: -1,
+        height: -1,
         visible: true
       }
     };
     this._htmlOverlays.set(htmlElement, element);
 
-    this.forceUpdate();
+    this.scheduleUpdate();
   }
 
   /**
@@ -227,6 +230,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Updates positions of all overlays. This is automatically managed and there
    * shouldn't be any reason to trigger this unless the attached elements are
    * modified externally.
+   *
+   * Calling this function often might cause degraded performance.
    */
   forceUpdate(): void {
     this.ensureNotDisposed();
@@ -234,6 +239,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     if (this._htmlOverlays.size === 0) {
       return;
     }
+    this.updateNewElementSizes();
 
     const camera = this.viewerCamera;
     const renderer = this.viewerRenderer;
@@ -249,16 +255,6 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     point.copy(camPos).addScaledVector(camNormal, camera.far);
     farPlane.setFromNormalAndCoplanarPoint(camNormal, point);
 
-    // Determine bounds up front to avoid dealing with recomputed styles
-    this._htmlOverlays.forEach((_, htmlElement) => {
-      htmlElement.style.visibility = 'initial';
-    });
-    this._htmlOverlays.forEach((element, htmlElement) => {
-      const clientRect = htmlElement.getBoundingClientRect();
-      element.state.width = clientRect.width;
-      element.state.height = clientRect.height;
-    });
-
     this._htmlOverlays.forEach((element, htmlElement) => {
       const {
         position3D,
@@ -268,6 +264,9 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
       const insideCameraPlanes =
         nearPlane.distanceToPoint(position3D) >= 0.0 && farPlane.distanceToPoint(position3D) <= 0.0;
+      // TODO 2021-11-19 larsmoa: Replace worldToViewportCoordinates() with something that doesn't cause
+      // canvas.getClientBoundingRect() to be called when PR #1700 is done.
+      // https://github.com/cognitedata/reveal/pull/1700
       const { x, y } = worldToViewportCoordinates(renderer, camera, position3D);
 
       if (insideCameraPlanes) {
@@ -285,8 +284,21 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       }
     });
     this.clusterElements();
-
     this.commitDOMChanges();
+  }
+
+  /**
+   * Update size of new elements. This is only done once as this causes
+   * layout to be invalidated which is an expensive operation.
+   */
+  private updateNewElementSizes() {
+    this._htmlOverlays.forEach((element, htmlElement) => {
+      if (element.state.width === -1) {
+        const clientRect = htmlElement.getBoundingClientRect();
+        element.state.width = clientRect.width;
+        element.state.height = clientRect.height;
+      }
+    });
   }
 
   private commitDOMChanges() {
@@ -344,45 +356,37 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     canvasBounds.set(new THREE.Vector2(0, 0), canvasSize);
     // Compute once as updating styles below will cause (unnecessary)
     // recomputation which slows down the process
-    const elementBounds = new THREE.Box2();
 
-    const grid = new BucketGrid2D<Element>(new THREE.Vector2(10, 10), canvasBounds);
+    const grid = new BucketGrid2D<Element>(canvasBounds, [10, 10]);
     for (const [htmlElement, element] of this._htmlOverlays.entries()) {
       const { state } = element;
-      elementBounds.min.set(state.position2D.x, state.position2D.y);
-      elementBounds.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
+      const elementBounds = createElementBounds(element);
       if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
         continue;
       }
       grid.insert(elementBounds, { htmlElement, ...element });
     }
 
+    const elementBounds = new THREE.Box2();
+    const clusterMidpoint = new THREE.Vector2();
     for (const element of this._htmlOverlays.values()) {
       const { state } = element;
-      elementBounds.min.set(state.position2D.x, state.position2D.y);
-      elementBounds.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
+      createElementBounds(element, elementBounds);
       if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
         continue;
       }
 
-      const cluster = Array.from(grid.overlappingElements(elementBounds))
-        // Remove elements now marked as hidden
-        .filter(overlappingElement => overlappingElement.state.visible)
-        .map(overlappingElement => ({
-          htmlElement: overlappingElement.htmlElement,
-          userData: overlappingElement.options.userData,
-          position: elementBounds.min.clone(),
-          state: overlappingElement.state
-        }));
-
+      const cluster = Array.from(grid.takeOverlappingElements(elementBounds));
       if (cluster.length > 1) {
-        const midpoint = cluster.reduce((position, element) => {
-          return position.addScaledVector(element.position, 1.0 / cluster.length);
-        }, new THREE.Vector2(0, 0));
-        const compositeElement = createClusterElementCallback(cluster);
+        const midpoint = cluster
+          .reduce((position, element) => position.add(element.state.position2D), clusterMidpoint.set(0, 0))
+          .divideScalar(cluster.length);
+        const compositeElement = createClusterElementCallback(
+          cluster.map(element => ({ htmlElement: element.htmlElement, userData: element.options.userData }))
+        );
         // Hide all elements in cluster
         cluster.forEach(element => (element.state.visible = false));
-
+        // ... and replace with a composite
         this.addComposite(compositeElement, midpoint);
       }
     }
@@ -409,5 +413,13 @@ function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
   out = out ?? new THREE.Box2();
   out.min.set(rect.left, rect.top);
   out.max.set(rect.right, rect.bottom);
+  return out;
+}
+
+function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {
+  const { state } = element;
+  out = out ?? new THREE.Box2();
+  out.min.set(state.position2D.x, state.position2D.y);
+  out.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
   return out;
 }
