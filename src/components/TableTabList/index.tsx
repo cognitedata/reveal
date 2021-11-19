@@ -92,7 +92,7 @@ const OpenNavTab = styled(Tab)`
 `;
 
 export default function TableTabList() {
-  const [list = []] = useTableTabList();
+  const list = useTableTabList() || [];
   const [[activeDb, activeTable] = [], setActive] = useActiveTable();
   const close = useCloseTable();
   const { isSidePanelOpen, setIsSidePanelOpen } =

@@ -11,11 +11,13 @@ import { Profiling } from 'containers/Profiling';
 import { TAB_HEIGHT } from 'utils/constants';
 
 const TableContent = () => {
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [[database, table, view] = [], update] = useActiveTable();
 
   return (
     <Wrapper>
       <StyledTabs
+        onChange={(view) => update([database!, table!, view])}
+        activeKey={view || 'stylesheet'}
         tabPosition="top"
         animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
@@ -29,13 +31,13 @@ const TableContent = () => {
         )}
       >
         <Tabs.TabPane
-          key="tab-stylesheet"
+          key="stylesheet"
           tab={<TabSpreadsheet />}
           style={{ overflow: 'auto' }}
         >
           <Spreadsheet />
         </Tabs.TabPane>
-        <Tabs.TabPane key="tab-profiling" tab={<TabProfiling />}>
+        <Tabs.TabPane key="profiling" tab={<TabProfiling />}>
           <Profiling />
         </Tabs.TabPane>
       </StyledTabs>
