@@ -1,9 +1,6 @@
 import * as React from 'react';
-import axios from 'axios';
-import omit from 'lodash/omit';
 import { Button, toast, ToastContainer } from '@cognite/cogs.js';
-import { saveToLocalStorage } from '@cognite/storage';
-import { CogniteAuth } from '@cognite/auth-utils';
+import { CogniteAuth, doFakeIdPLogin } from '@cognite/auth-utils';
 import { FakeIdp } from '@cognite/sidecar';
 
 type Props = {
@@ -22,16 +19,9 @@ const LoginWithFakeIDP: React.FC<Props> = ({
 
   const handleClick = () => {
     setLoading(true);
-    axios
-      .post(`http://localhost:8200/login/token`, omit(fakeIdpOptions, 'name'))
-      .then((result) => {
-        saveToLocalStorage('fakeIdp', {
-          project: fakeIdpOptions.project,
-          cluster: fakeIdpOptions.cluster,
-          idToken: result.data.id_token,
-          accessToken: result.data.access_token,
-        });
 
+    doFakeIdPLogin(fakeIdpOptions)
+      .then(() => {
         if (authClient) {
           authClient.loginInitial({
             flow: 'FAKE_IDP',

@@ -1,10 +1,3 @@
-export type FakeIdP = {
-  idToken: string;
-  accessToken: string;
-  project: string;
-  cluster: string;
-};
-
 export type AuthFlow =
   | 'COGNITE_AUTH'
   | 'AZURE_AD'

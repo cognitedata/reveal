@@ -1,3 +1,11 @@
+## 2.2.2 Nov 18 2021
+
+- Moved `storage.init` into a useEffect hook
+- Removed old `REACT_APP_E2E_MODE` from `getAuthHeaders` (this is replaced by fakeIdp)
+- Changed `getAuthHeaders` manual `React.useContext` into `useAuthContext`
+- Add `queryClient.clear()` into `reauthenticate`
+- Add `authClient.invalidateAuth` into `reauthenticate`
+
 ## 2.2.1 Nov 9 2021
 
 - Bump to have latest `@cognite/react-sentry` with sentry releaseId fixed.

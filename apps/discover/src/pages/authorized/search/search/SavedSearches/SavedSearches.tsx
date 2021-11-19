@@ -5,6 +5,7 @@ import { Dropdown, Input, Menu, Tooltip, Icon } from '@cognite/cogs.js';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { isEnterPressed } from '_helpers/general.helper';
+import { log } from '_helpers/log';
 import Divider from 'components/divider';
 import OverwriteSearchModal from 'components/modals/overwrite-search-modal';
 import Skeleton from 'components/skeleton';
@@ -117,7 +118,7 @@ export const SavedSearches: React.FC = React.memo(() => {
         tenant,
       });
     }
-    handleMutation();
+    handleCreateSavedSearch();
     setIsOverwriteSearchModalOpen(false);
   };
 
@@ -136,14 +137,14 @@ export const SavedSearches: React.FC = React.memo(() => {
     }
 
     hideDropdown();
-    handleMutation();
+    handleCreateSavedSearch();
   };
 
   const hideDropdown = () => {
     setDropdownVisible(false);
   };
 
-  const handleMutation = async () => {
+  const handleCreateSavedSearch = async () => {
     if (!currentSavedSearch) {
       showErrorMessage(SAVED_SEARCH_ERROR_MESSAGE_TEXT);
       return;
@@ -157,7 +158,9 @@ export const SavedSearches: React.FC = React.memo(() => {
     });
 
     setCurrentName('');
-    doingCreateMutate.then(handleCreateMutateResponse);
+    doingCreateMutate.then(handleCreateMutateResponse).catch((error) => {
+      log('Error', error);
+    });
   };
 
   const handleCreateMutateResponse = (

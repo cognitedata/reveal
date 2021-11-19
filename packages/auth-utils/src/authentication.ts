@@ -1,15 +1,9 @@
 import { CogniteClient } from '@cognite/sdk';
-import { getFromLocalStorage } from '@cognite/storage';
 import isString from 'lodash/isString';
 
 import { getFlow, saveFlow, log, decodeTokenUid } from './utils';
-import {
-  AuthenticatedUser,
-  AuthFlow,
-  AuthResult,
-  FakeIdP,
-  TokenInspect,
-} from './types';
+import { AuthenticatedUser, AuthFlow, AuthResult, TokenInspect } from './types';
+import { getFakeIdPInfoFromStorage, doFakeIdPLogin } from './fakeIdP';
 
 export class CogniteAuth {
   state: {
@@ -81,90 +75,98 @@ export class CogniteAuth {
     log('Internal state', this.state);
     log(`FlowToUse: ${authFlow}`);
 
+    if (this.state.initializing || this.state.authenticated) {
+      return this.getAuthState();
+    }
+
     switch (authFlow) {
       case 'AZURE_AD': {
-        if (!this.state.initializing && !this.state.authenticated) {
-          this.state.initializing = true;
-          this.publishAuthState();
+        this.state.initializing = true;
+        this.publishAuthState();
 
-          if (this.options.aad) {
-            const response = await this.getClient().loginWithOAuth({
-              type: 'AAD_OAUTH',
-              options: {
-                clientId: this.options.aad?.appId,
-                cluster: this.getCluster(),
-                tenantId: this.options.aad?.directoryTenantId,
-                signInType: {
-                  type: 'loginRedirect',
-                },
-              },
-            });
-
-            this.getClient().setProject(project);
-            if (!response) {
-              await this.getClient().authenticate();
-            }
-            const CDFToken = await this.getCDFToken();
-            const { accessToken, idToken, expiresOn, account } = CDFToken;
-
-            if (accessToken) {
-              this.state.authResult = {
-                idToken,
-                accessToken,
-                authFlow,
-                expTime: expiresOn,
-              };
-              this.state.id = decodeTokenUid(accessToken);
-
-              const email = account?.username.includes('@')
-                ? account.username
-                : undefined;
-              this.state.email = email;
-              this.state.project = project;
-            }
-
-            this.state.authenticated = response;
-            this.state.initializing = false;
-            this.publishAuthState();
-          }
-          this.state.initializing = false;
-        }
-        break;
-      }
-      case 'COGNITE_AUTH': {
-        if (!this.state.initializing && !this.state.authenticated) {
-          this.state.initializing = true;
-          this.publishAuthState();
-
-          this.setCluster();
-          await this.getClient().loginWithOAuth({
-            type: 'CDF_OAUTH',
+        if (this.options.aad) {
+          const response = await this.getClient().loginWithOAuth({
+            type: 'AAD_OAUTH',
             options: {
-              project,
+              clientId: this.options.aad?.appId,
+              cluster: this.getCluster(),
+              tenantId: this.options.aad?.directoryTenantId,
+              signInType: {
+                type: 'loginRedirect',
+              },
             },
           });
-          this.state.authenticated = await this.getClient().authenticate();
-          const accessToken = await this.getClient().getCDFToken();
-          const status = await this.getClient().login.status();
 
-          if (status) {
-            this.state.email = status.user;
+          this.getClient().setProject(project);
+          if (!response) {
+            await this.getClient().authenticate();
           }
+          const CDFToken = await this.getCDFToken();
+          const { accessToken, idToken, expiresOn, account } = CDFToken;
 
           if (accessToken) {
             this.state.authResult = {
+              idToken,
               accessToken,
               authFlow,
+              expTime: expiresOn,
             };
             this.state.id = decodeTokenUid(accessToken);
+
+            const email = account?.username.includes('@')
+              ? account.username
+              : undefined;
+            this.state.email = email;
             this.state.project = project;
           }
+
+          this.state.authenticated = response;
           this.state.initializing = false;
           this.publishAuthState();
         }
+        this.state.initializing = false;
+        break;
+      }
+      case 'COGNITE_AUTH': {
+        this.state.initializing = true;
+        this.publishAuthState();
+
+        this.setCluster();
+        await this.getClient().loginWithOAuth({
+          type: 'CDF_OAUTH',
+          options: {
+            project,
+          },
+        });
+        this.state.authenticated = await this.getClient().authenticate();
+        const accessToken = await this.getClient().getCDFToken();
+        const status = await this.getClient().login.status();
+
+        if (status) {
+          this.state.email = status.user;
+        }
+
+        if (accessToken) {
+          this.state.authResult = {
+            accessToken,
+            authFlow,
+          };
+          this.state.id = decodeTokenUid(accessToken);
+          this.state.project = project;
+        }
+        this.state.initializing = false;
+        this.publishAuthState();
         break;
       }
       case 'FAKE_IDP': {
+        const settings = getFakeIdPInfoFromStorage();
+        if (settings) {
+          await doFakeIdPLogin({
+            ...settings,
+            customExpiry: undefined,
+          });
+        }
+
         this.setFakeIdPInfo();
         this.publishAuthState();
         break;
@@ -188,7 +190,7 @@ export class CogniteAuth {
   }): Promise<void> {
     this.state.initializing = false;
     this.resetError();
-    this.state.authenticated = false;
+    this.invalidateAuth();
 
     log(`Running: loginInitial - ${flow}`);
 
@@ -324,7 +326,7 @@ export class CogniteAuth {
                 },
               },
               onNoProjectAvailable: () => {
-                this.state.authenticated = false;
+                this.invalidateAuth();
                 this.setError('Invalid access token!');
               },
             },
@@ -346,7 +348,7 @@ export class CogniteAuth {
           })
           .catch((error) => {
             // console.log('Error', error);
-            this.state.authenticated = false;
+            this.invalidateAuth();
             this.setError(error.message);
           });
       } else {
@@ -355,6 +357,11 @@ export class CogniteAuth {
     }
     this.state.initializing = false;
     this.publishAuthState();
+  }
+
+  // useful for when non CDF  services need to trigger a reauth flow
+  invalidateAuth() {
+    this.state.authenticated = false;
   }
 
   // the SDK did not provide a way to get the ID token
@@ -368,7 +375,7 @@ export class CogniteAuth {
   }
 
   private setFakeIdPInfo() {
-    const fakeAuth = getFromLocalStorage<FakeIdP>('fakeIdp');
+    const fakeAuth = getFakeIdPInfoFromStorage();
     if (fakeAuth) {
       this.setCluster(fakeAuth.cluster);
       // always make a new client, so we can keep state clean

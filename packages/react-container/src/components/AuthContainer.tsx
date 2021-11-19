@@ -3,6 +3,7 @@ import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { SidecarConfig } from '@cognite/sidecar';
 import type { CogniteClient } from '@cognite/sdk';
+import { useQueryClient } from 'react-query';
 
 import { syncUser } from '../utils/userManagementSync';
 import { log } from '../utils';
@@ -40,14 +41,17 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
     AuthContext | undefined
   >();
   const [loading, setLoading] = React.useState(true);
-  const { flow } = getFlow();
-
-  const { aadApplicationId, AADTenantID, applicationId, cdfCluster } = sidecar;
+  const { flow, options } = getFlow();
+  const queryClient = useQueryClient();
+  const { aadApplicationId, applicationId, cdfCluster } = sidecar;
 
   React.useEffect(() => {
     let aad;
     if (aadApplicationId) {
-      aad = { appId: aadApplicationId || '', directoryTenantId: AADTenantID };
+      aad = {
+        appId: aadApplicationId || '',
+        directoryTenantId: options?.directory,
+      };
     }
 
     const authClient = new CogniteAuth(sdkClient, {
@@ -72,21 +76,36 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
             1
           );
 
-          setAuthState({
-            client: authClient.getClient(),
-            authState: authenticatedUser,
-            reauthenticate: () => {
-              if (authenticatedUser.project) {
-                return authClient.loginAndAuthIfNeeded({
-                  project: authenticatedUser.project,
-                });
-              }
+          let newState = authResponse;
 
-              return Promise.reject(
-                new Error('No project set, can not re-auth')
-              );
-            },
-          });
+          if (!newState?.client) {
+            newState = {
+              client: authClient.getClient(),
+              authState: authenticatedUser,
+              reauthenticate: async () => {
+                queryClient.clear();
+                authClient.invalidateAuth();
+
+                if (authenticatedUser.project) {
+                  return authClient.loginAndAuthIfNeeded({
+                    project: authenticatedUser.project,
+                  });
+                }
+
+                return Promise.reject(
+                  new Error('No project set, can not re-auth')
+                );
+              },
+            };
+          } else {
+            newState = {
+              ...newState,
+              authState: authenticatedUser,
+            };
+          }
+
+          setAuthState(newState);
+
           setLoading(false);
         }
       }

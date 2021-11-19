@@ -41,14 +41,9 @@ const geospatialSDK: {
 };
 
 export const authenticateGeospatialSDK = (project: string, token: string) => {
-  if (geospatialSDK.client) {
-    return;
-  }
-
   geospatialSDK.client = CogniteGeospatialClient({
     project,
     token,
-    api_key: process.env.REACT_APP_API_KEY,
     api_url: `${cdfCluster}.cognitedata.com`,
     debug: true,
   });

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
+import { getTenantInfo } from '@cognite/react-container';
 import {
   UMSUserProfile,
   UMSUserProfilePreferences,
@@ -11,7 +12,8 @@ import { getJsonHeaders } from 'modules/api/service';
 import { userPreferences } from './endpoints';
 
 export const useUserPreferencesQuery = () => {
-  const headers = getJsonHeaders({}, true);
+  const [project] = getTenantInfo();
+  const headers = getJsonHeaders({ 'x-cdp-project': project }, true);
 
   return useQuery(USER_MANAGEMENT_SYSTEM_KEY.ME, () =>
     userPreferences(headers).get()

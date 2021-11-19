@@ -1,8 +1,18 @@
 import { CogniteClient } from '@cognite/sdk';
 import { saveToLocalStorage } from '@cognite/storage';
 
+import { FAKE_IDP_LS_KEY } from './fakeIdP';
 import CogniteAuth from './authentication';
-import { FakeIdP } from './types';
+
+jest.mock('./fakeIdP', () => {
+  const originalModule = jest.requireActual('./fakeIdP');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    doFakeIdPLogin: () => Promise.resolve(),
+  };
+});
 
 jest.mock('@cognite/sdk', () => ({
   CogniteClient: () => ({
@@ -32,7 +42,7 @@ describe('CogniteAuth', () => {
         flow: 'FAKE_IDP',
       });
 
-      saveToLocalStorage<FakeIdP>('fakeIdp', {
+      saveToLocalStorage(FAKE_IDP_LS_KEY, {
         idToken: 'idToken',
         accessToken: 'accessToken',
         project: 'project',

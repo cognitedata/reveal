@@ -49,7 +49,7 @@ window.__cogniteSidecar = {
       tokenId: 'discover-e2e',
       userId: 'discover-e2e-bluefield-user', // this is overwritten by os.hostname()
       // if you need to test expired tokens:
-      // customExpiry: Math.floor(new Date().getTime() / 1000) + 10,
+      // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // expire after 15 seconds
     },
     {
       cluster: 'bluefield',
@@ -64,8 +64,6 @@ window.__cogniteSidecar = {
       roles: [],
       tokenId: 'discover-dev',
       userId: 'discover-dev-bluefield-user', // this is overwritten by os.hostname()
-      // if you need to test expired tokens:
-      // customExpiry: Math.floor(new Date().getTime() / 1000) + 10,
     },
     {
       cluster: 'bluefield',

@@ -2,6 +2,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import { render, screen } from '@testing-library/react';
 import { mockSidecar } from '@cognite/sidecar';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { AuthContainer } from '../AuthContainer';
 
@@ -37,19 +38,30 @@ jest.mock('@cognite/auth-utils', () => {
 });
 
 describe('AuthContainer', () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity, // when to re-fetch if stale
+        cacheTime: Infinity,
+      },
+    },
+  });
+
   it('should get token from provider', () => {
     const sdkClient = new CogniteClient({ appId: 'test' });
     const sidecar = mockSidecar();
 
     const Test = () => (
-      <AuthContainer
-        sidecar={sidecar}
-        authError={jest.fn()}
-        tenant="test"
-        sdkClient={sdkClient}
-      >
-        test-content
-      </AuthContainer>
+      <QueryClientProvider client={queryClient}>
+        <AuthContainer
+          sidecar={sidecar}
+          authError={jest.fn()}
+          tenant="test"
+          sdkClient={sdkClient}
+        >
+          test-content
+        </AuthContainer>
+      </QueryClientProvider>
     );
 
     render(<Test />);

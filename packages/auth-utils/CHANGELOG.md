@@ -1,6 +1,12 @@
+## 2.1.0 Nov 18 2021
+
+- Refactor `loginAndAuthIfNeeded` to use `getFakeIdPInfoFromStorage` and clear auth state properly for `FAKE_IDP`
+- Add doFakeIdPLogin script to get tokens
+- Add FAKE_IDP reauth flow into `loginAndAuthIfNeeded`
+
 ## 2.0.0 Oct 5 2021
 
-- adds `@cognite/sdk v5.4.0` support by fixing breaking change
+- Add `@cognite/sdk v5.4.0` support
 
 ## 1.0.15 Sep 15 2021
 

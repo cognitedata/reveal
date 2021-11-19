@@ -60,8 +60,6 @@ const RawContainer: React.FC<Props> = ({
     disableReactQuery,
   } = sidecar;
 
-  storage.init({ tenant: possibleTenant, appName: applicationId });
-
   const [history] = React.useState(() => createBrowserHistory(possibleTenant));
 
   const client = useCogniteSDKClient(applicationId, {
@@ -69,6 +67,10 @@ const RawContainer: React.FC<Props> = ({
   });
 
   const initialTenantOrApiKeyTenant = project || initialTenant;
+
+  React.useEffect(() => {
+    storage.init({ tenant: possibleTenant, appName: applicationId });
+  }, [possibleTenant, applicationId]);
 
   React.useEffect(() => {
     if (apiKey) {

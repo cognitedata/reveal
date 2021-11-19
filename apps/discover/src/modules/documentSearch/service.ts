@@ -4,7 +4,7 @@ import mergeWith from 'lodash/mergeWith';
 import { reportException } from '@cognite/react-errors';
 import { DocumentsFilter, DocumentsSearch } from '@cognite/sdk-playground';
 
-import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
+import { getCogniteSDKClient, doReAuth } from '_helpers/getCogniteSDKClient';
 import { showErrorMessage } from 'components/toast';
 import { aggregates } from 'modules/documentSearch/constants';
 import {
@@ -86,6 +86,21 @@ const search = (
       };
     })
     .catch((error) => {
+      const safeErrorResponse = {
+        count: 0,
+        hits: [],
+        facets: processFacets({
+          items: [],
+          aggregates: [],
+        }),
+      };
+
+      if (error.status === 401) {
+        doReAuth();
+        showErrorMessage('There has been a service error, please try again');
+        return safeErrorResponse;
+      }
+
       if (error.status === 400 && error.extra && error.extra.validationError) {
         const validations = error.extra.validationError;
 
@@ -98,14 +113,7 @@ const search = (
 
       reportException(error);
 
-      return {
-        count: 0,
-        hits: [],
-        facets: processFacets({
-          items: [],
-          aggregates: [],
-        }),
-      };
+      return safeErrorResponse;
     });
 };
 

@@ -52,10 +52,7 @@ export const authenticateWellSDK = async (
   cluster: Cluster,
   accessToken?: string
 ) => {
-  if (isWellSDKAuthenticated()) return;
-
   const enableWellSDKV3 = await isWellSDKV3Enabled();
-
   if (enableWellSDKV3) {
     authenticateWellSDKV3(appId, baseUrl, project, accessToken);
   } else {

@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { getAppInsights } from '@cognite/react-azure-telemetry';
 import { getTenantInfo, AuthContext } from '@cognite/react-container';
 import { Cluster } from '@cognite/sdk-wells-v2';
 
@@ -22,6 +21,41 @@ export const ProvideAuthSetup: React.FC<{
 
   const isAzure = tenantConfig?.azureConfig?.enabled;
 
+  const doLoginActions = (token: string) => {
+    if (authState.client) {
+      setClient(authState.client);
+    }
+
+    authenticateGeospatialSDK(tenant, token);
+
+    const email = authState.authState?.email;
+    setEmail(email);
+
+    if (tenant && !tenantConfig?.wells?.disabled) {
+      authenticateWellSDK(
+        SIDECAR.applicationId,
+        SIDECAR.cdfApiBaseUrl,
+        tenant,
+        SIDECAR.cdfCluster as Cluster,
+        token
+      );
+    }
+    if (!tenantConfig?.seismic?.disabled) {
+      authenticateSeismicSDK(token);
+    }
+
+    if (tenant && !tenantConfig?.documents?.disabled) {
+      authenticateDocumentSDK(
+        SIDECAR.applicationId,
+        SIDECAR.cdfApiBaseUrl,
+        tenant,
+        token
+      );
+    }
+
+    setDoneAuth(true);
+  };
+
   React.useEffect(() => {
     if (tenantConfig && authState.client) {
       setReAuth(authState.reauthenticate);
@@ -33,84 +67,16 @@ export const ProvideAuthSetup: React.FC<{
       }
 
       if (isAzure) {
-        if (authState.client) {
-          setClient(authState.client);
-        }
-
-        authenticateGeospatialSDK(tenant, tokenToUse);
-
-        const email = authState.authState?.email;
-        setEmail(email);
-        const insights = getAppInsights();
-        if (insights && email) {
-          insights.setAuthenticatedUserContext(email);
-          insights.context.user.id = email;
-        }
-
-        if (tenant && !tenantConfig?.wells?.disabled) {
-          authenticateWellSDK(
-            SIDECAR.applicationId,
-            SIDECAR.cdfApiBaseUrl,
-            tenant,
-            SIDECAR.cdfCluster as Cluster,
-            tokenToUse
-          );
-        }
-        if (!tenantConfig?.seismic?.disabled) {
-          authenticateSeismicSDK(tokenToUse);
-        }
-
-        if (tenant && !tenantConfig?.documents?.disabled) {
-          authenticateDocumentSDK(
-            SIDECAR.applicationId,
-            SIDECAR.cdfApiBaseUrl,
-            tenant,
-            tokenToUse
-          );
-        }
-
-        setDoneAuth(true);
+        doLoginActions(tokenToUse);
       } else {
         authState.client.login.status().then((status) => {
           if (status?.project === tenant && authState.client) {
-            setClient(authState.client);
-            const email = authState.authState?.email;
-            setEmail(email);
-            const insights = getAppInsights();
-            if (insights && email) {
-              insights.setAuthenticatedUserContext(email);
-              insights.context.user.id = email;
-            }
-
-            authenticateGeospatialSDK(tenant, tokenToUse);
-            if (tenant && !tenantConfig?.wells?.disabled) {
-              authenticateWellSDK(
-                SIDECAR.applicationId,
-                SIDECAR.cdfApiBaseUrl,
-                tenant,
-                SIDECAR.cdfCluster as Cluster,
-                authState.authState?.token
-              );
-            }
-            if (!tenantConfig?.seismic?.disabled) {
-              authenticateSeismicSDK(authState.authState?.token);
-            }
-
-            if (tenant && !tenantConfig?.documents?.disabled) {
-              authenticateDocumentSDK(
-                SIDECAR.applicationId,
-                SIDECAR.cdfApiBaseUrl,
-                tenant,
-                authState.authState?.token
-              );
-            }
-
-            setDoneAuth(true);
+            doLoginActions(tokenToUse);
           }
         });
       }
     }
-  }, [authState, tenantConfig, tenant]);
+  }, [authState.authState?.authenticated, tenantConfig, tenant]);
 
   return doneAuth ? <>{children}</> : null;
 };
