@@ -16,7 +16,7 @@ const StyledSidePanelFooterWrapper = styled.div`
 const SidePanelFooter = (): JSX.Element => {
   const { setIsSidePanelOpen } = useContext(RawExplorerContext);
 
-  const [activeDatabase, activeTable] = useActiveTable();
+  const [[activeDatabase, activeTable] = []] = useActiveTable();
 
   return (
     <StyledSidePanelFooterWrapper>

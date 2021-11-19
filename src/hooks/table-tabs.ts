@@ -41,32 +41,38 @@ function useQueryParam<T>(
 
 export type SpecificTable = [database: string, table: string];
 
-export function useActiveTable() {
+function useUrlTable() {
   return useQueryParam<SpecificTable>('activeTable');
 }
 export function useTableTabList() {
   return useQueryParam<SpecificTable[]>('tableTabs');
 }
 
-export function useOpenTable() {
-  const [, setActive] = useActiveTable();
+export function useActiveTable(): [
+  SpecificTable | undefined,
+  (_: SpecificTable) => void
+] {
+  const [active, setActive] = useUrlTable();
   const [tabs, setTabs] = useTableTabList();
-  return ([newDb, newTable]: SpecificTable) => {
-    if (!tabs) {
-      setTabs([[newDb, newTable]]);
-    } else if (
-      !tabs?.find(
-        ([tabDb, tabTable]) => tabDb === newDb && newTable === tabTable
-      )
-    ) {
-      setTabs([...tabs, [newDb, newTable]]);
-    }
-    setActive([newDb, newTable]);
-  };
+  return [
+    active,
+    ([newDb, newTable, view]: SpecificTable) => {
+      if (!tabs) {
+        setTabs([[newDb, newTable, view]]);
+      } else if (
+        !tabs?.find(
+          ([tabDb, tabTable]) => tabDb === newDb && newTable === tabTable
+        )
+      ) {
+        setTabs([...tabs, [newDb, newTable, view]]);
+      }
+      setActive([newDb, newTable, view]);
+    },
+  ];
 }
 
 export function useCloseDatabase() {
-  const [[activeDb] = [undefined], setActive] = useActiveTable();
+  const [[activeDb] = [], setActive] = useUrlTable();
   const [tabs, setTabs] = useTableTabList();
   return ([closeDb]: [database: string]) => {
     if (tabs) {
@@ -87,8 +93,7 @@ export function useCloseDatabase() {
 }
 
 export function useCloseTable() {
-  const [[activeDb, activeTable] = [undefined, undefined], setActive] =
-    useActiveTable();
+  const [[activeDb, activeTable] = [], setActive] = useUrlTable();
   const [tabs, setTabs] = useTableTabList();
   return ([closeDb, closeTable]: SpecificTable) => {
     let closeIndex = tabs

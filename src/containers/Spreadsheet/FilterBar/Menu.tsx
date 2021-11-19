@@ -12,7 +12,7 @@ import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 export const Menu = (): JSX.Element => {
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [[database, table] = []] = useActiveTable();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;

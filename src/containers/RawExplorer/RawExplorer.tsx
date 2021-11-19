@@ -31,7 +31,7 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 const RawExplorer = (): JSX.Element => {
   const { isSidePanelOpen } = useContext(RawExplorerContext);
 
-  const [[tabDatabase, tabTable] = [undefined, undefined]] = useActiveTable();
+  const [[tabDatabase, tabTable] = []] = useActiveTable();
 
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
     useUserCapabilities('rawAcl', 'READ');

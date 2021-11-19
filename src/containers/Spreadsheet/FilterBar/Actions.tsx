@@ -13,7 +13,7 @@ import { rowKey } from 'hooks/sdk-queries';
 export const Actions = (): JSX.Element => {
   const queryClient = useQueryClient();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [[database, table] = []] = useActiveTable();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
   useEffect(() => {

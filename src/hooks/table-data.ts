@@ -27,7 +27,7 @@ interface ColumnType extends Partial<ColumnShape> {
 }
 
 export const useTableData = () => {
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [[database, table] = []] = useActiveTable();
   const [tableFilters, setTableFilters] = useState([]);
 
   const enabled = !!database && !!table;

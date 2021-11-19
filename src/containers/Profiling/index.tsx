@@ -5,7 +5,7 @@ import { useActiveTable } from 'hooks/table-tabs';
 import { useRawProfile } from 'hooks/sdk-queries';
 
 export const Profiling = (): JSX.Element => {
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [[database, table] = []] = useActiveTable();
 
   const { data, isFetching, isError, error } = useRawProfile(
     {

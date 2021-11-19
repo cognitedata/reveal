@@ -19,7 +19,7 @@ import { useDeleteDatabase, useTables } from 'hooks/sdk-queries';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import CreateTable from '../CreateTable';
 import { SortingType } from './DatabaseList';
-import { useOpenTable } from 'hooks/table-tabs';
+import { useActiveTable } from 'hooks/table-tabs';
 
 const { SubMenu } = Menu;
 
@@ -75,7 +75,7 @@ const DatabaseItem = ({
   const { appPath } = useParams<{ appPath: string }>();
   const [searchWord, setSearch] = useState<string>('');
 
-  const openTab = useOpenTable();
+  const [, openTab] = useActiveTable();
 
   const { data, isLoading, hasNextPage, fetchNextPage } = useTables(
     {
