@@ -20,6 +20,7 @@ import {
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
 } from 'utils/constants';
+import icons from 'assets/icons';
 
 const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
   {
@@ -58,6 +59,9 @@ const RawExplorer = (): JSX.Element => {
             ) : (
               <StyledRawExplorerNotSelectedWrapper>
                 <StyledRawExplorerNotSelectedContent>
+                  <StyledRawExplorerNotSelectedArrow
+                    src={icons.EmptyStateArrowIcon}
+                  />
                   <Title level={3}>Select a table to view raw data</Title>
                   <StyledRawExplorerNotSelectedBody>
                     Use the side menu to navigate between databases and open raw
@@ -103,12 +107,19 @@ const StyledRawExplorerNotSelectedWrapper = styled.div`
 
 const StyledRawExplorerNotSelectedContent = styled.div`
   margin-bottom: 30px;
+  position: relative;
   width: 400px;
 `;
 
 const StyledRawExplorerNotSelectedBody = styled(Body)`
   color: ${Colors['text-hint'].hex()};
   margin-top: 12px;
+`;
+
+const StyledRawExplorerNotSelectedArrow = styled.img`
+  position: absolute;
+  left: -225px;
+  top: -150px;
 `;
 
 export default RawExplorer;
