@@ -214,7 +214,7 @@ export class Cognite3DViewer {
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
     this.spinner.opacity = Math.max(0.2, options.loadingIndicatorStyle?.opacity ?? 1.0);
 
-    this.camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
+    this.camera = new THREE.PerspectiveCamera(80, undefined, 0.1, 10000);
     // TODO savokr 28-10-2021: Consider removing default camera position initialization
     this.camera.position.x = 30;
     this.camera.position.y = 10;
