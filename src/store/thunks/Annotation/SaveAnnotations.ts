@@ -3,7 +3,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { Annotation } from 'src/api/types';
-import { validateAnnotation } from 'src/api/utils';
+import { validateAnnotation } from 'src/api/annotation/utils';
 
 export const SaveAnnotations = createAsyncThunk<
   Annotation[],

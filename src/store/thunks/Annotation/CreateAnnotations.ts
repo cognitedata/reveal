@@ -8,7 +8,7 @@ import {
 } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
-import { getUnsavedAnnotation } from 'src/api/utils';
+import { getUnsavedAnnotation } from 'src/api/annotation/utils';
 
 export const CreateAnnotations = createAsyncThunk<
   VisionAnnotation[],

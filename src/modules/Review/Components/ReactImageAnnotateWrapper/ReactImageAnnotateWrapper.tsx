@@ -31,9 +31,9 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
+import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
-import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
 import { tools } from './Tools';
 
 export const ReactImageAnnotateWrapper = ({

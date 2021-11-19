@@ -1,7 +1,7 @@
 import { VisionAPIType } from 'src/api/types';
-import { getDetectionModelEndpoint } from 'src/api/utils';
 import { singleton } from '@keenondrums/singleton';
 import { BaseDetectionModelDataProvider } from 'src/api/BaseDetectionModelDataProvider';
+import { getDetectionModelEndpoint } from 'src/api/detectionUtils';
 
 @singleton
 export class TagDetectionDataProvider extends BaseDetectionModelDataProvider {

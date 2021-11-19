@@ -2,7 +2,10 @@ import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 import { VisionAsset } from 'src/modules/Common/store/filesSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationJob, VisionAPIType } from 'src/api/types';
-import { enforceRegionValidity, getUnsavedAnnotation } from 'src/api/utils';
+import {
+  enforceRegionValidity,
+  getUnsavedAnnotation,
+} from 'src/api/annotation/utils';
 import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import {

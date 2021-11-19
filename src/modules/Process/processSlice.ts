@@ -6,7 +6,6 @@ import {
   ParamsTagDetection,
   VisionAPIType,
 } from 'src/api/types';
-import { getFakeQueuedJob } from 'src/api/utils';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 import { clearFileState, fileProcessUpdate } from 'src/store/commonActions';
 import isEqual from 'lodash-es/isEqual';
@@ -23,6 +22,7 @@ import {
 } from 'src/store/genericTabularDataSlice';
 import { useSelector } from 'react-redux';
 import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
+import { getFakeQueuedJob } from 'src/api/detectionUtils';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
