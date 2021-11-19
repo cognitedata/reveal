@@ -7,7 +7,7 @@ import isString from 'lodash/isString';
 
 import { Tooltip } from 'components/tooltip';
 
-import { CellContentWrapper } from './elements';
+import { CellContentWrapper, CellValueWrapper } from './elements';
 
 interface Props {
   cell: Cell<any>;
@@ -49,11 +49,10 @@ const CellText = ({ children }: any) => {
 
   return (
     <CellContentWrapper
-      ref={elementRef}
       whiteSpace={children.props.column.displayFullText ? 'normal' : 'nowrap'}
     >
       <Tooltip title={children} enabled={overflowing}>
-        {children}
+        <CellValueWrapper ref={elementRef}> {children} </CellValueWrapper>
       </Tooltip>
     </CellContentWrapper>
   );
