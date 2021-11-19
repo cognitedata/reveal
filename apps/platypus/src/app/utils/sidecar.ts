@@ -52,7 +52,7 @@ const getAadApplicationId = (cluster: string) => {
   enableUserManagement: true,
   disableTranslations: false,
   disableLoopDetector: false,
-  disableSentry: false,
+  disableSentry: true,
   disableIntercom: false,
   disableReactQuery: false,
   ...((window as any).__cogniteSidecar || {}),

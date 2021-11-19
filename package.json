@@ -10,6 +10,7 @@
     "@cognite/sidecar": "^0.2.0",
     "@monaco-editor/react": "^4.3.1",
     "@reduxjs/toolkit": "^1.6.2",
+    "@sentry/browser": "^6.15.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/user-event": "^13.2.1",
     "@types/d3": "^7.0.0",

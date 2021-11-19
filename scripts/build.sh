@@ -42,6 +42,8 @@ export NX_REACT_APP_RELEASE_ID="${REACT_APP_RELEASE_ID:-}"
 export NX_REACT_APP_VERSION_SHA="${REACT_APP_VERSION_SHA:-}"
 export NX_REACT_APP_VERSION_NAME="${REACT_APP_VERSION_NAME:-}"
 export NX_PUBLIC_URL="${PUBLIC_URL:-}"
+export NX_SENTRY_PROJECT_NAME="${SENTRY_PROJECT_NAME:-}"
+export NX_SENTRY_DSN="${SENTRY_DSN:-}"
 
 nx build ${project} ${configuration} --deployUrl=${baseHref}
 
