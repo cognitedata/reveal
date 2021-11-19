@@ -17,8 +17,9 @@ export const Actions = (): JSX.Element => {
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    if (database && table) {
-      queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 4));
+    // invalidate rows/profile when closing the modal
+    if (database && table && !csvModalVisible) {
+      queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 3));
     }
   }, [csvModalVisible, database, table]);
 
