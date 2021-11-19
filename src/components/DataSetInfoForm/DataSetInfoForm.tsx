@@ -99,14 +99,21 @@ const DataSetInfoForm = (props: DataSetInfoFormProps): JSX.Element => {
         placeholder="Labels"
         getPopupContainer={getContainer}
       >
-        {props.selectedLabels?.length &&
+        {Array.isArray(props.selectedLabels) &&
+          props.selectedLabels?.length &&
           props.selectedLabels?.map((label: string) => (
             <Option key={label} value={label}>
               {label}
             </Option>
           ))}
         {labelSuggestions
-          ?.filter((label) => !props.selectedLabels?.includes(label))
+          ?.filter(
+            (label) =>
+              !(
+                Array.isArray(props.selectedLabels) &&
+                props.selectedLabels?.includes(label)
+              )
+          )
           ?.map((suggestion: string) => (
             <Option key={suggestion} value={suggestion}>
               {suggestion}
