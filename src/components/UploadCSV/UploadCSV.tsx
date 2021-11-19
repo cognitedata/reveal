@@ -101,17 +101,13 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
         chunk(results, _parser) {
           setParser(_parser);
           _parser.pause();
-          const items = results.data.map((row: string[]) => {
-            const rowcolumns = columns
-              ? columns.reduce(
-                  (accl, c, i) => ({
-                    ...accl,
-                    [c]: row[i],
-                  }),
-                  {}
-                )
-              : {};
-            return {
+          const items = new Array(results.data.length);
+          results.data.forEach((row: string[], rowIndex) => {
+            const rowcolumns: any = {};
+            columns?.forEach((column, index) => {
+              rowcolumns[column] = row[index];
+            });
+            items[rowIndex] = {
               key:
                 selectedKeyIndex === -1
                   ? uuid()
