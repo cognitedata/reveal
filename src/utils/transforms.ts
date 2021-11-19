@@ -485,11 +485,17 @@ export const getStepsFromWorkflowReactFlow = (
     return [];
   }
 
-  const validNodes: Node[] = [outputNode];
+  let validNodes: Node[] = [outputNode];
   // traversing from output node and all incomers and add it to validNodes until none left.
   function findInputNodes(node: Node) {
     const incomers = getIncomers(node as Node, elements);
     incomers.forEach((n) => {
+      // Check for duplicates
+      if (validNodes.some((vn) => vn.id === n.id)) {
+        // Need to keep the latest ones in the array, so remove previosly added ones
+        validNodes = validNodes.filter((vn) => vn.id === n.id);
+      }
+
       validNodes.unshift(n);
       findInputNodes(n);
     });
