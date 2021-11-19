@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Colors } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
 
@@ -26,9 +26,17 @@ export const Cell = (props: Props): JSX.Element => {
   };
 
   const isSelected = isCellSelected(rowIndex, columnIndex);
+  const isOverflow = true; // mock
 
   return isSelected ? (
-    <StyledCellSelected onClick={onCellSelect}>{cellData}</StyledCellSelected>
+    <StyledCellSelected onClick={onCellSelect}>
+      <StyledCellContent>{cellData}</StyledCellContent>
+      {isOverflow && (
+        <ExpandButton type="primary" size="small" style={{ padding: 0 }}>
+          <Icon type="Expand" />
+        </ExpandButton>
+      )}
+    </StyledCellSelected>
   ) : (
     <StyledCellUnselected onClick={onCellSelect}>
       {cellData}
@@ -49,14 +57,33 @@ const StyledCellUnselected = styled(StyledCell)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  user-select: none;
 `;
 
 const StyledCellSelected = styled(StyledCell)`
-  height: 200%;
   overflow: hidden;
-  text-overflow: ellipsis;
+  width: 100%;
+  height: auto;
+  max-height: 200%;
   z-index: 10;
   padding: 6px 14px;
   border-radius: 4px;
   border: 2px solid ${Colors.midblue.hex()};
+
+  & > * {
+    display: inline-block;
+  }
+`;
+
+const StyledCellContent = styled.div`
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+`;
+
+const ExpandButton = styled(Button)`
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 0.5em;
 `;
