@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import uuid from 'uuid';
 import PapaParse from 'papaparse';
@@ -42,28 +42,14 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
   const [uploadedCursor, setUploadedCursor] = useState(0);
   const [parsedCursor, setParsedCursor] = useState(0);
 
-  const resetState = useCallback(() => {
-    if (parser) {
-      parser.abort();
-    }
-    setCSVModalVisible(false);
-    setComplete(false);
-    setUploadedCursor(0);
-    setParsedCursor(0);
-    setFile(undefined);
-    setUpload(false);
-    setNetworkError(false);
-  }, [
-    setCSVModalVisible,
-    setComplete,
-    setUploadedCursor,
-    setParsedCursor,
-    setFile,
-    setUpload,
-    parser,
-  ]);
-
-  useEffect(() => () => resetState(), []);
+  useEffect(
+    () => () => {
+      if (parser) {
+        parser.abort();
+      }
+    },
+    [parser]
+  );
 
   useEffect(() => {
     if (complete) {
@@ -80,9 +66,8 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
           });
         }
       }
-      resetState();
     }
-  }, [complete, file, networkError, resetState]);
+  }, [complete, file, networkError]);
 
   useEffect(() => {
     if (file) {
@@ -127,7 +112,10 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
             })
             // Keep the main thread "open" to render progress before continuing parsing the file
             .then(() => sleep(250))
-            .then(() => _parser.resume());
+            .then(() => _parser.resume())
+            .catch(() => {
+              setNetworkError(true);
+            });
         },
         beforeFirstChunk(chunk) {
           return chunk.split('\n').splice(1).join('\n');
@@ -254,7 +242,13 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
       visible
       title="Upload CSV file"
       onCancel={() => {
-        resetState();
+        if (file && parser && !complete) {
+          notification.info({
+            message: `File upload was canceled.`,
+            key: 'file-upload',
+          });
+        }
+        setCSVModalVisible(false);
       }}
       okText="Confirm Upload"
       onOk={() => saveDataToApi()}
