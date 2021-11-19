@@ -198,26 +198,23 @@ export type CameraControlsOptions = {
    * but keyboard navigation still allows to go through the model.
    *
    * Modes:
-   *  'zoomToTarget' - zooms just to the current target (center of the screen) of the camera, 
-   *  'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects, 
-   *  'zoomToCursor'; - mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects. 
-   * 
+   * 'zoomToTarget' - zooms just to the current target (center of the screen) of the camera,
+   * 'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects,
+   * 'zoomToCursor'; - mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects.
+   *
    * Default is 'zoomPastCursor'.
    *
    */
-  mouseWheelAction?:
-  /**
-   * mouse wheel scroll zooms just to the current target (center of the screen) of the camera
-   */
-  | 'zoomToTarget' 
-  /**
-   * mouse wheel scroll zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects
-   */
-  | 'zoomPastCursor' 
-  /**
-   *  mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects
-   */
-  | 'zoomToCursor'; 
+  mouseWheelAction?: /** Mouse wheel scroll zooms just to the current target (center of the screen) of the camera. */
+  | 'zoomToTarget'
+    /**
+     * Mouse wheel scroll zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects.
+     */
+    | 'zoomPastCursor'
+    /**
+     * Mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects.
+     */
+    | 'zoomToCursor';
   /**
    * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
    *
