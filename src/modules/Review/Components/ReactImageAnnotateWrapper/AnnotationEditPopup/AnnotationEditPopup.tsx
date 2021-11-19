@@ -162,7 +162,7 @@ export const AnnotationEditPopup = (props: {
 
   useEffect(() => {
     // on select and on label value state is set region is updated accordingly
-    if (editing && labelValue?.color && labelValue.value) {
+    if (editing && !isKeypoint && labelValue?.color && labelValue.value) {
       let updatedRegionTags = [labelValue.value];
       if (region.tags?.length) {
         updatedRegionTags = updatedRegionTags.concat(region.tags.slice(1));

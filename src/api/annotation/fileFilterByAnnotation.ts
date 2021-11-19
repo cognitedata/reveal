@@ -2,7 +2,7 @@ import { AnnotationFilterType } from 'src/modules/Explorer/Components/Filters/ty
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { Annotation } from 'src/api/types';
-import { validateAnnotation } from 'src/api/utils';
+import { validateAnnotation } from 'src/api/annotation/utils';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
   ANNOTATION_FETCH_BULK_SIZE,

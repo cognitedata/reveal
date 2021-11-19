@@ -1,7 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
-import { getFieldOrSetNull, validateAnnotation } from 'src/api/utils';
+import {
+  getFieldOrSetNull,
+  validateAnnotation,
+} from 'src/api/annotation/utils';
 import { AnnotationUtils, VisionAnnotation } from 'src/utils/AnnotationUtils';
 import { Annotation } from 'src/api/types';
 
