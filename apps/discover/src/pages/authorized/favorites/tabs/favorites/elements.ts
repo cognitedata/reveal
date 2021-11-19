@@ -115,7 +115,6 @@ export const LabelDescription = styled(FlexAlignItems)`
   min-width: 100px;
   font-weight: 500;
   color: var(--cogs-text-primary);
-  margin-bottom: 6px;
 `;
 
 export const Value = styled(FlexAlignItems)`
@@ -149,7 +148,10 @@ export const Grid = styled.div`
 `;
 
 export const DangerButton = styled(Menu.Item)`
-  color: var(--cogs-red-2);
+  color: var(--cogs-text-danger);
+  &:hover {
+    background-color: var(--cogs-red-8); // this color not in color tokens
+  }
 `;
 
 export const ActionPadding = styled(FlexRow)`

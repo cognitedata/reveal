@@ -50,7 +50,7 @@ const Title = styled.div`
 
 const CardContent = styled(FlexGrow)`
   height: 202px;
-  padding: ${sizes.normal} ${sizes.normal} 20px ${sizes.normal};
+  padding: 12px ${sizes.normal} 20px ${sizes.normal};
   cursor: pointer;
 `;
 
