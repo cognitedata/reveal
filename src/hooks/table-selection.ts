@@ -1,14 +1,8 @@
-import { useState } from 'react';
+import { useContext } from 'react';
+import { RawExplorerContext } from 'contexts';
 
-type SelectedCell = {
-  rowIndex: number | undefined;
-  columnIndex: number | undefined;
-};
 export const useTableSelection = () => {
-  const [selectedCell, setSelectedCell] = useState<SelectedCell>({
-    rowIndex: undefined,
-    columnIndex: undefined,
-  });
+  const { selectedCell, setSelectedCell } = useContext(RawExplorerContext);
 
   const isCellSelected = (rowIndex: number, columnIndex: number) => {
     return (

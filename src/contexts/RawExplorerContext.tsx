@@ -13,12 +13,18 @@ export type SidePanelOptions = {
   selectedDatabase?: string;
   selectedTable?: string;
 };
+export type SelectedCell = {
+  rowIndex: number | undefined;
+  columnIndex: number | undefined;
+};
 
 type RawExplorerState = {
   isSidePanelOpen: boolean;
   setIsSidePanelOpen: Dispatch<SetStateAction<boolean>>;
   selectedSidePanelDatabase?: string;
   setSelectedSidePanelDatabase: Dispatch<SetStateAction<string | undefined>>;
+  selectedCell: SelectedCell;
+  setSelectedCell: Dispatch<SetStateAction<SelectedCell>>;
 };
 
 export const RawExplorerContext = createContext<RawExplorerState>(
@@ -34,6 +40,10 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
   const [selectedSidePanelDatabase, setSelectedSidePanelDatabase] = useState<
     string | undefined
   >();
+  const [selectedCell, setSelectedCell] = useState<SelectedCell>({
+    rowIndex: undefined,
+    columnIndex: undefined,
+  });
 
   return (
     <RawExplorerContext.Provider
@@ -42,6 +52,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
         setIsSidePanelOpen,
         selectedSidePanelDatabase,
         setSelectedSidePanelDatabase,
+        selectedCell,
+        setSelectedCell,
       }}
     >
       {children}
