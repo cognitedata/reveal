@@ -54,7 +54,7 @@ export type HtmlOverlayOptions = {
  */
 export type HtmlOverlayToolClusteringOptions = {
   /**
-   * Currently only 'overlapInScreenspace' is supported. In this mode,
+   * Currently only 'overlapInScreenSpace' is supported. In this mode,
    * overlays are clustered together into a single element as defined by
    * the {@link createClusterElementCallback} and hidden when they overlap
    * in screen space. The composite element is placed at the midpoint of
@@ -63,7 +63,7 @@ export type HtmlOverlayToolClusteringOptions = {
    * Clustered elements are faded in/out using CSS styling `transition`,
    * `opacity` and `visibility`.
    */
-  mode: 'overlapInScreenspace';
+  mode: 'overlapInScreenSpace';
 
   /**
    * Callback that is triggered when a set of overlays are clustered together
@@ -362,7 +362,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     }
 
     switch (options.mode) {
-      case 'overlapInScreenspace':
+      case 'overlapInScreenSpace':
         this.clusterByOverlapInScreenSpace(options.createClusterElementCallback);
         break;
 

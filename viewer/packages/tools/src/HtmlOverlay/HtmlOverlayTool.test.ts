@@ -192,7 +192,7 @@ describe(HtmlOverlayTool.name, () => {
       .fn()
       .mockReturnValue(document.createElement('div'));
     const options: HtmlOverlayToolOptions = {
-      clusteringOptions: { mode: 'overlapInScreenspace', createClusterElementCallback }
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
     };
     const helper = new HtmlOverlayTool(viewer, options);
 

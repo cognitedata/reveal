@@ -452,7 +452,7 @@ export function Migration() {
       const overlayTool = new HtmlOverlayTool(viewer,
         { 
           clusteringOptions: { 
-            mode: 'overlapInScreenspace', 
+            mode: 'overlapInScreenSpace', 
             createClusterElementCallback: cluster => {
               return createOverlay(`${cluster.length}`);
             }
@@ -553,7 +553,16 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
 function createOverlay(text: string): HTMLElement {
   const overlayHtml = document.createElement('div');
   overlayHtml.innerText = text;
-  overlayHtml.style.cssText = 'background: white; position: absolute; border-radius: 5px; border-color: black; pointer-events: none; touch-action: none;';
-  return overlayHtml;
+  overlayHtml.style.cssText = `
+    position: absolute; 
+    translate(-50%, -50%);
 
+    background: white; 
+    border-radius: 5px; 
+    border-color: black; 
+
+    pointer-events: none; 
+    touch-action: none;`;
+
+  return overlayHtml;
 }
