@@ -16,7 +16,6 @@ import {
 
 import { customConfigComponent } from './configComponents';
 import { ProjectConfigForm } from './ProjectConfigForm';
-import { ProjectConfigSetupWrapper } from './ProjectConfigSetupWrapper';
 
 export const ProjectConfig = () => {
   const { t } = useTranslation();
@@ -41,7 +40,7 @@ export const ProjectConfig = () => {
     async (overridingConfig) => {
       const configToUpdate = overridingConfig ?? configChanges;
       try {
-        await updateConfig({ ...configToUpdate, hasCustomConfig: true });
+        await updateConfig(configToUpdate);
         setConfigChanges({});
         setHasChanges(false);
       } catch (e) {
@@ -74,20 +73,14 @@ export const ProjectConfig = () => {
   }
 
   return (
-    <ProjectConfigSetupWrapper
+    <ProjectConfigForm
+      metadata={metadata}
+      config={config}
       onChange={handleChange}
       onUpdate={handleUpdate}
-      config={config}
-    >
-      <ProjectConfigForm
-        metadata={metadata}
-        config={config}
-        onChange={handleChange}
-        onUpdate={handleUpdate}
-        onReset={handleReset}
-        hasChanges={hasChanges}
-        renderCustomComponent={customConfigComponent}
-      />
-    </ProjectConfigSetupWrapper>
+      onReset={handleReset}
+      hasChanges={hasChanges}
+      renderCustomComponent={customConfigComponent}
+    />
   );
 };
