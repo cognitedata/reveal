@@ -48,10 +48,3 @@ export const CellContainer = styled.div<{ $selected: boolean }>`
   border: ${({ $selected }) =>
     $selected && `2px solid ${Colors.midblue.hex()}`};
 `;
-
-const _CellSelected = styled.div`
-  border: 2px solid ${Colors.midblue.hex()} !important;
-  box-sizing: border-box;
-  border-radius: 4px;
-  padding: 6px 14px;
-`;
