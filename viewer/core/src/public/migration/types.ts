@@ -197,13 +197,27 @@ export type CameraControlsOptions = {
    * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation,
    * but keyboard navigation still allows to go through the model.
    *
+   * Modes:
+   *  'zoomToTarget' - zooms just to the current target (center of the screen) of the camera, 
+   *  'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects, 
+   *  'zoomToCursor'; - mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects. 
+   * 
    * Default is 'zoomPastCursor'.
    *
    */
   mouseWheelAction?:
-    | 'zoomToTarget' // mouse wheel scroll zooms just to the current target (center of the screen) of the camera
-    | 'zoomPastCursor' // mouse wheel scroll zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects
-    | 'zoomToCursor'; // mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects
+  /**
+   * mouse wheel scroll zooms just to the current target (center of the screen) of the camera
+   */
+  | 'zoomToTarget' 
+  /**
+   * mouse wheel scroll zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects
+   */
+  | 'zoomPastCursor' 
+  /**
+   *  mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects
+   */
+  | 'zoomToCursor'; 
   /**
    * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
    *
