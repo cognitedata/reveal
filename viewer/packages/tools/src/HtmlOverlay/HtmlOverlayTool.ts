@@ -11,6 +11,10 @@ import { assertNever, worldToViewportCoordinates } from '@reveal/core/utilities'
 import { Cognite3DViewer, DisposedDelegate, SceneRenderedDelegate } from '@reveal/core';
 import debounce from 'lodash/debounce';
 
+/**
+ * Callback that is triggered whenever the 2D position of an overlay is updated
+ * in {@link HtmlOverlayTool}.
+ */
 export type HtmlOverlayPositionUpdatedDelegate = (
   element: HTMLElement,
   position2D: THREE.Vector2,
@@ -19,6 +23,10 @@ export type HtmlOverlayPositionUpdatedDelegate = (
   userData: any
 ) => void;
 
+/**
+ * Callback that is triggered when a set of overlays are clustered together in
+ * {@link HtmlOverlayTool}.
+ */
 export type HtmlOverlayCreateClusterDelegate = (
   overlayElements: {
     htmlElement: HTMLElement;
@@ -41,8 +49,28 @@ export type HtmlOverlayOptions = {
   userData?: any;
 };
 
+/**
+ * Controls how close overlay elements are clustered together.
+ */
 export type HtmlOverlayToolClusteringOptions = {
+  /**
+   * Currently only 'overlapInScreenspace' is supported. In this mode,
+   * overlays are clustered together into a single element as defined by
+   * the {@link createClusterElementCallback} and hidden when they overlap
+   * in screen space. The composite element is placed at the midpoint of
+   * all clustered elements.
+   *
+   * Clustered elements are faded in/out using CSS styling `transition`,
+   * `opacity` and `visibility`.
+   */
   mode: 'overlapInScreenspace';
+
+  /**
+   * Callback that is triggered when a set of overlays are clustered together
+   * to create a "composite" element as a placeholder for the clustered elements.
+   * Note that this callback will be triggered every frame for each cluster so it
+   * must be performant.
+   */
   createClusterElementCallback: HtmlOverlayCreateClusterDelegate;
 };
 
@@ -68,7 +96,7 @@ type HtmlOverlayElement = {
  * useful to create HTML overlays to highlight information about key positions in the 3D model.
  *
  * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
- * in most cases to have styles 'pointerEvents: none' and 'touchAction: none' to avoid
+ * in most cases to have styles 'pointer-events: none' and 'touch-action: none' to avoid
  * interfering with 3D navigation. Consider also applying 'transform: translate(-50%, -50%)'
  * to anchor the center of the element rather than the top-left corner. In some cases the
  * `zIndex`-attribute is necessary for the element to appear on top of the viewer.
@@ -179,6 +207,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     if (this.viewerDomElement.contains(htmlElement)) {
       throw new Error(`Element is already attached to viewer`);
     }
+
+    htmlElement.style.visibility = 'hidden';
 
     // Note! Must be part of DOM tree before we do getComputedStyle(), so add before check
     this.viewerDomElement.appendChild(htmlElement);
@@ -310,12 +340,13 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
     this._htmlOverlays.forEach((element, htmlElement) => {
       const { state } = element;
-      if (state.visible) {
-        htmlElement.style.visibility = 'visible';
-        htmlElement.style.left = `${state.position2D.x + offsetLeft}px`;
-        htmlElement.style.top = `${state.position2D.y + offsetTop}px`;
-      } else {
-        htmlElement.style.visibility = 'hidden';
+      htmlElement.style.left = `${state.position2D.x + offsetLeft}px`;
+      htmlElement.style.top = `${state.position2D.y + offsetTop}px`;
+
+      if (state.visible && htmlElement.style.visibility !== 'visible') {
+        fadeIn(htmlElement);
+      } else if (!state.visible && htmlElement.style.visibility !== 'hidden') {
+        fadeOut(htmlElement);
       }
     });
 
@@ -407,6 +438,26 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private onViewerDisposed(): void {
     this.dispose();
   }
+}
+
+/**
+ * Hides an element and applies a CSS transition.
+ */
+function fadeOut(htmlElement: HTMLElement) {
+  // https://stackoverflow.com/a/4861306
+  htmlElement.style.visibility = 'hidden';
+  htmlElement.style.opacity = '0';
+  htmlElement.style.transition = 'visibility 0s 0.2s, opacity 0.2s linear';
+}
+
+/**
+ * Shows an element and applies a CSS transition.
+ */
+function fadeIn(htmlElement: HTMLElement) {
+  // https://stackoverflow.com/a/4861306
+  htmlElement.style.visibility = 'visible';
+  htmlElement.style.opacity = '1';
+  htmlElement.style.transition = 'opacity 0.2s linear';
 }
 
 function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
