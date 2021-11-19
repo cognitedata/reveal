@@ -238,6 +238,15 @@ const annotationLabelSlice = createSlice({
       (state, action) => {
         const annotations = action.payload;
 
+        // HACK: only update states if annotations belong to one single file
+        // to avoid costly state update if thunks are triggered by other pages than review page
+        if (
+          [...new Set(annotations.map((item) => item.annotatedResourceId))]
+            .length > 1
+        ) {
+          return;
+        }
+
         const keypointAnnotations = annotations.filter(
           (annotation) => annotation.data?.keypoint
         );
