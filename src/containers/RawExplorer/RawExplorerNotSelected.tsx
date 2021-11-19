@@ -63,7 +63,11 @@ const RawExplorerNotSelected = (): JSX.Element => {
         </StyledRawExplorerReturningUserContent>
       ) : (
         <StyledRawExplorerFirstTimeContent>
-          <Carousel dots={{ className: 'first-time-carousel-dot' }}>
+          <Carousel
+            arrows
+            autoplay
+            dots={{ className: 'first-time-carousel-dot' }}
+          >
             {carouselSlides.map(({ title, detail, imageSrc }) => (
               <StyledCarouselPage key={title}>
                 <StyledCarouselPageContent>
