@@ -7,7 +7,7 @@ import {
   ChartWorkflow,
   ChartWorkflowV2,
 } from 'models/chart/types';
-import { updateWorkflow } from 'models/chart/updates';
+import { updateChartSettings, updateWorkflow } from 'models/chart/updates';
 import { trackUsage } from 'services/metrics';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
@@ -25,8 +25,12 @@ const ReactFlowNodeEditorContainer = ({
   sources,
   closeNodeEditor,
 }: NodeEditorProps) => {
-  const [, setChart] = useRecoilState(chartAtom);
+  const [chart, setChart] = useRecoilState(chartAtom);
   const operations = useAvailableOps();
+
+  const saveAutoAlign = (autoAlign: boolean) => {
+    setChart((oldChart) => updateChartSettings(oldChart!, { autoAlign }));
+  };
 
   const saveOutputName = (newCalculationName: string) => {
     setChart((oldChart) =>
@@ -61,6 +65,8 @@ const ReactFlowNodeEditorContainer = ({
         getSavedFlow={getSavedFlow}
         saveFlow={saveFlow}
         saveOutputName={saveOutputName}
+        autoAlign={chart?.settings?.autoAlign}
+        saveAutoAlign={saveAutoAlign}
         onEditorClick={handleEditorClick}
       />
       <CloseButton

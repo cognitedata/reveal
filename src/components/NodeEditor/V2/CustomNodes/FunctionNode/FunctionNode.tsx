@@ -3,6 +3,7 @@ import { NodeTypes } from 'models/node-editor/types';
 import { memo, useEffect, useState } from 'react';
 import { Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
+import { AUTO_ALIGN_PARAM } from 'utils/constants';
 import { NodeWrapper } from '../elements';
 import NodeHandle from '../NodeHandle';
 import NodeWithActionBar from '../NodeWithActionBar';
@@ -35,6 +36,10 @@ const FunctionNode = memo(({ id, data, selected }: FunctionNodeProps) => {
     onRemoveNode,
   } = data;
   const nodeHeight = toolFunction.inputs.length * PIN_HEIGHT;
+  // Remove auto-align parameter so it's not rendered in the form
+  const parameters = toolFunction.parameters.filter(
+    (p) => p.param !== AUTO_ALIGN_PARAM
+  );
 
   const [areParamsVisible, setAreParamsVisible] = useState<boolean>(false);
 
@@ -61,8 +66,7 @@ const FunctionNode = memo(({ id, data, selected }: FunctionNodeProps) => {
           padding: 10,
         }}
         onDoubleClick={() =>
-          !!toolFunction.parameters.length &&
-          setAreParamsVisible((isVisible) => !isVisible)
+          parameters.length && setAreParamsVisible((isVisible) => !isVisible)
         }
       >
         <HandleContainer height={nodeHeight} position="left">
@@ -82,10 +86,10 @@ const FunctionNode = memo(({ id, data, selected }: FunctionNodeProps) => {
               {input.name || `Input ${i + 1}`}
             </InputName>
           ))}
-        {areParamsVisible && !!toolFunction.parameters.length && (
+        {areParamsVisible && !!parameters.length && (
           <FunctionParameterForm
             nodeId={id}
-            parameters={toolFunction.parameters}
+            parameters={parameters}
             functionData={functionData}
             onFunctionDataChange={(nodeId, formData) => {
               onFunctionDataChange(nodeId, formData);

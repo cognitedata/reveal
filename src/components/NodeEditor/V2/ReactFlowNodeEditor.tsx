@@ -27,11 +27,11 @@ import {
   updatePosition,
 } from './utils';
 import AddButton, { AddMenu } from './AddButton';
-import CustomControls from './CustomControls';
-import ConstantNode from './CustomElements/ConstantNode';
-import FunctionNode from './CustomElements/FunctionNode/FunctionNode';
-import OutputNode from './CustomElements/OutputNode';
-import SourceNode from './CustomElements/SourceNode';
+import EditorControls from './EditorControls/EditorControls';
+import ConstantNode from './CustomNodes/ConstantNode';
+import FunctionNode from './CustomNodes/FunctionNode/FunctionNode';
+import OutputNode from './CustomNodes/OutputNode';
+import SourceNode from './CustomNodes/SourceNode';
 
 export type ReactFlowNodeEditorProps = {
   sources: (ChartTimeSeries | ChartWorkflow)[];
@@ -39,6 +39,8 @@ export type ReactFlowNodeEditorProps = {
   output: { id?: string; name?: string; color?: string };
   getSavedFlow: () => FlowExportObject | undefined;
   saveFlow?: (flow: FlowExportObject) => void;
+  autoAlign?: boolean;
+  saveAutoAlign?: (autoAlign: boolean) => void;
   saveOutputName?: (name: string) => void;
   onEditorClick?: () => void;
 };
@@ -49,6 +51,8 @@ const ReactFlowNodeEditor = ({
   output,
   getSavedFlow,
   saveFlow,
+  autoAlign,
+  saveAutoAlign,
   saveOutputName,
   onEditorClick,
 }: ReactFlowNodeEditorProps) => {
@@ -322,7 +326,7 @@ const ReactFlowNodeEditor = ({
           setContextMenuPosition(e);
         }}
       >
-        <CustomControls />
+        <EditorControls autoAlign={autoAlign} saveAutoAlign={saveAutoAlign} />
         <Background variant={BackgroundVariant.Dots} />
       </ReactFlow>
       <AddButton

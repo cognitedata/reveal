@@ -4,3 +4,4 @@ export const CLUSTER_KEY = 'cluster';
 export const SEARCH_KEY = 'q';
 export const FLOAT_NUMBER_PATTERN = /\d*\.?\d*$/;
 export const CHART_POINTS_PER_SERIES = 1000;
+export const AUTO_ALIGN_PARAM = 'align_timesteps';

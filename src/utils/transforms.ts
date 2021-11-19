@@ -3,6 +3,7 @@
 import {
   ComputationStep,
   Operation,
+  OperationParameters,
   OperationParametersTypeEnum,
 } from '@cognite/calculation-backend';
 import { isNil, omit, omitBy } from 'lodash';
@@ -23,6 +24,7 @@ import {
   StorableNode,
 } from 'models/chart/types';
 import { NodeTypes } from 'models/node-editor/types';
+import { AUTO_ALIGN_PARAM } from './constants';
 
 export type DSPFunctionConfig = {
   input: {
@@ -439,6 +441,20 @@ const getOperationFromReactFlowNode = (node: FlowElement) => {
   }
 };
 
+const getParamsFromReactFlowNode = (chart: Chart, node: FlowElement) => {
+  let params = node.data.functionData || {};
+  // Add auto-align parameter using the global setting
+  if (
+    node.data.toolFunction?.parameters?.some(
+      (p: OperationParameters) => p.param === AUTO_ALIGN_PARAM
+    )
+  ) {
+    params = { ...params, [AUTO_ALIGN_PARAM]: chart.settings?.autoAlign };
+  }
+
+  return params;
+};
+
 const getInputFromReactFlowNode = (
   chart: Chart,
   node: FlowElement,
@@ -513,7 +529,7 @@ export const getStepsFromWorkflowReactFlow = (
       return {
         ...node,
         incomers: getIncomers(node as Node, elements),
-        parameters: node.data.functionData || {},
+        parameters: getParamsFromReactFlowNode(chart, node),
       };
     });
 

@@ -3,6 +3,7 @@ import { AxisUpdate } from 'components/PlotlyChart';
 import { nanoid } from 'nanoid';
 import {
   Chart,
+  ChartSettings,
   ChartTimeSeries,
   ChartWorkflow,
   SourceCollectionData,
@@ -225,3 +226,13 @@ export function updateSourceAxisForChart(
 
   return updatedChart;
 }
+
+export const updateChartSettings = (
+  chart: Chart,
+  diff: Partial<ChartSettings>
+): Chart => {
+  return {
+    ...chart,
+    settings: { ...chart.settings, ...diff },
+  };
+};

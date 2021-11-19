@@ -25,11 +25,12 @@ export type SourceCollectionData = {
   id: string;
 };
 
-type ChartSettings = {
+export type ChartSettings = {
   showYAxis?: boolean;
   showMinMax?: boolean;
   showGridlines?: boolean;
   mergeUnits?: boolean;
+  autoAlign?: boolean;
 };
 
 export type ChartTimeSeries = {
