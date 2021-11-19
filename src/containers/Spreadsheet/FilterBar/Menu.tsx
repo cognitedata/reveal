@@ -16,7 +16,7 @@ export const Menu = (): JSX.Element => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;
-  const canBeRenamed = false;
+  const canBeRenamed = false; // TODO renaming is impossible now
 
   const stopPropagation = (
     e: React.MouseEvent<HTMLButtonElement | HTMLElement>
