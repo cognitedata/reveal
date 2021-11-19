@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Body, Colors, Detail, Loader, Title } from '@cognite/cogs.js';
+import { Body, Colors, Detail, Icon, Loader, Title } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 import { Carousel } from 'antd';
 import styled from 'styled-components';
@@ -67,6 +67,8 @@ const RawExplorerNotSelected = (): JSX.Element => {
             arrows
             autoplay
             dots={{ className: 'first-time-carousel-dot' }}
+            prevArrow={<Icon type="ChevronLeftLarge" />}
+            nextArrow={<Icon type="ChevronRightLarge" />}
           >
             {carouselSlides.map(({ title, detail, imageSrc }) => (
               <StyledCarouselPage key={title}>
@@ -127,6 +129,27 @@ const StyledRawExplorerFirstTimeContent = styled.div`
 
     li.slick-active button {
       background-color: ${Colors['text-hint'].hex()};
+    }
+  }
+
+  .ant-carousel {
+    .slick-prev,
+    .slick-next {
+      color: currentColor;
+      font-size: inherit;
+      z-index: 1;
+
+      ::before {
+        content: none;
+      }
+    }
+
+    .slick-prev {
+      left: 16px;
+    }
+
+    .slick-next {
+      right: 16px;
     }
   }
 `;
