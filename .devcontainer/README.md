@@ -17,4 +17,4 @@ Please see <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote
 
 Once the devcontainer startup is done, open a new terminal, and follow the build steps as explained in the main README.md for Reveal, running yarn build steps.
 
-If you have a (Github Codespaces]<https://github.com/features/codespaces> account, you should be able to load the devcontainer there as well.
+If you have a [Github Codespaces](https://github.com/features/codespaces) account, you should be able to load the devcontainer there as well.
