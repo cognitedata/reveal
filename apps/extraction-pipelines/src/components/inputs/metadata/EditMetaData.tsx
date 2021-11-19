@@ -85,15 +85,14 @@ export const EditMetaDataView = ({
     <>
       <ModalContent>
         <div css="display: flex; flex-direction: column; gap: 1rem">
-          <div css="display: flex; flex-direction: column; gap: 0.3rem;">
-            <div css="display: flex; gap: 0.3rem; color: gray">
-              <div css="flex: 1">{METADATA_DESC_HEADING}</div>
-              <div css="flex: 2">{METADATA_CONTENT_HEADING}</div>
-            </div>
+          <div css="display: grid; grid-gap: 0.75rem; grid-template-columns: 1fr 2fr auto">
+            <b>{METADATA_DESC_HEADING}</b>
+            <b>{METADATA_CONTENT_HEADING}</b>
+            <div />
             {metadata.map((meta, index) => {
               return (
-                <div key={meta.reactKey} css="display: flex; gap: 0.3rem">
-                  <div css="flex: 1">
+                <>
+                  <div key={meta.reactKey}>
                     <Input
                       fullWidth
                       value={meta.key}
@@ -101,7 +100,7 @@ export const EditMetaDataView = ({
                       onChange={(ev) => setKeyAt(index, ev.target.value)}
                     />
                   </div>
-                  <div css="flex: 2">
+                  <div>
                     <Input
                       fullWidth
                       placeholder="Text"
@@ -117,7 +116,7 @@ export const EditMetaDataView = ({
                       onClick={() => deleteRow(index)}
                     />
                   </div>
-                </div>
+                </>
               );
             })}
           </div>
