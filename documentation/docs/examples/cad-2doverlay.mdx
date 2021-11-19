@@ -124,3 +124,55 @@ viewer.on('click', async event => {
 As shown above, overlays can be removed using `remove()`. It is also possible to remove all
 overlays by calling `clear()` or by disposing the tool using `dispose()`. The tool cannot
 be used after calling `dispose()`.
+
+h2. Clustering overlays
+
+The overlay tool also support clustering of elements. When enabled, the tool will detect
+overlapping HTML elements and combine them into a single element by invoking a callback
+factory for creating a "composite" element.
+
+```js runnable
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
+function createOverlay(text) {
+  const element = document.createElement('div');
+  element.innerText = text;
+  element.style.cssText = `
+    position: absolute;
+
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    minHeight: 50px;
+    color: #fff;
+    background: #232323da;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
+}
+
+function createClusterElementCallback(cluster) {
+  const compositeElement = createOverlay(`${cluster.length}`);
+  compositeElement.style.color = '#999';
+  return compositeElement;
+}
+
+const overlays = new HtmlOverlayTool(viewer, 
+  { 
+    clusteringOptions: { mode: 'overlapInScreenspace', createClusterElementCallback 
+  }
+});
+viewer.on('click', async event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const el = createOverlay(`Overlay ${overlays.elements.length + 1}`);
+    overlays.add(el, intersection.point);
+  }
+});
+```
