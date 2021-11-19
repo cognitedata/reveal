@@ -40,7 +40,8 @@ describe('DocumentationSection', () => {
 
     const documentation = screen.getByText(mock.documentation);
     expect(documentation).toBeInTheDocument();
-    fireEvent.click(documentation);
+    const editBtn = screen.getAllByText('Edit')[0];
+    fireEvent.click(editBtn);
     await waitFor(() => {
       screen.getByTestId('documentation-textarea');
     });
@@ -59,7 +60,7 @@ describe('DocumentationSection', () => {
     await waitFor(() => {
       screen.getByText(newDocumentation);
     });
-    fireEvent.click(screen.getByText(newDocumentation));
+    fireEvent.click(editBtn);
     expect(screen.getByRole('textbox').textContent).toEqual(newDocumentation);
   });
 
