@@ -7,19 +7,14 @@ export type BaseArgs = {
 export type LoginArgs = BaseArgs & {
   project: string;
   clientId: string;
-  clientSecret: string;
+  clientSecret?: string;
   tenant: string;
   cluster: string;
   authType: AUTH_TYPE;
+  apiKey: string;
 };
 
-export interface ProjectConfig {
+export interface ProjectConfig extends Omit<LoginArgs, keyof BaseArgs> {
   loginStatus: LOGIN_STATUS;
   authToken: string;
-  clientSecret: string;
-  clientId: string;
-  cluster: string;
-  tenant: string;
-  project: string;
-  authType: AUTH_TYPE;
 }

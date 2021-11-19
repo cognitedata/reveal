@@ -1,7 +1,6 @@
 import Conf from 'conf';
-import { Arguments } from 'yargs';
-import { AUTH_TYPE, CONFIG_KEY, LOGIN_STATUS } from '../constants';
-import { LoginArgs, ProjectConfig } from '../types';
+import { CONFIG_KEY, LOGIN_STATUS } from '../constants';
+import { ProjectConfig } from '../types';
 let config: Conf<Record<string, unknown>>;
 
 export const getConfig = () => config;
@@ -20,24 +19,29 @@ export const getProjectConfig = () => {
     tenant: config.get(CONFIG_KEY.TENANT),
     authToken: config.get(CONFIG_KEY.AUTH_TOKEN),
     authType: config.get(CONFIG_KEY.AUTH_TYPE),
+    apiKey: config.get(CONFIG_KEY.API_KEY),
   } as ProjectConfig;
 
   return authArgs;
 };
 
-// TODO: refactor this, use project config instead
-export const setProjectConfig = (arg: Arguments<LoginArgs>, token: string) => {
-  const { clientId, clientSecret, cluster, tenant, project } = arg;
-  config.set(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.SUCCESS);
-  config.set(CONFIG_KEY.AUTH_TOKEN, token);
-  config.set(CONFIG_KEY.CLIENT_SECRET, clientSecret ?? '');
-  config.set(CONFIG_KEY.CLIENT_ID, clientId);
-  config.set(CONFIG_KEY.CLUSTER, cluster);
-  config.set(CONFIG_KEY.TENANT, tenant);
-  config.set(CONFIG_KEY.PROJECT, project);
-  config.set(CONFIG_KEY.AUTH_TYPE, AUTH_TYPE.CLIENT_SECRET);
+export const setProjectConfig = (arg: ProjectConfig, token: string) => {
+  const { clientId, clientSecret, cluster, tenant, project, authType, apiKey } =
+    arg;
+  setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.SUCCESS);
+  setProjectConfigItem(CONFIG_KEY.AUTH_TOKEN, token);
+  setProjectConfigItem(CONFIG_KEY.CLIENT_SECRET, clientSecret);
+  setProjectConfigItem(CONFIG_KEY.CLIENT_ID, clientId);
+  setProjectConfigItem(CONFIG_KEY.CLUSTER, cluster);
+  setProjectConfigItem(CONFIG_KEY.TENANT, tenant);
+  setProjectConfigItem(CONFIG_KEY.PROJECT, project);
+  setProjectConfigItem(CONFIG_KEY.AUTH_TYPE, authType);
+  setProjectConfigItem(CONFIG_KEY.API_KEY, apiKey);
 };
 
 export const setProjectConfigItem = (key: string, value: unknown): void => {
+  if (!value) {
+    return config.delete(key);
+  }
   config.set(key, value);
 };

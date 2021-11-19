@@ -34,9 +34,19 @@ Visit the staging [URL](http://platypus.staging.cogniteapp.com) and click `Advan
 
 - [Client Credential (**recommended**)](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow) mode is designed for long lasting token where you will need to provide `client_id` and `client_secret` for your application, this kind of token are long lasting and meant for machine interactions like CI/CD.
 
-  `yarn platypus login --client-secret=<code>`
+  `platypus login --client-secret=<code>`
 
 > You can obtain your personal `client_secret` by visiting [Azure > App registrations > Platypus: greenfield (staging)](https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/Credentials/appId/4770c0f1-7bb6-43b5-8c37-94f2a9306757/isMSAApp/) and then go to certificate and secrets and generate your new `client_secret`.
+
+- **Legacy Auth** is supported (but not-recomended), to use legacy auth with `API_KEY` please use the following command
+
+  `platypus login [project_name] --api-key=<api_key>`
+
+  alternatively you can also use
+
+  `API_KEY=<api_key> platypus login [project_name]`
+
+  > by default `[project_name]` is set to `platypus`
 
 ## NX CLI
 

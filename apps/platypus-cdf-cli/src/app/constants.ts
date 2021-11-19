@@ -1,5 +1,6 @@
 export enum AUTH_TYPE {
   CLIENT_SECRET = 'clientSecret',
+  LEGACY = 'legacy',
 }
 
 export enum LOGIN_STATUS {
@@ -16,4 +17,5 @@ export enum CONFIG_KEY {
   TENANT = 'tenant',
   CLUSTER = 'cluster',
   PROJECT = 'project',
+  API_KEY = 'apiKey',
 }

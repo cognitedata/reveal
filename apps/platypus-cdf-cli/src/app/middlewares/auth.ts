@@ -1,46 +1,38 @@
 import { Arguments } from 'yargs';
-import { AUTH_TYPE, CONFIG_KEY, LOGIN_STATUS } from '../constants';
-import { BaseArgs } from '../types';
+import { BaseArgs, ProjectConfig } from '../types';
+import { CogniteClient } from '@cognite/sdk-v6';
 import {
   createSdkClient,
   getCogniteSDKClient,
   setCogniteSDKClient,
 } from '../utils/cogniteSdk';
-import { getProjectConfig, setProjectConfigItem } from '../utils/config';
-import { getCommandName } from '../utils/yargs-utils';
-
-const unAuthenticated = { authenticated: false };
+import {
+  getProjectConfig,
+  setProjectConfig,
+  setProjectConfigItem,
+} from '../utils/config';
+import { CONFIG_KEY, LOGIN_STATUS } from '../constants';
 
 export async function authenticate(arg: Arguments<BaseArgs>) {
-  if (getCommandName(arg) === 'login') {
-    return unAuthenticated;
-  }
+  try {
+    // get stored accessToken, authType and try to login and initialize SDK
+    const storedProjectConfig = getProjectConfig();
 
-  // get stored accessToken, authType and try to login and initialize SDK
-  const projectConfig = getProjectConfig();
+    const projectConfig = { ...storedProjectConfig, ...arg } as ProjectConfig;
 
-  if (
-    !projectConfig ||
-    (projectConfig && projectConfig.loginStatus !== LOGIN_STATUS.SUCCESS)
-  ) {
-    throw new Error(
-      'You need to login first! try $ platypus login to initiate login'
-    );
-  }
-
-  if (projectConfig.authType === AUTH_TYPE.CLIENT_SECRET) {
     let client = getCogniteSDKClient();
     if (!client) {
       client = createSdkClient(projectConfig);
     }
 
-    await client.authenticate();
+    const token = await (client as unknown as CogniteClient).authenticate();
+    await client.assets.list();
+    setProjectConfig(projectConfig, token);
     setCogniteSDKClient(client);
-  } else {
+  } catch (error) {
     setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.UNAUTHENTICATED);
-
     throw new Error(
-      'Currently only able to refresh token for client_secret  based login please login again with $ platypus login --client-secret=<secret>'
+      'Failed to authenticate you, please make sure you use correct credentials for the login'
     );
   }
 }
