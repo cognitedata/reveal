@@ -607,13 +607,13 @@ export default class ComboControls extends EventDispatcher {
     camera.updateProjectionMatrix();
   };
 
-  private readonly calculateTargetOfssetLerp = (
+  private readonly calculateNewRadiusAndTargetOffsetLerp = (
     x: number,
     y: number,
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { dynamicTarget, minDistance, _sphericalEnd, _raycaster, _targetEnd, _reusableCamera } = this;
+    const { dynamicTarget, minDistance, _raycaster, _targetEnd, _reusableCamera } = this;
 
     const distFromCameraToScreenCenter = Math.tan(
       MathUtils.degToRad(90 - (this._camera as PerspectiveCamera).fov * 0.5)
@@ -643,14 +643,12 @@ export default class ComboControls extends EventDispatcher {
 
     const distFromRayOrigin = -deltaDistance * ratio;
 
-    _sphericalEnd.radius = radius;
-
     _reusableCamera.getWorldDirection(cameraDirection);
     cameraDirection.normalize().multiplyScalar(deltaDistance);
     const rayDirection = _raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
     const targetOffset = rayDirection.add(cameraDirection);
 
-    return targetOffset;
+    return { targetOffset, radius };
   };
 
   // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
@@ -662,11 +660,13 @@ export default class ComboControls extends EventDispatcher {
     return value;
   };
 
-  private readonly calculateTargetOfssetScrollTarget = (deltaDistance: number, cameraDirection: THREE.Vector3) => {
+  private readonly calculateNewRadiusAndTargetOffsetScrollTarget = (
+    deltaDistance: number,
+    cameraDirection: THREE.Vector3
+  ) => {
     const {
       minDistance,
       _reusableVector3,
-      _sphericalEnd,
       _target,
       _scrollTarget,
       _camera,
@@ -721,12 +721,10 @@ export default class ComboControls extends EventDispatcher {
       }
     }
 
-    _sphericalEnd.radius = radius;
-
     // if we scroll out, we don't change the target
     const targetOffset = targetToScrollTargetVec.multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
 
-    return targetOffset;
+    return { targetOffset, radius };
   };
 
   private readonly dollyWithWheelScroll = (
@@ -735,16 +733,41 @@ export default class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { _targetEnd, useScrollTarget, zoomToCursor } = this;
-    const isDollyOut = deltaDistance > 0 ? true : false;
+    const { _targetEnd, _sphericalEnd, useScrollTarget, zoomToCursor } = this;
 
-    const targetOffset = zoomToCursor
-      ? useScrollTarget && !isDollyOut
-        ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
-        : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)
-      : this.calculateTargetOfssetLerp(0, 0, deltaDistance, cameraDirection);
+    const isDollyIn = deltaDistance < 0 ? true : false;
+    const newTargetOffset = new Vector3();
+    let newRadius = _sphericalEnd.radius;
 
-    _targetEnd.add(targetOffset);
+    if (zoomToCursor) {
+      if (useScrollTarget && isDollyIn) {
+        const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetScrollTarget(
+          deltaDistance,
+          cameraDirection
+        );
+
+        newRadius = radius;
+        newTargetOffset.copy(targetOffset);
+      } else {
+        const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetLerp(
+          x,
+          y,
+          deltaDistance,
+          cameraDirection
+        );
+
+        newRadius = radius;
+        newTargetOffset.copy(targetOffset);
+      }
+    } else {
+      const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetLerp(0, 0, deltaDistance, cameraDirection);
+
+      newRadius = radius;
+      newTargetOffset.copy(targetOffset);
+    }
+
+    _targetEnd.add(newTargetOffset);
+    _sphericalEnd.radius = newRadius;
   };
 
   private readonly dollyPerspectiveCamera = (
