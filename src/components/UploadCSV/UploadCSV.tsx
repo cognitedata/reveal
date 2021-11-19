@@ -18,7 +18,7 @@ import { UploadChangeParam } from 'antd/lib/upload';
 import { Icon } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import styled from 'styled-components';
-import { getContainer } from 'utils/utils';
+import { getContainer, sleep } from 'utils/utils';
 import { useSDK } from '@cognite/sdk-provider';
 
 const { Dragger } = Upload;
@@ -39,7 +39,8 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
 
   const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
   const [parser, setParser] = useState<PapaParse.Parser | undefined>();
-  const [cursor, setCursor] = useState(0);
+  const [uploadedCursor, setUploadedCursor] = useState(0);
+  const [parsedCursor, setParsedCursor] = useState(0);
 
   const resetState = useCallback(() => {
     if (parser) {
@@ -47,14 +48,16 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
     }
     setCSVModalVisible(false);
     setComplete(false);
-    setCursor(0);
+    setUploadedCursor(0);
+    setParsedCursor(0);
     setFile(undefined);
     setUpload(false);
     setNetworkError(false);
   }, [
     setCSVModalVisible,
     setComplete,
-    setCursor,
+    setUploadedCursor,
+    setParsedCursor,
     setFile,
     setUpload,
     parser,
@@ -101,6 +104,7 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
         chunk(results, _parser) {
           setParser(_parser);
           _parser.pause();
+          setParsedCursor(results.meta.cursor);
           const items = new Array(results.data.length);
           results.data.forEach((row: string[], rowIndex) => {
             const rowcolumns: any = {};
@@ -116,10 +120,14 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
             };
           });
 
-          sdk.raw.insertRows(database, table, items).then(() => {
-            setCursor(results.meta.cursor);
-            _parser.resume();
-          });
+          sdk.raw
+            .insertRows(database, table, items)
+            .then(() => {
+              setUploadedCursor(results.meta.cursor);
+            })
+            // Keep the main thread "open" to render progress before continuing parsing the file
+            .then(() => sleep(250))
+            .then(() => _parser.resume());
         },
         beforeFirstChunk(chunk) {
           return chunk.split('\n').splice(1).join('\n');
@@ -204,8 +212,11 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
             <p> Uploading csv...</p>
             <Progress
               type="line"
-              percent={Math.floor((cursor / file.size) * 100)}
-              format={() => `${Math.floor(cursor / 2 ** 20)}MB`}
+              percent={Math.floor((parsedCursor / file.size) * 100)}
+              success={{
+                percent: Math.floor((uploadedCursor / file.size) * 100),
+              }}
+              format={() => `${Math.floor(uploadedCursor / 2 ** 20)}MB`}
             />
           </ContentWrapper>
         );
