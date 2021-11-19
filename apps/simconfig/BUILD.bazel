@@ -433,5 +433,5 @@ publish_fas(
     sentry_project_name = "simconfig",
     # FAS staging app id
     staging_app_id = "simconfig-staging",
-    versioning_strategy = "single-branch",
+    versioning_strategy = "multi-branch",
 )
