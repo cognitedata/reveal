@@ -1,12 +1,16 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { MetricsLogger } from '@reveal/metrics';
+
 declare module '*.jpeg' {
   const value: any;
   export = value;
 }
 
 declare global {
+  var revealMetricsLogger: { metricsLogger: MetricsLogger };
+
   namespace NodeJS {
     interface ProcessEnv {
       VERSION: string;

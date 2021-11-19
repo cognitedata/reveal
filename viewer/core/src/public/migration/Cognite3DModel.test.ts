@@ -15,7 +15,7 @@ describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
 
   beforeAll(() => {
-    MetricsLogger.initMetrics(false, '', '', {});
+    MetricsLogger.init(false, '', '', {});
   });
 
   beforeEach(() => {

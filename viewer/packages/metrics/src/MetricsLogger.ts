@@ -86,9 +86,9 @@ export class MetricsLogger {
   }
 
   static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
-    if ((globalThis as any).revealMetricsLogger === undefined && logMetrics) {
+    if (globalThis.revealMetricsLogger === undefined && logMetrics) {
       const metricsLogger = new MetricsLogger(project, applicationId, eventProps);
-      (globalThis as any).revealMetricsLogger = { metricsLogger };
+      globalThis.revealMetricsLogger = { metricsLogger };
     }
   }
 
@@ -98,8 +98,8 @@ export class MetricsLogger {
   }
 
   static trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
-    if ((globalThis as any).revealMetricsLogger) {
-      ((globalThis as any).revealMetricsLogger.metricsLogger as MetricsLogger)._innerTrackEvent(eventName, eventProps);
+    if (globalThis.revealMetricsLogger) {
+      globalThis.revealMetricsLogger.metricsLogger._innerTrackEvent(eventName, eventProps);
     }
   }
 

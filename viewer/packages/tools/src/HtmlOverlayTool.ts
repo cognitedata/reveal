@@ -57,6 +57,7 @@ type HtmlOverlayElement = {
  * overlayTool.remove(el);
  * // or, to remove all attached elements
  * overlayTool.clear();
+
  * // detach the tool from the viewer
  * overlayTool.dispose();
  * ```
