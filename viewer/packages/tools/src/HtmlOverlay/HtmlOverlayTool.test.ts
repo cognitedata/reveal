@@ -4,12 +4,16 @@
 
 import * as THREE from 'three';
 
-import { HtmlOverlayOptions, HtmlOverlayTool, HtmlOverlayToolOptions } from './HtmlOverlayTool';
+import {
+  HtmlOverlayOptions,
+  HtmlOverlayTool,
+  HtmlOverlayToolOptions,
+  HtmlOverlayCreateClusterDelegate
+} from './HtmlOverlayTool';
 
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { createGlContext } from '../../../../test-utilities';
-import { HtmlOverlayCreateClusterDelegate } from 'tools';
 
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
