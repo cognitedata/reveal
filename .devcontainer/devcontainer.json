@@ -31,7 +31,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-        // The xserver deps is needed for the GL package build needed by Reveal.
+	// The xserver deps is needed for the GL package build needed by Reveal.
 	"postCreateCommand": 
 		"sudo apt-get -y update && sudo apt-get --fix-missing -y install xserver-xorg-dev libxi-dev libxext-dev",
 
