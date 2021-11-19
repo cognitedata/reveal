@@ -5,19 +5,19 @@ import * as THREE from 'three';
 import { BucketGrid2D } from './BucketGrid2D';
 
 describe('BucketGrid2D', () => {
-  let dimensions: THREE.Vector2;
+  let dimensions: [number, number];
   let bounds: THREE.Box2;
   let grid: BucketGrid2D<number>;
   let cellBounds: (i: number, j: number) => THREE.Box2;
 
   beforeEach(() => {
-    dimensions = new THREE.Vector2(2, 2);
+    dimensions = [2, 2];
     bounds = new THREE.Box2(new THREE.Vector2(0, 0), new THREE.Vector2(1, 1));
-    grid = new BucketGrid2D<number>(dimensions, bounds);
+    grid = new BucketGrid2D<number>(bounds, dimensions);
 
     cellBounds = (i, j) => {
       // Create box that is just inside the bounds of the cell
-      const cellSize = new THREE.Vector2(1.0 / dimensions.width, 1.0 / dimensions.height);
+      const cellSize = new THREE.Vector2(1.0 / dimensions[0], 1.0 / dimensions[1]);
       return new THREE.Box2(
         new THREE.Vector2(1.0001 * cellSize.x * i, 1.0001 * cellSize.y * j),
         new THREE.Vector2(0.9999 * cellSize.x * (i + 1), 0.9999 * cellSize.y * (j + 1))
@@ -61,6 +61,24 @@ describe('BucketGrid2D', () => {
     grid.insert(createBounds([0.1, 0.1], [0.2, 0.2]), 0);
     grid.insert(createBounds([0.3, 0.3], [0.4, 0.4]), 1);
     expect(Array.from(grid.overlappingElements(createBounds([0.25, 0.25], [0.35, 0.35])))).toEqual([1]);
+  });
+
+  test('takeOverlappingElements() removes element from all cells', () => {
+    grid.insert(createBounds([0.1, 0.1], [0.9, 0.9]), 0);
+    const taken = Array.from(grid.takeOverlappingElements(createBounds([0.1, 0.1], [0.2, 0.2])));
+    const remaining = Array.from(grid.overlappingElements(bounds));
+    expect(taken).toEqual([0]);
+    expect(remaining).toBeEmpty();
+  });
+
+  test('add element after takeOverlappingElement() is not supported', () => {
+    const elementBounds = createBounds([0.1, 0.1], [0.9, 0.9]);
+    const element = 0;
+    grid.insert(elementBounds, element);
+
+    Array.from(grid.takeOverlappingElements(createBounds([0.1, 0.1], [0.2, 0.2])));
+
+    expect(() => grid.insert(elementBounds, element)).toThrowError();
   });
 });
 

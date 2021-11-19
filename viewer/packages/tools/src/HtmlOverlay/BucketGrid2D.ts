@@ -14,19 +14,23 @@ type SimpleGrid2DElement<T> = {
  * elements. Elements can be stored in several bu
  */
 export class BucketGrid2D<T> {
-  private readonly _dimensions: THREE.Vector2;
+  private readonly _dimensions: [width: number, height: number];
   private readonly _bounds: THREE.Box2;
   private readonly _cells: SimpleGrid2DElement<T>[][];
+  private readonly _takenElements = new Set<T>();
 
-  constructor(dimensions: THREE.Vector2, bounds: THREE.Box2) {
+  constructor(bounds: THREE.Box2, dimensions: [width: number, height: number]) {
     this._dimensions = dimensions;
-    this._cells = range(0, dimensions.x * dimensions.y).map(() => new Array<SimpleGrid2DElement<T>>());
+    this._cells = range(0, dimensions[0] * dimensions[1]).map(() => new Array<SimpleGrid2DElement<T>>());
     this._bounds = bounds;
   }
 
   insert(bounds: THREE.Box2, element: T) {
     if (!this._bounds.intersectsBox(bounds)) {
       throw new Error('Element to be added must be partially inside grid');
+    }
+    if (this._takenElements.has(element)) {
+      throw new Error('Re-adding previously taken elements is currently not supported');
     }
 
     for (const cell of this.cellsIntersecting(bounds)) {
@@ -42,7 +46,11 @@ export class BucketGrid2D<T> {
     const visitedElements = new Set<T>();
     for (const cell of this.cellsIntersecting(bounds)) {
       for (const candidateElement of cell) {
-        if (!visitedElements.has(candidateElement.element) && bounds.intersectsBox(candidateElement.bounds)) {
+        if (
+          !visitedElements.has(candidateElement.element) &&
+          !this._takenElements.has(candidateElement.element) &&
+          bounds.intersectsBox(candidateElement.bounds)
+        ) {
           visitedElements.add(candidateElement.element);
           yield candidateElement.element;
         }
@@ -50,21 +58,42 @@ export class BucketGrid2D<T> {
     }
   }
 
+  *takeOverlappingElements(bounds: THREE.Box2): Generator<T> {
+    if (!this._bounds.intersectsBox(bounds)) {
+      return;
+    }
+
+    for (const cell of this.cellsIntersecting(bounds)) {
+      let i = 0;
+      while (i < cell.length) {
+        const candidateElement = cell[i];
+        if (!this._takenElements.has(candidateElement.element) && bounds.intersectsBox(candidateElement.bounds)) {
+          this._takenElements.add(candidateElement.element);
+          yield candidateElement.element;
+        } else {
+          i++;
+        }
+      }
+    }
+  }
+
   private *cellsIntersecting(bounds: THREE.Box2): Generator<SimpleGrid2DElement<T>[]> {
     const { min, max } = this._bounds;
+    const dimX = this._dimensions[0];
+    const dimY = this._dimensions[1];
     const relativeBoundsMinX = (bounds.min.x - min.x) / (max.x - min.x);
     const relativeBoundsMaxX = (bounds.max.x - min.x) / (max.x - min.x);
     const relativeBoundsMinY = (bounds.min.y - min.y) / (max.y - min.y);
     const relativeBoundsMaxY = (bounds.max.y - min.y) / (max.y - min.y);
 
     const clamp = THREE.MathUtils.clamp;
-    const minI = clamp(Math.floor(this._dimensions.x * relativeBoundsMinX), 0, this._dimensions.x - 1);
-    const maxI = clamp(Math.floor(this._dimensions.x * relativeBoundsMaxX), 0, this._dimensions.x - 1);
-    const minJ = clamp(Math.floor(this._dimensions.y * relativeBoundsMinY), 0, this._dimensions.y - 1);
-    const maxJ = clamp(Math.floor(this._dimensions.y * relativeBoundsMaxY), 0, this._dimensions.y - 1);
+    const minI = clamp(Math.floor(dimX * relativeBoundsMinX), 0, dimX - 1);
+    const maxI = clamp(Math.floor(dimX * relativeBoundsMaxX), 0, dimX - 1);
+    const minJ = clamp(Math.floor(dimY * relativeBoundsMinY), 0, dimY - 1);
+    const maxJ = clamp(Math.floor(dimY * relativeBoundsMaxY), 0, dimY - 1);
     for (let j = minJ; j <= maxJ; ++j) {
       for (let i = minI; i <= maxI; ++i) {
-        yield this._cells[j * this._dimensions.y + i];
+        yield this._cells[j * dimX + i];
       }
     }
   }
