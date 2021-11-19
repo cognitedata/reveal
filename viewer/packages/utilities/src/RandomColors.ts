@@ -3,8 +3,6 @@
  */
 import * as THREE from 'three';
 
-import 'jest-extended';
-
 /**
  * Utility class for creating reasonable visible colors. Mainly meant for use
  * in debugging.
