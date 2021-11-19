@@ -19,23 +19,18 @@ import { Icon } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
-import { useInsertRows } from 'hooks/sdk-queries';
+import { useSDK } from '@cognite/sdk-provider';
 
 const { Dragger } = Upload;
 
 interface UploadCsvProps {
   table: string;
   database: string;
-  csvModalVisible: boolean;
   setCSVModalVisible(value: boolean): void;
 }
 
-const UploadCSV = ({
-  csvModalVisible,
-  setCSVModalVisible,
-  database,
-  table,
-}: UploadCsvProps) => {
+const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
+  const sdk = useSDK();
   const [file, setFile] = useState<File | undefined>();
   const [upload, setUpload] = useState(false);
   const [complete, setComplete] = useState(false);
@@ -45,8 +40,6 @@ const UploadCSV = ({
   const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
   const [parser, setParser] = useState<PapaParse.Parser | undefined>();
   const [cursor, setCursor] = useState(0);
-
-  const { mutate, isLoading, reset } = useInsertRows();
 
   const resetState = useCallback(() => {
     if (parser) {
@@ -58,16 +51,16 @@ const UploadCSV = ({
     setFile(undefined);
     setUpload(false);
     setNetworkError(false);
-    reset();
   }, [
     setCSVModalVisible,
     setComplete,
     setCursor,
     setFile,
     setUpload,
-    reset,
     parser,
   ]);
+
+  useEffect(() => () => resetState(), []);
 
   useEffect(() => {
     if (complete) {
@@ -87,12 +80,6 @@ const UploadCSV = ({
       resetState();
     }
   }, [complete, file, networkError, resetState]);
-
-  useEffect(() => {
-    if (!csvModalVisible && parser && parser.abort) {
-      parser.abort();
-    }
-  }, [csvModalVisible, parser]);
 
   useEffect(() => {
     if (file) {
@@ -133,19 +120,10 @@ const UploadCSV = ({
             };
           });
 
-          mutate(
-            { items, database, table },
-            {
-              onSuccess() {
-                setCursor(results.meta.cursor);
-                _parser.resume();
-              },
-              onError() {
-                setNetworkError(true);
-                _parser.abort();
-              },
-            }
-          );
+          sdk.raw.insertRows(database, table, items).then(() => {
+            setCursor(results.meta.cursor);
+            _parser.resume();
+          });
         },
         beforeFirstChunk(chunk) {
           return chunk.split('\n').splice(1).join('\n');
@@ -162,7 +140,7 @@ const UploadCSV = ({
         },
       });
     }
-  }, [file, upload, columns, mutate, selectedKeyIndex, database, table]);
+  }, [file, upload, columns, selectedKeyIndex, database, table]);
 
   const saveDataToApi = async () => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
@@ -266,7 +244,7 @@ const UploadCSV = ({
 
   return (
     <Modal
-      visible={csvModalVisible}
+      visible
       title="Upload CSV file"
       onCancel={() => {
         resetState();
@@ -275,7 +253,7 @@ const UploadCSV = ({
       onOk={() => saveDataToApi()}
       okButtonProps={{
         loading: upload,
-        disabled: !file || isLoading || upload,
+        disabled: !file || upload,
       }}
       getContainer={getContainer}
     >
