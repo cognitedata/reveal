@@ -27,6 +27,10 @@
       "@cognite/metrics/dist/mocks": [
         "../../../packages/metrics/src/mocks",
         "<rootDir>/../../packages/metrics/src/mocks"
+      ],
+      "@cognite/react-i18n/dist/mocks": [
+        "../../../packages/react-i18n/src/mocks",
+        "<rootDir>/../../packages/react-i18n/src/mocks"
       ]
     }
   },

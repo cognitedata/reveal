@@ -11,10 +11,6 @@ export default [
         file: pkg.main,
         format: 'cjs',
       },
-      {
-        file: pkg.module,
-        format: 'es',
-      },
     ],
     external: [
       ...Object.keys(pkg.dependencies || {}),
@@ -22,21 +18,6 @@ export default [
       // https://github.com/facebook/react/issues/20235
       // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
       'react/jsx-runtime',
-    ],
-    plugins: [
-      typescript({
-        typescript: require('typescript'),
-      }),
-      json(),
-    ],
-  },
-  {
-    input: 'src/mocks.ts',
-    output: [
-      {
-        file: 'dist/mocks.js',
-        format: 'cjs',
-      },
     ],
     plugins: [
       typescript({

@@ -7,11 +7,6 @@ export const SettingsContent = styled.div`
   width: 100%;
 `;
 
-export const VersionWrapper = styled.div`
-  margin-left: 8px;
-  color: var(--cogs-greyscale-grey10);
-`;
-
 export const SettingsContainer = styled.div`
   height: 100%;
   width: 100%;

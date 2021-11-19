@@ -126,6 +126,16 @@ i18next.on('languageChanged', async (lng) => {
 });
 ```
 
+## Testing
+
+Unit tests should stub out this library.
+Add this to your tests:
+
+```ts
+import * as mocks from '@cognite/react-i18n/dist/mocks';
+jest.mock('react-i18next', () => mocks);
+```
+
 [suspense boundary]: https://reactjs.org/docs/react-api.html#reactsuspense
 [suspense boundaries]: https://reactjs.org/docs/react-api.html#reactsuspense
 [hoc]: https://reactjs.org/docs/higher-order-components.html
