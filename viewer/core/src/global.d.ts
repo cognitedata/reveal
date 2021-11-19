@@ -9,6 +9,8 @@ declare module '*.jpeg' {
 }
 
 declare global {
+  // Global variables will only be usable if they are declared with var
+  // eslint-disable-next-line no-var
   var revealMetricsLogger: { metricsLogger: MetricsLogger };
 
   namespace NodeJS {
