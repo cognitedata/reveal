@@ -14,6 +14,7 @@ import {
 } from 'utils/constants';
 import { MetaData } from 'model/MetaData';
 import { ModalContent } from 'components/modals/ModalContent';
+import { StyledTableNoRowColor2 } from 'styles/StyledTable';
 
 type SuperProps = {
   close: () => void;
@@ -85,41 +86,49 @@ export const EditMetaDataView = ({
     <>
       <ModalContent>
         <div css="display: flex; flex-direction: column; gap: 1rem">
-          <div css="display: grid; grid-gap: 0.75rem; grid-template-columns: 1fr 2fr auto">
-            <b>{METADATA_DESC_HEADING}</b>
-            <b>{METADATA_CONTENT_HEADING}</b>
-            <div />
-            {metadata.map((meta, index) => {
-              return (
-                <>
-                  <div key={meta.reactKey}>
-                    <Input
-                      fullWidth
-                      value={meta.key}
-                      placeholder="Text"
-                      onChange={(ev) => setKeyAt(index, ev.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      fullWidth
-                      placeholder="Text"
-                      value={meta.value}
-                      onChange={(ev) => setValueAt(index, ev.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Button
-                      type="ghost"
-                      icon="Close"
-                      aria-label="Remove metadata row"
-                      onClick={() => deleteRow(index)}
-                    />
-                  </div>
-                </>
-              );
-            })}
-          </div>
+          <StyledTableNoRowColor2>
+            <table className="cogs-table">
+              <thead>
+                <tr>
+                  <td>{METADATA_DESC_HEADING}</td>
+                  <td>{METADATA_CONTENT_HEADING}</td>
+                  <td />
+                </tr>
+              </thead>
+              <tbody>
+                {metadata.map((meta, index) => {
+                  return (
+                    <tr key={meta.reactKey}>
+                      <td>
+                        <Input
+                          fullWidth
+                          value={meta.key}
+                          placeholder="Text"
+                          onChange={(ev) => setKeyAt(index, ev.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          fullWidth
+                          placeholder="Text"
+                          value={meta.value}
+                          onChange={(ev) => setValueAt(index, ev.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          type="ghost"
+                          icon="Close"
+                          aria-label="Remove metadata row"
+                          onClick={() => deleteRow(index)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </StyledTableNoRowColor2>
           <div>
             <Button icon="PlusCompact" onClick={addRow}>
               Add fields
