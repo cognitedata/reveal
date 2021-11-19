@@ -128,6 +128,7 @@ DEV_DEPENDENCIES = [
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "App": "build/App",
+    "assets": "build/assets",
     "components": "build/components",
     "global-styles": "build/global-styles",
     "hooks": "build/hooks",

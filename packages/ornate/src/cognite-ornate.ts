@@ -644,12 +644,17 @@ export class CogniteOrnate {
     };
   };
 
-  onExport = async (fileName = 'WorkSpace') => {
+  onExport = async (fileName = 'WorkSpace', documentIds?: string[]) => {
     const pdf = await PDFDocument.create();
+    const documents = documentIds
+      ? (documentIds.map((id) =>
+          this.documents.find((doc) => doc.group.id() === id)
+        ) as OrnatePDFDocument[])
+      : this.documents;
 
     // To do: instead of getting the PIDs from the canvas,
     // get the original PID and draw the annotations on the original ones.
-    const annotatedPIDs = this.documents.map(async (doc) => {
+    const annotatedPIDs = documents.map(async (doc) => {
       const isHidden = !doc.kImage.visible();
 
       if (isHidden) {
