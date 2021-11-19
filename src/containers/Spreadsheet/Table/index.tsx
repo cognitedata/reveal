@@ -74,6 +74,7 @@ const StyledBaseTable = styled(BaseTable)`
     padding: 0;
     justify-content: flex-end;
     flex-wrap: wrap;
+    overflow: visible !important;
   }
   .${TABLE_PREFIX}header-cell, .${TABLE_PREFIX}row-cell {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};

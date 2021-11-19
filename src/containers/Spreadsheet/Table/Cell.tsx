@@ -25,26 +25,38 @@ export const Cell = (props: Props): JSX.Element => {
     else setSelectedCell({ rowIndex, columnIndex });
   };
 
-  return (
-    <CellContainer
-      onClick={onCellSelect}
-      $selected={isCellSelected(rowIndex, columnIndex)}
-    >
+  const isSelected = isCellSelected(rowIndex, columnIndex);
+
+  return isSelected ? (
+    <StyledCellSelected onClick={onCellSelect}>{cellData}</StyledCellSelected>
+  ) : (
+    <StyledCellUnselected onClick={onCellSelect}>
       {cellData}
-    </CellContainer>
+    </StyledCellUnselected>
   );
 };
 
-export const CellContainer = styled.div<{ $selected: boolean }>`
+const StyledCell = styled.div`
   width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: white;
+`;
+
+const StyledCellUnselected = styled(StyledCell)`
   height: 100%;
+  padding: 8px 16px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  cursor: pointer;
-  box-sizing: border-box;
-  padding: ${({ $selected }) => ($selected ? '6px 14px' : '8px 16px')};
-  border-radius: ${({ $selected }) => $selected && '4px'};
-  border: ${({ $selected }) =>
-    $selected && `2px solid ${Colors.midblue.hex()}`};
+`;
+
+const StyledCellSelected = styled(StyledCell)`
+  height: 200%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 10;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 2px solid ${Colors.midblue.hex()};
 `;
