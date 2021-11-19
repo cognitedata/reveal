@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-
-import { Button, Colors, Flex, Icon } from '@cognite/cogs.js';
+import { Button, Colors, Icon } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
 
@@ -16,6 +15,22 @@ type Props = {
 export const Cell = (props: Props): JSX.Element => {
   const { cellData, columnIndex = -1, rowIndex = -1 } = props;
   const { selectedCell, setSelectedCell, isCellSelected } = useTableSelection();
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+  const [isOverflow, setIsOverflow] = useState<boolean>(false);
+  const selectedCellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = selectedCellRef?.current;
+    if (!isSelected || !element) return;
+    const hasOverflowingChildren =
+      element.offsetHeight < element.scrollHeight ||
+      element.offsetWidth < element.scrollWidth;
+    setIsOverflow(hasOverflowingChildren);
+  }, [isSelected]);
+
+  useEffect(() => {
+    setIsSelected(isCellSelected(rowIndex, columnIndex));
+  }, [selectedCell]);
 
   const onCellSelect = () => {
     const isClickedCellSelected =
@@ -25,12 +40,11 @@ export const Cell = (props: Props): JSX.Element => {
     else setSelectedCell({ rowIndex, columnIndex });
   };
 
-  const isSelected = isCellSelected(rowIndex, columnIndex);
-  const isOverflow = true; // mock
-
   return isSelected ? (
     <StyledCellSelected onClick={onCellSelect}>
-      <StyledCellContent isOverflow={isOverflow}>{cellData}</StyledCellContent>
+      <StyledCellContent ref={selectedCellRef} isOverflow={isOverflow}>
+        {cellData}
+      </StyledCellContent>
       {isOverflow && (
         <ExpandButton type="primary" size="small" style={{ padding: 0 }}>
           <Icon type="Expand" />
