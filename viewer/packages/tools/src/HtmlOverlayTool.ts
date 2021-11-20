@@ -103,6 +103,15 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Returns all added HTML elements along with their 3D positions.
+   */
+  get elements(): { element: HTMLElement; position3D: THREE.Vector3 }[] {
+    return Array.from(this._htmlOverlays.entries()).map(([element, info]) => {
+      return { element, position3D: info.position3D };
+    });
+  }
+
+  /**
    * Removes all elements and detaches from the viewer.
    * @override
    */
