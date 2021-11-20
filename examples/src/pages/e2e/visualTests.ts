@@ -61,5 +61,10 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'reassign-node-style',
     category: 'cad'
+  },
+  {
+    testKey: 'clipping-ignoreClipping',
+    category: 'cad'
   }
+
 ];
