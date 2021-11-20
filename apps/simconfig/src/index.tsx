@@ -4,8 +4,11 @@ import { Metrics } from '@cognite/metrics';
 import '@cognite/cogs.js/dist/cogs.css';
 import config from 'utils/config';
 import AppRoot from 'components/app/AppRoot';
+import { logMetadata } from 'utils/logMetadata';
 
 import * as serviceWorker from './serviceWorker';
+
+logMetadata();
 
 if (process.env.REACT_APP_SENTRY_DSN) {
   // Instantiate Sentry project
