@@ -4,7 +4,7 @@
 uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
-bool isSliced(NodeAppearance nodeApperance, vec3 point) {
+bool isSliced(NodeAppearance nodeAppearance, vec3 point) {
 #if NUM_CLIPPING_PLANES > 0
   if (nodeAppearance.ignoreClipping) {
     return false;
