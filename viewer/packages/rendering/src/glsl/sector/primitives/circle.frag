@@ -3,7 +3,7 @@
 #pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 varying float v_treeIndex;
@@ -31,7 +31,7 @@ void main() {
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
-    if (isSliced(appearance, vViewPosition)) {
+    if (isClipped(appearance, vViewPosition)) {
         discard;
     }
 

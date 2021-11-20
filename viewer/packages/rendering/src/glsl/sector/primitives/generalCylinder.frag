@@ -6,7 +6,7 @@
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 #define PI 3.14159265359
@@ -113,7 +113,7 @@ void main() {
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_arcAngle + v_angle ||
-        isSliced(appearance, p)
+        isClipped(appearance, p)
        ) {
         // Missed the first point, check the other point
         isInner = true;
@@ -124,7 +124,7 @@ void main() {
         if (theta < v_angle) theta += 2.0 * PI;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_arcAngle + v_angle || isSliced(appearance, p)
+            theta > v_arcAngle + v_angle || isClipped(appearance, p)
            ) {
             // Missed the other point too
             discard;

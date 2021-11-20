@@ -5,7 +5,7 @@
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 #define PI 3.14159265359
@@ -109,7 +109,7 @@ void main() {
 
     if (intersectionPointZ <= 0.0 ||
       intersectionPointZ >= L ||
-      isSliced(appearance, p)
+      isClipped(appearance, p)
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
       // or the intersection point is outside the end caps. This is not a valid solution.
@@ -120,7 +120,7 @@ void main() {
 
       if (intersectionPointZ <= 0.0 ||
         intersectionPointZ >= L ||
-        isSliced(appearance, p)
+        isClipped(appearance, p)
       ) {
         // Missed the other point too
         discard;

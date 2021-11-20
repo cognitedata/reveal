@@ -4,7 +4,7 @@
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
@@ -80,7 +80,7 @@ void main() {
     vec3 p = rayTarget + dist*rayDirection;
 
     if (intersectionPointZ <= vRadius - height ||
-        intersectionPointZ > vRadius || isSliced(appearance, p)
+        intersectionPointZ > vRadius || isClipped(appearance, p)
        ) {
         // Missed the first point, check the other point
 
@@ -88,7 +88,7 @@ void main() {
         intersectionPointZ = E.z + dist*D.z;
         p = rayTarget + dist*rayDirection;
         if (intersectionPointZ <= vRadius - height ||
-            intersectionPointZ > vRadius || isSliced(appearance, p)
+            intersectionPointZ > vRadius || isClipped(appearance, p)
            ) {
             // Missed the other point too
             discard;

@@ -6,7 +6,7 @@
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
 #pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 #define PI 3.14159265359
@@ -114,7 +114,7 @@ void main() {
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
       theta > v_angle + v_arcAngle ||
-      isSliced(appearance, p)
+      isClipped(appearance, p)
     ) {
       // Missed the first point, check the other point
       isInner = true;
@@ -126,7 +126,7 @@ void main() {
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
         theta > v_angle + v_arcAngle ||
-        isSliced(appearance, p)
+        isClipped(appearance, p)
       ) {
         // Missed the other point too
         discard;

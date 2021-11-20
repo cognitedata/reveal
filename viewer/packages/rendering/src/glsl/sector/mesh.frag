@@ -4,7 +4,7 @@
 #pragma glslify: determineNodeAppearance = require('../base/determineNodeAppearance.glsl');
 #pragma glslify: determineColor = require('../base/determineColor.glsl');
 #pragma glslify: determineVisibility = require('../base/determineVisibility.glsl');
-#pragma glslify: isSliced = require('../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: isClipped = require('../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../base/geometryTypes.glsl');
 
 uniform sampler2D colorDataTexture;
@@ -26,7 +26,7 @@ void main()
         discard;
     }
 
-    if (isSliced(appearance, v_viewPosition)) {
+    if (isClipped(appearance, v_viewPosition)) {
         discard;
     }
 
