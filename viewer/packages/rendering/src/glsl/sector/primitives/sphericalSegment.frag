@@ -80,7 +80,7 @@ void main() {
     vec3 p = rayTarget + dist*rayDirection;
 
     if (intersectionPointZ <= vRadius - height ||
-        intersectionPointZ > vRadius || isSliced(p)
+        intersectionPointZ > vRadius || isSliced(appearance, p)
        ) {
         // Missed the first point, check the other point
 
@@ -88,7 +88,7 @@ void main() {
         intersectionPointZ = E.z + dist*D.z;
         p = rayTarget + dist*rayDirection;
         if (intersectionPointZ <= vRadius - height ||
-            intersectionPointZ > vRadius || isSliced(p)
+            intersectionPointZ > vRadius || isSliced(appearance, p)
            ) {
             // Missed the other point too
             discard;

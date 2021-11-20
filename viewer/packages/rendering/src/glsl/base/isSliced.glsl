@@ -1,9 +1,14 @@
+#pragma glslify: NodeAppearance = require('./nodeAppearance.glsl')
+
 #if NUM_CLIPPING_PLANES > 0
 uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
-bool isSliced(vec3 point) {
+bool isSliced(NodeAppearance nodeApperance, vec3 point) {
 #if NUM_CLIPPING_PLANES > 0
+  if (nodeAppearance.ignoreClipping) {
+    return false;
+  }
   vec3 pointFlipped = -point;
   vec4 plane;
 

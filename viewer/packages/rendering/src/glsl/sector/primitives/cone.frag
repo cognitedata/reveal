@@ -114,7 +114,7 @@ void main() {
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
       theta > v_angle + v_arcAngle ||
-      isSliced(p)
+      isSliced(appearance, p)
     ) {
       // Missed the first point, check the other point
       isInner = true;
@@ -126,7 +126,7 @@ void main() {
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
         theta > v_angle + v_arcAngle ||
-        isSliced(p)
+        isSliced(appearance, p)
       ) {
         // Missed the other point too
         discard;

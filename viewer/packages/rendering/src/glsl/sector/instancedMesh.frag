@@ -24,7 +24,7 @@ void main() {
         discard;
     }
 
-    if (isSliced(v_viewPosition)) {
+    if (isSliced(appearance, v_viewPosition)) {
         discard;
     }
 

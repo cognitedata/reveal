@@ -1,5 +1,6 @@
 #pragma glslify: rand2d = require('../math/rand2d.glsl')
 #pragma glslify: isSliced = require('../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: NodeAppearance = require('../base/nodeAppearance.glsl')
 
 varying mediump vec3 v_color;
 varying lowp float v_coverageFactor;
@@ -8,10 +9,11 @@ varying lowp vec2 v_seed;
 
 
 varying vec3 v_viewPosition;
+    
+const NodeAppearance noIgnoreClippingAppearance = NodeAppearance(vec4(0.0), false, false, false, false);
 
 void main() {
-    
-    if(v_visible != 1.0 || isSliced(v_viewPosition)){
+    if(v_visible != 1.0 || isSliced(noIgnoreClippingAppearance, v_viewPosition)){
       discard;
     }
 

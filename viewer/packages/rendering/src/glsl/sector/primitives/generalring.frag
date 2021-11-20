@@ -33,7 +33,7 @@ void main() {
         discard;
     }
 
-    if (isSliced(vViewPosition)) {
+    if (isSliced(appearance, vViewPosition)) {
         discard;
     }
 

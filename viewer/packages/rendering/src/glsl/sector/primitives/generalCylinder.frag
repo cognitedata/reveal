@@ -113,7 +113,7 @@ void main() {
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_arcAngle + v_angle ||
-        isSliced(p)
+        isSliced(appearance, p)
        ) {
         // Missed the first point, check the other point
         isInner = true;
@@ -124,7 +124,7 @@ void main() {
         if (theta < v_angle) theta += 2.0 * PI;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_arcAngle + v_angle || isSliced(p)
+            theta > v_arcAngle + v_angle || isSliced(appearance, p)
            ) {
             // Missed the other point too
             discard;

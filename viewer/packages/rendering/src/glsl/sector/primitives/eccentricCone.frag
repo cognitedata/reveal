@@ -109,7 +109,7 @@ void main() {
 
     if (intersectionPointZ <= 0.0 ||
       intersectionPointZ >= L ||
-      isSliced(p)
+      isSliced(appearance, p)
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
       // or the intersection point is outside the end caps. This is not a valid solution.
@@ -120,7 +120,7 @@ void main() {
 
       if (intersectionPointZ <= 0.0 ||
         intersectionPointZ >= L ||
-        isSliced(p)
+        isSliced(appearance, p)
       ) {
         // Missed the other point too
         discard;

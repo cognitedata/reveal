@@ -25,7 +25,7 @@ void main() {
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
-    if (isSliced(vViewPosition)) {
+    if (isSliced(appearance, vViewPosition)) {
         discard;
     }
 
