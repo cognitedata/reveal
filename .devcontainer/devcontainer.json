@@ -1,0 +1,46 @@
+// For format details, see https://aka.ms/devcontainer.json For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/main/containers/typescript-node
+{
+	"name": "Reveal devcontainer",
+	"build": {
+		"dockerfile": "Dockerfile",
+		// Update 'VARIANT' to pick a Node version: 16, 14, 12.
+		// Append -bullseye or -buster to pin to an OS version.
+		// Use -bullseye variants on local on arm64/Apple Silicon.
+		"args": { 
+			"VARIANT": "16-bullseye"
+		}
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "zsh",
+	},
+
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"rust-lang.rust",
+		"cadenas.vscode-glsllint",
+		"mhutchie.git-graph",
+		"eamodio.gitlens"
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// The xserver deps is needed for the GL package build needed by Reveal.
+	"postCreateCommand": 
+		"sudo apt-get -y update && sudo apt-get --fix-missing -y install xserver-xorg-dev libxi-dev libxext-dev",
+
+	"postStartCommand": 
+		"yarn install",
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "node",
+	"features": {
+		"github-cli": "latest",
+	}
+}
