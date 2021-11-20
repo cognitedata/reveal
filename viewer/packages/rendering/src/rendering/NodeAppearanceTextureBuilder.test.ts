@@ -65,6 +65,13 @@ describe('NodeAppearanceTextureBuilder', () => {
     expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 5]);
   });
 
+  test('build() applies ignore clipping', () => {
+    styleProvider.assignStyledNodeCollection(nodeCollection, { ignoreClipping: true });
+    builder.build();
+
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, (1 << 6) + 1]);
+  });
+
   test('build() applies outline', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Orange });
     builder.build();
