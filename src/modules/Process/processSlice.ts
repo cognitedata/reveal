@@ -2,9 +2,6 @@ import { createSelector, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationJob,
   DetectionModelParams,
-  ParamsObjectDetection,
-  ParamsOCR,
-  ParamsTagDetection,
   VisionAPIType,
 } from 'src/api/types';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
@@ -48,11 +45,6 @@ export type State = GenericTabularState & {
     settings: DetectionModelParams;
     unsavedSettings: DetectionModelParams;
   }[];
-  detectionModelParameters: {
-    ocr: ParamsOCR;
-    tagDetection: ParamsTagDetection;
-    objectDetection: ParamsObjectDetection;
-  };
   showExploreModal: boolean;
   showSummaryModal: boolean;
 };
@@ -116,7 +108,6 @@ const initialState: State = {
       unsavedSettings: initialDetectionModelParameters.objectDetection,
     },
   ],
-  detectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
   showSummaryModal: false,
 };
