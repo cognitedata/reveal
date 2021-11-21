@@ -129,6 +129,28 @@ controls.addEventListener('hoveroff', () => {
 });
 ```
 
+### Ignore clipping planes for certain nodes
+
+Individual nodes can be ignored in CAD models, by using the `NodeAppearance.ignoreClipping`
+though the [CAD Node styling API](cad-styling).
+
+In the following example, the gas flare tower nodes are marked as not affected by clipping planes.
+This can be useful to use clipping planes to dynamically filter away uninteresting items.
+
+Note that loading is not affected by the ignore clipping node styling, so there might be 
+cases where some geometry is not loaded as expected when using this.
+
+```js runnable
+const nodes = new IndexSet();
+nodes.addRange(new NumericRange(774292, 3925)); // The flare tower 
+model.assignStyledNodeCollection(new TreeIndexNodeCollection(nodes), DefaultNodeAppearance.IgnoreClipping);
+
+const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 55, 0));
+viewer.setClippingPlanes([plane]);
+```
+
+
+
 ### CAD geometry filter
 
 A special type of clipping is to provide a "geometry filter" when loading the model. A geometry filter restricts the
