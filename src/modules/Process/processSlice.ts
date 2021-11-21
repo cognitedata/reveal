@@ -1,6 +1,7 @@
 import { createSelector, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationJob,
+  DetectionModelParams,
   ParamsObjectDetection,
   ParamsOCR,
   ParamsTagDetection,
@@ -30,8 +31,6 @@ export type JobState = AnnotationJob & {
 export type State = GenericTabularState & {
   fileIds: number[];
   showFileUploadModal: boolean;
-  selectedDetectionModels: Array<VisionAPIType>;
-  error?: string;
   files: {
     byId: Record<number, { jobIds: number[] }>;
     allIds: number[];
@@ -41,6 +40,14 @@ export type State = GenericTabularState & {
     byId: Record<number, JobState>;
     allIds: number[];
   };
+  error?: string;
+  selectedDetectionModels: Array<VisionAPIType>;
+  availableDetectionModels: {
+    modelName: string;
+    type: VisionAPIType;
+    settings: DetectionModelParams;
+    unsavedSettings: DetectionModelParams;
+  }[];
   detectionModelParameters: {
     ocr: ParamsOCR;
     tagDetection: ParamsTagDetection;
@@ -83,8 +90,6 @@ const initialState: State = {
   isLoading: false,
   fileIds: [],
   showFileUploadModal: false,
-  selectedDetectionModels: [VisionAPIType.OCR],
-  error: undefined,
   files: {
     byId: {},
     allIds: [],
@@ -94,6 +99,28 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
+  error: undefined,
+  selectedDetectionModels: [VisionAPIType.OCR],
+  availableDetectionModels: [
+    {
+      modelName: 'Text detection',
+      type: VisionAPIType.OCR,
+      settings: initialDetectionModelParameters.ocr,
+      unsavedSettings: initialDetectionModelParameters.ocr,
+    },
+    {
+      modelName: 'Asset tag detection',
+      type: VisionAPIType.TagDetection,
+      settings: initialDetectionModelParameters.tagDetection,
+      unsavedSettings: initialDetectionModelParameters.tagDetection,
+    },
+    {
+      modelName: 'Object detection',
+      type: VisionAPIType.ObjectDetection,
+      settings: initialDetectionModelParameters.objectDetection,
+      unsavedSettings: initialDetectionModelParameters.objectDetection,
+    },
+  ],
   detectionModelParameters: initialDetectionModelParameters,
   temporaryDetectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
