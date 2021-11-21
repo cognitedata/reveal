@@ -76,7 +76,7 @@ describe('NodeAppearanceTextureBuilder', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Orange });
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 3)]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 6)]);
   });
 
   test('build() adds new ghosted indices to correct set', () => {
