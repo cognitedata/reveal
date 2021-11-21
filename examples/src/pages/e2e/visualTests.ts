@@ -65,6 +65,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'clipping-ignoreClipping',
     category: 'cad'
+  },
+  {
+    testKey: 'outlines',
+    category: 'cad'
   }
-
 ];
