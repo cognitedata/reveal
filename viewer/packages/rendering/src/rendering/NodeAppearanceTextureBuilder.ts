@@ -79,11 +79,12 @@ export class NodeAppearanceTextureBuilder {
    * A texture holding at least one element per node with color override
    * and style information. RGB is used to store color, A is used to store
    * style toggles, with the following bit layout:
-   * - 0  : visible bit   - when set the node is visible
-   * - 1  : in front bit  - when set the node is rendered in front of other objects
-   * - 2  : ghosted bit   - when set the node is rendered 'ghosted'
-   * - 3-5: outline color - outline toggle and color ({@see OutlineColor}).
-   * - 6-7: unused
+   * - 0  : visible bit         - when set the node is visible
+   * - 1  : in front bit        - when set the node is rendered in front of other objects
+   * - 2  : ghosted bit         - when set the node is rendered 'ghosted'
+   * - 3  : ignore clipping bit - when set the node will ignore clipping planes
+   * - 4  : unused
+   * - 5-7: outline color - outline toggle and color ({@see OutlineColor}).
    * Note that in-front and ghost information also is available from
    * the {@see inFrontTreeIndices} and {@see ghostedTreeIndices} collections.
    */
@@ -212,13 +213,13 @@ function appearanceToColorOverride(appearance: NodeAppearance): [number, number,
   const outlineColor = appearance.outlineColor ? Number(appearance.outlineColor) : 0;
   const ignoreClipping = appearance.ignoreClipping !== undefined ? appearance.ignoreClipping : false;
   // Byte layout:
-  // [isVisible, renderInFront, renderGhosted, outlineColor0, outlineColor1, outlineColor2, unused, unused]
+  // [isVisible, renderInFront, renderGhosted, ignoreClipping, unused, outlineColor0, outlineColor1, outlineColor2]
   const bytePattern =
-    (isVisible ? 1 << 0 : 0) + // -------X
-    (inFront ? 1 << 1 : 0) + // ------X-
-    (ghosted ? 1 << 2 : 0) + // -----X--
-    (outlineColor << 3) + // --XXX---
-    (ignoreClipping ? 1 << 6 : 0); // -X------
+    (isVisible ? 1 << 0 : 0) + //      -------X
+    (inFront ? 1 << 1 : 0) + //        ------X-
+    (ghosted ? 1 << 2 : 0) + //        -----X--
+    (ignoreClipping ? 1 << 3 : 0) + // ----X---
+    (outlineColor << 5); //            XXX-----
   return [r, g, b, bytePattern];
 }
 
@@ -247,8 +248,8 @@ function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style
     (style.visible !== undefined ? 0b00000001 : 0) |
     (style.renderInFront !== undefined ? 0b00000010 : 0) |
     (style.renderGhosted !== undefined ? 0b00000100 : 0) |
-    (style.outlineColor !== undefined ? 0b00111000 : 0) |
-    (style.ignoreClipping !== undefined ? 0b01000000 : 0);
+    (style.ignoreClipping !== undefined ? 0b00001000 : 0) |
+    (style.outlineColor !== undefined ? 0b11100000 : 0);
   const keepAlphaBitmask = ~updateAlphaBitmask;
   const updateAlpha = a & updateAlphaBitmask;
 

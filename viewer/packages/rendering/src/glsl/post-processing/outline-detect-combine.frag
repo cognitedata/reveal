@@ -35,7 +35,7 @@ uniform float edgeGrayScaleIntensity;
 const float infinity = 1e20;
 
 float computeFloatEncodedOutlineIndex(float bitEncodedFloat){
-  return floatBitsSubset(floor((bitEncodedFloat * 255.0) + 0.5), 3, 6);
+  return floatBitsSubset(floor((bitEncodedFloat * 255.0) + 0.5), 5, 8);
 }
 
 vec4 computeNeighborOutlineIndices(sampler2D colorTexture){
@@ -156,6 +156,7 @@ void main() {
     color = vec4(mix(backAlbedo.rgb, clampedGhostAlbedo.rgb, s), backAlbedo.a);
     depth = mix(backDepth, ghostDepth, s);
   }
+  edgeStrength = 0.0;
   
   gl_FragColor = color * (1.0 - edgeStrength) + vec4(vec3(edgeGrayScaleIntensity) * edgeStrength, 1.0);
 #if defined(gl_FragDepthEXT) || defined(GL_EXT_frag_depth)  
