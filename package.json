@@ -27,6 +27,7 @@
     "@cognite/sdk": "^5.4.0",
     "@cognite/sdk-playground": "^4.2.1",
     "@cognite/sdk-provider": "^1.0.0",
+    "@cognite/sdk-react-query-hooks": "^6.0.1",
     "@cognite/z-index": "^0.2.1",
     "@google-cloud/storage": "^5.7.2",
     "@rescripts/cli": "^0.0.14",

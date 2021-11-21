@@ -36,3 +36,19 @@ export const loadingState = {
   SECOND_DESCRIPTION: 'This is taking a bit longer than expected',
   THIRD_DESCRIPTION: 'This is taking too long. Try refreshing the page',
 };
+
+export const noAccessConfig = {
+  TITLE: 'Request access to Document Classifiers',
+  TITLE_DESCRIPTION:
+    'You do not have access to view this page yet. Check the access right needed below',
+
+  PERMISSION_TITLE: 'You need the following capabilities:',
+
+  PERMISSION_SUBTITLE_1:
+    'Ask those response within your organization for access management to grant them to you',
+  PERMISSION_SUBTITLE_2: 'Learn more about access management in ',
+  documentation: {
+    TITLE: 'documentation',
+    URL: 'https://docs.cognite.com/dev/guides/iam/authorization.html#capabilities',
+  },
+};

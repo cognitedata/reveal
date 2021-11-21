@@ -1,9 +1,10 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 import { useLocation } from 'react-router-dom';
-import { useBaseUrl } from './useBaseUrl';
+import { useBaseUrl, useProjectUrl } from './useBaseUrl';
 
 export type Navigation = {
+  toDashboard: () => void;
   toHome: () => void;
   toLabel: (externalId: string) => void;
   toClassifier: (classifier: string, name?: string) => void;
@@ -23,6 +24,12 @@ export const useNavigation = (): Navigation => {
   const history = useHistory();
   const baseUrl = useBaseUrl();
   const buildUrl = useBuildUrl();
+  const projectUrl = useProjectUrl();
+
+  const toDashboard = () => {
+    const url = buildUrl(`/${projectUrl}`);
+    history.push(url);
+  };
 
   const toHome = () => {
     const url = buildUrl(baseUrl);
@@ -44,6 +51,7 @@ export const useNavigation = (): Navigation => {
   };
 
   return {
+    toDashboard,
     toHome,
     toLabel,
     toClassifier,

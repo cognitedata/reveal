@@ -1,10 +1,14 @@
 import { useUserContext } from '@cognite/cdf-utilities';
 import { useBaseParams } from './useParams';
 
-export const useBaseUrl = () => {
+export const useProjectUrl = () => {
   const { project } = useBaseParams();
   const user = useUserContext();
 
-  const baseUrl = `/${project || user.project}/documents`;
-  return baseUrl;
+  return `${project || user.project}`;
+};
+
+export const useBaseUrl = () => {
+  const projectUrl = useProjectUrl();
+  return `/${projectUrl}/documents`;
 };
