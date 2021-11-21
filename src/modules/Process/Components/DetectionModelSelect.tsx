@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useState } from 'react';
 import { Select } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
@@ -11,44 +12,14 @@ import {
   ColorsObjectDetection,
   ColorsTagDetection,
 } from 'src/constants/Colors';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/store/rootReducer';
 
 type SelectOption = {
   label: any;
   value: VisionAPIType;
   backgroundColor: string;
 };
-
-const availableDetectionModels: Array<SelectOption> = [
-  {
-    label: ocrModelDetails.badge(),
-    value: VisionAPIType.OCR,
-    backgroundColor: ColorsOCR.backgroundColor,
-  },
-  {
-    label: tagDetectionModelDetails.badge(),
-    value: VisionAPIType.TagDetection,
-    backgroundColor: ColorsTagDetection.backgroundColor,
-  },
-  {
-    label: objectDetectionModelDetails.badge(),
-    value: VisionAPIType.ObjectDetection,
-    backgroundColor: ColorsObjectDetection.backgroundColor,
-  },
-];
-
-function toOption(modelType: VisionAPIType): SelectOption {
-  const option = availableDetectionModels.find(
-    ({ value }) => value === modelType
-  );
-  if (!option) {
-    throw new Error(`${modelType} is unknown ML detection model`);
-  }
-  return option;
-}
-
-function fromOption({ value }: SelectOption): VisionAPIType {
-  return value;
-}
 
 // fixme cogs select must accept OptionType generic
 type Props = Omit<
@@ -78,6 +49,53 @@ export function DetectionModelSelect({ value, onChange, ...props }: Props) {
       };
     },
   };
+
+  const availableDetectionModels = useSelector(
+    (state: RootState) => state.processSlice.availableDetectionModels
+  );
+
+  const detectionModelOptions: SelectOption[] = availableDetectionModels.map(
+    // eslint-disable-next-line consistent-return
+    (item) => {
+      switch (item.type) {
+        case VisionAPIType.OCR:
+          return {
+            label: ocrModelDetails.badge(item.modelName),
+            value: VisionAPIType.OCR,
+            backgroundColor: ColorsOCR.backgroundColor,
+          };
+
+        case VisionAPIType.TagDetection:
+          return {
+            label: tagDetectionModelDetails.badge(item.modelName),
+            value: VisionAPIType.TagDetection,
+            backgroundColor: ColorsTagDetection.backgroundColor,
+          };
+
+        case VisionAPIType.ObjectDetection:
+          return {
+            label: objectDetectionModelDetails.badge(item.modelName),
+            value: VisionAPIType.ObjectDetection,
+            backgroundColor: ColorsObjectDetection.backgroundColor,
+          };
+      }
+    }
+  );
+
+  const toOption = (modelType: VisionAPIType): SelectOption => {
+    const option = detectionModelOptions.find(
+      (item) => item.value === modelType
+    );
+    if (!option) {
+      throw new Error(`${modelType} is unknown ML detection model`);
+    }
+    return option;
+  };
+
+  const fromOption = (item: SelectOption): VisionAPIType => {
+    return item.value;
+  };
+
   return (
     <Select
       isMulti
@@ -86,7 +104,7 @@ export function DetectionModelSelect({ value, onChange, ...props }: Props) {
         setSelectedOptionsCount(selectedOptions?.length || 1);
         onChange(selectedOptions?.map(fromOption) || []);
       }}
-      options={availableDetectionModels}
+      options={detectionModelOptions}
       {...props}
       styles={colorStyles}
     />

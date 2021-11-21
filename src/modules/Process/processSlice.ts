@@ -53,11 +53,6 @@ export type State = GenericTabularState & {
     tagDetection: ParamsTagDetection;
     objectDetection: ParamsObjectDetection;
   };
-  temporaryDetectionModelParameters: {
-    ocr: ParamsOCR;
-    tagDetection: ParamsTagDetection;
-    objectDetection: ParamsObjectDetection;
-  };
   showExploreModal: boolean;
   showSummaryModal: boolean;
 };
@@ -122,7 +117,6 @@ const initialState: State = {
     },
   ],
   detectionModelParameters: initialDetectionModelParameters,
-  temporaryDetectionModelParameters: initialDetectionModelParameters,
   showExploreModal: false,
   showSummaryModal: false,
 };
@@ -141,27 +135,42 @@ const processSlice = createGenericTabularDataSlice({
     ) {
       state.selectedDetectionModels = action.payload;
     },
-    setParamsOCR(state, action: PayloadAction<ParamsOCR>) {
-      state.temporaryDetectionModelParameters.ocr = action.payload;
-    },
-    setParamsTagDetection(state, action: PayloadAction<ParamsTagDetection>) {
-      state.temporaryDetectionModelParameters.tagDetection = action.payload;
-    },
-    setParamsObjectDetection(
+    setUnsavedDetectionModelSettings(
       state,
-      action: PayloadAction<ParamsObjectDetection>
+      action: PayloadAction<{
+        modelIndex: number;
+        params: DetectionModelParams;
+      }>
     ) {
-      state.temporaryDetectionModelParameters.objectDetection = action.payload;
+      const { params, modelIndex } = action.payload;
+      state.availableDetectionModels[modelIndex].unsavedSettings = params;
     },
     setDetectionModelParameters(state) {
-      state.detectionModelParameters = state.temporaryDetectionModelParameters;
+      state.availableDetectionModels.forEach((item) => {
+        item.settings = item.unsavedSettings;
+      });
     },
 
     revertDetectionModelParameters(state) {
-      state.temporaryDetectionModelParameters = state.detectionModelParameters;
+      state.availableDetectionModels.forEach((item) => {
+        item.unsavedSettings = item.settings;
+      });
     },
     resetDetectionModelParameters(state) {
-      state.temporaryDetectionModelParameters = initialDetectionModelParameters;
+      state.availableDetectionModels.forEach((item) => {
+        switch (item.type) {
+          case VisionAPIType.OCR:
+            item.unsavedSettings = initialDetectionModelParameters.ocr;
+            break;
+          case VisionAPIType.TagDetection:
+            item.unsavedSettings = initialDetectionModelParameters.tagDetection;
+            break;
+          case VisionAPIType.ObjectDetection:
+            item.unsavedSettings =
+              initialDetectionModelParameters.objectDetection;
+            break;
+        }
+      });
     },
     removeJobById(state, action: PayloadAction<number>) {
       const existingJob = state.jobs.byId[action.payload];
@@ -304,9 +313,7 @@ export const {
   hideFileMetadata,
   showFileMetadata,
   setFocusedFileId,
-  setParamsOCR,
-  setParamsTagDetection,
-  setParamsObjectDetection,
+  setUnsavedDetectionModelSettings,
   setDetectionModelParameters,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
