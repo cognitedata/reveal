@@ -69,14 +69,14 @@ describe('NodeAppearanceTextureBuilder', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { ignoreClipping: true });
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, (1 << 6) + 1]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, (1 << 3) + 1]);
   });
 
   test('build() applies outline', () => {
     styleProvider.assignStyledNodeCollection(nodeCollection, { outlineColor: NodeOutlineColor.Orange });
     builder.build();
 
-    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 6)]);
+    expect(texelsOf(builder.overrideColorPerTreeIndexTexture)).toEqual([0, 0, 0, 1 + (NodeOutlineColor.Orange << 5)]);
   });
 
   test('build() adds new ghosted indices to correct set', () => {
