@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Collapse, Input } from 'antd';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/utill';
@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
+import isEmpty from 'lodash-es/isEmpty';
 import { Header } from './Header';
 import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 
@@ -43,13 +44,17 @@ const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
 export const Keypoints = ({
   collections,
   setCollections,
+  options,
 }: {
   collections: AnnotationCollection;
   setCollections: (collection: AnnotationCollection) => void;
+  options?: { createNew?: { text?: string } };
 }) => {
   const { predefinedKeypoints } = collections;
   const [newKeypoints, setNewKeypoints] =
     useState<NewKeypoints | undefined>(undefined);
+  const keypointPanelRef = useRef<HTMLDivElement | null>(null);
+
   const addNewKeypoint = () => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
@@ -63,6 +68,14 @@ export const Keypoints = ({
       });
     }
   };
+
+  const addNewKeypointGroup = (newKeypointGroup?: { text?: string }) => {
+    setNewKeypoints({
+      collectionName: newKeypointGroup?.text || '',
+      keypoints: [{ caption: '', color: getRandomColor() }],
+    });
+  };
+
   const updateColor = (index: number, value: string) => {
     if (newKeypoints) {
       const { keypoints } = newKeypoints;
@@ -117,20 +130,35 @@ export const Keypoints = ({
     }
   };
 
+  const scrollToBottom = () => {
+    const elm = keypointPanelRef.current;
+    if (elm) {
+      elm.scrollTop = elm.scrollHeight - elm.clientHeight;
+    }
+  };
+
+  // create new keypoint on settings open
+  useEffect(() => {
+    if (options) {
+      if (!isEmpty(options.createNew)) {
+        addNewKeypointGroup(options.createNew);
+      }
+    }
+  }, [options]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [newKeypoints, predefinedKeypoints]);
+
   return (
     <>
       <Header
         title="Keypoints"
         count={predefinedKeypoints.length}
         disabledMessage={newKeypoints && 'Finish before creating a new one'}
-        onClickNew={() => {
-          setNewKeypoints({
-            collectionName: '',
-            keypoints: [{ caption: '', color: getRandomColor() }],
-          });
-        }}
+        onClickNew={() => addNewKeypointGroup()}
       />
-      <CollapsePanel>
+      <CollapsePanel ref={keypointPanelRef}>
         <Collapse
           bordered={false}
           defaultActiveKey={['new']}

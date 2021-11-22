@@ -33,7 +33,7 @@ export const AnnotationEditPopupBody = ({
   keypointLabel: string;
   labelOptions?: OptionType<string>[];
   onSelectLabel: (value: Required<OptionType<string>>) => void;
-  onOpenAnnotationSettings: () => void;
+  onOpenAnnotationSettings: (text?: string, color?: string) => void;
 }) => {
   const renderEmptyAnnotationMessage = () => {
     return (
@@ -55,7 +55,7 @@ export const AnnotationEditPopupBody = ({
           <Body level={2} style={{ paddingBottom: '15px', paddingTop: '8px' }}>
             Create a pre-defined list of annotations in Annotation Settings
           </Body>
-          <Button type="tertiary" onClick={onOpenAnnotationSettings}>
+          <Button type="tertiary" onClick={() => onOpenAnnotationSettings()}>
             Create annotations
           </Button>
         </StyledCol>

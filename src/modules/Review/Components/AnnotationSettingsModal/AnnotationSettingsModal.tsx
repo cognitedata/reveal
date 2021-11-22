@@ -7,6 +7,10 @@ import { AnnotationSettingsModalContent } from './AnnotationSettingsModalContent
 export type AnnotationSettingsModalProps = {
   showModal: boolean;
   onCancel: () => void;
+  options?: {
+    createNew: { text?: string; color?: string };
+    activeView: 'keypoint' | 'shape';
+  };
 };
 
 export const AnnotationSettingsModal = (
@@ -27,8 +31,12 @@ export const AnnotationSettingsModal = (
         maxHeight: '710px',
         display: 'inline-table',
       }}
+      destroyOnClose
     >
-      <AnnotationSettingsModalContent onCancel={props.onCancel} />
+      <AnnotationSettingsModalContent
+        onCancel={props.onCancel}
+        options={props.options}
+      />
     </StyledModal>
   );
 };
