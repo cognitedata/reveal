@@ -415,7 +415,7 @@ export function Migration() {
           const treeIndices = await cadModels[0].getSubtreeTreeIndices(rootTreeIndex);
           cadModels[0].setDefaultNodeAppearance({ visible: false });
           const explodeSet = new TreeIndexNodeCollection(treeIndices);
-            cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
+          cadModels[0].assignStyledNodeCollection(explodeSet, { visible: true });
 
           const rootBoundingBox = await cadModels[0].getBoundingBoxByTreeIndex(rootTreeIndex);
           viewer.fitCameraToBoundingBox(rootBoundingBox, 0);
@@ -458,17 +458,6 @@ export function Migration() {
             }
           }
         });
-      cadModels.forEach(x => {
-        const bounds = x.getModelBoundingBox();
-        for (let i = 0; i < 1000; i++) {
-          const position = new THREE.Vector3(
-            THREE.MathUtils.randFloat(bounds.min.x, bounds.max.x),
-            THREE.MathUtils.randFloat(bounds.min.y, bounds.max.y),
-            THREE.MathUtils.randFloat(bounds.min.z, bounds.max.z)
-          );
-          overlayTool.add(createOverlay(`Lorem`), position);
-        }
-      });
       new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

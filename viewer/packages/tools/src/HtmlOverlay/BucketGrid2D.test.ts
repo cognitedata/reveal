@@ -19,8 +19,8 @@ describe('BucketGrid2D', () => {
       // Create box that is just inside the bounds of the cell
       const cellSize = new THREE.Vector2(1.0 / dimensions[0], 1.0 / dimensions[1]);
       return new THREE.Box2(
-        new THREE.Vector2(1.0001 * cellSize.x * i, 1.0001 * cellSize.y * j),
-        new THREE.Vector2(0.9999 * cellSize.x * (i + 1), 0.9999 * cellSize.y * (j + 1))
+        new THREE.Vector2(cellSize.x * i + 1e-4, cellSize.y * j + 1e-4),
+        new THREE.Vector2(cellSize.x * (i + 1) - 1e-4, cellSize.y * (j + 1) - 1e-4)
       );
     };
   });
