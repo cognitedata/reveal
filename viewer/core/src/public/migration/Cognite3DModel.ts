@@ -15,7 +15,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
 import { NumericRange } from '@reveal/utilities';
-import { trackCadModelStyled, trackError } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
@@ -157,7 +157,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @throws Error if node collection already has been assigned to the model.
    */
   assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
-    trackCadModelStyled(nodeCollection.classToken, appearance);
+    MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
@@ -401,7 +401,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
-      trackError(error as Error, {
+      MetricsLogger.trackError(error as Error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });
