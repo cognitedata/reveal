@@ -24,7 +24,7 @@ export const Table = (props: Props): JSX.Element => {
         ...column,
         cellRenderer: (props: any) => <Cell {...props} />,
       })),
-    [selectedCell]
+    [columns, selectedCell]
   );
 
   return (
