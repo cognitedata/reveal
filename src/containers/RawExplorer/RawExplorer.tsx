@@ -103,11 +103,12 @@ const StyledRawExplorerNotSelectedWrapper = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
+  padding: 0 128px;
+  position: relative;
 `;
 
 const StyledRawExplorerNotSelectedContent = styled.div`
   margin-bottom: 30px;
-  position: relative;
   width: 400px;
 `;
 
@@ -118,8 +119,18 @@ const StyledRawExplorerNotSelectedBody = styled(Body)`
 
 const StyledRawExplorerNotSelectedArrow = styled.img`
   position: absolute;
-  left: -225px;
-  top: -150px;
+  left: 125px;
+  opacity: 1;
+  transform: translateY(calc(-100% - 75px));
+  transition: opacity ${SIDE_PANEL_TRANSITION_DURATION}s
+    ${SIDE_PANEL_TRANSITION_FUNCTION};
+  top: calc(50%);
+  max-height: 180px;
+  width: calc(50% - 400px);
+
+  @media screen and (max-width: 1400px) {
+    opacity: 0;
+  }
 `;
 
 export default RawExplorer;
