@@ -82,7 +82,7 @@ export class MetricsLogger {
     if (applicationId) {
       this._sessionProps.application = applicationId;
     }
-    this._innerTrackEvent('init', eventProps);
+    this.innerTrackEvent('init', eventProps);
   }
 
   static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
@@ -92,14 +92,14 @@ export class MetricsLogger {
     }
   }
 
-  private _innerTrackEvent(eventName: TrackedEvents, eventProps: EventProps) {
+  private innerTrackEvent(eventName: TrackedEvents, eventProps: EventProps) {
     const combined = { ...this._sessionProps, ...eventProps };
     mixpanel.track(eventName, combined);
   }
 
   static trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
     if (globalThis.revealMetricsLogger) {
-      globalThis.revealMetricsLogger.metricsLogger._innerTrackEvent(eventName, eventProps);
+      globalThis.revealMetricsLogger.metricsLogger.innerTrackEvent(eventName, eventProps);
     }
   }
 
