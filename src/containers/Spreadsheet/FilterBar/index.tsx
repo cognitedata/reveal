@@ -9,6 +9,8 @@ import { FILTER_BAR_HEIGHT } from 'utils/constants';
 import { Separator } from 'components/Separator';
 import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
+import { useTotalRowCount } from 'hooks/sdk-queries';
+import { useActiveTableContext } from 'contexts';
 
 type Props = {
   isEmpty?: boolean;
@@ -16,8 +18,12 @@ type Props = {
   setColumnFilter: (columnQuery: string) => void;
 };
 
-export const FilterBar = (props: Props): JSX.Element => {
-  const { isEmpty, columnFilter, setColumnFilter } = props;
+export const FilterBar = ({
+  isEmpty,
+  columnFilter,
+  setColumnFilter,
+}: Props): JSX.Element => {
+  const { database, table } = useActiveTableContext();
   const { rows, isFetched } = useTableData();
   const { filters, activeFilters, setFilter } = useFilters();
   const tableLength = isFetched ? (
@@ -25,6 +31,8 @@ export const FilterBar = (props: Props): JSX.Element => {
   ) : (
     <Icon type="LoadingSpinner" style={{ marginRight: '4px' }} />
   );
+
+  const { data: totalRows } = useTotalRowCount({ database, table });
 
   const onFilterClick = (filter: FilterType) => setFilter(filter.type);
   const onColumnFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -61,7 +69,8 @@ export const FilterBar = (props: Props): JSX.Element => {
           strong
           style={{ display: 'flex', alignItems: 'center' }}
         >
-          {tableLength} rows
+          {tableLength} {Number.isFinite(totalRows) ? `/ ${totalRows}` : ''}{' '}
+          rows
         </Body>
         <Separator style={{ margin: '0 12px' }} />
         <FilterBar.Actions />
