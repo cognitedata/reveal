@@ -4,7 +4,6 @@ import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 
 import {
   useActiveTable,
-  useOpenTable,
   useCloseTable,
   useTableTabList,
 } from 'hooks/table-tabs';
@@ -94,9 +93,9 @@ const OpenNavTab = styled(Tab)`
 `;
 
 export default function TableTabList() {
-  const [list = []] = useTableTabList();
-  const [[activeDb, activeTable] = [undefined, undefined]] = useActiveTable();
-  const openTab = useOpenTable();
+  const list = useTableTabList() || [];
+  const [[activeDb, activeTable] = [], openTab] = useActiveTable();
+
   const close = useCloseTable();
   const { isSidePanelOpen, setIsSidePanelOpen } =
     useContext(RawExplorerContext);

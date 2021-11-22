@@ -1,6 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
-import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
 
 const baseKey = 'raw-explorer';
 
@@ -13,6 +18,12 @@ export const rowKey = (db: string, table: string, pageSize: number) => [
   'rows',
   'pageSize',
   pageSize,
+];
+export const rawProfileKey = (db: string, table: string) => [
+  baseKey,
+  db,
+  table,
+  'raw-profile',
 ];
 
 export const useDatabases = () => {
@@ -106,6 +117,69 @@ export const useTableRows = (
   );
 };
 
+type Column = {
+  count: number;
+  nullCount: number;
+};
+type Profile = {
+  columns: Record<string, Column>;
+};
+
+export const useRawProfile = (
+  {
+    database,
+    table,
+  }: {
+    database: string;
+    table: string;
+  },
+  options?: { enabled: boolean }
+) => {
+  const sdk = useSDK();
+  return useQuery<Profile>(
+    rawProfileKey(database, table),
+    () =>
+      sdk
+        .post(`/api/v1/projects/${sdk.project}/profiler/raw`, {
+          data: {
+            database,
+            table,
+          },
+        })
+        .then((response) => response.data),
+    options
+  );
+};
+
+export const useTotalRowCount = (
+  {
+    database,
+    table,
+  }: {
+    database: string;
+    table: string;
+  },
+  options?: { enabled: boolean }
+) => {
+  const profile = useRawProfile({ database, table }, options);
+
+  const totalRows =
+    profile.isFetched && Object.values(profile.data?.columns || {}).length > 0
+      ? Object.values(profile.data?.columns || {}).reduce((accl, col) => {
+          try {
+            return Math.max(accl, col.count);
+          } catch {
+            return accl;
+          }
+        }, 0)
+      : undefined;
+
+  return {
+    ...profile,
+    data: totalRows,
+  };
+};
+
 export const useDeleteDatabase = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
@@ -163,7 +237,6 @@ export const useCreateTable = () => {
 
 export const useInsertRows = () => {
   const sdk = useSDK();
-  const queryClient = useQueryClient();
 
   return useMutation(
     ({
@@ -174,13 +247,6 @@ export const useInsertRows = () => {
       database: string;
       table: string;
       items: RawDBRowInsert[];
-    }) => {
-      return sdk.raw.insertRows(database, table, items);
-    },
-    {
-      onSuccess(_, { database, table }) {
-        queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 4));
-      },
-    }
+    }) => sdk.raw.insertRows(database, table, items)
   );
 };

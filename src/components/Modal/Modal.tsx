@@ -6,6 +6,7 @@ import { Icon } from '@cognite/cogs.js';
 
 import { MODAL_WIDTH } from 'utils/constants';
 import { getContainer } from 'utils/utils';
+import { ZIndexLayer } from 'utils/zIndex';
 
 export type ModalProps = {
   children: ReactNode;
@@ -34,6 +35,7 @@ const Modal = (props: ModalProps): JSX.Element => {
       closeIcon={<Icon type="LargeClose" />}
       getContainer={getContainer}
       width={MODAL_WIDTH}
+      zIndex={ZIndexLayer.Modal}
       {...props}
     />
   );
