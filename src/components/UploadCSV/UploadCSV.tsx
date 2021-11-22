@@ -20,17 +20,17 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import styled from 'styled-components';
 import { getContainer, sleep } from 'utils/utils';
 import { useSDK } from '@cognite/sdk-provider';
+import { useActiveTableContext } from 'contexts';
 
 const { Dragger } = Upload;
 
 interface UploadCsvProps {
-  table: string;
-  database: string;
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
 }
 
-const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
+const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const sdk = useSDK();
+  const { database, table } = useActiveTableContext();
   const [file, setFile] = useState<File | undefined>();
   const [upload, setUpload] = useState(false);
   const [complete, setComplete] = useState(false);
