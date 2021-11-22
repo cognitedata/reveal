@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { Button, Colors, Icon } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
+import {
+  StyledCellIndexColumn,
+  StyledCellUnselected,
+  StyledCellSelected,
+  StyledCellContent,
+  ExpandButton,
+} from './Cell.styles';
 
 const NO_CELL_SELECTED = { rowIndex: undefined, columnIndex: undefined };
 
@@ -40,6 +46,9 @@ export const Cell = (props: Props): JSX.Element => {
     else setSelectedCell({ rowIndex, columnIndex });
   };
 
+  if (columnIndex === 0) {
+    return <StyledCellIndexColumn>{cellData}</StyledCellIndexColumn>;
+  }
   return isSelected ? (
     <StyledCellSelected onClick={onCellSelect}>
       <StyledCellContent ref={selectedCellRef} isOverflow={isOverflow}>
@@ -57,52 +66,3 @@ export const Cell = (props: Props): JSX.Element => {
     </StyledCellUnselected>
   );
 };
-
-const StyledCell = styled.div`
-  width: 100%;
-  cursor: pointer;
-  box-sizing: border-box;
-  background-color: white;
-`;
-
-const StyledCellUnselected = styled(StyledCell)`
-  height: 100%;
-  padding: 8px 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  user-select: none;
-`;
-
-const StyledCellSelected = styled(StyledCell)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  overflow: hidden;
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  max-height: 200%;
-  z-index: 10;
-  padding: 6px 14px;
-  border-radius: 4px;
-  border: 2px solid ${Colors.midblue.hex()};
-`;
-
-const StyledCellContent = styled.div<{ isOverflow: boolean }>`
-  max-width: ${({ isOverflow }) => (isOverflow ? '90%' : '100%')};
-  white-space: pre-wrap;
-  word-wrap: break-word;
-`;
-
-const ExpandButton = styled(Button)`
-  padding: 0;
-  margin: 0 4px;
-  box-sizing: border-box;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
-  font-size: 0.5em;
-  align-self: center;
-`;
