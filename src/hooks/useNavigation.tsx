@@ -8,6 +8,7 @@ export type Navigation = {
   toHome: () => void;
   toLabel: (externalId: string) => void;
   toClassifier: (classifier: string, name?: string) => void;
+  goBack: () => void;
 };
 
 const useBuildUrl = () => {
@@ -37,9 +38,7 @@ export const useNavigation = (): Navigation => {
   };
 
   const toLabel = (externalId: string) => {
-    const url = buildUrl(
-      `${baseUrl}/document/${encodeURIComponent(externalId)}`
-    );
+    const url = buildUrl(`${baseUrl}/label/${encodeURIComponent(externalId)}`);
     history.push(url);
   };
 
@@ -50,10 +49,15 @@ export const useNavigation = (): Navigation => {
     history.push(url);
   };
 
+  const goBack = () => {
+    history.goBack();
+  };
+
   return {
     toDashboard,
     toHome,
     toLabel,
     toClassifier,
+    goBack,
   };
 };

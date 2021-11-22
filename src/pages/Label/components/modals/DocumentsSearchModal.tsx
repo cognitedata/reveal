@@ -1,10 +1,11 @@
 import { Loader, ToastContainer } from '@cognite/cogs.js';
-import { Modal } from 'components/Modal';
+import { Modal } from 'components/modal/Modal';
+import { TableWrapper } from 'components/table/TableWrapper';
 import React from 'react';
 import { useDocumentsSearchQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
-import { StickyTableHeadContainer } from 'styles/elements';
 import { getContainer } from 'utils/utils';
+import ModalFooter from 'components/modal/ModalFooter';
 import { DocumentsTable } from '../table/DocumentsTable';
 
 interface Props {
@@ -12,27 +13,39 @@ interface Props {
   visible?: boolean;
   toggleVisibility: () => void;
 }
+
 export const DocumentsSearchModal: React.FC<Props> = React.memo(
   ({ visible, toggleVisibility, labelId }) => {
-    const selectedIds = React.useRef({});
+    const [selectedFiles, setSelectedFiles] = React.useState({});
     const { data, isLoading } = useDocumentsSearchQuery(visible);
     const { mutateAsync } = useUpdateFileLabelsMutate('add');
 
     const handleSelectedIds = (ids: { [x: number]: boolean }) => {
-      selectedIds.current = ids;
+      setSelectedFiles(ids);
     };
 
-    const handleAddFilesClick = () => {
-      const documentIds = Object.keys(selectedIds.current).map((id) =>
-        Number(id)
-      );
+    const fileIds = React.useMemo(() => {
+      return Object.keys(selectedFiles).map((id) => Number(id));
+    }, [selectedFiles]);
 
-      if (documentIds.length > 0) {
-        mutateAsync({ label: { externalId: labelId }, documentIds }).then(() =>
+    const handleAddFilesClick = () => {
+      if (fileIds.length > 0) {
+        mutateAsync({ label: { externalId: labelId }, fileIds }).then(() =>
           toggleVisibility()
         );
       }
     };
+
+    const renderTable = React.useMemo(
+      () => (
+        <DocumentsTable
+          data={data}
+          showFilters
+          onSelectedIds={(ids) => handleSelectedIds(ids)}
+        />
+      ),
+      [data]
+    );
 
     if (isLoading) {
       return <Loader />;
@@ -45,15 +58,16 @@ export const DocumentsSearchModal: React.FC<Props> = React.memo(
         visible={visible}
         appElement={getContainer()}
         onCancel={() => toggleVisibility()}
-        onOk={() => handleAddFilesClick()}
-      >
-        <StickyTableHeadContainer>
-          <DocumentsTable
-            data={data}
-            showFilters
-            onSelectedIds={(ids) => handleSelectedIds(ids)}
+        footer={
+          <ModalFooter
+            data={fileIds}
+            label="files"
+            onOk={() => handleAddFilesClick()}
+            onCancel={() => toggleVisibility()}
           />
-        </StickyTableHeadContainer>
+        }
+      >
+        <TableWrapper stickyHeader>{renderTable}</TableWrapper>
 
         <ToastContainer />
       </Modal>

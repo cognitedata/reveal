@@ -8,10 +8,10 @@ import { Button, Loader } from '@cognite/cogs.js';
 import { useDocumentsPipelinesQuery } from 'services/query/documents/query';
 import { useNavigation } from 'hooks/useNavigation';
 import { Classifier } from '@cognite/sdk-playground';
-import { StickyTableHeadContainer } from 'styles/elements';
 import { useClassifierDeleteMutate } from 'services/query/classifier/mutate';
 import { useActiveClassifier } from 'hooks/useActiveClassifier';
 import { useDocumentsActiveClassifierPipelineMutate } from 'services/query/documents/mutate';
+import { TableWrapper } from 'components/table/TableWrapper';
 import ClassifierWidget from './components/widgets/ClassifierWidget';
 import { ClassifierTable } from './components/table/ClassifierTable';
 import { ConfusionMatrixModal } from './components/modal/ConfusionMatrixModal';
@@ -91,25 +91,24 @@ const Home = () => {
         }
       />
 
-      <ActiveModelContainer
-        classifier={activeClassifier}
-        onViewConfusionMatrixClick={() =>
-          toggleConfusionMatrixModal(activeClassifier)
-        }
-      />
-
-      <PageHeader
-        title="Overview"
-        titleLevel={4}
-        description="Queued and previously trained models"
-      />
-
       <PageContent>
-        <StickyTableHeadContainer>
+        <ActiveModelContainer
+          classifier={activeClassifier}
+          onViewConfusionMatrixClick={() =>
+            toggleConfusionMatrixModal(activeClassifier)
+          }
+        />
+
+        <PageHeader
+          title="Overview"
+          titleLevel={4}
+          description="Queued and previously trained models"
+        />
+        <TableWrapper stickyHeader>
           <ClassifierTable
             classifierActionsCallback={handleClassifierTableActionsCallback}
           />
-        </StickyTableHeadContainer>
+        </TableWrapper>
       </PageContent>
     </Page>
   );

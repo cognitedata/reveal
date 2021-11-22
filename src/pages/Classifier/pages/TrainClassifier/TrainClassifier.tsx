@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageHeader, PageContent } from 'components/page';
+import { PageHeader, PageContent, Page } from 'components/page';
 import {
   useClassifierConfig,
   useClassifierId,
@@ -12,13 +12,14 @@ import { useClassifierManageTrainingSetsQuery } from 'services/query';
 import { useClassifierCreateMutate } from 'services/query/classifier/mutate';
 import { useDocumentsClassifierByIdQuery } from 'services/query/documents/query';
 import { useClassifierParams } from 'hooks/useParams';
-import { InfoBar } from 'components/InfoBar';
-import { isClassifierTraining } from 'utils/classifier';
-import { useNavigation } from 'hooks/useNavigation';
+import { BottomNavigation } from 'pages/Classifier/components/navigations/BottomNavigation';
+import { isClassifierFinished } from 'utils/classifier';
+import { ClassifierProps } from '../router';
+import { TrainClassifierInfoBar } from './components/containers/TrainClassifierInfoBar';
+import { TrainClassifierNavigation } from './components/navigation/TrainClassifierNavigation';
 
-const TrainClassifier: React.FC = () => {
+const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
   const { classifierName } = useClassifierParams();
-  const { toHome } = useNavigation();
   const { description } = useClassifierConfig(ClassifierState.TRAIN);
   const { previousPage } = useClassifierActions();
 
@@ -36,25 +37,6 @@ const TrainClassifier: React.FC = () => {
     mutateAsync(classifierName).then((result) => {
       setClassifierId(result.id);
     });
-  };
-
-  const renderInfoBar = () => {
-    return (
-      <InfoBar visible={isClassifierTraining(newlyCreatedClassifier)}>
-        <Body level="2">
-          Training a classifier might take some time – You can go back to the
-          homepage and deploy the model when it’s ready.
-        </Body>
-        <Button
-          size="small"
-          type="primary"
-          icon="ArrowForward"
-          onClick={() => toHome()}
-        >
-          Go home
-        </Button>
-      </InfoBar>
-    );
   };
 
   const renderMessage = () => {
@@ -77,9 +59,33 @@ const TrainClassifier: React.FC = () => {
     );
   };
 
+  const renderAction = (isRunning: boolean, isDone: boolean) => {
+    return (
+      <Button
+        type="primary"
+        loading={isRunning || isLoading}
+        icon={isDone ? 'Checkmark' : undefined}
+        disabled={isDone || classifierTrainingSets.length === 0}
+        onClick={handleTrainClassifierClick}
+      >
+        {isDone ? 'Training completed' : 'Train classifier'}
+      </Button>
+    );
+  };
+
   return (
-    <>
-      {renderInfoBar()}
+    <Page
+      Widget={Widget()}
+      BottomNavigation={
+        <BottomNavigation>
+          <TrainClassifierNavigation
+            disabled={!isClassifierFinished(newlyCreatedClassifier)}
+          />
+        </BottomNavigation>
+      }
+      breadcrumbs={[{ title: 'New classifier' }]}
+    >
+      <TrainClassifierInfoBar classifier={newlyCreatedClassifier} />
 
       <PageHeader title="Train classifier" description={description} />
       <PageContent>
@@ -87,21 +93,11 @@ const TrainClassifier: React.FC = () => {
           <ActionContainer
             classifier={newlyCreatedClassifier}
             Message={renderMessage()}
-            Action={(isRunning, isDone) => (
-              <Button
-                type="primary"
-                loading={isRunning || isLoading}
-                icon={isDone ? 'Checkmark' : undefined}
-                disabled={isDone || classifierTrainingSets.length === 0}
-                onClick={handleTrainClassifierClick}
-              >
-                {isDone ? 'Training completed' : 'Train classifier'}
-              </Button>
-            )}
+            Action={renderAction}
           />
         </>
       </PageContent>
-    </>
+    </Page>
   );
 };
 

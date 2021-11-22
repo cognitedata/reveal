@@ -32,7 +32,7 @@ export type Aggregates = {
 
 export type LabelFileUpdate = {
   label: Label;
-  documentIds: number[];
+  fileIds: number[];
 };
 export type FilesApiError = {
   errors: { status: number; message: string }[];

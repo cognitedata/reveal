@@ -1,5 +1,5 @@
 import { Classifier } from '@cognite/sdk-playground';
-import { Modal } from 'components/Modal';
+import { Modal } from 'components/modal/Modal';
 import { PageHeader } from 'components/page';
 import { MatrixTable } from 'pages/Classifier/pages/ReviewModel/components';
 import React from 'react';

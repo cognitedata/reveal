@@ -7,26 +7,21 @@ const Content = styled.div`
   justify-content: space-between;
 `;
 
-interface Props {
-  nextText?: string;
-  backText?: string;
-  onBackClick: () => void;
-  onNextClick: () => void;
+export const NavigationBackButton = styled(Button).attrs({
+  type: 'ghost',
+  icon: 'ArrowBack',
+})``;
+
+export const NavigationNextButton = styled(Button).attrs({
+  type: 'primary',
+  icon: 'ArrowForward',
+  iconPlacement: 'right',
+})``;
+
+export interface ClassifierNavigationProps {
+  disabled?: boolean;
 }
-export const BottomNavigation: FC<Props> = ({
-  nextText,
-  backText,
-  onBackClick,
-  onNextClick,
-}) => {
-  return (
-    <Content>
-      <Button type="ghost" onClick={onBackClick}>
-        {backText || 'Back'}
-      </Button>
-      <Button type="primary" onClick={onNextClick}>
-        {nextText || 'Next'}
-      </Button>
-    </Content>
-  );
+
+export const BottomNavigation: FC = ({ children }) => {
+  return <Content>{children}</Content>;
 };

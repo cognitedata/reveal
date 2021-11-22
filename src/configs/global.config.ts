@@ -5,10 +5,10 @@ export const globalConfig = {
   DOCUMENT_WARNING_THRESHOLD: 25,
 
   DOCUMENT_THRESHOLD_TOOLTIP: {
-    primary: 'You have enough documents to perform a classifications',
+    primary: 'The label has enough documents to perform a classification.',
     warning:
-      'The data set has missing data sets to give a correct evaluation, please add some more.',
-    error: 'Classifications can not be completed without any data sets.',
+      'The label does not have enough documents to to perform a classification. Please try adding more.',
+    error: 'Classifications can not be completed without any documents.',
   } as { [x in TagColor]: string },
 };
 
@@ -35,6 +35,11 @@ export const loadingState = {
   FIRST_DESCRIPTION: 'Hold up, fetching your data from the backend',
   SECOND_DESCRIPTION: 'This is taking a bit longer than expected',
   THIRD_DESCRIPTION: 'This is taking too long. Try refreshing the page',
+};
+
+export const trainingConfig = {
+  INFO_BAR:
+    'Training a classifier might take some time – You can go back to the homepage and deploy the model when it is ready',
 };
 
 export const noAccessConfig = {

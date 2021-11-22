@@ -1,14 +1,17 @@
 import { Body, Button, Flex } from '@cognite/cogs.js';
-import { PageHeader } from 'components/page';
+import { Page, PageHeader } from 'components/page';
 import { useClassifierParams } from 'hooks/useParams';
 import { useClassifierConfig } from 'machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'machines/classifier/types';
+import { BottomNavigation } from 'pages/Classifier/components/navigations/BottomNavigation';
 import React, { FC } from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'services/query';
+import { ClassifierProps } from '../router';
 import { LabelsModal } from './components/modal/LabelsModal';
+import { ManageTrainingSetNavigation } from './components/navigation/ManageTrainSetNavigation';
 import { TrainingSetsTable } from './components/table/TrainingSetsTable';
 
-export const ManageTrainingSets: FC = () => {
+export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
   const { classifierName } = useClassifierParams();
 
   const { description } = useClassifierConfig(ClassifierState.MANAGE);
@@ -29,7 +32,15 @@ export const ManageTrainingSets: FC = () => {
   }
 
   return (
-    <>
+    <Page
+      Widget={Widget()}
+      BottomNavigation={
+        <BottomNavigation>
+          <ManageTrainingSetNavigation />
+        </BottomNavigation>
+      }
+      breadcrumbs={[{ title: 'New classifier' }]}
+    >
       <PageHeader
         title={classifierName}
         subtitle="Classifier:"
@@ -49,6 +60,6 @@ export const ManageTrainingSets: FC = () => {
       />
 
       <TrainingSetsTable />
-    </>
+    </Page>
   );
 };

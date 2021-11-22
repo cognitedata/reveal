@@ -20,3 +20,7 @@ export const StatesDescription = styled(Body).attrs({ level: 2 })`
   margin-top: 0.3rem;
   text-align: center;
 `;
+
+export const Image = styled.img`
+  height: 120px;
+`;

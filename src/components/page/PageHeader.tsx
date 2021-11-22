@@ -1,6 +1,6 @@
 import { Body, Button, Detail, Flex, Title } from '@cognite/cogs.js';
+import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div<{ $marginBottom?: string }>`
@@ -48,7 +48,7 @@ export const PageHeader: React.FC<Props> = React.memo(
     onClose,
     titleLevel = 3,
   }) => {
-    const history = useHistory();
+    const { goBack } = useNavigation();
 
     const renderCloseAction = React.useMemo(() => {
       if (onClose) {
@@ -71,14 +71,14 @@ export const PageHeader: React.FC<Props> = React.memo(
               type="ghost"
               icon="ArrowBack"
               aria-label="Go to previous page"
-              onClick={() => history.goBack()}
+              onClick={() => goBack()}
             />
           </BackContainer>
         );
       }
 
       return null;
-    }, [showGoBack, onClose, history]);
+    }, [showGoBack, onClose, goBack]);
 
     return (
       <Container $marginBottom={marginBottom}>

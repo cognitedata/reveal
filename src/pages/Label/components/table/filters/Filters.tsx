@@ -3,6 +3,7 @@ import React from 'react';
 import { useDocumentsSearchMutate } from 'services/query/documents/mutate';
 import { DocumentSearchQuery } from 'services/types';
 import styled from 'styled-components';
+import layers from 'utils/zIndex';
 import { DocumentCategoryFilter } from './actions/DocumentType';
 import { FileTypeFilter } from './actions/FileType';
 import { NameFilter } from './actions/Name';
@@ -10,9 +11,11 @@ import { SourceFilter } from './actions/Source';
 
 const Container = styled.div`
   display: flex;
+  margin: 1rem 0;
 
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  .cogs-select {
+    z-index: ${layers.SELECT_MENU};
+  }
 
   & > * {
     margin-left: 0.5rem;

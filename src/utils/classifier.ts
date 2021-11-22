@@ -1,13 +1,19 @@
 import { Classifier } from '@cognite/sdk-playground';
 
-export const isClassifierTraining = (data?: Classifier) => {
-  if (!data) return false;
+export const isClassifierTraining = (classifier?: Classifier) => {
+  if (!classifier) return false;
 
-  return data.status === 'queuing' || data.status === 'training';
+  return classifier.status === 'queuing' || classifier.status === 'training';
 };
 
-export const isClassifierDone = (data?: Classifier) => {
-  if (!data) return false;
+export const isClassifierDone = (classifier?: Classifier) => {
+  if (!classifier) return false;
 
-  return data.status === 'failed' || data.status === 'finished';
+  return classifier.status === 'failed' || classifier.status === 'finished';
+};
+
+export const isClassifierFinished = (classifier?: Classifier) => {
+  if (!classifier) return false;
+
+  return classifier.status === 'finished';
 };

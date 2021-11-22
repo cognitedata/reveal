@@ -1,5 +1,5 @@
 import { Classifier } from '@cognite/sdk-playground';
-import { TableCell } from 'components/TableCell';
+import { TableCell } from 'components/table/TableCell';
 
 export type ClassifierActions = (
   event: 'delete' | 'confusion_matrix',

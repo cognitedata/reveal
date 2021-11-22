@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { Classifier, Document } from '@cognite/sdk-playground';
-import { Tag } from 'components/Tag';
+import { Tag, TagColor } from 'components/Tag';
 import { globalConfig } from 'configs/global.config';
 import { Navigation } from 'hooks/useNavigation';
 import capitalize from 'lodash/capitalize';
@@ -18,7 +18,6 @@ import { ClassifierActions } from 'pages/Home/components/table/curateClassifierC
 import React from 'react';
 import { CellProps } from 'react-table';
 import { ClassifierStatus, ClassifierTrainingSet } from 'services/types';
-import { TagColor } from './Tag';
 
 export const TableCell = {
   Text:
@@ -167,18 +166,16 @@ export const TableCell = {
             <Menu style={{ width: '12rem' }}>
               <Menu.Header>Classifier actions</Menu.Header>
 
-              {original.metrics && (
-                <>
-                  <Menu.Item
-                    onClick={() => {
-                      classifierActionsCallback('confusion_matrix', original);
-                    }}
-                  >
-                    Review/deploy model
-                  </Menu.Item>
-                  <Menu.Divider />
-                </>
-              )}
+              <Menu.Item
+                disabled={!original.metrics}
+                onClick={() => {
+                  classifierActionsCallback('confusion_matrix', original);
+                }}
+              >
+                Review/deploy model
+              </Menu.Item>
+
+              <Menu.Divider />
 
               <Menu.Item
                 onClick={() => classifierActionsCallback('delete', original)}

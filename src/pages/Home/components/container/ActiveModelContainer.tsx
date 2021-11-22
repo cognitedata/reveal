@@ -1,7 +1,7 @@
 import { Body, Button, Flex, Label } from '@cognite/cogs.js';
 import { Classifier } from '@cognite/sdk-playground';
 import { PageHeader } from 'components/page';
-import { TableCell } from 'components/TableCell';
+import { TableCell } from 'components/table/TableCell';
 import React from 'react';
 import styled from 'styled-components';
 

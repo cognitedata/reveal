@@ -6,7 +6,7 @@ import { useDocumentsPipelinesQuery } from 'services/query/documents/query';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  background-color: rgba(74, 103, 251, 0.1);
+  background-color: var(--cogs-greyscale-grey2);
   border-radius: 6px;
   margin-bottom: 5px;
   padding: 8px 12px;
@@ -37,7 +37,7 @@ const ClassifierAdd: React.FC<{ disabled: boolean }> = ({ disabled }) => {
   return (
     <Tooltip
       disabled={!disabled}
-      content="Currently, it is just possible to have one classifier in the pipeline"
+      content="Currently, it is only possible to have one classifier in the pipeline"
     >
       <Button icon="PlusCompact" type="ghost" disabled={disabled}>
         New classifier

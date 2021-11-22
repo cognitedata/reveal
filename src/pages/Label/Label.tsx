@@ -1,20 +1,20 @@
 import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
-import TableBulkActions from 'components/BulkAction';
+import TableBulkActions from 'components/table/BulkAction';
 import { PageHeader, Page, PageContent } from 'components/page';
+import { TableWrapper } from 'components/table/TableWrapper';
 import { useLabelName } from 'hooks/useLabel';
+import { useNavigation } from 'hooks/useNavigation';
 import { useLabelParams } from 'hooks/useParams';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { useDocumentsQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
-import { StickyTableHeadContainer } from 'styles/elements';
 import { DocumentsSearchModal } from './components/modals/DocumentsSearchModal';
 import { DocumentsTable } from './components/table/DocumentsTable';
 
 export const LabelPage: React.FC = () => {
   const externalId = useLabelParams();
   const labelName = useLabelName(externalId);
-  const history = useHistory();
+  const { goBack } = useNavigation();
 
   const { data, isLoading } = useDocumentsQuery();
   const { mutate, isLoading: mutateLoading } =
@@ -33,8 +33,8 @@ export const LabelPage: React.FC = () => {
   };
 
   const handleRemoveDocumentsClick = () => {
-    const documentIds = Object.keys(selectedIds).map((item) => Number(item));
-    mutate({ label: { externalId }, documentIds });
+    const fileIds = Object.keys(selectedIds).map((item) => Number(item));
+    mutate({ label: { externalId }, fileIds });
   };
 
   const renderTable = React.useMemo(
@@ -67,7 +67,7 @@ export const LabelPage: React.FC = () => {
         {
           title: 'New classifier',
           onClick: () => {
-            history.goBack();
+            goBack();
           },
         },
         {
@@ -95,7 +95,7 @@ export const LabelPage: React.FC = () => {
       />
 
       <PageContent>
-        <StickyTableHeadContainer>{renderTable}</StickyTableHeadContainer>
+        <TableWrapper stickyHeader>{renderTable}</TableWrapper>
       </PageContent>
 
       <TableBulkActions

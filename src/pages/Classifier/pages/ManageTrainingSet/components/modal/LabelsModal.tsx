@@ -1,8 +1,9 @@
-import { Modal } from 'components/Modal';
+import { Modal } from 'components/modal/Modal';
+import { TableWrapper } from 'components/table/TableWrapper';
 import React from 'react';
 import { useDocumentsUpdatePipelineMutate } from 'services/query/documents/mutate';
-import { StickyTableHeadContainer } from 'styles/elements';
 import { getContainer } from 'utils/utils';
+import ModalFooter from 'components/modal/ModalFooter';
 import { Labels, LabelsTable } from '../table/LabelsTable';
 
 interface Props {
@@ -11,12 +12,12 @@ interface Props {
 }
 
 export const LabelsModal: React.FC<Props> = ({ visible, toggleVisibility }) => {
-  const selectedLabels = React.useRef<Labels[]>([]);
+  const [selectedLabels, setSelectedLabels] = React.useState<Labels[]>([]);
 
   const { mutateAsync } = useDocumentsUpdatePipelineMutate('add');
 
   const handleLabelsClick = () => {
-    const labels = selectedLabels.current.map(({ externalId }) => ({
+    const labels = selectedLabels.map(({ externalId }) => ({
       externalId,
     }));
 
@@ -26,7 +27,7 @@ export const LabelsModal: React.FC<Props> = ({ visible, toggleVisibility }) => {
   };
 
   const handleSectionChange = React.useCallback((event: Labels[]) => {
-    selectedLabels.current = event;
+    setSelectedLabels(event);
   }, []);
 
   return (
@@ -36,11 +37,18 @@ export const LabelsModal: React.FC<Props> = ({ visible, toggleVisibility }) => {
       visible={visible}
       getContainer={getContainer}
       onCancel={() => toggleVisibility()}
-      onOk={() => handleLabelsClick()}
+      footer={
+        <ModalFooter
+          data={selectedLabels}
+          label="labels"
+          onOk={() => handleLabelsClick()}
+          onCancel={() => toggleVisibility()}
+        />
+      }
     >
-      <StickyTableHeadContainer>
+      <TableWrapper stickyHeader>
         <LabelsTable onSelectionChange={handleSectionChange} />
-      </StickyTableHeadContainer>
+      </TableWrapper>
     </Modal>
   );
 };

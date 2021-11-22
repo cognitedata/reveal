@@ -1,4 +1,4 @@
-import { TableCell } from 'components/TableCell';
+import { TableCell } from 'components/table/TableCell';
 import { Column } from 'react-table';
 
 export const curateColumns = (labels: string[]) => {
@@ -15,7 +15,11 @@ export const curateColumns = (labels: string[]) => {
       ];
     },
     [
-      { Header: '', accessor: 'name', Cell: TableCell.Text({ strong: true }) },
+      {
+        Header: '',
+        accessor: 'name',
+        Cell: TableCell.Text({ strong: true }),
+      },
     ] as Column<any>[]
   );
 };

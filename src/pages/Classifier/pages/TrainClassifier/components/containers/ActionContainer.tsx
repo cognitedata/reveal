@@ -6,14 +6,14 @@ import { ClassifierStatus } from 'services/types';
 import { isClassifierDone, isClassifierTraining } from 'utils/classifier';
 import { Classifier } from '@cognite/sdk-playground';
 
-const Container = styled.div<{ $state?: ClassifierStatus }>`
+const Container = styled.div<{ $status?: ClassifierStatus }>`
   width: 50rem;
-  background-color: ${({ $state }) =>
-    !$state ? 'var(--cogs-bg-status-large--default)' : 'white'};
+  background-color: ${({ $status }) =>
+    !$status ? 'var(--cogs-bg-status-large--default)' : 'white'};
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid
-    ${({ $state }) => (!$state ? '#dbe1fe' : 'var(--cogs-greyscale-grey4);')};
+    ${({ $status }) => (!$status ? '#dbe1fe' : 'var(--cogs-greyscale-grey4);')};
 `;
 
 const Wrapper = styled.div`
@@ -27,9 +27,9 @@ interface Props {
 }
 
 const classifierStatusLabels = (
-  state?: ClassifierStatus
+  status?: ClassifierStatus
 ): { text: string; variant?: LabelVariants } => {
-  switch (state) {
+  switch (status) {
     case 'queuing':
     case 'training': {
       return {
@@ -68,7 +68,7 @@ const ActionContainer: React.FC<Props> = ({ classifier, Action, Message }) => {
 
   return (
     <>
-      <Container $state="training">
+      <Container $status={classifier?.status as ClassifierStatus | undefined}>
         <PageHeader
           title="Set up label classifier"
           titleLevel={5}

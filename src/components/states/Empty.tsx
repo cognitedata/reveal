@@ -1,6 +1,11 @@
 import React from 'react';
 import Recent from 'images/illustrations/recent.svg';
-import { StatesContainer, StatesDescription, StatesTitle } from './elements';
+import {
+  StatesContainer,
+  StatesDescription,
+  StatesTitle,
+  Image,
+} from './elements';
 
 interface Props {
   title?: string;
@@ -9,7 +14,7 @@ interface Props {
 export const Empty: React.FC<Props> = ({ title, description }) => {
   return (
     <StatesContainer>
-      <img src={Recent} alt="Empty illustration" />
+      <Image src={Recent} alt="Empty illustration" />
       <StatesTitle>{title || 'You have no data in this table'}</StatesTitle>
       <StatesDescription>{description}</StatesDescription>
     </StatesContainer>

@@ -5,16 +5,19 @@ import { ManageTrainingSets } from './ManageTrainingSet/ManageTrainingSet';
 import TrainClassifier from './TrainClassifier/TrainClassifier';
 import { ReviewModel } from './ReviewModel/ReviewModel';
 
-export const ClassifierRouter: FC = () => {
+export interface ClassifierProps {
+  Widget: () => JSX.Element | JSX.Element[];
+}
+export const ClassifierRouter: FC<ClassifierProps> = ({ Widget }) => {
   const classifierState = useClassifierCurrentState();
 
   switch (classifierState) {
     case ClassifierState.MANAGE:
-      return <ManageTrainingSets />;
+      return <ManageTrainingSets Widget={Widget} />;
     case ClassifierState.TRAIN:
-      return <TrainClassifier />;
+      return <TrainClassifier Widget={Widget} />;
     case ClassifierState.DEPLOY:
-      return <ReviewModel />;
+      return <ReviewModel Widget={Widget} />;
     default:
       return null;
   }

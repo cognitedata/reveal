@@ -10,8 +10,8 @@ export const useUpdateFileLabelsMutate = (action: 'add' | 'remove') => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({ label, documentIds }: LabelFileUpdate) =>
-      updateFileLabels(sdk, action, label, documentIds),
+    ({ label, fileIds }: LabelFileUpdate) =>
+      updateFileLabels(sdk, action, label, fileIds),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(DOCUMENTS_QUERY_KEYS.list);

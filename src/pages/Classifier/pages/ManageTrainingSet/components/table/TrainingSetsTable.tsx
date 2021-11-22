@@ -1,13 +1,13 @@
 import { Button, Loader, Table } from '@cognite/cogs.js';
-import TableBulkActions from 'components/BulkAction';
+import TableBulkActions from 'components/table/BulkAction';
 import { PageContent } from 'components/page';
 import { Empty } from 'components/states/Empty';
+import { TableWrapper } from 'components/table/TableWrapper';
 import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'services/query/classifier/query';
 import { useDocumentsUpdatePipelineMutate } from 'services/query/documents/mutate';
 import { ClassifierTrainingSet } from 'services/types';
-import { StickyTableHeadContainer } from 'styles/elements';
 import { curateColumns } from './curateTrainingSetsColumns';
 
 export const TrainingSetsTable: React.FC = () => {
@@ -16,7 +16,7 @@ export const TrainingSetsTable: React.FC = () => {
   >([]);
 
   const { data, isLoading } = useClassifierManageTrainingSetsQuery();
-  const { mutateAsync } = useDocumentsUpdatePipelineMutate('remove');
+  const { mutate } = useDocumentsUpdatePipelineMutate('remove');
 
   const navigate = useNavigation();
   const columns = React.useMemo(() => curateColumns(navigate), [navigate]);
@@ -26,7 +26,7 @@ export const TrainingSetsTable: React.FC = () => {
       externalId: id,
     }));
 
-    mutateAsync(labels);
+    mutate(labels);
   };
 
   const handleSectionChange = React.useCallback(
@@ -59,7 +59,7 @@ export const TrainingSetsTable: React.FC = () => {
   return (
     <>
       <PageContent>
-        <StickyTableHeadContainer>{renderTable}</StickyTableHeadContainer>
+        <TableWrapper stickyHeader>{renderTable}</TableWrapper>
       </PageContent>
       <TableBulkActions
         isVisible={selectedTrainingSets.length > 0}

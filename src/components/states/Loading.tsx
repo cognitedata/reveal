@@ -1,7 +1,12 @@
 import React from 'react';
 import Search from 'images/illustrations/search.svg';
 import { loadingState } from 'configs/global.config';
-import { StatesContainer, StatesDescription, StatesTitle } from './elements';
+import {
+  Image,
+  StatesContainer,
+  StatesDescription,
+  StatesTitle,
+} from './elements';
 
 interface Props {
   title?: string;
@@ -38,7 +43,7 @@ export const Loading: React.FC<Props> = ({
 
   return (
     <StatesContainer>
-      <img src={Search} alt="Loading illustration" />
+      <Image src={Search} alt="Loading illustration" />
       <StatesTitle>{title || loadingState.TITLE}</StatesTitle>
       <StatesDescription>{description}</StatesDescription>
     </StatesContainer>
