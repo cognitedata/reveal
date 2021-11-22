@@ -11,13 +11,18 @@ type SimpleGrid2DElement<T> = {
 
 /**
  * Data structure that splits a 2D region into cells where each cell can contain zero to many
- * elements. Elements can be stored in several bu
+ * elements. Elements can be stored in several cells. This data structure make overlap lookups
+ * efficient.
  */
 export class BucketGrid2D<T> {
   private readonly _dimensions: [width: number, height: number];
   private readonly _bounds: THREE.Box2;
   private readonly _cells: SimpleGrid2DElement<T>[][];
-  private readonly _takenElements = new Set<T>();
+  /**
+   * Holds elements that has been removed from the collection using {@link removeOverlappingElements}.
+   * This is used to avoid expensive re-allocations of cells when removing elements.
+   */
+  private readonly _removedElements = new Set<T>();
 
   constructor(bounds: THREE.Box2, dimensions: [width: number, height: number]) {
     this._dimensions = dimensions;
@@ -29,7 +34,7 @@ export class BucketGrid2D<T> {
     if (!this._bounds.intersectsBox(bounds)) {
       throw new Error('Element to be added must be partially inside grid');
     }
-    if (this._takenElements.has(element)) {
+    if (this._removedElements.has(element)) {
       throw new Error('Re-adding previously taken elements is currently not supported');
     }
 
@@ -48,7 +53,7 @@ export class BucketGrid2D<T> {
       for (const candidateElement of cell) {
         if (
           !visitedElements.has(candidateElement.element) &&
-          !this._takenElements.has(candidateElement.element) &&
+          !this._removedElements.has(candidateElement.element) &&
           bounds.intersectsBox(candidateElement.bounds)
         ) {
           visitedElements.add(candidateElement.element);
@@ -58,7 +63,7 @@ export class BucketGrid2D<T> {
     }
   }
 
-  *takeOverlappingElements(bounds: THREE.Box2): Generator<T> {
+  *removeOverlappingElements(bounds: THREE.Box2): Generator<T> {
     if (!this._bounds.intersectsBox(bounds)) {
       return;
     }
@@ -66,8 +71,8 @@ export class BucketGrid2D<T> {
     for (const cell of this.cellsIntersecting(bounds)) {
       for (let i = 0; i < cell.length; i++) {
         const candidateElement = cell[i];
-        if (!this._takenElements.has(candidateElement.element) && bounds.intersectsBox(candidateElement.bounds)) {
-          this._takenElements.add(candidateElement.element);
+        if (!this._removedElements.has(candidateElement.element) && bounds.intersectsBox(candidateElement.bounds)) {
+          this._removedElements.add(candidateElement.element);
           yield candidateElement.element;
         }
       }

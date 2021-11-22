@@ -408,7 +408,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         continue;
       }
 
-      const cluster = Array.from(grid.takeOverlappingElements(elementBounds));
+      const cluster = Array.from(grid.removeOverlappingElements(elementBounds));
       if (cluster.length > 1) {
         const midpoint = cluster
           .reduce((position, element) => position.add(element.state.position2D), clusterMidpoint.set(0, 0))

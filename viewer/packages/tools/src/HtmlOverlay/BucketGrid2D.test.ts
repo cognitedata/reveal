@@ -63,20 +63,20 @@ describe('BucketGrid2D', () => {
     expect(Array.from(grid.overlappingElements(createBounds([0.25, 0.25], [0.35, 0.35])))).toEqual([1]);
   });
 
-  test('takeOverlappingElements() removes element from all cells', () => {
+  test('removeOverlappingElements() removes element from all cells', () => {
     grid.insert(createBounds([0.1, 0.1], [0.9, 0.9]), 0);
-    const taken = Array.from(grid.takeOverlappingElements(createBounds([0.1, 0.1], [0.2, 0.2])));
+    const taken = Array.from(grid.removeOverlappingElements(createBounds([0.1, 0.1], [0.2, 0.2])));
     const remaining = Array.from(grid.overlappingElements(bounds));
     expect(taken).toEqual([0]);
     expect(remaining).toBeEmpty();
   });
 
-  test('add element after takeOverlappingElement() is not supported', () => {
+  test('add element after removeOverlappingElements() is not supported', () => {
     const elementBounds = createBounds([0.1, 0.1], [0.9, 0.9]);
     const element = 0;
     grid.insert(elementBounds, element);
 
-    Array.from(grid.takeOverlappingElements(createBounds([0.1, 0.1], [0.2, 0.2])));
+    Array.from(grid.removeOverlappingElements(createBounds([0.1, 0.1], [0.2, 0.2])));
 
     expect(() => grid.insert(elementBounds, element)).toThrowError();
   });
