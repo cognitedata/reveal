@@ -5,13 +5,13 @@ import { CRON_REQUIRED, cronValidator } from 'utils/validation/cronValidation';
 export const NAME_REQUIRED: Readonly<string> = `Extraction pipeline name is required`;
 export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 10000;
 export const nameRule = {
-  name: yup.string().required(NAME_REQUIRED),
+  name: yup.string().required(NAME_REQUIRED).max(140),
 };
 export const nameSchema = yup.object().shape(nameRule);
 export const META_DESC_REQUIRED: Readonly<string> = 'Description is required';
 export const META_CONTENT_REQUIRED: Readonly<string> = 'Content is required';
 export const metaDescriptionRule = {
-  description: yup.string().required(META_DESC_REQUIRED),
+  description: yup.string().required(META_DESC_REQUIRED).max(500),
 };
 export const metaContentRule = {
   content: yup.string().required(META_CONTENT_REQUIRED),
@@ -89,5 +89,5 @@ export const dataSetIdSchema = yup.object().shape({
 
 export const EXTERNAL_ID_REQUIRED: Readonly<string> = 'External id is required';
 export const externalIdRule = {
-  externalId: yup.string().required(EXTERNAL_ID_REQUIRED),
+  externalId: yup.string().required(EXTERNAL_ID_REQUIRED).max(255),
 };
