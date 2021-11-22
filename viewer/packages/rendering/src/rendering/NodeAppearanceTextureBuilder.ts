@@ -82,7 +82,7 @@ export class NodeAppearanceTextureBuilder {
    * - 0  : visible bit         - when set the node is visible
    * - 1  : in front bit        - when set the node is rendered in front of other objects
    * - 2  : ghosted bit         - when set the node is rendered 'ghosted'
-   * - 3  : ignore clipping bit - when set the node will ignore clipping planes
+   * - 3  : unused
    * - 4  : unused
    * - 5-7: outline color - outline toggle and color ({@see OutlineColor}).
    * Note that in-front and ghost information also is available from
