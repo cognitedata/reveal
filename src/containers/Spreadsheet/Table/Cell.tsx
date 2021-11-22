@@ -41,7 +41,7 @@ export const Cell = (props: Props): JSX.Element => {
       rowIndex === selectedCell.rowIndex &&
       columnIndex === selectedCell.columnIndex;
     if (isClickedCellSelected) deselectCell();
-    else setSelectedCell({ rowIndex, columnIndex });
+    else setSelectedCell({ rowIndex, columnIndex, cellData });
   };
 
   if (columnIndex === 0) {

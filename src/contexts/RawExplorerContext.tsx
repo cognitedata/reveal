@@ -5,6 +5,8 @@ import React, {
   useState,
 } from 'react';
 
+import { NO_CELL_SELECTED } from 'utils/table';
+
 export enum RawExplorerModal {
   CreateDatabase,
 }
@@ -16,6 +18,7 @@ export type SidePanelOptions = {
 export type SelectedCell = {
   rowIndex: number | undefined;
   columnIndex: number | undefined;
+  cellData: string | undefined;
 };
 
 type RawExplorerState = {
@@ -42,10 +45,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
   const [selectedSidePanelDatabase, setSelectedSidePanelDatabase] = useState<
     string | undefined
   >();
-  const [selectedCell, setSelectedCell] = useState<SelectedCell>({
-    rowIndex: undefined,
-    columnIndex: undefined,
-  });
+  const [selectedCell, setSelectedCell] =
+    useState<SelectedCell>(NO_CELL_SELECTED);
   const [isCellExpanded, setIsCellExpanded] = useState<boolean>(false);
 
   return (

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { RawExplorerContext } from 'contexts';
 
-const NO_CELL_SELECTED = { rowIndex: undefined, columnIndex: undefined };
+import { RawExplorerContext } from 'contexts';
+import { NO_CELL_SELECTED } from 'utils/table';
 
 export const useTableSelection = () => {
   const { selectedCell, setSelectedCell, isCellExpanded, setIsCellExpanded } =

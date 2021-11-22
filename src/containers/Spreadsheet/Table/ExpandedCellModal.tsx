@@ -5,7 +5,8 @@ import { Modal } from 'antd';
 import { useTableSelection } from 'hooks/table-selection';
 
 export const ExpandedCellModal = (): JSX.Element => {
-  const { isCellExpanded, setIsCellExpanded } = useTableSelection();
+  const { selectedCell, isCellExpanded, setIsCellExpanded } =
+    useTableSelection();
   const modalRef = useRef(null);
 
   const onModalClose = () => setIsCellExpanded(false);
@@ -15,6 +16,8 @@ export const ExpandedCellModal = (): JSX.Element => {
       visible={isCellExpanded}
       footer={null}
       mask={false}
+      centered={true}
+      width={465}
       onCancel={onModalClose}
       modalRender={(modal) => (
         <Draggable>
@@ -22,7 +25,7 @@ export const ExpandedCellModal = (): JSX.Element => {
         </Draggable>
       )}
     >
-      :3
+      {selectedCell.cellData}
     </Modal>
   );
 };
