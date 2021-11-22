@@ -3,7 +3,6 @@ struct NodeAppearance {
   bool isVisible;
   bool renderInFront;
   bool renderGhosted;
-  bool ignoreClipping;
 };
 
 #pragma glslify: export(NodeAppearance)

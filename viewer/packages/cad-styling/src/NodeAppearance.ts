@@ -44,10 +44,6 @@ export type NodeAppearance = {
    * node to make it stand out.
    */
   readonly outlineColor?: NodeOutlineColor;
-  /**
-   * When set, clipping planes are ignored by the node. Defaults to false.
-   */
-  readonly ignoreClipping?: boolean;
 };
 
 const OutlinedAppearance: NodeAppearance = {
@@ -74,18 +70,12 @@ const GhostedAppearance: NodeAppearance = {
   renderGhosted: true
 };
 
-const IgnoreClippingAppearance: NodeAppearance = {
-  visible: true,
-  ignoreClipping: true
-};
-
 const DefaultAppearance: NodeAppearance = {
   visible: true,
   renderGhosted: false,
   renderInFront: false,
   outlineColor: NodeOutlineColor.NoOutline,
-  color: [0, 0, 0] as [number, number, number],
-  ignoreClipping: false
+  color: [0, 0, 0] as [number, number, number]
 };
 
 /**

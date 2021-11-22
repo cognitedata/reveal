@@ -18,9 +18,8 @@ NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 tex
   bool isVisible = floatBitsSubset(alphaUnwrapped, 0, 1) == 1.0;
   bool renderInFront = floatBitsSubset(alphaUnwrapped, 1, 2) == 1.0;
   bool renderGhosted = floatBitsSubset(alphaUnwrapped, 2, 3) == 1.0;
-  bool ignoreClipping = floatBitsSubset(alphaUnwrapped, 3, 4) == 1.0;
 
-  return NodeAppearance(texel, isVisible, renderInFront, renderGhosted, ignoreClipping);
+  return NodeAppearance(texel, isVisible, renderInFront, renderGhosted);
 }
 
 #pragma glslify: export(determineNodeAppearance)

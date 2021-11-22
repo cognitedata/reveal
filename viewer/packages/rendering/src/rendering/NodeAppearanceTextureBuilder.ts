@@ -211,14 +211,12 @@ function appearanceToColorOverride(appearance: NodeAppearance): [number, number,
   const inFront = !!appearance.renderInFront;
   const ghosted = !!appearance.renderGhosted;
   const outlineColor = appearance.outlineColor ? Number(appearance.outlineColor) : 0;
-  const ignoreClipping = appearance.ignoreClipping !== undefined ? appearance.ignoreClipping : false;
   // Byte layout:
-  // [isVisible, renderInFront, renderGhosted, ignoreClipping, unused, outlineColor0, outlineColor1, outlineColor2]
+  // [isVisible, renderInFront, renderGhosted, unused, unused, outlineColor0, outlineColor1, outlineColor2]
   const bytePattern =
     (isVisible ? 1 << 0 : 0) + //      -------X
     (inFront ? 1 << 1 : 0) + //        ------X-
     (ghosted ? 1 << 2 : 0) + //        -----X--
-    (ignoreClipping ? 1 << 3 : 0) + // ----X---
     (outlineColor << 5); //            XXX-----
   return [r, g, b, bytePattern];
 }
@@ -248,7 +246,6 @@ function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style
     (style.visible !== undefined ? 0b00000001 : 0) |
     (style.renderInFront !== undefined ? 0b00000010 : 0) |
     (style.renderGhosted !== undefined ? 0b00000100 : 0) |
-    (style.ignoreClipping !== undefined ? 0b00001000 : 0) |
     (style.outlineColor !== undefined ? 0b11100000 : 0);
   const keepAlphaBitmask = ~updateAlphaBitmask;
   const updateAlpha = a & updateAlphaBitmask;
