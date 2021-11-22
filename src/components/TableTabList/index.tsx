@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
+import styled from 'styled-components';
+import { Icon, Button, Tooltip } from '@cognite/cogs.js';
+
 import {
   useActiveTable,
+  useOpenTable,
   useCloseTable,
   useTableTabList,
 } from 'hooks/table-tabs';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { TAB_HEIGHT } from 'utils/constants';
-import styled from 'styled-components';
 import { RawExplorerContext } from 'contexts';
 
 const Tabs = styled.ul`
@@ -93,8 +95,8 @@ const OpenNavTab = styled(Tab)`
 
 export default function TableTabList() {
   const [list = []] = useTableTabList();
-  const [[activeDb, activeTable] = [undefined, undefined], setActive] =
-    useActiveTable();
+  const [[activeDb, activeTable] = [undefined, undefined]] = useActiveTable();
+  const openTab = useOpenTable();
   const close = useCloseTable();
   const { isSidePanelOpen, setIsSidePanelOpen } =
     useContext(RawExplorerContext);
@@ -115,7 +117,7 @@ export default function TableTabList() {
           $active={db === activeDb && table === activeTable}
           onMouseDown={(event) => event.button === 1 && close([db, table])}
           onClick={() => {
-            setActive([db, table]);
+            openTab([db, table]);
           }}
         >
           <LeftIcon>
