@@ -20,6 +20,15 @@ import {
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool, ToolbarPosition } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
+import iconSet12 from './icons/Cognite_Icon_Set-12.png';
+import iconSet14 from './icons/Cognite_Icon_Set-14.png';
+import iconSet19 from './icons/Cognite_Icon_Set-19.png';
+import iconSet30 from './icons/Cognite_Icon_Set-30.png';
+import iconSet32 from './icons/Cognite_Icon_Set-32.png';
+import iconSet42 from './icons/Cognite_Icon_Set-42.png';
+import iconSet54 from './icons/Cognite_Icon_Set-54.png';
+import iconSet63 from './icons/Cognite_Icon_Set-63.png';
+
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
@@ -181,28 +190,15 @@ export function Toolbar() {
         alert("result called");
       }
 
-      const fileLoader = '!file-loader!';
-
-      const cameraIcon = await import(fileLoader + './icons/Cognite_Icon_Set-12.png');
-      const axisIcon = await import(fileLoader + './icons/Cognite_Icon_Set-14.png');
-      const doorIcon = await import(fileLoader + './icons/Cognite_Icon_Set-19.png');
-      const earthIcon = await import(fileLoader + './icons/Cognite_Icon_Set-30.png');
-      const timelineIcon = await import(fileLoader + './icons/Cognite_Icon_Set-32.png');
-      const keyIcon = await import(fileLoader + './icons/Cognite_Icon_Set-42.png');
-      const mapIcon = await import(fileLoader + './icons/Cognite_Icon_Set-54.png');
-      const settingsIcon = await import(fileLoader + './icons/Cognite_Icon_Set-63.png');
-
-
       const toolbar = new ToolbarTool(viewer);
-      toolbar.addToolbarItem('Camera Switch', cameraIcon.default, callbackMsg);
-      toolbar.addToolbarItem('Axis Tool', axisIcon.default, callbackMsg);
-      toolbar.addToolbarItem('HTML Overlay', doorIcon.default, callbackMsg);
-      toolbar.addToolbarItem('Debug Camera', earthIcon.default, callbackMsg);
-      toolbar.addToolbarItem('Timeline', timelineIcon.default, callbackMsg);
-      toolbar.addToolbarItem('Explode View', keyIcon.default, callbackMsg);
-      toolbar.addToolbarItem('Maps', mapIcon.default, callbackMsg);
-      toolbar.addToolbarItem('Settings', settingsIcon.default, callbackMsg);
-
+      toolbar.addToolbarItem('Camera Switch', iconSet12, callbackMsg);
+      toolbar.addToolbarItem('Axis Tool', iconSet14, callbackMsg);
+      toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
+      toolbar.addToolbarItem('Debug Camera', iconSet30, callbackMsg);
+      toolbar.addToolbarItem('Timeline', iconSet32, callbackMsg);
+      toolbar.addToolbarItem('Explode View', iconSet42, callbackMsg);
+      toolbar.addToolbarItem('Maps', iconSet54, callbackMsg);
+      toolbar.addToolbarItem('Settings', iconSet63, callbackMsg);
 
       const renderGui = gui.addFolder('Options');
       const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];
