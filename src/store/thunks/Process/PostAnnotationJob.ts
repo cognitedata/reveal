@@ -7,7 +7,7 @@ import {
 import { ThunkConfig } from 'src/store/rootReducer';
 import { createAnnotationJob } from 'src/api/annotationJob';
 import { State } from 'src/modules/Process/processSlice';
-import { PollJobs } from './PollJobs';
+import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 
 export const postAnnotationJob = createAsyncThunk<
   AnnotationJob,
