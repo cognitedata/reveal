@@ -64,14 +64,11 @@ export class BucketGrid2D<T> {
     }
 
     for (const cell of this.cellsIntersecting(bounds)) {
-      let i = 0;
-      while (i < cell.length) {
+      for (let i = 0; i < cell.length; i++) {
         const candidateElement = cell[i];
         if (!this._takenElements.has(candidateElement.element) && bounds.intersectsBox(candidateElement.bounds)) {
           this._takenElements.add(candidateElement.element);
           yield candidateElement.element;
-        } else {
-          i++;
         }
       }
     }
