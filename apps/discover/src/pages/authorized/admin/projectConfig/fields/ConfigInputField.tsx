@@ -1,10 +1,12 @@
 import React, { ChangeEvent, useState, useCallback } from 'react';
 
-import { Input, Switch, Textarea, toast } from '@cognite/cogs.js';
+import { Input, Textarea, toast } from '@cognite/cogs.js';
 
 import { showErrorMessage } from 'components/toast';
 
-import { HandleConfigChange, MetadataValue } from './types';
+import { HandleConfigChange, MetadataValue } from '../types';
+
+import { SwitchBoolean } from './SwitchBoolean';
 
 export const ConfigInputField: React.FC<{
   changeKey: string;
@@ -89,13 +91,12 @@ export const ConfigInputField: React.FC<{
       );
     case 'boolean':
       return (
-        <Switch
+        <SwitchBoolean
           name={changeKey}
-          value={Boolean(value) as boolean}
-          onChange={handleSwitchChange}
-        >
-          {field.label}
-        </Switch>
+          handleChange={handleSwitchChange}
+          value={Boolean(value)}
+          label={field.label}
+        />
       );
     case 'object':
     case 'array':
@@ -104,8 +105,8 @@ export const ConfigInputField: React.FC<{
           <Textarea
             className="config-textarea-container"
             style={{
-              height: 200,
-              width: 350,
+              height: 300,
+              width: 650,
             }}
             id={changeKey}
             name={field.label}

@@ -3,14 +3,15 @@ import React from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import map from 'lodash/map';
-import reduce from 'lodash/reduce';
-import some from 'lodash/some';
 
-import { Flex, Collapse, Body, CollapsePanelProps } from '@cognite/cogs.js';
+import { Flex, Collapse, Body } from '@cognite/cogs.js';
 import { ProjectConfig } from '@cognite/discover-api-types';
 
-import { ConfigIcon, CollapseWrapper, LeafField } from './elements';
-import { Metadata, MetadataValue } from './types';
+import { ExpandIcon } from '../common/ExpandIcon';
+import { ConfigIcon, CollapseWrapper, LeafField } from '../elements';
+import { Metadata, MetadataValue } from '../types';
+import { getMetadataFromValue } from '../utils/getMetadataFromValue';
+import { isLeaf } from '../utils/isLeaf';
 
 type Props = {
   metadata?: Metadata;
@@ -19,31 +20,6 @@ type Props = {
   prefixPath: string;
   config?: ProjectConfig;
 };
-
-const expandIcon = ({ isActive }: CollapsePanelProps) => {
-  return <ConfigIcon type="ChevronDownMicro" active={`${isActive}`} />;
-};
-
-const getMetadataFromValue = (
-  value: ProjectConfig[keyof ProjectConfig],
-  currentMetadata: MetadataValue
-): Metadata => {
-  return reduce<ProjectConfig[keyof ProjectConfig], Metadata>(
-    value as [],
-    (acc, datum, index) => {
-      const accumulator = { ...acc };
-      accumulator[index] = {
-        label:
-          get(datum, currentMetadata?.dataLabelIdentifier || '') ??
-          `${currentMetadata.label} ${index + 1}`,
-        children: currentMetadata.children,
-      };
-      return accumulator;
-    },
-    {}
-  );
-};
-
 export const ConfigFields: React.FC<Props> = ({
   prefixPath,
   selected,
@@ -61,11 +37,9 @@ export const ConfigFields: React.FC<Props> = ({
 
         const isCurrentPathActive = selected.indexOf(currentPath) === 0;
 
-        const isLeaf =
-          !some(currentMetadata.children, 'children') &&
-          !currentMetadata.dataAsChildren;
+        const currentMetadataIsLeaf = isLeaf(currentMetadata);
 
-        if (isLeaf) {
+        if (currentMetadataIsLeaf) {
           return (
             <LeafField
               key={currentPath}
@@ -98,6 +72,8 @@ export const ConfigFields: React.FC<Props> = ({
   );
 };
 
+// this is called recursively from the above ConfigFields component
+// so best to keep it located closely here
 const NestedField: React.FC<{
   currentPath: string;
   currentMetadata: MetadataValue;
@@ -135,7 +111,7 @@ const NestedField: React.FC<{
     <CollapseWrapper key={currentPath}>
       <Collapse
         activeKey={isCurrentPathActive ? currentPath : selected}
-        expandIcon={expandIcon}
+        expandIcon={ExpandIcon}
         className="config-field-item"
         accordion
         ghost

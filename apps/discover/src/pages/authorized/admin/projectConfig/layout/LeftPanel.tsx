@@ -5,13 +5,14 @@ import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { SearchBox } from 'components/filters';
 
-import { ConfigFields } from './ConfigFields';
+import { ConfigFields } from '../fields/ConfigFields';
+import { Metadata } from '../types';
+
 import {
   ProjectConfigSidebar,
   PaddingBottomBorder,
   ConfigFieldsWrapper,
 } from './elements';
-import { Metadata } from './types';
 
 type Props = {
   metadata: Metadata;

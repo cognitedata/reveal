@@ -11,19 +11,20 @@ import size from 'lodash/size';
 import { Button, Title, Flex } from '@cognite/cogs.js';
 import { ProjectConfig } from '@cognite/discover-api-types';
 
-import { ConfigFormFields } from './ConfigFormFields';
+import { ConfigFormFields } from '../fields/ConfigFormFields';
+import {
+  MetadataValue,
+  HandleConfigChange,
+  HandleConfigUpdate,
+  CustomComponent,
+} from '../types';
+
 import {
   ProjectConfigFooter,
   RightPanelContainer,
   FormContainer,
   ItemWrapper,
 } from './elements';
-import {
-  MetadataValue,
-  HandleConfigChange,
-  HandleConfigUpdate,
-  CustomComponent,
-} from './types';
 
 interface Props {
   metadataValue?: MetadataValue;
@@ -114,16 +115,17 @@ const ConfigComponent: React.FC<{
         metadataPath={metadataPath}
       />
       {map(value as [], (datum, index) => {
+        const label =
+          get(datum, metadataValue?.dataLabelIdentifier || '') ??
+          `${metadataValue?.label} ${index + 1}`;
         return (
-          <Flex gap={8} alignItems="center">
-            <ItemWrapper level="4">
-              {get(datum, metadataValue?.dataLabelIdentifier || '') ??
-                `${metadataValue?.label} ${index + 1}`}
-            </ItemWrapper>
+          <Flex gap={8} alignItems="center" key={label}>
+            <ItemWrapper level="4">{label}</ItemWrapper>
             <Button
               icon="Trash"
+              aria-label="Delete item"
               onClick={() => handleChange(datum)}
-              variant="ghost"
+              type="ghost"
             />
           </Flex>
         );

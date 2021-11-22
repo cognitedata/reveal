@@ -5,8 +5,7 @@ import get from 'lodash/get';
 import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { FullContainer } from './elements';
-import { LeftPanel } from './LeftPanel';
-import { RightPanel } from './RightPanel';
+import { RightPanel, LeftPanel } from './layout';
 import {
   HandleConfigChange,
   HandleConfigUpdate,
@@ -14,7 +13,7 @@ import {
   CustomComponent,
 } from './types';
 
-interface Props {
+export interface Props {
   config: ProjectConfig;
   onChange: HandleConfigChange;
   onUpdate: HandleConfigUpdate;

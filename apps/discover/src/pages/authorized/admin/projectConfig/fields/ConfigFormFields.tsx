@@ -3,8 +3,9 @@ import React from 'react';
 import get from 'lodash/get';
 import map from 'lodash/map';
 
+import { HandleConfigChange, MetadataValue } from '../types';
+
 import { ConfigInputField } from './ConfigInputField';
-import { HandleConfigChange, MetadataValue } from './types';
 
 export const ConfigFormFields: React.FC<{
   metadataValue?: MetadataValue;

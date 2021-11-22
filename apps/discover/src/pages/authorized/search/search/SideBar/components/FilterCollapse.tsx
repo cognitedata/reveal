@@ -4,8 +4,9 @@ import { useDispatch } from 'react-redux';
 import noop from 'lodash/noop';
 import styled from 'styled-components/macro';
 
-import { Collapse, Icon, CollapsePanelProps, Button } from '@cognite/cogs.js';
+import { Collapse, Button } from '@cognite/cogs.js';
 
+import { CollapseIcon } from 'components/icons/CollapseIcon';
 import { updateCategoryCollapseKey } from 'modules/sidebar/actions';
 import { useFilterActiveKeys } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
@@ -57,14 +58,6 @@ const Panel = styled(DefaultPanel)`
   border-radius: 6px;
 `;
 
-const CollapseIcon = styled(Icon)`
-  margin-right: 8px;
-  color: var(--cogs-text-color-secondary);
-  transition: transform 0.2s;
-  transform: ${({ active }: { active: string }) =>
-    JSON.parse(active) ? 'rotate(-180deg)' : 'rotate(0deg)'};
-`;
-
 const Container = styled(FlexColumn)`
   justify-content: center;
   order: -1;
@@ -83,10 +76,6 @@ export const FilterCollapse = ({
   const activeKeys = useFilterActiveKeys();
   const dispatch = useDispatch();
 
-  const expandIcon = ({ isActive }: CollapsePanelProps) => {
-    return <CollapseIcon type="ChevronDownCompact" active={`${isActive}`} />;
-  };
-
   return (
     <Collapse
       {...rest}
@@ -95,7 +84,7 @@ export const FilterCollapse = ({
         dispatch(updateCategoryCollapseKey({ category, value: keys }));
       }}
       ghost
-      expandIcon={expandIcon}
+      expandIcon={CollapseIcon}
     >
       {children}
     </Collapse>

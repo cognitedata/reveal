@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/modal';
 
-import { ConfigFormFields } from '../ConfigFormFields';
+import { ConfigFormFields } from '../fields/ConfigFormFields';
 import { CustomComponent } from '../types';
 
 import { CustomForm } from './elements';

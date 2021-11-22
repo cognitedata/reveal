@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, screen, act } from '@testing-library/react';
+import { cleanup, fireEvent, screen } from '@testing-library/react';
 
 import {
   mockProjectConfigMetadata,
@@ -7,15 +7,17 @@ import {
 import { testRenderer } from '__test-utils/renderer';
 
 import {
+  Props,
   ProjectConfigForm,
   adaptedSelectedPathToMetadataPath,
 } from '../ProjectConfigForm';
 
-const defaultProps = {
+const getDefaultProps = (extras: Partial<Props> = {}) => ({
   config: {},
   onChange: jest.fn(),
   metadata: mockProjectConfigMetadata,
-};
+  ...extras,
+});
 
 describe('ProjectConfigForm', () => {
   afterEach(() => {
@@ -23,42 +25,44 @@ describe('ProjectConfigForm', () => {
     jest.clearAllMocks();
   });
 
-  const defaultTestInit = (props = defaultProps) =>
-    testRenderer(ProjectConfigForm, undefined, props);
+  describe('ProjectConfigForm', () => {
+    const defaultTestInit = (props = getDefaultProps()) =>
+      testRenderer(ProjectConfigForm, undefined, props);
 
-  it('should render both left & right panel by default', () => {
-    defaultTestInit();
+    it('should render both left & right panel by default', () => {
+      defaultTestInit();
 
-    // Selected field keyword on left panel appears twice as it is header on right panel
-    expect(screen.getAllByText('General').length).toBe(2);
-  });
-
-  it('should trigger onChange with value upon changing value of Input', () => {
-    defaultTestInit();
-
-    fireEvent.change(screen.getByPlaceholderText('Side Bar'), {
-      target: { value: 5 },
+      // Selected field keyword on left panel appears twice as it is header on right panel
+      expect(screen.getAllByText('General').length).toBe(2);
     });
 
-    expect(defaultProps.onChange).toHaveBeenCalledWith('general.sideBar', 5);
-  });
+    it('should trigger onChange with value upon changing value of Input', () => {
+      const props = getDefaultProps();
+      defaultTestInit(props);
 
-  it('should switch right panel upon choosing different field in left Panel', async () => {
-    await act(async () => {
-      await defaultTestInit();
+      fireEvent.change(screen.getByPlaceholderText('Side Bar'), {
+        target: { value: 5 },
+      });
 
-      fireEvent.click(screen.getByText('Documents'));
-
-      expect(screen.queryByText('Disabled')).toBeInTheDocument();
+      expect(props.onChange).toHaveBeenCalledWith('general.sideBar', 5);
     });
-  });
 
-  test('should show layers 1 data as children for truthy dataAsChildren metadata & trigger onChange on blurring json input', async () => {
-    await act(async () => {
-      await defaultTestInit({
-        ...defaultProps,
+    it('should switch right panel upon choosing different field in left Panel', async () => {
+      const props = getDefaultProps({
         config: mockConfigDataWithLayers,
       });
+      await defaultTestInit(props);
+      fireEvent.click(screen.getByText('Documents'));
+
+      expect(screen.queryByText('Enabled')).toBeInTheDocument();
+    });
+
+    test('should show layers 1 data as children for truthy dataAsChildren metadata & trigger onChange on blurring json input', async () => {
+      const props = getDefaultProps({
+        config: mockConfigDataWithLayers,
+      });
+      await defaultTestInit(props);
+
       const map = screen.getByText('Map');
       fireEvent.click(map);
       const layers = screen.getByText('Layers');
@@ -72,8 +76,8 @@ describe('ProjectConfigForm', () => {
         target: { value: JSON.stringify(mockFilters) },
       });
 
-      expect(defaultProps.onChange).toHaveBeenCalled();
-      const onChangeArgs = defaultProps.onChange.mock.calls[0];
+      expect(props.onChange).toHaveBeenCalled();
+      const onChangeArgs = props.onChange.mock.calls[0];
       expect(onChangeArgs[0]).toBe('map.layers.0.filters');
       expect(onChangeArgs[1]).toStrictEqual(mockFilters);
     });
