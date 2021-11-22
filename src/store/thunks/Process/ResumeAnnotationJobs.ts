@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { JobState } from 'src/modules/Process/processSlice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
-import { PollJobs } from './PollJobs';
+import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 
 export const ResumeAnnotationJobs = createAsyncThunk<
   void,
