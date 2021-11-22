@@ -7,7 +7,7 @@ import { useRawProfile } from 'hooks/sdk-queries';
 export const Profiling = (): JSX.Element => {
   const [[database, table] = []] = useActiveTable();
 
-  const { data, isFetching, isError, error } = useRawProfile(
+  const { data, isLoading, isError, error } = useRawProfile(
     {
       database: database!,
       table: table!,
@@ -29,7 +29,7 @@ export const Profiling = (): JSX.Element => {
 
   return (
     <Flex direction="column">
-      {isFetching ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <div>
