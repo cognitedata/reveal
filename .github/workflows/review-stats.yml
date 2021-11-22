@@ -7,10 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run pull request stats
-        uses: flowwer-dev/pull-request-stats@master
-        with:
-          organization: 'cognite'
-          period: 30
-          charts: false
-          disable-links: true
-          sort-by: 'REVIEWS'
+        uses: flowwer-dev/pull-request-stats@v1
