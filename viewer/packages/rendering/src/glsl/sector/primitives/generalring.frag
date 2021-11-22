@@ -1,9 +1,11 @@
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
+#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
-#pragma glslify: import('../../math/constants.glsl')
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
+#pragma glslify: import('../../math/constants.glsl')
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 varying float v_oneMinusThicknessSqr;
@@ -26,15 +28,16 @@ uniform int renderMode;
 varying vec3 vViewPosition;
 
 void main() {
-    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
+    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
 
-    if (isSliced(vViewPosition)) {
+    if (isClipped(appearance, vViewPosition)) {
         discard;
     }
 
-    vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, appearance);
     float dist = dot(v_xy, v_xy);
     float theta = atan(v_xy.y, v_xy.x);
     vec3 normal = normalize( v_normal );
