@@ -11,6 +11,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 import { SDKProvider } from '@cognite/sdk-provider';
 import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
+import AccessCheck from 'AccessCheck';
 
 const App = () => {
   const history = createHistory();
@@ -44,28 +45,33 @@ const App = () => {
                   <Router history={history}>
                     <Suspense fallback={<Loader />}>
                       <Switch>
-                        <Route
-                          path="/:tenant/:appPath"
-                          component={useMemo(
-                            () =>
-                              React.lazy(
-                                () => import('pages/DataSetsList/DataSetsList')
-                              ),
-                            []
-                          )}
-                          exact
-                        />
-                        <Route
-                          path="/:tenant/:appPath/data-set/:dataSetId"
-                          component={useMemo(
-                            () =>
-                              React.lazy(
-                                () =>
-                                  import('pages/DataSetDetails/DataSetDetails')
-                              ),
-                            []
-                          )}
-                        />
+                        <AccessCheck>
+                          <Route
+                            path="/:tenant/:appPath"
+                            component={useMemo(
+                              () =>
+                                React.lazy(
+                                  () =>
+                                    import('pages/DataSetsList/DataSetsList')
+                                ),
+                              []
+                            )}
+                            exact
+                          />
+                          <Route
+                            path="/:tenant/:appPath/data-set/:dataSetId"
+                            component={useMemo(
+                              () =>
+                                React.lazy(
+                                  () =>
+                                    import(
+                                      'pages/DataSetDetails/DataSetDetails'
+                                    )
+                                ),
+                              []
+                            )}
+                          />
+                        </AccessCheck>
                       </Switch>
                     </Suspense>
                   </Router>
