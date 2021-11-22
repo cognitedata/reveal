@@ -1,4 +1,6 @@
 import { useContext } from 'react';
+import isNil from 'lodash/isNil';
+
 import { RawExplorerContext } from 'contexts';
 
 const NO_CELL_SELECTED = { rowIndex: undefined, columnIndex: undefined };
@@ -14,7 +16,7 @@ export const useTableSelection = () => {
   };
 
   const deselectCell = () => {
-    if (selectedCell.rowIndex && selectedCell.columnIndex)
+    if (!isNil(selectedCell.rowIndex) && !isNil(selectedCell.columnIndex))
       setSelectedCell(NO_CELL_SELECTED);
   };
 

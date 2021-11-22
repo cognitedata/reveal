@@ -5,7 +5,6 @@ export const StyledCell = styled.div`
   width: 100%;
   cursor: pointer;
   box-sizing: border-box;
-  background-color: white;
 `;
 
 export const StyledCellIndexColumn = styled.div`
@@ -42,6 +41,7 @@ export const StyledCellSelected = styled(StyledCell)`
   padding: 6px 14px;
   border-radius: 4px;
   border: 2px solid ${Colors.midblue.hex()};
+  background-color: white;
 `;
 
 export const StyledCellContent = styled.div<{ isOverflow: boolean }>`
