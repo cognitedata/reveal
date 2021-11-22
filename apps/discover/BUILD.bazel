@@ -385,7 +385,7 @@ copy_to_bin(
 )
 
 react_scripts_test(
-    name = "test",
+    name = "unit_test",
     # folder name to store jest coverage in during CI run
     app_name = "discover",
     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + [

@@ -30,7 +30,7 @@
     "build-storybook:bazel": "bazel build :storybook-static",
     "test:debug": "../../node_modules/.bin/react-scripts --inspect-brk test --runInBand",
     "t": "yarn test:all",
-    "test": "ibazel test :test",
+    "test": "ibazel test :unit_test",
     "test:raw": "./scripts/test.sh src",
     "test:all": "../../node_modules/.bin/react-scripts test --env=jest-environment-jsdom-sixteen",
     "test:changed": "yarn test:all --detectOpenHandles --bail --colors --verbose --onlyChanged --coverageReporters=none --watchAll=false",
