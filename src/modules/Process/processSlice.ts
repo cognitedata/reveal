@@ -425,6 +425,20 @@ export const selectIsProcessingStarted = createSelector(
   }
 );
 
+export const selectUnfinishedJobs = createSelector(
+  (state: State) => state.jobs.allIds,
+  selectAllJobs,
+  (allIds, allJobs) => {
+    return allIds
+      .map((id) => allJobs[id])
+      .filter(
+        (job) =>
+          job.jobId !== -1 &&
+          (job.status === 'Queued' || job.status === 'Running')
+      );
+  }
+);
+
 export const makeSelectAnnotationStatuses = () =>
   createSelector(selectJobsByFileId, (fileJobs) => {
     const annotationBadgeProps = {
