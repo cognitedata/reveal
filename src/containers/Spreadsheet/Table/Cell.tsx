@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Icon } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
 import {
@@ -7,8 +6,8 @@ import {
   StyledCellUnselected,
   StyledCellSelected,
   StyledCellContent,
-  StyledExpandButton,
 } from './Cell.styles';
+import { ExpandButton } from './ExpandButton';
 
 type Props = {
   cellData?: string | undefined;
@@ -59,25 +58,5 @@ export const Cell = (props: Props): JSX.Element => {
     <StyledCellUnselected onClick={onCellSelect}>
       {cellData}
     </StyledCellUnselected>
-  );
-};
-
-const ExpandButton = (): JSX.Element => {
-  const { setIsCellExpanded } = useTableSelection();
-
-  const onExpandClick = (event: any) => {
-    event.stopPropagation();
-    setIsCellExpanded(true);
-  };
-
-  return (
-    <StyledExpandButton
-      type="primary"
-      size="small"
-      onClick={onExpandClick}
-      style={{ padding: '4px' }}
-    >
-      <Icon type="Expand" />
-    </StyledExpandButton>
   );
 };
