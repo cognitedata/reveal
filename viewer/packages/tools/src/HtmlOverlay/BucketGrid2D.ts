@@ -13,6 +13,10 @@ type SimpleGrid2DElement<T> = {
  * Data structure that splits a 2D region into cells where each cell can contain zero to many
  * elements. Elements can be stored in several cells. This data structure make overlap lookups
  * efficient.
+ *
+ * Note! This class is tailored for usage with {@link HtmlOverlayTool} and has a few restrictions
+ * and assumptions associated with the usage. If used elsewhere, take care as to how this affects
+ * performance and behaviour.
  */
 export class BucketGrid2D<T> {
   private readonly _dimensions: [width: number, height: number];
