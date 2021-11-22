@@ -16,6 +16,7 @@ import {
   setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
+  selectAnnotationSettingsState,
   showAnnotationSettingsModel,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
@@ -75,8 +76,8 @@ export const ImagePreview = ({
       currentCollection(annotationLabelReducer)
   );
 
-  const showAnnotationSettingsModal = useSelector(
-    ({ reviewSlice }: RootState) => reviewSlice.showAnnotationSettings
+  const annotationSettingsState = useSelector(({ reviewSlice }: RootState) =>
+    selectAnnotationSettingsState(reviewSlice)
   );
 
   useEffect(() => {
@@ -136,8 +137,12 @@ export const ImagePreview = ({
     dispatch(setSelectedTool(tool));
   };
 
-  const onOpenAnnotationSettings = () => {
-    dispatch(showAnnotationSettingsModel(true));
+  const onOpenAnnotationSettings = (
+    type = 'shape',
+    text?: string,
+    color?: string
+  ) => {
+    dispatch(showAnnotationSettingsModel(true, type, text, color));
   };
 
   const onOpenKeyboardShortcuts = () => {
@@ -211,14 +216,15 @@ export const ImagePreview = ({
             type="ghost"
             icon="Settings"
             aria-label="open annotation settings"
-            onClick={onOpenAnnotationSettings}
-            toggled={showAnnotationSettingsModal}
+            onClick={() => onOpenAnnotationSettings()}
+            toggled={annotationSettingsState.show}
           />
         </Tooltip>
       </ExtraToolbar>
       <AnnotationSettingsModal
-        showModal={showAnnotationSettingsModal}
+        showModal={annotationSettingsState.show}
         onCancel={() => dispatch(showAnnotationSettingsModel(false))}
+        options={annotationSettingsState}
       />
       <KeyboardShortcutModal
         showModal={showKeyboardShortcutModal}

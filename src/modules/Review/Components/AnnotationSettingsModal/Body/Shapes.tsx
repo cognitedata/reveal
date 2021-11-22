@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input } from 'antd';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/utill';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
+import isEmpty from 'lodash-es/isEmpty';
 import { Header } from './Header';
 
 const validNewShapes = (newShapes: { [key: string]: Shape }) => {
@@ -24,19 +25,27 @@ const handleClick = (evt: any) => {
 export const Shapes = ({
   collections,
   setCollections,
+  options,
 }: {
   collections: AnnotationCollection;
   setCollections: (collection: AnnotationCollection) => void;
+  options?: { createNew?: { text?: string; color?: string } };
 }) => {
   const { predefinedShapes } = collections;
   const [newShapes, setNewShapes] = useState<{ [key: string]: Shape }>({});
+  const shapePanelRef = useRef<HTMLDivElement | null>(null);
 
-  const addNewShape = () => {
+  const addNewShape = (newShape?: { text?: string; color?: string }) => {
     const availableIndexes = Object.keys(newShapes);
-    const nextIndex = availableIndexes[availableIndexes.length - 1] + 1;
+    const nextIndex = availableIndexes.length
+      ? availableIndexes[availableIndexes.length - 1] + 1
+      : 0;
     setNewShapes((shapes) => ({
       ...shapes,
-      [`${nextIndex}`]: { shapeName: '', color: getRandomColor() },
+      [`${nextIndex}`]: {
+        shapeName: newShape?.text || '',
+        color: newShape?.color || getRandomColor(),
+      },
     }));
   };
   const updateCaption = (key: string, value: string) => {
@@ -65,6 +74,26 @@ export const Shapes = ({
     setNewShapes({});
   };
 
+  const scrollToBottom = () => {
+    const elm = shapePanelRef.current;
+    if (elm) {
+      elm.scrollTop = elm.scrollHeight - elm.clientHeight;
+    }
+  };
+
+  // create new keypoint on settings open
+  useEffect(() => {
+    if (options) {
+      if (!isEmpty(options.createNew)) {
+        addNewShape(options.createNew);
+      }
+    }
+  }, [options]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [newShapes, predefinedShapes]);
+
   return (
     <>
       <Header
@@ -77,7 +106,7 @@ export const Shapes = ({
             : undefined
         }
       />
-      <ShapePanel>
+      <ShapePanel ref={shapePanelRef}>
         {predefinedShapes.length ? (
           predefinedShapes.map((shape) => (
             <ShapeWrapper key={`${shape.shapeName}-${shape.color}`}>
