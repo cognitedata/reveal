@@ -30,14 +30,28 @@ type State = {
   fileIds: number[];
   selectedAnnotationIds: number[];
   hiddenAnnotationIds: number[];
-  showAnnotationSettings: boolean;
+  annotationSettings: {
+    show: boolean;
+    activeView: 'keypoint' | 'shape';
+    createNew: {
+      text?: string;
+      color?: string;
+    };
+  };
 };
 
 const initialState: State = {
   fileIds: [],
   selectedAnnotationIds: [],
   hiddenAnnotationIds: [],
-  showAnnotationSettings: false,
+  annotationSettings: {
+    show: false,
+    activeView: 'shape',
+    createNew: {
+      text: undefined,
+      color: undefined,
+    },
+  },
 };
 
 const reviewSlice = createSlice({
@@ -67,8 +81,37 @@ const reviewSlice = createSlice({
       const annotationId = action.payload;
       state.selectedAnnotationIds = [annotationId];
     },
-    showAnnotationSettingsModel(state, action: PayloadAction<boolean>) {
-      state.showAnnotationSettings = action.payload;
+    showAnnotationSettingsModel: {
+      prepare: (
+        show: boolean,
+        type = 'shape',
+        text?: string,
+        color?: string
+      ) => {
+        return {
+          payload: {
+            show,
+            options: { type, text, color },
+          },
+        };
+      },
+      reducer: (
+        state,
+        action: PayloadAction<{
+          show: boolean;
+          options: {
+            type: 'keypoint' | 'shape';
+            text?: string;
+            color?: string;
+          };
+        }>
+      ) => {
+        state.annotationSettings.createNew.text = action.payload.options?.text;
+        state.annotationSettings.createNew.color =
+          action.payload.options?.color;
+        state.annotationSettings.activeView = action.payload.options.type;
+        state.annotationSettings.show = action.payload.show;
+      },
     },
     resetPreview(state) {
       state.selectedAnnotationIds = [];
@@ -201,5 +244,18 @@ export const selectVisibleNonRejectedAnnotationsForFile = createSelector(
       (ann) =>
         ann.show && !!ann.region && ann.status !== AnnotationStatus.Rejected
     );
+  }
+);
+
+export const selectAnnotationSettingsState = createSelector(
+  (state: State) => state.annotationSettings,
+  (annotationSettingsState) => {
+    const settingsState = {
+      ...annotationSettingsState,
+      ...((!annotationSettingsState.createNew.text ||
+        annotationSettingsState.createNew.text) &&
+        !annotationSettingsState.createNew.color && { createNew: {} }),
+    };
+    return settingsState;
   }
 );

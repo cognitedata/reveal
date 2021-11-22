@@ -36,7 +36,6 @@ const lifecycles = singleSpaReact({
   // must be aligned with that id https://github.com/cognitedata/cdf-hub/pull/896/files#diff-bb6612be43d4f0ceceee1b286daf301a80e54aa1fc25edd5017a1aff986d6503R96
   domElementGetter: () => document.getElementById('cdf-vision-subapp')!,
 });
-
 configure({
   // logLevel: 'debug',
   ignoreRepeatedEventsWhenKeyHeldDown: false,
@@ -44,6 +43,18 @@ configure({
   stopEventPropagationAfterHandling: false,
   // todo: remove after https://github.com/greena13/react-hotkeys/issues/237
   ignoreEventsCondition: (keyEvent) => {
+    const IGNORED_TAGS = ['input', 'select', 'textarea'];
+
+    const eventIsFromIgnoredInput =
+      keyEvent.target &&
+      IGNORED_TAGS.includes(
+        (keyEvent.target as HTMLElement).tagName.toLowerCase()
+      );
+    const eventIsFromEditableText =
+      keyEvent.target && (keyEvent.target as HTMLElement).isContentEditable;
+    if (eventIsFromIgnoredInput || eventIsFromEditableText) {
+      return true;
+    }
     return (
       keyEvent.key === ' ' || keyEvent.key === 'Enter' || keyEvent.key === 'Tab'
     );
