@@ -85,8 +85,8 @@ describe(HtmlOverlayTool.name, () => {
 
     // Assert
     expect(htmlElement.style.visibility).toBe('visible');
-    expect(htmlElement.style.top).toBe(`${renderer.domElement.height / 2}px`);
     expect(htmlElement.style.left).toBe(`${renderer.domElement.width / 2}px`);
+    expect(htmlElement.style.top).toBe(`${renderer.domElement.height / 2}px`);
   });
 
   test('Hides overlay if behind camera or behind far plane', () => {
