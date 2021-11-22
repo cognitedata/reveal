@@ -7,7 +7,7 @@ import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata } from '@reveal/cad-parsers';
 import { createCadModelMetadata, generateSectorTree } from '../../../../test-utilities';
 import { NodesLocalClient } from '@reveal/nodes-api';
-import { initMetrics } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 
 import { IndexSet } from '../../../../packages/utilities';
 import { TreeIndexNodeCollection, NodeAppearance } from '../../../../packages/cad-styling';
@@ -26,7 +26,7 @@ describe('TimelineTool', () => {
   let kf3Appearance: NodeAppearance;
 
   beforeAll(() => {
-    initMetrics(false, '', '', {});
+    MetricsLogger.init(false, '', '', {});
   });
 
   beforeEach(() => {

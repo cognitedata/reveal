@@ -4,7 +4,7 @@
 
 import { NodeCollectionBase, NodeAppearance } from '@reveal/core/src';
 import { Cognite3DModel } from '@reveal/core';
-import { trackCadModelStyled } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 
 /**
  * Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
@@ -51,7 +51,7 @@ export class Keyframe {
    * @param nodeAppearance Style to assign to the node collection
    */
   public assignStyledNodeCollection(nodeCollection: NodeCollectionBase, nodeAppearance: NodeAppearance) {
-    trackCadModelStyled(nodeCollection.classToken, nodeAppearance);
+    MetricsLogger.trackCadModelStyled(nodeCollection.classToken, nodeAppearance);
 
     const index = this._nodeCollectionAndAppearance.findIndex(x => x.nodes === nodeCollection);
     if (index !== -1) {
