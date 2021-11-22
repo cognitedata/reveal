@@ -26,7 +26,7 @@ const { Dragger } = Upload;
 interface UploadCsvProps {
   table: string;
   database: string;
-  setCSVModalVisible(value: boolean): void;
+  setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
 }
 
 const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
@@ -248,7 +248,7 @@ const UploadCSV = ({ setCSVModalVisible, database, table }: UploadCsvProps) => {
             key: 'file-upload',
           });
         }
-        setCSVModalVisible(false);
+        setCSVModalVisible(false, upload);
       }}
       okText="Confirm Upload"
       onOk={() => saveDataToApi()}

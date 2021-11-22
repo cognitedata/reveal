@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
@@ -16,13 +16,6 @@ export const Actions = (): JSX.Element => {
   const [[database, table] = []] = useActiveTable();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
-  useEffect(() => {
-    // invalidate rows/profile when closing the modal
-    if (database && table && !csvModalVisible) {
-      queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 3));
-    }
-  }, [csvModalVisible, database, table]);
-
   return (
     <Bar alignItems="center" justifyContent="space-between">
       <AccessButton
@@ -37,7 +30,14 @@ export const Actions = (): JSX.Element => {
       </Dropdown>
       {csvModalVisible && (
         <UploadCSV
-          setCSVModalVisible={setCSVModalVisible}
+          setCSVModalVisible={(visible, tableChanged) => {
+            setCSVModalVisible(visible);
+            if (tableChanged) {
+              queryClient.invalidateQueries(
+                rowKey(database!, table!, 0).slice(0, 3)
+              );
+            }
+          }}
           table={table!}
           database={database!}
         />
