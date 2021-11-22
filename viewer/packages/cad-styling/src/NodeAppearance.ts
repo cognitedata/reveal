@@ -87,6 +87,5 @@ export const DefaultNodeAppearance = {
   Hidden: HiddenAppearance,
   InFront: InFrontAppearance,
   Ghosted: GhostedAppearance,
-  IgnoreClipping: IgnoreClippingAppearance,
   Highlighted: { ...InFrontAppearance, ...HighlightedColorAppearance, ...OutlinedAppearance }
 };

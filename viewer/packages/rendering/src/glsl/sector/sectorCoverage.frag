@@ -10,10 +10,10 @@ varying lowp vec2 v_seed;
 
 varying vec3 v_viewPosition;
     
-const NodeAppearance noIgnoreClippingAppearance = NodeAppearance(vec4(0.0), false, false, false, false);
+const NodeAppearance dummyNodeAppearance = NodeAppearance(vec4(0.0), false, false, false);
 
 void main() {
-    if(v_visible != 1.0 || isClipped(noIgnoreClippingAppearance, v_viewPosition)){
+    if(v_visible != 1.0 || isClipped(dummyNodeAppearance, v_viewPosition)){
       discard;
     }
 
