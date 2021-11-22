@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
+import isEmpty from 'lodash-es/isEmpty';
 import { Header } from './Header';
 
 const validNewShapes = (newShapes: { [key: string]: Shape }) => {
@@ -83,16 +84,15 @@ export const Shapes = ({
   // create new keypoint on settings open
   useEffect(() => {
     if (options) {
-      if (options.createNew) {
+      if (!isEmpty(options.createNew)) {
         addNewShape(options.createNew);
-        scrollToBottom();
       }
     }
   }, [options]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [newShapes]);
+  }, [newShapes, predefinedShapes]);
 
   return (
     <>

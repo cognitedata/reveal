@@ -16,6 +16,7 @@ import {
   setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
+  selectAnnotationSettingsState,
   showAnnotationSettingsModel,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
@@ -75,8 +76,8 @@ export const ImagePreview = ({
       currentCollection(annotationLabelReducer)
   );
 
-  const annotationSettingsState = useSelector(
-    ({ reviewSlice }: RootState) => reviewSlice.annotationSettings
+  const annotationSettingsState = useSelector(({ reviewSlice }: RootState) =>
+    selectAnnotationSettingsState(reviewSlice)
   );
 
   useEffect(() => {

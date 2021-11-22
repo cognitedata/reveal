@@ -246,3 +246,16 @@ export const selectVisibleNonRejectedAnnotationsForFile = createSelector(
     );
   }
 );
+
+export const selectAnnotationSettingsState = createSelector(
+  (state: State) => state.annotationSettings,
+  (annotationSettingsState) => {
+    const settingsState = {
+      ...annotationSettingsState,
+      ...((!annotationSettingsState.createNew.text ||
+        annotationSettingsState.createNew.text) &&
+        !annotationSettingsState.createNew.color && { createNew: {} }),
+    };
+    return settingsState;
+  }
+);

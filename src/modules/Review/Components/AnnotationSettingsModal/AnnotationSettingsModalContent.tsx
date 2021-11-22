@@ -32,7 +32,7 @@ export const AnnotationSettingsModalContent = ({
   };
 
   useEffect(() => {
-    if (options && options.activeView !== activeView) {
+    if (options && options?.activeView !== activeView) {
       setActiveView(options.activeView);
     }
   }, [options]);

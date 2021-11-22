@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
+import isEmpty from 'lodash-es/isEmpty';
 import { Header } from './Header';
 import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 
@@ -139,7 +140,7 @@ export const Keypoints = ({
   // create new keypoint on settings open
   useEffect(() => {
     if (options) {
-      if (options.createNew) {
+      if (!isEmpty(options.createNew)) {
         addNewKeypointGroup(options.createNew);
       }
     }
@@ -147,7 +148,7 @@ export const Keypoints = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [newKeypoints]);
+  }, [newKeypoints, predefinedKeypoints]);
 
   return (
     <>
