@@ -17,6 +17,10 @@ import {
   isValidDate,
   getDateByMatchingRegex,
   getTimeDuration,
+  longDate,
+  formatDate,
+  SHORT_DATE_FORMAT,
+  LONG_DATE_FORMAT,
 } from '../date';
 
 describe('date helpers', () => {
@@ -69,12 +73,28 @@ describe('date helpers', () => {
         '01.Jan.20 07:03:14'
       );
     });
+
+    test('should return formatted date', () => {
+      const date = new Date(2000, 1, 12);
+
+      expect(formatDate(date, SHORT_DATE_FORMAT)).toEqual('12.Feb.2000');
+      expect(formatDate(date, LONG_DATE_FORMAT)).toEqual('12 February, 2000');
+    });
+
     test('should return short date', () => {
       const date = new Date(2000, 1, 12);
 
       expect(shortDate(date)).toEqual('12.Feb.2000');
       expect(shortDate(date.toISOString())).toEqual('12.Feb.2000');
       expect(shortDate(date.getTime())).toEqual('12.Feb.2000');
+    });
+
+    test('should return long date', () => {
+      const date = new Date(2000, 1, 12);
+
+      expect(longDate(date)).toEqual('12 February, 2000');
+      expect(longDate(date.toISOString())).toEqual('12 February, 2000');
+      expect(longDate(date.getTime())).toEqual('12 February, 2000');
     });
 
     test('should return date for short date string', () => {

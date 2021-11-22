@@ -2,7 +2,12 @@ import React, { useMemo } from 'react';
 
 import get from 'lodash/get';
 
-import { getTimeDuration } from '_helpers/date';
+import {
+  CHART_AXIS_LABEL_DATE_FORMAT,
+  formatDate,
+  getTimeDuration,
+  longDate,
+} from '_helpers/date';
 import { ScatterPlot } from 'components/charts';
 import { AxisPlacement } from 'components/charts/common/Axis';
 import { ScatterPlotOptions } from 'components/charts/modules/ScatterPlot/types';
@@ -71,22 +76,7 @@ export const NPTEventsGraph: React.FC = () => {
   );
 
   const formatAxisLabel = (startTime: number) => {
-    const date = new Date(startTime);
-    const month = date.toLocaleString('default', {
-      month: 'short',
-      year: 'numeric',
-    });
-    return month;
-  };
-
-  const getFormattedDate = (time: number) => {
-    const date = new Date(time);
-    const formattedDate = date.toLocaleString('default', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-    return formattedDate;
+    return formatDate(startTime, CHART_AXIS_LABEL_DATE_FORMAT);
   };
 
   const renderPlotHoverComponent = (nptEvent: NPTEvent) => {
@@ -107,7 +97,7 @@ export const NPTEventsGraph: React.FC = () => {
           <QuarterColumn>
             <Card
               title="Start date"
-              value={getFormattedDate(get(nptEvent, accessors.START_TIME))}
+              value={longDate(get(nptEvent, accessors.START_TIME))}
             />
             <Card
               title="NPT MD (ft.)"
@@ -127,7 +117,7 @@ export const NPTEventsGraph: React.FC = () => {
           <QuarterColumn>
             <Card
               title="End date"
-              value={getFormattedDate(get(nptEvent, accessors.END_TIME))}
+              value={longDate(get(nptEvent, accessors.END_TIME))}
             />
             <Card
               title="Duration"

@@ -7,6 +7,7 @@ import {
   useNptTableCommonHeaders,
   useNptWellboresTableColumns,
   useNptEventsTableColumns,
+  useSelectedWellboreNptEventsTableColumns,
 } from '../useHelpers';
 
 jest.mock('hooks/useUserPreferences', () => ({
@@ -83,6 +84,32 @@ describe('useNptEventsTableColumns hook', () => {
     expect(ndsColumnHeaders).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ Header: 'NPT MD (m)' }),
+      ])
+    );
+  });
+});
+
+describe('useSelectedWellboreNptEventsTableColumns hook', () => {
+  beforeEach(() => {
+    (useUserPreferencesMeasurement as jest.Mock).mockImplementation(
+      () => METER
+    );
+  });
+
+  const getHookResult = async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useSelectedWellboreNptEventsTableColumns()
+    );
+    waitForNextUpdate();
+    return result.current;
+  };
+
+  it('should return npt codes and description columns as expected', async () => {
+    const ndsColumnHeaders = await getHookResult();
+    expect(ndsColumnHeaders).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ Header: 'NPT Code' }),
+        expect.objectContaining({ Header: 'Description' }),
       ])
     );
   });

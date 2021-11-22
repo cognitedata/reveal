@@ -18,7 +18,7 @@ import {
 import { ChartWrapper } from './elements';
 
 export const NPTDurationGraph: React.FC = () => {
-  const selectedWellboreData = useNPTGraphSelectedWellboreData();
+  const { data: selectedWellboreData } = useNPTGraphSelectedWellboreData();
 
   const options: StackedBarChartOptions<NPTEvent> = useMemo(
     () => ({
@@ -35,7 +35,7 @@ export const NPTDurationGraph: React.FC = () => {
   return (
     <ChartWrapper>
       <StackedBarChart<NPTEvent>
-        data={selectedWellboreData.data}
+        data={selectedWellboreData}
         xAxis={{
           accessor: accessors.DURATION,
           title: NPT_DURATION_GRAPH_X_AXIS_TITLE,

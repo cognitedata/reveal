@@ -1,6 +1,11 @@
 import isDate from 'lodash/isDate';
 import isString from 'lodash/isString';
-import moment, { Moment, unitOfTime } from 'moment';
+import moment, {
+  Moment,
+  MomentFormatSpecification,
+  MomentInput,
+  unitOfTime,
+} from 'moment';
 
 import { Range } from '@cognite/cogs.js';
 
@@ -10,25 +15,47 @@ import { Range } from '@cognite/cogs.js';
 
 // DATE FORMATS
 export const SHORT_DATE_FORMAT = 'DD.MMM.YYYY';
+export const LONG_DATE_FORMAT = 'DD MMMM, YYYY';
 export const TIME_AND_DATE_FORMAT = 'DD.MMM.YY hh:mm:ss';
 export const DOCUMENT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+export const CHART_AXIS_LABEL_DATE_FORMAT = 'MMM YYYY';
 export const DATE_NOT_AVAILABLE = 'N/A';
+
+export type DateFormat =
+  | typeof SHORT_DATE_FORMAT
+  | typeof LONG_DATE_FORMAT
+  | typeof TIME_AND_DATE_FORMAT
+  | typeof DOCUMENT_DATE_FORMAT
+  | typeof CHART_AXIS_LABEL_DATE_FORMAT;
 
 const dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
 
-export const toDate = (date: string | number, currentFormat?: string): Date =>
-  moment(date, currentFormat).toDate();
+export const toDate = (
+  date: MomentInput,
+  currentFormat?: MomentFormatSpecification
+): Date => moment(date, currentFormat).toDate();
+
+export const formatDate = (
+  date: MomentInput,
+  targetFormat: DateFormat,
+  currentFormat?: MomentFormatSpecification
+): string => moment(date, currentFormat).format(targetFormat);
 
 export const shortDate = (
-  date?: string | Date | number,
-  currentFormat?: string
-): string => moment(date, currentFormat).format(SHORT_DATE_FORMAT);
+  date?: MomentInput,
+  currentFormat?: MomentFormatSpecification
+): string => formatDate(date || now(), SHORT_DATE_FORMAT, currentFormat);
+
+export const longDate = (
+  date?: MomentInput,
+  currentFormat?: MomentFormatSpecification
+): string => formatDate(date || now(), LONG_DATE_FORMAT, currentFormat);
 
 export const getYearFromNumber = (date: string | number) => moment(date).year();
 
 export const shortDateTime = (
   dateTime: string | Date,
-  currentFormat?: string
+  currentFormat?: MomentFormatSpecification
 ) => getDateAsMoment(dateTime, currentFormat).format(TIME_AND_DATE_FORMAT);
 
 export const shortDateToDate = (shortDate: string): Date =>
@@ -60,8 +87,10 @@ export const fromNow = (date: string | number) => moment(date).fromNow();
 // This shouldn't be a export method
 // We don't want to expose moment objects outside of this service
 
-const getDateAsMoment = (date: Date | number | string, format?: string) =>
-  moment(date, format);
+const getDateAsMoment = (
+  date: Date | number | string,
+  format?: MomentFormatSpecification
+) => moment(date, format);
 
 export const getDateByMatchingRegex = (
   date: Date | number | string,
@@ -107,8 +136,10 @@ export const subtract = (
   return moment(date).subtract(amount, unit);
 };
 
-export const dateToEpoch = (date: Date | string, currentFormat?: string) =>
-  toEpoch(isString(date) ? toDate(date, currentFormat) : date);
+export const dateToEpoch = (
+  date: Date | string,
+  currentFormat?: MomentFormatSpecification
+) => toEpoch(isString(date) ? toDate(date, currentFormat) : date);
 
 export const ifRangeIsSameTimeModifyToDayRange = (range: Range) => {
   return range!.startDate?.getTime() !== range!.endDate?.getTime()
