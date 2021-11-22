@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { RawExplorerContext } from 'contexts';
 
+const NO_CELL_SELECTED = { rowIndex: undefined, columnIndex: undefined };
+
 export const useTableSelection = () => {
   const { selectedCell, setSelectedCell } = useContext(RawExplorerContext);
 
@@ -11,5 +13,10 @@ export const useTableSelection = () => {
     );
   };
 
-  return { selectedCell, setSelectedCell, isCellSelected };
+  const deselectCell = () => {
+    if (selectedCell.rowIndex && selectedCell.columnIndex)
+      setSelectedCell(NO_CELL_SELECTED);
+  };
+
+  return { selectedCell, setSelectedCell, isCellSelected, deselectCell };
 };

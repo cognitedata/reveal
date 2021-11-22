@@ -10,8 +10,6 @@ import {
   ExpandButton,
 } from './Cell.styles';
 
-const NO_CELL_SELECTED = { rowIndex: undefined, columnIndex: undefined };
-
 type Props = {
   cellData?: string | undefined;
   columnIndex?: number | undefined;
@@ -20,7 +18,8 @@ type Props = {
 
 export const Cell = (props: Props): JSX.Element => {
   const { cellData, columnIndex = -1, rowIndex = -1 } = props;
-  const { selectedCell, setSelectedCell, isCellSelected } = useTableSelection();
+  const { selectedCell, deselectCell, setSelectedCell, isCellSelected } =
+    useTableSelection();
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isOverflow, setIsOverflow] = useState<boolean>(false);
   const selectedCellRef = useRef<HTMLDivElement>(null);
@@ -42,7 +41,7 @@ export const Cell = (props: Props): JSX.Element => {
     const isClickedCellSelected =
       rowIndex === selectedCell.rowIndex &&
       columnIndex === selectedCell.columnIndex;
-    if (isClickedCellSelected) setSelectedCell(NO_CELL_SELECTED);
+    if (isClickedCellSelected) deselectCell();
     else setSelectedCell({ rowIndex, columnIndex });
   };
 
