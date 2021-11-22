@@ -9,6 +9,7 @@ bool isClipped(NodeAppearance nodeAppearance, vec3 point) {
   if (nodeAppearance.ignoreClipping) {
     return false;
   }
+
   vec3 pointFlipped = -point;
   vec4 plane;
 
