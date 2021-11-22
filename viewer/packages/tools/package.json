@@ -11,6 +11,7 @@
     "@reveal/camera-manager": "workspace:*",
     "@reveal/core": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/metrics": "workspace:*"
+    "@reveal/metrics": "workspace:*",
+    "@reveal/utilities": "workspace:*"
   }
 }
