@@ -16,7 +16,6 @@ export type VisionFileFilterProps = FileFilterProps & {
 };
 
 export type AnnotationFilterType = {
-  generatedBy?: string;
   annotationText?: string;
   annotationState?: string;
 };

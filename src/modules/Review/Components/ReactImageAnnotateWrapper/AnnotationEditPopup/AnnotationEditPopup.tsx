@@ -11,12 +11,12 @@ import {
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { BodyContainer } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/BodyContainer';
 import {
   Keypoint,
   KeypointCollection,
   VisionOptionType,
 } from 'src/modules/Review/types';
+import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
 
 export const AnnotationEditPopup = (props: {
   region: Region;
@@ -162,7 +162,7 @@ export const AnnotationEditPopup = (props: {
 
   useEffect(() => {
     // on select and on label value state is set region is updated accordingly
-    if (editing && labelValue?.color && labelValue.value) {
+    if (editing && !isKeypoint && labelValue?.color && labelValue.value) {
       let updatedRegionTags = [labelValue.value];
       if (region.tags?.length) {
         updatedRegionTags = updatedRegionTags.concat(region.tags.slice(1));
@@ -244,7 +244,7 @@ export const AnnotationEditPopup = (props: {
             </Col>
           </Row>
           <Row cols={5} style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            <BodyContainer
+            <AnnotationEditPopupBody
               isKeypointMode={isKeypoint}
               color={region.color}
               isSavedAnnotation={alreadyCreated}

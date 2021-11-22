@@ -2,7 +2,7 @@ import { AnnotationFilterType } from 'src/modules/Explorer/Components/Filters/ty
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { AnnotationApi } from 'src/api/annotation/AnnotationApi';
 import { Annotation } from 'src/api/types';
-import { validateAnnotation } from 'src/api/utils';
+import { validateAnnotation } from 'src/api/annotation/utils';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import {
   ANNOTATION_FETCH_BULK_SIZE,
@@ -11,7 +11,6 @@ import {
 import { splitListIntoChunks } from 'src/utils/generalUtils';
 
 const getAnnotations = async (
-  generatedBy?: string,
   annotationText?: string,
   annotationState?: string,
   fileIds?: number[]
@@ -20,7 +19,6 @@ const getAnnotations = async (
     annotatedResourceType: 'file',
     text: annotationText,
     status: annotationState,
-    source: generatedBy,
     annotatedResourceIds: fileIds && fileIds.map((id) => ({ id })),
   };
   const annotationListRequest = {
@@ -44,7 +42,7 @@ export const fileFilterByAnnotation = async (
   annotation: AnnotationFilterType,
   items: FileInfo[]
 ): Promise<FileInfo[]> => {
-  const { generatedBy, annotationText, annotationState } = annotation;
+  const { annotationText, annotationState } = annotation;
   const bulkedIds = splitListIntoChunks(
     items.map((file) => file.id),
     ANNOTATION_FETCH_BULK_SIZE
@@ -53,7 +51,7 @@ export const fileFilterByAnnotation = async (
   const relatedAnnotations = (
     await Promise.all(
       bulkedIds.map((ids) =>
-        getAnnotations(generatedBy, annotationText, annotationState, ids)
+        getAnnotations(annotationText, annotationState, ids)
       )
     )
   ).flat();
