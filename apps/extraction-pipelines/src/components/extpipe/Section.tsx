@@ -9,8 +9,9 @@ const SectionDiv = styled.div`
 `;
 const SectionHeader = styled.div`
   font-size: 1.1rem;
+  min-height: 3.5rem;
   font-weight: 500;
-  padding: 1rem 0 1rem 1rem;
+  padding-left: 1rem;
   border-bottom: 1px solid #eee;
   display: flex;
   align-items: center;
