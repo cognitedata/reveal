@@ -165,6 +165,7 @@ export const DropDownMenu = styled(Menu)`
 export const DescriptionField = styled.div`
   .cogs-input {
     background: var(--cogs-bg-control--secondary) !important;
+    text-overflow: ellipsis;
   }
   margin-bottom: ${sizes.normal};
 `;
