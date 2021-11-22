@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import Dropdown from 'components/Dropdown/Dropdown';
-import { useActiveTable, useOpenTable } from 'hooks/table-tabs';
+import { useActiveTable } from 'hooks/table-tabs';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 
 type SidePanelTableListItemProps = {
@@ -67,15 +67,13 @@ const SidePanelTableListItem = ({
 }: SidePanelTableListItemProps): JSX.Element => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const openTable = useOpenTable();
-  const [activeTable] = useActiveTable();
-  const [_, activeTableName] = activeTable || [];
+  const [[, activeTableName] = [], setTable] = useActiveTable();
   const isSelected = activeTableName === tableName;
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
 
   const handleDatabaseListItemClick = (): void => {
-    openTable([databaseName, tableName]);
+    setTable([databaseName, tableName]);
   };
 
   const stopPropagation = (e: MouseEvent<HTMLButtonElement | HTMLElement>) => {

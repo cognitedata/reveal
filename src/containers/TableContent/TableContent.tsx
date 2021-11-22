@@ -9,13 +9,19 @@ import { TableHeader } from 'components/TableHeader';
 import { Profiling } from 'containers/Profiling';
 
 import { TAB_HEIGHT } from 'utils/constants';
+import { useRawProfile } from 'hooks/sdk-queries';
 
 const TableContent = () => {
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
-
+  const [[database, table, view] = [], update] = useActiveTable();
+  const { isFetching } = useRawProfile(
+    { database: database!, table: table! },
+    { enabled: !!database && !!table }
+  );
   return (
     <Wrapper>
       <StyledTabs
+        onChange={(view) => update([database!, table!, view])}
+        activeKey={view || 'stylesheet'}
         tabPosition="top"
         animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
@@ -29,13 +35,16 @@ const TableContent = () => {
         )}
       >
         <Tabs.TabPane
-          key="tab-stylesheet"
+          key="stylesheet"
           tab={<TabSpreadsheet />}
           style={{ overflow: 'auto' }}
         >
           <Spreadsheet />
         </Tabs.TabPane>
-        <Tabs.TabPane key="tab-profiling" tab={<TabProfiling />}>
+        <Tabs.TabPane
+          key="profiling"
+          tab={<TabProfiling isFetching={isFetching} />}
+        >
           <Profiling />
         </Tabs.TabPane>
       </StyledTabs>
@@ -49,9 +58,9 @@ const TabSpreadsheet = (): JSX.Element => (
     Table
   </Tab>
 );
-const TabProfiling = (): JSX.Element => (
+const TabProfiling = ({ isFetching }: { isFetching: boolean }): JSX.Element => (
   <Tab>
-    <Icon type="Profiling" />
+    <Icon type={isFetching ? 'Loading' : 'Profiling'} />
     Profile
   </Tab>
 );

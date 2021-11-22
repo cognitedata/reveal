@@ -13,12 +13,13 @@ import { rowKey } from 'hooks/sdk-queries';
 export const Actions = (): JSX.Element => {
   const queryClient = useQueryClient();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const [[database, table] = []] = useActiveTable();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    if (database && table) {
-      queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 4));
+    // invalidate rows/profile when closing the modal
+    if (database && table && !csvModalVisible) {
+      queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 3));
     }
   }, [csvModalVisible, database, table]);
 

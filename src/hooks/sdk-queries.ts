@@ -1,6 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
-import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
 
 const baseKey = 'raw-explorer';
 
@@ -13,6 +18,12 @@ export const rowKey = (db: string, table: string, pageSize: number) => [
   'rows',
   'pageSize',
   pageSize,
+];
+export const rawProfileKey = (db: string, table: string) => [
+  baseKey,
+  db,
+  table,
+  'raw-profile',
 ];
 
 export const useDatabases = () => {
@@ -103,6 +114,32 @@ export const useTableRows = (
       ...options,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
+  );
+};
+
+export const useRawProfile = (
+  {
+    database,
+    table,
+  }: {
+    database: string;
+    table: string;
+  },
+  options?: { enabled: boolean }
+) => {
+  const sdk = useSDK();
+  return useQuery(
+    rawProfileKey(database, table),
+    () =>
+      sdk
+        .post(`/api/v1/projects/${sdk.project}/profiler/raw`, {
+          data: {
+            database,
+            table,
+          },
+        })
+        .then((response) => response.data),
+    options
   );
 };
 

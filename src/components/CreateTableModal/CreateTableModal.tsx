@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
-import { useOpenTable } from 'hooks/table-tabs';
+import { useActiveTable } from 'hooks/table-tabs';
 
 type CreateTableModalProps = {
   databaseName: string;
@@ -28,7 +28,7 @@ const CreateTableModal = ({
   const [tableName, setTableName] = useState('');
 
   const { mutate: createDatabase, isLoading } = useCreateTable();
-  const openTable = useOpenTable();
+  const [, openTable] = useActiveTable();
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isDisabled =
