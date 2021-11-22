@@ -30,6 +30,7 @@ const ADMIN_LAYERS_CREATE = `${ADMIN_LAYERS}/create`;
 const ADMIN_LAYERS_LIST = `${ADMIN_LAYERS}/list`;
 
 const ADMIN_PROJECT_CONFIG = `${ADMIN}/projectConfig`;
+const INTERNAL_PROJECT_CONFIG = '/__internal__/projectConfig';
 
 export default {
   LOGOUT: '/logout',
@@ -74,4 +75,5 @@ export default {
   ADMIN_LAYERS_LIST,
 
   ADMIN_PROJECT_CONFIG,
+  INTERNAL_PROJECT_CONFIG,
 };

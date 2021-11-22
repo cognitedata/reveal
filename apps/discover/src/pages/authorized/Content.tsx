@@ -10,6 +10,7 @@ import navigation from 'constants/navigation';
 import { usePageSettings } from 'hooks/usePageSettings';
 import { useUserSyncQuery } from 'modules/api/user/useUserQuery';
 import AdminPageContainer from 'pages/authorized/admin';
+import { ProjectConfig } from 'pages/authorized/admin/projectConfig';
 import { AppFrame } from 'pages/authorized/elements';
 import { Favorites } from 'pages/authorized/favorites';
 import { CreateFavoriteSetModal } from 'pages/authorized/favorites/modals';
@@ -41,6 +42,12 @@ const Content = () => {
                 path={navigation.ADMIN}
                 render={() => <AdminPageContainer />}
               />
+
+              <Route
+                path={navigation.INTERNAL_PROJECT_CONFIG}
+                render={() => <ProjectConfig />}
+              />
+
               <Route path={navigation.LOGOUT} render={() => <Logout />} />
               <Redirect from="" to={navigation.SEARCH} />
               <Redirect from="/" to={navigation.SEARCH} />
