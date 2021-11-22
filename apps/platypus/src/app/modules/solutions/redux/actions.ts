@@ -8,7 +8,7 @@ export const fetchSolutions = createAsyncThunk(
     const solutionsHandler = services().solutionsHandler;
     const result = await solutionsHandler.list();
     if (!result.isSuccess) {
-      throw Error(result.error);
+      throw Error(result.error.name);
     }
     return result.getValue();
   })

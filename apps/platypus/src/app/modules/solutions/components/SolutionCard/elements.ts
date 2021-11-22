@@ -5,7 +5,7 @@ export const StyledSolutionCard = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 182px;
-  width: 325px;
+  width: 320px;
   border-radius: 8px;
   padding: 16px;
   box-sizing: border-box;
@@ -19,7 +19,7 @@ export const StyledSolutionCard = styled.div`
 
   :hover {
     background-color: var(--cogs-greyscale-grey1);
-    top: -5px;
+    top: -2px;
   }
 
   .top {
@@ -34,13 +34,6 @@ export const StyledSolutionCard = styled.div`
   .menuContainer {
     display: flex;
     justify-content: right;
-    padding: 3px 7px;
-  }
-
-  .menu {
-    &:hover {
-      color: var(--cogs-primary);
-    }
   }
 
   .version {
@@ -57,5 +50,9 @@ export const StyledSolutionCard = styled.div`
   .avatar {
     display: inline-flex;
     background: var(--cogs-black) !important;
+  }
+
+  .owners {
+    opacity: 0.45;
   }
 `;

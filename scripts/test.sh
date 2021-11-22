@@ -4,8 +4,6 @@ set -e
 
 project="${1:-platypus}"
 
-cd "$(dirname "$0")"
-
 nx run ${project}:test "$@" \
   --collectCoverageFrom='!*/**/*.stories.tsx' \
   --ci \
@@ -15,3 +13,4 @@ nx run ${project}:test "$@" \
   --detectOpenHandles \
   --reporters=default \
   --watchAll=false
+

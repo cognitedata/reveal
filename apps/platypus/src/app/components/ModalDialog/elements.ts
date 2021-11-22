@@ -20,10 +20,6 @@ export const StyledModal = styled(Modal)`
     margin-top: 20px;
   }
 
-  .confirmDelete {
-    margin: 15px 0 0 0;
-  }
-
   .cogs-modal-close {
     top: 25px;
     right: 20px;
@@ -48,9 +44,5 @@ export const StyledModal = styled(Modal)`
         transform: scale(1.25);
       }
     }
-  }
-
-  .cogs-checkbox {
-    cursor: pointer;
   }
 `;

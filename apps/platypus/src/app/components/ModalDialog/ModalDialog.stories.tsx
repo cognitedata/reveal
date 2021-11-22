@@ -78,7 +78,7 @@ export const Base = () => {
           Are you sure you want to sing "We are the champions" song? You will
           lose all of your respect of your friends, and you will not be able to
           restore it later.
-          <div className="confirmDelete">
+          <div style={{ margin: '15px 0 0 0' }}>
             <Checkbox
               name="ConfirmSing"
               checked={confirmSing}

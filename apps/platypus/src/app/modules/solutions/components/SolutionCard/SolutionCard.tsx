@@ -2,18 +2,19 @@ import { useState } from 'react';
 import {
   Detail,
   Title,
-  Icon,
   Dropdown,
   Menu,
   Avatar,
   Label,
   Tooltip,
+  Body,
+  Button,
 } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 
 import { DateUtilsImpl } from '@platypus/platypus-infrastructure';
 
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Solution } from '@platypus/platypus-core';
 import { StyledSolutionCard } from './elements';
 
@@ -78,20 +79,32 @@ export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
         }
       >
         <div className="menuContainer">
-          <Icon type="HorizontalEllipsis" size={18} className="menu" />
+          <Button
+            icon="MoreOverflowEllipsisHorizontal"
+            type="ghost"
+            size="small"
+            aria-label="menu"
+          />
         </div>
       </Dropdown>
     );
   };
 
   const renderOwners = () => {
-    return solution.owners?.map((owner) => {
-      return (
-        <Tooltip content={owner} placement="bottom" key={owner}>
-          <Avatar text={owner} className="avatar" />
-        </Tooltip>
-      );
-    });
+    if (solution.owners.length) {
+      return solution.owners?.map((owner) => {
+        return (
+          <Tooltip content={owner} placement="bottom" key={owner}>
+            <Avatar text={owner} className="avatar" />
+          </Tooltip>
+        );
+      });
+    }
+    return (
+      <Body level={2} strong className="owners">
+        No owners
+      </Body>
+    );
   };
 
   return (
@@ -102,9 +115,9 @@ export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
     >
       <div className="top">
         <div>
-          <Title level={4} className="title">
+          <Title level={5} className="title">
             {solution.name}
-            <span className="version">
+            <span className="version" role="definition">
               <Label size="small" variant="unknown">
                 {solution.version || '1.0'}
               </Label>
@@ -120,6 +133,7 @@ export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
             setVisibleDropdown(true);
             e.stopPropagation();
           }}
+          role="menu"
         >
           {renderMenu()}
         </div>

@@ -7,4 +7,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/platypus',
+  setupFilesAfterEnv: ['./src/app/setupTests.ts'],
 };

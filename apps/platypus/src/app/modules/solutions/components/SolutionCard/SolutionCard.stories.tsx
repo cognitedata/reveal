@@ -5,7 +5,7 @@ import {
   GroupTitle,
   Group,
   List,
-} from '../Styles/storybook';
+} from '../../../../components/Styles/storybook';
 
 import { Solutions } from './solutions.mock';
 import { SolutionCard } from './SolutionCard';
@@ -29,11 +29,19 @@ export const Base = () => (
     </MainDescription>
     <Group>
       <GroupTitle>Default</GroupTitle>
-      <SolutionCard solution={Solutions[0]} onDelete={() => false} />
+      <DefaultSolutionCard />
     </Group>
     <Group>
       <GroupTitle>Solution without owners and version</GroupTitle>
-      <SolutionCard solution={Solutions[1]} onDelete={() => false} />
+      <SolutionCardWithoutOwners />
     </Group>
   </Wrapper>
+);
+
+export const DefaultSolutionCard = () => (
+  <SolutionCard solution={Solutions[0]} onDelete={() => false} />
+);
+
+export const SolutionCardWithoutOwners = () => (
+  <SolutionCard solution={Solutions[1]} onDelete={() => false} />
 );

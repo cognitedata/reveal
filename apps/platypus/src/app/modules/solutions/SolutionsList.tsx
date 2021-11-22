@@ -1,33 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Title, Row, Flex, Checkbox } from '@cognite/cogs.js';
+import { Title, Flex } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '../styles/SharedStyles';
 
-import services from './di';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { SolutionCard } from '@platypus-app/components/SolutionCard/SolutionCard';
-import { StyledSolutionListWrapper } from './elements';
+import { SolutionCard } from '@platypus-app/modules/solutions/components/SolutionCard/SolutionCard';
+import { StyledRow, StyledSolutionListWrapper } from './elements';
 import { useSolutions } from './hooks/useSolutions';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { ActionStatus } from '@platypus-app/types';
 import { Solution } from '@platypus/platypus-core';
 import { SolutionsState } from './redux/store';
+import { DeleteSolution } from './DeleteSolution';
 
 export const SolutionsList = () => {
-  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
-  const [deleting, setDeleting] = useState<boolean>(false);
-  const [deleteSolution, setDeleteSolution] = useState<Solution | undefined>(
-    undefined
-  );
   const { t } = useTranslation('solutions');
+
+  const [solutionToDelete, setSolutionToDelete] = useState<
+    Solution | undefined
+  >(undefined);
   const { solutionsStatus, solutions } = useSelector<SolutionsState>(
     (state) => state.solutions
   );
   const { fetchSolutions } = useSolutions();
-
-  const solutionsHandler = services().solutionsHandler;
 
   useEffect(() => {
     fetchSolutions();
@@ -44,80 +39,17 @@ export const SolutionsList = () => {
     );
   }
 
-  const renderDeleteModal = () => {
-    return (
-      <ModalDialog
-        visible={deleteSolution ? true : false}
-        title={t('delete_solution', 'Delete solution')}
-        onCancel={() => {
-          setDeleteSolution(undefined);
-          setConfirmDelete(false);
-        }}
-        onOk={() => deleteSolution && onDeleteSolution(deleteSolution.id)}
-        okDisabled={!confirmDelete}
-        okButtonName={t('delete', 'Delete')}
-        okProgress={deleting}
-      >
-        <div>
-          {t(
-            'are_you_sure_to_delete_solution_1',
-            'Are you sure you want to delete «'
-          )}
-          <strong>{deleteSolution?.name}</strong>
-          {t(
-            'are_you_sure_to_delete_solution_2',
-            '»? You will lose all of the data, and will not be able to restore it later.'
-          )}
-          <div className="confirmDelete">
-            <Checkbox
-              name="ConfirmDelete"
-              checked={confirmDelete}
-              onChange={() => setConfirmDelete(!confirmDelete)}
-            />{' '}
-            {t(
-              'yes_sure_to_delete_solution',
-              'Yes, I’m sure I want to delete this solution.'
-            )}
-          </div>
-        </div>
-      </ModalDialog>
-    );
-  };
-
-  const onDeleteSolution = (solutionId: string) => {
-    setDeleting(true);
-    solutionsHandler.delete({ id: solutionId }).then((result) => {
-      if (result.error) {
-        Notification({
-          type: 'error',
-          message: result.error.name,
-        });
-      } else {
-        Notification({
-          type: 'success',
-          message: t(
-            'success_solution_deleted',
-            'The solution was successfully deleted.'
-          ),
-        });
-        setDeleteSolution(undefined);
-        fetchSolutions();
-      }
-      setDeleting(false);
-    });
-  };
-
   const renderList = () => {
     return (
-      <Row cols={3} gutter={20} style={{ margin: '0 auto' }}>
+      <StyledRow cols={3} gutter={20} className="grid">
         {solutions.map((solution) => (
           <SolutionCard
             solution={solution}
-            onDelete={(solutionToDelete) => setDeleteSolution(solutionToDelete)}
+            onDelete={(deleteSolution) => setSolutionToDelete(deleteSolution)}
             key={solution.id}
           />
         ))}
-      </Row>
+      </StyledRow>
     );
   };
 
@@ -136,10 +68,12 @@ export const SolutionsList = () => {
       <Flex justifyContent="space-between" className="header">
         <Title level={3}>{t('solutions_title', 'Solutions')}</Title>
       </Flex>
-      <div className="solutions">
-        {solutions.length ? renderList() : renderEmptyList()}
-      </div>
-      {renderDeleteModal()}
+      {solutions.length ? renderList() : renderEmptyList()}
+      <DeleteSolution
+        solution={solutionToDelete}
+        onCancel={() => setSolutionToDelete(undefined)}
+        onAfterDeleting={() => fetchSolutions()}
+      />
     </StyledSolutionListWrapper>
   );
 };

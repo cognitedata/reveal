@@ -1,4 +1,4 @@
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, ButtonType, Title } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledModal } from './elements';
 
@@ -12,6 +12,7 @@ type ModalDialogProps = {
   okButtonName?: string;
   okDisabled?: boolean;
   okProgress?: boolean;
+  okType?: ButtonType;
 };
 
 export const ModalDialog = ({
@@ -24,6 +25,8 @@ export const ModalDialog = ({
   okButtonName,
   okDisabled,
   okProgress,
+  okType,
+  ...rest
 }: ModalDialogProps) => {
   const { t } = useTranslation('solutions');
 
@@ -33,6 +36,8 @@ export const ModalDialog = ({
       title={null}
       footer={null}
       onCancel={() => onCancel()}
+      appElement={document.body}
+      {...rest}
     >
       <div className="title">
         <Title level={4}>{title}</Title>
@@ -51,8 +56,8 @@ export const ModalDialog = ({
         <Button
           onClick={() => onOk()}
           disabled={okDisabled}
-          type="primary"
           loading={okProgress}
+          type={okType}
         >
           {okButtonName || t('ok', 'Ok')}
         </Button>
