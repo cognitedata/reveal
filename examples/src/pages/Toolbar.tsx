@@ -17,7 +17,7 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool, ToolbarPosition } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool, ToolbarPosition, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
 import iconSet12 from './icons/Cognite_Icon_Set-12.png';
@@ -190,9 +190,21 @@ export function Toolbar() {
         alert("result called");
       }
 
+      let axisTool: AxisViewTool | undefined;
+
+      var createAxisViewTool = () : void => {
+        if(axisTool === undefined) {
+          axisTool = new AxisViewTool(viewer);
+        }
+        else {
+          axisTool.dispose();
+          axisTool = undefined;
+        }
+      }
+
       const toolbar = new ToolbarTool(viewer);
       toolbar.addToolbarItem('Camera Switch', iconSet12, callbackMsg);
-      toolbar.addToolbarItem('Axis Tool', iconSet14, callbackMsg);
+      toolbar.addToolbarItem('Axis Tool', iconSet14, createAxisViewTool);
       toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
       toolbar.addToolbarItem('Debug Camera', iconSet30, callbackMsg);
       toolbar.addToolbarItem('Timeline', iconSet32, callbackMsg);
