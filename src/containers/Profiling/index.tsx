@@ -1,19 +1,16 @@
 import React from 'react';
 import { Alert } from 'antd';
 import { Flex, Loader } from '@cognite/cogs.js';
-import { useActiveTable } from 'hooks/table-tabs';
 import { useRawProfile } from 'hooks/sdk-queries';
+import { useActiveTableContext } from 'contexts';
 
 export const Profiling = (): JSX.Element => {
-  const [[database, table] = []] = useActiveTable();
+  const { database, table } = useActiveTableContext();
 
-  const { data, isLoading, isError, error } = useRawProfile(
-    {
-      database: database!,
-      table: table!,
-    },
-    { enabled: !!database && !!table }
-  );
+  const { data, isLoading, isError, error } = useRawProfile({
+    database,
+    table,
+  });
 
   if (isError) {
     return (

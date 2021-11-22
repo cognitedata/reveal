@@ -3,33 +3,27 @@ import React from 'react';
 import { Colors, Flex, Icon, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { useActiveTable } from 'hooks/table-tabs';
 import { Spreadsheet } from 'containers/Spreadsheet';
 import { TableHeader } from 'components/TableHeader';
 import { Profiling } from 'containers/Profiling';
 
 import { TAB_HEIGHT } from 'utils/constants';
 import { useRawProfile } from 'hooks/sdk-queries';
+import { useActiveTableContext } from 'contexts';
 
 const TableContent = () => {
-  const [[database, table, view] = [], update] = useActiveTable();
-  const { isFetching } = useRawProfile(
-    { database: database!, table: table! },
-    { enabled: !!database && !!table }
-  );
+  const { database, table, view, update } = useActiveTableContext();
+  const { isFetching } = useRawProfile({ database, table });
   return (
     <Wrapper>
       <StyledTabs
-        onChange={(view) => update([database!, table!, view])}
+        onChange={(view) => update([database, table, view])}
         activeKey={view || 'stylesheet'}
         tabPosition="top"
         animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
           <TopBar justifyContent="space-between" alignItems="center">
-            <TableHeader
-              title={database ?? ''}
-              subtitle={table && `${table}.csv`}
-            />
+            <TableHeader title={database} subtitle={`${table}.csv`} />
             <TabBarComponent {...props} />
           </TopBar>
         )}

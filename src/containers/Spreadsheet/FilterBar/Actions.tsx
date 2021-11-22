@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { Button, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { useActiveTable } from 'hooks/table-tabs';
 import AccessButton from 'components/AccessButton';
 import Dropdown from 'components/Dropdown/Dropdown';
 import UploadCSV from 'components/UploadCSV';
 import { Menu } from './Menu';
 import { useQueryClient } from 'react-query';
 import { rowKey } from 'hooks/sdk-queries';
+import { useActiveTableContext } from 'contexts';
 
 export const Actions = (): JSX.Element => {
   const queryClient = useQueryClient();
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const [[database, table] = []] = useActiveTable();
+  const { database, table } = useActiveTableContext();
   const [csvModalVisible, setCSVModalVisible] = useState<boolean>(false);
 
   return (
@@ -38,8 +38,6 @@ export const Actions = (): JSX.Element => {
               );
             }
           }}
-          table={table!}
-          database={database!}
         />
       )}
     </Bar>
