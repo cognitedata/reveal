@@ -7,7 +7,7 @@ import {
   StyledCellUnselected,
   StyledCellSelected,
   StyledCellContent,
-  ExpandButton,
+  StyledExpandButton,
 } from './Cell.styles';
 
 type Props = {
@@ -53,15 +53,31 @@ export const Cell = (props: Props): JSX.Element => {
       <StyledCellContent ref={selectedCellRef} isOverflow={isOverflow}>
         {cellData}
       </StyledCellContent>
-      {isOverflow && (
-        <ExpandButton type="primary" size="small" style={{ padding: 0 }}>
-          <Icon type="Expand" />
-        </ExpandButton>
-      )}
+      {isOverflow && <ExpandButton />}
     </StyledCellSelected>
   ) : (
     <StyledCellUnselected onClick={onCellSelect}>
       {cellData}
     </StyledCellUnselected>
+  );
+};
+
+const ExpandButton = (): JSX.Element => {
+  const { setIsCellExpanded } = useTableSelection();
+
+  const onExpandClick = (event: any) => {
+    event.stopPropagation();
+    setIsCellExpanded(true);
+  };
+
+  return (
+    <StyledExpandButton
+      type="primary"
+      size="small"
+      onClick={onExpandClick}
+      style={{ padding: '4px' }}
+    >
+      <Icon type="Expand" />
+    </StyledExpandButton>
   );
 };

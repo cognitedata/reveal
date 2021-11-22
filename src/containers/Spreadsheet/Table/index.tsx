@@ -5,6 +5,7 @@ import { Colors, Flex } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
 import { headerRenderer, emptyRenderer } from './customRenders';
+import { ExpandedCellModal } from './ExpandedCellModal';
 import { Cell } from './Cell';
 
 type Props = {
@@ -45,6 +46,7 @@ export const Table = (props: Props): JSX.Element => {
           />
         )}
       </AutoResizer>
+      <ExpandedCellModal />
     </Flex>
   );
 };

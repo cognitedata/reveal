@@ -4,7 +4,8 @@ import { RawExplorerContext } from 'contexts';
 const NO_CELL_SELECTED = { rowIndex: undefined, columnIndex: undefined };
 
 export const useTableSelection = () => {
-  const { selectedCell, setSelectedCell } = useContext(RawExplorerContext);
+  const { selectedCell, setSelectedCell, isCellExpanded, setIsCellExpanded } =
+    useContext(RawExplorerContext);
 
   const isCellSelected = (rowIndex: number, columnIndex: number) => {
     return (
@@ -17,5 +18,12 @@ export const useTableSelection = () => {
     setSelectedCell(NO_CELL_SELECTED);
   };
 
-  return { selectedCell, setSelectedCell, isCellSelected, deselectCell };
+  return {
+    selectedCell,
+    setSelectedCell,
+    isCellSelected,
+    deselectCell,
+    isCellExpanded,
+    setIsCellExpanded,
+  };
 };

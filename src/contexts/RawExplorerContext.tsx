@@ -25,6 +25,8 @@ type RawExplorerState = {
   setSelectedSidePanelDatabase: Dispatch<SetStateAction<string | undefined>>;
   selectedCell: SelectedCell;
   setSelectedCell: Dispatch<SetStateAction<SelectedCell>>;
+  isCellExpanded: boolean;
+  setIsCellExpanded: Dispatch<SetStateAction<boolean>>;
 };
 
 export const RawExplorerContext = createContext<RawExplorerState>(
@@ -44,6 +46,7 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
     rowIndex: undefined,
     columnIndex: undefined,
   });
+  const [isCellExpanded, setIsCellExpanded] = useState<boolean>(false);
 
   return (
     <RawExplorerContext.Provider
@@ -54,6 +57,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
         setSelectedSidePanelDatabase,
         selectedCell,
         setSelectedCell,
+        isCellExpanded,
+        setIsCellExpanded,
       }}
     >
       {children}

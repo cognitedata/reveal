@@ -50,8 +50,7 @@ export const StyledCellContent = styled.div<{ isOverflow: boolean }>`
   word-wrap: break-word;
 `;
 
-export const ExpandButton = styled(Button)`
-  padding: 0;
+export const StyledExpandButton = styled(Button)`
   margin: 0 4px;
   box-sizing: border-box;
   width: 20px;
