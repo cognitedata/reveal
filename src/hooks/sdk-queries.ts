@@ -163,7 +163,6 @@ export const useCreateTable = () => {
 
 export const useInsertRows = () => {
   const sdk = useSDK();
-  const queryClient = useQueryClient();
 
   return useMutation(
     ({
@@ -174,13 +173,6 @@ export const useInsertRows = () => {
       database: string;
       table: string;
       items: RawDBRowInsert[];
-    }) => {
-      return sdk.raw.insertRows(database, table, items);
-    },
-    {
-      onSuccess(_, { database, table }) {
-        queryClient.invalidateQueries(rowKey(database, table, 0).slice(0, 4));
-      },
-    }
+    }) => sdk.raw.insertRows(database, table, items)
   );
 };
