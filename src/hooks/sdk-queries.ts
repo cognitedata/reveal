@@ -117,6 +117,14 @@ export const useTableRows = (
   );
 };
 
+type Column = {
+  count: number;
+  nullCount: number;
+};
+type Profile = {
+  columns: Record<string, Column>;
+};
+
 export const useRawProfile = (
   {
     database,
@@ -128,7 +136,7 @@ export const useRawProfile = (
   options?: { enabled: boolean }
 ) => {
   const sdk = useSDK();
-  return useQuery(
+  return useQuery<Profile>(
     rawProfileKey(database, table),
     () =>
       sdk
@@ -141,6 +149,35 @@ export const useRawProfile = (
         .then((response) => response.data),
     options
   );
+};
+
+export const useTotalRowCount = (
+  {
+    database,
+    table,
+  }: {
+    database: string;
+    table: string;
+  },
+  options?: { enabled: boolean }
+) => {
+  const profile = useRawProfile({ database, table }, options);
+
+  const totalRows =
+    profile.isFetched && Object.values(profile.data?.columns || {}).length > 0
+      ? Object.values(profile.data?.columns || {}).reduce((accl, col) => {
+          try {
+            return Math.max(accl, col.count);
+          } catch {
+            return accl;
+          }
+        }, 0)
+      : undefined;
+
+  return {
+    ...profile,
+    data: totalRows,
+  };
 };
 
 export const useDeleteDatabase = () => {
