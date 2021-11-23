@@ -67,7 +67,9 @@ const CreateTableModal = ({
   useEffect(() => {
     if (!visible) {
       setTableName('');
+      setCreateTableModalStep(CreateTableModalStep.CreationMode);
       setSelectedCreationMode(undefined);
+      setSelectedPrimaryKeyMethod(undefined);
     }
   }, [visible]);
 
