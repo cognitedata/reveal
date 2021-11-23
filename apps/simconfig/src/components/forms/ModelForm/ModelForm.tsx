@@ -30,7 +30,7 @@ import {
 } from './constants';
 
 const getInitialModelFormState = (): ModelFormState => ({
-  boundaryConditions: [],
+  boundaryConditions: getSelectEntriesFromMap(BoundaryCondition),
   file: undefined,
   metadata: {
     modelName: '',

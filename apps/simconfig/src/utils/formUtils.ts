@@ -1,6 +1,8 @@
 import { FileExtensionToSimulator } from 'components/forms/ModelForm/constants';
 
-export const getSelectEntriesFromMap = (obj: { [key: string]: string }) =>
+export const getSelectEntriesFromMap = <T extends Record<string, string>>(
+  obj: T
+): { label: string; value: keyof T }[] =>
   Object.entries(obj).map(([value, label]) => ({
     label,
     value,
