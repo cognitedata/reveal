@@ -3,7 +3,7 @@ import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
 import { OptionProps } from 'react-select';
 import { VisionOptionType } from 'src/modules/Review/types';
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { VisionSelectOption } from 'src/modules/Common/Components/SelectOption/VisionSelectOption';
 
@@ -20,7 +20,7 @@ export const VisionAutoComplete = ({
   onChange: (value: Required<OptionType<string>>) => void;
   placeholder?: string;
   maxHeight?: number;
-  onClickCreateNew?: MouseEventHandler<HTMLButtonElement>;
+  onClickCreateNew?: (text: string) => void;
 }) => {
   return (
     <AutoComplete
@@ -62,7 +62,10 @@ export const VisionAutoComplete = ({
                       type="primary"
                       icon="PlusCompact"
                       size="small"
-                      onClick={onClickCreateNew}
+                      onClick={() =>
+                        onClickCreateNew &&
+                        onClickCreateNew(props.selectProps.inputValue)
+                      }
                       tabIndex={0}
                     >
                       Create New
