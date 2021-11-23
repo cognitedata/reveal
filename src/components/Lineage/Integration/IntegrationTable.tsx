@@ -10,7 +10,6 @@ import Timeline from 'antd/lib/timeline';
 import { Button, Colors } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
-import LinkButton from 'components/LinkButton';
 import InfoTooltip from 'components/InfoTooltip';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import {
@@ -79,9 +78,9 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
   };
 
   const createExtpipeButton = canEditExtractionPipelines ? (
-    <LinkButton icon="Plus" href={addIntegrationLink()}>
+    <StyledButton href={addIntegrationLink()} type="primary" icon="Plus">
       {CREATE_EXTRACTION_PIPELINE}
-    </LinkButton>
+    </StyledButton>
   ) : (
     <InfoTooltip
       showIcon={false}
@@ -119,9 +118,6 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
             rowKey={(record: Integration) => `${record?.id}`}
             getPopupContainer={getContainer}
           />
-          <StyledButton href={addIntegrationLink()} type="primary">
-            {CREATE_EXTRACTION_PIPELINE}
-          </StyledButton>
         </>
       )}
     </Timeline.Item>
