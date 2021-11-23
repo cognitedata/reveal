@@ -1197,11 +1197,6 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.1.tgz#f979e3de0c8fba7fb6dfcec07e016e75a859fcf8"
   integrity sha512-OzVE9R/cZ9YWOQXtej9rE9fEIRO/P3rKH02tz+qhDt7avIjNCWBvrAnOg9nLyXvkIBDQhy4r1SatJ8oT8Gfxpg==
 
-"@cognite/potree-core@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.0.tgz#7b288a12358b2ef2b2ae51195a4ecace396822be"
-  integrity sha512-/XhfPYlPIK7LxT0czUIGMWLcUjGfVmf3Nzcf+6FaG+sExr6S8Yqayeid9FdYgi7y+LFmvYSJrZyXgF5LL8ZMrg==
-
 "@cognite/potree-core@^1.1.6":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.2.0.tgz#29d42606e2dd4b4ef0ad82c97c0a23ca94f0ff65"
@@ -1251,13 +1246,6 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.1.tgz#49eabb2cafc8ebe53ac757b4be338e1745b1cb2d"
   integrity sha512-AQvFY0EDNvEKxnEnrYWUldwzWhpbln9fTVH/gFGl8Mn4vJVmJCBlOwqRxLB0CZ8BJY8v99rROA9M67+6p2N99w==
-  dependencies:
-    comlink "4.3.1"
-
-"@cognite/reveal-parser-worker@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.2.0.tgz#0606ddccddd40e7809ef52e78c36d96e7af9b11c"
-  integrity sha512-l3B+PCZjOFTdbc9aC8YqF76DktJaNeqvOhF7Xpno2Y4rST69SpWQjl/g1RE4fgOAoAltoQ8k5UIAv7E/iGNQkQ==
   dependencies:
     comlink "4.3.1"
 
@@ -1689,21 +1677,6 @@
   version "1.0.0-alpha.28"
   resolved "https://registry.yarnpkg.com/@francoischalifour/autocomplete-preset-algolia/-/autocomplete-preset-algolia-1.0.0-alpha.28.tgz#a5ad7996f42e43e4acbb4e0010d663746d0e9997"
   integrity sha512-bprfNmYt1opFUFEtD2XfY/kEsm13bzHQgU80uMjhuK0DJ914IjolT1GytpkdM6tJ4MBvyiJPP+bTtWO+BZ7c7w==
-
-"@gltf-transform/core@^0.12.11", "@gltf-transform/core@^0.12.12":
-  version "0.12.12"
-  resolved "https://registry.yarnpkg.com/@gltf-transform/core/-/core-0.12.12.tgz#ad864681efdbb5acf7945cf41578afdff4797676"
-  integrity sha512-+YBJ4j5x08rj+z0qQfdu0H+tcKhiUD5xcj5ZABHQT9oA90pRKSJ0bneIFP/atvyGiDvM1ZXsizVIKyBCsbL8qA==
-  dependencies:
-    gl-matrix "^3.3.0"
-
-"@gltf-transform/extensions@^0.12.11":
-  version "0.12.12"
-  resolved "https://registry.yarnpkg.com/@gltf-transform/extensions/-/extensions-0.12.12.tgz#d1fa73abe2201e66026d61f008c2768df2b38baa"
-  integrity sha512-BB8GIyYRsmFdRh1Vag7l4IUK8YbZrtdkU2oOueRUhAk2OKasZSwRgorfgb8ueWuoTxAx7XF8blL0nQt3yE/ORg==
-  dependencies:
-    "@gltf-transform/core" "^0.12.12"
-    ktx-parse "^0.2.1"
 
 "@google/model-viewer@^1.1.0":
   version "1.7.2"
@@ -7629,11 +7602,6 @@ kind-of@^6.0.0, kind-of@^6.0.2, kind-of@^6.0.3:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-ktx-parse@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.2.1.tgz#6805c0929eae0a1f571ab3ce789e860e9135b432"
-  integrity sha512-I+2mYJ6nQdWGmOlE3m9d9idKfhn2MCw04zaVpgtzyuc19uQ8OwRmmYLf/TP5ueVFfYmHbdpM8mPmId2X5PBLEw==
-
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/last-call-webpack-plugin/-/last-call-webpack-plugin-3.0.0.tgz#9742df0e10e3cf46e5c0381c2de90d3a7a2d7555"
@@ -8089,7 +8057,7 @@ lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-loglevel@^1.6.8, loglevel@^1.7.1:
+loglevel@^1.6.8:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.7.1.tgz#005fde2f5e6e47068f935ff28573e125ef72f197"
   integrity sha512-Hesni4s5UkWkwCGJMQGAh71PaLUmKFM60dHvq0zi/vDhhrzuk+4GgNbTXJ12YYQJn6ZKBDNIjYcuQGKudvqrIw==
