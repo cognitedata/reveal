@@ -6,6 +6,7 @@ import * as login from './app/cmds/login';
 import * as solutions from './app/cmds/solutions';
 import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
+import { LogoutCommand } from './app/cmds/logout';
 
 const config = {
   appId: 'platypus-cli',
@@ -19,6 +20,7 @@ scriptName('platypus')
   .command(login)
   .command(solutions)
   .command(templates)
+  .command(new LogoutCommand())
   .version()
   .help(true)
   .parse();

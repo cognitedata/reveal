@@ -1,5 +1,5 @@
 import { Logger } from '@platypus/platypus-core';
-import { AUTH_TYPE, LOGIN_STATUS } from './constants';
+import { AUTH_CONFIG, AUTH_TYPE, LOGIN_STATUS } from './constants';
 
 export type BaseArgs = {
   appId: string;
@@ -7,16 +7,16 @@ export type BaseArgs = {
 };
 
 export type LoginArgs = BaseArgs & {
-  project: string;
-  clientId: string;
-  clientSecret?: string;
-  tenant: string;
-  cluster: string;
-  authType: AUTH_TYPE;
-  apiKey: string;
+  [AUTH_CONFIG.PROJECT]: string;
+  [AUTH_CONFIG.CLIENT_ID]: string;
+  [AUTH_CONFIG.CLIENT_SECRET]?: string;
+  [AUTH_CONFIG.TENANT]: string;
+  [AUTH_CONFIG.CLUSTER]: string;
+  [AUTH_CONFIG.AUTH_TYPE]: AUTH_TYPE;
+  [AUTH_CONFIG.API_KEY]: string;
 };
 
 export interface ProjectConfig extends Omit<LoginArgs, keyof BaseArgs> {
-  loginStatus: LOGIN_STATUS;
-  authToken: string;
+  [AUTH_CONFIG.LOGIN_STATUS]: LOGIN_STATUS;
+  [AUTH_CONFIG.AUTH_TOKEN]: string;
 }

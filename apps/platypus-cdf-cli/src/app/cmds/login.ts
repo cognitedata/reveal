@@ -68,7 +68,7 @@ export const validateClientSecret = ({
   clientSecret,
   authType,
 }: {
-  clientSecret: string;
+  clientSecret?: string;
   authType: AUTH_TYPE;
 }): boolean | string =>
   authType === AUTH_TYPE.CLIENT_SECRET && (!clientSecret || clientSecret === '')

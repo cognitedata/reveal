@@ -6,7 +6,11 @@ import { AUTH_TYPE } from '../constants';
 import { Log } from '../utils/logger';
 
 export async function init(args: Arguments<LoginArgs>) {
-  setConfig(new Conf({ projectName: args.appId }));
+  // set config object
+  setConfig(
+    new Conf({ projectName: args.appId, configName: 'cdf-credentials' })
+  );
+  // set logger
   args.logger = new Log();
   // set auth type based on api_key
   if (args.apiKey) {

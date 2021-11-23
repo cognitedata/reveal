@@ -8,7 +8,11 @@ export enum LOGIN_STATUS {
   UNAUTHENTICATED = 'unauthenticated',
 }
 
-export enum CONFIG_KEY {
+export enum ROOT_CONFIG_KEY {
+  AUTH = 'auth',
+}
+
+export enum AUTH_CONFIG {
   AUTH_TOKEN = 'authToken',
   AUTH_TYPE = 'authType',
   LOGIN_STATUS = 'loginStatus',

@@ -11,7 +11,7 @@ import {
   setProjectConfig,
   setProjectConfigItem,
 } from '../utils/config';
-import { CONFIG_KEY, LOGIN_STATUS } from '../constants';
+import { ROOT_CONFIG_KEY } from '../constants';
 
 export async function authenticate(arg: Arguments<BaseArgs>) {
   try {
@@ -30,7 +30,7 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     setProjectConfig(projectConfig, token);
     setCogniteSDKClient(client);
   } catch (error) {
-    setProjectConfigItem(CONFIG_KEY.LOGIN_STATUS, LOGIN_STATUS.UNAUTHENTICATED);
+    setProjectConfigItem(ROOT_CONFIG_KEY.AUTH, undefined);
     throw new Error(
       'Failed to authenticate you, please make sure you use correct credentials for the login'
     );
