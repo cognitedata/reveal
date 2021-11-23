@@ -7,6 +7,7 @@ export function getDetectionModelEndpoint(modelType: VisionAPIType) {
     [VisionAPIType.OCR]: 'ocr',
     [VisionAPIType.TagDetection]: 'tagdetection',
     [VisionAPIType.ObjectDetection]: 'objectdetection',
+    [VisionAPIType.CustomModel]: 'automl/prediction',
   };
   return `${sdk.getBaseUrl()}/api/playground/projects/${
     sdk.project

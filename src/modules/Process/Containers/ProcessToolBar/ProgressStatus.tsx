@@ -77,7 +77,11 @@ export default function ProgressStatus() {
         if (job.type === VisionAPIType.TagDetection) {
           tag.push(job.status);
         }
-        if (job.type === VisionAPIType.ObjectDetection) {
+        if (
+          [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+            job.type
+          )
+        ) {
           objects.push(job.status);
           gdpr.push(job.status);
         }

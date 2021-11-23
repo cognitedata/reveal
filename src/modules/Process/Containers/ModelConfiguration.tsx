@@ -12,14 +12,20 @@ import { VisionAPIType } from 'src/api/types';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
+import * as customModelDetails from './ModelDetails/customModelDetails';
 
 const queryClient = new QueryClient();
 
 export const ModelConfiguration = () => {
-  const [currentModelSettings, setCurrentModelSettings] = useState(0);
-
   const availableDetectionModels = useSelector(
     (state: RootState) => state.processSlice.availableDetectionModels
+  );
+
+  const [currentModelSettings, setCurrentModelSettings] = useState(
+    // show custom model settings if custom model added
+    availableDetectionModels.length > 3
+      ? availableDetectionModels.length - 1
+      : 0
   );
 
   const modelSelectOptions = availableDetectionModels.map((item, index) => {
@@ -30,6 +36,8 @@ export const ModelConfiguration = () => {
         ? tagDetectionModelDetails.content(index)
         : item.type === VisionAPIType.ObjectDetection
         ? objectDetectionModelDetails.content(index)
+        : item.type === VisionAPIType.CustomModel
+        ? customModelDetails.content(index)
         : undefined;
 
     return {
