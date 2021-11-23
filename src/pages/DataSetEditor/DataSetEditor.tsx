@@ -35,10 +35,8 @@ const DataSetEditor = ({
 }: DataSetEditorProps): JSX.Element => {
   const { selectedDataSet, setSelectedDataSet } = useSelectedDataSet();
 
-  const {
-    dataSetWithIntegrations,
-    isLoading: isFetchingDataSet,
-  } = useDataSetWithIntegrations(selectedDataSet);
+  const { dataSetWithIntegrations, isLoading: isFetchingDataSet } =
+    useDataSetWithIntegrations(selectedDataSet);
 
   const { updateDataSet, isLoading: isUpdating } = useUpdateDataSetMutation();
 

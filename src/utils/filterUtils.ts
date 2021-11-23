@@ -28,7 +28,7 @@ const handleDataSetsSearch = (
     try {
       const searchRegex = new RegExp(searchValue, 'gi');
       return dataSetsList.filter(
-        set =>
+        (set) =>
           set.dataSet.name?.match(searchRegex) ||
           set.dataSet.description?.match(searchRegex) ||
           (set.dataSet.metadata.consoleLabels &&
@@ -61,7 +61,7 @@ const handleArchivedFilter = (
   if (showArchived) {
     dataSetsList = dataSets;
   } else {
-    dataSetsList = dataSets.filter(set => !set.dataSet.metadata.archived);
+    dataSetsList = dataSets.filter((set) => !set.dataSet.metadata.archived);
   }
   return dataSetsList;
 };

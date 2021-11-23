@@ -13,7 +13,7 @@ import {
   LineageTitle,
 } from 'utils/styledComponents';
 import { rawTablesColumnsWithIntegration } from 'components/Lineage/rawTableColumns';
-import { DataSet, Integration, RawTable } from 'utils/types';
+import { Integration, RawTable } from 'utils/types';
 import { DataSetWithIntegrations } from 'actions';
 import { getContainer } from 'utils/utils';
 import {
