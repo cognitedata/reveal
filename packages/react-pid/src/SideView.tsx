@@ -56,6 +56,9 @@ const CollapseHeader = styled.div`
 
 const CollapseSeperator = styled.div`
   padding: 0.5rem 1rem;
+  text-align: left;
+  background: #f7f7f7;
+  border-bottom: 1px solid #d9d9d9;
 `;
 
 interface SideViewProps {
@@ -178,8 +181,8 @@ export const SideView = ({
         />
       </div>
       <ScrollWrapper>
+        <CollapseSeperator>Lines</CollapseSeperator>
         <Collapse accordion ghost>
-          <CollapseSeperator>Lines</CollapseSeperator>
           <Collapse.Panel header={`Flowlines (${lines?.length || 0})`}>
             {lines?.map((line) => (
               <p key={line.pathIds.join('')}>
@@ -188,7 +191,9 @@ export const SideView = ({
               </p>
             ))}
           </Collapse.Panel>
-          <CollapseSeperator>Symbols</CollapseSeperator>
+        </Collapse>
+        <CollapseSeperator>Symbols</CollapseSeperator>
+        <Collapse accordion ghost>
           {symbols.map((symbol) => {
             return (
               <Collapse.Panel
