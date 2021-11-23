@@ -252,8 +252,7 @@ export const selectAnnotationSettingsState = createSelector(
   (annotationSettingsState) => {
     const settingsState = {
       ...annotationSettingsState,
-      ...((!annotationSettingsState.createNew.text ||
-        annotationSettingsState.createNew.text) &&
+      ...(!annotationSettingsState.createNew.text &&
         !annotationSettingsState.createNew.color && { createNew: {} }),
     };
     return settingsState;
