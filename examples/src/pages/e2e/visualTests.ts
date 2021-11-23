@@ -65,5 +65,8 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'custom-object-needsUpdate',
     category: 'cad'
+  },
+    testKey: 'outlines',
+    category: 'cad'
   }
 ];
