@@ -22,6 +22,8 @@ import {
   ConsumedSector
 } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
+import { PrimitiveBatchingManager } from '../PrimitiveBatchingManager';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -37,9 +39,9 @@ export class CadNode extends THREE.Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorScene: SectorScene;
-  private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
+  private readonly _primitiveBatchingManager: PrimitiveBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -51,18 +53,23 @@ export class CadNode extends THREE.Object3D {
     const instancedMeshGroup = new THREE.Group();
     instancedMeshGroup.name = 'InstancedMeshes';
 
+    const batchedPrimitivesMeshGroup = new THREE.Group();
+    batchedPrimitivesMeshGroup.name = 'Batched Primitives';
+
     this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
+
+    const materials = materialManager.getModelMaterials(model.modelIdentifier);
+    this._primitiveBatchingManager = new PrimitiveBatchingManager(batchedPrimitivesMeshGroup, materials);
 
     const rootSector = new RootSectorNode(model);
 
     rootSector.add(instancedMeshGroup);
+    rootSector.add(batchedPrimitivesMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
 
     this._sectorScene = scene;
-    // Ensure camera matrix is unequal on first frame
-    this._previousCameraMatrix.elements[0] = Infinity;
 
     // Prepare renderables
     this._rootSector = rootSector;
@@ -171,6 +178,10 @@ export class CadNode extends THREE.Object3D {
 
   public discardInstancedMeshes(sectorId: number) {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
+  }
+
+  public batchPrimtives(primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][]) {
+    this._primitiveBatchingManager.batchPrimitives(primitives);
   }
 
   public clearCache(): void {

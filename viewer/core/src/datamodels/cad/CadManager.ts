@@ -71,6 +71,10 @@ export class CadManager {
         cadModel.discardInstancedMeshes(sector.metadata.id);
       }
 
+      if (sector.primitives && sector.primitives.length > 0 && sector.levelOfDetail === LevelOfDetail.Detailed) {
+        cadModel.batchPrimtives(sector.primitives);
+      }
+
       const sectorNodeParent = cadModel.rootSector;
       const sectorNode = sectorNodeParent!.sectorNodeMap.get(sector.metadata.id);
       if (!sectorNode) {

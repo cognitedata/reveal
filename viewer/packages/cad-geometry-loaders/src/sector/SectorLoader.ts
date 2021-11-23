@@ -53,9 +53,9 @@ export class SectorLoader {
   }
 
   async *loadSectors(input: DetermineSectorsPayload): AsyncIterable<ConsumedSector> {
-    if (input.cameraInMotion) {
-      return [];
-    }
+    // if (input.cameraInMotion) {
+    //   return [];
+    // }
 
     const cadModels = input.models;
 

@@ -10,6 +10,7 @@ import { ParsedPrimitives, ParseSectorResult, ParseCtmResult, SectorQuads } from
 
 import { SectorMetadata } from '../metadata/types';
 import { LevelOfDetail } from './LevelOfDetail';
+import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 export type TriangleMesh = {
   readonly fileId: number;
@@ -48,6 +49,7 @@ export interface ConsumedSector {
   levelOfDetail: LevelOfDetail;
   group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
+  primitives?: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][];
 }
 
 export interface ParsedSector {
