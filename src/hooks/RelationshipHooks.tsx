@@ -440,7 +440,7 @@ export const useRelatedResourceCount = (
 
 export const useRelatedResourceCounts = (
   resource: ResourceItem
-): { counts: { [key in ResourceType]: string } } => {
+): { counts: { [key in ResourceType]?: string } } => {
   const { count: asset } = useRelatedResourceCount(resource, 'asset');
   const { count: event } = useRelatedResourceCount(resource, 'event');
   const { count: file } = useRelatedResourceCount(resource, 'file');

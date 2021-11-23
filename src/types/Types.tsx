@@ -6,7 +6,8 @@ export type ResourceType =
   | 'timeSeries'
   | 'sequence'
   | 'file'
-  | 'event';
+  | 'event'
+  | 'threeD';
 
 // Temporary mapping of the two almost identical types. Should be
 // removed as soon as possible, but that requires a full refactor

@@ -36,6 +36,11 @@ const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
     <Icon type="ResourceEvents" />
   </IconBackground>
 );
+const ThreeDIcon = ({ style }: { style?: React.CSSProperties }) => (
+  <IconBackground style={style}>
+    <Icon type="ResourceEvents" />
+  </IconBackground>
+);
 export const ResourceIcons = ({
   type,
   style,
@@ -54,6 +59,8 @@ export const ResourceIcons = ({
       return <EventIcon style={style} />;
     case 'asset':
       return <AssetIcon style={style} />;
+    case 'threeD':
+      return <ThreeDIcon style={style} />;
     default:
       throw new Error('Invalid Type');
   }
