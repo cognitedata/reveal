@@ -1,4 +1,4 @@
-name: Deploy platypus-cli
+name: Release & Deploy Platypus CLI
 on:
   push:
     branches:
@@ -30,10 +30,32 @@ jobs:
           yarn build production platypus-cdf-cli
 
       - name: Deploy PlatypusCLI to npm 🚀
+        id: publish
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          tag: alpha
+          tag: latest
           access: restricted
           check-version: true
           package: ./dist/apps/platypus-cdf-cli/package.json
+      
+      - name: Create Release
+        if: steps.publish.outputs.type != 'none'
+        uses: marvinpinto/action-automatic-releases
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: "latest"
+          title: Platypus CDF CLI Release ${{ github.ref }}
+          files: |
+            ./dist/apps/platypus-cdf-cli/*.js*
+          draft: true
+          body: |
+            ### Release Highlights
+
+            ### Features & Enhancements
+
+            <!-- Insert The Features and Enhancements below as points possibly add the link to the PR/commit -->
+
+            ### Bug Fixes
+
+            <!-- Insert The Bug Fixes below as points, also add relevant links -->
