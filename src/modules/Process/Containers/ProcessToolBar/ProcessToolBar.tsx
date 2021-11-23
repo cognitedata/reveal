@@ -13,6 +13,7 @@ import {
   resetDetectionModelParameters,
   selectAllProcessFiles,
   selectIsProcessingStarted,
+  addToAvailableDetectionModels,
 } from 'src/modules/Process/processSlice';
 import { message, notification } from 'antd';
 import React, { useState } from 'react';
@@ -79,6 +80,11 @@ export const ProcessToolBar = () => {
     !!processFiles.length &&
     !selectedDetectionModels.length &&
     isPollingFinished;
+
+  const handleCustomModelCreate = () => {
+    dispatch(addToAvailableDetectionModels());
+    setModalOpen(true);
+  };
 
   const detectionModelConfiguration = () => {
     return (
@@ -187,7 +193,7 @@ export const ProcessToolBar = () => {
                 <DetectionModelSelect
                   value={selectedDetectionModels}
                   onChange={onChange}
-                  isDisabled={disableModelSelection}
+                  handleCustomModelCreate={handleCustomModelCreate}
                 />
               </ModelSelector>
               <Button

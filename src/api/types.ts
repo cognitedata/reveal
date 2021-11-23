@@ -5,6 +5,7 @@ export enum VisionAPIType {
   OCR = 1,
   TagDetection,
   ObjectDetection,
+  CustomModel,
 }
 
 export interface DetectionModelDataProvider {
@@ -25,6 +26,7 @@ export type AnnotationType =
   | 'vision/ocr'
   | 'vision/tagdetection'
   | 'vision/objectdetection'
+  | 'vision/custommodel'
   | 'user_defined'
   | 'CDF_ANNOTATION_TEMPLATE';
 
@@ -142,7 +144,15 @@ export interface ParamsObjectDetection {
   threshold: number;
 }
 
+export interface ParamsCustomModel {
+  modelFile?: {
+    fileId: number;
+  };
+  threshold: number;
+}
+
 export type DetectionModelParams =
   | ParamsOCR
   | ParamsTagDetection
-  | ParamsObjectDetection;
+  | ParamsObjectDetection
+  | ParamsCustomModel;

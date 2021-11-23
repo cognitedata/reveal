@@ -61,6 +61,10 @@ const initialDetectionModelParameters = {
   objectDetection: {
     threshold: 0.8,
   },
+  customModel: {
+    modelFile: undefined,
+    threshold: 0.8,
+  },
 };
 
 const initialState: State = {
@@ -160,8 +164,35 @@ const processSlice = createGenericTabularDataSlice({
             item.unsavedSettings =
               initialDetectionModelParameters.objectDetection;
             break;
+          case VisionAPIType.CustomModel:
+            item.unsavedSettings = initialDetectionModelParameters.customModel;
+            break;
         }
       });
+    },
+    addToAvailableDetectionModels(state) {
+      const modelCount = state.availableDetectionModels.length;
+      const builtinModelCount = 3; // ocr, tag & objectdetection
+      const modelName =
+        modelCount - builtinModelCount
+          ? `Custom model (${modelCount - builtinModelCount})`
+          : 'Custom model';
+      state.availableDetectionModels.push({
+        modelName,
+        type: VisionAPIType.CustomModel,
+        settings: initialDetectionModelParameters.customModel,
+        unsavedSettings: initialDetectionModelParameters.customModel,
+      });
+    },
+    setCustomModelName(
+      state,
+      action: PayloadAction<{
+        modelIndex: number;
+        modelName: string;
+      }>
+    ) {
+      const { modelIndex, modelName } = action.payload;
+      state.availableDetectionModels[modelIndex].modelName = modelName;
     },
     removeJobById(state, action: PayloadAction<number>) {
       const existingJob = state.jobs.byId[action.payload];
@@ -311,6 +342,8 @@ export const {
   setDetectionModelParameters,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
+  setCustomModelName,
+  addToAvailableDetectionModels,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
   setSummaryModalVisibility,
@@ -480,7 +513,11 @@ export const makeSelectAnnotationStatuses = () =>
       if (job.type === VisionAPIType.TagDetection) {
         annotationBadgeProps.tag = statusData;
       }
-      if (job.type === VisionAPIType.ObjectDetection) {
+      if (
+        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+          job.type
+        )
+      ) {
         annotationBadgeProps.objects = statusData;
         annotationBadgeProps.gdpr = statusData;
       }

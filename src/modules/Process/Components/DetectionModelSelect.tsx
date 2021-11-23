@@ -1,17 +1,20 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react';
-import { Select } from '@cognite/cogs.js';
+import { Select, Button } from '@cognite/cogs.js';
 import { Props as SelectProps } from 'react-select';
 import { VisionAPIType } from 'src/api/types';
 
 import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from 'src/modules/Process/Containers/ModelDetails/OcrModelDetails';
+import * as customModelDetails from 'src/modules/Process/Containers/ModelDetails/customModelDetails';
+
 import {
   ColorsOCR,
   ColorsObjectDetection,
   ColorsTagDetection,
 } from 'src/constants/Colors';
+import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 
@@ -30,7 +33,12 @@ type Props = Omit<
   value: Array<SelectOption['value']>;
 };
 
-export function DetectionModelSelect({ value, onChange, ...props }: Props) {
+export function DetectionModelSelect({
+  value,
+  onChange,
+  handleCustomModelCreate,
+  ...props
+}: Props) {
   const [selectedOptionsCount, setSelectedOptionsCount] = useState<number>(
     value.length
   );
@@ -78,9 +86,34 @@ export function DetectionModelSelect({ value, onChange, ...props }: Props) {
             value: VisionAPIType.ObjectDetection,
             backgroundColor: ColorsObjectDetection.backgroundColor,
           };
+        case VisionAPIType.CustomModel:
+          return {
+            label: customModelDetails.badge(item.modelName),
+            value: VisionAPIType.CustomModel,
+            backgroundColor: ColorsObjectDetection.backgroundColor,
+          };
       }
     }
   );
+
+  const addCustomModelOption = {
+    label: (
+      <StyledButton
+        icon="PlusLarge"
+        onClick={handleCustomModelCreate}
+        type="ghost"
+      >
+        Add custom model
+      </StyledButton>
+    ),
+    value: VisionAPIType.CustomModel,
+    backgroundColor: '',
+  };
+
+  const options =
+    detectionModelOptions.length > 3 // Show create if custom model not already added
+      ? detectionModelOptions
+      : [...detectionModelOptions, addCustomModelOption];
 
   const toOption = (modelType: VisionAPIType): SelectOption => {
     const option = detectionModelOptions.find(
@@ -104,9 +137,17 @@ export function DetectionModelSelect({ value, onChange, ...props }: Props) {
         setSelectedOptionsCount(selectedOptions?.length || 1);
         onChange(selectedOptions?.map(fromOption) || []);
       }}
-      options={detectionModelOptions}
+      options={options}
       {...props}
       styles={colorStyles}
     />
   );
 }
+
+const StyledButton = styled(Button)`
+  width: 100%;
+  justify-content: start;
+  &:hover {
+    background: none;
+  }
+`;
