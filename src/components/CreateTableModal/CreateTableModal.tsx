@@ -76,12 +76,17 @@ const CreateTableModal = ({
   const [, openTable] = useActiveTable();
 
   const isUnique = !tables.some(({ name }) => name === tableName);
-  const isDisabled =
+  const isCreationDisabled =
     tableName.length === 0 ||
     tableName.length > 64 ||
     !selectedCreationMode ||
     !isUnique ||
     isCreatingTable;
+
+  const isUploadDisabled =
+    !selectedPrimaryKeyMethod ||
+    (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
+      !selectedColumn);
 
   useEffect(() => {
     if (!visible) {
@@ -132,9 +137,6 @@ const CreateTableModal = ({
     (method: PrimaryKeyMethod): (() => void) =>
     (): void => {
       setSelectedPrimaryKeyMethod(method);
-      if (method === PrimaryKeyMethod.AutoGenerate) {
-        setCreateTableModalStep(CreateTableModalStep.Upload);
-      }
     };
 
   const renderCreateTableModalStep = (): JSX.Element | undefined => {
@@ -166,14 +168,25 @@ const CreateTableModal = ({
         <StyledCancelButton onClick={onCancel} type="ghost">
           Cancel
         </StyledCancelButton>,
-        <Button
-          disabled={isDisabled}
-          loading={isCreatingTable}
-          onClick={handleCreate}
-          type="primary"
-        >
-          Create
-        </Button>,
+        ...(selectedCreationMode === CreationMode.Empty
+          ? [
+              <Button
+                disabled={isCreationDisabled}
+                loading={isCreatingTable}
+                onClick={handleCreate}
+                type="primary"
+              >
+                Create
+              </Button>,
+            ]
+          : []),
+        ...(selectedCreationMode === CreationMode.Upload
+          ? [
+              <Button disabled={isUploadDisabled} type="primary">
+                Upload
+              </Button>,
+            ]
+          : []),
       ]}
       onCancel={onCancel}
       title={<Title level={5}>Create table</Title>}
@@ -190,7 +203,7 @@ const CreateTableModal = ({
             setTableName(e.target.value)
           }
           onKeyUp={(e) => {
-            if (!isDisabled && e.key === 'Enter') {
+            if (!isCreationDisabled && e.key === 'Enter') {
               handleCreate();
             }
           }}
