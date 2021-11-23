@@ -9,7 +9,7 @@ import { groupMeshesByNumber } from '../utilities/groupMeshesByNumber';
 import { createOffsetsArray } from '../utilities/arrays';
 
 import { assertNever, MostFrequentlyUsedCache, MemoryRequestCache } from '@reveal/utilities';
-import { trackError } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import {
   CadSectorParser,
   LevelOfDetail,
@@ -96,7 +96,7 @@ export class CachedRepository implements Repository {
       }
     } catch (error) {
       this._consumedSectorCache.remove(cacheKey);
-      trackError(error as Error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
+      MetricsLogger.trackError(error, { methodName: 'loadSector', moduleName: 'CachedRepository' });
       throw error;
     }
   }

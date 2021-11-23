@@ -14,7 +14,7 @@ import { CadModelClipper } from './sector/CadModelClipper';
 import { CadModelMetadataRepository, CadModelMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { trackError } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
 export class CadManager {
@@ -91,7 +91,7 @@ export class CadManager {
       this._cadModelUpdateHandler.consumedSectorObservable().subscribe({
         next: consumeNextSector,
         error: error => {
-          trackError(error, {
+          MetricsLogger.trackError(error, {
             moduleName: 'CadManager',
             methodName: 'constructor'
           });
