@@ -32,7 +32,7 @@ const CreateEmptyTableOption = ({
 };
 
 const StyledCreateEmptyTableIcon = styled(Icon)`
-  color: ${Colors['border-default']};
+  color: ${Colors['border-default'].hex()};
 `;
 
 const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
@@ -86,12 +86,12 @@ const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
 `;
 
 const StyledCreateEmptyTableTitle = styled(Body)`
-  color: ${Colors['text-primary']};
+  color: ${Colors['text-primary'].hex()};
   margin: 16px 0 8px;
 `;
 
 const StyledCreateEmptyTableDetail = styled(Detail)`
-  color: ${Colors['text-hint']};
+  color: ${Colors['text-hint'].hex()};
   text-align: center;
 `;
 
