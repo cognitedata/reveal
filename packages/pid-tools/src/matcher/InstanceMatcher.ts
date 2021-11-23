@@ -1,5 +1,5 @@
 import { approxeqrel, PathSegment, Point } from './PathSegments';
-import { svgCommandToSegments } from './svgPathParser';
+import { segmentsToSVGCommand, svgCommandToSegments } from './svgPathParser';
 
 export enum MatchResult {
   Match,
@@ -9,16 +9,16 @@ export enum MatchResult {
 
 const errorMargin = 0.2;
 
-const calculateMidPoint = (pathSegment: PathSegment[]) => {
+const calculateMidPoint = (pathSegments: PathSegment[]) => {
   let sumX = 0;
   let sumY = 0;
-  pathSegment.forEach((pathSegment) => {
+  pathSegments.forEach((pathSegment) => {
     const { midPoint } = pathSegment;
     sumX += midPoint.x;
     sumY += midPoint.y;
   });
 
-  const numSegment = pathSegment.length;
+  const numSegment = pathSegments.length;
   return new Point(sumX / numSegment, sumY / numSegment);
 };
 
@@ -44,12 +44,16 @@ export class InternalSvgPath {
     midPoint: undefined | Point = undefined
   ) {
     this.segmentList = segmentList;
+
     this.pathId = pathId;
     if (midPoint !== undefined) {
       this.midPoint = midPoint;
     } else {
       this.midPoint = calculateMidPoint(this.segmentList);
     }
+  }
+  serializeToPathCommands(): string {
+    return segmentsToSVGCommand(this.segmentList);
   }
 }
 
@@ -141,5 +145,5 @@ export const newMatcher = (path: string) => {
 };
 
 export const newInternalSvgPath = (path: string, pathId = '') => {
-  return new InternalSvgPath(svgCommandToSegments(path), pathId);
+  return new InternalSvgPath(svgCommandToSegments(path, pathId), pathId);
 };

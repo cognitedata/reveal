@@ -1,1 +1,1 @@
-export { getSvgBoundingBox } from './getSvgBoundingBox';
+export { getInternalSvgBoundingBox } from './getSvgBoundingBox';

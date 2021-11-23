@@ -1,3 +1,5 @@
+import { BoundingBox } from 'types';
+
 export const approxeq = (v1: number, v2: number, epsilon = 2) =>
   Math.abs(v1 - v2) <= epsilon;
 
@@ -52,6 +54,19 @@ export class Point {
     return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
   }
 }
+const getBoundingBox = (startPoint: Point, stopPoint: Point) => {
+  const minX = Math.min(startPoint.x, stopPoint.x);
+  const minY = Math.min(startPoint.y, stopPoint.y);
+  const maxX = Math.max(startPoint.x, stopPoint.x);
+  const maxY = Math.max(startPoint.y, stopPoint.y);
+
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+};
 
 export abstract class PathSegment {
   start: Point;
@@ -62,10 +77,11 @@ export abstract class PathSegment {
     this.stop = stop;
     this.pathType = 'PathSegment';
   }
-
   abstract isSimilar(other: PathSegment): boolean;
+  abstract isEqual(other: PathSegment): boolean;
   abstract get midPoint(): Point;
   abstract get length(): number;
+  abstract get boundingBox(): BoundingBox;
 }
 
 export class LineSegment extends PathSegment {
@@ -84,6 +100,13 @@ export class LineSegment extends PathSegment {
 
     return approxeq(thisDx, otherDx) && approxeq(thisDy, otherDy);
   }
+  isEqual(other: PathSegment): boolean {
+    if (this.pathType !== other.pathType) return false;
+    return (
+      approxeq(this.start.distance(other.start), 0) &&
+      approxeq(this.stop.distance(other.stop), 0)
+    );
+  }
 
   get midPoint(): Point {
     return this.start.average(this.stop);
@@ -99,6 +122,10 @@ export class LineSegment extends PathSegment {
     let theta = Math.atan2(dy, dx);
     theta *= 180 / Math.PI; // rads to degs
     return theta;
+  }
+
+  get boundingBox() {
+    return getBoundingBox(this.start, this.stop);
   }
 }
 
@@ -130,6 +157,17 @@ export class CurveSegment extends PathSegment {
     return approxeq(dxThis, dxOther) && approxeq(dyThis, dyOther);
   }
 
+  isEqual(other: PathSegment): boolean {
+    if (!(other instanceof CurveSegment)) return false;
+
+    return (
+      approxeq(this.start.distance(other.start), 0) &&
+      approxeq(this.stop.distance(other.stop), 0) &&
+      approxeq(this.controlPoint1.distance(other.controlPoint1), 0) &&
+      approxeq(this.controlPoint2.distance(other.controlPoint2), 0)
+    );
+  }
+
   // This is a naive implementation. The geometric mid point should include `start` and `stop`
   get midPoint(): Point {
     return this.start.average(this.stop);
@@ -137,5 +175,11 @@ export class CurveSegment extends PathSegment {
 
   get length(): number {
     return this.start.distance(this.stop);
+  }
+
+  // Currently we do not handle the curve part of the bounding box
+  // It´s seen only as a strait line.
+  get boundingBox() {
+    return getBoundingBox(this.start, this.stop);
   }
 }

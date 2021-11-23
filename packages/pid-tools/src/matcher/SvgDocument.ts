@@ -4,7 +4,6 @@ import { newMatcher, MatchResult, InternalSvgPath } from './InstanceMatcher';
 
 export class SvgDocument {
   allSvgElements: InternalSvgPath[];
-
   constructor(allSvgElements: InternalSvgPath[]) {
     this.allSvgElements = allSvgElements;
   }
@@ -45,6 +44,7 @@ export class SvgDocument {
     const joinedSymbolSvgCommands = svgRepresentation.svgPaths
       .map((svgPath) => svgPath.svgCommands)
       .join(' ');
+
     const matcher = newMatcher(joinedSymbolSvgCommands);
 
     const all = this.allSvgElements;

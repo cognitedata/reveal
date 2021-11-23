@@ -112,7 +112,8 @@ export const SideView = ({
 
   const symbolHeaderRenderer = (symbol: DiagramSymbol) => {
     const { boundingBox } = symbol.svgRepresentations[0];
-    const viewboxPadding = 10;
+    const strokeWidth = 1;
+    const viewboxPadding = 2 * strokeWidth;
 
     return (
       <CollapseHeader>
@@ -137,7 +138,7 @@ export const SideView = ({
                 key={path.svgCommands}
                 d={path.svgCommands}
                 style={{
-                  strokeWidth: '12',
+                  strokeWidth,
                   stroke: 'black',
                   fill: 'none',
                 }}

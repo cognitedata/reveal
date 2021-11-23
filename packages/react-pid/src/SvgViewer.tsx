@@ -10,7 +10,8 @@ import {
   DiagramLineInstance,
   DiagramSymbolInstance,
   SvgRepresentation,
-  getSvgBoundingBox,
+  getInternalSvgBoundingBox,
+  SVG_ID,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
 import { Modal, Input, Button } from '@cognite/cogs.js';
@@ -67,7 +68,7 @@ const zoomFactor = 0.2;
 
 const updateSvgWithViewbox = () => {
   document
-    .getElementById('svg-id')
+    .getElementById(SVG_ID)
     ?.setAttribute(
       'viewBox',
       `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
@@ -207,6 +208,10 @@ export const SvgViewer = () => {
   };
 
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
+    if (svgDocument === undefined) {
+      return;
+    }
+
     const existingSymbolIndex = symbols.findIndex(
       (symbol) => symbol.symbolName === symbolName
     );
@@ -224,18 +229,29 @@ export const SvgViewer = () => {
       existingSymbolIndex !== -1
         ? symbols[existingSymbolIndex].svgRepresentations
         : [];
+
+    const internalSvgElems = [];
+    for (let i = 0; i < svgDocument.allSvgElements.length; i++) {
+      const elem = svgDocument.allSvgElements[i];
+      if (selection.filter((e) => e.id === elem.pathId).length !== 0) {
+        internalSvgElems.push(elem);
+      }
+    }
+
     const newSymbol: DiagramSymbol = {
       ...(existingSymbolIndex !== -1 ? symbols[existingSymbolIndex] : {}),
       symbolName,
       svgRepresentations: [
         ...existingSvgRepresentations,
         {
-          boundingBox: getSvgBoundingBox(selection),
-          svgPaths: selection.map(
+          boundingBox: getInternalSvgBoundingBox(internalSvgElems),
+          svgPaths: internalSvgElems.map(
             (svgElement) =>
               ({
-                svgCommands: svgElement.getAttribute('d') as string,
-                style: svgElement.getAttribute('style'),
+                svgCommands: svgElement.serializeToPathCommands(),
+                style: selection
+                  .filter((elem) => elem.id === svgElement.pathId)[0]
+                  .getAttribute('style'),
               } as SvgPath)
           ),
         },
@@ -265,18 +281,12 @@ export const SvgViewer = () => {
   const handleBeforeInjection = (svg?: SVGSVGElement) => {
     // console.log('handleBeforeInjection svg', svg);
     if (svg) {
-      svg.id = 'svg-id';
+      svg.id = SVG_ID;
       svg.style.width = '100%';
       svg.style.height = '100%';
 
-      const all: SVGElement[] = [];
-
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
-          if (svgDocument === undefined) {
-            all.push(node);
-          }
-
           if (selection.some((svgPath) => svgPath.id === node.id)) {
             node.style.stroke = 'red';
             const val = 1.5 * parseInt(node.style.strokeWidth, 10);
@@ -308,19 +318,6 @@ export const SvgViewer = () => {
           recursive(child);
         }
       }
-
-      if (svgDocument === undefined) {
-        svgDocument = new SvgDocument(
-          all
-            .filter((svgElement) => svgElement.getAttribute('d'))
-            .map((svgElement) => {
-              return newInternalSvgPath(
-                svgElement.getAttribute('d') as string,
-                svgElement.id
-              );
-            })
-        );
-      }
     }
   };
 
@@ -331,6 +328,8 @@ export const SvgViewer = () => {
     // console.log('handleAfterInjection', svg);
 
     if (svg) {
+      const all: SVGElement[] = [];
+
       if (!viewBox.isUpdated) {
         originalViewBox.x = svg.getBBox().x;
         originalViewBox.y = svg.getBBox().y;
@@ -352,6 +351,9 @@ export const SvgViewer = () => {
 
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
+          if (svgDocument === undefined) {
+            all.push(node);
+          }
           const originalStrokeWidth = node.style.strokeWidth;
           const originalStroke = node.style.stroke;
           node.addEventListener('mouseenter', () => {
@@ -415,6 +417,19 @@ export const SvgViewer = () => {
         if (child.tagName === 'g') {
           recursive(child);
         }
+      }
+
+      if (svgDocument === undefined) {
+        svgDocument = new SvgDocument(
+          all
+            .filter((svgElement) => svgElement.getAttribute('d'))
+            .map((svgElement) => {
+              return newInternalSvgPath(
+                svgElement.getAttribute('d') as string,
+                svgElement.id
+              );
+            })
+        );
       }
     }
   };
