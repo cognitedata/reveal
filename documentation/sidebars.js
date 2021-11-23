@@ -40,6 +40,7 @@ module.exports = {
         'examples/cad-explode',
         'examples/axisviewtool',
         'examples/geomaptool',
+        'examples/timelinetool',
         'examples/combine-models'
       ],
     },
