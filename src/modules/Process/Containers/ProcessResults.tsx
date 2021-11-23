@@ -25,6 +25,7 @@ import {
   setPageSize,
   useIsSelectedInProcess,
   useProcessFilesSelected,
+  selectUnfinishedJobs,
 } from 'src/modules/Process/processSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -44,6 +45,8 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
+import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+import { ResumeAnnotationJobs } from 'src/store/thunks/Process/ResumeAnnotationJobs';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -62,6 +65,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
 
   const processFiles = useSelector((state: RootState) =>
     selectProcessSortedFiles(state)
+  );
+
+  const unfinishedJobs = useSelector(({ processSlice }: RootState) =>
+    selectUnfinishedJobs(processSlice)
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
@@ -205,6 +212,19 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     ),
     []
   );
+
+  useEffect(() => {
+    const fileIds = processFiles
+      .filter((file) => !isVideo(file))
+      .map(({ id }) => id);
+
+    dispatch(
+      ResumeAnnotationJobs({
+        fileIds,
+        unfinishedJobs,
+      })
+    );
+  }, [processFiles]);
 
   return (
     <>
