@@ -5,6 +5,7 @@ import { Modal } from 'antd';
 import { Body, Colors } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
+import { TABLE_CELL_EXPANDED_WIDTH } from 'utils/constants';
 
 export const ExpandedCellModal = (): JSX.Element => {
   const [canDrag, setCanDrag] = useState<boolean>(true);
@@ -22,7 +23,7 @@ export const ExpandedCellModal = (): JSX.Element => {
       footer={null}
       mask={false}
       centered={true}
-      width={465}
+      width={TABLE_CELL_EXPANDED_WIDTH}
       bodyStyle={{ padding: '8px 64px 8px 8px' }}
       onCancel={onModalClose}
       modalRender={(modal) => (

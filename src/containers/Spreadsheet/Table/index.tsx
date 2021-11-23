@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Colors, Flex } from '@cognite/cogs.js';
 
 import { useTableSelection } from 'hooks/table-selection';
+import { TABLE_ROW_HEIGHT } from 'utils/constants';
+
 import { headerRenderer, emptyRenderer } from './customRenders';
 import { ExpandedCellModal } from './ExpandedCellModal';
 import { Cell } from './Cell';
@@ -38,8 +40,8 @@ export const Table = (props: Props): JSX.Element => {
             height={height}
             columns={isEmpty ? [] : newColumns}
             data={rows}
-            rowHeight={36}
-            headerHeight={isEmpty ? 0 : 36}
+            rowHeight={TABLE_ROW_HEIGHT}
+            headerHeight={isEmpty ? 0 : TABLE_ROW_HEIGHT}
             headerRenderer={headerRenderer}
             emptyRenderer={emptyRenderer}
             onEndReached={() => onEndReach && onEndReach()}
