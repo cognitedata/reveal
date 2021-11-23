@@ -8,7 +8,7 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import React from 'react';
-import { setParamsTagDetection } from 'src/modules/Process/processSlice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/processSlice';
 import { AssetSelector } from 'src/modules/Review/Components/AssetSelector/AssetSelector';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsTagDetection } from 'src/api/types';
@@ -24,8 +24,6 @@ import {
   TableContainer,
 } from './modelDetailsStyles';
 
-const modelName = 'Asset tag detection';
-
 export const description = () => {
   return (
     <Detail>
@@ -33,7 +31,7 @@ export const description = () => {
     </Detail>
   );
 };
-export const badge = (hideText: boolean = false) => {
+export const badge = (modelName: string, hideText: boolean = false) => {
   return (
     <Button
       icon="ResourceAssets"
@@ -48,39 +46,54 @@ export const badge = (hideText: boolean = false) => {
   );
 };
 
-export const content = () => {
+export const content = (modelIndex: number) => {
   const dispatch = useDispatch();
+
+  const modelName = useSelector(
+    ({ processSlice }: RootState) =>
+      processSlice.availableDetectionModels[modelIndex].modelName
+  );
 
   const params: ParamsTagDetection = useSelector(
     ({ processSlice }: RootState) =>
-      processSlice.temporaryDetectionModelParameters.tagDetection
+      processSlice.availableDetectionModels[modelIndex]
+        .unsavedSettings as ParamsTagDetection
   );
 
   const onUseCacheChange = (key: string) => {
-    const newParams: ParamsTagDetection = {
-      useCache: key === 'true',
-      partialMatch: params.partialMatch,
-      assetSubtreeIds: params.assetSubtreeIds,
+    const newParams = {
+      modelIndex,
+      params: {
+        useCache: key === 'true',
+        partialMatch: params.partialMatch,
+        assetSubtreeIds: params.assetSubtreeIds,
+      },
     };
-    dispatch(setParamsTagDetection(newParams));
+    dispatch(setUnsavedDetectionModelSettings(newParams));
   };
 
   const onPartialMatchChange = (key: string) => {
-    const newParams: ParamsTagDetection = {
-      useCache: params.useCache,
-      partialMatch: key === 'true',
-      assetSubtreeIds: params.assetSubtreeIds,
+    const newParams = {
+      modelIndex,
+      params: {
+        useCache: params.useCache,
+        partialMatch: key === 'true',
+        assetSubtreeIds: params.assetSubtreeIds,
+      },
     };
-    dispatch(setParamsTagDetection(newParams));
+    dispatch(setUnsavedDetectionModelSettings(newParams));
   };
 
   const onAssetSubtreeIdsChange = (assets: number[] | undefined) => {
-    const newParams: ParamsTagDetection = {
-      useCache: params.useCache,
-      partialMatch: params.partialMatch,
-      assetSubtreeIds: assets || [],
+    const newParams = {
+      modelIndex,
+      params: {
+        useCache: params.useCache,
+        partialMatch: params.partialMatch,
+        assetSubtreeIds: assets || [],
+      },
     };
-    dispatch(setParamsTagDetection(newParams));
+    dispatch(setUnsavedDetectionModelSettings(newParams));
   };
 
   return (
@@ -185,7 +198,7 @@ export const content = () => {
         <StyledCol span={1}>
           <div>
             <NameContainer>
-              {badge()}
+              {badge(modelName)}
               {description()}
             </NameContainer>
             <img

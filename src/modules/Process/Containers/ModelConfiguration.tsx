@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -5,6 +6,9 @@ import { Select, Body } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 
+import { RootState } from 'src/store/rootReducer';
+import { useSelector } from 'react-redux';
+import { VisionAPIType } from 'src/api/types';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
@@ -12,25 +16,28 @@ import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 const queryClient = new QueryClient();
 
 export const ModelConfiguration = () => {
-  const [currentModelSettings, setCurrentModelSettings] = useState('ocr');
+  const [currentModelSettings, setCurrentModelSettings] = useState(0);
 
-  const modelSelectOptions = [
-    {
-      label: 'Text detection',
-      value: 'ocr',
-      content: ocrModelDetails.content(),
-    },
-    {
-      label: 'Asset tag detection',
-      value: 'tagDetection',
-      content: tagDetectionModelDetails.content(),
-    },
-    {
-      label: 'Object detection',
-      value: 'objectDetection',
-      content: objectDetectionModelDetails.content(),
-    },
-  ];
+  const availableDetectionModels = useSelector(
+    (state: RootState) => state.processSlice.availableDetectionModels
+  );
+
+  const modelSelectOptions = availableDetectionModels.map((item, index) => {
+    const content =
+      item.type === VisionAPIType.OCR
+        ? ocrModelDetails.content(index)
+        : item.type === VisionAPIType.TagDetection
+        ? tagDetectionModelDetails.content(index)
+        : item.type === VisionAPIType.ObjectDetection
+        ? objectDetectionModelDetails.content(index)
+        : undefined;
+
+    return {
+      label: item.modelName,
+      value: index,
+      content,
+    };
+  });
 
   return (
     <>
