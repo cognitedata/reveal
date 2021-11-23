@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "lib": ["ES2015", "dom"],
-    "baseUrl": "../node_modules",
+    "baseUrl": "../src",
     "types": ["cypress", "node", "@testing-library/cypress"],
     "esModuleInterop": true
   },
-  "include": ["../node_modules/cypress", "**/*.ts"]
+  "include": ["**/*.ts"]
 }

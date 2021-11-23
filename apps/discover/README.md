@@ -98,18 +98,7 @@ NOTE: to run on different clusters, change this file:
 yarn cypress:open
 ```
 
-#### Run Cypress tests (CI mode)
-
-```shell
-yarn cypress:ci
-```
-
-Run specific tests:
-
-- `yarn cypress:ci cypress/integration/documents/**`
-- `yarn cypress:ci "**/documents.spec.ts"`
-
-#### Run Cypress tests through bazel
+#### Run live Cypress tests through bazel (dev mode)
 
 ```shell
 yarn cypress
@@ -117,10 +106,17 @@ yarn cypress
 
 Run specific tests:
 
-- `yarn cypress --spec cypress/integration/documents/**`
+- `yarn cypress --spec "**/documents/name-of-the-file.js"` to run one specific file
+- `yarn cypress --spec "**/documents/**"` to run all files inside a directory
 
 To stop the Cypress window from closing after a finished test, use the `--no-exit` flag.
 Cypress has many other run options, they can be found here: https://docs.cypress.io/guides/guides/command-line#Options
+
+#### Run Cypress tests (CI mode)
+
+```shell
+yarn cypress:ci
+```
 
 ### Testcafe: Run tests
 

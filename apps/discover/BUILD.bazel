@@ -14,6 +14,7 @@ load("//rules/test:testcafe_batch_test.bzl", "testcafe_batch_test")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@npm//cypress:index.bzl", "cypress")
+load("@npm//typescript:index.bzl", "tsc")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -436,44 +437,6 @@ react_scripts(
     ],
 )
 
-react_scripts(
-    name = "start-bluefield",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "start",
-    ],
-    data = _RUNTIME_DEPS + [
-        "chdir-workspace.js",
-    ],
-    env = {
-        "HTTPS": "true",
-        "REACT_APP_E2E_CLUSTER": "bluefield",
-        "REACT_APP_ENABLE_REDUX_LOGGER": "true",
-        "REACT_APP_DEBUG_METRICS": "true",
-        "REACT_APP_DEBUG_KEYS": "false",
-        "REACT_APP_ENABLE_ERRORS": "flash",
-        "REACT_APP_LANGUAGE_SELECTOR": "false",
-        "REACT_APP_RELEASE": "localhost",
-        "REACT_APP_I18N_DEBUG": "true",
-        "REACT_APP_I18N_PSEUDO": "false",
-        "BROWSER": "false",
-        "REACT_APP_LANGUAGE": "en",
-        "REACT_APP_LOCIZE_API_KEY": "f1f6b763-2c20-4e12-a1c5-c33f1a71cec2",
-        "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
-        "REACT_APP_LOCIZE_VERSION": "latest",
-        "REACT_APP_MIXPANEL_DEBUG": "false",
-        "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
-        ### END
-        "NODE_OPTIONS": "--max_old_space_size=4096",
-    },
-    tags = [
-        # This tag instructs ibazel to pipe into stdin a event describing actions.
-        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
-        # So use this to prevent EOF.
-        "ibazel_notify_changes",
-    ],
-)
-
 ### Testcafe ###
 
 copy_to_bin(
@@ -674,12 +637,15 @@ publish_fas(
 
 ### Cypress ###
 
-_TESTS_CYPRESS = [
-    "cypress/**/*.spec.ts",
-    "cypress/**/*.test.ts",
-]
+_CYPRESS_FILES = glob([
+    "cypress/support/**/*.ts",
+    "cypress/plugins/*",
+    "cypress/integration/**/*.ts",
+])
 
-TESTS_CYPRESS = glob(_TESTS_CYPRESS)
+CYPRESS_EXTERNAL_FILES = ["src/constants/app.ts"]
+
+CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES
 
 ts_project(
     name = "plugin_file",
@@ -692,15 +658,22 @@ ts_project(
     ],
 )
 
-# You can write your cypress tests a javascript files or in typescript.
-ts_project(
-    name = "cypress_project",
-    srcs = TESTS_CYPRESS + glob(["cypress/support/**/*"]),
-    tsconfig = "cypress/tsconfig.json",
-    deps = [
+tsc(
+    name = "cypress_files",
+    args = [
+        "--project",
+        "$(execpath :cypress/tsconfig.json)",
+        "--outDir",
+        "$(RULEDIR)/cypress_files",
+    ],
+    data = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + CYPRESS_FILES + [
+        ":cypress/tsconfig.json",
         "@npm//@testing-library/cypress",
         "@npm//cypress",
+        "@npm//@types/node",
+        "@npm//express",
     ],
+    output_dir = True,
 )
 
 cypress_web_test(
@@ -709,7 +682,7 @@ cypress_web_test(
     srcs = [
         ":build_sed",
         # Load ts_library tests as a target to srcs
-        ":cypress_project",
+        ":cypress_files",
     ],
     # A cypress config file is required
     config_file = "cypress.json",
@@ -721,24 +694,22 @@ cypress_web_test(
     # Your cypress plugin used to configure cypress and boot your server
     plugin_file = ":plugin_file",
     templated_args = [
-        "--config supportFile=./apps/discover/cypress/support,integrationFolder=./apps/discover/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js" +
+        "--config supportFile=./apps/discover/cypress_files/cypress/support,integrationFolder=./apps/discover/cypress_files/cypress/integration,pluginsFile=./apps/discover/cypress/plugin.js" +
         ",videosFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/video" +
         ",screenshotsFolder=$TEST_UNDECLARED_OUTPUTS_DIR/test.outputs/discover/screenshots",
     ],
 )
 
 cypress(
-    name = "cypress",
+    name = "cypress_run",
     args = [
         "run",
         "--headed",
         "--project ./apps/discover",
-        "--spec ./apps/discover/cypress/**/*.spec.js",
-        "--env BASE_URL=https://localhost:3000",
+        "--config supportFile=cypress_files/cypress/support,integrationFolder=cypress_files/cypress/integration",
     ],
     data = [
         "cypress.json",
-        ":cypress_project",
-        ":start",
+        ":cypress_files",
     ],
 )

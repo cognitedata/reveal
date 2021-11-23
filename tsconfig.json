@@ -22,7 +22,10 @@
         "../../../packages/*/src",
         "<rootDir>/../../packages/*/src",
         "../../../node_modules/@cognite/*",
-        "<rootDir>/../../node_modules/@cognite/*"
+        "<rootDir>/../../node_modules/@cognite/*",
+
+        "../../../../packages/*/src",
+        "<rootDir>/../../../packages/*/src"
       ],
       "@cognite/metrics/dist/mocks": [
         "../../../packages/metrics/src/mocks",

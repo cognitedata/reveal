@@ -23,8 +23,6 @@
     "start:b": "REACT_APP_E2E_CLUSTER=bluefield ./scripts/start.sh",
     "start:idp:a": "REACT_APP_E2E_CLUSTER=azure-dev ./scripts/startIdP.sh",
     "start:idp:b": "REACT_APP_E2E_CLUSTER=bluefield ./scripts/startIdP.sh",
-    "start:bazel:a": "ibazel run :start",
-    "start:bazel:b": "ibazel run :start-bluefield",
     "storybook": "../../node_modules/.bin/start-storybook -p 6006",
     "storybook:bazel": "ibazel run :start-storybook",
     "build-storybook:bazel": "bazel build :storybook-static",
@@ -35,9 +33,9 @@
     "test:all": "../../node_modules/.bin/react-scripts test --env=jest-environment-jsdom-sixteen",
     "test:changed": "yarn test:all --detectOpenHandles --bail --colors --verbose --onlyChanged --coverageReporters=none --watchAll=false",
     "update-helpers": "bazel run :generate_package_json_helpers",
-    "cypress": "ibazel run :cypress",
+    "cypress": "ibazel run :cypress_run -- --env REACT_APP_E2E_USER=$(git config user.email)",
     "cypress:ci": "bazel test :cypress_test",
-    "cypress:open": "../../node_modules/.bin/cypress open"
+    "cypress:open": "../../node_modules/.bin/cypress open --env REACT_APP_E2E_USER=$(git config user.email)"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

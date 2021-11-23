@@ -1586,6 +1586,13 @@
     "@types/geojson" "^7946.0.7"
     axios "^0.19.2"
 
+"@cognite/intercom-helper@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/intercom-helper/-/intercom-helper-0.2.0.tgz#8c59f093fe3526c2a93d168f721d31ffaf6da27e"
+  integrity sha512-Z3Ux4zr5ElcRu0YRa2m7LiHW7WO4p3RQ42mjzfYLNinvivmkH50+APN3spKhC71twAMt4W+aUDdvcxlt2X3ZMg==
+  dependencies:
+    axios "0.21.2"
+
 "@cognite/node-visualizer@1.2.15":
   version "1.2.15"
   resolved "https://registry.yarnpkg.com/@cognite/node-visualizer/-/node-visualizer-1.2.15.tgz#9d6c1d6e33e2c9aae111be7164a3e072759757c2"
@@ -1718,6 +1725,13 @@
     typedoc "^0.17.7"
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
+
+"@cognite/sidecar@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sidecar/-/sidecar-0.2.0.tgz#54391eaa4f4cadf8b0e780c27ebebcea348439e2"
+  integrity sha512-BmnMvg5yJFSkm7EOKbmx5g9l+HY4BP5tOe+zPE1WZZNuGj5psWODEr/ixGXkTBw/uuRl/gI7rc/E2bQjS10nWw==
+  dependencies:
+    "@cognite/intercom-helper" "0.2.0"
 
 "@cognite/simconfig-api-sdk@^0.1.2":
   version "0.1.2"

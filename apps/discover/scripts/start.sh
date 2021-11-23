@@ -36,7 +36,7 @@ IDP_PID=$!
 SERVE_PID=$!
 
 echo ' '
-echo '-> Starting testcafe server (from src)'
+echo '-> Starting Discover'
 echo ' '
 
 function cleanup {
@@ -51,9 +51,9 @@ trap cleanup EXIT
 
 USER_ID=$(git config user.email) # ok since this is local only
 echo '-------------'
-echo "Current user: $USER_ID" 
+echo "Current user: $USER_ID"
 echo '-------------'
-REACT_APP_E2E_USER=$USER_ID ../../node_modules/.bin/react-scripts --max-old-space-size=4096 start
+REACT_APP_E2E_USER=$USER_ID ibazel run :start
 EXIT_CODE=$?
 
 exit $EXIT_CODE

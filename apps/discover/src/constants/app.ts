@@ -3,9 +3,8 @@ import {
   SidecarConfig,
   CDFCluster,
   getDefaultSidecar,
+  FakeIdp,
 } from '@cognite/sidecar';
-
-import { getTestUserId } from '../_helpers/getTestUserId';
 
 // More info: https://cog.link/discover-projects
 const CLUSTER: CDFCluster =
@@ -55,11 +54,13 @@ const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
   ...sidecarOverrides,
   fakeIdp:
     sidecarOverrides && sidecarOverrides.fakeIdp
-      ? sidecarOverrides.fakeIdp.map((fakeIdp) => {
+      ? sidecarOverrides.fakeIdp.map((fakeIdp: FakeIdp) => {
           const isAdmin = fakeIdp.name?.toLowerCase().includes('admin');
           return {
             ...fakeIdp,
-            userId: (isAdmin ? 'admin-' : '') + (getTestUserId() || 'Error'),
+            userId: process.env.REACT_APP_E2E_USER
+              ? (isAdmin ? 'admin-' : '') + process.env.REACT_APP_E2E_USER
+              : fakeIdp.userId,
           };
         })
       : [],
