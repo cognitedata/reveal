@@ -14,7 +14,7 @@ describe('NodeAppearanceProvider', () => {
 
   beforeEach(() => {
     provider = new NodeAppearanceProvider();
-    jest.useFakeTimers();
+    jest.useFakeTimers('modern');
   });
 
   afterEach(() => {
@@ -67,12 +67,15 @@ describe('NodeAppearanceProvider', () => {
     provider.on('changed', listener);
 
     provider.assignStyledNodeCollection(nodeCollection, {});
+    jest.runAllTimers();
     expect(listener).toBeCalledTimes(1);
 
     provider.assignStyledNodeCollection(nodeCollection, { visible: false });
+    jest.runAllTimers();
     expect(listener).toBeCalledTimes(2);
 
     provider.unassignStyledNodeCollection(nodeCollection);
+    jest.runAllTimers();
     expect(listener).toBeCalledTimes(3);
   });
 
@@ -94,6 +97,7 @@ describe('NodeAppearanceProvider', () => {
     const style: NodeAppearance = { visible: false };
     provider.assignStyledNodeCollection(nodeCollection, style);
     provider.unassignStyledNodeCollection(nodeCollection);
+    jest.runAllTimers();
     const listener = jest.fn();
     provider.on('changed', listener);
 

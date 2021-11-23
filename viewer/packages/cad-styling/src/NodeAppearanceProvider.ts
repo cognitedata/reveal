@@ -6,6 +6,7 @@ import { NodeAppearance } from './NodeAppearance';
 import { NodeCollectionBase } from './NodeCollectionBase';
 
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
+import debounce from 'lodash/debounce';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
@@ -77,7 +78,7 @@ export class NodeAppearanceProvider {
 
       this._styledCollections.push(styledCollection);
       nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
-      this.notifyChanged();
+      this.scheduleNotifyChanged();
     }
   }
 
@@ -90,7 +91,7 @@ export class NodeAppearanceProvider {
 
     this._styledCollections.splice(index, 1);
     nodeCollection.off('changed', styledCollection.handleNodeCollectionChangedListener);
-    this.notifyChanged();
+    this.scheduleNotifyChanged();
   }
 
   applyStyles(applyCb: ApplyStyleDelegate) {
@@ -106,7 +107,7 @@ export class NodeAppearanceProvider {
       nodeCollection.off('changed', styledSet.handleNodeCollectionChangedListener);
     }
     this._styledCollections.splice(0);
-    this.notifyChanged();
+    this.scheduleNotifyChanged();
   }
 
   get isLoading(): boolean {
@@ -116,6 +117,10 @@ export class NodeAppearanceProvider {
   private notifyChanged() {
     this._events.changed.fire();
   }
+  /**
+   * Schedules event 'changed' to trigger at the next tick.
+   */
+  private readonly scheduleNotifyChanged = debounce(() => this.notifyChanged(), 0);
 
   private notifyLoadingStateChanged() {
     if (this._lastFiredLoadingState === this.isLoading) return;
@@ -124,7 +129,7 @@ export class NodeAppearanceProvider {
   }
 
   private handleNodeCollectionChanged(_styledSet: StyledNodeCollection) {
-    this.notifyChanged();
+    this.scheduleNotifyChanged();
     this.notifyLoadingStateChanged();
   }
 }
