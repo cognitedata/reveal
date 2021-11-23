@@ -22,7 +22,7 @@ import breadcrumbStyle from 'antd/es/breadcrumb/style/index.less';
 import buttonStyle from 'antd/es/button/style/index.less';
 // import calendarStyle from 'antd/es/calendar/style/index.less';
 import cardStyle from 'antd/es/card/style/index.less';
-// import carouselStyle from 'antd/es/carousel/style/index.less';
+import carouselStyle from 'antd/es/carousel/style/index.less';
 // import cascaderStyle from 'antd/es/cascader/style/index.less';
 // import checkboxStyle from 'antd/es/checkbox/style/index.less';
 // import collapseStyle from 'antd/es/collapse/style/index.less';
@@ -89,6 +89,7 @@ const styles = [
   breadcrumbStyle,
   buttonStyle,
   cardStyle,
+  carouselStyle,
   coreStyle,
   gridStyle,
   inputNumberStyle,

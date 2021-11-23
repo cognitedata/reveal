@@ -14,6 +14,7 @@ import { useActiveTableContext } from 'contexts';
 const TableContent = () => {
   const { database, table, view, update } = useActiveTableContext();
   const { isFetching } = useRawProfile({ database, table });
+
   return (
     <Wrapper>
       <StyledTabs
