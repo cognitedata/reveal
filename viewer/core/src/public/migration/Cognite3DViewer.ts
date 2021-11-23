@@ -1205,7 +1205,7 @@ export class Cognite3DViewer {
     this.camera.updateMatrixWorld();
     const screenPosition = new THREE.Vector3();
     if (normalize) {
-      worldToNormalizedViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+      worldToNormalizedViewportCoordinates(this.camera, point, screenPosition);
     } else {
       worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
     }
