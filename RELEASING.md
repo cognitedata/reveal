@@ -19,22 +19,35 @@ git checkout -b <your_username>/<package-name>@<version_to_release>
 
 ### Bump version and create a PR
 
-Navigate to the `viewer` (or `parser-worker`) folder and run `yarn bump` script 
+Navigate to the `viewer` (or `parser-worker`) folder and run `yarn version [major/minor/patch]` (for more info, see: https://yarnpkg.com/features/release-workflow)
 
 ```bash
 cd viewer
 
-# it will ask you to enter a new version number
-yarn bump
+# the semver version will change depending on it being a major, minor or patch update
+yarn version minor
 ```
 
-The version you specified will be committed and pushed to the remote repository among with the version tag. For production releases use the regular `x.y.z`-notation. For pre-releases use
-`x.y.z-beta.w`. Create a PR with the changes.
+Following, we also want to update the documentation with any changes that might have been added since the last release:
+
+Assuming you are at the root of the project navigate do the documentation folder and run the update script
+
+```bash
+
+cd documentation
+
+# replaces the 'latest' documentation by the 'next'
+yarn replace-latest-by-next
+```
+
+Commit these changes and optionally add a git tag to this commit (this can also be deferred to later when creating a release in GitHub).
+
+Create a PR with the changes.
 
 **Don't merge it yet**, but wait for the CI checks to complete.
 
 **Tip**: if something went wrong with the build, and you want to apply some fix, 
-don't forget to remove git tags that were created after running `yarn bump`. 
+don't forget to remove git tags that were created. 
 
 <details>
   <summary>Git tags removing example</summary>
@@ -70,13 +83,18 @@ If you are not currently logged into npm on your CLI, do the following:
 Once logged in, run:
 
 ```bash
-yarn release
+yarn build:prod
+cd dist
+npm publish
 ```
 
 or if you are releasing a beta version:
 
 ```bash
-yarn release --tag=beta
+
+yarn build:prod
+cd dist
+npm publish --tag=beta
 ```
 
 It creates a build, copies package.json into /dist with modifications and runs npm publish from viewer/dist.
