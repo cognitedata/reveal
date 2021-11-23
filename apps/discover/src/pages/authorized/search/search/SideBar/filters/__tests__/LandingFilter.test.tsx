@@ -4,7 +4,7 @@ import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 
-import { LandingFilter } from '..';
+import { LandingFilter } from '../LandingFilter';
 
 jest.mock('hooks/useGlobalMetrics', () => ({
   useGlobalMetrics: jest.fn(),
@@ -16,7 +16,7 @@ jest.mock('../SeismicFilter', () => ({
   },
 }));
 
-jest.mock('../WellsFilter', () => ({
+jest.mock('../well/WellFilters', () => ({
   WellsFilter: {
     Title: () => <div>WellsFilter</div>,
   },

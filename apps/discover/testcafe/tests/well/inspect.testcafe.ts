@@ -102,7 +102,7 @@ startTest('Trajectory wellbore search from dropdown', async () => {
   progress('Do a search in the dropdown input');
   await App.wellInspectPage.doSearchInDropdown('Wellbore 19');
   progress('Should return at least one record', true);
-  await t.expect(App.wellInspectPage.wellboreDropdownMenuItems.count).gt(2); // including select all
+  await t.expect(App.wellInspectPage.wellboreDropdownMenuItems.count).gt(0); // including select all
 });
 
 startTest('Trajectory wellbore select all indeterminate', async () => {

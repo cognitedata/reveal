@@ -107,7 +107,7 @@ export const useMutatePatchSavedSearch = (
 
   return useMutation(
     (savedSearchPatchContent: Partial<SavedSearchContent>) => {
-      // console.log('Should update saved search with:', props);
+      // console.log('Should update saved search with:', savedSearchPatchContent);
       return updateCurrentSearch(
         currentSavedSearch,
         savedSearchPatchContent,

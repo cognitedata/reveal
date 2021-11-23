@@ -10,7 +10,7 @@ import { BaseFilter } from '../components/BaseFilter';
 
 import { DocumentFilter } from './DocumentFilter';
 import { SeismicFilter } from './SeismicFilter';
-import { WellsFilter } from './WellsFilter';
+import { WellsFilter } from './well/WellFilters';
 
 const FiltersContainer = styled(Flex)`
   flex: 1;

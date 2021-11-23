@@ -12,6 +12,7 @@ import {
   useSetWellsFiltersAsync,
 } from 'modules/api/savedSearches/hooks/useClearWellsFilters';
 import { useAppliedWellFilters } from 'modules/sidebar/selectors';
+import { Modules } from 'modules/sidebar/types';
 import { useFilterConfigByCategory } from 'modules/wellSearch/hooks/useFilterConfigByCategory';
 import { useWellFilterOptions } from 'modules/wellSearch/hooks/useWellFilterOptionsQuery';
 import {
@@ -20,15 +21,15 @@ import {
   FilterConfig,
 } from 'modules/wellSearch/types';
 
-import { Modules } from '../../../../../../modules/sidebar/types';
-import { BaseFilter } from '../components/BaseFilter';
-import { FilterCollapse } from '../components/FilterCollapse';
+import { BaseFilter } from '../../components/BaseFilter';
+import { FilterCollapse } from '../../components/FilterCollapse';
+import Header from '../common/Header';
 
-import Header from './common/Header';
-import Title from './common/Title';
-import { WellIconWrapper, WellIcon } from './elements';
-import { CommonFilter } from './well/CommonFilter';
-import { TITLE, CATEGORY } from './well/constants';
+import { CommonFilter } from './CommonFilter';
+import { TITLE, CATEGORY } from './constants';
+import { Title } from './Title';
+
+const loader = <Skeleton.List lines={6} borders />;
 
 export const WellsFilter = () => {
   const usePreferredUnit = useUserPreferencesMeasurement();
@@ -91,8 +92,7 @@ export const WellsFilter = () => {
     });
   };
 
-  const loader = <Skeleton.List lines={6} borders />;
-
+  // eg: "Well Characteristics"
   const WellFilters: React.FC<{
     filterConfigs: FilterConfig[];
     index: number;
@@ -100,19 +100,23 @@ export const WellsFilter = () => {
     return React.useMemo(
       () => (
         <>
-          {filterConfigs.map((filterConfig) => (
-            <CommonFilter
-              key={filterConfig.id}
-              filterConfig={filterConfig}
-              onValueChange={(
-                id: number,
-                selectedVals: WellFilterOptionValue[]
-              ) => onValueChange(index, id, selectedVals, filterConfig.name)}
-              options={get(filterOptions, filterConfig.id, [])}
-              selectedOptions={selectedOptions[filterConfig.id]}
-              displayFilterTitle={filterConfigs.length > 1}
-            />
-          ))}
+          {filterConfigs.map((filterConfig) => {
+            // console.log('filterConfig', filterConfig);
+
+            return (
+              <CommonFilter
+                key={filterConfig.id}
+                filterConfig={filterConfig}
+                onValueChange={(
+                  id: number,
+                  selectedVals: WellFilterOptionValue[]
+                ) => onValueChange(index, id, selectedVals, filterConfig.name)}
+                options={get(filterOptions, filterConfig.id, [])}
+                selectedOptions={selectedOptions[filterConfig.id]}
+                displayFilterTitle={filterConfigs.length > 1}
+              />
+            );
+          })}
         </>
       ),
       [filterConfigs, index]
@@ -158,20 +162,4 @@ export const WellsFilter = () => {
   );
 };
 
-WellsFilter.Title = () => {
-  const clearWellFilters = useClearWellsFilters();
-
-  return (
-    <Title
-      title={TITLE}
-      category={CATEGORY}
-      iconElement={
-        <WellIconWrapper>
-          <WellIcon type="OilPlatform" />
-        </WellIconWrapper>
-      }
-      description="Search for wells and wellbores by source, characteristics, events and more"
-      handleClearFilters={clearWellFilters}
-    />
-  );
-};
+WellsFilter.Title = Title;

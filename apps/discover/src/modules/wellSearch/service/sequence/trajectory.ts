@@ -1,4 +1,5 @@
 import chunk from 'lodash/chunk';
+import find from 'lodash/find';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
@@ -149,7 +150,9 @@ export const convertToCustomTrajectoryData = (
       source: trajectoryData.source.sourceName,
       type: trajectoryData.type,
       bh_md: String(maxMeasuredDepth),
+      bh_md_unit: trajectoryData.measuredDepthUnit,
       bh_tvd: String(maxTrueVerticalDepth),
+      bh_tvd_unit: trajectoryData.trueVerticalDepthUnit,
     },
     createdTime: new Date(),
     lastUpdatedTime: new Date(),
@@ -210,7 +213,24 @@ export const fetchTrajectoriesUsingCogniteSDK = async (
                 );
                 return {
                   sequence: {
-                    ...sequence,
+                    ...{
+                      ...sequence,
+                      metadata: {
+                        ...sequence.metadata,
+                        bh_md_unit: get(
+                          find(sequence.columns, { externalId: 'md' })
+                            ?.metadata,
+                          'unit',
+                          'ft'
+                        ),
+                        bh_tvd_unit: get(
+                          find(sequence.columns, { externalId: 'tvd' })
+                            ?.metadata,
+                          'unit',
+                          'ft'
+                        ),
+                      },
+                    },
                     assetId: Number(
                       wellboreAssetIdReverseMap[Number(sequence.assetId)]
                     ),

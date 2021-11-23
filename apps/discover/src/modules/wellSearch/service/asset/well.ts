@@ -1,9 +1,8 @@
 import { Geometry } from '@turf/helpers';
 import get from 'lodash/get';
 
-import { WellFilter } from '@cognite/sdk-wells-v2';
-
 import { getWellById, getWellItemsByFilter } from 'modules/wellSearch/sdk';
+import { CommonWellFilter } from 'modules/wellSearch/types';
 import { normalizeWells } from 'modules/wellSearch/utils/wells';
 
 export interface SpatialSearchItemResponse {
@@ -14,7 +13,7 @@ export interface SpatialSearchItemResponse {
   };
 }
 
-export function getByFilters(wellFilter: WellFilter) {
+export function getByFilters(wellFilter: CommonWellFilter) {
   return getWellItemsByFilter(wellFilter).then((response) =>
     normalizeWells(get(response, 'items', []))
   );

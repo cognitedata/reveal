@@ -7,7 +7,6 @@ import {
   WaterDepthLimits as WaterDepthLimitsV2,
   SpudDateLimits as SpudDateLimitsV2,
   Well as WellV2,
-  WellFilter as WellFilterV2,
   WellItems as WellItemsV2,
   PolygonFilter as PolygonFilterV2,
   Wellbore as WellboreV2,
@@ -42,6 +41,8 @@ import {
   SummaryCount,
   DepthMeasurementItems,
 } from '@cognite/sdk-wells-v3';
+
+import { CommonWellFilter } from '../types';
 
 export const DEFAULT_DOUBLE_WITH_UNIT: DoubleWithUnit = {
   value: 0,
@@ -148,7 +149,9 @@ export const mapV2toV3PolygonFilter = (
   };
 };
 
-export const mapV2toV3WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
+export const mapV2toV3WellFilter = (
+  wellFilter: CommonWellFilter
+): WellFilterV3 => {
   const filters = {
     quadrant: toPropertyFilter(wellFilter.quadrants),
     block: toPropertyFilter(wellFilter.blocks),
@@ -163,6 +166,12 @@ export const mapV2toV3WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
       max: wellFilter.spudDate?.max?.toDateString(),
     },
     polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
+    trajectories: {
+      maxMeasuredDepth: wellFilter.hasTrajectory?.maxMeasuredDepth,
+      maxTrueVerticalDepth: wellFilter.trajectories?.maxTrueVerticalDepth,
+      maxDoglegSeverity: wellFilter.trajectories?.maxDoglegSeverity,
+    },
+    datum: wellFilter.datum,
   } as WellFilterV3;
 
   if (wellFilter.npt && !isEmpty(wellFilter.npt)) {
@@ -186,7 +195,7 @@ export const mapV2toV3WellFilter = (wellFilter: WellFilterV2): WellFilterV3 => {
 };
 
 export const mapWellFilterToWellFilterRequest = (
-  wellFilter: WellFilterV2
+  wellFilter: CommonWellFilter
 ): WellFilterRequest => {
   return {
     filter: mapV2toV3WellFilter(wellFilter),

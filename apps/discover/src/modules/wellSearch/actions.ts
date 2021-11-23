@@ -1,15 +1,17 @@
 ﻿import flatMap from 'lodash/flatMap';
 import groupBy from 'lodash/groupBy';
+import merge from 'lodash/merge';
 
 import { storage } from '@cognite/react-container';
 import { CogniteError, Sequence, Asset } from '@cognite/sdk';
-import { Polygon, WellFilter } from '@cognite/sdk-wells-v2';
+import { Polygon } from '@cognite/sdk-wells-v2';
 
 import { log } from '_helpers/log';
 import { showWarningMessage } from 'components/toast';
 import { ThunkResult } from 'core/types';
 import { Column } from 'modules/documentSearch/types';
 import { WELL_SEARCH_ACCESS_ERROR } from 'modules/wellSearch/constants';
+import { CommonWellFilter } from 'modules/wellSearch/types';
 import { filterConfigsById } from 'modules/wellSearch/utils/sidebarFilters';
 
 import {
@@ -113,28 +115,25 @@ export function search(filters: WellFilterMap): ThunkResult<void> {
     });
     dispatch(startSearch);
     const state = getState();
-    const wellFilters: WellFilter = Object.keys(filters).reduce(
+    const wellFilters: CommonWellFilter = Object.keys(filters).reduce(
       (prev, current) => {
         const id = Number(current);
         const { filterParameters } = filterConfigsById[id];
         return filterParameters && filters[id].length
-          ? {
-              ...prev,
-              ...{
-                ...filterParameters(filters[id] as string[]),
-                npt: {
-                  ...prev.npt,
-                  ...filterParameters(filters[id] as string[]).npt,
-                },
-                nds: {
-                  ...prev.nds,
-                  ...filterParameters(filters[id] as string[]).nds,
-                },
+          ? merge(prev, {
+              ...filterParameters(filters[id] as string[]),
+              npt: {
+                ...prev.npt,
+                ...filterParameters(filters[id] as string[]).npt,
               },
-            }
+              nds: {
+                ...prev.nds,
+                ...filterParameters(filters[id] as string[]).nds,
+              },
+            })
           : prev;
       },
-      {} as WellFilter
+      {} as CommonWellFilter
     );
 
     // Apply Geo Filter

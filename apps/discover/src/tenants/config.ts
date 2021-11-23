@@ -31,11 +31,19 @@ export const defaultWellFilters: WellConfig = {
     well_type: {
       enabled: true,
     },
+    md: {
+      enabled: false,
+    },
     kb_elevation: {
       enabled: false,
     },
     tvd: {
       enabled: false,
+    },
+    dls: {
+      enabled: false,
+      feetDistanceInterval: 30,
+      meterDistanceInterval: 100,
     },
     maximum_inclination_angle: {
       enabled: true,

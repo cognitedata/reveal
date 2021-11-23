@@ -9,7 +9,9 @@ export interface OverviewModel extends Omit<Wellbore, 'wellbores' | 'sources'> {
   spudDate?: string;
   waterDepth?: DoubleWithUnit;
   md?: string;
+  mdUnit?: string;
   tvd?: string;
+  tvdUnit?: string;
   sources?: string[];
   field?: string;
 }

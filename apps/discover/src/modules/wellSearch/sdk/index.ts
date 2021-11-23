@@ -1,9 +1,10 @@
 import isUndefined from 'lodash/isUndefined';
 
 import { getTenantInfo } from '@cognite/react-container';
-import { Cluster, WellFilter, NPTFilter } from '@cognite/sdk-wells-v2';
+import { Cluster, NPTFilter } from '@cognite/sdk-wells-v2';
 
 import { fetcher } from 'hooks/useTenantConfig';
+import { CommonWellFilter } from 'modules/wellSearch/types';
 import { TenantConfig } from 'tenants/types';
 
 import {
@@ -69,10 +70,25 @@ export const isWellSDKAuthenticated = () => {
 export const getWellFilterFetchers = () => {
   if (!isWellSDKAuthenticated()) return null;
 
+  const mdLimits = () => Promise.resolve([0, 50000]);
+  const tvdLimits = () => Promise.resolve([0, 50000]);
+  const kbLimits = () => Promise.resolve([0, 100]);
+  const dogLegSeverityLimts = () => Promise.resolve([0, 100]);
+
   if (!enableWellSDKV3) {
     const { fields, blocks, operators, measurements, regions } =
       getWellSDKClientV2().wells;
-    return { fields, blocks, operators, measurements, regions };
+    return {
+      fields,
+      blocks,
+      operators,
+      measurements,
+      regions,
+      mdLimits,
+      tvdLimits,
+      kbLimits,
+      dogLegSeverityLimts,
+    };
   }
 
   return {
@@ -93,6 +109,10 @@ export const getWellFilterFetchers = () => {
       getWellSDKClientV3()
         .measurements.list({})
         .then(getMeasurementsFromDepthMeasurementItems),
+    mdLimits,
+    tvdLimits,
+    kbLimits,
+    dogLegSeverityLimts,
   };
 };
 
@@ -168,7 +188,7 @@ export const getWellById = (wellId: number) => {
     : getWellSDKClientV2().wells.getById(wellId);
 };
 
-export const getWellItemsByFilter = (wellFilter: WellFilter) => {
+export const getWellItemsByFilter = (wellFilter: CommonWellFilter) => {
   return enableWellSDKV3
     ? getWellSDKClientV3()
         .wells.list(mapWellFilterToWellFilterRequest(wellFilter))

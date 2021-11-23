@@ -231,11 +231,19 @@ export interface WellConfig {
     well_type?: {
       enabled?: boolean;
     };
+    md?: {
+      enabled?: boolean;
+    };
     kb_elevation?: {
       enabled?: boolean;
     };
     tvd?: {
       enabled?: boolean;
+    };
+    dls?: {
+      enabled?: boolean;
+      feetDistanceInterval: number;
+      meterDistanceInterval: number;
     };
     maximum_inclination_angle?: {
       enabled?: boolean;

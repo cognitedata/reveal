@@ -168,7 +168,7 @@ export const getPrestineWellIds = (
   }) as unknown as number[];
 };
 
-export const getWaterDepthLimitsInFeet = (
+export const getWaterDepthLimitsInUnit = (
   waterDepthLimits: WaterDepthLimits,
   preferredUnit: string
 ) => {

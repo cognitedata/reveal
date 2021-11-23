@@ -15,6 +15,16 @@ const getUnitChangeAccessors = (unit: string) => [
     fromAccessor: 'waterDepth.unit',
     to: unit,
   },
+  {
+    accessor: 'md',
+    fromAccessor: 'mdUnit',
+    to: unit,
+  },
+  {
+    accessor: 'tvd',
+    fromAccessor: 'tvdUnit',
+    to: unit,
+  },
 ];
 
 export const useOverviewData = () => {
@@ -43,7 +53,9 @@ export const useOverviewData = () => {
 
           if (trajectory) {
             overView.md = trajectory.metadata?.bh_md;
+            overView.mdUnit = trajectory.metadata?.bh_md_unit;
             overView.tvd = trajectory.metadata?.bh_tvd;
+            overView.tvdUnit = trajectory.metadata?.bh_tvd_unit;
           }
 
           return convertToFixedDecimal(

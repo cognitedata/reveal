@@ -6,6 +6,8 @@ import {
 
 import { endOf, startOf } from '_helpers/date';
 import { FEET } from 'constants/units';
+import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
+import { WellConfig } from 'tenants/types';
 
 import { FilterIDs } from '../constants';
 import {
@@ -26,12 +28,20 @@ import {
   getWellsSpudDateLimits,
   getWellsWaterDepthLimits,
 } from '../sdk';
-import { FilterConfig, FilterConfigMap, FilterTypes } from '../types';
-import { getWaterDepthLimitsInFeet, processSpudDateLimits } from '../utils';
+import {
+  FiltersOnlySupportSdkV3,
+  FilterConfig,
+  FilterConfigMap,
+  FilterTypes,
+} from '../types';
+import { getWaterDepthLimitsInUnit, processSpudDateLimits } from '../utils';
 
 const wellFilterFetchers = getWellFilterFetchers();
 
-export const filterConfigs = (unit = FEET): FilterConfig[] => [
+export const filterConfigs = (
+  unit = FEET,
+  wellConfig: WellConfig = {}
+): FilterConfig[] => [
   {
     id: FilterIDs.DATA_SOURCE,
     name: 'Source',
@@ -107,6 +117,34 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     key: 'well_characteristics_filter.kb_elevation',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
+    fetcher: wellFilterFetchers?.kbLimits,
+    filterParameters: (values): FiltersOnlySupportSdkV3 => ({
+      trajectories: {
+        maxMeasuredDepth: {
+          min: values[0] as number,
+          max: values[1] as number,
+          unit: unitToLengthUnitEnum(unit),
+        },
+      },
+    }),
+    enableOnlySdkV3: true,
+  },
+  {
+    id: FilterIDs.MD,
+    name: `MD elevation (${unit})`,
+    key: 'well_characteristics_filter.md',
+    category: WELL_CHARACTERISTICS,
+    type: FilterTypes.NUMERIC_RANGE,
+    fetcher: wellFilterFetchers?.mdLimits,
+    filterParameters: (values): WellFilter => ({
+      hasTrajectory: {
+        maxMeasuredDepth: {
+          min: values[0] as number,
+          max: values[1] as number,
+          unit: unitToLengthUnitEnum(unit),
+        },
+      },
+    }),
   },
   {
     id: FilterIDs.TVD,
@@ -114,6 +152,48 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     key: 'well_characteristics_filter.tvd',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
+    fetcher: wellFilterFetchers?.tvdLimits,
+    filterParameters: (values): FiltersOnlySupportSdkV3 => ({
+      trajectories: {
+        maxTrueVerticalDepth: {
+          min: values[0] as number,
+          max: values[1] as number,
+          unit: unitToLengthUnitEnum(unit),
+        },
+      },
+    }),
+    enableOnlySdkV3: true,
+  },
+  {
+    id: FilterIDs.DOG_LEG_SEVERITY,
+    name: `Dogleg Severity (Degree/ ${
+      unit === 'ft'
+        ? wellConfig.well_characteristics_filter?.dls?.feetDistanceInterval
+        : wellConfig.well_characteristics_filter?.dls?.meterDistanceInterval
+    } ${unit})`,
+    key: 'well_characteristics_filter.dls',
+    category: WELL_CHARACTERISTICS,
+    type: FilterTypes.NUMERIC_RANGE,
+    fetcher: wellFilterFetchers?.dogLegSeverityLimts,
+    filterParameters: (values): FiltersOnlySupportSdkV3 => ({
+      trajectories: {
+        maxDoglegSeverity: {
+          min: values[0] as number,
+          max: values[1] as number,
+          unit: {
+            angleUnit: 'degree',
+            distanceUnit: unitToLengthUnitEnum(unit),
+            distanceInterval:
+              unit === 'ft'
+                ? wellConfig.well_characteristics_filter?.dls
+                    ?.feetDistanceInterval
+                : wellConfig.well_characteristics_filter?.dls
+                    ?.meterDistanceInterval,
+          },
+        },
+      },
+    }),
+    enableOnlySdkV3: true,
   },
   {
     id: FilterIDs.WATER_DEPTH,
@@ -123,7 +203,7 @@ export const filterConfigs = (unit = FEET): FilterConfig[] => [
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () =>
       getWellsWaterDepthLimits()?.then((response) =>
-        getWaterDepthLimitsInFeet(response, unit)
+        getWaterDepthLimitsInUnit(response, unit)
       ),
     filterParameters: (values): WellFilter => ({
       waterDepth: {

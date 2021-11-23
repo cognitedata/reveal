@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { Sequence } from '@cognite/sdk';
 
 import { LOG_TRAJECTORY } from 'constants/logging';
@@ -62,7 +64,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
     // Check if there are ids not in the cached data. Also filter cached data by requested ids
     const { newIds, trimmedData } = trimCachedData(data, wellboreIds);
 
-    if (newIds.length === 0) {
+    if (isEmpty(newIds)) {
       Object.keys(trimmedData).forEach((wellboresId) => {
         (trimmedData[wellboresId] as TrajectoryData[]).forEach(
           (trajectoryData) => {

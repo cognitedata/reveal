@@ -484,7 +484,7 @@ startTest(
     progress('Check if the bulk action bar is visible');
     await t.expect(App.resultTable.bulkActionBar.exists).ok();
 
-    const wellCountText = '1 well selected';
+    const wellCountText = '2 wells selected';
     progress(
       `Check if the selected wells count is displayed: ${wellCountText}`
     );
@@ -492,7 +492,7 @@ startTest(
       .expect(App.resultTable.getBulkActionText(wellCountText).exists)
       .ok();
 
-    const wellBoreCount = 'With 3 wellbores inside';
+    const wellBoreCount = 'With 2 wellbores inside';
     progress(
       `Check if the selected wellbores count is displayed as: ${wellBoreCount}`
     );
@@ -502,7 +502,7 @@ startTest(
 
     await App.resultTable.clickRowWithNthCheckbox(4);
 
-    const wellBoreCountFinal = 'With 2 wellbores inside';
+    const wellBoreCountFinal = 'With 1 wellbore inside';
     progress(
       `Check if the selected wellbores count is updated: ${wellBoreCountFinal}`
     );

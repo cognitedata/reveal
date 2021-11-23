@@ -34,11 +34,30 @@ const defaultTestConfig: TenantConfig = {
       field: {
         enabled: true,
       },
+      region: {
+        enabled: true,
+      },
       block: {
         enabled: true,
       },
       operator: {
         enabled: true,
+      },
+    },
+    well_characteristics_filter: {
+      md: {
+        enabled: true,
+      },
+      kb_elevation: {
+        enabled: true,
+      },
+      tvd: {
+        enabled: true,
+      },
+      dls: {
+        enabled: true,
+        feetDistanceInterval: 30,
+        meterDistanceInterval: 100,
       },
     },
     trajectory: defaultWellsConfig.wells?.trajectory,

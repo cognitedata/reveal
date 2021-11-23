@@ -235,6 +235,8 @@ export enum FilterIDs {
   FLUIDS = 18,
   WELL_TYPE = 19,
   REGION = 20,
+  MD = 30,
+  DOG_LEG_SEVERITY = 31,
 }
 
 export const PETREL_LOG_TYPE = 'logType';
