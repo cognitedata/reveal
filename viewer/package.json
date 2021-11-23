@@ -43,7 +43,7 @@
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
-    "@cognite/potree-core": "1.5.0",
+    "@cognite/potree-core": "^1.5.1",
     "@cognite/reveal-parser-worker": "1.2.0",
     "@gltf-transform/core": "^0.12.11",
     "@gltf-transform/extensions": "^0.12.11",
