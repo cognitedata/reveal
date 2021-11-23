@@ -8,6 +8,7 @@ import { OCRDetectionDataProvider } from 'src/api/ocr/OCRDetectionDataProvider';
 import { MockDataProvider } from 'src/api/MockDataProvider';
 import { TagDetectionDataProvider } from 'src/api/tagDetection/TagDetectionDataProvider';
 import { ObjectDetectionDataProvider } from 'src/api/objectDetection/ObjectDetectionDataProvider';
+import { JobState } from 'src/modules/Process/processSlice';
 
 function getDetectionModelDataProvider(
   modelType: VisionAPIType
@@ -33,11 +34,12 @@ export async function createAnnotationJob(
   detectionModel: VisionAPIType,
   fileIds: number[],
   parameters?: DetectionModelParams
-): Promise<AnnotationJob> {
+): Promise<JobState> {
   const dataProvider = getDetectionModelDataProvider(detectionModel);
   const job = await dataProvider.postJob(fileIds, parameters);
   return {
     type: detectionModel,
+    fileIds,
     ...job,
   };
 }

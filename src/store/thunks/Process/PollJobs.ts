@@ -1,11 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { fetchJobById } from 'src/api/annotationJob';
-import {
-  AnnotationJob,
-  AnnotationJobFailedItem,
-  VisionAPIType,
-} from 'src/api/types';
+import { AnnotationJob, AnnotationJobFailedItem } from 'src/api/types';
 import { JobState, removeJobById } from 'src/modules/Process/processSlice';
 import { fileProcessUpdate } from 'src/store/commonActions';
 import { ThunkConfig } from 'src/store/rootReducer';
@@ -13,30 +9,23 @@ import { fetchUntilComplete } from 'src/utils';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { AnnotationDetectionJobUpdate } from './AnnotationDetectionJobUpdate';
 
-export const PollJobs = createAsyncThunk<
-  void,
-  {
-    job: AnnotationJob | JobState;
-    filteredBatchFileIds: number[];
-    modelType: VisionAPIType;
-  },
-  ThunkConfig
->(
+export const PollJobs = createAsyncThunk<void, JobState, ThunkConfig>(
   'process/pollJobs',
-  async ({ job, filteredBatchFileIds, modelType }, { dispatch, getState }) => {
-    const doesFileExist = (fileId: number) =>
-      getState().filesSlice.files.byId[fileId];
-
+  async (job, { dispatch, getState }) => {
+    const { jobId, fileIds, type: modelType } = job;
     let completedFileIds: number[] = [];
     let failedJobs: AnnotationJobFailedItem[] = [];
 
+    const doesFileExist = (fileId: number) =>
+      getState().filesSlice.files.byId[fileId];
+
     await fetchUntilComplete<AnnotationJob>(
-      () => fetchJobById(job.type, job.jobId),
+      () => fetchJobById(modelType, jobId),
       {
         isCompleted: (latestJobVersion) =>
           latestJobVersion.status === 'Completed' ||
           latestJobVersion.status === 'Failed' ||
-          !filteredBatchFileIds.some(doesFileExist), // we don't want to poll jobs for removed files
+          !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
         onTick: async (latestJobVersion) => {
           await dispatch(
@@ -73,7 +62,7 @@ export const PollJobs = createAsyncThunk<
           dispatch(
             fileProcessUpdate({
               modelType,
-              fileIds: filteredBatchFileIds,
+              fileIds,
               job: latestJobVersion,
             })
           );
