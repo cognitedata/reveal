@@ -18,6 +18,7 @@ const TableContent = () => {
   return (
     <Wrapper>
       <StyledTabs
+        key={`${database}_${table}`}
         onChange={(view) => update([database, table, view])}
         activeKey={view || 'stylesheet'}
         tabPosition="top"
@@ -31,7 +32,7 @@ const TableContent = () => {
       >
         <Tabs.TabPane
           key="stylesheet"
-          tab={<TabSpreadsheet />}
+          tab={<TabSpreadsheet key={`${database}_${table}`} />}
           style={{ overflow: 'auto' }}
         >
           <Spreadsheet />
@@ -40,7 +41,7 @@ const TableContent = () => {
           key="profiling"
           tab={<TabProfiling isFetching={isFetching} />}
         >
-          <Profiling />
+          <Profiling key={`${database}_${table}`} />
         </Tabs.TabPane>
       </StyledTabs>
     </Wrapper>

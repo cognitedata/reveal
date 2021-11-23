@@ -55,7 +55,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
     if (hasNextPage && !isLoading) {
       fetchNextPage();
     }
-  }, []);
+  }, [hasNextPage, fetchNextPage, isLoading]);
 
   const databases = useMemo(
     () =>
