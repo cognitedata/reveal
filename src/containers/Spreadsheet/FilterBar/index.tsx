@@ -1,16 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Body, Flex, Icon, Input } from '@cognite/cogs.js';
+import { Body, Flex, Input } from '@cognite/cogs.js';
 
-import { useTableData } from 'hooks/table-data';
 import { useFilters } from 'hooks/table-filters';
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
 
 import { Separator } from 'components/Separator';
 import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
-import { useTotalRowCount } from 'hooks/sdk-queries';
-import { useActiveTableContext } from 'contexts';
+import RowCount from './RowCount';
 
 type Props = {
   isEmpty?: boolean;
@@ -23,16 +21,7 @@ export const FilterBar = ({
   columnFilter,
   setColumnFilter,
 }: Props): JSX.Element => {
-  const { database, table } = useActiveTableContext();
-  const { rows, isFetched } = useTableData();
   const { filters, activeFilters, setFilter } = useFilters();
-  const tableLength = isFetched ? (
-    rows.length ?? 0
-  ) : (
-    <Icon type="LoadingSpinner" style={{ marginRight: '4px' }} />
-  );
-
-  const { data: totalRows } = useTotalRowCount({ database, table });
 
   const onFilterClick = (filter: FilterType) => setFilter(filter.type);
   const onColumnFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -69,8 +58,7 @@ export const FilterBar = ({
           strong
           style={{ display: 'flex', alignItems: 'center' }}
         >
-          {tableLength} {Number.isFinite(totalRows) ? `/ ${totalRows}` : ''}{' '}
-          rows
+          <RowCount />
         </Body>
         <Separator style={{ margin: '0 12px' }} />
         <FilterBar.Actions />
