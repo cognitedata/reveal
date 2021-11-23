@@ -1,9 +1,14 @@
-import React from 'react';
-import BaseTable, { AutoResizer } from 'react-base-table';
+import React, { useMemo } from 'react';
+import BaseTable, { AutoResizer, ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Colors, Flex } from '@cognite/cogs.js';
 
+import { useTableSelection } from 'hooks/table-selection';
+import { TABLE_ROW_HEIGHT } from 'utils/constants';
+
 import { headerRenderer, emptyRenderer } from './customRenders';
+import { ExpandedCellModal } from './ExpandedCellModal';
+import { Cell } from './Cell';
 
 type Props = {
   rows: any;
@@ -14,6 +19,16 @@ type Props = {
 
 export const Table = (props: Props): JSX.Element => {
   const { rows, columns, isEmpty, onEndReach } = props;
+  const { selectedCell } = useTableSelection();
+
+  const newColumns = useMemo(
+    () =>
+      columns.map((column: ColumnShape) => ({
+        ...column,
+        cellRenderer: (props: any) => <Cell {...props} />,
+      })),
+    [columns, selectedCell]
+  );
 
   return (
     <Flex style={{ width: '100%', height: '100%' }}>
@@ -23,16 +38,17 @@ export const Table = (props: Props): JSX.Element => {
             fixed
             width={width}
             height={height}
-            columns={isEmpty ? [] : columns}
+            columns={isEmpty ? [] : newColumns}
             data={rows}
-            rowHeight={36}
-            headerHeight={isEmpty ? 0 : 36}
+            rowHeight={TABLE_ROW_HEIGHT}
+            headerHeight={isEmpty ? 0 : TABLE_ROW_HEIGHT}
             headerRenderer={headerRenderer}
             emptyRenderer={emptyRenderer}
             onEndReached={() => onEndReach && onEndReach()}
           />
         )}
       </AutoResizer>
+      <ExpandedCellModal />
     </Flex>
   );
 };
@@ -59,9 +75,10 @@ const StyledBaseTable = styled(BaseTable)`
     }
   }
   .${TABLE_PREFIX}row-cell {
-    padding: 8px 16px;
+    padding: 0;
     justify-content: flex-end;
     flex-wrap: wrap;
+    overflow: visible !important;
   }
   .${TABLE_PREFIX}header-cell, .${TABLE_PREFIX}row-cell {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
@@ -69,7 +86,7 @@ const StyledBaseTable = styled(BaseTable)`
   }
   .${TABLE_PREFIX}header-cell:first-child,
     .${TABLE_PREFIX}row-cell:first-child {
-    padding: 0 8px;
+    padding: 0;
     background-color: ${Colors['greyscale-grey1'].hex()};
   }
 `;
