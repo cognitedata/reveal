@@ -102,6 +102,10 @@
         },
         {
           "type": "doc",
+          "id": "version-2.x/examples/timelinetool"
+        },
+        {
+          "type": "doc",
           "id": "version-2.x/examples/combine-models"
         }
       ]
@@ -109,6 +113,17 @@
     {
       "type": "doc",
       "id": "version-2.x/concepts"
+    },
+    {
+      "collapsed": false,
+      "type": "category",
+      "label": "Extending Reveal",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-2.x/extending/datasource"
+        }
+      ]
     },
     {
       "type": "doc",
