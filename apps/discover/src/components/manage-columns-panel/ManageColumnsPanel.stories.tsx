@@ -3,8 +3,6 @@
 
 import { useState } from 'react';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { Button } from '@cognite/cogs.js';
 
 import { Typography } from 'components/typography';
@@ -15,7 +13,6 @@ export default {
   title: 'Components / ManageColumnsPanel',
   component: ManageColumnsPanel,
   decorators: [
-    withThemeProvider,
     (storyFn) => (
       <div style={{ position: 'relative', height: 300 }}>{storyFn()}</div>
     ),

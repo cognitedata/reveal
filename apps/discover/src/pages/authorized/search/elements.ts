@@ -4,7 +4,6 @@ import { Menu } from '@cognite/cogs.js';
 
 import layers from '_helpers/zindex';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
-import { Theme } from 'styles/useTheme';
 
 import { getFilterSizeStateInPX } from './search/SideBar/constants';
 
@@ -80,7 +79,7 @@ export const OuterSearchWrapper = styled(Flex)`
   flex: 1;
   box-sizing: border-box;
   /* box-shadow: 0px 8px 48px rgba(0, 0, 0, 0.1), 0px 0px 4px rgba(0, 0, 0, 0.1); */
-  background: ${(props: { theme: Theme }) => props.theme.palette.background2};
+  background: var(--cogs-white);
   z-index: ${layers.SEARCH_HISTORY};
   width: ${(props: { expandedMode: boolean }) =>
     `${props.expandedMode ? 100 : SEARCH_BAR_WIDTH}%`};

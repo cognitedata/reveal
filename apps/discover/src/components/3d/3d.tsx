@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { ThemeProvider } from 'styled-components/macro';
 
 import {
   NodeVisualizerProvider,
@@ -17,7 +18,6 @@ import {
 } from '@cognite/subsurface-interfaces';
 
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
-import { ThemeProvider } from 'styles/ThemeProvider';
 import { ThreeDeeTheme } from 'styles/ThreeDeeTheme';
 
 export interface Props extends WellsData {

@@ -31,7 +31,7 @@ interface Props {
   showDeleteButton: boolean;
   handleOpenModal: (modal: ModalType, set: FavoriteSummary) => void;
   handleComment: () => void;
-  viewMode: string;
+  viewMode?: string;
 }
 
 const Actions: React.FC<Props> = ({

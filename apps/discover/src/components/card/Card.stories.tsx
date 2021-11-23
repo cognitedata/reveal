@@ -1,5 +1,4 @@
 import Logo from 'images/DiscoverLogo.svg';
-import withThemeProvider from 'storybook/utils/themeDecorator';
 
 import { FlexGrow, FlexRow, Center } from 'styles/layout';
 
@@ -10,7 +9,6 @@ import { Card } from './Card';
 export default {
   title: 'Components / Card',
   component: Card,
-  decorators: [withThemeProvider],
 };
 
 export const simple = () => (

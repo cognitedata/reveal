@@ -1,7 +1,9 @@
+import { Colors } from '@cognite/cogs.js';
+
 const DARK_PURPLE = '#988998';
 const LIGHT_GREY = '#efefef';
 
-export function getMapStyles(theme) {
+export function getMapStyles() {
   return [
     {
       id: 'gl-draw-polygon-fill-inactive',
@@ -20,7 +22,7 @@ export function getMapStyles(theme) {
           LIGHT_GREY,
           'Selected',
           DARK_PURPLE,
-          theme.palette.tertiery.main,
+          Colors['bg-control--primary'].hex(),
         ],
         'fill-outline-color': [
           'match',
@@ -29,7 +31,7 @@ export function getMapStyles(theme) {
           LIGHT_GREY,
           'Selected',
           DARK_PURPLE,
-          theme.palette.tertiery.main,
+          Colors['bg-control--primary'].hex(),
         ],
         'fill-opacity': 0.1,
       },
@@ -40,8 +42,8 @@ export function getMapStyles(theme) {
       type: 'fill',
       filter: ['all', ['==', 'active', 'true'], ['==', '$type', 'Polygon']],
       paint: {
-        'fill-color': theme.palette.secondary.main,
-        'fill-outline-color': theme.palette.secondary.main,
+        'fill-color': Colors['bg-control--secondary'].hex(),
+        'fill-outline-color': Colors['bg-control--secondary'].hex(),
         'fill-opacity': 0.1,
       },
       // source: 'mapbox-gl-draw-cold'
@@ -52,7 +54,7 @@ export function getMapStyles(theme) {
       filter: ['all', ['==', '$type', 'Point'], ['==', 'meta', 'midpoint']],
       paint: {
         'circle-radius': 3,
-        'circle-color': theme.palette.secondary.main,
+        'circle-color': Colors['bg-control--secondary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -77,7 +79,7 @@ export function getMapStyles(theme) {
           LIGHT_GREY,
           'Selected',
           DARK_PURPLE,
-          theme.palette.tertiery.main,
+          Colors['bg-control--primary'].hex(),
         ],
         'line-width': 2,
       },
@@ -92,7 +94,7 @@ export function getMapStyles(theme) {
         'line-join': 'round',
       },
       paint: {
-        'line-color': theme.palette.secondary.main,
+        'line-color': Colors['bg-control--secondary'].hex(),
         'line-dasharray': [0.2, 2],
         'line-width': 2,
       },
@@ -112,7 +114,7 @@ export function getMapStyles(theme) {
         'line-join': 'round',
       },
       paint: {
-        'line-color': theme.palette.tertiery.main,
+        'line-color': Colors['bg-control--primary'].hex(),
         'line-width': 2,
       },
       // source: 'mapbox-gl-draw-cold'
@@ -126,7 +128,7 @@ export function getMapStyles(theme) {
         'line-join': 'round',
       },
       paint: {
-        'line-color': theme.palette.secondary.main,
+        'line-color': Colors['bg-control--secondary'].hex(),
         'line-dasharray': [0.2, 2],
         'line-width': 2,
       },
@@ -143,7 +145,7 @@ export function getMapStyles(theme) {
       ],
       paint: {
         'circle-radius': 6,
-        'circle-color': theme.palette.secondary.text,
+        'circle-color': Colors['text-secondary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -158,7 +160,7 @@ export function getMapStyles(theme) {
       ],
       paint: {
         'circle-radius': 3,
-        'circle-color': theme.palette.secondary.main,
+        'circle-color': Colors['bg-control--secondary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -175,7 +177,7 @@ export function getMapStyles(theme) {
       paint: {
         'circle-radius': 5,
         'circle-opacity': 1,
-        'circle-color': theme.palette.secondary.text,
+        'circle-color': Colors['text-secondary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -191,7 +193,7 @@ export function getMapStyles(theme) {
       ],
       paint: {
         'circle-radius': 3,
-        'circle-color': theme.palette.tertiery.main,
+        'circle-color': Colors['bg-control--primary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -206,7 +208,7 @@ export function getMapStyles(theme) {
       ],
       paint: {
         'circle-radius': 7,
-        'circle-color': theme.palette.secondary.text,
+        'circle-color': Colors['text-secondary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -221,7 +223,7 @@ export function getMapStyles(theme) {
       ],
       paint: {
         'circle-radius': 5,
-        'circle-color': theme.palette.tertiery.main,
+        'circle-color': Colors['bg-control--primary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },
@@ -237,7 +239,7 @@ export function getMapStyles(theme) {
           LIGHT_GREY,
           'Selected',
           DARK_PURPLE,
-          theme.palette.tertiery.main,
+          Colors['bg-control--primary'].hex(),
         ],
         'fill-outline-color': [
           'match',
@@ -246,7 +248,7 @@ export function getMapStyles(theme) {
           LIGHT_GREY,
           'Selected',
           DARK_PURPLE,
-          theme.palette.tertiery.main,
+          Colors['bg-control--primary'].hex(),
         ],
         'fill-opacity': 0.1,
       },
@@ -262,7 +264,7 @@ export function getMapStyles(theme) {
         'line-join': 'round',
       },
       paint: {
-        'line-color': theme.palette.tertiery.main,
+        'line-color': Colors['bg-control--primary'].hex(),
         'line-width': 2,
       },
       // source: 'mapbox-gl-draw-cold'
@@ -276,7 +278,7 @@ export function getMapStyles(theme) {
         'line-join': 'round',
       },
       paint: {
-        'line-color': theme.palette.tertiery.main,
+        'line-color': Colors['bg-control--primary'].hex(),
         'line-width': 2,
       },
       // source: 'mapbox-gl-draw-cold'
@@ -287,7 +289,7 @@ export function getMapStyles(theme) {
       filter: ['all', ['==', 'mode', 'static'], ['==', '$type', 'Point']],
       paint: {
         'circle-radius': 5,
-        'circle-color': theme.palette.tertiery.main,
+        'circle-color': Colors['bg-control--primary'].hex(),
       },
       // source: 'mapbox-gl-draw-cold'
     },

@@ -1,5 +1,3 @@
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { Button } from '@cognite/cogs.js';
 
 import { Tooltip } from './Tooltip';
@@ -7,7 +5,6 @@ import { Tooltip } from './Tooltip';
 export default {
   title: 'Components / tooltip',
   component: Tooltip,
-  decorators: [withThemeProvider],
 };
 
 export const full = () => (

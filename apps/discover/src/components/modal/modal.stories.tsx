@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { Button } from '@cognite/cogs.js';
 
 import { Modal, OKModal, BlankModal, ActionModal } from '.';
@@ -9,7 +7,6 @@ import { Modal, OKModal, BlankModal, ActionModal } from '.';
 export default {
   title: 'Components / modal',
   component: Modal,
-  decorators: [withThemeProvider],
 };
 
 export const basic = () => {

@@ -11,7 +11,6 @@ import {
   PagePaddingWrapper,
   sizes,
 } from 'styles/layout';
-import { useTheme } from 'styles/useTheme';
 
 const TopWrapper = styled(PagePaddingWrapper)`
   padding-top: ${sizes.large};
@@ -59,10 +58,8 @@ const Header: React.FC<Props> = ({
   Bottom,
   isLoading,
 }) => {
-  const theme = useTheme();
-
   return (
-    <TopWrapper theme={theme}>
+    <TopWrapper>
       <FlexRow>
         {Left && (
           <LeftContainer>

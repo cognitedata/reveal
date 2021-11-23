@@ -121,7 +121,7 @@ interface SeismicData {
   standardDeviation: number;
 }
 
-type SliceCollection = SeismicCollection[];
+export type SliceCollection = SeismicCollection[];
 
 export interface SeismicLine {
   id?: string;

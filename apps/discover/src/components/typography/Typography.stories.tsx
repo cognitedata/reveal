@@ -3,14 +3,11 @@
 
 import React from 'react';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { Typography } from './Typography';
 
 export default {
   title: 'Components / typography',
   component: Typography,
-  decorators: [withThemeProvider],
 };
 export const full = () => <TypographyComponent />;
 

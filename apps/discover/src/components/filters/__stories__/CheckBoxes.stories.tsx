@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { CheckBoxes } from '..';
 import { ExtraLabels } from '../interfaces';
 
@@ -24,5 +22,4 @@ export const basic = () => {
 export default {
   title: 'Components / Filters / Checkbox',
   component: CheckBoxes,
-  decorators: [withThemeProvider],
 };

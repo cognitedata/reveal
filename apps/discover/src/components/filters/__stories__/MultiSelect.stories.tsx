@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { MultiSelect } from '..';
 
 export const basic = () => {
@@ -21,5 +19,4 @@ export const basic = () => {
 export default {
   title: 'Components / Filters / MultiSelect',
   component: MultiSelect,
-  decorators: [withThemeProvider],
 };

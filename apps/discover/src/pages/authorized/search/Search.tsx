@@ -34,7 +34,6 @@ import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { initializeWellInspect } from 'modules/wellInspect/actions';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useTheme } from 'styles/useTheme';
 
 import { BetaSymbol } from '../elements';
 
@@ -112,7 +111,6 @@ export const Search: React.FC = () => {
   // const { data: stats } = useStatsFindQuery();
   const isOpen = useFilterBarIsOpen();
   const anythingHasSearched = useAnythingHasSearched();
-  const theme = useTheme();
   // INFO:Disabled after talking to Sam. Needs to be defined properly
   // const [tabTotals, setTabTotals] = React.useState<{ [total: string]: number }>(
   //   {}
@@ -290,7 +288,6 @@ export const Search: React.FC = () => {
   const SearchContent = useMemo(
     () => (
       <OuterSearchWrapper
-        theme={theme}
         expandedMode={showSearchResults}
         ref={(el: HTMLDivElement | null) => {
           searchContainer = el;

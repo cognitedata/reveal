@@ -5,8 +5,6 @@ import styled from 'styled-components/macro';
 import { Typography } from 'components/typography';
 import { User } from 'modules/user/types';
 import { FlexColumn, FlexGrow } from 'styles/layout';
-import { Theme } from 'styles/types';
-import { useTheme } from 'styles/useTheme';
 
 const Suggestion = styled(FlexGrow)`
   align-items: start;
@@ -16,8 +14,7 @@ const Suggestion = styled(FlexGrow)`
   padding: 10px 5px;
 
   &:hover {
-    background-color: ${(props: { theme: Theme }) =>
-      props.theme.palette.black.opacity10};
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
   }
 `;
@@ -43,12 +40,11 @@ interface SuggestionComponentProps {
 
 const SuggestionComponent: React.FC<SuggestionComponentProps> = (props) => {
   const { suggestion } = props;
-  const theme = useTheme();
 
   if (!suggestion) return null;
   return (
     <div role="menuitem">
-      <Suggestion theme={theme} as={FlexColumn}>
+      <Suggestion as={FlexColumn}>
         <NamePlate user={suggestion} />
         <Typography variant="label" weight="regular">
           {suggestion.email}

@@ -1,3 +1,10 @@
+/**
+ * DO NOT USE THIS COMPONENT
+ * -------------------------
+ * Use cogs components in stead.
+ *
+ * Phasing out this one...
+ */
 import { isArray } from 'util';
 
 import { useState } from 'react';
@@ -10,57 +17,68 @@ import {
   MenuItem,
   Select,
 } from '@material-ui/core';
+import { TS_FIX_ME } from 'core';
 
 import { Icons } from '@cognite/cogs.js';
 
-import withStyles from 'styles/withStyles';
+interface DropdownProps {
+  /** ## DO NOT USE THIS COMPONENT */
+  classes?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  label?: string;
+  /** ## DO NOT USE THIS COMPONENT */
+  selected?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  items?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  displayField: string;
+  /** ## DO NOT USE THIS COMPONENT */
+  valueField: string;
+  /** ## DO NOT USE THIS COMPONENT */
+  handleChange?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  helperText?: string;
+  /** ## DO NOT USE THIS COMPONENT */
+  style?: Record<string, unknown>;
+  /** ## DO NOT USE THIS COMPONENT */
+  component?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  children?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  className?: string;
+  /** ## DO NOT USE THIS COMPONENT */
+  multiple?: boolean;
+  /** ## DO NOT USE THIS COMPONENT */
+  renderValue?: TS_FIX_ME;
+  /** ## DO NOT USE THIS COMPONENT */
+  menuStyle?: Record<string, unknown>;
+}
 
-const styles = () => ({
-  formControl: {
-    minWidth: 200,
-  },
-  menuItem: {
-    height: 40,
-    color: '#000 !important',
-    fontSize: 14,
-    lineHeight: '24px',
-    margin: 8,
-    borderRadius: 4,
-    paddingTop: 8,
-    paddingBottom: 8,
-    '&:focus': {
-      backgroundColor: '#fff',
-    },
-  },
-  dropDownArrowStyle: {
-    top: 'calc(50% - 12px)',
-    right: 0,
-    position: 'absolute',
-    pointerEvents: 'none',
-  },
-});
-
-const DropdownComponent = withStyles(styles)((props) => {
-  const {
-    classes,
-    label,
-    selected,
-    items,
-    displayField,
-    valueField,
-    handleChange,
-    helperText,
-    style = {},
-    component,
-    children,
-    className,
-    multiple,
-    renderValue,
-    menuStyle = {},
-  } = props;
+/**
+ * DO NOT USE THIS COMPONENT
+ * -------------------------
+ * @deprecated Use cogs components in stead.
+ */
+export const Dropdown: React.FC<DropdownProps> = ({
+  classes,
+  label,
+  selected,
+  items,
+  displayField,
+  valueField,
+  handleChange,
+  helperText,
+  style = {},
+  component,
+  children,
+  className,
+  multiple,
+  renderValue,
+  menuStyle = {},
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  function handleClick(event) {
+  function handleClick(event: TS_FIX_ME) {
     setAnchorEl(event.currentTarget);
   }
 
@@ -68,17 +86,17 @@ const DropdownComponent = withStyles(styles)((props) => {
     setAnchorEl(null);
   }
 
-  function handleSelectItem(event) {
+  function handleSelectItem(event: TS_FIX_ME) {
     if (handleChange) {
       if (isArray(event.target.value)) {
-        const selectedItems = event.target.value.map((v) => {
-          return items.find((f) => f[valueField] === v);
+        const selectedItems = event.target.value.map((v: TS_FIX_ME) => {
+          return items.find((f: TS_FIX_ME) => f[valueField] === v);
         });
         handleChange(event, selectedItems);
       } else {
         const value =
           event.target.value || event.target.getAttribute('data-value');
-        const item = items.find((f) => f[valueField] === value);
+        const item = items.find((f: TS_FIX_ME) => f[valueField] === value);
         handleChange(event, item);
       }
     }
@@ -94,7 +112,6 @@ const DropdownComponent = withStyles(styles)((props) => {
         }}
 
         <Menu
-          multiple={multiple}
           elevation={1}
           anchorEl={anchorEl}
           keepMounted
@@ -102,11 +119,11 @@ const DropdownComponent = withStyles(styles)((props) => {
           onClose={handleClose}
           PaperProps={{ style: { minWidth: 200, ...menuStyle } }}
         >
-          {items.map((i) => {
+          {items.map((i: TS_FIX_ME) => {
             return (
               <MenuItem
                 onClick={handleSelectItem}
-                className={classes.menuItem}
+                className={classes?.menuItem}
                 key={i[valueField]}
                 title={i[displayField]}
                 data-value={i[valueField]}
@@ -134,7 +151,6 @@ const DropdownComponent = withStyles(styles)((props) => {
         }}
 
         <Menu
-          multiple={multiple}
           elevation={1}
           anchorEl={anchorEl}
           keepMounted
@@ -142,7 +158,7 @@ const DropdownComponent = withStyles(styles)((props) => {
           onClose={handleClose}
           PaperProps={{ style: { minWidth: 200 } }}
         >
-          {items.map((i) => {
+          {items.map((i: TS_FIX_ME) => {
             return (
               <MenuItem
                 onClick={handleSelectItem}
@@ -160,7 +176,7 @@ const DropdownComponent = withStyles(styles)((props) => {
     );
   }
 
-  const defaultRenderer = (item) => {
+  const defaultRenderer = (item: TS_FIX_ME) => {
     return item && item[displayField];
   };
 
@@ -176,43 +192,20 @@ const DropdownComponent = withStyles(styles)((props) => {
         style={style}
         disableUnderline
         autoWidth
-        IconComponent={() => (
-          <Icons.LargeDown className={classes.dropDownArrowStyle} />
-        )}
+        IconComponent={() => <Icons.ChevronDownLarge />}
         renderValue={renderValue || defaultRenderer}
       >
-        {items.map((i) => {
-          return (
-            <MenuItem
-              className={classes.menuItem}
-              key={i[valueField]}
-              value={i[valueField]}
-            >
-              {i[displayField]}
-            </MenuItem>
-          );
-        })}
+        {items.map((i: TS_FIX_ME) => (
+          <MenuItem
+            className={classes.menuItem}
+            key={i[valueField]}
+            value={i[valueField]}
+          >
+            {i[displayField]}
+          </MenuItem>
+        ))}
       </Select>
       {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
-});
-
-export const Dropdown = (props) => <DropdownComponent {...props} />;
-
-// Dropdown.propTypes = {
-//   /**  The string that's represented as a label.*/
-//   label: PropTypes.string,
-//   /**  Helpertext is the small infotext underneath the default dropdown*/
-//   helperText: PropTypes.string,
-//   /**  Which field should be set as a displayvalue for the dropdown.*/
-//   displayField: PropTypes.string.isRequired,
-//   /**  Which field should be set as a valuefield for the dropdown.*/
-//   valueField: PropTypes.string.isRequired,
-//   /**  If component is present it renders as the trigger component for the dropdown instead of the default dropdown.  */
-//   component: PropTypes.object,
-//   /**  handleChange event*/
-//   handleChange: PropTypes.func,
-// };
-
-// Dropdown.defaultProps = {};
+};

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Row } from 'react-table';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { Table } from '.';
 import { Options, TableResults } from './types';
 
@@ -123,5 +121,4 @@ export const checkable = () => {
 export default {
   title: 'shared|_components/table',
   component: Table,
-  decorators: [withThemeProvider],
 };

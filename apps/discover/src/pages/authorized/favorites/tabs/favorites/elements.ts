@@ -87,6 +87,8 @@ export const StyledCard = styled(Card)`
   box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.04),
     0px 3px ${sizes.small} rgba(0, 0, 0, 0.06);
 
+  transition: box-shadow var(--cogs-transition-time-fast);
+
   &:hover {
     box-shadow: 0px ${sizes.small} ${sizes.normal} ${sizes.extraSmall}
         rgba(0, 0, 0, 0.08),
@@ -164,6 +166,7 @@ export const DropDownMenu = styled(Menu)`
 
 export const DescriptionField = styled.div`
   .cogs-input {
+    pointer-events: none;
     background: var(--cogs-bg-control--secondary) !important;
     text-overflow: ellipsis;
   }

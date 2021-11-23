@@ -6,7 +6,6 @@ import { openInNewTab } from '_helpers/openInNewTab';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { Asset } from 'modules/map/types';
 import { WELL_FIELDS_WITH_PRODUCTION_DATA } from 'modules/wellSearch/constants';
-import useTheme, { Theme } from 'styles/useTheme';
 import { ExternalLinksConfig } from 'tenants/types';
 
 import { AssetListItem, AssetListItemContainer } from './elements';
@@ -17,11 +16,9 @@ interface Props {
 }
 
 const Item = ({
-  theme,
   asset,
   zoomToAsset,
 }: {
-  theme: Theme;
   asset: Asset;
   zoomToAsset: (asset: Asset) => void;
 }) => {
@@ -39,7 +36,6 @@ const Item = ({
   return (
     <AssetListItemContainer>
       <AssetListItem
-        theme={theme}
         onClick={handleZoomtoAsset}
         data-testid={`asset-${asset.name}`}
       >
@@ -63,14 +59,12 @@ export const QuickAssetNavigation: React.FC<Props> = ({
   assets,
   zoomToAsset,
 }) => {
-  const theme = useTheme();
   return (
     <Menu>
       {assets.map((asset) => {
         return (
           <Menu.Item key={`asset-${asset.name}`}>
             <Item
-              theme={theme}
               key={`asset-${asset.name}`}
               zoomToAsset={zoomToAsset}
               asset={asset}

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { featureCollection, feature } from '@turf/helpers';
-import withThemeProvider from 'storybook/utils/themeDecorator';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -13,7 +12,6 @@ import Map from './MapboxMap';
 export default {
   title: 'Components / Map',
   component: Map,
-  decorators: [withThemeProvider],
 };
 
 const props = {

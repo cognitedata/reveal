@@ -1,5 +1,4 @@
 import noop from 'lodash/noop';
-import withThemeProvider from 'storybook/utils/themeDecorator';
 
 import { getMockedAssets } from '__test-utils/fixtures/map';
 
@@ -16,7 +15,6 @@ export default {
         {storyFn()}
       </div>
     ),
-    withThemeProvider,
   ],
 };
 

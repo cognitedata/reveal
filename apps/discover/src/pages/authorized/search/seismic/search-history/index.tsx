@@ -15,40 +15,12 @@ import Filter9 from '@material-ui/icons/Filter9';
 import Filter9Plus from '@material-ui/icons/Filter9Plus';
 import ImageSearch from '@material-ui/icons/ImageSearch';
 import { SpeedDial, SpeedDialIcon, SpeedDialAction } from '@material-ui/lab';
+import { TS_FIX_ME } from 'core';
 
 import { shortDateTime } from '_helpers/date';
-import layers from '_helpers/zindex';
-import withStyles from 'styles/withStyles';
+import { SliceCollection } from 'modules/seismicSearch/types';
 
-const styles = (theme) => ({
-  speedDial: {
-    position: 'fixed',
-    bottom: 100,
-    right: 32,
-    zIndex: layers.SEARCH_HISTORY,
-  },
-  icon: {
-    width: 20,
-    height: 20,
-  },
-  errorIcon: {
-    width: 20,
-    height: 20,
-    fill: theme.palette.error.main,
-    color: theme.palette.error.main,
-  },
-  fabLoader: {
-    position: 'absolute',
-    height: '56px !important',
-    width: '56px !important',
-    left: 0,
-    top: 0,
-    color: theme.palette.primary.opacity80,
-    fill: theme.palette.primary.opacity80,
-  },
-});
-
-const getIcon = (slices) => {
+const getIcon = (slices: TS_FIX_ME) => {
   switch (slices.length || 0) {
     case 1:
       return Filter1;
@@ -73,9 +45,17 @@ const getIcon = (slices) => {
       return Filter9Plus;
   }
 };
+interface SearchHistoryProps {
+  sliceSearches: SliceCollection;
+  isVisible: boolean;
+  handleOnItemClick: (item: TS_FIX_ME) => void;
+}
 
-const SearchHistory = withStyles(styles)((props) => {
-  const { classes, handleOnItemClick, sliceSearches, isVisible } = props;
+const SearchHistory: React.FC<SearchHistoryProps> = ({
+  handleOnItemClick,
+  sliceSearches,
+  isVisible,
+}) => {
   const [open, setOpen] = React.useState(false);
 
   const Icon = useMemo(() => {
@@ -94,7 +74,7 @@ const SearchHistory = withStyles(styles)((props) => {
     setOpen(false);
   };
 
-  const selectItem = (item) => {
+  const selectItem = (item: TS_FIX_ME) => {
     setOpen(false);
     handleOnItemClick(item);
   };
@@ -105,7 +85,6 @@ const SearchHistory = withStyles(styles)((props) => {
     <>
       <SpeedDial
         ariaLabel={t('Data search history')}
-        className={classes.speedDial}
         hidden={!isVisible}
         aria-label="Date history"
         icon={
@@ -113,9 +92,7 @@ const SearchHistory = withStyles(styles)((props) => {
             aria-label="Progress"
             icon={
               <>
-                {isLoading && (
-                  <CircularProgress className={classes.fabLoader} />
-                )}
+                {isLoading && <CircularProgress />}
                 <Icon />{' '}
               </>
             }
@@ -125,7 +102,7 @@ const SearchHistory = withStyles(styles)((props) => {
         onOpen={handleOpen}
         open={open}
       >
-        {sliceSearches.map((slice) => (
+        {sliceSearches.map((slice: TS_FIX_ME) => (
           <SpeedDialAction
             key={slice.id}
             aria-label="Date"
@@ -134,15 +111,12 @@ const SearchHistory = withStyles(styles)((props) => {
               slice.isLoading ? (
                 <>
                   <ImageSearch style={{ width: 20, height: 20 }} />
-                  <CircularProgress
-                    style={{ position: 'absolute' }}
-                    className={classes.icon}
-                  />
+                  <CircularProgress style={{ position: 'absolute' }} />
                 </>
               ) : slice.hasError ? (
-                <BrokenImage className={classes.errorIcon} />
+                <BrokenImage />
               ) : (
-                <ImageSearch className={classes.icon} />
+                <ImageSearch />
               )
             }
             tooltipTitle={shortDateTime(slice.time)}
@@ -152,6 +126,6 @@ const SearchHistory = withStyles(styles)((props) => {
       </SpeedDial>
     </>
   );
-});
+};
 
 export default SearchHistory;

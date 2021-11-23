@@ -21,7 +21,6 @@ import { alphanumeric } from '_helpers/sort';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { SortBy } from 'pages/types';
 import { MarginRightSmallContainer } from 'styles/layout';
-import useTheme from 'styles/useTheme';
 
 import {
   TableWrap,
@@ -99,7 +98,6 @@ const TableInner = <T extends Object>({
   indeterminateIds = {},
   disabledRowClickCells = [],
 }: React.PropsWithChildren<Props<T>>) => {
-  const theme = useTheme();
   const [selected, setSelected] = React.useState<T[]>([]);
   const hooks: any = [useSortBy, useRowSelect];
   const { t } = useTranslation();
@@ -281,7 +279,6 @@ const TableInner = <T extends Object>({
                 return (
                   <CustomTableHead
                     scrollTable={scrollTable}
-                    theme={theme}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
                     onClick={() => handleColumnHeadClick(column)}
                     width={column.width}

@@ -64,7 +64,7 @@ export const ExistingSavedSearches: React.FC<{
     <>
       {hasSavedData && (
         <SavedSearchDivider>
-          <Divider color="gray" size="small" />
+          <Divider />
         </SavedSearchDivider>
       )}
       <SavedSearchListContent>

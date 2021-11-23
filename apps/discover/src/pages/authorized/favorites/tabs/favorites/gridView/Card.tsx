@@ -13,7 +13,6 @@ import {
   getFavoriteLastUpdatedByDateTime,
 } from 'modules/favorite/utils';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
-import { useTheme } from 'styles/useTheme';
 
 import {
   FAVORITE_SET_INFO_ASSETS,
@@ -48,7 +47,6 @@ export const FavouriteCard: React.FC<Props> = ({
   viewMode,
 }) => {
   const metrics = useGlobalMetrics('favorites');
-  const theme = useTheme();
   const { t } = useTranslation('Favorites');
 
   const handleOnClick = () => {
@@ -101,9 +99,7 @@ export const FavouriteCard: React.FC<Props> = ({
       }
     >
       <div data-testid="favourite-card">
-        <LabelDescription theme={theme}>
-          {t(FAVORITE_SET_INFO_DESCRIPTION)}
-        </LabelDescription>
+        <LabelDescription>{t(FAVORITE_SET_INFO_DESCRIPTION)}</LabelDescription>
         <DescriptionField>
           <Input
             disabled

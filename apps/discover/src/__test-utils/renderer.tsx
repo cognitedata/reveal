@@ -12,8 +12,6 @@ import { ConditionalWrapper } from '@cognite/react-container';
 
 import { render } from '__test-utils/custom-render';
 import { getMockedStore } from '__test-utils/store.utils';
-import defaultTheme from 'styles/defaultTheme';
-import ThemeProvider from 'styles/ThemeProvider';
 
 export const testWrapper: React.FC<{ store?: Store }> = ({
   store,
@@ -23,9 +21,7 @@ export const testWrapper: React.FC<{ store?: Store }> = ({
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <Provider store={store || getMockedStore()}>
-          <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>
-        </Provider>
+        <Provider store={store || getMockedStore()}>{children}</Provider>
       </QueryClientProvider>
     </BrowserRouter>
   );
@@ -54,10 +50,8 @@ const WrappedWithProviders: React.FC<Props> = ({
     <BrowserRouter>
       <ConditionalWrapper condition={!!store} wrap={StoreWrapper}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={defaultTheme}>
-            {React.createElement(component, props)}
-            <ToastContainer />
-          </ThemeProvider>
+          {React.createElement(component, props)}
+          <ToastContainer />
         </QueryClientProvider>
       </ConditionalWrapper>
     </BrowserRouter>

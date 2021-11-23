@@ -11,7 +11,6 @@ import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from 'modules/map/constants';
 import { useMapConfig } from 'modules/map/hooks/useMapConfig';
 import { SelectableLayer, MapDataSource, DrawMode } from 'modules/map/types';
 import { useMapContext } from 'modules/map/useMapCache';
-import useTheme from 'styles/useTheme';
 import { MapLayer } from 'tenants/types';
 
 import {
@@ -92,7 +91,6 @@ export const Map: React.FC<Props> = React.memo(
     const [draw, setDraw] = useState<any>(null);
     const [map, setMap] = useState<any>(null);
 
-    const theme = useTheme();
     const [mapStateSettings] = useMapContext();
     const { data: mapSettings } = useMapConfig();
 
@@ -165,7 +163,7 @@ export const Map: React.FC<Props> = React.memo(
         const drawMap = new MapboxDraw({
           userProperties: true,
           displayControlsDefault: false,
-          styles: [...getMapStyles(theme)],
+          styles: [...getMapStyles()],
           modes: {
             draw_free_polygon: FreeDraw,
             ...MapboxDraw.modes,

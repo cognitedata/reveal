@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import withThemeProvider from 'storybook/utils/themeDecorator';
-
 import { NumericRangeFilter } from '..';
 
 export const basic = () => {
@@ -20,5 +18,4 @@ export const basic = () => {
 export default {
   title: 'Components / Filters / NumericRangeFilter',
   component: NumericRangeFilter,
-  decorators: [withThemeProvider],
 };

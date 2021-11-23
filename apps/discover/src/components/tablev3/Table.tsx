@@ -18,7 +18,6 @@ import { alphanumeric } from '_helpers/sort';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { SortBy } from 'pages/types';
 import { MarginRightSmallContainer } from 'styles/layout';
-import useTheme from 'styles/useTheme';
 
 import {
   TableWrap,
@@ -62,7 +61,6 @@ const TableInner = <T extends Object>({
   disabledRowClickCells = [],
   hideHeaders,
 }: React.PropsWithChildren<TableProps<T>>) => {
-  const theme = useTheme();
   const [selected, setSelected] = React.useState<T[]>([]);
   const [tableWidth, setTableWidth] = React.useState<number>(1000);
   const hooks: any = [useSortBy, useRowSelect];
@@ -294,7 +292,6 @@ const TableInner = <T extends Object>({
             >
               {headerGroup.headers.map((column: any) => (
                 <CustomTableHead
-                  theme={theme}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                   onClick={() => handleColumnHeadClick(column)}
                   data-testid="table-header-cell"
