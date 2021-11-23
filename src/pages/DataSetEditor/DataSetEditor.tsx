@@ -8,10 +8,10 @@ import useDebounce from 'hooks/useDebounce';
 
 import { message } from 'antd';
 import {
-  useDataSet,
-  useUpdateDataSetMutation,
   useCreateDataSetMutation,
   useDataSetOwners,
+  useDataSetWithIntegrations,
+  useUpdateDataSetMutation,
   useUpdateDataSetOwners,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
@@ -35,7 +35,10 @@ const DataSetEditor = ({
 }: DataSetEditorProps): JSX.Element => {
   const { selectedDataSet, setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSet, isLoading: isFetchingDataSet } = useDataSet(selectedDataSet);
+  const {
+    dataSetWithIntegrations,
+    isLoading: isFetchingDataSet,
+  } = useDataSetWithIntegrations(selectedDataSet);
 
   const { updateDataSet, isLoading: isUpdating } = useUpdateDataSetMutation();
 
@@ -93,7 +96,11 @@ const DataSetEditor = ({
         color: 'white',
         fontSize: '16px',
       }}
-      title={<DrawerHeader>{dataSet?.name ?? 'Create data set'}</DrawerHeader>}
+      title={
+        <DrawerHeader>
+          {dataSetWithIntegrations?.dataSet.name ?? 'Create data set'}
+        </DrawerHeader>
+      }
       width="60%"
       visible={visible}
       destroyOnClose
@@ -104,7 +111,7 @@ const DataSetEditor = ({
       <DataSetCreation
         loading={loading}
         createDataSet={createDataSet}
-        dataSet={dataSet}
+        dataSet={dataSetWithIntegrations?.dataSet}
         changesSaved={changesSaved}
         setChangesSaved={setChangesSaved}
         updateDataSet={updateDataSet}

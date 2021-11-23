@@ -1,16 +1,20 @@
 import message from 'antd/lib/message';
 import isString from 'lodash/isString';
-import { DataSet } from './types';
+import { DataSetWithIntegrations } from 'subApp/vision/actions';
 
 const handleGovernanceFilter = (
   qualityFilter: string,
-  dataSetsList: DataSet[]
+  dataSetsList: DataSetWithIntegrations[]
 ) => {
   if (qualityFilter === 'governed') {
-    return dataSetsList.filter((set) => set.metadata.consoleGoverned === true);
+    return dataSetsList.filter(
+      set => set.dataSet.metadata.consoleGoverned === true
+    );
   }
   if (qualityFilter === 'ungoverned') {
-    return dataSetsList.filter((set) => set.metadata.consoleGoverned === false);
+    return dataSetsList.filter(
+      set => set.dataSet.metadata.consoleGoverned === false
+    );
   }
   return dataSetsList;
 };
@@ -18,22 +22,23 @@ const handleGovernanceFilter = (
 const handleDataSetsSearch = (
   searchValue: string | RegExp,
   setSearchValue: (arg0: string) => void,
-  dataSetsList: DataSet[]
+  dataSetsList: DataSetWithIntegrations[]
 ) => {
   if (searchValue !== '') {
     try {
       const searchRegex = new RegExp(searchValue, 'gi');
       return dataSetsList.filter(
-        (set: DataSet) =>
-          set.name?.match(searchRegex) ||
-          set.description?.match(searchRegex) ||
-          (Array.isArray(set.metadata.consoleLabels) &&
-            set.metadata.consoleLabels.some(
+        set =>
+          set.dataSet.name?.match(searchRegex) ||
+          set.dataSet.description?.match(searchRegex) ||
+          (set.dataSet.metadata.consoleLabels &&
+            Array.isArray(set.dataSet.metadata.consoleLabels) &&
+            set.dataSet.metadata.consoleLabels.some(
               (label) => isString(label) && label.match(searchRegex)
             )) ||
-          (set.metadata.integrations &&
-            Array.isArray(set.metadata.integrations) &&
-            set.metadata.integrations.some(
+          (set.integrations &&
+            Array.isArray(set.integrations) &&
+            set.integrations.some(
               (integration) =>
                 integration.name?.match(searchRegex) ||
                 integration.externalId?.match(searchRegex)
@@ -48,15 +53,15 @@ const handleDataSetsSearch = (
   return dataSetsList;
 };
 
-const handleArchivedFilter = (showArchived: boolean, dataSets: any[]) => {
-  let dataSetsList: DataSet[];
+const handleArchivedFilter = (
+  showArchived: boolean,
+  dataSets: DataSetWithIntegrations[]
+) => {
+  let dataSetsList: DataSetWithIntegrations[];
   if (showArchived) {
     dataSetsList = dataSets;
   } else {
-    dataSetsList = dataSets.filter(
-      (set: { metadata: { archived: boolean } }) =>
-        set.metadata.archived !== true
-    );
+    dataSetsList = dataSets.filter(set => !set.dataSet.metadata.archived);
   }
   return dataSetsList;
 };
@@ -66,7 +71,7 @@ export const handleDataSetsFilters = (
   searchValue: string | RegExp,
   setSearchValue: (arg0: string) => void,
   qualityFilter: string,
-  dataSets: any[]
+  dataSets: DataSetWithIntegrations[]
 ) => {
   const archiveDataSets = handleArchivedFilter(showArchived, dataSets);
   const searchDataSets = handleDataSetsSearch(

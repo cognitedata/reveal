@@ -22,6 +22,7 @@ import { useParams } from 'react-router';
 import isArray from 'lodash/isArray';
 import getTableColumns, { DataSetRow } from './TableColumns';
 import {
+  DataSetWithIntegrations,
   useDataSetsList,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
@@ -57,7 +58,10 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSets = [], isLoading: loading } = useDataSetsList();
+  const {
+    dataSetsWithIntegrations = [],
+    isLoading: loading,
+  } = useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
@@ -71,7 +75,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
       handleTableData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSets, qualityFilter, searchValue, showArchived]);
+  }, [dataSetsWithIntegrations, qualityFilter, searchValue, showArchived]);
 
   const handleModalClose = () => {
     setCreationDrawerVisible(false);
@@ -81,30 +85,31 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const handleTableData = () => {
     let tableDataSets: DataSetRow[] = [];
-    if (dataSets?.length && !loading) {
+    if (dataSetsWithIntegrations?.length && !loading) {
       const dataSetsList = handleDataSetsFilters(
         showArchived,
         searchValue,
         setSearchValue,
         qualityFilter,
-        dataSets
+        dataSetsWithIntegrations
       );
       tableDataSets = dataSetsList.map(
-        (dataSet: DataSet): DataSetRow => ({
-          key: dataSet.id,
-          name: dataSet.name,
-          description: dataSet.description,
-          labels: Array.isArray(dataSet?.metadata?.consoleLabels)
-            ? dataSet.metadata.consoleLabels
-            : [],
-          quality: dataSet.metadata.consoleGoverned,
-          integrations: dataSet.metadata.integrations ?? [],
-          writeProtected: dataSet.writeProtected,
-          archived:
-            dataSet.metadata.archived !== undefined
-              ? dataSet.metadata.archived
-              : false,
-        })
+        (dataSetWithIntegrations: DataSetWithIntegrations): DataSetRow => {
+          const { dataSet, integrations } = dataSetWithIntegrations;
+          return {
+            key: dataSet.id,
+            name: dataSet.name,
+            description: dataSet.description,
+            labels: (dataSet.metadata && dataSet.metadata.consoleLabels) || [],
+            quality: dataSet.metadata.consoleGoverned,
+            integrations,
+            writeProtected: dataSet.writeProtected,
+            archived:
+              dataSet.metadata.archived !== undefined
+                ? dataSet.metadata.archived
+                : false,
+          };
+        }
       );
     }
     setTableData(tableDataSets);
@@ -112,7 +117,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const getSourcesList = () => {
     const sourceNames: string[] = [];
-    dataSets.forEach((dataSet) => {
+    dataSetsWithIntegrations.forEach((dataSet) => {
       if (dataSet?.metadata?.consoleSource?.names?.length)
         dataSet.metadata.consoleSource.names.forEach((name: string) => {
           if (!sourceNames.includes(name)) {
@@ -175,16 +180,16 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   };
 
   const archiveDataSet = (key: number) => {
-    const dataSet = dataSets.find((curDs) => curDs.id === key);
-    if (dataSet) {
-      updateDataSetVisibility(dataSet, true);
+    const d = dataSetsWithIntegrations.find(curDs => curDs.dataSet.id === key);
+    if (d) {
+      updateDataSetVisibility(d.dataSet, true);
     }
   };
 
   const restoreDataSet = (key: number) => {
-    const dataSet = dataSets.find((curDs) => curDs.id === key);
-    if (dataSet) {
-      updateDataSetVisibility(dataSet, false);
+    const d = dataSetsWithIntegrations.find(curDs => curDs.dataSet.id === key);
+    if (d) {
+      updateDataSetVisibility(d.dataSet, false);
     }
   };
 
@@ -309,7 +314,11 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         rowKey="key"
         loading={loading}
         columns={[
-          ...getTableColumns(dataSets, showArchived, withIntegrations),
+          ...getTableColumns(
+            dataSetsWithIntegrations.map(x => x.dataSet),
+            showArchived,
+            withIntegrations
+          ),
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
         ]}

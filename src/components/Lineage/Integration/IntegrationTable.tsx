@@ -1,9 +1,4 @@
-import React, {
-  FunctionComponent,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
@@ -19,16 +14,14 @@ import {
   LineageTitle,
   NoDataText,
 } from '../../../utils/styledComponents';
-import { DataSet, Integration } from '../../../utils/types';
+import { Integration } from '../../../utils/types';
 import { IntegrationTableColumns } from './IntegrationTableColumns';
 import { IntegrationSourceExtractorProps } from './IntegrationSourceExtractor';
-import {
-  fetchIntegrationsByDataSetId,
-  getExtractionPipelineUIUrl,
-} from '../../../utils/integrationUtils';
+import { getExtractionPipelineUIUrl } from '../../../utils/integrationUtils';
+import { DataSetWithIntegrations } from 'subApp/vision/actions';
 
 interface IntegrationTableProps extends IntegrationSourceExtractorProps {
-  dataSet?: DataSet;
+  dataSetWithIntegrations: DataSetWithIntegrations;
 }
 
 export const INTEGRATIONS_HEADING: Readonly<string> = 'Extraction pipelines';
@@ -47,23 +40,9 @@ const StyledButton = styled(Button)`
 `;
 
 const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
-  dataSet,
+  dataSetWithIntegrations,
 }: PropsWithChildren<IntegrationTableProps>) => {
-  const [integrationList, setIntegrationList] = useState<
-    Integration[] | undefined
-  >();
-
-  useEffect(() => {
-    async function fetchIntegration(dataSetId: number) {
-      const res = await fetchIntegrationsByDataSetId(dataSetId);
-      setIntegrationList(res);
-    }
-    if (dataSet?.metadata?.integrations) {
-      setIntegrationList(dataSet.metadata?.integrations);
-    } else if (dataSet?.id && !dataSet.metadata.integrations) {
-      fetchIntegration(dataSet.id);
-    }
-  }, [setIntegrationList, dataSet]);
+  const { integrations, dataSet } = dataSetWithIntegrations;
 
   const permissionsExtractionPipelines = useUserCapabilities(
     'extractionPipelinesAcl',
@@ -74,7 +53,7 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
   const addIntegrationLink = () => {
     return `${createLink(`${getExtractionPipelineUIUrl('/create')}`)}${
       getEnv() ? '&' : '?'
-    }dataSetId=${dataSet?.id}`;
+    }dataSetId=${dataSet.id}`;
   };
 
   const createExtpipeButton = canEditExtractionPipelines ? (
@@ -94,26 +73,20 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
 
   return (
     <Timeline.Item
-      dot={
-        integrationList && integrationList.length ? (
-          <LineageDot />
-        ) : (
-          <EmptyLineageDot />
-        )
-      }
+      dot={integrations.length ? <LineageDot /> : <EmptyLineageDot />}
     >
       <LineageTitle>{INTEGRATIONS_HEADING}</LineageTitle>
       <LineageSubTitle>
         <span>{INTEGRATION_SUB_HEADING}</span>
         <span css="flex-shrink: 0">{createExtpipeButton}</span>
       </LineageSubTitle>
-      {!integrationList ? (
+      {!integrations ? (
         <NoDataText>{PERMISSION_TEXT}</NoDataText>
       ) : (
         <>
           <Table
             columns={IntegrationTableColumns}
-            dataSource={integrationList}
+            dataSource={integrations}
             pagination={{ pageSize: 5 }}
             rowKey={(record: Integration) => `${record?.id}`}
             getPopupContainer={getContainer}

@@ -13,7 +13,7 @@ sdk.get = jest.fn();
 
 describe('IntegrationUtils', () => {
   describe('mapDataSetIntegration', () => {
-    test('should integration on to integrations field on metadata on dataset', () => {
+    test('should match integrations with the corresponding data set', () => {
       const dataSets = [{ id: 123 }, { id: 321 }, { id: 111 }];
       const integrations = [
         { dataSetId: 111, name: 'integration 1' },
@@ -21,11 +21,9 @@ describe('IntegrationUtils', () => {
         { dataSetId: 123, name: 'integration 3' },
       ];
       const res = mapDataSetIntegration(dataSets, integrations);
-      expect(res[0].metadata.integrations[0].name).toEqual(
-        integrations[2].name
-      );
-      expect(res[1].metadata.integrations.length).toEqual(0);
-      expect(res[2].metadata.integrations[0]).toEqual(integrations[0]);
+      expect(res[0].integrations[0].name).toEqual(integrations[2].name);
+      expect(res[1].integrations.length).toEqual(0);
+      expect(res[2].integrations[0]).toEqual(integrations[0]);
     });
   });
 

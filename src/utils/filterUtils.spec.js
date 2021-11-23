@@ -2,29 +2,43 @@ import { handleDataSetsFilters } from './filterUtils';
 
 describe('FilterUtils', () => {
   describe('handleDataSetsSearch', () => {
-    const dataSets = [
-      { id: 123, name: 'my data set', metadata: { archived: false } },
+    const dataSetsWithIntegrations = [
       {
-        id: 111,
-        name: 'foo',
-        metadata: {
-          archived: false,
-          integrations: [{ name: 'integration', externalId: 'abc123' }],
+        integrations: [],
+        dataSet: {
+          id: 123,
+          name: 'my data set',
+          metadata: { archived: false },
         },
       },
       {
-        id: 333,
-        name: 'bar',
-        metadata: {
-          archived: false,
-          integrations: [{ name: 'other thing', externalId: 'external_999' }],
+        integrations: [{ name: 'integration', externalId: 'abc123' }],
+        dataSet: {
+          id: 111,
+          name: 'foo',
+          metadata: {
+            archived: false,
+          },
         },
       },
       {
-        id: 444,
-        name: 'baz',
-        metadata: {
-          archived: false,
+        integrations: [{ name: 'other thing', externalId: 'external_999' }],
+        dataSet: {
+          id: 333,
+          name: 'bar',
+          metadata: {
+            archived: false,
+          },
+        },
+      },
+      {
+        integrations: [],
+        dataSet: {
+          id: 444,
+          name: 'baz',
+          metadata: {
+            archived: false,
+          },
         },
       },
     ];
@@ -34,10 +48,10 @@ describe('FilterUtils', () => {
         'integra',
         jest.fn(),
         'all',
-        dataSets
+        dataSetsWithIntegrations
       );
       expect(res.length).toEqual(1);
-      expect(res[0]).toEqual(dataSets[1]);
+      expect(res[0]).toEqual(dataSetsWithIntegrations[1]);
     });
 
     test('Searches among integrations external id', () => {
@@ -46,10 +60,10 @@ describe('FilterUtils', () => {
         'external_999',
         jest.fn(),
         'all',
-        dataSets
+        dataSetsWithIntegrations
       );
       expect(res.length).toEqual(1);
-      expect(res[0]).toEqual(dataSets[2]);
+      expect(res[0]).toEqual(dataSetsWithIntegrations[2]);
     });
 
     test('Searches on data set name', () => {
@@ -58,10 +72,10 @@ describe('FilterUtils', () => {
         'baz',
         jest.fn(),
         'all',
-        dataSets
+        dataSetsWithIntegrations
       );
       expect(res.length).toEqual(1);
-      expect(res[0].name).toEqual(dataSets[3].name);
+      expect(res[0].name).toEqual(dataSetsWithIntegrations[3].name);
     });
   });
 });

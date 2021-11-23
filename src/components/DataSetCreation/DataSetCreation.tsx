@@ -288,10 +288,6 @@ const DataSetCreation = (props: DataSetCreationProps): JSX.Element => {
       if (selectedLabels) {
         newDataSet.metadata.consoleLabels = selectedLabels;
       }
-      if (newDataSet.metadata.integrations) {
-        // don't want to store ext pipe (integration) info on data set
-        newDataSet.metadata.integrations = undefined;
-      }
       props.updateDataSet(newDataSet);
       props.setChangesSaved(true);
       setSaveSections(false);

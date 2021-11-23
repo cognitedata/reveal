@@ -2,6 +2,7 @@ import moment from 'moment';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { RawIntegrationWithUpdateTime } from 'components/Lineage/Integration/IntegrationRawTables';
 import { DataSet, Integration, RawTableWithIntegrations } from 'utils/types';
+import { DataSetWithIntegrations } from 'subApp/vision/actions';
 
 export const updateRawTableWithLastUpdate = async (
   value: RawTableWithIntegrations
@@ -83,14 +84,13 @@ const addDataSetRawTables = (
 };
 
 export const combineDataSetAndIntegrationsRawTables = (
-  dataSet: DataSet | undefined
+  dataSetWithIntegrations: DataSetWithIntegrations
 ): RawTableWithIntegrations[] => {
+  const { dataSet, integrations } = dataSetWithIntegrations;
   const raws: Map<string, RawTableWithIntegrations> = dataSet?.metadata
     ?.rawTables
     ? addDataSetRawTables(dataSet)
     : new Map();
 
-  return dataSet?.metadata.integrations
-    ? addIntegrationsRawTables(raws, dataSet?.metadata.integrations)
-    : [];
+  return integrations ? addIntegrationsRawTables(raws, integrations) : [];
 };
