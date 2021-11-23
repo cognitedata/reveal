@@ -140,7 +140,11 @@ const convertToRegion = (annotation: VisibleAnnotation): Region => {
     visible: true,
     editingLabels: annotation.selected,
     tags: [annotation.text],
-    source: annotation.annotationType,
+    // HACK: treat custommodels as object detections
+    source:
+      annotation.annotationType === 'vision/custommodel'
+        ? 'vision/objectdetection'
+        : annotation.annotationType,
     status: annotation.status as unknown as RegionStatus,
   };
 };
