@@ -58,7 +58,7 @@ const SidePanelTableList = (): JSX.Element => {
     </>
   );
 
-  const [activeDatabase, activeTable] = useActiveTable();
+  const [[activeDatabase, activeTable] = []] = useActiveTable();
 
   useEffect(() => {
     if (!isLoading && hasNextPage) {

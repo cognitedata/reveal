@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
-import { useOpenTable } from 'hooks/table-tabs';
+import { useActiveTable } from 'hooks/table-tabs';
 
 import CreateEmptyTableOption from './CreateEmptyTableOption';
 
@@ -36,7 +36,7 @@ const CreateTableModal = ({
     useState<CreateTableOption>();
 
   const { mutate: createDatabase, isLoading } = useCreateTable();
-  const openTable = useOpenTable();
+  const [, openTable] = useActiveTable();
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isDisabled =

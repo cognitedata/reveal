@@ -4,19 +4,19 @@ import { Colors, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { useActiveTable } from 'hooks/table-tabs';
 import { useTableData } from 'hooks/table-data';
 import { escapeCSVValue } from 'utils/utils';
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
+import { useActiveTableContext } from 'contexts';
 
 export const Menu = (): JSX.Element => {
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const { database, table } = useActiveTableContext();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;
-  const canBeRenamed = false;
+  const canBeRenamed = false; // TODO renaming is impossible now
 
   const stopPropagation = (
     e: React.MouseEvent<HTMLButtonElement | HTMLElement>
@@ -75,8 +75,8 @@ export const Menu = (): JSX.Element => {
         </Item>
       </CogsMenu.Item>
       <DeleteTableModal
-        databaseName={database!}
-        tableName={table!}
+        databaseName={database}
+        tableName={table}
         visible={isDeleteModalOpen}
         onCancel={() => setIsDeleteModalOpen(false)}
       />

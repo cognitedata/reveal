@@ -1,19 +1,37 @@
 import React from 'react';
+import { Alert } from 'antd';
 import { Flex, Loader } from '@cognite/cogs.js';
-import { useTableData } from 'hooks/table-data';
+import { useRawProfile } from 'hooks/sdk-queries';
+import { useActiveTableContext } from 'contexts';
 
 export const Profiling = (): JSX.Element => {
-  const { isLoading } = useTableData();
+  const { database, table } = useActiveTableContext();
+
+  const { data, isLoading, isError, error } = useRawProfile({
+    database,
+    table,
+  });
+
+  if (isError) {
+    return (
+      <div>
+        <Alert
+          type="error"
+          message="Profiling service error"
+          description={JSON.stringify(error, null, 2)}
+        />
+      </div>
+    );
+  }
 
   return (
     <Flex direction="column">
       {isLoading ? (
         <Loader />
       ) : (
-        <>
-          {/* TODO CDFUX-952 
-          PROFILE PAGE HERE */}
-        </>
+        <div>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
       )}
     </Flex>
   );

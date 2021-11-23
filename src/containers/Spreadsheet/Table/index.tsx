@@ -1,7 +1,9 @@
 import React from 'react';
 import BaseTable, { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
-import { Body, Colors, Flex, Graphic } from '@cognite/cogs.js';
+import { Colors, Flex } from '@cognite/cogs.js';
+
+import { headerRenderer, emptyRenderer } from './customRenders';
 
 type Props = {
   rows: any;
@@ -25,19 +27,9 @@ export const Table = (props: Props): JSX.Element => {
             data={rows}
             rowHeight={36}
             headerHeight={isEmpty ? 0 : 36}
+            headerRenderer={headerRenderer}
+            emptyRenderer={emptyRenderer}
             onEndReached={() => onEndReach && onEndReach()}
-            emptyRenderer={
-              <EmptyTable>
-                <Graphic type="Search" />
-                <Body
-                  level={2}
-                  strong
-                  style={{ color: Colors['text-secondary'].hex() }}
-                >
-                  This table is empty.
-                </Body>
-              </EmptyTable>
-            }
           />
         )}
       </AutoResizer>
@@ -56,18 +48,22 @@ const StyledBaseTable = styled(BaseTable)`
   }
   .${TABLE_PREFIX}header-row {
     height: 36px;
-    background-color: ${Colors['greyscale-grey1'].hex()};
     box-shadow: none;
   }
   .${TABLE_PREFIX}header-cell {
+    padding: 0;
     border-top: 1px solid ${Colors['greyscale-grey3'].hex()};
+    background-color: ${Colors['greyscale-grey1'].hex()};
+    &:hover {
+      background-color: ${Colors['greyscale-grey2'].hex()};
+    }
   }
   .${TABLE_PREFIX}row-cell {
+    padding: 8px 16px;
     justify-content: flex-end;
     flex-wrap: wrap;
   }
   .${TABLE_PREFIX}header-cell, .${TABLE_PREFIX}row-cell {
-    padding: 8px 16px;
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
     border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
@@ -75,17 +71,5 @@ const StyledBaseTable = styled(BaseTable)`
     .${TABLE_PREFIX}row-cell:first-child {
     padding: 0 8px;
     background-color: ${Colors['greyscale-grey1'].hex()};
-  }
-`;
-
-const EmptyTable = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  & > * {
-    margin: 12px 0;
   }
 `;
