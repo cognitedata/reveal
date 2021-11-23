@@ -1,11 +1,13 @@
 import React from 'react';
 
 import { AllIconTypes, Body, Colors, Detail, Icon } from '@cognite/cogs.js';
+import icons, { IconType } from 'assets/icons';
 import styled from 'styled-components';
+import { CustomIcon } from 'components/CustomIcon';
 
 type CreateTableModalOptionProps = {
   description: string;
-  icon: AllIconTypes;
+  icon: AllIconTypes | IconType;
   isDisabled?: boolean;
   isSelected?: boolean;
   onClick?: () => void;
@@ -20,13 +22,19 @@ const CreateTableModalOption = ({
   onClick,
   title,
 }: CreateTableModalOptionProps): JSX.Element => {
+  const customIconKeys = Object.keys(icons);
+
   return (
     <StyledCreateOptionWrapper
       $isSelected={isSelected}
       disabled={isDisabled}
       onClick={onClick}
     >
-      <StyledCreateOptionIcon size={32} type={icon} />
+      {customIconKeys.includes(icon) ? (
+        <CustomIcon icon={icon as IconType} style={{ width: 32 }} />
+      ) : (
+        <StyledCreateOptionIcon size={32} type={icon as AllIconTypes} />
+      )}
       <StyledCreateOptionTitle level={6} strong>
         {title}
       </StyledCreateOptionTitle>
@@ -34,6 +42,7 @@ const CreateTableModalOption = ({
     </StyledCreateOptionWrapper>
   );
 };
+
 const StyledCreateOptionIcon = styled(Icon)`
   color: ${Colors['border-default'].hex()};
 `;

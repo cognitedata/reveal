@@ -41,7 +41,7 @@ const CreateTableModalPrimaryKeyStep = ({
         <StyledCreateOption>
           <CreateTableModalOption
             description="Choose a column that will be used. Note: this might mean data will be lost if the column is not 100% unique."
-            icon="Placeholder"
+            icon="KeyIcon"
             isDisabled={!columns}
             isSelected={
               selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
