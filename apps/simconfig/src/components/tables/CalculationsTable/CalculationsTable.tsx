@@ -22,7 +22,7 @@ export default function CalculationsTable({ data }: ComponentProps) {
     }
     dispatch(setSelectedCalculation(original));
 
-    history.push(`${url}/configuration`);
+    history.push(`${url}/configuration/${original.externalId}`);
   };
 
   const cols = [

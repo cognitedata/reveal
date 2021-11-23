@@ -23,6 +23,7 @@ export interface FileState {
   currentCalculation?: FileInfoSerializable;
   downloadLinks?: LinkWithID[];
   currentCalculationConfig?: CalculationConfig;
+  currentCalculationConfigStatus: RequestStatus;
 }
 
 export type FileInfoSerializable = Omit<

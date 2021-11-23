@@ -6,6 +6,7 @@ import { datasetReducer } from './dataset';
 import { fileReducer } from './file';
 import { boundaryConditionReducer } from './boundaryCondition';
 import { eventReducer } from './event';
+import { notificationReducer } from './notification';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     file: fileReducer,
     boundaryCondition: boundaryConditionReducer,
     event: eventReducer,
+    notification: notificationReducer,
   },
 });
 

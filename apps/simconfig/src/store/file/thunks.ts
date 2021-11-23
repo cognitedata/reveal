@@ -57,13 +57,28 @@ export const fetchCalculationFile = createAsyncThunk(
   'files/fetchCalculationFile',
   async ({ client, externalId }: ClientFilteredByCalculationId) =>
     (await client.files.getDownloadUrls([externalId])).map(async (url) => {
-      return (await fetch(url.downloadUrl)).json();
+      const response = await fetch(url.downloadUrl);
+
+      return response.json();
     })[0]
 );
 
 export const updateCalculationFile = createAsyncThunk(
   'files/updateCalculationFile',
   async ({ client, file }: ClientFilteredUpdatedFile) => {
-    return client.files.upload(file.fileInfo, file.fileContent, true);
+    const fileResponse = await client.files.upload(
+      file.fileInfo,
+      undefined,
+      true
+    );
+
+    if (!('uploadUrl' in fileResponse)) {
+      throw new Error('Error while uploading file to CDF');
+    }
+
+    await fetch(fileResponse.uploadUrl, {
+      method: 'PUT',
+      body: JSON.stringify(file.fileContent, null, 4),
+    });
   }
 );

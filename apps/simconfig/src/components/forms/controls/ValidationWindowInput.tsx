@@ -1,11 +1,12 @@
 import { Field, useFormikContext } from 'formik';
-import React, { useState } from 'react';
+import React from 'react';
 import { CalculationConfig } from 'components/forms/ConfigurationForm/types';
 import { getSelectEntriesFromMap } from 'utils/formUtils';
 import { INTERVAL_UNIT } from 'components/forms/ConfigurationForm/constants';
-import { Input, Select } from '@cognite/cogs.js';
+import { Select } from '@cognite/cogs.js';
 import {
   DoubleInputRow,
+  InputFullWidth,
   InputLabel,
   InputWithLabelContainerWide,
 } from 'components/forms/elements';
@@ -15,36 +16,57 @@ interface ComponentProps {
   disabled: boolean;
   type: string;
   title: string;
+  value: string;
 }
 function ValidationWindowInput({
   name,
   title,
   disabled,
   type,
+  value,
 }: React.PropsWithoutRef<ComponentProps>) {
-  const { getFieldProps, setFieldValue } =
+  const { setFieldValue, errors, values } =
     useFormikContext<CalculationConfig>();
-  const { value } = getFieldProps(name);
+  const validationValue = values.dataSampling.validationWindow;
 
-  const [intervalUnitValue, setIntervalUnitValue] = useState<
-    keyof typeof INTERVAL_UNIT
-  >(value ? value.slice(-1) : 'd');
-
-  const [intervalValue, setIntervalValue] = useState(
-    value ? value.substr(0, value.length - 1) : 0
-  );
+  const intervalUnitValue = value
+    ? (value.slice(-1) as keyof typeof INTERVAL_UNIT)
+    : 'd';
+  const intervalValue = value
+    ? parseInt(value.substr(0, value.length - 1), 10)
+    : 0;
 
   const handleSelectChange = ({
     value,
   }: {
     value: keyof typeof INTERVAL_UNIT;
   }) => {
-    setIntervalUnitValue(value);
     setFieldValue(name, intervalValue + value);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIntervalValue(e.target.value);
     setFieldValue(name, e.target.value + intervalUnitValue);
+  };
+
+  const getValueInMinutes = (value: number) => {
+    const multiplicative = {
+      m: 1,
+      h: 60,
+      d: 60 * 24,
+      w: 60 * 24 * 7,
+    };
+    return value * multiplicative[intervalUnitValue];
+  };
+
+  const validateInterval = () => {
+    const valueInMinutes = getValueInMinutes(intervalValue);
+
+    if (valueInMinutes < validationValue) {
+      return 'repeat cannot be more frequent than validation window';
+    }
+    if (valueInMinutes < 15) {
+      return 'Cannot repeat more frequently than 15 mins';
+    }
+    return undefined;
   };
 
   return (
@@ -53,12 +75,17 @@ function ValidationWindowInput({
         <InputLabel>{title}</InputLabel>
         <DoubleInputRow>
           <Field
-            as={Input}
+            name={name}
+            as={InputFullWidth}
+            width="174px"
             value={intervalValue}
             disabled={disabled}
             type={type}
+            error={errors.schedule?.repeat}
+            validate={validateInterval}
             onChange={handleInputChange}
           />
+
           <Field
             as={Select}
             theme="grey"

@@ -46,9 +46,9 @@ export const SectionTitle = styled(Title)`
   text-transform: uppercase;
   margin-bottom: 30px;
 `;
-export const ConfigurationEditButton = styled(Button)`
-  margin-top: 24px;
+export const FormButton = styled(Button)`
   float: right;
+  margin-left: 4px;
 `;
 
 export const InputAreaSwitch = styled(Switch)`

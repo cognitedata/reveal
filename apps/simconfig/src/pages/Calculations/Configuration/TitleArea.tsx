@@ -1,5 +1,4 @@
 import { Title } from '@cognite/cogs.js';
-import { FileInfoSerializable } from 'store/file/types';
 
 import {
   BLabel,
@@ -7,9 +6,10 @@ import {
   TitleContainer,
   TitleRowFlexEnd,
 } from '../elements';
+import { CalculationConfig } from '../../../components/forms/ConfigurationForm/types';
 
 interface ComponentProps {
-  fileData?: FileInfoSerializable;
+  fileData?: CalculationConfig;
 }
 
 export default function TitleArea({
@@ -19,14 +19,14 @@ export default function TitleArea({
   return (
     <>
       <TitleContainer>
-        <Title>{fileData?.metadata?.modelName}</Title>
+        <Title>{fileData?.modelName}</Title>
         <ItemWrapper>
-          <BLabel>Calculation type</BLabel>
-          {fileData?.metadata?.calcName}
+          <BLabel>Calculation Name</BLabel>
+          {fileData?.calculationName}
         </ItemWrapper>
         <ItemWrapper>
           <BLabel>Simulator</BLabel>
-          {fileData?.source}
+          {fileData?.simulator}
         </ItemWrapper>
       </TitleContainer>
       <TitleRowFlexEnd>{children}</TitleRowFlexEnd>

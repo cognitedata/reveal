@@ -1,10 +1,12 @@
 import { Container, AuthConsumer, AuthContext } from '@cognite/react-container';
-import sidecar from 'utils/sidecar';
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from 'store';
 import { CdfClientProvider } from 'providers/CdfClientProvider';
-import App from 'components/app/App';
 import { ApiProvider } from 'providers/ApiProvider';
+import App from 'components/app/App';
+import sidecar from 'utils/sidecar';
+
+import Notifications from './Notifications';
 
 export default function AppRoot() {
   return (
@@ -16,6 +18,7 @@ export default function AppRoot() {
               <ApiProvider authState={authState}>
                 <ReduxProvider store={store}>
                   <App />
+                  <Notifications />
                 </ReduxProvider>
               </ApiProvider>
             </CdfClientProvider>

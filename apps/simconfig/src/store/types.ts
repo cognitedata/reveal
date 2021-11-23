@@ -6,6 +6,7 @@ import { SimulatorState } from './simulator/types';
 import { FileState } from './file/types';
 import { BoundaryConditionState } from './boundaryCondition/types';
 import { EventState } from './event/types';
+import { NotificationState } from './notification/types';
 
 export enum RequestStatus {
   IDLE,
@@ -22,4 +23,5 @@ export type StoreState = {
   file: FileState;
   boundaryCondition: BoundaryConditionState;
   event: EventState;
+  notification: NotificationState;
 };

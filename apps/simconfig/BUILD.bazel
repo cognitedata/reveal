@@ -75,13 +75,13 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/gcs-browser-upload",
     "@npm//@cognite/sdk",
     "@npm//@cognite/simconfig-api-sdk",
     "@npm//@reduxjs/toolkit",
     "@npm//@sentry/browser",
     "@npm//eslint-config-react-app",
     "@npm//formik",
+    "@npm//yup",
     "@npm//lodash",
     "@npm//moment",
     "@npm//react",
@@ -93,16 +93,17 @@ DEPENDENCIES = [
     "//packages/sidecar",
     "//packages/react-i18n",
     "//packages/react-container",
+    "//packages/auth-utils",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-redux",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
-    "@npm//@types/lodash",
     "@npm//@types/styled-components",
 ]
 
@@ -112,6 +113,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/testcafe",
+    "@npm//@typescript-eslint/eslint-plugin",
     "@npm//babel-eslint",
     "@npm//eslint-plugin-import",
     "@npm//eslint-plugin-jsx-a11y",

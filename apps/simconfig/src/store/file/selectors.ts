@@ -10,6 +10,9 @@ export const selectSelectedCalculation = (state: StoreState) =>
 export const selectSelectedCalculationConfig = (state: StoreState) =>
   state.file.currentCalculationConfig;
 
+export const selectSelectedCalculationConfigStatus = (state: StoreState) =>
+  state.file.currentCalculationConfigStatus;
+
 export const selectIsFilesInitialized = (state: StoreState) =>
   state.file.initialized;
 

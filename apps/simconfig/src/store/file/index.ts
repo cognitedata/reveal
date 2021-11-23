@@ -3,7 +3,12 @@ import { RequestStatus } from 'store/types';
 import { partialUpdate } from 'store/utils';
 
 import { initialState } from './constants';
-import { fetchCalculationFile, fetchDownloadLinks, fetchFiles } from './thunks';
+import {
+  fetchCalculationFile,
+  fetchDownloadLinks,
+  fetchFiles,
+  updateCalculationFile,
+} from './thunks';
 import { FileInfoSerializable } from './types';
 
 export const fileSlice = createSlice({
@@ -27,6 +32,14 @@ export const fileSlice = createSlice({
     resetSelectedCalculationConfig: (state) =>
       partialUpdate(state, {
         currentCalculationConfig: undefined,
+      }),
+    setSelectedCalculationConfig: (state) =>
+      partialUpdate(state, {
+        currentCalculationConfig: undefined,
+      }),
+    reinitialiseSelectedCalculationConfig: (state) =>
+      partialUpdate(state, {
+        currentCalculationConfig: state.currentCalculationConfig,
       }),
     setFileForDownload: (
       state,
@@ -79,11 +92,25 @@ export const fileSlice = createSlice({
         })
       );
 
-    builder.addCase(fetchCalculationFile.fulfilled, (state, action) =>
+    builder.addCase(fetchCalculationFile.fulfilled, (state, action) => {
       partialUpdate(state, {
         currentCalculationConfig: action.payload,
+        currentCalculationConfigStatus: RequestStatus.SUCCESS,
+      });
+    });
+
+    builder
+      .addCase(updateCalculationFile.rejected, (state) => {
+        partialUpdate(state, {
+          currentCalculationConfigStatus: RequestStatus.ERROR,
+          currentCalculationConfig: undefined,
+        });
       })
-    );
+      .addCase(updateCalculationFile.fulfilled, (state) =>
+        partialUpdate(state, {
+          currentCalculationConfigStatus: RequestStatus.SUCCESS,
+        })
+      );
   },
 });
 export const {

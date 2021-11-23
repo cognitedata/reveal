@@ -14,8 +14,19 @@ import {
 import { AGGREGATE_TYPE, CHECK_TYPE } from './constants';
 import { CalculationConfig } from './types';
 
-export function DataSamplingSection() {
-  const { values, setFieldValue } = useFormikContext<CalculationConfig>();
+interface ComponentProps {
+  isEditing: boolean;
+}
+
+export function DataSamplingSection({
+  isEditing,
+}: React.PropsWithoutRef<ComponentProps>) {
+  const { values, setFieldValue, errors } =
+    useFormikContext<CalculationConfig>();
+
+  const logicalCheckEnabled = values.logicalCheck.enabled;
+  const steadyStateDetectionEnabled = values.steadyStateDetection.enabled;
+
   return (
     <>
       <SectionTitle level={2}>Data Sampling</SectionTitle>
@@ -24,18 +35,20 @@ export function DataSamplingSection() {
         <InputAreaTitle level={3}>Configuration</InputAreaTitle>
         <InputRow>
           <Field
+            type="number"
             as={Input}
             title="Validation Window"
             name="dataSampling.validationWindow"
-            disabled
-            type="number"
+            disabled={!isEditing}
+            error={errors?.dataSampling?.validationWindow}
             postfix={<Button disabled>Min</Button>}
           />
           <Field
             as={Input}
             title="Sampling Window"
             name="dataSampling.samplingWindow"
-            disabled
+            disabled={!isEditing}
+            error={errors?.dataSampling?.samplingWindow}
             type="number"
             postfix={<Button disabled>Min</Button>}
           />
@@ -43,7 +56,7 @@ export function DataSamplingSection() {
             as={Input}
             title="Granularity"
             name="dataSampling.granularity"
-            disabled
+            disabled={!isEditing}
             postfix={<Button disabled>Min</Button>}
           />
         </InputRow>
@@ -52,7 +65,7 @@ export function DataSamplingSection() {
         <InputAreaTitle level={3}>
           Logical check
           <Switch
-            disabled
+            disabled={!isEditing}
             value={values.logicalCheck.enabled}
             name="logicalCheck.enabled"
             onChange={(value: boolean) =>
@@ -73,7 +86,7 @@ export function DataSamplingSection() {
             <Field
               as={Select}
               theme="grey"
-              isDisabled
+              isDisabled={!isEditing || !logicalCheckEnabled}
               closeMenuOnSelect
               value={{
                 value: values.logicalCheck.aggregateType,
@@ -85,7 +98,7 @@ export function DataSamplingSection() {
               options={getSelectEntriesFromMap(AGGREGATE_TYPE)}
               name="logicalCheck.aggregateType"
               fullWidth
-              disabled
+              disabled={!isEditing || !logicalCheckEnabled}
             />
           </InputWithLabelContainer>
           <InputWithLabelContainer>
@@ -93,7 +106,7 @@ export function DataSamplingSection() {
             <Field
               as={Select}
               theme="grey"
-              isDisabled
+              isDisabled={!isEditing || !logicalCheckEnabled}
               closeMenuOnSelect
               value={{
                 value: values.logicalCheck.check,
@@ -105,7 +118,7 @@ export function DataSamplingSection() {
               options={getSelectEntriesFromMap(CHECK_TYPE)}
               name="logicalCheck.check"
               fullWidth
-              disabled
+              disabled={!isEditing || !logicalCheckEnabled}
             />
           </InputWithLabelContainer>
 
@@ -113,8 +126,9 @@ export function DataSamplingSection() {
             as={Input}
             title="Value"
             name="logicalCheck.value"
-            type=""
-            disabled
+            type="number"
+            step={0.5}
+            disabled={!isEditing || !logicalCheckEnabled}
           />
         </InputRow>
       </InputArea>
@@ -122,11 +136,11 @@ export function DataSamplingSection() {
         <InputAreaTitle level={3}>
           Steady state detection
           <Switch
-            value={values.logicalCheck?.enabled}
-            disabled
+            value={values.steadyStateDetection.enabled}
+            disabled={!isEditing}
             name="steadyStateDetection.enabled"
             onChange={(value: boolean) =>
-              setFieldValue('logicalCheck.enabled', value)
+              setFieldValue('steadyStateDetection.enabled', value)
             }
           />
         </InputAreaTitle>
@@ -143,7 +157,7 @@ export function DataSamplingSection() {
             <Field
               as={Select}
               theme="grey "
-              isDisabled
+              isDisabled={!isEditing || !steadyStateDetectionEnabled}
               closeMenuOnSelect
               value={{
                 value: values.steadyStateDetection.aggregateType,
@@ -156,7 +170,7 @@ export function DataSamplingSection() {
               options={getSelectEntriesFromMap(AGGREGATE_TYPE)}
               name="steadyStateDetection.aggregateType"
               fullWidth
-              disabled
+              disabled={!isEditing || !steadyStateDetectionEnabled}
             />
           </InputWithLabelContainer>
           <Field
@@ -164,21 +178,24 @@ export function DataSamplingSection() {
             title="Min Section Size"
             name="steadyStateDetection.minSectionSize"
             type="number"
-            disabled
+            error={errors?.steadyStateDetection?.minSectionSize}
+            disabled={!isEditing || !steadyStateDetectionEnabled}
           />
           <Field
             as={Input}
             title="Var threshold"
             name="steadyStateDetection.varThreshold"
             type="number"
-            disabled
+            error={errors?.steadyStateDetection?.varThreshold}
+            disabled={!isEditing || !steadyStateDetectionEnabled}
           />
           <Field
             as={Input}
             title="Slope threshold"
             name="steadyStateDetection.slopeThreshold"
             type="number"
-            disabled
+            error={errors?.steadyStateDetection?.slopeThreshold}
+            disabled={!isEditing || !steadyStateDetectionEnabled}
           />
         </InputRow>
       </InputArea>
