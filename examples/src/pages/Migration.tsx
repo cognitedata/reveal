@@ -462,15 +462,6 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
-      const controlsGui = gui.addFolder('Camera controls');
-      const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
-      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
-      });
-      controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
-      });
-  
       const overlayTool = new HtmlOverlayTool(viewer,
         { 
           clusteringOptions: { 
