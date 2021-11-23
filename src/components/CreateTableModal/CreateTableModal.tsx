@@ -109,6 +109,7 @@ const CreateTableModal = ({
     >
       <FormFieldWrapper isRequired title="Name">
         <Input
+          autoFocus
           disabled={isLoading}
           fullWidth
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
