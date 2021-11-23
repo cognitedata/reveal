@@ -25,16 +25,16 @@
     tunnel "0.0.6"
 
 "@azure/msal-browser@^2.11.0":
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.17.0.tgz#beb7d91e6123534b42c0d2ce85eda42a136a8555"
-  integrity sha512-NDK0NfsiRkjUU4V4jTt++aUPVg3JnRF4zV3B6WEOXDMH3OCbSJyqdO1WhdUWgMNQZz6Dk9bO/c6Bf4vUEgg+WA==
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-2.19.0.tgz#6915d200e0679eb8b26368bf0e0fc02ee4a8617a"
+  integrity sha512-nVMMSbFeocGv3SUYGBD+3pkE/pbAciGhER3KCjsBu6Sy9EDaBCiQ418KZfHBcCcrNQgFxf3nleWdeYoYX7281g==
   dependencies:
-    "@azure/msal-common" "^5.0.0"
+    "@azure/msal-common" "^5.1.0"
 
-"@azure/msal-common@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-5.0.0.tgz#4e927b9bdc3715e0b043ece01360c73739ef52c1"
-  integrity sha512-b3QXfW0BlGZs3mQ59rkVGcArzeMGd1RjHxyRez5bCB1F/F3jRmn2nY9jGamrILPBFz7weGpJiouW1VmDmAuk7Q==
+"@azure/msal-common@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-5.1.0.tgz#e3a75a8ba1602da040698046161961d6dc59bbc4"
+  integrity sha512-4zHZ5Ec7jAgTIWZO3ap1ozgIPGAirF1wL8UhsmPF9QDoZz0cMHdaNmtov5i2+6Xq37YMzhN5s50EFHBuXd7sDQ==
   dependencies:
     debug "^4.1.1"
 
@@ -1269,9 +1269,9 @@
   uid ""
 
 "@cognite/sdk-core@^3.2.0":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.2.5.tgz#76b7b1632ed84fb2740ba69959bcebbce91251c7"
-  integrity sha512-Jx77CQnKcLMLLuMLCYavLfpNgqrctUaoAaHyv3AP4IZfjGuJX9kTyAfkLCFmiMld9eXfCGNNgyBaDf6AUnsLxA==
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-3.4.1.tgz#1a7552f1babe441bd26f48993584bbbc7b98a8d1"
+  integrity sha512-E5/Xm5+yClLUzrK6RiVZ5E9YsGbG4pAmDSel7MuoCJB9L8q0lcQN65ESBFsmrRJrqKzu7ak7fh/xVzkGfrO9Iw==
   dependencies:
     "@azure/msal-browser" "^2.11.0"
     cross-fetch "^3.0.4"
@@ -4127,9 +4127,9 @@ core-js@^3.6.5:
   integrity sha512-5+5VxRFmSf97nM8Jr2wzOwLqRo6zphH2aX+7KsAUONObyzakDNq2G/bgbhinxB4PoV9L3aXQYhiDKyIKWd2c8g==
 
 core-js@^3.8.3:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.18.0.tgz#9af3f4a6df9ba3428a3fb1b171f1503b3f40cc49"
-  integrity sha512-WJeQqq6jOYgVgg4NrXKL0KLQhi0CT4ZOCvFL+3CQ5o7I6J8HkT5wd53EadMfqTDp1so/MT1J+w2ujhWcCJtN7w==
+  version "3.19.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.19.1.tgz#f6f173cae23e73a7d88fa23b6e9da329276c6641"
+  integrity sha512-Tnc7E9iKd/b/ff7GFbhwPVzJzPztGrChB8X8GLqoYGdEOG8IpLnK1xPyo3ZoO3HsK6TodJS58VGPOxA+hLHQMg==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -8302,10 +8302,15 @@ lodash@4.x, "lodash@>=3.5 <5", lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-loglevel@^1.6.8, loglevel@^1.7.1:
+loglevel@^1.6.8:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.7.1.tgz#005fde2f5e6e47068f935ff28573e125ef72f197"
   integrity sha512-Hesni4s5UkWkwCGJMQGAh71PaLUmKFM60dHvq0zi/vDhhrzuk+4GgNbTXJ12YYQJn6ZKBDNIjYcuQGKudvqrIw==
+
+loglevel@^1.7.1:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.0.tgz#e7ec73a57e1e7b419cb6c6ac06bf050b67356114"
+  integrity sha512-G6A/nJLRgWOuuwdNuA6koovfEV1YpqqAG4pRUlFaz3jj2QNZ8M4vBqnVA+HBTmU/AMNUtlOsMmSpF6NyOjztbA==
 
 loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3.1, loose-envify@^1.4.0:
   version "1.4.0"
@@ -8648,9 +8653,9 @@ mixin-object@^2.0.1:
     is-extendable "^0.1.1"
 
 mixpanel-browser@^2.39.0:
-  version "2.41.0"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
-  integrity sha512-IEuc9cH44hba9a3KEyulXINLn+gpFqluBDo7xiTk1h3j111dmmsctaE6tUzZYxgGLVqeNhTpsccdliOeX24Wlw==
+  version "2.42.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.42.0.tgz#85c056577875f6624358bf0d7dcd13678c8277db"
+  integrity sha512-9IC/+BYVIG3PfLn1ubkLsQdXc5dKot3sIXHf56GqssyLCOPPwlZfwhZqg1t8HC/sxGqLCL/HON3YbR7oiXMbeg==
 
 mkdirp-classic@^0.5.2:
   version "0.5.3"

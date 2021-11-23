@@ -9,7 +9,7 @@ import { RevealManager } from './RevealManager';
 import { RevealOptions } from './types';
 import { RenderAlreadyLoadedGeometryProvider } from '../datamodels/cad/rendering/RenderAlreadyLoadedGeometryProvider';
 
-import { initMetrics } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { RenderOptions, EffectRenderManager, CadMaterialManager } from '@reveal/rendering';
 import {
   ModelMetadataProvider,
@@ -94,7 +94,7 @@ export function createRevealManager(
   scene: THREE.Scene,
   revealOptions: RevealOptions = {}
 ): RevealManager {
-  initMetrics(revealOptions.logMetrics !== false, project, applicationId, {
+  MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
     constructorOptions: revealOptions
   });
 

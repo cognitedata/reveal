@@ -2,7 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-export { HtmlOverlayTool, HtmlOverlayOptions } from './src/HtmlOverlayTool';
+export {
+  HtmlOverlayTool,
+  HtmlOverlayOptions,
+  HtmlOverlayPositionUpdatedDelegate,
+  HtmlOverlayCreateClusterDelegate
+} from './src/HtmlOverlay/HtmlOverlayTool';
 export { ExplodedViewTool } from './src/ExplodedViewTool';
 export { DebugCameraTool } from './src/DebugCameraTool';
 export { AxisViewTool } from './src/AxisView/AxisViewTool';
@@ -32,5 +37,8 @@ export {
 } from './src/Geomap/MapConfig';
 export { ToolbarTool } from './src/Toolbar/ToolbarTool';
 export { ToolbarPosition } from './src/Toolbar/Toolbar';
+export { TimelineTool } from './src/Timeline/TimelineTool';
+export { Keyframe } from './src/Timeline/Keyframe';
+export { TimelineDateUpdateDelegate } from './src/Timeline/types';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
