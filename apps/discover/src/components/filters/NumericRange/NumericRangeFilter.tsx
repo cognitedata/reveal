@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 
+import debounce from 'lodash/debounce';
 import isNumber from 'lodash/isNumber';
 import toNumber from 'lodash/toNumber';
 
@@ -27,8 +28,12 @@ interface Config {
   editableTextFields?: boolean;
 }
 
-export const NumericRangeFilter: React.FC<Props> = (props) => {
-  const { values, selectedValues, onValueChange, config } = props;
+export const NumericRangeFilter: React.FC<Props> = ({
+  values,
+  selectedValues,
+  onValueChange,
+  config,
+}) => {
   const minMaxValues =
     isNumber(values[0]) && isNumber(values[1]) ? values : [0, 0];
   const [selectedMin, selectedMax] = selectedValues || minMaxValues;
@@ -36,6 +41,8 @@ export const NumericRangeFilter: React.FC<Props> = (props) => {
     selectedMin,
     selectedMax,
   ]);
+  const [min, max] = minMaxValues;
+  let [fastMin, fastMax] = fastMinMax;
 
   // Set range values in initial render.
   React.useEffect(() => {
@@ -44,7 +51,12 @@ export const NumericRangeFilter: React.FC<Props> = (props) => {
     }
   }, [selectedValues]);
 
-  const [min, max] = minMaxValues;
+  const debouncedSearch = React.useCallback(
+    debounce((from, to) => {
+      onValueChange([from, to]);
+    }, 300),
+    []
+  );
 
   const handleRangeSliderChange = (range: number[]) => {
     const from = range[0];
@@ -52,7 +64,7 @@ export const NumericRangeFilter: React.FC<Props> = (props) => {
 
     if (from !== selectedMin || to !== selectedMax) {
       setFastMinMax([from, to]);
-      onValueChange([from, to]);
+      debouncedSearch(from, to);
     }
   };
 
@@ -67,8 +79,6 @@ export const NumericRangeFilter: React.FC<Props> = (props) => {
   };
 
   const handleMinBlur = () => {
-    // eslint-disable-next-line prefer-const
-    let [fastMin, fastMax] = fastMinMax;
     if (fastMin < min) {
       fastMin = min;
     } else if (fastMin > fastMax) {
@@ -82,8 +92,6 @@ export const NumericRangeFilter: React.FC<Props> = (props) => {
   };
 
   const handleMaxBlur = () => {
-    // eslint-disable-next-line prefer-const
-    let [fastMin, fastMax] = fastMinMax;
     if (fastMax > max) {
       fastMax = max;
     } else if (fastMax < fastMin) {
@@ -103,7 +111,7 @@ export const NumericRangeFilter: React.FC<Props> = (props) => {
         <RangeSlider
           min={min}
           max={max}
-          value={[selectedMin, selectedMax]}
+          value={[fastMin, fastMax]}
           setValue={handleRangeSliderChange}
         />
       </RangeSliderWrapper>

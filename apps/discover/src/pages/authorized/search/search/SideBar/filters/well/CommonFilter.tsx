@@ -46,7 +46,9 @@ export const CommonFilter = ({
    * @TODO: Filter types should be typed properly and casting to `any` should be removed.
    */
   const options = originalOptions.map((option: any) =>
-    isUndefined(option.value.value) ? option : option.value
+    isUndefined(option.value?.value)
+      ? option || { value: 0 }
+      : option.value || { value: 0 }
   );
 
   const createDateRangeElement = () => (

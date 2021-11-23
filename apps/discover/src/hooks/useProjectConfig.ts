@@ -6,7 +6,7 @@ import { useProjectConfigGetQuery } from 'modules/api/projectConfig/useProjectCo
 
 export const useProjectConfig = useProjectConfigGetQuery;
 
-// cannot do "keyof ProjectConfig"
+// cannot do "key: keyof ProjectConfig" instead of "key: string"
 // because we use nested gets, eg: 'general.searchableLayerTitle'
 export const useProjectConfigByKey = <P = ProjectConfig>(key: string) => {
   const queryResult = useProjectConfig();
