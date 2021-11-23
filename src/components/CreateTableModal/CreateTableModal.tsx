@@ -13,6 +13,24 @@ import { useActiveTable } from 'hooks/table-tabs';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 
+const mockColumns = [
+  'key',
+  'covariance_xy',
+  'data_entry_mode',
+  'covariance_yz',
+  'y_offset',
+  'sequence_no',
+  'inclination',
+  'definitive_survey_id',
+  'covariance_zz',
+  'tvd',
+  'covariance_xx',
+  'x_offset',
+  'azimuth',
+  'ellipse_vertical',
+  'md',
+];
+
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
 export enum CreateTableModalStep {
@@ -51,6 +69,7 @@ const CreateTableModal = ({
     useState<CreationMode>();
   const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
     useState<PrimaryKeyMethod>();
+  const [selectedColumn, setSelectedColumn] = useState<string>();
 
   const { mutate: createDatabase, isLoading: isCreatingTable } =
     useCreateTable();
@@ -131,8 +150,11 @@ const CreateTableModal = ({
     if (createTableModalStep === CreateTableModalStep.PrimaryKey) {
       return (
         <CreateTableModalPrimaryKeyStep
-          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+          columns={mockColumns}
+          selectedColumn={selectedColumn}
+          selectColumnAsPrimaryKey={(name: string) => setSelectedColumn(name)}
           selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
         />
       );
     }
