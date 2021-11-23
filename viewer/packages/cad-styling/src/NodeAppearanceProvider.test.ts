@@ -14,7 +14,7 @@ describe('NodeAppearanceProvider', () => {
 
   beforeEach(() => {
     provider = new NodeAppearanceProvider();
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
