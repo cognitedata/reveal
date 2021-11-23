@@ -52,6 +52,9 @@ export function getTitle(t: ResourceType, plural: boolean = true): string {
     case 'event': {
       return plural ? 'Events' : 'Event';
     }
+    case 'threeD': {
+      return plural ? '3D models' : '3D model';
+    }
     default: {
       throw new Error(`Unknown ResourceType: ${t}`);
     }
