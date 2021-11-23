@@ -11,18 +11,24 @@ import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
+import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
+
+export enum CreateTableModalStep {
+  CreationMode = 'creationMode',
+  PrimaryKey = 'primaryKey',
+  Upload = 'upload',
+}
 
 export enum CreationMode {
   Empty = 'empty',
   Upload = 'upload',
 }
 
-export enum CreateTableModalStep {
-  CreationMode = 'creationMode',
-  PrimaryKey = 'primaryKey',
-  Upload = 'upload',
+export enum PrimaryKeyMethod {
+  ChooseColumn = 'chooseColumn',
+  AutoGenerate = 'autoGenerate',
 }
 
 type CreateTableModalProps = {
@@ -38,8 +44,13 @@ const CreateTableModal = ({
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const [tableName, setTableName] = useState('');
+  const [createTableModalStep, setCreateTableModalStep] = useState(
+    CreateTableModalStep.CreationMode
+  );
   const [selectedCreationMode, setSelectedCreationMode] =
     useState<CreationMode>();
+  const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
+    useState<PrimaryKeyMethod>();
 
   const { mutate: createDatabase, isLoading: isCreatingTable } =
     useCreateTable();
@@ -88,18 +99,38 @@ const CreateTableModal = ({
   };
 
   const selectCreationMode =
-    (option: CreationMode): (() => void) =>
+    (mode: CreationMode): (() => void) =>
     (): void => {
-      setSelectedCreationMode(option);
+      setSelectedCreationMode(mode);
+      if (mode === CreationMode.Upload) {
+        setCreateTableModalStep(CreateTableModalStep.PrimaryKey);
+      }
+    };
+
+  const selectPrimaryKeyMethod =
+    (method: PrimaryKeyMethod): (() => void) =>
+    (): void => {
+      setSelectedPrimaryKeyMethod(method);
+      if (method === PrimaryKeyMethod.AutoGenerate) {
+        setCreateTableModalStep(CreateTableModalStep.Upload);
+      }
     };
 
   const renderCreateTableModalStep = (): JSX.Element | undefined => {
-    if (CreateTableModalStep.CreationMode) {
+    if (createTableModalStep === CreateTableModalStep.CreationMode) {
       return (
         <CreateTableModalCreationModeStep
           isCreatingTable={isCreatingTable}
           selectedCreationMode={selectedCreationMode}
           selectCreationMode={selectCreationMode}
+        />
+      );
+    }
+    if (createTableModalStep === CreateTableModalStep.PrimaryKey) {
+      return (
+        <CreateTableModalPrimaryKeyStep
+          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
         />
       );
     }

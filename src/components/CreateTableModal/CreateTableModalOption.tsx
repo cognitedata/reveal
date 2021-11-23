@@ -8,7 +8,7 @@ type CreateTableModalOptionProps = {
   icon: AllIconTypes;
   isDisabled?: boolean;
   isSelected?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   title: string;
 };
 
@@ -46,6 +46,7 @@ const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  height: 100%;
   padding: 36px;
   width: 100%;
 

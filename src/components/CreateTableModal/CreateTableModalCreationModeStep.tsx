@@ -21,7 +21,9 @@ const CreateTableModalCreationModeStep = ({
   return (
     <FormFieldWrapper isRequired title="Select one">
       <StyledCreateOptions>
-        <StyledCreateOption>upload csv</StyledCreateOption>
+        <StyledCreateOption onClick={selectCreationMode(CreationMode.Upload)}>
+          upload csv
+        </StyledCreateOption>
         <StyledCreateOption>
           <CreateTableModalOption
             description="Upload files later or write data directly using the API."
