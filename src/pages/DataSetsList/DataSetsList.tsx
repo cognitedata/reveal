@@ -5,7 +5,6 @@ import { Button, Icon, Input } from '@cognite/cogs.js';
 import Table from 'antd/lib/table';
 import Tag from 'antd/lib/tag';
 import notification from 'antd/lib/notification';
-import { DataSet } from 'utils/types';
 import Checkbox from 'antd/lib/checkbox';
 import DataSetEditor from 'pages/DataSetEditor';
 import { Dropdown, DropdownMenuContent } from 'components/DropdownMenu';
@@ -58,10 +57,8 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const {
-    dataSetsWithIntegrations = [],
-    isLoading: loading,
-  } = useDataSetsList();
+  const { dataSetsWithIntegrations = [], isLoading: loading } =
+    useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
@@ -117,7 +114,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const getSourcesList = () => {
     const sourceNames: string[] = [];
-    dataSetsWithIntegrations.forEach((dataSet) => {
+    dataSetsWithIntegrations.forEach(({ dataSet }) => {
       if (dataSet?.metadata?.consoleSource?.names?.length)
         dataSet.metadata.consoleSource.names.forEach((name: string) => {
           if (!sourceNames.includes(name)) {
@@ -180,14 +177,18 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   };
 
   const archiveDataSet = (key: number) => {
-    const d = dataSetsWithIntegrations.find(curDs => curDs.dataSet.id === key);
+    const d = dataSetsWithIntegrations.find(
+      (curDs) => curDs.dataSet.id === key
+    );
     if (d) {
       updateDataSetVisibility(d.dataSet, true);
     }
   };
 
   const restoreDataSet = (key: number) => {
-    const d = dataSetsWithIntegrations.find(curDs => curDs.dataSet.id === key);
+    const d = dataSetsWithIntegrations.find(
+      (curDs) => curDs.dataSet.id === key
+    );
     if (d) {
       updateDataSetVisibility(d.dataSet, false);
     }
@@ -315,7 +316,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         loading={loading}
         columns={[
           ...getTableColumns(
-            dataSetsWithIntegrations.map(x => x.dataSet),
+            dataSetsWithIntegrations.map((x) => x.dataSet),
             showArchived,
             withIntegrations
           ),

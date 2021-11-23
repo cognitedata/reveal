@@ -1,6 +1,6 @@
 import message from 'antd/lib/message';
 import isString from 'lodash/isString';
-import { DataSetWithIntegrations } from 'subApp/vision/actions';
+import { DataSetWithIntegrations } from 'actions';
 
 const handleGovernanceFilter = (
   qualityFilter: string,
@@ -8,12 +8,12 @@ const handleGovernanceFilter = (
 ) => {
   if (qualityFilter === 'governed') {
     return dataSetsList.filter(
-      set => set.dataSet.metadata.consoleGoverned === true
+      (set) => set.dataSet.metadata.consoleGoverned === true
     );
   }
   if (qualityFilter === 'ungoverned') {
     return dataSetsList.filter(
-      set => set.dataSet.metadata.consoleGoverned === false
+      (set) => set.dataSet.metadata.consoleGoverned === false
     );
   }
   return dataSetsList;

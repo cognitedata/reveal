@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { DataSet, RawTable } from 'utils/types';
+import { RawTable } from 'utils/types';
 import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
 import Timeline from 'antd/lib/timeline';
@@ -28,8 +28,7 @@ import {
   EXTRACTOR_TEXT,
 } from 'components/Lineage/Extractor/Extractor';
 import * as Sentry from '@sentry/browser';
-import { DataSetWithIntegrations } from 'subApp/vision/actions';
-import { RawTable } from 'subApp/vision/utils/types';
+import { DataSetWithIntegrations } from 'actions';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
@@ -56,9 +55,10 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
 
   const getExternalTransformations = () => {
     if (dataSetWithIntegrations?.dataSet.metadata.transformations) {
-      const externalTransformation = dataSetWithIntegrations.dataSet.metadata.transformations.filter(
-        (trans) => trans.type === 'external'
-      );
+      const externalTransformation =
+        dataSetWithIntegrations.dataSet.metadata.transformations.filter(
+          (trans) => trans.type === 'external'
+        );
 
       if (externalTransformation && externalTransformation[0]) {
         return (

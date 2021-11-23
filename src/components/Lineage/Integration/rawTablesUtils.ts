@@ -2,7 +2,7 @@ import moment from 'moment';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { RawIntegrationWithUpdateTime } from 'components/Lineage/Integration/IntegrationRawTables';
 import { DataSet, Integration, RawTableWithIntegrations } from 'utils/types';
-import { DataSetWithIntegrations } from 'subApp/vision/actions';
+import { DataSetWithIntegrations } from 'actions';
 
 export const updateRawTableWithLastUpdate = async (
   value: RawTableWithIntegrations

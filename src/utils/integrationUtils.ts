@@ -5,18 +5,14 @@ const EXTRACTION_PIPELINE_PATH: Readonly<string> = 'extpipes';
 
 export const mapDataSetIntegration = (
   dataSets: DataSet[],
-  integrations: Integration[]
-): DataSet[] => {
-  return dataSets.map((dataSet) => {
-    const dataSetIntegrations = integrations.filter((integration) => {
-      return dataSet.id === integration.dataSetId;
-    });
-    return {
-      ...dataSet,
-      metadata: { ...dataSet.metadata, integrations: dataSetIntegrations },
-    };
-  });
-};
+  allIntegrations: Integration[]
+) =>
+  dataSets.map((dataSet) => ({
+    dataSet,
+    integrations: allIntegrations.filter(
+      (integration) => dataSet.id === integration.dataSetId
+    ),
+  }));
 
 export const getExtractionPipelineApiUrl = (project: string) => {
   return `/api/v1/projects/${project}/${EXTRACTION_PIPELINE_PATH}`;

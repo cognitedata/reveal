@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import handleError from 'utils/handleError';
 import omit from 'lodash/omit';
-import { CreationDataSet, DataSet, TransformationDetails } from 'utils/types';
+import {
+  CreationDataSet,
+  DataSet,
+  DataSetV3,
+  Integration,
+  TransformationDetails,
+} from 'utils/types';
 import { DataSetPatch, Group } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { useWithIntegrations } from 'hooks/useWithIntegrations';
 import {
   QueryClient,
   useMutation,
@@ -26,12 +31,12 @@ import {
   mapDataSetIntegration,
 } from 'utils/integrationUtils';
 import {
-  getRetrieveByDataSetIdKey,
   getDataSetOwnersByIdKey,
+  getRetrieveByDataSetIdKey,
+  getListDatasetsKey,
+  listGroupsKey,
   listRawDatabasesKey,
   listRawTablesKey,
-  listGroupsKey,
-  getListDatasetsKey,
 } from './keys';
 
 export const invalidateDataSetQueries = (
@@ -183,74 +188,64 @@ export const useUpdateDataSetVisibility = () => {
 
 /* QUERIES */
 
+export type DataSetWithIntegrations = {
+  dataSet: DataSetV3;
+  integrations: Integration[];
+};
 export const useDataSetsList = (): {
-  dataSets?: DataSet[];
+  dataSetsWithIntegrations?: DataSetWithIntegrations[];
   error: any;
   isLoading: boolean;
 } => {
-  const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
-    useWithIntegrations();
-  const { data: dataSets, ...rest } = useQuery(
-    getListDatasetsKey(withIntegrations),
+  const { data: dataSetsWithIntegrations, ...rest } = useQuery(
+    getListDatasetsKey(),
     async () => {
       const newDataSets = await sdk.datasets
         .list()
         .autoPagingToArray({ limit: -1 });
-      if (withIntegrations) {
-        let integrations;
-        try {
-          integrations = await sdk.get(
-            getExtractionPipelineApiUrl(sdk.project),
-            {
-              withCredentials: true,
-            }
-          );
-        } catch {
-          integrations = {};
-        }
-        return mapDataSetIntegration(
-          parseDataSetsList(newDataSets),
-          integrations?.data?.items ?? []
-        );
+      let integrations: Integration[] = [];
+      try {
+        const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
+          withCredentials: true,
+        });
+        integrations = res.data.items ?? [];
+      } catch (e) {
+        integrations = [];
       }
-      return parseDataSetsList(newDataSets);
+      return mapDataSetIntegration(
+        parseDataSetsList(newDataSets),
+        integrations
+      );
     },
-    { enabled: didFetchWithIntegrations, onError }
+    { onError }
   );
 
-  return { dataSets, ...rest };
+  return { dataSetsWithIntegrations, ...rest };
 };
 
-export const useDataSet = (id?: number) => {
-  const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
-    useWithIntegrations();
-
-  const { data: dataSet, ...rest } = useQuery(
-    getRetrieveByDataSetIdKey(String(id), withIntegrations),
+export const useDataSetWithIntegrations = (id?: number) => {
+  const { data: dataSetWithIntegrations, ...rest } = useQuery(
+    getRetrieveByDataSetIdKey(String(id)),
     // eslint-disable-next-line consistent-return
     async () => {
       if (id) {
         const [resDataSet] = await sdk.datasets.retrieve([{ id }]);
-        let integrations;
+        let integrations: Integration[] = [];
 
-        if (withIntegrations) {
+        try {
           integrations = await fetchIntegrationsByDataSetId(id);
+        } catch (e) {
+          integrations = [];
         }
-        const parsedDataSet = parseDataSet(resDataSet);
-
         return {
-          ...parsedDataSet,
-          metadata: {
-            ...parsedDataSet.metadata,
-            integrations,
-          },
+          dataSet: parseDataSet(resDataSet),
+          integrations,
         };
       }
     },
-    { onError, enabled: !!id && didFetchWithIntegrations }
+    { onError, enabled: !!id }
   );
-
-  return { dataSet, ...rest };
+  return { dataSetWithIntegrations, ...rest };
 };
 
 export const useDataSetOwners = (
@@ -301,6 +296,7 @@ export const useRawList = () => {
   };
 };
 
+/*
 export const useLabelSuggestions = () => {
   const { dataSets, ...rest } = useDataSetsList();
   const [labels, setLabels] = useState<Array<string>>([]);
@@ -321,6 +317,30 @@ export const useLabelSuggestions = () => {
       setLabels(Object.keys(suggestedLabels));
     }
   }, [dataSets]);
+
+  return { labels, ...rest };
+};
+*/
+
+export const useLabelSuggestions = () => {
+  const { dataSetsWithIntegrations, ...rest } = useDataSetsList();
+  const [labels, setLabels] = useState<Array<string>>([]);
+
+  useEffect(() => {
+    if (dataSetsWithIntegrations) {
+      const suggestedLabels = dataSetsWithIntegrations.reduce(
+        (acc: { [label: string]: string }, cur) => {
+          // eslint-disable-next-line no-unused-expressions
+          cur?.dataSet?.metadata?.consoleLabels?.forEach((label) => {
+            acc[label] = label;
+          });
+          return acc;
+        },
+        {}
+      );
+      setLabels(Object.keys(suggestedLabels));
+    }
+  }, [dataSetsWithIntegrations]);
 
   return { labels, ...rest };
 };

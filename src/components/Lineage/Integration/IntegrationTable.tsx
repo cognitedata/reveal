@@ -7,6 +7,7 @@ import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import InfoTooltip from 'components/InfoTooltip';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { DataSetWithIntegrations } from 'actions';
 import {
   EmptyLineageDot,
   LineageDot,
@@ -18,7 +19,6 @@ import { Integration } from '../../../utils/types';
 import { IntegrationTableColumns } from './IntegrationTableColumns';
 import { IntegrationSourceExtractorProps } from './IntegrationSourceExtractor';
 import { getExtractionPipelineUIUrl } from '../../../utils/integrationUtils';
-import { DataSetWithIntegrations } from 'subApp/vision/actions';
 
 interface IntegrationTableProps extends IntegrationSourceExtractorProps {
   dataSetWithIntegrations: DataSetWithIntegrations;
