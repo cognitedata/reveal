@@ -18,7 +18,7 @@ import { GeometryFilter } from '..';
 import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
-import { trackError, trackLoadModel, trackCameraNavigation } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
@@ -59,7 +59,7 @@ export class RevealManager {
       .pipe(
         auditTime(5000),
         tap(() => {
-          trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
+          MetricsLogger.trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
         })
       )
       .subscribe();
@@ -82,6 +82,14 @@ export class RevealManager {
   public resetRedraw(): void {
     this._cadManager.resetRedraw();
     this._pointCloudManager.resetRedraw();
+  }
+
+  public get debugRenderTiming(): boolean {
+    return this._effectRenderManager.debugRenderTimings;
+  }
+
+  public set debugRenderTiming(enable: boolean) {
+    this._effectRenderManager.debugRenderTimings = enable;
   }
 
   public get renderOptions(): RenderOptions {
@@ -193,7 +201,7 @@ export class RevealManager {
     modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
-    trackLoadModel(
+    MetricsLogger.trackLoadModel(
       {
         type
       },
@@ -263,7 +271,7 @@ export class RevealManager {
           distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
-          trackError(error, {
+          MetricsLogger.trackError(error, {
             moduleName: 'RevealManager',
             methodName: 'constructor'
           })

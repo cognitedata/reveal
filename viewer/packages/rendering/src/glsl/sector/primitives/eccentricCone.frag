@@ -1,9 +1,11 @@
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
+#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 #define PI 3.14159265359
@@ -33,11 +35,12 @@ varying vec3 v_normal;
 uniform int renderMode;
 
 void main() {
-    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
+    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
 
-    vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, appearance);
     vec3 normal = normalize( v_normal );
     mat3 basis = mat3(U.xyz, V.xyz, axis.xyz);
     vec3 surfacePoint = vec3(U.w, V.w, axis.w);
@@ -106,7 +109,7 @@ void main() {
 
     if (intersectionPointZ <= 0.0 ||
       intersectionPointZ >= L ||
-      isSliced(p)
+      isClipped(appearance, p)
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
       // or the intersection point is outside the end caps. This is not a valid solution.
@@ -117,7 +120,7 @@ void main() {
 
       if (intersectionPointZ <= 0.0 ||
         intersectionPointZ >= L ||
-        isSliced(p)
+        isClipped(appearance, p)
       ) {
         // Missed the other point too
         discard;

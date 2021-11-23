@@ -8,13 +8,13 @@ import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styl
 
 import { createCadModel } from '../../../../test-utilities/src/createCadModel';
 
-import { initMetrics } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 
 describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
 
   beforeAll(() => {
-    initMetrics(false, '', '', {});
+    MetricsLogger.init(false, '', '', {});
   });
 
   beforeEach(() => {
