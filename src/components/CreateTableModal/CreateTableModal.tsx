@@ -10,12 +10,18 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 
-import CreateTableModalOption from './CreateTableModalOption';
+import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
-enum CreateTableOption {
+export enum CreationMode {
   Empty = 'empty',
+  Upload = 'upload',
+}
+
+export enum CreateTableModalStep {
+  CreationMode = 'creationMode',
+  PrimaryKey = 'primaryKey',
   Upload = 'upload',
 }
 
@@ -32,24 +38,25 @@ const CreateTableModal = ({
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const [tableName, setTableName] = useState('');
-  const [selectedCreateTableOption, setSelectedCreateTableOption] =
-    useState<CreateTableOption>();
+  const [selectedCreationMode, setSelectedCreationMode] =
+    useState<CreationMode>();
 
-  const { mutate: createDatabase, isLoading } = useCreateTable();
+  const { mutate: createDatabase, isLoading: isCreatingTable } =
+    useCreateTable();
   const [, openTable] = useActiveTable();
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isDisabled =
     tableName.length === 0 ||
     tableName.length > 64 ||
-    !selectedCreateTableOption ||
+    !selectedCreationMode ||
     !isUnique ||
-    isLoading;
+    isCreatingTable;
 
   useEffect(() => {
     if (!visible) {
       setTableName('');
-      setSelectedCreateTableOption(undefined);
+      setSelectedCreationMode(undefined);
     }
   }, [visible]);
 
@@ -80,11 +87,23 @@ const CreateTableModal = ({
     );
   };
 
-  const selectOption =
-    (option: CreateTableOption): (() => void) =>
+  const selectCreationMode =
+    (option: CreationMode): (() => void) =>
     (): void => {
-      setSelectedCreateTableOption(option);
+      setSelectedCreationMode(option);
     };
+
+  const renderCreateTableModalStep = (): JSX.Element | undefined => {
+    if (CreateTableModalStep.CreationMode) {
+      return (
+        <CreateTableModalCreationModeStep
+          isCreatingTable={isCreatingTable}
+          selectedCreationMode={selectedCreationMode}
+          selectCreationMode={selectCreationMode}
+        />
+      );
+    }
+  };
 
   return (
     <Modal
@@ -94,7 +113,7 @@ const CreateTableModal = ({
         </StyledCancelButton>,
         <Button
           disabled={isDisabled}
-          loading={isLoading}
+          loading={isCreatingTable}
           onClick={handleCreate}
           type="primary"
         >
@@ -110,7 +129,7 @@ const CreateTableModal = ({
       <FormFieldWrapper isRequired title="Name">
         <Input
           autoFocus
-          disabled={isLoading}
+          disabled={isCreatingTable}
           fullWidth
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setTableName(e.target.value)
@@ -127,21 +146,7 @@ const CreateTableModal = ({
           The name should be unique. You can not change this name later.
         </StyledNameInputDetail>
       </FormFieldWrapper>
-      <FormFieldWrapper isRequired title="Select one">
-        <StyledCreateOptions>
-          <StyledCreateOption>upload csv</StyledCreateOption>
-          <StyledCreateOption>
-            <CreateTableModalOption
-              description="Upload files later or write data directly using the API."
-              icon="DataTable"
-              isDisabled={isLoading}
-              isSelected={selectedCreateTableOption === CreateTableOption.Empty}
-              onClick={selectOption(CreateTableOption.Empty)}
-              title="Create an empty table"
-            />
-          </StyledCreateOption>
-        </StyledCreateOptions>
-      </FormFieldWrapper>
+      {renderCreateTableModalStep()}
     </Modal>
   );
 };
@@ -153,21 +158,6 @@ const StyledNameInputDetail = styled(Detail)`
 
 const StyledCancelButton = styled(Button)`
   margin-right: 8px;
-`;
-
-const StyledCreateOptions = styled.ul`
-  display: flex;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const StyledCreateOption = styled.li`
-  flex: 1;
-
-  :not(:last-child) {
-    margin-right: 16px;
-  }
 `;
 
 export default CreateTableModal;
