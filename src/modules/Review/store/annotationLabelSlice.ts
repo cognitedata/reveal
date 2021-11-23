@@ -272,6 +272,8 @@ const annotationLabelSlice = createSlice({
           state.collections.byId[keypointAnnotation.id.toString()] = collection;
           state.collections.allIds = Object.keys(state.collections.byId);
         });
+
+        console.log('adding annotation label state fin:', Date.now());
       }
     );
 

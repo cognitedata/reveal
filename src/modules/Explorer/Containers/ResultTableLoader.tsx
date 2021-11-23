@@ -106,8 +106,9 @@ export const ResultTableLoader = <T extends Resource>({
         handleSetPercentageScanned
       );
       const fileIds = fileSearchResult.map((item) => item.id);
+
       dispatch(setLoadingAnnotations());
-      dispatch(RetrieveAnnotations(fileIds));
+      dispatch(RetrieveAnnotations({ fileIds, clearCache: true }));
       dispatch(setExplorerFiles(fileSearchResult));
     })();
 
