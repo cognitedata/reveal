@@ -34,18 +34,6 @@ const getDetectionModelParameters = (
   state: State,
   modelType: VisionAPIType
 ): DetectionModelParams | undefined => {
-  switch (modelType) {
-    case VisionAPIType.OCR: {
-      return state.detectionModelParameters.ocr;
-    }
-    case VisionAPIType.TagDetection: {
-      return state.detectionModelParameters.tagDetection;
-    }
-    case VisionAPIType.ObjectDetection: {
-      return state.detectionModelParameters.objectDetection;
-    }
-    default: {
-      return undefined;
-    }
-  }
+  return state.availableDetectionModels.find((item) => item.type === modelType)
+    ?.settings;
 };

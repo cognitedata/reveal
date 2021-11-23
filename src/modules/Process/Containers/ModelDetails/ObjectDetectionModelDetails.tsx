@@ -10,7 +10,7 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsObjectDetection } from 'src/api/types';
-import { setParamsObjectDetection } from 'src/modules/Process/processSlice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/processSlice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';
@@ -22,14 +22,12 @@ import {
   TableContainer,
 } from './modelDetailsStyles';
 
-const modelName = 'Object detection';
-
 export const description = () => {
   return (
     <Detail>Detects people, recognizable shapes and labels accordingly.</Detail>
   );
 };
-export const badge = (hideText: boolean = false) => {
+export const badge = (modelName: string, hideText: boolean = false) => {
   return (
     <Button
       icon="Scan"
@@ -44,12 +42,18 @@ export const badge = (hideText: boolean = false) => {
   );
 };
 
-export const content = () => {
+export const content = (modelIndex: number) => {
   const dispatch = useDispatch();
+
+  const modelName = useSelector(
+    ({ processSlice }: RootState) =>
+      processSlice.availableDetectionModels[modelIndex].modelName
+  );
 
   const params: ParamsObjectDetection = useSelector(
     ({ processSlice }: RootState) =>
-      processSlice.temporaryDetectionModelParameters.objectDetection
+      processSlice.availableDetectionModels[modelIndex]
+        .unsavedSettings as ParamsObjectDetection
   );
 
   const isValidThreshold = !!(
@@ -58,10 +62,13 @@ export const content = () => {
 
   const onThresholdChange = (value: number) => {
     if (isValidThreshold) {
-      const newParams: ParamsObjectDetection = {
-        threshold: value,
+      const newParams = {
+        modelIndex,
+        params: {
+          threshold: value,
+        },
       };
-      dispatch(setParamsObjectDetection(newParams));
+      dispatch(setUnsavedDetectionModelSettings(newParams));
     }
   };
 
@@ -133,7 +140,7 @@ export const content = () => {
         <StyledCol span={1}>
           <div>
             <NameContainer>
-              {badge()}
+              {badge(modelName)}
               {description()}
             </NameContainer>
             <img

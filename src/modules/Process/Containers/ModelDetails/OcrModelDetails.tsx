@@ -11,7 +11,7 @@ import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsOCR } from 'src/api/types';
-import { setParamsOCR } from 'src/modules/Process/processSlice';
+import { setUnsavedDetectionModelSettings } from 'src/modules/Process/processSlice';
 import { RootState } from 'src/store/rootReducer';
 import { ColorsOCR } from 'src/constants/Colors';
 import OcrIllustration from 'src/assets/visualDescriptions/OcrIllustration.svg';
@@ -23,13 +23,11 @@ import {
   TableContainer,
 } from './modelDetailsStyles';
 
-const modelName = 'Text detection';
-
 export const description = () => {
   return <Detail>Looks for strings of text and numbers.</Detail>;
 };
 
-export const badge = (hideText: boolean = false) => {
+export const badge = (modelName: string, hideText: boolean = false) => {
   return (
     <Button
       icon="TextScan"
@@ -44,19 +42,28 @@ export const badge = (hideText: boolean = false) => {
   );
 };
 
-export const content = () => {
+export const content = (modelIndex: number) => {
   const dispatch = useDispatch();
+
+  const modelName = useSelector(
+    ({ processSlice }: RootState) =>
+      processSlice.availableDetectionModels[modelIndex].modelName
+  );
 
   const params: ParamsOCR = useSelector(
     ({ processSlice }: RootState) =>
-      processSlice.temporaryDetectionModelParameters.ocr
+      processSlice.availableDetectionModels[modelIndex]
+        .unsavedSettings as ParamsOCR
   );
 
   const onUseCacheChange = (key: string) => {
-    const newParams: ParamsOCR = {
-      useCache: key === 'true',
+    const newParams = {
+      modelIndex,
+      params: {
+        useCache: key === 'true',
+      },
     };
-    dispatch(setParamsOCR(newParams));
+    dispatch(setUnsavedDetectionModelSettings(newParams));
   };
 
   return (
@@ -116,7 +123,7 @@ export const content = () => {
         <StyledCol span={1}>
           <div>
             <NameContainer>
-              {badge()}
+              {badge(modelName)}
               {description()}
             </NameContainer>
             <img src={OcrIllustration} alt="OcrIllustration" />
