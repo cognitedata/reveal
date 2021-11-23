@@ -79,7 +79,7 @@ const DetailView: FC<Props> = ({ onClose, record }) => {
         dataType: availableTargets.datatype,
         createdTime: translation?.revision.created_time,
         lastUpdated: translation?.revision.last_updated,
-        repository: availableTargets.project,
+        project: availableTargets.project,
         revision: translation?.revision.revision,
         revisionSteps: translation?.revision.steps,
         cdfMetadata: availableTargets.cdf_metadata,

@@ -59,11 +59,13 @@ const TableActions: React.FC = () => {
 
   const { data: sourceProjects } = useProjectsQuery({
     source: selectedSource,
+    instance: null,
     enabled: !!selectedSource,
   });
 
   const { data: targetProjects } = useProjectsQuery({
     source: selectedTarget,
+    instance: null,
     enabled: !!selectedTarget,
   });
 

@@ -1,4 +1,4 @@
-import { DataTransfersResponse } from 'types/ApiInterface';
+import { DataTransferResponse } from 'types/ApiInterface';
 
 export type MappedColumnNames = {
   name: DataTransfersTableKeys | DataTransfersTableKeys[];
@@ -6,6 +6,6 @@ export type MappedColumnNames = {
 };
 export type DataTransfersTableKeys = keyof DataTransfersTableData;
 
-export interface DataTransfersTableData extends DataTransfersResponse {
-  id: DataTransfersResponse['source']['id'];
+export interface DataTransfersTableData extends DataTransferResponse {
+  id: DataTransferResponse['source']['id'];
 }

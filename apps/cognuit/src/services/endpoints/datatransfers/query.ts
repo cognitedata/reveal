@@ -27,7 +27,7 @@ const useDataTransfersQuery = ({
         RESTTransfersFilter
       ];
 
-      return api!.datatransfers.get(extractedOptions);
+      return api!.translations.filterTransfers(extractedOptions);
     },
     {
       enabled: enabled && isValid,

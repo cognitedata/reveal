@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react';
 import { Button, Select } from '@cognite/cogs.js';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
-import { ProjectsResponse } from 'types/ApiInterface';
+import { ProjectResponse } from 'types/ApiInterface';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { ThirdPartySystems } from 'types/globalTypes';
 
@@ -22,7 +22,7 @@ import {
 
 interface Props extends CommonOriginProps {
   targetComplete: boolean;
-  availableProjects: ProjectsResponse[];
+  availableProjects: ProjectResponse[];
 }
 export const TargetOrigin: FC<Props> = ({
   targetComplete,
@@ -68,10 +68,13 @@ export const TargetOrigin: FC<Props> = ({
           }
           options={availableProjects.map((item) => ({
             label: item.external_id,
-            value: item.external_id,
+            value: item.id.toString(),
           }))}
           onChange={(event: any) => {
-            handleChange(ChangeType.PROJECT, event.value || '');
+            const selectedItem = availableProjects.find(
+              (project) => project.id.toString() === event.value
+            );
+            handleChange(ChangeType.PROJECT, selectedItem || '');
           }}
         />
       </main>

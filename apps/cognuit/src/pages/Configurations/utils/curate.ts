@@ -1,9 +1,9 @@
 import isUndefined from 'lodash/isUndefined';
-import { ConfigurationsResponse } from 'types/ApiInterface';
+import { ConfigurationResponse } from 'types/ApiInterface';
 import { ExtendedConfigurationsResponse } from 'typings/interfaces';
 
 export function curateConfigurationsData(
-  data?: ConfigurationsResponse[]
+  data?: ConfigurationResponse[]
 ): ExtendedConfigurationsResponse[] {
   if (isUndefined(data) || data.length === 0) return [];
 

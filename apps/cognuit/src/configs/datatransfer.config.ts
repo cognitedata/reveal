@@ -31,6 +31,9 @@ export default {
     'target.grouping',
     'target.business_tags',
     'target.data_status',
+    // TODO(CWP-1821) Add back project name and instance
+    'source.project',
+    'target.project',
   ],
   keyColumn: 'id',
   columnOrder: [
@@ -40,8 +43,9 @@ export default {
     'source.name',
     'source.author',
     'source.last_updated',
-    'source.connector',
-    'source.project',
+    'source.project.source',
+    'source.project.instance',
+    'source.project.external_id',
     'source.actions',
     // Put every desired order above this line.
     '*',
@@ -99,6 +103,18 @@ export default {
     {
       keyName: 'crs',
       value: 'CRS',
+    },
+    {
+      keyName: 'project.external_id',
+      value: 'Project',
+    },
+    {
+      keyName: 'project.instance',
+      value: 'Connector Instance',
+    },
+    {
+      keyName: 'project.source',
+      value: 'Source',
     },
   ],
 };

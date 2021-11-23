@@ -3,8 +3,8 @@ import { Badge, Button, Select } from '@cognite/cogs.js';
 import ErrorMessage from 'components/Molecules/ErrorMessage';
 import {
   DataStatusResponse,
-  ProjectBusinessTagsResponse,
-  ProjectsResponse,
+  BusinessTagsResponse,
+  ProjectResponse,
 } from 'types/ApiInterface';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { ThirdPartySystems } from 'types/globalTypes';
@@ -29,8 +29,8 @@ import {
 interface Props extends CommonOriginProps {
   sourceComplete: boolean;
   sourceUIState: ConfigUIState;
-  availableRepositories: ProjectsResponse[];
-  availableBusinessTags: ProjectBusinessTagsResponse;
+  availableRepositories: ProjectResponse[];
+  availableBusinessTags: BusinessTagsResponse;
   availableDataTypes: string[];
   availableDataStatus: DataStatusResponse[];
 }
@@ -151,10 +151,13 @@ export const SourceOrigin: FC<Props> = ({
             }
             options={availableRepositories.map((item) => ({
               label: item.external_id,
-              value: item.external_id,
+              value: item.id.toString(),
             }))}
             onChange={(event: any) => {
-              handleChange(ChangeType.REPO, event.value);
+              const selectedItem = availableRepositories.find(
+                (project) => project.id.toString() === event.value
+              );
+              handleChange(ChangeType.REPO, selectedItem);
             }}
           />
 

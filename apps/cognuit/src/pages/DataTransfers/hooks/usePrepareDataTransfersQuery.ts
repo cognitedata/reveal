@@ -50,10 +50,12 @@ export function usePrepareDataTransfersQuery() {
         buildOptions = {
           source: {
             source: selectedSource,
+            instance: selectedSourceProject.instance,
             external_id: selectedSourceProject.external_id,
           },
           target: {
             source: selectedTarget,
+            instance: selectedTargetProject.instance,
             external_id: selectedTargetProject.external_id,
           },
         };

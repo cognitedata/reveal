@@ -8,14 +8,14 @@ import {
   Select,
 } from '@cognite/cogs.js';
 import { AuthProvider, AuthContext } from '@cognite/react-container';
-import { ConfigurationOWtoPS, Source } from 'typings/interfaces';
+import { ConfigurationOWtoPS, Project, Source } from 'typings/interfaces';
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { Link, useHistory } from 'react-router-dom';
 import {
-  ObjectsRevisionsResponse,
-  ProjectRepositoryTheeResponse,
-  ProjectsResponse,
+  ObjectGetResponse,
+  RepositoryTreeResponse,
+  ProjectResponse,
 } from 'types/ApiInterface';
 import { CustomError } from 'services/CustomError';
 import LoadingBox from 'components/Molecules/LoadingBox';
@@ -73,10 +73,12 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     name,
     source: {
       external_id: '',
+      instance: '',
       source: Source.OPENWORKS,
     },
     target: {
       external_id: '',
+      instance: '',
       source: Source.STUDIO,
     },
     author: String(user),
@@ -99,19 +101,19 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   const [sourceComplete, setSourceComplete] = useState<boolean>(false);
   const [targetComplete, setTargetComplete] = useState<boolean>(false);
   const [availableRepositories, setAvailableRepositories] = useState<
-    ProjectsResponse[]
+    ProjectResponse[]
   >([]);
-  const [availableProjects, setAvailableProjects] = useState<
-    ProjectsResponse[]
-  >([]);
-  const [availableTargets, setAvailableTargets] = useState<
-    ObjectsRevisionsResponse[]
-  >([]);
-  const [availableWPS] = useState<ObjectsRevisionsResponse[]>([]);
+  const [availableProjects, setAvailableProjects] = useState<ProjectResponse[]>(
+    []
+  );
+  const [availableTargets, setAvailableTargets] = useState<ObjectGetResponse[]>(
+    []
+  );
+  const [availableWPS] = useState<ObjectGetResponse[]>([]);
   const [dataTypesLoading, setDataTypesLoading] = useState<boolean>(false);
   const [foldersLoading, setFoldersLoading] = useState<boolean>(false);
   const [availableDestinationFolders, setAvailableDestinationFolders] =
-    useState<ProjectRepositoryTheeResponse[]>([]);
+    useState<RepositoryTreeResponse[]>([]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [creationError, setCreationError] = useState<string | null>(null);
   const { api } = useContext(ApiContext);
@@ -125,35 +127,39 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     }));
   }, [user]);
 
-  async function fetchRepositories(): Promise<ProjectsResponse[]> {
-    return api!.projects.get(Source.STUDIO);
+  async function fetchRepositories(): Promise<ProjectResponse[]> {
+    return api!.projects.getBySource(Source.STUDIO);
   }
 
-  async function fetchProjects(): Promise<ProjectsResponse[]> {
-    return api!.projects.get(Source.OPENWORKS);
+  async function fetchProjects(): Promise<ProjectResponse[]> {
+    return api!.projects.getBySource(Source.OPENWORKS);
   }
 
   async function fetchTargetObjects(
-    projectName: string
-  ): Promise<ObjectsRevisionsResponse[]> {
-    return api!.objects.getFiltered({
-      connector: 'Openworks',
-      datatype: 'Target',
-      project: projectName,
-    });
+    projectName: string,
+    instance: string
+  ): Promise<ObjectGetResponse[]> {
+    const project: Project = {
+      external_id: projectName,
+      instance,
+      source: 'Openworks',
+    };
+    return api!.objects.getFiltered({ project });
   }
 
   async function fetchRepoTree(
-    repo: string
-  ): Promise<ProjectRepositoryTheeResponse[]> {
-    return api!.sources.getRepositoryTree(Source.STUDIO, repo);
+    repo: Project
+  ): Promise<RepositoryTreeResponse[]> {
+    return api!.packages.getRepositoryTree(repo);
   }
 
   function handleChange(type: ChangeType, value: any) {
     if (type === ChangeType.PROJECT) {
       setDataTypesLoading(true);
       updateSourceProject(value);
-      fetchTargetObjects((value || '').toString())
+      const projName = (value || '').toString();
+      const instance = 'default'; // If implementing this, allow the user to choose instance
+      fetchTargetObjects(projName, instance)
         .then((response) => {
           if (response && Array.isArray(response)) {
             setSourceUIState(ConfigUIState.CONFIGURING);
@@ -176,7 +182,11 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
       updateTargetRepository(value);
       setFoldersLoading(false);
       updateDestinationFolder(ROOT_FOLDER);
-      fetchRepoTree(String(value))
+      fetchRepoTree({
+        source: Source.STUDIO,
+        instance: 'default',
+        external_id: String(value),
+      })
         .then((response) => {
           if (response.length > 0) {
             setAvailableDestinationFolders(response);
@@ -264,6 +274,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
   useEffect(() => {
     if (
       configuration.source.external_id.trim() !== '' &&
+      configuration.source.instance.trim() !== '' &&
       (configuration.well_plan.length > 0 || configuration.targets.length > 0)
     ) {
       setSourceComplete(true);
@@ -272,6 +283,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
     }
     if (
       configuration.target.external_id.trim() !== '' &&
+      configuration.target.instance.trim() !== '' &&
       configuration.ow_to_studio_config.folder
     ) {
       setTargetComplete(true);

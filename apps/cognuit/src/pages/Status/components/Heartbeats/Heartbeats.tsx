@@ -1,7 +1,7 @@
 import { useState, FC } from 'react';
 import { Tabs } from '@cognite/cogs.js';
-import { Source, UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
-import { SourcesHeartbeatsResponse } from 'types/ApiInterface';
+import { Source } from 'typings/interfaces';
+import { HeartbeatsResponse } from 'types/ApiInterface';
 import EmptyTableMessage from 'components/Molecules/EmptyTableMessage/EmptyTableMessage';
 import { useSourceHeartbeatQuery } from 'services/endpoints/sources/query';
 import { ThirdPartySystems } from 'types/globalTypes';
@@ -26,18 +26,24 @@ interface Props {
   afterTimestamp: number;
 }
 
+// TODO(CWP-1817) List connector instances from API and get their names dynamically?
+const PSC_PROD = 'psc_prod';
+const OWC_PROD = 'ienergy-prod';
+
 const Heartbeats: FC<Props> = ({ dateRange, afterTimestamp }) => {
   const [activeTabKey, setActiveTabKey] = useState<string>('psToOw');
 
   const { data: psHeartbeats, isLoading: psLoading } = useSourceHeartbeatQuery({
     source: Source.STUDIO,
-    after: Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR),
+    instance: PSC_PROD,
+    after: afterTimestamp,
     enabled: activeTabKey === 'psToOw',
   });
 
   const { data: owHeartbeats, isLoading: owLoading } = useSourceHeartbeatQuery({
     source: Source.OPENWORKS,
-    after: Math.floor(afterTimestamp / UNIX_TIMESTAMP_FACTOR),
+    instance: OWC_PROD,
+    after: afterTimestamp,
     enabled: activeTabKey === 'owToPs',
   });
 
@@ -45,7 +51,7 @@ const Heartbeats: FC<Props> = ({ dateRange, afterTimestamp }) => {
     setActiveTabKey(key);
   }
 
-  const renderChart = (type: string, heartbeats: SourcesHeartbeatsResponse) => {
+  const renderChart = (type: string, heartbeats: HeartbeatsResponse) => {
     const getStatus = () => (
       <StatusText>
         {type === 'ps' ? ThirdPartySystems.PS : ThirdPartySystems.OW} connector
@@ -53,7 +59,7 @@ const Heartbeats: FC<Props> = ({ dateRange, afterTimestamp }) => {
       </StatusText>
     );
 
-    const getBars = (heartbeats: SourcesHeartbeatsResponse) => {
+    const getBars = (heartbeats: HeartbeatsResponse) => {
       let items: { date: string; isOn: string | undefined }[] = [];
       if (dateRange === DATE_RANGE_VALUES.lastMonth) {
         items = getMonthDates(heartbeats);

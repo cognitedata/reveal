@@ -1,7 +1,7 @@
 import {
-  ConfigurationsResponse,
+  ConfigurationResponse,
   DatatypesResponse,
-  ProjectsResponse,
+  ProjectResponse,
 } from 'types/ApiInterface';
 import { Range } from '@cognite/cogs.js';
 import {
@@ -40,9 +40,9 @@ interface Data {
 export interface DataTypesFilters {
   selectedSource: string | null;
   selectedTarget: string | null;
-  selectedConfiguration: ConfigurationsResponse | null;
-  selectedSourceProject: ProjectsResponse | null;
-  selectedTargetProject: ProjectsResponse | null;
+  selectedConfiguration: ConfigurationResponse | null;
+  selectedSourceProject: ProjectResponse | null;
+  selectedTargetProject: ProjectResponse | null;
   selectedDateRange: Range; // Keep, as might be useful to store the state of the date here.
   selectedDatatype: DatatypesResponse | null;
 }

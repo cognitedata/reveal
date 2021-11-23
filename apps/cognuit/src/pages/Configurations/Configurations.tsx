@@ -7,7 +7,7 @@ import ErrorMessage from 'components/Molecules/ErrorMessage';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useConfigurationsQuery } from 'services/endpoints/configurations/query';
 import { useConfigurationsMutation } from 'services/endpoints/configurations/mutation';
-import { ConfigurationsResponse } from 'types/ApiInterface';
+import { ConfigurationResponse } from 'types/ApiInterface';
 import config from 'configs/configurations.config';
 import { sortColumnsByRules } from 'utils/sorts';
 import { curateTableColumns } from 'utils/Table/curate';
@@ -21,7 +21,7 @@ const Configurations = () => {
   const { error, addError } = useContext(APIErrorContext);
   const [data, setData] = useState<ExtendedConfigurationsResponse[]>([]);
   const [columns, setColumns] = useState<
-    TableProps<ConfigurationsResponse>['columns']
+    TableProps<ConfigurationResponse>['columns']
   >([]);
   const [expandedColumns, setExpandedColumns] = React.useState<any>({});
 
@@ -51,7 +51,7 @@ const Configurations = () => {
 
   function setUpdatedConfiguration(
     id: number,
-    response: ConfigurationsResponse
+    response: ConfigurationResponse
   ) {
     const dataClone = JSON.parse(JSON.stringify(data));
     const selIndex = data.findIndex((item) => item.id === id);
@@ -65,7 +65,7 @@ const Configurations = () => {
   function handleStopStart(id: number, isActive: boolean) {
     startOrStopConfigurations
       .mutateAsync({ id, isActive })
-      .then((response: ConfigurationsResponse) => {
+      .then((response: ConfigurationResponse) => {
         setUpdatedConfiguration(id, response);
       });
   }

@@ -1,16 +1,16 @@
 import { ReactElement } from 'react';
 import { DataTypesFilters } from 'contexts/types/dataTransfersTypes';
 import {
-  ConfigurationsResponse,
+  ConfigurationResponse,
   DatatypesResponse,
-  ProjectsResponse,
+  ProjectResponse,
 } from 'types/ApiInterface';
 
 export type FilterSourceType = {
   sources: string[];
   selected: DataTypesFilters['selectedSource'];
   onSelectSource: (selected: DataTypesFilters['selectedSource']) => void;
-  projects: ProjectsResponse[];
+  projects: ProjectResponse[];
   selectedProject: DataTypesFilters['selectedSourceProject'];
   onSelectProject: (
     selected: DataTypesFilters['selectedSourceProject']
@@ -21,7 +21,7 @@ export type FilterTargetType = {
   targets: string[];
   selected: DataTypesFilters['selectedTarget'];
   onSelectTarget: (selected: DataTypesFilters['selectedTarget']) => void;
-  projects: ProjectsResponse[];
+  projects: ProjectResponse[];
   selectedProject: DataTypesFilters['selectedTargetProject'];
   onSelectProject: (
     selected: DataTypesFilters['selectedTargetProject']
@@ -35,7 +35,7 @@ export type FilterDataTypeType = {
 };
 
 export type FilterConfigurationType = {
-  configurations: ConfigurationsResponse[];
+  configurations: ConfigurationResponse[];
   selected: DataTypesFilters['selectedConfiguration'];
   onSelectConfiguration: (
     selected: DataTypesFilters['selectedConfiguration']

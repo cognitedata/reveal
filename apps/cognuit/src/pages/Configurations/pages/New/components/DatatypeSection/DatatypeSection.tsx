@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Badge, Icon, Input, Checkbox } from '@cognite/cogs.js';
-import { ObjectsRevisionsResponse } from 'types/ApiInterface';
+import { ObjectGetResponse } from 'types/ApiInterface';
 
 import { CollapsePanel, Container, ExpandButton, Header } from './elements';
 
 type Props = {
   name: string;
   onChange: (selected: number[]) => void;
-  objects: ObjectsRevisionsResponse[];
+  objects: ObjectGetResponse[];
   selectedObjects: number[];
 };
 

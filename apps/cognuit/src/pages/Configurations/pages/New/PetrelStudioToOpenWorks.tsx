@@ -63,11 +63,13 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
 
   const { data: availableRepositories } = useProjectsQuery({
     source: Source.STUDIO,
+    instance: null,
     enabled: sourceUIState !== ConfigUIState.INITIAL,
   });
 
   const { data: availableProjects } = useProjectsQuery({
     source: Source.OPENWORKS,
+    instance: null,
     enabled: targetUIState !== ConfigUIState.INITIAL,
   });
 
@@ -76,19 +78,20 @@ const PetrelStudioToOpenWorks: FC<Props> = ({ name }) => {
   });
 
   const { data: availableBusinessTags } = useProjectsBusinessTagsQuery({
-    repository: configuration.source.external_id,
-    source: configuration.source.source,
+    project: configuration.source,
     enabled: !!(
-      configuration.source.source && configuration.source.external_id
+      configuration.source.source &&
+      configuration.source.instance &&
+      configuration.source.external_id
     ),
   });
 
   const repoId = useMemo(() => {
     return getRepositoryIdInArrayFromExternalId(
       availableRepositories,
-      configuration.source.external_id
+      configuration.source
     );
-  }, [configuration.source.external_id]);
+  }, [configuration.source]);
 
   const { data: availableDataTypes } = useDatatypesQuery({
     id: repoId,

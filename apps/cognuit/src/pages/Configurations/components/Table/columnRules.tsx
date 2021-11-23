@@ -1,4 +1,4 @@
-import { Rule, UNIX_TIMESTAMP_FACTOR } from 'typings/interfaces';
+import { Rule } from 'typings/interfaces';
 import { Badge, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import { ProgressType } from 'components/Molecules/ProgressBar/types';
 import ProgressBar from 'components/Molecules/ProgressBar';
@@ -51,12 +51,12 @@ export const columnRules: (actions: Props) => Rule[] = ({
     {
       key: 'created_time',
       render: ({ value }: { value: number }) =>
-        new Date(value * UNIX_TIMESTAMP_FACTOR).toLocaleString(),
+        new Date(value).toLocaleString(),
     },
     {
       key: 'last_updated',
       render: ({ value }: { value: number }) =>
-        new Date(value * UNIX_TIMESTAMP_FACTOR).toLocaleString(),
+        new Date(value).toLocaleString(),
     },
     {
       key: 'author',

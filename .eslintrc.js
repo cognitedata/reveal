@@ -21,7 +21,7 @@ module.exports = {
   rules: {
     '@cognite/no-unissued-todos': [
       'error',
-      { issuePattern: '\\(((CG|DEMO|DTC|CM|PP)-[0-9]+)\\)' },
+      { issuePattern: '\\(((CG|DEMO|DTC|CM|PP|CWP)-[0-9]+)\\)' },
     ],
 
     'react/jsx-props-no-spreading': ['off'],

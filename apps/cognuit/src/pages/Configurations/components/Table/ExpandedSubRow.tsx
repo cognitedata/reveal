@@ -1,7 +1,4 @@
-import {
-  ExtendedConfigurationsResponse,
-  UNIX_TIMESTAMP_FACTOR,
-} from 'typings/interfaces';
+import { ExtendedConfigurationsResponse } from 'typings/interfaces';
 import { Badge } from '@cognite/cogs.js';
 import { getProgressStats } from 'pages/Configurations/utils/progress';
 
@@ -25,17 +22,13 @@ export function ExpandedSubRow({
         <ExpandedItemRow>
           <ExpandedItemLabel>Created: </ExpandedItemLabel>
           <ExpandedItemContent>
-            {new Date(
-              record.created_time * UNIX_TIMESTAMP_FACTOR
-            ).toLocaleString()}
+            {new Date(record.created_time).toLocaleString()}
           </ExpandedItemContent>
         </ExpandedItemRow>
         <ExpandedItemRow>
           <ExpandedItemLabel>Last updated: </ExpandedItemLabel>
           <ExpandedItemContent>
-            {new Date(
-              record.last_updated * UNIX_TIMESTAMP_FACTOR
-            ).toLocaleString()}
+            {new Date(record.last_updated).toLocaleString()}
           </ExpandedItemContent>
         </ExpandedItemRow>
       </ExpandedItem>

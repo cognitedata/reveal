@@ -61,7 +61,7 @@ const TranslationTabContent = ({ ...target }: TargetType) => (
           <h3>Project</h3>
           <Input
             type="text"
-            value={target.repository || ''}
+            value={target.project?.external_id || ''}
             variant="noBorder"
             readOnly
           />

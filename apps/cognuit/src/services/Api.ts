@@ -1,21 +1,23 @@
 import SIDECAR from 'configs/sidecar';
 import { CogniteClient } from '@cognite/sdk';
 import {
-  ConfigurationsResponse,
-  ProjectBusinessTagsResponse,
-  ProjectRepositoryTheeResponse,
-  ProjectsResponse,
-  ObjectsRevisionsResponse,
+  ConfigurationResponse,
+  BusinessTagsResponse,
+  RepositoryTreeResponse,
+  ProjectResponse,
+  ObjectGetResponse,
   RevisionTranslationsResponse,
-  SourcesHeartbeatsResponse,
+  HeartbeatsResponse,
   SourcesResponse,
   DatatypesResponse,
-  DataTransfersResponse,
-  ErrorDistributionResponse,
+  DataTransferResponse,
   DataStatusResponse,
+  ConnectorInstance,
 } from 'types/ApiInterface';
+import { ErrorDistributionResponse } from 'types/MockApiInterface';
 
 import {
+  Project,
   RESTConfigurationsFilter,
   RESTObjectsFilter,
   RESTPackageFilter,
@@ -113,20 +115,11 @@ class Api {
     return Promise.resolve(response.json());
   }
 
-  public datastatus = {
-    get: async (): Promise<DataStatusResponse[]> =>
-      this.get(`${this.baseURL}/datastatus`, { synced: true }),
-  };
-
-  public datatransfers = {
-    get: async (
-      filter: RESTTransfersFilter
-    ): Promise<DataTransfersResponse[]> =>
-      this.post(`${this.baseURL}/datatransfers/filter`, filter),
-  };
-
-  public datatypes = {
-    get: async (
+  public reference = {
+    getSources: async (): Promise<SourcesResponse[]> => {
+      return this.get(`${this.baseURL}/sources`);
+    },
+    getDatatypes: async (
       projectId: number | null = null
     ): Promise<DatatypesResponse[]> => {
       let queryParameters;
@@ -135,63 +128,127 @@ class Api {
     },
   };
 
-  public objects = {
-    get: async (): Promise<ObjectsRevisionsResponse[]> =>
-      this.get(`${this.baseURL}/objects`),
-    getFiltered: async (
-      options: RESTObjectsFilter
-    ): Promise<ObjectsRevisionsResponse[]> =>
-      this.post(`${this.baseURL}/objects/filter`, options),
-    getSingleObject: async (
-      objectId: number
-    ): Promise<ObjectsRevisionsResponse[]> =>
-      this.post(`${this.baseURL}/objects/byids`, [objectId]),
-    // getDatatransfersForRevision: async (
-    //   objectId: number,
-    //   revision: string
-    // ): Promise<GenericResponseObject> =>
-    //   this.get(
-    //     `${this.baseURL}/objects/${objectId}/revisions/${revision}/datatransfers`
-    //   ),
-  };
-
-  public packages = {
-    get: async (filter: RESTPackageFilter): Promise<any> =>
-      this.get(`${this.baseURL}/packages`, filter),
+  public connectors = {
+    get: async (source: string): Promise<ConnectorInstance> => {
+      const queryParameters = { source };
+      return this.get(`${this.baseURL}/instances`, queryParameters);
+    },
+    getHeartbeats: async (
+      source: string,
+      instance: string,
+      after: number
+    ): Promise<HeartbeatsResponse> => {
+      const queryParameters = { source, instance, after };
+      return this.get(`${this.baseURL}/heartbeats`, queryParameters);
+    },
   };
 
   public projects = {
-    get: async (source: Source | string): Promise<ProjectsResponse[]> =>
-      this.get(`${this.baseURL}/sources/${source}/projects`),
-    getBusinessTags: async (
+    // After implementing (CWP-1457), the projects should always be listed using
+    // getByInstance in the create new config page, so getBySource can be removed
+    // from both here and the API
+    getBySource: async (
+      source: Source | string
+    ): Promise<ProjectResponse[]> => {
+      const queryParameters = { source };
+      return this.get(`${this.baseURL}/projects`, queryParameters);
+    },
+    getByInstance: async (
       source: Source | string,
-      project: string
-    ): Promise<ProjectBusinessTagsResponse> =>
-      this.get(`${this.baseURL}/sources/${source}/projects/${project}/tags`),
+      instance: string
+    ): Promise<ProjectResponse[]> => {
+      const queryParameters = { source, instance };
+      return this.get(`${this.baseURL}/projects`, queryParameters);
+    },
   };
 
-  public sources = {
-    get: async (): Promise<SourcesResponse[]> =>
-      this.get(`${this.baseURL}/sources`),
-    getHeartbeats: async (
-      source: string,
-      after: number
-    ): Promise<SourcesHeartbeatsResponse> => {
-      const queryParameters = { after };
-      return this.get(
-        `${this.baseURL}/sources/${source}/heartbeats`,
-        queryParameters
-      );
+  public tags = {
+    getStatusTags: async (): Promise<DataStatusResponse[]> => {
+      const queryParameters = { synced: true };
+      return this.get(`${this.baseURL}/tags/status`, queryParameters);
     },
-    getProjects: async (source: string): Promise<ProjectsResponse[]> =>
-      this.get(`${this.baseURL}/sources/${source}/projects`),
+    getBusinessTags: async (project: Project): Promise<BusinessTagsResponse> =>
+      this.post(`${this.baseURL}/tags/business/list`, project),
+  };
+
+  public configurations = {
+    get: async (): Promise<ConfigurationResponse[]> =>
+      this.get(`${this.baseURL}/configurations`),
+    create: async (data: any): Promise<ConfigurationResponse> =>
+      this.post(`${this.baseURL}/configurations`, data),
+    getFiltered: async (
+      options: RESTConfigurationsFilter
+    ): Promise<ConfigurationResponse[]> =>
+      this.post(`${this.baseURL}/configurations/filter`, options),
+    startOrStopConfiguration: async (
+      id: number,
+      isActive: boolean
+    ): Promise<ConfigurationResponse> => {
+      if (isActive) {
+        return this.post(`${this.baseURL}/configurations/${id}/update`, {
+          status_active: false,
+        });
+      }
+      return this.post(`${this.baseURL}/configurations/${id}/update`, {
+        status_active: true,
+      });
+    },
+    update: async (id: number, options: any): Promise<ConfigurationResponse> =>
+      this.post(`${this.baseURL}/configurations/${id}/update`, options),
+    restart: async (id: number): Promise<ConfigurationResponse> =>
+      this.post(`${this.baseURL}/configurations/${id}/restart`, {}),
+  };
+
+  public objects = {
+    get: async (): Promise<ObjectGetResponse[]> =>
+      this.get(`${this.baseURL}/objects`),
+    getFiltered: async (
+      options: RESTObjectsFilter
+    ): Promise<ObjectGetResponse[]> =>
+      this.post(`${this.baseURL}/objects/filter`, options),
+    getSingleObject: async (objectId: number): Promise<ObjectGetResponse[]> =>
+      this.post(`${this.baseURL}/objects/byids`, [objectId]),
+  };
+
+  public revisions = {
+    getAllobjectRevisions: async (
+      objectId: string
+    ): Promise<ObjectGetResponse[]> =>
+      this.get(`${this.baseURL}/objects/${objectId}/revisions`),
+    getSingleRevision: async (
+      objectId: string,
+      revisionId: string
+    ): Promise<ObjectGetResponse> =>
+      this.get(`
+      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}`),
+  };
+
+  public translations = {
+    getTranslatedRevisions: async (
+      objectId: string,
+      revisionId: string
+    ): Promise<RevisionTranslationsResponse[]> =>
+      this.get(`
+      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}/translations`),
+    filterTransfers: async (
+      filter: RESTTransfersFilter
+    ): Promise<DataTransferResponse[]> =>
+      this.post(`${this.baseURL}/translations/filtertransfers`, filter),
+  };
+
+  // Note - these refer to the Petrel Studio repository tree, so it is not used outside
+  // the context of the OW->PS config creation, which is not currently in use
+  public packages = {
+    getFiltered: async (filter: RESTPackageFilter): Promise<any> =>
+      this.get(`${this.baseURL}/packages`, filter),
     getRepositoryTree: async (
-      source: string,
-      projectExternalId: string
-    ): Promise<ProjectRepositoryTheeResponse[]> =>
-      this.get(
-        `${this.baseURL}/sources/${source}/projects/${projectExternalId}/tree`
-      ),
+      project: Project
+    ): Promise<RepositoryTreeResponse[]> =>
+      this.post(`${this.baseURL}/packages/treeview`, project),
+  };
+
+  // Note - these are mock methods. The actual API does not have support for statitics YET
+  public statistics = {
     getErrorDistribution: async (
       source: string,
       after: number
@@ -220,51 +277,6 @@ class Api {
       }
       return Promise.resolve(mockDataTranslationsStatsHourly());
     },
-  };
-
-  public configurations = {
-    get: async (): Promise<ConfigurationsResponse[]> =>
-      this.get(`${this.baseURL}/configurations`),
-    create: async (data: any): Promise<ConfigurationsResponse> =>
-      this.post(`${this.baseURL}/configurations`, data),
-    getFiltered: async (
-      options: RESTConfigurationsFilter
-    ): Promise<ConfigurationsResponse[]> =>
-      this.post(`${this.baseURL}/configurations/filter`, options),
-    startOrStopConfiguration: async (
-      id: number,
-      isActive: boolean
-    ): Promise<ConfigurationsResponse> => {
-      if (isActive) {
-        return this.post(`${this.baseURL}/configurations/${id}/update`, {
-          status_active: false,
-        });
-      }
-      return this.post(`${this.baseURL}/configurations/${id}/update`, {
-        status_active: true,
-      });
-    },
-    update: async (id: number, options: any): Promise<ConfigurationsResponse> =>
-      this.post(`${this.baseURL}/configurations/${id}/update`, options),
-    restart: async (id: number): Promise<ConfigurationsResponse> =>
-      this.post(`${this.baseURL}/configurations/${id}/restart`, {}),
-  };
-
-  public revisions = {
-    get: async (objectId: string): Promise<ObjectsRevisionsResponse[]> =>
-      this.get(`${this.baseURL}/objects/${objectId}/revisions`),
-    getSingleRevision: async (
-      objectId: string,
-      revisionId: string
-    ): Promise<ObjectsRevisionsResponse> =>
-      this.get(`
-      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}`),
-    getRevisionTranslations: async (
-      objectId: string,
-      revisionId: string
-    ): Promise<RevisionTranslationsResponse[]> =>
-      this.get(`
-      ${this.baseURL}/objects/${objectId}/revisions/${revisionId}/translations`),
   };
 }
 

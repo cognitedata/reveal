@@ -4,14 +4,17 @@ import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
 import { useContext } from 'react';
 import { useQuery } from 'react-query';
 import { PROJECTS_KEY } from 'services/configs/queryKeys';
-import { Source } from 'typings/interfaces';
+import { Project, Source } from 'typings/interfaces';
 import { CustomError } from 'services/CustomError';
 
 const useProjectsQuery = ({
   source,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+  instance,
   enabled = true,
 }: {
   source: Source | string | null;
+  instance: string | null;
   enabled: boolean;
 }) => {
   const { api } = useContext(ApiContext);
@@ -32,7 +35,8 @@ const useProjectsQuery = ({
           )
         );
       }
-      return api!.projects.get(sourceKey);
+      // TODO(CWP-1457) Receive proper instance from method callers and call getByInstance instead
+      return api!.projects.getBySource(sourceKey);
     },
     {
       enabled: enabled && isValid,
@@ -50,13 +54,11 @@ const useProjectsQuery = ({
 };
 
 const useProjectsBusinessTagsQuery = ({
-  source,
-  repository,
+  project,
   enabled = true,
 }: {
-  source: Source | string | null;
+  project: Project | null;
   enabled: boolean;
-  repository: string;
 }) => {
   const { api } = useContext(ApiContext);
   const { addError, removeError } = useContext(APIErrorContext);
@@ -64,19 +66,19 @@ const useProjectsBusinessTagsQuery = ({
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    [PROJECTS_KEY.default, PROJECTS_KEY.business_tag, source, repository],
+    [PROJECTS_KEY.default, project],
     ({ queryKey }) => {
-      const [_key, _tag, sourceKey, repositoryKey] = queryKey;
+      const [_key, projectKey] = queryKey as [string, Project];
       // Should in theory never happened, the query is idle (due to the check in "enabled")
-      if (!sourceKey || !repositoryKey) {
+      if (!projectKey) {
         return Promise.reject(
           new CustomError(
-            '[Internal]: Missing source in API call to projects business tags',
+            '[Internal]: Missing project in API call to projects business tags',
             404
           )
         );
       }
-      return api!.projects.getBusinessTags(sourceKey, repositoryKey);
+      return api!.tags.getBusinessTags(projectKey);
     },
     {
       enabled: enabled && isValid,

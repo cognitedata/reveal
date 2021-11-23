@@ -15,7 +15,7 @@ const useSourcesQuery = () => {
   const { data, ...rest } = useQuery(
     SOURCES_KEY.default,
     async () => {
-      return api!.sources.get();
+      return api!.reference.getSources();
     },
     {
       enabled: isValid,
@@ -49,7 +49,7 @@ const useSourceErrorDistributionQuery = ({
   const { data, ...rest } = useQuery(
     [SOURCES_KEY.errorDistribution, source, after],
     async () => {
-      return api!.sources.getErrorDistribution(source, after);
+      return api!.statistics.getErrorDistribution(source, after);
     },
     {
       enabled: enabled && isValid,
@@ -68,10 +68,12 @@ const useSourceErrorDistributionQuery = ({
 
 const useSourceHeartbeatQuery = ({
   source,
+  instance,
   after,
   enabled = true,
 }: {
   source: string;
+  instance: string;
   after: number;
   enabled?: boolean;
 }) => {
@@ -81,9 +83,9 @@ const useSourceHeartbeatQuery = ({
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    [SOURCES_KEY.heartbeats, source, after],
+    [SOURCES_KEY.heartbeats, source, instance, after],
     async () => {
-      return api!.sources.getHeartbeats(source, after);
+      return api!.connectors.getHeartbeats(source, instance, after);
     },
     {
       enabled: enabled && isValid,
@@ -117,7 +119,7 @@ const useSourceTranslationStatisticsQuery = ({
   const { data, ...rest } = useQuery(
     [SOURCES_KEY.translationStatistics, source, timeRange],
     async () => {
-      return api!.sources.getTranslationStatistics(source, timeRange);
+      return api!.statistics.getTranslationStatistics(source, timeRange);
     },
     {
       enabled: enabled && isValid,

@@ -1,4 +1,5 @@
-import { ProjectsResponse } from 'types/ApiInterface';
+import { ProjectResponse } from 'types/ApiInterface';
+import { Project } from 'typings/interfaces';
 
 function drawBetweenObjects(
   line: SVGElement,
@@ -48,11 +49,13 @@ export const makeConnectorLines = () => {
 };
 
 export function getRepositoryIdInArrayFromExternalId(
-  availableRepositories: ProjectsResponse[],
-  externalId: string
+  availableRepositories: ProjectResponse[],
+  project: Project
 ) {
   const matchingRepo = availableRepositories.find(
-    (element) => element.external_id === externalId
+    (element) =>
+      element.external_id === project.external_id &&
+      element.instance === project.instance
   );
 
   if (matchingRepo) {

@@ -1,5 +1,5 @@
 import { columnRules } from 'pages/Configurations/components/Table/columnRules';
-import { ConfigurationsResponse } from 'types/ApiInterface';
+import { ConfigurationResponse } from 'types/ApiInterface';
 import {
   ExtendedConfigurationsResponse,
   GenerateConfigurationsColumns,
@@ -48,7 +48,7 @@ const defaultConfigurations = [
       },
     },
   },
-] as ConfigurationsResponse[];
+] as ConfigurationResponse[];
 
 const extendedConfigurations = [
   {

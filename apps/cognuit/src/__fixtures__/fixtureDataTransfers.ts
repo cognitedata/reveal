@@ -10,14 +10,18 @@ export const fixtureDataTransferDataTable: DataTransfersTableData[] = [
       created_time: 1619429869,
       last_updated: 1619429869,
       datatype: 'PointSet',
-      connector: 'Studio',
       name: 'PointSet - 7',
       crs: 'EPSG:23031',
       cdf_metadata: {},
       business_tags: ['Cognuit 87468'],
       data_status: [],
       origin: 'Sourced',
-      project: 'SourceTestProject',
+      project: {
+        id: 42,
+        external_id: 'SourceTestProject',
+        instance: 'sourceTest',
+        source: 'Studio',
+      },
       package: null,
       revisions: [
         {
@@ -111,14 +115,18 @@ export const fixtureDataTransferDataTable: DataTransfersTableData[] = [
       created_time: 1619429869,
       last_updated: 1619429869,
       datatype: 'PointSet',
-      connector: 'Studio',
       name: 'PointSet - 7',
       crs: 'EPSG:23031',
       cdf_metadata: {},
       business_tags: ['Cognuit 87468'],
       data_status: [],
       origin: 'Sourced',
-      project: 'SourceTestProject',
+      project: {
+        id: 780,
+        external_id: 'TargetTestProject',
+        instance: 'targetTest',
+        source: 'Openworks',
+      },
       package: null,
       revisions: [
         {

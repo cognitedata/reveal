@@ -1,33 +1,32 @@
 /* eslint-disable camelcase */
 // Following types derived from https://cognuit-cognitedata-development.cognite.ai/docs
 
-export type ErrorDistributionResponse = {
-  name: string;
-  total_errors: number;
-};
-
 // Data status tags
 export type DataStatusResponse = string;
 
-// Data types
-export type DatatypesResponse = string;
+// Reference
 
-// Sources
+export type DatatypesResponse = string;
 export type SourcesResponse = string;
-export type SourcesHeartbeatsResponse = number[];
+
+// Connectors
+
+export type ConnectorInstance = {
+  source: string;
+  instance: string;
+};
+export type HeartbeatsResponse = number[];
 
 // Projects
-export type ProjectBusinessTagsResponse = string[];
-export type ProjectsResponse = {
+export type BusinessTagsResponse = string[];
+export type ProjectResponse = {
   id: number;
-  created_time: number;
-  last_updated: number;
   external_id: string;
   source: string;
-  connector_instances: string[];
+  instance: string;
 };
 
-export type ProjectRepositoryTheeResponse = {
+export type RepositoryTreeResponse = {
   name: string;
   external_id: string;
   cdf_metadata?: any;
@@ -36,7 +35,7 @@ export type ProjectRepositoryTheeResponse = {
 };
 
 // Configurations
-export type ConfigurationsResponse = {
+export type ConfigurationResponse = {
   id: number;
   source: Source;
   target: Source;
@@ -79,9 +78,10 @@ interface Source {
 export type Status = 'In progress' | 'Succeeded' | 'Failed';
 
 // Data transfers
-export interface DataTransfersResponse {
-  source: ObjectsRevisionsResponse;
-  target: ObjectsRevisionsResponse;
+
+export interface DataTransferResponse {
+  source: ObjectGetResponse;
+  target: ObjectGetResponse;
   status: Status;
 }
 
@@ -104,19 +104,18 @@ interface Translation {
   status: string;
 }
 
-export interface ObjectsRevisionsResponse {
+export interface ObjectGetResponse {
   id: number;
   created_time: number;
   last_updated: number;
   datatype: string;
-  connector: string;
   name: string;
   crs: string;
   cdf_metadata: any;
   business_tags: string[];
   data_status: string[];
   origin: string;
-  project: string;
+  project: ProjectResponse;
   package: Package | null;
   revisions: Revision[];
   external_id: string;
@@ -143,9 +142,6 @@ export interface Revision {
         status: string;
       }[]
     | null;
-
-  // NOTE: Figure out if the property cdf_metadata is included in Revision
-  // cdf_metadata: any;
 }
 
 export interface Step {
@@ -168,8 +164,7 @@ interface Package {
   external_id: string;
   cdf_metadata: CdfMetadata;
   business_tags: string[];
-  source: string;
-  project: string;
+  project: ProjectResponse;
   parent: string;
   actively_monitored: boolean;
   path: string;

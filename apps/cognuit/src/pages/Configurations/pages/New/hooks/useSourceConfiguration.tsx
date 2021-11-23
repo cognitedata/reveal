@@ -1,5 +1,6 @@
 import { AuthContext, AuthProvider } from '@cognite/react-container';
 import * as React from 'react';
+import { ProjectResponse } from 'types/ApiInterface';
 import { NewConfiguration, Source } from 'typings/interfaces';
 
 import { ChangeType } from '../types';
@@ -12,10 +13,12 @@ export const useSourceConfiguration = ({ name }: { name: string | null }) => {
     name,
     source: {
       external_id: '',
+      instance: '',
       source: Source.STUDIO,
     },
     target: {
       external_id: '',
+      instance: '',
       source: Source.OPENWORKS,
     },
     business_tags: [],
@@ -24,20 +27,28 @@ export const useSourceConfiguration = ({ name }: { name: string | null }) => {
     data_status: [],
   });
 
-  function updateSourceRepository(value: any) {
+  function updateSourceRepository(value: ProjectResponse) {
     setConfiguration((prevState) => ({
       ...prevState,
-      source: { ...prevState.source, external_id: (value || '').toString() },
+      source: {
+        ...prevState.source,
+        instance: (value.instance || '').toString(),
+        external_id: (value.external_id || '').toString(),
+      },
       business_tags: [],
       datatypes: [],
       data_status: [],
     }));
   }
 
-  function updateTargetProject(value: any) {
+  function updateTargetProject(value: ProjectResponse) {
     setConfiguration((prevState) => ({
       ...prevState,
-      target: { ...prevState.target, external_id: (value || '').toString() },
+      target: {
+        ...prevState.target,
+        instance: (value.instance || '').toString(),
+        external_id: (value.external_id || '').toString(),
+      },
     }));
   }
 

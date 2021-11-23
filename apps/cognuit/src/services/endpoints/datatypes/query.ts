@@ -22,7 +22,7 @@ const useDatatypesQuery = ({
     [DATATYPES_KEYS.default, id],
     ({ queryKey }) => {
       const [_key, idKey] = queryKey as [string, number | null];
-      return api!.datatypes.get(idKey);
+      return api!.reference.getDatatypes(idKey);
     },
     {
       enabled: enabled && isValid,

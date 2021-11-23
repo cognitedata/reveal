@@ -1,3 +1,5 @@
+import { ProjectResponse } from 'types/ApiInterface';
+
 type StepType = {
   status: string;
   // eslint-disable-next-line camelcase
@@ -14,7 +16,7 @@ export type SourceType = {
   dataType?: string;
   createdTime?: number;
   lastUpdated?: number;
-  repository?: string;
+  project?: ProjectResponse;
   businessTags?: string;
   statusTags?: string;
   revision?: string | number | null;
@@ -34,7 +36,7 @@ export type TargetType = {
   dataType?: string;
   createdTime?: number;
   lastUpdated?: number;
-  repository?: string;
+  project?: ProjectResponse;
   configTag?: string;
   revision?: string | number | null;
   revisionSteps?: StepType[];

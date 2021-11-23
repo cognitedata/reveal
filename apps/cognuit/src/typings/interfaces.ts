@@ -2,7 +2,10 @@
 import { AllIconTypes } from '@cognite/cogs.js';
 import React from 'react';
 
-import { ConfigurationsResponse } from '../types/ApiInterface';
+import {
+  ConfigurationResponse,
+  ConnectorInstance,
+} from '../types/ApiInterface';
 
 export interface RevisionObject {
   id: number;
@@ -25,11 +28,10 @@ export interface RevisionObject {
   cdf_metadata: any;
 }
 
-export interface RESTProject {
-  created_time: number;
+export interface Project {
+  id?: number;
   external_id: string;
-  id: number;
-  last_updated: number;
+  instance: string;
   source: string;
 }
 
@@ -44,35 +46,24 @@ export interface RESTPackageFilter {
 }
 
 export interface RESTObjectsFilter {
-  connector: string;
-  project?: string;
+  source?: string;
+  connector?: ConnectorInstance;
+  project?: Project;
   configuration?: string;
   [property: string]: any;
 }
 
 export interface RESTConfigurationsFilter {
-  source: {
-    external_id?: string;
-    source: string;
-  };
-  target: {
-    external_id?: string;
-    source: string;
-  };
+  source?: Project;
+  target?: Project;
   datatypes?: string[];
   [property: string]: any;
 }
 
 export type SelectedDateRangeType = [Date | null, Date | null];
 export interface RESTTransfersFilter {
-  source?: {
-    external_id: string;
-    source: string;
-  };
-  target?: {
-    external_id: string;
-    source: string;
-  };
+  source?: Project;
+  target?: Project;
   updated_after?: number;
   updated_before?: number;
   configuration?: string;
@@ -89,28 +80,16 @@ export enum Source {
 export interface NewConfiguration {
   name: string | null;
   author: string;
-  source: {
-    external_id: string;
-    source: Source;
-  };
-  target: {
-    external_id: string;
-    source: Source;
-  };
+  source: Project;
+  target: Project;
   business_tags: string[];
   datatypes: string[];
   data_status: string[];
 }
 
 export interface ConfigurationOWtoPS {
-  source: {
-    external_id: string;
-    source: Source;
-  };
-  target: {
-    external_id: string;
-    source: Source;
-  };
+  source: Project;
+  target: Project;
   author: string;
   name: string | null | undefined;
   well_plan: number[];
@@ -151,24 +130,22 @@ export interface TranslationStatisticsObject {
   successful: number;
 }
 
-export const UNIX_TIMESTAMP_FACTOR = 1000;
-
 /**
  * For some reason the properties are extended in
  * "curateConfigurationsData"
  */
-export interface ExtendedConfigurationsResponse extends ConfigurationsResponse {
-  statusColor: ConfigurationsResponse['status_active'];
+export interface ExtendedConfigurationsResponse extends ConfigurationResponse {
+  statusColor: ConfigurationResponse['status_active'];
   repoProject: string;
   actions: {
-    direction: ConfigurationsResponse['source']['source'];
-    statusActive: ConfigurationsResponse['status_active'];
-    id: ConfigurationsResponse['id'];
-    name: ConfigurationsResponse['name'];
+    direction: ConfigurationResponse['source']['source'];
+    statusActive: ConfigurationResponse['status_active'];
+    id: ConfigurationResponse['id'];
+    name: ConfigurationResponse['name'];
   };
   conf_name: {
-    name: ConfigurationsResponse['name'];
-    id: ConfigurationsResponse['id'];
+    name: ConfigurationResponse['name'];
+    id: ConfigurationResponse['id'];
   };
 }
 

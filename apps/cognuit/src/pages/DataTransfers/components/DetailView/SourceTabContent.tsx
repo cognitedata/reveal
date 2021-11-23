@@ -62,7 +62,7 @@ const SourceTabContent = ({ ...source }: SourceType) => (
           <h3>Repository</h3>
           <Input
             type="text"
-            value={source.repository || ''}
+            value={source.project?.external_id || ''}
             variant="noBorder"
             readOnly
           />
