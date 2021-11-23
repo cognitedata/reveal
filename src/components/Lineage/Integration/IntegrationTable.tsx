@@ -11,7 +11,7 @@ import { Button, Colors } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import InfoTooltip from 'components/InfoTooltip';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
   EmptyLineageDot,
   LineageDot,
@@ -65,7 +65,7 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
     }
   }, [setIntegrationList, dataSet]);
 
-  const permissionsExtractionPipelines = usePermissions(
+  const permissionsExtractionPipelines = useUserCapabilities(
     'extractionPipelinesAcl',
     'WRITE'
   );
