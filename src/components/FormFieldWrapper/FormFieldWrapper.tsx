@@ -18,10 +18,8 @@ const FormFieldWrapper = ({
     <StyledFormFieldWrapper>
       <StyledFormFieldTitle level={2} strong>
         {title}
-        {isRequired ? (
+        {isRequired && (
           <StyledFormFieldRequired>&nbsp;*</StyledFormFieldRequired>
-        ) : (
-          <></>
         )}
       </StyledFormFieldTitle>
       {children}
