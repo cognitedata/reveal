@@ -610,8 +610,14 @@ export class EffectRenderManager {
   }
 
   private renderCustomObjects(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
-    this._renderer.setRenderTarget(this._customObjectRenderTarget);
-    this.renderStep('customobjects', scene, camera);
+    const originalAutoUpdate = scene.autoUpdate;
+    try {
+      scene.autoUpdate = true;
+      this._renderer.setRenderTarget(this._customObjectRenderTarget);
+      this.renderStep('customobjects', scene, camera);
+    } finally {
+      scene.autoUpdate = originalAutoUpdate;
+    }
   }
 
   private updateRenderSize(renderer: THREE.WebGLRenderer) {
