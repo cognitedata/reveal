@@ -95,3 +95,9 @@ export const getActionLabel = (capability: string, action: string) => {
   const capabilityName = getCapabilityName(capability);
   return `${capabilityName}:${action.toLowerCase()}`;
 };
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(ms), ms);
+  });
+};

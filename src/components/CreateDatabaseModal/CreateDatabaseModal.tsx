@@ -93,6 +93,7 @@ const CreateDatabaseModal = ({
         Name
       </Body>
       <Input
+        autoFocus
         disabled={isLoading}
         fullWidth
         onChange={(e: ChangeEvent<HTMLInputElement>) =>

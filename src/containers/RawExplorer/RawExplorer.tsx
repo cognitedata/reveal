@@ -9,8 +9,7 @@ import NoAccessPage from 'components/NoAccessPage/NoAccessPage';
 import SidePanel from 'components/SidePanel/SidePanel';
 import TableContent from 'containers/TableContent';
 import TableTabList from 'components/TableTabList';
-import { RawExplorerContext } from 'contexts';
-import { useActiveTable } from 'hooks/table-tabs';
+import { RawExplorerContext, ActiveTableProvider } from 'contexts';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
   BREADCRUMBS_HEIGHT,
@@ -18,7 +17,6 @@ import {
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
 } from 'utils/constants';
-import RawExplorerNotSelected from './RawExplorerNotSelected';
 
 const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
   {
@@ -28,8 +26,6 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 
 const RawExplorer = (): JSX.Element => {
   const { isSidePanelOpen } = useContext(RawExplorerContext);
-
-  const [[tabDatabase, tabTable] = [undefined, undefined]] = useActiveTable();
 
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
     useUserCapabilities('rawAcl', 'READ');
@@ -49,14 +45,10 @@ const RawExplorer = (): JSX.Element => {
           <StyledRawExplorerTableContentWrapper
             $isSidePanelOpen={isSidePanelOpen}
           >
-            {tabDatabase && tabTable ? (
-              <>
-                <TableTabList />
-                <TableContent />
-              </>
-            ) : (
-              <RawExplorerNotSelected />
-            )}
+            <ActiveTableProvider>
+              <TableTabList />
+              <TableContent />
+            </ActiveTableProvider>
           </StyledRawExplorerTableContentWrapper>
         </StyledRawExplorerContent>
       ) : (

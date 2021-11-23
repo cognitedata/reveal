@@ -43,7 +43,7 @@
     "@babel/helper-builder-react-jsx": "^7.16.0",
     "@babel/helper-builder-react-jsx-experimental": "^7.12.11",
     "@cognite/babel-plugin-styled-components": "^1.10.7",
-    "@cognite/cdf-ui-cli": "^1.1.0",
+    "@cognite/cdf-ui-cli": "^1.1.1",
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@rescripts/rescript-use-babel-config": "^0.0.10",
     "@storybook/preset-create-react-app": "^3.1.5",

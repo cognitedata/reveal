@@ -3,12 +3,20 @@ import { ColumnShape } from 'react-base-table';
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
 import isObject from 'lodash/isObject';
-import { useActiveTable } from 'hooks/table-tabs';
 import { useTableRows } from 'hooks/sdk-queries';
+import { useActiveTableContext } from 'contexts';
 
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
   key: 'Key',
   lastUpdatedTime: 'Last update time',
+};
+const INDEX_COLUMN: ColumnType = {
+  key: 'column-index',
+  dataKey: 'column-index',
+  title: '',
+  width: 50,
+  flexShrink: 0,
+  frozen: 'left',
 };
 const PAGE_SIZE = 100;
 
@@ -19,10 +27,8 @@ interface ColumnType extends Partial<ColumnShape> {
 }
 
 export const useTableData = () => {
-  const [[database, table] = [undefined, undefined]] = useActiveTable();
+  const { database, table } = useActiveTableContext();
   const [tableFilters, setTableFilters] = useState([]);
-
-  const enabled = !!database && !!table;
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
@@ -34,18 +40,15 @@ export const useTableData = () => {
     return value;
   }, []);
 
-  const rows = useTableRows(
-    {
-      database: database!,
-      table: table!,
-      pageSize: PAGE_SIZE,
-    },
-    { enabled }
-  );
+  const rows = useTableRows({
+    database,
+    table,
+    pageSize: PAGE_SIZE,
+  });
 
   useEffect(() => {
-    if (rows.isFetched && enabled) rows.refetch();
-  }, [rows.isFetched, enabled, rows.refetch]);
+    if (rows.isFetched) rows.refetch();
+  }, [rows.isFetched, rows.refetch]);
 
   const rawRows: Partial<RawDBRow>[] = useMemo(() => {
     if (rows.data) {
@@ -64,14 +67,6 @@ export const useTableData = () => {
 
   const getColumns = (): ColumnType[] => {
     const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
-    const indexColumn: ColumnType = {
-      key: 'column-index',
-      dataKey: 'column-index',
-      title: '',
-      width: 50,
-      flexShrink: 0,
-      frozen: 'left',
-    };
     const otherColumns: ColumnType[] = columnNames.map((name) => ({
       key: name,
       dataKey: name,
@@ -81,7 +76,7 @@ export const useTableData = () => {
       flexShrink: 0,
       resizable: true,
     }));
-    return [indexColumn, ...otherColumns];
+    return [INDEX_COLUMN, ...otherColumns];
   };
   const columns = useMemo(getColumns, [rawRows]);
 
