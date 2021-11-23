@@ -1,5 +1,7 @@
 {
-  "apps": {
+  "subDomains": {},
+  "projects": {},
+  "default": {
     "versionSpec": "^0.4.0"
   }
 }

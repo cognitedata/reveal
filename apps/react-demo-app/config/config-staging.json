@@ -1,10 +1,11 @@
 {
+  "subDomains": {},
   "projects": {
-    "aker-bp": {
-      "versionSpec": "<=0.4.8"
+    "wells-test": {
+      "versionSpec": "0.4.54"
     }
   },
-  "apps": {
+  "default": {
     "versionSpec": "^0.4.0"
   }
 }

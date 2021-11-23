@@ -8,9 +8,6 @@ load("@npm//testcafe:index.bzl", "testcafe")
 load("@npm//cypress:index.bzl", "cypress")
 load("@npm//@cognite/fas-tools:index.bzl", "fas_tools")
 load("@com_github_cognitedata_bazel_tools//k8s/kubeval:kubeval.bzl", "kubeval_test")
-load("@com_github_cognitedata_bazel_tools//general/docker_smoke_test:docker_smoke_test.bzl", "docker_smoke_test")
-
-# load("//rules/docker_smoke_test:docker_smoke_test.bzl", "docker_smoke_test")
 load("//rules:baker_bake.bzl", "baker_bake")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
@@ -522,8 +519,8 @@ fas_tools(
 
 nodejs_binary(
     name = "staging_prepare_docker_binary",
-    data = ["//scripts:prepare_docker.mjs"],
-    entry_point = "//scripts:prepare_docker.mjs",
+    data = ["//rules/docker:prepare_docker.mjs"],
+    entry_point = "//rules/docker:prepare_docker.mjs",
     env = {
         "GCLOUD_PROJECT": "cognitedata-development",
     },
@@ -550,15 +547,12 @@ container_layer(
 
 container_image(
     name = "staging_image",
-    base = "//apps:caddy_package_layer",
+    base = "//apps:caddy_image",
     entrypoint = [
         "/usr/share/bin/entrypoint.sh",
     ],
     layers = [
         ":staging_app_layer",
-        "//apps:caddy_config",
-        "//apps:entrypoint",
-        "//apps:caddy_folders",
     ],
     ports = [
         "8080/tcp",
@@ -585,21 +579,11 @@ spinnaker_deployment(
     service_name = "react-demo-app",
     spinnaker_pipeline = "//spinnaker-config/react-demo-app:spinnaker-config",
     tags = ["manual"],
-    deps = [
-        ":build",
-    ],
 )
 
 kubeval_test(
     name = "kubeval_test",
     srcs = ["//.baker:react-demo-app-manifests"],
-)
-
-docker_smoke_test(
-    name = "docker_smoke_test",
-    image = ":staging_image",
-    log_statement = "serving initial configuration",
-    tags = ["manual"],
 )
 
 baker_bake(

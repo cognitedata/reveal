@@ -6,34 +6,67 @@ const outputDest = process.argv[2];
 const releasesFile = process.argv[3];
 const configMap = process.argv[4];
 
-const prepareConfigMap = (releases) => {
-  const jsonConfigMap = JSON.parse(fs.readFileSync(configMap).toString());
+const prepareReleaseArray = () => {
+  const releases = fs.readFileSync(releasesFile).toString();
+
   const releaseLines = releases.trim().split('\n');
 
-  releaseLines.forEach((line) => {
-    if (line === '---- Releases ----') return;
-    const splitLine = line.split(';');
-    const originalVersion = splitLine[0];
-    const finalVersion = splitLine[1];
-    const gcsPath = splitLine[2];
+  const releaseArray = releaseLines
+    .map((line) => {
+      const splitLine = line.split(';');
+      if (!splitLine || splitLine.length !== 3) {
+        return null;
+      }
 
-    if (jsonConfigMap.apps.versionSpec === originalVersion) {
-      jsonConfigMap.apps.path = gcsPath;
-      jsonConfigMap.apps.finalVersion = finalVersion;
-    }
+      const release = {
+        originalVersion: splitLine[0],
+        finalVersion: splitLine[1],
+        gcsPath: splitLine[2],
+      };
+
+      return release;
+    })
+    .filter((release) => release);
+
+  return releaseArray;
+};
+
+const assignReleaseToConfigMap = (obj, release) => {
+  if (obj.versionSpec === release.originalVersion) {
+    obj.path = release.gcsPath;
+    obj.finalVersion = release.finalVersion;
+  }
+  return obj;
+};
+
+const prepareConfigMap = (releaseArray) => {
+  const jsonConfigMap = JSON.parse(fs.readFileSync(configMap).toString());
+
+  releaseArray.forEach((release) => {
+    jsonConfigMap.default = assignReleaseToConfigMap(
+      jsonConfigMap.default,
+      release
+    );
 
     Object.keys(jsonConfigMap.projects).forEach((key) => {
-      if (jsonConfigMap.projects[key].versionSpec === originalVersion) {
-        jsonConfigMap.projects[key].path = gcsPath;
-        jsonConfigMap.projects[key].finalVersion = finalVersion;
-      }
+      jsonConfigMap.projects[key] = assignReleaseToConfigMap(
+        jsonConfigMap.projects[key],
+        release
+      );
+    });
+
+    Object.keys(jsonConfigMap.subDomains).forEach((key) => {
+      jsonConfigMap.subDomains[key] = assignReleaseToConfigMap(
+        jsonConfigMap.subDomains[key],
+        release
+      );
     });
   });
 
   return jsonConfigMap;
 };
 
-const downloadVersions = (releases) => {
+const downloadVersions = (releaseArray) => {
   const { GOOGLE_APPLICATION_CREDENTIALS } = process.env;
 
   if (!GOOGLE_APPLICATION_CREDENTIALS) {
@@ -46,11 +79,18 @@ const downloadVersions = (releases) => {
 
   const bucketName = 'frontend-app-server-cognitedata-production';
 
-  const releaseLines = releases.trim().split('\n');
+  const downloaded = [];
+
   return Promise.all(
-    releaseLines.map(async (line) => {
-      if (line === '---- Releases ----') return;
-      const gcsPath = line.split(';')[2];
+    releaseArray.map(async (release) => {
+      const gcsPath = release.gcsPath;
+      if (
+        release.gcsPath === 'fas-demo/local' ||
+        downloaded.includes(gcsPath)
+      ) {
+        return;
+      }
+      downloaded.push(gcsPath);
 
       const options = {
         prefix: gcsPath,
@@ -84,14 +124,15 @@ const downloadVersions = (releases) => {
 };
 
 const main = async () => {
-  const releases = fs.readFileSync(releasesFile).toString();
-  const jsonConfigMap = prepareConfigMap(releases);
+  const releaseArray = prepareReleaseArray();
+
+  const jsonConfigMap = prepareConfigMap(releaseArray);
   fs.writeFileSync(
     `${outputDest}/configMap.json`,
     JSON.stringify(jsonConfigMap)
   );
 
-  await downloadVersions(releases);
+  await downloadVersions(releaseArray);
 };
 
 await main();

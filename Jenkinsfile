@@ -238,20 +238,6 @@ pods {
       }
     }
 
-    stageWithNotify("Docker smoketests", CONTEXTS.spinnaker_deployments) {
-      container('bazel') {
-        def changedApps = sh(label: "Which apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_deployment, //...)'", returnStdout: true)
-        print(changedApps)
-        if (changedApps) {
-          changedApps.split('\n').each {
-            def target = it.split(':')[0]
-            def testOutput = sh(script: "bazel run ${target}:docker_smoke_test", returnStdout: true)
-            print(testOutput)
-          }
-        }
-      }
-    }
-
     if (isPullRequest) {
       stageWithNotify('Publish storybook', CONTEXTS.publishStorybook) {
         container('bazel') {
@@ -431,7 +417,24 @@ pods {
     if (isProduction) {
       stageWithNotify("Spinnaker deployments", CONTEXTS.spinnaker_deployments) {
         container('bazel') {
-          def changedApps = sh(label: "Which apps were changed?", script: "bazel run //:has-changed -- -ref=HEAD^1 'kind(spinnaker_deployment, //...)'", returnStdout: true)
+          def getReleases = sh(
+            label: "Prepare docker builds",
+            script: "bazel query \"attr(name, '^staging_prepare_docker_build\$', //apps/...)\"",
+            returnStdout: true
+          )
+          if (getReleases) {
+            getReleases.split('\n').each {
+              sh(
+                label: "Run docker build",
+                script: "bazel build ${it}",
+              )
+            }
+          }
+          def changedApps = sh(
+            label: "Which apps were changed?",
+            script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(spinnaker_deployment, //...)'",
+            returnStdout: true
+          )
           print(changedApps)
           if (changedApps) {
             changedApps.split('\n').each {
