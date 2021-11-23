@@ -8,7 +8,7 @@ import {
   Label,
   Tooltip,
   Body,
-  Button,
+  Icon,
 } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
 
@@ -79,11 +79,10 @@ export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
         }
       >
         <div className="menuContainer">
-          <Button
-            icon="MoreOverflowEllipsisHorizontal"
-            type="ghost"
-            size="small"
-            aria-label="menu"
+          <Icon
+            type="MoreOverflowEllipsisHorizontal"
+            size={18}
+            className="menu"
           />
         </div>
       </Dropdown>

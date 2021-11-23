@@ -1,18 +1,18 @@
 import { Route, Switch } from 'react-router-dom';
+import { Icon } from '@cognite/cogs.js';
 
-import { ReactComponent as DataModel } from './icons/datamodel.svg';
-import { ReactComponent as DataPreview } from './icons/datapreview.svg';
-import { ReactComponent as QueryExplorer } from './icons/queryexplorer.svg';
-import { ReactComponent as PopulationPipelines } from './icons/populationpipelines.svg';
-import { ReactComponent as Monitoring } from './icons/monitoring.svg';
+import { ReactComponent as QueryExplorer } from './data-model/icons/queryexplorer.svg';
+import { ReactComponent as PopulationPipelines } from './data-model/icons/populationpipelines.svg';
+import { ReactComponent as Monitoring } from './data-model/icons/monitoring.svg';
 
-import { PageLayout } from '../../../components/Layouts/PageLayout';
-import { DatamodelPage } from './datamodelPages/DatamodelPage';
-import { DatapreviewPage } from './datamodelPages/DatapreviewPage';
-import { QueryExplorerPage } from './datamodelPages/QueryExplorerPage';
-import { PopulationPage } from './datamodelPages/PopulationPage';
-import { MonitoringPage } from './datamodelPages/MonitoringPage';
-import { SideBarMenu } from '../../../components/Navigations/SideBarMenu';
+import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
+import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
+
+import { DatamodelPage } from './data-model/pages/DatamodelPage';
+import { DatapreviewPage } from './data-model/pages/DatapreviewPage';
+import { QueryExplorerPage } from './query-explorer/pages/QueryExplorerPage';
+import { PopulationPage } from './population/pages/PopulationPage';
+import { MonitoringPage } from './monitoring/pages/MonitoringPage';
 
 export const DataModelLayout = () => {
   const renderPageContent = () => {
@@ -39,13 +39,13 @@ export const DataModelLayout = () => {
 
   const sideBarMenuItems = [
     {
-      icon: <DataModel />,
+      icon: <Icon type="GraphTree" />,
       page: 'data-model',
       slug: '',
       tooltip: 'Data model',
     },
     {
-      icon: <DataPreview />,
+      icon: <Icon type="Datasource" />,
       page: 'data-model',
       slug: 'datapreview',
       tooltip: 'Data preview',

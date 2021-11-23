@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
-import { NavigationMain } from '../../components/Navigations/NavigationMain';
-import { Spinner } from '../../components/Spinner/Spinner';
+
+import { NavigationMain } from '@platypus-app/components/Navigations/NavigationMain';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 const Status = lazy(() =>
   import('./Statusboard').then((module) => ({

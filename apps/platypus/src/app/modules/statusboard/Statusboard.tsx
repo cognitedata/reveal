@@ -1,5 +1,5 @@
 import { Title } from '@cognite/cogs.js';
-import { StyledPageWrapper } from '../styles/SharedStyles';
+import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 
 export const Status = () => (
   <StyledPageWrapper style={{ padding: '3rem' }}>

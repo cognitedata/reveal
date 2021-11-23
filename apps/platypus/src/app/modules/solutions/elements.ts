@@ -1,8 +1,6 @@
+import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import styled from 'styled-components/macro';
-
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
-
-import { StyledPageWrapper } from '../styles/SharedStyles';
 import { Row } from '@cognite/cogs.js';
 
 const solutionListWidth = 1020;

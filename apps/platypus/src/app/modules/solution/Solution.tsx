@@ -1,34 +1,35 @@
 import { lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Spinner } from '../../components/Spinner/Spinner';
-import { StyledPageWrapper } from '../styles/SharedStyles';
+
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 
 const OverviewPage = lazy(() =>
-  import('./solutionPages/OverviewLayout').then((module) => ({
+  import('./OverviewLayout').then((module) => ({
     default: module.OverviewLayout,
   }))
 );
 
 const DataModelPage = lazy(() =>
-  import('./solutionPages/DataModelLayout').then((module) => ({
+  import('./DataModelLayout').then((module) => ({
     default: module.DataModelLayout,
   }))
 );
 
 const DevelopmentToolsPage = lazy(() =>
-  import('./solutionPages/DevelopmentToolsPage').then((module) => ({
+  import('./development-tools/pages/DevelopmentToolsPage').then((module) => ({
     default: module.DevelopmentToolsPage,
   }))
 );
 
 const DeploymentsPage = lazy(() =>
-  import('./solutionPages/DeploymentsPage').then((module) => ({
+  import('./deployments/pages/DeploymentsPage').then((module) => ({
     default: module.DeploymentsPage,
   }))
 );
 
 const SettingsPage = lazy(() =>
-  import('./solutionPages/SettingsPage').then((module) => ({
+  import('./settings/pages/SettingsPage').then((module) => ({
     default: module.SettingsPage,
   }))
 );

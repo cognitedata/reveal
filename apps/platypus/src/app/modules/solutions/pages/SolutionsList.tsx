@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Title, Flex } from '@cognite/cogs.js';
-import { StyledPageWrapper } from '../styles/SharedStyles';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { SolutionCard } from '@platypus-app/modules/solutions/components/SolutionCard/SolutionCard';
-import { StyledRow, StyledSolutionListWrapper } from './elements';
-import { useSolutions } from './hooks/useSolutions';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { ActionStatus } from '@platypus-app/types';
 import { Solution } from '@platypus/platypus-core';
-import { SolutionsState } from './redux/store';
-import { DeleteSolution } from './DeleteSolution';
+import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
+
+import { StyledRow, StyledSolutionListWrapper } from '../elements';
+import { useSolutions } from '../hooks/useSolutions';
+import { SolutionsState } from '../redux/store';
+import { DeleteSolution } from '../DeleteSolution';
 
 export const SolutionsList = () => {
   const { t } = useTranslation('solutions');

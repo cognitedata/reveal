@@ -1,5 +1,5 @@
-import { PageContentLayout } from '../../../components/Layouts/PageContentLayout';
-import { PageLayout } from '../../../components/Layouts/PageLayout';
+import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
+import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 
 export const SettingsPage = () => (
   <PageLayout>

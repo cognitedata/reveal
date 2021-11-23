@@ -3,16 +3,22 @@ import { Route, Switch } from 'react-router-dom';
 import { SolutionsPage } from './modules/solutions/SolutionsPage';
 import { GuideToolsPage } from './modules/guides/GuideToolsPage';
 import { StatusPage } from './modules/statusboard/StatusboardPage';
+import { NavigationMain } from './components/Navigations/NavigationMain';
+import { Solution } from './modules/solution/Solution';
+import { NavigationSolution } from './components/Navigations/NavigationSolution';
+import { Spinner } from './components/Spinner/Spinner';
 
 const Routes = () => {
   return (
-    <React.Suspense fallback={<p>Loading&hellip;</p>}>
+    <React.Suspense fallback={<Spinner />}>
       <Switch>
-        <Route
-          exact
-          path={['/', '/solutions/:solutionId?/:tabKey?/:solutionPage?']}
-        >
+        <Route exact path={['/', '/solutions']}>
+          <NavigationMain />
           <SolutionsPage />
+        </Route>
+        <Route exact path={['/solutions/:solutionId?/:tabKey?/:solutionPage?']}>
+          <NavigationSolution />
+          <Solution />
         </Route>
         <Route exact path="/guidetools">
           <GuideToolsPage />
