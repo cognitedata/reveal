@@ -70,31 +70,35 @@ const StyledRawExplorerFirstTimeContent = styled.div`
   height: ${FIRST_TIME_CAROUSEL_HEIGHT}px;
   position: relative;
   width: 642px;
-  .first-time-carousel-dot {
-    li button {
-      background-color: ${Colors['bg-control--disabled-hover'].hex()};
-      border-radius: 8px;
-      height: 8px;
-    }
-    li.slick-active button {
-      background-color: ${Colors['text-hint'].hex()};
-    }
-  }
-  .ant-carousel {
-    .slick-prev,
-    .slick-next {
-      color: currentColor;
-      font-size: inherit;
-      z-index: 1;
-      ::before {
-        content: none;
+
+  &&& {
+    .first-time-carousel-dot {
+      li button {
+        background-color: ${Colors['bg-control--disabled-hover'].hex()};
+        border-radius: 8px;
+        height: 8px;
+      }
+      li.slick-active button {
+        background-color: ${Colors['text-hint'].hex()};
       }
     }
-    .slick-prev {
-      left: 16px;
-    }
-    .slick-next {
-      right: 16px;
+
+    .ant-carousel {
+      .slick-prev,
+      .slick-next {
+        color: currentColor;
+        font-size: inherit;
+        z-index: 1;
+        ::before {
+          content: none;
+        }
+      }
+      .slick-prev {
+        left: 16px;
+      }
+      .slick-next {
+        right: 16px;
+      }
     }
   }
 `;
