@@ -10,6 +10,9 @@ import Timeline from 'antd/lib/timeline';
 import { Button, Colors } from '@cognite/cogs.js';
 import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
+import LinkButton from 'components/LinkButton';
+import InfoTooltip from 'components/InfoTooltip';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import {
   EmptyLineageDot,
   LineageDot,
@@ -30,7 +33,8 @@ interface IntegrationTableProps extends IntegrationSourceExtractorProps {
 }
 
 export const INTEGRATIONS_HEADING: Readonly<string> = 'Extraction pipelines';
-export const ADD_INTEGRATION: Readonly<string> = 'Add extraction pipeline';
+export const CREATE_EXTRACTION_PIPELINE: Readonly<string> =
+  'Create extraction pipeline';
 export const INTEGRATION_SUB_HEADING: Readonly<string> =
   'Use this section to create, troubleshoot and view details on extraction pipelines that ingest data from extractors into this data set.';
 const PERMISSION_TEXT: Readonly<string> = `You must have the 'extractionPipelinesAcl:read' permission to see extraction pipelines in your project`;
@@ -62,11 +66,32 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
     }
   }, [setIntegrationList, dataSet]);
 
+  const permissionsExtractionPipelines = usePermissions(
+    'extractionPipelinesAcl',
+    'WRITE'
+  );
+  const canEditExtractionPipelines = permissionsExtractionPipelines.data;
+
   const addIntegrationLink = () => {
     return `${createLink(`${getExtractionPipelineUIUrl('/create')}`)}${
       getEnv() ? '&' : '?'
     }dataSetId=${dataSet?.id}`;
   };
+
+  const createExtpipeButton = canEditExtractionPipelines ? (
+    <LinkButton icon="Plus" href={addIntegrationLink()}>
+      {CREATE_EXTRACTION_PIPELINE}
+    </LinkButton>
+  ) : (
+    <InfoTooltip
+      showIcon={false}
+      tooltipText="You have insufficient access rights to create an extraction pipeline."
+    >
+      <Button disabled icon="Plus">
+        {CREATE_EXTRACTION_PIPELINE}
+      </Button>
+    </InfoTooltip>
+  );
 
   return (
     <Timeline.Item
@@ -79,7 +104,10 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
       }
     >
       <LineageTitle>{INTEGRATIONS_HEADING}</LineageTitle>
-      <LineageSubTitle>{INTEGRATION_SUB_HEADING}</LineageSubTitle>
+      <LineageSubTitle>
+        <span>{INTEGRATION_SUB_HEADING}</span>
+        <span css="flex-shrink: 0">{createExtpipeButton}</span>
+      </LineageSubTitle>
       {!integrationList ? (
         <NoDataText>{PERMISSION_TEXT}</NoDataText>
       ) : (
@@ -92,7 +120,7 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
             getPopupContainer={getContainer}
           />
           <StyledButton href={addIntegrationLink()} type="primary">
-            {ADD_INTEGRATION}
+            {CREATE_EXTRACTION_PIPELINE}
           </StyledButton>
         </>
       )}

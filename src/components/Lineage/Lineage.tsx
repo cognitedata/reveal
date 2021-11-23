@@ -4,7 +4,6 @@ import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
 import Timeline from 'antd/lib/timeline';
 import Typography from 'antd/lib/typography';
-import moment from 'moment';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { getJetfireUrl, getContainer } from 'utils/utils';
 import { JetfireApi } from 'jetfire/JetfireApi';
@@ -17,7 +16,6 @@ import {
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useFlag } from '@cognite/react-feature-flags';
-import { rawTablesColumns } from 'components/Lineage/rawTableColumns';
 import { IntegrationRawTables } from 'components/Lineage/Integration/IntegrationRawTables';
 
 import handleError from 'utils/handleError';
@@ -45,13 +43,7 @@ const Lineage = ({ dataSet }: LineageProps) => {
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
-  const [rawList, setRawList] = useState<RawWithUpdateTime[]>([]);
-  const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
 
-  const isFlagIntegration = useFlag('DATA_INTEGRATIONS_allowlist', {
-    fallback: false,
-    forceRerender: true,
-  });
   const isFlagConsumers = useFlag('EXTPIPES_CONSUMERS_allowlist', {
     fallback: false,
     forceRerender: true,
@@ -59,42 +51,6 @@ const Lineage = ({ dataSet }: LineageProps) => {
   useEffect(() => {
     trackEvent('DataSets.LineageFlow.Enters lineage flow');
   }, []);
-
-  const getRawTableLastUpdateTime = useCallback(async () => {
-    const tablesList = Array.isArray(dataSet?.metadata.rawTables)
-      ? dataSet!.metadata.rawTables
-      : [];
-
-    const rawTables = await Promise.all(
-      tablesList.map(async (item) => {
-        const rawDb = item.databaseName;
-        const rawTable = item.tableName;
-        try {
-          const results = await sdk.raw.listRows(rawDb, rawTable);
-          if (results?.items[0]) {
-            return {
-              databaseName: rawDb,
-              tableName: rawTable,
-              lastUpdate: moment(results.items[0].lastUpdatedTime).fromNow(),
-            } as RawWithUpdateTime;
-          }
-          return {
-            databaseName: rawDb,
-            tableName: rawTable,
-            lastUpdate: 'Never',
-          } as RawWithUpdateTime;
-        } catch (e) {
-          return {
-            databaseName: rawDb,
-            tableName: rawTable,
-            lastUpdate: 'This RAW table may be deleted.',
-          } as RawWithUpdateTime;
-        }
-      })
-    );
-    setRawList(rawTables);
-    setLoadingRaw(false);
-  }, [dataSet]);
 
   const getExternalTransformations = () => {
     if (dataSet && Array.isArray(dataSet.metadata.transformations)) {
@@ -159,8 +115,7 @@ const Lineage = ({ dataSet }: LineageProps) => {
 
   useEffect(() => {
     getTransformations();
-    getRawTableLastUpdateTime();
-  }, [getRawTableLastUpdateTime, getTransformations]);
+  }, [getTransformations]);
 
   if (dataSet && dataSet.metadata) {
     const { names: sourceNames } = dataSet.metadata.consoleSource || [];
@@ -169,7 +124,6 @@ const Lineage = ({ dataSet }: LineageProps) => {
       Array.isArray(dataSet.metadata.consoleExtractors.accounts)
         ? dataSet.metadata.consoleExtractors.accounts
         : [];
-    const usedRawTables = dataSet.metadata.rawTables;
     const usedTransformations =
       dataSet.metadata.transformations &&
       dataSet.metadata.transformations.length;
@@ -193,33 +147,12 @@ const Lineage = ({ dataSet }: LineageProps) => {
               <Extractor extractorAccounts={extractorAccounts} />
             </Timeline.Item>
           ) : null}
-          {isFlagIntegration && (
-            <IntegrationTable
-              dataSet={dataSet}
-              extractorAccounts={extractorAccounts}
-              sourceNames={sourceNames}
-            />
-          )}
-          {usedRawTables && !isFlagIntegration && (
-            <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>Raw Tables</LineageTitle>
-              <LineageSubTitle>
-                The RAW tables below are used in this data integration.
-              </LineageSubTitle>
-
-              <Table
-                loading={loadingRaw}
-                columns={rawTablesColumns}
-                dataSource={rawList}
-                pagination={{ pageSize: 5 }}
-                rowKey={(record: RawTable) =>
-                  `${record.databaseName}/${record.tableName}`
-                }
-                getPopupContainer={getContainer}
-              />
-            </Timeline.Item>
-          )}
-          {isFlagIntegration && <IntegrationRawTables dataSet={dataSet} />}
+          <IntegrationTable
+            dataSet={dataSet}
+            extractorAccounts={extractorAccounts}
+            sourceNames={sourceNames}
+          />
+          <IntegrationRawTables dataSet={dataSet} />
           {usedTransformations && (
             <Timeline.Item dot={<LineageDot />}>
               <LineageTitle>Transformations</LineageTitle>
