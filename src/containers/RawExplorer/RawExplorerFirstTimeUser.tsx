@@ -57,8 +57,9 @@ const RawExplorerFirstTimeUser = (): JSX.Element => {
 };
 
 const StyledRawExplorerFirstTimeWrapper = styled.div`
-  display: flex;
   align-items: center;
+  background-color: ${Colors['bg-accent'].hex()};
+  display: flex;
   justify-content: center;
   height: 100%;
 `;
@@ -104,6 +105,8 @@ const StyledRawExplorerFirstTimeContent = styled.div`
 `;
 
 const StyledCarouselPage = styled.div`
+  background-color: ${Colors.white};
+  border-radius: 16px;
   display: flex !important; /* overrides antd style */
   height: ${FIRST_TIME_CAROUSEL_HEIGHT}px;
   padding: 0px 48px 48px;
