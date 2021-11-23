@@ -178,7 +178,8 @@ export function Migration() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        renderMode: 'Color'
+        renderMode: 'Color',
+        debugRenderStageTimings: false
       };
       const guiActions = {
         addModel: () =>
@@ -267,6 +268,11 @@ export function Migration() {
         ]).name('SSAO').onFinishChange(v => {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
+        });
+      renderGui.add(guiState, 'debugRenderStageTimings')
+        .name('Debug timings')
+        .onChange(enabled => {
+          (viewer as any).revealManager.debugRenderTiming = enabled;
         });
 
       const debugGui = gui.addFolder('Debug');
@@ -442,7 +448,15 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
-      const overlayTool = new HtmlOverlayTool(viewer);
+      const overlayTool = new HtmlOverlayTool(viewer,
+        { 
+          clusteringOptions: { 
+            mode: 'overlapInScreenSpace', 
+            createClusterElementCallback: cluster => {
+              return createOverlay(`${cluster.length}`);
+            }
+          }
+        });
       new AxisViewTool(viewer);
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
@@ -455,9 +469,7 @@ export function Migration() {
               {
                 const { treeIndex, point, model } = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = document.createElement('div');
-                overlayHtml.innerText = `Node ${treeIndex}`;
-                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                const overlayHtml = createOverlay(`Node ${treeIndex}`);
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
@@ -524,4 +536,21 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
+}
+
+function createOverlay(text: string): HTMLElement {
+  const overlayHtml = document.createElement('div');
+  overlayHtml.innerText = text;
+  overlayHtml.style.cssText = `
+    position: absolute; 
+    translate(-50%, -50%);
+
+    background: white; 
+    border-radius: 5px; 
+    border-color: black; 
+
+    pointer-events: none; 
+    touch-action: none;`;
+
+  return overlayHtml;
 }

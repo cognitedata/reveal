@@ -35,7 +35,7 @@ uniform float edgeGrayScaleIntensity;
 const float infinity = 1e20;
 
 float computeFloatEncodedOutlineIndex(float bitEncodedFloat){
-  return floatBitsSubset(floor((bitEncodedFloat * 255.0) + 0.5), 3, 6);
+  return floatBitsSubset(floor((bitEncodedFloat * 255.0) + 0.5), 5, 8);
 }
 
 vec4 computeNeighborOutlineIndices(sampler2D colorTexture){

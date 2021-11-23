@@ -13,7 +13,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
 import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
-import { trackError, trackEvent } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -51,6 +51,7 @@ import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
+import log from '@reveal/logger';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -291,7 +292,7 @@ export class Cognite3DViewer {
           }
         },
         error =>
-          trackError(error, {
+          MetricsLogger.trackError(error, {
             moduleName: 'Cognite3DViewer',
             methodName: 'constructor'
           })
@@ -300,7 +301,7 @@ export class Cognite3DViewer {
 
     this.animate(0);
 
-    trackEvent('construct3dViewer', {
+    MetricsLogger.trackEvent('construct3dViewer', {
       constructorOptions: omit(options, [
         'sdk',
         'domElement',
@@ -317,6 +318,21 @@ export class Cognite3DViewer {
    */
   getVersion(): string {
     return process.env.VERSION;
+  }
+
+  /**
+   * Sets the log level. Used for debugging.
+   * Defaults to 'none' (which is identical to 'silent').
+   * @param level
+   */
+  setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none') {
+    switch (level) {
+      case 'none':
+        this.setLogLevel('silent');
+        break;
+      default:
+        log.setLevel(level);
+    }
   }
 
   /**
@@ -1030,7 +1046,7 @@ export class Cognite3DViewer {
     this.camera.updateMatrixWorld();
     const screenPosition = new THREE.Vector3();
     if (normalize) {
-      worldToNormalizedViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+      worldToNormalizedViewportCoordinates(this.camera, point, screenPosition);
     } else {
       worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
     }
@@ -1580,6 +1596,8 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   const edgeDetectionParameters = {
     enabled: viewerOptions.enableEdges ?? defaultRenderOptions.edgeDetectionParameters.enabled
   };
+
+  revealOptions.logMetrics = viewerOptions.logMetrics;
 
   revealOptions.renderOptions = {
     antiAliasing,
