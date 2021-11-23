@@ -56,7 +56,7 @@ export class Toolbar {
     controlDiv.appendChild(this._toolbarContainer);
   }
 
-  public async addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void): Promise<void> {
+  public addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void) {
     const element = document.createElement('BUTTON');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;

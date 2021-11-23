@@ -39,3 +39,11 @@
   border: 1px solid black;
   border-color: rgba(0, 0, 0, 0);
 }
+
+.reveal-viewer-toolbar-icon:hover {
+  background-color: yellow;
+}
+
+.reveal-viewer-toolbar-icon:focus {
+  background-color: orange;
+}
