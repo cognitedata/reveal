@@ -1,10 +1,11 @@
-import { CommandBuilder } from 'yargs';
+import { Arguments, CommandBuilder } from 'yargs';
 
 import {
   SolutionsHandler,
   SolutionsTemplatesApiService,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { BaseArgs } from '../../types';
 
 export const command = 'list';
 export const desc = 'List all solutions for current project';
@@ -20,24 +21,25 @@ export const builder: CommandBuilder = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function handler(args: any) {
+export async function handler(args: Arguments<BaseArgs>) {
   const client = getCogniteSDKClient();
 
   const solutionsHandler = new SolutionsHandler(
-    new SolutionsTemplatesApiService(client as any)
+    new SolutionsTemplatesApiService(client)
   );
 
   const result = await solutionsHandler.list();
 
   if (!result.isSuccess) {
-    return console.error(result.errorValue());
+    return args.logger.error(
+      `Failed to list solutions because of ${result.error}`
+    );
   }
 
   if (args.full) {
-    console.log(result.getValue());
+    args.logger.log(JSON.stringify(result.getValue()));
   } else {
-    console.log(
+    args.logger.log(
       result
         .getValue()
         .map((solution) => solution.name)

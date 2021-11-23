@@ -1,6 +1,7 @@
 import { Arguments, Argv } from 'yargs';
 import { CreateSolutionDTO } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { BaseArgs } from '../../types';
 
 export const command = 'create <name>';
 
@@ -24,7 +25,9 @@ export const builder = (yargs: Argv<CreateSolutionDTO>): Argv =>
       description: 'Who is the owner of this template group',
     });
 
-export const handler = async (args: Arguments<CreateSolutionDTO>) => {
+export const handler = async (
+  args: Arguments<BaseArgs & CreateSolutionDTO>
+) => {
   const client = getCogniteSDKClient();
 
   try {
@@ -35,8 +38,8 @@ export const handler = async (args: Arguments<CreateSolutionDTO>) => {
         owners: [args.owner],
       },
     ]);
-    console.log(`Template group "${args.name}" is created successfully`);
+    args.logger.log(`Template group "${args.name}" is created successfully`);
   } catch (error) {
-    console.error(error);
+    args.logger.error(error);
   }
 };

@@ -7,6 +7,7 @@ import {
   SolutionsTemplatesApiService,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { BaseArgs } from '../../types';
 
 export const command = 'delete <id>';
 
@@ -19,7 +20,9 @@ export const builder = (yargs: Argv<CreateSolutionDTO>): Argv =>
     demandOption: true,
   });
 
-export const handler = async (args: Arguments<DeleteSolutionDTO>) => {
+export const handler = async (
+  args: Arguments<BaseArgs & DeleteSolutionDTO>
+) => {
   const client = getCogniteSDKClient();
 
   const solutionsHandler = new SolutionsHandler(
@@ -31,8 +34,9 @@ export const handler = async (args: Arguments<DeleteSolutionDTO>) => {
   });
 
   if (!result.isSuccess) {
-    return console.error(result.errorValue());
+    return args.logger.error(
+      `Failed to delete solution because of ${result.error}`
+    );
   }
-
-  console.log(result.getValue());
+  args.logger.log(`Solution "${args.id}" is deleted successfully`);
 };

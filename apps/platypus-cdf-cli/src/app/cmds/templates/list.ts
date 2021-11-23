@@ -1,4 +1,5 @@
 import { Arguments, CommandBuilder } from 'yargs';
+import { BaseArgs } from '../../types';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
 export const command = 'list';
@@ -15,16 +16,16 @@ export const builder: CommandBuilder = {
   },
 };
 
-export async function handler(args: Arguments) {
+export async function handler(args: Arguments<BaseArgs>) {
   const client = getCogniteSDKClient();
 
   const templates = await client.templates.groups.list();
 
   if (args.full) {
-    console.log(templates.items);
+    args.logger.log(JSON.stringify(templates.items));
   }
 
-  console.log(
+  args.logger.log(
     templates.items.map((template) => template.externalId).join('\n')
   );
 }

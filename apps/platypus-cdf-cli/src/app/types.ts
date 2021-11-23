@@ -1,7 +1,9 @@
+import { Logger } from '@platypus/platypus-core';
 import { AUTH_TYPE, LOGIN_STATUS } from './constants';
 
 export type BaseArgs = {
   appId: string;
+  logger: Logger;
 };
 
 export type LoginArgs = BaseArgs & {

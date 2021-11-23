@@ -1,5 +1,5 @@
-import { Argv } from 'yargs';
-import { LoginArgs } from '../types';
+import { Arguments, Argv } from 'yargs';
+import { BaseArgs, LoginArgs } from '../types';
 import { AUTH_TYPE } from '../constants';
 
 export const command = 'login [project]';
@@ -49,8 +49,8 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     })
     .choices('auth-type', [AUTH_TYPE.CLIENT_SECRET, AUTH_TYPE.LEGACY]);
 
-export const handler = async () => {
-  console.log('[✅] Login Success!');
+export const handler = async (arg: Arguments<BaseArgs>) => {
+  arg.logger.info('Login Success');
 };
 
 export const validateClusterName = ({

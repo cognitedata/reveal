@@ -6,6 +6,7 @@ import {
   SolutionsTemplatesApiService,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { BaseArgs } from '../../types';
 
 export const command = 'create <name>';
 
@@ -29,7 +30,9 @@ export const builder = (yargs: Argv<CreateSolutionDTO>): Argv =>
       description: 'Who is the owner of this solution',
     });
 
-export const handler = async (args: Arguments<CreateSolutionDTO>) => {
+export const handler = async (
+  args: Arguments<BaseArgs & CreateSolutionDTO>
+) => {
   const client = getCogniteSDKClient();
 
   const solutionsHandler = new SolutionsHandler(
@@ -44,9 +47,8 @@ export const handler = async (args: Arguments<CreateSolutionDTO>) => {
   const result = await solutionsHandler.create(dto);
 
   if (!result.isSuccess) {
-    console.error(result.errorValue());
-    return;
+    return args.logger.error(result.error);
   }
 
-  console.log(result.getValue());
+  args.logger.info(`Solution "${args.name}" is successfully created.`);
 };

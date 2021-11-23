@@ -2,6 +2,7 @@ import { Arguments, Argv } from 'yargs';
 
 import { DeleteSolutionDTO } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { BaseArgs } from '../../types';
 
 export const command = 'delete <id>';
 
@@ -15,13 +16,15 @@ export const builder = (yargs: Argv): Argv =>
     demandOption: true,
   });
 
-export const handler = async (args: Arguments<DeleteSolutionDTO>) => {
+export const handler = async (
+  args: Arguments<BaseArgs & DeleteSolutionDTO>
+) => {
   const client = getCogniteSDKClient();
 
   try {
     await client.templates.groups.delete([{ externalId: args.id }]);
-    console.log(`Deleted the template group "${args.id}" successfully.`);
+    args.logger.log(`Deleted the template group "${args.id}" successfully.`);
   } catch (error) {
-    console.error(error);
+    args.logger.error(error);
   }
 };
