@@ -10,7 +10,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 
-import CreateEmptyTableOption from './CreateEmptyTableOption';
+import CreateTableModalOption from './CreateTableModalOption';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
@@ -131,10 +131,13 @@ const CreateTableModal = ({
         <StyledCreateOptions>
           <StyledCreateOption>upload csv</StyledCreateOption>
           <StyledCreateOption>
-            <CreateEmptyTableOption
+            <CreateTableModalOption
+              description="Upload files later or write data directly using the API."
+              icon="DataTable"
               isDisabled={isLoading}
               isSelected={selectedCreateTableOption === CreateTableOption.Empty}
               onClick={selectOption(CreateTableOption.Empty)}
+              title="Create an empty table"
             />
           </StyledCreateOption>
         </StyledCreateOptions>
