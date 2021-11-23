@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { Loader } from '@cognite/cogs.js';
+import { RawDB } from '@cognite/sdk';
 import styled from 'styled-components';
 
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
@@ -17,6 +18,8 @@ import {
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
 } from 'utils/constants';
+import { useDatabases } from 'hooks/sdk-queries';
+import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
 
 const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
   {
@@ -25,14 +28,29 @@ const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
 ];
 
 const RawExplorer = (): JSX.Element => {
-  const { isSidePanelOpen } = useContext(RawExplorerContext);
-
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
     useUserCapabilities('rawAcl', 'READ');
   const { data: hasListAccess, isFetched: isListAccessFetched } =
     useUserCapabilities('rawAcl', 'LIST');
 
-  if (!isReadAccessFetched || !isListAccessFetched) {
+  const { data, isLoading: isFetchingDatabases } = useDatabases({
+    enabled: hasListAccess,
+  });
+
+  const databases = useMemo(
+    () =>
+      data
+        ? data.pages.reduce(
+            (accl, page) => [...accl, ...page.items],
+            [] as RawDB[]
+          )
+        : ([] as RawDB[]),
+    [data]
+  );
+
+  const { isSidePanelOpen } = useContext(RawExplorerContext);
+
+  if (!isReadAccessFetched || !isListAccessFetched || isFetchingDatabases) {
     return <Loader />;
   }
 
@@ -45,10 +63,14 @@ const RawExplorer = (): JSX.Element => {
           <StyledRawExplorerTableContentWrapper
             $isSidePanelOpen={isSidePanelOpen}
           >
-            <ActiveTableProvider>
-              <TableTabList />
-              <TableContent />
-            </ActiveTableProvider>
+            {databases.length > 0 ? (
+              <ActiveTableProvider>
+                <TableTabList />
+                <TableContent />
+              </ActiveTableProvider>
+            ) : (
+              <RawExplorerFirstTimeUser />
+            )}
           </StyledRawExplorerTableContentWrapper>
         </StyledRawExplorerContent>
       ) : (

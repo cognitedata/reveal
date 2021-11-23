@@ -6,7 +6,6 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query';
-
 const baseKey = 'raw-explorer';
 
 export const tableKey = (db: string) => [baseKey, db, 'tables'];
@@ -26,7 +25,7 @@ export const rawProfileKey = (db: string, table: string) => [
   'raw-profile',
 ];
 
-export const useDatabases = () => {
+export const useDatabases = (options?: { enabled: boolean }) => {
   const sdk = useSDK();
   return useInfiniteQuery(
     dbKey,
@@ -43,6 +42,7 @@ export const useDatabases = () => {
         .then((response) => response.data),
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      ...options,
     }
   );
 };
