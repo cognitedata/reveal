@@ -92,11 +92,11 @@ export class PotreeGroupWrapper extends THREE.Object3D {
     this.nodes.splice(index, 1);
   }
 
-  requestRedraw() {
+  requestRedraw(): void {
     this._needsRedraw = true;
   }
 
-  resetRedraw() {
+  resetRedraw(): void {
     this._needsRedraw = false;
     this.numNodesLoadingAfterLastRedraw = Potree.Global.numNodesLoading;
     this.numChildrenAfterLastRedraw = this.potreeGroup.children.length;

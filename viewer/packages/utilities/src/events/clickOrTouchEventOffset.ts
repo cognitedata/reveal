@@ -8,7 +8,10 @@
  * @param target    HTML element to find coordinates relative to.
  * @returns A struct containing coordinates relative to the HTML element provided.
  */
-export function clickOrTouchEventOffset(ev: MouseEvent | TouchEvent, target: HTMLElement) {
+export function clickOrTouchEventOffset(
+  ev: MouseEvent | TouchEvent,
+  target: HTMLElement
+): { offsetX: number; offsetY: number } {
   const rect = target.getBoundingClientRect();
 
   if (ev instanceof MouseEvent) {

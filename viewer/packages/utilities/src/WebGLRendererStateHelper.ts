@@ -21,7 +21,7 @@ export class WebGLRendererStateHelper {
     this._originalState = {};
   }
 
-  setClearColor(color: THREE.Color | number | string, alpha?: number) {
+  setClearColor(color: THREE.Color | number | string, alpha?: number): void {
     this._originalState = {
       clearColor: this._renderer.getClearColor(new THREE.Color()),
       clearAlpha: this._renderer.getClearAlpha(),
@@ -30,7 +30,7 @@ export class WebGLRendererStateHelper {
     this._renderer.setClearColor(color, alpha);
   }
 
-  setSize(width: number, height: number) {
+  setSize(width: number, height: number): void {
     this._originalState = { size: this._renderer.getSize(new THREE.Vector2()), ...this._originalState };
     this._renderer.setSize(width, height);
   }
@@ -45,12 +45,12 @@ export class WebGLRendererStateHelper {
     this._renderer.autoClear = enabled;
   }
 
-  setRenderTarget(renderTarget: THREE.RenderTarget | null) {
+  setRenderTarget(renderTarget: THREE.RenderTarget | null): void {
     this._originalState = { renderTarget: this._renderer.getRenderTarget(), ...this._originalState };
     this._renderer.setRenderTarget(renderTarget);
   }
 
-  resetState() {
+  resetState(): void {
     if (this._originalState.autoClear !== undefined) {
       this._renderer.autoClear = this._originalState.autoClear;
     }

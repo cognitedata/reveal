@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, HttpHeaders } from '@cognite/sdk';
 
 import { ModelDataProvider } from './types';
 
@@ -15,7 +15,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
     this.client = client;
   }
 
-  get headers() {
+  get headers(): HttpHeaders {
     return this.client.getDefaultRequestHeaders();
   }
 
@@ -44,7 +44,7 @@ async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefin
     } catch (err) {
       // Keep first error only
       if (error !== undefined) {
-        error = err;
+        error = err as Error;
       }
     }
   }

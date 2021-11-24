@@ -24,19 +24,19 @@ export class IndexSet {
     }
   }
 
-  forEachRange(visitor: (range: NumericRange) => void) {
+  forEachRange(visitor: (range: NumericRange) => void): void {
     if (this.rootNode) {
       this.rootNode.traverse(visitor);
     }
   }
 
-  add(index: number) {
+  add(index: number): void {
     const range = new NumericRange(index, 1);
 
     this.addRange(range);
   }
 
-  addRange(range: NumericRange) {
+  addRange(range: NumericRange): void {
     if (this.rootNode) {
       this.rootNode = this.rootNode.addRange(range);
     } else {
@@ -44,12 +44,12 @@ export class IndexSet {
     }
   }
 
-  remove(index: number) {
+  remove(index: number): void {
     const range = new NumericRange(index, 1);
     this.removeRange(range);
   }
 
-  removeRange(range: NumericRange) {
+  removeRange(range: NumericRange): void {
     if (this.rootNode) {
       this.rootNode = this.rootNode.removeRange(range);
     }

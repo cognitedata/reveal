@@ -15,7 +15,7 @@ import {
   filterInstanceMesh
 } from '@reveal/cad-parsers';
 
-import { pipe, GroupedObservable, Observable, OperatorFunction } from 'rxjs';
+import { pipe, GroupedObservable, Observable, OperatorFunction, MonoTypeOperatorFunction } from 'rxjs';
 import { groupBy, distinctUntilKeyChanged, withLatestFrom, mergeMap, filter, map } from 'rxjs/operators';
 
 import { createSimpleGeometryMesh, Materials, createPrimitives } from '@reveal/rendering';
@@ -81,7 +81,7 @@ export function consumeSectorDetailed(
   return { sectorMeshes: group, instancedMeshes: instanceMeshes };
 }
 
-export function distinctUntilLevelOfDetailChanged() {
+export function distinctUntilLevelOfDetailChanged(): MonoTypeOperatorFunction<ConsumedSector> {
   return pipe(
     groupBy((sector: ConsumedSector) => sector.modelIdentifier),
     mergeMap((modelGroup: GroupedObservable<string, ConsumedSector>) => {
