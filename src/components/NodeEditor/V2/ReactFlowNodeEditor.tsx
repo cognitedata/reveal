@@ -36,7 +36,7 @@ import SourceNode from './CustomNodes/SourceNode';
 export type ReactFlowNodeEditorProps = {
   sources: (ChartTimeSeries | ChartWorkflow)[];
   operations: [boolean, (Error | undefined)?, (Operation[] | undefined)?];
-  output: { id?: string; name?: string; color?: string };
+  output: { id: string; name: string; color: string };
   getSavedFlow: () => FlowExportObject | undefined;
   saveFlow?: (flow: FlowExportObject) => void;
   autoAlign?: boolean;
@@ -291,7 +291,7 @@ const ReactFlowNodeEditor = ({
       saveOutputName,
     };
 
-    setElements(restoreSavedFlow(flow, callbacks));
+    setElements(restoreSavedFlow(flow, callbacks, output.color));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [output?.id]);
 

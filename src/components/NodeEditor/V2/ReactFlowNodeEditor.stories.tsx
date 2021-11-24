@@ -19,6 +19,6 @@ export const EmptyEditor = Template.bind({});
 EmptyEditor.args = {
   sources: [],
   operations: [false, undefined, []],
-  output: {},
+  output: { id: 'abc', name: 'Calcualtion', color: '#FF0000' },
   getSavedFlow: () => undefined,
 };

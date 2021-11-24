@@ -72,7 +72,8 @@ export const initializeFunctionData = (
 
 export const restoreSavedFlow = (
   flow: FlowExportObject,
-  callbacks: Record<string, Function | undefined>
+  callbacks: Record<string, Function | undefined>,
+  outputColor: string
 ): Elements => {
   const {
     onSourceItemChange,
@@ -118,6 +119,7 @@ export const restoreSavedFlow = (
             ...el.data,
             saveOutputName,
             onOutputNameChange,
+            color: outputColor,
           },
         };
       default:
