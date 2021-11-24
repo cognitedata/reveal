@@ -177,7 +177,7 @@ export const content = (modelIndex: number) => {
                       assets={params.assetSubtreeIds}
                       onSelectAssets={onAssetSubtreeIdsChange}
                       hideTitle
-                      maxMenuHeight={85}
+                      maxMenuHeight={100}
                     />
                   </th>
                 </tr>
