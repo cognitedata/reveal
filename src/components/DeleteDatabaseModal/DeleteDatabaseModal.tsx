@@ -90,8 +90,8 @@ const DeleteDatabaseModal = ({
       {...modalProps}
     >
       <StyledDeleteDatabaseModalBody level={2}>
-        Are you sure you want to delete <b>{databaseName}</b>? You will lose all
-        of the data, and will not be able to restore it later.
+        Are you sure you want to delete <b>{databaseName}</b>? You{' '}
+        <b>will not</b> be able to restore it later.
       </StyledDeleteDatabaseModalBody>
     </Modal>
   );

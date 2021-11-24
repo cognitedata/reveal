@@ -1,6 +1,6 @@
-import React, { MouseEvent } from 'react';
+import React, { useState } from 'react';
 
-import { Body, Button, Colors, Title } from '@cognite/cogs.js';
+import { Body, Button, Checkbox, Colors, Title } from '@cognite/cogs.js';
 import { notification } from 'antd';
 import styled from 'styled-components';
 
@@ -13,31 +13,18 @@ type DeleteTableModalProps = {
   tableName: string;
 } & Omit<ModalProps, 'children' | 'title'>;
 
-const StyledDeleteTableModalBody = styled(Body)`
-  color: ${Colors['text-primary'].hex()};
-`;
-
-const StyledCancelButton = styled(Button)`
-  margin-right: 8px;
-`;
-
-const StyledDeleteTableModalTitle = styled(Title)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 312px;
-`;
-
 const DeleteTableModal = ({
   databaseName,
   tableName,
   onCancel,
   ...modalProps
 }: DeleteTableModalProps): JSX.Element => {
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
   const { mutate: deleteTable, isLoading } = useDeleteTable();
   const closeTable = useCloseTable();
 
-  const handleDelete = (e: MouseEvent<HTMLButtonElement>): void => {
+  const handleDelete = (): void => {
     deleteTable(
       { database: databaseName, table: tableName },
       {
@@ -62,44 +49,81 @@ const DeleteTableModal = ({
         },
       }
     );
-    e.stopPropagation();
+  };
+
+  const handleClose = (): void => {
+    setIsConfirmed(false);
+    onCancel();
+  };
+
+  const handleConfirmCheckboxChange = (isChecked: boolean): void => {
+    setIsConfirmed(isChecked);
   };
 
   return (
-    <Modal
-      footer={[
-        <StyledCancelButton
-          onClick={(e) => {
-            onCancel();
-            e.stopPropagation();
-          }}
-          type="ghost"
-        >
-          Cancel
-        </StyledCancelButton>,
-        <Button
-          disabled={isLoading}
-          loading={isLoading}
-          onClick={handleDelete}
-          type="danger"
-        >
-          Delete
-        </Button>,
-      ]}
-      onCancel={onCancel}
-      title={
-        <StyledDeleteTableModalTitle level={5}>
-          Delete {tableName}
-        </StyledDeleteTableModalTitle>
-      }
-      {...modalProps}
-    >
-      <StyledDeleteTableModalBody level={2}>
-        Are you sure you want to delete <b>{tableName}</b>? You will lose all of
-        the data, and will not be able to restore it later.
-      </StyledDeleteTableModalBody>
-    </Modal>
+    <span onClick={(e) => e.stopPropagation()}>
+      <Modal
+        footer={[
+          <StyledCancelButton onClick={handleClose} type="ghost">
+            Cancel
+          </StyledCancelButton>,
+          <Button
+            disabled={isLoading || !isConfirmed}
+            loading={isLoading}
+            onClick={handleDelete}
+            type="danger"
+          >
+            Delete
+          </Button>,
+        ]}
+        onCancel={handleClose}
+        title={
+          <StyledDeleteTableModalTitle level={5}>
+            Delete {tableName}
+          </StyledDeleteTableModalTitle>
+        }
+        {...modalProps}
+      >
+        <StyledDeleteTableModalBody level={2}>
+          Are you sure you want to delete <b>{tableName}</b>? You will lose all
+          of the data, and <b>will not</b> be able to restore it later.
+        </StyledDeleteTableModalBody>
+        <StyledConfirmCheckboxWrapper>
+          <StyledConfirmCheckbox
+            checked={isConfirmed}
+            name="confirm-delete-table"
+            onChange={handleConfirmCheckboxChange}
+          >
+            Yes, I'm sure I want to delete this table
+          </StyledConfirmCheckbox>
+        </StyledConfirmCheckboxWrapper>
+      </Modal>
+    </span>
   );
 };
+
+const StyledDeleteTableModalBody = styled(Body)`
+  color: ${Colors['text-primary'].hex()};
+`;
+
+const StyledCancelButton = styled(Button)`
+  margin-right: 8px;
+`;
+
+const StyledDeleteTableModalTitle = styled(Title)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 312px;
+`;
+
+const StyledConfirmCheckboxWrapper = styled.div`
+  display: flex;
+  margin-top: 16px;
+`;
+
+const StyledConfirmCheckbox = styled(Checkbox)`
+  margin-right: 8px;
+`;
 
 export default DeleteTableModal;
