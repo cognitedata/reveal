@@ -8,6 +8,7 @@ export const TopBar = styled(FlexRow)`
   top: 0;
   z-index: ${layers.DROPDOWN_SELECT};
   padding: 0 ${sizes.small};
+  margin-top: ${sizes.normal};
 `;
 
 export const Header = styled(FlexRow)`
@@ -38,7 +39,7 @@ export const CompareViewCardsWrapper = styled(FlexColumn)`
   height: calc(100% - 148px);
   gap: ${sizes.normal};
   overflow: auto;
-  margin-top: 32px;
+  margin-top: ${sizes.normal};
   padding: 0 ${sizes.normal};
 `;
 

@@ -85,14 +85,6 @@ export const BlockHeader = styled(FlexColumn)`
   padding: ${sizes.normal} 12px;
   > * .checkbox-ui {
     margin-right: 12px;
-    background-color: var(--cogs-greyscale-grey7) !important;
-    border-color: var(--cogs-greyscale-grey7) !important;
-  }
-  > * .checkbox-ui.indeterminate {
-    background: var(--cogs-white) !important;
-  }
-  > * .checkbox-ui.indeterminate:before {
-    background: var(--cogs-greyscale-grey7) !important;
   }
 `;
 

@@ -118,6 +118,7 @@ export const Content = () => {
               onChange={() => onWellClick(well)}
               name={`sidebar-wellbore-${well.id}`}
               indeterminate={indeterminateIds[well.id]}
+              color={DEFAULT_WELLBORE_COLOR}
             >
               <div>
                 <WellLabel>Well</WellLabel>

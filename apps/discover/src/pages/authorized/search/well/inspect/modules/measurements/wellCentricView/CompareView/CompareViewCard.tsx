@@ -74,16 +74,20 @@ export const CompareViewCard: React.FC<Props> = ({
           {fitChart && fitChart.customdata && (
             <FlexRow key={`FIT-${fitChart.customdata[1]}`}>
               <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
-              <CurveName>FIT</CurveName>
-              <WellboreName>{fitChart.customdata[1]}</WellboreName>
+              <FlexColumn>
+                <CurveName>FIT</CurveName>
+                <WellboreName>{fitChart.customdata[1]}</WellboreName>
+              </FlexColumn>
             </FlexRow>
           )}
 
           {lotChart && lotChart.customdata && (
             <FlexRow key={`LOT-${lotChart.customdata[1]}`}>
               <CurveColorCode line={lotChart.line} marker={lotChart.marker} />
-              <CurveName>LOT</CurveName>
-              <WellboreName>{lotChart.customdata[1]}</WellboreName>
+              <FlexColumn>
+                <CurveName>LOT</CurveName>
+                <WellboreName>{lotChart.customdata[1]}</WellboreName>
+              </FlexColumn>
             </FlexRow>
           )}
         </LegendsHolder>

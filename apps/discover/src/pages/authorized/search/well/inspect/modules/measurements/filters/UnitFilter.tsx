@@ -18,16 +18,17 @@ export const UnitFilter: React.FC<Props> = ({
   options,
   onChange,
 }) => {
+  const optionsMap = mapCurvesToOptions(options);
   return (
     <DropdownWrapper>
       <Select
         theme="grey"
         title={title}
-        value={{ value: selected, label: selected }}
+        value={optionsMap.filter((option) => option.value === selected)}
         onChange={(option: OptionType<string>) => {
           onChange(option.value || '');
         }}
-        options={mapCurvesToOptions(options)}
+        options={optionsMap}
         placeholderSelectElement={selected}
         closeMenuOnSelect
       />
