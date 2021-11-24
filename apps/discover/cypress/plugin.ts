@@ -1,9 +1,11 @@
 import { readFileSync } from 'fs';
+import path from 'path';
 
+import webpackPreprocessor from '@cypress/webpack-preprocessor';
 import express from 'express';
 import { v1 as uuid } from 'uuid';
 
-module.exports = (_, config) => {
+module.exports = (on, config) => {
   const port = process.env.PORT;
   const pathToBuild = './apps/discover/build_bazel';
   const html = readFileSync(`${pathToBuild}/index.html`);
@@ -14,13 +16,22 @@ module.exports = (_, config) => {
   }
   const uniqueId = uuid();
   const app = express();
-  app.get('/uuid', (req, res) => {
+  app.get('/uuid', (_, res) => {
     res.json(uniqueId);
   });
   app.use(express.static(pathToBuild));
   app.use(redirectUnmatched);
 
   app.listen(port);
+
+  const options = webpackPreprocessor.defaultOptions;
+  options.webpackOptions.resolve = {
+    alias: {
+      '@cognite': path.resolve('./packages'),
+    },
+  };
+
+  on('file:preprocessor', webpackPreprocessor(options));
 
   return {
     ...config,

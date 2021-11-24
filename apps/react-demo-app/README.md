@@ -123,3 +123,25 @@ cypress_batch_test(
     starting_port = 12111,
 )
 ```
+
+In the event that your test files needs to import a local package and not from npm, you will need to add
+an alias to the webpack config of cypress into your `plugin.ts`
+
+```javascript
+import path from 'path';
+
+import webpackPreprocessor from '@cypress/webpack-preprocessor';
+
+module.exports = (on, config) => {
+  // ...
+  const options = webpackPreprocessor.defaultOptions;
+  options.webpackOptions.resolve = {
+    alias: {
+      '@cognite': path.resolve('./packages'),
+    },
+  };
+
+  on('file:preprocessor', webpackPreprocessor(options));
+  // ...
+};
+```

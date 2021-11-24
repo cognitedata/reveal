@@ -115,5 +115,5 @@ load("@build_bazel_rules_nodejs//toolchains/cypress:cypress_repositories.bzl", "
 # The name you pass here names the external repository you can load cypress_web_test from
 cypress_repositories(
     name = "cypress",
-    version = "8.7.0",
+    version = "9.0.0",
 )

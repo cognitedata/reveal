@@ -62,7 +62,9 @@ def cypress_batch_test(name, build_src, cypress_folder, global_cypress_files, cy
             # A cypress config file is required
             config_file = "cypress.json",
             # Any runtime dependencies you need to boot your server or run your tests
-            data = [],
+            data = [
+                "@npm//express",
+            ],
             env = {
                 "PORT": "%s" % port,
             },

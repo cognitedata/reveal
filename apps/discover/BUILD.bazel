@@ -652,8 +652,10 @@ ts_project(
     srcs = ["cypress/plugin.ts"],
     tsconfig = "cypress/tsconfig.json",
     deps = [
+        "@npm//@cypress/webpack-preprocessor",
         "@npm//@testing-library/cypress",
         "@npm//@types/node",
+        "@npm//@types/webpack-dev-server",
         "@npm//express",
     ],
 )
@@ -680,14 +682,15 @@ cypress_web_test(
     # The name of your test target
     name = "cypress_test",
     srcs = [
-        ":build_sed",
         # Load ts_library tests as a target to srcs
         ":cypress_files",
     ],
     # A cypress config file is required
     config_file = "cypress.json",
     # Any runtime dependencies you need to boot your server or run your tests
-    data = [],
+    data = DEPENDENCIES + [
+        ":build_sed",
+    ],
     env = {
         "PORT": "11120",
     },
