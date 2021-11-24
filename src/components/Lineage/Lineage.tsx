@@ -54,7 +54,7 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
   }, []);
 
   const getExternalTransformations = () => {
-    if (dataSetWithIntegrations?.dataSet.metadata.transformations) {
+    if (Array.isArray(dataSetWithIntegrations?.dataSet.metadata.transformations)) {
       const externalTransformation =
         dataSetWithIntegrations.dataSet.metadata.transformations.filter(
           (trans) => trans.type === 'external'

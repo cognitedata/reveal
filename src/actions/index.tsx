@@ -331,9 +331,11 @@ export const useLabelSuggestions = () => {
       const suggestedLabels = dataSetsWithIntegrations.reduce(
         (acc: { [label: string]: string }, cur) => {
           // eslint-disable-next-line no-unused-expressions
-          cur?.dataSet?.metadata?.consoleLabels?.forEach((label) => {
-            acc[label] = label;
-          });
+          if (Array.isArray(cur?.dataSet?.metadata?.consoleLabels)) {
+            cur?.dataSet?.metadata?.consoleLabels?.forEach((label) => {
+              acc[label] = label;
+            });
+          }
           return acc;
         },
         {}
