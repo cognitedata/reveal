@@ -117,6 +117,7 @@ export class NodeAppearanceProvider {
   private notifyChanged() {
     this._events.changed.fire();
   }
+
   /**
    * Schedules event 'changed' to trigger at the next tick.
    */
