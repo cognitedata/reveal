@@ -388,6 +388,11 @@ const fillReferencedCalculations = (
       ({ id }) => id === ref.data.selectedSourceId
     ) as ChartWorkflowV2;
 
+    if (!referencedWorkflow) {
+      shouldTerminate = true;
+      return;
+    }
+
     const referencedWorkflowOutput = referencedWorkflow.flow?.elements.find(
       (el) => el.type === NodeTypes.OUTPUT
     );
