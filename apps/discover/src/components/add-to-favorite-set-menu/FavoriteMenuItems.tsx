@@ -6,26 +6,32 @@ import { FavoriteSummary } from 'modules/favorite/types';
 import { FAVORITE_ON_ICON } from 'pages/authorized/search/map/constants';
 
 export interface Props {
-  favouriteSets: FavoriteSummary[];
+  favoriteSets: FavoriteSummary[];
   itemExistsInSets?: string[];
-  handleSelectFavourite: (item: FavoriteSummary) => void;
+  handleSelectFavorite: (item: FavoriteSummary) => void;
 }
 export const FavoriteMenuItems: React.FC<Props> = ({
-  handleSelectFavourite,
+  handleSelectFavorite,
   itemExistsInSets,
-  favouriteSets,
+  favoriteSets,
 }) => {
-  if (!favouriteSets) return null;
+  if (!favoriteSets) return null;
+
+  // Sort the favorites alphabetically
+  const sortedFavoriteSets = favoriteSets
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <>
-      {favouriteSets.map((item) => {
+      {sortedFavoriteSets.map((item) => {
         const isAlreadyFavored =
           itemExistsInSets &&
           itemExistsInSets.some((favoriteId) => favoriteId === item.id);
         return (
           <Menu.Item
             key={item.id}
-            onClick={() => handleSelectFavourite(item)}
+            onClick={() => handleSelectFavorite(item)}
             disabled={isAlreadyFavored}
             appendIcon={(isAlreadyFavored && FAVORITE_ON_ICON) || undefined}
           >

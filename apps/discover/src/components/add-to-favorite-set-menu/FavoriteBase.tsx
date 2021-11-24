@@ -42,7 +42,7 @@ export const FavoriteBase: React.FC<Props> = ({
   const { t } = useTranslation();
   const { handleFavoriteUpdate } = useHandleSelectFavourite();
 
-  const handleSelectFavourite = (setId: string) => {
+  const handleSelectFavorite = (setId: string) => {
     const favorite = favorites?.find((favorite) => favorite.id === setId);
 
     const wells =
@@ -62,7 +62,7 @@ export const FavoriteBase: React.FC<Props> = ({
     );
   };
 
-  const handleOpenCreateFavourite = () => {
+  const handleOpenCreateFavorite = () => {
     if (callBackModal) {
       callBackModal();
     }
@@ -101,14 +101,14 @@ export const FavoriteBase: React.FC<Props> = ({
         </InlineFlex>
       )}
       <FavoriteMenuItems
-        favouriteSets={favorites || []}
+        favoriteSets={favorites || []}
         itemExistsInSets={itemExistsInSets}
-        handleSelectFavourite={(item) => handleSelectFavourite(item.id)}
+        handleSelectFavorite={(item) => handleSelectFavorite(item.id)}
       />
       {favorites && favorites.length > 0 && (
         <Menu.Divider data-testid="menu-divider" />
       )}
-      <Menu.Item onClick={handleOpenCreateFavourite}>
+      <Menu.Item onClick={handleOpenCreateFavorite}>
         <Icon type="PlusCompact" />
         {t(CREATE_NEW_SET)}
       </Menu.Item>

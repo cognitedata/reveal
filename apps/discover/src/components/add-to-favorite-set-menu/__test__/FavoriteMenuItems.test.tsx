@@ -6,10 +6,10 @@ import { testRenderer } from '__test-utils/renderer';
 import { FavoriteMenuItems, Props } from '../FavoriteMenuItems';
 
 describe('FavoriteMenuItems', () => {
-  const favouriteSets = [getMockFavoriteSummary()];
-  const handleSelectFavourite = jest.fn();
+  const favoriteSets = [getMockFavoriteSummary()];
+  const handleSelectFavorite = jest.fn();
 
-  const defaultProps: Props = { favouriteSets, handleSelectFavourite };
+  const defaultProps: Props = { favoriteSets, handleSelectFavorite };
 
   const defaultTestInit = async (viewProps: Props = defaultProps) =>
     testRenderer(FavoriteMenuItems, undefined, viewProps);
@@ -20,14 +20,20 @@ describe('FavoriteMenuItems', () => {
     expect(screen.getAllByText('Mock favorite').length).toEqual(1);
   });
 
-  it('should call `handleSelectFavourite` as expected', async () => {
-    const favouriteSet = favouriteSets[0];
+  it('should render menu items alphabetically', async () => {
     await defaultTestInit();
-    const favouriteListItem = screen.getAllByText('Mock favorite')[0];
 
-    expect(favouriteListItem).toHaveTextContent(favouriteSet.name);
+    expect(screen.getAllByText('Mock favorite').length).toEqual(1);
+  });
 
-    fireEvent.click(favouriteListItem);
-    expect(handleSelectFavourite).toBeCalledTimes(1);
+  it('should call `handleSelectFavorite` as expected', async () => {
+    const favoriteSet = favoriteSets[0];
+    await defaultTestInit();
+    const favoriteListItem = screen.getAllByText('Mock favorite')[0];
+
+    expect(favoriteListItem).toHaveTextContent(favoriteSet.name);
+
+    fireEvent.click(favoriteListItem);
+    expect(handleSelectFavorite).toBeCalledTimes(1);
   });
 });
