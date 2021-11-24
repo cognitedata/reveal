@@ -4,6 +4,7 @@ import { default as EmptyStateArrowIcon } from './EmptyStateArrowIcon.svg';
 import { default as KeyIcon } from './KeyIcon.svg';
 import { default as NumberIcon } from './NumberIcon.svg';
 import { default as StringIcon } from './StringIcon.svg';
+import { default as UnknownPrimaryKeyIcon } from './UnknownPrimaryKeyIcon.svg';
 
 const icons = {
   BooleanIcon,
@@ -12,6 +13,7 @@ const icons = {
   KeyIcon,
   NumberIcon,
   StringIcon,
+  UnknownPrimaryKeyIcon,
 };
 
 export type IconType = keyof typeof icons;
