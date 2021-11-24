@@ -101,7 +101,6 @@ const ModelSelectContainer = styled.div`
 const ModelSettingsContainer = styled.div`
   display: grid;
   width: 100%;
-  overflow-y: auto;
   background: white;
   padding-left: 15px;
   padding-bottom: 15px;
