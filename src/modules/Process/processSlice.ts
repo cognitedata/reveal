@@ -1,9 +1,7 @@
 import { createSelector, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   AnnotationJob,
-  ParamsObjectDetection,
-  ParamsOCR,
-  ParamsTagDetection,
+  DetectionModelParams,
   VisionAPIType,
 } from 'src/api/types';
 import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
@@ -30,8 +28,6 @@ export type JobState = AnnotationJob & {
 export type State = GenericTabularState & {
   fileIds: number[];
   showFileUploadModal: boolean;
-  selectedDetectionModels: Array<VisionAPIType>;
-  error?: string;
   files: {
     byId: Record<number, { jobIds: number[] }>;
     allIds: number[];
@@ -41,16 +37,14 @@ export type State = GenericTabularState & {
     byId: Record<number, JobState>;
     allIds: number[];
   };
-  detectionModelParameters: {
-    ocr: ParamsOCR;
-    tagDetection: ParamsTagDetection;
-    objectDetection: ParamsObjectDetection;
-  };
-  temporaryDetectionModelParameters: {
-    ocr: ParamsOCR;
-    tagDetection: ParamsTagDetection;
-    objectDetection: ParamsObjectDetection;
-  };
+  error?: string;
+  selectedDetectionModels: Array<VisionAPIType>;
+  availableDetectionModels: {
+    modelName: string;
+    type: VisionAPIType;
+    settings: DetectionModelParams;
+    unsavedSettings: DetectionModelParams;
+  }[];
   showExploreModal: boolean;
   showSummaryModal: boolean;
 };
@@ -65,6 +59,10 @@ const initialDetectionModelParameters = {
     assetSubtreeIds: [],
   },
   objectDetection: {
+    threshold: 0.8,
+  },
+  customModel: {
+    modelFile: undefined,
     threshold: 0.8,
   },
 };
@@ -83,8 +81,6 @@ const initialState: State = {
   isLoading: false,
   fileIds: [],
   showFileUploadModal: false,
-  selectedDetectionModels: [VisionAPIType.OCR],
-  error: undefined,
   files: {
     byId: {},
     allIds: [],
@@ -94,8 +90,28 @@ const initialState: State = {
     byId: {},
     allIds: [],
   },
-  detectionModelParameters: initialDetectionModelParameters,
-  temporaryDetectionModelParameters: initialDetectionModelParameters,
+  error: undefined,
+  selectedDetectionModels: [VisionAPIType.OCR],
+  availableDetectionModels: [
+    {
+      modelName: 'Text detection',
+      type: VisionAPIType.OCR,
+      settings: initialDetectionModelParameters.ocr,
+      unsavedSettings: initialDetectionModelParameters.ocr,
+    },
+    {
+      modelName: 'Asset tag detection',
+      type: VisionAPIType.TagDetection,
+      settings: initialDetectionModelParameters.tagDetection,
+      unsavedSettings: initialDetectionModelParameters.tagDetection,
+    },
+    {
+      modelName: 'Object detection',
+      type: VisionAPIType.ObjectDetection,
+      settings: initialDetectionModelParameters.objectDetection,
+      unsavedSettings: initialDetectionModelParameters.objectDetection,
+    },
+  ],
   showExploreModal: false,
   showSummaryModal: false,
 };
@@ -114,27 +130,69 @@ const processSlice = createGenericTabularDataSlice({
     ) {
       state.selectedDetectionModels = action.payload;
     },
-    setParamsOCR(state, action: PayloadAction<ParamsOCR>) {
-      state.temporaryDetectionModelParameters.ocr = action.payload;
-    },
-    setParamsTagDetection(state, action: PayloadAction<ParamsTagDetection>) {
-      state.temporaryDetectionModelParameters.tagDetection = action.payload;
-    },
-    setParamsObjectDetection(
+    setUnsavedDetectionModelSettings(
       state,
-      action: PayloadAction<ParamsObjectDetection>
+      action: PayloadAction<{
+        modelIndex: number;
+        params: DetectionModelParams;
+      }>
     ) {
-      state.temporaryDetectionModelParameters.objectDetection = action.payload;
+      const { params, modelIndex } = action.payload;
+      state.availableDetectionModels[modelIndex].unsavedSettings = params;
     },
     setDetectionModelParameters(state) {
-      state.detectionModelParameters = state.temporaryDetectionModelParameters;
+      state.availableDetectionModels.forEach((item) => {
+        item.settings = item.unsavedSettings;
+      });
     },
 
     revertDetectionModelParameters(state) {
-      state.temporaryDetectionModelParameters = state.detectionModelParameters;
+      state.availableDetectionModels.forEach((item) => {
+        item.unsavedSettings = item.settings;
+      });
     },
     resetDetectionModelParameters(state) {
-      state.temporaryDetectionModelParameters = initialDetectionModelParameters;
+      state.availableDetectionModels.forEach((item) => {
+        switch (item.type) {
+          case VisionAPIType.OCR:
+            item.unsavedSettings = initialDetectionModelParameters.ocr;
+            break;
+          case VisionAPIType.TagDetection:
+            item.unsavedSettings = initialDetectionModelParameters.tagDetection;
+            break;
+          case VisionAPIType.ObjectDetection:
+            item.unsavedSettings =
+              initialDetectionModelParameters.objectDetection;
+            break;
+          case VisionAPIType.CustomModel:
+            item.unsavedSettings = initialDetectionModelParameters.customModel;
+            break;
+        }
+      });
+    },
+    addToAvailableDetectionModels(state) {
+      const modelCount = state.availableDetectionModels.length;
+      const builtinModelCount = 3; // ocr, tag & objectdetection
+      const modelName =
+        modelCount - builtinModelCount
+          ? `Custom model (${modelCount - builtinModelCount})`
+          : 'Custom model';
+      state.availableDetectionModels.push({
+        modelName,
+        type: VisionAPIType.CustomModel,
+        settings: initialDetectionModelParameters.customModel,
+        unsavedSettings: initialDetectionModelParameters.customModel,
+      });
+    },
+    setCustomModelName(
+      state,
+      action: PayloadAction<{
+        modelIndex: number;
+        modelName: string;
+      }>
+    ) {
+      const { modelIndex, modelName } = action.payload;
+      state.availableDetectionModels[modelIndex].modelName = modelName;
     },
     removeJobById(state, action: PayloadAction<number>) {
       const existingJob = state.jobs.byId[action.payload];
@@ -277,12 +335,12 @@ export const {
   hideFileMetadata,
   showFileMetadata,
   setFocusedFileId,
-  setParamsOCR,
-  setParamsTagDetection,
-  setParamsObjectDetection,
+  setUnsavedDetectionModelSettings,
   setDetectionModelParameters,
   revertDetectionModelParameters,
   resetDetectionModelParameters,
+  setCustomModelName,
+  addToAvailableDetectionModels,
   setProcessViewFileUploadModalVisibility,
   setSelectFromExploreModalVisibility,
   setSummaryModalVisibility,
@@ -438,7 +496,11 @@ export const makeSelectAnnotationStatuses = () =>
       if (job.type === VisionAPIType.TagDetection) {
         annotationBadgeProps.tag = statusData;
       }
-      if (job.type === VisionAPIType.ObjectDetection) {
+      if (
+        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+          job.type
+        )
+      ) {
         annotationBadgeProps.objects = statusData;
         annotationBadgeProps.gdpr = statusData;
       }

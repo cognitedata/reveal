@@ -61,17 +61,20 @@ export const ModelTypeStyleMap = {
   [VisionAPIType.OCR]: ColorsOCR,
   [VisionAPIType.TagDetection]: ColorsTagDetection,
   [VisionAPIType.ObjectDetection]: ColorsObjectDetection,
+  [VisionAPIType.CustomModel]: ColorsObjectDetection, // custom models are regarded as object detection models
 };
 export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionAPIType.OCR]: 'Scan',
   [VisionAPIType.TagDetection]: 'ResourceAssets',
   [VisionAPIType.ObjectDetection]: 'Scan',
+  [VisionAPIType.CustomModel]: 'Scan',
 };
 
 export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationType } = {
   [VisionAPIType.OCR]: 'vision/ocr',
   [VisionAPIType.TagDetection]: 'vision/tagdetection',
   [VisionAPIType.ObjectDetection]: 'vision/objectdetection',
+  [VisionAPIType.CustomModel]: 'vision/custommodel',
 };
 
 export const AnnotationTypeModelTypeMap = {
@@ -352,8 +355,9 @@ export const getAnnotationsBadgeCounts = (annotations: VisionAnnotation[]) => {
 
     const objects = annotations.filter(
       (item) =>
-        item.modelType === VisionAPIType.ObjectDetection &&
-        item.label !== 'person'
+        [VisionAPIType.ObjectDetection, VisionAPIType.CustomModel].includes(
+          item.modelType
+        ) && item.label !== 'person'
     );
     annotationsBadgeProps.objects = objects.length;
     const counts = getAnnotationCounts(objects);
