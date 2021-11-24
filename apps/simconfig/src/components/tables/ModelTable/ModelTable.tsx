@@ -1,7 +1,7 @@
 import { MouseEvent, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Button, Table, TableRow } from '@cognite/cogs.js';
+import { Button, Table, TableRow, Tooltip } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
 import { PAGES } from 'pages/Menubar';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -18,6 +18,7 @@ import {
 } from 'store/file';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { forceDownloadDialog } from 'utils/fileDownload';
+import { CapitalizedLabel } from 'pages/elements';
 
 type ComponentProps = {
   data: FileInfoSerializable[];
@@ -115,7 +116,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     return {
       id: 'name',
       Header: 'Name',
-      accessor: (row: FileInfoSerializable) => row.metadata?.modelName,
+      accessor: (row: FileInfoSerializable) => row.metadata.modelName,
     };
   };
 
@@ -150,6 +151,9 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     },
     {
       ...getNameColumnDefinition(),
+      Filter: Table.InputFilter(),
+      filter: 'fuzzyText',
+      filterIcon: 'Search',
       Cell: ({ cell: { value } }: any) => <strong>{value}</strong>,
     },
     {
@@ -166,6 +170,27 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
       sortType: 'number',
       Cell: ({ cell: { value } }: any) => (
         <>{moment(value).format('YYYY-MM-DD HH:mm')}</>
+      ),
+    },
+    {
+      id: 'readStatus',
+      Header: 'Read Status',
+      accessor: (row: FileInfoSerializable) => row.metadata,
+      sortType: 'number',
+      Cell: ({ cell: { value } }: any) => (
+        <>
+          {!value.errorMessage ? (
+            <CapitalizedLabel size="medium" variant="success">
+              OK
+            </CapitalizedLabel>
+          ) : (
+            <Tooltip content={value.errorMessage}>
+              <CapitalizedLabel size="medium" variant="danger">
+                Error
+              </CapitalizedLabel>
+            </Tooltip>
+          )}
+        </>
       ),
     },
     {
@@ -214,6 +239,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
         'name',
         'version',
         'updated',
+        'readStatus',
         'download',
         'calculations',
       ],
@@ -222,6 +248,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
         'userEmail',
         'description',
         'updated',
+        'readStatus',
         'download',
       ],
     };
