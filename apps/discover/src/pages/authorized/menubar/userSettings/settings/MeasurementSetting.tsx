@@ -13,7 +13,7 @@ interface Props {
 }
 export const MeasurementSetting: React.FC<Props> = ({ onTabClick }) => {
   const { t } = useTranslation();
-  const preferredMeasurement = useUserPreferencesMeasurement(false);
+  const preferredMeasurement = useUserPreferencesMeasurement();
 
   return (
     <SettingsItem>

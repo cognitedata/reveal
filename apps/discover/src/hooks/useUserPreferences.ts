@@ -1,13 +1,14 @@
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
+import { UserPrefferedUnit } from 'constants/units';
 import { useUserPreferencesQuery } from 'modules/userManagementService/query';
 
-export const useUserPreferencesMeasurement = (mapToDiscoverUnits = true) => {
+export const useUserPreferencesMeasurement = () => {
   const { data } = useUserPreferencesQuery();
   const unit =
     data?.preferences?.measurement ||
     UMSUserProfilePreferences.MeasurementEnum.Feet;
-  return mapToDiscoverUnits ? mapMeasurementEnumToDiscoverUnit(unit) : unit;
+  return mapMeasurementEnumToDiscoverUnit(unit);
 };
 
 const mapMeasurementEnumToDiscoverUnit = (
@@ -15,9 +16,9 @@ const mapMeasurementEnumToDiscoverUnit = (
 ) => {
   switch (fromUnit) {
     case UMSUserProfilePreferences.MeasurementEnum.Feet:
-      return 'ft';
+      return UserPrefferedUnit.FEET;
     case UMSUserProfilePreferences.MeasurementEnum.Meter:
-      return 'm';
+      return UserPrefferedUnit.METER;
     default: {
       throw new Error(`Unit: ${fromUnit}, is not supported`);
     }

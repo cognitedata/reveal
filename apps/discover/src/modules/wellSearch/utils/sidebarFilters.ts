@@ -1,3 +1,6 @@
+import head from 'lodash/head';
+import last from 'lodash/last';
+
 import {
   LengthUnitEnum,
   MeasurementType,
@@ -5,7 +8,7 @@ import {
 } from '@cognite/sdk-wells-v2';
 
 import { endOf, startOf } from '_helpers/date';
-import { FEET } from 'constants/units';
+import { FEET, UserPrefferedUnit } from 'constants/units';
 import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
 import { WellConfig } from 'tenants/types';
 
@@ -34,12 +37,29 @@ import {
   FilterConfigMap,
   FilterTypes,
 } from '../types';
-import { getWaterDepthLimitsInUnit, processSpudDateLimits } from '../utils';
+import {
+  getWaterDepthLimitsInUnit,
+  processSpudDateLimits,
+  getRangeLimitInUnit,
+} from '../utils';
 
 const wellFilterFetchers = getWellFilterFetchers();
 
+const DEFAULT_MIN_LIMIT = 0;
+const DEFAULT_MAX_LIMIT = 0;
+
+const getLimitRangeInUserPreferredUnit = (
+  limitRange: number[],
+  unit: UserPrefferedUnit
+) =>
+  getRangeLimitInUnit(
+    head(limitRange) || DEFAULT_MIN_LIMIT,
+    last(limitRange) || DEFAULT_MAX_LIMIT,
+    unit
+  );
+
 export const filterConfigs = (
-  unit = FEET,
+  unit = UserPrefferedUnit.FEET,
   wellConfig: WellConfig = {}
 ): FilterConfig[] => [
   {
@@ -117,7 +137,10 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.kb_elevation',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: wellFilterFetchers?.kbLimits,
+    fetcher: () =>
+      wellFilterFetchers
+        ?.kbLimits()
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
     filterParameters: (values): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxMeasuredDepth: {
@@ -135,7 +158,10 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.md',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: wellFilterFetchers?.mdLimits,
+    fetcher: () =>
+      wellFilterFetchers
+        ?.mdLimits()
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
     filterParameters: (values): WellFilter => ({
       hasTrajectory: {
         maxMeasuredDepth: {
@@ -152,7 +178,10 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.tvd',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: wellFilterFetchers?.tvdLimits,
+    fetcher: () =>
+      wellFilterFetchers
+        ?.tvdLimits()
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
     filterParameters: (values): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxTrueVerticalDepth: {
@@ -167,14 +196,17 @@ export const filterConfigs = (
   {
     id: FilterIDs.DOG_LEG_SEVERITY,
     name: `Dogleg Severity (Degree/ ${
-      unit === 'ft'
+      unit === FEET
         ? wellConfig.well_characteristics_filter?.dls?.feetDistanceInterval
         : wellConfig.well_characteristics_filter?.dls?.meterDistanceInterval
     } ${unit})`,
     key: 'well_characteristics_filter.dls',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: wellFilterFetchers?.dogLegSeverityLimts,
+    fetcher: () =>
+      wellFilterFetchers
+        ?.dogLegSeverityLimts()
+        .then((response) => getLimitRangeInUserPreferredUnit(response, unit)),
     filterParameters: (values): FiltersOnlySupportSdkV3 => ({
       trajectories: {
         maxDoglegSeverity: {
@@ -184,7 +216,7 @@ export const filterConfigs = (
             angleUnit: 'degree',
             distanceUnit: unitToLengthUnitEnum(unit),
             distanceInterval:
-              unit === 'ft'
+              unit === FEET
                 ? wellConfig.well_characteristics_filter?.dls
                     ?.feetDistanceInterval
                 : wellConfig.well_characteristics_filter?.dls

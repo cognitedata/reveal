@@ -1,6 +1,9 @@
+import { UserPrefferedUnit } from 'constants/units';
 import { filterConfigs } from 'modules/wellSearch/utils/sidebarFilters';
 
-export function getFilterOptions(prefferedUnit: string): Promise<any> {
+export function getFilterOptions(
+  prefferedUnit: UserPrefferedUnit
+): Promise<any> {
   const filterFetchers = filterConfigs(prefferedUnit).filter(
     (filterConfig) => filterConfig.fetcher
   );

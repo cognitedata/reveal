@@ -6,3 +6,8 @@ export const METER = 'm';
 export const FEET = 'ft';
 export const MILLIMETER = 'mm';
 export const CENTIMETER = 'cm';
+
+export enum UserPrefferedUnit {
+  FEET = 'ft',
+  METER = 'm',
+}

@@ -17,8 +17,10 @@ import { UnitConverterItem } from '_helpers/units/interfaces';
 import {
   changeUnit,
   changeUnits as changeSomeUnits,
+  changeUnitTo,
 } from '_helpers/units/utils';
 import { TableResults } from 'components/tablev2';
+import { FEET, UserPrefferedUnit } from 'constants/units';
 import { proj4Defs } from 'modules/map/proj4Defs';
 import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/modules/events/common';
 
@@ -180,6 +182,18 @@ export const getWaterDepthLimitsInUnit = (
   const min = changeUnit(waterDepthLimits.min, config).value;
   const max = changeUnit(waterDepthLimits.max, config).value;
   return [Math.floor(min), Math.ceil(max)];
+};
+
+export const getRangeLimitInUnit = (
+  limitMin: number,
+  limitMax: number,
+  preferredUnit: UserPrefferedUnit
+) => {
+  if (preferredUnit === FEET) return [limitMin, limitMax];
+  return [
+    Math.floor(changeUnitTo(limitMin, FEET, preferredUnit) || 0),
+    Math.ceil(changeUnitTo(limitMax, FEET, preferredUnit) || 0),
+  ];
 };
 
 export const processSpudDateLimits = (spudDateLimits: SpudDateLimits) => {
