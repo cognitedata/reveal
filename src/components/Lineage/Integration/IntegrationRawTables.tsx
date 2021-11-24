@@ -13,7 +13,8 @@ import {
   LineageTitle,
 } from 'utils/styledComponents';
 import { rawTablesColumnsWithIntegration } from 'components/Lineage/rawTableColumns';
-import { DataSet, Integration, RawTable } from 'utils/types';
+import { Integration, RawTable } from 'utils/types';
+import { DataSetWithIntegrations } from 'actions';
 import { getContainer } from 'utils/utils';
 import {
   combineDataSetAndIntegrationsRawTables,
@@ -26,7 +27,7 @@ export interface RawIntegrationWithUpdateTime extends RawTable {
 }
 
 interface IntegrationRawTablesProps {
-  dataSet?: DataSet;
+  dataSet?: DataSetWithIntegrations;
 }
 
 export const IntegrationRawTables: FunctionComponent<IntegrationRawTablesProps> =
@@ -35,7 +36,8 @@ export const IntegrationRawTables: FunctionComponent<IntegrationRawTablesProps> 
     const [loadingRaw, setLoadingRaw] = useState<boolean>(true);
 
     const getRawTableIntegrationLastUpdateTime = useCallback(async () => {
-      const combinedRaws = combineDataSetAndIntegrationsRawTables(dataSet);
+      const combinedRaws =
+        dataSet != null ? combineDataSetAndIntegrationsRawTables(dataSet) : [];
       const rawTables = await Promise.all(
         combinedRaws.map(updateRawTableWithLastUpdate)
       );

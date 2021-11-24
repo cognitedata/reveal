@@ -34,7 +34,6 @@ export interface DataSetV3 {
     transformations?: TransformationDetails[];
     consoleAdditionalDocs: Documentation[];
     consumers?: Consumer[];
-    integrations?: Integration[];
   };
   id: number;
   createdTime: number;

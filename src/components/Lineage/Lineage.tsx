@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { DataSet, RawTable } from 'utils/types';
+import { RawTable } from 'utils/types';
 import Table from 'antd/lib/table';
 import Spin from 'antd/lib/spin';
 import Timeline from 'antd/lib/timeline';
@@ -28,18 +28,19 @@ import {
   EXTRACTOR_TEXT,
 } from 'components/Lineage/Extractor/Extractor';
 import * as Sentry from '@sentry/browser';
+import { DataSetWithIntegrations } from 'actions';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
 interface LineageProps {
-  dataSet?: DataSet;
+  dataSetWithIntegrations?: DataSetWithIntegrations;
 }
 
 export interface RawWithUpdateTime extends RawTable {
   lastUpdate: string;
 }
 
-const Lineage = ({ dataSet }: LineageProps) => {
+const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
@@ -53,8 +54,10 @@ const Lineage = ({ dataSet }: LineageProps) => {
   }, []);
 
   const getExternalTransformations = () => {
-    if (dataSet && Array.isArray(dataSet.metadata.transformations)) {
-      const externalTransformation = dataSet.metadata.transformations.filter(
+    const transformations =
+      dataSetWithIntegrations?.dataSet.metadata.transformations;
+    if (Array.isArray(transformations)) {
+      const externalTransformation = transformations.filter(
         (trans) => trans.type === 'external'
       );
 
@@ -78,7 +81,7 @@ const Lineage = ({ dataSet }: LineageProps) => {
         includePublic: true,
       });
       const jetfiretransformations =
-        dataSet?.metadata?.transformations?.filter(
+        dataSetWithIntegrations?.dataSet?.metadata?.transformations?.filter(
           (tr) => tr.type === 'jetfire'
         ) || [];
       const mappedTransformations = jetfiretransformations.map(
@@ -111,23 +114,24 @@ const Lineage = ({ dataSet }: LineageProps) => {
         });
       }
     }
-  }, [dataSet]);
+  }, [dataSetWithIntegrations]);
 
   useEffect(() => {
     getTransformations();
   }, [getTransformations]);
 
-  if (dataSet && dataSet.metadata) {
-    const { names: sourceNames } = dataSet.metadata.consoleSource || [];
+  if (dataSetWithIntegrations) {
+    const { dataSet } = dataSetWithIntegrations;
+    const sourceNames = dataSet.metadata.consoleSource?.names;
     const extractorAccounts =
       dataSet.metadata.consoleExtractors &&
       Array.isArray(dataSet.metadata.consoleExtractors.accounts)
         ? dataSet.metadata.consoleExtractors.accounts
         : [];
     const usedTransformations =
-      dataSet.metadata.transformations &&
+      Array.isArray(dataSet.metadata.transformations) &&
       dataSet.metadata.transformations.length;
-    const hasSources = sourceNames != null && sourceNames.length >= 1;
+    const hasSources = Array.isArray(sourceNames) && sourceNames.length >= 1;
     const hasExtractorAccounts =
       extractorAccounts != null && extractorAccounts.length >= 1;
     return (
@@ -148,11 +152,11 @@ const Lineage = ({ dataSet }: LineageProps) => {
             </Timeline.Item>
           ) : null}
           <IntegrationTable
-            dataSet={dataSet}
+            dataSetWithIntegrations={dataSetWithIntegrations}
             extractorAccounts={extractorAccounts}
             sourceNames={sourceNames}
           />
-          <IntegrationRawTables dataSet={dataSet} />
+          <IntegrationRawTables dataSet={dataSetWithIntegrations} />
           {usedTransformations && (
             <Timeline.Item dot={<LineageDot />}>
               <LineageTitle>Transformations</LineageTitle>
@@ -169,7 +173,9 @@ const Lineage = ({ dataSet }: LineageProps) => {
                 </NoDataText>
               ) : (
                 <Table
-                  columns={transformationsColumns(dataSet)}
+                  columns={transformationsColumns(
+                    dataSetWithIntegrations.dataSet
+                  )}
                   dataSource={transformationsData}
                   pagination={{ pageSize: 5 }}
                   rowKey="id"
@@ -179,7 +185,9 @@ const Lineage = ({ dataSet }: LineageProps) => {
               {getExternalTransformations()}
             </Timeline.Item>
           )}
-          {isFlagConsumers && <ConsumerTable dataSet={dataSet} />}
+          {isFlagConsumers && (
+            <ConsumerTable dataSet={dataSetWithIntegrations.dataSet} />
+          )}
         </Timeline>
       </ContentView>
     );

@@ -20,7 +20,10 @@ import notification from 'antd/lib/notification';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { useDataSet, useUpdateDataSetVisibility } from '../../actions/index';
+import {
+  useDataSetWithIntegrations,
+  useUpdateDataSetVisibility,
+} from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
 
 const { TabPane } = Tabs;
@@ -37,7 +40,12 @@ const DataSetDetails = (): JSX.Element => {
 
   const { dataSetId } = useParams<DataSetDetailsRouteParams>();
 
-  const { dataSet, isLoading: loading, error } = useDataSet(Number(dataSetId));
+  const {
+    dataSetWithIntegrations,
+    isLoading: loading,
+    error,
+  } = useDataSetWithIntegrations(Number(dataSetId));
+  const dataSet = dataSetWithIntegrations?.dataSet;
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
@@ -201,7 +209,9 @@ const DataSetDetails = (): JSX.Element => {
                     />
                   </TabPane>
                   <TabPane tab="LINEAGE" key="2">
-                    <Lineage dataSet={dataSet} />
+                    <Lineage
+                      dataSetWithIntegrations={dataSetWithIntegrations}
+                    />
                   </TabPane>
                   <TabPane tab="DOCUMENTATION" key="3">
                     <DocumentationsTab dataSet={dataSet} />
