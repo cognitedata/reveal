@@ -202,6 +202,10 @@ export const LineageTitle = styled.h5`
 
 export const LineageSubTitle = styled.p`
   font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
 `;
 
 export const LineageTag = styled(Tag)`
