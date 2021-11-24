@@ -18,7 +18,12 @@ describe('CadMaterialManager', () => {
   let manager: CadMaterialManager;
 
   beforeEach(() => {
+    jest.useFakeTimers();
     manager = new CadMaterialManager();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   test('addModelMaterials creates material and initializes collections for model', () => {
@@ -62,6 +67,7 @@ describe('CadMaterialManager', () => {
     manager.on('materialsChanged', listener);
 
     provider.assignStyledNodeCollection(new TreeIndexNodeCollection(new IndexSet([1, 2, 3])), { renderGhosted: true });
+    jest.runAllTimers();
 
     expect(manager.getModelBackTreeIndices('model')).toEqual(new IndexSet([0, 4]));
     expect(manager.getModelGhostedTreeIndices('model')).toEqual(new IndexSet([1, 2, 3]));
