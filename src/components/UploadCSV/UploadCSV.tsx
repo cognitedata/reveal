@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import uuid from 'uuid';
-import PapaParse from 'papaparse';
-
+import { UploadChangeParam } from 'antd/lib/upload';
 import {
   notification,
   Progress,
@@ -13,14 +11,12 @@ import {
   Upload,
 } from 'antd';
 
-import { UploadChangeParam } from 'antd/lib/upload';
-
 import { Icon } from '@cognite/cogs.js';
-import { trackEvent } from '@cognite/cdf-route-tracker';
 import styled from 'styled-components';
-import { getContainer, sleep } from 'utils/utils';
-import { useSDK } from '@cognite/sdk-provider';
-import { useActiveTableContext } from 'contexts';
+import { getContainer } from 'utils/utils';
+
+import { useTableData } from 'hooks/table-data';
+import { useCSVUpload } from 'hooks/csv-upload';
 
 const { Dragger } = Upload;
 
@@ -29,123 +25,27 @@ interface UploadCsvProps {
 }
 
 const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
-  const sdk = useSDK();
-  const { database, table } = useActiveTableContext();
   const [file, setFile] = useState<File | undefined>();
-  const [upload, setUpload] = useState(false);
-  const [complete, setComplete] = useState(false);
-  const [networkError, setNetworkError] = useState(false);
-  const [columns, setColumns] = useState<string[] | undefined>();
-
+  const { columns } = useTableData();
   const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
-  const [parser, setParser] = useState<PapaParse.Parser | undefined>();
-  const [uploadedCursor, setUploadedCursor] = useState(0);
-  const [parsedCursor, setParsedCursor] = useState(0);
-
-  useEffect(
-    () => () => {
-      if (parser) {
-        parser.abort();
-      }
-    },
-    [parser]
-  );
-
-  useEffect(() => {
-    if (complete) {
-      if (file) {
-        if (networkError) {
-          notification.error({
-            message: `${file.name} is not uploaded!`,
-            key: 'file-upload',
-          });
-        } else {
-          notification.success({
-            message: `${file.name} is uploaded!`,
-            key: 'file-upload',
-          });
-        }
-      }
-    }
-  }, [complete, file, networkError]);
-
-  useEffect(() => {
-    if (file) {
-      PapaParse.parse(file, {
-        step(result, _parser) {
-          setColumns(result.data as string[]);
-          _parser.abort();
-        },
-        complete: () => {},
-      });
-    }
-  }, [file]);
-
-  useEffect(() => {
-    if (file && upload) {
-      PapaParse.parse<any>(file, {
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        chunk(results, _parser) {
-          setParser(_parser);
-          _parser.pause();
-          setParsedCursor(results.meta.cursor);
-          const items = new Array(results.data.length);
-          results.data.forEach((row: string[], rowIndex) => {
-            const rowcolumns: any = {};
-            columns?.forEach((column, index) => {
-              rowcolumns[column] = row[index];
-            });
-            items[rowIndex] = {
-              key:
-                selectedKeyIndex === -1
-                  ? uuid()
-                  : row[selectedKeyIndex].toString(),
-              columns: rowcolumns,
-            };
-          });
-
-          sdk.raw
-            .insertRows(database, table, items)
-            .then(() => {
-              setUploadedCursor(results.meta.cursor);
-            })
-            // Keep the main thread "open" to render progress before continuing parsing the file
-            .then(() => sleep(250))
-            .then(() => _parser.resume())
-            .catch(() => {
-              setNetworkError(true);
-            });
-        },
-        beforeFirstChunk(chunk) {
-          return chunk.split('\n').splice(1).join('\n');
-        },
-
-        error() {
-          notification.error({
-            message: `${file.name} could not be parsed!`,
-            key: 'file-upload',
-          });
-        },
-        complete() {
-          setComplete(true);
-        },
-      });
-    }
-  }, [file, upload, columns, selectedKeyIndex, database, table]);
-
-  const saveDataToApi = async () => {
-    trackEvent('RAW.Explorer.CSVUpload.Upload');
-    setUpload(true);
-  };
+  const {
+    parsePercentage,
+    uploadPercentage,
+    uploadSize,
+    columnHeaders,
+    isUpload,
+    isUploadFinished,
+    isParsing,
+    onConfirmUpload,
+  } = useCSVUpload(file, selectedKeyIndex);
 
   const checkAndReturnCols = () => {
-    if (columns && columns.length > 0) {
+    if (columnHeaders && columnHeaders.length > 0) {
       return (
         <div>
-          {columns.map((col) => (
-            <Tag style={{ margin: '5px' }} key={col}>
-              {col}
+          {columnHeaders.map((header: string) => (
+            <Tag style={{ margin: '5px' }} key={header}>
+              {header}
             </Tag>
           ))}
           <div style={{ marginTop: '20px' }}>
@@ -161,9 +61,9 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
               <Select.Option value="-1" key="-1">
                 Generate a new Key Column
               </Select.Option>
-              {columns.map((col, index) => (
+              {columnHeaders.map((header: string, index: number) => (
                 <Select.Option key={String(index)} value={String(index)}>
-                  {col}
+                  {header}
                 </Select.Option>
               ))}
             </Select>
@@ -194,17 +94,15 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const renderModalContent = () => {
     if (file) {
-      if (upload) {
+      if (isUpload) {
         return (
           <ContentWrapper>
             <p> Uploading csv...</p>
             <Progress
               type="line"
-              percent={Math.floor((parsedCursor / file.size) * 100)}
-              success={{
-                percent: Math.floor((uploadedCursor / file.size) * 100),
-              }}
-              format={() => `${Math.floor(uploadedCursor / 2 ** 20)}MB`}
+              percent={parsePercentage}
+              success={{ percent: uploadPercentage }}
+              format={() => `${uploadSize}MB`}
             />
           </ContentWrapper>
         );
@@ -242,19 +140,19 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
       visible
       title="Upload CSV file"
       onCancel={() => {
-        if (file && parser && !complete) {
+        if (file && isParsing && !isUploadFinished) {
           notification.info({
             message: `File upload was canceled.`,
             key: 'file-upload',
           });
         }
-        setCSVModalVisible(false, upload);
+        setCSVModalVisible(false, isUpload);
       }}
       okText="Confirm Upload"
-      onOk={() => saveDataToApi()}
+      onOk={onConfirmUpload}
       okButtonProps={{
-        loading: upload,
-        disabled: !file || upload,
+        loading: isUpload,
+        disabled: !file || isUpload,
       }}
       getContainer={getContainer}
     >
