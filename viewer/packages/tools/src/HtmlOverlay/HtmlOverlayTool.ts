@@ -92,8 +92,8 @@ type HtmlOverlayElement = {
 };
 
 /**
- * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
- * 3D position and updates its position/visibility as user moves the camera. This is 
+ * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+ * 3D position and updates its position/visibility as user moves the camera. This is
  * useful to create HTML overlays to highlight information about key positions in the 3D model.
  *
  * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
@@ -123,7 +123,7 @@ type HtmlOverlayElement = {
  * overlayTool.remove(el);
  * // or, to remove all attached elements
  * overlayTool.clear();
- 
+ *
  * // detach the tool from the viewer
  * overlayTool.dispose();
  * ```
@@ -202,7 +202,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * @param position3D
    * @param options
    */
-  add(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}) {
+  add(htmlElement: HTMLElement, position3D: THREE.Vector3, options: HtmlOverlayOptions = {}): void {
     this.ensureNotDisposed();
 
     if (this.viewerDomElement.contains(htmlElement)) {
@@ -238,7 +238,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
    * Removes a overlay and removes it from the DOM.
    * @param htmlElement
    */
-  remove(htmlElement: HTMLElement) {
+  remove(htmlElement: HTMLElement): void {
     this.ensureNotDisposed();
     if (!this.viewerDomElement.contains(htmlElement) || !this._htmlOverlays.has(htmlElement)) {
       throw new Error(`Element is not attached to viewer`);
@@ -250,7 +250,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   /**
    * Removes all attached HTML overlay elements.
    */
-  clear() {
+  clear(): void {
     const overlays = Array.from(this._htmlOverlays.keys());
     for (const element of overlays) {
       this.remove(element);

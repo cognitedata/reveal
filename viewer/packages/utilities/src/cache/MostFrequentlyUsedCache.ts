@@ -49,7 +49,7 @@ export class MostFrequentlyUsedCache<TKey, TValue> {
     return false;
   }
 
-  clear() {
+  clear(): void {
     if (this._disposeCallback !== undefined) {
       for (const value of this._cache.values()) {
         this._disposeCallback(value);

@@ -58,7 +58,11 @@ export class RevealManagerHelper {
    * @param scene
    * @param revealOptions
    */
-  static createLocalHelper(renderer: THREE.WebGLRenderer, scene: THREE.Scene, revealOptions: RevealOptions) {
+  static createLocalHelper(
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    revealOptions: RevealOptions
+  ): RevealManagerHelper {
     const revealManager = createLocalRevealManager(renderer, scene, revealOptions);
     return new RevealManagerHelper('local', revealManager);
   }
@@ -75,7 +79,7 @@ export class RevealManagerHelper {
     scene: THREE.Scene,
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
-  ) {
+  ): RevealManagerHelper {
     const revealManager = createCdfRevealManager(sdkClient, renderer, scene, revealOptions);
     return new RevealManagerHelper('cdf', revealManager);
   }
@@ -85,7 +89,7 @@ export class RevealManagerHelper {
     scene: THREE.Scene,
     revealOptions: RevealOptions,
     dataSource: DataSource
-  ) {
+  ): RevealManagerHelper {
     const revealManager = createRevealManager(
       'custom-datasource',
       'custom-datasource-app',

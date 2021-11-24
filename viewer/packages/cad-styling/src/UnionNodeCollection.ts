@@ -26,7 +26,7 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
     };
   }
 
-  protected createCombinedIndexSet() {
+  protected createCombinedIndexSet(): IndexSet {
     if (this._nodeCollections.length === 0) {
       return new IndexSet();
     }

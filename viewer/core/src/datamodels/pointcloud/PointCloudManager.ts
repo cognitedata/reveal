@@ -61,7 +61,7 @@ export class PointCloudManager {
     return this._pointCloudGroupWrapper.getLoadingStateObserver();
   }
 
-  updateCamera(_camera: THREE.PerspectiveCamera) {}
+  updateCamera(_camera: THREE.PerspectiveCamera): void {}
 
   async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);

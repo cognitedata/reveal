@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-export function isMobileOrTablet() {
+export function isMobileOrTablet(): boolean {
   // https://stackoverflow.com/a/11381730/167251
   let check = false;
   (a => {

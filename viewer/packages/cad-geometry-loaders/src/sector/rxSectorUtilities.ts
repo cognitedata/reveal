@@ -6,7 +6,7 @@ import { LevelOfDetail } from '@reveal/cad-parsers';
 
 import { DetermineSectorsInput } from './culling/types';
 
-export function loadingEnabled({ cadModelsMetadata, loadingHints }: DetermineSectorsInput) {
+export function loadingEnabled({ cadModelsMetadata, loadingHints }: DetermineSectorsInput): boolean {
   return cadModelsMetadata.length > 0 && loadingHints.suspendLoading !== true;
 }
 
