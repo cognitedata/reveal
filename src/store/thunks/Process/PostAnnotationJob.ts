@@ -68,7 +68,10 @@ export const postAnnotationJob = createAsyncThunk<
 
             if (newCompeletedFileIds.length) {
               await dispatch(
-                RetrieveAnnotations({ fileIds: newCompeletedFileIds })
+                RetrieveAnnotations({
+                  fileIds: newCompeletedFileIds,
+                  clearCache: false,
+                })
               );
             }
             // TODO: use failed job information

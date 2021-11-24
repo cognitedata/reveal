@@ -11,6 +11,11 @@ export const UpdateFiles = createAsyncThunk<
   ThunkConfig
 >('updateFiles', async (params, { dispatch }) => {
   const files = await sdk.files.update(params);
-  dispatch(RetrieveAnnotations({ fileIds: files.map((file) => file.id) }));
+  dispatch(
+    RetrieveAnnotations({
+      fileIds: files.map((file) => file.id),
+      clearCache: false,
+    })
+  );
   return files.map((fileInfo) => createFileState(fileInfo));
 });
