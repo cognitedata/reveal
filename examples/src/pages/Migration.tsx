@@ -466,7 +466,7 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
       });
-      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
       });
   

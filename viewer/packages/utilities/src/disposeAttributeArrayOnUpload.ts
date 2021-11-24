@@ -13,6 +13,6 @@
  * const colors = new THREE.Float32BufferAttribute(mesh.colors.buffer, 3).onUpload(disposeAttributeArrayOnUpload);
  * const treeIndices = new THREE.Float32BufferAttribute(mesh.treeIndices.buffer, 1).onUpload(disposeAttributeArrayOnUpload);
  */
-export function disposeAttributeArrayOnUpload(this: { array: ArrayLike<number> }) {
+export function disposeAttributeArrayOnUpload(this: { array: ArrayLike<number> }): void {
   (this.array as ArrayLike<number> | null) = null;
 }

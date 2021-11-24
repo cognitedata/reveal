@@ -10,7 +10,7 @@ export class LeafIndexNode {
   readonly count: number;
   readonly maxSubtreeDepth: number;
 
-  static fromInterval(begin: number, endInclusive: number) {
+  static fromInterval(begin: number, endInclusive: number): LeafIndexNode {
     return new LeafIndexNode(NumericRange.createFromInterval(begin, endInclusive));
   }
 
@@ -20,7 +20,7 @@ export class LeafIndexNode {
     this.count = range.count;
   }
 
-  traverse(visitor: (range: NumericRange) => void) {
+  traverse(visitor: (range: NumericRange) => void): void {
     visitor(this.range);
   }
 

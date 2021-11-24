@@ -199,7 +199,7 @@ export class NodeIdAndTreeIndexMaps {
     return mapped;
   }
 
-  add(nodeId: number, treeIndex: number) {
+  add(nodeId: number, treeIndex: number): void {
     this.nodeIdToTreeIndexMap.set(nodeId, treeIndex);
     this.treeIndexToNodeIdMap.set(treeIndex, nodeId);
   }

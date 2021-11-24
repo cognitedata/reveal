@@ -28,7 +28,7 @@ export function lastIndexOf<T>(
   value: number,
   firstSearchIndex: number,
   elementValueOf: (element: T) => number
-) {
+): number {
   let low = firstSearchIndex;
   let high = sortedArray.length - 1;
   let res = sortedArray.length;
