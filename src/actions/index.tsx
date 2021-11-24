@@ -197,12 +197,17 @@ export const useDataSetsList = (): {
         .list()
         .autoPagingToArray({ limit: -1 });
       if (withIntegrations) {
-        const integrations = await sdk.get(
-          getExtractionPipelineApiUrl(sdk.project),
-          {
-            withCredentials: true,
-          }
-        );
+        let integrations;
+        try {
+          integrations = await sdk.get(
+            getExtractionPipelineApiUrl(sdk.project),
+            {
+              withCredentials: true,
+            }
+          );
+        } catch {
+          integrations = {};
+        }
         return mapDataSetIntegration(
           parseDataSetsList(newDataSets),
           integrations?.data?.items ?? []
