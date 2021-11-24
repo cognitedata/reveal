@@ -1,24 +1,34 @@
 import React from 'react';
 
+import { Body, Colors, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { CustomIcon } from 'components/CustomIcon';
-import { Body, Colors, Overline } from '@cognite/cogs.js';
+import Message from 'components/Message/Message';
 
 const CreateTableModalUploadStep = (): JSX.Element => {
   return (
-    <StyledUploadStepWrapper>
-      <CustomIcon icon="DocumentIcon" style={{ height: 40, marginRight: 16 }} />
-      <StyledProgressionWrapper>
-        <StyledProgressionInfo>
-          <StyledFileName level={3} strong>
-            Coruscant.csv
-          </StyledFileName>
-          <StyledUploadPercentage level={3}>60%</StyledUploadPercentage>
-        </StyledProgressionInfo>
-        <StyledProgressionBar />
-      </StyledProgressionWrapper>
-    </StyledUploadStepWrapper>
+    <>
+      <Message
+        message="Please keep this window open to complete the upload."
+        type="info"
+      />
+      <StyledUploadStepWrapper>
+        <CustomIcon
+          icon="DocumentIcon"
+          style={{ height: 40, marginRight: 16 }}
+        />
+        <StyledProgressionWrapper>
+          <StyledProgressionInfo>
+            <StyledFileName level={3} strong>
+              Coruscant.csv
+            </StyledFileName>
+            <StyledUploadPercentage level={3}>60%</StyledUploadPercentage>
+          </StyledProgressionInfo>
+          <StyledProgressionBar />
+        </StyledProgressionWrapper>
+      </StyledUploadStepWrapper>
+    </>
   );
 };
 
@@ -27,6 +37,7 @@ const StyledUploadStepWrapper = styled.div`
   border: 1px solid ${Colors['border-default']};
   border-radius: 6px;
   display: flex;
+  margin-top: 16px;
   padding: 16px;
 `;
 

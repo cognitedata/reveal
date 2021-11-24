@@ -172,34 +172,38 @@ const CreateTableModal = ({
 
   return (
     <Modal
-      footer={[
-        <StyledCancelButton onClick={onCancel} type="ghost">
-          Cancel
-        </StyledCancelButton>,
-        ...(selectedCreationMode === CreationMode.Empty
+      footer={
+        createTableModalStep !== CreateTableModalStep.Upload
           ? [
-              <Button
-                disabled={isCreationDisabled}
-                loading={isCreatingTable}
-                onClick={handleCreate}
-                type="primary"
-              >
-                Create
-              </Button>,
+              <StyledCancelButton onClick={onCancel} type="ghost">
+                Cancel
+              </StyledCancelButton>,
+              ...(selectedCreationMode === CreationMode.Empty
+                ? [
+                    <Button
+                      disabled={isCreationDisabled}
+                      loading={isCreatingTable}
+                      onClick={handleCreate}
+                      type="primary"
+                    >
+                      Create
+                    </Button>,
+                  ]
+                : []),
+              ...(selectedCreationMode === CreationMode.Upload
+                ? [
+                    <Button
+                      disabled={isUploadDisabled}
+                      onClick={handleUpload}
+                      type="primary"
+                    >
+                      Upload
+                    </Button>,
+                  ]
+                : []),
             ]
-          : []),
-        ...(selectedCreationMode === CreationMode.Upload
-          ? [
-              <Button
-                disabled={isUploadDisabled}
-                onClick={handleUpload}
-                type="primary"
-              >
-                Upload
-              </Button>,
-            ]
-          : []),
-      ]}
+          : null
+      }
       onCancel={onCancel}
       title={<Title level={5}>Create table</Title>}
       visible={visible}
