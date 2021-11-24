@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Title, Flex } from '@cognite/cogs.js';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -15,6 +16,7 @@ import { SolutionsState } from '../redux/store';
 import { DeleteSolution } from '../DeleteSolution';
 
 export const SolutionsList = () => {
+  const history = useHistory();
   const { t } = useTranslation('solutions');
 
   const [solutionToDelete, setSolutionToDelete] = useState<
@@ -46,6 +48,11 @@ export const SolutionsList = () => {
         {solutions.map((solution) => (
           <SolutionCard
             solution={solution}
+            onEdit={(editSolution) => {
+              history.push({
+                pathname: `/solutions/${editSolution.id}`,
+              });
+            }}
             onDelete={(deleteSolution) => setSolutionToDelete(deleteSolution)}
             key={solution.id}
           />

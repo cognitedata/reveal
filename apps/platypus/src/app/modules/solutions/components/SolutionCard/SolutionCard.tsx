@@ -20,23 +20,20 @@ import { StyledSolutionCard } from './elements';
 
 type SoluionCardProps = {
   solution: Solution;
+  onEdit: (solution: Solution) => void;
   onDelete: (solution: Solution) => void;
 };
 
-export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
+export const SolutionCard = ({
+  solution,
+  onDelete,
+  onEdit,
+}: SoluionCardProps) => {
   const history = useHistory();
   const [visibleDropdown, setVisibleDropdown] = useState<boolean>(false);
   const { t } = useTranslation('solutions');
 
   const dataUtils = new DateUtilsImpl();
-
-  const onDuplicate = () => {
-    return false;
-  };
-
-  const onEdit = () => {
-    return false;
-  };
 
   const renderMenu = () => {
     return (
@@ -47,16 +44,7 @@ export const SolutionCard = ({ solution, onDelete }: SoluionCardProps) => {
           <Menu>
             <Menu.Item
               onClick={(e) => {
-                onDuplicate();
-                setVisibleDropdown(false);
-                e.stopPropagation();
-              }}
-            >
-              {t('duplicate', 'Duplicate')}
-            </Menu.Item>
-            <Menu.Item
-              onClick={(e) => {
-                onEdit();
+                onEdit(solution);
                 setVisibleDropdown(false);
                 e.stopPropagation();
               }}

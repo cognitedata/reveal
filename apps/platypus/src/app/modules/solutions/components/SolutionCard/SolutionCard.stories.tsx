@@ -39,9 +39,17 @@ export const Base = () => (
 );
 
 export const DefaultSolutionCard = () => (
-  <SolutionCard solution={Solutions[0]} onDelete={() => false} />
+  <SolutionCard
+    solution={Solutions[0]}
+    onDelete={() => false}
+    onEdit={() => false}
+  />
 );
 
 export const SolutionCardWithoutOwners = () => (
-  <SolutionCard solution={Solutions[1]} onDelete={() => false} />
+  <SolutionCard
+    solution={Solutions[1]}
+    onDelete={() => false}
+    onEdit={() => false}
+  />
 );
