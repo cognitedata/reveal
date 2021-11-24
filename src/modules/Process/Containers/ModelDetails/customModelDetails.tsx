@@ -194,6 +194,16 @@ export const content = (modelIndex: number) => {
                   </td>
                   <th>
                     <Row>
+                      <input
+                        type="range"
+                        min={0.4}
+                        max={1}
+                        value={params.threshold}
+                        onChange={(e) =>
+                          onThresholdChange(parseFloat(e.target.value))
+                        }
+                        step={0.05}
+                      />
                       <Input
                         type="number"
                         size="large"
@@ -204,16 +214,6 @@ export const content = (modelIndex: number) => {
                         value={params.threshold}
                         setValue={onThresholdChange}
                         style={{ height: '40px', MozAppearance: 'textfield' }}
-                      />
-                      <input
-                        type="range"
-                        min={0.4}
-                        max={1}
-                        value={params.threshold}
-                        onChange={(e) =>
-                          onThresholdChange(parseFloat(e.target.value))
-                        }
-                        step={0.05}
                       />
                     </Row>
                   </th>
