@@ -26,13 +26,20 @@ export const getExtractionPipelineUIUrl = (path?: string) => {
 };
 
 export const fetchIntegrationsByDataSetId = async (id: number) => {
-  const integrations = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
-    withCredentials: true,
-  });
+  let integrations;
+  try {
+    integrations = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
+      withCredentials: true,
+    });
+  } catch {
+    integrations = {};
+  }
 
-  return integrations.data.items.filter(
-    ({ dataSetId }: { dataSetId: number }) => {
-      return dataSetId === id;
-    }
+  return (
+    integrations?.data?.items?.filter(
+      ({ dataSetId }: { dataSetId: number }) => {
+        return dataSetId === id;
+      }
+    ) || []
   );
 };
