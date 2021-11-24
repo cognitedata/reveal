@@ -41,9 +41,9 @@
 }
 
 .reveal-viewer-toolbar-icon:hover {
-  background-color: yellow;
+  background-color: rgb(155, 155, 155);
 }
 
 .reveal-viewer-toolbar-icon:focus {
-  background-color: orange;
+  background-color: rgb(155, 155, 155);;
 }
