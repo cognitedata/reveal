@@ -1,4 +1,4 @@
-import { Checkbox } from '@cognite/cogs.js';
+import { Switch } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormElementProps } from './types';
@@ -13,12 +13,13 @@ const ParameterCheckbox = ({
 
   return (
     <CheckboxContainer>
-      <FunctionParameterFormLabel label={name} description={description} />
-      <Checkbox
+      <Switch
         name={`${nodeId}-${param}`}
-        checked={functionData[param]}
+        value={functionData[param]}
         onChange={(value) => onInputValueChange(param, type, value)}
-      />
+      >
+        <FunctionParameterFormLabel label={name} description={description} />
+      </Switch>
     </CheckboxContainer>
   );
 };
@@ -27,6 +28,7 @@ const CheckboxContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-top: 5px;
 `;
 
 export default ParameterCheckbox;
