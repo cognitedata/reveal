@@ -154,7 +154,7 @@ export class ByVisibilityGpuSectorCuller implements SectorCuller {
     this.takenSectors = new TakenSectorMap(this.options.determineSectorCost);
   }
 
-  dispose() {
+  dispose(): void {
     this.options.coverageUtil.dispose();
   }
 

@@ -48,18 +48,18 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     this._removeCallback = removeCallback;
   }
 
-  has(id: Key) {
+  has(id: Key): boolean {
     return this._data.has(id);
   }
 
-  forceInsert(id: Key, data: Data) {
+  forceInsert(id: Key, data: Data): void {
     if (this.isFull()) {
       this.cleanCache(this._defaultCleanupCount);
     }
     this.insert(id, data);
   }
 
-  insert(id: Key, data: Data) {
+  insert(id: Key, data: Data): void {
     if (this._data.size < this._maxElementsInCache) {
       this._data.set(id, new TimestampedContainer(data));
     } else {
@@ -67,7 +67,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     }
   }
 
-  remove(id: Key) {
+  remove(id: Key): void {
     if (this._removeCallback !== undefined) {
       const value = this._data.get(id);
       if (value !== undefined) {
@@ -91,7 +91,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     return !(this._data.size < this._maxElementsInCache);
   }
 
-  cleanCache(count: number) {
+  cleanCache(count: number): void {
     const allResults = Array.from(this._data.entries());
     allResults.sort((left, right) => {
       return right[1].lastAccessTime - left[1].lastAccessTime;
@@ -106,7 +106,7 @@ export class MemoryRequestCache<Key, Data> implements RequestCache<Key, Data> {
     }
   }
 
-  clear() {
+  clear(): void {
     if (this._removeCallback !== undefined) {
       for (const value of this._data.values()) {
         this._removeCallback(value.value);

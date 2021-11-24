@@ -45,7 +45,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Used to clean up memory.
    */
-  dispose() {
+  dispose(): void {
     this.children = [];
   }
 

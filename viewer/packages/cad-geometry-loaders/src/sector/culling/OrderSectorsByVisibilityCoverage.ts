@@ -150,7 +150,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     });
   }
 
-  dispose() {
+  dispose(): void {
     this._renderer.dispose();
   }
 
@@ -170,7 +170,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     return this._debugImageElement;
   }
 
-  setModels(models: CadModelMetadata[]) {
+  setModels(models: CadModelMetadata[]): void {
     const keepModelIdentifiers = new Set<string>();
     for (const model of models) {
       const modelIdentifier = model.modelIdentifier;
@@ -190,7 +190,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
     }
   }
 
-  setClipping(planes: THREE.Plane[] | null) {
+  setClipping(planes: THREE.Plane[] | null): void {
     this.coverageMaterial.clippingPlanes = planes;
   }
 

@@ -61,7 +61,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
+  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
@@ -81,7 +81,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
     const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('NodeCollection not added');
@@ -93,14 +93,14 @@ export class NodeAppearanceProvider {
     this.notifyChanged();
   }
 
-  applyStyles(applyCb: ApplyStyleDelegate) {
+  applyStyles(applyCb: ApplyStyleDelegate): void {
     this._styledCollections.forEach(styledSet => {
       const set = styledSet.nodeCollection.getIndexSet();
       applyCb(set, styledSet.appearance);
     });
   }
 
-  clear() {
+  clear(): void {
     for (const styledSet of this._styledCollections) {
       const nodeCollection = styledSet.nodeCollection;
       nodeCollection.off('changed', styledSet.handleNodeCollectionChangedListener);
