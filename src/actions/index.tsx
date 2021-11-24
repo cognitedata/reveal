@@ -296,32 +296,6 @@ export const useRawList = () => {
   };
 };
 
-/*
-export const useLabelSuggestions = () => {
-  const { dataSets, ...rest } = useDataSetsList();
-  const [labels, setLabels] = useState<Array<string>>([]);
-
-  useEffect(() => {
-    if (dataSets) {
-      const suggestedLabels = dataSets.reduce(
-        (acc: { [label: string]: string }, cur) => {
-          if (Array.isArray(cur?.metadata?.consoleLabels)) {
-            cur.metadata.consoleLabels.forEach((label) => {
-              acc[label] = label;
-            });
-          }
-          return acc;
-        },
-        {}
-      );
-      setLabels(Object.keys(suggestedLabels));
-    }
-  }, [dataSets]);
-
-  return { labels, ...rest };
-};
-*/
-
 export const useLabelSuggestions = () => {
   const { dataSetsWithIntegrations, ...rest } = useDataSetsList();
   const [labels, setLabels] = useState<Array<string>>([]);
@@ -330,9 +304,9 @@ export const useLabelSuggestions = () => {
     if (dataSetsWithIntegrations) {
       const suggestedLabels = dataSetsWithIntegrations.reduce(
         (acc: { [label: string]: string }, cur) => {
-          // eslint-disable-next-line no-unused-expressions
-          if (Array.isArray(cur?.dataSet?.metadata?.consoleLabels)) {
-            cur?.dataSet?.metadata?.consoleLabels?.forEach((label) => {
+          const labelsForMetadata = cur?.dataSet?.metadata?.consoleLabels;
+          if (Array.isArray(labelsForMetadata)) {
+            labelsForMetadata.forEach((label) => {
               acc[label] = label;
             });
           }

@@ -93,11 +93,12 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
       tableDataSets = dataSetsList.map(
         (dataSetWithIntegrations: DataSetWithIntegrations): DataSetRow => {
           const { dataSet, integrations } = dataSetWithIntegrations;
+          const labelsFromMetadata = dataSet.metadata?.consoleLabels;
           return {
             key: dataSet.id,
             name: dataSet.name,
             description: dataSet.description,
-            labels: (dataSet.metadata && dataSet.metadata.consoleLabels) || [],
+            labels: isArray(labelsFromMetadata) ? labelsFromMetadata : [],
             quality: dataSet.metadata.consoleGoverned,
             integrations,
             writeProtected: dataSet.writeProtected,
