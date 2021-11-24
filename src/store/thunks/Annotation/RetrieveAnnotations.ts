@@ -6,8 +6,8 @@ import { Annotation } from 'src/api/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
-import { from, lastValueFrom, merge } from 'rxjs';
-import { map, mergeAll, reduce } from 'rxjs/operators';
+import { from, lastValueFrom } from 'rxjs';
+import { map, mergeMap, reduce } from 'rxjs/operators';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation[],
@@ -32,15 +32,15 @@ export const RetrieveAnnotations = createAsyncThunk<
     return AnnotationApi.list(annotationListRequest);
   });
   if (requests.length) {
-    const responses = merge(requests.map((request) => from(request))).pipe(
-      mergeAll(),
+    const responses = from(requests).pipe(
+      mergeMap((request) => from(request)),
       map((annotations) => {
         const filteredAnnotations = annotations.filter(
           (annotation: Annotation) => {
             try {
               return validateAnnotation(annotation);
             } catch (error) {
-              console.error(
+              console.warn(
                 'Annotation is invalid, will not be visible',
                 annotation
               );
