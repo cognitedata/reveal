@@ -179,13 +179,19 @@ export const TableCell = {
 
               <Menu.Item
                 onClick={() => classifierActionsCallback('delete', original)}
+                appendIcon="Trash"
+                style={{ color: '#D51A46' }}
               >
                 Delete
               </Menu.Item>
             </Menu>
           }
         >
-          <Button type="ghost" icon="MoreOverflowEllipsisHorizontal" />
+          <Button
+            type="ghost"
+            icon="MoreOverflowEllipsisHorizontal"
+            aria-label="Classifier actions"
+          />
         </Dropdown>
       );
     },

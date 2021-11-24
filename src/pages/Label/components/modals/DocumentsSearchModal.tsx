@@ -17,6 +17,7 @@ interface Props {
 export const DocumentsSearchModal: React.FC<Props> = React.memo(
   ({ visible, toggleVisibility, labelId }) => {
     const [selectedFiles, setSelectedFiles] = React.useState({});
+
     const { data, isLoading } = useDocumentsSearchQuery(visible);
     const { mutateAsync } = useUpdateFileLabelsMutate('add');
 

@@ -7,9 +7,11 @@ export const useClassifierActions = () => {
   const nextPage = () => classifierMachine.send('NEXT');
   const previousPage = () => classifierMachine.send('PREVIOUS');
 
-  const updateDescription = (description: {
-    payload: { [x in ClassifierState]?: string };
-  }) => classifierMachine.send('updateDescription', description);
+  const updateDescription = (
+    description: {
+      [x in ClassifierState]?: string;
+    }
+  ) => classifierMachine.send('updateDescription', { payload: description });
 
   const setClassifierId = (id?: number) =>
     classifierMachine.send('setClassifierId', { payload: id });

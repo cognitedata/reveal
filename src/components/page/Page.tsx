@@ -1,4 +1,4 @@
-import { Breadcrumb } from 'pages/Classifier/components/breadcrumb/Breadcrumb';
+import { Breadcrumb } from 'components/Breadcrumb';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -51,6 +51,7 @@ interface Props {
   BottomNavigation?: JSX.Element[] | JSX.Element;
   breadcrumbs?: { title: string; onClick?: () => void }[];
 }
+
 export const Page: React.FC<Props> = ({
   children,
   BottomNavigation,

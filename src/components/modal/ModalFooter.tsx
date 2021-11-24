@@ -12,7 +12,7 @@ const ModalFooter: React.FC<Props> = ({ data, label, onOk, onCancel }) => {
   return (
     <Flex alignItems="center" justifyContent="space-between">
       <Body level={2}>
-        Selected {data.length} {label}
+        {data.length} {label} selected
       </Body>
       <Flex gap={8}>
         <Button type="ghost" onClick={() => onCancel()}>

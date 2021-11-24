@@ -68,7 +68,7 @@ const Home = () => {
     return (
       <ConfusionMatrixModal
         classifier={selectedClassifier}
-        visible={!!selectedClassifier}
+        visible={Boolean(selectedClassifier)}
         toggleVisibility={toggleConfusionMatrixModal}
         onDeployClick={handleDeployClassifierClick}
       />

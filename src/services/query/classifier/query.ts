@@ -39,7 +39,7 @@ export const useDocumentsClassifierByIdQuery = (id?: number) => {
     CLASSIFIER_KEYS.classifier(id),
     () => fetchDocumentClassifierById(sdk, id!),
     {
-      enabled: !!id,
+      enabled: Boolean(id),
       refetchInterval,
       onSuccess: (data) => {
         if (!isClassifierTraining(data)) {

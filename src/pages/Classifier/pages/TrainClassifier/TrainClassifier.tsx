@@ -1,25 +1,26 @@
 import React from 'react';
-import { PageHeader, PageContent, Page } from 'components/page';
+import { PageHeader, PageContent } from 'components/page';
 import {
   useClassifierConfig,
   useClassifierId,
 } from 'machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'machines/classifier/types';
-import ActionContainer from 'pages/Classifier/pages/TrainClassifier/components/containers/ActionContainer';
+import TrainClassifierContainer from 'pages/Classifier/pages/TrainClassifier/components/containers/TrainClassifierContainer';
 import { Body, Button, Flex, Tag } from '@cognite/cogs.js';
 import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
 import { useClassifierManageTrainingSetsQuery } from 'services/query';
 import { useClassifierCreateMutate } from 'services/query/classifier/mutate';
 import { useDocumentsClassifierByIdQuery } from 'services/query/classifier/query';
 import { useClassifierParams } from 'hooks/useParams';
-import { BottomNavigation } from 'pages/Classifier/components/navigations/BottomNavigation';
 import { isClassifierFinished } from 'utils/classifier';
+import { CommonClassifierPage } from 'pages/Classifier/components/ClassifierPage';
 import { ClassifierProps } from '../router';
 import { TrainClassifierInfoBar } from './components/containers/TrainClassifierInfoBar';
 import { TrainClassifierNavigation } from './components/navigation/TrainClassifierNavigation';
 
 const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
   const { classifierName } = useClassifierParams();
+  const { updateDescription } = useClassifierActions();
   const { description } = useClassifierConfig(ClassifierState.TRAIN);
   const { previousPage } = useClassifierActions();
 
@@ -39,7 +40,15 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
     });
   };
 
-  const renderMessage = () => {
+  React.useEffect(() => {
+    if (newlyCreatedClassifier?.status) {
+      updateDescription({
+        [ClassifierState.TRAIN]: newlyCreatedClassifier?.status,
+      });
+    }
+  }, [newlyCreatedClassifier, updateDescription]);
+
+  const renderTrainClassifierMessage = () => {
     const trainingSets = classifierTrainingSets.length;
     const trainingSetsFiles = classifierTrainingSets.reduce(
       (accumulator, item) => accumulator + (item.count || 0),
@@ -59,7 +68,7 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
     );
   };
 
-  const renderAction = (isRunning: boolean, isDone: boolean) => {
+  const renderTrainClassifierAction = (isRunning: boolean, isDone: boolean) => {
     return (
       <Button
         type="primary"
@@ -74,30 +83,25 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
   };
 
   return (
-    <Page
-      Widget={Widget()}
-      BottomNavigation={
-        <BottomNavigation>
-          <TrainClassifierNavigation
-            disabled={!isClassifierFinished(newlyCreatedClassifier)}
-          />
-        </BottomNavigation>
+    <CommonClassifierPage
+      Widget={Widget}
+      Navigation={
+        <TrainClassifierNavigation
+          disabled={!isClassifierFinished(newlyCreatedClassifier)}
+        />
       }
-      breadcrumbs={[{ title: 'New classifier' }]}
     >
       <TrainClassifierInfoBar classifier={newlyCreatedClassifier} />
 
       <PageHeader title="Train classifier" description={description} />
       <PageContent>
-        <>
-          <ActionContainer
-            classifier={newlyCreatedClassifier}
-            Message={renderMessage()}
-            Action={renderAction}
-          />
-        </>
+        <TrainClassifierContainer
+          classifier={newlyCreatedClassifier}
+          Message={renderTrainClassifierMessage()}
+          Action={renderTrainClassifierAction}
+        />
       </PageContent>
-    </Page>
+    </CommonClassifierPage>
   );
 };
 

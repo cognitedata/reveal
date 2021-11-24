@@ -3,18 +3,18 @@ import TableBulkActions from 'components/table/BulkAction';
 import { PageHeader, Page, PageContent } from 'components/page';
 import { TableWrapper } from 'components/table/TableWrapper';
 import { useLabelName } from 'hooks/useLabel';
-import { useNavigation } from 'hooks/useNavigation';
 import { useLabelParams } from 'hooks/useParams';
 import React from 'react';
 import { useDocumentsQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
+import { useBreadcrumb } from 'hooks/useBreadcrumb';
 import { DocumentsSearchModal } from './components/modals/DocumentsSearchModal';
 import { DocumentsTable } from './components/table/DocumentsTable';
 
 export const LabelPage: React.FC = () => {
   const externalId = useLabelParams();
   const labelName = useLabelName(externalId);
-  const { goBack } = useNavigation();
+  const { labelPageBreadcrumbs } = useBreadcrumb();
 
   const { data, isLoading } = useDocumentsQuery();
   const { mutate, isLoading: mutateLoading } =
@@ -62,19 +62,7 @@ export const LabelPage: React.FC = () => {
   }
 
   return (
-    <Page
-      breadcrumbs={[
-        {
-          title: 'New classifier',
-          onClick: () => {
-            goBack();
-          },
-        },
-        {
-          title: labelName,
-        },
-      ]}
-    >
+    <Page breadcrumbs={labelPageBreadcrumbs(labelName)}>
       <PageHeader
         title={labelName}
         subtitle="Label:"

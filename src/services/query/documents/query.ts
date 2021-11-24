@@ -49,7 +49,7 @@ export const useDocumentQuery = (documentId?: number) => {
     ({ queryKey: [_all, _document, id] }) =>
       fetchDocumentById(sdk, id as number),
     {
-      enabled: !!documentId,
+      enabled: Boolean(documentId),
     }
   );
 };
@@ -64,7 +64,7 @@ export const useDocumentPreviewQuery = (
     DOCUMENTS_KEYS.preview(documentId),
     () => previewDocument(sdk, documentId, page),
     {
-      enabled: !!documentId,
+      enabled: Boolean(documentId),
       staleTime: Infinity,
     }
   );

@@ -48,7 +48,6 @@ export const useUserPermissions = () => {
     .filter((permission) => !permission.hasPermission)
     .map((permission) => permission.label);
 
-  console.log('hey', allPermissions);
   return {
     allPermissions,
     missingPermissions,

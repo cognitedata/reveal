@@ -44,4 +44,5 @@ The Document Search UI can be run locally, using [dev.fusion.cogniteapp.com](htt
 9. Edit the url bar in the browser, and add `/documents` at the end of the path. Example: if you are using the `unstructured-search` tenant, the full url should be: `https://dev.fusion.cogniteapp.com/unstructured-search/documents?env=greenfield`
 
 ## Questions?
+
 Head on over to our Slack channel at [#topic-document-search](https://cognitedata.slack.com/archives/CKY04V4CA).

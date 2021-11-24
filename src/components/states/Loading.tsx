@@ -17,7 +17,7 @@ export const Loading: React.FC<Props> = ({
   title,
   disableDescriptionRotation,
 }) => {
-  const [description, setDescription] = React.useState(
+  const [description, setDescription] = React.useState<string>(
     loadingState.FIRST_DESCRIPTION
   );
 

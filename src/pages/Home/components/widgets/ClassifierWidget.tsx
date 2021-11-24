@@ -57,7 +57,7 @@ export const ClassifierWidget: React.FC = () => {
     <>
       <Title level={4}>Classifier list</Title>
       <ClassifierList pipeline={data?.classifier} />
-      <ClassifierAdd disabled={!!data?.classifier} />
+      <ClassifierAdd disabled={Boolean(data?.classifier)} />
     </>
   );
 };

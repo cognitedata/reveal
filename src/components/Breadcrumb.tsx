@@ -2,6 +2,7 @@ import { Body } from '@cognite/cogs.js';
 import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
 import styled from 'styled-components';
+import { globalConfig } from 'configs/global.config';
 
 const BreadcrumbText = styled(Body).attrs({ level: 2 })`
   cursor: pointer;
@@ -21,6 +22,7 @@ const Container = styled.div`
 interface Props {
   breadcrumbs?: { title: string; onClick?: () => void }[];
 }
+
 export const Breadcrumb: React.FC<Props> = ({ breadcrumbs }) => {
   const { toHome } = useNavigation();
 
@@ -32,15 +34,18 @@ export const Breadcrumb: React.FC<Props> = ({ breadcrumbs }) => {
           toHome();
         }}
       >
-        Document Classifiers - Version: 1.0
+        {globalConfig.APP_NAME} - Version: {globalConfig.VERSION}
       </BreadcrumbText>
+
       {breadcrumbs?.map((item, index) => (
         <React.Fragment key={item.title}>
           <BreadcrumbText>/</BreadcrumbText>
           <BreadcrumbText
             strong={breadcrumbs.length === index + 1}
             onClick={() => {
-              if (item.onClick) item.onClick();
+              if (item.onClick && breadcrumbs.length !== index + 1) {
+                item.onClick();
+              }
             }}
           >
             {item.title}

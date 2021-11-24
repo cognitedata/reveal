@@ -1,11 +1,11 @@
-import { Page, PageContent, PageHeader } from 'components/page';
+import { PageContent, PageHeader } from 'components/page';
 import { TableWrapper } from 'components/table/TableWrapper';
 import { useNavigation } from 'hooks/useNavigation';
 import { useClassifierId } from 'machines/classifier/hooks/useClassifierSelectors';
-import { BottomNavigation } from 'pages/Classifier/components/navigations/BottomNavigation';
 import React from 'react';
 import { useDocumentsActiveClassifierPipelineMutate } from 'services/query/pipelines/mutate';
 import { useDocumentsClassifierByIdQuery } from 'services/query/classifier/query';
+import { CommonClassifierPage } from 'pages/Classifier/components/ClassifierPage';
 import { ClassifierProps } from '../router';
 import { MatrixTable } from './components';
 import { ReviewModelNavigation } from './components/navigation/ReviewModelNavigation';
@@ -67,14 +67,11 @@ export const ReviewModel: React.FC<ClassifierProps> = ({ Widget }) => {
   };
 
   return (
-    <Page
-      Widget={Widget()}
-      BottomNavigation={
-        <BottomNavigation>
-          <ReviewModelNavigation onDeployClick={handleDeployClassifierClick} />
-        </BottomNavigation>
+    <CommonClassifierPage
+      Widget={Widget}
+      Navigation={
+        <ReviewModelNavigation onDeployClick={handleDeployClassifierClick} />
       }
-      breadcrumbs={[{ title: 'New classifier' }]}
     >
       <PageHeader title="Review Model" />
       <PageContent>
@@ -82,6 +79,6 @@ export const ReviewModel: React.FC<ClassifierProps> = ({ Widget }) => {
           <MatrixTable classifier={classifier} />
         </TableWrapper>
       </PageContent>
-    </Page>
+    </CommonClassifierPage>
   );
 };

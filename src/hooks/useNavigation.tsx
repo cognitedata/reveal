@@ -7,7 +7,7 @@ export type Navigation = {
   toDashboard: () => void;
   toHome: () => void;
   toLabel: (externalId: string) => void;
-  toClassifier: (classifier: string, name?: string) => void;
+  toClassifier: (classifier: string) => void;
   goBack: () => void;
 };
 

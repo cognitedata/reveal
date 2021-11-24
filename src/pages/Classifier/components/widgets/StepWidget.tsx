@@ -7,12 +7,13 @@ import {
 } from 'machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'machines/classifier/types';
 import React, { FC } from 'react';
+import TrainClassifierLabel from 'pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
 import {
-  StepContainer,
-  StepContent,
   StepBadgeActive,
   StepBadgeComplete,
   StepBadgeCount,
+  StepContainer,
+  StepContent,
   Title,
 } from './elements';
 
@@ -45,12 +46,20 @@ export const StepWidget: FC<{
     return <StepBadgeCount>{index + 1}</StepBadgeCount>;
   };
 
+  const renderDescription = () => {
+    if (step === ClassifierState.TRAIN) {
+      return <TrainClassifierLabel status={description} />;
+    }
+
+    return <Body level={2}>{description}</Body>;
+  };
+
   return (
     <StepContainer $isActive={isCurrentStep}>
       {renderStepBadge()}
-      <StepContent $step={!!description}>
+      <StepContent $step={Boolean(description)}>
         <Title $isActive={isCurrentStep}>{title}</Title>
-        <Body level={2}>{description}</Body>
+        {renderDescription()}
       </StepContent>
     </StepContainer>
   );
