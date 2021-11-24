@@ -29,7 +29,7 @@ import {
 import { getEntryColor } from 'utils/colors';
 import { useSearchParam } from 'hooks/navigation';
 import { SEARCH_KEY } from 'utils/constants';
-import { metrics, trackUsage } from 'services/metrics';
+import { metrics, shouldTrackMetrics, trackUsage } from 'services/metrics';
 import { ITimer } from '@cognite/metrics';
 import { Modes } from 'pages/types';
 import DetailsSidebar from 'components/DetailsSidebar';
@@ -135,6 +135,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
   const mergeUnits = get(chart, 'settings.mergeUnits', true);
 
   useEffect(() => {
+    if (!shouldTrackMetrics) {
+      return () => {};
+    }
     trackUsage('PageView.ChartView', { isOwner: chart?.user === login?.id });
     const timer = metrics.start('ChartView.ViewTime');
 
@@ -170,7 +173,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const openNodeEditor = () => {
     setWorkspaceMode('editor');
-    if (!editorTimer) {
+    if (!editorTimer && shouldTrackMetrics) {
       setEditorTimer(
         metrics.start('NodeEditor.ViewTime', {
           editor:
