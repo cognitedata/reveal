@@ -120,15 +120,18 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
     getTransformations();
   }, [getTransformations]);
 
-  if (dataSetWithIntegrations?.dataSet.metadata) {
-    const { names: sourceNames } =
-      dataSetWithIntegrations.dataSet.metadata.consoleSource || [];
+  if (dataSetWithIntegrations) {
+    const { dataSet } = dataSetWithIntegrations;
+    const sourceNames = dataSet.metadata.consoleSource?.names;
     const extractorAccounts =
-      dataSetWithIntegrations.dataSet.metadata.consoleExtractors?.accounts ||
-      [];
+      dataSet.metadata.consoleExtractors &&
+      Array.isArray(dataSet.metadata.consoleExtractors.accounts)
+        ? dataSet.metadata.consoleExtractors.accounts
+        : [];
     const usedTransformations =
-      dataSetWithIntegrations.dataSet.metadata.transformations?.length;
-    const hasSources = sourceNames != null && sourceNames.length >= 1;
+      Array.isArray(dataSet.metadata.transformations) &&
+      dataSet.metadata.transformations.length;
+    const hasSources = Array.isArray(sourceNames) && sourceNames.length >= 1;
     const hasExtractorAccounts =
       extractorAccounts != null && extractorAccounts.length >= 1;
     return (
