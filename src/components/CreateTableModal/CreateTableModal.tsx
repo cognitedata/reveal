@@ -12,6 +12,7 @@ import { useActiveTable } from 'hooks/table-tabs';
 
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
+import CreateTableModalUploadStep from './CreateTableModalUploadStep';
 
 const mockColumns = [
   'key',
@@ -124,6 +125,10 @@ const CreateTableModal = ({
     );
   };
 
+  const handleUpload = (): void => {
+    setCreateTableModalStep(CreateTableModalStep.Upload);
+  };
+
   const selectCreationMode =
     (mode: CreationMode): (() => void) =>
     (): void => {
@@ -160,6 +165,9 @@ const CreateTableModal = ({
         />
       );
     }
+    if (createTableModalStep === CreateTableModalStep.Upload) {
+      return <CreateTableModalUploadStep />;
+    }
   };
 
   return (
@@ -182,7 +190,11 @@ const CreateTableModal = ({
           : []),
         ...(selectedCreationMode === CreationMode.Upload
           ? [
-              <Button disabled={isUploadDisabled} type="primary">
+              <Button
+                disabled={isUploadDisabled}
+                onClick={handleUpload}
+                type="primary"
+              >
                 Upload
               </Button>,
             ]
@@ -194,26 +206,28 @@ const CreateTableModal = ({
       {...modalProps}
       width={CREATE_TABLE_MODAL_WIDTH}
     >
-      <FormFieldWrapper isRequired title="Name">
-        <Input
-          autoFocus
-          disabled={isCreatingTable}
-          fullWidth
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setTableName(e.target.value)
-          }
-          onKeyUp={(e) => {
-            if (!isCreationDisabled && e.key === 'Enter') {
-              handleCreate();
+      {createTableModalStep !== CreateTableModalStep.Upload && (
+        <FormFieldWrapper isRequired title="Name">
+          <Input
+            autoFocus
+            disabled={isCreatingTable}
+            fullWidth
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTableName(e.target.value)
             }
-          }}
-          placeholder="Enter name"
-          value={tableName}
-        />
-        <StyledNameInputDetail>
-          The name should be unique. You can not change this name later.
-        </StyledNameInputDetail>
-      </FormFieldWrapper>
+            onKeyUp={(e) => {
+              if (!isCreationDisabled && e.key === 'Enter') {
+                handleCreate();
+              }
+            }}
+            placeholder="Enter name"
+            value={tableName}
+          />
+          <StyledNameInputDetail>
+            The name should be unique. You can not change this name later.
+          </StyledNameInputDetail>
+        </FormFieldWrapper>
+      )}
       {renderCreateTableModalStep()}
     </Modal>
   );
