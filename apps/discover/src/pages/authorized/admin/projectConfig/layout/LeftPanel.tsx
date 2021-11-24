@@ -17,7 +17,7 @@ import {
 type Props = {
   metadata: Metadata;
   selected: string;
-  setSelected: React.Dispatch<React.SetStateAction<string>>;
+  setSelected: (path: string) => void;
   config?: ProjectConfig;
 };
 

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
+import head from 'lodash/head';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 
@@ -35,7 +37,22 @@ export const ProjectConfigForm: React.FC<Props> = ({
   metadata,
   renderCustomComponent,
 }) => {
-  const [selectedPath, setSelectedPath] = React.useState<string>('general');
+  const history = useHistory();
+  const { search } = useLocation();
+  const urlParams = React.useMemo(() => new URLSearchParams(search), [search]);
+
+  React.useEffect(() => {
+    if (!search) {
+      history.push({ search: `?selectedPath=${head(Object.keys(metadata))}` });
+    }
+  }, [metadata, search]);
+
+  const selectedPath: string = urlParams.get('selectedPath') || '';
+
+  const setSelectedPath = (path: string) => {
+    history.push({ search: `?selectedPath=${path}` });
+  };
+
   const metadataPath = React.useMemo(
     () => adaptedSelectedPathToMetadataPath(selectedPath),
     [selectedPath]

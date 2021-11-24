@@ -24,7 +24,10 @@ export const ConfigInputField: React.FC<{
 
   const handleNumberChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(changeKey, Number(event.target.value));
+      onChange(
+        changeKey,
+        event.target.value ? Number(event.target.value) : undefined
+      );
     },
     [changeKey]
   );
@@ -44,11 +47,15 @@ export const ConfigInputField: React.FC<{
   const handleJSONBlur = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
       let changedJSON;
+
       try {
-        changedJSON = JSON.parse(event.target.value);
+        changedJSON = event.target.value
+          ? JSON.parse(event.target.value)
+          : undefined;
+
         onChange(changeKey, changedJSON);
       } catch (e) {
-        showErrorMessage('Please enter valid JSON');
+        showErrorMessage('Please enter valid JSON.');
       }
     },
     [changeKey]

@@ -16,7 +16,7 @@ import { isLeaf } from '../utils/isLeaf';
 type Props = {
   metadata?: Metadata;
   selected: string;
-  setSelected: React.Dispatch<React.SetStateAction<string>>;
+  setSelected: (path: string) => void;
   prefixPath: string;
   config?: ProjectConfig;
 };
@@ -94,10 +94,7 @@ const NestedField: React.FC<{
       if (!newPath) {
         setSelected(currentPath);
       } else {
-        setSelected((existingPath) => {
-          if (newPath) return newPath;
-          return existingPath;
-        });
+        setSelected(newPath);
       }
     },
     [currentPath, setSelected]

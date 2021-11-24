@@ -206,11 +206,7 @@ export const RightPanel = ({
         <Button type="secondary" onClick={onReset} disabled={!hasChanges}>
           {t('Reset')}
         </Button>
-        <Button
-          type="primary"
-          onClick={() => onUpdate()}
-          disabled={!hasChanges}
-        >
+        <Button type="primary" onClick={onUpdate} disabled={!hasChanges}>
           {t('Save')}
         </Button>
       </ProjectConfigFooter>

@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Map } from 'immutable';
@@ -19,56 +19,55 @@ import { ProjectConfigForm } from './ProjectConfigForm';
 
 export const ProjectConfig = () => {
   const { t } = useTranslation();
+
   const { data: existingConfig = {}, isLoading } = useProjectConfigGetQuery();
+
+  const { mutate: updateConfig } = useProjectConfigUpdateMutate();
 
   const { data: metadata, isLoading: isMetadataLoading } =
     useProjectConfigMetadataGetQuery();
 
-  const { mutate: updateConfig, isLoading: isUpdating } =
-    useProjectConfigUpdateMutate();
-
   const [configChanges, setConfigChanges] = useState<ProjectConfigTypes>({});
 
-  const config = useMemo(
-    () => merge({}, existingConfig, configChanges),
-    [existingConfig, configChanges]
-  );
-
   const [hasChanges, setHasChanges] = useState<boolean>(false);
-
-  const handleUpdate = useCallback(
-    async (overridingConfig) => {
-      const configToUpdate = overridingConfig ?? configChanges;
-      try {
-        await updateConfig(configToUpdate);
-        setConfigChanges({});
-        setHasChanges(false);
-      } catch (e) {
-        showErrorMessage('Could not update config!');
-      }
-    },
-    [updateConfig, configChanges]
-  );
-
-  const handleChange = useCallback((key: string, value: unknown) => {
-    setConfigChanges((state) => Map(state).setIn(key.split('.'), value).toJS());
-    setHasChanges(true);
-  }, []);
 
   const handleReset = useCallback(() => {
     setConfigChanges({});
     setHasChanges(false);
   }, []);
 
-  if (isLoading || isMetadataLoading || isUpdating) {
+  const config = useMemo(
+    () => merge({}, existingConfig, configChanges),
+    [existingConfig, configChanges]
+  );
+
+  const handleUpdate = useCallback(async () => {
+    try {
+      await updateConfig(configChanges);
+    } catch (e) {
+      showErrorMessage('Could not update config.');
+    }
+  }, [updateConfig, configChanges]);
+
+  const handleChange = useCallback((key: string, value: unknown) => {
+    setConfigChanges((state) => Map(state).setIn(key.split('.'), value).toJS());
+    setHasChanges(true);
+  }, []);
+
+  // resetting the local change state after updated config is received
+  useEffect(() => {
+    handleReset();
+  }, [existingConfig, handleReset]);
+
+  if (isLoading || isMetadataLoading) {
     return (
-      <EmptyState isLoading loadingTitle={t('Loading Project Configuration')} />
+      <EmptyState isLoading loadingTitle={t('Loading project configuration')} />
     );
   }
 
   if (!metadata) {
     return (
-      <EmptyState isLoading={false} emptyTitle={t('No Metadata Found!')} />
+      <EmptyState isLoading={false} emptyTitle={t('No Metadata Found.')} />
     );
   }
 
