@@ -2,16 +2,16 @@
  * Copyright 2021 Cognite AS
  */
 
-import { of, pipe } from 'rxjs';
+import { Observable, of, OperatorFunction, pipe } from 'rxjs';
 import { delay, startWith, switchMap, distinctUntilChanged } from 'rxjs/operators';
 
-export const emissionLastMillis = (millis: number) => {
+export function emissionLastMillis(millis: number): OperatorFunction<unknown, boolean> {
   return pipe(
     switchMap(_ => delayedSwitch(millis)),
     distinctUntilChanged()
   );
-};
+}
 
-export const delayedSwitch = (millis: number) => {
+export function delayedSwitch(millis: number): Observable<boolean> {
   return of(false).pipe(delay(millis), startWith(true));
-};
+}

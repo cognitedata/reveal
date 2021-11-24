@@ -34,7 +34,7 @@ export class BucketGrid2D<T> {
     this._bounds = bounds;
   }
 
-  insert(bounds: THREE.Box2, element: T) {
+  insert(bounds: THREE.Box2, element: T): void {
     if (!this._bounds.intersectsBox(bounds)) {
       throw new Error('Element to be added must be partially inside grid');
     }

@@ -46,7 +46,7 @@ function generatePlane3D(
   };
 }
 
-export function setBoxGeometry(geometry: THREE.BufferGeometry) {
+export function setBoxGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   const boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1, 1, 1, 1);
 
   geometry.setIndex(boxGeometry.getIndex());
@@ -58,7 +58,7 @@ export function setBoxGeometry(geometry: THREE.BufferGeometry) {
   return geometry.boundingBox!;
 }
 
-export function setQuadGeometry(geometry: THREE.BufferGeometry, includeNormal = true) {
+export function setQuadGeometry(geometry: THREE.BufferGeometry, includeNormal = true): THREE.Box3 {
   const quadGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 
   geometry.setIndex(quadGeometry.getIndex());
@@ -71,7 +71,7 @@ export function setQuadGeometry(geometry: THREE.BufferGeometry, includeNormal = 
   return geometry.boundingBox!;
 }
 
-export function setTrapeziumGeometry(geometry: THREE.BufferGeometry) {
+export function setTrapeziumGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   const index = [0, 1, 3, 0, 3, 2];
   const position = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3];
 
@@ -81,7 +81,7 @@ export function setTrapeziumGeometry(geometry: THREE.BufferGeometry) {
   return new THREE.Box3().setFromArray(position);
 }
 
-export function setConeGeometry(geometry: THREE.BufferGeometry) {
+export function setConeGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   const positions = [];
   positions.push(-1, 1, -1);
   positions.push(-1, -1, -1);
@@ -116,7 +116,7 @@ export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
   };
 })();
 
-export function setTorusGeometry(geometry: THREE.BufferGeometry) {
+export function setTorusGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   const lods = [
     { tubularSegments: 9, radialSegments: 18 },
     { tubularSegments: 5, radialSegments: 12 },
@@ -132,7 +132,7 @@ export function setTorusGeometry(geometry: THREE.BufferGeometry) {
   return new THREE.Box3().setFromArray(torusGeometry.position.array);
 }
 
-export function setNutGeometry(geometry: THREE.BufferGeometry) {
+export function setNutGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   const nutGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 6);
   nutGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
 

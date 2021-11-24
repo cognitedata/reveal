@@ -22,7 +22,7 @@ export class IntermediateIndexNode {
     this.count = this.left.count + this.right.count;
   }
 
-  static fromIndexNodesAndBalance(r0: IndexNode, r1: IndexNode) {
+  static fromIndexNodesAndBalance(r0: IndexNode, r1: IndexNode): IntermediateIndexNode {
     if (r0.range.from > r1.range.toInclusive + 1) {
       return new IntermediateIndexNode(r1, r0).balance();
     } else if (r0.range.toInclusive + 1 < r1.range.from) {
@@ -33,7 +33,7 @@ export class IntermediateIndexNode {
     }
   }
 
-  traverse(visitor: (range: NumericRange) => void) {
+  traverse(visitor: (range: NumericRange) => void): void {
     // Note! The actual ranges are kept in leafs, so we do not visit "this"
     this.left.traverse(visitor);
     this.right.traverse(visitor);
