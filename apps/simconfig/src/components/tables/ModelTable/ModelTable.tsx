@@ -151,9 +151,6 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     {
       ...getNameColumnDefinition(),
       Cell: ({ cell: { value } }: any) => <strong>{value}</strong>,
-      Filter: Table.InputFilter(),
-      filter: 'fuzzyText',
-      filterIcon: 'Search',
     },
     {
       id: 'version',
@@ -173,7 +170,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     },
     {
       id: 'download',
-      Header: '',
+      Header: 'Download',
       Cell: ({ cell: { value } }: any) => (
         <>
           <Button
@@ -191,13 +188,13 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     },
     {
       id: 'calculations',
-      Header: '',
+      Header: 'Calculations',
       Cell: ({ cell: { value } }: any) => (
         <>
           <Button
             aria-label="calculations"
             data-model={value}
-            icon="FlowChart"
+            icon="Configure"
             type="ghost"
             onClick={onCalculationsClicked}
           />

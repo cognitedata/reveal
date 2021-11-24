@@ -14,7 +14,7 @@ export default function RunHistoryTable({ data }: ComponentProps) {
       id: 'runType',
       Header: 'Run Type',
       accessor: (row: EventSerializable) => {
-        return `${row.metadata?.runType}`.toLocaleUpperCase();
+        return `${row.metadata?.runType || 'N/A'}`.toLocaleUpperCase();
       },
       width: 1000,
     },
@@ -36,20 +36,19 @@ export default function RunHistoryTable({ data }: ComponentProps) {
           {value}
         </CapitalizedLabel>
       ),
-      Filter: Table.CheckboxColumnFilter(),
-      filter: 'arrayContains',
-      disableSortBy: true,
     },
     {
       id: 'message',
       Header: 'Message',
-      accessor: (row: EventSerializable) => `${row.metadata?.statusMessage}`,
+      accessor: (row: EventSerializable) =>
+        `${row.metadata?.statusMessage || ''}`,
       width: 1000,
     },
     {
       id: 'Model Version',
       Header: 'Model Version',
-      accessor: (row: EventSerializable) => `${row.metadata?.modelVersion}`,
+      accessor: (row: EventSerializable) =>
+        `${row.metadata?.modelVersion || 'N/A'}`,
       width: 1000,
     },
   ];

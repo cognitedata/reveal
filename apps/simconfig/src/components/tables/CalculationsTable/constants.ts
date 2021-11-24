@@ -2,7 +2,7 @@ import { LabelVariants } from '@cognite/cogs.js';
 
 export const STATUS_TYPE: { [x: string]: LabelVariants } = {
   none: 'unknown',
-  ready: 'unknown',
+  ready: 'default',
   running: 'warning',
   success: 'success',
   failure: 'danger',

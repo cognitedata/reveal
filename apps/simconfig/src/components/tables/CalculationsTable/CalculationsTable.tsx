@@ -5,6 +5,8 @@ import { setSelectedCalculation } from 'store/file';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
 import StatusCell from './StatusCell';
+import ViewHistoryCell from './ViewHistoryCell';
+import RunCalculationCell from './RunCalculationCell';
 
 type ComponentProps = {
   data: FileInfoSerializable[];
@@ -43,6 +45,30 @@ export default function CalculationsTable({ data }: ComponentProps) {
           row: { original },
         },
       }: any) => <StatusCell data={original} />,
+    },
+    {
+      id: 'runCalc',
+      Header: 'Run Calculation',
+      accessor: (row: FileInfoSerializable) => `${row.externalId}`,
+      width: 20,
+      maxWidth: 20,
+      Cell: ({
+        cell: {
+          row: { original },
+        },
+      }: any) => <RunCalculationCell data={original} />,
+    },
+    {
+      id: 'viewRunHistory',
+      Header: 'Run History',
+      accessor: (row: FileInfoSerializable) => `${row.externalId}`,
+      width: 20,
+      maxWidth: 50,
+      Cell: ({
+        cell: {
+          row: { original },
+        },
+      }: any) => <ViewHistoryCell data={original} />,
     },
   ];
 

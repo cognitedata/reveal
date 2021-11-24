@@ -59,7 +59,11 @@ export default function TitleArea({
             </ItemWrapper>
             <ItemWrapper>
               <BLabel>Calculations</BLabel>
-              <Button icon="FlowChart" onClick={navigateToCalculation} />
+              <Button
+                aria-label="calculations button"
+                icon="Configure"
+                onClick={navigateToCalculation}
+              />
             </ItemWrapper>
           </>
         )}

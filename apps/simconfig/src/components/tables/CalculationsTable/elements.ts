@@ -3,9 +3,11 @@ import styled from 'styled-components/macro';
 
 export const RunCalculationButton = styled(Button)`
   margin-left: 24px;
-  float: right;
 `;
 export const ViewRunHistoryButton = styled(Button)`
   margin-left: 24px;
-  float: right;
+`;
+
+export const WideCell = styled.div`
+  width: 200px;
 `;
