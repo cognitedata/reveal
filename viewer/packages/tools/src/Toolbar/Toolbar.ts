@@ -56,7 +56,7 @@ export class Toolbar {
     controlDiv.appendChild(this._toolbarContainer);
   }
 
-  public addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void) {
+  public addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void): void {
     const element = document.createElement('BUTTON');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
@@ -72,7 +72,7 @@ export class Toolbar {
     this._toolbarContainer.appendChild(element);
   }
 
-  public setPosition(position: ToolbarPosition) {
+  public setPosition(position: ToolbarPosition): void {
     switch (position) {
       case 'Top':
         this._toolbarContainer.classList.remove(this._activeContainerPosition);

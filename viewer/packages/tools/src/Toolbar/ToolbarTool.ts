@@ -27,7 +27,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
     this._toolbar.addToolbarItem(toolTip, backgroundImage, onClick);
   }
 
-  public setPosition(position: ToolbarPosition) {
+  public setPosition(position: ToolbarPosition): void {
     this._toolbar.setPosition(position);
   }
 
