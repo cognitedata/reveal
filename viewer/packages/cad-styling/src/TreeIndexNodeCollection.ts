@@ -26,7 +26,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
     }
   }
 
-  updateSet(treeIndices: IndexSet) {
+  updateSet(treeIndices: IndexSet): void {
     this._treeIndices = treeIndices;
     this.notifyChanged();
   }
@@ -34,7 +34,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   /**
    * Sets this set to hold an empty set.
    */
-  clear() {
+  clear(): void {
     this._treeIndices = new IndexSet();
     this.notifyChanged();
   }

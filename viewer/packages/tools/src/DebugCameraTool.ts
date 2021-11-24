@@ -34,13 +34,13 @@ export class DebugCameraTool extends Cognite3DViewerToolBase {
     super.dispose();
   }
 
-  showCameraHelper() {
+  showCameraHelper(): void {
     this.hideCameraHelper();
     this._cameraHelper = new THREE.CameraHelper(this.viewerCamera.clone() as THREE.PerspectiveCamera);
     this._viewer.addObject3D(this._cameraHelper);
   }
 
-  hideCameraHelper() {
+  hideCameraHelper(): void {
     if (this._cameraHelper !== undefined) {
       this._viewer.removeObject3D(this._cameraHelper);
       this._cameraHelper = undefined;

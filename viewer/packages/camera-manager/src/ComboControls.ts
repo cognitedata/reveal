@@ -1,6 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+// TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import {
   EventDispatcher,

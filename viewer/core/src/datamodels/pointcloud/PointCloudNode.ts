@@ -51,7 +51,7 @@ export class PointCloudNode extends THREE.Group {
     return this._potreeGroup.needsRedraw;
   }
 
-  requestRedraw() {
+  requestRedraw(): void {
     this._potreeGroup.requestRedraw();
   }
 
