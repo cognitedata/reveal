@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
+import { HttpHeaders } from '@cognite/sdk-core';
 import { ModelDataProvider } from './types';
 import { fetchWithStatusCheck } from './utilities';
 
 export class LocalModelDataProvider implements ModelDataProvider {
-  get headers() {
+  get headers(): HttpHeaders {
     return {};
   }
 

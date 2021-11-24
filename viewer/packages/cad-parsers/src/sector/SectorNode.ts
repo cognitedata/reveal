@@ -37,7 +37,7 @@ export class SectorNode extends THREE.Group {
     return this._updatedTimestamp;
   }
 
-  updateGeometry(geomtryGroup: AutoDisposeGroup | undefined, levelOfDetail: LevelOfDetail) {
+  updateGeometry(geomtryGroup: AutoDisposeGroup | undefined, levelOfDetail: LevelOfDetail): void {
     this.resetGeometry();
     this._group = geomtryGroup;
     if (this._group !== undefined) {
@@ -49,7 +49,7 @@ export class SectorNode extends THREE.Group {
     this.updateMatrixWorld(true);
   }
 
-  resetGeometry() {
+  resetGeometry(): void {
     if (this._group !== undefined) {
       this._group.dereference();
       this.remove(this._group);

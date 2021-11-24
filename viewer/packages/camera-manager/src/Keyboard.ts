@@ -1,6 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+
 const keyMap: { [s: string]: string } = {
   16: 'shift',
   17: 'ctrl',
@@ -26,7 +27,7 @@ export default class Keyboard {
   private keys: { [s: string]: number } = {};
   private _disabled = false;
 
-  get disabled() {
+  get disabled(): boolean {
     return this._disabled;
   }
 
@@ -43,15 +44,17 @@ export default class Keyboard {
     this.addEventListeners();
   }
 
-  public isPressed = (key: string) => this.keys[key] >= 1;
+  public isPressed(key: string): boolean {
+    return this.keys[key] >= 1;
+  }
 
-  public comsumePressed = (key: string) => {
+  public comsumePressed(key: string): boolean {
     const p = this.keys[key] === 2;
     if (p) {
       this.keys[key] = 1;
     }
     return p;
-  };
+  }
 
   private readonly addEventListeners = () => {
     this.clearPressedKeys();

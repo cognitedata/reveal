@@ -70,7 +70,7 @@ export class Geomap {
     return mapProvider;
   }
 
-  public latLongToWorldCoordinates(latLong: LatLongPosition) {
+  public latLongToWorldCoordinates(latLong: LatLongPosition): { x: number; y: number } {
     return GEOTHREE.UnitsUtils.datumsToSpherical(latLong.latitude, latLong.longitude);
   }
 

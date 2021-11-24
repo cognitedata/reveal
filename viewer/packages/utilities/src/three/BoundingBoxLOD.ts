@@ -29,11 +29,11 @@ export class BoundingBoxLOD extends THREE.Object3D {
     this.type = 'BoundingBoxLOD';
   }
 
-  setBoundingBox(boundingBox: THREE.Box3) {
+  setBoundingBox(boundingBox: THREE.Box3): void {
     this._boundingBox.copy(boundingBox);
   }
 
-  addLevel(object: THREE.Object3D, distance: number = 0) {
+  addLevel(object: THREE.Object3D, distance: number = 0): void {
     this._levels.push({ object, distance: Math.abs(distance) });
     this._levels.sort((a, b) => b.distance - a.distance);
     object.visible = false;
@@ -43,14 +43,14 @@ export class BoundingBoxLOD extends THREE.Object3D {
   /**
    * Returns the index of the current active LOD. 0 means highest detail.
    */
-  getCurrentLevel() {
+  getCurrentLevel(): number {
     return this._levels.length > 0 ? this._levels.length - this._activeLevel - 1 : 0;
   }
 
   /**
    * Update selected LOD level based on distance to camera.
    */
-  update(camera: THREE.Camera) {
+  update(camera: THREE.Camera): void {
     this.updateCurrentLevel(camera);
   }
 

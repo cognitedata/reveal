@@ -33,7 +33,7 @@ export function* createPrimitives(
   materials: Materials,
   sectorBounds: THREE.Box3,
   geometryClipBox: THREE.Box3 | null = null
-) {
+): Generator<THREE.Mesh | BoundingBoxLOD> {
   const primitives = sector.primitives;
   if (hasAny(primitives.boxCollection)) {
     yield createBoxes(primitives.boxCollection, primitives.boxAttributes, materials.box, geometryClipBox);

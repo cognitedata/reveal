@@ -76,7 +76,7 @@ module.exports = {
     'unused-imports/no-unused-imports-ts': 'error',
 
     // TODO: maksnester 26-06-2020 we need to fix our codebase to play well with these rules
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': ['error', { 'allowArgumentsExplicitlyTypedAsAny': true }],
 
     // to be discussed
     '@typescript-eslint/no-inferrable-types': 'off'
