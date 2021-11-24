@@ -7,7 +7,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
-import { NodeCollectionBase } from '@reveal/cad-styling';
+import { NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
@@ -119,7 +119,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     }/nodes/list`;
   }
 
-  serialize() {
+  serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
       state: cloneDeep(this._filter),

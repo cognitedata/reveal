@@ -39,11 +39,11 @@ export class NodeTransformProvider {
     }
   }
 
-  setNodeTransform(treeIndices: NumericRange, transform: THREE.Matrix4) {
+  setNodeTransform(treeIndices: NumericRange, transform: THREE.Matrix4): void {
     this._events.changed.fire('set', treeIndices, transform);
   }
 
-  resetNodeTransform(treeIndices: NumericRange) {
+  resetNodeTransform(treeIndices: NumericRange): void {
     this._events.changed.fire('reset', treeIndices, identityTransform);
   }
 }

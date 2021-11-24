@@ -75,7 +75,7 @@ export class NumericRange {
     }
   }
 
-  str() {
+  toString(): string {
     return '(' + this.from + ', ' + this.toInclusive + ')';
   }
 }

@@ -48,7 +48,7 @@ export class NodeAppearanceTextureBuilder {
    * expensive.
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
-  setDefaultAppearance(appearance: NodeAppearance) {
+  setDefaultAppearance(appearance: NodeAppearance): void {
     if (equalNodeAppearances(appearance, this._defaultAppearance)) {
       return;
     }
@@ -92,12 +92,12 @@ export class NodeAppearanceTextureBuilder {
     return this._overrideColorPerTreeIndexTexture;
   }
 
-  dispose() {
+  dispose(): void {
     this._styleProvider.off('changed', this._handleStylesChangedListener);
     this._overrideColorPerTreeIndexTexture.dispose();
   }
 
-  build() {
+  build(): void {
     if (!this._needsUpdate) {
       return;
     }
