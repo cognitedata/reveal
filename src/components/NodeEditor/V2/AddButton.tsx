@@ -115,13 +115,11 @@ const AddButton = ({
         }
       >
         <Button
-          icon="PlusCompact"
-          iconPlacement="right"
           type="primary"
           size="small"
           onClick={() => setIsMenuVisible(!isMenuVisible)}
         >
-          Add
+          Add Node
         </Button>
       </Dropdown>
     </AddDropdownContainer>
