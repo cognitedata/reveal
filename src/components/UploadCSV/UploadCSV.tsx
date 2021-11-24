@@ -13,9 +13,8 @@ import {
 
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { getContainer } from 'utils/utils';
 
-import { useTableData } from 'hooks/table-data';
+import { getContainer } from 'utils/utils';
 import { useCSVUpload } from 'hooks/csv-upload';
 
 const { Dragger } = Upload;
@@ -26,24 +25,24 @@ interface UploadCsvProps {
 
 const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const [file, setFile] = useState<File | undefined>();
-  const { columns } = useTableData();
   const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
   const {
     parsePercentage,
     uploadPercentage,
     uploadSize,
-    columnHeaders,
+    columns,
     isUpload,
     isUploadFinished,
+    isUploadFailed,
     isParsing,
     onConfirmUpload,
   } = useCSVUpload(file, selectedKeyIndex);
 
   const checkAndReturnCols = () => {
-    if (columnHeaders && columnHeaders.length > 0) {
+    if (columns && columns.length > 0) {
       return (
         <div>
-          {columnHeaders.map((header: string) => (
+          {columns.map((header: string) => (
             <Tag style={{ margin: '5px' }} key={header}>
               {header}
             </Tag>
@@ -61,7 +60,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
               <Select.Option value="-1" key="-1">
                 Generate a new Key Column
               </Select.Option>
-              {columnHeaders.map((header: string, index: number) => (
+              {columns.map((header: string, index: number) => (
                 <Select.Option key={String(index)} value={String(index)}>
                   {header}
                 </Select.Option>
@@ -82,11 +81,11 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   };
   const fileProps = {
     name: 'file',
+    accept: '.csv',
     multiple: false,
     handleManualRemove() {
       setFile(undefined);
     },
-    accept: '.csv',
     onChange(info: UploadChangeParam) {
       setFile(info.file.originFileObj);
     },
@@ -135,21 +134,23 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     );
   };
 
+  const onCancelUpload = () => {
+    if (file && isParsing && !isUploadFinished) {
+      notification.info({
+        message: `File upload was canceled.`,
+        key: 'file-upload',
+      });
+    }
+    setCSVModalVisible(false, isUpload);
+  };
+
   return (
     <Modal
       visible
       title="Upload CSV file"
-      onCancel={() => {
-        if (file && isParsing && !isUploadFinished) {
-          notification.info({
-            message: `File upload was canceled.`,
-            key: 'file-upload',
-          });
-        }
-        setCSVModalVisible(false, isUpload);
-      }}
-      okText="Confirm Upload"
       onOk={onConfirmUpload}
+      onCancel={onCancelUpload}
+      okText="Confirm Upload"
       okButtonProps={{
         loading: isUpload,
         disabled: !file || isUpload,
