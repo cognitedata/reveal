@@ -24,7 +24,7 @@ describe('NodeAppearanceTextureBuilder', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers;
+    jest.useRealTimers();
   });
 
   test('needsUpdate is initially true', () => {
