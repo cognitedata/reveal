@@ -18,7 +18,7 @@ export const useCSVUpload = (
 
   const [isUpload, setIsUpload] = useState<boolean>(false);
   const [isUploadFailed, setIsUploadFailed] = useState(false);
-  const [isUploadFinished, setIsUploadComplete] = useState(false);
+  const [isUploadCompleted, setIsUploadCompleted] = useState(false);
 
   const [columns, setColumns] = useState<string[] | undefined>();
   const [parser, setParser] = useState<PapaParse.Parser | undefined>();
@@ -31,18 +31,21 @@ export const useCSVUpload = (
 
   const updatePercentage = () => {
     if (!file || !isUpload) return;
-    const newParsePercentage = Math.floor((parsedCursor / file.size) * 100);
-    const newUploadPercentage = Math.floor((uploadedCursor / file.size) * 100);
-    const size = Math.floor(uploadedCursor / 2 ** 20);
+    const newParsePercentage = Math.ceil((parsedCursor / file.size) * 100);
+    const newUploadPercentage = Math.ceil((uploadedCursor / file.size) * 100);
+    const size = Math.ceil(uploadedCursor / 2 ** 20);
     setParsePercentage(newParsePercentage);
     setUploadPercentage(newUploadPercentage);
     setUploadSize(size);
   };
 
-  useEffect(() => {
-    if (!parser) return;
-    parser.abort();
-  }, [parser]);
+  useEffect(
+    () => () => {
+      if (!parser) return;
+      parser.abort();
+    },
+    [parser]
+  );
 
   useEffect(() => {
     updatePercentage();
@@ -74,7 +77,7 @@ export const useCSVUpload = (
         setIsUploadFailed(true);
       },
       complete: () => {
-        setIsUploadComplete(true);
+        setIsUploadCompleted(true);
         setIsUpload(false);
       },
       chunk(results, _parser) {
@@ -83,46 +86,47 @@ export const useCSVUpload = (
         setParsedCursor(results.meta.cursor);
         const items = new Array(results.data.length);
         results.data.forEach((row: string[], rowIndex) => {
-          const columnsNew: any = {};
+          const newColumns: any = {};
           columns?.forEach((column, index) => {
-            columnsNew[column] = row[index];
+            newColumns[column] = row[index];
           });
           items[rowIndex] = {
             key:
               selectedKeyIndex === -1
                 ? uuid()
                 : row[selectedKeyIndex].toString(),
-            columns: columnsNew,
+            columns: newColumns,
           };
         });
 
         sdk.raw
           .insertRows(database, table, items)
-          .then(() => setUploadedCursor(results.meta.cursor))
+          .then(() => {
+            setUploadedCursor(results.meta.cursor);
+          })
           // Keep the main thread "open" to render progress before continuing parsing the file
           .then(() => sleep(250))
           .then(() => _parser.resume())
           .catch(() => {
             setIsUploadFailed(true);
-            setIsUpload(false);
           });
       },
     });
   }, [file, isUpload, columns, selectedKeyIndex, database, table]);
 
   useEffect(() => {
-    if (!file) return;
-    if (isUploadFinished && !isUploadFailed)
-      notification.success({
-        message: `${file.name} is uploaded!`,
-        key: 'file-upload',
-      });
+    if (!file || !isUploadCompleted) return;
     if (isUploadFailed)
       notification.error({
         message: `${file.name} is not uploaded!`,
         key: 'file-upload',
       });
-  }, [file, isUploadFinished, isUploadFailed]);
+    else
+      notification.success({
+        message: `${file.name} is uploaded!`,
+        key: 'file-upload',
+      });
+  }, [file, isUploadCompleted, isUploadFailed]);
 
   const onConfirmUpload = () => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
@@ -135,8 +139,8 @@ export const useCSVUpload = (
     uploadSize,
     columns,
     isUpload,
-    isUploadFinished,
     isUploadFailed,
+    isUploadCompleted,
     isParsing: !!parser,
     onConfirmUpload,
   };
