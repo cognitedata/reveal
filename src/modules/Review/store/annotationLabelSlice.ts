@@ -272,7 +272,6 @@ const annotationLabelSlice = createSlice({
           state.collections.byId[keypointAnnotation.id.toString()] = collection;
           state.collections.allIds = Object.keys(state.collections.byId);
         });
-
       }
     );
 
