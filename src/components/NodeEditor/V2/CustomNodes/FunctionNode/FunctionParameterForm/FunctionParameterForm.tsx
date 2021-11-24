@@ -26,6 +26,17 @@ const FunctionParameterForm = ({
     setFormData({ ...formData, [param]: transformParamInput(type, value) });
   };
 
+  const inputProps = (type: string) => {
+    switch (type) {
+      case OperationParametersTypeEnum.Int:
+        return { type: 'tel' };
+      case OperationParametersTypeEnum.Float:
+        return { type: 'number', step: 0.01 };
+      default:
+        return { type: 'text' };
+    }
+  };
+
   return (
     <ParameterFormWrapper>
       {parameters.map((parameter) => {
@@ -61,13 +72,7 @@ const FunctionParameterForm = ({
               description={description}
             />
             <Input
-              type={
-                type === OperationParametersTypeEnum.Int ||
-                type === OperationParametersTypeEnum.Float
-                  ? 'number'
-                  : 'string'
-              }
-              step={1}
+              {...inputProps(type)}
               name={name}
               value={formData[param]}
               onChange={(event) =>
