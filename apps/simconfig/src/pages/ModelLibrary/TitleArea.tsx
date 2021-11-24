@@ -4,6 +4,7 @@ import { useAppDispatch } from 'store/hooks';
 import { setSelectedFile } from 'store/file';
 import { Title, Button } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
+import { UnitSystem } from 'components/forms/ModelForm/constants';
 
 import {
   BLabel,
@@ -56,6 +57,11 @@ export default function TitleArea({
             <ItemWrapper>
               <BLabel>Version</BLabel>
               {latestFile?.metadata?.version}
+            </ItemWrapper>
+            <ItemWrapper>
+              <BLabel>Unit system</BLabel>
+              {latestFile?.metadata &&
+                UnitSystem[latestFile?.metadata?.unitSystem]}
             </ItemWrapper>
             <ItemWrapper>
               <BLabel>Calculations</BLabel>

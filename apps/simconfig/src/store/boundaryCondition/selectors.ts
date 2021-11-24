@@ -5,3 +5,6 @@ export const selectBoundaryConditions = (state: StoreState) =>
 
 export const selectBoundaryConditionsStatus = (state: StoreState) =>
   state.boundaryCondition.requestStatus;
+
+export const selectBoundaryConditionsChartsLink = (state: StoreState) =>
+  state.boundaryCondition.chartsLink;

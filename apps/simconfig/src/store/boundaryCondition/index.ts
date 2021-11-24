@@ -4,7 +4,10 @@ import { RequestStatus } from '../types';
 import { partialUpdate } from '../utils';
 
 import { initialState } from './constants';
-import { fetchBoundaryConditions } from './thunks';
+import {
+  fetchBoundaryConditionChartsLink,
+  fetchBoundaryConditions,
+} from './thunks';
 
 export const boundaryConditionSlice = createSlice({
   name: 'boundaryCondition',
@@ -29,6 +32,14 @@ export const boundaryConditionSlice = createSlice({
           requestStatus: RequestStatus.ERROR,
         })
       );
+
+    builder.addCase(
+      fetchBoundaryConditionChartsLink.fulfilled,
+      (state, action) =>
+        partialUpdate(state, {
+          chartsLink: action.payload,
+        })
+    );
   },
 });
 export const boundaryConditionReducer = boundaryConditionSlice.reducer;

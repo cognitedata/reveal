@@ -1,32 +1,32 @@
 import React, { useContext, useEffect } from 'react';
-import { Button, Overline } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { BcContainer, BcLabel } from 'components/tables/ModelTable/elements';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import {
   selectBoundaryConditions,
+  selectBoundaryConditionsChartsLink,
   selectBoundaryConditionsStatus,
 } from 'store/boundaryCondition/selectors';
-import { fetchBoundaryConditions } from 'store/boundaryCondition/thunks';
+import {
+  fetchBoundaryConditions,
+  fetchBoundaryConditionChartsLink,
+} from 'store/boundaryCondition/thunks';
 import { RequestStatus } from 'store/types';
 
 import { SequenceDataType } from './constants';
-import { BodyWithSpacing, TitleWithSpacing } from './elements';
+import { BoundaryConditionContainer } from './elements';
 
 interface Props {
-  onClosePanel: () => void;
   data: FileInfoSerializable | undefined;
 }
 
-export const BoundaryConditionContent: React.FC<Props> = ({
-  data,
-  onClosePanel,
-}) => {
-  const { cdfClient } = useContext(CdfClientContext);
+export const BoundaryConditionContent: React.FC<Props> = ({ data }) => {
+  const { cdfClient, authState } = useContext(CdfClientContext);
   const dispatch = useAppDispatch();
   const displayValues = useAppSelector(selectBoundaryConditions);
   const displayValuesStatus = useAppSelector(selectBoundaryConditionsStatus);
+  const chartsLink = useAppSelector(selectBoundaryConditionsChartsLink);
 
   const fetchDisplayValues = async () => {
     if (!data || !data.name) {
@@ -48,6 +48,15 @@ export const BoundaryConditionContent: React.FC<Props> = ({
         filter,
       })
     );
+    dispatch(
+      fetchBoundaryConditionChartsLink({
+        client: cdfClient,
+        modelName: data.name,
+        projectName: authState?.project,
+        createdTime: data.createdTime,
+        filter,
+      })
+    );
   };
 
   useEffect(() => {
@@ -58,33 +67,47 @@ export const BoundaryConditionContent: React.FC<Props> = ({
   const success = displayValuesStatus === RequestStatus.SUCCESS;
 
   return (
-    <BcContainer>
-      <Button icon="Close" type="ghost" onClick={onClosePanel} />
-      <TitleWithSpacing level={2}>{data?.name}</TitleWithSpacing>
+    <BoundaryConditionContainer>
+      {success && (
+        <>
+          <table>
+            <caption>Boundary conditions</caption>
+            <tbody>
+              {displayValues.map((bc) => (
+                <tr key={bc.label}>
+                  <td className="label">{bc.label}</td>
+                  <td className="value">
+                    <Tooltip content={`Raw value: ${bc.rawValue}`}>
+                      <span className="number">
+                        {bc.value?.base}
+                        {bc.value?.exponent !== 0 && (
+                          <span>
+                            {' '}
+                            × 10<sup>{bc.value?.exponent}</sup>
+                          </span>
+                        )}
+                      </span>
+                    </Tooltip>
+                    <span className="unit"> {bc.displayUnit}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      <BodyWithSpacing>
-        <BcLabel>Version:</BcLabel>
-        {data?.metadata?.version}
-      </BodyWithSpacing>
-      <BodyWithSpacing>
-        <BcLabel>Description:</BcLabel>
-        {data?.metadata?.description}
-      </BodyWithSpacing>
-      <BodyWithSpacing>
-        <BcLabel>User:</BcLabel>
-        {data?.metadata?.userEmail}
-      </BodyWithSpacing>
-      <Overline>BOUNDARY CONDITIONS</Overline>
-      <BodyWithSpacing level={3}>
-        {success &&
-          displayValues.map((bc) => (
-            <div key={bc.label}>
-              <BcLabel>{bc.label}:</BcLabel>
-              {bc.value} {bc.unit}
-            </div>
-          ))}
-        {failed && <span>No Boundary conditions</span>}
-      </BodyWithSpacing>
-    </BcContainer>
+          <div className="charts-link">
+            <Button
+              type="primary"
+              href={chartsLink}
+              target="_blank"
+              icon="LineChart"
+            >
+              Open in Charts
+            </Button>
+          </div>
+        </>
+      )}
+      {failed && <div className="no-content">No boundary conditions</div>}
+    </BoundaryConditionContainer>
   );
 };

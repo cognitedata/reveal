@@ -1,4 +1,4 @@
-import { Button, CollapsablePanel } from '@cognite/cogs.js';
+import { Button, CollapsablePanel, Tag, Title } from '@cognite/cogs.js';
 import { CollapsableContainer, Container, Header } from 'pages/elements';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
@@ -13,6 +13,7 @@ import { DEFAULT_MODEL_SOURCE } from 'components/forms/ModelForm/constants';
 
 import { DATA_TYPE_FILE } from './constants';
 import TitleArea from './TitleArea';
+import { SidebarContainer } from './elements';
 
 type Params = {
   modelName?: string;
@@ -78,12 +79,34 @@ export default function ModelLibrary() {
   return (
     <CollapsableContainer>
       <CollapsablePanel
-        sidePanelRightWidth={330}
+        sidePanelRightWidth={420}
         sidePanelRight={
-          <BoundaryConditionContent
-            onClosePanel={onClosePanel}
-            data={selectedFileVersion}
-          />
+          <SidebarContainer>
+            <Title level={3} className="header">
+              <span className="name">
+                {selectedFileVersion?.name}
+                <Tag className="version">
+                  version {selectedFileVersion?.metadata?.version}
+                </Tag>
+              </span>
+              <Button
+                icon="Close"
+                type="ghost"
+                onClick={onClosePanel}
+                aria-label="close"
+              />
+            </Title>
+
+            <BoundaryConditionContent data={selectedFileVersion} />
+
+            <dl>
+              <dt>Description</dt>
+              <dd>{selectedFileVersion?.metadata?.description}</dd>
+
+              <dt>Uploaded by user</dt>
+              <dd>{selectedFileVersion?.metadata?.userEmail}</dd>
+            </dl>
+          </SidebarContainer>
         }
         sidePanelRightVisible={Boolean(selectedFileVersion)}
       >

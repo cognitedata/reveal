@@ -6,4 +6,5 @@ export const initialState: BoundaryConditionState = {
   requestStatus: RequestStatus.IDLE,
   initialized: false,
   boundaryConditions: [],
+  chartsLink: '',
 };

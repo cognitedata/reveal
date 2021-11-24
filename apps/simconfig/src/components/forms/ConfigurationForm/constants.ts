@@ -63,11 +63,17 @@ enum LIQUID_RATE_GAS_RATE_UNIT {
   'Sm3/MSm3' = 'Sm3/MSm3',
 }
 enum TEMPERATURE_UNIT {
-  'deg F' = 'deg F',
-  'deg C' = 'deg C',
-  'deg R' = 'deg R',
-  'deg K' = 'deg K',
+  'deg F' = '°F',
+  'deg C' = '°C',
+  'deg R' = '°R',
+  'deg K' = '°K',
 }
+
+export const MISC_UNITS = {
+  percent: '%',
+  feet: 'ft',
+  meters: 'm',
+} as const;
 
 export const UNIT_TYPE: { [x: string]: { [x: string]: string } } =
   Object.freeze({
