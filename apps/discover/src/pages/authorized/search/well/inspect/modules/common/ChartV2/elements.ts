@@ -166,6 +166,7 @@ export const DetailcardBlock = styled(FlexColumn)`
   padding: 8px 16px 8px 12px;
   background: var(--cogs-greyscale-grey1);
   border-radius: 8px;
+  flex: 0 0 50%;
 `;
 
 export const DetailcardBlockFull = styled(DetailcardBlock)`

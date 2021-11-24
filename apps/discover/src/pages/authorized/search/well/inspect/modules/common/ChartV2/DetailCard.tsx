@@ -42,11 +42,15 @@ const DetailCard = ({ data }: Props) => {
       <DetailcardSubRow>
         <DetailcardBlock>
           <DetailcardBlockHeader>{displayValues.yTitle}</DetailcardBlockHeader>
-          <DetailcardBlockContent>{displayValues.y}</DetailcardBlockContent>
+          <DetailcardBlockContent>
+            {Number(displayValues.y).toFixed(2)}
+          </DetailcardBlockContent>
         </DetailcardBlock>
         <DetailcardBlockFull>
           <DetailcardBlockHeader>{displayValues.xTitle}</DetailcardBlockHeader>
-          <DetailcardBlockContent>{displayValues.x}</DetailcardBlockContent>
+          <DetailcardBlockContent>
+            {Number(displayValues.x).toFixed(2)}
+          </DetailcardBlockContent>
         </DetailcardBlockFull>
       </DetailcardSubRow>
     </DetailcardWrapper>
