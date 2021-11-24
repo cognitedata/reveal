@@ -1,6 +1,6 @@
 import React from 'react';
 import { Toast } from 'components/Toast';
-import { useDocumentsPipelinesQuery } from 'services/query/documents/query';
+import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
 import { useNavigation } from 'hooks/useNavigation';
 import { useClassifierParams } from './useParams';
 

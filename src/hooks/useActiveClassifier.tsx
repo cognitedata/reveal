@@ -1,4 +1,4 @@
-import { useDocumentsClassifiersQuery } from 'services/query/documents/query';
+import { useDocumentsClassifiersQuery } from 'services/query/classifier/query';
 
 export const useActiveClassifier = () => {
   const { data, isLoading } = useDocumentsClassifiersQuery();

@@ -6,7 +6,7 @@ import { TableWrapper } from 'components/table/TableWrapper';
 import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'services/query/classifier/query';
-import { useDocumentsUpdatePipelineMutate } from 'services/query/documents/mutate';
+import { useDocumentsUpdatePipelineMutate } from 'services/query/pipelines/mutate';
 import { ClassifierTrainingSet } from 'services/types';
 import { curateColumns } from './curateTrainingSetsColumns';
 

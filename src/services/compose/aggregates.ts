@@ -8,7 +8,7 @@ export const composeAggregates = async (
 ): Promise<Aggregates> => {
   const aggregates = await fetchDocumentAggregates(sdk);
 
-  const transform = Object.entries(DOCUMENTS_AGGREGATES).reduce(
+  return Object.entries(DOCUMENTS_AGGREGATES).reduce(
     (accumulator, [key, constants]) => {
       const aggregate = aggregates?.find(
         (item) => item.name === constants.name
@@ -23,6 +23,4 @@ export const composeAggregates = async (
     },
     {} as Aggregates
   );
-
-  return transform;
 };

@@ -3,13 +3,14 @@ import { Classifier } from '@cognite/sdk-playground';
 import { Empty } from 'components/states/Empty';
 import { homeConfig } from 'configs/global.config';
 import React from 'react';
-import { useDocumentsClassifiersQuery } from 'services/query/documents/query';
+import { useDocumentsClassifiersQuery } from 'services/query/classifier/query';
 import { sortByDate } from 'utils/sort';
 import { ClassifierActions, curateColumns } from './curateClassifierColumns';
 
 interface Props {
   classifierActionsCallback?: ClassifierActions;
 }
+
 export const ClassifierTable: React.FC<Props> = ({
   classifierActionsCallback,
 }) => {

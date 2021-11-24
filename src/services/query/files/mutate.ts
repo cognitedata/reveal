@@ -1,7 +1,7 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useMutation, useQueryClient } from 'react-query';
 import { updateFileLabels } from 'services/api';
-import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
+import { DOCUMENTS_KEYS } from 'services/constants';
 import { Toast } from 'components/Toast';
 import { FilesApiError, LabelFileUpdate } from 'services/types';
 
@@ -14,7 +14,7 @@ export const useUpdateFileLabelsMutate = (action: 'add' | 'remove') => {
       updateFileLabels(sdk, action, label, fileIds),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(DOCUMENTS_QUERY_KEYS.list);
+        queryClient.invalidateQueries(DOCUMENTS_KEYS.documents());
         Toast.info({
           title: 'Updating file labels',
           message:

@@ -5,7 +5,7 @@ import {
   createDocumentClassifier,
   deleteDocumentClassifier,
 } from 'services/api';
-import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
+import { CLASSIFIER_KEYS } from 'services/constants';
 import { ApiError } from 'services/types';
 
 export const useClassifierCreateMutate = () => {
@@ -16,7 +16,7 @@ export const useClassifierCreateMutate = () => {
     (classifierName: string) => createDocumentClassifier(sdk, classifierName),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(DOCUMENTS_QUERY_KEYS.trainingSet);
+        queryClient.invalidateQueries(CLASSIFIER_KEYS.trainingSets());
       },
       onError: (error: ApiError) => {
         Toast.error({
@@ -37,7 +37,7 @@ export const useClassifierDeleteMutate = () => {
     (classifierId: number) => deleteDocumentClassifier(sdk, classifierId),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(DOCUMENTS_QUERY_KEYS.classifier);
+        queryClient.invalidateQueries(CLASSIFIER_KEYS.classifiers());
       },
       onError: (error: ApiError) => {
         Toast.error({

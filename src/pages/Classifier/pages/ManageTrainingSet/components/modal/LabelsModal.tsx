@@ -1,7 +1,7 @@
 import { Modal } from 'components/modal/Modal';
 import { TableWrapper } from 'components/table/TableWrapper';
 import React from 'react';
-import { useDocumentsUpdatePipelineMutate } from 'services/query/documents/mutate';
+import { useDocumentsUpdatePipelineMutate } from 'services/query/pipelines/mutate';
 import { getContainer } from 'utils/utils';
 import ModalFooter from 'components/modal/ModalFooter';
 import { Labels, LabelsTable } from '../table/LabelsTable';

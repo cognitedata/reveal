@@ -10,7 +10,7 @@ import { Body, Button, Flex, Tag } from '@cognite/cogs.js';
 import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
 import { useClassifierManageTrainingSetsQuery } from 'services/query';
 import { useClassifierCreateMutate } from 'services/query/classifier/mutate';
-import { useDocumentsClassifierByIdQuery } from 'services/query/documents/query';
+import { useDocumentsClassifierByIdQuery } from 'services/query/classifier/query';
 import { useClassifierParams } from 'hooks/useParams';
 import { BottomNavigation } from 'pages/Classifier/components/navigations/BottomNavigation';
 import { isClassifierFinished } from 'utils/classifier';

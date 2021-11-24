@@ -3,22 +3,18 @@ import { useQuery } from 'react-query';
 import {
   doDocumentSearch,
   fetchDocumentById,
-  fetchDocumentClassifierById,
-  fetchDocumentClassifiers,
   fetchDocumentList,
-  fetchDocumentPipelines,
   previewDocument,
 } from 'services/api';
-import { DOCUMENTS_QUERY_KEYS } from 'services/constants';
-import React from 'react';
+
+import { DOCUMENTS_KEYS } from 'services/constants';
 import { useLabelParams } from 'hooks/useParams';
-import { isClassifierTraining } from 'utils/classifier';
 
 export const useDocumentsSearchQuery = (enabled = true) => {
   const sdk = useSDK();
 
   const { data = [], ...rest } = useQuery(
-    [DOCUMENTS_QUERY_KEYS.search],
+    DOCUMENTS_KEYS.searches(),
     () => doDocumentSearch(sdk),
     {
       enabled,
@@ -34,10 +30,11 @@ export const useDocumentsQuery = (enabled = true) => {
   const externalId = useLabelParams();
 
   const { data = [], ...rest } = useQuery(
-    [DOCUMENTS_QUERY_KEYS.list, externalId],
-    ({ queryKey: [_, id] }) => fetchDocumentList(sdk, id),
+    DOCUMENTS_KEYS.documents(externalId),
+    ({ queryKey: [_all, _document, _label, id] }) =>
+      fetchDocumentList(sdk, id as string),
     {
-      enabled,
+      enabled: enabled && Boolean(externalId),
     }
   );
 
@@ -48,8 +45,9 @@ export const useDocumentQuery = (documentId?: number) => {
   const sdk = useSDK();
 
   return useQuery(
-    [DOCUMENTS_QUERY_KEYS.byId, documentId],
-    ({ queryKey: [_, id] }) => fetchDocumentById(sdk, id as number),
+    DOCUMENTS_KEYS.document(documentId),
+    ({ queryKey: [_all, _document, id] }) =>
+      fetchDocumentById(sdk, id as number),
     {
       enabled: !!documentId,
     }
@@ -63,52 +61,11 @@ export const useDocumentPreviewQuery = (
   const sdk = useSDK();
 
   return useQuery(
-    [DOCUMENTS_QUERY_KEYS.preview, documentId],
+    DOCUMENTS_KEYS.preview(documentId),
     () => previewDocument(sdk, documentId, page),
     {
       enabled: !!documentId,
       staleTime: Infinity,
     }
-  );
-};
-
-export const useDocumentsClassifiersQuery = () => {
-  const sdk = useSDK();
-
-  const { data = [], ...rest } = useQuery(
-    [DOCUMENTS_QUERY_KEYS.classifier],
-    () => fetchDocumentClassifiers(sdk)
-  );
-
-  return { data, ...rest };
-};
-
-export const useDocumentsClassifierByIdQuery = (id?: number) => {
-  const sdk = useSDK();
-
-  const [refetchInterval, setRefreshInterval] = React.useState(5000);
-  const disableRefreshInterval = () => setRefreshInterval(0);
-
-  return useQuery(
-    [DOCUMENTS_QUERY_KEYS.classifier, id],
-    () => fetchDocumentClassifierById(sdk, id!),
-    {
-      enabled: !!id,
-      refetchInterval,
-      onSuccess: (data) => {
-        if (!isClassifierTraining(data)) {
-          disableRefreshInterval();
-        }
-      },
-      onError: () => disableRefreshInterval(),
-    }
-  );
-};
-
-export const useDocumentsPipelinesQuery = () => {
-  const sdk = useSDK();
-
-  return useQuery([DOCUMENTS_QUERY_KEYS.pipelines], () =>
-    fetchDocumentPipelines(sdk)
   );
 };
