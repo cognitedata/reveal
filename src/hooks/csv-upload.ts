@@ -29,27 +29,24 @@ export const useCSVUpload = (
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadSize, setUploadSize] = useState(0);
 
-  useEffect(
-    () => () => {
-      if (!parser) return;
-      parser.abort();
-    },
-    [parser]
-  );
-
-  useEffect(() => {
+  const updatePercentage = () => {
     if (!file || !isUpload) return;
-    const percentage = Math.floor((parsedCursor / file.size) * 100);
-    setParsePercentage(percentage);
-  }, [parsedCursor, file, isUpload]);
-
-  useEffect(() => {
-    if (!file || !isUpload) return;
-    const percentage = Math.floor((uploadedCursor / file.size) * 100);
+    const newParsePercentage = Math.floor((parsedCursor / file.size) * 100);
+    const newUploadPercentage = Math.floor((uploadedCursor / file.size) * 100);
     const size = Math.floor(uploadedCursor / 2 ** 20);
-    setUploadPercentage(percentage);
+    setParsePercentage(newParsePercentage);
+    setUploadPercentage(newUploadPercentage);
     setUploadSize(size);
-  }, [uploadedCursor, file, isUpload]);
+  };
+
+  useEffect(() => {
+    if (!parser) return;
+    parser.abort();
+  }, [parser]);
+
+  useEffect(() => {
+    updatePercentage();
+  }, [parsedCursor, uploadedCursor, file, isUpload]);
 
   useEffect(() => {
     if (!file) return;
@@ -67,6 +64,19 @@ export const useCSVUpload = (
     PapaParse.parse<any>(file, {
       dynamicTyping: true,
       skipEmptyLines: true,
+      beforeFirstChunk: (chunk) => chunk.split('\n').splice(1).join('\n'),
+      error: () => {
+        notification.error({
+          message: `${file.name} could not be parsed!`,
+          key: 'file-upload',
+        });
+        setIsUpload(false);
+        setIsUploadFailed(true);
+      },
+      complete: () => {
+        setIsUploadComplete(true);
+        setIsUpload(false);
+      },
       chunk(results, _parser) {
         setParser(_parser);
         _parser.pause();
@@ -96,21 +106,6 @@ export const useCSVUpload = (
             setIsUploadFailed(true);
             setIsUpload(false);
           });
-      },
-      beforeFirstChunk(chunk) {
-        return chunk.split('\n').splice(1).join('\n');
-      },
-      error() {
-        notification.error({
-          message: `${file.name} could not be parsed!`,
-          key: 'file-upload',
-        });
-        setIsUpload(false);
-        setIsUploadFailed(true);
-      },
-      complete() {
-        setIsUploadComplete(true);
-        setIsUpload(false);
       },
     });
   }, [file, isUpload, columns, selectedKeyIndex, database, table]);

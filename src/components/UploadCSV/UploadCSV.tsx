@@ -33,10 +33,11 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     columns,
     isUpload,
     isUploadFinished,
-    isUploadFailed,
     isParsing,
     onConfirmUpload,
   } = useCSVUpload(file, selectedKeyIndex);
+
+  const okText = isUploadFinished ? 'OK' : 'Confirm Upload';
 
   const checkAndReturnCols = () => {
     if (columns && columns.length > 0) {
@@ -93,10 +94,12 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const renderModalContent = () => {
     if (file) {
-      if (isUpload) {
+      if (isUpload || isUploadFinished) {
         return (
           <ContentWrapper>
-            <p> Uploading csv...</p>
+            <p>
+              {isUploadFinished ? 'Uploading finished!' : 'Uploading csv...'}
+            </p>
             <Progress
               type="line"
               percent={parsePercentage}
@@ -144,13 +147,18 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     setCSVModalVisible(false, isUpload);
   };
 
+  const onOk = () => {
+    if (isUploadFinished) setCSVModalVisible(false, true);
+    else onConfirmUpload();
+  };
+
   return (
     <Modal
       visible
       title="Upload CSV file"
-      onOk={onConfirmUpload}
+      okText={okText}
+      onOk={onOk}
       onCancel={onCancelUpload}
-      okText="Confirm Upload"
       okButtonProps={{
         loading: isUpload,
         disabled: !file || isUpload,
