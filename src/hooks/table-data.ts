@@ -47,7 +47,9 @@ export const useTableData = () => {
   });
 
   useEffect(() => {
-    if (rows.isFetched) rows.refetch();
+    if (rows.isFetched) {
+      rows.refetch();
+    }
   }, [rows.isFetched, rows.refetch]);
 
   const rawRows: Partial<RawDBRow>[] = useMemo(() => {
