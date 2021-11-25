@@ -63,6 +63,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/react",
     "@npm//@types/file-saver",
     "@npm//@types/styled-components",
+    "@npm//@types/lodash",
 ]
 
 # Dev dependencies from package.json

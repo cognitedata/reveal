@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
+import constant from 'lodash/constant';
 import {
   SvgDocument,
   newInternalSvgPath,
@@ -14,32 +15,21 @@ import {
   getInternalSvgBoundingBox,
   SVG_ID,
 } from '@cognite/pid-tools';
-import styled from 'styled-components';
-import { Modal, Input, Button } from '@cognite/cogs.js';
+import { Modal, Input, Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
 
+import {
+  ModalFooterWrapper,
+  ReactSVGWindow,
+  ReactSVGWrapper,
+  SvgViewerWrapper,
+  ZoomButtonsWrapper,
+} from './elements';
+import { keyboardNavigation } from './utils/keyboardNavigation';
 import { SidePanel } from './components';
 
 const appElement = document.querySelector('#root') || undefined;
 
 let svgDocument: SvgDocument | undefined;
-
-const SvgViewerWrapper = styled.div`
-  height: calc(100% - 56px);
-  overflow: hidden;
-`;
-
-const ReactSVGWrapper = styled.div`
-  height: 100%;
-  overflow: scroll;
-  border: 2px solid;
-`;
-
-const ModalFooterWrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  justify-content: end;
-  gap: 1rem;
-`;
 
 type ExistingSymbolPromptData = {
   symbolName: string;
@@ -47,85 +37,13 @@ type ExistingSymbolPromptData = {
   resolution?: 'add' | 'rename';
 } | null;
 
-const originalViewBox = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  isUpdated: false,
-};
-
-const viewBox = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  isUpdated: false,
-};
-
-let keydownEventListenerAdded = false;
-const scrollFactor = 0.15;
-const zoomFactor = 0.2;
-
-const updateSvgWithViewbox = () => {
-  document
-    .getElementById(SVG_ID)
-    ?.setAttribute(
-      'viewBox',
-      `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
-    );
-};
-
-const moveLeft = () => {
-  viewBox.x -= scrollFactor * viewBox.width;
-  updateSvgWithViewbox();
-};
-
-const moveRight = () => {
-  viewBox.x += scrollFactor * viewBox.width;
-  updateSvgWithViewbox();
-};
-
-const moveUp = () => {
-  viewBox.y -= scrollFactor * viewBox.height;
-  updateSvgWithViewbox();
-};
-
-const moveDown = () => {
-  viewBox.y += scrollFactor * viewBox.height;
-  updateSvgWithViewbox();
-};
-
-const zoomIn = () => {
-  const widthChange = zoomFactor * viewBox.width;
-  viewBox.width -= widthChange;
-  viewBox.x += widthChange / 2;
-
-  const heightChange = zoomFactor * viewBox.height;
-  viewBox.height -= heightChange;
-  viewBox.y += heightChange / 2;
-
-  updateSvgWithViewbox();
-};
-
-const zoomOut = () => {
-  const widthChange = zoomFactor * (viewBox.width * (1 / (1 - zoomFactor)));
-  viewBox.width += widthChange;
-  viewBox.x -= widthChange / 2;
-
-  const heightChange = zoomFactor * (viewBox.height * (1 / (1 - zoomFactor)));
-  viewBox.height += heightChange;
-  viewBox.y -= heightChange / 2;
-  updateSvgWithViewbox();
-};
-
-const resetZoom = () => {
-  viewBox.x = originalViewBox.x;
-  viewBox.y = originalViewBox.y;
-  viewBox.width = originalViewBox.width;
-  viewBox.height = originalViewBox.height;
-  updateSvgWithViewbox();
-};
+const {
+  initNavigationEvents,
+  removeNavigationEvents,
+  zoomIn,
+  zoomOut,
+  resetZoom,
+} = keyboardNavigation();
 
 export const SvgViewer = () => {
   const [fileUrl, setFileUrl] = React.useState('');
@@ -149,43 +67,35 @@ export const SvgViewer = () => {
     }
   }, [existingSymbolPromptData]);
 
-  const onkeydown = (e: KeyboardEvent) => {
-    if (document.activeElement === document.body) {
-      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
-        return;
-      }
-      switch (e.code) {
-        case 'KeyA':
-          moveLeft();
-          break;
-        case 'KeyD':
-          moveRight();
-          break;
-        case 'KeyW':
-          moveUp();
-          break;
-        case 'KeyS':
-          moveDown();
-          break;
-        case 'KeyE':
-          zoomIn();
-          break;
-        case 'KeyQ':
-          zoomOut();
-          break;
-        case 'KeyR':
-          resetZoom();
-          break;
-      }
-    }
-  };
+  const viewportRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!keydownEventListenerAdded) {
-      keydownEventListenerAdded = true;
-      document.addEventListener('keydown', onkeydown);
+    if (viewportRef.current) {
+      initNavigationEvents(viewportRef.current as unknown as HTMLDivElement);
+      return () => removeNavigationEvents();
     }
+    return constant(true);
   });
+
+  const zoomButtonGroups: ToolBarButton[][] = [
+    [
+      {
+        icon: 'ZoomIn',
+        onClick: () => zoomIn(),
+        description: 'Zoom in',
+      },
+      {
+        icon: 'Refresh',
+        onClick: () => resetZoom(),
+        description: 'Reset zoom',
+      },
+      {
+        icon: 'ZoomOut',
+        onClick: () => zoomOut(),
+        description: 'Zoom out',
+      },
+    ],
+  ];
 
   const loadSymbolsAsJson = (jsonData: any) => {
     if ('symbols' in jsonData) {
@@ -340,25 +250,12 @@ export const SvgViewer = () => {
     // console.log('handleAfterInjection', svg);
 
     if (svg) {
+      const bBox = svg.getBBox();
       const all: SVGElement[] = [];
-
-      if (!viewBox.isUpdated) {
-        originalViewBox.x = svg.getBBox().x;
-        originalViewBox.y = svg.getBBox().y;
-        originalViewBox.width = svg.getBBox().width;
-        originalViewBox.height = svg.getBBox().height;
-        originalViewBox.isUpdated = true;
-
-        viewBox.x = originalViewBox.x;
-        viewBox.y = originalViewBox.y;
-        viewBox.width = originalViewBox.width;
-        viewBox.height = originalViewBox.height;
-        viewBox.isUpdated = true;
-      }
 
       svg.setAttribute(
         'viewBox',
-        `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
+        `${bBox.x} ${bBox.y} ${bBox.width} ${bBox.height}`
       );
 
       const recursive = (node: SVGElement) => {
@@ -480,15 +377,20 @@ export const SvgViewer = () => {
           />
         )}
         {fileUrl !== '' && (
-          <ReactSVGWrapper>
-            <ReactSVG
-              style={{ touchAction: 'none' }}
-              renumerateIRIElements={false}
-              src={fileUrl}
-              afterInjection={handleAfterInjection}
-              beforeInjection={handleBeforeInjection}
-            />
-          </ReactSVGWrapper>
+          <ReactSVGWindow>
+            <ReactSVGWrapper ref={viewportRef}>
+              <ReactSVG
+                style={{ touchAction: 'none' }}
+                renumerateIRIElements={false}
+                src={fileUrl}
+                afterInjection={handleAfterInjection}
+                beforeInjection={handleBeforeInjection}
+              />
+            </ReactSVGWrapper>
+            <ZoomButtonsWrapper>
+              <ToolBar direction="horizontal" buttonGroups={zoomButtonGroups} />
+            </ZoomButtonsWrapper>
+          </ReactSVGWindow>
         )}
       </div>
       {existingSymbolPromptData && !existingSymbolPromptData.resolution && (
