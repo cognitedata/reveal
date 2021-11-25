@@ -16,7 +16,7 @@ import {
 import styled from 'styled-components';
 import { Modal, Input, Button } from '@cognite/cogs.js';
 
-import { SideView } from './SideView';
+import { SidePanel } from './components';
 
 const appElement = document.querySelector('#root') || undefined;
 
@@ -399,7 +399,7 @@ export const SvgViewer = () => {
                   {
                     symbolName: 'Line',
                     pathIds: [node.id],
-                  },
+                  } as DiagramLineInstance,
                 ]);
               }
             }
@@ -456,7 +456,7 @@ export const SvgViewer = () => {
         }}
       >
         {fileUrl !== '' && (
-          <SideView
+          <SidePanel
             active={active}
             symbols={symbols}
             lines={lines}

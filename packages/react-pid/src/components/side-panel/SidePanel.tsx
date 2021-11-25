@@ -1,18 +1,14 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { saveAs } from 'file-saver';
-import {
-  Input,
-  Button,
-  ToolBar,
-  ToolBarButton,
-  Collapse,
-} from '@cognite/cogs.js';
+import { Input, Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
 import {
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
 } from '@cognite/pid-tools';
+
+import { CollapsableInstanceList } from './CollapsableInstanceList';
 
 const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   const jsonData = {
@@ -30,11 +26,6 @@ const SidePanelWrapper = styled.div`
   height: 100%;
 `;
 
-const ScrollWrapper = styled.div`
-  height: 100%;
-  overflow-y: scroll;
-`;
-
 const ToolBarWrapper = styled.div`
   padding: 40px;
   .active {
@@ -47,21 +38,7 @@ const ToolBarWrapper = styled.div`
   }
 `;
 
-const CollapseHeader = styled.div`
-  display: grid;
-  grid-template-columns: auto 3rem max-content;
-  align-items: center;
-  width: 100%;
-`;
-
-const CollapseSeperator = styled.div`
-  padding: 0.5rem 1rem;
-  text-align: left;
-  background: #f7f7f7;
-  border-bottom: 1px solid #d9d9d9;
-`;
-
-interface SideViewProps {
+interface SidePanelProps {
   active: string;
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
@@ -72,7 +49,7 @@ interface SideViewProps {
   saveSymbol: (symbolName: string, selection: SVGElement[]) => void;
 }
 
-export const SideView = ({
+export const SidePanel = ({
   active,
   symbols,
   lines,
@@ -81,7 +58,7 @@ export const SideView = ({
   setActive,
   loadSymbolsAsJson,
   saveSymbol,
-}: SideViewProps) => {
+}: SidePanelProps) => {
   const [symbolText, setSymbolText] = React.useState<string>('');
 
   const handleSymbolFileChange = ({ target }: any) => {
@@ -113,64 +90,6 @@ export const SideView = ({
     ],
   ];
 
-  const symbolHeaderRenderer = (symbol: DiagramSymbol) => {
-    const { boundingBox } = symbol.svgRepresentations[0];
-    const strokeWidth = 1;
-    const viewboxPadding = 2 * strokeWidth;
-
-    return (
-      <CollapseHeader>
-        <span>
-          {`${symbol.symbolName} (${
-            symbolInstances.filter(
-              (instance) => instance.symbolName === symbol.symbolName
-            ).length
-          })`}
-        </span>
-        <svg
-          viewBox={`${boundingBox.x - viewboxPadding} ${
-            boundingBox.y - viewboxPadding
-          } ${boundingBox.width + viewboxPadding * 2} ${
-            boundingBox.height + viewboxPadding * 2
-          }`}
-          style={{ aspectRatio: '1 / 1', height: '2rem' }}
-        >
-          {symbol.svgRepresentations[0].svgPaths.map((path) => {
-            return (
-              <path
-                key={path.svgCommands}
-                d={path.svgCommands}
-                style={{
-                  strokeWidth,
-                  stroke: 'black',
-                  fill: 'none',
-                }}
-              />
-            );
-          })}
-        </svg>
-        <span>({symbol.svgRepresentations.length})</span>
-      </CollapseHeader>
-    );
-  };
-
-  const renderSymbolInstances = (symbol: DiagramSymbol) => {
-    return (
-      <div>
-        {symbolInstances
-          .filter((instance) => {
-            return instance.symbolName === symbol.symbolName;
-          })
-          .map((instance) => (
-            <p key={instance.pathIds.join('')}>
-              {instance.symbolName}&nbsp;-&nbsp;
-              {instance.pathIds.join(' ')}
-            </p>
-          ))}
-      </div>
-    );
-  };
-
   return (
     <SidePanelWrapper>
       <div>
@@ -180,34 +99,11 @@ export const SideView = ({
           onChange={handleSymbolFileChange}
         />
       </div>
-      <ScrollWrapper>
-        <CollapseSeperator>Lines</CollapseSeperator>
-        <Collapse accordion ghost>
-          <Collapse.Panel header={`Flowlines (${lines?.length || 0})`}>
-            {lines?.map((line) => (
-              <p key={line.pathIds.join('')}>
-                {line.symbolName}&nbsp;-&nbsp;
-                {line.pathIds.join(' . ')}
-              </p>
-            ))}
-          </Collapse.Panel>
-        </Collapse>
-        <CollapseSeperator>Symbols</CollapseSeperator>
-        <Collapse accordion ghost>
-          {symbols.map((symbol) => {
-            return (
-              <Collapse.Panel
-                header={symbolHeaderRenderer(symbol)}
-                key={symbol.svgRepresentations[0].svgPaths
-                  .map((svgPath) => svgPath.svgCommands)
-                  .join()}
-              >
-                {renderSymbolInstances(symbol)}
-              </Collapse.Panel>
-            );
-          })}
-        </Collapse>
-      </ScrollWrapper>
+      <CollapsableInstanceList
+        symbols={symbols}
+        symbolInstances={symbolInstances}
+        lineInstances={lines}
+      />
       <div>
         {active === 'AddSymbol' && (
           <Input
