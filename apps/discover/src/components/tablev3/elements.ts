@@ -6,6 +6,28 @@ import layers from '_helpers/zindex';
 import { LoadMoreButton as DefaultLoadMoreButton } from 'components/buttons';
 import { sizes } from 'styles/layout';
 
+export const HoverContentWrapper = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding: 0 ${sizes.small} 0 ${sizes.small};
+  z-index: ${layers.TABLE_ROW_HOVER};
+  background: inherit;
+  border-bottom: 1px solid #e5e5e5;
+
+  transform: translateX(-4px);
+  transition: 0.2s;
+  transition-delay: 0.025s;
+  transition-timing-function: ease-out;
+
+  opacity: 0;
+  pointer-events: none;
+`;
+
 export const TableWrap = styled.div`
   min-width: 100%;
   max-width: 100%;
@@ -28,6 +50,18 @@ export const TableWrap = styled.div`
 
   & > div[role='rowgroup'] {
     display: contents;
+  }
+
+  // Make sure we don't end up with double borders beneith sub-tables
+  &
+    div[role='table']
+    > div[role='row']:last-of-type
+    ${HoverContentWrapper},
+    &
+    div[role='table']
+    > div[role='row']:last-of-type
+    > div {
+    border-bottom: none;
   }
 `;
 
@@ -73,28 +107,6 @@ export const OverlayCell = styled.div`
   &:hover {
     z-index: ${layers.TABLE_ROW_HOVER};
   }
-`;
-
-export const HoverContentWrapper = styled.span`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  padding: 0 ${sizes.small} 0 ${sizes.small};
-  z-index: ${layers.TABLE_ROW_HOVER};
-  background: inherit;
-  border-bottom: 1px solid #e5e5e5;
-
-  transform: translateX(-4px);
-  transition: 0.2s;
-  transition-delay: 0.025s;
-  transition-timing-function: ease-out;
-
-  opacity: 0;
-  pointer-events: none;
 `;
 
 export const OverlayContentWrapper = styled(HoverContentWrapper)`
