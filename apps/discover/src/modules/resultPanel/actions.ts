@@ -12,4 +12,6 @@ import {
 export const setSortByOptions =
   createAction<SearchOptionSortBy>(SET_SORT_BY_OPTIONS);
 export const setResultPanelWidth = createAction<number>(SET_RESULT_PANEL_WIDTH);
-export const setActivePanel = createAction<Modules>(SET_ACTIVE_PANEL);
+export const setActivePanel = createAction<Modules | undefined>(
+  SET_ACTIVE_PANEL
+);

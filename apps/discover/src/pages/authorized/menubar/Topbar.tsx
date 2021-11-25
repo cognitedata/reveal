@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import compact from 'lodash/compact';
@@ -16,12 +16,14 @@ import { useActivePanel } from 'modules/resultPanel/selectors';
 import { hideResults } from 'modules/search/actions';
 import { sizes } from 'styles/layout';
 
+import { setActivePanel } from '../../../modules/resultPanel/actions';
+
 import { AdminSettings } from './AdminSettings';
 import { SEARCH_LINK_TEXT_KEY, FAVORITES_LINK_TEXT_KEY } from './constants';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
 import { UserProfileButton } from './UserProfileButton';
-import { UserSettings } from './userSettings/UserSettings';
+import { UserSettings } from './userSettings';
 
 const Container = styled.div`
   position: sticky;
@@ -105,7 +107,10 @@ export const Topbar: React.FC = React.memo(() => {
     // make sure to reset the filters
     await clearAllFilters();
     // hide the result panel
-    await dispatch(hideResults());
+    batch(() => {
+      dispatch(setActivePanel(undefined));
+      dispatch(hideResults());
+    });
 
     handleNavigate(navigation.SEARCH, PATHNAMES.SEARCH)();
   };
@@ -114,8 +119,6 @@ export const Topbar: React.FC = React.memo(() => {
     () => (
       <TopBar.Left>
         <TopBarLogo
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore not supported prop in cogs.js
           onClick={handleLogoClick}
           title="Cognite Discover"
           logo={
@@ -139,7 +142,7 @@ export const Topbar: React.FC = React.memo(() => {
               name: t(SEARCH_LINK_TEXT_KEY) as string,
               isActive: active === PATHNAMES.SEARCH,
               onClick: handleNavigate(
-                `${navigation.SEARCH}/${activePanel}`,
+                `${navigation.SEARCH}${activePanel ? `/${activePanel}` : ''}`,
                 PATHNAMES.SEARCH
               ),
             },
@@ -156,7 +159,7 @@ export const Topbar: React.FC = React.memo(() => {
         />
       </TopBar.Left>
     ),
-    [active]
+    [active, activePanel]
   );
 
   const renderTopBarRight = React.useMemo(

@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import {
   useFilterBarIsOpen,
   useFilterCategory,
 } from 'modules/sidebar/selectors';
+
+import { setActivePanel } from '../../../../../modules/resultPanel/actions';
 
 import { MS_TRANSITION_TIME } from './constants';
 import { FilterBarContainer } from './elements';
@@ -18,6 +21,7 @@ export const FilterBar: React.FC = () => {
   // const { isOpen, category } = useFilterState();
   const isOpen = useFilterBarIsOpen();
   const category = useFilterCategory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTimeout(() => {
@@ -25,6 +29,10 @@ export const FilterBar: React.FC = () => {
       window.dispatchEvent(new Event('resize'));
     }, MS_TRANSITION_TIME);
   }, [isOpen]);
+
+  if (category === 'landing') {
+    dispatch(setActivePanel(undefined));
+  }
 
   const CategoryPage = () => {
     if (category === 'documents') {
