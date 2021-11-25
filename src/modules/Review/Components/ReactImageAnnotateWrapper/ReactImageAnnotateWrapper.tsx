@@ -1,10 +1,17 @@
-import React, { ReactText, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactText,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   deleteCurrentCollection,
   keypointSelectStatusChange,
   onCreateKeyPoint,
-  onCreateOrUpdateShape,
   onUpdateKeyPoint,
+  setLastShape,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
 import {
@@ -15,6 +22,7 @@ import {
   Annotator,
   Region,
   AnnotatorTool,
+  Action,
 } from '@cognite/react-image-annotate';
 import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
 import {
@@ -28,12 +36,13 @@ import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { CreateKeypointAnnotation } from 'src/store/thunks/Annotation/CreateKeypointAnnotation';
 import { RetrieveKeypointCollection } from 'src/store/thunks/Review/RetrieveKeypointCollection';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from 'src/store';
 import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
 import { AnnotationUtils } from 'src/utils/AnnotationUtils';
 import { VisionAPIType } from 'src/api/types';
+import { RootState } from 'src/store/rootReducer';
 import { tools } from './Tools';
 
 export const ReactImageAnnotateWrapper = ({
@@ -64,6 +73,12 @@ export const ReactImageAnnotateWrapper = ({
   }, [annotations, currentKeypointCollection]);
 
   const dispatch: AppDispatch = useDispatch();
+  const libDispatch = useRef<Dispatch<any> | null>(null);
+  const [tempRegion, setTempRegion] = useState<Region | null>(null);
+  const keepUnsavedRegion = useSelector(
+    ({ annotationLabelReducer }: RootState) =>
+      annotationLabelReducer.keepUnsavedRegion
+  );
 
   const collectionOptions = predefinedAnnotations?.predefinedKeypoints.map(
     (keypoint) => ({
@@ -154,7 +169,7 @@ export const ReactImageAnnotateWrapper = ({
           );
         }
       } else {
-        await dispatch(onCreateOrUpdateShape(annotationCollectionLabel));
+        await dispatch(setLastShape(annotationCollectionLabel));
         onCreateAnnotation(convertToAnnotation(region));
       }
     }
@@ -181,7 +196,7 @@ export const ReactImageAnnotateWrapper = ({
           }
         }
       } else {
-        await dispatch(onCreateOrUpdateShape(annotationLabel));
+        await dispatch(setLastShape(annotationLabel));
         onUpdateAnnotation(convertToAnnotation(region));
       }
     }
@@ -289,6 +304,27 @@ export const ReactImageAnnotateWrapper = ({
     }
   };
 
+  const onCreateRegion = (region: Region) => {
+    setTempRegion(region);
+  };
+
+  const onInitDispatch = (dispatchObj: Dispatch<any>) => {
+    libDispatch.current = dispatchObj;
+  };
+
+  const onCallDispatch = (action: Action) => {
+    if (libDispatch.current) {
+      if (action.type === 'MOUSE_DOWN') {
+        if (tempRegion && !keepUnsavedRegion) {
+          libDispatch.current({
+            type: 'DELETE_REGION',
+            region: tempRegion,
+          });
+        }
+      }
+    }
+  };
+
   return (
     <Container onKeyPress={onKeyPressSubmit}>
       <Annotator
@@ -304,6 +340,9 @@ export const ReactImageAnnotateWrapper = ({
         onSelectTool={onToolChange}
         selectedTool={selectedTool}
         onImageOrVideoLoaded={onImageOrVideoLoaded}
+        onRegionCreated={onCreateRegion}
+        onCallDispatch={onCallDispatch}
+        onInitDispatch={onInitDispatch}
       />
     </Container>
   );
