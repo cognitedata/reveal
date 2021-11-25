@@ -450,12 +450,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/potree-core@npm:1.5.0":
-  version: 1.5.0
-  resolution: "@cognite/potree-core@npm:1.5.0"
+"@cognite/potree-core@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@cognite/potree-core@npm:1.5.1"
   peerDependencies:
     three: ^0.128.0
-  checksum: 555e27e4c75fde8403a9e3791e09a625ca519e2f88caaf2c0aa31d1af14917c5edb54cdc0c58d936384b47063d145d2fad01c5a44bee96fd0e66649852442817
+  checksum: baacf84a86646ac4df8f9eff86d09bb9184dc612f44975c8f9bf057c376e3232162b70266e615bd5198871ccc852aa449a93e3b12f0370dcd214c108aca197ff
   languageName: node
   linkType: hard
 
@@ -472,7 +472,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@cognite/potree-core": 1.5.0
+    "@cognite/potree-core": ^1.5.1
     "@cognite/reveal-parser-worker": 1.2.0
     "@cognite/sdk": ^5.0.0
     "@cognite/sdk-core": ^3.0.0
