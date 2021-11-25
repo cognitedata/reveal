@@ -180,8 +180,15 @@ export class CadNode extends THREE.Object3D {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 
-  public batchPrimtives(primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][]) {
-    this._primitiveBatchingManager.batchPrimitives(primitives);
+  public batchPrimtives(
+    primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][],
+    sectorId: number
+  ) {
+    this._primitiveBatchingManager.batchPrimitives(primitives, sectorId);
+  }
+
+  public removePrimitives(sectorId: number) {
+    this._primitiveBatchingManager.removeSectorBatches(sectorId);
   }
 
   public clearCache(): void {

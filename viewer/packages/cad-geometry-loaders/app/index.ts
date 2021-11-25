@@ -41,11 +41,17 @@ async function init() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
+  // const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
 
   // const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
   // const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
+
+  const modelId = parseInt(urlParams.get('modelId') ?? '4304523256471874');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '8974179402104743');
+
+  // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -54,6 +60,7 @@ async function init() {
   const materialManager = new CadMaterialManager();
   const cadModelFactory = new CadModelFactory(materialManager, cdfModelMetadataProvider, cdfModelDataProvider);
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller());
+
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
 
   const model = await cadManager.addModel(modelIdentifier);

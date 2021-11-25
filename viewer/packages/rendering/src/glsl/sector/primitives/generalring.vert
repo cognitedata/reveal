@@ -2,6 +2,13 @@
 
 uniform mat4 inverseModelMatrix;
 
+attribute vec3 position;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+
 attribute mat4 a_instanceMatrix;
 
 attribute float a_treeIndex;

@@ -36,6 +36,7 @@ export class PrimitiveBatchingManager {
   private readonly _materials: Materials;
 
   private readonly _map: Map<string, [DynamicDefragmentedBuffer<Uint8Array>, THREE.InstancedMesh]>;
+  private readonly _sectorMap: Map<number, [string, number, number][]>;
 
   private readonly _views = new Map<number, TypedArrayConstructor>([
     [1, Uint8Array],
@@ -46,22 +47,111 @@ export class PrimitiveBatchingManager {
     this._primtivesGroup = group;
     this._materials = materials;
     this._map = new Map();
+    this._sectorMap = new Map();
   }
 
-  public batchPrimitives(primitives: [RevealGeometryCollectionType, THREE.BufferGeometry][]) {
+  public batchPrimitives(primitives: [RevealGeometryCollectionType, THREE.BufferGeometry][], sectorId: number) {
+    if (this._sectorMap.get(sectorId) !== undefined) {
+      return;
+    }
+
     primitives.forEach(primitive => {
       const [type, buffer] = primitive;
-      this.processPrimitive(buffer, type);
+      this.processPrimitive(buffer, type, sectorId);
     });
   }
 
-  private processPrimitive(buffer: THREE.BufferGeometry, type: RevealGeometryCollectionType) {
-    const instanceAttributes = Object.keys(buffer.attributes)
-      .filter(attribute => buffer.attributes[attribute] instanceof THREE.InterleavedBufferAttribute)
-      .map(name => {
-        return { name: name, attribute: buffer.attributes[name] as THREE.InterleavedBufferAttribute };
+  public removeSectorBatches(sectorId: number) {
+    const typeBatches = this._sectorMap.get(sectorId);
+
+    if (typeBatches === undefined) {
+      return;
+    }
+
+    console.log(typeBatches.length);
+
+    typeBatches.forEach(typeBatch => {
+      const [type, batchId, instanceCount] = typeBatch;
+
+      const geometry = this._map.get(type);
+
+      if (geometry === undefined) {
+        return;
+      }
+
+      const [defragBuffer, mesh] = geometry;
+      defragBuffer.remove(batchId);
+
+      const instanceAttributes = this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute);
+
+      instanceAttributes.forEach(p => {
+        p.attribute.needsUpdate = true;
       });
 
+      mesh.count -= instanceCount;
+    });
+
+    this._sectorMap.delete(sectorId);
+  }
+
+  private processPrimitive(
+    rawSectorBufferGeometry: THREE.BufferGeometry,
+    type: RevealGeometryCollectionType,
+    sectorId: number
+  ) {
+    const instanceAttributes = this.getAttributes(rawSectorBufferGeometry, THREE.InterleavedBufferAttribute);
+    const interleavedBufferView = this.getInstanceAttributesSharedView(instanceAttributes);
+
+    const key = RevealGeometryCollectionType[type].toString();
+
+    let payload = this._map.get(key);
+
+    const interleavedArrayBuffer = interleavedBufferView.buffer;
+
+    if (payload === undefined) {
+      const interleavedAttributesDefragBuffer = new DynamicDefragmentedBuffer(64, Uint8Array);
+      const defragmentedBufferGeometry = this.createDefragmentedBufferGeometry(
+        rawSectorBufferGeometry,
+        interleavedAttributesDefragBuffer
+      );
+      const material = this.getShaderMaterial(type, this._materials);
+      const instanceMesh = this.createInstanceMesh(this._primtivesGroup, defragmentedBufferGeometry, material);
+
+      payload = [interleavedAttributesDefragBuffer, instanceMesh];
+
+      this._map.set(key, [interleavedAttributesDefragBuffer, instanceMesh]);
+    }
+
+    const [defragBuffer, mesh] = payload;
+    const length = interleavedBufferView.byteLength;
+    const offset = interleavedBufferView.byteOffset;
+
+    const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
+    const { batchId, bufferIsReallocated } = defragBuffer.add(interleavedAttributesView);
+    let sectorBatches = this._sectorMap.get(sectorId);
+
+    if (sectorBatches === undefined) {
+      const sectorBatchInstance: [string, number, number][] = [];
+      this._sectorMap.set(sectorId, sectorBatchInstance);
+      sectorBatches = sectorBatchInstance;
+    }
+
+    const instanceCount = instanceAttributes[0].attribute.count;
+    sectorBatches.push([key, batchId, instanceCount]);
+
+    if (bufferIsReallocated) {
+      const defragmentedBufferGeometry = this.createDefragmentedBufferGeometry(mesh.geometry, defragBuffer);
+      mesh.geometry.dispose();
+      mesh.geometry = defragmentedBufferGeometry;
+    }
+
+    mesh.count += instanceCount;
+    // console.log(key, mesh.count);
+  }
+
+  private getInstanceAttributesSharedView(
+    instanceAttributes: { name: string; attribute: THREE.InterleavedBufferAttribute }[]
+  ) {
     assert(instanceAttributes.length > 0);
 
     const interleavedBufferView = instanceAttributes[0].attribute.array as TypedArray;
@@ -70,60 +160,42 @@ export class PrimitiveBatchingManager {
       const instanceAttributeBufferView = instanceAttributes[i].attribute.array;
       assert(interleavedBufferView.buffer.byteLength === (instanceAttributeBufferView as TypedArray).buffer.byteLength);
     }
+    return interleavedBufferView;
+  }
 
-    const key = RevealGeometryCollectionType[type].toString();
+  private createDefragmentedBufferGeometry(
+    bufferGeometry: THREE.BufferGeometry,
+    defragmentedAttributeBuffer: DynamicDefragmentedBuffer<Uint8Array>
+  ): THREE.BufferGeometry {
+    const instanceAttributes = this.getAttributes(bufferGeometry, THREE.InterleavedBufferAttribute);
 
-    const payload = this._map.get(key);
+    const geometry = this.createGeometry(bufferGeometry);
 
-    const interleavedArrayBuffer = interleavedBufferView.buffer;
+    instanceAttributes.forEach(instanceAttribute => {
+      const { name, attribute } = instanceAttribute;
 
-    if (payload === undefined) {
-      const length = interleavedBufferView.byteLength;
-      const offset = interleavedBufferView.byteOffset;
+      const stride = attribute.data.stride;
+      const componentSize = (attribute.array as TypedArray).BYTES_PER_ELEMENT;
 
-      const geometry = this.createGeometry(buffer);
+      const underlyingBuffer = defragmentedAttributeBuffer.bufferView.buffer;
+      const ComponentType = this._views.get(componentSize)!;
+      const interleavedAttributesBuffer = new THREE.InstancedInterleavedBuffer(
+        new ComponentType(underlyingBuffer),
+        stride
+      );
 
-      const interleavedAttributesDefragBuffer = new DynamicDefragmentedBuffer(length * 50, Uint8Array);
-      const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
-      interleavedAttributesDefragBuffer.add(interleavedAttributesView);
+      geometry.setAttribute(
+        name,
+        new THREE.InterleavedBufferAttribute(
+          interleavedAttributesBuffer,
+          attribute.itemSize,
+          attribute.offset,
+          attribute.normalized
+        )
+      );
+    });
 
-      instanceAttributes.forEach(instanceAttribute => {
-        const { name, attribute } = instanceAttribute;
-
-        const stride = attribute.data.stride;
-        const componentSize = (attribute.array as TypedArray).BYTES_PER_ELEMENT;
-
-        const underlyingBuffer = interleavedAttributesDefragBuffer.bufferView.buffer;
-        const ComponentType = this._views.get(componentSize)!;
-        const interleavedAttributesBuffer = new THREE.InstancedInterleavedBuffer(
-          new ComponentType(underlyingBuffer),
-          stride
-        );
-
-        geometry.setAttribute(
-          name,
-          new THREE.InterleavedBufferAttribute(
-            interleavedAttributesBuffer,
-            attribute.itemSize,
-            attribute.offset,
-            attribute.normalized
-          )
-        );
-      });
-
-      const material = this.getShaderMaterial(type, this._materials);
-      const instanceMesh = this.createInstanceMesh(this._primtivesGroup, geometry, material);
-      instanceMesh.count = instanceAttributes[0].attribute.count;
-      this._map.set(key, [interleavedAttributesDefragBuffer, instanceMesh]);
-    } else {
-      const [defragBuffer, mesh] = payload;
-      const length = interleavedBufferView.byteLength;
-      const offset = interleavedBufferView.byteOffset;
-
-      const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
-      defragBuffer.add(interleavedAttributesView);
-      mesh.count += instanceAttributes[0].attribute.count;
-    }
+    return geometry;
   }
 
   private createInstanceMesh(
@@ -135,25 +207,37 @@ export class PrimitiveBatchingManager {
     group.add(mesh);
     mesh.frustumCulled = false;
 
-    if (material.uniforms.inverseModelMatrix !== undefined) {
-      mesh.onBeforeRender = () => {
-        const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
-        inverseModelMatrix.copy(mesh.matrixWorld).invert();
-      };
-    }
+    mesh.onBeforeRender = (_1, _2, camera: THREE.Camera) => {
+      (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
+      (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
+      (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
+      (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
+      (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
+      (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+    };
+
+    mesh.updateMatrixWorld(true);
 
     return mesh;
+  }
+
+  private getAttributes<T extends THREE.BufferAttribute | THREE.InterleavedBufferAttribute>(
+    geometry: THREE.BufferGeometry,
+    filterType: new (...args: any[]) => T
+  ): { name: string; attribute: T }[] {
+    return Object.entries(geometry.attributes)
+      .filter(p => p[1] instanceof filterType)
+      .map(p => {
+        return { name: p[0], attribute: p[1] as T };
+      });
   }
 
   private createGeometry(geometry: THREE.BufferGeometry): THREE.BufferGeometry {
     const newGeometry = new THREE.BufferGeometry();
 
-    Object.keys(geometry.attributes)
-      .filter(attribute => geometry.attributes[attribute] instanceof THREE.BufferAttribute)
-      .forEach(name => {
-        const attribute = geometry.attributes[name] as THREE.BufferAttribute;
-        newGeometry.setAttribute(name, attribute);
-      });
+    this.getAttributes(geometry, THREE.BufferAttribute).forEach(namedAttribute => {
+      newGeometry.setAttribute(namedAttribute.name, namedAttribute.attribute);
+    });
 
     newGeometry.setIndex(geometry.getIndex());
 
