@@ -40,6 +40,7 @@ const TableContent = () => {
         <Tabs.TabPane
           key="profiling"
           tab={<TabProfiling isFetching={isFetching} />}
+          style={{ overflow: 'auto' }}
         >
           <Profiling key={`${database}_${table}`} />
         </Tabs.TabPane>
