@@ -200,10 +200,18 @@ export function Toolbar() {
           axisTool.dispose();
           axisTool = undefined;
         }
+      };
+
+      var screenShot = async (): Promise<void> => {
+        let downloadLink = document.createElement('a');
+        downloadLink.setAttribute('download', 'ScreenshotImage.png');
+        let url = await viewer.getScreenshot();
+        downloadLink.setAttribute('href', url);
+        downloadLink.click();
       }
 
       const toolbar = new ToolbarTool(viewer);
-      toolbar.addToolbarItem('Camera Switch', iconSet12, callbackMsg);
+      toolbar.addToolbarItem('Take Screenshot', iconSet12, screenShot);
       toolbar.addToolbarItem('Axis Tool', iconSet14, createAxisViewTool);
       toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
       toolbar.addToolbarItem('Debug Camera', iconSet30, callbackMsg);
