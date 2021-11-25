@@ -40,7 +40,7 @@ export const Section = ({
         <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
         {editButton && (
           <Button
-            type="link"
+            type="ghost"
             css="margin-left: auto"
             disabled={!editButton.canEdit}
             onClick={editButton.onClick}
