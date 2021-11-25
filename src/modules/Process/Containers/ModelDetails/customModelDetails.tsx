@@ -7,7 +7,7 @@ import {
   Row,
   Title,
 } from '@cognite/cogs.js';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsCustomModel } from 'src/api/types';
 import {
@@ -17,8 +17,8 @@ import {
 import { RootState } from 'src/store/rootReducer';
 import { ColorsObjectDetection } from 'src/constants/Colors';
 import CustomModelIllustration from 'src/assets/visualDescriptions/CustomModelIllustration.svg';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 
+import { FileSelectFilter } from 'src/modules/Common/Components/FileSelectFilter/FileSelectFilter';
 import {
   ColorBox,
   NameContainer,
@@ -51,8 +51,6 @@ export const badge = (modelName: string, hideText: boolean = false) => {
 };
 
 export const content = (modelIndex: number) => {
-  const [isValidFileId, setIsValidFileId] = useState<boolean>(true);
-
   const dispatch = useDispatch();
   const modelName = useSelector(
     ({ processSlice }: RootState) =>
@@ -69,43 +67,23 @@ export const content = (modelIndex: number) => {
     params.threshold >= 0.4 && params.threshold <= 1.0
   );
 
-  const checkIfFileIsValid = async () => {
-    if (params.modelFile !== undefined) {
-      try {
-        const files = await sdkv3.files.retrieve([
-          { id: params.modelFile.fileId },
-        ]);
-        const fileName = files[0].name;
-
-        if (fileName.substr(fileName.lastIndexOf('.')) === '.tflite') {
-          setIsValidFileId(true);
-        } else {
-          setIsValidFileId(false);
-        }
-      } catch (_) {
-        console.warn('Invalid model file ID');
-        setIsValidFileId(false);
-      }
-    }
-  };
-
   // Model configuration handlers
   const onModelNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setCustomModelName({ modelIndex, modelName: e.target.value }));
   };
 
-  const onModelFileIdChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const modeFile = { fileId: +e.target.value };
-    const newParams = {
-      modelIndex,
-      params: {
-        modelFile: modeFile,
-        threshold: params.threshold,
-      },
-    };
-    dispatch(setUnsavedDetectionModelSettings(newParams));
+  const onModelFileIdChange = async (fileIds?: number[]) => {
+    if (fileIds) {
+      const modeFile = { fileId: fileIds[0] }; // isMulti is false, so use first and only element
+      const newParams = {
+        modelIndex,
+        params: {
+          modelFile: modeFile,
+          threshold: params.threshold,
+        },
+      };
+      dispatch(setUnsavedDetectionModelSettings(newParams));
+    }
   };
 
   const onThresholdChange = (value: number) => {
@@ -120,10 +98,6 @@ export const content = (modelIndex: number) => {
       dispatch(setUnsavedDetectionModelSettings(newParams));
     }
   };
-
-  useEffect(() => {
-    checkIfFileIsValid();
-  }, [params.modelFile]);
 
   return (
     <ModelDetailSettingContainer>
@@ -162,22 +136,22 @@ export const content = (modelIndex: number) => {
                 </tr>
                 <tr>
                   <td>
-                    <Detail>File ID*</Detail>
+                    <Detail>Model file*</Detail>
                     <PrimaryTooltip
                       tooltipTitle=""
-                      tooltipText="CDF file ID for model file (.tflite)"
+                      tooltipText="Model filename (.tflite)"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
                     </PrimaryTooltip>
                   </td>
                   <th>
-                    <Input
-                      placeholder="Enter File ID"
-                      style={{ width: '100%' }}
-                      onChange={onModelFileIdChange}
-                      value={params.modelFile?.fileId || ''}
-                      error={
-                        !isValidFileId ? 'Invalid model file ID' : undefined
+                    <FileSelectFilter
+                      closeMenuOnSelect
+                      fileExtension=".tflite"
+                      placeholder="Search model file"
+                      onFileSelected={onModelFileIdChange}
+                      selectedFiles={
+                        params.modelFile ? [params.modelFile.fileId] : []
                       }
                     />
                   </th>
@@ -194,6 +168,16 @@ export const content = (modelIndex: number) => {
                   </td>
                   <th>
                     <Row>
+                      <input
+                        type="range"
+                        min={0.4}
+                        max={1}
+                        value={params.threshold}
+                        onChange={(e) =>
+                          onThresholdChange(parseFloat(e.target.value))
+                        }
+                        step={0.05}
+                      />
                       <Input
                         type="number"
                         size="large"
@@ -204,16 +188,6 @@ export const content = (modelIndex: number) => {
                         value={params.threshold}
                         setValue={onThresholdChange}
                         style={{ height: '40px', MozAppearance: 'textfield' }}
-                      />
-                      <input
-                        type="range"
-                        min={0.4}
-                        max={1}
-                        value={params.threshold}
-                        onChange={(e) =>
-                          onThresholdChange(parseFloat(e.target.value))
-                        }
-                        step={0.05}
                       />
                     </Row>
                   </th>

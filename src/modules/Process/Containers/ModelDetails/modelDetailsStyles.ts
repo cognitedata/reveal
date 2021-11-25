@@ -13,7 +13,6 @@ export const TableContainer = styled.div`
   table {
     table-layout: fixed;
     width: 100%;
-    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: smaller;
