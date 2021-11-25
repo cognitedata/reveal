@@ -8,33 +8,40 @@ import {
 import { nanoid } from 'nanoid';
 import { getEntryColor } from './colors';
 
-export const calculateGranularity = (domain: number[], pps: number) => {
-  const diff = domain[1] - domain[0];
-  for (let i = 1; i <= 60; i += 1) {
-    const points = diff / (1000 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}s`;
+export const calculateGranularity = (
+  domain: number[],
+  pointsPerSeries: number
+) => {
+  const timeDifference = domain[1] - domain[0];
+  // Seconds
+  for (let i = 1; i <= 60; i++) {
+    const pointsPerSecond = timeDifference / (1000 * i);
+    if (pointsPerSecond < pointsPerSeries) {
+      return `${i}s`;
     }
   }
-  for (let i = 1; i <= 60; i += 1) {
-    const points = diff / (1000 * 60 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}m`;
+  // Minutes
+  for (let i = 1; i <= 60; i++) {
+    const pointsPerMinute = timeDifference / (1000 * 60 * i);
+    if (pointsPerMinute < pointsPerSeries) {
+      return `${i}m`;
     }
   }
-  for (let i = 1; i < 24; i += 1) {
-    const points = diff / (1000 * 60 * 60 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}h`;
+  // Hours
+  for (let i = 1; i < 24; i++) {
+    const pointsPerHour = timeDifference / (1000 * 60 * 60 * i);
+    if (pointsPerHour < pointsPerSeries) {
+      return `${i}h`;
     }
   }
-  for (let i = 1; i < 100; i += 1) {
-    const points = diff / (1000 * 60 * 60 * 24 * i);
-    if (points < pps) {
-      return `${i === 1 ? '' : i}d`;
+  // Days
+  for (let i = 1; i < 100; i++) {
+    const pointsPerDay = timeDifference / (1000 * 60 * 60 * 24 * i);
+    if (pointsPerDay < pointsPerSeries) {
+      return `${i}d`;
     }
   }
-  return 'd';
+  return '1d';
 };
 
 export const convertTsToWorkFlow = (
