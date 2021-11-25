@@ -8,6 +8,16 @@ export class SvgDocument {
     this.allSvgElements = allSvgElements;
   }
 
+  getInternalPathById(pathId: string): InternalSvgPath | null {
+    // Change to hashmap if any performance issues
+    for (let i = this.allSvgElements.length - 1; i >= 0; --i) {
+      if (this.allSvgElements[i].pathId === pathId) {
+        return this.allSvgElements[i];
+      }
+    }
+    return null;
+  }
+
   findAllInstancesOfSymbol = (
     symbol: DiagramSymbol
   ): DiagramSymbolInstance[] => {

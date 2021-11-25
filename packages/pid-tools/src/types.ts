@@ -1,6 +1,5 @@
 export interface SvgPath {
   svgCommands: string;
-  style?: string;
 }
 
 export interface BoundingBox {

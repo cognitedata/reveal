@@ -129,73 +129,75 @@ export const SvgViewer = () => {
     }
   };
 
+  const getSymbolByName = (symbolName: string): DiagramSymbol | undefined => {
+    return symbols.find((symbol) => symbol.symbolName === symbolName);
+  };
+
+  const shouldShowPrompt = (symbolName: string) => {
+    const symbolExist = getSymbolByName(symbolName) !== undefined;
+    return symbolExist && existingSymbolPromptData?.resolution !== 'add';
+  };
+
+  const setOrUpdateSymbol = (
+    symbolName: string,
+    svgRepresentation: SvgRepresentation
+  ) => {
+    let diagramSymbol = getSymbolByName(symbolName);
+    if (diagramSymbol === undefined) {
+      diagramSymbol = {
+        symbolName,
+        svgRepresentations: [svgRepresentation],
+      } as DiagramSymbol;
+
+      setSymbols([...symbols, diagramSymbol]);
+    } else {
+      diagramSymbol.svgRepresentations.push(svgRepresentation);
+    }
+    return diagramSymbol;
+  };
+
+  const createSvgRepresentation = (pathIds: string[]) => {
+    const newSvgRepresentation = {} as SvgRepresentation;
+
+    const internalSvgPaths = pathIds.map((pathId) =>
+      svgDocument?.getInternalPathById(pathId)
+    );
+
+    newSvgRepresentation.boundingBox =
+      getInternalSvgBoundingBox(internalSvgPaths);
+
+    newSvgRepresentation.svgPaths = internalSvgPaths.map(
+      (internalSvgPath) =>
+        ({
+          svgCommands: internalSvgPath?.serializeToPathCommands(),
+        } as SvgPath)
+    );
+    return newSvgRepresentation;
+  };
+
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
     if (svgDocument === undefined) {
       return;
     }
 
-    const existingSymbolIndex = symbols.findIndex(
-      (symbol) => symbol.symbolName === symbolName
-    );
-    if (
-      existingSymbolIndex !== -1 &&
-      existingSymbolPromptData?.resolution !== 'add'
-    ) {
+    const showPrompt = shouldShowPrompt(symbolName);
+    if (showPrompt) {
       setExistingSymbolPromptData({
         symbolName,
         SVGElements: selection,
       });
       return;
     }
-    const existingSvgRepresentations: SvgRepresentation[] =
-      existingSymbolIndex !== -1
-        ? symbols[existingSymbolIndex].svgRepresentations
-        : [];
 
-    const internalSvgElems = [];
-    for (let i = 0; i < svgDocument.allSvgElements.length; i++) {
-      const elem = svgDocument.allSvgElements[i];
-      if (selection.filter((e) => e.id === elem.pathId).length !== 0) {
-        internalSvgElems.push(elem);
-      }
-    }
-
-    const newSymbol: DiagramSymbol = {
-      ...(existingSymbolIndex !== -1 ? symbols[existingSymbolIndex] : {}),
-      symbolName,
-      svgRepresentations: [
-        ...existingSvgRepresentations,
-        {
-          boundingBox: getInternalSvgBoundingBox(internalSvgElems),
-          svgPaths: internalSvgElems.map(
-            (svgElement) =>
-              ({
-                svgCommands: svgElement.serializeToPathCommands(),
-                style: selection
-                  .filter((elem) => elem.id === svgElement.pathId)[0]
-                  .getAttribute('style'),
-              } as SvgPath)
-          ),
-        },
-      ],
-    };
-
-    if (existingSymbolPromptData?.resolution === 'add') {
-      const newSymbols = [...symbols];
-      newSymbols.splice(existingSymbolIndex, 1, newSymbol);
-      setSymbols(newSymbols);
-    } else {
-      setSymbols([...symbols, newSymbol]);
-    }
+    const pathIds = selection.map((svgElement) => svgElement.id);
+    const newSvgRepresentation = createSvgRepresentation(pathIds);
+    const newSymbol = setOrUpdateSymbol(symbolName, newSvgRepresentation);
 
     setSelection([]);
 
-    if (svgDocument !== undefined) {
-      const newSymbolInstances =
-        svgDocument.findAllInstancesOfSymbol(newSymbol);
-      setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
-      setExistingSymbolPromptData(null);
-    }
+    const newSymbolInstances = svgDocument.findAllInstancesOfSymbol(newSymbol);
+    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+    setExistingSymbolPromptData(null);
   };
 
   // const saveLine = (selection: SVGElement[]) => {};
