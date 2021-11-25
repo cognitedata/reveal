@@ -224,7 +224,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         unfinishedJobs,
       })
     );
-  }, [processFiles]);
+  }, []);
 
   return (
     <>
