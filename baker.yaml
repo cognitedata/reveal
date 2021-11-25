@@ -17,7 +17,7 @@ services:
       - name: cdf-staging
         cluster_selection_rules:
           - description: 'react-demo-app cdf staging deployment pipeline'
-            expression: 'cdf:true && auth_cluster_name:azure-dev'
+            expression: 'cdf:true && (vendor:gke || vendor:aks)'
         manifest_template_command:
           [
             'bash',
