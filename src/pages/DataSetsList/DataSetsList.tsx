@@ -25,7 +25,7 @@ import {
   useDataSetsList,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
-import { useWithIntegrations } from '../../hooks/useWithIntegrations';
+import { useWithExtpipes } from '../../hooks/useWithIntegrations';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 
 interface DataSetsListProps {
@@ -34,7 +34,7 @@ interface DataSetsListProps {
 
 const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
-    useWithIntegrations();
+    useWithExtpipes();
 
   const { appPath } = useParams<{ appPath: string }>();
 

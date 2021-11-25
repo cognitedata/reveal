@@ -5,7 +5,7 @@ import {
   CreationDataSet,
   DataSet,
   DataSetV3,
-  Integration,
+  Extpipe,
   TransformationDetails,
 } from 'utils/types';
 import { DataSetPatch, Group } from '@cognite/sdk';
@@ -26,10 +26,10 @@ import {
   wait,
 } from 'utils/utils';
 import {
-  fetchIntegrationsByDataSetId,
+  fetchExtpipesByDataSetId,
   getExtractionPipelineApiUrl,
-  mapDataSetIntegration,
-} from 'utils/integrationUtils';
+  mapDataSetExtpipe,
+} from 'utils/extpipeUtils';
 import {
   getDataSetOwnersByIdKey,
   getRetrieveByDataSetIdKey,
@@ -188,64 +188,64 @@ export const useUpdateDataSetVisibility = () => {
 
 /* QUERIES */
 
-export type DataSetWithIntegrations = {
+export type DataSetWithExtpipes = {
   dataSet: DataSetV3;
-  integrations: Integration[];
+  extpipes: Extpipe[];
 };
 export const useDataSetsList = (): {
-  dataSetsWithIntegrations?: DataSetWithIntegrations[];
+  dataSetsWithExtpipes?: DataSetWithExtpipes[];
   error: any;
   isLoading: boolean;
 } => {
-  const { data: dataSetsWithIntegrations, ...rest } = useQuery(
+  const { data: dataSetsWithExtpipes, ...rest } = useQuery(
     getListDatasetsKey(),
     async () => {
       const newDataSets = await sdk.datasets
         .list()
         .autoPagingToArray({ limit: -1 });
-      let integrations: Integration[] = [];
+      let extpipes: Extpipe[] = [];
       try {
         const res = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
           withCredentials: true,
         });
-        integrations = res.data.items ?? [];
+        extpipes = res.data.items ?? [];
       } catch (e) {
-        integrations = [];
+        extpipes = [];
       }
-      return mapDataSetIntegration(
+      return mapDataSetExtpipe(
         parseDataSetsList(newDataSets),
-        integrations
+        extpipes
       );
     },
     { onError }
   );
 
-  return { dataSetsWithIntegrations, ...rest };
+  return { dataSetsWithExtpipes, ...rest };
 };
 
-export const useDataSetWithIntegrations = (id?: number) => {
-  const { data: dataSetWithIntegrations, ...rest } = useQuery(
+export const useDataSetWithExtpipes = (id?: number) => {
+  const { data: dataSetWithExtpipes, ...rest } = useQuery(
     getRetrieveByDataSetIdKey(String(id)),
     // eslint-disable-next-line consistent-return
     async () => {
       if (id) {
         const [resDataSet] = await sdk.datasets.retrieve([{ id }]);
-        let integrations: Integration[] = [];
+        let extpipes: Extpipe[] = [];
 
         try {
-          integrations = await fetchIntegrationsByDataSetId(id);
+          extpipes = await fetchExtpipesByDataSetId(id);
         } catch (e) {
-          integrations = [];
+          extpipes = [];
         }
         return {
           dataSet: parseDataSet(resDataSet),
-          integrations,
+          extpipes,
         };
       }
     },
     { onError, enabled: !!id }
   );
-  return { dataSetWithIntegrations, ...rest };
+  return { dataSetWithextpipes, ...rest };
 };
 
 export const useDataSetOwners = (
@@ -297,12 +297,12 @@ export const useRawList = () => {
 };
 
 export const useLabelSuggestions = () => {
-  const { dataSetsWithIntegrations, ...rest } = useDataSetsList();
+  const { dataSetsWithextpipes, ...rest } = useDataSetsList();
   const [labels, setLabels] = useState<Array<string>>([]);
 
   useEffect(() => {
-    if (dataSetsWithIntegrations) {
-      const suggestedLabels = dataSetsWithIntegrations.reduce(
+    if (dataSetsWithextpipes) {
+      const suggestedLabels = dataSetsWithextpipes.reduce(
         (acc: { [label: string]: string }, cur) => {
           const labelsForMetadata = cur?.dataSet?.metadata?.consoleLabels;
           if (Array.isArray(labelsForMetadata)) {
@@ -316,7 +316,7 @@ export const useLabelSuggestions = () => {
       );
       setLabels(Object.keys(suggestedLabels));
     }
-  }, [dataSetsWithIntegrations]);
+  }, [dataSetsWithextpipes]);
 
   return { labels, ...rest };
 };

@@ -8,7 +8,7 @@ import {
 import { Source, SOURCE_TEXT, SourceProps } from '../Source/Source';
 import { LineageSubTitle } from '../../../utils/styledComponents';
 
-const IntegrationSourceExtractorTitle = styled.h4`
+const ExtpipeSourceExtractorTitle = styled.h4`
   text-transform: uppercase;
 `;
 const Wrapper = styled.div`
@@ -17,23 +17,19 @@ const Wrapper = styled.div`
     margin-bottom: 2rem;
   }
 `;
-export type IntegrationSourceExtractorProps = SourceProps & ExtractorProps;
+export type ExtpipeSourceExtractorProps = SourceProps & ExtractorProps;
 
-export const IntegrationSourceExtractor: FunctionComponent<IntegrationSourceExtractorProps> =
+export const ExtpipeSourceExtractor: FunctionComponent<ExtpipeSourceExtractorProps> =
   ({
     extractorAccounts,
     sourceNames,
-  }: PropsWithChildren<IntegrationSourceExtractorProps>) => {
+  }: PropsWithChildren<ExtpipeSourceExtractorProps>) => {
     return (
       <Wrapper>
-        <IntegrationSourceExtractorTitle>
-          Source
-        </IntegrationSourceExtractorTitle>
+        <ExtpipeSourceExtractorTitle>Source</ExtpipeSourceExtractorTitle>
         <LineageSubTitle>{SOURCE_TEXT}</LineageSubTitle>
         <Source sourceNames={sourceNames} />
-        <IntegrationSourceExtractorTitle>
-          Extractor
-        </IntegrationSourceExtractorTitle>
+        <ExtpipeSourceExtractorTitle>Extractor</ExtpipeSourceExtractorTitle>
         <LineageSubTitle>{EXTRACTOR_TEXT}</LineageSubTitle>
         <Extractor extractorAccounts={extractorAccounts} />
       </Wrapper>

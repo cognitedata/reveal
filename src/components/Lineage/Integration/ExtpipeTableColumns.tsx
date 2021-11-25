@@ -3,10 +3,10 @@ import moment from 'moment';
 import { Tooltip } from '@cognite/cogs.js';
 import { toString as cronstureToString } from 'cronstrue';
 import { LabelTagGrey } from 'utils/styledComponents';
-import { Integration, SupportedSchedule } from 'utils/types';
-import { IntegrationLink } from 'components/Lineage/Integration/IntegrationLink';
+import { Extpipe, SupportedSchedule } from 'utils/types';
+import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 
-type LastStatuses = Pick<Integration, 'lastSuccess' | 'lastFailure'>;
+type LastStatuses = Pick<Extpipe, 'lastSuccess' | 'lastFailure'>;
 
 export const calculate = ({
   lastFailure,
@@ -64,18 +64,18 @@ export const isScheduleOfType = (
   });
 };
 
-export const IntegrationTableColumns = [
+export const ExtpipeTableColumns = [
   {
     title: 'Name',
     key: 'name',
-    render: (row: Integration) => {
-      return <IntegrationLink integration={row} />;
+    render: (row: Extpipe) => {
+      return <ExtpipeLink extpipe={row} />;
     },
   },
   {
     title: 'Schedule',
     key: 'schedule',
-    render: ({ schedule }: Integration) => {
+    render: ({ schedule }: Extpipe) => {
       if (!schedule) {
         return <LabelTagGrey>Not defined</LabelTagGrey>;
       }
@@ -94,7 +94,7 @@ export const IntegrationTableColumns = [
   {
     title: 'Last run',
     key: 'latestRun',
-    render: ({ lastFailure, lastSuccess }: Integration) => {
+    render: ({ lastFailure, lastSuccess }: Extpipe) => {
       const latestRun = calculate({ lastFailure, lastSuccess });
       return (
         <>
@@ -111,7 +111,7 @@ export const IntegrationTableColumns = [
   {
     title: 'Source',
     key: 'source',
-    render: ({ source }: Integration) => {
+    render: ({ source }: Extpipe) => {
       return <>{source ?? <LabelTagGrey>Not defined</LabelTagGrey>}</>;
     },
     ellipsis: true,
@@ -119,8 +119,8 @@ export const IntegrationTableColumns = [
   {
     title: 'Owner',
     key: 'owner',
-    render: (integration: Integration) => {
-      const owner = integration.contacts?.find(
+    render: (extpipe: Extpipe) => {
+      const owner = extpipe.contacts?.find(
         (contact) => !!contact.role && contact.role.toLowerCase() === 'owner'
       );
       if (owner) {

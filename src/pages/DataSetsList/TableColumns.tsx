@@ -11,7 +11,7 @@ import {
 import SearchableFilters from 'components/SearchableFilters';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, Integration } from 'utils/types';
-import { IntegrationLink } from 'components/Lineage/Integration/IntegrationLink';
+import { ExtpipeLink } from 'components/Lineage/Integration/IntegrationLink';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
 import { ColumnFilterIcon } from 'components/ColumnFilterIcon';
 import isArray from 'lodash/isArray';
@@ -145,7 +145,7 @@ const integrationTableColumn = () => {
             record.integrations.map((integration) => {
               return (
                 <li key={integration.id}>
-                  <IntegrationLink integration={integration} />
+                  <ExtpipeLink integration={integration} />
                 </li>
               );
             })}

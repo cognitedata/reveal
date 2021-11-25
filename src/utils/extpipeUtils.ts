@@ -1,16 +1,16 @@
-import { Integration, DataSet } from 'utils/types';
+import { Extpipe, DataSet } from 'utils/types';
 import sdk from '@cognite/cdf-sdk-singleton';
 
 const EXTRACTION_PIPELINE_PATH: Readonly<string> = 'extpipes';
 
-export const mapDataSetIntegration = (
+export const mapDataSetExtpipe = (
   dataSets: DataSet[],
-  allIntegrations: Integration[]
+  allExtpipes: Extpipe[]
 ) =>
   dataSets.map((dataSet) => ({
     dataSet,
-    integrations: allIntegrations.filter(
-      (integration) => dataSet.id === integration.dataSetId
+    extpipes: allExtpipes.filter(
+      (extpipe) => dataSet.id === integration.dataSetId
     ),
   }));
 

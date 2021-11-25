@@ -151,7 +151,7 @@ export interface Consumer {
   externalLinks: ExternalLink[];
 }
 
-export interface IntegrationUserInfo {
+export interface ExtpipeUserInfo {
   name?: string;
   email: string;
   role?: string;
