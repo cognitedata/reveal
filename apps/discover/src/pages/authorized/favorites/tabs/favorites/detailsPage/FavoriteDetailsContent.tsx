@@ -25,7 +25,7 @@ import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
 import {
   DOWNLOAD_MESSAGE,
   DOWNLOADING,
-} from 'pages/authorized/search/document/inspect/constants';
+} from 'pages/authorized/search/constants';
 import { NavigationTab } from 'pages/types';
 import { FlexAlignJustifyContent } from 'styles/layout';
 

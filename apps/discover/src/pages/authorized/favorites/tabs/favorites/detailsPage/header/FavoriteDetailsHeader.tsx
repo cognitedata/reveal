@@ -21,7 +21,7 @@ import { FavoriteSummary } from 'modules/favorite/types';
 import {
   DOWNLOAD_MESSAGE,
   DOWNLOADING,
-} from 'pages/authorized/search/document/inspect/constants';
+} from 'pages/authorized/search/constants';
 
 interface ActionProps {
   favorite: FavoriteSummary;

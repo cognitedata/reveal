@@ -43,7 +43,6 @@ import {
   WELLS_TAB_TITLE_KEY,
 } from './constants';
 import DocumentSearch from './document';
-import DocInspect from './document/inspect';
 import {
   OuterMapWrapper,
   OuterSearchWrapper,
@@ -346,10 +345,6 @@ export const Search: React.FC = () => {
             to={navigation.SEARCH_SEISMIC}
           />
           <Route path={navigation.SEARCH_WELLS_INSPECT} render={WellInspect} />
-          <Route
-            path={navigation.SEARCH_DOCUMENTS_INSPECT}
-            render={DocInspect}
-          />
           <Route path={navigation.SEARCH_DOCUMENTS} render={DocumentSearch} />
           <Route path={navigation.SEARCH_SEISMIC} render={SeismicSearch} />
           <Route path={navigation.SEARCH_WELLS} render={WellSearch} />

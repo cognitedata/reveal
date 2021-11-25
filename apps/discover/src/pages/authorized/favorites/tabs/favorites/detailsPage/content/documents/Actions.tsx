@@ -21,18 +21,15 @@ import {
   downloadFileFromUrl,
   openDocumentPreviewInNewTab,
 } from 'modules/documentPreview/utils';
-// import { documentSearchActions } from 'modules/documentSearch/actions';
-// import { useDocumentConfig } from 'modules/documentSearch/hooks';
 import { FavoriteDocumentData, FavouriteRowType } from 'modules/favorite/types';
 import { setObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
+import { DeleteDocumentFromSetModal } from 'pages/authorized/favorites/modals';
 import {
   DOWNLOAD_MESSAGE,
   DOWNLOADING,
-} from 'pages/authorized/search/document/inspect/constants';
+} from 'pages/authorized/search/constants';
 import { MenuItemDanger } from 'pages/authorized/search/elements';
 import { FlexRow } from 'styles/layout';
-
-import { DeleteDocumentFromSetModal } from '../../../../../modals';
 
 interface Props {
   showRemoveOption: boolean;
