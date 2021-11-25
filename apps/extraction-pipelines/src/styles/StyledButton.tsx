@@ -4,6 +4,7 @@ import { Button, Colors } from '@cognite/cogs.js';
 import { DivFlexProps } from 'styles/flex/StyledFlex';
 import { bottomSpacing } from 'styles/StyledVariables';
 import { CLOSE, SAVE } from 'utils/constants';
+import { ButtonProps } from '@cognite/cogs.js/dist/Components/Button/Button';
 
 type ButtonPlacedProps = DivFlexProps & { marginbottom?: number };
 export const ButtonPlaced = styled(Button)`
@@ -36,8 +37,11 @@ export const CloseButton = styled((props) => (
   margin: 0.125rem;
 `;
 
-type EditButtonProps = { $full: boolean };
-export const EditButton = styled((props) => (
+type EditButtonProps = ButtonProps & {
+  $full?: boolean;
+  showPencilIcon: boolean;
+};
+export const EditButton = styled((props: EditButtonProps) => (
   <Button {...props} type="ghost" icon="Edit" iconPlacement="right">
     {props.children}
   </Button>
@@ -65,7 +69,8 @@ export const EditButton = styled((props) => (
         background-color: ${Colors['midblue-7'].hex()};
         .cogs-icon {
           &.cogs-icon-Edit {
-            opacity: 1;
+            opacity: ${(props: EditButtonProps) =>
+              props.showPencilIcon ? '1' : '0'};
           }
         }
       }

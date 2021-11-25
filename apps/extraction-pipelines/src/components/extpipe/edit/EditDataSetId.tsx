@@ -160,6 +160,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
           </Wrapper>
         ) : (
           <EditButton
+            showPencilIcon={extpipe?.dataSet != null}
             onClick={onEditClick}
             disabled={!canEdit}
             title="Toggle edit row"

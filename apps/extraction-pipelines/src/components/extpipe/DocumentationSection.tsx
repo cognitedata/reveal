@@ -149,7 +149,12 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         troubleshooting or more detailed information about the data such as
         selection criteria.
       </p>
-      <EditButton type="ghost" onClick={onEditClick} disabled={!canEdit}>
+      <EditButton
+        showPencilIcon={false}
+        type="ghost"
+        onClick={onEditClick}
+        disabled={!canEdit}
+      >
         <AddFieldInfoText>
           {DetailFieldNames.DOCUMENTATION.toLowerCase()}
         </AddFieldInfoText>

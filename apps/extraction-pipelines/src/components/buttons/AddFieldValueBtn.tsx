@@ -22,7 +22,7 @@ export const AddFieldValueBtn = ({
   return !canEdit ? (
     <NoDataAdded>No {children} added.</NoDataAdded>
   ) : (
-    <EditButton onClick={onClick} $full>
+    <EditButton showPencilIcon={false} onClick={onClick} $full>
       <AddFieldInfoText>{children}</AddFieldInfoText>
     </EditButton>
   );

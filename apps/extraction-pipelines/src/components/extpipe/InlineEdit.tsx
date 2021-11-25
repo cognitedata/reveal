@@ -142,6 +142,7 @@ const InlineEdit = <Fields extends FieldValues>({
         <>
           {canEdit ? (
             <EditButton
+              showPencilIcon={actualValue != null}
               onClick={onEditClick}
               title="Toggle edit row"
               aria-expanded={isEdit}

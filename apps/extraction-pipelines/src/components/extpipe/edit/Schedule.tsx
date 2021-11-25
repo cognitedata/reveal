@@ -169,6 +169,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     }
     return (
       <EditButton
+        showPencilIcon={schedule != null}
         onClick={onEditClick}
         disabled={!canEdit}
         title="Toggle edit row"
