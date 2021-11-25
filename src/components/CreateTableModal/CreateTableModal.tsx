@@ -13,24 +13,7 @@ import { useActiveTable } from 'hooks/table-tabs';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
-
-const mockColumns = [
-  'key',
-  'covariance_xy',
-  'data_entry_mode',
-  'covariance_yz',
-  'y_offset',
-  'sequence_no',
-  'inclination',
-  'definitive_survey_id',
-  'covariance_zz',
-  'tvd',
-  'covariance_xx',
-  'x_offset',
-  'azimuth',
-  'ellipse_vertical',
-  'md',
-];
+import { useCSVUpload } from 'hooks/csv-upload';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
@@ -70,12 +53,14 @@ const CreateTableModal = ({
     useState<CreationMode>();
   const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
     useState<PrimaryKeyMethod>();
-  const [selectedColumn, setSelectedColumn] = useState<string>();
   const [file, setFile] = useState<File>(); // eslint-disable-line
+  const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
 
   const { mutate: createDatabase, isLoading: isCreatingTable } =
     useCreateTable();
   const [, openTable] = useActiveTable();
+
+  const { columns } = useCSVUpload(file, selectedColumnIndex);
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isCreationDisabled =
@@ -88,7 +73,7 @@ const CreateTableModal = ({
   const isUploadDisabled =
     !selectedPrimaryKeyMethod ||
     (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
-      !selectedColumn);
+      !(selectedColumnIndex >= 0));
 
   useEffect(() => {
     if (!visible) {
@@ -96,6 +81,8 @@ const CreateTableModal = ({
       setCreateTableModalStep(CreateTableModalStep.CreationMode);
       setSelectedCreationMode(undefined);
       setSelectedPrimaryKeyMethod(undefined);
+      setFile(undefined);
+      setSelectedColumnIndex(-1);
     }
   }, [visible]);
 
@@ -159,9 +146,11 @@ const CreateTableModal = ({
     if (createTableModalStep === CreateTableModalStep.PrimaryKey) {
       return (
         <CreateTableModalPrimaryKeyStep
-          columns={mockColumns}
-          selectedColumn={selectedColumn}
-          selectColumnAsPrimaryKey={(name: string) => setSelectedColumn(name)}
+          columns={columns}
+          selectedColumnIndex={selectedColumnIndex}
+          selectColumnAsPrimaryKey={(index: number) =>
+            setSelectedColumnIndex(index)
+          }
           selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
           selectPrimaryKeyMethod={selectPrimaryKeyMethod}
         />

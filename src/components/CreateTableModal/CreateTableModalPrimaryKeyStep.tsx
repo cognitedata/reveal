@@ -10,15 +10,15 @@ import CreateTableModalOption from './CreateTableModalOption';
 
 type CreateTableModalPrimaryKeyStepProps = {
   columns?: string[];
-  selectedColumn?: string;
-  selectColumnAsPrimaryKey: (name: string) => void;
+  selectedColumnIndex?: number;
+  selectColumnAsPrimaryKey: (columnIndex: number) => void;
   selectedPrimaryKeyMethod?: PrimaryKeyMethod;
   selectPrimaryKeyMethod: (method: PrimaryKeyMethod) => () => void;
 };
 
 const CreateTableModalPrimaryKeyStep = ({
   columns,
-  selectedColumn,
+  selectedColumnIndex,
   selectColumnAsPrimaryKey,
   selectedPrimaryKeyMethod,
   selectPrimaryKeyMethod,
@@ -30,9 +30,9 @@ const CreateTableModalPrimaryKeyStep = ({
   );
 
   const selectColumn =
-    (columnName: string): (() => void) =>
+    (columnIndex: number): (() => void) =>
     (): void => {
-      selectColumnAsPrimaryKey(columnName);
+      selectColumnAsPrimaryKey(columnIndex);
     };
 
   return (
@@ -75,12 +75,12 @@ const CreateTableModalPrimaryKeyStep = ({
           />
           {filteredColumns?.length ? (
             <StyledColumns>
-              {filteredColumns?.map((columnName) => (
+              {filteredColumns?.map((columnName, index) => (
                 <StyledRadio
-                  checked={selectedColumn === columnName}
+                  checked={selectedColumnIndex === index}
                   key={columnName}
                   name={columnName}
-                  onChange={selectColumn(columnName)}
+                  onChange={selectColumn(index)}
                 >
                   {columnName}
                 </StyledRadio>
