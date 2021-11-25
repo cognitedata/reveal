@@ -14,6 +14,7 @@ import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
 import { useCSVUpload } from 'hooks/csv-upload';
+import { trimFileExtension } from 'utils/utils';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
@@ -60,7 +61,13 @@ const CreateTableModal = ({
     useCreateTable();
   const [, openTable] = useActiveTable();
 
-  const { columns, onConfirmUpload } = useCSVUpload(file, selectedColumnIndex);
+  const {
+    columns,
+    isUploadFailed,
+    isUploadCompleted,
+    onConfirmUpload,
+    uploadPercentage,
+  } = useCSVUpload(file, selectedColumnIndex);
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isCreationDisabled =
@@ -152,6 +159,13 @@ const CreateTableModal = ({
       setSelectedPrimaryKeyMethod(method);
     };
 
+  const selectFile = (file?: File): void => {
+    setFile(file);
+    if (tableName.length === 0 && file) {
+      setTableName(trimFileExtension(file.name));
+    }
+  };
+
   const renderCreateTableModalStep = (): JSX.Element | undefined => {
     if (createTableModalStep === CreateTableModalStep.CreationMode) {
       return (
@@ -159,7 +173,7 @@ const CreateTableModal = ({
           isCreatingTable={isCreatingTable}
           selectedCreationMode={selectedCreationMode}
           selectCreationMode={selectCreationMode}
-          setFile={setFile}
+          setFile={selectFile}
         />
       );
     }
@@ -177,44 +191,58 @@ const CreateTableModal = ({
       );
     }
     if (createTableModalStep === CreateTableModalStep.Upload) {
-      return <CreateTableModalUploadStep />;
+      return (
+        <CreateTableModalUploadStep
+          fileName={file?.name ? trimFileExtension(file.name) : ''}
+          isUploadFailed={isUploadFailed}
+          isUploadCompleted={isUploadCompleted}
+          progression={uploadPercentage}
+        />
+      );
     }
   };
 
   return (
     <Modal
-      footer={
-        createTableModalStep !== CreateTableModalStep.Upload
+      footer={[
+        ...(createTableModalStep !== CreateTableModalStep.Upload
           ? [
               <StyledCancelButton onClick={onCancel} type="ghost">
                 Cancel
               </StyledCancelButton>,
-              ...(selectedCreationMode === CreationMode.Empty
-                ? [
-                    <Button
-                      disabled={isCreationDisabled}
-                      loading={isCreatingTable}
-                      onClick={handleCreate}
-                      type="primary"
-                    >
-                      Create
-                    </Button>,
-                  ]
-                : []),
-              ...(selectedCreationMode === CreationMode.Upload
-                ? [
-                    <Button
-                      disabled={isUploadDisabled}
-                      onClick={handleUpload}
-                      type="primary"
-                    >
-                      Upload
-                    </Button>,
-                  ]
-                : []),
             ]
-          : null
-      }
+          : []),
+        ...(selectedCreationMode === CreationMode.Empty
+          ? [
+              <Button
+                disabled={isCreationDisabled}
+                loading={isCreatingTable}
+                onClick={handleCreate}
+                type="primary"
+              >
+                Create
+              </Button>,
+            ]
+          : []),
+        ...(createTableModalStep === CreateTableModalStep.PrimaryKey
+          ? [
+              <Button
+                disabled={isUploadDisabled}
+                onClick={handleUpload}
+                type="primary"
+              >
+                Create
+              </Button>,
+            ]
+          : []),
+        ...(isUploadCompleted
+          ? [
+              <Button onClick={onCancel} type="primary">
+                OK
+              </Button>,
+            ]
+          : []),
+      ]}
       onCancel={onCancel}
       title={<Title level={5}>Create table</Title>}
       visible={visible}

@@ -101,3 +101,7 @@ export const sleep = (ms: number) => {
     setTimeout(() => resolve(ms), ms);
   });
 };
+
+export const trimFileExtension = (fullName: string): string => {
+  return fullName.split('.').slice(0, -1).join('.');
+};

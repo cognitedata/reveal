@@ -4,15 +4,40 @@ import { Body, Colors, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { CustomIcon } from 'components/CustomIcon';
-import Message from 'components/Message/Message';
+import Message, { MessageType } from 'components/Message/Message';
+import {
+  SIDE_PANEL_TRANSITION_DURATION,
+  SIDE_PANEL_TRANSITION_FUNCTION,
+} from 'utils/constants';
 
-const CreateTableModalUploadStep = (): JSX.Element => {
+type CreateTableModalUploadStepProps = {
+  fileName?: string;
+  isUploadFailed?: boolean;
+  isUploadCompleted?: boolean;
+  progression?: number;
+};
+
+const CreateTableModalUploadStep = ({
+  fileName,
+  isUploadFailed = false,
+  isUploadCompleted = false,
+  progression = 0,
+}: CreateTableModalUploadStepProps): JSX.Element => {
+  const percentage = isUploadCompleted ? 100 : progression;
+
+  let messageContent = 'Please keep this window open to complete the upload.';
+  let messageType: MessageType = 'info';
+  if (isUploadFailed) {
+    messageContent = 'An error has occurred while uploading your CSV.';
+    messageType = 'error';
+  } else if (isUploadCompleted) {
+    messageContent = 'The file was successfully uploaded.';
+    messageType = 'success';
+  }
+
   return (
     <>
-      <Message
-        message="Please keep this window open to complete the upload."
-        type="info"
-      />
+      <Message message={messageContent} type={messageType} />
       <StyledUploadStepWrapper>
         <CustomIcon
           icon="DocumentIcon"
@@ -21,11 +46,18 @@ const CreateTableModalUploadStep = (): JSX.Element => {
         <StyledProgressionWrapper>
           <StyledProgressionInfo>
             <StyledFileName level={3} strong>
-              Coruscant.csv
+              {fileName}
             </StyledFileName>
-            <StyledUploadPercentage level={3}>60%</StyledUploadPercentage>
+            <StyledUploadPercentage level={3}>
+              {percentage}%
+            </StyledUploadPercentage>
           </StyledProgressionInfo>
-          <StyledProgressionBar />
+          <StyledProgressionBarWrapper>
+            <StyledProgressionBar
+              $isUploadCompleted={isUploadCompleted}
+              $percentage={percentage}
+            />
+          </StyledProgressionBarWrapper>
         </StyledProgressionWrapper>
       </StyledUploadStepWrapper>
     </>
@@ -62,11 +94,26 @@ const StyledUploadPercentage = styled(Overline)`
   margin-left: auto;
 `;
 
-const StyledProgressionBar = styled.div`
-  background-color: ${Colors['bg-status-small--accent'].hex()};
+const StyledProgressionBarWrapper = styled.div`
+  background-color: ${Colors['bg-control--disabled'].hex()};
   border-radius: 4px;
   height: 8px;
   width: 100%;
+`;
+
+const StyledProgressionBar = styled.div<{
+  $isUploadCompleted: boolean;
+  $percentage: number;
+}>`
+  background-color: ${({ $isUploadCompleted }) =>
+    $isUploadCompleted
+      ? Colors.success.hex()
+      : Colors['bg-status-small--accent'].hex()};
+  border-radius: 4px;
+  height: 8px;
+  transition: width ${SIDE_PANEL_TRANSITION_DURATION}s
+    ${SIDE_PANEL_TRANSITION_FUNCTION};
+  width: ${({ $percentage }) => $percentage}%;
 `;
 
 export default CreateTableModalUploadStep;

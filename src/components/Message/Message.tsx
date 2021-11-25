@@ -3,7 +3,7 @@ import React from 'react';
 import { AllIconTypes, Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-type MessageType = 'info' | 'success' | 'warning' | 'error';
+export type MessageType = 'info' | 'success' | 'warning' | 'error';
 
 type MessageProps = {
   message: string;

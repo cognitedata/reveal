@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 
 import { Upload } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
@@ -17,7 +17,7 @@ type CreateTableModalCreationModeStepProps = {
   isCreatingTable: boolean;
   selectCreationMode: (creationMode: CreationMode) => () => void;
   selectedCreationMode?: CreationMode;
-  setFile: Dispatch<SetStateAction<File | undefined>>;
+  setFile: (file: File | undefined) => void;
 };
 
 const CreateTableModalCreationModeStep = ({
