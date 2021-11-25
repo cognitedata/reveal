@@ -36,7 +36,7 @@ export const MenuBar = () => {
   return (
     <TopBar>
       <TopBar.Left>
-        <TopBar.Logo title="Simulator Configuration" />
+        <TopBar.Logo title="Cognite Simulator Configuration" />
       </TopBar.Left>
       <TopBar.Navigation
         links={[
