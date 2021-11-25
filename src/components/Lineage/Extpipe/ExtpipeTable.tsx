@@ -7,7 +7,7 @@ import { createLink, getEnv } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/utils';
 import InfoTooltip from 'components/InfoTooltip';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
-import { DataSetWithIntegrations } from 'actions';
+import { DataSetWithExtpipes } from 'actions';
 import {
   EmptyLineageDot,
   LineageDot,
@@ -15,19 +15,19 @@ import {
   LineageTitle,
   NoDataText,
 } from '../../../utils/styledComponents';
-import { Integration } from '../../../utils/types';
-import { IntegrationTableColumns } from './IntegrationTableColumns';
-import { IntegrationSourceExtractorProps } from './IntegrationSourceExtractor';
-import { getExtractionPipelineUIUrl } from '../../../utils/integrationUtils';
+import { Extpipe } from '../../../utils/types';
+import { ExtpipeTableColumns } from './ExtpipeTableColumns';
+import { ExtpipeSourceExtractorProps } from './ExtpipeSourceExtractor';
+import { getExtractionPipelineUIUrl } from '../../../utils/extpipeUtils';
 
-interface IntegrationTableProps extends IntegrationSourceExtractorProps {
-  dataSetWithIntegrations: DataSetWithIntegrations;
+interface ExtpipeTableProps extends ExtpipeSourceExtractorProps {
+  dataSetWithExtpipes: DataSetWithExtpipes;
 }
 
-export const INTEGRATIONS_HEADING: Readonly<string> = 'Extraction pipelines';
+export const EXTPIPES_HEADING: Readonly<string> = 'Extraction pipelines';
 export const CREATE_EXTRACTION_PIPELINE: Readonly<string> =
   'Create extraction pipeline';
-export const INTEGRATION_SUB_HEADING: Readonly<string> =
+export const EXTPIPE_SUB_HEADING: Readonly<string> =
   'Use this section to create, troubleshoot and view details on extraction pipelines that ingest data from extractors into this data set.';
 const PERMISSION_TEXT: Readonly<string> = `You must have the 'extractionPipelinesAcl:read' permission to see extraction pipelines in your project`;
 
@@ -39,10 +39,10 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
-  dataSetWithIntegrations,
-}: PropsWithChildren<IntegrationTableProps>) => {
-  const { integrations, dataSet } = dataSetWithIntegrations;
+const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
+  dataSetWithExtpipes,
+}: PropsWithChildren<ExtpipeTableProps>) => {
+  const { extpipes, dataSet } = dataSetWithExtpipes;
 
   const permissionsExtractionPipelines = useUserCapabilities(
     'extractionPipelinesAcl',
@@ -50,14 +50,14 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
   );
   const canEditExtractionPipelines = permissionsExtractionPipelines.data;
 
-  const addIntegrationLink = () => {
+  const addExtpipeLink = () => {
     return `${createLink(`${getExtractionPipelineUIUrl('/create')}`)}${
       getEnv() ? '&' : '?'
     }dataSetId=${dataSet.id}`;
   };
 
   const createExtpipeButton = canEditExtractionPipelines ? (
-    <StyledButton href={addIntegrationLink()} type="primary" icon="Plus">
+    <StyledButton href={addExtpipeLink()} type="primary" icon="Plus">
       {CREATE_EXTRACTION_PIPELINE}
     </StyledButton>
   ) : (
@@ -72,23 +72,21 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
   );
 
   return (
-    <Timeline.Item
-      dot={integrations.length ? <LineageDot /> : <EmptyLineageDot />}
-    >
-      <LineageTitle>{INTEGRATIONS_HEADING}</LineageTitle>
+    <Timeline.Item dot={extpipes.length ? <LineageDot /> : <EmptyLineageDot />}>
+      <LineageTitle>{EXTPIPES_HEADING}</LineageTitle>
       <LineageSubTitle>
-        <span>{INTEGRATION_SUB_HEADING}</span>
+        <span>{EXTPIPE_SUB_HEADING}</span>
         <span css="flex-shrink: 0">{createExtpipeButton}</span>
       </LineageSubTitle>
-      {!integrations ? (
+      {!extpipes ? (
         <NoDataText>{PERMISSION_TEXT}</NoDataText>
       ) : (
         <>
           <Table
-            columns={IntegrationTableColumns}
-            dataSource={integrations}
+            columns={ExtpipeTableColumns}
+            dataSource={extpipes}
             pagination={{ pageSize: 5 }}
-            rowKey={(record: Integration) => `${record?.id}`}
+            rowKey={(record: Extpipe) => `${record?.id}`}
             getPopupContainer={getContainer}
           />
         </>
@@ -97,4 +95,4 @@ const IntegrationTable: FunctionComponent<IntegrationTableProps> = ({
   );
 };
 
-export default IntegrationTable;
+export default ExtpipeTable;

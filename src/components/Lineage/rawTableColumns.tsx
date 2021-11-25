@@ -2,8 +2,8 @@ import React from 'react';
 import { getStringCdfEnv } from 'utils/utils';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { RawWithUpdateTime } from 'components/Lineage/Lineage';
-import { RawIntegrationWithUpdateTime } from 'components/Lineage/Integration/IntegrationRawTables';
-import { IntegrationLink } from 'components/Lineage/Integration/IntegrationLink';
+import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';
+import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { LabelTagGrey, NoStyleList } from 'utils/styledComponents';
 
 export const rawTablesColumns = [
@@ -44,12 +44,12 @@ export const rawTablesColumns = [
   },
 ];
 
-export const rawTablesColumnsWithIntegration = () => {
+export const rawTablesColumnsWithExtpipe = () => {
   return [
     {
       title: 'Database name',
       key: 'databaseName',
-      render: (row: RawIntegrationWithUpdateTime) => (
+      render: (row: RawExtpipeWithUpdateTime) => (
         <a
           href={`/${sdk.project}/raw/${row.databaseName}${
             getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
@@ -60,17 +60,14 @@ export const rawTablesColumnsWithIntegration = () => {
           {row.databaseName}
         </a>
       ),
-      sorter: (
-        a: RawIntegrationWithUpdateTime,
-        b: RawIntegrationWithUpdateTime
-      ) => {
+      sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) => {
         return a.databaseName.localeCompare(b.databaseName);
       },
     },
     {
       title: 'Table name',
       key: 'tableName',
-      render: (row: RawIntegrationWithUpdateTime) => (
+      render: (row: RawExtpipeWithUpdateTime) => (
         <a
           href={`/${sdk.project}/raw/${row.databaseName}/${row.tableName}${
             getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : ''
@@ -81,26 +78,24 @@ export const rawTablesColumnsWithIntegration = () => {
           {row.tableName}
         </a>
       ),
-      sorter: (
-        a: RawIntegrationWithUpdateTime,
-        b: RawIntegrationWithUpdateTime
-      ) => a.tableName.localeCompare(b.tableName),
+      sorter: (a: RawExtpipeWithUpdateTime, b: RawExtpipeWithUpdateTime) =>
+        a.tableName.localeCompare(b.tableName),
     },
     {
-      title: 'Connected extraction pipeline',
-      key: 'integration',
-      render: (row: RawIntegrationWithUpdateTime) => {
-        const { integrations } = row;
-        if (!integrations || integrations.length === 0) {
+      title: 'Populated by extraction pipeline',
+      key: 'extpipe',
+      render: (row: RawExtpipeWithUpdateTime) => {
+        const { extpipes } = row;
+        if (!extpipes || extpipes.length === 0) {
           return <LabelTagGrey>Not connected/defined</LabelTagGrey>;
         }
         return (
           <NoStyleList>
-            {Array.isArray(integrations) &&
-              integrations.map((integration) => {
+            {Array.isArray(extpipes) &&
+              extpipes.map((extpipe) => {
                 return (
-                  <li key={integration.id}>
-                    <IntegrationLink integration={integration} />
+                  <li key={extpipe.id}>
+                    <ExtpipeLink extpipe={extpipe} />
                   </li>
                 );
               })}

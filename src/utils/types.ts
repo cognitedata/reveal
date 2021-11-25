@@ -151,7 +151,7 @@ export interface Consumer {
   externalLinks: ExternalLink[];
 }
 
-export interface IntegrationUserInfo {
+export interface ExtpipeUserInfo {
   name?: string;
   email: string;
   role?: string;
@@ -162,14 +162,14 @@ export enum SupportedSchedule {
   CONTINUOUS = 'Continuous',
   SCHEDULED = 'Scheduled',
 }
-interface IntegrationRawTable {
+interface ExtpipeRawTable {
   dbName: string;
   tableName: string;
 }
-export interface RawTableWithIntegrations extends RawTable {
-  integrations: Integration[];
+export interface RawTableWithExtpipes extends RawTable {
+  extpipes: Extpipe[];
 }
-export interface Integration {
+export interface Extpipe {
   id: number;
   name: string;
   createdTime: number; // milliseconds
@@ -179,13 +179,13 @@ export interface Integration {
   dataSetId: number;
   createdBy: string;
   schedule?: string;
-  rawTables?: IntegrationRawTable[];
+  rawTables?: ExtpipeRawTable[];
   source?: string;
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds
   lastMessage?: string;
-  contacts: IntegrationUserInfo[];
+  contacts: ExtpipeUserInfo[];
 }
 
 export type FileInfo = {

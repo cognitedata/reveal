@@ -10,7 +10,7 @@ import { message } from 'antd';
 import {
   useCreateDataSetMutation,
   useDataSetOwners,
-  useDataSetWithIntegrations,
+  useDataSetWithExtpipes,
   useUpdateDataSetMutation,
   useUpdateDataSetOwners,
 } from '../../actions/index';
@@ -35,8 +35,8 @@ const DataSetEditor = ({
 }: DataSetEditorProps): JSX.Element => {
   const { selectedDataSet, setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSetWithIntegrations, isLoading: isFetchingDataSet } =
-    useDataSetWithIntegrations(selectedDataSet);
+  const { dataSetWithExtpipes, isLoading: isFetchingDataSet } =
+    useDataSetWithExtpipes(selectedDataSet);
 
   const { updateDataSet, isLoading: isUpdating } = useUpdateDataSetMutation();
 
@@ -96,7 +96,7 @@ const DataSetEditor = ({
       }}
       title={
         <DrawerHeader>
-          {dataSetWithIntegrations?.dataSet.name ?? 'Create data set'}
+          {dataSetWithExtpipes?.dataSet.name ?? 'Create data set'}
         </DrawerHeader>
       }
       width="60%"
@@ -109,7 +109,7 @@ const DataSetEditor = ({
       <DataSetCreation
         loading={loading}
         createDataSet={createDataSet}
-        dataSet={dataSetWithIntegrations?.dataSet}
+        dataSet={dataSetWithExtpipes?.dataSet}
         changesSaved={changesSaved}
         setChangesSaved={setChangesSaved}
         updateDataSet={updateDataSet}

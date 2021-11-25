@@ -16,31 +16,31 @@ import {
 } from 'utils/styledComponents';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { useFlag } from '@cognite/react-feature-flags';
-import { IntegrationRawTables } from 'components/Lineage/Integration/IntegrationRawTables';
+import { ExtpipeRawTables } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 
 import handleError from 'utils/handleError';
 import transformationsColumns from 'components/Lineage/transformationColumns';
 import ConsumerTable from 'components/Lineage/ConsumerTable';
-import IntegrationTable from 'components/Lineage/Integration/IntegrationTable';
+import ExtpipeTable from 'components/Lineage/Extpipe/ExtpipeTable';
 import { Source, SOURCE_TEXT } from 'components/Lineage/Source/Source';
 import {
   Extractor,
   EXTRACTOR_TEXT,
 } from 'components/Lineage/Extractor/Extractor';
 import * as Sentry from '@sentry/browser';
-import { DataSetWithIntegrations } from 'actions';
+import { DataSetWithExtpipes } from 'actions';
 
 const jetfire = new JetfireApi(sdk, sdk.project, getJetfireUrl());
 
 interface LineageProps {
-  dataSetWithIntegrations?: DataSetWithIntegrations;
+  dataSetWithExtpipes?: DataSetWithExtpipes;
 }
 
 export interface RawWithUpdateTime extends RawTable {
   lastUpdate: string;
 }
 
-const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
+const Lineage = ({ dataSetWithExtpipes }: LineageProps) => {
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
     useState<boolean>(false);
@@ -55,7 +55,7 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
 
   const getExternalTransformations = () => {
     const transformations =
-      dataSetWithIntegrations?.dataSet.metadata.transformations;
+      dataSetWithExtpipes?.dataSet.metadata.transformations;
     if (Array.isArray(transformations)) {
       const externalTransformation = transformations.filter(
         (trans) => trans.type === 'external'
@@ -81,7 +81,7 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
         includePublic: true,
       });
       const jetfiretransformations =
-        dataSetWithIntegrations?.dataSet?.metadata?.transformations?.filter(
+        dataSetWithExtpipes?.dataSet?.metadata?.transformations?.filter(
           (tr) => tr.type === 'jetfire'
         ) || [];
       const mappedTransformations = jetfiretransformations.map(
@@ -114,14 +114,14 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
         });
       }
     }
-  }, [dataSetWithIntegrations]);
+  }, [dataSetWithExtpipes]);
 
   useEffect(() => {
     getTransformations();
   }, [getTransformations]);
 
-  if (dataSetWithIntegrations) {
-    const { dataSet } = dataSetWithIntegrations;
+  if (dataSetWithExtpipes) {
+    const { dataSet } = dataSetWithExtpipes;
     const sourceNames = dataSet.metadata.consoleSource?.names;
     const extractorAccounts =
       dataSet.metadata.consoleExtractors &&
@@ -151,12 +151,12 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
               <Extractor extractorAccounts={extractorAccounts} />
             </Timeline.Item>
           ) : null}
-          <IntegrationTable
-            dataSetWithIntegrations={dataSetWithIntegrations}
+          <ExtpipeTable
+            dataSetWithExtpipes={dataSetWithExtpipes}
             extractorAccounts={extractorAccounts}
             sourceNames={sourceNames}
           />
-          <IntegrationRawTables dataSet={dataSetWithIntegrations} />
+          <ExtpipeRawTables dataSet={dataSetWithExtpipes} />
           {usedTransformations && (
             <Timeline.Item dot={<LineageDot />}>
               <LineageTitle>Transformations</LineageTitle>
@@ -173,9 +173,7 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
                 </NoDataText>
               ) : (
                 <Table
-                  columns={transformationsColumns(
-                    dataSetWithIntegrations.dataSet
-                  )}
+                  columns={transformationsColumns(dataSetWithExtpipes.dataSet)}
                   dataSource={transformationsData}
                   pagination={{ pageSize: 5 }}
                   rowKey="id"
@@ -186,7 +184,7 @@ const Lineage = ({ dataSetWithIntegrations }: LineageProps) => {
             </Timeline.Item>
           )}
           {isFlagConsumers && (
-            <ConsumerTable dataSet={dataSetWithIntegrations.dataSet} />
+            <ConsumerTable dataSet={dataSetWithExtpipes.dataSet} />
           )}
         </Timeline>
       </ContentView>

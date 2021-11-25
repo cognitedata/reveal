@@ -1,10 +1,10 @@
 import message from 'antd/lib/message';
 import isString from 'lodash/isString';
-import { DataSetWithIntegrations } from 'actions';
+import { DataSetWithExtpipes } from 'actions';
 
 const handleGovernanceFilter = (
   qualityFilter: string,
-  dataSetsList: DataSetWithIntegrations[]
+  dataSetsList: DataSetWithExtpipes[]
 ) => {
   if (qualityFilter === 'governed') {
     return dataSetsList.filter(
@@ -22,7 +22,7 @@ const handleGovernanceFilter = (
 const handleDataSetsSearch = (
   searchValue: string | RegExp,
   setSearchValue: (arg0: string) => void,
-  dataSetsList: DataSetWithIntegrations[]
+  dataSetsList: DataSetWithExtpipes[]
 ) => {
   if (searchValue !== '') {
     try {
@@ -36,12 +36,12 @@ const handleDataSetsSearch = (
             set.dataSet.metadata.consoleLabels.some(
               (label) => isString(label) && label.match(searchRegex)
             )) ||
-          (set.integrations &&
-            Array.isArray(set.integrations) &&
-            set.integrations.some(
-              (integration) =>
-                integration.name?.match(searchRegex) ||
-                integration.externalId?.match(searchRegex)
+          (set.extpipes &&
+            Array.isArray(set.extpipes) &&
+            set.extpipes.some(
+              (extpipe) =>
+                extpipe.name?.match(searchRegex) ||
+                extpipe.externalId?.match(searchRegex)
             ))
       );
     } catch (e) {
@@ -55,9 +55,9 @@ const handleDataSetsSearch = (
 
 const handleArchivedFilter = (
   showArchived: boolean,
-  dataSets: DataSetWithIntegrations[]
+  dataSets: DataSetWithExtpipes[]
 ) => {
-  let dataSetsList: DataSetWithIntegrations[];
+  let dataSetsList: DataSetWithExtpipes[];
   if (showArchived) {
     dataSetsList = dataSets;
   } else {
@@ -71,7 +71,7 @@ export const handleDataSetsFilters = (
   searchValue: string | RegExp,
   setSearchValue: (arg0: string) => void,
   qualityFilter: string,
-  dataSets: DataSetWithIntegrations[]
+  dataSets: DataSetWithExtpipes[]
 ) => {
   const archiveDataSets = handleArchivedFilter(showArchived, dataSets);
   const searchDataSets = handleDataSetsSearch(

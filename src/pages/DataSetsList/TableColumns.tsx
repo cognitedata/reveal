@@ -10,8 +10,8 @@ import {
 } from 'utils/styledComponents';
 import SearchableFilters from 'components/SearchableFilters';
 import { getItemFromStorage } from 'utils/localStorage';
-import { DataSet, Integration } from 'utils/types';
-import { IntegrationLink } from 'components/Lineage/Integration/IntegrationLink';
+import { DataSet, Extpipe } from 'utils/types';
+import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
 import { ColumnFilterIcon } from 'components/ColumnFilterIcon';
 import isArray from 'lodash/isArray';
@@ -22,7 +22,7 @@ export interface DataSetRow {
   labels: string[];
   quality?: boolean;
   description: string;
-  integrations: Integration[];
+  extpipes: Extpipe[];
   writeProtected: boolean;
   archived: boolean;
 }
@@ -52,7 +52,7 @@ const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
 const getTableColumns = (
   dataSets: DataSet[],
   showArchived: boolean,
-  isIntegrationFlag: boolean
+  isExtpipeFlag: boolean
 ) => [
   {
     title: 'Name',
@@ -82,7 +82,7 @@ const getTableColumns = (
     defaultSortOrder:
       getItemFromStorage('dataset-description-column') || undefined,
   },
-  ...(isIntegrationFlag ? [integrationTableColumn()] : []),
+  ...(isExtpipeFlag ? [extpipeTableColumn()] : []),
   {
     title: <div style={{ lineHeight: '32px' }}>Labels</div>,
     dataIndex: 'labels',
@@ -132,20 +132,20 @@ const getTableColumns = (
   },
 ];
 
-const integrationTableColumn = () => {
+const extpipeTableColumn = () => {
   return {
     title: 'Extraction pipelines',
-    dataIndex: 'integrations',
-    key: 'integrations',
+    dataIndex: 'extpipes',
+    key: 'extpipes',
     width: '20%',
     render: (_value: string, record: DataSetRow) => {
       return (
         <NoStyleList>
-          {Array.isArray(record.integrations) &&
-            record.integrations.map((integration) => {
+          {Array.isArray(record.extpipes) &&
+            record.extpipes.map((extpipe) => {
               return (
-                <li key={integration.id}>
-                  <IntegrationLink integration={integration} />
+                <li key={extpipe.id}>
+                  <ExtpipeLink extpipe={extpipe} />
                 </li>
               );
             })}

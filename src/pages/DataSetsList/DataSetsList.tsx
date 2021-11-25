@@ -21,11 +21,11 @@ import { useParams } from 'react-router';
 import isArray from 'lodash/isArray';
 import getTableColumns, { DataSetRow } from './TableColumns';
 import {
-  DataSetWithIntegrations,
+  DataSetWithExtpipes,
   useDataSetsList,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
-import { useWithIntegrations } from '../../hooks/useWithIntegrations';
+import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 
 interface DataSetsListProps {
@@ -33,8 +33,8 @@ interface DataSetsListProps {
 }
 
 const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
-  const { data: withIntegrations, isFetched: didFetchWithIntegrations } =
-    useWithIntegrations();
+  const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
+    useWithExtpipes();
 
   const { appPath } = useParams<{ appPath: string }>();
 
@@ -57,8 +57,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
-  const { dataSetsWithIntegrations = [], isLoading: loading } =
-    useDataSetsList();
+  const { dataSetsWithExtpipes = [], isLoading: loading } = useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
@@ -72,7 +71,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
       handleTableData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSetsWithIntegrations, qualityFilter, searchValue, showArchived]);
+  }, [dataSetsWithExtpipes, qualityFilter, searchValue, showArchived]);
 
   const handleModalClose = () => {
     setCreationDrawerVisible(false);
@@ -82,17 +81,17 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const handleTableData = () => {
     let tableDataSets: DataSetRow[] = [];
-    if (dataSetsWithIntegrations?.length && !loading) {
+    if (dataSetsWithExtpipes?.length && !loading) {
       const dataSetsList = handleDataSetsFilters(
         showArchived,
         searchValue,
         setSearchValue,
         qualityFilter,
-        dataSetsWithIntegrations
+        dataSetsWithExtpipes
       );
       tableDataSets = dataSetsList.map(
-        (dataSetWithIntegrations: DataSetWithIntegrations): DataSetRow => {
-          const { dataSet, integrations } = dataSetWithIntegrations;
+        (dataSetWithExtpipes: DataSetWithExtpipes): DataSetRow => {
+          const { dataSet, extpipes } = dataSetWithExtpipes;
           const labelsFromMetadata = dataSet.metadata?.consoleLabels;
           return {
             key: dataSet.id,
@@ -100,7 +99,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
             description: dataSet.description,
             labels: isArray(labelsFromMetadata) ? labelsFromMetadata : [],
             quality: dataSet.metadata.consoleGoverned,
-            integrations,
+            extpipes,
             writeProtected: dataSet.writeProtected,
             archived:
               dataSet.metadata.archived !== undefined
@@ -115,7 +114,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
 
   const getSourcesList = () => {
     const sourceNames: string[] = [];
-    dataSetsWithIntegrations.forEach(({ dataSet }) => {
+    dataSetsWithExtpipes.forEach(({ dataSet }) => {
       if (dataSet?.metadata?.consoleSource?.names?.length)
         dataSet.metadata.consoleSource.names.forEach((name: string) => {
           if (!sourceNames.includes(name)) {
@@ -178,18 +177,14 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
   };
 
   const archiveDataSet = (key: number) => {
-    const d = dataSetsWithIntegrations.find(
-      (curDs) => curDs.dataSet.id === key
-    );
+    const d = dataSetsWithExtpipes.find((curDs) => curDs.dataSet.id === key);
     if (d) {
       updateDataSetVisibility(d.dataSet, true);
     }
   };
 
   const restoreDataSet = (key: number) => {
-    const d = dataSetsWithIntegrations.find(
-      (curDs) => curDs.dataSet.id === key
-    );
+    const d = dataSetsWithExtpipes.find((curDs) => curDs.dataSet.id === key);
     if (d) {
       updateDataSetVisibility(d.dataSet, false);
     }
@@ -290,7 +285,7 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
     }
   };
 
-  if (!didFetchWithIntegrations) {
+  if (!didFetchWithExtpipes) {
     return <Icon type="Loading" />;
   }
 
@@ -317,9 +312,9 @@ const DataSetsList = ({ history }: DataSetsListProps): JSX.Element => {
         loading={loading}
         columns={[
           ...getTableColumns(
-            dataSetsWithIntegrations.map((x) => x.dataSet),
+            dataSetsWithExtpipes.map((x) => x.dataSet),
             showArchived,
-            withIntegrations
+            withExtpipes
           ),
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
