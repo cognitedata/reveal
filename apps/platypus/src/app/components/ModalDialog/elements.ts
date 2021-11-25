@@ -4,6 +4,7 @@ import styled from 'styled-components/macro';
 export const StyledModal = styled(Modal)`
   width: 500px !important;
   padding: 10px;
+  border-radius: 12px;
 
   .title {
     display: flex;

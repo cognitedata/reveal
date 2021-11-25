@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Title, Flex } from '@cognite/cogs.js';
+import { Title, Flex, Button } from '@cognite/cogs.js';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
@@ -14,11 +14,13 @@ import { StyledRow, StyledSolutionListWrapper } from '../elements';
 import { useSolutions } from '../hooks/useSolutions';
 import { SolutionsState } from '../redux/store';
 import { DeleteSolution } from '../DeleteSolution';
+import { CreateSolution } from '../CreateSolution';
 
 export const SolutionsList = () => {
   const history = useHistory();
   const { t } = useTranslation('solutions');
 
+  const [createSolution, setCreateSolution] = useState(false);
   const [solutionToDelete, setSolutionToDelete] = useState<
     Solution | undefined
   >(undefined);
@@ -75,8 +77,15 @@ export const SolutionsList = () => {
     <StyledSolutionListWrapper>
       <Flex justifyContent="space-between" className="header">
         <Title level={3}>{t('solutions_title', 'Solutions')}</Title>
+        <Button onClick={() => setCreateSolution(true)}>
+          {t('create_solution_btn', 'Create solution')}
+        </Button>
       </Flex>
       {solutions.length ? renderList() : renderEmptyList()}
+      <CreateSolution
+        createSolution={createSolution}
+        onCancel={() => setCreateSolution(false)}
+      />
       <DeleteSolution
         solution={solutionToDelete}
         onCancel={() => setSolutionToDelete(undefined)}

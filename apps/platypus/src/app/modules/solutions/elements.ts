@@ -44,3 +44,30 @@ export const StyledRow = styled(Row)`
     grid-template-columns: repeat(2, 1fr) !important;
   }
 `;
+
+export const CreateSolutionModalContent = styled.div`
+  .cogs-body-2 {
+    margin-bottom: 6px;
+
+    &:first-of-type {
+      &:after {
+        content: ' *';
+        color: var(--cogs-red);
+      }
+    }
+  }
+  .input-detail {
+    display: flex;
+    align-items: center;
+    margin: 4px 0 24px;
+    .cogs-icon-WarningStroke {
+      width: 12px !important;
+      margin-right: 6px;
+      color: var(--cogs-text-danger);
+    }
+  }
+
+  .cogs-textarea {
+    height: 80px;
+  }
+`;
