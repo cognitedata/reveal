@@ -419,7 +419,7 @@ pods {
         container('bazel') {
           def getReleases = sh(
             label: "Prepare docker builds",
-            script: "bazel query \"attr(name, '^staging_prepare_docker_build\$', //apps/...)\"",
+            script: "bazel query \"attr(name, 'prepare_docker_build\$', //apps/...)\"",
             returnStdout: true
           )
           if (getReleases) {

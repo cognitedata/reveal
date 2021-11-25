@@ -4,20 +4,20 @@ def _prepare_docker_build_impl(ctx):
     datafile = ctx.actions.declare_directory(ctx.attr.out_dir)
     args = ctx.actions.args()
     args.add(datafile.path)
-    args.add(ctx.file.getRelease.path)
-    args.add(ctx.file.configMap.path)
+    args.add(ctx.file.get_release.path)
+    args.add(ctx.file.config_map.path)
 
     ctx.actions.run(
         outputs = [datafile],
         arguments = [args],
         inputs = depset([
-            ctx.file.getRelease,
-            ctx.file.configMap,
-            ctx.file.googleCredentials,
+            ctx.file.get_release,
+            ctx.file.config_map,
+            ctx.file.google_credentials,
         ]),
         executable = ctx.executable.binary,
         env = {
-            "GOOGLE_APPLICATION_CREDENTIALS": ctx.file.googleCredentials.path,
+            "GOOGLE_APPLICATION_CREDENTIALS": ctx.file.google_credentials.path,
         },
     )
 
@@ -42,8 +42,8 @@ prepare_docker_build = rule(
             doc = "Path to out folder",
             mandatory = True,
         ),
-        "configMap": attr.label(allow_single_file = True),
-        "getRelease": attr.label(allow_single_file = True),
-        "googleCredentials": attr.label(allow_single_file = True),
+        "config_map": attr.label(allow_single_file = True),
+        "get_release": attr.label(allow_single_file = True),
+        "google_credentials": attr.label(allow_single_file = True),
     },
 )

@@ -1,12 +1,10 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
-load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "nodejs_binary")
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer", "container_push")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 load("@npm//react-scripts:index.bzl", "react_scripts")
 load("@npm//testcafe:index.bzl", "testcafe")
 load("@npm//cypress:index.bzl", "cypress")
-load("@npm//@cognite/fas-tools:index.bzl", "fas_tools")
 load("@com_github_cognitedata_bazel_tools//k8s/kubeval:kubeval.bzl", "kubeval_test")
 load("//rules:baker_bake.bzl", "baker_bake")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
@@ -17,8 +15,7 @@ load("//rules/test:react_scripts_test.bzl", "react_scripts_test")
 load("//rules/test:testcafe_test.bzl", "testcafe_test")
 load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
-load("//rules/docker:prepare_docker_build.bzl", "prepare_docker_build")
-load("//rules/spinnaker:spinnaker_deployment.bzl", "spinnaker_deployment")
+load("//rules/container:container_build.bzl", "container_build")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -497,90 +494,6 @@ publish_fas(
     versioning_strategy = "single-branch",
 )
 
-### FAS BUILD ###
-fas_tools(
-    name = "staging_get_releases",
-    args = [
-        "get-releases",
-        "-d fas-demo",
-        "-p $(execpath :config/config-staging.json)",
-    ],
-    data = [
-        ":config/config-staging.json",
-        "//apps:google_application_credentials.json",
-    ],
-    env = {
-        "GOOGLE_APPLICATION_CREDENTIALS": "$(execpath //apps:google_application_credentials.json)",
-    },
-    output_dir = True,
-    stdout = "staging_get_releases/releases.csv",
-    tags = ["manual"],
-)
-
-nodejs_binary(
-    name = "staging_prepare_docker_binary",
-    data = ["//rules/docker:prepare_docker.mjs"],
-    entry_point = "//rules/docker:prepare_docker.mjs",
-    env = {
-        "GCLOUD_PROJECT": "cognitedata-development",
-    },
-    tags = ["manual"],
-)
-
-prepare_docker_build(
-    name = "staging_prepare_docker_build",
-    binary = ":staging_prepare_docker_binary",
-    configMap = ":config/config-staging.json",
-    getRelease = ":staging_get_releases/releases.csv",
-    googleCredentials = "//apps:google_application_credentials.json",
-    out_dir = "fas-demo",
-    tags = ["manual"],
-)
-
-container_layer(
-    name = "staging_app_layer",
-    directory = "/usr/share/caddy",
-    files = [":staging_prepare_docker_build"],
-    tags = ["manual"],
-    visibility = ["//visibility:private"],
-)
-
-container_image(
-    name = "staging_image",
-    base = "//apps:caddy_image",
-    entrypoint = [
-        "/usr/share/bin/entrypoint.sh",
-    ],
-    layers = [
-        ":staging_app_layer",
-    ],
-    ports = [
-        "8080/tcp",
-        "2019/tcp",
-    ],
-    tags = ["manual"],
-    visibility = ["//visibility:private"],
-)
-
-container_push(
-    name = "push",
-    format = "Docker",
-    image = ":staging_image",
-    registry = "eu.gcr.io",
-    repository = "cognitedata/apps/react-demo-app",
-    tag = "{BUILD_USER}-{BUILD_TIMESTAMP}",
-    tags = ["manual"],
-)
-
-spinnaker_deployment(
-    name = "spinnaker_deployment",
-    baked_manifests = ["//.baker:react-demo-app-manifests"],
-    image = ":push",
-    service_name = "react-demo-app",
-    spinnaker_pipeline = "//spinnaker-config/react-demo-app:spinnaker-config",
-    tags = ["manual"],
-)
-
 kubeval_test(
     name = "kubeval_test",
     srcs = ["//.baker:react-demo-app-manifests"],
@@ -591,3 +504,34 @@ baker_bake(
     manifests = glob(["kustomize/**/*"]),
     service_name = "react-demo-app",
 )
+
+### FAS BUILD ###
+# container_build(
+#     name = "fas_release",
+#     app_id = "fas-demo-release",
+#     app_name = "react-demo-app",
+#     build_layer = ":build",
+#     config_map = "config/config-release.json",
+#     docker_repo = "cognitedata/apps/react-demo-app",
+#     environment = "release",
+# )
+
+container_build(
+    name = "fas_staging",
+    app_id = "fas-demo",
+    app_name = "react-demo-app",
+    build_layer = ":build",
+    config_map = "config/config-staging.json",
+    docker_repo = "cognitedata/apps/react-demo-app-staging",
+    environment = "staging",
+)
+
+# container_build(
+#     name = "fas_prod",
+#     app_id = "fas-demo-prod",
+#     app_name = "react-demo-app",
+#     build_layer = ":build",
+#     config_map = "config/config-prod.json",
+#     docker_repo = "cognitedata/apps/react-demo-app",
+#     environment = "production",
+# )
