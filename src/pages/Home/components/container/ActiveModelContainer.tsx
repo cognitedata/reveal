@@ -98,8 +98,7 @@ export const ActiveModelContainer: React.FC<Props> = ({
       <FlexWrapper gap={24}>
         {metricsLabels.map(({ name, Render }) => (
           <MetricsLabel key={name}>
-            {name}
-            <MetricsValue>{Render}</MetricsValue>
+            {name}: <MetricsValue>{Render}</MetricsValue>
           </MetricsLabel>
         ))}
       </FlexWrapper>

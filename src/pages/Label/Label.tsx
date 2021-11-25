@@ -2,7 +2,7 @@ import { Body, Button, Flex, Loader } from '@cognite/cogs.js';
 import TableBulkActions from 'components/table/BulkAction';
 import { PageHeader, Page, PageContent } from 'components/page';
 import { TableWrapper } from 'components/table/TableWrapper';
-import { useLabelName } from 'hooks/useLabel';
+import { useLabelName } from 'hooks/useLabelName';
 import { useLabelParams } from 'hooks/useParams';
 import React from 'react';
 import { useDocumentsQuery } from 'services/query/documents/query';
@@ -13,7 +13,7 @@ import { DocumentsTable } from './components/table/DocumentsTable';
 
 export const LabelPage: React.FC = () => {
   const externalId = useLabelParams();
-  const labelName = useLabelName(externalId);
+  const { labelName } = useLabelName(externalId);
   const { labelPageBreadcrumbs } = useBreadcrumb();
 
   const { data, isLoading } = useDocumentsQuery();
