@@ -1,5 +1,5 @@
 import { getDateOrDefaultText } from '_helpers/date';
-import { sortDates } from '_helpers/dateConversion';
+import { sortDates } from '_helpers/sortDates';
 import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { FEET } from 'constants/units';

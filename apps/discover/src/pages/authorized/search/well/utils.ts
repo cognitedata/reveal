@@ -1,5 +1,5 @@
 import { getDateOrDefaultText } from '_helpers/date';
-import { sortDates } from '_helpers/dateConversion';
+import { sortDates } from '_helpers/sortDates';
 import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/columns';
 import { Well } from 'modules/wellSearch/types';

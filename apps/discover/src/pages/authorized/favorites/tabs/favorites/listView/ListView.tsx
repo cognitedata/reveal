@@ -6,7 +6,7 @@ import { Avatar, Menu, Dropdown } from '@cognite/cogs.js';
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/dateConversion';
+import { sortDates } from '_helpers/sortDates';
 import { MoreOptionsButton, CommentButton } from 'components/buttons';
 import { Table, TableResults } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';

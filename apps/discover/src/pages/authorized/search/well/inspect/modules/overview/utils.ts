@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 
 import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/dateConversion';
+import { sortDates } from '_helpers/sortDates';
 import { ColumnType } from 'components/tablev3';
 import { WATER_DEPTH } from 'pages/authorized/search/well/content/constants';
 

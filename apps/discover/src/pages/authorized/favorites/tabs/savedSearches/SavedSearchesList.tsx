@@ -7,8 +7,8 @@ import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/dateConversion';
 import { log } from '_helpers/log';
+import { sortDates } from '_helpers/sortDates';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';

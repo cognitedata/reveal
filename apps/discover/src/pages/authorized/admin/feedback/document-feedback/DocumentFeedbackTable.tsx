@@ -8,7 +8,7 @@ import sortBy from 'lodash/sortBy';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
-import { sortDates } from '_helpers/dateConversion';
+import { sortDates } from '_helpers/sortDates';
 import { OKModal } from 'components/modal';
 import { Table, Options, TableResults } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
