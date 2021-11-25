@@ -202,7 +202,7 @@ export const RightPanel = ({
           renderCustomComponent={renderCustomComponent}
         />
       </FormContainer>
-      <ProjectConfigFooter gap={4}>
+      <ProjectConfigFooter gap={4} data-testid="project-config-footer">
         <Button type="secondary" onClick={onReset} disabled={!hasChanges}>
           {t('Reset')}
         </Button>

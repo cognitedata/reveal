@@ -105,7 +105,7 @@ const NestedField: React.FC<{
     : currentMetadata.children;
 
   return (
-    <CollapseWrapper key={currentPath}>
+    <CollapseWrapper key={currentPath} data-testid="project-config-category">
       <Collapse
         activeKey={isCurrentPathActive ? currentPath : selected}
         expandIcon={ExpandIcon}
@@ -125,7 +125,7 @@ const NestedField: React.FC<{
             </Body>
           }
         >
-          <Flex direction="column">
+          <Flex direction="column" data-testid="collapse-content">
             <ConfigFields
               prefixPath={`${currentPath}.`}
               metadata={childrenMetadata}

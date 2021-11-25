@@ -1,39 +1,23 @@
-import {
-  INSUFFICIENT_ACCESS_RIGHTS_MESSAGE,
-  PROJECT,
-} from '../../support/constants';
-
 describe('Feedback page', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
-    cy.intercept({
-      url: '*/user/roles*',
-      method: 'GET',
-    }).as('getUserRoles');
   });
 
   it('cannot be accessed by a normal user', () => {
     cy.login();
     cy.url().should('include', '/search');
-    cy.log('Check that the Admin Settings button is not visible');
-    cy.findByTestId('top-bar').contains('Admin Settings').should('not.exist');
+    cy.checkAdminSettingsIsNotVisible();
 
-    cy.log(
-      'Check that we cannot access the admin page via URL and that it returns us to the home page'
-    );
-    cy.visit(`${Cypress.env('BASE_URL')}/${PROJECT}/admin/feedback/general`);
-    cy.url().should('include', '/admin/feedback/');
-
-    cy.wait('@getUserRoles');
-    cy.url().should('not.include', '/admin/feedback/');
-    cy.url().should('include', '/search');
-
-    cy.log('We check that the insufficient access message is shown');
-    cy.contains(INSUFFICIENT_ACCESS_RIGHTS_MESSAGE).should('be.visible');
+    cy.checkUserCannotAccessPage('admin/feedback/general');
   });
 
   it('can be used to check reported feedback as Admin', () => {
     // intercept the feedback request so we can wait for the data
+    cy.intercept({
+      url: '*/user/roles*',
+      method: 'GET',
+    }).as('getUserRoles');
+
     cy.intercept({
       url: '*/feedback/general',
       method: 'GET',
