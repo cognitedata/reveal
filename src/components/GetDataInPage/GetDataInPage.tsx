@@ -144,7 +144,7 @@ const GetDataInPage = (props: GetDataInProps): JSX.Element => {
             <OidcCheck>
               <FieldLabel>
                 Service account(s) used to write to CDF RAW or CDF data objects
-                in this data extpipe
+                in this data integration
               </FieldLabel>
               <StyledSelect
                 value={selectedExtractors}
