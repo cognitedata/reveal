@@ -1,12 +1,13 @@
 import * as React from 'react';
+import { useQueryClient } from 'react-query';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
-import { SidecarConfig } from '@cognite/sidecar';
+import { useLoopDetector } from '@cognite/react-loop-detector';
 import type { CogniteClient } from '@cognite/sdk';
-import { useQueryClient } from 'react-query';
+import { SidecarConfig } from '@cognite/sidecar';
 
-import { syncUser } from '../utils/userManagementSync';
 import { log } from '../utils';
+import { syncUser } from '../utils/userManagementSync';
 
 export interface AuthContext {
   client?: CogniteClient;
@@ -44,6 +45,8 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   const { flow, options } = getFlow();
   const queryClient = useQueryClient();
   const { aadApplicationId, applicationId, cdfCluster } = sidecar;
+
+  const { onLoopExit } = useLoopDetector();
 
   React.useEffect(() => {
     let aad;
@@ -154,6 +157,13 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
       authError();
     }
   }, [authResponse]);
+
+  // Clear loopDetector storage after a successful login
+  React.useEffect(() => {
+    if (authResponse?.authState?.authenticated) {
+      onLoopExit();
+    }
+  }, [authResponse?.authState]);
 
   log(
     '[AuthContainer] Render gates:',

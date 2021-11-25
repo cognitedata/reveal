@@ -1,3 +1,5 @@
+import { PROJECT } from '../../support/constants';
+
 describe('Project Config', () => {
   beforeEach(() => {
     cy.visit(Cypress.env('BASE_URL'));
@@ -21,11 +23,11 @@ describe('Project Config', () => {
     /**
      * Will enable this in another PR
      * */
-    // cy.log('Check that we can access the page directly through the url');
-    // cy.visit(`${Cypress.env('BASE_URL')}/${PROJECT}/admin/projectConfig`);
-    // cy.wait('@getUserRoles');
-    // cy.url().should('include', '/admin/projectConfig');
-    // cy.visit(`${Cypress.env('BASE_URL')}/${PROJECT}`);
+    cy.log('Check that we can access the page directly through the url');
+    cy.visit(`${Cypress.env('BASE_URL')}/${PROJECT}/admin/projectConfig`);
+    cy.wait('@getUserRoles');
+    cy.url().should('include', '/admin/projectConfig');
+    cy.visit(`${Cypress.env('BASE_URL')}/${PROJECT}`);
 
     cy.log('Check that the Admin Settings button is visible');
     cy.findByTestId('top-bar')
