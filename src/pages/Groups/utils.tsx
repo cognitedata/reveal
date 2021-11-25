@@ -164,7 +164,8 @@ export const capabilityDescriptions = {
   templategroups: 'Organize and structure your data',
   templateinstances: 'Access data organized in templategroups',
   wells: 'Access Well Data Layer',
-  visionmodel: 'Computer vision models can be used to contextualize imagery data for custom tasks such as classification and object detection.',
+  visionmodel:
+    'Computer vision models can be used to contextualize imagery data for custom tasks such as classification and object detection.',
 };
 
 export const getActionsFromCapability = (
