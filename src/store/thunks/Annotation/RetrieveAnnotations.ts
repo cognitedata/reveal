@@ -6,14 +6,17 @@ import { Annotation } from 'src/api/types';
 import { validateAnnotation } from 'src/api/annotation/utils';
 import { ANNOTATION_FETCH_BULK_SIZE } from 'src/constants/FetchConstants';
 import { splitListIntoChunks } from 'src/utils/generalUtils';
+import { from, lastValueFrom } from 'rxjs';
+import { map, mergeMap, reduce } from 'rxjs/operators';
 
 export const RetrieveAnnotations = createAsyncThunk<
   VisionAnnotation[],
-  number[],
+  { fileIds: number[]; clearCache?: boolean },
   ThunkConfig
 >('RetrieveAnnotations', async (payload) => {
+  const { fileIds: fetchFileIds } = payload;
   const fileIdBatches = splitListIntoChunks(
-    payload,
+    fetchFileIds,
     ANNOTATION_FETCH_BULK_SIZE
   );
   const requests = fileIdBatches.map((fileIds) => {
@@ -29,22 +32,32 @@ export const RetrieveAnnotations = createAsyncThunk<
     return AnnotationApi.list(annotationListRequest);
   });
   if (requests.length) {
-    const responses = await Promise.all(requests);
-    const annotations = responses.reduce((acc, rs) => {
-      return acc.concat(rs);
-    });
-    const filteredAnnotations = annotations.filter((annotation: Annotation) => {
-      try {
-        return validateAnnotation(annotation);
-      } catch (error) {
-        console.error('Annotation is invalid, will not be visible', annotation);
-        return false;
-      }
-    });
+    const responses = from(requests).pipe(
+      mergeMap((request) => from(request)),
+      map((annotations) => {
+        const filteredAnnotations = annotations.filter(
+          (annotation: Annotation) => {
+            try {
+              return validateAnnotation(annotation);
+            } catch (error) {
+              console.warn(
+                'Annotation is invalid, will not be visible',
+                annotation
+              );
+              return false;
+            }
+          }
+        );
+        const visionAnnotations =
+          AnnotationUtils.convertToVisionAnnotations(filteredAnnotations);
+        return visionAnnotations;
+      }),
+      reduce((allAnnotations, annotationsPerFile) => {
+        return allAnnotations.concat(annotationsPerFile);
+      })
+    );
 
-    const visionAnnotations =
-      AnnotationUtils.convertToVisionAnnotations(filteredAnnotations);
-    return visionAnnotations;
+    return lastValueFrom(responses);
   }
   return [];
 });

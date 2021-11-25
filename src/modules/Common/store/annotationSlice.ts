@@ -16,7 +16,6 @@ import {
   defaultMemoize,
 } from 'reselect';
 import isEqual from 'lodash-es/isEqual';
-import difference from 'lodash-es/difference';
 import {
   clearExplorerFileState,
   clearFileState,
@@ -45,36 +44,39 @@ const annotationSlice = createSlice({
   reducers: {},
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
+    builder.addCase(RetrieveAnnotations.pending, (state: State, { meta }) => {
+      const { fileIds, clearCache } = meta.arg;
+
+      // clear state
+      if (clearCache) {
+        state.annotations.byId = {};
+        state.files.byId = {};
+      } else {
+        fileIds.forEach((fileId) => {
+          const annotationIdsForFile = state.files.byId[fileId];
+          delete state.files.byId[fileId];
+          annotationIdsForFile.forEach((annotationId) => {
+            delete state.annotations.byId[annotationId];
+          });
+        });
+      }
+    });
+
     builder.addCase(
       RetrieveAnnotations.fulfilled,
       (state: State, { payload }) => {
-        const fileAnnotations: { [id: number]: number[] } = {};
-
         // update annotations
         payload.forEach((annotation) => {
-          if (fileAnnotations[annotation.annotatedResourceId]) {
-            fileAnnotations[annotation.annotatedResourceId].push(annotation.id);
-          } else {
-            fileAnnotations[annotation.annotatedResourceId] = [annotation.id];
-          }
-          state.annotations.byId[annotation.id] = annotation;
-        });
-
-        Object.keys(fileAnnotations).forEach((id) => {
-          const existingAnnotations = state.files.byId[+id];
-          const newAnnotations = fileAnnotations[+id];
-
-          if (!isEqual(existingAnnotations, newAnnotations)) {
-            const deletedAnnotations = difference(
-              existingAnnotations,
-              newAnnotations
+          if (state.files.byId[annotation.annotatedResourceId]) {
+            state.files.byId[annotation.annotatedResourceId].push(
+              annotation.id
             );
-            if (deletedAnnotations.length) {
-              deletedAnnotations.forEach((annotationId) => {
-                delete state.annotations.byId[annotationId];
-              });
-            }
-            state.files.byId[+id] = fileAnnotations[+id];
+          } else {
+            state.files.byId[annotation.annotatedResourceId] = [annotation.id];
+          }
+
+          if (!state.annotations.byId[annotation.id]) {
+            state.annotations.byId[annotation.id] = annotation;
           }
         });
       }
