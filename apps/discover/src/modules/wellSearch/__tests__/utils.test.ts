@@ -17,6 +17,7 @@ import {
   PPG,
   PSI,
   SG,
+  UserPrefferedUnit,
 } from 'constants/units';
 
 import { TrajectoryColumnR, Well, Wellbore } from '../types';
@@ -26,6 +27,7 @@ import {
   mapWellboresToThreeD,
   toBooleanMap,
   getDummyNptEventForWellbore,
+  getRangeLimitInUnit,
 } from '../utils';
 import { convertPressure } from '../utils/common';
 import { getExistColumns } from '../utils/trajectory';
@@ -290,5 +292,19 @@ describe('NPT events utils', () => {
       wellName: 'wellName',
       wellboreName: 'description',
     });
+  });
+});
+
+describe('getRangeLimitInUnit', () => {
+  it('should convert ft ranges into m', () => {
+    expect(getRangeLimitInUnit(100, 1000, UserPrefferedUnit.METER)).toEqual([
+      30, 305,
+    ]);
+  });
+
+  it('should return same range back since no chagne of unit', () => {
+    expect(getRangeLimitInUnit(100, 1000, UserPrefferedUnit.FEET)).toEqual([
+      100, 1000,
+    ]);
   });
 });
