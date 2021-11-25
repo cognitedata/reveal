@@ -1,6 +1,6 @@
-import * as listCmd from './templates/list';
-import * as createCmd from './templates/create';
-import * as deleteCmd from './templates/delete';
+import * as listCmd from './list';
+import * as createCmd from './create';
+import * as deleteCmd from './delete';
 import { Argv } from 'yargs';
 
 export const command = 'templates <command>';

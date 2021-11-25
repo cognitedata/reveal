@@ -1,6 +1,7 @@
 import { Arguments, Argv } from 'yargs';
-import { BaseArgs, LoginArgs } from '../types';
-import { AUTH_TYPE } from '../constants';
+import { BaseArgs, LoginArgs } from '../../types';
+import { AUTH_TYPE } from '../../constants';
+import { LoginStatusCommand } from './status';
 
 export const command = 'login [project]';
 export const desc = 'Login to CDF for using Platypus';
@@ -47,7 +48,8 @@ export const builder = (yargs: Argv<LoginArgs>) =>
       default: AUTH_TYPE.CLIENT_SECRET,
       description: 'Auth type',
     })
-    .choices('auth-type', [AUTH_TYPE.CLIENT_SECRET, AUTH_TYPE.LEGACY]);
+    .choices('auth-type', [AUTH_TYPE.CLIENT_SECRET, AUTH_TYPE.LEGACY])
+    .command(new LoginStatusCommand());
 
 export const handler = async (arg: Arguments<BaseArgs>) => {
   arg.logger.info('Login Success');

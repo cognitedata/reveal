@@ -1,6 +1,6 @@
-import * as listCmd from './solutions/list';
-import * as createCmd from './solutions/create';
-import * as deleteCmd from './solutions/delete';
+import * as listCmd from './list';
+import * as createCmd from './create';
+import * as deleteCmd from './delete';
 import { Argv } from 'yargs';
 
 export const command = 'solutions <command>';
