@@ -71,6 +71,7 @@ const CreateTableModal = ({
   const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
     useState<PrimaryKeyMethod>();
   const [selectedColumn, setSelectedColumn] = useState<string>();
+  const [file, setFile] = useState<File>(); // eslint-disable-line
 
   const { mutate: createDatabase, isLoading: isCreatingTable } =
     useCreateTable();
@@ -151,6 +152,7 @@ const CreateTableModal = ({
           isCreatingTable={isCreatingTable}
           selectedCreationMode={selectedCreationMode}
           selectCreationMode={selectCreationMode}
+          setFile={setFile}
         />
       );
     }

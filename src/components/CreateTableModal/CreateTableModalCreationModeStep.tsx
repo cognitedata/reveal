@@ -1,28 +1,61 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
+import { Upload } from 'antd';
+import { UploadChangeParam } from 'antd/lib/upload';
 import styled from 'styled-components';
 
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
 
 import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
+import { Body, Colors, Detail } from '@cognite/cogs.js';
+import { CustomIcon } from 'components/CustomIcon';
+
+const { Dragger } = Upload;
 
 type CreateTableModalCreationModeStepProps = {
   isCreatingTable: boolean;
   selectCreationMode: (creationMode: CreationMode) => () => void;
   selectedCreationMode?: CreationMode;
+  setFile: Dispatch<SetStateAction<File | undefined>>;
 };
 
 const CreateTableModalCreationModeStep = ({
   isCreatingTable,
   selectCreationMode,
   selectedCreationMode,
+  setFile,
 }: CreateTableModalCreationModeStepProps): JSX.Element => {
+  const fileProps = {
+    accept: '.csv',
+    beforeUpload: () => false,
+    handleManualRemove: () => {
+      setFile(undefined);
+    },
+    multiple: false,
+    name: 'file',
+    onChange: (info: UploadChangeParam) => {
+      const file = info.fileList[0];
+      if (file?.originFileObj) {
+        setFile(file.originFileObj);
+        selectCreationMode(CreationMode.Upload)();
+      }
+    },
+  };
+
   return (
     <FormFieldWrapper isRequired title="Select one">
       <StyledCreateOptions>
-        <StyledCreateOption onClick={selectCreationMode(CreationMode.Upload)}>
-          upload csv
+        <StyledCreateOption>
+          <StyledDragger {...fileProps}>
+            <CustomIcon icon="DocumentIcon" style={{ width: 32 }} />
+            <StyledCreateOptionTitle level={6} strong>
+              Add CSV file here.
+            </StyledCreateOptionTitle>
+            <StyledCreateOptionDetail strong>
+              Drag and drop, or click to select
+            </StyledCreateOptionDetail>
+          </StyledDragger>
         </StyledCreateOption>
         <StyledCreateOption>
           <CreateTableModalOption
@@ -52,6 +85,56 @@ const StyledCreateOption = styled.li`
   :not(:last-child) {
     margin-right: 16px;
   }
+
+  .ant-upload-list {
+    display: none;
+  }
+`;
+
+const StyledDragger = styled(Dragger)`
+  && {
+    background-color: ${Colors['bg-accent'].hex()};
+    border-color: ${Colors['border-default'].hex()};
+    border-radius: 6px;
+    padding: 0px;
+
+    .ant-upload-btn {
+      display: flex !important; /* overrides antd style */
+      padding: 36px !important; /* overrides antd style */
+      flex-direction: column;
+    }
+
+    :hover {
+      background-color: ${Colors['bg-hover'].hex()};
+      border-color: ${Colors['bg-status-small--accent'].hex()};
+    }
+
+    :active {
+      background-color: ${Colors['bg-selected'].hex()};
+      border-color: ${Colors['bg-status-small--accent-hover'].hex()};
+      border-width: 2px;
+      padding: 0px;
+
+      .ant-upload-btn {
+        padding: 35px !important; /* overrides antd style */
+      }
+    }
+  }
+
+  &&.ant-upload-drag-hover {
+    background-color: ${Colors['bg-hover'].hex()};
+    border-color: ${Colors['bg-status-small--accent'].hex()};
+  }
+`;
+
+const StyledCreateOptionTitle = styled(Body)`
+  color: ${Colors['text-primary'].hex()};
+  margin: 16px 0 8px;
+`;
+
+const StyledCreateOptionDetail = styled(Detail)`
+  color: ${Colors['text-hint'].hex()};
+  text-align: center;
 `;
 
 export default CreateTableModalCreationModeStep;
