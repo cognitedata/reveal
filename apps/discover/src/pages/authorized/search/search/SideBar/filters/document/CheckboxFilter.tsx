@@ -95,7 +95,8 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
 
     const currentFilterStateFacets = get(
       appliedFilters.documents,
-      docQueryFacetType
+      docQueryFacetType,
+      []
     );
 
     const handleApplyFilters = async (filters: CheckboxState[]) => {
