@@ -24,6 +24,7 @@ import { getFakeQueuedJob } from 'src/api/detectionUtils';
 
 export type JobState = AnnotationJob & {
   fileIds: number[];
+  completedFileIds?: number[];
 };
 export type State = GenericTabularState & {
   fileIds: number[];
@@ -233,8 +234,8 @@ const processSlice = createGenericTabularDataSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fileProcessUpdate, (state, { payload }) => {
-      const { fileIds, job, modelType } = payload;
-      addJobToState(state, fileIds, job, modelType);
+      const { fileIds, job, modelType, completedFileIds } = payload;
+      addJobToState(state, fileIds, job, modelType, completedFileIds);
     });
 
     /* postAnnotationJobs */
@@ -364,10 +365,16 @@ const addJobToState = (
   state: State,
   fileIds: number[],
   job: AnnotationJob,
-  modelType: VisionAPIType
+  modelType: VisionAPIType,
+  completedFileIds?: number[]
 ) => {
   /* eslint-disable  no-param-reassign */
-  const jobState: JobState = { ...job, fileIds, type: modelType };
+  const jobState: JobState = {
+    ...job,
+    fileIds,
+    type: modelType,
+    completedFileIds,
+  };
   const existingJob = state.jobs.byId[job.jobId];
   if (!existingJob || !isEqual(jobState, existingJob)) {
     if (existingJob) {

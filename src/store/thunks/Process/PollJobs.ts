@@ -12,8 +12,13 @@ import { AnnotationDetectionJobUpdate } from './AnnotationDetectionJobUpdate';
 export const PollJobs = createAsyncThunk<void, JobState, ThunkConfig>(
   'process/pollJobs',
   async (job, { dispatch, getState }) => {
-    const { jobId, fileIds, type: modelType } = job;
-    let completedFileIds: number[] = [];
+    const {
+      jobId,
+      fileIds,
+      type: modelType,
+      completedFileIds: completedFileIdsFromState,
+    } = job;
+    let completedFileIds: number[] = completedFileIdsFromState || [];
     let failedJobs: AnnotationJobFailedItem[] = [];
 
     const doesFileExist = (fileId: number) =>
@@ -64,6 +69,7 @@ export const PollJobs = createAsyncThunk<void, JobState, ThunkConfig>(
               modelType,
               fileIds,
               job: latestJobVersion,
+              completedFileIds,
             })
           );
         },
