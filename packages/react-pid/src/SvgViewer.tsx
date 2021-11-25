@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
@@ -192,18 +193,29 @@ export const SvgViewer = () => {
       setSymbols([...symbols, ...newSymbols]);
 
       if (svgDocument !== undefined) {
-        let allNewSymbolInstances: DiagramSymbolInstance[] = [];
-        newSymbols.forEach((newSymbol) => {
-          const newSymbolInstances = (
-            svgDocument as SvgDocument
-          ).findAllInstancesOfSymbol(newSymbol);
-          allNewSymbolInstances = [
-            ...allNewSymbolInstances,
-            ...newSymbolInstances,
-          ];
-        });
-        setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+        if (!('symbolInstances' in jsonData)) {
+          let allNewSymbolInstances: DiagramSymbolInstance[] = [];
+          newSymbols.forEach((newSymbol) => {
+            const newSymbolInstances = (
+              svgDocument as SvgDocument
+            ).findAllInstancesOfSymbol(newSymbol);
+            allNewSymbolInstances = [
+              ...allNewSymbolInstances,
+              ...newSymbolInstances,
+            ];
+          });
+          setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+        }
       }
+    }
+    if ('lines' in jsonData) {
+      const newLines = jsonData.lines as DiagramLineInstance[];
+      setLines([...lines, ...newLines]);
+    }
+    if ('symbolInstances' in jsonData) {
+      const newSymboleInstance =
+        jsonData.symbolInstances as DiagramSymbolInstance[];
+      setSymbolInstances([...symbolInstances, ...newSymboleInstance]);
     }
   };
 

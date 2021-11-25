@@ -1,7 +1,5 @@
-import * as React from 'react';
 import styled from 'styled-components';
-import { saveAs } from 'file-saver';
-import { Input, Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
+import { ToolBar, ToolBarButton } from '@cognite/cogs.js';
 import {
   DiagramLineInstance,
   DiagramSymbol,
@@ -9,16 +7,8 @@ import {
 } from '@cognite/pid-tools';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
-
-const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
-  const jsonData = {
-    symbols,
-  };
-  const fileToSave = new Blob([JSON.stringify(jsonData, undefined, 2)], {
-    type: 'application/json',
-  });
-  saveAs(fileToSave, 'DiagramSymbols.json');
-};
+import { FileController } from './FileController';
+import { AddSymbolController } from './AddSymbolController';
 
 const SidePanelWrapper = styled.div`
   display: grid;
@@ -59,18 +49,6 @@ export const SidePanel = ({
   loadSymbolsAsJson,
   saveSymbol,
 }: SidePanelProps) => {
-  const [symbolText, setSymbolText] = React.useState<string>('');
-
-  const handleSymbolFileChange = ({ target }: any) => {
-    if (target && target.files.length > 0) {
-      fetch(URL.createObjectURL(target.files[0]))
-        .then((response) => {
-          return response.json();
-        })
-        .then((json) => loadSymbolsAsJson(json));
-    }
-  };
-
   const ActionWithCustomStyling: ToolBarButton[][] = [
     [
       {
@@ -92,44 +70,20 @@ export const SidePanel = ({
 
   return (
     <SidePanelWrapper>
-      <div>
-        <input
-          type="file"
-          accept="application/JSON"
-          onChange={handleSymbolFileChange}
-        />
-      </div>
+      <FileController
+        symbols={symbols}
+        symbolInstances={symbolInstances}
+        lineInstances={lines}
+        loadSymbolsAsJson={loadSymbolsAsJson}
+      />
       <CollapsableInstanceList
         symbols={symbols}
         symbolInstances={symbolInstances}
         lineInstances={lines}
       />
       <div>
-        {active === 'AddSymbol' && (
-          <Input
-            value={symbolText}
-            onChange={(e) => setSymbolText(e.target.value)}
-            title="Symbol name"
-            postfix={
-              <Button
-                type="primary"
-                onClick={() => {
-                  setSymbolText('');
-                  saveSymbol(symbolText, selection);
-                }}
-                disabled={selection.length === 0 || symbolText === ''}
-              >
-                Add
-              </Button>
-            }
-          />
-        )}
-        <Button
-          onClick={() => saveSymbolsAsJson(symbols)}
-          disabled={symbols.length === 0}
-        >
-          Download symbols as JSON
-        </Button>
+        {active === 'AddSymbol' &&
+          AddSymbolController({ selection, saveSymbol })}
 
         <ToolBarWrapper>
           <ToolBar
