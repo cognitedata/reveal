@@ -9,6 +9,10 @@ import Routes from './Routes';
 import sidecar from './utils/sidecar';
 import store from './redux/store';
 
+// Globally defined global
+// GraphiQL package needs this to be run correctly
+(window as any).global = window;
+
 function App() {
   return (
     <>

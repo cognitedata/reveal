@@ -6,7 +6,7 @@ import {
   SolutionCardWithoutOwners,
 } from './SolutionCard.stories';
 
-describe('Modal', () => {
+describe('SolutionCard', () => {
   it('Should render default solution card', async () => {
     render(<DefaultSolutionCard />);
     const menu = screen.getAllByRole('menu');

@@ -2,8 +2,6 @@ import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const StyledMainTitle = styled(Title)`
-  display: flex;
-  flex-direction: column;
   padding: 0px 0 10px 0;
   margin-bottom: 20px;
   border-bottom: solid 1px var(--cogs-greyscale-grey3);
