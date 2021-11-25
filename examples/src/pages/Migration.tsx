@@ -12,11 +12,12 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
+  CameraControlsOptions,
   CognitePointCloudModel,
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  IndexSet,
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -88,6 +89,13 @@ export function Migration() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
+
+      const controlsOptions: CameraControlsOptions = {
+        onClickTargetChange: true,
+        mouseWheelAction: 'zoomToCursor',
+      }
+
+      viewer.setCameraControlsOptions(controlsOptions);
 
       const totalBounds = new THREE.Box3();
 
@@ -180,6 +188,10 @@ export function Migration() {
         },
         showCameraTool: new DebugCameraTool(viewer),
         renderMode: 'Color',
+        controls: {
+          mouseWheelAction: 'zoomToCursor',
+          onClickTargetChange: true
+        },
         debugRenderStageTimings: false
       };
       const guiActions = {
@@ -449,6 +461,15 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
+      const controlsGui = gui.addFolder('Camera controls');
+      const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
+      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
+      });
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on click').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
+      });
+  
       const overlayTool = new HtmlOverlayTool(viewer,
         { 
           clusteringOptions: { 
@@ -458,7 +479,9 @@ export function Migration() {
             }
           }
         });
+
       new AxisViewTool(viewer);
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -468,15 +491,15 @@ export function Migration() {
           switch (intersection.type) {
             case 'cad':
               {
-                const { treeIndex, point, model } = intersection;
+                const { treeIndex, point} = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
                 const overlayHtml = createOverlay(`Node ${treeIndex}`);
+
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
-                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+
               }
               break;
             case 'pointcloud':
