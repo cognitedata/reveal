@@ -23,7 +23,7 @@ import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
 
 const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
   {
-    title: 'Raw explorer',
+    title: 'RAW Explorer',
   },
 ];
 

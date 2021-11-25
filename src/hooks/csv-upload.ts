@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import uuid from 'uuid';
 import PapaParse from 'papaparse';
 import { notification } from 'antd';
@@ -26,19 +26,18 @@ export const useCSVUpload = (
   const [parsedCursor, setParsedCursor] = useState(0);
   const [uploadedCursor, setUploadedCursor] = useState(0);
 
-  const [parsePercentage, setParsePercentage] = useState(0);
-  const [uploadPercentage, setUploadPercentage] = useState(0);
-  const [uploadSize, setUploadSize] = useState(0);
-
-  const updatePercentage = () => {
-    if (!file || !isUpload) return;
+  const [parsePercentage] = useMemo(() => {
+    if (!file || !isUpload) return [0];
     const newParsePercentage = Math.ceil((parsedCursor / file.size) * 100);
+    return [newParsePercentage];
+  }, [parsedCursor, file, isUpload]);
+
+  const [uploadPercentage, uploadSize] = useMemo(() => {
+    if (!file || !isUpload) return [0, 0];
     const newUploadPercentage = Math.ceil((uploadedCursor / file.size) * 100);
     const size = Math.ceil(uploadedCursor / 2 ** 20);
-    setParsePercentage(newParsePercentage);
-    setUploadPercentage(newUploadPercentage);
-    setUploadSize(size);
-  };
+    return [newUploadPercentage, size];
+  }, [uploadedCursor, file, isUpload]);
 
   useEffect(
     () => () => {
@@ -47,10 +46,6 @@ export const useCSVUpload = (
     },
     [parser]
   );
-
-  useEffect(() => {
-    updatePercentage();
-  }, [parsedCursor, uploadedCursor, file, isUpload]);
 
   useEffect(() => {
     if (!file) return;
