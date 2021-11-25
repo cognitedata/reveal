@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'apps/platypus-cdf-cli/**'
+      - "apps/platypus-cdf-cli/**"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Set NPMKEY variable
         run: |
@@ -20,7 +20,7 @@ jobs:
           echo "::set-output name=NPMKEY::$NPMKEY"
         id: npm_auth_key
 
-      - name: 'Create .npmrc'
+      - name: Create .npmrc
         run: echo '${{ steps.npm_auth_key.outputs.NPMKEY }}' > .npmrc
 
       - name: Install Dependency & Build
@@ -34,28 +34,17 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          tag: latest
+          tag: alpha
           access: restricted
           check-version: true
           package: ./dist/apps/platypus-cdf-cli/package.json
-      
+
       - name: Create Release
         if: steps.publish.outputs.type != 'none'
-        uses: marvinpinto/action-automatic-releases
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: "latest"
-          title: Platypus CDF CLI Release ${{ github.ref }}
+          automatic_release_tag: ${{ steps.publish.outputs.version }}
+          title: Platypus CDF CLI Release ${{ steps.publish.outputs.version }}
           files: |
             ./dist/apps/platypus-cdf-cli/*.js*
-          draft: true
-          body: |
-            ### Release Highlights
-
-            ### Features & Enhancements
-
-            <!-- Insert The Features and Enhancements below as points possibly add the link to the PR/commit -->
-
-            ### Bug Fixes
-
-            <!-- Insert The Bug Fixes below as points, also add relevant links -->
