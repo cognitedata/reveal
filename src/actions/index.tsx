@@ -212,10 +212,7 @@ export const useDataSetsList = (): {
       } catch (e) {
         extpipes = [];
       }
-      return mapDataSetExtpipe(
-        parseDataSetsList(newDataSets),
-        extpipes
-      );
+      return mapDataSetExtpipe(parseDataSetsList(newDataSets), extpipes);
     },
     { onError }
   );
@@ -245,7 +242,7 @@ export const useDataSetWithExtpipes = (id?: number) => {
     },
     { onError, enabled: !!id }
   );
-  return { dataSetWithextpipes, ...rest };
+  return { dataSetWithExtpipes, ...rest };
 };
 
 export const useDataSetOwners = (
@@ -297,12 +294,12 @@ export const useRawList = () => {
 };
 
 export const useLabelSuggestions = () => {
-  const { dataSetsWithextpipes, ...rest } = useDataSetsList();
+  const { dataSetsWithExtpipes, ...rest } = useDataSetsList();
   const [labels, setLabels] = useState<Array<string>>([]);
 
   useEffect(() => {
-    if (dataSetsWithextpipes) {
-      const suggestedLabels = dataSetsWithextpipes.reduce(
+    if (dataSetsWithExtpipes) {
+      const suggestedLabels = dataSetsWithExtpipes.reduce(
         (acc: { [label: string]: string }, cur) => {
           const labelsForMetadata = cur?.dataSet?.metadata?.consoleLabels;
           if (Array.isArray(labelsForMetadata)) {
@@ -316,7 +313,7 @@ export const useLabelSuggestions = () => {
       );
       setLabels(Object.keys(suggestedLabels));
     }
-  }, [dataSetsWithextpipes]);
+  }, [dataSetsWithExtpipes]);
 
   return { labels, ...rest };
 };

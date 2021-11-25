@@ -20,14 +20,14 @@ describe('ExtpipeUtils', () => {
         { dataSetId: 999, name: 'extpipe 2' },
         { dataSetId: 123, name: 'extpipe 3' },
       ];
-      const res = mapDataSetextpipe(dataSets, extpipes);
+      const res = mapDataSetExtpipe(dataSets, extpipes);
       expect(res[0].extpipes[0].name).toEqual(extpipes[2].name);
       expect(res[1].extpipes.length).toEqual(0);
       expect(res[2].extpipes[0]).toEqual(extpipes[0]);
     });
   });
 
-  describe('fetchextpipesByDataSetId', () => {
+  describe('fetchExtpipesByDataSetId', () => {
     test('Fetched extpipes and filter by dataSetId', async () => {
       const extpipe = {
         name: 'my extpipe',
@@ -43,7 +43,7 @@ describe('ExtpipeUtils', () => {
       };
       const extpipes = [extpipe, extpipe2, extpipe3];
       sdk.get.mockResolvedValue({ data: { items: extpipes } });
-      const res = await fetchextpipesByDataSetId(321);
+      const res = await fetchExtpipesByDataSetId(321);
       expect(sdk.get).toHaveBeenCalledTimes(1);
       expect(res.length).toEqual(2);
       expect(res[0]).toEqual(extpipe2);

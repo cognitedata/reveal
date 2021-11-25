@@ -43,17 +43,12 @@ const addExtpipesRawTables = (
           if (allRawTablesMap.has(mapKey)) {
             const tableWithExtpipes = allRawTablesMap.get(mapKey)!;
             if (
-              !tableWithExtpipes.extpipes.find(
-                ({ id }) => id === extpipe.id
-              )
+              !tableWithExtpipes.extpipes.find(({ id }) => id === extpipe.id)
             ) {
               allRawTablesMap.set(mapKey, {
                 databaseName: dbName,
                 tableName,
-                extpipes: [
-                  ...tableWithExtpipes.extpipes,
-                  extpipe,
-                ],
+                extpipes: [...tableWithExtpipes.extpipes, extpipe],
               });
             }
           } else {
@@ -87,10 +82,9 @@ export const combineDataSetAndExtpipesRawTables = (
   dataSetWithExtpipes: DataSetWithExtpipes
 ): RawTableWithExtpipes[] => {
   const { dataSet, extpipes } = dataSetWithExtpipes;
-  const raws: Map<string, RawTableWithExtpipes> = dataSet?.metadata
-    ?.rawTables
+  const raws: Map<string, RawTableWithExtpipes> = dataSet?.metadata?.rawTables
     ? addDataSetRawTables(dataSet)
     : new Map();
 
-  return extpipes ? addextpipesRawTables(raws, extpipes) : [];
+  return extpipes ? addExtpipesRawTables(raws, extpipes) : [];
 };

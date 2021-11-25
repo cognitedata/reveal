@@ -9,9 +9,7 @@ export const mapDataSetExtpipe = (
 ) =>
   dataSets.map((dataSet) => ({
     dataSet,
-    extpipes: allExtpipes.filter(
-      (extpipe) => dataSet.id === integration.dataSetId
-    ),
+    extpipes: allExtpipes.filter((extpipe) => dataSet.id === extpipe.dataSetId),
   }));
 
 export const getExtractionPipelineApiUrl = (project: string) => {
@@ -21,21 +19,19 @@ export const getExtractionPipelineUIUrl = (path?: string) => {
   return `/${EXTRACTION_PIPELINE_PATH}${path}`;
 };
 
-export const fetchIntegrationsByDataSetId = async (id: number) => {
-  let integrations;
+export const fetchExtpipesByDataSetId = async (id: number) => {
+  let extpipes;
   try {
-    integrations = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
+    extpipes = await sdk.get(getExtractionPipelineApiUrl(sdk.project), {
       withCredentials: true,
     });
   } catch {
-    integrations = {};
+    extpipes = {};
   }
 
   return (
-    integrations?.data?.items?.filter(
-      ({ dataSetId }: { dataSetId: number }) => {
-        return dataSetId === id;
-      }
-    ) || []
+    extpipes?.data?.items?.filter(({ dataSetId }: { dataSetId: number }) => {
+      return dataSetId === id;
+    }) || []
   );
 };

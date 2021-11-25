@@ -2,13 +2,15 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 
 export const useWithExtpipes = () => {
-  const isFlagIntegration = useFlag('DATA_INTEGRATIONS_allowlist', {
+  const isFlagExtpipe = useFlag('DATA_EXTPIPES_allowlist', {
     fallback: false,
     forceRerender: true,
   });
-  const { data: hasIntegrationsPermission, ...queryProps } =
-    useUserCapabilities('extractionPipelinesAcl', 'READ');
+  const { data: hasExtpipesPermission, ...queryProps } = useUserCapabilities(
+    'extractionPipelinesAcl',
+    'READ'
+  );
 
-  const withIntegrations = isFlagIntegration && hasIntegrationsPermission;
-  return { data: withIntegrations, ...queryProps };
+  const withExtpipes = isFlagExtpipe && hasExtpipesPermission;
+  return { data: withExtpipes, ...queryProps };
 };

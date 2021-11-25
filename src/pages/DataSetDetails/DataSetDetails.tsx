@@ -21,7 +21,7 @@ import BasicInfoCard from 'components/BasicInfoCard';
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
-  useDataSetWithIntegrations,
+  useDataSetWithExtpipes,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
@@ -41,11 +41,11 @@ const DataSetDetails = (): JSX.Element => {
   const { dataSetId } = useParams<DataSetDetailsRouteParams>();
 
   const {
-    dataSetWithIntegrations,
+    dataSetWithExtpipes,
     isLoading: loading,
     error,
-  } = useDataSetWithIntegrations(Number(dataSetId));
-  const dataSet = dataSetWithIntegrations?.dataSet;
+  } = useDataSetWithExtpipes(Number(dataSetId));
+  const dataSet = dataSetWithExtpipes?.dataSet;
 
   const { setSelectedDataSet } = useSelectedDataSet();
 
@@ -209,9 +209,7 @@ const DataSetDetails = (): JSX.Element => {
                     />
                   </TabPane>
                   <TabPane tab="LINEAGE" key="2">
-                    <Lineage
-                      dataSetWithIntegrations={dataSetWithIntegrations}
-                    />
+                    <Lineage dataSetWithExtpipes={dataSetWithExtpipes} />
                   </TabPane>
                   <TabPane tab="DOCUMENTATION" key="3">
                     <DocumentationsTab dataSet={dataSet} />
