@@ -2,7 +2,7 @@
   "subDomains": {},
   "projects": {
     "wells-test": {
-      "versionSpec": "0.4.54"
+      "versionSpec": "0.4.62"
     }
   },
   "default": {
