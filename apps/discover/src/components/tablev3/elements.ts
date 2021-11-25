@@ -216,7 +216,7 @@ export const Footer = styled.div`
   align-items: center;
   position: sticky;
   left: 0;
-  max-width: ${(props: { width: number }) => props.width}px;
+  width: 100%;
 `;
 
 export const DefaultSortButton = styled(Button)`

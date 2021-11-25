@@ -8,6 +8,7 @@ import {
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
+import { caseInsensitiveSort } from '_helpers/sort';
 import { FAVORITE_KEY } from 'constants/react-query';
 import { discoverAPI, getJsonHeaders } from 'modules/api/service';
 import {
@@ -192,13 +193,21 @@ export function useFavoritesGetOneQuery(
   );
 }
 
-export function useFavoritesGetAllQuery(): UseQueryResult<FavoriteSummary[]> {
+export function useFavoritesGetAllQuery(
+  sortBy: 'name' | 'lastUpdatedTime' = 'lastUpdatedTime'
+): UseQueryResult<FavoriteSummary[]> {
   const headers = getJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
-  return useQuery(FAVORITE_KEY.ALL_FAVORITES, () =>
+  const query = useQuery(FAVORITE_KEY.ALL_FAVORITES, () =>
     discoverAPI.favorites
       .list(headers, tenant)
       .then((data) => data.map((item) => normalizeFavorite(item)))
   );
+
+  query?.data?.sort((a, b) =>
+    caseInsensitiveSort(a[sortBy], b[sortBy], sortBy !== 'name')
+  );
+
+  return query;
 }

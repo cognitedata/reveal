@@ -17,14 +17,9 @@ export const FavoriteMenuItems: React.FC<Props> = ({
 }) => {
   if (!favoriteSets) return null;
 
-  // Sort the favorites alphabetically
-  const sortedFavoriteSets = favoriteSets
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name));
-
   return (
     <>
-      {sortedFavoriteSets.map((item) => {
+      {favoriteSets.map((item) => {
         const isAlreadyFavored =
           itemExistsInSets &&
           itemExistsInSets.some((favoriteId) => favoriteId === item.id);

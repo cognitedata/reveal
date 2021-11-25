@@ -18,15 +18,17 @@ export const alphanumeric = <T extends Record<string, unknown>>(
 
 export const caseInsensitiveSort = (
   firstValue: string | number,
-  secondValue: string | number
+  secondValue: string | number,
+  reverse = false
 ) => {
+  const format = (input: number | string) => trim(upperCase(input.toString()));
+  const order = reverse ? -1 : 1;
+
   if (isNaN(Number(firstValue))) {
-    return trim(upperCase(firstValue as string)) >
-      trim(upperCase(secondValue as string))
-      ? 1
-      : -1;
+    return format(firstValue) > format(secondValue) ? order : -order;
   }
-  return Number(firstValue) > Number(secondValue) ? 1 : -1;
+
+  return Number(firstValue) > Number(secondValue) ? order : -order;
 };
 
 export const sortObjectsAscending = <T>(list: T[], path: string) =>

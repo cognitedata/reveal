@@ -203,7 +203,7 @@ const TableInner = <T extends Object>({
     if (showFooterForPaginationButton) {
       return (
         <FooterWrapper>
-          <Footer width={tableWidth}>
+          <Footer>
             {pageSize < rows.length ? (
               <LoadMoreButton
                 onClick={() => setPageSize(pageSize + pagination.pageSize)}

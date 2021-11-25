@@ -21,7 +21,7 @@ export const AddSingleItem: React.FC<Props> = ({
   wellId,
   callBackModal,
 }) => {
-  const { data: favorites } = useFavoritesGetAllQuery();
+  const { data: favorites } = useFavoritesGetAllQuery('name');
   const fileExistsInSet = useDocumentExistInFavorite(
     favorites || [],
     documentId

@@ -38,7 +38,7 @@ export const FavoriteBase: React.FC<Props> = ({
   callBackModal,
 }) => {
   const dispatch = useDispatch();
-  const { data: favorites } = useFavoritesGetAllQuery();
+  const { data: favorites } = useFavoritesGetAllQuery('name');
   const { t } = useTranslation();
   const { handleFavoriteUpdate } = useHandleSelectFavourite();
 

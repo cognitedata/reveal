@@ -85,6 +85,14 @@ describe('Case insensitive sort', () => {
   test('Should support case insensitive sort', () => {
     expect(caseInsensitiveSort('bp', 'Anadarko')).toEqual(1);
   });
+
+  test('Should sort by number (reversed)', () => {
+    expect(caseInsensitiveSort('1', '2', true)).toEqual(1);
+  });
+
+  test('Should support case insensitive sort (reversed)', () => {
+    expect(caseInsensitiveSort('anadarko', 'BP', true)).toEqual(1);
+  });
 });
 
 describe('Sort objects by key', () => {
