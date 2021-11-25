@@ -64,8 +64,8 @@ describe('DocumentsBulkActions show all filters', () => {
     await defaultTestInit();
     expect(screen.getByText(CLEAR_ALL_TEXT)).toBeInTheDocument();
     expect(screen.getByText('Well A')).toBeInTheDocument();
-    expect(screen.getByText('Compressed')).toBeInTheDocument();
-    expect(screen.getByText('Bp-Blob')).toBeInTheDocument();
+    expect(screen.getByText('File Type: Compressed')).toBeInTheDocument();
+    expect(screen.getByText('Source: Bp-Blob')).toBeInTheDocument();
   });
 });
 
@@ -87,8 +87,8 @@ describe('DocumentsBulkActions do not show clear tag and search phrase', () => {
     await defaultTestInit();
     expect(screen.queryByText(CLEAR_ALL_TEXT)).not.toBeInTheDocument();
     expect(screen.queryByText('Well A')).not.toBeInTheDocument();
-    expect(screen.getByText('Compressed')).toBeInTheDocument();
-    expect(screen.getByText('Bp-Blob')).toBeInTheDocument();
+    expect(screen.getByText('File Type: Compressed')).toBeInTheDocument();
+    expect(screen.getByText('Source: Bp-Blob')).toBeInTheDocument();
   });
 });
 
@@ -117,7 +117,7 @@ describe('DocumentsBulkActions show clear all for filters only', () => {
     });
     expect(screen.queryByText(CLEAR_ALL_TEXT)).toBeInTheDocument();
     expect(screen.queryByText('Well A')).not.toBeInTheDocument();
-    expect(screen.getByText('Compressed')).toBeInTheDocument();
-    expect(screen.getByText('Bp-Blob')).toBeInTheDocument();
+    expect(screen.getByText('File Type: Compressed')).toBeInTheDocument();
+    expect(screen.getByText('Source: Bp-Blob')).toBeInTheDocument();
   });
 });

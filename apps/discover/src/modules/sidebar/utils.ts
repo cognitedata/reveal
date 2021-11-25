@@ -5,7 +5,14 @@ import {
   DocumentsFacets,
   DocumentQueryFacetsNames,
   DocumentFilterCategoryTitles,
+  DocumentFacet,
 } from 'modules/documentSearch/types';
+
+const RANGE_FACETS: DocumentFacet[] = [
+  'lastcreated',
+  'lastmodified',
+  'pageCount',
+];
 
 export const getDocumentCategoryTitle = (
   category: DocumentQueryFacetsNames
@@ -13,8 +20,11 @@ export const getDocumentCategoryTitle = (
   return DocumentFilterCategoryTitles[category] || '';
 };
 
-export const isDocumentDateFacet = (facet: keyof DocumentsFacets): boolean =>
+export const isDocumentDateFacet = (facet: DocumentFacet): boolean =>
   facet === 'lastmodified' || facet === 'lastcreated';
+
+export const isRangeFacet = (facet: DocumentFacet): boolean =>
+  RANGE_FACETS.includes(facet);
 
 export const getDocumentFacetsflatValues = (
   documentFacets: DocumentsFacets

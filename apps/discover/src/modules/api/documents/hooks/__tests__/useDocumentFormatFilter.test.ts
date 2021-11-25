@@ -18,11 +18,11 @@ describe('useDocumentFormatFilter', () => {
     const result = formatTag('labels', {
       externalId: 'unstructured-doctype-TEST_TYPE_1',
     });
-    expect(result).toBe('TEST_TYPE_1');
+    expect(result).toBe('Document Category: TEST_TYPE_1');
   });
   it('formats the "filetype" tag correctly', () => {
     const result = formatTag('filetype', 'Compressed');
-    expect(result).toBe('Compressed');
+    expect(result).toBe('File Type: Compressed');
   });
   it('formats the "created" tag correctly', () => {
     const result = formatTag('lastcreated', ['1175637600000', '1619042400000']);
@@ -54,12 +54,12 @@ describe('useHumanizeDocumentFilters', () => {
     expect(result).toContainEqual({
       facet: 'filetype',
       facetNameDisplayFormat: 'File Type',
-      facetValueDisplayFormat: 'PDF',
+      facetValueDisplayFormat: 'File Type: PDF',
     });
     expect(result).toContainEqual({
       facet: 'filetype',
       facetNameDisplayFormat: DocumentFilterCategoryTitles.filetype,
-      facetValueDisplayFormat: 'IMAGE',
+      facetValueDisplayFormat: 'File Type: IMAGE',
     });
   });
 
@@ -71,12 +71,12 @@ describe('useHumanizeDocumentFilters', () => {
     expect(result).toContainEqual({
       facet: 'location',
       facetNameDisplayFormat: DocumentFilterCategoryTitles.location,
-      facetValueDisplayFormat: 'SOURCE_1',
+      facetValueDisplayFormat: 'Source: SOURCE_1',
     });
     expect(result).toContainEqual({
       facet: 'location',
       facetNameDisplayFormat: DocumentFilterCategoryTitles.location,
-      facetValueDisplayFormat: 'SOURCE_2',
+      facetValueDisplayFormat: 'Source: SOURCE_2',
     });
   });
 
@@ -128,6 +128,8 @@ describe('useHumanizeDocumentFilters', () => {
     expect(result[0].facetNameDisplayFormat).toBe(
       DocumentFilterCategoryTitles.labels
     );
-    expect(result[0].facetValueDisplayFormat).toBe('TEST_TYPE_1');
+    expect(result[0].facetValueDisplayFormat).toBe(
+      'Document Category: TEST_TYPE_1'
+    );
   });
 });

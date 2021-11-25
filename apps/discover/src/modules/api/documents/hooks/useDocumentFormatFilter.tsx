@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten';
+import isEmpty from 'lodash/isEmpty';
 
 import { formatFacetValue } from 'modules/api/documents/utils';
 import { useLabels } from 'modules/documentSearch/selectors';
@@ -8,10 +9,7 @@ import {
   FormattedFacet,
 } from 'modules/documentSearch/types';
 import { AppliedFilterEntries } from 'modules/sidebar/types';
-import {
-  getDocumentCategoryTitle,
-  isDocumentDateFacet,
-} from 'modules/sidebar/utils';
+import { getDocumentCategoryTitle, isRangeFacet } from 'modules/sidebar/utils';
 
 export const useDocumentFormatFilter = () => {
   const labels = useLabels();
@@ -27,15 +25,15 @@ export const useFormatDocumentFilters = () => {
     flatten(
       entries.map(([facet, value]) => {
         const facetNameDisplayFormat = getDocumentCategoryTitle(facet);
-        if (isDocumentDateFacet(facet) && value.length > 0) {
-          return createHumanizeFacet(
+        if (isRangeFacet(facet) && !isEmpty(value)) {
+          return createFormattedFacet(
             facet,
             facetNameDisplayFormat,
             formatFacetValue(facet, value, labels)
           );
         }
         return (value as (string | { externalId: string })[]).map((item) =>
-          createHumanizeFacet(
+          createFormattedFacet(
             facet,
             facetNameDisplayFormat,
             formatFacetValue(facet, item, labels)
@@ -45,7 +43,7 @@ export const useFormatDocumentFilters = () => {
     );
 };
 
-const createHumanizeFacet = (
+const createFormattedFacet = (
   facet: DocumentFacet,
   facetNameDisplayFormat: string,
   facetValueDisplayFormat: string

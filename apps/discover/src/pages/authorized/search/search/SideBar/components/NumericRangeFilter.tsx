@@ -86,6 +86,9 @@ export const NumericFacetRangeFilter: React.FC<Props> = React.memo(
           values={[minPageCount, maxPageCount]}
           selectedValues={appliedRange}
           onValueChange={onFilterRangeChange}
+          config={{
+            editableTextFields: true,
+          }}
         />
       </FilterCollapse.Panel>
     );

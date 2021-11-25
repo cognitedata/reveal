@@ -1,5 +1,7 @@
 import React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { GeoJsonGeometryTypes } from '@cognite/seismic-sdk-js';
 
 import { FilterTagProps } from 'components/tag/BlueFilterTag';
@@ -19,7 +21,7 @@ import {
 } from 'modules/sidebar/selectors';
 import {
   getDocumentFacetsflatValues,
-  isDocumentDateFacet,
+  isRangeFacet,
 } from 'modules/sidebar/utils';
 
 import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
@@ -142,9 +144,9 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
     const entries = useDocumentAppliedFilterEntries(documentFacets);
 
     const hasFiltersApplied =
-      (getDocumentFacetsflatValues(documentFacets) || []).length > 0 ||
+      !isEmpty(getDocumentFacetsflatValues(documentFacets) || []) ||
       geoFiltersApplied ||
-      (extraGeoJsonFilters && extraGeoJsonFilters.length > 0);
+      (extraGeoJsonFilters && !isEmpty(extraGeoJsonFilters));
 
     const handleClearFilterClicked = ({
       facet,
@@ -157,7 +159,7 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
 
       let filtered: unknown[];
 
-      if (isDocumentDateFacet(facet)) {
+      if (isRangeFacet(facet)) {
         filtered = [];
       } else if (facet === 'labels') {
         filtered = (documentFacets[facet] as { externalId: string }[]).filter(
@@ -241,7 +243,7 @@ export const DocumentAppliedFiltersCore: React.FC<CoreProps> = React.memo(
       >
         {(entries || []).map(([facet, activeFacetItems]) => {
           // "Batch" the dates into one tag
-          if (isDocumentDateFacet(facet) && activeFacetItems.length > 0) {
+          if (isRangeFacet(facet) && !isEmpty(activeFacetItems)) {
             const tag = formatTag(facet, activeFacetItems);
             return createFilterTagElement(`${facet}-document-tags`, tag, () =>
               handleClearFilterClicked({ facet, original: activeFacetItems })

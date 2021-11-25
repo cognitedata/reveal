@@ -11,7 +11,7 @@ import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { setCategoryPage, toggleFilterBar } from 'modules/sidebar/actions';
 import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
-import { CategoryTypes } from 'modules/sidebar/types';
+import { CategoryTypes, Modules } from 'modules/sidebar/types';
 import { SidebarDocumentAppliedFilters } from 'pages/authorized/search/document/header/SidebarDocumentAppliedFilters';
 import {
   HIDE_BUTTON_TEXT_KEY,
@@ -151,8 +151,8 @@ const FilterItemTitle: React.FC<TitleProps> = ({
       </Container>
       <CategorySubHeader title={title} displayBetaSymbol={displayBetaSymbol} />
       <FilterTextDiv>{description}</FilterTextDiv>
-      {category === 'documents' && <SidebarDocumentAppliedFilters />}
-      {category === 'wells' && <SidebarWellAppliedFilters />}
+      {category === Modules.DOCUMENTS && <SidebarDocumentAppliedFilters />}
+      {category === Modules.WELLS && <SidebarWellAppliedFilters />}
     </CategoryWrapper>
   );
 };
