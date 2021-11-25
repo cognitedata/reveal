@@ -173,9 +173,7 @@ const Lineage = ({ dataSetWithExtpipes }: LineageProps) => {
                 </NoDataText>
               ) : (
                 <Table
-                  columns={transformationsColumns(
-                    dataSetWithExtpipes.dataSet
-                  )}
+                  columns={transformationsColumns(dataSetWithExtpipes.dataSet)}
                   dataSource={transformationsData}
                   pagination={{ pageSize: 5 }}
                   rowKey="id"

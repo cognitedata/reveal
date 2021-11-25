@@ -72,9 +72,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   );
 
   return (
-    <Timeline.Item
-      dot={extpipes.length ? <LineageDot /> : <EmptyLineageDot />}
-    >
+    <Timeline.Item dot={extpipes.length ? <LineageDot /> : <EmptyLineageDot />}>
       <LineageTitle>{EXTPIPES_HEADING}</LineageTitle>
       <LineageSubTitle>
         <span>{EXTPIPE_SUB_HEADING}</span>
