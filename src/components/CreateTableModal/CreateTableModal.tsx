@@ -60,7 +60,7 @@ const CreateTableModal = ({
     useCreateTable();
   const [, openTable] = useActiveTable();
 
-  const { columns } = useCSVUpload(file, selectedColumnIndex);
+  const { columns, onConfirmUpload } = useCSVUpload(file, selectedColumnIndex);
 
   const isUnique = !tables.some(({ name }) => name === tableName);
   const isCreationDisabled =
@@ -71,6 +71,7 @@ const CreateTableModal = ({
     isCreatingTable;
 
   const isUploadDisabled =
+    isCreationDisabled ||
     !selectedPrimaryKeyMethod ||
     (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
       !(selectedColumnIndex >= 0));
@@ -114,7 +115,26 @@ const CreateTableModal = ({
   };
 
   const handleUpload = (): void => {
-    setCreateTableModalStep(CreateTableModalStep.Upload);
+    createDatabase(
+      { database: databaseName, table: tableName },
+      {
+        onSuccess: () => {
+          setCreateTableModalStep(CreateTableModalStep.Upload);
+          onConfirmUpload(databaseName, tableName);
+        },
+        onError: (e: any) => {
+          notification.error({
+            message: (
+              <p>
+                <p>Table {tableName} was not created!</p>
+                <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
+              </p>
+            ),
+            key: 'create-table',
+          });
+        },
+      }
+    );
   };
 
   const selectCreationMode =

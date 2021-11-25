@@ -6,16 +6,17 @@ import { notification } from 'antd';
 import { useSDK } from '@cognite/sdk-provider';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 
-import { useActiveTableContext } from 'contexts';
 import { sleep } from 'utils/utils';
 
 export const useCSVUpload = (
   file: File | undefined,
   selectedKeyIndex: number
 ) => {
-  const { database, table } = useActiveTableContext();
   const sdk = useSDK();
 
+  const [[database, table], setTableToUpload] = useState<
+    [string | undefined, string | undefined]
+  >([undefined, undefined]);
   const [isUpload, setIsUpload] = useState<boolean>(false);
   const [isUploadFailed, setIsUploadFailed] = useState(false);
   const [isUploadCompleted, setIsUploadCompleted] = useState(false);
@@ -63,7 +64,7 @@ export const useCSVUpload = (
   }, [file]);
 
   useEffect(() => {
-    if (!file || !isUpload) return;
+    if (!file || !isUpload || !database || !table) return;
     PapaParse.parse<any>(file, {
       dynamicTyping: true,
       skipEmptyLines: true,
@@ -128,8 +129,9 @@ export const useCSVUpload = (
       });
   }, [file, isUploadCompleted, isUploadFailed]);
 
-  const onConfirmUpload = () => {
+  const onConfirmUpload = (database: string, table: string) => {
     trackEvent('RAW.Explorer.CSVUpload.Upload');
+    setTableToUpload([database, table]);
     setIsUpload(true);
   };
 

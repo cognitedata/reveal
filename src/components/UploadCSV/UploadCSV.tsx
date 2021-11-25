@@ -9,6 +9,7 @@ import { useCSVUpload } from 'hooks/csv-upload';
 
 import { ModalProgress } from './ModalProgress';
 import { ModalChooseKey } from './ModalChooseKey';
+import { useActiveTableContext } from 'contexts';
 
 const { Dragger } = Upload;
 
@@ -29,6 +30,8 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     isParsing,
     onConfirmUpload,
   } = useCSVUpload(file, selectedKeyIndex);
+
+  const { database, table } = useActiveTableContext();
 
   const okText = isUploadCompleted ? 'OK' : 'Confirm Upload';
 
@@ -93,7 +96,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const onOk = () => {
     if (isUploadCompleted) setCSVModalVisible(false, true);
-    else onConfirmUpload();
+    else onConfirmUpload(database, table);
   };
 
   return (
