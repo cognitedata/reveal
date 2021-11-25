@@ -1,4 +1,4 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
 
 import { fetchJobById } from 'src/api/annotationJob';
 import { AnnotationJob, AnnotationJobFailedItem } from 'src/api/types';
@@ -33,45 +33,52 @@ export const PollJobs = createAsyncThunk<void, JobState, ThunkConfig>(
           !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
         onTick: async (latestJobVersion) => {
-          await dispatch(
+          const result = await dispatch(
             AnnotationDetectionJobUpdate({
               job: latestJobVersion,
               completedFileIds,
             })
           );
-          if (
-            latestJobVersion.status === 'Running' ||
-            latestJobVersion.status === 'Completed'
-          ) {
-            const newCompletedFileIds =
-              latestJobVersion.items
-                ?.map((item) => item.fileId)
-                .filter((item) => !completedFileIds.includes(item)) || [];
-            completedFileIds = [...completedFileIds, ...newCompletedFileIds];
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            unwrapResult(result);
+            if (
+              latestJobVersion.status === 'Running' ||
+              latestJobVersion.status === 'Completed'
+            ) {
+              const newCompletedFileIds =
+                latestJobVersion.items
+                  ?.map((item) => item.fileId)
+                  .filter((item) => !completedFileIds.includes(item)) || [];
+              completedFileIds = [...completedFileIds, ...newCompletedFileIds];
 
-            const newFailedJobs =
-              latestJobVersion.failedItems?.filter(
-                (newJobs) =>
-                  !failedJobs
-                    .map((failedJob) => failedJob.items[0].fileId)
-                    .includes(newJobs.items[0].fileId)
-              ) || [];
-            failedJobs = [...failedJobs, ...newFailedJobs];
+              const newFailedJobs =
+                latestJobVersion.failedItems?.filter(
+                  (newJobs) =>
+                    !failedJobs
+                      .map((failedJob) => failedJob.items[0].fileId)
+                      .includes(newJobs.items[0].fileId)
+                ) || [];
+              failedJobs = [...failedJobs, ...newFailedJobs];
 
-            if (newCompletedFileIds.length) {
-              await dispatch(RetrieveAnnotations(newCompletedFileIds));
+              if (newCompletedFileIds.length) {
+                await dispatch(RetrieveAnnotations(newCompletedFileIds));
+              }
+              // TODO: use failed job information
             }
-            // TODO: use failed job information
-          }
 
-          dispatch(
-            fileProcessUpdate({
-              modelType,
-              fileIds,
-              job: latestJobVersion,
-              completedFileIds,
-            })
-          );
+            dispatch(
+              fileProcessUpdate({
+                modelType,
+                fileIds,
+                job: latestJobVersion,
+                completedFileIds,
+              })
+            );
+          } catch (error) {
+            // TODO: use failed file Ids
+            console.error(error);
+          }
         },
 
         onError: (error) => {
