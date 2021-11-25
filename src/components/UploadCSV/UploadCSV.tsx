@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 
 import { UploadChangeParam } from 'antd/lib/upload';
-import { notification, Upload } from 'antd';
-import { Colors, Detail, Flex, Graphic, Title } from '@cognite/cogs.js';
+import { notification } from 'antd';
+import { Button, Colors, Detail, Flex, Graphic, Title } from '@cognite/cogs.js';
 
 import { getContainer } from 'utils/utils';
 import { useCSVUpload } from 'hooks/csv-upload';
 import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
 
+import Dragger from 'components/Dragger';
 import Modal from 'components/Modal/Modal';
 import { ModalProgress } from './ModalProgress';
 import { ModalChooseKey } from './ModalChooseKey';
-
-const { Dragger } = Upload;
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -96,19 +95,33 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     else onConfirmUpload();
   };
 
+  const okButtonProps = {
+    loading: isUpload,
+    disabled: !file || isUpload,
+  };
+
   return (
     <Modal
       visible
       title="Add new data"
-      okText={okText}
       onOk={onOk}
       onCancel={onCancelUpload}
       getContainer={getContainer}
       width={UPLOAD_MODAL_WIDTH}
-      okButtonProps={{
-        loading: isUpload,
-        disabled: !file || isUpload,
-      }}
+      footer={
+        <Flex justifyContent="flex-end" alignItems="flex-end">
+          <Button
+            variant="ghost"
+            onClick={onCancelUpload}
+            style={{ marginRight: '8px' }}
+          >
+            Cancel
+          </Button>
+          <Button type="primary" onClick={onOk} {...okButtonProps}>
+            {okText}
+          </Button>
+        </Flex>
+      }
     >
       {renderModalContent()}
     </Modal>

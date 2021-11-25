@@ -25,11 +25,12 @@ const StyledModal = styled(AntdModal)`
     }
 
     .ant-modal-body {
-      padding: 16px !important; /* overrides antd style */
+      padding: 20px !important; /* overrides antd style */
     }
 
     .ant-modal-footer {
       border: none;
+      height: 75px;
     }
   }
 `;
