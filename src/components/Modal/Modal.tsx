@@ -19,12 +19,18 @@ const StyledModal = styled(AntdModal)`
 
     .ant-modal-header {
       border-radius: 12px 12px 0 0;
+      border: none;
       padding-left: 16px;
       padding-right: 16px;
     }
 
     .ant-modal-body {
-      padding: 16px !important; /* overrides antd style */
+      padding: 20px !important; /* overrides antd style */
+    }
+
+    .ant-modal-footer {
+      border: none;
+      height: 75px;
     }
   }
 `;
