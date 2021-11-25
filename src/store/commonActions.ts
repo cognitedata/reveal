@@ -7,6 +7,7 @@ export const fileProcessUpdate =
     job: AnnotationJob;
     modelType: VisionAPIType;
     completedFileIds: number[];
+    failedFileIds: number[];
   }>('fileProcessUpdate');
 
 export const clearFileState = createAction<number[]>('clearFileState');
