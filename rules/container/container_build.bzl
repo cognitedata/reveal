@@ -46,8 +46,8 @@ def container_build(name, app_name, app_id, build_layer, docker_repo, environmen
 
     nodejs_binary(
         name = "%s_prepare_docker_binary" % name,
-        data = ["//scripts:prepare_docker.mjs"],
-        entry_point = "//scripts:prepare_docker.mjs",
+        data = ["//rules/docker:prepare_docker.mjs"],
+        entry_point = "//rules/docker:prepare_docker.mjs",
         env = {
             "GCLOUD_PROJECT": "cognitedata-development",
         },
