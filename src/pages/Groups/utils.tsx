@@ -362,7 +362,7 @@ export const getCapabilityScopes = (
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
     case 'transformations':
-      return ['all']
+      return ['all'];
     case 'extractionpipelines':
       return ['datasetScope', 'idScope', 'all'];
     case 'extractionruns':
