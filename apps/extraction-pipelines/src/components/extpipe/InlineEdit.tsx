@@ -16,7 +16,7 @@ import {
 import { DivFlex } from 'styles/flex/StyledFlex';
 import ValidationError from 'components/form/ValidationError';
 import { AnyObjectSchema } from 'yup';
-import { ColumnForm, StyledInput, StyledLabel } from 'styles/StyledForm';
+import { ColumnForm, Hint, StyledInput, StyledLabel } from 'styles/StyledForm';
 import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { Colors } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
@@ -33,6 +33,7 @@ export interface InlineEditProps<Fields> {
   fullWidth?: boolean;
   marginBottom?: boolean;
   canEdit: boolean;
+  hintText?: string;
 }
 
 const InlineEdit = <Fields extends FieldValues>({
@@ -42,6 +43,7 @@ const InlineEdit = <Fields extends FieldValues>({
   viewComp,
   showLabel,
   updateFn,
+  hintText,
   label,
   fullWidth = false,
   marginBottom = false,
@@ -100,6 +102,11 @@ const InlineEdit = <Fields extends FieldValues>({
       )}
       {isEdit ? (
         <DivFlex direction="column" align="stretch" css="padding: 0 1rem">
+          {hintText && (
+            <Hint id="data-set-id-hint" className="input-hint">
+              {hintText}
+            </Hint>
+          )}
           <ValidationError errors={errors} name={name} />
           <DivFlex css="gap: 0.5rem">
             <Controller
