@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
@@ -59,7 +59,8 @@ const CreateTableModal = ({
 
   const { mutate: createDatabase, isLoading: isCreatingTable } =
     useCreateTable();
-  const [, openTable] = useActiveTable();
+  const [[activeDatabaseName, activeTableName] = [], openTable] =
+    useActiveTable();
 
   const {
     columns,
@@ -83,6 +84,22 @@ const CreateTableModal = ({
     !selectedPrimaryKeyMethod ||
     (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
       !(selectedColumnIndex >= 0));
+
+  useEffect(() => {
+    if (
+      uploadPercentage > 0 &&
+      (activeDatabaseName !== databaseName || activeTableName !== tableName)
+    ) {
+      openTable([databaseName, tableName]);
+    }
+  }, [
+    activeDatabaseName,
+    activeTableName,
+    databaseName,
+    tableName,
+    openTable,
+    uploadPercentage,
+  ]);
 
   const handleCancel = (): void => {
     if (file && isParsing && !isUploadCompleted) {
@@ -127,7 +144,6 @@ const CreateTableModal = ({
       {
         onSuccess: () => {
           setCreateTableModalStep(CreateTableModalStep.Upload);
-          openTable([databaseName, tableName]);
           onConfirmUpload(databaseName, tableName);
         },
         onError: (e: any) => {
@@ -197,6 +213,7 @@ const CreateTableModal = ({
           fileName={file?.name ? trimFileExtension(file.name) : ''}
           isUploadFailed={isUploadFailed}
           isUploadCompleted={isUploadCompleted}
+          onCancel={handleCancel}
           progression={uploadPercentage}
         />
       );
