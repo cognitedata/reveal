@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 
 import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
@@ -82,17 +82,6 @@ const CreateTableModal = ({
     !selectedPrimaryKeyMethod ||
     (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
       !(selectedColumnIndex >= 0));
-
-  useEffect(() => {
-    if (!visible) {
-      setTableName('');
-      setCreateTableModalStep(CreateTableModalStep.CreationMode);
-      setSelectedCreationMode(undefined);
-      setSelectedPrimaryKeyMethod(undefined);
-      setFile(undefined);
-      setSelectedColumnIndex(-1);
-    }
-  }, [visible]);
 
   const handleCreate = (): void => {
     createDatabase(
@@ -244,6 +233,7 @@ const CreateTableModal = ({
             ]
           : []),
       ]}
+      maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
       onCancel={onCancel}
       title={<Title level={5}>Create table</Title>}
       visible={visible}
