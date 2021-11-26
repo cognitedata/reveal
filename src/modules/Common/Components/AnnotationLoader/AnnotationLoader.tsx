@@ -16,7 +16,7 @@ export function AnnotationLoader(props: {
   useEffect(() => {
     if (fileIds && fileIds.length) {
       dispatch(setLoadingAnnotations());
-      dispatch(RetrieveAnnotations(fileIds));
+      dispatch(RetrieveAnnotations({ fileIds, clearCache: true }));
     }
   }, [fileIds]);
 

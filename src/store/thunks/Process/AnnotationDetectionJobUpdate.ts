@@ -135,8 +135,6 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
         const savedAnnotations = unwrapResult(savedAnnotationResponse);
         return AnnotationUtils.convertToVisionAnnotations(savedAnnotations);
       }
-
-      await dispatch(RetrieveAnnotations(newCompletedFileIds));
     }
     return [];
   }
