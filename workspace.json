@@ -1,6 +1,148 @@
 {
   "version": 2,
   "projects": {
+    "cog-data-grid": {
+      "root": "libs/cog-data-grid",
+      "sourceRoot": "libs/cog-data-grid/src",
+      "projectType": "library",
+      "tags": [],
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/cog-data-grid",
+            "tsConfig": "libs/cog-data-grid/tsconfig.lib.json",
+            "project": "libs/cog-data-grid/package.json",
+            "entryFile": "libs/cog-data-grid/src/index.ts",
+            "external": ["react/jsx-runtime"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/cog-data-grid/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/cog-data-grid/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/cog-data-grid"],
+          "options": {
+            "jestConfig": "libs/cog-data-grid/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "demo-app-react": {
+      "root": "apps/demo-app-react",
+      "sourceRoot": "apps/demo-app-react/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:build",
+          "outputs": ["{options.outputPath}"],
+          "defaultConfiguration": "production",
+          "options": {
+            "outputPath": "dist/apps/demo-app-react",
+            "index": "apps/demo-app-react/src/index.html",
+            "baseHref": "/",
+            "main": "apps/demo-app-react/src/main.tsx",
+            "polyfills": "apps/demo-app-react/src/polyfills.ts",
+            "tsConfig": "apps/demo-app-react/tsconfig.app.json",
+            "assets": [
+              "apps/demo-app-react/src/favicon.ico",
+              "apps/demo-app-react/src/assets"
+            ],
+            "styles": ["apps/demo-app-react/src/styles.css"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/demo-app-react/src/environments/environment.ts",
+                  "with": "apps/demo-app-react/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "demo-app-react:build",
+            "hmr": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "demo-app-react:build:production",
+              "hmr": false
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/demo-app-react/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/demo-app-react"],
+          "options": {
+            "jestConfig": "apps/demo-app-react/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "demo-app-react-e2e": {
+      "root": "apps/demo-app-react-e2e",
+      "sourceRoot": "apps/demo-app-react-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/demo-app-react-e2e/cypress.json",
+            "devServerTarget": "demo-app-react:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "demo-app-react:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/demo-app-react-e2e/**/*.{js,ts}"]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": ["demo-app-react"]
+    },
     "platypus": {
       "root": "apps/platypus",
       "sourceRoot": "apps/platypus/src",
@@ -256,7 +398,6 @@
       "sourceRoot": "libs/platypus-infrastructure/src",
       "projectType": "library",
       "targets": {
-
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
