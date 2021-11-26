@@ -15,13 +15,18 @@ export class IndexSet {
   constructor(values?: Iterable<number> | NumericRange) {
     if (values == undefined) {
       this.rootNode = undefined;
-    } else if (values instanceof NumericRange) {
+    } else if (IndexSet.isNumericRange(values)) {
       this.addRange(values);
     } else {
       for (const index of values) {
         this.add(index);
       }
     }
+  }
+
+  static isNumericRange(value: NumericRange | Iterable<number>): value is NumericRange {
+    const range = value as NumericRange;
+    return range.from !== undefined && range.count !== undefined && range.toInclusive !== undefined;
   }
 
   forEachRange(visitor: (range: NumericRange) => void): void {
