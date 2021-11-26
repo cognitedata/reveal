@@ -16,6 +16,7 @@ import {
   SVG_ID,
 } from '@cognite/pid-tools';
 import { Modal, Input, Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
+import { ToolType } from 'types';
 
 import {
   ModalFooterWrapper,
@@ -30,6 +31,19 @@ import { SidePanel } from './components';
 const appElement = document.querySelector('#root') || undefined;
 
 let svgDocument: SvgDocument | undefined;
+
+const getSymbolInstanceByPathId = (
+  symbolInstances: DiagramSymbolInstance[],
+  pathId: string
+): DiagramSymbolInstance | null => {
+  const symbolInstance = symbolInstances.filter((symbolInstance) =>
+    symbolInstance.pathIds.includes(pathId)
+  );
+  if (symbolInstance.length > 0) {
+    return symbolInstance[0];
+  }
+  return null;
+};
 
 type ExistingSymbolPromptData = {
   symbolName: string;
@@ -47,7 +61,7 @@ const {
 
 export const SvgViewer = () => {
   const [fileUrl, setFileUrl] = React.useState('');
-  const [active, setActive] = React.useState<string>('AddSymbol');
+  const [active, setActive] = React.useState<ToolType>('addSymbol');
 
   const [selection, setSelection] = React.useState<SVGElement[]>([]);
   const [lines, setLines] = React.useState<DiagramLineInstance[]>([]);
@@ -268,6 +282,20 @@ export const SvgViewer = () => {
           const originalStrokeWidth = node.style.strokeWidth;
           const originalStroke = node.style.stroke;
           node.addEventListener('mouseenter', () => {
+            if (active === 'connectInstances') {
+              const symbolInstance = getSymbolInstanceByPathId(
+                symbolInstances,
+                node.id
+              );
+              if (symbolInstance) {
+                symbolInstance.pathIds.forEach((pathId) => {
+                  (
+                    document.getElementById(pathId) as unknown as SVGElement
+                  ).style.stroke = 'yellow';
+                });
+                return;
+              }
+            }
             if (selection.some((svgPath) => svgPath.id === node.id)) {
               const val = 1.5 * parseInt(originalStrokeWidth, 10);
               node.style.strokeWidth = val.toString();
@@ -279,12 +307,27 @@ export const SvgViewer = () => {
           });
 
           node.addEventListener('mouseleave', () => {
+            if (active === 'connectInstances') {
+              const symbolInstance = getSymbolInstanceByPathId(
+                symbolInstances,
+                node.id
+              );
+              if (symbolInstance) {
+                symbolInstance.pathIds.forEach((pathId) => {
+                  (
+                    document.getElementById(pathId) as unknown as SVGElement
+                  ).style.stroke = 'pink';
+                });
+                return;
+              }
+            }
+
             node.style.strokeWidth = originalStrokeWidth;
             node.style.stroke = originalStroke;
           });
 
           node.addEventListener('click', () => {
-            if (active === 'AddSymbol') {
+            if (active === 'addSymbol') {
               if (selection.some((svgPath) => svgPath.id === node.id)) {
                 const index = selection.map((e) => e.id).indexOf(node.id);
                 setSelection([
@@ -295,7 +338,7 @@ export const SvgViewer = () => {
                 setSelection([...selection, node]);
               }
             }
-            if (active === 'AddLine') {
+            if (active === 'addLine') {
               // Remove a line if already selected
               if (lines.some((line) => line.pathIds.includes(node.id))) {
                 const index = lines.findIndex((line) =>

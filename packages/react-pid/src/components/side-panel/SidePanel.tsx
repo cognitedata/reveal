@@ -5,6 +5,7 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
 } from '@cognite/pid-tools';
+import { ToolType } from 'types';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
@@ -29,12 +30,12 @@ const ToolBarWrapper = styled.div`
 `;
 
 interface SidePanelProps {
-  active: string;
+  active: ToolType;
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
   symbolInstances: DiagramSymbolInstance[];
   selection: SVGElement[];
-  setActive: (arg0: string) => void;
+  setActive: (arg0: ToolType) => void;
   loadSymbolsAsJson: (args0: string) => void;
   saveSymbol: (symbolName: string, selection: SVGElement[]) => void;
 }
@@ -53,17 +54,21 @@ export const SidePanel = ({
     [
       {
         icon: 'PlusCompact',
-        onClick: () =>
-          active === 'AddSymbol' ? setActive('') : setActive('AddSymbol'),
-        className: `${active === 'AddSymbol' && 'active'}`,
+        onClick: () => setActive('addSymbol'),
+        className: `${active === 'addSymbol' && 'active'}`,
         description: 'Add symbol',
       },
       {
         icon: 'VectorLine',
-        onClick: () =>
-          active === 'AddLine' ? setActive('') : setActive('AddLine'),
-        className: `${active === 'AddLine' && 'active'}`,
+        onClick: () => setActive('addLine'),
+        className: `${active === 'addLine' && 'active'}`,
         description: 'Add line',
+      },
+      {
+        icon: 'Split',
+        onClick: () => setActive('connectInstances'),
+        className: `${active === 'connectInstances' && 'active'}`,
+        description: 'Connect instances',
       },
     ],
   ];
@@ -82,7 +87,7 @@ export const SidePanel = ({
         lineInstances={lines}
       />
       <div>
-        {active === 'AddSymbol' &&
+        {active === 'addSymbol' &&
           AddSymbolController({ selection, saveSymbol })}
 
         <ToolBarWrapper>
