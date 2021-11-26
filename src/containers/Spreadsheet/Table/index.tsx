@@ -3,7 +3,6 @@ import BaseTable, { AutoResizer, ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Colors, Flex } from '@cognite/cogs.js';
 
-import { useTableSelection } from 'hooks/table-selection';
 import { TABLE_ROW_HEIGHT } from 'utils/constants';
 
 import { headerRenderer, emptyRenderer } from './customRenders';
@@ -19,7 +18,6 @@ type Props = {
 
 export const Table = (props: Props): JSX.Element => {
   const { rows, columns, isEmpty, onEndReach } = props;
-  const { selectedCell } = useTableSelection();
 
   const newColumns = useMemo(
     () =>
@@ -27,7 +25,7 @@ export const Table = (props: Props): JSX.Element => {
         ...column,
         cellRenderer: (props: any) => <Cell {...props} />,
       })),
-    [columns, selectedCell]
+    [columns]
   );
 
   return (

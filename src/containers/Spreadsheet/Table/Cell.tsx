@@ -34,7 +34,7 @@ export const Cell = (props: Props): JSX.Element => {
 
   useEffect(() => {
     setIsSelected(isCellSelected(rowIndex, columnIndex));
-  }, [selectedCell]);
+  }, [selectedCell, rowIndex, columnIndex, isCellSelected]);
 
   const onCellSelect = () => {
     const isClickedCellSelected =

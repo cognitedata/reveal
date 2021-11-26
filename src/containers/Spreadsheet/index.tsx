@@ -3,8 +3,10 @@ import { Flex, Loader } from '@cognite/cogs.js';
 import { useTableData } from 'hooks/table-data';
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
+import { useActiveTableContext } from 'contexts';
 
 export const Spreadsheet = (): JSX.Element => {
+  const { database, table } = useActiveTableContext();
   const { rows, columns, isLoading, isFetched, hasNextPage, fetchNextPage } =
     useTableData();
   const [columnFilter, setColumnFilter] = useState('');
@@ -22,6 +24,7 @@ export const Spreadsheet = (): JSX.Element => {
   return (
     <Flex direction="column" style={{ width: '100%', height: '100%' }}>
       <FilterBar
+        key={`${database}_${table}`}
         isEmpty={isEmpty}
         columnFilter={columnFilter}
         setColumnFilter={setColumnFilter}
