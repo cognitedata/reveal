@@ -108,7 +108,7 @@ export const useCSVUpload = (
           });
       },
     });
-  }, [file, isUpload, columns, selectedKeyIndex, database, table]);
+  }, [file, isUpload, columns, selectedKeyIndex, database, table, sdk.raw]);
 
   useEffect(() => {
     if (!file || !isUploadCompleted) return;

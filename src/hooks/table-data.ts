@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ColumnShape } from 'react-base-table';
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
@@ -46,12 +46,6 @@ export const useTableData = () => {
     pageSize: PAGE_SIZE,
   });
 
-  useEffect(() => {
-    if (rows.isFetched) {
-      rows.refetch();
-    }
-  }, [rows.isFetched, rows.refetch]);
-
   const rawRows: Partial<RawDBRow>[] = useMemo(() => {
     if (rows.data) {
       return rows.data.pages
@@ -82,7 +76,7 @@ export const useTableData = () => {
   };
   const columns = useMemo(getColumns, [rawRows]);
 
-  const getRows = (): Record<string, any>[] => {
+  const allRows = useMemo((): Record<string, any>[] => {
     const columnKeys = columns.map((column: ColumnType) => column.dataKey);
     const rows = rawRows.map((rawRow, index: number) => {
       const row: Record<string, any> = {
@@ -101,8 +95,7 @@ export const useTableData = () => {
       return row;
     });
     return rows;
-  };
-  const allRows = useMemo(getRows, [rawRows]);
+  }, [rawRows, chooseRenderType, columns]);
 
   return {
     ...rows,

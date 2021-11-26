@@ -117,11 +117,38 @@ export const useTableRows = (
   );
 };
 
-type Column = {
+export type StringProfile = {
+  distinctCount: number;
+  lengthHistogram: [number[], number[]];
+  lengthRange: [number, number];
+  valueCounts: [string[], number[]];
+};
+export type NumberProfile = {
+  distinctCount: number;
+  histogram: [number[], number[]];
+  valueRange: [number, number];
+};
+export type BooleanProfile = {
+  trueCount: number;
+};
+export type ObjectProfile = {
+  keyCountRange: [number, number];
+  keyCountHistogram: [number[], number[]];
+};
+export type VectorProfile = {
+  lengthRange: [number, number];
+  lengthHistogram: [number[], number[]];
+};
+export type Column = {
   count: number;
   nullCount: number;
+  string: null | StringProfile;
+  number: null | NumberProfile;
+  boolean: null | BooleanProfile;
+  object: null | ObjectProfile;
+  vector: null | VectorProfile;
 };
-type Profile = {
+export type Profile = {
   columns: Record<string, Column>;
 };
 
