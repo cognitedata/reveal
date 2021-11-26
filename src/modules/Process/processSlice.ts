@@ -504,8 +504,8 @@ export const selectIsProcessingStarted = createSelector(
 export const selectUnfinishedJobs = createSelector(
   (state: State) => state.jobs.allIds,
   selectAllJobs,
-  (allIds, allJobs) => {
-    return allIds
+  (allJobIds, allJobs) => {
+    return allJobIds
       .map((id) => allJobs[id])
       .filter(
         (job) =>

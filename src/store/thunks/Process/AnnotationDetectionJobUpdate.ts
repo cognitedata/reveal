@@ -15,7 +15,6 @@ import {
 } from 'src/utils/AnnotationUtils';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
 import { fileProcessUpdate } from 'src/store/commonActions';
-import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 
 export const AnnotationDetectionJobUpdate = createAsyncThunk<
   VisionAnnotation[],
