@@ -63,6 +63,7 @@ const CreateTableModal = ({
 
   const {
     columns,
+    isParsing,
     isUploadFailed,
     isUploadCompleted,
     onConfirmUpload,
@@ -83,6 +84,16 @@ const CreateTableModal = ({
     (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
       !(selectedColumnIndex >= 0));
 
+  const handleCancel = (): void => {
+    if (file && isParsing && !isUploadCompleted) {
+      notification.info({
+        message: `File upload was canceled.`,
+        key: 'file-upload',
+      });
+    }
+    onCancel();
+  };
+
   const handleCreate = (): void => {
     createDatabase(
       { database: databaseName, table: tableName },
@@ -92,7 +103,7 @@ const CreateTableModal = ({
             message: `Table ${tableName} created!`,
             key: 'create-table',
           });
-          onCancel();
+          handleCancel();
           openTable([databaseName, tableName]);
         },
         onError: (e: any) => {
@@ -197,7 +208,7 @@ const CreateTableModal = ({
       footer={[
         ...(createTableModalStep !== CreateTableModalStep.Upload
           ? [
-              <StyledCancelButton onClick={onCancel} type="ghost">
+              <StyledCancelButton onClick={handleCancel} type="ghost">
                 Cancel
               </StyledCancelButton>,
             ]
@@ -227,14 +238,14 @@ const CreateTableModal = ({
           : []),
         ...(isUploadCompleted
           ? [
-              <Button onClick={onCancel} type="primary">
+              <Button onClick={handleCancel} type="primary">
                 OK
               </Button>,
             ]
           : []),
       ]}
       maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       title={<Title level={5}>Create table</Title>}
       visible={visible}
       {...modalProps}
