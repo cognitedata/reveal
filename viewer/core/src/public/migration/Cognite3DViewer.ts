@@ -4,7 +4,6 @@
 import * as THREE from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
-import debounce from 'lodash/debounce';
 import omit from 'lodash/omit';
 import { Subscription, fromEventPattern } from 'rxjs';
 
@@ -12,7 +11,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, clickOrTouchEventOffset, EventTrigger, MouseHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, MouseHandler } from '@reveal/utilities';
 import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -1331,10 +1330,10 @@ export class Cognite3DViewer {
   private readonly startPointerEventListeners = () => {
     const mouseHandler = new MouseHandler(this.domElement);
 
-    mouseHandler.on('click', (e) => {
+    mouseHandler.on('click', e => {
       this._events.click.fire(e);
     });
-    mouseHandler.on('hover', (e) => {
+    mouseHandler.on('hover', e => {
       this._events.hover.fire(e);
     });
   };

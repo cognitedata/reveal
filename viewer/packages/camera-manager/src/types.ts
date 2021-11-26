@@ -75,15 +75,14 @@ export type CallbackData = {
  * Delegate for pointer events.
  * @module @cognite/reveal
  */
- export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
 /**
  * Type defining camera change event data.
  */
 export type CameraChangeData = (event: {
   camera: {
-    position: THREE.Vector3,
-    target: THREE.Vector3,
-  }
+    position: THREE.Vector3;
+    target: THREE.Vector3;
+  };
 }) => void;
- 

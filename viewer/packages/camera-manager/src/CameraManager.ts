@@ -6,13 +6,13 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
 import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate } from './types';
-import { assertNever, EventTrigger, MouseHandler, } from '@reveal/utilities';
+import { assertNever, EventTrigger, MouseHandler } from '@reveal/utilities';
 
 export class CameraManager {
   public readonly controls: ComboControls;
 
   private readonly _events = {
-    cameraChange: new EventTrigger<CameraChangeData>(),
+    cameraChange: new EventTrigger<CameraChangeData>()
   };
 
   private readonly _camera: THREE.PerspectiveCamera;
@@ -31,7 +31,7 @@ export class CameraManager {
   };
 
   private _cameraControlsOptions: Required<CameraControlsOptions> = { ...CameraManager.DefaultCameraControlsOptions };
-  
+
   public automaticNearFarPlane: boolean = true;
   public automaticControlsSensitivity = false;
 
@@ -219,7 +219,7 @@ export class CameraManager {
 
     this.controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
-      this._events.cameraChange.fire({camera: {position: position.clone(), target: target.clone()}});
+      this._events.cameraChange.fire({ camera: { position: position.clone(), target: target.clone() } });
     });
 
     if (!camera) {
@@ -233,10 +233,7 @@ export class CameraManager {
     }
   }
 
-  on(
-    event: 'cameraChange',
-    callback: CameraChangeData
-  ): void {
+  on(event: 'cameraChange', callback: CameraChangeData): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeData);
@@ -246,10 +243,7 @@ export class CameraManager {
     }
   }
 
-  off(
-    event: 'cameraChange',
-    callback: CameraChangeData
-  ): void {
+  off(event: 'cameraChange', callback: CameraChangeData): void {
     switch (event) {
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeData);
@@ -295,7 +289,10 @@ export class CameraManager {
 
   private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
-    duration = Math.min(Math.max(duration, CameraManager.DefaultMinAnimationDuration), CameraManager.DefaultMaxAnimationDuration);
+    duration = Math.min(
+      Math.max(duration, CameraManager.DefaultMinAnimationDuration),
+      CameraManager.DefaultMaxAnimationDuration
+    );
 
     return duration;
   }
