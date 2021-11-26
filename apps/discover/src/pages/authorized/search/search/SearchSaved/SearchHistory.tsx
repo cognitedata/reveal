@@ -195,6 +195,9 @@ export const SearchHistory: React.FC = () => {
       components={{
         DropdownIndicator: () => null,
       }}
+      onFocus={() => {
+        setFastValue(value?.value);
+      }}
       formatCreateLabel={formatCreateLabel}
       formatOptionLabel={formatOptionLabel}
       placeholder={t('Search')}
