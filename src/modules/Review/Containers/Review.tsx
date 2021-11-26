@@ -92,7 +92,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     }
 
     if (file) {
-      dispatch(RetrieveAnnotations([+fileId]));
+      dispatch(RetrieveAnnotations({ fileIds: [+fileId], clearCache: true }));
     }
   }, [file, fileId, reviewFileIds]);
 
