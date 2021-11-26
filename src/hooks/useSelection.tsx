@@ -90,7 +90,7 @@ export const useSelectionCheckbox = (
             ? Colors['midblue-7'].hex()
             : Colors['greyscale-grey2'].hex(),
         }}
-        icon="Check"
+        icon="Checkmark"
       />
     );
   }

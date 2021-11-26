@@ -122,9 +122,8 @@ export const AssetSmallPreview = ({
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Button
               onClick={() => setSelected(undefined)}
-              type="secondary"
-              icon="ArrowLeft"
-              variant="ghost"
+              type="ghost"
+              icon="ArrowBack"
             >
               BACK TO {asset.name.toLocaleUpperCase()}
             </Button>
@@ -257,7 +256,10 @@ export const AssetSmallPreview = ({
               }}
               title={
                 <div style={{ display: 'flex' }}>
-                  <Icon type="Timeseries" style={{ marginRight: '4px' }} />
+                  <Icon
+                    type="ResourceTimeseries"
+                    style={{ marginRight: '4px' }}
+                  />
                   <Title level={6}>Time series</Title>
                 </div>
               }

@@ -415,7 +415,7 @@ const AnnotationPreviewSidebar = ({
                 <Dropdown overlay={menuOptions}>
                   <Icon type="MoreOverflowEllipsisVertical" />
                 </Dropdown>
-                <Button icon="Close" variant="ghost" onClick={onClose} />
+                <Button icon="Close" type="ghost" onClick={onClose} />
               </div>
             </div>
           </div>
@@ -500,7 +500,7 @@ const AnnotationPreviewSidebar = ({
             onItemClicked &&
             item && [
               <Button
-                icon="ArrowRight"
+                icon="ArrowForward"
                 iconPlacement="right"
                 onClick={() =>
                   type &&

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Button } from '@cognite/cogs.js';
+import { SegmentedControl } from '@cognite/cogs.js';
 import { AssetFilterProps, Asset } from '@cognite/sdk';
-import { ButtonGroup, EnsureNonEmptyResource } from 'components';
+import { EnsureNonEmptyResource } from 'components';
 import {
   AssetTable,
   AssetTreeTable,
@@ -61,10 +61,23 @@ export const AssetSearchResults = ({
         filter={filter}
         query={query}
       >
-        <ButtonGroup currentKey={currentView} onButtonClicked={setCurrentView}>
-          <Button icon="Tree" key="tree" title="Asset hierarchy" />
-          <Button icon="List" key="list" title="List" />
-        </ButtonGroup>
+        <SegmentedControl
+          currentKey={currentView}
+          onButtonClicked={setCurrentView}
+        >
+          <SegmentedControl.Button
+            icon="Tree"
+            key="tree"
+            title="Asset hierarchy"
+            aria-label="Asset hierarchy"
+          />
+          <SegmentedControl.Button
+            icon="List"
+            key="list"
+            title="List"
+            aria-label="List"
+          />
+        </SegmentedControl>
       </SearchResultToolbar>
       <EnsureNonEmptyResource api="asset">{content}</EnsureNonEmptyResource>
     </>

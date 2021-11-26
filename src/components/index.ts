@@ -5,7 +5,6 @@ export * from './InfoGrid/InfoGrid';
 export * from './Popover/Popover';
 export * from './FilterForm/FilterForm';
 export * from './Splitter/Splitter';
-export * from './ButtonGroup/ButtonGroup';
 export * from './CdfCount/CdfCount';
 export * from './DatePicker';
 export * from './LatestDatapoint/LatestDatapoint';

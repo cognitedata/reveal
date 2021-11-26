@@ -54,7 +54,7 @@ export const CalendarPicker = ({
             }
           />
         </div>
-        <Icon type="ArrowRight" />
+        <Icon type="ArrowForward" />
         <div style={{ display: 'block' }}>
           <Overline level={3}>End</Overline>
           <DatePickerInput

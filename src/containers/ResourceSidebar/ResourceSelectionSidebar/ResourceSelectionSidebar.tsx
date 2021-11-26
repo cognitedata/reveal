@@ -119,7 +119,7 @@ export const ResourceSelectionSidebar = ({
           <div>
             <CloseButton
               icon="Close"
-              variant="ghost"
+              type="ghost"
               onClick={() => onClose(false)}
             />
             {header}

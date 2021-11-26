@@ -38,7 +38,7 @@ const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
 );
 const ThreeDIcon = ({ style }: { style?: React.CSSProperties }) => (
   <IconBackground style={style}>
-    <Icon type="ResourceEvents" />
+    <Icon type="Resource3D" />
   </IconBackground>
 );
 export const ResourceIcons = ({

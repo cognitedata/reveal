@@ -104,9 +104,7 @@ export const ResourcePreviewSidebar = ({
 
   return (
     <ResourcePreviewWrapper>
-      {closable && (
-        <CloseButton icon="Close" variant="ghost" onClick={onClose} />
-      )}
+      {closable && <CloseButton icon="Close" type="ghost" onClick={onClose} />}
       {header}
       {!hideContent && (propContent || content)}
       {footer}

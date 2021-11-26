@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   LineChart,
   LineChartProps,
-  ButtonGroup,
   Loader,
   RangePicker,
   SpacedRow,
@@ -13,6 +12,7 @@ import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import moment from 'moment';
 import { DateRangeProps } from 'CommonProps';
+import { SegmentedControl } from '@cognite/cogs.js';
 
 export type TIME_OPTION_KEY =
   | '10Y'
@@ -242,17 +242,17 @@ export const TimeseriesChart = ({
 
       <SpacedRow>
         {timeOptions.length > 1 && (
-          <ButtonGroup
+          <SegmentedControl
             variant="ghost"
             currentKey={timePeriod}
             onButtonClicked={key => setTimePeriod(key as TIME_OPTION_KEY)}
           >
             {timeOptions.map(key => (
-              <ButtonGroup.Button key={key}>
+              <SegmentedControl.Button key={key}>
                 {TIME_SELECT[key].label}
-              </ButtonGroup.Button>
+              </SegmentedControl.Button>
             ))}
-          </ButtonGroup>
+          </SegmentedControl>
         )}
         {showCustomRangePicker && (
           <RangePicker

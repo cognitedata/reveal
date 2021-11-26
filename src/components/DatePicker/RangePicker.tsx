@@ -1,8 +1,14 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useRef } from 'react';
 import moment from 'moment';
-import { SpacedRow, ButtonGroup, Divider } from 'components';
-import { Dropdown, Button, Icon, ButtonProps } from '@cognite/cogs.js';
+import { SpacedRow, Divider } from 'components';
+import {
+  Dropdown,
+  Button,
+  Icon,
+  ButtonProps,
+  SegmentedControl,
+} from '@cognite/cogs.js';
 import { TIME_SELECT } from 'containers';
 import { PivotRangePicker } from './PivotRangePicker';
 import {
@@ -59,18 +65,22 @@ export const RangePicker = ({
         overflow: 'auto',
       }}
     >
-      <ButtonGroup
+      <SegmentedControl
         style={{ marginBottom: 8 }}
         currentKey={mode}
         onButtonClicked={key => setMode(key as 'range' | 'calendar')}
       >
-        <ButtonGroup.Button style={{ flex: 1 }} key="range" icon="Events">
+        <SegmentedControl.Button style={{ flex: 1 }} key="range" icon="Events">
           Range
-        </ButtonGroup.Button>
-        <ButtonGroup.Button style={{ flex: 1 }} key="calendar" icon="Calendar">
+        </SegmentedControl.Button>
+        <SegmentedControl.Button
+          style={{ flex: 1 }}
+          key="calendar"
+          icon="Calendar"
+        >
           Calendar
-        </ButtonGroup.Button>
-      </ButtonGroup>
+        </SegmentedControl.Button>
+      </SegmentedControl>
       {mode === 'range' ? (
         <PivotRangePicker range={pivotRange} onRangeChanged={setPivotRange} />
       ) : (
@@ -111,7 +121,7 @@ export const RangePicker = ({
         <span ref={spanRef}>{`${moment(initialRange[0]).format(
           'yyyy/MM/DD HH:mm'
         )}`}</span>
-        <Icon type="ArrowRight" style={{ marginLeft: 8, marginRight: 8 }} />
+        <Icon type="ArrowForward" style={{ marginLeft: 8, marginRight: 8 }} />
         <span>{`${moment(initialRange[1]).format('yyyy/MM/DD HH:mm')}`}</span>
       </Button>
     </Dropdown>

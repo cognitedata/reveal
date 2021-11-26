@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonGroup } from 'components';
+import { SegmentedControl } from '@cognite/cogs.js';
 import { SearchResultToolbar } from '../SearchResultToolbar';
 
 export const TimeseriesToolbar = ({
@@ -23,10 +23,20 @@ export const TimeseriesToolbar = ({
       count={count}
       query={query}
     >
-      <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
-        <ButtonGroup.Button key="list" icon="List" title="List" />
-        <ButtonGroup.Button key="grid" icon="Grid" title="Grid" />
-      </ButtonGroup>
+      <SegmentedControl onButtonClicked={onViewChange} currentKey={currentView}>
+        <SegmentedControl.Button
+          key="list"
+          icon="List"
+          title="List"
+          aria-label="List"
+        />
+        <SegmentedControl.Button
+          key="grid"
+          icon="Grid"
+          title="Grid"
+          aria-label="Grid"
+        />
+      </SegmentedControl>
     </SearchResultToolbar>
   </>
 );

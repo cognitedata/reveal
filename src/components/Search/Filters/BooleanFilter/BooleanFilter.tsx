@@ -1,6 +1,5 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
-import { ButtonGroup } from 'components';
+import { Body, SegmentedControl } from '@cognite/cogs.js';
 
 export const BooleanFilter = ({
   title,
@@ -34,8 +33,8 @@ export const BooleanFilter = ({
       >
         {title}
       </Body>
-      <ButtonGroup
-        style={{ width: '100%' }}
+      <SegmentedControl
+        fullWidth
         currentKey={currentChecked}
         onButtonClicked={key => {
           if (key === 'unset') {
@@ -47,16 +46,16 @@ export const BooleanFilter = ({
           }
         }}
       >
-        <ButtonGroup.Button key="unset" style={{ flex: 1 }}>
+        <SegmentedControl.Button key="unset" style={{ flex: 1 }}>
           All
-        </ButtonGroup.Button>
-        <ButtonGroup.Button key="true" style={{ flex: 1 }}>
+        </SegmentedControl.Button>
+        <SegmentedControl.Button key="true" style={{ flex: 1 }}>
           True
-        </ButtonGroup.Button>
-        <ButtonGroup.Button key="false" style={{ flex: 1 }}>
+        </SegmentedControl.Button>
+        <SegmentedControl.Button key="false" style={{ flex: 1 }}>
           False
-        </ButtonGroup.Button>
-      </ButtonGroup>
+        </SegmentedControl.Button>
+      </SegmentedControl>
     </>
   );
 };

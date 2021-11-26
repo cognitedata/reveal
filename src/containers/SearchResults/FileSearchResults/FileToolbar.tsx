@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, SegmentedControl } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
-import { ButtonGroup } from 'components';
 import { SearchResultToolbar, FileUploaderModal } from 'containers';
 import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
 
@@ -48,10 +47,23 @@ export const FileToolbar = ({
             Upload
           </UploadButton>
         )}
-        <ButtonGroup onButtonClicked={onViewChange} currentKey={currentView}>
-          <ButtonGroup.Button key="list" icon="List" title="List" />
-          <ButtonGroup.Button key="grid" icon="Grid" title="Grid" />
-        </ButtonGroup>
+        <SegmentedControl
+          onButtonClicked={onViewChange}
+          currentKey={currentView}
+        >
+          <SegmentedControl.Button
+            key="list"
+            icon="List"
+            title="List"
+            aria-label="List"
+          />
+          <SegmentedControl.Button
+            key="grid"
+            icon="Grid"
+            title="Grid"
+            aria-label="Grid"
+          />
+        </SegmentedControl>
       </SearchResultToolbar>
       <FileUploaderModal
         visible={modalVisible}

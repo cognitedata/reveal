@@ -170,11 +170,11 @@ export const renderCustomHeader = (
     return (
       <SpacedRow style={{ paddingLeft: 8, paddingRight: 8 }}>
         <Button
-          variant="ghost"
+          type="ghost"
           size="small"
           onClick={decreaseMonth}
           disabled={prevMonthButtonDisabled}
-          icon="ArrowLeft"
+          icon="ArrowBack"
         />
         <div className="spacer" />
         <div style={{ width: 80 }}>
@@ -213,11 +213,11 @@ export const renderCustomHeader = (
         </div>
         <div className="spacer" />
         <Button
-          variant="ghost"
+          type="ghost"
           size="small"
           onClick={increaseMonth}
           disabled={nextMonthButtonDisabled}
-          icon="ArrowRight"
+          icon="ArrowForward"
         />
       </SpacedRow>
     );

@@ -64,7 +64,7 @@ export const MetadataFilter = <
           Metadata
         </Body>
         {showClearFiltersButton && (
-          <Button type="secondary" variant="ghost" onClick={clearFilters}>
+          <Button type="ghost" onClick={clearFilters}>
             Clear all
           </Button>
         )}

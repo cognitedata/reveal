@@ -260,7 +260,13 @@ export const FilePreviewOverview = ({
                 text={`${categorizedAnnotations.asset.annotations.length}`}
                 background={Colors['purple-5'].hex()}
               />
-              <Icon type={open.includes('assets') ? 'Up' : 'Down'} />
+              <Icon
+                type={
+                  open.includes('assets')
+                    ? 'ChevronUpCompact'
+                    : 'ChevronDownCompact'
+                }
+              />
             </CollapseHeader>
           }
         >
@@ -298,7 +304,13 @@ export const FilePreviewOverview = ({
                 text={`${categorizedAnnotations.file.annotations.length}`}
                 background={Colors['midorange-5'].hex()}
               />
-              <Icon type={open.includes('files') ? 'Up' : 'Down'} />
+              <Icon
+                type={
+                  open.includes('files')
+                    ? 'ChevronUpCompact'
+                    : 'ChevronDownCompact'
+                }
+              />
             </CollapseHeader>
           }
         >
@@ -329,14 +341,23 @@ export const FilePreviewOverview = ({
           key="timeseries"
           header={
             <CollapseHeader>
-              <Icon className="cogs-icon resource-icon" type="Timeseries" />
+              <Icon
+                className="cogs-icon resource-icon"
+                type="ResourceTimeseries"
+              />
               <Title level={5}>Time series</Title>
               <div className="spacer" />
               <Badge
                 text={`${categorizedAnnotations.timeSeries.annotations.length}`}
                 background={Colors['lightblue-5'].hex()}
               />
-              <Icon type={open.includes('timeseries') ? 'Up' : 'Down'} />
+              <Icon
+                type={
+                  open.includes('timeseries')
+                    ? 'ChevronUpCompact'
+                    : 'ChevronDownCompact'
+                }
+              />
             </CollapseHeader>
           }
         >
@@ -374,7 +395,13 @@ export const FilePreviewOverview = ({
                 text={`${categorizedAnnotations.event.annotations.length}`}
                 background={Colors['pink-5'].hex()}
               />
-              <Icon type={open.includes('events') ? 'Up' : 'Down'} />
+              <Icon
+                type={
+                  open.includes('events')
+                    ? 'ChevronUpCompact'
+                    : 'ChevronDownCompact'
+                }
+              />
             </CollapseHeader>
           }
         >
@@ -412,7 +439,13 @@ export const FilePreviewOverview = ({
                 text={`${categorizedAnnotations.sequence.annotations.length}`}
                 background={Colors['yellow-5'].hex()}
               />
-              <Icon type={open.includes('sequences') ? 'Up' : 'Down'} />
+              <Icon
+                type={
+                  open.includes('sequences')
+                    ? 'ChevronUpCompact'
+                    : 'ChevronDownCompact'
+                }
+              />
             </CollapseHeader>
           }
         >
@@ -467,7 +500,7 @@ export const FilePreviewOverview = ({
       </SidebarHeader>
       {extras}
       <Tabs>
-        <Button variant="ghost" onClick={() => setTab('resources')}>
+        <Button type="ghost" onClick={() => setTab('resources')}>
           <Title
             level={5}
             style={{
@@ -478,7 +511,7 @@ export const FilePreviewOverview = ({
             Detected resources
           </Title>
         </Button>
-        <Button variant="ghost" onClick={() => setTab('fileInfo')}>
+        <Button type="ghost" onClick={() => setTab('fileInfo')}>
           <Title
             level={5}
             style={{

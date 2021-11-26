@@ -109,11 +109,7 @@ export const SearchFilters = ({
           {allowHide && (
             <Col flex="none">
               <HideFiltersTooltip content="Hide">
-                <Button
-                  icon="PanelLeft"
-                  variant="ghost"
-                  onClick={closeFilters}
-                />
+                <Button icon="PanelLeft" type="ghost" onClick={closeFilters} />
               </HideFiltersTooltip>
             </Col>
           )}
