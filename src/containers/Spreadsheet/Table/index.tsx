@@ -30,7 +30,7 @@ export const Table = (props: Props): JSX.Element => {
   );
 
   return (
-    <Flex style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <StyledTableWrapper>
       <AutoResizer>
         {({ width, height }) => (
           <StyledBaseTable
@@ -49,11 +49,18 @@ export const Table = (props: Props): JSX.Element => {
       </AutoResizer>
       <ProfilingSidebar />
       <ExpandedCellModal />
-    </Flex>
+    </StyledTableWrapper>
   );
 };
 
 const TABLE_PREFIX = 'BaseTable__';
+const StyledTableWrapper = styled(Flex)`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transform: translate(0);
+`;
 const StyledBaseTable = styled(BaseTable)`
   .${TABLE_PREFIX}table {
     box-shadow: none;

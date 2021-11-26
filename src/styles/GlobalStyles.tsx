@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Tooltip as CogsTooltip, Drawer as CogsDrawer } from '@cognite/cogs.js';
+import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
@@ -13,11 +13,6 @@ import { ids } from './cogsVariables';
 CogsTooltip.defaultProps = {
   ...CogsTooltip.defaultProps,
   appendTo: getContainer,
-};
-
-CogsDrawer.defaultProps = {
-  ...CogsDrawer.defaultProps,
-  getContainer,
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
