@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
-import { Button, Colors, Drawer, Flex } from '@cognite/cogs.js';
+import { Button, Colors, Drawer, Flex, Title } from '@cognite/cogs.js';
 
 import { RawExplorerContext } from 'contexts';
 
 const SIDEBAR_PROFILING_WIDTH = 350;
 
 export const ProfilingSidebar = (): JSX.Element => {
-  const { isProfilingSidebarOpen, setIsProfilingSidebarOpen } =
+  const { isProfilingSidebarOpen, setIsProfilingSidebarOpen, selectedColumn } =
     useContext(RawExplorerContext);
 
   const onClickHide = () => {
@@ -17,6 +17,7 @@ export const ProfilingSidebar = (): JSX.Element => {
     <Drawer
       visible={isProfilingSidebarOpen}
       width={SIDEBAR_PROFILING_WIDTH}
+      closable={false}
       showMask={false}
       // @ts-ignore
       getContainer={null}
@@ -34,7 +35,9 @@ export const ProfilingSidebar = (): JSX.Element => {
         </Button>
       }
     >
-      <Flex>^_^</Flex>
+      <Flex>
+        <Title level={6}>{selectedColumn?.title ?? '-'}</Title>
+      </Flex>
     </Drawer>
   );
 };
