@@ -29,6 +29,7 @@ const nameToAclTypeMap = {
   users: 'usersAcl',
   projects: 'projectsAcl',
   datasets: 'datasetsAcl',
+  transformations: 'transformationsAcl',
   extractionpipelines: 'extractionPipelinesAcl',
   extractionruns: 'extractionRunsAcl',
   labels: 'labelsAcl',
@@ -60,6 +61,7 @@ const nameToFormattedName = {
   timeseries: 'Time series',
   digitaltwin: 'Digital twin',
   datasets: 'Data sets',
+  transformations: 'Transformations',
   extractionpipelines: 'Extraction pipelines',
   extractionruns: 'Extraction pipeline runs',
   modelhosting: 'Model hosting',
@@ -108,6 +110,7 @@ const capabilityTypeGroups = [
       'modelhosting',
       'generic',
       'functions',
+      'transformations',
       'labels',
       'geospatial',
       'entitymatching',
@@ -143,6 +146,8 @@ export const capabilityDescriptions = {
     'Relationships represent connections between pairs of CDF resources',
   datasets:
     'Data sets are groups of data based on origin, such as all SAP work orders',
+  transformations:
+    'Transformations are used to transform data from RAW tables and write it to CDF resources or write back to RAW tables',
   extractionpipelines:
     'Extraction pipelines are used to extract data from a source system',
   extractionruns: 'Execution history for extraction pipelines',
@@ -356,6 +361,8 @@ export const getCapabilityScopes = (
       return ['datasetScope', 'all'];
     case 'datasets':
       return ['idScope', 'all']; // idScope (uppercase S) and ...
+    case 'transformations':
+      return ['all'];
     case 'extractionpipelines':
       return ['datasetScope', 'idScope', 'all'];
     case 'extractionruns':
