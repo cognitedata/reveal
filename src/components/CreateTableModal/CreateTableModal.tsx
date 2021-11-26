@@ -10,13 +10,28 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 
-import CreateEmptyTableOption from './CreateEmptyTableOption';
+import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
+import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
+import CreateTableModalUploadStep from './CreateTableModalUploadStep';
+import { useCSVUpload } from 'hooks/csv-upload';
+import { trimFileExtension } from 'utils/utils';
 
 const CREATE_TABLE_MODAL_WIDTH = 600;
 
-enum CreateTableOption {
+export enum CreateTableModalStep {
+  CreationMode = 'creationMode',
+  PrimaryKey = 'primaryKey',
+  Upload = 'upload',
+}
+
+export enum CreationMode {
   Empty = 'empty',
   Upload = 'upload',
+}
+
+export enum PrimaryKeyMethod {
+  ChooseColumn = 'chooseColumn',
+  AutoGenerate = 'autoGenerate',
 }
 
 type CreateTableModalProps = {
@@ -32,24 +47,50 @@ const CreateTableModal = ({
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
   const [tableName, setTableName] = useState('');
-  const [selectedCreateTableOption, setSelectedCreateTableOption] =
-    useState<CreateTableOption>();
+  const [createTableModalStep, setCreateTableModalStep] = useState(
+    CreateTableModalStep.CreationMode
+  );
+  const [selectedCreationMode, setSelectedCreationMode] =
+    useState<CreationMode>();
+  const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
+    useState<PrimaryKeyMethod>();
+  const [file, setFile] = useState<File>(); // eslint-disable-line
+  const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
 
-  const { mutate: createDatabase, isLoading } = useCreateTable();
+  const { mutate: createDatabase, isLoading: isCreatingTable } =
+    useCreateTable();
   const [, openTable] = useActiveTable();
 
+  const {
+    columns,
+    isUploadFailed,
+    isUploadCompleted,
+    onConfirmUpload,
+    uploadPercentage,
+  } = useCSVUpload(file, selectedColumnIndex);
+
   const isUnique = !tables.some(({ name }) => name === tableName);
-  const isDisabled =
+  const isCreationDisabled =
     tableName.length === 0 ||
     tableName.length > 64 ||
-    !selectedCreateTableOption ||
+    !selectedCreationMode ||
     !isUnique ||
-    isLoading;
+    isCreatingTable;
+
+  const isUploadDisabled =
+    isCreationDisabled ||
+    !selectedPrimaryKeyMethod ||
+    (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
+      !(selectedColumnIndex >= 0));
 
   useEffect(() => {
     if (!visible) {
       setTableName('');
-      setSelectedCreateTableOption(undefined);
+      setCreateTableModalStep(CreateTableModalStep.CreationMode);
+      setSelectedCreationMode(undefined);
+      setSelectedPrimaryKeyMethod(undefined);
+      setFile(undefined);
+      setSelectedColumnIndex(-1);
     }
   }, [visible]);
 
@@ -80,26 +121,127 @@ const CreateTableModal = ({
     );
   };
 
-  const selectOption =
-    (option: CreateTableOption): (() => void) =>
+  const handleUpload = (): void => {
+    createDatabase(
+      { database: databaseName, table: tableName },
+      {
+        onSuccess: () => {
+          setCreateTableModalStep(CreateTableModalStep.Upload);
+          onConfirmUpload(databaseName, tableName);
+        },
+        onError: (e: any) => {
+          notification.error({
+            message: (
+              <p>
+                <p>Table {tableName} was not created!</p>
+                <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
+              </p>
+            ),
+            key: 'create-table',
+          });
+        },
+      }
+    );
+  };
+
+  const selectCreationMode =
+    (mode: CreationMode): (() => void) =>
     (): void => {
-      setSelectedCreateTableOption(option);
+      setSelectedCreationMode(mode);
+      if (mode === CreationMode.Upload) {
+        setCreateTableModalStep(CreateTableModalStep.PrimaryKey);
+      }
     };
+
+  const selectPrimaryKeyMethod =
+    (method: PrimaryKeyMethod): (() => void) =>
+    (): void => {
+      setSelectedPrimaryKeyMethod(method);
+    };
+
+  const selectFile = (file?: File): void => {
+    setFile(file);
+    if (tableName.length === 0 && file) {
+      setTableName(trimFileExtension(file.name));
+    }
+  };
+
+  const renderCreateTableModalStep = (): JSX.Element | undefined => {
+    if (createTableModalStep === CreateTableModalStep.CreationMode) {
+      return (
+        <CreateTableModalCreationModeStep
+          isCreatingTable={isCreatingTable}
+          selectedCreationMode={selectedCreationMode}
+          selectCreationMode={selectCreationMode}
+          setFile={selectFile}
+        />
+      );
+    }
+    if (createTableModalStep === CreateTableModalStep.PrimaryKey) {
+      return (
+        <CreateTableModalPrimaryKeyStep
+          columns={columns}
+          selectedColumnIndex={selectedColumnIndex}
+          selectColumnAsPrimaryKey={(index: number) =>
+            setSelectedColumnIndex(index)
+          }
+          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+        />
+      );
+    }
+    if (createTableModalStep === CreateTableModalStep.Upload) {
+      return (
+        <CreateTableModalUploadStep
+          fileName={file?.name ? trimFileExtension(file.name) : ''}
+          isUploadFailed={isUploadFailed}
+          isUploadCompleted={isUploadCompleted}
+          progression={uploadPercentage}
+        />
+      );
+    }
+  };
 
   return (
     <Modal
       footer={[
-        <StyledCancelButton onClick={onCancel} type="ghost">
-          Cancel
-        </StyledCancelButton>,
-        <Button
-          disabled={isDisabled}
-          loading={isLoading}
-          onClick={handleCreate}
-          type="primary"
-        >
-          Create
-        </Button>,
+        ...(createTableModalStep !== CreateTableModalStep.Upload
+          ? [
+              <StyledCancelButton onClick={onCancel} type="ghost">
+                Cancel
+              </StyledCancelButton>,
+            ]
+          : []),
+        ...(selectedCreationMode === CreationMode.Empty
+          ? [
+              <Button
+                disabled={isCreationDisabled}
+                loading={isCreatingTable}
+                onClick={handleCreate}
+                type="primary"
+              >
+                Create
+              </Button>,
+            ]
+          : []),
+        ...(createTableModalStep === CreateTableModalStep.PrimaryKey
+          ? [
+              <Button
+                disabled={isUploadDisabled}
+                onClick={handleUpload}
+                type="primary"
+              >
+                Create
+              </Button>,
+            ]
+          : []),
+        ...(isUploadCompleted
+          ? [
+              <Button onClick={onCancel} type="primary">
+                OK
+              </Button>,
+            ]
+          : []),
       ]}
       onCancel={onCancel}
       title={<Title level={5}>Create table</Title>}
@@ -107,38 +249,29 @@ const CreateTableModal = ({
       {...modalProps}
       width={CREATE_TABLE_MODAL_WIDTH}
     >
-      <FormFieldWrapper isRequired title="Name">
-        <Input
-          autoFocus
-          disabled={isLoading}
-          fullWidth
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setTableName(e.target.value)
-          }
-          onKeyUp={(e) => {
-            if (!isDisabled && e.key === 'Enter') {
-              handleCreate();
+      {createTableModalStep !== CreateTableModalStep.Upload && (
+        <FormFieldWrapper isRequired title="Name">
+          <Input
+            autoFocus
+            disabled={isCreatingTable}
+            fullWidth
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTableName(e.target.value)
             }
-          }}
-          placeholder="Enter name"
-          value={tableName}
-        />
-        <StyledNameInputDetail>
-          The name should be unique. You can not change this name later.
-        </StyledNameInputDetail>
-      </FormFieldWrapper>
-      <FormFieldWrapper isRequired title="Select one">
-        <StyledCreateOptions>
-          <StyledCreateOption>upload csv</StyledCreateOption>
-          <StyledCreateOption>
-            <CreateEmptyTableOption
-              isDisabled={isLoading}
-              isSelected={selectedCreateTableOption === CreateTableOption.Empty}
-              onClick={selectOption(CreateTableOption.Empty)}
-            />
-          </StyledCreateOption>
-        </StyledCreateOptions>
-      </FormFieldWrapper>
+            onKeyUp={(e) => {
+              if (!isCreationDisabled && e.key === 'Enter') {
+                handleCreate();
+              }
+            }}
+            placeholder="Enter name"
+            value={tableName}
+          />
+          <StyledNameInputDetail>
+            The name should be unique. You can not change this name later.
+          </StyledNameInputDetail>
+        </FormFieldWrapper>
+      )}
+      {renderCreateTableModalStep()}
     </Modal>
   );
 };
@@ -150,21 +283,6 @@ const StyledNameInputDetail = styled(Detail)`
 
 const StyledCancelButton = styled(Button)`
   margin-right: 8px;
-`;
-
-const StyledCreateOptions = styled.ul`
-  display: flex;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const StyledCreateOption = styled.li`
-  flex: 1;
-
-  :not(:last-child) {
-    margin-right: 16px;
-  }
 `;
 
 export default CreateTableModal;
