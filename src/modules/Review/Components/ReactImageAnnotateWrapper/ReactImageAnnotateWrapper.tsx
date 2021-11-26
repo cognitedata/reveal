@@ -23,6 +23,7 @@ import {
   Region,
   AnnotatorTool,
   Action,
+  MainLayoutState,
 } from '@cognite/react-image-annotate';
 import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
 import {
@@ -312,10 +313,11 @@ export const ReactImageAnnotateWrapper = ({
     libDispatch.current = dispatchObj;
   };
 
-  const onCallDispatch = (action: Action) => {
+  const onCallDispatch = (action: Action, state: MainLayoutState) => {
     if (libDispatch.current) {
       if (action.type === 'MOUSE_DOWN') {
-        if (tempRegion && !keepUnsavedRegion) {
+        if (tempRegion && state.mode === null && !keepUnsavedRegion) {
+          // delete temporary regions on mouse click if not saved in CDF
           libDispatch.current({
             type: 'DELETE_REGION',
             region: tempRegion,

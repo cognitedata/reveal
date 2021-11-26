@@ -12,11 +12,11 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
-import { v4 as uuidv4 } from 'uuid';
 import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import {
   AnnotationStatus,
+  createUniqueId,
   KeypointItem,
   KeypointVertex,
 } from 'src/utils/AnnotationUtils';
@@ -162,7 +162,7 @@ const annotationLabelSlice = createSlice({
         };
 
         if (!state.lastCollectionId) {
-          const collectionId = `${action.payload.collectionName}-${uuidv4()}`;
+          const collectionId = createUniqueId(action.payload.collectionName);
 
           const collection = {
             id: collectionId,
