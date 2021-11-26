@@ -18,7 +18,7 @@ import { CadNode } from '@reveal/rendering';
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
  * potential visible sectors.
  */
-const SectorLoadingBatchSize = 20;
+const SectorLoadingBatchSize = 10000;
 
 /**
  * Loads sector based on a given camera pose, a set of models and budget.

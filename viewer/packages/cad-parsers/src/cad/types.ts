@@ -49,7 +49,11 @@ export interface ConsumedSector {
   levelOfDetail: LevelOfDetail;
   group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
-  primitives?: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][];
+  primitives?: [
+    type: RevealGeometryCollectionType,
+    geometryBuffer: THREE.BufferGeometry,
+    instanceId: string | undefined
+  ][];
 }
 
 export interface ParsedSector {

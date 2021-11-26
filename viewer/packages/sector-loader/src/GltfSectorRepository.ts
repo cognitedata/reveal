@@ -55,61 +55,31 @@ export class GltfSectorRepository implements SectorRepository {
 
     const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
-    const primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][] = [];
+    const primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry, instanceId: string][] =
+      [];
 
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
 
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.box);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.CircleCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.circle);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.ConeCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.cone);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.EccentricConeCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.eccentricCone);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.EllipsoidSegmentCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.ellipsoidSegment);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.GeneralCylinderCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.generalCylinder);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.GeneralRingCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.generalRing);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.QuadCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.quad);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.TorusSegmentCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.torusSegment);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.TrapeziumCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.trapezium);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
         case RevealGeometryCollectionType.NutCollection:
-          // this.createMesh(group, parsedGeometry.buffer, materials.nut);
-          primitives.push([type, parsedGeometry.buffer]);
-          break;
-        case RevealGeometryCollectionType.TriangleMesh:
-          // this.createMesh(group, parsedGeometry.buffer, materials.triangleMesh);
+          primitives.push([type, parsedGeometry.buffer, type.toString()]);
           break;
         case RevealGeometryCollectionType.InstanceMesh:
-          // this.createMesh(group, parsedGeometry.buffer, materials.instancedMesh);
+          primitives.push([type, parsedGeometry.buffer, parsedGeometry.instanceId!.toString()]);
+          break;
+        case RevealGeometryCollectionType.TriangleMesh:
+          this.createMesh(group, parsedGeometry.buffer, materials.triangleMesh);
           break;
         default:
           assertNever(type);

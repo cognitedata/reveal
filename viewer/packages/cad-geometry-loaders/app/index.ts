@@ -47,8 +47,8 @@ async function init() {
   // const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
   // const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
 
-  const modelId = parseInt(urlParams.get('modelId') ?? '4304523256471874');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '8974179402104743');
+  const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
 
   // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
   // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
@@ -62,6 +62,13 @@ async function init() {
   const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller());
 
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
+
+  cadManager.budget = {
+    geometryDownloadSizeBytes: Infinity,
+    highDetailProximityThreshold: Infinity,
+    maximumNumberOfDrawCalls: Infinity,
+    maximumRenderCost: Infinity
+  };
 
   const model = await cadManager.addModel(modelIdentifier);
 

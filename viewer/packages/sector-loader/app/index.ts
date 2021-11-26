@@ -49,8 +49,8 @@ async function init() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
+  const modelId = parseInt(urlParams.get('modelId') ?? '258063315016470');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '4183000258165146');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
 

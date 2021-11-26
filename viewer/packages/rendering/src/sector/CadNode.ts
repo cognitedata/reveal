@@ -181,7 +181,11 @@ export class CadNode extends THREE.Object3D {
   }
 
   public batchPrimtives(
-    primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry][],
+    primitives: [
+      type: RevealGeometryCollectionType,
+      geometryBuffer: THREE.BufferGeometry,
+      instanceId: string | undefined
+    ][],
     sectorId: number
   ) {
     this._primitiveBatchingManager.batchPrimitives(primitives, sectorId);

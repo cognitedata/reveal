@@ -50,6 +50,7 @@ export type Node = {
 
 export type Mesh = {
   primitives: Primitive[];
+  extras: { [key: string]: any } | undefined;
 };
 
 export type Primitive = {
