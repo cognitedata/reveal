@@ -11,6 +11,14 @@ export const useUserPreferencesMeasurement = () => {
   return mapMeasurementEnumToDiscoverUnit(unit);
 };
 
+export const useUserPreferencesMeasurementByMeasurementEnum = () => {
+  const { data } = useUserPreferencesQuery();
+  return (
+    data?.preferences?.measurement ||
+    UMSUserProfilePreferences.MeasurementEnum.Feet
+  );
+};
+
 const mapMeasurementEnumToDiscoverUnit = (
   fromUnit: UMSUserProfilePreferences.MeasurementEnum
 ) => {

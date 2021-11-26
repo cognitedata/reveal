@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Body, SegmentedControl } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
 
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useUserPreferencesMeasurementByMeasurementEnum } from 'hooks/useUserPreferences';
 
 import { SettingsItem } from '../elements';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 export const MeasurementSetting: React.FC<Props> = ({ onTabClick }) => {
   const { t } = useTranslation();
-  const preferredMeasurement = useUserPreferencesMeasurement();
+  const preferredMeasurement = useUserPreferencesMeasurementByMeasurementEnum();
 
   return (
     <SettingsItem>

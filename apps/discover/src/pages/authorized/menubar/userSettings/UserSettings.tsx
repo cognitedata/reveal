@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';

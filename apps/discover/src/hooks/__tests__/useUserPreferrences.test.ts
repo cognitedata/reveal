@@ -1,9 +1,14 @@
 import { renderHook } from '@testing-library/react-hooks';
 
+import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';
+
 import { UserPrefferedUnit } from 'constants/units';
 import { useUserPreferencesQuery } from 'modules/userManagementService/query';
 
-import { useUserPreferencesMeasurement } from '../useUserPreferences';
+import {
+  useUserPreferencesMeasurement,
+  useUserPreferencesMeasurementByMeasurementEnum,
+} from '../useUserPreferences';
 
 jest.mock('modules/userManagementService/query', () => ({
   useUserPreferencesQuery: jest.fn(),
@@ -49,5 +54,35 @@ describe('useUserPreferencesMeasurement hook', () => {
     );
     waitForNextUpdate();
     expect(result.error).toEqual(Error('Unit: milimeter, is not supported'));
+  });
+});
+
+describe('useUserPreferencesMeasurementByMeasurementEnum hook', () => {
+  it('Get defaulted to ft when not response from react query', async () => {
+    (useUserPreferencesQuery as jest.Mock).mockImplementation(() => ({
+      data: undefined,
+    }));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useUserPreferencesMeasurementByMeasurementEnum()
+    );
+    waitForNextUpdate();
+    expect(result.current).toBe(UMSUserProfilePreferences.MeasurementEnum.Feet);
+  });
+
+  it('Return respective unit for unit returned from react query', async () => {
+    (useUserPreferencesQuery as jest.Mock).mockImplementation(() => ({
+      data: {
+        preferences: {
+          measurement: 'meter',
+        },
+      },
+    }));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useUserPreferencesMeasurementByMeasurementEnum()
+    );
+    waitForNextUpdate();
+    expect(result.current).toBe(
+      UMSUserProfilePreferences.MeasurementEnum.Meter
+    );
   });
 });
