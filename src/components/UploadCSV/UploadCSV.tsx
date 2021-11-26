@@ -12,6 +12,7 @@ import Dragger from 'components/Dragger';
 import Modal from 'components/Modal/Modal';
 import { ModalProgress } from './ModalProgress';
 import { ModalChooseKey } from './ModalChooseKey';
+import { useActiveTableContext } from 'contexts';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -30,6 +31,8 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     isParsing,
     onConfirmUpload,
   } = useCSVUpload(file, selectedKeyIndex);
+
+  const { database, table } = useActiveTableContext();
 
   const okText = isUploadCompleted ? 'OK' : 'Add';
 
@@ -92,7 +95,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const onOk = () => {
     if (isUploadCompleted) setCSVModalVisible(false, true);
-    else onConfirmUpload();
+    else onConfirmUpload(database, table);
   };
 
   const okButtonProps = {

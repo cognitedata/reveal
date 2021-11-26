@@ -1,41 +1,53 @@
 import React from 'react';
 
-import { Body, Colors, Detail, Icon } from '@cognite/cogs.js';
+import { AllIconTypes, Body, Colors, Detail, Icon } from '@cognite/cogs.js';
+import icons, { IconType } from 'assets/icons';
 import styled from 'styled-components';
+import { CustomIcon } from 'components/CustomIcon';
 
-type CreateEmptyTableOptionProps = {
+type CreateTableModalOptionProps = {
+  description: string;
+  icon: AllIconTypes | IconType;
   isDisabled?: boolean;
   isSelected?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  title: string;
 };
 
-const CreateEmptyTableOption = ({
+const CreateTableModalOption = ({
+  description,
+  icon,
   isDisabled,
   isSelected,
   onClick,
-}: CreateEmptyTableOptionProps): JSX.Element => {
+  title,
+}: CreateTableModalOptionProps): JSX.Element => {
+  const customIconKeys = Object.keys(icons);
+
   return (
-    <StyledCreateEmptyTableWrapper
+    <StyledCreateOptionWrapper
       $isSelected={isSelected}
       disabled={isDisabled}
       onClick={onClick}
     >
-      <StyledCreateEmptyTableIcon size={32} type="DataTable" />
-      <StyledCreateEmptyTableTitle level={6} strong>
-        Create an empty table
-      </StyledCreateEmptyTableTitle>
-      <StyledCreateEmptyTableDetail strong>
-        Upload files later or write data directly using the API.
-      </StyledCreateEmptyTableDetail>
-    </StyledCreateEmptyTableWrapper>
+      {customIconKeys.includes(icon) ? (
+        <CustomIcon icon={icon as IconType} style={{ width: 32 }} />
+      ) : (
+        <StyledCreateOptionIcon size={32} type={icon as AllIconTypes} />
+      )}
+      <StyledCreateOptionTitle level={6} strong>
+        {title}
+      </StyledCreateOptionTitle>
+      <StyledCreateOptionDetail strong>{description}</StyledCreateOptionDetail>
+    </StyledCreateOptionWrapper>
   );
 };
 
-const StyledCreateEmptyTableIcon = styled(Icon)`
+const StyledCreateOptionIcon = styled(Icon)`
   color: ${Colors['border-default'].hex()};
 `;
 
-const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
+const StyledCreateOptionWrapper = styled.button<{ $isSelected?: boolean }>`
   align-items: center;
   background-color: inherit;
   border: 1px solid ${Colors['border-default'].hex()};
@@ -43,6 +55,7 @@ const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  height: 100%;
   padding: 36px;
   width: 100%;
 
@@ -50,7 +63,7 @@ const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
     background-color: ${Colors['bg-hover'].hex()};
     border-color: ${Colors['bg-status-small--accent'].hex()};
 
-    ${StyledCreateEmptyTableIcon} {
+    ${StyledCreateOptionIcon} {
       color: ${Colors['bg-status-small--accent'].hex()};
     }
   }
@@ -60,7 +73,7 @@ const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
     border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
     padding: 35px;
 
-    ${StyledCreateEmptyTableIcon} {
+    ${StyledCreateOptionIcon} {
       color: ${Colors['bg-status-small--accent-hover'].hex()};
     }
   }
@@ -72,7 +85,7 @@ const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
       border: 2px solid ${Colors['bg-status-small--accent-hover'].hex()};
       padding: 35px;
   
-      ${StyledCreateEmptyTableIcon} {
+      ${StyledCreateOptionIcon} {
         color: ${Colors['bg-status-small--accent-hover'].hex()};
       }`
       : ''};
@@ -85,14 +98,14 @@ const StyledCreateEmptyTableWrapper = styled.button<{ $isSelected?: boolean }>`
       : ''};
 `;
 
-const StyledCreateEmptyTableTitle = styled(Body)`
+const StyledCreateOptionTitle = styled(Body)`
   color: ${Colors['text-primary'].hex()};
   margin: 16px 0 8px;
 `;
 
-const StyledCreateEmptyTableDetail = styled(Detail)`
+const StyledCreateOptionDetail = styled(Detail)`
   color: ${Colors['text-hint'].hex()};
   text-align: center;
 `;
 
-export default CreateEmptyTableOption;
+export default CreateTableModalOption;
