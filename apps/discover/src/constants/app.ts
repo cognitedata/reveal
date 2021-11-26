@@ -8,7 +8,7 @@ import {
 
 // More info: https://cog.link/discover-projects
 const CLUSTER: CDFCluster =
-  (process.env.REACT_APP_E2E_CLUSTER as CDFCluster) || 'bluefield';
+  (process.env.REACT_APP_CLUSTER as CDFCluster) || 'bluefield';
 
 // Run in production mode
 const PROD = false;

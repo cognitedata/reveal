@@ -83,6 +83,22 @@
               "all": {}
             }
           }
+        },
+        {
+          "wellsAcl": {
+            "actions": ["READ"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "documentPipelinesAcl": {
+            "actions": ["READ"],
+            "scope": {
+              "all": {}
+            }
+          }
         }
       ]
     }

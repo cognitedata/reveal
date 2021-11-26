@@ -516,7 +516,7 @@ testcafe(
         ":copy_testcafe_files",
     ],
     env = {
-        "REACT_APP_E2E_CLUSTER": "azure-dev",
+        "REACT_APP_CLUSTER": "azure-dev",
         "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
         "BASE_URL": "https://localhost:3000",
     },
@@ -540,8 +540,8 @@ testcafe(
         ":copy_testcafe_files",
     ],
     env = {
-        "REACT_APP_E2E_CLUSTER": "bluefield",
-        # "REACT_APP_E2E_CLUSTER": "azure-dev",
+        "REACT_APP_CLUSTER": "bluefield",
+        # "REACT_APP_CLUSTER": "azure-dev",
         "REACT_APP_E2E_USER": REACT_APP_E2E_USER,
         "BASE_URL": "https://localhost:3000",
     },

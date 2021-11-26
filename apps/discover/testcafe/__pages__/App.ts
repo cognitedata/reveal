@@ -24,7 +24,7 @@ import WellSearchPage from './WellSearch';
 
 // 'fixture inserting tests' need to know public readonly
 export const projectPrefix = 'discover-e2e-';
-export const cluster = process.env.REACT_APP_E2E_CLUSTER || 'bluefield';
+export const cluster = process.env.REACT_APP_CLUSTER || 'bluefield';
 export const project = `${projectPrefix}${cluster}`;
 export const filename = '15_9_19_A_1980_01_01';
 export const fileType = 'PDF';

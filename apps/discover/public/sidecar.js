@@ -19,7 +19,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-azure-dev',
       roles: [],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-azure-dev-user', // this is overwritten by os.hostname()
+      userId: 'discover-e2e-azure-dev-user', // this is overwritten in CI
     },
     {
       cluster: 'azure-dev',
@@ -33,7 +33,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-azure-dev',
       roles: ['administer'],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-azure-dev-admin', // this is overwritten by os.hostname()
+      userId: 'discover-e2e-azure-dev-admin', // this is overwritten in CI
     },
     {
       cluster: 'bluefield',
@@ -47,14 +47,14 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-bluefield',
       roles: [],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-bluefield-user', // this is overwritten by os.hostname()
+      userId: 'discover-e2e-bluefield-user', // this is overwritten in CI
       // if you need to test expired tokens:
       // customExpiry: Math.floor(new Date().getTime() / 1000) + 15, // expire after 15 seconds
     },
     {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
-      groups: ['defaultGroup', 'adminGroup'],
+      groups: ['readGroup'],
       name: 'Bluefield Dev',
       otherAccessTokenFields: {
         given_name: 'Normal',
@@ -63,7 +63,21 @@ window.__cogniteSidecar = {
       project: 'discover-dev-bluefield',
       roles: [],
       tokenId: 'discover-dev',
-      userId: 'discover-dev-bluefield-user', // this is overwritten by os.hostname()
+      userId: 'discover-dev-bluefield-user', // this is overwritten in CI
+    },
+    {
+      cluster: 'bluefield',
+      fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
+      groups: ['writeGroup'],
+      name: 'Bluefield Dev Admin',
+      otherAccessTokenFields: {
+        given_name: 'Admin',
+        family_name: 'Dev',
+      },
+      project: 'discover-dev-bluefield',
+      roles: [],
+      tokenId: 'discover-dev',
+      userId: 'discover-dev-bluefield-user', // this is overwritten in CI
     },
     {
       cluster: 'bluefield',
@@ -77,7 +91,7 @@ window.__cogniteSidecar = {
       project: 'discover-e2e-bluefield',
       roles: ['administer'],
       tokenId: 'discover-e2e',
-      userId: 'discover-e2e-bluefield-admin', // this is overwritten by os.hostname()
+      userId: 'discover-e2e-bluefield-admin', // this is overwritten in CI
     },
   ],
   disableIntercom: false,

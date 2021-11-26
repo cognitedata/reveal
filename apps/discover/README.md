@@ -35,7 +35,7 @@ yarn start:b
 Starting with a different cluster
 
 ```sh
-REACT_APP_E2E_CLUSTER=<cluster_name> yarn start
+REACT_APP_CLUSTER=<cluster_name> yarn start
 ```
 
 To edit the code with the linting rules working, open VSCode from the current directory:
