@@ -5,32 +5,37 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
-import { CallbackData, CameraControlsOptions } from './types';
-import { assertNever } from '@reveal/utilities';
-
-const DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
-  mouseWheelAction: 'zoomPastCursor',
-  onClickTargetChange: false
-};
+import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate } from './types';
+import { assertNever, EventTrigger, MouseHandler, } from '@reveal/utilities';
 
 export class CameraManager {
   public readonly controls: ComboControls;
 
+  private readonly _events = {
+    cameraChange: new EventTrigger<CameraChangeData>(),
+  };
+
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
+  private readonly _mouseHandler: MouseHandler;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CallbackData>;
 
-  private _cameraControlsOptions: Required<CameraControlsOptions> = { ...DefaultCameraControlsOptions };
+  private static readonly DefaultAnimationDuration: number = 600;
+  private static readonly DefaultMinAnimationDuration: number = 600;
+  private static readonly DefaultMaxAnimationDuration: number = 2500;
+  private static readonly DefaultMinDistance: number = 0.1;
+  private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
+    mouseWheelAction: 'zoomPastCursor',
+    onClickTargetChange: false
+  };
 
+  private _cameraControlsOptions: Required<CameraControlsOptions> = { ...CameraManager.DefaultCameraControlsOptions };
+  
   public automaticNearFarPlane: boolean = true;
   public automaticControlsSensitivity = false;
 
   private isDisposed = false;
-  private readonly _animationDuration: number = 600;
-  private readonly _minDefaultAnimationDuration: number = 600;
-  private readonly _maxDefaultAnimationDuration: number = 2500;
-  private readonly _minDistanceDefault: number = 0.1;
   private readonly _raycaster: THREE.Raycaster = new THREE.Raycaster();
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
   private _onWheel: ((event: MouseEvent) => void) | undefined = undefined;
@@ -130,7 +135,7 @@ export class CameraManager {
    */
   private teardownControls() {
     if (this._onClick !== undefined) {
-      this._domElement.removeEventListener('click', this._onClick);
+      this._mouseHandler.off('click', this._onClick as PointerEventDelegate);
       this._onClick = undefined;
     }
     if (this._onWheel !== undefined) {
@@ -187,7 +192,7 @@ export class CameraManager {
     }
 
     if (this._cameraControlsOptions.onClickTargetChange) {
-      this._domElement.addEventListener('click', onClick);
+      this._mouseHandler.on('click', onClick);
       this._onClick = onClick;
     }
     if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
@@ -203,6 +208,7 @@ export class CameraManager {
   ) {
     this._camera = camera;
     this._domElement = domElement;
+    this._mouseHandler = new MouseHandler(domElement);
     this._modelRaycastCallback = raycastFunction;
     this.controls = new ComboControls(camera, domElement);
     this.controls.dollyFactor = 0.992;
@@ -210,6 +216,11 @@ export class CameraManager {
     this.controls.maxDistance = 100.0;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
+
+    this.controls.addEventListener('cameraChange', event => {
+      const { position, target } = event.camera;
+      this._events.cameraChange.fire({camera: {position: position.clone(), target: target.clone()}});
+    });
 
     if (!camera) {
       this._camera = new THREE.PerspectiveCamera(60, undefined, 0.1, 10000);
@@ -219,6 +230,32 @@ export class CameraManager {
       this._camera.position.y = 10;
       this._camera.position.z = 50;
       this._camera.lookAt(new THREE.Vector3());
+    }
+  }
+
+  on(
+    event: 'cameraChange',
+    callback: CameraChangeData
+  ): void {
+    switch (event) {
+      case 'cameraChange':
+        this._events.cameraChange.subscribe(callback as CameraChangeData);
+        break;
+      default:
+        assertNever(event);
+    }
+  }
+
+  off(
+    event: 'cameraChange',
+    callback: CameraChangeData
+  ): void {
+    switch (event) {
+      case 'cameraChange':
+        this._events.cameraChange.subscribe(callback as CameraChangeData);
+        break;
+      default:
+        assertNever(event);
     }
   }
 
@@ -241,7 +278,7 @@ export class CameraManager {
   }
 
   setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
-    this._cameraControlsOptions = { ...DefaultCameraControlsOptions, ...controlsOptions };
+    this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
     this.teardownControls();
     this.setupControls();
@@ -252,13 +289,13 @@ export class CameraManager {
       return;
     }
 
-    const animationTime = animated ? this._animationDuration : 0;
+    const animationTime = animated ? CameraManager.DefaultAnimationDuration : 0;
     this.moveCameraTargetTo(target, animationTime);
   }
 
   private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
-    duration = Math.min(Math.max(duration, this._minDefaultAnimationDuration), this._maxDefaultAnimationDuration);
+    duration = Math.min(Math.max(duration, CameraManager.DefaultMinAnimationDuration), CameraManager.DefaultMaxAnimationDuration);
 
     return duration;
   }
@@ -478,7 +515,7 @@ export class CameraManager {
       // This is also used to determine the speed of the camera when flying with ASDW.
       // We want to either let it be controlled by the near plane if we are far away,
       // but no more than a fraction of the bounding box of the system if inside
-      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), this._minDistanceDefault);
+      this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), CameraManager.DefaultMinDistance);
     }
   }
 

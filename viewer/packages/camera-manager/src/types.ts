@@ -4,18 +4,20 @@
 
 export type CameraControlsOptions = {
   /**
-   * Sets mouse wheel initiated action based on either lerping in the direction of the cursor or using so-called scroll target notion.
-   * When mouse wheel scroll is initiated scroll target is set to the point on the model where cursor is hovering over. Then when zooming is happening camera
-   * target moves towards scroll target with speed proportional to zooming speed. This prevents the camera to go through the model when using mouse navigation,
-   * but keyboard navigation still allows to go through the model.
+   * Sets mouse wheel initiated action.
+   *
+   * Modes:
+   *
+   * 'zoomToTarget' - zooms just to the current target (center of the screen) of the camera.
+   *
+   * 'zoomPastCursor' - zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects.
+   *
+   * 'zoomToCursor' - mouse wheel scroll zooms towards the point on the model where cursor is hovering over, doesn't allow going through objects.
    *
    * Default is 'zoomPastCursor'.
    *
    */
-  mouseWheelAction?:
-    | 'zoomToTarget' // mouse wheel scroll zooms just to the current target (center of the screen) of the camera
-    | 'zoomPastCursor' // mouse wheel scroll zooms in the direction of the ray coming from camera through cursor screen position, allows going through objects
-    | 'zoomToCursor'; // mouse wheel scroll zooms towards the point on the model which cursor is hovering over, doesn't allow going through objects
+  mouseWheelAction?: 'zoomToTarget' | 'zoomPastCursor' | 'zoomToCursor';
   /**
    * Enables or disables change of camera target on mouse click. New target is then set to the point of the model under current cursor position.
    *
@@ -68,3 +70,20 @@ export type CallbackData = {
    */
   modelsBoundingBox: THREE.Box3;
 };
+
+/**
+ * Delegate for pointer events.
+ * @module @cognite/reveal
+ */
+ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
+
+/**
+ * Type defining camera change event data.
+ */
+export type CameraChangeData = (event: {
+  camera: {
+    position: THREE.Vector3,
+    target: THREE.Vector3,
+  }
+}) => void;
+ 

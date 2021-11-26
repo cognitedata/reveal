@@ -12,7 +12,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, clickOrTouchEventOffset, EventTrigger } from '@reveal/utilities';
+import { assertNever, clickOrTouchEventOffset, EventTrigger, MouseHandler } from '@reveal/utilities';
 import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -226,7 +226,7 @@ export class Cognite3DViewer {
 
     this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
 
-    this._cameraManager.controls.addEventListener('cameraChange', event => {
+    this._cameraManager.on('cameraChange', event => {
       const { position, target } = event.camera;
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
@@ -1328,80 +1328,89 @@ export class Cognite3DViewer {
 
     return true;
   }
-
   private readonly startPointerEventListeners = () => {
-    const canvas = this.canvas;
-    const maxMoveDistance = 4;
-    const maxClickDuration = 250;
+    const mouseHandler = new MouseHandler(this.domElement);
 
-    let pointerDown = false;
-    let pointerDownTimestamp = 0;
-    let validClick = false;
-
-    const onHoverCallback = debounce((e: MouseEvent) => {
-      this._events.hover.fire(clickOrTouchEventOffset(e, canvas));
-    }, 100);
-
-    const onMove = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
-      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, canvas);
-
-      // check for Manhattan distance greater than maxMoveDistance pixels
-      if (
-        pointerDown &&
-        validClick &&
-        Math.abs(offsetX - firstOffsetX) + Math.abs(offsetY - firstOffsetY) > maxMoveDistance
-      ) {
-        validClick = false;
-      }
-    };
-
-    const onUp = (e: MouseEvent | TouchEvent) => {
-      const clickDuration = e.timeStamp - pointerDownTimestamp;
-      if (pointerDown && validClick && clickDuration < maxClickDuration) {
-        // trigger events
-        this._events.click.fire(clickOrTouchEventOffset(e, canvas));
-      }
-      pointerDown = false;
-      validClick = false;
-
-      // move
-      canvas.removeEventListener('mousemove', onMove);
-      canvas.removeEventListener('touchmove', onMove);
-
-      // up
-      canvas.removeEventListener('mouseup', onUp);
-      canvas.removeEventListener('touchend', onUp);
-
-      // add back onHover
-      canvas.addEventListener('mousemove', onHoverCallback);
-    };
-
-    const onDown = (e: MouseEvent | TouchEvent) => {
-      event = e;
-      pointerDown = true;
-      validClick = true;
-      pointerDownTimestamp = e.timeStamp;
-
-      // move
-      canvas.addEventListener('mousemove', onMove);
-      canvas.addEventListener('touchmove', onMove);
-
-      // up
-      canvas.addEventListener('mouseup', onUp);
-      canvas.addEventListener('touchend', onUp);
-
-      // no more onHover
-      canvas.removeEventListener('mousemove', onHoverCallback);
-    };
-
-    // down
-    canvas.addEventListener('mousedown', onDown);
-    canvas.addEventListener('touchstart', onDown);
-
-    // on hover callback
-    canvas.addEventListener('mousemove', onHoverCallback);
+    mouseHandler.on('click', (e) => {
+      this._events.click.fire(e);
+    });
+    mouseHandler.on('hover', (e) => {
+      this._events.hover.fire(e);
+    });
   };
+  // private readonly startPointerEventListeners = () => {
+  //   const canvas = this.canvas;
+  //   const maxMoveDistance = 4;
+  //   const maxClickDuration = 250;
+
+  //   let pointerDown = false;
+  //   let pointerDownTimestamp = 0;
+  //   let validClick = false;
+
+  //   const onHoverCallback = debounce((e: MouseEvent) => {
+  //     this._events.hover.fire(clickOrTouchEventOffset(e, canvas));
+  //   }, 100);
+
+  //   const onMove = (e: MouseEvent | TouchEvent) => {
+  //     const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
+  //     const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, canvas);
+
+  //     // check for Manhattan distance greater than maxMoveDistance pixels
+  //     if (
+  //       pointerDown &&
+  //       validClick &&
+  //       Math.abs(offsetX - firstOffsetX) + Math.abs(offsetY - firstOffsetY) > maxMoveDistance
+  //     ) {
+  //       validClick = false;
+  //     }
+  //   };
+
+  //   const onUp = (e: MouseEvent | TouchEvent) => {
+  //     const clickDuration = e.timeStamp - pointerDownTimestamp;
+  //     if (pointerDown && validClick && clickDuration < maxClickDuration) {
+  //       // trigger events
+  //       this._events.click.fire(clickOrTouchEventOffset(e, canvas));
+  //     }
+  //     pointerDown = false;
+  //     validClick = false;
+
+  //     // move
+  //     canvas.removeEventListener('mousemove', onMove);
+  //     canvas.removeEventListener('touchmove', onMove);
+
+  //     // up
+  //     canvas.removeEventListener('mouseup', onUp);
+  //     canvas.removeEventListener('touchend', onUp);
+
+  //     // add back onHover
+  //     canvas.addEventListener('mousemove', onHoverCallback);
+  //   };
+
+  //   const onDown = (e: MouseEvent | TouchEvent) => {
+  //     event = e;
+  //     pointerDown = true;
+  //     validClick = true;
+  //     pointerDownTimestamp = e.timeStamp;
+
+  //     // move
+  //     canvas.addEventListener('mousemove', onMove);
+  //     canvas.addEventListener('touchmove', onMove);
+
+  //     // up
+  //     canvas.addEventListener('mouseup', onUp);
+  //     canvas.addEventListener('touchend', onUp);
+
+  //     // no more onHover
+  //     canvas.removeEventListener('mousemove', onHoverCallback);
+  //   };
+
+  //   // down
+  //   canvas.addEventListener('mousedown', onDown);
+  //   canvas.addEventListener('touchstart', onDown);
+
+  //   // on hover callback
+  //   canvas.addEventListener('mousemove', onHoverCallback);
+  // };
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
