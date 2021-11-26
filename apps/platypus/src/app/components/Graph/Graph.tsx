@@ -11,17 +11,15 @@ import * as d3 from 'd3';
 import { SimulationLinkDatum, SimulationNodeDatum } from 'd3';
 
 import styled from 'styled-components/macro';
-import { FixedNode } from './useFixedNodes';
 import { ZIndex } from '../../utils/zIndex';
+import { getELKNodes } from './layout/elkLayout';
+import { Spinner } from '../Spinner/Spinner';
 
 export type Node = SimulationNodeDatum & {
   id: string;
   title: string;
 };
 export type Link = { source: string; target: string };
-
-// Location cache for local nodes (id => location)
-const tmpLocationStore: { [key: string]: { x: number; y: number } } = {};
 
 const getMidPoint = (x = 0, y = 0) => (x + y) / 2;
 
@@ -62,9 +60,9 @@ export interface GraphProps<T> {
   nodes: (Node & T)[];
   links: Link[];
   useCurve?: boolean;
-  useFixedNodes?: boolean;
   children?: React.ReactNode;
   initialZoom?: number;
+  autoLayout?: boolean;
   getOffset?: GetOffsetFunction<T>;
   graphRef?: React.Ref<GraphFns>;
   onLinkEvent?: (
@@ -101,15 +99,13 @@ export const Graph = <T,>({
   nodes: propsNodes = [],
   links: propsLinks = [],
   useCurve = false,
-  useFixedNodes = false,
   initialZoom = 5,
+  autoLayout = true,
   getOffset = defaultGetOffset,
   onLinkEvent,
   children,
   graphRef: ref,
 }: GraphProps<T>) => {
-  const fixedNodes = useMemo(() => ({} as { [key in string]: FixedNode }), []);
-
   // where the lines are drawn
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -140,21 +136,36 @@ export const Graph = <T,>({
     d3.Selection<Element, Node & T, HTMLDivElement | null, unknown> | undefined
   >(undefined);
 
-  const nodes: (Node & T)[] = useMemo(
-    () =>
-      propsNodes.map((el) => {
-        const prev = tmpLocationStore[el.id];
-        const prevFixedNode = useFixedNodes
-          ? (fixedNodes || {})[el.id]
-          : undefined;
-        return {
-          ...prev,
-          ...el,
-          ...(prevFixedNode && { fx: prevFixedNode.x, fy: prevFixedNode.y }),
-        };
-      }),
-    [propsNodes, useFixedNodes, fixedNodes]
-  );
+  const [isLoading, setLoading] = useState<boolean>(autoLayout);
+  const [nodes, setNodes] = useState<(Node & T)[]>(propsNodes);
+
+  useEffect(() => {
+    setNodes(propsNodes);
+    if (autoLayout) {
+      setLoading(true);
+    }
+  }, [propsNodes, autoLayout]);
+
+  useEffect(() => {
+    (async () => {
+      if (isLoading && d3Nodes) {
+        console.log('rerunning');
+        const nodesForRendering = await getELKNodes(
+          d3Nodes.nodes() as (Element & { __data__: Node })[],
+          propsLinks
+        );
+        setNodes(
+          propsNodes.map((el) => {
+            return {
+              ...el,
+              ...nodesForRendering.find((n) => n.id === el.id),
+            };
+          }) as (Node & T)[]
+        );
+        setLoading(false);
+      }
+    })();
+  }, [isLoading, nodes, d3Nodes, propsNodes, propsLinks]);
 
   const links: SimulationLinkDatum<Node & T>[] = useMemo(() => {
     // make lookups easy
@@ -165,13 +176,15 @@ export const Graph = <T,>({
     });
 
     // make a list of { source: Node, target: Node } based on the link's source/target ids
-    const newLinks = propsLinks.map(
-      (link) =>
-        ({
-          source: nodeById[link.source],
-          target: nodeById[link.target],
-        } as SimulationLinkDatum<Node & T>)
-    );
+    const newLinks = propsLinks
+      .map(
+        (link) =>
+          ({
+            source: nodeById[link.source],
+            target: nodeById[link.target],
+          } as SimulationLinkDatum<Node & T>)
+      )
+      .filter((el) => el.source && el.target);
     return newLinks;
   }, [nodes, propsLinks]);
 
@@ -273,7 +286,6 @@ export const Graph = <T,>({
         d3Nodes.attr('style', (d: any) => {
           const nodeX = x + k * d.x;
           const nodeY = y + k * d.y;
-          tmpLocationStore[d.id] = { ...d };
           return `left: ${nodeX}px; top: ${nodeY}px`;
         });
       }
@@ -362,7 +374,6 @@ export const Graph = <T,>({
         simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
-        tmpLocationStore[d.id] = { ...d };
       };
 
       const drag = (event: { dx: any; dy: any }, d: any) => {
@@ -374,9 +385,6 @@ export const Graph = <T,>({
 
       const dragEnd = (event: { active: any }, _d: any) => {
         if (!event.active) simulation.alphaTarget(0);
-        if (useFixedNodes) {
-          // addFixedNode.mutate({ id: d.id, x: d.fx, y: d.fy });
-        }
       };
       d3Nodes.call(
         d3
@@ -386,7 +394,7 @@ export const Graph = <T,>({
           .on('end', dragEnd)
       );
     }
-  }, [d3Nodes, simulation, transform, useFixedNodes]);
+  }, [d3Nodes, simulation, transform]);
 
   useImperativeHandle(ref, () => ({
     zoomIn: (scaleFactor = 1.1) => {
@@ -465,6 +473,7 @@ export const Graph = <T,>({
       >
         {children}
       </div>
+      {isLoading && <Spinner style={{ position: 'absolute' }} />}
       <Wrapper ref={mainWrapperRef}>
         <div className="node-container" ref={containerRef}>
           <svg className="chart" ref={svgRef}>

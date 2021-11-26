@@ -381,7 +381,6 @@ export const SchemaVisualizer = ({
         links={links}
         initialZoom={10}
         useCurve
-        useFixedNodes
         getOffset={(...params) =>
           getOffset(...params)(showHeaderOnly, showRequiredIcon, showSearchIcon)
         }
