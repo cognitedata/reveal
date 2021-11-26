@@ -4,6 +4,7 @@ import { Col, Input, Checkbox, Row, Table } from 'antd';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 
+import LegacyLoginFlowWarning from 'pages/IDP/LegacyLoginFlowWarning';
 import columns from './columns';
 import { stringContains } from '../Groups/utils';
 
@@ -25,6 +26,7 @@ export default function APIKeys() {
 
   return (
     <>
+      <LegacyLoginFlowWarning />
       <Row justify="space-between">
         <Col>
           <Input.Search

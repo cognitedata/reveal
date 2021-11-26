@@ -22,7 +22,6 @@ type Props = {
 };
 export default function GroupDrawer({ group, onClose }: Props) {
   const sdk = useSDK();
-  const legacyAuth = sdk.getOAuthFlowType() === 'CDF_OAUTH';
   const client = useQueryClient();
   const [caps, setCaps] = useState(group?.capabilities || []);
   const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
@@ -39,9 +38,14 @@ export default function GroupDrawer({ group, onClose }: Props) {
       // @ts-ignore
       const { name, sourceId, source, capabilities, id } = g;
       const defaultGroup = project?.defaultGroupId === id;
-      const groupAccountIds = (
-        legacyAuth && !!id ? await sdk.groups.listServiceAccounts(id) : []
-      ).map(account => account.id);
+      let groupAccountIds: number[];
+      try {
+        groupAccountIds = (
+          id ? await sdk.groups.listServiceAccounts(id) : []
+        ).map(account => account.id);
+      } catch {
+        groupAccountIds = [];
+      }
 
       const [newGroup] = await sdk.groups.create([
         // @ts-ignore
@@ -53,9 +57,9 @@ export default function GroupDrawer({ group, onClose }: Props) {
       }
 
       if (defaultGroup && project) {
-        await sdk.put(`api/playground/projects/${project.name}/defaultGroup`, {
-          data: {
-            items: [newGroup.id],
+        await sdk.projects.updateProject(project.name, {
+          update: {
+            defaultGroupId: { set: newGroup.id },
           },
         });
       }
@@ -137,7 +141,7 @@ export default function GroupDrawer({ group, onClose }: Props) {
         <Form.Item
           hasFeedback={isLoading}
           validateStatus="validating"
-          label="Cabability"
+          label="Capability"
           extra={
             <>
               Select the capabilities to add to the group. These capabilities

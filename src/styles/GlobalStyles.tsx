@@ -37,7 +37,7 @@ import treeSelectStyle from 'antd/es/tree-select/style/index.less';
 import treeStyle from 'antd/es/tree/style/index.less';
 import typographyStyle from 'antd/es/typography/style/index.less';
 
-import { Icon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Icon, Loader, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { getContainer, styleScope } from 'utils/utils';
 
 import { useGlobalStyles } from '@cognite/cdf-utilities';
@@ -106,7 +106,15 @@ Dropdown.defaultProp = {
 Spin.setDefaultIndicator(<Icon type="Loading" />);
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  useGlobalStyles([...antdStyles, cogsStyles, tabsStyle]);
+  const isInjectedStyles = useGlobalStyles([
+    ...antdStyles,
+    cogsStyles,
+    tabsStyle,
+  ]);
+
+  if (!isInjectedStyles) {
+    return <Loader />;
+  }
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>

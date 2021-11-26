@@ -6,6 +6,7 @@ import { Icon, Button } from '@cognite/cogs.js';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getContainer } from 'utils/utils';
 import { useRouteMatch } from 'react-router';
+import { useAuthConfiguration } from 'hooks';
 
 const formItemLayout = {
   labelCol: {
@@ -72,21 +73,18 @@ export default function OIDCConfigContainer() {
         });
       },
       onSettled() {
-        cache.invalidateQueries('oidc-settings');
+        cache.invalidateQueries('project-settings');
+        cache.invalidateQueries('auth-configuration');
       },
     }
   );
 
-  const { data, isFetched } = useQuery('oidc-settings', () => {
-    return Promise.all([
-      sdk.projects.retrieve(match?.params.tenant!),
-      sdk
-        .get<{ isOidcEnabled: boolean }>(
-          `/api/playground/projects/${sdk.project}/configuration`
-        )
-        .then(r => r.data),
-    ]);
-  });
+  const { data: projectSettings, isFetched: areProjectSettingsFetched } =
+    useQuery('project-settings', () => {
+      return sdk.projects.retrieve(match?.params.tenant!);
+    });
+  const { data: authConfiguration, isFetched: isAuthConfigurationFetched } =
+    useAuthConfiguration();
 
   const handleSubmit = (values: any) => {
     mutate({
@@ -112,12 +110,15 @@ export default function OIDCConfigContainer() {
               claimName,
             })) || [],
           skewMs: values.skewMs,
+          isGroupCallbackEnabled:
+            (projectSettings?.oidcConfiguration as any)
+              ?.isGroupCallbackEnabled || null,
         },
       },
     });
   };
 
-  if (!isFetched) {
+  if (!(areProjectSettingsFetched && isAuthConfigurationFetched)) {
     return <Icon type="Loading" />;
   }
 
@@ -126,17 +127,17 @@ export default function OIDCConfigContainer() {
       {...formItemLayout}
       onFinish={handleSubmit}
       initialValues={{
-        ...data?.[0].oidcConfiguration,
-        accessClaims: data?.[0].oidcConfiguration?.accessClaims?.map(
+        ...projectSettings?.oidcConfiguration,
+        accessClaims: projectSettings?.oidcConfiguration?.accessClaims?.map(
           o => o.claimName
         ),
-        scopeClaims: data?.[0].oidcConfiguration?.scopeClaims?.map(
+        scopeClaims: projectSettings?.oidcConfiguration?.scopeClaims?.map(
           o => o.claimName
         ),
-        logClaims: data?.[0].oidcConfiguration?.logClaims?.map(
+        logClaims: projectSettings?.oidcConfiguration?.logClaims?.map(
           o => o.claimName
         ),
-        isOidcEnabled: data?.[1].isOidcEnabled,
+        isOidcEnabled: authConfiguration?.isOidcEnabled,
       }}
     >
       <Form.Item name="isOidcEnabled" label="Enabled" valuePropName="checked">

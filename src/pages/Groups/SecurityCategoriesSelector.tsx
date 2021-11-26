@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import Select from 'antd/lib/select';
-import Spin from 'antd/lib/spin';
-
 import { SecurityCategory } from '@cognite/sdk';
-import Tooltip from 'antd/lib/tooltip';
 import { useSDK } from '@cognite/sdk-provider';
+import { Select, Spin, Tooltip } from 'antd';
 
 const { Option } = Select;
 
@@ -74,7 +71,6 @@ const SecurityCategorySelector = ({
     <div>
       <Select
         mode="multiple"
-        labelInValue
         value={selectedCategories.map(c => c.key)}
         placeholder="Search and select security categories"
         notFoundContent={fetching ? <Spin /> : 'Not found'}
