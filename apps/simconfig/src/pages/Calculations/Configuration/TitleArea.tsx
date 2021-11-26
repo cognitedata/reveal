@@ -1,4 +1,6 @@
 import { Title } from '@cognite/cogs.js';
+import GoBackButton from 'components/app/GoBackButton';
+import { PAGES } from 'pages/Menubar';
 
 import {
   BLabel,
@@ -16,10 +18,21 @@ export default function TitleArea({
   fileData,
   children,
 }: React.PropsWithChildren<ComponentProps>) {
+  // TODO(SIM-176) Improve routing and missing content
+  if (!fileData?.modelName) {
+    return null;
+  }
+
   return (
     <>
       <TitleContainer>
-        <Title>{fileData?.modelName}</Title>
+        <GoBackButton
+          URL={PAGES.CALCULATION_LIBRARY.replace(
+            ':modelName',
+            fileData.modelName
+          )}
+        />
+        <Title>{fileData.modelName}</Title>
         <ItemWrapper>
           <BLabel>Calculation Name</BLabel>
           {fileData?.calculationName}

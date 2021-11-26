@@ -116,6 +116,7 @@ export default function ModelLibrary() {
               modelName={modelName || 'Model library'}
               showIndicators={!modelName}
               latestFile={getLatestFileInfo()}
+              showBack={!modelName}
             />
             <Button onClick={onClick} type="primary" icon="PlusCompact">
               {!modelName ? 'New model' : 'New version'}

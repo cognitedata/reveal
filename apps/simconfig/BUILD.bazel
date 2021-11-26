@@ -139,6 +139,19 @@ mappings_dict = {
     "utils": "build/utils",
 }
 
+LINTERS = [
+    "//packages/eslint-config",
+    "//packages/eslint-plugin",
+    "@npm//eslint-config-airbnb",
+    "@npm//eslint-config-prettier",
+    "@npm//eslint-plugin-jest",
+    "@npm//eslint-plugin-jest-dom",
+    "@npm//eslint-plugin-lodash",
+    "@npm//eslint-plugin-prettier",
+    "@npm//eslint-plugin-testcafe",
+    "@npm//eslint-plugin-testing-library",
+]
+
 ### end of auto-generated helpers ###
 
 eslint_config(
@@ -172,6 +185,8 @@ copy_to_bin(
     srcs = SOURCES + PUBLIC + [
         ":package.json",
         ":tsconfig.json",
+        ":.eslintrc.js",
+        ":.eslintrc.production.js",
     ],
 )
 
@@ -194,6 +209,7 @@ _RUNTIME_DEPS = [
     "chdir.js",
     "copy_static_files",
     "//:tsconfig",
+    "//:eslintrc",
 ]
 
 ### react-scripts build ###
@@ -206,7 +222,7 @@ react_scripts(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + LINTERS + [
         # see patches/react-scripts+4.0.3.patch
         # we have added this plugin into webpack so Bazel should know about it
         # TODO: move build script into a custom rules with defined plugin once and for all
@@ -378,7 +394,7 @@ build_storybook(
         "--quiet",
     ],
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + LINTERS + [
         "copy_storybook_files",
         "@npm//tsconfig-paths-webpack-plugin",
         "@npm//@storybook/addon-essentials",

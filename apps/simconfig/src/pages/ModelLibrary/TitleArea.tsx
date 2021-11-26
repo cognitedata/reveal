@@ -5,6 +5,8 @@ import { setSelectedFile } from 'store/file';
 import { Title, Button } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
 import { UnitSystem } from 'components/forms/ModelForm/constants';
+import GoBackButton from 'components/app/GoBackButton';
+import { PAGES } from 'pages/Menubar';
 
 import {
   BLabel,
@@ -19,12 +21,14 @@ interface ComponentProps {
   modelName: string;
   latestFile?: FileInfoSerializable;
   showIndicators: boolean;
+  showBack: boolean;
 }
 
 export default function TitleArea({
   modelName,
   latestFile,
   showIndicators,
+  showBack,
   children,
 }: React.PropsWithChildren<ComponentProps>) {
   const history = useHistory();
@@ -38,6 +42,7 @@ export default function TitleArea({
   return (
     <>
       <TitleContainer>
+        {!showBack && <GoBackButton URL={PAGES.MODEL_LIBRARY} />}
         <Title>{modelName}</Title>
         {!showIndicators && (
           <>

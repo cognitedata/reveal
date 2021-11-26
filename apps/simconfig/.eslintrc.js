@@ -5,5 +5,6 @@ module.exports = {
   rules: {
     'prettier/prettier': ['warn'],
     '@typescript-eslint/no-unused-vars-experimental': ['warn'],
+    '@cognite/no-unissued-todos': ['warn'],
   },
 };

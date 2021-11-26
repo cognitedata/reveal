@@ -4,6 +4,5 @@ module.exports = {
   ...baseConfig,
   rules: {
     ...baseConfig.rules,
-    // We can extend apps rules below
   },
 };
