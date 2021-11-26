@@ -1,7 +1,7 @@
 import { MouseEvent, useContext, useEffect } from 'react';
 import moment from 'moment';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Button, Table, TableRow, Tooltip } from '@cognite/cogs.js';
+import { Button, Table, Tooltip } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
 import { PAGES } from 'pages/Menubar';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
@@ -96,13 +96,20 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     }
   };
 
-  const onRowClicked = async (row: TableRow<FileInfoSerializable>) => {
+  const onDetailsClicked = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const extId = e.currentTarget.getAttribute('data-external-id') || '';
+    const row = data.find((row) => row.externalId === extId);
+    if (!row) {
+      throw new Error('no row details');
+    }
     if (!modelName) {
       await dispatch(setSelectedFile(undefined));
-      history.push(`${url}/${row.original.name}`);
+      history.push(`${url}/${row.name}`);
       return;
     }
-    await dispatch(setSelectedFile(row.original));
+    await dispatch(setSelectedFile(row));
   };
 
   const getNameColumnDefinition = () => {
@@ -230,6 +237,25 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
       maxWidth: 50,
       width: 20,
     },
+    {
+      id: 'details',
+      Header: 'Details',
+      accessor: (row: FileInfoSerializable) => `${row.externalId}`,
+      width: 50,
+      Cell: ({
+        cell: {
+          row: { original },
+        },
+      }: any) => (
+        <Button
+          icon="Info"
+          aria-label="details"
+          type="ghost"
+          data-external-id={original.externalId}
+          onClick={onDetailsClicked}
+        />
+      ),
+    },
   ];
 
   const getColumns = () => {
@@ -242,6 +268,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
         'readStatus',
         'download',
         'calculations',
+        'details',
       ],
       [PAGES.MODEL_LIBRARY_VERSION]: [
         'version',
@@ -250,6 +277,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
         'updated',
         'readStatus',
         'download',
+        'details',
       ],
     };
     const routeColumns = mapColumns[path];
@@ -267,7 +295,6 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
       filterable
       pagination
       columns={getColumns()}
-      onRowClick={onRowClicked}
     />
   );
 }

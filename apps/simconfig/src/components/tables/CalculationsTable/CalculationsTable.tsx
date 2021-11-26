@@ -1,8 +1,9 @@
-import { Table, TableRow } from '@cognite/cogs.js';
+import { MouseEvent } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Button, Table } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch } from 'store/hooks';
 import { setSelectedCalculation } from 'store/file';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 
 import StatusCell from './StatusCell';
 import ViewHistoryCell from './ViewHistoryCell';
@@ -16,15 +17,24 @@ export default function CalculationsTable({ data }: ComponentProps) {
   const dispatch = useAppDispatch();
 
   const { url } = useRouteMatch();
+
   const history = useHistory();
-  const onRowClick = (row: TableRow<FileInfoSerializable>) => {
-    const { original } = row;
-    if (!original.externalId) {
+
+  const onDetailsClicked = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const extId = e.currentTarget.getAttribute('data-external-id') || '';
+    if (!extId) {
       throw new Error('No external Id');
     }
-    dispatch(setSelectedCalculation(original));
+    const row = data.find((row) => row.externalId === extId);
+    if (!row) {
+      throw new Error('No row found');
+    }
 
-    history.push(`${url}/configuration/${original.externalId}`);
+    dispatch(setSelectedCalculation(row));
+
+    history.push(`${url}/configuration/${extId}`);
   };
 
   const cols = [
@@ -70,13 +80,26 @@ export default function CalculationsTable({ data }: ComponentProps) {
         },
       }: any) => <ViewHistoryCell data={original} />,
     },
+    {
+      id: 'details',
+      Header: 'Details',
+      accessor: (row: FileInfoSerializable) => `${row.externalId}`,
+      width: 100,
+      Cell: ({
+        cell: {
+          row: { original },
+        },
+      }: any) => (
+        <Button
+          icon="Info"
+          aria-label="details"
+          type="ghost"
+          data-external-id={original.externalId}
+          onClick={onDetailsClicked}
+        />
+      ),
+    },
   ];
 
-  return (
-    <Table<FileInfoSerializable>
-      dataSource={data}
-      columns={cols}
-      onRowClick={onRowClick}
-    />
-  );
+  return <Table<FileInfoSerializable> dataSource={data} columns={cols} />;
 }

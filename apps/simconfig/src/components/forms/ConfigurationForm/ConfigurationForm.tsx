@@ -1,4 +1,5 @@
 import { useContext, useRef, useState } from 'react';
+import * as yup from 'yup';
 import { Form, Formik, FormikProps } from 'formik';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectSelectedCalculation } from 'store/file/selectors';
@@ -10,7 +11,6 @@ import {
   getIntervalUnitValue,
   getIntervalValueInMinutes,
 } from 'components/forms/utils';
-import * as yup from 'yup';
 
 import { DataSamplingSection } from './DataSamplingSection';
 import { CalculationConfig } from './types';
