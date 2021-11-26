@@ -66,6 +66,7 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
       onBlur={handleOnBlur}
       menuPosition="fixed"
       autoFocus={autoFocus}
+      placeholderSelectText="Select schedule"
     />
   );
 };

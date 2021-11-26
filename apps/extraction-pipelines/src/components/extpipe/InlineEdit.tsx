@@ -34,6 +34,7 @@ export interface InlineEditProps<Fields> {
   marginBottom?: boolean;
   canEdit: boolean;
   hintText?: string;
+  placeholder?: string;
 }
 
 const InlineEdit = <Fields extends FieldValues>({
@@ -44,6 +45,7 @@ const InlineEdit = <Fields extends FieldValues>({
   showLabel,
   updateFn,
   hintText,
+  placeholder,
   label,
   fullWidth = false,
   marginBottom = false,
@@ -117,6 +119,7 @@ const InlineEdit = <Fields extends FieldValues>({
                 return (
                   <StyledInput
                     id={name}
+                    placeholder={placeholder}
                     value={field.value as string}
                     onChange={field.onChange}
                     error={!!fieldState.error}

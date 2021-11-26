@@ -35,6 +35,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
         <InlineEdit
           name="description"
           hintText="Describe the extraction pipeline."
+          placeholder="Enter description"
           label={DetailFieldNames.DESCRIPTION}
           canEdit={canEdit}
           schema={yup.object().shape({
@@ -50,6 +51,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
         <InlineEdit
           name="source"
           hintText="Enter the name of the extraction pipeline source system."
+          placeholder="Enter source"
           label={DetailFieldNames.SOURCE}
           canEdit={canEdit}
           schema={yup.object().shape({})}
@@ -64,6 +66,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
         <InlineEdit
           name="externalId"
           hintText="Enter a unique identifier. Use this ID when setting up status and heartbeat reporting for extractors."
+          placeholder="Enter external ID"
           label={DetailFieldNames.EXTERNAL_ID}
           canEdit={canEdit}
           schema={yup.object().shape({
