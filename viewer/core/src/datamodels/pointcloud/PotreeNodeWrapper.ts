@@ -16,7 +16,7 @@ export class PotreeNodeWrapper {
   readonly octtree: Potree.PointCloudOctreeNode;
   private _needsRedraw = false;
 
-  get needsRedraw() {
+  get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
@@ -86,11 +86,11 @@ export class PotreeNodeWrapper {
     return this.octtree.material.classification as PotreeClassification;
   }
 
-  recomputeClassification() {
+  recomputeClassification(): void {
     this.octtree.material.recomputeClassification();
   }
 
-  resetRedraw() {
+  resetRedraw(): void {
     this._needsRedraw = false;
   }
 }

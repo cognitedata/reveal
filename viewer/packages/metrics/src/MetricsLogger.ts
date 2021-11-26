@@ -85,37 +85,37 @@ export class MetricsLogger {
     this.innerTrackEvent('init', eventProps);
   }
 
-  static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps) {
+  static init(logMetrics: boolean, project: string, applicationId: string, eventProps: EventProps): void {
     if (globalThis.revealMetricsLogger === undefined && logMetrics) {
       const metricsLogger = new MetricsLogger(project, applicationId, eventProps);
       globalThis.revealMetricsLogger = { metricsLogger };
     }
   }
 
-  private innerTrackEvent(eventName: TrackedEvents, eventProps: EventProps) {
+  private innerTrackEvent(eventName: TrackedEvents, eventProps: EventProps): void {
     const combined = { ...this._sessionProps, ...eventProps };
     mixpanel.track(eventName, combined);
   }
 
-  static trackEvent(eventName: TrackedEvents, eventProps: EventProps) {
+  static trackEvent(eventName: TrackedEvents, eventProps: EventProps): void {
     if (globalThis.revealMetricsLogger) {
       globalThis.revealMetricsLogger.metricsLogger.innerTrackEvent(eventName, eventProps);
     }
   }
 
-  static trackCreateTool(toolName: string) {
+  static trackCreateTool(toolName: string): void {
     MetricsLogger.trackEvent('toolCreated', { toolName });
   }
 
-  static trackLoadModel(eventProps: EventProps, modelIdentifier: any) {
+  static trackLoadModel(eventProps: EventProps, modelIdentifier: any): void {
     MetricsLogger.trackEvent('loadModel', { ...eventProps, modelIdentifier });
   }
 
-  static trackCadModelStyled(nodeCollectionClassToken: string, appearance: any) {
+  static trackCadModelStyled(nodeCollectionClassToken: string, appearance: any): void {
     MetricsLogger.trackEvent('cadModelStyleAssigned', { nodeCollectionClassToken, style: appearance });
   }
 
-  static trackError(error: Error, eventProps: EventProps) {
+  static trackError(error: Error, eventProps: EventProps): void {
     log.error(error);
 
     this.trackEvent('error', {
@@ -126,7 +126,7 @@ export class MetricsLogger {
     });
   }
 
-  static trackCameraNavigation(eventProps: EventProps) {
+  static trackCameraNavigation(eventProps: EventProps): void {
     MetricsLogger.trackEvent('cameraNavigated', eventProps);
   }
 }
