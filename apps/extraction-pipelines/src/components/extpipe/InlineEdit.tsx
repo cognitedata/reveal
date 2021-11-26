@@ -99,9 +99,9 @@ const InlineEdit = <Fields extends FieldValues>({
         </StyledLabel>
       )}
       {isEdit ? (
-        <DivFlex direction="column" align="stretch">
+        <DivFlex direction="column" align="stretch" css="padding: 0 1rem">
           <ValidationError errors={errors} name={name} />
-          <DivFlex>
+          <DivFlex css="gap: 0.5rem">
             <Controller
               name={name}
               control={control}

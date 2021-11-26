@@ -53,6 +53,8 @@ const ScheduleWrapper = styled(DivFlex)`
   display: grid;
   grid-template-areas: 'select btns' 'cron cron';
   grid-template-columns: 1fr auto;
+  padding: 0 1rem;
+  grid-gap: 0.5rem;
   .cogs-select {
     grid-area: select;
   }
@@ -64,6 +66,7 @@ const ButtonWrapper = styled.div`
   grid-area: btns;
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
 `;
 
 export interface ScheduleFormInput {

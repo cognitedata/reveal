@@ -32,15 +32,17 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-areas: 'hint hint' 'error error' 'input btns';
   grid-template-columns: 1fr auto;
+  padding: 0 1rem;
+  grid-gap: 0.5rem;
   .input-hint {
-    margin-left: 1rem;
     grid-area: hint;
+    margin: 0;
   }
   .cogs-select {
     width: 100%;
     grid-area: input;
     height: 2.25rem;
-    margin: 0.125rem 1rem 0.125rem 0;
+    margin: 0;
   }
   .input-btns {
     grid-area: btns;
@@ -138,7 +140,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
         {isEdit ? (
           <Wrapper>
             <DataSetIdInput data={data} status={status} autoFocus />
-            <DivFlex className="input-btns">
+            <DivFlex className="input-btns" css="gap: 0.5rem">
               <MessageDialog
                 visible={errorVisible}
                 handleClickError={handleClickError}

@@ -17,25 +17,16 @@ export const ButtonPlaced = styled(Button)`
     }`};
 `;
 
-export const SaveButton = styled((props) => (
-  <Button type="tertiary" {...props} aria-label={SAVE} icon="Checkmark">
+export const SaveButton = (props: ButtonProps) => (
+  <Button type="primary" {...props} aria-label={SAVE} icon="Checkmark">
     {props.children}
   </Button>
-))`
-  margin: 0.125rem;
-  color: ${Colors.primary.hex()};
-  &:hover,
-  :focus {
-    color: ${Colors.primary.hex()};
-  }
-`;
-export const CloseButton = styled((props) => (
-  <Button type="tertiary" {...props} aria-label={CLOSE} icon="Close">
+);
+export const CloseButton = (props: ButtonProps) => (
+  <Button type="secondary" {...props} aria-label={CLOSE} icon="Close">
     {props.children}
   </Button>
-))`
-  margin: 0.125rem;
-`;
+);
 
 type EditButtonProps = ButtonProps & {
   $full?: boolean;
