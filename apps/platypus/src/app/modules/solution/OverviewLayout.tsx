@@ -1,32 +1,50 @@
+import { lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { OverviewPage } from './overview/pages/OverviewPage';
-import { UpdatesPage } from './updates/pages/UpdatesPage';
 
+import { Icon } from '@cognite/cogs.js';
+
+import { Schema, Solution } from '@platypus/platypus-core';
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
-import { lazy } from 'react';
-import { Icon } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-const Analytics = lazy(() =>
+const Analytics = lazy<any>(() =>
   import('./analytics/pages/AnalyticsPage').then((module) => ({
     default: module.AnalyticsPage,
   }))
 );
 
-export const OverviewLayout = () => {
+const UpdatesPage = lazy<any>(() =>
+  import('./updates/pages/UpdatesPage').then((module) => ({
+    default: module.UpdatesPage,
+  }))
+);
+
+const OverviewPage = lazy<any>(() =>
+  import('./overview/pages/OverviewPage').then((module) => ({
+    default: module.OverviewPage,
+  }))
+);
+
+export const OverviewLayout = ({
+  solution,
+  schema,
+}: {
+  solution: Solution;
+  schema: Schema;
+}) => {
   const { t } = useTranslation('overview');
   const renderPageContent = () => {
     return (
       <Switch>
         <Route exact path="*/analytics">
-          <Analytics />
+          <Analytics solution={solution} />
         </Route>
         <Route exact path="*/updates">
-          <UpdatesPage />
+          <UpdatesPage solution={solution} />
         </Route>
         <Route exact path="*">
-          <OverviewPage />
+          <OverviewPage solution={solution} schema={schema} />
         </Route>
       </Switch>
     );

@@ -9,6 +9,7 @@ import {
 import { useDispatch } from 'react-redux';
 
 import globalReducer from './reducers/global/globalReducer';
+import solutionSlice from './reducers/global/solutionReducer';
 
 const createReducer = (asyncReducers: any) => {
   return combineReducers({
@@ -19,6 +20,7 @@ const createReducer = (asyncReducers: any) => {
 const reducersRegistry = {
   global: globalReducer.reducer,
   solutions: solutionsSlice.reducer,
+  solution: solutionSlice.reducer,
 };
 
 const rootReducer = combineReducers(reducersRegistry);

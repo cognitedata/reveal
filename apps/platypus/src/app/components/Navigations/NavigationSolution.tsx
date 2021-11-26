@@ -30,8 +30,9 @@ const tabs: Array<{
 ];
 
 export const NavigationSolution = () => {
-  const { solutionId, tabKey } = useParams<{
+  const { solutionId, version, tabKey } = useParams<{
     solutionId: string;
+    version: string;
     tabKey: string;
   }>();
 
@@ -43,7 +44,7 @@ export const NavigationSolution = () => {
     isActive: tabKey === tab.slug || (tab.slug === 'overview' && !tabKey),
     onClick: () => {
       history.push({
-        pathname: `/solutions/${solutionId}/${tab.slug}`,
+        pathname: `/solutions/${solutionId}/${version}/${tab.slug}`,
       });
     },
   }));

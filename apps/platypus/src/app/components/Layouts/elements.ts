@@ -12,6 +12,7 @@ export const StyledPageContentLayout = styled.div`
     overflow: auto;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     font-size: 3rem;
   }
 `;

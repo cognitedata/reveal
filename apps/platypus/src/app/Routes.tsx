@@ -16,7 +16,10 @@ const Routes = () => {
           <NavigationMain />
           <SolutionsPage />
         </Route>
-        <Route exact path={['/solutions/:solutionId?/:tabKey?/:solutionPage?']}>
+        <Route
+          exact
+          path={['/solutions/:solutionId?/:version?/:tabKey?/:solutionPage?']}
+        >
           <NavigationSolution />
           <Solution />
         </Route>

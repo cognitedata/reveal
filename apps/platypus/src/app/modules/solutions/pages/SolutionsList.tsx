@@ -50,6 +50,11 @@ export const SolutionsList = () => {
         {solutions.map((solution) => (
           <SolutionCard
             solution={solution}
+            onOpen={(openSolution) => {
+              history.push({
+                pathname: `/solutions/${openSolution.id}`,
+              });
+            }}
             onEdit={(editSolution) => {
               history.push({
                 pathname: `/solutions/${editSolution.id}`,

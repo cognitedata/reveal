@@ -41,6 +41,7 @@ export const Base = () => (
 export const DefaultSolutionCard = () => (
   <SolutionCard
     solution={Solutions[0]}
+    onOpen={() => false}
     onDelete={() => false}
     onEdit={() => false}
   />
@@ -49,6 +50,7 @@ export const DefaultSolutionCard = () => (
 export const SolutionCardWithoutOwners = () => (
   <SolutionCard
     solution={Solutions[1]}
+    onOpen={() => false}
     onDelete={() => false}
     onEdit={() => false}
   />

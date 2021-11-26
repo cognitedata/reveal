@@ -10,7 +10,6 @@ import {
   Body,
   Icon,
 } from '@cognite/cogs.js';
-import { useHistory } from 'react-router-dom';
 
 import { DateUtilsImpl } from '@platypus/platypus-infrastructure';
 
@@ -20,6 +19,7 @@ import { StyledSolutionCard } from './elements';
 
 type SoluionCardProps = {
   solution: Solution;
+  onOpen: (solution: Solution) => void;
   onEdit: (solution: Solution) => void;
   onDelete: (solution: Solution) => void;
 };
@@ -28,8 +28,8 @@ export const SolutionCard = ({
   solution,
   onDelete,
   onEdit,
+  onOpen,
 }: SoluionCardProps) => {
-  const history = useHistory();
   const [visibleDropdown, setVisibleDropdown] = useState<boolean>(false);
   const { t } = useTranslation('solutions');
 
@@ -96,7 +96,7 @@ export const SolutionCard = ({
 
   return (
     <StyledSolutionCard
-      onClick={() => history.push(`solutions/${solution.id}`)}
+      onClick={() => onOpen(solution)}
       key={solution.id}
       className="z-4"
     >

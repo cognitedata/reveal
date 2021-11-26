@@ -7,3 +7,10 @@ export interface Solution {
   owners: string[];
   version: string;
 }
+
+export interface Schema {
+  version: string;
+  schemaString: string;
+  createdTime: number;
+  updatedTime: number;
+}

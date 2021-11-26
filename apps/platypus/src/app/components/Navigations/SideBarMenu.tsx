@@ -14,15 +14,16 @@ export type SideBarItem = {
 };
 
 export const SideBarMenu = ({ items }: SideBarProps) => {
-  const { solutionId, solutionPage } = useParams<{
+  const { solutionId, version, solutionPage } = useParams<{
     solutionId: string;
+    version: string;
     solutionPage: string;
   }>();
 
   const history = useHistory();
 
   const onRoute = (page: string, slug: string) => {
-    history.push(`/solutions/${solutionId}/${page}/${slug}`);
+    history.push(`/solutions/${solutionId}/${version}/${page}/${slug}`);
   };
 
   const renderIcon = (item: SideBarItem, index: number) => {
