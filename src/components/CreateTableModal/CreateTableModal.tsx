@@ -127,6 +127,7 @@ const CreateTableModal = ({
       {
         onSuccess: () => {
           setCreateTableModalStep(CreateTableModalStep.Upload);
+          openTable([databaseName, tableName]);
           onConfirmUpload(databaseName, tableName);
         },
         onError: (e: any) => {
