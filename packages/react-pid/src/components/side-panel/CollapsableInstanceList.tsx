@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  DiagramConnection,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -26,10 +27,11 @@ interface CollapsableInstanceListProps {
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstance[];
   lineInstances: DiagramLineInstance[];
+  connections: DiagramConnection[];
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
-  ({ symbols, symbolInstances, lineInstances }) => {
+  ({ symbols, symbolInstances, lineInstances, connections }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
       symbolName: string
@@ -83,9 +85,23 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
             ))}
           </Collapse.Panel>
         </Collapse>
+
         <CollapseSeperator>Symbols</CollapseSeperator>
         <Collapse accordion ghost>
           {renderSymbolPanels(symbols, symbolInstances)}
+        </Collapse>
+
+        <CollapseSeperator>Connections</CollapseSeperator>
+        <Collapse accordion ghost>
+          <Collapse.Panel header={`Connections (${connections?.length || 0})`}>
+            {connections?.map((connection) => (
+              <p key={`${connection.start}.${connection.end}`}>
+                {`${connection.start} ${
+                  connection.direction === 'unknown' ? '--' : '->'
+                } ${connection.end}`}
+              </p>
+            ))}
+          </Collapse.Panel>
         </Collapse>
       </ScrollWrapper>
     );

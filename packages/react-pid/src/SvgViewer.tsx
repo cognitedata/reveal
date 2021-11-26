@@ -14,10 +14,16 @@ import {
   SvgRepresentation,
   getInternalSvgBoundingBox,
   SVG_ID,
+  DiagramConnection,
+  DiagramInstanceId,
+  getDiagramInstanceId,
+  isPathIdInInstance,
+  connectionExists,
 } from '@cognite/pid-tools';
 import { Modal, Input, Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
 import { ToolType } from 'types';
 
+import { COLORS } from './constants';
 import {
   ModalFooterWrapper,
   ReactSVGWindow,
@@ -71,6 +77,16 @@ export const SvgViewer = () => {
   >([]);
   const [existingSymbolPromptData, setExistingSymbolPromptData] =
     useState<ExistingSymbolPromptData>(null);
+
+  const [connections, setConnections] = React.useState<DiagramConnection[]>([]);
+  const [connectionSelection, setConnectionSelection] =
+    React.useState<DiagramInstanceId | null>(null);
+
+  const setToolBarMode = (mode: ToolType) => {
+    setSelection([]);
+    setConnectionSelection(null);
+    setActive(mode);
+  };
 
   useEffect(() => {
     if (existingSymbolPromptData?.resolution === 'add') {
@@ -225,14 +241,8 @@ export const SvgViewer = () => {
 
       const recursive = (node: SVGElement) => {
         if (node.children.length === 0) {
-          if (selection.some((svgPath) => svgPath.id === node.id)) {
-            node.style.stroke = 'red';
-            const val = 1.5 * parseInt(node.style.strokeWidth, 10);
-            node.style.strokeWidth = val.toString();
-          }
-
           if (lines.some((line) => line.pathIds.includes(node.id))) {
-            node.style.stroke = 'magenta';
+            node.style.stroke = COLORS.diagramLine;
           }
 
           if (
@@ -240,7 +250,15 @@ export const SvgViewer = () => {
               symbolInst.pathIds.includes(node.id)
             )
           ) {
-            node.style.stroke = 'pink';
+            node.style.stroke = COLORS.symbol;
+          }
+
+          if (isPathIdInInstance(node.id, connectionSelection)) {
+            node.style.stroke = COLORS.connectionSelection;
+          }
+
+          if (selection.some((svgPath) => svgPath.id === node.id)) {
+            node.style.stroke = COLORS.symbolSelection;
           }
         } else {
           for (let j = 0; j < node.children.length; j++) {
@@ -280,50 +298,47 @@ export const SvgViewer = () => {
             all.push(node);
           }
           const originalStrokeWidth = node.style.strokeWidth;
-          const originalStroke = node.style.stroke;
+
           node.addEventListener('mouseenter', () => {
+            const boldStrokeWidth = (
+              1.5 * parseInt(originalStrokeWidth, 10)
+            ).toString();
+
             if (active === 'connectInstances') {
               const symbolInstance = getSymbolInstanceByPathId(
-                symbolInstances,
+                [...symbolInstances, ...lines],
                 node.id
               );
+
               if (symbolInstance) {
                 symbolInstance.pathIds.forEach((pathId) => {
                   (
                     document.getElementById(pathId) as unknown as SVGElement
-                  ).style.stroke = 'yellow';
+                  ).style.strokeWidth = boldStrokeWidth;
                 });
-                return;
               }
-            }
-            if (selection.some((svgPath) => svgPath.id === node.id)) {
-              const val = 1.5 * parseInt(originalStrokeWidth, 10);
-              node.style.strokeWidth = val.toString();
             } else {
-              const val = 1.5 * parseInt(originalStrokeWidth, 10);
-              node.style.strokeWidth = val.toString();
-              node.style.stroke = 'blue';
+              node.style.strokeWidth = boldStrokeWidth;
             }
           });
 
           node.addEventListener('mouseleave', () => {
             if (active === 'connectInstances') {
               const symbolInstance = getSymbolInstanceByPathId(
-                symbolInstances,
+                [...symbolInstances, ...lines],
                 node.id
               );
+
               if (symbolInstance) {
                 symbolInstance.pathIds.forEach((pathId) => {
                   (
                     document.getElementById(pathId) as unknown as SVGElement
-                  ).style.stroke = 'pink';
+                  ).style.strokeWidth = originalStrokeWidth;
                 });
-                return;
               }
+            } else {
+              node.style.strokeWidth = originalStrokeWidth;
             }
-
-            node.style.strokeWidth = originalStrokeWidth;
-            node.style.stroke = originalStroke;
           });
 
           node.addEventListener('click', () => {
@@ -337,8 +352,7 @@ export const SvgViewer = () => {
               } else {
                 setSelection([...selection, node]);
               }
-            }
-            if (active === 'addLine') {
+            } else if (active === 'addLine') {
               // Remove a line if already selected
               if (lines.some((line) => line.pathIds.includes(node.id))) {
                 const index = lines.findIndex((line) =>
@@ -355,6 +369,32 @@ export const SvgViewer = () => {
                     pathIds: [node.id],
                   } as DiagramLineInstance,
                 ]);
+              }
+            } else if (active === 'connectInstances') {
+              const symbolInstance = getSymbolInstanceByPathId(
+                [...symbolInstances, ...lines],
+                node.id
+              );
+
+              if (symbolInstance) {
+                const instanceId = getDiagramInstanceId(symbolInstance);
+
+                if (connectionSelection === null) {
+                  setConnectionSelection(instanceId);
+                } else if (instanceId === connectionSelection) {
+                  setConnectionSelection(null);
+                } else {
+                  const newConnection = {
+                    start: connectionSelection,
+                    end: instanceId,
+                    direction: 'unknown',
+                  } as DiagramConnection;
+                  if (connectionExists(connections, newConnection)) {
+                    return;
+                  }
+                  setConnections([...connections, newConnection]);
+                  setConnectionSelection(instanceId);
+                }
               }
             }
           });
@@ -416,9 +456,10 @@ export const SvgViewer = () => {
             lines={lines}
             symbolInstances={symbolInstances}
             selection={selection}
-            setActive={setActive}
+            setActive={setToolBarMode}
             loadSymbolsAsJson={loadSymbolsAsJson}
             saveSymbol={saveSymbol}
+            connections={connections}
           />
         )}
         {fileUrl !== '' && (

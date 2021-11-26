@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { ToolBar, ToolBarButton } from '@cognite/cogs.js';
 import {
+  DiagramConnection,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -38,6 +39,7 @@ interface SidePanelProps {
   setActive: (arg0: ToolType) => void;
   loadSymbolsAsJson: (args0: string) => void;
   saveSymbol: (symbolName: string, selection: SVGElement[]) => void;
+  connections: DiagramConnection[];
 }
 
 export const SidePanel = ({
@@ -49,6 +51,7 @@ export const SidePanel = ({
   setActive,
   loadSymbolsAsJson,
   saveSymbol,
+  connections,
 }: SidePanelProps) => {
   const ActionWithCustomStyling: ToolBarButton[][] = [
     [
@@ -85,6 +88,7 @@ export const SidePanel = ({
         symbols={symbols}
         symbolInstances={symbolInstances}
         lineInstances={lines}
+        connections={connections}
       />
       <div>
         {active === 'addSymbol' &&
