@@ -57,7 +57,6 @@ export function ScheduleSection({
             name="schedule.repeat"
             disabled={!isEditing || !enabledBySwitch}
             type="number"
-            value={values.schedule.repeat}
           />
         </InputRow>
       </InputArea>

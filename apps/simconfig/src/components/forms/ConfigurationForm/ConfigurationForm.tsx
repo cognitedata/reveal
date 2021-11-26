@@ -1,11 +1,15 @@
-import { useContext, useState } from 'react';
-import { Form, Formik } from 'formik';
+import { useContext, useRef, useState } from 'react';
+import { Form, Formik, FormikProps } from 'formik';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { selectSelectedCalculation } from 'store/file/selectors';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { FormButton } from 'components/forms/elements';
 import { updateCalculationFile } from 'store/file/thunks';
 import { initialConfigFile } from 'store/file/constants';
+import {
+  getIntervalUnitValue,
+  getIntervalValueInMinutes,
+} from 'components/forms/utils';
 import * as yup from 'yup';
 
 import { DataSamplingSection } from './DataSamplingSection';
@@ -27,6 +31,7 @@ export function ConfigurationForm({
   const { cdfClient } = useContext(CdfClientContext);
   const [isEditing, setIsEditing] = useState(false);
   const selectedFileInfo = useAppSelector(selectSelectedCalculation);
+  const formikRef = useRef<FormikProps<CalculationConfig>>(null);
 
   const handleSubmit = async (values: CalculationConfig) => {
     if (!selectedFileInfo) {
@@ -45,7 +50,34 @@ export function ConfigurationForm({
   const onEditClick = () => {
     setIsEditing(!isEditing);
   };
+
   const validationSchema = yup.object().shape({
+    schedule: yup.object().shape({
+      repeat: yup
+        .string()
+        .test(
+          'validate-is-less-than-vw',
+          'Cannot be more frequent than validation window',
+          (input) => {
+            if (!input) {
+              return false;
+            }
+
+            const validationWindow =
+              formikRef.current?.values.dataSampling.validationWindow;
+
+            if (!validationWindow) {
+              return false;
+            }
+
+            const unit = getIntervalUnitValue(input);
+            const value = parseInt(input, 10);
+            const minutes = getIntervalValueInMinutes(value, unit);
+
+            return minutes >= validationWindow;
+          }
+        ),
+    }),
     dataSampling: yup.object().shape({
       validationWindow: yup.number().min(0),
       samplingWindow: yup
@@ -72,6 +104,7 @@ export function ConfigurationForm({
       initialValues={formData || initialConfigFile}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
+      innerRef={formikRef}
     >
       {({ isValid, resetForm }) => (
         <Form>

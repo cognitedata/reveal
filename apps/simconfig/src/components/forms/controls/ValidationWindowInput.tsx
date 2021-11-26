@@ -6,7 +6,7 @@ import { INTERVAL_UNIT } from 'components/forms/ConfigurationForm/constants';
 import { Select } from '@cognite/cogs.js';
 import {
   DoubleInputRow,
-  InputFullWidth,
+  InputFullWidthForDouble,
   InputLabel,
   InputWithLabelContainerWide,
 } from 'components/forms/elements';
@@ -16,19 +16,18 @@ interface ComponentProps {
   disabled: boolean;
   type: string;
   title: string;
-  value: string;
 }
+
 function ValidationWindowInput({
   name,
   title,
   disabled,
   type,
-  value,
 }: React.PropsWithoutRef<ComponentProps>) {
   const { setFieldValue, errors, values } =
     useFormikContext<CalculationConfig>();
-  const validationValue = values.dataSampling.validationWindow;
 
+  const value = values.schedule.repeat;
   const intervalUnitValue = value
     ? (value.slice(-1) as keyof typeof INTERVAL_UNIT)
     : 'd';
@@ -47,42 +46,24 @@ function ValidationWindowInput({
     setFieldValue(name, e.target.value + intervalUnitValue);
   };
 
-  const getValueInMinutes = (value: number) => {
-    const multiplicative = {
-      m: 1,
-      h: 60,
-      d: 60 * 24,
-      w: 60 * 24 * 7,
-    };
-    return value * multiplicative[intervalUnitValue];
-  };
-
-  const validateInterval = () => {
-    const valueInMinutes = getValueInMinutes(intervalValue);
-
-    if (valueInMinutes < validationValue) {
-      return 'repeat cannot be more frequent than validation window';
-    }
-    if (valueInMinutes < 15) {
-      return 'Cannot repeat more frequently than 15 mins';
-    }
-    return undefined;
-  };
-
   return (
     <>
       <InputWithLabelContainerWide>
         <InputLabel>{title}</InputLabel>
         <DoubleInputRow>
           <Field
+            // Workaround for an issue in cogs.js: Removing the title also
+            // removes the input wrapper in the default state, which causes the
+            // input field to lose focus when the validation state/error
+            // message changes
+            title=" "
             name={name}
-            as={InputFullWidth}
+            as={InputFullWidthForDouble}
             width="174px"
             value={intervalValue}
             disabled={disabled}
             type={type}
             error={errors.schedule?.repeat}
-            validate={validateInterval}
             onChange={handleInputChange}
           />
 
