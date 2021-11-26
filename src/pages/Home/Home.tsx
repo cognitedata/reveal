@@ -18,7 +18,7 @@ import { ConfusionMatrixModal } from './components/modal/ConfusionMatrixModal';
 import { ActiveModelContainer } from './components/container/ActiveModelContainer';
 import { ClassifierActions } from './components/table/curateClassifierColumns';
 
-const Home = () => {
+const HomePage = () => {
   const user = useUserContext();
   const { toClassifier } = useNavigation();
 
@@ -114,4 +114,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;
