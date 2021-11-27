@@ -47,11 +47,11 @@ async function init() {
   // const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
   // const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
 
-  const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
+  // const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
+  // const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
 
-  // const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
+  const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -65,9 +65,9 @@ async function init() {
 
   cadManager.budget = {
     geometryDownloadSizeBytes: Infinity,
-    highDetailProximityThreshold: Infinity,
+    highDetailProximityThreshold: cadManager.budget.highDetailProximityThreshold,
     maximumNumberOfDrawCalls: Infinity,
-    maximumRenderCost: Infinity
+    maximumRenderCost: cadManager.budget.maximumRenderCost
   };
 
   const model = await cadManager.addModel(modelIdentifier);

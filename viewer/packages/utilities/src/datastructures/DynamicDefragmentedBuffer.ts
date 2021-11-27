@@ -64,7 +64,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
       throw new Error('batch does not exist in buffer');
     }
 
-    this._bufferView.copyWithin(batch.from, batch.from + batch.count, this.bufferView.length);
+    this._bufferView.copyWithin(batch.from, batch.from + batch.count, this._numFilled);
 
     this._numFilled -= batch.count;
 

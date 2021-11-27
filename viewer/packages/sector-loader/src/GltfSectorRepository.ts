@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
-import { CadMaterialManager } from '@reveal/rendering';
+import { CadMaterialManager, Materials } from '@reveal/rendering';
 import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
@@ -107,6 +107,39 @@ export class GltfSectorRepository implements SectorRepository {
       const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
       inverseModelMatrix.copy(mesh.matrixWorld).invert();
     };
+  }
+
+  private getShaderMaterial(type: RevealGeometryCollectionType, materials: Materials) {
+    switch (type) {
+      case RevealGeometryCollectionType.BoxCollection:
+        return materials.box;
+      case RevealGeometryCollectionType.CircleCollection:
+        return materials.circle;
+      case RevealGeometryCollectionType.ConeCollection:
+        return materials.cone;
+      case RevealGeometryCollectionType.EccentricConeCollection:
+        return materials.eccentricCone;
+      case RevealGeometryCollectionType.EllipsoidSegmentCollection:
+        return materials.ellipsoidSegment;
+      case RevealGeometryCollectionType.GeneralCylinderCollection:
+        return materials.generalCylinder;
+      case RevealGeometryCollectionType.GeneralRingCollection:
+        return materials.generalRing;
+      case RevealGeometryCollectionType.QuadCollection:
+        return materials.quad;
+      case RevealGeometryCollectionType.TorusSegmentCollection:
+        return materials.torusSegment;
+      case RevealGeometryCollectionType.TrapeziumCollection:
+        return materials.trapezium;
+      case RevealGeometryCollectionType.NutCollection:
+        return materials.nut;
+      case RevealGeometryCollectionType.TriangleMesh:
+        return materials.triangleMesh;
+      case RevealGeometryCollectionType.InstanceMesh:
+        return materials.instancedMesh;
+      default:
+        assertNever(type);
+    }
   }
 
   clear(): void {}
