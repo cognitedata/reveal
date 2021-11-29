@@ -31,9 +31,9 @@ export const DocumentsSearchModal: React.FC<Props> = React.memo(
 
     const handleAddFilesClick = () => {
       if (fileIds.length > 0) {
-        mutateAsync({ label: { externalId: labelId }, fileIds }).then(() =>
-          toggleVisibility()
-        );
+        mutateAsync({ label: { externalId: labelId }, fileIds })
+          .then(() => toggleVisibility())
+          .catch(() => null);
       }
     };
 

@@ -37,6 +37,9 @@ export const updateDocumentPipelinesActiveClassifier = (
     )
     .then((result) => {
       return result.data.items?.[0];
+    })
+    .catch((error) => {
+      throw error;
     });
 };
 
@@ -64,5 +67,8 @@ export const updateDocumentPipelinesTrainingLabels = (
     )
     .then((result) => {
       return result.data.items;
+    })
+    .catch((error) => {
+      throw error;
     });
 };

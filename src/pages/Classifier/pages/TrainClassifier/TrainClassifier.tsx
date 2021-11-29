@@ -6,7 +6,7 @@ import {
 } from 'machines/classifier/hooks/useClassifierSelectors';
 import { ClassifierState } from 'machines/classifier/types';
 import TrainClassifierContainer from 'pages/Classifier/pages/TrainClassifier/components/containers/TrainClassifierContainer';
-import { Body, Button, Flex, Tag } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
 import { useClassifierManageTrainingSetsQuery } from 'services/query';
 import { useClassifierCreateMutate } from 'services/query/classifier/mutate';
@@ -14,6 +14,7 @@ import { useDocumentsClassifierByIdQuery } from 'services/query/classifier/query
 import { useClassifierParams } from 'hooks/useParams';
 import { isClassifierFinished } from 'utils/classifier';
 import { CommonClassifierPage } from 'pages/Classifier/components/ClassifierPage';
+import { useNavigation } from 'hooks/useNavigation';
 import { ClassifierProps } from '../router';
 import { TrainClassifierInfoBar } from './components/containers/TrainClassifierInfoBar';
 import { TrainClassifierNavigation } from './components/navigation/TrainClassifierNavigation';
@@ -22,7 +23,8 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
   const { classifierName } = useClassifierParams();
   const { updateDescription } = useClassifierActions();
   const { description } = useClassifierConfig(ClassifierState.TRAIN);
-  const { previousPage } = useClassifierActions();
+
+  const { reload } = useNavigation();
 
   const { data: classifierTrainingSets } =
     useClassifierManageTrainingSetsQuery();
@@ -35,9 +37,11 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
     useDocumentsClassifierByIdQuery(classifierId);
 
   const handleTrainClassifierClick = () => {
-    mutateAsync(classifierName).then((result) => {
-      setClassifierId(result.id);
-    });
+    mutateAsync(classifierName)
+      .then((result) => {
+        setClassifierId(result.id);
+      })
+      .catch(() => null);
   };
 
   React.useEffect(() => {
@@ -47,40 +51,6 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
       });
     }
   }, [newlyCreatedClassifier, updateDescription]);
-
-  const renderTrainClassifierMessage = () => {
-    const trainingSets = classifierTrainingSets.length;
-    const trainingSetsFiles = classifierTrainingSets.reduce(
-      (accumulator, item) => accumulator + (item.count || 0),
-      0
-    );
-    return (
-      <Flex gap={8}>
-        <Body>Training classifier with</Body>
-        <Tag icon="Edit" onClick={previousPage}>
-          {trainingSets} labels
-        </Tag>
-        <Body>using</Body>
-        <Tag icon="Edit" onClick={previousPage}>
-          {trainingSetsFiles} files
-        </Tag>
-      </Flex>
-    );
-  };
-
-  const renderTrainClassifierAction = (isRunning: boolean, isDone: boolean) => {
-    return (
-      <Button
-        type="primary"
-        loading={isRunning || isLoading}
-        icon={isDone ? 'Checkmark' : undefined}
-        disabled={isDone || classifierTrainingSets.length === 0}
-        onClick={handleTrainClassifierClick}
-      >
-        {isDone ? 'Training completed' : 'Train classifier'}
-      </Button>
-    );
-  };
 
   return (
     <CommonClassifierPage
@@ -94,11 +64,29 @@ const TrainClassifier: React.FC<ClassifierProps> = ({ Widget }) => {
       <TrainClassifierInfoBar classifier={newlyCreatedClassifier} />
 
       <PageHeader title="Train classifier" description={description} />
+
       <PageContent>
         <TrainClassifierContainer
           classifier={newlyCreatedClassifier}
-          Message={renderTrainClassifierMessage()}
-          Action={renderTrainClassifierAction}
+          Action={(isRunning, isDone, status) => (
+            <Flex gap={8}>
+              <Button
+                type="primary"
+                loading={isRunning || isLoading}
+                icon={isDone ? 'Checkmark' : undefined}
+                disabled={isDone || classifierTrainingSets.length === 0}
+                onClick={handleTrainClassifierClick}
+              >
+                {isDone ? 'Training completed' : 'Train classifier'}
+              </Button>
+
+              {status === 'failed' && (
+                <Button type="primary" icon="Refresh" onClick={() => reload()}>
+                  Restart
+                </Button>
+              )}
+            </Flex>
+          )}
         />
       </PageContent>
     </CommonClassifierPage>

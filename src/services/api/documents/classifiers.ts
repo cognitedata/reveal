@@ -13,6 +13,9 @@ export const createDocumentClassifier = (sdk: CogniteClient, name: string) => {
     )
     .then((result) => {
       return result.data.items?.[0];
+    })
+    .catch((error) => {
+      throw error;
     });
 };
 
@@ -23,6 +26,9 @@ export const fetchDocumentClassifiers = (sdk: CogniteClient) => {
     )
     .then((result) => {
       return result.data.items;
+    })
+    .catch((error) => {
+      throw error;
     });
 };
 
@@ -38,6 +44,9 @@ export const fetchDocumentClassifierById = (sdk: CogniteClient, id: number) => {
     )
     .then((result) => {
       return result.data.items?.[0];
+    })
+    .catch((error) => {
+      throw error;
     });
 };
 
@@ -53,5 +62,8 @@ export const deleteDocumentClassifier = (sdk: CogniteClient, id: number) => {
     )
     .then((result) => {
       return result.data;
+    })
+    .catch((error) => {
+      throw error;
     });
 };

@@ -1,10 +1,14 @@
 import { Classifier } from '@cognite/sdk-playground';
 import { Modal } from 'components/modal/Modal';
-import { PageHeader } from 'components/page';
 import { MatrixTable } from 'pages/Classifier/pages/ReviewModel/components';
 import React from 'react';
+import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
 import { ActiveModelContainer } from '../container/ActiveModelContainer';
+
+const Container = styled.div`
+  margin-top: 1rem;
+`;
 
 interface Props {
   classifier: Classifier;
@@ -13,7 +17,7 @@ interface Props {
   onDeployClick: (classifier: Classifier) => void;
 }
 
-export const ConfusionMatrixModal: React.FC<Props> = ({
+export const ReviewModelModal: React.FC<Props> = ({
   classifier,
   visible,
   toggleVisibility,
@@ -21,17 +25,17 @@ export const ConfusionMatrixModal: React.FC<Props> = ({
 }) => {
   return (
     <Modal
-      title="Confusion Matrix"
+      title="Review model"
       okText="Deploy model"
       visible={visible}
       getContainer={getContainer}
       onCancel={() => toggleVisibility()}
       onOk={() => onDeployClick(classifier)}
     >
-      <br />
-      <ActiveModelContainer classifier={classifier} />
-      <PageHeader title="Confusion matrix" titleLevel={5} />
-      <MatrixTable classifier={classifier} />
+      <Container>
+        <ActiveModelContainer classifier={classifier} fullWidth />
+        <MatrixTable classifier={classifier} />
+      </Container>
     </Modal>
   );
 };

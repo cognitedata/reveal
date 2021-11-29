@@ -1,11 +1,11 @@
 import { PageContent, PageHeader } from 'components/page';
-import { TableWrapper } from 'components/table/TableWrapper';
 import { useNavigation } from 'hooks/useNavigation';
 import { useClassifierId } from 'machines/classifier/hooks/useClassifierSelectors';
 import React from 'react';
 import { useDocumentsActiveClassifierPipelineMutate } from 'services/query/pipelines/mutate';
 import { useDocumentsClassifierByIdQuery } from 'services/query/classifier/query';
 import { CommonClassifierPage } from 'pages/Classifier/components/ClassifierPage';
+import { ActiveModelContainer } from 'pages/Home/components/container/ActiveModelContainer';
 import { ClassifierProps } from '../router';
 import { MatrixTable } from './components';
 import { ReviewModelNavigation } from './components/navigation/ReviewModelNavigation';
@@ -60,9 +60,11 @@ export const ReviewModel: React.FC<ClassifierProps> = ({ Widget }) => {
 
   const handleDeployClassifierClick = () => {
     if (classifier) {
-      updateActiveClassifierMutate(classifier.id).then(() => {
-        toHome();
-      });
+      updateActiveClassifierMutate(classifier.id)
+        .then(() => {
+          toHome();
+        })
+        .catch(() => null);
     }
   };
 
@@ -74,10 +76,11 @@ export const ReviewModel: React.FC<ClassifierProps> = ({ Widget }) => {
       }
     >
       <PageHeader title="Review Model" />
+
+      <ActiveModelContainer classifier={classifier} />
+
       <PageContent>
-        <TableWrapper alignValuesCenter stickyHeader stickyFirstColumn>
-          <MatrixTable classifier={classifier} />
-        </TableWrapper>
+        <MatrixTable classifier={classifier} />
       </PageContent>
     </CommonClassifierPage>
   );

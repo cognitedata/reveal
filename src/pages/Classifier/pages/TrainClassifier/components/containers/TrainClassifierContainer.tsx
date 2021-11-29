@@ -4,6 +4,10 @@ import { PageHeader } from 'components/page';
 import { isClassifierDone, isClassifierTraining } from 'utils/classifier';
 import { Classifier } from '@cognite/sdk-playground';
 import TrainClassifierLabel from 'pages/Classifier/pages/TrainClassifier/components/TrainClassifierLabel';
+import { Flex, Body, Tag } from '@cognite/cogs.js';
+import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
+import { useClassifierManageTrainingSetsQuery } from 'services/query';
+import { ClassifierStatus } from 'services/types';
 
 const Container = styled.div<{ $status?: string }>`
   width: 50rem;
@@ -21,28 +25,60 @@ const Wrapper = styled.div`
 
 interface Props {
   classifier?: Classifier;
-  Action?: (isRunning: boolean, isDone: boolean) => JSX.Element | JSX.Element[];
-  Message?: JSX.Element | JSX.Element[];
+  Action?: (
+    isRunning: boolean,
+    isDone: boolean,
+    status?: ClassifierStatus
+  ) => JSX.Element | JSX.Element[];
 }
 
-const TrainClassifierContainer: React.FC<Props> = ({
-  classifier,
-  Action,
-  Message,
-}) => {
+const TrainClassifierContainer: React.FC<Props> = ({ classifier, Action }) => {
+  const { previousPage } = useClassifierActions();
+
+  const { data: classifierTrainingSets } =
+    useClassifierManageTrainingSetsQuery();
+
   const isRunning = isClassifierTraining(classifier);
   const isDone = isClassifierDone(classifier);
+
+  const trainingSets = classifierTrainingSets.length;
+  const trainingSetsFiles = classifierTrainingSets.reduce(
+    (accumulator, item) => accumulator + (item.count || 0),
+    0
+  );
 
   return (
     <>
       <Container $status={classifier?.status}>
         <PageHeader
-          title="Set up label classifier"
+          title="Set up for label classifier"
           titleLevel={5}
+          marginBottom="1rem"
           Action={<TrainClassifierLabel status={classifier?.status} />}
         />
-        {Message && <Wrapper>{Message}</Wrapper>}
-        {Action && <Wrapper>{Action(isRunning, isDone)}</Wrapper>}
+
+        <Wrapper>
+          <Flex gap={8}>
+            <Body>Training classifier with</Body>
+            <Tag icon="Edit" onClick={previousPage}>
+              {trainingSets} labels
+            </Tag>
+            <Body>using</Body>
+            <Tag icon="Edit" onClick={previousPage}>
+              {trainingSetsFiles} files
+            </Tag>
+          </Flex>
+        </Wrapper>
+
+        {Action && (
+          <Wrapper>
+            {Action(
+              isRunning,
+              isDone,
+              classifier?.status as ClassifierStatus | undefined
+            )}
+          </Wrapper>
+        )}
       </Container>
     </>
   );

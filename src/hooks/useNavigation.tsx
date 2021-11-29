@@ -9,6 +9,7 @@ export type Navigation = {
   toLabel: (externalId: string) => void;
   toClassifier: (classifier: string) => void;
   goBack: () => void;
+  reload: () => void;
 };
 
 const useBuildUrl = () => {
@@ -53,11 +54,16 @@ export const useNavigation = (): Navigation => {
     history.goBack();
   };
 
+  const reload = () => {
+    window.location.reload();
+  };
+
   return {
     toDashboard,
     toHome,
     toLabel,
     toClassifier,
     goBack,
+    reload,
   };
 };

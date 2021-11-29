@@ -14,7 +14,7 @@ import { useDocumentsActiveClassifierPipelineMutate } from 'services/query/pipel
 import { TableWrapper } from 'components/table/TableWrapper';
 import ClassifierWidget from './components/widgets/ClassifierWidget';
 import { ClassifierTable } from './components/table/ClassifierTable';
-import { ConfusionMatrixModal } from './components/modal/ConfusionMatrixModal';
+import { ReviewModelModal } from './components/modal/ReviewModelModal';
 import { ActiveModelContainer } from './components/container/ActiveModelContainer';
 import { ClassifierActions } from './components/table/curateClassifierColumns';
 
@@ -51,9 +51,11 @@ const HomePage = () => {
   };
 
   const handleDeployClassifierClick = (classifier: Classifier) => {
-    updateActiveClassifierMutate(classifier.id).then(() => {
-      toggleConfusionMatrixModal();
-    });
+    updateActiveClassifierMutate(classifier.id)
+      .then(() => {
+        toggleConfusionMatrixModal();
+      })
+      .catch(() => null);
   };
 
   useEffect(() => {
@@ -66,7 +68,7 @@ const HomePage = () => {
 
   if (selectedClassifier) {
     return (
-      <ConfusionMatrixModal
+      <ReviewModelModal
         classifier={selectedClassifier}
         visible={Boolean(selectedClassifier)}
         toggleVisibility={toggleConfusionMatrixModal}

@@ -1,15 +1,26 @@
-import { Table } from '@cognite/cogs.js';
+import { Flex, Table, Detail, Icon } from '@cognite/cogs.js';
 import { Classifier } from '@cognite/sdk-playground';
+import { TableWrapper } from 'components/table/TableWrapper';
 import React from 'react';
 import styled from 'styled-components';
 import { ConfusionMatrix, mapConfusionMatrix } from 'utils/matrix';
 import { curateColumns } from './curateMatrixColumns';
 
 const Container = styled.div`
-  /* border: 1px solid var(--cogs-greyscale-grey4); */
-  /* border-radius: 8px; */
   height: 100%;
   width: 100%;
+`;
+
+const HorizontalText = styled(Detail)`
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+`;
+
+const VerticalText = styled(HorizontalText)`
+  writing-mode: vertical-rl;
+  margin-top: 2rem;
+  margin-right: 0.5rem;
 `;
 
 interface Props {
@@ -23,12 +34,31 @@ export const MatrixTable: React.FC<Props> = ({ classifier }) => {
   const matrix = mapConfusionMatrix(confusionMatrix, labels);
 
   return (
-    <Container>
-      <Table<ConfusionMatrix>
-        pagination={false}
-        dataSource={matrix}
-        columns={columns as any}
-      />
-    </Container>
+    <Flex>
+      <VerticalText>
+        True label <Icon type="ArrowDown" />
+      </VerticalText>
+
+      <Flex direction="column">
+        <HorizontalText>
+          Predicted label <Icon type="ArrowForward" />
+        </HorizontalText>
+
+        <TableWrapper
+          alignValuesCenter
+          stickyHeader
+          stickyFirstColumn
+          extraBorders
+        >
+          <Container>
+            <Table<ConfusionMatrix>
+              pagination={false}
+              dataSource={matrix}
+              columns={columns as any}
+            />
+          </Container>
+        </TableWrapper>
+      </Flex>
+    </Flex>
   );
 };

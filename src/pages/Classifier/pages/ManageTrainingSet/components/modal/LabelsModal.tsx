@@ -21,9 +21,11 @@ export const LabelsModal: React.FC<Props> = ({ visible, toggleVisibility }) => {
       externalId,
     }));
 
-    mutateAsync(labels).then(() => {
-      toggleVisibility();
-    });
+    mutateAsync(labels)
+      .then(() => {
+        toggleVisibility();
+      })
+      .catch(() => null);
   };
 
   const handleSectionChange = React.useCallback((event: Labels[]) => {

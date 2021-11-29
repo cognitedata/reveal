@@ -44,6 +44,9 @@ export const fetchDocumentAggregates = (sdk: CogniteClient) => {
     )
     .then((result) => {
       return result.data.aggregates;
+    })
+    .catch((error) => {
+      throw error;
     });
 };
 
@@ -64,6 +67,9 @@ export const doDocumentSearch = (
     )
     .then((result) => {
       return result.data.items?.map(({ item }) => item);
+    })
+    .catch((error) => {
+      throw error;
     });
 };
 
@@ -85,7 +91,10 @@ export const fetchDocumentList = (sdk: CogniteClient, externalId: string) => {
         },
       }
     )
-    .then((result) => result.data.items);
+    .then((result) => result.data.items)
+    .catch((error) => {
+      throw error;
+    });
 };
 
 export const fetchDocumentById = (sdk: CogniteClient, documentId: number) => {
@@ -100,7 +109,10 @@ export const fetchDocumentById = (sdk: CogniteClient, documentId: number) => {
         },
       }
     )
-    .then((result) => result.data.items?.[0]);
+    .then((result) => result.data.items?.[0])
+    .catch((error) => {
+      throw error;
+    });
 };
 
 export const previewDocument = (
@@ -122,5 +134,8 @@ export const previewDocument = (
         },
       }
     )
-    .then((result) => parseArrayBufferToBase64(result.data));
+    .then((result) => parseArrayBufferToBase64(result.data))
+    .catch((error) => {
+      throw error;
+    });
 };

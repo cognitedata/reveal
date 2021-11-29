@@ -1,14 +1,15 @@
-import { Body, Button, Flex, Label } from '@cognite/cogs.js';
+import { Body, Button, Flex, Label, Title } from '@cognite/cogs.js';
 import { Classifier } from '@cognite/sdk-playground';
-import { PageHeader } from 'components/page';
-import { TableCell } from 'components/table/TableCell';
+import { motion } from 'framer-motion';
 import React from 'react';
 import styled from 'styled-components';
+import { metricsLabels } from './utils';
 
-const Container = styled.div`
-  width: 60rem;
+const Container = styled(motion.div)<{ $fullWidth?: boolean }>`
+  width: ${(props) => (props.$fullWidth ? '100%' : '60rem')};
   background-color: #fafafa;
   padding: 1rem;
+  padding-top: 0;
   border-radius: 8px;
   border: 2px solid #f5f5f5;
   margin-bottom: 2rem;
@@ -18,90 +19,68 @@ const FlexWrapper = styled(Flex)`
   margin-top: 1rem;
 `;
 
-const MetricsLabel = styled(Body).attrs({ level: 3 })``;
-const MetricsValue = styled(Body).attrs({ level: 2, strong: true })``;
+const MetricsWrapper = styled(FlexWrapper)`
+  justify-content: space-between;
+  width: 45rem;
+`;
+
 const TextLabel = styled(Label).attrs({ variant: 'unknown', size: 'medium' })``;
 
 interface Props {
   classifier?: Classifier;
   onViewConfusionMatrixClick?: () => void;
+  fullWidth?: boolean;
 }
 
 export const ActiveModelContainer: React.FC<Props> = ({
   classifier,
   onViewConfusionMatrixClick,
+  fullWidth,
 }) => {
   if (!classifier) {
     return (
       <Container>
-        <PageHeader title="No active model" titleLevel={5} marginBottom="0" />
+        <FlexWrapper direction="column">
+          <Title level={5}>No active model</Title>
 
-        <Body>
-          Train a new model and deploy a finished classifier to the pipeline
-        </Body>
+          <Body>
+            Train a new model and deploy a finished classifier to the pipeline
+          </Body>
+        </FlexWrapper>
       </Container>
     );
   }
 
-  const metricsLabels = [
-    {
-      name: 'Build Time',
-      Render: TableCell.Date({ value: classifier?.createdAt } as any),
-    },
-    {
-      name: 'Accuracy',
-      Render: TableCell.Number({
-        value: classifier?.metrics?.recall,
-      } as any),
-    },
-    {
-      name: 'F1 Score',
-      Render: TableCell.Number({
-        value: classifier?.metrics?.f1Score,
-      } as any),
-    },
-    {
-      name: 'Precision',
-      Render: TableCell.Number({
-        value: classifier?.metrics?.precision,
-      } as any),
-    },
-  ];
-
   return (
-    <Container>
-      <PageHeader
-        title="Active model"
-        titleLevel={5}
-        marginBottom="1rem"
-        Action={
-          <Label
-            size="medium"
-            variant={classifier.active ? 'default' : 'unknown'}
-          >
-            {classifier.active ? 'Currently running' : 'Inactive'}
-          </Label>
-        }
-      />
+    <Container $fullWidth={fullWidth}>
+      <FlexWrapper alignItems="center" justifyContent="space-between">
+        <Title level={5}>Active model</Title>
+        <Label size="medium" variant={classifier.active ? 'normal' : 'success'}>
+          {classifier.active ? 'Currently running' : 'Finished'}
+        </Label>
+      </FlexWrapper>
 
-      <Body level={2}>
-        Trained with{' '}
+      <FlexWrapper alignItems="center" gap={8}>
+        <Body level={2}>Trained with</Body>
         <TextLabel>
           {classifier.metrics?.labels?.length || '?'} labels
-        </TextLabel>{' '}
-        using{' '}
+        </TextLabel>
+        <Body level={2}>using</Body>
         <TextLabel>
           {(classifier as any)?.trainingSetSize || '?'} files
         </TextLabel>
-      </Body>
-
-      <FlexWrapper gap={24}>
-        {metricsLabels.map(({ name, Render }) => (
-          <MetricsLabel key={name}>
-            {name}: <MetricsValue>{Render}</MetricsValue>
-          </MetricsLabel>
-        ))}
       </FlexWrapper>
+
+      <MetricsWrapper>
+        {metricsLabels(classifier).map(({ name, Value }) => (
+          <Flex key={name} direction="column" gap={4}>
+            <Body level={3} strong>
+              {name}:
+            </Body>
+            <Body level={2}>{Value}</Body>
+          </Flex>
+        ))}
+      </MetricsWrapper>
 
       {onViewConfusionMatrixClick && (
         <FlexWrapper justifyContent="space-between" alignItems="center">

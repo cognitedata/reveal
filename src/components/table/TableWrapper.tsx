@@ -33,18 +33,34 @@ const StickyTableHead = styled.div`
   }
 `;
 
+const ExtraTableBorders = styled.div`
+  th:first-child,
+  td:first-child {
+    border-right: 1px solid var(--cogs-greyscale-grey2);
+  }
+
+  table {
+    border: 1px solid var(--cogs-greyscale-grey2);
+  }
+`;
+
 const StickyFirstColumn = styled.div`
-  tbody tr td:first-child {
+  th:first-child,
+  td:first-child {
     position: sticky;
     left: 0;
     background-color: white;
+    border-right: 1px solid var(--cogs-greyscale-grey2);
   }
 `;
 
 const AlignTableValuesCenter = styled.div`
+  th,
   td {
     text-align: center !important;
-    width: 50px !important;
+  }
+  .cogs-th-container {
+    display: block;
   }
 `;
 
@@ -52,12 +68,14 @@ interface Props {
   stickyHeader?: boolean;
   stickyFirstColumn?: boolean;
   alignValuesCenter?: boolean;
+  extraBorders?: boolean;
 }
 
 export const TableWrapper: React.FC<Props> = ({
   stickyHeader,
   stickyFirstColumn,
   alignValuesCenter,
+  extraBorders,
   children,
 }) => {
   const StickyHeadWrapper = stickyHeader ? StickyTableHead : React.Fragment;
@@ -70,11 +88,15 @@ export const TableWrapper: React.FC<Props> = ({
     ? AlignTableValuesCenter
     : React.Fragment;
 
+  const ExtraBordersWrapper = extraBorders ? ExtraTableBorders : React.Fragment;
+
   return (
     <Container>
       <StickyHeadWrapper>
         <StickyFirstColumnWrapper>
-          <AlignCenterWrapper>{children}</AlignCenterWrapper>
+          <ExtraBordersWrapper>
+            <AlignCenterWrapper>{children}</AlignCenterWrapper>
+          </ExtraBordersWrapper>
         </StickyFirstColumnWrapper>
       </StickyHeadWrapper>
     </Container>
