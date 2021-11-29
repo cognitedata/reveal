@@ -253,7 +253,7 @@ const CreateTableModal = ({
               </Button>,
             ]
           : []),
-        ...(isUploadCompleted
+        ...(isUploadCompleted || isUploadFailed
           ? [
               <Button onClick={handleCancel} type="primary">
                 OK

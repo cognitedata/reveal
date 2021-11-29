@@ -61,7 +61,9 @@ const CreateTableModalUploadStep = ({
             />
           </StyledProgressionBarWrapper>
         </StyledProgressionWrapper>
-        <StyledCloseButton icon="Close" onClick={onCancel} type="ghost" />
+        {!isUploadCompleted && !isUploadFailed && (
+          <StyledCloseButton icon="Close" onClick={onCancel} type="ghost" />
+        )}
       </StyledUploadStepWrapper>
     </>
   );
