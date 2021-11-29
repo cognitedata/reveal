@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
 
+import { Map } from 'immutable';
 import get from 'lodash/get';
-import head from 'lodash/head';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 
 import { FullContainer } from './elements';
+import { useSelectedPath } from './hooks/useSelectedPath';
 import { RightPanel, LeftPanel } from './layout';
 import {
   HandleConfigChange,
@@ -14,6 +14,8 @@ import {
   Metadata,
   CustomComponent,
 } from './types';
+import { adaptSelectedPathToMetadataPath } from './utils/adaptSelectedPathToMetadataPath';
+import { getArrayChangeDetail } from './utils/getArrayChangeDetail';
 
 export interface Props {
   config: ProjectConfig;
@@ -25,9 +27,6 @@ export interface Props {
   renderCustomComponent: CustomComponent;
 }
 
-export const adaptedSelectedPathToMetadataPath = (selectedPath = '') =>
-  selectedPath.replace(/\.\d+/g, '').replace(/\./g, '.children.');
-
 export const ProjectConfigForm: React.FC<Props> = ({
   onChange,
   onUpdate,
@@ -37,28 +36,36 @@ export const ProjectConfigForm: React.FC<Props> = ({
   metadata,
   renderCustomComponent,
 }) => {
-  const history = useHistory();
-  const { search } = useLocation();
-  const urlParams = React.useMemo(() => new URLSearchParams(search), [search]);
-
-  React.useEffect(() => {
-    if (!search) {
-      history.push({ search: `?selectedPath=${head(Object.keys(metadata))}` });
-    }
-  }, [metadata, search]);
-
-  const selectedPath: string = urlParams.get('selectedPath') || '';
-
-  const setSelectedPath = (path: string) => {
-    history.push({ search: `?selectedPath=${path}` });
-  };
+  const { selectedPath, setSelectedPath } = useSelectedPath(metadata);
 
   const metadataPath = React.useMemo(
-    () => adaptedSelectedPathToMetadataPath(selectedPath),
+    () => adaptSelectedPathToMetadataPath(selectedPath),
     [selectedPath]
   );
   const selectedMetadata = get(metadata, metadataPath);
   const valuePath = selectedPath;
+
+  const { hasArrayChange, arrayChangePath } = React.useMemo<{
+    hasArrayChange: boolean;
+    arrayChangePath: string;
+  }>(
+    () => getArrayChangeDetail(selectedPath, metadata),
+    [metadata, selectedPath]
+  );
+
+  const handleChange = React.useCallback(
+    (key: string, value: unknown) => {
+      if (hasArrayChange) {
+        onChange(
+          arrayChangePath,
+          get(Map(config).setIn(key.split('.'), value).toJS(), arrayChangePath)
+        );
+      } else {
+        onChange(key, value);
+      }
+    },
+    [onChange, hasArrayChange, arrayChangePath, selectedPath, config]
+  );
 
   return (
     <FullContainer>
@@ -70,7 +77,7 @@ export const ProjectConfigForm: React.FC<Props> = ({
       />
       <RightPanel
         metadataValue={selectedMetadata}
-        onChange={onChange}
+        onChange={handleChange}
         onUpdate={onUpdate}
         onReset={onReset}
         hasChanges={hasChanges}

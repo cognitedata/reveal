@@ -45,7 +45,6 @@ export function useProjectConfigUpdateMutate() {
         queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
       },
       onError: (_error) => {
-        queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
         showErrorMessage('Could not update project configuration.');
       },
     }

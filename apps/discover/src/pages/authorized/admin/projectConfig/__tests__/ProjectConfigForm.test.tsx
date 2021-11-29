@@ -3,14 +3,12 @@ import { cleanup, fireEvent, screen } from '@testing-library/react';
 import {
   mockProjectConfigMetadata,
   mockConfigDataWithLayers,
+  mockMetadataWithQueries,
+  mockConfigDataWithQueries,
 } from '__test-utils/fixtures/projectConfigMetadata';
 import { testRenderer } from '__test-utils/renderer';
 
-import {
-  Props,
-  ProjectConfigForm,
-  adaptedSelectedPathToMetadataPath,
-} from '../ProjectConfigForm';
+import { Props, ProjectConfigForm } from '../ProjectConfigForm';
 
 const getDefaultProps = (extras: Partial<Props> = {}) => ({
   config: {},
@@ -20,7 +18,7 @@ const getDefaultProps = (extras: Partial<Props> = {}) => ({
 });
 
 describe('ProjectConfigForm', () => {
-  afterEach(() => {
+  beforeEach(() => {
     cleanup();
     jest.clearAllMocks();
   });
@@ -57,7 +55,7 @@ describe('ProjectConfigForm', () => {
       expect(screen.queryByText('Enabled')).toBeInTheDocument();
     });
 
-    test('should show layers 1 data as children for truthy dataAsChildren metadata & trigger onChange on blurring json input', async () => {
+    test('should show layers 1 data as children for truthy dataAsChildren metadata & trigger onChange on blurring json input for whole array', async () => {
       const props = getDefaultProps({
         config: mockConfigDataWithLayers,
       });
@@ -78,27 +76,47 @@ describe('ProjectConfigForm', () => {
 
       expect(props.onChange).toHaveBeenCalled();
       const onChangeArgs = props.onChange.mock.calls[0];
-      expect(onChangeArgs[0]).toBe('map.layers.0.filters');
-      expect(onChangeArgs[1]).toStrictEqual(mockFilters);
-    });
-  });
+      expect(onChangeArgs[0]).toBe('map.layers');
 
-  describe('adaptedSelectedPathToMetadataPath', () => {
-    test('should inject selected path with children keyword at each level for accessing nested metadata', () => {
-      expect(
-        adaptedSelectedPathToMetadataPath('wells.trajectory.enabled')
-      ).toBe('wells.children.trajectory.children.enabled');
+      expect(onChangeArgs[1]).toStrictEqual([
+        { ...mockConfigDataWithLayers.map.layers[0], filters: mockFilters },
+        ...mockConfigDataWithLayers.map.layers.splice(1),
+      ]);
     });
-    test('should replace number accessor with children for accessing dataAsChildren metadata', () => {
-      expect(adaptedSelectedPathToMetadataPath('map.layers.0.filters')).toBe(
-        'map.children.layers.children.filters'
-      );
-    });
-    test('should return empty string when selected path is empty', () => {
-      expect(adaptedSelectedPathToMetadataPath('')).toBe('');
-    });
-    test('should return empty path when no path is sent', () => {
-      expect(adaptedSelectedPathToMetadataPath()).toBe('');
+
+    test('should show columns data as children for truthy dataAsChildren metadata & trigger onChange on blurring filters json for topmost array', async () => {
+      const props = getDefaultProps({
+        config: mockConfigDataWithQueries,
+        metadata: mockMetadataWithQueries,
+      });
+
+      await defaultTestInit(props);
+
+      const wells = screen.getByText('Wells');
+      fireEvent.click(wells);
+      const trajectory = screen.getByText('Trajectory');
+      fireEvent.click(trajectory);
+      const columns = screen.getByText('Columns');
+      fireEvent.click(columns);
+
+      fireEvent.click(screen.getAllByText('tvd')[0]);
+
+      const mockQuery = [{ a: 1 }];
+
+      fireEvent.focusOut(screen.getByPlaceholderText('Queries'), {
+        target: { value: JSON.stringify(mockQuery) },
+      });
+
+      expect(props.onChange).toHaveBeenCalled();
+      const onChangeArgs = props.onChange.mock.calls[0];
+      expect(onChangeArgs[0]).toBe('wells.trajectory.columns');
+
+      expect(onChangeArgs[1]).toStrictEqual([
+        {
+          ...mockConfigDataWithQueries.wells.trajectory.columns[0],
+          queries: mockQuery,
+        },
+      ]);
     });
   });
 });

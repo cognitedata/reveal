@@ -52,3 +52,39 @@ export const mockConfigDataWithLayers: { map: { layers: Layer[] } } = {
     ],
   },
 };
+
+export const mockConfigDataWithQueries = {
+  wells: {
+    trajectory: {
+      columns: [
+        { name: 'tvd', queries: [{ metadata: { filterName: 'filterValue' } }] },
+      ],
+    },
+  },
+};
+
+export const mockMetadataWithQueries: Metadata = {
+  ...mockProjectConfigMetadata,
+  wells: {
+    label: 'Wells',
+    type: 'object',
+    children: {
+      trajectory: {
+        label: 'Trajectory',
+        type: 'object',
+        children: {
+          columns: {
+            label: 'Columns',
+            type: 'array',
+            dataAsChildren: true,
+            dataLabelIdentifier: 'name',
+            children: {
+              name: { label: 'Name', type: 'string' },
+              queries: { label: 'Queries', type: 'array', renderAsJSON: true },
+            },
+          },
+        },
+      },
+    },
+  },
+};

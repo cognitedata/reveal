@@ -1,5 +1,7 @@
 import React, { ChangeEvent, useState, useCallback } from 'react';
 
+import isEqual from 'lodash/isEqual';
+
 import { Input, Textarea, toast } from '@cognite/cogs.js';
 
 import { showErrorMessage } from 'components/toast';
@@ -53,12 +55,14 @@ export const ConfigInputField: React.FC<{
           ? JSON.parse(event.target.value)
           : undefined;
 
-        onChange(changeKey, changedJSON);
+        if (!isEqual(value, changedJSON)) {
+          onChange(changeKey, changedJSON);
+        }
       } catch (e) {
         showErrorMessage('Please enter valid JSON.');
       }
     },
-    [changeKey]
+    [changeKey, value]
   );
 
   const handleSwitchChange = useCallback(
