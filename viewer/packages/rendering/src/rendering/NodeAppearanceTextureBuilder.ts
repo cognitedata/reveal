@@ -48,7 +48,7 @@ export class NodeAppearanceTextureBuilder {
    * expensive.
    * @param appearance New style that is applied to all 'unstyled' elements.
    */
-  setDefaultAppearance(appearance: NodeAppearance) {
+  setDefaultAppearance(appearance: NodeAppearance): void {
     if (equalNodeAppearances(appearance, this._defaultAppearance)) {
       return;
     }
@@ -79,11 +79,12 @@ export class NodeAppearanceTextureBuilder {
    * A texture holding at least one element per node with color override
    * and style information. RGB is used to store color, A is used to store
    * style toggles, with the following bit layout:
-   * - 0  : visible bit   - when set the node is visible
-   * - 1  : in front bit  - when set the node is rendered in front of other objects
-   * - 2  : ghosted bit   - when set the node is rendered 'ghosted'
-   * - 3-5: outline color - outline toggle and color ({@see OutlineColor}).
-   * - 6-7: unused
+   * - 0  : visible bit         - when set the node is visible
+   * - 1  : in front bit        - when set the node is rendered in front of other objects
+   * - 2  : ghosted bit         - when set the node is rendered 'ghosted'
+   * - 3  : unused
+   * - 4  : unused
+   * - 5-7: outline color - outline toggle and color ({@see OutlineColor}).
    * Note that in-front and ghost information also is available from
    * the {@see inFrontTreeIndices} and {@see ghostedTreeIndices} collections.
    */
@@ -91,12 +92,12 @@ export class NodeAppearanceTextureBuilder {
     return this._overrideColorPerTreeIndexTexture;
   }
 
-  dispose() {
+  dispose(): void {
     this._styleProvider.off('changed', this._handleStylesChangedListener);
     this._overrideColorPerTreeIndexTexture.dispose();
   }
 
-  build() {
+  build(): void {
     if (!this._needsUpdate) {
       return;
     }
@@ -211,8 +212,12 @@ function appearanceToColorOverride(appearance: NodeAppearance): [number, number,
   const ghosted = !!appearance.renderGhosted;
   const outlineColor = appearance.outlineColor ? Number(appearance.outlineColor) : 0;
   // Byte layout:
-  // [isVisible, renderInFront, renderGhosted, outlineColor0, outlineColor1, outlineColor2, unused, unused]
-  const bytePattern = (isVisible ? 1 << 0 : 0) + (inFront ? 1 << 1 : 0) + (ghosted ? 1 << 2 : 0) + (outlineColor << 3);
+  // [isVisible, renderInFront, renderGhosted, unused, unused, outlineColor0, outlineColor1, outlineColor2]
+  const bytePattern =
+    (isVisible ? 1 << 0 : 0) + //      -------X
+    (inFront ? 1 << 1 : 0) + //        ------X-
+    (ghosted ? 1 << 2 : 0) + //        -----X--
+    (outlineColor << 5); //            XXX-----
   return [r, g, b, bytePattern];
 }
 
@@ -241,7 +246,7 @@ function combineRGBA(rgbaBuffer: Uint8ClampedArray, treeIndices: IndexSet, style
     (style.visible !== undefined ? 0b00000001 : 0) |
     (style.renderInFront !== undefined ? 0b00000010 : 0) |
     (style.renderGhosted !== undefined ? 0b00000100 : 0) |
-    (style.outlineColor !== undefined ? 0b00111000 : 0);
+    (style.outlineColor !== undefined ? 0b11100000 : 0);
   const keepAlphaBitmask = ~updateAlphaBitmask;
   const updateAlpha = a & updateAlphaBitmask;
 

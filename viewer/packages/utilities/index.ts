@@ -5,6 +5,7 @@
 export { traverseDepthFirst } from './src/objectTraversal';
 export { transformCameraConfiguration } from './src/transformCameraConfiguration';
 
+export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 export { EventTrigger, clickOrTouchEventOffset, InputHandler } from './src/events';
 export { assertNever } from './src/assertNever';

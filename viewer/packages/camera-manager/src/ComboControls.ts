@@ -1,6 +1,8 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+// TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import {
   EventDispatcher,
@@ -602,19 +604,18 @@ export class ComboControls extends EventDispatcher {
 
   private readonly dollyOrthographicCamera = (_x: number, _y: number, deltaDistance: number) => {
     const camera = this._camera as OrthographicCamera;
-
     camera.zoom *= 1 - deltaDistance;
     camera.zoom = MathUtils.clamp(camera.zoom, this.minZoom, this.maxZoom);
     camera.updateProjectionMatrix();
   };
 
-  private readonly calculateTargetOfssetLerp = (
+  private readonly calculateNewRadiusAndTargetOffsetLerp = (
     x: number,
     y: number,
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { dynamicTarget, minDistance, _sphericalEnd, _raycaster, _targetEnd, _reusableCamera } = this;
+    const { dynamicTarget, minDistance, _raycaster, _targetEnd, _reusableCamera } = this;
 
     const distFromCameraToScreenCenter = Math.tan(
       MathUtils.degToRad(90 - (this._camera as PerspectiveCamera).fov * 0.5)
@@ -644,14 +645,12 @@ export class ComboControls extends EventDispatcher {
 
     const distFromRayOrigin = -deltaDistance * ratio;
 
-    _sphericalEnd.radius = radius;
-
     _reusableCamera.getWorldDirection(cameraDirection);
     cameraDirection.normalize().multiplyScalar(deltaDistance);
     const rayDirection = _raycaster.ray.direction.normalize().multiplyScalar(distFromRayOrigin);
     const targetOffset = rayDirection.add(cameraDirection);
 
-    return targetOffset;
+    return { targetOffset, radius };
   };
 
   // Function almost equal to mapLinear except it is behaving the same as clamp outside of specifed range
@@ -663,11 +662,13 @@ export class ComboControls extends EventDispatcher {
     return value;
   };
 
-  private readonly calculateTargetOfssetScrollTarget = (deltaDistance: number, cameraDirection: THREE.Vector3) => {
+  private readonly calculateNewRadiusAndTargetOffsetScrollTarget = (
+    deltaDistance: number,
+    cameraDirection: THREE.Vector3
+  ) => {
     const {
       minDistance,
       _reusableVector3,
-      _sphericalEnd,
       _target,
       _scrollTarget,
       _camera,
@@ -722,12 +723,10 @@ export class ComboControls extends EventDispatcher {
       }
     }
 
-    _sphericalEnd.radius = radius;
-
     // if we scroll out, we don't change the target
     const targetOffset = targetToScrollTargetVec.multiplyScalar(!isDollyOut ? deltaTargetOffsetDistance : 0);
 
-    return targetOffset;
+    return { targetOffset, radius };
   };
 
   private readonly dollyWithWheelScroll = (
@@ -736,15 +735,41 @@ export class ComboControls extends EventDispatcher {
     deltaDistance: number,
     cameraDirection: THREE.Vector3
   ) => {
-    const { _targetEnd, useScrollTarget, zoomToCursor } = this;
+    const { _targetEnd, _sphericalEnd, useScrollTarget, zoomToCursor } = this;
 
-    const targetOffset = zoomToCursor
-      ? useScrollTarget
-        ? this.calculateTargetOfssetScrollTarget(deltaDistance, cameraDirection)
-        : this.calculateTargetOfssetLerp(x, y, deltaDistance, cameraDirection)
-      : this.calculateTargetOfssetLerp(0, 0, deltaDistance, cameraDirection);
+    const isDollyIn = deltaDistance < 0 ? true : false;
+    const newTargetOffset = new Vector3();
+    let newRadius = _sphericalEnd.radius;
 
-    _targetEnd.add(targetOffset);
+    if (zoomToCursor) {
+      if (useScrollTarget && isDollyIn) {
+        const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetScrollTarget(
+          deltaDistance,
+          cameraDirection
+        );
+
+        newRadius = radius;
+        newTargetOffset.copy(targetOffset);
+      } else {
+        const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetLerp(
+          x,
+          y,
+          deltaDistance,
+          cameraDirection
+        );
+
+        newRadius = radius;
+        newTargetOffset.copy(targetOffset);
+      }
+    } else {
+      const { radius, targetOffset } = this.calculateNewRadiusAndTargetOffsetLerp(0, 0, deltaDistance, cameraDirection);
+
+      newRadius = radius;
+      newTargetOffset.copy(targetOffset);
+    }
+
+    _targetEnd.add(newTargetOffset);
+    _sphericalEnd.radius = newRadius;
   };
 
   private readonly dollyPerspectiveCamera = (
@@ -771,7 +796,6 @@ export class ComboControls extends EventDispatcher {
 
   private readonly dolly = (x: number, y: number, deltaDistance: number, moveTarget: boolean) => {
     const { _camera } = this;
-
     // @ts-ignore
     if (_camera.isOrthographicCamera) {
       this.dollyOrthographicCamera(x, y, deltaDistance);

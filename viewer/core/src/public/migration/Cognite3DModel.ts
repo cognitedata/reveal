@@ -15,7 +15,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
 import { NumericRange } from '@reveal/utilities';
-import { trackCadModelStyled, trackError } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
@@ -109,7 +109,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    *
    * @param appearance  Default node appearance.
    */
-  setDefaultNodeAppearance(appearance: NodeAppearance) {
+  setDefaultNodeAppearance(appearance: NodeAppearance): void {
     this.cadNode.defaultNodeAppearance = appearance;
   }
 
@@ -156,8 +156,8 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * ```
    * @throws Error if node collection already has been assigned to the model.
    */
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
-    trackCadModelStyled(nodeCollection.classToken, appearance);
+  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
+    MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
@@ -192,7 +192,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param nodeCollection   Node collection previously added using {@link assignStyledNodeCollection}.
    * @throws Error if node collection isn't assigned to the model.
    */
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('Node collection has not been assigned to model');
@@ -206,7 +206,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Removes all styled collections, resetting the appearance of all nodes to the
    * default appearance.
    */
-  removeAllStyledNodeCollections() {
+  removeAllStyledNodeCollections(): void {
     this._styledNodeCollections.splice(0);
     this.cadNode.nodeAppearanceProvider.clear();
   }
@@ -220,7 +220,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @param treeIndices       Tree indices of nodes to apply the transformation to.
    * @param transformMatrix   Transformation to apply.
    */
-  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4) {
+  setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4): void {
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
   }
 
@@ -228,7 +228,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * Resets the transformation for the nodes given.
    * @param treeIndices Tree indices of the nodes to reset transforms for.
    */
-  resetNodeTransform(treeIndices: NumericRange) {
+  resetNodeTransform(treeIndices: NumericRange): void {
     this.nodeTransformProvider.resetNodeTransform(treeIndices);
   }
 
@@ -288,7 +288,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
   /**
    * Cleans up used resources.
    */
-  dispose() {
+  dispose(): void {
     this.children = [];
   }
 
@@ -401,7 +401,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
-      trackError(error as Error, {
+      MetricsLogger.trackError(error as Error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });

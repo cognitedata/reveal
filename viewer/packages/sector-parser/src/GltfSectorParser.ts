@@ -39,7 +39,7 @@ export default class GltfSectorParser {
     this._gltfReader.registerExtensions([MeshGPUInstancing]);
   }
 
-  public parseSector(data: ArrayBuffer) {
+  public parseSector(data: ArrayBuffer): { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] {
     const document: Document = this._gltfReader.readBinary(data);
 
     const defaultScene = document.getRoot().getDefaultScene();

@@ -466,11 +466,20 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
       });
-      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on mouse click').onFinishChange(value => {
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on click').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
       });
+  
+      const overlayTool = new HtmlOverlayTool(viewer,
+        { 
+          clusteringOptions: { 
+            mode: 'overlapInScreenSpace', 
+            createClusterElementCallback: cluster => {
+              return createOverlay(`${cluster.length}`);
+            }
+          }
+        });
 
-      const overlayTool = new HtmlOverlayTool(viewer);
       new AxisViewTool(viewer);
 
       viewer.on('click', async event => {
@@ -484,9 +493,8 @@ export function Migration() {
               {
                 const { treeIndex, point} = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = document.createElement('div');
-                overlayHtml.innerText = `Node ${treeIndex}`;
-                overlayHtml.style.cssText = 'background: white; position: absolute; pointer-events: none; user-select: none;'; // possibly need to add other browsers prefixes
+                const overlayHtml = createOverlay(`Node ${treeIndex}`);
+
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
@@ -552,4 +560,21 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
+}
+
+function createOverlay(text: string): HTMLElement {
+  const overlayHtml = document.createElement('div');
+  overlayHtml.innerText = text;
+  overlayHtml.style.cssText = `
+    position: absolute; 
+    translate(-50%, -50%);
+
+    background: white; 
+    border-radius: 5px; 
+    border-color: black; 
+
+    pointer-events: none; 
+    touch-action: none;`;
+
+  return overlayHtml;
 }

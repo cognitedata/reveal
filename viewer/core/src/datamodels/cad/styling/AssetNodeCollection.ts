@@ -27,7 +27,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
   private _indexSet = new IndexSet();
   private readonly _model: Cognite3DModel;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
-  private _filter: any;
+  private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
 
   constructor(client: CogniteClient, model: Cognite3DModel) {
     super(AssetNodeCollection.classToken);
@@ -90,11 +90,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     }
   }
 
-  getFilter() {
-    return this._filter;
-  }
-
-  clear() {
+  clear(): void {
     if (this._fetchResultHelper !== undefined) {
       this._fetchResultHelper.interrupt();
     }

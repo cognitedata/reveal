@@ -102,7 +102,7 @@ export class WorkerPool {
   }
 }
 
-export async function checkWorkerVersion(worker: RevealParserWorker) {
+export async function checkWorkerVersion(worker: RevealParserWorker): Promise<void> {
   let actualWorkerVersion: string;
   try {
     actualWorkerVersion = await worker.getVersion();

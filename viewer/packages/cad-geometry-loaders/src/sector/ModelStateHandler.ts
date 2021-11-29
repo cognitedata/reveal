@@ -25,17 +25,17 @@ export class ModelStateHandler {
     }
   }
 
-  addModel(modelIdentifier: string) {
+  addModel(modelIdentifier: string): void {
     assert(this._sceneModelState[modelIdentifier] === undefined, `Model ${modelIdentifier} is already added`);
     this._sceneModelState[modelIdentifier] = {};
   }
 
-  removeModel(modelIdentifier: string) {
+  removeModel(modelIdentifier: string): void {
     assert(this._sceneModelState[modelIdentifier] !== undefined, `Model ${modelIdentifier} is not added`);
     delete this._sceneModelState[modelIdentifier];
   }
 
-  updateState(consumedSector: ConsumedSector) {
+  updateState(consumedSector: ConsumedSector): void {
     if (this._sceneModelState[consumedSector.modelIdentifier] === undefined) {
       // Received sector from model but the model is not added - happens when
       // sectors from newly removed model are loaded

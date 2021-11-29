@@ -70,7 +70,7 @@ export class CadMaterialManager {
     }
   }
 
-  addModelMaterials(modelIdentifier: string, maxTreeIndex: number) {
+  addModelMaterials(modelIdentifier: string, maxTreeIndex: number): void {
     const nodeAppearanceProvider = new NodeAppearanceProvider();
     const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
     nodeAppearanceTextureBuilder.build();
@@ -134,7 +134,7 @@ export class CadMaterialManager {
     return wrapper.nodeAppearanceTextureBuilder.getDefaultAppearance();
   }
 
-  setModelClippingPlanes(modelIdentifier: string, clippingPlanes: THREE.Plane[]) {
+  setModelClippingPlanes(modelIdentifier: string, clippingPlanes: THREE.Plane[]): void {
     const materialWrapper = this.materialsMap.get(modelIdentifier);
     if (materialWrapper === undefined) {
       throw new Error(
@@ -163,7 +163,7 @@ export class CadMaterialManager {
     });
   }
 
-  setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance) {
+  setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance): void {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     wrapper.nodeAppearanceTextureBuilder.setDefaultAppearance(defaultAppearance);
     this.updateMaterials(modelIdentifier);
@@ -184,7 +184,7 @@ export class CadMaterialManager {
     return wrapper.nodeAppearanceTextureBuilder.ghostedNodeTreeIndices;
   }
 
-  setRenderMode(mode: RenderMode) {
+  setRenderMode(mode: RenderMode): void {
     this._renderMode = mode;
     const colorWrite = mode !== RenderMode.DepthBufferOnly;
     this.applyToAllMaterials(material => {

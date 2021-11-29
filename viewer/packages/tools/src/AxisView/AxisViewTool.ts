@@ -18,7 +18,7 @@ import {
 } from './types';
 import { ComboControls } from '@reveal/camera-manager';
 import { Cognite3DViewer } from '@reveal/core';
-import { trackCreateTool } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -59,7 +59,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     [this._updateClickDiv, this._disposeClickDiv] = this.createClickDiv(viewer);
     this.addAxisBoxToViewer(this._axisGroup, this._layoutConfig.position!);
 
-    trackCreateTool('AxisViewTool');
+    MetricsLogger.trackCreateTool('AxisViewTool');
   }
 
   public dispose(): void {
