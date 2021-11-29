@@ -14,7 +14,7 @@ import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { useMutateFavoriteWellPatchWellbores } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
-import { InspectWellboreContext, Well } from 'modules/wellSearch/types';
+import { InspectWellboreContext, Well, WellId } from 'modules/wellSearch/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
 
@@ -25,7 +25,7 @@ export interface Props {
   favoriteId: string;
   favoriteWells: FavoriteContentWells | undefined;
   handleUpdatingFavoriteWellState: (
-    wellIds: number[],
+    wellIds: WellId[],
     inspectWellboreContext: InspectWellboreContext
   ) => void;
 }
@@ -44,10 +44,10 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   const history = useHistory();
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
 
-  const selectedWellIds: number[] = useMemo(() => {
-    return Object.keys(selectedWellIdsList)
-      .filter((key) => selectedWellIdsList[Number(key)])
-      .map(Number);
+  const selectedWellIds: WellId[] = useMemo(() => {
+    return Object.keys(selectedWellIdsList).filter(
+      (key: WellId) => selectedWellIdsList[key]
+    );
   }, [selectedWellIdsList]);
 
   const selectedWellIdsCount = useMemo(
@@ -65,7 +65,7 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   };
 
   const getPrestineWellIds = () => {
-    return selectedWellIds.reduce((acc: number[], wellId: number) => {
+    return selectedWellIds.reduce((acc: number[], wellId: WellId) => {
       const well = wells?.find((item) => item.id === wellId);
       if (!well) return acc;
 
@@ -79,7 +79,7 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   const isWellContainsWellbores = (well?: Well) =>
     well?.wellbores && well.wellbores.length;
 
-  const loadWellboresAndUpdateQueryCache = async (wellIds: number[]) => {
+  const loadWellboresAndUpdateQueryCache = async (wellIds: WellId[]) => {
     await mutate({
       updatingWellIds: wellIds,
       successCallback: () => {

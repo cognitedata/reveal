@@ -87,7 +87,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const handleRowSelect = useCallback((row) => {
     setSelectedIds((state) => ({
       ...state,
-      [row.id]: !state[row.id],
+      [row.original.id]: !state[row.original.id],
     }));
   }, []);
 
