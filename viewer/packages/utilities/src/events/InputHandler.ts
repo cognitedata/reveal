@@ -8,7 +8,7 @@ import { assertNever } from '@reveal/utilities';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
-export class MouseHandler {
+export class InputHandler {
   private readonly domElement: HTMLElement;
 
   private readonly _events = {
@@ -16,8 +16,8 @@ export class MouseHandler {
     hover: new EventTrigger<PointerEventDelegate>()
   };
 
-  constructor(domElement: HTMLElement) {
-    this.domElement = domElement;
+  private setupEventListeners() {
+    const { domElement } = this;
 
     const maxMoveDistance = 4;
     const maxClickDuration = 250;
@@ -89,6 +89,12 @@ export class MouseHandler {
 
     // on hover callback
     domElement.addEventListener('mousemove', onHoverCallback);
+  }
+
+  constructor(domElement: HTMLElement) {
+    this.domElement = domElement;
+
+    this.setupEventListeners();
   }
   /**
    * @example

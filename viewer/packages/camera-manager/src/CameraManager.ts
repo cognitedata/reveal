@@ -5,11 +5,11 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
-import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate } from './types';
-import { assertNever, EventTrigger, MouseHandler } from '@reveal/utilities';
+import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate, ControlsState } from './types';
+import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
 
 export class CameraManager {
-  public readonly controls: ComboControls;
+  private readonly controls: ComboControls;
 
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeData>()
@@ -17,7 +17,7 @@ export class CameraManager {
 
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
-  private readonly _mouseHandler: MouseHandler;
+  private readonly _inputHandler: InputHandler;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CallbackData>;
 
@@ -135,7 +135,7 @@ export class CameraManager {
    */
   private teardownControls() {
     if (this._onClick !== undefined) {
-      this._mouseHandler.off('click', this._onClick as PointerEventDelegate);
+      this._inputHandler.off('click', this._onClick as PointerEventDelegate);
       this._onClick = undefined;
     }
     if (this._onWheel !== undefined) {
@@ -192,7 +192,7 @@ export class CameraManager {
     }
 
     if (this._cameraControlsOptions.onClickTargetChange) {
-      this._mouseHandler.on('click', onClick);
+      this._inputHandler.on('click', onClick);
       this._onClick = onClick;
     }
     if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
@@ -208,7 +208,7 @@ export class CameraManager {
   ) {
     this._camera = camera;
     this._domElement = domElement;
-    this._mouseHandler = new MouseHandler(domElement);
+    this._inputHandler = new InputHandler(domElement);
     this._modelRaycastCallback = raycastFunction;
     this.controls = new ComboControls(camera, domElement);
     this.controls.dollyFactor = 0.992;
@@ -267,8 +267,36 @@ export class CameraManager {
     this.moveCameraTo(position, target, duration);
   }
 
+  cameraControlsEnabled(enabled: boolean): void {
+    this.controls.enabled = enabled;
+  }
+
+  getCameraControlsEnabled(): boolean {
+    return this.controls.enabled;
+  }
+
+  enableKeyboardNavigation(): void {
+    this.controls.enableKeyboardNavigation = true;
+  }
+
+  disableKeyboardNavigation(): void {
+    this.controls.enableKeyboardNavigation = false;
+  }
+
   getCameraControlsOptions(): CameraControlsOptions {
     return this._cameraControlsOptions;
+  }
+
+  getCameraControlsState(): ControlsState {
+    return this.controls.getState();
+  }
+
+  getCameraControls(): ComboControls {
+    return this.controls;
+  }
+
+  setCameraControlsState(controlsState: ControlsState): void {
+    this.controls.setState(controlsState.position, controlsState.target);
   }
 
   setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
@@ -514,6 +542,10 @@ export class CameraManager {
       // but no more than a fraction of the bounding box of the system if inside
       this.controls.minDistance = Math.min(Math.max(diagonal * 0.02, 0.1 * near), CameraManager.DefaultMinDistance);
     }
+  }
+
+  updateCameraControlsState(deltaTime: number) {
+    this.controls.update(deltaTime);
   }
 
   dispose(): void {

@@ -3,4 +3,4 @@
  */
 export { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 export { EventTrigger } from './EventTrigger';
-export { MouseHandler } from './MouseHandler';
+export { InputHandler } from './InputHandler';

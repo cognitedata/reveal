@@ -11,7 +11,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
-import { assertNever, EventTrigger, MouseHandler } from '@reveal/utilities';
+import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
 import { trackError, trackEvent } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
@@ -832,7 +832,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return new THREE.Vector3(-Infinity, -Infinity, -Infinity);
     }
-    return this._cameraManager.controls.getState().target.clone();
+    return this._cameraManager.getCameraControlsState().target.clone();
   }
 
   /**
@@ -852,7 +852,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this._cameraManager.controls.setState(position, this.getCameraTarget());
+    this._cameraManager.setCameraControlsState({position, target: this.getCameraTarget()});
   }
 
   /**
@@ -885,14 +885,14 @@ export class Cognite3DViewer {
    * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
    */
   get cameraControls(): ComboControls {
-    return this._cameraManager.controls;
+    return this._cameraManager.getCameraControls();
   }
 
   /**
    * Gets whether camera controls through mouse, touch and keyboard are enabled.
    */
   get cameraControlsEnabled(): boolean {
-    return this._cameraManager.controls.enabled;
+    return this._cameraManager.getCameraControlsEnabled();
   }
 
   /**
@@ -901,7 +901,7 @@ export class Cognite3DViewer {
    * objects in the scene or when implementing a "cinematic" viewer.
    */
   set cameraControlsEnabled(enabled: boolean) {
-    this._cameraManager.controls.enabled = enabled;
+    this._cameraManager.cameraControlsEnabled(enabled);
   }
 
   /**
@@ -917,7 +917,7 @@ export class Cognite3DViewer {
   loadCameraFromModel(model: CogniteModelBase): void {
     const config = model.getCameraConfiguration();
     if (config) {
-      this._cameraManager.controls.setState(config.position, config.target);
+      this._cameraManager.setCameraControlsState({position: config.position, target: config.target});
     } else {
       this.fitCameraToModel(model, 0);
     }
@@ -978,17 +978,17 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Allows to move camera with WASM or arrows keys.
+   * Allows to move camera with WASD or arrows keys.
    */
   enableKeyboardNavigation(): void {
-    this._cameraManager.controls.enableKeyboardNavigation = true;
+    this._cameraManager.enableKeyboardNavigation();
   }
 
   /**
-   * Disables camera movement by pressing WASM or arrows keys.
+   * Disables camera movement by pressing WASD or arrows keys.
    */
   disableKeyboardNavigation(): void {
-    this._cameraManager.controls.enableKeyboardNavigation = false;
+    this._cameraManager.disableKeyboardNavigation();
   }
 
   /**
@@ -1222,7 +1222,7 @@ export class Cognite3DViewer {
       if (didResize) {
         this.requestRedraw();
       }
-      this._cameraManager.controls.update(this.clock.getDelta());
+      this._cameraManager.updateCameraControlsState(this.clock.getDelta());
       renderController.update();
       this.revealManager.update(this.camera);
 
@@ -1319,97 +1319,20 @@ export class Cognite3DViewer {
 
     adjustCamera(this.camera, width, height);
 
-    // fixme: Invalid instanceof check: 'camera' has type that is not related to 'OrthographicCamera'
-    if (this.camera instanceof THREE.OrthographicCamera) {
-      this._cameraManager.controls.orthographicCameraDollyFactor = 20 / width;
-      this._cameraManager.controls.keyboardDollySpeed = 2 / width;
-    }
-
     return true;
   }
+
   private readonly startPointerEventListeners = () => {
-    const mouseHandler = new MouseHandler(this.domElement);
+    const mouseHandler = new InputHandler(this.domElement);
 
     mouseHandler.on('click', e => {
       this._events.click.fire(e);
     });
+    
     mouseHandler.on('hover', e => {
       this._events.hover.fire(e);
     });
   };
-  // private readonly startPointerEventListeners = () => {
-  //   const canvas = this.canvas;
-  //   const maxMoveDistance = 4;
-  //   const maxClickDuration = 250;
-
-  //   let pointerDown = false;
-  //   let pointerDownTimestamp = 0;
-  //   let validClick = false;
-
-  //   const onHoverCallback = debounce((e: MouseEvent) => {
-  //     this._events.hover.fire(clickOrTouchEventOffset(e, canvas));
-  //   }, 100);
-
-  //   const onMove = (e: MouseEvent | TouchEvent) => {
-  //     const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
-  //     const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, canvas);
-
-  //     // check for Manhattan distance greater than maxMoveDistance pixels
-  //     if (
-  //       pointerDown &&
-  //       validClick &&
-  //       Math.abs(offsetX - firstOffsetX) + Math.abs(offsetY - firstOffsetY) > maxMoveDistance
-  //     ) {
-  //       validClick = false;
-  //     }
-  //   };
-
-  //   const onUp = (e: MouseEvent | TouchEvent) => {
-  //     const clickDuration = e.timeStamp - pointerDownTimestamp;
-  //     if (pointerDown && validClick && clickDuration < maxClickDuration) {
-  //       // trigger events
-  //       this._events.click.fire(clickOrTouchEventOffset(e, canvas));
-  //     }
-  //     pointerDown = false;
-  //     validClick = false;
-
-  //     // move
-  //     canvas.removeEventListener('mousemove', onMove);
-  //     canvas.removeEventListener('touchmove', onMove);
-
-  //     // up
-  //     canvas.removeEventListener('mouseup', onUp);
-  //     canvas.removeEventListener('touchend', onUp);
-
-  //     // add back onHover
-  //     canvas.addEventListener('mousemove', onHoverCallback);
-  //   };
-
-  //   const onDown = (e: MouseEvent | TouchEvent) => {
-  //     event = e;
-  //     pointerDown = true;
-  //     validClick = true;
-  //     pointerDownTimestamp = e.timeStamp;
-
-  //     // move
-  //     canvas.addEventListener('mousemove', onMove);
-  //     canvas.addEventListener('touchmove', onMove);
-
-  //     // up
-  //     canvas.addEventListener('mouseup', onUp);
-  //     canvas.addEventListener('touchend', onUp);
-
-  //     // no more onHover
-  //     canvas.removeEventListener('mousemove', onHoverCallback);
-  //   };
-
-  //   // down
-  //   canvas.addEventListener('mousedown', onDown);
-  //   canvas.addEventListener('touchstart', onDown);
-
-  //   // on hover callback
-  //   canvas.addEventListener('mousemove', onHoverCallback);
-  // };
 }
 
 function adjustCamera(camera: THREE.Camera, width: number, height: number) {
