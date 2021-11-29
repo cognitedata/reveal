@@ -21,6 +21,7 @@ interface FileControllerProps {
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstance[];
   lineInstances: DiagramLineInstance[];
+  disabled: boolean;
   loadSymbolsAsJson: (json: any) => void;
 }
 
@@ -28,6 +29,7 @@ export const FileController: React.FC<FileControllerProps> = ({
   symbols,
   symbolInstances,
   lineInstances,
+  disabled,
   loadSymbolsAsJson,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -77,7 +79,11 @@ export const FileController: React.FC<FileControllerProps> = ({
             </Menu>
           }
         >
-          <Button icon="ChevronDownCompact" iconPlacement="right">
+          <Button
+            disabled={disabled}
+            icon="ChevronDownCompact"
+            iconPlacement="right"
+          >
             File
           </Button>
         </Dropdown>

@@ -1,1 +1,1 @@
-export * from './SvgViewer';
+export * from './ReactPid';

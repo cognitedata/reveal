@@ -1,5 +1,5 @@
 import { Title } from '@cognite/cogs.js';
-import { SvgViewer } from '@cognite/react-pid';
+import { ReactPid } from '@cognite/react-pid';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -11,7 +11,7 @@ const Info = () => {
   return (
     <Container>
       <Title>Engineering Diagram Parsing Tool</Title>
-      <SvgViewer />
+      <ReactPid />
     </Container>
   );
 };

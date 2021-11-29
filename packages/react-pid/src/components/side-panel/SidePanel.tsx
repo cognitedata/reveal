@@ -40,6 +40,7 @@ interface SidePanelProps {
   loadSymbolsAsJson: (args0: string) => void;
   saveSymbol: (symbolName: string, selection: SVGElement[]) => void;
   connections: DiagramConnection[];
+  fileUrl?: string;
 }
 
 export const SidePanel = ({
@@ -52,6 +53,7 @@ export const SidePanel = ({
   loadSymbolsAsJson,
   saveSymbol,
   connections,
+  fileUrl,
 }: SidePanelProps) => {
   const ActionWithCustomStyling: ToolBarButton[][] = [
     [
@@ -79,6 +81,7 @@ export const SidePanel = ({
   return (
     <SidePanelWrapper>
       <FileController
+        disabled={fileUrl === ''}
         symbols={symbols}
         symbolInstances={symbolInstances}
         lineInstances={lines}
