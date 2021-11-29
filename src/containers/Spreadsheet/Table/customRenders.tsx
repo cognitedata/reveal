@@ -42,7 +42,7 @@ type Props = {
 
 export const HeaderRender = (props: Props): JSX.Element => {
   const { cells, columns } = props;
-  const { setIsProfilingSidebarOpen, setSelectedColumnKey } =
+  const { setIsProfilingSidebarOpen, selectedColumnKey, setSelectedColumnKey } =
     useContext(RawExplorerContext);
 
   const onColumnClick = (column: ColumnShape) => {
@@ -59,8 +59,14 @@ export const HeaderRender = (props: Props): JSX.Element => {
             !!child && child.props?.className === 'BaseTable__column-resizer'
         );
         const isIndexColumn = index === 0;
+        const isSelected = selectedColumnKey === column.dataKey;
         const child = !isIndexColumn ? (
-          <HeaderCell level={3} strong onClick={() => onColumnClick(column)}>
+          <HeaderCell
+            level={3}
+            strong
+            isSelected={isSelected}
+            onClick={() => onColumnClick(column)}
+          >
             {column.title && <ColumnIcon title={column.title} />}
             <Tooltip content={column.title}>
               <HeaderTitle level={3} strong width={cell.props.style.width}>
@@ -108,7 +114,11 @@ const EmptyTable = styled.div`
   }
 `;
 
-const HeaderCell = styled(Body)`
+const HeaderCell = styled(Body).attrs(
+  ({ isSelected }: { isSelected: boolean }) => {
+    if (isSelected) return { style: { backgroundColor: '#F2F2F5' } };
+  }
+)<{ isSelected: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
