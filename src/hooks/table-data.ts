@@ -1,8 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ColumnShape } from 'react-base-table';
+
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
 import isObject from 'lodash/isObject';
+
 import { useTableRows } from 'hooks/sdk-queries';
 import { useActiveTableContext } from 'contexts';
 
@@ -27,8 +29,7 @@ interface ColumnType extends Partial<ColumnShape> {
 }
 
 export const useTableData = () => {
-  const { database, table } = useActiveTableContext();
-  const [tableFilters, setTableFilters] = useState([]);
+  const { database, table, columnNameFilter } = useActiveTableContext();
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
@@ -97,11 +98,22 @@ export const useTableData = () => {
     return rows;
   }, [rawRows, chooseRenderType, columns]);
 
+  const filteredColumns = useMemo(
+    () => [
+      ...columns.slice(0, 1),
+      ...columns
+        .slice(1)
+        .filter((column) =>
+          column.title.toLowerCase().includes(columnNameFilter.toLowerCase())
+        ),
+    ],
+    [columns, columnNameFilter]
+  );
+
   return {
     ...rows,
     rows: allRows,
     columns,
-    tableFilters,
-    setTableFilters,
+    filteredColumns,
   };
 };
