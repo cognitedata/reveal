@@ -13,6 +13,7 @@ import {
   nextCollection,
   nextKeypoint,
   nextShape,
+  setKeepUnsavedRegion,
   setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
@@ -52,13 +53,12 @@ export const ImagePreview = ({
       annotationLabelReducer.predefinedAnnotations
   );
 
-  const nextShapeName = useSelector(({ annotationLabelReducer }: RootState) =>
-    nextShape(annotationLabelReducer)
+  const nextShapeName = useSelector((rootState: RootState) =>
+    nextShape(rootState)
   );
 
-  const nextKeypointCollection = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      nextCollection(annotationLabelReducer)
+  const nextKeypointCollection = useSelector((rootState: RootState) =>
+    nextCollection(rootState)
   );
 
   const nextKeypointInCollection = useSelector(
@@ -142,6 +142,7 @@ export const ImagePreview = ({
     text?: string,
     color?: string
   ) => {
+    dispatch(setKeepUnsavedRegion(true));
     dispatch(showAnnotationSettingsModel(true, type, text, color));
   };
 
@@ -223,7 +224,10 @@ export const ImagePreview = ({
       </ExtraToolbar>
       <AnnotationSettingsModal
         showModal={annotationSettingsState.show}
-        onCancel={() => dispatch(showAnnotationSettingsModel(false))}
+        onCancel={() => {
+          dispatch(showAnnotationSettingsModel(false));
+          dispatch(setKeepUnsavedRegion(false));
+        }}
         options={annotationSettingsState}
       />
       <KeyboardShortcutModal
