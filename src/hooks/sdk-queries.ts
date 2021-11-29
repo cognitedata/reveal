@@ -18,11 +18,12 @@ export const rowKey = (db: string, table: string, pageSize: number) => [
   'pageSize',
   pageSize,
 ];
-export const rawProfileKey = (db: string, table: string) => [
+export const rawProfileKey = (db: string, table: string, limit?: number) => [
   baseKey,
   db,
   table,
   'raw-profile',
+  { limit: limit || 'all' },
 ];
 
 export const useDatabases = (options?: { enabled: boolean }) => {
@@ -156,21 +157,24 @@ export const useRawProfile = (
   {
     database,
     table,
+    limit,
   }: {
     database: string;
     table: string;
+    limit?: number;
   },
   options?: { enabled: boolean }
 ) => {
   const sdk = useSDK();
   return useQuery<Profile>(
-    rawProfileKey(database, table),
+    rawProfileKey(database, table, limit),
     () =>
       sdk
         .post(`/api/v1/projects/${sdk.project}/profiler/raw`, {
           data: {
             database,
             table,
+            limit,
           },
         })
         .then((response) => response.data),

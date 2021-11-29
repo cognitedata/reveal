@@ -60,15 +60,23 @@ export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
   const { data: rowCount } = useTotalRowCount({ database, table });
 
+  const fullProfile = useRawProfile({
+    database,
+    table,
+  });
+
+  const limitProfile = useRawProfile({
+    database,
+    table,
+    limit: 1000,
+  });
+
   const {
     data = { columns: {} },
     isLoading,
     isError,
     error,
-  } = useRawProfile({
-    database,
-    table,
-  });
+  } = fullProfile.isFetched ? fullProfile : limitProfile;
 
   const columnList = useMemo(
     () => Object.entries(data.columns).sort((a, b) => a[0].localeCompare(b[0])),
