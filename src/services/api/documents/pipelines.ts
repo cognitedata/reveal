@@ -5,12 +5,42 @@ import {
 } from '@cognite/sdk-playground';
 import { CogniteClient, Label, ListResponse } from '@cognite/sdk';
 
-export const fetchDocumentPipelines = (sdk: CogniteClient) => {
+export const createDocumentPipeline = (
+  sdk: CogniteClient,
+  classifierName: string
+) => {
   return sdk
-    .get<ListResponse<DocumentsPipeline[]>>(
-      `/api/playground/projects/${sdk.project}/documents/pipelines`
+    .post<ListResponse<DocumentsPipeline[]>>(
+      `/api/playground/projects/${sdk.project}/documents/pipelines`,
+      {
+        data: {
+          items: [
+            {
+              classifier: {
+                name: classifierName,
+                trainingLabels: [],
+              },
+            },
+          ],
+        },
+      }
     )
     .then((result) => result.data.items?.[0]);
+};
+
+export const fetchDocumentPipelines = async (sdk: CogniteClient) => {
+  const result = await sdk.get<ListResponse<DocumentsPipeline[]>>(
+    `/api/playground/projects/${sdk.project}/documents/pipelines`
+  );
+
+  let classifier = result.data.items?.[0];
+
+  // If a project doesn't have any configured pipeline configurations, create a default one.
+  if (!classifier) {
+    classifier = await createDocumentPipeline(sdk, 'Document Type');
+  }
+
+  return classifier;
 };
 
 export const updateDocumentPipelinesActiveClassifier = (

@@ -1,6 +1,5 @@
 import { Body, Button, Detail, Title, Tooltip } from '@cognite/cogs.js';
 import { DocumentsPipelineClassifier } from '@cognite/sdk-playground';
-import { Loading } from 'components/states/Loading';
 import React from 'react';
 import { useDocumentsPipelinesQuery } from 'services/query/pipelines/query';
 import styled from 'styled-components';
@@ -47,10 +46,10 @@ const ClassifierAdd: React.FC<{ disabled: boolean }> = ({ disabled }) => {
 };
 
 export const ClassifierWidget: React.FC = () => {
-  const { data, isLoading } = useDocumentsPipelinesQuery();
+  const { data } = useDocumentsPipelinesQuery();
 
-  if (isLoading) {
-    return <Loading />;
+  if (!data?.classifier) {
+    return null;
   }
 
   return (

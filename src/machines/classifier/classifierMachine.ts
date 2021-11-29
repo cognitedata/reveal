@@ -14,7 +14,7 @@ const model = createModel<Model, any>({
   status: {},
   /** Dynamic description for each state */
   description: {
-    train: 'Ready to run',
+    [ClassifierState.TRAIN]: 'Ready to run',
   },
 });
 

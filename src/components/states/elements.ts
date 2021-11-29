@@ -22,5 +22,5 @@ export const StatesDescription = styled(Body).attrs({ level: 2 })`
 `;
 
 export const Image = styled.img`
-  height: 120px;
+  height: 130px;
 `;
