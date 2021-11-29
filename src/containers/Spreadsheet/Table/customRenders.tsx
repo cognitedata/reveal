@@ -17,12 +17,12 @@ type Props = {
 
 export const HeaderRender = (props: Props): JSX.Element => {
   const { cells, columns } = props;
-  const { setIsProfilingSidebarOpen, setSelectedColumn } =
+  const { setIsProfilingSidebarOpen, setSelectedColumnKey } =
     useContext(RawExplorerContext);
 
   const onColumnClick = (column: ColumnShape) => {
     setIsProfilingSidebarOpen(true);
-    setSelectedColumn(column);
+    setSelectedColumnKey(column.dataKey);
   };
 
   return (

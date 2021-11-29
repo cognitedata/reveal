@@ -4,11 +4,47 @@ import { RawExplorerContext } from 'contexts';
 import { useTableData } from 'hooks/table-data';
 
 export const useColumnNavigation = () => {
-  const { selectedColumn, setSelectedColumn } = useContext(RawExplorerContext);
+  const { selectedColumnKey, setSelectedColumnKey } =
+    useContext(RawExplorerContext);
   const { filteredColumns } = useTableData();
 
-  const onPrevColumnClick = () => {};
-  const onNextColumnClick = () => {};
+  const getActiveColumnIndex = () => {
+    const activeColumnIndex = filteredColumns.findIndex(
+      (column) => column.dataKey === selectedColumnKey
+    );
+    return activeColumnIndex === -1 ? 0 : activeColumnIndex;
+  };
 
-  return { onPrevColumnClick, onNextColumnClick };
+  const moveToColumn = (direction: 'prev' | 'next') => {
+    if (!selectedColumnKey) return;
+    const activeColumnIndex = getActiveColumnIndex();
+
+    if (direction === 'prev') {
+      const prevIndex =
+        activeColumnIndex > 1
+          ? activeColumnIndex - 1
+          : filteredColumns.length - 1;
+      const prevColumnKey =
+        filteredColumns[prevIndex]?.dataKey ?? filteredColumns[1]?.dataKey;
+      setSelectedColumnKey(prevColumnKey);
+    }
+    if (direction === 'next') {
+      const nextIndex =
+        activeColumnIndex < filteredColumns.length - 1
+          ? activeColumnIndex + 1
+          : 1;
+      const nextColumnKey =
+        filteredColumns[nextIndex]?.dataKey ?? filteredColumns[1]?.dataKey;
+      setSelectedColumnKey(nextColumnKey);
+    }
+  };
+
+  const onPrevColumnClick = () => moveToColumn('prev');
+  const onNextColumnClick = () => moveToColumn('next');
+
+  const canNavigate =
+    filteredColumns.filter((column) => column.dataKey !== 'column-index')
+      .length > 0;
+
+  return { canNavigate, onPrevColumnClick, onNextColumnClick };
 };

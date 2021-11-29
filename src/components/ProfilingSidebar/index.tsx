@@ -6,13 +6,16 @@ import { Button, Colors, Title } from '@cognite/cogs.js';
 
 import { RawExplorerContext } from 'contexts';
 import { useColumnNavigation } from 'hooks/table-navigation';
+import { useColumnSelection } from 'hooks/table-selection';
 
 const SIDEBAR_PROFILING_WIDTH = 350;
 
 export const ProfilingSidebar = (): JSX.Element => {
-  const { isProfilingSidebarOpen, setIsProfilingSidebarOpen, selectedColumn } =
+  const { isProfilingSidebarOpen, setIsProfilingSidebarOpen } =
     useContext(RawExplorerContext);
-  const { onPrevColumnClick, onNextColumnClick } = useColumnNavigation();
+  const { canNavigate, onPrevColumnClick, onNextColumnClick } =
+    useColumnNavigation();
+  const { selectedColumn } = useColumnSelection();
 
   const onClickHide = () => {
     setIsProfilingSidebarOpen(false);
@@ -40,19 +43,25 @@ export const ProfilingSidebar = (): JSX.Element => {
     >
       <StyledDrawerHeader>
         <StyledDrawerHeaderSectionTitle>
-          <Button
-            size="small"
-            variant="ghost"
-            icon="ChevronLeftCompact"
-            onClick={onPrevColumnClick}
-          />
-          <Title level={6}>{selectedColumn?.title ?? '—'}</Title>
-          <Button
-            size="small"
-            variant="ghost"
-            icon="ChevronRightCompact"
-            onClick={onNextColumnClick}
-          />
+          {canNavigate && (
+            <Button
+              size="small"
+              variant="ghost"
+              icon="ChevronLeftCompact"
+              onClick={onPrevColumnClick}
+            />
+          )}
+          <Title level={6} style={{ flex: '1 1 auto', textAlign: 'center' }}>
+            {selectedColumn?.title ?? '—'}
+          </Title>
+          {canNavigate && (
+            <Button
+              size="small"
+              variant="ghost"
+              icon="ChevronRightCompact"
+              onClick={onNextColumnClick}
+            />
+          )}
         </StyledDrawerHeaderSectionTitle>
         <Button
           size="small"
