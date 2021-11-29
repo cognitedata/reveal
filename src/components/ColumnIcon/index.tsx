@@ -1,24 +1,16 @@
 import React from 'react';
 
-import { useActiveTableContext } from 'contexts';
 import { CustomIcon } from 'components/CustomIcon';
-import { Column, useRawProfile } from 'hooks/sdk-queries';
+import { useColumnType } from 'hooks/column-type';
 
 export const COLUMN_ICON_WIDTH = 50;
 
 export default function ColumnIcon({ title }: { title: string | undefined }) {
-  const { database, table } = useActiveTableContext();
-  const { data = { columns: {} as Record<string, Column> } } = useRawProfile({
-    database,
-    table,
-    limit: 1000,
-  });
+  const { getColumn } = useColumnType();
 
-  const column = title ? data.columns[title] : null;
+  const column = getColumn(title);
 
-  if (!column) {
-    return null;
-  }
+  if (!column) return null;
   return (
     <>
       {!!column.number && <CustomIcon icon="NumberIcon" />}

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import { Drawer } from 'antd';
 
@@ -8,6 +8,7 @@ import ColumnIcon from 'components/ColumnIcon';
 import { RawExplorerContext } from 'contexts';
 import { useColumnNavigation } from 'hooks/table-navigation';
 import { useColumnSelection } from 'hooks/table-selection';
+import { useColumnType } from 'hooks/column-type';
 
 const SIDEBAR_PROFILING_WIDTH = 350;
 const CLOSE_BUTTON_SPACE = 64;
@@ -18,6 +19,12 @@ export const ProfilingSidebar = (): JSX.Element => {
   const { canNavigate, onPrevColumnClick, onNextColumnClick } =
     useColumnNavigation();
   const { selectedColumn } = useColumnSelection();
+  const { getColumnType } = useColumnType();
+
+  const columnType = useMemo(
+    () => getColumnType(selectedColumn?.title),
+    [getColumnType, selectedColumn]
+  );
 
   const onClickHide = () => {
     setIsProfilingSidebarOpen(false);
@@ -88,6 +95,9 @@ export const ProfilingSidebar = (): JSX.Element => {
           Type
         </Body>
         <ColumnIcon title={selectedColumn?.title} />
+        <Body level={2} style={{ fontWeight: 400, marginLeft: '4px' }}>
+          {columnType}
+        </Body>
       </StyledDrawerSectionColumnType>
     </Drawer>
   );
