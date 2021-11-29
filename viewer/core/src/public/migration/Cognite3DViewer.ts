@@ -852,7 +852,7 @@ export class Cognite3DViewer {
     if (this.isDisposed) {
       return;
     }
-    this._cameraManager.setCameraControlsState({position, target: this.getCameraTarget()});
+    this._cameraManager.setCameraControlsState({ position, target: this.getCameraTarget() });
   }
 
   /**
@@ -917,7 +917,7 @@ export class Cognite3DViewer {
   loadCameraFromModel(model: CogniteModelBase): void {
     const config = model.getCameraConfiguration();
     if (config) {
-      this._cameraManager.setCameraControlsState({position: config.position, target: config.target});
+      this._cameraManager.setCameraControlsState({ position: config.position, target: config.target });
     } else {
       this.fitCameraToModel(model, 0);
     }
@@ -1328,7 +1328,7 @@ export class Cognite3DViewer {
     mouseHandler.on('click', e => {
       this._events.click.fire(e);
     });
-    
+
     mouseHandler.on('hover', e => {
       this._events.hover.fire(e);
     });

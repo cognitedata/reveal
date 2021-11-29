@@ -30,7 +30,7 @@ export type CameraControlsOptions = {
 export type ControlsState = {
   position: THREE.Vector3;
   target: THREE.Vector3;
-}
+};
 
 export interface RevealCameraControls {
   /**
@@ -82,10 +82,7 @@ export type CallbackData = {
  */
 export type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
-
 /**
  * Type defining camera change event data.
  */
-export type CameraChangeData = (event: {
-  camera: ControlsState;
-}) => void;
+export type CameraChangeData = (event: { camera: ControlsState }) => void;
