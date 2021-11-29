@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { AuthWrapper, SubAppWrapper } from '@cognite/cdf-utilities';
+import { AuthWrapper, SubAppWrapper, getProject } from '@cognite/cdf-utilities';
 import { Routes } from 'src/Routes';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { sdkv3 } from '@cognite/cdf-sdk-singleton';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from 'src/store';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import rootStyles from './styles/index.css';
 
 const App = () => {
@@ -30,6 +31,8 @@ const App = () => {
       datePickerStyle.unuse();
     };
   }, []);
+
+  const project = getProject();
   return (
     <AntStyles>
       <AuthWrapper
@@ -40,13 +43,20 @@ const App = () => {
       >
         <ThemeProvider theme={theme}>
           <SDKProvider sdk={sdkv3}>
-            <ReduxProvider store={store}>
-              <SubAppWrapper padding={false}>
-                <Router history={history}>
-                  <Routes />
-                </Router>
-              </SubAppWrapper>
-            </ReduxProvider>
+            <FlagProvider // https://cog.link/cdf-frontend-wiki
+              apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+              appName={subAppName}
+              projectName={project}
+              remoteAddress={window.location.hostname}
+            >
+              <ReduxProvider store={store}>
+                <SubAppWrapper padding={false}>
+                  <Router history={history}>
+                    <Routes />
+                  </Router>
+                </SubAppWrapper>
+              </ReduxProvider>
+            </FlagProvider>
           </SDKProvider>
         </ThemeProvider>
         <GlobalStyles theme={theme} />

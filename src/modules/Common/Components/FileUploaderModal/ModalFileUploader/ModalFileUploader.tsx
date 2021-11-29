@@ -21,6 +21,7 @@ import styled from 'styled-components';
 import * as UPLODER_CONST from 'src/constants/UploderConstants';
 import { MAX_CID_FILE_COUNT } from 'src/constants/CIDConstants';
 import { pushMetric } from 'src/utils/pushMetric';
+import { useFlag } from '@cognite/react-feature-flags';
 
 type GCSUploaderOptions = {
   file: Blob;
@@ -174,6 +175,8 @@ export const ModalFileUploader = ({
   const [processAfter, setProcessAfter] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number>(-1);
   const [cursorSize, setCursorSize] = useState<number>(0);
+
+  const visionMLEnabled = useFlag('VISION_ML');
 
   useEffect(() => {
     onFileListChange(fileList);
@@ -472,7 +475,7 @@ export const ModalFileUploader = ({
         {...props}
       />
       <Footer>
-        {enableProcessAfter && (
+        {visionMLEnabled && enableProcessAfter && (
           <Checkbox
             name="example2"
             checked={processAfter}
