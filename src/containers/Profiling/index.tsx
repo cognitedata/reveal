@@ -113,69 +113,71 @@ export const Profiling = (): JSX.Element => {
       <Flex style={{ width: '100%', height: '100%' }}>
         <AutoResizer>
           {({ width, height }) => (
-            <Table style={{ height, width }}>
-              <TableHeader>
-                <tr>
-                  <TableData>Type</TableData>
-                  <TableData>Column</TableData>
-                  <TableData>Empty</TableData>
-                  <TableData>Distinct</TableData>
-                  <TableData>Frequency</TableData>
-                  <TableData>Min</TableData>
-                  <TableData>Max</TableData>
-                  <TableData>Mean</TableData>
-                </tr>
-              </TableHeader>
-              <tbody>
-                {columnList.map(([label, column]) => [
-                  column.number && (
-                    <NumberProfileRow
-                      allCount={column.count}
-                      key={`${label}_number`}
-                      label={label}
-                      nullCount={column.nullCount}
-                      profile={column.number}
-                    />
-                  ),
-                  column.string && (
-                    <StringProfileRow
-                      allCount={column.count}
-                      key={`${label}_string`}
-                      label={label}
-                      nullCount={column.nullCount}
-                      profile={column.string}
-                    />
-                  ),
-                  column.boolean && (
-                    <BooleanProfileRow
-                      allCount={column.count}
-                      key={`${label}_boolean`}
-                      label={label}
-                      nullCount={column.nullCount}
-                      profile={column.boolean}
-                    />
-                  ),
-                  column.vector && (
-                    <VectorProfileRow
-                      allCount={column.count}
-                      key={`${label}_vector`}
-                      label={label}
-                      nullCount={column.nullCount}
-                      profile={column.vector}
-                    />
-                  ),
-                  column.object && (
-                    <ObjectProfileRow
-                      allCount={column.count}
-                      key={`${label}_object`}
-                      label={label}
-                      nullCount={column.nullCount}
-                      profile={column.object}
-                    />
-                  ),
-                ])}
-              </tbody>
-            </Table>
+            <div style={{ width, height }}>
+              <Table>
+                <TableHeader>
+                  <tr>
+                    <TableData>Type</TableData>
+                    <TableData>Column</TableData>
+                    <TableData>Empty</TableData>
+                    <TableData>Distinct</TableData>
+                    <TableData>Frequency</TableData>
+                    <TableData>Min</TableData>
+                    <TableData>Max</TableData>
+                    <TableData>Mean</TableData>
+                  </tr>
+                </TableHeader>
+                <tbody>
+                  {columnList.map(([label, column]) => [
+                    column.number && (
+                      <NumberProfileRow
+                        allCount={column.count}
+                        key={`${label}_number`}
+                        label={label}
+                        nullCount={column.nullCount}
+                        profile={column.number}
+                      />
+                    ),
+                    column.string && (
+                      <StringProfileRow
+                        allCount={column.count}
+                        key={`${label}_string`}
+                        label={label}
+                        nullCount={column.nullCount}
+                        profile={column.string}
+                      />
+                    ),
+                    column.boolean && (
+                      <BooleanProfileRow
+                        allCount={column.count}
+                        key={`${label}_boolean`}
+                        label={label}
+                        nullCount={column.nullCount}
+                        profile={column.boolean}
+                      />
+                    ),
+                    column.vector && (
+                      <VectorProfileRow
+                        allCount={column.count}
+                        key={`${label}_vector`}
+                        label={label}
+                        nullCount={column.nullCount}
+                        profile={column.vector}
+                      />
+                    ),
+                    column.object && (
+                      <ObjectProfileRow
+                        allCount={column.count}
+                        key={`${label}_object`}
+                        label={label}
+                        nullCount={column.nullCount}
+                        profile={column.object}
+                      />
+                    ),
+                  ])}
+                </tbody>
+              </Table>
+            </div>
           )}
         </AutoResizer>
       </Flex>
