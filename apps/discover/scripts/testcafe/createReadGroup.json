@@ -21,6 +21,14 @@
           }
         },
         {
+          "threedAcl": {
+            "actions": ["READ"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
           "assetsAcl": {
             "actions": ["READ"],
             "scope": {
@@ -38,6 +46,14 @@
         },
         {
           "eventsAcl": {
+            "actions": ["READ"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "timeSeriesAcl": {
             "actions": ["READ"],
             "scope": {
               "all": {}
@@ -78,6 +94,14 @@
         },
         {
           "groupsAcl": {
+            "actions": ["READ", "LIST"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "rawAcl": {
             "actions": ["READ", "LIST"],
             "scope": {
               "all": {}

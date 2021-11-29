@@ -29,7 +29,31 @@
           }
         },
         {
+          "threedAcl": {
+            "actions": ["READ", "CREATE", "UPDATE", "DELETE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
           "eventsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "functionsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "timeSeriesAcl": {
             "actions": ["READ", "WRITE"],
             "scope": {
               "all": {}
@@ -70,7 +94,7 @@
         },
         {
           "rawAcl": {
-            "actions": ["READ", "WRITE"],
+            "actions": ["READ", "WRITE", "LIST"],
             "scope": {
               "all": {}
             }
