@@ -18,7 +18,7 @@ import { CadNode } from '@reveal/rendering';
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
  * potential visible sectors.
  */
-const SectorLoadingBatchSize = 10000;
+const SectorLoadingBatchSize = 20;
 
 /**
  * Loads sector based on a given camera pose, a set of models and budget.
@@ -53,9 +53,9 @@ export class SectorLoader {
   }
 
   async *loadSectors(input: DetermineSectorsPayload): AsyncIterable<ConsumedSector> {
-    // if (input.cameraInMotion) {
-    //   return [];
-    // }
+    if (input.cameraInMotion) {
+      return [];
+    }
 
     const cadModels = input.models;
 
