@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Body, Colors, Overline } from '@cognite/cogs.js';
+import { Body, Button, Colors, Overline } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { CustomIcon } from 'components/CustomIcon';
@@ -14,6 +14,7 @@ type CreateTableModalUploadStepProps = {
   fileName?: string;
   isUploadFailed?: boolean;
   isUploadCompleted?: boolean;
+  onCancel: () => void;
   progression?: number;
 };
 
@@ -21,6 +22,7 @@ const CreateTableModalUploadStep = ({
   fileName,
   isUploadFailed = false,
   isUploadCompleted = false,
+  onCancel,
   progression = 0,
 }: CreateTableModalUploadStepProps): JSX.Element => {
   const percentage = isUploadCompleted ? 100 : progression;
@@ -59,6 +61,9 @@ const CreateTableModalUploadStep = ({
             />
           </StyledProgressionBarWrapper>
         </StyledProgressionWrapper>
+        {!isUploadCompleted && !isUploadFailed && (
+          <StyledCloseButton icon="Close" onClick={onCancel} type="ghost" />
+        )}
       </StyledUploadStepWrapper>
     </>
   );
@@ -114,6 +119,10 @@ const StyledProgressionBar = styled.div<{
   transition: width ${SIDE_PANEL_TRANSITION_DURATION}s
     ${SIDE_PANEL_TRANSITION_FUNCTION};
   width: ${({ $percentage }) => $percentage}%;
+`;
+
+const StyledCloseButton = styled(Button)`
+  margin-left: 8px;
 `;
 
 export default CreateTableModalUploadStep;

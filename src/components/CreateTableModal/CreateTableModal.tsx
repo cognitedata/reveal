@@ -59,10 +59,12 @@ const CreateTableModal = ({
 
   const { mutate: createDatabase, isLoading: isCreatingTable } =
     useCreateTable();
-  const [, openTable] = useActiveTable();
+  const [[activeDatabaseName, activeTableName] = [], openTable] =
+    useActiveTable();
 
   const {
     columns,
+    isParsing,
     isUploadFailed,
     isUploadCompleted,
     onConfirmUpload,
@@ -84,15 +86,30 @@ const CreateTableModal = ({
       !(selectedColumnIndex >= 0));
 
   useEffect(() => {
-    if (!visible) {
-      setTableName('');
-      setCreateTableModalStep(CreateTableModalStep.CreationMode);
-      setSelectedCreationMode(undefined);
-      setSelectedPrimaryKeyMethod(undefined);
-      setFile(undefined);
-      setSelectedColumnIndex(-1);
+    if (
+      uploadPercentage > 0 &&
+      (activeDatabaseName !== databaseName || activeTableName !== tableName)
+    ) {
+      openTable([databaseName, tableName]);
     }
-  }, [visible]);
+  }, [
+    activeDatabaseName,
+    activeTableName,
+    databaseName,
+    tableName,
+    openTable,
+    uploadPercentage,
+  ]);
+
+  const handleCancel = (): void => {
+    if (file && isParsing && !isUploadCompleted) {
+      notification.info({
+        message: `File upload was canceled.`,
+        key: 'file-upload',
+      });
+    }
+    onCancel();
+  };
 
   const handleCreate = (): void => {
     createDatabase(
@@ -103,7 +120,7 @@ const CreateTableModal = ({
             message: `Table ${tableName} created!`,
             key: 'create-table',
           });
-          onCancel();
+          handleCancel();
           openTable([databaseName, tableName]);
         },
         onError: (e: any) => {
@@ -196,6 +213,7 @@ const CreateTableModal = ({
           fileName={file?.name ? trimFileExtension(file.name) : ''}
           isUploadFailed={isUploadFailed}
           isUploadCompleted={isUploadCompleted}
+          onCancel={handleCancel}
           progression={uploadPercentage}
         />
       );
@@ -207,7 +225,7 @@ const CreateTableModal = ({
       footer={[
         ...(createTableModalStep !== CreateTableModalStep.Upload
           ? [
-              <StyledCancelButton onClick={onCancel} type="ghost">
+              <StyledCancelButton onClick={handleCancel} type="ghost">
                 Cancel
               </StyledCancelButton>,
             ]
@@ -235,15 +253,16 @@ const CreateTableModal = ({
               </Button>,
             ]
           : []),
-        ...(isUploadCompleted
+        ...(isUploadCompleted || isUploadFailed
           ? [
-              <Button onClick={onCancel} type="primary">
+              <Button onClick={handleCancel} type="primary">
                 OK
               </Button>,
             ]
           : []),
       ]}
-      onCancel={onCancel}
+      maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
+      onCancel={handleCancel}
       title={<Title level={5}>Create table</Title>}
       visible={visible}
       {...modalProps}

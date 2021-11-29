@@ -13,7 +13,7 @@ export type ModalProps = {
   onCancel: () => void;
 } & Omit<AntdModalProps, 'onCancel'>;
 
-const StyledModal = styled(AntdModal)`
+const StyledModal = styled(AntdModal)<{ $hasFooter: boolean }>`
   .ant-modal-content {
     border-radius: 12px;
 
@@ -30,19 +30,21 @@ const StyledModal = styled(AntdModal)`
 
     .ant-modal-footer {
       border: none;
-      height: 75px;
+      padding: ${({ $hasFooter }) => $hasFooter && '20px 16px'};
     }
   }
 `;
 
-const Modal = (props: ModalProps): JSX.Element => {
+const Modal = ({ footer, ...modalProps }: ModalProps): JSX.Element => {
   return (
     <StyledModal
+      $hasFooter={!!footer}
       closeIcon={<Icon type="LargeClose" />}
+      footer={footer}
       getContainer={getContainer}
       width={MODAL_WIDTH}
       zIndex={ZIndexLayer.Modal}
-      {...props}
+      {...modalProps}
     />
   );
 };
