@@ -21,6 +21,7 @@ import {
 import { Keypoint } from 'src/modules/Review/types';
 import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AllIconTypes } from '@cognite/cogs.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum AnnotationStatus {
   Verified = 'verified',
@@ -387,6 +388,10 @@ export const isLinkedAnnotation = (ann: Annotation): boolean => {
 
 export const isKeyPointAnnotation = (ann: Annotation): boolean => {
   return (ann as LinkedAnnotation).region?.shape === 'points';
+};
+
+export const createUniqueId = (text: string): string => {
+  return `${text.replace(/(\s)/g, '_').trim()}-${uuidv4()}`;
 };
 
 // todo: remove this function once they are not needed - start

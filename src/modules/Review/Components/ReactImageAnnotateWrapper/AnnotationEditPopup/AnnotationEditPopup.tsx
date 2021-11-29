@@ -17,6 +17,10 @@ import {
   VisionOptionType,
 } from 'src/modules/Review/types';
 import { AnnotationEditPopupBody } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopupBody';
+import {
+  setLastCollectionName,
+  setLastShape,
+} from 'src/modules/Review/store/annotationLabelSlice';
 
 export const AnnotationEditPopup = (props: {
   region: Region;
@@ -167,8 +171,10 @@ export const AnnotationEditPopup = (props: {
   const handleAnnotationSettingsOpen = (text?: string, color?: string) => {
     if (isKeypoint) {
       onOpenAnnotationSettings('keypoint', text, color);
+      if (text) dispatch(setLastCollectionName(text)); // todo - fix use case where user modifies the typed string before creating new predefined annotation
     } else {
       onOpenAnnotationSettings('shape', text, color);
+      if (text) dispatch(setLastShape(text)); // todo - fix use case where user modifies the typed string before creating new predefined annotation
     }
   };
 
@@ -194,15 +200,7 @@ export const AnnotationEditPopup = (props: {
         // create intermediate keypoints
         createKeypoint();
       }
-
-      return () => {
-        if (editing && !alreadyCreated) {
-          // removes temporary regions if not saved
-          onDelete(region);
-        }
-      };
     }
-    return () => {};
   }, [editing, nextKeypoint]);
 
   useEffect(() => {

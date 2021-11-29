@@ -12,15 +12,16 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
-import { v4 as uuidv4 } from 'uuid';
 import { Region } from '@cognite/react-image-annotate';
 import { Point } from '@cognite/react-image-annotate/Types/ImageCanvas/region-tools';
 import {
   AnnotationStatus,
+  createUniqueId,
   KeypointItem,
   KeypointVertex,
 } from 'src/utils/AnnotationUtils';
 import { ReactText } from 'react';
+import { RootState } from 'src/store/rootReducer';
 
 type KeyPointState = {
   id: string;
@@ -54,6 +55,7 @@ type State = {
     allIds: string[];
     selectedIds: string[];
   };
+  keepUnsavedRegion: boolean;
 };
 
 const initialState: State = {
@@ -76,6 +78,7 @@ const initialState: State = {
   lastShape: undefined,
   lastKeyPoint: undefined,
   currentTool: 'select',
+  keepUnsavedRegion: false,
 };
 
 const annotationLabelSlice = createSlice({
@@ -120,8 +123,11 @@ const annotationLabelSlice = createSlice({
         state.keypointMap.selectedIds = [action.payload];
       }
     },
-    onCreateOrUpdateShape(state, action: PayloadAction<string>) {
+    setLastShape(state, action: PayloadAction<string>) {
       state.lastShape = action.payload;
+    },
+    setLastCollectionName(state, action: PayloadAction<string>) {
+      state.lastCollectionName = action.payload;
     },
     setSelectedTool(state, action: PayloadAction<Tool>) {
       state.currentTool = action.payload;
@@ -156,7 +162,7 @@ const annotationLabelSlice = createSlice({
         };
 
         if (!state.lastCollectionId) {
-          const collectionId = `${action.payload.collectionName}-${uuidv4()}`;
+          const collectionId = createUniqueId(action.payload.collectionName);
 
           const collection = {
             id: collectionId,
@@ -220,6 +226,9 @@ const annotationLabelSlice = createSlice({
         predefinedKeypoints: [],
         predefinedShapes: [],
       };
+    },
+    setKeepUnsavedRegion(state, action: PayloadAction<boolean>) {
+      state.keepUnsavedRegion = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -296,12 +305,14 @@ export const {
   setCollectionStatus,
   keypointSelectStatusChange,
   setSelectedTool,
-  onCreateOrUpdateShape,
+  setLastShape,
+  setLastCollectionName,
   onCreateKeyPoint,
   onUpdateKeyPoint,
   deleteCollectionById,
   deleteCurrentCollection,
   removeLabels,
+  setKeepUnsavedRegion,
 } = annotationLabelSlice.actions;
 
 export default annotationLabelSlice.reducer;
@@ -355,9 +366,14 @@ export const nextKeypoint = createSelector(
 );
 
 export const nextShape = createSelector(
-  (state: State) => state.predefinedAnnotations.predefinedShapes,
-  (state: State) => state.lastShape,
-  (predefinedShapes, lastShape) => {
+  (state: RootState) => state.reviewSlice.annotationSettings.createNew,
+  (state: RootState) =>
+    state.annotationLabelReducer.predefinedAnnotations.predefinedShapes,
+  (state: RootState) => state.annotationLabelReducer.lastShape,
+  (annotationSettingsNewLabel, predefinedShapes, lastShape) => {
+    if (annotationSettingsNewLabel.text) {
+      return annotationSettingsNewLabel.text;
+    }
     if (lastShape) {
       return lastShape;
     }
@@ -366,13 +382,21 @@ export const nextShape = createSelector(
 );
 
 export const nextCollection = createSelector(
-  (state: State) => state.predefinedAnnotations.predefinedKeypoints,
-  (state: State) => state.lastCollectionName,
-  (predefinedKeypointCollections, lastCollectionName) => {
+  (state: RootState) => state.reviewSlice.annotationSettings.createNew,
+  (state: RootState) =>
+    state.annotationLabelReducer.predefinedAnnotations.predefinedKeypoints,
+  (state: RootState) => state.annotationLabelReducer.lastCollectionName,
+  (
+    annotationSettingsNewLabel,
+    predefinedKeypointCollections,
+    lastCollectionName
+  ) => {
     let collection = predefinedKeypointCollections[0];
-    if (lastCollectionName) {
+    if (annotationSettingsNewLabel.text || lastCollectionName) {
+      const collectionLabel =
+        annotationSettingsNewLabel.text || lastCollectionName;
       const template = predefinedKeypointCollections.find(
-        (c) => c.collectionName === lastCollectionName
+        (c) => c.collectionName === collectionLabel
       );
       if (template) {
         collection = template;
