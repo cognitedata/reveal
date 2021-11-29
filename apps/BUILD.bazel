@@ -57,6 +57,7 @@ container_layer(
     empty_dirs = [
         "/data/caddy",
         "/config/caddy",
+        "/var/www/html",
     ],
     visibility = ["//apps:__subpackages__"],
 )

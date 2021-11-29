@@ -66,7 +66,7 @@ def container_build(name, app_name, app_id, build_layer, docker_repo, environmen
 
     container_layer(
         name = "%s_app_layer" % name,
-        directory = "/usr/share/caddy",
+        directory = "/var/www/html",
         files = [":%s_prepare_docker_build" % name],
         tags = ["manual"],
         visibility = ["//visibility:private"],

@@ -526,12 +526,12 @@ container_build(
     environment = "staging",
 )
 
-# container_build(
-#     name = "fas_prod",
-#     app_id = "fas-demo-prod",
-#     app_name = "react-demo-app",
-#     build_layer = ":build",
-#     config_map = "config/config-prod.json",
-#     docker_repo = "cognitedata/apps/react-demo-app",
-#     environment = "production",
-# )
+container_build(
+    name = "fas_prod",
+    app_id = "fas-demo-prod",
+    app_name = "react-demo-app",
+    build_layer = ":build",
+    config_map = "config/config-prod.json",
+    docker_repo = "cognitedata/apps/react-demo-app",
+    environment = "production",
+)
