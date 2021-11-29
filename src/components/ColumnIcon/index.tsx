@@ -6,7 +6,7 @@ import { Column, useRawProfile } from 'hooks/sdk-queries';
 
 export const COLUMN_ICON_WIDTH = 50;
 
-export default function ColumnIcon({ title }: { title: string }) {
+export default function ColumnIcon({ title }: { title: string | undefined }) {
   const { database, table } = useActiveTableContext();
   const { data = { columns: {} as Record<string, Column> } } = useRawProfile({
     database,
@@ -14,7 +14,7 @@ export default function ColumnIcon({ title }: { title: string }) {
     limit: 1000,
   });
 
-  const column = data.columns[title];
+  const column = title ? data.columns[title] : null;
 
   if (!column) {
     return null;

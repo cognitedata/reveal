@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Drawer } from 'antd';
 
-import { Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 
+import ColumnIcon from 'components/ColumnIcon';
 import { RawExplorerContext } from 'contexts';
 import { useColumnNavigation } from 'hooks/table-navigation';
 import { useColumnSelection } from 'hooks/table-selection';
@@ -82,17 +83,27 @@ export const ProfilingSidebar = (): JSX.Element => {
           onClick={onClickHide}
         />
       </StyledDrawerHeader>
+      <StyledDrawerSectionColumnType>
+        <Body level={2} strong>
+          Type
+        </Body>
+        <ColumnIcon title={selectedColumn?.title} />
+      </StyledDrawerSectionColumnType>
     </Drawer>
   );
 };
 
-const StyledDrawerHeader = styled.div`
+const StyledDrawerSection = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 8px 16px;
   width: 100%;
   padding: 8px 16px;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+`;
+
+const StyledDrawerHeader = styled(StyledDrawerSection)`
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const StyledDrawerHeaderSectionTitle = styled.div`
@@ -102,4 +113,14 @@ const StyledDrawerHeaderSectionTitle = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-right: 8px;
+`;
+
+const StyledDrawerSectionColumnType = styled(StyledDrawerSection)`
+  padding: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  color: ${Colors['greyscale-grey7'].hex()};
+  & > :first-child {
+    width: 90px;
+  }
 `;
