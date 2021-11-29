@@ -18,11 +18,12 @@ export const rowKey = (db: string, table: string, pageSize: number) => [
   'pageSize',
   pageSize,
 ];
-export const rawProfileKey = (db: string, table: string) => [
+export const rawProfileKey = (db: string, table: string, limit?: number) => [
   baseKey,
   db,
   table,
   'raw-profile',
+  { limit: limit || 'all' },
 ];
 
 export const useDatabases = (options?: { enabled: boolean }) => {
@@ -149,6 +150,7 @@ export type Column = {
   vector: null | VectorProfile;
 };
 export type Profile = {
+  rowCount: number;
   columns: Record<string, Column>;
 };
 
@@ -156,55 +158,29 @@ export const useRawProfile = (
   {
     database,
     table,
+    limit,
   }: {
     database: string;
     table: string;
+    limit?: number;
   },
   options?: { enabled: boolean }
 ) => {
   const sdk = useSDK();
   return useQuery<Profile>(
-    rawProfileKey(database, table),
+    rawProfileKey(database, table, limit),
     () =>
       sdk
         .post(`/api/v1/projects/${sdk.project}/profiler/raw`, {
           data: {
             database,
             table,
+            limit,
           },
         })
         .then((response) => response.data),
     options
   );
-};
-
-export const useTotalRowCount = (
-  {
-    database,
-    table,
-  }: {
-    database: string;
-    table: string;
-  },
-  options?: { enabled: boolean }
-) => {
-  const profile = useRawProfile({ database, table }, options);
-
-  const totalRows =
-    profile.isFetched && Object.values(profile.data?.columns || {}).length > 0
-      ? Object.values(profile.data?.columns || {}).reduce((accl, col) => {
-          try {
-            return Math.max(accl, col.count);
-          } catch {
-            return accl;
-          }
-        }, 0)
-      : undefined;
-
-  return {
-    ...profile,
-    data: totalRows,
-  };
 };
 
 export const useDeleteDatabase = () => {

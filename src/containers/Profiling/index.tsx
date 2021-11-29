@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Alert } from 'antd';
 import styled from 'styled-components';
 import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
-import { useRawProfile, useTotalRowCount } from 'hooks/sdk-queries';
+import { useRawProfile } from 'hooks/sdk-queries';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
 import NumberProfileRow from './NumberProfileRow';
@@ -37,6 +37,10 @@ const Card = styled.div`
     background: rgba(57, 162, 99, 0.12);
     border-radius: 6px;
   }
+  .coverage.running {
+    color: black;
+    background: rgb(247 97 97 / 12%);
+  }
 `;
 
 const RootFlex = styled(Flex)`
@@ -58,17 +62,24 @@ const Table = styled.table`
 
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
-  const { data: rowCount } = useTotalRowCount({ database, table });
 
-  const {
-    data = { columns: {} },
-    isLoading,
-    isError,
-    error,
-  } = useRawProfile({
+  const fullProfile = useRawProfile({
     database,
     table,
   });
+
+  const limitProfile = useRawProfile({
+    database,
+    table,
+    limit: 1000,
+  });
+
+  const {
+    data = { columns: {}, rowCount: 0 },
+    isLoading,
+    isError,
+    error,
+  } = fullProfile.isFetched ? fullProfile : limitProfile;
 
   const columnList = useMemo(
     () => Object.entries(data.columns).sort((a, b) => a[0].localeCompare(b[0])),
@@ -98,8 +109,12 @@ export const Profiling = (): JSX.Element => {
         <Card className="z-2">
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
-            <div className="count">{rowCount}</div>
-            <div className="coverage">100%</div>
+            <div className="count">{data.rowCount}</div>
+            <div
+              className={`coverage ${fullProfile.isFetched ? '' : 'running'}`}
+            >
+              {fullProfile.isFetched ? '100%' : 'running...'}
+            </div>
           </Flex>
         </Card>
         <Card className="z-2">
