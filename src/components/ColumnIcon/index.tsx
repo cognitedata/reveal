@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { CustomIcon } from 'components/CustomIcon';
 import { useColumnType } from 'hooks/column-type';
@@ -8,7 +8,7 @@ export const COLUMN_ICON_WIDTH = 50;
 export default function ColumnIcon({ title }: { title: string | undefined }) {
   const { getColumn } = useColumnType();
 
-  const column = getColumn(title);
+  const column = useMemo(() => getColumn(title), [getColumn, title]);
 
   if (!column) return null;
   return (
