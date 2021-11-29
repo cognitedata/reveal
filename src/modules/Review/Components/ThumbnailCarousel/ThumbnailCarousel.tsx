@@ -54,9 +54,7 @@ export const ThumbnailCarousel = (props: {
       currentFileIndex !== -1 &&
       currentFileIndex !== currentSlideIndex
     ) {
-      setCurrentSlideIndex(
-        files.findIndex((item: any) => item.id === idFromUrl)
-      );
+      setCurrentSlideIndex(currentFileIndex);
     }
   }, [files]);
 
