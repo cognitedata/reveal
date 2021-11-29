@@ -123,6 +123,12 @@ export const columnMap: ColumnMap<DocumentTypeDataModel> = {
     order: 9,
     disableSorting: true,
   },
+  pageCount: {
+    Header: 'No. of pages',
+    accessor: 'pageCount',
+    width: '50px',
+    order: 10,
+  },
 };
 
 export const DocumentResultTable: React.FC = () => {

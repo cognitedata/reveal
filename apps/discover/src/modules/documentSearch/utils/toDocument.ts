@@ -120,6 +120,7 @@ export const toDocument = ({
       filepath: possiblePath || '',
       topfolder: splitPath[1] || 'Unknown',
       truncatedContent: item.truncatedContent || '',
+      pageCount: item.pageCount,
     },
     highlight: {
       content: getHighlight(highlight),
