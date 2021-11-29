@@ -4,6 +4,7 @@ import React, {
   SetStateAction,
   useState,
 } from 'react';
+import { ColumnShape } from 'react-base-table';
 
 import { NO_CELL_SELECTED } from 'utils/table';
 
@@ -26,6 +27,12 @@ type RawExplorerState = {
   setIsSidePanelOpen: Dispatch<SetStateAction<boolean>>;
   selectedSidePanelDatabase?: string;
   setSelectedSidePanelDatabase: Dispatch<SetStateAction<string | undefined>>;
+
+  isProfilingSidebarOpen: boolean;
+  setIsProfilingSidebarOpen: Dispatch<SetStateAction<boolean>>;
+  selectedColumn?: ColumnShape<any>;
+  setSelectedColumn: Dispatch<SetStateAction<ColumnShape<any> | undefined>>;
+
   selectedCell: SelectedCell;
   setSelectedCell: Dispatch<SetStateAction<SelectedCell>>;
   isCellExpanded: boolean;
@@ -45,6 +52,12 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
   const [selectedSidePanelDatabase, setSelectedSidePanelDatabase] = useState<
     string | undefined
   >();
+
+  const [isProfilingSidebarOpen, setIsProfilingSidebarOpen] = useState(true);
+  const [selectedColumn, setSelectedColumn] = useState<
+    ColumnShape<any> | undefined
+  >();
+
   const [selectedCell, setSelectedCell] =
     useState<SelectedCell>(NO_CELL_SELECTED);
   const [isCellExpanded, setIsCellExpanded] = useState<boolean>(false);
@@ -56,6 +69,12 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
         setIsSidePanelOpen,
         selectedSidePanelDatabase,
         setSelectedSidePanelDatabase,
+
+        isProfilingSidebarOpen,
+        setIsProfilingSidebarOpen,
+        selectedColumn,
+        setSelectedColumn,
+
         selectedCell,
         setSelectedCell,
         isCellExpanded,

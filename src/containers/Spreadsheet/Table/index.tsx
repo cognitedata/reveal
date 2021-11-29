@@ -5,9 +5,10 @@ import { Colors, Flex } from '@cognite/cogs.js';
 
 import { TABLE_ROW_HEIGHT } from 'utils/constants';
 
-import { headerRenderer, emptyRenderer } from './customRenders';
+import { HeaderRender, EmptyRender } from './customRenders';
 import { ExpandedCellModal } from './ExpandedCellModal';
 import { Cell } from './Cell';
+import { ProfilingSidebar } from 'components/ProfilingSidebar';
 
 type Props = {
   rows: any;
@@ -29,7 +30,7 @@ export const Table = (props: Props): JSX.Element => {
   );
 
   return (
-    <Flex style={{ width: '100%', height: '100%' }}>
+    <StyledTableWrapper>
       <AutoResizer>
         {({ width, height }) => (
           <StyledBaseTable
@@ -40,18 +41,26 @@ export const Table = (props: Props): JSX.Element => {
             data={rows}
             rowHeight={TABLE_ROW_HEIGHT}
             headerHeight={isEmpty ? 0 : TABLE_ROW_HEIGHT}
-            headerRenderer={headerRenderer}
-            emptyRenderer={emptyRenderer}
+            headerRenderer={(props: any) => <HeaderRender {...props} />}
+            emptyRenderer={(props: any) => <EmptyRender {...props} />}
             onEndReached={() => onEndReach && onEndReach()}
           />
         )}
       </AutoResizer>
+      <ProfilingSidebar />
       <ExpandedCellModal />
-    </Flex>
+    </StyledTableWrapper>
   );
 };
 
 const TABLE_PREFIX = 'BaseTable__';
+const StyledTableWrapper = styled(Flex)`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transform: translate(0);
+`;
 const StyledBaseTable = styled(BaseTable)`
   .${TABLE_PREFIX}table {
     box-shadow: none;
