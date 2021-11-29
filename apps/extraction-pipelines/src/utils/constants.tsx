@@ -1,4 +1,5 @@
 import React, { ReactFragment } from 'react';
+import { ExternalLink } from 'components/links/ExternalLink';
 
 export const CDF_LABEL: Readonly<string> = 'Cognite Data Fusion';
 export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
@@ -61,10 +62,9 @@ export const DOCUMENTATION_HINT: Readonly<ReactFragment> = (
   <>
     Add other documentation to provide context and insights about the extraction
     pipeline.{' '}
-    <a href="https://guides.github.com/features/mastering-markdown/">
+    <ExternalLink href="https://guides.github.com/features/mastering-markdown/">
       Use markdown for page formatting
-    </a>
-    .
+    </ExternalLink>
   </>
 );
 

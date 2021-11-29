@@ -1,14 +1,9 @@
-import { Icon } from '@cognite/cogs.js';
 import React, { FunctionComponent } from 'react';
-import styled from 'styled-components';
 import { useAppEnv } from 'hooks/useAppEnv';
 
 import { trackUsage } from 'utils/Metrics';
+import { ExternalLink } from 'components/links/ExternalLink';
 
-const LinkIcon = styled((props) => <Icon {...props}>{props.children}</Icon>)`
-  margin-left: 0.5rem;
-  width: 0.8rem;
-`;
 interface LinkBase {
   linkText: string;
 }
@@ -40,16 +35,9 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
   return (
     <>
       {(url || path) && (
-        <a
-          href={displayHref}
-          className="cogs-btn cogs-btn-link"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={onLinkClick}
-        >
+        <ExternalLink href={displayHref} onClick={onLinkClick}>
           {linkText}
-          <LinkIcon type="ExternalLink" />
-        </a>
+        </ExternalLink>
       )}
     </>
   );

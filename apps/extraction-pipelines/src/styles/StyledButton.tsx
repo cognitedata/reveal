@@ -40,11 +40,9 @@ export const EditButton = styled((props: EditButtonProps) => (
   &.cogs-btn {
     &.cogs-btn-ghost {
       background: unset;
-      width: ${(props: EditButtonProps) =>
-        props.$full ? '100%' : 'max-content'};
-      display: ${(props: EditButtonProps) => (props.$full ? 'grid' : 'flex')};
-      grid-template-columns: ${(props: EditButtonProps) =>
-        props.$full ? '1fr auto' : '1fr'};
+      width: ${(p) => (p.$full ? '100%' : 'max-content')};
+      display: ${(p) => (p.$full ? 'grid' : 'flex')};
+      grid-template-columns: ${(p) => (p.$full ? '1fr auto' : '1fr')};
       grid-template-rows: auto;
       justify-items: flex-start;
       height: fit-content;
@@ -60,8 +58,7 @@ export const EditButton = styled((props: EditButtonProps) => (
         background-color: ${Colors['midblue-7'].hex()};
         .cogs-icon {
           &.cogs-icon-Edit {
-            opacity: ${(props: EditButtonProps) =>
-              props.showPencilIcon ? '1' : '0'};
+            opacity: ${(p) => (p.showPencilIcon ? '1' : '0')};
           }
         }
       }

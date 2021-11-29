@@ -1,7 +1,8 @@
 import React, { FunctionComponent, ReactNode } from 'react';
-import { A, Graphic, Title } from '@cognite/cogs.js';
+import { Graphic, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { LEARNING_AND_RESOURCES_URL } from 'pages/Extpipes/Extpipes';
+import { ExternalLink } from 'components/links/ExternalLink';
 
 const NoExtpipesWrapper = styled((props) => (
   <div {...props}>{props.children}</div>
@@ -27,7 +28,9 @@ const NoExtpipes: FunctionComponent<Props> = ({ actionButton }) => {
           <p>
             Use this section to create and monitor data flows. Learn more about
             extraction pipelines in{' '}
-            <A href={LEARNING_AND_RESOURCES_URL}>documentation</A>.
+            <ExternalLink href={LEARNING_AND_RESOURCES_URL}>
+              documentation
+            </ExternalLink>
           </p>
           {actionButton}
         </div>

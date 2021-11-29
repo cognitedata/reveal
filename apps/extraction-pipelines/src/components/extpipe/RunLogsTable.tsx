@@ -17,6 +17,7 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 import { Extpipe } from 'model/Extpipe';
 import { calculateStatus } from 'utils/extpipeUtils';
 import { RunStatusUI } from 'model/Status';
+import { ExternalLink } from 'components/links/ExternalLink';
 
 const Wrapper = styled.div`
   margin-bottom: 5rem;
@@ -135,10 +136,9 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
       </p>
       <p>
         Learn how to activate an extraction pipeline in the{' '}
-        <a href="https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html">
+        <ExternalLink href="https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html">
           documentation
-        </a>
-        .
+        </ExternalLink>
       </p>
     </>
   ) : (

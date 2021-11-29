@@ -32,6 +32,7 @@ import { Button, Graphic } from '@cognite/cogs.js';
 import { Section } from 'components/extpipe/Section';
 import { DivFlex } from 'styles/flex/StyledFlex';
 import { trackUsage } from 'utils/Metrics';
+import { ExternalLink } from 'components/links/ExternalLink';
 
 const DocumentationForm = styled.form`
   padding: 0 1rem;
@@ -142,9 +143,9 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     <>
       <p style={{ margin: '3rem 0', textAlign: 'center' }}>
         Use{' '}
-        <a href="https://guides.github.com/features/mastering-markdown/">
+        <ExternalLink href="https://guides.github.com/features/mastering-markdown/">
           markdown
-        </a>{' '}
+        </ExternalLink>{' '}
         to document important information about the extraction pipeline, for
         troubleshooting or more detailed information about the data such as
         selection criteria.
