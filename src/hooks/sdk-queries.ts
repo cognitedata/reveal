@@ -150,6 +150,7 @@ export type Column = {
   vector: null | VectorProfile;
 };
 export type Profile = {
+  rowCount: number;
   columns: Record<string, Column>;
 };
 
@@ -180,35 +181,6 @@ export const useRawProfile = (
         .then((response) => response.data),
     options
   );
-};
-
-export const useTotalRowCount = (
-  {
-    database,
-    table,
-  }: {
-    database: string;
-    table: string;
-  },
-  options?: { enabled: boolean }
-) => {
-  const profile = useRawProfile({ database, table }, options);
-
-  const totalRows =
-    profile.isFetched && Object.values(profile.data?.columns || {}).length > 0
-      ? Object.values(profile.data?.columns || {}).reduce((accl, col) => {
-          try {
-            return Math.max(accl, col.count);
-          } catch {
-            return accl;
-          }
-        }, 0)
-      : undefined;
-
-  return {
-    ...profile,
-    data: totalRows,
-  };
 };
 
 export const useDeleteDatabase = () => {

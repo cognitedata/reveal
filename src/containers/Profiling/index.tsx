@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Alert } from 'antd';
 import styled from 'styled-components';
 import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
-import { useRawProfile, useTotalRowCount } from 'hooks/sdk-queries';
+import { useRawProfile } from 'hooks/sdk-queries';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
 import NumberProfileRow from './NumberProfileRow';
@@ -72,7 +72,7 @@ export const Profiling = (): JSX.Element => {
   });
 
   const {
-    data = { columns: {} },
+    data = { columns: {}, rowCount: 0 },
     isLoading,
     isError,
     error,
