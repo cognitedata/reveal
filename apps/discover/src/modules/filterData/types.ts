@@ -21,9 +21,6 @@ export interface FilterDataState {
     filterLogType: FilterLogType;
     selectedIds: SelectedMap;
   };
-  casing: {
-    selectedIds: SelectedMap;
-  };
   trajectory: {
     selectedIds: SelectedMap;
     selectedWellboreIds: SelectedMap;

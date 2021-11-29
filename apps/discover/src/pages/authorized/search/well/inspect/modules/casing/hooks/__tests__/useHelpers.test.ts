@@ -26,7 +26,7 @@ describe('useWellResultColumns hook', () => {
 
   it('should return well result head object with preferred unit', async () => {
     const ndsColumnHeaders = await getHookResult();
-    expect(ndsColumnHeaders).toEqual(
+    expect(ndsColumnHeaders.casingsTableColumn).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ Header: 'Top MD (m)' }),
         expect.objectContaining({ Header: 'Bottom MD (m)' }),

@@ -5,7 +5,6 @@ import {
   setNdsProbability,
   setNdsSeverity,
   setNptDuration,
-  setSelectedCasingIds,
   setSelectedTrajectoryWellboreIds,
 } from '../actions';
 import { FILTER_NAMES, MODULES } from '../constants';
@@ -68,21 +67,6 @@ describe('Filter data Actions', () => {
     const store: any = createMockStore();
 
     store.dispatch(setNptDuration(values));
-
-    expect(store.getActions()).toEqual([expectedActions]);
-  });
-
-  it(`should set casing selected Ids`, () => {
-    const filter = {
-      filterModule: MODULES.casing,
-      filterName: FILTER_NAMES.selectedIds,
-    };
-    const values = { 1: true };
-    const expectedActions = { type: SET_SELECTED_ID_MAP, filter, values };
-
-    const store: any = createMockStore();
-
-    store.dispatch(setSelectedCasingIds(values));
 
     expect(store.getActions()).toEqual([expectedActions]);
   });

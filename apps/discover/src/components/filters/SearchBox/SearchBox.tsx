@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Input } from '@cognite/cogs.js';
 
@@ -31,6 +31,10 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
   );
 
   const handleOnBlur = useCallback(() => setSearchPhrase(value), [value]);
+
+  useEffect(() => {
+    setSearchPhrase(value);
+  }, [value]);
 
   return (
     <SearchBoxWrapper>

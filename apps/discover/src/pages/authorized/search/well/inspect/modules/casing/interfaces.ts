@@ -4,7 +4,8 @@ import { CasingType } from './CasingView/interfaces';
 
 export type FormattedCasings = {
   key: number;
-  name: string;
+  wellboreName: string;
+  wellName: string;
   casings: CasingType[];
 };
 
@@ -22,4 +23,10 @@ export type CasingData = {
   idUnit: string;
   casingNames: string;
   casings: Sequence[];
+};
+
+export type GroupedCasingData = {
+  id: number;
+  wellName: string;
+  casings: CasingData[];
 };

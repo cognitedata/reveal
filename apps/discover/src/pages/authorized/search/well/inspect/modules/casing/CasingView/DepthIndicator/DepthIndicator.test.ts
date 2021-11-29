@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -7,6 +7,7 @@ import DepthIndicator from './DepthIndicator';
 const depthIndicatorProps = {
   casingDepth: 100,
   description: '22.0" intermediate casing 2',
+  outerDiameter: '22.0',
 };
 
 describe('Depth Indicator', () => {
@@ -24,9 +25,8 @@ describe('Depth Indicator', () => {
 
   it(`should display casing description`, async () => {
     await defaultTestInit();
-    const row = await waitFor(() =>
-      screen.findByText(depthIndicatorProps.description)
-    );
-    expect(row).toBeTruthy();
+    expect(
+      await screen.findByText(depthIndicatorProps.outerDiameter)
+    ).toBeInTheDocument();
   });
 });

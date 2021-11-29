@@ -1,3 +1,6 @@
+import { UserPrefferedUnit } from 'constants/units';
+import { NPTEvent } from 'modules/wellSearch/types';
+
 export interface CasingType {
   id: number;
   name: string;
@@ -9,5 +12,9 @@ export interface CasingType {
 
 export type CasingViewType = {
   casings: CasingType[];
-  name: string;
+  wellboreName: string;
+  wellName: string;
+  unit: UserPrefferedUnit;
+  events: NPTEvent[];
+  isEventsLoading?: boolean;
 };

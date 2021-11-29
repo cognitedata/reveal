@@ -79,15 +79,6 @@ export const setSelectedLogIds = (values: SelectedMap) => {
   return { type: SET_SELECTED_ID_MAP, filter, values };
 };
 
-// casings
-export const setSelectedCasingIds = (values: SelectedMap) => {
-  const filter = {
-    filterModule: MODULES.casing,
-    filterName: FILTER_NAMES.selectedIds,
-  };
-  return { type: SET_SELECTED_ID_MAP, filter, values };
-};
-
 // trajectory
 export const setSelectedTrajIds = (values: SelectedMap) => {
   const filter = {
@@ -114,7 +105,6 @@ export const filterDataActions = {
   setNptDuration,
   setLogFilterLogType,
   setSelectedLogIds,
-  setSelectedCasingIds,
   setSelectedTrajIds,
   setSelectedTrajectoryWellboreIds,
 };

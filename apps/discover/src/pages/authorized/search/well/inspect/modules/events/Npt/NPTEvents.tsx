@@ -9,11 +9,13 @@ import {
   useNptEventsForTable,
 } from 'modules/wellSearch/selectors';
 
+import { Separator } from '../../../elements';
+import { GraphTableSwitch } from '../../common/GraphTableSwitch';
+
 import { VIEW_MODES, DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NPTEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
 import { NPTGraph, SelectedWellboreView } from './graph';
-import { SwitchViewMode } from './SwitchViewMode';
 import { NPTTable } from './table';
 
 export const NPTEvents: React.FC = () => {
@@ -51,10 +53,11 @@ export const NPTEvents: React.FC = () => {
   return (
     <>
       <NPTEventsDataControlArea>
-        <SwitchViewMode
-          activeViewMode={activeViewMode}
-          onChangeViewMode={setActiveViewMode}
+        <GraphTableSwitch
+          viewMode={activeViewMode}
+          onChange={setActiveViewMode}
         />
+        {isTableViewModeActive && <Separator />}
         <FilterContainer
           events={eventsTable}
           isVisible={isTableViewModeActive}

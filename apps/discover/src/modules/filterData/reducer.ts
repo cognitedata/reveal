@@ -27,9 +27,6 @@ export const initialState: FilterDataState = {
     },
     selectedIds: {},
   },
-  casing: {
-    selectedIds: {},
-  },
   trajectory: {
     selectedIds: {},
     selectedWellboreIds: {},

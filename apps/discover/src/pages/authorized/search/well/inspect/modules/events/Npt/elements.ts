@@ -10,15 +10,6 @@ export const NPTEventsDataControlArea = styled(Flex)`
   z-index: ${layers.FILTER_BOX};
 `;
 
-export const SwitchViewModeWrapper = styled(Flex)`
-  padding-right: 10px;
-  margin-right: 10px;
-  border-right: 1px solid var(--cogs-border-default);
-  &:last-child {
-    border: none;
-  }
-`;
-
 export const NptCodeAvatar = styled.div`
   height: 12px;
   width: 12px;

@@ -1,55 +1,156 @@
-import React, { FC, Fragment } from 'react';
+import React, {
+  FC,
+  Fragment,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+import max from 'lodash/max';
 import orderBy from 'lodash/orderBy';
 
+import EmptyState from 'components/emptyState';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
+import { FlexColumn } from 'styles/layout';
 
+import { getScaleBlocks } from '../helper';
+
+import DepthColumn from './DepthColumn';
 import DepthIndicator from './DepthIndicator/DepthIndicator';
 import {
-  CasingViewWrapper,
-  WellName,
-  CenterLine,
+  BodyWrapper,
   RightGutter,
+  Wrapper,
+  Header,
+  MainHeader,
+  SubHeader,
+  BodyColumn,
+  BodyColumnHeaderWrapper,
+  BodyColumnMainHeader,
+  BodyColumnBody,
+  ScaleLine,
+  CasingScale,
 } from './elements';
+import EventsColumn from './EventsColumn';
 import { CasingViewType } from './interfaces';
+
+const MIN_SCALE_HEIGHT = 16;
+const EMPTY_STATE_TEXT = 'This wellbore has no casing data';
 
 /**
  * This component is used to generate casings diagram
  */
-const CasingView: FC<CasingViewType> = ({ casings, name }: CasingViewType) => {
+const CasingView: FC<CasingViewType> = ({
+  casings,
+  wellName,
+  wellboreName,
+  unit,
+  events,
+  isEventsLoading,
+}: CasingViewType) => {
+  const scaleRef = useRef<HTMLElement | null>(null);
+
   const [recentZIndex, setRecentZIndex] = React.useState(1);
 
   const casingsList = orderBy(casings, 'endDepth', 'desc');
 
-  return (
-    <CasingViewWrapper>
-      <WellName>{name}</WellName>
-      <CenterLine />
-      {convertToPreviewData(casingsList).map((normalizedCasing, index) => {
-        // This fires on indicator click event
-        const onIndicatorClick = () => {
-          // This increments casing view zindex value
-          setRecentZIndex((r) => r + 1);
-          return recentZIndex;
-        };
+  const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
 
-        return (
-          <Fragment key={normalizedCasing.id}>
-            <DepthIndicator
-              startDepth={normalizedCasing.startDepth}
-              casingDepth={normalizedCasing.casingDepth}
-              description={normalizedCasing.casingDescription}
-              onClick={onIndicatorClick}
-              linerCasing={normalizedCasing.linerCasing}
+  const normalizedCasings = useMemo(
+    () => convertToPreviewData(casingsList),
+    [casingsList]
+  );
+
+  const minDepth = 0;
+  const maxDepth = max(
+    casingsList.map((row) => Number(row.endDepth))
+  ) as number;
+
+  const validEvents = (events || []).filter(
+    (event) =>
+      event.measuredDepth &&
+      event.measuredDepth.value >= minDepth &&
+      event.measuredDepth.value <= maxDepth
+  );
+
+  const setScaleBlocksCount = () => {
+    const height = scaleRef.current?.offsetHeight || MIN_SCALE_HEIGHT;
+    setScaleBlocks(getScaleBlocks(height, minDepth, maxDepth));
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', setScaleBlocksCount);
+    return () => {
+      window.removeEventListener('resize', setScaleBlocksCount);
+    };
+  }, []);
+
+  useEffect(() => {
+    setScaleBlocksCount();
+  }, [minDepth, maxDepth]);
+
+  // This fires on indicator click event
+  const onIndicatorClick = () => {
+    // This increments casing view zindex value and return highest value only for clicked casing
+    setRecentZIndex((r) => r + 1);
+    return recentZIndex;
+  };
+
+  return (
+    <Wrapper>
+      <Header>
+        <FlexColumn>
+          <MainHeader>{wellName}</MainHeader>
+          <SubHeader>{wellboreName}</SubHeader>
+        </FlexColumn>
+      </Header>
+      <BodyWrapper>
+        {isEmpty(casings) ? (
+          <EmptyState emptySubtitle={EMPTY_STATE_TEXT} />
+        ) : (
+          <>
+            <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />
+            <BodyColumn>
+              <BodyColumnHeaderWrapper>
+                <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
+              </BodyColumnHeaderWrapper>
+              <BodyColumnBody>
+                <CasingScale ref={scaleRef}>
+                  {scaleBlocks.map((row) => (
+                    <ScaleLine key={row} />
+                  ))}
+                </CasingScale>
+                {normalizedCasings.map((normalizedCasing, index) => (
+                  <Fragment key={normalizedCasing.id}>
+                    <DepthIndicator
+                      startDepth={normalizedCasing.startDepth}
+                      casingDepth={normalizedCasing.casingDepth}
+                      description={normalizedCasing.casingDescription}
+                      outerDiameter={normalizedCasing.outerDiameter}
+                      onClick={onIndicatorClick}
+                      linerCasing={normalizedCasing.linerCasing}
+                    />
+                    {/* A trick to have space in right side for lengthiest description */}
+                    {casings.length === index + 1 && (
+                      <RightGutter>
+                        {normalizedCasing.outerDiameter}
+                      </RightGutter>
+                    )}
+                  </Fragment>
+                ))}
+              </BodyColumnBody>
+            </BodyColumn>
+            <EventsColumn
+              scaleBlocks={scaleBlocks}
+              events={validEvents}
+              isEventsLoading={isEventsLoading}
             />
-            {/* A trick to have space in right side for lengthiest description */}
-            {casings.length === index + 1 && (
-              <RightGutter>{normalizedCasing.maximumDescription}</RightGutter>
-            )}
-          </Fragment>
-        );
-      })}
-    </CasingViewWrapper>
+          </>
+        )}
+      </BodyWrapper>
+    </Wrapper>
   );
 };
 

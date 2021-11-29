@@ -170,3 +170,10 @@ export const LinksMenu = styled(Menu)`
 export const ThreeDeeWarningContentQuestion = styled.p`
   margin-top: 20px;
 `;
+
+export const Separator = styled(Flex)`
+  margin-right: 10px;
+  margin-left: 10px;
+  border-right: 2px solid var(--cogs-border-default);
+  height: 16px;
+`;

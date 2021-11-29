@@ -38,17 +38,23 @@ export const End = styled.div`
 export const Description = styled.div`
   position: relative;
   bottom: 14px;
-  color: ${mainPalette.black};
-  width: max-content;
-  font-size: 11px;
-  background-color: #f5f5dc;
-  border: 1px #ff0000 solid;
-  border-radius: 5px;
   padding: 2px;
   text-transform: lowercase;
   left: ${(props: { linerCasing: boolean }) =>
     props.linerCasing ? '9px' : '25px'};
   float: left;
+
+  height: 18px;
+  background: #efeef0;
+  border-radius: 4px;
+
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.004em;
+  color: var(--cogs-greyscale-grey9);
 `;
 
 export const TriangleBottomRight = styled.div`

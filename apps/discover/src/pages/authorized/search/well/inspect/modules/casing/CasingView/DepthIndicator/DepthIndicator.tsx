@@ -1,5 +1,9 @@
 import React, { FC } from 'react';
 
+import { followCursor } from 'tippy.js';
+
+import { Tooltip } from '@cognite/cogs.js';
+
 import {
   DepthIndicatorWrapper,
   LinerEnd,
@@ -17,6 +21,7 @@ type Props = {
   description?: string;
   onClick?: () => number;
   linerCasing: boolean;
+  outerDiameter: string;
 };
 
 const triangleHeight = 16;
@@ -32,13 +37,14 @@ const DepthIndicator: FC<Props> = ({
   description,
   onClick,
   linerCasing = false,
+  outerDiameter,
 }: Props) => {
   const startHeight = `${startDepth}%`;
   const middleHeight = `calc(${casingDepth}% - ${triangleHeight}px)`;
   const indicatorTransform = `rotateY(${flip ? '180' : '0'}deg)`;
   const [zIndex, setRecentZIndex] = React.useState(0);
 
-  const onIndicatorClick = () => {
+  const onMouseOver = () => {
     if (onClick) {
       // This returns last zindex value in casing view
       const recentZIndex = onClick();
@@ -48,14 +54,20 @@ const DepthIndicator: FC<Props> = ({
 
   return (
     <DepthIndicatorWrapper transform={indicatorTransform} zIndex={zIndex}>
-      <Start height={startHeight} onClick={onIndicatorClick} />
-      <Middle onClick={onIndicatorClick} height={middleHeight} />
-      <End onClick={onIndicatorClick}>
-        {linerCasing ? <LinerEnd /> : <TriangleBottomRight />}
-      </End>
-      {description && (
-        <Description linerCasing={linerCasing} onClick={onIndicatorClick}>
-          {description}
+      <Tooltip content={description} followCursor plugins={[followCursor]}>
+        <Start height={startHeight} onMouseOver={onMouseOver} />
+      </Tooltip>
+      <Tooltip content={description} followCursor plugins={[followCursor]}>
+        <Middle onClick={onMouseOver} height={middleHeight} />
+      </Tooltip>
+      <Tooltip content={description} followCursor plugins={[followCursor]}>
+        <End onMouseOver={onMouseOver}>
+          {linerCasing ? <LinerEnd /> : <TriangleBottomRight />}
+        </End>
+      </Tooltip>
+      {outerDiameter && (
+        <Description linerCasing={linerCasing} onMouseOver={onMouseOver}>
+          {outerDiameter}
         </Description>
       )}
     </DepthIndicatorWrapper>

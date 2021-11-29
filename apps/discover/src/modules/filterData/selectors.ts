@@ -12,10 +12,6 @@ export const useFilterDataLog = () => {
   return useSelector((state) => state.filterData.log);
 };
 
-export const useFilterDataCasing = () => {
-  return useSelector((state) => state.filterData.casing);
-};
-
 export const useFilterDataTrajectory = () => {
   return useSelector((state) => state.filterData.trajectory);
 };

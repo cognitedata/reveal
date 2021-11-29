@@ -1,5 +1,3 @@
-import get from 'lodash/get';
-import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
 import { Sequence } from '@cognite/sdk';
@@ -11,6 +9,10 @@ import { convertObject } from 'modules/wellSearch/utils';
 import { COMMON_COLUMN_WIDTHS } from '../../constants';
 
 import { CasingData, FormattedCasings } from './interfaces';
+
+const SCALE_BLOCK_HEIGHT = 40;
+const SCALE_PADDING = 16;
+
 /**
  * This returns string depth in proper number format
  */
@@ -34,13 +36,16 @@ export const getFortmattedCasingData = (
     }
     formattedCasings.push({
       key: row.id,
-      name: get(head(validCasings), 'metadata.wellboreName', row.wellboreName),
+      wellName: row.wellName,
+      wellboreName: row.wellboreName,
       casings: validCasings
         .map((casing: Sequence) => {
           return {
             id: casing.id,
             name: casing.metadata ? casing.metadata.assy_name : '',
-            outerDiameter: casing.metadata ? casing.metadata.assy_size : '',
+            outerDiameter: casing.metadata
+              ? Number(casing.metadata.assy_size).toFixed(2)
+              : '',
             startDepth: getDepth(
               casing.metadata ? casing.metadata.assy_original_md_top : '0'
             ),
@@ -89,38 +94,57 @@ export const getCasingListUnitChangeAccessors = (
 export const getCasingColumnsWithPrefferedUnit = (unit: string) => {
   return [
     {
-      Header: 'Well',
+      Header: 'Well / Wellbore',
       accessor: 'wellName',
-      width: COMMON_COLUMN_WIDTHS.WELL_NAME,
-    },
-    {
-      Header: 'Wellbore',
-      accessor: 'wellboreName',
-      width: COMMON_COLUMN_WIDTHS.WELLBORE_NAME,
+      width: `${COMMON_COLUMN_WIDTHS.WELL_NAME}px`,
     },
     {
       Header: 'Casing Type',
       accessor: 'casingNames',
+      width: '300px',
     },
     {
       Header: `Top MD (${unit})`,
       accessor: 'topMD',
+      width: '150px',
     },
     {
       Header: `Bottom MD (${unit})`,
       accessor: 'bottomMD',
+      width: '200px',
     },
     {
       Header: 'OD Min',
       accessor: 'odMin',
+      width: '150px',
     },
     {
       Header: 'OD Max',
       accessor: 'odMax',
+      width: '150px',
     },
     {
       Header: 'ID Min',
       accessor: 'idMin',
+      width: '150px',
     },
   ];
+};
+
+export const getScaleBlocks = (
+  height: number,
+  minDepth: number,
+  maxDepth: number
+) => {
+  const count = Math.floor((height - SCALE_PADDING) / SCALE_BLOCK_HEIGHT);
+  const distance = maxDepth - minDepth;
+  const pixelDepth = distance / (height - SCALE_PADDING * 2);
+  return [...Array(count).keys()].map((row) =>
+    Number(
+      (
+        minDepth +
+        ((row + 1) * SCALE_BLOCK_HEIGHT - SCALE_PADDING) * pixelDepth
+      ).toFixed(2)
+    )
+  );
 };

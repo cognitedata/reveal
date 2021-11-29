@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import difference from 'lodash/difference';
+import groupBy from 'lodash/groupBy';
 import pickBy from 'lodash/pickBy';
 import uniq from 'lodash/uniq';
 
@@ -79,6 +80,17 @@ export const useNptEventsForGraph = () => {
     if (isLoading) return { isLoading, events: [] };
     return { isLoading, events: (events as NPTEvent[]).concat(dummyNptEvents) };
   }, [events, wellboresWithoutNptData]);
+};
+
+export const useNptEventsForCasings = () => {
+  const { isLoading, events } = useNptEventsForTable();
+  return useMemo(() => {
+    const groupedEvents = groupBy(
+      (events || []).filter((event) => event.measuredDepth),
+      'wellboreId'
+    );
+    return { isLoading, events: groupedEvents };
+  }, [isLoading, events]);
 };
 
 export const useNptEventsForSelectedSecondaryWellbores = () => {
