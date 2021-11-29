@@ -41,17 +41,9 @@ async function init() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  // const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
-
-  // const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
-
-  // const modelId = parseInt(urlParams.get('modelId') ?? '4707472960431797');
-  // const revisionId = parseInt(urlParams.get('revisionId') ?? '6925547646157227');
-
-  const modelId = parseInt(urlParams.get('modelId') ?? '7029437408438765');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '1994234928723810');
+  // Defaults to all-primitives model on 3d-test
+  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
   const cdfModelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -104,6 +96,10 @@ async function init() {
     cadModelUpdateHandler.updateCamera(camera);
     render();
   });
+
+  await new Promise(_ => setTimeout(_, 2000));
+
+  render();
 
   function render() {
     window.requestAnimationFrame(() => {
