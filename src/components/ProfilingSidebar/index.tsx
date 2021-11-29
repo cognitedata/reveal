@@ -2,13 +2,14 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Drawer } from 'antd';
 
-import { Button, Colors, Title } from '@cognite/cogs.js';
+import { Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 
 import { RawExplorerContext } from 'contexts';
 import { useColumnNavigation } from 'hooks/table-navigation';
 import { useColumnSelection } from 'hooks/table-selection';
 
 const SIDEBAR_PROFILING_WIDTH = 350;
+const CLOSE_BUTTON_SPACE = 64;
 
 export const ProfilingSidebar = (): JSX.Element => {
   const { isProfilingSidebarOpen, setIsProfilingSidebarOpen } =
@@ -51,9 +52,20 @@ export const ProfilingSidebar = (): JSX.Element => {
               onClick={onPrevColumnClick}
             />
           )}
-          <Title level={6} style={{ flex: '1 1 auto', textAlign: 'center' }}>
-            {selectedColumn?.title ?? '—'}
-          </Title>
+          <Tooltip content={selectedColumn?.title}>
+            <Title
+              level={6}
+              style={{
+                flex: '1 1 50%',
+                textAlign: 'center',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {selectedColumn?.title ?? '—'}
+            </Title>
+          </Tooltip>
           {canNavigate && (
             <Button
               size="small"
@@ -86,6 +98,7 @@ const StyledDrawerHeader = styled.div`
 const StyledDrawerHeaderSectionTitle = styled.div`
   display: flex;
   flex: 1 1 auto;
+  max-width: ${SIDEBAR_PROFILING_WIDTH - CLOSE_BUTTON_SPACE}px;
   align-items: center;
   justify-content: space-between;
   margin-right: 8px;
