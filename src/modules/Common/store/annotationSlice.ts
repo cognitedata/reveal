@@ -67,7 +67,12 @@ const annotationSlice = createSlice({
       (state: State, { payload }) => {
         // update annotations
         payload.forEach((annotation) => {
-          if (state.files.byId[annotation.annotatedResourceId]) {
+          if (
+            state.files.byId[annotation.annotatedResourceId] &&
+            !state.files.byId[annotation.annotatedResourceId].includes(
+              annotation.id
+            )
+          ) {
             state.files.byId[annotation.annotatedResourceId].push(
               annotation.id
             );
@@ -75,7 +80,11 @@ const annotationSlice = createSlice({
             state.files.byId[annotation.annotatedResourceId] = [annotation.id];
           }
 
-          if (!state.annotations.byId[annotation.id]) {
+          if (
+            !state.annotations.byId[annotation.id] ||
+            state.annotations.byId[annotation.id].lastUpdatedTime !==
+              annotation.lastUpdatedTime
+          ) {
             state.annotations.byId[annotation.id] = annotation;
           }
         });
