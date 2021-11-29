@@ -51,6 +51,7 @@ const nameToAclTypeMap = {
   sessions: 'sessionsAcl',
   templategroups: 'templateGroupsAcl',
   templateinstances: 'templateInstancesAcl',
+  visionmodel: 'visionModelAcl',
   wells: 'wellsAcl',
 };
 
@@ -73,6 +74,7 @@ const nameToFormattedName = {
   sessions: 'Sessions',
   templategroups: 'Template groups',
   templateinstances: 'Template instances',
+  visionmodel: 'Vision model',
 };
 
 const capabilityTypeGroups = [
@@ -119,6 +121,7 @@ const capabilityTypeGroups = [
       'documentfeedback',
       'annotations',
       'wells',
+      'visionmodel',
     ],
   },
 ];
@@ -166,6 +169,8 @@ export const capabilityDescriptions = {
   templategroups: 'Organize and structure your data',
   templateinstances: 'Access data organized in templategroups',
   wells: 'Access Well Data Layer',
+  visionmodel:
+    'Computer vision models are used to analyze and extract information from imagery data.',
 };
 
 export const getActionsFromCapability = (
@@ -230,6 +235,9 @@ const getCapabilityKey = (
   }
   if (capabilityName === 'templateinstances') {
     capabilityName = 'template_instances';
+  }
+  if (capabilityName === 'visionmodel') {
+    capabilityName = 'vision_model';
   }
   if (capabilityName) {
     capabilityKey = `${capabilityName}_acl`;
