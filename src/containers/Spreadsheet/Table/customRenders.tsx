@@ -1,59 +1,68 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
 
+import { RawExplorerContext } from 'contexts';
 import { CustomIcon } from 'components/CustomIcon';
 
 const TYPE_ICON_WIDTH = 50;
 
 const Comp = ({ item }: any) => item;
 
-export const headerRenderer = ({
-  cells,
-  columns,
-}: {
+type Props = {
   cells: React.ReactElement[];
   columns: ColumnShape[];
-}) => {
-  const onColumnClick = (_column: ColumnShape) => {
-    /** Select column to show in the right sidebar */
-  };
-
-  return columns.map((column, index) => {
-    const cell = cells[index];
-    const cellResizer = (cell.props?.children ?? []).filter(
-      (child: React.ReactElement) =>
-        !!child && child.props?.className === 'BaseTable__column-resizer'
-    );
-    const isIndexColumn = index === 0;
-    const child = !isIndexColumn ? (
-      <HeaderCell level={3} strong onClick={() => onColumnClick(column)}>
-        <CustomIcon icon="NumberIcon" />
-        <Tooltip content={column.title}>
-          <HeaderTitle level={3} strong width={cell.props.style.width}>
-            {column.title}
-          </HeaderTitle>
-        </Tooltip>
-      </HeaderCell>
-    ) : (
-      <span />
-    );
-    return (
-      <Comp
-        item={React.cloneElement(cell, {
-          ...cell.props,
-          children: [child, ...cellResizer],
-          style: {
-            ...cell.props.style,
-          },
-        })}
-      />
-    );
-  });
 };
 
-export const emptyRenderer = () => (
+export const HeaderRender = (props: Props): JSX.Element => {
+  const { cells, columns } = props;
+  const { setIsProfilingSidebarOpen, setSelectedColumn } =
+    useContext(RawExplorerContext);
+
+  const onColumnClick = (column: ColumnShape) => {
+    setIsProfilingSidebarOpen(true);
+    setSelectedColumn(column);
+  };
+
+  return (
+    <React.Fragment>
+      {columns.map((column, index) => {
+        const cell = cells[index];
+        const cellResizer = (cell.props?.children ?? []).filter(
+          (child: React.ReactElement) =>
+            !!child && child.props?.className === 'BaseTable__column-resizer'
+        );
+        const isIndexColumn = index === 0;
+        const child = !isIndexColumn ? (
+          <HeaderCell level={3} strong onClick={() => onColumnClick(column)}>
+            <CustomIcon icon="NumberIcon" />
+            <Tooltip content={column.title}>
+              <HeaderTitle level={3} strong width={cell.props.style.width}>
+                {column.title}
+              </HeaderTitle>
+            </Tooltip>
+          </HeaderCell>
+        ) : (
+          <span />
+        );
+        return (
+          <Comp
+            item={React.cloneElement(cell, {
+              ...cell.props,
+              children: [child, ...cellResizer],
+              style: {
+                ...cell.props.style,
+              },
+            })}
+          />
+        );
+      })}
+    </React.Fragment>
+  );
+};
+
+export const EmptyRender = (): JSX.Element => (
   <EmptyTable>
     <Graphic type="Search" />
     <Body level={2} strong style={{ color: Colors['text-secondary'].hex() }}>

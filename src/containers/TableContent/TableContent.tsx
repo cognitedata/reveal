@@ -31,7 +31,7 @@ const TableContent = () => {
         )}
       >
         <Tabs.TabPane
-          key="stylesheet"
+          key="spreadsheet"
           tab={<TabSpreadsheet key={`${database}_${table}`} />}
           style={{ overflow: 'auto' }}
         >
