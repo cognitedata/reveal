@@ -34,4 +34,9 @@ const StyledGlobalStyles = createGlobalStyle`
   .ant-modal-wrap {
     overflow-y: hidden !important; /* overrides antd style */
   }
+
+  .rc-tabs-nav-operations {
+    visibility: hidden;
+    width: 0;
+  }
 `;
