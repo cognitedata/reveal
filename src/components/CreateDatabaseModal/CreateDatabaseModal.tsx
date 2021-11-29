@@ -1,13 +1,18 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { Body, Button, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 import { notification } from 'antd';
+import { useFormik } from 'formik';
 import styled from 'styled-components';
 
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useCreateDatabase } from 'hooks/sdk-queries';
+
+type CreateDatabaseFormValues = {
+  databaseName: string;
+};
 
 type CreateDatabaseModalProps = {
   databases: RawDB[];
@@ -25,24 +30,34 @@ const CreateDatabaseModal = ({
 }: CreateDatabaseModalProps): JSX.Element => {
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
 
-  const [databaseName, setDatabaseName] = useState('');
+  const {
+    errors,
+    handleBlur,
+    handleChange,
+    handleReset,
+    handleSubmit,
+    values,
+  } = useFormik<CreateDatabaseFormValues>({
+    initialValues: {
+      databaseName: '',
+    },
+    onSubmit: handleCreate,
+    validate: handleValidation,
+    validateOnBlur: true,
+  });
 
   const { mutate: createDatabase, isLoading } = useCreateDatabase();
 
-  const isUnique = !databases.some(({ name }) => name === databaseName);
-  const isDisabled =
-    databaseName.length === 0 ||
-    databaseName.length > 32 ||
-    !isUnique ||
-    isLoading;
+  const isDisabled = !values.databaseName || !!errors.databaseName || isLoading;
 
   useEffect(() => {
     if (!visible) {
-      setDatabaseName('');
+      handleReset(undefined);
     }
-  }, [visible]);
+  }, [handleReset, visible]);
 
-  const handleCreate = (): void => {
+  function handleCreate(values: CreateDatabaseFormValues): void {
+    const { databaseName } = values;
     createDatabase(
       { name: databaseName },
       {
@@ -67,50 +82,67 @@ const CreateDatabaseModal = ({
         },
       }
     );
-  };
+  }
+
+  function handleValidation(values: CreateDatabaseFormValues) {
+    const errors: Partial<Record<keyof CreateDatabaseFormValues, string>> = {};
+    if (!values.databaseName) {
+      errors.databaseName = 'A required field is missing.';
+    } else if (values.databaseName.length > 32) {
+      errors.databaseName = 'This name exceeds the character limit (32).';
+    } else if (databases.some(({ name }) => name === values.databaseName)) {
+      errors.databaseName = 'This name already exist. Try a different name.';
+    }
+    return errors;
+  }
 
   return (
-    <Modal
-      footer={[
-        <StyledCancelButton onClick={onCancel} type="ghost">
-          Cancel
-        </StyledCancelButton>,
-        <Button
-          disabled={isDisabled}
-          loading={isLoading}
-          onClick={handleCreate}
-          type="primary"
-        >
-          Create
-        </Button>,
-      ]}
-      onCancel={onCancel}
-      title={<Title level={5}>Create database</Title>}
-      visible={visible}
-      {...modalProps}
-    >
-      <Body level={2} strong>
-        Name
-      </Body>
-      <Input
-        autoFocus
-        disabled={isLoading}
-        fullWidth
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setDatabaseName(e.target.value)
-        }
-        onKeyUp={(e) => {
-          if (!isDisabled && e.key === 'Enter') {
-            handleCreate();
-          }
-        }}
-        placeholder="Enter name"
-        value={databaseName}
-      />
-      <Detail>
-        The name should be unique. You can not change this name later.
-      </Detail>
-    </Modal>
+    <form onSubmit={handleSubmit}>
+      <Modal
+        footer={[
+          <StyledCancelButton onClick={onCancel} type="ghost">
+            Cancel
+          </StyledCancelButton>,
+          <Button
+            disabled={isDisabled}
+            htmlType="submit"
+            loading={isLoading}
+            onClick={() => handleSubmit()}
+            type="primary"
+          >
+            Create
+          </Button>,
+        ]}
+        onCancel={onCancel}
+        title={<Title level={5}>Create database</Title>}
+        visible={visible}
+        {...modalProps}
+      >
+        <Body level={2} strong>
+          Name
+        </Body>
+        <Input
+          autoFocus
+          disabled={isLoading}
+          error={errors.databaseName}
+          fullWidth
+          onBlur={handleBlur}
+          onChange={handleChange('databaseName')}
+          onKeyUp={(e) => {
+            if (!isDisabled && e.key === 'Enter') {
+              handleSubmit();
+            }
+          }}
+          placeholder="Enter name"
+          value={values.databaseName}
+        />
+        {!errors.databaseName && (
+          <Detail>
+            The name should be unique. You can not change this name later.
+          </Detail>
+        )}
+      </Modal>
+    </form>
   );
 };
 
