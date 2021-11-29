@@ -299,7 +299,7 @@ export class CameraManager {
     this.controls.setState(controlsState.position, controlsState.target);
   }
 
-  setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
+  setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
 
     this.teardownControls();
@@ -325,7 +325,7 @@ export class CameraManager {
     return duration;
   }
 
-  public moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number) {
+  public moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
     const { _camera, _raycaster } = this;
 
     duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
@@ -401,7 +401,7 @@ export class CameraManager {
     tween.update(TWEEN.now());
   }
 
-  public moveCameraTargetTo(target: THREE.Vector3, duration?: number) {
+  public moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
     if (this.isDisposed) {
       return;
     }
@@ -488,7 +488,7 @@ export class CameraManager {
     tween.update(TWEEN.now());
   }
 
-  public updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3) {
+  public updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
@@ -544,7 +544,7 @@ export class CameraManager {
     }
   }
 
-  updateCameraControlsState(deltaTime: number) {
+  updateCameraControlsState(deltaTime: number): void {
     this.controls.update(deltaTime);
   }
 

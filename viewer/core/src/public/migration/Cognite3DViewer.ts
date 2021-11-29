@@ -12,7 +12,7 @@ import { LoadingState } from '@reveal/cad-geometry-loaders';
 import { defaultRenderOptions, SsaoParameters, SsaoSampleQuality, AntiAliasingMode } from '@reveal/rendering';
 
 import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
-import { MetricsLogger} from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 
 import { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from '../../utilities/worldToViewport';
 import { intersectCadNodes } from '../../datamodels/cad/picking';
@@ -24,7 +24,7 @@ import {
   CameraChangeDelegate,
   PointerEventDelegate,
   CadModelBudget,
-  PointCloudBudget,
+  PointCloudBudget
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -119,7 +119,6 @@ export class Cognite3DViewer {
 
   private readonly _automaticNearFarPlane: boolean;
   private readonly _automaticControlsSensitivity: boolean;
-  
 
   private isDisposed = false;
 
@@ -137,7 +136,7 @@ export class Cognite3DViewer {
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
    */
-   private readonly _updateNearAndFarPlaneBuffers = {
+  private readonly _updateNearAndFarPlaneBuffers = {
     combinedBbox: new THREE.Box3(),
     bbox: new THREE.Box3()
   };
@@ -463,7 +462,7 @@ export class Cognite3DViewer {
    * Sets camera controls mode to anything allowed in CameraControlsOptions type.
    * @param controlsOptions JSON object with camera controls options.
    */
-  setCameraControlsOptions(controlsOptions: CameraControlsOptions) {
+  setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
     this._cameraManager.setCameraControlsOptions(controlsOptions);
   }
 
@@ -872,7 +871,7 @@ export class Cognite3DViewer {
   setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
     if (this.isDisposed) {
       return;
-    } 
+    }
 
     this._cameraManager.setCameraTarget(target, animated);
   }
