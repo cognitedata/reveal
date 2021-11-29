@@ -3,12 +3,37 @@ import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext } from 'contexts';
+import { RawExplorerContext, useActiveTableContext } from 'contexts';
 import { CustomIcon } from 'components/CustomIcon';
+import { Column, useRawProfile } from 'hooks/sdk-queries';
 
 const TYPE_ICON_WIDTH = 50;
 
 const Comp = ({ item }: any) => item;
+
+function ColumnIcon({ title }: { title: string }) {
+  const { database, table } = useActiveTableContext();
+  const { data = { columns: {} as Record<string, Column> } } = useRawProfile({
+    database,
+    table,
+    limit: 1000,
+  });
+
+  const column = data.columns[title];
+
+  if (!column) {
+    return null;
+  }
+  return (
+    <>
+      {!!column.number && <CustomIcon icon="NumberIcon" />}
+      {!!column.string && <CustomIcon icon="StringIcon" />}
+      {!!column.boolean && <CustomIcon icon="BooleanIcon" />}
+      {!!column.object && <>ICON_TODO</>}
+      {!!column.vector && <>ICON_TODO</>}
+    </>
+  );
+}
 
 type Props = {
   cells: React.ReactElement[];
@@ -36,7 +61,7 @@ export const HeaderRender = (props: Props): JSX.Element => {
         const isIndexColumn = index === 0;
         const child = !isIndexColumn ? (
           <HeaderCell level={3} strong onClick={() => onColumnClick(column)}>
-            <CustomIcon icon="NumberIcon" />
+            {column.title && <ColumnIcon title={column.title} />}
             <Tooltip content={column.title}>
               <HeaderTitle level={3} strong width={cell.props.style.width}>
                 {column.title}
