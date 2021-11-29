@@ -231,7 +231,7 @@
     "cypress": "^9.0.0",
     "depcheck": "^1.4.2",
     "enzyme": "^3.9.0",
-    "es-check": "^6.1.0",
+    "es-check": "^6.1.1",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-eslint-plugin": "^2.3.0",
