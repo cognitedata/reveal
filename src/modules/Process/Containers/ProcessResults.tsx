@@ -103,7 +103,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         dispatch(DeleteFilesById([id]));
       },
     }),
-    [dispatch]
+    [dispatch, processFileIds]
   );
 
   const processTableRowData: ResultData[] = useMemo(
@@ -234,7 +234,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         {(paginationProps) => {
           const renderView = ({
             data,
-            totalCount,
+            ...otherProps
           }: {
             data: ResultData[];
             totalCount: number;
@@ -255,7 +255,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
               return (
                 <PageBasedGridView
                   data={data}
-                  totalCount={totalCount}
+                  {...otherProps}
                   onItemClick={handleItemClick}
                   isLoading={isLoading}
                   renderCell={renderCell}
@@ -266,7 +266,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
               return (
                 <MapView
                   data={data}
-                  totalCount={totalCount}
+                  {...otherProps}
                   onItemSelect={handleRowSelect}
                   onItemClick={handleItemClick}
                   focusedId={focusedFileId}
@@ -285,7 +285,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
             return (
               <FileTable
                 data={data}
-                totalCount={totalCount}
+                {...otherProps}
                 onItemSelect={handleRowSelect}
                 onItemClick={handleItemClick}
                 focusedId={focusedFileId}
