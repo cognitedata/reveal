@@ -24,7 +24,7 @@ export const HeaderRender = (props: Props): JSX.Element => {
   } = useContext(RawExplorerContext);
 
   const onColumnClick = (column: ColumnShape) => {
-    if (!isProfilingSidebarOpen) setIsProfilingSidebarOpen(true);
+    setIsProfilingSidebarOpen(true);
     setSelectedColumn(column);
   };
 
