@@ -17,12 +17,10 @@ import {
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarTool, ToolbarPosition, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarPosition, DefaultToolbar } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
-import iconSet12 from './icons/Cognite_Icon_Set-12.png';
-import iconSet14 from './icons/Cognite_Icon_Set-14.png';
-import iconSet19 from './icons/Cognite_Icon_Set-19.png';
+// import iconSet19 from './icons/Cognite_Icon_Set-19.png';
 import iconSet30 from './icons/Cognite_Icon_Set-30.png';
 import iconSet32 from './icons/Cognite_Icon_Set-32.png';
 import iconSet42 from './icons/Cognite_Icon_Set-42.png';
@@ -190,30 +188,10 @@ export function Toolbar() {
         alert("result called");
       }
 
-      let axisTool: AxisViewTool | undefined;
+      const defaultToolbar = new DefaultToolbar(viewer);
 
-      var createAxisViewTool = () : void => {
-        if(axisTool === undefined) {
-          axisTool = new AxisViewTool(viewer);
-        }
-        else {
-          axisTool.dispose();
-          axisTool = undefined;
-        }
-      };
-
-      var screenShot = async (): Promise<void> => {
-        let downloadLink = document.createElement('a');
-        downloadLink.setAttribute('download', 'ScreenshotImage.png');
-        let url = await viewer.getScreenshot();
-        downloadLink.setAttribute('href', url);
-        downloadLink.click();
-      }
-
-      const toolbar = new ToolbarTool(viewer);
-      toolbar.addToolbarItem('Take Screenshot', iconSet12, screenShot);
-      toolbar.addToolbarItem('Axis Tool', iconSet14, createAxisViewTool);
-      toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
+      const toolbar = defaultToolbar.getToolbar();
+      // toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
       toolbar.addToolbarItem('Debug Camera', iconSet30, callbackMsg);
       toolbar.addToolbarItem('Timeline', iconSet32, callbackMsg);
       toolbar.addToolbarItem('Explode View', iconSet42, callbackMsg);

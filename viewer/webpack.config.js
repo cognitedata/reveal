@@ -9,6 +9,7 @@ const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
 const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
 const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
@@ -118,6 +119,14 @@ module.exports = env => {
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
           IS_DEVELOPMENT_MODE: development
         })
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: './packages/tools/src/Toolbar/icons/',
+            to: './packages/tools/src/Toolbar/icons/'
+          },
+        ],
       })
     ]
   };
