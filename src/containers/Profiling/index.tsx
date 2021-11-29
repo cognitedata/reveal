@@ -37,6 +37,10 @@ const Card = styled.div`
     background: rgba(57, 162, 99, 0.12);
     border-radius: 6px;
   }
+  .coverage.running {
+    color: black;
+    background: rgb(247 97 97 / 12%);
+  }
 `;
 
 const RootFlex = styled(Flex)`
@@ -58,7 +62,6 @@ const Table = styled.table`
 
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
-  const { data: rowCount } = useTotalRowCount({ database, table });
 
   const fullProfile = useRawProfile({
     database,
@@ -106,8 +109,12 @@ export const Profiling = (): JSX.Element => {
         <Card className="z-2">
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
-            <div className="count">{rowCount}</div>
-            <div className="coverage">100%</div>
+            <div className="count">{data.rowCount}</div>
+            <div
+              className={`coverage ${fullProfile.isFetched ? '' : 'running'}`}
+            >
+              {fullProfile.isFetched ? '100%' : 'running...'}
+            </div>
           </Flex>
         </Card>
         <Card className="z-2">
