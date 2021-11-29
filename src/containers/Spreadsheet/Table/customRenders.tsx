@@ -17,11 +17,8 @@ type Props = {
 
 export const HeaderRender = (props: Props): JSX.Element => {
   const { cells, columns } = props;
-  const {
-    isProfilingSidebarOpen,
-    setIsProfilingSidebarOpen,
-    setSelectedColumn,
-  } = useContext(RawExplorerContext);
+  const { setIsProfilingSidebarOpen, setSelectedColumn } =
+    useContext(RawExplorerContext);
 
   const onColumnClick = (column: ColumnShape) => {
     setIsProfilingSidebarOpen(true);
