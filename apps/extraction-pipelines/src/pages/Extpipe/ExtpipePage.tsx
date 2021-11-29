@@ -12,7 +12,6 @@ import {
   Input,
   Loader,
   Menu,
-  Modal,
   toast,
 } from '@cognite/cogs.js';
 import {
@@ -43,31 +42,38 @@ import { Span3 } from 'styles/grid/StyledGrid';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
 import { createExtPipePath } from 'utils/baseURL';
-import { ids } from 'cogs-variables';
 import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/ExtpipesAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
+import { EditModal } from 'components/modals/EditModal';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 const PageNav = styled.ul`
   ${Span3};
+
   && {
     margin: 0;
   }
+
   padding: 1rem 0 0.8rem 0;
   list-style: none;
   display: flex;
+
   a,
   li {
     margin: 0;
     padding: 0;
+
     .tab-link {
       padding: 0.75rem 1rem;
       color: ${Colors.black.hex()};
       font-weight: bold;
+
       &:hover {
         background-color: ${Colors['midblue-7'].hex()};
         border-bottom: 5px solid ${Colors['midblue-7'].hex()};
       }
+
       &.active {
         border-bottom: 5px solid ${Colors.primary.hex()};
       }
@@ -83,38 +89,38 @@ const TabsAndActions = styled.div`
 `;
 
 interface ExtpipePageProps {}
-const DeleteDialog: FunctionComponent<{
+
+type DeleteDialogProps = {
   isOpen: boolean;
   close: () => void;
   doDelete: () => void;
   pipelineName: string;
-}> = (props) => {
+};
+const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
+  isOpen,
+  pipelineName,
+  close,
+  doDelete,
+}) => {
   const [inputText, setInputText] = useState('');
   const isDisabled = inputText.toLocaleLowerCase() !== 'delete';
-  const { close } = props;
   const closeCallback = useCallback(() => {
     setInputText('');
     close();
   }, [close]);
   return (
-    <Modal
-      title={`Delete "${props.pipelineName}"?`}
-      okDisabled={isDisabled}
-      visible={props.isOpen}
-      okText="Delete"
-      onCancel={closeCallback}
-      onOk={props.doDelete}
-      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
-      getContainer={() =>
-        document.getElementsByClassName(ids.styleScope).item(0) as any
-      }
+    <EditModal
+      title={`Delete "${pipelineName}"?`}
+      width={450}
+      visible={isOpen}
+      close={closeCallback}
     >
       <p>
         This will remove the extraction pipeline and its metadata and run
         history. It will NOT delete any data already ingested through the
         pipeline.
       </p>
-      <p>Are you sure you want to delete &quot;{props.pipelineName}&quot;?</p>
+      <p>Are you sure you want to delete &quot;{pipelineName}&quot;?</p>
       <p style={{ marginTop: '1.5rem' }}>
         <Input
           id="delete-input-text"
@@ -125,7 +131,15 @@ const DeleteDialog: FunctionComponent<{
           fullWidth
         />
       </p>
-    </Modal>
+      <DivFlex justify="flex-end" css="gap: 0.5rem">
+        <Button type="ghost" onClick={closeCallback}>
+          Cancel
+        </Button>
+        <Button type="danger" disabled={isDisabled} onClick={doDelete}>
+          Delete
+        </Button>
+      </DivFlex>
+    </EditModal>
   );
 };
 

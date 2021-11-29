@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  fireEvent,
-  screen,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
 import {
@@ -143,7 +139,7 @@ describe('ExtpipePage', () => {
     expect(screen.getByText(RunTableHeading.MESSAGE)).toBeInTheDocument();
   });
 
-  const deleteDialogHeader = () =>
+  const getDialogHeaderElement = () =>
     screen.queryByText('Delete "PI AF extpipe"?');
 
   async function clickDeletePipeline() {
@@ -153,16 +149,16 @@ describe('ExtpipePage', () => {
 
   test('Dialog pops up when clicking', async () => {
     renderExtpipePage();
-    expect(deleteDialogHeader()).not.toBeInTheDocument();
+    expect(getDialogHeaderElement()).not.toBeInTheDocument();
     await clickDeletePipeline();
-    expect(deleteDialogHeader()).toBeInTheDocument();
+    expect(getDialogHeaderElement()).toBeInTheDocument();
   });
 
   test('Dialog closes when clicking cancel', async () => {
     renderExtpipePage();
     await clickDeletePipeline();
     fireEvent.click(screen.getByText('Cancel'));
-    await waitForElementToBeRemoved(() => deleteDialogHeader());
+    expect(getDialogHeaderElement()).not.toBeInTheDocument();
   });
 
   const getInputFieldForDeleteConfirm = () =>
@@ -174,7 +170,7 @@ describe('ExtpipePage', () => {
 
     const confirmTextField = getInputFieldForDeleteConfirm();
     const deleteButtonInsideDialog = screen.getByText('Delete', {
-      selector: '.cogs-btn-primary',
+      selector: '.cogs-btn',
     });
 
     expect(deleteButtonInsideDialog.disabled).toBe(true);
@@ -190,14 +186,14 @@ describe('ExtpipePage', () => {
     renderExtpipePage();
     await clickDeletePipeline();
 
-    const confirmTextField = getInputFieldForDeleteConfirm();
-
-    fireEvent.change(confirmTextField, { target: { value: 'abc' } });
+    fireEvent.change(getInputFieldForDeleteConfirm(), {
+      target: { value: 'abc' },
+    });
 
     fireEvent.click(screen.getByText('Cancel'));
-    await waitForElementToBeRemoved(() => deleteDialogHeader());
+    expect(getDialogHeaderElement()).not.toBeInTheDocument();
 
     await clickDeletePipeline();
-    expect(confirmTextField.value).toBe('');
+    expect(getInputFieldForDeleteConfirm().value).toBe('');
   });
 });
