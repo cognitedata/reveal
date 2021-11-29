@@ -9,6 +9,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { pushMetric } from 'src/utils/pushMetric';
+import { useFlag } from '@cognite/react-feature-flags';
 
 export const BulkActionMenu = ({
   selectedCount,
@@ -36,6 +37,8 @@ export const BulkActionMenu = ({
     selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
   const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
 
+  const visionMLEnabled = useFlag('VISION_ML');
+
   const MenuContent = (
     <Menu
       style={{
@@ -53,7 +56,7 @@ export const BulkActionMenu = ({
           </>
         </Menu.Item>
       )}
-      {onContextualise && (
+      {visionMLEnabled && onContextualise && (
         <Menu.Item onClick={onContextualise} disabled={!count || !inLimit}>
           <Tooltip
             content={
