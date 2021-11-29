@@ -53,7 +53,7 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
     string | undefined
   >();
 
-  const [isProfilingSidebarOpen, setIsProfilingSidebarOpen] = useState(true);
+  const [isProfilingSidebarOpen, setIsProfilingSidebarOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<
     ColumnShape<any> | undefined
   >();

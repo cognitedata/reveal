@@ -20,7 +20,7 @@ const TableContent = () => {
       <StyledTabs
         key={`${database}_${table}`}
         onChange={(view) => update([database, table, view])}
-        activeKey={view || 'stylesheet'}
+        activeKey={view || 'spreadsheet'}
         tabPosition="top"
         animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
