@@ -35,7 +35,7 @@ export const DESCRIPTION_HINT: Readonly<string> =
 export const DESCRIPTION_LABEL: Readonly<string> = 'Description';
 
 export const EXTPIPE_SCHEDULE_HINT: Readonly<string> =
-  'Select the schedule for running the extraction pipeline.';
+  'Select the schedule that is set up in the extractor.';
 
 export const NO_RAW_TABLES_MESSAGE: Readonly<string> =
   'No raw tables registered';
