@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { Button, Colors, Drawer, Flex, Title } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
+import { Drawer } from 'antd';
 
 import { RawExplorerContext } from 'contexts';
 
@@ -17,17 +18,14 @@ export const ProfilingSidebar = (): JSX.Element => {
     <Drawer
       visible={isProfilingSidebarOpen}
       width={SIDEBAR_PROFILING_WIDTH}
+      placement="right"
       closable={false}
-      showMask={false}
-      // @ts-ignore
-      getContainer={null}
-      level={null}
-      handler={null}
-      onOk={onClickHide}
+      getContainer={false}
+      mask={false}
       onClose={onClickHide}
-      contentWrapperStyle={{
+      style={{
+        position: 'absolute',
         borderTop: `1px solid ${Colors['greyscale-grey3'].hex()}`,
-        boxShadow: `0 0 10px ${Colors['greyscale-grey4'].hex()}`,
       }}
       footer={
         <Button block icon="PanelRight" type="secondary" onClick={onClickHide}>
