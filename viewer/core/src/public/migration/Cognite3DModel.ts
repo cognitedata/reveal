@@ -15,7 +15,7 @@ import { callActionWithIndicesAsync } from '../../utilities/callActionWithIndice
 import { NodesApiClient } from '@reveal/nodes-api';
 import { CadModelMetadata, WellKnownDistanceToMeterConversionFactors } from '@reveal/cad-parsers';
 import { NumericRange } from '@reveal/utilities';
-import { trackCadModelStyled, trackError } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { CadNode, NodeTransformProvider } from '@reveal/rendering';
 import { NodeCollectionBase, NodeAppearance } from '@reveal/cad-styling';
 
@@ -157,7 +157,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * @throws Error if node collection already has been assigned to the model.
    */
   assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
-    trackCadModelStyled(nodeCollection.classToken, appearance);
+    MetricsLogger.trackCadModelStyled(nodeCollection.classToken, appearance);
 
     const index = this._styledNodeCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index !== -1) {
@@ -273,7 +273,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    * uses a right-hand Y-up coordinate system. This function also accounts for transformation
    * applied to the model.
    * @param box     The box in ThreeJS/model coordinates.
-   * @param out     Optional preallocated buffer for storing the result. May be `box`.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
    * @returns       Transformed box.
    */
   mapBoxFromModelToCdfCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
@@ -282,6 +282,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
       out.copy(box);
     }
     out.applyMatrix4(this.cadModel.inverseModelMatrix);
+    return out;
+  }
+
+  /**
+   * Maps from a 3D position in "CDF space" to coordinates in "ThreeJS model space".
+   * This is necessary because CDF has a right-handed Z-up coordinate system while ThreeJS
+   * uses a right-hand Y-up coordinate system. This function also accounts for transformation
+   * applied to the model.
+   * @param box     The box in CDF model coordinates.
+   * @param out     Optional preallocated buffer for storing the result. May be same input as `box`.
+   * @returns       Transformed box.
+   */
+  mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3 {
+    out = out ?? new THREE.Box3();
+    if (out !== box) {
+      out.copy(box);
+    }
+    out.applyMatrix4(this.cadModel.modelMatrix);
     return out;
   }
 
@@ -397,11 +415,14 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase {
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     try {
-      box = await this.nodesApiClient.getBoundingBoxByNodeId(this.modelId, this.revisionId, nodeId, box);
+      const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, [
+        nodeId
+      ]);
+      box = boxesResponse[0];
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {
-      trackError(error as Error, {
+      MetricsLogger.trackError(error as Error, {
         moduleName: 'Cognite3DModel',
         methodName: 'getBoundingBoxByNodeId'
       });

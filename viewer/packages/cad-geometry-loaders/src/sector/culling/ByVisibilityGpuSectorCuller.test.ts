@@ -11,6 +11,7 @@ import { PropType } from '../../utilities/reflection';
 
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { SectorMetadata, CadModelMetadata, LevelOfDetail } from '@reveal/cad-parsers';
+
 import { SectorRepository } from '@reveal/sector-loader';
 
 import {
@@ -209,7 +210,8 @@ function createDetermineSectorInput(
       highDetailProximityThreshold: 10,
       maximumNumberOfDrawCalls: Infinity,
       maximumRenderCost: Infinity
-    }
+    },
+    prioritizedAreas: []
   };
   return determineSectorsInput;
 }

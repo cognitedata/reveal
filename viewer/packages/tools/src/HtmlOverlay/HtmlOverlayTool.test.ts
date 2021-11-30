@@ -4,13 +4,19 @@
 
 import * as THREE from 'three';
 
-import { HtmlOverlayOptions, HtmlOverlayTool } from './HtmlOverlayTool';
+import {
+  HtmlOverlayOptions,
+  HtmlOverlayTool,
+  HtmlOverlayToolOptions,
+  HtmlOverlayCreateClusterDelegate
+} from './HtmlOverlayTool';
 
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
-import { createGlContext } from '../../../test-utilities';
 
-describe('HtmlOverlayTool', () => {
+import { createGlContext } from '../../../../test-utilities';
+
+describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
   let camera: THREE.PerspectiveCamera;
@@ -20,12 +26,7 @@ describe('HtmlOverlayTool', () => {
     const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
     const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
     const canvas = document.createElement('canvas');
-    const getBoundingClientRectSpy = jest.spyOn(canvas, 'getBoundingClientRect');
-    const rect: DOMRect = {
-      width: 128,
-      height: 128
-    } as DOMRect;
-    getBoundingClientRectSpy.mockReturnValue(rect);
+    fakeGetBoundingClientRect(canvas, 0, 0, 128, 128);
 
     renderer = new THREE.WebGLRenderer({ context, canvas });
 
@@ -81,11 +82,12 @@ describe('HtmlOverlayTool', () => {
 
     // Act
     helper.add(htmlElement, position);
+    helper.forceUpdate();
 
     // Assert
     expect(htmlElement.style.visibility).toBe('visible');
-    expect(htmlElement.style.top).toBe(`${renderer.domElement.height / 2}px`);
     expect(htmlElement.style.left).toBe(`${renderer.domElement.width / 2}px`);
+    expect(htmlElement.style.top).toBe(`${renderer.domElement.height / 2}px`);
   });
 
   test('Hides overlay if behind camera or behind far plane', () => {
@@ -99,6 +101,7 @@ describe('HtmlOverlayTool', () => {
     // Act
     helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1));
     helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10));
+    helper.forceUpdate();
 
     // Assert
     expect(behindCameraElement.style.visibility).toBe('hidden');
@@ -117,28 +120,35 @@ describe('HtmlOverlayTool', () => {
     const options: HtmlOverlayOptions = { positionUpdatedCallback: jest.fn() };
 
     // Act
-    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), options);
-    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), options);
-    helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), options);
+    helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), { ...options, userData: 'behindCameraElement' });
+    helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), { ...options, userData: 'behindFarPlaneElement' });
+    helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), {
+      ...options,
+      userData: 'withinNearAndFarPlaneElement'
+    });
+    helper.forceUpdate();
 
     // Assert
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       behindCameraElement,
       expect.any(THREE.Vector2),
       expect.any(THREE.Vector3),
-      expect.anything()
+      expect.anything(),
+      'behindCameraElement'
     );
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       behindFarPlaneElement,
       expect.any(THREE.Vector2),
       expect.any(THREE.Vector3),
-      expect.anything()
+      expect.anything(),
+      'behindFarPlaneElement'
     );
     expect(options.positionUpdatedCallback).toHaveBeenCalledWith(
       withinNearAndFarPlaneElement,
       expect.any(THREE.Vector2),
       expect.any(THREE.Vector3),
-      expect.anything()
+      expect.anything(),
+      'withinNearAndFarPlaneElement'
     );
   });
 
@@ -176,4 +186,47 @@ describe('HtmlOverlayTool', () => {
     // Assert
     expect(canvasContainer.children.length).toBeLessThanOrEqual(initialNumberOfElements);
   });
+
+  test('screenspace clustering combines overlapping elements', () => {
+    // Arrange
+    const createClusterElementCallback: HtmlOverlayCreateClusterDelegate = jest
+      .fn()
+      .mockReturnValue(document.createElement('div'));
+    const options: HtmlOverlayToolOptions = {
+      clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+    };
+    const helper = new HtmlOverlayTool(viewer, options);
+
+    const div1 = document.createElement('div');
+    fakeGetBoundingClientRect(div1, 0, 0, 64, 18);
+    div1.style.position = 'absolute';
+    const div2 = document.createElement('div');
+    div2.style.position = 'absolute';
+    fakeGetBoundingClientRect(div2, 0, 0, 64, 18);
+
+    // Act
+    helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    helper.forceUpdate();
+
+    // Assert
+    expect(createClusterElementCallback).toBeCalledTimes(1);
+    expect(div1.style.visibility).toEqual('hidden');
+    expect(div2.style.visibility).toEqual('hidden');
+  });
 });
+
+function fakeGetBoundingClientRect(element: HTMLElement, x: number, y: number, width: number, height: number) {
+  const rect: DOMRect = {
+    left: x,
+    right: x + width,
+    top: y,
+    bottom: y + height,
+    width: width,
+    height: height,
+    x,
+    y,
+    toJSON: () => {}
+  };
+  element.getBoundingClientRect = jest.fn(() => rect);
+}

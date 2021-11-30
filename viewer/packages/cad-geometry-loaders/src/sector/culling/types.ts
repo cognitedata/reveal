@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+
+import { PrioritizedArea } from '@reveal/cad-styling';
 import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
 import { CadLoadingHints } from '../../CadLoadingHints';
@@ -15,6 +17,7 @@ export interface DetermineSectorsInput {
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
   budget: CadModelSectorBudget;
+  prioritizedAreas: PrioritizedArea[];
 }
 
 export type DetermineSectorsPayload = {
@@ -24,6 +27,7 @@ export type DetermineSectorsPayload = {
   loadingHints: CadLoadingHints;
   cameraInMotion: boolean;
   budget: CadModelSectorBudget;
+  prioritizedAreas: PrioritizedArea[];
 };
 
 /**

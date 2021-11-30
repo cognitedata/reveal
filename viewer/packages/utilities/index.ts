@@ -5,6 +5,7 @@
 export { traverseDepthFirst } from './src/objectTraversal';
 export { transformCameraConfiguration } from './src/transformCameraConfiguration';
 
+export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 export { EventTrigger, clickOrTouchEventOffset } from './src/events';
 export { assertNever } from './src/assertNever';
@@ -15,6 +16,8 @@ export { packFloatInto } from './src/packFloat';
 export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmentedBuffer';
 export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
+export { toThreeBox3 } from './src/three/toThreeBox3';
+
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
 export { isMobileOrTablet } from './src/isMobileOrTablet';

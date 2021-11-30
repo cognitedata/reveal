@@ -9,10 +9,12 @@ out highp vec4 pc_fragColor;
 #pragma glslify: mul3 = require('../../math/mul3.glsl')
 #pragma glslify: displaceScalar = require('../../math/displaceScalar.glsl')
 #pragma glslify: updateFragmentDepth = require('../../base/updateFragmentDepth.glsl')
+#pragma glslify: NodeAppearance = require('../../base/nodeAppearance.glsl')
+#pragma glslify: determineNodeAppearance = require('../../base/determineNodeAppearance.glsl');
 #pragma glslify: determineVisibility = require('../../base/determineVisibility.glsl');
-#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
-#pragma glslify: isSliced = require('../../base/isSliced.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: determineColor = require('../../base/determineColor.glsl');
+#pragma glslify: updateFragmentColor = require('../../base/updateFragmentColor.glsl')
+#pragma glslify: isClipped = require('../../base/isClipped.glsl', NUM_CLIPPING_PLANES=NUM_CLIPPING_PLANES, UNION_CLIPPING_PLANES=UNION_CLIPPING_PLANES)
 #pragma glslify: GeometryType = require('../../base/geometryTypes.glsl');
 
 
@@ -57,11 +59,12 @@ uniform int renderMode;
 
 
 void main() {
-    if (!determineVisibility(colorDataTexture, treeIndexTextureSize, v_treeIndex, renderMode)) {
+    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
 
-    vec4 color = determineColor(v_color, colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    vec4 color = determineColor(v_color, appearance);    
     vec3 normal = normalize( v_normal );
 
     float R1 = v_centerB.w;
@@ -122,7 +125,7 @@ void main() {
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_arcAngle + v_angle ||
-        isSliced(p)
+        isClipped(appearance, p)
        ) {
         // Missed the first point, check the other point
         isInner = true;
@@ -133,7 +136,7 @@ void main() {
         if (theta < v_angle) theta += 2.0 * PI;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_arcAngle + v_angle || isSliced(p)
+            theta > v_arcAngle + v_angle || isClipped(appearance, p)
            ) {
             // Missed the other point too
             discard;

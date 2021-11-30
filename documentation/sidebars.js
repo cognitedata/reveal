@@ -26,6 +26,7 @@ module.exports = {
             'examples/cad-styling-custom',
           ]
         },
+        'examples/cad-prioritized-nodes',
         'examples/cad-transform-override',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
@@ -40,6 +41,7 @@ module.exports = {
         'examples/cad-explode',
         'examples/axisviewtool',
         'examples/geomaptool',
+        'examples/timelinetool',
         'examples/combine-models'
       ],
     },
