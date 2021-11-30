@@ -23,10 +23,10 @@ const CreateTableModalPrimaryKeyStep = ({
   selectedPrimaryKeyMethod,
   selectPrimaryKeyMethod,
 }: CreateTableModalPrimaryKeyStepProps): JSX.Element => {
-  const handleSelectedColumnChange = (value: any): void => {
+  const handleSelectedColumnChange = (value: string): void => {
     const selectedColumnIndex =
       columns?.findIndex((columnName) => columnName === value) ?? -1;
-    if (selectedColumnIndex !== undefined) {
+    if (selectedColumnIndex !== -1) {
       selectColumnAsPrimaryKey(selectedColumnIndex);
     }
   };
@@ -49,7 +49,7 @@ const CreateTableModalPrimaryKeyStep = ({
           </StyledCreateOption>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="A key will be auto-generate for you. This means that updating the data will overwrite the entire table."
+              description="A key will be auto-generated for you. This means that updating the data will overwrite the entire table."
               icon="UnknownPrimaryKeyIcon"
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.AutoGenerate
