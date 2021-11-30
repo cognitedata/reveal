@@ -11,13 +11,15 @@
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,jsx,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "lint": "eslint --config .eslintrc.production.js 'src/**/*.{js,jsx,ts,tsx}' 'public/index.html'",
     "lint:fix": "yarn lint --fix",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6006 -s public",
     "testcafe:run": "BASE_URL=http://localhost:11111 testcafe 'chromium:headless --no-sandbox' 'testcafe/desktop' --stop-on-first-fail",
     "testcafe:run-live": "BASE_URL=http://localhost:11111 testcafe 'chrome' 'testcafe/desktop' --live",
     "testcafe:start": "./scripts/testcafe-serve-run.sh",
     "testcafe:start-live": "./scripts/testcafe-start.sh",
     "testcafe:build": "./scripts/testcafe-build.sh",
-    "testcafe:serve": "serve -s build -l 11111"
+    "testcafe:serve": "serve -s build -l 11111",
+    "build-storybook": "build-storybook -s public",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
   "dependencies": {
     "@cognite/annotations": "^1.1.0",
@@ -68,9 +70,12 @@
     "@cognite/eslint-config": "^1.6.0",
     "@cognite/eslint-plugin": "^1.4.0",
     "@simbathesailor/use-what-changed": "^2.0.0",
-    "@storybook/addon-essentials": "^6.3.6",
+    "@storybook/addon-actions": "~6.3.12",
+    "@storybook/addon-essentials": "~6.3.12",
+    "@storybook/addon-links": "~6.3.12",
+    "@storybook/node-logger": "~6.3.12",
     "@storybook/preset-create-react-app": "^3.2.0",
-    "@storybook/react": "^6.3.6",
+    "@storybook/react": "~6.3.12",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/testcafe": "^4.3.1",
@@ -80,7 +85,7 @@
     "@types/node": "^14.14.12",
     "@types/plotly.js": "^1.54.9",
     "@types/plotly.js-basic-dist": "^1.54.0",
-    "@types/react": "^16.14.0",
+    "@types/react": "^17.0.37",
     "@types/react-beautiful-dnd": "^13.0.0",
     "@types/react-datepicker": "^4.1.7",
     "@types/react-dom": "^17.0.1",
@@ -90,6 +95,7 @@
     "@types/sinon": "^10.0.4",
     "@types/styled-components": "^5.1.15",
     "babel-loader": "8.1.0",
+    "chromatic": "^6.0.6",
     "eslint": "^7.27.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^6.15.0",
@@ -113,11 +119,30 @@
   "resolutions": {
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "@storybook/router": "~6.3.10",
     "**/@typescript-eslint/eslint-plugin": "^4.3.2",
     "**/@typescript-eslint/parser": "^4.3.2"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      },
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
   },
   "browserslist": {
     "production": [
