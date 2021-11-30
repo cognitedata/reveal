@@ -80,8 +80,7 @@ export class NumericRange {
   }
 
   static isNumericRange(value: any): value is NumericRange {
-    if (!value)
-      return false;
+    if (!value) return false;
 
     const range = value as NumericRange;
     return range.from !== undefined && range.count !== undefined && range.toInclusive !== undefined;
