@@ -23,10 +23,10 @@ const CreateTableModalPrimaryKeyStep = ({
   selectedPrimaryKeyMethod,
   selectPrimaryKeyMethod,
 }: CreateTableModalPrimaryKeyStepProps): JSX.Element => {
-  const handleSelectedColumnChange = (value: any): void => {
+  const handleSelectedColumnChange = (value: string): void => {
     const selectedColumnIndex =
       columns?.findIndex((columnName) => columnName === value) ?? -1;
-    if (selectedColumnIndex !== undefined) {
+    if (selectedColumnIndex !== -1) {
       selectColumnAsPrimaryKey(selectedColumnIndex);
     }
   };

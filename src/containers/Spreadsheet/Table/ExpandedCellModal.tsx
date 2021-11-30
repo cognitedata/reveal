@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { Modal } from 'antd';
 import { Body, Colors } from '@cognite/cogs.js';
 
-import { useTableSelection } from 'hooks/table-selection';
+import { useCellSelection } from 'hooks/table-selection';
 import { TABLE_CELL_EXPANDED_WIDTH } from 'utils/constants';
 
 export const ExpandedCellModal = (): JSX.Element => {
   const [canDrag, setCanDrag] = useState<boolean>(true);
   const { selectedCell, isCellExpanded, setIsCellExpanded } =
-    useTableSelection();
+    useCellSelection();
   const modalRef = useRef(null);
 
   const onModalClose = () => setIsCellExpanded(false);

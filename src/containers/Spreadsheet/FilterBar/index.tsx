@@ -12,20 +12,20 @@ import RowCount from './RowCount';
 
 type Props = {
   isEmpty?: boolean;
-  columnFilter: string;
-  setColumnFilter: (columnQuery: string) => void;
 };
 
-export const FilterBar = ({
-  isEmpty,
-  columnFilter,
-  setColumnFilter,
-}: Props): JSX.Element => {
-  const { filters, activeFilters, setFilter } = useFilters();
+export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
+  const {
+    filters,
+    columnTypeFilters,
+    setTypeFilter,
+    columnNameFilter,
+    setColumnNameFilter,
+  } = useFilters();
 
-  const onFilterClick = (filter: FilterType) => setFilter(filter.type);
+  const onFilterClick = (filter: FilterType) => setTypeFilter(filter.type);
   const onColumnFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setColumnFilter(e.target.value);
+    setColumnNameFilter(e.target.value);
 
   return (
     <Bar justifyContent="space-between" alignItems="center">
@@ -34,12 +34,12 @@ export const FilterBar = ({
           <>
             <Input
               placeholder="Search column name"
-              value={columnFilter}
+              value={columnNameFilter}
               onChange={onColumnFilterChange}
             />
             <Separator style={{ margin: '0 12px' }} />
             {filters.map((filter: FilterType) => {
-              const active = activeFilters.includes(filter.type);
+              const active = columnTypeFilters.includes(filter.type);
               return (
                 <FilterItem
                   filter={filter}
