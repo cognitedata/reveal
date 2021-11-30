@@ -9,6 +9,12 @@ import { StyledLabel } from 'styles/StyledForm';
 import { OptionTypeBase } from 'react-select';
 import { Extpipe } from 'model/Extpipe';
 import { InfoBox } from 'components/message/InfoBox';
+import { User } from 'model/User';
+import {
+  createUpdateSpec,
+  useDetailsUpdate,
+} from 'hooks/details/useDetailsUpdate';
+import { useAppEnv } from 'hooks/useAppEnv';
 
 const Hr = styled.hr`
   border: 0;
@@ -26,6 +32,8 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   extpipe,
   close,
 }) => {
+  const { project } = useAppEnv();
+  const { mutate } = useDetailsUpdate();
   const [value, setValue] = useState(
     extpipe.notificationConfig != null
       ? extpipe.notificationConfig.allowedNotSeenRangeInMinutes
@@ -37,10 +45,23 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     { label: 'hours', value: 'hours' },
     { label: 'days', value: 'days' },
   ];
-  function onConfirm() {
-    console.log(`confirmed new setting = ${timeUnit}`);
-    close();
-  }
+  const onConfirm = async () => {
+    if (!extpipe || !project) return;
+    const items = createUpdateSpec({
+      project,
+      id: extpipe.id,
+      fieldValue: { allowedNotSeenRangeInMinutes: value },
+      fieldName: 'notificationConfig',
+    });
+    await mutate(items, {
+      onError: () => {
+        alert('ERROR!!!');
+      },
+      onSuccess: () => {
+        close();
+      },
+    });
+  };
   return (
     <EditModal
       width={700}
