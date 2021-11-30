@@ -1,9 +1,9 @@
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
-import { AzureConfig } from 'tenants/types';
+import { getFlow } from '@cognite/auth-utils';
+import { getTenantInfo } from '@cognite/react-container';
 
 export const useIdToken = (useIdToken: boolean) => {
-  const { data: azureConfig } =
-    useTenantConfigByKey<AzureConfig>('azureConfig');
+  const [project] = getTenantInfo();
+  const { flow } = getFlow(project);
 
-  return useIdToken && azureConfig && azureConfig.enabled;
+  return useIdToken && flow !== 'COGNITE_AUTH';
 };

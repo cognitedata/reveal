@@ -1,34 +1,54 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { useIdToken } from 'hooks/useIdToken';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { getFlow, AuthFlow } from '@cognite/auth-utils';
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfigByKey: jest.fn(),
+import { useIdToken } from 'hooks/useIdToken';
+
+jest.mock('@cognite/auth-utils', () => ({
+  getFlow: jest.fn(),
 }));
 
 describe('useIdToken hook', () => {
   test('should return false if we pass useIdToken as false', () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => jest.fn());
+    (getFlow as jest.Mock).mockImplementation((): { flow: AuthFlow } => ({
+      flow: 'AZURE_AD',
+    }));
+
     const { result, waitForNextUpdate } = renderHook(() => useIdToken(false));
     waitForNextUpdate();
     expect(result.current).toBeFalsy();
   });
 
-  test('should return false if we pass useIdToken as true but azureConfig is undefined or not enabled', () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: undefined,
+  test('should return false if we pass useIdToken as true but flow is COGNITE_AUTH', () => {
+    (getFlow as jest.Mock).mockImplementation((): { flow: AuthFlow } => ({
+      flow: 'COGNITE_AUTH',
     }));
     const { result, waitForNextUpdate } = renderHook(() => useIdToken(true));
     waitForNextUpdate();
     expect(result.current).toBeFalsy();
   });
 
-  test('should return true if useIdToken is true and azureConfig enabled is true', async () => {
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: {
-        enabled: true,
-      },
+  test('should return true if useIdToken is true and flow is AZURE_AD', async () => {
+    (getFlow as jest.Mock).mockImplementation((): { flow: AuthFlow } => ({
+      flow: 'AZURE_AD',
+    }));
+    const { result, waitForNextUpdate } = renderHook(() => useIdToken(true));
+    waitForNextUpdate();
+    expect(result.current).toBeTruthy();
+  });
+
+  test('should return true if useIdToken is true and flow is FAKE_IDP', async () => {
+    (getFlow as jest.Mock).mockImplementation((): { flow: AuthFlow } => ({
+      flow: 'FAKE_IDP',
+    }));
+    const { result, waitForNextUpdate } = renderHook(() => useIdToken(true));
+    waitForNextUpdate();
+    expect(result.current).toBeTruthy();
+  });
+
+  test('should return true if useIdToken is true and flow is UNKNOWN', async () => {
+    (getFlow as jest.Mock).mockImplementation((): { flow: AuthFlow } => ({
+      flow: 'UNKNOWN',
     }));
     const { result, waitForNextUpdate } = renderHook(() => useIdToken(true));
     waitForNextUpdate();

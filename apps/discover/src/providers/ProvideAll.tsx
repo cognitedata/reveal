@@ -22,15 +22,15 @@ export const Providers: React.FC = ({ children }) => {
           }
 
           return (
-            <ProvideAuthSetup authState={authState}>
-              <ProvideProjectConfig>
+            <ProvideProjectConfig>
+              <ProvideAuthSetup authState={authState}>
                 <ProvideAzureTelemetry>
                   <ProvideTenantSetup>
                     <ProvideMixpanelSetup>{children}</ProvideMixpanelSetup>
                   </ProvideTenantSetup>
                 </ProvideAzureTelemetry>
-              </ProvideProjectConfig>
-            </ProvideAuthSetup>
+              </ProvideAuthSetup>
+            </ProvideProjectConfig>
           );
         }}
       </AuthConsumer>

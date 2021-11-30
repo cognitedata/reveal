@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo, useEffect } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Map } from 'immutable';
@@ -22,8 +22,6 @@ export const ProjectConfig = () => {
 
   const { data: existingConfig = {}, isLoading } = useProjectConfigGetQuery();
 
-  const { mutate: updateConfig } = useProjectConfigUpdateMutate();
-
   const { data: metadata, isLoading: isMetadataLoading } =
     useProjectConfigMetadataGetQuery();
 
@@ -41,23 +39,27 @@ export const ProjectConfig = () => {
     [existingConfig, configChanges]
   );
 
+  const { mutate: updateConfig } = useProjectConfigUpdateMutate({
+    onSuccess: handleReset,
+    onError: () => {
+      showErrorMessage('Could not update project configuration.');
+      setHasChanges(true);
+    },
+  });
+
   const handleUpdate = useCallback(async () => {
+    setHasChanges(false);
     try {
       await updateConfig(configChanges);
     } catch (e) {
       showErrorMessage('Could not update config.');
     }
-  }, [updateConfig, configChanges]);
+  }, [updateConfig, configChanges, setHasChanges]);
 
   const handleChange = useCallback((key: string, value: unknown) => {
     setConfigChanges((state) => Map(state).setIn(key.split('.'), value).toJS());
     setHasChanges(true);
   }, []);
-
-  // resetting the local change state after updated config is received
-  useEffect(() => {
-    handleReset();
-  }, [existingConfig, handleReset]);
 
   if (isLoading || isMetadataLoading) {
     return (

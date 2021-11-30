@@ -5,7 +5,7 @@ import { Cluster } from '@cognite/sdk-wells-v2';
 
 import { setClient, setEmail, setReAuth } from '_helpers/getCogniteSDKClient';
 import { SIDECAR } from 'constants/app';
-import { useTenantConfig } from 'hooks/useTenantConfig';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';
 import { authenticateGeospatialSDK } from 'modules/map/sdk';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
@@ -15,40 +15,40 @@ export const ProvideAuthSetup: React.FC<{
   authState: AuthContext;
 }> = ({ authState, children }) => {
   const [doneAuth, setDoneAuth] = React.useState(false);
-  const [tenant] = getTenantInfo();
+  const [project] = getTenantInfo();
 
-  const { data: tenantConfig } = useTenantConfig();
+  const { data: projectConfig } = useProjectConfig();
 
-  const isAzure = tenantConfig?.azureConfig?.enabled;
+  const isAzure = projectConfig?.azureConfig?.enabled;
 
   const doLoginActions = (token: string) => {
     if (authState.client) {
       setClient(authState.client);
     }
 
-    authenticateGeospatialSDK(tenant, token);
+    authenticateGeospatialSDK(project, token);
 
     const email = authState.authState?.email;
     setEmail(email);
 
-    if (tenant && !tenantConfig?.wells?.disabled) {
+    if (project && !projectConfig?.wells?.disabled) {
       authenticateWellSDK(
         SIDECAR.applicationId,
         SIDECAR.cdfApiBaseUrl,
-        tenant,
+        project,
         SIDECAR.cdfCluster as Cluster,
         token
       );
     }
-    if (!tenantConfig?.seismic?.disabled) {
+    if (!projectConfig?.seismic?.disabled) {
       authenticateSeismicSDK(token);
     }
 
-    if (tenant && !tenantConfig?.documents?.disabled) {
+    if (project && !projectConfig?.documents?.disabled) {
       authenticateDocumentSDK(
         SIDECAR.applicationId,
         SIDECAR.cdfApiBaseUrl,
-        tenant,
+        project,
         token
       );
     }
@@ -57,7 +57,7 @@ export const ProvideAuthSetup: React.FC<{
   };
 
   React.useEffect(() => {
-    if (tenantConfig && authState.client) {
+    if (projectConfig && authState.client) {
       setReAuth(authState.reauthenticate);
 
       const tokenToUse = authState.authState?.token;
@@ -70,13 +70,13 @@ export const ProvideAuthSetup: React.FC<{
         doLoginActions(tokenToUse);
       } else {
         authState.client.login.status().then((status) => {
-          if (status?.project === tenant && authState.client) {
+          if (status?.project === project && authState.client) {
             doLoginActions(tokenToUse);
           }
         });
       }
     }
-  }, [authState.authState?.authenticated, tenantConfig, tenant]);
+  }, [authState.authState?.authenticated, projectConfig, project, isAzure]);
 
   return doneAuth ? <>{children}</> : null;
 };
