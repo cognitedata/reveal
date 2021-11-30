@@ -10,14 +10,14 @@ const baseKey = 'raw-explorer';
 
 export const tableKey = (db: string) => [baseKey, db, 'tables'];
 export const dbKey = [baseKey, 'databases'];
-export const rowKey = (db: string, table: string, pageSize: number) => [
-  baseKey,
-  db,
-  table,
-  'rows',
-  'pageSize',
-  pageSize,
-];
+export const rowKey = (db: string, table: string, pageSize?: number) => {
+  const queryKey = [baseKey, db, table, 'rows'];
+  if (pageSize) {
+    queryKey.push('pageSize');
+    queryKey.push(String(pageSize));
+  }
+  return queryKey;
+};
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
   baseKey,
   db,
@@ -217,7 +217,8 @@ export const useDeleteTable = () => {
     ({ database, table }: { database: string; table: string }) =>
       sdk.raw.deleteTables(database, [{ name: table }]),
     {
-      onSuccess(_, { database }) {
+      onSuccess(_, { database, table }) {
+        queryClient.invalidateQueries(rowKey(database, table));
         queryClient.invalidateQueries(tableKey(database));
       },
     }
@@ -231,7 +232,8 @@ export const useCreateTable = () => {
     ({ database, table }: { database: string; table: string }) =>
       sdk.raw.createTables(database, [{ name: table }]),
     {
-      onSuccess(_, { database }) {
+      onSuccess(_, { database, table }) {
+        queryClient.invalidateQueries(rowKey(database, table));
         queryClient.invalidateQueries(tableKey(database));
       },
     }

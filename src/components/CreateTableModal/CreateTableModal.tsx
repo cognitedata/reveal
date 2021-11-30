@@ -286,7 +286,7 @@ const CreateTableModal = ({
             value={tableName}
           />
           <StyledNameInputDetail>
-            The name should be unique. You can not change this name later.
+            The name should be unique. You cannot change this name later.
           </StyledNameInputDetail>
         </FormFieldWrapper>
       )}

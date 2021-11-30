@@ -1,9 +1,11 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { RawExplorerContext } from 'contexts';
 import { NO_CELL_SELECTED } from 'utils/table';
 
-export const useTableSelection = () => {
+import { useTableData } from 'hooks/table-data';
+
+export const useCellSelection = () => {
   const { selectedCell, setSelectedCell, isCellExpanded, setIsCellExpanded } =
     useContext(RawExplorerContext);
 
@@ -26,4 +28,23 @@ export const useTableSelection = () => {
     isCellExpanded,
     setIsCellExpanded,
   };
+};
+
+export const useColumnSelection = () => {
+  const { selectedColumnKey } = useContext(RawExplorerContext);
+  const { columns } = useTableData();
+
+  const getSelectedColumn = () => {
+    const activeColumn = columns.find(
+      (column) => selectedColumnKey && column.dataKey === selectedColumnKey
+    );
+    return activeColumn;
+  };
+
+  const selectedColumn = useMemo(getSelectedColumn, [
+    columns,
+    selectedColumnKey,
+  ]);
+
+  return { selectedColumn };
 };

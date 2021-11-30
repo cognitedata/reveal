@@ -1,11 +1,11 @@
 import React from 'react';
 import { Icon } from '@cognite/cogs.js';
 
-import { useTableSelection } from 'hooks/table-selection';
+import { useCellSelection } from 'hooks/table-selection';
 import { StyledExpandButton } from './Cell.styles';
 
 export const ExpandButton = (): JSX.Element => {
-  const { setIsCellExpanded } = useTableSelection();
+  const { setIsCellExpanded } = useCellSelection();
 
   const onExpandClick = (event: any) => {
     event.stopPropagation();

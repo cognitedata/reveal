@@ -1,15 +1,29 @@
-import React, { createContext, useContext } from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
+import styled from 'styled-components';
 import { Colors, Title, Body, Loader } from '@cognite/cogs.js';
+
 import { useTableRows } from 'hooks/sdk-queries';
 import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
+import { DEFAULT_FILTER } from 'hooks/table-filters';
+
 import icons from 'assets/icons';
-import styled from 'styled-components';
 
 type ActiveTableState = {
   database: string;
   table: string;
   view?: string;
   update: (_: SpecificTable) => void;
+
+  columnTypeFilters: string[];
+  setColumnTypeFilters: Dispatch<SetStateAction<string[]>>;
+  columnNameFilter: string;
+  setColumnNameFilter: Dispatch<SetStateAction<string>>;
 };
 
 export const ActiveTableContext = createContext<ActiveTableState>(
@@ -28,6 +42,11 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
     { database: database!, table: table!, pageSize: 1 },
     { enabled: !!database && !!table }
   );
+
+  const [columnNameFilter, setColumnNameFilter] = useState('');
+  const [columnTypeFilters, setColumnTypeFilters] = useState<string[]>([
+    DEFAULT_FILTER.type,
+  ]);
 
   if (!database || !table || isError) {
     return (
@@ -61,6 +80,10 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
         table,
         update,
         view,
+        columnTypeFilters,
+        setColumnTypeFilters,
+        columnNameFilter,
+        setColumnNameFilter,
       }}
     >
       {children}
