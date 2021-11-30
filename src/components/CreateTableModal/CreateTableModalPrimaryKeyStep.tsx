@@ -49,7 +49,7 @@ const CreateTableModalPrimaryKeyStep = ({
           </StyledCreateOption>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="A key will be auto-generate for you. This means that updating the data will overwrite the entire table."
+              description="A key will be auto-generated for you. This means that updating the data will overwrite the entire table."
               icon="UnknownPrimaryKeyIcon"
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.AutoGenerate
