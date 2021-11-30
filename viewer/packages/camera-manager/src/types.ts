@@ -32,7 +32,8 @@ export type ControlsState = {
   target: THREE.Vector3;
 };
 
-export interface RevealCameraControls {
+export interface RevealCameraControls extends THREE.EventDispatcher {
+  enabled: boolean;
   /**
    * Method for updating controls state
    */
@@ -85,4 +86,4 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
 /**
  * Type defining camera change event data.
  */
-export type CameraChangeData = (event: { camera: ControlsState }) => void;
+export type CameraChangeData = (event: { camera: { position: THREE.Vector3; target: THREE.Vector3 } }) => void;

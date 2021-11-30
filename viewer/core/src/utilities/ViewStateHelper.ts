@@ -8,7 +8,7 @@ import { Cognite3DViewer } from '../public/migration/Cognite3DViewer';
 
 import { NodeCollectionDeserializer } from '../datamodels/cad/styling/NodeCollectionDeserializer';
 
-import { ComboControls } from '@reveal/camera-manager';
+import { RevealCameraControls } from '@reveal/camera-manager';
 import { NodeAppearance } from '@reveal/cad-styling';
 
 import { CogniteClient } from '@cognite/sdk';
@@ -29,7 +29,7 @@ export type ModelState = {
 };
 
 export class ViewStateHelper {
-  private readonly _cameraControls: ComboControls;
+  private readonly _cameraControls: RevealCameraControls;
   private readonly _viewer: Cognite3DViewer;
   private readonly _cdfClient: CogniteClient;
 
