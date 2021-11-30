@@ -49,8 +49,8 @@ async function init() {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
 
-  const modelId = parseInt(urlParams.get('modelId') ?? '258063315016470');
-  const revisionId = parseInt(urlParams.get('revisionId') ?? '4183000258165146');
+  const modelId = parseInt(urlParams.get('modelId') ?? '1791160622840317');
+  const revisionId = parseInt(urlParams.get('revisionId') ?? '498427137020189');
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
 
@@ -61,7 +61,7 @@ async function init() {
   const modelDataClient = new CdfModelDataProvider(client);
   const cadMaterialManager = new CadMaterialManager();
 
-  let consumedModel = await loadSector(outputs, guiData, modelDataClient, cadMaterialManager, client);
+  let consumedModel = await loadSectors(outputs, guiData, modelDataClient, cadMaterialManager, client);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,7 +79,7 @@ async function init() {
 
   formatGuiController.onChange(async _ => {
     group.remove(consumedModel);
-    consumedModel = await loadSector(outputs, guiData, modelDataClient, cadMaterialManager, client);
+    consumedModel = await loadSectors(outputs, guiData, modelDataClient, cadMaterialManager, client);
     group.add(consumedModel);
   });
 
@@ -97,7 +97,7 @@ async function init() {
   });
 }
 
-async function loadSector(
+async function loadSectors(
   outputs: BlobOutputMetadata[],
   guiData: { format: File3dFormat },
   modelDataClient: CdfModelDataProvider,
