@@ -19,7 +19,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
     super(TreeIndexNodeCollection.classToken);
     if (values instanceof IndexSet) {
       this._treeIndices = values;
-    } else if (values instanceof NumericRange) {
+    } else if (NumericRange.isNumericRange(values)) {
       this._treeIndices = new IndexSet(values);
     } else {
       this._treeIndices = new IndexSet(values);
