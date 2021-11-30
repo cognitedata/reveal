@@ -1,53 +1,66 @@
-import { useState } from 'react';
 import { FilterType } from 'components/FilterItem';
+import { useActiveTableContext } from 'contexts';
+
+export const DEFAULT_FILTER: FilterType = {
+  type: 'columns',
+  value: 13,
+};
 
 export const useFilters = () => {
-  const [activeFilters, setActiveFilters] = useState<string[]>([
-    DEFAULT_FILTER.type,
-  ]);
+  const {
+    columnTypeFilters,
+    setColumnTypeFilters,
+    columnNameFilter,
+    setColumnNameFilter,
+  } = useActiveTableContext();
 
   const filters = [
     DEFAULT_FILTER,
     ...mockFilters.filter((mockFilter) => mockFilter.value),
   ];
 
-  const setFilter = (type: string) => {
+  const setTypeFilter = (type: string) => {
     const selectAllColumns = type === DEFAULT_FILTER.type;
     const selectFirstFilter =
       !selectAllColumns &&
-      !activeFilters.includes(type) &&
-      activeFilters.includes(DEFAULT_FILTER.type) &&
-      activeFilters.length === 1;
+      !columnTypeFilters.includes(type) &&
+      columnTypeFilters.includes(DEFAULT_FILTER.type) &&
+      columnTypeFilters.length === 1;
     const selectAnotherFilter =
       !selectAllColumns &&
-      !activeFilters.includes(type) &&
-      !activeFilters.includes(DEFAULT_FILTER.type) &&
-      activeFilters.length > 0;
+      !columnTypeFilters.includes(type) &&
+      !columnTypeFilters.includes(DEFAULT_FILTER.type) &&
+      columnTypeFilters.length > 0;
     const deselectFilter =
       !selectAllColumns &&
-      activeFilters.includes(type) &&
-      activeFilters.length > 1;
+      columnTypeFilters.includes(type) &&
+      columnTypeFilters.length > 1;
     const deselectLastFilter =
       !selectAllColumns &&
-      activeFilters.includes(type) &&
-      activeFilters.length === 1;
+      columnTypeFilters.includes(type) &&
+      columnTypeFilters.length === 1;
 
     if (selectAllColumns || deselectLastFilter)
-      setActiveFilters([DEFAULT_FILTER.type]);
-    if (selectFirstFilter) setActiveFilters([type]);
-    if (selectAnotherFilter) setActiveFilters([...activeFilters, type]);
+      setColumnTypeFilters([DEFAULT_FILTER.type]);
+    if (selectFirstFilter) setColumnTypeFilters([type]);
+    if (selectAnotherFilter) setColumnTypeFilters([...columnTypeFilters, type]);
     if (deselectFilter)
-      setActiveFilters([...activeFilters.filter((active) => active !== type)]);
+      setColumnTypeFilters([
+        ...columnTypeFilters.filter((filter: string) => filter !== type),
+      ]);
     if (deselectFilter)
-      setActiveFilters([...activeFilters.filter((active) => active !== type)]);
+      setColumnTypeFilters([
+        ...columnTypeFilters.filter((filter: string) => filter !== type),
+      ]);
   };
 
-  return { filters, activeFilters, setFilter };
-};
-
-const DEFAULT_FILTER: FilterType = {
-  type: 'columns',
-  value: 13,
+  return {
+    filters,
+    columnTypeFilters,
+    setTypeFilter,
+    columnNameFilter,
+    setColumnNameFilter,
+  };
 };
 
 // mock

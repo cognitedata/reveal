@@ -80,12 +80,18 @@ const StyledBaseTable = styled(BaseTable)`
     &:hover {
       background-color: ${Colors['greyscale-grey2'].hex()};
     }
+    &:last-child {
+      padding-right: 0;
+    }
   }
   .${TABLE_PREFIX}row-cell {
-    padding: 0;
     justify-content: flex-end;
     flex-wrap: wrap;
     overflow: visible !important;
+    padding: 0;
+    &:last-child {
+      padding-right: 0;
+    }
   }
   .${TABLE_PREFIX}header-cell, .${TABLE_PREFIX}row-cell {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};

@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import { useHistory } from 'react-router-dom';
 
-import { useTableSelection } from 'hooks/table-selection';
+import { useCellSelection } from 'hooks/table-selection';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 const getSetItems =
@@ -60,7 +60,7 @@ export function useActiveTable(): [
 ] {
   const [active, setActive] = useUrlTable();
   const [tabs, setTabs] = useUrlTabList();
-  const { deselectCell } = useTableSelection();
+  const { deselectCell } = useCellSelection();
   return [
     active,
     ([newDb, newTable, newView]: SpecificTable) => {
