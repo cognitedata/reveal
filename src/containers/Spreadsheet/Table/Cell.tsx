@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useTableSelection } from 'hooks/table-selection';
+import { useCellSelection } from 'hooks/table-selection';
 import {
   StyledCellIndexColumn,
   StyledCellUnselected,
@@ -18,7 +18,7 @@ type Props = {
 export const Cell = (props: Props): JSX.Element => {
   const { cellData, columnIndex = -1, rowIndex = -1 } = props;
   const { selectedCell, deselectCell, setSelectedCell, isCellSelected } =
-    useTableSelection();
+    useCellSelection();
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [isOverflow, setIsOverflow] = useState<boolean>(false);
   const selectedCellRef = useRef<HTMLDivElement>(null);

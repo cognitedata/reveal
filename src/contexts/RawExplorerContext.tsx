@@ -4,7 +4,6 @@ import React, {
   SetStateAction,
   useState,
 } from 'react';
-import { ColumnShape } from 'react-base-table';
 
 import { NO_CELL_SELECTED } from 'utils/table';
 
@@ -30,8 +29,8 @@ type RawExplorerState = {
 
   isProfilingSidebarOpen: boolean;
   setIsProfilingSidebarOpen: Dispatch<SetStateAction<boolean>>;
-  selectedColumn?: ColumnShape<any>;
-  setSelectedColumn: Dispatch<SetStateAction<ColumnShape<any> | undefined>>;
+  selectedColumnKey?: string;
+  setSelectedColumnKey: Dispatch<SetStateAction<string | undefined>>;
 
   selectedCell: SelectedCell;
   setSelectedCell: Dispatch<SetStateAction<SelectedCell>>;
@@ -54,8 +53,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
   >();
 
   const [isProfilingSidebarOpen, setIsProfilingSidebarOpen] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState<
-    ColumnShape<any> | undefined
+  const [selectedColumnKey, setSelectedColumnKey] = useState<
+    string | undefined
   >();
 
   const [selectedCell, setSelectedCell] =
@@ -72,8 +71,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
 
         isProfilingSidebarOpen,
         setIsProfilingSidebarOpen,
-        selectedColumn,
-        setSelectedColumn,
+        selectedColumnKey,
+        setSelectedColumnKey,
 
         selectedCell,
         setSelectedCell,
