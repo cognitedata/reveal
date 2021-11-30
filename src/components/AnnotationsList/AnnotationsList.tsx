@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {
   Body,
   Button,
+  Flex,
   Graphic,
   Icon,
   SegmentedControl,
@@ -66,7 +67,7 @@ const AnnotationsList = ({
       onClick={() => handleClick(annotation)}
       pending={annotation.status === 'unhandled'}
     >
-      <Flex>
+      <Flex direction="row">
         <ResourceIcons
           style={{
             marginTop: '-5px',
@@ -96,7 +97,7 @@ const AnnotationsList = ({
   return (
     <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
       <ResourcePreviewWrapper>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <Flex direction="row" style={{ flex: '0 0 auto' }}>
           <Button
             icon="ArrowBack"
             onClick={goBack}
@@ -106,9 +107,9 @@ const AnnotationsList = ({
           <BreadcrumbItem separator={<span />}>
             {capitalize(type)}
           </BreadcrumbItem>
-        </div>
+        </Flex>
         <SegmentedControl
-          style={{ marginRight: 24 }}
+          style={{ marginRight: 24, flex: '0 0 auto' }}
           currentKey={filterType}
           variant="default"
           fullWidth
@@ -171,7 +172,8 @@ const ListItem = styled.div<TagProps>`
 `;
 
 const ResourcePreviewWrapper = styled.div`
-  height: 100%;
+  height: calc(100vh - 250px);
+  overflow: hidden;
   min-width: 360px;
   background: #fff;
   display: flex;
@@ -185,14 +187,10 @@ const ResourcePreviewWrapper = styled.div`
 const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   gap: 5px;
   height: 100%;
   overflow: auto;
-`;
-
-const Flex = styled.div`
-  display: flex;
-  flex-direction: row;
 `;
 
 const EmptyState = ({ type }: { type: AnnotationType }) => (

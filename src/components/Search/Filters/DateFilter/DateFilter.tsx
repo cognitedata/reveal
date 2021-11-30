@@ -92,14 +92,14 @@ export const DateFilter = ({
               return;
             }
             case 'before': {
-              if (!value || value.max !== startDate.valueOf()) {
-                setValue({ max: startDate.valueOf() });
+              if (!value || value.max !== endDate.valueOf()) {
+                setValue({ max: endDate.valueOf() });
               }
               return;
             }
             case 'after': {
-              if (!value || value.min !== startDate.valueOf()) {
-                setValue({ min: startDate.valueOf() });
+              if (!value || value.min !== endDate.valueOf()) {
+                setValue({ min: endDate.valueOf() });
               }
               return;
             }
