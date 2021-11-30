@@ -49,7 +49,7 @@ export function consumeSectorDetailed(
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
   const bounds = metadata.bounds;
 
-  if (geometryClipBox !== null && fuzzyContainsBox(geometryClipBox, bounds)) {
+  if (geometryClipBox !== null && isSectorBoundsFullyInsideClipBox(geometryClipBox, bounds)) {
     // If sector bounds is fully inside clip Box, nothing will be clipped so don't go the extra mile
     // to check
     geometryClipBox = null;
@@ -131,9 +131,14 @@ export function findSectorMetadata(root: SectorMetadata, sectorId: number): Sect
 }
 
 /**
- * Like THREE.Box3.containsBox(), but with fuzziness added.
+ * Checks if sector bounds is partially outside clip box, and hence
+ * if it should be clipped (as opposition to clipping). Since model
+ * sectors are clipped to fit within the clip box on load, we
+ * consider sectors on the boundary to be outside. Worst case, this
+ * causes geometry within some sectors to be unnecessary clipped
+ * towards to clip box, but will not lead to any lost geometry.
  */
-function fuzzyContainsBox(
+function isSectorBoundsFullyInsideClipBox(
   boxToCheckIfCovers: THREE.Box3,
   possiblyCovered: THREE.Box3,
   fuzziness: number = 1e-4
