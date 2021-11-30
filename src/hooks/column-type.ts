@@ -22,8 +22,6 @@ export const useColumnType = () => {
     if (!!column.number) return 'Number';
     if (!!column.string) return 'Text';
     if (!!column.boolean) return 'Boolean';
-    // @ts-ignore:next-line
-    if (!!column.datetime) return 'DateTime';
     if (!!column.object) return 'Object';
     if (!!column.vector) return 'Vector';
     return 'Unknown';
