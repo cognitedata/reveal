@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Colors, Flex } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 
 import { ColumnType } from 'hooks/table-data';
 import { useColumnType } from 'hooks/column-type';
@@ -19,47 +19,105 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
 
   return (
     <StyledProfilingData>
-      {columnType === 'Text' && <ColumnDataString />}
-      {columnType === 'Number' && <ColumnDataNumber />}
-      {columnType === 'Boolean' && <ColumnDataBoolean />}
-      {columnType === 'Object' && <ColumnDataObject />}
-      {columnType === 'Vector' && <ColumnDataVector />}
+      {columnType === 'Text' && <ColumnString />}
+      {columnType === 'DateTime' && <ColumnDateTime />}
+      {columnType === 'Boolean' && <ColumnBoolean />}
+      {columnType === 'Number' && <ColumnNumber />}
     </StyledProfilingData>
   );
 };
 
-const ColumnDataString = () => {
+const ColumnString = () => {
   return (
-    <Flex style={{ flexWrap: 'wrap' }}>
+    <StyledProfilingDataWrapper>
       <Section.Frequency />
       <Section title="Distinct values">123</Section>
       <Section title="Non-empty" isHalf>
-        123
+        12
       </Section>
       <Section title="Empty" isHalf>
-        123
+        23
       </Section>
       <Section title="Char length min" isHalf>
-        123
+        1
       </Section>
       <Section title="Char length max" isHalf>
-        123
+        11
       </Section>
       <Section.Distribution />
-    </Flex>
+    </StyledProfilingDataWrapper>
   );
 };
-const ColumnDataNumber = () => {
-  return <Section>this is a number</Section>;
+
+const ColumnDateTime = () => {
+  return (
+    <StyledProfilingDataWrapper>
+      <Section.Distribution />
+      <Section title="Distinct values">123</Section>
+      <Section title="Non-empty" isHalf>
+        12
+      </Section>
+      <Section title="Empty" isHalf>
+        23
+      </Section>
+      <Section title="First date" isHalf>
+        01.04.2013
+      </Section>
+      <Section title="Last date" isHalf>
+        07.04.2013
+      </Section>
+    </StyledProfilingDataWrapper>
+  );
 };
-const ColumnDataBoolean = () => {
-  return <Section>this is a bool</Section>;
+
+const ColumnBoolean = () => {
+  return (
+    <StyledProfilingDataWrapper>
+      <Section.Frequency />
+      <Section title="Distinct values">123</Section>
+      <Section title="True" isHalf>
+        123
+      </Section>
+      <Section title="False" isHalf>
+        321
+      </Section>
+      <Section title="Non-empty" isHalf>
+        12
+      </Section>
+      <Section title="Empty" isHalf>
+        23
+      </Section>
+      <Section.Distribution />
+    </StyledProfilingDataWrapper>
+  );
 };
-const ColumnDataObject = () => {
-  return <Section>this is a object</Section>;
-};
-const ColumnDataVector = () => {
-  return <Section>this is a vector</Section>;
+
+const ColumnNumber = () => {
+  return (
+    <StyledProfilingDataWrapper>
+      <Section.Distribution />
+      <Section title="Distinct values">123</Section>
+      <Section title="Non-empty" isHalf>
+        12
+      </Section>
+      <Section title="Empty" isHalf>
+        23
+      </Section>
+      <Section title="Min" isHalf>
+        123
+      </Section>
+      <Section title="Max" isHalf>
+        321
+      </Section>
+      <Section title="Mean" isHalf>
+        167
+      </Section>
+      <Section title="Median" isHalf>
+        189
+      </Section>
+      <Section title="Standard deviation">2.2</Section>
+    </StyledProfilingDataWrapper>
+  );
 };
 
 const StyledProfilingData = styled.div`
@@ -70,4 +128,9 @@ const StyledProfilingData = styled.div`
   flex: 1 1 auto;
   overflow: auto;
   border-bottom: none;
+`;
+
+const StyledProfilingDataWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
 `;
