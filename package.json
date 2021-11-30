@@ -23,6 +23,7 @@
     "@rescripts/utilities": "^0.0.8",
     "@sentry/browser": "^5.29.2",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@visx/axis": "^2.4.0",
     "@visx/group": "^2.1.0",
     "@visx/responsive": "^2.4.1",
     "@visx/scale": "^2.2.2",
