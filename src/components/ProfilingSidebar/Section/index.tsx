@@ -5,6 +5,7 @@ import { Colors, Body } from '@cognite/cogs.js';
 
 import { Frequency } from './Frequency';
 import { Distribution } from './Distribution';
+import { DistinctValues } from './DistinctValues';
 
 type Props = { children: React.ReactNode; title?: string; isHalf?: boolean };
 
@@ -27,6 +28,7 @@ export const Section = ({
 
 Section.Frequency = Frequency;
 Section.Distribution = Distribution;
+Section.DistinctValues = DistinctValues;
 
 const StyledSection = styled.div.attrs(({ isHalf }: { isHalf?: boolean }) => {
   const style: React.CSSProperties = {

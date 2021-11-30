@@ -93,7 +93,10 @@ const ColumnString = ({ count, nullCount, data }: PropsString) => {
   return (
     <StyledProfilingDataWrapper>
       <Section.Frequency allCount={count} counts={data.valueCounts} />
-      <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
+      <Section.DistinctValues
+        allCount={count}
+        distinctCount={data.distinctCount}
+      />
       <Section title="Non-empty" isHalf>
         {count}
       </Section>
@@ -161,7 +164,10 @@ const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
   return (
     <StyledProfilingDataWrapper>
       <Section.Distribution histogram={data.histogram} />
-      <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
+      <Section.DistinctValues
+        allCount={count}
+        distinctCount={data.distinctCount}
+      />
       <Section title="Non-empty" isHalf>
         {count}
       </Section>
