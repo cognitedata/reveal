@@ -89,8 +89,7 @@ type PropsString = {
 };
 const ColumnString = ({ count, nullCount, data }: PropsString) => {
   if (!data) return <span />;
-  console.log('STRING COLUMN');
-  console.log(data);
+
   return (
     <StyledProfilingDataWrapper>
       <Section.Frequency allCount={count} counts={data.valueCounts} />
@@ -122,8 +121,7 @@ type PropsBoolean = {
 };
 const ColumnBoolean = ({ count, nullCount, data }: PropsBoolean) => {
   if (!data) return <span />;
-  console.log('BOOLEAN COLUMN');
-  console.log(data);
+
   const { trueCount = 0 } = data;
   const falseCount = count - trueCount - nullCount;
   return (
@@ -159,8 +157,7 @@ type PropsNumber = {
 };
 const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
   if (!data) return <span />;
-  console.log('NUMBER COLUMN');
-  console.log(data);
+
   return (
     <StyledProfilingDataWrapper>
       <Section.Distribution histogram={data.histogram} />
