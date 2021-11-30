@@ -86,13 +86,18 @@ export const useCSVUpload = (
           columns?.forEach((column, index) => {
             newColumns[column] = row[index];
           });
-          items[rowIndex] = {
-            key:
-              selectedKeyIndex === -1
-                ? uuid()
-                : row[selectedKeyIndex].toString(),
-            columns: newColumns,
-          };
+          try {
+            items[rowIndex] = {
+              key:
+                selectedKeyIndex === -1
+                  ? uuid()
+                  : row[selectedKeyIndex].toString(),
+              columns: newColumns,
+            };
+          } catch (e) {
+            // this will throw error if uses chooses a key which has some empty cells
+            setIsUploadFailed(true);
+          }
         });
 
         sdk.raw
