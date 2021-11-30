@@ -27,15 +27,6 @@ export const PageWrapper = styled.div`
   }
 `;
 
-export const GridH2Wrapper = styled((props) => (
-  <Title {...props} level={2}>
-    {props.children}
-  </Title>
-))`
-  font-size: 1.2rem;
-  margin-bottom: 0.3rem;
-`;
-
 export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
   grid-area: main;
   padding: ${mainContentSpaceAround};

@@ -22,7 +22,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
 }) => {
   return (
     <EditModal
-      width={500}
+      width={700}
       title="Configure alerts"
       visible={isOpen}
       close={close}
@@ -38,17 +38,21 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       <label htmlFor="time-amount-input">
         Send an alert if there has been no activity for
       </label>
-      <DivFlex>
-        <Input placeholder="3" css="flex:1" id="time-amount-input" />
-        <Select
-          css="flex:2"
-          value={{ label: 'hours', value: 'hours' }}
-          options={[
-            { label: 'minutes', value: 'minutes' },
-            { label: 'hours', value: 'hours' },
-            { label: 'days', value: 'days' },
-          ]}
-        />
+      <DivFlex css="width: 250px" gap="0.5rem">
+        <div css="flex: 1">
+          <Input fullWidth placeholder="3" id="time-amount-input" />
+        </div>
+        <div css="flex: 2">
+          <Select
+            fullWidth
+            value={{ label: 'hours', value: 'hours' }}
+            options={[
+              { label: 'minutes', value: 'minutes' },
+              { label: 'hours', value: 'hours' },
+              { label: 'days', value: 'days' },
+            ]}
+          />
+        </div>
       </DivFlex>
       <Hr />
       <DivFlex justify="flex-end" css="gap: 0.5rem">
