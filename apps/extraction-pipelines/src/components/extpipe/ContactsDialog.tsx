@@ -38,9 +38,6 @@ export const Row = styled.div`
   }
 `;
 
-export const Heading = styled.span`
-  padding: 0.5rem 0.75rem 0.5rem 1rem;
-`;
 interface ContactsSectionProps {
   close: () => void;
 }

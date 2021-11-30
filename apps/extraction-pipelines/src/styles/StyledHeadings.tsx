@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
-import { Title } from '@cognite/cogs.js';
+import { Icon, IconType, Title } from '@cognite/cogs.js';
+import { DivFlex } from 'styles/flex/StyledFlex';
 
 export const PageTitle = styled((props) => (
   <HeadingWithUnderline {...props} level={1}>
@@ -23,11 +24,27 @@ export const StyledTitle2 = styled((props) => (
   font-size: 1.25rem;
   margin-bottom: 1rem;
 `;
+type IconHeadingProps = {
+  icon: IconType;
+};
+export const IconHeading = ({
+  icon,
+  children,
+}: PropsWithChildren<IconHeadingProps>) => {
+  return (
+    <DivFlex align="center" gap="0.5rem">
+      <Icon type={icon} />
+      <StyledTitle3 noMargin level={3}>
+        {children}
+      </StyledTitle3>
+    </DivFlex>
+  );
+};
 export const StyledTitle3 = styled((props) => (
   <Title {...props} level={3}>
     {props.children}
   </Title>
 ))`
   font-size: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: ${(props) => (props.noMargin ? '0' : '1rem')};
 `;

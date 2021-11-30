@@ -10,10 +10,11 @@ import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
 import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
-import { ContactsSection, Column } from 'components/extpipe/ContactsSection';
+import { Column, ContactsSection } from 'components/extpipe/ContactsSection';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
+import { NotificationSettings } from 'components/extpipe/NotificationSettings';
 
 interface ExtpipeInformationProps {
   canEdit: boolean;
@@ -84,6 +85,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           label={TableHeadings.SCHEDULE}
           canEdit={canEdit}
         />
+        <NotificationSettings canEdit={canEdit} />
       </Section>
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
