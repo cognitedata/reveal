@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Colors, Loader } from '@cognite/cogs.js';
+import { Colors, Flex, Icon } from '@cognite/cogs.js';
 
 import { useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
@@ -55,7 +55,15 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
 
   return (
     <StyledProfilingData>
-      {isLoading && <Loader />}
+      {isLoading && (
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          style={{ width: '100%', padding: '20px' }}
+        >
+          <Icon type="LoadingSpinner" />
+        </Flex>
+      )}
       {isError && <Message message="Profiling service error" type="error" />}
       {columnType === 'Text' && (
         <ColumnString
