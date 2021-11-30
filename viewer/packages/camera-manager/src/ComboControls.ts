@@ -15,6 +15,7 @@ import {
   OrthographicCamera,
   MathUtils
 } from 'three';
+import { RevealCameraControls } from './types';
 import Keyboard from './Keyboard';
 
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
@@ -41,7 +42,7 @@ function getPinchInfo(domElement: HTMLElement, touches: TouchList) {
 const defaultPointerRotationSpeed = Math.PI / 360; // half degree per pixel
 const defaultKeyboardRotationSpeed = defaultPointerRotationSpeed * 10;
 
-export class ComboControls extends EventDispatcher {
+export class ComboControls extends EventDispatcher implements RevealCameraControls{
   public enabled: boolean = true;
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.25;

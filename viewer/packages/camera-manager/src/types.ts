@@ -36,7 +36,7 @@ export interface RevealCameraControls {
   /**
    * Method for updating controls state
    */
-  update: () => void;
+  update: (deltaTime: number) => void;
 
   /**
    * Sets new state for controls
