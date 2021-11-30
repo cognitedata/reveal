@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { StyledLabel } from 'styles/StyledForm';
 import { OptionTypeBase } from 'react-select';
 import { Extpipe } from 'model/Extpipe';
+import { InfoBox } from 'components/message/InfoBox';
 
 const Hr = styled.hr`
   border: 0;
@@ -81,7 +82,10 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
         </div>
       </DivFlex>
       <Hr />
-      <DivFlex justify="flex-end" css="gap: 0.5rem">
+      <InfoBox iconType="InfoFilled">
+        You can manage who will receive notifications in the contacts section.
+      </InfoBox>
+      <DivFlex justify="flex-end" css="gap: 0.5rem; margin-top: 1rem">
         <Button type="ghost" onClick={close}>
           Cancel
         </Button>
