@@ -22,6 +22,17 @@ const Hr = styled.hr`
   margin: 1.5rem 0;
 `;
 
+const MINUTES_IN_HOUR = 60;
+const MINUTES_IN_DAY = 24 * MINUTES_IN_HOUR;
+function minutesToUnit(minutes: number) {
+  if (minutes === 0) return { n: 0, unit: 'hours' };
+  if (minutes % MINUTES_IN_DAY === 0)
+    return { n: minutes / MINUTES_IN_DAY, unit: 'days' };
+  if (minutes % MINUTES_IN_HOUR === 0)
+    return { n: minutes / MINUTES_IN_HOUR, unit: 'hours' };
+  return { n: minutes, unit: 'minutes' };
+}
+
 type NotificationDialogProps = {
   isOpen: boolean;
   extpipe: Extpipe;
@@ -34,12 +45,13 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
 }) => {
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
-  const [value, setValue] = useState(
+  const oldValue = minutesToUnit(
     extpipe.notificationConfig != null
       ? extpipe.notificationConfig.allowedNotSeenRangeInMinutes
       : 0
   );
-  const [timeUnit, setTimeUnit] = useState('hours');
+  const [value, setValue] = useState(oldValue.n);
+  const [timeUnit, setTimeUnit] = useState(oldValue.unit);
   const timeOptions = [
     { label: 'minutes', value: 'minutes' },
     { label: 'hours', value: 'hours' },
