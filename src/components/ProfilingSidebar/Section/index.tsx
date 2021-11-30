@@ -16,7 +16,7 @@ export const Section = ({
   return (
     <StyledSection isHalf={isHalf}>
       {title && (
-        <Body level={2} strong>
+        <Body level={2} strong style={{ marginBottom: '8px' }}>
           {title}
         </Body>
       )}

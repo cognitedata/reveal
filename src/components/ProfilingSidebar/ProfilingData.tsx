@@ -86,7 +86,7 @@ const ColumnString = ({ data }: { data: StringProfile | null }) => {
       <Section title="Char length max" isHalf>
         {data.lengthRange[1] ?? NO_DATA}
       </Section>
-      <Section.Distribution />
+      <Section.Distribution histogram={data.lengthHistogram} />
     </StyledProfilingDataWrapper>
   );
 };
@@ -122,7 +122,7 @@ const ColumnNumber = ({ data }: { data: NumberProfile | null }) => {
   console.log(data);
   return (
     <StyledProfilingDataWrapper>
-      <Section.Distribution />
+      <Section.Distribution histogram={data.histogram} />
       <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
       <Section title="Non-empty" isHalf>
         TODO
