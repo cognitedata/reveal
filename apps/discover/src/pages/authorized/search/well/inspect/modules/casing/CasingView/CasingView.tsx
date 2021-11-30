@@ -32,12 +32,13 @@ import {
   BodyColumnBody,
   ScaleLine,
   CasingScale,
+  EmptyCasingsStateWrapper,
 } from './elements';
 import EventsColumn from './EventsColumn';
 import { CasingViewType } from './interfaces';
 
 const MIN_SCALE_HEIGHT = 16;
-const EMPTY_STATE_TEXT = 'This wellbore has no casing data';
+const EMPTY_STATE_TEXT = 'This wellbore has no casing data';
 
 /**
  * This component is used to generate casings diagram
@@ -108,7 +109,9 @@ const CasingView: FC<CasingViewType> = ({
       </Header>
       <BodyWrapper>
         {isEmpty(casings) ? (
-          <EmptyState emptySubtitle={EMPTY_STATE_TEXT} />
+          <EmptyCasingsStateWrapper>
+            <EmptyState emptySubtitle={EMPTY_STATE_TEXT} />
+          </EmptyCasingsStateWrapper>
         ) : (
           <>
             <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />

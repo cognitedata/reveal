@@ -10,6 +10,7 @@ export const DepthIndicatorWrapper = styled.div`
   position: relative;
   transform: ${(props: { transform: string }) => props.transform};
   z-index: ${(props: { zIndex: number }) => props.zIndex};
+  margin-right: 20px;
 `;
 
 export const Start = styled.div`
@@ -37,11 +38,11 @@ export const End = styled.div`
 
 export const Description = styled.div`
   position: relative;
-  bottom: 14px;
+  bottom: -2px;
   padding: 2px;
   text-transform: lowercase;
-  left: ${(props: { linerCasing: boolean }) =>
-    props.linerCasing ? '9px' : '25px'};
+  /** left: ${(props: { linerCasing: boolean }) =>
+    props.linerCasing ? '9px' : '25px'}; **/
   float: left;
 
   height: 18px;

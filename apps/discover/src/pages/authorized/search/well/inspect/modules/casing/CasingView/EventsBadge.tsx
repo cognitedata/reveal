@@ -18,13 +18,21 @@ import {
 
 export type Props = {
   events: NPTEvent[];
-  totalEventsCount: number;
 };
 
 const MIN_SIZE_PERCENTAGE = 70;
+const MAX_SIZE_PERCENTAGE = 100;
 
-const EventsBadge: React.FC<Props> = ({ events, totalEventsCount }: Props) => {
+const EventsBadge: React.FC<Props> = ({ events }: Props) => {
   const groupedEvents = groupBy(events, 'nptCode');
+
+  let badgeSize = MAX_SIZE_PERCENTAGE;
+
+  if (events.length < 6) {
+    badgeSize = MIN_SIZE_PERCENTAGE;
+  } else if (events.length < 11) {
+    badgeSize = MIN_SIZE_PERCENTAGE + 15;
+  }
 
   return (
     <Dropdown
@@ -44,12 +52,7 @@ const EventsBadge: React.FC<Props> = ({ events, totalEventsCount }: Props) => {
       }
     >
       <EventsCountBadgeWrapper>
-        <EventsCountBadge
-          size={
-            (events.length / totalEventsCount) * (100 - MIN_SIZE_PERCENTAGE) +
-            MIN_SIZE_PERCENTAGE
-          }
-        >
+        <EventsCountBadge size={badgeSize}>
           <span>{events.length}</span>
         </EventsCountBadge>
       </EventsCountBadgeWrapper>

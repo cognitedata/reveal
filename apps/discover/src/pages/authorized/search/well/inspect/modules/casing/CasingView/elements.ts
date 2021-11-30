@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro';
 
+import { SubTitleText } from 'components/emptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const CasingViewListWrapper = styled.div`
@@ -58,6 +59,7 @@ export const BodyWrapper = styled(Flex)`
   height: calc(100% - 72px);
   padding: ${sizes.normal};
   gap: ${sizes.small};
+  justify-content: center;
   > * h6 {
     display: none;
   }
@@ -102,6 +104,7 @@ export const BodyColumnSubHeader = styled(Flex)`
 export const BodyColumnBody = styled(Flex)`
   height: calc(100% - 32px);
   padding: ${sizes.normal};
+  padding-bottom: 24px;
   position: relative;
   > * h6 {
     display: none;
@@ -225,4 +228,30 @@ export const EventsCodeCount = styled(Flex)`
 export const EmptyStateWrapper = styled(Flex)`
   white-space: break-spaces;
   max-width: 148px;
+  & ${SubTitleText} {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: -0.004em;
+    padding-top: 0;
+    justify-content: center;
+  }
+`;
+
+export const EmptyCasingsStateWrapper = styled(Flex)`
+  white-space: break-spaces;
+  max-width: 200px;
+  & ${SubTitleText} {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: -0.004em;
+    padding-top: 0;
+  }
 `;

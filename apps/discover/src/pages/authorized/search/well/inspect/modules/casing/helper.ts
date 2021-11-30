@@ -12,6 +12,7 @@ import { CasingData, FormattedCasings } from './interfaces';
 
 const SCALE_BLOCK_HEIGHT = 40;
 const SCALE_PADDING = 16;
+const SCALE_BOTTOM_PADDING = 24;
 
 /**
  * This returns string depth in proper number format
@@ -138,7 +139,7 @@ export const getScaleBlocks = (
 ) => {
   const count = Math.floor((height - SCALE_PADDING) / SCALE_BLOCK_HEIGHT);
   const distance = maxDepth - minDepth;
-  const pixelDepth = distance / (height - SCALE_PADDING * 2);
+  const pixelDepth = distance / (height - SCALE_PADDING - SCALE_BOTTOM_PADDING);
   return [...Array(count).keys()].map((row) =>
     Number(
       (

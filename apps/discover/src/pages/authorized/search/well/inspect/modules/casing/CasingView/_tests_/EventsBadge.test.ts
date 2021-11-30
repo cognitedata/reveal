@@ -13,7 +13,6 @@ const props = {
     { nptCode: 'CODE5' },
     { nptCode: 'CODE6' },
   ],
-  totalEventsCount: 10,
 };
 
 describe('Events Badge', () => {

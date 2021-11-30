@@ -30,13 +30,13 @@ describe('Depth Column', () => {
   it(`should display depth values`, async () => {
     await defaultTestInit();
     expect(
-      await screen.findByText(casingViewProps.scaleBlocks[0])
+      await screen.findByText(`${casingViewProps.scaleBlocks[0]}.00`)
     ).toBeInTheDocument();
     expect(
-      await screen.findByText(casingViewProps.scaleBlocks[1])
+      await screen.findByText(`${casingViewProps.scaleBlocks[1]}.00`)
     ).toBeInTheDocument();
     expect(
-      await screen.findByText(casingViewProps.scaleBlocks[2])
+      await screen.findByText(`${casingViewProps.scaleBlocks[2]}.00`)
     ).toBeInTheDocument();
   });
 });

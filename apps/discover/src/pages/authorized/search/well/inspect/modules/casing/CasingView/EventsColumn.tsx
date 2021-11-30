@@ -51,10 +51,7 @@ const EventsColumn: React.FC<Props> = ({
           return (
             <ScaleLine key={row}>
               {!isEmpty(blockEvents) ? (
-                <EventsBadge
-                  events={blockEvents}
-                  totalEventsCount={events.length}
-                />
+                <EventsBadge events={blockEvents} />
               ) : null}
             </ScaleLine>
           );
@@ -62,7 +59,7 @@ const EventsColumn: React.FC<Props> = ({
 
         {!isEmpty(lastEvents) ? (
           <LastScaleBlock>
-            <EventsBadge events={lastEvents} totalEventsCount={events.length} />
+            <EventsBadge events={lastEvents} />
           </LastScaleBlock>
         ) : null}
       </>
@@ -78,7 +75,7 @@ const EventsColumn: React.FC<Props> = ({
           <EmptyStateWrapper>
             <EmptyState
               isLoading={isEventsLoading}
-              loadingSubtitle={LOADING_TEXT}
+              loadingSubtitle={isEventsLoading ? LOADING_TEXT : ''}
               emptySubtitle={EMPTY_STATE_TEXT}
             />
           </EmptyStateWrapper>

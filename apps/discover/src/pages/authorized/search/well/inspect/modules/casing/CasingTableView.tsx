@@ -28,7 +28,7 @@ const wellsTableOptions = {
   hideScrollbars: true,
 };
 
-const CASINGS_EMPTY_TITLE = 'We couldn’t find anything based on your search';
+const CASINGS_EMPTY_TITLE = 'We couldn’t find anything based on your search';
 const CASINGS_EMPTY_SUB_TITLE = 'Please, change your search parameters';
 const SCROLL_MARGIN = 15;
 

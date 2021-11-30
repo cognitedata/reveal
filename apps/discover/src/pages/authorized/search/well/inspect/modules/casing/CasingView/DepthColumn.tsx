@@ -32,7 +32,7 @@ const DepthColumn: React.FC<Props> = ({ scaleBlocks, unit }: Props) => {
         <CasingScale>
           {scaleBlocks.map((row) => (
             <ScaleLine key={row}>
-              <ScaleLineDepth>{row}</ScaleLineDepth>
+              <ScaleLineDepth>{row.toFixed(2)}</ScaleLineDepth>
             </ScaleLine>
           ))}
         </CasingScale>
