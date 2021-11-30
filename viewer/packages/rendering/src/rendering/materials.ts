@@ -114,7 +114,7 @@ export function createMaterials(
     // TODO we can avoid drawing DoubleSide if we flip the ring in Rust and adjust the angle and
     // arc_angle accordingly
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL1
+    glslVersion: THREE.GLSL3
   });
 
   const coneMaterial = new THREE.ShaderMaterial({

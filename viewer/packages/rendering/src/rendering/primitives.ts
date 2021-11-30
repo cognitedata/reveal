@@ -335,10 +335,9 @@ function createGeneralCylinders(
   setAttributes(geometry, filteredCollection, generalCylinderAttributes, mesh);
   setBoundsFromBox(geometry, bounds);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Primitives (GeneralCylinders)`;
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-  mesh.onBeforeRender = (_1, _2, camera: THREE.Camera) => {
     (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
     (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
     (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
@@ -346,6 +345,8 @@ function createGeneralCylinders(
     (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
     (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
   };
+
+  mesh.name = `Primitives (GeneralCylinders)`;
 
   return mesh;
 }
@@ -371,10 +372,9 @@ function createGeneralRings(
   setAttributes(geometry, filteredCollection, generalRingAttributes, mesh);
   setBoundsFromInstanceMatrices(geometry);
 
-  mesh.onBeforeRender = () => updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-  mesh.name = `Primitives (GeneralRings)`;
+  mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
+    updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-  mesh.onBeforeRender = (_1, _2, camera: THREE.Camera) => {
     (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
     (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
     (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
@@ -382,6 +382,8 @@ function createGeneralRings(
     (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
     (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
   };
+
+  mesh.name = `Primitives (GeneralRings)`;
 
   return mesh;
 }

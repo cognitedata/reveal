@@ -5,32 +5,10 @@ import * as THREE from 'three';
 
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import assert from 'assert';
-import { assertNever, DynamicDefragmentedBuffer } from '@reveal/utilities';
+import { assertNever, DynamicDefragmentedBuffer, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
 import { Materials } from './rendering/materials';
 
-type TypedArray =
-  | Int8Array
-  | Uint8Array
-  | Uint8ClampedArray
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Float32Array
-  | Float64Array;
-
-type TypedArrayConstructor =
-  | Int8ArrayConstructor
-  | Uint8ArrayConstructor
-  | Int16ArrayConstructor
-  | Uint16ArrayConstructor
-  | Int32ArrayConstructor
-  | Uint32ArrayConstructor
-  | Uint8ClampedArrayConstructor
-  | Float32ArrayConstructor
-  | Float64ArrayConstructor;
-
-export class PrimitiveBatchingManager {
+export class GeometryBatchingManager {
   private readonly _primtivesGroup: THREE.Group;
 
   private readonly _materials: Materials;

@@ -22,7 +22,7 @@ import {
   ConsumedSector
 } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
-import { PrimitiveBatchingManager } from '../PrimitiveBatchingManager';
+import { GeometryBatchingManager } from '../GeometryBatchingManager';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
@@ -41,7 +41,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
-  private readonly _primitiveBatchingManager: PrimitiveBatchingManager;
+  private readonly _primitiveBatchingManager: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -59,7 +59,7 @@ export class CadNode extends THREE.Object3D {
     this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
-    this._primitiveBatchingManager = new PrimitiveBatchingManager(batchedPrimitivesMeshGroup, materials);
+    this._primitiveBatchingManager = new GeometryBatchingManager(batchedPrimitivesMeshGroup, materials);
 
     const rootSector = new RootSectorNode(model);
 
