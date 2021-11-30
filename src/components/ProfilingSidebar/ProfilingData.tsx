@@ -45,8 +45,12 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     [getColumnType, selectedColumn]
   );
 
-  const columnProfilingData: Partial<Column> = selectedColumn?.key
-    ? data.columns[selectedColumn?.key]
+  const {
+    count = 0,
+    nullCount = 0,
+    ...columnProfilingData
+  }: Partial<Column> = selectedColumn?.key
+    ? data.columns?.[selectedColumn?.key] ?? {}
     : {};
 
   return (
@@ -54,31 +58,48 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
       {isLoading && <Loader />}
       {isError && <Message message="Profiling service error" type="error" />}
       {columnType === 'Text' && (
-        <ColumnString data={columnProfilingData.string ?? null} />
+        <ColumnString
+          count={count}
+          nullCount={nullCount}
+          data={columnProfilingData.string ?? null}
+        />
       )}
       {columnType === 'Boolean' && (
-        <ColumnBoolean data={columnProfilingData.boolean ?? null} />
+        <ColumnBoolean
+          count={count}
+          nullCount={nullCount}
+          data={columnProfilingData.boolean ?? null}
+        />
       )}
       {columnType === 'Number' && (
-        <ColumnNumber data={columnProfilingData.number ?? null} />
+        <ColumnNumber
+          count={count}
+          nullCount={nullCount}
+          data={columnProfilingData.number ?? null}
+        />
       )}
     </StyledProfilingData>
   );
 };
 
-const ColumnString = ({ data }: { data: StringProfile | null }) => {
+type PropsString = {
+  count: number;
+  nullCount: number;
+  data: StringProfile | null;
+};
+const ColumnString = ({ count, nullCount, data }: PropsString) => {
   if (!data) return <span />;
   console.log('STRING COLUMN');
   console.log(data);
   return (
     <StyledProfilingDataWrapper>
-      <Section.Frequency />
+      <Section.Frequency allCount={count} counts={data.valueCounts} />
       <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
       <Section title="Non-empty" isHalf>
-        TODO
+        {count}
       </Section>
       <Section title="Empty" isHalf>
-        TODO
+        {nullCount}
       </Section>
       <Section title="Char length min" isHalf>
         {data.lengthRange[0] ?? NO_DATA}
@@ -91,32 +112,49 @@ const ColumnString = ({ data }: { data: StringProfile | null }) => {
   );
 };
 
-const ColumnBoolean = ({ data }: { data: BooleanProfile | null }) => {
+type PropsBoolean = {
+  count: number;
+  nullCount: number;
+  data: BooleanProfile | null;
+};
+const ColumnBoolean = ({ count, nullCount, data }: PropsBoolean) => {
   if (!data) return <span />;
   console.log('BOOLEAN COLUMN');
   console.log(data);
+  const { trueCount = 0 } = data;
+  const falseCount = count - trueCount - nullCount;
   return (
     <StyledProfilingDataWrapper>
-      <Section.Frequency />
-      <Section title="Distinct values">123</Section>
+      <Section.Frequency
+        allCount={count}
+        counts={[
+          ['True', 'False'],
+          [data.trueCount, falseCount],
+        ]}
+      />
       <Section title="True" isHalf>
-        {Number(data.trueCount)}
+        {Number(trueCount)}
       </Section>
       <Section title="False" isHalf>
-        TODO
+        {falseCount}
       </Section>
       <Section title="Non-empty" isHalf>
-        TODO
+        {count}
       </Section>
       <Section title="Empty" isHalf>
-        TODO
+        {nullCount}
       </Section>
       <Section.Distribution />
     </StyledProfilingDataWrapper>
   );
 };
 
-const ColumnNumber = ({ data }: { data: NumberProfile | null }) => {
+type PropsNumber = {
+  count: number;
+  nullCount: number;
+  data: NumberProfile | null;
+};
+const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
   if (!data) return <span />;
   console.log('NUMBER COLUMN');
   console.log(data);
@@ -125,10 +163,10 @@ const ColumnNumber = ({ data }: { data: NumberProfile | null }) => {
       <Section.Distribution histogram={data.histogram} />
       <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
       <Section title="Non-empty" isHalf>
-        TODO
+        {count}
       </Section>
       <Section title="Empty" isHalf>
-        TODO
+        {nullCount}
       </Section>
       <Section title="Min" isHalf>
         {data.valueRange[0]}
