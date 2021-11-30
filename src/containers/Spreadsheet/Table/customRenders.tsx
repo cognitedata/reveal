@@ -3,37 +3,10 @@ import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext, useActiveTableContext } from 'contexts';
-import { CustomIcon } from 'components/CustomIcon';
-import { Column, useRawProfile } from 'hooks/sdk-queries';
-
-const TYPE_ICON_WIDTH = 50;
+import { RawExplorerContext } from 'contexts';
+import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
 
 const Comp = ({ item }: any) => item;
-
-function ColumnIcon({ title }: { title: string }) {
-  const { database, table } = useActiveTableContext();
-  const { data = { columns: {} as Record<string, Column> } } = useRawProfile({
-    database,
-    table,
-    limit: 1000,
-  });
-
-  const column = data.columns[title];
-
-  if (!column) {
-    return null;
-  }
-  return (
-    <>
-      {!!column.number && <CustomIcon icon="NumberIcon" />}
-      {!!column.string && <CustomIcon icon="StringIcon" />}
-      {!!column.boolean && <CustomIcon icon="BooleanIcon" />}
-      {!!column.object && <>ICON_TODO</>}
-      {!!column.vector && <>ICON_TODO</>}
-    </>
-  );
-}
 
 type Props = {
   cells: React.ReactElement[];
@@ -136,7 +109,7 @@ const HeaderCell = styled(Body).attrs(
 
 const HeaderTitle = styled(Body)<{ width: number }>`
   width: ${({ width }) =>
-    width > TYPE_ICON_WIDTH ? width - TYPE_ICON_WIDTH : width}px;
+    width > COLUMN_ICON_WIDTH ? width - COLUMN_ICON_WIDTH : width}px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
