@@ -57,7 +57,7 @@ const Tab = styled.li<{ $active?: boolean }>`
 const LeftIcon = styled.span`
   flex-grow: 0;
   flex-shrink: 2;
-  flex-basis: 30px;
+  flex-basis: 20px;
   vertical-align: middle;
   white-space: nowrap;
   overflow: hidden;
@@ -71,6 +71,7 @@ const RightIcon = styled.span`
 `;
 
 const TabContent = styled.span`
+  flex-grow: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

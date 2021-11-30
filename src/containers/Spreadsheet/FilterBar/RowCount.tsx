@@ -1,11 +1,14 @@
 import React from 'react';
 import { Icon, Colors } from '@cognite/cogs.js';
 import { useActiveTableContext } from 'contexts';
-import { useTotalRowCount } from 'hooks/sdk-queries';
+import { useRawProfile } from 'hooks/sdk-queries';
 
 export default function RowCount() {
   const { database, table } = useActiveTableContext();
-  const { data: totalRows, isFetched } = useTotalRowCount({ database, table });
+  const { data = { rowCount: undefined }, isFetched } = useRawProfile({
+    database,
+    table,
+  });
 
   if (!isFetched) {
     return (
@@ -19,13 +22,13 @@ export default function RowCount() {
     );
   }
 
-  if (!Number.isFinite(totalRows)) {
+  if (!Number.isFinite(data.rowCount)) {
     return null;
   }
 
   return (
     <>
-      {totalRows} row{totalRows! === 1 ? '' : 's'}
+      {data.rowCount} row{data.rowCount! === 1 ? '' : 's'}
     </>
   );
 }
