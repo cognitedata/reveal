@@ -6,15 +6,16 @@ import { Button, Colors, Detail, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
-import { getContainer } from 'utils/utils';
+import { getContainer, trimFileExtension } from 'utils/utils';
 import { useCSVUpload } from 'hooks/csv-upload';
 import { useActiveTableContext } from 'contexts';
 
 import { CustomIcon } from 'components/CustomIcon';
 import Dragger from 'components/Dragger';
 import Modal from 'components/Modal/Modal';
-import { ModalProgress } from './ModalProgress';
-import { ModalChooseKey } from './ModalChooseKey';
+import CreateTableModalUploadStep from 'components/CreateTableModal/CreateTableModalUploadStep';
+import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTableModalPrimaryKeyStep';
+import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -22,19 +23,20 @@ interface UploadCsvProps {
 
 const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const [file, setFile] = useState<File | undefined>();
-  const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
+  const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
+  const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
+    useState<PrimaryKeyMethod>();
 
   const { database, table } = useActiveTableContext();
   const {
-    parsePercentage,
     uploadPercentage,
-    uploadSize,
     columns,
     isUpload,
     isUploadCompleted,
+    isUploadFailed,
     isParsing,
     onConfirmUpload,
-  } = useCSVUpload(file, selectedKeyIndex);
+  } = useCSVUpload(file, selectedColumnIndex);
 
   const onCancelUpload = () => {
     if (file && isParsing && !isUploadCompleted) {
@@ -50,6 +52,12 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     if (isUploadCompleted) setCSVModalVisible(false, true);
     else onConfirmUpload(database, table);
   };
+
+  const selectPrimaryKeyMethod =
+    (method: PrimaryKeyMethod): (() => void) =>
+    (): void => {
+      setSelectedPrimaryKeyMethod(method);
+    };
 
   const fileProps = {
     name: 'file',
@@ -69,9 +77,12 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   };
 
   const okText = isUploadCompleted ? 'OK' : 'Add';
+  const isStepAddFile = !file;
+  const isStepChooseColumn = file && !(isUpload || isUploadCompleted);
+  const isStepUpload = file && (isUpload || isUploadCompleted);
 
   const renderModalContent = () => {
-    if (!file)
+    if (isStepAddFile)
       return (
         <Dragger {...fileProps}>
           <CustomIcon icon="DocumentIcon" />
@@ -81,23 +92,28 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
           </StyledModalDetail>
         </Dragger>
       );
-    if (isUpload || isUploadCompleted) {
+    if (isStepUpload)
       return (
-        <ModalProgress
-          isUploadFinished={isUploadCompleted}
-          parsePercentage={parsePercentage}
-          uploadPercentage={uploadPercentage}
-          uploadSize={uploadSize}
+        <CreateTableModalUploadStep
+          fileName={file?.name ? trimFileExtension(file.name) : ''}
+          isUploadFailed={isUploadFailed}
+          isUploadCompleted={isUploadCompleted}
+          onCancel={onCancelUpload}
+          progression={uploadPercentage}
         />
       );
-    }
-    return (
-      <ModalChooseKey
-        columns={columns}
-        selectedKeyIndex={selectedKeyIndex}
-        setSelectedKeyIndex={setSelectedKeyIndex}
-      />
-    );
+    if (isStepChooseColumn)
+      return (
+        <CreateTableModalPrimaryKeyStep
+          columns={columns}
+          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+          selectedColumnIndex={selectedColumnIndex}
+          selectColumnAsPrimaryKey={(index: number) =>
+            setSelectedColumnIndex(index)
+          }
+        />
+      );
   };
 
   const footer = (
