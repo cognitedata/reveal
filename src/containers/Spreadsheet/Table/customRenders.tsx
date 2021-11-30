@@ -3,37 +3,10 @@ import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext, useActiveTableContext } from 'contexts';
-import { CustomIcon } from 'components/CustomIcon';
-import { Column, useRawProfile } from 'hooks/sdk-queries';
-
-const TYPE_ICON_WIDTH = 50;
+import { RawExplorerContext } from 'contexts';
+import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
 
 const Comp = ({ item }: any) => item;
-
-function ColumnIcon({ title }: { title: string }) {
-  const { database, table } = useActiveTableContext();
-  const { data = { columns: {} as Record<string, Column> } } = useRawProfile({
-    database,
-    table,
-    limit: 1000,
-  });
-
-  const column = data.columns[title];
-
-  if (!column) {
-    return null;
-  }
-  return (
-    <>
-      {!!column.number && <CustomIcon icon="NumberIcon" />}
-      {!!column.string && <CustomIcon icon="StringIcon" />}
-      {!!column.boolean && <CustomIcon icon="BooleanIcon" />}
-      {!!column.object && <>ICON_TODO</>}
-      {!!column.vector && <>ICON_TODO</>}
-    </>
-  );
-}
 
 type Props = {
   cells: React.ReactElement[];
@@ -42,12 +15,12 @@ type Props = {
 
 export const HeaderRender = (props: Props): JSX.Element => {
   const { cells, columns } = props;
-  const { setIsProfilingSidebarOpen, setSelectedColumn } =
+  const { setIsProfilingSidebarOpen, selectedColumnKey, setSelectedColumnKey } =
     useContext(RawExplorerContext);
 
   const onColumnClick = (column: ColumnShape) => {
     setIsProfilingSidebarOpen(true);
-    setSelectedColumn(column);
+    setSelectedColumnKey(column.dataKey);
   };
 
   return (
@@ -59,8 +32,14 @@ export const HeaderRender = (props: Props): JSX.Element => {
             !!child && child.props?.className === 'BaseTable__column-resizer'
         );
         const isIndexColumn = index === 0;
+        const isSelected = selectedColumnKey === column.dataKey;
         const child = !isIndexColumn ? (
-          <HeaderCell level={3} strong onClick={() => onColumnClick(column)}>
+          <HeaderCell
+            level={3}
+            strong
+            isSelected={isSelected}
+            onClick={() => onColumnClick(column)}
+          >
             {column.title && <ColumnIcon title={column.title} />}
             <Tooltip content={column.title}>
               <HeaderTitle level={3} strong width={cell.props.style.width}>
@@ -108,7 +87,11 @@ const EmptyTable = styled.div`
   }
 `;
 
-const HeaderCell = styled(Body)`
+const HeaderCell = styled(Body).attrs(
+  ({ isSelected }: { isSelected: boolean }) => {
+    if (isSelected) return { style: { backgroundColor: '#F2F2F5' } };
+  }
+)<{ isSelected: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
@@ -126,7 +109,7 @@ const HeaderCell = styled(Body)`
 
 const HeaderTitle = styled(Body)<{ width: number }>`
   width: ${({ width }) =>
-    width > TYPE_ICON_WIDTH ? width - TYPE_ICON_WIDTH : width}px;
+    width > COLUMN_ICON_WIDTH ? width - COLUMN_ICON_WIDTH : width}px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
