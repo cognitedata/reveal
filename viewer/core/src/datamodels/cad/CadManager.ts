@@ -73,7 +73,7 @@ export class CadManager {
       }
 
       if (sector.primitives && sector.primitives.length > 0 && sector.levelOfDetail === LevelOfDetail.Detailed) {
-        cadModel.batchPrimtives(sector.primitives, sector.metadata.id);
+        cadModel.batchGeometry(sector.primitives, sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;

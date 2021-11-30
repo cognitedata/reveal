@@ -41,7 +41,7 @@ export class CadNode extends THREE.Object3D {
   private readonly _sectorScene: SectorScene;
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
-  private readonly _primitiveBatchingManager: GeometryBatchingManager;
+  private readonly _geometryBatchingManager: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -53,18 +53,18 @@ export class CadNode extends THREE.Object3D {
     const instancedMeshGroup = new THREE.Group();
     instancedMeshGroup.name = 'InstancedMeshes';
 
-    const batchedPrimitivesMeshGroup = new THREE.Group();
-    batchedPrimitivesMeshGroup.name = 'Batched Primitives';
+    const batchedGeometryMeshGroup = new THREE.Group();
+    batchedGeometryMeshGroup.name = 'Batched Geometry';
 
     this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
-    this._primitiveBatchingManager = new GeometryBatchingManager(batchedPrimitivesMeshGroup, materials);
+    this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
 
     const rootSector = new RootSectorNode(model);
 
     rootSector.add(instancedMeshGroup);
-    rootSector.add(batchedPrimitivesMeshGroup);
+    rootSector.add(batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
@@ -180,7 +180,7 @@ export class CadNode extends THREE.Object3D {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 
-  public batchPrimtives(
+  public batchGeometry(
     primitives: [
       type: RevealGeometryCollectionType,
       geometryBuffer: THREE.BufferGeometry,
@@ -188,11 +188,11 @@ export class CadNode extends THREE.Object3D {
     ][],
     sectorId: number
   ) {
-    this._primitiveBatchingManager.batchPrimitives(primitives, sectorId);
+    this._geometryBatchingManager.batchPrimitives(primitives, sectorId);
   }
 
   public removePrimitives(sectorId: number) {
-    this._primitiveBatchingManager.removeSectorBatches(sectorId);
+    this._geometryBatchingManager.removeSectorBatches(sectorId);
   }
 
   public clearCache(): void {
