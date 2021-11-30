@@ -4,19 +4,20 @@ import { StyledLabel } from 'styles/StyledForm';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { NotificationDialog } from 'components/extpipe/NotificationDialog';
 import { Extpipe } from 'model/Extpipe';
+import { Section } from 'components/extpipe/Section';
 
-type NotificationSettingsProps = {
+type NotificationSectionProps = {
   canEdit: boolean;
   extpipe: Extpipe;
 };
 
-export const NotificationSettings: FunctionComponent<NotificationSettingsProps> = ({
+export const NotificationSection: FunctionComponent<NotificationSectionProps> = ({
   canEdit,
   extpipe,
-}: PropsWithChildren<NotificationSettingsProps>) => {
+}: PropsWithChildren<NotificationSectionProps>) => {
   const [open, setOpen] = useState(false);
   return (
-    <>
+    <Section icon="BellNotification" title="Notifications">
       <FieldWrapper>
         <StyledLabel htmlFor="nothing">Notifications</StyledLabel>
       </FieldWrapper>
@@ -30,6 +31,6 @@ export const NotificationSettings: FunctionComponent<NotificationSettingsProps> 
         isOpen={open}
         close={() => setOpen(false)}
       />
-    </>
+    </Section>
   );
 };

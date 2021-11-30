@@ -11,7 +11,7 @@ import { Extpipe } from 'model/Extpipe';
 
 const Hr = styled.hr`
   border: 0;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ddd;
   margin: 1.5rem 0;
 `;
 

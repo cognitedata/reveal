@@ -14,7 +14,7 @@ import { Column, ContactsSection } from 'components/extpipe/ContactsSection';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
-import { NotificationSettings } from 'components/extpipe/NotificationSettings';
+import { NotificationSection } from 'components/extpipe/NotificationSection';
 
 interface ExtpipeInformationProps {
   canEdit: boolean;
@@ -85,8 +85,8 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           label={TableHeadings.SCHEDULE}
           canEdit={canEdit}
         />
-        <NotificationSettings extpipe={extpipe} canEdit={canEdit} />
       </Section>
+      <NotificationSection extpipe={extpipe} canEdit={canEdit} />
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
       <MetaDataSection canEdit={canEdit} />
