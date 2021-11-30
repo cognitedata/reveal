@@ -1,15 +1,43 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+import { Colors, Loader } from '@cognite/cogs.js';
 
+import { useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import { useColumnType } from 'hooks/column-type';
+import {
+  useRawProfile,
+  Column,
+  StringProfile,
+  NumberProfile,
+  BooleanProfile,
+} from 'hooks/sdk-queries';
 
+import Message from 'components/Message/Message';
 import { Section } from './Section';
+
+const NO_DATA = '—';
 
 type Props = { selectedColumn: ColumnType | undefined };
 
 export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
+  const { database, table } = useActiveTableContext();
+  const fullProfile = useRawProfile({
+    database,
+    table,
+  });
+  const limitProfile = useRawProfile({
+    database,
+    table,
+    limit: 1000,
+  });
+
+  const {
+    data = { columns: {} as Record<string, Column> },
+    isLoading,
+    isError,
+  } = fullProfile.isFetched ? fullProfile : limitProfile;
+
   const { getColumnType } = useColumnType();
 
   const columnType = useMemo(
@@ -17,105 +45,104 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     [getColumnType, selectedColumn]
   );
 
+  const columnProfilingData: Partial<Column> = selectedColumn?.key
+    ? data.columns[selectedColumn?.key]
+    : {};
+
   return (
     <StyledProfilingData>
-      {columnType === 'Text' && <ColumnString />}
-      {columnType === 'DateTime' && <ColumnDateTime />}
-      {columnType === 'Boolean' && <ColumnBoolean />}
-      {columnType === 'Number' && <ColumnNumber />}
+      {isLoading && <Loader />}
+      {isError && <Message message="Profiling service error" type="error" />}
+      {columnType === 'Text' && (
+        <ColumnString data={columnProfilingData.string ?? null} />
+      )}
+      {columnType === 'Boolean' && (
+        <ColumnBoolean data={columnProfilingData.boolean ?? null} />
+      )}
+      {columnType === 'Number' && (
+        <ColumnNumber data={columnProfilingData.number ?? null} />
+      )}
     </StyledProfilingData>
   );
 };
 
-const ColumnString = () => {
+const ColumnString = ({ data }: { data: StringProfile | null }) => {
+  if (!data) return <span />;
+  console.log('STRING COLUMN');
+  console.log(data);
   return (
     <StyledProfilingDataWrapper>
       <Section.Frequency />
-      <Section title="Distinct values">123</Section>
+      <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
       <Section title="Non-empty" isHalf>
-        12
+        TODO
       </Section>
       <Section title="Empty" isHalf>
-        23
+        TODO
       </Section>
       <Section title="Char length min" isHalf>
-        1
+        {data.lengthRange[0] ?? NO_DATA}
       </Section>
       <Section title="Char length max" isHalf>
-        11
+        {data.lengthRange[1] ?? NO_DATA}
       </Section>
       <Section.Distribution />
     </StyledProfilingDataWrapper>
   );
 };
 
-const ColumnDateTime = () => {
-  return (
-    <StyledProfilingDataWrapper>
-      <Section.Distribution />
-      <Section title="Distinct values">123</Section>
-      <Section title="Non-empty" isHalf>
-        12
-      </Section>
-      <Section title="Empty" isHalf>
-        23
-      </Section>
-      <Section title="First date" isHalf>
-        01.04.2013
-      </Section>
-      <Section title="Last date" isHalf>
-        07.04.2013
-      </Section>
-    </StyledProfilingDataWrapper>
-  );
-};
-
-const ColumnBoolean = () => {
+const ColumnBoolean = ({ data }: { data: BooleanProfile | null }) => {
+  if (!data) return <span />;
+  console.log('BOOLEAN COLUMN');
+  console.log(data);
   return (
     <StyledProfilingDataWrapper>
       <Section.Frequency />
       <Section title="Distinct values">123</Section>
       <Section title="True" isHalf>
-        123
+        {Number(data.trueCount)}
       </Section>
       <Section title="False" isHalf>
-        321
+        TODO
       </Section>
       <Section title="Non-empty" isHalf>
-        12
+        TODO
       </Section>
       <Section title="Empty" isHalf>
-        23
+        TODO
       </Section>
       <Section.Distribution />
     </StyledProfilingDataWrapper>
   );
 };
 
-const ColumnNumber = () => {
+const ColumnNumber = ({ data }: { data: NumberProfile | null }) => {
+  if (!data) return <span />;
+  console.log('NUMBER COLUMN');
+  console.log(data);
   return (
     <StyledProfilingDataWrapper>
       <Section.Distribution />
-      <Section title="Distinct values">123</Section>
+      <Section title="Distinct values">{data.distinctCount ?? NO_DATA}</Section>
       <Section title="Non-empty" isHalf>
-        12
+        TODO
       </Section>
       <Section title="Empty" isHalf>
-        23
+        TODO
       </Section>
       <Section title="Min" isHalf>
-        123
+        {data.valueRange[0]}
       </Section>
       <Section title="Max" isHalf>
-        321
+        {data.valueRange[1]}
       </Section>
       <Section title="Mean" isHalf>
-        167
+        TODO
       </Section>
       <Section title="Median" isHalf>
-        189
+        TODO
       </Section>
-      <Section title="Standard deviation">2.2</Section>
+      <Section title="Standard deviation">TODO</Section>
     </StyledProfilingDataWrapper>
   );
 };
