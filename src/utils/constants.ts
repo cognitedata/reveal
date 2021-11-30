@@ -10,7 +10,7 @@ export const UPLOAD_MODAL_WIDTH = 500;
 
 export const BREADCRUMBS_HEIGHT = 50;
 export const TOPBAR_NAVIGATION_HEIGHT = 56;
-export const TAB_HEIGHT = 42;
+export const TAB_HEIGHT = 49;
 export const FILTER_BAR_HEIGHT = 68;
 
 export const TABLE_ROW_HEIGHT = 36;
