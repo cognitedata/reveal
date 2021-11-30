@@ -20,7 +20,7 @@ import {
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarPosition, DefaultToolbar } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
-// import iconSet19 from './icons/Cognite_Icon_Set-19.png';
+import iconSet19 from './icons/Cognite_Icon_Set-19.png';
 import iconSet30 from './icons/Cognite_Icon_Set-30.png';
 import iconSet32 from './icons/Cognite_Icon_Set-32.png';
 import iconSet42 from './icons/Cognite_Icon_Set-42.png';
@@ -191,7 +191,7 @@ export function Toolbar() {
       const defaultToolbar = new DefaultToolbar(viewer);
 
       const toolbar = defaultToolbar.getToolbar();
-      // toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
+      toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
       toolbar.addToolbarItem('Debug Camera', iconSet30, callbackMsg);
       toolbar.addToolbarItem('Timeline', iconSet32, callbackMsg);
       toolbar.addToolbarItem('Explode View', iconSet42, callbackMsg);
