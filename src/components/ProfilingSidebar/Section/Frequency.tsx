@@ -7,8 +7,9 @@ import { Section } from '.';
 type Props = {
   allCount: number;
   counts?: [string[], number[]];
+  title?: string;
 };
-export const Frequency = ({ allCount, counts }: Props): JSX.Element => {
+export const Frequency = ({ allCount, counts, title }: Props): JSX.Element => {
   const fixedCounts = counts
     ? zip(...counts)
         .map(([value, count]) => ({
@@ -27,7 +28,7 @@ export const Frequency = ({ allCount, counts }: Props): JSX.Element => {
     : [];
 
   return (
-    <Section title="Frequency analysis">
+    <Section title={title ?? 'Frequency analysis'}>
       <FrequencyStats allCount={allCount} counts={fixedCounts} />
     </Section>
   );

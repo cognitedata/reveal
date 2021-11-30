@@ -107,7 +107,10 @@ const ColumnString = ({ count, nullCount, data }: PropsString) => {
       <Section title="Char length max" isHalf>
         {data.lengthRange[1] ?? NO_DATA}
       </Section>
-      <Section.Distribution histogram={data.lengthHistogram} />
+      <Section.Distribution
+        histogram={data.lengthHistogram}
+        title="Char length distribution"
+      />
     </StyledProfilingDataWrapper>
   );
 };

@@ -4,11 +4,11 @@ import { zip } from 'lodash';
 import { Graph } from 'containers/Profiling/Distribution';
 import { Section } from '.';
 
-export const Distribution = ({
-  histogram,
-}: {
+type Props = {
   histogram?: [number[], number[]];
-}): JSX.Element => {
+  title?: string;
+};
+export const Distribution = ({ histogram, title }: Props): JSX.Element => {
   const distribution = zip(...(histogram ?? [])).map(([length, count]) => ({
     value: length?.toString() as string,
     count: count as number,
@@ -16,7 +16,7 @@ export const Distribution = ({
 
   if (histogram)
     return (
-      <Section title="Distribution">
+      <Section title={title ?? 'Distribution'}>
         <Graph
           distribution={distribution}
           height={200}
