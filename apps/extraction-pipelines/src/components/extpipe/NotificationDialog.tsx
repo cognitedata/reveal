@@ -6,6 +6,8 @@ import { DivFlex } from 'styles/flex/StyledFlex';
 import { IconHeading } from 'styles/StyledHeadings';
 import styled from 'styled-components';
 import { StyledLabel } from 'styles/StyledForm';
+import { OptionTypeBase } from 'react-select';
+import { Extpipe } from 'model/Extpipe';
 
 const Hr = styled.hr`
   border: 0;
@@ -15,18 +17,29 @@ const Hr = styled.hr`
 
 type NotificationDialogProps = {
   isOpen: boolean;
+  extpipe: Extpipe;
   close: () => void;
 };
 export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   isOpen,
+  extpipe,
   close,
 }) => {
+  const [value, setValue] = useState(
+    extpipe.notificationConfig != null
+      ? extpipe.notificationConfig.allowedNotSeenRangeInMinutes
+      : 0
+  );
   const [timeUnit, setTimeUnit] = useState('hours');
   const timeOptions = [
     { label: 'minutes', value: 'minutes' },
     { label: 'hours', value: 'hours' },
     { label: 'days', value: 'days' },
   ];
+  function onConfirm() {
+    console.log(`confirmed new setting = ${timeUnit}`);
+    close();
+  }
   return (
     <EditModal
       width={700}
@@ -47,16 +60,23 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       </StyledLabel>
       <DivFlex css="width: 250px" gap="0.5rem">
         <div css="flex: 1">
-          <Input fullWidth placeholder="3" id="time-amount-input" />
+          <Input
+            fullWidth
+            type="number"
+            placeholder="3"
+            id="time-amount-input"
+            value={value}
+            onChange={(e) => setValue(parseInt(e.target.value, 10))}
+          />
         </div>
         <div css="flex: 2">
           <Select
             fullWidth
             value={timeOptions.find((x) => x.value === timeUnit)!}
             options={timeOptions}
-            onChange={(v: { value: React.SetStateAction<string> }) =>
-              setTimeUnit(v.value)
-            }
+            onChange={(option: OptionTypeBase) => {
+              setTimeUnit(option.value);
+            }}
           />
         </div>
       </DivFlex>
@@ -65,7 +85,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
         <Button type="ghost" onClick={close}>
           Cancel
         </Button>
-        <Button type="primary" onClick={() => {}}>
+        <Button type="primary" onClick={onConfirm}>
           Confirm
         </Button>
       </DivFlex>

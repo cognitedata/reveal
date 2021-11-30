@@ -85,7 +85,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           label={TableHeadings.SCHEDULE}
           canEdit={canEdit}
         />
-        <NotificationSettings canEdit={canEdit} />
+        <NotificationSettings extpipe={extpipe} canEdit={canEdit} />
       </Section>
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
