@@ -13,8 +13,8 @@ import { GeometryFilter } from '../../public/types';
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { MetricsLogger } from '@reveal/metrics';
 import { ModelIdentifier } from '@reveal/modeldata-api';
+import { MetricsLogger } from '@reveal/metrics';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
