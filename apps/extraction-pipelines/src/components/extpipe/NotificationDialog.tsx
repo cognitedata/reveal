@@ -1,8 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import { EditModal } from 'components/modals/EditModal';
-import { Button } from '@cognite/cogs.js';
+import { Button, Input, Select } from '@cognite/cogs.js';
+
 import { DivFlex } from 'styles/flex/StyledFlex';
-import { IconHeading, StyledTitle3 } from 'styles/StyledHeadings';
+import { IconHeading } from 'styles/StyledHeadings';
 import styled from 'styled-components';
 
 const Hr = styled.hr`
@@ -20,15 +21,35 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   close,
 }) => {
   return (
-    <EditModal title="Configure alerts" visible={isOpen} close={close}>
+    <EditModal
+      width={500}
+      title="Configure alerts"
+      visible={isOpen}
+      close={close}
+    >
       <IconHeading icon="BellNotification">Run alerts</IconHeading>
       <p>Get alerted when runs fail</p>
       <Hr />
-      <StyledTitle3>Last seen status</StyledTitle3>
+      <IconHeading icon="BellNotification">Last seen status</IconHeading>
       <p>
         Allows you to track if the extraction pipeline is down due to connection
         issues.{' '}
       </p>
+      <label htmlFor="time-amount-input">
+        Send an alert if there has been no activity for
+      </label>
+      <DivFlex>
+        <Input placeholder="3" css="flex:1" id="time-amount-input" />
+        <Select
+          css="flex:2"
+          value={{ label: 'hours', value: 'hours' }}
+          options={[
+            { label: 'minutes', value: 'minutes' },
+            { label: 'hours', value: 'hours' },
+            { label: 'days', value: 'days' },
+          ]}
+        />
+      </DivFlex>
       <Hr />
       <DivFlex justify="flex-end" css="gap: 0.5rem">
         <Button type="ghost" onClick={close}>
