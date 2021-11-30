@@ -71,6 +71,7 @@ export default function ProfileDetailsRow({
                   <Distribution
                     distribution={distribution}
                     isBottomAxisDisplayed
+                    isGridDisplayed
                   />
                 </div>
               </Flex>

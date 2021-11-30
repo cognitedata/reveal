@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { AxisBottom } from '@visx/axis';
+import { GridRows } from '@visx/grid';
 import { Bar, BarStack } from '@visx/shape';
 import { Group } from '@visx/group';
 import { scaleBand, scaleLinear } from '@visx/scale';
@@ -8,6 +9,7 @@ import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import { Colors } from '@cognite/cogs.js';
 
 const BOTTOM_AXIS_HEIGHT = 24;
+const NUMBER_OF_TICKS = 4;
 
 type Count = {
   value: string;
@@ -17,10 +19,12 @@ type Count = {
 type Props = {
   distribution: Count[];
   isBottomAxisDisplayed?: boolean;
+  isGridDisplayed?: boolean;
 };
 export default function Distribution({
   distribution,
   isBottomAxisDisplayed,
+  isGridDisplayed,
 }: Props) {
   return (
     <ParentSize>
@@ -28,6 +32,7 @@ export default function Distribution({
         <Graph
           distribution={distribution}
           isBottomAxisDisplayed={isBottomAxisDisplayed}
+          isGridDisplayed={isGridDisplayed}
           width={width}
           height={height}
         />
@@ -42,6 +47,7 @@ type GraphProps = {
   distribution: Count[];
   fill?: string;
   isBottomAxisDisplayed?: boolean;
+  isGridDisplayed?: boolean;
 };
 export function Graph({
   distribution,
@@ -49,8 +55,11 @@ export function Graph({
   height,
   fill = 'rgba(41, 114, 225, 1)',
   isBottomAxisDisplayed,
+  isGridDisplayed,
 }: GraphProps) {
+  const horizontalMargin = 0;
   const verticalMargin = 0;
+  const xMax = width - horizontalMargin;
   const yMax =
     height - verticalMargin - (isBottomAxisDisplayed ? BOTTOM_AXIS_HEIGHT : 0);
 
@@ -75,9 +84,36 @@ export function Graph({
     [distribution, yMax]
   );
 
+  const gridTickValues = useMemo(() => {
+    let min = 0;
+    let max = 0;
+    distribution.forEach(({ count }) => {
+      if (count < min) {
+        min = count;
+      } else if (count > max) {
+        max = count;
+      }
+    });
+    const interval = (max - min) / (NUMBER_OF_TICKS - 1);
+
+    return [min, min + interval, max - interval, max];
+  }, [distribution]);
+
   return (
     <svg width={width} height={height}>
       <Group top={verticalMargin / 2}>
+        {isGridDisplayed && (
+          <GridRows
+            scale={counts}
+            width={xMax}
+            height={yMax}
+            numTicks={5}
+            stroke={Colors['border-default'].hex()}
+            strokeDasharray="6,6"
+            strokeWidth={1}
+            tickValues={gridTickValues}
+          />
+        )}
         <BarStack
           data={distribution}
           keys={['count']}
@@ -103,19 +139,21 @@ export function Graph({
             )
           }
         </BarStack>
-        <AxisBottom
-          hideTicks
-          scale={categories}
-          tickLabelProps={() => ({
-            fill: Colors['text-primary'].hex(),
-            fontFamily: 'Inter',
-            fontSize: 12,
-            fontWeight: 500,
-            textAnchor: 'middle',
-          })}
-          strokeWidth={0}
-          top={yMax}
-        />
+        {isBottomAxisDisplayed && (
+          <AxisBottom
+            hideTicks
+            scale={categories}
+            tickLabelProps={() => ({
+              fill: Colors['text-primary'].hex(),
+              fontFamily: 'Inter',
+              fontSize: 12,
+              fontWeight: 500,
+              textAnchor: 'middle',
+            })}
+            strokeWidth={0}
+            top={yMax}
+          />
+        )}
       </Group>
     </svg>
   );
