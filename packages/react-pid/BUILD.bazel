@@ -75,7 +75,6 @@ DEV_DEPENDENCIES = [
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "SvgViewer": "dist/SvgViewer",
     "components": "dist/components",
     "index": "dist/index",
 }
