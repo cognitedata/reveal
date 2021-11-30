@@ -133,7 +133,7 @@
     "redux-actions": "^2.6.5",
     "redux-devtools-extension": "^2.13.9",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0",
+    "redux-thunk": "^2.4.1",
     "reselect": "^4.0.0",
     "rrweb": "^1.0.5",
     "sanitize-html": "^2.3.2",

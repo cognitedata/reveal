@@ -54,6 +54,20 @@ window.__cogniteSidecar = {
     {
       cluster: 'bluefield',
       fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
+      groups: ['defaultGroup', 'readGroup', 'writeGroup'],
+      name: 'Bluefield Admin',
+      otherAccessTokenFields: {
+        given_name: 'Admin',
+        family_name: 'User',
+      },
+      project: 'discover-e2e-bluefield',
+      roles: ['administer'],
+      tokenId: 'discover-e2e',
+      userId: 'discover-e2e-bluefield-admin', // this is overwritten in CI
+    },
+    {
+      cluster: 'bluefield',
+      fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
       groups: ['readGroup'],
       name: 'Bluefield Dev',
       otherAccessTokenFields: {
@@ -75,23 +89,9 @@ window.__cogniteSidecar = {
         family_name: 'Dev',
       },
       project: 'discover-dev-bluefield',
-      roles: [],
+      roles: ['administer'],
       tokenId: 'discover-dev',
       userId: 'discover-dev-bluefield-user', // this is overwritten in CI
-    },
-    {
-      cluster: 'bluefield',
-      fakeApplicationId: '1f860e84-7353-4533-a088-8fbe3228400f',
-      groups: ['defaultGroup', 'readGroup', 'writeGroup'],
-      name: 'Bluefield Admin',
-      otherAccessTokenFields: {
-        given_name: 'Admin',
-        family_name: 'User',
-      },
-      project: 'discover-e2e-bluefield',
-      roles: ['administer'],
-      tokenId: 'discover-e2e',
-      userId: 'discover-e2e-bluefield-admin', // this is overwritten in CI
     },
   ],
   disableIntercom: false,
