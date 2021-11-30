@@ -4,12 +4,12 @@ import { Upload } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
 import styled from 'styled-components';
 
+import { Body, Colors, Detail } from '@cognite/cogs.js';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
+import { CustomIcon } from 'components/CustomIcon';
 
 import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
-import { Body, Colors, Detail } from '@cognite/cogs.js';
-import { CustomIcon } from 'components/CustomIcon';
 
 const { Dragger } = Upload;
 

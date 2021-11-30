@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 
 import { UploadChangeParam } from 'antd/lib/upload';
 import { notification } from 'antd';
-import { Button, Colors, Detail, Flex, Graphic, Title } from '@cognite/cogs.js';
+import { Button, Colors, Detail, Flex, Title } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
+import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
 import { getContainer } from 'utils/utils';
 import { useCSVUpload } from 'hooks/csv-upload';
-import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
+import { useActiveTableContext } from 'contexts';
 
+import { CustomIcon } from 'components/CustomIcon';
 import Dragger from 'components/Dragger';
 import Modal from 'components/Modal/Modal';
 import { ModalProgress } from './ModalProgress';
 import { ModalChooseKey } from './ModalChooseKey';
-import { useActiveTableContext } from 'contexts';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -70,15 +72,11 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     }
     return (
       <Dragger {...fileProps}>
-        <Flex justifyContent="center">
-          <p className="ant-upload-drag-icon">
-            <Graphic type="CSV" />
-          </p>
-        </Flex>
-        <Title level={6}>Add CSV file here.</Title>
-        <Detail style={{ color: Colors['greyscale-grey6'].hex() }}>
+        <CustomIcon icon="DocumentIcon" />
+        <StyledModalTitle level={6}>Add CSV file</StyledModalTitle>
+        <StyledModalDetail strong>
           Drag and drop, or click to select.
-        </Detail>
+        </StyledModalDetail>
       </Dragger>
     );
   };
@@ -106,7 +104,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   return (
     <Modal
       visible
-      title="Add new data"
+      title={<Title level={5}>Add new data</Title>}
       onOk={onOk}
       onCancel={onCancelUpload}
       getContainer={getContainer}
@@ -132,3 +130,10 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 };
 
 export default UploadCSV;
+
+const StyledModalTitle = styled(Title)`
+  margin: 16px 0 8px 0;
+`;
+const StyledModalDetail = styled(Detail)`
+  color: ${Colors['greyscale-grey6'].hex()};
+`;
