@@ -161,10 +161,10 @@ const PlotlyChartComponent = ({
    * Filter out callIDs that trigger unnecessary recalcs/rerenders
    */
   const tsCollectionAsString = JSON.stringify(
-    cleanTimeseriesCollection(chart?.timeSeriesCollection)
+    cleanTimeseriesCollection(chart?.timeSeriesCollection || [])
   );
   const wfCollectionAsString = JSON.stringify(
-    cleanWorkflowCollection(chart?.workflowCollection)
+    cleanWorkflowCollection(chart?.workflowCollection || [])
   );
 
   const seriesData: SeriesData[] = useMemo(() => {
