@@ -22,7 +22,7 @@ const INDEX_COLUMN: ColumnType = {
 };
 const PAGE_SIZE = 100;
 
-interface ColumnType extends Partial<ColumnShape> {
+export interface ColumnType extends Partial<ColumnShape> {
   key: string;
   dataKey: string;
   title: string;

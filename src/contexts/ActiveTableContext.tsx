@@ -13,10 +13,6 @@ import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
 import { DEFAULT_FILTER } from 'hooks/table-filters';
 
 import icons from 'assets/icons';
-import {
-  SIDE_PANEL_TRANSITION_DURATION,
-  SIDE_PANEL_TRANSITION_FUNCTION,
-} from 'utils/constants';
 
 type ActiveTableState = {
   database: string;
@@ -57,7 +53,9 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
       <StyledRawExplorerNotSelectedWrapper>
         <StyledRawExplorerNotSelectedContent>
           <StyledRawExplorerNotSelectedArrow src={icons.EmptyStateArrowIcon} />
-          <Title level={3}>Select a table to view raw data</Title>
+          <StyledRawExplorerNotSelectedTitle level={3}>
+            Select a table to view raw data
+          </StyledRawExplorerNotSelectedTitle>
           {isError && (
             <StyledRawExplorerNotSelectedBody>
               The specified table was not found!
@@ -94,17 +92,19 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
 };
 
 const StyledRawExplorerNotSelectedWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: ${Colors['bg-accent'].hex()};
   height: 100%;
-  padding: 0 128px;
+  padding: 300px 210px;
   position: relative;
 `;
 
 const StyledRawExplorerNotSelectedContent = styled.div`
   margin-bottom: 30px;
   width: 400px;
+`;
+
+const StyledRawExplorerNotSelectedTitle = styled(Title)`
+  color: ${Colors['text-secondary'].hex()};
 `;
 
 const StyledRawExplorerNotSelectedBody = styled(Body)`
@@ -114,16 +114,7 @@ const StyledRawExplorerNotSelectedBody = styled(Body)`
 
 const StyledRawExplorerNotSelectedArrow = styled.img`
   position: absolute;
-  left: 125px;
-  opacity: 1;
-  transform: translateY(calc(-100% - 75px));
-  transition: opacity ${SIDE_PANEL_TRANSITION_DURATION}s
-    ${SIDE_PANEL_TRANSITION_FUNCTION};
-  top: calc(50%);
-  max-height: 180px;
-  width: calc(50% - 400px);
-
-  @media screen and (max-width: 1400px) {
-    opacity: 0;
-  }
+  left: 32px;
+  top: 190px;
+  width: 160px;
 `;
