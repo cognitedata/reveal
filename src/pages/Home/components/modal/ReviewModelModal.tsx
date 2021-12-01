@@ -1,5 +1,6 @@
 import { Classifier } from '@cognite/sdk-playground';
 import { Modal } from 'components/modal/Modal';
+import { ModalProps } from 'components/modal/types';
 import { MatrixTable } from 'pages/Classifier/pages/ReviewModel/components';
 import React from 'react';
 import styled from 'styled-components';
@@ -10,10 +11,8 @@ const Container = styled.div`
   margin-top: 1rem;
 `;
 
-interface Props {
+interface Props extends ModalProps {
   classifier: Classifier;
-  visible?: boolean;
-  toggleVisibility: () => void;
   onDeployClick: (classifier: Classifier) => void;
 }
 

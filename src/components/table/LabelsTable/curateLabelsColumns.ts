@@ -1,7 +1,8 @@
 import { Table } from '@cognite/cogs.js';
 import { TableCell } from 'components/table/TableCell';
+import { Navigation } from 'hooks/useNavigation';
 
-export const curateColumns = () => {
+export const curateColumns = ({ navigate }: { navigate: Navigation }) => {
   return [
     {
       Header: 'Label',
@@ -11,12 +12,11 @@ export const curateColumns = () => {
       filterIcon: 'Search',
       Cell: TableCell.Label(),
     },
-    // Toggle showing external id
-    // {
-    //   Header: 'External Id',
-    //   accessor: 'externalId',
-    //   Cell: TableCell.Text(),
-    // },
+    {
+      Header: 'External Id',
+      accessor: 'externalId',
+      Cell: TableCell.Text(),
+    },
     {
       Header: 'Description',
       accessor: 'description',
@@ -26,6 +26,11 @@ export const curateColumns = () => {
       Header: 'Created',
       accessor: 'createdTime',
       Cell: TableCell.Date,
+    },
+    {
+      Header: '',
+      accessor: 'viewLabelAction',
+      Cell: TableCell.ViewLabelButton(navigate),
     },
   ];
 };

@@ -1,6 +1,7 @@
 import { Table } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { Loading } from 'components/states/Loading';
+import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'services/query';
 import { useLabelsQuery } from 'services/query/labels/query';
@@ -11,22 +12,34 @@ export type Labels = LabelDefinition & { id: number };
 
 interface Props {
   onSelectionChange: (event: Labels[]) => void;
+  showAllLabels?: boolean;
 }
 export const LabelsTable: React.FC<Props> = React.memo(
-  ({ onSelectionChange }) => {
-    const { data: labelsData, isLoading } = useLabelsQuery();
-    const { data: trainingSetsData } = useClassifierManageTrainingSetsQuery();
+  ({ onSelectionChange, showAllLabels }) => {
+    const navigate = useNavigation();
 
-    const columns = React.useMemo(() => curateColumns(), []);
+    const { data: labelsData, isLoading } = useLabelsQuery();
+    const { data: trainingSetsData } = useClassifierManageTrainingSetsQuery(
+      Boolean(showAllLabels)
+    );
+
+    const columns = React.useMemo(
+      () => curateColumns({ navigate }),
+      [navigate]
+    );
 
     // Hide labels that already exists in the classifier's training set.
     const data = React.useMemo(() => {
+      if (showAllLabels) {
+        return labelsData;
+      }
+
       return labelsData.filter((label) => {
         return !trainingSetsData.some(
           (trainingSet) => trainingSet.id === label.externalId
         );
       });
-    }, [labelsData, trainingSetsData]);
+    }, [labelsData, trainingSetsData, showAllLabels]);
 
     if (isLoading) {
       return <Loading />;

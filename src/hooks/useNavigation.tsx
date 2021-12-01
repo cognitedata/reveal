@@ -7,6 +7,7 @@ export type Navigation = {
   toDashboard: () => void;
   toHome: () => void;
   toLabel: (externalId: string) => void;
+  toLabels: () => void;
   toClassifier: (classifier: string) => void;
   goBack: () => void;
   reload: () => void;
@@ -39,7 +40,12 @@ export const useNavigation = (): Navigation => {
   };
 
   const toLabel = (externalId: string) => {
-    const url = buildUrl(`${baseUrl}/label/${encodeURIComponent(externalId)}`);
+    const url = buildUrl(`${baseUrl}/labels/${encodeURIComponent(externalId)}`);
+    history.push(url);
+  };
+
+  const toLabels = () => {
+    const url = buildUrl(`${baseUrl}/labels`);
     history.push(url);
   };
 
@@ -62,6 +68,7 @@ export const useNavigation = (): Navigation => {
     toDashboard,
     toHome,
     toLabel,
+    toLabels,
     toClassifier,
     goBack,
     reload,

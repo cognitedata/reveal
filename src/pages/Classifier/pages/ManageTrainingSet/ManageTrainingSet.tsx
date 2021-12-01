@@ -7,12 +7,14 @@ import React, { FC } from 'react';
 import { useClassifierManageTrainingSetsQuery } from 'services/query';
 import { useClassifierActions } from 'machines/classifier/hooks/useClassifierActions';
 import { CommonClassifierPage } from 'pages/Classifier/components/ClassifierPage';
+import { useNavigation } from 'hooks/useNavigation';
 import { ClassifierProps } from '../router';
 import { LabelsModal } from './components/modal/LabelsModal';
 import { ManageTrainingSetNavigation } from './components/navigation/ManageTrainSetNavigation';
 import { TrainingSetsTable } from './components/table/TrainingSetsTable';
 
 export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
+  const { toLabels } = useNavigation();
   const { classifierName } = useClassifierParams();
 
   const { description } = useClassifierConfig(ClassifierState.MANAGE);
@@ -52,6 +54,7 @@ export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
         Action={
           <Flex alignItems="center" gap={8}>
             {/* <Body level={2}>{data.length} labels</Body> */}
+            <Button onClick={() => toLabels()}>Manage labels</Button>
             <Button
               type="primary"
               icon="PlusCompact"

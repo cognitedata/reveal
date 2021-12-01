@@ -6,7 +6,8 @@ import { createBrowserHistory } from 'history';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ClassifierContext } from 'machines/classifier/contexts/ClassifierContext';
 import { PermissionWrapper } from 'components/PermissionWrapper';
-import LabelPage from './Label/Label';
+import LabelPage from './Labels/pages/Label/Label';
+import { LabelsPage } from './Labels/Labels';
 
 export const MainRouter = () => {
   const history = createBrowserHistory();
@@ -24,9 +25,10 @@ export const MainRouter = () => {
               </ClassifierContext>
             </Route>
             <Route
-              path="/:project/documents/label/:externalId"
+              path="/:project/documents/labels/:externalId"
               component={LabelPage}
             />
+            <Route path="/:project/documents/labels" component={LabelsPage} />
             <Route path="/:project/documents" component={Home} />
           </Switch>
         </PermissionWrapper>

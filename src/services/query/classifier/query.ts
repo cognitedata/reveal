@@ -9,11 +9,13 @@ import {
 } from 'services/api';
 import { isClassifierTraining } from 'utils/classifier';
 
-export const useClassifierManageTrainingSetsQuery = () => {
+export const useClassifierManageTrainingSetsQuery = (disabled = false) => {
   const sdk = useSDK();
 
-  const { data = [], ...rest } = useQuery(CLASSIFIER_KEYS.trainingSets(), () =>
-    composeClassifierTrainingSets(sdk)
+  const { data = [], ...rest } = useQuery(
+    CLASSIFIER_KEYS.trainingSets(),
+    () => composeClassifierTrainingSets(sdk),
+    { enabled: !disabled }
   );
 
   return { data, ...rest };

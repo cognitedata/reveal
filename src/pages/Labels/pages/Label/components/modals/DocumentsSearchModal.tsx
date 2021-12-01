@@ -6,12 +6,11 @@ import { useDocumentsSearchQuery } from 'services/query/documents/query';
 import { useUpdateFileLabelsMutate } from 'services/query/files/mutate';
 import { getContainer } from 'utils/utils';
 import ModalFooter from 'components/modal/ModalFooter';
+import { ModalProps } from 'components/modal/types';
 import { DocumentsTable } from '../table/DocumentsTable';
 
-interface Props {
+interface Props extends ModalProps {
   labelId: string;
-  visible?: boolean;
-  toggleVisibility: () => void;
 }
 
 export const DocumentsSearchModal: React.FC<Props> = React.memo(

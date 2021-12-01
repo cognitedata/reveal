@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@cognite/cogs.js';
 import { Classifier, Document } from '@cognite/sdk-playground';
+import { LabelDefinition } from '@cognite/sdk';
 import { Tag, TagColor } from 'components/Tag';
 import { globalConfig } from 'configs/global.config';
 import { Navigation } from 'hooks/useNavigation';
@@ -19,6 +20,9 @@ import React from 'react';
 import { CellProps } from 'react-table';
 import { ClassifierStatus, ClassifierTrainingSet } from 'services/types';
 
+// NOTE: This file is getting too big.
+// Move the cell render's that are specific to the columns, closer to the curating columns.
+// And have the generic ones stay in this function.
 export const TableCell = {
   Text:
     ({ strong } = { strong: false }) =>
@@ -134,8 +138,27 @@ export const TableCell = {
             size="small"
             icon="Edit"
             type="tertiary"
-            aria-label="Add files"
+            aria-label="Manage files"
             onClick={() => navigate.toLabel(id)}
+          />
+        </Tooltip>
+      );
+    },
+  ViewLabelButton:
+    (navigate: Navigation) =>
+    ({
+      row: {
+        original: { externalId },
+      },
+    }: CellProps<LabelDefinition>) => {
+      return (
+        <Tooltip content="Manage files in label">
+          <Button
+            size="small"
+            icon="Edit"
+            type="tertiary"
+            aria-label="Manage files"
+            onClick={() => navigate.toLabel(externalId)}
           />
         </Tooltip>
       );
@@ -157,6 +180,7 @@ export const TableCell = {
         </Button>
       );
     },
+
   ClassifierActions:
     (classifierActionsCallback: ClassifierActions) =>
     ({ row: { original } }: CellProps<Classifier>) => {

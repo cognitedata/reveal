@@ -3,10 +3,10 @@ import { Modal as CogsModal, ModalProps } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import styled from 'styled-components';
 
-const CustomModal = styled(CogsModal)`
-  width: 95% !important;
+const CustomModal = styled(CogsModal)<{ $modalSize?: string }>`
+  width: ${({ $modalSize }) => $modalSize || '95%'} !important;
   margin: 1rem auto;
-  height: 95%;
+  height: ${({ $modalSize }) => $modalSize || '95%'};
   overflow: hidden;
   padding: 0;
 
@@ -57,9 +57,14 @@ const CustomModal = styled(CogsModal)`
   }
 `;
 
-export const Modal: React.FC<ModalProps> = ({ children, ...rest }) => {
+interface Props extends ModalProps {
+  modalSize?: string;
+}
+
+export const Modal: React.FC<Props> = ({ children, modalSize, ...rest }) => {
   return (
     <CustomModal
+      $modalSize={modalSize}
       getContainer={getContainer}
       appElement={document.body}
       {...rest}
