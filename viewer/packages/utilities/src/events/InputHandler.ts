@@ -5,6 +5,7 @@ import { clickOrTouchEventOffset } from './clickOrTouchEventOffset';
 import { EventTrigger } from './EventTrigger';
 import debounce from 'lodash/debounce';
 import { assertNever } from '@reveal/utilities';
+import { Vector2 } from 'three';
 
 type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => void;
 
@@ -26,36 +27,24 @@ export class InputHandler {
     let pointerDownTimestamp = 0;
     let validClick = false;
 
+    const startOffset = new Vector2();
+
     const onHoverCallback = debounce((e: MouseEvent) => {
       this._events.hover.fire(clickOrTouchEventOffset(e, domElement));
     }, 100);
 
-    const onMove = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
-      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, domElement);
-
-      // check for Manhattan distance greater than maxMoveDistance pixels
-      if (
-        pointerDown &&
-        validClick &&
-        Math.abs(offsetX - firstOffsetX) + Math.abs(offsetY - firstOffsetY) > maxMoveDistance
-      ) {
-        validClick = false;
-      }
-    };
-
     const onUp = (e: MouseEvent | TouchEvent) => {
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
+      const hasMovedDuringClick =
+        Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > maxMoveDistance;
+
       const clickDuration = e.timeStamp - pointerDownTimestamp;
-      if (pointerDown && validClick && clickDuration < maxClickDuration) {
+      if (pointerDown && validClick && clickDuration < maxClickDuration && !hasMovedDuringClick) {
         // trigger events
         this._events.click.fire(clickOrTouchEventOffset(e, domElement));
       }
       pointerDown = false;
       validClick = false;
-
-      // move
-      domElement.removeEventListener('mousemove', onMove);
-      domElement.removeEventListener('touchmove', onMove);
 
       // up
       domElement.removeEventListener('mouseup', onUp);
@@ -66,14 +55,12 @@ export class InputHandler {
     };
 
     const onDown = (e: MouseEvent | TouchEvent) => {
-      event = e;
       pointerDown = true;
       validClick = true;
       pointerDownTimestamp = e.timeStamp;
 
-      // move
-      domElement.addEventListener('mousemove', onMove);
-      domElement.addEventListener('touchmove', onMove);
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
+      startOffset.set(offsetX, offsetY);
 
       // up
       domElement.addEventListener('mouseup', onUp);
