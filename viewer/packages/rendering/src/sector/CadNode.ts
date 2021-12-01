@@ -188,7 +188,7 @@ export class CadNode extends THREE.Object3D {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 
-  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number) {
+  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
     this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
   }
 
