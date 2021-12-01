@@ -338,7 +338,6 @@ function createGeneralCylinders(
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
     updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-    (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
     (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
     (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
     (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
@@ -375,7 +374,6 @@ function createGeneralRings(
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
     updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
 
-    (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
     (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
     (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
     (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
