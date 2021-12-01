@@ -48,7 +48,8 @@ const CreateTableModalCreationModeStep = ({
       <StyledCreateOptions>
         <StyledCreateOption>
           <StyledDragger {...fileProps}>
-            <CustomIcon icon="DocumentIcon" style={{ width: 32 }} />
+            <StyledDocumentIcon />
+            <StyledDocumentIconHover />
             <StyledCreateOptionTitle level={6} strong>
               Upload CSV file
             </StyledCreateOptionTitle>
@@ -91,6 +92,16 @@ const StyledCreateOption = styled.li`
   }
 `;
 
+const StyledDocumentIcon = styled(CustomIcon).attrs({ icon: 'DocumentIcon' })`
+  height: 40px;
+`;
+
+const StyledDocumentIconHover = styled(CustomIcon).attrs({
+  icon: 'DocumentIconHover',
+})`
+  height: 40px;
+`;
+
 const StyledDragger = styled(Dragger)`
   && {
     background-color: ${Colors['bg-accent'].hex()};
@@ -104,9 +115,21 @@ const StyledDragger = styled(Dragger)`
       flex-direction: column;
     }
 
+    ${StyledDocumentIconHover} {
+      display: none;
+    }
+
     :hover {
       background-color: ${Colors['bg-hover'].hex()};
       border-color: ${Colors['bg-status-small--accent'].hex()};
+
+      ${StyledDocumentIcon} {
+        display: none;
+      }
+
+      ${StyledDocumentIconHover} {
+        display: unset;
+      }
     }
 
     :active {
