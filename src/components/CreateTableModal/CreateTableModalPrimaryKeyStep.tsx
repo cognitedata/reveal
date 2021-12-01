@@ -37,25 +37,25 @@ const CreateTableModalPrimaryKeyStep = ({
         <StyledCreateOptions>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="Choose a column that will be used. Note: this might mean data will be lost if the column is not 100% unique."
+              description="This is the column that identifies each table record. Data is overwritten if the entries in the column are not unique."
               icon="KeyIcon"
               isDisabled={!columns}
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
               }
               onClick={selectPrimaryKeyMethod(PrimaryKeyMethod.ChooseColumn)}
-              title="I know the primary key."
+              title="I know the primary key"
             />
           </StyledCreateOption>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="A key will be auto-generated for you. This means that updating the data will overwrite the entire table."
+              description="An auto-generated key is added as a new column. Updating data creates a new entry and can result in duplicated entries."
               icon="UnknownPrimaryKeyIcon"
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.AutoGenerate
               }
               onClick={selectPrimaryKeyMethod(PrimaryKeyMethod.AutoGenerate)}
-              title="I don’t know the primary key."
+              title="I don’t know the primary key"
             />
           </StyledCreateOption>
         </StyledCreateOptions>

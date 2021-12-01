@@ -50,21 +50,21 @@ const CreateTableModalCreationModeStep = ({
           <StyledDragger {...fileProps}>
             <CustomIcon icon="DocumentIcon" style={{ width: 32 }} />
             <StyledCreateOptionTitle level={6} strong>
-              Add CSV file here.
+              Upload CSV file
             </StyledCreateOptionTitle>
             <StyledCreateOptionDetail strong>
-              Drag and drop, or click to select.
+              Drag and drop, or click to select
             </StyledCreateOptionDetail>
           </StyledDragger>
         </StyledCreateOption>
         <StyledCreateOption>
           <CreateTableModalOption
-            description="Upload files later or write data directly using the API."
+            description="Upload files later or write data directly using the API"
             icon="DataTable"
             isDisabled={isCreatingTable}
             isSelected={selectedCreationMode === CreationMode.Empty}
             onClick={selectCreationMode(CreationMode.Empty)}
-            title="Create an empty table."
+            title="Create empty table"
           />
         </StyledCreateOption>
       </StyledCreateOptions>
