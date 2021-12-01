@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 
 import { Body, Colors } from '@cognite/cogs.js';
 import { AxisBottom } from '@visx/axis';
-import { localPoint } from '@visx/event';
 import { GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
@@ -102,6 +101,15 @@ export function Graph({
     return '';
   }, [distribution, rangeEnd, tooltipData?.index]);
 
+  const maxCount = useMemo(() => {
+    return distribution.reduce((acc, cur) => {
+      if (cur.count > acc) {
+        return cur.count;
+      }
+      return acc;
+    }, 0);
+  }, [distribution]);
+
   const categories = useMemo(
     () =>
       scaleBand<string>({
@@ -138,6 +146,21 @@ export function Graph({
     return [min, min + interval, max - interval, max];
   }, [distribution]);
 
+  const handleMouseLeave = (): void => {
+    hideTooltip();
+  };
+
+  const handleMouseMove = (data: Count, index: number, left: number): void => {
+    showTooltip({
+      tooltipData: {
+        data: data,
+        index,
+      },
+      tooltipTop: 0,
+      tooltipLeft: left,
+    });
+  };
+
   return (
     <div style={{ position: 'relative' }}>
       <svg ref={containerRef} width={width} height={height}>
@@ -153,6 +176,46 @@ export function Graph({
               strokeWidth={1}
               tickValues={gridTickValues}
             />
+          )}
+          {isTooltipDisplayed && rangeEnd !== undefined && (
+            <BarStack
+              data={distribution.map((value) => ({
+                ...value,
+                count: maxCount,
+              }))}
+              keys={['count']}
+              x={(d) => d.value}
+              xScale={categories}
+              yScale={counts}
+              color={() => ''}
+            >
+              {(barStacks) =>
+                barStacks.map((barStack) =>
+                  barStack.bars.map(
+                    ({ bar, x, y, width, height }, barIndex) => {
+                      return (
+                        <Bar
+                          key={`bar-${bar.data.value}`}
+                          x={x}
+                          y={y}
+                          width={width}
+                          height={height}
+                          fill={
+                            tooltipData?.index === barIndex
+                              ? Colors['bg-control--secondary']
+                              : 'transparent'
+                          }
+                          onMouseLeave={handleMouseLeave}
+                          onMouseMove={() => {
+                            handleMouseMove(bar.data, barIndex, x + width / 2);
+                          }}
+                        />
+                      );
+                    }
+                  )
+                )
+              }
+            </BarStack>
           )}
           <BarStack
             data={distribution}
@@ -174,20 +237,9 @@ export function Graph({
                         width={width}
                         height={height}
                         fill={color}
-                        onMouseLeave={() => {
-                          hideTooltip();
-                        }}
-                        onMouseMove={(event) => {
-                          const eventSvgCoords = localPoint(event);
-                          const left = x + width / 2;
-                          showTooltip({
-                            tooltipData: {
-                              data: bar.data,
-                              index: barIndex,
-                            },
-                            tooltipTop: eventSvgCoords?.y,
-                            tooltipLeft: left,
-                          });
+                        onMouseLeave={handleMouseLeave}
+                        onMouseMove={() => {
+                          handleMouseMove(bar.data, barIndex, x + width / 2);
                         }}
                       />
                     );
@@ -231,7 +283,7 @@ export function Graph({
                 From {tooltipData.data?.value} to {tooltipIntervalEndValue}
               </StyledTooltipBody>
               <StyledTooltipBody level={3}>
-                Total: {tooltipData.data?.count}
+                Total: {distribution[tooltipData.index]?.count}
               </StyledTooltipBody>
             </StyledTooltipContent>
           </TooltipInPortal>
