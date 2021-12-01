@@ -22,6 +22,8 @@ import {
   ConsumedSector
 } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
+import { GeometryBatchingManager } from '../GeometryBatchingManager';
+import { ParsedGeometry } from '@reveal/sector-parser';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -37,9 +39,9 @@ export class CadNode extends THREE.Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
   private readonly _sectorScene: SectorScene;
-  private readonly _previousCameraMatrix = new THREE.Matrix4();
   private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
+  private readonly _geometryBatchingManager: GeometryBatchingManager;
 
   constructor(model: CadModelMetadata, materialManager: CadMaterialManager, sectorRepository: SectorRepository) {
     super();
@@ -51,18 +53,23 @@ export class CadNode extends THREE.Object3D {
     const instancedMeshGroup = new THREE.Group();
     instancedMeshGroup.name = 'InstancedMeshes';
 
+    const batchedGeometryMeshGroup = new THREE.Group();
+    batchedGeometryMeshGroup.name = 'Batched Geometry';
+
     this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
+
+    const materials = materialManager.getModelMaterials(model.modelIdentifier);
+    this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
 
     const rootSector = new RootSectorNode(model);
 
     rootSector.add(instancedMeshGroup);
+    rootSector.add(batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
     const { scene } = model;
 
     this._sectorScene = scene;
-    // Ensure camera matrix is unequal on first frame
-    this._previousCameraMatrix.elements[0] = Infinity;
 
     // Prepare renderables
     this._rootSector = rootSector;
@@ -179,6 +186,14 @@ export class CadNode extends THREE.Object3D {
 
   public discardInstancedMeshes(sectorId: number): void {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
+  }
+
+  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number) {
+    this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
+  }
+
+  public removeBatchedSectorGeometries(sectorId: number): void {
+    this._geometryBatchingManager.removeSectorBatches(sectorId);
   }
 
   public clearCache(): void {

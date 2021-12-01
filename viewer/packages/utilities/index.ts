@@ -24,6 +24,8 @@ export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
 export { WorkerPool } from './src/workers/WorkerPool';
 
+export { TypedArray, TypedArrayConstructor } from './src/types';
+
 export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
