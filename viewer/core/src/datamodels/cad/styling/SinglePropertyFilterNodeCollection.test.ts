@@ -28,9 +28,13 @@ describe('SinglePropertyFilterNodeCollection', () => {
     client.loginWithApiKey({ apiKey: 'dummy', project: 'unittest' });
 
     const mockV8SectorRepository = new Mock<V8SectorRepository>();
+    const materialManager = new CadMaterialManager();
 
     const cadModelMetadata: CadModelMetadata = createCadModelMetadata(8, generateV8SectorTree(3, 3));
-    const cadNode: CadNode = new CadNode(cadModelMetadata, new CadMaterialManager(), mockV8SectorRepository.object());
+
+    materialManager.addModelMaterials(cadModelMetadata.modelIdentifier, 0);
+
+    const cadNode: CadNode = new CadNode(cadModelMetadata, materialManager, mockV8SectorRepository.object());
     const nodesClient: NodesApiClient = new NodesLocalClient();
 
     model = new Cognite3DModel(1, 2, cadNode, nodesClient);

@@ -87,13 +87,25 @@ export function createMaterials(
     side: THREE.DoubleSide
   });
 
-  const generalRingMaterial = new THREE.ShaderMaterial({
+  const generalRingMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (General rings)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      viewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
       }
     },
     extensions: { fragDepth: true },
@@ -101,7 +113,8 @@ export function createMaterials(
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     // TODO we can avoid drawing DoubleSide if we flip the ring in Rust and adjust the angle and
     // arc_angle accordingly
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 
   const coneMaterial = new THREE.ShaderMaterial({
@@ -150,19 +163,35 @@ export function createMaterials(
     side: THREE.DoubleSide
   });
 
-  const generalCylinderMaterial = new THREE.ShaderMaterial({
+  const generalCylinderMaterial = new THREE.RawShaderMaterial({
     name: 'Primitives (General cylinder)',
     clipping: true,
     clippingPlanes,
     uniforms: {
       inverseModelMatrix: {
         value: new THREE.Matrix4()
+      },
+      modelMatrix: {
+        value: new THREE.Matrix4()
+      },
+      modelViewMatrix: {
+        value: new THREE.Matrix4()
+      },
+      projectionMatrix: {
+        value: new THREE.Matrix4()
+      },
+      normalMatrix: {
+        value: new THREE.Matrix3()
+      },
+      cameraPosition: {
+        value: new THREE.Vector3()
       }
     },
     extensions: { fragDepth: true },
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    glslVersion: THREE.GLSL3
   });
 
   const trapeziumMaterial = new THREE.ShaderMaterial({
