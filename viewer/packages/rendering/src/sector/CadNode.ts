@@ -23,7 +23,7 @@ import {
 } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
 import { GeometryBatchingManager } from '../GeometryBatchingManager';
-import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { ParsedGeometry } from '@reveal/sector-parser';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -174,28 +174,25 @@ export class CadNode extends THREE.Object3D {
     };
   }
 
-  public updateInstancedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {
+  public updateInstancedMeshes(
+    instanceMeshFiles: InstancedMeshFile[],
+    modelIdentifier: string,
+    sectorId: number
+  ): void {
     for (const instanceMeshFile of instanceMeshFiles) {
       this._instancedMeshManager.addInstanceMeshes(instanceMeshFile, modelIdentifier, sectorId);
     }
   }
 
-  public discardInstancedMeshes(sectorId: number) {
+  public discardInstancedMeshes(sectorId: number): void {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 
-  public batchGeometry(
-    geometryBatchingQueue: [
-      type: RevealGeometryCollectionType,
-      geometryBuffer: THREE.BufferGeometry,
-      instanceId: string | undefined
-    ][],
-    sectorId: number
-  ) {
+  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number) {
     this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
   }
 
-  public removeBatchedSectorGeometries(sectorId: number) {
+  public removeBatchedSectorGeometries(sectorId: number): void {
     this._geometryBatchingManager.removeSectorBatches(sectorId);
   }
 

@@ -10,12 +10,13 @@ import {
   Node,
   GlbHeaderData,
   GeometryProcessingPayload,
-  TypedArrayConstructor,
   Primitive,
   BufferView,
-  GltfJson
+  GltfJson,
+  ParsedGeometry
 } from './types';
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
+import { TypedArrayConstructor } from '@reveal/utilities';
 
 export class GltfSectorParser {
   private readonly _glbMetadataParser: GlbMetadataParser;
@@ -52,11 +53,7 @@ export class GltfSectorParser {
   }
 
   private traverseDefaultSceneNodes(json: GltfJson, headers: GlbHeaderData, data: ArrayBuffer) {
-    const typedGeometryBuffers: {
-      type: RevealGeometryCollectionType;
-      buffer: THREE.BufferGeometry;
-      instanceId?: number;
-    }[] = [];
+    const typedGeometryBuffers: ParsedGeometry[] = [];
 
     const defaultSceneNodeIds = json.scenes[json.scene].nodes;
 
@@ -74,17 +71,7 @@ export class GltfSectorParser {
     return typedGeometryBuffers;
   }
 
-  private processNode(
-    node: Node,
-    glbHeaderData: GlbHeaderData,
-    data: ArrayBuffer
-  ):
-    | {
-        type: RevealGeometryCollectionType;
-        buffer: THREE.InstancedBufferGeometry | THREE.BufferGeometry;
-        instanceId?: number;
-      }
-    | undefined {
+  private processNode(node: Node, glbHeaderData: GlbHeaderData, data: ArrayBuffer): ParsedGeometry | undefined {
     const instancingExtension = node.extensions?.EXT_mesh_gpu_instancing;
     const meshId = node.mesh;
 
@@ -117,7 +104,7 @@ export class GltfSectorParser {
         break;
     }
 
-    return { type: geometryType, buffer: bufferGeometry };
+    return { type: geometryType, geometryBuffer: bufferGeometry };
   }
   processInstancedTriangleMesh(payload: GeometryProcessingPayload) {
     const { bufferGeometry, glbHeaderData, meshId, data } = payload;
@@ -149,8 +136,8 @@ export class GltfSectorParser {
 
     return {
       type: RevealGeometryCollectionType.InstanceMesh,
-      buffer: payload.bufferGeometry,
-      instanceId: mesh.extras.InstanceId as number
+      geometryBuffer: payload.bufferGeometry,
+      instanceId: (mesh.extras.InstanceId as number).toString()
     };
   }
 

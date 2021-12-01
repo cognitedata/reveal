@@ -337,12 +337,7 @@ function createGeneralCylinders(
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
     updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-
-    (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-    (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-    (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-    (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
-    (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+    updateMaterialUniforms(material, mesh, camera);
   };
 
   mesh.name = `Primitives (GeneralCylinders)`;
@@ -373,12 +368,7 @@ function createGeneralRings(
 
   mesh.onBeforeRender = (_0, _1, camera: THREE.Camera) => {
     updateMaterialInverseModelMatrix(material, mesh.matrixWorld);
-
-    (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
-    (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
-    (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
-    (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
-    (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+    updateMaterialUniforms(material, mesh, camera);
   };
 
   mesh.name = `Primitives (GeneralRings)`;
@@ -582,6 +572,14 @@ function updateMaterialInverseModelMatrix(
 ) {
   const inverseModelMatrix: THREE.Matrix4 = material.uniforms.inverseModelMatrix.value;
   inverseModelMatrix.copy(matrixWorld).invert();
+}
+
+function updateMaterialUniforms(material: THREE.ShaderMaterial, mesh: THREE.Mesh, camera: THREE.Camera) {
+  (material.uniforms.modelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld);
+  (material.uniforms.viewMatrix?.value as THREE.Matrix4)?.copy(camera.matrixWorld).invert();
+  (material.uniforms.projectionMatrix?.value as THREE.Matrix4)?.copy(camera.projectionMatrix);
+  (material.uniforms.normalMatrix?.value as THREE.Matrix3)?.copy(mesh.normalMatrix);
+  (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
 }
 
 function setBoundsFromBox(geometry: THREE.InstancedBufferGeometry, bounds: THREE.Box3) {

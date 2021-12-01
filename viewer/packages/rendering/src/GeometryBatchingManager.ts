@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import assert from 'assert';
 import { assertNever, DynamicDefragmentedBuffer, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
 import { Materials } from './rendering/materials';
@@ -28,17 +28,14 @@ export class GeometryBatchingManager {
     this._sectorMap = new Map();
   }
 
-  public batchGeometries(
-    geometryBatchingQueue: [RevealGeometryCollectionType, THREE.BufferGeometry, string | undefined][],
-    sectorId: number
-  ) {
+  public batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number) {
     if (this._sectorMap.get(sectorId) !== undefined) {
       return;
     }
 
     geometryBatchingQueue.forEach(geometry => {
-      const [type, bufferGeometry, instanceId] = geometry;
-      this.processGeometries(bufferGeometry, instanceId, type, sectorId);
+      const { type, geometryBuffer, instanceId } = geometry;
+      this.processGeometries(geometryBuffer, instanceId, type, sectorId);
     });
   }
 
