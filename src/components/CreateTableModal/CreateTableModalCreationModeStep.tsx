@@ -92,7 +92,9 @@ const StyledCreateOption = styled.li`
   }
 `;
 
-const StyledDocumentIcon = styled(CustomIcon).attrs({ icon: 'DocumentIcon' })`
+const StyledDocumentIcon = styled(CustomIcon).attrs({
+  icon: 'DocumentIconDisabled',
+})`
   height: 40px;
 `;
 
