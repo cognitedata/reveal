@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
-import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
 
@@ -55,14 +55,11 @@ export class GltfSectorRepository implements SectorRepository {
 
     const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
-    const geometryBatchingQueue: [
-      type: RevealGeometryCollectionType,
-      geometryBuffer: THREE.BufferGeometry,
-      instanceId: string
-    ][] = [];
+    const geometryBatchingQueue: ParsedGeometry[] = [];
 
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
+      const geometryBuffer = parsedGeometry.geometryBuffer;
 
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
@@ -76,13 +73,13 @@ export class GltfSectorRepository implements SectorRepository {
         case RevealGeometryCollectionType.TorusSegmentCollection:
         case RevealGeometryCollectionType.TrapeziumCollection:
         case RevealGeometryCollectionType.NutCollection:
-          geometryBatchingQueue.push([type, parsedGeometry.buffer, type.toString()]);
+          geometryBatchingQueue.push({ type, geometryBuffer, instanceId: type.toString() });
           break;
         case RevealGeometryCollectionType.InstanceMesh:
-          geometryBatchingQueue.push([type, parsedGeometry.buffer, parsedGeometry.instanceId!.toString()]);
+          geometryBatchingQueue.push({ type, geometryBuffer, instanceId: parsedGeometry.instanceId! });
           break;
         case RevealGeometryCollectionType.TriangleMesh:
-          this.createMesh(group, parsedGeometry.buffer, materials.triangleMesh);
+          this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
           break;
         default:
           assertNever(type);
