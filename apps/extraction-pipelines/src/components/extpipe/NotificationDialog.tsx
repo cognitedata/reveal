@@ -24,7 +24,7 @@ const Hr = styled.hr`
 
 const MINUTES_IN_HOUR = 60;
 const MINUTES_IN_DAY = 24 * MINUTES_IN_HOUR;
-function minutesToUnit(minutes: number) {
+export function minutesToUnit(minutes: number) {
   if (minutes === 0) return { n: 0, unit: 'hours' };
   if (minutes % MINUTES_IN_DAY === 0)
     return { n: minutes / MINUTES_IN_DAY, unit: 'days' };
