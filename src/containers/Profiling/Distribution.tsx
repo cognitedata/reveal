@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
 
+import { Body, Colors } from '@cognite/cogs.js';
 import { AxisBottom } from '@visx/axis';
+import { localPoint } from '@visx/event';
 import { GridRows } from '@visx/grid';
-import { Bar, BarStack } from '@visx/shape';
 import { Group } from '@visx/group';
-import { scaleBand, scaleLinear } from '@visx/scale';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
-import { Colors } from '@cognite/cogs.js';
+import { scaleBand, scaleLinear } from '@visx/scale';
+import { Bar, BarStack } from '@visx/shape';
+import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
+import styled from 'styled-components';
 
 const BOTTOM_AXIS_HEIGHT = 24;
 const NUMBER_OF_TICKS = 4;
@@ -20,11 +23,15 @@ type Props = {
   distribution: Count[];
   isBottomAxisDisplayed?: boolean;
   isGridDisplayed?: boolean;
+  isTooltipDisplayed?: boolean;
+  rangeEnd?: number;
 };
 export default function Distribution({
   distribution,
   isBottomAxisDisplayed,
   isGridDisplayed,
+  isTooltipDisplayed,
+  rangeEnd,
 }: Props) {
   return (
     <ParentSize>
@@ -35,6 +42,8 @@ export default function Distribution({
           isGridDisplayed={isGridDisplayed}
           width={width}
           height={height}
+          rangeEnd={rangeEnd}
+          isTooltipDisplayed={isTooltipDisplayed}
         />
       )}
     </ParentSize>
@@ -48,6 +57,8 @@ type GraphProps = {
   fill?: string;
   isBottomAxisDisplayed?: boolean;
   isGridDisplayed?: boolean;
+  isTooltipDisplayed?: boolean;
+  rangeEnd?: number;
 };
 export function Graph({
   distribution,
@@ -56,12 +67,40 @@ export function Graph({
   fill = 'rgba(41, 114, 225, 1)',
   isBottomAxisDisplayed,
   isGridDisplayed,
+  isTooltipDisplayed,
+  rangeEnd,
 }: GraphProps) {
   const horizontalMargin = 0;
   const verticalMargin = 0;
   const xMax = width - horizontalMargin;
   const yMax =
     height - verticalMargin - (isBottomAxisDisplayed ? BOTTOM_AXIS_HEIGHT : 0);
+
+  const {
+    showTooltip,
+    hideTooltip,
+    tooltipOpen,
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+  } = useTooltip<{
+    data: Count;
+    index: number;
+  }>();
+
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    scroll: true,
+  });
+
+  const tooltipIntervalEndValue = useMemo(() => {
+    if (tooltipData?.index !== undefined) {
+      if (tooltipData.index === distribution.length - 1) {
+        return `${rangeEnd ?? ''}`;
+      }
+      return distribution[tooltipData.index + 1]?.value;
+    }
+    return '';
+  }, [distribution, rangeEnd, tooltipData?.index]);
 
   const categories = useMemo(
     () =>
@@ -100,61 +139,114 @@ export function Graph({
   }, [distribution]);
 
   return (
-    <svg width={width} height={height}>
-      <Group top={verticalMargin / 2}>
-        {isGridDisplayed && (
-          <GridRows
-            scale={counts}
-            width={xMax}
-            height={yMax}
-            numTicks={5}
-            stroke={Colors['border-default'].hex()}
-            strokeDasharray="6,6"
-            strokeWidth={1}
-            tickValues={gridTickValues}
-          />
+    <div style={{ position: 'relative' }}>
+      <svg ref={containerRef} width={width} height={height}>
+        <Group top={verticalMargin / 2}>
+          {isGridDisplayed && (
+            <GridRows
+              scale={counts}
+              width={xMax}
+              height={yMax}
+              numTicks={5}
+              stroke={Colors['border-default'].hex()}
+              strokeDasharray="6,6"
+              strokeWidth={1}
+              tickValues={gridTickValues}
+            />
+          )}
+          <BarStack
+            data={distribution}
+            keys={['count']}
+            x={(d) => d.value}
+            xScale={categories}
+            yScale={counts}
+            color={() => fill}
+          >
+            {(barStacks) =>
+              barStacks.map((barStack) =>
+                barStack.bars.map(
+                  ({ bar, color, x, y, width, height }, barIndex) => {
+                    return (
+                      <Bar
+                        key={`bar-${bar.data.value}`}
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={color}
+                        onMouseLeave={() => {
+                          hideTooltip();
+                        }}
+                        onMouseMove={(event) => {
+                          const eventSvgCoords = localPoint(event);
+                          const left = x + width / 2;
+                          showTooltip({
+                            tooltipData: {
+                              data: bar.data,
+                              index: barIndex,
+                            },
+                            tooltipTop: eventSvgCoords?.y,
+                            tooltipLeft: left,
+                          });
+                        }}
+                      />
+                    );
+                  }
+                )
+              )
+            }
+          </BarStack>
+          {isBottomAxisDisplayed && (
+            <AxisBottom
+              hideTicks
+              scale={categories}
+              tickLabelProps={() => ({
+                fill: Colors['text-primary'].hex(),
+                fontFamily: 'Inter',
+                fontSize: 12,
+                fontWeight: 500,
+                textAnchor: 'middle',
+              })}
+              strokeWidth={0}
+              top={yMax}
+            />
+          )}
+        </Group>
+      </svg>
+      {isTooltipDisplayed &&
+        rangeEnd !== undefined &&
+        tooltipOpen &&
+        tooltipData && (
+          <TooltipInPortal
+            top={tooltipTop}
+            left={tooltipLeft}
+            style={{
+              ...defaultStyles,
+              backgroundColor: Colors['bg-inverted'].hex(),
+              borderRadius: 6,
+            }}
+          >
+            <StyledTooltipContent>
+              <StyledTooltipBody level={3}>
+                From {tooltipData.data?.value} to {tooltipIntervalEndValue}
+              </StyledTooltipBody>
+              <StyledTooltipBody level={3}>
+                Total: {tooltipData.data?.count}
+              </StyledTooltipBody>
+            </StyledTooltipContent>
+          </TooltipInPortal>
         )}
-        <BarStack
-          data={distribution}
-          keys={['count']}
-          x={(d) => d.value}
-          xScale={categories}
-          yScale={counts}
-          color={() => fill}
-        >
-          {(barStacks) =>
-            barStacks.map((barStack) =>
-              barStack.bars.map(({ bar, color, x, y, width, height }) => {
-                return (
-                  <Bar
-                    key={`bar-${bar.data.value}`}
-                    x={x}
-                    y={y}
-                    width={width}
-                    height={height}
-                    fill={color}
-                  />
-                );
-              })
-            )
-          }
-        </BarStack>
-        {isBottomAxisDisplayed && (
-          <AxisBottom
-            hideTicks
-            scale={categories}
-            tickLabelProps={() => ({
-              fill: Colors['text-primary'].hex(),
-              fontFamily: 'Inter',
-              fontSize: 12,
-              fontWeight: 500,
-              textAnchor: 'middle',
-            })}
-            strokeWidth={0}
-            top={yMax}
-          />
-        )}
-      </Group>
-    </svg>
+    </div>
   );
 }
+
+const StyledTooltipContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const StyledTooltipBody = styled(Body)`
+  color: ${Colors.white.hex()};
+  font-family: Inter;
+`;

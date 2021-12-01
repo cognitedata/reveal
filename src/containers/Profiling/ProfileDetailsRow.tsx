@@ -72,6 +72,8 @@ export default function ProfileDetailsRow({
                     distribution={distribution}
                     isBottomAxisDisplayed
                     isGridDisplayed
+                    isTooltipDisplayed
+                    rangeEnd={max}
                   />
                 </div>
               </Flex>
