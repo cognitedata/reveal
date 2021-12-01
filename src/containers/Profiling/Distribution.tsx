@@ -10,13 +10,10 @@ import { Bar, BarStack } from '@visx/shape';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import styled from 'styled-components';
 
+import { Count } from 'hooks/profiling-service';
+
 const BOTTOM_AXIS_HEIGHT = 24;
 const NUMBER_OF_TICKS = 4;
-
-type Count = {
-  value: string;
-  count: number;
-};
 
 type Props = {
   distribution: Count[];

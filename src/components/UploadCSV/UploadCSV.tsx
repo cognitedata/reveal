@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 
 import { UploadChangeParam } from 'antd/lib/upload';
 import { notification } from 'antd';
-import { Button, Colors, Detail, Flex, Graphic, Title } from '@cognite/cogs.js';
+import { Button, Colors, Detail, Title } from '@cognite/cogs.js';
+import styled from 'styled-components';
 
-import { getContainer } from 'utils/utils';
-import { useCSVUpload } from 'hooks/csv-upload';
 import { UPLOAD_MODAL_WIDTH } from 'utils/constants';
+import { getContainer, trimFileExtension } from 'utils/utils';
+import { useCSVUpload } from 'hooks/csv-upload';
+import { useActiveTableContext } from 'contexts';
 
+import { CustomIcon } from 'components/CustomIcon';
 import Dragger from 'components/Dragger';
 import Modal from 'components/Modal/Modal';
-import { ModalProgress } from './ModalProgress';
-import { ModalChooseKey } from './ModalChooseKey';
-import { useActiveTableContext } from 'contexts';
+import CreateTableModalUploadStep from 'components/CreateTableModal/CreateTableModalUploadStep';
+import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTableModalPrimaryKeyStep';
+import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
@@ -20,68 +23,20 @@ interface UploadCsvProps {
 
 const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const [file, setFile] = useState<File | undefined>();
-  const [selectedKeyIndex, setSelectedKeyIndex] = useState<number>(-1);
+  const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
+  const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
+    useState<PrimaryKeyMethod>();
+
+  const { database, table } = useActiveTableContext();
   const {
-    parsePercentage,
     uploadPercentage,
-    uploadSize,
     columns,
     isUpload,
     isUploadCompleted,
+    isUploadFailed,
     isParsing,
     onConfirmUpload,
-  } = useCSVUpload(file, selectedKeyIndex);
-
-  const { database, table } = useActiveTableContext();
-
-  const okText = isUploadCompleted ? 'OK' : 'Add';
-
-  const fileProps = {
-    name: 'file',
-    accept: '.csv',
-    multiple: false,
-    handleManualRemove() {
-      setFile(undefined);
-    },
-    onChange(info: UploadChangeParam) {
-      setFile(info.file.originFileObj);
-    },
-  };
-
-  const renderModalContent = () => {
-    if (file) {
-      if (isUpload || isUploadCompleted) {
-        return (
-          <ModalProgress
-            isUploadFinished={isUploadCompleted}
-            parsePercentage={parsePercentage}
-            uploadPercentage={uploadPercentage}
-            uploadSize={uploadSize}
-          />
-        );
-      }
-      return (
-        <ModalChooseKey
-          columns={columns}
-          selectedKeyIndex={selectedKeyIndex}
-          setSelectedKeyIndex={setSelectedKeyIndex}
-        />
-      );
-    }
-    return (
-      <Dragger {...fileProps}>
-        <Flex justifyContent="center">
-          <p className="ant-upload-drag-icon">
-            <Graphic type="CSV" />
-          </p>
-        </Flex>
-        <Title level={6}>Add CSV file here.</Title>
-        <Detail style={{ color: Colors['greyscale-grey6'].hex() }}>
-          Drag and drop, or click to select.
-        </Detail>
-      </Dragger>
-    );
-  };
+  } = useCSVUpload(file, selectedColumnIndex);
 
   const onCancelUpload = () => {
     if (file && isParsing && !isUploadCompleted) {
@@ -98,33 +53,89 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     else onConfirmUpload(database, table);
   };
 
+  const selectPrimaryKeyMethod =
+    (method: PrimaryKeyMethod): (() => void) =>
+    (): void => {
+      setSelectedPrimaryKeyMethod(method);
+    };
+
+  const fileProps = {
+    name: 'file',
+    accept: '.csv',
+    multiple: false,
+    handleManualRemove() {
+      setFile(undefined);
+    },
+    onChange(info: UploadChangeParam) {
+      setFile(info.file.originFileObj);
+    },
+  };
+
   const okButtonProps = {
     loading: isUpload,
     disabled: !file || isUpload,
   };
 
+  const okText = isUploadCompleted ? 'OK' : 'Add';
+  const isStepAddFile = !file;
+  const isStepChooseColumn = file && !(isUpload || isUploadCompleted);
+  const isStepUpload = file && (isUpload || isUploadCompleted);
+
+  const renderModalContent = () => {
+    if (isStepAddFile)
+      return (
+        <Dragger {...fileProps}>
+          <CustomIcon icon="DocumentIcon" />
+          <StyledModalTitle level={6}>Add CSV file</StyledModalTitle>
+          <StyledModalDetail strong>
+            Drag and drop, or click to select.
+          </StyledModalDetail>
+        </Dragger>
+      );
+    if (isStepUpload)
+      return (
+        <CreateTableModalUploadStep
+          fileName={file?.name ? trimFileExtension(file.name) : ''}
+          isUploadFailed={isUploadFailed}
+          isUploadCompleted={isUploadCompleted}
+          onCancel={onCancelUpload}
+          progression={uploadPercentage}
+        />
+      );
+    if (isStepChooseColumn)
+      return (
+        <CreateTableModalPrimaryKeyStep
+          columns={columns}
+          selectedPrimaryKeyMethod={selectedPrimaryKeyMethod}
+          selectPrimaryKeyMethod={selectPrimaryKeyMethod}
+          selectedColumnIndex={selectedColumnIndex}
+          selectColumnAsPrimaryKey={(index: number) =>
+            setSelectedColumnIndex(index)
+          }
+        />
+      );
+  };
+
+  const footer = (
+    <StyledModalFooter>
+      <Button variant="ghost" onClick={onCancelUpload}>
+        Cancel
+      </Button>
+      <Button type="primary" onClick={onOk} {...okButtonProps}>
+        {okText}
+      </Button>
+    </StyledModalFooter>
+  );
+
   return (
     <Modal
       visible
-      title="Add new data"
+      title={<Title level={5}>Add new data</Title>}
       onOk={onOk}
       onCancel={onCancelUpload}
       getContainer={getContainer}
       width={UPLOAD_MODAL_WIDTH}
-      footer={
-        <Flex justifyContent="flex-end" alignItems="flex-end">
-          <Button
-            variant="ghost"
-            onClick={onCancelUpload}
-            style={{ marginRight: '8px' }}
-          >
-            Cancel
-          </Button>
-          <Button type="primary" onClick={onOk} {...okButtonProps}>
-            {okText}
-          </Button>
-        </Flex>
-      }
+      footer={footer}
     >
       {renderModalContent()}
     </Modal>
@@ -132,3 +143,19 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 };
 
 export default UploadCSV;
+
+const StyledModalTitle = styled(Title)`
+  margin: 16px 0 8px 0;
+`;
+const StyledModalDetail = styled(Detail)`
+  color: ${Colors['greyscale-grey6'].hex()};
+`;
+const StyledModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+  & > :first-child {
+    margin-right: 8px;
+  }
+`;
