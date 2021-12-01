@@ -191,26 +191,29 @@ function determineSectorPriority(
   sector: V9SectorMetadata,
   transformedBounds: THREE.Box3
 ) {
-  const levelWeightImportance = 2.0;
   const distanceToImportance = 1.0;
   const screenAreaImportance = 0.3;
   const frustumDepthImportance = 0.2;
-  const nodeScreenSizeImportance = 1.0;
+  const nodeMinScreenSizeImportance = 2.0;
+  const nodeMaxScreenSizeImportance = 1.0;
 
-  const levelWeight = weightFunctions.computeSectorTreePlacementWeight(sector);
   const distanceToCameraWeight = weightFunctions.computeDistanceToCameraWeight(transformedBounds);
   const screenAreaWeight = weightFunctions.computeScreenAreaWeight(transformedBounds);
   const frustumDepthWeight = weightFunctions.computeFrustumDepthWeight(transformedBounds);
-  const nodeScreenSizeWeight =
+  const nodeMinScreenSizeWeight =
+    sector.minDiagonalLength !== undefined
+      ? weightFunctions.computeNodeScreenSizeWeight(transformedBounds, sector.minDiagonalLength)
+      : 1.0;
+  const nodeMaxScreenSizeWeight =
     sector.maxDiagonalLength !== undefined
-      ? weightFunctions.computeMaximumNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
+      ? weightFunctions.computeNodeScreenSizeWeight(transformedBounds, sector.maxDiagonalLength)
       : 1.0;
 
   const priority =
-    levelWeightImportance * levelWeight +
     distanceToImportance * distanceToCameraWeight +
     screenAreaImportance * screenAreaWeight +
     frustumDepthImportance * frustumDepthWeight +
-    nodeScreenSizeImportance * nodeScreenSizeWeight;
+    nodeMinScreenSizeImportance * nodeMinScreenSizeWeight +
+    nodeMaxScreenSizeImportance * nodeMaxScreenSizeWeight;
   return priority;
 }
