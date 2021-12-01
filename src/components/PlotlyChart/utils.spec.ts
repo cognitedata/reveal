@@ -99,6 +99,38 @@ describe('getYaxisUpdatesFromEventData', () => {
     ]);
   });
 
+  it('handles valid input (2)', () => {
+    const eventdata = {
+      'yaxis.range[1]': 500,
+    };
+
+    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+
+    expect(axisUpdates).toEqual([
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        range: [1459.8294756630028, 500],
+      },
+    ]);
+  });
+
+  it('handles valid input (3)', () => {
+    const eventdata = {
+      'yaxis.range[0]': 500,
+    };
+
+    const axisUpdates = getYaxisUpdatesFromEventData(seriesData, eventdata);
+
+    expect(axisUpdates).toEqual([
+      {
+        id: 'VAL_RESERVOIR_PT_well01',
+        type: 'timeseries',
+        range: [500, 1491.8053766553744],
+      },
+    ]);
+  });
+
   it('handles empty input', () => {
     const eventdata = {};
 

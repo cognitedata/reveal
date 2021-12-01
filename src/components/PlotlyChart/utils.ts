@@ -318,7 +318,8 @@ export function getYaxisUpdatesFromEventData(
         const { series } = selectedSeriesData;
 
         const update = series.reduce((diff: { [key: string]: any }, s) => {
-          const { id = '', type = '', range: seriesRange = [] } = s;
+          const { range: seriesRange = [] } = selectedSeriesData;
+          const { id = '', type = '' } = s;
           const resultRange = (result[id] || {}).range || [];
           const range = resultRange.length
             ? [...resultRange]
