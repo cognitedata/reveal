@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon, Colors } from '@cognite/cogs.js';
 import { useActiveTableContext } from 'contexts';
-import { useRawProfile } from 'hooks/sdk-queries';
+import { useRawProfile } from 'hooks/profiling-service';
 
 export default function RowCount() {
   const { database, table } = useActiveTableContext();

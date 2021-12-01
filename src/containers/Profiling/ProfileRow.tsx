@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Colors } from '@cognite/cogs.js';
-import { CustomIcon } from 'components/CustomIcon';
 import styled from 'styled-components';
-import { IconType } from 'assets/icons';
 import ProfileDetailsRow from './ProfileDetailsRow';
 import { Graph } from './Distribution';
+import { ColumnProfile } from 'hooks/profiling-service';
+import ColumnIcon from 'components/ColumnIcon';
 
 export const TableData = styled.td`
   border: 1px solid ${Colors['greyscale-grey4'].hex()};
@@ -17,36 +17,23 @@ const NumberOrMissingTd = ({ value }: { value?: number }) => (
   </TableData>
 );
 
-type Count = {
-  value: string;
-  count: number;
-};
 type Props = {
-  icon?: IconType;
-  label: string;
-  nullCount?: number;
-  distinctCount?: number;
   allCount: number;
-  counts?: Count[];
-  distribution?: Count[];
-  min?: number;
-  max?: number;
-  mean?: number;
-  median?: number;
+  profile: ColumnProfile;
 };
-export default function NumberProfileRow({
-  icon,
-  label,
-  distinctCount,
-  nullCount,
-  min,
-  max,
-  mean,
-  median,
-  counts,
-  allCount,
-  distribution,
-}: Props) {
+
+export default function ProfileRow({ allCount, profile }: Props) {
+  const {
+    label,
+    nullCount,
+    distinctCount,
+    min,
+    max,
+    mean,
+    median,
+    histogram,
+    counts,
+  } = profile;
   const [expanded, setExpanded] = useState(false);
   return (
     <>
@@ -55,14 +42,14 @@ export default function NumberProfileRow({
         onClick={() => setExpanded(!expanded)}
         style={{ cursor: 'pointer' }}
       >
-        <TableData>{icon && <CustomIcon icon={icon} />}</TableData>
+        <TableData>{<ColumnIcon title={label} />}</TableData>
         <TableData>{label}</TableData>
         <NumberOrMissingTd value={nullCount} />
         <NumberOrMissingTd value={distinctCount} />
         <TableData style={{ padding: 0 }}>
-          {distribution && (
+          {histogram && (
             <Graph
-              distribution={distribution}
+              distribution={histogram}
               height={40}
               width={150}
               fill="rgba(140, 140, 140, 1)"
@@ -82,7 +69,7 @@ export default function NumberProfileRow({
           median={median}
           counts={counts}
           distinctCount={distinctCount}
-          distribution={distribution}
+          distribution={histogram}
         />
       )}
     </>
