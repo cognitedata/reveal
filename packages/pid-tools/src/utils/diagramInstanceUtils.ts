@@ -10,6 +10,19 @@ export const getDiagramInstanceId = (
   return symbolInstance.pathIds.sort().join('-');
 };
 
+export const getSymbolInstanceByPathId = (
+  symbolInstances: DiagramSymbolInstance[],
+  pathId: string
+): DiagramSymbolInstance | null => {
+  const symbolInstance = symbolInstances.filter((symbolInstance) =>
+    symbolInstance.pathIds.includes(pathId)
+  );
+  if (symbolInstance.length > 0) {
+    return symbolInstance[0];
+  }
+  return null;
+};
+
 export const isPathIdInInstance = (
   pathId: string,
   instanceId: DiagramInstanceId | null

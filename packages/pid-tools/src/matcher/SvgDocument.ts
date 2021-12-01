@@ -1,6 +1,11 @@
 import { DiagramSymbol, SvgRepresentation, DiagramSymbolInstance } from 'types';
 
-import { newMatcher, MatchResult, InternalSvgPath } from './InstanceMatcher';
+import {
+  newMatcher,
+  MatchResult,
+  InternalSvgPath,
+  newInternalSvgPath,
+} from './InstanceMatcher';
 
 export class SvgDocument {
   allSvgElements: InternalSvgPath[];
@@ -105,3 +110,18 @@ export class SvgDocument {
     return matches.map((match) => match.map((svgPath) => svgPath.pathId));
   };
 }
+
+export const newSvgDocumentFromSVGElements = (
+  svgElements: SVGElement[]
+): SvgDocument => {
+  return new SvgDocument(
+    svgElements
+      .filter((svgElement) => svgElement.getAttribute('d'))
+      .map((svgElement) => {
+        return newInternalSvgPath(
+          svgElement.getAttribute('d') as string,
+          svgElement.id
+        );
+      })
+  );
+};

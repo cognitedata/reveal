@@ -3,42 +3,26 @@
 import React, { useState } from 'react';
 import {
   SvgDocument,
-  newInternalSvgPath,
   SvgPath,
   DiagramSymbol,
   DiagramLineInstance,
   DiagramSymbolInstance,
   SvgRepresentation,
   getInternalSvgBoundingBox,
-  SVG_ID,
   DiagramConnection,
   DiagramInstanceId,
-  getDiagramInstanceId,
-  isPathIdInInstance,
-  connectionExists,
 } from '@cognite/pid-tools';
-import { ReactSVG } from 'react-svg';
 
 import { ToolType, ExistingSymbolPromptData } from './types';
-import { COLORS } from './constants';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
+import { SvgViewer } from './components/svg-viewer/SvgViewer';
 import { Viewport } from './components/viewport/Viewport';
 import { SaveSymbolModals } from './components/save-symbol-modals/SaveSymbolModals';
 
 let svgDocument: SvgDocument | undefined;
-
-const getSymbolInstanceByPathId = (
-  symbolInstances: DiagramSymbolInstance[],
-  pathId: string
-): DiagramSymbolInstance | null => {
-  const symbolInstance = symbolInstances.filter((symbolInstance) =>
-    symbolInstance.pathIds.includes(pathId)
-  );
-  if (symbolInstance.length > 0) {
-    return symbolInstance[0];
-  }
-  return null;
+const setSvgDocument = (svgDoc: SvgDocument) => {
+  svgDocument = svgDoc;
 };
 
 export const ReactPid: React.FC = () => {
@@ -167,202 +151,6 @@ export const ReactPid: React.FC = () => {
     setExistingSymbolPromptData(null);
   };
 
-  const handleBeforeInjection = (svg?: SVGSVGElement) => {
-    // console.log('handleBeforeInjection svg', svg);
-    if (svg) {
-      svg.id = SVG_ID;
-      svg.style.width = '100%';
-      svg.style.height = '100%';
-
-      const recursive = (node: SVGElement) => {
-        if (node.children.length === 0) {
-          if (lines.some((line) => line.pathIds.includes(node.id))) {
-            node.style.stroke = COLORS.diagramLine;
-          }
-
-          if (
-            symbolInstances.some((symbolInst) =>
-              symbolInst.pathIds.includes(node.id)
-            )
-          ) {
-            node.style.stroke = COLORS.symbol;
-          }
-
-          if (isPathIdInInstance(node.id, connectionSelection)) {
-            node.style.stroke = COLORS.connectionSelection;
-          }
-
-          if (selection.some((svgPath) => svgPath.id === node.id)) {
-            node.style.stroke = COLORS.symbolSelection;
-          }
-        } else {
-          for (let j = 0; j < node.children.length; j++) {
-            const child = node.children[j] as SVGElement;
-            recursive(child);
-          }
-        }
-      };
-
-      for (let j = 0; j < svg.children.length; j++) {
-        const child = svg.children[j] as SVGElement;
-        if (child.tagName === 'g') {
-          recursive(child);
-        }
-      }
-    }
-  };
-
-  const handleAfterInjection = (error: Error | null, svg?: SVGSVGElement) => {
-    if (error) {
-      return;
-    }
-    // console.log('handleAfterInjection', svg);
-
-    if (svg) {
-      const bBox = svg.getBBox();
-      const all: SVGElement[] = [];
-
-      svg.setAttribute(
-        'viewBox',
-        `${bBox.x} ${bBox.y} ${bBox.width} ${bBox.height}`
-      );
-
-      const recursive = (node: SVGElement) => {
-        if (node.children.length === 0) {
-          if (svgDocument === undefined) {
-            all.push(node);
-          }
-          const originalStrokeWidth = node.style.strokeWidth;
-
-          node.addEventListener('mouseenter', () => {
-            const boldStrokeWidth = (
-              1.5 * parseInt(originalStrokeWidth, 10)
-            ).toString();
-
-            if (active === 'connectInstances') {
-              const symbolInstance = getSymbolInstanceByPathId(
-                [...symbolInstances, ...lines],
-                node.id
-              );
-
-              if (symbolInstance) {
-                symbolInstance.pathIds.forEach((pathId) => {
-                  (
-                    document.getElementById(pathId) as unknown as SVGElement
-                  ).style.strokeWidth = boldStrokeWidth;
-                });
-              }
-            } else {
-              node.style.strokeWidth = boldStrokeWidth;
-            }
-          });
-
-          node.addEventListener('mouseleave', () => {
-            if (active === 'connectInstances') {
-              const symbolInstance = getSymbolInstanceByPathId(
-                [...symbolInstances, ...lines],
-                node.id
-              );
-
-              if (symbolInstance) {
-                symbolInstance.pathIds.forEach((pathId) => {
-                  (
-                    document.getElementById(pathId) as unknown as SVGElement
-                  ).style.strokeWidth = originalStrokeWidth;
-                });
-              }
-            } else {
-              node.style.strokeWidth = originalStrokeWidth;
-            }
-          });
-
-          node.addEventListener('click', () => {
-            if (active === 'addSymbol') {
-              if (selection.some((svgPath) => svgPath.id === node.id)) {
-                const index = selection.map((e) => e.id).indexOf(node.id);
-                setSelection([
-                  ...selection.slice(0, index),
-                  ...selection.slice(index + 1, selection.length),
-                ]);
-              } else {
-                setSelection([...selection, node]);
-              }
-            } else if (active === 'addLine') {
-              // Remove a line if already selected
-              if (lines.some((line) => line.pathIds.includes(node.id))) {
-                const index = lines.findIndex((line) =>
-                  line.pathIds.includes(node.id)
-                );
-                const newLines = [...lines];
-                newLines.splice(index, 1);
-                setLines(newLines);
-              } else {
-                setLines([
-                  ...lines,
-                  {
-                    symbolName: 'Line',
-                    pathIds: [node.id],
-                  } as DiagramLineInstance,
-                ]);
-              }
-            } else if (active === 'connectInstances') {
-              const symbolInstance = getSymbolInstanceByPathId(
-                [...symbolInstances, ...lines],
-                node.id
-              );
-
-              if (symbolInstance) {
-                const instanceId = getDiagramInstanceId(symbolInstance);
-
-                if (connectionSelection === null) {
-                  setConnectionSelection(instanceId);
-                } else if (instanceId === connectionSelection) {
-                  setConnectionSelection(null);
-                } else {
-                  const newConnection = {
-                    start: connectionSelection,
-                    end: instanceId,
-                    direction: 'unknown',
-                  } as DiagramConnection;
-                  if (connectionExists(connections, newConnection)) {
-                    return;
-                  }
-                  setConnections([...connections, newConnection]);
-                  setConnectionSelection(instanceId);
-                }
-              }
-            }
-          });
-        } else {
-          for (let j = 0; j < node.children.length; j++) {
-            const child = node.children[j] as SVGElement;
-            recursive(child);
-          }
-        }
-      };
-
-      for (let j = 0; j < svg.children.length; j++) {
-        const child = svg.children[j] as SVGElement;
-        if (child.tagName === 'g') {
-          recursive(child);
-        }
-      }
-
-      if (svgDocument === undefined) {
-        svgDocument = new SvgDocument(
-          all
-            .filter((svgElement) => svgElement.getAttribute('d'))
-            .map((svgElement) => {
-              return newInternalSvgPath(
-                svgElement.getAttribute('d') as string,
-                svgElement.id
-              );
-            })
-        );
-      }
-    }
-  };
-
   const handleFileChange = ({ target }: any) => {
     if (target && target.files.length > 0) {
       setFileUrl(URL.createObjectURL(target.files[0]));
@@ -387,7 +175,7 @@ export const ReactPid: React.FC = () => {
           fileUrl={fileUrl}
         />
         <Viewport>
-          {fileUrl === '' && (
+          {fileUrl === '' ? (
             <input
               type="file"
               accept=".svg"
@@ -399,14 +187,21 @@ export const ReactPid: React.FC = () => {
               }}
               onChange={handleFileChange}
             />
-          )}
-          {fileUrl !== '' && (
-            <ReactSVG
-              style={{ touchAction: 'none' }}
-              renumerateIRIElements={false}
-              src={fileUrl}
-              afterInjection={handleAfterInjection}
-              beforeInjection={handleBeforeInjection}
+          ) : (
+            <SvgViewer
+              fileUrl={fileUrl}
+              active={active}
+              symbolInstances={symbolInstances}
+              lines={lines}
+              setLines={setLines}
+              selection={selection}
+              setSelection={setSelection}
+              connectionSelection={connectionSelection}
+              setConnectionSelection={setConnectionSelection}
+              connections={connections}
+              setConnections={setConnections}
+              svgDocument={svgDocument}
+              setSvgDocument={setSvgDocument}
             />
           )}
         </Viewport>
