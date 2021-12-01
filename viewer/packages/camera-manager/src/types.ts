@@ -86,4 +86,4 @@ export type PointerEventDelegate = (event: { offsetX: number; offsetY: number })
 /**
  * Type defining camera change event data.
  */
-export type CameraChangeData = (event: { camera: { position: THREE.Vector3; target: THREE.Vector3 } }) => void;
+export type CameraChangeData = (event: { camera: { position: THREE.Vector3, target: THREE.Vector3 } }) => void;

@@ -459,7 +459,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Sets camera controls mode to anything allowed in CameraControlsOptions type.
+   * Sets camera control options. See {@link CameraControlsOptions}.
    * @param controlsOptions JSON object with camera controls options.
    */
   setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
@@ -882,14 +882,14 @@ export class Cognite3DViewer {
    * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
    */
   get cameraControls(): RevealCameraControls {
-    return this._cameraManager.getCameraControls();
+    return this._cameraManager.cameraControls;
   }
 
   /**
    * Gets whether camera controls through mouse, touch and keyboard are enabled.
    */
   get cameraControlsEnabled(): boolean {
-    return this._cameraManager.getCameraControlsEnabled();
+    return this._cameraManager.cameraControlsEnabled;
   }
 
   /**
@@ -898,7 +898,7 @@ export class Cognite3DViewer {
    * objects in the scene or when implementing a "cinematic" viewer.
    */
   set cameraControlsEnabled(enabled: boolean) {
-    this._cameraManager.cameraControlsEnabled(enabled);
+    this._cameraManager.cameraControlsEnabled = enabled;
   }
 
   /**
@@ -978,14 +978,14 @@ export class Cognite3DViewer {
    * Allows to move camera with WASD or arrows keys.
    */
   enableKeyboardNavigation(): void {
-    this._cameraManager.enableKeyboardNavigation();
+    this._cameraManager.keyboardNavigationEnabled = true;
   }
 
   /**
    * Disables camera movement by pressing WASD or arrows keys.
    */
   disableKeyboardNavigation(): void {
-    this._cameraManager.disableKeyboardNavigation();
+    this._cameraManager.keyboardNavigationEnabled = false;
   }
 
   /**

@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
-import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate, ControlsState } from './types';
+import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate, ControlsState, RevealCameraControls } from './types';
 import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
-import { RevealCameraControls } from '..';
+import { range } from 'lodash';
 
 export class CameraManager {
   private readonly _events = {
@@ -18,7 +18,7 @@ export class CameraManager {
   private readonly _camera: THREE.PerspectiveCamera;
   private readonly _domElement: HTMLElement;
   private readonly _inputHandler: InputHandler;
-  private readonly _raycaster: THREE.Raycaster = new THREE.Raycaster();
+  private readonly _raycaster = new THREE.Raycaster();
 
   private isDisposed = false;
 
@@ -92,16 +92,24 @@ export class CameraManager {
     }
   }
 
-  /**
-   * Convert pixel coordinates of the cursor to [-1,1]^2 coordinates.
-   * @param pixelX
-   * @param pixelY
-   */
-  private convertPixelCoordinatesToNormalized(pixelX: number, pixelY: number) {
-    const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
-    const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
+  on(event: 'cameraChange', callback: CameraChangeData): void {
+    switch (event) {
+      case 'cameraChange':
+        this._events.cameraChange.subscribe(callback as CameraChangeData);
+        break;
+      default:
+        assertNever(event);
+    }
+  }
 
-    return { x, y };
+  off(event: 'cameraChange', callback: CameraChangeData): void {
+    switch (event) {
+      case 'cameraChange':
+        this._events.cameraChange.subscribe(callback as CameraChangeData);
+        break;
+      default:
+        assertNever(event);
+    }
   }
 
   /**
@@ -140,7 +148,7 @@ export class CameraManager {
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
     const newTarget =
-      modelRaycastData?.intersection?.point ??
+      modelRaycastData.intersection?.point ??
       this.calculateMissedRaycast({ x, y }, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
@@ -166,7 +174,7 @@ export class CameraManager {
   private setupControls() {
     const { _controls: controls } = this;
 
-    let startedScroll = false;
+    let scrollStarted = false;
 
     const wheelClock = new THREE.Clock();
 
@@ -179,15 +187,15 @@ export class CameraManager {
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
 
-      const wantNewScrollTarget = startedScroll && e.deltaY < 0;
+      const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
 
       if (wantNewScrollTarget) {
-        startedScroll = false;
+        scrollStarted = true;
 
         const newTarget = await this.calculateNewTarget(e);
         this._controls.setScrollTarget(newTarget);
-      } else if (timeDelta > 0.1) {
-        startedScroll = true;
+      } else if (timeDelta > 0.08) {
+        scrollStarted = false;
       }
     };
 
@@ -218,26 +226,6 @@ export class CameraManager {
     }
   }
 
-  on(event: 'cameraChange', callback: CameraChangeData): void {
-    switch (event) {
-      case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeData);
-        break;
-      default:
-        assertNever(event);
-    }
-  }
-
-  off(event: 'cameraChange', callback: CameraChangeData): void {
-    switch (event) {
-      case 'cameraChange':
-        this._events.cameraChange.subscribe(callback as CameraChangeData);
-        break;
-      default:
-        assertNever(event);
-    }
-  }
-
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
     const boundingSphere = box.getBoundingSphere(new THREE.Sphere());
 
@@ -252,45 +240,26 @@ export class CameraManager {
     this.moveCameraTo(position, target, duration);
   }
 
-  cameraControlsEnabled(enabled: boolean): void {
+  set cameraControlsEnabled(enabled: boolean) {
     this._controls.enabled = enabled;
   }
 
-  getCameraControlsEnabled(): boolean {
+  get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
   }
 
-  enableKeyboardNavigation(): void {
-    this._controls.enableKeyboardNavigation = true;
+  set keyboardNavigationEnabled(enabled: boolean) {
+    this._controls.enableKeyboardNavigation = enabled;
   }
 
-  disableKeyboardNavigation(): void {
-    this._controls.enableKeyboardNavigation = false;
+  get keyboardNavigationEnabled(): boolean {
+    return this._controls.enableKeyboardNavigation;
   }
 
-  getCameraControlsOptions(): CameraControlsOptions {
-    return this._cameraControlsOptions;
-  }
-
-  getCameraControlsState(): ControlsState {
-    return this._controls.getState();
-  }
-
-  getCameraControls(): RevealCameraControls {
+  get cameraControls(): RevealCameraControls {
     return this._controls;
   }
-
-  setCameraControlsState(controlsState: ControlsState): void {
-    this._controls.setState(controlsState.position, controlsState.target);
-  }
-
-  setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
-    this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
-
-    this.teardownControls();
-    this.setupControls();
-  }
-
+  
   setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
     if (this.isDisposed) {
       return;
@@ -300,14 +269,23 @@ export class CameraManager {
     this.moveCameraTargetTo(target, animationTime);
   }
 
-  private calculateDefaultDuration(distanceToCamera: number): number {
-    let duration = distanceToCamera * 125; // 125ms per unit distance
-    duration = Math.min(
-      Math.max(duration, CameraManager.DefaultMinAnimationDuration),
-      CameraManager.DefaultMaxAnimationDuration
-    );
+  setCameraControlsState(controlsState: ControlsState): void {
+    this._controls.setState(controlsState.position, controlsState.target);
+  }
 
-    return duration;
+  getCameraControlsState(): ControlsState {
+    return this._controls.getState();
+  }
+  
+  getCameraControlsOptions(): CameraControlsOptions {
+    return this._cameraControlsOptions;
+  }
+
+  setCameraControlsOptions(controlsOptions: CameraControlsOptions): void {
+    this._cameraControlsOptions = { ...CameraManager.DefaultCameraControlsOptions, ...controlsOptions };
+
+    this.teardownControls();
+    this.setupControls();
   }
 
   public moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
@@ -499,7 +477,7 @@ export class CameraManager {
     nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
     nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
     let far = -Infinity;
-    for (let i = 0; i < 8; ++i) {
+    for (let i = 0; i < corners.length; ++i) {
       if (nearPlane.distanceToPoint(corners[i]) >= 0) {
         const dist = corners[i].distanceTo(cameraPosition);
         far = Math.max(far, dist);
@@ -538,19 +516,33 @@ export class CameraManager {
     this._controls.dispose();
     this.teardownControls();
   }
+
+  /**
+   * Convert pixel coordinates of the cursor to [-1,1]^2 coordinates.
+   * @param pixelX
+   * @param pixelY
+   */
+   private convertPixelCoordinatesToNormalized(pixelX: number, pixelY: number) {
+    const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
+    const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
+
+    return { x, y };
+  }
+
+  private calculateDefaultDuration(distanceToCamera: number): number {
+    let duration = distanceToCamera * 125; // 125ms per unit distance
+    duration = Math.min(
+      Math.max(duration, CameraManager.DefaultMinAnimationDuration),
+      CameraManager.DefaultMaxAnimationDuration
+    );
+
+    return duration;
+  }
+
 }
 
 function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
-  outBuffer = outBuffer || [
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3(),
-    new THREE.Vector3()
-  ];
+  outBuffer = outBuffer || range(0, 8).map(_ => new THREE.Vector3());
   if (outBuffer.length !== 8) {
     throw new Error(`outBuffer must hold exactly 8 elements, but holds ${outBuffer.length} elemnents`);
   }
@@ -567,3 +559,4 @@ function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): T
   outBuffer[7].set(min.x, max.y, max.z);
   return outBuffer;
 }
+
