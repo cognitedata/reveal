@@ -11,7 +11,7 @@ describe('DynamicDefragmentedBuffer', () => {
     const result = new DynamicDefragmentedBuffer(initialSize, Float32Array);
 
     expect(result.length).toBe(0);
-    expect(result.buffer.length).toBe(initialSize);
+    expect(result.bufferView.length).toBe(initialSize);
   });
 
   test('adding should increment length', () => {
@@ -31,10 +31,10 @@ describe('DynamicDefragmentedBuffer', () => {
     result.add(adds);
 
     expect(result.length).toBe(adds.length);
-    expect(result.buffer.length).toBe(8);
+    expect(result.bufferView.length).toBe(8);
 
     for (let i = 0; i < adds.length; i++) {
-      expect(adds[i]).toBe(result.buffer[i]);
+      expect(adds[i]).toBe(result.bufferView[i]);
     }
   });
 
@@ -47,8 +47,8 @@ describe('DynamicDefragmentedBuffer', () => {
     const addResultTwo = result.add(addsTwo);
 
     for (let i = 0; i < adds.length; i++) {
-      expect(adds[i]).toBe(result.buffer[i]);
-      expect(addsTwo[i]).toBe(result.buffer[i + adds.length]);
+      expect(adds[i]).toBe(result.bufferView[i]);
+      expect(addsTwo[i]).toBe(result.bufferView[i + adds.length]);
     }
 
     expect(addResultOne.batchId).toBe(0);
@@ -90,11 +90,11 @@ describe('DynamicDefragmentedBuffer', () => {
     expect(result.length).toBe(addsOne.length + addsThree.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsOne[i]);
+      expect(result.bufferView[i]).toBe(addsOne[i]);
     }
 
     for (let i = 0; i < addsThree.length; i++) {
-      expect(result.buffer[i + addsOne.length]).toBe(addsThree[i]);
+      expect(result.bufferView[i + addsOne.length]).toBe(addsThree[i]);
     }
   });
 
@@ -114,11 +114,11 @@ describe('DynamicDefragmentedBuffer', () => {
     expect(result.length).toBe(addsTwo.length + addsThree.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsTwo[i]);
+      expect(result.bufferView[i]).toBe(addsTwo[i]);
     }
 
     for (let i = 0; i < addsThree.length; i++) {
-      expect(result.buffer[i + addsTwo.length]).toBe(addsThree[i]);
+      expect(result.bufferView[i + addsTwo.length]).toBe(addsThree[i]);
     }
   });
 
@@ -138,11 +138,11 @@ describe('DynamicDefragmentedBuffer', () => {
     expect(result.length).toBe(addsOne.length + addsThree.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsOne[i]);
+      expect(result.bufferView[i]).toBe(addsOne[i]);
     }
 
     for (let i = 0; i < addsThree.length; i++) {
-      expect(result.buffer[i + addsOne.length]).toBe(addsThree[i]);
+      expect(result.bufferView[i + addsOne.length]).toBe(addsThree[i]);
     }
   });
 
@@ -154,7 +154,7 @@ describe('DynamicDefragmentedBuffer', () => {
     result.add(addsOne);
     result.add(addsTwo);
 
-    expect(result.buffer.length).toBe(32);
+    expect(result.bufferView.length).toBe(32);
   });
 
   test('deleting two middle batches should correctly defragment the buffer', () => {
@@ -175,11 +175,11 @@ describe('DynamicDefragmentedBuffer', () => {
     expect(result.length).toBe(addsOne.length + addsFour.length);
 
     for (let i = 0; i < addsOne.length; i++) {
-      expect(result.buffer[i]).toBe(addsOne[i]);
+      expect(result.bufferView[i]).toBe(addsOne[i]);
     }
 
     for (let i = 0; i < addsFour.length; i++) {
-      expect(result.buffer[i + addsOne.length]).toBe(addsFour[i]);
+      expect(result.bufferView[i + addsOne.length]).toBe(addsFour[i]);
     }
   });
 });

@@ -13,8 +13,8 @@ import { GeometryFilter } from '../../public/types';
 import { LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { MetricsLogger } from '@reveal/metrics';
 import { ModelIdentifier } from '@reveal/modeldata-api';
+import { MetricsLogger } from '@reveal/metrics';
 
 export class CadManager {
   private readonly _materialManager: CadMaterialManager;
@@ -69,6 +69,15 @@ export class CadManager {
         cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Simple || sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.discardInstancedMeshes(sector.metadata.id);
+        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
+      }
+
+      if (
+        sector.geometryBatchingQueue &&
+        sector.geometryBatchingQueue.length > 0 &&
+        sector.levelOfDetail === LevelOfDetail.Detailed
+      ) {
+        cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;

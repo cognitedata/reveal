@@ -12,6 +12,7 @@
     "@reveal/cad-styling": "workspace:*",
     "@reveal/logger": "workspace:*",
     "@reveal/sector-loader": "workspace:*",
+    "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,

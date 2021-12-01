@@ -121,13 +121,13 @@ export class InstancedMeshManager {
     instanceGeometry.setIndex(indices);
     instanceGeometry.setAttribute('position', vertices);
 
-    const treeIndexAttribute = new THREE.InstancedBufferAttribute(treeIndexBuffer.buffer, 1);
+    const treeIndexAttribute = new THREE.InstancedBufferAttribute(treeIndexBuffer.bufferView, 1);
     instanceGeometry.setAttribute('a_treeIndex', treeIndexAttribute);
 
-    const colorAttribute = new THREE.InstancedBufferAttribute(colorBuffer.buffer, 4, true);
+    const colorAttribute = new THREE.InstancedBufferAttribute(colorBuffer.bufferView, 4, true);
     instanceGeometry.setAttribute('a_color', colorAttribute);
 
-    const instanceMatrixAttribute = new THREE.InstancedBufferAttribute(instanceMatrixBuffer.buffer, 16);
+    const instanceMatrixAttribute = new THREE.InstancedBufferAttribute(instanceMatrixBuffer.bufferView, 16);
     instanceGeometry.setAttribute('a_instanceMatrix', instanceMatrixAttribute);
 
     const updateAttributes = () => {

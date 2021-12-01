@@ -40,8 +40,8 @@ export class CadModelFactory {
 
     const sectorRepository = this.getSectorRepository(format);
 
-    const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
     this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);
+    const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
 
     if (modelMetadata.geometryClipBox !== null) {
       const clipBox = transformToThreeJsSpace(modelMetadata.geometryClipBox, modelMetadata);

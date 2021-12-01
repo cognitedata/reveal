@@ -45,8 +45,6 @@
   "dependencies": {
     "@cognite/potree-core": "^1.5.1",
     "@cognite/reveal-parser-worker": "1.3.0",
-    "@gltf-transform/core": "^1.0.0",
-    "@gltf-transform/extensions": "^1.0.0",
     "@tweenjs/tween.js": "^18.6.4",
     "@types/three": "0.133.0",
     "assert": "^2.0.0",

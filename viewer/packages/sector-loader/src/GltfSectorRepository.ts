@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
-import { GltfSectorParser, RevealGeometryCollectionType } from '@reveal/sector-parser';
+import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
 
@@ -55,48 +55,31 @@ export class GltfSectorRepository implements SectorRepository {
 
     const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
+    const geometryBatchingQueue: ParsedGeometry[] = [];
+
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
+      const geometryBuffer = parsedGeometry.geometryBuffer;
 
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.box);
-          break;
         case RevealGeometryCollectionType.CircleCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.circle);
-          break;
         case RevealGeometryCollectionType.ConeCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.cone);
-          break;
         case RevealGeometryCollectionType.EccentricConeCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.eccentricCone);
-          break;
         case RevealGeometryCollectionType.EllipsoidSegmentCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.ellipsoidSegment);
-          break;
         case RevealGeometryCollectionType.GeneralCylinderCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.generalCylinder);
-          break;
         case RevealGeometryCollectionType.GeneralRingCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.generalRing);
-          break;
         case RevealGeometryCollectionType.QuadCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.quad);
-          break;
         case RevealGeometryCollectionType.TorusSegmentCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.torusSegment);
-          break;
         case RevealGeometryCollectionType.TrapeziumCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.trapezium);
-          break;
         case RevealGeometryCollectionType.NutCollection:
-          this.createMesh(group, parsedGeometry.buffer, materials.nut);
-          break;
-        case RevealGeometryCollectionType.TriangleMesh:
-          this.createMesh(group, parsedGeometry.buffer, materials.triangleMesh);
+          geometryBatchingQueue.push({ type, geometryBuffer, instanceId: type.toString() });
           break;
         case RevealGeometryCollectionType.InstanceMesh:
-          this.createMesh(group, parsedGeometry.buffer, materials.instancedMesh);
+          geometryBatchingQueue.push({ type, geometryBuffer, instanceId: parsedGeometry.instanceId! });
+          break;
+        case RevealGeometryCollectionType.TriangleMesh:
+          this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
           break;
         default:
           assertNever(type);
@@ -108,7 +91,8 @@ export class GltfSectorRepository implements SectorRepository {
       group: group,
       instancedMeshes: [],
       metadata: metadata,
-      modelIdentifier: sector.modelIdentifier
+      modelIdentifier: sector.modelIdentifier,
+      geometryBatchingQueue: geometryBatchingQueue
     };
   }
 

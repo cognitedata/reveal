@@ -9,7 +9,7 @@ import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 
 describe(GltfSectorParser.name, () => {
-  let parsedResult: { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[];
+  let parsedResult: { type: RevealGeometryCollectionType; geometryBuffer: THREE.BufferGeometry }[];
 
   beforeAll(() => {
     const parser = new GltfSectorParser();
@@ -27,7 +27,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(boxResult.length).toBe(1);
 
-    const boxes = boxResult[0].buffer;
+    const boxes = boxResult[0].geometryBuffer;
 
     for (const attribute in boxes.attributes) {
       if (attribute.startsWith('a_')) expect(boxes.attributes[attribute].count).toBe(2);
@@ -43,7 +43,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(circleResult.length).toBe(1);
 
-    const circles = circleResult[0].buffer;
+    const circles = circleResult[0].geometryBuffer;
 
     for (const attribute in circles.attributes) {
       if (attribute.startsWith('a_')) expect(circles.attributes[attribute].count).toBe(24);
@@ -60,7 +60,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(coneResult.length).toBe(1);
 
-    const cones = coneResult[0].buffer;
+    const cones = coneResult[0].geometryBuffer;
 
     for (const attribute in cones.attributes) {
       if (attribute.startsWith('a_')) expect(cones.attributes[attribute].count).toBe(32);
@@ -78,7 +78,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(eccentricConeResult.length).toBe(1);
 
-    const eccentricCones = eccentricConeResult[0].buffer;
+    const eccentricCones = eccentricConeResult[0].geometryBuffer;
 
     for (const attribute in eccentricCones.attributes) {
       if (attribute.startsWith('a_')) expect(eccentricCones.attributes[attribute].count).toBe(4);
@@ -96,7 +96,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(ellipsoidSegmentResult.length).toBe(1);
 
-    const ellipsoidSegments = ellipsoidSegmentResult[0].buffer;
+    const ellipsoidSegments = ellipsoidSegmentResult[0].geometryBuffer;
 
     for (const attribute in ellipsoidSegments.attributes) {
       if (attribute.startsWith('a_')) expect(ellipsoidSegments.attributes[attribute].count).toBe(12);
@@ -114,7 +114,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(generalCylinderResult.length).toBe(1);
 
-    const generalCylinders = generalCylinderResult[0].buffer;
+    const generalCylinders = generalCylinderResult[0].geometryBuffer;
 
     for (const attribute in generalCylinders.attributes) {
       if (attribute.startsWith('a_')) expect(generalCylinders.attributes[attribute].count).toBe(36);
@@ -130,7 +130,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(generalRingResult.length).toBe(1);
 
-    const generalRings = generalRingResult[0].buffer;
+    const generalRings = generalRingResult[0].geometryBuffer;
 
     for (const attribute in generalRings.attributes) {
       if (attribute.startsWith('a_')) expect(generalRings.attributes[attribute].count).toBe(58);
@@ -146,7 +146,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(quadResult.length).toBe(1);
 
-    const quads = quadResult[0].buffer;
+    const quads = quadResult[0].geometryBuffer;
 
     for (const attribute in quads.attributes) {
       if (attribute.startsWith('a_')) expect(quads.attributes[attribute].count).toBe(4);
@@ -162,7 +162,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(torusResult.length).toBe(1);
 
-    const tori = torusResult[0].buffer;
+    const tori = torusResult[0].geometryBuffer;
 
     for (const attribute in tori.attributes) {
       if (attribute.startsWith('a_')) expect(tori.attributes[attribute].count).toBe(6);
@@ -178,7 +178,7 @@ describe(GltfSectorParser.name, () => {
 
     expect(trapeziumResult.length).toBe(1);
 
-    const trapeziums = trapeziumResult[0].buffer;
+    const trapeziums = trapeziumResult[0].geometryBuffer;
 
     for (const attribute in trapeziums.attributes) {
       if (attribute.startsWith('a_')) expect(trapeziums.attributes[attribute].count).toBe(16);
