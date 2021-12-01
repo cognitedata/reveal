@@ -79,9 +79,9 @@ export const ResourceDetailsTabs = ({
     type => !excludedTypes.includes(type)
   );
 
-  let assetCount = counts.asset;
+  let assetCount = counts.asset || '0';
   if (parentResource.type === 'asset') {
-    const assetCountWithoutSeparator = counts.asset.split(',').join('');
+    const assetCountWithoutSeparator = assetCount.split(',').join('');
     let parsedAssetCount = parseInt(assetCountWithoutSeparator, 10);
     parsedAssetCount = Number.isNaN(parsedAssetCount) ? 0 : parsedAssetCount;
     parsedAssetCount =
@@ -100,7 +100,7 @@ export const ResourceDetailsTabs = ({
         <>
           <TabTitle>{getTitle(key)}</TabTitle>
           <Badge
-            text={key === 'asset' ? assetCount : counts[key]}
+            text={key === 'asset' ? assetCount : counts[key]!}
             background={Colors['greyscale-grey3'].hex()}
           />
         </>

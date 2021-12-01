@@ -75,6 +75,7 @@ export const TimeseriesPreview = ({
           <div
             style={{
               height: '40%',
+              width: 'calc(100% - 16px)',
               maxHeight: 400,
               display: 'flex',
               flexDirection: 'column',

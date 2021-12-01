@@ -195,6 +195,6 @@ const FilterWrapper = styled.div`
 `;
 
 const SelectWrapper = styled.div`
-  width: 165px;
+  width: 225px;
   margin: 20px;
 `;

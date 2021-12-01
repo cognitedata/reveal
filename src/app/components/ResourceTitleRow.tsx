@@ -21,8 +21,6 @@ type Props = {
   getTitle?: (_: any) => string | undefined;
   beforeDefaultActions?: React.ReactNode;
   afterDefaultActions?: React.ReactNode;
-  actionWidth?: number;
-  backWidth?: number;
 };
 
 export default function ResourceTitleRow({
@@ -30,8 +28,6 @@ export default function ResourceTitleRow({
   getTitle = (i: any) => i?.name,
   beforeDefaultActions,
   afterDefaultActions,
-  actionWidth = 275,
-  backWidth = 70,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
     convertResourceType(type),
@@ -45,9 +41,6 @@ export default function ResourceTitleRow({
   const inSearch = location.pathname.includes('/search');
   const [query] = useQueryString(SEARCH_KEY);
 
-  const nameWidth = `calc(100% - ${
-    inSearch ? actionWidth : actionWidth + backWidth
-  }px)`;
   const name = (
     <NameWrapper>
       {!inSearch &&
@@ -64,13 +57,14 @@ export default function ResourceTitleRow({
   );
 
   return (
-    <TitleRowWrapper>
+    <TitleRowWrapper
+      style={inSearch ? { maxWidth: 'calc(100vw - 480px)' } : {}}
+    >
       {!inSearch && (
         <div
           style={{
-            display: 'inline-block',
             overflow: 'hidden',
-            width: backWidth,
+            flex: '0 0 auto',
           }}
         >
           <Space>
@@ -81,10 +75,9 @@ export default function ResourceTitleRow({
       )}
       <div
         style={{
-          display: 'inline-block',
           overflow: 'hidden',
-          width: nameWidth,
           verticalAlign: 'bottom',
+          flex: '1 1 auto',
         }}
       >
         {inSearch ? (
@@ -101,9 +94,8 @@ export default function ResourceTitleRow({
       </div>
       <div
         style={{
-          display: 'inline-block',
           overflow: 'hidden',
-          width: actionWidth,
+          flex: '0 0 auto',
         }}
       >
         <TitleRowActions

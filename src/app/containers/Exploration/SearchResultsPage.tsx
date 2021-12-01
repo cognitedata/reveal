@@ -34,6 +34,14 @@ import { useDateRange } from 'app/context/DateRangeContext';
 import { PageTitle } from '@cognite/cdf-utilities';
 import FilterToggleButton from './FilterToggleButton';
 
+const defaultResourceTypes: ResourceType[] = [
+  'asset',
+  'timeSeries',
+  'file',
+  'event',
+  'sequence',
+];
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -164,6 +172,7 @@ function SearchPage() {
   return (
     <>
       <ResourceTypeTabs
+        resourceTypes={defaultResourceTypes}
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
       />
