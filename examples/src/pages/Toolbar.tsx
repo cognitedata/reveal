@@ -13,16 +13,11 @@ import {
   Cognite3DModel,
   CognitePointCloudModel,
   PotreePointColorType, 
-  PotreePointShape,
-  TreeIndexNodeCollection,
-  IndexSet
+  PotreePointShape
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ToolbarPosition, DefaultToolbar } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 
-import iconSet19 from './icons/Cognite_Icon_Set-19.png';
-import iconSet30 from './icons/Cognite_Icon_Set-30.png';
-import iconSet32 from './icons/Cognite_Icon_Set-32.png';
 import iconSet42 from './icons/Cognite_Icon_Set-42.png';
 import iconSet54 from './icons/Cognite_Icon_Set-54.png';
 import iconSet63 from './icons/Cognite_Icon_Set-63.png';
@@ -182,18 +177,15 @@ export function Toolbar() {
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
-      const selectedSet = new TreeIndexNodeCollection([]);
-
       var callbackMsg = () : void => {
         alert("result called");
       }
 
-      const defaultToolbar = new DefaultToolbar(viewer);
+      const model = cadModels[0] || pointCloudModels[0];
+
+      const defaultToolbar = new DefaultToolbar(viewer, model);
 
       const toolbar = defaultToolbar.getToolbar();
-      toolbar.addToolbarItem('HTML Overlay', iconSet19, callbackMsg);
-      toolbar.addToolbarItem('Debug Camera', iconSet30, callbackMsg);
-      toolbar.addToolbarItem('Timeline', iconSet32, callbackMsg);
       toolbar.addToolbarItem('Explode View', iconSet42, callbackMsg);
       toolbar.addToolbarItem('Maps', iconSet54, callbackMsg);
       toolbar.addToolbarItem('Settings', iconSet63, callbackMsg);
@@ -215,37 +207,6 @@ export function Toolbar() {
           default:
             toolbar.setPosition(ToolbarPosition.Bottom);
             break;
-        }
-      });
-
-      viewer.on('click', async event => {
-        const { offsetX, offsetY } = event;
-        console.log('2D coordinates', event);
-        const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-        if (intersection !== null) {
-          console.log(intersection);
-          switch (intersection.type) {
-            case 'cad':
-            {
-              const { treeIndex, point, model } = intersection;
-              console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-              // highlight the object
-              selectedSet.updateSet(new IndexSet([treeIndex]));
-              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-              viewer.fitCameraToBoundingBox(boundingBox, 1000);
-            }
-            break;
-
-            case 'pointcloud':
-              {
-                const { pointIndex, point } = intersection;
-                console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
-                const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
-                sphere.position.copy(point);
-                viewer.addObject3D(sphere);
-              }
-              break;
-          }
         }
       });
     }

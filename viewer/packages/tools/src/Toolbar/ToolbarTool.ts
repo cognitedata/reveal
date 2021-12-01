@@ -6,6 +6,10 @@ import { Cognite3DViewer } from '@reveal/core';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Toolbar, ToolbarPosition } from './Toolbar';
 
+/**
+ * Tool to help user to use the default toolbar items such as Camera & other features in Reveal to enable/disable it.
+ * The tool also helps in adding or create custom toolbar.
+ */
 export class ToolbarTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _toolbar: Toolbar;
@@ -27,6 +31,10 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
     this._toolbar.addToolbarItem(toolTip, backgroundImage, onClick);
   }
 
+  /**
+   * Set the position of the toolbar container
+   * @param position ToolbarPosition value such as Top, Bottom, Left, Right within the canvas
+   */
   public setPosition(position: ToolbarPosition): void {
     this._toolbar.setPosition(position);
   }

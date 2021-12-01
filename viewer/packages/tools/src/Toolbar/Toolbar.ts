@@ -4,6 +4,9 @@
 import { Cognite3DViewer } from '@reveal/core';
 import css from './Toolbar.css';
 
+/**
+ * Toolbar position within the canvas
+ */
 export enum ToolbarPosition {
   Top = 'Top',
   Bottom = 'Bottom',
@@ -11,6 +14,9 @@ export enum ToolbarPosition {
   Right = 'Right'
 }
 
+/**
+ * Toolbar class which creates a container to hold all icons within the toolbar
+ */
 export class Toolbar {
   private _toolbarContainer: HTMLDivElement;
   private static readonly stylesId = 'reveal-viewer-toolbar-styles';
@@ -36,6 +42,10 @@ export class Toolbar {
     this.createToolBarIcon(canvasElement!);
   }
 
+  /**
+   * Load the the styles from the CSS and appends them to the toolbarLoad the the styles from the CSS and appends them to the toolbar
+   * @returns Return if styles already loaded
+   */
   private static loadStyles() {
     if (document.getElementById(Toolbar.stylesId)) {
       return;
@@ -47,6 +57,10 @@ export class Toolbar {
     document.head.appendChild(style);
   }
 
+  /**
+   * Creates Toolbar container and adds it to the Canvas parent element and assigns default styles to them
+   * @param controlDiv Canvas parent div element
+   */
   private createToolBarIcon(controlDiv: HTMLElement) {
     this._toolbarContainer.id = 'toolbarContainer';
     Toolbar.loadStyles();
@@ -56,6 +70,12 @@ export class Toolbar {
     controlDiv.appendChild(this._toolbarContainer);
   }
 
+  /**
+   * Create & adds a button icons into the toolbar container
+   * @param toolTip Tooltip message to added for the icon
+   * @param backgroundImage Icon image to be displayed
+   * @param onClick Click event action for the icon
+   */
   public addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void): void {
     const element = document.createElement('BUTTON');
     element.className = Toolbar.classnames.icon;
@@ -72,6 +92,10 @@ export class Toolbar {
     this._toolbarContainer.appendChild(element);
   }
 
+  /**
+   * Set the position of the toolbar container
+   * @param position ToolbarPosition value such as Top, Bottom, Left, Right within the canvas
+   */
   public setPosition(position: ToolbarPosition): void {
     switch (position) {
       case 'Top':
