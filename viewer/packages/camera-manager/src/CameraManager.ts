@@ -5,9 +5,16 @@
 import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
-import { CallbackData, CameraControlsOptions, CameraChangeData, PointerEventDelegate, ControlsState, RevealCameraControls } from './types';
+import {
+  CallbackData,
+  CameraControlsOptions,
+  CameraChangeData,
+  PointerEventDelegate,
+  ControlsState,
+  RevealCameraControls
+} from './types';
 import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
-import { range } from 'lodash';
+import range from 'lodash/range';
 
 export class CameraManager {
   private readonly _events = {
@@ -148,8 +155,7 @@ export class CameraManager {
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
     const newTarget =
-      modelRaycastData.intersection?.point ??
-      this.calculateMissedRaycast({ x, y }, modelRaycastData.modelsBoundingBox);
+      modelRaycastData.intersection?.point ?? this.calculateMissedRaycast({ x, y }, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }
@@ -259,7 +265,7 @@ export class CameraManager {
   get cameraControls(): RevealCameraControls {
     return this._controls;
   }
-  
+
   setCameraTarget(target: THREE.Vector3, animated: boolean = false): void {
     if (this.isDisposed) {
       return;
@@ -276,7 +282,7 @@ export class CameraManager {
   getCameraControlsState(): ControlsState {
     return this._controls.getState();
   }
-  
+
   getCameraControlsOptions(): CameraControlsOptions {
     return this._cameraControlsOptions;
   }
@@ -522,7 +528,7 @@ export class CameraManager {
    * @param pixelX
    * @param pixelY
    */
-   private convertPixelCoordinatesToNormalized(pixelX: number, pixelY: number) {
+  private convertPixelCoordinatesToNormalized(pixelX: number, pixelY: number) {
     const x = (pixelX / this._domElement.clientWidth) * 2 - 1;
     const y = (pixelY / this._domElement.clientHeight) * -2 + 1;
 
@@ -538,7 +544,6 @@ export class CameraManager {
 
     return duration;
   }
-
 }
 
 function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): THREE.Vector3[] {
@@ -559,4 +564,3 @@ function getBoundingBoxCorners(bbox: THREE.Box3, outBuffer?: THREE.Vector3[]): T
   outBuffer[7].set(min.x, max.y, max.z);
   return outBuffer;
 }
-
