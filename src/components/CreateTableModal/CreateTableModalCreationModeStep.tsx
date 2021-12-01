@@ -53,7 +53,7 @@ const CreateTableModalCreationModeStep = ({
               Add CSV file here.
             </StyledCreateOptionTitle>
             <StyledCreateOptionDetail strong>
-              Drag and drop, or click to select
+              Drag and drop, or click to select.
             </StyledCreateOptionDetail>
           </StyledDragger>
         </StyledCreateOption>
@@ -64,7 +64,7 @@ const CreateTableModalCreationModeStep = ({
             isDisabled={isCreatingTable}
             isSelected={selectedCreationMode === CreationMode.Empty}
             onClick={selectCreationMode(CreationMode.Empty)}
-            title="Create an empty table"
+            title="Create an empty table."
           />
         </StyledCreateOption>
       </StyledCreateOptions>
