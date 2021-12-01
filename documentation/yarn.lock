@@ -1224,9 +1224,9 @@
     skmeans "^0.11.3"
 
 "@cognite/reveal-2.x@npm:@cognite/reveal@2.x.x":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-2.2.1.tgz#a08c89e367c72c72ba9eeb8c3c9eb0e170c42807"
-  integrity sha512-4+ybRgsOOvEP5hOrx/aOOCDAQTJZpMpmrt+LQftEPsObgD1LGIPcj/8c+iZ2wwPp7E+YTU8Ed8eIQEnr7eO0KA==
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-2.2.2.tgz#dab0d2a42cca61936b7aa8a271a016af0ec97aca"
+  integrity sha512-EYTcdwfAQ8lp1WYmLFzC4pAWZAAXD0Dzv8NcVKQ/8EwAGRJzqHWy838xVINsBxsEV+oCmTj5OuC0C6YP3flJUQ==
   dependencies:
     "@cognite/potree-core" "^1.5.1"
     "@cognite/reveal-parser-worker" "1.2.0"
@@ -1235,7 +1235,7 @@
     "@tweenjs/tween.js" "^18.6.4"
     "@types/three" "0.133.0"
     assert "^2.0.0"
-    comlink "4.3.1"
+    comlink "^4.3.1"
     geo-three "^0.0.15"
     glslify "^7.1.1"
     glslify-import "^3.1.0"
