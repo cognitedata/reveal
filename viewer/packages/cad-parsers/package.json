@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@reveal/modeldata-api": "workspace:*",
+    "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }
