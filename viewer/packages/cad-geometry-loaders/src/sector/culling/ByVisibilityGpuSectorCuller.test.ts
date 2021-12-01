@@ -113,6 +113,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     };
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(8, generateV8SectorTree(2, 2));
+    materialManager.addModelMaterials(model.modelIdentifier, 0);
     const mockV8SectorRepository = new Mock<SectorRepository>();
     const cadNode = new CadNode(model, materialManager, mockV8SectorRepository.object());
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
@@ -157,6 +158,7 @@ describe('ByVisibilityGpuSectorCuller', () => {
     const culler = new ByVisibilityGpuSectorCuller({ renderer, coverageUtil, determineSectorCost });
     const model = createCadModelMetadata(8, generateV8SectorTree(2, 2));
     const mockV8SectorRepository = new Mock<SectorRepository>();
+    materialManager.addModelMaterials(model.modelIdentifier, 0);
     const cadNode = new CadNode(model, materialManager, mockV8SectorRepository.object());
     Object.defineProperty(cadNode, 'cadModel', { get: jest.fn().mockReturnValue(model) });
     // culler.(model);
