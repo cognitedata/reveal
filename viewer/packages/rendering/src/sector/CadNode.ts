@@ -185,17 +185,17 @@ export class CadNode extends THREE.Object3D {
   }
 
   public batchGeometry(
-    primitives: [
+    geometryBatchingQueue: [
       type: RevealGeometryCollectionType,
       geometryBuffer: THREE.BufferGeometry,
       instanceId: string | undefined
     ][],
     sectorId: number
   ) {
-    this._geometryBatchingManager.batchPrimitives(primitives, sectorId);
+    this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
   }
 
-  public removePrimitives(sectorId: number) {
+  public removeBatchedSectorGeometries(sectorId: number) {
     this._geometryBatchingManager.removeSectorBatches(sectorId);
   }
 

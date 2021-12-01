@@ -55,8 +55,11 @@ export class GltfSectorRepository implements SectorRepository {
 
     const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
-    const primitives: [type: RevealGeometryCollectionType, geometryBuffer: THREE.BufferGeometry, instanceId: string][] =
-      [];
+    const geometryBatchingQueue: [
+      type: RevealGeometryCollectionType,
+      geometryBuffer: THREE.BufferGeometry,
+      instanceId: string
+    ][] = [];
 
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
@@ -73,10 +76,10 @@ export class GltfSectorRepository implements SectorRepository {
         case RevealGeometryCollectionType.TorusSegmentCollection:
         case RevealGeometryCollectionType.TrapeziumCollection:
         case RevealGeometryCollectionType.NutCollection:
-          primitives.push([type, parsedGeometry.buffer, type.toString()]);
+          geometryBatchingQueue.push([type, parsedGeometry.buffer, type.toString()]);
           break;
         case RevealGeometryCollectionType.InstanceMesh:
-          primitives.push([type, parsedGeometry.buffer, parsedGeometry.instanceId!.toString()]);
+          geometryBatchingQueue.push([type, parsedGeometry.buffer, parsedGeometry.instanceId!.toString()]);
           break;
         case RevealGeometryCollectionType.TriangleMesh:
           this.createMesh(group, parsedGeometry.buffer, materials.triangleMesh);
@@ -92,7 +95,7 @@ export class GltfSectorRepository implements SectorRepository {
       instancedMeshes: [],
       metadata: metadata,
       modelIdentifier: sector.modelIdentifier,
-      primitives: primitives
+      geometryBatchingQueue: geometryBatchingQueue
     };
   }
 

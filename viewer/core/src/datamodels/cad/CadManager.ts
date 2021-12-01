@@ -69,11 +69,15 @@ export class CadManager {
         cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
       } else if (sector.levelOfDetail === LevelOfDetail.Simple || sector.levelOfDetail === LevelOfDetail.Discarded) {
         cadModel.discardInstancedMeshes(sector.metadata.id);
-        cadModel.removePrimitives(sector.metadata.id);
+        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
       }
 
-      if (sector.primitives && sector.primitives.length > 0 && sector.levelOfDetail === LevelOfDetail.Detailed) {
-        cadModel.batchGeometry(sector.primitives, sector.metadata.id);
+      if (
+        sector.geometryBatchingQueue &&
+        sector.geometryBatchingQueue.length > 0 &&
+        sector.levelOfDetail === LevelOfDetail.Detailed
+      ) {
+        cadModel.batchGeometry(sector.geometryBatchingQueue, sector.metadata.id);
       }
 
       const sectorNodeParent = cadModel.rootSector;
