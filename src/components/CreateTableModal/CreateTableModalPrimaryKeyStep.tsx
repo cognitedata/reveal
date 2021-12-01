@@ -8,6 +8,7 @@ import Select from 'components/Select/Select';
 
 import { PrimaryKeyMethod } from './CreateTableModal';
 import CreateTableModalOption from './CreateTableModalOption';
+import Message from 'components/Message/Message';
 
 type CreateTableModalPrimaryKeyStepProps = {
   columns?: string[];
@@ -61,26 +62,34 @@ const CreateTableModalPrimaryKeyStep = ({
         </StyledCreateOptions>
       </FormFieldWrapper>
       {selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn && (
-        <FormFieldWrapper isRequired title="Select primary key">
-          {columns?.length ? (
-            <Select
-              defaultOpen
-              onChange={handleSelectedColumnChange}
-              placeholder="Enter column name"
-              showSearch
-            >
-              {columns?.map((columnName) => (
-                <Select.Option value={columnName} key={columnName}>
-                  {columnName}
-                </Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <StyledColumnsEmptyText level={2}>
-              No column found
-            </StyledColumnsEmptyText>
-          )}
-        </FormFieldWrapper>
+        <>
+          <StyledMessage
+            message={`File parsed. ${columns?.length ?? 0} column${
+              !!columns?.length ? 's' : ''
+            } detected.`}
+            type="success"
+          />
+          <FormFieldWrapper isRequired title="Select primary key">
+            {columns?.length ? (
+              <Select
+                defaultOpen
+                onChange={handleSelectedColumnChange}
+                placeholder="Enter column name"
+                showSearch
+              >
+                {columns?.map((columnName) => (
+                  <Select.Option value={columnName} key={columnName}>
+                    {columnName}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <StyledColumnsEmptyText level={2}>
+                No column found
+              </StyledColumnsEmptyText>
+            )}
+          </FormFieldWrapper>
+        </>
       )}
     </>
   );
@@ -105,6 +114,10 @@ const StyledColumnsEmptyText = styled(Body)`
   color: ${Colors['text-hint'].hex()};
   height: 22px;
   margin-top: 16px;
+`;
+
+const StyledMessage = styled(Message)`
+  margin-bottom: 16px;
 `;
 
 export default CreateTableModalPrimaryKeyStep;
