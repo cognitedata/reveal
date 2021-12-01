@@ -68,7 +68,11 @@ export default function ProfileDetailsRow({
                 }}
               >
                 <div style={{ height: '200px' }}>
-                  <Distribution distribution={distribution} />
+                  <Distribution
+                    distribution={distribution}
+                    isBottomAxisDisplayed
+                    isGridDisplayed
+                  />
                 </div>
               </Flex>
             ) : (
