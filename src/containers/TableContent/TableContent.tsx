@@ -25,7 +25,7 @@ const TableContent = () => {
         animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
           <TopBar justifyContent="space-between" alignItems="center">
-            <TableHeader title={database} subtitle={`${table}.csv`} />
+            <TableHeader title={database} subtitle={table} />
             <TabBarComponent {...props} />
           </TopBar>
         )}
