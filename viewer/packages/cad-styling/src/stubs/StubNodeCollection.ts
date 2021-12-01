@@ -28,13 +28,13 @@ export class StubNodeCollection extends NodeCollectionBase {
   getAreas(): AreaCollection {
     return this._areas;
   }
-  setAreas(areas: AreaCollection) {
+  setAreas(areas: AreaCollection): void {
     this._areas = areas;
   }
-  setIndexSet(set: IndexSet) {
+  setIndexSet(set: IndexSet): void {
     this._indexSet = set;
   }
-  clear() {
+  clear(): void {
     this._indexSet = new IndexSet();
   }
   serialize(): SerializedNodeCollection {

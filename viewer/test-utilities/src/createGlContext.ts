@@ -6,7 +6,11 @@
 // https://stackoverflow.com/a/50629802
 import { JSDOM } from 'jsdom';
 
-export function createGlContext(width: number, height: number, options?: WebGLContextAttributes) {
+export function createGlContext(
+  width: number,
+  height: number,
+  options?: WebGLContextAttributes
+): WebGLRenderingContext {
   // Override console.warn and eat warnings from THREE.WebGLRenderer about missing extensions
   const consoleWarn = console.warn;
   console.warn = (...data: any[]) => {

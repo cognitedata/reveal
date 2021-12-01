@@ -44,7 +44,7 @@ export class NodeCollectionDeserializer {
   registerNodeCollectionType<T extends NodeCollectionBase>(
     nodeCollectionType: TypeName,
     deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) => Promise<T>
-  ) {
+  ): void {
     this._types.set(nodeCollectionType, {
       deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) =>
         deserializer(descriptor, context) as Promise<T>
@@ -150,6 +150,6 @@ export class NodeCollectionDeserializer {
 export function registerCustomNodeCollectionType<T extends NodeCollectionBase>(
   nodeCollectionType: TypeName,
   deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) => Promise<T>
-) {
+): void {
   NodeCollectionDeserializer.Instance.registerNodeCollectionType(nodeCollectionType, deserializer);
 }

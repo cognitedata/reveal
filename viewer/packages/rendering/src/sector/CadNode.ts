@@ -97,7 +97,7 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.clippingPlanes = planes;
   }
 
-  get cadModelMetadata() {
+  get cadModelMetadata(): CadModelMetadata {
     return this._cadModelMetadata;
   }
 
@@ -109,11 +109,11 @@ export class CadNode extends THREE.Object3D {
     return this._sectorScene;
   }
 
-  get rootSector() {
+  get rootSector(): RootSectorNode {
     return this._rootSector;
   }
 
-  get materialManager() {
+  get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
 
@@ -121,7 +121,7 @@ export class CadNode extends THREE.Object3D {
     this._materialManager.setRenderMode(mode);
   }
 
-  get renderMode() {
+  get renderMode(): RenderMode {
     return this._materialManager.getRenderMode();
   }
 
@@ -167,13 +167,17 @@ export class CadNode extends THREE.Object3D {
     };
   }
 
-  public updateInstancedMeshes(instanceMeshFiles: InstancedMeshFile[], modelIdentifier: string, sectorId: number) {
+  public updateInstancedMeshes(
+    instanceMeshFiles: InstancedMeshFile[],
+    modelIdentifier: string,
+    sectorId: number
+  ): void {
     for (const instanceMeshFile of instanceMeshFiles) {
       this._instancedMeshManager.addInstanceMeshes(instanceMeshFile, modelIdentifier, sectorId);
     }
   }
 
-  public discardInstancedMeshes(sectorId: number) {
+  public discardInstancedMeshes(sectorId: number): void {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 

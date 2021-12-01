@@ -22,13 +22,13 @@ export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
     }
   }
 
-  add(nodeCollection: NodeCollectionBase) {
+  add(nodeCollection: NodeCollectionBase): void {
     nodeCollection.on('changed', this._changedUnderlyingNodeCollectionHandler);
     this._nodeCollections.push(nodeCollection);
     this.makeDirty();
   }
 
-  remove(nodeCollection: NodeCollectionBase) {
+  remove(nodeCollection: NodeCollectionBase): void {
     const index = this._nodeCollections.indexOf(nodeCollection);
     if (index < 0) {
       throw new Error('Could not find set');
@@ -42,7 +42,7 @@ export abstract class CombineNodeCollectionBase extends NodeCollectionBase {
   /**
    * Clears all underlying node collections.
    */
-  clear() {
+  clear(): void {
     this._nodeCollections.forEach(collection => collection.clear());
   }
 

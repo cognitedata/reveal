@@ -26,14 +26,14 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
     super(TreeIndexNodeCollection.classToken);
     if (values instanceof IndexSet) {
       this._treeIndices = values;
-    } else if (values instanceof NumericRange) {
+    } else if (NumericRange.isNumericRange(values)) {
       this._treeIndices = new IndexSet(values);
     } else {
       this._treeIndices = new IndexSet(values);
     }
   }
 
-  updateSet(treeIndices: IndexSet) {
+  updateSet(treeIndices: IndexSet): void {
     this._treeIndices = treeIndices;
     this.notifyChanged();
   }
@@ -41,7 +41,7 @@ export class TreeIndexNodeCollection extends NodeCollectionBase {
   /**
    * Sets this set to hold an empty set.
    */
-  clear() {
+  clear(): void {
     this._treeIndices = new IndexSet();
     this.notifyChanged();
   }

@@ -9,7 +9,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
 import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
-import { AreaCollection, EmptyAreaCollection, NodeCollectionBase } from '@reveal/cad-styling';
+import { AreaCollection, EmptyAreaCollection, NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
@@ -137,7 +137,7 @@ export class SinglePropertyFilterNodeCollection extends NodeCollectionBase {
     }/revisions/${this._model.revisionId}/nodes/list`;
   }
 
-  serialize() {
+  serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
       state: cloneDeep(this._filter),
