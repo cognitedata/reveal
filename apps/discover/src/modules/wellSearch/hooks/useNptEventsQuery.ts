@@ -18,7 +18,19 @@ export const useNptEventsQuery = () => {
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.NPT_EVENTS, () =>
-    service(wellboresMatchingIdMap, metric)
+    Promise.all(
+      Object.entries(wellboresMatchingIdMap).map(([matchingId, id]) =>
+        service({ [matchingId]: id as number }, metric)
+      )
+    ).then((response) =>
+      response.reduce(
+        (joinedResponse, wellboreResponse) => ({
+          ...joinedResponse,
+          ...wellboreResponse,
+        }),
+        {}
+      )
+    )
   );
 
   if (isLoading || !data) {
@@ -35,9 +47,21 @@ export const useNptEventsQuery = () => {
   // If there are ids not in the cached data, do a search for new ids and update the cache
   if (newIds.length && !fetchingNewData) {
     setFetchingNewData(true);
-    service(wellboresMatchingIdMap, metric).then((response) => {
+    Promise.all(
+      Object.entries(wellboresMatchingIdMap)
+        .filter(([_, id]) => newIds.includes(id))
+        .map(([matchingId, id]) =>
+          service({ [matchingId]: id as number }, metric)
+        )
+    ).then((response) => {
       queryClient.setQueryData(WELL_QUERY_KEY.NPT_EVENTS, {
-        ...response,
+        ...response.reduce(
+          (joinedResponse, wellboreResponse) => ({
+            ...joinedResponse,
+            ...wellboreResponse,
+          }),
+          {}
+        ),
         ...data,
       });
       setFetchingNewData(false);
