@@ -129,8 +129,8 @@ module.exports = env => {
           {
             from: './packages/tools/src/Toolbar/icons/',
             to: './packages/tools/src/Toolbar/icons/'
-          },
-        ],
+          }
+        ]
       })
     ]
   };

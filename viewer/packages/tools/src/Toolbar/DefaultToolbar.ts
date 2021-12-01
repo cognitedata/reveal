@@ -31,7 +31,7 @@ export class DefaultToolbar {
       this.axisTool.dispose();
       this.axisTool = undefined;
     }
-  }
+  };
 
   private readonly screenShot = async (): Promise<void> => {
     const downloadLink = document.createElement('a');
@@ -39,7 +39,7 @@ export class DefaultToolbar {
     const url = await this.viewer.getScreenshot();
     downloadLink.setAttribute('href', url);
     downloadLink.click();
-  }
+  };
 
   public getToolbar(): ToolbarTool {
     return this.toolbar;
