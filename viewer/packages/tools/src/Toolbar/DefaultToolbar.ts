@@ -29,7 +29,7 @@ export class DefaultToolbar {
     this.cameraControlOption = {
       onClickTargetChange: false,
       mouseWheelAction: 'zoomPastCursor'
-    }
+    };
     this.createDefaultToolbar();
   }
 
