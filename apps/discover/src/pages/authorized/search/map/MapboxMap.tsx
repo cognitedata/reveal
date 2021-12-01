@@ -153,9 +153,12 @@ export const Map: React.FC<Props> = React.memo(
           preserveDrawingBuffer: true,
           container: mapContainer.current,
           style: MAPBOX_MAP_ID,
-          center: mapStateSettings?.center || mapSettings?.center,
+          center:
+            mapStateSettings?.center ||
+            (mapSettings?.center as mapboxgl.MapboxOptions['center']),
           zoom: mapStateSettings?.zoom || mapSettings?.zoom,
-          maxBounds: mapSettings?.maxBounds,
+          maxBounds:
+            mapSettings?.maxBounds as mapboxgl.MapboxOptions['maxBounds'],
         });
 
         const miniMap = new Minimap();

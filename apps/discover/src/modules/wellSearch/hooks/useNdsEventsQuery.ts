@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
+
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
@@ -15,8 +17,9 @@ import { WellboreEventsMap } from '../types';
 import { trimCachedData } from '../utils/common';
 
 export const useNdsEventsQuery = () => {
-  const { data: enableWellSDKV3 } =
-    useTenantConfigByKey<boolean>('enableWellSDKV3');
+  const { data: enableWellSDKV3 } = useProjectConfigByKey<
+    ProjectConfigGeneral['enableWellSDKV3']
+  >('general.enableWellSDKV3');
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
   const queryClient = useQueryClient();

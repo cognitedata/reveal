@@ -10,6 +10,8 @@ import {
   Popup,
 } from 'maplibre-gl';
 
+import { ProjectConfigDocuments } from '@cognite/discover-api-types';
+
 import { log } from '_helpers/log';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
@@ -27,9 +29,8 @@ import { Modules } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellIds } from 'modules/wellSearch/selectors';
 
-import { useTenantConfigByKey } from '../../../../../hooks/useTenantConfig';
+import { useProjectConfigByKey } from '../../../../../hooks/useProjectConfig';
 import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
-import { DocumentConfig } from '../../../../../tenants/types';
 import {
   DOCUMENT_MARKER,
   GROUPED_CLUSTER_LAYER_ID,
@@ -162,9 +163,8 @@ export const UseMapEvents = () => {
   const wellIds = useWellIds();
   const dispatch = useDispatch();
   const [mapSettings, setMapSettings] = useMapContext();
-  const { data: documentConfig } = useTenantConfigByKey<DocumentConfig>(
-    Modules.DOCUMENTS
-  );
+  const { data: documentConfig } =
+    useProjectConfigByKey<ProjectConfigDocuments>(Modules.DOCUMENTS);
   const patchSavedSearch = useSavedSearch();
 
   const clusterZoomOnClickEvent = (e: MapMouseEvent) => {

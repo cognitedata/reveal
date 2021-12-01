@@ -3,11 +3,12 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import isEmpty from 'lodash/isEmpty';
 
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { Sequence } from '@cognite/sdk';
 
 import { LOG_TRAJECTORY } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
@@ -24,8 +25,9 @@ import { mapWellInfo } from '../utils/trajectory';
 import { useWellConfig } from './useWellConfig';
 
 export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
-  const { data: enableWellSDKV3 } =
-    useTenantConfigByKey<boolean>('enableWellSDKV3');
+  const { data: enableWellSDKV3 } = useProjectConfigByKey<
+    ProjectConfigGeneral['enableWellSDKV3']
+  >('general.enableWellSDKV3');
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const wells = useSecondarySelectedOrHoveredWells();
   const { data: config } = useWellConfig();

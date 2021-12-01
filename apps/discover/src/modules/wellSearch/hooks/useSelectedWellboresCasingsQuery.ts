@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
+
 import { LOG_CASING } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
@@ -18,8 +20,9 @@ import { trimCachedData } from '../utils/common';
 import { useWellConfig } from './useWellConfig';
 
 export const useSelectedWellboresCasingsQuery = () => {
-  const { data: enableWellSDKV3 } =
-    useTenantConfigByKey<boolean>('enableWellSDKV3');
+  const { data: enableWellSDKV3 } = useProjectConfigByKey<
+    ProjectConfigGeneral['enableWellSDKV3']
+  >('general.enableWellSDKV3');
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const { data: config } = useWellConfig();
   const wellboreAssetIdMap = useWellboreAssetIdMap();

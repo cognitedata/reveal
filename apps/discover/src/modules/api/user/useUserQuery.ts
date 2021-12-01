@@ -6,14 +6,14 @@ import {
   useQueryClient,
 } from 'react-query';
 
+import { ProjectConfigAzureConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { ONLY_FETCH_ONCE, USER_KEY } from 'constants/react-query';
 import { useAccessToken } from 'hooks/useAccessToken';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { discoverAPI, getJsonHeaders } from 'modules/api/service';
 import { AuthModes, User } from 'modules/user/types';
-import { AzureConfig } from 'tenants/types';
 
 import { UserProfileUpdateQueryData } from './types';
 
@@ -59,7 +59,7 @@ export function useUserRoles(): UseQueryResult<AuthModes | undefined> {
   const headers = getJsonHeaders();
   const [tenant] = getTenantInfo();
   const { data: azureConfig } =
-    useTenantConfigByKey<AzureConfig>('azureConfig');
+    useProjectConfigByKey<ProjectConfigAzureConfig>('azureConfig');
 
   return useQuery<AuthModes | undefined>(
     USER_KEY.ROLES,

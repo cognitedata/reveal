@@ -5,6 +5,9 @@ import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
 import pickBy from 'lodash/pickBy';
 
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
+
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import useSelector from 'hooks/useSelector';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { WELLBORE_COLORS } from 'modules/wellInspect/constants';
@@ -104,8 +107,9 @@ export const useSelectedWells = () => {
 
 // @sdk-wells-v3
 export const useSelectedWellIds = () => {
-  const { data: enableWellSDKV3 } =
-    useTenantConfigByKey<boolean>('enableWellSDKV3');
+  const { data: enableWellSDKV3 } = useProjectConfigByKey<
+    ProjectConfigGeneral['enableWellSDKV3']
+  >('general.enableWellSDKV3');
 
   return useSelector((state) => {
     const { selectedWellIds } = state.wellSearch;

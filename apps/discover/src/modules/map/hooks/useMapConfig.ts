@@ -1,6 +1,7 @@
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
-import { MapConfig } from 'tenants/types';
+import { ProjectConfigMap } from '@cognite/discover-api-types';
+
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 
 export const useMapConfig = () => {
-  return useTenantConfigByKey<MapConfig>('map');
+  return useProjectConfigByKey<ProjectConfigMap>('map');
 };

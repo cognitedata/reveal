@@ -1,7 +1,8 @@
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { ProjectConfigSeismic } from '@cognite/discover-api-types';
+
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { Modules } from 'modules/sidebar/types';
-import { SeismicConfig } from 'tenants/types';
 
 export const useSeismicConfig = () => {
-  return useTenantConfigByKey<SeismicConfig>(Modules.SEISMIC);
+  return useProjectConfigByKey<ProjectConfigSeismic>(Modules.SEISMIC);
 };

@@ -3,7 +3,7 @@ import { Store } from 'redux';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useUserRoles } from 'modules/api/user/useUserQuery';
 
 import { AdminSettings } from '../AdminSettings';
@@ -17,8 +17,8 @@ jest.mock('@cognite/react-feature-flags', () => ({
   useFlag: () => true,
 }));
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfigByKey: jest.fn(),
+jest.mock('hooks/useProjectConfig', () => ({
+  useProjectConfigByKey: jest.fn(),
 }));
 
 interface props {
@@ -36,7 +36,7 @@ describe('Admin Settings', () => {
     (useUserRoles as jest.Mock).mockImplementation(() => ({
       data: { isAdmin: true },
     }));
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: true,
     }));
 
@@ -51,7 +51,7 @@ describe('Admin Settings', () => {
     (useUserRoles as jest.Mock).mockImplementation(() => ({
       data: { isAdmin: false },
     }));
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: false,
     }));
 
@@ -67,7 +67,7 @@ describe('Admin Settings', () => {
     (useUserRoles as jest.Mock).mockImplementation(() => ({
       data: { isAdmin: true },
     }));
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: true,
     }));
 
@@ -86,7 +86,7 @@ describe('Admin Settings', () => {
     (useUserRoles as jest.Mock).mockImplementation(() => ({
       data: { isAdmin: true },
     }));
-    (useTenantConfigByKey as jest.Mock).mockImplementation(() => ({
+    (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
       data: false,
     }));
 

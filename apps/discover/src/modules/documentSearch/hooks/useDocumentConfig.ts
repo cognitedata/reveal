@@ -1,7 +1,8 @@
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { ProjectConfigDocuments } from '@cognite/discover-api-types';
+
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { Modules } from 'modules/sidebar/types';
-import { DocumentConfig } from 'tenants/types';
 
 export const useDocumentConfig = () => {
-  return useTenantConfigByKey<DocumentConfig>(Modules.DOCUMENTS);
+  return useProjectConfigByKey<ProjectConfigDocuments>(Modules.DOCUMENTS);
 };
