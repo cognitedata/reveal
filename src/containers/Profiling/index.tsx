@@ -1,16 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Alert } from 'antd';
+import { sortBy } from 'lodash';
 import styled from 'styled-components';
-import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
-import { useRawProfile } from 'hooks/sdk-queries';
+import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
+import { ColumnProfile, useRawProfile } from 'hooks/profiling-service';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
-import NumberProfileRow from './NumberProfileRow';
-import StringProfileRow from './StringProfileRow';
-import BooleanProfileRow from './BooleanProfileRow';
-import ObjectProfileRow from './ObjectProfileRow';
-import VectorProfileRow from './VectorProfileRow';
-import { TableData } from './ProfileRow';
+import ProfileRow, { TableData } from './ProfileRow';
 
 const Card = styled.div`
   padding: 16px;
@@ -51,6 +47,9 @@ const RootFlex = styled(Flex)`
 const TableHeader = styled.thead`
   background-color: ${Colors['greyscale-grey1'].hex()};
   color: ${Colors['greyscale-grey7'].hex()};
+  td .cogs-icon {
+    cursor: pointer;
+  }
 `;
 
 const Table = styled.table`
@@ -60,6 +59,7 @@ const Table = styled.table`
   }
 `;
 
+type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
 
@@ -75,16 +75,29 @@ export const Profiling = (): JSX.Element => {
   });
 
   const {
-    data = { columns: {}, rowCount: 0 },
+    data = { columns: [], rowCount: 0 },
     isLoading,
     isError,
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  const columnList = useMemo(
-    () => Object.entries(data.columns).sort((a, b) => a[0].localeCompare(b[0])),
-    [data.columns]
-  );
+  const [sortKey, _setSortKey] = useState<SortableColumn>('label');
+  const [sortReversed, _setSortReversed] = useState(false);
+  const setSortKey = (key: SortableColumn) => {
+    const reverse = sortKey === key;
+    _setSortKey(key);
+    if (reverse) {
+      _setSortReversed(!sortReversed);
+    }
+  };
+
+  const columnList = useMemo(() => {
+    const columns = sortBy(data.columns, sortKey);
+    if (sortReversed) {
+      return columns.reverse();
+    }
+    return columns;
+  }, [data.columns, sortKey, sortReversed]);
 
   if (isLoading) {
     return <Loader />;
@@ -132,64 +145,112 @@ export const Profiling = (): JSX.Element => {
               <Table>
                 <TableHeader>
                   <tr>
-                    <TableData>Type</TableData>
-                    <TableData>Column</TableData>
-                    <TableData>Empty</TableData>
-                    <TableData>Distinct</TableData>
-                    <TableData>Frequency</TableData>
-                    <TableData>Min</TableData>
-                    <TableData>Max</TableData>
-                    <TableData>Mean</TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Type
+                        <Icon
+                          type="SortBoth"
+                          onClick={() => setSortKey('type')}
+                        />
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Column
+                        <Icon
+                          type="SortBoth"
+                          onClick={() => setSortKey('label')}
+                        />
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Empty
+                        <Icon
+                          type="SortBoth"
+                          onClick={() => setSortKey('nullCount')}
+                        />
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Distinct
+                        <Icon
+                          type="SortBoth"
+                          onClick={() => setSortKey('distinctCount')}
+                        />
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Frequency
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Min
+                        <Icon
+                          type="SortBoth"
+                          onClick={() => setSortKey('min')}
+                        />
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Max
+                        <Icon
+                          type="SortBoth"
+                          onClick={() => setSortKey('max')}
+                        />
+                      </Flex>
+                    </TableData>
+                    <TableData>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        Mean
+                      </Flex>
+                    </TableData>
                   </tr>
                 </TableHeader>
                 <tbody>
-                  {columnList.map(([label, column]) => [
-                    column.number && (
-                      <NumberProfileRow
-                        allCount={column.count}
-                        key={`${label}_number`}
-                        label={label}
-                        nullCount={column.nullCount}
-                        profile={column.number}
-                      />
-                    ),
-                    column.string && (
-                      <StringProfileRow
-                        allCount={column.count}
-                        key={`${label}_string`}
-                        label={label}
-                        nullCount={column.nullCount}
-                        profile={column.string}
-                      />
-                    ),
-                    column.boolean && (
-                      <BooleanProfileRow
-                        allCount={column.count}
-                        key={`${label}_boolean`}
-                        label={label}
-                        nullCount={column.nullCount}
-                        profile={column.boolean}
-                      />
-                    ),
-                    column.vector && (
-                      <VectorProfileRow
-                        allCount={column.count}
-                        key={`${label}_vector`}
-                        label={label}
-                        nullCount={column.nullCount}
-                        profile={column.vector}
-                      />
-                    ),
-                    column.object && (
-                      <ObjectProfileRow
-                        allCount={column.count}
-                        key={`${label}_object`}
-                        label={label}
-                        nullCount={column.nullCount}
-                        profile={column.object}
-                      />
-                    ),
-                  ])}
+                  {columnList.map((column) => (
+                    <ProfileRow
+                      key={column.label}
+                      allCount={data.rowCount}
+                      profile={column}
+                    />
+                  ))}
                 </tbody>
               </Table>
             </div>
