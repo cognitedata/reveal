@@ -67,7 +67,7 @@ export default function ProfileDetailsRow({
                   height: 'calc(100% - 20px)',
                 }}
               >
-                <div style={{ height: '200px' }}>
+                <div style={{ height: '330px' }}>
                   <Distribution
                     distribution={distribution}
                     isBottomAxisDisplayed
