@@ -101,7 +101,7 @@ export class CadNode extends THREE.Object3D {
     return this._cadModelMetadata;
   }
 
-  get cadModelIdentifier() {
+  get cadModelIdentifier(): string {
     return this._cadModelMetadata.modelIdentifier;
   }
 
