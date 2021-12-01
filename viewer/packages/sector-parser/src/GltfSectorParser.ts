@@ -46,7 +46,7 @@ export class GltfSectorParser {
     this._glbMetadataParser = new GlbMetadataParser();
   }
 
-  public parseSector(data: ArrayBuffer): { type: RevealGeometryCollectionType; buffer: THREE.BufferGeometry }[] {
+  public parseSector(data: ArrayBuffer): ParsedGeometry[] {
     const headers = this._glbMetadataParser.parseGlbMetadata(data);
     const json = headers.json;
     return this.traverseDefaultSceneNodes(json, headers, data);
@@ -107,7 +107,7 @@ export class GltfSectorParser {
     return { type: geometryType, geometryBuffer: bufferGeometry };
   }
 
-  processInstancedTriangleMesh(payload: GeometryProcessingPayload): void {
+  processInstancedTriangleMesh(payload: GeometryProcessingPayload): ParsedGeometry {
     const { bufferGeometry, glbHeaderData, meshId, data } = payload;
 
     const json = glbHeaderData.json;
