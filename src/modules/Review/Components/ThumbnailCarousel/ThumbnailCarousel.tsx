@@ -44,6 +44,20 @@ export const ThumbnailCarousel = (props: {
     };
   }, []);
 
+  useEffect(() => {
+    const idFromUrl = +getIdfromUrl();
+    const currentFileIndex = files.findIndex(
+      (item: any) => item.id === idFromUrl
+    );
+    if (
+      idFromUrl &&
+      currentFileIndex !== -1 &&
+      currentFileIndex !== currentSlideIndex
+    ) {
+      setCurrentSlideIndex(currentFileIndex);
+    }
+  }, [files]);
+
   const handleOnClick = (fileId: number) => {
     // For background color / focus
     setCurrentSlideIndex(files.findIndex((item: any) => item.id === fileId));
