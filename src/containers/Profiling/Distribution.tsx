@@ -57,7 +57,7 @@ type GraphProps = {
   rangeEnd?: number;
 };
 export function Graph({
-  distribution,
+  distribution: rawDistribution,
   width,
   height,
   fill = 'rgba(41, 114, 225, 1)',
@@ -87,6 +87,18 @@ export function Graph({
   const { containerRef, TooltipInPortal } = useTooltipInPortal({
     scroll: true,
   });
+
+  const distribution = useMemo(() => {
+    return rawDistribution.map((value) => {
+      const formattedValue =
+        +Math.round((Number.parseFloat(value.value) + Number.EPSILON) * 100) /
+        100;
+      return {
+        ...value,
+        value: String(formattedValue),
+      };
+    });
+  }, [rawDistribution]);
 
   const tooltipIntervalEndValue = useMemo(() => {
     if (tooltipData?.index !== undefined) {
