@@ -197,7 +197,7 @@ export const Profiling = (): JSX.Element => {
                         />
                       </Flex>
                     </TableData>
-                    <TableData>
+                    <TableData $width={150}>
                       <Flex
                         direction="row"
                         justifyContent="space-between"
