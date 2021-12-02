@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@cognite/cog-data-grid": ["libs/cog-data-grid/src/index.ts"],
+      "@cognite/graph": ["libs/graph/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
       "@platypus-app/*": ["apps/platypus/src/app/*"],
       "@platypus/platypus-core": ["libs/platypus-core/src/index.ts"],

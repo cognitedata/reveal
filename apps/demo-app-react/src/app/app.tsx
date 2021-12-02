@@ -4,6 +4,12 @@ import { DataGridPage } from './pages/dataGrid/DataGridPage';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { GraphPage } from './pages/graph/GraphPage';
+
+import '@cognite/graph';
+import { enableGraphElement } from '@cognite/graph';
+
+enableGraphElement();
 
 export function App() {
   return (
@@ -19,6 +25,9 @@ export function App() {
           <li>
             <Link to="/data-grid">Data Grid</Link>
           </li>
+          <li>
+            <Link to="/graph">Graph</Link>
+          </li>
         </ul>
       </div>
       <Route
@@ -32,6 +41,7 @@ export function App() {
         )}
       />
       <Route path="/data-grid" exact component={DataGridPage} />
+      <Route path="/graph" exact component={GraphPage} />
       <Route
         path="/page-2"
         exact

@@ -22848,6 +22848,11 @@ react@17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
+reactify-wc@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/reactify-wc/-/reactify-wc-4.0.0.tgz#7e55f4f28c3222764335e5760b2a9ac4b5c93173"
+  integrity sha512-NLBk/0oYD3/v273xCvNbCWgAvlRYfBQX/k1BnPu0DTpE/Jwp8tTHzlc2vAmm1VO4DnOM81idSMeuVS78K4VXwQ==
+
 read-cache@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/read-cache/-/read-cache-1.0.0.tgz#e664ef31161166c9751cdbe8dbcf86b5fb58f774"

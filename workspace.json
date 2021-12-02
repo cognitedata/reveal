@@ -143,6 +143,39 @@
       "tags": [],
       "implicitDependencies": ["demo-app-react"]
     },
+    "graph": {
+      "root": "libs/graph",
+      "sourceRoot": "libs/graph/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/workspace:tsc",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/graph",
+            "main": "libs/graph/src/index.ts",
+            "tsConfig": "libs/graph/tsconfig.lib.json",
+            "assets": ["libs/graph/*.md"]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/graph/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/graph"],
+          "options": {
+            "jestConfig": "libs/graph/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "platypus": {
       "root": "apps/platypus",
       "sourceRoot": "apps/platypus/src",
@@ -393,6 +426,27 @@
       },
       "tags": []
     },
+    "platypus-docs": {
+      "root": "apps/platypus-docs",
+      "sourceRoot": "apps/platypus-docs/src",
+      "projectType": "application",
+      "targets": {
+        "serve": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx docz dev --config=apps/platypus-docs/doczrc.js --debug=true",
+            "parallel": false
+          }
+        },
+        "build": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx docz build --config=apps/platypus-docs/doczrc.js",
+            "parallel": false
+          }
+        }
+      }
+    },
     "platypus-infrastructure": {
       "root": "libs/platypus-infrastructure",
       "sourceRoot": "libs/platypus-infrastructure/src",
@@ -438,27 +492,6 @@
         }
       },
       "tags": []
-    },
-    "platypus-docs": {
-      "root": "apps/platypus-docs",
-      "sourceRoot": "apps/platypus-docs/src",
-      "projectType": "application",
-      "targets": {
-        "serve": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx docz dev --config=apps/platypus-docs/doczrc.js --debug=true",
-            "parallel": false
-          }
-        },
-        "build": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "command":"npx docz build --config=apps/platypus-docs/doczrc.js",
-            "parallel": false
-          }
-        }
-      }
     }
   }
 }
