@@ -125,6 +125,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
         <div css="flex: 2">
           <Select
             fullWidth
+            closeMenuOnSelect
             value={timeOptions.find((x) => x.value === timeUnit)!}
             options={timeOptions}
             onChange={(option: OptionTypeBase) => {
