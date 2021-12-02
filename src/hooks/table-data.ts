@@ -6,8 +6,9 @@ import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
 import isObject from 'lodash/isObject';
 
-import { useTableRows } from 'hooks/sdk-queries';
 import { useActiveTableContext } from 'contexts';
+import { useTableRows } from 'hooks/sdk-queries';
+import { useColumnType } from 'hooks/profiling-service';
 
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
   key: 'Key',
@@ -30,7 +31,9 @@ export interface ColumnType extends Partial<ColumnShape> {
 }
 
 export const useTableData = () => {
-  const { database, table, columnNameFilter } = useActiveTableContext();
+  const { database, table, columnNameFilter, columnTypeFilters } =
+    useActiveTableContext();
+  const { getColumnType } = useColumnType();
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
@@ -103,13 +106,18 @@ export const useTableData = () => {
   const filteredColumns = useMemo(
     () => [
       ...columns.slice(0, 1),
-      ...columns
-        .slice(1)
-        .filter((column) =>
-          column.title.toLowerCase().includes(columnNameFilter.toLowerCase())
-        ),
+      ...columns.slice(1).filter((column) => {
+        const columnType = getColumnType(column.title);
+        const fitsTypeFilter = columnTypeFilters.includes('All')
+          ? true
+          : columnTypeFilters.includes(columnType);
+        const fitsTitleFilter = column.title
+          .toLowerCase()
+          .includes(columnNameFilter.toLowerCase());
+        return fitsTitleFilter && fitsTypeFilter;
+      }),
     ],
-    [columns, columnNameFilter]
+    [columns, columnNameFilter, columnTypeFilters, getColumnType]
   );
 
   return {
