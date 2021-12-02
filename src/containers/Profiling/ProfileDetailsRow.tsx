@@ -13,7 +13,7 @@ type Props = {
   distinctCount?: number;
   allCount: number;
   counts?: Count[];
-  distribution?: Count[];
+  histogram?: Count[];
   min?: number;
   max?: number;
   mean?: number;
@@ -28,7 +28,7 @@ export default function ProfileDetailsRow({
   median,
   counts,
   allCount,
-  distribution,
+  histogram,
 }: Props) {
   return (
     <tr key="profile-details">
@@ -48,9 +48,8 @@ export default function ProfileDetailsRow({
               <NumberOrMissingSummary label="Median" value={median} />
             </Grid>
           </Section>
-
           <Section.Frequency counts={counts} allCount={allCount} />
-          <Section.Distribution histogram={distribution} />
+          <Section.Distribution histogram={histogram} />
         </ExpandedRow>
       </td>
     </tr>
