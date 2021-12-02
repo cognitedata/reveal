@@ -1,30 +1,19 @@
 import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from 'react-query';
-const baseKey = 'raw-explorer';
+import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
+export const baseKey = 'raw-explorer';
 
 export const tableKey = (db: string) => [baseKey, db, 'tables'];
 export const dbKey = [baseKey, 'databases'];
-export const rowKey = (db: string, table: string, pageSize: number) => [
-  baseKey,
-  db,
-  table,
-  'rows',
-  'pageSize',
-  pageSize,
-];
-export const rawProfileKey = (db: string, table: string, limit?: number) => [
-  baseKey,
-  db,
-  table,
-  'raw-profile',
-  { limit: limit || 'all' },
-];
+
+export const rowKey = (db: string, table: string, pageSize?: number) => {
+  const queryKey = [baseKey, db, table, 'rows'];
+  if (pageSize) {
+    queryKey.push('pageSize');
+    queryKey.push(String(pageSize));
+  }
+  return queryKey;
+};
 
 export const useDatabases = (options?: { enabled: boolean }) => {
   const sdk = useSDK();
@@ -118,71 +107,6 @@ export const useTableRows = (
   );
 };
 
-export type StringProfile = {
-  distinctCount: number;
-  lengthHistogram: [number[], number[]];
-  lengthRange: [number, number];
-  valueCounts: [string[], number[]];
-};
-export type NumberProfile = {
-  distinctCount: number;
-  histogram: [number[], number[]];
-  valueRange: [number, number];
-};
-export type BooleanProfile = {
-  trueCount: number;
-};
-export type ObjectProfile = {
-  keyCountRange: [number, number];
-  keyCountHistogram: [number[], number[]];
-};
-export type VectorProfile = {
-  lengthRange: [number, number];
-  lengthHistogram: [number[], number[]];
-};
-export type Column = {
-  count: number;
-  nullCount: number;
-  string: null | StringProfile;
-  number: null | NumberProfile;
-  boolean: null | BooleanProfile;
-  object: null | ObjectProfile;
-  vector: null | VectorProfile;
-};
-export type Profile = {
-  rowCount: number;
-  columns: Record<string, Column>;
-};
-
-export const useRawProfile = (
-  {
-    database,
-    table,
-    limit,
-  }: {
-    database: string;
-    table: string;
-    limit?: number;
-  },
-  options?: { enabled: boolean }
-) => {
-  const sdk = useSDK();
-  return useQuery<Profile>(
-    rawProfileKey(database, table, limit),
-    () =>
-      sdk
-        .post(`/api/v1/projects/${sdk.project}/profiler/raw`, {
-          data: {
-            database,
-            table,
-            limit,
-          },
-        })
-        .then((response) => response.data),
-    options
-  );
-};
-
 export const useDeleteDatabase = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
@@ -217,7 +141,8 @@ export const useDeleteTable = () => {
     ({ database, table }: { database: string; table: string }) =>
       sdk.raw.deleteTables(database, [{ name: table }]),
     {
-      onSuccess(_, { database }) {
+      onSuccess(_, { database, table }) {
+        queryClient.invalidateQueries(rowKey(database, table));
         queryClient.invalidateQueries(tableKey(database));
       },
     }
@@ -231,7 +156,8 @@ export const useCreateTable = () => {
     ({ database, table }: { database: string; table: string }) =>
       sdk.raw.createTables(database, [{ name: table }]),
     {
-      onSuccess(_, { database }) {
+      onSuccess(_, { database, table }) {
+        queryClient.invalidateQueries(rowKey(database, table));
         queryClient.invalidateQueries(tableKey(database));
       },
     }

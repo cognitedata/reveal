@@ -67,11 +67,9 @@ export const Menu = (): JSX.Element => {
           setIsDeleteModalOpen(true);
         }}
       >
-        <Item>
+        <Item danger>
           <Icon type="Trash" />
-          <span style={{ color: Colors['text-danger'].hex() }}>
-            Delete table
-          </span>
+          <span>Delete table</span>
         </Item>
       </CogsMenu.Item>
       <DeleteTableModal
@@ -90,9 +88,14 @@ const StyledMenu = styled(CogsMenu)`
     color: inherit;
   }
 `;
-const Item = styled.span`
+const Item = styled.span<{ danger?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   font-weight: 500;
+
+  & > * {
+    color: ${({ danger }) =>
+      danger ? Colors['text-danger'].hex() : 'inherit'};
+  }
 `;

@@ -6,12 +6,15 @@ export const SIDE_PANEL_TRANSITION_FUNCTION = 'ease';
 export const SIDE_PANEL_WIDTH = 320;
 
 export const MODAL_WIDTH = 400;
-export const UPLOAD_MODAL_WIDTH = 500;
+export const UPLOAD_MODAL_WIDTH = 600;
+export const CREATE_TABLE_MODAL_WIDTH = 600;
 
-export const BREADCRUMBS_HEIGHT = 50;
 export const TOPBAR_NAVIGATION_HEIGHT = 56;
-export const TAB_HEIGHT = 42;
+export const TAB_HEIGHT = 49;
 export const FILTER_BAR_HEIGHT = 68;
 
 export const TABLE_ROW_HEIGHT = 36;
 export const TABLE_CELL_EXPANDED_WIDTH = 465;
+
+export const SIDEBAR_PROFILING_DRAWER_WIDTH = 350;
+export const SIDEBAR_PROFILING_CLOSE_BUTTON_SPACE = 64;

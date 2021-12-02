@@ -4,12 +4,12 @@ import { Upload } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
 import styled from 'styled-components';
 
+import { Body, Colors, Detail } from '@cognite/cogs.js';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
+import { CustomIcon } from 'components/CustomIcon';
 
 import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
-import { Body, Colors, Detail } from '@cognite/cogs.js';
-import { CustomIcon } from 'components/CustomIcon';
 
 const { Dragger } = Upload;
 
@@ -53,7 +53,7 @@ const CreateTableModalCreationModeStep = ({
               Add CSV file here.
             </StyledCreateOptionTitle>
             <StyledCreateOptionDetail strong>
-              Drag and drop, or click to select
+              Drag and drop, or click to select.
             </StyledCreateOptionDetail>
           </StyledDragger>
         </StyledCreateOption>
@@ -64,7 +64,7 @@ const CreateTableModalCreationModeStep = ({
             isDisabled={isCreatingTable}
             isSelected={selectedCreationMode === CreationMode.Empty}
             onClick={selectCreationMode(CreationMode.Empty)}
-            title="Create an empty table"
+            title="Create an empty table."
           />
         </StyledCreateOption>
       </StyledCreateOptions>
