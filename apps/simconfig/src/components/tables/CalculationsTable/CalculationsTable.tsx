@@ -33,7 +33,6 @@ export default function CalculationsTable({ data }: ComponentProps) {
     }
 
     dispatch(setSelectedCalculation(row));
-
     history.push(`${url}/configuration/${extId}`);
   };
 

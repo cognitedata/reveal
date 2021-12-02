@@ -7,6 +7,7 @@ import { fileReducer } from './file';
 import { boundaryConditionReducer } from './boundaryCondition';
 import { eventReducer } from './event';
 import { notificationReducer } from './notification';
+import { samplingConfigurationReducer } from './samplingConfiguration';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     boundaryCondition: boundaryConditionReducer,
     event: eventReducer,
     notification: notificationReducer,
+    samplingConfiguration: samplingConfigurationReducer,
   },
 });
 

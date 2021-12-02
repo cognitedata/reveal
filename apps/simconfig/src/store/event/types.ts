@@ -7,6 +7,7 @@ export interface EventState {
   initialized: boolean;
   events: EntityState<EventSerializable>;
   eventHistory?: EventSerializable[];
+  currentEvent?: EventSerializable;
 }
 
 export type EventSerializable = Omit<

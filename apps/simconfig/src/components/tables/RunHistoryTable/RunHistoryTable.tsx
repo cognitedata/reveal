@@ -1,14 +1,21 @@
-import { Table } from '@cognite/cogs.js';
+import { Table, Button } from '@cognite/cogs.js';
 import moment from 'moment';
 import { EventSerializable } from 'store/event/types';
 import { STATUS_TYPE } from 'components/tables/CalculationsTable/constants';
 import { CapitalizedLabel } from 'pages/elements';
+import { setSelectedEvent } from 'store/event';
+import { useAppDispatch } from 'store/hooks';
 
 type ComponentProps = {
   data: EventSerializable[];
 };
 
 export default function RunHistoryTable({ data }: ComponentProps) {
+  const dispatch = useAppDispatch();
+
+  const onEventSelection = (event: EventSerializable) =>
+    dispatch(setSelectedEvent(event));
+
   const cols = [
     {
       id: 'runType',
@@ -50,6 +57,17 @@ export default function RunHistoryTable({ data }: ComponentProps) {
       accessor: (row: EventSerializable) =>
         `${row.metadata?.modelVersion || 'N/A'}`,
       width: 1000,
+    },
+    {
+      id: 'details',
+      Header: 'Details',
+      accessor: (row: EventSerializable) => (
+        <Button
+          icon="Info"
+          onClick={() => onEventSelection(row)}
+          aria-label="show-run-details"
+        />
+      ),
     },
   ];
 

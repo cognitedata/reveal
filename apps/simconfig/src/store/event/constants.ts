@@ -12,4 +12,5 @@ export const initialState: EventState = {
   initialized: false,
   events: eventsAdapter.getInitialState(),
   eventHistory: undefined,
+  currentEvent: undefined,
 };

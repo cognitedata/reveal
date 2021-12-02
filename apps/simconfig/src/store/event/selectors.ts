@@ -6,8 +6,12 @@ import { eventsAdapter } from './constants';
 const { selectById, selectAll } = eventsAdapter.getSelectors();
 
 export const selectEventsState = (state: StoreState) => state.event.events;
+
 export const selectEventHistory = (state: StoreState) =>
   state.event.eventHistory;
+
+export const selectSelectedEvent = (state: StoreState) =>
+  state.event.currentEvent;
 
 export const selectEventById = (id: string) => {
   return createSelector(selectEventsState, (state) => selectById(state, id));

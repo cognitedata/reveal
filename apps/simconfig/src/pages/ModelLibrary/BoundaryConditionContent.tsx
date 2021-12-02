@@ -13,6 +13,7 @@ import {
   fetchBoundaryConditionChartsLink,
 } from 'store/boundaryCondition/thunks';
 import { RequestStatus } from 'store/types';
+import { GenericInformationTable } from 'components/app/elements';
 
 import { SequenceDataType } from './constants';
 import { BoundaryConditionContainer } from './elements';
@@ -70,7 +71,7 @@ export const BoundaryConditionContent: React.FC<Props> = ({ data }) => {
     <BoundaryConditionContainer>
       {success && (
         <>
-          <table>
+          <GenericInformationTable>
             <caption>Boundary conditions</caption>
             <tbody>
               {displayValues.map((bc) => (
@@ -93,7 +94,7 @@ export const BoundaryConditionContent: React.FC<Props> = ({ data }) => {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </GenericInformationTable>
 
           <div className="charts-link">
             <Button

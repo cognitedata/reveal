@@ -12,7 +12,16 @@ import {
 export const eventSlice = createSlice({
   name: 'event',
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedEvent: (state, action) =>
+      partialUpdate(state, {
+        currentEvent: action.payload,
+      }),
+    resetSelectedEvent: (state) =>
+      partialUpdate(state, {
+        currentEvent: undefined,
+      }),
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLatestEventByCalculationId.pending, (state) =>
@@ -75,4 +84,6 @@ export const eventSlice = createSlice({
     });
   },
 });
+
+export const { setSelectedEvent, resetSelectedEvent } = eventSlice.actions;
 export const eventReducer = eventSlice.reducer;
