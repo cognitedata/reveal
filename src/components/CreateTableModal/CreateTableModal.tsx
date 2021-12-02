@@ -296,6 +296,7 @@ const CreateTableModal = ({
 
 const StyledNameInputDetail = styled(Detail)`
   color: ${Colors['text-secondary'].hex()};
+  font-size: 13px;
   margin-bottom: 16px;
 `;
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 
-import { Body, Button, Detail, Input, Title } from '@cognite/cogs.js';
+import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 import { notification } from 'antd';
 import { useFormik } from 'formik';
@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useCreateDatabase } from 'hooks/sdk-queries';
+import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
 
 type CreateDatabaseFormValues = {
   databaseName: string;
@@ -17,10 +18,6 @@ type CreateDatabaseFormValues = {
 type CreateDatabaseModalProps = {
   databases: RawDB[];
 } & Omit<ModalProps, 'children' | 'onOk' | 'title'>;
-
-const StyledCancelButton = styled(Button)`
-  margin-right: 8px;
-`;
 
 const CreateDatabaseModal = ({
   databases,
@@ -118,32 +115,39 @@ const CreateDatabaseModal = ({
         visible={visible}
         {...modalProps}
       >
-        <Body level={2} strong>
-          Name
-        </Body>
-        <Input
-          autoFocus
-          disabled={isLoading}
-          error={errors.databaseName}
-          fullWidth
-          onBlur={handleBlur}
-          onChange={handleChange('databaseName')}
-          onKeyUp={(e) => {
-            if (!isDisabled && e.key === 'Enter') {
-              handleSubmit();
-            }
-          }}
-          placeholder="Enter name"
-          value={values.databaseName}
-        />
-        {!errors.databaseName && (
-          <Detail>
-            The name should be unique. You cannot change this name later.
-          </Detail>
-        )}
+        <FormFieldWrapper isRequired title="Name">
+          <Input
+            autoFocus
+            disabled={isLoading}
+            error={errors.databaseName}
+            fullWidth
+            onBlur={handleBlur}
+            onChange={handleChange('databaseName')}
+            onKeyUp={(e) => {
+              if (!isDisabled && e.key === 'Enter') {
+                handleSubmit();
+              }
+            }}
+            placeholder="Enter name"
+            value={values.databaseName}
+          />
+          {!errors.databaseName && (
+            <StyledNameInputDetail>
+              Enter a unique name. You cannot change this later.
+            </StyledNameInputDetail>
+          )}
+        </FormFieldWrapper>
       </Modal>
     </form>
   );
 };
+
+const StyledNameInputDetail = styled(Detail)`
+  color: ${Colors['text-secondary'].hex()};
+`;
+
+const StyledCancelButton = styled(Button)`
+  margin-right: 8px;
+`;
 
 export default CreateDatabaseModal;
