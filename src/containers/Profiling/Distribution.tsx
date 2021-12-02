@@ -88,6 +88,16 @@ export function Graph({
     scroll: true,
   });
 
+  const tickValues = useMemo(() => {
+    if (distribution.length === 0) {
+      return [];
+    }
+    if (distribution.length === 1) {
+      return [distribution[0].value];
+    }
+    return [distribution[0].value, distribution[distribution.length - 1].value];
+  }, [distribution]);
+
   const tooltipIntervalEndValue = useMemo(() => {
     if (tooltipData?.index !== undefined) {
       if (tooltipData.index === distribution.length - 1) {
@@ -256,6 +266,7 @@ export function Graph({
                 fontWeight: 500,
                 textAnchor: 'middle',
               })}
+              tickValues={tickValues}
               strokeWidth={0}
               top={yMax}
             />
