@@ -420,7 +420,7 @@ export class CameraManager {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-   private calculateMissedRaycast(
+  private calculateMissedRaycast(
     cursorPosition: { x: number; y: number },
     modelsBoundingBox: THREE.Box3
   ): THREE.Vector3 {
@@ -470,7 +470,7 @@ export class CameraManager {
   }
   private handleMouseWheelActionChange(controlsOptions: CameraControlsOptions) {
     const { _controls: controls } = this;
-    
+
     switch (controlsOptions?.mouseWheelAction) {
       case 'zoomToTarget':
         controls.zoomToCursor = false;
