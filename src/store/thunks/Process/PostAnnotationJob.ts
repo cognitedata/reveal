@@ -22,7 +22,7 @@ export const postAnnotationJob = createAsyncThunk<
     );
     const createdJob = await createAnnotationJob(modelType, fileIds, params);
 
-    dispatch(PollJobs(createdJob));
+    dispatch(PollJobs({ ...createdJob, fileIds }));
 
     return createdJob;
   }

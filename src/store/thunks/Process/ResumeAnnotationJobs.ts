@@ -5,7 +5,7 @@ import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 
 export const ResumeAnnotationJobs = createAsyncThunk<
   void,
-  { fileIds: Array<number>; unfinishedJobs: JobState[] },
+  { unfinishedJobs: JobState[] },
   ThunkConfig
 >('process/resumeAnnotationJobs', async ({ unfinishedJobs }, { dispatch }) => {
   unfinishedJobs.forEach(async (unfinishedJob) => {
