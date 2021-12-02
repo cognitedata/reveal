@@ -190,7 +190,7 @@ export class Cognite3DViewer {
    * @param cursorPosition.y
    */
   private calculateMissedRaycast(cursorPosition: { x: number; y: number }): THREE.Vector3 {
-    const modelBB = this._models[0].getModelBoundingBox(new THREE.Box3()),
+    const modelBB = this._updateNearAndFarPlaneBuffers.combinedBbox,
       modelSize = modelBB.min.distanceTo(modelBB.max);
 
     this.raycaster.setFromCamera(cursorPosition, this.camera);
@@ -1723,43 +1723,32 @@ export class Cognite3DViewer {
 
   private readonly startPointerEventListeners = () => {
     const canvas = this.canvas;
-    const maxMoveDistance = 4;
+    const maxMoveDistance = 8;
     const maxClickDuration = 250;
 
     let pointerDown = false;
     let pointerDownTimestamp = 0;
     let validClick = false;
 
+    const startOffset = new THREE.Vector2();
+
     const onHoverCallback = debounce((e: MouseEvent) => {
       this._events.hover.fire(clickOrTouchEventOffset(e, canvas));
     }, 100);
 
-    const onMove = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
-      const { offsetX: firstOffsetX, offsetY: firstOffsetY } = clickOrTouchEventOffset(e, canvas);
-
-      // check for Manhattan distance greater than maxMoveDistance pixels
-      if (
-        pointerDown &&
-        validClick &&
-        Math.abs(offsetX - firstOffsetX) + Math.abs(offsetY - firstOffsetY) > maxMoveDistance
-      ) {
-        validClick = false;
-      }
-    };
-
     const onUp = (e: MouseEvent | TouchEvent) => {
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
+      const hasMovedDuringClick =
+        Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > maxMoveDistance;
+
       const clickDuration = e.timeStamp - pointerDownTimestamp;
-      if (pointerDown && validClick && clickDuration < maxClickDuration) {
+      if (pointerDown && validClick && clickDuration < maxClickDuration && !hasMovedDuringClick) {
         // trigger events
         this._events.click.fire(clickOrTouchEventOffset(e, canvas));
       }
+
       pointerDown = false;
       validClick = false;
-
-      // move
-      canvas.removeEventListener('mousemove', onMove);
-      canvas.removeEventListener('touchmove', onMove);
 
       // up
       canvas.removeEventListener('mouseup', onUp);
@@ -1775,9 +1764,8 @@ export class Cognite3DViewer {
       validClick = true;
       pointerDownTimestamp = e.timeStamp;
 
-      // move
-      canvas.addEventListener('mousemove', onMove);
-      canvas.addEventListener('touchmove', onMove);
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, canvas);
+      startOffset.set(offsetX, offsetY);
 
       // up
       canvas.addEventListener('mouseup', onUp);
