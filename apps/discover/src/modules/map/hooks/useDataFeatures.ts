@@ -106,7 +106,7 @@ export const useDataFeatures = (
       [] as Feature<Geometry>[]
     );
   }, [
-    externalWells,
+    // externalWells,
     wellResults.wells,
     wellResults.selectedWellIds,
     selectedDocumentsWithGeo,
@@ -144,18 +144,28 @@ export const useDataFeatures = (
       .filter((well) => !wellIds.includes(well.properties.id));
   }, [externalWells, selectedWellsWithGeo, selectedDocumentsWithGeo, wellIds]);
 
-  return {
-    ...documentSourceCollection,
-    features: [
-      ...(selectedLayers.includes(DOCUMENT_LAYER_ID)
-        ? documentSourceCollection.features
-        : []),
-      ...(selectedLayers.includes(WELL_HEADS_LAYER_ID)
-        ? wellCollection.features
-        : []),
-      ...(selectedLayers.includes(WELL_HEADS_LAYER_ID)
-        ? externalWellsCollection
-        : []),
-    ],
-  };
+  const features = useMemo(
+    () => ({
+      ...documentSourceCollection,
+      features: [
+        ...(selectedLayers.includes(DOCUMENT_LAYER_ID)
+          ? documentSourceCollection.features
+          : []),
+        ...(selectedLayers.includes(WELL_HEADS_LAYER_ID)
+          ? wellCollection.features
+          : []),
+        ...(selectedLayers.includes(WELL_HEADS_LAYER_ID)
+          ? externalWellsCollection
+          : []),
+      ],
+    }),
+    [
+      documentSourceCollection,
+      externalWellsCollection,
+      wellCollection,
+      selectedLayers,
+    ]
+  );
+
+  return features;
 };

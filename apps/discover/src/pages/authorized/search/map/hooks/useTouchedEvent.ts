@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 /**
  * Custom hook for map touched event with debounce time
@@ -6,25 +6,26 @@ import { useState } from 'react';
  */
 export const useTouchedEvent = (debounceTime = 150) => {
   const [touched, setTouched] = useState(false);
-  const [timer, setTimer] = useState<NodeJS.Timeout>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const touchedEvent = [
     {
       type: 'mousedown',
       callback: () => {
-        setTimer(setTimeout(() => setTouched(true), debounceTime));
+        timerRef.current = setTimeout(() => setTouched(true), debounceTime);
       },
     },
     {
       type: 'mouseup',
       callback: () => {
-        if (timer) {
-          clearTimeout(timer);
-          setTimer(undefined);
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = undefined;
         }
         setTouched(false);
       },
     },
   ];
+
   return { touched, touchedEvent };
 };

@@ -201,6 +201,7 @@ export const DocumentResultTable: React.FC = () => {
           dispatch(toggleOtherGeo(row.original.id, row.original.geolocation));
         }
         if (nextState) {
+          // mark for delete
           dispatch(documentSearchActions.addToPreviewedEntity(row.original));
           dispatch(
             documentSearchActions.addToSelectedDocumentId(row.original.id)
@@ -220,6 +221,7 @@ export const DocumentResultTable: React.FC = () => {
 
   const handleRowsSelect = useCallback((value: boolean) => {
     batch(() => {
+      // mark for delete
       dispatch(documentSearchActions.setPreviewedEntities(value ? data : []));
       if (value) {
         dispatch(documentSearchActions.addAllDocumentIds());

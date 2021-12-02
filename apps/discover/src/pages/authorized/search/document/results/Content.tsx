@@ -40,7 +40,7 @@ export const DocumentSearchContent: React.FC<Props> = ({ hasResults }) => {
 
   const handleDeselectAll = () => {
     dispatch(documentSearchActions.removeAllDocumentIds());
-    dispatch(documentSearchActions.setPreviewedEntities([]));
+    // dispatch(documentSearchActions.setPreviewedEntities([]));
   };
 
   const labels = useLabels();

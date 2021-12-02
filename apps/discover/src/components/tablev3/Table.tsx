@@ -230,7 +230,7 @@ const TableInner = <T extends Object>({
    * Generates a css grid-template-columns string based on the given column
    * sizes, and adds minmax where necessary.
    */
-  const getGridColumns: () => string = () => {
+  const getGridColumns = React.useMemo(() => {
     const cssColumns: string = headerGroups
       .flatMap((headerGroup: HeaderGroup<T>) =>
         headerGroup.headers.map((column: any) => {
@@ -271,14 +271,14 @@ const TableInner = <T extends Object>({
     }
 
     return gridColumns;
-  };
+  }, [headerGroups]);
 
   const tableContent = (
     <TableWrap
       {...rest}
       style={style}
       data-testid={id}
-      gridColumns={getGridColumns()}
+      gridColumns={getGridColumns}
       ref={TableWrapperRef}
     >
       {!hideHeaders && (

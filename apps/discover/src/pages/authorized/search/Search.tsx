@@ -22,7 +22,6 @@ import { useProjectConfig } from 'hooks/useProjectConfig';
 import { useResponsive } from 'hooks/useResponsive';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
-import { MapCache } from 'modules/map/useMapCache';
 import {
   setResultPanelWidth,
   setActivePanel,
@@ -379,16 +378,14 @@ export const Search: React.FC = () => {
               {SearchContent}
             </HorizontalResizableBox>
           )}
-          <MapCache>
-            <OuterMapWrapper
-              expandedMode={showSearchResults}
-              ref={setMapContainer}
-            >
-              <React.Suspense fallback={<Loader darkMode={false} />}>
-                <Map />
-              </React.Suspense>
-            </OuterMapWrapper>
-          </MapCache>
+          <OuterMapWrapper
+            expandedMode={showSearchResults}
+            ref={setMapContainer}
+          >
+            <React.Suspense fallback={<Loader darkMode={false} />}>
+              <Map />
+            </React.Suspense>
+          </OuterMapWrapper>
         </MapBoxContainer>
       </MainSearchContainer>
     </Container>

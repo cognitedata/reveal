@@ -190,10 +190,12 @@ export const Topbar: React.FC = React.memo(() => {
           {renderTopBarLeft} {renderTopBarRight}
         </TopBar>
       </Container>
-      <GeneralFeedback
-        visible={feedbackIsVisible}
-        onCancel={() => setFeedbackIsVisible(false)}
-      />
+      {feedbackIsVisible && (
+        <GeneralFeedback
+          visible={feedbackIsVisible}
+          onCancel={() => setFeedbackIsVisible(false)}
+        />
+      )}
     </>
   );
 });

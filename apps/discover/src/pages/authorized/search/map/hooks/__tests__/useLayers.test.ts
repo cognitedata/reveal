@@ -29,8 +29,7 @@ describe('useLayers', () => {
         }
       );
 
-      // console.log('searchableResult.current', searchableResult.current);
-      expect(searchableResult.current).toEqual([[]]);
+      expect(searchableResult.current).toEqual([]);
     });
   });
 });

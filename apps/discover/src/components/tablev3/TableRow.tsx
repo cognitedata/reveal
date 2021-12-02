@@ -59,8 +59,6 @@ const CustomRowComp = <T extends Object>({
   disabledRowClickCells = [],
   maxWidth,
 }: React.PropsWithChildren<RowProps<T>>) => {
-  // @ts-expect-error overrides outdated react table types
-  const { isSelected, isExpanded, isIndeterminate, isSomeSelected } = row;
   const { style: _unused, ...rest } = row.getRowProps();
   const RowComponent = TableRow || DefaultTableRow;
   const [onHandleClick, onHandleDoubleClick] = useClickPreventionOnDoubleClick(
@@ -88,7 +86,7 @@ const CustomRowComp = <T extends Object>({
     }
   };
 
-  const renderTableRow = React.useMemo(() => {
+  const renderTableRow = () => {
     return row.cells.map((cell) => (
       <TableCell
         {...cell.getCellProps()}
@@ -100,7 +98,7 @@ const CustomRowComp = <T extends Object>({
         <RenderTableCell cell={cell} />
       </TableCell>
     ));
-  }, [isSelected, isExpanded, isIndeterminate, isSomeSelected, row.cells]);
+  };
 
   return (
     <>
@@ -112,7 +110,7 @@ const CustomRowComp = <T extends Object>({
         onMouseLeave={handleRowMouseLeave}
         highlighted={highlighted}
       >
-        {renderTableRow}
+        {renderTableRow()}
 
         {renderRowOverlayComponent && (
           <OverlayCell>

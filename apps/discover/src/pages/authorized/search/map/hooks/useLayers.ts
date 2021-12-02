@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import get from 'lodash/get';
 import isString from 'lodash/isString';
@@ -70,19 +70,6 @@ export interface TypeaheadResult {
   feature: any;
 }
 
-export const useSearchableConfig = (
-  allLayers: Layers,
-  allLayerData: MapDataSource[]
-) => {
-  const [layers] = useSearchableLayers(allLayers, allLayerData);
-  return {
-    layers,
-    title: useProjectConfigByKey<ProjectConfigGeneral['searchableLayerTitle']>(
-      'general.searchableLayerTitle'
-    )?.data,
-  };
-};
-
 // might need to generalise this later on
 // but for the license use case at the moment this will do
 export const useSearchableLayers = (
@@ -120,5 +107,27 @@ export const useSearchableLayers = (
     }
   });
 
-  return [results];
+  return results;
+};
+
+export const useSearchableConfig = (
+  allLayers: Layers,
+  allLayerData: MapDataSource[]
+) => {
+  const title = useProjectConfigByKey<
+    ProjectConfigGeneral['searchableLayerTitle']
+  >('general.searchableLayerTitle')?.data;
+
+  const layers = useMemo(
+    () => useSearchableLayers(allLayers, allLayerData),
+    [allLayers, allLayerData]
+  );
+
+  return useMemo(
+    () => ({
+      layers,
+      title,
+    }),
+    [layers, title]
+  );
 };

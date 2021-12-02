@@ -24,7 +24,6 @@ import {
   setSelectedWell,
 } from 'modules/map/actions';
 import { DrawMode } from 'modules/map/types';
-import { useMapContext } from 'modules/map/useMapCache';
 import { Modules } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellIds } from 'modules/wellSearch/selectors';
@@ -40,8 +39,6 @@ import {
 import { MapLayerSearchModal } from '../map-overlay-actions/MapLayerSearchModal';
 import { MapEvent } from '../MapboxMap';
 import { extractDocumentMapLayers, getAbsoluteCoordinates } from '../utils';
-
-import { useLayers } from './useLayers';
 
 const hoverPopup = new Popup({
   closeButton: false,
@@ -157,12 +154,11 @@ const onMouseLeaveFilterableMapLayer = (e: MapMouseEvent) => {
   canvas.style.cursor = '';
 };
 
-export const UseMapEvents = () => {
+export const useMapEvents = () => {
   const metrics = useGlobalMetrics('wells');
-  const { layers: mapLayers, layersReady } = useLayers();
+  // const { layers: mapLayers, layersReady } = useLayers();
   const wellIds = useWellIds();
   const dispatch = useDispatch();
-  const [mapSettings, setMapSettings] = useMapContext();
   const { data: documentConfig } =
     useProjectConfigByKey<ProjectConfigDocuments>(Modules.DOCUMENTS);
   const patchSavedSearch = useSavedSearch();
@@ -246,10 +242,11 @@ export const UseMapEvents = () => {
     }
   };
 
-  // Close previewed document cards on map move
-  const handleMouseDown = () => {
-    dispatch(clearSelectedDocument());
-  };
+  // Note: This is causing way to many redux dispatch.
+  // figure out why this is needed, and if it can be done differently.
+  // const handleMouseDown = () => {
+  //   dispatch(clearSelectedDocument());
+  // };
 
   const onClickFilterableMapLayer = (event: MapMouseEvent) => {
     const view: MapboxGeoJSONFeature[] = event.target.queryRenderedFeatures(
@@ -300,22 +297,6 @@ export const UseMapEvents = () => {
         .setLngLat(event.lngLat)
         .setDOMContent(placeholder)
         .addTo(event.target);
-    }
-  };
-
-  const handleMovedEnd = (event: MapMouseEvent) => {
-    // is this necessary now that we've always displaying the map?
-    const center = event.target.getCenter();
-    const zoom = event.target.getZoom();
-
-    // used the 'if' here because we had to import mapSettings from the context
-    // const [, setMapSettings] = useMapContext();
-    // was giving lint errors
-    if (mapSettings) {
-      setMapSettings({
-        center,
-        zoom,
-      });
     }
   };
 
@@ -387,14 +368,14 @@ export const UseMapEvents = () => {
 
       // Map
 
-      {
-        type: 'mousedown',
-        callback: handleMouseDown,
-      },
-      {
-        type: 'moveend',
-        callback: handleMovedEnd,
-      },
+      // {
+      //   type: 'mousedown',
+      //   callback: handleMouseDown,
+      // },
+      // {
+      //   type: 'moveend',
+      //   callback: handleMouseDown,
+      // },
       {
         type: 'draw.selectionchange',
         callback: onSelectionChange,
@@ -412,7 +393,7 @@ export const UseMapEvents = () => {
         },
       },
     ],
-    [wellIds, mapLayers, layersReady]
+    []
   );
 
   return events;

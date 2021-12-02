@@ -1,5 +1,5 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { batch, useDispatch } from 'react-redux';
 
 import cleanCoords from '@turf/clean-coords';
 import {
@@ -52,7 +52,6 @@ import { useSelectedSurvey } from 'modules/seismicSearch/hooks';
 import { setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterCategory } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
-import { FlexGrow } from 'styles/layout';
 
 import { setClearPolygon } from '../../../../modules/map/actions';
 import { MS_TRANSITION_TIME } from '../search/SideBar/constants';
@@ -65,24 +64,15 @@ import {
 } from './constants';
 import { MapWrapper, MapBlockExpander } from './elements';
 import FloatingActions from './FloatingActions';
-import { useSelectedLayers } from './hooks';
-import { useLayers, useSearchableConfig } from './hooks/useLayers';
-import { UseMapEvents } from './hooks/useMapEvents';
+import { useLayers } from './hooks/useLayers';
+import { useMapEvents } from './hooks/useMapEvents';
 import { useMapSources } from './hooks/useMapSources';
 import { useTouchedEvent } from './hooks/useTouchedEvent';
 import { useVisibleLayers } from './hooks/useVisibleLayers';
 import LeaveConfirmModal from './LeaveConfirmModal';
-import {
-  ContentSelector,
-  LineButton,
-  MapNavigationPanel,
-  PolygonButton,
-  SearchableAssets,
-  InfoButton,
-  InfoCode,
-} from './map-overlay-actions';
+import { MapNavigationPanel } from './map-overlay-actions';
 import { Map as MapboxMap } from './MapboxMap';
-import { TopButtonMenu } from './TopButtonMenu';
+import { PolygonBar } from './polygon/PolygonBar';
 import { getMapIcons } from './utils/mapIcons';
 
 function getGeometryType<T>(item: T) {
@@ -94,9 +84,7 @@ export const Map: React.FC = () => {
   const {
     geoFilter,
     arbitraryLine,
-    selectedLayers: selected,
     otherGeo,
-    assets,
     zoomToFeature,
     zoomToCoords,
     moveToCoords,
@@ -104,8 +92,7 @@ export const Map: React.FC = () => {
     selectedFeature,
     cancelPolygonSearch,
   } = useMap();
-  const { layers: allLayers, selectableLayers } = useLayers();
-  const selectedLayers = useSelectedLayers(selectableLayers, selected);
+  const { selectableLayers } = useLayers();
   const { data: selectedSurveyData } = useSelectedSurvey();
   const metrics = useGlobalMetrics('map');
   const [flyTo, setFlyTo] = useState<{ zoom: any; center: any } | null>(null);
@@ -114,16 +101,20 @@ export const Map: React.FC = () => {
   const { showSearchResults } = useSearchState();
   const [polygon, setPolygon] = useState<MapState['geoFilter']>(() => []);
   const [showModal, setShowModal] = useState(false);
-  const [searchPending, setSearchPending] = useState(false);
+  const searchPendingRef = useRef<boolean>(false);
   const { touched, touchedEvent } = useTouchedEvent();
   const activePanel = useActivePanel();
   const sidebarCategory = useFilterCategory();
-  const [sidebarCategoryUnset, setSidebarCategoryUnset] = useState(false);
+  const sidebarCategoryUnsetRef = useRef<boolean>(false);
+
+  const [combinedSources] = useMapSources();
 
   const isPolygonButtonActive =
     drawMode === 'draw_polygon' || polygon.length > 0;
 
   const { t } = useTranslation();
+
+  const layers = useVisibleLayers(selectableLayers);
 
   const setSavedPolygon = useSetPolygon();
   const clearPolygon = useClearPolygon();
@@ -170,26 +161,28 @@ export const Map: React.FC = () => {
 
   // Handle clicking outside while on drawing mode
   useEffect(() => {
-    const outsideListner = (event: MouseEvent) => {
+    const outsideListener = (event: MouseEvent) => {
       if (
         mapReference &&
         !mapReference.getContainer().contains(event.target as Node)
       ) {
-        if (searchPending || drawMode === 'draw_polygon') {
+        if (searchPendingRef.current || drawMode === 'draw_polygon') {
           event.preventDefault();
           event.stopPropagation();
           setShowModal(true);
-        } else {
-          dispatch(clearSelectedFeature());
         }
+
+        //   else {
+        //     dispatch(clearSelectedFeature());
+        //   }
       }
     };
 
-    document.addEventListener('mousedown', outsideListner);
+    document.addEventListener('mousedown', outsideListener);
     return () => {
-      document.removeEventListener('mousedown', outsideListner);
+      document.removeEventListener('mousedown', outsideListener);
     };
-  }, [drawMode, mapReference, searchPending]);
+  }, [mapReference, drawMode]);
 
   // Handle keyboard listeners
   useKeyPressListener({
@@ -198,14 +191,14 @@ export const Map: React.FC = () => {
         isPolygonButtonActive ||
         getGeometryType(selectedFeature) === 'Polygon'
       ) {
-        onPolygonButtonToggle();
+        handlePolygonButtonToggle();
       }
     },
     deps: [isPolygonButtonActive, selectedFeature],
     key: 'Escape',
   });
 
-  const updateArea = (event: TS_FIX_ME) => {
+  const updateArea = React.useCallback((event: TS_FIX_ME) => {
     if (event.features.length === 0) return;
 
     const eventType = event && event.type;
@@ -217,7 +210,8 @@ export const Map: React.FC = () => {
 
     const feature = event.features[0];
     dispatch(setSelectedFeature(feature));
-    setSearchPending(true);
+
+    searchPendingRef.current = true;
 
     const type = getGeometryType(feature);
     if (type === 'LineString') {
@@ -240,9 +234,9 @@ export const Map: React.FC = () => {
         metrics.track('update-drawn-polygon-on-map');
       }
     }
-  };
+  }, []);
 
-  const mapEvents = UseMapEvents();
+  const mapEvents = useMapEvents();
 
   // Try to get these into the useMapEvents hooks, as of now they require some work if we're to avoid passing
   // tons of props, perhaps go with a context instead of all the useStates.
@@ -259,7 +253,7 @@ export const Map: React.FC = () => {
       ...touchedEvent,
       ...mapEvents,
     ],
-    [mapEvents]
+    []
   );
 
   const zoomToAsset = (point: Point, changeZoom?: number | false) => {
@@ -282,25 +276,40 @@ export const Map: React.FC = () => {
     });
   };
 
-  const onQuickSearchSelection = (selection: TS_FIX_ME) => {
+  const handleQuickSearchSelection = (selection: TS_FIX_ME) => {
     setFocusedFeature(selection.feature);
     metrics.track('click-asset-menu-item');
+  };
+
+  const handlePolygonButtonToggle = () => {
+    if (isPolygonButtonActive) {
+      dispatch(setDrawMode('simple_select'));
+      deletePolygon();
+      metrics.track('click-cancel-polygon-search-button');
+    } else {
+      dispatch(setDrawMode('draw_polygon'));
+      metrics.track('click-enable-polygon-search-button');
+    }
   };
 
   const deletePolygon = () => {
     setPolygon([]);
     dispatch(clearSelectedFeature());
-    setSearchPending(false);
+    searchPendingRef.current = false;
+
     if (geoFilter.length > 0) {
       clearPolygon();
     }
   };
 
   const handleRemoveFeature = () => {
-    setSearchPending(false);
+    searchPendingRef.current = false;
+
     if (getGeometryType(selectedFeature) === 'LineString') {
-      dispatch(removeArbitraryLine());
-      dispatch(clearSelectedFeature());
+      batch(() => {
+        dispatch(removeArbitraryLine());
+        dispatch(clearSelectedFeature());
+      });
     } else {
       deletePolygon();
       // Keep the drawing mode even after deleting the current polgon
@@ -310,35 +319,41 @@ export const Map: React.FC = () => {
 
   // this is when the 'search' icon is clicked from a polygon
   const handleSearchClicked = () => {
-    setSearchPending(false);
+    searchPendingRef.current = false;
     metrics.track('click-polygon-search-button');
 
-    // doing a slice on a survey
-    // NOTE: refactor this into the seismic module, it's not a 'map' thing
-    if (selectedFeature && getGeometryType(selectedFeature) === 'LineString') {
+    batch(() => {
+      // doing a slice on a survey
+      // NOTE: refactor this into the seismic module, it's not a 'map' thing
       if (
-        !selectedSurveyData ||
-        'error' in selectedSurveyData ||
-        selectedSurveyData.files.length === 0
+        selectedFeature &&
+        getGeometryType(selectedFeature) === 'LineString'
       ) {
-        showErrorMessage(SEISMIC_NO_SURVEY_ERROR_MESSAGE);
-        return;
-      }
+        if (
+          !selectedSurveyData ||
+          'error' in selectedSurveyData ||
+          selectedSurveyData.files.length === 0
+        ) {
+          showErrorMessage(SEISMIC_NO_SURVEY_ERROR_MESSAGE);
+          return;
+        }
 
-      const id = v1();
-      dispatch(
-        searchForSlicesByLine(id, selectedSurveyData.files, selectedFeature)
-      );
+        const id = v1();
 
-      dispatch(setSelectedSliceId(id));
-      dispatch(setSeismicCompareIsOpen(true));
-    } else {
-      dispatch(setDrawMode('direct_select')); // Trick to unselect polygon on search click
-      if (polygon) {
-        setSavedPolygon(polygon);
+        dispatch(
+          searchForSlicesByLine(id, selectedSurveyData.files, selectedFeature)
+        );
+
+        dispatch(setSelectedSliceId(id));
+        dispatch(setSeismicCompareIsOpen(true));
+      } else {
+        dispatch(setDrawMode('direct_select')); // Trick to unselect polygon on search click
+        if (polygon) {
+          setSavedPolygon(polygon);
+        }
       }
-    }
-    dispatch(clearSelectedFeature());
+      dispatch(clearSelectedFeature());
+    });
   };
 
   const handleToggleResult = () => {
@@ -350,7 +365,7 @@ export const Map: React.FC = () => {
       if (sidebarCategory !== 'landing') return;
 
       if (isUndefined(activePanel)) {
-        setSidebarCategoryUnset(true);
+        sidebarCategoryUnsetRef.current = true;
       } else {
         dispatch(setCategoryPage(activePanel as CategoryTypes));
       }
@@ -358,20 +373,21 @@ export const Map: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!isUndefined(activePanel) && sidebarCategoryUnset) {
-      setSidebarCategoryUnset(false);
+    if (!isUndefined(activePanel) && sidebarCategoryUnsetRef.current) {
+      sidebarCategoryUnsetRef.current = false;
       dispatch(setCategoryPage(activePanel as CategoryTypes));
     }
   }, [activePanel]);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       // Trigger a resize for the map to change width after transition has finished
       mapReference?.resize();
     }, MS_TRANSITION_TIME);
+
+    return () => clearTimeout(timeout);
   }, [showSearchResults]);
 
-  const layers = useVisibleLayers(selectableLayers);
   // sync the initial map state to the 'default' layers selection
   // note: this might be better done when initially loading the layers
   // so we can skip this step entirly.
@@ -382,11 +398,6 @@ export const Map: React.FC = () => {
 
     dispatch(setSelectedLayers(initialSelectedLayers));
   }, [selectableLayers]);
-
-  const [combinedSources] = useMapSources();
-
-  const { layers: searchableAssets, title: searchableTitle } =
-    useSearchableConfig(allLayers, combinedSources);
 
   const features = useMemo(() => {
     const collection = [
@@ -438,51 +449,42 @@ export const Map: React.FC = () => {
   //   return null;
   // }, [selectedFeature, geoFilter, mapReference?.getCenter(), touched]);
 
-  const onPolygonButtonToggle = () => {
-    if (isPolygonButtonActive) {
-      dispatch(setDrawMode('simple_select'));
-      deletePolygon();
-      metrics.track('click-cancel-polygon-search-button');
-    } else {
-      dispatch(setDrawMode('draw_polygon'));
-      metrics.track('click-enable-polygon-search-button');
-    }
-  };
+  const mapIcons = useMemo(() => {
+    return getMapIcons();
+  }, []);
 
-  const infoCodes: InfoCode[] = useMemo(() => {
-    if (!isPolygonButtonActive) {
-      return [];
-    }
-    if (!selectedFeature && polygon.length) {
-      return ['edit'];
-    }
-    return ['finish', 'cancel'];
-  }, [isPolygonButtonActive, polygon, selectedFeature]);
+  const renderBlockExpander = useMemo(() => {
+    if (showSearchResults) return null;
+
+    return (
+      <BlockExpander
+        data-testid="expand-search-result"
+        text={t(EXPAND_SEARCH_RESULTS_TEXT)}
+        onClick={handleToggleResult}
+      />
+    );
+  }, [showSearchResults]);
 
   return (
     <>
-      <LeaveConfirmModal
-        open={showModal}
-        onCancel={() => {
-          onPolygonButtonToggle();
-          setShowModal(false);
-        }}
-        onOk={() => {
-          setShowModal(false);
-        }}
-      />
+      {showModal && (
+        <LeaveConfirmModal
+          open={showModal}
+          onCancel={() => {
+            handlePolygonButtonToggle();
+            setShowModal(false);
+          }}
+          onOk={() => {
+            setShowModal(false);
+          }}
+        />
+      )}
       <DocumentCard map={mapReference} />
       <SeismicCard map={mapReference} />
       <WellCard map={mapReference} />
 
       <MapWrapper>
-        {!showSearchResults && (
-          <BlockExpander
-            data-testid="expand-search-result"
-            text={t(EXPAND_SEARCH_RESULTS_TEXT)}
-            onClick={handleToggleResult}
-          />
-        )}
+        {renderBlockExpander}
 
         <MapboxMap
           setMapReference={setMapReference}
@@ -493,7 +495,8 @@ export const Map: React.FC = () => {
           flyTo={flyTo}
           focusedFeature={focusedFeature}
           layers={layers}
-          mapIcons={getMapIcons()}
+          mapIcons={mapIcons}
+          selectedFeature={selectedFeature}
           renderNavigationControls={(mapWidth) => {
             return (
               <>
@@ -513,38 +516,15 @@ export const Map: React.FC = () => {
                 {/* When bigger than 70 pixels, show the zoom controls */}
                 {mapWidth > 70 && <MapNavigationPanel map={mapReference} />}
 
-                <TopButtonMenu>
-                  <InfoButton infoCodes={infoCodes} />
-
-                  <FlexGrow />
-
-                  <PolygonButton
-                    onToggle={onPolygonButtonToggle}
-                    isActive={isPolygonButtonActive}
-                  />
-
-                  <LineButton />
-
-                  <>
-                    {searchableTitle && (
-                      <SearchableAssets
-                        onSelect={onQuickSearchSelection}
-                        items={searchableAssets}
-                        placeholder={searchableTitle}
-                      />
-                    )}
-                  </>
-
-                  <ContentSelector
-                    selectedLayers={selectedLayers}
-                    zoomToAsset={zoomToAsset}
-                    assets={assets}
-                  />
-                </TopButtonMenu>
+                <PolygonBar
+                  polygon={polygon}
+                  zoomToAsset={zoomToAsset}
+                  onPolygonButtonToggle={handlePolygonButtonToggle}
+                  onQuickSearchSelection={handleQuickSearchSelection}
+                />
               </>
             );
           }}
-          selectedFeature={selectedFeature}
         />
       </MapWrapper>
     </>

@@ -33,13 +33,17 @@ export const selectionHook =
           const selectedRowCount = rows.filter(
             (row: any) => row.isSelected
           ).length;
+
           const allSelected = selectedRowCount === rows.length;
           const {
-            checked: _unused1,
-            onChange: _unused2,
+            checked: _unused,
+            onChange,
             ...rest
           } = getToggleAllRowsSelectedProps();
+
           const onCheckboxChanged = (nextState: boolean) => {
+            onChange({ target: { checked: nextState } });
+
             if (handleRowsSelect) {
               handleRowsSelect(nextState);
             }
@@ -58,13 +62,13 @@ export const selectionHook =
         // The cell can use the individual row's getToggleRowSelectedProps method
         // to the render a checkbox
         Cell: ({ row }: Hooks<T>) => {
-          const {
-            checked,
-            onChange: _unused3,
-            ...rest
-          } = row.getToggleRowSelectedProps();
+          const { checked, onChange, ...rest } =
+            row.getToggleRowSelectedProps();
+
           const isSelected = row.selected || checked || false;
           const onCheckboxChanged = (nextState: boolean) => {
+            onChange({ target: { checked: nextState } });
+
             if (handleRowSelect) {
               handleRowSelect(row, nextState);
             }

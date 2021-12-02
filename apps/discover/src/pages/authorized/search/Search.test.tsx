@@ -13,10 +13,6 @@ import { WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS } from 'modules/wellInspect/act
 
 import { Search } from './Search';
 
-jest.mock('modules/map/useMapCache', () => ({
-  MapCache: () => <></>,
-}));
-
 jest.mock('hooks/useProjectConfig', () => ({
   useProjectConfig: jest.fn(),
   useProjectConfigByKey: jest.fn(),

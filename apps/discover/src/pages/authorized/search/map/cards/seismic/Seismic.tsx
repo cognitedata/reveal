@@ -15,12 +15,13 @@ interface Props {
 export const SeismicCard: React.FC<Props> = ({ map }) => {
   const { data: selectedSurveyData } = useSelectedSurvey();
   const selectedFiles = useSelectedFiles();
-  const selectedFileIds = selectedFiles.map((file) => file.fileId);
 
   if (map && selectedSurveyData) {
     if ('error' in selectedSurveyData || !selectedSurveyData.files) {
       return null;
     }
+
+    const selectedFileIds = selectedFiles.map((file) => file.fileId);
 
     return (
       <MapPreviewContainer
