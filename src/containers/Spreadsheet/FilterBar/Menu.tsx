@@ -16,7 +16,6 @@ export const Menu = (): JSX.Element => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;
-  const canBeRenamed = false; // TODO renaming is impossible now
 
   const stopPropagation = (
     e: React.MouseEvent<HTMLButtonElement | HTMLElement>
@@ -37,12 +36,6 @@ export const Menu = (): JSX.Element => {
 
   return (
     <StyledMenu>
-      <CogsMenu.Item aria-label="Button rename table" disabled={!canBeRenamed}>
-        <Item>
-          <Icon type="Edit" />
-          Rename table
-        </Item>
-      </CogsMenu.Item>
       <CSVLink
         filename={`cognite-${database}-${table}.csv`}
         data={onDownloadData}
@@ -67,11 +60,9 @@ export const Menu = (): JSX.Element => {
           setIsDeleteModalOpen(true);
         }}
       >
-        <Item>
+        <Item danger>
           <Icon type="Trash" />
-          <span style={{ color: Colors['text-danger'].hex() }}>
-            Delete table
-          </span>
+          <span>Delete table</span>
         </Item>
       </CogsMenu.Item>
       <DeleteTableModal
@@ -90,9 +81,14 @@ const StyledMenu = styled(CogsMenu)`
     color: inherit;
   }
 `;
-const Item = styled.span`
+const Item = styled.span<{ danger?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   font-weight: 500;
+
+  & > * {
+    color: ${({ danger }) =>
+      danger ? Colors['text-danger'].hex() : 'inherit'};
+  }
 `;
