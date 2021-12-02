@@ -7,7 +7,7 @@ import * as solutions from './app/cmds/solutions';
 import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
 import { LogoutCommand } from './app/cmds/logout';
-import { red } from 'chalk';
+import chalk from 'chalk';
 
 const config = {
   appId: 'platypus-cli',
@@ -27,7 +27,7 @@ scriptName('platypus')
   .fail((msg, err, args) => {
     // if (err) throw err; // do something with stack report to sentry (maybe)
     console.error(
-      red(
+      chalk.red(
         msg ||
           err.message ||
           'Something went wrong, and we are unable to detect what please contact us for more info'

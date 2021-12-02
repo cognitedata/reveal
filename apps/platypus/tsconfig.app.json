@@ -9,7 +9,6 @@
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
     "../../node_modules/@nrwl/react/typings/image.d.ts",
-    "../../types/index.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts",
@@ -24,7 +23,6 @@
     "**/*.js",
     "**/*.jsx",
     "**/*.ts",
-    "**/*.tsx",
-    "../../types/index.d.ts"
+    "**/*.tsx"
   ]
 }
