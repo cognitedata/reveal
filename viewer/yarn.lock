@@ -505,7 +505,7 @@ __metadata:
     eslint-plugin-unused-imports: ^1.1.3
     file-loader: ^6.2.0
     geo-three: ^0.0.15
-    gl: ^4.8.0
+    gl: ^4.9.2
     glslify: ^7.1.1
     glslify-import: ^3.1.0
     glslify-loader: ^2.0.0
@@ -6096,18 +6096,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gl@npm:^4.8.0":
-  version: 4.9.0
-  resolution: "gl@npm:4.9.0"
+"gl@npm:^4.9.2":
+  version: 4.9.2
+  resolution: "gl@npm:4.9.2"
   dependencies:
     bindings: ^1.5.0
     bit-twiddle: ^1.0.2
     glsl-tokenizer: ^2.0.2
-    nan: ^2.14.1
-    node-abi: ^2.18.0
-    node-gyp: ^7.1.0
-    prebuild-install: ^5.3.5
-  checksum: 5f607abe1c230e37125e43be3b1e3aaefda10a9af22a1387d656b8994e810ba6a22104f75e45239c400e44208594468afa9645172b2a74de7b79b6da98c967bd
+    nan: ^2.15.0
+    node-abi: ^2.30.1
+    node-gyp: ^7.1.2
+    prebuild-install: ^5.3.6
+  checksum: 6c784f35a4bbd4f676f6bcc735c374bf4d0820882c28c6e8c6598d3131a61617aa994465ff4c73a54eb2ae0cb014e851e65deb585efb13b414b70ae3ea7d32e9
   languageName: node
   linkType: hard
 
@@ -9196,7 +9196,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.12.1, nan@npm:^2.14.1":
+"nan@npm:^2.12.1, nan@npm:^2.15.0":
   version: 2.15.0
   resolution: "nan@npm:2.15.0"
   dependencies:
@@ -9288,7 +9288,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-abi@npm:^2.18.0, node-abi@npm:^2.7.0":
+"node-abi@npm:^2.30.1":
+  version: 2.30.1
+  resolution: "node-abi@npm:2.30.1"
+  dependencies:
+    semver: ^5.4.1
+  checksum: 3f4b0c912ce4befcd7ceab4493ba90b51d60dfcc90f567c93f731d897ef8691add601cb64c181683b800f21d479d68f9a6e15d8ab8acd16a5706333b9e30a881
+  languageName: node
+  linkType: hard
+
+"node-abi@npm:^2.7.0":
   version: 2.30.0
   resolution: "node-abi@npm:2.30.0"
   dependencies:
@@ -9311,7 +9320,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:^7.1.0":
+"node-gyp@npm:^7.1.2":
   version: 7.1.2
   resolution: "node-gyp@npm:7.1.2"
   dependencies:
@@ -10133,7 +10142,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prebuild-install@npm:^5.3.5":
+"prebuild-install@npm:^5.3.6":
   version: 5.3.6
   resolution: "prebuild-install@npm:5.3.6"
   dependencies:
