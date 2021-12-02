@@ -101,12 +101,12 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       close={close}
     >
       <IconHeading icon="BellNotification">Run alerts</IconHeading>
-      <p>Get alerted when runs fail</p>
+      <p>Get alerted when runs fail.</p>
       <Hr />
       <IconHeading icon="BellNotification">Last seen status</IconHeading>
       <p>
         Allows you to track if the extraction pipeline is down due to connection
-        issues.{' '}
+        issues.
       </p>
       <StyledLabel htmlFor="time-amount-input">
         Send an alert if there has been no activity for
@@ -138,8 +138,8 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       <Hr />
       {numContactsWithNotificationsTurnedOn === 0 ? (
         <InfoBox iconType="WarningStroke" color="warning">
-          There are no currently no contacts that will receive notifications.
-          You can manage this in the contact section.
+          There are currently no contacts that will receive notifications. You
+          can manage this in the contact section.
         </InfoBox>
       ) : (
         <InfoBox iconType="InfoFilled">
