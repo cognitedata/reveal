@@ -36,6 +36,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
     counts,
   } = profile;
   const [expanded, setExpanded] = useState(false);
+
   return (
     <>
       <tr

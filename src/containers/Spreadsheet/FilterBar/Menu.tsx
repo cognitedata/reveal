@@ -16,7 +16,6 @@ export const Menu = (): JSX.Element => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const canBeDownloaded = isFetched && !!rows?.length;
-  const canBeRenamed = false; // TODO renaming is impossible now
 
   const stopPropagation = (
     e: React.MouseEvent<HTMLButtonElement | HTMLElement>
@@ -37,12 +36,6 @@ export const Menu = (): JSX.Element => {
 
   return (
     <StyledMenu>
-      <CogsMenu.Item aria-label="Button rename table" disabled={!canBeRenamed}>
-        <Item>
-          <Icon type="Edit" />
-          Rename table
-        </Item>
-      </CogsMenu.Item>
       <CSVLink
         filename={`cognite-${database}-${table}.csv`}
         data={onDownloadData}
