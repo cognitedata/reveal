@@ -14,7 +14,7 @@ import {
 } from 'hooks/profiling-service';
 
 import Message from 'components/Message/Message';
-import { Section } from './Section';
+import { Section } from 'components/ProfilingSection';
 
 const NO_DATA = '—';
 

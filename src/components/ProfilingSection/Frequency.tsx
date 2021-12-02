@@ -2,7 +2,7 @@ import React from 'react';
 import { zip } from 'lodash';
 
 import FrequencyStats from 'containers/Profiling/FrequencyStats';
-import { Section } from '.';
+import { Section } from 'components/ProfilingSection';
 
 type Props = {
   allCount: number;
@@ -29,7 +29,11 @@ export const Frequency = ({ allCount, counts, title }: Props): JSX.Element => {
 
   return (
     <Section title={title ?? 'Frequency analysis'}>
-      <FrequencyStats allCount={allCount} counts={fixedCounts} />
+      {fixedCounts ? (
+        <FrequencyStats allCount={allCount} counts={fixedCounts} />
+      ) : (
+        'MISSING'
+      )}
     </Section>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Body, Flex, Label } from '@cognite/cogs.js';
-import { Section } from '.';
+
+import { Section } from 'components/ProfilingSection';
 
 type Props = {
   allCount: number;
