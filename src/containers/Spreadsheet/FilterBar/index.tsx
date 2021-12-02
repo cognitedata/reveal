@@ -42,6 +42,7 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
               const active = columnTypeFilters.includes(filter.type);
               return (
                 <FilterItem
+                  key={`${filter.type}_${filter.value}`}
                   filter={filter}
                   active={active}
                   onClick={onFilterClick}
