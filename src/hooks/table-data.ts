@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { ColumnShape } from 'react-base-table';
+import isUndefined from 'lodash/isUndefined';
 
 import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
@@ -90,7 +91,8 @@ export const useTableData = () => {
           row.lastUpdatedTime = new Date(
             rawRow.lastUpdatedTime
           ).toLocaleString();
-        else if (rawRow[key as keyof RawDBRow])
+        // value can be boolean:false
+        else if (!isUndefined(rawRow[key as keyof RawDBRow]))
           row[key] = chooseRenderType(rawRow[key as keyof RawDBRow]);
       });
       return row;
