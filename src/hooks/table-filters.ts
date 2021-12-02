@@ -1,5 +1,7 @@
-import { FilterType } from 'components/FilterItem';
 import { useActiveTableContext } from 'contexts';
+import { useColumnType } from 'hooks/profiling-service';
+
+import { FilterType } from 'components/FilterItem';
 
 export const DEFAULT_FILTER: FilterType = {
   type: 'columns',
@@ -13,6 +15,10 @@ export const useFilters = () => {
     columnNameFilter,
     setColumnNameFilter,
   } = useActiveTableContext();
+  const { getColumnTypeCounts } = useColumnType();
+
+  const columnTypeCounts = getColumnTypeCounts();
+  console.log(columnTypeCounts);
 
   const filters = [
     DEFAULT_FILTER,
