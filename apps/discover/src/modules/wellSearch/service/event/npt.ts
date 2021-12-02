@@ -44,10 +44,6 @@ export async function getNptEventsByWellboreIds(
     items = [...items, ...response.items];
   }
 
-  useStopTimeLogger(networkTimer, {
-    noOfWellbores: wellboreIds.length,
-  });
-
   const groupedEvents = groupBy(
     items,
     (row) => wellboreExternalIdMap[row.parentExternalId]
@@ -57,6 +53,11 @@ export async function getNptEventsByWellboreIds(
     if (!groupedEvents[wellboreId]) {
       groupedEvents[wellboreId] = [];
     }
+  });
+
+  useStopTimeLogger(networkTimer, {
+    noOfWellbores: wellboreIds.length,
+    noOfNptEvents: items.length,
   });
 
   return Promise.resolve(groupedEvents);

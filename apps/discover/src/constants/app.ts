@@ -100,7 +100,10 @@ export const SIDECAR = {
     app_id: 'ou1uyk2p',
     hide_default_launcher: true,
   },
-  mixpanel: 'disabled', // required
+  mixpanel:
+    sidecarOverrides?.mixpanel ||
+    process.env.REACT_APP_MIXPANEL_TOKEN ||
+    'disabled',
   unleash: process.env.REACT_APP_UNLEASH || '',
   applicationId: PROD ? 'discover' : 'discover-staging',
   applicationName: 'Discover',

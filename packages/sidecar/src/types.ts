@@ -69,6 +69,7 @@ export type SidecarConfig = ApiBaseUrls & {
     version?: string;
     keySeparator?: false | string;
   };
+  mixpanel?: string;
   privacyPolicyUrl: string;
   simconfigApiBaseUrl: string;
 };

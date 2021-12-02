@@ -17,7 +17,7 @@ export const VIEW_MODES = {
 export const GraphTableSwitch: React.FC<Props> = ({ viewMode, onChange }) => {
   const { Graph, Table } = VIEW_MODES;
   return (
-    <Wrapper>
+    <Wrapper data-testid="graph-view-switch">
       <SegmentedControl currentKey={viewMode} onButtonClicked={onChange}>
         <SegmentedControl.Button key={Graph}>{Graph}</SegmentedControl.Button>
         <SegmentedControl.Button key={Table}>{Table}</SegmentedControl.Button>

@@ -1,20 +1,20 @@
 import '@testing-library/cypress/add-commands';
 import { AdminCommands } from './admin.commands';
-import { DocumentsCommands } from './documents.commands';
 import { FavoriteCommands } from './favorite.commands';
 import { LoginCommand } from './login.command';
+import { SearchCommands } from './search.commands';
 
 declare global {
   namespace Cypress {
     interface Chainable
       extends LoginCommand,
-        DocumentsCommands,
+        SearchCommands,
         FavoriteCommands,
         AdminCommands {}
   }
 }
 
 export * from './login.command';
-export * from './documents.commands';
+export * from './search.commands';
 export * from './favorite.commands';
 export * from './admin.commands';

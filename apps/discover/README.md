@@ -114,6 +114,10 @@ Cypress has many other run options, they can be found here: https://docs.cypress
 
 #### Run Cypress tests (CI mode)
 
+INFO:
+This command is used by Jenkins but can be executed locally too.
+Before executing in please comment out the "REACT_APP_MIXPANEL_TOKEN" in the BUILD.bazel file as that token is used to measure performance on staging
+
 ```shell
 yarn cypress:ci
 ```

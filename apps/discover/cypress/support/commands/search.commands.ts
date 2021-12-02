@@ -9,7 +9,7 @@ Cypress.Commands.add('clearAllFilters', () => {
 });
 
 Cypress.Commands.add(
-  'performDocumentSearch',
+  'performSearch',
   (searchString: string, clearFilters = false) => {
     if (clearFilters) {
       cy.log('Clearing all filters');
@@ -25,7 +25,7 @@ Cypress.Commands.add(
   }
 );
 
-export interface DocumentsCommands {
-  performDocumentSearch(searchString: string, clearAllFilters?: boolean): void;
+export interface SearchCommands {
+  performSearch(searchString: string, clearAllFilters?: boolean): void;
   clearAllFilters(): void;
 }

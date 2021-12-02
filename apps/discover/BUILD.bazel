@@ -336,6 +336,9 @@ react_scripts(
         "REACT_APP_ENABLE_REDUX_LOGGER": "false",
         "REACT_APP_LOCIZE_VERSION": "production",
 
+        # staging Mixpanel token used for E2E. Comment out when running locally
+        "REACT_APP_MIXPANEL_TOKEN": "69a30e428cda64ec8f375c286ac3d844",
+
         ### DO NOT CHANGE: FAS placeholders
         # In order to build only once we set placeholders into dynamic variables
         # Which will be on FAS publish step in Jenkins replaced to actual values
@@ -411,7 +414,6 @@ react_scripts(
     ],
     env = {
         "HTTPS": "true",
-        "REACT_APP_ENABLE_REDUX_LOGGER": "true",
         "REACT_APP_DEBUG_METRICS": "true",
         "REACT_APP_DEBUG_KEYS": "false",
         "REACT_APP_ENABLE_ERRORS": "flash",
@@ -425,7 +427,6 @@ react_scripts(
         "REACT_APP_LOCIZE_PROJECT_ID": "b0fef6b6-5821-4946-9acc-cb9c41568a75",
         "REACT_APP_LOCIZE_VERSION": "latest",
         "REACT_APP_MIXPANEL_DEBUG": "false",
-        "REACT_APP_MIXPANEL_TOKEN": "0dd343d29d483321995f9582436770f2",
         ### END
         "NODE_OPTIONS": "--max_old_space_size=4096",
     },

@@ -5,7 +5,6 @@
 
 // therefore, the only stuff we put here, is the stuff we want to use locally
 window.__cogniteSidecar = {
-  mixpanel: 'disabled', // do not send metrics when running e2e tests by setting wrong token
   fakeIdp: [
     {
       cluster: 'azure-dev',

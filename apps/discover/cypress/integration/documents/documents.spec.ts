@@ -19,7 +19,7 @@ describe('Documents', () => {
 
   it('Show expanded metadata on row click', () => {
     cy.log('Search for duplicate document');
-    cy.performDocumentSearch(QUERY_DUPLICATED_FILENAME);
+    cy.performSearch(QUERY_DUPLICATED_FILENAME);
     cy.findAllByTestId('table-cell')
       .contains(`${QUERY_DUPLICATED_FILENAME} (2)`)
       .first()
@@ -71,7 +71,7 @@ describe('Documents', () => {
       });
 
     cy.log(`Perform input search for: ${filename}`);
-    cy.performDocumentSearch(filename);
+    cy.performSearch(filename);
     cy.log(`Search results should be shown in the table`);
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 0);
 
@@ -106,7 +106,7 @@ describe('Documents', () => {
     // cy.findAllByTestId('table-row').should('have.length', 9);
 
     cy.log('Apply input filter again');
-    cy.performDocumentSearch(filename);
+    cy.performSearch(filename);
     // cy.findAllByTestId('table-row').should('have.length.greaterThan', 26);
 
     cy.log('Apply other filters');
@@ -182,7 +182,7 @@ describe('Documents', () => {
   });
 
   it('Click Preview document hover button', () => {
-    cy.performDocumentSearch(filename);
+    cy.performSearch(filename);
     cy.findAllByTestId('table-row')
       .first()
       .children()
