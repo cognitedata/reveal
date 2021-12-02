@@ -4,14 +4,14 @@ import { Colors, Flex, Icon } from '@cognite/cogs.js';
 
 import { useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
-import { useColumnType } from 'hooks/column-type';
 import {
+  useColumnType,
   useRawProfile,
-  Column,
   StringProfile,
   NumberProfile,
   BooleanProfile,
-} from 'hooks/sdk-queries';
+  ColumnProfile,
+} from 'hooks/profiling-service';
 
 import Message from 'components/Message/Message';
 import { Section } from './Section';
@@ -33,12 +33,12 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
   });
 
   const {
-    data = { columns: {} as Record<string, Column> },
+    data = { columns: [] },
     isLoading,
     isError,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  const { getColumnType } = useColumnType();
+  const { getColumnType } = useColumnType(database, table);
 
   const columnType = useMemo(
     () => getColumnType(selectedColumn?.title),
@@ -49,8 +49,8 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     count = 0,
     nullCount = 0,
     ...columnProfilingData
-  }: Partial<Column> = selectedColumn?.key
-    ? data.columns?.[selectedColumn?.key] ?? {}
+  }: Partial<ColumnProfile> = selectedColumn?.key
+    ? data.columns?.find((p) => p.label === selectedColumn?.key) ?? {}
     : {};
 
   return (
@@ -65,25 +65,25 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
         </Flex>
       )}
       {isError && <Message message="Profiling service error" type="error" />}
-      {columnType === 'Text' && (
+      {columnType === 'String' && (
         <ColumnString
           count={count}
           nullCount={nullCount}
-          data={columnProfilingData.string ?? null}
+          data={(columnProfilingData.profile as StringProfile) ?? null}
         />
       )}
       {columnType === 'Boolean' && (
         <ColumnBoolean
           count={count}
           nullCount={nullCount}
-          data={columnProfilingData.boolean ?? null}
+          data={(columnProfilingData.profile as BooleanProfile) ?? null}
         />
       )}
       {columnType === 'Number' && (
         <ColumnNumber
           count={count}
           nullCount={nullCount}
-          data={columnProfilingData.number ?? null}
+          data={(columnProfilingData.profile as NumberProfile) ?? null}
         />
       )}
     </StyledProfilingData>
@@ -119,6 +119,7 @@ const ColumnString = ({ count, nullCount, data }: PropsString) => {
       </Section>
       <Section.Distribution
         histogram={data.lengthHistogram}
+        max={data.lengthRange[1]}
         title="Char length distribution"
       />
     </StyledProfilingDataWrapper>
@@ -171,7 +172,10 @@ const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
 
   return (
     <StyledProfilingDataWrapper>
-      <Section.Distribution histogram={data.histogram} />
+      <Section.Distribution
+        histogram={data.histogram}
+        max={data.valueRange[1]}
+      />
       <Section.DistinctValues
         allCount={count}
         distinctCount={data.distinctCount}

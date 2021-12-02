@@ -5,18 +5,17 @@ import { RawDBTable } from '@cognite/sdk';
 import { notification } from 'antd';
 import styled from 'styled-components';
 
-import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
-import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useCreateTable } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
+import { useCSVUpload } from 'hooks/csv-upload';
+import { trimFileExtension } from 'utils/utils';
+import { CREATE_TABLE_MODAL_WIDTH } from 'utils/constants';
 
+import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
+import Modal, { ModalProps } from 'components/Modal/Modal';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
-import { useCSVUpload } from 'hooks/csv-upload';
-import { trimFileExtension } from 'utils/utils';
-
-const CREATE_TABLE_MODAL_WIDTH = 600;
 
 export enum CreateTableModalStep {
   CreationMode = 'creationMode',

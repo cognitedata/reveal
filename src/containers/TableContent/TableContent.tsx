@@ -8,7 +8,7 @@ import { TableHeader } from 'components/TableHeader';
 import { Profiling } from 'containers/Profiling';
 
 import { TAB_HEIGHT } from 'utils/constants';
-import { useRawProfile } from 'hooks/sdk-queries';
+import { useRawProfile } from 'hooks/profiling-service';
 import { useActiveTableContext } from 'contexts';
 
 const TableContent = () => {
@@ -25,7 +25,7 @@ const TableContent = () => {
         animated={{ tabPane: true }}
         renderTabBar={(props, TabBarComponent) => (
           <TopBar justifyContent="space-between" alignItems="center">
-            <TableHeader title={database} subtitle={`${table}.csv`} />
+            <TableHeader title={database} subtitle={table} />
             <TabBarComponent {...props} />
           </TopBar>
         )}
