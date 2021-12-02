@@ -222,6 +222,8 @@ export class Cognite3DViewer {
     this.scene.autoUpdate = false;
 
     this._cameraManager = new CameraManager(this.camera, this.canvas, this.modelIntersectionCallback.bind(this));
+    this._cameraManager.automaticControlsSensitivity = this._automaticControlsSensitivity;
+    this._cameraManager.automaticNearFarPlane = this._automaticNearFarPlane;
 
     this._cameraManager.on('cameraChange', event => {
       const { position, target } = event.camera;

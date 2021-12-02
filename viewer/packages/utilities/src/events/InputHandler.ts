@@ -20,7 +20,7 @@ export class InputHandler {
   private setupEventListeners() {
     const { domElement } = this;
 
-    const maxMoveDistance = 4;
+    const maxMoveDistance = 8;
     const maxClickDuration = 250;
 
     let pointerDown = false;

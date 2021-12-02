@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import TWEEN from '@tweenjs/tween.js';
 import { ComboControls } from './ComboControls';
 import {
-  CallbackData,
+  CameraManagerCallbackData,
   CameraControlsOptions,
   CameraChangeData,
   PointerEventDelegate,
@@ -29,13 +29,13 @@ export class CameraManager {
 
   private isDisposed = false;
 
-  private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CallbackData>;
+  private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
   private _onWheel: ((event: MouseEvent) => void) | undefined = undefined;
 
-  private static readonly DefaultAnimationDuration = 600;
-  private static readonly DefaultMinAnimationDuration = 600;
-  private static readonly DefaultMaxAnimationDuration = 2500;
+  private static readonly DefaultAnimationDuration = 300;
+  private static readonly DefaultMinAnimationDuration = 300;
+  private static readonly DefaultMaxAnimationDuration = 1250;
   private static readonly DefaultMinDistance = 0.1;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
@@ -70,7 +70,7 @@ export class CameraManager {
   constructor(
     camera: THREE.PerspectiveCamera,
     domElement: HTMLElement,
-    raycastFunction: (x: number, y: number) => Promise<CallbackData>
+    raycastFunction: (x: number, y: number) => Promise<CameraManagerCallbackData>
   ) {
     this._camera = camera;
     this._domElement = domElement;
@@ -116,119 +116,6 @@ export class CameraManager {
         break;
       default:
         assertNever(event);
-    }
-  }
-
-  /**
-   * Calculates new target when raycaster doesn't have any intersections with the model.
-   * @param cursorPosition Cursor position for desired calculations.
-   * @param cursorPosition.x
-   * @param cursorPosition.y
-   */
-  private calculateMissedRaycast(
-    cursorPosition: { x: number; y: number },
-    modelsBoundingBox: THREE.Box3
-  ): THREE.Vector3 {
-    const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
-
-    this._raycaster.setFromCamera(cursorPosition, this._camera);
-
-    const farPoint = this._raycaster.ray.direction
-      .clone()
-      .normalize()
-      .multiplyScalar(
-        Math.max(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize)
-      )
-      .add(this._camera.position);
-
-    return farPoint;
-  }
-
-  /**
-   * Calculates new camera target based on cursor position.
-   * @param event MouseEvent that contains pointer location data.
-   */
-  private async calculateNewTarget(event: MouseEvent): Promise<THREE.Vector3> {
-    const { offsetX, offsetY } = event;
-    const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
-
-    const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
-
-    const newTarget =
-      modelRaycastData.intersection?.point ?? this.calculateMissedRaycast({ x, y }, modelRaycastData.modelsBoundingBox);
-
-    return newTarget;
-  }
-
-  /**
-   * Removes controls event listeners if they are defined.
-   */
-  private teardownControls() {
-    if (this._onClick !== undefined) {
-      this._inputHandler.off('click', this._onClick as PointerEventDelegate);
-      this._onClick = undefined;
-    }
-    if (this._onWheel !== undefined) {
-      this._domElement.removeEventListener('wheel', this._onWheel);
-      this._onWheel = undefined;
-    }
-  }
-
-  /**
-   * Method for setting up camera controls listeners and values inside current controls class.
-   */
-  private setupControls() {
-    const { _controls: controls } = this;
-
-    let scrollStarted = false;
-
-    const wheelClock = new THREE.Clock();
-
-    const onClick = async (e: any) => {
-      this._controls.enableKeyboardNavigation = false;
-      const newTarget = await this.calculateNewTarget(e);
-      this.setCameraTarget(newTarget, true);
-    };
-
-    const onWheel = async (e: any) => {
-      const timeDelta = wheelClock.getDelta();
-
-      const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
-
-      if (wantNewScrollTarget) {
-        scrollStarted = true;
-
-        const newTarget = await this.calculateNewTarget(e);
-        this._controls.setScrollTarget(newTarget);
-      } else if (timeDelta > 0.08) {
-        scrollStarted = false;
-      }
-    };
-
-    switch (this._cameraControlsOptions.mouseWheelAction) {
-      case 'zoomToTarget':
-        controls.zoomToCursor = false;
-        break;
-      case 'zoomPastCursor':
-        controls.useScrollTarget = false;
-        controls.zoomToCursor = true;
-        break;
-      case 'zoomToCursor':
-        controls.setScrollTarget(controls.getState().target);
-        controls.useScrollTarget = true;
-        controls.zoomToCursor = true;
-        break;
-      default:
-        assertNever(this._cameraControlsOptions.mouseWheelAction);
-    }
-
-    if (this._cameraControlsOptions.onClickTargetChange) {
-      this._inputHandler.on('click', onClick);
-      this._onClick = onClick;
-    }
-    if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
-      this._domElement.addEventListener('wheel', onWheel);
-      this._onWheel = onWheel;
     }
   }
 
@@ -294,7 +181,11 @@ export class CameraManager {
     this.setupControls();
   }
 
-  public moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
+  moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
+    if (this.isDisposed) {
+      return;
+    }
+
     const { _camera, _raycaster } = this;
 
     duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
@@ -370,7 +261,7 @@ export class CameraManager {
     tween.update(TWEEN.now());
   }
 
-  public moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
+  moveCameraTargetTo(target: THREE.Vector3, duration?: number): void {
     if (this.isDisposed) {
       return;
     }
@@ -457,7 +348,7 @@ export class CameraManager {
     tween.update(TWEEN.now());
   }
 
-  public updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
+  updateCameraNearAndFar(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): void {
     // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
     if (this.isDisposed) {
       return;
@@ -521,6 +412,123 @@ export class CameraManager {
     this.isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
+  }
+
+  /**
+   * Calculates new target when raycaster doesn't have any intersections with the model.
+   * @param cursorPosition Cursor position for desired calculations.
+   * @param cursorPosition.x
+   * @param cursorPosition.y
+   */
+   private calculateMissedRaycast(
+    cursorPosition: { x: number; y: number },
+    modelsBoundingBox: THREE.Box3
+  ): THREE.Vector3 {
+    const modelSize = modelsBoundingBox.min.distanceTo(modelsBoundingBox.max);
+
+    this._raycaster.setFromCamera(cursorPosition, this._camera);
+
+    const farPoint = this._raycaster.ray.direction
+      .clone()
+      .normalize()
+      .multiplyScalar(
+        Math.max(this._camera.position.distanceTo(modelsBoundingBox.getCenter(new THREE.Vector3())), modelSize)
+      )
+      .add(this._camera.position);
+
+    return farPoint;
+  }
+
+  /**
+   * Calculates new camera target based on cursor position.
+   * @param event MouseEvent that contains pointer location data.
+   */
+  private async calculateNewTarget(event: MouseEvent): Promise<THREE.Vector3> {
+    const { offsetX, offsetY } = event;
+    const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
+
+    const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
+
+    const newTarget =
+      modelRaycastData.intersection?.point ?? this.calculateMissedRaycast({ x, y }, modelRaycastData.modelsBoundingBox);
+
+    return newTarget;
+  }
+
+  /**
+   * Removes controls event listeners if they are defined.
+   */
+  private teardownControls() {
+    if (this._onClick !== undefined) {
+      this._inputHandler.off('click', this._onClick as PointerEventDelegate);
+      this._onClick = undefined;
+    }
+    if (this._onWheel !== undefined) {
+      this._domElement.removeEventListener('wheel', this._onWheel);
+      this._onWheel = undefined;
+    }
+  }
+  private handleMouseWheelActionChange(controlsOptions: CameraControlsOptions) {
+    const { _controls: controls } = this;
+    
+    switch (controlsOptions?.mouseWheelAction) {
+      case 'zoomToTarget':
+        controls.zoomToCursor = false;
+        break;
+      case 'zoomPastCursor':
+        controls.useScrollTarget = false;
+        controls.zoomToCursor = true;
+        break;
+      case 'zoomToCursor':
+        controls.setScrollTarget(controls.getState().target);
+        controls.useScrollTarget = true;
+        controls.zoomToCursor = true;
+        break;
+      case undefined:
+        break;
+      default:
+        assertNever(controlsOptions.mouseWheelAction);
+    }
+  }
+  /**
+   * Method for setting up camera controls listeners and values inside current controls class.
+   */
+  private setupControls() {
+    let scrollStarted = false;
+
+    const wheelClock = new THREE.Clock();
+
+    const onClick = async (e: any) => {
+      this._controls.enableKeyboardNavigation = false;
+      const newTarget = await this.calculateNewTarget(e);
+      this.setCameraTarget(newTarget, true);
+    };
+
+    const onWheel = async (e: any) => {
+      const timeDelta = wheelClock.getDelta();
+
+      const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
+
+      if (wantNewScrollTarget) {
+        scrollStarted = true;
+
+        const newTarget = await this.calculateNewTarget(e);
+        this._controls.setScrollTarget(newTarget);
+      } else if (timeDelta > 0.08) {
+        scrollStarted = false;
+      }
+    };
+
+    this.handleMouseWheelActionChange(this._cameraControlsOptions);
+
+    if (this._cameraControlsOptions.onClickTargetChange) {
+      this._inputHandler.on('click', onClick);
+      this._onClick = onClick;
+    }
+    if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
+      this._domElement.addEventListener('wheel', onWheel);
+      this._onWheel = onWheel;
+    }
   }
 
   /**

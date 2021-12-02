@@ -60,7 +60,7 @@ export interface RevealCameraControls extends THREE.EventDispatcher {
   setScrollTarget: (target: THREE.Vector3) => void;
 }
 
-export type CallbackData = {
+export type CameraManagerCallbackData = {
   intersection: {
     /**
      * Coordinate of the intersection.
