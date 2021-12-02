@@ -9,7 +9,10 @@ import { useProjectConfig } from 'hooks/useProjectConfig';
 import { authenticateDocumentSDK } from 'modules/documentSearch/sdk';
 import { authenticateGeospatialSDK } from 'modules/map/sdk';
 import { authenticateSeismicSDK } from 'modules/seismicSearch/service';
-import { authenticateWellSDK } from 'modules/wellSearch/sdk';
+import {
+  authenticateWellSDK,
+  setEnableWellSDKV3,
+} from 'modules/wellSearch/sdk';
 
 export const ProvideAuthSetup: React.FC<{
   authState: AuthContext;
@@ -32,6 +35,9 @@ export const ProvideAuthSetup: React.FC<{
     setEmail(email);
 
     if (project && !projectConfig?.wells?.disabled) {
+      // setting wells v3 enabled before authentication
+      setEnableWellSDKV3(projectConfig?.general?.enableWellSDKV3);
+
       authenticateWellSDK(
         SIDECAR.applicationId,
         SIDECAR.cdfApiBaseUrl,

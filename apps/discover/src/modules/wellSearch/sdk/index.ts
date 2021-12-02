@@ -1,11 +1,9 @@
 import isUndefined from 'lodash/isUndefined';
 
-import { getTenantInfo } from '@cognite/react-container';
+import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { Cluster, NPTFilter } from '@cognite/sdk-wells-v2';
 
-import { fetcher } from 'hooks/useTenantConfig';
 import { CommonWellFilter } from 'modules/wellSearch/types';
-import { TenantConfig } from 'tenants/types';
 
 import {
   extractWellboresFromWells,
@@ -33,17 +31,14 @@ import {
   getWellByMatchingId,
 } from './v3';
 
-let enableWellSDKV3: TenantConfig['enableWellSDKV3'];
+let globalEnableWellSDKV3: ProjectConfigGeneral['enableWellSDKV3'];
 
-export const isWellSDKV3Enabled = async () => {
-  if (!isUndefined(enableWellSDKV3)) return enableWellSDKV3;
-
-  const [tenant] = getTenantInfo();
-  const tenantConfig = await fetcher(tenant);
-  const isEnabled = tenantConfig.enableWellSDKV3;
-
-  enableWellSDKV3 = isUndefined(isEnabled) ? false : isEnabled;
-  return enableWellSDKV3;
+export const setEnableWellSDKV3 = (
+  enableWellSDKV3?: ProjectConfigGeneral['enableWellSDKV3']
+) => {
+  globalEnableWellSDKV3 = isUndefined(enableWellSDKV3)
+    ? false
+    : enableWellSDKV3;
 };
 
 export const authenticateWellSDK = async (
@@ -53,8 +48,7 @@ export const authenticateWellSDK = async (
   cluster: Cluster,
   accessToken?: string
 ) => {
-  const enableWellSDKV3 = await isWellSDKV3Enabled();
-  if (enableWellSDKV3) {
+  if (globalEnableWellSDKV3) {
     authenticateWellSDKV3(appId, baseUrl, project, accessToken);
   } else {
     authenticateWellSDKV2(project, cluster, accessToken);
@@ -62,7 +56,7 @@ export const authenticateWellSDK = async (
 };
 
 export const isWellSDKAuthenticated = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3().isLoggedIn
     : getWellSDKClientV2().isLoggedIn;
 };
@@ -75,7 +69,7 @@ export const getWellFilterFetchers = () => {
   const kbLimits = () => Promise.resolve([0, 100]);
   const dogLegSeverityLimts = () => Promise.resolve([0, 100]);
 
-  if (!enableWellSDKV3) {
+  if (!globalEnableWellSDKV3) {
     const { fields, blocks, operators, measurements, regions } =
       getWellSDKClientV2().wells;
     return {
@@ -117,13 +111,13 @@ export const getWellFilterFetchers = () => {
 };
 
 export const getSources = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3().sources.list().then(mapV3ToV2SourceItems)
     : getWellSDKClientV2().wells.sources();
 };
 
 export const getWellsWaterDepthLimits = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .summaries.waterDepthLimits()
         .then(mapV3ToV2WellsWaterDepthLimits)
@@ -133,7 +127,7 @@ export const getWellsWaterDepthLimits = () => {
 };
 
 export const getWellsSpudDateLimits = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .summaries.spudDateLimits()
         .then(mapV3ToV2SpudDateLimits)
@@ -143,7 +137,7 @@ export const getWellsSpudDateLimits = () => {
 };
 
 export const getNPTDurationLimits = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .summaries.nptDurations()
         .then((response) => [
@@ -159,7 +153,7 @@ export const getNPTDurationLimits = () => {
 };
 
 export const getNPTCodes = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .summaries.nptCodes()
         .then(mapSummaryCountsToStringArray)
@@ -167,7 +161,7 @@ export const getNPTCodes = () => {
 };
 
 export const getNPTDetailCodes = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .summaries.nptDetailCodes()
         .then(mapSummaryCountsToStringArray)
@@ -175,7 +169,7 @@ export const getNPTDetailCodes = () => {
 };
 
 export const getNDSRiskTypes = () => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .summaries.ndsRiskTypes()
         .then(mapSummaryCountsToStringArray)
@@ -183,13 +177,13 @@ export const getNDSRiskTypes = () => {
 };
 
 export const getWellById = (wellId: number) => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellByMatchingId(wellId).then(mapV3ToV2Well)
     : getWellSDKClientV2().wells.getById(wellId);
 };
 
 export const getWellItemsByFilter = (wellFilter: CommonWellFilter) => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .wells.list(mapWellFilterToWellFilterRequest(wellFilter))
         .then(mapV3ToV2WellItems)
@@ -197,7 +191,7 @@ export const getWellItemsByFilter = (wellFilter: CommonWellFilter) => {
 };
 
 export const getWellboresFromWells = (wellIds: number[]) => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .wellbores.retrieveMultipleByWells(
           toIdentifierItems(wellIds.map(toIdentifier))
@@ -212,7 +206,7 @@ export const getNPTItems = (
   cursor?: string,
   limit?: number
 ) => {
-  return enableWellSDKV3
+  return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .npt.list({
           filter: mapV2toV3NPTFilter(filter),
