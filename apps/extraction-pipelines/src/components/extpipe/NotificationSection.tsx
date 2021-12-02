@@ -49,11 +49,13 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
         </FieldWrapper>
       )}
 
-      <NotificationDialog
-        extpipe={extpipe}
-        isOpen={open}
-        close={() => setOpen(false)}
-      />
+      {open && (
+        <NotificationDialog
+          extpipe={extpipe}
+          isOpen={open}
+          close={() => setOpen(false)}
+        />
+      )}
     </Section>
   );
 };
