@@ -31,17 +31,20 @@ export default function Distribution({
 }: Props) {
   return (
     <ParentSize>
-      {({ width, height }) => (
-        <Graph
-          distribution={distribution}
-          isBottomAxisDisplayed={isBottomAxisDisplayed}
-          isGridDisplayed={isGridDisplayed}
-          width={width}
-          height={height}
-          rangeEnd={rangeEnd}
-          isTooltipDisplayed={isTooltipDisplayed}
-        />
-      )}
+      {({ width, height }) =>
+        width &&
+        height && (
+          <Graph
+            distribution={distribution}
+            isBottomAxisDisplayed={isBottomAxisDisplayed}
+            isGridDisplayed={isGridDisplayed}
+            width={width}
+            height={height}
+            rangeEnd={rangeEnd}
+            isTooltipDisplayed={isTooltipDisplayed}
+          />
+        )
+      }
     </ParentSize>
   );
 }

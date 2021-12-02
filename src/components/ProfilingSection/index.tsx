@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 import { Colors, Body } from '@cognite/cogs.js';
 
-import { Frequency } from './Frequency';
-import { Distribution } from './Distribution';
-import { DistinctValues } from './DistinctValues';
+import { SectionFrequency } from './SectionFrequency';
+import { SectionDistribution } from './SectionDistribution';
+import { SectionDistinctValues } from './SectionDistinctValues';
 
 export const DATA_MISSING = 'MISSING';
 
@@ -14,6 +14,7 @@ type Props = {
   title?: string;
   isHalf?: boolean;
   isCompact?: boolean;
+  style?: React.CSSProperties;
 };
 
 export const Section = ({
@@ -21,9 +22,10 @@ export const Section = ({
   title,
   isHalf = false,
   isCompact = false,
+  style = {},
 }: Props): JSX.Element => {
   return (
-    <StyledSection isHalf={isHalf} isCompact={isCompact}>
+    <StyledSection isHalf={isHalf} isCompact={isCompact} style={style}>
       {title && (
         <Body level={2} strong style={{ marginBottom: '8px' }}>
           {title}
@@ -34,12 +36,20 @@ export const Section = ({
   );
 };
 
-Section.Frequency = Frequency;
-Section.Distribution = Distribution;
-Section.DistinctValues = DistinctValues;
+Section.Frequency = SectionFrequency;
+Section.Distribution = SectionDistribution;
+Section.DistinctValues = SectionDistinctValues;
 
 const StyledSection = styled.div.attrs(
-  ({ isHalf, isCompact }: { isHalf?: boolean; isCompact?: boolean }) => {
+  ({
+    isHalf,
+    isCompact,
+    style,
+  }: {
+    isHalf?: boolean;
+    isCompact?: boolean;
+    style: React.CSSProperties;
+  }) => {
     const defaultStyle: React.CSSProperties = {
       flex: isHalf ? '1 1 45%' : '1 1 100%',
       maxWidth: isHalf ? '50%' : '100%',
@@ -49,11 +59,12 @@ const StyledSection = styled.div.attrs(
       borderRadius: '8px',
       backgroundColor: Colors['greyscale-grey1'].hex(),
     };
-    const style: React.CSSProperties = {
+    const newStyle: React.CSSProperties = {
       ...defaultStyle,
       ...(isCompact ? compactStyle : {}),
+      ...style,
     };
-    return { style };
+    return { style: newStyle };
   }
 )<{ isHalf?: boolean; isCompact?: boolean }>`
   display: flex;

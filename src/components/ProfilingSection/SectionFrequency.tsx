@@ -10,7 +10,7 @@ type Props = {
   isHalf?: boolean;
   isCompact?: boolean;
 };
-export const Frequency = ({
+export const SectionFrequency = ({
   allCount,
   counts,
   title,

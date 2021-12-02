@@ -11,7 +11,7 @@ type Props = {
   isCompact?: boolean;
 };
 
-export const DistinctValues = ({
+export const SectionDistinctValues = ({
   allCount,
   distinctCount,
   title,
