@@ -9,12 +9,12 @@ import { StyledLabel } from 'styles/StyledForm';
 import { OptionTypeBase } from 'react-select';
 import { Extpipe } from 'model/Extpipe';
 import { InfoBox } from 'components/message/InfoBox';
-import { User } from 'model/User';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
+import { ErrorMessage } from 'components/error/ErrorMessage';
 
 const Hr = styled.hr`
   border: 0;
@@ -57,6 +57,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       ? extpipe.notificationConfig.allowedNotSeenRangeInMinutes
       : 0
   );
+  const [showErrors, setShowErrors] = useState(false);
   const [value, setValue] = useState(oldValue.n);
   const [timeUnit, setTimeUnit] = useState(oldValue.unit);
   const timeOptions = [
@@ -64,8 +65,13 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     { label: 'hours', value: 'hours' },
     { label: 'days', value: 'days' },
   ];
+  const isValid = () => value > 0;
   const onConfirm = async () => {
     if (!extpipe || !project) return;
+    if (!isValid()) {
+      setShowErrors(true);
+      return;
+    }
     const items = createUpdateSpec({
       project,
       id: extpipe.id,
@@ -124,6 +130,9 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
           />
         </div>
       </DivFlex>
+      {showErrors && !isValid() && (
+        <ErrorMessage>Value must be bigger than 0</ErrorMessage>
+      )}
       <Hr />
       <InfoBox iconType="InfoFilled">
         You can manage who will receive notifications in the contacts section.
