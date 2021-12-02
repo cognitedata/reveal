@@ -67,11 +67,13 @@ export default function ProfileDetailsRow({
                   height: 'calc(100% - 20px)',
                 }}
               >
-                <div style={{ height: '200px' }}>
+                <div style={{ height: '320px', marginTop: 16 }}>
                   <Distribution
                     distribution={distribution}
                     isBottomAxisDisplayed
                     isGridDisplayed
+                    isTooltipDisplayed
+                    rangeEnd={max}
                   />
                 </div>
               </Flex>
