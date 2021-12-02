@@ -42,7 +42,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
         onClick={() => setExpanded(!expanded)}
         style={{ cursor: 'pointer' }}
       >
-        <TableData>{<ColumnIcon title={label} />}</TableData>
+        <TableData>{<ColumnIcon dataKey={label} />}</TableData>
         <TableData>{label}</TableData>
         <NumberOrMissingTd value={nullCount} />
         <NumberOrMissingTd value={distinctCount} />

@@ -108,7 +108,7 @@ export const useTableData = () => {
     () => [
       ...columns.slice(0, 1),
       ...columns.slice(1).filter((column) => {
-        const columnType = getColumnType(column.title);
+        const columnType = getColumnType(column.dataKey);
         const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
           ? true
           : columnTypeFilters.includes(columnType);

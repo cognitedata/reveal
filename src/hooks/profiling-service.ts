@@ -270,13 +270,15 @@ export const useColumnType = () => {
     limit: 1000,
   });
 
-  const getColumn = (title: string | undefined) => {
-    const column = title ? data.columns.find((c) => c.label === title) : null;
+  const getColumn = (dataKey: string | undefined) => {
+    const column = dataKey
+      ? data.columns.find((c) => c.label === dataKey)
+      : null;
     return column;
   };
 
-  const getColumnType = (title: string | undefined) => {
-    const column = getColumn(title);
+  const getColumnType = (dataKey: string | undefined) => {
+    const column = getColumn(dataKey);
 
     return column?.type || 'Unknown';
   };

@@ -23,7 +23,7 @@ export const Header = ({ selectedColumn }: Props) => {
   const { getColumnType } = useColumnType();
 
   const columnType = useMemo(
-    () => getColumnType(selectedColumn?.title),
+    () => getColumnType(selectedColumn?.dataKey),
     [getColumnType, selectedColumn]
   );
 
@@ -75,7 +75,7 @@ export const Header = ({ selectedColumn }: Props) => {
         <Body level={2} strong>
           Type
         </Body>
-        <ColumnIcon title={selectedColumn?.title} />
+        <ColumnIcon dataKey={selectedColumn?.dataKey} />
         <Body level={2} style={{ fontWeight: 400, marginLeft: '4px' }}>
           {columnType}
         </Body>

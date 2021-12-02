@@ -40,7 +40,7 @@ export const HeaderRender = (props: Props): JSX.Element => {
             isSelected={isSelected}
             onClick={() => onColumnClick(column)}
           >
-            {column.title && <ColumnIcon title={column.title} />}
+            {column.dataKey && <ColumnIcon dataKey={column.dataKey} />}
             <Tooltip content={column.title}>
               <HeaderTitle level={3} strong width={cell.props.style.width}>
                 {column.title}

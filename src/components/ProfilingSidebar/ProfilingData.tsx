@@ -41,7 +41,7 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
   const { getColumnType } = useColumnType();
 
   const columnType = useMemo(
-    () => getColumnType(selectedColumn?.title),
+    () => getColumnType(selectedColumn?.dataKey),
     [getColumnType, selectedColumn]
   );
 

@@ -5,12 +5,17 @@ import { useColumnType } from 'hooks/profiling-service';
 
 export const COLUMN_ICON_WIDTH = 50;
 
-export default function ColumnIcon({ title }: { title: string | undefined }) {
+type Props = { dataKey: string | undefined };
+
+export default function ColumnIcon({ dataKey }: Props) {
   const { getColumnType } = useColumnType();
 
-  const column = useMemo(() => getColumnType(title), [getColumnType, title]);
+  const columnType = useMemo(
+    () => getColumnType(dataKey),
+    [getColumnType, dataKey]
+  );
 
-  switch (column) {
+  switch (columnType) {
     case 'String':
       return <CustomIcon icon="StringIcon" />;
     case 'Number':
