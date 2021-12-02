@@ -5,9 +5,10 @@ import styled from 'styled-components';
 import { IconType } from 'assets/icons';
 import { CustomIcon } from 'components/CustomIcon';
 import { ColumnProfile } from 'hooks/profiling-service';
+import { ALL_FILTER } from 'hooks/table-filters';
 
 export type FilterType = {
-  type: ColumnProfile['type'] | 'All';
+  type: ColumnProfile['type'] | typeof ALL_FILTER;
   value?: number;
   icon?: IconType;
   label?: string;

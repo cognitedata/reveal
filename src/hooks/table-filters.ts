@@ -3,13 +3,14 @@ import { useColumnType } from 'hooks/profiling-service';
 
 import { FilterType } from 'components/FilterItem';
 
+export const ALL_FILTER: 'All' = 'All';
 export const DEFAULT_FILTER: FilterType = {
-  type: 'All',
+  type: ALL_FILTER,
   value: 0,
 };
 
 export const filtersMap: FilterType[] = [
-  { type: 'All', label: 'columns' },
+  { type: ALL_FILTER, label: 'columns' },
   { type: 'Number', icon: 'NumberIcon' },
   { type: 'String', icon: 'StringIcon' },
   { type: 'Boolean', icon: 'BooleanIcon' },

@@ -3,7 +3,8 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
 
 import { useActiveTableContext } from 'contexts';
-import { baseKey } from './sdk-queries';
+import { ALL_FILTER } from 'hooks/table-filters';
+import { baseKey } from 'hooks/sdk-queries';
 
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
   baseKey,
@@ -257,7 +258,9 @@ export function useRawProfile(
   );
 }
 
-type TableProfileType = Partial<Record<ColumnProfile['type'] | 'All', number>>;
+type ColumnTypeCount = Partial<
+  Record<ColumnProfile['type'] | typeof ALL_FILTER, number>
+>;
 
 export const useColumnType = () => {
   const { database, table } = useActiveTableContext();
@@ -278,20 +281,20 @@ export const useColumnType = () => {
     return column?.type || 'Unknown';
   };
 
-  const getColumnTypeCounts = (): TableProfileType => {
+  const getColumnTypeCounts = (): ColumnTypeCount => {
     if (!data.columns.length) return {};
     const columnsTypes: ColumnProfile['type'][] = data.columns
       .filter(Boolean)
       .map((column) => column.type);
     const columnsTypeCounts = columnsTypes.reduce(
-      (typeCounts: TableProfileType, currType: ColumnProfile['type']) => {
+      (typeCounts: ColumnTypeCount, currType: ColumnProfile['type']) => {
         if (!currType) return typeCounts;
         if (typeCounts[currType])
           typeCounts[currType] = typeCounts[currType]! + 1;
         else typeCounts[currType] = 1;
         return typeCounts;
       },
-      { All: data.columns.length } as TableProfileType
+      { [ALL_FILTER]: data.columns.length } as ColumnTypeCount
     );
     return columnsTypeCounts;
   };
