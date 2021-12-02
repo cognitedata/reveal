@@ -22,7 +22,7 @@ const carouselSlides = [
     imageSrc: TabsGraphic,
   },
   {
-    title: 'Get out of the box data profiling.',
+    title: 'Analyze and inspect your data.',
     detail: 'Discover, analyze, and understand critical patterns in your data.',
     imageSrc: ProfilingGraphic,
   },
