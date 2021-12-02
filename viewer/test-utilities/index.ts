@@ -11,6 +11,7 @@ export {
 } from './src/createSectorMetadata';
 
 export { createCadModelMetadata } from './src/createCadModelMetadata';
+export { createCadModel } from './src/createCadModel';
 export { createDetermineSectorInput } from './src/createDetermineSectorInput';
 
 export { mockClientAuthentication } from './src/cogniteClientAuth';

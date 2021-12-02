@@ -1703,27 +1703,12 @@
   dependencies:
     gl-matrix "~3.3.0"
 
-"@gltf-transform/core@^1.0.0", "@gltf-transform/core@^1.2.4":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@gltf-transform/core/-/core-1.2.4.tgz#676d23224fc5cdaf27f733c71ac36d829fa8e071"
-  integrity sha512-XAq++xwQg7ZPxHzRACf1uTuYntqJ7DTiE4IOWJa+ATvSk4hoHRCAFsMB0ziTKgEUObcKVrNvBwctxx5ABVrktA==
-  dependencies:
-    gl-matrix "~3.4.3"
-
 "@gltf-transform/extensions@^0.12.11":
   version "0.12.16"
   resolved "https://registry.yarnpkg.com/@gltf-transform/extensions/-/extensions-0.12.16.tgz#e568930ab2ca25b20233c5d98f1ad43bc201b0e5"
   integrity sha512-phftmyXd8qSPHVqQjQVrECxdNTRORumI9Of7bLHTZ0gXcQSkCKMTYBnmVL0fHi6ZhsayoccCPgzQiK0LpkzMYQ==
   dependencies:
     "@gltf-transform/core" "^0.12.16"
-    ktx-parse "^0.2.1"
-
-"@gltf-transform/extensions@^1.0.0":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@gltf-transform/extensions/-/extensions-1.2.4.tgz#3a7c58aa74f82888421a2ab5ef4e3ba8aa874f55"
-  integrity sha512-xAHJp8M4XbFoIYrnYl2rp8MeBHRX5UJhHnVtpdWjE9LbqZYGIyinJSj+TtMsphx4EN3lnEKDRy2+yVOkJ/rTkg==
-  dependencies:
-    "@gltf-transform/core" "^1.2.4"
     ktx-parse "^0.2.1"
 
 "@google/model-viewer@^1.1.0":
@@ -5913,11 +5898,6 @@ gl-matrix@^3.3.0, gl-matrix@~3.3.0:
   resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.3.0.tgz#232eef60b1c8b30a28cbbe75b2caf6c48fd6358b"
   integrity sha512-COb7LDz+SXaHtl/h4LeaFcNdJdAQSDeVqjiIihSXNrkWObZLhDI4hIkZC11Aeqp7bcE72clzB0BnDXr2SmslRA==
 
-gl-matrix@~3.4.3:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.4.3.tgz#fc1191e8320009fd4d20e9339595c6041ddc22c9"
-  integrity sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA==
-
 glob-parent@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-3.1.0.tgz#9e6af6299d8d3bd2bd40430832bd113df906c5ae"
@@ -7646,9 +7626,9 @@ kind-of@^6.0.0, kind-of@^6.0.2, kind-of@^6.0.3:
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
 ktx-parse@^0.2.1:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.2.2.tgz#b037b66044855215b332cb73104590af49e47791"
-  integrity sha512-cFBc1jnGG2WlUf52NbDUXK2obJ+Mo9WUkBRvr6tP6CKxRMvZwDDFNV3JAS4cewETp5KyexByfWm9sm+O8AffiQ==
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/ktx-parse/-/ktx-parse-0.2.1.tgz#6805c0929eae0a1f571ab3ce789e860e9135b432"
+  integrity sha512-I+2mYJ6nQdWGmOlE3m9d9idKfhn2MCw04zaVpgtzyuc19uQ8OwRmmYLf/TP5ueVFfYmHbdpM8mPmId2X5PBLEw==
 
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"

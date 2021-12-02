@@ -1,15 +1,17 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import TWEEN from '@tweenjs/tween.js';
+
 import { Cognite3DModel } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
-import { createCadModel } from '../../../../test-utilities/src/createCadModel';
-import { MetricsLogger } from '@reveal/metrics';
 
-import { IndexSet } from '../../../../packages/utilities';
-import { TreeIndexNodeCollection, NodeAppearance } from '../../../../packages/cad-styling';
+import { createCadModel } from '../../../../test-utilities';
 import { TimelineTool } from './TimelineTool';
-import TWEEN from '@tweenjs/tween.js';
+
+import { MetricsLogger } from '@reveal/metrics';
+import { IndexSet } from '@reveal/utilities';
+import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 
 describe('TimelineTool', () => {
   let client: CogniteClient;

@@ -14,7 +14,7 @@ const visitBox3CornerPointsVars = {
  * that will be changed later, so if this is to be stored
  * it must be cloned first.
  */
-export function visitBox3CornerPoints(box: THREE.Box3, callback: (corner: THREE.Vector3) => void) {
+export function visitBox3CornerPoints(box: THREE.Box3, callback: (corner: THREE.Vector3) => void): void {
   const { tmpVector } = visitBox3CornerPointsVars;
   tmpVector.set(box.min.x, box.min.y, box.min.z); // 000
   callback(tmpVector);

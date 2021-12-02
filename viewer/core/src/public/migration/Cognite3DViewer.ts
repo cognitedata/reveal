@@ -24,7 +24,8 @@ import {
   CameraChangeDelegate,
   PointerEventDelegate,
   CadModelBudget,
-  PointCloudBudget
+  PointCloudBudget,
+  CameraControlsOptions
 } from './types';
 import { NotSupportedInMigrationWrapperError } from './NotSupportedInMigrationWrapperError';
 import RenderController from './RenderController';
@@ -32,7 +33,7 @@ import { CogniteModelBase } from './CogniteModelBase';
 import { Cognite3DModel } from './Cognite3DModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { RevealManager } from '../RevealManager';
-import { CameraControlsOptions, DisposedDelegate, SceneRenderedDelegate } from '../types';
+import { DisposedDelegate, SceneRenderedDelegate } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
@@ -106,6 +107,7 @@ export class Cognite3DViewer {
   private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly _boundAnimate = this.animate.bind(this);
+
   private readonly _events = {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),

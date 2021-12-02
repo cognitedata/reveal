@@ -6,8 +6,9 @@ import { NodeAppearance } from './NodeAppearance';
 import { NodeCollectionBase } from './NodeCollectionBase';
 
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
-import debounce from 'lodash/debounce';
 import { PrioritizedArea } from './prioritized/types';
+
+import debounce from 'lodash/debounce';
 
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.

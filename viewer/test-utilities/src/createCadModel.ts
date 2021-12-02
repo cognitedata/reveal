@@ -1,8 +1,6 @@
-
 /*!
  * Copyright 2021 Cognite AS
  */
-
 import { V8SectorRepository } from '../../packages/sector-loader';
 import { Cognite3DModel } from '../../core/src/public/migration/Cognite3DModel';
 import { NodesLocalClient } from '../../packages/nodes-api';
@@ -13,7 +11,12 @@ import { generateV8SectorTree } from './createSectorMetadata';
 
 import { Mock } from 'moq.ts';
 
-export function createCadModel(modelId: number, revisionId: number, depth: number = 3, children: number = 3 ): Cognite3DModel {
+export function createCadModel(
+  modelId: number,
+  revisionId: number,
+  depth: number = 3,
+  children: number = 3
+): Cognite3DModel {
   const materialManager = new CadMaterialManager();
   const cadRoot = generateV8SectorTree(depth, children);
   const cadMetadata = createCadModelMetadata(8, cadRoot);

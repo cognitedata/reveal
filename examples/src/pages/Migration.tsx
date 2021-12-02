@@ -17,7 +17,7 @@ import {
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  IndexSet,
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -462,6 +462,15 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
+      const controlsGui = gui.addFolder('Camera controls');
+      const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
+      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
+      });
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on click').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
+      });
+  
       const overlayTool = new HtmlOverlayTool(viewer,
         { 
           clusteringOptions: { 
