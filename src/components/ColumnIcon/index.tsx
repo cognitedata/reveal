@@ -2,13 +2,11 @@ import React, { useMemo } from 'react';
 
 import { CustomIcon } from 'components/CustomIcon';
 import { useColumnType } from 'hooks/profiling-service';
-import { useActiveTableContext } from 'contexts';
 
 export const COLUMN_ICON_WIDTH = 50;
 
 export default function ColumnIcon({ title }: { title: string | undefined }) {
-  const { database, table } = useActiveTableContext();
-  const { getColumnType } = useColumnType(database, table);
+  const { getColumnType } = useColumnType();
 
   const column = useMemo(() => getColumnType(title), [getColumnType, title]);
 

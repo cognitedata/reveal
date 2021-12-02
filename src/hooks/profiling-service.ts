@@ -1,6 +1,8 @@
 import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
+
+import { useActiveTableContext } from 'contexts';
 import { baseKey } from './sdk-queries';
 
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
@@ -255,7 +257,8 @@ export function useRawProfile(
   );
 }
 
-export const useColumnType = (database: string, table: string) => {
+export const useColumnType = () => {
+  const { database, table } = useActiveTableContext();
   const { data = { columns: [] } } = useRawProfile({
     database,
     table,
@@ -273,5 +276,5 @@ export const useColumnType = (database: string, table: string) => {
     return column?.type || 'Unknown';
   };
 
-  return { getColumn, getColumnType };
+  return { getColumn, getColumnType, columns: data.columns };
 };
