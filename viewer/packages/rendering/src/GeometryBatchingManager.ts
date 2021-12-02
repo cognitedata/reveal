@@ -33,7 +33,7 @@ export class GeometryBatchingManager {
     this._sectorMap = new Map();
   }
 
-  public batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number) {
+  public batchGeometries(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
     if (this._sectorMap.get(sectorId) !== undefined) {
       return;
     }
@@ -44,7 +44,7 @@ export class GeometryBatchingManager {
     });
   }
 
-  public removeSectorBatches(sectorId: number) {
+  public removeSectorBatches(sectorId: number): void {
     const typeBatches = this._sectorMap.get(sectorId);
 
     if (typeBatches === undefined) {

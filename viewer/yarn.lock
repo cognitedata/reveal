@@ -1059,6 +1059,7 @@ __metadata:
   resolution: "@reveal/tools@workspace:packages/tools"
   dependencies:
     "@reveal/cad-parsers": "workspace:*"
+    "@reveal/cad-styling": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
     "@reveal/core": "workspace:*"
     "@reveal/logger": "workspace:*"

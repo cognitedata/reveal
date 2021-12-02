@@ -92,13 +92,9 @@ type HtmlOverlayElement = {
 };
 
 /**
-<<<<<<< HEAD
+
  * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
  * 3D position and updates its position/visibility as user moves the camera. This is
-=======
- * Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a 
- * 3D position and updates its position/visibility as user moves the camera. This is 
->>>>>>> Merge master inte release/3.0-alpha (#1710)
  * useful to create HTML overlays to highlight information about key positions in the 3D model.
  *
  * Attached elements *must* have CSS style 'position: absolute'. It's also recommended
@@ -128,11 +124,7 @@ type HtmlOverlayElement = {
  * overlayTool.remove(el);
  * // or, to remove all attached elements
  * overlayTool.clear();
-<<<<<<< HEAD
  *
-=======
- 
->>>>>>> Merge master inte release/3.0-alpha (#1710)
  * // detach the tool from the viewer
  * overlayTool.dispose();
  * ```

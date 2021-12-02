@@ -225,16 +225,14 @@ describe('Cognite3DViewer', () => {
 
     // Act
     viewer.setCameraControlsOptions({
-      changeCameraTargetOnClick: !originalCameraControlsOptions.changeCameraTargetOnClick,
+      onClickTargetChange: !originalCameraControlsOptions.onClickTargetChange,
       mouseWheelAction: 'zoomToTarget'
     });
 
     // Assert
     const newCameraControlsOptions = viewer.getCameraControlsOptions();
 
-    expect(newCameraControlsOptions.changeCameraTargetOnClick).not.toEqual(
-      originalCameraControlsOptions.changeCameraTargetOnClick
-    );
+    expect(newCameraControlsOptions.onClickTargetChange).not.toEqual(originalCameraControlsOptions.onClickTargetChange);
     expect(newCameraControlsOptions.mouseWheelAction).toEqual('zoomToTarget');
   });
 });

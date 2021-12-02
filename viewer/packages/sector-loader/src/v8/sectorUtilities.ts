@@ -75,6 +75,7 @@ export function consumeSectorDetailed(
     .filter(x => x.instances.length > 0);
   return { sectorMeshes: group, instancedMeshes: instanceMeshes };
 }
+
 /**
  * Checks if sector bounds is partially outside clip box, and hence
  * if it should be clipped (as opposition to clipping). Since model

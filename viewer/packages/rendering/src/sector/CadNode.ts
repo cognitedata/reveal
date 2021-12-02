@@ -108,7 +108,7 @@ export class CadNode extends THREE.Object3D {
     return this._cadModelMetadata;
   }
 
-  get cadModelIdentifier() {
+  get cadModelIdentifier(): string {
     return this._cadModelMetadata.modelIdentifier;
   }
 
@@ -188,7 +188,7 @@ export class CadNode extends THREE.Object3D {
     this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 
-  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number) {
+  public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
     this._geometryBatchingManager.batchGeometries(geometryBatchingQueue, sectorId);
   }
 
