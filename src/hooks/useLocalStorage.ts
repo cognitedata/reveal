@@ -2,11 +2,14 @@ import { useState } from 'react';
 
 import { fireErrorNotification } from 'utils/handleError';
 
-const useLocalStorage = <T>(key: string, defaultValue: T) => {
-  const [storedValue, setStoredValue] = useState(() => {
+const useLocalStorage = <T>(
+  key: string,
+  defaultValue: T
+): [T, (_: T) => void] => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultValue;
+      return item ? (JSON.parse(item) as T) : defaultValue;
     } catch (error) {
       fireErrorNotification(error);
       return defaultValue;

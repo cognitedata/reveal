@@ -16,7 +16,7 @@ export default function FrequencyStats({ allCount, counts }: Props) {
     <>
       <header>Frequency statistics</header>
       {counts && (
-        <FrequenceTable style={{ width: '100%' }}>
+        <FrequenceTable style={{ marginTop: 12, width: '100%' }}>
           <TableHeader>
             <tr>
               <td>Value</td>
