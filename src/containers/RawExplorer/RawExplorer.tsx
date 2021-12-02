@@ -4,8 +4,6 @@ import { Loader } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 import styled from 'styled-components';
 
-import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
-import { BreadcrumbItemProps } from 'components/Breadcrumb/BreadcrumbItem';
 import NoAccessPage from 'components/NoAccessPage/NoAccessPage';
 import SidePanel from 'components/SidePanel/SidePanel';
 import TableContent from 'containers/TableContent';
@@ -13,19 +11,12 @@ import TableTabList from 'components/TableTabList';
 import { RawExplorerContext, ActiveTableProvider } from 'contexts';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import {
-  BREADCRUMBS_HEIGHT,
   DATABASE_LIST_WIDTH,
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
 } from 'utils/constants';
 import { useDatabases } from 'hooks/sdk-queries';
 import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
-
-const breadcrumbs: Pick<BreadcrumbItemProps, 'path' | 'title'>[] = [
-  {
-    title: 'RAW Explorer',
-  },
-];
 
 const RawExplorer = (): JSX.Element => {
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
@@ -56,7 +47,6 @@ const RawExplorer = (): JSX.Element => {
 
   return (
     <>
-      <Breadcrumb isFillingSpace items={breadcrumbs} />
       {hasReadAccess && hasListAccess ? (
         <StyledRawExplorerContent>
           <SidePanel />
@@ -84,7 +74,7 @@ const StyledRawExplorerContent = styled.div`
   display: flex;
   padding: 0;
   box-sizing: border-box;
-  height: calc(100% - ${BREADCRUMBS_HEIGHT + 1}px);
+  height: 100%;
 `;
 
 const StyledRawExplorerTableContentWrapper = styled.div<{
