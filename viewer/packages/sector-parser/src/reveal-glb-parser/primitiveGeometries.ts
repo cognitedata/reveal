@@ -148,7 +148,7 @@ export function setNutGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
 export function setPrimitiveTopology(
   primitiveCollectionName: RevealGeometryCollectionType,
   geometry: THREE.BufferGeometry
-) {
+): void {
   switch (primitiveCollectionName) {
     case RevealGeometryCollectionType.BoxCollection:
       setBoxGeometry(geometry);
