@@ -257,7 +257,8 @@ export function useRawProfile(
   );
 }
 
-type TableProfileType = Record<Partial<ColumnProfile['type'] | 'All'>, number>;
+type TableProfileType = Partial<Record<ColumnProfile['type'] | 'All', number>>;
+
 export const useColumnType = () => {
   const { database, table } = useActiveTableContext();
   const { data = { columns: [] } } = useRawProfile({
@@ -277,7 +278,7 @@ export const useColumnType = () => {
     return column?.type || 'Unknown';
   };
 
-  const getColumnTypeCounts = () => {
+  const getColumnTypeCounts = (): TableProfileType => {
     if (!data.columns.length) return {};
     const columnsTypes: ColumnProfile['type'][] = data.columns
       .filter(Boolean)
@@ -286,7 +287,7 @@ export const useColumnType = () => {
       (typeCounts: TableProfileType, currType: ColumnProfile['type']) => {
         if (!currType) return typeCounts;
         if (typeCounts[currType])
-          typeCounts[currType] = typeCounts[currType] + 1;
+          typeCounts[currType] = typeCounts[currType]! + 1;
         else typeCounts[currType] = 1;
         return typeCounts;
       },

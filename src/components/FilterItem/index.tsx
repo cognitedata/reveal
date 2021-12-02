@@ -4,11 +4,13 @@ import styled from 'styled-components';
 
 import { IconType } from 'assets/icons';
 import { CustomIcon } from 'components/CustomIcon';
+import { ColumnProfile } from 'hooks/profiling-service';
 
 export type FilterType = {
-  type: string;
-  value: number;
+  type: ColumnProfile['type'] | 'All';
+  value?: number;
   icon?: IconType;
+  label?: string;
 };
 
 type Props = {
