@@ -63,6 +63,10 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     { label: 'hours', value: 'hours' },
     { label: 'days', value: 'days' },
   ];
+  const numContactsWithNotificationsTurnedOn = (extpipe.contacts ?? []).reduce(
+    (sum, contact) => sum + (contact.sendNotification ? 1 : 0),
+    0
+  );
   const isValid = () => value > 0;
   const onConfirm = async () => {
     if (!extpipe || !project) return;
@@ -132,9 +136,16 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
         <ErrorMessage>Value must be bigger than 0</ErrorMessage>
       )}
       <Hr />
-      <InfoBox iconType="InfoFilled">
-        You can manage who will receive notifications in the contacts section.
-      </InfoBox>
+      {numContactsWithNotificationsTurnedOn === 0 ? (
+        <InfoBox iconType="WarningStroke" color="warning">
+          There are no currently no contacts that will receive notifications.
+          You can manage this in the contact section.
+        </InfoBox>
+      ) : (
+        <InfoBox iconType="InfoFilled">
+          You can manage who will receive notifications in the contacts section.
+        </InfoBox>
+      )}
       <DivFlex justify="flex-end" css="gap: 0.5rem; margin-top: 1rem">
         <Button type="ghost" onClick={close}>
           Cancel

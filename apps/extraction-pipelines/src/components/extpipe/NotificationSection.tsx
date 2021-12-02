@@ -45,7 +45,9 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
         </AddFieldValueBtn>
       ) : (
         <FieldWrapper>
-          {renderTime(extpipe.notificationConfig.allowedNotSeenRangeInMinutes)}
+          {renderTime(
+            extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
+          )}
         </FieldWrapper>
       )}
 

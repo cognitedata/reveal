@@ -3,14 +3,22 @@ import { IconFilled } from 'styles/StyledIcon';
 import styled from 'styled-components';
 import { AllIconTypes, Colors } from '@cognite/cogs.js';
 
-const Box = styled.div`
+interface InfoBoxProps {
+  iconType: AllIconTypes;
+  color?: 'primary' | 'warning';
+}
+const colorMap = {
+  primary: Colors['midblue-7'],
+  warning: Colors['yellow-8'],
+};
+
+const Box = styled.div<Pick<InfoBoxProps, 'color'>>`
   display: grid;
   grid-template-areas: 'icon heading' '. content1' '. content2';
   grid-template-columns: 2rem auto;
   padding: 1rem;
   border-radius: 0.25rem;
-  background-color: ${(props: { boxColor?: string }) =>
-    props.boxColor ?? `${Colors['midblue-7'].hex()}`};
+  background-color: ${(p) => colorMap[p.color ?? 'primary'].hex()};
   h2 {
     grid-area: heading;
   }
@@ -28,17 +36,15 @@ const Box = styled.div`
     }
   }
 `;
-interface InfoBoxProps {
-  iconType: AllIconTypes;
-}
 
 export const InfoBox: FunctionComponent<InfoBoxProps> = ({
   iconType,
   children,
+  color,
 }: PropsWithChildren<InfoBoxProps>) => {
   return (
-    <Box className="bottom-spacing">
-      <IconFilled type={iconType} />
+    <Box className="bottom-spacing" color={color}>
+      <IconFilled color={Colors[color ?? 'primary'].hex()} type={iconType} />
       {children}
     </Box>
   );
