@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ReactNode } from 'react';
 
-import { Colors, Detail, Input } from '@cognite/cogs.js';
+import { Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { SIDE_PANEL_WIDTH } from 'utils/constants';
@@ -12,6 +12,50 @@ type SidePanelLevelProps = {
   query: string;
   searchInputPlaceholder?: string;
 };
+
+const SidePanelLevelWrapper = ({
+  children,
+  header,
+  onQueryChange,
+  query,
+  searchInputPlaceholder,
+}: SidePanelLevelProps): JSX.Element => {
+  return (
+    <StyledPanelLevel>
+      <StyledSidePanelLevelHeader>{header}</StyledSidePanelLevelHeader>
+      <StyledSidePanelLevelSearchInput
+        fullWidth
+        icon="Search"
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          onQueryChange(e.target.value)
+        }
+        placeholder={searchInputPlaceholder}
+        value={query}
+      />
+      <StyledSidePanelLevelContent>{children}</StyledSidePanelLevelContent>
+    </StyledPanelLevel>
+  );
+};
+
+export const StyledEmptyListWrapper = styled.div`
+  align-items: center;
+  background-color: ${Colors['bg-accent'].hex()};
+  border: 1px solid ${Colors['border-default'].hex()};
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  padding: 36px 48px;
+`;
+
+export const StyledEmptyListTitle = styled(Title)`
+  color: ${Colors['text-primary'].hex()};
+`;
+
+export const StyledEmptyListDetail = styled(Detail)`
+  color: ${Colors['text-hint'].hex()};
+  margin: 8px 0 16px;
+  text-align: center;
+`;
 
 export const StyledNoItemsWrapper = styled.div`
   background-color: ${Colors['bg-accent']};
@@ -49,29 +93,5 @@ const StyledSidePanelLevelSearchInput = styled(Input)`
   margin-bottom: 12px;
   padding: 0 12px 12px;
 `;
-
-const SidePanelLevelWrapper = ({
-  children,
-  header,
-  onQueryChange,
-  query,
-  searchInputPlaceholder,
-}: SidePanelLevelProps): JSX.Element => {
-  return (
-    <StyledPanelLevel>
-      <StyledSidePanelLevelHeader>{header}</StyledSidePanelLevelHeader>
-      <StyledSidePanelLevelSearchInput
-        fullWidth
-        icon="Search"
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          onQueryChange(e.target.value)
-        }
-        placeholder={searchInputPlaceholder}
-        value={query}
-      />
-      <StyledSidePanelLevelContent>{children}</StyledSidePanelLevelContent>
-    </StyledPanelLevel>
-  );
-};
 
 export default SidePanelLevelWrapper;
