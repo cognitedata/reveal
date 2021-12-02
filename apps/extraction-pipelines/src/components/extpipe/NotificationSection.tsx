@@ -17,9 +17,9 @@ type NotificationSectionProps = {
 function renderTime(minutes: number) {
   const t = minutesToUnit(minutes);
   return (
-    <div>
-      <span>{t.n}</span> <i>{t.unit}</i>
-    </div>
+    <span>
+      {t.n} {t.unit}
+    </span>
   );
 }
 
@@ -36,7 +36,7 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
       editButton={{ canEdit, onClick: openDialog }}
     >
       <FieldWrapper>
-        <StyledLabel htmlFor="nothing">Notifications</StyledLabel>
+        <StyledLabel htmlFor="nothing">Notification settings</StyledLabel>
       </FieldWrapper>
 
       {extpipe.notificationConfig == null ? (
@@ -45,9 +45,13 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
         </AddFieldValueBtn>
       ) : (
         <FieldWrapper>
-          {renderTime(
-            extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
-          )}
+          <div>
+            Sends alerts{' '}
+            {renderTime(
+              extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
+            )}{' '}
+            after no detected activity.
+          </div>
         </FieldWrapper>
       )}
 
