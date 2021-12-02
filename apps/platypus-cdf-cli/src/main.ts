@@ -7,6 +7,7 @@ import * as solutions from './app/cmds/solutions';
 import * as templates from './app/cmds/templates';
 import { init } from './app/middlewares/init';
 import { LogoutCommand } from './app/cmds/logout';
+import { red } from 'chalk';
 
 const config = {
   appId: 'platypus-cli',
@@ -23,6 +24,19 @@ scriptName('platypus')
   .command(new LogoutCommand())
   .version()
   .help(true)
+  .fail((msg, err, args) => {
+    // if (err) throw err; // do something with stack report to sentry (maybe)
+    console.error(
+      red(
+        msg ||
+          err.message ||
+          'Something went wrong, and we are unable to detect what please contact us for more info'
+      )
+    );
+    console.log('\nUsages:\n');
+    console.error(args.help());
+    process.exit(1);
+  })
   .parse();
 
 export default yargs;
