@@ -118,7 +118,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   useEffect(() => {
-    dispatch(FetchFilesById(processFileIds));
+    if (processFileIds.length) dispatch(FetchFilesById(processFileIds));
   }, [processFileIds]);
 
   const handleItemClick = useCallback(
