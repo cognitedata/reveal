@@ -4,7 +4,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { QueryExplorer } from '../../components/QueryExplorer/QueryExplorer';
+import { QueryExplorer } from '../components/QueryExplorer';
 
 export const QueryExplorerPage = () => {
   const { t } = useTranslation('SolutionMonitoring');

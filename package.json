@@ -33,6 +33,7 @@
     "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "graphiql": "^1.5.1",
+    "graphiql-explorer": "^0.6.3",
     "graphql": "^15.6.1",
     "jwt-decode": "^3.1.2",
     "open": "^8.4.0",

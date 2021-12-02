@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 import { Route, Switch } from 'react-router-dom';
 import { Icon } from '@cognite/cogs.js';
 
@@ -8,11 +10,35 @@ import { ReactComponent as Monitoring } from './data-model/icons/monitoring.svg'
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
 
-import { DatamodelPage } from './data-model/pages/DatamodelPage';
-import { DatapreviewPage } from './data-model/pages/DatapreviewPage';
-import { QueryExplorerPage } from './query-explorer/pages/QueryExplorerPage';
-import { PopulationPage } from './population/pages/PopulationPage';
-import { MonitoringPage } from './monitoring/pages/MonitoringPage';
+const DatapreviewPage = lazy<any>(() =>
+  import('./data-model/pages/DatapreviewPage').then((module) => ({
+    default: module.DatapreviewPage,
+  }))
+);
+
+const QueryExplorerPage = lazy<any>(() =>
+  import('./query-explorer/pages/QueryExplorerPage').then((module) => ({
+    default: module.QueryExplorerPage,
+  }))
+);
+
+const PopulationPage = lazy<any>(() =>
+  import('./population/pages/PopulationPage').then((module) => ({
+    default: module.PopulationPage,
+  }))
+);
+
+const MonitoringPage = lazy<any>(() =>
+  import('./monitoring/pages/MonitoringPage').then((module) => ({
+    default: module.MonitoringPage,
+  }))
+);
+
+const DatamodelPage = lazy<any>(() =>
+  import('./data-model/pages/DatamodelPage').then((module) => ({
+    default: module.DatamodelPage,
+  }))
+);
 
 export const DataModelLayout = () => {
   const renderPageContent = () => {

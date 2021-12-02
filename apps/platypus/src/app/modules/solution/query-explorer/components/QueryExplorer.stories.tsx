@@ -4,7 +4,7 @@ import {
   MainDescription,
   GroupTitle,
   Group,
-} from '../../../../components/Styles/storybook';
+} from '@platypus-app/components/Styles/storybook';
 
 import { FETCHER_API, DEFAULT_QUERY } from './query-explorer.mock';
 import { QueryExplorer } from './QueryExplorer';
