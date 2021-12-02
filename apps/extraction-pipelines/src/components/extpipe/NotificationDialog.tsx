@@ -55,7 +55,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   const oldValue = minutesToUnit(
     extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
   );
-  const [showErrors, setShowErrors] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<null | string>(null);
   const [value, setValue] = useState(oldValue.n);
   const [timeUnit, setTimeUnit] = useState(oldValue.unit);
   const timeOptions = [
@@ -67,11 +67,10 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     (sum, contact) => sum + (contact.sendNotification ? 1 : 0),
     0
   );
-  const isValid = () => value > 0;
   const onConfirm = async () => {
     if (!extpipe || !project) return;
-    if (!isValid()) {
-      setShowErrors(true);
+    if (value <= 0) {
+      setErrorMessage('Value must be bigger than 0');
       return;
     }
     const items = createUpdateSpec({
@@ -85,7 +84,9 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     });
     await mutate(items, {
       onError: () => {
-        alert('An error occurred');
+        setErrorMessage(
+          'An error occurred. The new notification settings was not saved due to an error. Make sure everything is filled out correctly, and try again.'
+        );
       },
       onSuccess: () => {
         close();
@@ -95,7 +96,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   return (
     <EditModal
       width={700}
-      title="Configure alerts"
+      title="Notifications settings"
       visible={isOpen}
       close={close}
     >
@@ -110,7 +111,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       <StyledLabel htmlFor="time-amount-input">
         Send an alert if there has been no activity for
       </StyledLabel>
-      <DivFlex css="width: 250px" gap="0.5rem">
+      <DivFlex css="width: 250px; margin-top: 0.5rem;" gap="0.5rem">
         <div css="flex: 1">
           <Input
             fullWidth
@@ -132,9 +133,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
           />
         </div>
       </DivFlex>
-      {showErrors && !isValid() && (
-        <ErrorMessage>Value must be bigger than 0</ErrorMessage>
-      )}
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       <Hr />
       {numContactsWithNotificationsTurnedOn === 0 ? (
         <InfoBox iconType="WarningStroke" color="warning">

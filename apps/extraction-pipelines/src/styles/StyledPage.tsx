@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import { Colors, Title } from '@cognite/cogs.js';
-import React from 'react';
+import { Colors } from '@cognite/cogs.js';
 import {
   mainContentSpaceAround,
   mainContentSpaceSides,
