@@ -20,7 +20,7 @@ type Props = {
 };
 
 export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
-  const { type, value, icon } = filter;
+  const { type, value, icon, label } = filter;
 
   return (
     <Button
@@ -36,7 +36,7 @@ export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
         </FilterContent>
       ) : (
         <FilterContent level={2} strong>
-          {value} {type}
+          {value} {label ?? type}
         </FilterContent>
       )}
     </Button>
