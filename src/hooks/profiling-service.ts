@@ -20,6 +20,7 @@ export type StringProfile = {
 export type NumberProfile = {
   distinctCount: number;
   histogram: [number[], number[]];
+  valueCounts: Record<string, number>;
   valueRange: [number, number];
 };
 export type BooleanProfile = {
@@ -128,7 +129,23 @@ function transformNumberProfile(
   column: RawColumn
 ): ColumnProfile {
   const profile = column.number;
-  const { distinctCount, valueRange = [] } = (profile || {}) as NumberProfile;
+  const {
+    distinctCount,
+    histogram = [[], []],
+    valueCounts = {},
+    valueRange = [],
+  } = (profile || {}) as NumberProfile;
+
+  const counts = Object.keys(valueCounts)
+    .map((key) => ({
+      value: key as string,
+      count: valueCounts[key] as number,
+    }))
+    .sort((a, b) => b.count - a.count);
+  const formattedHistogram = zip(...histogram).map(([length, count]) => ({
+    value: length?.toString() as string,
+    count: count as number,
+  }));
 
   return {
     type: 'Number',
@@ -136,8 +153,10 @@ function transformNumberProfile(
     count: column.count,
     min: valueRange[0],
     max: valueRange[1],
+    histogram: formattedHistogram,
     nullCount: column.nullCount,
     distinctCount,
+    counts,
     profile,
   };
 }
