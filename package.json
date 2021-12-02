@@ -111,7 +111,7 @@
     "babel-loader": "8.2.3",
     "cypress": "^9.0.0",
     "eslint": "7.32.0",
-    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb": "^19.0.1",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.25.3",
