@@ -42,7 +42,7 @@ export class IntersectionNodeCollection extends CombineNodeCollectionBase {
     return set;
   }
 
-  public makeDirty() {
+  public makeDirty(): void {
     super.makeDirty();
 
     this._cachedNodeAreas = undefined;

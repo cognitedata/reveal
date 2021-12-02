@@ -112,7 +112,7 @@ export class AssetNodeCollection extends NodeCollectionBase {
     return boundingBoxes;
   }
 
-  getFilter() {
+  getFilter(): { assetId?: number | undefined; boundingBox?: THREE.Box3 | undefined } | undefined {
     return this._filter;
   }
 

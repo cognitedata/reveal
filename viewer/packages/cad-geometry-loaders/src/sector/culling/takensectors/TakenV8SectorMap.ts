@@ -33,7 +33,7 @@ export class TakenV8SectorMap extends TakenSectorMapBase {
     this.determineSectorCost = determineSectorCost;
   }
 
-  initializeScene(modelMetadata: CadModelMetadata) {
+  initializeScene(modelMetadata: CadModelMetadata): void {
     assert(
       modelMetadata.scene.version === 8,
       `Only sector version 8 is supported, but got ${modelMetadata.scene.version}`
@@ -54,7 +54,7 @@ export class TakenV8SectorMap extends TakenSectorMapBase {
     return count;
   }
 
-  markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number) {
+  markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number): void {
     const entry = this._takenSectorTrees.get(model.modelIdentifier);
     assert(
       !!entry,
@@ -90,7 +90,7 @@ export class TakenV8SectorMap extends TakenSectorMapBase {
     return allWanted;
   }
 
-  clear() {
+  clear(): void {
     this._takenSectorTrees.clear();
   }
 }
