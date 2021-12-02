@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Body, Flex, Input } from '@cognite/cogs.js';
+import { Body, Colors, Flex, Icon, Input } from '@cognite/cogs.js';
 
 import { useFilters } from 'hooks/table-filters';
+
 import { FILTER_BAR_HEIGHT } from 'utils/constants';
 
 import { Separator } from 'components/Separator';
@@ -11,10 +12,14 @@ import { Actions } from './Actions';
 import RowCount from './RowCount';
 
 type Props = {
+  isProfilingFetching?: boolean;
   isEmpty?: boolean;
 };
 
-export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
+export const FilterBar = ({
+  isEmpty,
+  isProfilingFetching,
+}: Props): JSX.Element => {
   const {
     filters,
     columnTypeFilters,
@@ -38,16 +43,25 @@ export const FilterBar = ({ isEmpty }: Props): JSX.Element => {
               onChange={onColumnFilterChange}
             />
             <Separator style={{ margin: '0 12px' }} />
-            {filters.map((filter: FilterType) => {
-              const active = columnTypeFilters.includes(filter.type);
-              return (
-                <FilterItem
-                  filter={filter}
-                  active={active}
-                  onClick={onFilterClick}
-                />
-              );
-            })}
+            <FilterBar.Buttons justifyContent="center" alignItems="center">
+              {isProfilingFetching ? (
+                <>
+                  <Body level={2}> Running data profiling...</Body>
+                  <Icon type="LoadingSpinner" className="load-icon" />
+                </>
+              ) : (
+                filters.map((filter: FilterType) => {
+                  const active = columnTypeFilters.includes(filter.type);
+                  return (
+                    <FilterItem
+                      filter={filter}
+                      active={active}
+                      onClick={onFilterClick}
+                    />
+                  );
+                })
+              )}
+            </FilterBar.Buttons>
           </>
         )}
       </FilterBar.List>
@@ -79,5 +93,16 @@ const List = styled(Flex)`
   }
 `;
 
+const Buttons = styled(Flex)`
+  & > * {
+    margin-right: 8px;
+    color: ${Colors['greyscale-grey7'].hex()};
+  }
+  .load-icon {
+    margin-left: 4px;
+  }
+`;
+
 FilterBar.List = List;
 FilterBar.Actions = Actions;
+FilterBar.Buttons = Buttons;
