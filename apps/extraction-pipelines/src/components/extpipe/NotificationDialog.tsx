@@ -53,9 +53,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   const { project } = useAppEnv();
   const { mutate } = useDetailsUpdate();
   const oldValue = minutesToUnit(
-    extpipe.notificationConfig != null
-      ? extpipe.notificationConfig.allowedNotSeenRangeInMinutes
-      : 0
+    extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
   );
   const [showErrors, setShowErrors] = useState(false);
   const [value, setValue] = useState(oldValue.n);
@@ -83,7 +81,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     });
     await mutate(items, {
       onError: () => {
-        alert('ERROR!!!');
+        alert('An error occurred');
       },
       onSuccess: () => {
         close();

@@ -21,7 +21,7 @@ export interface RegisterExtpipeInfo {
   rawTables?: ExtpipeRawTable[];
 }
 export type NotificationConfig = {
-  allowedNotSeenRangeInMinutes: number;
+  allowedNotSeenRangeInMinutes?: number;
 };
 export interface Extpipe extends Omit<RegisterExtpipeInfo, 'id'> {
   id: number;
