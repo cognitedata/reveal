@@ -69,7 +69,6 @@ export default function ProfileRow({ allCount, profile }: Props) {
           median={median}
           counts={counts}
           distinctCount={distinctCount}
-          distribution={histogram}
         />
       )}
     </>

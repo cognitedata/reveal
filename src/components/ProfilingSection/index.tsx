@@ -7,7 +7,7 @@ import { Frequency } from './Frequency';
 import { Distribution } from './Distribution';
 import { DistinctValues } from './DistinctValues';
 
-export const DATA_MISSING = 'Missing';
+export const DATA_MISSING = 'MISSING';
 
 type Props = {
   children: React.ReactNode;
@@ -40,12 +40,18 @@ Section.DistinctValues = DistinctValues;
 
 const StyledSection = styled.div.attrs(
   ({ isHalf, isCompact }: { isHalf?: boolean; isCompact?: boolean }) => {
-    const style: React.CSSProperties = {
+    const defaultStyle: React.CSSProperties = {
       flex: isHalf ? '1 1 45%' : '1 1 100%',
       maxWidth: isHalf ? '50%' : '100%',
-      backgroundColor: isCompact
-        ? Colors['greyscale-grey1'].hex()
-        : Colors.white.hex(),
+      backgroundColor: Colors.white.hex(),
+    };
+    const compactStyle: React.CSSProperties = {
+      borderRadius: '8px',
+      backgroundColor: Colors['greyscale-grey1'].hex(),
+    };
+    const style: React.CSSProperties = {
+      ...defaultStyle,
+      ...(isCompact ? compactStyle : {}),
     };
     return { style };
   }
@@ -58,5 +64,4 @@ const StyledSection = styled.div.attrs(
   padding: 12px;
   margin: 6px;
   box-sizing: border-box;
-  border-radius: 8px;
 `;

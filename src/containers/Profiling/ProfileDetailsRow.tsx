@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Flex, Colors } from '@cognite/cogs.js';
-import Distribution from './Distribution';
-import FrequencyStats from './FrequencyStats';
+
+import { Section } from 'components/ProfilingSection';
 
 type Count = {
   value: string;
@@ -34,8 +34,7 @@ export default function ProfileDetailsRow({
     <tr key="profile-details">
       <td colSpan={9} style={{ padding: 0 }}>
         <ExpandedRow>
-          <Panel>
-            <header>Numerical statistics</header>
+          <Section title="Numerical statistics">
             <Grid direction="row" wrap="wrap">
               <NumberOrMissingSummary
                 label="Distinct values"
@@ -48,39 +47,10 @@ export default function ProfileDetailsRow({
               <NumberOrMissingSummary label="Mean" value={mean} />
               <NumberOrMissingSummary label="Median" value={median} />
             </Grid>
-          </Panel>
+          </Section>
 
-          <Panel>
-            {counts ? (
-              <FrequencyStats counts={counts} allCount={allCount} />
-            ) : (
-              'MISSING'
-            )}
-          </Panel>
-          <Panel>
-            <header>Distribution</header>
-            {distribution ? (
-              <Flex
-                direction="column"
-                justifyContent="flex-end"
-                style={{
-                  height: 'calc(100% - 20px)',
-                }}
-              >
-                <div style={{ height: '330px' }}>
-                  <Distribution
-                    distribution={distribution}
-                    isBottomAxisDisplayed
-                    isGridDisplayed
-                    isTooltipDisplayed
-                    rangeEnd={max}
-                  />
-                </div>
-              </Flex>
-            ) : (
-              'MISSING'
-            )}
-          </Panel>
+          <Section.Frequency counts={counts} allCount={allCount} />
+          <Section.Distribution histogram={distribution} />
         </ExpandedRow>
       </td>
     </tr>
@@ -107,17 +77,7 @@ const ExpandedRow = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 `;
-const Panel = styled.div`
-  background-color: white;
-  padding: 10px;
 
-  header {
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    display: block;
-  }
-`;
 const Grid = styled(Flex)`
   .item {
     min-width: 120px;
