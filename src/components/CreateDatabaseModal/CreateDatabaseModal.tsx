@@ -137,9 +137,7 @@ const CreateDatabaseModal = ({
           value={values.databaseName}
         />
         {!errors.databaseName && (
-          <Detail>
-            The name should be unique. You cannot change this name later.
-          </Detail>
+          <Detail>Enter a unique name. You cannot change this later.</Detail>
         )}
       </Modal>
     </form>

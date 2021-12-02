@@ -31,9 +31,9 @@ const CreateTableModalOption = ({
       onClick={onClick}
     >
       {customIconKeys.includes(icon) ? (
-        <CustomIcon icon={icon as IconType} style={{ width: 32 }} />
+        <CustomIcon icon={icon as IconType} style={{ height: 40 }} />
       ) : (
-        <StyledCreateOptionIcon size={32} type={icon as AllIconTypes} />
+        <StyledCreateOptionIcon size={40} type={icon as AllIconTypes} />
       )}
       <StyledCreateOptionTitle level={6} strong>
         {title}
