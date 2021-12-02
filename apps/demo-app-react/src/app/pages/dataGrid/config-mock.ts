@@ -23,6 +23,8 @@ export const configSample = {
         },
       ],
       display_order: 1,
+      pinned: 'left',
+      width: 250,
     },
     {
       property: 'estimateName',

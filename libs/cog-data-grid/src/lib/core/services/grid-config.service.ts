@@ -6,6 +6,9 @@ import {
   ColumnConfig,
 } from '../types';
 
+const cellClassRules = {
+  'platypus-cell-empty': (params: any) => !params.value,
+};
 export class GridConfigService {
   /**
    * Loads default ag-grid gridOptions needed for grid to work
@@ -75,7 +78,6 @@ export class GridConfigService {
         if (columnConfig.data_type === ColumnDataType.Dynamic) {
           return null;
         }
-
         // hide: this.isNotVisibleIfVisibilityRule(attr, context),
         //   cellEditor: 'inputCellEditorComponent',
         //   cellClassRules: {
@@ -87,13 +89,15 @@ export class GridConfigService {
         //   optional: attr.optional || true,
         const isEditable =
           this.isNotEditableIfExpressionOrEditRule(columnConfig);
-        const colDef = <ColDef>{
+        const colDef = {
           field: `attributes.${columnConfig.property}`,
           headerName: `${columnConfig.label}`,
           type: this.getColumnType(columnConfig.data_type),
           editable: isEditable,
-        };
-
+          resizable: true,
+          cellClassRules: cellClassRules,
+          ...columnConfig,
+        } as ColDef;
         return colDef;
       })
       .filter((col) => col);

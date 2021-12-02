@@ -4,6 +4,8 @@ import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import { useEffect, useState } from 'react';
 import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
 import { GridConfigService } from './core/services/grid-config.service';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 
 const gridConfigService = new GridConfigService();
 
@@ -28,31 +30,30 @@ export function CogDataGrid(props: CogDataGridProps) {
       const tmpGridOptions = Object.assign(gridConfigService.getGridConfig(), {
         stopEditingWhenGridLosesFocus: false,
         onCellValueChanged: onCellValueChanged,
+        rowHeight: 96,
       });
 
       const generatedColDefs = gridConfigService.buildColDefs(props.config);
 
-      console.log(generatedColDefs);
       setGridOptions(tmpGridOptions);
       setColDefs(generatedColDefs as any);
-
       setIsGridInit(true);
     }
-  }, [isGridInit]);
+  }, [isGridInit, props.config]);
 
   if (!isGridInit) {
     return <div>Loading...</div>;
   }
+
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
-      <AgGridReact
-        rowData={props.data}
-        columnDefs={colDefs}
-        gridOptions={gridOptions}
-      >
-        {props.children}
-      </AgGridReact>
-    </div>
+    <AgGridReact
+      rowData={props.data}
+      columnDefs={colDefs}
+      gridOptions={gridOptions}
+      className="ag-theme-alpine"
+    >
+      {props.children}
+    </AgGridReact>
   );
 }
 
