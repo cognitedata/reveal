@@ -190,7 +190,7 @@ export class GltfSectorParser {
         case 'POSITION':
           return 'position';
         case '_treeIndex':
-          return 'a_treeIndex';
+          return 'treeIndex';
         default:
           throw new Error();
       }
