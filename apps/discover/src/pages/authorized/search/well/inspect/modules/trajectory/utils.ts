@@ -8,7 +8,7 @@ import { Wellbore } from 'modules/wellSearch/types';
 
 export const getWellboreNameForTrajectory = (
   trajId = '',
-  selectedTrajectories: Sequence[]
+  selectedTrajectories: Sequence[] = []
 ) => {
   const groupedTrajs = groupBy(selectedTrajectories, 'externalId');
   const trajectory = head(groupedTrajs[trajId]);

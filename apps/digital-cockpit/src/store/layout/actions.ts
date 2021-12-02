@@ -1,5 +1,6 @@
 import { CogniteExternalId } from '@cognite/sdk';
 import { createAction } from 'typesafe-actions';
+
 import { LayoutActionTypes, BoardLayoutPayloadItem } from './types';
 
 export const layoutsLoading = createAction(

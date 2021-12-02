@@ -2,7 +2,7 @@ import { RootDispatcher } from 'store/types';
 import { HttpError } from '@cognite/sdk';
 import { setError } from 'store/notification/actions';
 
-interface MixedHttpError extends HttpError {
+export interface MixedHttpError extends HttpError {
   code: number;
   message: string;
   type: string;

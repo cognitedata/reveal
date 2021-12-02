@@ -1,3 +1,5 @@
+import { ADMIN_GROUP_NAME } from 'constants/cdf';
+
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -34,7 +36,6 @@ import { fetchUserSpace } from 'store/userSpace/thunks';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import 'glider-js/glider.min.css';
 import { useMetrics } from 'utils/metrics';
-import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
 import { TenantContext } from 'providers/TenantProvider';

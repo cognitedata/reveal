@@ -11,9 +11,8 @@ export const ConfigFormFields: React.FC<{
   metadataValue?: MetadataValue;
   valuePath?: string;
   onChange: HandleConfigChange;
-  onReset?: () => void;
   value: unknown;
-}> = ({ metadataValue, valuePath, value, onChange, onReset }) => {
+}> = ({ metadataValue, valuePath, value, onChange }) => {
   return (
     <>
       {map(metadataValue?.children, (child, childKey) => {
@@ -27,7 +26,6 @@ export const ConfigFormFields: React.FC<{
             field={child}
             changeKey={valuePath ? `${valuePath}.${childKey}` : childKey}
             onChange={onChange}
-            onReset={onReset}
           />
         );
       })}

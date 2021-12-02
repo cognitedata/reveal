@@ -10,6 +10,7 @@ import { configureStore } from 'store';
 import { History } from 'history';
 import { AuthProvider } from '@cognite/react-container';
 import { HelpCenterContextProvider } from 'context/HelpCenterContext';
+
 import { mockAuthState } from '../__mocks/auth';
 import { PartialRootState } from '../store/types';
 

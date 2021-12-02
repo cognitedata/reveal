@@ -1,5 +1,6 @@
 import { HelpCenter as CogsHelpCenter } from '@cognite/cogs.js';
 import useTranslation from 'hooks/useTranslation';
+
 import { docList } from './utils';
 import { HelpCenterBase } from './elements';
 

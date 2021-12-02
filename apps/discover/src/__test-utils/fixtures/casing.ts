@@ -4,7 +4,7 @@ export const getMockCasings = (wellboreId?: number) => {
       id: 3296482019589132,
       name: 'USA0000600900_00183',
       description: 'EDM Casing',
-      assetId: 75915540932499340,
+      assetId: 759155409324993,
       externalId: '3TSN622Z8T_cpFDdj1bZ0_00183',
       metadata: {
         assy_min_inside_diameter: '0.0',

@@ -14,8 +14,12 @@ export const initialState: SearchState = {
 
 export function search(
   state: SearchState = initialState,
-  action: SearchAction
+  action?: SearchAction
 ): SearchState {
+  if (!action) {
+    return state;
+  }
+
   switch (action.type) {
     case SET_SEARCHING:
       return {

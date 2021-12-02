@@ -3,14 +3,10 @@ import { FilterTag } from 'components/tag/FilterTag';
 
 import { WellAppliedFilters } from './WellAppliedFilters';
 
-export const SidebarWellAppliedFilters: React.FC = () => {
-  return (
-    <>
-      <WellAppliedFilters
-        filterTagComponent={FilterTag}
-        clearTagComponent={ClearTag}
-        showClearTag
-      />
-    </>
-  );
-};
+export const SidebarWellAppliedFilters: React.FC = () => (
+  <WellAppliedFilters
+    filterTagComponent={FilterTag}
+    clearTagComponent={ClearTag}
+    showClearTag
+  />
+);

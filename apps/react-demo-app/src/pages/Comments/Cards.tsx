@@ -5,11 +5,11 @@ import { SetCommentTarget } from '@cognite/react-comments';
 
 import { CardContainer, Elevation } from './elements';
 
-interface Card {
+interface ICard {
   asset: Asset;
   setCommentTarget: SetCommentTarget;
 }
-export const Card: React.FC<Card> = ({ asset, setCommentTarget }) => {
+export const Card: React.FC<ICard> = ({ asset, setCommentTarget }) => {
   return (
     <Elevation
       className="z-4"
@@ -30,8 +30,8 @@ export const Card: React.FC<Card> = ({ asset, setCommentTarget }) => {
 };
 
 export const Cards: React.FC<{
-  assets: Card['asset'][];
-  setCommentTarget: Card['setCommentTarget'];
+  assets: ICard['asset'][];
+  setCommentTarget: ICard['setCommentTarget'];
 }> = ({ assets, setCommentTarget }) => {
   return (
     <CardContainer>

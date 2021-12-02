@@ -2,6 +2,7 @@ import React from 'react';
 import { Body, Graphic, Tooltip } from '@cognite/cogs.js';
 import { ApplicationItem } from 'store/config/types';
 import { useLastVisited } from 'hooks';
+
 import { NavigationItemContainer, NavigationItemTitle } from './elements';
 
 interface Props {

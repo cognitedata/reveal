@@ -12,15 +12,11 @@ export default {
 };
 
 export const simple = () => (
-  <Card
-    title="This is a base card"
-    text="Lorem ipsum dol or at"
-    avatarText="AA"
-  />
+  <Card title="This is a base card" text="Lorem ipsum dol or at" />
 );
 
 export const withContent = () => (
-  <Card title="This is a base card" text="Lorem ipsum dolor at" avatarText="AA">
+  <Card title="This is a base card" text="Lorem ipsum dolor at">
     <FlexRow>
       <div>
         <Typography>Members!</Typography>

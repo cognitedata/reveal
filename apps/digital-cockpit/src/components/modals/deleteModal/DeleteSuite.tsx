@@ -81,20 +81,18 @@ const DeleteSuite: React.FC<Props> = ({ suiteItem: suite }: Props) => {
   );
 
   return (
-    <>
-      <Modal
-        visible
-        onCancel={handleClose}
-        headerText="Delete suite?"
-        footer={footer}
-        width={400}
-        underlineColor="#db0657"
-      >
-        <ModalContainer>
-          <Title level={5}>Delete &quot;{suite.title}&quot;?</Title>
-        </ModalContainer>
-      </Modal>
-    </>
+    <Modal
+      visible
+      onCancel={handleClose}
+      headerText="Delete suite?"
+      footer={footer}
+      width={400}
+      underlineColor="#db0657"
+    >
+      <ModalContainer>
+        <Title level={5}>Delete &quot;{suite.title}&quot;?</Title>
+      </ModalContainer>
+    </Modal>
   );
 };
 

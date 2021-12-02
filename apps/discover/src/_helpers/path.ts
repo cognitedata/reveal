@@ -1,4 +1,4 @@
-const driveRegex = new RegExp('^[A-Za-z]-drive');
+const driveRegex = /^[A-Za-z]-drive/;
 
 export const convertPath = (path: string) => {
   if (!path || path.length < 1) {

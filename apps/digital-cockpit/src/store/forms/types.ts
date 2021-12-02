@@ -1,5 +1,6 @@
 import { ActionType } from 'typesafe-actions';
 import { CogniteExternalId, FileInfo } from '@cognite/sdk';
+
 import * as actions from './actions';
 
 export enum FormActionTypes {

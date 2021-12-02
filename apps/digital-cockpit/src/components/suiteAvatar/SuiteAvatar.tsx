@@ -1,5 +1,6 @@
 import React from 'react';
 import { acronym } from 'utils/acronym';
+
 import { SuiteAvatarContainer, Default, Medium, Large } from './elements';
 import { types } from './avatarLogo';
 

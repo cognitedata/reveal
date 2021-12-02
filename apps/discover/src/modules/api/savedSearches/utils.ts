@@ -23,7 +23,7 @@ import { getEmptyFilters } from './utils/getEmptyFilters';
 export const updateCurrentSearch = async (
   currentSavedSearch: SavedSearchContent,
   savedSearchPatchContent: SavedSearchQuery | SavedSearchContent,
-  waitForResponse = true,
+  waitForResponse: boolean,
   headers: FetchHeaders,
   tenant: string
 ) => {
@@ -101,7 +101,7 @@ export const createSavedSearch = ({
   tenant,
 }: {
   values: SavedSearchContent;
-  name?: string;
+  name: string;
   headers: FetchHeaders;
   tenant: string;
 }) => {

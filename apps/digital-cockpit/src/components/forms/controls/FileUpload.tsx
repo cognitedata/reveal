@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { filesUploadState, imageFileState } from 'store/forms/selectors';
 import { boardValidator } from 'validators';
 import { useMetrics } from 'utils/metrics';
-
 import { addFileToDeleteQueue } from 'store/forms/actions';
 import { FieldProps } from 'formik';
 

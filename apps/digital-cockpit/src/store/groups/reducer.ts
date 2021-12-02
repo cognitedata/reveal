@@ -1,6 +1,7 @@
 import { createReducer } from 'typesafe-actions';
 import { Group } from '@cognite/sdk';
 import { checkIsAdmin } from 'utils/groups';
+
 import {
   GroupsState,
   UserGroupsActionTypes,

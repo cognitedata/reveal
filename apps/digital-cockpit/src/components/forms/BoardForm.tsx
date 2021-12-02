@@ -32,6 +32,7 @@ import {
 import { CogniteExternalId } from '@cognite/sdk';
 import * as actions from 'store/forms/actions';
 import * as layoutActions from 'store/layout/actions';
+
 import {
   FormContainer,
   BoardsContainer,

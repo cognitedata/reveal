@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -24,11 +24,9 @@ describe('SearchInputValues', () => {
   });
 
   it(`should trigger callback on remove click`, async () => {
-    await act(async () => {
-      await testInit(defaultProps);
-      const button = screen.getByTestId('remove-btn');
-      fireEvent.click(button);
-      expect(onClick).toBeCalledTimes(1);
-    });
+    await testInit(defaultProps);
+    const button = screen.getByTestId('remove-btn');
+    fireEvent.click(button);
+    expect(onClick).toBeCalledTimes(1);
   });
 });

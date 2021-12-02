@@ -3,6 +3,7 @@ import {
   ExternalFileInfo,
   FileUploadResponse,
 } from '@cognite/sdk';
+
 import { CdfClient } from './cdfClient';
 
 export const validImgTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];

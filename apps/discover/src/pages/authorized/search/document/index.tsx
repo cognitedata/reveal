@@ -6,10 +6,8 @@ const DocumentSearch = React.lazy(
   () => import(/* webpackChunkName: "documents" */ './DocumentSearch')
 );
 
-export default () => {
-  return (
-    <React.Suspense fallback={<Empty />}>
-      <DocumentSearch />
-    </React.Suspense>
-  );
-};
+export default () => (
+  <React.Suspense fallback={<Empty />}>
+    <DocumentSearch />
+  </React.Suspense>
+);

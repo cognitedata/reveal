@@ -418,6 +418,7 @@ export default class DataProvider extends React.Component<
       domainsByCollectionId
     );
 
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     const context: DataType = {
       series: collectedSeries,
       collections: collectionsWithDomains,
@@ -525,7 +526,9 @@ export const fetchData = async (
   try {
     loaderResult = await loader(params);
   } catch (e) {
-    onFetchDataError(e, params);
+    if (e instanceof Error) {
+      onFetchDataError(e, params);
+    }
   }
 
   setState(

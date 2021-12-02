@@ -1,5 +1,6 @@
 import React from 'react';
 import { Title } from '@cognite/cogs.js';
+
 import { SuitbarContainer, MainContent } from './elements';
 
 interface Props {

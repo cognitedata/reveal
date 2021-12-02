@@ -7,6 +7,7 @@ import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { Suite } from 'store/suites/types';
 import { Button, Icon } from '@cognite/cogs.js';
 import omit from 'lodash/omit';
+
 import {
   FormFooter,
   CustomInputContainer,

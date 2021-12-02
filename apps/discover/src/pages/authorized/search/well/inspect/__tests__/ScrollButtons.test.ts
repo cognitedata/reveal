@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -23,12 +23,10 @@ describe('Scroll Buttons', () => {
         current: scrollElement,
       },
     };
-    await act(async () => {
-      await defaultTestInit(props);
-      fireEvent.click(screen.getByTestId('scroll-next'));
-      expect(scrollElement.scrollTo).toBeCalledTimes(1);
-      fireEvent.click(screen.getByTestId('scroll-prev'));
-      expect(scrollElement.scrollTo).toBeCalledTimes(2);
-    });
+    await defaultTestInit(props);
+    fireEvent.click(screen.getByTestId('scroll-next'));
+    expect(scrollElement.scrollTo).toBeCalledTimes(1);
+    fireEvent.click(screen.getByTestId('scroll-prev'));
+    expect(scrollElement.scrollTo).toBeCalledTimes(2);
   });
 });

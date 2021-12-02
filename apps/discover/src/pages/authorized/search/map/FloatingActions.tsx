@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { SearchButton, CloseButton } from 'components/buttons';
 
@@ -32,4 +32,4 @@ export const FloatingActions: React.FC<ActionProps> = ({
   );
 };
 
-export default FloatingActions;
+export default React.memo(FloatingActions);

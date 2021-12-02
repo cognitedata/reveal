@@ -33,6 +33,8 @@ def eslint_test(name, data, eslint_config, **kwargs):
     inputs.extend([eslint_config])
 
     deps = [
+        # package.json is needed by eslint-plugin-import: https://github.com/import-js/eslint-plugin-import/issues/2096
+        "//:package.json",
         "//packages/eslint-config",
         "//packages/eslint-plugin",
         "@npm//@testing-library/jest-dom",

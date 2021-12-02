@@ -15,6 +15,7 @@ import { PartialStoreState, StoreState, StoreAction } from 'core/types';
 import { initialState as documentSearchState } from 'modules/documentSearch/reducer';
 import { initialState as favouriteState } from 'modules/favorite/reducer';
 import { initialState as feedbackState } from 'modules/feedback/reducer';
+import { initialState as filterDataState } from 'modules/filterData/reducer';
 import { initialState as mapState } from 'modules/map/reducer';
 import { initialState as searchState } from 'modules/search/reducer';
 import { initialState as seismicState } from 'modules/seismicSearch/reducer';
@@ -48,6 +49,7 @@ export const getInitialStore: () => PartialStoreState = () => {
       tenant: testTenant,
     },
     favourite: { ...favouriteState },
+    filterData: { ...filterDataState },
     feedback: { ...feedbackState },
     seismicSearch: { ...seismicState },
     map: { ...mapState },

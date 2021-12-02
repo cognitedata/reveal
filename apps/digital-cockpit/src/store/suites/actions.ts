@@ -1,5 +1,6 @@
 import { FileLink, IdEither } from '@cognite/sdk';
 import { createAction } from 'typesafe-actions';
+
 import { SuitesTableActionTypes, Suite } from './types';
 
 export const loadSuitesTable = createAction(

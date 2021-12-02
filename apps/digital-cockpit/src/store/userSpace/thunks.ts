@@ -1,7 +1,8 @@
 import { ApiClient } from 'utils';
 import { RootDispatcher } from 'store/types';
-import { setHttpError } from 'store/notification/thunks';
+import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
+
 import * as actions from './actions';
 import { LastVisited, UserSpacePayload } from './types';
 
@@ -12,9 +13,10 @@ export const fetchUserSpace =
       const userSpace: UserSpacePayload = await apiClient.getUserSpace();
       dispatch(actions.loadedUserSpace(userSpace));
     } catch (e) {
-      dispatch(actions.loadUserSpaceError(e));
-      if (e?.code !== 404) {
-        dispatch(setHttpError('Failed to fetch user space', e));
+      const error = e as MixedHttpError;
+      dispatch(actions.loadUserSpaceError(error));
+      if (error?.code !== 404) {
+        dispatch(setHttpError('Failed to fetch user space', error));
         Sentry.captureException(e);
       }
     }

@@ -1,5 +1,6 @@
 import { CogniteExternalId } from '@cognite/sdk';
 import { createReducer } from 'typesafe-actions';
+
 import {
   LayoutActionTypes,
   LayoutRootAction,

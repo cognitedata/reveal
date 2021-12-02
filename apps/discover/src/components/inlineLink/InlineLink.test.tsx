@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -29,22 +29,18 @@ describe('InlineLink', () => {
   });
 
   it(`should trigger callback on click`, async () => {
-    await act(async () => {
-      await testInit(defaultProps);
-      const button = screen.getByTestId('link-btn');
-      fireEvent.click(button);
-      expect(onClick).toBeCalledTimes(1);
-    });
+    await testInit(defaultProps);
+    const button = screen.getByTestId('link-btn');
+    fireEvent.click(button);
+    expect(onClick).toBeCalledTimes(1);
   });
 
   it(`should navigate on click`, async () => {
-    await act(async () => {
-      await testInit({
-        href: 'https://testlink',
-      });
-      const button = screen.getByTestId('link-btn');
-      fireEvent.click(button);
-      expect(mockPush).toBeCalledTimes(1);
+    await testInit({
+      href: 'https://testlink',
     });
+    const button = screen.getByTestId('link-btn');
+    fireEvent.click(button);
+    expect(mockPush).toBeCalledTimes(1);
   });
 });

@@ -58,7 +58,7 @@ export const toWellSequence = (input: Sequence): WellSequence => {
 export const normalizeCoords = (
   x: string | number = 0,
   y: string | number = 0,
-  crs: string
+  crs = ''
 ): Partial<Well> => {
   if (!crs) return {};
   const CRS = crs.toUpperCase();

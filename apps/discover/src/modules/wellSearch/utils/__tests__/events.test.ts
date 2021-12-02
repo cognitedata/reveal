@@ -62,12 +62,12 @@ describe('Events utils', () => {
     );
 
     const resultedWellbore = getWellbore(mockCogniteEvent, wellbores);
-    expect(resultedWellbore?.id).toEqual(75915540932488339);
+    expect(resultedWellbore?.id).toEqual(759155409324883);
   });
 
   it(`should map well informations to npt events`, () => {
     const events: WellboreNPTEventsMap = {
-      75915540932488340: [mockNpt],
+      759155409324993: [mockNpt],
     };
 
     const results = mapWellInfoToNPTEvents(
@@ -83,8 +83,8 @@ describe('Events utils', () => {
           nptCode: UNKNOWN_NPT_CODE,
           nptCodeDetail: UNKNOWN_NPT_DETAIL_CODE,
           wellName: '16/1',
-          wellboreId: '75915540932488340',
-          wellboreName: 'wellbore B desc',
+          wellboreId: '759155409324993',
+          wellboreName: 'wellbore A desc',
         },
       },
     ]);
@@ -92,7 +92,7 @@ describe('Events utils', () => {
 
   it(`should convert npt events to 3d events format`, () => {
     const events: WellboreNPTEventsMap = {
-      75915540932488340: [
+      759155409324993: [
         {
           ...mockNpt,
           ...{
@@ -111,7 +111,7 @@ describe('Events utils', () => {
     );
     expect(results).toEqual([
       {
-        assetIds: [75915540932488340],
+        assetIds: [759155409324993],
         metadata: {
           npt_md: 328.084,
         },

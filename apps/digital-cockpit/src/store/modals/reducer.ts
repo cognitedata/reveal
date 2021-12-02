@@ -1,4 +1,5 @@
 import { createReducer } from 'typesafe-actions';
+
 import { ModalActionTypes, ModalState, ModalRootAction } from './types';
 
 const initialState: ModalState = {

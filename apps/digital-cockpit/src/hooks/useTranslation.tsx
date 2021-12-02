@@ -1,6 +1,5 @@
 import React from 'react';
 import { i18n as reactI18N, WithT, TFunction, TOptions } from 'i18next';
-
 import {
   useTranslation as useTranslationFromLibrary,
   i18next,

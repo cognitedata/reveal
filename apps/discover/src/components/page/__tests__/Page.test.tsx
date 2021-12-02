@@ -7,11 +7,7 @@ import { Page, Props } from '../Page';
 jest.mock('pages/authorized/menubar', () => {
   return {
     Topbar: () => {
-      return (
-        <>
-          <p>Mock Top Bar</p>
-        </>
-      );
+      return <p>Mock Top Bar</p>;
     },
   };
 });

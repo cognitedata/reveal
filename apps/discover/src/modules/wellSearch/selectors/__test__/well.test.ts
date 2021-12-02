@@ -58,7 +58,7 @@ describe('Well hook', () => {
 
     expect(data).toEqual({
       selectedSecondaryWellIds: { '1234': true },
-      selectedSecondaryWellboreIds: { '75915540932499340': true },
+      selectedSecondaryWellboreIds: { '759155409324993': true },
     });
   });
 
@@ -85,7 +85,7 @@ describe('Well hook', () => {
 
     expect(data).toEqual({
       wellIds: [1234],
-      wellboreIds: [75915540932499340],
+      wellboreIds: [759155409324993],
     });
   });
 

@@ -72,25 +72,23 @@ export const Tile: React.FC<Props> = ({
   }, []);
 
   return (
-    <>
-      <TileContainer
-        isBoard={isBoard}
-        {...(isBoard && { onClick: setAsLastvisited })}
-      >
-        <TileHeader isBoard={isBoard} color={color}>
-          <Flex>
-            {avatar && <SuiteAvatar title={dataItem.title} color={color} />}
-            <TileDescription>
-              <Overline level={3}>{(dataItem as Board)?.type}</Overline>
-              <Tooltip content={dataItem.title}>
-                <StyledTitle level={6}>{dataItem.title}</StyledTitle>
-              </Tooltip>
-            </TileDescription>
-          </Flex>
-          {menu}
-        </TileHeader>
-        {renderPreview(dataItem)}
-      </TileContainer>
-    </>
+    <TileContainer
+      isBoard={isBoard}
+      {...(isBoard && { onClick: setAsLastvisited })}
+    >
+      <TileHeader isBoard={isBoard} color={color}>
+        <Flex>
+          {avatar && <SuiteAvatar title={dataItem.title} color={color} />}
+          <TileDescription>
+            <Overline level={3}>{(dataItem as Board)?.type}</Overline>
+            <Tooltip content={dataItem.title}>
+              <StyledTitle level={6}>{dataItem.title}</StyledTitle>
+            </Tooltip>
+          </TileDescription>
+        </Flex>
+        {menu}
+      </TileHeader>
+      {renderPreview(dataItem)}
+    </TileContainer>
   );
 };

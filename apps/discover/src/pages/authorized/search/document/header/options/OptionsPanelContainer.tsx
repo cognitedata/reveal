@@ -17,36 +17,34 @@ import { columnMap } from '../../results/DocumentResultTable';
 import OptionsPanel from './OptionsPanel';
 
 interface Props {
-  viewMode: ViewMode;
+  // viewMode: ViewMode;
   selectedColumns: string[];
-  searchForSensitive: boolean;
+  // searchForSensitive: boolean;
   // isGroupSimilarResults: boolean;
-
-  setViewModel: (viewMode: ViewMode) => void;
+  // setViewModel: (viewMode: ViewMode) => void;
 
   addSelectedColumn: (column: Column) => void;
   removeSelectedColumn: (column: Column) => void;
-  setSelectedColumns: (columns: string[]) => void;
+  // setSelectedColumns: (columns: string[]) => void;
 
-  handleSearchInSensitiveToggle: (value: boolean) => void;
-
-  hideGroupDuplicateOption?: boolean;
+  // handleSearchInSensitiveToggle: (value: boolean) => void;
+  // hideGroupDuplicateOption?: boolean;
 }
 
 const OptionsPanelContainer: React.FC<Props> = (props) => {
   const {
-    viewMode,
+    // viewMode,
     selectedColumns,
-    searchForSensitive,
+    // searchForSensitive,
     // isGroupSimilarResults,
-    setViewModel,
+    // setViewModel,
 
     addSelectedColumn,
     removeSelectedColumn,
-    setSelectedColumns,
+    // setSelectedColumns,
 
-    handleSearchInSensitiveToggle,
-    hideGroupDuplicateOption = true,
+    // handleSearchInSensitiveToggle,
+    // hideGroupDuplicateOption = true,
   } = props;
 
   const availableColumns = getAvailableColumns(columnMap);
@@ -64,20 +62,20 @@ const OptionsPanelContainer: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSelectAllColumns = (value: boolean) => {
-    const columns = availableColumns
-      .filter((column) => value || column.disabled)
-      .map((column) => column.field);
+  // const handleSelectAllColumns = (value: boolean) => {
+  //   const columns = availableColumns
+  //     .filter((column) => value || column.disabled)
+  //     .map((column) => column.field);
 
-    setSelectedColumns(columns);
-  };
+  //   setSelectedColumns(columns);
+  // };
 
-  const toggleSearchInSensitive = (
-    _event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean
-  ) => {
-    handleSearchInSensitiveToggle(checked);
-  };
+  // const toggleSearchInSensitive = (
+  //   _event: React.ChangeEvent<HTMLInputElement>,
+  //   checked: boolean
+  // ) => {
+  //   handleSearchInSensitiveToggle(checked);
+  // };
 
   const mergedColumns = availableColumns.map((availableColumn) => {
     return {
@@ -89,15 +87,15 @@ const OptionsPanelContainer: React.FC<Props> = (props) => {
 
   return (
     <OptionsPanel
-      setViewModel={setViewModel}
+      // setViewModel={setViewModel}
       handleColumnSelection={handleColumnSelection}
-      handleSearchInSensitiveToggle={toggleSearchInSensitive}
-      handleSelectAllColumns={handleSelectAllColumns}
-      viewMode={viewMode}
+      // handleSearchInSensitiveToggle={toggleSearchInSensitive}
+      // handleSelectAllColumns={handleSelectAllColumns}
+      // viewMode={viewMode}
       columns={sortedColumns}
-      searchForSensitive={searchForSensitive}
+      // searchForSensitive={searchForSensitive}
       // isGroupSimilarResults={isGroupSimilarResults}
-      hideGroupDuplicateOption={hideGroupDuplicateOption}
+      // hideGroupDuplicateOption={hideGroupDuplicateOption}
     />
   );
 };

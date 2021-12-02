@@ -62,7 +62,11 @@ const getRootItem = <T>(key: string, defaultValue?: T): T | undefined => {
   try {
     return JSON.parse(stringValue);
   } catch (ex) {
-    log<string>(ex, [stringValue], 2);
+    if (ex instanceof Error) {
+      log<string>(ex.message, [stringValue], 2);
+    } else if (typeof ex === 'string') {
+      log<string>(ex, [stringValue], 2);
+    }
     return defaultValue;
   }
 };
@@ -101,11 +105,13 @@ export const getRootString = <T, D = undefined>(
   try {
     return JSON.parse(maybeJson);
   } catch (error) {
-    reportException(error, { maybeJson }).then((errorId) => {
-      metrics.track('getRootString', {
-        errorId,
+    if (error instanceof Error || typeof error === 'string') {
+      reportException(error, { maybeJson }).then((errorId) => {
+        metrics.track('getRootString', {
+          errorId,
+        });
       });
-    });
+    }
     return defaultValue;
   }
 };

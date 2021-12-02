@@ -6,10 +6,4 @@ export default {
   decorators: [],
 };
 
-export const Basic = () => {
-  return (
-    <>
-      <FavoriteHeader />
-    </>
-  );
-};
+export const Basic = () => <FavoriteHeader />;

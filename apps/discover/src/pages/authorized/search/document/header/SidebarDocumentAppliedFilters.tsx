@@ -8,13 +8,11 @@ import {
 
 export const SidebarDocumentAppliedFilters: React.FC = () => {
   return (
-    <>
-      <DocumentAppliedFilters
-        filterTagComponent={FilterTag}
-        clearTagComponent={ClearTag}
-        showClearTag
-        showClearTagForScenarios={ClearAllScenarios.FILTERS}
-      />
-    </>
+    <DocumentAppliedFilters
+      filterTagComponent={FilterTag}
+      clearTagComponent={ClearTag}
+      showClearTag
+      showClearTagForScenarios={ClearAllScenarios.FILTERS}
+    />
   );
 };

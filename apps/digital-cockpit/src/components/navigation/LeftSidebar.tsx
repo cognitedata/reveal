@@ -8,7 +8,6 @@ import { useMetrics } from 'utils/metrics';
 import { ApplicationItem } from 'store/config/types';
 import { getApplications } from 'store/config/selectors';
 import { TenantContext } from 'providers/TenantProvider';
-
 import {
   DndContext,
   DragEndEvent,
@@ -26,6 +25,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { isAdmin } from 'store/groups/selectors';
 import { changeAndSaveSuitesOrder } from 'store/suites/thunks';
 import { ApiClientContext } from 'providers/ApiClientProvider';
+
 import { handleHideSidebar } from './utils';
 import {
   TitleContainer,

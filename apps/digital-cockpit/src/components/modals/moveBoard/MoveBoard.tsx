@@ -95,67 +95,65 @@ const MoveBoard: React.FC<Props> = ({
   );
 
   return (
-    <>
-      <Modal
-        visible
-        onCancel={handleClose}
-        headerText="Move board to a suite"
-        footer={footer}
-        width={400}
-        underlineColor="#db0657"
-      >
-        <Title level={4} style={{ marginBottom: '10px' }}>
-          Select a target suite
-        </Title>
-        {!!parentSuite && (
-          <RadioItemsContainer>
-            <Title level={6}>Parent suite</Title>
+    <Modal
+      visible
+      onCancel={handleClose}
+      headerText="Move board to a suite"
+      footer={footer}
+      width={400}
+      underlineColor="#db0657"
+    >
+      <Title level={4} style={{ marginBottom: '10px' }}>
+        Select a target suite
+      </Title>
+      {!!parentSuite && (
+        <RadioItemsContainer>
+          <Title level={6}>Parent suite</Title>
+          <Radio
+            name="suiteKey"
+            key={parentSuite.key}
+            value={parentSuite.key}
+            checked={targetSuiteKey === parentSuite.key}
+            onChange={() => handleOnChange(parentSuite.key)}
+          >
+            {parentSuite.title}
+          </Radio>
+        </RadioItemsContainer>
+      )}
+      {!!childSuites && childSuites?.length > 0 && (
+        <RadioItemsContainer>
+          <Title level={6}>Child suites</Title>
+          {childSuites?.map((suite: Suite) => (
             <Radio
               name="suiteKey"
-              key={parentSuite.key}
-              value={parentSuite.key}
-              checked={targetSuiteKey === parentSuite.key}
-              onChange={() => handleOnChange(parentSuite.key)}
+              key={suite.key}
+              value={suite.key}
+              checked={targetSuiteKey === suite.key}
+              onChange={() => handleOnChange(suite.key)}
             >
-              {parentSuite.title}
+              {suite.title}
             </Radio>
-          </RadioItemsContainer>
-        )}
-        {!!childSuites && childSuites?.length > 0 && (
-          <RadioItemsContainer>
-            <Title level={6}>Child suites</Title>
-            {childSuites?.map((suite: Suite) => (
-              <Radio
-                name="suiteKey"
-                key={suite.key}
-                value={suite.key}
-                checked={targetSuiteKey === suite.key}
-                onChange={() => handleOnChange(suite.key)}
-              >
-                {suite.title}
-              </Radio>
-            ))}
-          </RadioItemsContainer>
-        )}
-        {!!otherSuites && otherSuites?.length > 0 && (
-          <RadioItemsContainer>
-            <Title level={6}>Other suites</Title>
+          ))}
+        </RadioItemsContainer>
+      )}
+      {!!otherSuites && otherSuites?.length > 0 && (
+        <RadioItemsContainer>
+          <Title level={6}>Other suites</Title>
 
-            {otherSuites?.map((suite: Suite) => (
-              <Radio
-                name="suiteKey"
-                key={suite.key}
-                value={suite.key}
-                checked={targetSuiteKey === suite.key}
-                onChange={() => handleOnChange(suite.key)}
-              >
-                {suite.title}
-              </Radio>
-            ))}
-          </RadioItemsContainer>
-        )}
-      </Modal>
-    </>
+          {otherSuites?.map((suite: Suite) => (
+            <Radio
+              name="suiteKey"
+              key={suite.key}
+              value={suite.key}
+              checked={targetSuiteKey === suite.key}
+              onChange={() => handleOnChange(suite.key)}
+            >
+              {suite.title}
+            </Radio>
+          ))}
+        </RadioItemsContainer>
+      )}
+    </Modal>
   );
 };
 

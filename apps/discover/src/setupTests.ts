@@ -39,10 +39,6 @@ jest.mock('@cognite/seismic-sdk-js', () => {
           },
         }),
     };
-
-    constructor() {
-      return this;
-    }
   }
 
   return { CogniteSeismicClient };

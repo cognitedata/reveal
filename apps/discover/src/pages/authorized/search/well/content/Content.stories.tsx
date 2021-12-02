@@ -14,12 +14,6 @@ export default {
   decorators: [withProvider],
 };
 
-export const Result = () => {
-  return (
-    <>
-      <Content />
-    </>
-  );
-};
+export const Result = () => <Content />;
 
 export const frontPage = () => <Content />;

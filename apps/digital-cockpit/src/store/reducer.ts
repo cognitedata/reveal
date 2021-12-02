@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import { SuitesReducer } from './suites/reducer';
 import { AuthReducer } from './auth/reducer';
 import { ModalReducer } from './modals/reducer';

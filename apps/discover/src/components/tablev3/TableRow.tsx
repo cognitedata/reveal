@@ -61,7 +61,7 @@ const CustomRowComp = <T extends Object>({
 }: React.PropsWithChildren<RowProps<T>>) => {
   // @ts-expect-error overrides outdated react table types
   const { isSelected, isExpanded, isIndeterminate, isSomeSelected } = row;
-  const { style, ...rest } = row.getRowProps();
+  const { style: _unused, ...rest } = row.getRowProps();
   const RowComponent = TableRow || DefaultTableRow;
   const [onHandleClick, onHandleDoubleClick] = useClickPreventionOnDoubleClick(
     () => handleRowClick && handleRowClick(row),

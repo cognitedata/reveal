@@ -93,7 +93,8 @@ export async function getMeasurementsByWellboreIds(
   const groupedData = groupBy(results, 'assetId');
   wellboreIds.forEach((wellboreId) => {
     if (!groupedData[wellboreId]) {
-      groupedData[wellboreId] = [];
+      delete groupedData[wellboreId];
+      // groupedData[wellboreId] = [];
     }
   });
 

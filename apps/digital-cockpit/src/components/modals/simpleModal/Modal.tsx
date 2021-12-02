@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import noop from 'lodash/noop';
 import { Title, Button, Icon } from '@cognite/cogs.js';
+
 import {
   ModalCloseButton,
   ModalHeaderUnderline,

@@ -62,7 +62,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
     options,
   });
 
-  const [_, xScaleMaxValue] = useXScaleRange<T>({
+  const [_unused, xScaleMaxValue] = useXScaleRange<T>({
     data: filteredData,
     accessors,
     useGroupedValues: true,

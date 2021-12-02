@@ -7,7 +7,7 @@ import { adaptSelectedPathToMetadataPath } from './adaptSelectedPathToMetadataPa
 
 export const getArrayChangeDetail = (
   selectedPath = '',
-  metadata: Metadata
+  metadata: Metadata = {}
 ): { hasArrayChange: boolean; arrayChangePath: string } => {
   if (selectedPath) {
     const extractedPath = selectedPath.split('.');

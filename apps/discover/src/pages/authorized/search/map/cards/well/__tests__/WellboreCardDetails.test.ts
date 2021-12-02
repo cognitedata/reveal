@@ -15,7 +15,7 @@ describe('Wellbore card details', () => {
 
   const defaultTestInit = async (
     extra: WellState = wellState,
-    viewProps: { wellId: number }
+    viewProps: { wellId: number } = { wellId: 0 }
   ) => {
     const store = getMockedStore({ wellSearch: { ...extra } });
 

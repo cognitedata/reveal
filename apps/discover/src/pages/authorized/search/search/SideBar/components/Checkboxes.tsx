@@ -5,8 +5,8 @@ import { v1 } from 'uuid';
 
 import { Checkbox } from '@cognite/cogs.js';
 
+import { log } from '_helpers/log';
 import { formatBigNumbersWithSuffix } from '_helpers/number';
-import { DocumentQueryFacet } from 'modules/documentSearch/types';
 
 import {
   CheckboxContainer,
@@ -30,15 +30,21 @@ interface Props {
   data: CheckboxState[];
   title?: string;
   onValueChange: (values: string[]) => void;
-  resultFacets?: DocumentQueryFacet[];
+  resultFacets?: unknown;
   hideResultsCount?: boolean;
 }
 export const Checkboxes: React.FC<Props> = ({
   data = [],
   title,
   onValueChange,
+  resultFacets,
   hideResultsCount,
 }) => {
+  log(
+    'resultFacets in deprecated and should be removed.',
+    resultFacets ? 'available' : 'not present'
+  );
+
   const onChange = (selected: boolean, option: CheckboxState) => {
     const selectedValues = data
       .filter(

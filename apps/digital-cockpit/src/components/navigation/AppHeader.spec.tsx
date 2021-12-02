@@ -3,12 +3,12 @@ import { screen, waitFor } from '@testing-library/react';
 import { GroupsState } from 'store/groups/types';
 import { allUserGroups } from '__mocks/groups';
 import { initialState as groupsInitialStore } from 'store/groups/reducer';
-
 import merge from 'lodash/merge';
 import { createMockCdfClient } from 'utils/test/client';
-import AppHeader from './AppHeader';
 
 import { devUserGroups } from '../../__mocks/groups';
+
+import AppHeader from './AppHeader';
 
 const mockClient = createMockCdfClient();
 

@@ -69,52 +69,50 @@ export const Feedback = () => {
           }
         };
         return (
-          <>
-            <FeedbackContent>
-              <TabBar>
-                <div>
-                  <SegmentedControl
-                    currentKey={selectedItem}
-                    onButtonClicked={handleNavigation}
-                  >
-                    <SegmentedControl.Button key={FeedbackTabs.general}>
-                      {t('General Feedback')}
-                    </SegmentedControl.Button>
-                    <SegmentedControl.Button key={FeedbackTabs.document}>
-                      {t('Document Feedback')}
-                    </SegmentedControl.Button>
-                  </SegmentedControl>
-                </div>
-                <div>
-                  <ViewDeletedFilesSwitch />
-                </div>
-              </TabBar>
-              <Switch>
-                <Route
-                  path={navigation.ADMIN_FEEDBACK_GENERAL}
-                  render={() => (
-                    <GeneralFeedback
-                      setCommentTarget={setCommentTarget}
-                      commentTarget={commentTarget}
-                    />
-                  )}
-                />
-                <Route
-                  path={navigation.ADMIN_FEEDBACK_DOCUMENT}
-                  render={() => (
-                    <DocumentFeedback
-                      setCommentTarget={setCommentTarget}
-                      commentTarget={commentTarget}
-                    />
-                  )}
-                />
-                <Redirect
-                  from={navigation.ADMIN}
-                  to={navigation.ADMIN_FEEDBACK_GENERAL}
-                />
-              </Switch>
-            </FeedbackContent>
-          </>
+          <FeedbackContent>
+            <TabBar>
+              <div>
+                <SegmentedControl
+                  currentKey={selectedItem}
+                  onButtonClicked={handleNavigation}
+                >
+                  <SegmentedControl.Button key={FeedbackTabs.general}>
+                    {t('General Feedback')}
+                  </SegmentedControl.Button>
+                  <SegmentedControl.Button key={FeedbackTabs.document}>
+                    {t('Document Feedback')}
+                  </SegmentedControl.Button>
+                </SegmentedControl>
+              </div>
+              <div>
+                <ViewDeletedFilesSwitch />
+              </div>
+            </TabBar>
+            <Switch>
+              <Route
+                path={navigation.ADMIN_FEEDBACK_GENERAL}
+                render={() => (
+                  <GeneralFeedback
+                    setCommentTarget={setCommentTarget}
+                    commentTarget={commentTarget}
+                  />
+                )}
+              />
+              <Route
+                path={navigation.ADMIN_FEEDBACK_DOCUMENT}
+                render={() => (
+                  <DocumentFeedback
+                    setCommentTarget={setCommentTarget}
+                    commentTarget={commentTarget}
+                  />
+                )}
+              />
+              <Redirect
+                from={navigation.ADMIN}
+                to={navigation.ADMIN_FEEDBACK_GENERAL}
+              />
+            </Switch>
+          </FeedbackContent>
         );
       }}
     </CommentSlider>

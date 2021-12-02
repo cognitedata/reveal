@@ -6,6 +6,7 @@ import { TS_FIX_ME } from 'core';
 
 import { Button, Checkbox, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
+import { log } from '_helpers/log';
 import { FlexColumn } from 'styles/layout';
 
 import { CustomMenu, InputContainer } from './elements';
@@ -34,7 +35,7 @@ interface Props {
   /** This functions handles the single select click */
   handleColumnSelection: (column: TS_FIX_ME) => void;
   /** This functions handles the select all / deselect all click */
-  handleSelectAllColumns: (isAllSelected: boolean) => void;
+  handleSelectAllColumns?: (isAllSelected: boolean) => void;
   /** If columns are grouped(Using GroupedColumn structure) or not(Using SimpleColumn structure)  */
   groupedColumns?: boolean;
   includeSearchInput?: boolean;
@@ -47,6 +48,7 @@ interface Props {
 const ManageColumnsPanel: React.FC<Props> = ({
   columns = [],
   handleColumnSelection,
+  handleSelectAllColumns,
   groupedColumns = false,
   includeSearchInput = false,
   searchInputChange,
@@ -61,6 +63,11 @@ const ManageColumnsPanel: React.FC<Props> = ({
   const [visible, setVisible] = useState<boolean>(visibility);
 
   useEffect(() => setVisible(visibility), [visibility]);
+
+  log(
+    'handleSelectAllColumns currently not in use.',
+    handleSelectAllColumns ? 'available' : 'not present'
+  );
 
   const clearable = useMemo(() => {
     return {

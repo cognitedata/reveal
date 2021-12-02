@@ -23,7 +23,7 @@ import {
 
 interface Props {
   feedback: DocumentFeedbackItem;
-  deleted?: boolean;
+  // deleted?: boolean;
 }
 
 interface BaseProps {
@@ -71,60 +71,58 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
     setAssessment(undefined);
   };
   return (
-    <>
-      <TableDropdown>
-        {feedback.isSensitiveData && (
-          <SensitiveWarning
-            resolved={
-              assessment !== undefined ||
-              feedback.isSensitiveByAdmin !== undefined
-            }
-          >
-            <SensitiveWarningText>
-              {t('This document was marked as sensitive')}
-            </SensitiveWarningText>
-            <AssessDropdown
-              assessment={assessment}
-              clearAssessment={handleClearAssessment}
-              handleChangeAssessment={handleChangeAssessment}
-            />
-          </SensitiveWarning>
-        )}
+    <TableDropdown>
+      {feedback.isSensitiveData && (
+        <SensitiveWarning
+          resolved={
+            assessment !== undefined ||
+            feedback.isSensitiveByAdmin !== undefined
+          }
+        >
+          <SensitiveWarningText>
+            {t('This document was marked as sensitive')}
+          </SensitiveWarningText>
+          <AssessDropdown
+            assessment={assessment}
+            clearAssessment={handleClearAssessment}
+            handleChangeAssessment={handleChangeAssessment}
+          />
+        </SensitiveWarning>
+      )}
 
-        <DocumentFeedbackDetailsWrapper>
+      <DocumentFeedbackDetailsWrapper>
+        <MetadataItem
+          label={t('Original path')}
+          value={feedback.fileLocation}
+          type="path"
+        />
+        <MetadataTable
+          columns={2}
+          metadata={[
+            { label: t('File name'), value: feedback.fileName },
+            { label: t('Feedback ID'), value: feedback.id },
+            {
+              label: t('Current document type'),
+              value: feedback?.originalType,
+              type: 'label',
+            },
+            {
+              label: t('Suggested document type'),
+              value: feedback?.suggestedType,
+              type: 'label',
+            },
+          ]}
+        />
+        <MarginBottomNormalContainer>
           <MetadataItem
-            label={t('Original path')}
-            value={feedback.fileLocation}
-            type="path"
+            label={t('User comment')}
+            value={feedback.comment}
+            type="text"
           />
-          <MetadataTable
-            columns={2}
-            metadata={[
-              { label: t('File name'), value: feedback.fileName },
-              { label: t('Feedback ID'), value: feedback.id },
-              {
-                label: t('Current document type'),
-                value: feedback?.originalType,
-                type: 'label',
-              },
-              {
-                label: t('Suggested document type'),
-                value: feedback?.suggestedType,
-                type: 'label',
-              },
-            ]}
-          />
-          <MarginBottomNormalContainer>
-            <MetadataItem
-              label={t('User comment')}
-              value={feedback.comment}
-              type="text"
-            />
-          </MarginBottomNormalContainer>
-          {action}
-        </DocumentFeedbackDetailsWrapper>
-      </TableDropdown>
-    </>
+        </MarginBottomNormalContainer>
+        {action}
+      </DocumentFeedbackDetailsWrapper>
+    </TableDropdown>
   );
 };
 

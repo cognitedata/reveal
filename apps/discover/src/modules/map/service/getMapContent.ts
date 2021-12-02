@@ -43,11 +43,11 @@ export function getMapContent(url: string): Promise<FeatureCollection> {
         });
 
     if (!window?.caches) {
-      return fetchGet(url);
+      resolve(fetchGet(url));
     }
 
     // fetch cached data
-    return window.caches
+    window.caches
       .match(url)
       .then((response) => {
         if (!response) throw Error('No data');
@@ -60,7 +60,7 @@ export function getMapContent(url: string): Promise<FeatureCollection> {
       })
       .catch(() => {
         // we didn't get cached data, the network is our last hope:
-        return networkUpdate();
+        networkUpdate();
       });
   });
 }

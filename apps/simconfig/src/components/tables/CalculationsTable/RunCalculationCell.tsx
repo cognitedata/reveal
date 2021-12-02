@@ -68,14 +68,12 @@ export default function RunCalculationCell({ data }: ComponentProps) {
     : 'CaretClosedDefault';
 
   return (
-    <>
-      <RunCalculationButton
-        aria-label={status}
-        disabled={isCalculationReadyOrRunning}
-        type="ghost"
-        icon={buttonIcon}
-        onClick={onClickRun}
-      />
-    </>
+    <RunCalculationButton
+      aria-label={status}
+      disabled={isCalculationReadyOrRunning}
+      type="ghost"
+      icon={buttonIcon}
+      onClick={onClickRun}
+    />
   );
 }

@@ -7,11 +7,7 @@ import { Paper } from '../Paper';
 jest.mock('pages/authorized/menubar', () => {
   return {
     Topbar: () => {
-      return (
-        <>
-          <p>Mock Top Bar</p>
-        </>
-      );
+      return <p>Mock Top Bar</p>;
     },
   };
 });

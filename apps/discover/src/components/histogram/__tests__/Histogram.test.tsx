@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import Histogram from '../Histogram';
 
@@ -22,13 +22,11 @@ describe('header', () => {
   });
 
   it(`should trigger 'toggleFilter' callback on click`, async () => {
-    await act(async () => {
-      await defaultTestInit();
-      const button = screen.getByTestId('histogram-btn');
-      if (button) {
-        fireEvent.click(button);
-      }
-      expect(toggleFilter).toBeCalledWith(key);
-    });
+    await defaultTestInit();
+    const button = screen.getByTestId('histogram-btn');
+    if (button) {
+      fireEvent.click(button);
+    }
+    expect(toggleFilter).toBeCalledWith(key);
   });
 });

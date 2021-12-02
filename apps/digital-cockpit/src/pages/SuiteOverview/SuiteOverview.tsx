@@ -24,8 +24,8 @@ import { GridLayout } from 'store/layout/types';
 import isEmpty from 'lodash/isEmpty';
 import SuiteBreadcrumb from 'components/navigation/SuiteBreadcrumb';
 import { SubSuiteTile } from 'components/tiles';
-import { ContainerTitle, StyledTitle } from './elements';
 
+import { ContainerTitle, StyledTitle } from './elements';
 import SuiteOverviewGrid from './SuiteOverviewGrid';
 
 const SuiteOverview: React.FC = () => {
@@ -154,6 +154,7 @@ const SuiteOverview: React.FC = () => {
     dispatch(modalOpen({ modalType, modalProps }));
   };
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const Header = () => (
     <>
       {parentSuite ? (

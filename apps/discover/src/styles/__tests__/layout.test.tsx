@@ -20,17 +20,15 @@ describe('layout', () => {
 
   it('first level should be ok', () => {
     render(
-      <>
-        <Flex>
-          <FlexGrow>
-            <Relative>
-              <DisplayRelative>
-                <TestContent />
-              </DisplayRelative>
-            </Relative>
-          </FlexGrow>
-        </Flex>
-      </>
+      <Flex>
+        <FlexGrow>
+          <Relative>
+            <DisplayRelative>
+              <TestContent />
+            </DisplayRelative>
+          </Relative>
+        </FlexGrow>
+      </Flex>
     );
 
     expect(screen.getByText(TestString)).toBeInTheDocument();
@@ -38,17 +36,15 @@ describe('layout', () => {
 
   it('second level should be ok', () => {
     render(
-      <>
-        <FlexShrinkWrap>
-          <FlexColumn>
-            <FlexAlignItems>
-              <Center>
-                <TestContent />
-              </Center>
-            </FlexAlignItems>
-          </FlexColumn>
-        </FlexShrinkWrap>
-      </>
+      <FlexShrinkWrap>
+        <FlexColumn>
+          <FlexAlignItems>
+            <Center>
+              <TestContent />
+            </Center>
+          </FlexAlignItems>
+        </FlexColumn>
+      </FlexShrinkWrap>
     );
 
     expect(screen.getByText(TestString)).toBeInTheDocument();
@@ -56,15 +52,13 @@ describe('layout', () => {
 
   it('margins', () => {
     render(
-      <>
-        <MarginBottomSmallContainer>
-          <MarginRightLargeContainer>
-            <MarginRightSmallContainer>
-              <TestContent />
-            </MarginRightSmallContainer>
-          </MarginRightLargeContainer>
-        </MarginBottomSmallContainer>
-      </>
+      <MarginBottomSmallContainer>
+        <MarginRightLargeContainer>
+          <MarginRightSmallContainer>
+            <TestContent />
+          </MarginRightSmallContainer>
+        </MarginRightLargeContainer>
+      </MarginBottomSmallContainer>
     );
 
     expect(screen.getByText(TestString)).toBeInTheDocument();

@@ -116,6 +116,7 @@ export class DocumentTable extends React.PureComponent<
 
   public renderDocument =
     (category: string, description: string) =>
+    // eslint-disable-next-line react/no-unstable-nested-components
     (document: Document, i: number, all: Document[]) => {
       const { documentRenderer } = this.props;
       if (documentRenderer) {
@@ -200,29 +201,27 @@ export class DocumentTable extends React.PureComponent<
       : (collapseProps || {}).defaultActiveKey;
 
     return (
-      <>
-        <TableWrapper className={className}>
-          <CollapseContainer
-            {...collapseProps}
-            defaultActiveKey={defaultActiveKeys}
-          >
-            {categoryWithData.map((category) => {
-              const { description, documents, type } = category;
-              return (
-                <PanelWrapper
-                  header={this.renderPanelHeader(
-                    getShortDescription(description),
-                    documents.length
-                  )}
-                  key={type}
-                >
-                  {documents.map(this.renderDocument(type, description))}
-                </PanelWrapper>
-              );
-            })}
-          </CollapseContainer>
-        </TableWrapper>
-      </>
+      <TableWrapper className={className}>
+        <CollapseContainer
+          {...collapseProps}
+          defaultActiveKey={defaultActiveKeys}
+        >
+          {categoryWithData.map((category) => {
+            const { description, documents, type } = category;
+            return (
+              <PanelWrapper
+                header={this.renderPanelHeader(
+                  getShortDescription(description),
+                  documents.length
+                )}
+                key={type}
+              >
+                {documents.map(this.renderDocument(type, description))}
+              </PanelWrapper>
+            );
+          })}
+        </CollapseContainer>
+      </TableWrapper>
     );
   }
 }

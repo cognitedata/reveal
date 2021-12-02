@@ -35,7 +35,11 @@ export const Logout: React.FC = () => {
         };
         azureAdClient.msalApplication.logout(logOutRequest);
       } catch (err) {
-        log(err, undefined, 3);
+        if (err instanceof Error) {
+          log(err.message, undefined, 3);
+        } else if (typeof err === 'string') {
+          log(err, undefined, 3);
+        }
       } finally {
         window.location.pathname = '/';
       }
@@ -51,7 +55,11 @@ export const Logout: React.FC = () => {
         window.open(logoutUrl);
       }
     } catch (err) {
-      log(err, undefined, 3);
+      if (err instanceof Error) {
+        log(err.message, undefined, 3);
+      } else if (typeof err === 'string') {
+        log(err, undefined, 3);
+      }
     } finally {
       window.location.pathname = '/';
     }

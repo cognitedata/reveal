@@ -1,4 +1,4 @@
-import { screen, act } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -27,21 +27,17 @@ describe('Well Inspect Sidebar Hide Button', () => {
   };
 
   it(`should render block expander on sidebar collapsed`, async () => {
-    await act(async () => {
-      await defaultTestInit({ ...defaultProps });
-      const element = screen.getByTestId('block-expander');
-      expect(element).toBeInTheDocument();
-    });
+    await defaultTestInit({ ...defaultProps });
+    const element = screen.getByTestId('block-expander');
+    expect(element).toBeInTheDocument();
   });
 
   it(`should render hide button on sidebar expand`, async () => {
-    await act(async () => {
-      await defaultTestInit({
-        ...defaultProps,
-        isOpen: true,
-      });
-      const element = screen.getByTestId('well-inspect-sidebar-hide-btn');
-      expect(element).toBeInTheDocument();
+    await defaultTestInit({
+      ...defaultProps,
+      isOpen: true,
     });
+    const element = screen.getByTestId('well-inspect-sidebar-hide-btn');
+    expect(element).toBeInTheDocument();
   });
 });

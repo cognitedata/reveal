@@ -72,7 +72,7 @@ export const mockWellboreOptions = {
 export const mockedWellboreResultFixture: Wellbore[] = [
   {
     name: 'wellbore B',
-    id: 75915540932488339,
+    id: 759155409324883,
     wellId: 1234,
     description: 'wellbore B desc',
     sourceWellbores: [],
@@ -80,14 +80,14 @@ export const mockedWellboreResultFixture: Wellbore[] = [
   },
   {
     name: 'wellbore A',
-    id: 75915540932499340,
-    externalId: 'Wellbore A:75915540932499340',
+    id: 759155409324993,
+    externalId: 'Wellbore A:759155409324993',
     wellId: 1234,
     description: 'wellbore A desc',
     sourceWellbores: [
       {
-        id: 75915540932499340,
-        externalId: 'Wellbore A:75915540932499340',
+        id: 759155409324993,
+        externalId: 'Wellbore A:759155409324993',
         source: 'Source A',
       },
     ],
@@ -116,10 +116,10 @@ export const mockedWellStateWithSelectedWells = {
       1234: true,
     },
     selectedWellboreIds: {
-      75915540932499340: true,
+      759155409324993: true,
     },
     wellboreData: {
-      75915540932499340: {
+      759155409324993: {
         logType: [],
         ppfg: [],
         geomechanic: [],
@@ -235,7 +235,7 @@ export const mockedWellStateWithSelectedWells = {
       1234: true,
     },
     selectedSecondaryWellboreIds: {
-      75915540932499340: true,
+      759155409324993: true,
     },
   },
   wellInspect: {
@@ -256,8 +256,8 @@ export const mockedWellSearchState = {
 
 export const mockedSequencesResultFixture = [
   {
-    parentId: 75915540932488339,
-    assetId: 75915540932488339,
+    parentId: 759155409324883,
+    assetId: 759155409324883,
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 23891231812,
     columns: [],
@@ -272,7 +272,7 @@ export const mockedSequencesResultFixture = [
     },
   },
   {
-    parentId: 75915540932488339,
+    parentId: 759155409324883,
     assetId: 123214123312,
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 123213123,
@@ -456,7 +456,7 @@ export const getMockWellFilterConfig = () => ({
 
 export const mockedMeasurementsResultFixture: Measurement[] = [
   {
-    assetId: 75915540932488339,
+    assetId: 759155409324883,
     externalId: 'BBHLH0L1CT-POS7ICp7Al-0007I',
     id: 23891231812,
     columns: [

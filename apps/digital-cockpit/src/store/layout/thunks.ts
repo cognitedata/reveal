@@ -1,11 +1,12 @@
 import { RootDispatcher } from 'store/types';
 import { ApiClient } from 'utils';
 import { mapGridWidgetToBoardLayout } from 'utils/layout';
-import { setHttpError } from 'store/notification/thunks';
+import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import { setNotification } from 'store/notification/actions';
 import * as Sentry from '@sentry/browser';
 import { GridStackWidget } from 'gridstack';
 import { CogniteExternalId } from '@cognite/sdk';
+
 import { BoardLayoutPayloadItem, BoardLayoutResponse } from './types';
 import * as actions from './actions';
 
@@ -17,8 +18,9 @@ export function loadLayouts(apiClient: ApiClient) {
         (await apiClient.getLayout()) as BoardLayoutResponse;
       dispatch(actions.layoutsLoaded(layouts));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.layoutError());
-      dispatch(setHttpError('Failed to load layout configuration', e));
+      dispatch(setHttpError('Failed to load layout configuration', error));
       Sentry.captureException(e);
     }
   };
@@ -43,8 +45,9 @@ export function saveBoardLayout(
       dispatch(actions.layoutsSaved(boardLayout));
       dispatch(setNotification('Layout saved'));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.layoutError());
-      dispatch(setHttpError('Failed to save layout configuration', e));
+      dispatch(setHttpError('Failed to save layout configuration', error));
       Sentry.captureException(e);
     }
   };
@@ -59,8 +62,9 @@ export function deleteLayoutItems(
     try {
       await apiClient.deleteLayoutItems(items);
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.layoutError());
-      dispatch(setHttpError('Failed to delete layout items', e));
+      dispatch(setHttpError('Failed to delete layout items', error));
       Sentry.captureException(e);
     } finally {
       dispatch(actions.resetLayoutDeleteQueue());

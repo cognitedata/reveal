@@ -1,3 +1,5 @@
+import { CUSTOMER_LOGO_ID } from 'constants/cdf';
+
 import React, { useContext, useState } from 'react';
 import Modal from 'components/modals/simpleModal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,8 +11,7 @@ import { CustomInputContainer } from 'components/forms/elements';
 import { useMetrics } from 'utils/metrics';
 import * as Sentry from '@sentry/browser';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { setHttpError } from 'store/notification/thunks';
-
+import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import {
   validImgTypes,
   maximumLogoSize,
@@ -18,8 +19,6 @@ import {
   validateFileSize,
   uploadFile,
 } from 'utils/files';
-
-import { CUSTOMER_LOGO_ID } from 'constants/cdf';
 import { ExternalFileInfo } from '@cognite/sdk';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
@@ -88,13 +87,15 @@ const UploadLogoModal: React.FC = () => {
       dispatch(addConfigItems({ customerLogoFetched: false }));
       metrics.track('Uploaded');
     } catch (e) {
-      dispatch(setHttpError(`Failed to upload customer logo`, e));
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to upload customer logo`, error));
       Sentry.captureException(e);
     }
     setIsSaving(false);
     handleCloseModal();
   };
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const Footer = () => (
     <ModalFooter>
       <Button type="ghost" onClick={cancel} disabled={isSaving}>

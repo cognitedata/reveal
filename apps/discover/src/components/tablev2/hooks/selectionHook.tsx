@@ -34,8 +34,11 @@ export const selectionHook =
             (row: any) => row.isSelected
           ).length;
           const allSelected = selectedRowCount === rows.length;
-          const { checked, onChange, ...rest } =
-            getToggleAllRowsSelectedProps();
+          const {
+            checked: _unused1,
+            onChange: _unused2,
+            ...rest
+          } = getToggleAllRowsSelectedProps();
           const onCheckboxChanged = (nextState: boolean) => {
             if (handleRowsSelect) {
               handleRowsSelect(nextState);
@@ -55,7 +58,7 @@ export const selectionHook =
         // The cell can use the individual row's getToggleRowSelectedProps method
         // to the render a checkbox
         Cell: ({ row }: CellProps<any>) => {
-          const { checked, onChange, ...rest } =
+          const { checked, onChange: _unused3, ...rest } =
             // @ts-expect-error unknown issue
             row.getToggleRowSelectedProps();
           const isSelected = row.original.selected || checked || false;

@@ -110,7 +110,7 @@ const startLogRowDataFetch = async (log: Sequence) => {
   // This sorts already fetched row data sets in binary search
   const sortedValuedRowsSets = sortBy(
     searchedValuedRowsSets,
-    (searchedValuedRowsSet) => searchedValuedRowsSet[0].rowNumber // eslint-disable-line lodash/prop-shorthand
+    (searchedValuedRowsSet) => searchedValuedRowsSet[0].rowNumber
   );
 
   let sortedValuedRows: SequenceRow[] = [];
@@ -178,7 +178,7 @@ const startLogFrmTopsRowDataFetch = async (log: Sequence) => {
   // This sorts already fetched row data sets in binary search
   const sortedValuedRowsSets = sortBy(
     searchedValuedRowsSets,
-    (searchedValuedRowsSet) => searchedValuedRowsSet[0].rowNumber // eslint-disable-line lodash/prop-shorthand
+    (searchedValuedRowsSet) => searchedValuedRowsSet[0].rowNumber
   );
 
   let sortedValuedRows: SequenceRow[] = [];

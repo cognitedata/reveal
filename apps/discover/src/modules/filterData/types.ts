@@ -25,6 +25,9 @@ export interface FilterDataState {
     selectedIds: SelectedMap;
     selectedWellboreIds: SelectedMap;
   };
+  casing: {
+    selectedIds: SelectedMap;
+  };
 }
 
 export type FilterValues =

@@ -2,11 +2,12 @@
 import { CdfClient, ApiClient } from 'utils';
 import { RootDispatcher } from 'store/types';
 import { setNotification } from 'store/notification/actions';
-import { setHttpError } from 'store/notification/thunks';
+import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { CogniteExternalId } from '@cognite/sdk';
 import { Metrics } from '@cognite/metrics';
 import { updateSuitesOrder } from 'utils/suitesTable';
+
 import { Board, Suite } from './types';
 import * as actions from './actions';
 
@@ -18,11 +19,12 @@ export const fetchSuites =
       const suites: Suite[] = await apiClient.getSuites();
       dispatch(actions.loadedSuitesTable(suites as Suite[]));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.loadSuitesTableFailed());
-      if (e?.code === 403 && metrics) {
+      if (error?.code === 403 && metrics) {
         metrics.track('NotAuthorizedUser');
       } else {
-        dispatch(setHttpError(`Failed to fetch suites`, e));
+        dispatch(setHttpError(`Failed to fetch suites`, error));
         Sentry.captureException(e);
       }
     }
@@ -38,8 +40,9 @@ export const insertSuite =
       showNotification &&
         dispatch(setNotification(['Saved.', 'Please edit & save the layout']));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.suiteError());
-      dispatch(setHttpError('Failed to save a suite', e));
+      dispatch(setHttpError('Failed to save a suite', error));
       Sentry.captureException(e);
     }
   };
@@ -52,8 +55,9 @@ export const deleteSuite =
       dispatch(fetchSuites(apiClient));
       dispatch(setNotification('Deleted successfully'));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.suiteError());
-      dispatch(setHttpError('Failed to delete a suite', e));
+      dispatch(setHttpError('Failed to delete a suite', error));
       Sentry.captureException(e);
     }
   };
@@ -66,11 +70,12 @@ export function deleteFiles(
     try {
       await client.deleteFiles(fileExternalIds);
     } catch (e) {
+      const error = e as MixedHttpError;
       Sentry.captureException(e);
       dispatch(
         setHttpError(
           `Failed to delete image preview(s): ${fileExternalIds.join(',')}`,
-          e
+          error
         )
       );
     }
@@ -84,8 +89,9 @@ export const fetchImageUrls =
       const imgUrls = await client.getDownloadUrls(ids);
       dispatch(actions.fetchedImgUrls(imgUrls));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(actions.fetchImgUrlsFailed());
-      dispatch(setHttpError('Failed to fetch image urls ', e));
+      dispatch(setHttpError('Failed to fetch image urls ', error));
       Sentry.captureException(e);
     }
   };
@@ -106,7 +112,8 @@ function saveSuitesSilently(apiClient: ApiClient, suites: Suite[]) {
     try {
       await apiClient.updateSuites(suites);
     } catch (e) {
-      dispatch(setHttpError(`Failed to update suites`, e));
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to update suites`, error));
       Sentry.captureException(e);
     }
   };
@@ -133,7 +140,8 @@ export function moveBoard(
       await apiClient.updateSuites(suitesToUpdate);
       dispatch(actions.replaceSuites(suitesToUpdate));
     } catch (e) {
-      dispatch(setHttpError(`Failed to update suites`, e));
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to update suites`, error));
       Sentry.captureException(e);
     }
   };

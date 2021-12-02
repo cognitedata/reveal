@@ -1,5 +1,6 @@
 import { createReducer } from 'typesafe-actions';
 import { replaceSuites } from 'utils/suitesTable';
+
 import {
   ImgUrlLink,
   Suite,

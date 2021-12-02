@@ -4,7 +4,11 @@ export const initialState = {
   hasGivenConsent: undefined,
 };
 
-export function user(state: UserState = initialState, action: UserAction) {
+export function user(state: UserState = initialState, action?: UserAction) {
+  if (!action) {
+    return state;
+  }
+
   switch (action.type) {
     case SET_CONSENT: {
       return {

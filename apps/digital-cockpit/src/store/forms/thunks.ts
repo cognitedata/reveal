@@ -2,14 +2,14 @@ import { getExternalFileInfo, uploadFile } from 'utils/files';
 import { CogniteExternalId, CogniteInternalId, FileInfo } from '@cognite/sdk';
 import { RootDispatcher } from 'store/types';
 import { ApiClient, CdfClient } from 'utils';
-
 import { insertSuite } from 'store/suites/thunks';
 import { Suite } from 'store/suites/types';
-import { setHttpError } from 'store/notification/thunks';
+import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { setError } from 'store/notification/actions';
 import { deleteLayoutItems } from 'store/layout/thunks';
 import { updateBoardWithFileId } from 'utils/forms';
+
 import * as actions from './actions';
 
 export function updateFileInfoState(
@@ -96,8 +96,9 @@ function uploadFiles({
           fileExternalId: externalId as CogniteExternalId,
         });
       } catch (e) {
-        dispatch(actions.fileUploadError({ boardKey, error: e?.message }));
-        dispatch(setHttpError(`Failed to upload file ${externalId}`, e));
+        const error = e as MixedHttpError;
+        dispatch(actions.fileUploadError({ boardKey, error: error?.message }));
+        dispatch(setHttpError(`Failed to upload file ${externalId}`, error));
         Sentry.captureException(e);
       }
     }
@@ -114,11 +115,12 @@ export function deleteFiles(
       await client.deleteFiles(fileExternalIds);
       dispatch(actions.filesDeleted());
     } catch (e) {
+      const error = e as MixedHttpError;
       Sentry.captureException(e);
       dispatch(
         setHttpError(
           `Failed to delete image preview(s): ${fileExternalIds.join(', ')}`,
-          e
+          error
         )
       );
     }
@@ -137,9 +139,10 @@ export function retrieveFileInfo(
       )[0] as FileInfo;
       dispatch(actions.retrievedFile(fileInfo));
     } catch (e) {
-      dispatch(actions.fileRetrieveError(e));
+      const error = e as MixedHttpError;
+      dispatch(actions.fileRetrieveError(error));
       dispatch(
-        setHttpError(`Failed to fetch file name for ${fileExternalId}`, e)
+        setHttpError(`Failed to fetch file name for ${fileExternalId}`, error)
       );
       Sentry.captureException(e);
     }

@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'types';

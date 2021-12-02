@@ -20,21 +20,23 @@ describe('useClickAwayListener hook', () => {
 
   const clickOutside = jest.fn();
 
-  beforeEach(() => {
+  const setupTest = () => {
     const { result } = renderHook(() =>
       useRef<HTMLHeadingElement | null>(null)
     );
 
     clickOutside.mockClear();
     renderTestComponent(result.current, clickOutside);
-  });
+  };
 
   it('should not call `clickOutside` when click inside the component', async () => {
+    setupTest();
     fireEvent.click(screen.getByTestId('test-component'));
     expect(clickOutside).not.toHaveBeenCalled();
   });
 
   it('should call `clickOutside` once when click outside of the component', async () => {
+    setupTest();
     fireEvent.mouseDown(document);
     await waitFor(() => expect(clickOutside).toHaveBeenCalledTimes(1));
   });

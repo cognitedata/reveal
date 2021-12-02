@@ -177,30 +177,28 @@ export function ModelForm({
         <Form>
           <InputRow>
             {file ? (
-              <>
-                <Field
-                  as={Input}
-                  title="File name"
-                  name="metadata.fileName"
-                  maxLength={512}
-                  icon="Document"
-                  validate={validateFilename}
-                  fullWidth
-                  error={
-                    errors?.metadata?.fileName
-                      ? errors.metadata.fileName
-                      : undefined
-                  }
-                  isValid={isValidFile(metadata.fileName)}
-                  helpText={
-                    isValidFile(metadata.fileName)
-                      ? `Simulator: ${metadata.simulator}`
-                      : undefined
-                  }
-                  disabled
-                  postfix={<Button onClick={onButtonClick}>File</Button>}
-                />
-              </>
+              <Field
+                as={Input}
+                title="File name"
+                name="metadata.fileName"
+                maxLength={512}
+                icon="Document"
+                validate={validateFilename}
+                fullWidth
+                error={
+                  errors?.metadata?.fileName
+                    ? errors.metadata.fileName
+                    : undefined
+                }
+                isValid={isValidFile(metadata.fileName)}
+                helpText={
+                  isValidFile(metadata.fileName)
+                    ? `Simulator: ${metadata.simulator}`
+                    : undefined
+                }
+                disabled
+                postfix={<Button onClick={onButtonClick}>File</Button>}
+              />
             ) : (
               <Field
                 as={FileInput}

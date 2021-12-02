@@ -157,7 +157,6 @@ const defaultConfig: TenantConfig = {
   },
   sideBar: 2,
   externalLinks: {
-    // eslint-disable-next-line lodash/prefer-constant
     hasWellProductionData: () =>
       'https://app.powerbi.com/groups/5e138d2c-cd5e-477f-9840-7f02f8c9a6f2/reports/61f91bdd-7af0-4ac8-bfa0-7de24f1fd267/ReportSection?noSignUpCheck=1',
     hasProductionData: (field?: string) => {

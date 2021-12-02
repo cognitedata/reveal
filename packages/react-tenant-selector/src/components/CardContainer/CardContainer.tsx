@@ -99,6 +99,7 @@ const CardContainer = ({
   //   loading,
   // });
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const ErrorDisplay = () => {
     if (!authState?.error || !authState?.errorMessage) {
       return null;

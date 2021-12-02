@@ -88,6 +88,7 @@ class Scaler extends Component<Props, State> {
       dataContext: { collections, series },
     } = this.props;
 
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     const finalContext: ScalerType = {
       collections,
       series,

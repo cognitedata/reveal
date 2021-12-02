@@ -3,6 +3,7 @@ import {
   Metrics as mockMetrics,
   useMetrics as useMockMetrics,
 } from '@cognite/metrics/dist/mocks';
+
 import sidecar from './sidecar';
 
 export const getMetrics = () => {

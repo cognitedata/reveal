@@ -1,7 +1,8 @@
+import { FILE_STORAGE_DATA_SET_ID } from 'constants/cdf';
+
 import { RootDispatcher } from 'store/types';
 import { ApiClient, CdfClient } from 'utils';
-import { FILE_STORAGE_DATA_SET_ID } from 'constants/cdf';
-import { setHttpError } from 'store/notification/thunks';
+import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import {
   setNotification,
@@ -9,6 +10,7 @@ import {
 } from 'store/notification/actions';
 import map from 'lodash/map';
 import isArray from 'lodash/isArray';
+
 import * as actions from './actions';
 import { ConfigItems, ConfigItemPayload } from './types';
 
@@ -20,14 +22,15 @@ export const getDataSet =
       )[0];
       dispatch(actions.addConfigItems({ dataSetId: id }));
     } catch (e) {
-      if (e.status === 400) {
+      const error = e as MixedHttpError;
+      if (error.status === 400) {
         // if data set does not exist -> create it
         dispatch(createDataSet(client));
       } else {
         dispatch(
           setHttpError(
             `Failed to retrieve data set ${FILE_STORAGE_DATA_SET_ID}`,
-            e
+            error
           )
         );
         Sentry.captureException(e);
@@ -42,10 +45,11 @@ function createDataSet(client: CdfClient) {
       dispatch(actions.addConfigItems({ dataSetId: id }));
       dispatch(setNotification(`Data set ${FILE_STORAGE_DATA_SET_ID} created`));
     } catch (e) {
+      const error = e as MixedHttpError;
       dispatch(
         setHttpError(
           `Failed to create a data set ${FILE_STORAGE_DATA_SET_ID}`,
-          e
+          error
         )
       );
       Sentry.captureException(e);
@@ -59,7 +63,8 @@ export const getApplicationsList =
       const { applications } = await apiClient.getApplications();
       dispatch(actions.addConfigItems({ applications }));
     } catch (e) {
-      dispatch(setHttpError(`Failed to fetch applications list`, e));
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to fetch applications list`, error));
       Sentry.captureException(e);
     }
   };
@@ -79,7 +84,8 @@ export const saveApplicationsList =
         })
       );
     } catch (e) {
-      dispatch(setHttpError(`Failed to save applications list`, e));
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to save applications list`, error));
       Sentry.captureException(e);
     }
   };
@@ -103,7 +109,8 @@ export const saveAppConfig =
         })
       );
     } catch (e) {
-      dispatch(setHttpError(`Failed to save configuration`, e));
+      const error = e as MixedHttpError;
+      dispatch(setHttpError(`Failed to save configuration`, error));
       Sentry.captureException(e);
     }
   };

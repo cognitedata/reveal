@@ -9,11 +9,7 @@ import isEmpty from 'lodash/isEmpty';
 export function usePrepareDataTransfersQuery() {
   const [options, setOptions] = useState<RESTTransfersFilter>({});
 
-  const {
-    data: datatransfers,
-    refetch,
-    ...rest
-  } = useDataTransfersQuery({
+  const { data: datatransfers, ...rest } = useDataTransfersQuery({
     enabled: !isEmpty(options),
     options,
   });

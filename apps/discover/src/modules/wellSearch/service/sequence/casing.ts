@@ -186,9 +186,10 @@ export const getGroupedSequenceData = (
   data: Sequence[],
   wellboreIds: WellboreId[]
 ) => {
-  const groupedData = groupBy(data, 'assetId');
+  const groupedData: Record<string, Sequence[]> = groupBy(data, 'assetId');
   wellboreIds.forEach((wellboreId) => {
-    groupedData[wellboreId] = filterValidCasings(groupedData[wellboreId] || []);
+    const isValid = filterValidCasings(groupedData[wellboreId] || []);
+    groupedData[wellboreId] = isValid;
   });
   return groupedData;
 };

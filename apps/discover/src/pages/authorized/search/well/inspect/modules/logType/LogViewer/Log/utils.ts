@@ -101,7 +101,7 @@ const addFrmRulersHelper = (instance: LogViewer, frmTrack: Track): void => {
       );
 
       const gTagLocation = get(gTag, '__data__');
-      const rulerTop = gTagLocation?.y - index * RULER_HEIGHT;
+      const rulerTop = (gTagLocation?.y || 0) - index * RULER_HEIGHT;
 
       if (!label) return;
 

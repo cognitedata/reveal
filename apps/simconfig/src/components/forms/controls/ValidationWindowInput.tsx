@@ -47,45 +47,43 @@ function ValidationWindowInput({
   };
 
   return (
-    <>
-      <InputWithLabelContainerWide>
-        <InputLabel>{title}</InputLabel>
-        <DoubleInputRow>
-          <Field
-            // Workaround for an issue in cogs.js: Removing the title also
-            // removes the input wrapper in the default state, which causes the
-            // input field to lose focus when the validation state/error
-            // message changes
-            title=" "
-            name={name}
-            as={InputFullWidthForDouble}
-            width="174px"
-            value={intervalValue}
-            disabled={disabled}
-            type={type}
-            error={errors.schedule?.repeat}
-            onChange={handleInputChange}
-          />
+    <InputWithLabelContainerWide>
+      <InputLabel>{title}</InputLabel>
+      <DoubleInputRow>
+        <Field
+          // Workaround for an issue in cogs.js: Removing the title also
+          // removes the input wrapper in the default state, which causes the
+          // input field to lose focus when the validation state/error
+          // message changes
+          title=" "
+          name={name}
+          as={InputFullWidthForDouble}
+          width="174px"
+          value={intervalValue}
+          disabled={disabled}
+          type={type}
+          error={errors.schedule?.repeat}
+          onChange={handleInputChange}
+        />
 
-          <Field
-            as={Select}
-            theme="grey"
-            value={{
-              value: intervalUnitValue,
-              label: `${INTERVAL_UNIT[intervalUnitValue]}${
-                intervalValue > 1 ? 's' : ''
-              }`,
-            }}
-            options={getSelectEntriesFromMap(INTERVAL_UNIT)}
-            onChange={handleSelectChange}
-            disabled={disabled}
-            isDisabled={disabled}
-            closeMenuOnSelect
-            fullWidth
-          />
-        </DoubleInputRow>
-      </InputWithLabelContainerWide>
-    </>
+        <Field
+          as={Select}
+          theme="grey"
+          value={{
+            value: intervalUnitValue,
+            label: `${INTERVAL_UNIT[intervalUnitValue]}${
+              intervalValue > 1 ? 's' : ''
+            }`,
+          }}
+          options={getSelectEntriesFromMap(INTERVAL_UNIT)}
+          onChange={handleSelectChange}
+          disabled={disabled}
+          isDisabled={disabled}
+          closeMenuOnSelect
+          fullWidth
+        />
+      </DoubleInputRow>
+    </InputWithLabelContainerWide>
   );
 }
 

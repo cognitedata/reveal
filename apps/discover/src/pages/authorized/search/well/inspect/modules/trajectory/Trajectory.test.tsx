@@ -12,7 +12,7 @@ describe('Trajectory Page', () => {
       filterData: {
         trajectory: {
           selectedIds: {},
-          selectedWellboreIds: { 75915540932499340: true },
+          selectedWellboreIds: { 759155409324993: true },
         },
       },
     });

@@ -76,8 +76,12 @@ export const initialState: FeedbackState = {
 
 export function feedback(
   state: FeedbackState = initialState,
-  action: FeedbackAction
+  action?: FeedbackAction
 ) {
+  if (!action) {
+    return state;
+  }
+
   switch (action.type) {
     case FAILED:
       return {

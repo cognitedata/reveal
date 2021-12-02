@@ -60,7 +60,7 @@ describe('Wellbore hook', () => {
     });
     const data: WellboreAssetIdMap = result.current;
 
-    expect(data[75915540932488340]).toEqual(75915540932488340);
+    expect(data[759155409324993]).toEqual(759155409324993);
   });
 
   test('load selected or hovered wellbores', async () => {
@@ -85,7 +85,7 @@ describe('Wellbore hook', () => {
     });
 
     expect(result.current).toEqual({
-      'Wellbore A:75915540932499340': 75915540932499340,
+      'Wellbore A:759155409324993': 759155409324993,
     });
   });
 
@@ -111,7 +111,7 @@ describe('Wellbore hook', () => {
     });
 
     expect(result.current).toEqual({
-      'Wellbore A:75915540932499340': 75915540932499340,
+      'Wellbore A:759155409324993': 759155409324993,
     });
   });
 
@@ -124,7 +124,7 @@ describe('Wellbore hook', () => {
     });
 
     expect(result.current).toEqual({
-      'Wellbore A:75915540932499340': 75915540932499340,
+      'Wellbore A:759155409324993': 759155409324993,
     });
   });
 });

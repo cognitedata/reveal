@@ -180,7 +180,7 @@ describe('Well Reducer', () => {
 
   it(`should set the selected wellbore id with parent well`, () => {
     const wellId = 1234;
-    const wellboreId = 75915540932488339;
+    const wellboreId = 759155409324883;
 
     const wells = mockedWellResultFixture.map((well) => ({
       ...well,
@@ -201,7 +201,7 @@ describe('Well Reducer', () => {
       }
     );
     expect(state.selectedWellIds).toEqual({ 1234: true });
-    expect(state.selectedWellboreIds).toEqual({ 75915540932488339: true });
+    expect(state.selectedWellboreIds).toEqual({ 759155409324883: true });
 
     const state2 = wellReducer(
       {
@@ -216,7 +216,7 @@ describe('Well Reducer', () => {
     );
 
     expect(state2.selectedWellIds).toEqual({ 1234: false });
-    expect(state2.selectedWellboreIds).toEqual({ 75915540932488339: false });
+    expect(state2.selectedWellboreIds).toEqual({ 759155409324883: false });
   });
 
   it(`should set the search phrase inside currentquery`, () => {

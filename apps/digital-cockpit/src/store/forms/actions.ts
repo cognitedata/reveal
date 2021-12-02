@@ -1,5 +1,6 @@
 import { CogniteExternalId, FileInfo } from '@cognite/sdk';
 import { createAction } from 'typesafe-actions';
+
 import { FormActionTypes, FileUpdateError } from './types';
 
 export const clearForm = createAction(FormActionTypes.CLEAR_FORM)<void>();

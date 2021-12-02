@@ -61,6 +61,7 @@ export const FlagProvider = ({
 
   if (!client.current) return null;
 
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = { client: client.current };
 
   return (

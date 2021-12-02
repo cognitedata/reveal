@@ -1,4 +1,5 @@
 import { createAction } from 'typesafe-actions';
+
 import { LastVisited, UserSpaceActionTypes, UserSpacePayload } from './types';
 
 export const loadUserSpace = createAction(

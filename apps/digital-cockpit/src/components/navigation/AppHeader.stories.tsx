@@ -1,5 +1,6 @@
 import configureStory from 'storybook/configureStory';
 import { mockGroupStateAdmin } from '__mocks/groups';
+
 import AppHeader from './AppHeader';
 
 export default {

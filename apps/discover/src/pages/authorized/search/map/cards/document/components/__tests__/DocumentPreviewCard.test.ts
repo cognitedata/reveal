@@ -1,4 +1,4 @@
-import { screen, fireEvent, act } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
 import { Store } from 'redux';
 
@@ -56,21 +56,19 @@ describe('Favourite Content', () => {
   };
 
   it('should trigger clear selectedDocument when clicking close', async () => {
-    await act(async () => {
-      const { store } = await defaultTestInit({
-        documentId: mockedDocument.id,
-      });
-
-      const button = screen.getByTestId('preview-card-close-button');
-
-      if (button) {
-        fireEvent.click(button);
-      }
-
-      const actions = store.getActions();
-      expect(actions).toHaveLength(1);
-      expect(actions[0].type).toEqual(CLEAR_SELECTED_DOCUMENT);
+    const { store } = await defaultTestInit({
+      documentId: mockedDocument.id,
     });
+
+    const button = screen.getByTestId('preview-card-close-button');
+
+    if (button) {
+      fireEvent.click(button);
+    }
+
+    const actions = store.getActions();
+    expect(actions).toHaveLength(1);
+    expect(actions[0].type).toEqual(CLEAR_SELECTED_DOCUMENT);
   });
 
   it('clicking the explore parent folder button should trigger extractParentFolder', async () => {
@@ -78,19 +76,17 @@ describe('Favourite Content', () => {
       .spyOn(documentSearchActions, 'extractParentFolder')
       .mockImplementation(() => noop);
 
-    await act(async () => {
-      await defaultTestInit({
-        documentId: mockedDocument.id,
-      });
-
-      const button = screen.getByTestId('button-extract-parent-folder');
-
-      if (button) {
-        fireEvent.click(button);
-      }
-
-      expect(spy).toBeCalledTimes(1);
+    await defaultTestInit({
+      documentId: mockedDocument.id,
     });
+
+    const button = screen.getByTestId('button-extract-parent-folder');
+
+    if (button) {
+      fireEvent.click(button);
+    }
+
+    expect(spy).toBeCalledTimes(1);
   });
 
   it('clicking the feedback button should trigger setObjectFeedbackModalDocumentId', async () => {
@@ -98,17 +94,15 @@ describe('Favourite Content', () => {
       .spyOn(feedbackActions, 'setObjectFeedbackModalDocumentId')
       .mockImplementation(() => noop);
 
-    await act(async () => {
-      await defaultTestInit({
-        documentId: mockedDocument.id,
-      });
-
-      const button = screen.getByTestId('button-feedback');
-
-      if (button) {
-        fireEvent.click(button);
-      }
-      expect(spy).toBeCalledTimes(1);
+    await defaultTestInit({
+      documentId: mockedDocument.id,
     });
+
+    const button = screen.getByTestId('button-feedback');
+
+    if (button) {
+      fireEvent.click(button);
+    }
+    expect(spy).toBeCalledTimes(1);
   });
 });

@@ -13,6 +13,7 @@ describe('FeatureToggle', () => {
     url: 'https://localhost',
   });
   const wrapper = ({ children }: { children: React.ReactNode }) => (
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <FlagContext.Provider value={{ client }}>{children}</FlagContext.Provider>
   );
 

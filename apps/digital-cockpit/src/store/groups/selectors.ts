@@ -1,6 +1,8 @@
-import { StoreState } from 'store/types';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
+
+import { StoreState } from 'store/types';
 import { getGroupNames } from 'utils/groups';
+
 import { GroupsState } from './types';
 
 export const getGroupsState = (state: StoreState): GroupsState => state.groups;

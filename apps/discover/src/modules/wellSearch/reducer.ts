@@ -71,8 +71,11 @@ export const initialState: WellState = {
 
 export function wellReducer(
   state: WellState = initialState,
-  action: WellSearchAction
+  action?: WellSearchAction
 ) {
+  if (!action) {
+    return state;
+  }
   switch (action.type) {
     case WELL_ADD_SELECTED_COLUMN:
       return {

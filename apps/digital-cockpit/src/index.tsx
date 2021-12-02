@@ -1,11 +1,10 @@
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/browser';
-
 import config from 'utils/config';
 import { Metrics } from '@cognite/metrics';
-
 import { getFASVersionName, getReleaseVersion } from 'utils/release';
 import sidecar from 'utils/sidecar';
+
 import AppRoot from './AppRoot/App';
 import * as serviceWorker from './serviceWorker';
 

@@ -1,5 +1,6 @@
-import { Group } from '@cognite/sdk';
 import { ADMIN_GROUP_NAME } from 'constants/cdf';
+
+import { Group } from '@cognite/sdk';
 
 export const getGroupNames = (groups: Group[] = []): string[] =>
   groups.map((group) => group.name);

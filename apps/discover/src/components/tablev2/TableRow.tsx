@@ -59,7 +59,7 @@ const CustomRowComp = <T extends Record<string, unknown>>({
   // @ts-expect-error overrides outdated react table types
   const { isSelected, isExpanded, isIndeterminate, isSomeSelected } = row;
 
-  const { style, ...rest } = row.getRowProps();
+  const { style: _unused, ...rest } = row.getRowProps();
 
   const renderTableRow = React.useMemo(() => {
     return row.cells.map((cell) => (

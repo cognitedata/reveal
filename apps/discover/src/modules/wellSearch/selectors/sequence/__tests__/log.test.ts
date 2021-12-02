@@ -37,7 +37,7 @@ describe('log hook', () => {
         wellSearch: {
           ...mockedWellStateWithSelectedWells.wellSearch,
           wellboreData: {
-            75915540932499340: {
+            759155409324993: {
               logType: [
                 {
                   sequence: {

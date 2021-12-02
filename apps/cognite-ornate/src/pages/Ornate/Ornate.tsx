@@ -681,16 +681,14 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
   const sidebarContent =
     workspace !== null ? (
       <WorkSpaceSearch onLoadFile={loadFile}>
-        <>
-          <WorkspaceDocsPanel
-            workspace={workspace as Workspace}
-            workspaceDocs={workspaceDocuments}
-            onLoadFile={loadFile}
-            onWorkspaceTitleUpdated={updateWorkspaceTitle}
-            onDeleteDocument={onDeleteDocument}
-            onAssetClick={onAssetClick}
-          />
-        </>
+        <WorkspaceDocsPanel
+          workspace={workspace as Workspace}
+          workspaceDocs={workspaceDocuments}
+          onLoadFile={loadFile}
+          onWorkspaceTitleUpdated={updateWorkspaceTitle}
+          onDeleteDocument={onDeleteDocument}
+          onAssetClick={onAssetClick}
+        />
       </WorkSpaceSearch>
     ) : (
       <RecentWorkspaces

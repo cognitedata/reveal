@@ -67,6 +67,7 @@ const LoopDetector = ({
   };
 
   return (
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <Context.Provider value={{ onLoopExit, records: recentRecords }}>
       {children}
     </Context.Provider>

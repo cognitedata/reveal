@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { Store } from 'redux';
 
 import { testRendererModal } from '__test-utils/renderer';
@@ -28,21 +28,17 @@ describe('Basic Share modal', () => {
   };
 
   it(`should display modal with title`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const headerText = screen.getByText(defaultProps.title);
-      expect(headerText).toBeInTheDocument();
-    });
+    await defaultTestInit(defaultProps);
+    const headerText = screen.getByText(defaultProps.title);
+    expect(headerText).toBeInTheDocument();
   });
 
   it(`should trigger 'share' callback on share`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const button = screen.queryByText(SHARE_MODAL_BUTTON_TEXT);
-      if (button) {
-        fireEvent.click(button);
-      }
-      expect(onShare).toBeCalledTimes(1);
-    });
+    await defaultTestInit(defaultProps);
+    const button = screen.queryByText(SHARE_MODAL_BUTTON_TEXT);
+    if (button) {
+      fireEvent.click(button);
+    }
+    expect(onShare).toBeCalledTimes(1);
   });
 });

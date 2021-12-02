@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import constant from 'lodash/constant';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -64,12 +64,10 @@ describe('TableEmpty', () => {
       .spyOn(mapActions, 'clearSelectedFeature')
       .mockImplementation(() => ({ type: '' }));
 
-    await act(async () => {
-      await testInit(defaultProps);
-      const button = screen.getByTestId('clear-all-btn');
-      fireEvent.click(button);
-      expect(clearAllFilters).toBeCalledTimes(1);
-      expect(clearAllFiltersSpy).toBeCalledTimes(1);
-    });
+    await testInit(defaultProps);
+    const button = screen.getByTestId('clear-all-btn');
+    fireEvent.click(button);
+    expect(clearAllFilters).toBeCalledTimes(1);
+    expect(clearAllFiltersSpy).toBeCalledTimes(1);
   });
 });

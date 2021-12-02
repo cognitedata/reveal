@@ -112,8 +112,12 @@ export const initialState: DocumentState = {
 
 export function search(
   state: DocumentState = initialState,
-  action: DocumentAction
+  action?: DocumentAction
 ): DocumentState {
+  if (!action) {
+    return state;
+  }
+
   switch (action.type) {
     case ADD_SELECTED_COLUMN:
       return {

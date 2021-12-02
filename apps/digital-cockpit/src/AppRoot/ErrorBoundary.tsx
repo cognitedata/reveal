@@ -5,6 +5,7 @@ import { StoreState } from 'store/types';
 import { toast, ToastContainer } from '@cognite/cogs.js';
 import { clearNotification } from 'store/notification/actions';
 import ErrorPage from 'pages/ErrorPage';
+
 import Toast from './Toast';
 
 type Props = {

@@ -11,6 +11,7 @@ import {
   BoardLayoutResponse,
 } from 'store/layout/types';
 import { ConfigItemPayload, AppConfigItemResponse } from 'store/config/types';
+
 import sidecar from './sidecar';
 
 type AppDataResponse = {

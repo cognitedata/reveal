@@ -9,6 +9,7 @@ import { ModalType } from 'store/modals/types';
 import { Board, Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import assign from 'lodash/assign';
+
 import { ActionsContainer, MenuContainer, MenuItemContent } from './elements';
 
 interface Props {

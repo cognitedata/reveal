@@ -26,8 +26,8 @@ describe('Trajectory2D util', () => {
     );
 
     expect(result).toEqual({
-      '75915540932488340': true,
-      '75915540932499340': true,
+      '759155409324883': true,
+      '759155409324993': true,
     });
   });
 });

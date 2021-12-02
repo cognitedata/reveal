@@ -6,7 +6,7 @@ export const getPathsFromDoc = (doc: DocumentType) => {
   if (doc.duplicates) {
     return [
       ...path,
-      ...doc.duplicates?.map(
+      ...(doc.duplicates || []).map(
         (duplicateDocument) => duplicateDocument.doc.filepath
       ),
     ];

@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -101,11 +101,9 @@ describe('FilterCategoryValues', () => {
   });
 
   it(`should trigger callback on remove click`, async () => {
-    await act(async () => {
-      await testInit();
-      const button = await screen.findAllByTestId('remove-btn');
-      fireEvent.click(button[0]);
-      expect(useSetWellsFilters).toHaveBeenCalled();
-    });
+    await testInit();
+    const button = await screen.findAllByTestId('remove-btn');
+    fireEvent.click(button[0]);
+    expect(useSetWellsFilters).toHaveBeenCalled();
   });
 });

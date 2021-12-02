@@ -179,7 +179,7 @@ const getDataPoints = async ({
 };
 
 export const mergeInsert = (
-  base: Datapoint[] = [],
+  base: Datapoint[],
   toInsert: Datapoint[],
   subDomain: number[],
   xAccessor: AccessorFunc = (d) => d.timestamp
@@ -370,7 +370,7 @@ export const createLoader =
                 granularity,
               }));
               const data = mergeInsert(
-                firstSeries,
+                firstSeries || [],
                 newSeries.data,
                 subDomain,
                 xAccessor

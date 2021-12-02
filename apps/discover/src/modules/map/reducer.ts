@@ -46,8 +46,11 @@ export const initialState: MapState = {
 
 export function map(
   state: MapState = initialState,
-  action: MapAction
+  action?: MapAction
 ): MapState {
+  if (!action) {
+    return state;
+  }
   switch (action.type) {
     case ADD_SELECTABLE_LAYERS:
     case SET_GEO_FILTERS:
@@ -89,7 +92,7 @@ export function map(
       let updatedOtherGeo: MapState['otherGeo'] = {};
 
       if (existing) {
-        const { [action.id]: toRemove, ...rest } = state.otherGeo;
+        const { [action.id]: _toRemove, ...rest } = state.otherGeo;
         updatedOtherGeo = rest;
       } else {
         // console.log('Adding:', action.geometry);

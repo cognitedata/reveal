@@ -235,7 +235,7 @@ const TableInner = <T extends Object>({
       .flatMap((headerGroup: HeaderGroup<T>) =>
         headerGroup.headers.map((column: any) => {
           const { width } = column;
-          const matchOnlyNumbers = new RegExp(/^[0-9]*$/);
+          const matchOnlyNumbers = /^[0-9]*$/;
 
           // When the maxWidth is not provided, it will be Number.MAX_SAFE_INTEGER by default (🤯 )
           // However, we want these columns to have a fixed width. So we use the regular width as

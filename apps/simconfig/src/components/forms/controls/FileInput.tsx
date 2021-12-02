@@ -36,32 +36,29 @@ export function FileInput({
   };
 
   return (
-    <>
-      <DropWrapper
-        onDrop={onDrop}
-        onDragOver={(event) => {
-          event.preventDefault();
-        }}
-      >
-        <DropTextWrapper>
-          <Flex gap={10} justifyContent="center">
-            <Icon type="Download" size={32} /> Drag and drop model file, or
-            browse for file below.
-          </Flex>
-        </DropTextWrapper>
-        <div>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label htmlFor="file-upload" className="cogs-btn cogs-btn--padding">
-            Browse...
-            <HiddenInputFile
-              id="file-upload"
-              type="file"
-              accept={extensions?.join(',')}
-              onChange={onChange}
-            />
-          </label>
-        </div>
-      </DropWrapper>
-    </>
+    <DropWrapper
+      onDrop={onDrop}
+      onDragOver={(event) => {
+        event.preventDefault();
+      }}
+    >
+      <DropTextWrapper>
+        <Flex gap={10} justifyContent="center">
+          <Icon type="Download" size={32} /> Drag and drop model file, or browse
+          for file below.
+        </Flex>
+      </DropTextWrapper>
+      <div>
+        <label htmlFor="file-upload" className="cogs-btn cogs-btn--padding">
+          Browse...
+          <HiddenInputFile
+            id="file-upload"
+            type="file"
+            accept={extensions?.join(',')}
+            onChange={onChange}
+          />
+        </label>
+      </div>
+    </DropWrapper>
   );
 }

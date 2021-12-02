@@ -1,4 +1,3 @@
-// eslint-disable-next-line @cognite/no-sdk-submodule-imports
 import { Data } from 'plotly.js';
 
 import { PPG } from 'constants/units';

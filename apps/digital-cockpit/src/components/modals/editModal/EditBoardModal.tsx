@@ -76,25 +76,24 @@ const EditBoardModal: React.FC<Props> = ({
   };
 
   return (
-    <>
-      <Modal
-        visible
-        onCancel={cancel}
-        headerText="Board form"
-        footer={<></>}
-        width={904}
-      >
-        <ModalContainer>
-          <BoardForm
-            filesUploadQueue={filesUploadQueue}
-            initialBoardItem={boardItem}
-            suite={suiteItem}
-            handleSave={handleSave}
-            handleCancel={cancel}
-          />
-        </ModalContainer>
-      </Modal>
-    </>
+    <Modal
+      visible
+      onCancel={cancel}
+      headerText="Board form"
+      // eslint-disable-next-line react/jsx-no-useless-fragment
+      footer={<></>}
+      width={904}
+    >
+      <ModalContainer>
+        <BoardForm
+          filesUploadQueue={filesUploadQueue}
+          initialBoardItem={boardItem}
+          suite={suiteItem}
+          handleSave={handleSave}
+          handleCancel={cancel}
+        />
+      </ModalContainer>
+    </Modal>
   );
 };
 

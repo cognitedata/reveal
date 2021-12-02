@@ -48,6 +48,23 @@ module.exports = {
         },
       },
     ],
+    'react/jsx-no-useless-fragment': ['off'],
+    'react/jsx-curly-newline': ['off'],
+    'react/jsx-one-expression-per-line': ['off'],
+    'react/jsx-wrap-multilines': ['off'],
+
+    // In order to follow the top level .eslintrc setup the rules below
+    // should be enabled and corresponding eslint errors should be addressed.
+    // This can be done gradually in the later PRs
+    'no-promise-executor-return': ['off'],
+    'testing-library/prefer-presence-queries': ['off'],
+    'react/no-unstable-nested-components': ['off'],
+    'testing-library/prefer-query-by-disappearance': ['off'],
+    'react-hooks/rules-of-hooks': ['off'],
+    'import/no-anonymous-default-export': ['off'],
+    // This will be fixed in version v2.25.3 of eslint-plugin-import package
+    'import/no-import-module-exports': ['off'],
+    'unicode-bom': ['off'],
     'no-param-reassign': [
       'error',
       { props: true, ignorePropertyModificationsFor: ['state'] },

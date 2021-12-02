@@ -1,4 +1,5 @@
 import { createReducer } from 'typesafe-actions';
+
 import { AuthActionTypes, AuthRootAction, AuthState } from './types';
 
 const initialState: AuthState = {

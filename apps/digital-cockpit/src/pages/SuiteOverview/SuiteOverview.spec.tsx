@@ -2,8 +2,8 @@ import { sandbox, render } from 'utils/test';
 import { getEmptySuite, getSuiteWithImages } from '__mocks/suites';
 import { createMockCdfClient } from 'utils/test/client';
 import { initialState as initialSuitesState } from 'store/suites/reducer';
-
 import merge from 'lodash/merge';
+
 import SuiteOverview from './SuiteOverview';
 
 jest.mock('react-router-dom', () => ({

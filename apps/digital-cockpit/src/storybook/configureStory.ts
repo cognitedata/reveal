@@ -1,5 +1,6 @@
 import { DecoratorFunction } from '@storybook/addons';
 import { PartialRootState } from 'store/types';
+
 import { SetupMocks } from './useSandbox';
 import mockDecorator from './mockDecorator';
 

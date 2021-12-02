@@ -1,4 +1,5 @@
 import { StoreState } from 'store/types';
+
 import { FilesUploadState, FormState, ImageFileState } from './types';
 
 export const formState = (state: StoreState): FormState => state.form;

@@ -204,15 +204,13 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
       id: 'download',
       Header: 'Download',
       Cell: ({ cell: { value } }: any) => (
-        <>
-          <Button
-            aria-label="download"
-            data-external-id={value}
-            icon={isFileLoading(value)}
-            type="ghost"
-            onClick={onDownloadClicked}
-          />
-        </>
+        <Button
+          aria-label="download"
+          data-external-id={value}
+          icon={isFileLoading(value)}
+          type="ghost"
+          onClick={onDownloadClicked}
+        />
       ),
       accessor: (row: FileInfoSerializable) => row.externalId,
       disableSortBy: true,
@@ -222,15 +220,13 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
       id: 'calculations',
       Header: 'Calculations',
       Cell: ({ cell: { value } }: any) => (
-        <>
-          <Button
-            aria-label="calculations"
-            data-model={value}
-            icon="Configure"
-            type="ghost"
-            onClick={onCalculationsClicked}
-          />
-        </>
+        <Button
+          aria-label="calculations"
+          data-model={value}
+          icon="Configure"
+          type="ghost"
+          onClick={onCalculationsClicked}
+        />
       ),
       accessor: (row: FileInfoSerializable) => row.name,
       disableSortBy: true,

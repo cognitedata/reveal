@@ -1,7 +1,6 @@
 import {
   screen,
   fireEvent,
-  act,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import noop from 'lodash/noop';
@@ -39,9 +38,7 @@ describe.skip('Admin -> General feedback', () => {
     await screen.findByText('New!');
 
     const deleteButton = await screen.findByTestId('button-delete');
-    act(() => {
-      fireEvent.click(deleteButton);
-    });
+    fireEvent.click(deleteButton);
 
     await waitForElementToBeRemoved(() => screen.getByText('New!'));
     const status = screen.queryByText('New!');
@@ -55,9 +52,7 @@ describe.skip('Admin -> General feedback', () => {
     await screen.findByText('New!');
 
     const commentElement = await screen.findByText('Lorem ipsum');
-    act(() => {
-      fireEvent.click(commentElement);
-    });
+    fireEvent.click(commentElement);
 
     const replyButton = await screen.findByText('Reply to user');
 
@@ -71,9 +66,7 @@ describe.skip('Admin -> General feedback', () => {
 
     const assignToMeButton = await screen.findByTestId('button-assign-to-me');
 
-    act(() => {
-      fireEvent.click(assignToMeButton);
-    });
+    fireEvent.click(assignToMeButton);
 
     const assignedUser = await screen.findByText(defaultTestUser);
 
@@ -89,14 +82,10 @@ describe.skip('Admin -> General feedback', () => {
     await screen.findByText('New!');
 
     const deleteButton = await screen.findByTestId('button-delete');
-    act(() => {
-      fireEvent.click(deleteButton);
-    });
+    fireEvent.click(deleteButton);
     const showDeletedSWitch = screen.getByText('View deleted files');
 
-    await act(async () => {
-      fireEvent.click(showDeletedSWitch);
-    });
+    fireEvent.click(showDeletedSWitch);
 
     expect(toggleGeneralFeedbackDeletedSpy).toBeCalled();
   });
@@ -112,9 +101,7 @@ describe.skip('Admin -> General feedback', () => {
 
   //   const recoverButton = await screen.findByTestId('button-recover');
 
-  //   act(() => {
   //     fireEvent.click(recoverButton);
-  //   });
 
   //   expect(recoverGeneralFeedbackSpy).toBeCalled();
   //   expect(recoverGeneralFeedbackSpy).toBeCalledWith(expect.any(String));

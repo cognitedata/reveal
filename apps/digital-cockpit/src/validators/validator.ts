@@ -2,6 +2,7 @@ import forEach from 'lodash/forEach';
 import set from 'lodash/set';
 import isFunction from 'lodash/isFunction';
 import { FormikErrors } from 'formik';
+
 import { ValidationRules, Validator } from './types';
 
 const validateValue = (
@@ -28,10 +29,11 @@ const validateValue = (
   return error; // eslint-disable-line consistent-return
 };
 
+export type Values = { [key: string]: string | string[] | undefined | null };
 export type ValidationErrors = { [key: string]: string | undefined };
 
 export function validateValues(
-  values = {},
+  values: Values,
   rules: Validator,
   customErrors: ValidationErrors = {}
 ) {

@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -30,9 +30,7 @@ describe('ExternalLink', () => {
     const linkButton = screen.getByText(childTestString);
     global.open = jest.fn();
 
-    act(() => {
-      fireEvent.click(linkButton);
-    });
+    fireEvent.click(linkButton);
 
     expect(window.open).toHaveBeenCalled();
     expect(window.open).toHaveBeenCalledTimes(1);
@@ -46,9 +44,7 @@ describe('ExternalLink', () => {
     const linkButton = screen.getByText(childTestString);
     global.open = jest.fn();
 
-    act(() => {
-      fireEvent.click(linkButton);
-    });
+    fireEvent.click(linkButton);
 
     expect(window.open).toHaveBeenCalled();
     expect(window.open).toHaveBeenCalledTimes(2);
@@ -62,9 +58,7 @@ describe('ExternalLink', () => {
     const linkButton = screen.getByText(childTestString);
     global.open = jest.fn();
 
-    act(() => {
-      fireEvent.click(linkButton);
-    });
+    fireEvent.click(linkButton);
 
     expect(window.open).not.toHaveBeenCalled();
   });

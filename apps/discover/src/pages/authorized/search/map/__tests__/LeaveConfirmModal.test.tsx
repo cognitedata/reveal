@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { Store } from 'redux';
 
 import { testRendererModal } from '__test-utils/renderer';
@@ -26,41 +26,31 @@ describe('Leave confirmation modal', () => {
   };
 
   it(`should display modal`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const headerText = screen.getByTestId('drawing-mode-leave-confirmation');
-      expect(headerText).toBeInTheDocument();
-    });
+    await defaultTestInit(defaultProps);
+    const headerText = screen.getByTestId('drawing-mode-leave-confirmation');
+    expect(headerText).toBeInTheDocument();
   });
 
   it(`should close modal`, async () => {
-    await act(async () => {
-      await defaultTestInit({
-        ...defaultProps,
-        open: false,
-      });
-      const headerText = screen.queryByTestId(
-        'drawing-mode-leave-confirmation'
-      );
-      expect(headerText).not.toBeInTheDocument();
+    await defaultTestInit({
+      ...defaultProps,
+      open: false,
     });
+    const headerText = screen.queryByTestId('drawing-mode-leave-confirmation');
+    expect(headerText).not.toBeInTheDocument();
   });
 
   it(`should trigger callback on cancel button click`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const button = screen.getByTestId('map-leave-modal-cancel-btn');
-      fireEvent.click(button);
-      expect(onCancel).toBeCalledTimes(1);
-    });
+    await defaultTestInit(defaultProps);
+    const button = screen.getByTestId('map-leave-modal-cancel-btn');
+    fireEvent.click(button);
+    expect(onCancel).toBeCalledTimes(1);
   });
 
   it(`should trigger callback on ok button click`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const button = screen.getByTestId('map-leave-modal-ok-btn');
-      fireEvent.click(button);
-      expect(onOk).toBeCalledTimes(1);
-    });
+    await defaultTestInit(defaultProps);
+    const button = screen.getByTestId('map-leave-modal-ok-btn');
+    fireEvent.click(button);
+    expect(onOk).toBeCalledTimes(1);
   });
 });

@@ -19,7 +19,6 @@ interface Props {
   emptyTitle?: string;
   emptySubtitle?: string;
   img?: IllustrationType;
-  alt?: string;
   isLoading?: boolean;
 }
 

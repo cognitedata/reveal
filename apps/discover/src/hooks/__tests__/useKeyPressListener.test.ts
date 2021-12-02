@@ -1,5 +1,5 @@
 import { fireEvent } from '@testing-library/react';
-import { act, renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 
 import { useKeyPressListener } from '../useKeyPressListener';
 
@@ -13,9 +13,7 @@ describe('useKeyPressListener', () => {
       })
     );
 
-    act(() => {
-      fireEvent.keyDown(document, { key: 'Enter', code: 'Enter' });
-    });
+    fireEvent.keyDown(document, { key: 'Enter', code: 'Enter' });
     expect(onKeyDown).toBeCalledTimes(1);
   });
 
@@ -29,9 +27,7 @@ describe('useKeyPressListener', () => {
       })
     );
 
-    act(() => {
-      fireEvent.keyDown(document, { key: 'Esc', code: 'Esc' });
-    });
+    fireEvent.keyDown(document, { key: 'Esc', code: 'Esc' });
     expect(onKeyDown).toBeCalledTimes(1);
   });
 
@@ -45,9 +41,7 @@ describe('useKeyPressListener', () => {
       })
     );
 
-    act(() => {
-      fireEvent.keyDown(document, { key: 'Enter', code: 'Enter' });
-    });
+    fireEvent.keyDown(document, { key: 'Enter', code: 'Enter' });
     expect(onKeyDown).toBeCalledTimes(0);
   });
 });

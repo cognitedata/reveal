@@ -17,6 +17,9 @@ import { modalOpen } from 'store/modals/actions';
 import { getConfigState } from 'store/config/selectors';
 import { addConfigItems } from 'store/config/actions';
 import useHelpCenter from 'hooks/useHelpCenter';
+
+import { fetchCustomerLogoUrl } from '../../store/thunks';
+
 import CustomerLogo from './CustomerLogo';
 import {
   GroupPreview,
@@ -25,7 +28,6 @@ import {
   AppHeaderWrapper,
 } from './elements';
 import UserMenu from './UserMenu';
-import { fetchCustomerLogoUrl } from '../../store/thunks';
 
 const AppHeader: React.FC = () => {
   const dispatch = useDispatch();

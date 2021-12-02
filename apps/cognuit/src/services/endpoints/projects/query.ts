@@ -9,7 +9,7 @@ import { CustomError } from 'services/CustomError';
 
 const useProjectsQuery = ({
   source,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   instance,
   enabled = true,
 }: {

@@ -3,6 +3,7 @@ import { Body, Tooltip } from '@cognite/cogs.js';
 import { useLocation } from 'react-router-dom';
 import SuiteAvatar from 'components/suiteAvatar/SuiteAvatar';
 import { Suite } from 'store/suites/types';
+
 import { NavigationItemContainer, NavigationItemTitle } from './elements';
 
 interface Props {

@@ -1,5 +1,6 @@
 import { createReducer } from 'typesafe-actions';
 import isArray from 'lodash/isArray';
+
 import {
   NotificationState,
   NotificationTypes,

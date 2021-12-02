@@ -22,7 +22,10 @@ generate_package_json_helpers(
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = ["//packages/eslint-plugin"]
+DEPENDENCIES = [
+    "@npm//eslint",
+    "//packages/eslint-plugin",
+]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = []
@@ -36,8 +39,8 @@ DEV_DEPENDENCIES = [
     "@npm//eslint-plugin-jest",
     "@npm//eslint-plugin-jsx-a11y",
     "@npm//eslint-plugin-prettier",
-    "@npm//eslint-plugin-react-hooks",
     "@npm//eslint-plugin-react",
+    "@npm//eslint-plugin-react-hooks",
     "@npm//prettier",
 ]
 
@@ -47,8 +50,12 @@ mappings_dict = {
     ".gitignore": "./.gitignore",
     "BUILD": "./BUILD",
     "README": "./README",
+    "apps": "./apps",
+    "base": "./base",
     "index": "./index",
+    "legacy": "./legacy",
     "package": "./package",
+    "services": "./services",
     "tsconfig": "./tsconfig",
     "yarn": "./yarn",
 }
@@ -78,9 +85,8 @@ js_library(
     package_name = "@cognite/eslint-config",
     srcs = [
         ".eslintrc.js",
-        "index.js",
         "package-json",
-    ],
+    ] + glob(["*.js"]),
     visibility = ["//visibility:public"],
     deps = DEPENDENCIES,
 )

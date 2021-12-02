@@ -44,7 +44,7 @@ describe('casing selectors (useSelectedWellboresCasingsData)', () => {
   });
 
   it('should return formatted casings', async () => {
-    const wellboreId = 75915540932499340;
+    const wellboreId = 759155409324993;
     const casings = getMockCasings(wellboreId);
     (useSelectedWellboresCasingsQuery as jest.Mock).mockImplementation(() => ({
       isLoading: false,
@@ -100,7 +100,7 @@ describe('casing selectors (useCasingsForTable)', () => {
   });
 
   it('should return formatted casings with unit converted to ft', async () => {
-    const wellboreId = 75915540932499340;
+    const wellboreId = 759155409324993;
     const casings = getMockCasings(wellboreId);
     (useSelectedWellboresCasingsQuery as jest.Mock).mockImplementation(() => ({
       isLoading: false,
@@ -137,7 +137,7 @@ describe('casing selectors (useCasingsForTable)', () => {
   });
 
   it('should return formatted casings with unit converted to m', async () => {
-    const wellboreId = 75915540932499340;
+    const wellboreId = 759155409324993;
     const casings = getMockCasings(wellboreId);
     (useSelectedWellboresCasingsQuery as jest.Mock).mockImplementation(() => ({
       isLoading: false,

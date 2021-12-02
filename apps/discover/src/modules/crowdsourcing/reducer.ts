@@ -19,8 +19,12 @@ export const intialState: CrowdsourcingState = {
 
 export function crowdsourcing(
   state: CrowdsourcingState = intialState,
-  action: CrowdsourcingAction
+  action?: CrowdsourcingAction
 ) {
+  if (!action) {
+    return state;
+  }
+
   switch (action.type) {
     case SORT_FIELD_DOCUMENT:
       return {

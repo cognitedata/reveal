@@ -1,4 +1,3 @@
-import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import uniqueId from 'lodash/uniqueId';
 
@@ -14,10 +13,8 @@ describe('useDocument hook', () => {
     waitForNextUpdate();
     const [doc, isLoading, error] = result.current;
 
-    await waitFor(() => {
-      expect(doc).toBeFalsy();
-      expect(isLoading).toBeTruthy();
-      expect(error).toBeFalsy();
-    });
+    expect(doc).toBeFalsy();
+    expect(isLoading).toBeTruthy();
+    expect(error).toBeFalsy();
   });
 });

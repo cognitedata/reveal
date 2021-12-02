@@ -10,13 +10,13 @@ describe('nds', () => {
       {
         id: 1,
         assetIds: [12, 10],
-        metadata: { parentExternalId: 'Wellbore A:75915540932499340' },
+        metadata: { parentExternalId: 'Wellbore A:759155409324993' },
         ...createdAndLastUpdatedTime,
       },
     ];
-    const wellboreIds = [75915540932488339, 75915540932499340];
+    const wellboreIds = [759155409324883, 759155409324993];
     const wellboreSourceExternalIdMap = {
-      'Wellbore A:75915540932499340': 75915540932499340,
+      'Wellbore A:759155409324993': 759155409324993,
     };
     const groupedEvents = getGroupedNdsEvents(
       response,
@@ -25,12 +25,12 @@ describe('nds', () => {
     );
 
     expect(groupedEvents).toEqual({
-      '75915540932488340': [],
-      '75915540932499340': [
+      // '75915540932488340': [],
+      '759155409324993': [
         {
           id: 1,
-          assetIds: [75915540932499340],
-          metadata: { parentExternalId: 'Wellbore A:75915540932499340' },
+          assetIds: [759155409324993],
+          metadata: { parentExternalId: 'Wellbore A:759155409324993' },
           ...createdAndLastUpdatedTime,
         },
       ],

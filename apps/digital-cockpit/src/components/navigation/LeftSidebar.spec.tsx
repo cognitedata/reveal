@@ -1,7 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from 'react';
 import render from 'utils/test/renderStory';
 import { clickElement } from 'utils/test/events';
+
 import { Base } from './LeftSidebar.stories';
 import * as leftSidebarUtils from './utils';
 

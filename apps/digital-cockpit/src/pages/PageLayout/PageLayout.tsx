@@ -3,6 +3,7 @@ import AppHeader from 'components/navigation/AppHeader';
 import LeftSidebar from 'components/navigation/LeftSidebar';
 import ModalManager from 'components/modals/ModalManager';
 import GlobalComponents from 'components/navigation/GlobalComponents';
+
 import { Content, Main, Container, ContentWrapper } from './elements';
 
 interface Props {

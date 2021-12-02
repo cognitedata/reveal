@@ -1,6 +1,7 @@
 import { DeepPartial, Store } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RootState } from 'store/reducer';
+
 import { AuthRootAction, AuthState } from './auth/types';
 import { SuitesTableRootAction, SuitesTableState } from './suites/types';
 import { ModalRootAction, ModalState } from './modals/types';

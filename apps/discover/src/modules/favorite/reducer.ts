@@ -16,8 +16,12 @@ export const initialState = {
 
 export function favourite(
   state: FavouriteState = initialState,
-  action: FavouriteAction
+  action?: FavouriteAction
 ) {
+  if (!action) {
+    return state;
+  }
+
   switch (action.type) {
     case SHOW_CREATE_MODAL: {
       return {

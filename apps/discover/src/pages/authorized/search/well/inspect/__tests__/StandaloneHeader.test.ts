@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -46,11 +46,9 @@ describe('Well Inspect Standalone Header', () => {
     const props = {
       title: 'Overview',
     };
-    await act(async () => {
-      await defaultTestInit(props);
-      const button = screen.getByTestId('standalone-header-close-btn');
-      fireEvent.click(button);
-      expect(mockGoBack).toBeCalledTimes(1);
-    });
+    await defaultTestInit(props);
+    const button = screen.getByTestId('standalone-header-close-btn');
+    fireEvent.click(button);
+    expect(mockGoBack).toBeCalledTimes(1);
   });
 });

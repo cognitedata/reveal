@@ -85,6 +85,10 @@ import { Map as MapboxMap } from './MapboxMap';
 import { TopButtonMenu } from './TopButtonMenu';
 import { getMapIcons } from './utils/mapIcons';
 
+function getGeometryType<T>(item: T) {
+  return get(item, 'geometry.type');
+}
+
 export const Map: React.FC = () => {
   const dispatch = useDispatch();
   const {
@@ -151,9 +155,10 @@ export const Map: React.FC = () => {
 
   useEffect(() => {
     // Draw polygon when loads a saved search
-    if (geoFilter.length) {
-      if (geoFilter[0].geometry.type === 'LineString') {
-        dispatch(addArbitraryLine(v1(), geoFilter[0] as Feature));
+    if (geoFilter.length > 0) {
+      const firstGeo = geoFilter[0];
+      if (getGeometryType(firstGeo) === 'LineString') {
+        dispatch(addArbitraryLine(v1(), firstGeo as Feature));
       } else {
         setPolygon(geoFilter);
       }
@@ -191,7 +196,7 @@ export const Map: React.FC = () => {
     onKeyDown: () => {
       if (
         isPolygonButtonActive ||
-        selectedFeature?.geometry?.type === 'Polygon'
+        getGeometryType(selectedFeature) === 'Polygon'
       ) {
         onPolygonButtonToggle();
       }
@@ -203,26 +208,34 @@ export const Map: React.FC = () => {
   const updateArea = (event: TS_FIX_ME) => {
     if (event.features.length === 0) return;
 
+    const eventType = event && event.type;
+
+    if (!eventType) {
+      // console.log('Missing event type!')
+      return;
+    }
+
     const feature = event.features[0];
     dispatch(setSelectedFeature(feature));
     setSearchPending(true);
 
-    if (feature.geometry.type === 'LineString') {
-      if (event.type === 'draw.create') {
+    const type = getGeometryType(feature);
+    if (type === 'LineString') {
+      if (eventType === 'draw.create') {
         dispatch(addArbitraryLine(v1(), feature));
         metrics.track('draw-linestring-search-on-map');
       }
-      if (event.type === 'draw.delete') {
+      if (eventType === 'draw.delete') {
         dispatch(removeArbitraryLine());
         metrics.track('click-delete-linestring-button');
       }
-    } else if (feature.geometry.type === 'Polygon') {
+    } else if (type === 'Polygon') {
       cleanCoords(feature, { mutate: true });
-      if (event.type === 'draw.create') {
+      if (eventType === 'draw.create') {
         setPolygon(event.features);
         metrics.track('draw-polygon-search-on-map');
       }
-      if (event.type === 'draw.update') {
+      if (eventType === 'draw.update') {
         setPolygon(event.features);
         metrics.track('update-drawn-polygon-on-map');
       }
@@ -285,10 +298,7 @@ export const Map: React.FC = () => {
 
   const handleRemoveFeature = () => {
     setSearchPending(false);
-    if (
-      selectedFeature &&
-      get(selectedFeature, 'geometry.type') === 'LineString'
-    ) {
+    if (getGeometryType(selectedFeature) === 'LineString') {
       dispatch(removeArbitraryLine());
       dispatch(clearSelectedFeature());
     } else {
@@ -305,7 +315,7 @@ export const Map: React.FC = () => {
 
     // doing a slice on a survey
     // NOTE: refactor this into the seismic module, it's not a 'map' thing
-    if (selectedFeature?.geometry.type === 'LineString') {
+    if (selectedFeature && getGeometryType(selectedFeature) === 'LineString') {
       if (
         !selectedSurveyData ||
         'error' in selectedSurveyData ||
@@ -388,13 +398,13 @@ export const Map: React.FC = () => {
       arbitraryLine, // ------- seismic line
     ];
     const safeFeatures = collection.filter((item) =>
-      get(item, 'geometry.type')
+      getGeometryType(item)
     ) as Feature[];
     // remove any null or empty points and convert to an official 'featureCollection'
     return featureCollection(safeFeatures);
   }, [polygon, otherGeo, arbitraryLine]);
 
-  const renderFloatingActions = React.useMemo(() => {
+  const RenderFloatingActions = () => {
     if (selectedFeature && mapReference && !touched) {
       const rightMostPoint = getRightMostPoint(mapReference, selectedFeature);
       const coo = mapReference.project(rightMostPoint.geometry.coordinates);
@@ -408,7 +418,25 @@ export const Map: React.FC = () => {
       );
     }
     return null;
-  }, [selectedFeature, geoFilter, mapReference?.getCenter(), touched]);
+  };
+  // this is getting a strange error on build
+  // will disable the memo for now.
+  //
+  // const renderFloatingActions = React.useMemo(() => {
+  //   if (selectedFeature && mapReference && !touched) {
+  //     const rightMostPoint = getRightMostPoint(mapReference, selectedFeature);
+  //     const coo = mapReference.project(rightMostPoint.geometry.coordinates);
+  //     return (
+  //       <FloatingActions
+  //         buttonX={coo.x}
+  //         buttonY={coo.y}
+  //         handleSearchClicked={handleSearchClicked}
+  //         handleRemoveFeature={handleRemoveFeature}
+  //       />
+  //     );
+  //   }
+  //   return null;
+  // }, [selectedFeature, geoFilter, mapReference?.getCenter(), touched]);
 
   const onPolygonButtonToggle = () => {
     if (isPolygonButtonActive) {
@@ -469,7 +497,8 @@ export const Map: React.FC = () => {
           renderNavigationControls={(mapWidth) => {
             return (
               <>
-                {renderFloatingActions}
+                <RenderFloatingActions />
+                {/* {renderFloatingActions} */}
 
                 {/* Collapsed state. Show the expand button */}
                 {showSearchResults && mapWidth === 60 && (

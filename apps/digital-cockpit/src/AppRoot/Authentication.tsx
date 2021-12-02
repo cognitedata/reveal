@@ -13,6 +13,7 @@ import { Metrics as CogniteMetrics } from '@cognite/metrics';
 import { getDataSet } from 'store/config/thunks';
 import { AuthProvider } from '@cognite/react-container';
 import { fetchAppData } from 'store/thunks';
+
 import Routes from './Routes';
 
 const Authentication = (): JSX.Element => {

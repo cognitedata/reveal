@@ -1,4 +1,5 @@
 import { createReducer } from 'typesafe-actions';
+
 import {
   ConfigActionTypes,
   ConfigState,

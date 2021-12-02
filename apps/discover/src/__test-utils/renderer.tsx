@@ -65,7 +65,11 @@ export const testRendererModal = (
   options?: RenderOptions
 ): any => {
   Modal.setAppElement(document.body);
-  const { container, rerender, ...rest } = render(
+  const {
+    container: _unused,
+    rerender,
+    ...rest
+  } = render(
     <WrappedWithProviders store={store} component={component} props={props} />,
     options
   );

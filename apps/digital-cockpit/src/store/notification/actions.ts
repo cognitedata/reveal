@@ -1,4 +1,5 @@
 import { createAction } from 'typesafe-actions';
+
 import { NotificationState, NotificationTypes } from './types';
 
 export const setNotification = createAction(NotificationTypes.SET_NOTIFICATION)<

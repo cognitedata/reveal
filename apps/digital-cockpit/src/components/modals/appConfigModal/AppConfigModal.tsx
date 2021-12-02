@@ -48,33 +48,31 @@ const AppConfiguration: React.FC = () => {
   );
 
   return (
-    <>
-      <Modal
-        visible
-        onCancel={handleClose}
-        headerText="Change configuration"
-        footer={footer}
-        width={400}
-        underlineColor="#db0657"
-      >
-        <ModalContainer>
-          <Title level={5}>Application configuration</Title>
-          <SwitchContainer>
-            <Switch
-              key="useAllGroups"
-              name="useAllGroups"
-              value={useAllGroupsSelected}
-              size="small"
-              onChange={handleOnChange}
-            >
-              <Tooltip content="Use only groups with sourceId (e.g. linked to AAD groups) or use all user groups">
-                <span>Use all user groups</span>
-              </Tooltip>
-            </Switch>
-          </SwitchContainer>
-        </ModalContainer>
-      </Modal>
-    </>
+    <Modal
+      visible
+      onCancel={handleClose}
+      headerText="Change configuration"
+      footer={footer}
+      width={400}
+      underlineColor="#db0657"
+    >
+      <ModalContainer>
+        <Title level={5}>Application configuration</Title>
+        <SwitchContainer>
+          <Switch
+            key="useAllGroups"
+            name="useAllGroups"
+            value={useAllGroupsSelected}
+            size="small"
+            onChange={handleOnChange}
+          >
+            <Tooltip content="Use only groups with sourceId (e.g. linked to AAD groups) or use all user groups">
+              <span>Use all user groups</span>
+            </Tooltip>
+          </Switch>
+        </SwitchContainer>
+      </ModalContainer>
+    </Modal>
   );
 };
 

@@ -32,11 +32,7 @@ export interface SavedSearchSaveResponse extends BaseAPIResult {
 
 const SAVED_SEARCH_ENDPOINT = 'savedSearches';
 export const savedSearches = {
-  get: async (
-    id: string = SAVED_SEARCHES_CURRENT_KEY,
-    headers: FetchHeaders,
-    tenant: string
-  ) => {
+  get: async (id: string, headers: FetchHeaders, tenant: string) => {
     const response = await fetchGet<SavedSearchGetResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/${id}`,
       { headers }
@@ -90,11 +86,7 @@ export const savedSearches = {
     );
   },
 
-  delete: (
-    id: string = SAVED_SEARCHES_CURRENT_KEY,
-    headers: FetchHeaders,
-    tenant: string
-  ) => {
+  delete: (id: string, headers: FetchHeaders, tenant: string) => {
     return fetchDelete(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/${id}`,
       { headers }
@@ -103,7 +95,7 @@ export const savedSearches = {
 
   save: async (
     searchOptions: SavedSearchContent,
-    name: string = SAVED_SEARCHES_CURRENT_KEY,
+    name: string,
     headers: FetchHeaders,
     tenant: string
   ): Promise<SavedSearchContent | GenericApiError> => {

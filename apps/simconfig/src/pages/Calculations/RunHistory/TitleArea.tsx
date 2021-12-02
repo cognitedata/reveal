@@ -24,6 +24,7 @@ export default function TitleArea({
     return null;
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const returnUrl = useRouteMatch(PAGES.CALCULATION_LIBRARY)?.url || '/';
 
   return (

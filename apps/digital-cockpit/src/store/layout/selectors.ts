@@ -4,6 +4,7 @@ import { Board } from 'store/suites/types';
 import { StoreState } from 'store/types';
 import { makeDefaultBoardLayout } from 'utils/layout';
 import { createSelector } from 'reselect';
+
 import { LayoutState, BoardLayoutPayloadItem, GridLayout } from './types';
 
 export const getLayoutState = (state: StoreState): LayoutState => state.layout;

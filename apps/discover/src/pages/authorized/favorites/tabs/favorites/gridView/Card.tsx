@@ -74,9 +74,8 @@ export const FavouriteCard: React.FC<Props> = ({
 
   return (
     <StyledCard
-      loading={!favorite}
       data-testid={`favorite-card-${favorite?.name}`}
-      avatarText={favorite?.name}
+      text={favorite?.name}
       clickHandler={handleOnClick}
       title={favorite?.name}
       settings={

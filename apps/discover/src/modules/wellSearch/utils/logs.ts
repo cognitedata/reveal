@@ -37,7 +37,7 @@ const getMostMatchingPPFG = (wellBorePPFGs: SequenceData[] = []) => {
 // Create ppfg, wellbore id mapping object to access ppfgs efficiently
 export const getPPFGWellboreIdMapping = (
   logs: SequenceLogType[] = [],
-  wellboreData: WellboreData
+  wellboreData: WellboreData = {}
 ) => {
   return uniqBy(
     logs.filter((log) => log.logType === PETREL_LOG_TYPE),
@@ -54,7 +54,7 @@ export const getPPFGWellboreIdMapping = (
 // Create ppfg and id mapping object to access ppfgs efficiently
 export const getPPFGIdMapping = (
   logs: SequenceLogType[] = [],
-  wellboreData: WellboreData
+  wellboreData: WellboreData = {}
 ) => {
   const ppfgIdMapping: { [key: string]: SequenceData } = {};
   logs
@@ -74,7 +74,7 @@ export const getPPFGIdMapping = (
 // Create geomechanic and id mapping object to access geomechanics efficiently
 export const getGeomechanicIdMapping = (
   logs: SequenceLogType[] = [],
-  wellboreData: WellboreData
+  wellboreData: WellboreData = {}
 ) => {
   const geomechanicIdMapping: { [key: string]: SequenceData } = {};
   logs
@@ -98,7 +98,7 @@ export const getGeomechanicIdMapping = (
 // Create log and id mapping object to access logs efficiently
 export const getPetrelLogIdMapping = (
   logs: SequenceLogType[] = [],
-  wellboreData: WellboreData
+  wellboreData: WellboreData = {}
 ) => {
   const logIdMapping: { [key: string]: SequenceData } = {};
   logs
@@ -118,7 +118,7 @@ export const getPetrelLogIdMapping = (
 // Create log and id mapping object to access logs efficiently
 export const getLogFrmsTopsIdMapping = (
   logs: SequenceLogType[] = [],
-  wellboreData: WellboreData
+  wellboreData: WellboreData = {}
 ) => {
   const logFrmsTopsIdMapping: { [key: string]: SequenceData } = {};
   uniqBy(

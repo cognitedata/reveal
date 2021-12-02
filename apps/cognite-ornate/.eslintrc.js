@@ -5,7 +5,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/ban-ts-comment': ['off'],
     'no-console': ['off'],
-    '@typescript-eslint/no-unused-vars-experimental': ['warn'],
+    '@typescript-eslint/no-unused-vars': ['warn'],
     '@cognite/no-number-z-index': ['warn'],
     yoda: ['off'],
   },

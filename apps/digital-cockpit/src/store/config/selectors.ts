@@ -1,5 +1,7 @@
-import { StoreState } from 'store/types';
 import { allApplications } from 'constants/applications';
+
+import { StoreState } from 'store/types';
+
 import { ConfigState } from './types';
 
 export const getConfigState = (state: StoreState): ConfigState => state.config;

@@ -6,6 +6,7 @@ import { ApplicationItem } from 'store/config/types';
 import { Suite } from 'store/suites/types';
 import { findLastVisitedTimeByKey } from 'utils/userSpace';
 import { LastVisitedItem } from 'store/userSpace/types';
+
 import { LastVisited, UserSpaceState } from './types';
 
 export const getUserSpace = (state: StoreState): UserSpaceState =>

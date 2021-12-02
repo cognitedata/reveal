@@ -71,20 +71,18 @@ const DeleteBoard: React.FC<Props> = ({
   );
 
   return (
-    <>
-      <Modal
-        visible
-        onCancel={cancel}
-        headerText="Remove board?"
-        footer={footer}
-        width={400}
-        underlineColor="#db0657"
-      >
-        <ModalContainer>
-          <Title level={5}>Remove &quot;{board.title}&quot;?</Title>
-        </ModalContainer>
-      </Modal>
-    </>
+    <Modal
+      visible
+      onCancel={cancel}
+      headerText="Remove board?"
+      footer={footer}
+      width={400}
+      underlineColor="#db0657"
+    >
+      <ModalContainer>
+        <Title level={5}>Remove &quot;{board.title}&quot;?</Title>
+      </ModalContainer>
+    </Modal>
   );
 };
 

@@ -93,5 +93,5 @@ export const SaveSymbolModals: React.FC<SaveSymbolModalsProps> = ({
     );
   }
 
-  return <></>;
+  return null;
 };

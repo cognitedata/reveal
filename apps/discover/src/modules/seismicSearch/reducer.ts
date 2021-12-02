@@ -66,8 +66,11 @@ export const initialState: SeismicState = {
 
 export function seismic(
   state: SeismicState = initialState,
-  action: SeismicAction
+  action?: SeismicAction
 ): SeismicState {
+  if (!action) {
+    return state;
+  }
   switch (action.type) {
     case SET_DATASET_IS_WORKING: {
       return {

@@ -252,7 +252,9 @@ function getWellboreSequences(
           ...item,
           assetId: wellboreAssetIdReverseMap[item.assetId as number],
         }));
-        const wellboreSeqeunces = groupBy(sequences, 'assetId');
+        const wellboreSeqeunces = groupBy(sequences, 'assetId') as {
+          [x: string]: any;
+        };
         wellboreIds.forEach((wellboreId) => {
           if (!wellboreSeqeunces[wellboreId]) {
             wellboreSeqeunces[wellboreId] = [];
@@ -477,7 +479,9 @@ function getWellboreAssets(
           ...item,
           parentId: wellboreAssetIdReverseMap[item.parentId as number],
         }));
-        const wellboreAssets = groupBy(assets, 'parentId');
+        const wellboreAssets = groupBy(assets, 'parentId') as {
+          [x: string]: any;
+        };
         wellboreIds.forEach((wellboreId) => {
           if (!wellboreAssets[wellboreId]) {
             wellboreAssets[wellboreId] = [];

@@ -13,7 +13,6 @@ import { SwitchBoolean } from './SwitchBoolean';
 export const ConfigInputField: React.FC<{
   changeKey: string;
   field: MetadataValue;
-  onReset?: () => void;
   onChange: HandleConfigChange;
   value?: unknown;
 }> = ({ field, onChange, value, changeKey }) => {

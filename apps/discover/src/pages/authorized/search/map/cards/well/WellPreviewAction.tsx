@@ -19,9 +19,9 @@ import { WellCardAddToFavorites } from './WellCardAddToFavorites';
 
 interface Props {
   well: Well | null;
-  handlePreviewClick?: () => void;
-  handleViewClick?: () => void;
-  isPreviewButtonDisabled?: boolean;
+  // handlePreviewClick?: () => void;
+  // handleViewClick?: () => void;
+  // isPreviewButtonDisabled?: boolean;
 }
 
 export const WellPreviewAction: React.FC<Props> = (props) => {

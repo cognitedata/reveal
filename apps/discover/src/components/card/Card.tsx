@@ -60,7 +60,6 @@ const HeaderRight = styled(FlexRow)`
 `;
 
 interface Props {
-  avatarText?: string;
   title?: string;
   text?: string;
   loading?: boolean;
@@ -71,11 +70,9 @@ interface Props {
 }
 
 export const Card: React.FC<Props> = ({
-  avatarText,
   title,
   children,
   text,
-  loading,
   className,
   clickHandler,
   settings,

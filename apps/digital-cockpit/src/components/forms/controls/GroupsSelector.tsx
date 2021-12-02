@@ -1,3 +1,5 @@
+import { ADMIN_GROUP_NAME } from 'constants/cdf';
+
 import React from 'react';
 import { Group } from '@cognite/sdk';
 import { Select } from '@cognite/cogs.js';
@@ -5,7 +7,6 @@ import includes from 'lodash/includes';
 import { useSelector } from 'react-redux';
 import { getGroupsState } from 'store/groups/selectors';
 import { CustomLabel, CustomSelectContainer } from 'components/forms/elements';
-import { ADMIN_GROUP_NAME } from 'constants/cdf';
 import { FieldProps } from 'formik';
 import { OptionTypeBase } from 'types/core';
 

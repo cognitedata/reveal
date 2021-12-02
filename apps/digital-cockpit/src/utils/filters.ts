@@ -16,7 +16,7 @@ export function filterSuitesByGroups(
     .filter((suite: Suite) => !!suite.boards.length);
 }
 
-function filterOutBoards(boards: Board[] = [], groupFilter: string[]): Board[] {
+function filterOutBoards(boards: Board[], groupFilter: string[]): Board[] {
   return boards
     .filter(
       (board) =>

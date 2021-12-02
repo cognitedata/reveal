@@ -86,7 +86,9 @@ export const CheckBoxes = <T extends string | Item>(props: Props<T>) => {
           checked={selected}
           onChange={() => onValChange(key as string)}
           data-testid={key}
-        >{`${displayText} ${extraOptionToDisplay}`}</Checkbox>
+        >
+          {`${displayText} ${extraOptionToDisplay}`}
+        </Checkbox>
       </Container>
     );
   };

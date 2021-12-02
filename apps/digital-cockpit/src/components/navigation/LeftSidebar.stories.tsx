@@ -1,5 +1,6 @@
 import configureStory from 'storybook/configureStory';
 import { mockSuitesTable } from '__mocks/suites';
+
 import LeftSidebar from './LeftSidebar';
 
 export default {

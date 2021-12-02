@@ -29,7 +29,7 @@ interface Props {
 const DEFAULT_MIN_VALUE = 0;
 
 export const NumericFacetRangeFilter: React.FC<Props> = React.memo(
-  ({ title, docQueryFacetType, categoryData, resultFacets, ...rest }) => {
+  ({ title, docQueryFacetType, categoryData, ...rest }) => {
     const appliedFilters = useFilterAppliedFilters();
 
     const [showApplyButton, setShowApplyButton] = useState(false);

@@ -22,12 +22,10 @@ export const ThreeDeePreview: React.FC<Props> = ({ onClose }: Props) => {
   if (!fileId) return null;
 
   return (
-    <>
-      <BlankModal visible onCancel={onClose} title={t('3d preview')} fullWidth>
-        <ThreeDeeContainer>
-          {fileId && <ThreeDee fileId={fileId} />}
-        </ThreeDeeContainer>
-      </BlankModal>
-    </>
+    <BlankModal visible onCancel={onClose} title={t('3d preview')} fullWidth>
+      <ThreeDeeContainer>
+        {fileId && <ThreeDee fileId={fileId} />}
+      </ThreeDeeContainer>
+    </BlankModal>
   );
 };

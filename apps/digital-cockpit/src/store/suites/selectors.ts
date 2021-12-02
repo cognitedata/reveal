@@ -4,11 +4,13 @@ import { filterSuitesByGroups } from 'utils/filters';
 import maxBy from 'lodash/maxBy';
 import { CogniteExternalId } from '@cognite/sdk';
 import { createSelector } from 'reselect';
+
 import { ImgUrls, Suite, SuitesTableState } from './types';
 
 export const getSuitesTableState = (state: StoreState): SuitesTableState => {
   const { suites: suitesState } = state.suitesTable;
   let suites = (suitesState || []).sort(
+    // eslint-disable-next-line no-unsafe-optional-chaining
     (x: Suite, y: Suite) => x?.order - y?.order
   );
 

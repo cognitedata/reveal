@@ -31,12 +31,19 @@ export const initialState: FilterDataState = {
     selectedIds: {},
     selectedWellboreIds: {},
   },
+  casing: {
+    selectedIds: {},
+  },
 };
 
 export function filterData(
   state: FilterDataState = initialState,
-  action: FilterDataAction
+  action?: FilterDataAction
 ) {
+  if (!action) {
+    return state;
+  }
+
   const { type, filter = {} as Filter, values } = action;
   const { filterModule, filterName } = filter;
   const module = get(state, filterModule);

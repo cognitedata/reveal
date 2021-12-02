@@ -36,7 +36,7 @@ export const CasingPreviewModal: React.FC<Props> = ({ onClose, casing }) => {
       footer={footer}
     >
       <CasingView
-        key={`${casing.key}KEY`}
+        key={`${casing.key}-casing-key`}
         wellName={casing.wellName}
         wellboreName={casing.wellboreName}
         casings={casing.casings}

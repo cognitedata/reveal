@@ -31,9 +31,11 @@ const extractSelectedFiltersName = (
   return extractedFilters;
 };
 
-export const RelatedDocumentCheckBoxes: React.FC<Props> = (props) => {
-  const { categoryData, resultFacets, docQueryFacetType } = props;
-
+export const RelatedDocumentCheckBoxes: React.FC<Props> = ({
+  categoryData,
+  resultFacets,
+  docQueryFacetType,
+}) => {
   const [activeFilters, setFilters] = useState<CheckboxState[]>([]);
   const setRelatedDocumentFilters = useSetRelatedDocumentFilters();
   const { data } = useQuerySavedSearchRelatedDocuments();

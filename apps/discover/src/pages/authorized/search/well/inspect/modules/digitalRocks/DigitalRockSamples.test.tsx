@@ -9,7 +9,7 @@ import { DigitalRockSamplesTable, Props } from './DigitalRockSamples';
 
 const defaultProps: Props = {
   digitalRock: {
-    parentId: 75915540932499341,
+    parentId: 7591554093249934,
     id: 1123123,
     name: 'asset 2',
     rootId: 1123123,
@@ -55,7 +55,7 @@ describe('DigitalRockSamples', () => {
     }));
     await testInit({
       digitalRock: {
-        parentId: 75915540932499342,
+        parentId: 7591554093249934,
         id: 1123123,
         name: 'asset 2',
         rootId: 1123123,

@@ -6,6 +6,7 @@ import {
 } from 'history';
 import { Container } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
+
 import Authentication from './Authentication';
 import AppProviders from './AppProviders';
 import ErrorBoundary from './ErrorBoundary';

@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['airbnb', 'prettier', 'prettier/react', 'plugin:jest/recommended'],
+  extends: ['airbnb', 'prettier', 'plugin:jest/recommended'],
   plugins: ['react', 'prettier', 'jest', 'react-hooks', 'import', '@cognite'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -46,11 +46,11 @@ module.exports = {
         '@typescript-eslint/no-array-constructor': 'warn',
         '@typescript-eslint/no-namespace': 'error',
         'no-use-before-define': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars-experimental': [
+        // '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': [
           2,
           {
-            ignoredNamesRegex: '^_',
+            argsIgnorePattern: '^_',
             // ignoreArgsIfArgsAfterAreUsed: true, <--- for reference - allows for (event, variable: x)
           },
         ],

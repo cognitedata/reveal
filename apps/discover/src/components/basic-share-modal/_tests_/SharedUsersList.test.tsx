@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { Store } from 'redux';
 
 import { testRendererModal } from '__test-utils/renderer';
@@ -38,40 +38,32 @@ describe('Shared Users List', () => {
   };
 
   it(`should display shared users count`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const headerText = screen.getByText('Shared with (2)');
-      expect(headerText).toBeInTheDocument();
-    });
+    await defaultTestInit(defaultProps);
+    const headerText = screen.getByText('Shared with (2)');
+    expect(headerText).toBeInTheDocument();
   });
 
   it(`should display owner indicator`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const headerText = screen.getByText('Owner');
-      expect(headerText).toBeInTheDocument();
-    });
+    await defaultTestInit(defaultProps);
+    const headerText = screen.getByText('Owner');
+    expect(headerText).toBeInTheDocument();
   });
 
   it(`should display users names and emails`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      expect(screen.getByText('Test User')).toBeInTheDocument();
-      expect(screen.getByText('Test User 2')).toBeInTheDocument();
+    await defaultTestInit(defaultProps);
+    expect(screen.getByText('Test User')).toBeInTheDocument();
+    expect(screen.getByText('Test User 2')).toBeInTheDocument();
 
-      expect(screen.getByText('test.user@cognite.com')).toBeInTheDocument();
-      expect(screen.getByText('test.user2@cognite.com')).toBeInTheDocument();
-    });
+    expect(screen.getByText('test.user@cognite.com')).toBeInTheDocument();
+    expect(screen.getByText('test.user2@cognite.com')).toBeInTheDocument();
   });
 
   it(`should trigger 'remove' callback on remove`, async () => {
-    await act(async () => {
-      await defaultTestInit(defaultProps);
-      const button = screen.getByText(SHARE_MODAL_REMOVE_BUTTON_TEXT);
-      if (button) {
-        fireEvent.click(button);
-      }
-      expect(onRemove).toBeCalledTimes(1);
-    });
+    await defaultTestInit(defaultProps);
+    const button = screen.getByText(SHARE_MODAL_REMOVE_BUTTON_TEXT);
+    if (button) {
+      fireEvent.click(button);
+    }
+    expect(onRemove).toBeCalledTimes(1);
   });
 });

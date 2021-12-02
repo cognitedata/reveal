@@ -19,11 +19,7 @@ export default {
 export const Result = () => {
   // const [result, setResult] = useState([]);
 
-  return (
-    <>
-      <Content hasSearched hasResults />
-    </>
-  );
+  return <Content hasSearched hasResults />;
 };
 
 export const empty = () => (

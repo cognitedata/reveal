@@ -51,7 +51,8 @@ export async function getNptEventsByWellboreIds(
 
   wellboreIds.forEach((wellboreId) => {
     if (!groupedEvents[wellboreId]) {
-      groupedEvents[wellboreId] = [];
+      delete groupedEvents[wellboreId];
+      // groupedEvents[wellboreId] = [];
     }
   });
 

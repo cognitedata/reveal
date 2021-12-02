@@ -218,6 +218,8 @@ react_scripts(
         "@npm//tsconfig-paths-webpack-plugin",
     ],
     env = {
+        # As long as react_scripts does not allow eslint 8 we need this variable
+        "SKIP_PREFLIGHT_CHECK": "true",
         # Specify your Sentry DSN is the URL used to report runtime issues
         "REACT_APP_SENTRY_DSN": "https://327fcc3805594b24aa95d16ecf383c07@o124058.ingest.sentry.io/5557692",
         # Specify your Mixpanel project token used in users analytics
@@ -297,6 +299,9 @@ react_scripts(
         "chdir-workspace.js",
     ],
     env = {
+        # As long as react_scripts does not allow eslint 8 we need this variable
+        "SKIP_PREFLIGHT_CHECK": "true",
+        "DISABLE_ESLINT_PLUGIN": "true",
         "HTTPS": "true",
         "REACT_APP_I18N_DEBUG": "true",
         "REACT_APP_I18N_PSEUDO": "false",

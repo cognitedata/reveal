@@ -1,4 +1,4 @@
-import { fireEvent, act, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { render } from '../../utils/test';
 
@@ -23,9 +23,7 @@ describe('<LoginWithCognite />', () => {
     const tenantInput = screen.getByPlaceholderText(
       'Enter Company ID'
     ) as HTMLInputElement;
-    act(() => {
-      fireEvent.change(tenantInput, { target: { value: 'AKERBP_' } });
-    });
+    fireEvent.change(tenantInput, { target: { value: 'AKERBP_' } });
     expect(tenantInput.value).toEqual('akerbp');
   });
 
@@ -34,13 +32,9 @@ describe('<LoginWithCognite />', () => {
     const toClusterButton = screen.getByText(
       'Specify Cluster'
     ) as HTMLButtonElement;
-    act(() => {
-      fireEvent.click(toClusterButton);
-    });
+    fireEvent.click(toClusterButton);
     const backToTenantButton = screen.getByText('Back') as HTMLButtonElement;
-    act(() => {
-      fireEvent.click(backToTenantButton);
-    });
+    fireEvent.click(backToTenantButton);
     expect(screen.getByText('Specify Cluster')).toBeInTheDocument();
   });
 });

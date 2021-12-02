@@ -15,7 +15,7 @@ let maxDescription = '';
  *
  * This returns casings with valid depths
  */
-export const filterValidCasings = (casings: Sequence[]) => {
+export const filterValidCasings = (casings: Sequence[]): Sequence[] => {
   // get unique casings by name
   const uniqueByAssyName = uniqBy(casings, 'metadata.assy_name');
   const filteredCasingsByDepth = uniqueByAssyName.filter(

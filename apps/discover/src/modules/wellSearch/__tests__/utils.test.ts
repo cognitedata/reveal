@@ -218,7 +218,7 @@ describe('3D Component Utils', () => {
     expect(results).toEqual([
       {
         description: 'wellbore B desc',
-        id: 75915540932488340,
+        id: 759155409324883,
         metadata: {
           bh_x_coordinate: '',
           bh_y_coordinate: '',
@@ -241,14 +241,14 @@ describe('3D Component Utils', () => {
           elevation_value_unit: '',
         },
         name: 'wellbore A',
-        id: 75915540932499340,
-        externalId: 'Wellbore A:75915540932499340',
+        id: 759155409324993,
+        externalId: 'Wellbore A:759155409324993',
         wellId: 1234,
         description: 'wellbore A desc',
         sourceWellbores: [
           {
-            externalId: 'Wellbore A:75915540932499340',
-            id: 75915540932499340,
+            externalId: 'Wellbore A:759155409324993',
+            id: 759155409324993,
             source: 'Source A',
           },
         ],

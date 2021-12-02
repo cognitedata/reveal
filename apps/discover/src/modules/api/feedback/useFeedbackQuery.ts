@@ -49,7 +49,7 @@ export function useFeedbackGetAllQuery<T>(endpoint: FeedbackType = 'general') {
 
 export function useFeedbackGetOneQuery<T>(
   endpoint: FeedbackType = 'general',
-  id: string
+  id = ''
 ) {
   const headers = getJsonHeaders({}, true);
   return useQuery(FEEDBACK_QUERY_KEY.ONE(endpoint, id), () =>

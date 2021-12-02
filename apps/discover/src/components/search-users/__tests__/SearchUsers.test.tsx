@@ -52,7 +52,10 @@ describe('SearchUsers Tests', () => {
       fireEvent.change(input, { target: { value: 'John' } });
     }
 
-    await waitFor(() => fireEvent.click(screen.getByText('John Doe')));
+    await waitFor(() => {
+      // eslint-disable-next-line testing-library/no-wait-for-side-effects
+      fireEvent.click(screen.getByText('John Doe'));
+    });
     expect(onUsersSelectedChange).toBeCalledTimes(1);
   });
 });

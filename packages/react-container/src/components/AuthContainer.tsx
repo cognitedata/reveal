@@ -206,6 +206,7 @@ type AuthContainerForApiKeyModeProps = Exclude<
 export const AuthContainerForApiKeyMode: React.FC<AuthContainerForApiKeyModeProps> =
   ({ sdkClient, tenant, children }) => (
     <AuthProvider.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         client: sdkClient,
         authState: {

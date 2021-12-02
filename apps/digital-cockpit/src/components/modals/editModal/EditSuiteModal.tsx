@@ -10,6 +10,7 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import { saveForm, addChildSuite } from 'store/forms/thunks';
 import { getNextSuiteOrder } from 'store/suites/selectors';
 import { getEmptySuite } from 'utils/forms';
+
 import { ModalContainer } from '../elements';
 import Modal from '../simpleModal/Modal';
 
@@ -98,6 +99,7 @@ const EditSuiteModal: React.FC<Props> = ({
           : `Create a new ${parentSuiteItem ? 'subsuite' : 'suite'}`
       }
       width={536}
+      // eslint-disable-next-line react/jsx-no-useless-fragment
       footer={<></>}
     >
       <ModalContainer>

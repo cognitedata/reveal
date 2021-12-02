@@ -1,4 +1,4 @@
-import { screen, fireEvent, act } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
@@ -37,11 +37,9 @@ describe('DocumentResultTableHoverComponent', () => {
 
     userEvent.hover(screen.getByTestId('menu-button'));
 
-    act(() => {
-      fireEvent.click(screen.getByTestId('button-preview-document'));
-      fireEvent.click(screen.getByText(OPEN_PARENT_FOLDER_OPTION_TEXT));
-      fireEvent.click(screen.getByText(LEAVE_FEEDBACK_OPTION_TEXT));
-    });
+    fireEvent.click(screen.getByTestId('button-preview-document'));
+    fireEvent.click(screen.getByText(OPEN_PARENT_FOLDER_OPTION_TEXT));
+    fireEvent.click(screen.getByText(LEAVE_FEEDBACK_OPTION_TEXT));
 
     expect(onPreviewHandle).toBeCalled();
     expect(onExtractParentFolderHandle).toBeCalled();

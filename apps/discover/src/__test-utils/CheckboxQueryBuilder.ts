@@ -5,9 +5,10 @@ const queryAllByCheckbox = (...args: Arguments) => {
   return queryHelpers.queryAllByAttribute('type', args[1], 'checkbox');
 };
 
-const getMultipleError = (container: HTMLElement, args: Arguments) =>
+const getMultipleError = (container: Element | null, args: Arguments) =>
   `Found multiple elements with the type attribute of checkbox: ${container} ${args}`;
-const getMissingError = (container: HTMLElement, args: Arguments) =>
+
+const getMissingError = (container: Element | null, args: Arguments) =>
   `Unable to find an element with the type attribute of checkbox : ${container} ${args}`;
 
 const [

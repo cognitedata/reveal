@@ -9,6 +9,7 @@ import { ModalType } from 'store/modals/types';
 import { Suite } from 'store/suites/types';
 import { useMetrics } from 'utils/metrics';
 import { getGroupsState, isAdmin } from 'store/groups/selectors';
+
 import {
   SuiteActionsContainer,
   MenuContainer,

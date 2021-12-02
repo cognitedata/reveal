@@ -75,9 +75,7 @@ export const useMutateWellBorePatch = (wellIds: number[]) => {
         groupBy(wellbores, 'wellId')
       );
 
-      return new Promise<Dictionary<Wellbore[]>>((resolve) =>
-        resolve(groupedWellbores)
-      );
+      return Promise.resolve<Dictionary<Wellbore[]>>(groupedWellbores);
     },
     {
       onSuccess: (result) => {

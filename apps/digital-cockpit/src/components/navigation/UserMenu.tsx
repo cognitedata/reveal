@@ -2,6 +2,7 @@ import { Menu } from '@cognite/cogs.js';
 import useTranslation from 'hooks/useTranslation';
 import { CdfClient } from 'utils';
 import { logout } from 'utils/logout';
+
 import { MenuItemWrapper } from './elements';
 
 type UserMenuProps = {

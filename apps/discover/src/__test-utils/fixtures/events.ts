@@ -3,7 +3,7 @@ import { CogniteEvent } from '@cognite/sdk';
 import { createdAndLastUpdatedTime } from './log';
 
 export const mockCogniteEvent: CogniteEvent = {
-  assetIds: [75915540932488339], // wellbore id
+  assetIds: [759155409324883], // wellbore id
   ...createdAndLastUpdatedTime,
   id: 1,
 };

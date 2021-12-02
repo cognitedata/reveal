@@ -1,3 +1,5 @@
+import { allApplications } from 'constants/applications';
+
 import React, { useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootDispatcher } from 'store/types';
@@ -13,7 +15,6 @@ import {
 import { useMetrics } from 'utils/metrics';
 import { getApplications } from 'store/config/selectors';
 import { ApplicationItem } from 'store/config/types';
-import { allApplications } from 'constants/applications';
 import { saveApplicationsList } from 'store/config/thunks';
 import { TenantContext } from 'providers/TenantProvider';
 
@@ -55,33 +56,31 @@ const SelectApplications: React.FC = () => {
   );
 
   return (
-    <>
-      <Modal
-        visible
-        onCancel={handleClose}
-        headerText="Select Applications"
-        footer={footer}
-        width={400}
-        underlineColor="#db0657"
-      >
-        <ModalContainer>
-          <Title level={5}>Select deployed applications</Title>
-          <SwitchContainer>
-            {allApplications.map((app: ApplicationItem) => (
-              <Switch
-                key={app.key}
-                name={app.key}
-                value={apps.includes(app.key)}
-                size="small"
-                onChange={() => handleOnChange(app.key)}
-              >
-                {app.title}
-              </Switch>
-            ))}
-          </SwitchContainer>
-        </ModalContainer>
-      </Modal>
-    </>
+    <Modal
+      visible
+      onCancel={handleClose}
+      headerText="Select Applications"
+      footer={footer}
+      width={400}
+      underlineColor="#db0657"
+    >
+      <ModalContainer>
+        <Title level={5}>Select deployed applications</Title>
+        <SwitchContainer>
+          {allApplications.map((app: ApplicationItem) => (
+            <Switch
+              key={app.key}
+              name={app.key}
+              value={apps.includes(app.key)}
+              size="small"
+              onChange={() => handleOnChange(app.key)}
+            >
+              {app.title}
+            </Switch>
+          ))}
+        </SwitchContainer>
+      </ModalContainer>
+    </Modal>
   );
 };
 

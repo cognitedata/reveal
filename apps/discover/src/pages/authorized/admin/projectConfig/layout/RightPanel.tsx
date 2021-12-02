@@ -38,7 +38,7 @@ interface Props {
   renderCustomComponent: CustomComponent;
 }
 
-type ConfigFormProps = Omit<Props, 'hasChanges' | 'onUpdate'> & {
+type ConfigFormProps = Omit<Props, 'hasChanges' | 'onUpdate' | 'onReset'> & {
   hasDataAsChildren?: boolean;
 };
 
@@ -103,7 +103,9 @@ const ConfigComponent: React.FC<{
         icon="PlusCompact"
         iconPlacement="right"
         onClick={() => setCreateNewOpened(true)}
-      >{`Create New ${metadataValue?.label}`}</Button>
+      >
+        Create New {metadataValue?.label}
+      </Button>
       <CreateNewComponent
         opened={createNewOpened}
         setOpened={setCreateNewOpened}
@@ -140,7 +142,6 @@ const ConfigForm: React.FC<ConfigFormProps> = ({
   value,
   valuePath,
   onChange,
-  onReset,
   hasDataAsChildren,
   renderCustomComponent,
 }) => {
@@ -161,7 +162,6 @@ const ConfigForm: React.FC<ConfigFormProps> = ({
           value={value}
           valuePath={valuePath}
           onChange={onChange}
-          onReset={onReset}
         />
       )}
     </>
@@ -196,7 +196,6 @@ export const RightPanel = ({
           metadataValue={metadataValue}
           value={value}
           valuePath={valuePath}
-          onReset={onReset}
           onChange={onChange}
           hasDataAsChildren={hasDataAsChildren}
           renderCustomComponent={renderCustomComponent}

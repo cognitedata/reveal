@@ -1,5 +1,6 @@
 import { CogniteExternalId, FileInfo } from '@cognite/sdk';
 import { createReducer } from 'typesafe-actions';
+
 import {
   FormActionTypes,
   FormState,

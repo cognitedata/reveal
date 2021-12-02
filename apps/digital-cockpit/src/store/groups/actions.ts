@@ -1,5 +1,6 @@
 import { Group } from '@cognite/sdk';
 import { createAction } from 'typesafe-actions';
+
 import { UserGroupsActionTypes } from './types';
 
 export const loadGroups = createAction(

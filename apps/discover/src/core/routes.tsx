@@ -8,15 +8,11 @@ import { WhiteLoader } from 'components/loading';
 
 import { showErrorMessage } from '../components/toast';
 
-type Props = RouteProps & {
-  hasSidebar?: boolean;
-};
+const PageLayout: React.FC<RouteProps> = ({ children }) => <>{children}</>;
 
-const PageLayout: React.FC<Props> = ({ children }) => <>{children}</>;
-
-export const PageRoute = ({ hasSidebar = true, ...rest }: Props) => {
+export const PageRoute = ({ ...rest }: RouteProps) => {
   return (
-    <PageLayout hasSidebar={hasSidebar} location={rest.location as Location}>
+    <PageLayout location={rest.location as Location}>
       <Route {...rest} />
     </PageLayout>
   );
