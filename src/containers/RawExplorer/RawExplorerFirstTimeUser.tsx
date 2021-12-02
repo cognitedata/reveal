@@ -4,6 +4,7 @@ import { Colors, Detail, Icon, Title } from '@cognite/cogs.js';
 import { Carousel } from 'antd';
 import styled from 'styled-components';
 
+import ProfilingGraphic from 'assets/ProfilingGraphic.svg';
 import SidePanelGraphic from 'assets/SidePanelGraphic.svg';
 import TabsGraphic from 'assets/TabsGraphic.svg';
 
@@ -22,9 +23,8 @@ const carouselSlides = [
   },
   {
     title: 'Get out of the box data profiling.',
-    detail:
-      'Understand structure, content and interrelationships, and identify potential for projects.',
-    imageSrc: TabsGraphic,
+    detail: 'Discover, analyze, and understand critical patterns in your data.',
+    imageSrc: ProfilingGraphic,
   },
 ];
 
