@@ -8,15 +8,20 @@ import assert from 'assert';
 import { assertNever, DynamicDefragmentedBuffer, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
 import { Materials } from './rendering/materials';
 
+type BatchedBuffer = {
+  defragBuffer: DynamicDefragmentedBuffer<Uint8Array>;
+  mesh: THREE.InstancedMesh;
+};
+
 export class GeometryBatchingManager {
   private readonly _batchedGeometriesGroup: THREE.Group;
 
   private readonly _materials: Materials;
 
-  private readonly _instancedTypeMap: Map<string, [DynamicDefragmentedBuffer<Uint8Array>, THREE.InstancedMesh]>;
+  private readonly _instancedTypeMap: Map<string, BatchedBuffer>;
   private readonly _sectorMap: Map<number, [string, number, number][]>;
 
-  private readonly _views = new Map<number, TypedArrayConstructor>([
+  private static readonly TypedArrayViews = new Map<number, TypedArrayConstructor>([
     [1, Uint8Array],
     [4, Float32Array]
   ]);
@@ -55,7 +60,7 @@ export class GeometryBatchingManager {
         return;
       }
 
-      const [defragBuffer, mesh] = geometry;
+      const { defragBuffer, mesh } = geometry;
       defragBuffer.remove(batchId);
 
       const instanceAttributes = this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute);
@@ -86,7 +91,7 @@ export class GeometryBatchingManager {
 
     const interleavedArrayBuffer = interleavedBufferView.buffer;
 
-    const [defragBuffer, mesh] = instanceMeshGeometry;
+    const { defragBuffer, mesh } = instanceMeshGeometry;
     const length = interleavedBufferView.byteLength;
     const offset = interleavedBufferView.byteOffset;
 
@@ -133,10 +138,7 @@ export class GeometryBatchingManager {
     sectorBufferGeometry: THREE.BufferGeometry,
     type: RevealGeometryCollectionType,
     instanceId: string
-  ): [
-    DynamicDefragmentedBuffer<Uint8Array>,
-    THREE.InstancedMesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>
-  ] {
+  ): BatchedBuffer {
     const interleavedAttributesDefragBuffer = new DynamicDefragmentedBuffer(64, Uint8Array);
     const defragmentedBufferGeometry = this.createDefragmentedBufferGeometry(
       sectorBufferGeometry,
@@ -150,9 +152,10 @@ export class GeometryBatchingManager {
       instanceId
     );
 
-    this._instancedTypeMap.set(instanceId, [interleavedAttributesDefragBuffer, instanceMesh]);
+    const buffer: BatchedBuffer = { defragBuffer: interleavedAttributesDefragBuffer, mesh: instanceMesh };
+    this._instancedTypeMap.set(instanceId, buffer);
 
-    return [interleavedAttributesDefragBuffer, instanceMesh];
+    return buffer;
   }
 
   private getInstanceAttributesSharedView(
@@ -184,7 +187,7 @@ export class GeometryBatchingManager {
       const componentSize = (attribute.array as TypedArray).BYTES_PER_ELEMENT;
 
       const underlyingBuffer = defragmentedAttributeBuffer.bufferView.buffer;
-      const ComponentType = this._views.get(componentSize)!;
+      const ComponentType = GeometryBatchingManager.TypedArrayViews.get(componentSize)!;
       const interleavedAttributesBuffer = new THREE.InstancedInterleavedBuffer(
         new ComponentType(underlyingBuffer),
         stride
