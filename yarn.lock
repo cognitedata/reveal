@@ -3142,6 +3142,33 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
+"@cognite/cogs.js@^3.42.6":
+  version "3.42.6"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.6.tgz#4ff179e7708f927abde0fd1ed99c4c5937703ddd"
+  integrity sha512-vdGI6XSdUTnI69Y2DZIKn+P7eTNazQbYQuhbxxXQKXBhGU2Bh2MZvwuKxpZ6Zo5e3g09ucSaOpRNtwxgmd0u1Q==
+  dependencies:
+    "@tippyjs/react" "4.2.3"
+    "@types/react-date-range" "^1.1.2"
+    classnames "^2.3.1"
+    color "^3.1.2"
+    dayjs "^1.9.7"
+    eslint-config-stylelint "^13.1.1"
+    focus-visible "^5.1.0"
+    match-sorter "^6.3.0"
+    rc-collapse "^1.11.8"
+    rc-drawer "^4.1.0"
+    rc-slider "^9.5.4"
+    rc-tabs "^11.6.2"
+    react-date-range "^1.1.3"
+    react-modal "^3.11.2"
+    react-select "^3.1.0"
+    react-table "^7.6.0"
+    react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
+    stylelint "^13.13.1"
+    tippy.js "6.2.0"
+    ts-dedent "^2.2.0"
+
 "@cognite/data-exploration@^1.6.4":
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.6.4.tgz#12eaa567a859ab8b3e18cf07cb085d36954e97f4"
@@ -3229,6 +3256,7 @@
   integrity sha512-yQdD5XZcPKgzSwefiLcJ8/SC2yUij1b+7qOWT3jdRsOP4FMQI1UmDAczz1ekThuA0phuHRFyM4TFpmMvLYawZA==
   dependencies:
     unleash-proxy-client "1.2.2"
+
 "@cognite/react-image-annotate@^1.8.0-v3-3":
   version "1.8.0-v3-3"
   resolved "https://registry.yarnpkg.com/@cognite/react-image-annotate/-/react-image-annotate-1.8.0-v3-3.tgz#eb8de5b9f8de38087b32ceab1abaa69930c94803"
