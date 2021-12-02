@@ -53,7 +53,7 @@ export class InvertedNodeCollection extends NodeCollectionBase {
    * Not supported.
    * @throws Always throws an error.
    */
-  clear() {
+  clear(): never {
     // clearing the underlying set would result in all nodes being added to this set
     // which would feel counter-intuitive.
     throw new Error('clear() is not supported');

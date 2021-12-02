@@ -89,7 +89,7 @@ export class TakenV8SectorTree {
       .sort((l, r) => r.priority - l.priority);
   }
 
-  markSectorDetailed(sectorId: number, priority: number) {
+  markSectorDetailed(sectorId: number, priority: number): void {
     this.setSectorPriority(sectorId, priority);
     if (this.sectors[sectorId].lod === LevelOfDetail.Detailed) {
       return;

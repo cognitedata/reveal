@@ -49,7 +49,7 @@ export class WeightFunctionsHelper {
     });
   }
 
-  addCandidateSectors(sectors: SectorMetadata[], modelMatrix: THREE.Matrix4) {
+  addCandidateSectors(sectors: SectorMetadata[], modelMatrix: THREE.Matrix4): void {
     // Note! We compute distance to camera, not screen (which would probably be better)
     const { minDistance, maxDistance } = sectors.reduce(
       (minMax, sector) => {

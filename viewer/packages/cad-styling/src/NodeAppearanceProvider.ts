@@ -8,6 +8,8 @@ import { NodeCollectionBase } from './NodeCollectionBase';
 import { IndexSet, assertNever, EventTrigger } from '@reveal/utilities';
 import { PrioritizedArea } from './prioritized/types';
 
+import debounce from 'lodash/debounce';
+
 /**
  * Delegate for applying styles in {@see NodeStyleProvider}.
  * @param treeIndices Set of tree indices that the style is applied to.
@@ -63,7 +65,7 @@ export class NodeAppearanceProvider {
     }
   }
 
-  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance) {
+  assignStyledNodeCollection(nodeCollection: NodeCollectionBase, appearance: NodeAppearance): void {
     const existingCollection = this._styledCollections.find(x => x.nodeCollection === nodeCollection);
     if (existingCollection !== undefined) {
       existingCollection.appearance = appearance;
@@ -79,11 +81,11 @@ export class NodeAppearanceProvider {
 
       this._styledCollections.push(styledCollection);
       nodeCollection.on('changed', styledCollection.handleNodeCollectionChangedListener);
-      this.notifyChanged();
+      this.scheduleNotifyChanged();
     }
   }
 
-  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase) {
+  unassignStyledNodeCollection(nodeCollection: NodeCollectionBase): void {
     const index = this._styledCollections.findIndex(x => x.nodeCollection === nodeCollection);
     if (index === -1) {
       throw new Error('NodeCollection not added');
@@ -92,10 +94,10 @@ export class NodeAppearanceProvider {
 
     this._styledCollections.splice(index, 1);
     nodeCollection.off('changed', styledCollection.handleNodeCollectionChangedListener);
-    this.notifyChanged();
+    this.scheduleNotifyChanged();
   }
 
-  applyStyles(applyCb: ApplyStyleDelegate) {
+  applyStyles(applyCb: ApplyStyleDelegate): void {
     this._styledCollections.forEach(styledSet => {
       const set = styledSet.nodeCollection.getIndexSet();
       applyCb(set, styledSet.appearance);
@@ -123,13 +125,13 @@ export class NodeAppearanceProvider {
     return this._cachedPrioritizedAreas;
   }
 
-  clear() {
+  clear(): void {
     for (const styledSet of this._styledCollections) {
       const nodeCollection = styledSet.nodeCollection;
       nodeCollection.off('changed', styledSet.handleNodeCollectionChangedListener);
     }
     this._styledCollections.splice(0);
-    this.notifyChanged();
+    this.scheduleNotifyChanged();
   }
 
   get isLoading(): boolean {
@@ -141,6 +143,11 @@ export class NodeAppearanceProvider {
     this._events.changed.fire();
   }
 
+  /**
+   * Schedules event 'changed' to trigger at the next tick.
+   */
+  private readonly scheduleNotifyChanged = debounce(() => this.notifyChanged(), 0);
+
   private notifyLoadingStateChanged() {
     if (this._lastFiredLoadingState === this.isLoading) return;
     this._lastFiredLoadingState = this.isLoading;
@@ -148,7 +155,7 @@ export class NodeAppearanceProvider {
   }
 
   private handleNodeCollectionChanged(_styledSet: StyledNodeCollection) {
-    this.notifyChanged();
+    this.scheduleNotifyChanged();
     this.notifyLoadingStateChanged();
   }
 }

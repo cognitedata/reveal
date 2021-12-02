@@ -44,7 +44,7 @@ export function consumeSectorDetailed(
 ): { sectorMeshes: AutoDisposeGroup; instancedMeshes: InstancedMeshFile[] } {
   const bounds = metadata.bounds;
 
-  if (geometryClipBox !== null && geometryClipBox.containsBox(bounds)) {
+  if (geometryClipBox !== null && isSectorBoundsFullyInsideClipBox(geometryClipBox, bounds)) {
     // If sector bounds is fully inside clip Box, nothing will be clipped so don't go the extra mile
     // to check
     geometryClipBox = null;
@@ -74,4 +74,29 @@ export function consumeSectorDetailed(
     })
     .filter(x => x.instances.length > 0);
   return { sectorMeshes: group, instancedMeshes: instanceMeshes };
+}
+
+/**
+ * Checks if sector bounds is partially outside clip box, and hence
+ * if it should be clipped (as opposition to clipping). Since model
+ * sectors are clipped to fit within the clip box on load, we
+ * consider sectors on the boundary to be outside. Worst case, this
+ * causes geometry within some sectors to be unnecessary clipped
+ * towards to clip box, but will not lead to any lost geometry.
+ */
+function isSectorBoundsFullyInsideClipBox(
+  boxToCheckIfCovers: THREE.Box3,
+  possiblyCovered: THREE.Box3,
+  fuzziness: number = 1e-4
+): boolean {
+  const big = boxToCheckIfCovers;
+  const small = possiblyCovered;
+  return (
+    big.min.x - small.min.x >= fuzziness &&
+    small.max.x - big.max.x >= fuzziness &&
+    big.min.y - small.min.y >= fuzziness &&
+    small.max.y - big.max.y >= fuzziness &&
+    big.min.z - small.min.z >= fuzziness &&
+    small.max.z - big.max.z >= fuzziness
+  );
 }

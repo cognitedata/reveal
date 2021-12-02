@@ -32,7 +32,7 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
     this.setOptions(options);
   }
 
-  setOptions(options: DebugLoadedSectorsToolOptions) {
+  setOptions(options: DebugLoadedSectorsToolOptions): void {
     this._options = {
       showDetailedSectors: true,
       showDiscardedSectors: false,
@@ -44,11 +44,11 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
     };
   }
 
-  dispose() {
+  dispose(): void {
     this._viewer.removeObject3D(this._boundingBoxes);
   }
 
-  showSectorBoundingBoxes(model: Cognite3DModel) {
+  showSectorBoundingBoxes(model: Cognite3DModel): void {
     this._model = model;
     this.updateBoundingBoxes();
   }

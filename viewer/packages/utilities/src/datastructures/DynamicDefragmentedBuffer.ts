@@ -57,7 +57,7 @@ export class DynamicDefragmentedBuffer<T extends TypedArray> {
     return { batchId: batchId, bufferIsReallocated: isReallocated };
   }
 
-  public remove(batchId: number) {
+  public remove(batchId: number): void {
     const batch = this._batchMap.get(batchId);
 
     if (!batch) {

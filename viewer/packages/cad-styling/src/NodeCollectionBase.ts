@@ -71,7 +71,7 @@ export abstract class NodeCollectionBase {
   /**
    * Triggers the changed-event.
    */
-  protected notifyChanged() {
+  protected notifyChanged(): void {
     this._changedEvent.fire();
   }
 

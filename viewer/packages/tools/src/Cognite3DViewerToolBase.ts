@@ -18,7 +18,7 @@ export abstract class Cognite3DViewerToolBase {
    * @param handler
    * @internal
    */
-  on(event: 'disposed', handler: () => void) {
+  on(event: 'disposed', handler: () => void): void {
     switch (event) {
       case 'disposed':
         this._disposedEvent.subscribe(handler);
@@ -34,7 +34,7 @@ export abstract class Cognite3DViewerToolBase {
    * @param event
    * @param handler
    */
-  off(event: 'disposed', handler: () => void) {
+  off(event: 'disposed', handler: () => void): void {
     switch (event) {
       case 'disposed':
         this._disposedEvent.unsubscribe(handler);

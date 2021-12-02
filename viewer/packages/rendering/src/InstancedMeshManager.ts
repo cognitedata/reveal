@@ -45,7 +45,7 @@ export class InstancedMeshManager {
     this._instancedMeshGroup = instancedMeshGroup;
   }
 
-  public addInstanceMeshes(meshFile: InstancedMeshFile, modelIdentifier: string, sectorId: number) {
+  public addInstanceMeshes(meshFile: InstancedMeshFile, modelIdentifier: string, sectorId: number): void {
     if (this._processedSectorMap.has(sectorId)) {
       return;
     }
@@ -84,7 +84,7 @@ export class InstancedMeshManager {
     }
   }
 
-  public removeSectorInstancedMeshes(sectorId: number) {
+  public removeSectorInstancedMeshes(sectorId: number): void {
     const sectorBatchDescriptors = this._processedSectorMap.get(sectorId);
 
     if (!sectorBatchDescriptors) {

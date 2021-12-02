@@ -29,7 +29,7 @@ export class CadManager {
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
   private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
-  get materialManager() {
+  get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
 
@@ -105,7 +105,7 @@ export class CadManager {
     );
   }
 
-  dispose() {
+  dispose(): void {
     this._cadModelUpdateHandler.dispose();
     this._cadModelFactory.dispose();
     this._subscription.unsubscribe();
@@ -124,7 +124,7 @@ export class CadManager {
     return this._needsRedraw;
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera) {
+  updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cadModelUpdateHandler.updateCamera(camera);
     this._needsRedraw = true;
   }
