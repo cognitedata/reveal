@@ -1,5 +1,5 @@
 import { TemplateGroup } from '@cognite/sdk';
-import { Solution } from '../types';
+import { Solution } from '../../types';
 
 export class TemplatesDataMapper {
   serialize(solution: Solution): TemplateGroup {

@@ -11,11 +11,10 @@ import {
   Icon,
 } from '@cognite/cogs.js';
 
-import { DateUtilsImpl } from '@platypus/platypus-infrastructure';
-
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Solution } from '@platypus/platypus-core';
 import { StyledSolutionCard } from './elements';
+import services from '@platypus-app/di';
 
 type SoluionCardProps = {
   solution: Solution;
@@ -32,8 +31,6 @@ export const SolutionCard = ({
 }: SoluionCardProps) => {
   const [visibleDropdown, setVisibleDropdown] = useState<boolean>(false);
   const { t } = useTranslation('solutions');
-
-  const dataUtils = new DateUtilsImpl();
 
   const renderMenu = () => {
     return (
@@ -112,7 +109,7 @@ export const SolutionCard = ({
           </Title>
           <Detail>
             {t('solution_last_updated', 'Last updated')}{' '}
-            {dataUtils.parseTimestamp(solution.createdTime)}
+            {services.dateUtils.format(solution.createdTime)}
           </Detail>
         </div>
         <div

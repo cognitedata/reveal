@@ -10,7 +10,7 @@ export class SolutionsHandler {
 
   list(): Promise<Result<Solution[]>> {
     return this.solutionsService
-      .list()
+      .listTemplateGroups()
       .then((solutions) => Result.ok(solutions));
   }
 
@@ -24,7 +24,7 @@ export class SolutionsHandler {
       return Promise.resolve(Result.fail(validationResult.errors));
     }
     return this.solutionsService
-      .create(dto)
+      .createTemplateGroup(dto)
       .then((solution) => Result.ok(solution))
       .catch((err) => {
         if (err.status === 409) {
@@ -39,7 +39,7 @@ export class SolutionsHandler {
 
   delete(dto: DeleteSolutionDTO): Promise<Result<unknown>> {
     return this.solutionsService
-      .delete(dto)
+      .deleteTemplateGroup(dto)
       .then((res) => Result.ok(res))
       .catch((err) => {
         if (err.status === 403) {

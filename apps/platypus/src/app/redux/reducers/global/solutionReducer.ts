@@ -1,6 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Schema, Solution } from '@platypus/platypus-core';
+import {
+  SolutionSchema,
+  Solution,
+  SolutionSchemaStatus,
+} from '@platypus/platypus-core';
 
 const mockSchemaString = `type Person @template {
   firstName: String
@@ -36,30 +40,34 @@ const solutionStateSlice = createSlice({
     } as Solution,
     selectedSchema: {
       version: '3',
-      schemaString: mockSchemaString,
+      status: SolutionSchemaStatus.PUBLISHED,
+      schema: mockSchemaString,
       createdTime: 1637752126628,
-      updatedTime: 1637752126628,
-    } as Schema,
+      lastUpdatedTime: 1637752126628,
+    } as SolutionSchema,
     schemas: [
       {
         version: '3',
-        schemaString: mockSchemaString,
+        schema: mockSchemaString,
+        status: SolutionSchemaStatus.PUBLISHED,
         createdTime: 1637752126628,
-        updatedTime: 1637752126628,
+        lastUpdatedTime: 1637752126628,
       },
       {
         version: '2',
-        schemaString: mockSchemaString,
+        schema: mockSchemaString,
+        status: SolutionSchemaStatus.PUBLISHED,
         createdTime: 1637752126628,
-        updatedTime: 1637752126628,
+        lastUpdatedTime: 1637752126628,
       },
       {
         version: '1',
-        schemaString: mockSchemaString,
+        schema: mockSchemaString,
+        status: SolutionSchemaStatus.PUBLISHED,
         createdTime: 1637752126628,
-        updatedTime: 1637752126628,
+        lastUpdatedTime: 1637752126628,
       },
-    ] as Schema[],
+    ] as SolutionSchema[],
   },
   reducers: {
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {

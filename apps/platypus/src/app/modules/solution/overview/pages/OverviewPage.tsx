@@ -1,14 +1,14 @@
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Solution, Schema } from '@platypus/platypus-core';
+import { Solution, SolutionSchema } from '@platypus/platypus-core';
 
 export const OverviewPage = ({
   solution,
   schema,
 }: {
   solution?: Solution;
-  schema: Schema;
+  schema: SolutionSchema;
 }) => {
   const { t } = useTranslation('SolutionMonitoring');
 

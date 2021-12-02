@@ -1,4 +1,4 @@
-import ELK from 'elkjs/lib/elk.bundled.js';
+import ELK from 'elkjs/lib/elk.bundled.js'; // keep it as it is, otherwise the build fails
 import { Node, Link } from '../Graph';
 
 export const getELKNodes = async (
@@ -40,7 +40,7 @@ export const getELKNodes = async (
       throw new Error('Unable to create ELK positioning.');
     }
     const newNodes = nodes.map((node) => {
-      const child = children.find((ch) => ch.id === node.id);
+      const child = children.find((ch: { id: string }) => ch.id === node.id);
       return {
         ...node.__data__,
         fx: child?.x ?? 0,

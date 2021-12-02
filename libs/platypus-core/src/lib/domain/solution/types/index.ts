@@ -8,9 +8,23 @@ export interface Solution {
   version: string;
 }
 
-export interface Schema {
+export enum SolutionSchemaStatus {
+  DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
+}
+
+export interface SolutionSchema {
+  externalId: string;
+  status: SolutionSchemaStatus;
   version: string;
-  schemaString: string;
+  /** GraphQL Schema String */
+  schema: string;
+  /**
+   * When resource was created
+   */
   createdTime: number;
-  updatedTime: number;
+  /**
+   * When resource was last updated
+   */
+  lastUpdatedTime: number;
 }

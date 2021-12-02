@@ -5,7 +5,6 @@ import { Solution } from '@platypus/platypus-core';
 
 import { Notification } from '@platypus-app/components/Notification/Notification';
 
-// import { useSolutions } from './hooks/useSolutions';
 import { useTranslation } from '../../hooks/useTranslation';
 import services from './di';
 import { StyledModalDialog } from './elements';

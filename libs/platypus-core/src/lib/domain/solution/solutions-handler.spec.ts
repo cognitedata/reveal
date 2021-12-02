@@ -3,9 +3,13 @@ import { SolutionsHandler } from './solutions-handler';
 
 describe('SolutionsHandlerTest', () => {
   const solutionProviderMock = {
-    list: jest.fn().mockImplementation(() => Promise.resolve([])),
-    create: jest.fn().mockImplementation(() => Promise.resolve([])),
-    delete: jest.fn().mockImplementation(() => Promise.resolve([])),
+    listTemplateGroups: jest.fn().mockImplementation(() => Promise.resolve([])),
+    createTemplateGroup: jest
+      .fn()
+      .mockImplementation(() => Promise.resolve([])),
+    deleteTemplateGroup: jest
+      .fn()
+      .mockImplementation(() => Promise.resolve([])),
   } as ISolutionsApiService;
 
   const createInstance = () => {
@@ -20,7 +24,7 @@ describe('SolutionsHandlerTest', () => {
   it('should fetch solutions', async () => {
     const service = createInstance();
     await service.list();
-    expect(solutionProviderMock.list).toBeCalled();
+    expect(solutionProviderMock.listTemplateGroups).toBeCalled();
   });
 
   it('should create solution', async () => {
@@ -31,7 +35,7 @@ describe('SolutionsHandlerTest', () => {
       owner: 'test-user@cognite.com',
     };
     await service.create(reqDto);
-    expect(solutionProviderMock.create).toBeCalledWith(reqDto);
+    expect(solutionProviderMock.createTemplateGroup).toBeCalledWith(reqDto);
   });
 
   it('should delete solution', async () => {
@@ -40,6 +44,6 @@ describe('SolutionsHandlerTest', () => {
       id: 'test group',
     };
     await service.delete(reqDto);
-    expect(solutionProviderMock.delete).toBeCalledWith(reqDto);
+    expect(solutionProviderMock.deleteTemplateGroup).toBeCalledWith(reqDto);
   });
 });

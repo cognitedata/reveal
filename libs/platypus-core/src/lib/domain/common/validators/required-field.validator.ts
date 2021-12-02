@@ -1,9 +1,16 @@
-import { ValidationRule } from '@platypus/platypus-core';
-import { ValidatorResult } from '../../../boundaries/validation';
+import { DataUtils } from '../../../boundaries/utils';
+import {
+  ValidationRule,
+  ValidatorResult,
+} from '../../../boundaries/validation';
 
 export class RequiredFieldValidator extends ValidationRule {
   validate(field: string, value: unknown): ValidatorResult {
-    if (!value || (Array.isArray(value) && !value.length)) {
+    if (
+      !value ||
+      (Array.isArray(value) && !value.length) ||
+      (DataUtils.isString(value) && !(value as string).trim())
+    ) {
       return {
         valid: false,
         errors: {

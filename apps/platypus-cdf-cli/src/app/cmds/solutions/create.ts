@@ -3,7 +3,8 @@ import { Arguments, Argv } from 'yargs';
 import {
   CreateSolutionDTO,
   SolutionsHandler,
-  SolutionsTemplatesApiService,
+  SolutionTemplatesFacadeService,
+  TemplatesApiService,
 } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 import { BaseArgs } from '../../types';
@@ -36,7 +37,7 @@ export const handler = async (
   const client = getCogniteSDKClient();
 
   const solutionsHandler = new SolutionsHandler(
-    new SolutionsTemplatesApiService(client)
+    new SolutionTemplatesFacadeService(new TemplatesApiService(client))
   );
 
   const dto = {

@@ -1,6 +1,7 @@
 import {
   SolutionsHandler,
-  SolutionsTemplatesApiService,
+  SolutionTemplatesFacadeService,
+  TemplatesApiService,
 } from '@platypus/platypus-core';
 
 import { getCogniteSDKClient } from '@platypus-app/utils/cogniteSdk';
@@ -8,7 +9,9 @@ import { getCogniteSDKClient } from '@platypus-app/utils/cogniteSdk';
 export default () => {
   return {
     solutionsHandler: new SolutionsHandler(
-      new SolutionsTemplatesApiService(getCogniteSDKClient())
+      new SolutionTemplatesFacadeService(
+        new TemplatesApiService(getCogniteSDKClient())
+      )
     ),
   };
 };

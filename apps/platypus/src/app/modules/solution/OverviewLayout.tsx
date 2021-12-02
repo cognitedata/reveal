@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { Schema, Solution } from '@platypus/platypus-core';
+import { SolutionSchema, Solution } from '@platypus/platypus-core';
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -31,7 +31,7 @@ export const OverviewLayout = ({
   schema,
 }: {
   solution: Solution;
-  schema: Schema;
+  schema: SolutionSchema;
 }) => {
   const { t } = useTranslation('overview');
   const renderPageContent = () => {

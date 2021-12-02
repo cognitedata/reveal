@@ -15,6 +15,9 @@ describe('RequiredFieldValidatorTest', () => {
     let result = validator.validate('name', '');
     expect(result.valid).toBe(false);
 
+    result = validator.validate('name', ' ');
+    expect(result.valid).toBe(false);
+
     result = validator.validate('name', null);
     expect(result.valid).toBe(false);
 

@@ -1,8 +1,8 @@
 export enum DateFormat {
   /**
-   * YYYY-MM-DD -> 2021-12-25
+   * yyyy-MM-dd -> 2021-12-25
    */
-  SERVER_DATE_FORMAT = 'YYYY-MM-DD',
+  SERVER_DATE_FORMAT = 'yyyy-MM-dd',
 
   /**
    * dd.MM.yyyy -> 25.06.1977
