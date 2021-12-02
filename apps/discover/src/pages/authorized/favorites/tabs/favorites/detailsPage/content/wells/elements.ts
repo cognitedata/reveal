@@ -7,7 +7,8 @@ export const FavoriteWellWrapper = styled(FlexColumn)`
   height: 100%;
 
   & > div[data-testid='table-bulk-actions'] {
-    width: calc(100% - 110px);
+    position: sticky;
+    width: calc(100% - 32px);
   }
 
   & > table[data-testid='well-result-table'] {
