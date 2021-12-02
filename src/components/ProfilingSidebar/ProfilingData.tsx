@@ -119,6 +119,7 @@ const ColumnString = ({ count, nullCount, data }: PropsString) => {
       </Section>
       <Section.Distribution
         histogram={data.lengthHistogram}
+        max={data.lengthRange[1]}
         title="Char length distribution"
       />
     </StyledProfilingDataWrapper>
@@ -171,7 +172,10 @@ const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
 
   return (
     <StyledProfilingDataWrapper>
-      <Section.Distribution histogram={data.histogram} />
+      <Section.Distribution
+        histogram={data.histogram}
+        max={data.valueRange[1]}
+      />
       <Section.DistinctValues
         allCount={count}
         distinctCount={data.distinctCount}
