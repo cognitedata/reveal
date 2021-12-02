@@ -51,7 +51,7 @@ function useUrlTable(): [SpecificTableState, (t: SpecificTableState) => void] {
   const project = getProject();
   const env = getEnv();
   const [lsTab, setLsTab] = useLocalStorage<SpecificTableState>(
-    `${project}_${env}_activeTab`,
+    `${project}_${env}_raw_activeTab`,
     undefined
   );
   const [tab, setTab] = useQueryParam<SpecificTableState>('activeTable', lsTab);
