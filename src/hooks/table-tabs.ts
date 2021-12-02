@@ -68,7 +68,7 @@ function useUrlTabList(): [SpecificTable[], (_: SpecificTable[]) => void] {
   const project = getProject();
   const env = getEnv();
   const [lsTabs, setLsTabs] = useLocalStorage<SpecificTable[]>(
-    `${project}_${env}_tabList`,
+    `${project}_${env}_raw_tabList`,
     []
   );
   const [tabs = [], setTabs] = useQueryParam<SpecificTable[]>('tabs', lsTabs);
