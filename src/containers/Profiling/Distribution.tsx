@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import { Count } from 'hooks/profiling-service';
 
 const BOTTOM_AXIS_HEIGHT = 24;
+const MAXIMUM_BAR_WIDTH = 16;
 const NUMBER_OF_TICKS = 4;
 
 type Props = {
@@ -20,6 +21,7 @@ type Props = {
   isBottomAxisDisplayed?: boolean;
   isGridDisplayed?: boolean;
   isTooltipDisplayed?: boolean;
+  maximumBarWidth?: number;
   rangeEnd?: number;
 };
 export default function Distribution({
@@ -27,6 +29,7 @@ export default function Distribution({
   isBottomAxisDisplayed,
   isGridDisplayed,
   isTooltipDisplayed,
+  maximumBarWidth,
   rangeEnd,
 }: Props) {
   return (
@@ -40,6 +43,7 @@ export default function Distribution({
           height={height}
           rangeEnd={rangeEnd}
           isTooltipDisplayed={isTooltipDisplayed}
+          maximumBarWidth={maximumBarWidth}
         />
       )}
     </ParentSize>
@@ -54,6 +58,7 @@ type GraphProps = {
   isBottomAxisDisplayed?: boolean;
   isGridDisplayed?: boolean;
   isTooltipDisplayed?: boolean;
+  maximumBarWidth?: number;
   rangeEnd?: number;
 };
 export function Graph({
@@ -64,6 +69,7 @@ export function Graph({
   isBottomAxisDisplayed,
   isGridDisplayed,
   isTooltipDisplayed,
+  maximumBarWidth = MAXIMUM_BAR_WIDTH,
   rangeEnd,
 }: GraphProps) {
   const horizontalMargin = 0;
@@ -200,12 +206,14 @@ export function Graph({
                 barStacks.map((barStack) =>
                   barStack.bars.map(
                     ({ bar, x, y, width, height }, barIndex) => {
+                      const actualWidth = Math.min(width, maximumBarWidth);
+                      const leftOffset = (width - actualWidth) / 2;
                       return (
                         <Bar
                           key={`bar-${bar.data.value}`}
-                          x={x}
+                          x={x + leftOffset}
                           y={y}
-                          width={width}
+                          width={actualWidth}
                           height={height}
                           fill={
                             tooltipData?.index === barIndex
@@ -236,12 +244,14 @@ export function Graph({
               barStacks.map((barStack) =>
                 barStack.bars.map(
                   ({ bar, color, x, y, width, height }, barIndex) => {
+                    const actualWidth = Math.min(width, maximumBarWidth);
+                    const leftOffset = (width - actualWidth) / 2;
                     return (
                       <Bar
                         key={`bar-${bar.data.value}`}
-                        x={x}
+                        x={x + leftOffset}
                         y={y}
-                        width={width}
+                        width={actualWidth}
                         height={height}
                         fill={color}
                         onMouseLeave={handleMouseLeave}

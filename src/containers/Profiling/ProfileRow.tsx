@@ -51,6 +51,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
             <Graph
               distribution={histogram}
               height={40}
+              maximumBarWidth={6}
               width={150}
               fill="rgba(140, 140, 140, 1)"
             />
