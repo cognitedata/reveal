@@ -1,5 +1,4 @@
-import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchJobById } from 'src/api/annotationJob';
 import { AnnotationJob } from 'src/api/types';
 import { JobState, removeJobById } from 'src/modules/Process/processSlice';
@@ -38,7 +37,7 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
                 latestJobVersion.status === 'Running' ||
                 latestJobVersion.status === 'Completed'
               ) {
-                const result = await dispatch(
+                await dispatch(
                   AnnotationDetectionJobUpdate({
                     job: latestJobVersion,
                     fileIds,
@@ -46,8 +45,7 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
                     completedFileIds,
                     failedFileIds,
                   })
-                );
-                unwrapResult(result);
+                ).unwrap();
               }
             } catch (error) {
               // TODO: use failed file Ids
