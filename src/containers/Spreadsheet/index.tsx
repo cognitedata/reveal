@@ -3,7 +3,6 @@ import { Colors, Icon, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useActiveTableContext } from 'contexts';
 import { useTableData } from 'hooks/table-data';
-import { useRawProfile } from 'hooks/profiling-service';
 
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
@@ -22,7 +21,6 @@ const Loading = styled.p`
 
 export const Spreadsheet = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
-  const { isFetching } = useRawProfile({ database, table });
   const {
     rows,
     filteredColumns,
