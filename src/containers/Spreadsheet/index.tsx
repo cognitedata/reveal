@@ -1,8 +1,10 @@
 import React from 'react';
 import { Colors, Icon, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { useActiveTableContext } from 'contexts';
 import { useTableData } from 'hooks/table-data';
+import { useColumnType } from 'hooks/profiling-service';
 
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
@@ -30,6 +32,7 @@ export const Spreadsheet = (): JSX.Element => {
     hasNextPage,
     fetchNextPage,
   } = useTableData();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
 
   const isEmpty = isFetched && !rows?.length;
 
@@ -38,7 +41,7 @@ export const Spreadsheet = (): JSX.Element => {
       <FilterBar
         key={`${database}_${table}`}
         isEmpty={isEmpty}
-        isProfilingFetching={isFetching}
+        areTypesFetched={areTypesFetched}
       />
       {isLoading ? (
         <Loader />
