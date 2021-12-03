@@ -248,7 +248,28 @@ function transformProfile(p: RawProfile): Profile {
   };
 }
 
-export function useRawProfile(
+type RawProfileRequest = {
+  database: string;
+  table: string;
+};
+type RawProfileOptions = {
+  enabled: boolean;
+};
+export function useQuickProfile(
+  { database, table }: RawProfileRequest,
+  options?: RawProfileOptions
+) {
+  return useRawProfile({ database, table, limit: 1000 }, options);
+}
+export const FULL_PROFILE_LIMIT = 1000000;
+export function useFullProfile(
+  { database, table }: RawProfileRequest,
+  options?: RawProfileOptions
+) {
+  return useRawProfile({ database, table, limit: FULL_PROFILE_LIMIT }, options);
+}
+
+function useRawProfile(
   {
     database,
     table,
@@ -256,7 +277,7 @@ export function useRawProfile(
   }: {
     database: string;
     table: string;
-    limit?: number;
+    limit: number;
   },
   options?: { enabled: boolean }
 ) {
