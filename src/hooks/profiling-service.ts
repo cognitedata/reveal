@@ -256,7 +256,7 @@ export function useRawProfile(
   }: {
     database: string;
     table: string;
-    limit?: number;
+    limit: number;
   },
   options?: { enabled: boolean }
 ) {
