@@ -1,8 +1,9 @@
 import React from 'react';
 import { Colors, Icon, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
 import { useActiveTableContext } from 'contexts';
-import { useTableData } from 'hooks/table-data';
+import { useTableData, useIsTableEmpty } from 'hooks/table-data';
 
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
@@ -30,8 +31,7 @@ export const Spreadsheet = (): JSX.Element => {
     hasNextPage,
     fetchNextPage,
   } = useTableData();
-
-  const isEmpty = isFetched && !rows?.length;
+  const isEmpty = useIsTableEmpty(database, table);
 
   return (
     <Flex direction="column" style={{ width: '100%', height: '100%' }}>
