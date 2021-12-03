@@ -16,9 +16,10 @@ type NotificationSectionProps = {
 
 function renderTime(minutes: number) {
   const t = minutesToUnit(minutes);
+  const unit = t.n === 1 ? t.unit.slice(0, -1) : t.unit;
   return (
     <span>
-      {t.n} {t.unit}
+      {t.n} {unit}
     </span>
   );
 }
