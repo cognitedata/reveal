@@ -3,6 +3,8 @@ import { useContext } from 'react';
 import { RawExplorerContext } from 'contexts';
 import { useTableData } from 'hooks/table-data';
 
+const COLUMNS_IGNORE = ['column-index', 'lastUpdatedColumn', 'key'];
+
 export const useColumnNavigation = () => {
   const { selectedColumnKey, setSelectedColumnKey } =
     useContext(RawExplorerContext);
@@ -43,7 +45,7 @@ export const useColumnNavigation = () => {
   const onNextColumnClick = () => moveToColumn('next');
 
   const canNavigate =
-    filteredColumns.filter((column) => column.dataKey !== 'column-index')
+    filteredColumns.filter((column) => !COLUMNS_IGNORE.includes(column.dataKey))
       .length > 0;
 
   return { canNavigate, onPrevColumnClick, onNextColumnClick };
