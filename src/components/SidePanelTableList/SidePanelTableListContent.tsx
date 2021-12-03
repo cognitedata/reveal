@@ -62,7 +62,7 @@ const SidePanelTableListContent = ({
         <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
           <Button
             disabled={!hasWriteAccess}
-            icon="PlusCompact"
+            icon="Add"
             onClick={openCreateModal}
             type="primary"
           >

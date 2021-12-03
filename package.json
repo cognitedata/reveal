@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@cognite/cdf-utilities": "^0.7.3",
-    "@cognite/cogs.js": "^3.36.0",
+    "@cognite/cogs.js": "^5.2.1",
     "@cognite/metrics": "^0.1.7",
     "@cognite/sdk": "^5.5.0",
     "@cognite/sdk-provider": "^1.0.0",

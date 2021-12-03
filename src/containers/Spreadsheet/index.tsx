@@ -56,11 +56,7 @@ export const Spreadsheet = (): JSX.Element => {
           />
           {isFetched && isFetching && (
             <Loading>
-              <Icon
-                type="LoadingSpinner"
-                size={12}
-                style={{ marginRight: 8 }}
-              />
+              <Icon type="Loader" size={12} style={{ marginRight: 8 }} />
               Loading more data
             </Loading>
           )}

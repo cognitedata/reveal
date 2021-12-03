@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { CustomIcon } from 'components/CustomIcon';
+import { Icon } from '@cognite/cogs.js';
 import { useColumnType } from 'hooks/profiling-service';
 
 export const COLUMN_ICON_WIDTH = 50;
@@ -17,11 +17,11 @@ export default function ColumnIcon({ dataKey }: Props) {
 
   switch (columnType) {
     case 'String':
-      return <CustomIcon icon="StringIcon" />;
+      return <Icon type="String" />;
     case 'Number':
-      return <CustomIcon icon="NumberIcon" />;
+      return <Icon type="Number" />;
     case 'Boolean':
-      return <CustomIcon icon="BooleanIcon" />;
+      return <Icon type="Boolean" />;
     case 'Object':
     case 'Vector':
       return <>ICON_TODO</>;

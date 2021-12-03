@@ -47,7 +47,7 @@ export const FilterBar = ({
               {isProfilingFetching ? (
                 <>
                   <Body level={2}> Running data profiling...</Body>
-                  <Icon type="LoadingSpinner" className="load-icon" />
+                  <Icon type="Loader" className="load-icon" />
                 </>
               ) : (
                 filters.map((filter: FilterType) => {
