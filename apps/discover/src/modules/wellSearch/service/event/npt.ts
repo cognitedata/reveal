@@ -1,4 +1,5 @@
 import groupBy from 'lodash/groupBy';
+import set from 'lodash/set';
 
 import { ITimer, Metrics } from '@cognite/metrics';
 
@@ -51,8 +52,7 @@ export async function getNptEventsByWellboreIds(
 
   wellboreIds.forEach((wellboreId) => {
     if (!groupedEvents[wellboreId]) {
-      delete groupedEvents[wellboreId];
-      // groupedEvents[wellboreId] = [];
+      set(groupedEvents, wellboreId, []);
     }
   });
 

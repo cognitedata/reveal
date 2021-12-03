@@ -1,4 +1,5 @@
 import groupBy from 'lodash/groupBy';
+import set from 'lodash/set';
 
 import { Metrics } from '@cognite/metrics';
 import { Sequence } from '@cognite/sdk';
@@ -93,8 +94,7 @@ export async function getMeasurementsByWellboreIds(
   const groupedData = groupBy(results, 'assetId');
   wellboreIds.forEach((wellboreId) => {
     if (!groupedData[wellboreId]) {
-      delete groupedData[wellboreId];
-      // groupedData[wellboreId] = [];
+      set(groupedData, wellboreId, []);
     }
   });
 

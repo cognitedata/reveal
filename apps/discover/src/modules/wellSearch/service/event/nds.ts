@@ -1,5 +1,6 @@
 import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
+import set from 'lodash/set';
 
 import { ITimer, Metrics } from '@cognite/metrics';
 import { CogniteEvent } from '@cognite/sdk';
@@ -175,8 +176,7 @@ export const getGroupedNdsEvents = (
 
   wellboreIds.forEach((wellboreId) => {
     if (!groupedEvents[wellboreId]) {
-      delete groupedEvents[wellboreId];
-      // groupedEvents[wellboreId] = [];
+      set(groupedEvents, wellboreId, []);
     }
   });
 
