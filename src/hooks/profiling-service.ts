@@ -248,7 +248,27 @@ function transformProfile(p: RawProfile): Profile {
   };
 }
 
-export function useRawProfile(
+type RawProfileRequest = {
+  database: string;
+  table: string;
+};
+type RawProfileOptions = {
+  enabled: boolean;
+};
+export function useQuickRawProfile(
+  { database, table }: RawProfileRequest,
+  options?: RawProfileOptions
+) {
+  return useRawProfile({ database, table, limit: 1000 }, options);
+}
+export function useFullRawProfile(
+  { database, table }: RawProfileRequest,
+  options?: RawProfileOptions
+) {
+  return useRawProfile({ database, table, limit: 1000000 }, options);
+}
+
+function useRawProfile(
   {
     database,
     table,
