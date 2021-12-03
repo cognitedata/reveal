@@ -1,9 +1,7 @@
 import React from 'react';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button, Icon, IconType } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { IconType } from 'assets/icons';
-import { CustomIcon } from 'components/CustomIcon';
 import { ColumnProfile } from 'hooks/profiling-service';
 import { ALL_FILTER } from 'hooks/table-filters';
 
@@ -32,7 +30,7 @@ export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
     >
       {icon ? (
         <FilterContent level={2} strong>
-          <CustomIcon icon={icon} style={{ marginRight: '8px' }} />
+          <Icon type={icon} style={{ marginRight: '8px' }} />
           {value}
         </FilterContent>
       ) : (

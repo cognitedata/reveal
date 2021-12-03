@@ -156,7 +156,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Type
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('type')}
                         />
                       </Flex>
@@ -169,7 +169,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Column
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('label')}
                         />
                       </Flex>
@@ -182,7 +182,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Empty
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('nullCount')}
                         />
                       </Flex>
@@ -195,7 +195,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Distinct
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('distinctCount')}
                         />
                       </Flex>
@@ -217,7 +217,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Min
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('min')}
                         />
                       </Flex>
@@ -230,7 +230,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Max
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('max')}
                         />
                       </Flex>

@@ -51,13 +51,13 @@ const TableContent = () => {
 
 const TabSpreadsheet = (): JSX.Element => (
   <Tab>
-    <Icon type="Table" />
+    <Icon type="TableViewSmall" />
     Table
   </Tab>
 );
 const TabProfiling = ({ isFetching }: { isFetching: boolean }): JSX.Element => (
   <Tab>
-    <Icon type={isFetching ? 'Loading' : 'Profiling'} />
+    <Icon type={isFetching ? 'Loader' : 'Profiling'} />
     Profile
   </Tab>
 );
