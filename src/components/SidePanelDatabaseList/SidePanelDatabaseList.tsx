@@ -115,7 +115,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
                   icon="PlusCompact"
                   onClick={() => setIsCreateModalOpen(true)}
                 >
-                  Create Database
+                  Create database
                 </Button>
               </Tooltip>
             </>

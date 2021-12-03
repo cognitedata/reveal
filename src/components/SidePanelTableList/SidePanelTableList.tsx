@@ -45,6 +45,10 @@ const SidePanelTableList = (): JSX.Element => {
     }
   }, [isLoading, fetchNextPage, hasNextPage]);
 
+  useEffect(() => {
+    setQuery('');
+  }, [selectedSidePanelDatabase]);
+
   const tables = useMemo(
     () =>
       data
