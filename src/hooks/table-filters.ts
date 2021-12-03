@@ -1,10 +1,22 @@
-import { FilterType } from 'components/FilterItem';
 import { useActiveTableContext } from 'contexts';
+import { useColumnType } from 'hooks/profiling-service';
 
+import { FilterType } from 'components/FilterItem';
+
+export const ALL_FILTER: 'All' = 'All';
 export const DEFAULT_FILTER: FilterType = {
-  type: 'columns',
-  value: 13,
+  type: ALL_FILTER,
+  value: 0,
 };
+
+export const filtersMap: FilterType[] = [
+  { type: ALL_FILTER, label: 'columns' },
+  { type: 'Number', icon: 'NumberIcon' },
+  { type: 'String', icon: 'StringIcon' },
+  { type: 'Boolean', icon: 'BooleanIcon' },
+  { type: 'Vector' },
+  { type: 'Object' },
+];
 
 export const useFilters = () => {
   const {
@@ -13,11 +25,16 @@ export const useFilters = () => {
     columnNameFilter,
     setColumnNameFilter,
   } = useActiveTableContext();
+  const { getColumnTypeCounts } = useColumnType();
 
-  const filters = [
-    DEFAULT_FILTER,
-    ...mockFilters.filter((mockFilter) => mockFilter.value),
-  ];
+  const columnTypeCounts = getColumnTypeCounts();
+
+  const filters = filtersMap
+    .map((filter: FilterType) => ({
+      ...filter,
+      value: columnTypeCounts[filter.type],
+    }))
+    .filter((filter: FilterType) => filter.value);
 
   const setTypeFilter = (type: string) => {
     const selectAllColumns = type === DEFAULT_FILTER.type;
@@ -62,35 +79,3 @@ export const useFilters = () => {
     setColumnNameFilter,
   };
 };
-
-// mock
-const mockFilters: FilterType[] = [
-  {
-    type: 'number',
-    value: 7,
-    icon: 'NumberIcon',
-  },
-  {
-    type: 'string',
-    value: 6,
-    icon: 'StringIcon',
-  },
-  {
-    type: 'boolean',
-    value: 6,
-    icon: 'BooleanIcon',
-  },
-  {
-    type: 'vector',
-    value: 0,
-  },
-  {
-    type: 'object',
-    value: 0,
-  },
-  {
-    type: 'date',
-    value: 6,
-    icon: 'DateIcon',
-  },
-];
