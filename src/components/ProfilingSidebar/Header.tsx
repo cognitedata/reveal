@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { Body, Button, Colors, Icon, Title, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 
 import { RawExplorerContext, useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
