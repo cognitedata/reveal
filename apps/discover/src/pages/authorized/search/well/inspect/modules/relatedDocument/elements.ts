@@ -4,13 +4,7 @@ import {
   TagRow,
   TagWrapper,
 } from 'pages/authorized/search/document/header/elements';
-import {
-  Flex,
-  FlexRow,
-  sizes,
-  FlexColumn,
-  FlexAlignJustifyContent,
-} from 'styles/layout';
+import { Flex, FlexRow, sizes, FlexColumn } from 'styles/layout';
 
 export const FlexContainer = styled(Flex)`
   gap: 8px;
@@ -90,10 +84,6 @@ export const HeaderSearchWrapper = styled(FlexRow)`
   .tippy-box {
     max-width: none !important; // Overwrite tippy's max width for SyntaxHelper
   }
-`;
-
-export const EmptyStateAppliedFilters = styled(FlexAlignJustifyContent)`
-  margin-top: 12px;
 `;
 
 export const InputContainer = styled.div`

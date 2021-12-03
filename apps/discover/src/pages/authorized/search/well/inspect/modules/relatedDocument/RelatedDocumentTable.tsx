@@ -34,8 +34,7 @@ import { DocumentResultTableHoverComponent } from 'pages/authorized/search/docum
 import { DocumentResultTableSubRow } from 'pages/authorized/search/document/results/DocumentResultTableSubRow';
 import { DocumentsBulkActions } from 'pages/authorized/search/document/results/DocumentsBulkActions';
 
-import { EmptyStateAppliedFilters, TableBulkActionsHolder } from './elements';
-import { RelatedDocumentAppliedFilters } from './RelatedDocumentAppliedFilters';
+import { TableBulkActionsHolder } from './elements';
 
 interface Props {
   data?: DocumentResult;
@@ -50,11 +49,7 @@ export const RelatedDocumentTable: React.FC = () => {
         isLoading={isLoading}
         emptyTitle={NO_RESULTS_TEXT}
         emptySubtitle={NO_RESULTS_SUB_TEXT}
-      >
-        <EmptyStateAppliedFilters>
-          <RelatedDocumentAppliedFilters showClearTag showSearchPhraseTag />
-        </EmptyStateAppliedFilters>
-      </EmptyState>
+      />
     );
   }
 
