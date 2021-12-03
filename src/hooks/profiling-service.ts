@@ -1,6 +1,6 @@
 import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import { useActiveTableContext } from 'contexts';
 import { ALL_FILTER } from 'hooks/table-filters';
@@ -252,19 +252,16 @@ type RawProfileRequest = {
   database: string;
   table: string;
 };
-type RawProfileOptions = {
-  enabled: boolean;
-};
 export function useQuickProfile(
   { database, table }: RawProfileRequest,
-  options?: RawProfileOptions
+  options?: Omit<UseQueryOptions<Profile>, 'retry'>
 ) {
   return useRawProfile({ database, table, limit: 1000 }, options);
 }
 export const FULL_PROFILE_LIMIT = 1000000;
 export function useFullProfile(
   { database, table }: RawProfileRequest,
-  options?: RawProfileOptions
+  options?: Omit<UseQueryOptions<Profile>, 'retry'>
 ) {
   return useRawProfile({ database, table, limit: FULL_PROFILE_LIMIT }, options);
 }
@@ -279,7 +276,7 @@ function useRawProfile(
     table: string;
     limit: number;
   },
-  options?: { enabled: boolean }
+  options?: Omit<UseQueryOptions<Profile>, 'retry'>
 ) {
   const sdk = useSDK();
   return useQuery<Profile>(
@@ -294,7 +291,10 @@ function useRawProfile(
           },
         })
         .then((response) => transformProfile(response.data)),
-    options
+    {
+      ...options,
+      retry: false,
+    }
   );
 }
 
