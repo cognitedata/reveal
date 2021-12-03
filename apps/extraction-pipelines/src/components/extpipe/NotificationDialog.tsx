@@ -70,7 +70,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   const onConfirm = async () => {
     if (!extpipe || !project) return;
     if (!value || value <= 0) {
-      setErrorMessage('You must enter a value bigger than 0');
+      setErrorMessage('Enter a value greater than 0');
       return;
     }
     const items = createUpdateSpec({
