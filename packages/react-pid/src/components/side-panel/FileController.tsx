@@ -66,7 +66,9 @@ export const FileController: React.FC<FileControllerProps> = ({
                 onClick={() =>
                   saveInstancesAsJson(symbols, lineInstances, symbolInstances)
                 }
-                disabled={symbolInstances.length === 0}
+                disabled={
+                  symbolInstances.length === 0 && lineInstances.length === 0
+                }
               >
                 Download Graph
               </Menu.Item>

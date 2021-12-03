@@ -28,10 +28,11 @@ interface CollapsableInstanceListProps {
   symbolInstances: DiagramSymbolInstance[];
   lineInstances: DiagramLineInstance[];
   connections: DiagramConnection[];
+  deleteSymbol: (symbol: DiagramSymbol) => void;
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
-  ({ symbols, symbolInstances, lineInstances, connections }) => {
+  ({ symbols, symbolInstances, lineInstances, connections, deleteSymbol }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
       symbolName: string
@@ -61,6 +62,7 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
                 symbolInstances,
                 symbol.symbolName
               ),
+              deleteSymbol,
             })}
             key={symbol.svgRepresentations[0].svgPaths
               .map((svgPath) => svgPath.svgCommands)

@@ -39,6 +39,7 @@ interface SidePanelProps {
   setActive: (arg0: ToolType) => void;
   loadSymbolsAsJson: (args0: string) => void;
   saveSymbol: (symbolName: string, selection: SVGElement[]) => void;
+  deleteSymbol: (symbol: DiagramSymbol) => void;
   connections: DiagramConnection[];
   fileUrl?: string;
 }
@@ -52,6 +53,7 @@ export const SidePanel = ({
   setActive,
   loadSymbolsAsJson,
   saveSymbol,
+  deleteSymbol,
   connections,
   fileUrl,
 }: SidePanelProps) => {
@@ -91,6 +93,7 @@ export const SidePanel = ({
         symbols={symbols}
         symbolInstances={symbolInstances}
         lineInstances={lines}
+        deleteSymbol={deleteSymbol}
         connections={connections}
       />
       <div>

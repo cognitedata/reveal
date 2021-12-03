@@ -3,6 +3,7 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DiagramLineInstance,
+  SvgDocument,
 } from '@cognite/pid-tools';
 
 export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
@@ -66,4 +67,43 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
     return false;
   }
   return true;
+};
+
+export const loadSymbolsFromJson = (
+  jsonData: any,
+  setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
+  symbols: DiagramSymbol[],
+  svgDocument: SvgDocument,
+  setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
+  symbolInstances: DiagramSymbolInstance[],
+  setLines: (diagramLines: DiagramLineInstance[]) => void,
+  lines: DiagramLineInstance[]
+) => {
+  if ('symbols' in jsonData) {
+    const newSymbols = jsonData.symbols as DiagramSymbol[];
+    setSymbols([...symbols, ...newSymbols]);
+
+    if (!('symbolInstances' in jsonData)) {
+      let allNewSymbolInstances: DiagramSymbolInstance[] = [];
+      newSymbols.forEach((newSymbol) => {
+        const newSymbolInstances = (
+          svgDocument as SvgDocument
+        ).findAllInstancesOfSymbol(newSymbol);
+        allNewSymbolInstances = [
+          ...allNewSymbolInstances,
+          ...newSymbolInstances,
+        ];
+      });
+      setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
+    }
+  }
+  if ('lines' in jsonData) {
+    const newLines = jsonData.lines as DiagramLineInstance[];
+    setLines([...lines, ...newLines]);
+  }
+  if ('symbolInstances' in jsonData) {
+    const newSymboleInstance =
+      jsonData.symbolInstances as DiagramSymbolInstance[];
+    setSymbolInstances([...symbolInstances, ...newSymboleInstance]);
+  }
 };

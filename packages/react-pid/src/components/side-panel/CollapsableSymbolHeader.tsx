@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { DiagramSymbol } from '@cognite/pid-tools';
+import { Icon } from '@cognite/cogs.js';
 
 const CollapseHeader = styled.div`
   display: grid;
-  grid-template-columns: auto 3rem max-content;
+  grid-template-columns: auto 2rem 2rem 1rem;
   align-items: center;
   width: 100%;
 `;
@@ -11,10 +12,11 @@ const CollapseHeader = styled.div`
 interface CollapsableSymbolHeaderProps {
   symbol: DiagramSymbol;
   symbolInstanceCount: number;
+  deleteSymbol: (symbol: DiagramSymbol) => void;
 }
 
 export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
-  ({ symbol, symbolInstanceCount }) => {
+  ({ symbol, symbolInstanceCount, deleteSymbol }) => {
     const { boundingBox } = symbol.svgRepresentations[0];
     const strokeWidth = 1;
     const viewboxPadding = 2 * strokeWidth;
@@ -45,6 +47,7 @@ export const CollapsableSymbolHeader: React.FC<CollapsableSymbolHeaderProps> =
           })}
         </svg>
         <span>({symbol.svgRepresentations.length})</span>
+        <Icon onClick={() => deleteSymbol(symbol)} type="Close" size={12} />
       </CollapseHeader>
     );
   };

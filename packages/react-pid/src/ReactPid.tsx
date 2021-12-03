@@ -13,12 +13,14 @@ import {
   DiagramInstanceId,
 } from '@cognite/pid-tools';
 
+import { loadSymbolsFromJson } from './utils/jsonUtils';
 import { ToolType, ExistingSymbolPromptData } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
 import { SvgViewer } from './components/svg-viewer/SvgViewer';
 import { Viewport } from './components/viewport/Viewport';
 import { SaveSymbolModals } from './components/save-symbol-modals/SaveSymbolModals';
+import { deleteSymbolFromState, getSymbolByName } from './utils/symbolUtils';
 
 let svgDocument: SvgDocument | undefined;
 const setSvgDocument = (svgDoc: SvgDocument) => {
@@ -49,43 +51,24 @@ export const ReactPid: React.FC = () => {
   };
 
   const loadSymbolsAsJson = (jsonData: any) => {
-    if ('symbols' in jsonData) {
-      const newSymbols = jsonData.symbols as DiagramSymbol[];
-      setSymbols([...symbols, ...newSymbols]);
+    if (svgDocument === undefined) {
+      return;
+    }
 
-      if (svgDocument !== undefined) {
-        if (!('symbolInstances' in jsonData)) {
-          let allNewSymbolInstances: DiagramSymbolInstance[] = [];
-          newSymbols.forEach((newSymbol) => {
-            const newSymbolInstances = (
-              svgDocument as SvgDocument
-            ).findAllInstancesOfSymbol(newSymbol);
-            allNewSymbolInstances = [
-              ...allNewSymbolInstances,
-              ...newSymbolInstances,
-            ];
-          });
-          setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
-        }
-      }
-    }
-    if ('lines' in jsonData) {
-      const newLines = jsonData.lines as DiagramLineInstance[];
-      setLines([...lines, ...newLines]);
-    }
-    if ('symbolInstances' in jsonData) {
-      const newSymboleInstance =
-        jsonData.symbolInstances as DiagramSymbolInstance[];
-      setSymbolInstances([...symbolInstances, ...newSymboleInstance]);
-    }
-  };
-
-  const getSymbolByName = (symbolName: string): DiagramSymbol | undefined => {
-    return symbols.find((symbol) => symbol.symbolName === symbolName);
+    loadSymbolsFromJson(
+      jsonData,
+      setSymbols,
+      symbols,
+      svgDocument,
+      setSymbolInstances,
+      symbolInstances,
+      setLines,
+      lines
+    );
   };
 
   const shouldShowPrompt = (symbolName: string) => {
-    const symbolExist = getSymbolByName(symbolName) !== undefined;
+    const symbolExist = getSymbolByName(symbols, symbolName) !== undefined;
     return symbolExist && existingSymbolPromptData?.resolution !== 'add';
   };
 
@@ -93,7 +76,7 @@ export const ReactPid: React.FC = () => {
     symbolName: string,
     svgRepresentation: SvgRepresentation
   ) => {
-    let diagramSymbol = getSymbolByName(symbolName);
+    let diagramSymbol = getSymbolByName(symbols, symbolName);
     if (diagramSymbol === undefined) {
       diagramSymbol = {
         symbolName,
@@ -124,6 +107,18 @@ export const ReactPid: React.FC = () => {
         } as SvgPath)
     );
     return newSvgRepresentation;
+  };
+
+  const deleteSymbol = (diagramSymbol: DiagramSymbol) => {
+    deleteSymbolFromState(
+      diagramSymbol,
+      symbolInstances,
+      connections,
+      setConnections,
+      setSymbolInstances,
+      setSymbols,
+      symbols
+    );
   };
 
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
@@ -172,6 +167,7 @@ export const ReactPid: React.FC = () => {
           loadSymbolsAsJson={loadSymbolsAsJson}
           saveSymbol={saveSymbol}
           connections={connections}
+          deleteSymbol={deleteSymbol}
           fileUrl={fileUrl}
         />
         <Viewport>
