@@ -32,24 +32,19 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
             !fileIds.some(doesFileExist), // we don't want to poll jobs for removed files
 
           onTick: async (latestJobVersion) => {
-            try {
-              if (
-                latestJobVersion.status === 'Running' ||
-                latestJobVersion.status === 'Completed'
-              ) {
-                await dispatch(
-                  AnnotationDetectionJobUpdate({
-                    job: latestJobVersion,
-                    fileIds,
-                    modelType,
-                    completedFileIds,
-                    failedFileIds,
-                  })
-                ).unwrap();
-              }
-            } catch (error) {
-              // TODO: use failed file Ids
-              console.error(error);
+            if (
+              latestJobVersion.status === 'Running' ||
+              latestJobVersion.status === 'Completed'
+            ) {
+              await dispatch(
+                AnnotationDetectionJobUpdate({
+                  job: latestJobVersion,
+                  fileIds,
+                  modelType,
+                  completedFileIds,
+                  failedFileIds,
+                })
+              ).unwrap();
             }
           },
 
