@@ -23,3 +23,7 @@ export enum AUTH_CONFIG {
   PROJECT = 'project',
   API_KEY = 'apiKey',
 }
+
+export const CONSTANTS = {
+  PROJECT_CONFIG_FILE_NAME: 'cdfrc.json',
+};
