@@ -59,7 +59,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
           <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
             <Button
               disabled={!hasWriteAccess}
-              icon="PlusCompact"
+              icon="Add"
               onClick={() => setIsCreateModalOpen(true)}
               size="small"
               type="primary"
@@ -89,7 +89,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
           <Button
             block
             disabled={!hasWriteAccess}
-            icon="PlusCompact"
+            icon="Add"
             onClick={() => setIsCreateModalOpen(true)}
           >
             Create database

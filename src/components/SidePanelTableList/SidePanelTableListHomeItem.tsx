@@ -76,7 +76,7 @@ const SidePanelTableListHomeItem = ({
               >
                 <Button
                   disabled={!isEmpty || !hasWriteAccess}
-                  icon="Trash"
+                  icon="Delete"
                   onClick={() => setIsDeleteModalOpen(true)}
                   type="ghost-danger"
                 >
@@ -86,11 +86,7 @@ const SidePanelTableListHomeItem = ({
             </Menu>
           }
         >
-          <Button
-            icon="MoreOverflowEllipsisHorizontal"
-            size="small"
-            type="ghost"
-          />
+          <Button icon="EllipsisHorizontal" size="small" type="ghost" />
         </Dropdown>
         <DeleteDatabaseModal
           databaseName={selectedSidePanelDatabase}

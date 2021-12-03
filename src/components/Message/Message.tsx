@@ -36,7 +36,7 @@ const Message = ({
       break;
     case 'error':
       backgroundColor = 'rgba(223, 58, 55, 0.06)';
-      icon = 'Beware';
+      icon = 'ErrorFilled';
       iconColor = '#CF1A17';
       break;
     case 'info':

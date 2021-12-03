@@ -55,18 +55,23 @@ const Tab = styled.li<{ $active?: boolean }>`
 `;
 
 const LeftIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-grow: 0;
-  flex-shrink: 2;
+  flex-shrink: 0;
   flex-basis: 20px;
-  vertical-align: middle;
   white-space: nowrap;
   overflow: hidden;
+  margin-right: 12px;
 `;
 const RightIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-grow: 0;
   flex-shrink: 0;
   color: var(--cogs-greyscale-grey6);
-  vertical-align: middle;
   padding-left: 10px;
 `;
 
@@ -121,29 +126,28 @@ export default function TableTabList() {
           }}
         >
           <LeftIcon>
-            <Icon size={10} type="Table" />
+            <Icon type="DataTable" />
           </LeftIcon>
 
           <TabContent>{table}</TabContent>
 
-          <RightIcon>
-            <Tooltip
-              content={table}
-              delay={300}
-              key={`${db}_${table}`}
-              placement="bottom"
-            >
+          <Tooltip
+            content={table}
+            delay={300}
+            key={`${db}_${table}`}
+            placement="bottom"
+          >
+            <RightIcon>
               <Icon
-                size={10}
-                type="Close"
+                type="CloseLarge"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   close([db, table]);
                 }}
               />
-            </Tooltip>
-          </RightIcon>
+            </RightIcon>
+          </Tooltip>
         </Tab>
       ))}
       <FillerTab key="filler-tab" />

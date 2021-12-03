@@ -65,7 +65,7 @@ const SidePanelTableList = (): JSX.Element => {
       header={
         <StyledSidePanelTableListHeaderWrapper>
           <Button
-            icon="ArrowBack"
+            icon="ArrowLeft"
             onClick={() => setSelectedSidePanelDatabase(undefined)}
             size="small"
             type="ghost"
@@ -76,7 +76,7 @@ const SidePanelTableList = (): JSX.Element => {
           <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
             <Button
               disabled={!hasWriteAccess}
-              icon="PlusCompact"
+              icon="Add"
               onClick={() => setIsCreateModalOpen(true)}
               size="small"
               type="primary"
@@ -107,7 +107,7 @@ const SidePanelTableList = (): JSX.Element => {
           <Button
             block
             disabled={!hasWriteAccess}
-            icon="PlusCompact"
+            icon="Add"
             onClick={() => setIsCreateModalOpen(true)}
           >
             Create table

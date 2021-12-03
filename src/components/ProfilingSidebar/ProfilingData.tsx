@@ -61,7 +61,7 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
           justifyContent="center"
           style={{ width: '100%', padding: '20px' }}
         >
-          <Icon type="LoadingSpinner" />
+          <Icon type="Loader" />
         </Flex>
       )}
       {isError && <Message message="Profiling service error" type="error" />}
