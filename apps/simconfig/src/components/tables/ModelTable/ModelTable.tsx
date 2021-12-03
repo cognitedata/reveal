@@ -173,7 +173,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
     {
       id: 'updated',
       Header: 'Updated',
-      accessor: (row: FileInfoSerializable) => row.lastUpdatedTime,
+      accessor: (row: FileInfoSerializable) => row.createdTime,
       sortType: 'number',
       Cell: ({ cell: { value } }: any) => (
         <>{moment(value).format('YYYY-MM-DD HH:mm')}</>
