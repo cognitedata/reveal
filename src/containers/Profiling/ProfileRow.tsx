@@ -34,6 +34,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
     median,
     histogram,
     counts,
+    count,
   } = profile;
   const [expanded, setExpanded] = useState(false);
 
@@ -67,6 +68,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
         <ProfileDetailsRow
           allCount={allCount}
           nullCount={nullCount}
+          count={count}
           min={min}
           max={max}
           median={median}

@@ -12,28 +12,13 @@ import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useActiveTable } from 'hooks/table-tabs';
 
 import SidePanelDatabaseListContent from './SidePanelDatabaseListContent';
-import SidePanelDatabaseListCreateDatabaseBanner from './SidePanelDatabaseListCreateDatabaseBanner';
 
-const StyledSidePanelDatabaseListHeaderWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  width: 100%;
-`;
-
-const StyledSidePanelDatabaseListHeaderTitle = styled(Body)`
-  margin-right: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 62px);
-`;
-
-const StyledSidePanelDatabaseListHeaderIconDivider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
-  height: 16px;
-  margin: 0 8px;
-  width: 2px;
-`;
+const accessWarningContent = (
+  <>
+    To create databases, you need to have the <strong>raw:write</strong>{' '}
+    capability
+  </>
+);
 
 const SidePanelDatabaseList = (): JSX.Element => {
   const [query, setQuery] = useState('');
@@ -42,12 +27,6 @@ const SidePanelDatabaseList = (): JSX.Element => {
   const { data, fetchNextPage, isLoading, hasNextPage } = useDatabases();
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const accessWarningContent = (
-    <>
-      To create databases, you need to have the <strong>raw:write</strong>{' '}
-      capability
-    </>
-  );
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 
@@ -100,33 +79,22 @@ const SidePanelDatabaseList = (): JSX.Element => {
       onQueryChange={setQuery}
       query={query}
     >
-      {data ? (
-        <>
-          {databases.length > 0 ? (
-            <>
-              <SidePanelDatabaseListContent
-                databases={databases}
-                searchQuery={query}
-              />
-              <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
-                <Button
-                  block
-                  disabled={!hasWriteAccess}
-                  icon="Add"
-                  onClick={() => setIsCreateModalOpen(true)}
-                >
-                  Create database
-                </Button>
-              </Tooltip>
-            </>
-          ) : (
-            <SidePanelDatabaseListCreateDatabaseBanner
-              onClick={() => setIsCreateModalOpen(true)}
-            />
-          )}
-        </>
-      ) : (
-        <></>
+      <SidePanelDatabaseListContent
+        databases={databases}
+        openCreateModal={() => setIsCreateModalOpen(true)}
+        searchQuery={query}
+      />
+      {!!databases.length && (
+        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+          <Button
+            block
+            disabled={!hasWriteAccess}
+            icon="Add"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            Create database
+          </Button>
+        </Tooltip>
       )}
       <CreateDatabaseModal
         databases={databases}
@@ -136,5 +104,26 @@ const SidePanelDatabaseList = (): JSX.Element => {
     </SidePanelLevelWrapper>
   );
 };
+
+const StyledSidePanelDatabaseListHeaderWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  width: 100%;
+`;
+
+const StyledSidePanelDatabaseListHeaderTitle = styled(Body)`
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: calc(100% - 62px);
+`;
+
+const StyledSidePanelDatabaseListHeaderIconDivider = styled.div`
+  background-color: ${Colors['bg-control--disabled']};
+  height: 16px;
+  margin: 0 8px;
+  width: 2px;
+`;
 
 export default SidePanelDatabaseList;

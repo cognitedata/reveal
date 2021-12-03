@@ -1,10 +1,12 @@
 import React, { useContext, useMemo } from 'react';
 
-import { Detail, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
+import { Button, Title, Tooltip } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
-import styled from 'styled-components';
 
 import {
+  StyledEmptyListDetail,
+  StyledEmptyListTitle,
+  StyledEmptyListWrapper,
   StyledNoItemsDetail,
   StyledNoItemsWrapper,
 } from 'components/SidePanel/SidePanelLevelWrapper';
@@ -50,14 +52,12 @@ const SidePanelTableListContent = ({
 
   if (!tables.length) {
     return (
-      <StyledEmptyDatabaseWrapper>
-        <StyledEmptyDatabaseTitle level={6}>
-          Create a table
-        </StyledEmptyDatabaseTitle>
-        <StyledEmptyDatabaseDetail strong>
+      <StyledEmptyListWrapper>
+        <StyledEmptyListTitle level={6}>Create a table</StyledEmptyListTitle>
+        <StyledEmptyListDetail strong>
           All raw data is stored in tables. Create a table to upload a file or
           write data directly using the API.
-        </StyledEmptyDatabaseDetail>
+        </StyledEmptyListDetail>
 
         <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
           <Button
@@ -69,7 +69,7 @@ const SidePanelTableListContent = ({
             Create table
           </Button>
         </Tooltip>
-      </StyledEmptyDatabaseWrapper>
+      </StyledEmptyListWrapper>
     );
   }
 
@@ -95,25 +95,5 @@ const SidePanelTableListContent = ({
     </>
   );
 };
-
-const StyledEmptyDatabaseWrapper = styled.div`
-  align-items: center;
-  background-color: ${Colors['bg-accent'].hex()};
-  border: 1px solid ${Colors['border-default'].hex()};
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  padding: 36px 48px;
-`;
-
-const StyledEmptyDatabaseTitle = styled(Title)`
-  color: ${Colors['text-primary'].hex()};
-`;
-
-const StyledEmptyDatabaseDetail = styled(Detail)`
-  color: ${Colors['text-hint'].hex()};
-  margin: 8px 0 16px;
-  text-align: center;
-`;
 
 export default SidePanelTableListContent;
