@@ -34,7 +34,7 @@ export interface ColumnType extends Partial<ColumnShape> {
 export const useTableData = () => {
   const { database, table, columnNameFilter, columnTypeFilters } =
     useActiveTableContext();
-  const { getColumnType } = useColumnType(database, table);
+  const { getColumnType, isFetched } = useColumnType(database, table);
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
@@ -103,20 +103,23 @@ export const useTableData = () => {
   }, [rawRows, chooseRenderType, columns]);
 
   const filteredColumns = useMemo(
-    () => [
-      ...columns.slice(0, 1),
-      ...columns.slice(1).filter((column) => {
-        const columnType = getColumnType(column.dataKey);
-        const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
-          ? true
-          : columnTypeFilters.includes(columnType);
-        const fitsTitleFilter = column.title
-          .toLowerCase()
-          .includes(columnNameFilter.toLowerCase());
-        return fitsTitleFilter && fitsTypeFilter;
-      }),
-    ],
-    [columns, columnNameFilter, columnTypeFilters, getColumnType]
+    () =>
+      isFetched
+        ? [
+            ...columns.slice(0, 1),
+            ...columns.slice(1).filter((column) => {
+              const columnType = getColumnType(column.dataKey);
+              const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
+                ? true
+                : columnTypeFilters.includes(columnType);
+              const fitsTitleFilter = column.title
+                .toLowerCase()
+                .includes(columnNameFilter.toLowerCase());
+              return fitsTitleFilter && fitsTypeFilter;
+            }),
+          ]
+        : columns,
+    [columns, columnNameFilter, columnTypeFilters, isFetched, getColumnType]
   );
 
   return {

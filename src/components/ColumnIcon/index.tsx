@@ -10,11 +10,11 @@ type Props = { dataKey: string | undefined };
 
 export default function ColumnIcon({ dataKey }: Props) {
   const { database, table } = useActiveTableContext();
-  const { getColumnType } = useColumnType(database, table);
+  const { getColumnType, isFetched } = useColumnType(database, table);
 
   const columnType = useMemo(
-    () => getColumnType(dataKey),
-    [getColumnType, dataKey]
+    () => (isFetched ? getColumnType(dataKey) : 'Loading'),
+    [getColumnType, isFetched, dataKey]
   );
 
   switch (columnType) {
@@ -27,6 +27,8 @@ export default function ColumnIcon({ dataKey }: Props) {
     case 'Object':
     case 'Vector':
       return <>ICON_TODO</>;
+    case 'Loading':
+      return <Icon type="Loader" />;
     default:
       return null;
   }
