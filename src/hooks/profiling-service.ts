@@ -1,7 +1,10 @@
 import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { baseKey } from './sdk-queries';
+
+import { useActiveTableContext } from 'contexts';
+import { ALL_FILTER } from 'hooks/table-filters';
+import { baseKey } from 'hooks/sdk-queries';
 
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
   baseKey,
@@ -274,23 +277,48 @@ export function useRawProfile(
   );
 }
 
-export const useColumnType = (database: string, table: string) => {
+type ColumnTypeCount = Partial<
+  Record<ColumnProfile['type'] | typeof ALL_FILTER, number>
+>;
+
+export const useColumnType = () => {
+  const { database, table } = useActiveTableContext();
   const { data = { columns: [] } } = useRawProfile({
     database,
     table,
     limit: 1000,
   });
 
-  const getColumn = (title: string | undefined) => {
-    const column = title ? data.columns.find((c) => c.label === title) : null;
+  const getColumn = (dataKey: string | undefined) => {
+    const column = dataKey
+      ? data.columns.find((c) => c.label === dataKey)
+      : null;
     return column;
   };
 
-  const getColumnType = (title: string | undefined) => {
-    const column = getColumn(title);
+  const getColumnType = (dataKey: string | undefined) => {
+    const column = getColumn(dataKey);
 
     return column?.type || 'Unknown';
   };
 
-  return { getColumn, getColumnType };
+  const getColumnTypeCounts = (): ColumnTypeCount => {
+    if (!data.columns.length) return {};
+    const columnsTypes: ColumnProfile['type'][] = data.columns
+      .filter(Boolean)
+      .map((column) => column.type);
+    const columnsTypeCounts = columnsTypes.reduce(
+      (typeCounts: ColumnTypeCount, currType: ColumnProfile['type']) => {
+        if (!currType) return typeCounts;
+        if (typeCounts[currType])
+          typeCounts[currType] = typeCounts[currType]! + 1;
+        else typeCounts[currType] = 1;
+        return typeCounts;
+      },
+      { [ALL_FILTER]: data.columns.length } as ColumnTypeCount
+    );
+    return columnsTypeCounts;
+  };
+
+  return { getColumn, getColumnType, getColumnTypeCounts };
 };

@@ -35,7 +35,11 @@ export const Spreadsheet = (): JSX.Element => {
 
   return (
     <Flex direction="column" style={{ width: '100%', height: '100%' }}>
-      <FilterBar key={`${database}_${table}`} isEmpty={isEmpty} />
+      <FilterBar
+        key={`${database}_${table}`}
+        isEmpty={isEmpty}
+        isProfilingFetching={isFetching}
+      />
       {isLoading ? (
         <Loader />
       ) : (

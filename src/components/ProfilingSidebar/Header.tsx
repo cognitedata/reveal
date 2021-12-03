@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Body, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext, useActiveTableContext } from 'contexts';
+import { RawExplorerContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import { useColumnNavigation } from 'hooks/table-navigation';
 import { useColumnType } from 'hooks/profiling-service';
@@ -16,15 +16,14 @@ import ColumnIcon from 'components/ColumnIcon';
 type Props = { selectedColumn: ColumnType | undefined };
 
 export const Header = ({ selectedColumn }: Props) => {
-  const { database, table } = useActiveTableContext();
   const { setIsProfilingSidebarOpen } = useContext(RawExplorerContext);
 
   const { canNavigate, onPrevColumnClick, onNextColumnClick } =
     useColumnNavigation();
-  const { getColumnType } = useColumnType(database, table);
+  const { getColumnType } = useColumnType();
 
   const columnType = useMemo(
-    () => getColumnType(selectedColumn?.title),
+    () => getColumnType(selectedColumn?.dataKey),
     [getColumnType, selectedColumn]
   );
 
@@ -76,7 +75,7 @@ export const Header = ({ selectedColumn }: Props) => {
         <Body level={2} strong>
           Type
         </Body>
-        <ColumnIcon title={selectedColumn?.title} />
+        <ColumnIcon dataKey={selectedColumn?.dataKey} />
         <Body level={2} style={{ fontWeight: 400, marginLeft: '4px' }}>
           {columnType}
         </Body>
