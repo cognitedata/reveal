@@ -3,7 +3,11 @@ import { Alert } from 'antd';
 import { sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
-import { ColumnProfile, useRawProfile } from 'hooks/profiling-service';
+import {
+  ColumnProfile,
+  useQuickProfile,
+  useFullProfile,
+} from 'hooks/profiling-service';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
 import ProfileRow, { TableData } from './ProfileRow';
@@ -63,15 +67,14 @@ type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
 
-  const fullProfile = useRawProfile({
+  const fullProfile = useFullProfile({
     database,
     table,
   });
 
-  const limitProfile = useRawProfile({
+  const limitProfile = useQuickProfile({
     database,
     table,
-    limit: 1000,
   });
 
   const {

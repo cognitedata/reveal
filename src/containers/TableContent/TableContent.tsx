@@ -8,12 +8,12 @@ import { TableHeader } from 'components/TableHeader';
 import { Profiling } from 'containers/Profiling';
 
 import { TAB_HEIGHT } from 'utils/constants';
-import { useRawProfile } from 'hooks/profiling-service';
+import { useFullProfile } from 'hooks/profiling-service';
 import { useActiveTableContext } from 'contexts';
 
 const TableContent = () => {
   const { database, table, view, update } = useActiveTableContext();
-  const { isFetching } = useRawProfile({ database, table });
+  const { isFetching } = useFullProfile({ database, table });
 
   return (
     <Wrapper>

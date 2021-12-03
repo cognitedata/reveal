@@ -6,7 +6,8 @@ import { useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import {
   useColumnType,
-  useRawProfile,
+  useQuickProfile,
+  useFullProfile,
   StringProfile,
   NumberProfile,
   BooleanProfile,
@@ -22,14 +23,13 @@ type Props = { selectedColumn: ColumnType | undefined };
 
 export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
   const { database, table } = useActiveTableContext();
-  const fullProfile = useRawProfile({
+  const fullProfile = useFullProfile({
     database,
     table,
   });
-  const limitProfile = useRawProfile({
+  const limitProfile = useQuickProfile({
     database,
     table,
-    limit: 1000,
   });
 
   const {
