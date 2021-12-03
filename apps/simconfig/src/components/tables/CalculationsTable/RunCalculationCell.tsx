@@ -1,8 +1,14 @@
 import { useContext, MouseEvent } from 'react';
+import { useSelector } from 'react-redux';
+import { Tooltip } from '@cognite/cogs.js';
 import { FileInfoSerializable } from 'store/file/types';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import { selectSimulators } from 'store/simulator/selectors';
+import {
+  selectSimulators,
+  selectIsSimulatorAvailable,
+  selectAvailableSimulators,
+} from 'store/simulator/selectors';
 import { selectEventById } from 'store/event/selectors';
 import { runNewCalculation } from 'store/event/thunks';
 import { sanitizeValue } from 'utils/stringUtils';
@@ -18,6 +24,16 @@ export default function RunCalculationCell({ data }: ComponentProps) {
 
   const dispatch = useAppDispatch();
   const simulators = useAppSelector(selectSimulators);
+  const availableSimulators = useSelector(selectAvailableSimulators);
+  const isSimulatorAvailable =
+    simulators?.length &&
+    availableSimulators &&
+    simulators.some(
+      (simulator) =>
+        simulator.simulator === data.source &&
+        simulator.name === data.metadata.connector &&
+        selectIsSimulatorAvailable(simulator)
+    );
   const selectedEvent = useAppSelector(selectEventById(data.externalId || ''));
   const status = selectedEvent?.metadata?.status || 'none';
   const isCalculationReadyOrRunning = ['ready', 'running'].includes(status);
@@ -68,12 +84,25 @@ export default function RunCalculationCell({ data }: ComponentProps) {
     : 'CaretClosedDefault';
 
   return (
-    <RunCalculationButton
-      aria-label={status}
-      disabled={isCalculationReadyOrRunning}
-      type="ghost"
-      icon={buttonIcon}
-      onClick={onClickRun}
-    />
+    <>
+      {isSimulatorAvailable ? (
+        <RunCalculationButton
+          aria-label={status}
+          disabled={isCalculationReadyOrRunning}
+          type="ghost"
+          icon={buttonIcon}
+          onClick={onClickRun}
+        />
+      ) : (
+        <Tooltip content="Simulator not available.">
+          <RunCalculationButton
+            aria-label={status}
+            type="ghost-danger"
+            icon={buttonIcon}
+            disabled
+          />
+        </Tooltip>
+      )}
+    </>
   );
 }
