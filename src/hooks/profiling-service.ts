@@ -261,11 +261,12 @@ export function useQuickProfile(
 ) {
   return useRawProfile({ database, table, limit: 1000 }, options);
 }
+export const FULL_PROFILE_LIMIT = 1000000;
 export function useFullProfile(
   { database, table }: RawProfileRequest,
   options?: RawProfileOptions
 ) {
-  return useRawProfile({ database, table, limit: 1000000 }, options);
+  return useRawProfile({ database, table, limit: FULL_PROFILE_LIMIT }, options);
 }
 
 function useRawProfile(
