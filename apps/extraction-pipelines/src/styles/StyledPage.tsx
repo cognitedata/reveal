@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import { Colors, Title } from '@cognite/cogs.js';
-import React from 'react';
+import { Colors } from '@cognite/cogs.js';
 import {
   mainContentSpaceAround,
   mainContentSpaceSides,
@@ -25,15 +24,6 @@ export const PageWrapper = styled.div`
     margin: 1.5rem 0 1.5rem 2rem;
     align-self: center;
   }
-`;
-
-export const GridH2Wrapper = styled((props) => (
-  <Title {...props} level={2}>
-    {props.children}
-  </Title>
-))`
-  font-size: 1.2rem;
-  margin-bottom: 0.3rem;
 `;
 
 export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`

@@ -20,12 +20,16 @@ export interface RegisterExtpipeInfo {
   contacts?: User[];
   rawTables?: ExtpipeRawTable[];
 }
+export type NotificationConfig = {
+  allowedNotSeenRangeInMinutes?: number;
+};
 export interface Extpipe extends Omit<RegisterExtpipeInfo, 'id'> {
   id: number;
   createdTime: number; // milliseconds
   createdBy?: string; // milliseconds
   lastUpdatedTime: number; // milliseconds
   dataSet?: DataSetModel;
+  notificationConfig?: NotificationConfig;
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds
   lastSeen?: number; // milliseconds

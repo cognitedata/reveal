@@ -9,7 +9,7 @@ import {
   ExtpipeFieldValue,
 } from 'model/Extpipe';
 
-const FieldWrapper = styled.div`
+export const FieldWrapper = styled.div`
   display: flex;
   padding: 0 1rem;
   flex-direction: column;
