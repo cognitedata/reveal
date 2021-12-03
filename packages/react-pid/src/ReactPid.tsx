@@ -11,6 +11,7 @@ import {
   getInternalSvgBoundingBox,
   DiagramConnection,
   DiagramInstanceId,
+  getNoneOverlappingSymbolInstances,
 } from '@cognite/pid-tools';
 
 import { loadSymbolsFromJson } from './utils/jsonUtils';
@@ -142,7 +143,12 @@ export const ReactPid: React.FC = () => {
     setSelection([]);
 
     const newSymbolInstances = svgDocument.findAllInstancesOfSymbol(newSymbol);
-    setSymbolInstances([...symbolInstances, ...newSymbolInstances]);
+    const prunedInstances = getNoneOverlappingSymbolInstances(
+      svgDocument,
+      symbolInstances,
+      newSymbolInstances
+    );
+    setSymbolInstances(prunedInstances);
     setExistingSymbolPromptData(null);
   };
 
