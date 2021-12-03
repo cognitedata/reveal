@@ -40,7 +40,8 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
         <StyledLabel htmlFor="nothing">Notification settings</StyledLabel>
       </FieldWrapper>
 
-      {extpipe.notificationConfig == null ? (
+      {extpipe.notificationConfig == null ||
+      extpipe.notificationConfig.allowedNotSeenRangeInMinutes == null ? (
         <AddFieldValueBtn canEdit={canEdit} onClick={openDialog}>
           notification
         </AddFieldValueBtn>
@@ -49,7 +50,7 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
           <div>
             Sends alerts{' '}
             {renderTime(
-              extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
+              extpipe.notificationConfig.allowedNotSeenRangeInMinutes
             )}{' '}
             after no detected activity.
           </div>
