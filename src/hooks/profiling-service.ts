@@ -15,18 +15,23 @@ export const rawProfileKey = (db: string, table: string, limit?: number) => [
 ];
 
 export type StringProfile = {
+  count: number;
   distinctCount: number;
   lengthHistogram: [number[], number[]];
   lengthRange: [number, number];
   valueCounts: [string[], number[]];
 };
 export type NumberProfile = {
+  count: number;
   distinctCount: number;
   histogram: [number[], number[]];
   valueCounts: Record<string, number>;
   valueRange: [number, number];
+  mean: number;
+  std: number;
 };
 export type BooleanProfile = {
+  count: number;
   trueCount: number;
 };
 export type ObjectProfile = {

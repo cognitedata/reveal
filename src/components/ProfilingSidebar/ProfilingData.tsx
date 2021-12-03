@@ -193,12 +193,11 @@ const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
         {data.valueRange[1]}
       </Section>
       <Section title="Mean" isHalf>
-        TODO
+        {data.mean.toFixed(1)}
       </Section>
-      <Section title="Median" isHalf>
-        TODO
+      <Section title="Standard deviation" isHalf>
+        {data.std.toFixed(1)}
       </Section>
-      <Section title="Standard deviation">TODO</Section>
     </StyledProfilingDataWrapper>
   );
 };
