@@ -255,13 +255,13 @@ type RawProfileRequest = {
 type RawProfileOptions = {
   enabled: boolean;
 };
-export function useQuickRawProfile(
+export function useQuickProfile(
   { database, table }: RawProfileRequest,
   options?: RawProfileOptions
 ) {
   return useRawProfile({ database, table, limit: 1000 }, options);
 }
-export function useFullRawProfile(
+export function useFullProfile(
   { database, table }: RawProfileRequest,
   options?: RawProfileOptions
 ) {

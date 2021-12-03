@@ -1,11 +1,11 @@
 import React from 'react';
 import { Icon, Colors } from '@cognite/cogs.js';
 import { useActiveTableContext } from 'contexts';
-import { useRawProfile } from 'hooks/profiling-service';
+import { useFullProfile } from 'hooks/profiling-service';
 
 export default function RowCount() {
   const { database, table } = useActiveTableContext();
-  const { data = { rowCount: undefined }, isFetched } = useRawProfile({
+  const { data = { rowCount: undefined }, isFetched } = useFullProfile({
     database,
     table,
   });
