@@ -2,6 +2,8 @@ import queryString from 'query-string';
 import { useHistory } from 'react-router-dom';
 
 import { useCellSelection } from 'hooks/table-selection';
+import useLocalStorage from './useLocalStorage';
+import { getEnv, getProject } from '@cognite/cdf-utilities';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 const getSetItems =
@@ -22,6 +24,7 @@ const getSetItems =
 
 function useQueryParam<T>(
   key: string,
+  defaultValue: T,
   push = false
 ): [T | undefined, (_: T | undefined) => void] {
   const history = useHistory();
@@ -32,9 +35,9 @@ function useQueryParam<T>(
       const itemStr = (search[key] || '') as string;
       return itemStr
         ? (JSON.parse(decodeURIComponent(itemStr)) as T)
-        : undefined;
+        : defaultValue;
     } catch {
-      return undefined;
+      return defaultValue;
     }
   })();
 
@@ -42,12 +45,41 @@ function useQueryParam<T>(
 }
 
 export type SpecificTable = [database: string, table: string, view?: string];
+type SpecificTableState = SpecificTable | undefined;
 
-function useUrlTable() {
-  return useQueryParam<SpecificTable>('activeTable');
+function useUrlTable(): [SpecificTableState, (t: SpecificTableState) => void] {
+  const project = getProject();
+  const env = getEnv();
+  const [lsTab, setLsTab] = useLocalStorage<SpecificTableState>(
+    `${project}_${env}_raw_activeTab`,
+    undefined
+  );
+  const [tab, setTab] = useQueryParam<SpecificTableState>('activeTable', lsTab);
+
+  return [
+    tab,
+    (t: SpecificTableState) => {
+      setTab(t);
+      setLsTab(t);
+    },
+  ];
 }
-function useUrlTabList() {
-  return useQueryParam<SpecificTable[]>('tableTabs');
+function useUrlTabList(): [SpecificTable[], (_: SpecificTable[]) => void] {
+  const project = getProject();
+  const env = getEnv();
+  const [lsTabs, setLsTabs] = useLocalStorage<SpecificTable[]>(
+    `${project}_${env}_raw_tabList`,
+    []
+  );
+  const [tabs = [], setTabs] = useQueryParam<SpecificTable[]>('tabs', lsTabs);
+
+  return [
+    tabs,
+    (tabs: SpecificTable[]) => {
+      setTabs(tabs);
+      setLsTabs(tabs);
+    },
+  ];
 }
 
 export function useTableTabList() {
@@ -55,7 +87,7 @@ export function useTableTabList() {
 }
 
 export function useActiveTable(): [
-  SpecificTable | undefined,
+  SpecificTableState,
   (_: SpecificTable) => void
 ] {
   const [active, setActive] = useUrlTable();

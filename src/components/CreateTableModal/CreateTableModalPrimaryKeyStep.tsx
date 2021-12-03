@@ -8,6 +8,7 @@ import Select from 'components/Select/Select';
 
 import { PrimaryKeyMethod } from './CreateTableModal';
 import CreateTableModalOption from './CreateTableModalOption';
+import Message from 'components/Message/Message';
 
 type CreateTableModalPrimaryKeyStepProps = {
   columns?: string[];
@@ -37,50 +38,58 @@ const CreateTableModalPrimaryKeyStep = ({
         <StyledCreateOptions>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="Choose a column that will be used. Note: this might mean data will be lost if the column is not 100% unique."
+              description="This is the column that identifies each table record. Data is overwritten if the entries in the column are not unique."
               icon="KeyIcon"
               isDisabled={!columns}
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
               }
               onClick={selectPrimaryKeyMethod(PrimaryKeyMethod.ChooseColumn)}
-              title="I know the primary key."
+              title="I know the primary key"
             />
           </StyledCreateOption>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="A key will be auto-generated for you. This means that updating the data will overwrite the entire table."
+              description="An auto-generated key is added as a new column. Updating data creates a new entry and can result in duplicated entries."
               icon="UnknownPrimaryKeyIcon"
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.AutoGenerate
               }
               onClick={selectPrimaryKeyMethod(PrimaryKeyMethod.AutoGenerate)}
-              title="I don’t know the primary key."
+              title="I don’t know the primary key"
             />
           </StyledCreateOption>
         </StyledCreateOptions>
       </FormFieldWrapper>
       {selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn && (
-        <FormFieldWrapper isRequired title="Select primary key">
-          {columns?.length ? (
-            <Select
-              defaultOpen
-              onChange={handleSelectedColumnChange}
-              placeholder="Enter column name"
-              showSearch
-            >
-              {columns?.map((columnName) => (
-                <Select.Option value={columnName} key={columnName}>
-                  {columnName}
-                </Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <StyledColumnsEmptyText level={2}>
-              No column found
-            </StyledColumnsEmptyText>
-          )}
-        </FormFieldWrapper>
+        <>
+          <StyledMessage
+            message={`File parsed. ${columns?.length ?? 0} column${
+              !!columns?.length ? 's' : ''
+            } detected.`}
+            type="success"
+          />
+          <FormFieldWrapper isRequired title="Select primary key">
+            {columns?.length ? (
+              <Select
+                defaultOpen
+                onChange={handleSelectedColumnChange}
+                placeholder="Enter column name"
+                showSearch
+              >
+                {columns?.map((columnName) => (
+                  <Select.Option value={columnName} key={columnName}>
+                    {columnName}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <StyledColumnsEmptyText level={2}>
+                No column found
+              </StyledColumnsEmptyText>
+            )}
+          </FormFieldWrapper>
+        </>
       )}
     </>
   );
@@ -105,6 +114,10 @@ const StyledColumnsEmptyText = styled(Body)`
   color: ${Colors['text-hint'].hex()};
   height: 22px;
   margin-top: 16px;
+`;
+
+const StyledMessage = styled(Message)`
+  margin-bottom: 16px;
 `;
 
 export default CreateTableModalPrimaryKeyStep;

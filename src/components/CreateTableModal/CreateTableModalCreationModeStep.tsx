@@ -48,23 +48,24 @@ const CreateTableModalCreationModeStep = ({
       <StyledCreateOptions>
         <StyledCreateOption>
           <StyledDragger {...fileProps}>
-            <CustomIcon icon="DocumentIcon" style={{ width: 32 }} />
+            <StyledDocumentIcon />
+            <StyledDocumentIconHover />
             <StyledCreateOptionTitle level={6} strong>
-              Add CSV file here.
+              Upload CSV file
             </StyledCreateOptionTitle>
             <StyledCreateOptionDetail strong>
-              Drag and drop, or click to select.
+              Drag and drop, or click to select
             </StyledCreateOptionDetail>
           </StyledDragger>
         </StyledCreateOption>
         <StyledCreateOption>
           <CreateTableModalOption
-            description="Upload files later or write data directly using the API."
+            description="Upload files later or write data directly using the API"
             icon="DataTable"
             isDisabled={isCreatingTable}
             isSelected={selectedCreationMode === CreationMode.Empty}
             onClick={selectCreationMode(CreationMode.Empty)}
-            title="Create an empty table."
+            title="Create empty table"
           />
         </StyledCreateOption>
       </StyledCreateOptions>
@@ -91,6 +92,18 @@ const StyledCreateOption = styled.li`
   }
 `;
 
+const StyledDocumentIcon = styled(CustomIcon).attrs({
+  icon: 'DocumentIconDisabled',
+})`
+  height: 40px;
+`;
+
+const StyledDocumentIconHover = styled(CustomIcon).attrs({
+  icon: 'DocumentIconHover',
+})`
+  height: 40px;
+`;
+
 const StyledDragger = styled(Dragger)`
   && {
     background-color: ${Colors['bg-accent'].hex()};
@@ -104,9 +117,21 @@ const StyledDragger = styled(Dragger)`
       flex-direction: column;
     }
 
+    ${StyledDocumentIconHover} {
+      display: none;
+    }
+
     :hover {
       background-color: ${Colors['bg-hover'].hex()};
       border-color: ${Colors['bg-status-small--accent'].hex()};
+
+      ${StyledDocumentIcon} {
+        display: none;
+      }
+
+      ${StyledDocumentIconHover} {
+        display: unset;
+      }
     }
 
     :active {
