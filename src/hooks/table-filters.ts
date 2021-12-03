@@ -11,9 +11,9 @@ export const DEFAULT_FILTER: FilterType = {
 
 export const filtersMap: FilterType[] = [
   { type: ALL_FILTER, label: 'columns' },
-  { type: 'Number', icon: 'NumberIcon' },
-  { type: 'String', icon: 'StringIcon' },
-  { type: 'Boolean', icon: 'BooleanIcon' },
+  { type: 'Number', icon: 'Number' },
+  { type: 'String', icon: 'String' },
+  { type: 'Boolean', icon: 'Boolean' },
   { type: 'Vector' },
   { type: 'Object' },
 ];
