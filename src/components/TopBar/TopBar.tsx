@@ -8,7 +8,7 @@ import { ChartActions } from 'components/TopBar';
 import EditableText from 'components/EditableText';
 import { useChat } from 'hooks/intercom';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 const TopBarWrapper = () => {
   const { data: user } = useUserInfo();

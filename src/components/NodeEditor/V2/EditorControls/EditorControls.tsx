@@ -6,12 +6,12 @@ import AutoAlignDropdown from './AutoAlignDropdown';
 
 type EditorControlsProps = {
   autoAlign?: boolean;
-  saveAutoAlign?: (autoAlign: boolean) => void;
+  onToggleAutoAlign?: (autoAlign: boolean) => void;
 };
 
 const EditorControls = ({
   autoAlign,
-  saveAutoAlign = () => {},
+  onToggleAutoAlign = () => {},
 }: EditorControlsProps) => {
   const { fitView, zoomIn, zoomOut } = useZoomPanHelper();
   const [isAutoAlignDropdownVisible, setIsAutoAlignDropdownVisible] =
@@ -38,7 +38,7 @@ const EditorControls = ({
           <AutoAlignDropdown
             initialValue={autoAlign}
             saveAutoAlign={(val) => {
-              saveAutoAlign(val);
+              onToggleAutoAlign(val);
               setIsAutoAlignDropdownVisible(false);
             }}
           />

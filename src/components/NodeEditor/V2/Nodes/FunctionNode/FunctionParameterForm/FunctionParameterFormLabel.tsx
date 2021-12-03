@@ -1,4 +1,4 @@
-import { Icon, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 const FunctionParameterFormLabel = ({
@@ -10,12 +10,9 @@ const FunctionParameterFormLabel = ({
 }) => {
   return (
     <Label>
-      {label}
-      {description && (
-        <Tooltip content={description}>
-          <Icon type="Info" />
-        </Tooltip>
-      )}
+      <Tooltip content={description} disabled={!description}>
+        <>{label}</>
+      </Tooltip>
     </Label>
   );
 };

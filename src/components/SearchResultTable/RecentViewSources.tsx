@@ -19,7 +19,7 @@ import {
 import { useCdfItems } from 'hooks/cognite-functions';
 import { useQueryClient } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
 import AssetSearchHit from './AssetSearchHit';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';

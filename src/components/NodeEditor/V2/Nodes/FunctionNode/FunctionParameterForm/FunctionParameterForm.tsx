@@ -2,7 +2,7 @@ import { Button, Input } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { OperationParametersTypeEnum } from '@cognite/calculation-backend';
 import { useState } from 'react';
-import { transformParamInput } from 'utils/transforms';
+import { transformParamInput } from '../../../transforms';
 import FunctionParameterFormLabel from './FunctionParameterFormLabel';
 import { ParameterFormProps } from './types';
 import FunctionParameterSelect from './FunctionParameterSelect';
@@ -15,6 +15,8 @@ const FunctionParameterForm = ({
   functionData = {},
   onFunctionDataChange,
 }: ParameterFormProps) => {
+  if (parameters.length === 0)
+    throw new Error('Missing parameters for generating the form');
   const [formData, setFormData] =
     useState<{ [key: string]: any }>(functionData);
 

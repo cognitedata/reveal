@@ -1,9 +1,30 @@
 import { Operation } from '@cognite/calculation-backend';
-import { NodeTypes } from 'models/node-editor/types';
-import { Elements, FlowExportObject, Node } from 'react-flow-renderer';
-import { transformParamInput } from 'utils/transforms';
+import { ChartWorkflowV2 } from 'models/chart/types';
+import { Elements, FlowElement, Node } from 'react-flow-renderer';
+import {
+  NodeTypes,
+  SourceOption,
+  NodeDataVariants,
+  NodeDataDehydratedVariants,
+  NodeCallbacks,
+} from './types';
+import { transformParamInput } from './transforms';
+import { FUNCTION_NODE_DRAG_HANDLE_CLASSNAME } from './constants';
+import {
+  ConstantNodeData,
+  ConstantNodeDataDehydrated,
+} from './Nodes/ConstantNode';
+import {
+  FunctionNodeData,
+  FunctionNodeDataDehydrated,
+} from './Nodes/FunctionNode/FunctionNode';
+import { OutputNodeData, OutputNodeDataDehydrated } from './Nodes/OutputNode';
+import { SourceNodeData, SourceNodeDataDehydrated } from './Nodes/SourceNode';
 
-export const updatePosition = (els: Elements, node: Node): Elements => {
+export const updatePosition = (
+  els: Elements<NodeDataDehydratedVariants>,
+  node: Node<NodeDataDehydratedVariants>
+): Elements => {
   return els.map((el) => {
     if (el.id === node.id) {
       return {
@@ -16,7 +37,7 @@ export const updatePosition = (els: Elements, node: Node): Elements => {
 };
 
 export const updateNodeData = (
-  els: Elements,
+  els: Elements<NodeDataDehydratedVariants>,
   nodeId: string,
   diff: any
 ): Elements => {
@@ -34,8 +55,27 @@ export const updateNodeData = (
   });
 };
 
+export const getDuplicatedNode = (
+  els: Elements<NodeDataDehydratedVariants>,
+  nodeId: string,
+  newNodeId: string
+): FlowElement<NodeDataDehydratedVariants> | undefined => {
+  const elementToDuplicate = els.find((el) => el.id === nodeId) as Node;
+  if (!elementToDuplicate) {
+    return undefined;
+  }
+  return {
+    ...elementToDuplicate,
+    id: newNodeId,
+    position: {
+      x: elementToDuplicate.position.x + 50,
+      y: elementToDuplicate.position.y + 50,
+    },
+  };
+};
+
 export const duplicateNode = (
-  els: Elements,
+  els: Elements<NodeDataDehydratedVariants>,
   nodeId: string,
   newNodeId: string
 ) => {
@@ -70,60 +110,90 @@ export const initializeFunctionData = (
   return functionData;
 };
 
-export const restoreSavedFlow = (
-  flow: FlowExportObject,
-  callbacks: Record<string, Function | undefined>,
-  outputColor: string
-): Elements => {
+export const rehydrateStoredFlow = (
+  workflow: ChartWorkflowV2,
+  sources: SourceOption[],
+  callbacks: NodeCallbacks
+): Elements<NodeDataVariants> => {
+  if (workflow?.version !== 'v2') {
+    return [];
+  }
+
+  const { flow } = workflow;
+
+  if (!flow) {
+    return [];
+  }
+
   const {
     onSourceItemChange,
     onConstantChange,
     onFunctionDataChange,
     onOutputNameChange,
-    saveOutputName,
     onDuplicateNode,
     onRemoveNode,
   } = callbacks;
 
-  return flow.elements.map((el) => {
+  const outputElements: Elements<NodeDataVariants> = flow.elements.map((el) => {
     switch (el.type) {
       case NodeTypes.SOURCE:
         return {
-          ...el,
+          ...(el as FlowElement<SourceNodeDataDehydrated>),
           data: {
             ...el.data,
+            sourceOptions: sources,
             onSourceItemChange,
             onDuplicateNode,
             onRemoveNode,
-          },
+          } as SourceNodeData,
         };
       case NodeTypes.CONSTANT:
         return {
-          ...el,
-          data: { ...el.data, onConstantChange, onDuplicateNode, onRemoveNode },
+          ...(el as FlowElement<ConstantNodeDataDehydrated>),
+          data: {
+            ...el.data,
+            onConstantChange,
+            onDuplicateNode,
+            onRemoveNode,
+          } as ConstantNodeData,
         };
       case NodeTypes.FUNCTION:
         return {
-          ...el,
+          ...(el as FlowElement<FunctionNodeDataDehydrated>),
+          dragHandle: `.${FUNCTION_NODE_DRAG_HANDLE_CLASSNAME}`,
           data: {
             ...el.data,
             onFunctionDataChange,
             onDuplicateNode,
             onRemoveNode,
-          },
+          } as FunctionNodeData,
         };
       case NodeTypes.OUTPUT:
         return {
-          ...el,
+          ...(el as FlowElement<OutputNodeDataDehydrated>),
           data: {
             ...el.data,
-            saveOutputName,
+            name: workflow.name,
+            color: workflow.color,
             onOutputNameChange,
-            color: outputColor,
-          },
+          } as OutputNodeData,
         };
       default:
-        return el;
+        return el as FlowElement<NodeDataVariants>;
     }
   });
+
+  return outputElements;
+};
+
+export const getOutputNodePosition = (element?: HTMLDivElement | null) => {
+  return element
+    ? {
+        x: element.getBoundingClientRect().width - 250,
+        y: element.getBoundingClientRect().height / 2,
+      }
+    : {
+        x: 1000,
+        y: 200,
+      };
 };

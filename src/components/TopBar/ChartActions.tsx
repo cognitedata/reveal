@@ -10,7 +10,7 @@ import SharingDropdown from 'components/SharingDropdown/SharingDropdown';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 export const ChartActions = () => {
   const { takeScreenshot } = useScreenshot();

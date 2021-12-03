@@ -1,7 +1,7 @@
 import { AutoComplete } from '@cognite/cogs.js';
 import { Chart, ChartWorkflow, StorableNode } from 'models/chart/types';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { ConfigPanelComponentProps } from '.';
 
 export const effectId = 'OUTPUT';

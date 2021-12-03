@@ -4,7 +4,7 @@ import { DateRange, Button } from '@cognite/cogs.js';
 import TimeSelector from 'components/TimeSelector';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { useState } from 'react';
 
 const relativeTimeOptions = [

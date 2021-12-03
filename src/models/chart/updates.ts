@@ -1,6 +1,6 @@
 import { Timeseries } from '@cognite/sdk';
 import { AxisUpdate } from 'components/PlotlyChart';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Chart,
   ChartSettings,
@@ -13,7 +13,7 @@ import { getEntryColor } from 'utils/colors';
 import { convertTsToWorkFlow } from 'utils/timeseries';
 
 export function duplicate(chart: Chart, login: UserInfo): Chart {
-  const id = nanoid();
+  const id = uuidv4();
   return {
     ...chart,
     id,
@@ -119,7 +119,7 @@ export function duplicateWorkflow(chart: Chart, wfId: string): Chart {
   if (wf) {
     const newWf = {
       ...wf,
-      id: nanoid(),
+      id: uuidv4(),
       name: `${wf.name} Copy`,
       color: getEntryColor(chart.id, wf.id),
     };
@@ -159,7 +159,7 @@ export function covertTSToChartTS(
   range: number[] = []
 ): ChartTimeSeries {
   return {
-    id: nanoid(),
+    id: uuidv4(),
     name: ts.name || ts.externalId || ts.id.toString(),
     tsId: ts.id,
     tsExternalId: ts.externalId,

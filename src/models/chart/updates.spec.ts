@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { Chart, ChartTimeSeries, ChartWorkflow } from './types';
 import {
   addTimeseries,
@@ -11,7 +11,7 @@ import {
 } from './updates';
 
 describe('charts util', () => {
-  const id = nanoid();
+  const id = uuidv4();
   const chart: Chart = {
     id,
     version: 1,

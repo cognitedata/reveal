@@ -2,7 +2,7 @@ import { Menu } from '@cognite/cogs.js';
 import { convertTimeseriesToWorkflow } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 type Props = {
   id: string;

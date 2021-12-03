@@ -14,7 +14,7 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { timeseriesSummaryById } from 'models/timeseries/selectors';
 import flow from 'lodash/flow';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { isEqual } from 'lodash';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';

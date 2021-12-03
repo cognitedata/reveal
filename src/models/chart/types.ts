@@ -1,4 +1,5 @@
 import { Node, Connection } from '@cognite/connect';
+import { NodeDataDehydratedVariants } from 'components/NodeEditor/V2/types';
 import { FlowExportObject } from 'react-flow-renderer';
 
 export type Chart = {
@@ -85,7 +86,7 @@ export type ChartWorkflowV1 = ChartWorkflowBase & {
  */
 export type ChartWorkflowV2 = ChartWorkflowBase & {
   version: 'v2';
-  flow?: FlowExportObject;
+  flow?: FlowExportObject<NodeDataDehydratedVariants>;
 };
 
 export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;
@@ -95,6 +96,8 @@ export type StorableNode = Omit<Node, 'functionEffect'> & {
 };
 
 export type CalculationCallRef = {
+  id: string;
+  status: string;
   callId: string;
   callDate: number;
   hash?: number;

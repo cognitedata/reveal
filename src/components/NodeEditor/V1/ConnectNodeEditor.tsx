@@ -13,9 +13,9 @@ import {
   CtxPosition,
 } from '@cognite/connect';
 import { Menu, Dropdown, Button } from '@cognite/cogs.js';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import workflowBackgroundSrc from 'assets/workflowBackground.png';
-import defaultNodeOptions from 'components/Nodes';
+import defaultNodeOptions from 'components/NodeEditor/V1/Nodes';
 import {
   Chart,
   ChartWorkflow,
@@ -23,7 +23,8 @@ import {
   StorableNode,
 } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
-import { getStepsFromWorkflowConnect } from 'utils/transforms';
+import { SetterOrUpdater } from 'recoil';
+import { getStepsFromWorkflowConnect } from './transforms';
 import { pinTypes } from './utils';
 import ConfigPanel from './ConfigPanel';
 
@@ -43,14 +44,14 @@ type WorkflowEditorProps = {
   chart: Chart;
   workflowId: string;
   closeNodeEditor: () => void;
-  mutate: (update: (c: Chart | undefined) => Chart) => void;
+  setChart: SetterOrUpdater<Chart | undefined>;
 };
 
 const ConnectNodeEditor = ({
   workflowId,
   chart,
   closeNodeEditor,
-  mutate,
+  setChart,
 }: WorkflowEditorProps) => {
   const [activeNode, setActiveNode] = useState<StorableNode>();
   const [isAddNodeMenuOpen, setAddNodeMenuVisibility] = useState(false);
@@ -87,7 +88,7 @@ const ConnectNodeEditor = ({
   const update = (diff: Partial<ChartWorkflow>) => {
     const applicableDiff = pick(diff, ['nodes', 'connections']);
 
-    mutate((oldChart) => ({
+    setChart((oldChart) => ({
       ...oldChart!,
       workflowCollection: oldChart?.workflowCollection?.map((wf) =>
         wf.id === workflowId
@@ -225,7 +226,7 @@ const ConnectNodeEditor = ({
                       nodes: [
                         ...nodes,
                         {
-                          id: nanoid(),
+                          id: uuidv4(),
                           ...nodeOption.node,
                           ...nodePosition,
                           calls: [],
@@ -276,7 +277,7 @@ const ConnectNodeEditor = ({
                   key={nodeOption.name}
                   onClick={() => {
                     setNewNode({
-                      id: nanoid(),
+                      id: uuidv4(),
                       ...nodeOption.node,
                       ...newNodePosition,
                       calls: [],

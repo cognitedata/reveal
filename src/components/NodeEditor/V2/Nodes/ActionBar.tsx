@@ -1,8 +1,8 @@
 import { Operation } from '@cognite/calculation-backend';
 import { Button, Modal } from '@cognite/cogs.js';
-import { NodeTypes } from 'models/node-editor/types';
 import { useState } from 'react';
 import styled from 'styled-components/macro';
+import { NodeTypes } from '../types';
 import { NodeWrapper } from './elements';
 
 export type ActionBarProps = {

@@ -1,13 +1,16 @@
 import { Meta, Story } from '@storybook/react';
 import { Col, List, Row } from 'antd';
-import DetailsBlock, { DetailsBlockProps } from './DetailsBlock';
+import { ComponentProps } from 'react';
+import DetailsBlock from './DetailsBlock';
 
 export default {
   component: DetailsBlock,
   title: 'Components/Common/DetailsBlock',
 } as Meta;
 
-const Template: Story<DetailsBlockProps> = (args) => <DetailsBlock {...args} />;
+const Template: Story<ComponentProps<typeof DetailsBlock>> = (args) => (
+  <DetailsBlock {...args} />
+);
 
 export const EmptyBlock = Template.bind({});
 

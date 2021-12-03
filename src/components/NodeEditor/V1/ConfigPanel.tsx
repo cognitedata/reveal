@@ -1,10 +1,10 @@
 import { Button, Input } from '@cognite/cogs.js';
 import { createElement, useEffect, useState } from 'react';
 import { StorableNode } from 'models/chart/types';
-import defaultNodeOptions from 'components/Nodes';
+import defaultNodeOptions from 'components/NodeEditor/V1/Nodes';
 import styled from 'styled-components/macro';
 
-import { effectId as OutputSeriesEffectId } from 'components/Nodes/OutputSeries';
+import { effectId as OutputSeriesEffectId } from 'components/NodeEditor/V1/Nodes/OutputSeries';
 
 const ConfigPanelWrapper = styled.div`
   position: absolute;

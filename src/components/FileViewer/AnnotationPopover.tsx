@@ -15,7 +15,7 @@ import {
 import { trackUsage } from 'services/metrics';
 import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 export const AnnotationPopover = ({
   annotations,

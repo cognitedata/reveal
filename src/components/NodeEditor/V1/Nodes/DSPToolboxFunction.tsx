@@ -8,14 +8,11 @@ import {
   OperationParameters,
   OperationParametersTypeEnum,
 } from '@cognite/calculation-backend';
-import {
-  getConfigFromDspFunction,
-  transformParamInput,
-} from 'utils/transforms';
 import { StorableNode } from 'models/chart/types';
 import { trackUsage } from 'services/metrics';
 import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 import ToolboxFunctionDropdown from 'components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
+import { getConfigFromDspFunction, transformParamInput } from '../transforms';
 import { ConfigPanelComponentProps } from '.';
 import { DSPToolboxFunctionInput } from './DSPToolboxFunctionInput';
 import { getCategoriesFromToolFunctions } from './utils';

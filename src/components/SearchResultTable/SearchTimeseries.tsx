@@ -15,7 +15,7 @@ import { calculateDefaultYAxis } from 'utils/axis';
 import { trackUsage } from 'services/metrics';
 import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
 import RecentViewSources from './RecentViewSources';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';

@@ -8,7 +8,7 @@ import {
 } from 'react';
 import * as React from 'react';
 import { compact } from 'lodash';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { Chart, ChartTimeSeries } from 'models/chart/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
@@ -162,7 +162,7 @@ export const OpenInCharts: FC = () => {
       shouldBeAddedToExistingChart && existingChart
         ? existingChart
         : {
-            id: nanoid(),
+            id: uuidv4(),
             user: login?.id,
             userInfo: login,
             name: chartName,

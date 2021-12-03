@@ -1,22 +1,22 @@
-import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import ToolboxFunctionDropdown from 'components/ToolboxFunctionDropdown/ToolboxFunctionDropdown';
 import { SourceCircle, SourceSquare } from 'pages/ChartView/elements';
 import { useState } from 'react';
-import { getCategoriesFromToolFunctions } from 'components/Nodes/utils';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { getCategoriesFromToolFunctions } from 'components/NodeEditor/V1/Nodes/utils';
 import styled from 'styled-components/macro';
 import Layers from 'utils/z-index';
 import { Operation } from '@cognite/calculation-backend';
+import { Elements } from 'react-flow-renderer';
+import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 
 interface AddButtonProps {
-  sources: (ChartTimeSeries | ChartWorkflow)[];
-  operations: [boolean, (Error | undefined)?, (Operation[] | undefined)?];
-  addSourceNode: (
-    event: React.MouseEvent,
-    source: ChartTimeSeries | ChartWorkflow
-  ) => void;
+  elements: Elements<NodeDataVariants>;
+  sources: SourceOption[];
+  operations: Operation[];
+  addSourceNode: (event: React.MouseEvent, source: SourceOption) => void;
   addFunctionNode: (event: React.MouseEvent, func: Operation) => void;
   addConstantNode: (event: React.MouseEvent) => void;
+  addOutputNode: (event: React.MouseEvent) => void;
 }
 
 interface AddMenuProps extends AddButtonProps {
@@ -28,14 +28,18 @@ export const SourceListDropdown = ({
   addSourceNode,
 }: Omit<
   AddButtonProps,
-  'operations' | 'addFunctionNode' | 'addConstantNode'
+  | 'elements'
+  | 'operations'
+  | 'addFunctionNode'
+  | 'addConstantNode'
+  | 'addOutputNode'
 >) => {
   return (
     <SourceDropdownMenu>
       <Menu.Header>Select wanted sources</Menu.Header>
       {sources.map((source) => (
         <SourceMenuItem
-          key={source.id}
+          key={source.value}
           onClick={(event) => addSourceNode(event, source)}
         >
           {source.type === 'timeseries' ? (
@@ -43,7 +47,7 @@ export const SourceListDropdown = ({
           ) : (
             <SourceSquare color={source?.color} fade={false} />
           )}
-          {source.name}
+          {source.label}
         </SourceMenuItem>
       ))}
     </SourceDropdownMenu>
@@ -51,14 +55,16 @@ export const SourceListDropdown = ({
 };
 
 export const AddMenu = ({
+  elements,
   sources,
   operations,
   addSourceNode,
   addFunctionNode,
   addConstantNode,
+  addOutputNode,
   onFunctionSelected = () => {},
 }: AddMenuProps) => {
-  const [isLoading, _, functions = []] = operations;
+  const hasOutputNode = elements.some((el) => el.type === NodeTypes.OUTPUT);
 
   return (
     <AddDropdownMenu>
@@ -69,12 +75,11 @@ export const AddMenu = ({
       >
         <span>Source</span>
       </Menu.Submenu>
-      {isLoading && <Icon type="Loading" />}
-      {!!functions.length && (
+      {!!operations.length && (
         <ToolboxFunctionDropdown
           categories={{
             Recent: [],
-            ...getCategoriesFromToolFunctions(functions),
+            ...getCategoriesFromToolFunctions(operations),
           }}
           onFunctionSelected={(func: Operation, event: React.MouseEvent) => {
             onFunctionSelected(func);
@@ -85,16 +90,19 @@ export const AddMenu = ({
         </ToolboxFunctionDropdown>
       )}
       <Menu.Item onClick={addConstantNode}>Constant</Menu.Item>
+      {!hasOutputNode && <Menu.Item onClick={addOutputNode}>Output</Menu.Item>}
     </AddDropdownMenu>
   );
 };
 
 const AddButton = ({
+  elements,
   sources,
   operations,
   addSourceNode,
   addFunctionNode,
   addConstantNode,
+  addOutputNode,
 }: AddButtonProps) => {
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
 
@@ -105,11 +113,13 @@ const AddButton = ({
         onClickOutside={() => setIsMenuVisible(false)}
         content={
           <AddMenu
+            elements={elements}
             sources={sources}
             operations={operations}
             addSourceNode={addSourceNode}
             addFunctionNode={addFunctionNode}
             addConstantNode={addConstantNode}
+            addOutputNode={addOutputNode}
             onFunctionSelected={() => setIsMenuVisible(false)}
           />
         }

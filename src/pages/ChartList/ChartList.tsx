@@ -10,7 +10,7 @@ import {
 } from '@cognite/cogs.js';
 import { Chart } from 'models/chart/types';
 import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { subDays } from 'date-fns';
 import { useNavigate } from 'hooks/navigation';
 import ChartListItem, { ViewOption } from 'components/ChartListItem';
@@ -19,7 +19,7 @@ import { CHART_VERSION } from 'config/';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useResetRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -92,7 +92,7 @@ const ChartList = () => {
     dateFrom.setHours(0, 0);
     const dateTo = new Date();
     dateTo.setHours(23, 59);
-    const id = nanoid();
+    const id = uuidv4();
     const newChart: Chart = {
       id,
       user: login?.id,

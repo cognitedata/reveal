@@ -1,16 +1,19 @@
 import { Edge, Elements, Node } from 'react-flow-renderer';
 import { Connection } from '@cognite/connect';
 import {
+  Chart,
+  ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV1,
   ChartWorkflowV2,
 } from 'models/chart/types';
-import { node as SourceNode } from 'components/Nodes/SourceReference';
-import { node as ConstantNode } from 'components/Nodes/Constant';
-import { node as FunctionNode } from 'components/Nodes/DSPToolboxFunction';
-import { node as OutputNode } from 'components/Nodes/OutputSeries';
-import { getConfigFromDspFunction } from 'utils/transforms';
-import { NodeTypes, SourceOption } from 'models/node-editor/types';
+import { node as SourceNode } from 'components/NodeEditor/V1/Nodes/SourceReference';
+import { node as ConstantNode } from 'components/NodeEditor/V1/Nodes/Constant';
+import { node as FunctionNode } from 'components/NodeEditor/V1/Nodes/DSPToolboxFunction';
+import { node as OutputNode } from 'components/NodeEditor/V1/Nodes/OutputSeries';
+import { NodeTypes, SourceOption } from 'components/NodeEditor/V2/types';
+import { ComputationStep } from '@cognite/calculation-backend';
+import { getConfigFromDspFunction } from './V1/transforms';
 
 export const isWorkflowRunnable = (workflow: ChartWorkflow) => {
   if (!workflow.version) {
@@ -120,4 +123,62 @@ export const convertWorkflowToV1 = (
   });
 
   return { version: '', nodes, connections };
+};
+
+export const getSourcesFromChart = (chart: Chart | undefined) => {
+  if (!chart) {
+    return [];
+  }
+
+  const sourceOptions: (ChartWorkflow | ChartTimeSeries)[] = [
+    ...(chart.timeSeriesCollection || []).map((ts) => ({
+      type: 'timeseries',
+      ...ts,
+    })),
+    ...(chart.workflowCollection || []).map((wf) => ({
+      type: 'workflow',
+      ...wf,
+    })),
+  ];
+
+  return sourceOptions;
+};
+
+export const getSourceOption = (
+  source: ChartWorkflow | ChartTimeSeries
+): SourceOption => {
+  return {
+    type: source.type as 'timeseries' | 'workflow',
+    label: source.name,
+    color: source.color,
+    value: source.id,
+  };
+};
+
+/**
+ * This will be unnecessary if we change to use tsExternalId
+ * as 'value' for timeseries sources in getSourceOption
+ *
+ * The reason for not doing it straight away is that I
+ * didn't want to break the existing charts/calculations
+ */
+export const resolveTimeseriesSourceInSteps = (
+  steps: ComputationStep[] = [],
+  sources: ChartTimeSeries[] = []
+): ComputationStep[] => {
+  return steps.map((step) => {
+    return {
+      ...step,
+      inputs: step.inputs.map((input) => {
+        if (input.type === 'ts') {
+          return {
+            ...input,
+            value:
+              sources.find(({ id }) => id === input.value)?.tsExternalId || '',
+          };
+        }
+        return input;
+      }),
+    };
+  });
 };

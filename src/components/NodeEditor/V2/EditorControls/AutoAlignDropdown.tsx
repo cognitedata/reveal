@@ -1,3 +1,4 @@
+import styled from 'styled-components/macro';
 import {
   Button,
   Icon,
@@ -6,8 +7,7 @@ import {
   Title,
   Tooltip,
 } from '@cognite/cogs.js';
-import { useState } from 'react';
-import styled from 'styled-components/macro';
+import { useState, useEffect } from 'react';
 
 type AutoAlignDropdownProps = {
   initialValue?: boolean;
@@ -19,6 +19,10 @@ const AutoAlignDropdown = ({
   saveAutoAlign,
 }: AutoAlignDropdownProps) => {
   const [autoAlign, setAutoAlign] = useState(initialValue);
+
+  useEffect(() => {
+    setAutoAlign(initialValue);
+  }, [initialValue]);
 
   return (
     <Menu style={{ marginBottom: 10 }}>

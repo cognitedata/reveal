@@ -13,7 +13,7 @@ import { Chart } from 'models/chart/types';
 
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 interface SharingDropdownProps {
   chart: Chart;

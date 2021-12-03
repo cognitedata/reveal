@@ -35,8 +35,10 @@ import {
 import { removeWorkflow, updateWorkflow } from 'models/chart/updates';
 import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
-import { getStepsFromWorkflow } from 'utils/transforms';
 import { convertValue } from 'utils/units';
+import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
+import { getStepsFromWorkflow } from 'components/NodeEditor/transforms';
+import { validateSteps } from 'components/NodeEditor/V2/calculations';
 import {
   SourceDescription,
   SourceItem,
@@ -94,6 +96,8 @@ export default function WorkflowRow({
   const call = calls?.sort((c) => c.callDate)[0];
   const isWorkspaceMode = mode === 'workspace';
 
+  const [, , operations] = useAvailableOps();
+
   const update = (wfId: string, diff: Partial<ChartWorkflow>) => {
     mutate((oldChart) => updateWorkflow(oldChart!, wfId, diff));
   };
@@ -102,7 +106,9 @@ export default function WorkflowRow({
     () =>
       isWorkflowRunnable(workflow) ? getStepsFromWorkflow(chart, workflow) : [],
     [chart, workflow]
-  );
+  ) as Calculation['steps'];
+
+  const isStepsValid = validateSteps(steps, operations);
 
   const [{ dateFrom, dateTo }] = useDebounce(
     { dateFrom: chart.dateFrom, dateTo: chart.dateTo },
@@ -130,10 +136,20 @@ export default function WorkflowRow({
   const runComputation = useCallback(() => {
     const computationCopy: Calculation = JSON.parse(stringifiedComputation);
 
-    const isComputationValid =
-      computationCopy.steps.length &&
-      computationCopy.steps.every((step) => step.inputs.length);
-    if (!isComputationValid) {
+    if (!isStepsValid) {
+      mutate((oldChart) =>
+        updateWorkflow(oldChart!, workflow.id, {
+          calls: [],
+        })
+      );
+      setWorkflowState((workflows) => ({
+        ...workflows,
+        [id]: {
+          id,
+          loading: false,
+          datapoints: [],
+        },
+      }));
       return;
     }
 
@@ -154,9 +170,32 @@ export default function WorkflowRow({
             })
           );
         },
+        onError() {
+          mutate((oldChart) =>
+            updateWorkflow(oldChart!, workflow.id, {
+              calls: [],
+            })
+          );
+          setWorkflowState((workflows) => ({
+            ...workflows,
+            [id]: {
+              id,
+              loading: false,
+              datapoints: [],
+            },
+          }));
+        },
       }
     );
-  }, [stringifiedComputation, createCalculation, mutate, workflow.id]);
+  }, [
+    id,
+    setWorkflowState,
+    stringifiedComputation,
+    createCalculation,
+    mutate,
+    workflow.id,
+    isStepsValid,
+  ]);
 
   const currentCallStatus = useCalculationStatus(call?.callId!);
 

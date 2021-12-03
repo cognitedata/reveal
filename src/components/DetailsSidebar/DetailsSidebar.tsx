@@ -106,7 +106,7 @@ export default function DetailsSidebar({
         <Container>
           <SourceHeader sourceItem={sourceItem} />
           {selectedMenu === 'metadata' && <Metadata sourceItem={sourceItem} />}
-          {selectedMenu === 'statistics' && (
+          {selectedMenu === 'statistics' && visible && (
             <Statistics sourceItem={sourceItem} />
           )}
         </Container>

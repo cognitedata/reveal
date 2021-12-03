@@ -20,7 +20,7 @@ import Layers from 'utils/z-index';
 import AssetSearchHit from 'components/SearchResultTable/AssetSearchHit';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 
 export const FileView = () => {
   const [chart, setChart] = useRecoilState(chartAtom);

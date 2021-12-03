@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { useSDK } from '@cognite/sdk-provider';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from 'react-query';
 import { units } from 'utils/units';
@@ -99,43 +99,39 @@ export const useStatistics = (
     debouncedPrevDatesAsString !== debouncedDatesAsString;
 
   useEffect(() => {
-    if (!sourceItem) {
-      return;
+    if (!sourceItem) return;
+
+    if (!sourceChanged && !datesChanged) {
+      if (statistics) return;
+      if (statisticsCall && !callStatusError) return;
     }
 
-    if (!sourceChanged) {
-      if (!datesChanged) {
-        if (statistics) {
-          return;
-        }
-        if (statisticsCall && !callStatusError) {
-          return;
-        }
+    let identifier;
+    if (sourceItem.type === 'timeseries') {
+      identifier = (sourceItem as ChartTimeSeries).tsExternalId;
+    } else {
+      const backendCalls = (sourceItem as ChartWorkflow).calls;
+      if (backendCalls && backendCalls.length > 0) {
+        identifier = backendCalls[0].callId;
+      } else {
+        return;
       }
     }
 
-    const identifier =
-      sourceItem?.type === 'timeseries'
-        ? (sourceItem as ChartTimeSeries).tsExternalId
-        : (sourceItem as ChartWorkflow).calls?.[0].callId;
-    if (!identifier) {
-      return;
-    }
+    if (!identifier) return;
 
     const statisticsParameters: CreateStatisticsParams = {
       start_time: new Date(dateFrom).getTime(),
       end_time: new Date(dateTo).getTime(),
       histogram_options: { num_boxes: 10 }, // (eiriklv): This should be chosen by user at some point
-      ...(sourceItem?.type === 'timeseries'
+      ...(sourceItem.type === 'timeseries'
         ? { tag: identifier }
         : { calculation_id: identifier }),
     };
 
     const hashOfParams = getHash(statisticsParameters);
 
-    if (hashOfParams === statisticsCall?.hash) {
-      return;
-    }
+    if (hashOfParams === statisticsCall?.hash) return;
 
     async function createStatistics() {
       if (
@@ -179,9 +175,7 @@ export const useStatistics = (
     sourceChanged,
   ]);
 
-  return {
-    results: statisticsData?.results,
-  };
+  return { results: statisticsData?.results };
 };
 
 export const getDisplayUnit = (preferredUnit?: string) => {

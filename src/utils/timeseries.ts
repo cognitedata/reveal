@@ -1,11 +1,11 @@
-import { node as TimeSeriesReferenceNode } from 'components/Nodes/TimeSeriesReference';
-import { node as OutputSeriesNode } from 'components/Nodes/OutputSeries';
+import { node as TimeSeriesReferenceNode } from 'components/NodeEditor/V1/Nodes/TimeSeriesReference';
+import { node as OutputSeriesNode } from 'components/NodeEditor/V1/Nodes/OutputSeries';
 import {
   ChartTimeSeries,
   ChartWorkflow,
   ChartWorkflowV1,
 } from 'models/chart/types';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import { getEntryColor } from './colors';
 
 export const calculateGranularity = (
@@ -48,10 +48,10 @@ export const convertTsToWorkFlow = (
   chartId: string,
   ts: ChartTimeSeries
 ): ChartWorkflow => {
-  const workflowId = nanoid();
-  const inputNodeId = `${TimeSeriesReferenceNode.subtitle}-${nanoid()}`;
-  const outputNodeId = `${OutputSeriesNode.subtitle}-${nanoid()}`;
-  const connectionId = nanoid();
+  const workflowId = uuidv4();
+  const inputNodeId = `${TimeSeriesReferenceNode.subtitle}-${uuidv4()}`;
+  const outputNodeId = `${OutputSeriesNode.subtitle}-${uuidv4()}`;
+  const connectionId = uuidv4();
 
   /**
    * TODO: This needs to be updated when React Flow has been implemented.

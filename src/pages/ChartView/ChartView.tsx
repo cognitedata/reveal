@@ -19,7 +19,7 @@ import PlotlyChartComponent from 'components/PlotlyChart/PlotlyChart';
 import DateRangeSelector from 'components/DateRangeSelector';
 import Search from 'components/Search';
 import { useChart, useUpdateChart } from 'hooks/firebase';
-import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 import {
   ChartTimeSeries,
   ChartWorkflow,
@@ -37,7 +37,12 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { addWorkflow } from 'models/chart/updates';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
+import { Elements } from 'react-flow-renderer';
+import {
+  NodeDataDehydratedVariants,
+  NodeTypes,
+} from 'components/NodeEditor/V2/types';
 import SourceRows from './SourceRows';
 
 import {
@@ -186,7 +191,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
     }
   };
 
-  const closeNodeEditor = () => {
+  const handleCloseEditor = () => {
     setWorkspaceMode('workspace');
     if (editorTimer) {
       editorTimer.stop();
@@ -199,14 +204,30 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       return;
     }
 
-    const newWorkflowId = nanoid();
+    const newWorkflowId = uuidv4();
+
+    /**
+     * The current template is just an output node
+     * that's added for you (but it could be anything!)
+     */
+    const elementsTemplate: Elements<NodeDataDehydratedVariants> = [
+      {
+        id: uuidv4(),
+        type: NodeTypes.OUTPUT,
+        position: { x: 400, y: 150 },
+      },
+    ];
 
     const newWorkflow = {
       version: 'v2',
       id: newWorkflowId,
       name: 'New Calculation',
       color: getEntryColor(chart.id, newWorkflowId),
-      flow: { elements: [], position: [0, 0], zoom: 1 },
+      flow: {
+        elements: elementsTemplate,
+        position: [0, 0],
+        zoom: 1,
+      },
       lineWeight: 1,
       lineStyle: 'solid',
       enabled: true,
@@ -584,9 +605,9 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
                       </SourceTableWrapper>
                       {workspaceMode === 'editor' && !!selectedSourceId && (
                         <NodeEditor
-                          mutate={setChart}
+                          setChart={setChart}
                           workflowId={selectedSourceId}
-                          closeNodeEditor={closeNodeEditor}
+                          onClose={handleCloseEditor}
                           chart={chart}
                         />
                       )}

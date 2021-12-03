@@ -1,30 +1,40 @@
 import { Select } from '@cognite/cogs.js';
-import { NodeTypes, SourceOption } from 'models/node-editor/types';
 import { memo } from 'react';
-import { Position } from 'react-flow-renderer';
+import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
+import { NodeTypes, SourceOption } from '../types';
 import { ColorBlock, InputWrapper, NodeWrapper } from './elements';
 import NodeHandle from './NodeHandle';
 import NodeWithActionBar from './NodeWithActionBar';
 
-type SourceNodeProps = {
-  id: string;
-  data: {
-    type: string;
-    sourceOptions: SourceOption[];
-    selectedSourceId: string;
-    onSourceItemChange: (
-      nodeId: string,
-      selectedItemId: string,
-      selectedItemType: string
-    ) => void;
-    onDuplicateNode: (nodeId: string, nodeType: NodeTypes) => void;
-    onRemoveNode: (nodeId: string) => void;
-  };
-  selected: boolean;
+export type SourceNodeDataDehydrated = {
+  selectedSourceId: string;
+  type?: string;
 };
 
-const SourceNode = memo(({ id, data, selected }: SourceNodeProps) => {
+export type SourceNodeCallbacks = {
+  onSourceItemChange: (
+    nodeId: string,
+    selectedItemId: string,
+    selectedItemType: string
+  ) => void;
+  onDuplicateNode: (nodeId: string, nodeType: NodeTypes) => void;
+  onRemoveNode: (nodeId: string) => void;
+};
+
+export type SourceNodeData = SourceNodeDataDehydrated &
+  SourceNodeCallbacks & {
+    sourceOptions: SourceOption[];
+  };
+
+const emptySourceOption: SourceOption = {
+  type: 'timeseries',
+  label: 'No source selected',
+  color: '#FFF',
+  value: '',
+};
+
+const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
   const {
     selectedSourceId,
     sourceOptions,
@@ -32,8 +42,10 @@ const SourceNode = memo(({ id, data, selected }: SourceNodeProps) => {
     onDuplicateNode,
     onRemoveNode,
   } = data;
+
   const sourceItem =
-    sourceOptions.find((s) => s.value === selectedSourceId) || sourceOptions[0];
+    sourceOptions.find((s) => s.value === selectedSourceId) ||
+    emptySourceOption;
 
   return (
     <NodeWithActionBar
@@ -50,7 +62,7 @@ const SourceNode = memo(({ id, data, selected }: SourceNodeProps) => {
         <div>Source</div>
         <NodeHandle id="result" type="source" position={Position.Right} />
         <InputWrapper>
-          <ColorBlock color={sourceItem?.color} />
+          <ColorBlock color={sourceItem.color} />
           <SelectWrapper>
             <Select
               value={sourceItem}

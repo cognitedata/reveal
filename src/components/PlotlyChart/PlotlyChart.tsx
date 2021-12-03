@@ -1,6 +1,6 @@
 import { DatapointsMultiQuery } from '@cognite/sdk';
 import { useSDK } from '@cognite/sdk-provider';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { timeseriesAtom } from 'models/timeseries/atom';
 import { availableWorkflows } from 'models/workflows/selectors';
 import dayjs from 'dayjs';

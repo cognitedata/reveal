@@ -17,7 +17,7 @@ import { trackUsage } from 'services/metrics';
 import Highlighter from 'react-highlight-words';
 import { useAddToRecentLocalStorage } from 'hooks/recently-used';
 import { useRecoilState } from 'recoil';
-import { chartAtom } from 'models/chart/atom';
+import chartAtom from 'models/chart/atom';
 import { AxisUpdate } from 'components/PlotlyChart';
 import { removeIllegalCharacters } from 'utils/text';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
