@@ -13,9 +13,15 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          cache: yarn
+          registry-url: "https://registry.npmjs.org"
+
       - name: Update dependencies
         env:
-          NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
         run: yarn upgrade
 
       - name: Create Pull Request
@@ -25,4 +31,6 @@ jobs:
           title: "chore(deps): update packages"
           body: Packages updated using yarn upgrade
           branch: yarn-upgrade
-          labels: auto-merge
+          labels: |
+            auto-merge
+            dependencies
