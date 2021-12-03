@@ -20,13 +20,12 @@ import {
   UserPrefferedUnit,
 } from 'constants/units';
 
-import { TrajectoryColumnR, Well, Wellbore } from '../types';
+import { TrajectoryColumnR, Well } from '../types';
 import {
   convertObject,
   getPrestineWellIds,
   mapWellboresToThreeD,
   toBooleanMap,
-  getDummyNptEventForWellbore,
   getRangeLimitInUnit,
 } from '../utils';
 import { convertPressure } from '../utils/common';
@@ -265,32 +264,6 @@ describe('Common Utils', () => {
     expect(results).toEqual({
       1: true,
       2: true,
-    });
-  });
-});
-
-describe('NPT events utils', () => {
-  it('should return a dummy NPT event with given wellbore data', () => {
-    const wellbore: Wellbore = {
-      id: 12345,
-      name: 'name',
-      description: 'description',
-      metadata: { wellName: 'wellName' },
-      sourceWellbores: [],
-      ...mockWellboreOptions,
-    };
-
-    expect(getDummyNptEventForWellbore(wellbore)).toEqual({
-      parentExternalId: '',
-      parentType: '',
-      sourceEventExternalId: '',
-      source: '',
-      startTime: 0,
-      endTime: 0,
-      duration: 0,
-      wellboreId: 12345,
-      wellName: 'wellName',
-      wellboreName: 'description',
     });
   });
 });

@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 
 import { scaleBand, scaleLinear } from 'd3-scale';
-import compact from 'lodash/compact';
-import get from 'lodash/get';
-import uniq from 'lodash/uniq';
 
 import {
   Accessors,
@@ -11,6 +8,8 @@ import {
   Margins,
   ScaleRange,
 } from 'components/charts/types';
+
+import { useYScaleDomain } from './useYScaleDomain';
 
 const RANGE_MIN_SCALE_FACTOR = 0.98;
 const RANGE_MAX_SCALE_FACTOR = 1.02;
@@ -22,7 +21,7 @@ export const useChartScales = <T>({
   accessors,
   xScaleRange,
   yScaleRange,
-  yScaleDomain: yScaleDomainCustom,
+  yScaleDomainCustom,
   reverseXScaleDomain,
   reverseYScaleDomain,
 }: {
@@ -32,19 +31,23 @@ export const useChartScales = <T>({
   accessors: Accessors;
   xScaleRange: ScaleRange;
   yScaleRange?: ScaleRange;
-  yScaleDomain?: string[];
+  yScaleDomainCustom?: string[];
   reverseXScaleDomain?: boolean;
   reverseYScaleDomain?: boolean;
 }) => {
   const [xScaleMinValue, xScaleMaxValue] = xScaleRange;
 
-  const getCalculatedYScaleDomain = () => {
-    const yScaleValues = data.map((dataElement) =>
-      get(dataElement, accessors.y)
-    );
-    const yScaleDomain = uniq(compact(yScaleValues));
-    return yScaleDomain;
-  };
+  const xScaleDomain = [
+    xScaleMinValue * RANGE_MIN_SCALE_FACTOR,
+    xScaleMaxValue * RANGE_MAX_SCALE_FACTOR,
+  ];
+
+  const yScaleDomain = yScaleRange
+    ? [
+        yScaleRange[0] * RANGE_MIN_SCALE_FACTOR,
+        yScaleRange[1] * RANGE_MAX_SCALE_FACTOR,
+      ]
+    : useYScaleDomain<T>(data, accessors.y, yScaleDomainCustom);
 
   const getYScaleLinear = () => {
     return scaleLinear()
@@ -61,18 +64,6 @@ export const useChartScales = <T>({
       )
       .range([chartDimensions.height - margins.bottom, margins.top]);
   };
-
-  const xScaleDomain = [
-    xScaleMinValue * RANGE_MIN_SCALE_FACTOR,
-    xScaleMaxValue * RANGE_MAX_SCALE_FACTOR,
-  ];
-
-  const yScaleDomain = yScaleRange
-    ? [
-        yScaleRange[0] * RANGE_MIN_SCALE_FACTOR,
-        yScaleRange[1] * RANGE_MAX_SCALE_FACTOR,
-      ]
-    : yScaleDomainCustom || getCalculatedYScaleDomain();
 
   const xScale = useMemo(() => {
     return scaleLinear()

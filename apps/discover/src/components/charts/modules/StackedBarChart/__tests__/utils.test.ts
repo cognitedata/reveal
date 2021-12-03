@@ -25,7 +25,7 @@ describe('StackedBarChart -> utils', () => {
   });
 
   it('should return data with stacked width as expected', () => {
-    expect(getStackedData<Data>(data, 'count').stackedData).toEqual([
+    expect(getStackedData<Data>(data, 'count')).toEqual([
       { label: 'Label1', group: 'A', count: 20, stackedWidth: 20 },
       { label: 'Label2', group: 'B', count: 30.5, stackedWidth: 50.5 },
       { label: 'Label1', group: 'A', count: 50.25, stackedWidth: 100.75 },

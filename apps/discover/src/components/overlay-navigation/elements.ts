@@ -2,6 +2,8 @@ import styled from 'styled-components/macro';
 
 import layers from '_helpers/zindex';
 
+import { OverlayNavigationProps } from './OverlayNavigation';
+
 export const OverlayNavigationContainer = styled.div`
   position: absolute;
   background: var(--cogs-bg-default);
@@ -11,4 +13,8 @@ export const OverlayNavigationContainer = styled.div`
   height: 100%;
   width: 100%;
   overflow: auto;
+  visibility: hidden;
+  ${(props: OverlayNavigationProps) => `
+    ${props.mount ? 'visibility: visible' : 'max-height: 0'};
+  `}
 `;

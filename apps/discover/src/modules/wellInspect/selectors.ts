@@ -11,14 +11,6 @@ export const useInspectSidebarWidth = () => {
   return useMemo(() => state.inspectSidebarWidth, [state.inspectSidebarWidth]);
 };
 
-export const useNPTGraphSelectedWellboreData = () => {
-  const state = useWellInspect();
-  return useMemo(
-    () => state.nptGraphSelectedWellboreData,
-    [state.nptGraphSelectedWellboreData]
-  );
-};
-
 export const useColoredWellbores = () => {
   return useSelector((state) => state.wellInspect.coloredWellbores);
 };

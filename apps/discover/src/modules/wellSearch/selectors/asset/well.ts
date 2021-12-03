@@ -283,7 +283,7 @@ export const useSelectedOrHoveredWells = () => {
           } as Wellbore;
         }),
       }));
-    }, wells);
+    }, [JSON.stringify(wells)]);
   });
 };
 
@@ -301,7 +301,11 @@ export const useSecondarySelectedOrHoveredWells = () => {
             (wellbore) => selectedSecondaryWellboreIds[wellbore.id]
           ),
         })),
-    [wells, selectedSecondaryWellIds, selectedSecondaryWellboreIds]
+    [
+      JSON.stringify(wells),
+      JSON.stringify(selectedSecondaryWellIds),
+      JSON.stringify(selectedSecondaryWellboreIds),
+    ]
   );
 };
 

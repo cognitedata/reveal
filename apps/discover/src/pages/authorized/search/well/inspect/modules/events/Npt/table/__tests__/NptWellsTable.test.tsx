@@ -3,12 +3,12 @@ import { screen } from '@testing-library/react';
 import { mockNptEvents } from '__test-utils/fixtures/npt';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { useNptEventsForTable } from 'modules/wellSearch/selectors';
+import { useNptEvents } from 'modules/wellSearch/selectors';
 
 import { NptWellsTable } from '../NptWellsTable';
 
 jest.mock('modules/wellSearch/selectors', () => ({
-  useNptEventsForTable: jest.fn(),
+  useNptEvents: jest.fn(),
 }));
 
 jest.mock('modules/filterData/selectors', () => ({
@@ -21,7 +21,7 @@ jest.mock('modules/filterData/selectors', () => ({
 
 describe('NptWellsTable', () => {
   beforeEach(() => {
-    (useNptEventsForTable as jest.Mock).mockImplementation(() => ({
+    (useNptEvents as jest.Mock).mockImplementation(() => ({
       isLoading: false,
       events: mockNptEvents,
     }));

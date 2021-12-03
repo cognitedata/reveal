@@ -17,6 +17,7 @@ import { ScatterPlotProps } from './types';
 import { getCalculatedYAxisTicks } from './utils';
 
 export const ScatterPlot = <T extends DataObject<T>>({
+  id,
   data: dataOriginal,
   xAxis,
   yAxis,
@@ -119,6 +120,7 @@ export const ScatterPlot = <T extends DataObject<T>>({
 
   return (
     <BaseChart<T>
+      id={id}
       className="scatter-plot"
       chartRef={chartRef}
       data={data}

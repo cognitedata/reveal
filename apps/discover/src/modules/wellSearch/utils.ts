@@ -24,7 +24,7 @@ import { FEET, UserPrefferedUnit } from 'constants/units';
 import { proj4Defs } from 'modules/map/proj4Defs';
 import { convertToClosestInteger } from 'pages/authorized/search/well/inspect/modules/events/common';
 
-import { NPTEvent, Well, Wellbore, WellSequence } from './types';
+import { Well, Wellbore, WellSequence } from './types';
 
 const defaultUnknownValue = 'Unknown';
 
@@ -252,20 +252,3 @@ export const toBooleanMap = (list: (number | string)[], status = true) =>
     }),
     {}
   );
-
-export const getDummyNptEventForWellbore = (
-  wellbore: Wellbore,
-  extras?: Partial<NPTEvent>
-): NPTEvent => ({
-  parentExternalId: '',
-  parentType: '',
-  sourceEventExternalId: '',
-  source: '',
-  startTime: 0,
-  endTime: 0,
-  duration: 0,
-  ...extras,
-  wellboreId: wellbore.id,
-  wellName: wellbore.metadata?.wellName,
-  wellboreName: wellbore.description,
-});

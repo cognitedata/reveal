@@ -1,16 +1,12 @@
-import React, { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useMemo } from 'react';
 
 import { BackButton, BaseButton } from 'components/buttons';
-import {
-  clearNPTGraphSelectedWellboreData,
-  setNPTGraphSelectedWellboreData,
-} from 'modules/wellInspect/actions';
-import { useNPTGraphSelectedWellboreData } from 'modules/wellInspect/selectors';
 import {
   useSecondarySelectedOrHoveredWellboreNames,
   useSelectedSecondaryWellboreNamesWithoutNptData,
 } from 'modules/wellSearch/selectors';
+
+import { SelectedWellboreNavigatable } from '../types';
 
 import {
   DetailsContainer,
@@ -19,82 +15,89 @@ import {
   WellName,
 } from './elements';
 
-export const NavigationPanel: React.FC = () => {
-  const dispatch = useDispatch();
-  const wellbores = useSecondarySelectedOrHoveredWellboreNames();
-  const wellboresWithoutNptData =
-    useSelectedSecondaryWellboreNamesWithoutNptData();
-  const selectedWellboreData = useNPTGraphSelectedWellboreData();
+export interface NavigationPanelData extends SelectedWellboreNavigatable {
+  wellName: string;
+}
 
-  const { index, data, groupedData } = selectedWellboreData;
-  const { wellboreName, wellName } = data[0];
+interface Props {
+  data: NavigationPanelData;
+  onChangeSelectedWellbore: (
+    selectedWellbore: SelectedWellboreNavigatable
+  ) => void;
+  onCloseSelectedWellboreView: () => void;
+  disableNavigation?: boolean;
+}
 
-  const getDataOfNthIndex = (index: number) => {
-    const wellbore = wellbores[index];
-    const data = groupedData[wellbore];
-    return { wellbore, data };
-  };
+export const NavigationPanel: React.FC<Props> = React.memo(
+  ({
+    data,
+    onChangeSelectedWellbore,
+    onCloseSelectedWellboreView,
+    disableNavigation,
+  }) => {
+    const wellbores = useSecondarySelectedOrHoveredWellboreNames();
+    const wellboresWithoutNptData =
+      useSelectedSecondaryWellboreNamesWithoutNptData();
 
-  const validIndexes = useMemo(
-    () =>
-      [...Array(wellbores.length).keys()].filter((index) => {
-        const { wellbore } = getDataOfNthIndex(index);
-        return !wellboresWithoutNptData.includes(wellbore);
-      }),
-    [JSON.stringify(wellbores)]
-  );
-  const isFirstWellbore = validIndexes.indexOf(index) === 0;
-  const isLastWellbore = validIndexes.indexOf(index) === wellbores.length - 1;
+    const { wellboreName, wellName, index } = data;
 
-  const navigateToWellboreOfNthIndex = (index: number) => {
-    const { wellbore, data } = getDataOfNthIndex(index);
-    dispatch(
-      setNPTGraphSelectedWellboreData({
-        key: wellbore,
-        index,
-        data,
-      })
+    const validIndexes = useMemo(
+      () =>
+        [...Array(wellbores.length).keys()].filter((index) => {
+          const wellboreName = wellbores[index];
+          return !wellboresWithoutNptData.includes(wellboreName);
+        }),
+      [JSON.stringify(wellbores)]
     );
-  };
+    const indexOfValidIndexes = validIndexes.indexOf(index);
+    const isFirstWellbore = indexOfValidIndexes === 0;
+    const isLastWellbore = indexOfValidIndexes === validIndexes.length - 1;
 
-  const handleClickBackButton = useCallback(
-    () => dispatch(clearNPTGraphSelectedWellboreData()),
-    []
-  );
+    const navigateToWellboreOfNthIndex = (index: number) => {
+      onChangeSelectedWellbore({
+        wellboreName: wellbores[index],
+        index,
+      });
+    };
 
-  const handleNavigateToPreviousWellbore = () => {
-    const previousIndex = validIndexes[validIndexes.indexOf(index) - 1];
-    navigateToWellboreOfNthIndex(previousIndex);
-  };
+    const handleNavigateToPreviousWellbore = () => {
+      const previousIndex = validIndexes[indexOfValidIndexes - 1];
+      navigateToWellboreOfNthIndex(previousIndex);
+    };
 
-  const handleNavigateToNextWellbore = () => {
-    const nextIndex = validIndexes[validIndexes.indexOf(index) + 1];
-    navigateToWellboreOfNthIndex(nextIndex);
-  };
+    const handleNavigateToNextWellbore = () => {
+      const nextIndex = validIndexes[indexOfValidIndexes + 1];
+      navigateToWellboreOfNthIndex(nextIndex);
+    };
 
-  return (
-    <NavigationPanelContainer>
-      <BackButton onClick={handleClickBackButton} />
+    return (
+      <NavigationPanelContainer>
+        <BackButton onClick={onCloseSelectedWellboreView} />
 
-      <DetailsContainer>
-        <WellboreName>{wellboreName}</WellboreName>
-        <WellName>{wellName}</WellName>
-      </DetailsContainer>
+        <DetailsContainer>
+          <WellboreName>{wellboreName}</WellboreName>
+          <WellName>{wellName}</WellName>
+        </DetailsContainer>
 
-      <BaseButton
-        icon="ChevronLeftCompact"
-        type="secondary"
-        onClick={handleNavigateToPreviousWellbore}
-        disabled={isFirstWellbore}
-        aria-label="previous-wellbore"
-      />
-      <BaseButton
-        icon="ChevronRightCompact"
-        type="secondary"
-        onClick={handleNavigateToNextWellbore}
-        disabled={isLastWellbore}
-        aria-label="next-wellbore"
-      />
-    </NavigationPanelContainer>
-  );
-};
+        {!disableNavigation && (
+          <>
+            <BaseButton
+              icon="ChevronLeftCompact"
+              type="secondary"
+              onClick={handleNavigateToPreviousWellbore}
+              disabled={isFirstWellbore}
+              aria-label="previous-wellbore"
+            />
+            <BaseButton
+              icon="ChevronRightCompact"
+              type="secondary"
+              onClick={handleNavigateToNextWellbore}
+              disabled={isLastWellbore}
+              aria-label="next-wellbore"
+            />
+          </>
+        )}
+      </NavigationPanelContainer>
+    );
+  }
+);

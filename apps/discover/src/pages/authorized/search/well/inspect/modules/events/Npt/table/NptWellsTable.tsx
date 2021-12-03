@@ -46,7 +46,7 @@ export const NptWellsTable: React.FC<{ events: NPTEvent[] }> = ({ events }) => {
 
     setWells(wells);
     setSortBy([]);
-  }, [events]);
+  }, [JSON.stringify(events)]);
 
   useEffect(() => {
     if (isEmpty(wells)) return;
@@ -55,7 +55,7 @@ export const NptWellsTable: React.FC<{ events: NPTEvent[] }> = ({ events }) => {
       ...expandedWells,
       [wells[0].id]: true,
     });
-  }, [wells]);
+  }, [JSON.stringify(wells)]);
 
   const handleRowClick = useCallback(
     (row: Row) => {

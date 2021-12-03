@@ -15,6 +15,7 @@ import { ChartDetailsContainer, ChartWrapper } from './elements';
 import { DataObject } from './types';
 
 export interface Props<T> extends ChartTitlesProps {
+  id: string;
   data: T[];
   className: string;
   chartRef: RefObject<HTMLDivElement>;
@@ -25,6 +26,7 @@ export interface Props<T> extends ChartTitlesProps {
 }
 
 export const BaseChart = <T extends DataObject<T>>({
+  id,
   data,
   className,
   chartRef,
@@ -50,7 +52,7 @@ export const BaseChart = <T extends DataObject<T>>({
   };
 
   return (
-    <ChartWrapper ref={chartRef} className={className}>
+    <ChartWrapper data-testid={id} ref={chartRef} className={className}>
       <ChartDetailsContainer className="chart-details">
         <ChartTitles title={title} subtitle={subtitle} />
         <ChartZoomActions {...zoomActions} />

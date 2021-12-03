@@ -16,10 +16,11 @@ import { useGroupedData } from './hooks/useGroupedData';
 import { StackedBarChartProps } from './types';
 
 export const StackedBarChart = <T extends DataObject<T>>({
+  id,
   data: dataOriginal,
   xAxis,
   yAxis,
-  yScaleDomain: yScaleDomainOriginal,
+  yScaleDomain: yScaleDomainCustom,
   groupDataInsideBarsBy,
   title,
   subtitle,
@@ -75,6 +76,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
     accessors,
     spacings,
     xScaleMaxValue,
+    yScaleDomainCustom,
     zoomStepSize: options?.zoomStepSize || DEFAULT_ZOOM_STEP_SIZE,
   });
 
@@ -84,7 +86,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
     margins,
     accessors,
     xScaleRange: [0, xScaleMaxValue],
-    yScaleDomain: yScaleDomainOriginal,
+    yScaleDomainCustom,
     reverseXScaleDomain: xAxis.reverseScaleDomain,
     reverseYScaleDomain: yAxis.reverseScaleDomain,
   });
@@ -146,6 +148,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
 
   return (
     <BaseChart<T>
+      id={id}
       className="stacked-bar-chart"
       chartRef={chartRef}
       data={data}

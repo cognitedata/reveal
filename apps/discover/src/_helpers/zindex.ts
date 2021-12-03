@@ -10,6 +10,7 @@ const LAYERS = [
   'COOKIE_CONSENT',
   'TOP_BAR',
   'PAGE_HEADER',
+  'OVERLAY_LOADER',
   'OVERLAY_NAVIGATION',
   'MAP_DOCUMENT_PREVIEW', // doc preview card
   'RESIZE_BAR',

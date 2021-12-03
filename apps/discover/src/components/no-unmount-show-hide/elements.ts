@@ -4,8 +4,9 @@ import { NoUnmountShowHideProps } from './NoUnmountShowHide';
 
 export const NoUnmountShowHideContainer = styled.div`
   position: relative;
+  visibility: hidden;
   ${(props: NoUnmountShowHideProps) => `
-    display: ${props.show ? 'initial' : 'none'};
+    ${props.show ? 'visibility: visible' : 'max-height: 0'};
     ${props.fullHeight && 'height: 100%'};
   `}
 `;

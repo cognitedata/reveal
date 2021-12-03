@@ -1,12 +1,11 @@
 import { RefObject, useCallback, useEffect, useState } from 'react';
 
-import get from 'lodash/get';
-import uniq from 'lodash/uniq';
-
 import { Accessors, Dimensions, Margins } from 'components/charts/types';
 import { useDebounce } from 'hooks/useDebounce';
 
 import { getStylePropertyValue } from '../utils';
+
+import { useYScaleDomain } from './useYScaleDomain';
 
 const UNINITIALIZED_CHART_DIMENTIONS: Dimensions = { height: 0, width: 0 };
 
@@ -17,6 +16,7 @@ export const useZoomableChart = <T>({
   accessors,
   spacings,
   xScaleMaxValue,
+  yScaleDomainCustom,
   zoomStepSize,
 }: {
   data: T[];
@@ -25,6 +25,7 @@ export const useZoomableChart = <T>({
   accessors: Accessors;
   spacings: { x: number; y: number };
   xScaleMaxValue: number;
+  yScaleDomainCustom?: string[];
   zoomStepSize: number;
 }) => {
   const [initialChartDimensions, setInitialChartDimensions] =
@@ -36,14 +37,17 @@ export const useZoomableChart = <T>({
   const [disableZoomOut, setDisableZoomOut] = useState<boolean>(false);
   const [zoomFactor, setZoomFactor] = useState<number>(1);
 
-  const yAxisUniqueElementsCount = uniq(
-    data.map((dataElement) => get(dataElement, accessors.y))
-  ).length;
+  const yScaleDomain = useYScaleDomain<T>(
+    data,
+    accessors.y,
+    yScaleDomainCustom
+  );
+  const yScaleDomainLength = yScaleDomain.length;
 
   useEffect(() => {
     if (!chartRef) return;
 
-    const height = spacings.y * yAxisUniqueElementsCount;
+    const height = spacings.y * yScaleDomainLength;
 
     const width =
       parseInt(getStylePropertyValue(chartRef, 'width'), 10) -
@@ -56,7 +60,7 @@ export const useZoomableChart = <T>({
     setInitialChartDimensions(dimensions);
     setChartDimensions(dimensions);
     setZoomFactor(1);
-  }, [yAxisUniqueElementsCount, xScaleMaxValue]);
+  }, [yScaleDomainLength, xScaleMaxValue]);
 
   useEffect(() => {
     setDisableZoomIn(chartDimensions.width >= spacings.x * xScaleMaxValue);

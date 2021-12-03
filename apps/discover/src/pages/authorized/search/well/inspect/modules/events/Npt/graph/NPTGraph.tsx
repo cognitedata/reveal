@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import get from 'lodash/get';
 
@@ -8,7 +7,6 @@ import {
   SelectedBarData,
   StackedBarChart,
 } from 'components/charts/modules/StackedBarChart';
-import { setNPTGraphSelectedWellboreData } from 'modules/wellInspect/actions';
 import { useSecondarySelectedOrHoveredWellboreNames } from 'modules/wellSearch/selectors';
 import { NPTEvent } from 'modules/wellSearch/types';
 
@@ -19,10 +17,15 @@ import {
   GRAPH_X_AXIS_TITLE,
   NPT_GRAPH_OPTIONS,
 } from './constants';
+import { SelectedWellbore } from './types';
 
-export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
-  ({ events }) => {
-    const dispatch = useDispatch();
+interface Props {
+  events: NPTEvent[];
+  onSelectBar: (selectedWellbore: SelectedWellbore) => void;
+}
+
+export const NPTGraph: React.FC<Props> = React.memo(
+  ({ events, onSelectBar }) => {
     const selectedSecondaryWellboreNames =
       useSecondarySelectedOrHoveredWellboreNames();
 
@@ -59,24 +62,35 @@ export const NPTGraph: React.FC<{ events: NPTEvent[] }> = React.memo(
     );
 
     const handleOnSelectBar = useCallback(
-      (selectedBarData: SelectedBarData<NPTEvent>) =>
-        dispatch(setNPTGraphSelectedWellboreData(selectedBarData)),
+      (selectedBarData: SelectedBarData<NPTEvent>) => {
+        onSelectBar({
+          wellboreName: selectedBarData.key,
+          index: selectedBarData.index,
+        });
+      },
       []
     );
 
-    return (
-      <StackedBarChart<NPTEvent>
-        data={data}
-        xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
-        yAxis={{ accessor: accessors.WELLBORE_NAME, reverseScaleDomain: true }}
-        yScaleDomain={selectedSecondaryWellboreNames}
-        groupDataInsideBarsBy={accessors.NPT_CODE}
-        title={GRAPH_TITLE}
-        subtitle={chartSubtitle}
-        options={NPT_GRAPH_OPTIONS}
-        onUpdate={handleOnUpdateGraph}
-        onSelectBar={handleOnSelectBar}
-      />
+    return useMemo(
+      () => (
+        <StackedBarChart<NPTEvent>
+          id="npt-events-graph"
+          data={data}
+          xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
+          yAxis={{
+            accessor: accessors.WELLBORE_NAME,
+            reverseScaleDomain: true,
+          }}
+          yScaleDomain={selectedSecondaryWellboreNames}
+          groupDataInsideBarsBy={accessors.NPT_CODE}
+          title={GRAPH_TITLE}
+          subtitle={chartSubtitle}
+          options={NPT_GRAPH_OPTIONS}
+          onUpdate={handleOnUpdateGraph}
+          onSelectBar={handleOnSelectBar}
+        />
+      ),
+      [JSON.stringify(selectedSecondaryWellboreNames), chartSubtitle]
     );
   }
 );

@@ -47,7 +47,7 @@ describe('Wells inspect view', () => {
 
       cy.url().should('contain', '/wells/inspect/eventsNpt');
       cy.log('Graph should be the default selected view');
-      cy.findByTestId('chart-title').should('be.visible');
+      cy.findByTestId('npt-events-graph').should('be.visible');
 
       cy.log('Switch to table view');
       cy.findByTestId('graph-view-switch').contains('Table').click();

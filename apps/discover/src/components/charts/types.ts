@@ -7,6 +7,7 @@ export type GroupedData<T> = { [key: string]: T[] };
 export type ScaleRange = [number, number];
 
 export interface BaseChartProps<T> {
+  id: string;
   data: T[];
   xAxis: ChartAxis & XAxisPlacement;
   yAxis: ChartAxis;
