@@ -85,7 +85,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     if (isStepAddFile)
       return (
         <Dragger {...fileProps}>
-          <CustomIcon icon="DocumentIcon" />
+          <CustomIcon icon="DocumentIconDisabled" />
           <StyledModalTitle level={6}>Add CSV file</StyledModalTitle>
           <StyledModalDetail strong>
             Drag and drop, or click to select.

@@ -39,7 +39,7 @@ const Modal = ({ footer, ...modalProps }: ModalProps): JSX.Element => {
   return (
     <StyledModal
       $hasFooter={!!footer}
-      closeIcon={<Icon type="LargeClose" />}
+      closeIcon={<Icon type="CloseLarge" />}
       footer={footer}
       getContainer={getContainer}
       width={MODAL_WIDTH}

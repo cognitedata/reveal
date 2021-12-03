@@ -5,12 +5,21 @@ import styled from 'styled-components';
 
 export type MessageType = 'info' | 'success' | 'warning' | 'error';
 
+export type MessageSize = 'small' | 'default';
+
 type MessageProps = {
+  className?: string;
   message: string;
+  size?: MessageSize;
   type?: MessageType;
 };
 
-const Message = ({ message, type = 'info' }: MessageProps): JSX.Element => {
+const Message = ({
+  className,
+  message,
+  size = 'default',
+  type = 'info',
+}: MessageProps): JSX.Element => {
   let backgroundColor: string;
   let icon: AllIconTypes;
   let iconColor: string;
@@ -18,28 +27,32 @@ const Message = ({ message, type = 'info' }: MessageProps): JSX.Element => {
     case 'success':
       backgroundColor = 'rgba(57, 162, 99, 0.06)';
       icon = 'CheckmarkFilled';
-      iconColor = Colors.success.hex();
+      iconColor = '#2E8551';
       break;
     case 'warning':
       backgroundColor = 'rgba(255, 187, 0, 0.06)';
       icon = 'WarningFilled';
-      iconColor = Colors.warning.hex();
+      iconColor = '#D67F05';
       break;
     case 'error':
       backgroundColor = 'rgba(223, 58, 55, 0.06)';
-      icon = 'Beware';
-      iconColor = Colors.danger.hex();
+      icon = 'ErrorFilled';
+      iconColor = '#CF1A17';
       break;
     case 'info':
     default:
       backgroundColor = 'rgba(110, 133, 252, 0.06)';
       icon = 'InfoFilled';
-      iconColor = Colors['text-accent'].hex();
+      iconColor = Colors['bg-status-small--accent'].hex();
       break;
   }
 
   return (
-    <StyledMessageWrapper $backgroundColor={backgroundColor}>
+    <StyledMessageWrapper
+      $backgroundColor={backgroundColor}
+      $size={size}
+      className={className}
+    >
       <StyledMessageIcon $iconColor={iconColor} type={icon} />
       <StyledMessageContent level={2}>{message}</StyledMessageContent>
     </StyledMessageWrapper>
@@ -51,12 +64,15 @@ const StyledMessageIcon = styled(Icon)<{ $iconColor: string }>`
   margin-right: 10px;
 `;
 
-const StyledMessageWrapper = styled.div<{ $backgroundColor: string }>`
+const StyledMessageWrapper = styled.div<{
+  $backgroundColor: string;
+  $size: MessageSize;
+}>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   border-radius: 8px;
   display: flex;
-  padding: 16px;
+  padding: ${({ $size }) => ($size === 'small' ? '10px 14px' : '16px')};
 `;
 
 const StyledMessageContent = styled(Body)`

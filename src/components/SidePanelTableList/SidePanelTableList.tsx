@@ -14,26 +14,11 @@ import { useTables } from 'hooks/sdk-queries';
 import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { useActiveTable } from 'hooks/table-tabs';
 
-const StyledSidePanelTableListHeaderWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  width: 100%;
-`;
-
-const StyledSidePanelTableListHeaderTitle = styled(Body)`
-  margin: 0 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 98px);
-`;
-
-const StyledSidePanelTableListHeaderIconDivider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
-  height: 16px;
-  margin: 0 8px;
-  width: 2px;
-`;
+const accessWarningContent = (
+  <>
+    To create tables, you need to have the <strong>raw:write</strong> capability
+  </>
+);
 
 const SidePanelTableList = (): JSX.Element => {
   const {
@@ -51,12 +36,6 @@ const SidePanelTableList = (): JSX.Element => {
   );
 
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
-  const accessWarningContent = (
-    <>
-      To create tables, you need to have the <strong>raw:write</strong>{' '}
-      capability
-    </>
-  );
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
 
@@ -65,6 +44,10 @@ const SidePanelTableList = (): JSX.Element => {
       fetchNextPage();
     }
   }, [isLoading, fetchNextPage, hasNextPage]);
+
+  useEffect(() => {
+    setQuery('');
+  }, [selectedSidePanelDatabase]);
 
   const tables = useMemo(
     () =>
@@ -82,7 +65,7 @@ const SidePanelTableList = (): JSX.Element => {
       header={
         <StyledSidePanelTableListHeaderWrapper>
           <Button
-            icon="ArrowBack"
+            icon="ArrowLeft"
             onClick={() => setSelectedSidePanelDatabase(undefined)}
             size="small"
             type="ghost"
@@ -93,7 +76,7 @@ const SidePanelTableList = (): JSX.Element => {
           <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
             <Button
               disabled={!hasWriteAccess}
-              icon="PlusCompact"
+              icon="Add"
               onClick={() => setIsCreateModalOpen(true)}
               size="small"
               type="primary"
@@ -114,17 +97,23 @@ const SidePanelTableList = (): JSX.Element => {
       searchInputPlaceholder="Filter tables"
     >
       <SidePanelTableListHomeItem isEmpty={isLoading || !tables.length} />
-      <SidePanelTableListContent searchQuery={query} tables={tables} />
-      <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
-        <Button
-          block
-          disabled={!hasWriteAccess}
-          icon="PlusCompact"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          Create table
-        </Button>
-      </Tooltip>
+      <SidePanelTableListContent
+        openCreateModal={() => setIsCreateModalOpen(true)}
+        searchQuery={query}
+        tables={tables}
+      />
+      {!!tables.length && (
+        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+          <Button
+            block
+            disabled={!hasWriteAccess}
+            icon="Add"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            Create table
+          </Button>
+        </Tooltip>
+      )}
       {isCreateModalOpen && (
         <CreateTableModal
           databaseName={selectedSidePanelDatabase}
@@ -136,5 +125,26 @@ const SidePanelTableList = (): JSX.Element => {
     </SidePanelLevelWrapper>
   );
 };
+
+const StyledSidePanelTableListHeaderWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  width: 100%;
+`;
+
+const StyledSidePanelTableListHeaderTitle = styled(Body)`
+  margin: 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: calc(100% - 98px);
+`;
+
+const StyledSidePanelTableListHeaderIconDivider = styled.div`
+  background-color: ${Colors['bg-control--disabled']};
+  height: 16px;
+  margin: 0 8px;
+  width: 2px;
+`;
 
 export default SidePanelTableList;

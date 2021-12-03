@@ -98,7 +98,7 @@ const SidePanelDatabaseListItemTooltip = ({
       content={
         <StyledTooltipContent>
           <StyledTooltipHeader>
-            <StyledTooltipHeaderIcon type="Datasource" />
+            <StyledTooltipHeaderIcon type="DataSource" />
             <Title level={5}>{name}</Title>
           </StyledTooltipHeader>
           <StyledTooltipBody>{renderTables()}</StyledTooltipBody>

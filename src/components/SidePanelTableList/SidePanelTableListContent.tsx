@@ -1,28 +1,42 @@
 import React, { useContext, useMemo } from 'react';
 
-import { Title } from '@cognite/cogs.js';
+import { Button, Title, Tooltip } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 
 import {
+  StyledEmptyListDetail,
+  StyledEmptyListTitle,
+  StyledEmptyListWrapper,
   StyledNoItemsDetail,
   StyledNoItemsWrapper,
 } from 'components/SidePanel/SidePanelLevelWrapper';
 
 import { RawExplorerContext } from 'contexts';
+import { useUserCapabilities } from 'hooks/useUserCapabilities';
 import { stringCompare } from 'utils/utils';
 
 import SidePanelTableListItem from './SidePanelTableListItem';
 
+const accessWarningContent = (
+  <>
+    To create tables, you need to have the <strong>raw:write</strong> capability
+  </>
+);
+
 type SidePanelTableListContentProps = {
+  openCreateModal: () => void;
   searchQuery?: string;
   tables: RawDB[];
 };
 
 const SidePanelTableListContent = ({
+  openCreateModal,
   searchQuery,
   tables,
 }: SidePanelTableListContentProps): JSX.Element => {
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
+
+  const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
 
   const filteredTableList = useMemo(() => {
     return (
@@ -36,6 +50,29 @@ const SidePanelTableListContent = ({
     );
   }, [searchQuery, tables]);
 
+  if (!tables.length) {
+    return (
+      <StyledEmptyListWrapper>
+        <StyledEmptyListTitle level={6}>Create a table</StyledEmptyListTitle>
+        <StyledEmptyListDetail strong>
+          All raw data is stored in tables. Create a table to upload a file or
+          write data directly using the API.
+        </StyledEmptyListDetail>
+
+        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+          <Button
+            disabled={!hasWriteAccess}
+            icon="Add"
+            onClick={openCreateModal}
+            type="primary"
+          >
+            Create table
+          </Button>
+        </Tooltip>
+      </StyledEmptyListWrapper>
+    );
+  }
+
   return (
     <>
       {filteredTableList.length > 0 ? (
@@ -48,9 +85,10 @@ const SidePanelTableListContent = ({
         ))
       ) : (
         <StyledNoItemsWrapper>
-          <Title level={6}>There are no items here.</Title>
+          <Title level={6}>No results found.</Title>
           <StyledNoItemsDetail strong>
-            Search for documents by source, format, type, creation date and more
+            The search “{searchQuery}” did not match any tables. Please try
+            another search.
           </StyledNoItemsDetail>
         </StyledNoItemsWrapper>
       )}

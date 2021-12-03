@@ -24,6 +24,14 @@ export const Cell = (props: Props): JSX.Element => {
   const selectedCellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    document.addEventListener('mousedown', onCellClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', onCellClickOutside);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const element = selectedCellRef?.current;
     if (!isSelected || !element) return;
     const hasOverflowingChildren =
@@ -36,22 +44,21 @@ export const Cell = (props: Props): JSX.Element => {
     setIsSelected(isCellSelected(rowIndex, columnIndex));
   }, [selectedCell, rowIndex, columnIndex, isCellSelected]);
 
-  const onCellSelect = () => {
-    const isClickedCellSelected =
-      rowIndex === selectedCell.rowIndex &&
-      columnIndex === selectedCell.columnIndex;
-    if (isClickedCellSelected) deselectCell();
-    else setSelectedCell({ rowIndex, columnIndex, cellData });
+  const onCellSelect = () =>
+    setSelectedCell({ rowIndex, columnIndex, cellData });
+  const onCellClickOutside = (event: MouseEvent) => {
+    const element = (selectedCellRef as React.MutableRefObject<HTMLDivElement>)
+      ?.current;
+    if (!element) return;
+    if (element && !element.contains(event.target as Node)) deselectCell();
   };
 
   if (columnIndex === 0) {
     return <StyledCellIndexColumn>{cellData}</StyledCellIndexColumn>;
   }
   return isSelected ? (
-    <StyledCellSelected onClick={onCellSelect}>
-      <StyledCellContent ref={selectedCellRef} isOverflow={isOverflow}>
-        {cellData}
-      </StyledCellContent>
+    <StyledCellSelected onClick={onCellSelect} ref={selectedCellRef}>
+      <StyledCellContent isOverflow={isOverflow}>{cellData}</StyledCellContent>
       {isOverflow && <ExpandButton />}
     </StyledCellSelected>
   ) : (

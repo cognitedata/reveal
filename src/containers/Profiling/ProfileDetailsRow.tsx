@@ -18,6 +18,7 @@ type Props = {
   max?: number;
   mean?: number;
   median?: number;
+  count?: number;
 };
 export default function ProfileDetailsRow({
   distinctCount,
@@ -28,6 +29,7 @@ export default function ProfileDetailsRow({
   median,
   counts,
   allCount,
+  count,
   histogram,
 }: Props) {
   return (
@@ -40,7 +42,7 @@ export default function ProfileDetailsRow({
                 label="Distinct values"
                 value={distinctCount}
               />
-              <NumberOrMissingSummary label="Non-empty" value={distinctCount} />
+              <NumberOrMissingSummary label="Non-empty" value={count} />
               <NumberOrMissingSummary label="Empty" value={nullCount} />
               <NumberOrMissingSummary label="Min" value={min} />
               <NumberOrMissingSummary label="Max" value={max} />

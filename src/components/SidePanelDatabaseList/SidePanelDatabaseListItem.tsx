@@ -103,12 +103,12 @@ const SidePanelDatabaseListItem = ({
       <StyledSidePanelDatabaseListItemWrapper
         onClick={handleDatabaseListItemClick}
       >
-        <StyledDatabaseIcon type="Datasource" />
+        <StyledDatabaseIcon type="DataSource" />
         <StyledDatabaseName level={3}>{name}</StyledDatabaseName>
         {!hasNextPage && (
           <StyledTableCount strong>{tables.length}</StyledTableCount>
         )}
-        <StyledNavigationIcon type="ChevronRightCompact" />
+        <StyledNavigationIcon type="ChevronRight" />
       </StyledSidePanelDatabaseListItemWrapper>
     </SidePanelDatabaseListItemTooltip>
   );

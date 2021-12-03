@@ -6,12 +6,14 @@ import { RawDBRow } from '@cognite/sdk';
 import isBoolean from 'lodash/isBoolean';
 import isObject from 'lodash/isObject';
 
-import { useTableRows } from 'hooks/sdk-queries';
 import { useActiveTableContext } from 'contexts';
+import { useTableRows } from 'hooks/sdk-queries';
+import { useColumnType } from 'hooks/profiling-service';
+import { ALL_FILTER } from 'hooks/table-filters';
 
+const COLUMNS_IGNORE = ['lastUpdatedTime'];
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
   key: 'Key',
-  lastUpdatedTime: 'Last update time',
 };
 const INDEX_COLUMN: ColumnType = {
   key: 'column-index',
@@ -30,7 +32,9 @@ export interface ColumnType extends Partial<ColumnShape> {
 }
 
 export const useTableData = () => {
-  const { database, table, columnNameFilter } = useActiveTableContext();
+  const { database, table, columnNameFilter, columnTypeFilters } =
+    useActiveTableContext();
+  const { getColumnType } = useColumnType();
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
@@ -65,15 +69,17 @@ export const useTableData = () => {
 
   const getColumns = (): ColumnType[] => {
     const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
-    const otherColumns: ColumnType[] = columnNames.map((name) => ({
-      key: name,
-      dataKey: name,
-      title: COLUMN_NAMES_MAPPED[name] ?? name,
-      width: 200,
-      flexGrow: 1,
-      flexShrink: 0,
-      resizable: true,
-    }));
+    const otherColumns: ColumnType[] = columnNames
+      .filter((name) => !COLUMNS_IGNORE.includes(name))
+      .map((name) => ({
+        key: name,
+        dataKey: name,
+        title: COLUMN_NAMES_MAPPED[name] ?? name,
+        width: 200,
+        flexGrow: 1,
+        flexShrink: 0,
+        resizable: true,
+      }));
     return [INDEX_COLUMN, ...otherColumns];
   };
   const columns = useMemo(getColumns, [rawRows]);
@@ -87,10 +93,6 @@ export const useTableData = () => {
       };
       columnKeys.forEach((key) => {
         if (key === 'column-index') row[key] = index + 1;
-        else if (key === 'lastUpdatedTime' && rawRow.lastUpdatedTime)
-          row.lastUpdatedTime = new Date(
-            rawRow.lastUpdatedTime
-          ).toLocaleString();
         // value can be boolean:false
         else if (!isUndefined(rawRow[key as keyof RawDBRow]))
           row[key] = chooseRenderType(rawRow[key as keyof RawDBRow]);
@@ -103,13 +105,18 @@ export const useTableData = () => {
   const filteredColumns = useMemo(
     () => [
       ...columns.slice(0, 1),
-      ...columns
-        .slice(1)
-        .filter((column) =>
-          column.title.toLowerCase().includes(columnNameFilter.toLowerCase())
-        ),
+      ...columns.slice(1).filter((column) => {
+        const columnType = getColumnType(column.dataKey);
+        const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
+          ? true
+          : columnTypeFilters.includes(columnType);
+        const fitsTitleFilter = column.title
+          .toLowerCase()
+          .includes(columnNameFilter.toLowerCase());
+        return fitsTitleFilter && fitsTypeFilter;
+      }),
     ],
-    [columns, columnNameFilter]
+    [columns, columnNameFilter, columnTypeFilters, getColumnType]
   );
 
   return {

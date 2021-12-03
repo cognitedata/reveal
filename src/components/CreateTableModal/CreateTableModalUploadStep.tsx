@@ -111,9 +111,7 @@ const StyledProgressionBar = styled.div<{
   $percentage: number;
 }>`
   background-color: ${({ $isUploadCompleted }) =>
-    $isUploadCompleted
-      ? Colors.success.hex()
-      : Colors['bg-status-small--accent'].hex()};
+    $isUploadCompleted ? '#2E8551' : Colors['bg-status-small--accent'].hex()};
   border-radius: 4px;
   height: 8px;
   transition: width ${SIDE_PANEL_TRANSITION_DURATION}s

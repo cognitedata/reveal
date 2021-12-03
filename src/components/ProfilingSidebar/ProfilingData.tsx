@@ -6,7 +6,8 @@ import { useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import {
   useColumnType,
-  useRawProfile,
+  useQuickProfile,
+  useFullProfile,
   StringProfile,
   NumberProfile,
   BooleanProfile,
@@ -20,14 +21,13 @@ type Props = { selectedColumn: ColumnType | undefined };
 
 export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
   const { database, table } = useActiveTableContext();
-  const fullProfile = useRawProfile({
+  const fullProfile = useFullProfile({
     database,
     table,
   });
-  const limitProfile = useRawProfile({
+  const limitProfile = useQuickProfile({
     database,
     table,
-    limit: 1000,
   });
 
   const {
@@ -36,10 +36,10 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     isError,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  const { getColumnType } = useColumnType(database, table);
+  const { getColumnType } = useColumnType();
 
   const columnType = useMemo(
-    () => getColumnType(selectedColumn?.title),
+    () => getColumnType(selectedColumn?.dataKey),
     [getColumnType, selectedColumn]
   );
 
@@ -56,7 +56,7 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
           justifyContent="center"
           style={{ width: '100%', padding: '20px' }}
         >
-          <Icon type="LoadingSpinner" />
+          <Icon type="Loader" />
         </Flex>
       )}
       {isError && <Message message="Profiling service error" type="error" />}

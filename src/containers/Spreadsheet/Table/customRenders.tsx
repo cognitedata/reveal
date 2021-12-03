@@ -35,12 +35,13 @@ export const HeaderRender = (props: Props): JSX.Element => {
         const isSelected = selectedColumnKey === column.dataKey;
         const child = !isIndexColumn ? (
           <HeaderCell
+            key={`${column.title}_${index}`}
             level={3}
             strong
-            isSelected={isSelected}
+            $isSelected={isSelected}
             onClick={() => onColumnClick(column)}
           >
-            {column.title && <ColumnIcon title={column.title} />}
+            {column.dataKey && <ColumnIcon dataKey={column.dataKey} />}
             <Tooltip content={column.title}>
               <HeaderTitle level={3} strong width={cell.props.style.width}>
                 {column.title}
@@ -48,11 +49,13 @@ export const HeaderRender = (props: Props): JSX.Element => {
             </Tooltip>
           </HeaderCell>
         ) : (
-          <span />
+          <span key={`${column.title}_${index}`} />
         );
         return (
           <Comp
+            key={`${column.title}_${index}`}
             item={React.cloneElement(cell, {
+              key: `${column.title}_${index}`,
               ...cell.props,
               children: [child, ...cellResizer],
               style: {
@@ -88,10 +91,10 @@ const EmptyTable = styled.div`
 `;
 
 const HeaderCell = styled(Body).attrs(
-  ({ isSelected }: { isSelected: boolean }) => {
-    if (isSelected) return { style: { backgroundColor: '#F2F2F5' } };
+  ({ $isSelected }: { $isSelected: boolean }) => {
+    if ($isSelected) return { style: { backgroundColor: '#F2F2F5' } };
   }
-)<{ isSelected: boolean }>`
+)<{ $isSelected: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;

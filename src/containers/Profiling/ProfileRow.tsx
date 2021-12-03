@@ -6,9 +6,10 @@ import { Graph } from './Distribution';
 import { ColumnProfile } from 'hooks/profiling-service';
 import ColumnIcon from 'components/ColumnIcon';
 
-export const TableData = styled.td`
+export const TableData = styled.td<{ $width?: number }>`
   border: 1px solid ${Colors['greyscale-grey4'].hex()};
   padding: 16px;
+  width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
 `;
 
 const NumberOrMissingTd = ({ value }: { value?: number }) => (
@@ -33,8 +34,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
     median,
     histogram,
     counts,
+    count,
   } = profile;
   const [expanded, setExpanded] = useState(false);
+
   return (
     <>
       <tr
@@ -42,15 +45,16 @@ export default function ProfileRow({ allCount, profile }: Props) {
         onClick={() => setExpanded(!expanded)}
         style={{ cursor: 'pointer' }}
       >
-        <TableData>{<ColumnIcon title={label} />}</TableData>
+        <TableData>{<ColumnIcon dataKey={label} />}</TableData>
         <TableData>{label}</TableData>
         <NumberOrMissingTd value={nullCount} />
         <NumberOrMissingTd value={distinctCount} />
-        <TableData style={{ padding: 0 }}>
+        <TableData style={{ padding: '4px 0 0' }}>
           {histogram && (
             <Graph
               distribution={histogram}
               height={40}
+              maximumBarWidth={6}
               width={150}
               fill="rgba(140, 140, 140, 1)"
             />
@@ -64,6 +68,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
         <ProfileDetailsRow
           allCount={allCount}
           nullCount={nullCount}
+          count={count}
           min={min}
           max={max}
           median={median}

@@ -1,14 +1,15 @@
 import React from 'react';
-import { Body, Button } from '@cognite/cogs.js';
+import { Body, Button, Icon, IconType } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { IconType } from 'assets/icons';
-import { CustomIcon } from 'components/CustomIcon';
+import { ColumnProfile } from 'hooks/profiling-service';
+import { ALL_FILTER } from 'hooks/table-filters';
 
 export type FilterType = {
-  type: string;
-  value: number;
+  type: ColumnProfile['type'] | typeof ALL_FILTER;
+  value?: number;
   icon?: IconType;
+  label?: string;
 };
 
 type Props = {
@@ -18,7 +19,7 @@ type Props = {
 };
 
 export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
-  const { type, value, icon } = filter;
+  const { type, value, icon, label } = filter;
 
   return (
     <Button
@@ -29,12 +30,12 @@ export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
     >
       {icon ? (
         <FilterContent level={2} strong>
-          <CustomIcon icon={icon} style={{ marginRight: '8px' }} />
+          <Icon type={icon} style={{ marginRight: '8px' }} />
           {value}
         </FilterContent>
       ) : (
         <FilterContent level={2} strong>
-          {value} {type}
+          {value} {label ?? type}
         </FilterContent>
       )}
     </Button>

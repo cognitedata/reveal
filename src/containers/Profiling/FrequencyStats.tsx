@@ -14,7 +14,7 @@ type Props = {
 export default function FrequencyStats({ allCount, counts }: Props) {
   if (!counts) return <span />;
   return (
-    <FrequenceTable style={{ width: '100%' }}>
+    <FrequenceTable style={{ marginTop: 12, width: '100%' }}>
       <TableHeader>
         <tr>
           <td>Value</td>

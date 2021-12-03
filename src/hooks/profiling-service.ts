@@ -1,7 +1,10 @@
 import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
-import { baseKey } from './sdk-queries';
+
+import { useActiveTableContext } from 'contexts';
+import { ALL_FILTER } from 'hooks/table-filters';
+import { baseKey } from 'hooks/sdk-queries';
 
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
   baseKey,
@@ -20,6 +23,7 @@ export type StringProfile = {
 export type NumberProfile = {
   distinctCount: number;
   histogram: [number[], number[]];
+  valueCounts: Record<string, number>;
   valueRange: [number, number];
 };
 export type BooleanProfile = {
@@ -130,10 +134,19 @@ function transformNumberProfile(
   const profile = column.number;
   const {
     distinctCount,
+    valueCounts = {},
     valueRange = [],
     histogram = [[], []],
   } = (profile || {}) as NumberProfile;
-  const fixedHistogram = zip(...histogram).map(([length, count]) => ({
+
+  const counts = Object.keys(valueCounts)
+    .map((key) => ({
+      value: key as string,
+      count: valueCounts[key] as number,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const formattedHistogram = zip(...histogram).map(([length, count]) => ({
     value: length?.toString() as string,
     count: count as number,
   }));
@@ -144,9 +157,10 @@ function transformNumberProfile(
     count: column.count,
     min: valueRange[0],
     max: valueRange[1],
-    histogram: fixedHistogram,
+    histogram: formattedHistogram,
     nullCount: column.nullCount,
     distinctCount,
+    counts,
     profile,
   };
 }
@@ -245,7 +259,28 @@ function transformProfile(p: RawProfile): Profile {
   };
 }
 
-export function useRawProfile(
+type RawProfileRequest = {
+  database: string;
+  table: string;
+};
+type RawProfileOptions = {
+  enabled: boolean;
+};
+export function useQuickProfile(
+  { database, table }: RawProfileRequest,
+  options?: RawProfileOptions
+) {
+  return useRawProfile({ database, table, limit: 1000 }, options);
+}
+export const FULL_PROFILE_LIMIT = 1000000;
+export function useFullProfile(
+  { database, table }: RawProfileRequest,
+  options?: RawProfileOptions
+) {
+  return useRawProfile({ database, table, limit: FULL_PROFILE_LIMIT }, options);
+}
+
+function useRawProfile(
   {
     database,
     table,
@@ -253,7 +288,7 @@ export function useRawProfile(
   }: {
     database: string;
     table: string;
-    limit?: number;
+    limit: number;
   },
   options?: { enabled: boolean }
 ) {
@@ -274,23 +309,48 @@ export function useRawProfile(
   );
 }
 
-export const useColumnType = (database: string, table: string) => {
+type ColumnTypeCount = Partial<
+  Record<ColumnProfile['type'] | typeof ALL_FILTER, number>
+>;
+
+export const useColumnType = () => {
+  const { database, table } = useActiveTableContext();
   const { data = { columns: [] } } = useRawProfile({
     database,
     table,
     limit: 1000,
   });
 
-  const getColumn = (title: string | undefined) => {
-    const column = title ? data.columns.find((c) => c.label === title) : null;
+  const getColumn = (dataKey: string | undefined) => {
+    const column = dataKey
+      ? data.columns.find((c) => c.label === dataKey)
+      : null;
     return column;
   };
 
-  const getColumnType = (title: string | undefined) => {
-    const column = getColumn(title);
+  const getColumnType = (dataKey: string | undefined) => {
+    const column = getColumn(dataKey);
 
     return column?.type || 'Unknown';
   };
 
-  return { getColumn, getColumnType };
+  const getColumnTypeCounts = (): ColumnTypeCount => {
+    if (!data.columns.length) return {};
+    const columnsTypes: ColumnProfile['type'][] = data.columns
+      .filter(Boolean)
+      .map((column) => column.type);
+    const columnsTypeCounts = columnsTypes.reduce(
+      (typeCounts: ColumnTypeCount, currType: ColumnProfile['type']) => {
+        if (!currType) return typeCounts;
+        if (typeCounts[currType])
+          typeCounts[currType] = typeCounts[currType]! + 1;
+        else typeCounts[currType] = 1;
+        return typeCounts;
+      },
+      { [ALL_FILTER]: data.columns.length } as ColumnTypeCount
+    );
+    return columnsTypeCounts;
+  };
+
+  return { getColumn, getColumnType, getColumnTypeCounts };
 };
