@@ -28,6 +28,7 @@ export type NumberProfile = {
   valueCounts: Record<string, number>;
   valueRange: [number, number];
   mean: number;
+  median: number;
   std: number;
 };
 export type BooleanProfile = {
@@ -53,6 +54,7 @@ export type ColumnProfile = {
   max?: number;
   mean?: number;
   median?: number;
+  std?: number;
   histogram?: Count[];
   counts?: Count[];
   profile:
@@ -140,6 +142,9 @@ function transformNumberProfile(
   const {
     distinctCount,
     histogram = [[], []],
+    mean,
+    median,
+    std,
     valueCounts = {},
     valueRange = [],
   } = (profile || {}) as NumberProfile;
@@ -161,6 +166,9 @@ function transformNumberProfile(
     count: column.count,
     min: valueRange[0],
     max: valueRange[1],
+    mean: mean ? Number(mean.toFixed(1)) : undefined,
+    median: median ? Number(median.toFixed(1)) : undefined,
+    std: std ? Number(std.toFixed(1)) : undefined,
     histogram: formattedHistogram,
     nullCount: column.nullCount,
     distinctCount,

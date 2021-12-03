@@ -32,6 +32,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
     max,
     mean,
     median,
+    std,
     histogram,
     counts,
     count,
@@ -71,7 +72,9 @@ export default function ProfileRow({ allCount, profile }: Props) {
           count={count}
           min={min}
           max={max}
+          mean={mean}
           median={median}
+          std={std}
           counts={counts}
           distinctCount={distinctCount}
           distribution={histogram}
