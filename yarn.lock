@@ -3142,7 +3142,7 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^3.42.5":
+"@cognite/cogs.js@^3.42.6":
   version "3.42.6"
   resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.6.tgz#4ff179e7708f927abde0fd1ed99c4c5937703ddd"
   integrity sha512-vdGI6XSdUTnI69Y2DZIKn+P7eTNazQbYQuhbxxXQKXBhGU2Bh2MZvwuKxpZ6Zo5e3g09ucSaOpRNtwxgmd0u1Q==
@@ -3169,17 +3169,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.7.3.tgz#d044524c1808b54ff281b9fbe2bd0d70580f956c"
-  integrity sha512-3RCUlTUSFS8D547MyVXQ+J4eetoiQIg6Qb9+ApCxlyMjmPX7zAU9UUhy3mXjWIbm0uAl/Sh4hA66eV7QpdQ6PA==
+"@cognite/data-exploration@^1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-1.6.4.tgz#12eaa567a859ab8b3e18cf07cb085d36954e97f4"
+  integrity sha512-U6/fKJE09nfvTP9NzJ8JSdv9mJI0aql7TpNxTo+nr+94HuWg2z6gSZkefB/bsALp3QFNbzR1cevzopNJHBhcOA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
-    "@cognite/cogs.js" "^3.42.5"
+    "@cognite/cogs.js" "^3.32.1"
     "@cognite/gcs-browser-upload" "^1.1.0"
     "@cognite/react-feature-flags" "^0.1.0"
-    "@cognite/react-picture-annotation" "^2.0.1"
+    "@cognite/react-picture-annotation" "^2.0.0"
     "@cognite/sdk" "^3.3.6"
     "@cognite/sdk-provider" "^1.0.0"
     "@cognite/sdk-react-query-hooks" "^5.0.1"
@@ -3315,10 +3315,10 @@
     react-splitter-layout "^4.0.0"
     styled-components "^5.2.0"
 
-"@cognite/react-picture-annotation@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.1.tgz#9790303ab204f7b2c27f16c6c87b67e0b73f0f5f"
-  integrity sha512-+gn+RudIhOY9BFzOZ1eJe+ypxc0XAFkL4Rxx1xrYJbZywPKOZ76RVTdXuCmqsLh56Aq4MnGhtrcBR3bbbDnAYQ==
+"@cognite/react-picture-annotation@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.0.tgz#181f0bd90192a3892c4f9b5ad59584aa8fd5f80d"
+  integrity sha512-/lHq0JMrNkYyJL+8SZfJbW8btW0g5l7XYyTgx+3XSYOKUxDDGlGAAWTW9KgBsdyqc5CjtWPXphJko937Wp7UQg==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^3.3.0"
