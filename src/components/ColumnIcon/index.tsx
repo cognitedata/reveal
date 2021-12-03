@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { Icon } from '@cognite/cogs.js';
+import { useActiveTableContext } from 'contexts';
 import { useColumnType } from 'hooks/profiling-service';
 
 export const COLUMN_ICON_WIDTH = 50;
@@ -8,7 +9,8 @@ export const COLUMN_ICON_WIDTH = 50;
 type Props = { dataKey: string | undefined };
 
 export default function ColumnIcon({ dataKey }: Props) {
-  const { getColumnType } = useColumnType();
+  const { database, table } = useActiveTableContext();
+  const { getColumnType } = useColumnType(database, table);
 
   const columnType = useMemo(
     () => getColumnType(dataKey),

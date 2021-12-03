@@ -34,7 +34,7 @@ export interface ColumnType extends Partial<ColumnShape> {
 export const useTableData = () => {
   const { database, table, columnNameFilter, columnTypeFilters } =
     useActiveTableContext();
-  const { getColumnType } = useColumnType();
+  const { getColumnType } = useColumnType(database, table);
 
   const chooseRenderType = useCallback((value: any): string => {
     if (isBoolean(value)) return value.toString();
