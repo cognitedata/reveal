@@ -105,7 +105,7 @@ export const TableCell = {
 
     if (value === 'queuing' || value === 'training') {
       return (
-        <Label size="medium" icon="LoadingSpinner" variant="default">
+        <Label size="medium" icon="Loader" variant="default">
           {status}
         </Label>
       );
@@ -203,7 +203,7 @@ export const TableCell = {
 
               <Menu.Item
                 onClick={() => classifierActionsCallback('delete', original)}
-                appendIcon="Trash"
+                appendIcon="Delete"
                 style={{ color: '#D51A46' }}
               >
                 Delete
@@ -213,7 +213,7 @@ export const TableCell = {
         >
           <Button
             type="ghost"
-            icon="MoreOverflowEllipsisHorizontal"
+            icon="EllipsisVertical"
             aria-label="Classifier actions"
           />
         </Dropdown>

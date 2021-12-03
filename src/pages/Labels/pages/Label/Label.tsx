@@ -71,7 +71,7 @@ export const LabelPage: React.FC = () => {
             <Body level="2">{data.length} files</Body>
 
             <Button
-              icon="PlusCompact"
+              icon="AddLarge"
               type="primary"
               onClick={() => toggleShowFiles()}
             >
@@ -91,7 +91,7 @@ export const LabelPage: React.FC = () => {
         title={`${Object.keys(selectedIds).length} documents selected`}
       >
         <Button
-          icon="Trash"
+          icon="Delete"
           loading={mutateLoading}
           onClick={() => handleRemoveDocumentsClick()}
         >

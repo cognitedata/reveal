@@ -9,12 +9,12 @@ const Content = styled.div`
 
 export const NavigationBackButton = styled(Button).attrs({
   type: 'ghost',
-  icon: 'ArrowBack',
+  icon: 'ArrowLeft',
 })``;
 
 export const NavigationNextButton = styled(Button).attrs({
   type: 'primary',
-  icon: 'ArrowForward',
+  icon: 'ArrowRight',
   iconPlacement: 'right',
 })``;
 

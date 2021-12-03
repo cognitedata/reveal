@@ -67,7 +67,7 @@ export const TrainingSetsTable: React.FC = () => {
       >
         <Button
           type="secondary"
-          icon="Trash"
+          icon="Delete"
           onClick={() => handleRemoveLabelsClick()}
         >
           Remove

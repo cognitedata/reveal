@@ -30,7 +30,7 @@ export const StepWidget: FC<{
     if (isCurrentStep) {
       return (
         <StepBadgeActive>
-          <Icon type="ArrowForward" />
+          <Icon type="ArrowRight" />
         </StepBadgeActive>
       );
     }

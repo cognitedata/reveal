@@ -19,7 +19,7 @@ export const TrainClassifierInfoBar: React.FC<Props> = ({ classifier }) => {
       <Button
         size="small"
         type="primary"
-        icon="ArrowForward"
+        icon="ArrowRight"
         iconPlacement="right"
         onClick={() => toHome()}
       >

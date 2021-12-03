@@ -16,7 +16,7 @@ export const FileTypeFilter: React.FC<FilterProps> = ({ onChange }) => {
     <FilterContainer>
       <Select
         title="File Type"
-        icon="ResourceDocuments"
+        icon="Document"
         filterKey="fileType"
         options={fileTypeOptions}
         onChange={onChange}

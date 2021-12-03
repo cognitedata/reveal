@@ -39,7 +39,7 @@ export const NoAccessPage: React.FC<Props> = ({ missingPermissions }) => {
   return (
     <Page
       Widget={
-        <Button icon="ArrowBack" onClick={toDashboard}>
+        <Button icon="ArrowLeft" onClick={toDashboard}>
           Back to dashboard
         </Button>
       }

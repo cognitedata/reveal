@@ -57,7 +57,7 @@ export const ManageTrainingSets: FC<ClassifierProps> = ({ Widget }) => {
             <Button onClick={() => toLabels()}>Manage labels</Button>
             <Button
               type="primary"
-              icon="PlusCompact"
+              icon="AddLarge"
               onClick={() => toggleLabelsModal()}
             >
               Add labels

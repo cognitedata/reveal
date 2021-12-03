@@ -1,4 +1,4 @@
-import { Body } from '@cognite/cogs.js';
+import { Body, Icon } from '@cognite/cogs.js';
 import { useNavigation } from 'hooks/useNavigation';
 import React from 'react';
 import styled from 'styled-components';
@@ -39,7 +39,8 @@ export const Breadcrumb: React.FC<Props> = ({ breadcrumbs }) => {
 
       {breadcrumbs?.map((item, index) => (
         <React.Fragment key={item.title}>
-          <BreadcrumbText>/</BreadcrumbText>
+          <Icon type="Breadcrumb" />
+
           <BreadcrumbText
             strong={breadcrumbs.length === index + 1}
             onClick={() => {

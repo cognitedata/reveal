@@ -84,7 +84,7 @@ const HomePage = () => {
         description={homeConfig.DESCRIPTION}
         Action={
           <Button
-            icon="PlusCompact"
+            icon="AddLarge"
             type="primary"
             onClick={() => toClassifier(pipeline?.classifier.name || 'No name')}
           >

@@ -41,7 +41,7 @@ export const MatrixTable: React.FC<Props> = ({ classifier }) => {
 
       <Flex direction="column">
         <HorizontalText>
-          Predicted label <Icon type="ArrowForward" />
+          Predicted label <Icon type="ArrowRight" />
         </HorizontalText>
 
         <TableWrapper

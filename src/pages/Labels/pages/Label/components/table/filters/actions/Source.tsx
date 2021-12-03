@@ -16,7 +16,7 @@ export const SourceFilter: React.FC<FilterProps> = ({ onChange }) => {
     <FilterContainer>
       <Select
         title="Source"
-        icon="Datasource"
+        icon="DataSource"
         filterKey="source"
         options={sourceOptions}
         onChange={onChange}

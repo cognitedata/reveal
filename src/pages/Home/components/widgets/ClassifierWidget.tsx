@@ -38,7 +38,7 @@ const ClassifierAdd: React.FC<{ disabled: boolean }> = ({ disabled }) => {
       disabled={!disabled}
       content="Currently, it is only possible to have one classifier in the pipeline"
     >
-      <Button icon="PlusCompact" type="ghost" disabled={disabled}>
+      <Button icon="AddLarge" type="ghost" disabled={disabled}>
         New classifier
       </Button>
     </Tooltip>

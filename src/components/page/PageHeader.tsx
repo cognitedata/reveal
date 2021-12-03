@@ -56,7 +56,7 @@ export const PageHeader: React.FC<Props> = React.memo(
           <BackContainer>
             <Button
               type="ghost"
-              icon="Close"
+              icon="CloseLarge"
               aria-label="Go to previous page"
               onClick={onClose}
             />
@@ -69,7 +69,7 @@ export const PageHeader: React.FC<Props> = React.memo(
           <BackContainer>
             <Button
               type="ghost"
-              icon="ArrowBack"
+              icon="ArrowLeft"
               aria-label="Go to previous page"
               onClick={() => goBack()}
             />

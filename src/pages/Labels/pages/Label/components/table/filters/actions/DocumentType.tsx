@@ -16,7 +16,7 @@ export const DocumentCategoryFilter: React.FC<FilterProps> = ({ onChange }) => {
     <FilterContainer>
       <Select
         title="Document Type"
-        icon="Label"
+        icon="Tag"
         filterKey="documentType"
         options={documentTypeOptions}
         onChange={onChange}

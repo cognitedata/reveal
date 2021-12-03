@@ -62,7 +62,7 @@ export const LabelsPage: React.FC = () => {
             <Body level="2">{data.length} labels</Body>
 
             <Button
-              icon="PlusCompact"
+              icon="AddLarge"
               type="primary"
               onClick={() => toggleLabelsModal()}
             >
@@ -89,7 +89,7 @@ export const LabelsPage: React.FC = () => {
       >
         <Button
           type="secondary"
-          icon="Trash"
+          icon="Delete"
           onClick={() => handleDeleteLabelsClick()}
         >
           Remove
