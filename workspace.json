@@ -366,6 +366,15 @@
           },
           "configurations": {
             "production": {
+              "sourceMap": false,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
+                }
+              ],
               "optimization": true,
               "extractLicenses": true,
               "inspect": false,

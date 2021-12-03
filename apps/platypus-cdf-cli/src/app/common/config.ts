@@ -1,5 +1,6 @@
-import { mkdirSync } from 'fs';
-import { readFile, writeFile } from 'fs/promises';
+import { mkdirSync, promises } from 'fs';
+const { writeFile, readFile } = promises;
+
 import { join } from 'path';
 import { Arguments, CommandModule } from 'yargs';
 import { CONSTANTS } from '../constants';

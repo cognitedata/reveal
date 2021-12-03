@@ -1,9 +1,14 @@
 import { Arguments } from 'yargs';
 import { BaseArgs } from '../types';
 import { ConfigSchema, injectRCFile } from './config';
-import fs from 'fs/promises';
+import { promises } from 'fs';
 
-jest.mock('fs/promises');
+jest.mock('fs', () => ({
+  promises: {
+    writeFile: jest.fn(),
+    readFile: jest.fn(),
+  },
+}));
 
 describe('Test @injectRCFile decorator', () => {
   let count = 0;
@@ -20,7 +25,7 @@ describe('Test @injectRCFile decorator', () => {
     version: 1000,
   };
 
-  const readFile = (fs.readFile as jest.Mock).mockResolvedValue(
+  const readFile = (promises.readFile as jest.Mock).mockResolvedValue(
     JSON.stringify(config)
   );
 
