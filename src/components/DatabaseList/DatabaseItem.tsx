@@ -116,7 +116,7 @@ const DatabaseItem = ({
             title={`Table ${_table.name}`}
             getPopupContainer={getContainer}
           >
-            <StyledTableItemIcon type="Table" />
+            <StyledTableItemIcon type="TableViewSmall" />
             <span>{_table.name}</span>
           </Tooltip>
         </a>
@@ -213,7 +213,7 @@ const DatabaseItem = ({
                 >
                   <Button
                     aria-label="Delete database"
-                    icon="Trash"
+                    icon="Delete"
                     type="ghost"
                   />
                 </Tooltip>
@@ -238,7 +238,7 @@ const DatabaseItem = ({
         ) : (
           <StyledAlert message="This database has no tables" type="info" />
         )}
-        {tables ? renderTables() : <Icon type="Loading" />}
+        {tables ? renderTables() : <Icon type="Loader" />}
 
         <CreateTable database={database} />
       </SubMenu>

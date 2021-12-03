@@ -13,7 +13,7 @@ export default function RowCount() {
   if (!isFetched) {
     return (
       <Icon
-        type="Loading"
+        type="Loader"
         style={{
           color: Colors['greyscale-grey4'].hex(),
           margin: '0 5px',

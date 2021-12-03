@@ -61,7 +61,7 @@ export const Menu = (): JSX.Element => {
         }}
       >
         <Item danger>
-          <Icon type="Trash" />
+          <Icon type="Delete" />
           <span>Delete table</span>
         </Item>
       </CogsMenu.Item>

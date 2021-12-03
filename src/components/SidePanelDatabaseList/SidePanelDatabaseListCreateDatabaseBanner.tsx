@@ -36,14 +36,14 @@ const SidePanelDatabaseListCreateDatabaseBanner = ({
 }: SidePanelDatabaseListCreateDatabaseBannerProps): JSX.Element => {
   return (
     <StyledCreateDatabaseBannerWrapper>
-      <StyledCreateDatabaseBannerIcon size={32} type="Datasource" />
+      <StyledCreateDatabaseBannerIcon size={32} type="DataSource" />
       <StyledCreateDatabaseBannerTitle level={6} strong>
         Create your first database
       </StyledCreateDatabaseBannerTitle>
       <StyledCreateDatabaseBannerDetail strong>
         You can either create them manually here or through the api
       </StyledCreateDatabaseBannerDetail>
-      <Button icon="PlusCompact" onClick={onClick} type="tertiary">
+      <Button icon="Add" onClick={onClick} type="tertiary">
         Create database
       </Button>
     </StyledCreateDatabaseBannerWrapper>

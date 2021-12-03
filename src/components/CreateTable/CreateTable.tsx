@@ -41,7 +41,7 @@ export default function CreateTable({ database }: { database: string }) {
           title={
             isLoading ? (
               <>
-                Creating table <Icon type="Loading" />
+                Creating table <Icon type="Loader" />
               </>
             ) : (
               'Create table'
@@ -89,7 +89,7 @@ export default function CreateTable({ database }: { database: string }) {
 
       <Button
         style={{ width: '100%', marginBottom: '5px' }}
-        icon="PlusCompact"
+        icon="Add"
         type="primary"
         onClick={() => setVisible(true)}
         disabled={!hasWriteAccess}

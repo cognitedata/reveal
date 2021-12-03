@@ -121,7 +121,7 @@ export default function TableTabList() {
           }}
         >
           <LeftIcon>
-            <Icon size={10} type="Table" />
+            <Icon size={10} type="TableViewSmall" />
           </LeftIcon>
 
           <TabContent>{table}</TabContent>
