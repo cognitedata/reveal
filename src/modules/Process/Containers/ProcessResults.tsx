@@ -45,7 +45,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
-import { ResumeAnnotationJobs } from 'src/store/thunks/Process/ResumeAnnotationJobs';
+import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const dispatch = useDispatch();
@@ -213,11 +213,8 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   useEffect(() => {
-    dispatch(
-      ResumeAnnotationJobs({
-        unfinishedJobs,
-      })
-    );
+    // Resume Annotation Jobs
+    dispatch(PollJobs(unfinishedJobs));
   }, []);
 
   return (
