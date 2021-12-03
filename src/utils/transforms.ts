@@ -168,11 +168,7 @@ export function getOperationFromNode(node: StorableNode) {
 
 export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
   if (!workflow.version) {
-    return getStepsFromWorkflowConnect(
-      chart,
-      workflow.nodes,
-      workflow.connections
-    );
+    return getStepsFromWorkflowConnect(chart, workflow);
   }
   if (workflow.version === 'v2') {
     return getStepsFromWorkflowReactFlow(chart, workflow.flow);
@@ -182,9 +178,14 @@ export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
 
 export function getStepsFromWorkflowConnect(
   chart: Chart,
-  nodes: StorableNode[] | undefined,
-  connections: Record<string, any> | undefined
+  workflow: ChartWorkflowV1
 ): ComputationStep[] {
+  if (!workflow) {
+    return [];
+  }
+
+  const { nodes, connections } = workflow;
+
   const outputNode = nodes?.find(
     (node) => node.functionEffectReference === 'OUTPUT'
   );
@@ -196,11 +197,14 @@ export function getStepsFromWorkflowConnect(
   let totalNodes = [...(nodes || [])];
   let totalConnections = { ...connections } as typeof connections;
   const validNodes: StorableNode[] = [outputNode];
+  let detectedCircularReference = false;
 
   /**
    * Resolve connected nodes from the output node (end) and backwards
    */
-  function resolveInputNodes(node: StorableNode) {
+  function resolveInputNodes(node: StorableNode, illegalReferences: string[]) {
+    const updatedIllegalReferences = [...illegalReferences];
+
     node.inputPins.forEach((inputPin: any) => {
       const inputNodeConnections = Object.values(totalConnections || {})
         .filter(Boolean)
@@ -235,6 +239,17 @@ export function getStepsFromWorkflowConnect(
             const referencedWorkflow = chart.workflowCollection?.find(
               ({ id }) => id === nodeCandidate.functionData.sourceId
             ) as ChartWorkflowV1;
+
+            if (!referencedWorkflow) {
+              return undefined;
+            }
+
+            if (illegalReferences.includes(referencedWorkflow.id)) {
+              detectedCircularReference = true;
+              return undefined;
+            }
+
+            updatedIllegalReferences.push(referencedWorkflow.id);
 
             const wfOutputNode = referencedWorkflow?.nodes?.find(
               (nd) => nd.functionEffectReference === 'OUTPUT'
@@ -305,11 +320,17 @@ export function getStepsFromWorkflowConnect(
       }
 
       inputNodes.forEach((inputNode) => validNodes.unshift(inputNode));
-      inputNodes.forEach(resolveInputNodes);
+      inputNodes.forEach((inputNode) =>
+        resolveInputNodes(inputNode, updatedIllegalReferences)
+      );
     });
   }
 
-  resolveInputNodes(outputNode!);
+  resolveInputNodes(outputNode!, [workflow.id]);
+
+  if (detectedCircularReference) {
+    return [];
+  }
 
   const steps: ComputationStep[] = validNodes
     .filter((node) =>

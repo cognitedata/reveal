@@ -113,8 +113,8 @@ const ConnectNodeEditor = ({
       node.id === nextNode.id ? nextNode : node
     );
     const deleteCalls = !isEqual(
-      getStepsFromWorkflowConnect(chart, workflow.nodes, workflow.connections),
-      getStepsFromWorkflowConnect(chart, nodeUpdate, workflow.connections)
+      getStepsFromWorkflowConnect(chart, workflow),
+      getStepsFromWorkflowConnect(chart, { ...workflow, nodes: nodeUpdate })
     );
 
     if (deleteCalls) {

@@ -214,11 +214,7 @@ describe('getStepsFromWorkflowConnect', () => {
       enabled: true,
     };
 
-    const steps = getStepsFromWorkflowConnect(
-      chart,
-      workflow.nodes,
-      workflow.connections
-    );
+    const steps = getStepsFromWorkflowConnect(chart, workflow);
 
     expect(steps).toEqual([]);
   });
@@ -446,11 +442,7 @@ describe('getStepsFromWorkflowConnect', () => {
       },
     };
 
-    const steps = getStepsFromWorkflowConnect(
-      chart,
-      workflow.nodes,
-      workflow.connections
-    );
+    const steps = getStepsFromWorkflowConnect(chart, workflow);
 
     expect(steps).toEqual([]);
   });
@@ -793,11 +785,7 @@ describe('getStepsFromWorkflowConnect', () => {
       },
     };
 
-    const steps = getStepsFromWorkflowConnect(
-      chart,
-      workflow.nodes,
-      workflow.connections
-    );
+    const steps = getStepsFromWorkflowConnect(chart, workflow);
 
     expect(steps).toEqual([
       {
@@ -943,11 +931,7 @@ describe('getStepsFromWorkflowConnect', () => {
       name: 'New Calculation',
     };
 
-    const steps = getStepsFromWorkflowConnect(
-      chart,
-      workflow.nodes,
-      workflow.connections
-    );
+    const steps = getStepsFromWorkflowConnect(chart, workflow);
 
     expect(steps).toEqual([
       {
@@ -1366,11 +1350,7 @@ describe('getStepsFromWorkflowConnect', () => {
       },
     };
 
-    const steps = getStepsFromWorkflowConnect(
-      chart,
-      workflow.nodes,
-      workflow.connections
-    );
+    const steps = getStepsFromWorkflowConnect(chart, workflow);
 
     expect(steps).toEqual([
       {
@@ -1656,8 +1636,7 @@ describe('getStepsFromWorkflowConnect', () => {
 
     const steps = getStepsFromWorkflowConnect(
       chart,
-      (chart.workflowCollection?.[1] as ChartWorkflowV1).nodes,
-      (chart.workflowCollection?.[1] as ChartWorkflowV1).connections
+      chart.workflowCollection?.[1] as ChartWorkflowV1
     );
 
     expect(steps).toEqual([
@@ -2003,8 +1982,7 @@ describe('getStepsFromWorkflowConnect', () => {
 
     const firstLevelSteps = getStepsFromWorkflowConnect(
       chart,
-      (chart.workflowCollection?.[1] as ChartWorkflowV1).nodes,
-      (chart.workflowCollection?.[1] as ChartWorkflowV1).connections
+      chart.workflowCollection?.[1] as ChartWorkflowV1
     );
 
     expect(firstLevelSteps).toEqual([
@@ -2032,8 +2010,7 @@ describe('getStepsFromWorkflowConnect', () => {
 
     const secondLevelSteps = getStepsFromWorkflowConnect(
       chart,
-      (chart.workflowCollection?.[2] as ChartWorkflowV1).nodes,
-      (chart.workflowCollection?.[2] as ChartWorkflowV1).connections
+      chart.workflowCollection?.[2] as ChartWorkflowV1
     );
 
     expect(secondLevelSteps).toEqual([
@@ -2068,6 +2045,361 @@ describe('getStepsFromWorkflowConnect', () => {
         ],
       },
     ]);
+  });
+
+  it('handles circular workflow source references gracefully', () => {
+    const chart: Chart = {
+      id: 'sDxh9oG2cTehVNr3iieB1',
+      user: 'eirik.vullum@cognite.com',
+      userInfo: {
+        id: 'eirik.vullum@cognite.com',
+        email: 'eirik.vullum@cognite.com',
+        displayName: 'eirik.vullum@cognite.com',
+      },
+      name: 'Chart for testing circ v1',
+      updatedAt: 1638315273859,
+      createdAt: 1638315273859,
+      timeSeriesCollection: [
+        {
+          id: 'cr3t6oryB894XY02XbOUP',
+          name: 'VAL_21_PI_1017_04:Z.X.Value',
+          tsId: 4582687667743262,
+          tsExternalId: 'VAL_21_PI_1017_04:Z.X.Value',
+          unit: '',
+          type: 'timeseries',
+          originalUnit: '',
+          preferredUnit: '',
+          color: '#6929c4',
+          lineWeight: 1,
+          lineStyle: 'solid',
+          displayMode: 'lines',
+          enabled: true,
+          description: '-',
+          range: [0.00226, 0.00306],
+          createdAt: 1638315296509,
+        },
+      ],
+      workflowCollection: [
+        {
+          version: '',
+          id: 'FB7E0X_4eDgXP8rQE6Vbb',
+          name: 'Calc 1',
+          color: '#1192e8',
+          nodes: [
+            {
+              id: 'AksE3lm8r-IE_xnHf0E45',
+              title: 'Output',
+              subtitle: 'CHART OUTPUT',
+              color: '#4A67FB',
+              icon: 'Icon',
+              outputPins: [],
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                  x: 601,
+                  y: 188,
+                },
+              ],
+              functionEffectReference: 'OUTPUT',
+              x: 601,
+              y: 126,
+              calls: [],
+              selected: false,
+              width: 162,
+            },
+            {
+              id: 'ICSt8e05ickheJWDdJ_SO',
+              title: 'Calc 3',
+              subtitle: 'Calculation',
+              color: '#FC2574',
+              icon: 'Function',
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                  x: 375.546875,
+                  y: 147,
+                },
+              ],
+              functionEffectReference: 'SOURCE_REFERENCE',
+              functionData: {
+                type: 'workflow',
+                sourceId: 'phXaTp4LIyUMam3SIWP3i',
+              },
+              x: 61,
+              y: 127,
+              calls: [],
+              selected: false,
+              width: 314.546875,
+            },
+          ],
+          connections: {
+            yNcIHOEQeyDqd8IFOzQEQ: {
+              id: 'yNcIHOEQeyDqd8IFOzQEQ',
+              outputPin: {
+                nodeId: 'ICSt8e05ickheJWDdJ_SO',
+                pinId: 'result',
+              },
+              inputPin: {
+                nodeId: 'AksE3lm8r-IE_xnHf0E45',
+                pinId: 'datapoints',
+              },
+            },
+          },
+          lineWeight: 1,
+          lineStyle: 'solid',
+          enabled: true,
+          createdAt: 1638315299192,
+          unit: '',
+          preferredUnit: '',
+          type: 'workflow',
+          calls: [
+            {
+              id: '60e361a7-7d74-4827-8b5f-60102f2c6248',
+              status: 'Pending',
+              callId: '60e361a7-7d74-4827-8b5f-60102f2c6248',
+              callDate: 1638315327283,
+              hash: -109218728,
+            },
+          ],
+          statisticsCalls: [
+            {
+              callDate: 1638315334656,
+              callId: '2b12e5e3-4472-4807-aa9f-95437a297166',
+              hash: -1328510548,
+            },
+          ],
+        },
+        {
+          version: '',
+          id: 'TWgIPCZS4UyfuThADJ-iv',
+          name: 'Calc 2',
+          color: '#005d5d',
+          nodes: [
+            {
+              id: 'KZ2Z1lF77cyB8KGjYw73v',
+              title: 'Output',
+              subtitle: 'CHART OUTPUT',
+              color: '#4A67FB',
+              icon: 'Icon',
+              outputPins: [],
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                  x: 692,
+                  y: 201,
+                },
+              ],
+              functionEffectReference: 'OUTPUT',
+              x: 692,
+              y: 139,
+              calls: [],
+              selected: false,
+              width: 162,
+            },
+            {
+              id: 'Ib--43Ju64bqEbTfFi85d',
+              title: 'Calc 1',
+              subtitle: 'Calculation',
+              color: '#FC2574',
+              icon: 'Function',
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                  x: 210.0625,
+                  y: 152,
+                },
+              ],
+              functionEffectReference: 'SOURCE_REFERENCE',
+              functionData: {
+                type: 'workflow',
+                sourceId: 'FB7E0X_4eDgXP8rQE6Vbb',
+              },
+              x: 101,
+              y: 132,
+              calls: [],
+              selected: false,
+              width: 109.0625,
+            },
+          ],
+          connections: {
+            nnFo8c_tUcmk0MQI8fr6m: {
+              id: 'nnFo8c_tUcmk0MQI8fr6m',
+              outputPin: {
+                nodeId: 'Ib--43Ju64bqEbTfFi85d',
+                pinId: 'result',
+              },
+              inputPin: {
+                nodeId: 'KZ2Z1lF77cyB8KGjYw73v',
+                pinId: 'datapoints',
+              },
+            },
+          },
+          lineWeight: 1,
+          lineStyle: 'solid',
+          enabled: true,
+          createdAt: 1638315330462,
+          unit: '',
+          preferredUnit: '',
+          type: 'workflow',
+          calls: [
+            {
+              id: 'e2e784d7-0106-48cf-bbd2-f3c029373fa5',
+              status: 'Pending',
+              callId: 'e2e784d7-0106-48cf-bbd2-f3c029373fa5',
+              callDate: 1638315349583,
+              hash: 1300411767,
+            },
+          ],
+          statisticsCalls: [
+            {
+              callDate: 1638315356772,
+              callId: '1c5fb92c-c1b0-4032-aa54-7fbbf19b756b',
+              hash: -456607203,
+            },
+          ],
+        },
+        {
+          version: '',
+          id: 'phXaTp4LIyUMam3SIWP3i',
+          name: 'Calc 3',
+          color: '#9f1853',
+          nodes: [
+            {
+              id: '0R4wysMOEyEuLsxzBNNvL',
+              title: 'Output',
+              subtitle: 'CHART OUTPUT',
+              color: '#4A67FB',
+              icon: 'Icon',
+              outputPins: [],
+              inputPins: [
+                {
+                  id: 'datapoints',
+                  title: 'Time Series',
+                  types: ['TIMESERIES'],
+                  x: 709,
+                  y: 183,
+                },
+              ],
+              functionEffectReference: 'OUTPUT',
+              x: 709,
+              y: 121,
+              calls: [],
+              selected: false,
+              width: 162,
+            },
+            {
+              id: 'aYLJxO2Gsi4Z7Z9sxqYsK',
+              title: 'Calc 2',
+              subtitle: 'Calculation',
+              color: '#FC2574',
+              icon: 'Function',
+              inputPins: [],
+              outputPins: [
+                {
+                  id: 'result',
+                  title: 'Time Series',
+                  type: 'TIMESERIES',
+                  x: 150.0625,
+                  y: 131,
+                },
+              ],
+              functionEffectReference: 'SOURCE_REFERENCE',
+              functionData: {
+                type: 'workflow',
+                sourceId: 'TWgIPCZS4UyfuThADJ-iv',
+              },
+              x: 41,
+              y: 111,
+              calls: [],
+              selected: false,
+              width: 109.0625,
+            },
+          ],
+          connections: {
+            '2jj4dEQ3wqIS2bNNPRkyx': {
+              id: '2jj4dEQ3wqIS2bNNPRkyx',
+              outputPin: {
+                nodeId: 'aYLJxO2Gsi4Z7Z9sxqYsK',
+                pinId: 'result',
+              },
+              inputPin: {
+                nodeId: '0R4wysMOEyEuLsxzBNNvL',
+                pinId: 'datapoints',
+              },
+            },
+          },
+          lineWeight: 1,
+          lineStyle: 'solid',
+          enabled: true,
+          createdAt: 1638315350851,
+          unit: '',
+          preferredUnit: '',
+          type: 'workflow',
+          calls: [
+            {
+              id: 'cdb5832c-f8d8-40ea-9f82-328318113727',
+              status: 'Pending',
+              callId: 'cdb5832c-f8d8-40ea-9f82-328318113727',
+              callDate: 1638315367459,
+              hash: -1591803402,
+            },
+          ],
+          statisticsCalls: [
+            {
+              callDate: 1638315379616,
+              callId: '6f59aeab-6d0b-4231-8d0d-c28e5494a4c3',
+              hash: -217660026,
+            },
+          ],
+        },
+      ],
+      dateFrom: '2021-10-31T23:00:33.858Z',
+      dateTo: '2021-12-01T22:59:33.858Z',
+      public: false,
+      version: 1,
+      settings: {
+        showYAxis: true,
+        showMinMax: false,
+        showGridlines: true,
+        mergeUnits: false,
+      },
+      dirty: true,
+      sourceCollection: [
+        {
+          id: 'phXaTp4LIyUMam3SIWP3i',
+          type: 'workflow',
+        },
+        {
+          id: 'TWgIPCZS4UyfuThADJ-iv',
+          type: 'workflow',
+        },
+        {
+          id: 'FB7E0X_4eDgXP8rQE6Vbb',
+          type: 'workflow',
+        },
+        {
+          id: 'cr3t6oryB894XY02XbOUP',
+          type: 'timeseries',
+        },
+      ],
+    };
+
+    const steps = getStepsFromWorkflowConnect(
+      chart,
+      chart.workflowCollection?.[0] as ChartWorkflowV1
+    );
+
+    expect(steps).toEqual([]);
   });
 });
 
@@ -2817,6 +3149,331 @@ describe('getStepsFromWorkflowReactFlow', () => {
   });
 
   it('generates correct steps (another calculation as input)', () => {
+    const chart: Chart = {
+      id: 'chart-1',
+      name: 'Chart 1',
+      version: 1,
+      user: 'abc@cognite.com',
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+      dateFrom: new Date().toJSON(),
+      dateTo: new Date().toJSON(),
+      timeSeriesCollection: [
+        {
+          id: 'j350Z4nwnOfk212Nu3bks',
+          type: 'timeseries',
+          name: 'Pressure 1019',
+          tsExternalId: 'VAL_21_PT_1019_04:Z.X.Value',
+          tsId: 4470513466595936,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+        {
+          id: 'RvXihRaJJujRDDFKC4D1-',
+          tsExternalId: 'VAL_21_PT_1017_04:Z.X.Value',
+          name: 'Pressure 1017',
+          type: 'timeseries',
+          tsId: 1561976339625775,
+          enabled: true,
+          createdAt: 1635243072437,
+          color: '#1192e8',
+        },
+      ],
+      workflowCollection: [
+        {
+          version: 'v2',
+          type: 'workflow',
+          name: 'ΔP',
+          createdAt: 1635243137501,
+          color: '#005d5d',
+          flow: {
+            elements: [
+              {
+                id: 'w5ivU9w58jxfUz7htTPUe',
+                data: {
+                  name: 'New Calculation',
+                  color: '#6929c4',
+                },
+                type: 'CalculationOutput',
+                position: {
+                  x: 1031,
+                  y: 108,
+                },
+              },
+              {
+                data: {
+                  type: 'timeseries',
+                  sourceOptions: [],
+                  selectedSourceId: 'j350Z4nwnOfk212Nu3bks',
+                },
+                id: 'ZNyEwM0gqzMpXaSd_GPKW',
+                position: {
+                  x: 96,
+                  y: 84,
+                },
+                type: 'CalculationInput',
+              },
+              {
+                data: {
+                  selectedSourceId: 'RvXihRaJJujRDDFKC4D1-',
+                  sourceOptions: [],
+                  type: 'timeseries',
+                },
+                id: 'x1Psfywpu3O2BXwHkqH-K',
+                position: {
+                  x: 99,
+                  y: 228,
+                },
+                type: 'CalculationInput',
+              },
+              {
+                position: {
+                  x: 517,
+                  y: 74,
+                },
+                data: {
+                  toolFunction: {
+                    name: 'Resample to granularity',
+                    op: 'resample_to_granularity',
+                  },
+                  functionData: {
+                    granularity: '1h',
+                    aggregate: 'mean',
+                  },
+                },
+                type: 'ToolboxFunction',
+                id: 'a_HOVHQ71v5pXYvV7usq_',
+              },
+              {
+                data: {
+                  functionData: {
+                    aggregate: 'mean',
+                    granularity: '1h',
+                  },
+                  toolFunction: {
+                    op: 'resample_to_granularity',
+                    name: 'Resample to granularity',
+                  },
+                },
+                id: '9-RiktpSALNrlmwqoUPkt',
+                position: {
+                  x: 517.3818181818183,
+                  y: 220.9057851239669,
+                },
+                type: 'ToolboxFunction',
+              },
+              {
+                id: 'I3ezdixmgmf1ux-DRVZvs',
+                data: {
+                  toolFunction: {
+                    op: 'sub',
+                    name: 'Subtraction',
+                  },
+                  functionData: {},
+                },
+                position: {
+                  x: 806.6793388429753,
+                  y: 112.2545454545454,
+                },
+                type: 'ToolboxFunction',
+              },
+              {
+                id: 'reactflow__edge-ZNyEwM0gqzMpXaSd_GPKWresult-a_HOVHQ71v5pXYvV7usq_series',
+                target: 'a_HOVHQ71v5pXYvV7usq_',
+                targetHandle: 'series',
+                type: 'default',
+                source: 'ZNyEwM0gqzMpXaSd_GPKW',
+                sourceHandle: 'result',
+              },
+              {
+                type: 'default',
+                target: '9-RiktpSALNrlmwqoUPkt',
+                id: 'reactflow__edge-x1Psfywpu3O2BXwHkqH-Kresult-9-RiktpSALNrlmwqoUPktseries',
+                sourceHandle: 'result',
+                targetHandle: 'series',
+                source: 'x1Psfywpu3O2BXwHkqH-K',
+              },
+              {
+                target: 'I3ezdixmgmf1ux-DRVZvs',
+                type: 'default',
+                targetHandle: 'b',
+                id: 'reactflow__edge-9-RiktpSALNrlmwqoUPktout-result-I3ezdixmgmf1ux-DRVZvsb',
+                source: '9-RiktpSALNrlmwqoUPkt',
+                sourceHandle: 'out-result',
+              },
+              {
+                type: 'default',
+                source: 'a_HOVHQ71v5pXYvV7usq_',
+                targetHandle: 'a',
+                sourceHandle: 'out-result',
+                target: 'I3ezdixmgmf1ux-DRVZvs',
+                id: 'reactflow__edge-a_HOVHQ71v5pXYvV7usq_out-result-I3ezdixmgmf1ux-DRVZvsa',
+              },
+              {
+                source: 'I3ezdixmgmf1ux-DRVZvs',
+                sourceHandle: 'out-result',
+                target: 'w5ivU9w58jxfUz7htTPUe',
+                targetHandle: 'datapoints',
+                id: 'reactflow__edge-I3ezdixmgmf1ux-DRVZvsout-result-w5ivU9w58jxfUz7htTPUedatapoints',
+                type: 'default',
+              },
+            ],
+            position: [-17.75, 111.5],
+            zoom: 0.5,
+          },
+          enabled: false,
+          id: 'gAYbR4eVz12AwuTvLeIxR',
+        },
+      ],
+    };
+
+    const workflow: ChartWorkflowV2 = {
+      version: 'v2',
+      id: 'abc123',
+      name: 'Empty workflow',
+      color: '#FFF',
+      flow: {
+        elements: [
+          {
+            position: {
+              x: 1682,
+              y: 262,
+            },
+            type: 'CalculationOutput',
+            data: {
+              name: 'New Calculation',
+              color: '#9f1853',
+            },
+            id: 'JrFD5yxRA9dJcnpAs48pp',
+          },
+          {
+            position: {
+              x: 964.75,
+              y: 252.37890625,
+            },
+            data: {
+              selectedSourceId: 'gAYbR4eVz12AwuTvLeIxR',
+              type: 'workflow',
+              sourceOptions: [],
+            },
+            id: 'rg-495YhO5rAAqjyD1X-Z',
+            type: 'CalculationInput',
+          },
+          {
+            type: 'ToolboxFunction',
+            id: 'Tzcchda282s2PTA-84dMa',
+            data: {
+              toolFunction: {
+                name: 'Saviztky-Golay',
+                category: 'Smooth',
+                op: 'sg',
+              },
+              functionData: {
+                window_length: 3,
+                polyorder: 50,
+              },
+            },
+            position: {
+              x: 1374.042894261608,
+              y: 247.5634556695561,
+            },
+          },
+          {
+            target: 'Tzcchda282s2PTA-84dMa',
+            targetHandle: 'data',
+            sourceHandle: 'result',
+            source: 'rg-495YhO5rAAqjyD1X-Z',
+            type: 'default',
+            id: 'reactflow__edge-rg-495YhO5rAAqjyD1X-Zresult-Tzcchda282s2PTA-84dMadata',
+          },
+          {
+            sourceHandle: 'out-result',
+            id: 'reactflow__edge-Tzcchda282s2PTA-84dMaout-result-JrFD5yxRA9dJcnpAs48ppdatapoints',
+            type: 'default',
+            source: 'Tzcchda282s2PTA-84dMa',
+            targetHandle: 'datapoints',
+            target: 'JrFD5yxRA9dJcnpAs48pp',
+          },
+        ],
+        position: [0, 0],
+        zoom: 1,
+      },
+      enabled: true,
+    };
+
+    const steps = getStepsFromWorkflowReactFlow(chart, workflow.flow);
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1017_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 1,
+        op: 'resample_to_granularity',
+        inputs: [
+          {
+            type: 'ts',
+            value: 'VAL_21_PT_1019_04:Z.X.Value',
+          },
+        ],
+        params: {
+          granularity: '1h',
+          aggregate: 'mean',
+        },
+      },
+      {
+        step: 2,
+        op: 'sub',
+        inputs: [
+          {
+            type: 'result',
+            value: 1,
+          },
+          {
+            type: 'result',
+            value: 0,
+          },
+        ],
+      },
+      {
+        step: 3,
+        op: 'sg',
+        inputs: [
+          {
+            type: 'result',
+            value: 2,
+          },
+        ],
+        params: {
+          polyorder: 50,
+          window_length: 3,
+        },
+      },
+      {
+        step: 4,
+        op: 'PASSTHROUGH',
+        inputs: [
+          {
+            type: 'result',
+            value: 3,
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('handles circular references gracefully', () => {
     const chart: Chart = {
       id: 'chart-1',
       name: 'Chart 1',
