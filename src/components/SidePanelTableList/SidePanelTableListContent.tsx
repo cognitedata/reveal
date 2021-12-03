@@ -85,9 +85,10 @@ const SidePanelTableListContent = ({
         ))
       ) : (
         <StyledNoItemsWrapper>
-          <Title level={6}>There are no items here.</Title>
+          <Title level={6}>No results found.</Title>
           <StyledNoItemsDetail strong>
-            Search for documents by source, format, type, creation date and more
+            The search “{searchQuery}” did not match any tables. Please try
+            another search.
           </StyledNoItemsDetail>
         </StyledNoItemsWrapper>
       )}

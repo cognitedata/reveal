@@ -34,6 +34,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
     median,
     histogram,
     counts,
+    count,
   } = profile;
   const [expanded, setExpanded] = useState(false);
 
@@ -44,7 +45,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
         onClick={() => setExpanded(!expanded)}
         style={{ cursor: 'pointer' }}
       >
-        <TableData>{<ColumnIcon title={label} />}</TableData>
+        <TableData>{<ColumnIcon dataKey={label} />}</TableData>
         <TableData>{label}</TableData>
         <NumberOrMissingTd value={nullCount} />
         <NumberOrMissingTd value={distinctCount} />
@@ -67,6 +68,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
         <ProfileDetailsRow
           allCount={allCount}
           nullCount={nullCount}
+          count={count}
           min={min}
           max={max}
           median={median}
