@@ -23,10 +23,10 @@ const EditorControls = ({
       showFitView={false}
       showInteractive={false}
     >
-      <CustomControlButton onClick={zoomIn}>
+      <CustomControlButton onClick={() => zoomIn()}>
         <Icon type="ZoomIn" />
       </CustomControlButton>
-      <CustomControlButton onClick={zoomOut}>
+      <CustomControlButton onClick={() => zoomOut()}>
         <Icon type="ZoomOut" />
       </CustomControlButton>
       <CustomControlButton onClick={() => fitView({ padding: 0.2 })}>
