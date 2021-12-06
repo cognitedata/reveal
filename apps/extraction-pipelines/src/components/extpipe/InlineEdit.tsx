@@ -54,7 +54,7 @@ const InlineEdit = <Fields extends FieldValues>({
 }: PropsWithChildren<InlineEditProps<Fields>>) => {
   const [isEdit, setIsEdit] = useState(false);
   const { mutate } = useDetailsUpdate();
-  const [errorVisible, setErrorVisible] = useState<null | string>(null);
+  const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
   const {
     control,
@@ -70,7 +70,7 @@ const InlineEdit = <Fields extends FieldValues>({
     await mutate(items, {
       onError: (err: ErrorVariations) => {
         trackUsage({ t: 'EditField.Rejected', field: name });
-        setErrorVisible(
+        setErrorMessage(
           err?.duplicated
             ? `This ${label.toLowerCase()} is already in use`
             : SERVER_ERROR_CONTENT
@@ -91,7 +91,7 @@ const InlineEdit = <Fields extends FieldValues>({
   };
 
   const handleClickError = () => {
-    setErrorVisible(null);
+    setErrorMessage(null);
   };
 
   const onCancel = () => {
@@ -135,10 +135,10 @@ const InlineEdit = <Fields extends FieldValues>({
               }}
             />
             <MessageDialog
-              visible={errorVisible != null}
+              visible={errorMessage != null}
               handleClickError={handleClickError}
               title={SERVER_ERROR_TITLE}
-              contentText={errorVisible || ''}
+              contentText={errorMessage || ''}
             >
               <SaveButton
                 htmlType="submit"

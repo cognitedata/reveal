@@ -73,9 +73,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           placeholder="Enter external ID"
           label={DetailFieldNames.EXTERNAL_ID}
           canEdit={canEdit}
-          schema={yup.object().shape({
-            ...externalIdRule,
-          })}
+          schema={yup.object().shape(externalIdRule)}
           defaultValues={{ externalId: extpipe?.externalId }}
           fullWidth
           updateFn={rootUpdate({ extpipe, name: 'externalId', project })}
