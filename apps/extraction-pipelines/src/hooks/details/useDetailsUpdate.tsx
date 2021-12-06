@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { Extpipe, ExtpipeFieldName, ExtpipeFieldValue } from 'model/Extpipe';
-import { ExtpipeError } from 'model/SDKErrors';
+import { ErrorVariations } from 'model/SDKErrors';
 import { ExtpipeUpdateSpec, saveUpdate } from 'utils/ExtpipesAPI';
 import { FieldValues } from 'react-hook-form';
 
@@ -18,7 +18,7 @@ export type DetailsUpdateContext = {
 };
 export const useDetailsUpdate = () => {
   const queryClient = useQueryClient();
-  return useMutation<Extpipe, ExtpipeError, DetailsUpdateContext>(
+  return useMutation<Extpipe, ErrorVariations, DetailsUpdateContext>(
     ({ project, items }) => {
       return saveUpdate(project, items);
     },

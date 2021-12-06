@@ -15,10 +15,6 @@ export interface ErrorVariations {
   duplicated?: Record<string, string>[];
 }
 
-export interface ExtpipeError {
-  data: ErrorObj;
-}
-
 export interface SDKDataSetsError {
   errors: { status: number; message: string }[];
 }
