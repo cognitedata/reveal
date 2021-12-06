@@ -29,7 +29,8 @@
           {
             "enforceBuildableLibDependency": true,
             "allow": [
-              "@platypus-app"
+              "@platypus-app",
+              "@platypus-core"
             ],
             "depConstraints": [
               {

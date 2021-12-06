@@ -1,4 +1,4 @@
-import { PlatypusError } from '@platypus/platypus-core';
+import { PlatypusError } from '@platypus-core/boundaries/types';
 import { TemplatesApiService } from './templates-api.service';
 
 describe('TemplatesApiServiceTest', () => {
@@ -33,7 +33,7 @@ describe('TemplatesApiServiceTest', () => {
         create: jest.fn().mockImplementation(() => {
           return Promise.resolve([templateGroupMock]);
         }),
-        delete: jest.fn(),
+        delete: jest.fn().mockImplementation(() => Promise.resolve(true)),
       },
       group: jest.fn().mockImplementation(() => {
         return {
@@ -79,7 +79,7 @@ describe('TemplatesApiServiceTest', () => {
     await service.deleteTemplateGroup({
       id: templateGroupMock.externalId,
     });
-    expect(cdfMock.templates.groups.create).toBeCalled();
+    expect(cdfMock.templates.groups.delete).toBeCalled();
   });
 
   it('should list all template group versions', async () => {

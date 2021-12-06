@@ -1,9 +1,8 @@
+import { DTO, Result } from '@platypus-core/boundaries/types';
 import {
-  DTO,
-  Result,
   Validator,
   ValidatorResult,
-} from '@platypus/platypus-core';
+} from '@platypus-core/boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 import { ISolutionSchemaApiService } from './boundaries';
 import { CreateSchemaDTO, FetchSolutionDTO, ListVersionsDTO } from './dto';

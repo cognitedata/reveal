@@ -3,7 +3,7 @@ import {
   TemplateGroup,
   TemplateGroupVersion,
 } from '@cognite/sdk';
-import { PlatypusError } from '@platypus/platypus-core';
+import { PlatypusError } from '@platypus-core/boundaries/types';
 import {
   CreateSchemaDTO,
   CreateSolutionDTO,
@@ -28,24 +28,28 @@ export class TemplatesApiService {
       .then((templateGroups) => {
         const [createdTemplateGroup] = templateGroups;
         return createdTemplateGroup;
-      });
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   deleteTemplateGroup(dto: DeleteSolutionDTO): Promise<unknown> {
-    return this.cdfClient.templates.groups.delete([{ externalId: dto.id }], {
-      ignoreUnknownIds: false,
-    });
+    return this.cdfClient.templates.groups
+      .delete([{ externalId: dto.id }], {
+        ignoreUnknownIds: false,
+      })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   listTemplateGroups(): Promise<TemplateGroup[]> {
     return this.cdfClient.templates.groups
       .list()
-      .then((templateGroups) => templateGroups.items);
+      .then((templateGroups) => templateGroups.items)
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
   fetchSchemaVersion(dto: FetchSolutionDTO): Promise<TemplateGroupVersion> {
     return this.listSchemaVersions(dto).then((versions) => {
-      if (!versions.length) {
+      if (!versions || !versions.length) {
         return Promise.reject(
           new PlatypusError(
             `Specified version ${dto.version} does not exist!`,
@@ -72,11 +76,7 @@ export class TemplatesApiService {
       .group(dto.solutionId)
       .versions.list(filter)
       .then((response) => response.items)
-      .catch((err) => {
-        return Promise.reject(
-          new PlatypusError(err.message, 'NOT_FOUND', err.status, err.stack)
-        );
-      });
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
   createSchema(dto: CreateSchemaDTO): Promise<TemplateGroupVersion> {
     return this.createOrUpdate(dto, 'Update');
@@ -95,14 +95,6 @@ export class TemplatesApiService {
         schema: dto.schema,
         conflictMode: mode as any,
       })
-      .catch((error) => {
-        const errorType =
-          error.errorMessage && error.errorMessage.includes('breaking changes')
-            ? 'BREAKING_CHANGE'
-            : 'ERROR_CREATING';
-        return Promise.reject(
-          new PlatypusError(error.message, errorType, error.status, error.stack)
-        );
-      });
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 }

@@ -7,14 +7,16 @@ import {
 export class RequiredFieldValidator extends ValidationRule {
   validate(field: string, value: unknown): ValidatorResult {
     if (
-      !value ||
-      (Array.isArray(value) && !value.length) ||
-      (DataUtils.isString(value) && !(value as string).trim())
+      value !== false &&
+      value !== 0 &&
+      (!value ||
+        (Array.isArray(value) && !value.length) ||
+        (DataUtils.isString(value) && !(value as string).trim()))
     ) {
       return {
         valid: false,
         errors: {
-          name: field + ' is required field',
+          [field]: this.validationMessage || field + ' is required field',
         },
       } as ValidatorResult;
     }

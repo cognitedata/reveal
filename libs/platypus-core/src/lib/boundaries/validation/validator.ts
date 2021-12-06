@@ -46,24 +46,23 @@ export class Validator {
         continue;
       }
 
-      if (!this.data.hasOwnProperty(key)) {
-        result.errors = Object.assign(
-          result.errors,
-          'Data does not contain ' + key + ' property'
-        );
-        result.valid = false;
-        continue;
-      }
-
       this.validators[key].forEach((validator) => {
+        if (!this.data.hasOwnProperty(key)) {
+          result.errors = Object.assign(result.errors, {
+            [key]:
+              validator.validationMessage ||
+              'Data does not contain ' + key + ' property',
+          });
+          result.valid = false;
+          return;
+        }
+
         const res = validator.validate(key, this.data[key]);
 
         if (!res.valid) {
           result.errors = Object.assign(result.errors, res.errors);
           result.valid = false;
-          return true;
         }
-        return false;
       });
     }
 
