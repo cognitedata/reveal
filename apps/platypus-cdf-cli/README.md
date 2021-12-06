@@ -56,6 +56,14 @@ platypus templates create <name> [--description=<description>]
 platypus templates delete <external_id>
 ```
 
+# Metrics, Logs and Telemetry
+
+## Update Notifier
+
+We check in background if a newer version of the package is published in `npm` and notify the user about the same if a newer version is available.
+
+> To opt-out set `optOut` to `true` in `~/.config/configstore/update-notifier-@cognite/platypus-cli.json` or set env `NO_UPDATE_NOTIFIER`
+
 # For Developer
 
 You can find the code under `apps/platypus-cdf-cli`.
