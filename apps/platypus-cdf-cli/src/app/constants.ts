@@ -26,4 +26,5 @@ export enum AUTH_CONFIG {
 
 export const CONSTANTS = {
   PROJECT_CONFIG_FILE_NAME: 'cdfrc.json',
+  MANUAL_WEBSITE: 'https://github.com/cognitedata/platypus',
 };

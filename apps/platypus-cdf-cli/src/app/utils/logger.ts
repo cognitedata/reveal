@@ -24,3 +24,4 @@ export class Log extends Logger {
     console.log(chalk.cyan(msg));
   }
 }
+export default new Log();
