@@ -4,9 +4,7 @@ import { Colors, Detail, Icon, Title } from '@cognite/cogs.js';
 import { Carousel } from 'antd';
 import styled from 'styled-components';
 
-import ProfilingGraphic from 'assets/ProfilingGraphic.svg';
-import SidePanelGraphic from 'assets/SidePanelGraphic.svg';
-import TabsGraphic from 'assets/TabsGraphic.svg';
+import graphics from 'assets/graphics';
 
 const FIRST_TIME_CAROUSEL_HEIGHT = 330;
 
@@ -14,17 +12,17 @@ const carouselSlides = [
   {
     title: 'Get started with RAW Explorer.',
     detail: 'Create databases to store and organize raw data in tables.',
-    imageSrc: SidePanelGraphic,
+    imageSrc: graphics.SidePanelGraphic,
   },
   {
     title: 'View and compare tables as tabs.',
     detail: 'Open raw data in table format to compare and analyze the content.',
-    imageSrc: TabsGraphic,
+    imageSrc: graphics.TabsGraphic,
   },
   {
     title: 'Analyze and inspect your data.',
     detail: 'Discover, analyze, and understand critical patterns in your data.',
-    imageSrc: ProfilingGraphic,
+    imageSrc: graphics.ProfilingGraphic,
   },
 ];
 
