@@ -10,7 +10,6 @@ import {
 import { toCamelCase } from 'utils/primitivesUtils';
 import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
 import { AddExtpipeFormInput } from 'pages/create/CreateExtpipe';
-import { DataSetModel } from 'model/DataSetModel';
 import { Range } from '@cognite/cogs.js';
 
 export const calculateStatus = (status: LastStatuses): StatusObj => {
@@ -120,10 +119,7 @@ const constructMetadata = (
   });
 };
 
-export const createAddExtpipeInfo = (
-  fields: AddExtpipeFormInput,
-  data?: DataSetModel[]
-) => {
+export const createAddExtpipeInfo = (fields: AddExtpipeFormInput) => {
   const {
     source,
     schedule,
@@ -145,7 +141,7 @@ export const createAddExtpipeInfo = (
     name,
     externalId,
     ...(description && { description }),
-    ...((data || fieldDataSetId) && { dataSetId: fieldDataSetId }),
+    ...(fieldDataSetId && { dataSetId: fieldDataSetId }),
     ...(metadata && {
       metadata: Object.assign({}, ...metadata),
     }),

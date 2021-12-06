@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import {
@@ -9,7 +9,6 @@ import {
   EXT_PIPE_NAME_HEADING,
   EXTERNAL_ID_HINT,
   EXTPIPE_EXTERNAL_ID_HEADING,
-  EXTRACTION_PIPELINE_LOWER,
   NAME_HINT,
 } from 'utils/constants';
 import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
@@ -18,13 +17,13 @@ import { ButtonPlaced } from 'styles/StyledButton';
 import * as yup from 'yup';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDataSet } from 'hooks/useDataSets';
 import { FullInput } from 'components/inputs/FullInput';
 import { usePostExtpipe } from 'hooks/usePostExtpipe';
 import styled from 'styled-components';
 import { Button, Colors, Modal } from '@cognite/cogs.js';
 import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
+  dataSetIdRule,
   descriptionRule,
   externalIdRule,
   nameRule,
@@ -64,7 +63,6 @@ const InfoMessage = styled.span`
     }
   }
 `;
-const NO_DATA_SET_MSG: Readonly<string> = `No data set found. You can link your ${EXTRACTION_PIPELINE_LOWER} to a data set trough edit later.`;
 
 export interface AddExtpipeFormInput extends ScheduleFormInput, FieldValues {
   name: string;
@@ -78,6 +76,7 @@ export interface AddExtpipeFormInput extends ScheduleFormInput, FieldValues {
   selectedRawTables: ExtpipeRawTable[];
 }
 const pageSchema = yup.object().shape({
+  ...dataSetIdRule,
   ...nameRule,
   ...externalIdRule,
   ...descriptionRule,
@@ -101,15 +100,9 @@ const CustomLabel = styled.label<{ required: boolean }>`
 `;
 
 export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
-  const [dataSetLoadError, setDataSetLoadError] = useState<string | null>(null);
   const history = useHistory();
   const location = useLocation();
-  const { search } = location;
-  const dataSetId = findDataSetId(search) ?? '';
-  const { data: dataSet, isLoading, error: dataSetError } = useDataSet(
-    parseInt(dataSetId, 10),
-    dataSetLoadError ? 0 : 3
-  );
+  const dataSetIdFromLocation = findDataSetId(location.search);
   const { data: dataSets, status: dataSetsStatus } = useDataSetsList(
     DATASET_LIST_LIMIT
   );
@@ -120,7 +113,9 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
       name: '',
       externalId: '',
       description: '',
-      dataSetId: parseInt(dataSetId, 10),
+      dataSetId: dataSetIdFromLocation
+        ? parseInt(dataSetIdFromLocation, 10)
+        : undefined,
       selectedRawTables: [],
       documentation: '',
       contacts: [],
@@ -136,21 +131,11 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
   } = methods;
 
   useEffect(() => {
-    if (dataSetError) {
-      setDataSetLoadError(dataSetError.errors[0].missing && NO_DATA_SET_MSG);
-    }
-  }, [dataSetError, setDataSetLoadError]);
-  useEffect(() => {
-    if (isLoading) {
-      setDataSetLoadError(null);
-    }
-  }, [isLoading, setDataSetLoadError]);
-  useEffect(() => {
     register('dataSetId');
   }, [register]);
 
   const onSubmit = (fields: AddExtpipeFormInput) => {
-    const extpipeInfo = createAddExtpipeInfo(fields, dataSet);
+    const extpipeInfo = createAddExtpipeInfo(fields);
     trackUsage({ t: 'Create.Submit' });
     mutate(
       { extpipeInfo },
@@ -194,18 +179,6 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
 
   return (
     <>
-      {dataSetLoadError && (
-        <InfoMessage
-          id="dataset-error"
-          className="data-set-info"
-          role="region"
-          aria-live="polite"
-          color={`${Colors.yellow.hex()}`}
-        >
-          <InfoIcon />
-          {dataSetLoadError}
-        </InfoMessage>
-      )}
       <FormProvider {...methods}>
         <CreateFormWrapper onSubmit={handleSubmit(onSubmit)}>
           {errors.server ? (
@@ -219,7 +192,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               <p>{errors.server.message}</p>
             </InfoMessage>
           ) : null}
-          {!dataSetId && (
+          {dataSetIdFromLocation == null && (
             <DataSetIdInput
               data={dataSets}
               status={dataSetsStatus}
@@ -277,7 +250,10 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             {props.customCancelCallback == null ? (
               <a
                 href={createLink(
-                  `/data-sets${dataSetId && `/data-set/${dataSetId}`}`
+                  `/data-sets${
+                    dataSetIdFromLocation &&
+                    `/data-set/${dataSetIdFromLocation}`
+                  }`
                 )}
                 className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"
               >

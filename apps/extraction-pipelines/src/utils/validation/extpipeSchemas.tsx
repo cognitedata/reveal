@@ -7,6 +7,9 @@ export const MAX_DOCUMENTATION_LENGTH: Readonly<number> = 10000;
 export const nameRule = {
   name: yup.string().required(NAME_REQUIRED).max(140),
 };
+export const dataSetIdRule = {
+  dataSetId: yup.number().required('Data set is required'),
+};
 export const nameSchema = yup.object().shape(nameRule);
 export const META_DESC_REQUIRED: Readonly<string> = 'Description is required';
 export const META_CONTENT_REQUIRED: Readonly<string> = 'Content is required';

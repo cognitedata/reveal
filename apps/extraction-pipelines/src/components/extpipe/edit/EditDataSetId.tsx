@@ -78,9 +78,6 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   useEffect(() => {
     register('dataSetId');
   }, [register]);
-  if (!extpipe || !project) {
-    return <p />;
-  }
 
   const onSave = async (field: FormInput) => {
     if (extpipe && project) {
@@ -120,13 +117,16 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
     setIsEdit(false);
   };
 
+  if (!extpipe || !project) {
+    return <p />;
+  }
   if (!canEdit) {
     return (
       <div css="padding: 0 1rem; margin-bottom: 1rem">
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
           {TableHeadings.DATA_SET}
         </StyledLabel>
-        <DetailsValueView fieldName="dataSet" fieldValue={extpipe?.dataSet} />
+        <DetailsValueView fieldName="dataSet" fieldValue={extpipe.dataSet} />
       </div>
     );
   }
@@ -162,7 +162,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
           </Wrapper>
         ) : (
           <EditButton
-            showPencilIcon={extpipe?.dataSet != null}
+            showPencilIcon={extpipe.dataSet != null}
             onClick={onEditClick}
             disabled={!canEdit}
             title="Toggle edit row"
@@ -171,7 +171,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
             data-testid={`${BtnTestIds.EDIT_BTN}dataSetId`}
             $full
           >
-            <AddInfo fieldValue={extpipe?.dataSet} fieldName="dataSet" />
+            <AddInfo fieldValue={extpipe.dataSet} fieldName="dataSet" />
           </EditButton>
         )}
       </ColumnForm>
