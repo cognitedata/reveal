@@ -18,6 +18,7 @@ type Props = {
   max?: number;
   mean?: number;
   median?: number;
+  std?: number;
   count?: number;
 };
 export default function ProfileDetailsRow({
@@ -27,6 +28,7 @@ export default function ProfileDetailsRow({
   max,
   mean,
   median,
+  std,
   counts,
   allCount,
   count,
@@ -48,6 +50,7 @@ export default function ProfileDetailsRow({
               <NumberOrMissingSummary label="Max" value={max} />
               <NumberOrMissingSummary label="Mean" value={mean} />
               <NumberOrMissingSummary label="Median" value={median} />
+              <NumberOrMissingSummary label="Standard deviation" value={std} />
             </Grid>
           </Section>
           <Section.Frequency counts={counts} allCount={allCount} />

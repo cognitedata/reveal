@@ -156,7 +156,7 @@ interface PropsNumber extends BaseColumn {
 }
 const ColumnNumber = ({ data, profile }: PropsNumber) => {
   if (!profile) return <span />;
-  const { count, nullCount, histogram, min, max, mean, median } = data;
+  const { count, nullCount, histogram, min, max, mean, std } = data;
   const { distinctCount } = profile;
 
   return (
@@ -180,13 +180,10 @@ const ColumnNumber = ({ data, profile }: PropsNumber) => {
         {max}
       </Section>
       <Section title="Mean" isCompact isHalf>
-        {mean ?? DATA_MISSING}
+        {mean?.toFixed(1) ?? DATA_MISSING}
       </Section>
-      <Section title="Median" isCompact isHalf>
-        {median ?? DATA_MISSING}
-      </Section>
-      <Section title="Standard deviation" isCompact>
-        {DATA_MISSING}
+      <Section title="Standard deviation" isCompact isHalf>
+        {std?.toFixed(1) ?? DATA_MISSING}
       </Section>
     </StyledProfilingDataWrapper>
   );
