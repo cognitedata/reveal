@@ -28,7 +28,6 @@ export default function ProfileDetailsRow({
   max,
   mean,
   median,
-  std,
   counts,
   allCount,
   count,
@@ -39,19 +38,26 @@ export default function ProfileDetailsRow({
       <td colSpan={9} style={{ padding: 0 }}>
         <ExpandedRow>
           <Section title="Numerical statistics">
-            <Grid direction="row" wrap="wrap">
-              <NumberOrMissingSummary
-                label="Distinct values"
-                value={distinctCount}
-              />
-              <NumberOrMissingSummary label="Non-empty" value={count} />
-              <NumberOrMissingSummary label="Empty" value={nullCount} />
-              <NumberOrMissingSummary label="Min" value={min} />
-              <NumberOrMissingSummary label="Max" value={max} />
-              <NumberOrMissingSummary label="Mean" value={mean} />
-              <NumberOrMissingSummary label="Median" value={median} />
-              <NumberOrMissingSummary label="Standard deviation" value={std} />
-            </Grid>
+            <Flex direction="column" style={{ width: '100%' }}>
+              <StyledStatisticsRow>
+                <NumberOrMissingSummary
+                  label="Distinct values"
+                  value={distinctCount}
+                />
+              </StyledStatisticsRow>
+              <StyledStatisticsRow>
+                <NumberOrMissingSummary label="Non-empty" value={count} />
+                <NumberOrMissingSummary label="Empty" value={nullCount} />
+              </StyledStatisticsRow>
+              <StyledStatisticsRow>
+                <NumberOrMissingSummary label="Min" value={min} />
+                <NumberOrMissingSummary label="Max" value={max} />
+              </StyledStatisticsRow>
+              <StyledStatisticsRow>
+                <NumberOrMissingSummary label="Mean" value={mean} />
+                <NumberOrMissingSummary label="Median" value={median} />
+              </StyledStatisticsRow>
+            </Flex>
           </Section>
           <Section.Frequency counts={counts} allCount={allCount} />
           <Section.Distribution histogram={histogram} />
@@ -82,19 +88,23 @@ const ExpandedRow = styled.div`
   grid-gap: 1rem;
 `;
 
-const Grid = styled(Flex)`
+const StyledStatisticsRow = styled(Flex)`
   .item {
-    min-width: 120px;
-    margin-right: 10px;
-    padding: 8px 12px;
+    flex: 1;
+    padding: 8px 0;
     font-weight: 600;
     font-size: 18px;
     line-height: 24px;
+
     header {
       display: block;
       font-weight: 400;
       font-size: 13px;
       line-height: 18px;
     }
+  }
+
+  .item:not(:last-child) {
+    margin-right: 12px;
   }
 `;

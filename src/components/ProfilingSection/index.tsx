@@ -72,7 +72,7 @@ const StyledSection = styled.div.attrs(
   align-items: flex-start;
   justify-content: flex-start;
   height: auto;
-  padding: 12px;
+  padding: 20px;
   margin: 6px;
   box-sizing: border-box;
 `;
