@@ -41,7 +41,6 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
     max,
     mean,
     median,
-    std,
     histogram,
   } = profile;
   return (
@@ -51,14 +50,14 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
           <NumberOrMissingSummary
             label="Distinct values"
             value={distinctCount}
+            isHalf={false}
           />
           <NumberOrMissingSummary label="Non-empty" value={count} />
           <NumberOrMissingSummary label="Empty" value={nullCount} />
-          <NumberOrMissingSummary label="Min" value={min} />
-          <NumberOrMissingSummary label="Max" value={max} />
-          <NumberOrMissingSummary label="Mean" value={mean} />
-          <NumberOrMissingSummary label="Median" value={median} />
-          <NumberOrMissingSummary label="Standard deviation" value={std} />
+          <NumberOrMissingSummary label="Minimum length" value={min} />
+          <NumberOrMissingSummary label="Maximum length" value={max} />
+          <NumberOrMissingSummary label="Mean length" value={mean} />
+          <NumberOrMissingSummary label="Median length" value={median} />
         </Grid>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
@@ -125,14 +124,16 @@ const ProfilingDataBoolean = ({ allCount, profile }: Props) => {
 const NumberOrMissingSummary = ({
   label,
   value,
+  isHalf = true,
 }: {
   label: string;
   value?: number;
+  isHalf?: boolean;
 }) => (
-  <div className="item">
+  <GridItem isHalf={isHalf}>
     <header>{label}</header>
     {Number.isFinite(value) ? value : 'MISSING'}
-  </div>
+  </GridItem>
 );
 
 const ExpandedRow = styled.div`
@@ -143,20 +144,19 @@ const ExpandedRow = styled.div`
   grid-gap: 1rem;
 `;
 
-const Grid = styled(Flex)`
-  .item {
-    min-width: 120px;
-    margin-right: 10px;
-    padding: 8px 12px;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 24px;
-    header {
-      display: block;
-      font-weight: 400;
-      font-size: 13px;
-      line-height: 18px;
-    }
+const Grid = styled(Flex)``;
+const GridItem = styled.div`
+  flex: ${({ isHalf }: { isHalf: boolean }) =>
+    isHalf ? '0 0 50%' : '0 0 100%'};
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  header {
+    display: block;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
   }
 `;
 
