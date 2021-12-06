@@ -16,7 +16,7 @@
   "dependencies": {
     "@cognite/cdf-sdk-singleton": "^0.8.2",
     "@cognite/cdf-utilities": "^0.9.2",
-    "@cognite/cogs.js": "^3.32.1",
+    "@cognite/cogs.js": "^3.42.6",
     "@cognite/data-exploration": "^1.7.3",
     "@cognite/react-feature-flags": "^0.2.2-rc.0",
     "@cognite/react-image-annotate": "^1.8.0-v3-3",
