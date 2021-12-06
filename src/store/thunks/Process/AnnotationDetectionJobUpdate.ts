@@ -61,35 +61,42 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
         const jobFilesWithDetectedAnnotations = newAnnotationJobResults.filter(
           (jobItem) => !!jobItem.annotations.length
         );
-        const assetRequests = jobFilesWithDetectedAnnotations.map((jobItem) => {
-          const assetExternalIds = [
-            ...new Set(
-              jobItem.annotations.map(
-                (detectedAnnotation) => detectedAnnotation.text
-              )
-            ),
-          ];
-          return dispatch(
-            fetchAssets(
-              assetExternalIds.map((externalId) => ({
-                externalId,
-              }))
-            )
+        if (jobFilesWithDetectedAnnotations.length) {
+          const assetRequests = jobFilesWithDetectedAnnotations.map(
+            (jobItem) => {
+              const assetExternalIds = [
+                ...new Set(
+                  jobItem.annotations.map(
+                    (detectedAnnotation) => detectedAnnotation.text
+                  )
+                ),
+              ];
+              return dispatch(
+                fetchAssets(
+                  assetExternalIds.map((externalId) => ({
+                    externalId,
+                  }))
+                )
+              );
+            }
           );
-        });
-        const assetResponses = await Promise.all(assetRequests);
-        const assetUnwrappedResponses = assetResponses.map((assetRes) =>
-          unwrapResult(assetRes)
-        );
-        const assetMapArr = assetUnwrappedResponses.map(
-          (assetUnwrappedResponse) =>
-            new Map(
-              assetUnwrappedResponse.map((asset) => [asset.externalId!, asset])
-            )
-        );
-        assetExternalIdMap = assetMapArr.reduce((acc, current) => {
-          return new Map([...acc, ...current]);
-        });
+          const assetResponses = await Promise.all(assetRequests);
+          const assetUnwrappedResponses = assetResponses.map((assetRes) =>
+            unwrapResult(assetRes)
+          );
+          const assetMapArr = assetUnwrappedResponses.map(
+            (assetUnwrappedResponse) =>
+              new Map(
+                assetUnwrappedResponse.map((asset) => [
+                  asset.externalId!,
+                  asset,
+                ])
+              )
+          );
+          assetExternalIdMap = assetMapArr.reduce((acc, current) => {
+            return new Map([...acc, ...current]);
+          });
+        }
       }
 
       // save new prediction results as annotations

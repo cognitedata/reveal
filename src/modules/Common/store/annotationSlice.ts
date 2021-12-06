@@ -54,10 +54,12 @@ const annotationSlice = createSlice({
       } else {
         fileIds.forEach((fileId) => {
           const annotationIdsForFile = state.files.byId[fileId];
+          if (annotationIdsForFile && annotationIdsForFile.length) {
+            annotationIdsForFile.forEach((annotationId) => {
+              delete state.annotations.byId[annotationId];
+            });
+          }
           delete state.files.byId[fileId];
-          annotationIdsForFile.forEach((annotationId) => {
-            delete state.annotations.byId[annotationId];
-          });
         });
       }
     });
@@ -181,7 +183,7 @@ export const selectFileAnnotations = createSelector(
   }
 );
 
-export const selecAllAnnotations = createSelector(
+export const selectAllAnnotations = createSelector(
   annotationsById,
   (annotations: Record<number, VisionAnnotation>) => {
     const allAnnotations = Object.entries(annotations).map(
@@ -229,7 +231,7 @@ export const makeSelectAnnotationCounts = () =>
   });
 
 export const makeSelectTotalAnnotationCounts = () =>
-  createDeepEqualSelector(selecAllAnnotations, (annotations) => {
+  createDeepEqualSelector(selectAllAnnotations, (annotations) => {
     return getAnnotationsBadgeCounts(annotations);
   });
 
