@@ -20,6 +20,7 @@ import { ColumnForm, Hint, StyledInput, StyledLabel } from 'styles/StyledForm';
 import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
 import { Colors } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
+import { ErrorVariations } from 'model/SDKErrors';
 import { AddInfo } from './AddInfo';
 
 export interface InlineEditProps<Fields> {
@@ -53,7 +54,7 @@ const InlineEdit = <Fields extends FieldValues>({
 }: PropsWithChildren<InlineEditProps<Fields>>) => {
   const [isEdit, setIsEdit] = useState(false);
   const { mutate } = useDetailsUpdate();
-  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorVisible, setErrorVisible] = useState<null | string>(null);
 
   const {
     control,
@@ -67,9 +68,13 @@ const InlineEdit = <Fields extends FieldValues>({
     const items = updateFn(field);
     trackUsage({ t: 'EditField.Save', field: name });
     await mutate(items, {
-      onError: () => {
+      onError: (err: ErrorVariations) => {
         trackUsage({ t: 'EditField.Rejected', field: name });
-        setErrorVisible(true);
+        setErrorVisible(
+          err?.duplicated
+            ? `This ${label.toLowerCase()} is already in use`
+            : SERVER_ERROR_CONTENT
+        );
       },
       onSuccess: () => {
         trackUsage({ t: 'EditField.Completed', field: name });
@@ -86,7 +91,7 @@ const InlineEdit = <Fields extends FieldValues>({
   };
 
   const handleClickError = () => {
-    setErrorVisible(false);
+    setErrorVisible(null);
   };
 
   const onCancel = () => {
@@ -130,10 +135,10 @@ const InlineEdit = <Fields extends FieldValues>({
               }}
             />
             <MessageDialog
-              visible={errorVisible}
+              visible={errorVisible != null}
               handleClickError={handleClickError}
               title={SERVER_ERROR_TITLE}
-              contentText={SERVER_ERROR_CONTENT}
+              contentText={errorVisible || ''}
             >
               <SaveButton
                 htmlType="submit"
