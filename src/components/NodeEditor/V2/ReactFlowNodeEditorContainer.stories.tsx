@@ -35,9 +35,9 @@ EmptyCalculation.args = {
       position: [0, 0],
     },
     version: 'v2',
+    settings: { autoAlign: false },
   },
   operations: fullListOfOperations,
-  settings: { autoAlign: false },
   sources: [
     {
       label: 'Timeseries Source 1',

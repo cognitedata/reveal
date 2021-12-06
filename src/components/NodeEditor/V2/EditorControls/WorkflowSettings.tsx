@@ -1,29 +1,14 @@
 import styled from 'styled-components/macro';
-import {
-  Button,
-  Icon,
-  Menu,
-  SegmentedControl,
-  Title,
-  Tooltip,
-} from '@cognite/cogs.js';
-import { useState, useEffect } from 'react';
+import { Icon, Menu, SegmentedControl, Title, Tooltip } from '@cognite/cogs.js';
+import { ComponentProps } from 'react';
+import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 
-type AutoAlignDropdownProps = {
-  initialValue?: boolean;
-  saveAutoAlign: (autoAlign: boolean) => void;
+type Props = {
+  settings: ComponentProps<typeof ReactFlowNodeEditor>['settings'];
+  onSaveSettings: (settings: Props['settings']) => void;
 };
 
-const AutoAlignDropdown = ({
-  initialValue = false,
-  saveAutoAlign,
-}: AutoAlignDropdownProps) => {
-  const [autoAlign, setAutoAlign] = useState(initialValue);
-
-  useEffect(() => {
-    setAutoAlign(initialValue);
-  }, [initialValue]);
-
+const WorkflowSettings = ({ settings, onSaveSettings }: Props) => {
   return (
     <Menu style={{ marginBottom: 10 }}>
       <DropdownContainer>
@@ -36,15 +21,14 @@ const AutoAlignDropdown = ({
 
         <FormWrapper>
           <SegmentedControl
-            currentKey={autoAlign ? 'on' : 'off'}
-            onButtonClicked={(key: string) => setAutoAlign(key === 'on')}
+            currentKey={settings.autoAlign ? 'on' : 'off'}
+            onButtonClicked={(key: string) =>
+              onSaveSettings({ ...settings, autoAlign: key === 'on' })
+            }
           >
             <SegmentedControl.Button key="on">On</SegmentedControl.Button>
             <SegmentedControl.Button key="off">Off</SegmentedControl.Button>
           </SegmentedControl>
-          <Button type="primary" onClick={() => saveAutoAlign(autoAlign)}>
-            Confirm
-          </Button>
         </FormWrapper>
       </DropdownContainer>
     </Menu>
@@ -73,4 +57,4 @@ const FormWrapper = styled.div`
   justify-content: space-between;
 `;
 
-export default AutoAlignDropdown;
+export default WorkflowSettings;

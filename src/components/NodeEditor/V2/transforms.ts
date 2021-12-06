@@ -15,7 +15,7 @@ import {
   isEdge,
   removeElements,
 } from 'react-flow-renderer';
-import { ChartSettings, ChartWorkflowV2 } from 'models/chart/types';
+import { ChartWorkflowV2 } from 'models/chart/types';
 import { NodeDataVariants } from 'components/NodeEditor/V2/types';
 import { FunctionNodeData } from 'components/NodeEditor/V2/Nodes/FunctionNode/FunctionNode';
 import { NodeTypes } from './types';
@@ -145,7 +145,7 @@ const getOperationFromReactFlowNode = (node: FlowElement) => {
 };
 
 const getParamsFromReactFlowNode = (
-  settings: ChartSettings,
+  settings: ChartWorkflowV2['settings'],
   node: FlowElement<NodeDataVariants>
 ) => {
   if (node.type !== NodeTypes.FUNCTION) {
@@ -196,14 +196,11 @@ const getInputFromReactFlowNode = (node: FlowElement, nodes: FlowElement[]) => {
 
 export const getStepsFromWorkflowReactFlow = (
   workflow: ChartWorkflowV2,
-  settings: ChartSettings = {},
   workflows: ChartWorkflowV2[] = []
 ): ComputationStep[] => {
   const { flow } = workflow;
 
-  if (!flow) {
-    return [];
-  }
+  if (!flow) return [];
 
   const filteredElements = flow.elements.filter((node) => {
     switch (node.type) {
@@ -256,7 +253,7 @@ export const getStepsFromWorkflowReactFlow = (
       return {
         ...node,
         incomers: getIncomers(node as Node, elements),
-        parameters: getParamsFromReactFlowNode(settings, node),
+        parameters: getParamsFromReactFlowNode(workflow.settings, node),
       };
     });
 

@@ -29,6 +29,7 @@ import {
   updateConstantInFlow,
   updateFlowEdge,
   updateFlowPositionAndZoom,
+  updateFlowSettings,
   updateFunctionDataInFlow,
   updateNodePositionInFlow,
   updateSourceItemInFlow,
@@ -63,10 +64,8 @@ const ReactFlowNodeEditorContainer = ({
   workflows = [],
   operations = [],
   sources,
-  settings = {},
   onClose,
   onUpdateWorkflow = () => {},
-  onUpdateSettings = () => {},
 }: NodeEditorContainerProps) => {
   /**
    * Hook onto the internal react-flow state
@@ -80,7 +79,6 @@ const ReactFlowNodeEditorContainer = ({
    * Use internal state by default (but)
    */
   const [localWorkflow, setLocalWorkflow] = useState(workflow);
-  const [localSettings, setLocalSettings] = useState(settings);
 
   /**
    * Overwrite local workflow state if new workflow prop is passed from outside
@@ -90,19 +88,11 @@ const ReactFlowNodeEditorContainer = ({
   }, [workflow]);
 
   /**
-   * Overwrite local settings state if new settings prop is passed from outside
-   */
-  useEffect(() => {
-    setLocalSettings(settings);
-  }, [settings]);
-
-  /**
    * Calculate computation steps
    */
   const steps = useMemo(
-    () =>
-      getStepsFromWorkflowReactFlow(localWorkflow, localSettings, workflows),
-    [localWorkflow, localSettings, workflows]
+    () => getStepsFromWorkflowReactFlow(localWorkflow, workflows),
+    [localWorkflow, workflows]
   );
 
   /**
@@ -113,15 +103,11 @@ const ReactFlowNodeEditorContainer = ({
   /**
    * Data handlers
    */
-  const handleToggleAutoAlign = useCallback(
-    (autoAlign: boolean) => {
-      const updatedSettings = { ...settings, autoAlign };
-
-      setLocalSettings(updatedSettings);
-      onUpdateSettings(updatedSettings);
-    },
-    [onUpdateSettings, settings]
-  );
+  const handleSaveSettings = (updatedSettings: ChartWorkflowV2['settings']) => {
+    const newWorkflow = updateFlowSettings(localWorkflow, updatedSettings);
+    setLocalWorkflow(() => newWorkflow);
+    onUpdateWorkflow(newWorkflow, steps, isValid);
+  };
 
   const handleUpdatePositionAndZoom = useCallback(
     (transform: FlowTransform) => {
@@ -399,9 +385,9 @@ const ReactFlowNodeEditorContainer = ({
         flowElements={flowElements}
         sources={sources}
         operations={operations}
-        autoAlign={Boolean(localSettings.autoAlign)}
+        settings={localWorkflow.settings || { autoAlign: true }}
         isValid={isValid}
-        onToggleAutoAlign={handleToggleAutoAlign}
+        onSaveSettings={handleSaveSettings}
         onElementsRemove={handleRemoveElements}
         onConnect={handleConnect}
         onEdgeUpdate={handleEdgeUpdate}

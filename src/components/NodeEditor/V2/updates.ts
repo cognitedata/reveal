@@ -243,6 +243,16 @@ export const updateFlowPositionAndZoom = (
   };
 };
 
+export const updateFlowSettings = (
+  workflow: ChartWorkflowV2,
+  settings: ChartWorkflowV2['settings']
+): ChartWorkflowV2 => {
+  return {
+    ...workflow,
+    settings,
+  };
+};
+
 export const updateWorkflowName = (
   workflow: ChartWorkflowV2,
   name: string

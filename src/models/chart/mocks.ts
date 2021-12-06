@@ -15,6 +15,7 @@ export const emptyWorkflow: ChartWorkflowV2 = {
     position: [0, 0],
   },
   version: 'v2',
+  settings: { autoAlign: true },
   unit: '',
   calls: [],
   lineWeight: 1,
@@ -56,6 +57,7 @@ export const chartWithEmptyCalculation: Chart = {
         position: [0, 0],
       },
       version: 'v2',
+      settings: { autoAlign: true },
       unit: '',
       calls: [
         {
@@ -232,6 +234,7 @@ export const chartWithMultipleCalculations: Chart = {
         position: [0, 0],
       },
       version: 'v2',
+      settings: { autoAlign: true },
       unit: '',
       calls: [
         {
@@ -422,9 +425,11 @@ export const chartWithMultipleCalculations: Chart = {
         },
       ],
       version: 'v2',
+      settings: { autoAlign: true },
     },
     {
       version: 'v2',
+      settings: { autoAlign: true },
       preferredUnit: '',
       statisticsCalls: [
         {
@@ -488,6 +493,7 @@ export const chartWithMultipleCalculations: Chart = {
       ],
     },
     {
+      settings: { autoAlign: true },
       color: '#fa4d56',
       type: 'workflow',
       lineStyle: 'solid',

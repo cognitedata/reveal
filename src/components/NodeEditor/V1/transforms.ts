@@ -162,7 +162,6 @@ export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
   if (workflow.version === 'v2') {
     return getStepsFromWorkflowReactFlow(
       workflow,
-      chart.settings,
       chart.workflowCollection as ChartWorkflowV2[] // DANGEROUS! Need confirmation
     );
   }

@@ -39,6 +39,7 @@ describe('transformParamInput', () => {
 describe('getStepsFromWorkflowReactFlow', () => {
   it('generates correct steps (empty workflow)', () => {
     const workflow: ChartWorkflowV2 = {
+      settings: { autoAlign: true },
       version: 'v2',
       id: 'abc123',
       name: 'Empty workflow',
@@ -54,6 +55,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
 
   it('generates correct steps (only output node)', () => {
     const workflow: ChartWorkflowV2 = {
+      settings: { autoAlign: true },
       version: 'v2',
       id: 'abc123',
       name: 'Empty workflow',
@@ -87,6 +89,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
   it('generates correct steps (multistep computation)', () => {
     const workflow: ChartWorkflowV2 = {
       version: 'v2',
+      settings: { autoAlign: true },
       id: 'abc123',
       name: 'Empty workflow',
       color: '#FFF',
@@ -292,9 +295,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
       enabled: true,
     };
 
-    const settings = {};
-
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings);
+    const steps = getStepsFromWorkflowReactFlow(workflow);
 
     expect(steps).toEqual([
       {
@@ -367,6 +368,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
 
   it('generates correct steps (noop computation)', () => {
     const workflow: ChartWorkflowV2 = {
+      settings: { autoAlign: true },
       version: 'v2',
       id: 'abc123',
       name: 'Empty workflow',
@@ -413,9 +415,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
       enabled: true,
     };
 
-    const settings = {};
-
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings);
+    const steps = getStepsFromWorkflowReactFlow(workflow);
 
     expect(steps).toEqual([
       {
@@ -433,6 +433,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
 
   it('generates correct steps (dangling nodes)', () => {
     const workflow: ChartWorkflowV2 = {
+      settings: { autoAlign: true },
       version: 'v2',
       id: 'abc123',
       name: 'Empty workflow',
@@ -675,9 +676,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
       enabled: true,
     };
 
-    const settings = {};
-
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings);
+    const steps = getStepsFromWorkflowReactFlow(workflow);
 
     expect(steps).toEqual([
       {
@@ -1009,9 +1008,8 @@ describe('getStepsFromWorkflowReactFlow', () => {
     ] as ChartWorkflowV2[];
 
     const workflow = workflows[1];
-    const settings = {};
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings, workflows);
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     expect(steps).toEqual([
       {
@@ -1087,9 +1085,8 @@ describe('getStepsFromWorkflowReactFlow', () => {
     const workflows = workflowCollectionMock;
 
     const workflow = workflows[3];
-    const settings = {};
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings, workflows);
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     expect(steps).toEqual([
       {
@@ -1105,7 +1102,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
             value: 'bHi5m84gI7hwFnPbQQ1BQ',
           },
         ],
-        params: {},
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 1,
@@ -1124,9 +1123,8 @@ describe('getStepsFromWorkflowReactFlow', () => {
     const workflows = workflowCollectionMock2;
 
     const workflow = workflows[3];
-    const settings = {};
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings, workflows);
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     expect(steps).toEqual([
       {
@@ -1142,7 +1140,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
             value: 'bHi5m84gI7hwFnPbQQ1BQ',
           },
         ],
-        params: {},
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 1,
@@ -1191,6 +1191,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
       dateTo: '2021-11-03T00:10:58.805Z',
       workflowCollection: [
         {
+          settings: { autoAlign: true },
           unit: '',
           color: '#1192e8',
           lineStyle: 'solid',
@@ -1238,6 +1239,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
           lineWeight: 1,
         },
         {
+          settings: { autoAlign: true },
           lineWeight: 1,
           flow: {
             position: [0, 0],
@@ -1285,6 +1287,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
           type: 'workflow',
         },
         {
+          settings: { autoAlign: true },
           version: 'v2',
           color: '#9f1853',
           name: 'Calc 3',
@@ -1363,10 +1366,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
     };
 
     const workflow = chart.workflowCollection?.[0] as ChartWorkflowV2;
-    const { settings } = chart;
     const workflows = chart.workflowCollection as ChartWorkflowV2[];
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings, workflows);
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     expect(steps).toEqual([
       {
@@ -1385,6 +1387,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
   it('should handle using the same calculation reference as a source multiple times in a calculation', () => {
     const workflows = [
       {
+        settings: { autoAlign: true },
         version: 'v2',
         id: 'kFo_FV7arfuTOhmIiYlhw',
         name: 'Calc 1',
@@ -1440,6 +1443,7 @@ describe('getStepsFromWorkflowReactFlow', () => {
         ],
       },
       {
+        settings: { autoAlign: true },
         version: 'v2',
         id: 'MLoc-AIHZ-xlaiaTB3iCC',
         name: 'Calc 2',
@@ -1564,9 +1568,8 @@ describe('getStepsFromWorkflowReactFlow', () => {
     ] as ChartWorkflowV2[];
 
     const workflow = workflows[1];
-    const settings = {};
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings, workflows);
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     expect(steps).toEqual([
       {
@@ -1582,7 +1585,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
         ],
-        params: {},
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 1,
@@ -1601,9 +1606,8 @@ describe('getStepsFromWorkflowReactFlow', () => {
     const workflows = workflowCollectionMock3;
 
     const workflow = workflows[2];
-    const settings = {};
 
-    const steps = getStepsFromWorkflowReactFlow(workflow, settings, workflows);
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     expect(steps).toEqual([
       {
@@ -1619,7 +1623,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
         ],
-        params: {},
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 1,
@@ -1634,7 +1640,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
             value: 'D4p8lyEgT0P86-Abc-jh7',
           },
         ],
-        params: {},
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 2,
@@ -1663,7 +1671,9 @@ describe('getStepsFromWorkflowReactFlow', () => {
             value: 0,
           },
         ],
-        params: {},
+        params: {
+          align_timesteps: true,
+        },
       },
       {
         step: 4,

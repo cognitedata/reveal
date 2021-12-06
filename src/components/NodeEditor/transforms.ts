@@ -26,11 +26,7 @@ export function getStepsFromWorkflow(chart: Chart, workflow: ChartWorkflow) {
     /**
      * Generate the steps
      */
-    const steps = getStepsFromWorkflowReactFlow(
-      workflow,
-      chart.settings,
-      workflows
-    );
+    const steps = getStepsFromWorkflowReactFlow(workflow, workflows);
 
     /**
      * Resolve all the timeseries value steps into actual external ids

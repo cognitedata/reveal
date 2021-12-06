@@ -22,9 +22,9 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
       <ReactFlowNodeEditor
         sources={[]}
         operations={[]}
-        autoAlign
+        settings={{ autoAlign: true }}
         isValid
-        onToggleAutoAlign={() => {}}
+        onSaveSettings={() => {}}
         onElementsRemove={() => {}}
         onConnect={() => {}}
         onEdgeUpdate={() => {}}

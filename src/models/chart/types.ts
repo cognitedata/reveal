@@ -87,6 +87,9 @@ export type ChartWorkflowV1 = ChartWorkflowBase & {
 export type ChartWorkflowV2 = ChartWorkflowBase & {
   version: 'v2';
   flow?: FlowExportObject<NodeDataDehydratedVariants>;
+  settings: {
+    autoAlign: boolean;
+  };
 };
 
 export type ChartWorkflow = ChartWorkflowV1 | ChartWorkflowV2;

@@ -25,16 +25,19 @@ import ConstantNode from './Nodes/ConstantNode';
 import OutputNode from './Nodes/OutputNode';
 import SourceNode from './Nodes/SourceNode';
 
-export type NodeEditorProps = {
+type Props = {
   id?: string;
   position?: [number, number];
   zoom?: number;
   flowElements: Elements<NodeDataVariants>;
   sources: SourceOption[];
   operations: Operation[];
-  autoAlign: boolean;
+  settings: {
+    autoAlign: boolean;
+  };
+  // eslint-disable-next-line react/no-unused-prop-types
   isValid: boolean;
-  onToggleAutoAlign: (autoAlign: boolean) => void;
+  onSaveSettings: (updatedSettings: Props['settings']) => void;
   onElementsRemove: (elementsToRemove: Elements<NodeDataVariants>) => void;
   onConnect: (connection: Edge | Connection) => void;
   onEdgeUpdate: (oldEdge: Edge, newConnection: Connection) => void;
@@ -53,8 +56,8 @@ const ReactFlowNodeEditor = ({
   flowElements,
   sources,
   operations,
-  autoAlign,
-  onToggleAutoAlign,
+  settings,
+  onSaveSettings,
   onElementsRemove,
   onConnect,
   onEdgeUpdate,
@@ -64,7 +67,7 @@ const ReactFlowNodeEditor = ({
   onAddFunctionNode,
   onAddOutputNode,
   onMove,
-}: NodeEditorProps) => {
+}: Props) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<RFInstance | null>(
@@ -186,10 +189,7 @@ const ReactFlowNodeEditor = ({
           }}
           onMoveEnd={handleMove}
         >
-          <EditorControls
-            autoAlign={autoAlign}
-            onToggleAutoAlign={onToggleAutoAlign}
-          />
+          <EditorControls settings={settings} onSaveSettings={onSaveSettings} />
           <Background variant={BackgroundVariant.Dots} />
         </ReactFlow>
       )}

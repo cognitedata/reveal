@@ -21,8 +21,10 @@ EmptyEditor.args = {
   flowElements: [],
   sources: [],
   operations: fullListOfOperations,
-  autoAlign: false,
-  onToggleAutoAlign: () => {},
+  settings: {
+    autoAlign: true,
+  },
+  onSaveSettings: () => {},
   onElementsRemove: () => {},
   onConnect: () => {},
   onEdgeUpdate: () => {},
@@ -84,8 +86,10 @@ SimplePassthrough.args = {
   ],
   sources: [],
   operations: [],
-  autoAlign: false,
-  onToggleAutoAlign: () => {},
+  settings: {
+    autoAlign: true,
+  },
+  onSaveSettings: () => {},
   onElementsRemove: () => {},
   onConnect: () => {},
   onEdgeUpdate: () => {},
@@ -95,4 +99,11 @@ SimplePassthrough.args = {
   onAddFunctionNode: () => {},
   onAddOutputNode: () => {},
   onMove: () => {},
+};
+
+export const AutoAlignOff = Template.bind({});
+
+AutoAlignOff.args = {
+  ...SimplePassthrough.args,
+  settings: { autoAlign: false },
 };

@@ -1,18 +1,17 @@
 import { Dropdown, Icon } from '@cognite/cogs.js';
-import { useState } from 'react';
+import { Badge } from 'antd';
+import { ComponentProps, useState } from 'react';
 import { Controls, ControlButton, useZoomPanHelper } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
-import AutoAlignDropdown from './AutoAlignDropdown';
+import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
+import WorkflowSettings from './WorkflowSettings';
 
-type EditorControlsProps = {
-  autoAlign?: boolean;
-  onToggleAutoAlign?: (autoAlign: boolean) => void;
+type Props = {
+  settings: ComponentProps<typeof ReactFlowNodeEditor>['settings'];
+  onSaveSettings: (settings: Props['settings']) => void;
 };
 
-const EditorControls = ({
-  autoAlign,
-  onToggleAutoAlign = () => {},
-}: EditorControlsProps) => {
+const EditorControls = ({ settings, onSaveSettings = () => {} }: Props) => {
   const { fitView, zoomIn, zoomOut } = useZoomPanHelper();
   const [isAutoAlignDropdownVisible, setIsAutoAlignDropdownVisible] =
     useState<boolean>(false);
@@ -35,12 +34,9 @@ const EditorControls = ({
 
       <Dropdown
         content={
-          <AutoAlignDropdown
-            initialValue={autoAlign}
-            saveAutoAlign={(val) => {
-              onToggleAutoAlign(val);
-              setIsAutoAlignDropdownVisible(false);
-            }}
+          <WorkflowSettings
+            settings={settings}
+            onSaveSettings={onSaveSettings}
           />
         }
         visible={isAutoAlignDropdownVisible}
@@ -51,7 +47,12 @@ const EditorControls = ({
         <CustomControlButton
           onClick={() => setIsAutoAlignDropdownVisible((visible) => !visible)}
         >
-          <Icon type="Configure" />
+          <Badge
+            dot={!settings.autoAlign}
+            style={{ color: 'var(--cogs-danger)' }}
+          >
+            <Icon type="Configure" />
+          </Badge>
         </CustomControlButton>
       </Dropdown>
     </CustomControlButtonGroup>

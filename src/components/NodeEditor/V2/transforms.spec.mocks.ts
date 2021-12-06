@@ -14,6 +14,7 @@ export const workflowCollectionMock: ChartWorkflowV2[] = [
     color: '#1192e8',
     createdAt: 1638148032268,
     lineWeight: 1,
+    settings: { autoAlign: false },
     flow: {
       position: [0, 0],
       zoom: 1,
@@ -90,6 +91,7 @@ export const workflowCollectionMock: ChartWorkflowV2[] = [
     color: '#005d5d',
     version: 'v2',
     id: '2M_k0eYSYiU0w7olxpxKy',
+    settings: { autoAlign: true },
     flow: {
       zoom: 1,
       elements: [
@@ -246,6 +248,7 @@ export const workflowCollectionMock: ChartWorkflowV2[] = [
     createdAt: 1638148083465,
     lineStyle: 'solid',
     name: 'Calculation 3',
+    settings: { autoAlign: true },
     version: 'v2',
     id: 'terEW2LnAFlU-XPC0UeNR',
     type: 'workflow',
@@ -310,6 +313,7 @@ export const workflowCollectionMock: ChartWorkflowV2[] = [
     type: 'workflow',
     preferredUnit: '',
     name: 'New Calculation',
+    settings: { autoAlign: true },
     version: 'v2',
     unit: '',
     lineWeight: 1,
@@ -449,6 +453,7 @@ export const workflowCollectionMock: ChartWorkflowV2[] = [
 export const workflowCollectionMock2: ChartWorkflowV2[] = [
   {
     range: [0.00121811464793258, 0.004798625564858012],
+    settings: { autoAlign: true },
     version: 'v2',
     enabled: true,
     lineStyle: 'solid',
@@ -513,6 +518,7 @@ export const workflowCollectionMock2: ChartWorkflowV2[] = [
   },
   {
     range: [0.002229554809050533, 0.0056663855126161955],
+    settings: { autoAlign: true },
     version: 'v2',
     calls: [
       {
@@ -689,6 +695,7 @@ export const workflowCollectionMock2: ChartWorkflowV2[] = [
     lineStyle: 'solid',
   },
   {
+    settings: { autoAlign: true },
     color: '#9f1853',
     createdAt: 1638148083465,
     range: [0.0012853134080263958, 0.003327958071466366],
@@ -753,6 +760,7 @@ export const workflowCollectionMock2: ChartWorkflowV2[] = [
     lineStyle: 'solid',
   },
   {
+    settings: { autoAlign: true },
     type: 'workflow',
     calls: [],
     statisticsCalls: [
@@ -899,6 +907,7 @@ export const workflowCollectionMock3: ChartWorkflowV2[] = [
     type: 'workflow',
     lineWeight: 1,
     name: 'Calc 1',
+    settings: { autoAlign: true },
     flow: {
       zoom: 1,
       elements: [
@@ -941,6 +950,7 @@ export const workflowCollectionMock3: ChartWorkflowV2[] = [
     unit: '',
   },
   {
+    settings: { autoAlign: true },
     lineStyle: 'solid',
     version: 'v2',
     type: 'workflow',
@@ -1071,6 +1081,7 @@ export const workflowCollectionMock3: ChartWorkflowV2[] = [
     lineWeight: 1,
   },
   {
+    settings: { autoAlign: true },
     version: 'v2',
     id: '3jsKfy1u_CDe0FxfZEt7S',
     name: 'Calc 3',

@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import { useCallback, useEffect } from 'react';
-import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { useSDK } from '@cognite/sdk-provider';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
@@ -68,28 +68,29 @@ export const useStatistics = (
 
   const updateStatistics = useCallback(
     (diff: Partial<ChartTimeSeries | ChartWorkflow>) => {
-      if (!sourceItem) {
-        return;
-      }
-      setChart((oldChart) => ({
-        ...oldChart!,
-        timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
-          ts.id === sourceItem.id
-            ? {
-                ...ts,
-                ...diff,
-              }
-            : ts
-        ),
-        workflowCollection: oldChart?.workflowCollection?.map((wf) =>
-          wf.id === sourceItem.id
-            ? {
-                ...wf,
-                ...diff,
-              }
-            : wf
-        ),
-      }));
+      if (!sourceItem) return;
+      setChart((oldChart) => {
+        if (!oldChart) return undefined;
+        return {
+          ...oldChart,
+          timeSeriesCollection: oldChart?.timeSeriesCollection?.map((ts) =>
+            ts.id === sourceItem.id
+              ? {
+                  ...ts,
+                  ...diff,
+                }
+              : ts
+          ),
+          workflowCollection: oldChart?.workflowCollection?.map((wf) =>
+            wf.id === sourceItem.id
+              ? {
+                  ...wf,
+                  ...diff,
+                }
+              : wf
+          ),
+        } as Chart;
+      });
     },
     [setChart, sourceItem]
   );
