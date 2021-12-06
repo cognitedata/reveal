@@ -153,13 +153,12 @@ export const Profiling = (): JSX.Element => {
               <Table>
                 <TableHeader>
                   <tr>
-                    <TableData>
+                    <TableData $width={44}>
                       <Flex
                         direction="row"
                         justifyContent="space-between"
                         alignItems="center"
                       >
-                        Type
                         <Icon
                           type="ReorderDefault"
                           onClick={() => setSortKey('type')}
