@@ -1,5 +1,5 @@
 module.exports = {
-  extends: './.eslintrc.production.js',
+  extends: ['./.eslintrc.production.js', 'plugin:storybook/recommended'],
   // We can relax some settings here for nicer development experience; warnings will crash in CI
   rules: {
     'prettier/prettier': [
@@ -13,11 +13,15 @@ module.exports = {
     ],
     '@cognite/no-unissued-todos': [
       'warn',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
+      {
+        issuePattern: '\\(((DEMO)-[0-9]+)\\)',
+      },
     ],
     '@typescript-eslint/no-unused-vars-experimental': [
       'warn',
-      { ignoredNamesRegex: '^_' },
+      {
+        ignoredNamesRegex: '^_',
+      },
     ],
   },
 };

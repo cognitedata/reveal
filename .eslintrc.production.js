@@ -3,6 +3,7 @@ module.exports = {
     '@cognite',
     'plugin:testing-library/react',
     'plugin:react-hooks/recommended',
+    'plugin:storybook/recommended',
   ],
   plugins: ['@cognite', 'testing-library'],
   rules: {
