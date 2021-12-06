@@ -32,7 +32,6 @@ export class CameraManager {
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
   private _onWheel: ((event: MouseEvent) => void) | undefined = undefined;
-  
 
   private static readonly DefaultAnimationDuration = 300;
   private static readonly DefaultMinAnimationDuration = 300;
@@ -182,8 +181,6 @@ export class CameraManager {
     this.setupControls();
   }
 
-  
-
   moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
     if (this.isDisposed) {
       return;
@@ -217,7 +214,8 @@ export class CameraManager {
 
     const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
 
-    tween.onUpdate(() => {
+    tween
+      .onUpdate(() => {
         if (this.isDisposed) {
           return;
         }
@@ -255,7 +253,7 @@ export class CameraManager {
     const { _camera, _controls: controls } = this;
 
     duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
-    
+
     const startTarget = this.calculateAnimationStartTarget(target);
     const from = {
       targetX: startTarget.x,
@@ -269,10 +267,11 @@ export class CameraManager {
     };
 
     const tempTarget = new THREE.Vector3();
-    
+
     const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
 
-    tween.onStart(() => {
+    tween
+      .onStart(() => {
         controls.lookAtViewTarget = true;
         controls.setState(this._camera.position, target);
       })
@@ -378,11 +377,15 @@ export class CameraManager {
     _raycaster.setFromCamera(new THREE.Vector2(), _camera);
     const distanceToTarget = newTarget.distanceTo(_camera.position);
     const scaledDirection = _raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
-    
-    return _raycaster.ray.origin.clone().add(scaledDirection);
-  };
 
-  private createTweenAnimation(from: any, to: any, duration: number): {tween: TWEEN.Tween, stopTween: (event: Event) => void} {
+    return _raycaster.ray.origin.clone().add(scaledDirection);
+  }
+
+  private createTweenAnimation(
+    from: any,
+    to: any,
+    duration: number
+  ): { tween: TWEEN.Tween; stopTween: (event: Event) => void } {
     const animation = new TWEEN.Tween(from);
     const stopTween = (event: Event) => {
       if (this.isDisposed) {
@@ -403,10 +406,9 @@ export class CameraManager {
     this._domElement.addEventListener('wheel', stopTween);
     document.addEventListener('keydown', stopTween);
 
-    const tween = animation.to(to, duration)
-      .easing((x: number) => TWEEN.Easing.Circular.Out(x));
-      
-    return {tween, stopTween};
+    const tween = animation.to(to, duration).easing((x: number) => TWEEN.Easing.Circular.Out(x));
+
+    return { tween, stopTween };
   }
 
   /**

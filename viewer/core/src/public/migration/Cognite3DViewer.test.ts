@@ -231,7 +231,9 @@ describe('Cognite3DViewer', () => {
     // Assert
     const newCameraControlsOptions = viewer.getCameraControlsOptions();
 
-    expect(newCameraControlsOptions.changeCameraTargetOnClick).not.toEqual(originalCameraControlsOptions.changeCameraTargetOnClick);
+    expect(newCameraControlsOptions.changeCameraTargetOnClick).not.toEqual(
+      originalCameraControlsOptions.changeCameraTargetOnClick
+    );
     expect(newCameraControlsOptions.mouseWheelAction).toEqual('zoomToTarget');
   });
 });
