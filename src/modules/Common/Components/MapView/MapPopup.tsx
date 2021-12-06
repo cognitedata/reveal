@@ -97,7 +97,13 @@ export const MapPopup = ({
           </table>
         </div>
         <div className="close">
-          <Button type="ghost" icon="Close" size="small" onClick={onClose} />
+          <Button
+            type="ghost"
+            icon="Close"
+            size="small"
+            aria-label="close popup"
+            onClick={onClose}
+          />
         </div>
       </div>
       <div className="footer">
