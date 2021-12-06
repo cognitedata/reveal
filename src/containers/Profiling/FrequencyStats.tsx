@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 
-type Count = {
+export type Count = {
   value: string;
   count: number;
 };
@@ -12,35 +12,28 @@ type Props = {
 };
 
 export default function FrequencyStats({ allCount, counts }: Props) {
+  if (!counts) return <span />;
   return (
-    <>
-      <header>Frequency statistics</header>
-      {counts && (
-        <FrequenceTable style={{ marginTop: 12, width: '100%' }}>
-          <TableHeader>
-            <tr>
-              <td>Value</td>
-              <td className="numeric">Count</td>
-              <td />
-            </tr>
-          </TableHeader>
-          <tbody>
-            {counts.map(({ value, count }) => (
-              <tr
-                key={value}
-                className={value === '<other>' ? 'other' : undefined}
-              >
-                <TableData>{value}</TableData>
-                <TableData className="numeric">{count}</TableData>
-                <TableData style={{ width: '30%', padding: '0 10px' }}>
-                  <Percent p={Math.round((count / allCount) * 100)} />
-                </TableData>
-              </tr>
-            ))}
-          </tbody>
-        </FrequenceTable>
-      )}
-    </>
+    <FrequenceTable style={{ marginTop: 12, width: '100%' }}>
+      <TableHeader>
+        <tr>
+          <td>Value</td>
+          <td className="numeric">Count</td>
+          <td />
+        </tr>
+      </TableHeader>
+      <tbody>
+        {counts.map(({ value, count }) => (
+          <tr key={value} className={value === '<other>' ? 'other' : undefined}>
+            <TableData>{value}</TableData>
+            <TableData className="numeric">{count}</TableData>
+            <TableData style={{ width: '30%', padding: '0 10px' }}>
+              <Percent p={Math.round((count / allCount) * 100)} />
+            </TableData>
+          </tr>
+        ))}
+      </tbody>
+    </FrequenceTable>
   );
 }
 

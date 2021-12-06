@@ -134,9 +134,9 @@ function transformNumberProfile(
   const profile = column.number;
   const {
     distinctCount,
-    histogram = [[], []],
     valueCounts = {},
     valueRange = [],
+    histogram = [[], []],
   } = (profile || {}) as NumberProfile;
 
   const counts = Object.keys(valueCounts)
@@ -145,6 +145,7 @@ function transformNumberProfile(
       count: valueCounts[key] as number,
     }))
     .sort((a, b) => b.count - a.count);
+
   const formattedHistogram = zip(...histogram).map(([length, count]) => ({
     value: length?.toString() as string,
     count: count as number,
@@ -168,10 +169,20 @@ function transformBooleanProfile(
   label: string,
   column: RawColumn
 ): ColumnProfile {
+  const profile = column.boolean;
+  const { trueCount } = (profile || {}) as BooleanProfile;
+  const { count, nullCount } = column;
+  const falseCount = count - trueCount - nullCount;
+
+  const counts = [
+    { value: 'True', count: trueCount },
+    { value: 'False', count: falseCount },
+  ];
   return {
     type: 'Boolean',
     label,
     count: column.count,
+    counts,
     nullCount: column.nullCount,
     profile: column.boolean,
   };
