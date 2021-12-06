@@ -51,7 +51,7 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   return (
     <Section
       title="Contacts"
-      icon="Public"
+      icon="Users"
       editButton={{ onClick: openEdit, canEdit }}
     >
       <Wrapper>
@@ -72,7 +72,7 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
                         <a href={`mailto:${contact.email}`}>{contact.email}</a>
                         {contact.sendNotification && (
                           <Icon
-                            type="BellNotification"
+                            type="BellFilled"
                             size={12}
                             css="margin-left: 6px; vertical-align: middle;"
                           />

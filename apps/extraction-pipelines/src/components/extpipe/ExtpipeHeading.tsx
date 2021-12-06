@@ -59,7 +59,7 @@ export const ExtpipeHeading: FunctionComponent = () => {
             }}
           >
             <div css="display: flex; align-items: center;">
-              <Icon type="ArrowBack" />
+              <Icon type="ArrowLeft" />
             </div>
           </StyledNavLink>
           <InlineEdit

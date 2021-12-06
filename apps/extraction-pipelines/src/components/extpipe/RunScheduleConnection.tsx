@@ -76,12 +76,12 @@ export const RunScheduleConnection: FunctionComponent = () => {
           <CardValue className="card-value">
             <TimeDisplay value={lastRun.time} relative />
           </CardValue>
-          <Icon type="ArrowForward" />
+          <Icon type="ArrowRight" />
         </CardInWrapper>
       </CardNavLink>
       <CardInWrapper>
         <StyledTitleCard className="card-title">
-          <Icon type="Schedule" />
+          <Icon type="Calendar" />
           {TableHeadings.SCHEDULE}
         </StyledTitleCard>
         <CardValue className="card-value">
@@ -108,7 +108,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
           <CardValue className="card-value">
             {lastConnected && <TimeDisplay value={lastConnected} relative />}
           </CardValue>
-          <Icon type="ArrowForward" />
+          <Icon type="ArrowRight" />
         </CardInWrapper>
       </CardNavLink>
     </CardWrapper>

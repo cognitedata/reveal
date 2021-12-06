@@ -32,7 +32,7 @@ export const NotificationSection: FunctionComponent<NotificationSectionProps> = 
   const openDialog = () => setOpen(true);
   return (
     <Section
-      icon="BellNotification"
+      icon="BellFilled"
       title="Notifications"
       editButton={{ canEdit, onClick: openDialog }}
     >

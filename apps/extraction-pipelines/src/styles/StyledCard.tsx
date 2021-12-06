@@ -79,7 +79,7 @@ export const CardInWrapper = styled.div`
   .card-value {
     grid-area: value;
   }
-  .cogs-icon-ArrowForward {
+  .cogs-icon-ArrowRight {
     color: ${Colors.primary.hex()};
     grid-area: arrow;
     align-self: center;
@@ -89,12 +89,12 @@ export const CardInWrapper = styled.div`
 `;
 
 export const CardNavLink = styled(NavLink)`
-  .cogs-icon-ArrowForward {
+  .cogs-icon-ArrowRight {
     opacity: 0;
   }
   :hover {
     background-color: ${Colors['midblue-7'].hex()};
-    .cogs-icon-ArrowForward {
+    .cogs-icon-ArrowRight {
       opacity: 1;
     }
   }
