@@ -169,7 +169,7 @@
     "@storybook/preset-typescript": "^3.0.0",
     "@storybook/react": "^6.3.10",
     "@testing-library/cypress": "^8.0.1",
-    "@testing-library/jest-dom": "^5.15.0",
+    "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/testcafe": "^4.4.0",
