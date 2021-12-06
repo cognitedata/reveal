@@ -2,6 +2,7 @@ import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, UseQueryOptions } from 'react-query';
 
+import { PRIMARY_KEY_DATAKEY } from 'hooks/table-data';
 import { ALL_FILTER } from 'hooks/table-filters';
 import { baseKey } from 'hooks/sdk-queries';
 
@@ -347,6 +348,7 @@ export const useColumnType = (
 ) => {
   const { getColumn, isFetched } = useColumn(database, table, limit);
   const getColumnType = (dataKey: string | undefined) => {
+    if (dataKey === PRIMARY_KEY_DATAKEY) return 'Key';
     const column = getColumn(dataKey);
     return column?.type || 'Unknown';
   };
