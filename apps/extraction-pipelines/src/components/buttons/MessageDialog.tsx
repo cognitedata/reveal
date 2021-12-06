@@ -90,7 +90,9 @@ const MessageDialog: FunctionComponent<Props> = ({
       content={
         <DialogStyle dialogWidth={width}>
           {icon}
-          <Title level={4}>{title}</Title>
+          <Title level={4} css="color: white">
+            {title}
+          </Title>
           {handleClose && (
             <Button
               id="dialog-close-btn"
