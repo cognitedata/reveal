@@ -15,6 +15,7 @@ import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
 import { NotificationSection } from 'components/extpipe/NotificationSection';
+import { metaDescriptionSchema } from 'utils/validation/extpipeSchemas';
 
 interface ExtpipeInformationProps {
   canEdit: boolean;
@@ -39,9 +40,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           placeholder="Enter description"
           label={DetailFieldNames.DESCRIPTION}
           canEdit={canEdit}
-          schema={yup.object().shape({
-            description: yup.string(),
-          })}
+          schema={metaDescriptionSchema}
           defaultValues={{ description: extpipe?.description }}
           fullWidth
           updateFn={rootUpdate({ extpipe, name: 'description', project })}
