@@ -21,6 +21,7 @@ export const ChartsIOButtons: React.FC = () => {
   const selectedConfig = useAppSelector(selectSelectedCalculationConfig);
   const chartInputLink = useAppSelector(selectChartInputLink);
   const chartOutputLink = useAppSelector(selectChartOutputLink);
+  const eventSuccessful = selectedEvent?.metadata?.status !== 'failure';
 
   useEffect(() => {
     if (selectedEvent) {
@@ -55,26 +56,29 @@ export const ChartsIOButtons: React.FC = () => {
 
   return (
     <div className="charts-buttons">
-      {chartInputLink && (
-        <Button
-          type="primary"
-          href={chartInputLink}
-          target="_blank"
-          icon="LineChart"
-        >
-          Inputs
-        </Button>
-      )}
-
-      {chartOutputLink && (
-        <Button
-          type="primary"
-          href={chartOutputLink}
-          target="_blank"
-          icon="LineChart"
-        >
-          Outputs
-        </Button>
+      {eventSuccessful && (
+        <>
+          {chartInputLink && (
+            <Button
+              type="primary"
+              href={chartInputLink}
+              target="_blank"
+              icon="LineChart"
+            >
+              Open Inputs in Charts
+            </Button>
+          )}
+          {chartOutputLink && (
+            <Button
+              type="primary"
+              href={chartOutputLink}
+              target="_blank"
+              icon="LineChart"
+            >
+              Open Outputs in Charts
+            </Button>
+          )}
+        </>
       )}
     </div>
   );

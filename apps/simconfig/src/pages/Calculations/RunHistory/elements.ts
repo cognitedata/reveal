@@ -31,7 +31,10 @@ export const RunDetailsBox = styled.dt`
 
   .charts-buttons {
     display: flex;
+    flex-direction: column;
     margin-top: 1em;
-    justify-content: space-around;
+    a {
+      margin-top: 1em;
+    }
   }
 `;

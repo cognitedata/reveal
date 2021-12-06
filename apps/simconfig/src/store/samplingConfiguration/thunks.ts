@@ -1,4 +1,5 @@
-import { CogniteClient, Timestamp } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk';
+import moment from 'moment';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { EventSerializable } from 'store/event/types';
 import { CalculationConfig } from 'components/forms/ConfigurationForm/types';
@@ -23,12 +24,15 @@ const generateChartLink = (
   timeSeriesExternalIds: string,
   chartName: string,
   projectName: string | undefined,
-  startTime: Timestamp | undefined,
-  endTime: Timestamp | undefined
+  calcTime: number | undefined
 ) => {
-  if (!startTime || !endTime || !projectName) {
+  if (!calcTime || !projectName) {
     return undefined;
   }
+
+  const endTime = moment(calcTime).add(1, 'hours').valueOf();
+  const startTime = moment(calcTime).subtract(1, 'hours').valueOf();
+
   const chartsUrl = new URL(
     `https://charts.${sidecar.cdfCluster}.cogniteapp.com/${projectName}`
   );
@@ -45,7 +49,11 @@ const generateChartLink = (
 export const fetchChartsInputLink = createAsyncThunk(
   'samplingConfiguration/fetchChartsInputLink',
   ({ currentEvent, calculationConfig, projectName }: ChartIO) => {
-    if (!currentEvent || !calculationConfig) {
+    if (
+      !currentEvent ||
+      !calculationConfig ||
+      !currentEvent.metadata?.calcTime
+    ) {
       return undefined;
     }
 
@@ -62,12 +70,13 @@ export const fetchChartsInputLink = createAsyncThunk(
     );
 
     const chartLinkInputs = inputTimeSeriesExternalId.join(',');
+    const calcTime = Number(currentEvent.metadata.calcTime);
+
     return generateChartLink(
       chartLinkInputs,
       `${modelName} Input TimeSeries`,
       projectName,
-      currentEvent.startTime,
-      currentEvent.endTime
+      calcTime
     );
   }
 );
@@ -75,7 +84,11 @@ export const fetchChartsInputLink = createAsyncThunk(
 export const fetchChartsOutputLink = createAsyncThunk(
   'samplingConfiguration/fetchChartsOutputLink',
   ({ currentEvent, calculationConfig, projectName }: ChartIO) => {
-    if (!currentEvent || !calculationConfig) {
+    if (
+      !currentEvent ||
+      !calculationConfig ||
+      !currentEvent.metadata?.calcTime
+    ) {
       return undefined;
     }
 
@@ -91,13 +104,14 @@ export const fetchChartsOutputLink = createAsyncThunk(
       })
     );
 
+    const calcTime = Number(currentEvent.metadata.calcTime);
+
     const chartLinkOutputs = outputTimeSeriesExternalId.join(',');
     return generateChartLink(
       chartLinkOutputs,
       `${modelName} Output TimeSeries`,
       projectName,
-      currentEvent.startTime,
-      currentEvent.endTime
+      calcTime
     );
   }
 );
