@@ -66,8 +66,8 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
     return <Loader />;
   }
 
-  const handleSelectChange = (option: SelectOption) => {
-    setValue('dataSetId', option?.value ?? '');
+  const handleSelectChange = (option: SelectOption | null) => {
+    setValue('dataSetId', option != null ? option.value : undefined);
   };
 
   const renderInput = (
