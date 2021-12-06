@@ -2,7 +2,6 @@ import queryString from 'query-string';
 import { useHistory } from 'react-router-dom';
 
 import { useCellSelection } from 'hooks/table-selection';
-import useLocalStorage from './useLocalStorage';
 import { getEnv, getProject } from '@cognite/cdf-utilities';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
@@ -45,20 +44,36 @@ function useQueryParam<T>(
 }
 
 export type SpecificTable = [database: string, table: string, view?: string];
-type SpecificTableState = SpecificTable | undefined;
 
-function useUrlTable(): [SpecificTableState, (t: SpecificTableState) => void] {
+function useUrlTable(): [
+  SpecificTable | undefined,
+  (t?: SpecificTable) => void
+] {
   const project = getProject();
   const env = getEnv();
-  const [lsTab, setLsTab] = useLocalStorage<SpecificTableState>(
-    `${project}_${env}_raw_activeTab`,
-    undefined
+  const lsKey = `${project}_${env}_raw_activeTab`;
+
+  const lsTab: SpecificTable | undefined = (() => {
+    try {
+      const s = localStorage.getItem(lsKey);
+      return s ? JSON.parse(s) : undefined;
+    } catch {
+      return undefined;
+    }
+  })();
+  const setLsTab = (tab: SpecificTable | undefined) => {
+    try {
+      localStorage.setItem(lsKey, JSON.stringify(tab));
+    } catch {}
+  };
+  const [tab, setTab] = useQueryParam<SpecificTable | undefined>(
+    'activeTable',
+    lsTab
   );
-  const [tab, setTab] = useQueryParam<SpecificTableState>('activeTable', lsTab);
 
   return [
     tab,
-    (t: SpecificTableState) => {
+    (t?: SpecificTable) => {
       setTab(t);
       setLsTab(t);
     },
@@ -67,10 +82,22 @@ function useUrlTable(): [SpecificTableState, (t: SpecificTableState) => void] {
 function useUrlTabList(): [SpecificTable[], (_: SpecificTable[]) => void] {
   const project = getProject();
   const env = getEnv();
-  const [lsTabs, setLsTabs] = useLocalStorage<SpecificTable[]>(
-    `${project}_${env}_raw_tabList`,
-    []
-  );
+  const lsKey = `${project}_${env}_raw_tabList`;
+
+  const lsTabs: SpecificTable[] = (() => {
+    try {
+      const s = localStorage.getItem(lsKey);
+      return s ? JSON.parse(s) : [];
+    } catch {
+      return [];
+    }
+  })();
+  const setLsTabs = (tabs: SpecificTable[]) => {
+    try {
+      localStorage.setItem(lsKey, JSON.stringify(tabs));
+    } catch {}
+  };
+
   const [tabs = [], setTabs] = useQueryParam<SpecificTable[]>('tabs', lsTabs);
 
   return [
@@ -87,7 +114,7 @@ export function useTableTabList() {
 }
 
 export function useActiveTable(): [
-  SpecificTableState,
+  SpecificTable | undefined,
   (_: SpecificTable) => void
 ] {
   const [active, setActive] = useUrlTable();
