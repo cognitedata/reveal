@@ -1,10 +1,13 @@
 import React, {
   createContext,
-  Dispatch,
-  SetStateAction,
+  useContext,
+  useEffect,
   useState,
+  SetStateAction,
+  Dispatch,
 } from 'react';
 
+import { useActiveTable } from 'hooks/table-tabs';
 import { NO_CELL_SELECTED } from 'utils/table';
 
 export enum RawExplorerModal {
@@ -46,6 +49,8 @@ type RawExplorerProviderProps = {
   children: React.ReactNode;
 };
 
+export const useRawExplorerContext = () => useContext(RawExplorerContext);
+
 export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true);
   const [selectedSidePanelDatabase, setSelectedSidePanelDatabase] = useState<
@@ -84,4 +89,28 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
       {children}
     </RawExplorerContext.Provider>
   );
+};
+
+export const useProfilingSidebar = () => {
+  const {
+    profilingSidebarOpenState,
+    setProfilingSidebarOpenState,
+    setSelectedColumnKey,
+  } = useRawExplorerContext();
+  const [[activeTable] = []] = useActiveTable();
+
+  const setIsProfilingSidebarOpen = (isOpen: boolean) => {
+    if (!isOpen) setSelectedColumnKey(undefined);
+    setProfilingSidebarOpenState(isOpen);
+  };
+
+  useEffect(() => {
+    setIsProfilingSidebarOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTable]);
+
+  return {
+    isProfilingSidebarOpen: profilingSidebarOpenState,
+    setIsProfilingSidebarOpen,
+  };
 };

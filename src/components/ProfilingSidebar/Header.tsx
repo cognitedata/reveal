@@ -3,10 +3,9 @@ import styled from 'styled-components';
 
 import { Body, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 
-import { useActiveTableContext } from 'contexts';
+import { useActiveTableContext, useProfilingSidebar } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import { useColumnNavigation } from 'hooks/table-navigation';
-import { useProfilingSidebar } from 'hooks/profiling-sidebar';
 import { useColumnType } from 'hooks/profiling-service';
 
 import {

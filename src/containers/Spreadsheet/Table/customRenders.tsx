@@ -3,8 +3,7 @@ import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
 
-import { useProfilingSidebar } from 'hooks/profiling-sidebar';
-import { RawExplorerContext } from 'contexts';
+import { RawExplorerContext, useProfilingSidebar } from 'contexts';
 
 import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
 

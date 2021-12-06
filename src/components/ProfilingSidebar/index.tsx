@@ -3,8 +3,8 @@ import { Drawer } from 'antd';
 
 import { Button, Colors } from '@cognite/cogs.js';
 
+import { useProfilingSidebar } from 'contexts';
 import { useColumnSelection } from 'hooks/table-selection';
-import { useProfilingSidebar } from 'hooks/profiling-sidebar';
 import { SIDEBAR_PROFILING_DRAWER_WIDTH } from 'utils/constants';
 
 import { Header } from './Header';
