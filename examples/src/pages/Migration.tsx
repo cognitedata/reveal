@@ -68,7 +68,6 @@ export function Migration() {
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
-        automaticControlsSensitivity: true,
         antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') || undefined) as any
       };
@@ -92,7 +91,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        onClickTargetChange: true,
+        changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       }
 
@@ -191,7 +190,7 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          onClickTargetChange: true
+          changeCameraTargetOnClick: true
         },
         debugRenderStageTimings: false
       };
@@ -467,8 +466,8 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
         viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
       });
-      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on click').onFinishChange(value => {
-        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
+      controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
   
       const overlayTool = new HtmlOverlayTool(viewer,

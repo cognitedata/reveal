@@ -32,6 +32,7 @@ export class CameraManager {
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
   private _onWheel: ((event: MouseEvent) => void) | undefined = undefined;
+  
 
   private static readonly DefaultAnimationDuration = 300;
   private static readonly DefaultMinAnimationDuration = 300;
@@ -39,7 +40,7 @@ export class CameraManager {
   private static readonly DefaultMinDistance = 0.1;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
-    onClickTargetChange: false
+    changeCameraTargetOnClick: false
   };
 
   private _cameraControlsOptions: Required<CameraControlsOptions> = { ...CameraManager.DefaultCameraControlsOptions };
@@ -181,19 +182,19 @@ export class CameraManager {
     this.setupControls();
   }
 
+  
+
   moveCameraTo(position: THREE.Vector3, target: THREE.Vector3, duration?: number): void {
     if (this.isDisposed) {
       return;
     }
 
-    const { _camera, _raycaster } = this;
+    const { _camera } = this;
 
     duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
 
-    _raycaster.setFromCamera(new THREE.Vector2(), _camera);
-    const distanceToTarget = target.distanceTo(_camera.position);
-    const scaledDirection = _raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
-    const startTarget = _raycaster.ray.origin.clone().add(scaledDirection);
+    const startTarget = this.calculateAnimationStartTarget(target);
+
     const from = {
       x: _camera.position.x,
       y: _camera.position.y,
@@ -211,32 +212,12 @@ export class CameraManager {
       targetZ: target.z
     };
 
-    const animation = new TWEEN.Tween(from);
-    const stopTween = (event: Event) => {
-      if (this.isDisposed) {
-        document.removeEventListener('keydown', stopTween);
-        animation.stop();
-        return;
-      }
-
-      if (event.type !== 'keydown' || this._controls.enableKeyboardNavigation) {
-        animation.stop();
-        this._domElement.removeEventListener('pointerdown', stopTween);
-        this._domElement.removeEventListener('wheel', stopTween);
-        document.removeEventListener('keydown', stopTween);
-      }
-    };
-
-    this._domElement.addEventListener('pointerdown', stopTween);
-    this._domElement.addEventListener('wheel', stopTween);
-    document.addEventListener('keydown', stopTween);
-
     const tempTarget = new THREE.Vector3();
     const tempPosition = new THREE.Vector3();
-    const tween = animation
-      .to(to, duration)
-      .easing((x: number) => TWEEN.Easing.Circular.Out(x))
-      .onUpdate(() => {
+
+    const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
+
+    tween.onUpdate(() => {
         if (this.isDisposed) {
           return;
         }
@@ -271,14 +252,11 @@ export class CameraManager {
       return;
     }
 
-    const { _camera, _raycaster, _controls: controls } = this;
+    const { _camera, _controls: controls } = this;
 
     duration = duration ?? this.calculateDefaultDuration(target.distanceTo(_camera.position));
-
-    _raycaster.setFromCamera(new THREE.Vector2(), _camera);
-    const distanceToTarget = target.distanceTo(_camera.position);
-    const scaledDirection = _raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
-    const startTarget = _raycaster.ray.origin.clone().add(scaledDirection);
+    
+    const startTarget = this.calculateAnimationStartTarget(target);
     const from = {
       targetX: startTarget.x,
       targetY: startTarget.y,
@@ -290,30 +268,11 @@ export class CameraManager {
       targetZ: target.z
     };
 
-    const animation = new TWEEN.Tween(from);
-    const stopTween = (event: Event) => {
-      if (this.isDisposed) {
-        document.removeEventListener('keydown', stopTween);
-        animation.stop();
-        return;
-      }
-      if (event.type !== 'keydown' || this._controls.enableKeyboardNavigation) {
-        animation.stop();
-        this._domElement.removeEventListener('pointerdown', stopTween);
-        this._domElement.removeEventListener('wheel', stopTween);
-        document.removeEventListener('keydown', stopTween);
-      }
-    };
-
-    this._domElement.addEventListener('pointerdown', stopTween);
-    this._domElement.addEventListener('wheel', stopTween);
-    document.addEventListener('keydown', stopTween);
-
     const tempTarget = new THREE.Vector3();
-    const tween = animation
-      .to(to, duration)
-      .easing((x: number) => TWEEN.Easing.Circular.Out(x))
-      .onStart(() => {
+    
+    const { tween, stopTween } = this.createTweenAnimation(from, to, duration);
+
+    tween.onStart(() => {
         controls.lookAtViewTarget = true;
         controls.setState(this._camera.position, target);
       })
@@ -331,13 +290,13 @@ export class CameraManager {
       })
       .onStop(() => {
         controls.lookAtViewTarget = false;
-
         controls.setState(this._camera.position, tempTarget);
       })
       .onComplete(() => {
         if (this.isDisposed) {
           return;
         }
+
         controls.lookAtViewTarget = false;
         controls.enableKeyboardNavigation = true;
         controls.setState(this._camera.position, tempTarget);
@@ -412,6 +371,42 @@ export class CameraManager {
     this.isDisposed = true;
     this._controls.dispose();
     this.teardownControls();
+  }
+
+  private calculateAnimationStartTarget(newTarget: THREE.Vector3): THREE.Vector3 {
+    const { _raycaster, _camera } = this;
+    _raycaster.setFromCamera(new THREE.Vector2(), _camera);
+    const distanceToTarget = newTarget.distanceTo(_camera.position);
+    const scaledDirection = _raycaster.ray.direction.clone().multiplyScalar(distanceToTarget);
+    
+    return _raycaster.ray.origin.clone().add(scaledDirection);
+  };
+
+  private createTweenAnimation(from: any, to: any, duration: number): {tween: TWEEN.Tween, stopTween: (event: Event) => void} {
+    const animation = new TWEEN.Tween(from);
+    const stopTween = (event: Event) => {
+      if (this.isDisposed) {
+        document.removeEventListener('keydown', stopTween);
+        animation.stop();
+        return;
+      }
+
+      if (event.type !== 'keydown' || this._controls.enableKeyboardNavigation) {
+        animation.stop();
+        this._domElement.removeEventListener('pointerdown', stopTween);
+        this._domElement.removeEventListener('wheel', stopTween);
+        document.removeEventListener('keydown', stopTween);
+      }
+    };
+
+    this._domElement.addEventListener('pointerdown', stopTween);
+    this._domElement.addEventListener('wheel', stopTween);
+    document.addEventListener('keydown', stopTween);
+
+    const tween = animation.to(to, duration)
+      .easing((x: number) => TWEEN.Easing.Circular.Out(x));
+      
+    return {tween, stopTween};
   }
 
   /**
@@ -521,7 +516,7 @@ export class CameraManager {
 
     this.handleMouseWheelActionChange(this._cameraControlsOptions);
 
-    if (this._cameraControlsOptions.onClickTargetChange) {
+    if (this._cameraControlsOptions.changeCameraTargetOnClick) {
       this._inputHandler.on('click', onClick);
       this._onClick = onClick;
     }

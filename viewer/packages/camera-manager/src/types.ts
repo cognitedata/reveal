@@ -24,7 +24,7 @@ export type CameraControlsOptions = {
    * Default is false.
    *
    */
-  onClickTargetChange?: boolean;
+  changeCameraTargetOnClick?: boolean;
 };
 
 export type ControlsState = {
