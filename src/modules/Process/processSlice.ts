@@ -509,8 +509,7 @@ export const selectUnfinishedJobs = createSelector(
       .map((id) => allJobs[id])
       .filter(
         (job) =>
-          job.jobId !== -1 &&
-          (job.status === 'Queued' || job.status === 'Running')
+          job.jobId > 0 && (job.status === 'Queued' || job.status === 'Running')
       );
   }
 );
