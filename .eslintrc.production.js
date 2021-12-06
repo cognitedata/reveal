@@ -15,10 +15,7 @@ module.exports = {
     ],
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
-    '@cognite/no-unissued-todos': [
-      'error',
-      { issuePattern: '\\(((DEMO)-[0-9]+)\\)' },
-    ],
+    '@cognite/no-unissued-todos': ['error', { issuePattern: ': CHART-[0-9]+' }],
     'no-param-reassign': ['error', { props: false }],
     'react/require-default-props': ['off'],
     'max-classes-per-file': ['off'],
@@ -28,8 +25,6 @@ module.exports = {
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
-    'react/jsx-uses-react': 'off',
-    'react/react-in-jsx-scope': 'off',
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
@@ -63,6 +58,12 @@ module.exports = {
       files: ['**/*.tsx'],
       rules: {
         'react/prop-types': 'off',
+      },
+    },
+    {
+      files: ['**/*.stories.tsx'],
+      rules: {
+        'no-console': 'off',
       },
     },
   ],

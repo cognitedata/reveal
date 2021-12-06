@@ -11,12 +11,7 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
-    '@cognite/no-unissued-todos': [
-      'warn',
-      {
-        issuePattern: '\\(((DEMO)-[0-9]+)\\)',
-      },
-    ],
+    '@cognite/no-unissued-todos': ['warn', { issuePattern: ': CHART-[0-9]+' }],
     '@typescript-eslint/no-unused-vars-experimental': [
       'warn',
       {
