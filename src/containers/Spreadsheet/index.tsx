@@ -3,7 +3,7 @@ import { Colors, Icon, Flex, Loader } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { useActiveTableContext } from 'contexts';
-import { useTableData } from 'hooks/table-data';
+import { useTableData, useIsTableEmpty } from 'hooks/table-data';
 import { useColumnType } from 'hooks/profiling-service';
 
 import { FilterBar } from './FilterBar';
@@ -34,7 +34,7 @@ export const Spreadsheet = (): JSX.Element => {
   } = useTableData();
   const { isFetched: areTypesFetched } = useColumnType(database, table);
 
-  const isEmpty = isFetched && !rows?.length;
+  const isEmpty = useIsTableEmpty(database, table);
 
   return (
     <Flex direction="column" style={{ width: '100%', height: '100%' }}>

@@ -1,6 +1,6 @@
 import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import { ALL_FILTER } from 'hooks/table-filters';
 import { baseKey } from 'hooks/sdk-queries';
@@ -14,18 +14,24 @@ export const rawProfileKey = (db: string, table: string, limit?: number) => [
 ];
 
 export type StringProfile = {
+  count: number;
   distinctCount: number;
   lengthHistogram: [number[], number[]];
   lengthRange: [number, number];
   valueCounts: [string[], number[]];
 };
 export type NumberProfile = {
+  count: number;
   distinctCount: number;
   histogram: [number[], number[]];
   valueCounts: Record<string, number>;
   valueRange: [number, number];
+  mean: number;
+  median: number;
+  std: number;
 };
 export type BooleanProfile = {
+  count: number;
   trueCount: number;
 };
 export type ObjectProfile = {
@@ -47,6 +53,7 @@ export type ColumnProfile = {
   max?: number;
   mean?: number;
   median?: number;
+  std?: number;
   histogram?: Count[];
   counts?: Count[];
   profile:
@@ -133,9 +140,12 @@ function transformNumberProfile(
   const profile = column.number;
   const {
     distinctCount,
-    histogram = [[], []],
+    mean,
+    median,
+    std,
     valueCounts = {},
     valueRange = [],
+    histogram = [[], []],
   } = (profile || {}) as NumberProfile;
 
   const counts = Object.keys(valueCounts)
@@ -144,6 +154,7 @@ function transformNumberProfile(
       count: valueCounts[key] as number,
     }))
     .sort((a, b) => b.count - a.count);
+
   const formattedHistogram = zip(...histogram).map(([length, count]) => ({
     value: length?.toString() as string,
     count: count as number,
@@ -155,6 +166,9 @@ function transformNumberProfile(
     count: column.count,
     min: valueRange[0],
     max: valueRange[1],
+    mean: mean ? Number(mean.toFixed(1)) : undefined,
+    median: median ? Number(median.toFixed(1)) : undefined,
+    std: std ? Number(std.toFixed(1)) : undefined,
     histogram: formattedHistogram,
     nullCount: column.nullCount,
     distinctCount,
@@ -167,10 +181,20 @@ function transformBooleanProfile(
   label: string,
   column: RawColumn
 ): ColumnProfile {
+  const profile = column.boolean;
+  const { trueCount } = (profile || {}) as BooleanProfile;
+  const { count, nullCount } = column;
+  const falseCount = count - trueCount - nullCount;
+
+  const counts = [
+    { value: 'True', count: trueCount },
+    { value: 'False', count: falseCount },
+  ];
   return {
     type: 'Boolean',
     label,
     count: column.count,
+    counts,
     nullCount: column.nullCount,
     profile: column.boolean,
   };
@@ -251,19 +275,16 @@ type RawProfileRequest = {
   database: string;
   table: string;
 };
-type RawProfileOptions = {
-  enabled: boolean;
-};
 export function useQuickProfile(
   { database, table }: RawProfileRequest,
-  options?: RawProfileOptions
+  options?: Omit<UseQueryOptions<Profile>, 'retry'>
 ) {
   return useRawProfile({ database, table, limit: 1000 }, options);
 }
 export const FULL_PROFILE_LIMIT = 1000000;
 export function useFullProfile(
   { database, table }: RawProfileRequest,
-  options?: RawProfileOptions
+  options?: Omit<UseQueryOptions<Profile>, 'retry'>
 ) {
   return useRawProfile({ database, table, limit: FULL_PROFILE_LIMIT }, options);
 }
@@ -278,7 +299,7 @@ function useRawProfile(
     table: string;
     limit: number;
   },
-  options?: { enabled: boolean }
+  options?: Omit<UseQueryOptions<Profile>, 'retry'>
 ) {
   const sdk = useSDK();
   return useQuery<Profile>(
@@ -293,7 +314,10 @@ function useRawProfile(
           },
         })
         .then((response) => transformProfile(response.data)),
-    options
+    {
+      ...options,
+      retry: false,
+    }
   );
 }
 
