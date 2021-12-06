@@ -12,7 +12,7 @@ import { useTableRows } from 'hooks/sdk-queries';
 import { SpecificTable, useActiveTable } from 'hooks/table-tabs';
 import { DEFAULT_FILTER } from 'hooks/table-filters';
 
-import icons from 'assets/icons';
+import { graphics } from 'assets';
 
 type ActiveTableState = {
   database: string;
@@ -52,7 +52,9 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
     return (
       <StyledRawExplorerNotSelectedWrapper>
         <StyledRawExplorerNotSelectedContent>
-          <StyledRawExplorerNotSelectedArrow src={icons.EmptyStateArrowIcon} />
+          <StyledRawExplorerNotSelectedArrow
+            src={graphics.EmptyStateArrowGraphic}
+          />
           <StyledRawExplorerNotSelectedTitle level={3}>
             Select a table to view raw data
           </StyledRawExplorerNotSelectedTitle>
