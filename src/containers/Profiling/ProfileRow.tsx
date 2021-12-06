@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { Colors } from '@cognite/cogs.js';
+
+import { Button, Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
+
+import ColumnIcon from 'components/ColumnIcon';
+import { ColumnProfile } from 'hooks/profiling-service';
+
 import ProfileDetailsRow from './ProfileDetailsRow';
 import { Graph } from './Distribution';
-import { ColumnProfile } from 'hooks/profiling-service';
-import ColumnIcon from 'components/ColumnIcon';
-
-export const TableData = styled.td<{ $width?: number }>`
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
-  padding: 16px;
-  width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
-`;
 
 const NumberOrMissingTd = ({ value }: { value?: number }) => (
   <TableData className="numeric">
@@ -41,7 +38,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
 
   return (
     <>
-      <tr
+      <StyledTableRow
         key="profile"
         onClick={() => setExpanded(!expanded)}
         style={{ cursor: 'pointer' }}
@@ -64,7 +61,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
         <NumberOrMissingTd value={min} />
         <NumberOrMissingTd value={max} />
         <NumberOrMissingTd value={mean} />
-      </tr>
+        <StyledExpandTableCell>
+          <StyledExpandButton icon="ChevronDown" type="ghost" />
+        </StyledExpandTableCell>
+      </StyledTableRow>
       {expanded && (
         <ProfileDetailsRow
           allCount={allCount}
@@ -83,3 +83,27 @@ export default function ProfileRow({ allCount, profile }: Props) {
     </>
   );
 }
+
+export const TableData = styled.td<{ $width?: number }>`
+  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  padding: 16px;
+  width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
+`;
+
+const StyledExpandButton = styled(Button)`
+  display: none;
+`;
+
+const StyledExpandTableCell = styled(TableData)`
+  padding: 9px 16px 8px;
+`;
+
+const StyledTableRow = styled.tr`
+  &:hover {
+    background-color: ${Colors['bg-accent'].hex()};
+
+    ${StyledExpandButton} {
+      display: block;
+    }
+  }
+`;
