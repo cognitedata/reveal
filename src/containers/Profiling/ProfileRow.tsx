@@ -77,7 +77,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
           std={std}
           counts={counts}
           distinctCount={distinctCount}
-          distribution={histogram}
+          histogram={histogram}
         />
       )}
     </>
