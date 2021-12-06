@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
 import { Story } from '@storybook/react';
 import { Placeholder } from './Placeholder';
@@ -22,6 +21,16 @@ Default.args = {
   componentName: 'Overview page',
   componentDescription:
     'On the overview page we are envisioning main information about a solution.',
-  // eslint-disable-next-line lodash/prefer-noop
-  votingHandler: () => {},
+};
+
+const TemplateWithoutGraphic: Story<Parameters<typeof Placeholder>[0]> = (
+  args
+) => <Placeholder {...args} />;
+
+export const WithoutGraphic = TemplateWithoutGraphic.bind({});
+
+WithoutGraphic.args = {
+  componentName: 'UI editor',
+  componentDescription: 'It will help you build data model even faster.',
+  showGraphic: false,
 };
