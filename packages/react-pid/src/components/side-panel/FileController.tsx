@@ -8,7 +8,6 @@ import {
 } from '@cognite/pid-tools';
 
 import {
-  saveInstancesAsJson,
   saveSymbolsAsJson,
   isValidSymbolFileSchema,
 } from '../../utils/jsonUtils';
@@ -23,14 +22,16 @@ interface FileControllerProps {
   lineInstances: DiagramLineInstance[];
   disabled: boolean;
   loadSymbolsAsJson: (json: any) => void;
+  saveGraphAsJson: () => void;
 }
 
 export const FileController: React.FC<FileControllerProps> = ({
   symbols,
   symbolInstances,
-  lineInstances,
   disabled,
   loadSymbolsAsJson,
+  saveGraphAsJson,
+  lineInstances,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -63,9 +64,7 @@ export const FileController: React.FC<FileControllerProps> = ({
             <Menu>
               <Menu.Item onClick={onUploadButtonClick}>Upload</Menu.Item>
               <Menu.Item
-                onClick={() =>
-                  saveInstancesAsJson(symbols, lineInstances, symbolInstances)
-                }
+                onClick={saveGraphAsJson}
                 disabled={
                   symbolInstances.length === 0 && lineInstances.length === 0
                 }

@@ -42,6 +42,7 @@ interface SidePanelProps {
   deleteSymbol: (symbol: DiagramSymbol) => void;
   connections: DiagramConnection[];
   fileUrl?: string;
+  saveGraphAsJson: () => void;
 }
 
 export const SidePanel = ({
@@ -56,6 +57,7 @@ export const SidePanel = ({
   deleteSymbol,
   connections,
   fileUrl,
+  saveGraphAsJson,
 }: SidePanelProps) => {
   const ActionWithCustomStyling: ToolBarButton[][] = [
     [
@@ -88,6 +90,7 @@ export const SidePanel = ({
         symbolInstances={symbolInstances}
         lineInstances={lines}
         loadSymbolsAsJson={loadSymbolsAsJson}
+        saveGraphAsJson={saveGraphAsJson}
       />
       <CollapsableInstanceList
         symbols={symbols}

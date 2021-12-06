@@ -28,6 +28,10 @@ export interface DiagramLineInstance extends DiagramSymbolInstance {
   symbolName: 'Line';
 }
 
+export interface DiagramInstanceOutputFormat extends DiagramSymbolInstance {
+  boundingBox: BoundingBox;
+}
+
 export type DiagramInstanceId = string;
 export interface DiagramConnection {
   start: DiagramInstanceId;

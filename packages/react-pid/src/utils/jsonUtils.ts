@@ -3,8 +3,11 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DiagramLineInstance,
+  DiagramConnection,
   SvgDocument,
 } from '@cognite/pid-tools';
+
+import { getDiagramInstanceOutputFormat } from './saveGraph';
 
 export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
   const jsonData = {
@@ -17,15 +20,25 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
 };
 
 export const saveInstancesAsJson = (
+  svgDocument: SvgDocument,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
-  symbolInstances: DiagramSymbolInstance[]
+  symbolInstances: DiagramSymbolInstance[],
+  connections: DiagramConnection[]
 ) => {
+  const linesWithBBox = getDiagramInstanceOutputFormat(svgDocument, lines);
+  const symbolInstancesWithBBox = getDiagramInstanceOutputFormat(
+    svgDocument,
+    symbolInstances
+  );
+
   const jsonData = {
     symbols,
-    lines,
-    symbolInstances,
+    lines: linesWithBBox,
+    symbolInstances: symbolInstancesWithBBox,
+    connections,
   };
+
   const fileToSave = new Blob([JSON.stringify(jsonData, undefined, 2)], {
     type: 'application/json',
   });
@@ -57,6 +70,23 @@ export const isValidSymbolFileSchema = (jsonData: any) => {
     );
   }
 
+  if ('connections' in jsonData) {
+    (jsonData.connections as DiagramConnection[]).forEach(
+      (connection: DiagramConnection) => {
+        connection.end.split('-').forEach((pathId) => {
+          if (document.getElementById(pathId) === null) {
+            missingIds.push(pathId);
+          }
+        });
+        connection.start.split('-').forEach((pathId) => {
+          if (document.getElementById(pathId) === null) {
+            missingIds.push(pathId);
+          }
+        });
+      }
+    );
+  }
+
   if (missingIds.length !== 0) {
     // eslint-disable-next-line no-console
     console.log(
@@ -77,7 +107,9 @@ export const loadSymbolsFromJson = (
   setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
   symbolInstances: DiagramSymbolInstance[],
   setLines: (diagramLines: DiagramLineInstance[]) => void,
-  lines: DiagramLineInstance[]
+  lines: DiagramLineInstance[],
+  setConnections: (diagramConnections: DiagramConnection[]) => void,
+  connections: DiagramConnection[]
 ) => {
   if ('symbols' in jsonData) {
     const newSymbols = jsonData.symbols as DiagramSymbol[];
@@ -105,5 +137,10 @@ export const loadSymbolsFromJson = (
     const newSymboleInstance =
       jsonData.symbolInstances as DiagramSymbolInstance[];
     setSymbolInstances([...symbolInstances, ...newSymboleInstance]);
+  }
+
+  if ('connections' in jsonData) {
+    const newConnections = jsonData.connections as DiagramConnection[];
+    setConnections([...connections, ...newConnections]);
   }
 };

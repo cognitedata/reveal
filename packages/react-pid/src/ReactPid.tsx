@@ -14,7 +14,7 @@ import {
   getNoneOverlappingSymbolInstances,
 } from '@cognite/pid-tools';
 
-import { loadSymbolsFromJson } from './utils/jsonUtils';
+import { loadSymbolsFromJson, saveInstancesAsJson } from './utils/jsonUtils';
 import { ToolType, ExistingSymbolPromptData } from './types';
 import { ReactPidWrapper, ReactPidLayout } from './elements';
 import { SidePanel } from './components';
@@ -64,7 +64,23 @@ export const ReactPid: React.FC = () => {
       setSymbolInstances,
       symbolInstances,
       setLines,
-      lines
+      lines,
+      setConnections,
+      connections
+    );
+  };
+
+  const saveGraphAsJson = () => {
+    if (svgDocument === undefined) {
+      return;
+    }
+
+    saveInstancesAsJson(
+      svgDocument,
+      symbols,
+      lines,
+      symbolInstances,
+      connections
     );
   };
 
@@ -175,6 +191,7 @@ export const ReactPid: React.FC = () => {
           connections={connections}
           deleteSymbol={deleteSymbol}
           fileUrl={fileUrl}
+          saveGraphAsJson={saveGraphAsJson}
         />
         <Viewport>
           {fileUrl === '' ? (
