@@ -62,7 +62,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
         <NumberOrMissingTd value={max} />
         <NumberOrMissingTd value={mean} />
         <StyledExpandTableCell>
-          <StyledExpandButton icon="ChevronDown" type="ghost" />
+          <StyledExpandButton
+            icon={expanded ? 'ChevronUp' : 'ChevronDown'}
+            type="ghost"
+          />
         </StyledExpandTableCell>
       </StyledTableRow>
       {expanded && (
