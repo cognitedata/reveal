@@ -79,6 +79,12 @@ export const SidePanel = ({
         className: `${active === 'connectInstances' && 'active'}`,
         description: 'Connect instances',
       },
+      {
+        icon: 'GraphTree',
+        onClick: () => setActive('graphExplorer'),
+        className: `${active === 'graphExplorer' && 'active'}`,
+        description: 'Explore the wast graph universe',
+      },
     ],
   ];
 

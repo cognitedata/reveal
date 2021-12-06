@@ -55,6 +55,8 @@ DEPENDENCIES = [
     "@npm//react-svg",
     "@npm//file-saver",
     "@npm//styled-components",
+    "@npm//graphology",
+    "@npm//graphology-simple-path",
     "//packages/pid-tools",
 ]
 

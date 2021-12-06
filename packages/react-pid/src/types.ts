@@ -1,4 +1,8 @@
-export type ToolType = 'addSymbol' | 'addLine' | 'connectInstances';
+export type ToolType =
+  | 'addSymbol'
+  | 'addLine'
+  | 'connectInstances'
+  | 'graphExplorer';
 
 export type SaveSymbolConflictResolution = 'add' | 'rename';
 

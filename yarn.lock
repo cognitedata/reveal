@@ -17022,6 +17022,32 @@ graphlib@^2.1.5:
   dependencies:
     lodash "^4.17.15"
 
+graphology-simple-path@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/graphology-simple-path/-/graphology-simple-path-0.1.1.tgz#a61679281b482bc677cf8130323b40f47824b45d"
+  integrity sha512-hjub7HM193APeydOsKuUTtw64AZ+l5V+3KXqq8KPXpoZKr69ZKAuuLE6qY+eizhaSS/YRfYjl/OOyHbkW1VOeQ==
+  dependencies:
+    graphology-utils "^1.8.0"
+    mnemonist "^0.38.0"
+
+graphology-types@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/graphology-types/-/graphology-types-0.23.0.tgz#76a0564baf31891044a7b0cc6cd028810541bb7a"
+  integrity sha512-6Je1NWU3el7YmybAhRzrOEi79Blhx05EU3wGUCvP5ikaxRXEflrW/5unfw5q/wqfwjryM9tcwUv4M7TZ8yTBYQ==
+
+graphology-utils@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/graphology-utils/-/graphology-utils-1.8.0.tgz#41315c468656e2a3e028a76468bbc2fbe42b0145"
+  integrity sha512-Pa7SW30OMm8fVtyH49b3GJ/uxlMHGfXly50wIhlcc7ZoX9ahZa7sPBz+obo4WZClrRV6wh3tIu0GJoI42eao1A==
+
+graphology@^0.23.1:
+  version "0.23.1"
+  resolved "https://registry.yarnpkg.com/graphology/-/graphology-0.23.1.tgz#03946a692ad792bfa64cee0097b3ee4c971dabbe"
+  integrity sha512-BbqXtXpKnn/yJRnHgCJRkF5Ii5LDudThErd0yko6u3jGTH2+HE9/XbT245tn75ESeMZdJqJOGR+NHJh8Kex4Hw==
+  dependencies:
+    events "^3.3.0"
+    obliterator "^2.0.0"
+
 graphql@^15.5.1:
   version "15.5.1"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.5.1.tgz#f2f84415d8985e7b84731e7f3536f8bb9d383aad"
@@ -21334,6 +21360,13 @@ mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@^0.5.5, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
+mnemonist@^0.38.0:
+  version "0.38.5"
+  resolved "https://registry.yarnpkg.com/mnemonist/-/mnemonist-0.38.5.tgz#4adc7f4200491237fe0fa689ac0b86539685cade"
+  integrity sha512-bZTFT5rrPKtPJxj8KSV0WkPyNxl72vQepqqVUAW2ARUpUSF2qXMB6jZj7hW5/k7C1rtpzqbD/IIbJwLXUjCHeg==
+  dependencies:
+    obliterator "^2.0.0"
+
 moment-duration-format-commonjs@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/moment-duration-format-commonjs/-/moment-duration-format-commonjs-1.0.0.tgz#dc5de612e6d6ff41f774d03772a139a363563bc3"
@@ -22245,6 +22278,11 @@ objectorarray@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/objectorarray/-/objectorarray-1.0.4.tgz#d69b2f0ff7dc2701903d308bb85882f4ddb49483"
   integrity sha512-91k8bjcldstRz1bG6zJo8lWD7c6QXcB4nTDUqiEvIL1xAsLoZlOOZZG+nd6YPz+V7zY1580J4Xxh1vZtyv4i/w==
+
+obliterator@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/obliterator/-/obliterator-2.0.1.tgz#fbdd873bf39fc4f365a53b1fc86617a22526987c"
+  integrity sha512-XnkiCrrBcIZQitJPAI36mrrpEUvatbte8hLcTcQwKA1v9NkCKasSi+UAguLsLDs/out7MoRzAlmz7VXvY6ph6w==
 
 obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
