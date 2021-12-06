@@ -15,9 +15,7 @@ import {
 } from 'hooks/profiling-service';
 
 import Message from 'components/Message/Message';
-import { Section } from './Section';
-
-const NO_DATA = '—';
+import { Section, DATA_MISSING } from 'components/ProfilingSection';
 
 type Props = { selectedColumn: ColumnType | undefined };
 
@@ -45,13 +43,10 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     [getColumnType, selectedColumn]
   );
 
-  const {
-    count = 0,
-    nullCount = 0,
-    ...columnProfilingData
-  }: Partial<ColumnProfile> = selectedColumn?.key
-    ? data.columns?.find((p) => p.label === selectedColumn?.key) ?? {}
-    : {};
+  const { profile, ...columnProfilingData }: ColumnProfile = selectedColumn?.key
+    ? data.columns?.find((p) => p.label === selectedColumn?.key) ??
+      ({} as ColumnProfile)
+    : ({} as ColumnProfile);
 
   return (
     <StyledProfilingData>
@@ -67,138 +62,132 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
       {isError && <Message message="Profiling service error" type="error" />}
       {columnType === 'String' && (
         <ColumnString
-          count={count}
-          nullCount={nullCount}
-          data={(columnProfilingData.profile as StringProfile) ?? null}
+          data={columnProfilingData}
+          profile={(profile as StringProfile) ?? null}
         />
       )}
       {columnType === 'Boolean' && (
         <ColumnBoolean
-          count={count}
-          nullCount={nullCount}
-          data={(columnProfilingData.profile as BooleanProfile) ?? null}
+          data={columnProfilingData}
+          profile={(profile as BooleanProfile) ?? null}
         />
       )}
       {columnType === 'Number' && (
         <ColumnNumber
-          count={count}
-          nullCount={nullCount}
-          data={(columnProfilingData.profile as NumberProfile) ?? null}
+          data={columnProfilingData}
+          profile={(profile as NumberProfile) ?? null}
         />
       )}
     </StyledProfilingData>
   );
 };
 
-type PropsString = {
-  count: number;
-  nullCount: number;
-  data: StringProfile | null;
+type BaseColumn = {
+  data: Omit<ColumnProfile, 'profile'>;
 };
-const ColumnString = ({ count, nullCount, data }: PropsString) => {
-  if (!data) return <span />;
+
+interface PropsString extends BaseColumn {
+  profile?: StringProfile | null;
+}
+const ColumnString = ({ data, profile }: PropsString) => {
+  if (!profile) return <span />;
+  const { count, counts, nullCount, histogram, min, max } = data;
 
   return (
     <StyledProfilingDataWrapper>
-      <Section.Frequency allCount={count} counts={data.valueCounts} />
+      <Section.Frequency allCount={count} counts={counts} isCompact />
       <Section.DistinctValues
         allCount={count}
-        distinctCount={data.distinctCount}
+        distinctCount={profile.distinctCount}
+        isCompact
       />
-      <Section title="Non-empty" isHalf>
+      <Section title="Non-empty" isCompact isHalf>
         {count}
       </Section>
-      <Section title="Empty" isHalf>
+      <Section title="Empty" isCompact isHalf>
         {nullCount}
       </Section>
-      <Section title="Char length min" isHalf>
-        {data.lengthRange[0] ?? NO_DATA}
+      <Section title="Minimum length" isCompact isHalf>
+        {min}
       </Section>
-      <Section title="Char length max" isHalf>
-        {data.lengthRange[1] ?? NO_DATA}
+      <Section title="Maximum length" isCompact isHalf>
+        {max}
       </Section>
       <Section.Distribution
-        histogram={data.lengthHistogram}
-        max={data.lengthRange[1]}
-        title="Char length distribution"
+        histogram={histogram}
+        max={max}
+        title="Length distribution"
+        isCompact
       />
     </StyledProfilingDataWrapper>
   );
 };
 
-type PropsBoolean = {
-  count: number;
-  nullCount: number;
-  data: BooleanProfile | null;
-};
-const ColumnBoolean = ({ count, nullCount, data }: PropsBoolean) => {
-  if (!data) return <span />;
-
-  const { trueCount = 0 } = data;
+interface PropsBoolean extends BaseColumn {
+  profile?: BooleanProfile | null;
+}
+const ColumnBoolean = ({ data, profile }: PropsBoolean) => {
+  if (!profile) return <span />;
+  const { count, nullCount, counts } = data;
+  const { trueCount = 0 } = profile;
   const falseCount = count - trueCount - nullCount;
+
   return (
     <StyledProfilingDataWrapper>
-      <Section.Frequency
-        allCount={count}
-        counts={[
-          ['True', 'False'],
-          [data.trueCount, falseCount],
-        ]}
-      />
-      <Section title="True" isHalf>
+      <Section.Frequency allCount={count} counts={counts} isCompact />
+      <Section title="True" isCompact isHalf>
         {Number(trueCount)}
       </Section>
-      <Section title="False" isHalf>
+      <Section title="False" isCompact isHalf>
         {falseCount}
       </Section>
-      <Section title="Non-empty" isHalf>
+      <Section title="Non-empty" isCompact isHalf>
         {count}
       </Section>
-      <Section title="Empty" isHalf>
+      <Section title="Empty" isCompact isHalf>
         {nullCount}
       </Section>
-      <Section.Distribution />
     </StyledProfilingDataWrapper>
   );
 };
 
-type PropsNumber = {
-  count: number;
-  nullCount: number;
-  data: NumberProfile | null;
-};
-const ColumnNumber = ({ count, nullCount, data }: PropsNumber) => {
-  if (!data) return <span />;
+interface PropsNumber extends BaseColumn {
+  profile?: NumberProfile | null;
+}
+const ColumnNumber = ({ data, profile }: PropsNumber) => {
+  if (!profile) return <span />;
+  const { count, nullCount, histogram, min, max, mean, median } = data;
+  const { distinctCount } = profile;
 
   return (
     <StyledProfilingDataWrapper>
-      <Section.Distribution
-        histogram={data.histogram}
-        max={data.valueRange[1]}
-      />
+      <Section.Distribution histogram={histogram} max={max} isCompact />
       <Section.DistinctValues
         allCount={count}
-        distinctCount={data.distinctCount}
+        distinctCount={distinctCount}
+        isCompact
       />
-      <Section title="Non-empty" isHalf>
+      <Section title="Non-empty" isCompact isHalf>
         {count}
       </Section>
-      <Section title="Empty" isHalf>
+      <Section title="Empty" isCompact isHalf>
         {nullCount}
       </Section>
-      <Section title="Min" isHalf>
-        {data.valueRange[0]}
+      <Section title="Min" isCompact isHalf>
+        {min}
       </Section>
-      <Section title="Max" isHalf>
-        {data.valueRange[1]}
+      <Section title="Max" isCompact isHalf>
+        {max}
       </Section>
-      <Section title="Mean" isHalf>
-        TODO
+      <Section title="Mean" isCompact isHalf>
+        {mean ?? DATA_MISSING}
       </Section>
-      <Section title="Median" isHalf>
-        TODO
+      <Section title="Median" isCompact isHalf>
+        {median ?? DATA_MISSING}
       </Section>
-      <Section title="Standard deviation">TODO</Section>
+      <Section title="Standard deviation" isCompact>
+        {DATA_MISSING}
+      </Section>
     </StyledProfilingDataWrapper>
   );
 };
