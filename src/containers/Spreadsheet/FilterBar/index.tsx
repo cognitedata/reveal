@@ -12,14 +12,11 @@ import { Actions } from './Actions';
 import RowCount from './RowCount';
 
 type Props = {
-  isProfilingFetching?: boolean;
   isEmpty?: boolean;
+  areTypesFetched?: boolean;
 };
 
-export const FilterBar = ({
-  isEmpty,
-  isProfilingFetching,
-}: Props): JSX.Element => {
+export const FilterBar = ({ isEmpty, areTypesFetched }: Props): JSX.Element => {
   const {
     filters,
     columnTypeFilters,
@@ -44,7 +41,7 @@ export const FilterBar = ({
             />
             <Separator style={{ margin: '0 12px' }} />
             <FilterBar.Buttons justifyContent="center" alignItems="center">
-              {isProfilingFetching ? (
+              {!areTypesFetched ? (
                 <>
                   <Body level={2}> Running data profiling...</Body>
                   <Icon type="Loader" className="load-icon" />
