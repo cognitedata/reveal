@@ -16,14 +16,12 @@ class DateRange {
     progress(`Opening date range filter`);
 
     await t.click(Selector('#Calendar'), {
-      offsetX: 50,
-      offsetY: -30,
+      offsetX: 60,
       speed: 0.8,
     });
 
     await t.click(Selector('#Calendar'), {
-      offsetX: 110,
-      offsetY: 205,
+      offsetX: 130,
       speed: 0.8,
     });
 
