@@ -13,19 +13,6 @@ type Props = {
 export default function ProfileDetailsRow({ allCount, profile }: Props) {
   const columnType = profile.type;
 
-  // export default function ProfileDetailsRow({
-  //   distinctCount,
-  //   nullCount,
-  //   min,
-  //   max,
-  //   mean,
-  //   median,
-  //   counts,
-  //   allCount,
-  //   count,
-  //   histogram,
-  // }: Props) {
-
   return (
     <StyledExpandedRow key="profile-details">
       <td colSpan={9} style={{ padding: 0 }}>
