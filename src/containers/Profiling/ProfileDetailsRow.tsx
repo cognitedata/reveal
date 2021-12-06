@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Flex, Colors } from '@cognite/cogs.js';
 
 import { Section } from 'components/ProfilingSection';
-import { ColumnProfile } from 'hooks/profiling-service';
+import { BooleanProfile, ColumnProfile } from 'hooks/profiling-service';
 
 type Props = {
   allCount: number;
@@ -104,37 +104,20 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
 };
 
 const ProfilingDataBoolean = ({ allCount, profile }: Props) => {
-  const {
-    distinctCount,
-    counts,
-    count,
-    nullCount,
-    min,
-    max,
-    mean,
-    median,
-    std,
-    histogram,
-  } = profile;
+  const { counts, count, nullCount, profile: boolProfile } = profile;
+  const { trueCount } = boolProfile as BooleanProfile;
+  const falseCount = count - trueCount - nullCount;
   return (
     <>
       <Section title="Numerical statistics">
         <Grid direction="row" wrap="wrap">
-          <NumberOrMissingSummary
-            label="Distinct values"
-            value={distinctCount}
-          />
+          <NumberOrMissingSummary label="True" value={trueCount} />
+          <NumberOrMissingSummary label="False" value={falseCount} />
           <NumberOrMissingSummary label="Non-empty" value={count} />
           <NumberOrMissingSummary label="Empty" value={nullCount} />
-          <NumberOrMissingSummary label="Min" value={min} />
-          <NumberOrMissingSummary label="Max" value={max} />
-          <NumberOrMissingSummary label="Mean" value={mean} />
-          <NumberOrMissingSummary label="Median" value={median} />
-          <NumberOrMissingSummary label="Standard deviation" value={std} />
         </Grid>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
-      <Section.Distribution histogram={histogram} />
     </>
   );
 };
