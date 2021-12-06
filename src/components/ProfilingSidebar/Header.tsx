@@ -1,12 +1,14 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { Body, Button, Colors, Title, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext, useActiveTableContext } from 'contexts';
+import { useActiveTableContext } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import { useColumnNavigation } from 'hooks/table-navigation';
+import { useProfilingSidebar } from 'hooks/profiling-sidebar';
 import { useColumnType } from 'hooks/profiling-service';
+
 import {
   SIDEBAR_PROFILING_DRAWER_WIDTH,
   SIDEBAR_PROFILING_CLOSE_BUTTON_SPACE,
@@ -16,9 +18,11 @@ import ColumnIcon from 'components/ColumnIcon';
 type Props = { selectedColumn: ColumnType | undefined };
 
 export const Header = ({ selectedColumn }: Props) => {
-  const { setIsProfilingSidebarOpen } = useContext(RawExplorerContext);
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
+
+  const { setIsProfilingSidebarOpen } = useProfilingSidebar();
+
   const { canNavigate, onPrevColumnClick, onNextColumnClick } =
     useColumnNavigation();
 

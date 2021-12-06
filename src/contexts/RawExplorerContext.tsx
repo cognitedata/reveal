@@ -27,8 +27,8 @@ type RawExplorerState = {
   selectedSidePanelDatabase?: string;
   setSelectedSidePanelDatabase: Dispatch<SetStateAction<string | undefined>>;
 
-  isProfilingSidebarOpen: boolean;
-  setIsProfilingSidebarOpen: Dispatch<SetStateAction<boolean>>;
+  profilingSidebarOpenState: boolean;
+  setProfilingSidebarOpenState: Dispatch<SetStateAction<boolean>>;
   selectedColumnKey?: string;
   setSelectedColumnKey: Dispatch<SetStateAction<string | undefined>>;
 
@@ -52,7 +52,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
     string | undefined
   >();
 
-  const [isProfilingSidebarOpen, setIsProfilingSidebarOpen] = useState(false);
+  const [profilingSidebarOpenState, setProfilingSidebarOpenState] =
+    useState(false);
   const [selectedColumnKey, setSelectedColumnKey] = useState<
     string | undefined
   >();
@@ -69,8 +70,8 @@ export const RawExplorerProvider = ({ children }: RawExplorerProviderProps) => {
         selectedSidePanelDatabase,
         setSelectedSidePanelDatabase,
 
-        isProfilingSidebarOpen,
-        setIsProfilingSidebarOpen,
+        profilingSidebarOpenState,
+        setProfilingSidebarOpenState,
         selectedColumnKey,
         setSelectedColumnKey,
 
