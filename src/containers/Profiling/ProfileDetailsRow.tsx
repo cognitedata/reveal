@@ -86,6 +86,7 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
           <NumberOrMissingSummary
             label="Distinct values"
             value={distinctCount}
+            isHalf={false}
           />
           <NumberOrMissingSummary label="Non-empty" value={count} />
           <NumberOrMissingSummary label="Empty" value={nullCount} />
