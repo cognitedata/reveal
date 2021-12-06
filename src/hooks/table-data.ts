@@ -126,3 +126,17 @@ export const useTableData = () => {
     filteredColumns,
   };
 };
+
+export const useIsTableEmpty = (database: string, table: string) => {
+  const { data = { pages: [] }, isFetched } = useTableRows({
+    database,
+    table,
+    pageSize: 1,
+  });
+
+  const isEmpty = useMemo(() => {
+    return isFetched && !data.pages[0]?.items?.length;
+  }, [isFetched, data]);
+
+  return isEmpty;
+};
