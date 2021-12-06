@@ -14,8 +14,6 @@ export const filtersMap: FilterType[] = [
   { type: 'Number', icon: 'Number' },
   { type: 'String', icon: 'String' },
   { type: 'Boolean', icon: 'Boolean' },
-  { type: 'Vector' },
-  { type: 'Object' },
 ];
 
 export const useFilters = () => {
