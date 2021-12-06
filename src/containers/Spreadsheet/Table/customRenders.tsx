@@ -1,11 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
-import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext, useProfilingSidebar } from 'contexts';
+import {
+  RawExplorerContext,
+  useActiveTableContext,
+  useProfilingSidebar,
+} from 'contexts';
 
 import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
+import { CustomIcon } from 'components/CustomIcon';
+import UploadCSV from 'components/UploadCSV';
+import { useQueryClient } from 'react-query';
+import { rowKey } from 'hooks/sdk-queries';
 
 const Comp = ({ item }: any) => item;
 
@@ -71,14 +79,103 @@ export const HeaderRender = (props: Props): JSX.Element => {
   );
 };
 
-export const EmptyRender = (): JSX.Element => (
-  <EmptyTable>
-    <Graphic type="Search" />
-    <Body level={2} strong style={{ color: Colors['text-secondary'].hex() }}>
-      This table is empty.
-    </Body>
-  </EmptyTable>
-);
+const Box = styled.div`
+  padding: 40px;
+  margin: 20px;
+  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  border-radius: 6px;
+  width: 250px;
+  text-align: center;
+  .icon-hover {
+    display: none;
+  }
+  .text-icon {
+    color: ${Colors['greyscale-grey4'].hex()};
+  }
+  .icon {
+    display: inital;
+  }
+  &:hover {
+    background-color: ${Colors['midblue-7'].hex()};
+    border-color: ${Colors['midblue-3'].hex()};
+    .icon-hover {
+      display: initial;
+    }
+    .icon {
+      display: none;
+    }
+    .text-icon {
+      color: ${Colors['midblue-3'].hex()};
+    }
+  }
+`;
+
+export const EmptyRender = (): JSX.Element => {
+  const [csvModalVisible, setCSVModalVisible] = useState(false);
+  const { database, table } = useActiveTableContext();
+  const queryClient = useQueryClient();
+  return (
+    <EmptyTable>
+      {csvModalVisible && (
+        <UploadCSV
+          setCSVModalVisible={(visible, tableChanged) => {
+            setCSVModalVisible(visible);
+            if (tableChanged) {
+              queryClient.invalidateQueries(
+                rowKey(database!, table!, 0).slice(0, 3)
+              );
+            }
+          }}
+        />
+      )}
+      <Body level={2} strong style={{ color: Colors['text-secondary'].hex() }}>
+        This table is empty. Upload a CSV file or write data directly using the
+        API.
+      </Body>
+      <Flex>
+        <Box>
+          <p style={{ height: 50 }}>
+            <CustomIcon className="icon" icon="DocumentIconDisabled" />
+            <CustomIcon className="icon-hover" icon="DocumentIconHover" />
+          </p>
+          <p>
+            <strong>Upload CSV file</strong>
+          </p>
+          <Button type="primary" onClick={() => setCSVModalVisible(true)}>
+            Add data
+            <Icon type="Upload" />
+          </Button>
+        </Box>
+        <a
+          style={{ color: Colors['text-primary'].hex() }}
+          href="https://docs.cognite.com/api/v1/#operation/postRows"
+          target="_blank"
+        >
+          <Box>
+            <p
+              className="text-icon"
+              style={{
+                height: 50,
+                fontWeight: 1000,
+                fontSize: '1.5em',
+              }}
+            >
+              {'</>'}
+            </p>
+            <p>
+              <strong>
+                Write data using API <Icon type="ExternalLink" />
+              </strong>
+            </p>
+            <p style={{ color: Colors['text-secondary'].hex() }}>
+              Learn how to write data to a RAW table here
+            </p>
+          </Box>
+        </a>
+      </Flex>
+    </EmptyTable>
+  );
+};
 
 const EmptyTable = styled.div`
   display: flex;
