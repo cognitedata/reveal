@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { useActiveTableContext } from 'contexts';
 import { useTableData, useIsTableEmpty } from 'hooks/table-data';
+import { useColumnType } from 'hooks/profiling-service';
 
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
@@ -31,6 +32,8 @@ export const Spreadsheet = (): JSX.Element => {
     hasNextPage,
     fetchNextPage,
   } = useTableData();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
+
   const isEmpty = useIsTableEmpty(database, table);
 
   return (
@@ -38,7 +41,7 @@ export const Spreadsheet = (): JSX.Element => {
       <FilterBar
         key={`${database}_${table}`}
         isEmpty={isEmpty}
-        isProfilingFetching={isFetching}
+        areTypesFetched={areTypesFetched}
       />
       {isLoading ? (
         <Loader />

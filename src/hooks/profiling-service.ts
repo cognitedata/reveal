@@ -2,7 +2,6 @@ import { zip } from 'lodash';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery, UseQueryOptions } from 'react-query';
 
-import { useActiveTableContext } from 'contexts';
 import { ALL_FILTER } from 'hooks/table-filters';
 import { baseKey } from 'hooks/sdk-queries';
 
@@ -326,27 +325,44 @@ type ColumnTypeCount = Partial<
   Record<ColumnProfile['type'] | typeof ALL_FILTER, number>
 >;
 
-export const useColumnType = () => {
-  const { database, table } = useActiveTableContext();
-  const { data = { columns: [] } } = useRawProfile({
+export const useColumn = (database: string, table: string, limit = 1000) => {
+  const { data = { columns: [] }, isFetched } = useRawProfile({
     database,
     table,
-    limit: 1000,
+    limit,
   });
-
   const getColumn = (dataKey: string | undefined) => {
     const column = dataKey
       ? data.columns.find((c) => c.label === dataKey)
       : null;
     return column;
   };
+  return { getColumn, isFetched };
+};
 
+export const useColumnType = (
+  database: string,
+  table: string,
+  limit = 1000
+) => {
+  const { getColumn, isFetched } = useColumn(database, table, limit);
   const getColumnType = (dataKey: string | undefined) => {
     const column = getColumn(dataKey);
-
     return column?.type || 'Unknown';
   };
+  return { getColumnType, isFetched };
+};
 
+export const useColumnTypeCounts = (
+  database: string,
+  table: string,
+  limit = 1000
+) => {
+  const { data = { columns: [] }, isFetched } = useRawProfile({
+    database,
+    table,
+    limit,
+  });
   const getColumnTypeCounts = (): ColumnTypeCount => {
     if (!data.columns.length) return {};
     const columnsTypes: ColumnProfile['type'][] = data.columns
@@ -364,6 +380,5 @@ export const useColumnType = () => {
     );
     return columnsTypeCounts;
   };
-
-  return { getColumn, getColumnType, getColumnTypeCounts };
+  return { getColumnTypeCounts, isFetched };
 };

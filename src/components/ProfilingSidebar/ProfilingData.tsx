@@ -36,11 +36,11 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     isError,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  const { getColumnType } = useColumnType();
+  const { getColumnType, isFetched } = useColumnType(database, table);
 
   const columnType = useMemo(
-    () => getColumnType(selectedColumn?.dataKey),
-    [getColumnType, selectedColumn]
+    () => (isFetched ? getColumnType(selectedColumn?.dataKey) : null),
+    [getColumnType, selectedColumn, isFetched]
   );
 
   const { profile, ...columnProfilingData }: ColumnProfile = selectedColumn?.key

@@ -3,7 +3,8 @@ import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
 import { Body, Colors, Graphic, Tooltip } from '@cognite/cogs.js';
 
-import { RawExplorerContext } from 'contexts';
+import { RawExplorerContext, useProfilingSidebar } from 'contexts';
+
 import ColumnIcon, { COLUMN_ICON_WIDTH } from 'components/ColumnIcon';
 
 const Comp = ({ item }: any) => item;
@@ -15,7 +16,8 @@ type Props = {
 
 export const HeaderRender = (props: Props): JSX.Element => {
   const { cells, columns } = props;
-  const { setIsProfilingSidebarOpen, selectedColumnKey, setSelectedColumnKey } =
+  const { setIsProfilingSidebarOpen } = useProfilingSidebar();
+  const { selectedColumnKey, setSelectedColumnKey } =
     useContext(RawExplorerContext);
 
   const onColumnClick = (column: ColumnShape) => {
