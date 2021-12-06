@@ -35,7 +35,7 @@ export default function ProfileDetailsRow({
   histogram,
 }: Props) {
   return (
-    <tr key="profile-details">
+    <StyledExpandedRow key="profile-details">
       <td colSpan={9} style={{ padding: 0 }}>
         <ExpandedRow>
           <Section title="Numerical statistics">
@@ -57,7 +57,7 @@ export default function ProfileDetailsRow({
           <Section.Distribution histogram={histogram} />
         </ExpandedRow>
       </td>
-    </tr>
+    </StyledExpandedRow>
   );
 }
 
@@ -97,4 +97,8 @@ const Grid = styled(Flex)`
       line-height: 18px;
     }
   }
+`;
+
+const StyledExpandedRow = styled.tr`
+  border: 1px solid ${Colors['border-default'].hex()};
 `;
