@@ -78,6 +78,17 @@ export const MISC_UNITS = {
   meters: 'm',
 } as const;
 
+export const GAUGE_DEPTH_UNIT = {
+  feet: 'feet',
+  meters: 'meters',
+} as const;
+
+export enum BHP_ESTIMATION_METHOD {
+  'BHP from gradient traverse' = 'BHP from gradient traverse',
+  'BHP from WHP' = 'BHP from WHP',
+  'none' = 'none',
+}
+
 export const UNIT_TYPE: { [x: string]: { [x: string]: string } } =
   Object.freeze({
     Pressure: PRESSURE_UNIT,

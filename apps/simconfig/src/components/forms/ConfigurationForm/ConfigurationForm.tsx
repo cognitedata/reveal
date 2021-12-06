@@ -17,6 +17,7 @@ import { CalculationConfig } from './types';
 import { InputSection } from './InputSection';
 import { OutputSection } from './OutputSection';
 import { ScheduleSection } from './ScheduleSection';
+import { BHPEstimationSection } from './BHPEstimationSection';
 import { RootFindingSection } from './RootFindingSection';
 
 interface ComponentProps {
@@ -77,10 +78,25 @@ export function ConfigurationForm({
 
             return minutes >= validationWindow;
           }
+        )
+        .test(
+          'validate-is-greater-than-15-min',
+          'Cannot be less than 15 minutes',
+          (input) => {
+            if (!input) {
+              return false;
+            }
+
+            const unit = getIntervalUnitValue(input);
+            const value = parseInt(input, 10);
+            const minutes = getIntervalValueInMinutes(value, unit);
+
+            return minutes >= 15;
+          }
         ),
     }),
     dataSampling: yup.object().shape({
-      validationWindow: yup.number().min(0),
+      validationWindow: yup.number().min(15, 'cannot be less than 15'),
       samplingWindow: yup
         .number()
         .lessThan(
@@ -103,6 +119,11 @@ export function ConfigurationForm({
       bracket: yup.object().shape({
         lowerBound: yup.number().min(0),
         upperBound: yup.number().moreThan(yup.ref('lowerBound')),
+      }),
+    }),
+    estimateBHP: yup.object().shape({
+      gaugeDepth: yup.object().shape({
+        value: yup.number().min(0),
       }),
     }),
   });
@@ -144,6 +165,8 @@ export function ConfigurationForm({
           </FormButton>
           <ScheduleSection isEditing={isEditing} />
           <DataSamplingSection isEditing={isEditing} />
+          <BHPEstimationSection isEditing={false} />
+
           <RootFindingSection isEditing={false} />
           <InputSection />
           <OutputSection />

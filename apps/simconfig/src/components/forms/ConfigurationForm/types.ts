@@ -1,7 +1,9 @@
 import {
   AGGREGATE_TYPE,
+  BHP_ESTIMATION_METHOD,
   CHECK_TYPE,
   ROOT_FINDING_METHOD,
+  GAUGE_DEPTH_UNIT,
   UNIT_TYPE,
 } from './constants';
 
@@ -20,6 +22,7 @@ export interface CalculationConfig {
   manualInputs: ConfigManualInput[];
   outputTimeSeries: ConfigOutputTimeSeries[];
   outputSequences: ConfigOutputSequence[];
+  estimateBHP?: ConfigEstimateBHP;
   rootFindingSettings?: ConfigRootFindingSettings;
 }
 export interface ConfigSchedule {
@@ -80,4 +83,14 @@ export interface ConfigRootFindingSettings {
 interface Bracket {
   lowerBound: number;
   upperBound: number;
+}
+export interface ConfigEstimateBHP {
+  enabled: boolean;
+  method: keyof typeof BHP_ESTIMATION_METHOD;
+  gaugeDepth?: GaugeDepth;
+}
+
+interface GaugeDepth {
+  value: number;
+  unit: keyof typeof GAUGE_DEPTH_UNIT;
 }
