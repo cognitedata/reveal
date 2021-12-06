@@ -6,6 +6,7 @@ import { EventPage } from 'app/containers/Event/EventPage';
 import { TimeseriesPage } from 'app/containers/Timeseries/TimeseriesPage';
 import { FilePage } from 'app/containers/File/FilePage';
 import { SequencePage } from 'app/containers/Sequence/SequencePage';
+import { ThreeDPreview } from 'app/containers/ThreeD/ThreeDPreview';
 
 export const ResourceDetailsPage = () => {
   const [currentResourceType] = useCurrentResourceType();
@@ -22,6 +23,8 @@ export const ResourceDetailsPage = () => {
         return <FilePage />;
       case 'sequence':
         return <SequencePage />;
+      case 'threeD':
+        return <ThreeDPreview />;
       default:
         return null;
     }
@@ -34,7 +37,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100% - 56px);
+  height: 100%;
   background: #fff;
   overflow: hidden;
 `;

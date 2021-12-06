@@ -99,6 +99,9 @@ export const useResourceFilter = (type: ResourceType) => {
     case 'timeSeries': {
       return observer.timeseriesFilter;
     }
+    case 'threeD': {
+      return {};
+    }
     default:
       throw new Error('Unknown sdk type');
   }

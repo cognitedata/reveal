@@ -32,15 +32,8 @@ import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
 import { useDateRange } from 'app/context/DateRangeContext';
 import { PageTitle } from '@cognite/cdf-utilities';
+import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
-
-const defaultResourceTypes: ResourceType[] = [
-  'asset',
-  'timeSeries',
-  'file',
-  'event',
-  'sequence',
-];
 
 const Wrapper = styled.div`
   display: flex;
@@ -164,6 +157,8 @@ function SearchPage() {
             {...commonProps}
           />
         );
+      case 'threeD':
+        return <ThreeDSearchResults query={query} />;
       default:
         return null;
     }
@@ -172,7 +167,6 @@ function SearchPage() {
   return (
     <>
       <ResourceTypeTabs
-        resourceTypes={defaultResourceTypes}
         currentResourceType={currentResourceType}
         setCurrentResourceType={setCurrentResourceType}
       />
@@ -190,7 +184,7 @@ function SearchPage() {
           setFileFilter={setFileFilter}
           resourceType={currentResourceType}
           closeFilters={() => setShowFilter(false)}
-          visible={showFilter}
+          visible={currentResourceType !== 'threeD' && showFilter}
         />
         <div
           style={{
@@ -204,7 +198,7 @@ function SearchPage() {
           }}
         >
           <SearchInputContainer align="middle">
-            {!showFilter ? (
+            {currentResourceType !== 'threeD' && !showFilter ? (
               <Col flex="none">
                 <FilterToggleButton
                   toggleOpen={() => setShowFilter(!showFilter)}

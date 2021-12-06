@@ -38,12 +38,14 @@ export default function ResourceTitleRow({
 
   const history = useHistory();
   const location = useLocation();
-  const inSearch = location.pathname.includes('/search');
+  const isPreview =
+    location.pathname.includes('/search') ||
+    location.pathname.includes('/threeD');
   const [query] = useQueryString(SEARCH_KEY);
 
   const name = (
     <NameWrapper>
-      {!inSearch &&
+      {!isPreview &&
         (isFetched ? (
           <ResourceIcons type={type} style={{ marginRight: '10px' }} />
         ) : (
@@ -51,16 +53,16 @@ export default function ResourceTitleRow({
         ))}
       <NameHeader>
         {getTitle(data) || id}
-        {inSearch && '→'}
+        {isPreview && '→'}
       </NameHeader>
     </NameWrapper>
   );
 
   return (
     <TitleRowWrapper
-      style={inSearch ? { maxWidth: 'calc(100vw - 480px)' } : {}}
+      style={isPreview ? { maxWidth: 'calc(100vw - 480px)' } : {}}
     >
-      {!inSearch && (
+      {!isPreview && (
         <div
           style={{
             overflow: 'hidden',
@@ -80,7 +82,7 @@ export default function ResourceTitleRow({
           flex: '1 1 auto',
         }}
       >
-        {inSearch ? (
+        {isPreview ? (
           <Link
             style={{ color: 'var(--cogs-primary)' }}
             to={createLink(`/explore/${type}/${id}`, { [SEARCH_KEY]: query })}
