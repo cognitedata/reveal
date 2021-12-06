@@ -3,7 +3,11 @@ import { Alert } from 'antd';
 import { sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
-import { ColumnProfile, useRawProfile } from 'hooks/profiling-service';
+import {
+  ColumnProfile,
+  useQuickProfile,
+  useFullProfile,
+} from 'hooks/profiling-service';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
 import ProfileRow, { TableData } from './ProfileRow';
@@ -63,15 +67,14 @@ type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
 
-  const fullProfile = useRawProfile({
+  const fullProfile = useFullProfile({
     database,
     table,
   });
 
-  const limitProfile = useRawProfile({
+  const limitProfile = useQuickProfile({
     database,
     table,
-    limit: 1000,
   });
 
   const {
@@ -153,7 +156,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Type
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('type')}
                         />
                       </Flex>
@@ -166,7 +169,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Column
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('label')}
                         />
                       </Flex>
@@ -179,7 +182,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Empty
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('nullCount')}
                         />
                       </Flex>
@@ -192,7 +195,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Distinct
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('distinctCount')}
                         />
                       </Flex>
@@ -214,7 +217,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Min
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('min')}
                         />
                       </Flex>
@@ -227,7 +230,7 @@ export const Profiling = (): JSX.Element => {
                       >
                         Max
                         <Icon
-                          type="SortBoth"
+                          type="ReorderDefault"
                           onClick={() => setSortKey('max')}
                         />
                       </Flex>

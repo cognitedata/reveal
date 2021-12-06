@@ -105,7 +105,7 @@ const SidePanelTableListItem = ({
             >
               <Button
                 disabled={!hasWriteAccess}
-                icon="Trash"
+                icon="Delete"
                 onClick={(e) => {
                   stopPropagation(e);
                   setIsDeleteModalOpen(true);
@@ -120,7 +120,7 @@ const SidePanelTableListItem = ({
       >
         <StyledTableListDropdownButton
           $isSelected={isSelected}
-          icon="MoreOverflowEllipsisHorizontal"
+          icon="EllipsisHorizontal"
           onClick={stopPropagation}
           size="small"
           type="ghost"

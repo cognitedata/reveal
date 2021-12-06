@@ -11,9 +11,9 @@ import { useTableRows } from 'hooks/sdk-queries';
 import { useColumnType } from 'hooks/profiling-service';
 import { ALL_FILTER } from 'hooks/table-filters';
 
+const COLUMNS_IGNORE = ['lastUpdatedTime'];
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
   key: 'Key',
-  lastUpdatedTime: 'Last updated time',
 };
 const INDEX_COLUMN: ColumnType = {
   key: 'column-index',
@@ -69,15 +69,17 @@ export const useTableData = () => {
 
   const getColumns = (): ColumnType[] => {
     const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
-    const otherColumns: ColumnType[] = columnNames.map((name) => ({
-      key: name,
-      dataKey: name,
-      title: COLUMN_NAMES_MAPPED[name] ?? name,
-      width: 200,
-      flexGrow: 1,
-      flexShrink: 0,
-      resizable: true,
-    }));
+    const otherColumns: ColumnType[] = columnNames
+      .filter((name) => !COLUMNS_IGNORE.includes(name))
+      .map((name) => ({
+        key: name,
+        dataKey: name,
+        title: COLUMN_NAMES_MAPPED[name] ?? name,
+        width: 200,
+        flexGrow: 1,
+        flexShrink: 0,
+        resizable: true,
+      }));
     return [INDEX_COLUMN, ...otherColumns];
   };
   const columns = useMemo(getColumns, [rawRows]);
@@ -91,10 +93,6 @@ export const useTableData = () => {
       };
       columnKeys.forEach((key) => {
         if (key === 'column-index') row[key] = index + 1;
-        else if (key === 'lastUpdatedTime' && rawRow.lastUpdatedTime)
-          row.lastUpdatedTime = new Date(
-            rawRow.lastUpdatedTime
-          ).toLocaleString();
         // value can be boolean:false
         else if (!isUndefined(rawRow[key as keyof RawDBRow]))
           row[key] = chooseRenderType(rawRow[key as keyof RawDBRow]);
@@ -127,4 +125,18 @@ export const useTableData = () => {
     columns,
     filteredColumns,
   };
+};
+
+export const useIsTableEmpty = (database: string, table: string) => {
+  const { data = { pages: [] }, isFetched } = useTableRows({
+    database,
+    table,
+    pageSize: 1,
+  });
+
+  const isEmpty = useMemo(() => {
+    return isFetched && !data.pages[0]?.items?.length;
+  }, [isFetched, data]);
+
+  return isEmpty;
 };

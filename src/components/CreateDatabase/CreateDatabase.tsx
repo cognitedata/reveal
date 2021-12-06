@@ -40,7 +40,7 @@ export default function CreateDatabase() {
           title={
             isLoading ? (
               <>
-                Creating database <Icon type="Loading" />
+                Creating database <Icon type="Loader" />
               </>
             ) : (
               'Create database'
@@ -88,7 +88,7 @@ export default function CreateDatabase() {
 
       <Button
         style={{ width: '100%', marginBottom: '5px' }}
-        icon="PlusCompact"
+        icon="Add"
         type="primary"
         onClick={() => setVisible(true)}
         disabled={!hasWriteAccess}

@@ -38,7 +38,7 @@ export const Header = ({ selectedColumn }: Props) => {
             <Button
               size="small"
               variant="ghost"
-              icon="ChevronLeftCompact"
+              icon="ChevronLeft"
               onClick={onPrevColumnClick}
             />
           )}
@@ -60,7 +60,7 @@ export const Header = ({ selectedColumn }: Props) => {
             <Button
               size="small"
               variant="ghost"
-              icon="ChevronRightCompact"
+              icon="ChevronRight"
               onClick={onNextColumnClick}
             />
           )}

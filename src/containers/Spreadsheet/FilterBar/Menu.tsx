@@ -9,6 +9,8 @@ import { escapeCSVValue } from 'utils/utils';
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import { useActiveTableContext } from 'contexts';
 
+const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
+
 export const Menu = (): JSX.Element => {
   const { data: hasWriteAccess } = useUserCapabilities('rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
@@ -28,7 +30,9 @@ export const Menu = (): JSX.Element => {
         Object.keys(item).forEach((key) => {
           escapedColumns[key] = escapeCSVValue(item[key]);
         });
-        delete escapedColumns['column-index'];
+        COLUMNS_IGNORED.forEach((column: string) => {
+          delete escapedColumns[column];
+        });
         return { key: item.key, ...escapedColumns };
       }) || []
     );
@@ -61,7 +65,7 @@ export const Menu = (): JSX.Element => {
         }}
       >
         <Item danger>
-          <Icon type="Trash" />
+          <Icon type="Delete" />
           <span>Delete table</span>
         </Item>
       </CogsMenu.Item>

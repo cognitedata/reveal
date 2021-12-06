@@ -8,12 +8,14 @@ import { TableHeader } from 'components/TableHeader';
 import { Profiling } from 'containers/Profiling';
 
 import { TAB_HEIGHT } from 'utils/constants';
-import { useRawProfile } from 'hooks/profiling-service';
+import { useFullProfile } from 'hooks/profiling-service';
+import { useIsTableEmpty } from 'hooks/table-data';
 import { useActiveTableContext } from 'contexts';
 
 const TableContent = () => {
   const { database, table, view, update } = useActiveTableContext();
-  const { isFetching } = useRawProfile({ database, table });
+  const { isFetching } = useFullProfile({ database, table });
+  const isEmpty = useIsTableEmpty(database, table);
 
   return (
     <Wrapper>
@@ -41,6 +43,7 @@ const TableContent = () => {
           key="profiling"
           tab={<TabProfiling isFetching={isFetching} />}
           style={{ overflow: 'auto' }}
+          disabled={isEmpty}
         >
           <Profiling key={`${database}_${table}`} />
         </Tabs.TabPane>
@@ -51,13 +54,13 @@ const TableContent = () => {
 
 const TabSpreadsheet = (): JSX.Element => (
   <Tab>
-    <Icon type="Table" />
+    <Icon type="TableViewSmall" />
     Table
   </Tab>
 );
 const TabProfiling = ({ isFetching }: { isFetching: boolean }): JSX.Element => (
   <Tab>
-    <Icon type={isFetching ? 'Loading' : 'Profiling'} />
+    <Icon type={isFetching ? 'Loader' : 'Profiling'} />
     Profile
   </Tab>
 );
