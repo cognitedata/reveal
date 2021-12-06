@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { fireErrorNotification } from 'utils/handleError';
-
 const useLocalStorage = <T>(
   key: string,
   defaultValue: T
@@ -11,7 +9,6 @@ const useLocalStorage = <T>(
       const item = window.localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : defaultValue;
     } catch (error) {
-      fireErrorNotification(error);
       return defaultValue;
     }
   });
@@ -23,9 +20,7 @@ const useLocalStorage = <T>(
         value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      fireErrorNotification(error);
-    }
+    } catch (error) {}
   };
 
   return [storedValue, setValue];
