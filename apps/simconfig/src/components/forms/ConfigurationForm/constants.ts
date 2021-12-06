@@ -68,7 +68,10 @@ enum TEMPERATURE_UNIT {
   'deg R' = '°R',
   'deg K' = '°K',
 }
-
+export enum ROOT_FINDING_METHOD {
+  'min' = 'Min',
+  'max' = 'Max',
+}
 export const MISC_UNITS = {
   percent: '%',
   feet: 'ft',

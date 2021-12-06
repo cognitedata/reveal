@@ -1,4 +1,9 @@
-import { AGGREGATE_TYPE, CHECK_TYPE, UNIT_TYPE } from './constants';
+import {
+  AGGREGATE_TYPE,
+  CHECK_TYPE,
+  ROOT_FINDING_METHOD,
+  UNIT_TYPE,
+} from './constants';
 
 export interface CalculationConfig {
   simulator: string;
@@ -15,6 +20,7 @@ export interface CalculationConfig {
   manualInputs: ConfigManualInput[];
   outputTimeSeries: ConfigOutputTimeSeries[];
   outputSequences: ConfigOutputSequence[];
+  rootFindingSettings?: ConfigRootFindingSettings;
 }
 export interface ConfigSchedule {
   enabled: boolean;
@@ -65,4 +71,13 @@ export interface ConfigOutputTimeSeries {
 export interface ConfigOutputSequence {
   name: string;
   type: string;
+}
+export interface ConfigRootFindingSettings {
+  rootTolerance: number;
+  mainSolution: keyof typeof ROOT_FINDING_METHOD;
+  bracket: Bracket;
+}
+interface Bracket {
+  lowerBound: number;
+  upperBound: number;
 }

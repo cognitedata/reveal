@@ -17,6 +17,7 @@ import { CalculationConfig } from './types';
 import { InputSection } from './InputSection';
 import { OutputSection } from './OutputSection';
 import { ScheduleSection } from './ScheduleSection';
+import { RootFindingSection } from './RootFindingSection';
 
 interface ComponentProps {
   formData?: CalculationConfig;
@@ -96,6 +97,14 @@ export function ConfigurationForm({
       varThreshold: yup.number().min(0),
       slopeThreshold: yup.number().lessThan(0),
     }),
+    rootFindingSettings: yup.object().shape({
+      mainSolution: yup.string(),
+      rootTolerance: yup.number().moreThan(0),
+      bracket: yup.object().shape({
+        lowerBound: yup.number().min(0),
+        upperBound: yup.number().moreThan(yup.ref('lowerBound')),
+      }),
+    }),
   });
 
   return (
@@ -135,6 +144,7 @@ export function ConfigurationForm({
           </FormButton>
           <ScheduleSection isEditing={isEditing} />
           <DataSamplingSection isEditing={isEditing} />
+          <RootFindingSection isEditing={false} />
           <InputSection />
           <OutputSection />
         </Form>
