@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Flex, Colors } from '@cognite/cogs.js';
 
-import { Section } from 'components/ProfilingSection';
+import { Section, DATA_MISSING } from 'components/ProfilingSection';
 import { BooleanProfile, ColumnProfile } from 'hooks/profiling-service';
 
 type Props = {
@@ -12,6 +12,20 @@ type Props = {
 
 export default function ProfileDetailsRow({ allCount, profile }: Props) {
   const columnType = profile.type;
+
+  // export default function ProfileDetailsRow({
+  //   distinctCount,
+  //   nullCount,
+  //   min,
+  //   max,
+  //   mean,
+  //   median,
+  //   counts,
+  //   allCount,
+  //   count,
+  //   histogram,
+  // }: Props) {
+
   return (
     <StyledExpandedRow key="profile-details">
       <td colSpan={9} style={{ padding: 0 }}>
@@ -46,7 +60,7 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
   return (
     <>
       <Section title="Numerical statistics">
-        <Grid direction="row" wrap="wrap">
+        <StyledStatisticsRow direction="row" wrap="wrap">
           <NumberOrMissingSummary
             label="Distinct values"
             value={distinctCount}
@@ -58,7 +72,7 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
           <NumberOrMissingSummary label="Maximum length" value={max} />
           <NumberOrMissingSummary label="Mean length" value={mean} />
           <NumberOrMissingSummary label="Median length" value={median} />
-        </Grid>
+        </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
       <Section.Distribution histogram={histogram} />
@@ -82,7 +96,7 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
   return (
     <>
       <Section title="Numerical statistics">
-        <Grid direction="row" wrap="wrap">
+        <StyledStatisticsRow direction="row" wrap="wrap">
           <NumberOrMissingSummary
             label="Distinct values"
             value={distinctCount}
@@ -95,7 +109,7 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
           <NumberOrMissingSummary label="Mean" value={mean} />
           <NumberOrMissingSummary label="Median" value={median} />
           <NumberOrMissingSummary label="Standard deviation" value={std} />
-        </Grid>
+        </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
       <Section.Distribution histogram={histogram} />
@@ -110,12 +124,12 @@ const ProfilingDataBoolean = ({ allCount, profile }: Props) => {
   return (
     <>
       <Section title="Numerical statistics">
-        <Grid direction="row" wrap="wrap">
+        <StyledStatisticsRow direction="row" wrap="wrap">
           <NumberOrMissingSummary label="True" value={trueCount} />
           <NumberOrMissingSummary label="False" value={falseCount} />
           <NumberOrMissingSummary label="Non-empty" value={count} />
           <NumberOrMissingSummary label="Empty" value={nullCount} />
-        </Grid>
+        </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
     </>
@@ -131,10 +145,10 @@ const NumberOrMissingSummary = ({
   value?: number;
   isHalf?: boolean;
 }) => (
-  <GridItem isHalf={isHalf}>
+  <StyledStatisticsItem isHalf={isHalf}>
     <header>{label}</header>
-    {Number.isFinite(value) ? value : 'MISSING'}
-  </GridItem>
+    {Number.isFinite(value) ? value : DATA_MISSING}
+  </StyledStatisticsItem>
 );
 
 const ExpandedRow = styled.div`
@@ -145,11 +159,13 @@ const ExpandedRow = styled.div`
   grid-gap: 1rem;
 `;
 
-const Grid = styled(Flex)``;
-const GridItem = styled.div`
+const StyledStatisticsRow = styled(Flex)`
+  width: 100%;
+`;
+const StyledStatisticsItem = styled.div`
   flex: ${({ isHalf }: { isHalf: boolean }) =>
-    isHalf ? '0 0 50%' : '0 0 100%'};
-  padding: 8px 12px;
+    isHalf ? '1 1 50%' : '1 1 100%'};
+  padding: 8px 0px;
   font-weight: 600;
   font-size: 18px;
   line-height: 24px;
