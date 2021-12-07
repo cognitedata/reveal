@@ -10,7 +10,7 @@ export const DatamodelPage = () => {
   return (
     <PageContentLayout>
       <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
-      <PageContentLayout.Body>DATA MODEL (WIP...)</PageContentLayout.Body>
+      <PageContentLayout.Body>Data model page</PageContentLayout.Body>
     </PageContentLayout>
   );
 };

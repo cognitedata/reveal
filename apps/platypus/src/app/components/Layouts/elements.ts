@@ -41,3 +41,63 @@ export const StyledPageWrapper = styled.div`
   overflow: auto;
   height: 100%;
 `;
+
+export const SplitPanel = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: white;
+  display: flex;
+
+  .split-panel-sidebar {
+    width: 25%;
+    background: var(--split-panel-sidebar-background, transparent);
+    top: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    bottom: 0;
+    display: flex;
+    box-sizing: border-box;
+    resize: horizontal;
+    height: 100%;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .divider-hitbox {
+    cursor: col-resize;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    padding-right: 5px;
+  }
+
+  .divider {
+    height: 100%;
+    border: 1px solid #ccc;
+  }
+
+  .split-panel-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    height: 100%;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .split-panel-content-wrapper {
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+`;

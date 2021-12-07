@@ -1,15 +1,13 @@
-import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Body, Input, Textarea, Detail, Icon } from '@cognite/cogs.js';
-
-import services from './di';
-import { useTranslation } from '../../hooks/useTranslation';
-import { Notification } from '@platypus-app/components/Notification/Notification';
-import { CreateSolutionModalContent } from './elements';
+import { Body, Detail, Icon, Input, Textarea } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
-
+import { Notification } from '@platypus-app/components/Notification/Notification';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { AuthState } from '@platypus-app/redux/reducers/global/globalReducer';
+import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useTranslation } from '../../hooks/useTranslation';
+import services from './di';
+import { CreateSolutionModalContent } from './elements';
 
 export const CreateSolution = ({
   createSolution,
@@ -111,6 +109,7 @@ export const CreateSolution = ({
             )}
           </Detail>
         </div>
+
         <Body level={2} strong>
           {t('modal_description_title', 'Description')}
         </Body>
