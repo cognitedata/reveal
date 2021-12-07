@@ -32,8 +32,7 @@ export class V9GeometryFilterer {
   ): THREE.BufferGeometry {
     if (!clipBox) return geometryBuffer;
 
-    if (type == RevealGeometryCollectionType.InstanceMesh ||
-      type == RevealGeometryCollectionType.TriangleMesh)
+    if (type == RevealGeometryCollectionType.InstanceMesh || type == RevealGeometryCollectionType.TriangleMesh)
       return geometryBuffer;
 
     const interleavedAttributes = V9GeometryFilterer.getAttributes(geometryBuffer, THREE.InterleavedBufferAttribute);
@@ -71,16 +70,18 @@ export class V9GeometryFilterer {
       return geometryBuffer;
     }
 
-    return V9GeometryFilterer.createNewBufferGeometry(newArray, geometryBuffer, interleavedAttributes );
+    return V9GeometryFilterer.createNewBufferGeometry(newArray, geometryBuffer, interleavedAttributes);
   }
 
   static filterEllipsoidCollectionVars = {
     center: new THREE.Vector3()
   };
 
-  private static createNewBufferGeometry(array: Uint8Array,
-                                         oldGeometryBuffer: THREE.BufferGeometry,
-                                         interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>) {
+  private static createNewBufferGeometry(
+    array: Uint8Array,
+    oldGeometryBuffer: THREE.BufferGeometry,
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>
+  ) {
     const newGeometry = new THREE.BufferGeometry();
 
     const bufferAttributeMap = V9GeometryFilterer.getAttributes(oldGeometryBuffer, THREE.BufferAttribute);
@@ -95,10 +96,7 @@ export class V9GeometryFilterer {
       const componentSize = (attribute.array as TypedArray).BYTES_PER_ELEMENT;
 
       const ComponentType = V9GeometryFilterer._views.get(componentSize)!;
-      const interleavedAttributesBuffer = new THREE.InstancedInterleavedBuffer(
-        new ComponentType(array.buffer),
-        stride
-      );
+      const interleavedAttributesBuffer = new THREE.InstancedInterleavedBuffer(new ComponentType(array.buffer), stride);
 
       newGeometry.setAttribute(
         name,
@@ -120,30 +118,35 @@ export class V9GeometryFilterer {
   ): Uint8Array {
     const { center } = V9GeometryFilterer.filterEllipsoidCollectionVars;
 
-    const computeCallback = (index: number, _elementSize: number,
-                             _attributeFloatValues: Float32Array, out: THREE.Box3): THREE.Box3 => {
+    const computeCallback = (
+      index: number,
+      _elementSize: number,
+      _attributeFloatValues: Float32Array,
+      out: THREE.Box3
+    ): THREE.Box3 => {
       const r1 = interleavedAttributeMap.get('_horizontalRadius')!.getX(index);
       const r2 = interleavedAttributeMap.get('_verticalRadius')!.getX(index);
       const height = interleavedAttributeMap.get('_height')!.getX(index);
 
       const centerAttribute = interleavedAttributeMap.get('_center')!;
-      center.set(centerAttribute.getX(index),
-                 centerAttribute.getY(index),
-                 centerAttribute.getZ(index));
+      center.set(centerAttribute.getX(index), centerAttribute.getY(index), centerAttribute.getZ(index));
 
       return computeBoundingBoxFromEllipseValues(r1, r2, height, center, out);
-    }
+    };
 
     return this.filterOnValues(interleavedAttributeMap, computeCallback, clipBox);
   }
 
-  private static filterOnValues(interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
-                                computeBoundingBoxCallback: (index: number,
-                                                             elementSize: number,
-                                                             attributeFloatValues: Float32Array,
-                                                             out: THREE.Box3) => THREE.Box3,
-                                clipBox: THREE.Box3): Uint8Array
-  {
+  private static filterOnValues(
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
+    computeBoundingBoxCallback: (
+      index: number,
+      elementSize: number,
+      attributeFloatValues: Float32Array,
+      out: THREE.Box3
+    ) => THREE.Box3,
+    clipBox: THREE.Box3
+  ): Uint8Array {
     const firstInterleavedAttribute = interleavedAttributeMap.values().next().value as THREE.InterleavedBufferAttribute;
     const typedArray = firstInterleavedAttribute.array as TypedArray;
     const sharedArray = new Uint8Array(typedArray.buffer);
