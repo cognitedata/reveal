@@ -164,7 +164,7 @@ export const VisualizerToolbar = (props: VisualizerToolbarProps) => {
         <ToolbarContainer horizontal={horizontal}>
           <DragHandle dragging={dragging}>
             <DragHandleIcon className="handle">
-              <CogsIcon type="DragHandle" />
+              <CogsIcon type="DragHandleVertical" />
             </DragHandleIcon>
           </DragHandle>
           {addToolbars()}
