@@ -11,7 +11,7 @@ import { useTableRows } from 'hooks/sdk-queries';
 import { useColumnType } from 'hooks/profiling-service';
 import { ALL_FILTER } from 'hooks/table-filters';
 
-export const PRIMARY_KEY_DATAKEY = '_key';
+export const PRIMARY_KEY_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_PRIMARY_KEY';
 
 const COLUMNS_IGNORE = ['lastUpdatedTime'];
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
@@ -66,7 +66,7 @@ export const useTableData = () => {
               lastUpdatedTime: _lastUpdatedTime,
             } = row;
             return {
-              _key,
+              [PRIMARY_KEY_DATAKEY]: _key,
               ...columns,
             };
           });
