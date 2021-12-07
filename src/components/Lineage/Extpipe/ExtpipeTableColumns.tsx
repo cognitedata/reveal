@@ -96,15 +96,7 @@ export const ExtpipeTableColumns = [
     key: 'latestRun',
     render: ({ lastFailure, lastSuccess }: Extpipe) => {
       const latestRun = calculate({ lastFailure, lastSuccess });
-      return (
-        <>
-          {latestRun > 0 ? (
-            moment(latestRun).fromNow()
-          ) : (
-            <LabelTagGrey>Not activated</LabelTagGrey>
-          )}
-        </>
-      );
+      return latestRun > 0 ? moment(latestRun).fromNow() : '–';
     },
     ellipsis: true,
   },
@@ -112,7 +104,7 @@ export const ExtpipeTableColumns = [
     title: 'Source',
     key: 'source',
     render: ({ source }: Extpipe) => {
-      return <>{source ?? <LabelTagGrey>Not defined</LabelTagGrey>}</>;
+      return source ?? '–';
     },
     ellipsis: true,
   },
@@ -131,7 +123,7 @@ export const ExtpipeTableColumns = [
           </a>
         );
       }
-      return <LabelTagGrey>Not defined</LabelTagGrey>;
+      return '–';
     },
     ellipsis: true,
   },
