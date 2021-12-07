@@ -1,5 +1,11 @@
 import { AnnotationStatus, AnnotationUtils } from 'src/utils/AnnotationUtils';
-import { Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
+import {
+  Collapse,
+  Detail,
+  Icon,
+  SegmentedControl,
+  Tooltip,
+} from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
 import styled from 'styled-components';
@@ -10,24 +16,6 @@ type RowProps = {
   icon?: boolean;
   borderColor?: string;
 };
-
-const StyledRow = styled.div<RowProps>`
-  display: flex;
-  width: 100%;
-  padding: 7px 5px 7px ${(props) => (props.icon ? '5px' : '16px')};
-  gap: 12px;
-  border: ${(props) =>
-    props.borderColor ? `1px solid ${props.borderColor}` : 'none'};
-  border-radius: 5px;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ApproveBtnContainer = styled.div`
-  height: 100%;
-  flex: 0 1 168px;
-`;
 
 export const AnnotationTableRow = ({
   annotation,
@@ -97,9 +85,49 @@ export const AnnotationTableRow = ({
       />
       <AnnotationLabelContainer>
         <Tooltip className="lbl-tooltip" content={annotation.text}>
-          <AnnotationLbl color={annotation.color}>
-            {annotation.text}
-          </AnnotationLbl>
+          {annotation.linkedResourceId ? (
+            <StyledCollapse
+              accordion
+              expandIcon={({ isActive }) =>
+                isActive ? (
+                  <Icon type="ChevronDownCompact" />
+                ) : (
+                  <Icon type="ChevronUpCompact" />
+                )
+              }
+            >
+              <StyledCollapsePanel
+                header={
+                  <AnnotationLbl
+                    color={annotation.color}
+                    style={{ paddingLeft: '8px' }}
+                  >
+                    {annotation.text}
+                  </AnnotationLbl>
+                }
+                key={1}
+              >
+                <>
+                  <AnnotationLbl color={annotation.color}>
+                    <Detail style={{ color: 'inherit' }}>
+                      {`ID: ${annotation.linkedResourceId}`}
+                    </Detail>
+                  </AnnotationLbl>
+                  {annotation.linkedResourceExternalId && (
+                    <AnnotationLbl color={annotation.color}>
+                      <Detail style={{ color: 'inherit' }}>
+                        {`External ID: ${annotation.linkedResourceExternalId}`}
+                      </Detail>
+                    </AnnotationLbl>
+                  )}
+                </>
+              </StyledCollapsePanel>
+            </StyledCollapse>
+          ) : (
+            <AnnotationLbl color={annotation.color}>
+              {`${annotation.text}`}
+            </AnnotationLbl>
+          )}
         </Tooltip>
       </AnnotationLabelContainer>
       <ShowHideIconContainer>
@@ -133,6 +161,24 @@ export const AnnotationTableRow = ({
     </StyledRow>
   );
 };
+
+const StyledRow = styled.div<RowProps>`
+  display: flex;
+  width: 100%;
+  padding: 7px 5px 7px ${(props) => (props.icon ? '5px' : '16px')};
+  gap: 12px;
+  border: ${(props) =>
+    props.borderColor ? `1px solid ${props.borderColor}` : 'none'};
+  border-radius: 5px;
+  overflow: hidden;
+  justify-content: center;
+  align-items: baseline;
+`;
+
+const ApproveBtnContainer = styled.div`
+  height: 100%;
+  flex: 0 1 168px;
+`;
 
 const AnnotationLabelContainer = styled.div`
   flex: 1 1 150px;
@@ -193,4 +239,21 @@ const StyledSegmentedControl = styled(SegmentedControl)<{ status: string }>`
     background: ${(props) =>
       props.status !== AnnotationStatus.Rejected ? '#d9d9d9' : '#FFCFCF'};
   }
+`;
+
+const StyledCollapsePanel = styled(Collapse.Panel)`
+  background: transparent;
+
+  .rc-collapse-header {
+    padding: 0;
+  }
+
+  .rc-collapse-content {
+    padding: 0;
+    background: transparent;
+  }
+`;
+
+const StyledCollapse = styled(Collapse)`
+  background: transparent;
 `;

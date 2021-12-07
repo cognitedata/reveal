@@ -71,6 +71,7 @@ export interface DetectedAnnotation {
   text: string;
   region: AnnotationRegion;
   confidence: number;
+  assetIds?: Array<number>;
 }
 
 export type CDFResourceId = {
