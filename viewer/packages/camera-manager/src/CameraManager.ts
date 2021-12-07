@@ -77,9 +77,6 @@ export class CameraManager {
     this._inputHandler = new InputHandler(domElement);
     this._modelRaycastCallback = raycastFunction;
     this._controls = new ComboControls(camera, domElement);
-    this._controls.dollyFactor = 0.992;
-    this._controls.minDistance = 0.15;
-    this._controls.maxDistance = 100.0;
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
 
@@ -417,7 +414,7 @@ export class CameraManager {
    * @param cursorPosition.x
    * @param cursorPosition.y
    */
-  private calculateMissedRaycast(
+  private calculateNewTargetWithoutModel(
     cursorPosition: { x: number; y: number },
     modelsBoundingBox: THREE.Box3
   ): THREE.Vector3 {
@@ -447,7 +444,7 @@ export class CameraManager {
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
     const newTarget =
-      modelRaycastData.intersection?.point ?? this.calculateMissedRaycast({ x, y }, modelRaycastData.modelsBoundingBox);
+      modelRaycastData.intersection?.point ?? this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }

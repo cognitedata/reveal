@@ -48,8 +48,7 @@ export class ComboControls extends EventDispatcher implements RevealCameraContro
   public dampingFactor: number = 0.25;
   public dynamicTarget: boolean = true;
   public minDistance: number = 0.1;
-  public maxDistance: number = Infinity;
-  public dollyFactor: number = 0.98;
+  public dollyFactor: number = 0.99;
   public minPolarAngle: number = 0; // radians
   public maxPolarAngle: number = Math.PI; // radians
   public minAzimuthAngle: number = -Infinity; // radians
