@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Button, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
@@ -18,8 +18,16 @@ type Props = {
 
 export default function ProfileRow({ allCount, profile }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const { label, nullCount, distinctCount, min, max, mean, histogram } =
-    profile;
+  const {
+    label,
+    count = 0,
+    nullCount = 0,
+    distinctCount = 0,
+    min,
+    max,
+    mean,
+    histogram,
+  } = profile;
 
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
@@ -28,6 +36,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
     () => (isFetched ? getColumnType(label) : undefined),
     [getColumnType, isFetched, label]
   );
+
+  const emptyPercent = count === 0 ? 0 : Math.ceil((100 * nullCount) / count);
+  const distinctPercent =
+    count - nullCount === 0 ? 0 : Math.ceil(100 * (distinctCount / count));
 
   return (
     <>
@@ -38,11 +50,17 @@ export default function ProfileRow({ allCount, profile }: Props) {
       >
         <TableCell>{<ColumnIcon dataKey={label} />}</TableCell>
         <TableCell>{label}</TableCell>
-        <TableCell numeric>
+        <TableCell>
           <NumberOrMissingTd value={nullCount} />
+          <Label size="small" variant="success">
+            {emptyPercent}%
+          </Label>
         </TableCell>
-        <TableCell numeric>
+        <TableCell>
           <NumberOrMissingTd value={distinctCount} />
+          <Label size="small" variant="success">
+            {distinctPercent}%
+          </Label>
         </TableCell>
         <TableCell style={{ padding: '4px 0 0' }}>
           {histogram && (
