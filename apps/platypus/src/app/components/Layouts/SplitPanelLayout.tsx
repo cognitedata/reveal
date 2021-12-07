@@ -5,7 +5,7 @@ const MIN_WIDTH = 100;
 
 export interface SplitPanelProps {
   sidebar: React.ReactNode;
-  sidebarWidth?: number;
+  sidebarWidth?: number | string;
   sidebarMinWidth?: number;
   content: React.ReactNode;
 }
@@ -28,6 +28,9 @@ export const SplitPanelLayout = (props: SplitPanelProps) => {
     setSeparatorXPosition(e.touches[0].clientX);
     setDragging(true);
   };
+
+  const isString = (value: unknown) =>
+    Object.prototype.toString.call(value) === '[object String]';
 
   const onMove = (clientX: number) => {
     if (dragging && leftPanelWidth && separatorXPosition) {
@@ -70,7 +73,11 @@ export const SplitPanelLayout = (props: SplitPanelProps) => {
       <div
         className="split-panel-sidebar"
         ref={splitPaneRef}
-        style={{ width: `${leftPanelWidth}px` }}
+        style={{
+          width: isString(leftPanelWidth)
+            ? leftPanelWidth
+            : `${leftPanelWidth}px`,
+        }}
       >
         {props.sidebar}
       </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story } from '@storybook/react';
 import { GraphqlCodeEditor } from './GraphqlCodeEditor';
-import { mockComplexGraphqlModel } from '../../mocks/graphqlModels';
+import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
 
 export default {
   title: 'Components/Graphql Code Editor',

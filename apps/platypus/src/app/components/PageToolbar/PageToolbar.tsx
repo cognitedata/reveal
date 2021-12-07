@@ -8,12 +8,14 @@ type HtmlElementProps<T extends HTMLElement> = React.DetailedHTMLProps<
 >;
 
 export interface ToolbarProps extends HtmlElementProps<HTMLElement> {
+  titleLevel?: number;
   backPathname?: string;
 }
 
 export const PageToolbar = ({
   children,
   title,
+  titleLevel = 4,
   backPathname,
 }: ToolbarProps) => {
   const history = useHistory();
@@ -35,7 +37,7 @@ export const PageToolbar = ({
             }}
           />
         )}
-        <Title level={5}>{title}</Title>
+        <Title level={titleLevel}>{title}</Title>
       </TopBar.Left>
       {children && <TopBar.Right>{children}</TopBar.Right>}
     </StyledTopBar>

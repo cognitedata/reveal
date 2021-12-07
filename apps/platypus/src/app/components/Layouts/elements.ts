@@ -13,7 +13,8 @@ export const StyledPageContentLayout = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    font-size: 3rem;
+    font-size: inherit;
+    position: relative;
   }
 `;
 
