@@ -518,6 +518,7 @@ export const Map: React.FC = () => {
 
                 <PolygonBar
                   polygon={polygon}
+                  sources={combinedSources}
                   zoomToAsset={zoomToAsset}
                   onPolygonButtonToggle={handlePolygonButtonToggle}
                   onQuickSearchSelection={handleQuickSearchSelection}

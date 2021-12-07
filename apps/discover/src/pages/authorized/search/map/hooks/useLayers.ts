@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 
 import get from 'lodash/get';
 import isString from 'lodash/isString';
@@ -6,7 +7,6 @@ import isString from 'lodash/isString';
 import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { convertToCancellablePromise } from '_helpers/cancellablePromise';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { fetchTenantFile } from 'hooks/useTenantConfig';
 import { useStaticSelectableLayers } from 'modules/map/hooks/useStaticSelectableLayers';
@@ -16,49 +16,41 @@ import { Layers } from 'tenants/types';
 
 import { getLayersByKey, getLayerById } from '../utils/layers';
 
+const QUERY_KEY = 'LAYERS_QUERY';
+
 export const useLayers = () => {
   const [tenant] = getTenantInfo();
-  const [layers, setLayers] = useState<Layers>();
-  const [selectableLayers, setSelectableLayers] = useState<SelectableLayer[]>(
-    []
-  );
-  const [layersReady, setLayersReady] = useState(false);
   const staticSelectableLayers = useStaticSelectableLayers();
 
-  useEffect(() => {
-    setSelectableLayers(staticSelectableLayers);
-    const cancellablePromise = convertToCancellablePromise(
-      fetchTenantFile(tenant, 'layers')
-    );
+  const defaultResponse = {
+    layers: {},
+    selectableLayers: staticSelectableLayers,
+  };
 
-    cancellablePromise.promise
+  const { data, isFetched: layersReady } = useQuery([QUERY_KEY], () =>
+    fetchTenantFile(tenant, 'layers')
       .then((fetchedLayers) => {
-        setLayers(fetchedLayers);
         if (fetchedLayers) {
-          const selectableLayers = getLayersByKey(fetchedLayers, 'alwaysOn');
-          setSelectableLayers([
-            ...staticSelectableLayers,
-            ...selectableLayers.filter(
-              (layer) => layer.id !== WELL_HEADS_LAYER_ID
-            ),
-          ]);
+          const alwaysOnLayers = getLayersByKey(fetchedLayers, 'alwaysOn');
+          return {
+            layers: fetchedLayers,
+            selectableLayers: [
+              ...staticSelectableLayers,
+              ...alwaysOnLayers.filter(
+                (layer) => layer.id !== WELL_HEADS_LAYER_ID
+              ),
+            ],
+          };
         }
+        return defaultResponse;
       })
-      .catch(() => {
-        // -- todo -- load base layers by default?
-        setLayers({});
-      })
-      .finally(() => {
-        setLayersReady(true);
-      });
+      .catch((_) => defaultResponse)
+  );
 
-    return () => {
-      cancellablePromise.cancel();
-    };
-  }, [tenant]);
+  const { layers, selectableLayers } = data || defaultResponse;
 
   return {
-    layers: layers || {},
+    layers,
     selectableLayers,
     layersReady,
   };

@@ -85,9 +85,11 @@ export const useMapContent = () => {
 
         if (remoteService) {
           promises.push(
-            remoteService(tenant, headers).then((content) => {
-              pushResponse(content);
-            })
+            remoteService(tenant, headers).then(
+              (content: FeatureCollection) => {
+                pushResponse(content);
+              }
+            )
           );
         }
       });

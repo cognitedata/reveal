@@ -5,12 +5,11 @@ import { TS_FIX_ME } from 'core';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { useMap } from 'modules/map/selectors';
-import { MapState } from 'modules/map/types';
+import { MapDataSource, MapState } from 'modules/map/types';
 import { FlexGrow } from 'styles/layout';
 
 import { useSelectedLayers } from '../hooks';
 import { useLayers, useSearchableConfig } from '../hooks/useLayers';
-import { useMapSources } from '../hooks/useMapSources';
 import {
   ContentSelector,
   InfoButton,
@@ -23,6 +22,7 @@ import { TopButtonMenu } from '../TopButtonMenu';
 
 interface Props {
   polygon: MapState['geoFilter'];
+  sources: MapDataSource[];
   onPolygonButtonToggle: () => void;
   onQuickSearchSelection: (selection: TS_FIX_ME) => void;
   zoomToAsset: (point: Point, changeZoom?: number | false) => void;
@@ -30,6 +30,7 @@ interface Props {
 
 export const PolygonBar: React.FC<Props> = ({
   polygon,
+  sources,
   onPolygonButtonToggle,
   onQuickSearchSelection,
   zoomToAsset,
@@ -44,10 +45,8 @@ export const PolygonBar: React.FC<Props> = ({
   const { layers: allLayers, selectableLayers } = useLayers();
   const selectedLayers = useSelectedLayers(selectableLayers, selected);
 
-  const [combinedSources] = useMapSources();
-
   const { layers: searchableAssets, title: searchableTitle } =
-    useSearchableConfig(allLayers, combinedSources);
+    useSearchableConfig(allLayers, sources);
 
   const isPolygonButtonActive =
     drawMode === 'draw_polygon' || polygon.length > 0;

@@ -1,4 +1,5 @@
 import head from 'lodash/head';
+import isArray from 'lodash/isArray';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
@@ -69,7 +70,7 @@ export async function getWellHeads(tenant: string, headers: FetchHeaders) {
       headers,
       tenant
     );
-  const items = response || [];
+  const items = isArray(response) ? response : [];
 
   const features = items.map((item: SpatialSearchItemResponse) => ({
     type: 'Feature',
