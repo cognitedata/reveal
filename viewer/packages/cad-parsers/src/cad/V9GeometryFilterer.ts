@@ -72,7 +72,6 @@ export class V9GeometryFilterer {
     return geometryBuffer;
   }
 
-
   static filterEllipsoidCollectionVars = {
     center: new THREE.Vector3()
   };
@@ -81,7 +80,6 @@ export class V9GeometryFilterer {
     geometryBuffer: THREE.BufferGeometry,
     clipBox: THREE.Box3
   ): THREE.BufferGeometry {
-
     const { center } = V9GeometryFilterer.filterEllipsoidCollectionVars;
 
     const interleavedAttributeMap = V9GeometryFilterer.getAttributes(geometryBuffer, THREE.InterleavedBufferAttribute);
