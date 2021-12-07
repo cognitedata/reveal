@@ -12,9 +12,7 @@ import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { Prompt, RouteComponentProps, useHistory } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { resetPreview } from 'src/modules/Review/store/reviewSlice';
-import ImageReview from 'src/modules/Review/Containers/ImageReview';
-import VideoReview from 'src/modules/Review/Containers/VideoReview';
-import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
+import ReviewBody from 'src/modules/Review/Containers/ReviewBody';
 import { resetEditHistory } from 'src/modules/FileDetails/fileDetailsSlice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 import { pushMetric } from 'src/utils/pushMetric';
@@ -136,11 +134,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
               right={<DeleteButton onConfirm={handleFileDelete} />}
             />
           </ToolBar>
-          {isVideo(file) ? (
-            <VideoReview file={file} prev={previousPage} />
-          ) : (
-            <ImageReview file={file} prev={previousPage} />
-          )}
+          <ReviewBody file={file} prev={previousPage} />
         </Container>
       </>
     );

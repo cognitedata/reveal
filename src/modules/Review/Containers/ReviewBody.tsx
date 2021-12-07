@@ -19,11 +19,13 @@ import {
 import { RootState } from 'src/store/rootReducer';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
+import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
+import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { ImageContextualization } from './ImageContextualization';
 
 const queryClient = new QueryClient();
 
-const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
+const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const { file, prev } = props;
   const history = useHistory();
   const [inFocus, setInFocus] = useState<boolean>(false);
@@ -52,7 +54,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
     setInFocus(mode);
   };
 
-  const handleImageLoad = (status: boolean) => {
+  const handleLoad = (status: boolean) => {
     setLoading(status);
     loadingState.current = status;
   };
@@ -106,16 +108,18 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
             >
               {loading && (
                 // eslint-disable-next-line @cognite/no-number-z-index
-                <PreviewLoader style={{ zIndex: 1000 }}>
+                <PreviewLoader style={{ zIndex: 1000 }} isVideo={isVideo(file)}>
                   <Spin />
                 </PreviewLoader>
               )}
-              {file && (
+              {file && isVideo(file) ? (
+                <VideoPreview fileObj={file} isLoading={handleLoad} />
+              ) : (
                 <ImagePreview
                   file={file}
                   onEditMode={onEditMode}
                   annotations={visibleNonRejectedAnnotations}
-                  isLoading={handleImageLoad}
+                  isLoading={handleLoad}
                   scrollIntoView={scrollToItem}
                 />
               )}
@@ -131,7 +135,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
             <StyledTitle level={4}>{file?.name}</StyledTitle>
             <TabsContainer>
               <Tabs
-                tab={currentTab}
+                tab={isVideo(file) ? 'file-detail' : currentTab}
                 onTabChange={tabChange}
                 style={{
                   border: 0,
@@ -141,6 +145,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
                   title="Annotations"
                   key="context"
                   style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
+                  disabled={isVideo(file)}
                 >
                   <ImageContextualization
                     file={file}
@@ -171,7 +176,7 @@ const ImageReview = (props: { file: FileInfo; prev: string | undefined }) => {
     </ImageKeyboardShortKeys>
   );
 };
-export default ImageReview;
+export default ReviewBody;
 
 const AnnotationContainer = styled.div`
   height: 100%;
@@ -192,9 +197,12 @@ type PreviewProps = {
   inFocus?: boolean;
 };
 
+interface PreviewLoaderProps {
+  isVideo: boolean;
+}
 // eslint-disable-next-line @cognite/no-number-z-index
-const PreviewLoader = styled.div`
-  width: calc(100% - 50px);
+const PreviewLoader = styled.div<PreviewLoaderProps>`
+  width: ${(props) => (props.isVideo ? '100%' : 'calc(100% - 50px)')};
   height: 100%;
   display: flex;
   align-items: center;
