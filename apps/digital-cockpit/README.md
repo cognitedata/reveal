@@ -4,7 +4,7 @@ Cognite Digital Cockpit allows heavy industry users to accumulate all their appl
 
 With live data from embedded dashboards & infographics overview of your KPIs, you can quickly get an overview of your organization´s status.
 
-For more information please read the [https://docs.cognite.com/portal/guides/getstarted.html](documentation)
+For more information please read the [https://docs.cognite.com/portal/](documentation)
 
 ## Setup a new tenant for Digital Cockpit
 

@@ -59,7 +59,7 @@ const SnapshotTooltip = () => (
     Find more information about how to embed a dashboard, e.g., Grafana,
     PowerBI,&nbsp;
     <A
-      href="https://docs.cognite.com/portal/guides/admin-actions.html#example-add-a-link-to-a-grafana-report"
+      href="https://docs.cognite.com/portal/guides/set_up_suites_and_boards.html#add-a-link-to-a-grafana-report"
       isExternal
       target="_blank"
     >
@@ -321,7 +321,7 @@ export const BoardForm: React.FC<BoardFormProps> = ({
                   To give access to the right groups, make sure groups are
                   set-up correctly, see our{' '}
                   <StyledLink
-                    href="https://docs.cognite.com/portal/guides/admin-actions.html#see-which-suites-and-boards-a-group-can-access"
+                    href="https://docs.cognite.com/portal/guides/set_up_suites_and_boards.html#see-which-suites-and-boards-a-group-can-access"
                     isExternal
                     target="_blank"
                   >
