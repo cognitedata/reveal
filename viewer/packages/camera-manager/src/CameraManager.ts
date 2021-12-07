@@ -444,7 +444,8 @@ export class CameraManager {
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
     const newTarget =
-      modelRaycastData.intersection?.point ?? this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
+      modelRaycastData.intersection?.point ??
+      this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }
