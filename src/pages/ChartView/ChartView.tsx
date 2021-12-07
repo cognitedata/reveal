@@ -218,7 +218,7 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       },
     ];
 
-    const newWorkflow = {
+    const newWorkflow: ChartWorkflowV2 = {
       version: 'v2',
       id: newWorkflowId,
       name: 'New Calculation',
@@ -234,7 +234,8 @@ const ChartView = ({ chartId: chartIdProp }: ChartViewProps) => {
       createdAt: Date.now(),
       unit: '',
       preferredUnit: '',
-    } as ChartWorkflowV2;
+      settings: { autoAlign: true },
+    };
 
     setChart((oldChart) => addWorkflow(oldChart!, newWorkflow));
     setSelectedSourceId(newWorkflowId);

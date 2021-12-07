@@ -145,7 +145,7 @@ const getOperationFromReactFlowNode = (node: FlowElement) => {
 };
 
 const getParamsFromReactFlowNode = (
-  settings: ChartWorkflowV2['settings'],
+  settings: ChartWorkflowV2['settings'] = { autoAlign: true },
   node: FlowElement<NodeDataVariants>
 ) => {
   if (node.type !== NodeTypes.FUNCTION) {
