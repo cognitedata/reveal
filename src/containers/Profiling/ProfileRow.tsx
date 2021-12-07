@@ -1,19 +1,54 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
-import { ColumnProfile } from 'hooks/profiling-service';
+import { CustomIcon } from 'components/CustomIcon';
+import { useActiveTableContext } from 'contexts';
+import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 
-import ProfileDetailsRow from './ProfileDetailsRow';
 import { Graph } from './Distribution';
+import ProfileDetailsRow from './ProfileDetailsRow';
 
-const NumberOrMissingTd = ({ value }: { value?: number }) => (
-  <TableData className="numeric">
-    {Number.isFinite(value) ? value : 'MISSING'}
-  </TableData>
-);
+const StyledInfoFilledIcon = styled(Icon).attrs({
+  size: 16,
+  type: 'InfoFilled',
+})`
+  color: ${Colors['text-hint'].hex()};
+`;
+
+const NumberOrMissingTd = ({
+  checkIfAvailable,
+  columnType,
+  value,
+}: {
+  checkIfAvailable?: boolean;
+  columnType?: ColumnProfile['type'] | 'Unknown';
+  value?: number;
+}) => {
+  if (columnType !== 'Number' && checkIfAvailable) {
+    return (
+      <TableData className="numeric">
+        <Tooltip content="This information is not available for this data type">
+          <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
+        </Tooltip>
+      </TableData>
+    );
+  }
+
+  return (
+    <TableData className="numeric">
+      {Number.isFinite(value) ? (
+        value
+      ) : (
+        <Tooltip content="Unavailable due to error">
+          <StyledInfoFilledIcon />
+        </Tooltip>
+      )}
+    </TableData>
+  );
+};
 
 type Props = {
   allCount: number;
@@ -24,6 +59,14 @@ export default function ProfileRow({ allCount, profile }: Props) {
   const [expanded, setExpanded] = useState(false);
   const { label, nullCount, distinctCount, min, max, mean, histogram } =
     profile;
+
+  const { database, table } = useActiveTableContext();
+  const { getColumnType, isFetched } = useColumnType(database, table);
+
+  const columnType = useMemo(
+    () => (isFetched ? getColumnType(label) : undefined),
+    [getColumnType, isFetched, label]
+  );
 
   return (
     <>
@@ -47,9 +90,21 @@ export default function ProfileRow({ allCount, profile }: Props) {
             />
           )}
         </TableData>
-        <NumberOrMissingTd value={min} />
-        <NumberOrMissingTd value={max} />
-        <NumberOrMissingTd value={mean} />
+        <NumberOrMissingTd
+          checkIfAvailable
+          columnType={columnType}
+          value={min}
+        />
+        <NumberOrMissingTd
+          checkIfAvailable
+          columnType={columnType}
+          value={max}
+        />
+        <NumberOrMissingTd
+          checkIfAvailable
+          columnType={columnType}
+          value={mean}
+        />
         <StyledExpandTableCell>
           <StyledExpandButton
             icon={expanded ? 'ChevronUp' : 'ChevronDown'}

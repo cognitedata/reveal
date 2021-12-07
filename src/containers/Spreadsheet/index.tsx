@@ -9,7 +9,7 @@ import { useColumnType } from 'hooks/profiling-service';
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
 
-const Loading = styled.p`
+const Loading = styled.p<{ $visible: boolean }>`
   position: absolute;
   bottom: 24px;
   left: 50%;
@@ -19,6 +19,8 @@ const Loading = styled.p`
   font-weight: 500;
   padding: 8px 16px;
   border-radius: 6px;
+  opacity: ${(props) => (props.$visible ? 1 : 0)};
+  transition: opacity 0.5s linear 1s;
 `;
 
 export const Spreadsheet = (): JSX.Element => {
@@ -57,12 +59,10 @@ export const Spreadsheet = (): JSX.Element => {
               }
             }}
           />
-          {isFetched && isFetching && (
-            <Loading>
-              <Icon type="Loader" size={12} style={{ marginRight: 8 }} />
-              Loading more data
-            </Loading>
-          )}
+          <Loading $visible={isFetched && isFetching}>
+            <Icon type="Loader" size={12} style={{ marginRight: 8 }} />
+            Loading more data
+          </Loading>
         </>
       )}
     </Flex>
