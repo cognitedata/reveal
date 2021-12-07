@@ -109,7 +109,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           trackUsage({ t: 'EditField.Rejected', field: 'documentation' });
           setError('server', {
             type: 'server',
-            message: error.data.message,
+            message: error.data?.message,
             shouldFocus: true,
           });
         },

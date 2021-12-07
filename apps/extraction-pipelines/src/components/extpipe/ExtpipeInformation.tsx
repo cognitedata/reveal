@@ -15,6 +15,11 @@ import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
 import { NotificationSection } from 'components/extpipe/NotificationSection';
+import {
+  externalIdRule,
+  metaDescriptionSchema,
+  sourceSchema,
+} from 'utils/validation/extpipeSchemas';
 
 interface ExtpipeInformationProps {
   canEdit: boolean;
@@ -39,9 +44,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           placeholder="Enter description"
           label={DetailFieldNames.DESCRIPTION}
           canEdit={canEdit}
-          schema={yup.object().shape({
-            description: yup.string(),
-          })}
+          schema={metaDescriptionSchema}
           defaultValues={{ description: extpipe?.description }}
           fullWidth
           updateFn={rootUpdate({ extpipe, name: 'description', project })}
@@ -55,7 +58,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           placeholder="Enter source"
           label={DetailFieldNames.SOURCE}
           canEdit={canEdit}
-          schema={yup.object().shape({})}
+          schema={sourceSchema}
           updateFn={rootUpdate({ extpipe, name: 'source', project })}
           defaultValues={{
             source: extpipe?.source,
@@ -70,9 +73,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           placeholder="Enter external ID"
           label={DetailFieldNames.EXTERNAL_ID}
           canEdit={canEdit}
-          schema={yup.object().shape({
-            externalId: yup.string().required('ExternalId is required'),
-          })}
+          schema={yup.object().shape(externalIdRule)}
           defaultValues={{ externalId: extpipe?.externalId }}
           fullWidth
           updateFn={rootUpdate({ extpipe, name: 'externalId', project })}
