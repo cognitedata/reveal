@@ -141,9 +141,13 @@ export const EmptyRender = (): JSX.Element => {
           <p>
             <strong>Upload CSV file</strong>
           </p>
-          <Button type="primary" onClick={() => setCSVModalVisible(true)}>
+          <Button
+            icon="Upload"
+            iconPlacement="right"
+            type="primary"
+            onClick={() => setCSVModalVisible(true)}
+          >
             Add data
-            <Icon type="Upload" />
           </Button>
         </Box>
         <a
