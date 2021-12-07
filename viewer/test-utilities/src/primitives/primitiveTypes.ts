@@ -27,8 +27,10 @@ const primitiveTypeToCollectionTypeMap: Map<PrimitiveType, RevealGeometryCollect
 
 export function getCollectionType(primitiveType: PrimitiveType): RevealGeometryCollectionType {
   const collectionType = primitiveTypeToCollectionTypeMap.get(primitiveType);
-  if (!collectionType) {
+
+  if (collectionType === undefined) {
     throw Error('Could not find primitive type in primitiveTypeToCollectionTypeMap');
   }
+
   return collectionType;
 }
