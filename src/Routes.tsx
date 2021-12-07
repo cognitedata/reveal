@@ -10,7 +10,7 @@ import {
   useHistory,
   useRouteMatch,
 } from 'react-router-dom';
-import { Loader } from '@cognite/cogs.js';
+import { Loader, toast } from '@cognite/cogs.js';
 import ChartList from 'pages/ChartList';
 import ChartView from 'pages/ChartView';
 import TenantSelectorView from 'pages/TenantSelector';
@@ -24,6 +24,7 @@ import { identifyUser } from 'services/metrics';
 import { azureInfo, loginStatus } from 'services/user-info';
 import * as Sentry from '@sentry/react';
 import { useCluster, useProject } from 'hooks/config';
+import ErrorToast from 'components/ErrorToast/ErrorToast';
 
 const SentryRoute = Sentry.withSentryRouting(Route);
 
@@ -53,7 +54,7 @@ const AppRoutes = () => {
   const project = useProject();
   const [initializing, setInitializing] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
-  const { isFetched: firebaseDone, isError } = useFirebaseInit(
+  const { isFetched: firebaseDone, isError: isFirebaseError } = useFirebaseInit(
     !initializing && authenticated
   );
 
@@ -151,8 +152,18 @@ const AppRoutes = () => {
     return <Loader />;
   }
 
-  if (isError) {
-    return <>nope</>;
+  if (isFirebaseError) {
+    toast.error(
+      <ErrorToast
+        title="Failed to load Firebase"
+        text="Please reload the page"
+      />,
+      {
+        autoClose: false,
+        closeOnClick: false,
+      }
+    );
+    return null;
   }
 
   return (

@@ -7,6 +7,7 @@ import {
   Tabs,
   SegmentedControl,
   Select,
+  toast,
 } from '@cognite/cogs.js';
 import { Chart } from 'models/chart/types';
 import { useMyCharts, usePublicCharts, useUpdateChart } from 'hooks/firebase';
@@ -20,6 +21,8 @@ import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useResetRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
+import ErrorToast from 'components/ErrorToast/ErrorToast';
+import { useAvailableOps } from 'components/NodeEditor/AvailableOps';
 
 type ActiveTabOption = 'mine' | 'public';
 type SortOption = 'name' | 'owner' | 'updatedAt';
@@ -52,6 +55,8 @@ const ChartList = () => {
   const myCharts = useMyCharts();
   const pubCharts = usePublicCharts();
   const resetChart = useResetRecoilState(chartAtom);
+  const [_isLoadingOperations, operationsError, _operations] =
+    useAvailableOps();
 
   useEffect(() => {
     resetChart();
@@ -160,6 +165,19 @@ const ChartList = () => {
       </div>
     );
   };
+
+  if (operationsError instanceof Error) {
+    toast.error(
+      <ErrorToast
+        title="Failed to load Operations"
+        text="Please reload the page"
+      />,
+      {
+        autoClose: false,
+        closeOnClick: false,
+      }
+    );
+  }
 
   return (
     <div id="chart-list" style={{ padding: 16, width: '100%' }}>
