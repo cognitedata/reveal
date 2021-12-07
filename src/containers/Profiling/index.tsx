@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Alert } from 'antd';
 import { sortBy } from 'lodash';
 import styled from 'styled-components';
-import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
+import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
 import {
   ColumnProfile,
   useQuickProfile,
@@ -10,7 +10,8 @@ import {
 } from 'hooks/profiling-service';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
-import ProfileRow, { TableData } from './ProfileRow';
+import ProfileRow from './ProfileRow';
+import ProfileTableHeader from './ProfileTableHeader';
 
 const Card = styled.div`
   padding: 16px;
@@ -48,14 +49,6 @@ const RootFlex = styled(Flex)`
   height: 100%;
 `;
 
-const TableHeader = styled.thead`
-  background-color: ${Colors['greyscale-grey1'].hex()};
-  color: ${Colors['greyscale-grey7'].hex()};
-  td .cogs-icon {
-    cursor: pointer;
-  }
-`;
-
 const Table = styled.table`
   width: 100%;
   .numeric {
@@ -63,12 +56,8 @@ const Table = styled.table`
   }
 `;
 
-const StyledExpandTableHeaderIcon = styled(Icon)`
-  cursor: pointer;
-  margin: 0 10px;
-`;
+export type SortableColumn = keyof ColumnProfile;
 
-type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
 
@@ -89,15 +78,8 @@ export const Profiling = (): JSX.Element => {
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  const [sortKey, _setSortKey] = useState<SortableColumn>('label');
-  const [sortReversed, _setSortReversed] = useState(false);
-  const setSortKey = (key: SortableColumn) => {
-    const reverse = sortKey === key;
-    _setSortKey(key);
-    if (reverse) {
-      _setSortReversed(!sortReversed);
-    }
-  };
+  const [sortKey, setSortKey] = useState<SortableColumn>('label');
+  const [sortReversed, setSortReversed] = useState(false);
 
   const columnList = useMemo(() => {
     const columns = sortBy(data.columns, sortKey);
@@ -151,114 +133,12 @@ export const Profiling = (): JSX.Element => {
           {({ width, height }) => (
             <div style={{ width, height }}>
               <Table>
-                <TableHeader>
-                  <tr>
-                    <TableData $width={44}>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('type')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Column
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('label')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Empty
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('nullCount')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Distinct
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('distinctCount')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData $width={150}>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Frequency
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Min
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('min')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Max
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('max')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Mean
-                      </Flex>
-                    </TableData>
-                    <TableData $width={68}>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <StyledExpandTableHeaderIcon type="ChevronDown" />
-                      </Flex>
-                    </TableData>
-                  </tr>
-                </TableHeader>
+                <ProfileTableHeader
+                  sortKey={sortKey}
+                  setSortKey={setSortKey}
+                  sortReversed={sortReversed}
+                  setSortReversed={setSortReversed}
+                />
                 <tbody>
                   {columnList.map((column) => (
                     <ProfileRow
