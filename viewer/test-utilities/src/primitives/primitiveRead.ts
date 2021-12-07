@@ -16,7 +16,11 @@ function readBufferValues(array: TypedArray, count: number): number[] {
   return resultArray;
 }
 
-function readAttributeValue(geometryBuffer: THREE.BufferGeometry, attributeDescription: AttributeDesc, byteOffset: number): any {
+function readAttributeValue(
+  geometryBuffer: THREE.BufferGeometry,
+  attributeDescription: AttributeDesc,
+  byteOffset: number
+): number | number[] {
   const threeAttribute = geometryBuffer.getAttribute(attributeDescription.name) as THREE.InterleavedBufferAttribute;
   const underlyingTypedArray = threeAttribute.data.array as TypedArray;
   const rawBuffer = underlyingTypedArray.buffer;
@@ -44,12 +48,14 @@ function readAttributeValue(geometryBuffer: THREE.BufferGeometry, attributeDescr
   }
 }
 
-export function readPrimitiveFromBuffer(primitiveName: PrimitiveType,
-                                        geometryBuffer: THREE.BufferGeometry,
-                                        byteOffset: number): Object {
+export function readPrimitiveFromBuffer(
+  primitiveName: PrimitiveType,
+  geometryBuffer: THREE.BufferGeometry,
+  byteOffset: number
+): Record<string, unknown> {
   const attributeDescriptions = createAttributeDescriptionsForPrimitive(primitiveName);
 
-  const obj: any = {};
+  const obj: Record<string, unknown> = {};
   for (const attributeDescription of attributeDescriptions) {
     const value = readAttributeValue(geometryBuffer, attributeDescription, byteOffset);
     obj[attributeDescription.name.slice(1)] = value;

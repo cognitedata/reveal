@@ -14,10 +14,12 @@ function writeBytesToBuffer(array: Uint8Array, values: number[]) {
   array.set(values);
 }
 
-function writeAttributeToBuffer(buffer: ArrayBuffer,
-                                value: number | number[],
-                                byteOffset: number,
-                                attributeDescription: AttributeDesc) {
+function writeAttributeToBuffer(
+  buffer: ArrayBuffer,
+  value: number | number[],
+  byteOffset: number,
+  attributeDescription: AttributeDesc
+) {
   const totalByteOffset = attributeDescription.byteOffset + byteOffset;
   const valueArray = typeof value === 'number' ? [value] : value;
 
@@ -30,15 +32,17 @@ function writeAttributeToBuffer(buffer: ArrayBuffer,
   }
 }
 
-function isNumberOrNumberArray(value: any): value is (number | number[]) {
+function isNumberOrNumberArray(value: any): value is number | number[] {
   return typeof value === 'number' || (Array.isArray(value) && value.length > 0 && typeof value[0] === 'number');
 }
 
 // Returns new offset after insertion
-export function writePrimitiveToBuffer(primitiveName: PrimitiveType,
-                                       buffer: ArrayBuffer,
-                                       obj: any,
-                                       byteOffset: number): number {
+export function writePrimitiveToBuffer(
+  primitiveName: PrimitiveType,
+  buffer: ArrayBuffer,
+  obj: any,
+  byteOffset: number
+): number {
   const byteView = new Uint8Array(buffer, byteOffset);
   const totalAttributeSize = getTotalAttributeSize(primitiveName);
 
@@ -51,8 +55,8 @@ export function writePrimitiveToBuffer(primitiveName: PrimitiveType,
     const prefixedAttributeName = '_' + rawAttributeName;
     const attributeDescription = attributeDescriptionMap.get(prefixedAttributeName);
 
-    if (!attributeDescription || ! isNumberOrNumberArray(value)) {
-      throw Error("Unknown attribute name " + rawAttributeName + " in addPrimitive function");
+    if (!attributeDescription || !isNumberOrNumberArray(value)) {
+      throw Error('Unknown attribute name ' + rawAttributeName + ' in addPrimitive function');
     }
 
     writeAttributeToBuffer(buffer, value as number | number[], byteOffset, attributeDescription);

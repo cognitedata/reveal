@@ -2,11 +2,15 @@
  * Copyright 2021 Cognite AS
  */
 
-import { createAttributeDescriptionsForPrimitive, getComponentByteSize, getTotalAttributeSize, getShouldNormalize } from './primitiveAttributes';
+import {
+  createAttributeDescriptionsForPrimitive,
+  getComponentByteSize,
+  getTotalAttributeSize,
+  getShouldNormalize
+} from './primitiveAttributes';
 import { writePrimitiveToBuffer } from './primitiveWrite';
 import { readPrimitiveFromBuffer } from './primitiveRead';
 import { PrimitiveType } from './primitiveTypes';
-
 
 import * as THREE from 'three';
 import { TypedArray } from '@reveal/utilities';
@@ -23,26 +27,32 @@ export function createPrimitiveInterleavedGeometry(name: PrimitiveType, primitiv
 
   const floatView = new Float32Array(buffer);
 
-  const interleavedBuffer = new THREE.InstancedInterleavedBuffer(floatView, singleElementSize / floatView.BYTES_PER_ELEMENT);
+  const interleavedBuffer = new THREE.InstancedInterleavedBuffer(
+    floatView,
+    singleElementSize / floatView.BYTES_PER_ELEMENT
+  );
 
   const attributeDescriptions = createAttributeDescriptionsForPrimitive(name);
 
   const geometry = new THREE.BufferGeometry();
 
   for (const attributeDescription of attributeDescriptions) {
-    const itemSize = attributeDescription.format.numComponents *
-      getComponentByteSize(attributeDescription.format.componentType) / floatView.BYTES_PER_ELEMENT;
+    const itemSize =
+      (attributeDescription.format.numComponents * getComponentByteSize(attributeDescription.format.componentType)) /
+      floatView.BYTES_PER_ELEMENT;
 
     if (!Number.isInteger(itemSize)) {
-      throw Error("Attribute does not have size divisible by float size");
+      throw Error('Attribute does not have size divisible by float size');
     }
 
     const shouldNormalize = getShouldNormalize(attributeDescription.format.componentType);
 
-    const bufferAttribute = new THREE.InterleavedBufferAttribute(interleavedBuffer,
-                                                                 itemSize,
-                                                                 attributeDescription.byteOffset / floatView.BYTES_PER_ELEMENT,
-                                                                 shouldNormalize);
+    const bufferAttribute = new THREE.InterleavedBufferAttribute(
+      interleavedBuffer,
+      itemSize,
+      attributeDescription.byteOffset / floatView.BYTES_PER_ELEMENT,
+      shouldNormalize
+    );
 
     geometry.setAttribute(attributeDescription.name, bufferAttribute);
   }
@@ -50,24 +60,26 @@ export function createPrimitiveInterleavedGeometry(name: PrimitiveType, primitiv
   return geometry;
 }
 
-
 /* NB: Assumes BufferGeometry only uses one underlying buffer for interleaved attributes */
 function getBufferByteSize(geometryBuffer: THREE.BufferGeometry) {
   let underlyingBuffer: ArrayBuffer | undefined = undefined;
   for (const attr of Object.entries(geometryBuffer.attributes)) {
-    if (attr[1] instanceof THREE.InterleavedBufferAttribute){
+    if (attr[1] instanceof THREE.InterleavedBufferAttribute) {
       underlyingBuffer = ((attr[1] as THREE.InterleavedBufferAttribute).array as TypedArray).buffer;
     }
   }
 
   if (!underlyingBuffer) {
-    throw Error("Could not find interleaved attribute buffer for BufferGeometry");
+    throw Error('Could not find interleaved attribute buffer for BufferGeometry');
   }
 
   return underlyingBuffer.byteLength;
 }
 
-export function parseInterleavedGeometry(name: PrimitiveType, geometryBuffer: THREE.BufferGeometry): Object[] {
+export function parseInterleavedGeometry(
+  name: PrimitiveType,
+  geometryBuffer: THREE.BufferGeometry
+): Record<string, unknown>[] {
   const singleElementSize = getTotalAttributeSize(name);
 
   const byteLength = getBufferByteSize(geometryBuffer);
@@ -75,15 +87,13 @@ export function parseInterleavedGeometry(name: PrimitiveType, geometryBuffer: TH
   const numElements = byteLength / singleElementSize;
 
   if (!Number.isInteger(numElements)) {
-    throw Error("Array size not multiple of primitive size");
+    throw Error('Array size not multiple of primitive size');
   }
 
-  const result: Object[] = [];
+  const result: Record<string, unknown>[] = [];
   let currentOffset = 0;
   for (let i = 0; i < numElements; i++) {
-    const thisPrimitive: Object = readPrimitiveFromBuffer(name,
-                                                          geometryBuffer,
-                                                          currentOffset);
+    const thisPrimitive: Record<string, unknown> = readPrimitiveFromBuffer(name, geometryBuffer, currentOffset);
     result.push(thisPrimitive);
     currentOffset += singleElementSize;
   }

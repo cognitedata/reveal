@@ -2,24 +2,23 @@
  * Copyright 2021 Cognite AS
  */
 
-import { RevealGeometryCollectionType } from "../../../packages/sector-parser";
+import { RevealGeometryCollectionType } from '../../../packages/sector-parser';
 
 export enum PrimitiveType {
   Ellipsoid,
   Box
-};
+}
 
 export type Box = {
-  instanceMatrix: number[]
+  instanceMatrix: number[];
 };
 
 export type Ellipsoid = {
-  horizontalRadius: number,
-  verticalRadius: number,
-  height: number,
-  center: [number, number, number]
+  horizontalRadius: number;
+  verticalRadius: number;
+  height: number;
+  center: [number, number, number];
 };
-
 
 const primitiveTypeToCollectionTypeMap: Map<PrimitiveType, RevealGeometryCollectionType> = new Map([
   [PrimitiveType.Box, RevealGeometryCollectionType.BoxCollection],
