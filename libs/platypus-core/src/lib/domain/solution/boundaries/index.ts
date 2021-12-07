@@ -11,6 +11,7 @@ export interface ISolutionsApiService {
   createTemplateGroup(dto: CreateSolutionDTO): Promise<Solution>;
   deleteTemplateGroup(dto: DeleteSolutionDTO): Promise<unknown>;
   listTemplateGroups(): Promise<Solution[]>;
+  fetchTemplateGroup(dto: FetchSolutionDTO): Promise<Solution>;
 }
 
 export interface ISolutionSchemaApiService {

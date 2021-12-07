@@ -2,7 +2,7 @@ import { Result } from '../../boundaries/types/result';
 import { Validator } from '../../boundaries/validation';
 import { RequiredFieldValidator } from '../common/validators/required-field.validator';
 import { ISolutionsApiService } from './boundaries';
-import { CreateSolutionDTO, DeleteSolutionDTO } from './dto';
+import { CreateSolutionDTO, DeleteSolutionDTO, FetchSolutionDTO } from './dto';
 import { Solution } from './types';
 
 export class SolutionsHandler {
@@ -11,6 +11,12 @@ export class SolutionsHandler {
   list(): Promise<Result<Solution[]>> {
     return this.solutionsService
       .listTemplateGroups()
+      .then((solutions) => Result.ok(solutions));
+  }
+
+  fetch(dto: FetchSolutionDTO): Promise<Result<Solution>> {
+    return this.solutionsService
+      .fetchTemplateGroup(dto)
       .then((solutions) => Result.ok(solutions));
   }
 

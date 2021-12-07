@@ -109,7 +109,7 @@ export const SolutionCard = ({
           </Title>
           <Detail>
             {t('solution_last_updated', 'Last updated')}{' '}
-            {services.dateUtils.format(solution.createdTime)}
+            {services().dateUtils.format(solution.createdTime)}
           </Detail>
         </div>
         <div

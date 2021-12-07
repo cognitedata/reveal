@@ -1,13 +1,13 @@
-import { lazy, Suspense } from 'react';
-import { Redirect, Route, Switch, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useEffect, lazy, Suspense } from 'react';
+import { Route, Switch, useParams } from 'react-router-dom';
 
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
-import solutionStateSlice from '@platypus-app/redux/reducers/global/solutionReducer';
+import { useSolution } from './hooks/useSolution';
+import { ActionStatus } from '@platypus-app/types';
 
 const OverviewPage = lazy<any>(() =>
   import('./OverviewLayout').then((module) => ({
@@ -40,73 +40,77 @@ const SettingsPage = lazy(() =>
 );
 
 export const Solution = () => {
-  const dispatch = useDispatch();
-
-  const { solutionId, version } = useParams<{
+  const { solutionId } = useParams<{
     solutionId: string;
-    version: string;
   }>();
 
-  const { solution, selectedSchema } = useSelector<SolutionState>(
-    (state) => state.solution
-  );
+  const { solution, selectedSchema, solutionStatus, schemasStatus } =
+    useSelector<SolutionState>((state) => state.solution);
 
-  // If $version parameter is missed in the url
-  if (!version) {
+  const { fetchVersions, fetchSolution } = useSolution();
+
+  useEffect(() => {
+    fetchSolution(solutionId);
+  }, [fetchSolution, solutionId]);
+
+  useEffect(() => {
+    fetchVersions(solutionId);
+  }, [fetchVersions, solutionId]);
+
+  if (
+    solutionStatus === ActionStatus.SUCCESS &&
+    schemasStatus === ActionStatus.SUCCESS
+  ) {
     return (
-      <Redirect
-        to={`/solutions/${solutionId}/${selectedSchema?.version}/${
-          version || 'overview'
-        }`}
-      />
-    );
-  } else {
-    // otherwise a schema with defined $version will be selected in the store
-    dispatch(
-      solutionStateSlice.actions.selectVersion({
-        version,
-      })
+      <StyledPageWrapper>
+        <Switch>
+          <Route
+            exact
+            path={[
+              '/solutions/:solutionId?/:version?',
+              '/solutions/:solutionId?/:version?/overview/:solutionPage?',
+            ]}
+          >
+            <Suspense fallback={<Spinner />}>
+              <OverviewPage solution={solution} schema={selectedSchema} />
+            </Suspense>
+          </Route>
+          <Route
+            exact
+            path="/solutions/:solutionId?/:version?/data-model/:solutionPage?"
+          >
+            <Suspense fallback={<Spinner />}>
+              <DataModelPage />
+            </Suspense>
+          </Route>
+          <Route
+            exact
+            path="/solutions/:solutionId?/:version?/development-tools"
+          >
+            <Suspense fallback={<Spinner />}>
+              <DevelopmentToolsPage />
+            </Suspense>
+          </Route>
+          <Route exact path="/solutions/:solutionId?/:version?/deployments">
+            <Suspense fallback={<Spinner />}>
+              <DeploymentsPage />
+            </Suspense>
+          </Route>
+          <Route exact path="/solutions/:solutionId?/:version?/settings">
+            <Suspense fallback={<Spinner />}>
+              <SettingsPage />
+            </Suspense>
+          </Route>
+        </Switch>
+      </StyledPageWrapper>
     );
   }
 
-  return (
-    <StyledPageWrapper>
-      <Switch>
-        <Route
-          exact
-          path={[
-            '/solutions/:solutionId?/:version?',
-            '/solutions/:solutionId?/:version?/overview/:solutionPage?',
-          ]}
-        >
-          <Suspense fallback={<Spinner />}>
-            <OverviewPage solution={solution} schema={selectedSchema} />
-          </Suspense>
-        </Route>
-        <Route
-          exact
-          path="/solutions/:solutionId?/:version?/data-model/:solutionPage?"
-        >
-          <Suspense fallback={<Spinner />}>
-            <DataModelPage />
-          </Suspense>
-        </Route>
-        <Route exact path="/solutions/:solutionId?/:version?/development-tools">
-          <Suspense fallback={<Spinner />}>
-            <DevelopmentToolsPage />
-          </Suspense>
-        </Route>
-        <Route exact path="/solutions/:solutionId?/:version?/deployments">
-          <Suspense fallback={<Spinner />}>
-            <DeploymentsPage />
-          </Suspense>
-        </Route>
-        <Route exact path="/solutions/:solutionId?/:version?/settings">
-          <Suspense fallback={<Spinner />}>
-            <SettingsPage />
-          </Suspense>
-        </Route>
-      </Switch>
-    </StyledPageWrapper>
-  );
+  if (
+    solutionStatus === ActionStatus.FAIL ||
+    schemasStatus === ActionStatus.FAIL
+  ) {
+    return <Spinner />;
+  }
+  return <Spinner />;
 };

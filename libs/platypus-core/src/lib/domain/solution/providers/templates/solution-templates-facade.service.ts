@@ -7,6 +7,7 @@ import {
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
+  FetchVersionDTO,
   ListVersionsDTO,
 } from '../../dto';
 import { Solution, SolutionSchema } from '../../types';
@@ -46,13 +47,22 @@ export class SolutionTemplatesFacadeService
       );
   }
 
-  fetchSchemaVersion(dto: FetchSolutionDTO): Promise<SolutionSchema> {
+  fetchTemplateGroup(dto: FetchSolutionDTO): Promise<Solution> {
+    return this.templatesApiService
+      .fetchTemplateGroup({ solutionId: dto.solutionId })
+      .then((templateGroup) =>
+        this.templatesDataMapper.deserialize(templateGroup)
+      );
+  }
+
+  fetchSchemaVersion(dto: FetchVersionDTO): Promise<SolutionSchema> {
     return this.templatesApiService
       .fetchSchemaVersion(dto)
       .then((version) =>
         this.templateSchemaDataMapper.deserialize(dto.solutionId, version)
       );
   }
+
   listSchemaVersions(dto: ListVersionsDTO): Promise<SolutionSchema[]> {
     return this.templatesApiService.listSchemaVersions(dto).then((versions) => {
       return versions.map((templateSchemaVersion) =>
@@ -63,6 +73,7 @@ export class SolutionTemplatesFacadeService
       );
     });
   }
+
   publishSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
     return this.templatesApiService
       .createSchema(dto)
@@ -70,6 +81,7 @@ export class SolutionTemplatesFacadeService
         this.templateSchemaDataMapper.deserialize(dto.solutionId, res)
       );
   }
+
   updateSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
     return this.templatesApiService
       .updateSchema(dto)

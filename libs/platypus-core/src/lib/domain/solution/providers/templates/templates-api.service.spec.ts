@@ -30,6 +30,9 @@ describe('TemplatesApiServiceTest', () => {
         list: jest.fn().mockImplementation(() => {
           return Promise.resolve({ items: [templateGroupMock] });
         }),
+        retrieve: jest.fn().mockImplementation(() => {
+          return Promise.resolve([templateGroupMock]);
+        }),
         create: jest.fn().mockImplementation(() => {
           return Promise.resolve([templateGroupMock]);
         }),
@@ -45,6 +48,7 @@ describe('TemplatesApiServiceTest', () => {
       }),
     },
   } as any;
+
   const createInstance = () => {
     return new TemplatesApiService(cdfMock);
   };
@@ -90,6 +94,15 @@ describe('TemplatesApiServiceTest', () => {
     });
     expect(listVersionsMock).toBeCalled();
     expect(versions).toEqual([templateSchemaMock]);
+  });
+
+  it('should load template group as a solution', async () => {
+    const service = createInstance();
+    const solution = await service.fetchTemplateGroup({
+      solutionId: templateGroupMock.externalId,
+    });
+    expect(cdfMock.templates.groups.list).toBeCalled();
+    expect(solution).toEqual(templateGroupMock);
   });
 
   it('should create new template schema version', async () => {

@@ -1,83 +1,61 @@
+import { fetchVersions, fetchSolution } from './actions';
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  SolutionSchema,
-  Solution,
-  SolutionSchemaStatus,
-} from '@platypus/platypus-core';
-
-const mockSchemaString = `type Person @template {
-  firstName: String
-  lastName: String
-  email: String
-  age: Long
-}
-
-type Product @template {
-  name: String
-  price: Float
-  image: String
-  description: String
-  category: Product
-}
-
-type Category @template {
-  name: String
-  products: [Product]
-}`;
+import { SolutionSchema, Solution } from '@platypus/platypus-core';
+import { ActionStatus } from '@platypus-app/types';
 
 const solutionStateSlice = createSlice({
   name: 'solution',
   initialState: {
-    solution: {
-      id: '500',
-      name: 'Mocked Solution',
-      description: 'This template group is used for development.',
-      createdTime: 1637752126628,
-      updatedTime: 1637752126628,
-      owners: ['denis@diigts.no'],
-      version: '3',
-    } as Solution,
-    selectedSchema: {
-      version: '3',
-      status: SolutionSchemaStatus.PUBLISHED,
-      schema: mockSchemaString,
-      createdTime: 1637752126628,
-      lastUpdatedTime: 1637752126628,
-    } as SolutionSchema,
-    schemas: [
-      {
-        version: '3',
-        schema: mockSchemaString,
-        status: SolutionSchemaStatus.PUBLISHED,
-        createdTime: 1637752126628,
-        lastUpdatedTime: 1637752126628,
-      },
-      {
-        version: '2',
-        schema: mockSchemaString,
-        status: SolutionSchemaStatus.PUBLISHED,
-        createdTime: 1637752126628,
-        lastUpdatedTime: 1637752126628,
-      },
-      {
-        version: '1',
-        schema: mockSchemaString,
-        status: SolutionSchemaStatus.PUBLISHED,
-        createdTime: 1637752126628,
-        lastUpdatedTime: 1637752126628,
-      },
-    ] as SolutionSchema[],
+    solution: undefined as Solution | undefined,
+    solutionStatus: ActionStatus.IDLE,
+    solutionError: '',
+    selectedSchema: undefined as SolutionSchema | undefined,
+    schemas: [] as SolutionSchema[],
+    schemasStatus: ActionStatus.IDLE,
+    schemasError: '',
   },
   reducers: {
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {
-      state.selectedSchema = Object.assign(
-        state.selectedSchema,
-        state.schemas.find(
-          (schema) => schema.version === action.payload.version
-        )
-      );
+      if (state.schemas.length) {
+        state.selectedSchema = Object.assign(
+          state.selectedSchema,
+          state.schemas.find(
+            (schema) => schema.version === action.payload.version
+          )
+        );
+      }
     },
+  },
+  extraReducers: (builder) => {
+    // Fetching solution
+    builder.addCase(fetchSolution.pending, (state) => {
+      state.solutionStatus = ActionStatus.PROCESSING;
+    });
+    builder.addCase(fetchSolution.fulfilled, (state, action) => {
+      state.solutionStatus = ActionStatus.SUCCESS;
+      state.solution = action.payload;
+    });
+    builder.addCase(fetchSolution.rejected, (state, action) => {
+      state.solutionStatus = ActionStatus.FAIL;
+      state.solutionError = action.error.message as string;
+    });
+
+    // Fetching versions
+    builder.addCase(fetchVersions.pending, (state) => {
+      state.schemasStatus = ActionStatus.PROCESSING;
+    });
+    builder.addCase(fetchVersions.fulfilled, (state, action) => {
+      state.schemasStatus = ActionStatus.SUCCESS;
+      state.schemas = action.payload;
+      state.selectedSchema = action.payload.length
+        ? action.payload[0]
+        : undefined;
+    });
+    builder.addCase(fetchVersions.rejected, (state, action) => {
+      state.schemasStatus = ActionStatus.FAIL;
+      state.schemasError = action.error.message as string;
+    });
   },
 });
 

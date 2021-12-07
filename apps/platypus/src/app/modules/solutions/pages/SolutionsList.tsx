@@ -15,6 +15,7 @@ import { useSolutions } from '../hooks/useSolutions';
 import { SolutionsState } from '../redux/store';
 import { DeleteSolution } from '../DeleteSolution';
 import { CreateSolution } from '../CreateSolution';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
 export const SolutionsList = () => {
   const history = useHistory();
@@ -52,12 +53,12 @@ export const SolutionsList = () => {
             solution={solution}
             onOpen={(openSolution) => {
               history.push({
-                pathname: `/solutions/${openSolution.id}`,
+                pathname: `/solutions/${openSolution.id}/${DEFAULT_VERSION_PATH}`,
               });
             }}
             onEdit={(editSolution) => {
               history.push({
-                pathname: `/solutions/${editSolution.id}`,
+                pathname: `/solutions/${editSolution.id}/${DEFAULT_VERSION_PATH}`,
               });
             }}
             onDelete={(deleteSolution) => setSolutionToDelete(deleteSolution)}

@@ -35,7 +35,6 @@ export class SolutionSchemaHandler {
    */
   versions(dto: ListVersionsDTO): Promise<Result<SolutionSchema[]>> {
     const validationResult = this.validate(dto, ['solutionId']);
-
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }

@@ -4,11 +4,14 @@ import {
   TemplateGroupVersion,
 } from '@cognite/sdk';
 import { PlatypusError } from '@platypus-core/boundaries/types';
+import { ExternalId } from '@cognite/sdk-core';
+
 import {
   CreateSchemaDTO,
   CreateSolutionDTO,
   DeleteSolutionDTO,
   FetchSolutionDTO,
+  FetchVersionDTO,
   ListVersionsDTO,
 } from '../../dto';
 
@@ -47,7 +50,19 @@ export class TemplatesApiService {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  fetchSchemaVersion(dto: FetchSolutionDTO): Promise<TemplateGroupVersion> {
+  fetchTemplateGroup(dto: FetchSolutionDTO): Promise<TemplateGroup> {
+    const externalIds: ExternalId[] = [
+      {
+        externalId: dto.solutionId,
+      },
+    ];
+    return this.cdfClient.templates.groups
+      .retrieve(externalIds)
+      .then((templateGroup) => templateGroup[0])
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
+
+  fetchSchemaVersion(dto: FetchVersionDTO): Promise<TemplateGroupVersion> {
     return this.listSchemaVersions(dto).then((versions) => {
       if (!versions || !versions.length) {
         return Promise.reject(

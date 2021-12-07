@@ -9,6 +9,9 @@ export interface DeleteSolutionDTO {
 }
 
 export interface FetchSolutionDTO {
+  solutionId: string;
+}
+export interface FetchVersionDTO {
   /** SolutionId (template group external id) */
   solutionId: string;
   version: string;

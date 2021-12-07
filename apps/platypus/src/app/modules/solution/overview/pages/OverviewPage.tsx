@@ -14,11 +14,7 @@ export const OverviewPage = ({
 
   const renderHeader = () => {
     return (
-      <PageToolbar
-        title={`${t('solution_overview_title', 'Overview')} v.${
-          schema.version
-        }`}
-      />
+      <PageToolbar title={`${t('solution_overview_title', 'Overview')} `} />
     );
   };
 
@@ -30,7 +26,7 @@ export const OverviewPage = ({
         <br />
         <br />
         <strong>{solution?.name}</strong>
-        Version {schema.version}
+        Version: {schema?.version || 'No schema defined yet'}
       </PageContentLayout.Body>
     </PageContentLayout>
   );

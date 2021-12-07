@@ -1,7 +1,8 @@
 import { PlatypusError } from '@platypus-app/types';
+import { Notification } from '@platypus-app/components/Notification/Notification';
 
 const showErrorNotification = (error: PlatypusError) => {
-  console.error(error.message);
+  Notification({ type: 'error', message: error.message });
 };
 
 export function withToastForError<Returned>(
