@@ -125,12 +125,12 @@ export default function ProfileRow({ allCount, profile }: Props) {
             value={mean}
           />
         </TableCell>
-        <StyledExpandTableCell>
+        <TableCell style={{ padding: '8px 16px' }}>
           <StyledExpandButton
             icon={expanded ? 'ChevronUp' : 'ChevronDown'}
             type="ghost"
           />
-        </StyledExpandTableCell>
+        </TableCell>
       </StyledTableRow>
       {expanded && <ProfileDetailsRow allCount={allCount} profile={profile} />}
     </>
@@ -184,7 +184,7 @@ export const TableCell = ({ $width, numeric, children, style }: any) => {
     alignItems: 'center',
   };
   return (
-    <StyledTD $width={$width} style={style}>
+    <StyledTD $width={$width} style={style} className="styled-cell">
       <Body level={2} strong style={bodyStyle}>
         {children}
       </Body>
@@ -201,15 +201,18 @@ const StyledTD = styled.td<{
   text-align: ${({ numeric }) => (numeric ? 'right' : 'left')};
 `;
 
-const StyledExpandTableCell = styled(StyledTD)`
-  padding: 8px 16px;
-`;
-
 const StyledExpandButton = styled(Button)`
   display: none;
 `;
 
 const StyledTableRow = styled.tr`
+  cursor: pointer;
+  .styled-cell {
+    border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
+  .styled-cell:not(:last-child) {
+    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
   &:hover {
     background-color: ${Colors['bg-accent'].hex()};
 

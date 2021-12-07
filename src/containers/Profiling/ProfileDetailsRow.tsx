@@ -14,7 +14,7 @@ export default function ProfileDetailsRow({ allCount, profile }: Props) {
   const columnType = profile.type;
 
   return (
-    <StyledExpandedRow key="profile-details">
+    <tr key="profile-details">
       <td colSpan={9} style={{ padding: 0 }}>
         <ExpandedRow>
           {columnType === 'String' && (
@@ -28,7 +28,7 @@ export default function ProfileDetailsRow({ allCount, profile }: Props) {
           )}
         </ExpandedRow>
       </td>
-    </StyledExpandedRow>
+    </tr>
   );
 }
 
@@ -139,6 +139,7 @@ const NumberOrMissingSummary = ({
 );
 
 const ExpandedRow = styled.div`
+  border-top: 1px solid ${Colors['border-default'].hex()};
   background-color: ${Colors['greyscale-grey1'].hex()};
   padding: 24px;
   display: grid;
@@ -162,8 +163,4 @@ const StyledStatisticsItem = styled.div`
     font-size: 13px;
     line-height: 18px;
   }
-`;
-
-const StyledExpandedRow = styled.tr`
-  border: 1px solid ${Colors['border-default'].hex()};
 `;

@@ -162,10 +162,4 @@ const Table = styled.table`
   border-spacing: 0;
   overflow: hidden;
   border: 1px solid ${Colors['greyscale-grey4'].hex()};
-  tr:not(:last-child) > td {
-    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
-  }
-  td:not(:last-child) {
-    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
-  }
 `;
