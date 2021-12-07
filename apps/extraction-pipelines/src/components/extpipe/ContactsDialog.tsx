@@ -85,9 +85,8 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
 };
 
 const isValidEmail = (email: string) => {
-  // @Email(regexp = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-zA-Z]{2,})$")
-  //     @Size(min = 1, max = 254)
-  return /^[\w-+]+(\.[\w]+)*@[\w-]+(\.[\w]+)*(\.[a-zA-Z]{2,})$/.test(email);
+  // backend regex = @Email(regexp = "^[\\w-\\+]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[a-zA-Z]{2,})$")
+  return /^[\w-+]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*(\.[a-zA-Z]{2,})$/.test(email);
 };
 
 type ViewProps = {
