@@ -130,7 +130,7 @@ export const EditMetaDataView = ({
             </table>
           </StyledTableNoRowColor2>
           <div>
-            <Button icon="PlusCompact" onClick={addRow}>
+            <Button icon="AddLarge" onClick={addRow}>
               Add fields
             </Button>
           </div>

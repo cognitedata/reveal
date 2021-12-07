@@ -81,7 +81,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
       </CardNavLink>
       <CardInWrapper>
         <StyledTitleCard className="card-title">
-          <Icon type="Calendar" />
+          <Icon type="Clock" />
           {TableHeadings.SCHEDULE}
         </StyledTitleCard>
         <CardValue className="card-value">
