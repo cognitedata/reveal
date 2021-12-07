@@ -10,6 +10,7 @@ import {
 } from '@turf/helpers';
 import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import mapboxgl from 'maplibre-gl';
 import { v1 } from 'uuid';
@@ -110,7 +111,7 @@ export const Map: React.FC = () => {
   const [combinedSources] = useMapSources();
 
   const isPolygonButtonActive =
-    drawMode === 'draw_polygon' || polygon.length > 0;
+    drawMode === 'draw_polygon' || !isEmpty(polygon);
 
   const { t } = useTranslation();
 
@@ -146,7 +147,7 @@ export const Map: React.FC = () => {
 
   useEffect(() => {
     // Draw polygon when loads a saved search
-    if (geoFilter.length > 0) {
+    if (!isEmpty(geoFilter)) {
       const firstGeo = geoFilter[0];
       if (getGeometryType(firstGeo) === 'LineString') {
         dispatch(addArbitraryLine(v1(), firstGeo as Feature));
@@ -199,7 +200,7 @@ export const Map: React.FC = () => {
   });
 
   const updateArea = React.useCallback((event: TS_FIX_ME) => {
-    if (event.features.length === 0) return;
+    if (isEmpty(event.features)) return;
 
     const eventType = event && event.type;
 
@@ -260,7 +261,7 @@ export const Map: React.FC = () => {
     let zoom = changeZoom;
 
     // default zoom
-    if (changeZoom === undefined) {
+    if (isUndefined(changeZoom)) {
       // since the data is clustered we zoom in one level deeper to "get out" of the cluster
       zoom = DEFAULT_CLUSTER_ZOOM_LEVEL + 1;
     }
@@ -297,7 +298,7 @@ export const Map: React.FC = () => {
     dispatch(clearSelectedFeature());
     searchPendingRef.current = false;
 
-    if (geoFilter.length > 0) {
+    if (!isEmpty(geoFilter)) {
       clearPolygon();
     }
   };
@@ -332,7 +333,7 @@ export const Map: React.FC = () => {
         if (
           !selectedSurveyData ||
           'error' in selectedSurveyData ||
-          selectedSurveyData.files.length === 0
+          isEmpty(selectedSurveyData.files)
         ) {
           showErrorMessage(SEISMIC_NO_SURVEY_ERROR_MESSAGE);
           return;
