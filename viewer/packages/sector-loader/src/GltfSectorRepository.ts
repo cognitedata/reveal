@@ -63,11 +63,6 @@ export class GltfSectorRepository implements SectorRepository {
 
       const filteredGeometryBuffer = V9GeometryFilterer.filterGeometry(parsedGeometry.geometryBuffer, type);
 
-      if (type === RevealGeometryCollectionType.BoxCollection) {
-        console.log('Attributes for ' + type);
-        console.dir(parsedGeometry.geometryBuffer.attributes);
-      }
-
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
         case RevealGeometryCollectionType.CircleCollection:
