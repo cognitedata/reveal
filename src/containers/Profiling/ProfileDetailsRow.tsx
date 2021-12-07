@@ -33,17 +33,8 @@ export default function ProfileDetailsRow({ allCount, profile }: Props) {
 }
 
 const ProfilingDataString = ({ allCount, profile }: Props) => {
-  const {
-    distinctCount,
-    counts,
-    count,
-    nullCount,
-    min,
-    max,
-    mean,
-    median,
-    histogram,
-  } = profile;
+  const { distinctCount, counts, count, nullCount, min, max, histogram } =
+    profile;
   return (
     <>
       <Section title="Numerical statistics">
@@ -57,8 +48,6 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
           <NumberOrMissingSummary label="Empty" value={nullCount} />
           <NumberOrMissingSummary label="Minimum length" value={min} />
           <NumberOrMissingSummary label="Maximum length" value={max} />
-          <NumberOrMissingSummary label="Mean length" value={mean} />
-          <NumberOrMissingSummary label="Median length" value={median} />
         </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
