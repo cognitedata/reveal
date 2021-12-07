@@ -1,6 +1,14 @@
 import React, { useMemo, useState } from 'react';
 
-import { Button, Colors, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Colors,
+  Flex,
+  Icon,
+  Label,
+  Tooltip,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
@@ -137,14 +145,17 @@ const NumberOrMissingTd = ({
 };
 
 export const TableCell = ({ $width, numeric, children, style }: any) => {
-  const flexStyle = {
-    direction: 'row',
+  const bodyStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
     justifyContent: numeric ? 'flex-end' : 'space-between',
     alignItems: 'center',
   };
   return (
     <StyledTD $width={$width} style={style}>
-      <Flex {...flexStyle}>{children}</Flex>
+      <Body level={2} strong style={bodyStyle}>
+        {children}
+      </Body>
     </StyledTD>
   );
 };
@@ -155,15 +166,15 @@ const StyledTD = styled.td<{
 }>`
   padding: 16px;
   width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
-  text-align: ${({ numeric }) => (numeric ? 'right' : 'center')};
+  text-align: ${({ numeric }) => (numeric ? 'right' : 'left')};
+`;
+
+const StyledExpandTableCell = styled(StyledTD)`
+  padding: 8px 16px;
 `;
 
 const StyledExpandButton = styled(Button)`
   display: none;
-`;
-
-const StyledExpandTableCell = styled(TableCell)`
-  padding: 9px 16px 8px;
 `;
 
 const StyledTableRow = styled.tr`
