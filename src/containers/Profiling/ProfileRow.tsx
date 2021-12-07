@@ -11,6 +11,20 @@ import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
 
+type ProfileRowDataType = 'Empty' | 'Distinct' | 'Min' | 'Max' | 'Mean';
+
+const availableDataTypes: Record<
+  ColumnProfile['type'] | 'Unknown',
+  ProfileRowDataType[]
+> = {
+  Boolean: ['Empty'],
+  Number: ['Empty', 'Distinct', 'Min', 'Max', 'Mean'],
+  Object: ['Empty'],
+  String: ['Empty', 'Distinct'],
+  Vector: ['Empty'],
+  Unknown: [],
+};
+
 const StyledInfoFilledIcon = styled(Icon).attrs({
   size: 16,
   type: 'InfoFilled',
@@ -19,15 +33,19 @@ const StyledInfoFilledIcon = styled(Icon).attrs({
 `;
 
 const NumberOrMissingTd = ({
-  checkIfAvailable,
   columnType,
+  dataType,
   value,
 }: {
-  checkIfAvailable?: boolean;
   columnType?: ColumnProfile['type'] | 'Unknown';
+  dataType: ProfileRowDataType;
   value?: number;
 }) => {
-  if (columnType !== 'Number' && checkIfAvailable) {
+  const isDataAvailable = columnType
+    ? availableDataTypes[columnType].includes(dataType)
+    : false;
+
+  if (!isDataAvailable) {
     return (
       <TableData className="numeric">
         <Tooltip content="This information is not available for this data type">
@@ -77,8 +95,16 @@ export default function ProfileRow({ allCount, profile }: Props) {
       >
         <TableData>{<ColumnIcon dataKey={label} />}</TableData>
         <TableData>{label}</TableData>
-        <NumberOrMissingTd value={nullCount} />
-        <NumberOrMissingTd value={distinctCount} />
+        <NumberOrMissingTd
+          columnType={columnType}
+          dataType="Empty"
+          value={nullCount}
+        />
+        <NumberOrMissingTd
+          columnType={columnType}
+          dataType="Distinct"
+          value={distinctCount}
+        />
         <TableData style={{ padding: '4px 0 0' }}>
           {histogram && (
             <Graph
@@ -90,19 +116,11 @@ export default function ProfileRow({ allCount, profile }: Props) {
             />
           )}
         </TableData>
+        <NumberOrMissingTd columnType={columnType} dataType="Min" value={min} />
+        <NumberOrMissingTd columnType={columnType} dataType="Max" value={max} />
         <NumberOrMissingTd
-          checkIfAvailable
           columnType={columnType}
-          value={min}
-        />
-        <NumberOrMissingTd
-          checkIfAvailable
-          columnType={columnType}
-          value={max}
-        />
-        <NumberOrMissingTd
-          checkIfAvailable
-          columnType={columnType}
+          dataType="Mean"
           value={mean}
         />
         <StyledExpandTableCell>
