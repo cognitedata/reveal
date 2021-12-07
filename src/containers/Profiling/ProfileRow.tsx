@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
@@ -10,45 +10,6 @@ import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
-
-const StyledInfoFilledIcon = styled(Icon).attrs({
-  size: 16,
-  type: 'InfoFilled',
-})`
-  color: ${Colors['text-hint'].hex()};
-`;
-
-const NumberOrMissingTd = ({
-  checkIfAvailable,
-  columnType,
-  value,
-}: {
-  checkIfAvailable?: boolean;
-  columnType?: ColumnProfile['type'] | 'Unknown';
-  value?: number;
-}) => {
-  if (columnType !== 'Number' && checkIfAvailable) {
-    return (
-      <TableData className="numeric">
-        <Tooltip content="This information is not available for this data type">
-          <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
-        </Tooltip>
-      </TableData>
-    );
-  }
-
-  return (
-    <TableData className="numeric">
-      {Number.isFinite(value) ? (
-        value
-      ) : (
-        <Tooltip content="Unavailable due to error">
-          <StyledInfoFilledIcon />
-        </Tooltip>
-      )}
-    </TableData>
-  );
-};
 
 type Props = {
   allCount: number;
@@ -75,11 +36,15 @@ export default function ProfileRow({ allCount, profile }: Props) {
         onClick={() => setExpanded(!expanded)}
         style={{ cursor: 'pointer' }}
       >
-        <TableData>{<ColumnIcon dataKey={label} />}</TableData>
-        <TableData>{label}</TableData>
-        <NumberOrMissingTd value={nullCount} />
-        <NumberOrMissingTd value={distinctCount} />
-        <TableData style={{ padding: '4px 0 0' }}>
+        <TableCell>{<ColumnIcon dataKey={label} />}</TableCell>
+        <TableCell>{label}</TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd value={nullCount} />
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd value={distinctCount} />
+        </TableCell>
+        <TableCell style={{ padding: '4px 0 0' }}>
           {histogram && (
             <Graph
               distribution={histogram}
@@ -89,22 +54,28 @@ export default function ProfileRow({ allCount, profile }: Props) {
               fill="rgba(140, 140, 140, 1)"
             />
           )}
-        </TableData>
-        <NumberOrMissingTd
-          checkIfAvailable
-          columnType={columnType}
-          value={min}
-        />
-        <NumberOrMissingTd
-          checkIfAvailable
-          columnType={columnType}
-          value={max}
-        />
-        <NumberOrMissingTd
-          checkIfAvailable
-          columnType={columnType}
-          value={mean}
-        />
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd
+            checkIfAvailable
+            columnType={columnType}
+            value={min}
+          />
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd
+            checkIfAvailable
+            columnType={columnType}
+            value={max}
+          />
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd
+            checkIfAvailable
+            columnType={columnType}
+            value={mean}
+          />
+        </TableCell>
         <StyledExpandTableCell>
           <StyledExpandButton
             icon={expanded ? 'ChevronUp' : 'ChevronDown'}
@@ -117,16 +88,63 @@ export default function ProfileRow({ allCount, profile }: Props) {
   );
 }
 
-export const TableData = styled.td<{ $width?: number }>`
+const NumberOrMissingTd = ({
+  checkIfAvailable,
+  columnType,
+  value,
+}: {
+  checkIfAvailable?: boolean;
+  columnType?: ColumnProfile['type'] | 'Unknown';
+  value?: number;
+}) => {
+  if (columnType !== 'Number' && checkIfAvailable) {
+    return (
+      <StyledJustifyCenter>
+        <Tooltip content="This information is not available for this data type">
+          <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
+        </Tooltip>
+      </StyledJustifyCenter>
+    );
+  }
+
+  return Number.isFinite(value) ? (
+    <>{value}</>
+  ) : (
+    <StyledJustifyCenter>
+      <Tooltip content="Unavailable due to error">
+        <StyledInfoFilledIcon />
+      </Tooltip>
+    </StyledJustifyCenter>
+  );
+};
+
+export const TableCell = ({ $width, numeric, children, style }: any) => {
+  const flexStyle = {
+    direction: 'row',
+    justifyContent: numeric ? 'flex-end' : 'space-between',
+    alignItems: 'center',
+  };
+  return (
+    <StyledTD $width={$width} style={style}>
+      <Flex {...flexStyle}>{children}</Flex>
+    </StyledTD>
+  );
+};
+
+const StyledTD = styled.td<{
+  $width?: number;
+  numeric?: boolean;
+}>`
   padding: 16px;
   width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
+  text-align: ${({ numeric }) => (numeric ? 'right' : 'center')};
 `;
 
 const StyledExpandButton = styled(Button)`
   display: none;
 `;
 
-const StyledExpandTableCell = styled(TableData)`
+const StyledExpandTableCell = styled(TableCell)`
   padding: 9px 16px 8px;
 `;
 
@@ -138,4 +156,16 @@ const StyledTableRow = styled.tr`
       display: block;
     }
   }
+`;
+
+const StyledJustifyCenter = styled(Flex)`
+  width: 100%;
+  justify-content: center;
+`;
+
+const StyledInfoFilledIcon = styled(Icon).attrs({
+  size: 16,
+  type: 'InfoFilled',
+})`
+  color: ${Colors['text-hint'].hex()};
 `;

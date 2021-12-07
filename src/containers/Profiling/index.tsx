@@ -161,9 +161,6 @@ const Table = styled.table`
   border-spacing: 0;
   overflow: hidden;
   border: 1px solid ${Colors['greyscale-grey4'].hex()};
-  .numeric {
-    text-align: right;
-  }
   tr:not(:last-child) > td {
     border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Flex, Colors, Icon } from '@cognite/cogs.js';
-import { TableData } from './ProfileRow';
+import { Colors, Icon } from '@cognite/cogs.js';
+import { TableCell } from './ProfileRow';
 
 import { SortableColumn } from '.';
 
@@ -22,98 +22,40 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
   return (
     <StyledTableHeader>
       <tr>
-        <TableData $width={44}>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Icon type="ReorderDefault" onClick={() => onSortClick('type')} />
-          </Flex>
-        </TableData>
-        <TableData>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Column
-            <Icon type="ReorderDefault" onClick={() => onSortClick('label')} />
-          </Flex>
-        </TableData>
-        <TableData>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Empty
-            <Icon
-              type="ReorderDefault"
-              onClick={() => onSortClick('nullCount')}
-            />
-          </Flex>
-        </TableData>
-        <TableData>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Distinct
-            <Icon
-              type="ReorderDefault"
-              onClick={() => onSortClick('distinctCount')}
-            />
-          </Flex>
-        </TableData>
-        <TableData $width={150}>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Frequency
-          </Flex>
-        </TableData>
-        <TableData>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Min
-            <Icon type="ReorderDefault" onClick={() => onSortClick('min')} />
-          </Flex>
-        </TableData>
-        <TableData>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Max
-            <Icon type="ReorderDefault" onClick={() => onSortClick('max')} />
-          </Flex>
-        </TableData>
-        <TableData>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            Mean
-          </Flex>
-        </TableData>
-        <TableData $width={68}>
-          <Flex
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <StyledExpandTableHeaderIcon type="ChevronDown" />
-          </Flex>
-        </TableData>
+        <TableCell $width={44}>
+          <Icon type="ReorderDefault" onClick={() => onSortClick('type')} />
+        </TableCell>
+        <TableCell>
+          Column
+          <Icon type="ReorderDefault" onClick={() => onSortClick('label')} />
+        </TableCell>
+        <TableCell>
+          Empty
+          <Icon
+            type="ReorderDefault"
+            onClick={() => onSortClick('nullCount')}
+          />
+        </TableCell>
+        <TableCell>
+          Distinct
+          <Icon
+            type="ReorderDefault"
+            onClick={() => onSortClick('distinctCount')}
+          />
+        </TableCell>
+        <TableCell $width={150}>Frequency</TableCell>
+        <TableCell>
+          Min
+          <Icon type="ReorderDefault" onClick={() => onSortClick('min')} />
+        </TableCell>
+        <TableCell>
+          Max
+          <Icon type="ReorderDefault" onClick={() => onSortClick('max')} />
+        </TableCell>
+        <TableCell>Mean</TableCell>
+        <TableCell $width={68}>
+          <StyledExpandTableHeaderIcon type="ChevronDown" />
+        </TableCell>
       </tr>
     </StyledTableHeader>
   );
