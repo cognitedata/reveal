@@ -88,3 +88,8 @@ Then you can add some story to document functionality that you want add.
 
 Project build as a library will be created in **dist/node-visualizer** folder.
 
+
+### Publishing your changes
+
+Make sure your changes are merged on master. Checkout master and run `yarn publish`.
+When prompted, type the new version number you want to publish on.
