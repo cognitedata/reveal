@@ -4,7 +4,7 @@ import { sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
 
-import { ALL_FILTER } from 'hooks/table-filters';
+import { useFilteredColumns } from 'hooks/table-filters';
 import {
   ColumnProfile,
   useQuickProfile,
@@ -76,8 +76,7 @@ const StyledExpandTableHeaderIcon = styled(Icon)`
 
 type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
-  const { database, table, columnNameFilter, columnTypeFilters } =
-    useActiveTableContext();
+  const { database, table } = useActiveTableContext();
   const { isFetched: areTypesFetched } = useColumnType(database, table);
 
   const fullProfile = useFullProfile({
@@ -107,21 +106,7 @@ export const Profiling = (): JSX.Element => {
     }
   };
 
-  const filteredColumns = useMemo(
-    () =>
-      areTypesFetched
-        ? data.columns.filter((column) => {
-            const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
-              ? true
-              : columnTypeFilters.includes(column.type);
-            const fitsTitleFilter = column.label
-              .toLowerCase()
-              .includes(columnNameFilter.toLowerCase());
-            return fitsTitleFilter && fitsTypeFilter;
-          })
-        : data.columns,
-    [data.columns, columnNameFilter, columnTypeFilters, areTypesFetched]
-  );
+  const filteredColumns = useFilteredColumns(data.columns);
 
   const columnList = useMemo(() => {
     const columns = sortBy(filteredColumns, sortKey);

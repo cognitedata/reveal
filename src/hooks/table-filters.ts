@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
+
 import { useActiveTableContext } from 'contexts';
-import { useColumnTypeCounts } from 'hooks/profiling-service';
+import { useColumnTypeCounts, useColumnType } from 'hooks/profiling-service';
 
 import { FilterType } from 'components/FilterItem';
 
@@ -78,4 +80,28 @@ export const useFilters = () => {
     columnNameFilter,
     setColumnNameFilter,
   };
+};
+
+export const useFilteredColumns = (columns: any) => {
+  const { database, table, columnNameFilter, columnTypeFilters } =
+    useActiveTableContext();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
+
+  const filteredColumns = useMemo(
+    () =>
+      areTypesFetched
+        ? columns.filter((column: any) => {
+            const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
+              ? true
+              : columnTypeFilters.includes(column.type);
+            const fitsTitleFilter = column.label
+              .toLowerCase()
+              .includes(columnNameFilter.toLowerCase());
+            return fitsTitleFilter && fitsTypeFilter;
+          })
+        : columns,
+    [columns, columnNameFilter, columnTypeFilters, areTypesFetched]
+  );
+
+  return filteredColumns;
 };
