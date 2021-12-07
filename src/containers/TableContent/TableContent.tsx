@@ -41,7 +41,7 @@ const TableContent = () => {
         </Tabs.TabPane>
         <Tabs.TabPane
           key="profiling"
-          tab={<TabProfiling isFetching={isFetching} />}
+          tab={<TabProfiling isFetching={isFetching} isEmpty={isEmpty} />}
           style={{ overflow: 'auto' }}
           disabled={isEmpty}
         >
@@ -58,8 +58,14 @@ const TabSpreadsheet = (): JSX.Element => (
     Table
   </Tab>
 );
-const TabProfiling = ({ isFetching }: { isFetching: boolean }): JSX.Element => (
-  <Tab>
+const TabProfiling = ({
+  isFetching,
+  isEmpty,
+}: {
+  isFetching: boolean;
+  isEmpty: boolean;
+}): JSX.Element => (
+  <Tab style={{ color: isEmpty ? Colors['greyscale-grey5'].hex() : 'inherit' }}>
     <Icon type={isFetching ? 'Loader' : 'Profiling'} />
     Profile
   </Tab>
