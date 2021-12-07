@@ -106,6 +106,7 @@ export const Profiling = (): JSX.Element => {
                   ))}
                 </tbody>
               </Table>
+              <div style={{ height: '24px' }} />
             </div>
           )}
         </AutoResizer>
