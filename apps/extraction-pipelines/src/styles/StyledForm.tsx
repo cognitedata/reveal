@@ -90,6 +90,12 @@ export const ColumnForm = styled.form`
     margin-left: 1rem;
     color: ${sideBarLabelColor};
   }
+  .cogs-input-container {
+    width: 100%;
+    .addons-input-wrapper {
+      width: 100%;
+    }
+  }
 `;
 
 export const AddForm = styled.form`
