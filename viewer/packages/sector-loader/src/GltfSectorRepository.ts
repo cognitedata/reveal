@@ -63,6 +63,11 @@ export class GltfSectorRepository implements SectorRepository {
 
       const filteredGeometryBuffer = V9GeometryFilterer.filterGeometry(parsedGeometry.geometryBuffer, type);
 
+      if (type === RevealGeometryCollectionType.BoxCollection) {
+        console.log('Attributes for ' + type);
+        console.dir(parsedGeometry.geometryBuffer.attributes);
+      }
+
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
         case RevealGeometryCollectionType.CircleCollection:
@@ -75,14 +80,14 @@ export class GltfSectorRepository implements SectorRepository {
         case RevealGeometryCollectionType.TorusSegmentCollection:
         case RevealGeometryCollectionType.TrapeziumCollection:
         case RevealGeometryCollectionType.NutCollection:
-          geometryBatchingQueue.push({ type,
-                                       geometryBuffer: filteredGeometryBuffer,
-                                       instanceId: type.toString() });
+          geometryBatchingQueue.push({ type, geometryBuffer: filteredGeometryBuffer, instanceId: type.toString() });
           break;
         case RevealGeometryCollectionType.InstanceMesh:
-          geometryBatchingQueue.push({ type,
-                                       geometryBuffer: filteredGeometryBuffer,
-                                       instanceId: parsedGeometry.instanceId! });
+          geometryBatchingQueue.push({
+            type,
+            geometryBuffer: filteredGeometryBuffer,
+            instanceId: parsedGeometry.instanceId!
+          });
           break;
         case RevealGeometryCollectionType.TriangleMesh:
           this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
