@@ -23,10 +23,14 @@ export const AnnotationStatusChange = createAsyncThunk<
       dispatch(UpdateAnnotations([unSavedAnnotation])); // update annotation
       return;
     }
+    // eslint-disable-next-line no-nested-ternary
+    const assetsToFetch = updatedAnnotation.linkedResourceId
+      ? { id: updatedAnnotation.linkedResourceId }
+      : updatedAnnotation.linkedResourceExternalId
+      ? { externalId: updatedAnnotation.linkedResourceExternalId }
+      : { externalId: updatedAnnotation.text };
 
-    const assetResponse = await dispatch(
-      fetchAssets([{ externalId: updatedAnnotation.text }])
-    );
+    const assetResponse = await dispatch(fetchAssets([assetsToFetch]));
     const assets = unwrapResult(assetResponse);
 
     if (assets && assets.length) {

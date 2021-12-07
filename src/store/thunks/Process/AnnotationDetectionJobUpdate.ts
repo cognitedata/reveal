@@ -35,7 +35,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
   ) => {
     if (job.status === 'Running' || job.status === 'Completed') {
       let unsavedAnnotations: UnsavedAnnotation[] = [];
-      let assetExternalIdMap = new Map<string, VisionAsset>();
+      let assetIdMap = new Map<number, VisionAsset>();
 
       const newCompletedFileIds =
         job.items
@@ -64,17 +64,19 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
         if (jobFilesWithDetectedAnnotations.length) {
           const assetRequests = jobFilesWithDetectedAnnotations.map(
             (jobItem) => {
-              const assetExternalIds = [
+              const assetIds: number[] = [
                 ...new Set(
-                  jobItem.annotations.map(
-                    (detectedAnnotation) => detectedAnnotation.text
-                  )
+                  jobItem.annotations
+                    .map((detectedAnnotation) => detectedAnnotation?.assetIds)
+                    .filter((item): item is number[] => !!item)
+                    .flat()
                 ),
               ];
+
               return dispatch(
                 fetchAssets(
-                  assetExternalIds.map((externalId) => ({
-                    externalId,
+                  assetIds.map((id) => ({
+                    id,
                   }))
                 )
               );
@@ -86,14 +88,9 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
           );
           const assetMapArr = assetUnwrappedResponses.map(
             (assetUnwrappedResponse) =>
-              new Map(
-                assetUnwrappedResponse.map((asset) => [
-                  asset.externalId!,
-                  asset,
-                ])
-              )
+              new Map(assetUnwrappedResponse.map((asset) => [asset.id, asset]))
           );
-          assetExternalIdMap = assetMapArr.reduce((acc, current) => {
+          assetIdMap = assetMapArr.reduce((acc, current) => {
             return new Map([...acc, ...current]);
           });
         }
@@ -104,21 +101,36 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
         const { annotations } = annResult;
 
         if (annotations && annotations.length) {
-          const unsavedAnnotationsForFile = annotations.map((ann) => {
-            const asset = assetExternalIdMap.get(ann.text);
-
-            return getUnsavedAnnotation(
-              ann.text,
-              job.type,
-              annResult.fileId,
-              'context_api',
-              enforceRegionValidity(ann.region),
-              AnnotationStatus.Unhandled,
-              { confidence: ann.confidence },
-              asset?.id,
-              asset?.externalId
-            );
-          });
+          const unsavedAnnotationsForFile = annotations
+            .map((ann) => {
+              if (ann.assetIds && ann.assetIds.length) {
+                return ann.assetIds.map((assetId) => {
+                  const asset = assetIdMap.get(assetId);
+                  return getUnsavedAnnotation(
+                    ann.text,
+                    job.type,
+                    annResult.fileId,
+                    'context_api',
+                    enforceRegionValidity(ann.region),
+                    AnnotationStatus.Unhandled,
+                    { confidence: ann.confidence },
+                    asset?.id,
+                    asset?.externalId
+                  );
+                });
+              }
+              return getUnsavedAnnotation(
+                ann.text,
+                job.type,
+                annResult.fileId,
+                'context_api',
+                enforceRegionValidity(ann.region),
+                AnnotationStatus.Unhandled,
+                { confidence: ann.confidence }
+              );
+            })
+            .filter((item): item is UnsavedAnnotation[] => !!item)
+            .flat();
           unsavedAnnotations = unsavedAnnotations.concat(
             unsavedAnnotationsForFile
           );
