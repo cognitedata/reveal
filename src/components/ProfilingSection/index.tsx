@@ -27,7 +27,7 @@ export const Section = ({
   return (
     <StyledSection isHalf={isHalf} isCompact={isCompact} style={style}>
       {title && (
-        <Body level={2} strong style={{ marginBottom: '8px' }}>
+        <Body level={2} strong style={{ marginBottom: '4px' }}>
           {title}
         </Body>
       )}
@@ -54,10 +54,12 @@ const StyledSection = styled.div.attrs(
       flex: isHalf ? '1 1 45%' : '1 1 100%',
       maxWidth: isHalf ? '50%' : '100%',
       backgroundColor: Colors.white.hex(),
+      padding: '20px',
     };
     const compactStyle: React.CSSProperties = {
       borderRadius: '8px',
       backgroundColor: Colors['greyscale-grey1'].hex(),
+      padding: '8px 12px',
     };
     const newStyle: React.CSSProperties = {
       ...defaultStyle,
@@ -72,7 +74,6 @@ const StyledSection = styled.div.attrs(
   align-items: flex-start;
   justify-content: flex-start;
   height: auto;
-  padding: 12px;
   margin: 6px;
   box-sizing: border-box;
 `;

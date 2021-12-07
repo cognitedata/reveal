@@ -1,6 +1,9 @@
 import React from 'react';
+
+import { Colors, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Colors } from '@cognite/cogs.js';
+
+import { TOOLTIP_DELAY_IN_MS } from 'utils/constants';
 
 export type Count = {
   value: string;
@@ -14,20 +17,30 @@ type Props = {
 export default function FrequencyStats({ allCount, counts }: Props) {
   if (!counts) return <span />;
   return (
-    <FrequenceTable style={{ marginTop: 12, width: '100%' }}>
+    <FrequenceTable style={{ width: '100%' }}>
       <TableHeader>
         <tr>
-          <td>Value</td>
-          <td className="numeric">Count</td>
-          <td />
+          <td style={{ width: 'calc(70% - 90px)' }}>Value</td>
+          <td className="numeric" style={{ width: 90 }}>
+            Count
+          </td>
+          <td style={{ width: '30%' }} />
         </tr>
       </TableHeader>
       <tbody>
         {counts.map(({ value, count }) => (
           <tr key={value} className={value === '<other>' ? 'other' : undefined}>
-            <TableData>{value}</TableData>
+            <StyledFrequenceTableValue>
+              <Tooltip
+                content={value}
+                delay={TOOLTIP_DELAY_IN_MS}
+                disabled={value === '<other>'}
+              >
+                <>{value}</>
+              </Tooltip>
+            </StyledFrequenceTableValue>
             <TableData className="numeric">{count}</TableData>
-            <TableData style={{ width: '30%', padding: '0 10px' }}>
+            <TableData style={{ padding: '0 10px' }}>
               <Percent p={Math.round((count / allCount) * 100)} />
             </TableData>
           </tr>
@@ -65,6 +78,8 @@ const FrequenceTable = styled.table`
   tr.other {
     border-top: 1px dashed ${Colors['greyscale-grey4'].hex()};
   }
+
+  table-layout: fixed;
 `;
 
 const TableHeader = styled.thead`
@@ -73,4 +88,12 @@ const TableHeader = styled.thead`
 `;
 const TableData = styled.td`
   padding: 4px 0;
+`;
+
+const StyledFrequenceTableValue = styled(TableData)`
+  width: calc(70% - 100px);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

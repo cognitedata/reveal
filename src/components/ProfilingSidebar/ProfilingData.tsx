@@ -116,7 +116,7 @@ const ColumnString = ({ data, profile }: PropsString) => {
       <Section.Distribution
         histogram={histogram}
         max={max}
-        title="Length distribution"
+        title="Char length distribution"
         isCompact
       />
     </StyledProfilingDataWrapper>
@@ -156,7 +156,7 @@ interface PropsNumber extends BaseColumn {
 }
 const ColumnNumber = ({ data, profile }: PropsNumber) => {
   if (!profile) return <span />;
-  const { count, nullCount, histogram, min, max, mean, std } = data;
+  const { count, nullCount, histogram, min, max, mean, median, std } = data;
   const { distinctCount } = profile;
 
   return (
@@ -182,7 +182,10 @@ const ColumnNumber = ({ data, profile }: PropsNumber) => {
       <Section title="Mean" isCompact isHalf>
         {mean?.toFixed(1) ?? DATA_MISSING}
       </Section>
-      <Section title="Standard deviation" isCompact isHalf>
+      <Section title="Median" isCompact isHalf>
+        {median?.toFixed(1) ?? DATA_MISSING}
+      </Section>
+      <Section title="Standard deviation" isCompact>
         {std?.toFixed(1) ?? DATA_MISSING}
       </Section>
     </StyledProfilingDataWrapper>

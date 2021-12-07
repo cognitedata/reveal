@@ -63,6 +63,11 @@ const Table = styled.table`
   }
 `;
 
+const StyledExpandTableHeaderIcon = styled(Icon)`
+  cursor: pointer;
+  margin: 0 10px;
+`;
+
 type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
@@ -148,13 +153,12 @@ export const Profiling = (): JSX.Element => {
               <Table>
                 <TableHeader>
                   <tr>
-                    <TableData>
+                    <TableData $width={44}>
                       <Flex
                         direction="row"
                         justifyContent="space-between"
                         alignItems="center"
                       >
-                        Type
                         <Icon
                           type="ReorderDefault"
                           onClick={() => setSortKey('type')}
@@ -242,6 +246,15 @@ export const Profiling = (): JSX.Element => {
                         alignItems="center"
                       >
                         Mean
+                      </Flex>
+                    </TableData>
+                    <TableData $width={68}>
+                      <Flex
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        <StyledExpandTableHeaderIcon type="ChevronDown" />
                       </Flex>
                     </TableData>
                   </tr>
