@@ -14,7 +14,7 @@ const DirectionArrows = ({ psToOw = true }: Props) => (
         psToOw ? Colors.danger.hex() : Colors['greyscale-grey4'].hex()
       }
     >
-      <Icon type="ArrowForward" />
+      <Icon type="ArrowRight" />
     </Arrow>
     <Arrow
       isTop={false}
@@ -22,7 +22,7 @@ const DirectionArrows = ({ psToOw = true }: Props) => (
         !psToOw ? Colors.midblue.hex() : Colors['greyscale-grey4'].hex()
       }
     >
-      <Icon type="ArrowBack" />
+      <Icon type="ArrowLeft" />
     </Arrow>
   </ArrowsContainer>
 );

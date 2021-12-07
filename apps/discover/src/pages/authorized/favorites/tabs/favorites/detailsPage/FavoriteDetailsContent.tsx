@@ -163,7 +163,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
                 <span>
                   Documents
                   {isDocumentsIdle || isDocumentsLoading ? (
-                    <Icon type="LoadingSpinner" style={{ marginLeft: 4 }} />
+                    <Icon type="Loader" style={{ marginLeft: 4 }} />
                   ) : (
                     <Badge text={`${content?.documentIds.length || 0}`} />
                   )}
@@ -176,7 +176,7 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
                 <span>
                   Wells
                   {isWellsIdle || isWellsLoading ? (
-                    <Icon type="LoadingSpinner" style={{ marginLeft: 4 }} />
+                    <Icon type="Loader" style={{ marginLeft: 4 }} />
                   ) : (
                     <Badge
                       text={`${

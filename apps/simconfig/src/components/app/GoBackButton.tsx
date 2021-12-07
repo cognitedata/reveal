@@ -15,7 +15,7 @@ export default function GoBackButton({ URL }: BackButtonProps) {
   return (
     <GoBackContainer>
       <Icon
-        type="ArrowBack"
+        type="ArrowLeft"
         size={30}
         style={{ cursor: 'pointer' }}
         onClick={goBack}

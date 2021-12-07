@@ -30,7 +30,7 @@ export const UserSettings: React.FC = () => {
       <Menu>
         <SettingsHeader>
           <Title level={5}>{t('Settings')}</Title>
-          <Icon type="LargeClose" onClick={toggleVisibility} />
+          <Icon type="CloseLarge" onClick={toggleVisibility} />
         </SettingsHeader>
 
         <Menu.Divider />

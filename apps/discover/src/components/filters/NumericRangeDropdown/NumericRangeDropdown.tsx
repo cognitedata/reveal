@@ -32,7 +32,7 @@ export const NumericRangeDropdown: React.FC<NumericRangeDropdownProps> = ({
   const [values, setValues] = useState<number[]>(selectedRange || range);
 
   const dropdownIcon = useMemo(
-    () => (dropdownVisible ? 'ChevronUpCompact' : 'ChevronDownCompact'),
+    () => (dropdownVisible ? 'ChevronUp' : 'ChevronDown'),
     [dropdownVisible]
   );
 

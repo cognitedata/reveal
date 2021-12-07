@@ -173,7 +173,7 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
 
     return (
       <FavoriteIndicatorContainer>
-        <Icon type="FavoriteOn" />
+        <Icon type="FavoriteFilled" />
       </FavoriteIndicatorContainer>
     );
   };

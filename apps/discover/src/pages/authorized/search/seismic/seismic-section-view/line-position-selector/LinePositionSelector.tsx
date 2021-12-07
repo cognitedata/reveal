@@ -92,7 +92,7 @@ export const LinePositionSelector: React.FC<Props> = ({
         type="ghost"
         size="small"
         shape="round"
-        icon="Right"
+        icon="ChevronRight"
         onClick={onIncrement}
         aria-label="Increment"
       />

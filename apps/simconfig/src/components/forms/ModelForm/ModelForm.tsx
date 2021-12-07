@@ -293,7 +293,7 @@ export function ModelForm({
             <Button
               type="primary"
               htmlType="submit"
-              icon="PlusCompact"
+              icon="Add"
               disabled={isSubmitting}
               loading={isSubmitting}
             >

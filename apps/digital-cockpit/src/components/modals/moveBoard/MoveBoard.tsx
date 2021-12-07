@@ -85,7 +85,7 @@ const MoveBoard: React.FC<Props> = ({
         Cancel
       </Button>
       {isProcessing ? (
-        <Icon type="Loading" />
+        <Icon type="Loader" />
       ) : (
         <Button type="primary" iconPlacement="left" onClick={save}>
           Save

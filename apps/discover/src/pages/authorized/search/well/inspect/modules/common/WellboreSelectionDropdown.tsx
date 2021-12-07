@@ -143,7 +143,7 @@ const WellboreSelectionDropdown: React.FC<Props> = (props: Props) => {
             {getValue()}
           </WellboreSelectionButtonValue>
           <WellboreSelectionImageContainer>
-            <Icons.ChevronDownCompact />
+            <Icons.ChevronDown />
           </WellboreSelectionImageContainer>
         </WellboreSelectionButtonContainer>
       </WellboreSelectionButton>

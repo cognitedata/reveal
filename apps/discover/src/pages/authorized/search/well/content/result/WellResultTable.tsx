@@ -170,7 +170,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
 
       return (
         <FavoriteIndicatorContainer>
-          <Icon type="FavoriteOn" />
+          <Icon type="FavoriteFilled" />
         </FavoriteIndicatorContainer>
       );
     },

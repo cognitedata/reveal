@@ -152,7 +152,7 @@ const WorkSpaceSearch = ({ onLoadFile, children }: WorkSpaceSearchProps) => {
         placeholder={t('search_placeholder', 'Search for documents / tags')}
         value={query}
         variant="noBorder"
-        icon={filesState?.status === 'LOADING' ? 'Loading' : 'Search'}
+        icon={filesState?.status === 'LOADING' ? 'Loader' : 'Search'}
         iconPlacement="right"
         fullWidth
         onFocus={() => {

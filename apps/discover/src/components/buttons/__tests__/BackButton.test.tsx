@@ -40,7 +40,7 @@ describe('Back Button', () => {
   //   });
 
   //   expect(
-  //     container.getElementsByClassName(`${COGS_ICON_CLASS_PREFIX}-ArrowBack`)
+  //     container.getElementsByClassName(`${COGS_ICON_CLASS_PREFIX}-ArrowLeft`)
   //       .length
   //   ).toBeGreaterThan(0);
   // });

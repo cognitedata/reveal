@@ -30,7 +30,7 @@ function SimulatorStatusComponent() {
   );
 
   if (!isSimulatorInitialized) {
-    return <Icon type="LoadingSpinner" />;
+    return <Icon type="Loader" />;
   }
 
   if (simulators?.length && availableSimulators) {

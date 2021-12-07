@@ -10,7 +10,7 @@ export const PlusButton: React.FC<ExtendedButtonProps> = ({ ...props }) => (
   <BaseButton
     size={OPERATOR_BUTTON_SIZE}
     type={OPERATOR_BUTTON_TYPE}
-    icon="PlusCompact"
+    icon="Add"
     tooltip={PLUS_BUTTON_TOOLTIP}
     aria-label="Plus"
     {...props}

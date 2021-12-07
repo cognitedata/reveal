@@ -696,7 +696,7 @@ const OpenWorksToPetrelStudio = ({ name }: Props) => {
           width={450}
           closeIcon={
             <CloseIcon
-              type="LargeClose"
+              type="CloseLarge"
               onClick={() => setCreationError(null)}
             />
           }

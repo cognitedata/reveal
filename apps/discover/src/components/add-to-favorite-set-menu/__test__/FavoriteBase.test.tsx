@@ -36,7 +36,7 @@ describe('Favorite base', () => {
     expect(screen.getByText(ADD_TO_FAVOURITES)).toBeInTheDocument();
     expect(screen.getByText(CREATE_NEW_SET)).toBeInTheDocument();
     // expect(
-    //   container.getElementsByClassName(`${COGS_ICON_CLASS_PREFIX}-PlusCompact`)
+    //   container.getElementsByClassName(`${COGS_ICON_CLASS_PREFIX}-Add`)
     //     .length
     // ).toBeGreaterThan(0);
 

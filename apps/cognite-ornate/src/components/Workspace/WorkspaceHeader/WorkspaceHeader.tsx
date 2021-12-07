@@ -17,14 +17,14 @@ export const WorkspaceHeader = ({
     <>
       {isBackVisible && (
         <Icon
-          type="ChevronLeftCompact"
+          type="ChevronLeft"
           style={{ cursor: 'pointer' }}
           onClick={onBackClick}
           title={t('back', 'Back')}
         />
       )}
       <Icon
-        type="WorkSpace"
+        type="FlowChart"
         style={{ marginLeft: '5px', marginRight: '10px' }}
       />{' '}
       <span>{t('my_workspaces_title', 'My Workspaces')}</span>

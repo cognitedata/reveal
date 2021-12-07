@@ -138,7 +138,7 @@ export const WellInspect: React.FC = () => {
           >
             <LinkNode>
               <span>{t(item.name)}</span>
-              <Icon type="OpenExternal" size={16} />
+              <Icon type="ArrowUpRight" size={16} />
             </LinkNode>
           </Menu.Item>
         ))}
@@ -191,7 +191,7 @@ export const WellInspect: React.FC = () => {
                       id="link-tabs"
                       aria-label="Other"
                       iconPlacement="right"
-                      icon="ChevronDownCompact"
+                      icon="ChevronDown"
                     >
                       {t('Other')}
                     </Button>
@@ -208,7 +208,7 @@ export const WellInspect: React.FC = () => {
                     }}
                   >
                     <span>{standaloneItems[0].name}</span>
-                    <Icon type="OpenExternal" size={16} />
+                    <Icon type="ArrowUpRight" size={16} />
                   </Button>
                 )}
               </TabsScrollWrapper>

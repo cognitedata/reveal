@@ -41,7 +41,7 @@ export const Tile: React.FC<Props> = ({
     if (!okRender) {
       return (
         <TilePreview>
-          <Icon type="Loading" />
+          <Icon type="Loader" />
         </TilePreview>
       );
     }

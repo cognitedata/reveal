@@ -32,11 +32,10 @@ const CreateNewConfiguration = () => {
   const MenuContent = (
     <Menu>
       <Menu.Item onClick={() => handleFinish(SessionType.PS_TO_OW)}>
-        <Icon type="PlusCompact" /> {ThirdPartySystems.PS} to{' '}
-        {ThirdPartySystems.OW}
+        <Icon type="Add" /> {ThirdPartySystems.PS} to {ThirdPartySystems.OW}
       </Menu.Item>
       <Menu.Item onClick={() => handleFinish(SessionType.OW_TO_PS)}>
-        <Icon type="PlusCompact" />
+        <Icon type="Add" />
         {ThirdPartySystems.OW} to {ThirdPartySystems.PS}
       </Menu.Item>
     </Menu>
@@ -67,7 +66,7 @@ const CreateNewConfiguration = () => {
       {display === displayState.COLLAPSED && (
         <Button
           type="primary"
-          icon="PlusCompact"
+          icon="Add"
           onClick={() => setDisplay(displayState.EXPANDED)}
           style={{ height: '36px' }}
         >

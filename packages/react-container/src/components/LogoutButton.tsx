@@ -11,7 +11,7 @@ export const LogoutButton: React.FC<Props> = ({ handleClick }) => {
   return (
     <Button
       type="secondary"
-      icon="LogOut"
+      icon="Logout"
       role="button"
       aria-label="Logout"
       onClick={handleClick}

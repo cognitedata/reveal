@@ -195,7 +195,7 @@ export const columnRules: (actions: Props) => Rule[] = ({
                     />
                   </svg>
                 ) : (
-                  <Icon type="TriangleRight" />
+                  <Icon type="ChevronRight" />
                 )}
               </PlayStopButton>
             </Tooltip>

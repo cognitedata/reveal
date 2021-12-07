@@ -76,7 +76,7 @@ export const CategorySwitch: React.FC = React.memo(() => {
         <Tooltip title="Filter categories" enabled={!isOpen}>
           <Button
             type="ghost"
-            icon={isOpen ? 'ChevronUpCompact' : 'ChevronDownCompact'}
+            icon={isOpen ? 'ChevronUp' : 'ChevronDown'}
             aria-label="Filter Categories"
             onClick={() => {
               metrics.track(

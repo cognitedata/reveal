@@ -100,7 +100,7 @@ const ConfigComponent: React.FC<{
     <Flex direction="column" gap={16} alignItems="flex-start">
       <Button
         type="secondary"
-        icon="PlusCompact"
+        icon="Add"
         iconPlacement="right"
         onClick={() => setCreateNewOpened(true)}
       >
@@ -124,7 +124,7 @@ const ConfigComponent: React.FC<{
           <Flex gap={8} alignItems="center" key={label}>
             <ItemWrapper level="4">{label}</ItemWrapper>
             <Button
-              icon="Trash"
+              icon="Delete"
               aria-label="Delete item"
               onClick={() => handleChange(datum)}
               type="ghost"

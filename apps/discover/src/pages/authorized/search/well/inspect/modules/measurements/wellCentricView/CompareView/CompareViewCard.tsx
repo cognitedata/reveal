@@ -96,7 +96,7 @@ export const CompareViewCard: React.FC<Props> = ({
           hidden={!displayShowAll}
           type="ghost"
           size="small"
-          icon={showAll ? 'ChevronUpCompact' : 'ChevronDownCompact'}
+          icon={showAll ? 'ChevronUp' : 'ChevronDown'}
           text={showAll ? 'Hide all' : 'Show all'}
           aria-label={showAll ? 'Hide all' : 'Show all'}
           onClick={() => setShowAll(!showAll)}

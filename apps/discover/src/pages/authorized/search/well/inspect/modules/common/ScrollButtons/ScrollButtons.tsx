@@ -77,7 +77,7 @@ export const ScrollButtons: React.FC<Props> = ({ scrollRef }) => {
           scroll(true);
         }}
         aria-label="Previous"
-        icon="ArrowBack"
+        icon="ArrowLeft"
         disabled={leftDisabled}
       />
       <Button
@@ -85,7 +85,7 @@ export const ScrollButtons: React.FC<Props> = ({ scrollRef }) => {
           scroll();
         }}
         aria-label="Next"
-        icon="ArrowForward"
+        icon="ArrowRight"
         disabled={rightDisabled}
       />
     </Wrapper>

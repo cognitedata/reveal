@@ -109,7 +109,7 @@ export const FavoriteBase: React.FC<Props> = ({
         <Menu.Divider data-testid="menu-divider" />
       )}
       <Menu.Item onClick={handleOpenCreateFavorite}>
-        <Icon type="PlusCompact" />
+        <Icon type="Add" />
         {t(CREATE_NEW_SET)}
       </Menu.Item>
     </Menu>

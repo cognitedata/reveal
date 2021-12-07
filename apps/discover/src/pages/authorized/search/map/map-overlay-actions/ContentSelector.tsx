@@ -57,10 +57,8 @@ export const ContentSelector: React.FC<Props> = React.memo(
     };
     const { layers: allLayers } = useLayers();
 
-    const assetsIcon =
-      selected === 'Assets' ? 'ChevronUpCompact' : 'ChevronDownCompact';
-    const layersIcon =
-      selected === 'Layers' ? 'ChevronUpCompact' : 'ChevronDownCompact';
+    const assetsIcon = selected === 'Assets' ? 'ChevronUp' : 'ChevronDown';
+    const layersIcon = selected === 'Layers' ? 'ChevronUp' : 'ChevronDown';
 
     const { t } = useTranslation('Search');
     const ASSET_TOOLTIP_TEXT = 'Zoom to an asset';

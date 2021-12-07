@@ -80,11 +80,7 @@ export const FileController: React.FC<FileControllerProps> = ({
             </Menu>
           }
         >
-          <Button
-            disabled={disabled}
-            icon="ChevronDownCompact"
-            iconPlacement="right"
-          >
+          <Button disabled={disabled} icon="ChevronDown" iconPlacement="right">
             File
           </Button>
         </Dropdown>

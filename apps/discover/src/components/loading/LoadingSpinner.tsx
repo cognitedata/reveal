@@ -22,7 +22,7 @@ export const LoadingSpinner: React.FC<Props> = ({ isLoading, message }) => {
 
   return (
     <FlexAlignJustifyContent>
-      <Icon type="LoadingSpinner" data-testid="loading-spinner" />
+      <Icon type="Loader" data-testid="loading-spinner" />
       {message && <MessageWrapper>{message}</MessageWrapper>}
     </FlexAlignJustifyContent>
   );

@@ -96,7 +96,7 @@ export const SuiteForm: React.FC<Props> = ({
             </Button>
             <div>
               {isSubmitting ? (
-                <Icon type="Loading" />
+                <Icon type="Loader" />
               ) : (
                 <>
                   <Button

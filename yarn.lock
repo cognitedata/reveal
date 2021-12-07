@@ -2310,13 +2310,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@cognite/cogs.js@^3.42.1":
-  version "3.42.1"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-3.42.1.tgz#03d619cb0ecafb472051f0853dab4adb6984db76"
-  integrity sha512-BUErP/AFcdlMR3wxneqxK24ozvWvK1YNiRTcVkyFBK2ATdXhkxPmpEsn+e6ajigPc4aIZAJxsoYA5wUeel42LA==
+"@cognite/cogs.js@^5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.2.1.tgz#43c71dd723ab049edcd2b762ba67295c7419ff38"
+  integrity sha512-K2xnp6gDFriId57/cdwJATeKGDOjjLHqjPECJ644NkmFDsHP+T1PbgmbLc+xYSBO3843NTXiNYUu0LjGebffFA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.1.2"
+    axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
@@ -2332,6 +2333,7 @@
     react-select "^3.1.0"
     react-table "^7.6.0"
     react-toastify "^6.0.9"
+    resize-observer-polyfill "^1.5.1"
     stylelint "^13.13.1"
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
@@ -9663,7 +9665,7 @@ axe-core@^4.3.5:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.3.5.tgz#78d6911ba317a8262bfee292aeafcc1e04b49cc5"
   integrity sha512-WKTW1+xAzhMS5dJsxWkliixlO/PqC4VhmO9T4juNYcaTg9jzWiJsou6m5pxWYGfigWbwzJWeFY6z47a+4neRXA==
 
-axios@*, axios@^0.21.1, axios@^0.21.4:
+axios@*, axios@^0.21.1, axios@^0.21.2, axios@^0.21.4:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==

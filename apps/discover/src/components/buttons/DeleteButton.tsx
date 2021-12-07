@@ -6,7 +6,7 @@ export const DeleteButton: React.FC<ExtendedButtonProps> = ({ ...props }) => (
   <BaseButton
     size="small"
     type="ghost-danger"
-    icon="Trash"
+    icon="Delete"
     tooltip={DELETE_BUTTON_TOOLTIP}
     aria-label="Delete"
     {...props}

@@ -179,7 +179,7 @@ const SuiteOverview: React.FC = () => {
           <Button
             key="add-subsuite"
             type="ghost"
-            icon="FolderLineAlt"
+            icon="Folder"
             iconPlacement="left"
             onClick={() =>
               handleOpenModal('EditSuite', { parentSuiteItem: suite })
@@ -194,7 +194,7 @@ const SuiteOverview: React.FC = () => {
           <Button
             key="add-board"
             type="ghost"
-            icon="PlusCompact"
+            icon="Add"
             iconPlacement="left"
             onClick={() => handleOpenModal('EditBoard', { suiteItem: suite })}
           >

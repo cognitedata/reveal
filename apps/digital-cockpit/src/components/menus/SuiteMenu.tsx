@@ -58,7 +58,7 @@ export const SuiteMenu: React.FC<Props> = ({ suiteItem }) => {
     <MenuContainer ref={ref}>
       <Button
         type="ghost"
-        icon="MoreOverflowEllipsisHorizontal"
+        icon="EllipsisHorizontal"
         onClick={handleMenuOpen}
         aria-label="View more"
       />
@@ -102,7 +102,7 @@ export const SuiteMenu: React.FC<Props> = ({ suiteItem }) => {
                       })
                     }
                   >
-                    <Icon type="Trash" />
+                    <Icon type="Delete" />
                     Delete suite
                   </MenuItemContent>
                 </Menu.Item>

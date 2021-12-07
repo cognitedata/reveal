@@ -62,7 +62,7 @@ export const SidePanel = ({
   const ActionWithCustomStyling: ToolBarButton[][] = [
     [
       {
-        icon: 'PlusCompact',
+        icon: 'Add',
         onClick: () => setActive('addSymbol'),
         className: `${active === 'addSymbol' && 'active'}`,
         description: 'Add symbol',

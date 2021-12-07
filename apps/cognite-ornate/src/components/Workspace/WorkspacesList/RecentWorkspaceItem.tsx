@@ -52,7 +52,7 @@ export const RecentWorkspaceItem = ({
             cancelText={t('cancelText', 'Cancel')}
           >
             <Icon
-              type="Trash"
+              type="Delete"
               role="button"
               tabIndex={0}
               aria-label={t('delete_tooltip_icon', 'Delete stash')}

@@ -14,6 +14,6 @@ const StyledCollapseIcon = styled(Icon)`
 
 export const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {
   return (
-    <StyledCollapseIcon type="ChevronDownCompact" active={`${isActive}`} /> // note: active is string?!?!
+    <StyledCollapseIcon type="ChevronDown" active={`${isActive}`} /> // note: active is string?!?!
   );
 };

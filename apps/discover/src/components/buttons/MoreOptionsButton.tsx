@@ -7,7 +7,7 @@ export const MoreOptionsButton: React.FC<ExtendedButtonProps> = ({
   <BaseButton
     size="small"
     type="secondary"
-    icon="MoreOverflowEllipsisHorizontal"
+    icon="EllipsisHorizontal"
     aria-label="More options"
     {...props}
   />

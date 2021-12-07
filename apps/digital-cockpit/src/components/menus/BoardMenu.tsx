@@ -101,7 +101,7 @@ export const BoardMenu: React.FC<Props> = ({ boardItem, suiteItem }) => {
                   })
                 }
               >
-                <Icon type="Trash" />
+                <Icon type="Delete" />
                 Remove board
               </MenuItemContent>
             </Menu.Item>
@@ -116,7 +116,7 @@ export const BoardMenu: React.FC<Props> = ({ boardItem, suiteItem }) => {
                   })
                 }
               >
-                <Icon type="FolderLineAlt" />
+                <Icon type="Folder" />
                 Move to..
               </MenuItemContent>
             </Menu.Item>
@@ -133,7 +133,7 @@ export const BoardMenu: React.FC<Props> = ({ boardItem, suiteItem }) => {
         appendTo={document.body}
         hideOnClick
       >
-        <Icon type="MoreOverflowEllipsisHorizontal" />
+        <Icon type="EllipsisHorizontal" />
       </Dropdown>
     </MenuContainer>
   );

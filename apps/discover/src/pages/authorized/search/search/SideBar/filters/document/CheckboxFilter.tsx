@@ -55,10 +55,7 @@ const ViewMore: React.FC<{
   onShowMoreClick: () => void;
 }> = ({ expanded, onShowMoreClick }) => (
   <FlexAlignItems style={{ cursor: 'pointer' }} onClick={onShowMoreClick}>
-    <ChevronCollapseUpDownIcon
-      expanded={expanded ? 1 : 0}
-      type="ChevronDownCompact"
-    />
+    <ChevronCollapseUpDownIcon expanded={expanded ? 1 : 0} type="ChevronDown" />
     <Body level={2}>{expanded ? 'View less' : 'View more'}</Body>
   </FlexAlignItems>
 );

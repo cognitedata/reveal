@@ -141,7 +141,7 @@ const ManageColumnsPanel: React.FC<Props> = ({
     () => (
       <Tooltip placement="bottom" content={t('Organize columns')}>
         <Button
-          icon="Column"
+          icon="Columns"
           aria-label="Column setting"
           data-testid="organize-columns"
           onClick={() => {

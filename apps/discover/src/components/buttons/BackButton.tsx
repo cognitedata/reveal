@@ -4,7 +4,7 @@ import { ExtendedButtonProps } from './types';
 
 export const BackButton: React.FC<ExtendedButtonProps> = ({ ...props }) => (
   <BaseButton
-    icon="ArrowBack"
+    icon="ArrowLeft"
     tooltip={BACK_BUTTON_TOOLTIP}
     aria-label="Go back"
     {...props}

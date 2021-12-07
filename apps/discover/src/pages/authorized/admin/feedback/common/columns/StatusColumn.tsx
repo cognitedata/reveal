@@ -36,7 +36,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ status, options }) => {
       iconPlacement="right"
       icon="ChevronDownLarge"
       variant={color}
-      aria-label="Down"
+      aria-label="ChevronDown"
     >
       {text}
     </Label>

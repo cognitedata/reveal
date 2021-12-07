@@ -61,7 +61,7 @@ const DeleteBoard: React.FC<Props> = ({
       <Button onClick={cancel}>Keep board</Button>
       <Button
         type="danger"
-        icon="Trash"
+        icon="Delete"
         iconPlacement="left"
         onClick={handleDeleteSuite}
       >

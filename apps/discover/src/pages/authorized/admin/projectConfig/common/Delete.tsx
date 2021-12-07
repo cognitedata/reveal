@@ -7,7 +7,7 @@ export const DeleteButton = ({
 }) => {
   return (
     <Button
-      icon="Trash"
+      icon="Delete"
       aria-label="Delete item"
       onClick={() => handleChange()}
       type="ghost"

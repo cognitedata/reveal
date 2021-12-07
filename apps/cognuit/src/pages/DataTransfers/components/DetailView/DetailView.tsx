@@ -99,7 +99,7 @@ const DetailView: FC<Props> = ({ onClose, record }) => {
       onOk={onClose}
       width={768}
       appElement={document.body}
-      closeIcon={<CloseIcon type="LargeClose" onClick={onClose} />}
+      closeIcon={<CloseIcon type="CloseLarge" onClick={onClose} />}
     >
       <h2 className="visually-hidden">Detail view</h2>
       {isLoading ? (

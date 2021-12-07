@@ -140,7 +140,7 @@ export const Bars = <T extends DataObject<T>>({
                 data-testid="bar-label"
               >
                 {key}
-                {!isNoData && <Icon type="ChevronRightCompact" size={14} />}
+                {!isNoData && <Icon type="ChevronRight" size={14} />}
               </BarLabel>
             )}
 

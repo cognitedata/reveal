@@ -54,7 +54,7 @@ export const ColorSelector: React.FC<Props> = ({
           <Button
             variant="default"
             size="small"
-            icon={opened ? 'ChevronUpCompact' : 'ChevronDownCompact'}
+            icon={opened ? 'ChevronUp' : 'ChevronDown'}
             iconPlacement="right"
             data-testid="seismic-color-band-button"
             aria-label="Color band button"

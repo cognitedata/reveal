@@ -10,7 +10,7 @@ export const ViewButton: React.FC<ExtendedButtonProps> = ({
     size="small"
     type="primary"
     text={VIEW_BUTTON_TEXT}
-    icon={hideIcon ? undefined : 'OpenExternal'}
+    icon={hideIcon ? undefined : 'ArrowUpRight'}
     iconPlacement="right"
     aria-label="View"
     {...rest}

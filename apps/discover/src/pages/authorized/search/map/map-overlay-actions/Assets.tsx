@@ -45,7 +45,7 @@ const Item = ({
       </AssetListItem>
       {WELL_FIELDS_WITH_PRODUCTION_DATA.includes(asset.name) && (
         <Button
-          icon="OpenExternal"
+          icon="ArrowUpRight"
           type="link"
           aria-label="Open an external dashboard"
           onClick={(event) => openInNewTab(event, links)}

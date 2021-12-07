@@ -71,7 +71,7 @@ const DeleteSuite: React.FC<Props> = ({ suiteItem: suite }: Props) => {
       <Button onClick={handleClose}>Keep suite</Button>
       <Button
         type="danger"
-        icon="Trash"
+        icon="Delete"
         iconPlacement="left"
         onClick={handleDeleteSuite}
       >

@@ -82,14 +82,14 @@ export const NavigationPanel: React.FC<Props> = React.memo(
         {!disableNavigation && (
           <>
             <BaseButton
-              icon="ChevronLeftCompact"
+              icon="ChevronLeft"
               type="secondary"
               onClick={handleNavigateToPreviousWellbore}
               disabled={isFirstWellbore}
               aria-label="previous-wellbore"
             />
             <BaseButton
-              icon="ChevronRightCompact"
+              icon="ChevronRight"
               type="secondary"
               onClick={handleNavigateToNextWellbore}
               disabled={isLastWellbore}

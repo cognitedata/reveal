@@ -62,7 +62,7 @@ export const WellboreCardDetails: React.FC<{ wellId: number }> = ({
               <WellboreButton
                 aria-label="Wellbore button"
                 type="ghost"
-                icon="ArrowForward"
+                icon="ArrowRight"
               />
             </WellboreRow>
           ))}

@@ -39,7 +39,7 @@ interface Props {
   underlineColor?: string;
 }
 
-const CloseIconDefault = <Icon type="LargeClose" />;
+const CloseIconDefault = <Icon type="CloseLarge" />;
 
 const CustomModal: React.FC<Props> = ({
   width = 420,

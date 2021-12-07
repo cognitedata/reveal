@@ -71,12 +71,12 @@ export const WorkSpaceAssetListItem = ({
 
   const getIconType = (): AllIconTypes => {
     if (expanding) {
-      return 'Loading';
+      return 'Loader';
     }
     if (expanded) {
-      return 'Right';
+      return 'ChevronRight';
     }
-    return 'Down';
+    return 'ChevronDown';
   };
 
   return (

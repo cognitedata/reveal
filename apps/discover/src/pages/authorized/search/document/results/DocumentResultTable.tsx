@@ -312,7 +312,7 @@ export const DocumentResultTable: React.FC = () => {
 
       return (
         <FavoriteIndicatorContainer>
-          <Icon type="FavoriteOn" />
+          <Icon type="FavoriteFilled" />
         </FavoriteIndicatorContainer>
       );
     },

@@ -129,7 +129,7 @@ export default function ModelTable({ data, modelName }: ComponentProps) {
 
   const isFileLoading = (externalId: string) =>
     processingDownload && fileForDownload?.externalId === externalId
-      ? 'Loading'
+      ? 'Loader'
       : 'Download';
 
   const cols = [

@@ -31,7 +31,7 @@ const DatatypeSection = ({
   }, [filterValue, objects]);
   const expandIcon = (isActive: boolean) => (
     <Icon
-      type="ChevronDownCompact"
+      type="ChevronDown"
       style={{
         marginRight: 8,
         transition: 'transform .2s',

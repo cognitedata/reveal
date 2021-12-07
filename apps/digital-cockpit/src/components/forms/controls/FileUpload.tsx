@@ -116,7 +116,7 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
     );
     return (
       <UploadFileNameContainer>
-        {loading && <Icon type="Loading" />}
+        {loading && <Icon type="Loader" />}
         {withTooltip ? (
           <Tooltip content={fname}>{fileTag}</Tooltip>
         ) : (
@@ -160,7 +160,7 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label htmlFor="uploadImage">
         <span>Or upload an image</span>
-        <Icon type="ChevronRightCompact" />
+        <Icon type="ChevronRight" />
       </label>
       {renderFileNameContainer()}
     </UploadImageContainer>

@@ -95,7 +95,7 @@ export const WorkspaceDocsPanel = ({
                 {doc.documentName}
                 <Icon
                   className="action-button"
-                  type="Trash"
+                  type="Delete"
                   size={12}
                   onClick={(e) => {
                     e.preventDefault();

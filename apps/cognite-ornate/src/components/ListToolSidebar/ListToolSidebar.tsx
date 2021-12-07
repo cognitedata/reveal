@@ -213,7 +213,7 @@ const ListToolSidebar = ({ listItems, onItemChange }: ListToolSidebarProps) => {
           <Icon
             className="list-item__remove"
             onClick={() => onRemove(listItem)}
-            type="LargeClose"
+            type="CloseLarge"
             style={{ width: 12 }}
           />
         </ListToolItem>

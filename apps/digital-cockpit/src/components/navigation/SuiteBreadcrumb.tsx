@@ -48,7 +48,7 @@ const SuiteBreadcrumb: React.FC<Props> = ({ suiteKey }: Props) => {
                       <Menu.Item>
                         <Link to={`/suites/${first.key}`}>
                           <Title level={6}>
-                            <Icon type="ChevronBreadcrumb" /> {suite.title}
+                            <Icon type="Breadcrumb" /> {suite.title}
                           </Title>
                         </Link>
                       </Menu.Item>
@@ -59,13 +59,13 @@ const SuiteBreadcrumb: React.FC<Props> = ({ suiteKey }: Props) => {
             appendTo={document.body}
             hideOnClick
           >
-            <Icon type="ChevronDownCompact" />
+            <Icon type="ChevronDown" />
           </Dropdown>
         </SuiteBreadcrumbMenu>
 
         {/* last suite */}
         <SuiteBreadcrumbContainer key={last.key}>
-          <Icon type="ChevronBreadcrumb" />
+          <Icon type="Breadcrumb" />
           <Title level={6}>{last.title}</Title>
         </SuiteBreadcrumbContainer>
       </>
@@ -84,7 +84,7 @@ const SuiteBreadcrumb: React.FC<Props> = ({ suiteKey }: Props) => {
             </SuiteBreadcrumbContainer>
           ) : (
             <SuiteBreadcrumbContainer key={suite.key}>
-              <Icon type="ChevronBreadcrumb" />
+              <Icon type="Breadcrumb" />
               <Title level={6}>{suite.title}</Title>
             </SuiteBreadcrumbContainer>
           )

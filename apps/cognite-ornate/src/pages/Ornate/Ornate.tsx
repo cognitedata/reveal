@@ -771,7 +771,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       {selectedNode && <ContextMenu selectedNode={selectedNode} />}
 
       <Button
-        icon="WorkSpace"
+        icon="FlowChart"
         iconPlacement="left"
         size="default"
         type="ghost"
@@ -824,7 +824,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       <MainToolbar>
         <Button
           type="secondary"
-          icon="WorkSpaceSave"
+          icon="Save"
           onClick={onSave}
           disabled={!workspaceDocuments.length}
           style={{ marginRight: '10px' }}
@@ -854,7 +854,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       {target && <Comments target={target} handleClose={handleClose} />}
 
       <Loader className={showLoader ? 'visible' : ''}>
-        <Icon type="Loading" className="loading-icon" size={40} />
+        <Icon type="Loader" className="loading-icon" size={40} />
       </Loader>
     </WorkspaceContainer>
   );

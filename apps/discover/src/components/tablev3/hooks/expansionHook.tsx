@@ -14,7 +14,7 @@ export const EXPANSION_COLUMN_ID = 'expansion';
 export const Expand: React.FC<Props> = ({ expanded }) => {
   return (
     <ExpandIconWrapper expanded={expanded}>
-      <Icons.ChevronDownCompact />
+      <Icons.ChevronDown />
     </ExpandIconWrapper>
   );
 };

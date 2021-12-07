@@ -301,7 +301,7 @@ export const BoardForm: React.FC<BoardFormProps> = ({
                       key={boardItem.key}
                       selected={isEqual(boardItem.key, values.key)}
                     >
-                      <StyledCheckIcon type="Check" />
+                      <StyledCheckIcon type="Checkmark" />
                       <Tooltip content={boardItem.title}>
                         <StyledBody level={4}>{boardItem.title}</StyledBody>
                       </Tooltip>
@@ -310,7 +310,7 @@ export const BoardForm: React.FC<BoardFormProps> = ({
                         onClick={(event) =>
                           deleteBoardFromList(event, boardItem, values.key)
                         }
-                        icon="Trash"
+                        icon="Delete"
                       />
                     </AddedBoardItem>
                   ))}
@@ -346,7 +346,7 @@ export const BoardForm: React.FC<BoardFormProps> = ({
               Cancel
             </Button>
             {isSubmitting ? (
-              <Icon type="Loading" />
+              <Icon type="Loader" />
             ) : (
               <Button
                 type="primary"

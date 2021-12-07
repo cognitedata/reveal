@@ -58,7 +58,7 @@ export const ScrollButtons: React.FC<Props> = ({ children, scrollRef }) => {
           data-testid="scroll-prev"
           onClick={() => scroll()}
         >
-          <Icon type="ChevronLeftCompact" size={16} />
+          <Icon type="ChevronLeft" size={16} />
         </Button>
       </TabsControllerButton>
       {children}
@@ -70,7 +70,7 @@ export const ScrollButtons: React.FC<Props> = ({ children, scrollRef }) => {
           data-testid="scroll-next"
           onClick={() => scroll(true)}
         >
-          <Icon type="ChevronRightCompact" size={16} />
+          <Icon type="ChevronRight" size={16} />
         </Button>
       </TabsControllerButton>
     </>

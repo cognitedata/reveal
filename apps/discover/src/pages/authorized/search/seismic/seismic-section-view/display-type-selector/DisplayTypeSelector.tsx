@@ -48,7 +48,7 @@ export const DisplayTypeSelector: React.FC<Props> = ({
         <Button
           variant="default"
           size="small"
-          icon={opened ? 'ChevronUpCompact' : 'ChevronDownCompact'}
+          icon={opened ? 'ChevronUp' : 'ChevronDown'}
           iconPlacement="right"
           data-testid="seismic-display-type-button"
           aria-label="Display type button"

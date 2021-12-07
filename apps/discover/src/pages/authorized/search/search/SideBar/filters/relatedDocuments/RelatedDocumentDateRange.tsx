@@ -111,7 +111,7 @@ export const RelatedDocumentDateRange: React.FC = () => {
         <DateRangeButtonWrapper active={showDropdown}>
           <BaseButton
             onClick={handleClick}
-            icon={showDropdown ? 'ChevronUpCompact' : 'ChevronDownCompact'}
+            icon={showDropdown ? 'ChevronUp' : 'ChevronDown'}
             type="secondary"
             text={t('Date Range')}
             iconPlacement="right"

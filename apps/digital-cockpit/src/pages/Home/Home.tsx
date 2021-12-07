@@ -115,7 +115,7 @@ const Home = () => {
             <>
               <Button
                 type="tertiary"
-                icon="PlusCompact"
+                icon="Add"
                 iconPlacement="left"
                 onClick={() => handleOpenModal('SelectApplications')}
               >
@@ -123,7 +123,7 @@ const Home = () => {
               </Button>
               <Button
                 type="tertiary"
-                icon="PlusCompact"
+                icon="Add"
                 iconPlacement="left"
                 onClick={() => handleOpenModal('EditSuite')}
               >
@@ -141,7 +141,7 @@ const Home = () => {
             {canEdit ? (
               <Button
                 type="tertiary"
-                icon="PlusCompact"
+                icon="Add"
                 iconPlacement="left"
                 onClick={() => handleOpenModal('EditSuite')}
                 style={{ marginTop: 8 }}

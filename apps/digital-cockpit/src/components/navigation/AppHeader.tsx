@@ -99,7 +99,7 @@ const AppHeader: React.FC = () => {
       component: (
         <Tooltip content="View what other groups has access to">
           <Icon
-            type="Public"
+            type="Users"
             data-testid="select-group-preview-menu"
             onClick={() => metrics.track('GroupMenu_Click')}
           />
@@ -121,7 +121,7 @@ const AppHeader: React.FC = () => {
                 >
                   {groupName}
                 </CustomMenuItem>
-                {groupsFilter.includes(groupName) && <Icon type="Check" />}
+                {groupsFilter.includes(groupName) && <Icon type="Checkmark" />}
               </Menu.Item>
             ))}
           </GroupItemWrapper>
@@ -190,7 +190,7 @@ const AppHeader: React.FC = () => {
               <TopBar.Logo
                 title={groupsFilter.join(', ')}
                 logo={
-                  <Icon type="Public" style={{ margin: '6px 8px 0 12px' }} />
+                  <Icon type="Users" style={{ margin: '6px 8px 0 12px' }} />
                 }
               />
             </TopBar.Left>

@@ -126,7 +126,7 @@ const WorkSpaceTools = ({
         title="Select S"
         disabled={activeTool === 'default'}
       >
-        <Icon type="SelectCursor" />
+        <Icon type="Cursor" />
       </Button>
       <Button
         type="ghost"
@@ -137,7 +137,7 @@ const WorkSpaceTools = ({
         }}
         disabled={activeTool === 'move'}
       >
-        <Icon type="GrabAndMove" />
+        <Icon type="Grab" />
       </Button>
       <ToolboxSeparator />
       <Button
@@ -149,7 +149,7 @@ const WorkSpaceTools = ({
         }}
         disabled={activeTool === 'line'}
       >
-        <Icon type="LineTool" />
+        <Icon type="Highlighter" />
       </Button>
       <Button
         type="ghost"
@@ -160,7 +160,7 @@ const WorkSpaceTools = ({
         }}
         disabled={activeTool === 'rect'}
       >
-        <Icon type="BoxTool" />
+        <Icon type="FrameTool" />
       </Button>
       <Button
         type="ghost"
@@ -182,7 +182,7 @@ const WorkSpaceTools = ({
         }}
         disabled={activeTool === 'text'}
       >
-        <Icon type="TextTool" />
+        <Icon type="Text" />
       </Button>
       <Button
         type="ghost"
@@ -216,7 +216,7 @@ const WorkSpaceTools = ({
         }}
         disabled={activeTool === 'stamp'}
       >
-        <Icon type="QualityStamp" />
+        <Icon type="Checkmark" />
       </Button>
     </WorkSpaceToolsWrapper>
   );

@@ -72,7 +72,7 @@ const CategoryWrapper = styled(FlexColumn)`
   margin-bottom: ${sizes.small};
   cursor: pointer;
 
-  &:hover .cogs-icon-ArrowForward {
+  &:hover .cogs-icon-ArrowRight {
     color: var(--cogs-midblue-3);
     margin-right: ${sizes.extraSmall};
     transition: margin-right var(--cogs-transition-time-fast);
@@ -146,7 +146,7 @@ const FilterItemTitle: React.FC<TitleProps> = ({
         <FilterTitle title={title} iconElement={iconElement}>
           <CategoryHeader category={category} {...rest} displayClear />
           <FlexGrow />
-          <ForwardIcon type="ArrowForward" />
+          <ForwardIcon type="ArrowRight" />
         </FilterTitle>
       </Container>
       <CategorySubHeader title={title} displayBetaSymbol={displayBetaSymbol} />

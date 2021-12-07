@@ -38,7 +38,7 @@ const UserMenu = (props: UserMenuProps) => {
       >
         <span>{currentLanguage?.name}</span>
       </Menu.Submenu>
-      <Menu.Item appendIcon="LogOut" onClick={() => logout(client)}>
+      <Menu.Item appendIcon="Logout" onClick={() => logout(client)}>
         Log out
       </Menu.Item>
       <Menu.Item style={{ background: '#FAFAFA', borderRadius: '4px' }}>
