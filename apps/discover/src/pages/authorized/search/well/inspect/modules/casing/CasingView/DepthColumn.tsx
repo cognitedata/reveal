@@ -22,7 +22,7 @@ export type Props = {
 
 const DepthColumn: React.FC<Props> = ({ scaleBlocks, unit }: Props) => {
   return (
-    <BodyColumn>
+    <BodyColumn width={100}>
       <BodyColumnHeaderWrapper>
         <BodyColumnMainHeader>MD</BodyColumnMainHeader>
         <FlexGrow />

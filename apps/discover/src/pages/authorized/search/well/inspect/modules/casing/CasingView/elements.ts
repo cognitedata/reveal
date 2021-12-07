@@ -29,7 +29,7 @@ export const Wrapper = styled(FlexColumn)`
 `;
 
 export const Header = styled(FlexRow)`
-  gap: ${sizes.extraSmall};
+  gap: 32px;
   padding: ${sizes.normal};
   box-shadow: inset 0px -1px 0px var(--cogs-greyscale-grey3);
 `;
@@ -69,7 +69,7 @@ export const BodyColumn = styled(FlexColumn)`
   height: 100%;
   border: 1px solid var(--cogs-greyscale-grey3);
   border-radius: 12px;
-  min-width: 100px;
+  min-width: ${(props: { width: number }) => props.width}px;
   width: auto;
   background: var(--cogs-bg-accent);
 `;

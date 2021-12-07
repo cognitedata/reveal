@@ -11,10 +11,13 @@ import isEmpty from 'lodash/isEmpty';
 import max from 'lodash/max';
 import orderBy from 'lodash/orderBy';
 
+import { Button } from '@cognite/cogs.js';
+
 import EmptyState from 'components/emptyState';
 import { convertToPreviewData } from 'modules/wellSearch/utils/casings';
 import { FlexColumn } from 'styles/layout';
 
+import { SelectedWellboreView } from '../../events/Npt/graph';
 import { getScaleBlocks } from '../helper';
 
 import DepthColumn from './DepthColumn';
@@ -59,6 +62,8 @@ const CasingView: FC<CasingViewType> = ({
 
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
 
+  const [selectedWellbore, setSelectedWellbore] = useState<string>();
+
   const normalizedCasings = useMemo(
     () => convertToPreviewData(casingsList),
     [casingsList]
@@ -100,60 +105,82 @@ const CasingView: FC<CasingViewType> = ({
   };
 
   return (
-    <Wrapper>
-      <Header>
-        <FlexColumn>
-          <MainHeader>{wellName}</MainHeader>
-          <SubHeader>{wellboreName}</SubHeader>
-        </FlexColumn>
-      </Header>
-      <BodyWrapper>
-        {isEmpty(casings) ? (
-          <EmptyCasingsStateWrapper>
-            <EmptyState emptySubtitle={EMPTY_STATE_TEXT} />
-          </EmptyCasingsStateWrapper>
-        ) : (
-          <>
-            <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />
-            <BodyColumn>
-              <BodyColumnHeaderWrapper>
-                <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
-              </BodyColumnHeaderWrapper>
-              <BodyColumnBody>
-                <CasingScale ref={scaleRef}>
-                  {scaleBlocks.map((row) => (
-                    <ScaleLine key={row} />
+    <>
+      <Wrapper>
+        <Header>
+          <FlexColumn>
+            <MainHeader>{wellName}</MainHeader>
+            <SubHeader>{wellboreName}</SubHeader>
+          </FlexColumn>
+          <Button
+            onClick={() => {
+              setSelectedWellbore(wellboreName);
+            }}
+            title="NPT details"
+            disabled={isEmpty(validEvents)}
+          >
+            NPT details
+          </Button>
+        </Header>
+        <BodyWrapper>
+          {isEmpty(casings) ? (
+            <EmptyCasingsStateWrapper>
+              <EmptyState emptySubtitle={EMPTY_STATE_TEXT} />
+            </EmptyCasingsStateWrapper>
+          ) : (
+            <>
+              <DepthColumn scaleBlocks={scaleBlocks} unit={unit} />
+              <BodyColumn width={150}>
+                <BodyColumnHeaderWrapper>
+                  <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
+                </BodyColumnHeaderWrapper>
+                <BodyColumnBody>
+                  <CasingScale ref={scaleRef}>
+                    {scaleBlocks.map((row) => (
+                      <ScaleLine key={row} />
+                    ))}
+                  </CasingScale>
+                  {normalizedCasings.map((normalizedCasing, index) => (
+                    <Fragment key={normalizedCasing.id}>
+                      <DepthIndicator
+                        startDepth={normalizedCasing.startDepth}
+                        casingDepth={normalizedCasing.casingDepth}
+                        description={normalizedCasing.casingDescription}
+                        outerDiameter={normalizedCasing.outerDiameter}
+                        onClick={onIndicatorClick}
+                        linerCasing={normalizedCasing.linerCasing}
+                      />
+                      {/* A trick to have space in right side for lengthiest description */}
+                      {casings.length === index + 1 && (
+                        <RightGutter>
+                          {normalizedCasing.outerDiameter}
+                        </RightGutter>
+                      )}
+                    </Fragment>
                   ))}
-                </CasingScale>
-                {normalizedCasings.map((normalizedCasing, index) => (
-                  <Fragment key={normalizedCasing.id}>
-                    <DepthIndicator
-                      startDepth={normalizedCasing.startDepth}
-                      casingDepth={normalizedCasing.casingDepth}
-                      description={normalizedCasing.casingDescription}
-                      outerDiameter={normalizedCasing.outerDiameter}
-                      onClick={onIndicatorClick}
-                      linerCasing={normalizedCasing.linerCasing}
-                    />
-                    {/* A trick to have space in right side for lengthiest description */}
-                    {casings.length === index + 1 && (
-                      <RightGutter>
-                        {normalizedCasing.outerDiameter}
-                      </RightGutter>
-                    )}
-                  </Fragment>
-                ))}
-              </BodyColumnBody>
-            </BodyColumn>
-            <EventsColumn
-              scaleBlocks={scaleBlocks}
-              events={validEvents}
-              isEventsLoading={isEventsLoading}
-            />
-          </>
-        )}
-      </BodyWrapper>
-    </Wrapper>
+                </BodyColumnBody>
+              </BodyColumn>
+              <EventsColumn
+                scaleBlocks={scaleBlocks}
+                events={validEvents}
+                isEventsLoading={isEventsLoading}
+              />
+            </>
+          )}
+        </BodyWrapper>
+      </Wrapper>
+      {selectedWellbore && (
+        <SelectedWellboreView
+          events={validEvents}
+          selectedWellbore={selectedWellbore}
+          setSelectedWellbore={(selected) => {
+            if (!selected) {
+              setSelectedWellbore(undefined);
+            }
+          }}
+        />
+      )}
+    </>
   );
 };
 

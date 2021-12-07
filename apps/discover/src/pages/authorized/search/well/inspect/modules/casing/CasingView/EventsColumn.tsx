@@ -66,7 +66,7 @@ const EventsColumn: React.FC<Props> = ({
     );
   }, [scaleBlocks, events]);
   return (
-    <BodyColumn>
+    <BodyColumn width={150}>
       <BodyColumnHeaderWrapper>
         <BodyColumnMainHeader>NPT Events</BodyColumnMainHeader>
       </BodyColumnHeaderWrapper>
