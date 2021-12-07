@@ -7,10 +7,13 @@ import {
   ColumnProfile,
   useQuickProfile,
   useFullProfile,
+  useColumnType,
 } from 'hooks/profiling-service';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
 import ProfileRow, { TableData } from './ProfileRow';
+
+import { FilterBar } from 'containers/Spreadsheet/FilterBar';
 
 const Card = styled.div`
   padding: 16px;
@@ -71,6 +74,7 @@ const StyledExpandTableHeaderIcon = styled(Icon)`
 type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
 
   const fullProfile = useFullProfile({
     database,
@@ -145,6 +149,9 @@ export const Profiling = (): JSX.Element => {
             <p className="coverage">100%</p>
           </Flex>
         </Card>
+      </Flex>
+      <Flex style={{ width: '100%', paddingBottom: '8px' }}>
+        <FilterBar areTypesFetched={areTypesFetched} />
       </Flex>
       <Flex style={{ width: '100%', height: '100%' }}>
         <AutoResizer>
