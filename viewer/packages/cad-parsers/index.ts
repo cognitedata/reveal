@@ -27,7 +27,6 @@ export {
   filterPrimitivesOutsideClipBoxByVertices
 } from './src/cad/filterPrimitivesV8';
 
-
 export { filterInstanceMesh } from './src/cad/filterInstanceMesh';
 
 export {

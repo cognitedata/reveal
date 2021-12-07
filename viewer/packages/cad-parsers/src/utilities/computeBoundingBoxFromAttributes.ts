@@ -147,11 +147,13 @@ const computeBoundingBoxFromEllipseAttributesVars = {
   size: new THREE.Vector3()
 };
 
-export function computeBoundingBoxFromEllipseValues(radius1: number,
-                                                    radius2: number,
-                                                    height: number,
-                                                    center: THREE.Vector3,
-                                                    out: THREE.Box3): THREE.Box3 {
+export function computeBoundingBoxFromEllipseValues(
+  radius1: number,
+  radius2: number,
+  height: number,
+  center: THREE.Vector3,
+  out: THREE.Box3
+): THREE.Box3 {
   const { size } = computeBoundingBoxFromEllipseAttributesVars;
 
   const extent = 2 * Math.max(radius1, radius2, height);
@@ -159,7 +161,6 @@ export function computeBoundingBoxFromEllipseValues(radius1: number,
   out.setFromCenterAndSize(center, size);
   return out;
 }
-
 
 export function computeBoundingBoxFromEllipseAttributes(
   centerAttribute: ParsePrimitiveAttribute,
@@ -182,13 +183,7 @@ export function computeBoundingBoxFromEllipseAttributes(
   const radius2 = readAttribute(radius2Attribute);
   const height = readAttribute(heightAttribute);
 
-  center.set(readAttribute(centerAttribute, 0),
-             readAttribute(centerAttribute, 1),
-             readAttribute(centerAttribute, 2));
+  center.set(readAttribute(centerAttribute, 0), readAttribute(centerAttribute, 1), readAttribute(centerAttribute, 2));
 
-  return computeBoundingBoxFromEllipseValues(radius1,
-                                             radius2,
-                                             height,
-                                             center,
-                                             out);
+  return computeBoundingBoxFromEllipseValues(radius1, radius2, height, center, out);
 }
