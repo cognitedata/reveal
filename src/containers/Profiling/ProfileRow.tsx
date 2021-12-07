@@ -59,9 +59,12 @@ export default function ProfileRow({ allCount, profile }: Props) {
     [getColumnType, isFetched, label]
   );
 
-  const emptyPercent = count === 0 ? 0 : ((100 * nullCount) / count).toFixed(2);
+  const emptyPercent =
+    count + nullCount === 0
+      ? 0
+      : ((100 * nullCount) / (count + nullCount)).toFixed(2);
   const distinctPercent =
-    count - nullCount === 0 ? 0 : (100 * (distinctCount / count)).toFixed(2);
+    count === 0 ? 0 : (100 * (distinctCount / count)).toFixed(2);
 
   return (
     <>
