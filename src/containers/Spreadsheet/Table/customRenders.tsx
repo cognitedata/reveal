@@ -156,15 +156,8 @@ export const EmptyRender = (): JSX.Element => {
           target="_blank"
         >
           <Box>
-            <p
-              className="text-icon"
-              style={{
-                height: 50,
-                fontWeight: 1000,
-                fontSize: '1.5em',
-              }}
-            >
-              {'</>'}
+            <p className="text-icon">
+              <Icon size={40} type="Code" />
             </p>
             <p>
               <strong>
