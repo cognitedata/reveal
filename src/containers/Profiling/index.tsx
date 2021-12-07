@@ -13,49 +13,6 @@ import { useActiveTableContext } from 'contexts';
 import ProfileRow from './ProfileRow';
 import ProfileTableHeader from './ProfileTableHeader';
 
-const Card = styled.div`
-  padding: 16px;
-  margin: 10px 10px 20px 0;
-  border: 1px solid ${Colors['greyscale-grey3'].hex()};
-  border-radius: 8px;
-  min-width: 277px;
-  header {
-    display: block;
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  .count {
-    color: ${Colors['greyscale-grey9'].hex()};
-    font-weight: 900;
-    font-size: 24px;
-    line-height: 32px;
-  }
-  .coverage {
-    padding: 8px 12px;
-    color: #22633c;
-    background: rgba(57, 162, 99, 0.12);
-    border-radius: 6px;
-  }
-  .coverage.running {
-    color: black;
-    background: rgb(247 97 97 / 12%);
-  }
-`;
-
-const RootFlex = styled(Flex)`
-  padding: 10px;
-  height: 100%;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  .numeric {
-    text-align: right;
-  }
-`;
-
 export type SortableColumn = keyof ColumnProfile;
 
 export const Profiling = (): JSX.Element => {
@@ -156,3 +113,46 @@ export const Profiling = (): JSX.Element => {
     </RootFlex>
   );
 };
+
+const Card = styled.div`
+  padding: 16px;
+  margin: 10px 10px 20px 0;
+  border: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-radius: 8px;
+  min-width: 277px;
+  header {
+    display: block;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .count {
+    color: ${Colors['greyscale-grey9'].hex()};
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .coverage {
+    padding: 8px 12px;
+    color: #22633c;
+    background: rgba(57, 162, 99, 0.12);
+    border-radius: 6px;
+  }
+  .coverage.running {
+    color: black;
+    background: rgb(247 97 97 / 12%);
+  }
+`;
+
+const RootFlex = styled(Flex)`
+  padding: 10px;
+  height: 100%;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  .numeric {
+    text-align: right;
+  }
+`;
