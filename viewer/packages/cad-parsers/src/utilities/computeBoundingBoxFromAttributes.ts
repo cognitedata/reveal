@@ -147,6 +147,20 @@ const computeBoundingBoxFromEllipseAttributesVars = {
   size: new THREE.Vector3()
 };
 
+export function computeBoundingBoxFromEllipseValues(radius1: number,
+                                                    radius2: number,
+                                                    height: number,
+                                                    center: THREE.Vector3,
+                                                    out: THREE.Box3): THREE.Box3 {
+  const { size } = computeBoundingBoxFromEllipseAttributesVars;
+
+  const extent = 2 * Math.max(radius1, radius2, height);
+  size.set(extent, extent, extent);
+  out.setFromCenterAndSize(center, size);
+  return out;
+}
+
+
 export function computeBoundingBoxFromEllipseAttributes(
   centerAttribute: ParsePrimitiveAttribute,
   radius1Attribute: ParsePrimitiveAttribute,
@@ -157,19 +171,24 @@ export function computeBoundingBoxFromEllipseAttributes(
   elementIndex: number,
   out: THREE.Box3
 ): THREE.Box3 {
-  const { center, size } = computeBoundingBoxFromEllipseAttributesVars;
+  const { center } = computeBoundingBoxFromEllipseAttributesVars;
 
   function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
     const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
     return attributeFloatValues[offset + idx];
   }
 
-  center.set(readAttribute(centerAttribute, 0), readAttribute(centerAttribute, 1), readAttribute(centerAttribute, 2));
   const radius1 = readAttribute(radius1Attribute);
   const radius2 = readAttribute(radius2Attribute);
   const height = readAttribute(heightAttribute);
-  const extent = 2.0 * Math.max(radius1, radius2, height);
-  size.set(extent, extent, extent);
-  out.setFromCenterAndSize(center, size);
-  return out;
+
+  center.set(readAttribute(centerAttribute, 0),
+             readAttribute(centerAttribute, 1),
+             readAttribute(centerAttribute, 2));
+
+  return computeBoundingBoxFromEllipseValues(radius1,
+                                             radius2,
+                                             height,
+                                             center,
+                                             out);
 }

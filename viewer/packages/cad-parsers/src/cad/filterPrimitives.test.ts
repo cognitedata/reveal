@@ -10,7 +10,7 @@ import {
   filterPrimitivesOutsideClipBoxByCenterAndRadius,
   filterPrimitivesOutsideClipBoxByEllipse,
   filterPrimitivesOutsideClipBoxByVertices
-} from './filterPrimitives';
+} from './filterPrimitivesV8';
 
 describe('filterPrimitivesOutsideClipBoxByCenterAndRadius', () => {
   let attributes: Map<string, ParsePrimitiveAttribute>;
