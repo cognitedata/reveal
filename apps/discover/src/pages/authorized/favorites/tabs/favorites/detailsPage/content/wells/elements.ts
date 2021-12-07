@@ -18,7 +18,9 @@ export const FavoriteWellWrapper = styled(FlexColumn)`
 
 export const FavoriteWelboreResultsTableWrapper = styled(
   WelboreResultsTableWrapper
-)``;
+)`
+  width: 100%;
+`;
 
 export const RemoveFavoriteLabel = styled.span`
   color: var(--cogs-red-2);
