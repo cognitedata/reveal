@@ -122,6 +122,9 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
 const StyledTableHeader = styled.thead`
   background-color: ${Colors['greyscale-grey1'].hex()};
   color: ${Colors['greyscale-grey7'].hex()};
+  td {
+    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
   td .cogs-icon {
     cursor: pointer;
   }

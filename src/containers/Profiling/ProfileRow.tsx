@@ -118,7 +118,6 @@ export default function ProfileRow({ allCount, profile }: Props) {
 }
 
 export const TableData = styled.td<{ $width?: number }>`
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
   padding: 16px;
   width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
 `;

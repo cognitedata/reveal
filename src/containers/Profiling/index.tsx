@@ -65,7 +65,7 @@ export const Profiling = (): JSX.Element => {
   return (
     <RootFlex direction="column">
       <Title level={4}>Table summary</Title>
-      <Flex direction="row">
+      <CardsFlex direction="row">
         <Card className="z-2">
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
@@ -84,7 +84,7 @@ export const Profiling = (): JSX.Element => {
             <p className="coverage">100%</p>
           </Flex>
         </Card>
-      </Flex>
+      </CardsFlex>
       <Flex style={{ width: '100%', height: '100%' }}>
         <AutoResizer>
           {({ width, height }) => (
@@ -146,13 +146,28 @@ const Card = styled.div`
 `;
 
 const RootFlex = styled(Flex)`
-  padding: 10px;
+  padding: 36px 24px 24px;
   height: 100%;
 `;
 
+const CardsFlex = styled(Flex)`
+  padding: 24px 0;
+`;
 const Table = styled.table`
+  margin: 0;
   width: 100%;
+  border-radius: 8px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid ${Colors['greyscale-grey4'].hex()};
   .numeric {
     text-align: right;
+  }
+  tr:not(:last-child) > td {
+    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
+  td:not(:last-child) {
+    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
   }
 `;
