@@ -2,82 +2,140 @@ import React from 'react';
 import styled from 'styled-components';
 import { Flex, Colors } from '@cognite/cogs.js';
 
-import { Section } from 'components/ProfilingSection';
+import { Section, DATA_MISSING } from 'components/ProfilingSection';
+import { BooleanProfile, ColumnProfile } from 'hooks/profiling-service';
 
-type Count = {
-  value: string;
-  count: number;
-};
 type Props = {
-  nullCount?: number;
-  distinctCount?: number;
   allCount: number;
-  counts?: Count[];
-  histogram?: Count[];
-  min?: number;
-  max?: number;
-  mean?: number;
-  median?: number;
-  std?: number;
-  count?: number;
+  profile: ColumnProfile;
 };
-export default function ProfileDetailsRow({
-  distinctCount,
-  nullCount,
-  min,
-  max,
-  mean,
-  median,
-  counts,
-  allCount,
-  count,
-  histogram,
-}: Props) {
+
+export default function ProfileDetailsRow({ allCount, profile }: Props) {
+  const columnType = profile.type;
+
   return (
     <StyledExpandedRow key="profile-details">
       <td colSpan={9} style={{ padding: 0 }}>
         <ExpandedRow>
-          <Section title="Numerical statistics">
-            <Flex direction="column" style={{ width: '100%' }}>
-              <StyledStatisticsRow>
-                <NumberOrMissingSummary
-                  label="Distinct values"
-                  value={distinctCount}
-                />
-              </StyledStatisticsRow>
-              <StyledStatisticsRow>
-                <NumberOrMissingSummary label="Non-empty" value={count} />
-                <NumberOrMissingSummary label="Empty" value={nullCount} />
-              </StyledStatisticsRow>
-              <StyledStatisticsRow>
-                <NumberOrMissingSummary label="Min" value={min} />
-                <NumberOrMissingSummary label="Max" value={max} />
-              </StyledStatisticsRow>
-              <StyledStatisticsRow>
-                <NumberOrMissingSummary label="Mean" value={mean} />
-                <NumberOrMissingSummary label="Median" value={median} />
-              </StyledStatisticsRow>
-            </Flex>
-          </Section>
-          <Section.Frequency counts={counts} allCount={allCount} />
-          <Section.Distribution histogram={histogram} />
+          {columnType === 'String' && (
+            <ProfilingDataString profile={profile} allCount={allCount} />
+          )}
+          {columnType === 'Number' && (
+            <ProfilingDataNumber profile={profile} allCount={allCount} />
+          )}
+          {columnType === 'Boolean' && (
+            <ProfilingDataBoolean profile={profile} allCount={allCount} />
+          )}
         </ExpandedRow>
       </td>
     </StyledExpandedRow>
   );
 }
 
+const ProfilingDataString = ({ allCount, profile }: Props) => {
+  const {
+    distinctCount,
+    counts,
+    count,
+    nullCount,
+    min,
+    max,
+    mean,
+    median,
+    histogram,
+  } = profile;
+  return (
+    <>
+      <Section title="Numerical statistics">
+        <StyledStatisticsRow direction="row" wrap="wrap">
+          <NumberOrMissingSummary
+            label="Distinct values"
+            value={distinctCount}
+            isHalf={false}
+          />
+          <NumberOrMissingSummary label="Non-empty" value={count} />
+          <NumberOrMissingSummary label="Empty" value={nullCount} />
+          <NumberOrMissingSummary label="Minimum length" value={min} />
+          <NumberOrMissingSummary label="Maximum length" value={max} />
+          <NumberOrMissingSummary label="Mean length" value={mean} />
+          <NumberOrMissingSummary label="Median length" value={median} />
+        </StyledStatisticsRow>
+      </Section>
+      <Section.Frequency counts={counts} allCount={allCount} />
+      <Section.Distribution histogram={histogram} />
+    </>
+  );
+};
+
+const ProfilingDataNumber = ({ allCount, profile }: Props) => {
+  const {
+    distinctCount,
+    counts,
+    count,
+    nullCount,
+    min,
+    max,
+    mean,
+    median,
+    std,
+    histogram,
+  } = profile;
+  return (
+    <>
+      <Section title="Numerical statistics">
+        <StyledStatisticsRow direction="row" wrap="wrap">
+          <NumberOrMissingSummary
+            label="Distinct values"
+            value={distinctCount}
+            isHalf={false}
+          />
+          <NumberOrMissingSummary label="Non-empty" value={count} />
+          <NumberOrMissingSummary label="Empty" value={nullCount} />
+          <NumberOrMissingSummary label="Min" value={min} />
+          <NumberOrMissingSummary label="Max" value={max} />
+          <NumberOrMissingSummary label="Mean" value={mean} />
+          <NumberOrMissingSummary label="Median" value={median} />
+          <NumberOrMissingSummary label="Standard deviation" value={std} />
+        </StyledStatisticsRow>
+      </Section>
+      <Section.Frequency counts={counts} allCount={allCount} />
+      <Section.Distribution histogram={histogram} />
+    </>
+  );
+};
+
+const ProfilingDataBoolean = ({ allCount, profile }: Props) => {
+  const { counts, count, nullCount, profile: boolProfile } = profile;
+  const { trueCount } = boolProfile as BooleanProfile;
+  const falseCount = count - trueCount - nullCount;
+  return (
+    <>
+      <Section title="Numerical statistics">
+        <StyledStatisticsRow direction="row" wrap="wrap">
+          <NumberOrMissingSummary label="True" value={trueCount} />
+          <NumberOrMissingSummary label="False" value={falseCount} />
+          <NumberOrMissingSummary label="Non-empty" value={count} />
+          <NumberOrMissingSummary label="Empty" value={nullCount} />
+        </StyledStatisticsRow>
+      </Section>
+      <Section.Frequency counts={counts} allCount={allCount} />
+    </>
+  );
+};
+
 const NumberOrMissingSummary = ({
   label,
   value,
+  isHalf = true,
 }: {
   label: string;
   value?: number;
+  isHalf?: boolean;
 }) => (
-  <div className="item">
+  <StyledStatisticsItem isHalf={isHalf}>
     <header>{label}</header>
-    {Number.isFinite(value) ? value : 'MISSING'}
-  </div>
+    {Number.isFinite(value) ? value : DATA_MISSING}
+  </StyledStatisticsItem>
 );
 
 const ExpandedRow = styled.div`
@@ -89,23 +147,20 @@ const ExpandedRow = styled.div`
 `;
 
 const StyledStatisticsRow = styled(Flex)`
-  .item {
-    flex: 1;
-    padding: 8px 0;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 24px;
-
-    header {
-      display: block;
-      font-weight: 400;
-      font-size: 13px;
-      line-height: 18px;
-    }
-  }
-
-  .item:not(:last-child) {
-    margin-right: 12px;
+  width: 100%;
+`;
+const StyledStatisticsItem = styled.div`
+  flex: ${({ isHalf }: { isHalf: boolean }) =>
+    isHalf ? '1 1 50%' : '1 1 100%'};
+  padding: 8px 0px;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  header {
+    display: block;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
   }
 `;
 
