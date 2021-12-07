@@ -37,7 +37,10 @@ export const BulkActionMenu = ({
     selectedCount && maxSelectCount ? selectedCount <= maxSelectCount : true;
   const exceededLimitMessage = `Total number of files that can be processed simultaneously is ${maxSelectCount}`;
 
-  const visionMLEnabled = useFlag('VISION_ML');
+  const visionMLEnabled = useFlag('VISION_ML', {
+    fallback: false,
+    forceRerender: true,
+  });
 
   const MenuContent = (
     <Menu
