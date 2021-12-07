@@ -11,3 +11,5 @@ export const getFilterSizeStateInPX = (isOpen: boolean) => {
 
 export const HIDE_BUTTON_TEXT_KEY = 'Hide';
 export const EXPAND_FILTERS_TEXT = 'Click to expand filters';
+export const DATE_RANGE_FILTER_FROM_PLACEHOLDER = 'From';
+export const DATE_RANGE_FILTER_TO_PLACEHOLDER = 'To';
