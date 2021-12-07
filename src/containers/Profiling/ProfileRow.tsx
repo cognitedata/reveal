@@ -74,20 +74,9 @@ type Props = {
 };
 
 export default function ProfileRow({ allCount, profile }: Props) {
-  const {
-    label,
-    nullCount,
-    distinctCount,
-    min,
-    max,
-    mean,
-    median,
-    std,
-    histogram,
-    counts,
-    count,
-  } = profile;
   const [expanded, setExpanded] = useState(false);
+  const { label, nullCount, distinctCount, min, max, mean, histogram } =
+    profile;
 
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
@@ -141,21 +130,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
           />
         </StyledExpandTableCell>
       </StyledTableRow>
-      {expanded && (
-        <ProfileDetailsRow
-          allCount={allCount}
-          nullCount={nullCount}
-          count={count}
-          min={min}
-          max={max}
-          mean={mean}
-          median={median}
-          std={std}
-          counts={counts}
-          distinctCount={distinctCount}
-          histogram={histogram}
-        />
-      )}
+      {expanded && <ProfileDetailsRow allCount={allCount} profile={profile} />}
     </>
   );
 }
