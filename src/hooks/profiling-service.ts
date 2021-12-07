@@ -307,6 +307,9 @@ function useRawProfile(
     () =>
       sdk
         .post<RawProfile>(`/api/v1/projects/${sdk.project}/profiler/raw`, {
+          headers: {
+            'cdf-version': 'v20211207',
+          },
           data: {
             database,
             table,

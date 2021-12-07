@@ -19,6 +19,20 @@ import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
 
+type ProfileRowDataType = 'Empty' | 'Distinct' | 'Min' | 'Max' | 'Mean';
+
+const availableDataTypes: Record<
+  ColumnProfile['type'] | 'Unknown',
+  ProfileRowDataType[]
+> = {
+  Boolean: ['Empty'],
+  Number: ['Empty', 'Distinct', 'Min', 'Max', 'Mean'],
+  Object: ['Empty'],
+  String: ['Empty', 'Distinct'],
+  Vector: ['Empty'],
+  Unknown: [],
+};
+
 type Props = {
   allCount: number;
   profile: ColumnProfile;
@@ -45,30 +59,39 @@ export default function ProfileRow({ allCount, profile }: Props) {
     [getColumnType, isFetched, label]
   );
 
-  const emptyPercent = count === 0 ? 0 : Math.ceil((100 * nullCount) / count);
+  const emptyPercent = count === 0 ? 0 : ((100 * nullCount) / count).toFixed(2);
   const distinctPercent =
-    count - nullCount === 0 ? 0 : Math.ceil(100 * (distinctCount / count));
+    count - nullCount === 0 ? 0 : (100 * (distinctCount / count)).toFixed(2);
 
   return (
     <>
-      <StyledTableRow
-        key="profile"
-        onClick={() => setExpanded(!expanded)}
-        style={{ cursor: 'pointer' }}
-      >
+      <StyledTableRow key="profile" onClick={() => setExpanded(!expanded)}>
         <TableCell>{<ColumnIcon dataKey={label} />}</TableCell>
         <TableCell>{label}</TableCell>
         <TableCell>
-          <NumberOrMissingTd value={nullCount} />
-          <Label size="small" variant="success">
-            {emptyPercent}%
-          </Label>
+          <NumberOrMissingTd
+            dataType="Empty"
+            columnType={columnType}
+            value={nullCount}
+          >
+            <Label size="small" variant={!nullCount ? 'success' : 'default'}>
+              {emptyPercent}%
+            </Label>
+          </NumberOrMissingTd>
         </TableCell>
         <TableCell>
-          <NumberOrMissingTd value={distinctCount} />
-          <Label size="small" variant="success">
-            {distinctPercent}%
-          </Label>
+          <NumberOrMissingTd
+            dataType="Distinct"
+            columnType={columnType}
+            value={distinctCount}
+          >
+            <Label
+              size="small"
+              variant={distinctPercent === '100' ? 'success' : 'default'}
+            >
+              {distinctPercent}%
+            </Label>
+          </NumberOrMissingTd>
         </TableCell>
         <TableCell style={{ padding: '4px 0 0' }}>
           {histogram && (
@@ -83,21 +106,21 @@ export default function ProfileRow({ allCount, profile }: Props) {
         </TableCell>
         <TableCell numeric>
           <NumberOrMissingTd
-            checkIfAvailable
+            dataType="Min"
             columnType={columnType}
             value={min}
           />
         </TableCell>
         <TableCell numeric>
           <NumberOrMissingTd
-            checkIfAvailable
+            dataType="Max"
             columnType={columnType}
             value={max}
           />
         </TableCell>
         <TableCell numeric>
           <NumberOrMissingTd
-            checkIfAvailable
+            dataType="Mean"
             columnType={columnType}
             value={mean}
           />
@@ -115,15 +138,21 @@ export default function ProfileRow({ allCount, profile }: Props) {
 }
 
 const NumberOrMissingTd = ({
-  checkIfAvailable,
+  dataType,
   columnType,
   value,
+  children,
 }: {
-  checkIfAvailable?: boolean;
+  dataType: ProfileRowDataType;
   columnType?: ColumnProfile['type'] | 'Unknown';
   value?: number;
+  children?: React.ReactNode;
 }) => {
-  if (columnType !== 'Number' && checkIfAvailable) {
+  const isDataAvailable = columnType
+    ? availableDataTypes[columnType].includes(dataType)
+    : false;
+
+  if (!isDataAvailable) {
     return (
       <StyledJustifyCenter>
         <Tooltip content="This information is not available for this data type">
@@ -134,7 +163,10 @@ const NumberOrMissingTd = ({
   }
 
   return Number.isFinite(value) ? (
-    <>{value}</>
+    <>
+      {value}
+      {children}
+    </>
   ) : (
     <StyledJustifyCenter>
       <Tooltip content="Unavailable due to error">
