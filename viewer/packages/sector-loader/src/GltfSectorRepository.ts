@@ -9,6 +9,7 @@ import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
+import { V9GeometryFilterer } from '../../cad-parsers/src/cad/V9GeometryFilterer';
 
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -59,7 +60,8 @@ export class GltfSectorRepository implements SectorRepository {
 
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
-      const geometryBuffer = parsedGeometry.geometryBuffer;
+
+      const filteredGeometryBuffer = V9GeometryFilterer.filterGeometry(parsedGeometry.geometryBuffer, type);
 
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
@@ -73,10 +75,14 @@ export class GltfSectorRepository implements SectorRepository {
         case RevealGeometryCollectionType.TorusSegmentCollection:
         case RevealGeometryCollectionType.TrapeziumCollection:
         case RevealGeometryCollectionType.NutCollection:
-          geometryBatchingQueue.push({ type, geometryBuffer, instanceId: type.toString() });
+          geometryBatchingQueue.push({ type,
+                                       geometryBuffer: filteredGeometryBuffer,
+                                       instanceId: type.toString() });
           break;
         case RevealGeometryCollectionType.InstanceMesh:
-          geometryBatchingQueue.push({ type, geometryBuffer, instanceId: parsedGeometry.instanceId! });
+          geometryBatchingQueue.push({ type,
+                                       geometryBuffer: filteredGeometryBuffer,
+                                       instanceId: parsedGeometry.instanceId! });
           break;
         case RevealGeometryCollectionType.TriangleMesh:
           this.createMesh(group, parsedGeometry.geometryBuffer, materials.triangleMesh);
