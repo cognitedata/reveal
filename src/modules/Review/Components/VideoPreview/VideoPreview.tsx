@@ -15,6 +15,7 @@ const LoaderContainer = styled.div`
 
 type FilePreviewProps = {
   fileObj: FileInfo;
+  isLoading: (status: boolean) => void;
 };
 
 const LoaderView = () => {
@@ -50,6 +51,7 @@ export const retrieveDownloadUrl = async (
 
 export const VideoPreview: React.FC<FilePreviewProps> = ({
   fileObj,
+  isLoading,
 }: FilePreviewProps) => {
   const [url, setUrl] = useState('');
 
@@ -68,8 +70,7 @@ export const VideoPreview: React.FC<FilePreviewProps> = ({
       height="100%"
       muted
       onReady={() => {
-        // eslint-disable-next-line no-console
-        console.log('Playing');
+        isLoading(false);
       }}
     />
   ) : (
