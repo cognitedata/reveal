@@ -63,6 +63,11 @@ export const TableWrap = styled.div`
     > div {
     border-bottom: none;
   }
+
+  & > [data-testid='table-row-sub'] {
+    max-width: ${(props: { tableWidth: string }) =>
+      Number(props.tableWidth) > 0 ? `${props.tableWidth}px` : ''};
+  }
 `;
 
 // Regular cell

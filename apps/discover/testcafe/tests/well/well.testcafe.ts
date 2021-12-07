@@ -475,11 +475,11 @@ startTest(
   async () => {
     await App.wellSearchPage.doSearch(wellDataSearchPhrase);
 
-    await App.resultTable.clickRowWithNthCheckbox(0);
+    await App.resultTable.clickCheckboxOfRowWithText('F-1');
 
     await t.wait(500);
 
-    await App.resultTable.clickRowWithNthCheckbox(3);
+    await App.resultTable.clickCheckboxOfRowWithText('F-10');
 
     progress('Check if the bulk action bar is visible');
     await t.expect(App.resultTable.bulkActionBar.exists).ok();
@@ -497,10 +497,11 @@ startTest(
       `Check if the selected wellbores count is displayed as: ${wellBoreCount}`
     );
     await t
+      .debug()
       .expect(App.resultTable.getBulkActionText(wellBoreCount).exists)
       .ok();
 
-    await App.resultTable.clickRowWithNthCheckbox(4);
+    await App.resultTable.clickCheckboxOfRowWithText('Wellbore F-10');
 
     const wellBoreCountFinal = 'With 1 wellbore inside';
     progress(

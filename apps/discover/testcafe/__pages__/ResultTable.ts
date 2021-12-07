@@ -114,7 +114,7 @@ class ResultTable {
    */
   clickRowWithText = async (text: string) => {
     progress(`Click the row with text: "${text}"`);
-    await t.click(Selector('[data-testid="table-cell"]').withText(text).nth(0));
+    await t.click(this.getCellWithText(text));
   };
 
   /**
@@ -123,6 +123,15 @@ class ResultTable {
   clickRowWithNthCheckbox = async (nth: number) => {
     progress(`Click the checkbox in row #:${nth + 1}`);
     await t.click(this.getRowWithNth(nth).find('div[class*="checkbox-ui"]'));
+  };
+
+  clickCheckboxOfRowWithText = async (text: string) => {
+    progress(`Click the checkbox of row with text ${text}`);
+    await t.click(
+      this.getCellWithText(text)
+        .parent('[data-testid="table-row"]')
+        .find('div[class*="checkbox-ui"]')
+    );
   };
 
   clickRowWithNthButtonWithText = async (nth: number, buttonText: string) => {

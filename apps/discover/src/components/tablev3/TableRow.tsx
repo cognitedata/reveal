@@ -37,10 +37,6 @@ interface RowProps<T extends Object> {
   expanded?: boolean;
   disabledRowClickCells?: string[];
   highlighted?: boolean;
-  /**
-   * Used as a maximum size for a sub-table
-   */
-  maxWidth: string;
 }
 // eslint-disable-next-line @typescript-eslint/ban-types
 const CustomRowComp = <T extends Object>({
@@ -57,7 +53,6 @@ const CustomRowComp = <T extends Object>({
   expanded = false,
   highlighted = false,
   disabledRowClickCells = [],
-  maxWidth,
 }: React.PropsWithChildren<RowProps<T>>) => {
   const { style: _unused, ...rest } = row.getRowProps();
   const RowComponent = TableRow || DefaultTableRow;
@@ -136,7 +131,6 @@ const CustomRowComp = <T extends Object>({
       {renderRowSubComponent && expanded && (
         <RowComponent
           expandedRow
-          maxWidth={maxWidth}
           highlighted={highlighted}
           data-testid="table-row"
         >

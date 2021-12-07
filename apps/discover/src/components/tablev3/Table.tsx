@@ -12,6 +12,7 @@ import {
 
 import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 
 import { alphanumeric } from '_helpers/sort';
@@ -166,7 +167,7 @@ const TableInner = <T extends Object>({
   // keep a nice track of the selected items so we can give them to the renderProps
   React.useEffect(() => {
     const values = Object.keys(selectedRowIds).map((key: any) => data[key]);
-    if (selected.length !== 0 && values.length !== 0) {
+    if (!isEmpty(selected) && !isEmpty(values)) {
       setSelected(values);
     }
   }, [selectedRowIds]);
@@ -280,6 +281,7 @@ const TableInner = <T extends Object>({
       data-testid={id}
       gridColumns={getGridColumns}
       ref={TableWrapperRef}
+      tableWidth={tableWidth}
     >
       {!hideHeaders && (
         <Thead>
@@ -340,7 +342,6 @@ const TableInner = <T extends Object>({
             renderRowSubComponent={renderRowSubComponent}
             rowOptions={rowOptions}
             expanded={expanded}
-            maxWidth={tableWidth > 0 ? `${tableWidth}px` : ''}
             disabledRowClickCells={disabledRowClickCells}
             renderRowOverlayComponent={renderRowOverlayComponent}
             renderRowHoverComponent={renderRowHoverComponent}
