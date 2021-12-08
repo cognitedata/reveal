@@ -1,5 +1,6 @@
-import { CustomComponent } from '../types';
+import { CustomComponent } from '../projectConfig';
 
+import { LayersFormModal } from './LayersFormModal';
 import { MetadataFormModal } from './MetadataFormModal';
 
 export const customConfigComponent: CustomComponent = ({
@@ -11,7 +12,7 @@ export const customConfigComponent: CustomComponent = ({
   switch (type) {
     case 'map.children.layers':
       return (
-        <MetadataFormModal
+        <LayersFormModal
           onClose={onClose}
           onOk={onOk}
           metadataValue={metadataValue}

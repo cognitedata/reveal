@@ -48,7 +48,7 @@ export const ConfigFields: React.FC<Props> = ({
               })}
               onClick={() => setSelected(currentPath)}
             >
-              <ConfigIcon type="Dot" active="true" />
+              <ConfigIcon type="Minus" active="true" />
               <Body level={2} strong>
                 {currentMetadata.label}
               </Body>

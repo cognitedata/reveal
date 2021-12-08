@@ -14,7 +14,8 @@ import {
   useProjectConfigMetadataGetQuery,
 } from 'modules/api/projectConfig/useProjectConfigQuery';
 
-import { customConfigComponent } from './configComponents';
+import { customConfigComponent } from '../configComponents';
+
 import { ProjectConfigForm } from './ProjectConfigForm';
 
 export const ProjectConfig = () => {
