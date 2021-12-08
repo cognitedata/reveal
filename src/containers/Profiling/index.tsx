@@ -7,10 +7,14 @@ import {
   ColumnProfile,
   useQuickProfile,
   useFullProfile,
+  FULL_PROFILE_LIMIT,
 } from 'hooks/profiling-service';
 import { AutoResizer } from 'react-base-table';
 import { useActiveTableContext } from 'contexts';
 import ProfileRow, { TableData } from './ProfileRow';
+import ProfileCoverageLabel, {
+  ProfileResultType,
+} from './ProfileCoverageLabel';
 
 const Card = styled.div`
   padding: 16px;
@@ -30,6 +34,7 @@ const Card = styled.div`
     font-weight: 900;
     font-size: 24px;
     line-height: 32px;
+    margin-bottom: 0;
   }
   .coverage {
     padding: 8px 12px;
@@ -89,6 +94,13 @@ export const Profiling = (): JSX.Element => {
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
+  let profileResultType: ProfileResultType = 'running';
+  if (fullProfile.data?.rowCount === FULL_PROFILE_LIMIT) {
+    profileResultType = 'partial';
+  } else if (fullProfile.isFetched) {
+    profileResultType = 'complete';
+  }
+
   const [sortKey, _setSortKey] = useState<SortableColumn>('label');
   const [sortReversed, _setSortReversed] = useState(false);
   const setSortKey = (key: SortableColumn) => {
@@ -131,18 +143,20 @@ export const Profiling = (): JSX.Element => {
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
             <div className="count">{data.rowCount}</div>
-            <div
-              className={`coverage ${fullProfile.isFetched ? '' : 'running'}`}
-            >
-              {fullProfile.isFetched ? '100%' : 'running...'}
-            </div>
+            <ProfileCoverageLabel
+              coverageType="rows"
+              resultType={profileResultType}
+            />
           </Flex>
         </Card>
         <Card className="z-2">
           <header>Columns profiled</header>
           <Flex direction="row" justifyContent="space-between">
             <p className="count">{Object.values(data.columns).length}</p>
-            <p className="coverage">100%</p>
+            <ProfileCoverageLabel
+              coverageType="columns"
+              resultType={profileResultType}
+            />
           </Flex>
         </Card>
       </Flex>
