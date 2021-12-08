@@ -1,5 +1,5 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { fetchAssets } from 'src/store/thunks/fetchAssets';
@@ -14,7 +14,7 @@ export const AnnotationStatusChange = createAsyncThunk<
   ThunkConfig
 >('AnnotationStatusChange', async (payload, { getState, dispatch }) => {
   const updateFileAndAnnotation = async (
-    file: FileState,
+    file: VisionFile,
     updatedAnnotation: VisionAnnotation
   ) => {
     const unSavedAnnotation = { ...updatedAnnotation };
@@ -88,7 +88,7 @@ export const AnnotationStatusChange = createAsyncThunk<
   const annotationState =
     getState().annotationReducer.annotations.byId[payload.id];
   const file =
-    getState().filesSlice.files.byId[annotationState.annotatedResourceId];
+    getState().fileReducer.files.byId[annotationState.annotatedResourceId];
 
   await updateFileAndAnnotation(file, {
     ...annotationState,

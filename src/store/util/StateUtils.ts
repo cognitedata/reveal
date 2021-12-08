@@ -1,10 +1,10 @@
 // state helper functions
 
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 
 // convert to state
-export const createFileState = (file: FileInfo): FileState => {
+export const createFileState = (file: FileInfo): VisionFile => {
   return {
     ...file,
     createdTime: file.createdTime?.getTime(),
@@ -17,7 +17,7 @@ export const createFileState = (file: FileInfo): FileState => {
 
 // convert from state helper functions
 
-export const createFileInfo = (file: FileState): FileInfo => {
+export const createFileInfo = (file: VisionFile): FileInfo => {
   return {
     ...file,
     id: Number(file.id),

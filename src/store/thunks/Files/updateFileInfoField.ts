@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import isEqual from 'lodash-es/isEqual';
@@ -14,7 +14,7 @@ export const updateFileInfoField = createAsyncThunk<
     throw new Error('Id not provided!');
   }
 
-  const fileState = getState().filesSlice;
+  const fileState = getState().fileReducer;
   const fileMetadataState = getState().fileDetailsSlice;
 
   const fileDetails = fileState.files.byId[fileId];
@@ -112,7 +112,7 @@ export const updateFileInfoField = createAsyncThunk<
         const value = editedFileDetails[key];
         if (
           !Object.keys(editedFileDetails).includes(key) ||
-          isEqual(value, fileDetails[key as keyof FileState])
+          isEqual(value, fileDetails[key as keyof VisionFile])
         ) {
           return;
         }

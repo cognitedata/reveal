@@ -1,6 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import './commonActions';
-import filesSlice from 'src/modules/Common/store/filesSlice';
+import fileReducer from 'src/modules/Common/store/files/slice';
 import commonReducer from 'src/modules/Common/store/commonSlice';
 import annotationReducer from 'src/modules/Common/store/annotationSlice';
 import annotationLabelReducer from 'src/modules/Review/store/annotationLabelSlice';
@@ -10,7 +10,7 @@ import processSlice from 'src/modules/Process/processSlice';
 import reviewSlice from 'src/modules/Review/store/reviewSlice';
 
 const rootReducer = combineReducers({
-  filesSlice,
+  fileReducer,
   commonReducer,
   processSlice,
   reviewSlice,

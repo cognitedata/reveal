@@ -164,7 +164,7 @@ export default reviewSlice.reducer;
 // selectors
 
 export const selectAllReviewFiles = createSelector(
-  (state: RootState) => state.filesSlice.files.byId,
+  (state: RootState) => state.fileReducer.files.byId,
   (state: RootState) => state.reviewSlice.fileIds,
   (allFiles, allIds) => {
     const files: FileInfo[] = [];

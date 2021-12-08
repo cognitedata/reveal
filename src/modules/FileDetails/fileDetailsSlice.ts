@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Label } from '@cognite/cdf-sdk-singleton';
-import { selectFileById } from 'src/modules/Common/store/filesSlice';
+import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
 import {
   MetadataItem,
@@ -135,7 +135,7 @@ export const editedFileMeta = (state: State): Record<number, MetadataItem> =>
 
 export const selectUpdatedFileDetails = createSelector(
   (state: RootState) => editedFileDetails(state.fileDetailsSlice),
-  (state: RootState, id: number) => selectFileById(state.filesSlice, id),
+  (state: RootState, id: number) => selectFileById(state.fileReducer, id),
   (editedInfo, fileInfo) => {
     if (fileInfo) {
       const mergedInfo: VisionFileDetails = {
@@ -150,7 +150,7 @@ export const selectUpdatedFileDetails = createSelector(
 
 export const selectUpdatedFileMeta = createSelector(
   (state: RootState) => editedFileMeta(state.fileDetailsSlice),
-  (state: RootState, id: number) => selectFileById(state.filesSlice, id),
+  (state: RootState, id: number) => selectFileById(state.fileReducer, id),
   (editedMeta, fileInfo) => {
     let metadata: MetadataItem[] = generateKeyValueArray(fileInfo?.metadata);
 

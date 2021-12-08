@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { IdEither, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { VisionAsset } from 'src/modules/Common/store/filesSlice';
+import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 
 export const fetchAssets = createAsyncThunk<

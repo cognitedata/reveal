@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
-import { selectFileById } from 'src/modules/Common/store/filesSlice';
+import { selectFileById } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
@@ -40,8 +40,8 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
   const dispatch = useDispatch();
   const { fileId } = props.match.params;
 
-  const file = useSelector(({ filesSlice }: RootState) =>
-    selectFileById(filesSlice, +fileId)
+  const file = useSelector(({ fileReducer }: RootState) =>
+    selectFileById(fileReducer, +fileId)
   );
 
   const reviewFileIds = useSelector(

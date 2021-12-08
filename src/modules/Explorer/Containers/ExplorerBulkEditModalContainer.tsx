@@ -3,7 +3,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/explorerSlice';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import {
   BulkEditTempState,
   setBulkEditModalVisibility,
@@ -18,7 +18,7 @@ export const ExplorerBulkEditModalContainer = () => {
     ({ commonReducer }: RootState) => commonReducer.showBulkEditModal
   );
 
-  const selectedFiles: FileState[] = useSelector((rootState: RootState) =>
+  const selectedFiles: VisionFile[] = useSelector((rootState: RootState) =>
     selectExplorerAllSelectedFilesInSortedOrder(rootState)
   );
   const bulkEditTemp = useSelector(

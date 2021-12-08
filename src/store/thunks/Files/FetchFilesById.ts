@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { createFileState } from 'src/store/util/StateUtils';
 
 export const FetchFilesById = createAsyncThunk<
-  FileState[],
+  VisionFile[],
   number[],
   ThunkConfig
 >('FetchFilesById', async (fileIds) => {

@@ -7,7 +7,7 @@ import { RootState } from 'src/store/rootReducer';
 import {
   setDataSetIds,
   setExtractExif,
-} from 'src/modules/Common/store/filesSlice';
+} from 'src/modules/Common/store/files/slice';
 import { DataSetSelect } from '@cognite/data-exploration';
 import 'antd/dist/antd.css';
 
@@ -21,8 +21,8 @@ export function ModalFileUploadOption({
   const queryClient = new QueryClient();
   const dispatch = useDispatch();
 
-  const { dataSetIds } = useSelector((state: RootState) => state.filesSlice); // remove these state dependencies
-  const { extractExif } = useSelector((state: RootState) => state.filesSlice);
+  const { dataSetIds } = useSelector((state: RootState) => state.fileReducer); // remove these state dependencies
+  const { extractExif } = useSelector((state: RootState) => state.fileReducer);
 
   return (
     <OptionContainer>

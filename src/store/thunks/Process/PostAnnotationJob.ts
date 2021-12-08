@@ -27,7 +27,7 @@ export const postAnnotationJob = createAsyncThunk<
     const createdJob = await createAnnotationJob(modelType, fileIds, params);
 
     const doesFileExist = (fileId: number) =>
-      getState().filesSlice.files.byId[fileId];
+      getState().fileReducer.files.byId[fileId];
 
     let completedFileIds: number[] = [];
     let failedJobs: AnnotationJobFailedItem[] = [];

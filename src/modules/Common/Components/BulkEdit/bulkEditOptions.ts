@@ -1,6 +1,6 @@
 import { ColumnShape, Column } from 'react-base-table';
 import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import { BulkEditTableDataType } from './BulkEditTable/BulkEditTable';
 import { getDataForLabel } from './Label/getDataForLabel';
 import { LabelPanel } from './Label/LabelPanel';
@@ -21,7 +21,7 @@ export type BulkEditOptionType = {
   }: EditPanelProps) => JSX.Element;
   columns: ColumnShape[];
   data: (
-    selectedFiles: FileState[],
+    selectedFiles: VisionFile[],
     bulkEditTemp: BulkEditTempState,
     editPanelState: EditPanelState
   ) => BulkEditTableDataType[];
@@ -30,7 +30,7 @@ export type BulkEditOptionType = {
 export type MetadataSelectOptionType = { value: string; label: string };
 
 export type EditPanelProps = {
-  selectedFiles: FileState[];
+  selectedFiles: VisionFile[];
   bulkEditTemp: BulkEditTempState;
   editPanelStateOptions: {
     editPanelState: EditPanelState;

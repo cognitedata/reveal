@@ -1,5 +1,5 @@
 import { createAsyncThunk, unwrapResult } from '@reduxjs/toolkit';
-import { VisionAsset } from 'src/modules/Common/store/filesSlice';
+import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { AnnotationJob, VisionAPIType } from 'src/api/types';
 import {

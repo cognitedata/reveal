@@ -19,7 +19,7 @@ import {
   GenericTabularState,
 } from 'src/store/genericTabularDataSlice';
 import { useSelector } from 'react-redux';
-import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
+import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { getFakeQueuedJob } from 'src/api/detectionUtils';
 
 export type JobState = AnnotationJob & {
@@ -439,7 +439,7 @@ export const selectAllJobsForAllFilesDict = createSelector(
 );
 
 export const selectAllProcessFiles = createSelector(
-  (state: RootState) => state.filesSlice.files.byId,
+  (state: RootState) => state.fileReducer.files.byId,
   (state: RootState) => state.processSlice.fileIds,
   (allFiles, allIds) => {
     const files: FileInfo[] = [];
@@ -525,7 +525,7 @@ export const selectProcessSortedFiles = createSelector(
 
 export const selectProcessSelectedFileIdsInSortedOrder = createSelector(
   selectProcessSortedFiles,
-  (rootState: RootState) => selectAllSelectedIds(rootState.filesSlice),
+  (rootState: RootState) => selectAllSelectedIds(rootState.fileReducer),
   (sortedFiles, selectedIds) => {
     const indexMap = new Map<number, number>(
       sortedFiles.map((item, index) => [item.id, index])
@@ -544,7 +544,7 @@ export const selectProcessSelectedFileIdsInSortedOrder = createSelector(
 
 export const selectProcessAllSelectedFilesInSortedOrder = createSelector(
   selectProcessSelectedFileIdsInSortedOrder,
-  (rootState: RootState) => rootState.filesSlice.files.byId,
+  (rootState: RootState) => rootState.fileReducer.files.byId,
   (sortedSelectedFileIds, allFiles) => {
     return sortedSelectedFileIds.map((id) => allFiles[id]);
   }
@@ -565,15 +565,15 @@ export const isProcessingFile = (
 // hooks
 
 export const useIsSelectedInProcess = (id: number) => {
-  const selectedIds = useSelector(({ filesSlice }: RootState) =>
-    selectAllSelectedIds(filesSlice)
+  const selectedIds = useSelector(({ fileReducer }: RootState) =>
+    selectAllSelectedIds(fileReducer)
   );
   return selectedIds.includes(id);
 };
 
 export const useProcessFilesSelected = () => {
-  const selectedIds = useSelector(({ filesSlice }: RootState) =>
-    selectAllSelectedIds(filesSlice)
+  const selectedIds = useSelector(({ fileReducer }: RootState) =>
+    selectAllSelectedIds(fileReducer)
   );
   return !!selectedIds.length;
 };

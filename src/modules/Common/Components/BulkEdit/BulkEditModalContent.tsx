@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Body, Button, Select, Title, Tooltip } from '@cognite/cogs.js';
 import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 import { BulkEditTable } from './BulkEditTable/BulkEditTable';
 import {
@@ -11,7 +11,7 @@ import {
 } from './bulkEditOptions';
 
 export type BulkEditModalContentProps = {
-  selectedFiles: FileState[];
+  selectedFiles: VisionFile[];
   bulkEditTemp: BulkEditTempState;
   onCancel: () => void;
   setBulkEditTemp: (value: BulkEditTempState) => void;
