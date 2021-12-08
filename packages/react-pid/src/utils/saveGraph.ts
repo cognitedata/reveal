@@ -17,6 +17,7 @@ export const getDiagramInstanceOutputFormat = (
       pathIds: diagramInstance.pathIds,
       symbolName: diagramInstance.symbolName,
       boundingBox: getInternalSvgBoundingBox(internalSvgPaths),
+      labels: diagramInstance.labels,
     };
   });
 };

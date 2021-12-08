@@ -1,8 +1,8 @@
-import { InternalSvgPath } from 'matcher/InstanceMatcher';
+import { PidPath } from 'matcher/InstanceMatcher';
 import { BoundingBox } from 'types';
 
 export const getInternalSvgBoundingBox = (
-  internalSvgPaths: InternalSvgPath[]
+  internalSvgPaths: PidPath[]
 ): BoundingBox => {
   let minX = Infinity;
   let minY = Infinity;

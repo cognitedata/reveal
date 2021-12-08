@@ -1,3 +1,5 @@
+import { BoundingBox } from '../types';
+
 import { approxeqrel, PathSegment, Point } from './PathSegments';
 import { segmentsToSVGCommand, svgCommandToSegments } from './svgPathParser';
 
@@ -34,7 +36,7 @@ const midPointDistances = (pathSgements: PathSegment[]) => {
   return localMidPointDistances.sort((a, b) => a - b);
 };
 
-export class InternalSvgPath {
+export class PidPath {
   segmentList: PathSegment[];
   midPoint: Point;
   pathId: string;
@@ -54,6 +56,40 @@ export class InternalSvgPath {
   }
   serializeToPathCommands(): string {
     return segmentsToSVGCommand(this.segmentList);
+  }
+
+  static fromSVGElement(svgElement: SVGPathElement) {
+    return PidPath.fromPathCommand(
+      svgElement.getAttribute('d') as string,
+      svgElement.id
+    );
+  }
+
+  static fromPathCommand(pathCommand: string, pathId = '') {
+    return new PidPath(svgCommandToSegments(pathCommand, pathId), pathId);
+  }
+}
+
+export class PidTspan {
+  id: string;
+  boundingBox: BoundingBox;
+  text: string;
+
+  constructor(id: string, text: string, boundingBox: BoundingBox) {
+    this.id = id;
+    this.boundingBox = boundingBox;
+    this.text = text;
+  }
+
+  static fromSVGTSpan(tSpan: SVGTSpanElement) {
+    const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
+    const boundingBox = {
+      x: bBox.x,
+      y: bBox.y,
+      width: bBox.width,
+      height: bBox.height,
+    };
+    return new PidTspan(tSpan.id, tSpan.innerHTML, boundingBox);
   }
 }
 
@@ -90,7 +126,7 @@ export class InstanceMatcher {
     return (1 + errorMargin) * this.maxMidPointDistance < otherMaxDistance;
   }
 
-  matches(other: InternalSvgPath[]): MatchResult {
+  matches(other: PidPath[]): MatchResult {
     const combinedPathSegments: PathSegment[] = [];
     other.forEach((svgPath) => {
       svgPath.segmentList.forEach((pathSegment) => {
@@ -142,8 +178,4 @@ export class InstanceMatcher {
 
 export const newMatcher = (path: string) => {
   return new InstanceMatcher(svgCommandToSegments(path));
-};
-
-export const newInternalSvgPath = (path: string, pathId = '') => {
-  return new InternalSvgPath(svgCommandToSegments(path, pathId), pathId);
 };

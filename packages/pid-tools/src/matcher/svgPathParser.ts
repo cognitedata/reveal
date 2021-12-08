@@ -5,11 +5,11 @@ import { SVG_ID } from '../constants';
 import { CurveSegment, LineSegment, PathSegment, Point } from './PathSegments';
 
 type PointTranslationParams = {
-  currentElem: SVGPathElement;
+  currentElem: SVGPathElement | SVGTSpanElement;
   svg: SVGSVGElement;
 };
 
-const translatePointWithDOM = (
+export const translatePointWithDOM = (
   x: number,
   y: number,
   params: PointTranslationParams

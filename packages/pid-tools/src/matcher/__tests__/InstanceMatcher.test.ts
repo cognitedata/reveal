@@ -1,8 +1,4 @@
-import {
-  newMatcher,
-  MatchResult,
-  newInternalSvgPath,
-} from '../InstanceMatcher';
+import { newMatcher, MatchResult, PidPath } from '../InstanceMatcher';
 
 describe('symbol-matching', () => {
   test('connectionSymbol from same file', () => {
@@ -12,7 +8,7 @@ describe('symbol-matching', () => {
       'M 1580,4954 V 5385 L 1534,5447 L 1488,5385M 1580,5247 H 1488M 1488,4954 V 5385M 1580,4954 L 1534,4985 L 1488,4954';
 
     const matcher = newMatcher(connectionSymbol1);
-    const potentialMatch = [newInternalSvgPath(connectionSymbol2)];
+    const potentialMatch = [PidPath.fromPathCommand(connectionSymbol2)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
   });
 
@@ -22,7 +18,7 @@ describe('symbol-matching', () => {
       'M 2405,4094.5 C 2405,4128.4653 2377.4656,4156 2343.5,4156 C 2309.5344,4156 2282,4128.4653 2282,4094.5 C 2282,4060.5344 2309.5344,4033 2343.5,4033 C 2377.4656,4033 2405,4060.5344 2405,4094.5';
 
     const matcher = newMatcher(squareSymbol);
-    const potentialMatch = [newInternalSvgPath(circleSymbol)];
+    const potentialMatch = [PidPath.fromPathCommand(circleSymbol)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
   });
 
@@ -33,7 +29,7 @@ describe('symbol-matching', () => {
       'M 4318,2657 L 4349,2642 L 4318,2626 Z M 4380,2626 L 4349,2642 L 4380,2657 Z';
 
     const matcher = newMatcher(closedValve);
-    const potentialMatch = [newInternalSvgPath(closedValve2)];
+    const potentialMatch = [PidPath.fromPathCommand(closedValve2)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
   });
 
@@ -52,7 +48,7 @@ describe('symbol-matching', () => {
     ].join(' ');
 
     const matcher = newMatcher(fileLink);
-    const potentialMatch = [newInternalSvgPath(fileLink2)];
+    const potentialMatch = [PidPath.fromPathCommand(fileLink2)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
   });
 
@@ -71,7 +67,7 @@ describe('symbol-matching', () => {
     ].join(' ');
 
     const matcher = newMatcher(fileLinkUp);
-    const potentialMatch = [newInternalSvgPath(fileLinkDown)];
+    const potentialMatch = [PidPath.fromPathCommand(fileLinkDown)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
   });
 
@@ -86,7 +82,7 @@ describe('symbol-matching', () => {
     );
 
     const matcher = newMatcher(closedValve);
-    const potentialMatch = [newInternalSvgPath(closedValveSubMatch)];
+    const potentialMatch = [PidPath.fromPathCommand(closedValveSubMatch)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.SubMatch);
   });
 });
@@ -98,7 +94,7 @@ describe('isTooSpreadOut', () => {
     const matcher = newMatcher(symbol);
 
     const spreadOutSymbol = ['M 0,0 V 100', 'M 121,0 V 100'].join(' ');
-    const potentialMatch = newInternalSvgPath(spreadOutSymbol);
+    const potentialMatch = PidPath.fromPathCommand(spreadOutSymbol);
     expect(matcher.isTooSpreadOut(potentialMatch.segmentList)).toEqual(true);
   });
 
@@ -108,7 +104,7 @@ describe('isTooSpreadOut', () => {
     const matcher = newMatcher(symbol);
 
     const notSpreadOutSymbol = ['M 0,0 V 100', 'M 79,0 V 100'].join(' ');
-    const potentialMatch = newInternalSvgPath(notSpreadOutSymbol);
+    const potentialMatch = PidPath.fromPathCommand(notSpreadOutSymbol);
     expect(matcher.isTooSpreadOut(potentialMatch.segmentList)).toEqual(false);
   });
 
@@ -128,7 +124,7 @@ describe('isTooSpreadOut', () => {
     ].join('');
 
     const matcher = newMatcher(instrument);
-    const potentialMatch = [newInternalSvgPath(instrumentWrongCircle)];
+    const potentialMatch = [PidPath.fromPathCommand(instrumentWrongCircle)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
   });
 });

@@ -4,6 +4,7 @@ import {
   DiagramSymbolInstance,
   getDiagramInstanceId,
   isPathIdInInstance,
+  DiagramLabel,
 } from '@cognite/pid-tools';
 
 import { COLORS } from '../../constants';
@@ -38,6 +39,35 @@ export const isInAddSymbolSelection = (
   return selection.some((svgPath) => svgPath.id === node.id);
 };
 
+export const isInLabelSelection = (
+  node: SVGElement,
+  labelSelection: DiagramInstanceId | null
+) => {
+  return labelSelection === node.id;
+};
+
+export const isLabelInInstance = (
+  instance: DiagramSymbolInstance,
+  id: DiagramInstanceId
+) => {
+  return instance.labels.some((labelInInstance) => labelInInstance.id === id);
+};
+
+export const isLabelInInstances = (
+  node: SVGElement,
+  symbolInstances: DiagramSymbolInstance[]
+) => {
+  return symbolInstances.some((instance) =>
+    isLabelInInstance(instance, node.id)
+  );
+};
+
+const getInstanceLabelIndex = (instance: DiagramSymbolInstance, id: string) => {
+  return instance.labels.findIndex(
+    (labelOnInstance) => labelOnInstance.id === id
+  );
+};
+
 export const isInGraphSelection = (
   node: SVGElement,
   graphSelection: DiagramInstanceId | null
@@ -50,28 +80,61 @@ export const applyStyleToNode = (
   node: SVGElement,
   selection: SVGElement[],
   connectionSelection: DiagramInstanceId | null,
+  labelSelection: DiagramInstanceId | null,
   symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[],
   graphPaths: DiagramInstanceId[][],
   graphSelection: DiagramInstanceId | null
 ) => {
-  if (isDiagramLine(node, lines)) {
+  if (isDiagramLine(node, lines) || isLabelInInstances(node, lines)) {
     node.style.stroke = COLORS.diagramLine;
   }
-  if (isSymbolInstance(node, symbolInstances)) {
+  if (
+    isSymbolInstance(node, symbolInstances) ||
+    isLabelInInstances(node, symbolInstances)
+  ) {
     node.style.stroke = COLORS.symbol;
   }
   if (isInConnectionSelection(node, connectionSelection)) {
     node.style.stroke = COLORS.connectionSelection;
   }
+  if (isInLabelSelection(node, labelSelection)) {
+    node.style.stroke = COLORS.labelSelection;
+  }
   if (isInAddSymbolSelection(node, selection)) {
     node.style.stroke = COLORS.symbolSelection;
+  }
+  if (node instanceof SVGTSpanElement) {
+    node.style.cursor = 'pointer';
   }
   if (isInGraphSelection(node, graphSelection)) {
     node.style.stroke = COLORS.connectionSelection;
   }
 };
 /* eslint-enable no-param-reassign */
+
+export const addOrRemoveLabelToInstance = (
+  node: SVGElement,
+  pidLabel: DiagramLabel,
+  instance: DiagramSymbolInstance | DiagramLineInstance,
+  instances: DiagramSymbolInstance[] | DiagramLineInstance[],
+  setter: (arg: DiagramSymbolInstance[] | DiagramLineInstance[]) => void
+) => {
+  const labelIndex = getInstanceLabelIndex(instance, node.id);
+  if (labelIndex === -1) {
+    instance.labels.push(pidLabel);
+  } else {
+    instance.labels.splice(labelIndex, 1);
+  }
+  setter(
+    instances.map((oldInstance) => {
+      if (oldInstance.pathIds === instance.pathIds) {
+        return instance;
+      }
+      return oldInstance;
+    })
+  );
+};
 
 export const colorSymbol = (
   diagramInstanceId: string,

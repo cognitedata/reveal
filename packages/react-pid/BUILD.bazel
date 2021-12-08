@@ -73,6 +73,7 @@ DEV_DEPENDENCIES = [
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
     "@npm//typescript",
+    "@npm//graphology-types",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

@@ -11,7 +11,7 @@ export const getDiagramInstanceId = (
   return symbolInstance.pathIds.sort().join('-');
 };
 
-export const getSymbolInstanceByPathId = (
+export const getDiagramInstanceByPathId = (
   symbolInstances: DiagramSymbolInstance[],
   pathId: string
 ): DiagramSymbolInstance | null => {

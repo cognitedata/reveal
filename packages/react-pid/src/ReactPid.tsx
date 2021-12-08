@@ -41,6 +41,9 @@ export const ReactPid: React.FC = () => {
   const [existingSymbolPromptData, setExistingSymbolPromptData] =
     useState<ExistingSymbolPromptData | null>(null);
 
+  const [labelSelection, setLabelSelection] =
+    useState<DiagramInstanceId | null>(null);
+
   const [connections, setConnections] = React.useState<DiagramConnection[]>([]);
   const [connectionSelection, setConnectionSelection] =
     React.useState<DiagramInstanceId | null>(null);
@@ -48,6 +51,7 @@ export const ReactPid: React.FC = () => {
   const setToolBarMode = (mode: ToolType) => {
     setSelection([]);
     setConnectionSelection(null);
+    setLabelSelection(null);
     setActive(mode);
   };
 
@@ -211,6 +215,7 @@ export const ReactPid: React.FC = () => {
               fileUrl={fileUrl}
               active={active}
               symbolInstances={symbolInstances}
+              setSymbolInstances={setSymbolInstances}
               lines={lines}
               setLines={setLines}
               selection={selection}
@@ -221,6 +226,8 @@ export const ReactPid: React.FC = () => {
               setConnections={setConnections}
               svgDocument={svgDocument}
               setSvgDocument={setSvgDocument}
+              labelSelection={labelSelection}
+              setLabelSelection={setLabelSelection}
             />
           )}
         </Viewport>

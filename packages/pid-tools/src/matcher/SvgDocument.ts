@@ -1,23 +1,29 @@
 import { DiagramSymbol, SvgRepresentation, DiagramSymbolInstance } from 'types';
 
-import {
-  newMatcher,
-  MatchResult,
-  InternalSvgPath,
-  newInternalSvgPath,
-} from './InstanceMatcher';
+import { newMatcher, MatchResult, PidPath, PidTspan } from './InstanceMatcher';
 
 export class SvgDocument {
-  allSvgElements: InternalSvgPath[];
-  constructor(allSvgElements: InternalSvgPath[]) {
-    this.allSvgElements = allSvgElements;
+  pidPaths: PidPath[];
+  pidLabels: PidTspan[];
+  constructor(paths: PidPath[], labels: PidTspan[]) {
+    this.pidPaths = paths;
+    this.pidLabels = labels;
   }
 
-  getInternalPathById(pathId: string): InternalSvgPath | null {
+  getInternalPathById(pathId: string): PidPath | null {
     // Change to hashmap if any performance issues
-    for (let i = this.allSvgElements.length - 1; i >= 0; --i) {
-      if (this.allSvgElements[i].pathId === pathId) {
-        return this.allSvgElements[i];
+    for (let i = this.pidPaths.length - 1; i >= 0; --i) {
+      if (this.pidPaths[i].pathId === pathId) {
+        return this.pidPaths[i];
+      }
+    }
+    return null;
+  }
+
+  getPidTspanById(id: string): PidTspan | null {
+    for (let i = this.pidLabels.length - 1; i >= 0; --i) {
+      if (this.pidLabels[i].id === id) {
+        return this.pidLabels[i];
       }
     }
     return null;
@@ -45,6 +51,7 @@ export class SvgDocument {
       return {
         symbolName: symbol.symbolName,
         pathIds: match,
+        labels: [],
       } as DiagramSymbolInstance;
     });
 
@@ -54,7 +61,7 @@ export class SvgDocument {
   findAllInstancesOfSvgRepresentation = (
     svgRepresentation: SvgRepresentation
   ): string[][] => {
-    const matches: InternalSvgPath[][] = [];
+    const matches: PidPath[][] = [];
 
     const joinedSymbolSvgCommands = svgRepresentation.svgPaths
       .map((svgPath) => svgPath.svgCommands)
@@ -62,7 +69,7 @@ export class SvgDocument {
 
     const matcher = newMatcher(joinedSymbolSvgCommands);
 
-    const all = this.allSvgElements;
+    const all = this.pidPaths;
 
     // Filter out all paths that are a sub match and find matches that only consist of one SVGElement
     const potMatches = [];
@@ -109,19 +116,18 @@ export class SvgDocument {
 
     return matches.map((match) => match.map((svgPath) => svgPath.pathId));
   };
-}
 
-export const newSvgDocumentFromSVGElements = (
-  svgElements: SVGElement[]
-): SvgDocument => {
-  return new SvgDocument(
-    svgElements
-      .filter((svgElement) => svgElement.getAttribute('d'))
+  static fromSVGElements(svgElements: SVGElement[]) {
+    const paths = svgElements
+      .filter((svgElement) => svgElement instanceof SVGPathElement)
       .map((svgElement) => {
-        return newInternalSvgPath(
-          svgElement.getAttribute('d') as string,
-          svgElement.id
-        );
-      })
-  );
-};
+        return PidPath.fromSVGElement(svgElement as SVGPathElement);
+      });
+    const labels = svgElements
+      .filter((svgElement) => svgElement instanceof SVGTSpanElement)
+      .map((svgElement) => {
+        return PidTspan.fromSVGTSpan(svgElement as SVGTSpanElement);
+      });
+    return new SvgDocument(paths, labels);
+  }
+}

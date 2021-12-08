@@ -14,6 +14,12 @@ export interface SvgRepresentation {
   boundingBox: BoundingBox;
 }
 
+export interface DiagramLabel {
+  id: string;
+  text: string;
+  boundingBox: BoundingBox;
+}
+
 export interface DiagramSymbol {
   symbolName: string;
   svgRepresentations: SvgRepresentation[];
@@ -22,6 +28,7 @@ export interface DiagramSymbol {
 export interface DiagramSymbolInstance {
   symbolName: string;
   pathIds: string[];
+  labels: DiagramLabel[];
 }
 
 export interface DiagramLineInstance extends DiagramSymbolInstance {
@@ -33,6 +40,7 @@ export interface DiagramInstanceOutputFormat extends DiagramSymbolInstance {
 }
 
 export type DiagramInstanceId = string;
+
 export interface DiagramConnection {
   start: DiagramInstanceId;
   end: DiagramInstanceId;

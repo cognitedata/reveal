@@ -4,4 +4,5 @@ export const COLORS = {
   diagramLine: 'blue',
   symbolSelection: 'orange',
   connectionSelection: 'lawngreen',
+  labelSelection: 'coral',
 };

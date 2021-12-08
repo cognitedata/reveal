@@ -80,6 +80,12 @@ export const SidePanel = ({
         description: 'Connect instances',
       },
       {
+        icon: 'Flag',
+        onClick: () => setActive('connectLabels'),
+        className: `${active === 'connectLabels' && 'active'}`,
+        description: 'Connect labels',
+      },
+      {
         icon: 'GraphTree',
         onClick: () => setActive('graphExplorer'),
         className: `${active === 'graphExplorer' && 'active'}`,
