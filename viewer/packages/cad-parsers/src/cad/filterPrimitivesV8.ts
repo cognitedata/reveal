@@ -30,14 +30,15 @@ export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   const instanceMatrixAttribute = attributes.get('instanceMatrix');
   assert(instanceMatrixAttribute !== undefined);
   const elementSize = elementSizeFromAttributes(attributes);
+  const byteOffset = instanceMatrixAttribute.offset;
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
     elementSize,
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromInstanceMatrixAttributes(
-        instanceMatrixAttribute,
         attributeFloatValues,
+        byteOffset,
         elementSize,
         index,
         baseBox,

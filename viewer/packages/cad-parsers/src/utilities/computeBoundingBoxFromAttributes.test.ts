@@ -218,11 +218,12 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
     const baseBbox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
     const matrix = new THREE.Matrix4().identity();
     const valuesAsFloats = new Float32Array(matrix.toArray());
+    const matrixByteOffset = instanceMatrixAttribute.offset;
 
     // Act
     const result = computeBoundingBoxFromInstanceMatrixAttributes(
-      instanceMatrixAttribute,
       valuesAsFloats,
+      matrixByteOffset,
       elementSize,
       0,
       baseBbox,
@@ -241,11 +242,12 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
       new THREE.Matrix4().makeScale(1, 2, 3)
     );
     const valuesAsFloats = new Float32Array(matrix.toArray());
+    const matrixByteOffset = instanceMatrixAttribute.offset;
 
     // Act
     const result = computeBoundingBoxFromInstanceMatrixAttributes(
-      instanceMatrixAttribute,
       valuesAsFloats,
+      matrixByteOffset,
       elementSize,
       0,
       baseBbox,

@@ -106,8 +106,8 @@ const computeBoundingBoxFromInstanceMatrixAttributesVars = {
 };
 
 export function computeBoundingBoxFromInstanceMatrixAttributes(
-  instanceMatrixAttribute: ParsePrimitiveAttribute,
   attributeFloatValues: Float32Array,
+  byteOffset: number,
   elementSize: number,
   elementIndex: number,
   baseBoundingBox: THREE.Box3,
@@ -115,7 +115,7 @@ export function computeBoundingBoxFromInstanceMatrixAttributes(
 ): THREE.Box3 {
   const { instanceMatrix } = computeBoundingBoxFromInstanceMatrixAttributesVars;
 
-  const offset = (elementIndex * elementSize + instanceMatrixAttribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+  const offset = (elementIndex * elementSize + byteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
   // Note! set() accepts row-major, stored column-major
   instanceMatrix.set(
     attributeFloatValues[offset + 0],
