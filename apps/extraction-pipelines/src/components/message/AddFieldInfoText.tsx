@@ -18,7 +18,7 @@ export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
 }: PropsWithChildren<AddFieldInfoTextProps>) => {
   return (
     <Styled>
-      <Icon type="PlusCompact" style={{ marginRight: '1rem' }} /> add {children}
+      <Icon type="AddLarge" style={{ marginRight: '1rem' }} /> add {children}
     </Styled>
   );
 };

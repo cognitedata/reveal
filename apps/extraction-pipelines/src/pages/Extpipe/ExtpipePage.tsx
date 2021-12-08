@@ -267,7 +267,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
               >
                 <Button
                   onClick={() => setDropdownVisible(!dropdownVisible)}
-                  icon="MoreOverflowEllipsisHorizontal"
+                  icon="EllipsisHorizontal"
                   data-testid="extpipe-actions-dropdown-button"
                   aria-label="More pipeline actions"
                   iconPlacement="right"

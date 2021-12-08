@@ -66,7 +66,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   return (
     <Section
       title="RAW tables"
-      icon="Table"
+      icon="TableViewSmall"
       editButton={{ onClick: openDialog, canEdit }}
       data-testid={`${TEST_ID_BTN_SAVE}rawTable`}
     >

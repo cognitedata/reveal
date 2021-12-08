@@ -220,7 +220,7 @@ export const RawEditModalView = ({
             ))}
           </Col>
           <div>
-            <Button icon="PlusCompact" onClick={addRow}>
+            <Button icon="AddLarge" onClick={addRow}>
               Add new table
             </Button>
           </div>

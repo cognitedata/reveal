@@ -213,7 +213,7 @@ export const ContactsDialogView = ({
       </StyledTableNoRowColor2>
 
       <div>
-        <Button icon="PlusCompact" onClick={addRow}>
+        <Button icon="AddLarge" onClick={addRow}>
           Add contact
         </Button>
       </div>

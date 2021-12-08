@@ -11,16 +11,16 @@ const getSortOrder = <T extends object>(
   if (column.isSorted) {
     return column.isSortedDesc
       ? {
-          icon: 'SortDown',
+          icon: 'SortDescending',
           ariaSort: 'descending',
         }
       : {
-          icon: 'SortUp',
+          icon: 'SortAscending',
           ariaSort: 'ascending',
         };
   }
   return {
-    icon: 'SortBoth',
+    icon: 'ReorderDefault',
     ariaSort: 'none',
   };
 };

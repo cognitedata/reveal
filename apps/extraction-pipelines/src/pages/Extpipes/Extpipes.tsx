@@ -86,7 +86,7 @@ const Extpipes: FunctionComponent<Props> = () => {
       <Button
         variant="default"
         type="primary"
-        icon="PlusCompact"
+        icon="AddLarge"
         disabled={!canEdit}
         onClick={onClickCreateButton}
       >

@@ -97,19 +97,3 @@ export const ColumnForm = styled.form`
     }
   }
 `;
-
-export const AddForm = styled.form`
-  display: grid;
-  grid-column-gap: 0.5rem;
-  align-items: center;
-  grid-template-rows: max-content;
-  input {
-    width: 100%;
-  }
-  button {
-    justify-self: end;
-  }
-  [aria-expanded] {
-    justify-self: end;
-  }
-`;

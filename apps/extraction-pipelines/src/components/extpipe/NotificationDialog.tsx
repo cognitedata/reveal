@@ -100,10 +100,10 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       visible={isOpen}
       close={close}
     >
-      <IconHeading icon="BellNotification">Run alerts</IconHeading>
+      <IconHeading icon="BellFilled">Run alerts</IconHeading>
       <p>Get alerted when runs fail.</p>
       <Hr />
-      <IconHeading icon="BellNotification">Last seen status</IconHeading>
+      <IconHeading icon="BellFilled">Last seen status</IconHeading>
       <p>
         Allows you to track if the extraction pipeline is down due to connection
         issues.
@@ -137,7 +137,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       <Hr />
       {numContactsWithNotificationsTurnedOn === 0 ? (
-        <InfoBox iconType="WarningStroke" color="warning">
+        <InfoBox iconType="WarningFilled" color="warning">
           There are currently no contacts that will receive notifications. You
           can manage this in the contact section.
         </InfoBox>

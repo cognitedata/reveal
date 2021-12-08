@@ -164,7 +164,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           onClick={toggleStartDropDown}
           postfix={
             <Button type="ghost" onClick={toggleStartDropDown}>
-              <Icon type="ChevronDownMicro" />
+              <Icon type="ChevronDownSmall" />
             </Button>
           }
           aria-label={RANGE_START_LABEL}
@@ -187,7 +187,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           aria-label={RANGE_END_LABEL}
           postfix={
             <Button type="ghost" onClick={toggleEndDropDown}>
-              <Icon type="ChevronDownMicro" />
+              <Icon type="ChevronDownSmall" />
             </Button>
           }
         />
