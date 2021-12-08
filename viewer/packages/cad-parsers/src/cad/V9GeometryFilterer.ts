@@ -4,7 +4,10 @@
 
 import { assertNever, TypedArray, TypedArrayConstructor } from '@reveal/utilities';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
-import { computeBoundingBoxFromEllipseValues } from '../utilities/computeBoundingBoxFromAttributes';
+import {
+  computeBoundingBoxFromEllipseValues,
+  computeBoundingBoxFromInstanceMatrixAttributes
+} from '../utilities/computeBoundingBoxFromAttributes';
 import { filterPrimitivesOutsideClipBox } from './filterPrimitivesCommon';
 import * as THREE from 'three';
 
@@ -40,7 +43,7 @@ export class V9GeometryFilterer {
 
     switch (type) {
       case RevealGeometryCollectionType.BoxCollection:
-        // newArray = V9GeometryFilterer.filterBoxCollection(interleavedAttributes, clipBox);
+        newArray = V9GeometryFilterer.filterBoxCollection(interleavedAttributes, clipBox);
         break;
       case RevealGeometryCollectionType.CircleCollection:
         break;
@@ -112,6 +115,30 @@ export class V9GeometryFilterer {
     return newGeometry;
   }
 
+  private static filterWithCallback(
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
+    computeBoundingBoxCallback: (
+      index: number,
+      elementSize: number,
+      attributeFloatValues: Float32Array,
+      out: THREE.Box3
+    ) => THREE.Box3,
+    clipBox: THREE.Box3
+  ): Uint8Array {
+    const firstInterleavedAttribute = interleavedAttributeMap.values().next().value as THREE.InterleavedBufferAttribute;
+    const typedArray = firstInterleavedAttribute.array as TypedArray;
+    const sharedArray = new Uint8Array(typedArray.buffer);
+
+    const newRawBuffer = filterPrimitivesOutsideClipBox(
+      sharedArray,
+      firstInterleavedAttribute.data.stride * typedArray.BYTES_PER_ELEMENT,
+      clipBox,
+      computeBoundingBoxCallback
+    );
+
+    return newRawBuffer;
+  }
+
   private static filterEllipsoidCollection(
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
     clipBox: THREE.Box3
@@ -134,30 +161,33 @@ export class V9GeometryFilterer {
       return computeBoundingBoxFromEllipseValues(r1, r2, height, center, out);
     };
 
-    return this.filterOnValues(interleavedAttributeMap, computeCallback, clipBox);
+    return this.filterWithCallback(interleavedAttributeMap, computeCallback, clipBox);
   }
 
-  private static filterOnValues(
+  private static filterBoxCollection(
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
-    computeBoundingBoxCallback: (
+    clipBox: THREE.Box3
+  ): Uint8Array {
+    const computeCallback = (
       index: number,
       elementSize: number,
       attributeFloatValues: Float32Array,
       out: THREE.Box3
-    ) => THREE.Box3,
-    clipBox: THREE.Box3
-  ): Uint8Array {
-    const firstInterleavedAttribute = interleavedAttributeMap.values().next().value as THREE.InterleavedBufferAttribute;
-    const typedArray = firstInterleavedAttribute.array as TypedArray;
-    const sharedArray = new Uint8Array(typedArray.buffer);
+    ) => {
+      const baseBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
+      const matrixAttribute = interleavedAttributeMap.get('_instanceMatrix')!;
+      const byteOffset = matrixAttribute.offset * (matrixAttribute.array as TypedArray).BYTES_PER_ELEMENT;
 
-    const newRawBuffer = filterPrimitivesOutsideClipBox(
-      sharedArray,
-      firstInterleavedAttribute.data.stride * typedArray.BYTES_PER_ELEMENT,
-      clipBox,
-      computeBoundingBoxCallback
-    );
+      return computeBoundingBoxFromInstanceMatrixAttributes(
+        attributeFloatValues,
+        byteOffset,
+        elementSize,
+        index,
+        baseBox,
+        out
+      );
+    };
 
-    return newRawBuffer;
+    return this.filterWithCallback(interleavedAttributeMap, computeCallback, clipBox);
   }
 }

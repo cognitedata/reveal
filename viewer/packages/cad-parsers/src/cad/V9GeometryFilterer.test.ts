@@ -30,7 +30,22 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitive
   const newPrimitives = parseInterleavedGeometry(primitiveType, filteredGeometry);
 
   expect(newPrimitives).toHaveLength(1);
-  expect(newPrimitives[0]).toContainEntries(Object.entries(primitives[0]));
+  expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[0]));
+
+  for (const key in primitives[0]) {
+    if (Array.isArray(primitives[0][key])) {
+      const array0 = primitives[0][key] as number[];
+      const array1 = newPrimitives[0][key] as number[];
+
+      expect(array0).toHaveLength(array1.length);
+
+      for (let i = 0; i < array0.length; i++) {
+        expect(array0[i]).toBeCloseTo(array1[i]);
+      }
+    } else {
+      expect(primitives[0][key]).toBeCloseTo(newPrimitives[0][key] as number);
+    }
+  }
 }
 
 describe('V9GeometryFilterer filters primitives correctly', () => {
