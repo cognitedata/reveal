@@ -21,7 +21,11 @@ import { SidePanel } from './components';
 import { SvgViewer } from './components/svg-viewer/SvgViewer';
 import { Viewport } from './components/viewport/Viewport';
 import { SaveSymbolModals } from './components/save-symbol-modals/SaveSymbolModals';
-import { deleteSymbolFromState, getSymbolByName } from './utils/symbolUtils';
+import {
+  deleteConnectionFromState,
+  deleteSymbolFromState,
+  getSymbolByName,
+} from './utils/symbolUtils';
 
 let svgDocument: SvgDocument | undefined;
 const setSvgDocument = (svgDoc: SvgDocument) => {
@@ -142,6 +146,10 @@ export const ReactPid: React.FC = () => {
     );
   };
 
+  const deleteConnection = (diagramConnection: DiagramConnection) => {
+    deleteConnectionFromState(diagramConnection, connections, setConnections);
+  };
+
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
     if (svgDocument === undefined) {
       return;
@@ -194,6 +202,7 @@ export const ReactPid: React.FC = () => {
           saveSymbol={saveSymbol}
           connections={connections}
           deleteSymbol={deleteSymbol}
+          deleteConnection={deleteConnection}
           fileUrl={fileUrl}
           saveGraphAsJson={saveGraphAsJson}
         />

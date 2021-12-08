@@ -6,7 +6,7 @@ import {
   DiagramSymbolInstance,
 } from '@cognite/pid-tools';
 import styled from 'styled-components';
-import { Collapse } from '@cognite/cogs.js';
+import { Collapse, Icon } from '@cognite/cogs.js';
 
 import { getInstancesByName, getInstanceCount } from './utils';
 import { CollapsableSymbolHeader } from './CollapsableSymbolHeader';
@@ -23,16 +23,29 @@ const CollapseSeperator = styled.div`
   border-bottom: 1px solid #d9d9d9;
 `;
 
+const ConnectionItem = styled.div`
+  display: grid;
+  grid-template-columns: auto max-content;
+`;
+
 interface CollapsableInstanceListProps {
   symbols: DiagramSymbol[];
   symbolInstances: DiagramSymbolInstance[];
   lineInstances: DiagramLineInstance[];
   connections: DiagramConnection[];
   deleteSymbol: (symbol: DiagramSymbol) => void;
+  deleteConnection: (connection: DiagramConnection) => void;
 }
 
 export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
-  ({ symbols, symbolInstances, lineInstances, connections, deleteSymbol }) => {
+  ({
+    symbols,
+    symbolInstances,
+    lineInstances,
+    connections,
+    deleteSymbol,
+    deleteConnection,
+  }) => {
     const renderSymbolInstances = (
       symbolInstances: DiagramSymbolInstance[],
       symbolName: string
@@ -97,11 +110,18 @@ export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
         <Collapse accordion ghost>
           <Collapse.Panel header={`Connections (${connections?.length || 0})`}>
             {connections?.map((connection) => (
-              <p key={`${connection.start}.${connection.end}`}>
-                {`${connection.start} ${
-                  connection.direction === 'unknown' ? '--' : '->'
-                } ${connection.end}`}
-              </p>
+              <ConnectionItem key={`${connection.start}.${connection.end}`}>
+                <p>
+                  {`${connection.start} ${
+                    connection.direction === 'unknown' ? '--' : '->'
+                  } ${connection.end}`}
+                </p>
+                <Icon
+                  onClick={() => deleteConnection(connection)}
+                  type="Close"
+                  size={12}
+                />
+              </ConnectionItem>
             ))}
           </Collapse.Panel>
         </Collapse>

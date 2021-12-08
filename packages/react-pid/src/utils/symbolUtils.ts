@@ -36,6 +36,20 @@ export const deleteSymbolFromState = (
   setSymbols(symbolsToKeep);
 };
 
+export const deleteConnectionFromState = (
+  diagramConnection: DiagramConnection,
+  diagramConnections: DiagramConnection[],
+  setConnections: (connections: DiagramConnection[]) => void
+) => {
+  setConnections(
+    diagramConnections.filter((connection) =>
+      Object.values(connection).some(
+        (value) => Object.values(diagramConnection).includes(value) === false
+      )
+    )
+  );
+};
+
 export const getSymbolByName = (
   symbols: DiagramSymbol[],
   symbolName: string
