@@ -3,8 +3,6 @@ import groupBy from 'lodash/groupBy';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
 
-import { sortObjectsAscending } from '_helpers/sort';
-
 import { ColorConfig, DataObject } from '../../types';
 
 import { DEFAULT_COLOR, DEFAULT_NO_DATA_COLOR } from './constants';
@@ -52,22 +50,6 @@ export const fixValuesToDecimalPlaces = <T>(
       [valueAccessor]: parseFloat(fixedValue.toFixed(toFixed)),
     };
   });
-
-export const getStackedData = <T>(data: T[], xAccessor: string) => {
-  const orderedData = sortObjectsAscending<T>(data, xAccessor);
-
-  let stackedWidth = 0;
-
-  return orderedData.map((dataElement) => {
-    const width = Number(get(dataElement, xAccessor));
-    stackedWidth += width;
-
-    return {
-      ...dataElement,
-      stackedWidth: parseFloat(stackedWidth.toFixed(2)),
-    };
-  });
-};
 
 export const getBarFillColorForDataElement = <T extends DataObject<T>>(
   dataElement: T,

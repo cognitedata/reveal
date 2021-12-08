@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
+import { useCompare } from 'hooks/useCompare';
+
 import { AxisPlacement, XAxisPlacement } from '../common/Axis';
 import { LegendCheckboxState, LegendProps } from '../common/Legend';
 import { getLegendInitialCheckboxState } from '../common/Legend/utils';
@@ -32,13 +34,15 @@ export const useChartCommonEssentials = <T>({
   options: BaseChartOptions<T> & any;
   onUpdate?: () => void;
 }) => {
-  const data = filterUndefinedValues<T>(dataOriginal, yAxis.accessor);
+  const data = useMemo(
+    () => filterUndefinedValues<T>(dataOriginal, yAxis.accessor),
+    useCompare([dataOriginal])
+  );
 
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [legendCheckboxState, setLegendCheckboxState] =
     useState<LegendCheckboxState>({});
 
-  const stringifiedData = JSON.stringify(data);
   const margins = { ...DEFAULT_MARGINS, ...options?.margins };
 
   const xAccessor = xAxis.accessor;
@@ -69,43 +73,41 @@ export const useChartCommonEssentials = <T>({
   const initialCheckboxState: LegendCheckboxState = useMemo(() => {
     if (isEmpty(data) || isUndefined(colorConfig)) return {};
     return getLegendInitialCheckboxState<T>(data, colorConfig.accessor);
-  }, [stringifiedData]);
+  }, useCompare([data]));
 
   const onChangeLegendCheckbox = useCallback(
     (option: string, checked: boolean) => {
       if (isUndefined(colorConfig)) return;
 
-      setLegendCheckboxState((currentState) => {
-        const updatedCheckboxState = {
-          ...currentState,
-          [option]: checked,
-        };
+      const updatedCheckboxState = {
+        ...legendCheckboxState,
+        [option]: checked,
+      };
 
-        const filteredData = getFilteredData<T>(
-          data,
-          colorConfig.accessor,
-          updatedCheckboxState
-        );
+      const filteredData = getFilteredData<T>(
+        data,
+        colorConfig.accessor,
+        updatedCheckboxState
+      );
 
-        setFilteredData(filteredData);
-        return updatedCheckboxState;
-      });
+      setLegendCheckboxState(updatedCheckboxState);
+      setTimeout(() => setFilteredData(filteredData));
 
       if (onUpdate) onUpdate();
     },
-    [stringifiedData]
+    useCompare([data, legendCheckboxState])
   );
 
   const handleResetToDefault = useCallback(() => {
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
     if (onUpdate) onUpdate();
-  }, [initialCheckboxState]);
+  }, useCompare([data]));
 
   useEffect(() => {
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
-  }, [initialCheckboxState]);
+  }, useCompare([data]));
 
   const legendProps: LegendProps = {
     legendCheckboxState,
@@ -115,18 +117,21 @@ export const useChartCommonEssentials = <T>({
     legendOptions: options?.legendOptions,
   };
 
-  return {
-    data,
-    filteredData,
-    margins,
-    xAccessor,
-    yAccessor,
-    accessors,
-    xAxisPlacement,
-    legendProps,
-    colorConfig,
-    chartOffsetBottom,
-    spacings,
-    handleResetToDefault,
-  };
+  return useMemo(
+    () => ({
+      data,
+      filteredData,
+      margins,
+      xAccessor,
+      yAccessor,
+      accessors,
+      xAxisPlacement,
+      legendProps,
+      colorConfig,
+      chartOffsetBottom,
+      spacings,
+      handleResetToDefault,
+    }),
+    useCompare([data, filteredData, legendCheckboxState])
+  );
 };

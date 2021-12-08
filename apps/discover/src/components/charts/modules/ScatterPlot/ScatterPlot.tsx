@@ -53,7 +53,11 @@ export const ScatterPlot = <T extends DataObject<T>>({
     data,
     accessors,
   });
-  const yScaleRange = useYScaleRange<T>({ data, yAccessor });
+  const yScaleRange = useYScaleRange<T>({
+    data,
+    yAccessor,
+    scaleFactor: 0.02,
+  });
 
   const { chartDimensions, zoomFactor, ...zoomActions } = useZoomableChart({
     data,

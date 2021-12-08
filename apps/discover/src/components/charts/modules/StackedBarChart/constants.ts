@@ -1,5 +1,4 @@
 export const BAR_HEIGHT = 32;
-export const BAR_STACKED_WIDTH_ACCESSOR = 'stackedWidth';
 export const DEFAULT_COLOR = '#808080';
 export const DEFAULT_NO_DATA_COLOR = '#00000010';
 

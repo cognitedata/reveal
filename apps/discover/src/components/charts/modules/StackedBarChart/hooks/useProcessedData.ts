@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { useCompare } from 'hooks/useCompare';
+
 import { StackedBarChartOptions } from '../types';
 import { fixValuesToDecimalPlaces } from '../utils';
 
@@ -13,14 +15,12 @@ export const useProcessedData = <T>({
   options?: StackedBarChartOptions<T>;
 }) => {
   return useMemo(() => {
-    if (options?.fixXValuesToDecimalPlaces) {
-      return fixValuesToDecimalPlaces<T>(
-        data,
-        xAccessor,
-        options?.fixXValuesToDecimalPlaces
-      );
-    }
+    if (!options?.fixXValuesToDecimalPlaces) return data;
 
-    return data;
-  }, [data]);
+    return fixValuesToDecimalPlaces<T>(
+      data,
+      xAccessor,
+      options?.fixXValuesToDecimalPlaces
+    );
+  }, useCompare([data]));
 };

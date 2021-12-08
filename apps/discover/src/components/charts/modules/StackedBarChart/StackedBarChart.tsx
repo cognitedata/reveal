@@ -67,6 +67,7 @@ export const StackedBarChart = <T extends DataObject<T>>({
     data: filteredData,
     accessors,
     useGroupedValues: true,
+    scaleFactor: 0.1,
   });
 
   const { chartDimensions, zoomFactor, ...zoomActions } = useZoomableChart({

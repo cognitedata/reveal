@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import groupBy from 'lodash/groupBy';
 
 import { Accessors, GroupedData } from 'components/charts/types';
+import { useCompare } from 'hooks/useCompare';
 
 import { StackedBarChartOptions } from '../types';
 import { sumObjectsByKey } from '../utils';
@@ -33,17 +34,17 @@ export const useGroupedData = <T>({
 
     if (!groupDataInsideBarsBy) return groupedDataWithoutSummedValues;
 
-    const dataWithSummedValues: GroupedData<T> = {};
-
-    Object.keys(groupedDataWithoutSummedValues).forEach((key) => {
-      dataWithSummedValues[key] = sumObjectsByKey<T>(
-        groupedDataWithoutSummedValues[key],
-        groupDataInsideBarsBy,
-        xAccessor,
-        options?.fixXValuesToDecimalPlaces
-      );
-    });
-
-    return dataWithSummedValues;
-  }, [processedData]);
+    return Object.keys(groupedDataWithoutSummedValues).reduce(
+      (dataWithSummedValues, key) => ({
+        ...dataWithSummedValues,
+        [key]: sumObjectsByKey<T>(
+          groupedDataWithoutSummedValues[key],
+          groupDataInsideBarsBy,
+          xAccessor,
+          options?.fixXValuesToDecimalPlaces
+        ),
+      }),
+      {} as GroupedData<T>
+    );
+  }, useCompare([processedData]));
 };

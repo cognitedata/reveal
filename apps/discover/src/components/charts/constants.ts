@@ -16,9 +16,9 @@ export const DEFAULT_X_AXIS_TICKS = 15;
 export const DEFAULT_X_AXIS_PLACEMENT = 'Top';
 
 export const DEFAULT_MARGINS: Margins = {
-  top: 20,
+  top: 5,
   right: 20,
-  bottom: 10,
+  bottom: 5,
   left: 5,
 };
 

@@ -43,12 +43,8 @@ describe('useZoomableChart hook', () => {
     expect(zoomIn).toBeTruthy();
     expect(zoomOut).toBeTruthy();
     expect(resetZoom).toBeTruthy();
-
-    // Following should have the boolean value `false` initially in this case since the width of chart is undefined.
     expect(disableZoomIn).toBeFalsy();
-    expect(disableZoomOut).toBeFalsy();
-
-    // Initial zoom factor.
+    expect(disableZoomOut).toBeTruthy();
     expect(zoomFactor).toEqual(1);
   });
 });

@@ -5,19 +5,24 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import isUndefined from 'lodash/isUndefined';
 
+import { useCompare } from 'hooks/useCompare';
+
 import { Accessors, ScaleRange } from '../types';
-import { getSumOfValuesOfObjectsByKey } from '../utils';
+import { getRangeScaleFactor, getSumOfValuesOfObjectsByKey } from '../utils';
 
 export const useXScaleRange = <T>({
   data,
   accessors,
   useGroupedValues = false,
+  scaleFactor,
 }: {
   data: T[];
   accessors: Accessors;
   useGroupedValues?: boolean;
+  scaleFactor?: number;
 }): ScaleRange => {
   const { x: xAccessor, y: yAccessor } = accessors;
+  const [scaleFactorMin, scaleFactorMax] = getRangeScaleFactor(scaleFactor);
 
   const getGroupedValues = () => {
     const compactData = data.filter(
@@ -42,9 +47,9 @@ export const useXScaleRange = <T>({
       ? getGroupedValues()
       : getUngroupedValues();
 
-    const min = Math.floor(Math.min(...xAxisValues));
-    const max = Math.ceil(Math.max(...xAxisValues));
+    const min = Math.floor(Math.min(...xAxisValues) * scaleFactorMin);
+    const max = Math.ceil(Math.max(...xAxisValues) * scaleFactorMax);
 
     return [min, max];
-  }, [data]);
+  }, useCompare([data]));
 };

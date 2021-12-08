@@ -6,8 +6,11 @@ export type GroupedData<T> = { [key: string]: T[] };
 
 export type ScaleRange = [number, number];
 
-export interface BaseChartProps<T> {
+export interface ChartId {
   id: string;
+}
+
+export interface BaseChartProps<T> extends ChartId {
   data: T[];
   xAxis: ChartAxis & XAxisPlacement;
   yAxis: ChartAxis;

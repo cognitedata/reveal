@@ -1,5 +1,4 @@
 import get from 'lodash/get';
-import uniqueId from 'lodash/uniqueId';
 
 import { DataObject } from 'components/charts/types';
 
@@ -24,6 +23,7 @@ export const Plots = <T extends DataObject<T>>({
         const xValue = get(dataElement, xAccessor);
         const yValue = get(dataElement, yAccessor);
         const plotColor = getPlotColorForDataElement(dataElement, colorConfig);
+        const key = `${xValue}-${yValue}`;
 
         const tooltip = options?.formatTooltip
           ? options.formatTooltip(dataElement)
@@ -36,7 +36,7 @@ export const Plots = <T extends DataObject<T>>({
         const PlotElement = <Plot color={plotColor} data-testid="plot" />;
 
         return (
-          <PlotContainer key={uniqueId()} x={xScale(xValue)} y={yScale(yValue)}>
+          <PlotContainer key={key} x={xScale(xValue)} y={yScale(yValue)}>
             {renderPlotHoverComponent ? (
               <PlotTooltipHTML
                 content={tooltipContent}

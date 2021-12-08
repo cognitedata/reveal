@@ -1,3 +1,5 @@
+import { scaleLinear } from 'd3';
+
 import {
   ChartAxis,
   Dimensions,
@@ -53,3 +55,5 @@ export const accessors: Accessors = { x: xAccessor, y: yAccessor };
 
 export const xAxis: ChartAxis = { accessor: xAccessor };
 export const yAxis: ChartAxis = { accessor: yAccessor };
+
+export const xScale = scaleLinear().domain([0, 100]).range([0, 100]);

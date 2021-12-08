@@ -1,24 +1,32 @@
+import { useMemo } from 'react';
+
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import uniqueId from 'lodash/uniqueId';
+import isUndefined from 'lodash/isUndefined';
 import { followCursor } from 'tippy.js';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { sortObjectsDecending } from '_helpers/sort';
 import { DataObject } from 'components/charts/types';
+import { useCompare } from 'hooks/useCompare';
+import { sizes } from 'styles/layout';
 
 import {
-  BAR_STACKED_WIDTH_ACCESSOR,
   DEFAULT_NO_DATA_AMONG_SELECTED_CHECKBOXES_TEXT,
   DEFAULT_NO_DATA_TEXT,
 } from './constants';
-import { BarComponent, BarLabel, Bar, BarTooltip, BarText } from './elements';
+import {
+  BarComponent,
+  BarLabel,
+  Bar,
+  BarTooltip,
+  BarText,
+  BarDisabled,
+} from './elements';
 import { BarsProps } from './types';
 import {
   getBarFillColorForDataElement,
   getBarFillColorForDisabledBar,
-  getStackedData,
 } from './utils';
 
 export const Bars = <T extends DataObject<T>>({
@@ -43,37 +51,27 @@ export const Bars = <T extends DataObject<T>>({
   const { x: xScale, y: yScale } = scales;
   const { x: xAccessor } = accessors;
 
-  const renderBarsWithData = (data: T[]) => {
-    const stackedData = getStackedData<T>(data, xAccessor);
-    const orderedData = sortObjectsDecending<T>(
-      stackedData,
-      BAR_STACKED_WIDTH_ACCESSOR
-    );
-    const maxValue = Math.max(
-      ...orderedData.map((dataElement) =>
-        get(dataElement, BAR_STACKED_WIDTH_ACCESSOR)
-      )
-    );
+  const renderBarsWithData = (data: T[], groupKey: string) => {
+    let barOffsetLeft = 0;
 
-    return orderedData.map((dataElement) => {
-      const stackedWidth = get(dataElement, BAR_STACKED_WIDTH_ACCESSOR);
+    return data.map((dataElement, index) => {
       const xValue = get(dataElement, xAccessor);
-      const rounded = stackedWidth === maxValue;
+      const barWidth = xScale(xValue);
+
+      if (isUndefined(barWidth)) return null;
+
+      const key = `${groupKey}-${get(
+        dataElement,
+        colorConfig?.accessor
+      )}-${xValue}`;
 
       const tooltip = options?.formatTooltip
         ? options.formatTooltip(dataElement)
         : xValue;
 
-      const barFillColor = getBarFillColorForDataElement(
-        dataElement,
-        colorConfig
-      );
-
-      if (!stackedWidth) return null;
-
-      return (
+      const barComponent = (
         <BarTooltip
-          key={uniqueId(xValue)}
+          key={key}
           content={tooltip}
           placement="bottom"
           followCursor="horizontal"
@@ -81,78 +79,104 @@ export const Bars = <T extends DataObject<T>>({
           disabled={isEmpty(tooltip)}
         >
           <Bar
-            width={xScale(stackedWidth)}
-            fill={barFillColor}
-            rounded={rounded}
             data-testid="bar"
+            style={{
+              width: barWidth,
+              left: barOffsetLeft,
+              background: getBarFillColorForDataElement(
+                dataElement,
+                colorConfig
+              ),
+              borderRadius: getBarSegmentBorderRadius(data, index),
+            }}
           />
         </BarTooltip>
       );
+
+      barOffsetLeft += barWidth;
+
+      return barComponent;
     });
   };
 
-  const renderDisabledBar = (barText: string) => {
+  const renderDisabledBar = (barText: string, key: string) => {
     return (
-      <Bar
-        width={xScale(xScaleMaxValue as any)}
-        fill={getBarFillColorForDisabledBar(colorConfig)}
-        rounded
+      <BarDisabled
         data-testid="no-data-bar"
+        key={key}
+        style={{
+          width: xScale(xScaleMaxValue as any),
+          background: getBarFillColorForDisabledBar(colorConfig),
+        }}
       >
         <BarText level={2} default strong data-testid="bar-text">
           {barText}
         </BarText>
-      </Bar>
+      </BarDisabled>
     );
   };
 
-  return (
-    <g>
-      {yScaleDomain.map((key, index) => {
-        const initialData = get(initialGroupedData, key, []);
-        const data = get(groupedData, key, []);
+  const getBarSegmentBorderRadius = (data: T[], index: number) => {
+    if (data.length === 1) return `${sizes.extraSmall}`;
 
-        const isNoData = isEmpty(initialData);
-        const isNoDataAmongSelectedCheckboxes = !isNoData && isEmpty(data);
-        const isBarDisabled = isNoData || isNoDataAmongSelectedCheckboxes;
+    const isFirstBar = index === 0;
+    const isLastBar = index === data.length - 1;
 
-        const handleSelectBar = () => {
-          if (!isNoData) {
-            onSelectBar(key, index);
-          }
-        };
+    if (isFirstBar) return `${sizes.extraSmall} 0 0 ${sizes.extraSmall}`;
+    if (isLastBar) return `0 ${sizes.extraSmall} ${sizes.extraSmall} 0`;
+    return null;
+  };
 
-        return (
-          <BarComponent
-            key={key}
-            x={margins.left}
-            y={yScale(key as any)}
-            width={barComponentDimensions.width}
-            height={barComponentDimensions.height}
-            onClick={handleSelectBar}
-          >
-            {!options?.hideBarLabels && (
-              <BarLabel
-                level={2}
-                default
-                strong
-                disabled={isNoData}
-                data-testid="bar-label"
-              >
-                {key}
-                {!isNoData && <Icon type="ChevronRight" size={14} />}
-              </BarLabel>
-            )}
+  return useMemo(
+    () => (
+      <g>
+        {yScaleDomain.map((key, index) => {
+          const initialData = get(initialGroupedData, key, [] as T[]);
+          const data = get(groupedData, key, [] as T[]);
 
-            {isNoDataAmongSelectedCheckboxes &&
-              renderDisabledBar(noDataAmongSelectedCheckboxesBarText)}
+          const isNoData = isEmpty(initialData);
+          const isNoDataAmongSelectedCheckboxes = !isNoData && isEmpty(data);
+          const isBarDisabled = isNoData || isNoDataAmongSelectedCheckboxes;
 
-            {isNoData && renderDisabledBar(noDataBarText)}
+          const handleSelectBar = () => {
+            if (!isNoData) {
+              onSelectBar(key, index);
+            }
+          };
 
-            {!isBarDisabled && renderBarsWithData(data)}
-          </BarComponent>
-        );
-      })}
-    </g>
+          return (
+            <BarComponent
+              key={key}
+              x={margins.left}
+              y={yScale(key as any)}
+              width={barComponentDimensions.width}
+              height={barComponentDimensions.height}
+              onClick={handleSelectBar}
+            >
+              {!options?.hideBarLabels && (
+                <BarLabel
+                  level={2}
+                  default
+                  strong
+                  disabled={isNoData}
+                  data-testid="bar-label"
+                >
+                  {key}
+                  {!isNoData && <Icon type="ChevronRight" size={14} />}
+                </BarLabel>
+              )}
+
+              {isNoDataAmongSelectedCheckboxes &&
+                renderDisabledBar(noDataAmongSelectedCheckboxesBarText, key)}
+
+              {isNoData && renderDisabledBar(noDataBarText, key)}
+
+              {!isBarDisabled && renderBarsWithData(data, key)}
+            </BarComponent>
+          );
+        })}
+      </g>
+    ),
+    useCompare([groupedData, yScaleDomain, xScale])
   );
 };

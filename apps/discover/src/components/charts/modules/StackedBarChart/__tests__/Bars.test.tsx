@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import groupBy from 'lodash/groupBy';
 
-import { Data, data } from '__test-utils/fixtures/charts';
+import { Data, data, xScale } from '__test-utils/fixtures/charts';
 import { testRenderer } from '__test-utils/renderer';
 import { DEFAULT_MARGINS } from 'components/charts/constants';
 
@@ -20,7 +20,7 @@ describe('StackedBarChart -> Bars', () => {
   const defaultProps: BarsProps<Data> = {
     initialGroupedData: groupedData,
     groupedData,
-    scales: { x: jest.fn() as any, y: jest.fn() as any },
+    scales: { x: xScale, y: jest.fn() as any },
     xScaleMaxValue: 100,
     yScaleDomain: Object.keys(groupedData),
     accessors: { x: 'count', y: 'label' },

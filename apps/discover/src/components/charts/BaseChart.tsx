@@ -60,7 +60,7 @@ export const BaseChart = <T extends DataObject<T>>({
 
       {renderContentConditionally()}
 
-      {!isEmpty(data) && <Legend {...legendProps} />}
+      {!isEmpty(data) && <Legend id={id} {...legendProps} />}
     </ChartWrapper>
   );
 };

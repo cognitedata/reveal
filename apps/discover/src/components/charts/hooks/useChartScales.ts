@@ -8,11 +8,9 @@ import {
   Margins,
   ScaleRange,
 } from 'components/charts/types';
+import { useCompare } from 'hooks/useCompare';
 
 import { useYScaleDomain } from './useYScaleDomain';
-
-const RANGE_MIN_SCALE_FACTOR = 0.98;
-const RANGE_MAX_SCALE_FACTOR = 1.02;
 
 export const useChartScales = <T>({
   data,
@@ -35,19 +33,8 @@ export const useChartScales = <T>({
   reverseXScaleDomain?: boolean;
   reverseYScaleDomain?: boolean;
 }) => {
-  const [xScaleMinValue, xScaleMaxValue] = xScaleRange;
-
-  const xScaleDomain = [
-    xScaleMinValue * RANGE_MIN_SCALE_FACTOR,
-    xScaleMaxValue * RANGE_MAX_SCALE_FACTOR,
-  ];
-
-  const yScaleDomain = yScaleRange
-    ? [
-        yScaleRange[0] * RANGE_MIN_SCALE_FACTOR,
-        yScaleRange[1] * RANGE_MAX_SCALE_FACTOR,
-      ]
-    : useYScaleDomain<T>(data, accessors.y, yScaleDomainCustom);
+  const yScaleDomain =
+    yScaleRange || useYScaleDomain<T>(data, accessors.y, yScaleDomainCustom);
 
   const getYScaleLinear = () => {
     return scaleLinear()
@@ -67,15 +54,16 @@ export const useChartScales = <T>({
 
   const xScale = useMemo(() => {
     return scaleLinear()
-      .domain(
-        reverseXScaleDomain ? xScaleDomain.slice().reverse() : xScaleDomain
-      )
+      .domain(reverseXScaleDomain ? xScaleRange.slice().reverse() : xScaleRange)
       .range([margins.left, chartDimensions.width - margins.right]);
-  }, [xScaleMaxValue, margins, chartDimensions]);
+  }, useCompare([data, xScaleRange, chartDimensions]));
 
   const yScale = useMemo(() => {
     return yScaleRange ? getYScaleLinear() : getYScaleBand();
-  }, [data, chartDimensions]);
+  }, useCompare([data, yScaleDomain, chartDimensions]));
 
-  return { xScale, yScale, xScaleDomain, yScaleDomain };
+  return useMemo(
+    () => ({ xScale, yScale, xScaleDomain: xScaleRange, yScaleDomain }),
+    useCompare([xScale, yScale])
+  );
 };

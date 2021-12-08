@@ -38,21 +38,16 @@ export const Bar = styled(Center)`
   position: absolute;
   align-items: center;
   height: ${BAR_HEIGHT}px;
-  border-radius: ${sizes.extraSmall} 0px 0px ${sizes.extraSmall};
   border-width: 2px 0px;
   border-style: solid;
   border-color: ${CHART_BACKGROUND_COLOR};
-  ${(props: {
-    fill: string;
-    width: number;
-    rounded: boolean;
-    disabled: boolean;
-  }) => `
-    background: ${props.fill};
-    width: ${props.width}px;
-    ${props.rounded && `border-radius: ${sizes.extraSmall}`};
-    ${!props.disabled && `cursor: pointer`};
-  `};
+  box-shadow: inset -2px 0px 0px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+`;
+
+export const BarDisabled = styled(Bar)`
+  cursor: default;
+  border-radius: ${sizes.extraSmall};
 `;
 
 export const BarText = styled(Body)`
