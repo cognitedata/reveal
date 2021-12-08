@@ -6,9 +6,7 @@ interface ErrorIconProps {
   width: string;
 }
 
-export const ErrorIcon = styled((props) => (
-  <Icon {...props} type="ErrorStroked" />
-))`
+export const ErrorIcon = styled((props) => <Icon {...props} type="Error" />)`
   width: ${(props: ErrorIconProps) => props.width || '1.5rem'};
   svg {
     path {
