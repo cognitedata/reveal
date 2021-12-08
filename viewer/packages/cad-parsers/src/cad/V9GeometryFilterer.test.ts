@@ -18,7 +18,7 @@ import {
   parseInterleavedGeometry
 } from '../../../../test-utilities/src/primitives/primitiveThreeBuffers';
 
-function assertSecondCulledAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitiveType: PrimitiveType) {
+function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitiveType: PrimitiveType) {
   const bufferGeometry = createPrimitiveInterleavedGeometry(primitiveType, primitives);
 
   const clipBox = new THREE.Box3(new THREE.Vector3(8, -12, -2), new THREE.Vector3(12, -8, 2));
@@ -71,7 +71,7 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
       }
     ];
 
-    assertSecondCulledAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveType.Ellipsoid);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveType.Ellipsoid);
   });
 
   test('Two boxes: one accepted, one rejected - returns filtered', () => {
@@ -90,6 +90,6 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
       }
     ];
 
-    assertSecondCulledAwayFromBoxAtX10Yneg10Z0(boxes, PrimitiveType.Box);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(boxes, PrimitiveType.Box);
   });
 });
