@@ -33,7 +33,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitive
   expect(newPrimitives[0]).toContainEntries(Object.entries(primitives[0]));
 }
 
-describe('V9GeometryFilterer accepts empty clipBox', () => {
+describe('V9GeometryFilterer filters primitives correctly', () => {
   test('no clipbox, returns original', () => {
     const ellipsoid: Ellipsoid = {
       horizontalRadius: 10,
@@ -52,9 +52,7 @@ describe('V9GeometryFilterer accepts empty clipBox', () => {
 
     expect(newGeometry).toBe(bufferGeometry);
   });
-});
 
-describe('V9GeometryFilterer filters primitives correctly', () => {
   test('Two ellipsoid segments: one accepted, one rejected - returns filtered', () => {
     const ellipsoids: Ellipsoid[] = [
       {
