@@ -10,6 +10,27 @@ import {
 import { TAB_HEIGHT } from 'utils/constants';
 import { RawExplorerContext } from 'contexts';
 
+const LeftIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 12px;
+`;
+const RightIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+  color: var(--cogs-greyscale-grey6);
+  padding-left: 10px;
+`;
+
 const Tabs = styled.ul`
   display: flex;
   flex-direction: row;
@@ -46,33 +67,12 @@ const Tab = styled.li<{ $active?: boolean }>`
     props.$active
       ? 'var(--cogs-greyscale-grey9)'
       : 'var(--cogs-greyscale-grey7)'};
-  .cogs-icon-Table {
-    color: ${(props) => (props.$active ? 'var(--cogs-green)' : 'unset')};
+  ${LeftIcon} {
+    color: ${(props) => (props.$active ? '#2E8551' : 'unset')};
   }
-  &:hover .cogs-icon-Table {
-    color: var(--cogs-green);
+  &:hover ${LeftIcon} {
+    color: #2e8551;
   }
-`;
-
-const LeftIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 20px;
-  white-space: nowrap;
-  overflow: hidden;
-  margin-right: 12px;
-`;
-const RightIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 0;
-  flex-shrink: 0;
-  color: var(--cogs-greyscale-grey6);
-  padding-left: 10px;
 `;
 
 const TabContent = styled.span`
