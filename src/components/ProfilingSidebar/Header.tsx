@@ -38,6 +38,7 @@ export const Header = ({ selectedColumn }: Props) => {
         <StyledDrawerHeaderSectionTitle>
           {canNavigate && (
             <Button
+              aria-label="Previous column"
               size="small"
               variant="ghost"
               icon="ChevronLeft"
@@ -60,6 +61,7 @@ export const Header = ({ selectedColumn }: Props) => {
           </Tooltip>
           {canNavigate && (
             <Button
+              aria-label="Next column"
               size="small"
               variant="ghost"
               icon="ChevronRight"
@@ -68,6 +70,7 @@ export const Header = ({ selectedColumn }: Props) => {
           )}
         </StyledDrawerHeaderSectionTitle>
         <Button
+          aria-label="Hide side panel"
           size="small"
           variant="ghost"
           icon="Close"
