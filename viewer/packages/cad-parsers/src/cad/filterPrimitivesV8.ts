@@ -76,11 +76,11 @@ export function filterPrimitivesOutsideClipBoxByCenterAndRadius(
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromCenterAndRadiusAttributes(
-        centerAattribute,
-        centerBattribute,
-        radiusAattribute,
-        radiusBattribute,
         attributeFloatValues,
+        centerAattribute.offset,
+        centerBattribute.offset,
+        radiusAattribute.offset,
+        radiusBattribute.offset,
         elementSize,
         index,
         outBox

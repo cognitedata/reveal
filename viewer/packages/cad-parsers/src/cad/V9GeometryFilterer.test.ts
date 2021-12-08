@@ -8,8 +8,13 @@ import * as THREE from 'three';
 
 import {
   PrimitiveType,
-  Ellipsoid,
   Box,
+  Circle,
+  Cone,
+  GeneralCylinder,
+  Ellipsoid,
+  GeneralRing,
+  Quad,
   getCollectionType
 } from '../../../../test-utilities/src/primitives/primitiveTypes';
 
@@ -68,6 +73,100 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
     expect(newGeometry).toBe(bufferGeometry);
   });
 
+  test('Two boxes: one accepted, one rejected - returns filtered', () => {
+    const mat0 = new THREE.Matrix4()
+      .makeTranslation(10, -10, 0)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+    const mat1 = new THREE.Matrix4()
+      .makeTranslation(-10, 5, 10)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const boxes: Box[] = [
+      {
+        instanceMatrix: mat0.toArray()
+      },
+      {
+        instanceMatrix: mat1.toArray()
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(boxes, PrimitiveType.Box);
+  });
+
+  test('Two circles: one accepted, one rejected - returns filtered', () => {
+    const mat0 = new THREE.Matrix4()
+      .makeTranslation(10, -10, 0)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+    const mat1 = new THREE.Matrix4()
+      .makeTranslation(-10, 5, 10)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const circles: Circle[] = [
+      {
+        instanceMatrix: mat0.toArray(),
+        normal: [0, 1, 0]
+      },
+      {
+        instanceMatrix: mat1.toArray(),
+        normal: [0, 1, 0]
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(circles, PrimitiveType.Circle);
+  });
+
+  test('Two cones: one accepted, one rejected - returns filtered', () => {
+    const cones: Cone[] = [
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        centerA: [10, -10, -0.5],
+        centerB: [10, -10, 0.5],
+        localXAxis: [1, 0, 0],
+        radiusA: 0.5,
+        radiusB: 0.3
+      },
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        centerA: [-10, 5, 9],
+        centerB: [-10, 5, 11],
+        localXAxis: [1, 0, 0],
+        radiusA: 0.5,
+        radiusB: 0.3
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(cones, PrimitiveType.Cone);
+  });
+
+  test('Two general cylinders: one accepted, one rejected - returns filtered', () => {
+    const generalCylinders: GeneralCylinder[] = [
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        centerA: [10, -10, -0.5],
+        centerB: [10, -10, 0.5],
+        localXAxis: [1, 0, 0],
+        planeA: [0, 1, 0, 1],
+        planeB: [0, -1, 0, 1],
+        radius: 0.5
+      },
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        centerA: [-10, 5, -0.5],
+        centerB: [-10, 5, 0.5],
+        localXAxis: [1, 0, 0],
+        planeA: [0, 1, 0, 1],
+        planeB: [0, -1, 0, 1],
+        radius: 0.5
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalCylinders, PrimitiveType.GeneralCylinder);
+  });
+
   test('Two ellipsoid segments: one accepted, one rejected - returns filtered', () => {
     const ellipsoids: Ellipsoid[] = [
       {
@@ -87,14 +186,47 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
     testSecondFilteredAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveType.Ellipsoid);
   });
 
-  test('Two boxes: one accepted, one rejected - returns filtered', () => {
+  test('Two general rings: one accepted, one rejected - returns filtered', () => {
     const mat0 = new THREE.Matrix4()
       .makeTranslation(10, -10, 0)
       .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
     const mat1 = new THREE.Matrix4()
       .makeTranslation(-10, 5, 10)
       .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
-    const boxes: Box[] = [
+
+    const normal: [number, number, number] = [0, 1, 0];
+
+    const generalRings: GeneralRing[] = [
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        instanceMatrix: mat0.toArray(),
+        normal: normal,
+        thickness: 0.5
+      },
+      {
+        angle: 0,
+        arcAngle: Math.PI,
+        instanceMatrix: mat1.toArray(),
+        normal: normal,
+        thickness: 0.5
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalRings, PrimitiveType.GeneralRing);
+  });
+
+  test('Two quads: one accepted, one rejected - returns filtered', () => {
+    const mat0 = new THREE.Matrix4()
+      .makeTranslation(10, -10, 0)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const mat1 = new THREE.Matrix4()
+      .makeTranslation(-10, 5, 10)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const quads: Quad[] = [
       {
         instanceMatrix: mat0.toArray()
       },
@@ -103,6 +235,6 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(boxes, PrimitiveType.Box);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(quads, PrimitiveType.Quad);
   });
 });

@@ -12,34 +12,34 @@ const computeBoundingBoxFromCenterAndRadiusAttributesVars = {
 };
 
 export function computeBoundingBoxFromCenterAndRadiusAttributes(
-  centerAattribute: ParsePrimitiveAttribute,
-  centerBattribute: ParsePrimitiveAttribute,
-  radiusAattribute: ParsePrimitiveAttribute,
-  radiusBattribute: ParsePrimitiveAttribute,
   attributeFloatValues: Float32Array,
+  centerAByteOffset: number,
+  centerBByteOffset: number,
+  radiusAByteOffset: number,
+  radiusBByteOffset: number,
   elementSize: number,
   elementIndex: number,
   out: THREE.Box3
 ): THREE.Box3 {
   const { centerA, centerB, sphere, box } = computeBoundingBoxFromCenterAndRadiusAttributesVars;
 
-  function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
-    const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+  function readAttribute(byteOffset: number, idx: number = 0): number {
+    const offset = (elementIndex * elementSize + byteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
     return attributeFloatValues[offset + idx];
   }
 
   centerA.set(
-    readAttribute(centerAattribute, 0),
-    readAttribute(centerAattribute, 1),
-    readAttribute(centerAattribute, 2)
+    readAttribute(centerAByteOffset, 0),
+    readAttribute(centerAByteOffset, 1),
+    readAttribute(centerAByteOffset, 2)
   );
   centerB.set(
-    readAttribute(centerBattribute, 0),
-    readAttribute(centerBattribute, 1),
-    readAttribute(centerBattribute, 2)
+    readAttribute(centerBByteOffset, 0),
+    readAttribute(centerBByteOffset, 1),
+    readAttribute(centerBByteOffset, 2)
   );
-  const radiusA = readAttribute(radiusAattribute);
-  const radiusB = readAttribute(radiusBattribute);
+  const radiusA = readAttribute(radiusAByteOffset);
+  const radiusB = readAttribute(radiusBByteOffset);
 
   // Note! Not the tighest fit we could make, works ok for now but could be improved by
   // using normal of each cap to determine exact end points of the top/bottom

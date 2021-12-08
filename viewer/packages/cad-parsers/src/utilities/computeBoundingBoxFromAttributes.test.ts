@@ -33,11 +33,11 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
-      centerA_attribute,
-      centerB_attribute,
-      radiusA_attribute,
-      radiusB_attribute,
       valuesAsFloats,
+      centerA_attribute.offset,
+      centerB_attribute.offset,
+      radiusA_attribute.offset,
+      radiusB_attribute.offset,
       elementSize,
       0,
       new THREE.Box3()
@@ -56,11 +56,11 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
-      centerA_attribute,
-      centerB_attribute,
-      radiusA_attribute,
-      radiusB_attribute,
       valuesAsFloats,
+      centerA_attribute.offset,
+      centerB_attribute.offset,
+      radiusA_attribute.offset,
+      radiusB_attribute.offset,
       elementSize,
       0,
       new THREE.Box3()
@@ -80,11 +80,11 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
-      centerA_attribute,
-      centerB_attribute,
-      radiusA_attribute,
-      radiusB_attribute,
       valuesAsFloats,
+      centerA_attribute.offset,
+      centerB_attribute.offset,
+      radiusA_attribute.offset,
+      radiusB_attribute.offset,
       elementSize,
       1,
       new THREE.Box3()

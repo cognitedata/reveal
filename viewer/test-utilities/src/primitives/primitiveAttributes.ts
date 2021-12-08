@@ -83,11 +83,36 @@ export type AttributeDesc = {
 };
 
 const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
+  [PrimitiveType.Box, ['_treeIndex', '_color', '_instanceMatrix']],
+  [PrimitiveType.Circle, ['_treeIndex', '_color', '_instanceMatrix', '_normal']],
+  [
+    PrimitiveType.Cone,
+    ['_treeIndex', '_color', '_angle', '_arcAngle', '_centerA', '_centerB', '_localXAxis', '_radiusA', '_radiusB']
+  ],
+  [
+    PrimitiveType.GeneralCylinder,
+    [
+      '_treeIndex',
+      '_color',
+      '_angle',
+      '_arcAngle',
+      '_centerA',
+      '_centerB',
+      '_localXAxis',
+      '_planeA',
+      '_planeB',
+      '_radius'
+    ]
+  ],
   [
     PrimitiveType.Ellipsoid,
     ['_treeIndex', '_color', '_center', '_normal', '_horizontalRadius', '_verticalRadius', '_height']
   ],
-  [PrimitiveType.Box, ['_treeIndex', '_color', '_instanceMatrix']]
+  [
+    PrimitiveType.GeneralRing,
+    ['_treeIndex', '_color', '_angle', '_arcAngle', '_instanceMatrix', '_normal', '_thickness']
+  ],
+  [PrimitiveType.Quad, ['_treeIndex', '_color', '_instanceMatrix']]
 ]);
 
 export function getAttributeList(primitiveType: PrimitiveType): string[] {

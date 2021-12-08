@@ -53,6 +53,8 @@ export function readPrimitiveFromBuffer(
   geometryBuffer: THREE.BufferGeometry,
   byteOffset: number
 ): Record<string, unknown> {
+  // TODO: This must use attribute descriptions from incoming Buffer Geometry
+  // ordering is not guaranteed to be same as the one in createAttributeDescriptionsForPrimitive
   const attributeDescriptions = createAttributeDescriptionsForPrimitive(primitiveName);
 
   const obj: Record<string, unknown> = {};
