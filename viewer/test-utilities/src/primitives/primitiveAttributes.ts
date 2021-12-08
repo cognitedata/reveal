@@ -99,17 +99,15 @@ export function getAttributeList(primitiveType: PrimitiveType): string[] {
   return attributeList;
 }
 
-function getTotalAttributeByteSizeByAttributes(attributeNames: string[]): number {
+export function getTotalAttributeSize(name: PrimitiveType): number {
+  const attributeNames = primitiveAttributeNameMap.get(name)!;
+
   let sum = 0;
   for (const s of attributeNames) {
     const attributeFormat = commonAttributeTypeMap.get(s)!;
     sum += getComponentByteSize(attributeFormat.componentType) * attributeFormat.numComponents;
   }
   return sum;
-}
-
-export function getTotalAttributeSize(name: PrimitiveType): number {
-  return getTotalAttributeByteSizeByAttributes(primitiveAttributeNameMap.get(name)!);
 }
 
 function createAttributeDescriptions(attributeNames: string[]): AttributeDesc[] {
