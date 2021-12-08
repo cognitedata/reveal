@@ -32,13 +32,6 @@ module.exports = {
     ],
 
     'react/function-component-definition': ['off'],
-    // 'react/function-component-definition': [
-    //   'error',
-    //   {
-    //     namedComponents: 'arrow-function',
-    //     unnamedComponents: 'arrow-function',
-    //   },
-    // ],
     'react/jsx-no-useless-fragment': [
       'error',
       {
