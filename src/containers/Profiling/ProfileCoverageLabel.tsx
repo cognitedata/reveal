@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Icon, Tooltip } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export type ProfileResultType = 'running' | 'partial' | 'complete';
 export type ProfileCoverageType = 'rows' | 'columns';
@@ -18,7 +18,7 @@ const ProfileCoverageLabel = ({
     case 'complete':
       return <StyledLabelComplete>Complete</StyledLabelComplete>;
     case 'running':
-      return <StyledLabelRunning>Running...</StyledLabelRunning>;
+      return <StyledLabelRunning>Running</StyledLabelRunning>;
     case 'partial':
       return (
         <Tooltip content="Only the first million rows of data were profiled">
@@ -52,9 +52,24 @@ const StyledLabelComplete = styled(StyledLabelBaseWrapper)`
   color: #22633c;
 `;
 
+const StyledEllipsisAnimation = keyframes`
+  to {
+    width: 15px;    
+  }
+`;
+
 const StyledLabelRunning = styled(StyledLabelBaseWrapper)`
   background-color: #6e85fc1f;
   color: #2b3a88;
+  width: 92px;
+
+  ::after {
+    overflow: hidden;
+    animation: ${StyledEllipsisAnimation} steps(4, end) 1s infinite;
+    content: '\2026';
+    padding-left: 1px;
+    width: 0px;
+  }
 `;
 
 const StyledLabelPartial = styled(StyledLabelBaseWrapper)`
