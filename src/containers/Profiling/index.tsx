@@ -1,16 +1,19 @@
 import React, { useMemo, useState } from 'react';
+
+import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { sortBy } from 'lodash';
+import { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
-import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
+
+import { useActiveTableContext } from 'contexts';
 import {
   ColumnProfile,
   useQuickProfile,
   useFullProfile,
   FULL_PROFILE_LIMIT,
 } from 'hooks/profiling-service';
-import { AutoResizer } from 'react-base-table';
-import { useActiveTableContext } from 'contexts';
+
 import ProfileRow, { TableData } from './ProfileRow';
 import ProfileCoverageLabel, {
   ProfileResultType,
@@ -29,13 +32,6 @@ const Card = styled.div`
     line-height: 20px;
     font-weight: 600;
     margin-bottom: 20px;
-  }
-  .count {
-    color: ${Colors['greyscale-grey9'].hex()};
-    font-weight: 900;
-    font-size: 24px;
-    line-height: 32px;
-    margin-bottom: 0;
   }
   .coverage {
     padding: 8px 12px;
@@ -72,6 +68,15 @@ const Table = styled.table`
 const StyledExpandTableHeaderIcon = styled(Icon)`
   cursor: pointer;
   margin: 0 10px;
+`;
+
+const StyledCount = styled.div<{ $isRunning?: boolean }>`
+  color: ${({ $isRunning }) =>
+    $isRunning ? Colors['text-hint'].hex() : Colors['greyscale-grey9'].hex()};
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 32px;
+  margin-bottom: 0;
 `;
 
 type SortableColumn = keyof ColumnProfile;
@@ -144,7 +149,9 @@ export const Profiling = (): JSX.Element => {
         <Card className="z-2">
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
-            <div className="count">{data.rowCount}</div>
+            <StyledCount $isRunning={!fullProfile.isFetched}>
+              {data.rowCount}
+            </StyledCount>
             <ProfileCoverageLabel
               coverageType="rows"
               resultType={profileResultType}
@@ -154,7 +161,9 @@ export const Profiling = (): JSX.Element => {
         <Card className="z-2">
           <header>Columns profiled</header>
           <Flex direction="row" justifyContent="space-between">
-            <p className="count">{Object.values(data.columns).length}</p>
+            <StyledCount $isRunning={!fullProfile.isFetched}>
+              {Object.values(data.columns).length}
+            </StyledCount>
             <ProfileCoverageLabel
               coverageType="columns"
               resultType={profileResultType}
