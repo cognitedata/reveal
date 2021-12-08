@@ -10,6 +10,63 @@ import {
 import { TAB_HEIGHT } from 'utils/constants';
 import { RawExplorerContext } from 'contexts';
 
+export default function TableTabList() {
+  const list = useTableTabList() || [];
+  const [[activeDb, activeTable] = [], openTab] = useActiveTable();
+
+  const close = useCloseTable();
+  const { isSidePanelOpen, setIsSidePanelOpen } =
+    useContext(RawExplorerContext);
+  return (
+    <Tabs>
+      {!isSidePanelOpen && (
+        <OpenNavTab>
+          <Button
+            size="small"
+            icon="PanelRight"
+            onClick={() => setIsSidePanelOpen(true)}
+          />
+        </OpenNavTab>
+      )}
+      {list.map(([db, table]) => (
+        <Tab
+          key={`${db}_${table}`}
+          $active={db === activeDb && table === activeTable}
+          onMouseDown={(event) => event.button === 1 && close([db, table])}
+          onClick={() => {
+            openTab([db, table]);
+          }}
+        >
+          <LeftIcon>
+            <Icon type="DataTable" />
+          </LeftIcon>
+
+          <TabContent>{table}</TabContent>
+
+          <Tooltip
+            content={table}
+            delay={300}
+            key={`${db}_${table}`}
+            placement="bottom"
+          >
+            <RightIcon>
+              <Icon
+                type="CloseLarge"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  close([db, table]);
+                }}
+              />
+            </RightIcon>
+          </Tooltip>
+        </Tab>
+      ))}
+      <FillerTab key="filler-tab" />
+    </Tabs>
+  );
+}
+
 const LeftIcon = styled.span`
   display: flex;
   align-items: center;
@@ -97,60 +154,3 @@ const OpenNavTab = styled(Tab)`
   flex-basis: auto;
   background-color: white;
 `;
-
-export default function TableTabList() {
-  const list = useTableTabList() || [];
-  const [[activeDb, activeTable] = [], openTab] = useActiveTable();
-
-  const close = useCloseTable();
-  const { isSidePanelOpen, setIsSidePanelOpen } =
-    useContext(RawExplorerContext);
-  return (
-    <Tabs>
-      {!isSidePanelOpen && (
-        <OpenNavTab>
-          <Button
-            size="small"
-            icon="PanelRight"
-            onClick={() => setIsSidePanelOpen(true)}
-          />
-        </OpenNavTab>
-      )}
-      {list.map(([db, table]) => (
-        <Tab
-          key={`${db}_${table}`}
-          $active={db === activeDb && table === activeTable}
-          onMouseDown={(event) => event.button === 1 && close([db, table])}
-          onClick={() => {
-            openTab([db, table]);
-          }}
-        >
-          <LeftIcon>
-            <Icon type="DataTable" />
-          </LeftIcon>
-
-          <TabContent>{table}</TabContent>
-
-          <Tooltip
-            content={table}
-            delay={300}
-            key={`${db}_${table}`}
-            placement="bottom"
-          >
-            <RightIcon>
-              <Icon
-                type="CloseLarge"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  close([db, table]);
-                }}
-              />
-            </RightIcon>
-          </Tooltip>
-        </Tab>
-      ))}
-      <FillerTab key="filler-tab" />
-    </Tabs>
-  );
-}
