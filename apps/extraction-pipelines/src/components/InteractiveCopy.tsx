@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Colors, Icons } from '@cognite/cogs.js';
-import { CopyType } from 'components/InteractiveCopyWithText';
 import { StyledTooltip } from 'styles/StyledToolTip';
 
 import { trackUsage } from 'utils/Metrics';
+
+export type CopyType =
+  | 'id'
+  | 'externalId'
+  | 'source'
+  | 'dataSetId'
+  | 'cronExpression'
+  | 'dbName'
+  | 'tableName'
+  | 'pageLink';
 
 interface InteractiveCopyProps {
   text: string;
@@ -44,7 +53,7 @@ const InteractiveCopy = ({
       interactive
       content={
         <div style={{ padding: '0.3125rem 0.5625rem' }}>
-          {hasCopied ? 'Copied!' : 'Copy'}
+          {hasCopied ? 'Copied!' : `Copy ${text}`}
         </div>
       }
     >
