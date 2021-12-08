@@ -41,8 +41,7 @@ export class SolutionSchemaHandler {
 
     return this.solutionSchemaService
       .listSchemaVersions(dto)
-      .then((versions) => Result.ok(versions))
-      .catch((err) => Result.fail(err));
+      .then((versions) => Result.ok(versions));
   }
 
   /**

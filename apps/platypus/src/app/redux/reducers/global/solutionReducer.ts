@@ -3,6 +3,7 @@ import { fetchVersions, fetchSolution } from './actions';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SolutionSchema, Solution } from '@platypus/platypus-core';
 import { ActionStatus } from '@platypus-app/types';
+import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 
 const solutionStateSlice = createSlice({
   name: 'solution',
@@ -18,12 +19,15 @@ const solutionStateSlice = createSlice({
   reducers: {
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {
       if (state.schemas.length) {
-        state.selectedSchema = Object.assign(
-          state.selectedSchema,
-          state.schemas.find(
+        if (action.payload.version === DEFAULT_VERSION_PATH) {
+          state.selectedSchema = state.schemas[0];
+        } else {
+          state.selectedSchema = state.schemas.find(
             (schema) => schema.version === action.payload.version
-          )
-        );
+          );
+        }
+      } else {
+        state.selectedSchema = undefined;
       }
     },
   },

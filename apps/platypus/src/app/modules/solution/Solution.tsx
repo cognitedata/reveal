@@ -1,5 +1,6 @@
 import { useEffect, lazy, Suspense } from 'react';
 import { Route, Switch, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
@@ -8,6 +9,9 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useSolution } from './hooks/useSolution';
 import { ActionStatus } from '@platypus-app/types';
+import solutionStateSlice from '@platypus-app/redux/reducers/global/solutionReducer';
+import { InfoMessage } from '@platypus-app/components/InfoMessage/InfoMessage';
+import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 const OverviewPage = lazy<any>(() =>
   import('./OverviewLayout').then((module) => ({
@@ -40,11 +44,15 @@ const SettingsPage = lazy(() =>
 );
 
 export const Solution = () => {
-  const { solutionId } = useParams<{
+  const { t } = useTranslation('Solution');
+  const dispatch = useDispatch();
+
+  const { solutionId, version } = useParams<{
     solutionId: string;
+    version: string;
   }>();
 
-  const { solution, selectedSchema, solutionStatus, schemasStatus } =
+  const { solutionStatus, schemasStatus, schemas, selectedSchema } =
     useSelector<SolutionState>((state) => state.solution);
 
   const { fetchVersions, fetchSolution } = useSolution();
@@ -57,9 +65,20 @@ export const Solution = () => {
     fetchVersions(solutionId);
   }, [fetchVersions, solutionId]);
 
+  useEffect(() => {
+    if (schemasStatus === ActionStatus.SUCCESS) {
+      dispatch(
+        solutionStateSlice.actions.selectVersion({
+          version,
+        })
+      );
+    }
+  }, [dispatch, version, schemasStatus, schemas]);
+
   if (
     solutionStatus === ActionStatus.SUCCESS &&
-    schemasStatus === ActionStatus.SUCCESS
+    schemasStatus === ActionStatus.SUCCESS &&
+    (selectedSchema || !schemas.length)
   ) {
     return (
       <StyledPageWrapper>
@@ -72,7 +91,7 @@ export const Solution = () => {
             ]}
           >
             <Suspense fallback={<Spinner />}>
-              <OverviewPage solution={solution} schema={selectedSchema} />
+              <OverviewPage />
             </Suspense>
           </Route>
           <Route
@@ -106,11 +125,26 @@ export const Solution = () => {
     );
   }
 
-  if (
-    solutionStatus === ActionStatus.FAIL ||
-    schemasStatus === ActionStatus.FAIL
-  ) {
-    return <Spinner />;
+  if (solutionStatus === ActionStatus.FAIL) {
+    return (
+      <InfoMessage
+        type="Documents"
+        title={t('solution_not_found', 'Solution is not found.')}
+      />
+    );
   }
+
+  if (
+    schemasStatus === ActionStatus.FAIL ||
+    (!selectedSchema && schemas.length)
+  ) {
+    return (
+      <InfoMessage
+        type="Documents"
+        title={t('schema_not_found', 'Schema is not found.')}
+      />
+    );
+  }
+
   return <Spinner />;
 };
