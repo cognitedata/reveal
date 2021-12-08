@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Message from 'components/Message/Message';
+import { PROFILE_STATUS_MESSAGE_DURATION_IN_MS } from 'utils/constants';
 
 import { ProfileResultType } from './ProfileCoverageLabel';
 
@@ -17,6 +18,7 @@ const ProfileStatusMessage = ({
     case 'complete':
       return (
         <StyledMessage
+          duration={PROFILE_STATUS_MESSAGE_DURATION_IN_MS}
           isClosable
           message="Data profiling completed for all rows and columns."
           type="success"
@@ -32,6 +34,7 @@ const ProfileStatusMessage = ({
     case 'partial':
       return (
         <StyledMessage
+          duration={PROFILE_STATUS_MESSAGE_DURATION_IN_MS}
           isClosable
           message="Data profiling partially completed. Only the first million rows of data were processed."
           type="warning"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { AllIconTypes, Body, Button, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -9,6 +9,7 @@ export type MessageSize = 'small' | 'default';
 
 type MessageProps = {
   className?: string;
+  duration?: number;
   isClosable?: boolean;
   message: string;
   size?: MessageSize;
@@ -17,6 +18,7 @@ type MessageProps = {
 
 const Message = ({
   className,
+  duration,
   isClosable,
   message,
   size = 'default',
@@ -55,6 +57,14 @@ const Message = ({
       iconColor = Colors['bg-status-small--accent'].hex();
       break;
   }
+
+  useEffect(() => {
+    if (isClosable) {
+      setTimeout(() => {
+        setIsOpen(false);
+      }, [duration]);
+    }
+  }, [duration, isClosable]);
 
   const handleMessageClick = (): void => {
     if (isClosable) {
