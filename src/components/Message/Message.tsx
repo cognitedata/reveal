@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { AllIconTypes, Body, Button, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
@@ -9,7 +9,6 @@ export type MessageSize = 'small' | 'default';
 
 type MessageProps = {
   className?: string;
-  duration?: number;
   isClosable?: boolean;
   message: string;
   size?: MessageSize;
@@ -18,7 +17,6 @@ type MessageProps = {
 
 const Message = ({
   className,
-  duration,
   isClosable,
   message,
   size = 'default',
@@ -58,14 +56,6 @@ const Message = ({
       break;
   }
 
-  useEffect(() => {
-    if (isClosable) {
-      setTimeout(() => {
-        setIsOpen(false);
-      }, [duration]);
-    }
-  }, [duration, isClosable]);
-
   const handleMessageClick = (): void => {
     if (isClosable) {
       setIsOpen(false);
@@ -79,8 +69,10 @@ const Message = ({
   return (
     <StyledMessageWrapper
       $backgroundColor={backgroundColor}
+      $isClosable={isClosable}
       $size={size}
       className={className}
+      onClick={handleMessageClick}
     >
       <StyledMessageIcon $iconColor={iconColor} type={icon} />
       <StyledMessageContent level={2}>{message}</StyledMessageContent>
@@ -88,7 +80,6 @@ const Message = ({
         <StyledCloseButton
           aria-label="Close message"
           icon="Close"
-          onClick={handleMessageClick}
           size="small"
           type="ghost"
         />
@@ -104,6 +95,7 @@ const StyledMessageIcon = styled(Icon)<{ $iconColor: string }>`
 
 const StyledMessageWrapper = styled.div<{
   $backgroundColor: string;
+  $isClosable?: boolean;
   $size: MessageSize;
 }>`
   align-items: center;
@@ -111,6 +103,7 @@ const StyledMessageWrapper = styled.div<{
   border-radius: 8px;
   display: flex;
   padding: ${({ $size }) => ($size === 'small' ? '10px 14px' : '16px')};
+  cursor: ${({ $isClosable }) => $isClosable && 'pointer'};
 `;
 
 const StyledMessageContent = styled(Body)`
