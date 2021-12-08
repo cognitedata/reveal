@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useActiveTableContext } from 'contexts';
+import { useActiveTable } from 'hooks/table-tabs';
 import { useColumnTypeCounts, useColumnType } from 'hooks/profiling-service';
 
 import { FilterType } from 'components/FilterItem';
@@ -27,6 +28,7 @@ export const useFilters = () => {
     columnNameFilter,
     setColumnNameFilter,
   } = useActiveTableContext();
+  const [[activeTable] = []] = useActiveTable();
   const { getColumnTypeCounts } = useColumnTypeCounts(database, table);
 
   const columnTypeCounts = getColumnTypeCounts();
@@ -73,12 +75,24 @@ export const useFilters = () => {
       ]);
   };
 
+  const resetFilter = () => {
+    setColumnNameFilter('');
+    setColumnTypeFilters([DEFAULT_FILTER.type]);
+  };
+
+  useEffect(() => {
+    resetFilter();
+    // filter gets reset to default state ONLY when the active table changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTable]);
+
   return {
     filters,
     columnTypeFilters,
     setTypeFilter,
     columnNameFilter,
     setColumnNameFilter,
+    resetFilter,
   };
 };
 
