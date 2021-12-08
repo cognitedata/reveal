@@ -2,6 +2,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { Button, Modal } from '@cognite/cogs.js';
 import { useState } from 'react';
 import styled from 'styled-components/macro';
+import ReactMarkdown from 'react-markdown';
 import { NodeTypes } from '../types';
 import { NodeWrapper } from './elements';
 
@@ -45,30 +46,34 @@ const ActionBar = ({
           aria-label="Remove"
           onClick={() => onRemoveClick()}
         />
-        {nodeType === NodeTypes.FUNCTION && toolFunction && (
-          <>
-            <Divider />
-            <Button
-              type="ghost"
-              icon="Info"
-              aria-label="Info"
-              onClick={() => setIsModalVisible(true)}
-            />
-          </>
-        )}
+        {nodeType === NodeTypes.FUNCTION &&
+          toolFunction &&
+          toolFunction.description && (
+            <>
+              <Divider />
+              <Button
+                type="ghost"
+                icon="Info"
+                aria-label="Info"
+                onClick={() => setIsModalVisible(true)}
+              />
+            </>
+          )}
       </ActionContainer>
-      <InfoModal
-        appElement={document.getElementsByTagName('body')}
-        title={toolFunction?.name}
-        visible={isModalVisible}
-        footer={null}
-        onCancel={() => {
-          setIsModalVisible(false);
-        }}
-        width={750}
-      >
-        <p>{toolFunction?.description}</p>
-      </InfoModal>
+      {toolFunction && toolFunction.description && (
+        <InfoModal
+          appElement={document.getElementsByTagName('body')}
+          title={toolFunction.name}
+          visible={isModalVisible}
+          footer={null}
+          onCancel={() => {
+            setIsModalVisible(false);
+          }}
+          width={750}
+        >
+          <ReactMarkdown>{toolFunction.description}</ReactMarkdown>
+        </InfoModal>
+      )}
     </>
   );
 };
