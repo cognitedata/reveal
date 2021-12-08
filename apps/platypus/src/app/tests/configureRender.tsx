@@ -1,7 +1,7 @@
 import { INITIAL_TEST_STATE } from './store';
 import { configureStore } from '@reduxjs/toolkit';
 
-import rootReducer from '@platypus-app/redux/store';
+import { rootReducer } from '@platypus-app/redux/store';
 
 function configureTestStore(initialState = {}) {
   const combinedState = { ...INITIAL_TEST_STATE, ...initialState };

@@ -9,7 +9,6 @@ export default makeDecorator({
   parameterName: 'providersConfig',
   skipIfNoParametersOrOptions: false,
   wrapper: (story, context, { parameters }) => {
-    console.log(parameters);
     const { redux } = parameters || {
       redux: undefined,
     };

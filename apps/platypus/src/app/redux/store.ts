@@ -23,7 +23,7 @@ const reducersRegistry = {
   solution: solutionSlice.reducer,
 };
 
-const rootReducer = combineReducers(reducersRegistry);
+export const rootReducer = combineReducers(reducersRegistry);
 
 function createStore() {
   return configureStore({

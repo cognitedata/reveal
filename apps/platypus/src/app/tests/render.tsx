@@ -1,15 +1,17 @@
 /* eslint-disable */
-import React, { ComponentClass } from 'react';
+import React, { ComponentClass, JSXElementConstructor } from 'react';
 // Here is where our custom render is being defined, so we don't need this check
 /* eslint-disable-next-line @cognite/rtl-use-custom-render-function */
 import { render, RenderOptions } from '@testing-library/react';
 import { DeepPartial } from 'redux';
 import { RootState } from '@platypus-app/redux/store';
-import rootReducer from '@platypus-app/redux/store';
+import { rootReducer } from '@platypus-app/redux/store';
 import { configureStore } from '@reduxjs/toolkit';
 
 import { INITIAL_TEST_STATE } from './store';
 import AppProviders from './AppProviders';
+import { StoryConfiguration } from './configureStorybook';
+import merge from 'lodash/merge';
 
 type ExtendedRenderOptions = { redux?: DeepPartial<RootState> };
 
@@ -43,15 +45,26 @@ export const Wrapper =
     );
   };
 
-export default (ui: React.ReactElement, options: CogniteRenderOptions = {}) => {
+type RenderableComponent<Props, T> = React.ReactElement<
+  Props,
+  JSXElementConstructor<Props> & { story?: T }
+>;
+
+export default <Props, T extends StoryConfiguration>(
+  ui: RenderableComponent<Props, T>,
+  options: CogniteRenderOptions = {}
+) => {
+  const { story } = ui.type;
+
   // This is where you can wrap your rendered UI component in redux stores,
   // providers, or anything else you might want.
   const { redux: renderRedux, ...rest } = options;
 
-  const redux = {
-    ...INITIAL_TEST_STATE,
-    ...renderRedux,
-  };
+  const redux = merge(
+    INITIAL_TEST_STATE,
+    renderRedux,
+    story ? story.redux : undefined
+  );
 
   return render(ui, { ...rest, wrapper: Wrapper(redux) });
 };

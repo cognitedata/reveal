@@ -96,6 +96,7 @@ export const SolutionCard = ({
       onClick={() => onOpen(solution)}
       key={solution.id}
       className="z-4"
+      data-testid={`solution-card`}
     >
       <div className="top">
         <div>
