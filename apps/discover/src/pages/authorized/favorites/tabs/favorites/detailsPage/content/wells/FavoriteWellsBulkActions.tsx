@@ -2,7 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
+import sum from 'lodash/sum';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -17,6 +20,10 @@ import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
 import { InspectWellboreContext, Well, WellId } from 'modules/wellSearch/types';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
+import {
+  CLEAR_SELECTION_TEXT,
+  VIEW_SELECTED_WELL_TEXT,
+} from 'pages/authorized/search/well/content/constants';
 
 export interface Props {
   allWellIds?: number[];
@@ -28,14 +35,16 @@ export interface Props {
     wellIds: WellId[],
     inspectWellboreContext: InspectWellboreContext
   ) => void;
+  selectedWellboresList: FavoriteContentWells;
 }
 export const FavoriteWellsBulkActions: React.FC<Props> = ({
   selectedWellIdsList,
   allWellIds,
   deselectAll,
   favoriteId,
-  favoriteWells,
+  favoriteWells = {},
   handleUpdatingFavoriteWellState,
+  selectedWellboresList,
 }) => {
   const { t } = useTranslation('Search');
   const { mutateAsync: mutateFavoriteContent } = useFavoriteUpdateContent();
@@ -53,6 +62,14 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
   const selectedWellIdsCount = useMemo(
     () => selectedWellIds.length,
     [selectedWellIds]
+  );
+
+  const selectedWellboreIdsCount = useMemo(
+    () =>
+      sum(
+        Object.values(selectedWellboresList).flatMap((item) => [item.length])
+      ),
+    [JSON.stringify(selectedWellboresList)]
   );
 
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
@@ -100,33 +117,75 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
     selectedWellIdsCount > 1 ? 'wells' : 'well'
   } selected`;
 
-  const removeAllWells = () => {
-    removeFromQueryCache();
+  const subtitle = `With ${selectedWellboreIdsCount} ${
+    selectedWellboreIdsCount > 1 ? 'wellbores' : 'wellbore'
+  } inside`;
+
+  const removeAllWells = (): void => {
+    removeSelectedWellboresAndWells();
     deselectAll();
   };
 
-  const removeFromQueryCache = () => {
+  const removeSelectedWellboresAndWells = (): void => {
+    let newFavoriteWells: FavoriteContentWells = favoriteWells;
+
+    if (!favoriteWells) return;
+
+    Object.keys(selectedWellboresList).forEach((wellId) => {
+      // checking favorite well contains all the wellbores(denoted as empty []), then remove selected wellbores
+      if (isEmpty(favoriteWells[wellId])) {
+        newFavoriteWells[wellId] = getRemainingWellboreList(wellId);
+      } else {
+        newFavoriteWells[wellId] = favoriteWells[wellId].filter(
+          (wellboreId) => !selectedWellboresList[wellId].includes(wellboreId)
+        );
+      }
+      // removing well if no wellbore is left after removing wellbores
+      if (isEmpty(newFavoriteWells[wellId])) {
+        newFavoriteWells = omit(newFavoriteWells, wellId);
+      }
+    });
+
+    removeFromQueryCache(newFavoriteWells);
+  };
+
+  const getRemainingWellboreList = (wellId: WellId): string[] => {
+    return (
+      wells
+        .find((well) => isEqual(String(well.id), wellId))
+        ?.wellbores?.filter(
+          (wellbore) => !selectedWellboresList[wellId].includes(wellbore.id)
+        )
+        .flatMap((wellbore) => String([wellbore.id])) || []
+    );
+  };
+
+  const removeFromQueryCache = (favoriteWells: FavoriteContentWells): void => {
     mutateFavoriteContent({
       id: favoriteId,
       updateData: {
-        wells: favoriteWells ? omit(favoriteWells, selectedWellIds) : undefined,
+        wells: favoriteWells,
       },
     });
   };
 
-  const isVisible = selectedWellIdsCount > 0;
+  const isVisible = selectedWellIdsCount > 0 || selectedWellboreIdsCount > 0;
 
   return (
     <>
       {isVisible && (
         <>
-          <TableBulkActions isVisible={isVisible} title={bulkActionTitle}>
+          <TableBulkActions
+            isVisible={isVisible}
+            title={bulkActionTitle}
+            subtitle={subtitle}
+          >
             <ViewButton
               variant="inverted"
               size="default"
-              tooltip={t('View the selected wells')}
+              tooltip={t(VIEW_SELECTED_WELL_TEXT)}
               onClick={handleClickView}
-              aria-label="View the selected wells"
+              aria-label={VIEW_SELECTED_WELL_TEXT}
               hideIcon
             />
 
@@ -142,9 +201,9 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
 
             <CloseButton
               variant="inverted"
-              tooltip={t('Clear selection')}
+              tooltip={t(CLEAR_SELECTION_TEXT)}
               onClick={deselectAll}
-              aria-label="Clear selection"
+              aria-label={CLEAR_SELECTION_TEXT}
               data-testid="close-btn"
             />
           </TableBulkActions>

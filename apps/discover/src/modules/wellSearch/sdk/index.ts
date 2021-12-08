@@ -201,6 +201,18 @@ export const getWellboresFromWells = (wellIds: number[]) => {
     : getWellSDKClientV2().wellbores.getFromWells(wellIds);
 };
 
+export const getWellboresByIds = (wellboreIds: number[]) => {
+  return globalEnableWellSDKV3
+    ? getWellSDKClientV3()
+        .wellbores.retrieveMultiple(
+          toIdentifierItems(wellboreIds.map(toIdentifier))
+        )
+        .then((wellboreItems) => wellboreItems.items.map(mapV3ToV2Wellbore))
+    : Promise.all(
+        wellboreIds.map((item) => getWellSDKClientV2().wellbores.getById(item))
+      );
+};
+
 export const getNPTItems = (
   filter: NPTFilter,
   cursor?: string,

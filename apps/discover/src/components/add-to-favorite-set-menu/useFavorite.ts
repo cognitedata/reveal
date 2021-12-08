@@ -1,40 +1,34 @@
 import { useMemo } from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteContentWells, FavoriteSummary } from 'modules/favorite/types';
-import { WellId } from 'modules/wellSearch/types';
+import {
+  getDocumentExistInFavorite,
+  getWellsWellboresExistInFavorite,
+} from 'modules/favorite/utils';
+import { WellboreId, WellId } from 'modules/wellSearch/types';
 
 export function useDocumentExistInFavorite(
   favorites: FavoriteSummary[],
   documentId: number
 ) {
   return useMemo(() => {
-    return favorites
-      .filter((favorite) =>
-        favorite.content.documentIds.includes(Number(documentId))
-      )
-      .map((favorite) => favorite.id);
+    return getDocumentExistInFavorite(favorites, documentId);
   }, [favorites, documentId]);
 }
 
-export function useWellExistInFavorite(
+export const useWellExistInFavorite = (
   favorites: FavoriteSummary[],
-  wellId: WellId
-) {
+  wellId: WellId,
+  wellboreId?: WellboreId
+): string[] => {
   return useMemo(() => {
-    return favorites
-      .filter((favorite) =>
-        Object.keys(favorite.content.wells).includes(String(wellId))
-      )
-      .map((favorite) => favorite.id);
-  }, [favorites, wellId]);
-}
-
-export const getWellIds = (wellId?: WellId) => (wellId ? [wellId] : []);
-
-export const getDocumentIds = (documentId?: number) =>
-  documentId ? [documentId] : [];
+    return getWellsWellboresExistInFavorite(favorites, wellId, wellboreId);
+  }, [JSON.stringify(favorites), wellId, wellboreId]);
+};
 
 export const useHandleSelectFavourite = () => {
   const { mutateAsync } = useFavoriteUpdateContent();
@@ -47,7 +41,7 @@ export const useHandleSelectFavourite = () => {
     documentSuccess: () => void,
     wellSuccess: () => void
   ) => {
-    if (documentIds && documentIds.length) {
+    if (documentIds && !isEmpty(documentIds)) {
       metrics.track('click-add-documents-to-set');
 
       mutateAsync({

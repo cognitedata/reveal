@@ -86,6 +86,7 @@ export enum InspectWellboreContext {
   WELL_CARD_WELLBORES,
   FAVORITE_HOVERED_WELL,
   FAVORITE_CHECKED_WELLS,
+  FAVORITE_HOVERED_WELLBORE,
 }
 
 export interface WellState {

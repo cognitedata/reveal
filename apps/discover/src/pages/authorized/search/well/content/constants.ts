@@ -11,3 +11,11 @@ export const WATER_DEPTH = 'Water depth';
 export const BLOCK_NAME = 'Block name';
 export const FIELD_NAME = 'Field name';
 export const NO_WELLS_AND_WELLBORE_ERROR_MESSAGE = `No wellbores are selected with wells. At least one wellbore has to be selected with a well.`;
+export const FETCHING_SELECTED_WELBORE_MESSAGE =
+  'Fetching selected wellbores...';
+export const OPEN_FIELD_PRODUCTION_MESSAGE = 'Open field production data';
+export const OPEN_BROWSER_MESSAGE = 'Open data in new browser tabs';
+export const VIEW_SELECTED_WELL_TEXT = 'View the selected wells';
+export const ADD_SELECTED_WELLS_TEXT = 'Add the selected wells to favorites';
+export const CLEAR_SELECTION_TEXT = 'Clear selection';
+export const FAVORITE_WELLBORE_LOADING_ERROR_TEXT = 'Error loading wellbores';

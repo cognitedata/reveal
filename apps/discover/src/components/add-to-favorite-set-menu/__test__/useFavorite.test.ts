@@ -3,10 +3,9 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { FavoriteSummary } from 'modules/favorite/types';
+import { getDocumentIds, getWellIds } from 'modules/favorite/utils';
 
 import {
-  getDocumentIds,
-  getWellIds,
   useDocumentExistInFavorite,
   useHandleSelectFavourite,
   useWellExistInFavorite,

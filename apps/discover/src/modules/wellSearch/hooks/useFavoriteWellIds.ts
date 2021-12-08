@@ -1,23 +1,27 @@
 import { useMemo } from 'react';
 
-import uniq from 'lodash/uniq';
-
 import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
+import { FavoriteContentWells } from 'modules/favorite/types';
 
-import { WellId } from '../types';
-
-export const useFavoriteWellIds = (): WellId[] => {
+export const useFavoriteWellIds = (): FavoriteContentWells => {
   const { data: favoriteSets } = useFavoritesGetAllQuery();
 
   return useMemo(() => {
     if (!favoriteSets || 'error' in favoriteSets) {
-      return [];
+      return {};
     }
+    const addedWellsAndWellbores: FavoriteContentWells = {};
 
-    return uniq(
-      favoriteSets.flatMap((favoriteSet) =>
-        Object.keys(favoriteSet.content.wells)
-      )
-    );
+    favoriteSets.forEach((favoriteSet) => {
+      Object.keys(favoriteSet.content.wells).forEach((wellId) => {
+        addedWellsAndWellbores[wellId] = addedWellsAndWellbores[wellId]
+          ? addedWellsAndWellbores[wellId].concat(
+              favoriteSet.content.wells[wellId]
+            )
+          : favoriteSet.content.wells[wellId];
+      });
+    });
+
+    return addedWellsAndWellbores;
   }, [favoriteSets]);
 };

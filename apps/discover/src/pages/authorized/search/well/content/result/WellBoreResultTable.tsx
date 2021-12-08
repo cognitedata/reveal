@@ -4,13 +4,16 @@ import { batch, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Row } from 'react-table';
 
+import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
+import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
+import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
 
-import { ViewButton } from 'components/buttons';
+import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
+import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -26,6 +29,7 @@ import {
   WellboreColumns,
   WellboreSubtableOptions,
 } from 'pages/authorized/constant';
+import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
 import { FavoriteIndicatorContainer } from 'pages/authorized/search/elements';
 import { FlexRow } from 'styles/layout';
 
@@ -150,26 +154,52 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
     return (
       <FlexRow>
         <OverlayCellPadding>
-          <ViewButton
-            data-testid="button-view-wellbore"
-            onClick={() => handleViewClick(row)}
-            hideIcon
-          />
+          <FlexRow>
+            <ViewButton
+              data-testid="button-view-wellbore"
+              onClick={() => handleViewClick(row)}
+              hideIcon
+            />
+            <Dropdown
+              openOnHover
+              content={
+                <Menu>
+                  <Menu.Submenu
+                    content={
+                      <AddToFavoriteSetMenu
+                        wellboreIds={[(row.original as Wellbore).id]}
+                        wellIds={[well.id]}
+                        setFavored={noop}
+                      />
+                    }
+                  >
+                    <span>{ADD_TO_FAVORITES_OPTION_TEXT}</span>
+                  </Menu.Submenu>
+                </Menu>
+              }
+            >
+              <MoreOptionsButton data-testid="menu-button" />
+            </Dropdown>
+          </FlexRow>
         </OverlayCellPadding>
       </FlexRow>
     );
   };
 
   const renderRowOverlayComponent = ({ row }: { row: Row<Wellbore> }) => {
-    /**
-     * Currently, if the well ID is exists in a favorite, its all wellbores are considered as added to favorite.
-     * Hence, checking if the well id of the wellbore exists in a favorite set.
-     */
-    const isAlreadyInFavorite = favoriteWellIds.includes(
-      String(row.original.wellId)
-    );
+    // undefined favorite set or well id not in favorite
+    if (
+      isUndefined(favoriteWellIds) ||
+      !Object.keys(favoriteWellIds).includes(String(well.id))
+    )
+      return null;
 
-    if (!isAlreadyInFavorite) return null;
+    // wellbore list not empty and wellbore row not in welbore list
+    if (
+      !isEmpty(favoriteWellIds[well.id]) &&
+      !favoriteWellIds[well.id].includes(row.original.id)
+    )
+      return null;
 
     return (
       <FavoriteIndicatorContainer>

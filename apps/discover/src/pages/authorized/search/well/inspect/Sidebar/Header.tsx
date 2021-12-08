@@ -45,6 +45,7 @@ export const Header: React.FC<Props> = ({ isOpen }) => {
   const favoriteWellsInspectOptions: InspectWellboreContext[] = [
     InspectWellboreContext.FAVORITE_CHECKED_WELLS,
     InspectWellboreContext.FAVORITE_HOVERED_WELL,
+    InspectWellboreContext.FAVORITE_HOVERED_WELLBORE,
   ];
 
   const goToSearchWellsPage = () => history.push(navigation.SEARCH_WELLS);

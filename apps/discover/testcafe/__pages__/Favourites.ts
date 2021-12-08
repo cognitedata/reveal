@@ -1,4 +1,8 @@
 import { screen } from '@testing-library/testcafe';
+import {
+  CLEAR_SELECTION_TEXT,
+  VIEW_SELECTED_WELL_TEXT,
+} from '../../src/pages/authorized/search/well/content/constants';
 import { t, Selector } from 'testcafe';
 
 import {
@@ -214,13 +218,13 @@ class FavoritesPage extends BaseSearchPage {
       .eql(true);
     await t
       .expect(
-        App.favoritesPage.favoriteBulkActionButtons('View the selected wells')
+        App.favoritesPage.favoriteBulkActionButtons(VIEW_SELECTED_WELL_TEXT)
           .exists
       )
       .eql(true);
     await t
       .expect(
-        App.favoritesPage.favoriteBulkActionButtons('Clear selection').exists
+        App.favoritesPage.favoriteBulkActionButtons(CLEAR_SELECTION_TEXT).exists
       )
       .eql(true);
   };

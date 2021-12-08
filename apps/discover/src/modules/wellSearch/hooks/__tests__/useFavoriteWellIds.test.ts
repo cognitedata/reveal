@@ -25,7 +25,7 @@ describe('useFavoriteWellIds hook', () => {
     }));
 
     const favoriteWellIds = getFavoriteWellIds();
-    expect(favoriteWellIds).toEqual([]);
+    expect(favoriteWellIds).toEqual({});
   });
 
   it('should return favorite well ids as expected', () => {
@@ -58,10 +58,10 @@ describe('useFavoriteWellIds hook', () => {
     }));
 
     const favoriteWellIds = getFavoriteWellIds();
-    expect(favoriteWellIds).toEqual([
-      'test-well-id-1',
-      'test-well-id-2',
-      'test-well-id-3',
-    ]);
+    expect(favoriteWellIds).toEqual({
+      'test-well-id-1': [],
+      'test-well-id-2': [],
+      'test-well-id-3': [],
+    });
   });
 });

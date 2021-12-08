@@ -22,6 +22,15 @@ import {
 } from 'modules/wellSearch/selectors';
 import { InspectWellboreContext } from 'modules/wellSearch/types';
 
+import {
+  ADD_SELECTED_WELLS_TEXT,
+  CLEAR_SELECTION_TEXT,
+  FETCHING_SELECTED_WELBORE_MESSAGE,
+  OPEN_BROWSER_MESSAGE,
+  OPEN_FIELD_PRODUCTION_MESSAGE,
+  VIEW_SELECTED_WELL_TEXT,
+} from '../constants';
+
 export const WellsBulkActions: React.FC = () => {
   const { t } = useTranslation('Search');
   const history = useHistory();
@@ -67,7 +76,7 @@ export const WellsBulkActions: React.FC = () => {
   } selected`;
 
   const subtitle = wellboresFetching
-    ? 'Fetching selected wellbores...'
+    ? FETCHING_SELECTED_WELBORE_MESSAGE
     : `With ${selectedWellboresCount} ${
         selectedWellboresCount > 1 ? 'wellbores' : 'wellbore'
       } inside`;
@@ -82,10 +91,10 @@ export const WellsBulkActions: React.FC = () => {
         <ViewButton
           variant="inverted"
           size="default"
-          text={t('Open field production data')}
-          tooltip={t('Open data in new browser tabs')}
+          text={t(OPEN_FIELD_PRODUCTION_MESSAGE)}
+          tooltip={t(OPEN_BROWSER_MESSAGE)}
           onClick={(event) => openInNewTab(event, externalLinks)}
-          aria-label="Open data in new browser tabs"
+          aria-label={OPEN_BROWSER_MESSAGE}
           hideIcon
         />
       ) : null}
@@ -93,7 +102,7 @@ export const WellsBulkActions: React.FC = () => {
       <ViewButton
         variant="inverted"
         size="default"
-        tooltip={t('View the selected wells')}
+        tooltip={t(VIEW_SELECTED_WELL_TEXT)}
         onClick={handleClickView}
         data-testid="wells-inspect-button"
         hideIcon
@@ -103,13 +112,18 @@ export const WellsBulkActions: React.FC = () => {
 
       <Dropdown
         placement="top"
-        content={<AddToFavoriteSetMenu wellIds={selectedWellIds} />}
+        content={
+          <AddToFavoriteSetMenu
+            wellIds={selectedWellIds}
+            wellboreIds={selectedWellboreIds}
+          />
+        }
       >
         <FavoriteButton
-          tooltip={t('Add the selected wells to favorites')}
+          tooltip={t(ADD_SELECTED_WELLS_TEXT)}
           onClick={handleClickFavoriteButton}
           data-testid="welldata-favorite-all-button"
-          aria-label="Add the selected wells"
+          aria-label={ADD_SELECTED_WELLS_TEXT}
         />
       </Dropdown>
 
@@ -117,9 +131,9 @@ export const WellsBulkActions: React.FC = () => {
 
       <CloseButton
         variant="inverted"
-        tooltip={t('Clear selection')}
+        tooltip={t(CLEAR_SELECTION_TEXT)}
         onClick={handleDeselectAll}
-        aria-label="Clear selection"
+        aria-label={CLEAR_SELECTION_TEXT}
       />
     </TableBulkActions>
   );

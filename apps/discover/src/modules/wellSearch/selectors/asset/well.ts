@@ -3,6 +3,8 @@ import React, { useMemo } from 'react';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 
 import { ProjectConfigGeneral } from '@cognite/discover-api-types';
@@ -26,6 +28,7 @@ import {
   Wellbore,
   WellId,
 } from 'modules/wellSearch/types';
+import { getFilteredWellbores } from 'modules/wellSearch/utils/wells';
 import { ExternalLinksConfig } from 'tenants/types';
 
 export const useWells = () => {
@@ -68,7 +71,7 @@ export const useFavoriteWellResult = (id?: number) => {
   return null;
 };
 
-export const useWellBoreResult = (wellId?: number) => {
+export const useWellBoreResult = (wellId?: number): Wellbore[] => {
   const idList = wellId ? [wellId] : [];
   const { data } = wellBoreUseQuery(idList);
   if (!wellId) return [];
@@ -228,6 +231,38 @@ export const useSelectedOrHoveredWells = () => {
         return [];
       }
 
+      /* 
+      This method is used to get a well with a wellbore which hovered on favorite wellbore table
+      (View button in seperate wellbore row)
+      */
+
+      if (
+        isEqual(
+          inspectContext,
+          InspectWellboreContext.FAVORITE_HOVERED_WELLBORE
+        )
+      ) {
+        if (isEmpty(favoriteWellData)) return [];
+        /* 
+        Parsing only one wellId as favoriteHoveredIds when getting favoriteWellData for this function.
+        So the result canbe contained only one well or non. 
+        So need to get the head of that array if it is not empty.
+        */
+        const firstWell = head(favoriteWellData);
+        if (firstWell) {
+          /* 
+          HoveredWellboreIds also contains only one wellbore id.
+          Then need to get the wellbore that equals with the head of HoveredWellboreIds
+          */
+          const resultedWellbores = getFilteredWellbores(
+            firstWell.wellbores,
+            head(Object.keys(state.wellSearch.hoveredWellboreIds))
+          );
+
+          return [{ ...firstWell, ...{ wellbores: resultedWellbores || [] } }];
+        }
+        return [];
+      }
       if (inspectContext === InspectWellboreContext.FAVORITE_CHECKED_WELLS) {
         if (!favoriteWellData?.length) return [];
 

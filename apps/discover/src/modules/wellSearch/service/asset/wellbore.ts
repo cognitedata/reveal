@@ -1,6 +1,9 @@
 import groupBy from 'lodash/groupBy';
 
-import { getWellboresFromWells } from 'modules/wellSearch/sdk';
+import {
+  getWellboresFromWells,
+  getWellboresByIds,
+} from 'modules/wellSearch/sdk';
 import { Wellbore } from 'modules/wellSearch/types';
 
 export async function getWellboresByWellIds(
@@ -16,4 +19,10 @@ export async function getGroupedWellboresByWellIds(wellIds: number[]) {
       groupBy(wellbores, 'wellId')
     )
   );
+}
+
+export async function getWellboresByWellboreIds(
+  wellboreIds: number[]
+): Promise<Wellbore[]> {
+  return getWellboresByIds(wellboreIds);
 }

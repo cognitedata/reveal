@@ -9,13 +9,18 @@ import {
   getWellboresByWellIds,
   getWellByWellId,
 } from 'modules/wellSearch/service';
-import { Wellbore, WellBoreListMap, WellMap } from 'modules/wellSearch/types';
+import {
+  Wellbore,
+  WellBoreListMap,
+  WellId,
+  WellMap,
+} from 'modules/wellSearch/types';
 import { normalizeWell } from 'modules/wellSearch/utils/wells';
 
 export const WELL_CARD_KEY = 'wellCardKey';
 export const WELLBORE_CARD_KEY = 'welloreCardKey';
 
-export const wellBoreUseQuery = (wellIds: number[]) => {
+export const wellBoreUseQuery = (wellIds: WellId[]) => {
   const { wellbores } = useWellbores(wellIds);
 
   return useQuery<WellBoreListMap>([WELLBORE_CARD_KEY], () => {

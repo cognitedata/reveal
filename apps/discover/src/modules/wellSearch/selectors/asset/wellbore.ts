@@ -7,6 +7,7 @@ import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 
 import useSelector from 'hooks/useSelector';
@@ -16,6 +17,7 @@ import {
   Wellbore,
   WellboreAssetIdMap,
 } from 'modules/wellSearch/types';
+import { getFilteredWellbores } from 'modules/wellSearch/utils/wells';
 
 import {
   useWellBoreResult,
@@ -154,6 +156,7 @@ export const useWellboreAssetIdMap = () => {
       state.wellSearch.wellFavoriteHoveredOrCheckedWells;
     const { data: favoriteWellData } =
       useFavoriteWellResults(favoriteHoveredIds);
+    const { hoveredWellboreIds } = state.wellSearch;
 
     return useMemo(() => {
       if (InspectWellboreContext.WELL_CARD_WELLBORES === inspectContext) {
@@ -173,6 +176,33 @@ export const useWellboreAssetIdMap = () => {
         const firstWell = head(favoriteWellData);
 
         const resultedWellbores = firstWell?.wellbores || [];
+        return resultedWellbores.reduce((idMap, wellbore) => {
+          const wellboreAssetId = get(
+            wellbore,
+            'sourceWellbores[0].id',
+            wellbore.id
+          );
+          return {
+            ...idMap,
+            [wellbore.id]: wellboreAssetId,
+          };
+        }, {} as WellboreAssetIdMap);
+      }
+
+      if (
+        isEqual(
+          inspectContext,
+          InspectWellboreContext.FAVORITE_HOVERED_WELLBORE
+        )
+      ) {
+        const firstWell = head(favoriteWellData);
+
+        if (!firstWell) return [];
+        const resultedWellbores = getFilteredWellbores(
+          firstWell.wellbores,
+          head(Object.keys(hoveredWellboreIds))
+        );
+
         return resultedWellbores.reduce((idMap, wellbore) => {
           const wellboreAssetId = get(
             wellbore,
@@ -299,4 +329,17 @@ export const useWellboresFetching = () => {
     );
     return !isEmpty(wellboresNotFetchedWellIds);
   }, [wellboresFetchedWellIds, selectedWellIds]);
+};
+
+export const useWellboresByIdsAndWellId = (
+  wellId: number,
+  wellboreIds: string[]
+) => {
+  const wellbores: Wellbore[] = useWellBoreResult(wellId);
+
+  return useMemo(() => {
+    return !isEmpty(wellboreIds)
+      ? wellbores.filter((wellbore) => wellboreIds.includes(wellbore.id))
+      : wellbores;
+  }, [JSON.stringify(wellbores)]);
 };

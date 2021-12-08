@@ -17,10 +17,17 @@ interface Props {
   onClose: () => void;
   onConfirm: () => void;
   singleItem?: boolean;
+  isWell?: boolean;
 }
 
-export const DeleteWellFromSetModal: React.FC<Props> = (props) => {
-  const { isOpen, title, onClose, onConfirm, singleItem = true } = props;
+export const DeleteWellFromSetModal: React.FC<Props> = ({
+  isOpen,
+  title,
+  onClose,
+  onConfirm,
+  singleItem = true,
+  isWell = true,
+}) => {
   const { t } = useTranslation('Favorites');
   const metrics = useGlobalMetrics('favorites');
 
@@ -34,6 +41,8 @@ export const DeleteWellFromSetModal: React.FC<Props> = (props) => {
     onClose();
   };
 
+  const wellOrWellbore = isWell ? ' well' : ' wellbore';
+
   return (
     <Modal
       visible={isOpen}
@@ -44,8 +53,8 @@ export const DeleteWellFromSetModal: React.FC<Props> = (props) => {
     >
       <span>
         {t('Are you sure you want to remove the')}{' '}
-        {title ? <Title>{title}</Title> : ''} {singleItem ? 'well' : 'wells'}{' '}
-        from the set?
+        {title ? <Title>{title}</Title> : ''}
+        {singleItem ? wellOrWellbore : wellOrWellbore.concat('s')} from the set?
       </span>
     </Modal>
   );

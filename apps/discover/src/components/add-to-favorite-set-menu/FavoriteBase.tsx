@@ -2,8 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import merge from 'lodash/merge';
-
 import { Icon, Menu } from '@cognite/cogs.js';
 
 import { CloseButton } from 'components/buttons';
@@ -13,7 +11,13 @@ import {
   setItemsToAddAfterFavoriteCreation,
   showCreateFavoriteSetModal,
 } from 'modules/favorite/actions';
-import { WellId } from 'modules/wellSearch/types';
+import { FavoriteContentWells } from 'modules/favorite/types';
+import {
+  getDocumentsToAddAfterFavoriteCreation,
+  getUpdatedWells,
+  getWellsToAddAfterFavoriteCreation,
+} from 'modules/favorite/utils';
+import { WellboreId, WellId } from 'modules/wellSearch/types';
 import { InlineFlex, RightAlignedSmall } from 'styles/layout';
 
 import {
@@ -27,6 +31,7 @@ import { useHandleSelectFavourite } from './useFavorite';
 export interface Props {
   documentIds: number[];
   wellIds: WellId[];
+  wellboreIds?: WellboreId[];
   itemExistsInSets?: string[];
   callBackModal?: () => void;
 }
@@ -34,6 +39,7 @@ export interface Props {
 export const FavoriteBase: React.FC<Props> = ({
   documentIds,
   wellIds,
+  wellboreIds = [],
   itemExistsInSets,
   callBackModal,
 }) => {
@@ -43,15 +49,12 @@ export const FavoriteBase: React.FC<Props> = ({
   const { handleFavoriteUpdate } = useHandleSelectFavourite();
 
   const handleSelectFavorite = (setId: string) => {
-    const favorite = favorites?.find((favorite) => favorite.id === setId);
-
-    const wells =
-      favorite && wellIds.length
-        ? merge(
-            { ...favorite.content.wells },
-            ...wellIds.map((wellId) => ({ [wellId]: [] }))
-          )
-        : undefined;
+    const wells: FavoriteContentWells = getUpdatedWells(
+      favorites,
+      wellIds,
+      wellboreIds,
+      setId
+    );
 
     handleFavoriteUpdate(
       setId,
@@ -69,18 +72,8 @@ export const FavoriteBase: React.FC<Props> = ({
 
     dispatch(
       setItemsToAddAfterFavoriteCreation({
-        documentIds:
-          documentIds && documentIds.length ? documentIds : undefined,
-        wells:
-          wellIds && wellIds.length
-            ? wellIds.reduce(
-                (previousValue, currentValue) => ({
-                  ...previousValue,
-                  [currentValue]: [],
-                }),
-                {}
-              )
-            : undefined,
+        documentIds: getDocumentsToAddAfterFavoriteCreation(documentIds),
+        wells: getWellsToAddAfterFavoriteCreation(wellIds),
       })
     );
     dispatch(showCreateFavoriteSetModal());

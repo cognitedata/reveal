@@ -162,9 +162,9 @@ const WellResult: React.FC<DispatchProps> = (props) => {
 
   const renderRowOverlayComponent = useCallback(
     ({ row }) => {
-      const isAlreadyInFavorite = favoriteWellIds.includes(
-        String(row.original.id)
-      );
+      const isAlreadyInFavorite = favoriteWellIds
+        ? Object.keys(favoriteWellIds).includes(String(row.original.id))
+        : false;
 
       if (!isAlreadyInFavorite) return null;
 

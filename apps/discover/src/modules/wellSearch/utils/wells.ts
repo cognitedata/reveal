@@ -1,7 +1,9 @@
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 
 import { Well } from '@cognite/sdk-wells-v2';
 
+import { Wellbore } from '../types';
 import { normalizeCoords } from '../utils';
 
 export const normalizeWell = (well: Well) => {
@@ -24,4 +26,13 @@ export const normalizeWell = (well: Well) => {
 
 export const normalizeWells = (wells: Well[]) => {
   return wells.map(normalizeWell);
+};
+
+export const getFilteredWellbores = (
+  wellbores: Wellbore[] | undefined,
+  wellboreId: string | undefined
+): Wellbore[] => {
+  return (
+    wellbores?.filter((wellbore) => isEqual(wellbore.id, wellboreId)) || []
+  );
 };

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { CloseButton, BaseButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
+import { CLEAR_SELECTION_TEXT } from 'pages/authorized/search/well/content/constants';
 
 import { getSelectedWellboresTitle, getSelectedWellsTitle } from '../utils';
 
@@ -40,9 +41,9 @@ export const WellCentricBulkActions: React.FC<Props> = ({
 
       <CloseButton
         variant="inverted"
-        tooltip={t('Clear selection')}
+        tooltip={t(CLEAR_SELECTION_TEXT)}
         onClick={handleDeselectAll}
-        aria-label="Clear selection"
+        aria-label={CLEAR_SELECTION_TEXT}
       />
     </TableBulkActions>
   );

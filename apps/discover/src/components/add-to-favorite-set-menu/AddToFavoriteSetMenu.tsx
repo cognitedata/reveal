@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { WellId } from 'modules/wellSearch/types';
+import head from 'lodash/head';
+
+import { WellboreId, WellId } from 'modules/wellSearch/types';
 
 import { AddMultipleItems } from './AddMultipleItems';
 import { AddSingleItem } from './AddSingleItem';
@@ -8,6 +10,7 @@ import { AddSingleItem } from './AddSingleItem';
 export interface Props {
   documentIds?: number[];
   wellIds?: WellId[];
+  wellboreIds?: WellboreId[];
   setFavored?: React.Dispatch<React.SetStateAction<boolean>>;
   parentCallBack?: () => void;
 }
@@ -15,13 +18,19 @@ export interface Props {
 export const AddToFavoriteSetMenu: React.FC<Props> = ({
   documentIds = [],
   wellIds = [],
+  wellboreIds = [],
   parentCallBack,
 }) => {
   if (documentIds.length === 1 || wellIds.length === 1) {
     return (
       <AddSingleItem
+        /*
+        documentIds cannot go with lodash head - 
+        head returns a number or undefined, undefined cannot assignable to a number
+        */
         documentId={documentIds[0]}
-        wellId={wellIds[0]}
+        wellId={head(wellIds)}
+        wellboreId={head(wellboreIds)}
         callBackModal={parentCallBack}
       />
     );
@@ -31,6 +40,7 @@ export const AddToFavoriteSetMenu: React.FC<Props> = ({
     <AddMultipleItems
       documentIds={documentIds}
       wellIds={wellIds}
+      wellboreIds={wellboreIds}
       callBackModal={parentCallBack}
     />
   );
