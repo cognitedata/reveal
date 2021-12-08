@@ -58,7 +58,11 @@ const Schedule: FunctionComponent<Props> = ({
   return (
     <InteractiveCopyWrapper {...rest}>
       {parsedExpression}{' '}
-      <InteractiveCopy text={schedule} copyType="cronExpression" />
+      <InteractiveCopy
+        showTextInTooltip
+        text={schedule}
+        copyType="cronExpression"
+      />
     </InteractiveCopyWrapper>
   );
 };

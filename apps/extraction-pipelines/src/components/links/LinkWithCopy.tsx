@@ -28,7 +28,11 @@ const LinkWithCopy: FunctionComponent<Props> = ({
       >
         {linkText}
       </StyledLink>
-      <InteractiveCopy text={copyText} copyType={copyType} />
+      <InteractiveCopy
+        showTextInTooltip={linkText !== copyText}
+        text={copyText}
+        copyType={copyType}
+      />
     </>
   );
 };

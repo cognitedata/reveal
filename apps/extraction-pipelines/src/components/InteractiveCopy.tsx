@@ -18,6 +18,7 @@ export type CopyType =
 interface InteractiveCopyProps {
   text: string;
   copyType: CopyType;
+  showTextInTooltip: boolean;
   // eslint-disable-next-line react/require-default-props
   onCopy?: () => void;
 }
@@ -26,6 +27,7 @@ const InteractiveCopy = ({
   text,
   copyType,
   onCopy: onCopyCallback,
+  showTextInTooltip,
 }: InteractiveCopyProps) => {
   const [hasCopied, setHasCopied] = useState(false);
 
@@ -53,7 +55,9 @@ const InteractiveCopy = ({
       interactive
       content={
         <div style={{ padding: '0.3125rem 0.5625rem' }}>
-          {hasCopied ? 'Copied!' : `Copy ${text}`}
+          {hasCopied
+            ? 'Copied!'
+            : `Copy ${showTextInTooltip ? text : ''}`.trim()}
         </div>
       }
     >
