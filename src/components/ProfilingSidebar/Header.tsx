@@ -40,7 +40,7 @@ export const Header = ({ selectedColumn }: Props) => {
             <Button
               aria-label="Previous column"
               size="small"
-              variant="ghost"
+              type="ghost"
               icon="ChevronLeft"
               onClick={onPrevColumnClick}
             />
@@ -63,7 +63,7 @@ export const Header = ({ selectedColumn }: Props) => {
             <Button
               aria-label="Next column"
               size="small"
-              variant="ghost"
+              type="ghost"
               icon="ChevronRight"
               onClick={onNextColumnClick}
             />
@@ -72,7 +72,7 @@ export const Header = ({ selectedColumn }: Props) => {
         <Button
           aria-label="Hide side panel"
           size="small"
-          variant="ghost"
+          type="ghost"
           icon="Close"
           onClick={onClickHide}
         />
