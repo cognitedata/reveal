@@ -9,11 +9,16 @@ export enum PrimitiveType {
   Box
 }
 
-export type Box = {
+export type CommonAttributes = {
+  treeIndex?: number;
+  color?: [number, number, number, number];
+};
+
+export type Box = CommonAttributes & {
   instanceMatrix: number[];
 };
 
-export type Ellipsoid = {
+export type Ellipsoid = CommonAttributes & {
   horizontalRadius: number;
   verticalRadius: number;
   height: number;
