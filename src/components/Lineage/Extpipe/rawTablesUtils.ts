@@ -13,7 +13,7 @@ export const updateRawTableWithLastUpdate = async (
     const lastUpdate =
       results.items.length > 0
         ? moment(results.items[0].lastUpdatedTime).fromNow()
-        : 'Never';
+        : '–';
     return {
       databaseName,
       tableName,

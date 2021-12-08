@@ -2,7 +2,6 @@ import React from 'react';
 import moment from 'moment';
 import { Tooltip } from '@cognite/cogs.js';
 import { toString as cronstureToString } from 'cronstrue';
-import { LabelTagGrey } from 'utils/styledComponents';
 import { Extpipe, SupportedSchedule } from 'utils/types';
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 
@@ -77,7 +76,7 @@ export const ExtpipeTableColumns = [
     key: 'schedule',
     render: ({ schedule }: Extpipe) => {
       if (!schedule) {
-        return <LabelTagGrey>Not defined</LabelTagGrey>;
+        return 'Not defined';
       }
       if (
         isScheduleOfType(schedule, [
@@ -92,7 +91,7 @@ export const ExtpipeTableColumns = [
     ellipsis: true,
   },
   {
-    title: 'Last run',
+    title: 'Last run time',
     key: 'latestRun',
     render: ({ lastFailure, lastSuccess }: Extpipe) => {
       const latestRun = calculate({ lastFailure, lastSuccess });
