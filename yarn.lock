@@ -1581,10 +1581,10 @@
   dependencies:
     unleash-proxy-client "^1.0.1"
 
-"@cognite/react-picture-annotation@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.1.tgz#9790303ab204f7b2c27f16c6c87b67e0b73f0f5f"
-  integrity sha512-+gn+RudIhOY9BFzOZ1eJe+ypxc0XAFkL4Rxx1xrYJbZywPKOZ76RVTdXuCmqsLh56Aq4MnGhtrcBR3bbbDnAYQ==
+"@cognite/react-picture-annotation@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@cognite/react-picture-annotation/-/react-picture-annotation-2.0.2.tgz#6bf401fe5532a1807c00ac15d985e363a43243f4"
+  integrity sha512-zCbkrh2eAVU0bERfzVWUitGr76uKSa9WO3bhNx42fzZeV+1LdU2KTXyFZERyRDwnxayQIGiepmxMYwwcFpae/g==
   dependencies:
     "@cognite/annotations" "^1.1.0"
     "@cognite/sdk" "^3.3.0"
