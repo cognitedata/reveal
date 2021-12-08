@@ -17,6 +17,7 @@ const ProfileStatusMessage = ({
     case 'complete':
       return (
         <StyledMessage
+          isClosable
           message="Data profiling completed for all rows and columns."
           type="success"
         />
@@ -31,6 +32,7 @@ const ProfileStatusMessage = ({
     case 'partial':
       return (
         <StyledMessage
+          isClosable
           message="Data profiling partially completed. Only the first million rows of data were processed."
           type="warning"
         />
