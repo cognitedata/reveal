@@ -40,6 +40,8 @@ def eslint_test(name, data, eslint_config, **kwargs):
         "@npm//@testing-library/jest-dom",
         "@npm//@testing-library/react",
         "@npm//@testing-library/testcafe",
+        "@npm//@typescript-eslint/eslint-plugin",
+        "@npm//@typescript-eslint/parser",
         "@npm//eslint-config-airbnb",
         "@npm//eslint-config-prettier",
         "@npm//eslint-plugin-import",

@@ -105,6 +105,8 @@ module.exports = {
     'lodash/prefer-get': ['off'],
     'lodash/prefer-includes': ['off'],
     'lodash/prefer-startswith': ['off'],
+    'lodash/prefer-noop': ['off'],
+    'lodash/chaining': ['error', 'implicit'],
 
     '@typescript-eslint/explicit-function-return-type': [
       'off',
