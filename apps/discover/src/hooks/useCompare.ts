@@ -11,8 +11,13 @@ import isEqual from 'lodash/isEqual';
  *
  * Let `dep` is an array or an object array.
  *
- * useEffect(() => { // something }, [useCompare(dep)]);
- * useMemo(() => { // something }, [useCompare(dep)]);
+ * useEffect(() => { // something }, useCompare([dep]));
+ * useMemo(() => { // something }, useCompare([dep]));
+ *
+ * For multiple deps, `useCompare` can be used as follows.
+ *
+ * useCompare([dep1, dep2, dep3, ...])
+ *
  *
  * **********************************************************************************
  *
