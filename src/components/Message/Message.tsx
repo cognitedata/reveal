@@ -3,7 +3,7 @@ import React from 'react';
 import { AllIconTypes, Body, Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-export type MessageType = 'info' | 'success' | 'warning' | 'error';
+export type MessageType = 'info' | 'success' | 'warning' | 'error' | 'loading';
 
 export type MessageSize = 'small' | 'default';
 
@@ -38,6 +38,11 @@ const Message = ({
       backgroundColor = 'rgba(223, 58, 55, 0.06)';
       icon = 'ErrorFilled';
       iconColor = '#CF1A17';
+      break;
+    case 'loading':
+      backgroundColor = 'rgba(110, 133, 252, 0.06)';
+      icon = 'Loader';
+      iconColor = '#2B3A88';
       break;
     case 'info':
     default:

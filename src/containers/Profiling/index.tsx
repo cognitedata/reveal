@@ -15,6 +15,7 @@ import ProfileRow, { TableData } from './ProfileRow';
 import ProfileCoverageLabel, {
   ProfileResultType,
 } from './ProfileCoverageLabel';
+import ProfileStatusMessage from './ProfileStatusMessage';
 
 const Card = styled.div`
   padding: 16px;
@@ -137,6 +138,7 @@ export const Profiling = (): JSX.Element => {
 
   return (
     <RootFlex direction="column">
+      <ProfileStatusMessage resultType={profileResultType} />
       <Title level={4}>Table summary</Title>
       <Flex direction="row">
         <Card className="z-2">
