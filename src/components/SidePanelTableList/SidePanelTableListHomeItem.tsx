@@ -86,7 +86,12 @@ const SidePanelTableListHomeItem = ({
             </Menu>
           }
         >
-          <Button icon="EllipsisHorizontal" size="small" type="ghost" />
+          <Button
+            aria-label="Options"
+            icon="EllipsisHorizontal"
+            size="small"
+            type="ghost"
+          />
         </Dropdown>
         <DeleteDatabaseModal
           databaseName={selectedSidePanelDatabase}
