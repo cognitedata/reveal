@@ -20,6 +20,7 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
+import { InfoBox } from 'components/message/InfoBox';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -127,16 +128,32 @@ export const ContactsDialogView = ({
   const deleteRow = (index: number) => {
     setContacts(contacts.filter((m, i) => i !== index));
   };
+  const numOwners = contacts.reduce(
+    (acc, c) => (c.role === 'Owner' ? acc + 1 : acc),
+    0
+  );
   const addRow = () => {
-    setContacts([
-      ...contacts,
-      {
-        name: '',
-        email: '',
-        role: contacts.length === 0 ? 'Owner' : '',
-        sendNotification: false,
-      },
-    ]);
+    setContacts(
+      numOwners === 0
+        ? [
+            {
+              name: '',
+              email: '',
+              role: 'Owner',
+              sendNotification: false,
+            },
+            ...contacts,
+          ]
+        : [
+            ...contacts,
+            {
+              name: '',
+              email: '',
+              role: '',
+              sendNotification: false,
+            },
+          ]
+    );
   };
   return (
     <>
@@ -214,9 +231,15 @@ export const ContactsDialogView = ({
 
       <div>
         <Button icon="AddLarge" onClick={addRow}>
-          Add contact
+          Add {numOwners === 0 ? 'owner' : 'contact'}
         </Button>
       </div>
+
+      {numOwners !== 1 && (
+        <InfoBox iconType="WarningFilled" color="warning">
+          There should be exactly one owner.
+        </InfoBox>
+      )}
 
       <div css="display: flex; justify-content: flex-end; gap: 0.5rem">
         <Button onClick={onCancel} type="ghost">
