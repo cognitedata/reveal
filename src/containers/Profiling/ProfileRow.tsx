@@ -227,10 +227,19 @@ const StyledExpandButton = styled(Button)`
 const StyledTableRow = styled.tr`
   cursor: pointer;
   .styled-cell {
-    border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
   }
-  .styled-cell:not(:last-child) {
+  .styled-cell:last-child {
     border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
+  &:last-child {
+    .styled-cell:first-child {
+      border-radius: 0 0 0 8px;
+    }
+    .styled-cell:last-child {
+      border-radius: 0 0 8px 0;
+    }
   }
   &:hover {
     background-color: ${Colors['bg-accent'].hex()};
