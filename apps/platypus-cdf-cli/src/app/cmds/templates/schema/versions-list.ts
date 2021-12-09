@@ -25,6 +25,7 @@ export const commandArgs = [
     description: 'add --full for the full schema including generated types',
     prompt: 'Do you want to see the response as JSON',
     type: CommandArgumentType.BOOLEAN,
+    initial: false,
   },
 ] as CommandArgument[];
 

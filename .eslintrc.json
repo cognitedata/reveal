@@ -30,7 +30,8 @@
             "enforceBuildableLibDependency": true,
             "allow": [
               "@platypus-app",
-              "@platypus-core"
+              "@platypus-core",
+              "@cognite/platypus-cdf-cli"
             ],
             "depConstraints": [
               {

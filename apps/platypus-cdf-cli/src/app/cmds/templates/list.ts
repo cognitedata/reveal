@@ -1,31 +1,39 @@
-import { Arguments, CommandBuilder } from 'yargs';
-import { BaseArgs } from '../../types';
-import { getCogniteSDKClient } from '../../utils/cogniteSdk';
+import { TemplatesApiService } from '@platypus/platypus-core';
+import { CommandArgument, CommandArgumentType } from '../../types';
+import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
+import Response from '@cognite/platypus-cdf-cli/app/utils/logger';
 
-export const command = 'list';
-export const desc = 'List all templates for current project';
-export const builder: CommandBuilder = {
-  full: {
+import { getCogniteSDKClient } from '@cognite/platypus-cdf-cli/app/utils/cogniteSdk';
+
+export const commandArgs = [
+  {
+    name: 'full',
     description: 'add --full for the full schema including generated types',
-    default: false,
-    type: 'boolean',
+    prompt: 'Do you want to see the response as JSON',
+    type: CommandArgumentType.BOOLEAN,
+    initial: false,
+    example: '$0 templates list --full',
   },
-  type: {
-    description: 'see just a specific type',
-    type: 'array',
-  },
-};
+] as CommandArgument[];
 
-export async function handler(args: Arguments<BaseArgs>) {
-  const client = getCogniteSDKClient();
+export class TemplatesListCommand extends CLICommand {
+  async execute(args) {
+    const client = getCogniteSDKClient();
+    const templatesApi = new TemplatesApiService(client);
 
-  const templates = await client.templates.groups.list();
+    const templates = await templatesApi.listTemplateGroups();
 
-  if (args.full) {
-    return args.logger.log(JSON.stringify(templates.items, null, 2));
+    if (args.full === true) {
+      Response.log(JSON.stringify(templates, null, 2));
+      return;
+    }
+
+    Response.log(templates.map((template) => template.externalId).join('\n'));
   }
-
-  args.logger.log(
-    templates.items.map((template) => template.externalId).join('\n')
-  );
 }
+
+export default new TemplatesListCommand(
+  'list',
+  'List all template groups for current project',
+  commandArgs
+);

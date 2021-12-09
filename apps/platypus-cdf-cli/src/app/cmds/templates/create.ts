@@ -1,45 +1,53 @@
-import { Arguments, Argv } from 'yargs';
-import { CreateSolutionDTO } from '@platypus/platypus-core';
+import { TemplatesApiService } from '@platypus/platypus-core';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
-import { BaseArgs } from '../../types';
+import { CommandArgument, CommandArgumentType } from '../../types';
+import { CLICommand } from '@cognite/platypus-cdf-cli/app/common/cli-command';
+import Response from '@cognite/platypus-cdf-cli/app/utils/logger';
 
-export const command = 'create <name>';
+export const commandArgs = [
+  {
+    name: 'externalId',
+    description: 'Template group external id',
+    prompt: 'Enter unique name for the template group',
+    type: CommandArgumentType.STRING,
+    required: true,
+    example:
+      '$0 templates create --externalId=template-group-external-id --description=some description --owner=email-addres@domain',
+  },
+  {
+    name: 'description',
+    description: 'Template group description',
+    prompt: 'Enter description for your template group',
+    type: CommandArgumentType.STRING,
+    required: true,
+    initial: '',
+  },
+  {
+    name: 'owner',
+    description: 'Template group owner',
+    prompt: 'Enter template group owner',
+    type: CommandArgumentType.STRING,
+    required: false,
+    initial: '',
+  },
+] as CommandArgument[];
 
-export const desc = 'Create a template group';
+export class CreateTemplateGroupCommand extends CLICommand {
+  async execute(args) {
+    const client = getCogniteSDKClient();
+    const templatesApi = new TemplatesApiService(client);
 
-export const builder = (yargs: Argv<CreateSolutionDTO>): Argv =>
-  yargs
-    .positional('name', {
-      type: 'string',
-      description: 'Template group external id',
-      demandOption: true,
-    })
-    .option('description', {
-      type: 'string',
-      default: '',
-      description: "Template group's description",
-    })
-    .option('owner', {
-      type: 'string',
-      default: '',
-      description: 'Who is the owner of this template group',
+    await templatesApi.createTemplateGroup({
+      name: args.externalId,
+      description: args.description,
+      owner: args.owner,
     });
-
-export const handler = async (
-  args: Arguments<BaseArgs & CreateSolutionDTO>
-) => {
-  const client = getCogniteSDKClient();
-
-  try {
-    await client.templates.groups.create([
-      {
-        externalId: args.name,
-        description: args.description,
-        owners: [args.owner],
-      },
-    ]);
-    args.logger.log(`Template group "${args.name}" is created successfully`);
-  } catch (error) {
-    args.logger.error(error);
+    Response.log(`Template group "${args.externalId}" is created successfully`);
   }
-};
+}
+
+export default new CreateTemplateGroupCommand(
+  'create',
+  'Create a template group',
+  commandArgs
+);

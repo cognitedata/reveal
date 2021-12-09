@@ -1,7 +1,7 @@
 import { Argv } from 'yargs';
-import * as listCmd from './list';
-import * as createCmd from './create';
-import * as deleteCmd from './delete';
+import listCmd from './list';
+import createCmd from './create';
+import deleteCmd from './delete';
 import * as schemaCmds from './schema';
 import { TemplateInitCommand } from './init';
 
