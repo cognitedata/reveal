@@ -6,7 +6,7 @@ import { MAX_SELECT_COUNT } from 'src/constants/ExplorerConstants';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from 'src/modules/Common/store/commonSlice';
+} from 'src/modules/Common/store/common/slice';
 import { ViewMode } from 'src/modules/Common/types';
 import { RootState } from 'src/store/rootReducer';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';

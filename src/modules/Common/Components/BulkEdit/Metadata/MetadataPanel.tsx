@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Body, Button, Input, Select, Tooltip } from '@cognite/cogs.js';
 import { EditPanelProps } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
-import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 import { Metadata } from '@cognite/cdf-sdk-singleton';
 
 const getMetadataKeys = (
   selectedFiles: VisionFile[],
-  bulkEditTemp: BulkEditTempState
+  bulkEditUnsaved: BulkEditUnsavedState
 ) => {
   const existingMetadataKeys = selectedFiles
     .map((file) => (file.metadata ? Object.keys(file.metadata) : []))
     .flat();
-  const newKeys = bulkEditTemp.metadata
-    ? Object.keys(bulkEditTemp.metadata)
+  const newKeys = bulkEditUnsaved.metadata
+    ? Object.keys(bulkEditUnsaved.metadata)
     : [];
   const allMetadataKeys = existingMetadataKeys
     .concat(newKeys)
@@ -28,17 +28,17 @@ const getMetadataKeys = (
 
 const setInitialMetadataTempState = (
   existingMetadataKeys: string[],
-  bulkEditTemp: BulkEditTempState,
-  setBulkEditTemp: (value: BulkEditTempState) => void
+  bulkEditUnsaved: BulkEditUnsavedState,
+  setBulkEditUnsaved: (value: BulkEditUnsavedState) => void
 ) => {
   const initialMetadata = existingMetadataKeys.reduce(
     (o, key) => Object.assign(o, { [key]: undefined }),
     {}
   );
-  setBulkEditTemp({
-    ...bulkEditTemp,
+  setBulkEditUnsaved({
+    ...bulkEditUnsaved,
     metadata: {
-      ...bulkEditTemp.metadata,
+      ...bulkEditUnsaved.metadata,
       ...initialMetadata,
     } as Metadata,
   });
@@ -46,10 +46,10 @@ const setInitialMetadataTempState = (
 
 export const MetadataPanel = ({
   selectedFiles,
-  bulkEditTemp,
+  bulkEditUnsaved,
   editPanelStateOptions,
   setEditing,
-  setBulkEditTemp,
+  setBulkEditUnsaved,
 }: EditPanelProps) => {
   const { editPanelState, setEditPanelState } = editPanelStateOptions;
 
@@ -61,7 +61,7 @@ export const MetadataPanel = ({
 
   const { existingMetadataKeys, metadataSelectOptions } = getMetadataKeys(
     selectedFiles,
-    bulkEditTemp
+    bulkEditUnsaved
   );
   const activeKey =
     editPanelState.metadataActiveKey || metadataSelectOptions[0];
@@ -72,15 +72,15 @@ export const MetadataPanel = ({
   useEffect(() => {
     setInitialMetadataTempState(
       existingMetadataKeys,
-      bulkEditTemp,
-      setBulkEditTemp
+      bulkEditUnsaved,
+      setBulkEditUnsaved
     );
     setActiveKey(metadataSelectOptions[0]);
   }, []);
 
   useEffect(() => {
-    setUpdatedValue(bulkEditTemp.metadata?.[activeKey.label] || '');
-    setInitialUpdatedValue(bulkEditTemp.metadata?.[activeKey.label] || '');
+    setUpdatedValue(bulkEditUnsaved.metadata?.[activeKey.label] || '');
+    setInitialUpdatedValue(bulkEditUnsaved.metadata?.[activeKey.label] || '');
     setEditing(false);
   }, [activeKey]);
 
@@ -123,10 +123,10 @@ export const MetadataPanel = ({
           type="secondary"
           onClick={() => {
             console.error('Not Implemented!');
-            setBulkEditTemp({
-              ...bulkEditTemp,
+            setBulkEditUnsaved({
+              ...bulkEditUnsaved,
               metadata: {
-                ...bulkEditTemp.metadata,
+                ...bulkEditUnsaved.metadata,
                 [newKey]: newValue,
               } as Metadata,
             });
@@ -180,10 +180,10 @@ export const MetadataPanel = ({
         <Button
           type="secondary"
           onClick={() => {
-            setBulkEditTemp({
-              ...bulkEditTemp,
+            setBulkEditUnsaved({
+              ...bulkEditUnsaved,
               metadata: {
-                ...bulkEditTemp.metadata,
+                ...bulkEditUnsaved.metadata,
                 [activeKey.value]: updatedValue,
               } as Metadata,
             });

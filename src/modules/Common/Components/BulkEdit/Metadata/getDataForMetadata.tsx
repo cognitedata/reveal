@@ -1,13 +1,13 @@
 import React from 'react';
 import { EditPanelState } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 
 export const getDataForMetadata = (
   selectedFiles: VisionFile[],
-  bulkEditTemp: BulkEditTempState,
+  bulkEditUnsaved: BulkEditUnsavedState,
   editPanelState: EditPanelState
 ): BulkEditTableDataType[] => {
   return selectedFiles.map((file) => {
@@ -17,7 +17,7 @@ export const getDataForMetadata = (
     };
     const originalValue = metadata ? metadata[activeKey] || '---' : '';
 
-    const { metadata: newMetadata } = bulkEditTemp;
+    const { metadata: newMetadata } = bulkEditUnsaved;
     const updatedValue = newMetadata ? newMetadata[activeKey] : '';
 
     return {

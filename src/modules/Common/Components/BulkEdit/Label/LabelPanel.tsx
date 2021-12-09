@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { LabelFilter } from '@cognite/data-exploration';
 
 export const LabelPanel = ({
-  bulkEditTemp,
-  setBulkEditTemp,
+  bulkEditUnsaved,
+  setBulkEditUnsaved,
 }: EditPanelProps) => (
   <PanelContainer>
     <SelectContainer>
@@ -14,10 +14,10 @@ export const LabelPanel = ({
       <LabelFilterContainer>
         <LabelFilter
           resourceType="file"
-          value={bulkEditTemp.labels}
+          value={bulkEditUnsaved.labels}
           setValue={(newFilters) =>
-            setBulkEditTemp({
-              ...bulkEditTemp,
+            setBulkEditUnsaved({
+              ...bulkEditUnsaved,
               labels: newFilters,
             })
           }

@@ -5,7 +5,6 @@ import {
   setSelectedAllFiles,
 } from 'src/modules/Common/store/files/slice';
 import { selectAllFilesSelected } from 'src/modules/Common/store/files/selectors';
-
 import {
   FileActions,
   ResultData,

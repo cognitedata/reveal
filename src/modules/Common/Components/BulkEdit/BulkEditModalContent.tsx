@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Body, Button, Select, Title, Tooltip } from '@cognite/cogs.js';
-import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 import { BulkEditTable } from './BulkEditTable/BulkEditTable';
@@ -12,17 +12,17 @@ import {
 
 export type BulkEditModalContentProps = {
   selectedFiles: VisionFile[];
-  bulkEditTemp: BulkEditTempState;
+  bulkEditUnsaved: BulkEditUnsavedState;
   onCancel: () => void;
-  setBulkEditTemp: (value: BulkEditTempState) => void;
+  setBulkEditUnsaved: (value: BulkEditUnsavedState) => void;
   onFinishBulkEdit: () => void;
 };
 
 export const BulkEditModalContent = ({
   selectedFiles,
-  bulkEditTemp,
+  bulkEditUnsaved,
   onCancel,
-  setBulkEditTemp,
+  setBulkEditUnsaved,
   onFinishBulkEdit,
 }: BulkEditModalContentProps) => {
   const [selectedBulkEditOption, setSelectedBulkEditOption] =
@@ -53,15 +53,15 @@ export const BulkEditModalContent = ({
         </EditType>
         <EditPanel
           selectedFiles={selectedFiles}
-          bulkEditTemp={bulkEditTemp}
-          setBulkEditTemp={setBulkEditTemp}
+          bulkEditUnsaved={bulkEditUnsaved}
+          setBulkEditUnsaved={setBulkEditUnsaved}
           setEditing={setEditing}
           editPanelStateOptions={{ editPanelState, setEditPanelState }}
         />
         <BulkEditTable
           data={selectedBulkEditOption.data(
             selectedFiles,
-            bulkEditTemp,
+            bulkEditUnsaved,
             editPanelState
           )}
           columns={selectedBulkEditOption.columns}
