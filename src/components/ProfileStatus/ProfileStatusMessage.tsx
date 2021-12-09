@@ -6,16 +6,19 @@ import Message from 'components/Message/Message';
 
 type ProfileStatusMessageProps = {
   resultType: ProfileResultType;
+  isCompact?: boolean;
 };
 
 export const ProfileStatusMessage = ({
   resultType,
+  isCompact,
 }: ProfileStatusMessageProps): JSX.Element => {
   switch (resultType) {
     case 'complete':
       return (
         <StyledMessage
           isClosable
+          isCompact={isCompact}
           message="Data profiling completed for all rows and columns."
           type="success"
         />
@@ -23,6 +26,7 @@ export const ProfileStatusMessage = ({
     case 'running':
       return (
         <StyledMessage
+          isCompact={isCompact}
           message="Running data profiling for the first million rows. Profile is currently being populated."
           type="loading"
         />
@@ -31,6 +35,7 @@ export const ProfileStatusMessage = ({
       return (
         <StyledMessage
           isClosable
+          isCompact={isCompact}
           message="Data profiling partially completed. Only the first million rows of data were processed."
           type="warning"
         />
@@ -40,6 +45,11 @@ export const ProfileStatusMessage = ({
   }
 };
 
-const StyledMessage = styled(Message)`
-  margin-bottom: 20px;
+const StyledMessage = styled(Message)<{ isCompact?: boolean }>`
+  align-items: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
+  margin-bottom: ${({ isCompact }) => (isCompact ? '0' : '20px')};
+  padding: 16px 24px;
+  & > * {
+    margin: ${({ isCompact }) => isCompact && '0 6px'};
+  }
 `;

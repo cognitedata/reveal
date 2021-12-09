@@ -46,7 +46,7 @@ export const ProfilingSidebar = (): JSX.Element => {
       footer={footer}
     >
       <Flex style={{ padding: '8px' }}>
-        <ProfileStatusMessage resultType={profileResultType} />
+        <ProfileStatusMessage resultType={profileResultType} isCompact />
       </Flex>
       <ProfilingData selectedColumn={selectedColumn} />
     </Drawer>
