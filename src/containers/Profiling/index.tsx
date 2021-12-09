@@ -121,7 +121,7 @@ export const Profiling = (): JSX.Element => {
           </Flex>
         </Card>
       </CardsFlex>
-      <Flex style={{ width: '100%', paddingBottom: '8px' }}>
+      <Flex style={{ width: '100%' }}>
         <FilterBar areTypesFetched={areTypesFetched} />
       </Flex>
       <Flex style={{ width: '100%', height: '100%' }}>
