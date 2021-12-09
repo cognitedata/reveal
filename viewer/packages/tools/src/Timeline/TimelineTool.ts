@@ -81,7 +81,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Removes the Keyframe from the timeline. Does nothing if the keyframe isn't part of the timeline.
    * @param keyframe - Keyframe to be removed from the timeline
    */
-  public removeKeyframe(keyframe: Keyframe) {
+  public removeKeyframe(keyframe: Keyframe): void {
     const index = this._keyframes.findIndex(obj => obj === keyframe);
 
     if (index > -1) {
@@ -93,7 +93,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * Removes the Keyframe from the Timeline
    * @param date - Date of the Keyframe to be removed from the Timeline
    */
-  public removeKeyframeByDate(date: Date) {
+  public removeKeyframeByDate(date: Date): void {
     const index = this._keyframes.findIndex(obj => obj.getKeyframeDate() === date);
 
     if (index > -1) {
@@ -107,7 +107,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
    * @param endDate - Keyframe date to stop the Playback of Keyframes
    * @param totalDurationInMilliSeconds - Number of milliseconds for all Keyframe within startDate & endDate to be rendered
    */
-  public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number) {
+  public play(startDate: Date, endDate: Date, totalDurationInMilliSeconds: number): void {
     this.stop();
 
     const playState = { dateInMs: startDate.getTime() };
@@ -148,7 +148,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   /**
    * Stops any ongoing playback
    */
-  public stop() {
+  public stop(): void {
     if (this._playback !== undefined) {
       this._playback.stop();
       this._playback = undefined;
@@ -158,7 +158,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   /**
    * Pause any ongoing playback
    */
-  public pause() {
+  public pause(): void {
     if (this._playback !== undefined && this._playback.isPlaying()) {
       this._playback.pause();
     }
@@ -167,7 +167,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
   /**
    * Resume any paused playback
    */
-  public resume() {
+  public resume(): void {
     if (this._playback !== undefined && this._playback.isPaused()) {
       this._playback.resume();
     }

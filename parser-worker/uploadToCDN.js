@@ -21,6 +21,11 @@ function getRelativeFilesFromDirectory(directoryPath) {
   );
 }
 
+/*
+ * you're not supposed to run the script manually
+ * to upload things you just click "run workflow" button here https://github.com/cognitedata/reveal/actions/workflows/upload-worker.yml 
+*/
+
 (async function upload() {
   const bucketName = "apps-cdn-bucket-cognitedata-production";
   const gcsPath = getWorkerCDNFolderPath();

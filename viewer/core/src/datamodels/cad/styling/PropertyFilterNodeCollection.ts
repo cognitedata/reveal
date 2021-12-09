@@ -9,7 +9,7 @@ import { CogniteClient, Node3D } from '@cognite/sdk';
 import { Cognite3DModel } from '../../../public/migration/Cognite3DModel';
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 
-import { AreaCollection, EmptyAreaCollection, NodeCollectionBase } from '@reveal/cad-styling';
+import { AreaCollection, EmptyAreaCollection, NodeCollectionBase, SerializedNodeCollection } from '@reveal/cad-styling';
 import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
 
 import range from 'lodash/range';
@@ -41,7 +41,11 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
   private readonly _model: Cognite3DModel;
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
-  private _filter = {};
+  private _filter: {
+    [category: string]: {
+      [key: string]: string;
+    };
+  } = {};
 
   constructor(client: CogniteClient, model: Cognite3DModel, options: PropertyFilterNodeCollectionOptions = {}) {
     super(PropertyFilterNodeCollection.classToken);
@@ -109,9 +113,6 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
     await Promise.all(requests);
   }
 
-  getFilter() {
-    return this._filter;
-  }
   /**
    * Clears the node collection and interrupts any ongoing operations.
    */
@@ -131,7 +132,7 @@ export class PropertyFilterNodeCollection extends NodeCollectionBase {
     return this._areas;
   }
 
-  serialize() {
+  serialize(): SerializedNodeCollection {
     return {
       token: this.classToken,
       state: cloneDeep(this._filter),

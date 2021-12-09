@@ -110,7 +110,7 @@ export class CadModelUpdateHandler {
     );
   }
 
-  dispose() {
+  dispose(): void {
     this._sectorCuller.dispose();
   }
 
@@ -135,12 +135,12 @@ export class CadModelUpdateHandler {
     return this._lastSpent;
   }
 
-  addModel(model: CadNode) {
+  addModel(model: CadNode): void {
     this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'add' });
   }
 
-  removeModel(model: CadNode) {
+  removeModel(model: CadNode): void {
     this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier);
     this._modelSubject.next({ model, operation: 'remove' });
   }

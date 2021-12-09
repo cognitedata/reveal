@@ -27,7 +27,7 @@ export function packFloat(f: number): [number, number, number, number] {
   return rgba;
 }
 
-export function packFloatInto(f: number, targetBuffer: Uint8ClampedArray, offset: number) {
+export function packFloatInto(f: number, targetBuffer: Uint8ClampedArray, offset: number): void {
   const F = abs(f);
   if (F == 0) {
     return;
@@ -47,7 +47,7 @@ export function packFloatInto(f: number, targetBuffer: Uint8ClampedArray, offset
   targetBuffer[offset + 3] = floor(exp2(23.0) * mod(Mantissa, exp2(-15.0)));
 }
 
-export function unpackFloat4(packedFloat: [number, number, number, number]) {
+export function unpackFloat4(packedFloat: [number, number, number, number]): number {
   const [r, g, b, a] = packedFloat;
   const sign = 1.0 - step(128.0, r) * 2.0;
   const exponent = 2.0 * mod(r, 128.0) + step(128.0, g) - 127.0;

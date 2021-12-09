@@ -31,7 +31,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
     this._notifyChangedCallback = notifySetChangedCallback;
   }
 
-  interrupt() {
+  interrupt(): void {
     this._interrupted = true;
   }
 
