@@ -1,6 +1,14 @@
 import React, { useMemo, useState } from 'react';
 
-import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Colors,
+  Flex,
+  Icon,
+  Label,
+  Tooltip,
+} from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import ColumnIcon from 'components/ColumnIcon';
@@ -25,49 +33,6 @@ const availableDataTypes: Record<
   Unknown: [],
 };
 
-const StyledInfoFilledIcon = styled(Icon).attrs({
-  size: 16,
-  type: 'InfoFilled',
-})`
-  color: ${Colors['text-hint'].hex()};
-`;
-
-const NumberOrMissingTd = ({
-  columnType,
-  dataType,
-  value,
-}: {
-  columnType?: ColumnProfile['type'] | 'Unknown';
-  dataType: ProfileRowDataType;
-  value?: number;
-}) => {
-  const isDataAvailable = columnType
-    ? availableDataTypes[columnType].includes(dataType)
-    : false;
-
-  if (!isDataAvailable) {
-    return (
-      <TableData className="numeric">
-        <Tooltip content="This information is not available for this data type">
-          <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
-        </Tooltip>
-      </TableData>
-    );
-  }
-
-  return (
-    <TableData className="numeric">
-      {Number.isFinite(value) ? (
-        value
-      ) : (
-        <Tooltip content="Unavailable due to error">
-          <StyledInfoFilledIcon />
-        </Tooltip>
-      )}
-    </TableData>
-  );
-};
-
 type Props = {
   allCount: number;
   profile: ColumnProfile;
@@ -75,37 +40,78 @@ type Props = {
 
 export default function ProfileRow({ allCount, profile }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const { label, nullCount, distinctCount, min, max, mean, histogram } =
-    profile;
+  const {
+    label,
+    count = 0,
+    nullCount = 0,
+    distinctCount = 0,
+    min,
+    max,
+    mean,
+    histogram,
+  } = profile;
 
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
 
+  const getPercentage = (portion: number, total: number) => {
+    const percentage = total === 0 ? 0 : (100 * portion) / total;
+    if (percentage === 0 || percentage === 100) return percentage;
+    if (percentage > 0 && percentage < 10) return percentage.toFixed(2);
+    else return percentage.toFixed(1);
+  };
+  const getLabelVariant = (percentage: number | string, type: string) => {
+    if (type === 'empty') {
+      if (percentage === 100) return 'danger';
+      if (percentage === 0) return 'success';
+    }
+    if (type === 'distinct') {
+      if (percentage === 100) return 'success';
+    }
+    return 'unknown';
+  };
   const columnType = useMemo(
     () => (isFetched ? getColumnType(label) : undefined),
     [getColumnType, isFetched, label]
   );
 
+  const emptyPercent = getPercentage(nullCount, count + nullCount);
+  const distinctPercent = getPercentage(distinctCount, count + nullCount);
+
   return (
     <>
-      <StyledTableRow
-        key="profile"
-        onClick={() => setExpanded(!expanded)}
-        style={{ cursor: 'pointer' }}
-      >
-        <TableData>{<ColumnIcon dataKey={label} />}</TableData>
-        <TableData>{label}</TableData>
-        <NumberOrMissingTd
-          columnType={columnType}
-          dataType="Empty"
-          value={nullCount}
-        />
-        <NumberOrMissingTd
-          columnType={columnType}
-          dataType="Distinct"
-          value={distinctCount}
-        />
-        <TableData style={{ padding: '4px 0 0' }}>
+      <StyledTableRow key="profile" onClick={() => setExpanded(!expanded)}>
+        <TableCell>{<ColumnIcon dataKey={label} />}</TableCell>
+        <TableCell>{label}</TableCell>
+        <TableCell>
+          <NumberOrMissingTd
+            dataType="Empty"
+            columnType={columnType}
+            value={nullCount}
+          >
+            <Label
+              size="small"
+              variant={getLabelVariant(emptyPercent, 'empty')}
+            >
+              {emptyPercent}%
+            </Label>
+          </NumberOrMissingTd>
+        </TableCell>
+        <TableCell>
+          <NumberOrMissingTd
+            dataType="Distinct"
+            columnType={columnType}
+            value={distinctCount}
+          >
+            <Label
+              size="small"
+              variant={getLabelVariant(distinctPercent, 'distinct')}
+            >
+              {distinctPercent}%
+            </Label>
+          </NumberOrMissingTd>
+        </TableCell>
+        <TableCell style={{ padding: '4px 0 0' }}>
           {histogram && (
             <Graph
               distribution={histogram}
@@ -115,42 +121,117 @@ export default function ProfileRow({ allCount, profile }: Props) {
               fill="rgba(140, 140, 140, 1)"
             />
           )}
-        </TableData>
-        <NumberOrMissingTd columnType={columnType} dataType="Min" value={min} />
-        <NumberOrMissingTd columnType={columnType} dataType="Max" value={max} />
-        <NumberOrMissingTd
-          columnType={columnType}
-          dataType="Mean"
-          value={mean}
-        />
-        <StyledExpandTableCell>
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd
+            dataType="Min"
+            columnType={columnType}
+            value={min}
+          />
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd
+            dataType="Max"
+            columnType={columnType}
+            value={max}
+          />
+        </TableCell>
+        <TableCell numeric>
+          <NumberOrMissingTd
+            dataType="Mean"
+            columnType={columnType}
+            value={mean}
+          />
+        </TableCell>
+        <TableCell style={{ padding: '8px 16px' }}>
           <StyledExpandButton
             aria-label="Expand row"
             icon={expanded ? 'ChevronUp' : 'ChevronDown'}
             type="ghost"
           />
-        </StyledExpandTableCell>
+        </TableCell>
       </StyledTableRow>
       {expanded && <ProfileDetailsRow allCount={allCount} profile={profile} />}
     </>
   );
 }
 
-export const TableData = styled.td<{ $width?: number }>`
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+const NumberOrMissingTd = ({
+  dataType,
+  columnType,
+  value,
+  children,
+}: {
+  dataType: ProfileRowDataType;
+  columnType?: ColumnProfile['type'] | 'Unknown';
+  value?: number;
+  children?: React.ReactNode;
+}) => {
+  const isDataAvailable = columnType
+    ? availableDataTypes[columnType].includes(dataType)
+    : false;
+
+  if (!isDataAvailable) {
+    return (
+      <StyledJustifyCenter>
+        <Tooltip content="This information is not available for this data type">
+          <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
+        </Tooltip>
+      </StyledJustifyCenter>
+    );
+  }
+
+  return Number.isFinite(value) ? (
+    <>
+      {value}
+      {children}
+    </>
+  ) : (
+    <StyledJustifyCenter>
+      <Tooltip content="Unavailable due to error">
+        <StyledInfoFilledIcon />
+      </Tooltip>
+    </StyledJustifyCenter>
+  );
+};
+
+export const TableCell = ({ $width, numeric, children, style }: any) => {
+  const bodyStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: numeric ? 'flex-end' : 'space-between',
+    alignItems: 'center',
+  };
+  return (
+    <StyledTD $width={$width} style={style} className="styled-cell">
+      <Body level={2} strong style={bodyStyle}>
+        {children}
+      </Body>
+    </StyledTD>
+  );
+};
+
+const StyledTD = styled.td<{
+  $width?: number;
+  numeric?: boolean;
+}>`
   padding: 16px;
   width: ${({ $width }) => ($width !== undefined ? `${$width}px` : '')};
+  text-align: ${({ numeric }) => (numeric ? 'right' : 'left')};
 `;
 
 const StyledExpandButton = styled(Button)`
   display: none;
 `;
 
-const StyledExpandTableCell = styled(TableData)`
-  padding: 9px 16px 8px;
-`;
-
 const StyledTableRow = styled.tr`
+  cursor: pointer;
+  .styled-cell {
+    border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
+  .styled-cell:not(:last-child) {
+    border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
   &:hover {
     background-color: ${Colors['bg-accent'].hex()};
 
@@ -158,4 +239,16 @@ const StyledTableRow = styled.tr`
       display: block;
     }
   }
+`;
+
+const StyledJustifyCenter = styled(Flex)`
+  width: 100%;
+  justify-content: center;
+`;
+
+const StyledInfoFilledIcon = styled(Icon).attrs({
+  size: 16,
+  type: 'InfoFilled',
+})`
+  color: ${Colors['text-hint'].hex()};
 `;
