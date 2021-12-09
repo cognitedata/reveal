@@ -10,7 +10,7 @@ import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { useSolution } from './hooks/useSolution';
 import { ActionStatus } from '@platypus-app/types';
 import solutionStateSlice from '@platypus-app/redux/reducers/global/solutionReducer';
-import { InfoMessage } from '@platypus-app/components/InfoMessage/InfoMessage';
+import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 const OverviewPage = lazy<any>(() =>
@@ -127,9 +127,9 @@ export const Solution = () => {
 
   if (solutionStatus === ActionStatus.FAIL) {
     return (
-      <InfoMessage
+      <BasicPlaceholder
         type="Documents"
-        title={t('solution_not_found', 'Solution is not found.')}
+        title={t('solution_not_found', 'Solution is not found')}
       />
     );
   }
@@ -139,9 +139,9 @@ export const Solution = () => {
     (!selectedSchema && schemas.length)
   ) {
     return (
-      <InfoMessage
+      <BasicPlaceholder
         type="Documents"
-        title={t('schema_not_found', 'Schema is not found.')}
+        title={t('schema_not_found', 'Schema is not found')}
       />
     );
   }

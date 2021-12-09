@@ -4,7 +4,7 @@ import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
-import { SchemaVersionSelect } from '@platypus-app/components/SchemaVersionSelect/SchemaVersionSelect';
+import { SchemaVersionSelect } from '@platypus-app/modules/solution/components/SchemaVersionSelect/SchemaVersionSelect';
 import { StyledVersionContainer } from './elements';
 
 export const OverviewPage = () => {
@@ -20,6 +20,8 @@ export const OverviewPage = () => {
     return (
       <StyledVersionContainer>
         <SchemaVersionSelect
+          selectedVersion={selectedSchema?.version}
+          versions={schemas.map((s) => s.version)}
           onChange={(seletedValue) => {
             history.replace(`/solutions/${solution?.id}/${seletedValue}`);
           }}

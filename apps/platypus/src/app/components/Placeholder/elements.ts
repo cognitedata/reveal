@@ -4,66 +4,70 @@ export const PlaceholderWrapper = styled.div`
   padding: 16px;
   width: 100%;
   height: 100%;
+  flex: 1;
 
-  .content {
+  .wrapper {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
     width: 100%;
     height: 100%;
-    padding-top: 220px;
     background: var(--cogs-bg-accent);
-    border: 1px dashed var(--cogs-border-default);
-    box-sizing: border-box;
-    border-radius: 16px;
+    flex-direction: column;
+    justify-content: center;
 
-    .placeholder-text {
-      width: 480px;
-      padding-top: 16px;
-      margin: 0 32px 24px 0;
+    .content {
+      display: flex;
+      margin: 0 auto;
+      flex: 0;
+      align-items: center;
 
-      .cogs-title-3 {
-        margin-bottom: 8px;
-      }
-      .cogs-body-1 {
-        display: inline;
-      }
-      .cogs-label {
-        height: 24px;
-        margin-right: 5px;
-        background: rgba(50, 56, 83, 0.04);
-        font-size: 16px;
-        color: var(--cogs-text-color-secondary);
+      .placeholder-text {
+        width: 400px;
+        padding-top: 16px;
+        margin: 0 32px 24px 0;
 
-        &:hover {
-          color: var(--cogs-text-color);
-          background: rgba(34, 42, 83, 0.1);
+        .cogs-title-3 {
+          margin-bottom: 8px;
         }
-      }
-    }
+        .cogs-body-1 {
+          display: inline;
+        }
+        .cogs-label {
+          height: 24px;
+          margin-right: 5px;
+          background: rgba(50, 56, 83, 0.04);
+          font-size: 16px;
+          color: var(--cogs-text-color-secondary);
 
-    .placeholder-actions {
-      .cogs-body-1 {
-        &:first-child {
-          margin-bottom: 16px;
-        }
-        &:last-of-type {
-          display: inline-block;
+          &:hover {
+            color: var(--cogs-text-color);
+            background: rgba(34, 42, 83, 0.1);
+          }
         }
       }
-      button {
-        margin-right: 8px;
-        &:last-of-type {
-          margin-left: 8px;
+
+      .placeholder-actions {
+        .cogs-body-1 {
+          &:first-child {
+            margin-bottom: 16px;
+          }
+          &:last-of-type {
+            display: inline-block;
+          }
         }
-        &:focus {
-          color: var(--cogs-primary);
-          background: rgba(74, 103, 251, 0.08);
+        button {
+          margin-right: 8px;
+          &:last-of-type {
+            margin-left: 8px;
+          }
+          &:focus {
+            color: var(--cogs-primary);
+            background: rgba(74, 103, 251, 0.08);
+          }
         }
-      }
-      .cogs-detail {
-        display: block;
-        margin-top: 10px;
+        .cogs-detail {
+          display: block;
+          margin-top: 10px;
+        }
       }
     }
 

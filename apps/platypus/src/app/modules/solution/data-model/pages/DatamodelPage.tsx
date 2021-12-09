@@ -28,7 +28,7 @@ export const DatamodelPage = () => {
   };
 
   const codeEditor = (
-    <div>
+    <>
       <PageToolbar title={t('editor_title', 'Editor')} titleLevel={6}>
         <SegmentedControl
           currentKey={currentView}
@@ -59,11 +59,11 @@ export const DatamodelPage = () => {
           showGraphic={false}
         />
       )}
-    </div>
+    </>
   );
 
   const schemaVisualization = (
-    <div>
+    <>
       <PageToolbar title={t('preview_title', 'Preview')} titleLevel={6} />
       <Placeholder
         componentName={t('visualizer', 'Data model visualizer')}
@@ -73,7 +73,7 @@ export const DatamodelPage = () => {
         )}
         showGraphic={false}
       />
-    </div>
+    </>
   );
   return (
     <PageContentLayout>
