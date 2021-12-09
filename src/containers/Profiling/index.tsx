@@ -1,16 +1,28 @@
 import React, { useMemo, useState } from 'react';
+
+import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { sortBy } from 'lodash';
+import { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
-import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
+
+import { useActiveTableContext } from 'contexts';
+import { useFilteredColumns } from 'hooks/table-filters';
 import {
   ColumnProfile,
   useQuickProfile,
   useFullProfile,
+  FULL_PROFILE_LIMIT,
+  useColumnType,
 } from 'hooks/profiling-service';
-import { AutoResizer } from 'react-base-table';
-import { useActiveTableContext } from 'contexts';
+
 import ProfileRow, { TableData } from './ProfileRow';
+import ProfileCoverageLabel, {
+  ProfileResultType,
+} from './ProfileCoverageLabel';
+import ProfileStatusMessage from './ProfileStatusMessage';
+
+import { FilterBar } from 'containers/Spreadsheet/FilterBar';
 
 const Card = styled.div`
   padding: 16px;
@@ -24,12 +36,6 @@ const Card = styled.div`
     line-height: 20px;
     font-weight: 600;
     margin-bottom: 20px;
-  }
-  .count {
-    color: ${Colors['greyscale-grey9'].hex()};
-    font-weight: 900;
-    font-size: 24px;
-    line-height: 32px;
   }
   .coverage {
     padding: 8px 12px;
@@ -68,9 +74,19 @@ const StyledExpandTableHeaderIcon = styled(Icon)`
   margin: 0 10px;
 `;
 
+const StyledCount = styled.div<{ $isRunning?: boolean }>`
+  color: ${({ $isRunning }) =>
+    $isRunning ? Colors['text-hint'].hex() : Colors['greyscale-grey9'].hex()};
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 32px;
+  margin-bottom: 0;
+`;
+
 type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
 
   const fullProfile = useFullProfile({
     database,
@@ -89,6 +105,13 @@ export const Profiling = (): JSX.Element => {
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
+  let profileResultType: ProfileResultType = 'running';
+  if (fullProfile.data?.rowCount === FULL_PROFILE_LIMIT) {
+    profileResultType = 'partial';
+  } else if (fullProfile.isFetched) {
+    profileResultType = 'complete';
+  }
+
   const [sortKey, _setSortKey] = useState<SortableColumn>('label');
   const [sortReversed, _setSortReversed] = useState(false);
   const setSortKey = (key: SortableColumn) => {
@@ -99,13 +122,15 @@ export const Profiling = (): JSX.Element => {
     }
   };
 
+  const filteredColumns = useFilteredColumns(data.columns);
+
   const columnList = useMemo(() => {
-    const columns = sortBy(data.columns, sortKey);
+    const columns = sortBy(filteredColumns, sortKey);
     if (sortReversed) {
       return columns.reverse();
     }
     return columns;
-  }, [data.columns, sortKey, sortReversed]);
+  }, [filteredColumns, sortKey, sortReversed]);
 
   if (isLoading) {
     return <Loader />;
@@ -125,26 +150,36 @@ export const Profiling = (): JSX.Element => {
 
   return (
     <RootFlex direction="column">
+      <ProfileStatusMessage resultType={profileResultType} />
       <Title level={4}>Table summary</Title>
       <Flex direction="row">
         <Card className="z-2">
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
-            <div className="count">{data.rowCount}</div>
-            <div
-              className={`coverage ${fullProfile.isFetched ? '' : 'running'}`}
-            >
-              {fullProfile.isFetched ? '100%' : 'running...'}
-            </div>
+            <StyledCount $isRunning={!fullProfile.isFetched}>
+              {data.rowCount}
+            </StyledCount>
+            <ProfileCoverageLabel
+              coverageType="rows"
+              resultType={profileResultType}
+            />
           </Flex>
         </Card>
         <Card className="z-2">
           <header>Columns profiled</header>
           <Flex direction="row" justifyContent="space-between">
-            <p className="count">{Object.values(data.columns).length}</p>
-            <p className="coverage">100%</p>
+            <StyledCount $isRunning={!fullProfile.isFetched}>
+              {Object.values(data.columns).length}
+            </StyledCount>
+            <ProfileCoverageLabel
+              coverageType="columns"
+              resultType={profileResultType}
+            />
           </Flex>
         </Card>
+      </Flex>
+      <Flex style={{ width: '100%', paddingBottom: '8px' }}>
+        <FilterBar areTypesFetched={areTypesFetched} />
       </Flex>
       <Flex style={{ width: '100%', height: '100%' }}>
         <AutoResizer>

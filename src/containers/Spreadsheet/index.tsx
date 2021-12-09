@@ -40,11 +40,14 @@ export const Spreadsheet = (): JSX.Element => {
 
   return (
     <Flex direction="column" style={{ width: '100%', height: '100%' }}>
-      <FilterBar
-        key={`${database}_${table}`}
-        isEmpty={isEmpty}
-        areTypesFetched={areTypesFetched}
-      />
+      <Flex style={{ padding: '0 16px' }}>
+        <FilterBar
+          key={`${database}_${table}`}
+          isEmpty={isEmpty}
+          areTypesFetched={areTypesFetched}
+          hasActions={true}
+        />
+      </Flex>
       {isLoading ? (
         <Loader />
       ) : (
