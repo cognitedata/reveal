@@ -13,7 +13,7 @@ import { readPrimitiveFromBuffer } from './primitiveRead';
 import { PrimitiveType } from './primitiveTypes';
 
 import * as THREE from 'three';
-import { TypedArray } from '@reveal/utilities';
+import { TypedArray } from '../../../packages/utilities';
 
 export function createPrimitiveInterleavedGeometry(name: PrimitiveType, primitiveDescs: any[]): THREE.BufferGeometry {
   const singleElementSize = getTotalAttributeSize(name);
