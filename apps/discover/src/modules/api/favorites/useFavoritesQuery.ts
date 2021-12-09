@@ -193,21 +193,26 @@ export function useFavoritesGetOneQuery(
   );
 }
 
-export function useFavoritesGetAllQuery(
-  sortBy: 'name' | 'lastUpdatedTime' = 'lastUpdatedTime'
-): UseQueryResult<FavoriteSummary[]> {
+export function useFavoritesGetAllQuery(): UseQueryResult<FavoriteSummary[]> {
   const headers = getJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
-  const query = useQuery(FAVORITE_KEY.ALL_FAVORITES, () =>
-    discoverAPI.favorites
-      .list(headers, tenant)
-      .then((data) => data.map((item) => normalizeFavorite(item)))
+  return useQuery(
+    FAVORITE_KEY.ALL_FAVORITES,
+    () =>
+      discoverAPI.favorites
+        .list(headers, tenant)
+        .then((data) => data.map((item) => normalizeFavorite(item))) // favorites are sorted in the backend by lastUpdatedBy
   );
+}
 
-  query?.data?.sort((a, b) =>
-    caseInsensitiveSort(a[sortBy], b[sortBy], sortBy !== 'name')
-  );
+export function useFavoritesSortedByName() {
+  const result = useFavoritesGetAllQuery();
 
-  return query;
+  return {
+    ...result,
+    data: result.data
+      ? [...result.data].sort((a, b) => caseInsensitiveSort(a.name, b.name))
+      : result.data,
+  };
 }

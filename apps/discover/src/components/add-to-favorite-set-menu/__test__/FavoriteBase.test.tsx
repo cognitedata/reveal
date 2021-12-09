@@ -12,7 +12,7 @@ jest.mock('react-redux', () => ({
 }));
 
 jest.mock('../../../modules/api/favorites/useFavoritesQuery', () => ({
-  useFavoritesGetAllQuery: () => ({
+  useFavoritesSortedByName: () => ({
     status: true,
     favorites: [],
   }),

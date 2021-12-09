@@ -144,7 +144,7 @@ const TableInner = <T extends Object>({
         // @ts-expect-error overrides outdated react table types
         pageIndex: 0,
         pageSize: pagination.pageSize,
-        sortBy: sortByValue,
+        sortBy: initialSortBy,
       },
       manualSortBy,
     },

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
+import { useFavoritesSortedByName } from 'modules/api/favorites/useFavoritesQuery';
 import {
   getDocumentIds,
   getWellbores,
@@ -26,7 +26,7 @@ export const AddSingleItem: React.FC<Props> = ({
   wellboreId,
   callBackModal,
 }) => {
-  const { data: favorites } = useFavoritesGetAllQuery('name');
+  const { data: favorites } = useFavoritesSortedByName();
   const fileExistsInSet = useDocumentExistInFavorite(
     favorites || [],
     documentId

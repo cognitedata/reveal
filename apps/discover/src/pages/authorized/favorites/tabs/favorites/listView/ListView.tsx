@@ -48,7 +48,16 @@ const ListView: React.FC<Props> = ({
   commentTarget,
 }) => {
   const { t } = useTranslation('Favorites');
-  const options = { checkable: false, flex: false };
+  const options = {
+    checkable: false,
+    flex: false,
+    sortBy: [
+      {
+        id: 'Date updated',
+        desc: false,
+      },
+    ],
+  };
   const [highlightedIds, setHighlightedIds] = React.useState<TableResults>();
 
   const columns = useMemo(
@@ -86,10 +95,7 @@ const ListView: React.FC<Props> = ({
         width: '170px',
         accessor: (row: FavoriteSummary) => shortDate(row.createdTime),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
-          sortDates(
-            shortDate(rowA.original.createdTime),
-            shortDate(rowB.original.createdTime)
-          ),
+          sortDates(rowA.original.createdTime, rowB.original.createdTime),
       },
       {
         Header: t('Last update by'),
@@ -104,8 +110,12 @@ const ListView: React.FC<Props> = ({
           shortDate(getFavoriteLastUpdatedByDateTime(row.lastUpdatedBy)),
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
           sortDates(
-            shortDate(rowA.original.lastUpdatedTime),
-            shortDate(rowB.original.lastUpdatedTime)
+            new Date(
+              getFavoriteLastUpdatedByDateTime(rowA.original.lastUpdatedBy)
+            ),
+            new Date(
+              getFavoriteLastUpdatedByDateTime(rowB.original.lastUpdatedBy)
+            )
           ),
       },
     ],

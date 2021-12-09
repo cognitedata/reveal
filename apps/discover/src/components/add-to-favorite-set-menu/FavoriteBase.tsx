@@ -6,7 +6,6 @@ import { Icon, Menu } from '@cognite/cogs.js';
 
 import { CloseButton } from 'components/buttons';
 import { showSuccessMessage } from 'components/toast';
-import { useFavoritesGetAllQuery } from 'modules/api/favorites/useFavoritesQuery';
 import {
   setItemsToAddAfterFavoriteCreation,
   showCreateFavoriteSetModal,
@@ -19,6 +18,8 @@ import {
 } from 'modules/favorite/utils';
 import { WellboreId, WellId } from 'modules/wellSearch/types';
 import { InlineFlex, RightAlignedSmall } from 'styles/layout';
+
+import { useFavoritesSortedByName } from '../../modules/api/favorites/useFavoritesQuery';
 
 import {
   ADD_TO_FAVOURITES,
@@ -44,7 +45,7 @@ export const FavoriteBase: React.FC<Props> = ({
   callBackModal,
 }) => {
   const dispatch = useDispatch();
-  const { data: favorites } = useFavoritesGetAllQuery('name');
+  const { data: favorites } = useFavoritesSortedByName();
   const { t } = useTranslation();
   const { handleFavoriteUpdate } = useHandleSelectFavourite();
 
