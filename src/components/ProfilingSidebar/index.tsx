@@ -1,19 +1,22 @@
 import React from 'react';
 import { Drawer } from 'antd';
 
-import { Button, Colors } from '@cognite/cogs.js';
+import { Button, Colors, Flex } from '@cognite/cogs.js';
 
-import { useProfilingSidebar } from 'contexts';
+import { useActiveTableContext, useProfilingSidebar } from 'contexts';
 import { useColumnSelection } from 'hooks/table-selection';
+import { useProfileResultType } from 'hooks/profiling-service';
 import { SIDEBAR_PROFILING_DRAWER_WIDTH } from 'utils/constants';
 
+import { ProfileStatusMessage } from 'components/ProfileStatus';
 import { Header } from './Header';
 import { ProfilingData } from './ProfilingData';
 
 export const ProfilingSidebar = (): JSX.Element => {
+  const { database, table } = useActiveTableContext();
   const { isProfilingSidebarOpen, setIsProfilingSidebarOpen } =
     useProfilingSidebar();
-
+  const profileResultType = useProfileResultType(database, table);
   const { selectedColumn } = useColumnSelection();
 
   const onClickHide = () => setIsProfilingSidebarOpen(false);
@@ -42,6 +45,9 @@ export const ProfilingSidebar = (): JSX.Element => {
       title={<Header selectedColumn={selectedColumn} />}
       footer={footer}
     >
+      <Flex style={{ padding: '8px' }}>
+        <ProfileStatusMessage resultType={profileResultType} />
+      </Flex>
       <ProfilingData selectedColumn={selectedColumn} />
     </Drawer>
   );
