@@ -2,6 +2,21 @@
 
 This app is served as an example [React]-based application served using frontend-app-server (FAS).
 
+## Unit tests - Jest
+
+Unit tests in React Demo App are using Jest and testing-library/react.
+
+```sh
+yarn test                                           # To run all tests in watch mode
+yarn test file.test.ts                              # Run test from a file
+yarn test someDirectory                             # Run tests from a specific directory
+yarn test ./some/file.test.ts -t "Name of a test"   # Run a specific test from a file
+yarn test:debug                                     # Run tests in band
+yarn test:coverage                                  # Run tests with coverage report
+```
+
+The CI uses the `react_scripts_test` rule which takes longer as it performs a build internally
+
 ## Requirements to run and test locally
 
 Copy react-demo-app-e2e-azure-dev.jwk-key.json from Lastpass -> Shared Demo App into the file:

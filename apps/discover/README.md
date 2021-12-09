@@ -65,9 +65,12 @@ When on CI, get generate a UUID.
 Unit tests in Discover are using Jest and testing-library/react.
 
 ```sh
-yarn test                                           # To run all tests in watchmode
-yarn jest ./some/file.test.ts -t "Name of a test"   # Run a specific test from a file
-yarn test:coverage                                  # To generate a test coverage report
+yarn test                                           # To run all tests in watch mode
+yarn test file.test.ts                              # Run test from a file
+yarn test someDirectory                             # Run tests from a specific directory
+yarn test ./some/file.test.ts -t "Name of a test"   # Run a specific test from a file
+yarn test:debug                                     # Run tests in band
+yarn test:coverage                                  # Run tests with coverage report
 ```
 
 ## Running E2E tests manually

@@ -238,7 +238,7 @@ react_scripts(
     output_dir = True,
 )
 
-### react-scripts test ###
+### react-scripts test CI ###
 
 copy_to_bin(
     name = "copy_test_files",
@@ -255,6 +255,30 @@ react_scripts_test(
         "@npm//@storybook/preset-create-react-app",
         "@npm//@storybook/react",
         "copy_test_files",
+    ],
+)
+
+### react-scripts test Dev ###
+react_scripts(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "test",
+        "--watchAll=false",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        # As long as react_scripts does not allow eslint 8 we need this variable
+        "SKIP_PREFLIGHT_CHECK": "true",
+        "DISABLE_ESLINT_PLUGIN": "true",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
     ],
 )
 
