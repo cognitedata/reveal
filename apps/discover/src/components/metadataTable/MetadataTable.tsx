@@ -19,8 +19,8 @@ export const MetadataItem: React.FC<MetaDataItemProps> = ({
       key={`metadata-label-${label}`}
       data-testid={`metadata-label-${label}`}
     >
-      <Label title={`${label}`}>{label}</Label>
-      <Value title={`${value}`}>{formatItem({ value, type })}</Value>
+      <Label>{label}</Label>
+      <Value>{formatItem({ value, type })}</Value>
     </MetadataContainer>
   );
 };

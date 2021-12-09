@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Icon, Label as CogsLabel } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
 import { Label, TitleStyle } from 'components/metadataTable/elements';
 import { Ellipsis, sizes } from 'styles/layout';
@@ -50,32 +50,4 @@ export const CopyIcon = styled(Icon)`
   &:hover svg {
     color: var(--cogs-greyscale-grey9);
   }
-`;
-
-export const DocumentAssetsContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-export const DocumentAssetsHeader = styled(Label)`
-  margin-bottom: ${sizes.extraSmall};
-`;
-
-export const DocumentAssetNamesContainer = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-export const DocumentAssetsHiddenCount = styled(CogsLabel)`
-  position: absolute;
-  left: ${(props: { left: number }) => props.left + 8}px;
-  background-color: #e1e1e1 !important;
-`;
-
-export const DocumentAssetNone = styled.div`
-  line-height: var(--cogs-t5-line-height);
-  display: flex;
-  color: var(--cogs-greyscale-grey6);
 `;

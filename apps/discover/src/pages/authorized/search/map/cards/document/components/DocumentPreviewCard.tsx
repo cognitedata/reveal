@@ -8,7 +8,6 @@ import { useTranslation } from '@cognite/react-i18n';
 import { getPathsFromDoc } from '_helpers/getPathsFromDocument';
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
 import { TitleButton } from 'components/card/preview-card/elements';
-import { DocumentAssets } from 'components/document-info-panel/DocumentAssets';
 import { FilePath } from 'components/document-info-panel/FilePath';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import { showSuccessMessage } from 'components/toast';
@@ -97,10 +96,6 @@ export const DocumentPreviewCard: React.FC<{ documentId: string }> = ({
         </MarginBottomNormalContainer>
 
         <Metadata doc={doc} />
-
-        <MarginBottomNormalContainer>
-          <DocumentAssets assetIds={doc.doc.assetIds} />
-        </MarginBottomNormalContainer>
       </DocumentInfoWrapper>
 
       <DocumentViewModal

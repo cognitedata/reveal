@@ -23,14 +23,14 @@ describe('meta data table', () => {
       ],
     });
 
-    const checkLabel = screen.getByTitle('Author');
+    const checkLabel = screen.getByText('Author');
     expect(checkLabel).toBeInTheDocument();
-    const checkLabel2 = screen.getByTitle('Location');
+    const checkLabel2 = screen.getByText('Location');
     expect(checkLabel2).toBeInTheDocument();
 
-    const checkValue = screen.getByTitle('test-author');
+    const checkValue = screen.getByText('test-author');
     expect(checkValue).toBeInTheDocument();
-    const checkValue2 = screen.getByTitle('test-location');
+    const checkValue2 = screen.getByText('test-location');
     expect(checkValue2).toBeInTheDocument();
   });
 });

@@ -1,9 +1,10 @@
+/* eslint-disable react/no-array-index-key */
+import compact from 'lodash/compact';
 import isArray from 'lodash/isArray';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
-import uniqueId from 'lodash/uniqueId';
 
-import { Label } from '@cognite/cogs.js';
+import { Flex, Label, Tooltip } from '@cognite/cogs.js';
 
 import { shortDate } from '_helpers/date';
 import { getHumanReadableFileSize } from '_helpers/number';
@@ -18,6 +19,8 @@ export interface FormatItemProps {
   value?: string | string[] | number | React.ReactNode[] | false | null;
   type?: 'text' | 'path' | 'filesize' | 'date' | 'label' | 'componentlist';
 }
+
+const maxLabels = 9;
 
 export const formatItem = ({ value, type }: FormatItemProps) => {
   if (type === 'text') {
@@ -46,22 +49,49 @@ export const formatItem = ({ value, type }: FormatItemProps) => {
 
   // In case it's an array, return them wrapped in labels
   if (isArray(value)) {
-    return (
-      <>
-        {value.length ? (
-          value.map((item) =>
-            type === 'componentlist' ? (
-              <span key={uniqueId()}>{item}</span>
-            ) : (
-              <Label key={uniqueId()} size="small" variant="unknown">
-                {item}
-              </Label>
-            )
+    // Filter out falsey values
+    const compactArray: string[] | React.ReactNode[] = compact(value);
+
+    return compactArray.length ? (
+      <Flex gap={6} direction="row" wrap="wrap">
+        {compactArray.slice(0, maxLabels).map((item, i) =>
+          type === 'componentlist' ? (
+            <span key={`${item?.toString()}${i}`}>{item}</span>
+          ) : (
+            <Label
+              key={`${item?.toString()}${i}`}
+              size="small"
+              variant="unknown"
+              selectable
+            >
+              {item}
+            </Label>
           )
-        ) : (
-          <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
         )}
-      </>
+        {compactArray.length > maxLabels && (
+          <Tooltip
+            placement="bottom"
+            content={
+              <>
+                {compactArray.slice(maxLabels).map((label) => (
+                  <div key={label?.toString()}>{label}</div>
+                ))}
+              </>
+            }
+          >
+            <Label
+              icon="Add"
+              iconPlacement="left"
+              size="small"
+              variant="unknown"
+            >
+              {value.length - maxLabels}
+            </Label>
+          </Tooltip>
+        )}
+      </Flex>
+    ) : (
+      <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
     );
   }
 
