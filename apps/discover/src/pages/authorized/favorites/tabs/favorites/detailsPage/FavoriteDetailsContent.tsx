@@ -9,7 +9,7 @@ import { useTranslation } from '@cognite/react-i18n';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import EmptyState from 'components/emptyState';
-import { LoadMoreButton } from 'components/tablev2/elements';
+import { LoadMoreButton } from 'components/tablev3/elements';
 import { showInfoMessageWithTitle } from 'components/toast';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';

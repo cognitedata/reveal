@@ -6,8 +6,7 @@ import has from 'lodash/has';
 import { Sequence } from '@cognite/sdk';
 
 import { WhiteLoader } from 'components/loading';
-import { Table } from 'components/tablev2';
-import { ColumnType } from 'components/tablev3';
+import { Table, ColumnType, RowProps } from 'components/tablev3';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataTrajectory } from 'modules/filterData/selectors';
 import { useTrajectoriesQuery } from 'modules/wellSearch/hooks/useTrajectoriesQuery';
@@ -122,8 +121,10 @@ export const Trajectory: React.FC = () => {
     );
   };
 
-  const handleRowSelect = (traj: Sequence, value: boolean) => {
-    dispatch(filterDataActions.setSelectedTrajIds({ [traj.id]: value }));
+  const handleRowSelect = (traj: RowProps<Sequence>, value: boolean) => {
+    dispatch(
+      filterDataActions.setSelectedTrajIds({ [traj.original.id]: value })
+    );
   };
 
   const handleRowsSelect = (value: boolean) => {

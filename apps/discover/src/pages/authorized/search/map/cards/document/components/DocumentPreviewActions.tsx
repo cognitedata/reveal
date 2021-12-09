@@ -103,7 +103,7 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
           type="ghost"
           data-testid="button-extract-parent-folder"
           onClick={onExtractParentFolder}
-          icon="FolderLine"
+          icon="Folder"
           aria-label="Explore Parent Folder"
         />
       </Tooltip>

@@ -19,18 +19,21 @@ export const generateOverviewColumns = (
     {
       Header: 'Field',
       accessor: 'field',
-      width: 'auto',
+      width: '100px',
+      maxWidth: '0.2fr',
     },
     {
       Header: 'Source',
       accessor: (value: OverviewModel) =>
         value.sources ? value.sources.join(', ') : '',
-      width: 'auto',
+      width: '100px',
+      maxWidth: '0.2fr',
     },
     {
       Header: 'Operator',
       accessor: 'operator',
-      width: 'auto',
+      width: '100px',
+      maxWidth: '0.2fr',
     },
     {
       Header: 'Spud Date',
@@ -41,22 +44,26 @@ export const generateOverviewColumns = (
 
         return sortDates(date1, date2);
       },
-      width: 'auto',
+      maxWidth: '0.15fr',
+      width: '100px',
     },
     {
       Header: `${WATER_DEPTH} (${userPrefferedUnit})`,
       accessor: 'waterDepth.value',
-      width: 'auto',
+      maxWidth: '0.15fr',
+      width: '100px',
     },
     {
       Header: `TVD (${userPrefferedUnit})`,
       accessor: (row) => row.tvd || '',
-      width: 'auto',
+      maxWidth: '0.15fr',
+      width: '100px',
     },
     {
       Header: `MD (${userPrefferedUnit})`,
       accessor: (row) => row.md || '',
-      width: 'auto',
+      maxWidth: '0.15fr',
+      width: '100px',
     },
   ];
   return columns;

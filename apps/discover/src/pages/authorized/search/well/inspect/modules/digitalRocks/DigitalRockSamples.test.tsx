@@ -53,6 +53,7 @@ describe('DigitalRockSamples', () => {
       ],
       isLoading: false,
     }));
+
     await testInit({
       digitalRock: {
         parentId: 7591554093249934,
@@ -62,6 +63,7 @@ describe('DigitalRockSamples', () => {
         ...createdAndLastUpdatedTime,
       },
     });
-    expect(screen.getByTestId('grain-analysis-btn')).toBeInTheDocument();
+
+    expect(screen.getByText('Open grain analysis')).toBeInTheDocument();
   });
 });

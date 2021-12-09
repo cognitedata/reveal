@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Row } from 'react-table';
 
-import { Table } from 'components/tablev2';
+import { Table, RowProps } from 'components/tablev3';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { stopSearching } from 'modules/search/actions';
 import { useSearchState } from 'modules/search/selectors';
@@ -45,24 +44,24 @@ export const ResultTable: React.FC<Props> = ({ result }) => {
     {
       Header: 'Survey name',
       accessor: 'survey',
-      width: 'auto',
+      width: '1fr',
     },
   ];
 
   const data = result;
 
-  const handleDoubleClick = (row: Row) => {
+  const handleDoubleClick = (row: RowProps) => {
     const survey = row.original as SeismicSurveyContainer;
     zoomToSurvey(survey);
   };
 
-  const handleRowClick = (row: Row) => {
+  const handleRowClick = (row: RowProps) => {
     const survey = row.original as SeismicSurveyContainer;
 
     dispatch(toggleSurveySelected(survey.id, selectedSurveys));
   };
 
-  const renderRowSubComponent = ({ row }: { row: Row }) => {
+  const renderRowSubComponent = ({ row }: { row: RowProps }) => {
     const survey = row.original as SeismicSurveyContainer;
 
     return <ResultSurveyFiles survey={survey} />;
@@ -105,6 +104,7 @@ export const ResultTable: React.FC<Props> = ({ result }) => {
         id="seismic-result-table"
         data={data}
         columns={columns}
+        hideHeaders
         handleDoubleClick={handleDoubleClick}
         handleRowClick={handleRowClick}
         expandedIds={expandedSearchResults}

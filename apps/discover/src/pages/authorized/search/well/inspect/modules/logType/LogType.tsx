@@ -7,7 +7,7 @@ import { Sequence } from '@cognite/sdk';
 import { ExpandButton } from 'components/buttons';
 import { Dropdown } from 'components/dropdown';
 import { WhiteLoader } from 'components/loading';
-import { Table } from 'components/tablev2';
+import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { filterDataActions } from 'modules/filterData/actions';
 import { useFilterDataLog } from 'modules/filterData/selectors';
@@ -38,28 +38,34 @@ const columns = [
     Header: 'Well',
     accessor: 'wellName',
     width: COMMON_COLUMN_WIDTHS.WELL_NAME,
+    maxWidth: '0.5fr',
   },
   {
     Header: 'Wellbore',
     accessor: 'wellboreName',
     width: COMMON_COLUMN_WIDTHS.WELLBORE_NAME,
+    maxWidth: '0.3fr',
   },
   {
     Header: 'Log Name',
     accessor: 'name',
+    width: '140px',
+    maxWidth: '0.3fr',
   },
   {
     Header: 'Category',
     accessor: 'category',
+    width: '140px',
   },
   {
     Header: 'Source',
     accessor: 'metadata.source',
+    width: '140px',
   },
   {
     Header: 'Modified',
     accessor: 'modified',
-    width: 'auto',
+    width: '140px',
   },
 ];
 
@@ -141,8 +147,13 @@ export const LogType: React.FC = () => {
     return <WhiteLoader />;
   }
 
-  const handleRowSelect = (logTypeData: LogTypeData, value: boolean) => {
-    dispatch(filterDataActions.setSelectedLogIds({ [logTypeData.id]: value }));
+  const handleRowSelect = (
+    logTypeData: RowProps<LogTypeData>,
+    value: boolean
+  ) => {
+    dispatch(
+      filterDataActions.setSelectedLogIds({ [logTypeData.original.id]: value })
+    );
   };
 
   const handleRowsSelect = (value: boolean) => {

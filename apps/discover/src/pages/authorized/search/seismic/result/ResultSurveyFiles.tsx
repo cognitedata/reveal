@@ -5,7 +5,7 @@ import { Row } from 'react-table';
 
 import compact from 'lodash/compact';
 
-import { Table } from 'components/tablev2';
+import { RowProps, Table } from 'components/tablev3';
 import {
   useSurvey,
   useSurveys,
@@ -26,7 +26,8 @@ import { useZoomToSurvey } from '../utils/zoomToSurvey';
 
 interface ColumnHeader {
   Header?: string;
-  width?: number | 'auto';
+  width?: string | number;
+  maxWidth?: string | null;
   accessor?: string;
 }
 interface Props {
@@ -47,6 +48,7 @@ export const ResultSurveyFiles: React.FC<Props> = ({ survey }) => {
     indentRow: true,
     flex: false,
     hideScrollbars: true,
+    width: '100%',
   };
 
   const surveyColumns = React.useMemo(() => {
@@ -62,7 +64,10 @@ export const ResultSurveyFiles: React.FC<Props> = ({ survey }) => {
 
             return {
               Header: config.metadata[key].displayName,
-              width: config.metadata[key].width || 'auto',
+              width: config.metadata[key].width
+                ? `${config.metadata[key].width}px`
+                : '140px',
+              maxWidth: '0.5fr',
               accessor,
             };
           }
@@ -76,6 +81,8 @@ export const ResultSurveyFiles: React.FC<Props> = ({ survey }) => {
         {
           Header: 'Name',
           accessor: 'dataSetName',
+          width: '140px',
+          maxWidth: '0.5fr',
         },
       ];
     }
@@ -101,8 +108,8 @@ export const ResultSurveyFiles: React.FC<Props> = ({ survey }) => {
     doRowClickAction(row.original as SeismicFile);
   };
 
-  const handleRowSelect = (fileSelected: SeismicFile) => {
-    doRowClickAction(fileSelected);
+  const handleRowSelect = (fileSelected: RowProps<SeismicFile>) => {
+    doRowClickAction(fileSelected.original);
   };
 
   const selectedIds = selectedFiles.reduce((acc, { fileId }) => {

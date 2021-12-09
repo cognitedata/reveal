@@ -58,7 +58,7 @@ export const useSeismicMapFeatures = () => {
         if (survey) {
           // add the outlines of each file
           // console.log('Checking files:', files);
-          if (files.length > 0) {
+          if (files?.length > 0) {
             files.forEach((file) => {
               // console.log('Processing file:', file);
 

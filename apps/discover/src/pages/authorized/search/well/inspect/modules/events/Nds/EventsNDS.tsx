@@ -4,7 +4,7 @@ import { ResizableBox } from 'react-resizable';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { WhiteLoader } from 'components/loading';
-import { Table } from 'components/tablev2';
+import { Table } from 'components/tablev3';
 import {
   LOG_EVENTS_NDS,
   LOG_WELLS_EVENTS_NDS_NAMESPACE,

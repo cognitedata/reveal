@@ -21,7 +21,7 @@ export const useNptWellsTableColumns = () => {
     {
       id: accessors.NPT_CODE,
       Header: 'Well / Wellbore / NPT code',
-      width: `${COMMON_COLUMN_WIDTHS.WELL_NAME}px`,
+      width: COMMON_COLUMN_WIDTHS.WELL_NAME,
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderAsBody2DefaultStrongText(get(original, accessors.WELL_NAME)),
     },
@@ -46,6 +46,7 @@ export const useNptEventsTableColumns = () => {
     {
       id: accessors.NPT_CODE,
       width: '330px',
+      maxWidth: '0.3fr',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original),
     },
@@ -59,6 +60,7 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
       id: accessors.NPT_CODE,
       Header: 'NPT Code',
       width: '330px',
+      maxWidth: '0.3fr',
       Cell: ({ row: { original } }: { row: { original: NPTEvent } }) =>
         renderNPTCodeWithColor(original),
     },
@@ -69,6 +71,8 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
       return {
         ...header,
         Header: 'Duration',
+        width: '330px',
+        maxWidth: '0.3fr',
         accessor: (row: NPTEvent) => {
           const duration = processAccessor(row, accessors.DURATION);
           if (duration) return getTimeDuration(duration, 'days');

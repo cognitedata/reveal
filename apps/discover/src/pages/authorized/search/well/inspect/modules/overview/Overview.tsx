@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { WhiteLoader } from 'components/loading';
-import { Table } from 'components/tablev2';
+import { Table } from 'components/tablev3';
 import { useOverviewData } from 'modules/wellSearch/selectors/sequence/useOverviewData';
 
 import { useOverviewResultColumns } from './hooks/useOverviewUtils';

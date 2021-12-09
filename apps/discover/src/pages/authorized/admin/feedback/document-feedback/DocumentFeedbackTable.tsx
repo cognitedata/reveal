@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Row } from 'react-table';
 
 import compact from 'lodash/compact';
 import sortBy from 'lodash/sortBy';
@@ -10,7 +9,7 @@ import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/sortDates';
 import { OKModal } from 'components/modal';
-import { Table, Options, TableResults } from 'components/tablev3';
+import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
@@ -269,13 +268,16 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     deleteObjectFeedback(feedback.id, updateDocumentFeedback);
   };
 
-  const handleRowClick = useCallback((row: Row & { isSelected: boolean }) => {
-    const feedback = row.original as DocumentFeedbackItem;
-    setExpandedIds((state) => ({
-      ...state,
-      [feedback.id]: !state[feedback.id],
-    }));
-  }, []);
+  const handleRowClick = useCallback(
+    (row: RowProps & { isSelected: boolean }) => {
+      const feedback = row.original as DocumentFeedbackItem;
+      setExpandedIds((state) => ({
+        ...state,
+        [feedback.id]: !state[feedback.id],
+      }));
+    },
+    []
+  );
 
   const renderRowSubComponent = useCallback(
     ({ row }) => {

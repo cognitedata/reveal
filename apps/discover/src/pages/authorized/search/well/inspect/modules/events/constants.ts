@@ -11,5 +11,5 @@ export const accessors = {
 };
 
 export const widths = {
-  RISK_SUB_CATEGORY: 200,
+  RISK_SUB_CATEGORY: '200px',
 };

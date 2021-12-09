@@ -26,39 +26,47 @@ const columns = (depthUnit = '', dimensionUnit = '') =>
     {
       Header: 'Digital Rock identifier',
       accessor: DIGITAL_ROCKS_ACCESSORS.IDENTIFIER,
+      width: '240px',
+      maxWidth: '1fr',
     },
     {
       Header: 'Timestamp',
+      width: '240px',
       accessor: (digitalRock: Asset) => shortDateTime(digitalRock.createdTime),
     },
     {
       Header: 'Core identifier',
+      width: '140px',
       accessor: DIGITAL_ROCKS_ACCESSORS.CORE_IDENTIFIER,
     },
     {
       Header: 'Plug identifier',
+      width: '140px',
       accessor: DIGITAL_ROCKS_ACCESSORS.PLUG_IDENTIFIER,
     },
     {
       Header: 'Source of material',
+      width: '140px',
       accessor: DIGITAL_ROCKS_ACCESSORS.SOURCE_OF_METRIAL,
     },
     {
       Header: `MD Depth${depthUnit && `(${depthUnit})`} / Depth Datum`,
+      width: '140px',
       accessor: 'metadata.plugDepthAndDatum',
     },
     {
       Header: 'Voxel resolution',
+      width: '140px',
       accessor: 'metadata.image_resolution',
     },
     {
       Header: `Dimension${dimensionUnit && `(${dimensionUnit})`} - (X,Y,Z)`,
+      width: '140px',
       accessor: 'metadata.dimensionXYZ',
     },
   ].map((row) => ({ ...row, width: '250px' }));
 
 const tableOptions = {
-  height: '100%',
   checkable: false,
   flex: false,
   hideScrollbars: true,

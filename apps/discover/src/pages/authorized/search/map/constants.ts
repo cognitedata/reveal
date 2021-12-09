@@ -31,4 +31,4 @@ export const SURFACE_FACILITY_ICON = 'surface_facility_icon';
 export const SUBSURFACE_FACILITY_ICON = 'subsurface_facility_icon';
 
 export const FAVORITE_ON_ICON = 'FavoriteFilled';
-export const FAVORITE_OFF_ICON = 'FavoriteOff';
+export const FAVORITE_OFF_ICON = 'Favorite';

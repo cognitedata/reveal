@@ -31,8 +31,8 @@ export const COMMON_COLUMN_ACCESSORS = {
 };
 
 export const COMMON_COLUMN_WIDTHS = {
-  WELL_NAME: 300,
-  WELLBORE_NAME: 250,
+  WELL_NAME: '300px',
+  WELLBORE_NAME: '250px',
 };
 
 export const TOP_BAR_HEIGHT = 68; // px

@@ -1,61 +1,22 @@
 import React, { useState } from 'react';
 
+import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
 import EmptyState from 'components/emptyState';
-import { Table } from 'components/tablev2';
+import { RowProps, Table } from 'components/tablev3';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
+import { FlexRow } from 'styles/layout';
 
 import DialogPopup from '../common/DialogPopup';
 
-import { DigitalRocksSampleWrapper, TableButton } from './elements';
+import { DigitalRocksSampleWrapper } from './elements';
 import GrainAnalysis from './GrainAnalysis';
-
-const columns = [
-  {
-    Header: 'Name',
-    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.NAME,
-  },
-  {
-    Header: 'Description',
-    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.DESCRIPTION,
-  },
-  {
-    Header: 'Source',
-    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.SOURCE,
-  },
-  {
-    Header: 'Uncertainty',
-    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.UNCERTAINTY,
-  },
-  {
-    Header: 'Volume',
-    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.VOLUME_ID,
-  },
-  {
-    Header: 'Orientation',
-    accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.ORIENTATION,
-  },
-  {
-    Header: 'Median grain diameter(microns)',
-    accessor: 'metadata.rMedianTrask',
-  },
-  {
-    Header: 'Mean grain diameter(microns)',
-    accessor: 'metadata.rMeanTrask',
-  },
-  {
-    Header: 'Dimension(voxels) - (X,Y,Z)',
-    accessor: 'metadata.dimensionXYZ',
-  },
-].map((row) => ({ ...row, width: 'auto' }));
 
 export type Props = {
   digitalRock: Asset;
 };
-
-const TABLE_ROW_HEIGHT = 49;
 
 const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
   const { isLoading, digitalRockSamples } = useDigitalRocksSamples([
@@ -66,17 +27,54 @@ const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
     Asset | undefined
   >();
 
-  const rowCount = digitalRockSamples.length;
-
-  const tableHeight = (rowCount + 1) * TABLE_ROW_HEIGHT;
-
-  const options = {
-    checkable: false,
-    height: `${tableHeight}px`,
-    hideBorders: false,
-    disableSorting: true,
-    flex: false,
-  };
+  const columns = [
+    {
+      Header: 'Name',
+      accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.NAME,
+      width: '240px',
+      maxWidth: '1fr',
+    },
+    {
+      Header: 'Description',
+      accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.DESCRIPTION,
+      width: '140px',
+    },
+    {
+      Header: 'Source',
+      accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.SOURCE,
+      width: '140px',
+    },
+    {
+      Header: 'Uncertainty',
+      accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.UNCERTAINTY,
+      width: '140px',
+    },
+    {
+      Header: 'Volume',
+      accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.VOLUME_ID,
+      width: '140px',
+    },
+    {
+      Header: 'Orientation',
+      accessor: DIGITAL_ROCK_SAMPLES_ACCESSORS.ORIENTATION,
+      width: '140px',
+    },
+    {
+      Header: 'Median grain diameter(microns)',
+      accessor: 'metadata.rMedianTrask',
+      width: '140px',
+    },
+    {
+      Header: 'Mean grain diameter(microns)',
+      accessor: 'metadata.rMeanTrask',
+      width: '140px',
+    },
+    {
+      Header: 'Dimension(voxels) - (X,Y,Z)',
+      accessor: 'metadata.dimensionXYZ',
+      width: '140px',
+    },
+  ].map((row) => ({ ...row, width: 'auto' }));
 
   const openGrainAnalysis = (asset: Asset) => {
     const digitalRockSample = {
@@ -97,21 +95,26 @@ const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
     return <EmptyState isLoading={isLoading} />;
   }
 
-  const extendedColumns = [
-    ...columns,
-    {
-      id: 'grain-analysis-column',
-      accessor: (asset: Asset) => (
-        <TableButton
-          data-testid="grain-analysis-btn"
-          onClick={() => openGrainAnalysis(asset)}
-          color="primary"
+  const options = {
+    checkable: false,
+    flex: false,
+  };
+
+  const renderRowHoverComponent: React.FC<{
+    row: RowProps<Asset>;
+  }> = ({ row }) => {
+    return (
+      <FlexRow>
+        <Button
+          style={{ whiteSpace: 'nowrap' }}
+          onClick={() => openGrainAnalysis(row.original)}
+          type="primary"
         >
-          Grain Analysis
-        </TableButton>
-      ),
-    },
-  ];
+          Open grain analysis
+        </Button>
+      </FlexRow>
+    );
+  };
 
   return (
     <>
@@ -120,8 +123,10 @@ const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
           scrollTable
           id="digital-rock-samples-result-table"
           data={digitalRockSamples}
-          columns={extendedColumns}
+          columns={columns}
           options={options}
+          indent
+          renderRowHoverComponent={renderRowHoverComponent}
         />
       </DigitalRocksSampleWrapper>
       <DialogPopup

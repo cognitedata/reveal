@@ -97,12 +97,19 @@ export const getCasingColumnsWithPrefferedUnit = (unit: string) => {
     {
       Header: 'Well / Wellbore',
       accessor: 'wellName',
-      width: `${COMMON_COLUMN_WIDTHS.WELL_NAME}px`,
+      width: COMMON_COLUMN_WIDTHS.WELL_NAME,
+      maxWidth: '0.6fr',
+    },
+    {
+      Header: 'Wellbore',
+      accessor: 'wellboreName',
+      width: COMMON_COLUMN_WIDTHS.WELLBORE_NAME,
+      maxWidth: '0.4fr',
     },
     {
       Header: 'Casing Type',
       accessor: 'casingNames',
-      width: '300px',
+      width: '140px',
     },
     {
       Header: `Top MD (${unit})`,
@@ -112,7 +119,7 @@ export const getCasingColumnsWithPrefferedUnit = (unit: string) => {
     {
       Header: `Bottom MD (${unit})`,
       accessor: 'bottomMD',
-      width: '200px',
+      width: '150px',
     },
     {
       Header: 'OD Min',

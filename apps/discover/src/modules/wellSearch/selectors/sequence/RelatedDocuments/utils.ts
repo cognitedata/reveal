@@ -1,4 +1,4 @@
-import { TableResults } from 'components/tablev2';
+import { TableResults } from 'components/tablev3';
 import { SavedSearchContent } from 'modules/api/savedSearches';
 import {
   AggregateNames,

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Row } from 'react-table';
 
 import { Menu, Dropdown } from '@cognite/cogs.js';
 import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
@@ -13,7 +12,7 @@ import { ViewButton, MoreOptionsButton } from 'components/buttons';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';
 import { UserOption } from 'components/search-users/SearchUsers';
-import { Table, TableResults } from 'components/tablev3';
+import { Table, TableResults, RowProps } from 'components/tablev3';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
@@ -138,7 +137,10 @@ export const SavedSearches: React.FC<{
       {
         Header: t('Created'),
         accessor: (row: SavedSearchItem) => shortDate(row.value.createdTime),
-        sortType: (rowA: Row<SavedSearchItem>, rowB: Row<SavedSearchItem>) =>
+        sortType: (
+          rowA: RowProps<SavedSearchItem>,
+          rowB: RowProps<SavedSearchItem>
+        ) =>
           sortDates(
             shortDate(rowA.original.value.createdTime),
             shortDate(rowB.original.value.createdTime)
@@ -154,7 +156,7 @@ export const SavedSearches: React.FC<{
   }, [commentTarget]);
 
   const renderRowHoverComponent: React.FC<{
-    row: Row<SavedSearchItem>;
+    row: RowProps<SavedSearchItem>;
   }> = ({ row }) => {
     const isOwner = user.data?.id === row.original?.owner?.id;
     return (

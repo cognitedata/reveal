@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { Row } from 'react-table';
 
 import compact from 'lodash/compact';
 import isString from 'lodash/isString';
@@ -10,7 +9,7 @@ import { SetCommentTarget, CommentTarget } from '@cognite/react-comments';
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/sortDates';
 import EmptyState from 'components/emptyState';
-import { Table, Options, TableResults } from 'components/tablev3';
+import { Table, Options, TableResults, RowProps } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import {
   useFeedbackUpdateMutate,
@@ -231,13 +230,16 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     [generalFeedbackShowDeleted]
   );
 
-  const handleRowClick = useCallback((row: Row & { isSelected: boolean }) => {
-    const feedback = row.original as GeneralFeedbackItem;
-    setExpandedIds((state) => ({
-      ...state,
-      [feedback.id]: !state[feedback.id],
-    }));
-  }, []);
+  const handleRowClick = useCallback(
+    (row: RowProps & { isSelected: boolean }) => {
+      const feedback = row.original as GeneralFeedbackItem;
+      setExpandedIds((state) => ({
+        ...state,
+        [feedback.id]: !state[feedback.id],
+      }));
+    },
+    []
+  );
 
   const toggleGeneralFeedbackData = React.useMemo(() => {
     if (!data || isString(data)) {

@@ -83,7 +83,7 @@ export const Card: React.FC<Props> = ({
       <CardHeader>
         <HeaderLeft onClick={clickHandler}>
           <AvatarWrapper>
-            <IconWrapper type="FolderLine" />
+            <IconWrapper type="Folder" />
           </AvatarWrapper>
           <Title>{title}</Title>
         </HeaderLeft>

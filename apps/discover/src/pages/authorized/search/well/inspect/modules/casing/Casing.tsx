@@ -28,7 +28,6 @@ export const Casing: React.FC = () => {
     ),
     [searchPhrase]
   );
-
   return (
     <>
       <TopBarWrapper>
