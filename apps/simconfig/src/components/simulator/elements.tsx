@@ -9,6 +9,9 @@ const SimulatorItemContainer = styled.div`
   margin: 5px 0;
   white-space: nowrap;
   flex-direction: column;
+  &:not(:first-child) {
+    margin-top: 2em;
+  }
 `;
 
 const SimulatorItem = styled.p`
@@ -46,6 +49,9 @@ export function SimulatorTag({
             <SimulatorItem>Name: {simulator.name}</SimulatorItem>
             <SimulatorItem>
               Connector Version: {simulator.connectorVersion}
+            </SimulatorItem>
+            <SimulatorItem>
+              DataSet: {simulator.dataSetName || simulator.dataSet}
             </SimulatorItem>
             <HearBeatContainer>
               <SimulatorItem>Last Seen: </SimulatorItem>

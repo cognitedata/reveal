@@ -71,8 +71,8 @@ export function ModelForm({
     ? getInitialModelFormState()
     : initialModelFormState;
 
-  const { modelLibraryDataSet } = simulators[0];
-  modelFormState.fileInfo.dataSetId = modelLibraryDataSet;
+  const { dataSet } = simulators[0];
+  modelFormState.fileInfo.dataSetId = dataSet;
 
   const onButtonClick = () => {
     if (inputFile.current) {

@@ -6,14 +6,14 @@ export enum SimulatorBackend {
 }
 
 export type Simulator = {
+  dataSetName: string;
+  dataSetWriteProtected: boolean;
   simulator: SimulatorBackend;
   name: string;
   heartbeat: number;
-  modelLibraryDataSet: number;
-  configurationLibraryDataSet: number;
+  dataSet: number;
   connectorVersion: string;
 };
-
 export interface SimulatorState {
   requestStatus: RequestStatus;
   initialized: boolean;
