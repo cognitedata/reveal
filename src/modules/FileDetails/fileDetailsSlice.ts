@@ -18,7 +18,7 @@ export type State = {
   loadingField: string | null;
 };
 
-const initialState: State = {
+export const initialState: State = {
   metadataEdit: false,
   fileDetails: {},
   fileMetaData: {},
