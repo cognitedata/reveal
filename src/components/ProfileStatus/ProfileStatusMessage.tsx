@@ -1,16 +1,14 @@
 import React from 'react';
-
 import styled from 'styled-components';
 
+import { ProfileResultType } from 'hooks/profiling-service';
 import Message from 'components/Message/Message';
-
-import { ProfileResultType } from './ProfileCoverageLabel';
 
 type ProfileStatusMessageProps = {
   resultType: ProfileResultType;
 };
 
-const ProfileStatusMessage = ({
+export const ProfileStatusMessage = ({
   resultType,
 }: ProfileStatusMessageProps): JSX.Element => {
   switch (resultType) {
@@ -45,5 +43,3 @@ const ProfileStatusMessage = ({
 const StyledMessage = styled(Message)`
   margin-bottom: 20px;
 `;
-
-export default ProfileStatusMessage;
