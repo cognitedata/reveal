@@ -76,7 +76,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
   );
 
   const emptyPercent = getPercentage(nullCount, count + nullCount);
-  const distinctPercent = getPercentage(distinctCount, count);
+  const distinctPercent = getPercentage(distinctCount, count + nullCount);
 
   return (
     <>

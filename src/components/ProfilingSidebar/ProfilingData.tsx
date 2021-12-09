@@ -97,7 +97,7 @@ const ColumnString = ({ data, profile }: PropsString) => {
     <StyledProfilingDataWrapper>
       <Section.Frequency allCount={count} counts={counts} isCompact />
       <Section.DistinctValues
-        allCount={count}
+        allCount={count + nullCount}
         distinctCount={profile.distinctCount}
         isCompact
       />
@@ -163,7 +163,7 @@ const ColumnNumber = ({ data, profile }: PropsNumber) => {
     <StyledProfilingDataWrapper>
       <Section.Distribution histogram={histogram} max={max} isCompact />
       <Section.DistinctValues
-        allCount={count}
+        allCount={count + nullCount}
         distinctCount={distinctCount}
         isCompact
       />
