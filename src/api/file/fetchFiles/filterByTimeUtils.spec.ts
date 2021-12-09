@@ -5,12 +5,12 @@ import {
   DateOptions,
 } from 'src/modules/Explorer/Components/Filters/DateFilter';
 import { timeFormat } from 'src/modules/Explorer/Components/Filters/TimeFilter';
+import { mockFileInfo } from 'src/__test-utils/data/mockFileInfo';
 import {
   calculateTotalSeconds,
   filterByTime,
   validate,
 } from './filterByTimeUtils';
-import { itemsTestData } from './testData';
 
 describe('Testing calculateTotalSeconds fn', () => {
   it('If item time is 0', () => {
@@ -56,7 +56,7 @@ describe('Testing validate function in time filter', () => {
 });
 
 describe('Testing filterByTime fn', () => {
-  const items: FileInfo[] = itemsTestData;
+  const items: FileInfo[] = mockFileInfo;
   it('No filters defined', () => {
     expect(filterByTime({}, items)).toHaveLength(items.length);
   });

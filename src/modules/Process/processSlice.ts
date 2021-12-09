@@ -13,7 +13,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { postAnnotationJob } from 'src/store/thunks/Process/PostAnnotationJob';
 import { createFileInfo } from 'src/store/util/StateUtils';
-import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
+import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import {
   createGenericTabularDataSlice,
   GenericTabularState,
@@ -533,7 +533,7 @@ export const selectProcessSelectedFileIdsInSortedOrder = createSelector(
 
     const sortedIds = GenericSort(
       selectedIds,
-      SorterNames.indexInSortedArray,
+      SortKeys.indexInSortedArray,
       false,
       indexMap
     );

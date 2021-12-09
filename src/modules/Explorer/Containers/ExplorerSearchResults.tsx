@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { EnsureNonEmptyResource } from '@cognite/data-exploration';
 import { FileFilterProps, FileInfo } from '@cognite/cdf-sdk-singleton';
 import { FileGridPreview } from 'src/modules/Common/Components/FileGridPreview/FileGridPreview';
@@ -26,10 +26,12 @@ import {
   setSelectedAllExplorerFiles,
   useIsSelectedInExplorer,
   useExplorerFilesSelected,
+  setDefaultTimestampKey,
 } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
 import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 
 export const ExplorerSearchResults = ({
   reFetchProp,
@@ -61,6 +63,11 @@ export const ExplorerSearchResults = ({
 
   const sortPaginateState = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.sortMeta
+  );
+
+  const defaultTimestampKey = useSelector(
+    ({ explorerReducer }: RootState) =>
+      explorerReducer.sortMeta.defaultTimestampKey
   );
 
   const handleSelectAllFiles = (
@@ -113,6 +120,15 @@ export const ExplorerSearchResults = ({
     ),
     [otherProps.onItemSelect]
   );
+
+  useEffect(() => {
+    if (sortPaginateControls.sortKey === SortKeys.uploadedTime) {
+      dispatch(setDefaultTimestampKey(SortKeys.uploadedTime));
+    }
+    if (sortPaginateControls.sortKey === SortKeys.createdTime) {
+      dispatch(setDefaultTimestampKey(SortKeys.createdTime));
+    }
+  }, [sortPaginateControls.sortKey]);
 
   return (
     <ResultContainer>
@@ -178,6 +194,7 @@ export const ExplorerSearchResults = ({
                         onSelectAllRows={handleSelectAllFiles}
                         onSelectPage={handleSetSelectedFiles}
                         rowKey="rowKey"
+                        defaultTimestampKey={defaultTimestampKey}
                       />
                     );
                   };

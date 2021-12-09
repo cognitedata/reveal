@@ -11,18 +11,38 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { LoadingTable } from 'src/modules/Common/Components/LoadingRenderer/LoadingTable';
 import { NoData } from 'src/modules/Common/Components/NoData/NoData';
+import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import { FileListTableProps } from './types';
+
+const getTimestampDataKey = (
+  sortKey?: string,
+  defaultTimestampKey?: string
+) => {
+  switch (sortKey) {
+    case SortKeys.uploadedTime:
+    case SortKeys.createdTime:
+      return sortKey;
+    default:
+      return defaultTimestampKey;
+  }
+};
 
 const rendererMap = {
   name: NameRenderer,
   mimeType: StringRenderer,
   createdTime: DateRenderer,
+  uploadedTime: DateRenderer,
   sourceCreatedTime: DateRenderer,
   annotations: AnnotationRenderer,
   action: ActionRendererExplorer,
 };
 
 export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
+  const timestampDataKey = getTimestampDataKey(
+    props.sortKey,
+    props.defaultTimestampKey
+  );
+
   const columns: ColumnShape<TableDataItem>[] = [
     {
       key: 'name',
@@ -43,12 +63,12 @@ export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
     ...(!props.modalView
       ? [
           {
-            key: 'createdTime',
-            title: 'Created Time',
-            dataKey: 'createdTime',
+            key: 'Timestamp',
+            title: 'Timestamp', // This will override by TimeHeaderRenderer according to selected option
+            dataKey: timestampDataKey,
             align: Column.Alignment.LEFT,
             width: 250,
-            sortable: true,
+            sortable: false,
           },
         ]
       : []),
@@ -56,6 +76,7 @@ export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
     {
       key: 'annotations',
       title: 'Annotations',
+      dataKey: 'annotations',
       width: 0,
       flexGrow: 1,
       align: Column.Alignment.LEFT,
@@ -66,7 +87,7 @@ export function FileTableExplorer(props: FileListTableProps<TableDataItem>) {
           {
             key: 'action',
             title: '',
-            dataKey: 'menu',
+            dataKey: 'action',
             align: Column.Alignment.RIGHT,
             width: 200,
           },

@@ -12,6 +12,7 @@ import { SelectionRenderer } from 'src/modules/Common/Containers/FileTableRender
 import { SelectAllHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/SelectAllHeaderRendrerer';
 import { StringHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/StringHeaderRenderer';
 import { FileListTableProps } from 'src/modules/Common/Components/FileTable/types';
+import { TimeHeaderRenderer } from 'src/modules/Common/Containers/FileTableRenderers/TimeHeaderRenderer';
 
 export type SelectableTableProps = FileListTableProps<TableDataItem> & {
   selectable: boolean;
@@ -101,7 +102,7 @@ export function SelectableTable(props: SelectableTableProps) {
   }, [props.columns, selectable, props.rendererMap, props.data]);
 
   const Cell = (cellProps: any) => {
-    const renderer = rendererMap[cellProps.column.key];
+    const renderer = rendererMap[cellProps.column.dataKey];
     if (renderer) {
       return renderer(cellProps);
     }
@@ -112,6 +113,16 @@ export function SelectableTable(props: SelectableTableProps) {
     if (cellProps.column.key === 'selected') {
       return SelectAllHeaderRenderer(cellProps);
     }
+    if (cellProps.column.key === 'Timestamp') {
+      return TimeHeaderRenderer({
+        ...cellProps,
+        sortKey,
+        reverse,
+        setSortKey,
+        setReverse,
+      });
+    }
+
     return StringHeaderRenderer(cellProps);
   };
 
