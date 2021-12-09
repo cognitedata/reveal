@@ -67,10 +67,11 @@ export const PaginationWrapper = ({
       ? Math.ceil(fetchedCount / pageSize)
       : Math.ceil(fetchedCount / CONST.DEFAULT_PAGE_SIZE);
 
-  const tableFooter =
-    totalCount > fetchedCount && totalPages === currentPage ? (
+  const tableFooter = useMemo(() => {
+    return totalCount > fetchedCount && totalPages === currentPage ? (
       <Footer fetchedCount={fetchedCount} totalCount={totalCount} />
     ) : null;
+  }, [totalCount, fetchedCount, totalPages, currentPage]);
 
   const pagedData = useMemo(() => {
     return getPage(data, pagination, currentPage, pageSize);
