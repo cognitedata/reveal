@@ -51,7 +51,7 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
         </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
-      <Section.Distribution histogram={histogram} />
+      <Section.Distribution histogram={histogram} max={max} />
     </>
   );
 };
@@ -88,7 +88,7 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
         </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
-      <Section.Distribution histogram={histogram} />
+      <Section.Distribution histogram={histogram} max={max} />
     </>
   );
 };
