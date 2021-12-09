@@ -79,9 +79,7 @@ export default function RunCalculationCell({ data }: ComponentProps) {
     dispatch(runNewCalculation({ client: cdfClient, item }));
   };
 
-  const buttonIcon = isCalculationReadyOrRunning
-    ? 'LoadingSpinner'
-    : 'CaretClosedDefault';
+  const buttonIcon = isCalculationReadyOrRunning ? 'Loader' : 'Play';
 
   return (
     <>
