@@ -4,12 +4,24 @@ type ValueType = Omit<TableDataItem, 'menuActions' | 'rowKey'> & {
   annotationCount: number;
 };
 
-export const SorterNames = {
+export const SortKeys = {
   name: 'name',
   mimeType: 'mimeType',
   annotations: 'annotations',
+  uploadedTime: 'uploadedTime',
   createdTime: 'createdTime',
   indexInSortedArray: 'indexInSortedArray',
+};
+
+const timestampSorter = (a: Date, b: Date, reverse: boolean) => {
+  if (reverse) {
+    if (a === undefined) return -1;
+    if (b === undefined) return 1;
+    return b.valueOf() - a.valueOf();
+  }
+  if (a === undefined) return 1;
+  if (b === undefined) return -1;
+  return a.valueOf() - b.valueOf();
 };
 
 // todo: add tests
@@ -19,7 +31,7 @@ export const Sorters: {
     sort: (a: any, b: any, reverse: boolean) => any;
   };
 } = {
-  [SorterNames.name]: {
+  [SortKeys.name]: {
     transform: (data: ValueType) => data.name,
     sort: (a: string, b: string, reverse: boolean) => {
       if (reverse) {
@@ -28,7 +40,7 @@ export const Sorters: {
       return a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     },
   },
-  [SorterNames.mimeType]: {
+  [SortKeys.mimeType]: {
     transform: (data: ValueType) => data.mimeType,
     sort: (a: string, b: string, reverse: boolean) => {
       if (reverse) {
@@ -37,7 +49,7 @@ export const Sorters: {
       return a && b && a.toLowerCase() > b.toLowerCase() ? 1 : -1;
     },
   },
-  [SorterNames.annotations]: {
+  [SortKeys.annotations]: {
     transform: (data: ValueType) => {
       return data.annotationCount;
     },
@@ -48,20 +60,15 @@ export const Sorters: {
       return a > b ? 1 : -1;
     },
   },
-  [SorterNames.createdTime]: {
-    transform: (data: ValueType) => data.createdTime,
-    sort: (a: Date, b: Date, reverse: boolean) => {
-      if (reverse) {
-        if (a === undefined) return -1;
-        if (b === undefined) return 1;
-        return b.valueOf() - a.valueOf();
-      }
-      if (a === undefined) return 1;
-      if (b === undefined) return -1;
-      return a.valueOf() - b.valueOf();
-    },
+  [SortKeys.uploadedTime]: {
+    transform: (data: ValueType) => data.uploadedTime,
+    sort: timestampSorter,
   },
-  [SorterNames.indexInSortedArray]: {
+  [SortKeys.createdTime]: {
+    transform: (data: ValueType) => data.createdTime,
+    sort: timestampSorter,
+  },
+  [SortKeys.indexInSortedArray]: {
     transform: (data: number, idIndexMapOfSortedArray: Map<number, number>) =>
       idIndexMapOfSortedArray.get(data),
     sort: (a: number, b: number) => {

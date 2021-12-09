@@ -44,6 +44,7 @@ export type TableDataItem = Pick<
   | 'geoLocation'
   | 'uploaded'
   | 'createdTime'
+  | 'uploadedTime'
 > & {
   menuActions: FileActions; // menu: FileActions;
   rowKey: string; // unique key;
@@ -68,6 +69,17 @@ export type SelectableTableCellRenderer = {
   column: SelectableTableColumnShape<TableDataItem>;
   rowIndex: number;
   cellData: any;
+};
+
+export type SelectableTableCellRendererProps = {
+  rowData: TableDataItem;
+  column: ColumnShape<TableDataItem>;
+  rowIndex: number;
+  cellData: any;
+  sortKey?: string;
+  reverse?: boolean;
+  setSortKey: ((key: string) => void) | undefined;
+  setReverse: ((rev: boolean) => void) | undefined;
 };
 
 export type ViewMode = 'list' | 'grid' | 'map' | 'modal';

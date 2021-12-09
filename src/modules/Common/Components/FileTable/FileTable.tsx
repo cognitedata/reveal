@@ -41,12 +41,14 @@ export function FileTable(props: FileListTableProps<TableDataItem>) {
     {
       key: 'status',
       title: 'Status',
+      dataKey: 'status',
       width: 250,
       align: Column.Alignment.LEFT,
     },
     {
       key: 'annotations',
       title: 'Annotations',
+      dataKey: 'annotations',
       width: 0,
       flexGrow: 1,
       align: Column.Alignment.LEFT,
@@ -54,7 +56,7 @@ export function FileTable(props: FileListTableProps<TableDataItem>) {
     {
       key: 'action',
       title: '',
-      dataKey: 'menu',
+      dataKey: 'action',
       align: Column.Alignment.RIGHT,
       width: 200,
     },

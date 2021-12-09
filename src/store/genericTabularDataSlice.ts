@@ -15,6 +15,8 @@ export interface GenericTabularState {
   sortMeta: {
     sortKey?: string;
     reverse?: boolean;
+    // this default key will override by the last selected choice for the Timestamp column
+    defaultTimestampKey?: string;
     currentPage: number;
     pageSize: number;
   };

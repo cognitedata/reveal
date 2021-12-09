@@ -20,7 +20,7 @@ import { createFileInfo, createFileState } from 'src/store/util/StateUtils';
 import { makeReducerSelectAllFilesWithFilter } from 'src/store/commonReducers';
 import { DEFAULT_PAGE_SIZE } from 'src/constants/PaginationConsts';
 import { VisionFileFilterProps } from 'src/modules/Explorer/Components/Filters/types';
-import { GenericSort, SorterNames } from 'src/modules/Common/Utils/SortUtils';
+import { GenericSort, SortKeys } from 'src/modules/Common/Utils/SortUtils';
 import { RootState } from 'src/store/rootReducer';
 import isEqual from 'lodash-es/isEqual';
 import {
@@ -77,6 +77,7 @@ const initialState: State = {
     reverse: false,
     currentPage: 1,
     pageSize: DEFAULT_PAGE_SIZE,
+    defaultTimestampKey: SortKeys.createdTime,
   },
   isLoading: false,
   query: '',
@@ -180,6 +181,9 @@ const explorerSlice = createGenericTabularDataSlice({
     setPercentageScanned(state, action: PayloadAction<number>) {
       state.percentageScanned = action.payload;
     },
+    setDefaultTimestampKey(state, action: PayloadAction<string>) {
+      state.sortMeta.defaultTimestampKey = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(setExplorerFiles, (state, { payload }) => {
@@ -251,6 +255,7 @@ export const {
   resetExplorerTemporaryState,
   setIsLoading,
   setPercentageScanned,
+  setDefaultTimestampKey,
 } = explorerSlice.actions;
 
 export default explorerSlice.reducer;
@@ -313,7 +318,7 @@ export const selectExplorerSelectedFileIdsInSortedOrder = createSelector(
 
     const sortedIds = GenericSort(
       selectedIds,
-      SorterNames.indexInSortedArray,
+      SortKeys.indexInSortedArray,
       false,
       indexMap
     );

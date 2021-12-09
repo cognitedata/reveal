@@ -7,7 +7,7 @@ import { FileInfo } from '@cognite/cdf-sdk-singleton';
  * each day has three files with 7.00AM, 12.00PM, 3.00PM time stamps.
  *  created, updated and sourceCreated same particular file
  */
-export const itemsTestData: FileInfo[] = [
+export const mockFileInfo: FileInfo[] = [
   {
     id: 1,
     uploaded: true,
@@ -15,6 +15,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 1, 7, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 1, 7, 0, 0, 0),
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 1, 12, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 1, 12, 0, 0, 0),
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 1, 15, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 1, 15, 0, 0, 0),
   },
   {
     id: 4,
@@ -39,6 +42,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 2, 7, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 2, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 2, 7, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 2, 7, 0, 0, 0),
   },
   {
     id: 5,
@@ -47,6 +51,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 2, 12, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 2, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 2, 12, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 2, 12, 0, 0, 0),
   },
   {
     id: 6,
@@ -55,6 +60,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 2, 15, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 2, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 2, 15, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 2, 15, 0, 0, 0),
   },
   {
     id: 7,
@@ -63,6 +69,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 3, 7, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 3, 7, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 3, 7, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 3, 7, 0, 0, 0),
   },
   {
     id: 8,
@@ -71,6 +78,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 3, 12, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 3, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 3, 12, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 3, 12, 0, 0, 0),
   },
   {
     id: 9,
@@ -79,6 +87,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 3, 15, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 3, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 3, 15, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 3, 15, 0, 0, 0),
   },
   {
     id: 10,
@@ -87,6 +96,7 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 4, 4, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 4, 4, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 4, 4, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 4, 4, 0, 0, 0),
   },
   {
     id: 11,
@@ -95,13 +105,15 @@ export const itemsTestData: FileInfo[] = [
     createdTime: new Date(2021, 0, 4, 12, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 4, 12, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 4, 12, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 4, 12, 0, 0, 0),
   },
   {
-    id: 10,
+    id: 12,
     uploaded: true,
     name: 'twelve',
     createdTime: new Date(2021, 0, 4, 15, 0, 0, 0),
     lastUpdatedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
     sourceCreatedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
+    uploadedTime: new Date(2021, 0, 4, 15, 0, 0, 0),
   },
 ];

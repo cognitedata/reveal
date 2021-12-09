@@ -27,6 +27,7 @@ type FileTableProps<T> = Omit<BaseTableProps<T>, 'data' | 'width'> & {
 export type FileListTableProps<T> = FileTableProps<T> &
   PaginatedTableProps<T> & {
     isLoading?: boolean;
+    defaultTimestampKey?: string;
   };
 
 export type GridViewProps<T> = {
