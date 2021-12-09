@@ -119,7 +119,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const footer = (
     <StyledModalFooter>
-      <Button variant="ghost" onClick={onCancelUpload}>
+      <Button type="ghost" onClick={onCancelUpload}>
         Cancel
       </Button>
       <Button type="primary" onClick={onOk} {...okButtonProps}>
