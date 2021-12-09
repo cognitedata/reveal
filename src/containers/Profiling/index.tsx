@@ -211,28 +211,3 @@ const StyledCount = styled.div<{ $isRunning?: boolean }>`
   line-height: 32px;
   margin-bottom: 0;
 `;
-
-{
-  /*
-// old styles
-const Table = styled.table`
-  width: 100%;
-  .numeric {
-    text-align: right;
-  }
-`;
-
-const TableHeader = styled.thead`
-  background-color: ${Colors['greyscale-grey1'].hex()};
-  color: ${Colors['greyscale-grey7'].hex()};
-  td .cogs-icon {
-    cursor: pointer;
-  }
-`;
-
-const StyledExpandTableHeaderIcon = styled(Icon)`
-  cursor: pointer;
-  margin: 0 10px;
-`;
-*/
-}
