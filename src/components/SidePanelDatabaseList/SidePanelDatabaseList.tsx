@@ -58,6 +58,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
           </StyledSidePanelDatabaseListHeaderTitle>
           <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
             <Button
+              aria-label="Create database"
               disabled={!hasWriteAccess}
               icon="Add"
               onClick={() => setIsCreateModalOpen(true)}
@@ -67,6 +68,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
           </Tooltip>
           <StyledSidePanelDatabaseListHeaderIconDivider />
           <Button
+            aria-label="Hide side panel"
             disabled={!(activeDatabase && activeTable)}
             icon="PanelLeft"
             onClick={() => setIsSidePanelOpen(false)}
