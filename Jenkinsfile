@@ -103,11 +103,11 @@ def pods = { body ->
 
             node(POD_LABEL) {
               dir('main') {
-                stageWithNotify('Checkout code', CONTEXTS.checkout) {
+                stage('Checkout code') {
                   checkout(scm)
                 }
 
-                stageWithNotify('Install dependencies', CONTEXTS.setup) {
+                stage('Install dependencies') {
                   yarn.setup()
                 }
 
@@ -136,7 +136,7 @@ pods {
     threadPool(
       tasks: [
         'Lint': {
-          stageWithNotify('Check linting', CONTEXTS.lint) {
+          stage('Check linting') {
             dir('lint') {
               container('fas') {
                 retry(3) {
@@ -148,7 +148,7 @@ pods {
         },
 
         'Unit tests': {
-          stageWithNotify('Execute unit tests', CONTEXTS.unitTests) {
+          stage('Execute unit tests') {
             dir('unit-tests') {
               container('fas') {
                 retry(3) {
@@ -176,7 +176,7 @@ pods {
 
         'Preview': {
           dir('preview') {
-            stageWithNotify('Build for preview', CONTEXTS.buildPreview) {
+            stage('Build for preview') {
               fas.build(
                 appId: "${STAGING_APP_ID}-pr-${env.CHANGE_ID}",
                 repo: APPLICATION_REPO_ID,
@@ -190,7 +190,7 @@ pods {
 
         'Staging': {
           dir('staging') {
-            stageWithNotify('Build for staging', CONTEXTS.buildStaging) {
+            stage('Build for staging') {
               fas.build(
                 appId: STAGING_APP_ID,
                 repo: APPLICATION_REPO_ID,
@@ -204,7 +204,7 @@ pods {
 
         'Production': {
           dir('production') {
-            stageWithNotify('Build for production', CONTEXTS.buildProduction) {
+            stage('Build for production') {
               fas.build(
                 appId: PRODUCTION_APP_ID,
                 repo: APPLICATION_REPO_ID,
@@ -228,7 +228,7 @@ pods {
       workers: 4,
     )
 
-    stageWithNotify('Publish preview build', CONTEXTS.publishPreview) {
+    stage('Publish preview build') {
       if (!isPullRequest) {
         print "Not a PR, no need to preview"
         return
@@ -240,7 +240,7 @@ pods {
       }
     }
 
-    stageWithNotify('Publish staging build', CONTEXTS.publishStaging) {
+    stage('Publish staging build') {
       if (!isStaging) {
         print "Not pushing to staging, no need to preview"
         return
@@ -266,7 +266,7 @@ pods {
 
 
     if (isProduction && PRODUCTION_APP_ID) {
-      stageWithNotify('Publish production build', CONTEXTS.publishProduction) {
+      stage('Publish production build') {
         dir('production') {
           fas.publish()
 
