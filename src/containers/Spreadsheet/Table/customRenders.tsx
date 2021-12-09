@@ -52,7 +52,7 @@ export const HeaderRender = (props: Props): JSX.Element => {
             onClick={() => onColumnClick(column)}
           >
             {column.dataKey && <ColumnIcon dataKey={column.dataKey} />}
-            <Tooltip content={column.title}>
+            <Tooltip content={<TooltipWrapper>{column.title}</TooltipWrapper>}>
               <HeaderTitle level={3} strong width={cell.props.style.width}>
                 {column.title}
               </HeaderTitle>
@@ -78,6 +78,11 @@ export const HeaderRender = (props: Props): JSX.Element => {
     </React.Fragment>
   );
 };
+
+const TooltipWrapper = styled.p`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 const Box = styled.div`
   padding: 40px;

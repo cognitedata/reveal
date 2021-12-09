@@ -65,6 +65,7 @@ const SidePanelTableList = (): JSX.Element => {
       header={
         <StyledSidePanelTableListHeaderWrapper>
           <Button
+            aria-label="Back"
             icon="ArrowLeft"
             onClick={() => setSelectedSidePanelDatabase(undefined)}
             size="small"
@@ -75,6 +76,7 @@ const SidePanelTableList = (): JSX.Element => {
           </StyledSidePanelTableListHeaderTitle>
           <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
             <Button
+              aria-label="Create table"
               disabled={!hasWriteAccess}
               icon="Add"
               onClick={() => setIsCreateModalOpen(true)}
@@ -84,6 +86,7 @@ const SidePanelTableList = (): JSX.Element => {
           </Tooltip>
           <StyledSidePanelTableListHeaderIconDivider />
           <Button
+            aria-label="Hide side panel"
             disabled={!(activeDatabase && activeTable)}
             icon="PanelLeft"
             onClick={() => setIsSidePanelOpen(false)}

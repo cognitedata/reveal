@@ -84,13 +84,14 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const renderModalContent = () => {
     if (isStepAddFile)
       return (
-        <Dragger {...fileProps}>
-          <CustomIcon icon="DocumentIconDisabled" />
+        <StyledDragger {...fileProps}>
+          <StyledDocumentIcon />
+          <StyledDocumentIconHover />
           <StyledModalTitle level={6}>Add CSV file</StyledModalTitle>
           <StyledModalDetail strong>
             Drag and drop, or click to select.
           </StyledModalDetail>
-        </Dragger>
+        </StyledDragger>
       );
     if (isStepUpload)
       return (
@@ -118,7 +119,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
 
   const footer = (
     <StyledModalFooter>
-      <Button variant="ghost" onClick={onCancelUpload}>
+      <Button type="ghost" onClick={onCancelUpload}>
         Cancel
       </Button>
       <Button type="primary" onClick={onOk} {...okButtonProps}>
@@ -150,6 +151,19 @@ const StyledModalTitle = styled(Title)`
 const StyledModalDetail = styled(Detail)`
   color: ${Colors['greyscale-grey6'].hex()};
 `;
+
+const StyledDocumentIcon = styled(CustomIcon).attrs({
+  icon: 'DocumentIconDisabled',
+})`
+  height: 40px;
+`;
+
+const StyledDocumentIconHover = styled(CustomIcon).attrs({
+  icon: 'DocumentIconHover',
+})`
+  height: 40px;
+`;
+
 const StyledModalFooter = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -157,5 +171,19 @@ const StyledModalFooter = styled.div`
 
   & > :first-child {
     margin-right: 8px;
+  }
+`;
+
+const StyledDragger = styled(Dragger)`
+  ${StyledDocumentIconHover} {
+    display: none;
+  }
+  &:hover {
+    ${StyledDocumentIcon} {
+      display: none;
+    }
+    ${StyledDocumentIconHover} {
+      display: unset;
+    }
   }
 `;

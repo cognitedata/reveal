@@ -38,8 +38,9 @@ export const Header = ({ selectedColumn }: Props) => {
         <StyledDrawerHeaderSectionTitle>
           {canNavigate && (
             <Button
+              aria-label="Previous column"
               size="small"
-              variant="ghost"
+              type="ghost"
               icon="ChevronLeft"
               onClick={onPrevColumnClick}
             />
@@ -53,6 +54,7 @@ export const Header = ({ selectedColumn }: Props) => {
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 whiteSpace: 'nowrap',
+                maxWidth: 200,
               }}
             >
               {selectedColumn?.title ?? '—'}
@@ -60,16 +62,18 @@ export const Header = ({ selectedColumn }: Props) => {
           </Tooltip>
           {canNavigate && (
             <Button
+              aria-label="Next column"
               size="small"
-              variant="ghost"
+              type="ghost"
               icon="ChevronRight"
               onClick={onNextColumnClick}
             />
           )}
         </StyledDrawerHeaderSectionTitle>
         <Button
+          aria-label="Hide side panel"
           size="small"
-          variant="ghost"
+          type="ghost"
           icon="Close"
           onClick={onClickHide}
         />
