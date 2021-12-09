@@ -4,7 +4,7 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { RawWithUpdateTime } from 'components/Lineage/Lineage';
 import { RawExtpipeWithUpdateTime } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
-import { LabelTagGrey, NoStyleList } from 'utils/styledComponents';
+import { NoStyleList } from 'utils/styledComponents';
 
 export const rawTablesColumns = [
   {
@@ -87,7 +87,7 @@ export const rawTablesColumnsWithExtpipe = () => {
       render: (row: RawExtpipeWithUpdateTime) => {
         const { extpipes } = row;
         if (!extpipes || extpipes.length === 0) {
-          return <LabelTagGrey>Not connected/defined</LabelTagGrey>;
+          return '–';
         }
         return (
           <NoStyleList>
