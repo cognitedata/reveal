@@ -60,6 +60,16 @@ export default function ProfileRow({ allCount, profile }: Props) {
     if (percentage > 0 && percentage < 10) return percentage.toFixed(2);
     else return percentage.toFixed(1);
   };
+  const getLabelVariant = (percentage: number | string, type: string) => {
+    if (type === 'empty') {
+      if (percentage === 100) return 'danger';
+      if (percentage === 0) return 'success';
+    }
+    if (type === 'distinct') {
+      if (percentage === 100) return 'success';
+    }
+    return 'unknown';
+  };
   const columnType = useMemo(
     () => (isFetched ? getColumnType(label) : undefined),
     [getColumnType, isFetched, label]
@@ -79,7 +89,10 @@ export default function ProfileRow({ allCount, profile }: Props) {
             columnType={columnType}
             value={nullCount}
           >
-            <Label size="small" variant={!nullCount ? 'success' : 'default'}>
+            <Label
+              size="small"
+              variant={getLabelVariant(emptyPercent, 'empty')}
+            >
               {emptyPercent}%
             </Label>
           </NumberOrMissingTd>
@@ -92,7 +105,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
           >
             <Label
               size="small"
-              variant={distinctPercent === '100' ? 'success' : 'default'}
+              variant={getLabelVariant(distinctPercent, 'distinct')}
             >
               {distinctPercent}%
             </Label>
