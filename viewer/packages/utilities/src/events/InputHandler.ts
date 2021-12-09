@@ -11,72 +11,13 @@ type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => voi
 
 export class InputHandler {
   private readonly domElement: HTMLElement;
+  private static maxMoveDistance = 8;
+  private static maxClickDuration = 250;
 
   private readonly _events = {
     click: new EventTrigger<PointerEventDelegate>(),
     hover: new EventTrigger<PointerEventDelegate>()
   };
-
-  private setupEventListeners() {
-    const { domElement } = this;
-
-    const maxMoveDistance = 8;
-    const maxClickDuration = 250;
-
-    let pointerDown = false;
-    let pointerDownTimestamp = 0;
-    let validClick = false;
-
-    const startOffset = new Vector2();
-
-    const onHoverCallback = debounce((e: MouseEvent) => {
-      this._events.hover.fire(clickOrTouchEventOffset(e, domElement));
-    }, 100);
-
-    const onUp = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
-      const hasMovedDuringClick =
-        Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > maxMoveDistance;
-
-      const clickDuration = e.timeStamp - pointerDownTimestamp;
-      if (pointerDown && validClick && clickDuration < maxClickDuration && !hasMovedDuringClick) {
-        // trigger events
-        this._events.click.fire(clickOrTouchEventOffset(e, domElement));
-      }
-      pointerDown = false;
-      validClick = false;
-
-      // up
-      domElement.removeEventListener('mouseup', onUp);
-      domElement.removeEventListener('touchend', onUp);
-
-      // add back onHover
-      domElement.addEventListener('mousemove', onHoverCallback);
-    };
-
-    const onDown = (e: MouseEvent | TouchEvent) => {
-      pointerDown = true;
-      validClick = true;
-      pointerDownTimestamp = e.timeStamp;
-
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
-      startOffset.set(offsetX, offsetY);
-
-      // up
-      domElement.addEventListener('mouseup', onUp);
-      domElement.addEventListener('touchend', onUp);
-
-      // no more onHover
-      domElement.removeEventListener('mousemove', onHoverCallback);
-    };
-
-    // down
-    domElement.addEventListener('mousedown', onDown);
-    domElement.addEventListener('touchstart', onDown);
-
-    // on hover callback
-    domElement.addEventListener('mousemove', onHoverCallback);
-  }
 
   constructor(domElement: HTMLElement) {
     this.domElement = domElement;
@@ -116,5 +57,63 @@ export class InputHandler {
       default:
         assertNever(event);
     }
+  }
+
+  private setupEventListeners() {
+    const { domElement } = this;
+
+    let pointerDown = false;
+    let pointerDownTimestamp = 0;
+    let validClick = false;
+
+    const startOffset = new Vector2();
+
+    const onHoverCallback = debounce((e: MouseEvent) => {
+      this._events.hover.fire(clickOrTouchEventOffset(e, domElement));
+    }, 100);
+
+    const onUp = (e: MouseEvent | TouchEvent) => {
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
+      const hasMovedDuringClick =
+        Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > InputHandler.maxMoveDistance;
+
+      const clickDuration = e.timeStamp - pointerDownTimestamp;
+      if (pointerDown && validClick && clickDuration < InputHandler.maxClickDuration && !hasMovedDuringClick) {
+        // trigger events
+        this._events.click.fire(clickOrTouchEventOffset(e, domElement));
+      }
+      pointerDown = false;
+      validClick = false;
+
+      // up
+      domElement.removeEventListener('mouseup', onUp);
+      domElement.removeEventListener('touchend', onUp);
+
+      // add back onHover
+      domElement.addEventListener('mousemove', onHoverCallback);
+    };
+
+    const onDown = (e: MouseEvent | TouchEvent) => {
+      pointerDown = true;
+      validClick = true;
+      pointerDownTimestamp = e.timeStamp;
+
+      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
+      startOffset.set(offsetX, offsetY);
+
+      // up
+      domElement.addEventListener('mouseup', onUp);
+      domElement.addEventListener('touchend', onUp);
+
+      // no more onHover
+      domElement.removeEventListener('mousemove', onHoverCallback);
+    };
+
+    // down
+    domElement.addEventListener('mousedown', onDown);
+    domElement.addEventListener('touchstart', onDown);
+
+    // on hover callback
+    domElement.addEventListener('mousemove', onHoverCallback);
   }
 }
