@@ -14,9 +14,14 @@ import RowCount from './RowCount';
 type Props = {
   isEmpty?: boolean;
   areTypesFetched?: boolean;
+  hasActions?: boolean;
 };
 
-export const FilterBar = ({ isEmpty, areTypesFetched }: Props): JSX.Element => {
+export const FilterBar = ({
+  isEmpty,
+  areTypesFetched,
+  hasActions,
+}: Props): JSX.Element => {
   const {
     filters,
     columnTypeFilters,
@@ -63,24 +68,26 @@ export const FilterBar = ({ isEmpty, areTypesFetched }: Props): JSX.Element => {
           </>
         )}
       </FilterBar.List>
-      <Flex justifyContent="center" alignItems="center">
-        <Separator style={{ margin: '0 12px' }} />
-        <Body
-          level={2}
-          strong
-          style={{ display: 'flex', alignItems: 'center' }}
-        >
-          <RowCount />
-        </Body>
-        <Separator style={{ margin: '0 12px' }} />
-        <FilterBar.Actions />
-      </Flex>
+      {hasActions && (
+        <Flex justifyContent="center" alignItems="center">
+          <Separator style={{ margin: '0 12px' }} />
+          <Body
+            level={2}
+            strong
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
+            <RowCount />
+          </Body>
+          <Separator style={{ margin: '0 12px' }} />
+          <FilterBar.Actions />
+        </Flex>
+      )}
     </Bar>
   );
 };
 
 const Bar = styled(Flex)`
-  padding: 16px;
+  width: 100%;
   height: ${FILTER_BAR_HEIGHT}px;
   box-sizing: border-box;
 `;
