@@ -128,6 +128,7 @@ const StyledCarouselPageDetail = styled(Detail)`
 `;
 
 const StyledCarouselPageImage = styled.img`
+  height: 280px;
   width: auto;
   margin-left: auto;
 `;

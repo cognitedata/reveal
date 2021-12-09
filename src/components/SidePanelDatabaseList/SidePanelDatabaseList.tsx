@@ -54,7 +54,7 @@ const SidePanelDatabaseList = (): JSX.Element => {
       header={
         <StyledSidePanelDatabaseListHeaderWrapper>
           <StyledSidePanelDatabaseListHeaderTitle strong>
-            {databases.length > 0 ? 'RAW Databases' : 'RAW Explorer'}
+            RAW Explorer
           </StyledSidePanelDatabaseListHeaderTitle>
           <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
             <Button
