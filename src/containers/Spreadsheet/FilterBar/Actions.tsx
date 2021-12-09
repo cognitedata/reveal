@@ -26,7 +26,11 @@ export const Actions = (): JSX.Element => {
         Add new data
       </AccessButton>
       <Dropdown content={<Menu />}>
-        <Button icon="EllipsisHorizontal" type="secondary" />
+        <Button
+          aria-label="Options"
+          icon="EllipsisHorizontal"
+          type="secondary"
+        />
       </Dropdown>
       {csvModalVisible && (
         <UploadCSV
