@@ -30,4 +30,17 @@ describe('useOneOfPermissions', () => {
       false
     );
   });
+  test('Check all groups for the required acl/action combination (and not just the first one)', () => {
+    useCapabilities.mockReturnValue({
+      isLoading: false,
+      data: [
+        { acl: EXTRACTION_PIPELINES_ACL, actions: ['READ'] },
+        { acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] },
+      ],
+    });
+    const hasAccess = useOneOfPermissions([
+      { acl: EXTRACTION_PIPELINES_ACL, action: 'WRITE' },
+    ]).data;
+    expect(hasAccess).toBe(true);
+  });
 });
