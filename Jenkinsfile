@@ -111,11 +111,11 @@ pods {
       }
     }
 
-    //   container('fas') {
-    //     stageWithNotify('Unit tests') {
-    //       sh("yarn test")
-    //     }
-    //   }
+    container('fas') {
+      stageWithNotify('Unit tests') {
+        sh("yarn test")
+      }
+    }
 
     container('fas') {
       stageWithNotify('Build') {
