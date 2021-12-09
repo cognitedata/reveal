@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Colors, Icon } from '@cognite/cogs.js';
-import { TableCell } from './ProfileRow';
 
+import { ZIndexLayer } from 'utils/zIndex';
+import { TableCell } from './ProfileRow';
 import { SortableColumn } from '.';
 
 type Props = {
@@ -66,7 +67,7 @@ const StyledTableHeader = styled.thead`
   top: 12px;
   background-color: ${Colors['greyscale-grey1'].hex()};
   color: ${Colors['greyscale-grey7'].hex()};
-  z-index: 11; /** anything lower makes histograms be over the scrolled header **/
+  z-index: ${ZIndexLayer.Dropdown}; /** lower values causes histograms to render above the scrolled header **/
   .styled-cell {
     border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
     border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
