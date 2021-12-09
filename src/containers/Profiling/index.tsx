@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Flex, Loader, Title, Colors, Icon } from '@cognite/cogs.js';
+import { Flex, Loader, Title, Colors } from '@cognite/cogs.js';
 import { Alert } from 'antd';
 import { sortBy } from 'lodash';
 import { AutoResizer } from 'react-base-table';
@@ -16,74 +16,16 @@ import {
   ColumnProfile,
 } from 'hooks/profiling-service';
 
-import ProfileRow, { TableData } from './ProfileRow';
+import { FilterBar } from 'containers/Spreadsheet/FilterBar';
 import {
   ProfileStatusMessage,
   ProfileCoverageLabel,
 } from 'components/ProfileStatus';
+import ProfileTableHeader from './ProfileTableHeader';
+import ProfileRow from './ProfileRow';
 
-import { FilterBar } from 'containers/Spreadsheet/FilterBar';
+export type SortableColumn = keyof ColumnProfile;
 
-const Card = styled.div`
-  padding: 16px;
-  margin: 10px 10px 20px 0;
-  border: 1px solid ${Colors['greyscale-grey3'].hex()};
-  border-radius: 8px;
-  min-width: 277px;
-  header {
-    display: block;
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  .coverage {
-    padding: 8px 12px;
-    color: #22633c;
-    background: rgba(57, 162, 99, 0.12);
-    border-radius: 6px;
-  }
-  .coverage.running {
-    color: black;
-    background: rgb(247 97 97 / 12%);
-  }
-`;
-
-const RootFlex = styled(Flex)`
-  padding: 10px;
-  height: 100%;
-`;
-
-const TableHeader = styled.thead`
-  background-color: ${Colors['greyscale-grey1'].hex()};
-  color: ${Colors['greyscale-grey7'].hex()};
-  td .cogs-icon {
-    cursor: pointer;
-  }
-`;
-
-const Table = styled.table`
-  width: 100%;
-  .numeric {
-    text-align: right;
-  }
-`;
-
-const StyledExpandTableHeaderIcon = styled(Icon)`
-  cursor: pointer;
-  margin: 0 10px;
-`;
-
-const StyledCount = styled.div<{ $isRunning?: boolean }>`
-  color: ${({ $isRunning }) =>
-    $isRunning ? Colors['text-hint'].hex() : Colors['greyscale-grey9'].hex()};
-  font-weight: 900;
-  font-size: 24px;
-  line-height: 32px;
-  margin-bottom: 0;
-`;
-
-type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
   const { isFetched: areTypesFetched } = useColumnType(database, table);
@@ -106,9 +48,9 @@ export const Profiling = (): JSX.Element => {
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
   const profileResultType = useProfileResultType(database, table);
-
   const [sortKey, _setSortKey] = useState<SortableColumn>('label');
   const [sortReversed, _setSortReversed] = useState(false);
+
   const setSortKey = (key: SortableColumn) => {
     const reverse = sortKey === key;
     _setSortKey(key);
@@ -147,7 +89,7 @@ export const Profiling = (): JSX.Element => {
     <RootFlex direction="column">
       <ProfileStatusMessage resultType={profileResultType} />
       <Title level={4}>Table summary</Title>
-      <Flex direction="row">
+      <CardsFlex direction="row">
         <Card className="z-2">
           <header>Rows profiled</header>
           <Flex direction="row" justifyContent="space-between">
@@ -172,7 +114,7 @@ export const Profiling = (): JSX.Element => {
             />
           </Flex>
         </Card>
-      </Flex>
+      </CardsFlex>
       <Flex style={{ width: '100%', paddingBottom: '8px' }}>
         <FilterBar areTypesFetched={areTypesFetched} />
       </Flex>
@@ -181,114 +123,12 @@ export const Profiling = (): JSX.Element => {
           {({ width, height }) => (
             <div style={{ width, height }}>
               <Table>
-                <TableHeader>
-                  <tr>
-                    <TableData $width={44}>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('type')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Column
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('label')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Empty
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('nullCount')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Distinct
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('distinctCount')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData $width={150}>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Frequency
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Min
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('min')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Max
-                        <Icon
-                          type="ReorderDefault"
-                          onClick={() => setSortKey('max')}
-                        />
-                      </Flex>
-                    </TableData>
-                    <TableData>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        Mean
-                      </Flex>
-                    </TableData>
-                    <TableData $width={68}>
-                      <Flex
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <StyledExpandTableHeaderIcon type="ChevronDown" />
-                      </Flex>
-                    </TableData>
-                  </tr>
-                </TableHeader>
+                <ProfileTableHeader
+                  sortKey={sortKey}
+                  setSortKey={setSortKey}
+                  sortReversed={sortReversed}
+                  setSortReversed={_setSortReversed}
+                />
                 <tbody>
                   {columnList.map((column) => (
                     <ProfileRow
@@ -299,6 +139,7 @@ export const Profiling = (): JSX.Element => {
                   ))}
                 </tbody>
               </Table>
+              <div style={{ height: '24px' }} />
             </div>
           )}
         </AutoResizer>
@@ -306,3 +147,61 @@ export const Profiling = (): JSX.Element => {
     </RootFlex>
   );
 };
+
+const Card = styled.div`
+  padding: 16px;
+  margin: 10px 10px 20px 0;
+  border: 1px solid ${Colors['greyscale-grey3'].hex()};
+  border-radius: 8px;
+  min-width: 277px;
+  header {
+    display: block;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .count {
+    color: ${Colors['greyscale-grey9'].hex()};
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .coverage {
+    padding: 8px 12px;
+    color: #22633c;
+    background: rgba(57, 162, 99, 0.12);
+    border-radius: 6px;
+  }
+  .coverage.running {
+    color: black;
+    background: rgb(247 97 97 / 12%);
+  }
+`;
+
+const RootFlex = styled(Flex)`
+  padding: 36px 24px 24px;
+  height: 100%;
+`;
+
+const CardsFlex = styled(Flex)`
+  padding: 24px 0;
+`;
+const Table = styled.table`
+  margin: 0;
+  width: 100%;
+  border-radius: 8px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid ${Colors['greyscale-grey4'].hex()};
+`;
+
+const StyledCount = styled.div<{ $isRunning?: boolean }>`
+  color: ${({ $isRunning }) =>
+    $isRunning ? Colors['text-hint'].hex() : Colors['greyscale-grey9'].hex()};
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 32px;
+  margin-bottom: 0;
+`;
