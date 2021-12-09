@@ -2,7 +2,7 @@ import React from 'react';
 import {
   setDataSetIds,
   setExtractExif,
-} from 'src/modules/Common/store/filesSlice';
+} from 'src/modules/Common/store/files/slice';
 import styled from 'styled-components';
 import { Checkbox, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -19,8 +19,8 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
   const queryClient = new QueryClient();
   const dispatch = useDispatch();
 
-  const { dataSetIds } = useSelector((state: RootState) => state.filesSlice);
-  const { extractExif } = useSelector((state: RootState) => state.filesSlice);
+  const { dataSetIds } = useSelector((state: RootState) => state.fileReducer);
+  const { extractExif } = useSelector((state: RootState) => state.fileReducer);
 
   return (
     <OptionContainer>

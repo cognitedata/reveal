@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { VisionAsset } from 'src/modules/Common/store/filesSlice';
+import { VisionAsset } from 'src/modules/Common/store/files/types';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import styled from 'styled-components';

@@ -21,7 +21,7 @@ export const PollJobs = createAsyncThunk<void, JobState[], ThunkConfig>(
       const failedFileIds: number[] = failedFileIdsFromState || [];
 
       const doesFileExist = (fileId: number) =>
-        getState().filesSlice.files.byId[fileId];
+        getState().fileReducer.files.byId[fileId];
 
       await fetchUntilComplete<AnnotationJob>(
         () => fetchJobById(modelType, jobId),

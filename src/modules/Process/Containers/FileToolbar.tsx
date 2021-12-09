@@ -5,7 +5,7 @@ import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
 } from 'src/modules/Common/store/commonSlice';
-import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
+import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,7 +26,7 @@ export const FileToolbar = ({
   const dispatch = useDispatch();
 
   const selectedFileIds = useSelector((state: RootState) =>
-    selectAllSelectedIds(state.filesSlice)
+    selectAllSelectedIds(state.fileReducer)
   );
 
   const processFilesLength = useSelector(

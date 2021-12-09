@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
 import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
-import { selectAllSelectedIds } from 'src/modules/Common/store/filesSlice';
+import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { CellRenderer, TableDataItem } from 'src/modules/Common/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
@@ -85,7 +85,7 @@ export function ActionRendererExplorer({ rowData }: CellRenderer) {
 
 export function ActionRendererProcess({ rowData }: CellRenderer) {
   const filesSelected = useSelector(
-    (state: RootState) => !!selectAllSelectedIds(state.filesSlice).length
+    (state: RootState) => !!selectAllSelectedIds(state.fileReducer).length
   );
   return ActionRenderer(rowData, VisionMode.Contextualize, filesSelected);
 }

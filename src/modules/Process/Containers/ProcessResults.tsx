@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import {
-  selectAllFilesSelected,
   setFileSelectState,
-  setSelectedAllFiles,
   setSelectedFiles,
-} from 'src/modules/Common/store/filesSlice';
+  setSelectedAllFiles,
+} from 'src/modules/Common/store/files/slice';
+import { selectAllFilesSelected } from 'src/modules/Common/store/files/selectors';
+
 import {
   FileActions,
   ResultData,
@@ -71,7 +72,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   );
 
   const allFilesSelected = useSelector((state: RootState) =>
-    selectAllFilesSelected(state.filesSlice)
+    selectAllFilesSelected(state.fileReducer)
   );
 
   const selectedFileIds = useSelector((state: RootState) =>

@@ -152,7 +152,7 @@ export const FileUploader = ({
 }: FileUploaderProps) => {
   const sdk = useSDK();
   const { dataSetIds, extractExif } = useSelector(
-    (state: RootState) => state.filesSlice
+    (state: RootState) => state.fileReducer
   );
   const [fileList, setFileList] = useState<Array<CogsFileInfo | CogsFile>>(
     (initialUploadedFiles || []).map((file) => {

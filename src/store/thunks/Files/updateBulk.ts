@@ -1,13 +1,13 @@
 import { Label } from '@cognite/cdf-sdk-singleton';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { UpdateFiles } from './UpdateFiles';
 
 export const updateBulk = createAsyncThunk<
   void,
-  { selectedFiles: FileState[]; bulkEditTemp: BulkEditTempState },
+  { selectedFiles: VisionFile[]; bulkEditTemp: BulkEditTempState },
   ThunkConfig
 >('updateBulk', async ({ selectedFiles, bulkEditTemp }, { dispatch }) => {
   const payload: {

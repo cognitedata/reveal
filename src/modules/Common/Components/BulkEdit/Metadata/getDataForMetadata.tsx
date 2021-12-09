@@ -2,11 +2,11 @@ import React from 'react';
 import { EditPanelState } from 'src/modules/Common/Components/BulkEdit/bulkEditOptions';
 import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
 import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 
 export const getDataForMetadata = (
-  selectedFiles: FileState[],
+  selectedFiles: VisionFile[],
   bulkEditTemp: BulkEditTempState,
   editPanelState: EditPanelState
 ): BulkEditTableDataType[] => {

@@ -4,7 +4,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { FileState } from 'src/modules/Common/store/filesSlice';
+import { VisionFile } from 'src/modules/Common/store/files/types';
 import { SelectFilter } from 'src/modules/Common/types';
 import {
   FileGeoLocation,
@@ -337,7 +337,7 @@ const deleteFileById = (state: State, id: number) => {
   state.files.allIds = Object.keys(state.files.byId).map((fid) => +fid);
 };
 
-const updateFileState = (state: State, file: FileState) => {
+const updateFileState = (state: State, file: VisionFile) => {
   const hasInState = !!state.files.byId[+file.id];
   state.files.byId[+file.id] = convertToExplorerFileState(file);
   if (!hasInState) {
@@ -352,7 +352,7 @@ const resetFileState = (state: State) => {
 };
 
 const convertToExplorerFileState = (
-  fileState: FileState
+  fileState: VisionFile
 ): ExplorerFileState => {
   return { ...fileState };
 };
