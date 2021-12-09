@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Colors, Icon } from '@cognite/cogs.js';
-import { TableCell } from './ProfileRow';
 
+import { ZIndexLayer } from 'utils/zIndex';
+import { TableCell } from './ProfileRow';
 import { SortableColumn } from '.';
 
 type Props = {
@@ -62,10 +63,22 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
 }
 
 const StyledTableHeader = styled.thead`
+  position: sticky;
+  top: 12px;
   background-color: ${Colors['greyscale-grey1'].hex()};
   color: ${Colors['greyscale-grey7'].hex()};
-  .styled-cell:not(:last-child) {
+  z-index: ${ZIndexLayer.Dropdown}; /** lower values causes histograms to render above the scrolled header **/
+  .styled-cell {
+    border-top: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-bottom: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-left: 1px solid ${Colors['greyscale-grey4'].hex()};
+  }
+  .styled-cell:first-child {
+    border-radius: 8px 0 0 0;
+  }
+  .styled-cell:last-child {
     border-right: 1px solid ${Colors['greyscale-grey4'].hex()};
+    border-radius: 0 8px 0 0;
   }
   td .cogs-icon {
     cursor: pointer;
