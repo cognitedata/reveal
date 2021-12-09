@@ -54,17 +54,19 @@ export default function ProfileRow({ allCount, profile }: Props) {
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
 
+  const getPercentage = (portion: number, total: number) => {
+    const percentage = total === 0 ? 0 : (100 * portion) / total;
+    if (percentage === 0 || percentage === 100) return percentage;
+    if (percentage > 0 && percentage < 10) return percentage.toFixed(2);
+    else return percentage.toFixed(1);
+  };
   const columnType = useMemo(
     () => (isFetched ? getColumnType(label) : undefined),
     [getColumnType, isFetched, label]
   );
 
-  const emptyPercent =
-    count + nullCount === 0
-      ? 0
-      : ((100 * nullCount) / (count + nullCount)).toFixed(2);
-  const distinctPercent =
-    count === 0 ? 0 : (100 * (distinctCount / count)).toFixed(2);
+  const emptyPercent = getPercentage(nullCount, count + nullCount);
+  const distinctPercent = getPercentage(distinctCount, count);
 
   return (
     <>
