@@ -100,7 +100,7 @@ export const ErrorFeedback = ({
   }
   return (
     <ErrorCard>
-      <ErrorIcon type="ErrorStroked" />
+      <ErrorIcon type="Error" />
       <Title level={2}>{title}</Title>
       <p className="content">{message}</p>
       {showBtn && (

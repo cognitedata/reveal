@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import { CopyType } from 'components/InteractiveCopyWithText';
 import { StyledLink } from 'styles/StyledLinks';
-import InteractiveCopy from 'components/InteractiveCopy';
+import InteractiveCopy, { CopyType } from 'components/InteractiveCopy';
 
 interface OwnProps {
   href: string;
@@ -29,7 +28,11 @@ const LinkWithCopy: FunctionComponent<Props> = ({
       >
         {linkText}
       </StyledLink>
-      <InteractiveCopy text={copyText} copyType={copyType} />
+      <InteractiveCopy
+        showTextInTooltip={linkText !== copyText}
+        text={copyText}
+        copyType={copyType}
+      />
     </>
   );
 };

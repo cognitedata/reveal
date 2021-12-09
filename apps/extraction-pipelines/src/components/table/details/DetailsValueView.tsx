@@ -67,7 +67,11 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       return (
         <InteractiveCopyWrapper id={fieldName}>
           {fieldValue}{' '}
-          <InteractiveCopy text={`${fieldValue}`} copyType="externalId" />
+          <InteractiveCopy
+            showTextInTooltip={false}
+            text={`${fieldValue}`}
+            copyType="externalId"
+          />
         </InteractiveCopyWrapper>
       );
     case 'source':
@@ -75,14 +79,23 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
         <InteractiveCopyWrapper id={fieldName}>
           {fieldValue}{' '}
           {fieldValue && (
-            <InteractiveCopy text={`${fieldValue}`} copyType="source" />
+            <InteractiveCopy
+              showTextInTooltip={false}
+              text={`${fieldValue}`}
+              copyType="source"
+            />
           )}
         </InteractiveCopyWrapper>
       );
     case 'id':
       return (
         <InteractiveCopyWrapper id={fieldName}>
-          {fieldValue} <InteractiveCopy text={`${fieldValue}`} copyType="id" />
+          {fieldValue}{' '}
+          <InteractiveCopy
+            showTextInTooltip={false}
+            text={`${fieldValue}`}
+            copyType="id"
+          />
         </InteractiveCopyWrapper>
       );
     case 'status': {

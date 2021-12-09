@@ -36,18 +36,14 @@ export const DataSet: FunctionComponent<Props> = ({
     );
   }
   return (
-    <StyledTooltip content={dataSetId}>
-      <>
-        <DatasetTooltip>
-          <LinkWithCopy
-            href={getDataSetsLink({ origin, project, cdfEnv, dataSetId })}
-            linkText={dataSetName}
-            copyText={`${dataSetId}`}
-            copyType="dataSetId"
-            {...rest}
-          />
-        </DatasetTooltip>
-      </>
-    </StyledTooltip>
+    <DatasetTooltip>
+      <LinkWithCopy
+        href={getDataSetsLink({ origin, project, cdfEnv, dataSetId })}
+        linkText={dataSetName}
+        copyText={`${dataSetId}`}
+        copyType="dataSetId"
+        {...rest}
+      />
+    </DatasetTooltip>
   );
 };
