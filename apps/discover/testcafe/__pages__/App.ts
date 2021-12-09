@@ -33,7 +33,7 @@ export const source = 'Volve';
 export const duplicateFileName = 'Volve_Well_Summary_15_9-19.pdf';
 export const wellDataSearchPhrase = 'Well F';
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:3000';
 
 class App {
   public readonly cluster = cluster;

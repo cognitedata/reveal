@@ -68,7 +68,7 @@ export const getTokenHeaders = ({
   // progress(` - Project: ${App.project}`);
   progress('');
 
-  return customFetch('http://localhost:8200/login/token', {
+  return customFetch('http://127.0.0.1:8200/login/token', {
     method: 'POST',
     body: JSON.stringify({
       cluster: App.cluster,

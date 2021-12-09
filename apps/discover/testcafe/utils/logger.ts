@@ -40,6 +40,7 @@ export const logNetworkLoggerResults = (
     'https://events.mapbox.com',
     'https://api.mapbox.com/',
     'https://api-js.mixpanel.com',
+    'http://127.0.0.1:',
     'http://localhost:',
   ];
 

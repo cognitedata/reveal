@@ -5,7 +5,7 @@ import { Role } from 'testcafe';
 import App from '../__pages__/App';
 import { progress } from '../utils';
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:3000';
 
 export const regularUser = Role(
   baseUrl,
