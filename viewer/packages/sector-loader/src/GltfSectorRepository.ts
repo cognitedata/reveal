@@ -9,7 +9,7 @@ import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { SectorRepository } from '..';
 import { AutoDisposeGroup, assertNever } from '@reveal/utilities';
-import { V9GeometryFilterer } from '../../cad-parsers/src/cad/V9GeometryFilterer';
+import { filterGeometryOutsideClipBox } from '../../cad-parsers/src/cad/filterPrimitivesV9';
 
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -61,7 +61,7 @@ export class GltfSectorRepository implements SectorRepository {
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
 
-      const filteredGeometryBuffer = V9GeometryFilterer.filterGeometry(parsedGeometry.geometryBuffer, type);
+      const filteredGeometryBuffer = filterGeometryOutsideClipBox(parsedGeometry.geometryBuffer, type);
 
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:

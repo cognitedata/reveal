@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { V9GeometryFilterer } from './V9GeometryFilterer';
+import { filterGeometryOutsideClipBox } from './filterPrimitivesV9';
 import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
 
@@ -34,7 +34,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitive
 
   const collectionType = getCollectionType(primitiveType);
 
-  const filteredGeometry = V9GeometryFilterer.filterGeometry(bufferGeometry, collectionType, clipBox);
+  const filteredGeometry = filterGeometryOutsideClipBox(bufferGeometry, collectionType, clipBox);
 
   const newPrimitives = parseInterleavedGeometry(primitiveType, filteredGeometry);
 
@@ -57,7 +57,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitive
   }
 }
 
-describe('V9GeometryFilterer filters primitives correctly', () => {
+describe('filterPrimitivesV9 filters primitives correctly', () => {
   test('no clipbox, returns original', () => {
     const ellipsoid: Ellipsoid = {
       horizontalRadius: 10,
@@ -68,7 +68,7 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
 
     const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveType.Ellipsoid, [ellipsoid]);
 
-    const newGeometry = V9GeometryFilterer.filterGeometry(
+    const newGeometry = filterGeometryOutsideClipBox(
       bufferGeometry,
       RevealGeometryCollectionType.EllipsoidSegmentCollection,
       undefined
