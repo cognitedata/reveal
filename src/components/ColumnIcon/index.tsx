@@ -30,6 +30,8 @@ export default function ColumnIcon({ dataKey }: Props) {
       return <CustomIcon icon="ObjectIcon" />;
     case 'Vector':
       return <CustomIcon icon="ArrayIcon" />;
+    case 'Key':
+      return <CustomIcon icon="KeyIcon" />;
     case 'Loading':
       return <Icon type="Loader" />;
     default:
