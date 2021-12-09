@@ -102,12 +102,21 @@ export const ContactsDialogView = ({
   onConfirm,
   showErrors,
 }: ViewProps) => {
+  const emptyContact = {
+    name: '',
+    email: '',
+    role: '',
+    sendNotification: false,
+  };
+
   const [contacts, setContacts] = useState(
-    [...initialContacts].sort(
-      (a, b) =>
-        (isOwnerRole(a.role ?? '') ? -1000 : 0) -
-        (isOwnerRole(b.role ?? '') ? -1000 : 0)
-    )
+    initialContacts.length === 0
+      ? [{ ...emptyContact, role: 'Owner' }]
+      : [...initialContacts].sort(
+          (a, b) =>
+            (isOwnerRole(a.role ?? '') ? -1000 : 0) -
+            (isOwnerRole(b.role ?? '') ? -1000 : 0)
+        )
   );
   const onEdit = (
     index: number,
@@ -135,24 +144,8 @@ export const ContactsDialogView = ({
   const addRow = () => {
     setContacts(
       numOwners === 0
-        ? [
-            {
-              name: '',
-              email: '',
-              role: 'Owner',
-              sendNotification: false,
-            },
-            ...contacts,
-          ]
-        : [
-            ...contacts,
-            {
-              name: '',
-              email: '',
-              role: '',
-              sendNotification: false,
-            },
-          ]
+        ? [{ ...emptyContact, role: 'Owner' }, ...contacts]
+        : [...contacts, emptyContact]
     );
   };
   return (
@@ -235,9 +228,14 @@ export const ContactsDialogView = ({
         </Button>
       </div>
 
-      {numOwners !== 1 && (
+      {numOwners === 0 && (
         <InfoBox iconType="WarningFilled" color="warning">
-          There should be exactly one owner.
+          There should be an owner.
+        </InfoBox>
+      )}
+      {numOwners >= 2 && (
+        <InfoBox iconType="WarningFilled" color="warning">
+          There should only be one owner.
         </InfoBox>
       )}
 
