@@ -40,7 +40,7 @@ export class V9GeometryFilterer {
     );
   }
 
-  static filterGeometry(
+  static filterGeometryOutsideClipBox(
     geometryBuffer: THREE.BufferGeometry,
     type: RevealGeometryCollectionType,
     clipBox?: THREE.Box3
