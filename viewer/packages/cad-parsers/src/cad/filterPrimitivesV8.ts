@@ -115,10 +115,10 @@ export function filterPrimitivesOutsideClipBoxByVertices(
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromVertexAttributes(
-        vertex1attribute,
-        vertex2attribute,
-        vertex3attribute,
-        vertex4attribute,
+        vertex1attribute.offset,
+        vertex2attribute.offset,
+        vertex3attribute.offset,
+        vertex4attribute.offset,
         attributeFloatValues,
         elementSize,
         index,

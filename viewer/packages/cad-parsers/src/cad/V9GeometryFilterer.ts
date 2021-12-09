@@ -7,7 +7,8 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import {
   computeBoundingBoxFromCenterAndRadiusAttributes,
   computeBoundingBoxFromEllipseValues,
-  computeBoundingBoxFromInstanceMatrixAttributes
+  computeBoundingBoxFromInstanceMatrixAttributes,
+  computeBoundingBoxFromVertexAttributes
 } from '../utilities/computeBoundingBoxFromAttributes';
 import { filterPrimitivesOutsideClipBox } from './filterPrimitivesCommon';
 import * as THREE from 'three';
@@ -18,10 +19,15 @@ export class V9GeometryFilterer {
     [4, Float32Array]
   ]);
 
-  private static getQuadBoundingBox(): THREE.Box3 {
-    const epsilon = 1e-4;
-    return new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -epsilon), new THREE.Vector3(0.5, 0.5, epsilon));
-  }
+  private static readonly quadBoundingBox = new THREE.Box3(
+    new THREE.Vector3(-0.5, -0.5, -1e-4),
+    new THREE.Vector3(0.5, 0.5, -1e-4)
+  );
+
+  private static readonly unitBoundingBox = new THREE.Box3(
+    new THREE.Vector3(-0.5, -0.5, -0.5),
+    new THREE.Vector3(0.5, 0.5, 0.5)
+  );
 
   private static getAttributes<T extends THREE.BufferAttribute | THREE.InterleavedBufferAttribute>(
     geometry: THREE.BufferGeometry,
@@ -58,6 +64,7 @@ export class V9GeometryFilterer {
         newArray = V9GeometryFilterer.filterConeCollection(interleavedAttributes, clipBox);
         break;
       case RevealGeometryCollectionType.EccentricConeCollection:
+        newArray = V9GeometryFilterer.filterEccentricConeCollection(interleavedAttributes, clipBox);
         break;
       case RevealGeometryCollectionType.EllipsoidSegmentCollection:
         newArray = V9GeometryFilterer.filterEllipsoidCollection(interleavedAttributes, clipBox);
@@ -72,18 +79,16 @@ export class V9GeometryFilterer {
         newArray = V9GeometryFilterer.filterQuadCollection(interleavedAttributes, clipBox);
         break;
       case RevealGeometryCollectionType.TorusSegmentCollection:
+        newArray = V9GeometryFilterer.filterTorusCollection(interleavedAttributes, clipBox);
         break;
       case RevealGeometryCollectionType.TrapeziumCollection:
+        newArray = V9GeometryFilterer.filterTrapeziumCollection(interleavedAttributes, clipBox);
         break;
       case RevealGeometryCollectionType.NutCollection:
+        newArray = V9GeometryFilterer.filterNutCollection(interleavedAttributes, clipBox);
         break;
       default:
         assertNever(type);
-    }
-
-    // TODO: Remove after implementing for all geometry types
-    if (!newArray) {
-      return geometryBuffer;
     }
 
     return V9GeometryFilterer.createNewBufferGeometry(newArray, geometryBuffer, interleavedAttributes);
@@ -212,16 +217,22 @@ export class V9GeometryFilterer {
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
     clipBox: THREE.Box3
   ): Uint8Array {
-    const baseBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
-    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, baseBox, clipBox);
+    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(
+      interleavedAttributeMap,
+      V9GeometryFilterer.unitBoundingBox,
+      clipBox
+    );
   }
 
   private static filterCircleCollection(
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
     clipBox: THREE.Box3
   ): Uint8Array {
-    const baseBox = V9GeometryFilterer.getQuadBoundingBox();
-    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, baseBox, clipBox);
+    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(
+      interleavedAttributeMap,
+      V9GeometryFilterer.quadBoundingBox,
+      clipBox
+    );
   }
 
   private static filterConeCollection(
@@ -231,11 +242,11 @@ export class V9GeometryFilterer {
     return V9GeometryFilterer.filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radiusA', '_radiusB');
   }
 
-  private static filterGeneralCylinderCollection(
+  private static filterEccentricConeCollection(
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
     clipBox: THREE.Box3
   ): Uint8Array {
-    return V9GeometryFilterer.filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radius', '_radius');
+    return V9GeometryFilterer.filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radiusA', '_radiusB');
   }
 
   static filterEllipsoidCollectionVars = {
@@ -267,19 +278,118 @@ export class V9GeometryFilterer {
     return V9GeometryFilterer.filterWithCallback(interleavedAttributeMap, computeCallback, clipBox);
   }
 
+  private static filterGeneralCylinderCollection(
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
+    clipBox: THREE.Box3
+  ): Uint8Array {
+    return V9GeometryFilterer.filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radius', '_radius');
+  }
+
   private static filterGeneralRingCollection(
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
     clipBox: THREE.Box3
   ): Uint8Array {
-    const baseBox = V9GeometryFilterer.getQuadBoundingBox();
-    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, baseBox, clipBox);
+    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(
+      interleavedAttributeMap,
+      V9GeometryFilterer.quadBoundingBox,
+      clipBox
+    );
   }
 
   private static filterQuadCollection(
     interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
     clipBox: THREE.Box3
   ): Uint8Array {
-    const baseBox = V9GeometryFilterer.getQuadBoundingBox();
-    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, baseBox, clipBox);
+    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(
+      interleavedAttributeMap,
+      V9GeometryFilterer.quadBoundingBox,
+      clipBox
+    );
+  }
+
+  static filterTorusCollectionVars = {
+    boundingBox: new THREE.Box3()
+  };
+
+  private static filterTorusCollection(
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
+    clipBox: THREE.Box3
+  ): Uint8Array {
+    const { boundingBox } = this.filterTorusCollectionVars;
+
+    const computeCallback = (
+      index: number,
+      elementSize: number,
+      attributeFloatValues: Float32Array,
+      out: THREE.Box3
+    ): THREE.Box3 => {
+      const radius = interleavedAttributeMap.get('_radius')!.getX(index);
+      const tubeRadius = interleavedAttributeMap.get('_tubeRadius')!.getX(index);
+
+      boundingBox.min.set(-radius - tubeRadius, -radius - tubeRadius, -tubeRadius);
+      boundingBox.max.set(radius + tubeRadius, radius + tubeRadius, tubeRadius);
+
+      const matrixAttribute = interleavedAttributeMap.get('_instanceMatrix')!;
+      const matrixByteOffset = matrixAttribute.offset * (matrixAttribute.array as TypedArray).BYTES_PER_ELEMENT;
+
+      return computeBoundingBoxFromInstanceMatrixAttributes(
+        attributeFloatValues,
+        matrixByteOffset,
+        elementSize,
+        index,
+        boundingBox,
+        out
+      );
+    };
+
+    return V9GeometryFilterer.filterWithCallback(interleavedAttributeMap, computeCallback, clipBox);
+  }
+
+  private static filterTrapeziumCollection(
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
+    clipBox: THREE.Box3
+  ): Uint8Array {
+    const computeCallback = (
+      index: number,
+      elementSize: number,
+      attributeFloatValues: Float32Array,
+      out: THREE.Box3
+    ): THREE.Box3 => {
+      const vertex1Attribute = interleavedAttributeMap.get('_vertex1')!;
+      const vertex2Attribute = interleavedAttributeMap.get('_vertex2')!;
+      const vertex3Attribute = interleavedAttributeMap.get('_vertex3')!;
+      const vertex4Attribute = interleavedAttributeMap.get('_vertex4')!;
+
+      const elementByteSize = (vertex1Attribute.array as TypedArray).BYTES_PER_ELEMENT;
+
+      const vertex1AttributeByteOffset = vertex1Attribute.offset * elementByteSize;
+      const vertex2AttributeByteOffset = vertex2Attribute.offset * elementByteSize;
+      const vertex3AttributeByteOffset = vertex3Attribute.offset * elementByteSize;
+      const vertex4AttributeByteOffset = vertex4Attribute.offset * elementByteSize;
+
+      return computeBoundingBoxFromVertexAttributes(
+        vertex1AttributeByteOffset,
+        vertex2AttributeByteOffset,
+        vertex3AttributeByteOffset,
+        vertex4AttributeByteOffset,
+        attributeFloatValues,
+        elementSize,
+        index,
+        out
+      );
+    };
+
+    return V9GeometryFilterer.filterWithCallback(interleavedAttributeMap, computeCallback, clipBox);
+  }
+
+  private static filterNutCollection(
+    interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
+    clipBox: THREE.Box3
+  ): Uint8Array {
+    return V9GeometryFilterer.filterOnInstanceMatrixAndBoundingBox(
+      interleavedAttributeMap,
+      V9GeometryFilterer.unitBoundingBox,
+      clipBox
+    );
   }
 }

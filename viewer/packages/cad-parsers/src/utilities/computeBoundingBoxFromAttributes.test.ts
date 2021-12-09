@@ -137,10 +137,10 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromVertexAttributes(
-      vertex1Attribute,
-      vertex2Attribute,
-      vertex3Attribute,
-      vertex4Attribute,
+      vertex1Attribute.offset,
+      vertex2Attribute.offset,
+      vertex3Attribute.offset,
+      vertex4Attribute.offset,
       valuesAsFloats,
       elementSize,
       0,
@@ -165,10 +165,10 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromVertexAttributes(
-      vertex1Attribute,
-      vertex2Attribute,
-      vertex3Attribute,
-      vertex4Attribute,
+      vertex1Attribute.offset,
+      vertex2Attribute.offset,
+      vertex3Attribute.offset,
+      vertex4Attribute.offset,
       valuesAsFloats,
       elementSize,
       1,

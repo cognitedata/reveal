@@ -11,10 +11,14 @@ import {
   Box,
   Circle,
   Cone,
-  GeneralCylinder,
+  EccentricCone,
   Ellipsoid,
+  GeneralCylinder,
   GeneralRing,
   Quad,
+  Torus,
+  Trapezium,
+  Nut,
   getCollectionType
 } from '../../../../test-utilities/src/primitives/primitiveTypes';
 
@@ -140,6 +144,46 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
     testSecondFilteredAwayFromBoxAtX10Yneg10Z0(cones, PrimitiveType.Cone);
   });
 
+  test('Two eccentric cones: one accepted, one rejected - returns filtered', () => {
+    const eccentricCones: EccentricCone[] = [
+      {
+        centerA: [10, -10, -0.5],
+        centerB: [10, -10, 0.5],
+        normal: [0, 0, 1],
+        radiusA: 0.5,
+        radiusB: 0.3
+      },
+      {
+        centerA: [-10, 5, -2],
+        centerB: [-10, 5, 2],
+        normal: [0, 0, 1],
+        radiusA: 0.5,
+        radiusB: 0.3
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(eccentricCones, PrimitiveType.EccentricCone);
+  });
+
+  test('Two ellipsoid segments: one accepted, one rejected - returns filtered', () => {
+    const ellipsoids: Ellipsoid[] = [
+      {
+        horizontalRadius: 1,
+        verticalRadius: 1,
+        height: 1,
+        center: [10, -10, 0]
+      },
+      {
+        horizontalRadius: 1,
+        verticalRadius: 1,
+        height: 1,
+        center: [10, 10, 10]
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveType.Ellipsoid);
+  });
+
   test('Two general cylinders: one accepted, one rejected - returns filtered', () => {
     const generalCylinders: GeneralCylinder[] = [
       {
@@ -165,25 +209,6 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
     ];
 
     testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalCylinders, PrimitiveType.GeneralCylinder);
-  });
-
-  test('Two ellipsoid segments: one accepted, one rejected - returns filtered', () => {
-    const ellipsoids: Ellipsoid[] = [
-      {
-        horizontalRadius: 1,
-        verticalRadius: 1,
-        height: 1,
-        center: [10, -10, 0]
-      },
-      {
-        horizontalRadius: 1,
-        verticalRadius: 1,
-        height: 1,
-        center: [10, 10, 10]
-      }
-    ];
-
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveType.Ellipsoid);
   });
 
   test('Two general rings: one accepted, one rejected - returns filtered', () => {
@@ -236,5 +261,72 @@ describe('V9GeometryFilterer filters primitives correctly', () => {
     ];
 
     testSecondFilteredAwayFromBoxAtX10Yneg10Z0(quads, PrimitiveType.Quad);
+  });
+
+  test('Two tori: one accepted, one rejected - returns filtered', () => {
+    const mat0 = new THREE.Matrix4()
+      .makeTranslation(10, -10, 0)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const mat1 = new THREE.Matrix4()
+      .makeTranslation(-10, 5, 10)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const tori: Torus[] = [
+      {
+        arcAngle: Math.PI,
+        instanceMatrix: mat0.toArray(),
+        radius: 0.5,
+        tubeRadius: 0.1
+      },
+      {
+        arcAngle: Math.PI,
+        instanceMatrix: mat1.toArray(),
+        radius: 0.5,
+        tubeRadius: 0.1
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(tori, PrimitiveType.Torus);
+  });
+
+  test('Two trapeziums: one accepted, one rejected - returns filtered', () => {
+    const trapeziums: Trapezium[] = [
+      {
+        vertex1: [9.5, -10, -0.5],
+        vertex2: [9.5, -10, 0.5],
+        vertex3: [10.5, -10, -0.5],
+        vertex4: [10.5, -10, 0.5]
+      },
+      {
+        vertex1: [-10.5, 5, 9.5],
+        vertex2: [-10.5, 5, 10.5],
+        vertex3: [-9.5, 5, 9.5],
+        vertex4: [-9.5, 5, 10.5]
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(trapeziums, PrimitiveType.Trapezium);
+  });
+
+  test('Two nuts: one accepted, one rejected - returns filtered', () => {
+    const mat0 = new THREE.Matrix4()
+      .makeTranslation(10, -10, 0)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const mat1 = new THREE.Matrix4()
+      .makeTranslation(-10, 5, 10)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const nuts: Nut[] = [
+      {
+        instanceMatrix: mat0.toArray()
+      },
+      {
+        instanceMatrix: mat1.toArray()
+      }
+    ];
+
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(nuts, PrimitiveType.Nut);
   });
 });

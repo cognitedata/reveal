@@ -121,6 +121,7 @@ export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
 
   return {
     torusLodGeometries,
+    // TODO, hflatval: I believe this is wrong, torusLodGeometries are just planes near the origin
     torusGeometryBoundingBox: new THREE.Box3().setFromArray(
       torusLodGeometries[torusLodGeometries.length - 1].position.array
     )

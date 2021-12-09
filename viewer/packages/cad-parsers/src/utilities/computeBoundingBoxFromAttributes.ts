@@ -60,10 +60,10 @@ const computeBoundingBoxFromVertexAttributesVars = {
 };
 
 export function computeBoundingBoxFromVertexAttributes(
-  vertex1Attribute: ParsePrimitiveAttribute,
-  vertex2Attribute: ParsePrimitiveAttribute,
-  vertex3Attribute: ParsePrimitiveAttribute,
-  vertex4Attribute: ParsePrimitiveAttribute,
+  vertex1AttributeByteOffset: number,
+  vertex2AttributeByteOffset: number,
+  vertex3AttributeByteOffset: number,
+  vertex4AttributeByteOffset: number,
   attributeFloatValues: Float32Array,
   elementSize: number,
   elementIndex: number,
@@ -71,30 +71,30 @@ export function computeBoundingBoxFromVertexAttributes(
 ): THREE.Box3 {
   const { vertex1, vertex2, vertex3, vertex4 } = computeBoundingBoxFromVertexAttributesVars;
 
-  function readAttribute(attribute: ParsePrimitiveAttribute, idx: number = 0): number {
-    const offset = (elementIndex * elementSize + attribute.offset) / attributeFloatValues.BYTES_PER_ELEMENT;
+  function readAttribute(attributeByteOffset: number, idx: number = 0): number {
+    const offset = (elementIndex * elementSize + attributeByteOffset) / attributeFloatValues.BYTES_PER_ELEMENT;
     return attributeFloatValues[offset + idx];
   }
 
   vertex1.set(
-    readAttribute(vertex1Attribute, 0),
-    readAttribute(vertex1Attribute, 1),
-    readAttribute(vertex1Attribute, 2)
+    readAttribute(vertex1AttributeByteOffset, 0),
+    readAttribute(vertex1AttributeByteOffset, 1),
+    readAttribute(vertex1AttributeByteOffset, 2)
   );
   vertex2.set(
-    readAttribute(vertex2Attribute, 0),
-    readAttribute(vertex2Attribute, 1),
-    readAttribute(vertex2Attribute, 2)
+    readAttribute(vertex2AttributeByteOffset, 0),
+    readAttribute(vertex2AttributeByteOffset, 1),
+    readAttribute(vertex2AttributeByteOffset, 2)
   );
   vertex3.set(
-    readAttribute(vertex3Attribute, 0),
-    readAttribute(vertex3Attribute, 1),
-    readAttribute(vertex3Attribute, 2)
+    readAttribute(vertex3AttributeByteOffset, 0),
+    readAttribute(vertex3AttributeByteOffset, 1),
+    readAttribute(vertex3AttributeByteOffset, 2)
   );
   vertex4.set(
-    readAttribute(vertex4Attribute, 0),
-    readAttribute(vertex4Attribute, 1),
-    readAttribute(vertex4Attribute, 2)
+    readAttribute(vertex4AttributeByteOffset, 0),
+    readAttribute(vertex4AttributeByteOffset, 1),
+    readAttribute(vertex4AttributeByteOffset, 2)
   );
 
   out.setFromPoints([vertex1, vertex2, vertex3, vertex4]);

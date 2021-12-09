@@ -73,7 +73,11 @@ export const commonAttributeTypeMap: Map<string, AttributeFormat> = new Map([
   ['_verticalRadius', floatDesc],
   ['_planeA', vec4Desc],
   ['_planeB', vec4Desc],
-  ['_height', floatDesc]
+  ['_height', floatDesc],
+  ['_vertex1', vec3Desc],
+  ['_vertex2', vec3Desc],
+  ['_vertex3', vec3Desc],
+  ['_vertex4', vec3Desc]
 ]);
 
 export type AttributeDesc = {
@@ -88,6 +92,11 @@ const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
   [
     PrimitiveType.Cone,
     ['_treeIndex', '_color', '_angle', '_arcAngle', '_centerA', '_centerB', '_localXAxis', '_radiusA', '_radiusB']
+  ],
+  [PrimitiveType.EccentricCone, ['_treeIndex', '_color', '_centerA', '_centerB', '_normal', '_radiusA', '_radiusB']],
+  [
+    PrimitiveType.Ellipsoid,
+    ['_treeIndex', '_color', '_center', '_normal', '_horizontalRadius', '_verticalRadius', '_height']
   ],
   [
     PrimitiveType.GeneralCylinder,
@@ -105,14 +114,13 @@ const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
     ]
   ],
   [
-    PrimitiveType.Ellipsoid,
-    ['_treeIndex', '_color', '_center', '_normal', '_horizontalRadius', '_verticalRadius', '_height']
-  ],
-  [
     PrimitiveType.GeneralRing,
     ['_treeIndex', '_color', '_angle', '_arcAngle', '_instanceMatrix', '_normal', '_thickness']
   ],
-  [PrimitiveType.Quad, ['_treeIndex', '_color', '_instanceMatrix']]
+  [PrimitiveType.Quad, ['_treeIndex', '_color', '_instanceMatrix']],
+  [PrimitiveType.Torus, ['_treeIndex', '_color', '_arcAngle', '_instanceMatrix', '_radius', '_tubeRadius']],
+  [PrimitiveType.Trapezium, ['_treeIndex', '_color', '_vertex1', '_vertex2', '_vertex3', '_vertex4']],
+  [PrimitiveType.Nut, ['_instanceMatrix']]
 ]);
 
 export function getAttributeList(primitiveType: PrimitiveType): string[] {
