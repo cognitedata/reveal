@@ -7,11 +7,13 @@ import { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
 
 import { useActiveTableContext } from 'contexts';
+import { useFilteredColumns } from 'hooks/table-filters';
 import {
   ColumnProfile,
   useQuickProfile,
   useFullProfile,
   FULL_PROFILE_LIMIT,
+  useColumnType,
 } from 'hooks/profiling-service';
 
 import ProfileRow, { TableData } from './ProfileRow';
@@ -19,6 +21,8 @@ import ProfileCoverageLabel, {
   ProfileResultType,
 } from './ProfileCoverageLabel';
 import ProfileStatusMessage from './ProfileStatusMessage';
+
+import { FilterBar } from 'containers/Spreadsheet/FilterBar';
 
 const Card = styled.div`
   padding: 16px;
@@ -82,6 +86,7 @@ const StyledCount = styled.div<{ $isRunning?: boolean }>`
 type SortableColumn = keyof ColumnProfile;
 export const Profiling = (): JSX.Element => {
   const { database, table } = useActiveTableContext();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
 
   const fullProfile = useFullProfile({
     database,
@@ -117,13 +122,15 @@ export const Profiling = (): JSX.Element => {
     }
   };
 
+  const filteredColumns = useFilteredColumns(data.columns);
+
   const columnList = useMemo(() => {
-    const columns = sortBy(data.columns, sortKey);
+    const columns = sortBy(filteredColumns, sortKey);
     if (sortReversed) {
       return columns.reverse();
     }
     return columns;
-  }, [data.columns, sortKey, sortReversed]);
+  }, [filteredColumns, sortKey, sortReversed]);
 
   if (isLoading) {
     return <Loader />;
@@ -170,6 +177,9 @@ export const Profiling = (): JSX.Element => {
             />
           </Flex>
         </Card>
+      </Flex>
+      <Flex style={{ width: '100%', paddingBottom: '8px' }}>
+        <FilterBar areTypesFetched={areTypesFetched} />
       </Flex>
       <Flex style={{ width: '100%', height: '100%' }}>
         <AutoResizer>
