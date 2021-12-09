@@ -85,8 +85,7 @@ const getUpdater =
     if (id) {
       await sdk.groups.delete([id]);
     }
-    // eslint-disable-next-line
-    // todo: service acconts
+
     await sleep(500);
     return newGroup;
   };
