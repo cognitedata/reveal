@@ -9,18 +9,18 @@ import styled from 'styled-components';
 import { useActiveTableContext } from 'contexts';
 import { useFilteredColumns } from 'hooks/table-filters';
 import {
-  ColumnProfile,
   useQuickProfile,
   useFullProfile,
-  FULL_PROFILE_LIMIT,
   useColumnType,
+  useProfileResultType,
+  ColumnProfile,
 } from 'hooks/profiling-service';
 
 import ProfileRow, { TableData } from './ProfileRow';
-import ProfileCoverageLabel, {
-  ProfileResultType,
-} from './ProfileCoverageLabel';
-import ProfileStatusMessage from './ProfileStatusMessage';
+import {
+  ProfileStatusMessage,
+  ProfileCoverageLabel,
+} from 'components/ProfileStatus';
 
 import { FilterBar } from 'containers/Spreadsheet/FilterBar';
 
@@ -105,12 +105,7 @@ export const Profiling = (): JSX.Element => {
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  let profileResultType: ProfileResultType = 'running';
-  if (fullProfile.data?.rowCount === FULL_PROFILE_LIMIT) {
-    profileResultType = 'partial';
-  } else if (fullProfile.isFetched) {
-    profileResultType = 'complete';
-  }
+  const profileResultType = useProfileResultType(database, table);
 
   const [sortKey, _setSortKey] = useState<SortableColumn>('label');
   const [sortReversed, _setSortReversed] = useState(false);

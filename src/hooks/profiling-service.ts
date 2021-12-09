@@ -386,3 +386,22 @@ export const useColumnTypeCounts = (
   };
   return { getColumnTypeCounts, isFetched };
 };
+
+export type ProfileResultType = 'running' | 'partial' | 'complete';
+export type ProfileCoverageType = 'rows' | 'columns';
+
+export const useProfileResultType = (database: string, table: string) => {
+  const fullProfile = useFullProfile({
+    database,
+    table,
+  });
+
+  let profileResultType: ProfileResultType = 'running';
+  if (fullProfile.data?.rowCount === FULL_PROFILE_LIMIT) {
+    profileResultType = 'partial';
+  } else if (fullProfile.isFetched) {
+    profileResultType = 'complete';
+  }
+
+  return profileResultType;
+};
