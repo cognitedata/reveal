@@ -46,7 +46,7 @@ const Message = ({
     case 'loading':
       backgroundColor = 'rgba(110, 133, 252, 0.06)';
       icon = 'Loader';
-      iconColor = '#2B3A88';
+      iconColor = Colors['link-primary-hover'].hex();
       break;
     case 'info':
     default:
