@@ -197,7 +197,6 @@ const Table = styled.table`
   position: relative;
   margin: 0;
   width: 100%;
-  border-radius: 0 0 8px 8px;
   border-collapse: separate;
   border-spacing: 0;
 `;
