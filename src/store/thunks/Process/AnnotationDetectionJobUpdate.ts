@@ -44,6 +44,7 @@ export const AnnotationDetectionJobUpdate = createAsyncThunk<
 
       const newFailedFileIds: number[] =
         job.failedItems
+          // Use first item in batch to check if the batch has failed
           ?.map((failedJob) => failedJob.items[0].fileId)
           .filter((fileId) => !failedFileIds.includes(fileId)) || [];
 
