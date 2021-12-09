@@ -20,7 +20,7 @@ export const ConfigInputField: React.FC<{
     (event: ChangeEvent<HTMLInputElement>) => {
       onChange(changeKey, event.target.value);
     },
-    [changeKey]
+    [changeKey, onChange]
   );
 
   const handleNumberChange = useCallback(
@@ -30,7 +30,7 @@ export const ConfigInputField: React.FC<{
         event.target.value ? Number(event.target.value) : undefined
       );
     },
-    [changeKey]
+    [changeKey, onChange]
   );
 
   const [jsonValue, setJSONValue] = useState<string | undefined>(
@@ -61,14 +61,14 @@ export const ConfigInputField: React.FC<{
         showErrorMessage('Please enter valid JSON.');
       }
     },
-    [changeKey, value]
+    [value, onChange, changeKey]
   );
 
   const handleSwitchChange = useCallback(
     (switchValue: boolean) => {
       onChange(changeKey, switchValue);
     },
-    [changeKey]
+    [changeKey, onChange]
   );
 
   switch (field.type) {
