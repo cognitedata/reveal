@@ -138,7 +138,7 @@ export const ContactsDialogView = ({
     setContacts(contacts.filter((m, i) => i !== index));
   };
   const numOwners = contacts.reduce(
-    (acc, c) => (c.role === 'Owner' ? acc + 1 : acc),
+    (acc, c) => (isOwnerRole(c.role || '') ? acc + 1 : acc),
     0
   );
   const addRow = () => {
