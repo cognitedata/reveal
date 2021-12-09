@@ -3,11 +3,9 @@ import { Button as CogsButton } from '@cognite/cogs.js';
 import { Drawer, Form, Input, notification } from 'antd';
 import styled from 'styled-components';
 import { Group, GroupSpec } from '@cognite/sdk';
-import { useSDK } from '@cognite/sdk-provider';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { sleep } from 'utils/utils';
-
+import { useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router';
+import { useUpdateGroup } from 'hooks';
 import CapabilitiesSelector from './CapabilitiesSelector';
 
 const Button = styled(CogsButton)`
@@ -21,99 +19,52 @@ type Props = {
   onCreate?: (_: GroupSpec) => Promise<void>;
 };
 export default function GroupDrawer({ group, onClose }: Props) {
-  const sdk = useSDK();
   const client = useQueryClient();
   const [caps, setCaps] = useState(group?.capabilities || []);
   const tenant = useRouteMatch<{ tenant: string }>('/:tenant')?.params.tenant;
-  const { data: project } = useQuery(
-    ['project', tenant],
-    () => sdk.projects.retrieve(tenant!),
-    {
-      enabled: !!tenant,
-    }
-  );
 
-  const { mutateAsync: updateGroup, isLoading } = useMutation(
-    async (g: Group) => {
-      // @ts-ignore
-      const { name, sourceId, source, capabilities, id } = g;
-      const defaultGroup = project?.defaultGroupId === id;
-      let groupAccountIds: number[];
-      try {
-        groupAccountIds = (
-          id ? await sdk.groups.listServiceAccounts(id) : []
-        ).map(account => account.id);
-      } catch {
-        groupAccountIds = [];
-      }
-
-      const [newGroup] = await sdk.groups.create([
-        // @ts-ignore
-        { name, sourceId, source, capabilities },
-      ]);
-
-      if (groupAccountIds.length > 0) {
-        await sdk.groups.addServiceAccounts(newGroup.id, groupAccountIds);
-      }
-
-      if (defaultGroup && project) {
-        await sdk.projects.updateProject(project.name, {
-          update: {
-            defaultGroupId: { set: newGroup.id },
-          },
-        });
-      }
-
-      if (id) {
-        await sdk.groups.delete([id]);
-      }
-      // eslint-disable-next-line
-      // todo: service acconts
-      await sleep(500);
-      return newGroup;
+  const { mutateAsync: updateGroup, isLoading } = useUpdateGroup(tenant!, {
+    onMutate() {
+      notification.info({
+        key: 'group-update',
+        message: `${group ? 'Updating' : 'Creating'} group`,
+      });
     },
-    {
-      onMutate() {
-        notification.info({
-          key: 'group-update',
-          message: `${group ? 'Updating' : 'Creating'} group`,
-        });
-      },
-      onSuccess() {
-        client.invalidateQueries(['groups']);
-        notification.success({
-          key: 'group-update',
-          message: `Group ${group ? 'updated' : 'created'}`,
-        });
-        onClose();
-      },
-      onError(error) {
-        notification.error({
-          key: 'group-update',
-          message: `Group not ${group ? 'updated' : 'created'}`,
-          description: (
-            <>
-              <p>
-                An error occured when ${group ? 'updating' : 'creating'} the
-                group
-              </p>
-              <pre>{JSON.stringify(error, null, 2)}</pre>
-            </>
-          ),
-        });
-      },
-    }
-  );
+    onSuccess() {
+      client.invalidateQueries(['groups']);
+      notification.success({
+        key: 'group-update',
+        message: `Group ${group ? 'updated' : 'created'}`,
+      });
+      onClose();
+    },
+    onError(error) {
+      notification.error({
+        key: 'group-update',
+        message: `Group not ${group ? 'updated' : 'created'}`,
+        description: (
+          <>
+            <p>
+              An error occured when ${group ? 'updating' : 'creating'} the group
+            </p>
+            <pre>{JSON.stringify(error, null, 2)}</pre>
+          </>
+        ),
+      });
+    },
+  });
 
   return (
     <Drawer visible onClose={onClose} width={720} title="Create new group">
       <Form
         layout="vertical"
         onFinish={(g: Group) => {
-          updateGroup({
-            ...g,
-            capabilities: caps,
-          });
+          if (tenant) {
+            updateGroup({
+              ...g,
+              capabilities: caps,
+            });
+          }
         }}
         initialValues={{
           id: group?.id,
