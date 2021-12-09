@@ -17,6 +17,13 @@ const StyledDragger = styled(AntdDragger)`
     border-radius: 7px;
     box-sizing: border-box;
     width: 100%;
+    transition: 0.3s;
+
+    &:hover {
+      border: 2px dashed ${Colors['midblue'].hex()};
+      background-color: ${Colors['bg-control--toggled-hover'].hex()};
+    }
+
     .ant-upload-btn {
       padding: 36px;
       box-sizing: border-box;
