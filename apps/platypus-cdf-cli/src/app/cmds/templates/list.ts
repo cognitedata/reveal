@@ -22,7 +22,7 @@ export async function handler(args: Arguments<BaseArgs>) {
   const templates = await client.templates.groups.list();
 
   if (args.full) {
-    args.logger.log(JSON.stringify(templates.items));
+    return args.logger.log(JSON.stringify(templates.items, null, 2));
   }
 
   args.logger.log(

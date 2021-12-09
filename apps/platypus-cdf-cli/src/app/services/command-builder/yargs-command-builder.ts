@@ -29,9 +29,13 @@ export class YargsCommandBuilder {
 
     switch (arg.type) {
       case CommandArgumentType.MULTI_SELECT:
-      case CommandArgumentType.SELECT:
         yargsInstance
           .array(arg.name)
+          .choices(arg.name, (arg.options as ArrayPromptOptions).choices);
+        break;
+      case CommandArgumentType.SELECT:
+        yargsInstance
+          .string(arg.name)
           .choices(arg.name, (arg.options as ArrayPromptOptions).choices);
         break;
       case CommandArgumentType.BOOLEAN:

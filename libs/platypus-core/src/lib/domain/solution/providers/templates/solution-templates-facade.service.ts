@@ -76,7 +76,7 @@ export class SolutionTemplatesFacadeService
 
   publishSchema(dto: CreateSchemaDTO): Promise<SolutionSchema> {
     return this.templatesApiService
-      .createSchema(dto)
+      .publishSchema(dto)
       .then((res) =>
         this.templateSchemaDataMapper.deserialize(dto.solutionId, res)
       );

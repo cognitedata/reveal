@@ -2,6 +2,8 @@ import {
   CogniteClient,
   TemplateGroup,
   TemplateGroupVersion,
+  ExternalTemplateGroupVersion,
+  ConflictMode,
 } from '@cognite/sdk';
 import { PlatypusError } from '@platypus-core/boundaries/types';
 import { ExternalId } from '@cognite/sdk-core';
@@ -93,23 +95,36 @@ export class TemplatesApiService {
       .then((response) => response.items)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
-  createSchema(dto: CreateSchemaDTO): Promise<TemplateGroupVersion> {
-    return this.createOrUpdate(dto, 'Update');
+  publishSchema(dto: CreateSchemaDTO): Promise<TemplateGroupVersion> {
+    return this.createOrUpdate(dto, ConflictMode.Update);
   }
-  updateSchema(dto: CreateSchemaDTO): Promise<TemplateGroupVersion> {
-    return this.createOrUpdate(dto, 'Patch');
+
+  updateSchema(
+    dto: CreateSchemaDTO,
+    forceUpdate = false
+  ): Promise<TemplateGroupVersion> {
+    return this.createOrUpdate(
+      dto,
+      forceUpdate ? ConflictMode.Force : ConflictMode.Patch
+    );
   }
 
   private createOrUpdate(
     dto: CreateSchemaDTO,
     mode: string
   ): Promise<TemplateGroupVersion> {
+    const requestDto = {
+      schema: dto.schema,
+      conflictMode: mode as ConflictMode,
+    } as ExternalTemplateGroupVersion;
+
+    if (dto.version) {
+      requestDto.version = +dto.version;
+    }
+
     return this.cdfClient.templates
       .group(dto.solutionId)
-      .versions.upsert({
-        schema: dto.schema,
-        conflictMode: mode as any,
-      })
+      .versions.upsert(requestDto)
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 }

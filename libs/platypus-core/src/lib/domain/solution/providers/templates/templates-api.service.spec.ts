@@ -113,7 +113,7 @@ describe('TemplatesApiServiceTest', () => {
       version: '1',
     });
     expect(upsertVersionMock).toBeCalledWith({
-      conflictMode: 'Update',
+      conflictMode: 'Patch',
       schema: templateSchemaMock.schema,
     });
     expect(version).toEqual(templateSchemaMock);
@@ -127,7 +127,7 @@ describe('TemplatesApiServiceTest', () => {
       version: '1',
     });
     expect(upsertVersionMock).toBeCalledWith({
-      conflictMode: 'Patch',
+      conflictMode: 'Update',
       schema: templateSchemaMock.schema,
     });
     expect(version).toEqual(templateSchemaMock);
