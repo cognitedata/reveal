@@ -320,6 +320,7 @@ function useRawProfile(
     {
       ...options,
       retry: false,
+      refetchOnWindowFocus: true,
     }
   );
 }
