@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import './commonActions';
 import fileReducer from 'src/modules/Common/store/files/slice';
-import commonReducer from 'src/modules/Common/store/commonSlice';
+import commonReducer from 'src/modules/Common/store/common/slice';
 import annotationReducer from 'src/modules/Common/store/annotationSlice';
 import annotationLabelReducer from 'src/modules/Review/store/annotationLabelSlice';
 import fileDetailsSlice from 'src/modules/FileDetails/fileDetailsSlice';

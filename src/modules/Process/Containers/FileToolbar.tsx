@@ -4,7 +4,7 @@ import { SegmentedControl } from '@cognite/cogs.js';
 import {
   setBulkEditModalVisibility,
   setFileDownloadModalVisibility,
-} from 'src/modules/Common/store/commonSlice';
+} from 'src/modules/Common/store/common/slice';
 import { selectAllSelectedIds } from 'src/modules/Common/store/files/selectors';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import styled from 'styled-components';

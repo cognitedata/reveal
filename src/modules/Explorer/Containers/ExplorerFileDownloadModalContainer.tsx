@@ -2,7 +2,7 @@ import { FileDownloaderModal } from 'src/modules/Common/Components/FileDownloade
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
-import { setFileDownloadModalVisibility } from 'src/modules/Common/store/commonSlice';
+import { setFileDownloadModalVisibility } from 'src/modules/Common/store/common/slice';
 import { selectExplorerSelectedFileIdsInSortedOrder } from 'src/modules/Explorer/store/explorerSlice';
 
 export const ExplorerFileDownloadModalContainer = () => {

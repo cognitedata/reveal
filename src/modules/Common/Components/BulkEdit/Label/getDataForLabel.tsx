@@ -1,17 +1,17 @@
 import React from 'react';
 import { Tag } from 'antd';
 import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
-import { BulkEditTempState } from 'src/modules/Common/store/commonSlice';
+import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import styled from 'styled-components';
 
 export const getDataForLabel = (
   selectedFiles: VisionFile[],
-  bulkEditTemp: BulkEditTempState
+  bulkEditUnsaved: BulkEditUnsavedState
 ): BulkEditTableDataType[] => {
   return selectedFiles.map((file) => {
     const { name, labels } = file;
-    const newLabels = bulkEditTemp.labels;
+    const newLabels = bulkEditUnsaved.labels;
     return {
       name,
       original: labels ? (

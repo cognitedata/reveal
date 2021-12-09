@@ -2,10 +2,11 @@ import { BulkEditModal } from 'src/modules/Common/Components/BulkEdit/BulkEditMo
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  BulkEditTempState,
   setBulkEditModalVisibility,
-  setBulkEditTemp,
-} from 'src/modules/Common/store/commonSlice';
+  setBulkEditUnsaved,
+} from 'src/modules/Common/store/common/slice';
+
+import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { RootState } from 'src/store/rootReducer';
 import { updateBulk } from 'src/store/thunks/Files/updateBulk';
 import { selectProcessAllSelectedFilesInSortedOrder } from 'src/modules/Process/processSlice';
@@ -20,12 +21,12 @@ export const ProcessBulkEditModalContainer = () => {
   const showBulkEditModal = useSelector(
     ({ commonReducer }: RootState) => commonReducer.showBulkEditModal
   );
-  const bulkEditTemp = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.bulkEditTemp
+  const bulkEditUnsaved = useSelector(
+    ({ commonReducer }: RootState) => commonReducer.bulkEditUnsavedState
   );
 
-  const setBulkEdit = (value: BulkEditTempState) => {
-    dispatch(setBulkEditTemp(value));
+  const setBulkEdit = (value: BulkEditUnsavedState) => {
+    dispatch(setBulkEditUnsaved(value));
   };
 
   const onCloseBulkEdit = () => {
@@ -33,7 +34,7 @@ export const ProcessBulkEditModalContainer = () => {
     setBulkEdit({});
   };
   const onFinishBulkEdit = () => {
-    dispatch(updateBulk({ selectedFiles, bulkEditTemp }));
+    dispatch(updateBulk({ selectedFiles, bulkEditUnsaved }));
     onCloseBulkEdit();
   };
 
@@ -41,9 +42,9 @@ export const ProcessBulkEditModalContainer = () => {
     <BulkEditModal
       showModal={showBulkEditModal}
       selectedFiles={selectedFiles}
-      bulkEditTemp={bulkEditTemp}
+      bulkEditUnsaved={bulkEditUnsaved}
       onCancel={onCloseBulkEdit}
-      setBulkEditTemp={setBulkEdit}
+      setBulkEditUnsaved={setBulkEdit}
       onFinishBulkEdit={onFinishBulkEdit}
     />
   );

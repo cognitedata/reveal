@@ -1,4 +1,3 @@
-import { Label, Metadata } from '@cognite/cdf-sdk-singleton';
 import {
   createSlice,
   isFulfilled,
@@ -13,27 +12,12 @@ import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotat
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { UpdateFiles } from 'src/store/thunks/Files/UpdateFiles';
 import { ToastUtils } from 'src/utils/ToastUtils';
+import { BulkEditUnsavedState, CommonState } from './types';
 
-export type BulkEditTempState = {
-  metadata?: Metadata;
-  keepOriginalMetadata?: Boolean;
-  labels?: Label[];
-};
-
-export type State = {
-  showFileDownloadModal: boolean;
-  showBulkEditModal: boolean;
-  bulkEditTemp: BulkEditTempState;
-  saveState: {
-    mode: CDFStatusModes;
-    time?: number;
-  };
-};
-
-const initialState: State = {
+export const initialState: CommonState = {
   showFileDownloadModal: false,
   showBulkEditModal: false,
-  bulkEditTemp: {},
+  bulkEditUnsavedState: {},
   saveState: {
     mode: 'saved' as CDFStatusModes,
     time: new Date().getTime(),
@@ -51,8 +35,8 @@ const commonSlice = createSlice({
     setBulkEditModalVisibility(state, action: PayloadAction<boolean>) {
       state.showBulkEditModal = action.payload;
     },
-    setBulkEditTemp(state, action: PayloadAction<BulkEditTempState>) {
-      state.bulkEditTemp = action.payload;
+    setBulkEditUnsaved(state, action: PayloadAction<BulkEditUnsavedState>) {
+      state.bulkEditUnsavedState = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -94,17 +78,7 @@ const commonSlice = createSlice({
 export const {
   setFileDownloadModalVisibility,
   setBulkEditModalVisibility,
-  setBulkEditTemp,
+  setBulkEditUnsaved,
 } = commonSlice.actions;
 
 export default commonSlice.reducer;
-
-export const selectCDFState = (
-  state: State
-): {
-  mode: CDFStatusModes;
-  time?: number | undefined;
-} => {
-  const cdfSaveStatus = state.saveState;
-  return cdfSaveStatus;
-};

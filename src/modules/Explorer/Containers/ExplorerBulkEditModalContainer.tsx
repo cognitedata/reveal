@@ -5,10 +5,11 @@ import { RootState } from 'src/store/rootReducer';
 import { selectExplorerAllSelectedFilesInSortedOrder } from 'src/modules/Explorer/store/explorerSlice';
 import { VisionFile } from 'src/modules/Common/store/files/types';
 import {
-  BulkEditTempState,
   setBulkEditModalVisibility,
-  setBulkEditTemp,
-} from 'src/modules/Common/store/commonSlice';
+  setBulkEditUnsaved,
+} from 'src/modules/Common/store/common/slice';
+
+import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { updateBulk } from 'src/store/thunks/Files/updateBulk';
 
 export const ExplorerBulkEditModalContainer = () => {
@@ -21,15 +22,15 @@ export const ExplorerBulkEditModalContainer = () => {
   const selectedFiles: VisionFile[] = useSelector((rootState: RootState) =>
     selectExplorerAllSelectedFilesInSortedOrder(rootState)
   );
-  const bulkEditTemp = useSelector(
-    ({ commonReducer }: RootState) => commonReducer.bulkEditTemp
+  const bulkEditUnsaved = useSelector(
+    ({ commonReducer }: RootState) => commonReducer.bulkEditUnsavedState
   );
 
-  const setBulkEdit = (value: BulkEditTempState) => {
-    dispatch(setBulkEditTemp(value));
+  const setBulkEdit = (value: BulkEditUnsavedState) => {
+    dispatch(setBulkEditUnsaved(value));
   };
   const onFinishBulkEdit = () => {
-    dispatch(updateBulk({ selectedFiles, bulkEditTemp }));
+    dispatch(updateBulk({ selectedFiles, bulkEditUnsaved }));
     onCloseBulkEdit();
   };
   const onCloseBulkEdit = () => {
@@ -41,9 +42,9 @@ export const ExplorerBulkEditModalContainer = () => {
     <BulkEditModal
       showModal={showBulkEditModal}
       selectedFiles={selectedFiles}
-      bulkEditTemp={bulkEditTemp}
+      bulkEditUnsaved={bulkEditUnsaved}
       onCancel={onCloseBulkEdit}
-      setBulkEditTemp={setBulkEdit}
+      setBulkEditUnsaved={setBulkEdit}
       onFinishBulkEdit={onFinishBulkEdit}
     />
   );
