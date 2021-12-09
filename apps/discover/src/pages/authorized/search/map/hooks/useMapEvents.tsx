@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { render } from 'react-dom';
 import { useDispatch } from 'react-redux';
 
+import simplify from '@turf/simplify';
 import { TS_FIX_ME } from 'core';
 import {
   MapboxGeoJSONFeature,
@@ -30,6 +31,7 @@ import { useWellIds } from 'modules/wellSearch/selectors';
 
 import { useProjectConfigByKey } from '../../../../../hooks/useProjectConfig';
 import { useSavedSearch } from '../../../../../modules/api/savedSearches/hooks';
+import { useMapDrawMode } from '../../../../../modules/map/selectors';
 import {
   DOCUMENT_MARKER,
   GROUPED_CLUSTER_LAYER_ID,
@@ -144,16 +146,6 @@ const onMouseLeave = (e: MapMouseEvent) => {
   hoverPopup.remove();
 };
 
-const onMouseEnterFilterableMapLayer = (e: MapMouseEvent) => {
-  const canvas = e.target.getCanvas();
-  canvas.style.cursor = 'pointer';
-};
-
-const onMouseLeaveFilterableMapLayer = (e: MapMouseEvent) => {
-  const canvas = e.target.getCanvas();
-  canvas.style.cursor = '';
-};
-
 export const useMapEvents = () => {
   const metrics = useGlobalMetrics('wells');
   // const { layers: mapLayers, layersReady } = useLayers();
@@ -162,6 +154,19 @@ export const useMapEvents = () => {
   const { data: documentConfig } =
     useProjectConfigByKey<ProjectConfigDocuments>(Modules.DOCUMENTS);
   const patchSavedSearch = useSavedSearch();
+  const drawMode = useMapDrawMode();
+
+  const onMouseEnterFilterableMapLayer = (e: MapMouseEvent) => {
+    if (drawMode !== 'draw_polygon') {
+      const canvas = e.target.getCanvas();
+      canvas.style.cursor = 'pointer';
+    }
+  };
+
+  const onMouseLeaveFilterableMapLayer = (e: MapMouseEvent) => {
+    const canvas = e.target.getCanvas();
+    canvas.style.cursor = '';
+  };
 
   const clusterZoomOnClickEvent = (e: MapMouseEvent) => {
     const view: any = e.target.queryRenderedFeatures(e.point, {
@@ -253,8 +258,15 @@ export const useMapEvents = () => {
       event.point
     );
 
-    // Don't show the filter popup if we click on one of our custom layers
-    if (view.find((f) => f.properties?.customLayer)) {
+    /**
+     * Don't show the filter popup if we click on one of our custom layers
+     * or we are drawing a polygon
+     * */
+
+    if (
+      view.find((f) => f.properties?.customLayer) ||
+      drawMode === 'draw_polygon'
+    ) {
       return;
     }
 
@@ -269,6 +281,15 @@ export const useMapEvents = () => {
         <MapLayerSearchModal
           items={filteredFeatures.map((f) => f.geoFilter)}
           onItemSelect={(item) => {
+            const filter = { ...item };
+            if (filter.geoJson.type === 'Polygon') {
+              let tolerance = 0.002;
+
+              while (filter.geoJson.coordinates[0].length > 50) {
+                simplify(filter.geoJson, { mutate: true, tolerance });
+                tolerance += 0.001;
+              }
+            }
             patchSavedSearch({
               // TODO(PP-2162)(https://cognitedata.atlassian.net/browse/PP-2162)
 
@@ -283,7 +304,7 @@ export const useMapEvents = () => {
                   : [item],
               }, */
               filters: {
-                extraGeoJsonFilters: [item],
+                extraGeoJsonFilters: [filter],
               },
               geoJson: [],
             });
@@ -393,7 +414,7 @@ export const useMapEvents = () => {
         },
       },
     ],
-    []
+    [drawMode]
   );
 
   return events;

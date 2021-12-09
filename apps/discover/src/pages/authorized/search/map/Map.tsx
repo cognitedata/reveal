@@ -254,7 +254,7 @@ export const Map: React.FC = () => {
       ...touchedEvent,
       ...mapEvents,
     ],
-    []
+    [mapEvents]
   );
 
   const zoomToAsset = (point: Point, changeZoom?: number | false) => {

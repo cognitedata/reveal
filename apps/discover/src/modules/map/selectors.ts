@@ -6,6 +6,10 @@ export const useMap = () => {
   return useSelector((state) => state.map);
 };
 
+export const useMapDrawMode = () => {
+  return useSelector((state) => state.map.drawMode);
+};
+
 export const useGeoFilter = () => {
   const { geoFilter } = useMap();
   return geoFilter;
