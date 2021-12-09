@@ -1,5 +1,8 @@
+import { useEffect, useMemo } from 'react';
+
 import { useActiveTableContext } from 'contexts';
-import { useColumnTypeCounts } from 'hooks/profiling-service';
+import { useActiveTable } from 'hooks/table-tabs';
+import { useColumnTypeCounts, useColumnType } from 'hooks/profiling-service';
 
 import { FilterType } from 'components/FilterItem';
 
@@ -25,6 +28,7 @@ export const useFilters = () => {
     columnNameFilter,
     setColumnNameFilter,
   } = useActiveTableContext();
+  const [[activeTable] = []] = useActiveTable();
   const { getColumnTypeCounts } = useColumnTypeCounts(database, table);
 
   const columnTypeCounts = getColumnTypeCounts();
@@ -71,11 +75,47 @@ export const useFilters = () => {
       ]);
   };
 
+  const resetFilter = () => {
+    setColumnNameFilter('');
+    setColumnTypeFilters([DEFAULT_FILTER.type]);
+  };
+
+  useEffect(() => {
+    resetFilter();
+    // filter gets reset to default state ONLY when the active table changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTable]);
+
   return {
     filters,
     columnTypeFilters,
     setTypeFilter,
     columnNameFilter,
     setColumnNameFilter,
+    resetFilter,
   };
+};
+
+export const useFilteredColumns = (columns: any) => {
+  const { database, table, columnNameFilter, columnTypeFilters } =
+    useActiveTableContext();
+  const { isFetched: areTypesFetched } = useColumnType(database, table);
+
+  const filteredColumns = useMemo(
+    () =>
+      areTypesFetched
+        ? columns.filter((column: any) => {
+            const fitsTypeFilter = columnTypeFilters.includes(ALL_FILTER)
+              ? true
+              : columnTypeFilters.includes(column.type);
+            const fitsTitleFilter = column.label
+              .toLowerCase()
+              .includes(columnNameFilter.toLowerCase());
+            return fitsTitleFilter && fitsTypeFilter;
+          })
+        : columns,
+    [columns, columnNameFilter, columnTypeFilters, areTypesFetched]
+  );
+
+  return filteredColumns;
 };
