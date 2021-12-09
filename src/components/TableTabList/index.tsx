@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Icon, Button, Tooltip } from '@cognite/cogs.js';
+import { Colors, Icon, Button, Tooltip } from '@cognite/cogs.js';
 
 import {
   useActiveTable,
@@ -153,5 +153,5 @@ const OpenNavTab = styled(Tab)`
   flex-shrink: 0;
   padding: 0 10px;
   flex-basis: auto;
-  background-color: white;
+  background-color: ${Colors['greyscale-grey1'].hex()};
 `;
