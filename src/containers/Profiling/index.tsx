@@ -194,13 +194,11 @@ const CardsFlex = styled(Flex)`
   padding: 24px 0;
 `;
 const Table = styled.table`
+  position: relative;
   margin: 0;
   width: 100%;
-  border-radius: 8px;
   border-collapse: separate;
   border-spacing: 0;
-  overflow: hidden;
-  border: 1px solid ${Colors['greyscale-grey4'].hex()};
 `;
 
 const StyledCount = styled.div<{ $isRunning?: boolean }>`

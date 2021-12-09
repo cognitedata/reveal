@@ -128,7 +128,8 @@ const NumberOrMissingSummary = ({
 );
 
 const ExpandedRow = styled.div`
-  border-top: 1px solid ${Colors['border-default'].hex()};
+  border: 1px solid ${Colors['border-default'].hex()};
+  border-top: none;
   background-color: ${Colors['greyscale-grey1'].hex()};
   padding: 24px;
   display: grid;
