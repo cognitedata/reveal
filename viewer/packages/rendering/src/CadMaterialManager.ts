@@ -290,5 +290,4 @@ function applyClippingPlanesToRawShaderMaterial(
   } else {
     delete material.uniforms['clippingPlanes'];
   }
-  // material.needsUpdate = true;
 }
