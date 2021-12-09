@@ -110,6 +110,7 @@ export default function TableTabList() {
       {!isSidePanelOpen && (
         <OpenNavTab>
           <Button
+            aria-label="Show side panel"
             size="small"
             icon="PanelRight"
             onClick={() => setIsSidePanelOpen(true)}

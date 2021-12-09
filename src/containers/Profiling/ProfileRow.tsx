@@ -130,6 +130,7 @@ export default function ProfileRow({ allCount, profile }: Props) {
         </TableCell>
         <TableCell style={{ padding: '8px 16px' }}>
           <StyledExpandButton
+            aria-label="Expand row"
             icon={expanded ? 'ChevronUp' : 'ChevronDown'}
             type="ghost"
           />
