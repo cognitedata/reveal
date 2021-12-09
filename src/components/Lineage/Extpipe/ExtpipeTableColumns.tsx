@@ -94,8 +94,8 @@ export const ExtpipeTableColumns = [
     title: 'Last run time',
     key: 'latestRun',
     render: ({ lastFailure, lastSuccess }: Extpipe) => {
-      const latestRun = calculate({ lastFailure, lastSuccess });
-      return latestRun > 0 ? moment(latestRun).fromNow() : '–';
+      const lastRunTime = calculate({ lastFailure, lastSuccess });
+      return lastRunTime > 0 ? moment(lastRunTime).fromNow() : '–';
     },
     ellipsis: true,
   },
