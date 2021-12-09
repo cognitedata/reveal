@@ -20,6 +20,7 @@ import {
 } from 'hooks/details/useDetailsUpdate';
 import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
+import { InfoBox } from 'components/message/InfoBox';
 
 export const ContactsSectionWrapper = styled(Grid)`
   align-content: flex-start;
@@ -101,12 +102,21 @@ export const ContactsDialogView = ({
   onConfirm,
   showErrors,
 }: ViewProps) => {
+  const emptyContact = {
+    name: '',
+    email: '',
+    role: '',
+    sendNotification: false,
+  };
+
   const [contacts, setContacts] = useState(
-    [...initialContacts].sort(
-      (a, b) =>
-        (isOwnerRole(a.role ?? '') ? -1000 : 0) -
-        (isOwnerRole(b.role ?? '') ? -1000 : 0)
-    )
+    initialContacts.length === 0
+      ? [{ ...emptyContact, role: 'Owner' }]
+      : [...initialContacts].sort(
+          (a, b) =>
+            (isOwnerRole(a.role ?? '') ? -1000 : 0) -
+            (isOwnerRole(b.role ?? '') ? -1000 : 0)
+        )
   );
   const onEdit = (
     index: number,
@@ -127,16 +137,16 @@ export const ContactsDialogView = ({
   const deleteRow = (index: number) => {
     setContacts(contacts.filter((m, i) => i !== index));
   };
+  const numOwners = contacts.reduce(
+    (acc, c) => (isOwnerRole(c.role || '') ? acc + 1 : acc),
+    0
+  );
   const addRow = () => {
-    setContacts([
-      ...contacts,
-      {
-        name: '',
-        email: '',
-        role: contacts.length === 0 ? 'Owner' : '',
-        sendNotification: false,
-      },
-    ]);
+    setContacts(
+      numOwners === 0
+        ? [{ ...emptyContact, role: 'Owner' }, ...contacts]
+        : [...contacts, emptyContact]
+    );
   };
   return (
     <>
@@ -214,9 +224,20 @@ export const ContactsDialogView = ({
 
       <div>
         <Button icon="AddLarge" onClick={addRow}>
-          Add contact
+          Add {numOwners === 0 ? 'owner' : 'contact'}
         </Button>
       </div>
+
+      {numOwners === 0 && (
+        <InfoBox iconType="WarningFilled" color="warning">
+          There should be an owner.
+        </InfoBox>
+      )}
+      {numOwners >= 2 && (
+        <InfoBox iconType="WarningFilled" color="warning">
+          There should only be one owner.
+        </InfoBox>
+      )}
 
       <div css="display: flex; justify-content: flex-end; gap: 0.5rem">
         <Button onClick={onCancel} type="ghost">
