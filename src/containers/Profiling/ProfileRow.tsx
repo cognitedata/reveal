@@ -163,13 +163,16 @@ const NumberOrMissingTd = ({
   children,
 }: {
   dataType: ProfileRowDataType;
-  columnType?: ColumnProfile['type'] | 'Unknown';
+  columnType?: ColumnProfile['type'] | 'Key' | 'Unknown';
   value?: number;
   children?: React.ReactNode;
 }) => {
-  const isDataAvailable = columnType
-    ? availableDataTypes[columnType].includes(dataType)
-    : false;
+  const getIsDataAvailable = (): boolean => {
+    if (!columnType) return false;
+    if (columnType === 'Key') return true;
+    return availableDataTypes[columnType].includes(dataType);
+  };
+  const isDataAvailable = getIsDataAvailable();
 
   if (!isDataAvailable) {
     return (
