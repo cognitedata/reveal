@@ -231,9 +231,10 @@ export function Graph({
             )}
             {isTooltipDisplayed && rangeEnd !== undefined && (
               <BarStack
-                data={distribution.map((value) => ({
+                data={distribution.map((value, i) => ({
                   ...value,
                   count: maxCount,
+                  key: i.toString(),
                 }))}
                 keys={['count']}
                 x={(d) => d.value}
@@ -249,7 +250,7 @@ export function Graph({
                         const leftOffset = (width - actualWidth) / 2;
                         return (
                           <Bar
-                            key={`bar-${bar.data.value}`}
+                            key={`bar-${bar.data.key}`}
                             x={x + leftOffset}
                             y={y}
                             width={actualWidth}
@@ -276,7 +277,11 @@ export function Graph({
               </BarStack>
             )}
             <BarStack
-              data={distribution}
+              data={distribution.map((value, i) => ({
+                ...value,
+                count: maxCount,
+                key: i.toString(),
+              }))}
               keys={['count']}
               x={(d) => d.value}
               xScale={categories}
@@ -291,7 +296,7 @@ export function Graph({
                       const leftOffset = (width - actualWidth) / 2;
                       return (
                         <Bar
-                          key={`bar-${bar.data.value}`}
+                          key={`bar-${bar.data.key}`}
                           x={x + leftOffset}
                           y={y}
                           width={actualWidth}

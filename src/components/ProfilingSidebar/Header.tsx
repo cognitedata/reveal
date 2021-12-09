@@ -54,6 +54,7 @@ export const Header = ({ selectedColumn }: Props) => {
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
                 whiteSpace: 'nowrap',
+                maxWidth: 200,
               }}
             >
               {selectedColumn?.title ?? '—'}
