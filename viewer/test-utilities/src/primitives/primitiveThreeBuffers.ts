@@ -14,50 +14,101 @@ import { PrimitiveType } from './primitiveTypes';
 
 import * as THREE from 'three';
 import { TypedArray } from '../../../packages/utilities';
+import { assert } from 'console';
 
-export function createPrimitiveInterleavedGeometry(name: PrimitiveType, primitiveDescs: any[]): THREE.BufferGeometry {
-  const singleElementSize = getTotalAttributeSize(name);
-  const totalSize = singleElementSize * primitiveDescs.length;
-  const buffer = new ArrayBuffer(totalSize);
-
-  let currentOffset = 0;
-  for (const primitiveDesc of primitiveDescs) {
-    currentOffset = writePrimitiveToBuffer(name, buffer, primitiveDesc, currentOffset);
+function createCommonBuffer(elementSizes: number[], primitiveDescs: any[][]) {
+  let totalSize = 0;
+  for (let i = 0; i < primitiveDescs.length; i++) {
+    totalSize += elementSizes[i] * primitiveDescs[i].length;
   }
 
-  const floatView = new Float32Array(buffer);
+  return new ArrayBuffer(totalSize);
+}
 
-  const interleavedBuffer = new THREE.InstancedInterleavedBuffer(
-    floatView,
-    singleElementSize / floatView.BYTES_PER_ELEMENT
-  );
+function createInstancedInterleavedBuffers(
+  buffer: ArrayBuffer,
+  types: PrimitiveType[],
+  primitiveDescs: any[][],
+  elementSizes: number[]
+): THREE.InstancedInterleavedBuffer[] {
+  let currentByteOffset = 0;
+  let lastByteOffset = 0;
 
-  const attributeDescriptions = createAttributeDescriptionsForPrimitive(name);
+  const interleavedBuffers: THREE.InstancedInterleavedBuffer[] = [];
 
-  const geometry = new THREE.BufferGeometry();
-
-  for (const attributeDescription of attributeDescriptions) {
-    const itemSize =
-      (attributeDescription.format.numComponents * getComponentByteSize(attributeDescription.format.componentType)) /
-      floatView.BYTES_PER_ELEMENT;
-
-    if (!Number.isInteger(itemSize)) {
-      throw Error('Attribute does not have size divisible by float size');
+  for (let i = 0; i < types.length; i++) {
+    for (const primitiveDesc of primitiveDescs[i]) {
+      currentByteOffset = writePrimitiveToBuffer(types[i], buffer, primitiveDesc, currentByteOffset);
     }
 
-    const shouldNormalize = getShouldNormalize(attributeDescription.format.componentType);
-
-    const bufferAttribute = new THREE.InterleavedBufferAttribute(
-      interleavedBuffer,
-      itemSize,
-      attributeDescription.byteOffset / floatView.BYTES_PER_ELEMENT,
-      shouldNormalize
+    const floatView = new Float32Array(
+      buffer,
+      lastByteOffset,
+      (currentByteOffset - lastByteOffset) / Float32Array.BYTES_PER_ELEMENT
     );
+    lastByteOffset = currentByteOffset;
 
-    geometry.setAttribute(attributeDescription.name, bufferAttribute);
+    interleavedBuffers.push(
+      new THREE.InstancedInterleavedBuffer(floatView, elementSizes[i] / floatView.BYTES_PER_ELEMENT)
+    );
   }
 
-  return geometry;
+  return interleavedBuffers;
+}
+
+function createBufferGeometries(
+  types: PrimitiveType[],
+  interleavedBuffers: THREE.InstancedInterleavedBuffer[]
+): THREE.BufferGeometry[] {
+  const geometries: THREE.BufferGeometry[] = [];
+
+  for (let i = 0; i < types.length; i++) {
+    const attributeDescriptions = createAttributeDescriptionsForPrimitive(types[i]);
+
+    const geometry = new THREE.BufferGeometry();
+
+    for (const attributeDescription of attributeDescriptions) {
+      const itemSize =
+        (attributeDescription.format.numComponents * getComponentByteSize(attributeDescription.format.componentType)) /
+        Float32Array.BYTES_PER_ELEMENT;
+
+      if (!Number.isInteger(itemSize)) {
+        throw Error('Attribute does not have size divisible by float size');
+      }
+
+      const shouldNormalize = getShouldNormalize(attributeDescription.format.componentType);
+
+      const bufferAttribute = new THREE.InterleavedBufferAttribute(
+        interleavedBuffers[i],
+        itemSize,
+        attributeDescription.byteOffset / Float32Array.BYTES_PER_ELEMENT,
+        shouldNormalize
+      );
+
+      geometry.setAttribute(attributeDescription.name, bufferAttribute);
+    }
+    geometries.push(geometry);
+  }
+
+  return geometries;
+}
+
+export function createPrimitiveInterleavedGeometriesSharingBuffer(
+  types: PrimitiveType[],
+  primitiveDescs: any[][]
+): THREE.BufferGeometry[] {
+  assert(types.length == primitiveDescs.length);
+
+  const elementSizes = types.map(computeTotalAttributeByteSize);
+  const buffer = createCommonBuffer(elementSizes, primitiveDescs);
+
+  const interleavedBuffers = createInstancedInterleavedBuffers(buffer, types, primitiveDescs, elementSizes);
+
+  return createBufferGeometries(types, interleavedBuffers);
+}
+
+export function createPrimitiveInterleavedGeometry(name: PrimitiveType, primitiveDescs: any[]): THREE.BufferGeometry {
+  return createPrimitiveInterleavedGeometriesSharingBuffer([name], [primitiveDescs])[0];
 }
 
 /* NB: Assumes BufferGeometry only uses one underlying buffer for interleaved attributes */
