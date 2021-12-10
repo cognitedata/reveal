@@ -21,19 +21,23 @@ export interface DataSetError {
 }
 
 interface ErrorMessageProps {
-  error?: DataSetError;
+  error?: DataSetError | null;
 }
 
-export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({
-  error,
-}: PropsWithChildren<ErrorMessageProps>) => {
-  if (!error) {
-    return null;
-  }
+export const ErrorMessageBox = ({ children }: PropsWithChildren<{}>) => {
   return (
     <ErrorWrapper className="z-4">
       <StyledIcon type="Warning" />
-      {generateStatusMessage(error)}
+      {children}
     </ErrorWrapper>
   );
+};
+
+export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({
+  error,
+}: ErrorMessageProps) => {
+  if (!error) {
+    return null;
+  }
+  return <ErrorMessageBox>{generateStatusMessage(error)}</ErrorMessageBox>;
 };
