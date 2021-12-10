@@ -54,7 +54,7 @@ const TableContent = () => {
 
 const TabSpreadsheet = (): JSX.Element => (
   <Tab>
-    <Icon type="TableViewSmall" />
+    <Icon type="DataTable" />
     Table
   </Tab>
 );
