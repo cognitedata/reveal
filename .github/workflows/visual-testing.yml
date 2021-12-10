@@ -18,7 +18,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         # Ignore scripts because they can steal the token
-        run: yarn install --ignore-scripts
+        run: yarn install --ignore-scripts --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
       - name: Publish to Chromatic
