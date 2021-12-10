@@ -5,6 +5,7 @@ import {
   DiagramLineInstance,
   DiagramConnection,
   SvgDocument,
+  getNoneOverlappingSymbolInstances,
 } from '@cognite/pid-tools';
 
 import { getDiagramInstanceOutputFormat } from './saveGraph';
@@ -121,10 +122,11 @@ export const loadSymbolsFromJson = (
         const newSymbolInstances = (
           svgDocument as SvgDocument
         ).findAllInstancesOfSymbol(newSymbol);
-        allNewSymbolInstances = [
-          ...allNewSymbolInstances,
-          ...newSymbolInstances,
-        ];
+        allNewSymbolInstances = getNoneOverlappingSymbolInstances(
+          svgDocument,
+          allNewSymbolInstances,
+          newSymbolInstances
+        );
       });
       setSymbolInstances([...symbolInstances, ...allNewSymbolInstances]);
     }
