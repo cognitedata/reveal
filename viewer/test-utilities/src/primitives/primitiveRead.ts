@@ -3,8 +3,7 @@
  */
 
 import { assertNever, TypedArray } from '../../../packages/utilities';
-import { AttributeDesc, createAttributeDescriptionsForPrimitive } from './primitiveAttributes';
-import { PrimitiveType } from './primitiveTypes';
+import { AttributeDesc, commonAttributeTypeMap } from './primitiveAttributes';
 
 import * as THREE from 'three';
 
@@ -48,14 +47,33 @@ function readAttributeValue(
   }
 }
 
+function getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer: THREE.BufferGeometry): AttributeDesc[] {
+  const descs: AttributeDesc[] = [];
+  for (const attributeName in geometryBuffer.attributes) {
+    const attribute = geometryBuffer.attributes[attributeName];
+    if (!(attribute instanceof THREE.InterleavedBufferAttribute)) continue;
+
+    const format = commonAttributeTypeMap.get(attributeName);
+
+    if (!format) continue;
+
+    const attributeDesc = {
+      name: attributeName,
+      format,
+      byteOffset: attribute.offset * (attribute.array as TypedArray).BYTES_PER_ELEMENT
+    };
+
+    descs.push(attributeDesc);
+  }
+
+  return descs;
+}
+
 export function readPrimitiveFromBuffer(
-  primitiveName: PrimitiveType,
   geometryBuffer: THREE.BufferGeometry,
   byteOffset: number
 ): Record<string, unknown> {
-  // TODO: This must use attribute descriptions from incoming Buffer Geometry
-  // ordering is not guaranteed to be same as the one in createAttributeDescriptionsForPrimitive
-  const attributeDescriptions = createAttributeDescriptionsForPrimitive(primitiveName);
+  const attributeDescriptions = getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer);
 
   const obj: Record<string, unknown> = {};
   for (const attributeDescription of attributeDescriptions) {

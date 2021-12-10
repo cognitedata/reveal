@@ -93,7 +93,7 @@ export function parseInterleavedGeometry(
   const result: Record<string, unknown>[] = [];
   let currentOffset = 0;
   for (let i = 0; i < numElements; i++) {
-    const thisPrimitive: Record<string, unknown> = readPrimitiveFromBuffer(name, geometryBuffer, currentOffset);
+    const thisPrimitive: Record<string, unknown> = readPrimitiveFromBuffer(geometryBuffer, currentOffset);
     result.push(thisPrimitive);
     currentOffset += singleElementSize;
   }
