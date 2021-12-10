@@ -1,4 +1,4 @@
-﻿// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck - PLEASE FIX NEXT TIME YOU CHANGE THIS FILE
 
 import { useState } from 'react';

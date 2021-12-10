@@ -1,4 +1,4 @@
-﻿import safeGet from 'lodash/get';
+import safeGet from 'lodash/get';
 
 import { doReAuth } from './getCogniteSDKClient';
 

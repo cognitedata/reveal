@@ -1,4 +1,4 @@
-﻿import {
+import {
   getMockDocument,
   getMockDocumentFacets,
 } from '__test-utils/fixtures/document';

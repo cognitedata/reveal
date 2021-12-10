@@ -1,4 +1,4 @@
-﻿import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { cleanup } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react-hooks';

@@ -1,4 +1,4 @@
-﻿import { initialState, wellInspect } from '../reducer';
+import { initialState, wellInspect } from '../reducer';
 import {
   SET_COLORED_WELLBORES,
   SET_INSPECT_SIDEBAR_WIDTH,

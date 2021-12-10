@@ -1,3 +1,3 @@
-﻿import CreateFavoriteSetModal from './CreateFavoriteSetModal';
+import CreateFavoriteSetModal from './CreateFavoriteSetModal';
 
 export default CreateFavoriteSetModal;

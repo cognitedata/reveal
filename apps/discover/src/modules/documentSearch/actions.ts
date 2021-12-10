@@ -1,4 +1,4 @@
-﻿import get from 'lodash/get';
+import get from 'lodash/get';
 import isNil from 'lodash/isNil';
 import isObject from 'lodash/isObject';
 import { Dispatch } from 'redux';

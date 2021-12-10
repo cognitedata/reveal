@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import cleanCoords from '@turf/clean-coords';

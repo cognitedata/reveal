@@ -1,4 +1,4 @@
-﻿import { feedback } from '../reducer';
+import { feedback } from '../reducer';
 import { ADD, ADDING, SET_ITEM, GET_ALL_GENERAL } from '../types';
 
 describe('feedback reducer', () => {

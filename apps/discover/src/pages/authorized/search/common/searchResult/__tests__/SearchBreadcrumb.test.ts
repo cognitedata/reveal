@@ -1,4 +1,4 @@
-﻿import { screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';

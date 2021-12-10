@@ -1,4 +1,4 @@
-﻿import { FILTER_NAMES, MODULES } from './constants';
+import { FILTER_NAMES, MODULES } from './constants';
 import {
   FilterLogType,
   SearchInput,

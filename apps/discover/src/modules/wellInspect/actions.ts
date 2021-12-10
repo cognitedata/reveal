@@ -1,4 +1,4 @@
-﻿import { createAction } from '@reduxjs/toolkit';
+import { createAction } from '@reduxjs/toolkit';
 import { ThunkResult } from 'core';
 
 import { storage } from '@cognite/react-container';

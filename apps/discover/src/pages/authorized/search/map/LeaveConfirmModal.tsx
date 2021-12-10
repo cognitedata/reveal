@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 import { Button, Modal } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';

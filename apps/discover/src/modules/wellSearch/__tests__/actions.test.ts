@@ -1,4 +1,4 @@
-﻿import { PartialStoreState } from 'core';
+import { PartialStoreState } from 'core';
 import fetchMock from 'fetch-mock';
 
 import { Asset, Sequence } from '@cognite/sdk';

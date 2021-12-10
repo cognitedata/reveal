@@ -1,4 +1,4 @@
-﻿import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { useWellboresByIdsAndWellId } from 'modules/wellSearch/selectors';

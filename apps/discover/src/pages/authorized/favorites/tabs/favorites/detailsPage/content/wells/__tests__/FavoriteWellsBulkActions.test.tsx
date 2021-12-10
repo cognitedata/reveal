@@ -1,4 +1,4 @@
-﻿import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { initialState } from 'modules/wellSearch/reducer';

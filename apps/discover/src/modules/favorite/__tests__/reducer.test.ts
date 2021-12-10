@@ -1,4 +1,4 @@
-﻿import { favourite } from '../reducer';
+import { favourite } from '../reducer';
 import {
   HIDE_CREATE_MODAL,
   SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION,

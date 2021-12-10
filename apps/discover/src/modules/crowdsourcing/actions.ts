@@ -1,4 +1,4 @@
-﻿import { ThunkResult } from 'core/types';
+import { ThunkResult } from 'core/types';
 
 import {
   SORT_FIELD_DOCUMENT,

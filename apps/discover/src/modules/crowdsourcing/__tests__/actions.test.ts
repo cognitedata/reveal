@@ -1,4 +1,4 @@
-﻿import { createMockStore } from '__test-utils/store.utils';
+import { createMockStore } from '__test-utils/store.utils';
 
 import {
   setDocumentSortField,

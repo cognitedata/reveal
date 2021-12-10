@@ -1,4 +1,4 @@
-﻿import { Feature } from '@turf/helpers';
+import { Feature } from '@turf/helpers';
 
 import { Geometry } from '@cognite/seismic-sdk-js';
 

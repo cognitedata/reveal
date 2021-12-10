@@ -1,4 +1,4 @@
-﻿import { PartialStoreState } from 'core';
+import { PartialStoreState } from 'core';
 import fetchMock from 'fetch-mock';
 
 import { getMockedStore, getInitialStore } from '__test-utils/store.utils';

@@ -1,4 +1,4 @@
-﻿import { Sequence, Asset } from '@cognite/sdk';
+import { Sequence, Asset } from '@cognite/sdk';
 
 import {
   getDefaultWell,

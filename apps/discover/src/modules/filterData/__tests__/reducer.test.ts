@@ -1,4 +1,4 @@
-﻿import get from 'lodash/get';
+import get from 'lodash/get';
 
 import { FILTER_NAMES, MODULES } from '../constants';
 import { filterData, initialState } from '../reducer';

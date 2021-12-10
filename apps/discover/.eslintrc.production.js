@@ -63,7 +63,7 @@ module.exports = {
     'import/no-anonymous-default-export': ['error'],
     // This will be fixed in version v2.25.3 of eslint-plugin-import package
     'import/no-import-module-exports': ['off'],
-    'unicode-bom': ['off'],
+    'unicode-bom': ['error'],
     'no-param-reassign': [
       'error',
       { props: true, ignorePropertyModificationsFor: ['state'] },

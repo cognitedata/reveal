@@ -1,4 +1,4 @@
-﻿import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
 import { Store } from 'redux';
 

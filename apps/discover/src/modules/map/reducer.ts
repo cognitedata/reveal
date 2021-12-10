@@ -1,4 +1,4 @@
-﻿import { MapState } from 'modules/map/types';
+import { MapState } from 'modules/map/types';
 import {
   ADD_ARBITRARYLINE,
   ADD_SELECTABLE_LAYERS,

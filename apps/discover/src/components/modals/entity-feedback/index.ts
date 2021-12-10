@@ -1,3 +1,3 @@
-﻿import { EntityFeedback } from './EntityFeedbackModal';
+import { EntityFeedback } from './EntityFeedbackModal';
 
 export default EntityFeedback;

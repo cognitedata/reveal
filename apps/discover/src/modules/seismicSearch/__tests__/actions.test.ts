@@ -1,4 +1,4 @@
-﻿import { GeoJson } from '@cognite/seismic-sdk-js';
+import { GeoJson } from '@cognite/seismic-sdk-js';
 
 import { getMockedStore } from '__test-utils/store.utils';
 import { now } from '_helpers/date';

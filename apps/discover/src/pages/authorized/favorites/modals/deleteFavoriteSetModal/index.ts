@@ -1,3 +1,3 @@
-﻿import DeleteFavoriteSetModal from './DeleteFavoriteSetModal';
+import DeleteFavoriteSetModal from './DeleteFavoriteSetModal';
 
 export default DeleteFavoriteSetModal;

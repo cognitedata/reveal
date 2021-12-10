@@ -1,4 +1,4 @@
-﻿import { configureStore } from 'core/store';
+import { configureStore } from 'core/store';
 
 // only for tests
 export const store = configureStore();

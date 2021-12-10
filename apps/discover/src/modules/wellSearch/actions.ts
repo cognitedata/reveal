@@ -1,4 +1,4 @@
-﻿import flatMap from 'lodash/flatMap';
+import flatMap from 'lodash/flatMap';
 import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 

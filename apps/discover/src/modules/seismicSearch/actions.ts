@@ -1,4 +1,4 @@
-﻿import { LineString, GeoJson } from '@cognite/seismic-sdk-js';
+import { LineString, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { now } from '_helpers/date';
 import { log } from '_helpers/log';

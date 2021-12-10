@@ -1,4 +1,4 @@
-﻿import { crowdsourcing, intialState } from '../reducer';
+import { crowdsourcing, intialState } from '../reducer';
 import {
   SORT_FIELD_DOCUMENT,
   SORT_ASCENDING_DOCUMENT,

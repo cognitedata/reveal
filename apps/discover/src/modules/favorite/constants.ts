@@ -1,4 +1,4 @@
-﻿import { ViewModeObject } from './types';
+import { ViewModeObject } from './types';
 
 export const ViewMode: ViewModeObject = {
   Card: 'Card',
