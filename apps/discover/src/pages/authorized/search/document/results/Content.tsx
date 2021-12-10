@@ -1,13 +1,14 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components/macro';
 
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
+import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
 import {
   useLabels,
-  useDocuments,
   useSelectedDocumentsDocId,
 } from 'modules/documentSearch/selectors';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
@@ -28,13 +29,12 @@ const SearchResults = styled(FlexColumn)`
   max-height: 100%;
 `;
 
-interface Props {
-  hasResults: boolean;
-}
-export const DocumentSearchContent: React.FC<Props> = ({ hasResults }) => {
+export const DocumentSearchContent: React.FC = () => {
   const {
-    result: { facets, hits },
-  } = useDocuments();
+    data: { facets, hits },
+    isLoading,
+  } = useDocumentSearchResultQuery();
+
   const dispatch = useDispatch();
   const selectedDocumentIds = useSelectedDocumentsDocId();
 
@@ -45,13 +45,11 @@ export const DocumentSearchContent: React.FC<Props> = ({ hasResults }) => {
 
   const labels = useLabels();
 
-  const { isLoading } = useDocuments();
-
   const documentResultCount = useDocumentResultCount();
 
-  const searchHasFoundResults = hasResults && !isLoading;
-
   const documentInformation = getDocumentsFacetsInfo(facets, labels);
+
+  const searchHasFoundResults = !isEmpty(hits) && !isLoading;
 
   // To memo, or not to memo, thats the question...
   const documentStats: BreadCrumbStats = {

@@ -8,7 +8,6 @@ import { useTranslation } from '@cognite/react-i18n';
 
 import { withThousandSeparator } from '_helpers/number';
 import { GreyBadge } from 'components/badge';
-import { useDocuments } from 'modules/documentSearch/selectors';
 import { FlexGrow, FlexRow } from 'styles/layout';
 
 import { BreadCrumbContent, BreadCrumbStats } from './types';
@@ -45,7 +44,6 @@ export interface Props {
 }
 export const SearchBreadcrumb: React.FC<Props> = React.memo(
   ({ content, stats }) => {
-    const { currentDocumentQuery } = useDocuments();
     const { t } = useTranslation();
 
     const renderFacetAndCount = (facets: BreadCrumbContent['content']) => {
@@ -94,9 +92,6 @@ export const SearchBreadcrumb: React.FC<Props> = React.memo(
       [stats]
     );
 
-    if (!currentDocumentQuery.hasSearched) {
-      return null;
-    }
     return (
       <Wrapper
         id="search-header-breadcrumb"

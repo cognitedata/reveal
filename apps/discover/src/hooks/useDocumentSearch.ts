@@ -4,19 +4,13 @@ import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
 
 import { SavedSearchQuery } from 'modules/api/savedSearches/types';
-import { documentSearchActions } from 'modules/documentSearch/actions';
-import { DOCUMENT_FALLBACK_SEARCH_LIMIT } from 'modules/documentSearch/constants';
-import { toSort } from 'modules/documentSearch/utils/toSort';
 import { setSortByOptions } from 'modules/resultPanel/actions';
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
 
 import { updateExtraGeoJsonAppliedFilters } from '../modules/sidebar/actions';
 
-import { useProjectConfig } from './useProjectConfig';
-
 export const useDocumentSearch = () => {
   const dispatch = useDispatch();
-  const { data: projectConfig } = useProjectConfig();
 
   const doDocumentSearch = (searchQuery: SavedSearchQuery) => {
     const { geoFilter, phrase } = searchQuery;
@@ -58,20 +52,6 @@ export const useDocumentSearch = () => {
         )
       );
     }
-
-    const sort = sortBy.map(toSort);
-
-    dispatch(
-      documentSearchActions.search({
-        filters: {
-          ...projectConfig?.documents?.filters,
-        },
-        sort,
-        limit:
-          projectConfig?.documents?.defaultLimit ||
-          DOCUMENT_FALLBACK_SEARCH_LIMIT,
-      })
-    );
   };
 
   return doDocumentSearch;

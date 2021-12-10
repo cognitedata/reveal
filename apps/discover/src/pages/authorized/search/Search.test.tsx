@@ -22,7 +22,10 @@ const page = (store: Store) => testRenderer(Search, store);
 
 const defaultTestInit = async () => {
   const store = getMockedStore({
-    resultPanel: { panelWidth: 1920 },
+    resultPanel: {
+      panelWidth: 1920,
+      sortBy: { documents: [] },
+    },
   });
   return { ...page(store) };
 };

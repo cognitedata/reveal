@@ -82,6 +82,11 @@ export const USER_MANAGEMENT_SYSTEM_KEY = {
   SEARCH: [USER_MANAGEMENT_SYSTEM, 'search'],
 } as const;
 
+const DOCUMENTS = 'documents';
+export const DOCUMENTS_QUERY_KEY = {
+  SEARCH: [DOCUMENTS, 'search'],
+};
+
 export const DOCUMENTS_AGGREGATES = {
   labels: 'DOCUMENTS_LABELS_AGGREGATE',
   filetype: 'DOCUMENTS_FILE_TYPE_AGGREGATE',

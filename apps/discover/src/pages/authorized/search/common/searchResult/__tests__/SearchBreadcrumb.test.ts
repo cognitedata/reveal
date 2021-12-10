@@ -19,14 +19,6 @@ describe('SearchBreadcrumb', () => {
   const Page = (viewStore: Store, viewProps?: any) =>
     testRenderer(SearchBreadcrumb, viewStore, viewProps);
 
-  it('renders nothing when document is falsy', () => {
-    const store = getMockedStore();
-    Page(store, defaultProps);
-    expect(
-      screen.queryByText('Showing', { exact: false })
-    ).not.toBeInTheDocument();
-  });
-
   it('renders breadcrumb if count is greater than zero', () => {
     const store = getMockedStore({
       documentSearch: {

@@ -1,4 +1,5 @@
 import {
+  DocumentResult,
   DocumentResultFacets,
   DocumentsFacets,
 } from 'modules/documentSearch/types';
@@ -30,6 +31,12 @@ export const getEmptyDocumentStateFacets = (): DocumentResultFacets => ({
   location: [],
   lastUpdatedTime: [],
   pageCount: [],
+});
+
+export const getEmptyDocumentResult = (): DocumentResult => ({
+  count: 0,
+  hits: [],
+  facets: getEmptyDocumentStateFacets(),
 });
 
 export const getEmptyFacets = (): DocumentsFacets => ({

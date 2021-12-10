@@ -1,22 +1,19 @@
-import { useMemo } from 'react';
-
 import { documentDateToDate } from '_helpers/dateConversion';
 import { useQueryDocumentLabels } from 'modules/api/documents/useDocumentQuery';
-import { useDocuments } from 'modules/documentSearch/selectors';
+import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
 
+import { useDeepMemo } from './useDeep';
 import { getFilteredLabels } from './utils/getFilteredLabels';
 
 export const useDocumentsForTable = () => {
   const { data: allLabels, isFetched } = useQueryDocumentLabels();
-  const {
-    result: { hits },
-  } = useDocuments();
+  const { data: documentResult } = useDocumentSearchResultQuery();
 
-  return useMemo(() => {
-    const documents = hits.map((documentData) => ({
+  return useDeepMemo(() => {
+    const documents = documentResult.hits.map((documentData) => ({
       ...documentData,
       labels: getFilteredLabels(documentData.doc.labels, allLabels),
     }));
     return documentDateToDate(documents);
-  }, [allLabels, hits, isFetched]);
+  }, [allLabels, documentResult, isFetched]);
 };

@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useDeepMemo } from 'hooks/useDeep';
 
-import { useFacets } from 'modules/documentSearch/selectors';
+import { useDocumentResultFacets } from './useDocumentResultFacets';
 
 export const useDocumentResultCount = () => {
-  const facets = useFacets();
+  const facets = useDocumentResultFacets();
 
-  return useMemo(
+  return useDeepMemo(
     () =>
       facets.lastUpdatedTime.reduce((result, value) => {
         return result + value.count;
