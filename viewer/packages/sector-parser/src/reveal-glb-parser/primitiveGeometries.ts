@@ -112,6 +112,8 @@ export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
 
   return {
     torusLodGeometries,
+    // TODO hflatval: I believe this is wrong torusLodGeometries are just planes
+    // that are constructed into the final toruses in the vertex shader
     torusGeometryBoundingBox: new THREE.Box3().setFromArray(
       torusLodGeometries[torusLodGeometries.length - 1].position.array
     )
