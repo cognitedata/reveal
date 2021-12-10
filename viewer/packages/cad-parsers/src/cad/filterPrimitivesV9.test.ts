@@ -23,9 +23,27 @@ import {
 } from '../../../../test-utilities/src/primitives/primitiveTypes';
 
 import {
+  createPrimitiveInterleavedGeometriesSharingBuffer,
   createPrimitiveInterleavedGeometry,
   parseInterleavedGeometry
 } from '../../../../test-utilities/src/primitives/primitiveThreeBuffers';
+
+function assertApproximateObjectEquality(obj0: any, obj1: any) {
+  for (const key in obj0) {
+    if (Array.isArray(obj0[key])) {
+      const array0 = obj0[key] as number[];
+      const array1 = obj1[key] as number[];
+
+      expect(array0).toHaveLength(array1.length);
+
+      for (let i = 0; i < array0.length; i++) {
+        expect(array0[i]).toBeCloseTo(array1[i]);
+      }
+    } else {
+      expect(obj0[key]).toBeCloseTo(obj1[key] as number);
+    }
+  }
+}
 
 function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitiveType: PrimitiveType) {
   const bufferGeometry = createPrimitiveInterleavedGeometry(primitiveType, primitives);
@@ -42,21 +60,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitive
 
   expect(newPrimitives).toHaveLength(1);
   expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[0]));
-
-  for (const key in primitives[0]) {
-    if (Array.isArray(primitives[0][key])) {
-      const array0 = primitives[0][key] as number[];
-      const array1 = newPrimitives[0][key] as number[];
-
-      expect(array0).toHaveLength(array1.length);
-
-      for (let i = 0; i < array0.length; i++) {
-        expect(array0[i]).toBeCloseTo(array1[i]);
-      }
-    } else {
-      expect(primitives[0][key]).toBeCloseTo(newPrimitives[0][key] as number);
-    }
-  }
+  assertApproximateObjectEquality(primitives[0], newPrimitives[0]);
 }
 
 describe('filterPrimitivesV9 filters primitives correctly', () => {
@@ -361,5 +365,61 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
     ];
 
     testSecondFilteredAwayFromBoxAtX10Yneg10Z0(nuts, PrimitiveType.Nut);
+  });
+
+  test('Two different primitive types in same buffer: one of each accepted', () => {
+    const mat0 = new THREE.Matrix4()
+      .makeTranslation(10, -10, 0)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+    const mat1 = new THREE.Matrix4()
+      .makeTranslation(-10, 5, 10)
+      .multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0, 1, 2, 'XYZ')));
+
+    const circles: Circle[] = [
+      {
+        instanceMatrix: mat0.toArray(),
+        normal: [0, 1, 0]
+      },
+      {
+        instanceMatrix: mat1.toArray(),
+        normal: [0, 1, 0]
+      }
+    ];
+
+    const ellipsoids: Ellipsoid[] = [
+      {
+        horizontalRadius: 1,
+        verticalRadius: 1,
+        height: 1,
+        center: [10, -10, 0]
+      },
+      {
+        horizontalRadius: 1,
+        verticalRadius: 1,
+        height: 1,
+        center: [10, 10, 10]
+      }
+    ];
+
+    const primitives = [circles, ellipsoids];
+    const primitiveTypes = [PrimitiveType.Circle, PrimitiveType.Ellipsoid];
+    const collectionTypes = primitiveTypes.map(getCollectionType);
+
+    const geometries = createPrimitiveInterleavedGeometriesSharingBuffer(primitiveTypes, primitives);
+
+    const clipBox = new THREE.Box3(new THREE.Vector3(8, -12, -2), new THREE.Vector3(12, -8, 2));
+
+    for (let i = 0; i < collectionTypes.length; i++) {
+      const filtered = filterGeometryOutsideClipBox(geometries[i], collectionTypes[i], clipBox);
+
+      expect(filtered).toBeDefined();
+
+      const newPrimitives = parseInterleavedGeometry(primitiveTypes[i], filtered!);
+
+      expect(newPrimitives).toHaveLength(1);
+      expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[i][0]));
+
+      assertApproximateObjectEquality(primitives[i][0], newPrimitives[0]);
+    }
   });
 });
