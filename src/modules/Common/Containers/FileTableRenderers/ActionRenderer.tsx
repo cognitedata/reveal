@@ -57,11 +57,7 @@ export function ActionRenderer(
   return (
     <Action>
       {showReviewButton && (
-        <ReviewButton
-          disabled={reviewDisabled}
-          onClick={handleReview}
-          style={{ marginRight: '10px', background: 'white' }}
-        />
+        <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
       )}
       <ActionMenu
         showExifIcon={fileDetails?.geoLocation !== undefined}
@@ -93,4 +89,5 @@ export function ActionRendererProcess({ rowData }: CellRenderer) {
 export const Action = styled.div`
   display: flex;
   align-items: flex-end;
+  gap: 10px;
 `;

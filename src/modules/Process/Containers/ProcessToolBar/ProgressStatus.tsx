@@ -152,7 +152,7 @@ export default function ProgressStatus() {
           </Col>
           <Col span={2}>
             <Body level={2} strong>
-              {fileCount} files on {pageCount} pages
+              {fileCount} files on {pageCount} page{pageCount > 1 ? 's' : ''}
             </Body>
           </Col>
           <Col span={1}>
