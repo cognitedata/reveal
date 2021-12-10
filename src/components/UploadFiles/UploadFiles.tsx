@@ -6,7 +6,7 @@ import List from 'antd/lib/list';
 import Spin from 'antd/lib/spin';
 import { Button, Icon } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
-
+import isString from 'lodash/isString';
 import sdk from '@cognite/cdf-sdk-singleton';
 
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -129,7 +129,7 @@ const UploadFiles = ({
       }
     },
     customRequest: ({ file, onSuccess, onError }) => {
-      if (typeof file === 'string') return;
+      if (isString(file)) return;
       trackEvent('DataSets.CreationFlow.Uploaded documentation file', {
         type: file.type ? file.type : '',
       });
