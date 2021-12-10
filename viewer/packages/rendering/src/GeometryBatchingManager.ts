@@ -118,12 +118,12 @@ export class GeometryBatchingManager {
   ) {
     this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute).forEach(namedAttribute => {
       const attribute = namedAttribute.attribute;
-      this.setUpdateRange(attribute, updateRange);
+      this.extendUpdateRange(attribute, updateRange);
       attribute.data.needsUpdate = true;
     });
   }
 
-  private setUpdateRange(
+  private extendUpdateRange(
     attribute: THREE.InterleavedBufferAttribute,
     updateRange: {
       byteOffset: number;
