@@ -31,5 +31,6 @@ export function filterPrimitivesOutsideClipBox(
       filteredCount++;
     }
   }
+
   return filteredByteValues.slice(0, filteredCount * elementSize);
 }

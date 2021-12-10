@@ -61,7 +61,11 @@ export class GltfSectorRepository implements SectorRepository {
     parsedSectorGeometry.forEach(parsedGeometry => {
       const type = parsedGeometry.type as RevealGeometryCollectionType;
 
-      const filteredGeometryBuffer = filterGeometryOutsideClipBox(parsedGeometry.geometryBuffer, type);
+      const filteredGeometryBuffer = filterGeometryOutsideClipBox(
+        parsedGeometry.geometryBuffer,
+        type,
+        sector.geometryClipBox ?? undefined
+      );
 
       if (!filteredGeometryBuffer) return;
 
