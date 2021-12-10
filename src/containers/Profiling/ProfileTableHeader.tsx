@@ -58,6 +58,9 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
           <StyledExpandTableHeaderIcon type="ChevronDown" />
         </TableCell>
       </tr>
+      <StyledTableHeaderBackground />
+      <StyledTableHeaderWhiteBorder />
+      <StyledTableHeaderGrayBorder />
     </StyledTableHeader>
   );
 }
@@ -88,4 +91,33 @@ const StyledTableHeader = styled.thead`
 const StyledExpandTableHeaderIcon = styled(Icon)`
   cursor: pointer;
   margin: 0 10px;
+`;
+
+const StyledTableHeaderBackground = styled.tr`
+  position: absolute;
+  top: -12px;
+  background-color: ${Colors.white.hex()};
+  width: 100%;
+  height: 12px;
+`;
+
+const StyledTableHeaderWhiteBorder = styled.tr`
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 8px;
+  border: 1px solid ${Colors.white.hex()};
+  border-bottom-width: 0;
+  border-top-width: 0;
+`;
+
+const StyledTableHeaderGrayBorder = styled.tr`
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 8px;
+  border: 1px solid ${Colors['border-default'].hex()};
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-width: 0;
 `;
