@@ -15,7 +15,7 @@ import {
 import { TableDataItem } from 'src/modules/Common/types';
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
-import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
+import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
 
 export const FileGridPreview = ({

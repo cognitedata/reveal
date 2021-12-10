@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeSelectTotalAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
+import { makeSelectTotalAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
 import { RootState } from 'src/store/rootReducer';
 import {
   selectAllJobs,

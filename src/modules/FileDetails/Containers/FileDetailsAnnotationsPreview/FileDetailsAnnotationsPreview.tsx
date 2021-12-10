@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Button, Title } from '@cognite/cogs.js';
-import { selectFileAnnotationsByType } from 'src/modules/Common/store/annotationSlice';
+import { selectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';

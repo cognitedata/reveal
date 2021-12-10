@@ -1,5 +1,5 @@
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { selectFileAnnotations } from 'src/modules/Common/store/annotationSlice';
+import { selectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';

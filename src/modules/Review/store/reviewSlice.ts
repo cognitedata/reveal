@@ -6,7 +6,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { VisionAPIType } from 'src/api/types';
-import { selectFileAnnotations } from 'src/modules/Common/store/annotationSlice';
+import { selectFileAnnotations } from 'src/modules/Common/store/annotation/selectors';
 import {
   clearFileState,
   deselectAllSelectionsReviewPage,

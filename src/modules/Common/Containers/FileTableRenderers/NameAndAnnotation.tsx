@@ -1,4 +1,4 @@
-import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotationSlice';
+import { makeSelectAnnotationCounts } from 'src/modules/Common/store/annotation/selectors';
 import { CellRenderer } from 'src/modules/Common/types';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
