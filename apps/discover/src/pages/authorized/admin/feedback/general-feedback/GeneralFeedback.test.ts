@@ -40,7 +40,7 @@ describe.skip('Admin -> General feedback', () => {
     const deleteButton = await screen.findByTestId('button-delete');
     fireEvent.click(deleteButton);
 
-    await waitForElementToBeRemoved(() => screen.getByText('New!'));
+    await waitForElementToBeRemoved(() => screen.queryByText('New!'));
     const status = screen.queryByText('New!');
 
     expect(status).not.toBeInTheDocument();

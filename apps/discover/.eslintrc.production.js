@@ -58,7 +58,7 @@ module.exports = {
     // This can be done gradually in the later PRs
     'testing-library/prefer-presence-queries': ['off'],
     'react/no-unstable-nested-components': ['off'],
-    'testing-library/prefer-query-by-disappearance': ['off'],
+    'testing-library/prefer-query-by-disappearance': ['error'],
     'react-hooks/rules-of-hooks': ['off'],
     'import/no-anonymous-default-export': ['error'],
     // This will be fixed in version v2.25.3 of eslint-plugin-import package

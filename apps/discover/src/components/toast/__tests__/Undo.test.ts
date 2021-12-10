@@ -34,7 +34,7 @@ describe('UndoToast', () => {
 
     fireEvent.click(await screen.findByText('Undo'));
 
-    await waitForElementToBeRemoved(() => screen.getByText(toastText), {
+    await waitForElementToBeRemoved(() => screen.queryByText(toastText), {
       timeout: 2000,
     });
 
