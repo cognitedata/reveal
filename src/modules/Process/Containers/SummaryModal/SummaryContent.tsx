@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
-import { annotationsById } from 'src/modules/Common/store/annotationSlice';
+import { annotationsById } from 'src/modules/Common/store/annotation/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { Title } from '@cognite/cogs.js';
 import styled from 'styled-components';

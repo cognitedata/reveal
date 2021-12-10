@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { AnnotationStatus } from 'src/utils/AnnotationUtils';
 import { ToastUtils } from 'src/utils/ToastUtils';
-import { selectAnnotationsForAllFiles } from 'src/modules/Common/store/annotationSlice';
+import { selectAnnotationsForAllFiles } from 'src/modules/Common/store/annotation/selectors';
 import { renameDuplicates } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import { getDownloadControls } from './DownloadControlButtons';
 import {

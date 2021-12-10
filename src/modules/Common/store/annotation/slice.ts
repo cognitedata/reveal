@@ -1,5 +1,4 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { VisionAPIType } from 'src/api/types';
 import { CreateAnnotations } from 'src/store/thunks/Annotation/CreateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
@@ -7,30 +6,12 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { AnnotationDetectionJobUpdate } from 'src/store/thunks/Process/AnnotationDetectionJobUpdate';
 import {
-  getAnnotationsBadgeCounts,
-  VisionAnnotation,
-} from 'src/utils/AnnotationUtils';
-import {
-  createSelector,
-  createSelectorCreator,
-  defaultMemoize,
-} from 'reselect';
-import isEqual from 'lodash-es/isEqual';
-import {
   clearExplorerFileState,
   clearFileState,
 } from 'src/store/commonActions';
+import { AnnotationState } from './types';
 
-type State = {
-  files: {
-    byId: Record<number, number[]>;
-  };
-  annotations: {
-    byId: Record<number, VisionAnnotation>;
-  };
-};
-
-const initialState: State = {
+export const initialState: AnnotationState = {
   files: {
     byId: {},
   },
@@ -44,29 +25,32 @@ const annotationSlice = createSlice({
   reducers: {},
   /* eslint-disable no-param-reassign */
   extraReducers: (builder) => {
-    builder.addCase(RetrieveAnnotations.pending, (state: State, { meta }) => {
-      const { fileIds, clearCache } = meta.arg;
+    builder.addCase(
+      RetrieveAnnotations.pending,
+      (state: AnnotationState, { meta }) => {
+        const { fileIds, clearCache } = meta.arg;
 
-      // clear state
-      if (clearCache) {
-        state.annotations.byId = {};
-        state.files.byId = {};
-      } else {
-        fileIds.forEach((fileId) => {
-          const annotationIdsForFile = state.files.byId[fileId];
-          if (annotationIdsForFile && annotationIdsForFile.length) {
-            annotationIdsForFile.forEach((annotationId) => {
-              delete state.annotations.byId[annotationId];
-            });
-          }
-          delete state.files.byId[fileId];
-        });
+        // clear state
+        if (clearCache) {
+          state.annotations.byId = {};
+          state.files.byId = {};
+        } else {
+          fileIds.forEach((fileId) => {
+            const annotationIdsForFile = state.files.byId[fileId];
+            if (annotationIdsForFile && annotationIdsForFile.length) {
+              annotationIdsForFile.forEach((annotationId) => {
+                delete state.annotations.byId[annotationId];
+              });
+            }
+            delete state.files.byId[fileId];
+          });
+        }
       }
-    });
+    );
 
     builder.addCase(
       RetrieveAnnotations.fulfilled,
-      (state: State, { payload }) => {
+      (state: AnnotationState, { payload }) => {
         // update annotations
         payload.forEach((annotation) => {
           if (
@@ -116,6 +100,7 @@ const annotationSlice = createSlice({
     });
 
     builder.addMatcher(
+      // TODO: refactor -> same as RetrieveAnnotations.fulfilled
       isAnyOf(
         CreateAnnotations.fulfilled,
         AnnotationDetectionJobUpdate.fulfilled,
@@ -165,83 +150,3 @@ const annotationSlice = createSlice({
 });
 
 export default annotationSlice.reducer;
-
-// selectors
-
-export const annotationsById = (state: State) => {
-  return state.annotations.byId;
-};
-
-export const selectFileAnnotations = createSelector(
-  (state: State, id: number) => state.files.byId[id],
-  annotationsById,
-  (annotationIds, allAnnotations) => {
-    if (annotationIds && annotationIds.length) {
-      return annotationIds.map((id) => allAnnotations[id]);
-    }
-    return [];
-  }
-);
-
-export const selectAllAnnotations = createSelector(
-  annotationsById,
-  (annotations: Record<number, VisionAnnotation>) => {
-    const allAnnotations = Object.entries(annotations).map(
-      ([_, annotation]) => {
-        return annotation;
-      }
-    );
-
-    return allAnnotations;
-  }
-);
-
-export const selectAnnotationsForAllFiles = createSelector(
-  (state: State, fileIds: number[]) =>
-    fileIds.map((id) => selectFileAnnotations(state, id)),
-  (_: State, fileIds: number[]) => fileIds,
-  (annotations, fileIds) => {
-    const data: Record<number, VisionAnnotation[]> = {};
-    fileIds.forEach((id, index) => {
-      data[id] = annotations[index];
-    });
-
-    return data;
-  }
-);
-
-const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
-
-export const filesAnnotationCounts = createDeepEqualSelector(
-  (state: State) => state.files.byId,
-  (_: State, fileIds: number[]) => fileIds,
-  (allFiles, fileIds) => {
-    const data: Record<number, number> = {};
-    fileIds.forEach((id) => {
-      data[id] = allFiles[id]?.length || 0;
-    });
-
-    return data;
-  }
-);
-
-export const makeSelectAnnotationCounts = () =>
-  createDeepEqualSelector(selectFileAnnotations, (annotations) => {
-    return getAnnotationsBadgeCounts(annotations);
-  });
-
-export const makeSelectTotalAnnotationCounts = () =>
-  createDeepEqualSelector(selectAllAnnotations, (annotations) => {
-    return getAnnotationsBadgeCounts(annotations);
-  });
-
-export const selectFileAnnotationsByType = createSelector(
-  selectFileAnnotations,
-  (state: State, fileId: number, types: VisionAPIType[]) => types,
-  (annotations, types) => {
-    if (annotations) {
-      return annotations.filter((item) => types.includes(item.modelType));
-    }
-    return [];
-  }
-);
