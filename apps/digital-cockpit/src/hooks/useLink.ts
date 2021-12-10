@@ -6,12 +6,10 @@ export function useLink() {
   const history = useHistory();
   const tenant = usePossibleTenant();
   const documentTitle = useMemo(() => {
-    switch (window.location.hostname) {
-      case 'cogniteapp.com':
-        return 'Solutions Portal';
-      default:
-        return 'Digital Cockpit';
+    if (window.location.hostname.includes('digital-cockpit')) {
+      return 'Digital Cockpit';
     }
+    return 'Solutions Portal';
   }, []);
   const fusionLink = useMemo(
     () => `https://fusion.cognite.com/${tenant}`,
