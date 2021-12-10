@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { computeNdcAreaOfBox } from './computeNdcAreaOfBox';
 
-import { SectorMetadata } from '@reveal/cad-parsers';
+import { SectorMetadata, V9SectorMetadata } from '@reveal/cad-parsers';
 import { PrioritizedArea } from '@reveal/cad-styling';
 
 const preallocated = {
@@ -108,10 +108,21 @@ export class WeightFunctionsHelper {
   }
 
   /**
+   * Computes a weight based on placement in sector tree (i.e. prioritize)
+   * sectors right below root sector.
+   * @param sector
+   */
+  computeSectorTreePlacementWeight(sector: V9SectorMetadata): number {
+    // Prioritize sectors directly under the root. These contains large structures
+    // in V9 format and is therefore a low-detail version of the full model.
+    return sector.depth === 1 ? 1.0 : 1.0 / 3.0;
+  }
+
+  /**
    * Computes a weight based on how large the biggest node within the sector
    * will be on screen (a number in range [0-1]).
    */
-  computeNodeScreenSizeWeight(transformedSectorBounds: THREE.Box3, maxNodeDiagonalLength: number): number {
+  computeMaximumNodeScreenSizeWeight(transformedSectorBounds: THREE.Box3, maxNodeDiagonalLength: number): number {
     const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
     if (distanceToCamera === 0.0) {
       return 1.0; // Can cover the whole screen regardless of how big the node is
