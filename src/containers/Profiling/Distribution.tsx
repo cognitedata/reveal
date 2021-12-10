@@ -279,7 +279,6 @@ export function Graph({
             <BarStack
               data={distribution.map((value, i) => ({
                 ...value,
-                count: maxCount,
                 key: i.toString(),
               }))}
               keys={['count']}
