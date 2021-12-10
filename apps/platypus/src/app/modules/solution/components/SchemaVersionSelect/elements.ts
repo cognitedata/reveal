@@ -7,3 +7,8 @@ export const StyledResult = styled.div`
 export const StyledSelectContainer = styled.div`
   width: 200px;
 `;
+
+export const StyledVersionContainer = styled.div`
+  width: 80px;
+  margin-left: 10px;
+`;

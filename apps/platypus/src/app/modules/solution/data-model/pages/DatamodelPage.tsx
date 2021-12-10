@@ -1,19 +1,32 @@
 import { useEffect, useState } from 'react';
-import { GraphqlCodeEditor } from '../components/GraphqlCodeEditor/GraphqlCodeEditor';
+import { useHistory } from 'react-router-dom';
+
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { SegmentedControl } from '@cognite/cogs.js';
+import { Button, SegmentedControl } from '@cognite/cogs.js';
 import { Placeholder } from '@platypus-app/components/Placeholder/Placeholder';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 
+import { SchemaVersionSelect } from '../../components/SchemaVersionSelect/SchemaVersionSelect';
+import { GraphqlCodeEditor } from '../components/GraphqlCodeEditor/GraphqlCodeEditor';
+import { SCHEMA_VERSION_LABEL } from '@platypus-app/utils/config';
+import { StyledSchemaVersion } from './elements';
+
+enum Mode {
+  View,
+  Edit,
+}
+
 export const DatamodelPage = () => {
+  const history = useHistory();
+  const [mode, setMode] = useState<Mode>(Mode.View);
   const [projectSchema, setProjectSchema] = useState('');
   const [currentView, setCurrentView] = useState('code');
   const { t } = useTranslation('SolutionDataModel');
-  const { selectedSchema } = useSelector<SolutionState>(
+  const { solution, schemas, selectedSchema } = useSelector<SolutionState>(
     (state) => state.solution
   );
 
@@ -23,8 +36,70 @@ export const DatamodelPage = () => {
     }
   }, [selectedSchema]);
 
+  const renderVersion = () => {
+    if (schemas.length) {
+      if (mode === Mode.View) {
+        return (
+          <SchemaVersionSelect
+            selectedVersion={selectedSchema?.version}
+            versions={schemas.map((s) => s.version)}
+            onChange={(seletedValue) => {
+              history.replace(
+                `/solutions/${solution?.id}/${seletedValue}/data-model`
+              );
+            }}
+          />
+        );
+      } else {
+        return (
+          <StyledSchemaVersion>
+            {SCHEMA_VERSION_LABEL(selectedSchema?.version)}
+          </StyledSchemaVersion>
+        );
+      }
+    }
+    return null;
+  };
+
+  const renderTools = () => {
+    if (mode === Mode.Edit) {
+      return (
+        <>
+          <Button
+            type="ghost"
+            onClick={() => {
+              setProjectSchema(selectedSchema!.schema);
+              setMode(Mode.View);
+            }}
+            style={{ marginRight: '10px' }}
+          >
+            Cancel
+          </Button>
+          <Button type="primary" onClick={() => setMode(Mode.Edit)}>
+            Save
+          </Button>
+        </>
+      );
+    }
+    if (selectedSchema && selectedSchema?.version === schemas[0].version) {
+      return (
+        <Button type="primary" onClick={() => setMode(Mode.Edit)}>
+          Edit
+        </Button>
+      );
+    }
+    return null;
+  };
+
   const renderHeader = () => {
-    return <PageToolbar title={t('data_model_title', 'Data model')} />;
+    return (
+      <PageToolbar
+        title={t('data_model_title', 'Data model')}
+        behindTitle={renderVersion()}
+      >
+        <PageToolbar.Tools>{renderTools()}</PageToolbar.Tools>
+      </PageToolbar>
+    );
   };
 
   const codeEditor = (
@@ -48,6 +123,7 @@ export const DatamodelPage = () => {
           onChange={(schemaString) => {
             setProjectSchema(schemaString);
           }}
+          disabled={mode === Mode.View}
         />
       ) : (
         <Placeholder

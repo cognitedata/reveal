@@ -5,7 +5,6 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import { SchemaVersionSelect } from '@platypus-app/modules/solution/components/SchemaVersionSelect/SchemaVersionSelect';
-import { StyledVersionContainer } from './elements';
 
 export const OverviewPage = () => {
   const history = useHistory();
@@ -18,15 +17,13 @@ export const OverviewPage = () => {
 
   const renderVersionSelect = () => {
     return (
-      <StyledVersionContainer>
-        <SchemaVersionSelect
-          selectedVersion={selectedSchema?.version}
-          versions={schemas.map((s) => s.version)}
-          onChange={(seletedValue) => {
-            history.replace(`/solutions/${solution?.id}/${seletedValue}`);
-          }}
-        />
-      </StyledVersionContainer>
+      <SchemaVersionSelect
+        selectedVersion={selectedSchema?.version}
+        versions={schemas.map((s) => s.version)}
+        onChange={(seletedValue) => {
+          history.replace(`/solutions/${solution?.id}/${seletedValue}`);
+        }}
+      />
     );
   };
 

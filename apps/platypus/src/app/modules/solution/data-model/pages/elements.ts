@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro';
 
-export const StyledVersionContainer = styled.div`
-  width: 80px;
+export const StyledSchemaVersion = styled.div`
   margin-left: 10px;
 `;
