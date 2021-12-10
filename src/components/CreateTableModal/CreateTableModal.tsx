@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Button, Colors, Detail, Input, Title } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
@@ -60,10 +60,12 @@ const CreateTableModal = ({
   const [file, setFile] = useState<File>(); // eslint-disable-line
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
 
-  const { mutate: createDatabase, isLoading: isCreatingTable } =
-    useCreateTable();
-  const [[activeDatabaseName, activeTableName] = [], openTable] =
-    useActiveTable();
+  const {
+    mutate: createDatabase,
+    isLoading: isCreatingTable,
+    isSuccess: tableCreated,
+  } = useCreateTable();
+  const [_, openTable] = useActiveTable();
 
   const {
     columns,
@@ -96,29 +98,15 @@ const CreateTableModal = ({
     (selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn &&
       !(selectedColumnIndex >= 0));
 
-  useEffect(() => {
-    if (
-      uploadPercentage > 0 &&
-      (activeDatabaseName !== databaseName ||
-        activeTableName !== values.tableName)
-    ) {
-      openTable([databaseName, values.tableName]);
-    }
-  }, [
-    activeDatabaseName,
-    activeTableName,
-    databaseName,
-    values.tableName,
-    openTable,
-    uploadPercentage,
-  ]);
-
   function handleCancel(): void {
     if (file && isParsing && !isUploadCompleted) {
       notification.info({
         message: `File upload was canceled.`,
         key: 'file-upload',
       });
+    }
+    if (tableCreated) {
+      openTable([databaseName, values.tableName]);
     }
     onCancel();
   }
