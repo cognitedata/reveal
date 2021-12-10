@@ -3,14 +3,16 @@ import React from 'react';
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { keyframes } from 'styled-components';
 
-export type ProfileResultType = 'running' | 'partial' | 'complete';
-export type ProfileCoverageType = 'rows' | 'columns';
+import {
+  ProfileCoverageType,
+  ProfileResultType,
+} from 'hooks/profiling-service';
 
 type ProfileCoverageLabelProps = {
   coverageType: ProfileCoverageType;
   resultType: ProfileResultType;
 };
-const ProfileCoverageLabel = ({
+export const ProfileCoverageLabel = ({
   coverageType,
   resultType,
 }: ProfileCoverageLabelProps): JSX.Element => {
@@ -81,5 +83,3 @@ const StyledPartialIcon = styled(Icon)`
   color: #bb5b00;
   margin-right: 6px;
 `;
-
-export default ProfileCoverageLabel;
