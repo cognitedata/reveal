@@ -63,6 +63,8 @@ export class GltfSectorRepository implements SectorRepository {
 
       const filteredGeometryBuffer = filterGeometryOutsideClipBox(parsedGeometry.geometryBuffer, type);
 
+      if (!filteredGeometryBuffer) return;
+
       switch (type) {
         case RevealGeometryCollectionType.BoxCollection:
         case RevealGeometryCollectionType.CircleCollection:

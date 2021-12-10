@@ -17,11 +17,16 @@ export function filterGeometryOutsideClipBox(
   geometryBuffer: THREE.BufferGeometry,
   type: RevealGeometryCollectionType,
   clipBox?: THREE.Box3
-): THREE.BufferGeometry {
+): THREE.BufferGeometry | undefined {
   if (!clipBox) return geometryBuffer;
 
-  if (type == RevealGeometryCollectionType.InstanceMesh || type == RevealGeometryCollectionType.TriangleMesh)
-    return geometryBuffer;
+  if (type === RevealGeometryCollectionType.InstanceMesh || type === RevealGeometryCollectionType.TriangleMesh) {
+    const boundingBox = geometryBuffer.boundingBox;
+    if (!boundingBox || boundingBox.intersectsBox(clipBox)) {
+      return geometryBuffer;
+    }
+    return undefined;
+  }
 
   const interleavedAttributes = getAttributes(geometryBuffer, THREE.InterleavedBufferAttribute);
   let newArray: Uint8Array | undefined;
@@ -62,6 +67,10 @@ export function filterGeometryOutsideClipBox(
       break;
     default:
       assertNever(type);
+  }
+
+  if (newArray.length === 0) {
+    return undefined;
   }
 
   return createNewBufferGeometry(newArray, geometryBuffer, interleavedAttributes);

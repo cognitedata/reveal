@@ -36,7 +36,9 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitive
 
   const filteredGeometry = filterGeometryOutsideClipBox(bufferGeometry, collectionType, clipBox);
 
-  const newPrimitives = parseInterleavedGeometry(primitiveType, filteredGeometry);
+  expect(filteredGeometry).toBeDefined();
+
+  const newPrimitives = parseInterleavedGeometry(primitiveType, filteredGeometry!);
 
   expect(newPrimitives).toHaveLength(1);
   expect(newPrimitives[0]).toContainKeys(Object.keys(primitives[0]));
@@ -75,6 +77,37 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
     );
 
     expect(newGeometry).toBe(bufferGeometry);
+  });
+
+  test('returns undefined if nothing intersects clipbox', () => {
+    const ellipsoids: Ellipsoid[] = [
+      {
+        horizontalRadius: 10,
+        verticalRadius: 10,
+        height: 10,
+        center: [0, 0, 0]
+      },
+      {
+        horizontalRadius: 10,
+        verticalRadius: 10,
+        height: 10,
+        center: [20, 20, 0]
+      }
+    ];
+
+    const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveType.Ellipsoid, ellipsoids);
+
+    const clipBox = new THREE.Box3();
+    clipBox.min.set(-30, -30, -30);
+    clipBox.max.set(-20, -20, -20);
+
+    const newGeometry = filterGeometryOutsideClipBox(
+      bufferGeometry,
+      RevealGeometryCollectionType.EllipsoidSegmentCollection,
+      clipBox
+    );
+
+    expect(newGeometry).toBeUndefined();
   });
 
   test('Two boxes: one accepted, one rejected - returns filtered', () => {
