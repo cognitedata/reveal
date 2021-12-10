@@ -56,7 +56,6 @@ module.exports = {
     // In order to follow the top level .eslintrc setup the rules below
     // should be enabled and corresponding eslint errors should be addressed.
     // This can be done gradually in the later PRs
-    'no-promise-executor-return': ['off'],
     'testing-library/prefer-presence-queries': ['off'],
     'react/no-unstable-nested-components': ['off'],
     'testing-library/prefer-query-by-disappearance': ['off'],

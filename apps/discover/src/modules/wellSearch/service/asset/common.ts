@@ -22,5 +22,5 @@ export async function getAssetsByParentIds(parentIds: number[], fetcher: any) {
     );
   }
   log('fetcher configurations not found while fetching assets by wellbore id');
-  return new Promise<Asset[]>((resolve) => resolve([]));
+  return Promise.resolve([] as Asset[]);
 }

@@ -5,6 +5,7 @@ import {
   CancellablePromise,
 } from '_helpers/cancellablePromise';
 
+/* eslint-disable no-promise-executor-return */
 const delay = (n: number) => new Promise((resolve) => setTimeout(resolve, n));
 
 const useCancellablePromises = () => {

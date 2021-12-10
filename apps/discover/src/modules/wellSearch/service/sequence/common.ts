@@ -71,7 +71,7 @@ export async function getSequencesByAssetIds(
   log(
     'fetcher configurations not found while fetching sequences by wellbore id'
   );
-  return new Promise<Sequence[]>((resolve) => resolve([]));
+  return Promise.resolve([]);
 }
 
 export function getSequenceRowData(id: number, limit = 10000) {

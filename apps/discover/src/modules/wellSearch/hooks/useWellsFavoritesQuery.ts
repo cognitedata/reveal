@@ -61,12 +61,7 @@ export const useMutateFavoriteWellPatchWellbores = () => {
     async (favoriteMutateModel: FavoriteMutateModel) => {
       const { updatingWellIds, successCallback } = favoriteMutateModel;
       const wellbores = await getGroupedWellboresByWellIds(updatingWellIds);
-
-      return new Promise<{
-        wellbores: DictionaryType<Wellbore[]>;
-        updatingWellIds: number[];
-        successCallback?: (wellbores: DictionaryType<Wellbore[]>) => void;
-      }>((resolve) => resolve({ wellbores, updatingWellIds, successCallback }));
+      return Promise.resolve({ wellbores, updatingWellIds, successCallback });
     },
     {
       onSuccess: (response) => {
