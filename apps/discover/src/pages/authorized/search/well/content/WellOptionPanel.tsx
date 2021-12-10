@@ -28,14 +28,6 @@ export const WellOptionPanel: React.FC = () => {
     }
   };
 
-  const handleSelectAllColumns = (value: boolean) => {
-    const columns = availableColumns
-      .filter((column) => value || column.disabled)
-      .map((column) => column.field);
-
-    dispatch(wellSearchActions.setSelectedColumns(columns));
-  };
-
   const mergedColumns = availableColumns.map((availableColumn) => {
     return {
       ...availableColumn,
@@ -48,7 +40,6 @@ export const WellOptionPanel: React.FC = () => {
   return (
     <OptionsPanel
       handleColumnSelection={handleColumnSelection}
-      handleSelectAllColumns={handleSelectAllColumns}
       columns={sortedColumns}
     />
   );

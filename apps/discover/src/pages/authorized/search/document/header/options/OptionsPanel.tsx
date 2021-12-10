@@ -19,7 +19,6 @@ interface Props {
   columns: AvailableColumn[];
   // viewMode?: ViewMode;
   // searchForSensitive?: boolean;
-  handleSelectAllColumns?: (selectall: boolean) => void;
   handleColumnSelection: (column: AvailableColumn) => void;
   // handleSearchInSensitiveToggle?: (
   //   event: React.ChangeEvent<HTMLInputElement>,
@@ -29,16 +28,11 @@ interface Props {
   // hideGroupDuplicateOption?: boolean;
 }
 
-const OptionsPanel: React.FC<Props> = ({
-  columns,
-  handleSelectAllColumns,
-  handleColumnSelection,
-}) => {
+const OptionsPanel: React.FC<Props> = ({ columns, handleColumnSelection }) => {
   return (
     <Root>
       <ManageColumnsPanel
         columns={columns}
-        handleSelectAllColumns={handleSelectAllColumns}
         handleColumnSelection={handleColumnSelection}
       />
     </Root>

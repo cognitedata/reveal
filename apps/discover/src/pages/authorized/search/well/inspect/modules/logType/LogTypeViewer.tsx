@@ -280,14 +280,6 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
       )
     );
   };
-  const handleSelectAllMarkers = (isAllSelected: boolean) => {
-    setMarkersFilters(
-      markersFilters.map((markersFilter) => ({
-        ...markersFilter,
-        selected: isAllSelected,
-      }))
-    );
-  };
 
   const handleDomainChange = (name: string, minMax: string, value: number) => {
     setDomains((domainList) =>
@@ -313,7 +305,6 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
           <MarkersFilterWrapper>
             <ManageColumnsPanel
               columns={markersFilters}
-              handleSelectAllColumns={handleSelectAllMarkers}
               handleColumnSelection={handleMarkersSelection}
             >
               <ExpandButton text={t('Filter Markers')} />

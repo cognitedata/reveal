@@ -11,10 +11,7 @@ import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { DocumentPayload } from 'modules/api/documents/types';
 import { useSetDocumentFilters } from 'modules/api/savedSearches/hooks/useClearDocumentFilters';
-import {
-  DocumentQueryFacet,
-  DocumentQueryFacets,
-} from 'modules/documentSearch/types';
+import { DocumentQueryFacets } from 'modules/documentSearch/types';
 import { useFilterAppliedFilters } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
 import { FlexAlignItems, sizes } from 'styles/layout';
@@ -68,7 +65,6 @@ interface Props {
   >;
   categoryData: DocumentPayload[];
   category: CategoryTypes;
-  resultFacets: DocumentQueryFacet[];
   defaultNumberOfItemsToDisplay?: number;
 }
 export const CheckboxFilter: React.FC<Props> = React.memo(
@@ -76,7 +72,6 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
     title,
     docQueryFacetType,
     categoryData: categoryDataOriginal,
-    resultFacets,
     defaultNumberOfItemsToDisplay,
     ...rest
   }) => {
@@ -213,7 +208,6 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
           <Checkboxes
             data={getCheckboxesData(activeFilters)}
             onValueChange={handleSelectedFilterSelection}
-            resultFacets={resultFacets}
             hideResultsCount={hideFilterCount}
           />
           {renderViewMoreButton}

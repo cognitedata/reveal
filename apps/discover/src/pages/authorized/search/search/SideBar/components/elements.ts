@@ -58,11 +58,6 @@ export const ClearButton = styled(Button)`
   color: var(--cogs-greyscale-grey7);
 `;
 
-export const ButtonBorderWrapper = styled.div`
-  border-bottom: ${(props: { highlightBorder: boolean }) =>
-    props.highlightBorder ? '3px solid var(--cogs-midblue-2)' : 'none'};
-`;
-
 export const CategoryItem = styled(Menu.Item)`
   ${(props: { selected: boolean }) =>
     props.selected ? 'color: var(--cogs-primary);' : ''};

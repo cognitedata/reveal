@@ -156,7 +156,6 @@ const WellboreSelectionDropdown: React.FC<Props> = (props: Props) => {
       <WellboreDropdownWrapper>
         <ManageColumnsPanel
           columns={getColumns}
-          handleSelectAllColumns={handleSelectAllMarkers}
           handleColumnSelection={handleMarkersSelection}
           groupedColumns
           includeSearchInput

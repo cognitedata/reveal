@@ -4,7 +4,7 @@ import { AvailableColumn } from 'modules/documentSearch/types';
 import { getAvailableColumns } from 'modules/documentSearch/utils/columns';
 import { setSelectedRelatedDocumentColumns } from 'modules/wellInspect/actions';
 import { useWellInspect } from 'modules/wellInspect/selectors';
-import { toBooleanMap } from 'modules/wellSearch/utils';
+// import { toBooleanMap } from 'modules/wellSearch/utils';
 import OptionsPanel from 'pages/authorized/search/document/header/options/OptionsPanel';
 
 import { columns } from './constant';
@@ -22,13 +22,13 @@ export const RelatedDocumentOptionPanel: React.FC = () => {
     );
   };
 
-  const handleSelectAllColumns = (value: boolean) => {
-    dispatch(
-      setSelectedRelatedDocumentColumns(
-        toBooleanMap(Object.keys(columns), value)
-      )
-    );
-  };
+  // const handleSelectAllColumns = (value: boolean) => {
+  //   dispatch(
+  //     setSelectedRelatedDocumentColumns(
+  //       toBooleanMap(Object.keys(columns), value)
+  //     )
+  //   );
+  // };
 
   const filteredColumns = availableColumns.map((availableColumn) => {
     return {
@@ -40,7 +40,7 @@ export const RelatedDocumentOptionPanel: React.FC = () => {
   return (
     <OptionsPanel
       handleColumnSelection={handleColumnSelection}
-      handleSelectAllColumns={handleSelectAllColumns}
+      // handleSelectAllColumns={handleSelectAllColumns}
       columns={filteredColumns}
     />
   );
