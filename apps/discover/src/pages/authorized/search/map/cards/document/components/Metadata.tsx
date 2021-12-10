@@ -19,7 +19,7 @@ export const Metadata: React.FC<Props> = ({
   );
 
   return (
-    <div style={{ width: '1028px' }}>
+    <>
       <MetadataTable
         columns={numberOfColumns}
         metadata={[
@@ -55,6 +55,6 @@ export const Metadata: React.FC<Props> = ({
           },
         ]}
       />
-    </div>
+    </>
   );
 };
