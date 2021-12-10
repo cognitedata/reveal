@@ -30,6 +30,7 @@ describe('Project Config', () => {
     }).as('getConfig');
 
     cy.loginAsAdmin();
+    cy.acceptCookies();
 
     /**
      * Will enable this in another PR
