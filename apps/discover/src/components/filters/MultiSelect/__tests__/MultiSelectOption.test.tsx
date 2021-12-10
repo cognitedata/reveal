@@ -37,6 +37,6 @@ describe('MultiSelectOption', () => {
   it('should render count as expected', async () => {
     await defaultTestInit();
 
-    expect(screen.queryByText(120)).toBeInTheDocument();
+    expect(screen.getByText(120)).toBeInTheDocument();
   });
 });

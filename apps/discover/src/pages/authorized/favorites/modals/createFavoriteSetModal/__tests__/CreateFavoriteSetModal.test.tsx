@@ -60,9 +60,9 @@ describe('Create Favorite Set Model', () => {
       screen.getByText(CREATE_SET_MODAL_DESCRIPTION_LABEL)
     ).toBeInTheDocument();
     expect(screen.getByText('Create new set')).toBeInTheDocument();
-    expect(screen.queryByTestId('create-favourite-name')).toBeInTheDocument();
+    expect(screen.getByTestId('create-favourite-name')).toBeInTheDocument();
     expect(
-      screen.queryByTestId('create-favourite-description')
+      screen.getByTestId('create-favourite-description')
     ).toBeInTheDocument();
   });
 

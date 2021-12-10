@@ -35,8 +35,8 @@ describe('Numeric Range Filter', () => {
 
   it(`should show min max values if no value is selected`, async () => {
     await defaultTestInit(defaultProps);
-    expect(screen.queryByDisplayValue(values[0])).toBeInTheDocument();
-    expect(screen.queryByDisplayValue(values[1])).toBeInTheDocument();
+    expect(screen.getByDisplayValue(values[0])).toBeInTheDocument();
+    expect(screen.getByDisplayValue(values[1])).toBeInTheDocument();
   });
 
   it(`should show selected values`, async () => {
@@ -46,8 +46,8 @@ describe('Numeric Range Filter', () => {
     };
 
     await defaultTestInit(props);
-    expect(screen.queryByDisplayValue(selectedValues[0])).toBeInTheDocument();
-    expect(screen.queryByDisplayValue(selectedValues[1])).toBeInTheDocument();
+    expect(screen.getByDisplayValue(selectedValues[0])).toBeInTheDocument();
+    expect(screen.getByDisplayValue(selectedValues[1])).toBeInTheDocument();
   });
 
   it(`Input boxes should be editable`, async () => {

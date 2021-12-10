@@ -25,9 +25,9 @@ describe('Well metadata', () => {
       }),
     });
 
-    expect(screen.queryByText('test-sources')).toBeInTheDocument();
-    expect(screen.queryByText('test-operator')).toBeInTheDocument();
-    expect(screen.queryByText(shortDate(SPUD_DATE))).toBeInTheDocument();
+    expect(screen.getByText('test-sources')).toBeInTheDocument();
+    expect(screen.getByText('test-operator')).toBeInTheDocument();
+    expect(screen.getByText(shortDate(SPUD_DATE))).toBeInTheDocument();
   });
 
   it("should render placeholders when well isn't provided", async () => {

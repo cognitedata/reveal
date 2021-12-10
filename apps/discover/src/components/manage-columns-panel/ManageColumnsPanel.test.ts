@@ -32,7 +32,7 @@ describe('ManageColumnsPanel', () => {
     const button = screen.getByTestId('organize-columns');
     await fireEvent.click(button);
 
-    expect(screen.queryByText('Field2')).toBeInTheDocument();
+    expect(screen.getByText('Field2')).toBeInTheDocument();
   });
 
   it('should trigger onVisibilityToggle', async () => {

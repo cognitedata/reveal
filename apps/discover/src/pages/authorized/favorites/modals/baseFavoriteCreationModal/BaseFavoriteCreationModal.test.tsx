@@ -49,7 +49,7 @@ describe('BaseFavoriteCreationModal', () => {
 
     // Changing name
     fireEvent.change(nameInput, { target: { value: TEST_NAME } });
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
 
     // Deleting name
     fireEvent.change(nameInput, { target: { value: '' } });
@@ -64,7 +64,7 @@ describe('BaseFavoriteCreationModal', () => {
     fireEvent.change(nameInput, { target: { value: TEST_NAME } });
 
     expect(descriptionInput).toHaveValue('');
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
   });
 
   it('should not enable ok button when changing only the description field', async () => {
@@ -121,7 +121,7 @@ describe('BaseFavoriteCreationModal', () => {
       target: { value: TEST_DESCRIPTION_EDITIED },
     });
 
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
   });
 
   it('should be able to edit only the name', async () => {
@@ -145,7 +145,7 @@ describe('BaseFavoriteCreationModal', () => {
     });
 
     expect(descriptionInput).toHaveValue(TEST_DESCRIPTION);
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
   });
 
   it('should be able to edit only the description', async () => {
@@ -169,7 +169,7 @@ describe('BaseFavoriteCreationModal', () => {
     });
 
     expect(nameInput).toHaveValue(TEST_NAME);
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
   });
 
   it('should enable ok button when at least one input changed', async () => {
@@ -192,7 +192,7 @@ describe('BaseFavoriteCreationModal', () => {
     fireEvent.change(nameInput, {
       target: { value: TEST_NAME_EDITIED },
     });
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
     fireEvent.change(nameInput, {
       target: { value: TEST_NAME },
     });
@@ -202,7 +202,7 @@ describe('BaseFavoriteCreationModal', () => {
     fireEvent.change(nameInput, {
       target: { value: TEST_DESCRIPTION_EDITIED },
     });
-    expect(screen.getByText(OK_TEXT).getAttribute('disabled')).toBeFalsy();
+    expect(screen.queryByText(OK_TEXT)?.getAttribute('disabled')).toBeFalsy();
     fireEvent.change(descriptionInput, {
       target: { value: TEST_DESCRIPTION },
     });

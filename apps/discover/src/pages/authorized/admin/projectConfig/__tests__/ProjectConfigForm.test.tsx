@@ -52,7 +52,7 @@ describe('ProjectConfigForm', () => {
       await defaultTestInit(props);
       fireEvent.click(screen.getByText('Documents'));
 
-      expect(screen.queryByText('Enabled')).toBeInTheDocument();
+      expect(screen.getByText('Enabled')).toBeInTheDocument();
     });
 
     test('should show layers 1 data as children for truthy dataAsChildren metadata & trigger onChange on blurring json input for whole array', async () => {

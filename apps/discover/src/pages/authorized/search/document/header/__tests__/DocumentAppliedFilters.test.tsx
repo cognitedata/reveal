@@ -56,8 +56,8 @@ describe('DocumentsBulkActions show all filters', () => {
         appliedFilters: getEmptyAppliedFilterType(),
       }),
     });
-    expect(screen.queryByText(CLEAR_ALL_TEXT)).toBeInTheDocument();
-    expect(screen.queryByText('WELL A')).toBeInTheDocument();
+    expect(screen.getByText(CLEAR_ALL_TEXT)).toBeInTheDocument();
+    expect(screen.getByText('WELL A')).toBeInTheDocument();
   });
 
   it('Both filters and serach phrase', async () => {
@@ -115,7 +115,7 @@ describe('DocumentsBulkActions show clear all for filters only', () => {
         appliedFilters: getMockAppliedFiltersType(),
       }),
     });
-    expect(screen.queryByText(CLEAR_ALL_TEXT)).toBeInTheDocument();
+    expect(screen.getByText(CLEAR_ALL_TEXT)).toBeInTheDocument();
     expect(screen.queryByText('Well A')).not.toBeInTheDocument();
     expect(screen.getByText('File Type: Compressed')).toBeInTheDocument();
     expect(screen.getByText('Source: Bp-Blob')).toBeInTheDocument();

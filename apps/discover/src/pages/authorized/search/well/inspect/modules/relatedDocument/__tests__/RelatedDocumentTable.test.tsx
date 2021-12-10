@@ -32,6 +32,6 @@ describe('RelatedDocumentTableComponent', () => {
 
   it('should display loader on related document loading', async () => {
     await testInit();
-    expect(screen.queryByTestId('related-document-table')).toBeInTheDocument();
+    expect(screen.getByTestId('related-document-table')).toBeInTheDocument();
   });
 });

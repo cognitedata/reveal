@@ -46,8 +46,8 @@ describe('Favorite Bulk action bar', () => {
       selectedWellboresList: { '1': ['test 1', 'test 2'] },
     });
 
-    expect(screen.queryByText('1 well selected')).toBeInTheDocument();
-    expect(screen.queryByText('With 2 wellbores inside')).toBeInTheDocument();
+    expect(screen.getByText('1 well selected')).toBeInTheDocument();
+    expect(screen.getByText('With 2 wellbores inside')).toBeInTheDocument();
   });
 
   it('should deselect all on close', async () => {

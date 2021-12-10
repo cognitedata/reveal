@@ -16,6 +16,6 @@ describe('LoadingSpinner', () => {
 
   it('should render loading spinner as expected', async () => {
     await defaultTestInit({ isLoading: true });
-    expect(screen.queryByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 });

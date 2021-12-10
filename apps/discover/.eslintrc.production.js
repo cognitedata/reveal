@@ -53,17 +53,19 @@ module.exports = {
     'react/jsx-one-expression-per-line': ['off'],
     'react/jsx-wrap-multilines': ['off'],
 
-    // In order to follow the top level .eslintrc setup the rules below
-    // should be enabled and corresponding eslint errors should be addressed.
-    // This can be done gradually in the later PRs
-    'testing-library/prefer-presence-queries': ['off'],
+    'testing-library/prefer-presence-queries': ['error'],
     'react/no-unstable-nested-components': ['error'],
     'testing-library/prefer-query-by-disappearance': ['error'],
-    'react-hooks/rules-of-hooks': ['off'],
     'import/no-anonymous-default-export': ['error'],
+    'unicode-bom': ['error'],
+
     // This will be fixed in version v2.25.3 of eslint-plugin-import package
     'import/no-import-module-exports': ['off'],
-    'unicode-bom': ['error'],
+
+    // In order to follow the top level .eslintrc setup the rules below
+    // should be enabled and corresponding eslint errors should be addressed.
+    // This can be done gradually in the later PRs:
+    'react-hooks/rules-of-hooks': ['off'],
     'no-param-reassign': [
       'error',
       { props: true, ignorePropertyModificationsFor: ['state'] },

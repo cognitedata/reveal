@@ -30,7 +30,7 @@ describe('FilePath', () => {
       paths: getPathsFromDoc(mockDocument),
     });
 
-    expect(screen.queryByText('Original path')).toBeInTheDocument();
+    expect(screen.getByText('Original path')).toBeInTheDocument();
     expect(screen.getAllByTestId('document-parent-path').length).toEqual(1);
   });
 
@@ -40,7 +40,7 @@ describe('FilePath', () => {
       paths: getPathsFromDoc({ ...mockDocument, duplicates: [mockDocument] }),
     });
 
-    expect(screen.queryByText('Original path')).toBeInTheDocument();
+    expect(screen.getByText('Original path')).toBeInTheDocument();
     expect(screen.getAllByTestId('document-parent-path').length).toEqual(2);
   });
 });

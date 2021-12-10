@@ -71,7 +71,7 @@ describe('Favorite Wellbore table', () => {
       favoriteId: '1',
     });
 
-    expect(screen.queryByText(FAVORITE_SET_NO_WELLS)).toBeInTheDocument();
+    expect(screen.getByText(FAVORITE_SET_NO_WELLS)).toBeInTheDocument();
   });
 
   it('should render loading message when `isLoading` is true and no data', async () => {

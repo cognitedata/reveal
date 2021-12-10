@@ -18,21 +18,21 @@ describe('SwitchBoolean', () => {
 
   it('should check the custom enabled value', () => {
     defaultTestInit({ value: true });
-    expect(screen.queryByText('Disabled')).toBeInTheDocument();
+    expect(screen.getByText('Disabled')).toBeInTheDocument();
   });
 
   it('should check the custom disabled value', () => {
     defaultTestInit({ value: false });
-    expect(screen.queryByText('Enabled')).toBeInTheDocument();
+    expect(screen.getByText('Enabled')).toBeInTheDocument();
   });
 
   it('should check the disabled value - when not using the special inverse type', () => {
     defaultTestInit({ label: 'Normal mode' });
-    expect(screen.queryByText('Normal mode')).toBeInTheDocument();
+    expect(screen.getByText('Normal mode')).toBeInTheDocument();
   });
 
   it('should check the enabled value - when not using the special inverse type', () => {
     defaultTestInit({ label: 'Normal mode', value: true });
-    expect(screen.queryByText('Normal mode')).toBeInTheDocument();
+    expect(screen.getByText('Normal mode')).toBeInTheDocument();
   });
 });

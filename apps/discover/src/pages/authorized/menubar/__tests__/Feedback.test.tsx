@@ -61,7 +61,7 @@ describe('Feedback', () => {
     await defaultTestInit();
 
     fireEvent.click(screen.getByTestId('feedback-options'));
-    expect(screen.queryByText('Feedback')).toBeInTheDocument();
+    expect(screen.getByText('Feedback')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Feedback'));
     expect(screen.queryByText('Feedback')).not.toBeInTheDocument();
   });
