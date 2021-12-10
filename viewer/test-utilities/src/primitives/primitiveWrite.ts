@@ -52,11 +52,11 @@ export function writePrimitiveToBuffer(
 
   for (const rawAttributeName in obj) {
     const value = obj[rawAttributeName];
-    const prefixedAttributeName = '_' + rawAttributeName;
+    const prefixedAttributeName = 'a_' + rawAttributeName;
     const attributeDescription = attributeDescriptionMap.get(prefixedAttributeName);
 
     if (!attributeDescription || !isNumberOrNumberArray(value)) {
-      throw Error('Unknown attribute name ' + rawAttributeName + ' in addPrimitive function');
+      throw Error('Unknown attribute name ' + prefixedAttributeName);
     }
 
     writeAttributeToBuffer(buffer, value as number | number[], byteOffset, attributeDescription);

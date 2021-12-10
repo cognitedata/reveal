@@ -78,7 +78,7 @@ export function readPrimitiveFromBuffer(
   const obj: Record<string, unknown> = {};
   for (const attributeDescription of attributeDescriptions) {
     const value = readAttributeValue(geometryBuffer, attributeDescription, byteOffset);
-    obj[attributeDescription.name.slice(1)] = value;
+    obj[attributeDescription.name.slice(2)] = value;
   }
 
   return obj;

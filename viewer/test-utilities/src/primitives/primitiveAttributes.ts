@@ -91,9 +91,22 @@ const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
   [PrimitiveType.Circle, ['a_treeIndex', 'a_color', 'a_instanceMatrix', 'a_normal']],
   [
     PrimitiveType.Cone,
-    ['a_treeIndex', 'a_color', 'a_angle', 'a_arcAngle', 'a_centerA', 'a_centerB', 'a_localXAxis', 'a_radiusA', 'a_radiusB']
+    [
+      'a_treeIndex',
+      'a_color',
+      'a_angle',
+      'a_arcAngle',
+      'a_centerA',
+      'a_centerB',
+      'a_localXAxis',
+      'a_radiusA',
+      'a_radiusB'
+    ]
   ],
-  [PrimitiveType.EccentricCone, ['a_treeIndex', 'a_color', 'a_centerA', 'a_centerB', 'a_normal', 'a_radiusA', 'a_radiusB']],
+  [
+    PrimitiveType.EccentricCone,
+    ['a_treeIndex', 'a_color', 'a_centerA', 'a_centerB', 'a_normal', 'a_radiusA', 'a_radiusB']
+  ],
   [
     PrimitiveType.Ellipsoid,
     ['a_treeIndex', 'a_color', 'a_center', 'a_normal', 'a_horizontalRadius', 'a_verticalRadius', 'a_height']
