@@ -196,7 +196,7 @@ export class Cognite3DViewer {
     this._renderer.localClippingEnabled = true;
 
     this._automaticNearFarPlane = options.automaticCameraNearFar ?? true;
-    this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? false;
+    this._automaticControlsSensitivity = options.automaticControlsSensitivity ?? true;
 
     this.canvas.style.width = '640px';
     this.canvas.style.height = '480px';

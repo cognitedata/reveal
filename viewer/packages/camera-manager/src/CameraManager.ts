@@ -36,7 +36,7 @@ export class CameraManager {
   private static readonly DefaultAnimationDuration = 300;
   private static readonly DefaultMinAnimationDuration = 300;
   private static readonly DefaultMaxAnimationDuration = 1250;
-  private static readonly DefaultMinDistance = 0.1;
+  private static readonly DefaultMinDistance = 1;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false
@@ -45,7 +45,7 @@ export class CameraManager {
   private _cameraControlsOptions: Required<CameraControlsOptions> = { ...CameraManager.DefaultCameraControlsOptions };
 
   public automaticNearFarPlane = true;
-  public automaticControlsSensitivity = false;
+  public automaticControlsSensitivity = true;
 
   /**
    * Reusable buffers used by functions in Cognite3dViewer to avoid allocations.
@@ -443,9 +443,10 @@ export class CameraManager {
 
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
+    
     const newTarget =
-      modelRaycastData.intersection?.point ??
-      this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
+    modelRaycastData.intersection?.point ??
+    this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }
