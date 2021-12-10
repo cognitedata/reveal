@@ -4,12 +4,10 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import { PRIMARY_KEY_DATAKEY } from 'hooks/table-data';
 import { ALL_FILTER } from 'hooks/table-filters';
-import { baseKey } from 'hooks/sdk-queries';
+import { tableKey } from 'hooks/sdk-queries';
 
 export const rawProfileKey = (db: string, table: string, limit?: number) => [
-  baseKey,
-  db,
-  table,
+  ...tableKey(db, table),
   'raw-profile',
   { limit: limit || 'all' },
 ];

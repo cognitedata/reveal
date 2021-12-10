@@ -3,11 +3,13 @@ import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 export const baseKey = 'raw-explorer';
 
-export const tableKey = (db: string) => [baseKey, db, 'tables'];
-export const dbKey = [baseKey, 'databases'];
+export const dbKey = (db: string) => [baseKey, db];
+export const databaseListKey = [baseKey, 'database-list'];
+export const tableListKey = (db: string) => [...dbKey(db), 'table-list'];
 
+export const tableKey = (db: string, table: string) => [baseKey, db, table];
 export const rowKey = (db: string, table: string, pageSize?: number) => {
-  const queryKey = [baseKey, db, table, 'rows'];
+  const queryKey = [...tableKey(db, table), 'rows'];
   if (pageSize) {
     queryKey.push('pageSize');
     queryKey.push(String(pageSize));
@@ -18,7 +20,7 @@ export const rowKey = (db: string, table: string, pageSize?: number) => {
 export const useDatabases = (options?: { enabled: boolean }) => {
   const sdk = useSDK();
   return useInfiniteQuery(
-    dbKey,
+    databaseListKey,
     ({ pageParam = undefined }) =>
       sdk
         .get<{
@@ -44,7 +46,7 @@ export const useTables = (
   const sdk = useSDK();
 
   return useInfiniteQuery(
-    tableKey(database),
+    tableListKey(database),
     ({ pageParam = undefined }) =>
       sdk
         .get<{
@@ -114,8 +116,9 @@ export const useDeleteDatabase = () => {
     ({ database }: { database: string }) =>
       sdk.raw.deleteDatabases([{ name: database }]),
     {
-      onSuccess() {
-        queryClient.invalidateQueries(dbKey);
+      onSuccess(_, { database }) {
+        queryClient.invalidateQueries(databaseListKey);
+        queryClient.resetQueries(dbKey(database));
       },
     }
   );
@@ -128,7 +131,7 @@ export const useCreateDatabase = () => {
     ({ name }: { name: string }) => sdk.raw.createDatabases([{ name }]),
     {
       onSuccess() {
-        queryClient.invalidateQueries(dbKey);
+        queryClient.invalidateQueries(databaseListKey);
       },
     }
   );
@@ -142,8 +145,8 @@ export const useDeleteTable = () => {
       sdk.raw.deleteTables(database, [{ name: table }]),
     {
       onSuccess(_, { database, table }) {
-        queryClient.invalidateQueries(rowKey(database, table));
-        queryClient.invalidateQueries(tableKey(database));
+        queryClient.resetQueries(tableKey(database, table));
+        queryClient.invalidateQueries(tableListKey(database));
       },
     }
   );
@@ -156,9 +159,8 @@ export const useCreateTable = () => {
     ({ database, table }: { database: string; table: string }) =>
       sdk.raw.createTables(database, [{ name: table }]),
     {
-      onSuccess(_, { database, table }) {
-        queryClient.invalidateQueries(rowKey(database, table));
-        queryClient.invalidateQueries(tableKey(database));
+      onSuccess(_, { database }) {
+        queryClient.invalidateQueries(tableListKey(database));
       },
     }
   );
