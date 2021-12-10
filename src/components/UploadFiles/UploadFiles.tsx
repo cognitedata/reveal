@@ -10,7 +10,8 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
 
 import { UploadFile } from 'antd/lib/upload/interface';
-import { FileInfo } from '../../utils/types';
+import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
+import { FileInfo } from 'utils/types';
 
 interface UploadFileProps {
   setFileList(value: FileInfo[]): void;
@@ -89,6 +90,7 @@ const UploadFiles = ({
   setChangesSaved,
 }: UploadFileProps): JSX.Element => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const getDownloadUrl = async (fileId: number) => {
     const links = await sdk.files.getDownloadUrls([{ id: fileId }]);
@@ -120,7 +122,6 @@ const UploadFiles = ({
     },
     customRequest: ({ file, onSuccess, onError }) => {
       if (typeof file === 'string') return;
-      // if (file instanceof Blob) return;
       trackEvent('DataSets.CreationFlow.Uploaded documentation file', {
         type: file.type ? file.type : '',
       });
@@ -140,6 +141,7 @@ const UploadFiles = ({
             xhr.onload = () => {
               const { status } = xhr;
               if (status === 200) {
+                setUploadError(null);
                 message.success('File is uploaded');
                 setIsUploading(false);
                 if (onSuccess) onSuccess('Ok', xhr);
@@ -152,9 +154,10 @@ const UploadFiles = ({
             xhr.send(file);
           }
         })
-        .catch((err) => {
-          console.log('upload err', err);
-          console.log('onError is', onError);
+        .catch(() => {
+          setUploadError(
+            'Failed to upload. Make sure you have access, and try again.'
+          );
           setIsUploading(false);
           if (onError) onError(new Error('Upload failed'));
         });
@@ -163,6 +166,11 @@ const UploadFiles = ({
 
   return (
     <div>
+      {uploadError && (
+        <div css="margin: 1rem 0;">
+          <ErrorMessageBox>{uploadError}</ErrorMessageBox>
+        </div>
+      )}
       <Upload.Dragger {...uploadProps}>
         {!isUploading ? (
           <>
