@@ -2,6 +2,9 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DiagramConnection,
+  DiagramLineInstance,
+  getDiagramInstanceId,
+  isConnectionUnidirectionalMatch,
 } from '@cognite/pid-tools';
 
 export const deleteSymbolFromState = (
@@ -36,6 +39,27 @@ export const deleteSymbolFromState = (
   setSymbols(symbolsToKeep);
 };
 
+export const deleteLineFromState = (
+  line: DiagramLineInstance,
+  lineInstances: DiagramLineInstance[],
+  connections: DiagramConnection[],
+  setConnections: (diagramConnections: DiagramConnection[]) => void,
+  setLines: (diagramLineInstances: DiagramLineInstance[]) => void
+) => {
+  const lineInstanceId = getDiagramInstanceId(line);
+  setConnections(
+    connections.filter(
+      (connection) =>
+        connection.start !== lineInstanceId && connection.end !== lineInstanceId
+    )
+  );
+  setLines(
+    lineInstances.filter(
+      (lineInstance) => getDiagramInstanceId(lineInstance) !== lineInstanceId
+    )
+  );
+};
+
 export const deleteConnectionFromState = (
   diagramConnection: DiagramConnection,
   diagramConnections: DiagramConnection[],
@@ -43,9 +67,7 @@ export const deleteConnectionFromState = (
 ) => {
   setConnections(
     diagramConnections.filter((connection) =>
-      Object.values(connection).some(
-        (value) => Object.values(diagramConnection).includes(value) === false
-      )
+      isConnectionUnidirectionalMatch(diagramConnection, connection)
     )
   );
 };

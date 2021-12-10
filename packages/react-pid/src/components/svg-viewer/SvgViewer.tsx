@@ -14,6 +14,7 @@ import { ReactSVG } from 'react-svg';
 import { allSimplePaths } from 'graphology-simple-path';
 import Graph from 'graphology';
 
+import { deleteLineFromState } from '../../utils/symbolUtils';
 import { COLORS } from '../../constants';
 import { ToolType } from '../../types';
 import { applyToLeafSVGElements } from '../../utils/svgDomUtils';
@@ -177,7 +178,17 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       }
     } else if (active === 'addLine') {
       if (isDiagramLine(node, lines)) {
-        setLines(lines.filter((line) => !line.pathIds.includes(node.id)));
+        const line = getDiagramInstanceByPathId(lines, node.id);
+        if (!line) {
+          return;
+        }
+        deleteLineFromState(
+          line as DiagramLineInstance,
+          lines,
+          connections,
+          setConnections,
+          setLines
+        );
       } else {
         setLines([
           ...lines,

@@ -31,16 +31,21 @@ export const isPathIdInInstance = (
   return instanceId !== null && instanceId.split('-').includes(pathId);
 };
 
+export const isConnectionUnidirectionalMatch = (
+  connectionA: DiagramConnection,
+  connectionB: DiagramConnection
+) =>
+  (connectionA.start === connectionB.start &&
+    connectionA.end === connectionB.end) ||
+  (connectionA.start === connectionB.end &&
+    connectionA.end === connectionB.start);
+
 export const connectionExists = (
   connections: DiagramConnection[],
   newConnection: DiagramConnection
 ) => {
-  return connections.some(
-    (connection) =>
-      (connection.start === newConnection.start &&
-        connection.end === newConnection.end) ||
-      (connection.start === newConnection.end &&
-        connection.end === newConnection.start)
+  return connections.some((connection) =>
+    isConnectionUnidirectionalMatch(connection, newConnection)
   );
 };
 
