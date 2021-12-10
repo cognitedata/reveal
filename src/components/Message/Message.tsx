@@ -27,30 +27,36 @@ const Message = ({
   let backgroundColor: string;
   let icon: AllIconTypes;
   let iconColor: string;
+  let border: string;
   switch (type) {
     case 'success':
       backgroundColor = 'rgba(57, 162, 99, 0.06)';
+      border = '1px solid rgba(57, 162, 99, 0.2)';
       icon = 'CheckmarkFilled';
       iconColor = '#2E8551';
       break;
     case 'warning':
       backgroundColor = 'rgba(255, 187, 0, 0.06)';
+      border = '1px solid rgba(255, 187, 0, 0.2)';
       icon = 'WarningFilled';
       iconColor = '#D67F05';
       break;
     case 'error':
       backgroundColor = 'rgba(223, 58, 55, 0.06)';
+      border = '1px solid rgba(223, 58, 55, 0.2)';
       icon = 'ErrorFilled';
       iconColor = '#CF1A17';
       break;
     case 'loading':
       backgroundColor = 'rgba(110, 133, 252, 0.06)';
+      border = '1px solid rgba(110, 133, 252, 0.2)';
       icon = 'Loader';
       iconColor = Colors['link-primary-hover'].hex();
       break;
     case 'info':
     default:
       backgroundColor = 'rgba(110, 133, 252, 0.06)';
+      border = '1px solid rgba(110, 133, 252, 0.2)';
       icon = 'InfoFilled';
       iconColor = Colors['bg-status-small--accent'].hex();
       break;
@@ -69,6 +75,7 @@ const Message = ({
   return (
     <StyledMessageWrapper
       $backgroundColor={backgroundColor}
+      $border={border}
       $isClosable={isClosable}
       $size={size}
       className={className}
@@ -95,11 +102,13 @@ const StyledMessageIcon = styled(Icon)<{ $iconColor: string }>`
 
 const StyledMessageWrapper = styled.div<{
   $backgroundColor: string;
+  $border: string;
   $isClosable?: boolean;
   $size: MessageSize;
 }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
+  border: ${({ $border }) => $border};
   border-radius: 8px;
   display: flex;
   padding: ${({ $size }) => ($size === 'small' ? '10px 14px' : '16px')};
