@@ -143,7 +143,7 @@ function filterWithCallback(
 ): Uint8Array {
   const firstInterleavedAttribute = interleavedAttributeMap.values().next().value as THREE.InterleavedBufferAttribute;
   const typedArray = firstInterleavedAttribute.array as TypedArray;
-  const sharedArray = new Uint8Array(typedArray.buffer);
+  const sharedArray = new Uint8Array(typedArray.buffer, typedArray.byteOffset, typedArray.byteLength);
 
   const newRawBuffer = filterPrimitivesOutsideClipBox(
     sharedArray,
