@@ -122,7 +122,8 @@ export const SearchTableResultActionContainer = styled(FlexRow)`
 `;
 
 export const MetadataContainer = styled.div`
-  padding: ${sizes.normal} ${sizes.normal} ${sizes.medium} ${sizes.huge};
+  width: 100%;
+  padding: ${sizes.normal} ${sizes.normal} ${sizes.medium} 72px;
 `;
 
 export const MenuItemDanger = styled(Menu.Item)`

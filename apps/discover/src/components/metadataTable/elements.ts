@@ -32,6 +32,9 @@ export const Label = styled(TitleStyle)`
 `;
 
 export const Value = styled(TitleStyle)`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--cogs-greyscale-grey9);
   font-weight: 400;
 `;
