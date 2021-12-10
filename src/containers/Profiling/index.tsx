@@ -9,20 +9,20 @@ import styled from 'styled-components';
 import { useActiveTableContext } from 'contexts';
 import { useFilteredColumns } from 'hooks/table-filters';
 import {
-  ColumnProfile,
   useQuickProfile,
   useFullProfile,
-  FULL_PROFILE_LIMIT,
   useColumnType,
+  useProfileResultType,
+  ColumnProfile,
 } from 'hooks/profiling-service';
 
 import { FilterBar } from 'containers/Spreadsheet/FilterBar';
-import ProfileRow from './ProfileRow';
+import {
+  ProfileStatusMessage,
+  ProfileCoverageLabel,
+} from 'components/ProfileStatus';
 import ProfileTableHeader from './ProfileTableHeader';
-import ProfileCoverageLabel, {
-  ProfileResultType,
-} from './ProfileCoverageLabel';
-import ProfileStatusMessage from './ProfileStatusMessage';
+import ProfileRow from './ProfileRow';
 
 export type SortableColumn = keyof ColumnProfile;
 
@@ -47,15 +47,9 @@ export const Profiling = (): JSX.Element => {
     error,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
+  const profileResultType = useProfileResultType(database, table);
   const [sortKey, _setSortKey] = useState<SortableColumn>('label');
   const [sortReversed, _setSortReversed] = useState(false);
-
-  let profileResultType: ProfileResultType = 'running';
-  if (fullProfile.data?.rowCount === FULL_PROFILE_LIMIT) {
-    profileResultType = 'partial';
-  } else if (fullProfile.isFetched) {
-    profileResultType = 'complete';
-  }
 
   const setSortKey = (key: SortableColumn) => {
     const reverse = sortKey === key;
@@ -121,7 +115,7 @@ export const Profiling = (): JSX.Element => {
           </Flex>
         </Card>
       </CardsFlex>
-      <Flex style={{ width: '100%', paddingBottom: '8px' }}>
+      <Flex style={{ width: '100%' }}>
         <FilterBar areTypesFetched={areTypesFetched} />
       </Flex>
       <Flex style={{ width: '100%', height: '100%' }}>
