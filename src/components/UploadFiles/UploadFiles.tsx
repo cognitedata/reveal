@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Upload, { UploadChangeParam } from 'antd/lib/upload';
+import { UploadChangeParam, UploadProps } from 'antd/lib/upload';
+import { Upload } from 'antd';
 import message from 'antd/lib/message';
 import List from 'antd/lib/list';
 import Spin from 'antd/lib/spin';
@@ -11,9 +12,7 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { FileInfo } from '../../utils/types';
 
-const { Dragger } = Upload;
-
-interface UploadProps {
+interface UploadFileProps {
   setFileList(value: FileInfo[]): void;
   fileList: FileInfo[];
   setChangesSaved(value: boolean): void;
@@ -88,45 +87,8 @@ const UploadFiles = ({
   fileList,
   setFileList,
   setChangesSaved,
-}: UploadProps): JSX.Element => {
+}: UploadFileProps): JSX.Element => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
-
-  const uploadFile = async (request: any) => {
-    const { file } = request;
-    trackEvent('DataSets.CreationFlow.Uploaded documentation file', {
-      type: file.type ? file.type : '',
-    });
-    sdk.files
-      .upload({
-        name: file.name,
-        mimeType: file.type === '' ? undefined : file.type,
-        source: 'Cognite Data Fusion',
-      })
-      .then((response: any) => {
-        const fileId = response.id;
-        addFileToSystemSet(fileId);
-        if (response.uploadUrl) {
-          const xhr = new XMLHttpRequest();
-          xhr.open('PUT', response.uploadUrl, true);
-          xhr.onload = () => {
-            const { status } = xhr;
-            if (status === 200) {
-              message.success('File is uploaded');
-              setIsUploading(false);
-              request.onSuccess();
-              setFileList([{ name: file.name, id: fileId }, ...fileList]);
-            } else {
-              message.error('Something went wrong!');
-            }
-          };
-          xhr.setRequestHeader('Content-Type', file.type);
-          xhr.send(file);
-        }
-      })
-      .catch(() => {
-        request.onError();
-      });
-  };
 
   const getDownloadUrl = async (fileId: number) => {
     const links = await sdk.files.getDownloadUrls([{ id: fileId }]);
@@ -138,7 +100,7 @@ const UploadFiles = ({
     return links[0].downloadUrl;
   };
 
-  const uploadProps = {
+  const uploadProps: UploadProps = {
     name: 'file',
     showUploadList: false,
     disabled: isUploading,
@@ -156,12 +118,52 @@ const UploadFiles = ({
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    customRequest: (request: any) => uploadFile(request),
+    customRequest: ({ file, onSuccess, onError }) => {
+      if (typeof file === 'string') return;
+      // if (file instanceof Blob) return;
+      trackEvent('DataSets.CreationFlow.Uploaded documentation file', {
+        type: file.type ? file.type : '',
+      });
+      const fileName = 'name' in file ? file.name : 'Uploaded file';
+      sdk.files
+        .upload({
+          name: fileName,
+          mimeType: file.type === '' ? undefined : file.type,
+          source: 'Cognite Data Fusion',
+        })
+        .then((response: any) => {
+          const fileId = response.id;
+          addFileToSystemSet(fileId);
+          if (response.uploadUrl) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('PUT', response.uploadUrl, true);
+            xhr.onload = () => {
+              const { status } = xhr;
+              if (status === 200) {
+                message.success('File is uploaded');
+                setIsUploading(false);
+                if (onSuccess) onSuccess('Ok', xhr);
+                setFileList([{ name: fileName, id: fileId }, ...fileList]);
+              } else {
+                message.error('Something went wrong!');
+              }
+            };
+            xhr.setRequestHeader('Content-Type', file.type);
+            xhr.send(file);
+          }
+        })
+        .catch((err) => {
+          console.log('upload err', err);
+          console.log('onError is', onError);
+          setIsUploading(false);
+          if (onError) onError(new Error('Upload failed'));
+        });
+    },
   };
 
   return (
     <div>
-      <Dragger {...uploadProps}>
+      <Upload.Dragger {...uploadProps}>
         {!isUploading ? (
           <>
             <p className="ant-upload-drag-icon">
@@ -174,7 +176,7 @@ const UploadFiles = ({
         ) : (
           <Spin />
         )}
-      </Dragger>
+      </Upload.Dragger>
       <List>
         {fileList.map((file) => (
           <List.Item key={file.id}>
