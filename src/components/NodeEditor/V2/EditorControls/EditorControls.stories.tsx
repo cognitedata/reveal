@@ -16,6 +16,7 @@ const Template: Story<ComponentProps<typeof EditorControls>> = (args) => (
 
 export const AutoAlignOff = Template.bind({});
 export const AutoAlignOn = Template.bind({});
+export const ReadOnly = Template.bind({});
 
 AutoAlignOn.args = {
   settings: { autoAlign: true },
@@ -23,4 +24,9 @@ AutoAlignOn.args = {
 
 AutoAlignOff.args = {
   settings: { autoAlign: false },
+};
+
+ReadOnly.args = {
+  settings: { autoAlign: false },
+  readOnly: true,
 };

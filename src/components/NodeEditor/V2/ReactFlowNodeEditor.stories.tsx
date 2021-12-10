@@ -16,6 +16,8 @@ const Template: Story<ComponentProps<typeof ReactFlowNodeEditor>> = (args) => (
 );
 
 export const EmptyEditor = Template.bind({});
+export const ReadOnly = Template.bind({});
+export const AutoAlignOff = Template.bind({});
 
 EmptyEditor.args = {
   flowElements: [],
@@ -51,6 +53,7 @@ SimplePassthrough.args = {
         name: 'My Output',
         color: 'red',
         onOutputNameChange: () => {},
+        readOnly: false,
       },
     },
     {
@@ -69,6 +72,7 @@ SimplePassthrough.args = {
         onSourceItemChange: () => {},
         onDuplicateNode: () => {},
         onRemoveNode: () => {},
+        readOnly: false,
       } as SourceNodeData,
       position: {
         y: 46,
@@ -101,9 +105,12 @@ SimplePassthrough.args = {
   onMove: () => {},
 };
 
-export const AutoAlignOff = Template.bind({});
-
 AutoAlignOff.args = {
   ...SimplePassthrough.args,
   settings: { autoAlign: false },
+};
+
+ReadOnly.args = {
+  ...SimplePassthrough.args,
+  readOnly: true,
 };

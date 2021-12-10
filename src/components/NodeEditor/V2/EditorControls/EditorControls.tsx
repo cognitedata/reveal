@@ -8,10 +8,15 @@ import WorkflowSettings from './WorkflowSettings';
 
 type Props = {
   settings: ComponentProps<typeof ReactFlowNodeEditor>['settings'];
+  readOnly: boolean;
   onSaveSettings: (settings: Props['settings']) => void;
 };
 
-const EditorControls = ({ settings, onSaveSettings = () => {} }: Props) => {
+const EditorControls = ({
+  settings,
+  readOnly,
+  onSaveSettings = () => {},
+}: Props) => {
   const { fitView, zoomIn, zoomOut } = useZoomPanHelper();
   const [isAutoAlignDropdownVisible, setIsAutoAlignDropdownVisible] =
     useState<boolean>(false);
@@ -37,6 +42,7 @@ const EditorControls = ({ settings, onSaveSettings = () => {} }: Props) => {
           <WorkflowSettings
             settings={settings}
             onSaveSettings={onSaveSettings}
+            readOnly={readOnly}
           />
         }
         visible={isAutoAlignDropdownVisible}

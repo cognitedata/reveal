@@ -18,6 +18,7 @@ import FunctionParameterForm from './FunctionParameterForm/FunctionParameterForm
 export type FunctionNodeDataDehydrated = {
   toolFunction: Operation;
   functionData: { [key: string]: any };
+  readOnly: boolean;
 };
 
 export type FunctionNodeCallbacks = {
@@ -37,6 +38,7 @@ const FunctionNode = memo(
     const {
       toolFunction,
       functionData,
+      readOnly,
       onFunctionDataChange,
       onDuplicateNode,
       onRemoveNode,
@@ -61,14 +63,27 @@ const FunctionNode = memo(
 
     return (
       <NodeWithActionBar
-        nodeType={NodeTypes.FUNCTION}
-        toolFunction={toolFunction}
-        isActionBarVisible={selected}
-        onEditClick={() => {
-          setAreParamsVisible((isVisible) => !isVisible);
+        capabilities={{
+          canEdit: !readOnly && parameters.length > 0,
+          canDuplicate: !readOnly,
+          canRemove: !readOnly,
+          canSeeInfo: Boolean(toolFunction.description),
         }}
-        onDuplicateClick={() => onDuplicateNode(id, NodeTypes.CONSTANT)}
-        onRemoveClick={() => onRemoveNode(id)}
+        actions={{
+          onEditFunctionClick:
+            parameters.length > 0
+              ? () => setAreParamsVisible((isVisible) => !isVisible)
+              : undefined,
+          onDuplicateClick: () => onDuplicateNode(id, NodeTypes.CONSTANT),
+          onRemoveClick: () => onRemoveNode(id),
+        }}
+        data={{
+          indslFunction: toolFunction,
+        }}
+        status={{
+          isEditing: areParamsVisible,
+        }}
+        isActionBarVisible={selected}
       >
         <NodeWrapper
           className={containerClasses}
@@ -117,10 +132,6 @@ const FunctionNode = memo(
               }}
             />
           )}
-          {/*
-           * TODO: Support multiple outputs
-           * Assuming all functions have only one output for now
-           */}
           <HandleContainer height={nodeHeight} position="right">
             {toolFunction.outputs.map((output, i) => (
               <FunctionNodeHandle

@@ -56,7 +56,7 @@ export type NodeEditorContainerProps = {
     steps: ComputationStep[],
     isValid: boolean
   ) => void;
-  onUpdateSettings: (settings: ChartSettings) => void;
+  readOnly?: boolean;
 };
 
 const ReactFlowNodeEditorContainer = ({
@@ -66,6 +66,7 @@ const ReactFlowNodeEditorContainer = ({
   sources,
   onClose,
   onUpdateWorkflow = () => {},
+  readOnly = false,
 }: NodeEditorContainerProps) => {
   /**
    * Hook onto the internal react-flow state
@@ -264,6 +265,7 @@ const ReactFlowNodeEditorContainer = ({
         data: {
           selectedSourceId: source.value,
           type: source.type,
+          readOnly,
         },
         position,
       };
@@ -273,7 +275,7 @@ const ReactFlowNodeEditorContainer = ({
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
     },
-    [onUpdateWorkflow, localWorkflow, steps, isValid]
+    [onUpdateWorkflow, localWorkflow, steps, isValid, readOnly]
   );
 
   const handleAddFunctionNode = useCallback(
@@ -286,6 +288,7 @@ const ReactFlowNodeEditorContainer = ({
         data: {
           toolFunction,
           functionData: initializeFunctionData(toolFunction),
+          readOnly,
         },
         position,
       };
@@ -295,7 +298,7 @@ const ReactFlowNodeEditorContainer = ({
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
     },
-    [onUpdateWorkflow, localWorkflow, steps, isValid]
+    [onUpdateWorkflow, localWorkflow, steps, isValid, readOnly]
   );
 
   const handleAddConstantNode = useCallback(
@@ -305,9 +308,7 @@ const ReactFlowNodeEditorContainer = ({
       const newNode: Node<ConstantNodeDataDehydrated> = {
         id: nodeId,
         type: NodeTypes.CONSTANT,
-        data: {
-          value: 1,
-        },
+        data: { value: 1, readOnly },
         position,
       };
 
@@ -316,7 +317,7 @@ const ReactFlowNodeEditorContainer = ({
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
     },
-    [onUpdateWorkflow, localWorkflow, steps, isValid]
+    [onUpdateWorkflow, localWorkflow, steps, isValid, readOnly]
   );
 
   const handleAddOutputNode = useCallback(
@@ -326,7 +327,7 @@ const ReactFlowNodeEditorContainer = ({
       const newNode: Node<OutputNodeDataDehydrated> = {
         id: nodeId,
         type: NodeTypes.OUTPUT,
-        data: {},
+        data: { readOnly },
         position,
       };
 
@@ -335,7 +336,7 @@ const ReactFlowNodeEditorContainer = ({
       setLocalWorkflow(updatedWorkflow);
       onUpdateWorkflow(updatedWorkflow, steps, isValid);
     },
-    [onUpdateWorkflow, localWorkflow, steps, isValid]
+    [onUpdateWorkflow, localWorkflow, steps, isValid, readOnly]
   );
 
   /**
@@ -366,8 +367,8 @@ const ReactFlowNodeEditorContainer = ({
    * which we'll provide to react-flow
    */
   const flowElements = useMemo(
-    () => rehydrateStoredFlow(localWorkflow, sources, callbacks),
-    [localWorkflow, sources, callbacks]
+    () => rehydrateStoredFlow(localWorkflow, sources, callbacks, readOnly),
+    [localWorkflow, sources, callbacks, readOnly]
   );
 
   /**
@@ -379,6 +380,7 @@ const ReactFlowNodeEditorContainer = ({
   return (
     <>
       <ReactFlowNodeEditor
+        readOnly={readOnly}
         id={localWorkflow.id}
         position={position}
         zoom={zoom}

@@ -1,5 +1,5 @@
 import { Select } from '@cognite/cogs.js';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { NodeTypes, SourceOption } from '../types';
@@ -10,6 +10,7 @@ import NodeWithActionBar from './NodeWithActionBar';
 export type SourceNodeDataDehydrated = {
   selectedSourceId: string;
   type?: string;
+  readOnly: boolean;
 };
 
 export type SourceNodeCallbacks = {
@@ -30,12 +31,13 @@ export type SourceNodeData = SourceNodeDataDehydrated &
 const emptySourceOption: SourceOption = {
   type: 'timeseries',
   label: 'No source selected',
-  color: '#FFF',
+  color: '#F00',
   value: '',
 };
 
 const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
   const {
+    readOnly,
     selectedSourceId,
     sourceOptions,
     onSourceItemChange,
@@ -46,34 +48,44 @@ const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
   const sourceItem =
     sourceOptions.find((s) => s.value === selectedSourceId) ||
     emptySourceOption;
+  const [isInputVisible, setIsInputVisible] = useState(true);
 
   return (
     <NodeWithActionBar
-      nodeType={NodeTypes.SOURCE}
-      isActionBarVisible={selected}
-      onDuplicateClick={() => {
-        onDuplicateNode(id, NodeTypes.SOURCE);
+      capabilities={{
+        canDuplicate: !readOnly,
+        canEdit: !readOnly,
+        canRemove: !readOnly,
+        canSeeInfo: false,
       }}
-      onRemoveClick={() => {
-        onRemoveNode(id);
+      actions={{
+        onEditClick: () => setIsInputVisible(!isInputVisible),
+        onDuplicateClick: () => onDuplicateNode(id, NodeTypes.SOURCE),
+        onRemoveClick: () => onRemoveNode(id),
       }}
+      status={{ isEditing: isInputVisible }}
+      isActionBarVisible={selected && !readOnly}
     >
       <NodeWrapper className={selected ? 'selected' : ''}>
-        <div>Source</div>
+        <span>Source</span>
         <NodeHandle id="result" type="source" position={Position.Right} />
-        <InputWrapper>
-          <ColorBlock color={sourceItem.color} />
-          <SelectWrapper>
-            <Select
-              value={sourceItem}
-              options={sourceOptions}
-              onChange={(option: SourceOption) =>
-                onSourceItemChange(id, option.value, option.type)
-              }
-              closeMenuOnSelect
-            />
-          </SelectWrapper>
-        </InputWrapper>
+        {readOnly || !isInputVisible ? (
+          sourceItem.label
+        ) : (
+          <InputWrapper>
+            <ColorBlock color={sourceItem.color} />
+            <SelectWrapper>
+              <Select
+                value={sourceItem}
+                options={sourceOptions}
+                onChange={(option: SourceOption) =>
+                  onSourceItemChange(id, option.value, option.type)
+                }
+                closeMenuOnSelect
+              />
+            </SelectWrapper>
+          </InputWrapper>
+        )}
       </NodeWrapper>
     </NodeWithActionBar>
   );

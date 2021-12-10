@@ -9,6 +9,7 @@ import NodeWithActionBar from './NodeWithActionBar';
 
 export type ConstantNodeDataDehydrated = {
   value: number;
+  readOnly: boolean;
 };
 
 export type ConstantNodeCallbacks = {
@@ -22,19 +23,28 @@ export type ConstantNodeData = ConstantNodeDataDehydrated &
 
 const ConstantNode = memo(
   ({ id, data, selected }: NodeProps<ConstantNodeData>) => {
-    const { value, onConstantChange, onDuplicateNode, onRemoveNode } = data;
+    const { value, readOnly, onConstantChange, onDuplicateNode, onRemoveNode } =
+      data;
 
     const [isInputVisible, setIsInputVisible] = useState<boolean>(false);
 
     return (
       <NodeWithActionBar
-        nodeType={NodeTypes.CONSTANT}
-        isActionBarVisible={selected}
-        onEditClick={() => {
-          setIsInputVisible((isVisible) => !isVisible);
+        isActionBarVisible={selected && !readOnly}
+        actions={{
+          onEditClick: () => setIsInputVisible((isVisible) => !isVisible),
+          onDuplicateClick: () => onDuplicateNode(id, NodeTypes.CONSTANT),
+          onRemoveClick: () => onRemoveNode(id),
         }}
-        onDuplicateClick={() => onDuplicateNode(id, NodeTypes.CONSTANT)}
-        onRemoveClick={() => onRemoveNode(id)}
+        capabilities={{
+          canEdit: true,
+          canDuplicate: true,
+          canRemove: true,
+          canSeeInfo: false,
+        }}
+        status={{
+          isEditing: isInputVisible,
+        }}
       >
         <NodeWrapper
           className={selected ? 'selected' : ''}

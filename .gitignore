@@ -37,3 +37,4 @@ yalc.lock
 
 # dotenv
 .env
+build-storybook.log

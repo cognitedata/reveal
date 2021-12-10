@@ -6,9 +6,14 @@ import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
 type Props = {
   settings: ComponentProps<typeof ReactFlowNodeEditor>['settings'];
   onSaveSettings: (settings: Props['settings']) => void;
+  readOnly?: boolean;
 };
 
-const WorkflowSettings = ({ settings, onSaveSettings }: Props) => {
+const WorkflowSettings = ({
+  settings,
+  readOnly = false,
+  onSaveSettings,
+}: Props) => {
   return (
     <Menu style={{ marginBottom: 10 }}>
       <DropdownContainer>
@@ -18,18 +23,20 @@ const WorkflowSettings = ({ settings, onSaveSettings }: Props) => {
             <Icon type="Info" />
           </Tooltip>
         </ATitleWrapper>
-
-        <FormWrapper>
-          <SegmentedControl
-            currentKey={settings.autoAlign ? 'on' : 'off'}
-            onButtonClicked={(key: string) =>
-              onSaveSettings({ ...settings, autoAlign: key === 'on' })
-            }
-          >
-            <SegmentedControl.Button key="on">On</SegmentedControl.Button>
-            <SegmentedControl.Button key="off">Off</SegmentedControl.Button>
-          </SegmentedControl>
-        </FormWrapper>
+        {readOnly && (settings.autoAlign ? 'On' : 'Off')}
+        {!readOnly && (
+          <FormWrapper>
+            <SegmentedControl
+              currentKey={settings.autoAlign ? 'on' : 'off'}
+              onButtonClicked={(key: string) =>
+                onSaveSettings({ ...settings, autoAlign: key === 'on' })
+              }
+            >
+              <SegmentedControl.Button key="on">On</SegmentedControl.Button>
+              <SegmentedControl.Button key="off">Off</SegmentedControl.Button>
+            </SegmentedControl>
+          </FormWrapper>
+        )}
       </DropdownContainer>
     </Menu>
   );

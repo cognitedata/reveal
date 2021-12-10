@@ -1,17 +1,16 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { fullListOfOperations } from 'models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
-import FunctionNode from './FunctionNode';
-import ReactFlowNodeEditor from '../../ReactFlowNodeEditor';
-import { NodeTypes } from '../../types';
+import ConstantNode from './ConstantNode';
+import ReactFlowNodeEditor from '../ReactFlowNodeEditor';
+import { NodeTypes } from '../types';
 
 export default {
-  component: FunctionNode,
-  title: 'Components/Node Editor/v2/Nodes/Function Node',
+  component: ConstantNode,
+  title: 'Components/Node Editor/v2/Nodes/Constant Node',
 } as Meta;
 
-const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
+const Template: Story<ComponentProps<typeof ConstantNode>> = (args) => (
   <div
     style={{
       width: 'calc(100vw - (100vw - 100%))',
@@ -37,7 +36,7 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
         flowElements={[
           {
             ...args,
-            type: NodeTypes.FUNCTION,
+            type: NodeTypes.CONSTANT,
             position: { x: 50, y: 100 },
           },
         ]}
@@ -46,31 +45,29 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
   </div>
 );
 
-export const AddFunction = Template.bind({});
-export const ExtremeOutliersFunction = Template.bind({});
+export const Default = Template.bind({});
+export const ReadOnly = Template.bind({});
 
-AddFunction.args = {
+Default.args = {
   id: 'sample',
   data: {
-    toolFunction: fullListOfOperations[27],
-    functionData: {},
-    onFunctionDataChange: () => {},
+    readOnly: false,
+    value: 1,
+    onConstantChange: () => {},
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
-    readOnly: false,
   },
   selected: false,
 };
 
-ExtremeOutliersFunction.args = {
+ReadOnly.args = {
   id: 'sample',
   data: {
-    toolFunction: fullListOfOperations[0],
-    functionData: {},
-    onFunctionDataChange: () => {},
+    readOnly: true,
+    value: 1,
+    onConstantChange: () => {},
     onDuplicateNode: () => {},
     onRemoveNode: () => {},
-    readOnly: false,
   },
   selected: false,
 };

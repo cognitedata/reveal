@@ -1,9 +1,11 @@
-import { Chart, ChartSettings, ChartWorkflowV2 } from 'models/chart/types';
-import { updateChartSettings, updateWorkflow } from 'models/chart/updates';
+import { Chart, ChartWorkflowV2 } from 'models/chart/types';
+import { updateWorkflow } from 'models/chart/updates';
 import { useCallback } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
-import { Icon } from '@cognite/cogs.js';
+import { Icon, toast } from '@cognite/cogs.js';
 import { SetterOrUpdater } from 'recoil';
+import ErrorToast from 'components/ErrorToast/ErrorToast';
+import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { SourceOption } from './V2/types';
 import { useAvailableOps } from './AvailableOps';
 import { getSourceOption, getSourcesFromChart } from './utils';
@@ -29,6 +31,8 @@ const NodeEditor = ({
   const workflow = chart?.workflowCollection?.find(
     (flow) => flow.id === workflowId
   );
+
+  const { data: login } = useUserInfo();
 
   /**
    * Get all operations
@@ -57,20 +61,15 @@ const NodeEditor = ({
     [setChart, workflowId]
   );
 
-  /**
-   * Generate update function for chart settings
-   */
-  const handleUpdateSettings = useCallback(
-    (settings: ChartSettings) => {
-      setChart((oldChart) => {
-        return updateChartSettings(oldChart!, settings);
-      });
-    },
-    [setChart]
-  );
+  const readOnly = Boolean(login?.id && login?.id !== chart?.user);
 
-  if (operationsError) {
-    throw operationsError;
+  if (operationsError instanceof Error) {
+    toast.error(
+      <ErrorToast
+        title="Failed to load Operations"
+        text="Please reload the page"
+      />
+    );
   }
 
   if (isLoadingOperations) {
@@ -98,7 +97,7 @@ const NodeEditor = ({
           settings={chart.settings}
           onClose={onClose}
           onUpdateWorkflow={handleUpdateWorkflow}
-          onUpdateSettings={handleUpdateSettings}
+          readOnly={readOnly}
         />
       </ReactFlowProvider>
     );

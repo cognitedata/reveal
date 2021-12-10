@@ -35,6 +35,7 @@ type Props = {
   settings: {
     autoAlign: boolean;
   };
+  readOnly?: boolean;
   // eslint-disable-next-line react/no-unused-prop-types
   isValid: boolean;
   onSaveSettings: (updatedSettings: Props['settings']) => void;
@@ -57,6 +58,7 @@ const ReactFlowNodeEditor = ({
   sources,
   operations,
   settings,
+  readOnly = false,
   onSaveSettings,
   onElementsRemove,
   onConnect,
@@ -189,19 +191,25 @@ const ReactFlowNodeEditor = ({
           }}
           onMoveEnd={handleMove}
         >
-          <EditorControls settings={settings} onSaveSettings={onSaveSettings} />
+          <EditorControls
+            settings={settings}
+            onSaveSettings={onSaveSettings}
+            readOnly={readOnly}
+          />
           <Background variant={BackgroundVariant.Dots} />
         </ReactFlow>
       )}
-      <AddButton
-        elements={flowElements}
-        sources={sources}
-        operations={operations}
-        addSourceNode={addSourceNode}
-        addFunctionNode={addFunctionNode}
-        addConstantNode={addConstantNode}
-        addOutputNode={addOutputNode}
-      />
+      {!readOnly && (
+        <AddButton
+          elements={flowElements}
+          sources={sources}
+          operations={operations}
+          addSourceNode={addSourceNode}
+          addFunctionNode={addFunctionNode}
+          addConstantNode={addConstantNode}
+          addOutputNode={addOutputNode}
+        />
+      )}
       {contextMenuPosition && (
         <ContextMenu
           position={{

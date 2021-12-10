@@ -1,3 +1,8 @@
+import {
+  OperationInputsTypesEnum,
+  OperationOutputsTypesEnum,
+  OperationParametersTypeEnum,
+} from '@cognite/calculation-backend';
 import { Chart, ChartWorkflowV2 } from './types';
 
 export const emptyWorkflow: ChartWorkflowV2 = {
@@ -204,7 +209,9 @@ export const chartWithMultipleCalculations: Chart = {
         elements: [
           {
             id: 'M6EixG-TP2uGwLRyI-LoU',
-            data: {},
+            data: {
+              readOnly: false,
+            },
             position: {
               x: 591,
               y: 117,
@@ -221,6 +228,7 @@ export const chartWithMultipleCalculations: Chart = {
             data: {
               type: 'timeseries',
               selectedSourceId: 'z4_SabhZ-LQjPx53WhSF5',
+              readOnly: false,
             },
           },
           {
@@ -268,7 +276,9 @@ export const chartWithMultipleCalculations: Chart = {
         zoom: 1,
         elements: [
           {
-            data: {},
+            data: {
+              readOnly: false,
+            },
             type: 'CalculationOutput',
             id: '_jXUDsA3kK4fXQ07ny6n-',
             position: {
@@ -281,6 +291,7 @@ export const chartWithMultipleCalculations: Chart = {
             data: {
               type: 'workflow',
               selectedSourceId: 'uZZ2AvDqqhsSe-RjPUS-0',
+              readOnly: false,
             },
             position: {
               x: 44,
@@ -290,6 +301,7 @@ export const chartWithMultipleCalculations: Chart = {
           },
           {
             data: {
+              readOnly: false,
               functionData: {
                 wavelet: 'db8',
                 level: 2,
@@ -300,7 +312,7 @@ export const chartWithMultipleCalculations: Chart = {
                   {
                     description:
                       'The data to be filtered. The series must have a pandas.DatetimeIndex.',
-                    types: ['ts'],
+                    types: [OperationInputsTypesEnum.Ts],
                     param: 'data',
                     name: 'Time series.',
                   },
@@ -312,7 +324,7 @@ export const chartWithMultipleCalculations: Chart = {
                     default_value: 2,
                     description:
                       'The number of wavelet decomposition levels (typically 1 through 6) to use.',
-                    type: 'int',
+                    type: OperationParametersTypeEnum.Int,
                     param: 'level',
                     name: 'Level.',
                     options: null,
@@ -373,14 +385,14 @@ export const chartWithMultipleCalculations: Chart = {
                       'The default is a Daubechies wavelet of order 8 (*db8*). For other types of wavelets see consult the\n`pywavelets pacakge <https://pywavelets.readthedocs.io/en/latest/ref/wavelets.html>`_.\nThe thresholding methods assume an orthogonal wavelet transform and may not choose the threshold\nappropriately for biorthogonal wavelets. Orthogonal wavelets are desirable because white noise in\nthe input remains white noise in the sub-bands. Therefore one should choose one of the db[1-20], sym[2-20]\nor coif[1-5] type wavelet filters.',
                     name: 'Type.',
                     param: 'wavelet',
-                    type: 'str',
+                    type: OperationParametersTypeEnum.Str,
                   },
                 ],
                 op: 'wavelet_filter',
                 outputs: [
                   {
                     name: 'Filtered time series',
-                    types: ['ts'],
+                    types: [OperationOutputsTypesEnum.Ts],
                     description: null,
                   },
                 ],
@@ -455,11 +467,14 @@ export const chartWithMultipleCalculations: Chart = {
             },
             type: 'CalculationOutput',
             id: 'xDj7A-MswVQsXTyjvNI8U',
-            data: {},
+            data: {
+              readOnly: false,
+            },
           },
           {
             id: 'rzcuySUBWdmdMTF10ITFK',
             data: {
+              readOnly: false,
               type: 'workflow',
               selectedSourceId: '2M_k0eYSYiU0w7olxpxKy',
             },
@@ -519,6 +534,7 @@ export const chartWithMultipleCalculations: Chart = {
               x: 146,
             },
             data: {
+              readOnly: false,
               selectedSourceId: 'bHi5m84gI7hwFnPbQQ1BQ',
               type: 'timeseries',
             },
@@ -531,13 +547,16 @@ export const chartWithMultipleCalculations: Chart = {
             type: 'CalculationInput',
             id: 'ItZu2zOAOw5ZDTLvwxaSa',
             data: {
+              readOnly: false,
               type: 'timeseries',
               selectedSourceId: 'z4_SabhZ-LQjPx53WhSF5',
             },
           },
           {
             type: 'CalculationOutput',
-            data: {},
+            data: {
+              readOnly: false,
+            },
             position: {
               y: 152,
               x: 775,
@@ -551,13 +570,17 @@ export const chartWithMultipleCalculations: Chart = {
               x: 560,
             },
             data: {
+              readOnly: false,
               functionData: {},
               toolFunction: {
                 name: 'Multiplication',
                 op: 'mul',
                 inputs: [
                   {
-                    types: ['ts', 'const'],
+                    types: [
+                      OperationInputsTypesEnum.Ts,
+                      OperationInputsTypesEnum.Const,
+                    ],
                     name: 'Time-series or number.',
                     description: null,
                     param: 'a',
@@ -565,7 +588,10 @@ export const chartWithMultipleCalculations: Chart = {
                   {
                     name: 'Time-series or number.',
                     param: 'b',
-                    types: ['ts', 'const'],
+                    types: [
+                      OperationInputsTypesEnum.Ts,
+                      OperationInputsTypesEnum.Const,
+                    ],
                     description: null,
                   },
                 ],
@@ -576,13 +602,16 @@ export const chartWithMultipleCalculations: Chart = {
                     param: 'align_timesteps',
                     description:
                       'Automatically align time stamp  of input time series. Default is False.',
-                    type: 'bool',
+                    type: OperationParametersTypeEnum.Bool,
                     options: null,
                   },
                 ],
                 outputs: [
                   {
-                    types: ['ts', 'const'],
+                    types: [
+                      OperationOutputsTypesEnum.Ts,
+                      OperationOutputsTypesEnum.Const,
+                    ],
                     name: 'pandas.Series : Multiplication of both input variables.',
                     description: null,
                   },

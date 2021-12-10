@@ -113,7 +113,8 @@ export const initializeFunctionData = (
 export const rehydrateStoredFlow = (
   workflow: ChartWorkflowV2,
   sources: SourceOption[],
-  callbacks: NodeCallbacks
+  callbacks: NodeCallbacks,
+  readOnly: boolean
 ): Elements<NodeDataVariants> => {
   if (workflow?.version !== 'v2') {
     return [];
@@ -145,6 +146,7 @@ export const rehydrateStoredFlow = (
             onSourceItemChange,
             onDuplicateNode,
             onRemoveNode,
+            readOnly,
           } as SourceNodeData,
         };
       case NodeTypes.CONSTANT:
@@ -155,6 +157,7 @@ export const rehydrateStoredFlow = (
             onConstantChange,
             onDuplicateNode,
             onRemoveNode,
+            readOnly,
           } as ConstantNodeData,
         };
       case NodeTypes.FUNCTION:
@@ -166,6 +169,7 @@ export const rehydrateStoredFlow = (
             onFunctionDataChange,
             onDuplicateNode,
             onRemoveNode,
+            readOnly,
           } as FunctionNodeData,
         };
       case NodeTypes.OUTPUT:
@@ -176,6 +180,7 @@ export const rehydrateStoredFlow = (
             name: workflow.name,
             color: workflow.color,
             onOutputNameChange,
+            readOnly,
           } as OutputNodeData,
         };
       default:
