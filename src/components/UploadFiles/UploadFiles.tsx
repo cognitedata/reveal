@@ -12,6 +12,8 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { ErrorMessageBox } from 'components/ErrorMessage/ErrorMessage';
 import { FileInfo } from 'utils/types';
+import { useUserCapabilities } from 'hooks/useUserCapabilities';
+import { nameToAclTypeMap } from 'utils/utils';
 
 interface UploadFileProps {
   setFileList(value: FileInfo[]): void;
@@ -89,6 +91,12 @@ const UploadFiles = ({
   setFileList,
   setChangesSaved,
 }: UploadFileProps): JSX.Element => {
+  const filesReadCapability = useUserCapabilities(
+    nameToAclTypeMap.files,
+    'READ'
+  );
+  const isMissingReadAccess =
+    !filesReadCapability.isFetching && !filesReadCapability.data;
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -185,11 +193,19 @@ const UploadFiles = ({
           <Spin />
         )}
       </Upload.Dragger>
+      {isMissingReadAccess && (
+        <div css="margin: 1rem 0;">
+          <ErrorMessageBox>
+            You do not have access to read/download files.
+          </ErrorMessageBox>
+        </div>
+      )}
       <List>
         {fileList.map((file) => (
           <List.Item key={file.id}>
             <Button
               type="link"
+              disabled={isMissingReadAccess}
               onClick={async () => {
                 const url = await getDownloadUrl(file.id);
                 if (url) {

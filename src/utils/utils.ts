@@ -341,7 +341,7 @@ export const stringCompare = (a = '', b = '') => {
   return al.localeCompare(bl, 'nb');
 };
 
-const nameToAclTypeMap = {
+export const nameToAclTypeMap = {
   '3d': 'threedAcl',
   assets: 'assetsAcl',
   events: 'eventsAcl',
