@@ -20,23 +20,19 @@ const HighlightedBody = styled(SanitizedHTML)`
   margin-top: 15px;
 `;
 
+const HighlightView: React.FC<{ content: string }> = React.memo(
+  ({ content }) => (
+    <Body level={3} as="div">
+      <HighlightedBody allowedTags={['em']} html={`${content}...`} />
+    </Body>
+  )
+);
+
 // This component is extended with the logic of either show the first
 // sentence highlighted (based on keyword) or showing the first sentence in the document.
 export const Highlight: React.FC<{ doc: DocumentType }> = ({ doc }) => {
   const [documentHighlight] = useDocumentHighlightedContent(doc);
   const { t } = useTranslation('Documents');
-
-  const Wrapper: React.FC = ({ children }) => (
-    <Body level={3} as="div">
-      {children}
-    </Body>
-  );
-
-  const HighlightView: React.FC<{ content: string }> = ({ content }) => (
-    <Wrapper>
-      <HighlightedBody allowedTags={['em']} html={`${content}...`} />
-    </Wrapper>
-  );
 
   const hasSentenceToHighlight = first(documentHighlight?.content);
 

@@ -38,7 +38,8 @@ const WrappedWithProviders: React.FC<Props> = ({
   props = {},
 }) => {
   const queryClient = new QueryClient();
-  const StoreWrapper: React.FC = (children) => {
+
+  const storeWrapper = (children: React.ReactNode) => {
     return store ? (
       <Provider store={store}>{children}</Provider>
     ) : (
@@ -48,7 +49,7 @@ const WrappedWithProviders: React.FC<Props> = ({
 
   return (
     <BrowserRouter>
-      <ConditionalWrapper condition={!!store} wrap={StoreWrapper}>
+      <ConditionalWrapper condition={!!store} wrap={storeWrapper}>
         <QueryClientProvider client={queryClient}>
           {React.createElement(component, props)}
           <ToastContainer />

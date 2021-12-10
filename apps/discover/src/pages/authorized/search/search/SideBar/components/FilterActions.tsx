@@ -28,7 +28,7 @@ export const FilterActions: React.FC<Props> = React.memo(
   ({ category, displayClear, displayCategorySwitch, handleClearFilters }) => {
     const { data: statsCount } = useStatsGetQuery();
 
-    const CategoryStats = () => {
+    const renderCategoryStats = () => {
       const getCategoryCount = statsCount && statsCount[category];
 
       if (getCategoryCount) {
@@ -48,7 +48,7 @@ export const FilterActions: React.FC<Props> = React.memo(
 
     return (
       <Container>
-        <CategoryStats />
+        {renderCategoryStats()}
         {displayCategorySwitch && <CategorySwitch />}
         <FilterClearButton
           displayClear={displayClear}

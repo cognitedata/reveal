@@ -57,7 +57,7 @@ module.exports = {
     // should be enabled and corresponding eslint errors should be addressed.
     // This can be done gradually in the later PRs
     'testing-library/prefer-presence-queries': ['off'],
-    'react/no-unstable-nested-components': ['off'],
+    'react/no-unstable-nested-components': ['error'],
     'testing-library/prefer-query-by-disappearance': ['error'],
     'react-hooks/rules-of-hooks': ['off'],
     'import/no-anonymous-default-export': ['error'],

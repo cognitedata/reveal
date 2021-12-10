@@ -46,11 +46,16 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
     setTableKey(documentData.length);
   }, [documentData]);
 
+  /**
+   * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
+   * makes sense to be "inlined", as it is easier to read and closer to the column cell settings.
+   */
   const columns = useMemo(
     () => [
       {
         Header: t('File Details'),
         disableSortBy: true,
+        // eslint-disable-next-line react/no-unstable-nested-components
         Cell: ({ row }: FavouriteRowType<FavoriteDocumentData>) => (
           <Summary
             filename={row.original.name}
@@ -67,6 +72,7 @@ export const FavoriteDocumentsTable: React.FC<Props> = ({
       {
         Header: t('Metadata'),
         disableSortBy: true,
+        // eslint-disable-next-line react/no-unstable-nested-components
         Cell: (row: FavoriteRowData) => <Metadata data={row.row.original} />,
         width: '400px',
         maxWidth: '0.5fr',

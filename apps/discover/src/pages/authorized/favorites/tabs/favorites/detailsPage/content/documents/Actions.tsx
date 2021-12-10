@@ -111,9 +111,7 @@ export const Actions: React.FC<Props> = ({
   //   );
   // };
 
-  const RowHoverComponent: React.FC<{
-    row: FavouriteRowType<FavoriteDocumentData>;
-  }> = ({ row }) => {
+  const renderRowHoverComponent = () => {
     return (
       <FlexRow>
         <PreviewButton
@@ -166,7 +164,7 @@ export const Actions: React.FC<Props> = ({
 
   return (
     <>
-      <RowHoverComponent row={row} />
+      {renderRowHoverComponent()}
 
       <DocumentViewModal
         documentId={documentToPreview?.id?.toString() || ''}

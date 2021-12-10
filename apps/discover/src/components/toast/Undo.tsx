@@ -60,7 +60,7 @@ export const UndoToast: React.FC<Props> = (props) => {
     onClose,
   };
 
-  const ToastContents = () => (
+  const renderToastContent = () => (
     <StyledToast>
       {props.children}
       <Button onClick={handleUndoClick} aria-label="Undo">
@@ -71,7 +71,7 @@ export const UndoToast: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.visible) {
-      cogniteToast.open(ToastContents, option);
+      cogniteToast.open(renderToastContent, option);
     } else {
       cogniteToast.dismiss();
     }

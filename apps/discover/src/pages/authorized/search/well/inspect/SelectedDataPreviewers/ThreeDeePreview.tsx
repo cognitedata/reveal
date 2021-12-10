@@ -30,6 +30,10 @@ import {
 } from 'modules/wellSearch/utils';
 import { orderedCasingsByBase } from 'modules/wellSearch/utils/casings';
 
+const ThreeDeeEmptyStateLoader: React.FC = () => {
+  return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;
+};
+
 type Props = ReturnType<typeof mapStateToProps>;
 const ThreeDeePreview: React.FC<Props> = ({
   selectedWellboreIds,
@@ -158,10 +162,6 @@ const ThreeDeePreview: React.FC<Props> = ({
     (data) => setLoadingMap((state) => ({ ...state, ...data })),
     []
   );
-
-  const ThreeDeeEmptyStateLoader: React.FC = () => {
-    return <EmptyState isLoading loadingSubtitle={LOADING_SUB_TEXT} />;
-  };
 
   if (!config) {
     return <ThreeDeeEmptyStateLoader />;

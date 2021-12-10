@@ -54,11 +54,14 @@ interface DropdownProps {
   menuStyle?: Record<string, unknown>;
 }
 
+const renderIcon = () => <Icons.ChevronDownLarge />;
+
 /**
  * DO NOT USE THIS COMPONENT
  * -------------------------
  * @deprecated Use cogs components in stead.
  */
+
 export const Dropdown: React.FC<DropdownProps> = ({
   classes,
   label,
@@ -192,7 +195,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         style={style}
         disableUnderline
         autoWidth
-        IconComponent={() => <Icons.ChevronDownLarge />}
+        IconComponent={renderIcon}
         renderValue={renderValue || defaultRenderer}
       >
         {items.map((i: TS_FIX_ME) => (

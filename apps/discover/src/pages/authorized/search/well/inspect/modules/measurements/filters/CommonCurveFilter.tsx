@@ -24,6 +24,10 @@ export const CommonCurveFilter: React.FC<Props> = ({
 
   const total = mapOptionsToCurves(options).length;
 
+  const renderEmpty = () => (
+    <EmptyState emptySubtitle="Sorry, but we couldn’t find anything based on your search" />
+  );
+
   return (
     <DropdownWrapper>
       <Select
@@ -40,9 +44,7 @@ export const CommonCurveFilter: React.FC<Props> = ({
         enableSelectAll
         showCustomCheckbox
         placeholderSelectElement={`${selected.length} / ${total}`}
-        noOptionsMessage={() => (
-          <EmptyState emptySubtitle="Sorry, but we couldn’t find anything based on your search" />
-        )}
+        noOptionsMessage={renderEmpty}
       />
     </DropdownWrapper>
   );

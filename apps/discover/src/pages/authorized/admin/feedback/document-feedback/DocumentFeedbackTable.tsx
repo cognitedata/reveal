@@ -74,6 +74,10 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
     return item.isSensitiveByAdmin;
   };
 
+  /**
+   * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
+   * makes sense to be "inlined", as it is easier to read and closer to the column cell settings.
+   */
   const feedbackColumns: ColumnMap<DocumentFeedbackItem> = {
     markedAs: {
       Header: FIELDS.markedAs.display,
@@ -81,6 +85,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       width: '300px',
       maxWidth: '0.5fr',
       order: 0,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => <DocumentFeedbackLabels feedback={cell.row.original} />,
       // sortType: (row1, row2) => row1.original.markedAs
       disableSorting: true,
@@ -90,6 +95,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'createdTime',
       width: '140px',
       order: 1,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
       sortType: (row1, row2) =>
         sortDates(
@@ -102,6 +108,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'statusCol', // don't rename this to status. it cause to render a <div> inside <p> validation error
       width: '140px',
       order: 2,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <StatusColumn
           status={cell.row.original.status}
@@ -120,6 +127,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       width: '300px',
       maxWidth: '0.5fr',
       order: 3,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <span>
           {cell.row.original.comment.length ? (
@@ -150,6 +158,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'user',
       width: '200px',
       order: 4,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <span>
           {cell.row.original.user ? (
@@ -169,6 +178,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'assignedToCol', // Don't rename this to assignedTo. It cause to render a "<div> inside <p> validation error".
       width: '200px',
       order: 5,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: ({ row }) => (
         <AssigneeColumn
           assignee={row.original.assignee}
@@ -186,6 +196,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
       accessor: 'actions',
       width: '150px',
       order: 6,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <ActionColumn
           feedbackRow={cell.row.original}

@@ -66,6 +66,7 @@ const ListView: React.FC<Props> = ({
         id: 'Acronym',
         width: '76px',
         disableSorting: true,
+        // eslint-disable-next-line react/no-unstable-nested-components
         Cell: ({ row: { original } }: RowType) => (
           <Avatar
             text={getFullNameOrDefaultText(original.owner)}

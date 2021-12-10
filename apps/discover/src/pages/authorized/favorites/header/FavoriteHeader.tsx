@@ -70,7 +70,7 @@ export const FavoriteHeader: React.FC<Props> = ({ hideActions }) => {
 
   const viewMode = useViewMode();
 
-  const RightContent = () => {
+  const renderRightContent = () => {
     if (hideActions) {
       return <EmptyActions />;
     }
@@ -119,7 +119,7 @@ export const FavoriteHeader: React.FC<Props> = ({ hideActions }) => {
     <Header
       title={t(headerTitleText)}
       description={t(headerTitleDesc)}
-      Right={RightContent}
+      Right={renderRightContent}
       Bottom={Tabs}
     />
   );

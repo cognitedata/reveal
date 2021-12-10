@@ -188,6 +188,16 @@ export const SavedSearches: React.FC = React.memo(() => {
     setDropdownVisible(!dropdownVisible);
   };
 
+  const renderSaveIcon = () => (
+    <Tooltip content={t('Save')} placement="bottom">
+      <Icon
+        type="Save"
+        onClick={handleSave}
+        data-testid="save-new-search-button"
+      />
+    </Tooltip>
+  );
+
   const MenuContent = (
     <Menu>
       <SavedSearchTitle>
@@ -207,15 +217,7 @@ export const SavedSearches: React.FC = React.memo(() => {
             value={currentName}
             clearable={clearable}
             subComponentPlacement="right"
-            customSubComponent={() => (
-              <Tooltip content={t('Save')} placement="bottom">
-                <Icon
-                  type="Save"
-                  onClick={handleSave}
-                  data-testid="save-new-search-button"
-                />
-              </Tooltip>
-            )}
+            customSubComponent={renderSaveIcon}
             onKeyPress={handleKeyPress}
             data-testid="saved-search-input"
           />

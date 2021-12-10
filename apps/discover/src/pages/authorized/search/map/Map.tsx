@@ -416,7 +416,7 @@ export const Map: React.FC = () => {
     return featureCollection(safeFeatures);
   }, [polygon, otherGeo, arbitraryLine]);
 
-  const RenderFloatingActions = () => {
+  const renderFloatingActions = () => {
     if (selectedFeature && mapReference && !touched) {
       const rightMostPoint = getRightMostPoint(mapReference, selectedFeature);
       const coo = mapReference.project(rightMostPoint.geometry.coordinates);
@@ -501,8 +501,7 @@ export const Map: React.FC = () => {
           renderNavigationControls={(mapWidth) => {
             return (
               <>
-                <RenderFloatingActions />
-                {/* {renderFloatingActions} */}
+                {renderFloatingActions()}
 
                 {/* Collapsed state. Show the expand button */}
                 {showSearchResults && mapWidth === 60 && (

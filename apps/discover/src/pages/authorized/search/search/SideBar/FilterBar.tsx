@@ -34,7 +34,7 @@ export const FilterBar: React.FC = () => {
     dispatch(setActivePanel(undefined));
   }
 
-  const CategoryPage = () => {
+  const renderCategoryPage = () => {
     if (category === 'documents') {
       return <DocumentFilter />;
     }
@@ -48,6 +48,8 @@ export const FilterBar: React.FC = () => {
   };
 
   return (
-    <FilterBarContainer isOpen={isOpen}>{CategoryPage()}</FilterBarContainer>
+    <FilterBarContainer isOpen={isOpen}>
+      {renderCategoryPage()}
+    </FilterBarContainer>
   );
 };

@@ -92,29 +92,26 @@ export interface Props {
   handleDownloadAllDocuments: () => void;
   isLoading?: boolean;
 }
-export const FavoriteDetailsHeader: React.FC<Props> = React.memo((props) => {
-  const {
+export const FavoriteDetailsHeader: React.FC<Props> = React.memo(
+  ({
     favorite,
     handleComment,
     handleToggleShareModal,
     handleToggleEditModal,
     handleDownloadAllDocuments,
     isLoading,
-  } = props;
+  }) => {
+    const history = useHistory();
 
-  const history = useHistory();
+    const handleBack = () => {
+      history.push(navigation.FAVORITES);
+    };
 
-  const handleBack = () => {
-    history.push(navigation.FAVORITES);
-  };
+    const renderActions = () => {
+      const hasFetchedFavorites = !isLoading && favorite;
 
-  return (
-    <Header
-      title={favorite?.name || ''}
-      description={favorite?.description}
-      isLoading={isLoading}
-      Right={() =>
-        !isLoading && favorite ? (
+      if (hasFetchedFavorites) {
+        return (
           <Actions
             favorite={favorite}
             handleComment={handleComment}
@@ -122,9 +119,22 @@ export const FavoriteDetailsHeader: React.FC<Props> = React.memo((props) => {
             handleToggleShareModal={handleToggleShareModal}
             handleDownloadAllDocuments={handleDownloadAllDocuments}
           />
-        ) : null
+        );
       }
-      Left={() => <BackButton onClick={handleBack} />}
-    />
-  );
-});
+
+      return null;
+    };
+
+    const renderBackButton = () => <BackButton onClick={handleBack} />;
+
+    return (
+      <Header
+        title={favorite?.name || ''}
+        description={favorite?.description}
+        isLoading={isLoading}
+        Right={renderActions}
+        Left={renderBackButton}
+      />
+    );
+  }
+);

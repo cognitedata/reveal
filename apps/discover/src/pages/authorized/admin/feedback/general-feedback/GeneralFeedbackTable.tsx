@@ -54,6 +54,10 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
   const { data: user } = useUserProfileQuery();
   const [highlightedIds, setHighlightedIds] = useState<TableResults>();
 
+  /**
+   * Reason for eslint-disable: components that are inline-rendered for React-Table cell,
+   * makes sense to be "inlined", as it is easier to read and closer to the column cell settings.
+   */
   const feedbackColumns: ColumnMap<GeneralFeedbackItem> = {
     screenshot: {
       Header: '',
@@ -62,6 +66,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       maxWidth: '0.1fr',
       order: 0,
       disableSorting: true,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <ScreenshotColumn
           feedbackRow={cell.row.original}
@@ -76,6 +81,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       width: '100px',
       maxWidth: '0.1fr',
       order: 1,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: ({ row }) => (
         <StatusColumn
           status={row.original.status}
@@ -93,6 +99,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       width: '140px',
       maxWidth: '0.1fr',
       order: 2,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <span>{getFullNameOrDefaultText(cell.row.original.assignee)}</span>
       ),
@@ -107,6 +114,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       width: '140px',
       maxWidth: '0.1fr',
       order: 3,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <span>{getFullNameOrDefaultText(cell.row.original.user)}</span>
       ),
@@ -120,6 +128,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       accessor: 'createdTime',
       width: '140px',
       order: 4,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => <span>{shortDate(cell.row.original.createdTime)}</span>,
       sortType: (row1, row2) =>
         sortDates(
@@ -133,6 +142,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       width: '250px',
       maxWidth: '1fr',
       order: 5,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <span>
           {feedbackHelper.shortCommentText(cell.row.original.comment, 65, 75)}
@@ -145,6 +155,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
       width: '180px',
       maxWidth: '0.2fr',
       order: 6,
+      // eslint-disable-next-line react/no-unstable-nested-components
       Cell: (cell) => (
         <ActionColumn
           feedbackRow={cell.row.original}

@@ -82,15 +82,9 @@ export const PdfPreview: React.FC<Props> = ({
         }}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={onError}
-        loading={() => <span />}
       >
         {Array.from(new Array(numberOfPages), (_pageNumber, index) => (
-          <Page
-            key={`page_${index + 1}`}
-            pageNumber={index + 1}
-            scale={1.5}
-            loading={() => <span />}
-          />
+          <Page key={`page_${index + 1}`} pageNumber={index + 1} scale={1.5} />
         ))}
       </Document>
     </PdfPreviewContainer>
