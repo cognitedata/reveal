@@ -2,12 +2,14 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const EventsNds = React.lazy(
+const EventsNdsLazy = React.lazy(
   () => import(/* webpackChunkName: 'events_nds' */ './EventsNDS')
 );
 
-export default () => (
+const EventsNds = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <EventsNds />
+    <EventsNdsLazy />
   </React.Suspense>
 );
+
+export default EventsNds;

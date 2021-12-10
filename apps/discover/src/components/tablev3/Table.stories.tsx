@@ -118,6 +118,7 @@ export const checkable = () => {
   );
 };
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'shared|_components/table',
   component: Table,

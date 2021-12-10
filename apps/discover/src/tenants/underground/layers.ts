@@ -1,6 +1,6 @@
 import { mapService } from 'modules/map/service';
 
-export default {
+const undergroundLayers = {
   Well_Heads: {
     remoteService: mapService.getWellHeads,
     name: 'Well Heads',
@@ -10,3 +10,5 @@ export default {
     weight: 101,
   },
 };
+
+export default undergroundLayers;

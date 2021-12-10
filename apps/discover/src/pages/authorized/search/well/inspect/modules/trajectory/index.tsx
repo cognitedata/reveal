@@ -2,12 +2,14 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const Trajectory = React.lazy(
+const TrajectoryLazy = React.lazy(
   () => import(/* webpackChunkName: 'trajectory' */ './Trajectory')
 );
 
-export default () => (
+const Trajectory = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <Trajectory />
+    <TrajectoryLazy />
   </React.Suspense>
 );
+
+export default Trajectory;

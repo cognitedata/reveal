@@ -4,6 +4,7 @@ import { Button } from '@cognite/cogs.js';
 
 import { OverwriteSearchModal } from './OverwriteSearchModal';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Modals / overwrite-search-modal',
   component: OverwriteSearchModal,

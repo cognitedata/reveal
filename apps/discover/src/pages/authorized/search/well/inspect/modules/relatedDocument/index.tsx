@@ -2,10 +2,12 @@ import React from 'react';
 
 import { WhiteLoader } from 'components/loading/WhiteLoader';
 
-const RelatedDocument = React.lazy(() => import('./RelatedDocument'));
+const RelatedDocumentLazy = React.lazy(() => import('./RelatedDocument'));
 
-export default () => (
+const RelatedDocument = () => (
   <React.Suspense fallback={<WhiteLoader />}>
-    <RelatedDocument />
+    <RelatedDocumentLazy />
   </React.Suspense>
 );
+
+export default RelatedDocument;

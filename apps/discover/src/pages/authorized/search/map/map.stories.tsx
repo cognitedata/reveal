@@ -9,6 +9,7 @@ import { Flex } from 'styles/layout';
 
 import Map from './MapboxMap';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Map',
   component: Map,

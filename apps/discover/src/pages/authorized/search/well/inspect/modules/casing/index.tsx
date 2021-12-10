@@ -2,10 +2,12 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const Casing = React.lazy(() => import('./Casing'));
+const CasingLazy = React.lazy(() => import('./Casing'));
 
-export default () => (
+const Casing = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <Casing />
+    <CasingLazy />
   </React.Suspense>
 );
+
+export default Casing;

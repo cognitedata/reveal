@@ -14,6 +14,7 @@ const withProvider = (story: any) => (
   <Provider store={store}>{story()}</Provider>
 );
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Modals / create-favourite-set-modal',
   component: CreateFavoriteSetModal,

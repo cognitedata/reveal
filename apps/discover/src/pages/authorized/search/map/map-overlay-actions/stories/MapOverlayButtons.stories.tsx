@@ -4,6 +4,7 @@ import { getMockedAssets } from '__test-utils/fixtures/map';
 
 import { ContentSelector } from '../ContentSelector';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / map/MapOverlayActions',
   component: ContentSelector,

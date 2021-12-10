@@ -19,6 +19,7 @@ export const basic = () => {
   );
 };
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Filters / Checkbox',
   component: CheckBoxes,

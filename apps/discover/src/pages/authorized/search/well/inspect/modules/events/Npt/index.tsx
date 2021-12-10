@@ -2,12 +2,14 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const NPTEvents = React.lazy(
+const NPTEventsLazy = React.lazy(
   () => import(/* webpackChunkName: 'events_npt' */ './NPTEvents')
 );
 
-export default () => (
+const NPTEvents = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <NPTEvents />
+    <NPTEventsLazy />
   </React.Suspense>
 );
+
+export default NPTEvents;

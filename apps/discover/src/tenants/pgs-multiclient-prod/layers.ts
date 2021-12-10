@@ -19,7 +19,7 @@ const weights: Record<string, number> = [
   };
 }, {});
 
-export default {
+const pgsMulticlientProdLayers = {
   wellheads: {
     remote: `${MAP_DATA_URL}public/NPD/wellheads.geojson`,
     name: 'Wellheads',
@@ -307,3 +307,5 @@ export default {
     ],
   },
 } as Layers;
+
+export default pgsMulticlientProdLayers;

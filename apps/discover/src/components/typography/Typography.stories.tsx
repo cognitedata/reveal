@@ -5,6 +5,7 @@ import React from 'react';
 
 import { Typography } from './Typography';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / typography',
   component: Typography,

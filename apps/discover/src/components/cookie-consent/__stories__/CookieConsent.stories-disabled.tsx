@@ -1,5 +1,6 @@
 import { Props, CookieConsent } from '../CookieConsent';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'shared/cookieConsent',
   component: CookieConsent,

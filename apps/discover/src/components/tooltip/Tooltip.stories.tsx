@@ -2,6 +2,7 @@ import { Button } from '@cognite/cogs.js';
 
 import { Tooltip } from './Tooltip';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / tooltip',
   component: Tooltip,

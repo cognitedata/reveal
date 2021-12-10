@@ -2,12 +2,14 @@
 
 import { Loader } from '@cognite/cogs.js';
 
-const SeismicComponent = React.lazy(
+const SeismicComponentLazy = React.lazy(
   () => import(/* webpackChunkName: "seismic" */ './DataSearch')
 );
 
-export default () => (
+const SeismicComponent = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <SeismicComponent />
+    <SeismicComponentLazy />
   </React.Suspense>
 );
+
+export default SeismicComponent;

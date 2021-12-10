@@ -2,10 +2,12 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const Overview = React.lazy(() => import('./Overview'));
+const OverviewLazy = React.lazy(() => import('./Overview'));
 
-export default () => (
+const Overview = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <Overview />
+    <OverviewLazy />
   </React.Suspense>
 );
+
+export default Overview;

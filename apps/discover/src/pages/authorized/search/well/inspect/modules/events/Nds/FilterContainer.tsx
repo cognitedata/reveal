@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, FC } from 'react';
 import { useDispatch } from 'react-redux';
 
 import countBy from 'lodash/countBy';
@@ -50,9 +50,11 @@ const getOptionsList = (
   ];
 };
 
-export default (props: Props) => {
-  const { events, filteredEvents, onChangeFilteredEvents } = props;
-
+const filterContainer: FC<Props> = ({
+  events,
+  filteredEvents,
+  onChangeFilteredEvents,
+}) => {
   const dispatch = useDispatch();
 
   const [riskTypesAll, risktableAllExtraLabels] = useMemo(
@@ -157,3 +159,5 @@ export default (props: Props) => {
     </NdsFilterContainer>
   );
 };
+
+export default filterContainer;

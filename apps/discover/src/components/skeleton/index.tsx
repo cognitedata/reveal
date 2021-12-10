@@ -8,4 +8,6 @@ export const Base = {
   Circle,
 };
 
-export default { Text, List, Paragraph };
+const skeleton = { Text, List, Paragraph };
+
+export default skeleton;

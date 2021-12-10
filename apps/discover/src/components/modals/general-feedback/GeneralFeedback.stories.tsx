@@ -4,6 +4,7 @@ import { Button } from '@cognite/cogs.js';
 
 import { GeneralFeedbackModal } from './GeneralFeedback';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Modals / general-feedback',
   component: GeneralFeedbackModal,

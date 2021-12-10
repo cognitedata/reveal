@@ -2,10 +2,12 @@ import React from 'react';
 
 import { WhiteLoader } from 'components/loading';
 
-const Measurements = React.lazy(() => import('./Measurements'));
+const MeasurementsLazy = React.lazy(() => import('./Measurements'));
 
-export default () => (
+const Measurements = () => (
   <React.Suspense fallback={<WhiteLoader />}>
-    <Measurements />
+    <MeasurementsLazy />
   </React.Suspense>
 );
+
+export default Measurements;

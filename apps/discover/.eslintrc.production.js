@@ -60,7 +60,7 @@ module.exports = {
     'react/no-unstable-nested-components': ['off'],
     'testing-library/prefer-query-by-disappearance': ['off'],
     'react-hooks/rules-of-hooks': ['off'],
-    'import/no-anonymous-default-export': ['off'],
+    'import/no-anonymous-default-export': ['error'],
     // This will be fixed in version v2.25.3 of eslint-plugin-import package
     'import/no-import-module-exports': ['off'],
     'unicode-bom': ['off'],

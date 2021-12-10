@@ -2,10 +2,12 @@ import React from 'react';
 
 import { WhiteLoader } from 'components/loading';
 
-const ThreeDee = React.lazy(() => import('./threeDee'));
+const ThreeDeeLazy = React.lazy(() => import('./threeDee'));
 
-export default () => (
+const ThreeDee = () => (
   <React.Suspense fallback={<WhiteLoader />}>
-    <ThreeDee />
+    <ThreeDeeLazy />
   </React.Suspense>
 );
+
+export default ThreeDee;

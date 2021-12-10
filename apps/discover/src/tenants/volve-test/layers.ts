@@ -4,7 +4,7 @@ import { Layers } from '../types';
 
 const MAP_DATA_URL = 'https://storage.googleapis.com/discover_layers_us/';
 
-export default {
+const volveTestLayers = {
   Well_Heads: {
     remoteService: mapService.getWellHeads,
     name: 'Well Heads',
@@ -174,3 +174,5 @@ export default {
     weight: 93,
   },
 } as Layers;
+
+export default volveTestLayers;

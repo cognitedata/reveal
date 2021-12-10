@@ -2,12 +2,14 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const Wells = React.lazy(
+const WellsLazy = React.lazy(
   () => import(/* webpackChunkName: "wells" */ './wellSearch')
 );
 
-export default () => (
+const Wells = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <Wells />
+    <WellsLazy />
   </React.Suspense>
 );
+
+export default Wells;

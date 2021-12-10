@@ -2,10 +2,12 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const DigitalRocks = React.lazy(() => import('./DigitalRocks'));
+const DigitalRocksLazy = React.lazy(() => import('./DigitalRocks'));
 
-export default () => (
+const DigitalRocks = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <DigitalRocks />
+    <DigitalRocksLazy />
   </React.Suspense>
 );
+
+export default DigitalRocks;

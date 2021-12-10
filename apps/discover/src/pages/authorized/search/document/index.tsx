@@ -2,12 +2,14 @@
 
 import { Empty } from '../elements';
 
-const DocumentSearch = React.lazy(
+const DocumentSearchLazy = React.lazy(
   () => import(/* webpackChunkName: "documents" */ './DocumentSearch')
 );
 
-export default () => (
+const DocumentSearch = () => (
   <React.Suspense fallback={<Empty />}>
-    <DocumentSearch />
+    <DocumentSearchLazy />
   </React.Suspense>
 );
+
+export default DocumentSearch;

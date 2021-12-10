@@ -7,6 +7,7 @@ import { FavoriteSummary } from 'modules/favorite/types';
 
 import DeleteFavoriteSetModal from './index';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Modals / delete-favorite-set-modal',
   component: DeleteFavoriteSetModal,

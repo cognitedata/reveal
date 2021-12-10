@@ -2,10 +2,12 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const MultiplePPFG = React.lazy(() => import('./MultiplePPFGPreview'));
+const MultiplePPFGLazy = React.lazy(() => import('./MultiplePPFGPreview'));
 
-export default () => (
+const MultiplePPFG = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <MultiplePPFG />
+    <MultiplePPFGLazy />
   </React.Suspense>
 );
+
+export default MultiplePPFG;

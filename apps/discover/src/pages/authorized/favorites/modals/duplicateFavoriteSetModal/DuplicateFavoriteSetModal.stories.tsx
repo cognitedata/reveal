@@ -7,6 +7,7 @@ import { FavoriteSummary } from 'modules/favorite/types';
 
 import DuplicateFavoriteSetModal from './index';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Modals / duplicate-favourite-set-modal',
   component: DuplicateFavoriteSetModal,

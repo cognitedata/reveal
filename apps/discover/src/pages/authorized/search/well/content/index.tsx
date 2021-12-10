@@ -2,12 +2,14 @@ import React from 'react';
 
 import { Loader } from '@cognite/cogs.js';
 
-const Content = React.lazy(
+const ContentLazy = React.lazy(
   () => import(/* webpackChunkName: 'well-content' */ './Content')
 );
 
-export default () => (
+const Content = () => (
   <React.Suspense fallback={<Loader darkMode={false} />}>
-    <Content />
+    <ContentLazy />
   </React.Suspense>
 );
+
+export default Content;

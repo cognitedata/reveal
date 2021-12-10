@@ -7,6 +7,7 @@ import { Button } from '@cognite/cogs.js';
 
 import ShareFavoriteModal from './ShareFavoriteSetModal';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Modals / share-favourite-set-modal',
   component: ShareFavoriteModal,

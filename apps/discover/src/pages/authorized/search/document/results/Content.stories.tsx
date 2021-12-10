@@ -10,6 +10,7 @@ import Content from './Content';
 
 const withProvider = (story) => <Provider store={store}>{story()}</Provider>;
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Pages / Document Search',
   component: Content,

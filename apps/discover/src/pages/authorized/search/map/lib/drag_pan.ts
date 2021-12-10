@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+const dragPan = {
   enable(ctx: any) {
     setTimeout(() => {
       // First check we've got a map and some context.
@@ -24,4 +23,5 @@ export default {
     }, 0);
   },
 };
-/* eslint-enable */
+
+export default dragPan;

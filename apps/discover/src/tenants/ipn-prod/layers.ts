@@ -30,7 +30,7 @@ const weights: Record<string, number> = [
   };
 }, {});
 
-export default {
+const ipnProdLayers = {
   developmentWells: {
     remoteService: mapService.getAllWellbores,
     name: 'Development Wells',
@@ -654,3 +654,5 @@ export default {
     ],
   },
 } as Layers;
+
+export default ipnProdLayers;
