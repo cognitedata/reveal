@@ -145,7 +145,7 @@ export function getAttributeList(primitiveType: PrimitiveType): string[] {
   return attributeList;
 }
 
-export function getTotalAttributeSize(name: PrimitiveType): number {
+export function computeTotalAttributeByteSize(name: PrimitiveType): number {
   const attributeNames = primitiveAttributeNameMap.get(name)!;
 
   let sum = 0;

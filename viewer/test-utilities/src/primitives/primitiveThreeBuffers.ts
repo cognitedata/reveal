@@ -5,7 +5,7 @@
 import {
   createAttributeDescriptionsForPrimitive,
   getComponentByteSize,
-  getTotalAttributeSize,
+  computeTotalAttributeByteSize,
   getShouldNormalize
 } from './primitiveAttributes';
 import { writePrimitiveToBuffer } from './primitiveWrite';
@@ -80,7 +80,7 @@ export function parseInterleavedGeometry(
   name: PrimitiveType,
   geometryBuffer: THREE.BufferGeometry
 ): Record<string, unknown>[] {
-  const singleElementSize = getTotalAttributeSize(name);
+  const singleElementSize = computeTotalAttributeByteSize(name);
 
   const byteLength = getBufferByteSize(geometryBuffer);
 

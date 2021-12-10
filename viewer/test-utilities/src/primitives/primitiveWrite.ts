@@ -3,7 +3,7 @@
  */
 
 import { assertNever } from '../../../packages/utilities';
-import { AttributeDesc, getTotalAttributeSize, createAttributeDescriptionsMap } from './primitiveAttributes';
+import { AttributeDesc, computeTotalAttributeByteSize, createAttributeDescriptionsMap } from './primitiveAttributes';
 import { PrimitiveType } from './primitiveTypes';
 
 function writeFloatsToBuffer(array: Float32Array, values: number[]) {
@@ -44,7 +44,7 @@ export function writePrimitiveToBuffer(
   byteOffset: number
 ): number {
   const byteView = new Uint8Array(buffer, byteOffset);
-  const totalAttributeSize = getTotalAttributeSize(primitiveName);
+  const totalAttributeSize = computeTotalAttributeByteSize(primitiveName);
 
   byteView.fill(0, totalAttributeSize);
 
