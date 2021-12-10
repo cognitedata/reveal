@@ -54,30 +54,30 @@ const vec4Desc = attributeFormatMap.get('vec4')!;
 const mat4Desc = attributeFormatMap.get('mat4')!;
 
 export const commonAttributeTypeMap: Map<string, AttributeFormat> = new Map([
-  ['_treeIndex', floatDesc],
-  ['_color', byte4Desc],
-  ['_center', vec3Desc],
-  ['_centerA', vec3Desc],
-  ['_centerB', vec3Desc],
-  ['_normal', vec3Desc],
-  ['_instanceMatrix', mat4Desc],
-  ['_radius', floatDesc],
-  ['_radiusA', floatDesc],
-  ['_radiusB', floatDesc],
-  ['_angle', floatDesc],
-  ['_arcAngle', floatDesc],
-  ['_localXAxis', vec3Desc],
-  ['_thickness', floatDesc],
-  ['_tubeRadius', floatDesc],
-  ['_horizontalRadius', floatDesc],
-  ['_verticalRadius', floatDesc],
-  ['_planeA', vec4Desc],
-  ['_planeB', vec4Desc],
-  ['_height', floatDesc],
-  ['_vertex1', vec3Desc],
-  ['_vertex2', vec3Desc],
-  ['_vertex3', vec3Desc],
-  ['_vertex4', vec3Desc]
+  ['a_treeIndex', floatDesc],
+  ['a_color', byte4Desc],
+  ['a_center', vec3Desc],
+  ['a_centerA', vec3Desc],
+  ['a_centerB', vec3Desc],
+  ['a_normal', vec3Desc],
+  ['a_instanceMatrix', mat4Desc],
+  ['a_radius', floatDesc],
+  ['a_radiusA', floatDesc],
+  ['a_radiusB', floatDesc],
+  ['a_angle', floatDesc],
+  ['a_arcAngle', floatDesc],
+  ['a_localXAxis', vec3Desc],
+  ['a_thickness', floatDesc],
+  ['a_tubeRadius', floatDesc],
+  ['a_horizontalRadius', floatDesc],
+  ['a_verticalRadius', floatDesc],
+  ['a_planeA', vec4Desc],
+  ['a_planeB', vec4Desc],
+  ['a_height', floatDesc],
+  ['a_vertex1', vec3Desc],
+  ['a_vertex2', vec3Desc],
+  ['a_vertex3', vec3Desc],
+  ['a_vertex4', vec3Desc]
 ]);
 
 export type AttributeDesc = {
@@ -87,40 +87,40 @@ export type AttributeDesc = {
 };
 
 const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
-  [PrimitiveType.Box, ['_treeIndex', '_color', '_instanceMatrix']],
-  [PrimitiveType.Circle, ['_treeIndex', '_color', '_instanceMatrix', '_normal']],
+  [PrimitiveType.Box, ['a_treeIndex', 'a_color', 'a_instanceMatrix']],
+  [PrimitiveType.Circle, ['a_treeIndex', 'a_color', 'a_instanceMatrix', 'a_normal']],
   [
     PrimitiveType.Cone,
-    ['_treeIndex', '_color', '_angle', '_arcAngle', '_centerA', '_centerB', '_localXAxis', '_radiusA', '_radiusB']
+    ['a_treeIndex', 'a_color', 'a_angle', 'a_arcAngle', 'a_centerA', 'a_centerB', 'a_localXAxis', 'a_radiusA', 'a_radiusB']
   ],
-  [PrimitiveType.EccentricCone, ['_treeIndex', '_color', '_centerA', '_centerB', '_normal', '_radiusA', '_radiusB']],
+  [PrimitiveType.EccentricCone, ['a_treeIndex', 'a_color', 'a_centerA', 'a_centerB', 'a_normal', 'a_radiusA', 'a_radiusB']],
   [
     PrimitiveType.Ellipsoid,
-    ['_treeIndex', '_color', '_center', '_normal', '_horizontalRadius', '_verticalRadius', '_height']
+    ['a_treeIndex', 'a_color', 'a_center', 'a_normal', 'a_horizontalRadius', 'a_verticalRadius', 'a_height']
   ],
   [
     PrimitiveType.GeneralCylinder,
     [
-      '_treeIndex',
-      '_color',
-      '_angle',
-      '_arcAngle',
-      '_centerA',
-      '_centerB',
-      '_localXAxis',
-      '_planeA',
-      '_planeB',
-      '_radius'
+      'a_treeIndex',
+      'a_color',
+      'a_angle',
+      'a_arcAngle',
+      'a_centerA',
+      'a_centerB',
+      'a_localXAxis',
+      'a_planeA',
+      'a_planeB',
+      'a_radius'
     ]
   ],
   [
     PrimitiveType.GeneralRing,
-    ['_treeIndex', '_color', '_angle', '_arcAngle', '_instanceMatrix', '_normal', '_thickness']
+    ['a_treeIndex', 'a_color', 'a_angle', 'a_arcAngle', 'a_instanceMatrix', 'a_normal', 'a_thickness']
   ],
-  [PrimitiveType.Quad, ['_treeIndex', '_color', '_instanceMatrix']],
-  [PrimitiveType.Torus, ['_treeIndex', '_color', '_arcAngle', '_instanceMatrix', '_radius', '_tubeRadius']],
-  [PrimitiveType.Trapezium, ['_treeIndex', '_color', '_vertex1', '_vertex2', '_vertex3', '_vertex4']],
-  [PrimitiveType.Nut, ['_instanceMatrix']]
+  [PrimitiveType.Quad, ['a_treeIndex', 'a_color', 'a_instanceMatrix']],
+  [PrimitiveType.Torus, ['a_treeIndex', 'a_color', 'a_arcAngle', 'a_instanceMatrix', 'a_radius', 'a_tubeRadius']],
+  [PrimitiveType.Trapezium, ['a_treeIndex', 'a_color', 'a_vertex1', 'a_vertex2', 'a_vertex3', 'a_vertex4']],
+  [PrimitiveType.Nut, ['a_instanceMatrix']]
 ]);
 
 export function getAttributeList(primitiveType: PrimitiveType): string[] {

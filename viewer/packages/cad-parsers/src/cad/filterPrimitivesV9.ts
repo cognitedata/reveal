@@ -166,7 +166,7 @@ function filterOnInstanceMatrixAndBoundingBox(
     attributeFloatValues: Float32Array,
     out: THREE.Box3
   ) => {
-    const matrixAttribute = interleavedAttributeMap.get('_instanceMatrix')!;
+    const matrixAttribute = interleavedAttributeMap.get('a_instanceMatrix')!;
     const matrixByteOffset = matrixAttribute.offset * (matrixAttribute.array as TypedArray).BYTES_PER_ELEMENT;
 
     return computeBoundingBoxFromInstanceMatrixAttributes(
@@ -194,8 +194,8 @@ function filterOnCenterAndRadius(
     attributeFloatValues: Float32Array,
     out: THREE.Box3
   ): THREE.Box3 => {
-    const centerAAttribute = interleavedAttributeMap.get('_centerA')!;
-    const centerBAttribute = interleavedAttributeMap.get('_centerB')!;
+    const centerAAttribute = interleavedAttributeMap.get('a_centerA')!;
+    const centerBAttribute = interleavedAttributeMap.get('a_centerB')!;
     const radiusAAttribute = interleavedAttributeMap.get(radiusAAttributeName)!;
     const radiusBAttribute = interleavedAttributeMap.get(radiusBAttributeName)!;
 
@@ -225,10 +225,10 @@ function filterOnVertexAttributes(
     attributeFloatValues: Float32Array,
     out: THREE.Box3
   ): THREE.Box3 => {
-    const vertex1Attribute = interleavedAttributeMap.get('_vertex1')!;
-    const vertex2Attribute = interleavedAttributeMap.get('_vertex2')!;
-    const vertex3Attribute = interleavedAttributeMap.get('_vertex3')!;
-    const vertex4Attribute = interleavedAttributeMap.get('_vertex4')!;
+    const vertex1Attribute = interleavedAttributeMap.get('a_vertex1')!;
+    const vertex2Attribute = interleavedAttributeMap.get('a_vertex2')!;
+    const vertex3Attribute = interleavedAttributeMap.get('a_vertex3')!;
+    const vertex4Attribute = interleavedAttributeMap.get('a_vertex4')!;
 
     const elementByteSize = (vertex1Attribute.array as TypedArray).BYTES_PER_ELEMENT;
 
@@ -268,13 +268,13 @@ function filterOnTorusAttributes(
     attributeFloatValues: Float32Array,
     out: THREE.Box3
   ): THREE.Box3 => {
-    const radius = interleavedAttributeMap.get('_radius')!.getX(index);
-    const tubeRadius = interleavedAttributeMap.get('_tubeRadius')!.getX(index);
+    const radius = interleavedAttributeMap.get('a_radius')!.getX(index);
+    const tubeRadius = interleavedAttributeMap.get('a_tubeRadius')!.getX(index);
 
     boundingBox.min.set(-radius - tubeRadius, -radius - tubeRadius, -tubeRadius);
     boundingBox.max.set(radius + tubeRadius, radius + tubeRadius, tubeRadius);
 
-    const matrixAttribute = interleavedAttributeMap.get('_instanceMatrix')!;
+    const matrixAttribute = interleavedAttributeMap.get('a_instanceMatrix')!;
     const matrixByteOffset = matrixAttribute.offset * (matrixAttribute.array as TypedArray).BYTES_PER_ELEMENT;
 
     return computeBoundingBoxFromInstanceMatrixAttributes(
@@ -306,11 +306,11 @@ function filterOnEllipsoidAttributes(
     _attributeFloatValues: Float32Array,
     out: THREE.Box3
   ): THREE.Box3 => {
-    const r1 = interleavedAttributeMap.get('_horizontalRadius')!.getX(index);
-    const r2 = interleavedAttributeMap.get('_verticalRadius')!.getX(index);
-    const height = interleavedAttributeMap.get('_height')!.getX(index);
+    const r1 = interleavedAttributeMap.get('a_horizontalRadius')!.getX(index);
+    const r2 = interleavedAttributeMap.get('a_verticalRadius')!.getX(index);
+    const height = interleavedAttributeMap.get('a_height')!.getX(index);
 
-    const centerAttribute = interleavedAttributeMap.get('_center')!;
+    const centerAttribute = interleavedAttributeMap.get('a_center')!;
     center.set(centerAttribute.getX(index), centerAttribute.getY(index), centerAttribute.getZ(index));
 
     return computeBoundingBoxFromEllipseValues(r1, r2, height, center, out);
@@ -337,14 +337,14 @@ function filterConeCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
 ): Uint8Array {
-  return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radiusA', '_radiusB');
+  return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, 'a_radiusA', 'a_radiusB');
 }
 
 function filterEccentricConeCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
 ): Uint8Array {
-  return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radiusA', '_radiusB');
+  return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, 'a_radiusA', 'a_radiusB');
 }
 
 function filterEllipsoidCollection(
@@ -358,7 +358,7 @@ function filterGeneralCylinderCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
 ): Uint8Array {
-  return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, '_radius', '_radius');
+  return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, 'a_radius', 'a_radius');
 }
 
 function filterGeneralRingCollection(
