@@ -79,9 +79,11 @@ export const MetadataPanel = ({
   }, []);
 
   useEffect(() => {
-    setUpdatedValue(bulkEditUnsaved.metadata?.[activeKey.label] || '');
-    setInitialUpdatedValue(bulkEditUnsaved.metadata?.[activeKey.label] || '');
-    setEditing(false);
+    if (activeKey) {
+      setUpdatedValue(bulkEditUnsaved.metadata?.[activeKey.label] || '');
+      setInitialUpdatedValue(bulkEditUnsaved.metadata?.[activeKey.label] || '');
+      setEditing(false);
+    }
   }, [activeKey]);
 
   useEffect(() => {
@@ -112,17 +114,12 @@ export const MetadataPanel = ({
         />
       </InputContainer>
       <Tooltip
-        content={
-          <span data-testid="text-content">
-            New key and value cannot be empty
-          </span>
-        }
+        content={<span>New key and value cannot be empty</span>}
         disabled={newValue.trim() !== '' && newKey.trim() !== ''}
       >
         <Button
           type="secondary"
           onClick={() => {
-            console.error('Not Implemented!');
             setBulkEditUnsaved({
               ...bulkEditUnsaved,
               metadata: {
@@ -172,10 +169,8 @@ export const MetadataPanel = ({
         />
       </InputContainer>
       <Tooltip
-        content={
-          <span data-testid="text-content">Updated value cannot be empty</span>
-        }
-        disabled={updatedValue.trim() !== ''}
+        content={<span>Selected Key or Updated value cannot be empty</span>}
+        disabled={updatedValue.trim() !== '' && activeKey !== undefined}
       >
         <Button
           type="secondary"
