@@ -21,12 +21,7 @@ export function getComponentByteSize(type: AttributeComponentType): number {
 }
 
 export function getShouldNormalize(type: AttributeComponentType): boolean {
-  switch (type) {
-    case 'byte':
-      return true;
-    default:
-      return false;
-  }
+  return type == 'byte';
 }
 
 export type AttributeFormat = {
