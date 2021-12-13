@@ -16,7 +16,7 @@ import * as THREE from 'three';
 import { TypedArray } from '../../../../packages/utilities';
 import { assert } from 'console';
 
-function createCommonBuffer(elementSizes: number[], primitiveDescs: any[][]) {
+function createCommonBuffer(elementSizes: number[], primitiveDescs: Primitive[][]) {
   let totalSize = 0;
   for (let i = 0; i < primitiveDescs.length; i++) {
     totalSize += elementSizes[i] * primitiveDescs[i].length;
@@ -28,7 +28,7 @@ function createCommonBuffer(elementSizes: number[], primitiveDescs: any[][]) {
 function createInstancedInterleavedBuffers(
   buffer: ArrayBuffer,
   types: PrimitiveName[],
-  primitiveDescs: any[][],
+  primitiveDescs: Primitive[][],
   elementSizes: number[]
 ): THREE.InstancedInterleavedBuffer[] {
   let currentByteOffset = 0;
