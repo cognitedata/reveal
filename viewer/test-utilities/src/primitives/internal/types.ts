@@ -114,6 +114,10 @@ const primitiveTypeToCollectionTypeMap: Map<PrimitiveName, RevealGeometryCollect
   [PrimitiveName.Nut, RevealGeometryCollectionType.NutCollection]
 ]);
 
+
+/**
+ * Returns the RevealGeometryCollectionType corresponding to this PrimitiveName
+ */
 export function getCollectionType(primitiveType: PrimitiveName): RevealGeometryCollectionType {
   const collectionType = primitiveTypeToCollectionTypeMap.get(primitiveType);
 

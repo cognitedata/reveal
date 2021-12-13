@@ -93,6 +93,12 @@ function createBufferGeometries(
   return geometries;
 }
 
+/**
+ * Takes a list of primitive names and a list of lists containing
+ * instances of the corresponding primitives.
+ * Returns a list of THREE.BufferGeometry objects describing the primitives
+ * written to a single shared underlying buffer.
+ */
 export function createPrimitiveInterleavedGeometriesSharingBuffer(
   types: PrimitiveName[],
   primitiveDescs: Primitive[][]
@@ -107,6 +113,10 @@ export function createPrimitiveInterleavedGeometriesSharingBuffer(
   return createBufferGeometries(types, interleavedBuffers);
 }
 
+/**
+ * Takes a primitive name and a list of primitive instances of that type
+ * Returns a THREE.BufferGeometry containing the primitives
+ */
 export function createPrimitiveInterleavedGeometry(name: PrimitiveName, primitiveDescs: Primitive[]): THREE.BufferGeometry {
   return createPrimitiveInterleavedGeometriesSharingBuffer([name], [primitiveDescs])[0];
 }
@@ -127,6 +137,10 @@ function getBufferByteSize(geometryBuffer: THREE.BufferGeometry) {
   return underlyingBuffer.byteLength;
 }
 
+/**
+ * Reads primitives of the specified type out of the provided THREE.BufferGeometry object
+ * Returns list of records containing the resulting primitives
+ */
 export function parseInterleavedGeometry(
   name: PrimitiveName,
   geometryBuffer: THREE.BufferGeometry
