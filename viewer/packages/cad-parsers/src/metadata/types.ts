@@ -54,5 +54,6 @@ export type I3dF3dSectorMetadata = {
 export type GltfSectorMetadata = {
   readonly sectorFileName: string | null;
   readonly maxDiagonalLength: number;
+  readonly minDiagonalLength: number;
   readonly downloadSize: number;
 };

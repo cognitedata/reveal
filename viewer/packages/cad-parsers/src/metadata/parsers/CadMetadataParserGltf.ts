@@ -56,6 +56,7 @@ function createSectorMetadata(metadata: V9SceneSectorMetadata): V9SectorMetadata
     estimatedRenderCost: metadata.estimatedTriangleCount || 0,
     downloadSize: metadata.downloadSize || 0,
     maxDiagonalLength: metadata.maxDiagonalLength || 0,
+    minDiagonalLength: metadata.minDiagonalLength || 0,
     sectorFileName: metadata.sectorFileName,
 
     // Populated later
