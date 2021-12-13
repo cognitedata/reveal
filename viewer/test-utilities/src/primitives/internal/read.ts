@@ -73,10 +73,7 @@ function getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer: T
 /**
  * Reads and returns a single primitive from the provided geometry buffer, at the given byte offset
  */
-export function readPrimitiveFromBuffer(
-  geometryBuffer: THREE.BufferGeometry,
-  byteOffset: number
-): Primitive {
+export function readPrimitiveFromBuffer(geometryBuffer: THREE.BufferGeometry, byteOffset: number): Primitive {
   const attributeDescriptions = getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer);
 
   const obj: Record<string, PrimitiveComponent> = {};

@@ -100,7 +100,18 @@ export type Nut = CommonAttributes & {
 
 export type PrimitiveComponent = number | number[];
 
-export type Primitive = Box | Circle | Cone | EccentricCone | Ellipsoid | GeneralCylinder | GeneralRing | Quad | Torus | Trapezium | Nut;
+export type Primitive =
+  | Box
+  | Circle
+  | Cone
+  | EccentricCone
+  | Ellipsoid
+  | GeneralCylinder
+  | GeneralRing
+  | Quad
+  | Torus
+  | Trapezium
+  | Nut;
 
 const primitiveTypeToCollectionTypeMap: Map<PrimitiveName, RevealGeometryCollectionType> = new Map([
   [PrimitiveName.Box, RevealGeometryCollectionType.BoxCollection],
@@ -115,7 +126,6 @@ const primitiveTypeToCollectionTypeMap: Map<PrimitiveName, RevealGeometryCollect
   [PrimitiveName.Trapezium, RevealGeometryCollectionType.TrapeziumCollection],
   [PrimitiveName.Nut, RevealGeometryCollectionType.NutCollection]
 ]);
-
 
 /**
  * Returns the RevealGeometryCollectionType corresponding to this PrimitiveName
