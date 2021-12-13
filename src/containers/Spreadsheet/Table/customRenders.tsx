@@ -147,15 +147,11 @@ export const EmptyRender = (): JSX.Element => {
           }}
         />
       )}
-      <Body
-        level={2}
-        strong
-        style={{ color: Colors['text-secondary'].hex(), marginTop: '20%' }}
-      >
+      <EmptyTableText level={2} strong>
         This table is empty. Upload a CSV file or write data directly using the
         API.
-      </Body>
-      <Flex>
+      </EmptyTableText>
+      <Flex wrap="wrap" justifyContent="center">
         <Box onClick={() => setCSVModalVisible(true)}>
           <p style={{ height: 50 }}>
             <CustomIcon className="icon" icon="DocumentIconDisabled" />
@@ -199,6 +195,7 @@ const EmptyTable = styled.div`
   width: 100%;
   height: 100%;
   align-items: center;
+  justify-content: center;
   background-size: 180px 36px;
   background-position: -130px 0;
   background-image: linear-gradient(
@@ -207,6 +204,12 @@ const EmptyTable = styled.div`
       transparent 1px
     ),
     linear-gradient(to bottom, ${fakeTableColor} 1px, transparent 1px);
+`;
+
+const EmptyTableText = styled(Body)`
+  color: ${Colors['text-secondary'].hex()};
+  text-align: center;
+  margin-top: -100px;
 `;
 
 const HeaderCell = styled(Body).attrs(
