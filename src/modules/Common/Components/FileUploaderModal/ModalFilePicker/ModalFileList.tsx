@@ -39,6 +39,11 @@ export function ModalFileList({
         {files.map((file) => (
           <FileListItem key={file.uid} file={file} onRemove={onRemove} />
         ))}
+        {!files.length && (
+          <Background>
+            <Title level={5}>No items selected for upload</Title>
+          </Background>
+        )}
       </FileListContainer>
     </div>
   );
@@ -52,6 +57,12 @@ const FileListContainer = styled.div`
     background-color: #fbfbfb;
   }
   border-radius: 10px;
+`;
+
+const Background = styled.div`
+  text-align: center;
+  top: 75%;
+  position: relative;
 `;
 
 const Header = styled.div`

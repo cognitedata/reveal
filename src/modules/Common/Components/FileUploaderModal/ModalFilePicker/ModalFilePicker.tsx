@@ -63,14 +63,14 @@ export function ModalFilePicker({
                     type="tertiary"
                     onClick={openSelectDirectoryDialogue}
                   >
-                    Add directory
+                    Select directory
                   </Button>
                   <Button
                     icon="Image"
                     type="tertiary"
                     onClick={openSelectFileDialogue}
                   >
-                    Add files
+                    Select files
                   </Button>
                 </FilePickerButtonsContainer>
                 <div style={{ width: '190px' }}>

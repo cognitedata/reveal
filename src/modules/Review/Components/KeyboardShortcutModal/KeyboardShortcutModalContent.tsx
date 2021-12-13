@@ -1,46 +1,46 @@
-import { Detail, Icon, Micro, Title } from '@cognite/cogs.js';
+import { Body, Detail, Icon, Title } from '@cognite/cogs.js';
 import React from 'react';
 import styled from 'styled-components';
 
 export const KeyboardShortcutModalContent = () => {
   return (
     <>
-      <Title level={4} as="h1">
+      <Title level={5} as="h1">
         Keyboard Shortcuts
       </Title>
-      <Body>
+      <ContentBody>
         <Section>
-          <Title level={5} as="h2">
+          <Title level={6} as="h2">
             Navigation
           </Title>
           <SectionBody>
             <Shortcut>
-              <Micro>Move left in image carousal</Micro>
+              <Body level={3}>Move left in image carousal</Body>
               <Icon type="ArrowLeft" size={12} />
             </Shortcut>
             <Shortcut>
-              <Micro>Move right in image carousal</Micro>
+              <Body level={3}>Move right in image carousal</Body>
               <Icon type="ArrowRight" size={12} />
             </Shortcut>
             <Separator />
             <Shortcut>
-              <Micro>Move up in annotation list</Micro>
+              <Body level={3}>Move up in annotation list</Body>
               <Icon type="ArrowUp" size={12} />
             </Shortcut>
             <Shortcut>
-              <Micro>Move down in annotation list</Micro>
+              <Body level={3}>Move down in annotation list</Body>
               <Icon type="ArrowDown" size={12} />
             </Shortcut>
             <Separator />
             <Shortcut>
-              <Micro>Move into annotation collection</Micro>
+              <Body level={3}>Move into annotation collection</Body>
               <CommandAndIcon>
                 <CommandText>CMD / CTRL +</CommandText>
                 <Icon type="ArrowDown" size={12} />
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Move out of annotation collection</Micro>
+              <Body level={3}>Move out of annotation collection</Body>
               <CommandAndIcon>
                 <CommandText>CMD / CTRL +</CommandText>
                 <Icon type="ArrowUp" size={12} />
@@ -54,37 +54,37 @@ export const KeyboardShortcutModalContent = () => {
           </Title>
           <SectionBody>
             <Shortcut>
-              <Micro>Selection Tool</Micro>
+              <Body level={3}>Selection Tool</Body>
               <CommandAndIcon>
                 <CommandText>V</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Panning Tool (hand)</Micro>
+              <Body level={3}>Panning Tool (hand)</Body>
               <CommandAndIcon>
                 <CommandText>H</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Keypoint collection</Micro>
+              <Body level={3}>Keypoint collection</Body>
               <CommandAndIcon>
                 <CommandText>K</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Polygon</Micro>
+              <Body level={3}>Polygon</Body>
               <CommandAndIcon>
                 <CommandText>P</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Rectangle (bounding box)</Micro>
+              <Body level={3}>Rectangle (bounding box)</Body>
               <CommandAndIcon>
                 <CommandText>R</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Line</Micro>
+              <Body level={3}>Line</Body>
               <CommandAndIcon>
                 <CommandText>L</CommandText>
               </CommandAndIcon>
@@ -97,19 +97,19 @@ export const KeyboardShortcutModalContent = () => {
           </Title>
           <SectionBody>
             <Shortcut>
-              <Micro>Set selected annotation as true</Micro>
+              <Body level={3}>Set selected annotation as true</Body>
               <CommandAndIcon>
                 <CommandText>Z</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Set selected annotation as false</Micro>
+              <Body level={3}>Set selected annotation as false</Body>
               <CommandAndIcon>
                 <CommandText>X</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Delete selected annotation</Micro>
+              <Body level={3}>Delete selected annotation</Body>
               <CommandAndIcon>
                 <CommandText>BACKSPACE</CommandText>
               </CommandAndIcon>
@@ -122,20 +122,22 @@ export const KeyboardShortcutModalContent = () => {
           </Title>
           <SectionBody>
             <Shortcut>
-              <Micro>Cancel (close annotation window without saving)</Micro>
+              <Body level={3}>
+                Cancel (close annotation window without saving)
+              </Body>
               <CommandAndIcon>
                 <CommandText>ESC</CommandText>
               </CommandAndIcon>
             </Shortcut>
             <Shortcut>
-              <Micro>Confirm/Update (save and close)</Micro>
+              <Body level={3}>Confirm/Update (save and close)</Body>
               <CommandAndIcon>
                 <CommandText>ENTER</CommandText>
               </CommandAndIcon>
             </Shortcut>
           </SectionBody>
         </Section>
-      </Body>
+      </ContentBody>
     </>
   );
 };
@@ -144,7 +146,7 @@ const CommandText = styled(Detail)`
   font-weight: 400;
 `;
 
-const Body = styled.div`
+const ContentBody = styled.div`
   padding-top: 32px;
 `;
 const Section = styled.div``;
