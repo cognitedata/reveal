@@ -43,6 +43,7 @@ export type BaseSceneSectorMetadata = {
 export type GltfSceneSectorMetadata = {
   readonly sectorFileName: string | null;
   readonly maxDiagonalLength: number;
+  readonly minDiagonalLength: number;
   readonly downloadSize: number;
 };
 
