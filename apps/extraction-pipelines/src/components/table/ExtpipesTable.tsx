@@ -138,6 +138,9 @@ const ExtpipesTable = <T extends { id: ReactText }>({
     {
       columns: headerCols,
       data: dataSource,
+      autoResetFilters: false,
+      autoResetGlobalFilter: false,
+      autoResetSortBy: false,
       autoResetSelectedRows: false,
       stateReducer: selectReducer as any,
       filterTypes,
