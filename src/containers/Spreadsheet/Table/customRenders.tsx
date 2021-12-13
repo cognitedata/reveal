@@ -147,7 +147,11 @@ export const EmptyRender = (): JSX.Element => {
           }}
         />
       )}
-      <Body level={2} strong style={{ color: Colors['text-secondary'].hex() }}>
+      <Body
+        level={2}
+        strong
+        style={{ color: Colors['text-secondary'].hex(), marginTop: '20%' }}
+      >
         This table is empty. Upload a CSV file or write data directly using the
         API.
       </Body>
@@ -194,16 +198,15 @@ const EmptyTable = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  justify-content: center;
   align-items: center;
   background-size: 180px 36px;
+  background-position: -130px 0;
   background-image: linear-gradient(
       to right,
       ${fakeTableColor} 1px,
       transparent 1px
     ),
     linear-gradient(to bottom, ${fakeTableColor} 1px, transparent 1px);
-  background-position: -130px 0;
 `;
 
 const HeaderCell = styled(Body).attrs(
