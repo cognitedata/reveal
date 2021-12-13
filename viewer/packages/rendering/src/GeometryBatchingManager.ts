@@ -61,13 +61,9 @@ export class GeometryBatchingManager {
       }
 
       const { defragBuffer, mesh } = geometry;
-      defragBuffer.remove(batchId);
+      const { updateRange } = defragBuffer.remove(batchId);
 
-      const instanceAttributes = this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute);
-
-      instanceAttributes.forEach(namedAttribute => {
-        namedAttribute.attribute.needsUpdate = true;
-      });
+      this.updateInstanceAttributes(mesh, updateRange);
 
       mesh.count -= instanceCount;
     });
@@ -96,7 +92,7 @@ export class GeometryBatchingManager {
     const offset = interleavedBufferView.byteOffset;
 
     const interleavedAttributesView = new Uint8Array(interleavedArrayBuffer, offset, length);
-    const { batchId, bufferIsReallocated } = defragBuffer.add(interleavedAttributesView);
+    const { batchId, bufferIsReallocated, updateRange } = defragBuffer.add(interleavedAttributesView);
     const sectorBatches = this._sectorMap.get(sectorId) ?? this.createSectorBatch(sectorId);
 
     assert(instanceAttributes.length > 0);
@@ -107,16 +103,49 @@ export class GeometryBatchingManager {
     if (bufferIsReallocated) {
       this.reallocateBufferGeometry(mesh, defragBuffer);
     } else {
-      this.updateInstanceAttributes(mesh);
+      this.updateInstanceAttributes(mesh, updateRange);
     }
 
     mesh.count += instanceCount;
   }
 
-  private updateInstanceAttributes(mesh: THREE.InstancedMesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>) {
+  private updateInstanceAttributes(
+    mesh: THREE.InstancedMesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>,
+    updateRange: {
+      byteOffset: number;
+      byteCount: number;
+    }
+  ) {
     this.getAttributes(mesh.geometry, THREE.InterleavedBufferAttribute).forEach(namedAttribute => {
-      namedAttribute.attribute.data.needsUpdate = true;
+      const attribute = namedAttribute.attribute;
+      this.extendUpdateRange(attribute, updateRange);
+      attribute.data.needsUpdate = true;
     });
+  }
+
+  private extendUpdateRange(
+    attribute: THREE.InterleavedBufferAttribute,
+    updateRange: {
+      byteOffset: number;
+      byteCount: number;
+    }
+  ) {
+    const typeSize = (attribute.data.array as TypedArray).BYTES_PER_ELEMENT;
+    const newOffset = updateRange.byteOffset / typeSize;
+    const newCount = updateRange.byteCount / typeSize;
+
+    const { offset: oldOffset, count: oldCount } = attribute.data.updateRange;
+
+    if (oldCount === -1) {
+      attribute.data.updateRange = { offset: newOffset, count: newCount };
+      attribute.data.needsUpdate = true;
+      return;
+    }
+
+    const offset = Math.min(oldOffset, newOffset);
+    const count = Math.max(oldOffset + oldCount, newOffset + newCount) - offset;
+
+    attribute.data.updateRange = { offset, count };
   }
 
   private reallocateBufferGeometry(
