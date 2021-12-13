@@ -27,7 +27,7 @@ describe('Favorites', () => {
     });
   });
 
-  it('Should add, view and delete single well-bore to favorites', () => {
+  it.skip('Should add, view and delete single well-bore to favorites', () => {
     cy.log('Go to well result table');
     cy.findByText('Click to expand the search result').click();
     cy.findByRole('tab', { name: 'Wells' }).click();
