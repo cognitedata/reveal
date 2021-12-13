@@ -3,12 +3,13 @@
  */
 import * as THREE from 'three';
 
-import { CadMaterialManager } from '@reveal/rendering';
-
 import { CadModelFactory } from './CadModelFactory';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
-import { It, Mock } from 'moq.ts';
+
+import { CadMaterialManager } from '@reveal/rendering';
 import { GeometryFilter } from '@reveal/core';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
+
+import { It, Mock } from 'moq.ts';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;
@@ -48,7 +49,8 @@ describe('CadModelFactory', () => {
       },
       estimatedTriangleCount: 10000,
       estimatedDrawCallCount: 20,
-      maxDiagonalLength: 3.0
+      maxDiagonalLength: 3.0,
+      minDiagonalLength: 1.0
     };
 
     const modelMetadataProviderMock = new Mock<ModelMetadataProvider>()

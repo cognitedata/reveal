@@ -75,6 +75,7 @@ export function createV9SectorMetadata(tree: SectorTree, depth: number = 0, path
     estimatedRenderCost: 1000,
     downloadSize: 1024 * 1024,
     maxDiagonalLength: 1.0,
+    minDiagonalLength: 0.5,
     sectorFileName: `${id}.glb`,
     children
   };

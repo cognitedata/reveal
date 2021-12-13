@@ -52,6 +52,7 @@ describe('CadMetadataParserGltf', () => {
       estimatedRenderCost: 10,
       downloadSize: 1000,
       maxDiagonalLength: 10,
+      minDiagonalLength: 5,
       sectorFileName: `${sectorRoot.id}.glb`
     };
 
@@ -174,6 +175,7 @@ function createSectorMetadata(id: number, parentId: number = -1): V9SceneSectorM
     },
     downloadSize: 1000,
     maxDiagonalLength: 10,
+    minDiagonalLength: 5,
     sectorFileName: `${id}.glb`
   };
   return metadata;
