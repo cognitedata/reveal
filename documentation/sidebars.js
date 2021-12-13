@@ -41,6 +41,7 @@ module.exports = {
         'examples/axisviewtool',
         'examples/geomaptool',
         'examples/timelinetool',
+        'examples/toolbartool',
         'examples/combine-models'
       ],
     },

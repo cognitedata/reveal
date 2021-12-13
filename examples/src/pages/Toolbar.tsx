@@ -177,7 +177,7 @@ export function Toolbar() {
         await addModel({ modelId, revisionId, geometryFilter: createGeometryFilterFromState(guiState.geometryFilter) });
       }
 
-      var callbackMsg = () : void => {
+      const callbackMsg = () : void => {
         alert("result called");
       }
 
