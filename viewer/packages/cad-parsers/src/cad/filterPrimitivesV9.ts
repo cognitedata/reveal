@@ -81,7 +81,8 @@ const _views = new Map<number, TypedArrayConstructor>([
   [4, Float32Array]
 ]);
 
-const quadBoundingBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -1e-4), new THREE.Vector3(0.5, 0.5, 1e-4));
+const epsilon = 1e-4;
+const quadBoundingBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -epsilon), new THREE.Vector3(0.5, 0.5, epsilon));
 
 const unitBoundingBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
 
