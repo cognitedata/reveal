@@ -12,8 +12,9 @@ import { useColumnType } from 'hooks/profiling-service';
 import { ALL_FILTER } from 'hooks/table-filters';
 
 export const PRIMARY_KEY_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_PRIMARY_KEY';
+export const LAST_UPDATED_DATAKEY = 'COGNITE_CDF_RAW_EXPLORER_LAST_UPDATED';
 
-const COLUMNS_IGNORE = ['lastUpdatedTime'];
+const COLUMNS_IGNORE = [LAST_UPDATED_DATAKEY];
 const COLUMN_NAMES_MAPPED: Record<string, string> = {
   [PRIMARY_KEY_DATAKEY]: 'Key',
 };
@@ -54,25 +55,23 @@ export const useTableData = () => {
     pageSize: PAGE_SIZE,
   });
 
-  const rawRows: Partial<RawDBRow & { [PRIMARY_KEY_DATAKEY]: any }>[] =
-    useMemo(() => {
-      if (rows.data) {
-        return rows.data.pages
-          .reduce((accl, page) => [...accl, ...page.items], [] as RawDBRow[])
-          .map((row) => {
-            const {
-              columns,
-              key: _key,
-              lastUpdatedTime: _lastUpdatedTime,
-            } = row;
-            return {
-              [PRIMARY_KEY_DATAKEY]: _key,
-              ...columns,
-            };
-          });
-      }
-      return [];
-    }, [rows.data]);
+  const rawRows: Partial<
+    RawDBRow & { [PRIMARY_KEY_DATAKEY]: any; [LAST_UPDATED_DATAKEY]: any }
+  >[] = useMemo(() => {
+    if (rows.data) {
+      return rows.data.pages
+        .reduce((accl, page) => [...accl, ...page.items], [] as RawDBRow[])
+        .map((row) => {
+          const { columns, key: _key, lastUpdatedTime: _lastUpdatedTime } = row;
+          return {
+            [PRIMARY_KEY_DATAKEY]: _key,
+            [LAST_UPDATED_DATAKEY]: _lastUpdatedTime,
+            ...columns,
+          };
+        });
+    }
+    return [];
+  }, [rows.data]);
 
   const getColumns = (): ColumnType[] => {
     const columnNames = rawRows[0] ? Object.keys(rawRows[0]) : [];
