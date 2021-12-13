@@ -1,7 +1,9 @@
 import { useSDK } from '@cognite/sdk-provider';
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
+import { CogniteClient, Group } from '@cognite/sdk';
 import equal from 'deep-equal';
-import { useQuery } from 'react-query';
+import { useMutation, UseMutationOptions, useQuery } from 'react-query';
+import { sleep } from './utils/utils';
 
 export const useGroups = (all = false) => {
   const sdk = useSDK();
@@ -46,4 +48,56 @@ export const usePermissions = (key: string, type?: string, scope?: any) => {
           )
         : true),
   };
+};
+
+const getUpdater =
+  (sdk: CogniteClient, project: string) => async (g: Group) => {
+    const projectData = await sdk.projects.retrieve(project);
+    // @ts-ignore sdk type not up to date wrt source
+    const { name, sourceId, source, capabilities, id } = g;
+    const defaultGroup = projectData?.defaultGroupId === id;
+    let groupAccountIds: number[];
+    try {
+      groupAccountIds = (
+        id ? await sdk.groups.listServiceAccounts(id) : []
+      ).map(account => account.id);
+    } catch {
+      groupAccountIds = [];
+    }
+
+    const [newGroup] = await sdk.groups.create([
+      // @ts-ignore
+      { name, sourceId, source, capabilities },
+    ]);
+
+    if (groupAccountIds.length > 0) {
+      await sdk.groups.addServiceAccounts(newGroup.id, groupAccountIds);
+    }
+
+    if (defaultGroup && projectData) {
+      await sdk.projects.updateProject(projectData.name, {
+        update: {
+          defaultGroupId: { set: newGroup.id },
+        },
+      });
+    }
+
+    if (id) {
+      await sdk.groups.delete([id]);
+    }
+
+    await sleep(500);
+    return newGroup;
+  };
+
+export const useUpdateGroup = (
+  project: string,
+  o: UseMutationOptions<Group, unknown, Group, unknown>
+) => {
+  const sdk = useSDK();
+  return useMutation(getUpdater(sdk, project), o);
+};
+
+export const forUnitTests = {
+  getUpdater,
 };

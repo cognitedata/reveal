@@ -1,14 +1,14 @@
 {
   "name": "@cognite/cdf-access-management",
   "description": "Access management subapp of fusion.cognite.com",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost SKIP_PREFLIGHT_CHECK=true PORT=8000 rescripts start",
     "build": "rescripts --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-access-management --outputFilename index.js --destinationPath ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
-    "test": "rescripts test --watchAll=false",
+    "test": "jest src",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .jsx,.js,.tsx,.ts --fix",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)"
@@ -64,12 +64,15 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-testing-library": "^4.0.1",
+    "jest": "26",
+    "jest-environment-jsdom-sixteen": "^2.0.0",
     "less": "^3.12.2",
     "less-loader": "^7.0.1",
     "postcss-prefixwrap": "^1.22.1",
     "prettier": "^2.2.1",
     "sinon": "^10.0.0",
     "style-loader": "^2.0.0",
+    "ts-node": "^10.4.0",
     "typescript": "^4.2.4"
   },
   "eslintConfig": {
