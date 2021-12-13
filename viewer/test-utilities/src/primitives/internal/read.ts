@@ -3,7 +3,8 @@
  */
 
 import { assertNever, TypedArray } from '../../../../packages/utilities';
-import { AttributeDesc, commonAttributeTypeMap } from './primitiveAttributes';
+import { AttributeDesc, commonAttributeTypeMap } from './attributes';
+import { Primitive } from './types';
 
 import * as THREE from 'three';
 
@@ -72,7 +73,7 @@ function getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer: T
 export function readPrimitiveFromBuffer(
   geometryBuffer: THREE.BufferGeometry,
   byteOffset: number
-): Record<string, unknown> {
+): Primitive {
   const attributeDescriptions = getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer);
 
   const obj: Record<string, unknown> = {};
@@ -81,5 +82,5 @@ export function readPrimitiveFromBuffer(
     obj[attributeDescription.name.slice(2)] = value;
   }
 
-  return obj;
+  return obj as Primitive;
 }

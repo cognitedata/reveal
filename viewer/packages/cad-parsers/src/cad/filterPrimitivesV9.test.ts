@@ -19,6 +19,7 @@ import {
   Torus,
   Trapezium,
   Nut,
+  Primitive,
   getCollectionType,
   createPrimitiveInterleavedGeometriesSharingBuffer,
   createPrimitiveInterleavedGeometry,
@@ -42,7 +43,7 @@ function assertApproximateObjectEquality(obj0: any, obj1: any) {
   }
 }
 
-function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: any[], primitiveType: PrimitiveType) {
+function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: Primitive[], primitiveType: PrimitiveName) {
   const bufferGeometry = createPrimitiveInterleavedGeometry(primitiveType, primitives);
 
   const clipBox = new THREE.Box3(new THREE.Vector3(8, -12, -2), new THREE.Vector3(12, -8, 2));

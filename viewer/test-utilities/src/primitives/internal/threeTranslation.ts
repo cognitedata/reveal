@@ -7,10 +7,10 @@ import {
   getComponentByteSize,
   computeTotalAttributeByteSize,
   getShouldNormalize
-} from './primitiveAttributes';
-import { writePrimitiveToBuffer } from './primitiveWrite';
-import { readPrimitiveFromBuffer } from './primitiveRead';
-import { PrimitiveName } from './primitiveTypes';
+} from './attributes';
+import { writePrimitiveToBuffer } from './write';
+import { readPrimitiveFromBuffer } from './read';
+import { PrimitiveName, Primitive } from './types';
 
 import * as THREE from 'three';
 import { TypedArray } from '../../../../packages/utilities';
@@ -95,7 +95,7 @@ function createBufferGeometries(
 
 export function createPrimitiveInterleavedGeometriesSharingBuffer(
   types: PrimitiveName[],
-  primitiveDescs: any[][]
+  primitiveDescs: Primitive[][]
 ): THREE.BufferGeometry[] {
   assert(types.length == primitiveDescs.length);
 
@@ -107,7 +107,7 @@ export function createPrimitiveInterleavedGeometriesSharingBuffer(
   return createBufferGeometries(types, interleavedBuffers);
 }
 
-export function createPrimitiveInterleavedGeometry(name: PrimitiveName, primitiveDescs: any[]): THREE.BufferGeometry {
+export function createPrimitiveInterleavedGeometry(name: PrimitiveName, primitiveDescs: Primitive[]): THREE.BufferGeometry {
   return createPrimitiveInterleavedGeometriesSharingBuffer([name], [primitiveDescs])[0];
 }
 
@@ -130,7 +130,7 @@ function getBufferByteSize(geometryBuffer: THREE.BufferGeometry) {
 export function parseInterleavedGeometry(
   name: PrimitiveName,
   geometryBuffer: THREE.BufferGeometry
-): Record<string, unknown>[] {
+): Primitive[] {
   const singleElementSize = computeTotalAttributeByteSize(name);
 
   const byteLength = getBufferByteSize(geometryBuffer);
@@ -141,10 +141,10 @@ export function parseInterleavedGeometry(
     throw Error('Array size not multiple of primitive size');
   }
 
-  const result: Record<string, unknown>[] = [];
+  const result: Primitive[] = [];
   let currentOffset = 0;
   for (let i = 0; i < numElements; i++) {
-    const thisPrimitive: Record<string, unknown> = readPrimitiveFromBuffer(geometryBuffer, currentOffset);
+    const thisPrimitive: Primitive = readPrimitiveFromBuffer(geometryBuffer, currentOffset);
     result.push(thisPrimitive);
     currentOffset += singleElementSize;
   }
