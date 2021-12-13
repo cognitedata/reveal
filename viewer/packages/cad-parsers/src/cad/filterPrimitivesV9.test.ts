@@ -61,7 +61,7 @@ function testSecondFilteredAwayFromBoxAtX10Yneg10Z0(primitives: Primitive[], pri
   assertApproximateObjectEquality(primitives[0], newPrimitives[0]);
 }
 
-describe('filterPrimitivesV9 filters primitives correctly', () => {
+describe(filterGeometryOutsideClipBox.name, () => {
   test('no clipbox, returns original', () => {
     const ellipsoid: Ellipsoid = {
       horizontalRadius: 10,
