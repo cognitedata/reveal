@@ -31,7 +31,9 @@ export type ControlsState = {
   position: THREE.Vector3;
   target: THREE.Vector3;
 };
-
+/**
+ * @internal
+ * */
 export interface RevealCameraControls extends THREE.EventDispatcher {
   enabled: boolean;
   /**
