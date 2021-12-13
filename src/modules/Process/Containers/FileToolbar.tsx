@@ -79,10 +79,10 @@ export const FileToolbar = ({
               <SegmentedControl.Button
                 key="grid"
                 icon="Grid"
-                title="Grid"
+                title="Gallery"
                 size="small"
               >
-                Grid
+                Gallery
               </SegmentedControl.Button>
 
               <SegmentedControl.Button

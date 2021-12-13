@@ -23,8 +23,8 @@ export const SelectionCheckbox = ({
 
 const Selection = styled.div`
   position: absolute;
-  top: 12px;
-  left: 30px;
+  top: 14px;
+  left: 9px;
   .cogs-checkbox {
     .checkbox-ui {
       background: #ffffff;

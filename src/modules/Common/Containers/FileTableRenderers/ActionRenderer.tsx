@@ -57,7 +57,11 @@ export function ActionRenderer(
   return (
     <Action>
       {showReviewButton && (
-        <ReviewButton disabled={reviewDisabled} onClick={handleReview} />
+        <ReviewButton
+          disabled={reviewDisabled}
+          onClick={handleReview}
+          noBackground
+        />
       )}
       <ActionMenu
         showExifIcon={fileDetails?.geoLocation !== undefined}
