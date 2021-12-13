@@ -10,6 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 
+import { useDeepMemo } from 'hooks/useDeep';
 import useSelector from 'hooks/useSelector';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import {
@@ -337,9 +338,9 @@ export const useWellboresByIdsAndWellId = (
 ) => {
   const wellbores: Wellbore[] = useWellBoreResult(wellId);
 
-  return useMemo(() => {
+  return useDeepMemo(() => {
     return !isEmpty(wellboreIds)
       ? wellbores.filter((wellbore) => wellboreIds.includes(wellbore.id))
       : wellbores;
-  }, [JSON.stringify(wellbores)]);
+  }, [wellbores]);
 };

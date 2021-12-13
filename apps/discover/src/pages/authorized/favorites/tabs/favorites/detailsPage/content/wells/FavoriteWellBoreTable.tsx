@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { MoreOptionsButton, ViewButton } from 'components/buttons';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import navigation from 'constants/navigation';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
@@ -85,7 +86,7 @@ const WellboreResult: React.FC<Props> = ({
     {}
   );
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!isEmpty(wellbores)) return;
     if (isEmpty(wellboreIds)) {
       getWellboresByWellIds([well.id]).then((res) => {
@@ -98,9 +99,9 @@ const WellboreResult: React.FC<Props> = ({
         })
         .catch(() => showErrorMessage(FAVORITE_WELLBORE_LOADING_ERROR_TEXT));
     }
-  }, [JSON.stringify(wellboreIds), JSON.stringify(wellbores)]);
+  }, [wellboreIds, wellbores]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!isEqual(selectedWellbores, Object.keys(selectedWellboreIds))) {
       const newSelectedWellboreIds = selectedWellbores.reduce(
         (previous, current) => ({
@@ -112,14 +113,14 @@ const WellboreResult: React.FC<Props> = ({
 
       setSelectedWellboreIds(newSelectedWellboreIds);
     }
-  }, [JSON.stringify(selectedWellbores)]);
+  }, [selectedWellbores]);
 
   const getSortedWellbores = (wellboreList: Wellbore[] | undefined) =>
     wellboreList ? sortBy(wellboreList, 'name') : [];
 
-  const sortedWellbores = useMemo(
+  const sortedWellbores = useDeepMemo(
     () => getSortedWellbores(wellbores),
-    [JSON.stringify(wellbores)]
+    [wellbores]
   );
 
   if (isEmpty(wellbores)) {

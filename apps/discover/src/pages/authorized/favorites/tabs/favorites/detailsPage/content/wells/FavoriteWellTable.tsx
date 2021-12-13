@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -13,6 +13,7 @@ import EmptyState from 'components/emptyState';
 import { LOADING_TEXT } from 'components/emptyState/constants';
 import { Options, Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
+import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
@@ -68,22 +69,22 @@ export const FavoriteWellsTable: React.FC<Props> = ({
   const [selectedWellboreIdsWithWellId, setSelectedWellboreIdsWithWellId] =
     useState<FavoriteContentWells>({});
 
-  useEffect(() => {
+  useDeepEffect(() => {
     setWellIds(wells ? Object.keys(wells) : []);
-  }, [JSON.stringify(wells)]);
+  }, [wells]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     setWellsData(data || []);
-  }, [JSON.stringify(data)]);
+  }, [data]);
 
-  const columns = useMemo(
+  const columns = useDeepMemo(
     () => Object.values(wellColumns || []),
-    [JSON.stringify(wellColumns)]
+    [wellColumns]
   );
 
-  useEffect(() => {
+  useDeepEffect(() => {
     mutateWells(wellIds);
-  }, [JSON.stringify(wellIds)]);
+  }, [wellIds]);
 
   const handleRowClick = useCallback(
     (row: RowProps<Well> & { isSelected: boolean }) => {
@@ -178,7 +179,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
     };
   };
 
-  const renderRowSubComponent = useCallback(
+  const renderRowSubComponent = useDeepCallback(
     ({ row }) => {
       const wellbores: WellboreId[] = wells
         ? wells[
@@ -199,7 +200,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({
         />
       );
     },
-    [JSON.stringify(wells), JSON.stringify(selectedWellboreIdsWithWellId)]
+    [wells, selectedWellboreIdsWithWellId]
   );
 
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);

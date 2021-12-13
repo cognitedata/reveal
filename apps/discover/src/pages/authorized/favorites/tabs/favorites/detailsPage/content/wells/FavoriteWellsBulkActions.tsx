@@ -12,6 +12,7 @@ import { Button } from '@cognite/cogs.js';
 import { CloseButton, ViewButton } from 'components/buttons';
 import TableBulkActions from 'components/table-bulk-actions';
 import navigation from 'constants/navigation';
+import { useDeepMemo } from 'hooks/useDeep';
 import { useFavoriteUpdateContent } from 'modules/api/favorites/useFavoritesQuery';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import { SelectedMap } from 'modules/filterData/types';
@@ -64,12 +65,12 @@ export const FavoriteWellsBulkActions: React.FC<Props> = ({
     [selectedWellIds]
   );
 
-  const selectedWellboreIdsCount = useMemo(
+  const selectedWellboreIdsCount = useDeepMemo(
     () =>
       sum(
         Object.values(selectedWellboresList).flatMap((item) => [item.length])
       ),
-    [JSON.stringify(selectedWellboresList)]
+    [selectedWellboresList]
   );
 
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
