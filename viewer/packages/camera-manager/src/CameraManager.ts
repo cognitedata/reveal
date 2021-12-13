@@ -312,7 +312,7 @@ export class CameraManager {
       return;
     }
 
-    const { cameraPosition, cameraDirection, corners, nearPlane, nearPlaneCoplanarPoint } =
+    const { cameraPosition, cameraDirection, corners } =
       this._updateNearAndFarPlaneBuffers;
     getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
@@ -320,29 +320,18 @@ export class CameraManager {
 
     // 1. Compute nearest to fit the whole bbox (the case
     // where the camera is inside the box is ignored for now)
-    let near = combinedBbox.distanceToPoint(cameraPosition);
-    near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
-    near = Math.max(0.1, near);
+    let near = this.calculateCameraNear(camera, combinedBbox);
 
     // 2. Compute the far distance to the distance from camera to furthest
     // corner of the boundingbox that is "in front" of the near plane
-    nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
-    nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
-    let far = -Infinity;
-    for (let i = 0; i < corners.length; ++i) {
-      if (nearPlane.distanceToPoint(corners[i]) >= 0) {
-        const dist = corners[i].distanceTo(cameraPosition);
-        far = Math.max(far, dist);
-      }
-    }
-    far = Math.max(near * 2, far);
+    let far = this.calculateCameraFar(near);
 
     // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
     if (combinedBbox.containsPoint(cameraPosition)) {
       near = Math.min(0.1, far / 1000.0);
     }
-
+    
     // Apply
     if (this.automaticNearFarPlane) {
       camera.near = near;
@@ -406,6 +395,33 @@ export class CameraManager {
     const tween = animation.to(to, duration).easing((x: number) => TWEEN.Easing.Circular.Out(x));
 
     return { tween, stopTween };
+  }
+
+  private calculateCameraFar(near: number): number {
+    const {nearPlane, nearPlaneCoplanarPoint, cameraPosition, cameraDirection, corners} = this._updateNearAndFarPlaneBuffers;
+    
+    nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
+    nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
+    let far = -Infinity;
+    for (let i = 0; i < corners.length; ++i) {
+      if (nearPlane.distanceToPoint(corners[i]) >= 0) {
+        const dist = corners[i].distanceTo(cameraPosition);
+        far = Math.max(far, dist);
+      }
+    }
+    far = Math.max(near * 2, far);
+
+    return far;
+  }
+
+  private calculateCameraNear(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): number {
+    const { cameraPosition } = this._updateNearAndFarPlaneBuffers;
+    
+    let near = combinedBbox.distanceToPoint(cameraPosition);
+    near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
+    near = Math.max(0.1, near);
+
+    return near;
   }
 
   /**
