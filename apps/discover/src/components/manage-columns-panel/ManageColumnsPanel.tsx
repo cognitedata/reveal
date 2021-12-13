@@ -8,6 +8,7 @@ import { Button, Checkbox, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 
 import { FlexColumn } from 'styles/layout';
 
+import { DROPDOWN_HEADER, TOOLTIP_TEXT } from './constants';
 import { CustomMenu, InputContainer } from './elements';
 
 export interface SimpleColumn {
@@ -120,6 +121,7 @@ const ManageColumnsPanel: React.FC<Props> = ({
             iconPlacement="left"
           />
         )}
+        <Menu.Header>{DROPDOWN_HEADER}</Menu.Header>
         {groupedColumns
           ? renderGroupedCheckboxes(columns as GroupedColumn[])
           : renderCheckboxes(columns as SimpleColumn[])}
@@ -130,7 +132,7 @@ const ManageColumnsPanel: React.FC<Props> = ({
 
   const renderDropDown = React.useMemo(
     () => (
-      <Tooltip placement="bottom" content={t('Organize columns')}>
+      <Tooltip placement="bottom" content={t(TOOLTIP_TEXT)}>
         <Button
           icon="Columns"
           aria-label="Column setting"

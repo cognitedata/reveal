@@ -9,7 +9,7 @@ export const CustomMenu = styled(Menu)`
   overflow: auto;
   margin-top: ${sizes.small};
   border-radius: ${sizes.small};
-  width: 352px;
+  width: 196px;
   padding: 4px 0px;
   border: 1px solid var(--cogs-white);
 
