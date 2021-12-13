@@ -5,12 +5,13 @@ import set from 'lodash/set';
 import { ITimer, Metrics } from '@cognite/metrics';
 import { CogniteEvent } from '@cognite/sdk';
 import {
+  Nds,
   NdsItems,
   TrajectoryInterpolationItems,
-  TrajectoryInterpolationRequest,
 } from '@cognite/sdk-wells-v3';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
+import { showErrorMessage } from 'components/toast';
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import {
   TimeLogStages,
@@ -20,6 +21,11 @@ import {
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
+import {
+  getDummyTrueVerticalDepths,
+  getTrajectoryInterpolationRequests,
+  getTVDForMD,
+} from 'modules/wellSearch/utils/nds';
 
 import { EVENT_LIMIT, EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 
@@ -55,20 +61,20 @@ export const fetchNdsEventsUsingWellsSDK = async (
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
   const ndsEventsRequestBody = {
-    filter: {
-      wellboreIds: wellboreIds.map(toIdentifier),
-    },
+    filter: { wellboreIds: wellboreIds.map(toIdentifier) },
     limit: EVENT_PER_PAGE,
   };
 
-  const ndsEvents = await getWellSDKClient().nds.list(ndsEventsRequestBody);
-  const ndsEventsAsCogniteEvents = await mapNdsItemsToCogniteEvents(
-    ndsEvents,
-    wellboreSourceExternalIdMap
+  const ndsEvents = await Promise.resolve(
+    getWellSDKClient()
+      .nds.list(ndsEventsRequestBody)
+      .then((ndsItems: NdsItems) =>
+        mapNdsItemsToCogniteEvents(ndsItems.items, wellboreSourceExternalIdMap)
+      )
   );
 
   return getGroupedNdsEvents(
-    ndsEventsAsCogniteEvents,
+    ndsEvents,
     wellboreIds,
     wellboreSourceExternalIdMap
   );
@@ -107,28 +113,31 @@ export const fetchNdsEventsCogniteSDK = async (
 };
 
 export const mapNdsItemsToCogniteEvents = async (
-  ndsItems: NdsItems,
+  ndsEvents: Nds[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
-  const trajectoryInterpolationRequests: TrajectoryInterpolationRequest[] =
-    ndsItems.items.map((event) => ({
-      wellboreId: { assetExternalId: event.wellboreAssetExternalId },
-      measuredDepths: [event.holeStart.value, event.holeEnd.value],
-      measuredDepthUnit: { unit: event.holeStart.unit },
-    }));
+  const tvds = await getWellSDKClient()
+    .trajectories.interpolate({
+      items: getTrajectoryInterpolationRequests(ndsEvents),
+      ignoreUnknownMeasuredDepths: true,
+    })
+    .then((interpolationItems: TrajectoryInterpolationItems) => {
+      return groupBy(interpolationItems.items, 'wellboreMatchingId');
+    })
+    .catch(() => {
+      showErrorMessage(
+        'Something went wrong in getting True Vertical Depth values.'
+      );
 
-  const trajectoryInterpolationItems =
-    (await getWellSDKClient().trajectories.interpolate(
-      trajectoryInterpolationRequests
-    )) as TrajectoryInterpolationItems;
+      return groupBy(
+        getDummyTrueVerticalDepths(ndsEvents),
+        'wellboreMatchingId'
+      );
+    });
 
-  const groupedTVD = groupBy(
-    trajectoryInterpolationItems.items,
-    'wellboreAssetExternalId'
-  );
-
-  return ndsItems.items.map((event) => {
-    const tvd = groupedTVD[event.wellboreAssetExternalId][0];
+  return ndsEvents.map((event) => {
+    const tvdsForWellbore = tvds[event.wellboreMatchingId][0];
+    const tvdUnit = tvdsForWellbore.trueVerticalDepthUnit.unit;
 
     return {
       id: wellboreSourceExternalIdMap[event.source.eventExternalId],
@@ -148,10 +157,13 @@ export const mapNdsItemsToCogniteEvents = async (
         risk_sub_category: event.subtype || '',
         severity: String(event.severity),
         probability: String(event.probability),
-        tvd_offset_hole_start: tvd.trueVerticalDepths[0],
-        tvd_offset_hole_start_unit: tvd.trueVerticalDepthUnit.unit,
-        tvd_offset_hole_end: tvd.trueVerticalDepths[1],
-        tvd_offset_hole_end_unit: tvd.trueVerticalDepthUnit.unit,
+        tvd_offset_hole_start: getTVDForMD(
+          tvdsForWellbore,
+          event.holeStart.value
+        ),
+        tvd_offset_hole_start_unit: tvdUnit,
+        tvd_offset_hole_end: getTVDForMD(tvdsForWellbore, event.holeEnd.value),
+        tvd_offset_hole_end_unit: tvdUnit,
       },
       assetIds: [event.wellboreAssetExternalId],
     } as unknown as CogniteEvent;

@@ -1,5 +1,6 @@
 import chunk from 'lodash/chunk';
 import find from 'lodash/find';
+import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
@@ -9,7 +10,6 @@ import uniqueId from 'lodash/uniqueId';
 import { Metrics } from '@cognite/metrics';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import {
-  Trajectory,
   TrajectoryData as TrajectoryDataV3,
   TrajectoryDataRow,
   TrajectoryItems,
@@ -92,19 +92,21 @@ export const fetchTrajectoriesUsingWellsSDK = async (
     availableColumnNames.includes(column.name)
   );
 
-  const trajectories = Promise.all(
-    idChunkList.map((wellboreIdChunk) =>
-      getWellSDKClient()
-        .trajectories.list({
-          filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
-          limit: CHUNK_LIMIT,
-        })
-        .then((trajectoryItems: TrajectoryItems) => trajectoryItems.items)
+  const trajectories = flatten(
+    await Promise.all(
+      idChunkList.map((wellboreIdChunk) =>
+        getWellSDKClient()
+          .trajectories.list({
+            filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
+            limit: CHUNK_LIMIT,
+          })
+          .then((trajectoryItems: TrajectoryItems) => trajectoryItems.items)
+      )
     )
   );
 
-  const processedTrajectoryData = Promise.all(
-    ([] as Trajectory[]).concat(...(await trajectories)).map((trajectory) =>
+  const trajectoryData = await Promise.all(
+    trajectories.map((trajectory) =>
       getWellSDKClient()
         .trajectories.listData({
           sequenceExternalId: trajectory.source.sequenceExternalId,
@@ -119,11 +121,7 @@ export const fetchTrajectoriesUsingWellsSDK = async (
     )
   );
 
-  const results = ([] as TrajectoryData[]).concat(
-    ...(await processedTrajectoryData)
-  );
-
-  return getGroupedTrajectoryData(results, wellboreIds);
+  return getGroupedTrajectoryData(trajectoryData, wellboreIds);
 };
 
 export const convertToCustomTrajectoryData = (

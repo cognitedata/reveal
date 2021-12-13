@@ -1,4 +1,5 @@
 import chunk from 'lodash/chunk';
+import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import max from 'lodash/max';
@@ -69,22 +70,22 @@ export const fetchCasingsUsingWellsSDK = async (
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
 ) => {
   const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
-  const casings = Promise.all(
-    idChunkList.map((wellboreIdChunk) =>
-      getWellSDKClient()
-        .casings.list({
-          filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
-          limit: CHUNK_LIMIT,
-        })
-        .then((casingItems) =>
-          mapCasingItemsToSequences(casingItems, wellboreSourceExternalIdMap)
-        )
+  const casings = flatten(
+    await Promise.all(
+      idChunkList.map((wellboreIdChunk) =>
+        getWellSDKClient()
+          .casings.list({
+            filter: { wellboreIds: wellboreIdChunk.map(toIdentifier) },
+            limit: CHUNK_LIMIT,
+          })
+          .then((casingItems) =>
+            mapCasingItemsToSequences(casingItems, wellboreSourceExternalIdMap)
+          )
+      )
     )
   );
 
-  const results = ([] as Sequence[]).concat(...(await casings));
-
-  return getGroupedSequenceData(results, wellboreIds);
+  return getGroupedSequenceData(casings, wellboreIds);
 };
 
 export const mapCasingItemsToSequences = (
