@@ -45,12 +45,13 @@ import { CadModelSectorLoadStatistics } from '../../datamodels/cad/CadModelSecto
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { CameraManager, CameraControlsOptions, RevealCameraControls } from '@reveal/camera-manager';
+import { CameraManager, CameraControlsOptions } from '@reveal/camera-manager';
 import { CdfModelIdentifier, CdfModelOutputsProvider, File3dFormat } from '@reveal/modeldata-api';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
+import { ComboControls } from 'dist/packages/camera-manager';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -883,7 +884,7 @@ export class Cognite3DViewer {
    * for documentation. Note that by default the `minDistance` setting of the controls will
    * be automatic. This can be disabled using {@link Cognite3DViewerOptions.automaticControlsSensitivity}.
    */
-  get cameraControls(): RevealCameraControls {
+  get cameraControls(): ComboControls {
     return this._cameraManager.cameraControls;
   }
 

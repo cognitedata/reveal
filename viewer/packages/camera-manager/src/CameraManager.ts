@@ -11,7 +11,6 @@ import {
   CameraChangeData,
   PointerEventDelegate,
   ControlsState,
-  RevealCameraControls
 } from './types';
 import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
 import range from 'lodash/range';
@@ -146,7 +145,7 @@ export class CameraManager {
     return this._controls.enableKeyboardNavigation;
   }
 
-  get cameraControls(): RevealCameraControls {
+  get cameraControls(): ComboControls {
     return this._controls;
   }
 
@@ -331,7 +330,7 @@ export class CameraManager {
     if (combinedBbox.containsPoint(cameraPosition)) {
       near = Math.min(0.1, far / 1000.0);
     }
-    
+
     // Apply
     if (this.automaticNearFarPlane) {
       camera.near = near;
