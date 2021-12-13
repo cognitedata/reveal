@@ -10,10 +10,10 @@ import {
 } from './primitiveAttributes';
 import { writePrimitiveToBuffer } from './primitiveWrite';
 import { readPrimitiveFromBuffer } from './primitiveRead';
-import { PrimitiveType } from './primitiveTypes';
+import { PrimitiveName } from './primitiveTypes';
 
 import * as THREE from 'three';
-import { TypedArray } from '../../../packages/utilities';
+import { TypedArray } from '../../../../packages/utilities';
 import { assert } from 'console';
 
 function createCommonBuffer(elementSizes: number[], primitiveDescs: any[][]) {
@@ -27,7 +27,7 @@ function createCommonBuffer(elementSizes: number[], primitiveDescs: any[][]) {
 
 function createInstancedInterleavedBuffers(
   buffer: ArrayBuffer,
-  types: PrimitiveType[],
+  types: PrimitiveName[],
   primitiveDescs: any[][],
   elementSizes: number[]
 ): THREE.InstancedInterleavedBuffer[] {
@@ -57,7 +57,7 @@ function createInstancedInterleavedBuffers(
 }
 
 function createBufferGeometries(
-  types: PrimitiveType[],
+  types: PrimitiveName[],
   interleavedBuffers: THREE.InstancedInterleavedBuffer[]
 ): THREE.BufferGeometry[] {
   const geometries: THREE.BufferGeometry[] = [];
@@ -94,7 +94,7 @@ function createBufferGeometries(
 }
 
 export function createPrimitiveInterleavedGeometriesSharingBuffer(
-  types: PrimitiveType[],
+  types: PrimitiveName[],
   primitiveDescs: any[][]
 ): THREE.BufferGeometry[] {
   assert(types.length == primitiveDescs.length);
@@ -107,7 +107,7 @@ export function createPrimitiveInterleavedGeometriesSharingBuffer(
   return createBufferGeometries(types, interleavedBuffers);
 }
 
-export function createPrimitiveInterleavedGeometry(name: PrimitiveType, primitiveDescs: any[]): THREE.BufferGeometry {
+export function createPrimitiveInterleavedGeometry(name: PrimitiveName, primitiveDescs: any[]): THREE.BufferGeometry {
   return createPrimitiveInterleavedGeometriesSharingBuffer([name], [primitiveDescs])[0];
 }
 
@@ -128,7 +128,7 @@ function getBufferByteSize(geometryBuffer: THREE.BufferGeometry) {
 }
 
 export function parseInterleavedGeometry(
-  name: PrimitiveType,
+  name: PrimitiveName,
   geometryBuffer: THREE.BufferGeometry
 ): Record<string, unknown>[] {
   const singleElementSize = computeTotalAttributeByteSize(name);

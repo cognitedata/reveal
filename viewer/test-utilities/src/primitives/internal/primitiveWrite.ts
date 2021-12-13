@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever } from '../../../packages/utilities';
+import { assertNever } from '../../../../packages/utilities';
 import { AttributeDesc, computeTotalAttributeByteSize, createAttributeDescriptionsMap } from './primitiveAttributes';
-import { PrimitiveType } from './primitiveTypes';
+import { PrimitiveName } from './primitiveTypes';
 
 function writeFloatsToBuffer(array: Float32Array, values: number[]) {
   array.set(values);
@@ -38,7 +38,7 @@ function isNumberOrNumberArray(value: any): value is number | number[] {
 
 // Returns new offset after insertion
 export function writePrimitiveToBuffer(
-  primitiveName: PrimitiveType,
+  primitiveName: PrimitiveName,
   buffer: ArrayBuffer,
   obj: any,
   byteOffset: number

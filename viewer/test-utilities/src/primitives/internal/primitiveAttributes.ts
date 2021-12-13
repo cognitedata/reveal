@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever } from '../../../packages/utilities';
+import { assertNever } from '../../../../packages/utilities';
 
-import { PrimitiveType } from './primitiveTypes';
+import { PrimitiveName } from './primitiveTypes';
 
 type AttributeDescriptionName = 'byte4' | 'float' | 'vec3' | 'vec4' | 'mat4';
 type AttributeComponentType = 'float' | 'byte';
@@ -86,11 +86,11 @@ export type AttributeDesc = {
   byteOffset: number;
 };
 
-const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
-  [PrimitiveType.Box, ['a_treeIndex', 'a_color', 'a_instanceMatrix']],
-  [PrimitiveType.Circle, ['a_treeIndex', 'a_color', 'a_instanceMatrix', 'a_normal']],
+const primitiveAttributeNameMap: Map<PrimitiveName, string[]> = new Map([
+  [PrimitiveName.Box, ['a_treeIndex', 'a_color', 'a_instanceMatrix']],
+  [PrimitiveName.Circle, ['a_treeIndex', 'a_color', 'a_instanceMatrix', 'a_normal']],
   [
-    PrimitiveType.Cone,
+    PrimitiveName.Cone,
     [
       'a_treeIndex',
       'a_color',
@@ -104,15 +104,15 @@ const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
     ]
   ],
   [
-    PrimitiveType.EccentricCone,
+    PrimitiveName.EccentricCone,
     ['a_treeIndex', 'a_color', 'a_centerA', 'a_centerB', 'a_normal', 'a_radiusA', 'a_radiusB']
   ],
   [
-    PrimitiveType.Ellipsoid,
+    PrimitiveName.Ellipsoid,
     ['a_treeIndex', 'a_color', 'a_center', 'a_normal', 'a_horizontalRadius', 'a_verticalRadius', 'a_height']
   ],
   [
-    PrimitiveType.GeneralCylinder,
+    PrimitiveName.GeneralCylinder,
     [
       'a_treeIndex',
       'a_color',
@@ -127,16 +127,16 @@ const primitiveAttributeNameMap: Map<PrimitiveType, string[]> = new Map([
     ]
   ],
   [
-    PrimitiveType.GeneralRing,
+    PrimitiveName.GeneralRing,
     ['a_treeIndex', 'a_color', 'a_angle', 'a_arcAngle', 'a_instanceMatrix', 'a_normal', 'a_thickness']
   ],
-  [PrimitiveType.Quad, ['a_treeIndex', 'a_color', 'a_instanceMatrix']],
-  [PrimitiveType.Torus, ['a_treeIndex', 'a_color', 'a_arcAngle', 'a_instanceMatrix', 'a_radius', 'a_tubeRadius']],
-  [PrimitiveType.Trapezium, ['a_treeIndex', 'a_color', 'a_vertex1', 'a_vertex2', 'a_vertex3', 'a_vertex4']],
-  [PrimitiveType.Nut, ['a_instanceMatrix']]
+  [PrimitiveName.Quad, ['a_treeIndex', 'a_color', 'a_instanceMatrix']],
+  [PrimitiveName.Torus, ['a_treeIndex', 'a_color', 'a_arcAngle', 'a_instanceMatrix', 'a_radius', 'a_tubeRadius']],
+  [PrimitiveName.Trapezium, ['a_treeIndex', 'a_color', 'a_vertex1', 'a_vertex2', 'a_vertex3', 'a_vertex4']],
+  [PrimitiveName.Nut, ['a_instanceMatrix']]
 ]);
 
-export function getAttributeList(primitiveType: PrimitiveType): string[] {
+export function getAttributeList(primitiveType: PrimitiveName): string[] {
   const attributeList = primitiveAttributeNameMap.get(primitiveType);
   if (!attributeList) {
     throw Error('Primitive type not found in primitiveAttributeNampMap');
@@ -145,7 +145,7 @@ export function getAttributeList(primitiveType: PrimitiveType): string[] {
   return attributeList;
 }
 
-export function computeTotalAttributeByteSize(name: PrimitiveType): number {
+export function computeTotalAttributeByteSize(name: PrimitiveName): number {
   const attributeNames = primitiveAttributeNameMap.get(name)!;
 
   let sum = 0;
@@ -174,12 +174,12 @@ function createAttributeDescriptions(attributeNames: string[]): AttributeDesc[] 
   return resultDescriptions;
 }
 
-export function createAttributeDescriptionsMap(name: PrimitiveType): Map<string, AttributeDesc> {
+export function createAttributeDescriptionsMap(name: PrimitiveName): Map<string, AttributeDesc> {
   const descList = createAttributeDescriptionsForPrimitive(name);
   return new Map(descList.map(desc => [desc.name, desc]));
 }
 
-export function createAttributeDescriptionsForPrimitive(name: PrimitiveType): AttributeDesc[] {
+export function createAttributeDescriptionsForPrimitive(name: PrimitiveName): AttributeDesc[] {
   const attributeList = primitiveAttributeNameMap.get(name)!;
   return createAttributeDescriptions(attributeList);
 }

@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 
-import { RevealGeometryCollectionType } from '../../../packages/sector-parser';
+import { RevealGeometryCollectionType } from '../../../../packages/sector-parser';
 
-export enum PrimitiveType {
+export enum PrimitiveName {
   Box,
   Circle,
   Cone,
@@ -98,21 +98,23 @@ export type Nut = CommonAttributes & {
   instanceMatrix: number[];
 };
 
-const primitiveTypeToCollectionTypeMap: Map<PrimitiveType, RevealGeometryCollectionType> = new Map([
-  [PrimitiveType.Box, RevealGeometryCollectionType.BoxCollection],
-  [PrimitiveType.Circle, RevealGeometryCollectionType.CircleCollection],
-  [PrimitiveType.Cone, RevealGeometryCollectionType.ConeCollection],
-  [PrimitiveType.EccentricCone, RevealGeometryCollectionType.EccentricConeCollection],
-  [PrimitiveType.Ellipsoid, RevealGeometryCollectionType.EllipsoidSegmentCollection],
-  [PrimitiveType.GeneralCylinder, RevealGeometryCollectionType.GeneralCylinderCollection],
-  [PrimitiveType.GeneralRing, RevealGeometryCollectionType.GeneralRingCollection],
-  [PrimitiveType.Quad, RevealGeometryCollectionType.QuadCollection],
-  [PrimitiveType.Torus, RevealGeometryCollectionType.TorusSegmentCollection],
-  [PrimitiveType.Trapezium, RevealGeometryCollectionType.TrapeziumCollection],
-  [PrimitiveType.Nut, RevealGeometryCollectionType.NutCollection]
+export type Primitive = Box | Circle | Cone | EccentricCone | Ellipsoid | GeneralCylinder | GeneralRing | Quad | Torus | Trapezium | Nut;
+
+const primitiveTypeToCollectionTypeMap: Map<PrimitiveName, RevealGeometryCollectionType> = new Map([
+  [PrimitiveName.Box, RevealGeometryCollectionType.BoxCollection],
+  [PrimitiveName.Circle, RevealGeometryCollectionType.CircleCollection],
+  [PrimitiveName.Cone, RevealGeometryCollectionType.ConeCollection],
+  [PrimitiveName.EccentricCone, RevealGeometryCollectionType.EccentricConeCollection],
+  [PrimitiveName.Ellipsoid, RevealGeometryCollectionType.EllipsoidSegmentCollection],
+  [PrimitiveName.GeneralCylinder, RevealGeometryCollectionType.GeneralCylinderCollection],
+  [PrimitiveName.GeneralRing, RevealGeometryCollectionType.GeneralRingCollection],
+  [PrimitiveName.Quad, RevealGeometryCollectionType.QuadCollection],
+  [PrimitiveName.Torus, RevealGeometryCollectionType.TorusSegmentCollection],
+  [PrimitiveName.Trapezium, RevealGeometryCollectionType.TrapeziumCollection],
+  [PrimitiveName.Nut, RevealGeometryCollectionType.NutCollection]
 ]);
 
-export function getCollectionType(primitiveType: PrimitiveType): RevealGeometryCollectionType {
+export function getCollectionType(primitiveType: PrimitiveName): RevealGeometryCollectionType {
   const collectionType = primitiveTypeToCollectionTypeMap.get(primitiveType);
 
   if (collectionType === undefined) {

@@ -7,7 +7,7 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import * as THREE from 'three';
 
 import {
-  PrimitiveType,
+  PrimitiveName,
   Box,
   Circle,
   Cone,
@@ -19,14 +19,11 @@ import {
   Torus,
   Trapezium,
   Nut,
-  getCollectionType
-} from '../../../../test-utilities/src/primitives/primitiveTypes';
-
-import {
+  getCollectionType,
   createPrimitiveInterleavedGeometriesSharingBuffer,
   createPrimitiveInterleavedGeometry,
   parseInterleavedGeometry
-} from '../../../../test-utilities/src/primitives/primitiveThreeBuffers';
+} from '../../../../test-utilities/src/primitives';
 
 function assertApproximateObjectEquality(obj0: any, obj1: any) {
   for (const key in obj0) {
@@ -72,7 +69,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       center: [0, 0, 0]
     };
 
-    const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveType.Ellipsoid, [ellipsoid]);
+    const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveName.Ellipsoid, [ellipsoid]);
 
     const newGeometry = filterGeometryOutsideClipBox(
       bufferGeometry,
@@ -99,7 +96,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveType.Ellipsoid, ellipsoids);
+    const bufferGeometry = createPrimitiveInterleavedGeometry(PrimitiveName.Ellipsoid, ellipsoids);
 
     const clipBox = new THREE.Box3();
     clipBox.min.set(-30, -30, -30);
@@ -131,7 +128,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(boxes, PrimitiveType.Box);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(boxes, PrimitiveName.Box);
   });
 
   test('Two circles: one accepted, one rejected - returns filtered', () => {
@@ -153,7 +150,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(circles, PrimitiveType.Circle);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(circles, PrimitiveName.Circle);
   });
 
   test('Two cones: one accepted, one rejected - returns filtered', () => {
@@ -178,7 +175,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(cones, PrimitiveType.Cone);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(cones, PrimitiveName.Cone);
   });
 
   test('Two eccentric cones: one accepted, one rejected - returns filtered', () => {
@@ -199,7 +196,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(eccentricCones, PrimitiveType.EccentricCone);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(eccentricCones, PrimitiveName.EccentricCone);
   });
 
   test('Two ellipsoid segments: one accepted, one rejected - returns filtered', () => {
@@ -218,7 +215,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveType.Ellipsoid);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(ellipsoids, PrimitiveName.Ellipsoid);
   });
 
   test('Two general cylinders: one accepted, one rejected - returns filtered', () => {
@@ -245,7 +242,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalCylinders, PrimitiveType.GeneralCylinder);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalCylinders, PrimitiveName.GeneralCylinder);
   });
 
   test('Two general rings: one accepted, one rejected - returns filtered', () => {
@@ -276,7 +273,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalRings, PrimitiveType.GeneralRing);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(generalRings, PrimitiveName.GeneralRing);
   });
 
   test('Two quads: one accepted, one rejected - returns filtered', () => {
@@ -297,7 +294,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(quads, PrimitiveType.Quad);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(quads, PrimitiveName.Quad);
   });
 
   test('Two tori: one accepted, one rejected - returns filtered', () => {
@@ -324,7 +321,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(tori, PrimitiveType.Torus);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(tori, PrimitiveName.Torus);
   });
 
   test('Two trapeziums: one accepted, one rejected - returns filtered', () => {
@@ -343,7 +340,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(trapeziums, PrimitiveType.Trapezium);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(trapeziums, PrimitiveName.Trapezium);
   });
 
   test('Two nuts: one accepted, one rejected - returns filtered', () => {
@@ -364,7 +361,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
       }
     ];
 
-    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(nuts, PrimitiveType.Nut);
+    testSecondFilteredAwayFromBoxAtX10Yneg10Z0(nuts, PrimitiveName.Nut);
   });
 
   test('Two different primitive types in same buffer: one of each accepted', () => {
@@ -402,7 +399,7 @@ describe('filterPrimitivesV9 filters primitives correctly', () => {
     ];
 
     const primitives = [circles, ellipsoids];
-    const primitiveTypes = [PrimitiveType.Circle, PrimitiveType.Ellipsoid];
+    const primitiveTypes = [PrimitiveName.Circle, PrimitiveName.Ellipsoid];
     const collectionTypes = primitiveTypes.map(getCollectionType);
 
     const geometries = createPrimitiveInterleavedGeometriesSharingBuffer(primitiveTypes, primitives);

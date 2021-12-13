@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { assertNever, TypedArray } from '../../../packages/utilities';
+import { assertNever, TypedArray } from '../../../../packages/utilities';
 import { AttributeDesc, commonAttributeTypeMap } from './primitiveAttributes';
 
 import * as THREE from 'three';
