@@ -1,7 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { ColumnShape } from 'react-base-table';
 import styled from 'styled-components';
-import { Body, Button, Colors, Flex, Icon, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Colors,
+  Flex,
+  Icon,
+  Title,
+  Tooltip,
+} from '@cognite/cogs.js';
 
 import {
   RawExplorerContext,
@@ -85,17 +93,23 @@ const TooltipWrapper = styled.p`
 `;
 
 const Box = styled.div`
-  padding: 40px;
+  width: 280px;
+  padding: 28px;
   margin: 20px;
   border: 1px solid ${Colors['greyscale-grey4'].hex()};
+  background-color: ${Colors.white.hex()};
   border-radius: 6px;
-  width: 250px;
+  cursor: pointer;
   text-align: center;
+  .cogs-title-5 {
+    margin-bottom: 16px;
+  }
   .icon-hover {
     display: none;
   }
   .text-icon {
     color: ${Colors['greyscale-grey4'].hex()};
+    min-height: 50px;
   }
   .icon {
     display: inital;
@@ -138,20 +152,13 @@ export const EmptyRender = (): JSX.Element => {
         API.
       </Body>
       <Flex>
-        <Box>
+        <Box onClick={() => setCSVModalVisible(true)}>
           <p style={{ height: 50 }}>
             <CustomIcon className="icon" icon="DocumentIconDisabled" />
             <CustomIcon className="icon-hover" icon="DocumentIconHover" />
           </p>
-          <p>
-            <strong>Upload CSV file</strong>
-          </p>
-          <Button
-            icon="Upload"
-            iconPlacement="right"
-            type="primary"
-            onClick={() => setCSVModalVisible(true)}
-          >
+          <Title level={5}>Upload CSV file</Title>
+          <Button icon="Upload" iconPlacement="right" type="primary">
             Add data
           </Button>
         </Box>
@@ -164,12 +171,13 @@ export const EmptyRender = (): JSX.Element => {
             <p className="text-icon">
               <Icon size={40} type="Code" />
             </p>
-            <p>
-              <strong>
-                Write data using API <Icon type="ExternalLink" />
-              </strong>
-            </p>
-            <p style={{ color: Colors['text-secondary'].hex() }}>
+            <Title level={5}>
+              <Flex alignItems="center" justifyContent="center">
+                <span style={{ marginRight: '8px' }}>Write data using API</span>
+                <Icon type="ExternalLink" />
+              </Flex>
+            </Title>
+            <p style={{ color: Colors['text-secondary'].hex(), margin: 0 }}>
               Learn how to write data to a RAW table here
             </p>
           </Box>
@@ -186,9 +194,6 @@ const EmptyTable = styled.div`
   height: 100%;
   justify-content: center;
   align-items: center;
-  & > * {
-    margin: 12px 0;
-  }
 `;
 
 const HeaderCell = styled(Body).attrs(
