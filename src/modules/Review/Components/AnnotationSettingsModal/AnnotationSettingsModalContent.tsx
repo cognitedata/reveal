@@ -27,8 +27,18 @@ export const AnnotationSettingsModalContent = ({
     options?.activeView || 'shape'
   );
 
+  const [newCollection, setNewCollection] =
+    useState<AnnotationCollection | null>(null);
+
   const setCollections = (collection: AnnotationCollection) => {
-    dispatch(SaveAnnotationTemplates(collection));
+    setNewCollection(collection);
+  };
+  const submitNewCollection = () => {
+    if (newCollection) {
+      setNewCollection(null);
+      dispatch(SaveAnnotationTemplates(newCollection));
+    }
+    onCancel();
   };
 
   useEffect(() => {
@@ -54,7 +64,7 @@ export const AnnotationSettingsModalContent = ({
         <Tabs.TabPane tab="Pre-defined Shapes" key="shape">
           <Body>
             <Shapes
-              collections={collections}
+              collections={newCollection || collections}
               setCollections={setCollections}
               options={options?.activeView === 'shape' ? options : undefined}
             />
@@ -63,7 +73,7 @@ export const AnnotationSettingsModalContent = ({
         <Tabs.TabPane tab="Pre-defined Points" key="keypoint">
           <Body>
             <Keypoints
-              collections={collections}
+              collections={newCollection || collections}
               setCollections={setCollections}
               options={options?.activeView === 'keypoint' ? options : undefined}
             />
@@ -87,7 +97,7 @@ export const AnnotationSettingsModalContent = ({
           <Button type="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="primary" onClick={onCancel}>
+          <Button type="primary" onClick={submitNewCollection}>
             Done
           </Button>
         </RightFooter>
