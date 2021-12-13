@@ -10,10 +10,11 @@ import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 import styled from 'styled-components/macro';
 
-import { Dropdown, Icon, Menu } from '@cognite/cogs.js';
+import { Dropdown, Menu } from '@cognite/cogs.js';
 
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { MoreOptionsButton, ViewButton } from 'components/buttons';
+import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -30,7 +31,6 @@ import {
   WellboreSubtableOptions,
 } from 'pages/authorized/constant';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
-import { FavoriteIndicatorContainer } from 'pages/authorized/search/elements';
 import { FlexRow } from 'styles/layout';
 
 import { NO_WELLBORES_FOUND } from '../constants';
@@ -201,11 +201,7 @@ const WellboreResult: React.FC<Props> = ({ well }) => {
     )
       return null;
 
-    return (
-      <FavoriteIndicatorContainer>
-        <Icon type="FavoriteFilled" />
-      </FavoriteIndicatorContainer>
-    );
+    return <FavoriteStarIcon />;
   };
   return (
     <Table<Wellbore>

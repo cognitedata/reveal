@@ -9,6 +9,7 @@ import { Icon, AllIconTypes } from '@cognite/cogs.js';
 
 import { getDateOrDefaultText } from '_helpers/date';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
+import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllipsis';
 import { Table, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
@@ -43,8 +44,6 @@ import {
   zoomToCoords,
 } from 'modules/map/actions';
 import { SortBy } from 'pages/types';
-
-import { FavoriteIndicatorContainer } from '../../elements';
 
 import { DocumentResultTableHoverComponent } from './DocumentResultTableHoverComponent';
 import { DocumentResultTableSubRow } from './DocumentResultTableSubRow';
@@ -310,11 +309,7 @@ export const DocumentResultTable: React.FC = () => {
 
       if (!isAlreadyInFavorite) return null;
 
-      return (
-        <FavoriteIndicatorContainer>
-          <Icon type="FavoriteFilled" />
-        </FavoriteIndicatorContainer>
-      );
+      return <FavoriteStarIcon />;
     },
     [favoriteDocumentIds]
   );

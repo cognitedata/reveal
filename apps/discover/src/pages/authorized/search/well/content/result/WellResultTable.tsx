@@ -6,12 +6,13 @@ import compact from 'lodash/compact';
 import noop from 'lodash/noop';
 import sortBy from 'lodash/sortBy';
 
-import { Icon, Menu, Dropdown } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 
 import { getDateOrDefaultText } from '_helpers/date';
 import { changeUnits } from '_helpers/units/utils';
 import AddToFavoriteSetMenu from 'components/add-to-favorite-set-menu';
 import { ViewButton, MoreOptionsButton } from 'components/buttons';
+import { FavoriteStarIcon } from 'components/icons/FavoriteStarIcon';
 import { Options, Table, RowProps } from 'components/tablev3';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -29,10 +30,7 @@ import { convertToFixedDecimal } from 'modules/wellSearch/utils';
 import { WellResultTableOptions } from 'pages/authorized/constant';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
-import {
-  FavoriteIndicatorContainer,
-  SearchTableResultActionContainer,
-} from 'pages/authorized/search/elements';
+import { SearchTableResultActionContainer } from 'pages/authorized/search/elements';
 import { generateWellColumns } from 'pages/authorized/search/well/utils';
 import { FlexRow } from 'styles/layout';
 
@@ -168,11 +166,7 @@ const WellResult: React.FC<DispatchProps> = (props) => {
 
       if (!isAlreadyInFavorite) return null;
 
-      return (
-        <FavoriteIndicatorContainer>
-          <Icon type="FavoriteFilled" />
-        </FavoriteIndicatorContainer>
-      );
+      return <FavoriteStarIcon />;
     },
     [favoriteWellIds]
   );

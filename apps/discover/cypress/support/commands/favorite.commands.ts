@@ -29,12 +29,28 @@ function createFavorite(body: FavoritePostSchema) {
   });
 }
 
+const deleteAllFavorites = () => {
+  getTokenHeaders().then((tokenResponse) => {
+    getAllFavorites().then((favoriteResponse) => {
+      favoriteResponse.body.map((favorite: any) => {
+        return cy.request({
+          method: 'DELETE',
+          url: `${getFavoritesEndpoint(PROJECT)}/${favorite.id}`,
+          headers: tokenResponse,
+        });
+      });
+    });
+  });
+};
+
 Cypress.Commands.add('listFavorites', getAllFavorites);
 Cypress.Commands.add('createFavorite', createFavorite);
+Cypress.Commands.add('deleteAllFavorites', deleteAllFavorites);
 
 export interface FavoriteCommands {
   listFavorites(): Cypress.Chainable<Cypress.Response<[]>>;
   createFavorite(
     body: FavoritePostSchema
   ): Cypress.Chainable<Cypress.Response<string>>;
+  deleteAllFavorites(): void;
 }
