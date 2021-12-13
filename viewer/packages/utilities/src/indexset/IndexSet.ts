@@ -15,7 +15,7 @@ export class IndexSet {
   constructor(values?: Iterable<number> | NumericRange) {
     if (values == undefined) {
       this.rootNode = undefined;
-    } else if (values instanceof NumericRange) {
+    } else if (NumericRange.isNumericRange(values)) {
       this.addRange(values);
     } else {
       for (const index of values) {
