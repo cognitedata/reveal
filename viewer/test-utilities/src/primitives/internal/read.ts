@@ -4,7 +4,7 @@
 
 import { assertNever, TypedArray } from '../../../../packages/utilities';
 import { AttributeDesc, commonAttributeTypeMap } from './attributes';
-import { Primitive } from './types';
+import { Primitive, PrimitiveComponent } from './types';
 
 import * as THREE from 'three';
 
@@ -20,7 +20,7 @@ function readAttributeValue(
   geometryBuffer: THREE.BufferGeometry,
   attributeDescription: AttributeDesc,
   byteOffset: number
-): number | number[] {
+): PrimitiveComponent {
   const threeAttribute = geometryBuffer.getAttribute(attributeDescription.name) as THREE.InterleavedBufferAttribute;
   const underlyingTypedArray = threeAttribute.data.array as TypedArray;
   const rawBuffer = underlyingTypedArray.buffer;
@@ -76,7 +76,7 @@ export function readPrimitiveFromBuffer(
 ): Primitive {
   const attributeDescriptions = getInterleavedAttributeDescriptionsFromBufferGeometry(geometryBuffer);
 
-  const obj: Record<string, unknown> = {};
+  const obj: Record<string, PrimitiveComponent> = {};
   for (const attributeDescription of attributeDescriptions) {
     const value = readAttributeValue(geometryBuffer, attributeDescription, byteOffset);
     obj[attributeDescription.name.slice(2)] = value;

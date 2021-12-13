@@ -98,6 +98,8 @@ export type Nut = CommonAttributes & {
   instanceMatrix: number[];
 };
 
+export type PrimitiveComponent = number | number[];
+
 export type Primitive = Box | Circle | Cone | EccentricCone | Ellipsoid | GeneralCylinder | GeneralRing | Quad | Torus | Trapezium | Nut;
 
 const primitiveTypeToCollectionTypeMap: Map<PrimitiveName, RevealGeometryCollectionType> = new Map([
