@@ -187,6 +187,8 @@ export const EmptyRender = (): JSX.Element => {
   );
 };
 
+const fakeTableColor = `${Colors['greyscale-grey4'].hex()}33`;
+
 const EmptyTable = styled.div`
   display: flex;
   flex-direction: column;
@@ -194,6 +196,14 @@ const EmptyTable = styled.div`
   height: 100%;
   justify-content: center;
   align-items: center;
+  background-size: 180px 36px;
+  background-image: linear-gradient(
+      to right,
+      ${fakeTableColor} 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, ${fakeTableColor} 1px, transparent 1px);
+  background-position: -130px 0;
 `;
 
 const HeaderCell = styled(Body).attrs(
