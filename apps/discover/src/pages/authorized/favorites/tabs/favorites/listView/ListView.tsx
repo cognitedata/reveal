@@ -2,12 +2,13 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Row } from 'react-table';
 
-import { Avatar, Menu, Dropdown } from '@cognite/cogs.js';
+import { Menu, Dropdown } from '@cognite/cogs.js';
 import { CommentTarget, SetCommentTarget } from '@cognite/react-comments';
 
 import { shortDate } from '_helpers/date';
 import { sortDates } from '_helpers/sortDates';
 import { MoreOptionsButton, CommentButton } from 'components/buttons';
+import { AvatarWrapper, IconWrapper } from 'components/card/element';
 import { Table, TableResults } from 'components/tablev3';
 import { COMMENT_NAMESPACE } from 'constants/comments';
 import { FavoriteSummary } from 'modules/favorite/types';
@@ -67,11 +68,10 @@ const ListView: React.FC<Props> = ({
         width: '76px',
         disableSorting: true,
         // eslint-disable-next-line react/no-unstable-nested-components
-        Cell: ({ row: { original } }: RowType) => (
-          <Avatar
-            text={getFullNameOrDefaultText(original.owner)}
-            maxLength={2}
-          />
+        Cell: () => (
+          <AvatarWrapper>
+            <IconWrapper type="Folder" />
+          </AvatarWrapper>
         ),
       },
       {
