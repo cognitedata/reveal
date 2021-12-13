@@ -1,13 +1,15 @@
 import {
+  FavoriteLastUpdatedBy,
   FavoritePatchContentSchema,
   FavoritePatchSchema,
+  FavoriteOwner,
+  FavoriteContent,
   FavoriteSummary as FavoriteSummaryApi,
 } from '@cognite/discover-api-types';
 import { Document } from '@cognite/sdk-playground';
 
 import { DocumentLabel, DocumentType } from '../documentSearch/types';
 import { getFilepath } from '../documentSearch/utils/getFilepath';
-import { BasicUserInfo } from '../user/types';
 import { Well } from '../wellSearch/types';
 
 export const SHOW_CREATE_MODAL = 'prettypoly/favourite/SHOW_CREATE_MODAL';
@@ -62,36 +64,12 @@ export interface FavouriteState {
   };
 }
 
-export type LastUpdatedBy = {
-  userId: string;
-  dateTime: string;
-  firstname?: string;
-  lastname?: string;
-};
+export type LastUpdatedBy = FavoriteLastUpdatedBy;
 
 export type SharedWithData = {
   user: { id: string; firstname?: string; lastname?: string };
   permissions: ('READ' | 'WRITE')[];
 };
-
-export interface FavoriteSummary {
-  id: string;
-  owner: BasicUserInfo;
-  description: string;
-  name: string;
-  createdTime: string;
-  lastUpdatedTime: string;
-  lastUpdatedBy: LastUpdatedBy[];
-  assetCount: number;
-  content: FavoriteContent;
-  sharedWith: SharedWithData[];
-}
-
-export interface FavoriteContent {
-  documentIds: number[];
-  wells: FavoriteContentWells;
-  seismicIds: number[];
-}
 
 export interface FavoriteContentWells {
   [key: string]: string[];
@@ -180,6 +158,19 @@ export const mapWellToFavoriteWellData = (well: Well): FavoriteWellData => ({
   id: well.id,
   name: well.name,
 });
+
+export interface FavoriteSummary {
+  id: string;
+  owner: FavoriteOwner;
+  description: string;
+  name: string;
+  createdTime: string;
+  lastUpdatedTime: string;
+  lastUpdatedBy: LastUpdatedBy[];
+  assetCount: number;
+  content: FavoriteContent;
+  sharedWith: SharedWithData[];
+}
 
 /**
  * We are not using the generated type directly. We are mapping it to a local type.

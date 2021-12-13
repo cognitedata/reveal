@@ -1,7 +1,7 @@
+import { SavedSearchSortBy } from '@cognite/discover-api-types';
 import { DocumentsFilter } from '@cognite/sdk-playground';
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
-import { SortBy } from '../../../pages/types';
 import { DocumentsFacets } from '../../documentSearch/types';
 import { SharedWithData } from '../../favorite/types';
 import { MapLayerGeoJsonFilter } from '../../sidebar/types';
@@ -37,9 +37,7 @@ export interface SearchOptionFilters {
   extraGeoJsonFilters?: MapLayerGeoJsonFilter[];
 }
 
-export interface SearchOptionSortBy {
-  documents?: SortBy[];
-}
+export type SearchOptionSortBy = SavedSearchSortBy;
 
 // we should not be introducing new types, this stuff already exists
 // let's work on removing this:

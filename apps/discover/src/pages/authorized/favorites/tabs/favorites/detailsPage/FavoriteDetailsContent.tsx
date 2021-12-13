@@ -5,6 +5,7 @@ import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
 
 import { Badge, Icon, Tabs } from '@cognite/cogs.js';
+import { FavoriteContent } from '@cognite/discover-api-types';
 import { useTranslation } from '@cognite/react-i18n';
 
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
@@ -20,7 +21,7 @@ import {
   zipFavoritesAndDownload,
 } from 'modules/documentPreview/utils';
 import { useDocumentsByIdForFavoritesQuery } from 'modules/documentSearch/hooks/useDocumentsByIdsForFavorites';
-import { FavoriteContent, FavoriteDocumentData } from 'modules/favorite/types';
+import { FavoriteDocumentData } from 'modules/favorite/types';
 import { useFavoriteWellResults } from 'modules/wellSearch/selectors';
 import {
   DOWNLOAD_MESSAGE,

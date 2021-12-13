@@ -45,9 +45,4 @@ export const user = {
         headers,
       }
     ),
-  search: async (query: string, headers: FetchHeaders, tenant: string) =>
-    fetchGet<User[]>(
-      `${SIDECAR.discoverApiBaseUrl}/${tenant}/users/search?query=${query}`,
-      { headers }
-    ),
 };

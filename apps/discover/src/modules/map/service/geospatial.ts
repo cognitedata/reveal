@@ -57,19 +57,18 @@ export const getGenericMapLayer = async () => {
 };
 
 export async function getWellHeads(tenant: string, headers: FetchHeaders) {
-  const response =
-    await discoverAPI.geospatial.search<SpatialSearchItemResponse>(
-      {
-        data: {
-          limit: 1000,
-          layer: 'wellhead',
-          source: 'well-data-layer',
-          attributes: ['head'],
-        },
+  const response = await discoverAPI.geospatial.search(
+    {
+      data: {
+        limit: 1000,
+        layer: 'wellhead',
+        source: 'well-data-layer',
+        attributes: ['head'],
       },
-      headers,
-      tenant
-    );
+    },
+    headers,
+    tenant
+  );
   const items = isArray(response) ? response : [];
 
   const features = items.map((item: SpatialSearchItemResponse) => ({
@@ -588,7 +587,7 @@ export async function getTrajectories(tenant: string) {
 }
 
 export async function getAllBlocks(tenant: string, headers: FetchHeaders) {
-  const response = await discoverAPI.geospatial.search<NPDLayerItemResponse>(
+  const response = await discoverAPI.geospatial.search(
     {
       data: {
         limit: 1000,
@@ -602,14 +601,16 @@ export async function getAllBlocks(tenant: string, headers: FetchHeaders) {
 
   const items = response || [];
 
-  const features = items.map((item: NPDLayerItemResponse) => ({
-    type: 'Feature',
-    properties: {
-      name: item.attributes.name,
-      id: head(item.assetIds),
-    },
-    geometry: item.attributes.geometry,
-  }));
+  const features = (items as unknown as NPDLayerItemResponse[]).map(
+    (item: NPDLayerItemResponse) => ({
+      type: 'Feature',
+      properties: {
+        name: item.attributes.name,
+        id: head(item.assetIds),
+      },
+      geometry: item.attributes.geometry,
+    })
+  );
   return {
     features,
     type: 'FeatureCollection',
@@ -617,7 +618,7 @@ export async function getAllBlocks(tenant: string, headers: FetchHeaders) {
 }
 
 export async function getAllWellbores(tenant: string, headers: FetchHeaders) {
-  const response = await discoverAPI.geospatial.search<NPDLayerItemResponse>(
+  const response = await discoverAPI.geospatial.search(
     {
       data: {
         limit: 1000,
@@ -631,15 +632,17 @@ export async function getAllWellbores(tenant: string, headers: FetchHeaders) {
 
   const items = response || [];
 
-  const features = items.map((item: NPDLayerItemResponse) => ({
-    type: 'Feature',
-    properties: {
-      name: item.attributes.name,
-      id: head(item.assetIds),
-      type: item.attributes.type,
-    },
-    geometry: item.attributes.geometry,
-  }));
+  const features = (items as unknown as NPDLayerItemResponse[]).map(
+    (item: NPDLayerItemResponse) => ({
+      type: 'Feature',
+      properties: {
+        name: item.attributes.name,
+        id: head(item.assetIds),
+        type: item.attributes.type,
+      },
+      geometry: item.attributes.geometry,
+    })
+  );
   return {
     features,
     type: 'FeatureCollection',

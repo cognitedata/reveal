@@ -5,18 +5,6 @@ import { discoverAPI, getJsonHeaders } from 'modules/api/service';
 
 import { Stats } from './types';
 
-// save to db-service
-export const useStatsQuery: () => UseQueryResult<Stats, unknown> = () => {
-  const headers = getJsonHeaders({}, true);
-  return useQuery<Stats>(
-    STATS_QUERY_KEY.UPDATE,
-    () => discoverAPI.stats.update({ headers }),
-    {
-      ...ONLY_FETCH_ONCE,
-      enabled: false,
-    }
-  );
-};
 // find from cdf
 export const useStatsFindQuery: () => UseQueryResult<Stats, unknown> = () => {
   const headers = getJsonHeaders();

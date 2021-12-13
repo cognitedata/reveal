@@ -17,6 +17,11 @@ export const deleteSavedSearches = async (
   const savedSearchesList = await savedSearches.list(headers, App.project);
 
   const deleting = savedSearchesList.map((savedSearch) => {
+    if (!savedSearch.value.id) {
+      progress(`Saved search with no name found: ${savedSearch.value}`);
+      return Promise.resolve();
+    }
+
     progress(`Deleting saved search: ${savedSearch.value.name}`);
     return savedSearches.delete(savedSearch.value.id, headers, App.project);
   });

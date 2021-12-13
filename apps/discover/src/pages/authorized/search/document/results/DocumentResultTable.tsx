@@ -137,7 +137,7 @@ export const DocumentResultTable: React.FC = () => {
   const dispatch = useDispatch();
   const { data: savedSearch } = useQuerySavedSearchCurrent();
   const initialSortBy = get(savedSearch, 'sortBy.documents');
-  const savedSearchSort = useSavedSearchSort();
+  const updateSavedSearchSort = useSavedSearchSort();
   const savedSearchSortClear = useSavedSearchSortClear();
   const metrics = useGlobalMetrics('documents');
   const { data: config } = useDocumentConfig();
@@ -232,7 +232,7 @@ export const DocumentResultTable: React.FC = () => {
 
   const handleSort = useCallback((sortBy: SortBy[]) => {
     if (sortBy.length > 0 && sortByMap[sortBy[0].id]) {
-      savedSearchSort({ documents: sortBy });
+      updateSavedSearchSort({ documents: sortBy });
     } else {
       savedSearchSortClear();
       showErrorMessage('Not supported!');

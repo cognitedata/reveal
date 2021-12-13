@@ -1,6 +1,11 @@
 import reduce from 'lodash/reduce';
 
 import {
+  SavedSearchAddShareSchemaBody,
+  SavedSearchRemoveShareSchemaPOST,
+} from '@cognite/discover-api-types';
+
+import {
   fetchDelete,
   fetchGet,
   FetchHeaders,
@@ -113,10 +118,7 @@ export const savedSearches = {
   },
 
   addShare: async (
-    payload: {
-      id: string;
-      users: string[];
-    },
+    payload: SavedSearchAddShareSchemaBody,
     headers: FetchHeaders,
     tenant: string
   ): Promise<SavedSearchContent | GenericApiError> => {
@@ -138,13 +140,15 @@ export const savedSearches = {
     user: string,
     headers: FetchHeaders,
     tenant: string
-  ) =>
-    fetchPost<T>(
+  ) => {
+    const body: SavedSearchRemoveShareSchemaPOST = {
+      id,
+      user,
+    };
+    return fetchPost<T>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/${SAVED_SEARCH_ENDPOINT}/removeshare`,
-      {
-        id,
-        user,
-      },
+      body,
       { headers }
-    ),
+    );
+  },
 };

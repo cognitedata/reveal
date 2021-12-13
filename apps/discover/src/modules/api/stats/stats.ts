@@ -1,6 +1,6 @@
 import { getTenantInfo } from '@cognite/react-container';
 
-import { fetchGet, FetchHeaders, fetchPost } from '_helpers/fetch';
+import { fetchGet, FetchHeaders } from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
 
 import { StatsApiResult } from './types';
@@ -28,22 +28,6 @@ export const stats = {
     const [tenant] = getTenantInfo();
 
     return fetchGet<StatsApiResult>(
-      `${SIDECAR.discoverApiBaseUrl}/${tenant}/stats`,
-      {
-        headers,
-      }
-    ).then((response) => {
-      if (response.success) {
-        return response.data.stats;
-      }
-
-      throw Error('Error getting stats');
-    });
-  },
-  update: async ({ headers }: { headers: FetchHeaders }) => {
-    const [tenant] = getTenantInfo();
-
-    return fetchPost<StatsApiResult>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/stats`,
       {
         headers,

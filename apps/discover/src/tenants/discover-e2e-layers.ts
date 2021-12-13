@@ -1,10 +1,18 @@
-import { Layers } from './types';
+import { mapService } from 'modules/map/service';
 
 const MAP_DATA_URL = 'https://storage.googleapis.com/discover_layers_us/';
 
 export const AKER_BP_DATA_URL = `${MAP_DATA_URL}akerbp/`;
 
-const layers: Layers = {
+const layers = {
+  Well_Heads: {
+    remoteService: mapService.getWellHeads,
+    name: 'Well Heads',
+    color: 'transparent',
+    defaultOn: true,
+    mapLayers: [],
+    weight: 101,
+  },
   akerBPLicense: {
     remote: `${AKER_BP_DATA_URL}Licenses_AkerBP.json`,
     name: 'Licenses Aker BP',
