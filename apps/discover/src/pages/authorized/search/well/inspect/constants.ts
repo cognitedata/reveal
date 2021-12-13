@@ -83,17 +83,6 @@ export const TAB_ITEMS: Tab[] = [
     name: 'Geomechanics & PPFG',
     path: navigation.SEARCH_WELLS_INSPECT_MEASUREMENTS,
   },
-  // {
-  //   key: 'geomechanic',
-  //   name: 'Geomechanic',
-  //   path: navigation.SEARCH_WELLS_INSPECT_GEOMECHANIC,
-  // },
-  // {
-  //   key: 'multiplePPFG',
-  //   name: 'Multiple PPFG',
-  //   path: navigation.SEARCH_WELLS_INSPECT_MULTIPLEPPFG,
-  //   standalone: true,
-  // },
   {
     key: 'threeDee',
     name: '3D',

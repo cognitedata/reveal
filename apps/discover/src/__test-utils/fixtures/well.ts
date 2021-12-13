@@ -122,12 +122,10 @@ export const mockedWellStateWithSelectedWells = {
       759155409324993: {
         logType: [],
         ppfg: [],
-        geomechanic: [],
       },
       '7591554': {
         logType: [],
         ppfg: [],
-        geomechanic: [],
         digitalRocks: [
           {
             asset: {
@@ -139,7 +137,6 @@ export const mockedWellStateWithSelectedWells = {
       '75915540932499342': {
         logType: [],
         ppfg: [],
-        geomechanic: [],
         digitalRocks: [
           {
             asset: {
@@ -158,7 +155,6 @@ export const mockedWellStateWithSelectedWells = {
       '75915540932499343': {
         logType: [],
         ppfg: [],
-        geomechanic: [],
         digitalRocks: [
           {
             asset: {
@@ -178,7 +174,6 @@ export const mockedWellStateWithSelectedWells = {
       '75915540932499344': {
         logType: [],
         ppfg: [],
-        geomechanic: [],
         digitalRocks: [
           {
             asset: {

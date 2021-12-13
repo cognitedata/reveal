@@ -21,7 +21,6 @@ import {
   SequenceData,
   SET_HOVERED_WELL,
   SET_PPFG_ROW_DATA,
-  SET_GEOMECHANIC_ROW_DATA,
   SET_WELLBORE_SEQUENCES,
   SET_WELLBORE_ASSETS,
   AssetData,
@@ -450,29 +449,6 @@ export function wellReducer(
       };
     }
 
-    case SET_GEOMECHANIC_ROW_DATA: {
-      const updatedWellboreData = { ...state.wellboreData };
-
-      action.data.forEach((geomechanicData) => {
-        const wellboreId = geomechanicData.sequence.assetId as number;
-        const newList = (
-          updatedWellboreData[wellboreId].geomechanic as SequenceData[]
-        ).map((geomechanicRow) =>
-          geomechanicRow.sequence.id === geomechanicData.sequence.id
-            ? { ...geomechanicRow, rows: geomechanicData.rows }
-            : geomechanicRow
-        );
-        updatedWellboreData[wellboreId] = {
-          ...updatedWellboreData[wellboreId],
-          ...{ geomechanic: newList },
-        };
-      });
-
-      return {
-        ...state,
-        ...{ wellboreData: updatedWellboreData },
-      };
-    }
     case SET_WELLBORE_ASSETS: {
       const updatedWellboreData = { ...state.wellboreData };
       Object.keys(action.data).forEach((wellboreId) => {

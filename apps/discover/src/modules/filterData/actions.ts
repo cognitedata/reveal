@@ -1,6 +1,5 @@
 import { FILTER_NAMES, MODULES } from './constants';
 import {
-  FilterLogType,
   SearchInput,
   MultiSelect,
   NumericRange,
@@ -62,15 +61,6 @@ export const setNptDuration = (values: NumericRange) => {
   return { type: SET_FILTER_VALUES, filter, values };
 };
 
-// Logs
-export const setLogFilterLogType = (values: FilterLogType) => {
-  const filter = {
-    filterModule: MODULES.log,
-    filterName: FILTER_NAMES.filterLogType,
-  };
-  return { type: SET_FILTER_VALUES, filter, values };
-};
-
 export const setSelectedLogIds = (values: SelectedMap) => {
   const filter = {
     filterModule: MODULES.log,
@@ -103,7 +93,6 @@ export const filterDataActions = {
   setNptDetailCode,
   setNptSearchPhrase,
   setNptDuration,
-  setLogFilterLogType,
   setSelectedLogIds,
   setSelectedTrajIds,
   setSelectedTrajectoryWellboreIds,

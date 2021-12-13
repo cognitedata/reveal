@@ -21,10 +21,6 @@ export const initialState: FilterDataState = {
     nptDetailCode: [],
   },
   log: {
-    filterLogType: {
-      id: 1,
-      title: 'All',
-    },
     selectedIds: {},
   },
   trajectory: {

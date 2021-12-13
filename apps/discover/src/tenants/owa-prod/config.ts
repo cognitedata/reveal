@@ -303,9 +303,6 @@ const defaultConfig: TenantConfig = {
     threeDee: {
       enabled: true,
     },
-    multiplePPFG: {
-      enabled: true,
-    },
     digitalRocks: {
       enabled: false,
       metaInfo: {

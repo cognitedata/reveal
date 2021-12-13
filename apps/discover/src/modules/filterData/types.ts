@@ -18,7 +18,6 @@ export interface FilterDataState {
     nptDetailCode: MultiSelect;
   };
   log: {
-    filterLogType: FilterLogType;
     selectedIds: SelectedMap;
   };
   trajectory: {
@@ -30,21 +29,12 @@ export interface FilterDataState {
   };
 }
 
-export type FilterValues =
-  | NumericRange
-  | MultiSelect
-  | FilterLogType
-  | SelectedMap;
+export type FilterValues = NumericRange | MultiSelect | SelectedMap;
 export interface FilterDataAction {
   type: FilterDataActionsType;
   filter: Filter;
   values: FilterValues;
 }
-
-export type FilterLogType = {
-  id: number;
-  title: string;
-};
 
 export type Filter = {
   filterModule: typeof MODULES[keyof typeof MODULES];

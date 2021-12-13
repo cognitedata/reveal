@@ -51,7 +51,6 @@ describe('log hook', () => {
                 },
               ],
               ppfg: [],
-              geomechanic: [],
             },
           },
         },

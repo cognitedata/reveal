@@ -347,9 +347,6 @@ export const defaultWellsConfig: TenantConfig = {
     threeDee: {
       enabled: true,
     },
-    multiplePPFG: {
-      enabled: true,
-    },
     measurements: {
       enabled: true,
     },

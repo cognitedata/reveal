@@ -22,7 +22,6 @@ import {
   SET_LOG_TYPE,
   SET_LOGS_ROW_DATA,
   SET_PPFG_ROW_DATA,
-  SET_GEOMECHANIC_ROW_DATA,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
@@ -198,22 +197,6 @@ describe('Well search Actions', () => {
         {
           type: SET_PPFG_ROW_DATA,
           data: [{ sequence: ppfg, rows: [] }],
-        },
-      ]);
-    });
-  });
-
-  describe('getGeomechanicData', () => {
-    it(`should fetch Geomechanic rows for the given Geomechanic`, async () => {
-      const { store } = getDefaultTestValues();
-      const geomechanic = { id: 1234 } as Sequence;
-      await store.dispatch(
-        wellSearchActions.getGeomechanicData(geomechanic) as any
-      );
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_GEOMECHANIC_ROW_DATA,
-          data: [{ sequence: geomechanic, rows: [] }],
         },
       ]);
     });

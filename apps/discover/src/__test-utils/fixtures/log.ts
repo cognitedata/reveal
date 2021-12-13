@@ -73,12 +73,4 @@ export const MockSequenceLogTypeData: SequenceLogType[] = [
       assetId: 11111,
     },
   },
-  {
-    ...sequence,
-    ...{
-      id: 1,
-      logType: 'geomechanic',
-      assetId: 11111,
-    },
-  },
 ];

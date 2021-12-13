@@ -7,10 +7,8 @@ import Casing from './modules/casing';
 import DigitalRocks from './modules/digitalRocks';
 import EventsNds from './modules/events/Nds';
 import EventsNpt from './modules/events/Npt';
-import Geomechanics from './modules/geomechanics';
 import LogType from './modules/logType';
 import Measurements from './modules/measurements';
-import MultiplePPFG from './modules/multiplePPFG';
 import Overview from './modules/overview';
 import RelatedDocument from './modules/relatedDocument';
 import Trajectory from './modules/trajectory';
@@ -48,14 +46,6 @@ export const InspectRouter = () => (
       render={Measurements}
     />
     <Route path={navigation.SEARCH_WELLS_INSPECT_THREEDEE} render={ThreeDee} />
-    <Route
-      path={navigation.SEARCH_WELLS_INSPECT_GEOMECHANIC}
-      render={Geomechanics}
-    />
-    <Route
-      path={navigation.SEARCH_WELLS_INSPECT_MULTIPLEPPFG}
-      render={MultiplePPFG}
-    />
     <Redirect
       from={navigation.SEARCH_WELLS_INSPECT}
       to={navigation.SEARCH_WELLS_INSPECT_OVERVIEW}

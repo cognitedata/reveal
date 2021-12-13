@@ -6,11 +6,7 @@ import { TRACK_CONFIG } from 'modules/wellSearch/constants';
 import { SequenceData, WellboreData } from 'modules/wellSearch/types';
 import { SequenceLogType } from 'pages/authorized/search/well/inspect/modules/logType/interfaces';
 
-import {
-  GEOMECHANIC_LOG_TYPE,
-  PETREL_LOG_TYPE,
-  PPFG_LOG_TYPE,
-} from '../constants';
+import { PETREL_LOG_TYPE } from '../constants';
 
 const ppfgTracks = TRACK_CONFIG.filter((track) => track.type === 'PPFG').map(
   (track) => track.column
@@ -49,50 +45,6 @@ export const getPPFGWellboreIdMapping = (
       [wbId]: getMostMatchingPPFG(wellboreData[wbId].ppfg),
     };
   }, {} as { [key: string]: SequenceData });
-};
-
-// Create ppfg and id mapping object to access ppfgs efficiently
-export const getPPFGIdMapping = (
-  logs: SequenceLogType[] = [],
-  wellboreData: WellboreData = {}
-) => {
-  const ppfgIdMapping: { [key: string]: SequenceData } = {};
-  logs
-    .filter((log) => log.logType === PPFG_LOG_TYPE)
-    .forEach((ppfg) => {
-      const wellBorePPFGs = wellboreData[ppfg.assetId as number]
-        .ppfg as SequenceData[];
-      wellBorePPFGs
-        .filter((wellBorePPFG) => wellBorePPFG.sequence.id === ppfg.id)
-        .forEach((wellBorePPFG) => {
-          ppfgIdMapping[wellBorePPFG.sequence.id] = wellBorePPFG;
-        });
-    });
-  return ppfgIdMapping;
-};
-
-// Create geomechanic and id mapping object to access geomechanics efficiently
-export const getGeomechanicIdMapping = (
-  logs: SequenceLogType[] = [],
-  wellboreData: WellboreData = {}
-) => {
-  const geomechanicIdMapping: { [key: string]: SequenceData } = {};
-  logs
-    .filter((log) => log.logType === GEOMECHANIC_LOG_TYPE)
-    .forEach((geomechanic) => {
-      const wellBoreGeomechanics = wellboreData[geomechanic.assetId as number]
-        .geomechanic as SequenceData[];
-      wellBoreGeomechanics
-        .filter(
-          (wellBoreGeomechanic) =>
-            wellBoreGeomechanic.sequence.id === geomechanic.id
-        )
-        .forEach((wellBoreGeomechanic) => {
-          geomechanicIdMapping[wellBoreGeomechanic.sequence.id] =
-            wellBoreGeomechanic;
-        });
-    });
-  return geomechanicIdMapping;
 };
 
 // Create log and id mapping object to access logs efficiently

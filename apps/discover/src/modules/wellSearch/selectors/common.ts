@@ -14,11 +14,7 @@ export const usePristineIds = () => {
   const wellboreData = useWellboreData();
   return useMemo(() => {
     const logPristineIds: number[] = [];
-    const ppfgPristineIds: number[] = [];
     const documentPristineIds: number[] = [];
-    const fitPristineIds: number[] = [];
-    const lotPristineIds: number[] = [];
-    const geomechanicsPristineIds: number[] = [];
     const logsRowPristineIds: Sequence[] = [];
     const logsFrmTopsRowPristineIds: Sequence[] = [];
     const digitalRocksPristineIds: number[] = [];
@@ -29,27 +25,8 @@ export const usePristineIds = () => {
         logPristineIds.push(wbid);
       }
 
-      // Get Wellbore ids to fetch PPFG
-      if (!wellboreData[wbid]?.ppfg) {
-        ppfgPristineIds.push(wbid);
-      }
-
-      // Get Wellbore ids to fetch FIT
-      if (!wellboreData[wbid]?.fit) {
-        fitPristineIds.push(wbid);
-      }
-
       if (!wellboreData[wbid]?.documents) {
         documentPristineIds.push(wbid);
-      }
-      // Get Wellbore ids to fetch LOT
-      if (!wellboreData[wbid]?.lot) {
-        lotPristineIds.push(wbid);
-      }
-
-      // Get Wellbore ids to fetch Geomechanics
-      if (!wellboreData[wbid]?.geomechanic) {
-        geomechanicsPristineIds.push(wbid);
       }
 
       // Get Logs ids to fetch logs row data
@@ -79,10 +56,6 @@ export const usePristineIds = () => {
     });
     return {
       logPristineIds,
-      ppfgPristineIds,
-      fitPristineIds,
-      lotPristineIds,
-      geomechanicsPristineIds,
       logsRowPristineIds,
       logsFrmTopsRowPristineIds,
       documentPristineIds,

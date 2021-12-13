@@ -6,9 +6,4 @@ export type LogTypeData = Sequence & {
   logType: string;
 };
 
-export type FilterLogType = {
-  id: number;
-  title: string;
-};
-
 export type SequenceLogType = Sequence & { logType?: string };

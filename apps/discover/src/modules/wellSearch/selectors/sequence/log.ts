@@ -84,44 +84,28 @@ export const useSelectedWellBoresLogs = () => {
 };
 
 export const useLogTypes = () => {
-  const { logPristineIds, ppfgPristineIds, geomechanicsPristineIds } =
-    usePristineIds();
+  const { logPristineIds } = usePristineIds();
   const wells = useSecondarySelectedOrHoveredWells();
   const wellboreData = useWellboreData();
   return useMemo(() => {
     const tempData: LogTypeData[] = [];
-    if (
-      logPristineIds.length > 0 ||
-      ppfgPristineIds.length > 0 ||
-      geomechanicsPristineIds.length > 0
-    )
-      return tempData;
+    if (logPristineIds.length > 0) return tempData;
     wells.forEach((well) => {
       if (well.wellbores) {
         well.wellbores.forEach((wellbore) => {
-          // Update data in table
-          const tableDataTypes = ['logType', 'ppfg', 'geomechanic'];
-          tableDataTypes.forEach((tableDataType: string) => {
-            const data = get(
-              wellboreData[wellbore.id],
-              tableDataType
-            ) as SequenceData[];
-            if (data) {
-              data.forEach((logData) => {
-                const { sequence } = logData;
-                updateData(tempData, well, wellbore, tableDataType, sequence);
-              });
-            }
-          });
+          const data = get(
+            wellboreData[wellbore.id],
+            'logType'
+          ) as SequenceData[];
+          if (data) {
+            data.forEach((logData) => {
+              const { sequence } = logData;
+              updateData(tempData, well, wellbore, 'logType', sequence);
+            });
+          }
         });
       }
     });
     return tempData;
-  }, [
-    wells,
-    wellboreData,
-    logPristineIds,
-    ppfgPristineIds,
-    geomechanicsPristineIds,
-  ]);
+  }, [wells, wellboreData, logPristineIds]);
 };

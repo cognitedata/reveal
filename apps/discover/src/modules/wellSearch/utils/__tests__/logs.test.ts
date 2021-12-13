@@ -9,10 +9,8 @@ import {
 } from 'modules/wellSearch/types';
 
 import {
-  getGeomechanicIdMapping,
   getLogFrmsTopsIdMapping,
   getPetrelLogIdMapping,
-  getPPFGIdMapping,
   getPPFGWellboreIdMapping,
 } from '../logs';
 
@@ -54,7 +52,6 @@ const frmLogsData: SequenceData[] = [
 const wellboreData: WellboreData = {
   11111: {
     ppfg: sequenceData,
-    geomechanic: sequenceData,
     logType: sequenceData,
     logsFrmTops: frmLogsData,
   },
@@ -73,20 +70,6 @@ describe('Log viewer utils', () => {
           },
         },
       },
-    });
-  });
-
-  it('should return ppfg id mapping object', () => {
-    expect(getPPFGIdMapping(MockSequenceLogTypeData, wellboreData)).toEqual({
-      '1': sequenceData[0],
-    });
-  });
-
-  it('should return gemechanic id mapping object', () => {
-    expect(
-      getGeomechanicIdMapping(MockSequenceLogTypeData, wellboreData)
-    ).toEqual({
-      '1': sequenceData[0],
     });
   });
 

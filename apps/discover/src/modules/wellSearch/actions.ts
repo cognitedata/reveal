@@ -42,7 +42,6 @@ import {
   WellSearchAction,
   SET_HOVERED_WELL,
   SET_PPFG_ROW_DATA,
-  SET_GEOMECHANIC_ROW_DATA,
   SET_HOVERED_WELLBORE_IDS,
   LogTypes,
   SequenceTypes,
@@ -447,19 +446,6 @@ function getPPFGData(ppfg: Sequence): ThunkResult<void> {
   };
 }
 
-function getGeomechanicData(geomechanic: Sequence): ThunkResult<void> {
-  return (dispatch) => {
-    return wellSearchService
-      .getSequenceRowData(geomechanic.id)
-      .then((rows: SequenceRow[]) => {
-        dispatch({
-          type: SET_GEOMECHANIC_ROW_DATA,
-          data: [{ sequence: geomechanic, rows }],
-        });
-      });
-  };
-}
-
 function getWellboreAssets(
   wellboreIds: number[],
   wellboreAssetIdMap: WellboreAssetIdMap,
@@ -706,7 +692,6 @@ export const wellSearchActions = {
   getLogType,
   getLogData,
   getPPFGData,
-  getGeomechanicData,
   getDigitalRockSamples,
   getGrainAnalysisData,
   getAllWellbores,

@@ -18,9 +18,6 @@ export const FILTER_NAMES = {
   nptCode: 'nptCode',
   nptDetailCode: 'nptDetailCode',
 
-  // logs
-  filterLogType: 'filterLogType',
-
   // trajectory
   selectedWellboreIds: 'selectedWellboreIds',
 

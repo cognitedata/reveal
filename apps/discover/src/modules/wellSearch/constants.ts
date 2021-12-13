@@ -240,8 +240,6 @@ export enum FilterIDs {
 }
 
 export const PETREL_LOG_TYPE = 'logType';
-export const PPFG_LOG_TYPE = 'ppfg';
-export const GEOMECHANIC_LOG_TYPE = 'geomechanic';
 
 export const DIGITAL_ROCKS_ACCESSORS = {
   DIMENSION_X: 'metadata.SIM_XDIM',

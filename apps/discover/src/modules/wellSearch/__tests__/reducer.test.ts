@@ -26,7 +26,6 @@ import {
   SET_LOGS_ROW_DATA,
   SET_WELLBORE_SEQUENCES,
   SET_PPFG_ROW_DATA,
-  SET_GEOMECHANIC_ROW_DATA,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   SET_WELLBORE_ASSETS,
   SET_GRAIN_ANALYSIS_DATA,
@@ -354,34 +353,6 @@ describe('Well Reducer', () => {
     expect(state.wellboreData).toEqual({
       [wellboreId]: {
         ppfg: [{ sequence: ppfg, rows: [] }],
-      },
-    });
-  });
-
-  it(`should set geomechanic row data in wellboreData state`, () => {
-    const wellboreId = 1234;
-    const geomechanic = {
-      id: 231324234223,
-      name: 'geomechanic 1',
-      assetId: wellboreId,
-    } as Sequence;
-    const state = wellReducer(
-      {
-        ...initialState,
-        wellboreData: {
-          [wellboreId]: {
-            geomechanic: [{ sequence: geomechanic }],
-          },
-        },
-      },
-      {
-        type: SET_GEOMECHANIC_ROW_DATA,
-        data: [{ sequence: geomechanic, rows: [] }],
-      }
-    );
-    expect(state.wellboreData).toEqual({
-      [wellboreId]: {
-        geomechanic: [{ sequence: geomechanic, rows: [] }],
       },
     });
   });

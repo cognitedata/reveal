@@ -168,9 +168,6 @@ export interface WellConfig {
   threeDee?: {
     enabled: boolean;
   };
-  multiplePPFG?: {
-    enabled: boolean;
-  };
 
   digitalRocks?: {
     enabled: boolean;

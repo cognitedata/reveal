@@ -40,7 +40,6 @@ export const SET_LOG_TYPE = 'WELL_SET_LOG_TYPE';
 export const SET_LOGS_ROW_DATA = 'WELL_SET_LOGS_ROW_DATA';
 export const SET_WELLBORE_SEQUENCES = 'WELL_SET_WELLBORE_SEQUENCES';
 export const SET_PPFG_ROW_DATA = 'WELL_SET_PPFG_ROW_DATA';
-export const SET_GEOMECHANIC_ROW_DATA = 'WELL_SET_GEOMECHANIC_ROW_DATA';
 export const SET_WELLBORE_ASSETS = 'WELL_SET_WELLBORE_ASSETS';
 export const SET_WELLBORE_DIGITAL_ROCK_SAMPLES =
   'WELL_SET_WELLBORE_DIGITAL_ROCK_SAMPLES';
@@ -74,7 +73,7 @@ export const SET_FAVORITE_ID = 'SET_FAVORITE_ID';
 
 export type EventsType = 'nds' | 'npt';
 export type LogTypes = 'logs' | 'logsFrmTops';
-export type SequenceTypes = 'ppfg' | 'geomechanic' | 'fit' | 'lot';
+export type SequenceTypes = 'ppfg' | 'fit' | 'lot';
 export type AssetTypes = 'digitalRocks';
 export type GrainAnalysisTypes = 'gpart';
 export type DictionaryType<T> = Dictionary<T>;
@@ -233,11 +232,6 @@ interface SetPPFGData {
   data: SequenceData[];
 }
 
-interface SetGeomechanicData {
-  type: typeof SET_GEOMECHANIC_ROW_DATA;
-  data: SequenceData[];
-}
-
 interface SetGrainAnalysisData {
   type: typeof SET_GRAIN_ANALYSIS_DATA;
   digitalRockSample: Asset;
@@ -348,7 +342,6 @@ export type WellSearchAction =
   | SetLogType
   | SetLogsData
   | SetPPFGData
-  | SetGeomechanicData
   | SetWellboreSequences
   | SetWellboreAssets
   | SetWellboreDigitalRockSamples
@@ -458,7 +451,6 @@ export interface WellboreData {
     ppfg?: SequenceData[];
     fit?: SequenceData[];
     lot?: SequenceData[];
-    geomechanic?: SequenceData[];
     documents?: DocumentType[];
     digitalRocks?: AssetData[];
   };
