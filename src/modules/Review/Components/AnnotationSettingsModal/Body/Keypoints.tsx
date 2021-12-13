@@ -1,48 +1,32 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Collapse, Input } from 'antd';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
-import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/utill';
+import {
+  getRandomColor,
+  validNewKeypoint,
+} from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import isEmpty from 'lodash-es/isEmpty';
+import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
 import { Header } from './Header';
 import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 
 const { Panel } = Collapse;
-
-type NewKeypoints = Pick<
-  KeypointCollection,
-  'collectionName' | 'lastUpdated'
-> & {
-  keypoints: {
-    caption: string;
-    color: string;
-  }[];
-};
 
 const handleClick = (evt: any) => {
   // dummy handler to stop event propagation
   evt.stopPropagation();
 };
 
-const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
-  if (newKeypoints) {
-    const { collectionName, keypoints } = newKeypoints;
-    if (collectionName === '') return false;
-
-    const keypointCaptions = keypoints.map((keypoint) => keypoint.caption);
-    if (keypointCaptions.includes('')) return false;
-  }
-  return true;
-};
-
 export const Keypoints = ({
   predefinedKeypointCollections,
   unsavedKeypointCollections,
   setUnsavedKeypointCollections,
+  creationInProgress,
   options,
 }: {
   predefinedKeypointCollections: KeypointCollection[];
@@ -50,6 +34,7 @@ export const Keypoints = ({
   setUnsavedKeypointCollections: (
     keypointCollections: KeypointCollection[]
   ) => void;
+  creationInProgress: (inProgress: boolean) => void;
   options?: { createNew?: { text?: string } };
 }) => {
   const [newKeypoints, setNewKeypoints] =
@@ -159,6 +144,15 @@ export const Keypoints = ({
       }
     }
   }, [options]);
+
+  // set in progress state to disable done button
+  useEffect(() => {
+    if (newKeypoints) {
+      creationInProgress(true);
+    } else {
+      creationInProgress(false);
+    }
+  }, [newKeypoints]);
 
   useEffect(() => {
     scrollToBottom();

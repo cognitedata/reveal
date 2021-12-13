@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from 'antd';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
-import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/utill';
+import {
+  getRandomColor,
+  validNewShapes,
+} from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
 import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
@@ -9,13 +12,6 @@ import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/Anno
 import isEmpty from 'lodash-es/isEmpty';
 import { Shape } from 'src/modules/Review/types';
 import { Header } from './Header';
-
-const validNewShapes = (newShapes: { [key: string]: Shape }) => {
-  const shapeNames = Object.keys(newShapes).map(
-    (key) => newShapes[key].shapeName
-  );
-  return !shapeNames.includes('');
-};
 
 const handleClick = (evt: any) => {
   // dummy handler to stop event propagation
@@ -26,11 +22,13 @@ export const Shapes = ({
   predefinedShapes,
   unsavedShapes,
   setUnsavedShapes,
+  creationInProgress,
   options,
 }: {
   predefinedShapes: Shape[];
   unsavedShapes: Shape[];
   setUnsavedShapes: (shapes: Shape[]) => void;
+  creationInProgress: (inProgress: boolean) => void;
   options?: { createNew?: { text?: string; color?: string } };
 }) => {
   const [newShapes, setNewShapes] = useState<{ [key: string]: Shape }>({});
@@ -97,6 +95,14 @@ export const Shapes = ({
       }
     }
   }, [options]);
+
+  useEffect(() => {
+    if (Object.keys(newShapes).length !== 0) {
+      creationInProgress(true);
+    } else {
+      creationInProgress(false);
+    }
+  }, [newShapes]);
 
   useEffect(() => {
     scrollToBottom();

@@ -32,6 +32,10 @@ export const AnnotationSettingsModalContent = ({
     predefinedShapes: [],
   });
 
+  const [shapeCreationInProgress, setShapeCreationInProgress] = useState(false);
+  const [keypointCreationInProgress, setKeypointCreationInProgress] =
+    useState(false);
+
   const submitNewCollection = () => {
     if (newCollection) {
       onDone(newCollection);
@@ -53,6 +57,13 @@ export const AnnotationSettingsModalContent = ({
       ...collection,
       predefinedKeypoints: [...keypointCollections],
     }));
+  };
+
+  const setShapesInProgressState = (state: boolean) => {
+    setShapeCreationInProgress(state);
+  };
+  const setKeypointsInProgressState = (state: boolean) => {
+    setKeypointCreationInProgress(state);
   };
 
   useEffect(() => {
@@ -82,6 +93,7 @@ export const AnnotationSettingsModalContent = ({
               unsavedShapes={newCollection.predefinedShapes}
               setUnsavedShapes={setUnsavedShapes}
               options={options?.activeView === 'shape' ? options : undefined}
+              creationInProgress={setShapesInProgressState}
             />
           </Body>
         </Tabs.TabPane>
@@ -94,6 +106,7 @@ export const AnnotationSettingsModalContent = ({
               unsavedKeypointCollections={newCollection.predefinedKeypoints}
               setUnsavedKeypointCollections={setUnsavedKeypointCollections}
               options={options?.activeView === 'keypoint' ? options : undefined}
+              creationInProgress={setKeypointsInProgressState}
             />
           </Body>
         </Tabs.TabPane>
@@ -115,7 +128,11 @@ export const AnnotationSettingsModalContent = ({
           <Button type="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="primary" onClick={submitNewCollection}>
+          <Button
+            type="primary"
+            onClick={submitNewCollection}
+            disabled={shapeCreationInProgress || keypointCreationInProgress}
+          >
             Done
           </Button>
         </RightFooter>
