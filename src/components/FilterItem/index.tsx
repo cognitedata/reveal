@@ -21,21 +21,24 @@ type Props = {
 export const FilterItem = ({ filter, active, onClick }: Props): JSX.Element => {
   const { type, value, icon, label } = filter;
 
+  const isDisabled = !value;
+
   return (
     <Button
       type="tertiary"
-      toggled={active}
+      toggled={active && !isDisabled}
+      disabled={isDisabled}
       onClick={() => onClick(filter)}
       style={{ padding: '8px' }}
     >
       {icon ? (
         <FilterContent level={2} strong>
           <Icon type={icon} style={{ marginRight: '8px' }} />
-          {value}
+          {value ?? 0}
         </FilterContent>
       ) : (
         <FilterContent level={2} strong>
-          {value} {label ?? type}
+          {value ?? 0} {label ?? type}
         </FilterContent>
       )}
     </Button>

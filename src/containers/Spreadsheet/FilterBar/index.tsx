@@ -37,36 +37,33 @@ export const FilterBar = ({
   return (
     <Bar justifyContent="space-between" alignItems="center">
       <FilterBar.List justifyContent="center" alignItems="center">
-        {!isEmpty && (
-          <>
-            <Input
-              placeholder="Search column name"
-              value={columnNameFilter}
-              onChange={onColumnFilterChange}
-            />
-            <Separator style={{ margin: '0 12px' }} />
-            <FilterBar.Buttons justifyContent="center" alignItems="center">
-              {!areTypesFetched ? (
-                <>
-                  <Body level={2}> Running data profiling...</Body>
-                  <Icon type="Loader" className="load-icon" />
-                </>
-              ) : (
-                filters.map((filter: FilterType) => {
-                  const active = columnTypeFilters.includes(filter.type);
-                  return (
-                    <FilterItem
-                      key={`${filter.type}_${filter.value}`}
-                      filter={filter}
-                      active={active}
-                      onClick={onFilterClick}
-                    />
-                  );
-                })
-              )}
-            </FilterBar.Buttons>
-          </>
-        )}
+        <Input
+          placeholder="Search column name"
+          value={columnNameFilter}
+          onChange={onColumnFilterChange}
+          disabled={isEmpty}
+        />
+        <Separator style={{ margin: '0 12px' }} />
+        <FilterBar.Buttons justifyContent="center" alignItems="center">
+          {!areTypesFetched ? (
+            <>
+              <Body level={2}> Running data profiling...</Body>
+              <Icon type="Loader" className="load-icon" />
+            </>
+          ) : (
+            filters.map((filter: FilterType) => {
+              const active = columnTypeFilters.includes(filter.type);
+              return (
+                <FilterItem
+                  key={`${filter.type}_${filter.value}`}
+                  filter={filter}
+                  active={active}
+                  onClick={onFilterClick}
+                />
+              );
+            })
+          )}
+        </FilterBar.Buttons>
       </FilterBar.List>
       {hasActions && (
         <Flex justifyContent="center" alignItems="center">
@@ -89,7 +86,9 @@ export const FilterBar = ({
 const Bar = styled(Flex)`
   width: 100%;
   height: ${FILTER_BAR_HEIGHT}px;
+  padding: 16px;
   box-sizing: border-box;
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
 `;
 
 const List = styled(Flex)`

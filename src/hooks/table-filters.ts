@@ -38,7 +38,9 @@ export const useFilters = () => {
       ...filter,
       value: columnTypeCounts[filter.type],
     }))
-    .filter((filter: FilterType) => filter.value);
+    .filter((filter: FilterType) =>
+      filter.type === DEFAULT_FILTER.type ? true : filter.value
+    );
 
   const setTypeFilter = (type: string) => {
     const selectAllColumns = type === DEFAULT_FILTER.type;
