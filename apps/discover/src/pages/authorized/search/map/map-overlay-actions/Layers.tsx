@@ -9,7 +9,7 @@ import { useStaticSelectableLayers } from 'modules/map/hooks/useStaticSelectable
 import { SelectableLayer } from 'modules/map/types';
 import { Layer } from 'tenants/types';
 
-import { LayerColorDot, LayerItem } from './elements';
+import { LayerItem, LayerWrapper } from './elements';
 
 const Item = ({
   item,
@@ -33,12 +33,12 @@ const Item = ({
         checked={item.selected}
         disabled={item.disabled || false}
         onChange={handleOnChange}
+        color={allLayers[item.id]?.color}
       >
         <Body level={2} as="span">
           {item.name}
         </Body>
       </Checkbox>
-      <LayerColorDot color={allLayers[item.id]?.color} />
     </LayerItem>
   );
 };
@@ -57,7 +57,7 @@ export const LayerSelector: React.FC<Props> = React.memo(
     );
 
     return (
-      <Menu>
+      <LayerWrapper>
         {layers
           .filter((layer) =>
             staticLayers.map((staticLayer) => staticLayer.id).includes(layer.id)
@@ -92,7 +92,7 @@ export const LayerSelector: React.FC<Props> = React.memo(
             </Menu.Item>
           );
         })}
-      </Menu>
+      </LayerWrapper>
     );
   }
 );

@@ -28,7 +28,7 @@ describe('Layers  Content', () => {
   const defaultTestInit = async (viewProps?: Partial<Props>) => {
     const props = {
       layers: [layer1],
-      allLayers: { layer1: { name: 'l1', color: '', defaultOn: true } },
+      allLayers: { layer1: { name: 'l1', color: '#FF5733', defaultOn: true } },
       handleClose: noop,
       ...viewProps,
     };

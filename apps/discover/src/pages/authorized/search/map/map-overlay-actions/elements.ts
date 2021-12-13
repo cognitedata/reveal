@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Menu } from '@cognite/cogs.js';
+
 import layers from '_helpers/zindex';
 import { Paper } from 'components/paper';
 import { Flex, FlexAlignItems, sizes } from 'styles/layout';
@@ -113,9 +115,8 @@ const AssetHeaderContainer = styled.div`
   padding-bottom: 0px;
 `;
 
-const LayerWrapper = styled.div`
-  padding: 16px;
-  padding-bottom: 8px;
+const LayerWrapper = styled(Menu)`
+  min-width: 256px;
 `;
 
 const LayerItem = styled(FlexAlignItems)`
