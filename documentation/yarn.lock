@@ -1202,7 +1202,7 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.1.tgz#b61bc4ed905757701c8d2074b153890974857bb3"
   integrity sha512-T0+MIDd3ebZDjRbddiLF1KhMeW0JCunbvaxpseZdgAjXx6S/W4EiIFJqjP0g9KXOn09DLSAIS8DVtKKfKtyhAA==
 
-"@cognite/reveal-1.x@npm:@cognite/reveal@^1.5.5":
+"@cognite/reveal-1.x@npm:@cognite/reveal@1.x.x":
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/@cognite/reveal/-/reveal-1.5.5.tgz#712e710351f10b9e029438687524a2458c42b1a6"
   integrity sha512-QzftiiYLdhCqr1cWW+Y6jg04sM+rq3Aev55A3JCl5/8N7bfY+5AMeZd7hlvYqZIMyMN2hlzKtExpdxZ56oxOJA==
@@ -2205,7 +2205,7 @@
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.133.0.tgz#2e344ce10bc81dc89295b79a98c09932b3f0c294"
   integrity sha512-neDN9L64GK1fhT2raWXYIFvIr6ktM6XYgssfTh4zZp+XRgowD1qJ4/w79hLrLQ0w87u1E91ZfvHB0198wBsuHg==
 
-"@types/three@^0.135.0":
+"@types/three@0.135.0":
   version "0.135.0"
   resolved "https://registry.yarnpkg.com/@types/three/-/three-0.135.0.tgz#db7f9d9699b60aba844fc5b2893adf6dd6811665"
   integrity sha512-l7WLhIHjhHMtlpyTSltPPAKLpiMwgMD1hXHj59AVUpYRoZP7Fd9NNOSRSvZBCPLpTHPYojgQvSJCoza9zoL7bg==
@@ -12565,7 +12565,7 @@ three@0.133.0:
   resolved "https://registry.yarnpkg.com/three/-/three-0.133.0.tgz#41427306c731a89407221b7be48c7a63580400e7"
   integrity sha512-1p8xTXnJD4hMM2Ktm7+FqOOBoImBoftKnKtAZT/b9AQeL3LhRkVu/HnIJhWA69qIMvUYpjfnunNsO4WdObw1ZQ==
 
-three@^0.135.0:
+three@0.135.0:
   version "0.135.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.135.0.tgz#cff4ec8edd3c51ce9bc7e88d13e8eafed4d0ddfc"
   integrity sha512-kuEpuuxRzLv0MDsXai9huCxOSQPZ4vje6y0gn80SRmQvgz6/+rI0NAvCRAw56zYaWKMGMfqKWsxF9Qa2Z9xymQ==
