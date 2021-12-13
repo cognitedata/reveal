@@ -17,8 +17,8 @@ export { PrimitiveName,
          Nut,
          Primitive,
          getCollectionType,
-       } from './internal/primitiveTypes';
+       } from './internal/types';
 
 export { createPrimitiveInterleavedGeometriesSharingBuffer,
          createPrimitiveInterleavedGeometry,
-         parseInterleavedGeometry } from './internal/primitiveThreeBuffers';
+         parseInterleavedGeometry } from './internal/threeTranslation';

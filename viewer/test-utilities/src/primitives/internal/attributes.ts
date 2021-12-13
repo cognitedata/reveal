@@ -4,7 +4,7 @@
 
 import { assertNever } from '../../../../packages/utilities';
 
-import { PrimitiveName } from './primitiveTypes';
+import { PrimitiveName } from './types';
 
 type AttributeDescriptionName = 'byte4' | 'float' | 'vec3' | 'vec4' | 'mat4';
 type AttributeComponentType = 'float' | 'byte';
