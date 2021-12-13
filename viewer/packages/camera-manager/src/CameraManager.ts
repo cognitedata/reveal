@@ -10,7 +10,7 @@ import {
   CameraControlsOptions,
   CameraChangeData,
   PointerEventDelegate,
-  ControlsState,
+  ControlsState
 } from './types';
 import { assertNever, EventTrigger, InputHandler } from '@reveal/utilities';
 import range from 'lodash/range';
@@ -311,8 +311,7 @@ export class CameraManager {
       return;
     }
 
-    const { cameraPosition, cameraDirection, corners } =
-      this._updateNearAndFarPlaneBuffers;
+    const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
     getBoundingBoxCorners(combinedBbox, corners);
     camera.getWorldPosition(cameraPosition);
     camera.getWorldDirection(cameraDirection);
@@ -323,7 +322,7 @@ export class CameraManager {
 
     // 2. Compute the far distance to the distance from camera to furthest
     // corner of the boundingbox that is "in front" of the near plane
-    let far = this.calculateCameraFar(near);
+    const far = this.calculateCameraFar(near);
 
     // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
@@ -397,8 +396,9 @@ export class CameraManager {
   }
 
   private calculateCameraFar(near: number): number {
-    const {nearPlane, nearPlaneCoplanarPoint, cameraPosition, cameraDirection, corners} = this._updateNearAndFarPlaneBuffers;
-    
+    const { nearPlane, nearPlaneCoplanarPoint, cameraPosition, cameraDirection, corners } =
+      this._updateNearAndFarPlaneBuffers;
+
     nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
     nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
     let far = -Infinity;
@@ -415,7 +415,7 @@ export class CameraManager {
 
   private calculateCameraNear(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): number {
     const { cameraPosition } = this._updateNearAndFarPlaneBuffers;
-    
+
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
     near = Math.max(0.1, near);
@@ -458,10 +458,9 @@ export class CameraManager {
 
     const modelRaycastData = await this._modelRaycastCallback(offsetX, offsetY);
 
-    
     const newTarget =
-    modelRaycastData.intersection?.point ??
-    this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
+      modelRaycastData.intersection?.point ??
+      this.calculateNewTargetWithoutModel({ x, y }, modelRaycastData.modelsBoundingBox);
 
     return newTarget;
   }

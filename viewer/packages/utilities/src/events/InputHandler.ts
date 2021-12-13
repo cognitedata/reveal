@@ -11,8 +11,8 @@ type PointerEventDelegate = (event: { offsetX: number; offsetY: number }) => voi
 
 export class InputHandler {
   private readonly domElement: HTMLElement;
-  private static maxMoveDistance = 8;
-  private static maxClickDuration = 250;
+  private static readonly maxMoveDistance = 8;
+  private static readonly maxClickDuration = 250;
 
   private readonly _events = {
     click: new EventTrigger<PointerEventDelegate>(),
