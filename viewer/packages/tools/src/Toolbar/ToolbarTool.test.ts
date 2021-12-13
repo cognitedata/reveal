@@ -12,13 +12,21 @@ import * as THREE from 'three';
 describe('ToolbarTool', () => {
   let viewer: Cognite3DViewer;
   let canvasContainer: HTMLElement;
-  let toolbar: ToolbarTool;
+  let tool: ToolbarTool;
   let iconClicked: () => void;
-  let createElement: any;
   
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });
+
+  const styles = {
+    container: 'reveal-viewer-toolbar-container',
+    bottom: 'reveal-viewer-toolbar-container--bottom',
+    top: 'reveal-viewer-toolbar-container--top',
+    left: 'reveal-viewer-toolbar-container--left',
+    right: 'reveal-viewer-toolbar-container--right',
+    icon: 'reveal-viewer-toolbar-icon'
+  };
 
   beforeAll(() => {
     MetricsLogger.init(false, '', '', {});
@@ -30,25 +38,25 @@ describe('ToolbarTool', () => {
     canvasContainer.style.height = '480px';
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
 
-    toolbar = new ToolbarTool(viewer);
+    tool = new ToolbarTool(viewer);
     iconClicked = jest.fn();
-    createElement = document.createElement;
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
-    document.createElement = createElement;
   });
 
   test('Add icon item to the Toolbar', () => {
-    document.createElement = jest.fn().mockImplementation(() => {
-      return 'BUTTON';
-    });
-    toolbar.addToolbarItem('Tooltip1', '', iconClicked);
-    toolbar.addToolbarItem('Tooltip2', '', iconClicked);
-    toolbar.addToolbarItem('Tooltip3', '', iconClicked);
+    const createElementMock = jest.spyOn(document, 'createElement');
+    tool.addToolbarItem('Tooltip1', '', iconClicked);
+    tool.addToolbarItem('Tooltip2', '', iconClicked);
+    tool.addToolbarItem('Tooltip3', '', iconClicked);
+    tool.addToolbarItem('Tooltip4', '', iconClicked);
+    tool.addToolbarItem('Tooltip5', '', iconClicked);
 
-    expect(document.createElement).toBeCalledTimes(3);
+    expect(createElementMock).toBeCalledTimes(10);
+
+    createElementMock.mockRestore();
   });
 
   // test('Set Position of toolbar', () => {
