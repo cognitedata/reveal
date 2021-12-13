@@ -86,7 +86,9 @@ export const FilterBar = ({
 const Bar = styled(Flex)`
   width: 100%;
   height: ${FILTER_BAR_HEIGHT}px;
+  padding: 16px;
   box-sizing: border-box;
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
 `;
 
 const List = styled(Flex)`
