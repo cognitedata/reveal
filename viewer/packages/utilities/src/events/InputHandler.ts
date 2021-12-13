@@ -68,20 +68,9 @@ export class InputHandler {
 
     const startOffset = new Vector2();
 
-    const onHoverCallback = debounce((e: MouseEvent) => {
-      this._events.hover.fire(clickOrTouchEventOffset(e, domElement));
-    }, 100);
-
     const onUp = (e: MouseEvent | TouchEvent) => {
-      const { offsetX, offsetY } = clickOrTouchEventOffset(e, domElement);
-      const hasMovedDuringClick =
-        Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > InputHandler.maxMoveDistance;
+      this.handleClickEvent(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
 
-      const clickDuration = e.timeStamp - pointerDownTimestamp;
-      if (pointerDown && validClick && clickDuration < InputHandler.maxClickDuration && !hasMovedDuringClick) {
-        // trigger events
-        this._events.click.fire(clickOrTouchEventOffset(e, domElement));
-      }
       pointerDown = false;
       validClick = false;
 
@@ -90,7 +79,7 @@ export class InputHandler {
       domElement.removeEventListener('touchend', onUp);
 
       // add back onHover
-      domElement.addEventListener('mousemove', onHoverCallback);
+      domElement.addEventListener('mousemove', this.onHoverCallback);
     };
 
     const onDown = (e: MouseEvent | TouchEvent) => {
@@ -106,7 +95,7 @@ export class InputHandler {
       domElement.addEventListener('touchend', onUp);
 
       // no more onHover
-      domElement.removeEventListener('mousemove', onHoverCallback);
+      domElement.removeEventListener('mousemove', this.onHoverCallback);
     };
 
     // down
@@ -114,6 +103,43 @@ export class InputHandler {
     domElement.addEventListener('touchstart', onDown);
 
     // on hover callback
-    domElement.addEventListener('mousemove', onHoverCallback);
+    domElement.addEventListener('mousemove', this.onHoverCallback);
   }
+
+  private isProperClick(
+    e: MouseEvent | TouchEvent,
+    startOffset: Vector2,
+    pointerDown: boolean,
+    validClick: boolean,
+    pointerDownTimestamp: number
+  ) {
+    const { offsetX, offsetY } = clickOrTouchEventOffset(e, this.domElement);
+    const clickDuration = e.timeStamp - pointerDownTimestamp;
+
+    const hasMovedDuringClick =
+      Math.abs(offsetX - startOffset.x) + Math.abs(offsetY - startOffset.y) > InputHandler.maxMoveDistance;
+
+    const isProperClick =
+      pointerDown && validClick && clickDuration < InputHandler.maxClickDuration && !hasMovedDuringClick;
+
+    return isProperClick;
+  }
+
+  private handleClickEvent(
+    e: MouseEvent | TouchEvent,
+    startOffset: Vector2,
+    pointerDown: boolean,
+    validClick: boolean,
+    pointerDownTimestamp: number
+  ) {
+    const isProperClick = this.isProperClick(e, startOffset, pointerDown, validClick, pointerDownTimestamp);
+
+    if (isProperClick) {
+      this._events.click.fire(clickOrTouchEventOffset(e, this.domElement));
+    }
+  }
+
+  private readonly onHoverCallback = debounce((e: MouseEvent) => {
+    this._events.hover.fire(clickOrTouchEventOffset(e, this.domElement));
+  }, 100);
 }
