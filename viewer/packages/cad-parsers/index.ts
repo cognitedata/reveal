@@ -38,7 +38,7 @@ export {
   torusLodGeometries,
   boxGeometryBoundingBox,
   quadGeometryBoundingBox,
-  torusGeometryBoundingBox,
+  /* torusGeometryBoundingBox, */
   nutGeometryBoundingBox
 } from './src/cad/primitiveGeometries';
 
