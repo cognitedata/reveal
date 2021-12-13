@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from 'antd';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/utill';
-import { AnnotationCollection, Shape } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
 import isEmpty from 'lodash-es/isEmpty';
+import { Shape } from 'src/modules/Review/types';
 import { Header } from './Header';
 
 const validNewShapes = (newShapes: { [key: string]: Shape }) => {
@@ -23,17 +23,24 @@ const handleClick = (evt: any) => {
 };
 
 export const Shapes = ({
-  collections,
-  setCollections,
+  predefinedShapes,
+  unsavedShapes,
+  setUnsavedShapes,
   options,
 }: {
-  collections: AnnotationCollection;
-  setCollections: (collection: AnnotationCollection) => void;
+  predefinedShapes: Shape[];
+  unsavedShapes: Shape[];
+  setUnsavedShapes: (shapes: Shape[]) => void;
   options?: { createNew?: { text?: string; color?: string } };
 }) => {
-  const { predefinedShapes } = collections;
   const [newShapes, setNewShapes] = useState<{ [key: string]: Shape }>({});
   const shapePanelRef = useRef<HTMLDivElement | null>(null);
+  const allShapes: (Shape & { unsaved?: boolean })[] = useMemo(() => {
+    return [
+      ...predefinedShapes,
+      ...unsavedShapes.map((sp) => ({ ...sp, unsaved: true })),
+    ];
+  }, [predefinedShapes, unsavedShapes]);
 
   const addNewShape = (newShape?: { text?: string; color?: string }) => {
     const availableIndexes = Object.keys(newShapes);
@@ -67,11 +74,12 @@ export const Shapes = ({
   };
   const onFinish = () => {
     const newShapesTemp = Object.keys(newShapes).map((key) => newShapes[key]);
-    setCollections({
-      ...collections,
-      predefinedShapes: [...collections.predefinedShapes, ...newShapesTemp],
-    });
+    setUnsavedShapes([...unsavedShapes, ...newShapesTemp]);
     setNewShapes({});
+  };
+
+  const deleteUnsavedShape = (name: string) => {
+    setUnsavedShapes(unsavedShapes.filter((shape) => shape.shapeName !== name));
   };
 
   const scrollToBottom = () => {
@@ -107,18 +115,29 @@ export const Shapes = ({
         }
       />
       <ShapePanel ref={shapePanelRef}>
-        {predefinedShapes.length ? (
-          predefinedShapes.map((shape) => (
+        {allShapes.length ? (
+          allShapes.map((shape) => (
             <ShapeWrapper key={`${shape.shapeName}-${shape.color}`}>
               <ShapeName level={2}>{shape.shapeName}</ShapeName>
-              <ColorBox color={shape.color} />
+              <DeleteButtonColorBoxWrapper>
+                {shape.unsaved && (
+                  <Button
+                    icon="Trash"
+                    onClick={() => deleteUnsavedShape(shape.shapeName)}
+                    size="small"
+                    type="ghost-danger"
+                    aria-label="deleteButton"
+                  />
+                )}
+                <ColorBox color={shape.color} />
+              </DeleteButtonColorBoxWrapper>
             </ShapeWrapper>
           ))
         ) : (
-          <div style={{ padding: '10px' }}>
+          <EmptyMsgContainer>
             {!Object.keys(newShapes).length &&
               renderEmptyAnnotationMessage('shape')}
-          </div>
+          </EmptyMsgContainer>
         )}
         {Object.keys(newShapes).map((key) => (
           <ShapeWrapper key={`${key}`} style={{ background: '#4a67fb14' }}>
@@ -203,11 +222,17 @@ const RawInput = styled(Input)`
   width: 423px;
   background: #ffffff;
 `;
-
 const ShapeControls = styled.div`
   display: grid;
   grid-auto-flow: column;
   gap: 5px;
   justify-content: end;
+  padding: 10px;
+`;
+const DeleteButtonColorBoxWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+const EmptyMsgContainer = styled.div`
   padding: 10px;
 `;

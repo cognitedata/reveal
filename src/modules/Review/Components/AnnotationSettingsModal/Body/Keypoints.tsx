@@ -1,12 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Collapse, Input } from 'antd';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
 import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/utill';
-import {
-  AnnotationCollection,
-  Keypoint,
-  KeypointCollection,
-} from 'src/modules/Review/types';
+import { Keypoint, KeypointCollection } from 'src/modules/Review/types';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
@@ -17,8 +13,10 @@ import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 
 const { Panel } = Collapse;
 
-type NewKeypoints = {
-  collectionName: string;
+type NewKeypoints = Pick<
+  KeypointCollection,
+  'collectionName' | 'lastUpdated'
+> & {
   keypoints: {
     caption: string;
     color: string;
@@ -42,18 +40,29 @@ const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
 };
 
 export const Keypoints = ({
-  collections,
-  setCollections,
+  predefinedKeypointCollections,
+  unsavedKeypointCollections,
+  setUnsavedKeypointCollections,
   options,
 }: {
-  collections: AnnotationCollection;
-  setCollections: (collection: AnnotationCollection) => void;
+  predefinedKeypointCollections: KeypointCollection[];
+  unsavedKeypointCollections: KeypointCollection[];
+  setUnsavedKeypointCollections: (
+    keypointCollections: KeypointCollection[]
+  ) => void;
   options?: { createNew?: { text?: string } };
 }) => {
-  const { predefinedKeypoints } = collections;
   const [newKeypoints, setNewKeypoints] =
     useState<NewKeypoints | undefined>(undefined);
   const keypointPanelRef = useRef<HTMLDivElement | null>(null);
+
+  const allKeypointCollections: (KeypointCollection & { unsaved?: boolean })[] =
+    useMemo(() => {
+      return [
+        ...predefinedKeypointCollections,
+        ...unsavedKeypointCollections.map((sp) => ({ ...sp, unsaved: true })),
+      ];
+    }, [predefinedKeypointCollections, unsavedKeypointCollections]);
 
   const addNewKeypoint = () => {
     if (newKeypoints) {
@@ -116,18 +125,23 @@ export const Keypoints = ({
           order: `${index + 1}`,
         })
       );
-      setCollections({
-        ...collections,
-        predefinedKeypoints: [
-          ...collections.predefinedKeypoints,
-          {
-            collectionName,
-            keypoints: structuredNewKeypoints,
-          },
-        ],
-      });
+      setUnsavedKeypointCollections([
+        ...unsavedKeypointCollections,
+        {
+          collectionName,
+          keypoints: structuredNewKeypoints,
+        },
+      ]);
       setNewKeypoints(undefined);
     }
+  };
+
+  const deleteUnsavedKeypointCollection = (name: string) => {
+    setUnsavedKeypointCollections(
+      unsavedKeypointCollections.filter(
+        (collection) => collection.collectionName !== name
+      )
+    );
   };
 
   const scrollToBottom = () => {
@@ -148,13 +162,13 @@ export const Keypoints = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [newKeypoints, predefinedKeypoints]);
+  }, [newKeypoints, allKeypointCollections]);
 
   return (
     <>
       <Header
         title="Keypoints"
-        count={predefinedKeypoints.length}
+        count={allKeypointCollections.length}
         disabledMessage={newKeypoints && 'Finish before creating a new one'}
         onClickNew={() => addNewKeypointGroup()}
       />
@@ -170,39 +184,50 @@ export const Keypoints = ({
             />
           )}
         >
-          {predefinedKeypoints.length ? (
-            predefinedKeypoints.map(
-              (keypointCollection: KeypointCollection) => (
-                <Panel
-                  header={
-                    <PanelHeader>
-                      <Body level={2}>{keypointCollection.collectionName}</Body>
-                    </PanelHeader>
-                  }
-                  key={keypointCollection.collectionName}
-                >
-                  <PanelBody>
-                    <Row>
-                      <OrderDetail style={{ marginLeft: '30px' }}>
-                        Order
-                      </OrderDetail>
-                      <KeyPointDetail>Key point</KeyPointDetail>
+          {allKeypointCollections.length ? (
+            allKeypointCollections.map((keypointCollection) => (
+              <Panel
+                header={
+                  <PanelHeader>
+                    <Body level={2}>{keypointCollection.collectionName}</Body>
+                    {keypointCollection.unsaved && (
+                      <Button
+                        icon="Trash"
+                        onClick={() =>
+                          deleteUnsavedKeypointCollection(
+                            keypointCollection.collectionName
+                          )
+                        }
+                        size="small"
+                        type="ghost-danger"
+                        aria-label="deleteButton"
+                      />
+                    )}
+                  </PanelHeader>
+                }
+                key={keypointCollection.collectionName}
+              >
+                <PanelBody>
+                  <Row>
+                    <OrderDetail style={{ marginLeft: '30px' }}>
+                      Order
+                    </OrderDetail>
+                    <KeyPointDetail>Key point</KeyPointDetail>
+                  </Row>
+                  {keypointCollection.keypoints?.map((keypoint, index) => (
+                    <Row key={`${keypoint.caption} - ${keypoint.color}`}>
+                      <ColorBox color={keypoint.color} />
+                      <OrderDetail>{index + 1}</OrderDetail>
+                      <KeyPointDetail>{keypoint.caption}</KeyPointDetail>
                     </Row>
-                    {keypointCollection.keypoints?.map((keypoint, index) => (
-                      <Row key={`${keypoint.caption} - ${keypoint.color}`}>
-                        <ColorBox color={keypoint.color} />
-                        <OrderDetail>{index + 1}</OrderDetail>
-                        <KeyPointDetail>{keypoint.caption}</KeyPointDetail>
-                      </Row>
-                    ))}
-                  </PanelBody>
-                </Panel>
-              )
-            )
+                  ))}
+                </PanelBody>
+              </Panel>
+            ))
           ) : (
-            <div style={{ padding: '10px', background: '#ffffff' }}>
+            <EmptyMsgContainer>
               {!newKeypoints && renderEmptyAnnotationMessage('point')}
-            </div>
+            </EmptyMsgContainer>
           )}
           {/* New Keypoint Collection */}
           {newKeypoints && (
@@ -368,4 +393,8 @@ const KeypointControls = styled.div`
   gap: 5px;
   justify-content: end;
   padding: 10px;
+`;
+const EmptyMsgContainer = styled.div`
+  padding: 10px;
+  background: #ffffff;
 `;

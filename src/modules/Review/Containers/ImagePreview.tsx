@@ -21,7 +21,11 @@ import {
   showAnnotationSettingsModel,
   VisibleAnnotation,
 } from 'src/modules/Review/store/reviewSlice';
-import { AnnotationTableItem, Tool } from 'src/modules/Review/types';
+import {
+  AnnotationCollection,
+  AnnotationTableItem,
+  Tool,
+} from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
@@ -30,6 +34,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { pushMetric } from 'src/utils/pushMetric';
 import styled from 'styled-components';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
 
 export const ImagePreview = ({
   file,
@@ -150,6 +155,16 @@ export const ImagePreview = ({
     setShowKeyboardShortcutModal(true);
   };
 
+  const onDoneAnnotationSettings = (
+    newCollection: AnnotationCollection | null
+  ) => {
+    if (newCollection) {
+      dispatch(SaveAnnotationTemplates(newCollection));
+    }
+    dispatch(showAnnotationSettingsModel(false));
+    dispatch(setKeepUnsavedRegion(false));
+  };
+
   return (
     <Container>
       <ReactImageAnnotateWrapper
@@ -223,11 +238,13 @@ export const ImagePreview = ({
         </Tooltip>
       </ExtraToolbar>
       <AnnotationSettingsModal
+        predefinedAnnotations={definedCollection}
         showModal={annotationSettingsState.show}
         onCancel={() => {
           dispatch(showAnnotationSettingsModel(false));
           dispatch(setKeepUnsavedRegion(false));
         }}
+        onDone={onDoneAnnotationSettings}
         options={annotationSettingsState}
       />
       <KeyboardShortcutModal

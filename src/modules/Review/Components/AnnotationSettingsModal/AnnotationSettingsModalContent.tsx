@@ -1,44 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
-import { AnnotationCollection } from 'src/modules/Review/types';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+import {
+  AnnotationCollection,
+  KeypointCollection,
+  Shape,
+} from 'src/modules/Review/types';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
 import { Shapes } from './Body/Shapes';
 import { Keypoints } from './Body/Keypoints';
 
 export const AnnotationSettingsModalContent = ({
+  predefinedAnnotations,
+  onDone,
   onCancel,
   options,
 }: {
+  predefinedAnnotations: AnnotationCollection;
+  onDone: (collection: AnnotationCollection) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
     activeView: 'keypoint' | 'shape';
   };
 }) => {
-  const dispatch = useDispatch();
-  const collections = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.predefinedAnnotations
-  );
   const [activeView, setActiveView] = useState<string>(
     options?.activeView || 'shape'
   );
 
-  const [newCollection, setNewCollection] =
-    useState<AnnotationCollection | null>(null);
+  const [newCollection, setNewCollection] = useState<AnnotationCollection>({
+    predefinedKeypoints: [],
+    predefinedShapes: [],
+  });
 
-  const setCollections = (collection: AnnotationCollection) => {
-    setNewCollection(collection);
-  };
   const submitNewCollection = () => {
     if (newCollection) {
-      setNewCollection(null);
-      dispatch(SaveAnnotationTemplates(newCollection));
+      onDone(newCollection);
     }
     onCancel();
+  };
+
+  const setUnsavedShapes = (shapes: Shape[]) => {
+    setNewCollection((collection) => ({
+      ...collection,
+      predefinedShapes: [...shapes],
+    }));
+  };
+
+  const setUnsavedKeypointCollections = (
+    keypointCollections: KeypointCollection[]
+  ) => {
+    setNewCollection((collection) => ({
+      ...collection,
+      predefinedKeypoints: [...keypointCollections],
+    }));
   };
 
   useEffect(() => {
@@ -64,8 +78,9 @@ export const AnnotationSettingsModalContent = ({
         <Tabs.TabPane tab="Pre-defined Shapes" key="shape">
           <Body>
             <Shapes
-              collections={newCollection || collections}
-              setCollections={setCollections}
+              predefinedShapes={predefinedAnnotations.predefinedShapes}
+              unsavedShapes={newCollection.predefinedShapes}
+              setUnsavedShapes={setUnsavedShapes}
               options={options?.activeView === 'shape' ? options : undefined}
             />
           </Body>
@@ -73,8 +88,11 @@ export const AnnotationSettingsModalContent = ({
         <Tabs.TabPane tab="Pre-defined Points" key="keypoint">
           <Body>
             <Keypoints
-              collections={newCollection || collections}
-              setCollections={setCollections}
+              predefinedKeypointCollections={
+                predefinedAnnotations.predefinedKeypoints
+              }
+              unsavedKeypointCollections={newCollection.predefinedKeypoints}
+              setUnsavedKeypointCollections={setUnsavedKeypointCollections}
               options={options?.activeView === 'keypoint' ? options : undefined}
             />
           </Body>
