@@ -14,7 +14,7 @@ describe('ToolbarTool', () => {
   let canvasContainer: HTMLElement;
   let tool: ToolbarTool;
   let iconClicked: () => void;
-  
+
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
   const renderer = new THREE.WebGLRenderer({ context });

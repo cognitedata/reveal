@@ -39,7 +39,7 @@ export class Toolbar {
     }
 
     this._toolbarContainer = document.createElement('div');
-    this.createToolBarIcon(canvasElement!);
+    this.createToolBar(canvasElement!);
   }
 
   /**
@@ -61,7 +61,7 @@ export class Toolbar {
    * Creates Toolbar container and adds it to the Canvas parent element and assigns default styles to them
    * @param controlDiv Canvas parent div element
    */
-  private createToolBarIcon(controlDiv: HTMLElement) {
+  private createToolBar(controlDiv: HTMLElement) {
     this._toolbarContainer.id = 'toolbarContainer';
     Toolbar.loadStyles();
     this._toolbarContainer.className = Toolbar.classnames.container;

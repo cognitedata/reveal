@@ -28,8 +28,15 @@ const defaultToolbar = new DefaultToolbar(viewer, model);
 ```
 
 ## Custom Toolbar
+Each custom toolbar element in Reveal provides flexibilty for the user to add tooltip, icon image and a callback function to trigger when the icon button is clicked.
+We add a new element to the toolbar with `addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void)`
+- `toolTip` - Tooltip for the Icon button
+- `backgroundImage` - Background image to be placed onto icon button. The image needs to be in string with `base64` format.
+- `onClick` - Click event callback function which can be used to perform custom functionlity of the user
+
 We have two options for custom toolbar.
-### Adding elements to default toolbar
+### Adding elements to default toolbar.
+We can add elements to default toolbar by retriving existing ToolbarTool object by using `defaultToolbar.getToolbar()`.
 
 ```jsx
 // import { ToolbarTool, DefaultToolbar } from '@cognite/reveal/tools';
@@ -49,6 +56,7 @@ toolbar.addToolbarItem('Settings', iconSet63, callbackMsg);
 ```
 
 ### Creating new elements for the toolbar
+By creating ToolbarTool object, user can add elements to the new (empty/no element) toolbar.
 
 ```jsx
 // import { ToolbarTool } from '@cognite/reveal/tools';
@@ -67,3 +75,19 @@ toolbar.addToolbarItem('Explode View', iconSet42, callbackMsg);
 toolbar.addToolbarItem('Maps', iconSet54, callbackMsg);
 toolbar.addToolbarItem('Settings', iconSet63, callbackMsg);
 ```
+
+## Toolbar Position
+We can set the position of the toolbar to either of the below position within the Reveal window using `setPositionsetPosition(position: ToolbarPosition)`.
+- `ToolbarPosition.Top`
+- `ToolbarPosition.Bottom`
+- `ToolbarPosition.Left`
+- `ToolbarPosition.Right`
+
+```jsx
+// import { ToolbarPosition } from '@cognite/reveal/tools';
+
+toolbar.setPosition(ToolbarPosition.Top);
+```
+:::note
+Default position of toolbar is at the Bottom of the window.
+:::
