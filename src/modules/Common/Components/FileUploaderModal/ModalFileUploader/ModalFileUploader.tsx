@@ -461,7 +461,7 @@ export const ModalFileUploader = ({
   return (
     <div>
       <Title level={3} as="p">
-        Upload files
+        Upload new files to CDF
       </Title>
       <ModalFilePicker
         onRemove={removeFile}
@@ -483,7 +483,7 @@ export const ModalFileUploader = ({
               setProcessAfter(nextState);
             }}
           >
-            Process files after uploading
+            Contextualize images after upload
           </Checkbox>
         )}
         {CancelButton}

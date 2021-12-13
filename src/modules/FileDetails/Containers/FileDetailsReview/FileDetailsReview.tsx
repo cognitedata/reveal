@@ -89,12 +89,6 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
             updateInfo={updateFileInfo}
           />
         )}
-        <MetadataTableToolBar
-          editMode={tableEditMode}
-          metadata={fileMetadata}
-          onAddRow={onAddRow}
-          onEditModeChange={onEditModeChange}
-        />
         <MetaDataTable
           title="Metadata"
           rowHeight={35}
@@ -102,6 +96,14 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
           data={fileMetadata}
           columnWidth={220}
           details={fileDetails}
+          toolBar={
+            <MetadataTableToolBar
+              editMode={tableEditMode}
+              metadata={fileMetadata}
+              onAddRow={onAddRow}
+              onEditModeChange={onEditModeChange}
+            />
+          }
         />
       </DetailsContainer>
     </Container>

@@ -31,13 +31,12 @@ const ImageBox = styled.div`
 `;
 
 const PreviewCell = styled.div`
+  padding: 0 16px 16px 0;
   height: 400px;
   width: 306px;
-  margin-top: 30px;
-  padding-left: 20px;
   .preview {
-    height: 90%;
-    width: 90%;
+    height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;

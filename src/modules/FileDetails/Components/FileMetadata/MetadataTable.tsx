@@ -17,17 +17,6 @@ import exifIcon from 'src/assets/exifIcon.svg';
 import { TableDataItem } from 'src/modules/Common/types';
 import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
 
-const Container = styled.div`
-  width: 100%;
-  padding-bottom: 10px;
-`;
-
-const TitleHeader = styled.div`
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-`;
-
 type TableProps = Omit<Omit<BaseTableProps<TableDataItem>, 'width'>, 'height'>;
 
 type MetadataTableProps = TableProps & {
@@ -36,6 +25,7 @@ type MetadataTableProps = TableProps & {
   data: MetadataItem[];
   columnWidth: number;
   details: VisionFileDetails | null;
+  toolBar: JSX.Element;
 };
 
 const { dispatch } = store;
@@ -124,13 +114,16 @@ export const MetaDataTable = (props: MetadataTableProps) => {
 
   return (
     <Container>
-      <TitleHeader>
-        <Title level={6}>{props.title}</Title>
-        {props.details?.geoLocation && (
-          <ExifIcon>
-            <img src={exifIcon} alt="exifIcon" />
-          </ExifIcon>
-        )}
+      <TitleHeader width={props.columnWidth * 2}>
+        <Left>
+          <Title level={6}>{props.title}</Title>
+          {props.details?.geoLocation && (
+            <ExifIcon>
+              <img src={exifIcon} alt="exifIcon" />
+            </ExifIcon>
+          )}
+        </Left>
+        <Right>{props.toolBar}</Right>
       </TitleHeader>
       <TableWrapper>
         <ReactBaseTable<MetadataItem>
@@ -146,3 +139,29 @@ export const MetaDataTable = (props: MetadataTableProps) => {
     </Container>
   );
 };
+
+const Container = styled.div`
+  width: 100%;
+  padding-bottom: 10px;
+`;
+
+const TitleHeader = styled.div<{ width: number }>`
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  margin-bottom: 14px;
+  width: ${(props) => `${props.width}px`};
+`;
+
+const Left = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  align-self: center;
+  grid-gap: 10px;
+`;
+
+const Right = styled.div`
+  justify-self: end;
+  align-self: center;
+  grid-gap: 10px;
+`;

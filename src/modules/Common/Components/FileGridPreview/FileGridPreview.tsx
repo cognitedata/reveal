@@ -120,16 +120,16 @@ export const FileGridPreview = ({
 
 const MenuContainer = styled.div`
   position: absolute;
-  top: 7px;
-  right: calc(10% + 7px);
+  top: 0;
+  right: 0;
+  margin: 8px 24px 0 0;
 `;
 
 const PreviewCell = styled.div`
-  margin-top: 30px;
-  padding-left: 20px;
+  padding: 0 16px 16px 0;
   .preview {
-    height: 90%;
-    width: 90%;
+    height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
