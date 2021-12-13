@@ -80,31 +80,31 @@ export const FilePath: React.FC<FilePathProps> = ({ paths, documentId }) => {
       <FlexColumn>
         <PathHeader>{t('Original path')}</PathHeader>
         {paths.map((path, index) => (
-          <Tooltip
-            title={tooltipTitle}
+          <PathContainer
             key={path + index || Math.random()}
-            placement="right"
-            enabled={!!path}
+            showCursor={false}
+            data-testid="document-parent-path"
           >
-            <CopyToClipboard
-              text={convertPath(path)}
-              onCopy={handleCopyToClipboard}
-            >
-              <PathContainer showCursor data-testid="document-parent-path">
-                <FlexRow>
-                  <PathText>
-                    {path ? (
-                      <>{path}</>
-                    ) : (
-                      <>Invalid path. {renderReportIssueButton()}</>
-                    )}
-                  </PathText>
-                  <FlexGrow />
+            <FlexRow>
+              <PathText>
+                {path ? (
+                  <>{path}</>
+                ) : (
+                  <>Invalid path. {renderReportIssueButton()}</>
+                )}
+              </PathText>
+              <FlexGrow />
+
+              <Tooltip title={tooltipTitle} placement="bottom" enabled={!!path}>
+                <CopyToClipboard
+                  text={convertPath(path)}
+                  onCopy={handleCopyToClipboard}
+                >
                   <CopyIcon type="Copy" />
-                </FlexRow>
-              </PathContainer>
-            </CopyToClipboard>
-          </Tooltip>
+                </CopyToClipboard>
+              </Tooltip>
+            </FlexRow>
+          </PathContainer>
         ))}
       </FlexColumn>
     </FilePathContainer>

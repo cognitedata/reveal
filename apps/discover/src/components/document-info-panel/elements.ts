@@ -41,6 +41,7 @@ export const FilePathContainer = styled.div`
 `;
 
 export const CopyIcon = styled(Icon)`
+  cursor: pointer;
   svg {
     height: ${sizes.normal};
     width: ${sizes.normal};
