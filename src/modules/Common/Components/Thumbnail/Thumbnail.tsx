@@ -1,6 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
 import { FileInfo } from '@cognite/cdf-sdk-singleton';
-import { Body, DocumentIcon, Button } from '@cognite/cogs.js';
+import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
 import React, { useEffect, useMemo, useState } from 'react';
 import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
@@ -41,7 +41,8 @@ export const Thumbnail = ({ fileInfo, onViewClicked }: ThumbnailProps) => {
           onClick={onViewClicked}
           style={{ padding: '4px 60px' }}
         >
-          View
+          View file
+          <Icon type="ArrowRight" style={{ marginLeft: '8px' }} />
         </Button>
       </OverlayContainer>
     );

@@ -138,11 +138,6 @@ export const FileDetails = ({
                   updateInfo={updateFileInfo}
                 />
               )}
-              <MetadataTableToolBar
-                editMode={tableEditMode}
-                metadata={fileMetadata}
-                onEditModeChange={onEditModeChange}
-              />
               <MetaDataTable
                 title="Metadata"
                 rowHeight={35}
@@ -150,6 +145,13 @@ export const FileDetails = ({
                 editMode={tableEditMode}
                 data={fileMetadata}
                 details={fileDetails}
+                toolBar={
+                  <MetadataTableToolBar
+                    editMode={tableEditMode}
+                    metadata={fileMetadata}
+                    onEditModeChange={onEditModeChange}
+                  />
+                }
               />
             </Tabs.Pane>
           </Tabs>
