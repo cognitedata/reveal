@@ -7,6 +7,7 @@ import { Group } from '@visx/group';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import { scaleBand, scaleLinear } from '@visx/scale';
 import { Bar, BarStack } from '@visx/shape';
+import { TextProps } from '@visx/text/lib/Text';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
 import styled from 'styled-components';
 
@@ -15,6 +16,35 @@ import { Count } from 'hooks/profiling-service';
 const BOTTOM_AXIS_HEIGHT = 24;
 const MAXIMUM_BAR_WIDTH = 16;
 const NUMBER_OF_TICKS = 4;
+
+const getAxisTickLabelStyle = (
+  _: any,
+  index: number,
+  values: any[]
+): Partial<TextProps> => {
+  // The tick label is centered if there is only one tick. But if there are two
+  // ticks, we left and right align the label at the both end of the axis.
+  let textAnchor: TextProps['textAnchor'] = 'middle';
+  let dx: TextProps['dx'] = 0;
+  if (values.length > 1) {
+    if (index === 0) {
+      textAnchor = 'start';
+      dx = -3;
+    } else {
+      textAnchor = 'end';
+      dx = 3;
+    }
+  }
+
+  return {
+    fill: Colors['text-primary'].hex(),
+    fontFamily: 'Inter',
+    fontSize: 12,
+    fontWeight: 500,
+    textAnchor,
+    dx,
+  };
+};
 
 type Props = {
   distribution: Count[];
@@ -280,19 +310,7 @@ export function Graph({
             {isBottomAxisDisplayed && (
               <AxisBottom
                 scale={categories}
-                tickLabelProps={(_, index, values) => ({
-                  fill: Colors['text-primary'].hex(),
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  textAnchor:
-                    values.length === 1
-                      ? 'middle'
-                      : index === 0
-                      ? 'start'
-                      : 'end',
-                  dx: values.length === 1 ? 0 : index === 0 ? -3 : 3,
-                })}
+                tickLabelProps={getAxisTickLabelStyle}
                 tickValues={tickValues}
                 strokeWidth={0}
                 tickLineProps={{
