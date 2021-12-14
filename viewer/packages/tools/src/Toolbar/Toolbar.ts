@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/core';
-import { ToolbarTool } from 'tools';
 import css from './Toolbar.css';
 
 /**

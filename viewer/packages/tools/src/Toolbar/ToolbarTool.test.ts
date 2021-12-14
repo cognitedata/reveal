@@ -4,7 +4,7 @@
 import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { ToolbarTool } from './ToolbarTool';
-// import { ToolbarPosition } from './Toolbar';
+import { ToolbarPosition } from './Toolbar';
 import { MetricsLogger } from '@reveal/metrics';
 import { createGlContext } from '../../../../test-utilities';
 import * as THREE from 'three';
@@ -48,21 +48,21 @@ describe('ToolbarTool', () => {
 
   test('Add icon item to the Toolbar', () => {
     const createElementMock = jest.spyOn(document, 'createElement');
-    tool.addToolbarItem('Tooltip1', '', iconClicked);
-    tool.addToolbarItem('Tooltip2', '', iconClicked);
-    tool.addToolbarItem('Tooltip3', '', iconClicked);
-    tool.addToolbarItem('Tooltip4', '', iconClicked);
-    tool.addToolbarItem('Tooltip5', '', iconClicked);
+    tool.addToolbarItem('Tooltip1', '', true, iconClicked);
+    tool.addToolbarItem('Tooltip2', '', false, iconClicked);
+    tool.addToolbarItem('Tooltip3', '', false, iconClicked);
+    tool.addToolbarItem('Tooltip4', '', true, iconClicked);
+    tool.addToolbarItem('Tooltip5', '', false, iconClicked);
 
     expect(createElementMock).toBeCalledTimes(10);
 
     createElementMock.mockRestore();
   });
 
-  // test('Set Position of toolbar', () => {
-  //   const position = ToolbarPosition.Bottom;
-  //   toolbar.setPosition(position);
+  test('Set Position of toolbar', () => {
+    const position = ToolbarPosition.Bottom;
+    tool.setPosition(position);
 
-  //   // expect
-  // });
+    // expect
+  });
 });
