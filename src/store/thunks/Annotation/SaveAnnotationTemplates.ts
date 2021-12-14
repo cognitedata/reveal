@@ -26,12 +26,15 @@ export const SaveAnnotationTemplates = createAsyncThunk<
   const unsavedKeypointCollections: KeypointCollection[] = [];
   const unsavedAnnotations: UnsavedAnnotation[] = [];
 
-  templateData.predefinedShapes.forEach((shape) => {
+  templateData.predefinedShapes.forEach((shape, index) => {
     if (!shape.id) {
       if (
         savedConfiguration.predefinedShapes.find(
           (savedShape) => savedShape.shapeName.trim() === shape.shapeName.trim()
-        )
+        ) ||
+        templateData.predefinedShapes.findIndex(
+          (savedShape) => savedShape.shapeName.trim() === shape.shapeName.trim()
+        ) !== index
       ) {
         throw Error(
           `Shape: ${shape.shapeName} cannot be added since it already exists`
@@ -42,14 +45,19 @@ export const SaveAnnotationTemplates = createAsyncThunk<
     }
   });
 
-  templateData.predefinedKeypoints.forEach((keypointCollection) => {
+  templateData.predefinedKeypoints.forEach((keypointCollection, index) => {
     if (!keypointCollection.id) {
       if (
         savedConfiguration.predefinedKeypoints.find(
           (savedShape) =>
             savedShape.collectionName.trim() ===
             keypointCollection.collectionName.trim()
-        )
+        ) ||
+        templateData.predefinedKeypoints.findIndex(
+          (savedShape) =>
+            savedShape.collectionName.trim() ===
+            keypointCollection.collectionName.trim()
+        ) !== index
       ) {
         throw Error(
           `Keypoint collection: ${keypointCollection.collectionName} cannot be added since it already exists`

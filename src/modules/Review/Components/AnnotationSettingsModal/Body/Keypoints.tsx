@@ -12,6 +12,7 @@ import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
 import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import isEmpty from 'lodash-es/isEmpty';
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
+import { ToastUtils } from 'src/utils/ToastUtils';
 import { Header } from './Header';
 import { renderEmptyAnnotationMessage } from './EmptyAnnotationInfo';
 
@@ -110,14 +111,23 @@ export const Keypoints = ({
           order: `${index + 1}`,
         })
       );
-      setUnsavedKeypointCollections([
-        ...unsavedKeypointCollections,
-        {
-          collectionName,
-          keypoints: structuredNewKeypoints,
-        },
-      ]);
-      setNewKeypoints(undefined);
+      const duplicates = allKeypointCollections.find(
+        (allItem) => allItem.collectionName === collectionName
+      );
+      if (duplicates) {
+        ToastUtils.onFailure(
+          `Cannot add ${duplicates.collectionName}, since it already exists!`
+        );
+      } else {
+        setUnsavedKeypointCollections([
+          ...unsavedKeypointCollections,
+          {
+            collectionName,
+            keypoints: structuredNewKeypoints,
+          },
+        ]);
+        setNewKeypoints(undefined);
+      }
     }
   };
 

@@ -11,6 +11,7 @@ import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
 import isEmpty from 'lodash-es/isEmpty';
 import { Shape } from 'src/modules/Review/types';
+import { ToastUtils } from 'src/utils/ToastUtils';
 import { Header } from './Header';
 
 const handleClick = (evt: any) => {
@@ -72,8 +73,21 @@ export const Shapes = ({
   };
   const onFinish = () => {
     const newShapesTemp = Object.keys(newShapes).map((key) => newShapes[key]);
-    setUnsavedShapes([...unsavedShapes, ...newShapesTemp]);
-    setNewShapes({});
+    if (newShapesTemp.length > 0) {
+      const newShape = newShapesTemp[0];
+      const duplicates = allShapes.find(
+        (allItem) => allItem.shapeName === newShape.shapeName
+      );
+
+      if (duplicates) {
+        ToastUtils.onFailure(
+          `Cannot add ${duplicates.shapeName}, since it already exists!`
+        );
+      } else {
+        setUnsavedShapes([...unsavedShapes, ...newShapesTemp]);
+        setNewShapes({});
+      }
+    }
   };
 
   const deleteUnsavedShape = (name: string) => {

@@ -40,7 +40,6 @@ export const AnnotationSettingsModalContent = ({
     if (newCollection) {
       onDone(newCollection);
     }
-    onCancel();
   };
 
   const setUnsavedShapes = (shapes: Shape[]) => {

@@ -155,14 +155,18 @@ export const ImagePreview = ({
     setShowKeyboardShortcutModal(true);
   };
 
-  const onDoneAnnotationSettings = (
+  const onDoneAnnotationSettings = async (
     newCollection: AnnotationCollection | null
   ) => {
-    if (newCollection) {
-      dispatch(SaveAnnotationTemplates(newCollection));
+    try {
+      if (newCollection) {
+        await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
+        dispatch(showAnnotationSettingsModel(false));
+        dispatch(setKeepUnsavedRegion(false));
+      }
+    } catch (e) {
+      console.error('Error occurred while saving predefined annotations!');
     }
-    dispatch(showAnnotationSettingsModel(false));
-    dispatch(setKeepUnsavedRegion(false));
   };
 
   return (
