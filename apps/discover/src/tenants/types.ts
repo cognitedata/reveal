@@ -42,6 +42,7 @@ export interface Layer {
   local?: string;
   color: string;
   defaultOn: boolean;
+  disabled?: boolean; // being added to new config layer
 
   // which layer to show this before
   // used for layer display ordering

@@ -1,5 +1,6 @@
 import findLast from 'lodash/findLast';
 import isFunction from 'lodash/isFunction';
+import isUndefined from 'lodash/isUndefined';
 
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
 import { Layer, Layers } from 'tenants/types';
@@ -22,8 +23,14 @@ export const choosePreviousSelectedLayer = (
 export const getLayerById = (allLayers: MapDataSource[], id: string) =>
   allLayers.find((layer) => layer.id === id);
 
-const isLayerEmpty = (layer: Layer) =>
-  !layer.remote && !layer.local && !layer.remoteService;
+const isLayerEmpty = (layer: Layer) => {
+  // layers from project config will have disabled set
+  if (isUndefined(layer.disabled)) {
+    return !layer.remote && !layer.local && !layer.remoteService;
+  }
+
+  return layer.disabled;
+};
 
 export const getLayersByKey = (
   allLayers: Layers,

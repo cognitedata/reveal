@@ -5,7 +5,7 @@ import { Body, Checkbox, Menu } from '@cognite/cogs.js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { toggleLayer } from 'modules/map/actions';
-import { useStaticSelectableLayers } from 'modules/map/hooks/useStaticSelectableLayers';
+import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
 import { SelectableLayer } from 'modules/map/types';
 import { Layer } from 'tenants/types';
 
@@ -49,18 +49,20 @@ export interface Props {
 }
 export const LayerSelector: React.FC<Props> = React.memo(
   ({ layers = [], allLayers }) => {
-    const staticLayers = useStaticSelectableLayers();
+    const categoryLayers = useCategoryLayers();
 
     const dynamicLayers = layers.filter(
       (layer) =>
-        !staticLayers.map((staticLayer) => staticLayer.id).includes(layer.id)
+        !categoryLayers.map((staticLayer) => staticLayer.id).includes(layer.id)
     );
 
     return (
       <LayerWrapper>
         {layers
           .filter((layer) =>
-            staticLayers.map((staticLayer) => staticLayer.id).includes(layer.id)
+            categoryLayers
+              .map((staticLayer) => staticLayer.id)
+              .includes(layer.id)
           )
           .map((item) => {
             return (

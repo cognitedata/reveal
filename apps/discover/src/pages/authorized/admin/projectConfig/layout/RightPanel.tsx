@@ -6,12 +6,11 @@ import get from 'lodash/get';
 import isNaN from 'lodash/isNaN';
 import last from 'lodash/last';
 import map from 'lodash/map';
-import size from 'lodash/size';
 
 import { Button, Title, Flex } from '@cognite/cogs.js';
 import { ProjectConfig } from '@cognite/discover-api-types';
 
-import { ConfigFormFields } from '../fields/ConfigFormFields';
+import { ConfigFormFields } from '../fields';
 import {
   MetadataValue,
   HandleConfigChange,
@@ -61,8 +60,11 @@ const CreateNewComponent: React.FC<
     ? renderCustomComponent({
         onClose: () => setOpened(false),
         onOk: (datum: unknown) => {
-          onChange(`${valuePath}.${size((value as []) || [])}`, datum);
-          setOpened(false);
+          if (value) {
+            onChange(valuePath, [...(value as []), datum]);
+          } else {
+            onChange(valuePath, [datum]);
+          }
         },
         type: metadataPath,
         metadataValue,

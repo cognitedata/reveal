@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { FeatureCollection } from '@turf/helpers';
+import isUndefined from 'lodash/isUndefined';
 
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
@@ -12,6 +13,7 @@ import {
 } from '_helpers/cancellablePromise';
 import { log } from '_helpers/log';
 import { fetchTenantFile } from 'hooks/useTenantConfig';
+import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
 import { setSources, patchSource, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { mapService } from 'modules/map/service';
@@ -57,7 +59,8 @@ export const useMapContent = () => {
 
     if (layersReady && !sources) {
       Object.keys(layers).forEach((id) => {
-        const { remote, remoteService, local, asset } = layers[id];
+        const { remote, remoteService, local, asset, disabled, name } =
+          layers[id];
 
         const pushResponse = (content: FeatureCollection) => {
           tempSources.push({ id, data: content });
@@ -92,6 +95,15 @@ export const useMapContent = () => {
             )
           );
         }
+        if (!isUndefined(disabled)) {
+          promises.push(
+            geospatialV1.getGeoJSON(name).then((geoJSON) => {
+              // eslint-disable-next-line
+              // @ts-ignore geometry property will match after v7 sdk
+              pushResponse(geoJSON);
+            })
+          );
+        }
       });
 
       if (promises.length > 0) {
@@ -99,6 +111,8 @@ export const useMapContent = () => {
         cancellablePromise.promise
           .then(() => {
             dispatch(setSources(tempSources));
+
+            // it is always empty array: remove this
             startLazyLoad(lazyIds);
           })
           .catch((error) => {

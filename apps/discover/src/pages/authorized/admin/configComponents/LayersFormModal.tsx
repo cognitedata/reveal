@@ -1,13 +1,27 @@
-import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { useFormik } from 'formik';
+import omit from 'lodash/omit';
 
 import { FileReaderComp } from 'components/file-reader';
 import { Modal } from 'components/modal';
 import { showErrorMessage } from 'components/toast';
+import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
 
 import { CustomComponent, ConfigFormFields } from '../projectConfig';
 
 import { CustomForm } from './elements';
+
+const validate = (values: Record<string, unknown>) => {
+  const errors: Record<string, string> = {};
+  if (!values.name) {
+    errors.name = 'Please enter a valid name';
+  }
+  if (!values.layerSource) {
+    errors.layerSource = 'Please select a source file';
+  }
+  return errors;
+};
 
 export const LayersFormModal: CustomComponent = ({
   onClose,
@@ -15,23 +29,33 @@ export const LayersFormModal: CustomComponent = ({
   metadataValue,
 }) => {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({});
-  const [layerSource, setLayerSource] = useState<Record<string, unknown>>();
 
-  const handleChange = useCallback(
-    (changeKey: string, changeValue: unknown) =>
-      setFormData((state) => ({ ...state, [changeKey]: changeValue })),
-    []
-  );
+  const onSubmit = (values: any) => {
+    return geospatialV1
+      .createLayer(values.layerSource)
+      .then(() => {
+        onOk(omit(values, 'layerSource'));
+        onClose();
+      })
+      .catch((error) => {
+        showErrorMessage(
+          error?.message || 'Could not create layer. Please check JSON file.'
+        );
+      });
+  };
 
-  const handleOk = useCallback(() => {
-    onOk(formData);
-  }, [formData, layerSource]);
+  const { values, errors, setFieldValue, submitForm, isSubmitting } =
+    useFormik<{ layerSource?: object }>({
+      initialValues: {},
+      validate,
+      onSubmit,
+      validateOnChange: false,
+    });
 
   const handleRead = (fileContent: unknown) => {
     try {
       if (typeof fileContent === 'string') {
-        setLayerSource(JSON.parse(fileContent as string));
+        setFieldValue('layerSource', JSON.parse(fileContent as string));
       }
     } catch (e) {
       showErrorMessage('Invalid JSON file.');
@@ -45,16 +69,18 @@ export const LayersFormModal: CustomComponent = ({
       title={`New ${metadataValue?.label}`}
       onCancel={onClose}
       okText={t('Create')}
-      onOk={handleOk}
+      okDisabled={isSubmitting}
+      onOk={submitForm}
       className="project-config-modal-form"
     >
       <CustomForm direction="column" gap={16}>
         <ConfigFormFields
           metadataValue={metadataValue}
-          value={formData}
-          onChange={handleChange}
+          value={values}
+          onChange={setFieldValue}
+          error={errors}
         />
-        <FileReaderComp onRead={handleRead} />
+        <FileReaderComp onRead={handleRead} error={errors.layerSource} />
       </CustomForm>
     </Modal>
   );

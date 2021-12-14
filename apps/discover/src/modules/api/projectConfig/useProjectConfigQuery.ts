@@ -10,7 +10,10 @@ import noop from 'lodash/noop';
 import { ProjectConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
-import { PROJECT_CONFIG_QUERY_KEY } from 'constants/react-query';
+import {
+  PROJECT_CONFIG_QUERY_KEY,
+  LAYERS_QUERY_KEY,
+} from 'constants/react-query';
 import { discoverAPI, getJsonHeaders } from 'modules/api/service';
 import { Metadata } from 'pages/authorized/admin/projectConfig/types';
 
@@ -37,6 +40,7 @@ export function useProjectConfigUpdateMutate({
     {
       onSuccess: () => {
         queryClient.invalidateQueries(PROJECT_CONFIG_QUERY_KEY.CONFIG);
+        queryClient.invalidateQueries(LAYERS_QUERY_KEY.ALL); // reset the layers
         onSuccess();
       },
       onError: (_error) => {

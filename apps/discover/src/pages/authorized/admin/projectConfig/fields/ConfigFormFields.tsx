@@ -12,7 +12,8 @@ export const ConfigFormFields: React.FC<{
   valuePath?: string;
   onChange: HandleConfigChange;
   value: unknown;
-}> = ({ metadataValue, valuePath, value, onChange }) => {
+  error?: Record<string, string | boolean>;
+}> = ({ metadataValue, valuePath, value, onChange, error }) => {
   return (
     <>
       {map(metadataValue?.children, (child, childKey) => {
@@ -23,6 +24,7 @@ export const ConfigFormFields: React.FC<{
           <ConfigInputField
             key={`${valuePath}${childKey}`}
             value={get(value, childKey)}
+            error={get(error, childKey)}
             field={child}
             changeKey={valuePath ? `${valuePath}.${childKey}` : childKey}
             onChange={onChange}

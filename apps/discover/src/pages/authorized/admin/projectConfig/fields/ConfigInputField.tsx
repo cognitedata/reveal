@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useState, useCallback } from 'react';
 
 import isEqual from 'lodash/isEqual';
+import isUndefined from 'lodash/isUndefined';
 
 import { Input, Textarea, toast } from '@cognite/cogs.js';
 
@@ -15,7 +16,8 @@ export const ConfigInputField: React.FC<{
   field: MetadataValue;
   onChange: HandleConfigChange;
   value?: unknown;
-}> = ({ field, onChange, value, changeKey }) => {
+  error?: string | boolean;
+}> = ({ field, onChange, value, changeKey, error }) => {
   const handleTextChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       onChange(changeKey, event.target.value);
@@ -77,10 +79,11 @@ export const ConfigInputField: React.FC<{
         <Input
           id={changeKey}
           name={field.label}
+          error={error}
           helpText={field.helpText}
           placeholder={field.placeholder ?? field.label}
           title={field.label}
-          value={value as string}
+          value={isUndefined(value) ? '' : (value as string)}
           onChange={handleTextChange}
           data-testid={`${changeKey}-value`}
         />
@@ -90,6 +93,7 @@ export const ConfigInputField: React.FC<{
         <Input
           id={changeKey}
           name={field.label}
+          error={error}
           helpText={field.helpText}
           type="number"
           placeholder={field.placeholder ?? field.label}

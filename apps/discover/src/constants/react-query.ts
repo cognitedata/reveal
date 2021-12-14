@@ -101,3 +101,8 @@ export const PROJECT_CONFIG_QUERY_KEY = {
   CONFIG: [PROJECT_CONFIG, 'config'],
   METADATA: [PROJECT_CONFIG, 'metadata'],
 };
+
+const LAYERS = 'layers';
+export const LAYERS_QUERY_KEY = {
+  ALL: [LAYERS, 'get'],
+};

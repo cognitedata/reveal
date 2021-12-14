@@ -21,7 +21,10 @@ export const MetadataFormModal: CustomComponent = ({
     []
   );
 
-  const handleOk = useCallback(() => onOk(formData), [formData]);
+  const handleOk = useCallback(() => {
+    onOk(formData);
+    onClose();
+  }, [formData, onClose]);
 
   return (
     <Modal

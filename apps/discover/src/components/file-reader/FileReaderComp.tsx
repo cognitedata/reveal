@@ -6,8 +6,10 @@ import { Input } from '@cognite/cogs.js';
 
 export const FileReaderComp = ({
   onRead,
+  error,
 }: {
   onRead: (res: unknown) => void;
+  error?: boolean | string;
 }) => {
   const reader = React.useRef<FileReader>(new FileReader());
 
@@ -32,6 +34,7 @@ export const FileReaderComp = ({
       type="file"
       name="Upload JSON"
       title="Upload JSON"
+      error={error}
       accept="application/JSON"
       onChange={onChange}
     />

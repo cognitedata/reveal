@@ -2,40 +2,54 @@ import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
+import keyBy from 'lodash/keyBy';
 
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
+import {
+  ProjectConfigGeneral,
+  ProjectConfigMap,
+} from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
+import { LAYERS_QUERY_KEY } from 'constants/react-query';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { fetchTenantFile } from 'hooks/useTenantConfig';
-import { useStaticSelectableLayers } from 'modules/map/hooks/useStaticSelectableLayers';
+import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
 import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';
 import { Layers } from 'tenants/types';
 
-import { getLayersByKey, getLayerById } from '../utils/layers';
-
-const QUERY_KEY = 'LAYERS_QUERY';
+import { getLayersByKey, getLayerById } from '../utils';
 
 export const useLayers = () => {
   const [tenant] = getTenantInfo();
-  const staticSelectableLayers = useStaticSelectableLayers();
+  const { data: projectConfigLayers } =
+    useProjectConfigByKey<ProjectConfigMap['layers']>('map.layers');
+
+  // TODO(PP-678) temp name, to be changed to id once done in backend.
+  const adaptedProjectConfigLayers = keyBy(projectConfigLayers, 'name');
+
+  const categoryLayers = useCategoryLayers();
 
   const defaultResponse = {
-    layers: {},
-    selectableLayers: staticSelectableLayers,
+    layers: adaptedProjectConfigLayers,
+    selectableLayers: categoryLayers,
   };
 
-  const { data, isFetched: layersReady } = useQuery([QUERY_KEY], () =>
+  const { data, isFetched: layersReady } = useQuery(LAYERS_QUERY_KEY.ALL, () =>
     fetchTenantFile(tenant, 'layers')
       .then((fetchedLayers) => {
-        if (fetchedLayers) {
-          const alwaysOnLayers = getLayersByKey(fetchedLayers, 'alwaysOn');
+        const combinedLayers = {
+          ...adaptedProjectConfigLayers,
+          ...fetchedLayers,
+        };
+        if (!isEmpty(combinedLayers)) {
+          const alwaysOnLayers = getLayersByKey(combinedLayers, 'alwaysOn');
           return {
-            layers: fetchedLayers,
+            layers: combinedLayers,
             selectableLayers: [
-              ...staticSelectableLayers,
+              ...categoryLayers,
               ...alwaysOnLayers.filter(
                 (layer) => layer.id !== WELL_HEADS_LAYER_ID
               ),
