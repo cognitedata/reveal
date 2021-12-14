@@ -1,12 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { TS_FIX_ME } from 'core';
 import styled from 'styled-components/macro';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
-import { Dropdown } from 'components/dropdown';
 import { sizes } from 'styles/layout';
 
 import { ColorScale } from './ColorScale';
@@ -26,8 +24,7 @@ export const ColourButtonContainer: React.FC<Props> = ({ setColorScale }) => {
 
   const { t } = useTranslation();
 
-  const handleChangeColorScheme = (_event: TS_FIX_ME, value: TS_FIX_ME) => {
-    const item = items.find((y) => y.id === value.id);
+  const handleChangeColorScheme = (item: SeismicColor) => {
     if (item) {
       // callback
       setColorScale(item.id);
@@ -40,11 +37,20 @@ export const ColourButtonContainer: React.FC<Props> = ({ setColorScale }) => {
       <ColorScale {...currentColour} />
       <div>
         <Dropdown
-          items={items}
-          valueField="id"
-          displayField="title"
-          handleChange={handleChangeColorScheme}
-          selected={{ id: currentColour.id }}
+          content={
+            <Menu>
+              {items.map((item) => (
+                <Menu.Item
+                  key={item.id}
+                  onClick={() => {
+                    handleChangeColorScheme(item);
+                  }}
+                >
+                  {item.title}
+                </Menu.Item>
+              ))}
+            </Menu>
+          }
         >
           <Button
             variant="default"

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
+import { Dropdown, Menu } from '@cognite/cogs.js';
+
 import { ExpandButton } from 'components/buttons';
-import { Dropdown } from 'components/dropdown';
 
 import { SelectorWrapper } from './elements';
 
@@ -34,7 +35,7 @@ export const ValueSelector: React.FC<Props> = ({
     title: selection.title || selection.value,
   }));
 
-  const selectHandle = (_e: React.MouseEvent, item: ValueSelection) => {
+  const selectHandle = (item: ValueSelection) => {
     setSelected(item);
     if (onChange) {
       onChange(item.value);
@@ -45,12 +46,20 @@ export const ValueSelector: React.FC<Props> = ({
     <SelectorWrapper showOutline={showOutline}>
       {label && <span>{label} : </span>}
       <Dropdown
-        handleChange={selectHandle}
-        selected={{ ...selected }}
-        items={extendedSelections}
-        displayField="title"
-        valueField="id"
-        menuStyle={{ marginTop: '60px' }}
+        content={
+          <Menu>
+            {extendedSelections.map((item) => (
+              <Menu.Item
+                onClick={() => {
+                  selectHandle(item);
+                }}
+                key={item.id}
+              >
+                {item.title}
+              </Menu.Item>
+            ))}
+          </Menu>
+        }
       >
         <ExpandButton text={selected.title} />
       </Dropdown>

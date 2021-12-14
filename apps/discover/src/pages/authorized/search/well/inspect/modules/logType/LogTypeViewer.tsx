@@ -9,9 +9,10 @@ import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
 
+import { Dropdown, Menu } from '@cognite/cogs.js';
+
 import { DATE_NOT_AVAILABLE } from '_helpers/date';
 import { ExpandButton } from 'components/buttons';
-import { Dropdown } from 'components/dropdown';
 import { WhiteLoader } from 'components/loading';
 import ManageColumnsPanel from 'components/manage-columns-panel';
 import { wellSearchActions } from 'modules/wellSearch/actions';
@@ -38,6 +39,15 @@ export const MarkersFilterWrapper = styled.div`
   .CheckboxHolder {
     overflow-y: auto;
     max-height: 300px;
+  }
+`;
+
+const CustomMenu = styled(Menu)`
+  height: 80vh;
+  overflow: auto;
+
+  .cogs-menu-item {
+    min-height: 36px;
   }
 `;
 
@@ -126,7 +136,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
       )
         .filter((logsFrmTop) => !logsFrmTop.rows)
         .map((logsFrmTops) => logsFrmTops.sequence);
-      const ppfgsToFetch = (wellboreData[wellboreId].ppfg as SequenceData[])
+      const ppfgsToFetch = (wellboreData[wellboreId].ppfg || [])
         .filter(
           (ppfg) =>
             !ppfg.rows &&
@@ -144,7 +154,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     onLogTypeSelection(logTypeSelections[0]);
   }
 
-  const selectedLogTypeHandle = (_e: any, item: LogTypeSelection) => {
+  const selectedLogTypeHandle = (item: LogTypeSelection) => {
     onLogTypeSelection(item);
   };
 
@@ -236,14 +246,24 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     <>
       <ModuleFilterDropdownWrapper>
         <Dropdown
-          handleChange={selectedLogTypeHandle}
-          selected={{ ...selectedLogType }}
-          items={logTypeSelections}
-          displayField="title"
-          valueField="id"
+          content={
+            <CustomMenu>
+              {logTypeSelections.map((item) => (
+                <Menu.Item
+                  key={item.id}
+                  onClick={() => {
+                    selectedLogTypeHandle(item);
+                  }}
+                >
+                  {item.title}
+                </Menu.Item>
+              ))}
+            </CustomMenu>
+          }
         >
           <ExpandButton text={selectedLogType?.title || DATE_NOT_AVAILABLE} />
         </Dropdown>
+
         {!isEmpty(markersFilters) && (
           <MarkersFilterWrapper>
             <ManageColumnsPanel

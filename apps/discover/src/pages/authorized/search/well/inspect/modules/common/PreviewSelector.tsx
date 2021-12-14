@@ -1,9 +1,8 @@
 import { useState } from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 
 import { PreviewButton } from 'components/buttons';
-import { Dropdown } from 'components/dropdown';
 
 import {
   PreviewSelectorWrapper,
@@ -59,13 +58,18 @@ const PreviewSelector: (outerProps: OuterProps) => React.FC<Props> =
         {enableModeSelector && (
           <PreviewModeWrapper>
             <Dropdown
-              handleChange={(_event: any, item: PreviewMode) => {
-                setPreviewMode({ ...item });
-              }}
-              selected={{ ...previewMode }}
-              items={previewModes}
-              displayField="title"
-              valueField="id"
+              content={
+                <Menu>
+                  {previewModes.map((item) => (
+                    <Menu.Item
+                      key={item.id}
+                      onClick={() => setPreviewMode(item)}
+                    >
+                      {item.title}
+                    </Menu.Item>
+                  ))}
+                </Menu>
+              }
             >
               <Button
                 data-testid="preview-mode-button"
