@@ -115,7 +115,7 @@ async function loadSectors(
   cadMaterialManager.addModelMaterials(output!.blobId.toString(), sceneJson.maxTreeIndex);
 
   const sectorRepository: SectorRepository =
-    formatVersion === 8
+    formatVersion === 9
       ? new GltfSectorRepository(modelDataClient, cadMaterialManager)
       : new V8SectorRepository(modelDataClient, cadMaterialManager);
 
