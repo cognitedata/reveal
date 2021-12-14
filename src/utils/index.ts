@@ -3,6 +3,7 @@ import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { AccessPermission } from 'src/utils/types';
 import { getProject } from '@cognite/cdf-utilities';
 import { ids } from 'src/cogs-variables';
+import cloneDeep from 'lodash-es/cloneDeep';
 
 export * from './fetchUntilComplete';
 
@@ -20,7 +21,7 @@ export const userHasCapabilities = (
   user: AuthenticatedUserWithGroups,
   acls: Array<AccessPermission>
 ) => {
-  const copy = [...acls];
+  const copy = cloneDeep(acls);
   copy.forEach((acl) => {
     user.groups.forEach((group) => {
       if (!group.capabilities) {
