@@ -39,7 +39,7 @@ export default function FrequencyStats({ allCount, counts }: Props) {
                 <>{value}</>
               </Tooltip>
             </StyledFrequenceTableValue>
-            <TableData className="numeric">{count}</TableData>
+            <TableData>{count}</TableData>
             <TableData style={{ padding: '0 10px' }}>
               <Percent p={Math.round((count / allCount) * 100)} />
             </TableData>
@@ -91,9 +91,8 @@ const TableData = styled.td`
 `;
 
 const StyledFrequenceTableValue = styled(TableData)`
-  width: calc(70% - 100px);
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-right: 8px;
 `;
