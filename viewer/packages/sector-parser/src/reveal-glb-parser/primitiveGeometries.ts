@@ -99,25 +99,6 @@ export function setConeGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   return new THREE.Box3().setFromArray(positions);
 }
 
-export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
-  const lods = [
-    { tubularSegments: 9, radialSegments: 18 },
-    { tubularSegments: 5, radialSegments: 12 },
-    { tubularSegments: 4, radialSegments: 5 }
-  ];
-  const transformFunc = (u: number, v: number) => [u, v * 2.0 * Math.PI];
-  const torusLodGeometries = lods.map(({ tubularSegments, radialSegments }) => {
-    return generatePlane3D(radialSegments, tubularSegments, transformFunc);
-  });
-
-  return {
-    torusLodGeometries,
-    torusGeometryBoundingBox: new THREE.Box3().setFromArray(
-      torusLodGeometries[torusLodGeometries.length - 1].position.array
-    )
-  };
-})();
-
 export function setTorusGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
   const lods = [
     { tubularSegments: 9, radialSegments: 18 },
