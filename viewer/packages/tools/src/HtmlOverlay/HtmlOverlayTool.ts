@@ -79,16 +79,18 @@ export type HtmlOverlayToolOptions = {
   clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
 
+type HtmlOverlayElementScreenState = {
+  visible: boolean;
+  position2D: THREE.Vector2;
+  width: number;
+  height: number;
+};
+
 type HtmlOverlayElement = {
   position3D: THREE.Vector3;
   options: HtmlOverlayOptions;
 
-  state: {
-    visible: boolean;
-    position2D: THREE.Vector2;
-    width: number;
-    height: number;
-  };
+  state: HtmlOverlayElementScreenState;
 };
 
 /**
@@ -318,6 +320,11 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this.commitDOMChanges();
   }
 
+  private getWidthHeightForHtmlElement(htmlElement: HTMLElement) {
+    const clientRect = htmlElement.getBoundingClientRect();
+    return [clientRect.width, clientRect.height];
+  }
+
   /**
    * Update size of new elements. This is only done once as this causes
    * layout to be invalidated which is an expensive operation.
@@ -325,6 +332,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private updateNewElementSizes() {
     this._htmlOverlays.forEach((element, htmlElement) => {
       if (element.state.width === -1) {
+        [element.state.width, element.state.height] = this.getWidthHeightForHtmlElement(htmlElement);
         const clientRect = htmlElement.getBoundingClientRect();
         element.state.width = clientRect.width;
         element.state.height = clientRect.height;
@@ -382,6 +390,55 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private clusterByOverlapInScreenSpace(createClusterElementCallback: HtmlOverlayCreateClusterDelegate) {
     type Element = HtmlOverlayElement & { htmlElement: HTMLElement };
 
+    interface ElementWrapper {
+      getOriginalElements(): Generator<Element>;
+      isVisible(): boolean;
+      getElement(): Element;
+    }
+
+    class SingleElementWrapper implements ElementWrapper {
+      private readonly _element: Element;
+      constructor(el: Element) {
+        this._element = el;
+      }
+      *getOriginalElements(): Generator<Element> {
+        yield this._element;
+      }
+      isVisible(): boolean {
+        return this._element.state.visible;
+      }
+      getElement(): Element {
+        return this._element;
+      }
+    }
+
+    class ClusteredElementWrapper implements ElementWrapper {
+      private readonly _children: ElementWrapper[];
+      private readonly _compositeElement: Element;
+      readonly visible: boolean;
+      constructor(children: ElementWrapper[], composite: Element) {
+        this._children = children;
+        this.visible = true;
+        this._compositeElement = composite;
+      }
+      *getOriginalElements(): Generator<Element> {
+        for (const c of this._children) {
+          yield* c.getOriginalElements();
+        }
+      }
+      isVisible(): boolean {
+        return this.visible;
+      }
+      getElement(): Element {
+        return this._compositeElement;
+      }
+    }
+    function* getAllElements(wrappers: ElementWrapper[]): Generator<Element> {
+      for (const w of wrappers) {
+        yield* w.getOriginalElements();
+      }
+    }
+
     const canvas = this.viewerRenderer.domElement;
     const canvasBounds = domRectToBox2(canvas.getBoundingClientRect());
     const canvasSize = canvasBounds.getSize(new THREE.Vector2());
@@ -389,21 +446,23 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     // Compute once as updating styles below will cause (unnecessary)
     // recomputation which slows down the process
 
-    const grid = new BucketGrid2D<Element>(canvasBounds, [10, 10]);
+    const grid = new BucketGrid2D<ElementWrapper>(canvasBounds, [10, 10]);
     for (const [htmlElement, element] of this._htmlOverlays.entries()) {
       const { state } = element;
-      const elementBounds = createElementBounds(element);
+      const elementBounds = createElementBounds(element.state);
       if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
         continue;
       }
-      grid.insert(elementBounds, { htmlElement, ...element });
+      grid.insert(elementBounds, new SingleElementWrapper({ htmlElement, ...element }));
     }
+
+    const clusterSet = new Set<ClusteredElementWrapper>();
 
     const elementBounds = new THREE.Box2();
     const clusterMidpoint = new THREE.Vector2();
     for (const element of this._htmlOverlays.values()) {
       const { state } = element;
-      createElementBounds(element, elementBounds);
+      createElementBounds(element.state, elementBounds);
       if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
         continue;
       }
@@ -411,16 +470,42 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       const cluster = Array.from(grid.removeOverlappingElements(elementBounds));
       if (cluster.length > 1) {
         const midpoint = cluster
-          .reduce((position, element) => position.add(element.state.position2D), clusterMidpoint.set(0, 0))
+          .reduce((position, wrapper) => position.add(wrapper.getElement().state.position2D), clusterMidpoint.set(0, 0))
           .divideScalar(cluster.length);
         const compositeElement = createClusterElementCallback(
-          cluster.map(element => ({ htmlElement: element.htmlElement, userData: element.options.userData }))
+          cluster.map(wrapper => ({
+            htmlElement: wrapper.getElement().htmlElement,
+            userData: element.options.userData
+          }))
         );
+
+        const [elementWidth, elementHeight] = this.getWidthHeightForHtmlElement(compositeElement);
+        const newScreenState = { visible: false, width: elementWidth, height: elementHeight, position2D: midpoint };
+        const clusterBounds = createElementBounds(newScreenState);
+        const clusteredElementWrapper = new ClusteredElementWrapper(cluster, {
+          htmlElement: compositeElement,
+          ...{ state: newScreenState, options: {}, position3D: new THREE.Vector3() }
+        });
+
+        grid.insert(clusterBounds, clusteredElementWrapper);
+
+        clusterSet.add(clusteredElementWrapper);
+
         // Hide all elements in cluster
-        cluster.forEach(element => (element.state.visible = false));
+        cluster.forEach(wrapper => {
+          if (wrapper instanceof SingleElementWrapper) {
+            wrapper.getElement().state.visible = false;
+          } else if (wrapper instanceof ClusteredElementWrapper) {
+            clusterSet.delete(wrapper);
+          }
+        });
         // ... and replace with a composite
-        this.addComposite(compositeElement, midpoint);
+        // this.addComposite(compositeElement, midpoint);
       }
+    }
+
+    for (const cluster of clusterSet) {
+      this.addComposite(cluster.getElement().htmlElement, cluster.getElement().state.position2D);
     }
   }
 
@@ -468,8 +553,7 @@ function domRectToBox2(rect: DOMRect, out?: THREE.Box2): THREE.Box2 {
   return out;
 }
 
-function createElementBounds(element: HtmlOverlayElement, out?: THREE.Box2) {
-  const { state } = element;
+function createElementBounds(state: HtmlOverlayElementScreenState, out?: THREE.Box2) {
   out = out ?? new THREE.Box2();
   out.min.set(state.position2D.x, state.position2D.y);
   out.max.set(state.position2D.x + state.width, state.position2D.y + state.height);
