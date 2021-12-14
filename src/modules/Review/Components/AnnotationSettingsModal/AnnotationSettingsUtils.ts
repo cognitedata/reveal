@@ -1,5 +1,6 @@
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
 import { Shape } from 'src/modules/Review/types';
+import isEmpty from 'lodash/isEmpty';
 
 export const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
@@ -13,17 +14,24 @@ export const getRandomColor = () => {
 export const validNewKeypoint = (newKeypoints: NewKeypoints | undefined) => {
   if (newKeypoints) {
     const { collectionName, keypoints } = newKeypoints;
-    if (collectionName === '') return false;
+    if (isEmpty(collectionName)) return false;
 
+    if (!keypoints.length) return false;
     const keypointCaptions = keypoints.map((keypoint) => keypoint.caption);
     if (keypointCaptions.includes('')) return false;
+    const keypointColors = keypoints.map((keypoint) => keypoint.color);
+    return !keypointColors.includes('');
   }
-  return true;
+  return false;
 };
 
 export const validNewShapes = (newShapes: { [key: string]: Shape }) => {
+  if (isEmpty(newShapes)) {
+    return false;
+  }
   const shapeNames = Object.keys(newShapes).map(
     (key) => newShapes[key].shapeName
   );
-  return !shapeNames.includes('');
+  const shapeColors = Object.keys(newShapes).map((key) => newShapes[key].color);
+  return !shapeNames.includes('') && !shapeColors.includes('');
 };
