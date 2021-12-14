@@ -1,0 +1,31 @@
+name: Chromatic
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  visual-testing:
+    runs-on: ubuntu-latest
+    name: Visual testing
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node 🐍
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+          always-auth: true
+
+      - name: Install dependencies 🔧
+        run: yarn install --ignore-scripts --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
+      - name: Publish to Chromatic 🎬
+        uses: chromaui/action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
