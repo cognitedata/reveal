@@ -35,11 +35,12 @@ export const AnnotationSettingsModalContent = ({
   const [shapeCreationInProgress, setShapeCreationInProgress] = useState(false);
   const [keypointCreationInProgress, setKeypointCreationInProgress] =
     useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const submitNewCollection = () => {
-    if (newCollection) {
-      onDone(newCollection);
-    }
+  const submitNewCollection = async () => {
+    setIsSaving(true);
+    await onDone(newCollection);
+    setIsSaving(false);
   };
 
   const setUnsavedShapes = (shapes: Shape[]) => {
@@ -131,6 +132,7 @@ export const AnnotationSettingsModalContent = ({
             type="primary"
             onClick={submitNewCollection}
             disabled={shapeCreationInProgress || keypointCreationInProgress}
+            loading={isSaving}
           >
             Done
           </Button>

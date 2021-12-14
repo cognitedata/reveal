@@ -163,35 +163,39 @@ export const ImagePreview = ({
   ) => {
     try {
       if (newCollection) {
-        await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
-        dispatch(showAnnotationSettingsModel(false));
-        dispatch(setKeepUnsavedRegion(false));
-
-        if (!isEmpty(annotationSettingsState.createNew)) {
-          if (
-            annotationSettingsState.activeView === 'shape' &&
-            newCollection.predefinedShapes.length > 0
-          ) {
-            dispatch(
-              setLastShape(
-                newCollection.predefinedShapes[
-                  newCollection.predefinedShapes.length - 1
-                ].shapeName
-              )
-            );
-          } else if (
-            annotationSettingsState.activeView === 'keypoint' &&
-            newCollection.predefinedKeypoints.length > 0
-          ) {
-            dispatch(
-              setLastCollectionName(
-                newCollection.predefinedKeypoints[
-                  newCollection.predefinedKeypoints.length - 1
-                ].collectionName
-              )
-            );
+        if (
+          newCollection.predefinedShapes.length ||
+          newCollection.predefinedKeypoints.length
+        ) {
+          await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
+          if (!isEmpty(annotationSettingsState.createNew)) {
+            if (
+              annotationSettingsState.activeView === 'shape' &&
+              newCollection.predefinedShapes.length > 0
+            ) {
+              dispatch(
+                setLastShape(
+                  newCollection.predefinedShapes[
+                    newCollection.predefinedShapes.length - 1
+                  ].shapeName
+                )
+              );
+            } else if (
+              annotationSettingsState.activeView === 'keypoint' &&
+              newCollection.predefinedKeypoints.length > 0
+            ) {
+              dispatch(
+                setLastCollectionName(
+                  newCollection.predefinedKeypoints[
+                    newCollection.predefinedKeypoints.length - 1
+                  ].collectionName
+                )
+              );
+            }
           }
         }
+        dispatch(showAnnotationSettingsModel(false));
+        dispatch(setKeepUnsavedRegion(false));
       }
     } catch (e) {
       console.error('Error occurred while saving predefined annotations!');
