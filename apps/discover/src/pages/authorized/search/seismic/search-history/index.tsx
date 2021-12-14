@@ -1,48 +1,69 @@
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
-import { CircularProgress } from '@material-ui/core';
-import BrokenImage from '@material-ui/icons/BrokenImage';
-import Filter1 from '@material-ui/icons/Filter1';
-import Filter2 from '@material-ui/icons/Filter2';
-import Filter3 from '@material-ui/icons/Filter3';
-import Filter4 from '@material-ui/icons/Filter4';
-import Filter5 from '@material-ui/icons/Filter5';
-import Filter6 from '@material-ui/icons/Filter6';
-import Filter7 from '@material-ui/icons/Filter7';
-import Filter8 from '@material-ui/icons/Filter8';
-import Filter9 from '@material-ui/icons/Filter9';
-import Filter9Plus from '@material-ui/icons/Filter9Plus';
-import ImageSearch from '@material-ui/icons/ImageSearch';
-import { SpeedDial, SpeedDialIcon, SpeedDialAction } from '@material-ui/lab';
 import { TS_FIX_ME } from 'core';
+import {
+  FilterIcon1,
+  FilterIcon2,
+  FilterIcon3,
+  FilterIcon4,
+  FilterIcon5,
+  FilterIcon6,
+  FilterIcon7,
+  FilterIcon8,
+  FilterIcon9,
+  FilterIcon9Plus,
+  BrokenImage,
+  ImageSearch,
+} from 'images/icons';
+import styled from 'styled-components/macro';
+
+import {
+  Button,
+  Dropdown,
+  Icon as CogsIcon,
+  Menu,
+  Tooltip,
+} from '@cognite/cogs.js';
 
 import { shortDateTime } from '_helpers/date';
 import { SliceCollection } from 'modules/seismicSearch/types';
 
+const ButtonWrapper = styled.div`
+  position: relative;
+  bottom: 84px;
+  left: 50%;
+
+  button > span {
+    margin-right: 0 !important;
+  }
+
+  .cogs-menu {
+    margin-bottom: 16px;
+  }
+`;
+
 const getIcon = (slices: TS_FIX_ME) => {
   switch (slices.length || 0) {
     case 1:
-      return Filter1;
+      return FilterIcon1;
     case 2:
-      return Filter2;
+      return FilterIcon2;
     case 3:
-      return Filter3;
+      return FilterIcon3;
     case 4:
-      return Filter4;
+      return FilterIcon4;
     case 5:
-      return Filter5;
+      return FilterIcon5;
     case 6:
-      return Filter6;
+      return FilterIcon6;
     case 7:
-      return Filter7;
+      return FilterIcon7;
     case 8:
-      return Filter8;
+      return FilterIcon8;
     case 9:
-      return Filter9;
-
+      return FilterIcon9;
     default:
-      return Filter9Plus;
+      return FilterIcon9Plus;
   }
 };
 interface SearchHistoryProps {
@@ -56,8 +77,6 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
   sliceSearches,
   isVisible,
 }) => {
-  const [open, setOpen] = React.useState(false);
-
   const Icon = useMemo(() => {
     return getIcon(sliceSearches);
   }, [sliceSearches]);
@@ -66,64 +85,50 @@ const SearchHistory: React.FC<SearchHistoryProps> = ({
     return sliceSearches.filter((s) => s.isLoading).length > 0;
   }, [sliceSearches]);
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const selectItem = (item: TS_FIX_ME) => {
-    setOpen(false);
     handleOnItemClick(item);
   };
 
-  const { t } = useTranslation('SeismicData');
+  const renderContent = () => {
+    return sliceSearches.map((slice: TS_FIX_ME) => (
+      <Menu.Item key={slice.id} onClick={() => selectItem(slice)}>
+        <Tooltip content={shortDateTime(slice.time)}>
+          {
+            // eslint-disable-next-line no-nested-ternary
+            slice.isLoading ? (
+              <>
+                <ImageSearch />
+                <CogsIcon
+                  aria-label="Loading"
+                  type="Loader"
+                  style={{ position: 'absolute' }}
+                />
+              </>
+            ) : slice.hasError ? (
+              <BrokenImage />
+            ) : (
+              <ImageSearch />
+            )
+          }
+        </Tooltip>
+      </Menu.Item>
+    ));
+  };
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <>
-      <SpeedDial
-        ariaLabel={t('Data search history')}
-        hidden={!isVisible}
-        aria-label="Date history"
-        icon={
-          <SpeedDialIcon
-            aria-label="Progress"
-            icon={
-              <>
-                {isLoading && <CircularProgress />}
-                <Icon />{' '}
-              </>
-            }
-          />
-        }
-        onClose={handleClose}
-        onOpen={handleOpen}
-        open={open}
-      >
-        {sliceSearches.map((slice: TS_FIX_ME) => (
-          <SpeedDialAction
-            key={slice.id}
-            aria-label="Date"
-            icon={
-              // eslint-disable-next-line no-nested-ternary
-              slice.isLoading ? (
-                <>
-                  <ImageSearch style={{ width: 20, height: 20 }} />
-                  <CircularProgress style={{ position: 'absolute' }} />
-                </>
-              ) : slice.hasError ? (
-                <BrokenImage />
-              ) : (
-                <ImageSearch />
-              )
-            }
-            tooltipTitle={shortDateTime(slice.time)}
-            onClick={() => selectItem(slice)}
-          />
-        ))}
-      </SpeedDial>
+      <ButtonWrapper>
+        <Dropdown openOnHover content={<Menu>{renderContent()}</Menu>}>
+          <Button type="primary">
+            {isLoading && <CogsIcon type="Loader" />}
+            <Icon />
+          </Button>
+        </Dropdown>
+      </ButtonWrapper>
     </>
   );
 };
