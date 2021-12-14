@@ -12,11 +12,12 @@ import {
   Cognite3DViewer,
   Cognite3DViewerOptions,
   Cognite3DModel,
+  CameraControlsOptions,
   CognitePointCloudModel,
   PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
-  IndexSet
+  IndexSet,
 } from '@cognite/reveal';
 import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool, HtmlOverlayTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -88,6 +89,13 @@ export function Migration() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
+
+      const controlsOptions: CameraControlsOptions = {
+        onClickTargetChange: true,
+        mouseWheelAction: 'zoomToCursor',
+      }
+
+      viewer.setCameraControlsOptions(controlsOptions);
 
       const totalBounds = new THREE.Box3();
 
@@ -179,7 +187,12 @@ export function Migration() {
           hideAllNodes: false
         },
         showCameraTool: new DebugCameraTool(viewer),
-        renderMode: 'Color'
+        renderMode: 'Color',
+        controls: {
+          mouseWheelAction: 'zoomToCursor',
+          onClickTargetChange: true
+        },
+        debugRenderStageTimings: false
       };
       const guiActions = {
         addModel: () =>
@@ -268,6 +281,11 @@ export function Migration() {
         ]).name('SSAO').onFinishChange(v => {
           urlParams.set('ssao', v);
           window.location.href = url.toString();
+        });
+      renderGui.add(guiState, 'debugRenderStageTimings')
+        .name('Debug timings')
+        .onChange(enabled => {
+          (viewer as any).revealManager.debugRenderTiming = enabled;
         });
 
       const debugGui = gui.addFolder('Debug');
@@ -443,8 +461,27 @@ export function Migration() {
 
       assetExplode.add(explodeActions, 'reset').name('Reset');
 
-      const overlayTool = new HtmlOverlayTool(viewer);
+      const controlsGui = gui.addFolder('Camera controls');
+      const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
+      controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), mouseWheelAction: value });
+      });
+      controlsGui.add(guiState.controls, 'onClickTargetChange').name('Change camera target on click').onFinishChange(value => {
+        viewer.setCameraControlsOptions({ ...viewer.getCameraControlsOptions(), onClickTargetChange: value });
+      });
+  
+      const overlayTool = new HtmlOverlayTool(viewer,
+        { 
+          clusteringOptions: { 
+            mode: 'overlapInScreenSpace', 
+            createClusterElementCallback: cluster => {
+              return createOverlay(`${cluster.length}`);
+            }
+          }
+        });
+
       new AxisViewTool(viewer);
+
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -454,17 +491,15 @@ export function Migration() {
           switch (intersection.type) {
             case 'cad':
               {
-                const { treeIndex, point, model } = intersection;
+                const { treeIndex, point} = intersection;
                 console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-                const overlayHtml = document.createElement('div');
-                overlayHtml.innerText = `Node ${treeIndex}`;
-                overlayHtml.style.cssText = 'background: white; position: absolute;';
+                const overlayHtml = createOverlay(`Node ${treeIndex}`);
+
                 overlayTool.add(overlayHtml, point);
   
                 // highlight the object
                 selectedSet.updateSet(new IndexSet([treeIndex]));
-                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+
               }
               break;
             case 'pointcloud':
@@ -525,4 +560,21 @@ function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THR
     return undefined;
   }
   return { boundingBox: new THREE.Box3().setFromCenterAndSize(state.center, state.size), isBoundingBoxInModelCoordinates: true };
+}
+
+function createOverlay(text: string): HTMLElement {
+  const overlayHtml = document.createElement('div');
+  overlayHtml.innerText = text;
+  overlayHtml.style.cssText = `
+    position: absolute; 
+    translate(-50%, -50%);
+
+    background: white; 
+    border-radius: 5px; 
+    border-color: black; 
+
+    pointer-events: none; 
+    touch-action: none;`;
+
+  return overlayHtml;
 }

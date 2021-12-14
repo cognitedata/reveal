@@ -7,6 +7,7 @@ type Props = {
   viewerOptions?: Partial<Cognite3DViewerOptions>;
 
   modelUrls: string[];
+  fitCameraToModel?: boolean;
   geometryFilter?: GeometryFilter;
 
   initializeCallback?: (viewer: Cognite3DViewer) => void;
@@ -21,7 +22,7 @@ type LoadingState = {
 }
 
 export function Cognite3DTestViewer(props: Props) {
-  const { viewerOptions, modelUrls, geometryFilter } = props;
+  const { viewerOptions, modelUrls, geometryFilter, fitCameraToModel } = props;
   const { modelAddedCallback, initializeCallback, pageReadyCallback} = props;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,7 +66,9 @@ export function Cognite3DTestViewer(props: Props) {
           localPath: modelUrl,
           geometryFilter
         });
-      viewer.fitCameraToModel(model, 0);
+      if (fitCameraToModel !== false) {
+        viewer.fitCameraToModel(model, 0);
+      }
       if (modelAddedCallback) {
         modelAddedCallback(model, modelIndex, modelUrl);
       }
@@ -81,7 +84,7 @@ export function Cognite3DTestViewer(props: Props) {
     return () => {
       viewer && viewer.dispose();
     };
-  }, [geometryFilter, initializeCallback, modelAddedCallback, pageReadyCallback, modelUrls, viewerOptions]);
+  }, [geometryFilter, initializeCallback, modelAddedCallback, pageReadyCallback, modelUrls, viewerOptions, fitCameraToModel]);
 
   const readyForScreenshot = loadingState.itemsLoaded > 0 &&
     loadingState.itemsLoaded === loadingState.itemsRequested;

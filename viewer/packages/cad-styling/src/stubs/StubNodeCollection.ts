@@ -22,10 +22,10 @@ export class StubNodeCollection extends NodeCollectionBase {
   getIndexSet(): IndexSet {
     return this._indexSet;
   }
-  setIndexSet(set: IndexSet) {
+  setIndexSet(set: IndexSet): void {
     this._indexSet = set;
   }
-  clear() {
+  clear(): void {
     this._indexSet = new IndexSet();
   }
   serialize(): SerializedNodeCollection {

@@ -25,7 +25,7 @@ export class BoundingBoxClipper {
     this.updatePlanes();
   }
 
-  get minX() {
+  get minX(): number {
     return this._box.min.x;
   }
 
@@ -34,7 +34,7 @@ export class BoundingBoxClipper {
     this.updatePlanes();
   }
 
-  get minY() {
+  get minY(): number {
     return this._box.min.y;
   }
 
@@ -43,7 +43,7 @@ export class BoundingBoxClipper {
     this.updatePlanes();
   }
 
-  get minZ() {
+  get minZ(): number {
     return this._box.min.z;
   }
 
@@ -52,7 +52,7 @@ export class BoundingBoxClipper {
     this.updatePlanes();
   }
 
-  get maxX() {
+  get maxX(): number {
     return this._box.max.x;
   }
 
@@ -61,7 +61,7 @@ export class BoundingBoxClipper {
     this.updatePlanes();
   }
 
-  get maxY() {
+  get maxY(): number {
     return this._box.max.y;
   }
 
@@ -70,7 +70,7 @@ export class BoundingBoxClipper {
     this.updatePlanes();
   }
 
-  get maxZ() {
+  get maxZ(): number {
     return this._box.max.z;
   }
 
@@ -101,7 +101,7 @@ export class BoundingBoxClipper {
     );
   }
 
-  get clippingPlanes() {
+  get clippingPlanes(): THREE.Plane[] {
     return this._clippingPlanes;
   }
 }

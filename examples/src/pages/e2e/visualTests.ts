@@ -69,5 +69,9 @@ export const visualTests: VisualTest[] = [
   {
     testKey: 'reassign-node-style',
     category: 'cad'
+  },
+  {
+    testKey: 'outlines',
+    category: 'cad'
   }
 ];

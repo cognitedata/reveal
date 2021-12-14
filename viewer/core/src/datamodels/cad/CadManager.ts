@@ -14,7 +14,7 @@ import { CadModelClipper } from './sector/CadModelClipper';
 import { CadModelMetadataRepository, CadModelMetadata, LevelOfDetail, ConsumedSector } from '@reveal/cad-parsers';
 import { CadModelUpdateHandler, CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { CadNode, CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { trackError } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
 export class CadManager {
@@ -31,7 +31,7 @@ export class CadManager {
   private readonly _markNeedsRedrawBound = this.markNeedsRedraw.bind(this);
   private readonly _materialsChangedListener = this.handleMaterialsChanged.bind(this);
 
-  get materialManager() {
+  get materialManager(): CadMaterialManager {
     return this._materialManager;
   }
 
@@ -91,7 +91,7 @@ export class CadManager {
       this._cadModelUpdateHandler.consumedSectorObservable().subscribe({
         next: consumeNextSector,
         error: error => {
-          trackError(error, {
+          MetricsLogger.trackError(error, {
             moduleName: 'CadManager',
             methodName: 'constructor'
           });
@@ -100,7 +100,7 @@ export class CadManager {
     );
   }
 
-  dispose() {
+  dispose(): void {
     this._cadModelUpdateHandler.dispose();
     this._subscription.unsubscribe();
     this._materialManager.off('materialsChanged', this._materialsChangedListener);
@@ -118,7 +118,7 @@ export class CadManager {
     return this._needsRedraw;
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera) {
+  updateCamera(camera: THREE.PerspectiveCamera): void {
     this._cadModelUpdateHandler.updateCamera(camera);
     this._needsRedraw = true;
   }

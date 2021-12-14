@@ -66,13 +66,13 @@ export type SectorCost = {
   renderCost: number;
 };
 
-export function addSectorCost(sum: SectorCost, cost: SectorCost) {
+export function addSectorCost(sum: SectorCost, cost: SectorCost): void {
   sum.downloadSize += cost.downloadSize;
   sum.drawCalls += cost.drawCalls;
   sum.renderCost += cost.renderCost;
 }
 
-export function reduceSectorCost(sum: SectorCost, cost: SectorCost) {
+export function reduceSectorCost(sum: SectorCost, cost: SectorCost): void {
   sum.downloadSize -= cost.downloadSize;
   sum.drawCalls -= cost.drawCalls;
   sum.renderCost -= cost.renderCost;

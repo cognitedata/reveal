@@ -9,7 +9,7 @@
  * @param url2 Optional. Default is `location.origin`. If provided then it must be
  * absolute url to avoid comparison between two relative urls.
  */
-export function isTheSameDomain(url1: string, url2: string = location.origin) {
+export function isTheSameDomain(url1: string, url2: string = location.origin): boolean {
   const isRelative = (url: string) => {
     if (url.match(/^.*\/\//)) {
       return false; // starts with protocol - means absolute url, e.g. https://foo.bar/baz

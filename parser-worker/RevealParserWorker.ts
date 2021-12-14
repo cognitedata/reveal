@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as Comlink from "comlink";
+
 import { createDetailedGeometry } from "./createDetailedGeometry";
 import type * as rustTypes from "./pkg/reveal_rs_wrapper";
 
@@ -44,7 +46,34 @@ export class RevealParserWorker {
 
     sectorData.free();
 
-    return parseResult;
+    return Comlink.transfer(parseResult, [
+      parseResult.instanceMeshes.colors.buffer,
+      parseResult.instanceMeshes.fileIds.buffer,
+      parseResult.instanceMeshes.instanceMatrices.buffer,
+      parseResult.instanceMeshes.sizes.buffer,
+      parseResult.instanceMeshes.treeIndices.buffer,
+      parseResult.instanceMeshes.triangleCounts.buffer,
+      parseResult.instanceMeshes.triangleOffsets.buffer,
+
+      parseResult.triangleMeshes.colors.buffer,
+      parseResult.triangleMeshes.fileIds.buffer,
+      parseResult.triangleMeshes.sizes.buffer,
+      parseResult.triangleMeshes.treeIndices.buffer,
+      parseResult.triangleMeshes.triangleCounts.buffer,
+
+      parseResult.primitives.boxCollection.buffer,
+      parseResult.primitives.circleCollection.buffer,
+      parseResult.primitives.coneCollection.buffer,
+      parseResult.primitives.eccentricConeCollection.buffer,
+      parseResult.primitives.ellipsoidSegmentCollection.buffer,
+      parseResult.primitives.generalCylinderCollection.buffer,
+      parseResult.primitives.generalRingCollection.buffer,
+      parseResult.primitives.nutCollection.buffer,
+      parseResult.primitives.quadCollection.buffer,
+      parseResult.primitives.sphericalSegmentCollection.buffer,
+      parseResult.primitives.torusSegmentCollection.buffer,
+      parseResult.primitives.trapeziumCollection.buffer,
+    ]);
   }
 
   public async parseCtm(buffer: Uint8Array): Promise<ParseCtmResult> {
@@ -61,7 +90,10 @@ export class RevealParserWorker {
 
     ctm.free();
 
-    return result;
+    const transferable: Transferable[] = result.normals !== undefined ?
+      [result.indices.buffer, result.normals.buffer, result.vertices.buffer] :
+      [result.indices.buffer, result.vertices.buffer];
+    return Comlink.transfer(result, transferable);
   }
 
   public async parseQuads(buffer: Uint8Array): Promise<SectorQuads> {

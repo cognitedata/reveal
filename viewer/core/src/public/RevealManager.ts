@@ -18,7 +18,7 @@ import { GeometryFilter } from '..';
 import { CadModelSectorBudget, LoadingState } from '@reveal/cad-geometry-loaders';
 import { NodeAppearanceProvider } from '@reveal/cad-styling';
 import { RenderOptions, EffectRenderManager, CadNode, defaultRenderOptions, RenderMode } from '@reveal/rendering';
-import { trackError, trackLoadModel, trackCameraNavigation } from '@reveal/metrics';
+import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
@@ -59,7 +59,7 @@ export class RevealManager {
       .pipe(
         auditTime(5000),
         tap(() => {
-          trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
+          MetricsLogger.trackCameraNavigation({ moduleName: 'RevealManager', methodName: 'update' });
         })
       )
       .subscribe();
@@ -84,6 +84,14 @@ export class RevealManager {
     this._pointCloudManager.resetRedraw();
   }
 
+  public get debugRenderTiming(): boolean {
+    return this._effectRenderManager.debugRenderTimings;
+  }
+
+  public set debugRenderTiming(enable: boolean) {
+    this._effectRenderManager.debugRenderTimings = enable;
+  }
+
   public get renderOptions(): RenderOptions {
     return this._effectRenderManager.renderOptions;
   }
@@ -96,7 +104,7 @@ export class RevealManager {
     return this._cadManager.needsRedraw || this._pointCloudManager.needsRedraw;
   }
 
-  public update(camera: THREE.PerspectiveCamera) {
+  public update(camera: THREE.PerspectiveCamera): void {
     const hasCameraChanged =
       this._lastCamera.zoom !== camera.zoom ||
       !this._lastCamera.position.equals(camera.position) ||
@@ -171,7 +179,7 @@ export class RevealManager {
     }
   }
 
-  public render(camera: THREE.PerspectiveCamera) {
+  public render(camera: THREE.PerspectiveCamera): void {
     this._effectRenderManager.render(camera);
     this.resetRedraw();
   }
@@ -181,7 +189,7 @@ export class RevealManager {
    * @param target New rendering target.
    * @param autoSetTargetSize Auto size target to fit canvas.
    */
-  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true) {
+  public setRenderTarget(target: THREE.WebGLRenderTarget | null, autoSetTargetSize: boolean = true): void {
     this._effectRenderManager.setRenderTarget(target);
     this._effectRenderManager.setRenderTargetAutoSize(autoSetTargetSize);
   }
@@ -193,7 +201,7 @@ export class RevealManager {
     modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode | CadNode> {
-    trackLoadModel(
+    MetricsLogger.trackLoadModel(
       {
         type
       },
@@ -231,12 +239,12 @@ export class RevealManager {
     }
   }
 
-  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2) {
+  public addUiObject(object: THREE.Object3D, screenPos: THREE.Vector2, size: THREE.Vector2): void {
     this._effectRenderManager.addUiObject(object, screenPos, size);
     this.requestRedraw();
   }
 
-  public removeUiObject(object: THREE.Object3D) {
+  public removeUiObject(object: THREE.Object3D): void {
     this._effectRenderManager.removeUiObject(object);
     this.requestRedraw();
   }
@@ -263,7 +271,7 @@ export class RevealManager {
           distinctUntilChanged((x, y) => x.itemsLoaded === y.itemsLoaded && x.itemsRequested === y.itemsRequested)
         )
         .subscribe(this.notifyLoadingStateChanged.bind(this), error =>
-          trackError(error, {
+          MetricsLogger.trackError(error, {
             moduleName: 'RevealManager',
             methodName: 'constructor'
           })

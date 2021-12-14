@@ -24,7 +24,7 @@ export class TransformOverrideBuffer {
     return this._dataTexture;
   }
 
-  get overrideIndices() {
+  get overrideIndices(): Map<number, number> {
     return this._treeIndexToOverrideIndex;
   }
 
@@ -48,7 +48,7 @@ export class TransformOverrideBuffer {
     this._treeIndexToOverrideIndex = new Map();
   }
 
-  dispose() {
+  dispose(): void {
     this._dataTexture.dispose();
   }
 
@@ -85,7 +85,7 @@ export class TransformOverrideBuffer {
     return matrixIndex;
   }
 
-  public removeOverrideTransform(treeIndex: number) {
+  public removeOverrideTransform(treeIndex: number): void {
     if (!this._treeIndexToOverrideIndex.has(treeIndex)) return;
 
     const matrixIndex = this._treeIndexToOverrideIndex.get(treeIndex)!;
