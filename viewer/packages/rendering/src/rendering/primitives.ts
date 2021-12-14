@@ -13,7 +13,7 @@ import {
   torusLodGeometries,
   boxGeometryBoundingBox,
   quadGeometryBoundingBox,
-  /* torusGeometryBoundingBox, */
+  // torusGeometryBoundingBox, // Disabled due to error in torus bounding box
   nutGeometryBoundingBox,
   SectorGeometry,
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
