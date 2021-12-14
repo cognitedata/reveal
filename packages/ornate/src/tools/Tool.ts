@@ -21,6 +21,7 @@ export class Tool implements ICogniteOrnateTool {
   onMouseDown: (e: KonvaEventObject<MouseEvent>) => void = noop;
   onMouseMove: (e: KonvaEventObject<MouseEvent>) => void = noop;
   onMouseUp: (e: KonvaEventObject<MouseEvent>) => void = noop;
+  onMouseOver: (e: KonvaEventObject<MouseEvent>) => void = noop;
   onAnnotationClick: (e: KonvaEventObject<MouseEvent>, shape: Shape) => void =
     noop;
 }

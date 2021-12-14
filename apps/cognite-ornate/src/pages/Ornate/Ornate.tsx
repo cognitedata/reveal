@@ -119,11 +119,11 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
       stampTool.current = new StampTool(ornateViewer.current);
 
-      const ornateTransfomer = new OrnateTransformer();
-      ornateTransfomer.onSelectNodes = (nodes) => {
+      const ornateTransformer = new OrnateTransformer(ornateViewer.current);
+      ornateTransformer.onSelectNodes = (nodes) => {
         setSelectedNode(nodes[0]);
       };
-      ornateViewer.current.transformer = ornateTransfomer;
+      ornateViewer.current.transformer = ornateTransformer;
       ornateViewer.current.drawingLayer.add(ornateViewer.current.transformer);
 
       ornateViewer.current.tools = {
@@ -183,27 +183,49 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       if (!workspaceDocuments.length) {
         return;
       }
-      metrics.track('onHotkey', { key: e.key });
-      if (e.key === 'm') {
-        onToolChange('move');
+
+      if (e.metaKey) {
+        if (e.key === 'c') {
+          ornateViewer.current!.transformer!.copySelectedNodes();
+        }
+        if (e.key === 'v') {
+          ornateViewer.current!.transformer!.pasteSelectedNodes();
+        }
       }
-      if (e.key === 'r') {
-        onToolChange('rect');
+
+      if (e.ctrlKey) {
+        if (e.key === 'c') {
+          ornateViewer.current!.transformer!.copySelectedNodes();
+        }
+        if (e.key === 'v') {
+          ornateViewer.current!.transformer!.pasteSelectedNodes();
+        }
       }
-      if (e.key === 'l') {
-        onToolChange('line');
-      }
-      if (e.key === 't') {
-        onToolChange('text');
-      }
-      if (e.key === 'c') {
-        onToolChange('circle');
-      }
-      if (e.key === 'i') {
-        onToolChange('list');
-      }
-      if (e.key === 's') {
-        onToolChange('default');
+
+      // Prevent ctrl and cmd key combination
+      if (e.key !== 'Control' && !e.metaKey) {
+        metrics.track('onHotkey', { key: e.key });
+        if (e.key === 'm') {
+          onToolChange('move');
+        }
+        if (e.key === 'r') {
+          onToolChange('rect');
+        }
+        if (e.key === 'l') {
+          onToolChange('line');
+        }
+        if (e.key === 't') {
+          onToolChange('text');
+        }
+        if (e.key === 'c') {
+          onToolChange('circle');
+        }
+        if (e.key === 'i') {
+          onToolChange('list');
+        }
+        if (e.key === 's' || e.key === 'Escape') {
+          onToolChange('default');
+        }
       }
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
         e.preventDefault(); // needed so the undo does not trigger the Chrome undo shortcut

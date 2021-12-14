@@ -56,6 +56,16 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
     this.mouseMoved = false;
   };
 
+  onMouseOver = (e: KonvaEventObject<MouseEvent>) => {
+    const groupName =
+      e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
+    const group = this.ornateInstance.stage.findOne(`#${groupName}`);
+    this.ornateInstance.transformer?.updateGroup(
+      group as Konva.Group,
+      groupName
+    );
+  };
+
   onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     // Reduce the sensitivity
     if (e.evt.movementX > 1 || e.evt.movementY > 1) {

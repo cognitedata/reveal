@@ -46,7 +46,18 @@ const ContextMenu = ({
     return () => {
       document.removeEventListener('wheel', onMouseWheel);
     };
-  }, []);
+  }, [selectedNode]);
+
+  useEffect(() => {
+    setX(
+      getAlignCenterPositionX(
+        selectedNode.getClientRect().x,
+        selectedNode.getClientRect().width,
+        ref.current?.clientWidth || 0
+      )
+    );
+    setY(selectedNode.getClientRect().y);
+  }, [selectedNode]);
 
   useEffect(() => {
     // We need to reposition the contextmenu whenever the stage view moves
