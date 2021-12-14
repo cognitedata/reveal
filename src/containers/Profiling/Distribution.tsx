@@ -217,18 +217,6 @@ export function Graph({
       <div style={{ position: 'relative' }}>
         <svg ref={containerRef} width={width} height={height}>
           <Group top={verticalMargin / 2}>
-            {isGridDisplayed && (
-              <GridRows
-                scale={counts}
-                width={xMax}
-                height={yMax}
-                numTicks={5}
-                stroke={Colors['border-default'].hex()}
-                strokeDasharray="6,6"
-                strokeWidth={1}
-                tickValues={gridTickValues}
-              />
-            )}
             {isTooltipDisplayed && rangeEnd !== undefined && (
               <BarStack
                 data={distribution.map((value, i) => ({
@@ -276,6 +264,45 @@ export function Graph({
                 }
               </BarStack>
             )}
+            {isGridDisplayed && (
+              <GridRows
+                scale={counts}
+                width={xMax}
+                height={yMax}
+                numTicks={5}
+                stroke={Colors['border-default'].hex()}
+                strokeDasharray="6,6"
+                strokeWidth={1}
+                dy={1}
+                tickValues={gridTickValues}
+              />
+            )}
+            {isBottomAxisDisplayed && (
+              <AxisBottom
+                scale={categories}
+                tickLabelProps={(_, index, values) => ({
+                  fill: Colors['text-primary'].hex(),
+                  fontFamily: 'Inter',
+                  fontSize: 12,
+                  fontWeight: 500,
+                  textAnchor:
+                    values.length === 1
+                      ? 'middle'
+                      : index === 0
+                      ? 'start'
+                      : 'end',
+                  dx: values.length === 1 ? 0 : index === 0 ? -3 : 3,
+                })}
+                tickValues={tickValues}
+                strokeWidth={0}
+                tickLineProps={{
+                  stroke: Colors['border-default'].hex(),
+                  strokeWidth: 1,
+                  y2: 6,
+                }}
+                top={yMax}
+              />
+            )}
             <BarStack
               data={distribution.map((value, i) => ({
                 ...value,
@@ -312,22 +339,6 @@ export function Graph({
                 )
               }
             </BarStack>
-            {isBottomAxisDisplayed && (
-              <AxisBottom
-                hideTicks
-                scale={categories}
-                tickLabelProps={() => ({
-                  fill: Colors['text-primary'].hex(),
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  textAnchor: 'middle',
-                })}
-                tickValues={tickValues}
-                strokeWidth={0}
-                top={yMax}
-              />
-            )}
           </Group>
         </svg>
       </div>
