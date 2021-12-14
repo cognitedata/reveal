@@ -13,37 +13,11 @@ import {
   computeBoundingBoxFromVertexAttributes
 } from '../utilities/computeBoundingBoxFromAttributes';
 
-function filterPrimitivesOutsideClipBox(
-  attributesByteValues: Uint8Array,
-  attributes: Map<string, ParsePrimitiveAttribute>,
-  clipBox: THREE.Box3,
-  getBoundsOfElementsCallback: (
-    index: number,
-    elementSize: number,
-    attributeFloatValues: Float32Array,
-    outBox: THREE.Box3
-  ) => void
-): Uint8Array {
-  const elementSize = Array.from(attributes.values()).reduce((a, b) => Math.max(a, b.offset + b.size), 0);
-  const elementCount = attributesByteValues.length / elementSize;
-  const attributeFloatValues = new Float32Array(attributesByteValues.buffer);
+import { filterPrimitivesOutsideClipBox } from './filterPrimitivesCommon';
 
-  const instanceBbox = new THREE.Box3();
-
-  const filteredByteValues = new Uint8Array(attributesByteValues.length);
-  let filteredCount = 0;
-  for (let i = 0; i < elementCount; ++i) {
-    getBoundsOfElementsCallback(i, elementSize, attributeFloatValues, instanceBbox);
-
-    if (clipBox.intersectsBox(instanceBbox)) {
-      const elementValues = attributesByteValues.subarray(i * elementSize, (i + 1) * elementSize);
-      filteredByteValues.set(elementValues, filteredCount * elementSize);
-      filteredCount++;
-    }
-  }
-  return filteredByteValues.slice(0, filteredCount * elementSize);
+function elementSizeFromAttributes(attributes: Map<string, ParsePrimitiveAttribute>): number {
+  return Array.from(attributes.values()).reduce((a, b) => Math.max(a, b.offset + b.size), 0);
 }
-
 export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   attributesByteValues: Uint8Array,
   attributes: Map<string, ParsePrimitiveAttribute>,
@@ -55,14 +29,16 @@ export function filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
   }
   const instanceMatrixAttribute = attributes.get('instanceMatrix');
   assert(instanceMatrixAttribute !== undefined);
+  const elementSize = elementSizeFromAttributes(attributes);
+  const byteOffset = instanceMatrixAttribute.offset;
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
-    attributes,
+    elementSize,
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromInstanceMatrixAttributes(
-        instanceMatrixAttribute,
         attributeFloatValues,
+        byteOffset,
         elementSize,
         index,
         baseBox,
@@ -93,17 +69,18 @@ export function filterPrimitivesOutsideClipBoxByCenterAndRadius(
       radiusAattribute !== undefined &&
       radiusBattribute !== undefined
   );
+  const elementSize = elementSizeFromAttributes(attributes);
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
-    attributes,
+    elementSize,
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromCenterAndRadiusAttributes(
-        centerAattribute,
-        centerBattribute,
-        radiusAattribute,
-        radiusBattribute,
         attributeFloatValues,
+        centerAattribute.offset,
+        centerBattribute.offset,
+        radiusAattribute.offset,
+        radiusBattribute.offset,
         elementSize,
         index,
         outBox
@@ -131,16 +108,17 @@ export function filterPrimitivesOutsideClipBoxByVertices(
       vertex3attribute !== undefined &&
       vertex4attribute !== undefined
   );
+  const elementSize = elementSizeFromAttributes(attributes);
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
-    attributes,
+    elementSize,
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromVertexAttributes(
-        vertex1attribute,
-        vertex2attribute,
-        vertex3attribute,
-        vertex4attribute,
+        vertex1attribute.offset,
+        vertex2attribute.offset,
+        vertex3attribute.offset,
+        vertex4attribute.offset,
         attributeFloatValues,
         elementSize,
         index,
@@ -170,9 +148,10 @@ export function filterPrimitivesOutsideClipBoxByEllipse(
       verticalRadiusAttribute !== undefined &&
       heightAttribute !== undefined
   );
+  const elementSize = elementSizeFromAttributes(attributes);
   return filterPrimitivesOutsideClipBox(
     attributesByteValues,
-    attributes,
+    elementSize,
     geometryClipBox,
     (index, elementSize, attributeFloatValues, outBox) => {
       computeBoundingBoxFromEllipseAttributes(
