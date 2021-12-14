@@ -76,13 +76,23 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
 
       const allSectorsInModel = new Map<number, PrioritizedWantedSector>();
       traverseDepthFirst(model.scene.root, sector => {
-        allSectorsInModel.set(sector.id, toWantedSector(modelIdentifier, model, sector, LevelOfDetail.Discarded, -1));
+        allSectorsInModel.set(
+          sector.id,
+          toWantedSector(modelIdentifier, model, sector, LevelOfDetail.Discarded, -1, model.geometryClipBox)
+        );
         return true;
       });
 
       for (const [sectorId, priority] of sectorIds) {
         const sector = model.scene.getSectorById(sectorId)!;
-        const wantedSector = toWantedSector(modelIdentifier, model, sector, LevelOfDetail.Detailed, priority);
+        const wantedSector = toWantedSector(
+          modelIdentifier,
+          model,
+          sector,
+          LevelOfDetail.Detailed,
+          priority,
+          model.geometryClipBox
+        );
         allSectorsInModel.set(sectorId, wantedSector);
       }
 
@@ -111,12 +121,13 @@ function toWantedSector(
   model: CadModelMetadata,
   sector: SectorMetadata,
   levelOfDetail: LevelOfDetail,
-  priority: number
+  priority: number,
+  geometryClipBox: THREE.Box3 | null
 ): PrioritizedWantedSector {
   const prioritizedSector: PrioritizedWantedSector = {
     modelIdentifier,
     modelBaseUrl: model.modelBaseUrl,
-    geometryClipBox: null,
+    geometryClipBox,
     levelOfDetail,
     metadata: sector,
     priority
