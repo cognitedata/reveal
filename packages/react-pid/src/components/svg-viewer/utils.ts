@@ -49,8 +49,10 @@ export const isInLabelSelection = (
 export const isLabelInInstance = (
   instance: DiagramSymbolInstance,
   id: DiagramInstanceId
-) => {
-  return instance.labels.some((labelInInstance) => labelInInstance.id === id);
+): boolean => {
+  return !!instance.labels?.some(
+    (labelInInstance) => labelInInstance.id === id
+  );
 };
 
 export const isLabelInInstances = (
@@ -62,9 +64,14 @@ export const isLabelInInstances = (
   );
 };
 
-const getInstanceLabelIndex = (instance: DiagramSymbolInstance, id: string) => {
-  return instance.labels.findIndex(
-    (labelOnInstance) => labelOnInstance.id === id
+const getInstanceLabelIndex = (
+  instance: DiagramSymbolInstance,
+  id: string
+): number => {
+  return (
+    instance.labels?.findIndex(
+      (labelOnInstance) => labelOnInstance.id === id
+    ) || -1
   );
 };
 
@@ -120,16 +127,21 @@ export const addOrRemoveLabelToInstance = (
   instances: DiagramSymbolInstance[] | DiagramLineInstance[],
   setter: (arg: DiagramSymbolInstance[] | DiagramLineInstance[]) => void
 ) => {
-  const labelIndex = getInstanceLabelIndex(instance, node.id);
+  const newInstance = instance;
+  if (newInstance.labels === undefined) {
+    newInstance.labels = [];
+  }
+
+  const labelIndex = getInstanceLabelIndex(newInstance, node.id);
   if (labelIndex === -1) {
-    instance.labels.push(pidLabel);
+    newInstance.labels.push(pidLabel);
   } else {
-    instance.labels.splice(labelIndex, 1);
+    newInstance.labels.splice(labelIndex, 1);
   }
   setter(
     instances.map((oldInstance) => {
-      if (oldInstance.pathIds === instance.pathIds) {
-        return instance;
+      if (oldInstance.pathIds === newInstance.pathIds) {
+        return newInstance;
       }
       return oldInstance;
     })

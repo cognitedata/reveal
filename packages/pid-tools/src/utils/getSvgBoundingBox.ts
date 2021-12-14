@@ -1,5 +1,6 @@
-import { PidPath } from 'matcher/InstanceMatcher';
 import { BoundingBox } from 'types';
+
+import { PidPath } from '../pid';
 
 export const getInternalSvgBoundingBox = (
   internalSvgPaths: PidPath[]

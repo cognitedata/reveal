@@ -4,7 +4,7 @@ import {
   DiagramSymbolInstance,
   DiagramLineInstance,
   DiagramConnection,
-  SvgDocument,
+  PidDocument,
   getNoneOverlappingSymbolInstances,
 } from '@cognite/pid-tools';
 
@@ -21,15 +21,15 @@ export const saveSymbolsAsJson = (symbols: DiagramSymbol[]) => {
 };
 
 export const saveInstancesAsJson = (
-  svgDocument: SvgDocument,
+  pidDocument: PidDocument,
   symbols: DiagramSymbol[],
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[],
   connections: DiagramConnection[]
 ) => {
-  const linesWithBBox = getDiagramInstanceOutputFormat(svgDocument, lines);
+  const linesWithBBox = getDiagramInstanceOutputFormat(pidDocument, lines);
   const symbolInstancesWithBBox = getDiagramInstanceOutputFormat(
-    svgDocument,
+    pidDocument,
     symbolInstances
   );
 
@@ -104,7 +104,7 @@ export const loadSymbolsFromJson = (
   jsonData: any,
   setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
   symbols: DiagramSymbol[],
-  svgDocument: SvgDocument,
+  pidDocument: PidDocument,
   setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
   symbolInstances: DiagramSymbolInstance[],
   setLines: (diagramLines: DiagramLineInstance[]) => void,
@@ -120,10 +120,10 @@ export const loadSymbolsFromJson = (
       let allNewSymbolInstances: DiagramSymbolInstance[] = [];
       newSymbols.forEach((newSymbol) => {
         const newSymbolInstances = (
-          svgDocument as SvgDocument
+          pidDocument as PidDocument
         ).findAllInstancesOfSymbol(newSymbol);
         allNewSymbolInstances = getNoneOverlappingSymbolInstances(
-          svgDocument,
+          pidDocument,
           allNewSymbolInstances,
           newSymbolInstances
         );

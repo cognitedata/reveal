@@ -2,21 +2,21 @@ import {
   DiagramInstanceOutputFormat,
   DiagramSymbolInstance,
   getInternalSvgBoundingBox,
-  SvgDocument,
+  PidDocument,
 } from '@cognite/pid-tools';
 
 export const getDiagramInstanceOutputFormat = (
-  svgDocument: SvgDocument,
+  pidDocument: PidDocument,
   diagramInstances: DiagramSymbolInstance[]
 ): DiagramInstanceOutputFormat[] => {
   return diagramInstances.map((diagramInstance) => {
-    const internalSvgPaths = diagramInstance.pathIds.map((pathId: string) =>
-      svgDocument.getInternalPathById(pathId)
+    const pidPaths = diagramInstance.pathIds.map(
+      (pathId: string) => pidDocument.getPidPathById(pathId)!
     );
     return {
       pathIds: diagramInstance.pathIds,
       symbolName: diagramInstance.symbolName,
-      boundingBox: getInternalSvgBoundingBox(internalSvgPaths),
+      boundingBox: getInternalSvgBoundingBox(pidPaths),
       labels: diagramInstance.labels,
     };
   });

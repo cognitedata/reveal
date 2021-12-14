@@ -1,4 +1,4 @@
-import { PidPath } from '../../matcher/InstanceMatcher';
+import { PidPath } from '../../pid';
 import { getInternalSvgBoundingBox } from '../getSvgBoundingBox';
 
 describe('getSvgBoundingBox', () => {

@@ -28,7 +28,7 @@ export interface DiagramSymbol {
 export interface DiagramSymbolInstance {
   symbolName: string;
   pathIds: string[];
-  labels: DiagramLabel[];
+  labels?: DiagramLabel[];
 }
 
 export interface DiagramLineInstance extends DiagramSymbolInstance {

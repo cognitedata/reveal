@@ -1,3 +1,2 @@
-export { SvgDocument } from './SvgDocument';
+export { findAllInstancesOfSymbol } from './findAllInstancesOfSymbol';
 export { Point, PathSegment, LineSegment, CurveSegment } from './PathSegments';
-export { PidPath } from './InstanceMatcher';

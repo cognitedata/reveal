@@ -5,7 +5,7 @@ import {
   DiagramLineInstance,
   DiagramSymbolInstance,
   getDiagramInstanceId,
-  SvgDocument,
+  PidDocument,
   SVG_ID,
   getDiagramInstanceByPathId,
 } from '@cognite/pid-tools';
@@ -42,8 +42,8 @@ interface SvgViewerProps {
   setConnections: (arg: DiagramConnection[]) => void;
   labelSelection: DiagramInstanceId | null;
   setLabelSelection: (arg: DiagramInstanceId | null) => void;
-  svgDocument: SvgDocument | undefined;
-  setSvgDocument: (arg: SvgDocument) => void;
+  pidDocument: PidDocument | undefined;
+  setPidDocument: (arg: PidDocument) => void;
 }
 
 export const SvgViewer: React.FC<SvgViewerProps> = ({
@@ -59,8 +59,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
   setConnectionSelection,
   connections,
   setConnections,
-  svgDocument,
-  setSvgDocument,
+  pidDocument,
+  setPidDocument,
   labelSelection,
   setLabelSelection,
 }) => {
@@ -243,7 +243,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         if (!labelSelection) {
           return;
         }
-        const pidLabel = svgDocument?.getPidTspanById(node.id);
+        const pidLabel = pidDocument?.getPidTspanById(node.id);
         if (!pidLabel) {
           return;
         }
@@ -318,7 +318,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
 
     const allSVGElements: SVGElement[] = [];
     applyToLeafSVGElements(svg, (node) => {
-      if (svgDocument === undefined) {
+      if (pidDocument === undefined) {
         allSVGElements.push(node);
       }
 
@@ -345,8 +345,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
       });
     });
 
-    if (svgDocument === undefined) {
-      setSvgDocument(SvgDocument.fromSVGElements(allSVGElements));
+    if (pidDocument === undefined) {
+      setPidDocument(PidDocument.fromSVGElements(allSVGElements));
     }
   };
   /* eslint-enable no-param-reassign */

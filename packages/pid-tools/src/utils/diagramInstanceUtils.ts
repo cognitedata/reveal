@@ -1,4 +1,4 @@
-import { SvgDocument } from '../matcher';
+import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
   DiagramInstanceId,
@@ -59,13 +59,13 @@ export const hasOverlappingPathIds = (
 };
 
 const getPathSegmentLengthInSymbolInstance = (
-  svgDocument: SvgDocument,
+  pidDocument: PidDocument,
   diagramSymbolInstance1: DiagramSymbolInstance
 ) => {
   let count = 0;
   for (let i = 0; i < diagramSymbolInstance1.pathIds.length; i++) {
     const pathId = diagramSymbolInstance1.pathIds[i];
-    const segmentList = svgDocument.getInternalPathById(pathId)?.segmentList;
+    const segmentList = pidDocument.getPidPathById(pathId)?.segmentList;
     if (segmentList !== undefined) {
       count += segmentList.length;
     }
@@ -74,7 +74,7 @@ const getPathSegmentLengthInSymbolInstance = (
 };
 
 export const getLeastComplexDiagramSymbol = (
-  svgDocument: SvgDocument,
+  pidDocument: PidDocument,
   diagramSymbolInstance1: DiagramSymbolInstance,
   diagramSymbolInstance2: DiagramSymbolInstance
 ) => {
@@ -83,12 +83,12 @@ export const getLeastComplexDiagramSymbol = (
   // to be able to determine that circle with square is the bigger/more complicated object.
 
   const count1 = getPathSegmentLengthInSymbolInstance(
-    svgDocument,
+    pidDocument,
     diagramSymbolInstance1
   );
 
   const count2 = getPathSegmentLengthInSymbolInstance(
-    svgDocument,
+    pidDocument,
     diagramSymbolInstance2
   );
 
@@ -96,7 +96,7 @@ export const getLeastComplexDiagramSymbol = (
 };
 
 export const getNoneOverlappingSymbolInstances = (
-  svgDocument: SvgDocument,
+  pidDocument: PidDocument,
   symbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
 ) => {
@@ -116,7 +116,7 @@ export const getNoneOverlappingSymbolInstances = (
       if (!pathIdOverlap) continue;
 
       const objectToRemove = getLeastComplexDiagramSymbol(
-        svgDocument,
+        pidDocument,
         potentialInstance,
         oldInstance
       );

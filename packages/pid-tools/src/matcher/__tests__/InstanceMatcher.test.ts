@@ -1,39 +1,163 @@
-import { newMatcher, MatchResult, PidPath } from '../InstanceMatcher';
+import {
+  MatchResult,
+  getMatchResultWithReferences,
+  InstanceMatcher,
+} from '../InstanceMatcher';
+import { svgCommandToSegments } from '../svgPathParser';
+import { PidPath } from '../../pid';
 
-describe('symbol-matching', () => {
-  test('connectionSymbol from same file', () => {
-    const connectionSymbol1 =
-      'M 1921,4954 V 5385 L 1875,5447 L 1829,5385M 1921,5247 H 1829M 1829,4954 V 5385M 1921,4954 L 1875,4985 L 1829,4954';
-    const connectionSymbol2 =
-      'M 1580,4954 V 5385 L 1534,5447 L 1488,5385M 1580,5247 H 1488M 1488,4954 V 5385M 1580,4954 L 1534,4985 L 1488,4954';
+describe('isSimilarWithReferences', () => {
+  test('simple L shaped paths (same scale)', () => {
+    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0');
+    const path2 = svgCommandToSegments('M 100,100 l 0,10 l 10,0');
 
-    const matcher = newMatcher(connectionSymbol1);
-    const potentialMatch = [PidPath.fromPathCommand(connectionSymbol2)];
+    expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 0, path2, 1)).toEqual(
+      MatchResult.NotMatch
+    );
+  });
+
+  test('simple L shaped paths (different scale)', () => {
+    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0');
+    const path2 = svgCommandToSegments('M 100,100 l 0,20 l 20,0');
+
+    expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 0, path2, 1)).toEqual(
+      MatchResult.NotMatch
+    );
+  });
+
+  test('simple L shaped paths (different scale & error margin)', () => {
+    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0');
+    const path2SmallError = svgCommandToSegments('M 100,100 l 0,22 l 20,0');
+
+    expect(getMatchResultWithReferences(path1, 0, path2SmallError, 0)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 1, path2SmallError, 1)).toEqual(
+      MatchResult.Match
+    );
+
+    const path2BigError = svgCommandToSegments('M 100,100 l 0,26 l 20,0');
+
+    expect(getMatchResultWithReferences(path1, 0, path2BigError, 0)).toEqual(
+      MatchResult.NotMatch
+    );
+    expect(getMatchResultWithReferences(path1, 1, path2BigError, 1)).toEqual(
+      MatchResult.NotMatch
+    );
+  });
+
+  test('simple paths sub match (same scale)', () => {
+    const path1 = svgCommandToSegments('M 0,0 l 0,10 l 10,0 l 0,10');
+    const path2 = svgCommandToSegments('M 100,100 l 0,10 l 10,0');
+
+    expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
+      MatchResult.SubMatch
+    );
+    expect(getMatchResultWithReferences(path1, 1, path2, 1)).toEqual(
+      MatchResult.SubMatch
+    );
+    expect(getMatchResultWithReferences(path1, 2, path2, 1)).toEqual(
+      MatchResult.NotMatch
+    );
+  });
+
+  test('simple paths ending with Z', () => {
+    const closedValve1 = 'M 0,0 l -31,16 l 31,15 z';
+    const closedValve2 = 'M 0,0 l -31,-16 l 31,-16 z';
+
+    const path1 = svgCommandToSegments(closedValve1);
+    const path2 = svgCommandToSegments(closedValve2);
+
+    // path1 index -> path2 index
+    //           0 -> 1
+    //           1 -> 0
+    //           2 -> 2
+    expect(getMatchResultWithReferences(path1, 2, path2, 2)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 0, path2, 1)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 1, path2, 0)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 0, path2, 0)).toEqual(
+      MatchResult.NotMatch
+    );
+    expect(getMatchResultWithReferences(path1, 1, path2, 1)).toEqual(
+      MatchResult.NotMatch
+    );
+  });
+
+  test('closed valves', () => {
+    const closedValve1 =
+      'M 300,250 l -31,16 l 31,15 Z m -62,31 l 31,-15 l -31,-16 Z';
+    const closedValve2 =
+      'M 450,250 l 31,-15 l -31,-16 Z m 62,-31 l -31,16 l 31,16 Z';
+    const path1 = svgCommandToSegments(closedValve1);
+    const path2 = svgCommandToSegments(closedValve2);
+
+    // path1 index -> path2 index
+    //           0 -> 3
+    //           1 -> 4
+    //           2 -> 5
+    //           3 -> 0
+    //           4 -> 1
+    //           5 -> 2
+    expect(getMatchResultWithReferences(path1, 0, path2, 3)).toEqual(
+      MatchResult.Match
+    );
+    expect(getMatchResultWithReferences(path1, 1, path2, 4)).toEqual(
+      MatchResult.Match
+    );
+  });
+});
+
+describe('matches', () => {
+  test('square match', () => {
+    const square1 = 'M 100,100 h 100 v 100 h -100 v -100';
+    const square2 = 'M 900,900 h 100 v 100 h -100 v -100';
+
+    const matcher = InstanceMatcher.fromPathCommand(square1);
+    const potentialMatch = [PidPath.fromPathCommand(square2)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
   });
 
-  test('circle and square', () => {
+  test('circle and square not match', () => {
     const squareSymbol = 'M 2782,4156 V 4033 H 2906M 2906,4033 V 4156 H 2782';
     const circleSymbol =
       'M 2405,4094.5 C 2405,4128.4653 2377.4656,4156 2343.5,4156 C 2309.5344,4156 2282,4128.4653 2282,4094.5 C 2282,4060.5344 2309.5344,4033 2343.5,4033 C 2377.4656,4033 2405,4060.5344 2405,4094.5';
 
-    const matcher = newMatcher(squareSymbol);
+    const matcher = InstanceMatcher.fromPathCommand(squareSymbol);
     const potentialMatch = [PidPath.fromPathCommand(circleSymbol)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
   });
 
-  test('paths ending with Z', () => {
-    const closedValve =
-      'M 3111,2503 L 3080,2519 L 3111,2534 Z M 3049,2534 L 3080,2519 L 3049,2503 Z';
+  test('closed valve match', () => {
+    const closedValve1 =
+      'M 300,250 l -31,16 l 31,15 Z m -62,31 l 31,-15 l -31,-16 Z';
     const closedValve2 =
-      'M 4318,2657 L 4349,2642 L 4318,2626 Z M 4380,2626 L 4349,2642 L 4380,2657 Z';
+      'M 450,250 l 31,-15 l -31,-16 Z m 62,-31 l -31,16 l 31,16 Z';
 
-    const matcher = newMatcher(closedValve);
+    // path1 index -> path2 index
+    //           0 -> 5
+    //           1 -> 3
+    //           2 -> 4
+    //           3 -> 1
+    //           4 -> 2
+    //           5 -> 0
+    const matcher = InstanceMatcher.fromPathCommand(closedValve1);
     const potentialMatch = [PidPath.fromPathCommand(closedValve2)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
   });
 
-  test('file link', () => {
+  test('file link match', () => {
     const fileLink = [
       'M 737,2842 L 706,2889 L 737,2935 H 305',
       'M 305,2842 L 243,2889 L 305,2935',
@@ -47,12 +171,12 @@ describe('symbol-matching', () => {
       'M 7842,3952 V 4044',
     ].join(' ');
 
-    const matcher = newMatcher(fileLink);
+    const matcher = InstanceMatcher.fromPathCommand(fileLink);
     const potentialMatch = [PidPath.fromPathCommand(fileLink2)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.Match);
   });
 
-  test('file link different orientations', () => {
+  test('file link different orientations not match', () => {
     const fileLinkUp = [
       'M 1488,4954 V 5385',
       'M 1580,4954 L 1534,4985 L 1488,4954',
@@ -66,7 +190,7 @@ describe('symbol-matching', () => {
       'M 3557,5247 H 3465',
     ].join(' ');
 
-    const matcher = newMatcher(fileLinkUp);
+    const matcher = InstanceMatcher.fromPathCommand(fileLinkUp);
     const potentialMatch = [PidPath.fromPathCommand(fileLinkDown)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
   });
@@ -77,54 +201,10 @@ describe('symbol-matching', () => {
       'M 4380,2626 L 4349,2642 L 4380,2657 Z',
     ].join(' ');
 
-    const closedValveSubMatch = ['M 4318,2657 L 4349,2642 L 4318,2626 Z'].join(
-      ' '
-    );
+    const closedValveSubMatch = 'M 4318,2657 L 4349,2642 L 4318,2626 Z';
 
-    const matcher = newMatcher(closedValve);
+    const matcher = InstanceMatcher.fromPathCommand(closedValve);
     const potentialMatch = [PidPath.fromPathCommand(closedValveSubMatch)];
     expect(matcher.matches(potentialMatch)).toEqual(MatchResult.SubMatch);
-  });
-});
-
-describe('isTooSpreadOut', () => {
-  test('simple lines too spread out', () => {
-    // Simple too spread out
-    const symbol = ['M 0,0 V 100', 'M 50,0 V 100', 'M 100,0 V 100'].join(' ');
-    const matcher = newMatcher(symbol);
-
-    const spreadOutSymbol = ['M 0,0 V 100', 'M 121,0 V 100'].join(' ');
-    const potentialMatch = PidPath.fromPathCommand(spreadOutSymbol);
-    expect(matcher.isTooSpreadOut(potentialMatch.segmentList)).toEqual(true);
-  });
-
-  test('simple lines not too spread out', () => {
-    // Simple too spread out
-    const symbol = ['M 0,0 V 100', 'M 50,0 V 100', 'M 100,0 V 100'].join(' ');
-    const matcher = newMatcher(symbol);
-
-    const notSpreadOutSymbol = ['M 0,0 V 100', 'M 79,0 V 100'].join(' ');
-    const potentialMatch = PidPath.fromPathCommand(notSpreadOutSymbol);
-    expect(matcher.isTooSpreadOut(potentialMatch.segmentList)).toEqual(false);
-  });
-
-  test('instrument too spread out (wrong placement of circle)', () => {
-    const instrument = [
-      'M 2520,4094 H 2643',
-      'M 2643,4094.5 C 2643,4128.4653 2615.4656,4156 2581.5,4156 C 2547.5344,4156 2520,4128.4653 2520,4094.5 C 2520,4060.5344 2547.5344,4033 2581.5,4033 C 2615.4656,4033 2643,4060.5344 2643,4094.5',
-      'M 2520,4156 V 4033 H 2643',
-      'M 2643,4033 V 4156 H 2520',
-    ].join(' ');
-
-    const instrumentWrongCircle = [
-      'M 3881,2704.5 C 3881,2738.4656 3853.4656,2766 3819.5,2766 C 3785.5344,2766 3758,2738.4656 3758,2704.5 C 3758,2670.5344 3785.5344,2643 3819.5,2643 C 3853.4656,2643 3881,2670.5344 3881,2704.5',
-      'M 3973,3135 V 3012 H 4097',
-      'M 3973,3074 H 4097',
-      'M 4097,3012 V 3135 H 3973',
-    ].join('');
-
-    const matcher = newMatcher(instrument);
-    const potentialMatch = [PidPath.fromPathCommand(instrumentWrongCircle)];
-    expect(matcher.matches(potentialMatch)).toEqual(MatchResult.NotMatch);
   });
 });

@@ -37,11 +37,15 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//svg-parser",
     "@npm//svg-path-parser",
 ]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = ["@npm//@types/svg-path-parser"]
+TYPE_DEPENDENCIES = [
+    "@npm//@types/svg-parser",
+    "@npm//@types/svg-path-parser",
+]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
@@ -52,12 +56,12 @@ DEV_DEPENDENCIES = [
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "Instance": "dist/Instance",
-    "InstanceMatcher": "dist/InstanceMatcher",
-    "PathSegments": "dist/PathSegments",
-    "__tests__": "dist/__tests__",
+    "constants": "dist/constants",
     "index": "dist/index",
-    "svgUtils": "dist/svgUtils",
+    "matcher": "dist/matcher",
+    "pid": "dist/pid",
+    "types": "dist/types",
+    "utils": "dist/utils",
 }
 
 ### end of auto-generated helpers ###

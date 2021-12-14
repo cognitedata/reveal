@@ -1,7 +1,8 @@
-import { BoundingBox } from '../types';
+/* eslint-disable no-continue */
+import { PidPath } from '../pid/PidPath';
 
-import { approxeqrel, PathSegment, Point } from './PathSegments';
-import { segmentsToSVGCommand, svgCommandToSegments } from './svgPathParser';
+import { PathSegment } from './PathSegments';
+import { svgCommandToSegments } from './svgPathParser';
 
 export enum MatchResult {
   Match,
@@ -9,173 +10,116 @@ export enum MatchResult {
   NotMatch,
 }
 
-const errorMargin = 0.2;
-
-const calculateMidPoint = (pathSegments: PathSegment[]) => {
-  let sumX = 0;
-  let sumY = 0;
-  pathSegments.forEach((pathSegment) => {
-    const { midPoint } = pathSegment;
-    sumX += midPoint.x;
-    sumY += midPoint.y;
-  });
-
-  const numSegment = pathSegments.length;
-  return new Point(sumX / numSegment, sumY / numSegment);
+const getMaxLengthIndex = (pathSegments: PathSegment[]): number => {
+  let maxLength = 0;
+  let maxLengthIndex = 0;
+  for (let i = 0; i < pathSegments.length; i++) {
+    if (pathSegments[i].length > maxLength) {
+      maxLength = pathSegments[i].length;
+      maxLengthIndex = i;
+    }
+  }
+  return maxLengthIndex;
 };
 
-const midPointDistances = (pathSgements: PathSegment[]) => {
+const getMidPointDistances = (pathSegments: PathSegment[]) => {
   const localMidPointDistances: number[] = [];
-  for (let i = 0; i < pathSgements.length - 1; ++i) {
-    const midPointI = pathSgements[i].midPoint;
-    for (let j = i + 1; j < pathSgements.length; ++j) {
-      const midPointJ = pathSgements[j].midPoint;
+  for (let i = 0; i < pathSegments.length - 1; ++i) {
+    const midPointI = pathSegments[i].midPoint;
+    for (let j = i + 1; j < pathSegments.length; ++j) {
+      const midPointJ = pathSegments[j].midPoint;
       localMidPointDistances.push(midPointI.distance(midPointJ));
     }
   }
   return localMidPointDistances.sort((a, b) => a - b);
 };
 
-export class PidPath {
-  segmentList: PathSegment[];
-  midPoint: Point;
-  pathId: string;
-  constructor(
-    segmentList: PathSegment[],
-    pathId: string,
-    midPoint: undefined | Point = undefined
-  ) {
-    this.segmentList = segmentList;
-
-    this.pathId = pathId;
-    if (midPoint !== undefined) {
-      this.midPoint = midPoint;
-    } else {
-      this.midPoint = calculateMidPoint(this.segmentList);
-    }
-  }
-  serializeToPathCommands(): string {
-    return segmentsToSVGCommand(this.segmentList);
-  }
-
-  static fromSVGElement(svgElement: SVGPathElement) {
-    return PidPath.fromPathCommand(
-      svgElement.getAttribute('d') as string,
-      svgElement.id
-    );
-  }
-
-  static fromPathCommand(pathCommand: string, pathId = '') {
-    return new PidPath(svgCommandToSegments(pathCommand, pathId), pathId);
-  }
-}
-
-export class PidTspan {
-  id: string;
-  boundingBox: BoundingBox;
-  text: string;
-
-  constructor(id: string, text: string, boundingBox: BoundingBox) {
-    this.id = id;
-    this.boundingBox = boundingBox;
-    this.text = text;
-  }
-
-  static fromSVGTSpan(tSpan: SVGTSpanElement) {
-    const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
-    const boundingBox = {
-      x: bBox.x,
-      y: bBox.y,
-      width: bBox.width,
-      height: bBox.height,
-    };
-    return new PidTspan(tSpan.id, tSpan.innerHTML, boundingBox);
-  }
-}
+const getMaxMidPointDistance = (pathSegments: PathSegment[]) => {
+  const midPointDistances = getMidPointDistances(pathSegments);
+  return midPointDistances[midPointDistances.length - 1];
+};
 
 export class InstanceMatcher {
   segmentList: PathSegment[];
-  midPointDistances: number[];
   maxMidPointDistance: number;
   constructor(segmentList: PathSegment[]) {
     this.segmentList = segmentList;
-    this.midPointDistances = midPointDistances(segmentList);
-    this.maxMidPointDistance =
-      this.midPointDistances[this.midPointDistances.length - 1];
+    this.maxMidPointDistance = getMaxMidPointDistance(segmentList);
   }
 
-  isTooSpreadOut(pathSegments: PathSegment[]): boolean {
-    const otherMidDistances = midPointDistances(pathSegments);
-
-    if (this.midPointDistances.length === otherMidDistances.length) {
-      for (let i = 0; i < this.midPointDistances.length; ++i) {
-        if (
-          !approxeqrel(
-            this.midPointDistances[i],
-            otherMidDistances[i],
-            errorMargin
-          )
-        ) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    const otherMaxDistance = otherMidDistances[otherMidDistances.length - 1];
-    return (1 + errorMargin) * this.maxMidPointDistance < otherMaxDistance;
+  static fromPathCommand(pathCommand: string) {
+    return new InstanceMatcher(svgCommandToSegments(pathCommand));
   }
 
   matches(other: PidPath[]): MatchResult {
-    const combinedPathSegments: PathSegment[] = [];
+    const otherPathSegments: PathSegment[] = [];
     other.forEach((svgPath) => {
-      svgPath.segmentList.forEach((pathSegment) => {
-        combinedPathSegments.push(pathSegment);
-      });
+      otherPathSegments.push(...svgPath.segmentList);
     });
 
-    if (
-      combinedPathSegments.length > this.segmentList.length ||
-      this.isTooSpreadOut(combinedPathSegments)
-    ) {
+    if (this.segmentList.length < otherPathSegments.length) {
       return MatchResult.NotMatch;
     }
 
-    // this does not take orientation of the pathSegments into account
-    const matchedSegments = new Set<number>();
+    const potMatchIndex = getMaxLengthIndex(otherPathSegments);
+    const potMatchReference = otherPathSegments[potMatchIndex];
+    for (let i = 0; i < this.segmentList.length; i++) {
+      if (!potMatchReference.isSimilar(this.segmentList[i])) continue;
 
-    for (let i = 0; i < combinedPathSegments.length; i++) {
-      const otherPath = combinedPathSegments[i];
-      let foundMatch = false;
-      for (let j = 0; j < this.segmentList.length; j++) {
-        if (matchedSegments.has(j)) {
-          continue; // eslint-disable-line no-continue
-        }
-        const myPath = this.segmentList[j];
-        if (myPath.isSimilar(otherPath)) {
-          matchedSegments.add(j);
-          foundMatch = true;
-          break;
-        }
+      const matchResult = getMatchResultWithReferences(
+        this.segmentList,
+        i,
+        otherPathSegments,
+        potMatchIndex
+      );
+
+      if (matchResult !== MatchResult.NotMatch) {
+        return matchResult;
       }
-
-      if (!foundMatch) {
-        return MatchResult.NotMatch;
-      }
-    }
-
-    const numMathces = matchedSegments.size;
-    if (numMathces === this.segmentList.length) {
-      return MatchResult.Match;
-    }
-
-    if (numMathces > 0) {
-      return MatchResult.SubMatch;
     }
     return MatchResult.NotMatch;
   }
 }
 
-export const newMatcher = (path: string) => {
-  return new InstanceMatcher(svgCommandToSegments(path));
+const distanceThreshold = 15;
+export const getMatchResultWithReferences = (
+  pathSegments: PathSegment[],
+  pathRefIndex: number,
+  potMatchSegments: PathSegment[],
+  potRefIndex: number
+) => {
+  const pathRefOrigin = pathSegments[pathRefIndex].midPoint;
+  const pathRefScale = 100 / pathSegments[pathRefIndex].length;
+  const potRefOrigin = potMatchSegments[potRefIndex].midPoint;
+  const potRefScale = 100 / potMatchSegments[potRefIndex].length;
+
+  const matchedPathSegments = pathSegments.map(() => false);
+  for (let i = 0; i < potMatchSegments.length; i++) {
+    let minDistance = Infinity;
+    let minDistanceIndex = -1;
+    for (let j = 0; j < pathSegments.length; j++) {
+      if (matchedPathSegments[j]) continue;
+      const distance = potMatchSegments[i].getTranslationAndScaleDistance(
+        potRefOrigin,
+        potRefScale,
+        pathSegments[j],
+        pathRefOrigin,
+        pathRefScale
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        minDistanceIndex = j;
+      }
+    }
+    if (minDistance >= distanceThreshold) {
+      return MatchResult.NotMatch;
+    }
+    matchedPathSegments[minDistanceIndex] = true;
+  }
+
+  // A match was found for all the potential match path segments
+  if (potMatchSegments.length === pathSegments.length) {
+    return MatchResult.Match;
+  }
+  return MatchResult.SubMatch;
 };

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {
-  SvgDocument,
+  PidDocument,
   SvgPath,
   DiagramSymbol,
   DiagramLineInstance,
@@ -27,9 +27,9 @@ import {
   getSymbolByName,
 } from './utils/symbolUtils';
 
-let svgDocument: SvgDocument | undefined;
-const setSvgDocument = (svgDoc: SvgDocument) => {
-  svgDocument = svgDoc;
+let pidDocument: PidDocument | undefined;
+const setPidDocument = (pidDoc: PidDocument) => {
+  pidDocument = pidDoc;
 };
 
 export const ReactPid: React.FC = () => {
@@ -60,7 +60,7 @@ export const ReactPid: React.FC = () => {
   };
 
   const loadSymbolsAsJson = (jsonData: any) => {
-    if (svgDocument === undefined) {
+    if (pidDocument === undefined) {
       return;
     }
 
@@ -68,7 +68,7 @@ export const ReactPid: React.FC = () => {
       jsonData,
       setSymbols,
       symbols,
-      svgDocument,
+      pidDocument,
       setSymbolInstances,
       symbolInstances,
       setLines,
@@ -79,12 +79,12 @@ export const ReactPid: React.FC = () => {
   };
 
   const saveGraphAsJson = () => {
-    if (svgDocument === undefined) {
+    if (pidDocument === undefined) {
       return;
     }
 
     saveInstancesAsJson(
-      svgDocument,
+      pidDocument,
       symbols,
       lines,
       symbolInstances,
@@ -115,17 +115,19 @@ export const ReactPid: React.FC = () => {
     return diagramSymbol;
   };
 
-  const createSvgRepresentation = (pathIds: string[]) => {
+  const createSvgRepresentation = (
+    pidDocument: PidDocument,
+    pathIds: string[]
+  ) => {
     const newSvgRepresentation = {} as SvgRepresentation;
 
-    const internalSvgPaths = pathIds.map((pathId) =>
-      svgDocument?.getInternalPathById(pathId)
+    const pidPaths = pathIds.map(
+      (pathId) => pidDocument.getPidPathById(pathId)!
     );
 
-    newSvgRepresentation.boundingBox =
-      getInternalSvgBoundingBox(internalSvgPaths);
+    newSvgRepresentation.boundingBox = getInternalSvgBoundingBox(pidPaths);
 
-    newSvgRepresentation.svgPaths = internalSvgPaths.map(
+    newSvgRepresentation.svgPaths = pidPaths.map(
       (internalSvgPath) =>
         ({
           svgCommands: internalSvgPath?.serializeToPathCommands(),
@@ -151,7 +153,7 @@ export const ReactPid: React.FC = () => {
   };
 
   const saveSymbol = (symbolName: string, selection: SVGElement[]) => {
-    if (svgDocument === undefined) {
+    if (pidDocument === undefined) {
       return;
     }
 
@@ -165,14 +167,14 @@ export const ReactPid: React.FC = () => {
     }
 
     const pathIds = selection.map((svgElement) => svgElement.id);
-    const newSvgRepresentation = createSvgRepresentation(pathIds);
+    const newSvgRepresentation = createSvgRepresentation(pidDocument, pathIds);
     const newSymbol = setOrUpdateSymbol(symbolName, newSvgRepresentation);
 
     setSelection([]);
 
-    const newSymbolInstances = svgDocument.findAllInstancesOfSymbol(newSymbol);
+    const newSymbolInstances = pidDocument.findAllInstancesOfSymbol(newSymbol);
     const prunedInstances = getNoneOverlappingSymbolInstances(
-      svgDocument,
+      pidDocument,
       symbolInstances,
       newSymbolInstances
     );
@@ -233,8 +235,8 @@ export const ReactPid: React.FC = () => {
               setConnectionSelection={setConnectionSelection}
               connections={connections}
               setConnections={setConnections}
-              svgDocument={svgDocument}
-              setSvgDocument={setSvgDocument}
+              pidDocument={pidDocument}
+              setPidDocument={setPidDocument}
               labelSelection={labelSelection}
               setLabelSelection={setLabelSelection}
             />

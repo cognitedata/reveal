@@ -110,18 +110,48 @@ export const svgCommandToSegments = (
   return getSegments(commands, pathId);
 };
 
-export const segmentsToSVGCommand = (pathSegments: PathSegment[]) => {
+export const segmentsToSVGCommand = (
+  pathSegments: PathSegment[],
+  toFixed: null | number = null
+) => {
   const newPathList: string[] = [];
 
-  pathSegments.forEach((pathSegment) => {
+  const fmtFloat = (n: number) => {
+    if (toFixed === null) return n;
+    return n.toFixed(toFixed);
+  };
+
+  pathSegments.forEach((pathSegment, index) => {
     if (pathSegment instanceof LineSegment) {
       pathSegment as LineSegment;
-      newPathList.push(`M ${pathSegment.start.x} ${pathSegment.start.y}`);
-      newPathList.push(`L ${pathSegment.stop.x} ${pathSegment.stop.y}`);
+      if (
+        index === 0 ||
+        pathSegments[index - 1].stop.distance(pathSegments[index].start) !== 0
+      ) {
+        newPathList.push(
+          `M ${fmtFloat(pathSegment.start.x)} ${fmtFloat(pathSegment.start.y)}`
+        );
+      }
+
+      const dx = pathSegment.stop.x - pathSegment.start.x;
+      const dy = pathSegment.stop.y - pathSegment.start.y;
+      if (dy === 0) {
+        newPathList.push(`h ${fmtFloat(dx)}`);
+      } else if (dx === 0) {
+        newPathList.push(`v ${fmtFloat(dy)}`);
+      } else {
+        newPathList.push(`l ${fmtFloat(dx)} ${fmtFloat(dy)}`);
+      }
     } else if (pathSegment instanceof CurveSegment) {
-      newPathList.push(`M ${pathSegment.start.x} ${pathSegment.start.y}`);
       newPathList.push(
-        `C ${pathSegment.controlPoint1.x} ${pathSegment.controlPoint1.y}, ${pathSegment.controlPoint2.x} ${pathSegment.controlPoint2.y}, ${pathSegment.stop.x} ${pathSegment.stop.y}`
+        `M ${fmtFloat(pathSegment.start.x)} ${fmtFloat(pathSegment.start.y)}`
+      );
+      newPathList.push(
+        `C ${fmtFloat(pathSegment.controlPoint1.x)} ${fmtFloat(
+          pathSegment.controlPoint1.y
+        )}, ${fmtFloat(pathSegment.controlPoint2.x)} ${fmtFloat(
+          pathSegment.controlPoint2.y
+        )}, ${fmtFloat(pathSegment.stop.x)} ${fmtFloat(pathSegment.stop.y)}`
       );
     }
   });

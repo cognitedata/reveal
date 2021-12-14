@@ -53,6 +53,12 @@ export class Point {
   average(other: Point) {
     return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
   }
+
+  translateAndScale(translatePoint: Point, scale: number) {
+    const newX = scale * (this.x - translatePoint.x);
+    const newY = scale * (this.y - translatePoint.y);
+    return new Point(newX, newY);
+  }
 }
 const getBoundingBox = (startPoint: Point, stopPoint: Point) => {
   const minX = Math.min(startPoint.x, stopPoint.x);
@@ -82,6 +88,35 @@ export abstract class PathSegment {
   abstract get midPoint(): Point;
   abstract get length(): number;
   abstract get boundingBox(): BoundingBox;
+
+  getTranslationAndScaleDistance(
+    thisOrigin: Point,
+    thisScale: number,
+    other: PathSegment,
+    otherOrigin: Point,
+    otherScale: number
+  ): number {
+    if (this.pathType !== other.pathType) return Infinity;
+
+    const thisStart = this.start.translateAndScale(thisOrigin, thisScale);
+    const thisStop = this.stop.translateAndScale(thisOrigin, thisScale);
+    const otherStart = other.start.translateAndScale(otherOrigin, otherScale);
+    const otherStop = other.stop.translateAndScale(otherOrigin, otherScale);
+
+    const sameDistance =
+      thisStart.distance(otherStart) + thisStop.distance(otherStop);
+    const oppositeDistance =
+      thisStart.distance(otherStop) + thisStop.distance(otherStart);
+    return Math.min(sameDistance, oppositeDistance);
+  }
+
+  get angle() {
+    const dy = this.stop.y - this.start.y;
+    const dx = this.stop.x - this.start.x;
+    let theta = Math.atan2(dy, dx);
+    theta *= 180 / Math.PI; // rads to degs
+    return theta;
+  }
 }
 
 export class LineSegment extends PathSegment {
@@ -100,6 +135,7 @@ export class LineSegment extends PathSegment {
 
     return approxeq(thisDx, otherDx) && approxeq(thisDy, otherDy);
   }
+
   isEqual(other: PathSegment): boolean {
     if (this.pathType !== other.pathType) return false;
     return (
@@ -114,14 +150,6 @@ export class LineSegment extends PathSegment {
 
   get length() {
     return this.start.distance(this.stop);
-  }
-
-  get angle() {
-    const dy = this.stop.y - this.start.y;
-    const dx = this.stop.x - this.start.x;
-    let theta = Math.atan2(dy, dx);
-    theta *= 180 / Math.PI; // rads to degs
-    return theta;
   }
 
   get boundingBox() {
