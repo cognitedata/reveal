@@ -208,13 +208,8 @@ export const DocumentResultTable: React.FC = () => {
           dispatch(toggleOtherGeo(row.original.id, row.original.geolocation));
         }
         if (nextState) {
-          // mark for delete
-          dispatch(documentSearchActions.addToPreviewedEntity(row.original));
           dispatch(documentSearchActions.selectDocumentIds([row.original.id]));
         } else {
-          dispatch(
-            documentSearchActions.removeFromPreviewedEntity(row.original)
-          );
           dispatch(
             documentSearchActions.unselectDocumentIds([row.original.id])
           );
@@ -226,17 +221,11 @@ export const DocumentResultTable: React.FC = () => {
 
   const handleRowsSelect = useDeepCallback(
     (selected: boolean) => {
-      batch(() => {
-        // mark for delete
-        dispatch(
-          documentSearchActions.setPreviewedEntities(selected ? data : [])
-        );
-        if (selected) {
-          dispatch(documentSearchActions.selectDocumentIds(documentIds));
-        } else {
-          dispatch(documentSearchActions.unselectDocumentIds(documentIds));
-        }
-      });
+      if (selected) {
+        dispatch(documentSearchActions.selectDocumentIds(documentIds));
+      } else {
+        dispatch(documentSearchActions.unselectDocumentIds(documentIds));
+      }
     },
     [documentIds]
   );

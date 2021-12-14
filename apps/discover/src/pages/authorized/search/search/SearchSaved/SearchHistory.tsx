@@ -65,17 +65,9 @@ export const SearchHistory: React.FC = () => {
     }, 1000);
   };
 
-  //   const debounceInputChange = useDebounce((newValue: string) => {
-  //     // INFO: this was dispatching an empty search after the input was focused out. I think that is unnecessary so I added this check here
-  //     if (newValue !== '') {
-  //     //   dispatch(documentSearchActions.getTypeahead(newValue));
-  //     }
-  //   }, 500);
-
   const handleSearchInput = (e: any, { action }: any) => {
     // Shouldn't update input value on menu close if still focussed on input
     if (action !== 'menu-close') {
-      //   debounceInputChange(e);
       setFastValue(e);
     }
   };

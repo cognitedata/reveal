@@ -53,16 +53,8 @@ export const getInitialStore: () => PartialStoreState = () => {
     feedback: { ...feedbackState },
     seismicSearch: { ...seismicState },
     map: { ...mapState },
-    documentSearch: {
-      ...documentSearchState,
-      result: {
-        ...documentSearchState.result,
-        aggregates: [],
-      },
-    },
-    search: {
-      ...searchState,
-    },
+    documentSearch: { ...documentSearchState },
+    search: { ...searchState },
     wellSearch: { ...wellState },
     user: { ...userState, user: { id: '1' } },
     sidebar: getMockSidebarState(),

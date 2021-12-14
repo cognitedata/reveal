@@ -24,22 +24,4 @@ describe('useAnythingHasSearched hook', () => {
     const view = await renderHookWithStore(store);
     expect(view).toBeTruthy();
   });
-
-  it('should return true when `hasSearched` of `documentSearch` is true', async () => {
-    const store = getMockedStore({
-      search: { showSearchResults: false },
-      documentSearch: { currentDocumentQuery: { hasSearched: true } },
-    });
-    const view = await renderHookWithStore(store);
-    expect(view).toBeTruthy();
-  });
-
-  it('should return false when `hasSearched` of `documentSearch` is false', async () => {
-    const store = getMockedStore({
-      search: { showSearchResults: false },
-      documentSearch: { currentDocumentQuery: { hasSearched: false } },
-    });
-    const view = await renderHookWithStore(store);
-    expect(view).toBeFalsy();
-  });
 });

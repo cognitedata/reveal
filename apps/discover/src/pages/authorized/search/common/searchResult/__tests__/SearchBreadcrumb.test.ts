@@ -3,7 +3,6 @@ import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { initialState as documentSearchState } from 'modules/documentSearch/reducer';
 
 import { SearchBreadcrumb, Props } from '../SearchBreadCrumb';
 
@@ -12,7 +11,6 @@ const defaultProps: Props = {
     totalResults: 0,
     currentHits: 0,
   },
-  // content: []
 };
 
 describe('SearchBreadcrumb', () => {
@@ -20,18 +18,7 @@ describe('SearchBreadcrumb', () => {
     testRenderer(SearchBreadcrumb, viewStore, viewProps);
 
   it('renders breadcrumb if count is greater than zero', () => {
-    const store = getMockedStore({
-      documentSearch: {
-        ...documentSearchState,
-        result: {
-          ...documentSearchState.result,
-          aggregates: [],
-        },
-        currentDocumentQuery: {
-          hasSearched: true,
-        },
-      },
-    });
+    const store = getMockedStore();
 
     Page(store, { ...defaultProps, count: 200 });
     expect(screen.getByText('Showing', { exact: false })).toBeInTheDocument();

@@ -5,8 +5,8 @@ import {
   useFormatDocumentFilters,
 } from '../useDocumentFormatFilter';
 
-jest.mock('modules/documentSearch/selectors', () => ({
-  useLabels: jest.fn(() => {
+jest.mock('modules/documentSearch/hooks/useLabelsQuery', () => ({
+  useLabelsQuery: jest.fn(() => {
     return { 'unstructured-doctype-TEST_TYPE_1': 'TEST_TYPE_1' };
   }),
 }));

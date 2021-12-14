@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
@@ -7,10 +7,8 @@ import styled from 'styled-components/macro';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
 import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
-import {
-  useLabels,
-  useSelectedDocumentIds,
-} from 'modules/documentSearch/selectors';
+import { useLabelsQuery } from 'modules/documentSearch/hooks/useLabelsQuery';
+import { useSelectedDocumentIds } from 'modules/documentSearch/selectors';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
 import { DocumentContentAppliedFilters } from 'pages/authorized/search/document/header/DocumentContentAppliedFilters';
@@ -38,12 +36,11 @@ export const DocumentSearchContent: React.FC = () => {
   const dispatch = useDispatch();
   const selectedDocumentIds = useSelectedDocumentIds();
 
-  const handleDeselectAll = () => {
+  const handleDeselectAll = useCallback(() => {
     dispatch(documentSearchActions.unselectDocumentIds(selectedDocumentIds));
-    // dispatch(documentSearchActions.setPreviewedEntities([]));
-  };
+  }, []);
 
-  const labels = useLabels();
+  const labels = useLabelsQuery();
 
   const documentResultCount = useDocumentResultCount();
 

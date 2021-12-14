@@ -17,35 +17,13 @@ import { columnMap } from '../../results/DocumentResultTable';
 import OptionsPanel from './OptionsPanel';
 
 interface Props {
-  // viewMode: ViewMode;
   selectedColumns: string[];
-  // searchForSensitive: boolean;
-  // isGroupSimilarResults: boolean;
-  // setViewModel: (viewMode: ViewMode) => void;
-
   addSelectedColumn: (column: Column) => void;
   removeSelectedColumn: (column: Column) => void;
-  // setSelectedColumns: (columns: string[]) => void;
-
-  // handleSearchInSensitiveToggle: (value: boolean) => void;
-  // hideGroupDuplicateOption?: boolean;
 }
 
 const OptionsPanelContainer: React.FC<Props> = (props) => {
-  const {
-    // viewMode,
-    selectedColumns,
-    // searchForSensitive,
-    // isGroupSimilarResults,
-    // setViewModel,
-
-    addSelectedColumn,
-    removeSelectedColumn,
-    // setSelectedColumns,
-
-    // handleSearchInSensitiveToggle,
-    // hideGroupDuplicateOption = true,
-  } = props;
+  const { selectedColumns, addSelectedColumn, removeSelectedColumn } = props;
 
   const availableColumns = getAvailableColumns(columnMap);
 
@@ -62,21 +40,6 @@ const OptionsPanelContainer: React.FC<Props> = (props) => {
     }
   };
 
-  // const handleSelectAllColumns = (value: boolean) => {
-  //   const columns = availableColumns
-  //     .filter((column) => value || column.disabled)
-  //     .map((column) => column.field);
-
-  //   setSelectedColumns(columns);
-  // };
-
-  // const toggleSearchInSensitive = (
-  //   _event: React.ChangeEvent<HTMLInputElement>,
-  //   checked: boolean
-  // ) => {
-  //   handleSearchInSensitiveToggle(checked);
-  // };
-
   const mergedColumns = availableColumns.map((availableColumn) => {
     return {
       ...availableColumn,
@@ -87,23 +50,14 @@ const OptionsPanelContainer: React.FC<Props> = (props) => {
 
   return (
     <OptionsPanel
-      // setViewModel={setViewModel}
       handleColumnSelection={handleColumnSelection}
-      // handleSearchInSensitiveToggle={toggleSearchInSensitive}
-      // handleSelectAllColumns={handleSelectAllColumns}
-      // viewMode={viewMode}
       columns={sortedColumns}
-      // searchForSensitive={searchForSensitive}
-      // isGroupSimilarResults={isGroupSimilarResults}
-      // hideGroupDuplicateOption={hideGroupDuplicateOption}
     />
   );
 };
 
 function mapDispatchToProps(dispatch: TS_FIX_ME) {
   return {
-    handleSearchInSensitiveToggle: (value: boolean) =>
-      dispatch(documentSearchActions.setSearchForSensitive(value)),
     setSelectedColumns: (columns: string[]) =>
       dispatch(documentSearchActions.setSelectedColumns(columns)),
     addSelectedColumn: (column: Column) =>
@@ -119,10 +73,6 @@ function mapStateToProps(state: StoreState) {
   return {
     viewMode: state.documentSearch.viewMode || 'table',
     selectedColumns: state.documentSearch.selectedColumns,
-    searchForSensitive:
-      state.documentSearch.currentDocumentQuery.searchForSensitive,
-    // isGroupSimilarResults:
-    // state.search.currentDocumentQuery.isGroupSimilarResults,
   };
 }
 

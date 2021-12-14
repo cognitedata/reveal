@@ -24,7 +24,6 @@ const LAYERS = [
   'FILTER_BOX', // (FilterDropdown), Advanced Search
   'BASE_FILTER', // (OffsetFilter, DepthFilter, DocumentTypeFilter, SourceFilter)
   'FILTER',
-  'TYPEAHEAD', // (from doc header)
   'LAYER_SELECTOR',
   'MANAGE_COLUMNS',
   'SEISMIC_PREVIEW',

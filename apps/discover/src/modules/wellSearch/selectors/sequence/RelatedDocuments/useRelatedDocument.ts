@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { DOCUMENT_FALLBACK_SEARCH_LIMIT } from 'modules/documentSearch/constants';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
-import { useLabels } from 'modules/documentSearch/selectors';
+import { useLabelsQuery } from 'modules/documentSearch/hooks/useLabelsQuery';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
 import { getFacetsCounts } from 'modules/documentSearch/utils/getFacetsCounts';
 import { useWellInspect } from 'modules/wellInspect/selectors';
@@ -31,7 +31,7 @@ export const useRelatedDocumentLimit = () => {
 
 export const useRelatedDocumentDataStats = () => {
   const { data, facets, aggregates } = useRelatedDocumentData();
-  const labels = useLabels();
+  const labels = useLabelsQuery();
   return useMemo(() => {
     const documentInformation =
       facets && getDocumentsFacetsInfo(facets, labels);

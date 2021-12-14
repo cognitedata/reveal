@@ -2,7 +2,7 @@ import flatten from 'lodash/flatten';
 import isEmpty from 'lodash/isEmpty';
 
 import { formatFacetValue } from 'modules/api/documents/utils';
-import { useLabels } from 'modules/documentSearch/selectors';
+import { useLabelsQuery } from 'modules/documentSearch/hooks/useLabelsQuery';
 import {
   DocumentsFacets,
   DocumentFacet,
@@ -12,7 +12,7 @@ import { AppliedFilterEntries } from 'modules/sidebar/types';
 import { getDocumentCategoryTitle, isRangeFacet } from 'modules/sidebar/utils';
 
 export const useDocumentFormatFilter = () => {
-  const labels = useLabels();
+  const labels = useLabelsQuery();
 
   return (facet: keyof DocumentsFacets, item: any) => {
     return formatFacetValue(facet, item, labels);
@@ -20,7 +20,7 @@ export const useDocumentFormatFilter = () => {
 };
 
 export const useFormatDocumentFilters = () => {
-  const labels = useLabels();
+  const labels = useLabelsQuery();
   return (entries: AppliedFilterEntries[]) =>
     flatten(
       entries.map(([facet, value]) => {

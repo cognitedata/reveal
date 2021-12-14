@@ -34,12 +34,6 @@ const doSearch = (
   });
 };
 
-// get the data we need to put into the typeahead dropdown
-const getTypeahead = (query: SearchQueryFull) => {
-  const queryInfo = getSearchQuery(query);
-  return doSearch(queryInfo.query, {}, [], 10).then(toDocuments);
-};
-
 export const getLabels = () => {
   return getCogniteSDKClient().labels.list({
     filter: {},
@@ -167,7 +161,6 @@ const getCategoriesByQuery = (
 
 export const documentSearchService = {
   search,
-  getTypeahead,
   documentsByIds,
   getCategoriesByAssetIds,
   getCategoriesByQuery,

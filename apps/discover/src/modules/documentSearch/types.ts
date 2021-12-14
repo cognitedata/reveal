@@ -14,21 +14,10 @@ import { MapLayerGeoJsonFilter } from '../sidebar/types';
 // Document state
 
 export interface DocumentState {
-  currentDocumentQuery: DocumentQuery;
-  result: DocumentResult;
   selectedDocumentIds: string[];
   extractParentFolderPath?: string;
-  hoveredDocumentId?: string;
-  isSearching: boolean;
-  isLoading: boolean;
-  typeAheadResults: any[];
   selectedColumns: string[];
-  previewedEntities: DocumentType[];
-  isInitialized: boolean;
-  errorMessage: string;
-  displayInformationModal: boolean;
   viewMode: ViewMode;
-  labels: Labels;
 }
 export interface Labels {
   [s: string]: string;
@@ -150,13 +139,6 @@ export interface SearchQueryFull {
   extraDocumentFilters?: DocumentsFilter;
 }
 
-// we dont use most of these fields
-// let's slowly transition to the above 'DocumentQueryNew'
-// which only has fields that are used with CDF
-export interface DocumentQuery {
-  hasSearched: boolean; // <- needed, eventually move into query
-  searchForSensitive: boolean;
-}
 export type ViewMode = 'card' | 'table';
 
 export interface Column {
