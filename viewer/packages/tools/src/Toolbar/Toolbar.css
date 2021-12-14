@@ -52,6 +52,10 @@
   background-color: rgb(155, 155, 155);
 }
 
-.reveal-viewer-toolbar-icon:focus {
-  background-color: rgb(155, 155, 155);;
+.reveal-viewer-toolbar-icon-clicked {
+  background-color: rgb(255, 153, 0);;
+}
+
+.reveal-viewer-toolbar-icon:visited {
+  background-color: rgb(255, 153, 0);;
 }

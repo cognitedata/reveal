@@ -37,11 +37,16 @@ export class DefaultToolbar {
    * Create a Default Toolbar using Toolbar Tool
    */
   private createDefaultToolbar() {
-    this.toolbar.addToolbarItem('Take Screenshot', iconSet12, this.screenShot);
-    this.toolbar.addToolbarItem('Axis Tool', iconSet14, this.axisView);
-    this.toolbar.addToolbarItem('Enable/Disable Camera Target on Click', iconSet19, this.changeCameraTargetOnClick);
-    this.toolbar.addToolbarItem('Toggle Zoom past/Zoom to Cursor', iconSet30, this.toggleCameraZoomPastToCursor);
-    this.toolbar.addToolbarItem('Fit Camera to Model', iconSet32, this.fitCameraToModel);
+    this.toolbar.addToolbarItem('Take Screenshot', iconSet12, false, this.screenShot);
+    this.toolbar.addToolbarItem('Axis Tool', iconSet14, true, this.axisView);
+    this.toolbar.addToolbarItem(
+      'Enable/Disable Camera Target on Click',
+      iconSet19,
+      true,
+      this.changeCameraTargetOnClick
+    );
+    this.toolbar.addToolbarItem('Toggle Zoom past/Zoom to Cursor', iconSet30, true, this.toggleCameraZoomPastToCursor);
+    this.toolbar.addToolbarItem('Fit Camera to Model', iconSet32, false, this.fitCameraToModel);
   }
 
   /**

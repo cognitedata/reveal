@@ -186,9 +186,9 @@ export function Toolbar() {
       const defaultToolbar = new DefaultToolbar(viewer, model);
 
       const toolbar = defaultToolbar.getToolbar();
-      toolbar.addToolbarItem('Explode View', iconSet42, callbackMsg);
-      toolbar.addToolbarItem('Maps', iconSet54, callbackMsg);
-      toolbar.addToolbarItem('Settings', iconSet63, callbackMsg);
+      toolbar.addToolbarItem('Explode View', iconSet42, true, callbackMsg);
+      toolbar.addToolbarItem('Maps', iconSet54, false, callbackMsg);
+      toolbar.addToolbarItem('Settings', iconSet63, true, callbackMsg);
 
       const renderGui = gui.addFolder('Options');
       const toolbarPosition = ['Top', 'Bottom', 'Left', 'Right'];

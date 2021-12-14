@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { Cognite3DViewer } from '@reveal/core';
+import { ToolbarTool } from 'tools';
 import css from './Toolbar.css';
 
 /**
@@ -27,7 +28,8 @@ export class Toolbar {
     top: 'reveal-viewer-toolbar-container--top',
     left: 'reveal-viewer-toolbar-container--left',
     right: 'reveal-viewer-toolbar-container--right',
-    icon: 'reveal-viewer-toolbar-icon'
+    icon: 'reveal-viewer-toolbar-icon',
+    iconClicked: 'reveal-viewer-toolbar-icon-clicked'
   };
 
   private _activeContainerPosition = Toolbar.classnames.bottom;
@@ -76,7 +78,7 @@ export class Toolbar {
    * @param backgroundImage Icon image to be displayed
    * @param onClick Click event action for the icon
    */
-  public addToolbarItem(toolTip: string, backgroundImage: string, onClick: () => void): void {
+  public addToolbarItem(toolTip: string, backgroundImage: string, isToggle: boolean, onClick: () => void): void {
     const element = document.createElement('BUTTON');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
@@ -86,6 +88,13 @@ export class Toolbar {
     element.appendChild(iconImage);
 
     element.onclick = function () {
+      if (isToggle) {
+        if (element.classList.contains(Toolbar.classnames.iconClicked)) {
+          element.classList.remove(Toolbar.classnames.iconClicked);
+        } else {
+          element.classList.add(Toolbar.classnames.iconClicked);
+        }
+      }
       onClick();
     };
 
