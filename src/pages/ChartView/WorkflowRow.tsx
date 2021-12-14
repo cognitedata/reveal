@@ -108,7 +108,8 @@ export default function WorkflowRow({
     [chart, workflow]
   ) as Calculation['steps'];
 
-  const isStepsValid = validateSteps(steps, operations);
+  const isStepsValid =
+    workflow.version === 'v2' ? validateSteps(steps, operations) : true;
 
   const [{ dateFrom, dateTo }] = useDebounce(
     { dateFrom: chart.dateFrom, dateTo: chart.dateTo },
