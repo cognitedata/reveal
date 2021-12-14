@@ -1,8 +1,10 @@
 import { Menu } from '@cognite/cogs.js';
 import { Metrics } from '@cognite/metrics';
 import Konva from 'konva';
+import { Node, NodeConfig } from 'konva/lib/Node';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { ColorResult } from 'react-color';
+import { UpdateKeyType } from '@cognite/ornate';
 
 import { ColorControl, OpacityControl } from '.';
 import { ShapeStyleControlWrapper } from './elements';
@@ -20,6 +22,11 @@ type ShapeStyleControllProps = {
   selectedNode: Konva.Node;
   metrics: Metrics;
   fill?: boolean;
+  updateShape: (
+    shape: Node<NodeConfig>,
+    updateKey: UpdateKeyType,
+    updateValue: string | number
+  ) => void;
 };
 
 type StyleSettings = {
@@ -32,6 +39,7 @@ const ShapeStyleControl = ({
   selectedNode,
   metrics,
   fill,
+  updateShape,
 }: ShapeStyleControllProps) => {
   const [styleSettings, setStyleSettings] = useState<StyleSettings>({
     stroke: selectedNode.getAttr('stroke'),
@@ -61,7 +69,7 @@ const ShapeStyleControl = ({
       [fillOrStroke]: newColor,
       opacity: Number(e.target.value),
     });
-    selectedNode.setAttr(fillOrStroke, newColor);
+    updateShape(selectedNode, fillOrStroke, newColor);
   };
 
   const onColorChange = (color: ColorResult) => {
@@ -77,7 +85,7 @@ const ShapeStyleControl = ({
       [fillOrStroke]: newColor,
       opacity: opacity || 1,
     });
-    selectedNode.setAttr(fillOrStroke, newColor);
+    updateShape(selectedNode, fillOrStroke, newColor);
   };
 
   return (

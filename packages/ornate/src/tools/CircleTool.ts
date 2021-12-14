@@ -13,7 +13,6 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
   isToolUsingShapeSettings = true;
 
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    const { drawingLayer } = this.ornateInstance;
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
@@ -36,6 +35,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       userGenerated: true,
       type: 'circle',
       name: 'drawing',
+      fill: `rgba(255,255,255,0)`,
       inGroup: groupName,
     });
 
@@ -48,12 +48,7 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       }
     });
 
-    if (!this.group) {
-      drawingLayer.add(this.newCircle);
-      drawingLayer.draw();
-      return;
-    }
-    this.group.add(this.newCircle);
+    this.ornateInstance.addShape(this.newCircle);
   };
 
   onMouseMove = () => {

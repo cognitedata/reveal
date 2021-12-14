@@ -1,9 +1,11 @@
 import Konva from 'konva';
-import { KonvaEventObject } from 'konva/lib/Node';
+import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
+import { Shape, ShapeConfig } from 'konva/lib/Shape';
 import { v4 as uuid } from 'uuid';
 import { Vector2d } from 'konva/lib/types';
 import { PDFDocument } from 'pdf-lib';
 
+import { OrnateHistory, UpdateKeyType } from './containers/History';
 import { OrnateTransformer } from './containers/Transformer';
 import {
   OrnateAnnotation,
@@ -49,6 +51,7 @@ export class CogniteOrnate {
   drawingLayer: Konva.Layer = new Konva.Layer({
     name: 'drawingLayer',
   });
+  history: OrnateHistory = new OrnateHistory([]);
   isDrawing = false;
   currentTool: Tool = new DefaultTool(this);
   connectedLineGroup: ConnectedLine[] = [];
@@ -153,6 +156,44 @@ export class CogniteOrnate {
 
   isCurrentToolUsingShapeSettings = () => {
     return this.currentTool.isToolUsingShapeSettings;
+  };
+
+  /**
+   * Function which creates the shape, as well as keeps track of it so it can be undone. Currently can be used with line, circle, rect and text.
+   */
+  addShape = (shape: Shape<ShapeConfig>) => {
+    if (shape === null) return;
+    const groupName = shape.attrs?.attachedToGroup || shape.attrs?.inGroup;
+    const group = this.stage.findOne(`#${groupName}`) as Konva.Group;
+    const layer: Konva.Layer | Konva.Group = group || this.drawingLayer;
+    this.history.addShape(shape);
+    layer.add(shape);
+    if (!group) {
+      this.drawingLayer.draw();
+    }
+  };
+
+  /**
+   * Function which updates the selected shape settings as well as keeps the previous value for the Undo functionality
+   */
+  updateShape = (
+    selectedShape: Node<NodeConfig> | null,
+    updatedKey: UpdateKeyType,
+    updatedValue: string | number
+  ) => {
+    if (selectedShape === null) return;
+    this.history.updateShape(selectedShape, updatedKey);
+    selectedShape.setAttr(updatedKey, updatedValue);
+  };
+
+  /**
+   * Function which destroys the shape, as well as keeps track of it so it can be undone. Currently can be used with line, circle, rect and text.
+   */
+  destroyShape = (selectedShape: Node<NodeConfig> | null) => {
+    if (selectedShape === null) return;
+    this.history.destroyShape(selectedShape);
+    selectedShape.destroy();
+    this.transformer?.setSelectedNodes([]);
   };
 
   addPDFDocument = async (

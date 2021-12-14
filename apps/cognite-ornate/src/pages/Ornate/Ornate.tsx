@@ -19,7 +19,9 @@ import {
   CommentTool,
   StampTool,
   OrnateTransformer,
+  UpdateKeyType,
 } from '@cognite/ornate';
+import debounce from 'lodash/debounce';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
 import WorkSpaceTools from 'components/WorkSpaceTools';
 import ShapeSettings from 'components/ShapeSettings';
@@ -46,6 +48,7 @@ import { Theme } from 'utils/theme';
 import { Comments } from 'components/Comments/Comments';
 import { useMetrics } from '@cognite/metrics';
 import ContextMenu from 'components/ContextMenu';
+import { Node, NodeConfig } from 'konva/lib/Node';
 
 import {
   Loader,
@@ -160,6 +163,17 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     [workspaceDocuments]
   );
 
+  const updateShape = debounce(
+    (
+      shape: Node<NodeConfig>,
+      updateKey: UpdateKeyType,
+      updateValue: string | number
+    ) => {
+      ornateViewer.current?.updateShape(shape, updateKey, updateValue);
+    },
+    1000
+  );
+
   useEffect(() => {
     document.addEventListener('onDelete', onDelete);
     document.addEventListener('onAnnotationClick', onAnnotationClick as any);
@@ -190,6 +204,10 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
       }
       if (e.key === 's') {
         onToolChange('default');
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
+        e.preventDefault(); // needed so the undo does not trigger the Chrome undo shortcut
+        ornateViewer.current?.history.undoChanges(ornateViewer.current);
       }
     };
 
@@ -768,7 +786,9 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
       {shapeSettingsComponent}
 
-      {selectedNode && <ContextMenu selectedNode={selectedNode} />}
+      {selectedNode && (
+        <ContextMenu selectedNode={selectedNode} updateShape={updateShape} />
+      )}
 
       <Button
         icon="FlowChart"

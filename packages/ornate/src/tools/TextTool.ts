@@ -165,7 +165,6 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       this.onTextEdit(e.target as Konva.Text);
       return;
     }
-    const { drawingLayer } = this.ornateInstance;
     const groupName =
       e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
     this.group = this.ornateInstance.stage.findOne(
@@ -186,12 +185,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       inGroup: groupName,
     });
 
-    if (!this.group) {
-      drawingLayer.add(this.newText);
-      drawingLayer.draw();
-    } else {
-      this.group.add(this.newText);
-    }
+    this.ornateInstance.addShape(this.newText);
     this.onTextEdit(this.newText);
   };
 }

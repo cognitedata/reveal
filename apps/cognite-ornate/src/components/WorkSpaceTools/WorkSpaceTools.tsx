@@ -171,7 +171,7 @@ const WorkSpaceTools = ({
         }}
         disabled={activeTool === 'circle'}
       >
-        <Icon type="ColorPalette" />
+        <Icon type="DotLarge" />
       </Button>
       <Button
         type="ghost"

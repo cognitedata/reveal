@@ -21,9 +21,14 @@ export class DefaultTool extends Tool implements ICogniteOrnateTool {
 
   onDelete = () => {
     if (this.selectedNode) {
-      this.selectedNode?.destroy();
-      this.selectedNode = null;
-      this.ornateInstance.transformer?.setSelectedNodes([]);
+      const supportedUndoShapes = ['line', 'rect', 'circle', 'text'];
+      if (supportedUndoShapes.includes(this.selectedNode.attrs?.type)) {
+        this.ornateInstance.destroyShape(this.selectedNode);
+      } else {
+        this.selectedNode?.destroy();
+        this.selectedNode = null;
+        this.ornateInstance.transformer?.setSelectedNodes([]);
+      }
     }
   };
 

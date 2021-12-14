@@ -1,6 +1,7 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { ICogniteOrnateTool } from 'types';
+import { v4 as uuid } from 'uuid';
 
 import { Tool } from './Tool';
 
@@ -23,7 +24,6 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    const { drawingLayer } = this.ornateInstance;
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
@@ -33,22 +33,18 @@ export class LineTool extends Tool implements ICogniteOrnateTool {
     this.group = group as Konva.Group;
     const { x: startX, y: startY } = this.getPosition();
     this.newLine = new Konva.Line({
+      id: uuid(),
       points: [startX, startY, startX, startY],
       stroke: this.shapeSettings.stroke,
       strokeWidth: this.shapeSettings.strokeWidth,
       userGenerated: true,
       name: 'drawing',
       type: 'line',
+      fill: `rgba(255,255,255,0)`,
       inGroup: groupName,
     });
 
-    if (!group) {
-      drawingLayer.add(this.newLine);
-      drawingLayer.draw();
-      return;
-    }
-
-    this.group.add(this.newLine);
+    this.ornateInstance.addShape(this.newLine);
   };
 
   onMouseMove = (e: KonvaEventObject<MouseEvent>) => {

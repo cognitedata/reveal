@@ -1,23 +1,34 @@
 import { Menu } from '@cognite/cogs.js';
 import { Metrics } from '@cognite/metrics';
 import Konva from 'konva';
+import { Node, NodeConfig } from 'konva/lib/Node';
 import { ChangeEvent, useState } from 'react';
+import { UpdateKeyType } from '@cognite/ornate';
 
 import { FontSizeControlWrapper } from './elements';
 
 type FontSizeControlProps = {
   selectedNode: Konva.Node;
   metrics: Metrics;
+  updateShape: (
+    shape: Node<NodeConfig>,
+    updateKey: UpdateKeyType,
+    updateValue: string | number
+  ) => void;
 };
 
-const FontSizeControl = ({ selectedNode, metrics }: FontSizeControlProps) => {
+const FontSizeControl = ({
+  selectedNode,
+  metrics,
+  updateShape,
+}: FontSizeControlProps) => {
   const [fontSize, setFontSize] = useState<number>(
     selectedNode.getAttr('fontSize')
   );
 
   const onFontSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
     metrics.track('onFontSizeChange', { value: e.target.value });
-    selectedNode.setAttr('fontSize', Number(e.target.value));
+    updateShape(selectedNode, 'fontSize', Number(e.target.value));
     setFontSize(Number(e.target.value));
   };
 

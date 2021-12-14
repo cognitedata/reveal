@@ -2,6 +2,8 @@ import { Button, Menu } from '@cognite/cogs.js';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Konva from 'konva';
 import { useMetrics } from '@cognite/metrics';
+import { Node, NodeConfig } from 'konva/lib/Node';
+import { UpdateKeyType } from '@cognite/ornate';
 
 import {
   ThicknessControl,
@@ -14,9 +16,18 @@ import { getAlignCenterPositionX } from './ContextMenuItems/utils';
 type ContextMenuProps = {
   selectedNode: Konva.Node;
   menuItems?: React.Component[];
+  updateShape: (
+    shape: Node<NodeConfig>,
+    updateKey: UpdateKeyType,
+    updateValue: string | number
+  ) => void;
 };
 
-const ContextMenu = ({ selectedNode, menuItems }: ContextMenuProps) => {
+const ContextMenu = ({
+  selectedNode,
+  menuItems,
+  updateShape,
+}: ContextMenuProps) => {
   const metrics = useMetrics('ContextMenu');
   const ref = useRef<HTMLDivElement>(null);
   const [x, setX] = useState<number>(
@@ -68,7 +79,11 @@ const ContextMenu = ({ selectedNode, menuItems }: ContextMenuProps) => {
   };
 
   const thicknessControl = (
-    <ThicknessControl selectedNode={selectedNode} metrics={metrics} />
+    <ThicknessControl
+      selectedNode={selectedNode}
+      metrics={metrics}
+      updateShape={updateShape}
+    />
   );
 
   const strokeControlButton = (
@@ -90,7 +105,11 @@ const ContextMenu = ({ selectedNode, menuItems }: ContextMenuProps) => {
   );
 
   const fontSizeControl = (
-    <FontSizeControl selectedNode={selectedNode} metrics={metrics} />
+    <FontSizeControl
+      selectedNode={selectedNode}
+      metrics={metrics}
+      updateShape={updateShape}
+    />
   );
 
   const getMenuItems = useCallback(() => {
@@ -119,6 +138,7 @@ const ContextMenu = ({ selectedNode, menuItems }: ContextMenuProps) => {
           selectedNode={selectedNode}
           metrics={metrics}
           fill={fill}
+          updateShape={updateShape}
         />
       )}
       {(commonMenuItems || menuItems) && (

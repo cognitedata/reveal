@@ -25,7 +25,6 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
   };
 
   onMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    const { drawingLayer } = this.ornateInstance;
     this.ornateInstance.isDrawing = true;
 
     // If we're over an item with a group attachment, add it there instead.
@@ -47,6 +46,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
       userGenerated: true,
       type: 'rect',
       name: 'drawing',
+      fill: `rgba(255,255,255,0)`,
       // TO DO: Refactor how we do this
       inGroup: groupName,
     });
@@ -62,12 +62,7 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
       }
     });
 
-    if (!this.group) {
-      drawingLayer.add(this.newRect);
-      drawingLayer.draw();
-      return;
-    }
-    this.group.add(this.newRect);
+    this.ornateInstance.addShape(this.newRect);
   };
 
   onMouseMove = () => {
