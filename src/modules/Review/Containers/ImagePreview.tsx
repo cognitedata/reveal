@@ -14,6 +14,8 @@ import {
   nextKeypoint,
   nextShape,
   setKeepUnsavedRegion,
+  setLastCollectionName,
+  setLastShape,
   setSelectedTool,
 } from 'src/modules/Review/store/annotationLabelSlice';
 import {
@@ -35,6 +37,7 @@ import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/R
 import { pushMetric } from 'src/utils/pushMetric';
 import styled from 'styled-components';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+import isEmpty from 'lodash/isEmpty';
 
 export const ImagePreview = ({
   file,
@@ -163,6 +166,32 @@ export const ImagePreview = ({
         await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
         dispatch(showAnnotationSettingsModel(false));
         dispatch(setKeepUnsavedRegion(false));
+
+        if (!isEmpty(annotationSettingsState.createNew)) {
+          if (
+            annotationSettingsState.activeView === 'shape' &&
+            newCollection.predefinedShapes.length > 0
+          ) {
+            dispatch(
+              setLastShape(
+                newCollection.predefinedShapes[
+                  newCollection.predefinedShapes.length - 1
+                ].shapeName
+              )
+            );
+          } else if (
+            annotationSettingsState.activeView === 'keypoint' &&
+            newCollection.predefinedKeypoints.length > 0
+          ) {
+            dispatch(
+              setLastCollectionName(
+                newCollection.predefinedKeypoints[
+                  newCollection.predefinedKeypoints.length - 1
+                ].collectionName
+              )
+            );
+          }
+        }
       }
     } catch (e) {
       console.error('Error occurred while saving predefined annotations!');
