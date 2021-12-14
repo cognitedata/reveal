@@ -138,4 +138,27 @@ describe('validateSteps', () => {
 
     expect(isValid).toBe(true);
   });
+
+  it('should accept steps with valid inputs (using old uppercase op style)', () => {
+    const steps: Calculation['steps'] = [
+      {
+        step: 0,
+        op: 'ADD',
+        inputs: [
+          { type: 'ts', value: 'VAL_21_PT_1017_04:Z.X.Value' },
+          { type: 'ts', value: 'VAL_21_PI_1017_04:Z.X.Value' },
+        ],
+        params: {},
+      },
+      {
+        step: 1,
+        op: 'PASSTHROUGH',
+        inputs: [{ type: 'result', value: 0 }],
+      },
+    ] as Calculation['steps'];
+
+    const isValid = validateSteps(steps, fullListOfOperations);
+
+    expect(isValid).toBe(true);
+  });
 });

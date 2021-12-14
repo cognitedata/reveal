@@ -31,7 +31,7 @@ export const validateSteps = (
 
   return steps.every((step) => {
     const operationDefinition = operationDefinitions?.find(
-      ({ op }) => step.op === op
+      ({ op }) => step.op.toLowerCase() === op.toLowerCase()
     );
 
     if (!operationDefinition) {
