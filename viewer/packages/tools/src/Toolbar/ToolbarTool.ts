@@ -25,6 +25,7 @@ export class ToolbarTool extends Cognite3DViewerToolBase {
    * Add a Icon button into the Toolbar container
    * @param toolTip Tooltip for the Icon button
    * @param backgroundImage background image to be placed onto icon
+   * @param isToggle Is the icon button used as toggle
    * @param onClick Click event callback function which will be used to perform custom functionlity of the user
    */
   public addToolbarItem(toolTip: string, backgroundImage: string, isToggle: boolean, onClick: () => void): void {

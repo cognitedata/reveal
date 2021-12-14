@@ -76,6 +76,7 @@ export class Toolbar {
    * Create & adds a button icons into the toolbar container
    * @param toolTip Tooltip message to added for the icon
    * @param backgroundImage Icon image to be displayed
+   * @param isToggle Is the icon button used as toggle
    * @param onClick Click event action for the icon
    */
   public addToolbarItem(toolTip: string, backgroundImage: string, isToggle: boolean, onClick: () => void): void {
