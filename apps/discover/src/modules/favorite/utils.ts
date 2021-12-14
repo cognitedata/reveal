@@ -52,7 +52,7 @@ const checkWellboreIdAndFavoriteWellcontent = (
   wellboreId: WellboreId,
   wells: FavoriteContentWells,
   wellboreList: string[]
-) => {
+): boolean => {
   return (
     /* wellbore id will undefined when adding entire well */
     isUndefined(wellboreId) ||
@@ -77,7 +77,7 @@ export const getWellsWellboresExistInFavorite = (
   favorites: FavoriteSummary[],
   wellId: WellId,
   wellboreId?: WellboreId
-) => {
+): string[] => {
   return favorites
     .filter(
       (favorite) =>

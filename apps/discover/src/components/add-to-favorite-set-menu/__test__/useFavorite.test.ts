@@ -3,7 +3,6 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockFavoriteSummary } from '__test-utils/fixtures/favorite';
 import { FavoriteSummary } from 'modules/favorite/types';
-import { getDocumentIds, getWellIds } from 'modules/favorite/utils';
 
 import {
   useDocumentExistInFavorite,
@@ -87,22 +86,6 @@ describe('Use Favorite', () => {
     );
 
     expect(result.current[0]).toEqual(undefined);
-  });
-
-  it(`should get well id list`, async () => {
-    const wells = getWellIds(123);
-    expect(wells).toEqual([123]);
-
-    const emptyWells = getWellIds();
-    expect(emptyWells).toEqual([]);
-  });
-
-  it(`should get document id list`, async () => {
-    const documents = getDocumentIds(123);
-    expect(documents).toEqual([123]);
-
-    const emptyDocuments = getDocumentIds();
-    expect(emptyDocuments).toEqual([]);
   });
 
   it(`should update favorites`, async () => {
