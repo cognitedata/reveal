@@ -38,6 +38,51 @@ const SCALE_MIN = 0.05;
 export type CogniteOrnateOptions = {
   container: string;
 };
+
+const getShapeByDrawing = (drawing: Drawing) => {
+  if (drawing.type === 'line') {
+    return new Konva.Line({ ...drawing.attrs, id: drawing.id });
+  }
+
+  if (drawing.type === 'rect') {
+    return new Konva.Rect({ ...drawing.attrs, id: drawing.id });
+  }
+
+  if (drawing.type === 'text') {
+    return new Konva.Text({ ...drawing.attrs, id: drawing.id });
+  }
+
+  if (drawing.type === 'circle') {
+    return new Konva.Circle({ ...drawing.attrs, id: drawing.id });
+  }
+
+  if (drawing.type === 'stamp' && drawing.attrs.url) {
+    // Make sure we do not pass an image in to begin with - it wont be valid
+    const shape = new Konva.Image({ ...drawing.attrs, image: undefined });
+
+    const imageObj = new Image();
+    imageObj.onload = () => {
+      (shape as Konva.Image).image(imageObj);
+    };
+    imageObj.src = drawing.attrs.url;
+    return shape;
+  }
+
+  if (drawing.type === 'comment') {
+    return CommentTool.create({ ...drawing.attrs, id: drawing.id });
+  }
+
+  throw new Error(`Drawing referenced unsupported shape: ${drawing.type}`);
+};
+
+const getGroupById = (id: string, stage: Konva.Stage) => {
+  const group = stage.findOne<Konva.Group>(`#${id}`);
+  if (!group) {
+    throw new Error(`No group with id ${id} was found`);
+  }
+  return group;
+};
+
 export class CogniteOrnate {
   host: HTMLDivElement;
   documents: OrnatePDFDocument[] = [];
@@ -606,40 +651,26 @@ export class CogniteOrnate {
 
   addDrawings = (...drawings: Drawing[]) => {
     return drawings.map((drawing) => {
-      let shape = new Konva.Shape();
-      if (drawing.type === 'line') {
-        shape = new Konva.Line(drawing.attrs);
+      const container = drawing.groupId
+        ? getGroupById(drawing.groupId, this.stage)
+        : this.drawingLayer;
+      const shape = getShapeByDrawing(drawing);
+      if (drawing.onClick) {
+        shape.on('click', drawing.onClick);
       }
-      if (drawing.type === 'rect') {
-        shape = new Konva.Rect(drawing.attrs);
-      }
-      if (drawing.type === 'text') {
-        shape = new Konva.Text(drawing.attrs);
-      }
-      if (drawing.type === 'circle') {
-        shape = new Konva.Circle(drawing.attrs);
-      }
-      if (drawing.type === 'stamp' && drawing.attrs.url) {
-        // Make sure we do not pass an image in to begin with - it wont be valid
-        shape = new Konva.Image({ ...drawing.attrs, image: undefined });
 
-        const imageObj = new Image();
-        imageObj.onload = () => {
-          (shape as Konva.Image).image(imageObj);
-        };
-        imageObj.src = drawing.attrs.url;
-      }
-      if (drawing.type === 'comment') {
-        shape = CommentTool.create(drawing.attrs);
-      }
-      if (drawing.groupId) {
-        const group = this.stage.findOne<Konva.Group>(`#${drawing.groupId}`);
-        if (group) {
-          group.add(shape);
-        }
-      }
+      container.add(shape);
       return shape;
     });
+  };
+
+  removeShapeById = (id: string) => {
+    const shape = this.stage.findOne(`#${id}`);
+    if (!shape) {
+      return;
+    }
+
+    shape.destroy();
   };
 
   removeDocument(doc: OrnatePDFDocument) {

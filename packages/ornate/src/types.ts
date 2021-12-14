@@ -32,9 +32,11 @@ export type OrnateAnnotationInstance = {
 };
 
 export type Drawing = {
+  id?: string;
   type: 'rect' | 'line' | 'text' | 'circle' | 'comment' | 'stamp';
   attrs: any;
   groupId?: string;
+  onClick?: (event: KonvaEventObject<MouseEvent>) => void;
 };
 
 export type OrnateJsonDocument = {
