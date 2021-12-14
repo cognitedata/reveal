@@ -9,7 +9,7 @@ import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocument
 import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
 import {
   useLabels,
-  useSelectedDocumentsDocId,
+  useSelectedDocumentIds,
 } from 'modules/documentSearch/selectors';
 import { getDocumentsFacetsInfo } from 'modules/documentSearch/utils';
 import { SearchBreadcrumb } from 'pages/authorized/search/common/searchResult';
@@ -36,10 +36,10 @@ export const DocumentSearchContent: React.FC = () => {
   } = useDocumentSearchResultQuery();
 
   const dispatch = useDispatch();
-  const selectedDocumentIds = useSelectedDocumentsDocId();
+  const selectedDocumentIds = useSelectedDocumentIds();
 
   const handleDeselectAll = () => {
-    dispatch(documentSearchActions.removeAllDocumentIds());
+    dispatch(documentSearchActions.unselectDocumentIds(selectedDocumentIds));
     // dispatch(documentSearchActions.setPreviewedEntities([]));
   };
 
@@ -73,7 +73,7 @@ export const DocumentSearchContent: React.FC = () => {
 
       <DocumentResultTable />
       <DocumentsBulkActions
-        selectedDocumentIds={selectedDocumentIds}
+        selectedDocumentIds={selectedDocumentIds.map(Number)}
         handleDeselectAll={handleDeselectAll}
       />
     </>

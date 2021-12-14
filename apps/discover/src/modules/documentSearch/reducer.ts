@@ -1,5 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
-import map from 'lodash/map';
+import concat from 'lodash/concat';
+import difference from 'lodash/difference';
 import merge from 'lodash/merge';
 
 import {
@@ -34,12 +35,10 @@ import {
   DocumentAction,
   SET_LABELS,
   SET_PREVIEW_ENTITIES,
-  ADD_SELECTED_DOCUMENT_ID,
-  REMOVE_SELECTED_DOCUMENT_ID,
-  ADD_ALL_DOCUMENT_IDS,
-  REMOVE_ALL_DOCUMENT_IDS,
   SET_HOVERED_DOCUMENT,
   UNSET_HOVERED_DOCUMENT,
+  SELECT_DOCUMENT_IDS,
+  UNSELECT_DOCUMENT_IDS,
 } from 'modules/documentSearch/types.actions';
 
 import {
@@ -249,33 +248,17 @@ export function search(
       };
     }
 
-    case ADD_SELECTED_DOCUMENT_ID: {
+    case SELECT_DOCUMENT_IDS: {
       return {
         ...state,
-        selectedDocumentIds: [...state.selectedDocumentIds, action.id],
+        selectedDocumentIds: concat(state.selectedDocumentIds, action.ids),
       };
     }
 
-    case REMOVE_SELECTED_DOCUMENT_ID: {
+    case UNSELECT_DOCUMENT_IDS: {
       return {
         ...state,
-        selectedDocumentIds: state.selectedDocumentIds.filter(
-          (id) => id !== action.id
-        ),
-      };
-    }
-
-    case ADD_ALL_DOCUMENT_IDS: {
-      return {
-        ...state,
-        selectedDocumentIds: map(state.result.hits, 'id'),
-      };
-    }
-
-    case REMOVE_ALL_DOCUMENT_IDS: {
-      return {
-        ...state,
-        selectedDocumentIds: [],
+        selectedDocumentIds: difference(state.selectedDocumentIds, action.ids),
       };
     }
 

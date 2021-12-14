@@ -19,23 +19,17 @@ import {
   REMOVE_PREVIEW_ENTITY,
   CLEAR_PREVIEW_RESULTS,
   SET_PREVIEW_ENTITIES,
-  ADD_SELECTED_DOCUMENT_ID,
-  REMOVE_SELECTED_DOCUMENT_ID,
-  ADD_ALL_DOCUMENT_IDS,
-  REMOVE_ALL_DOCUMENT_IDS,
   SET_HOVERED_DOCUMENT,
   UNSET_HOVERED_DOCUMENT,
+  SELECT_DOCUMENT_IDS,
+  UNSELECT_DOCUMENT_IDS,
 } from 'modules/documentSearch/types.actions';
 
 import { initialState, search } from '../reducer';
 
 describe('search.reducer', () => {
   test('returns initial state', () => {
-    expect(
-      search(undefined, {
-        type: REMOVE_ALL_DOCUMENT_IDS,
-      })
-    ).toBeDefined();
+    expect(search()).toBeDefined();
   });
 
   test(`Reducer key: ${ADD_SELECTED_COLUMN}`, () => {
@@ -273,8 +267,8 @@ describe('search.reducer', () => {
         selectedDocumentIds: [],
       },
       {
-        type: ADD_SELECTED_DOCUMENT_ID,
-        id: documentIdToAdd,
+        type: SELECT_DOCUMENT_IDS,
+        ids: [documentIdToAdd],
       }
     );
     expect(state.selectedDocumentIds).toEqual([documentIdToAdd]);
@@ -296,56 +290,11 @@ describe('search.reducer', () => {
         selectedDocumentIds: ['778781654822070', '778781654822071'],
       },
       {
-        type: REMOVE_SELECTED_DOCUMENT_ID,
-        id: documentIdToRemove,
+        type: UNSELECT_DOCUMENT_IDS,
+        ids: [documentIdToRemove],
       }
     );
     expect(state.selectedDocumentIds).toEqual(['778781654822071']);
-  });
-
-  it(`Add all document ids to state`, () => {
-    const state = search(
-      {
-        ...initialState,
-        result: {
-          hits: [
-            getMockDocument({ id: '778781654822069' }),
-            getMockDocument({ id: '778781654822071' }),
-          ],
-          count: 2,
-          facets: getMockDocumentFacets(),
-        },
-        selectedDocumentIds: [],
-      },
-      {
-        type: ADD_ALL_DOCUMENT_IDS,
-      }
-    );
-    expect(state.selectedDocumentIds).toEqual([
-      '778781654822069',
-      '778781654822071',
-    ]);
-  });
-
-  it(`Remove all document ids from state`, () => {
-    const state = search(
-      {
-        ...initialState,
-        result: {
-          hits: [
-            getMockDocument({ id: '778781654822069' }),
-            getMockDocument({ id: '778781654822071' }),
-          ],
-          count: 2,
-          facets: getMockDocumentFacets(),
-        },
-        selectedDocumentIds: ['778781654822070', '778781654822071'],
-      },
-      {
-        type: REMOVE_ALL_DOCUMENT_IDS,
-      }
-    );
-    expect(state.selectedDocumentIds).toEqual([]);
   });
 
   it(`Add hovered document id to state`, () => {

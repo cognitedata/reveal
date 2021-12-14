@@ -56,14 +56,24 @@ import {
   ClearPreviewResults,
   ClearTypeahead,
   SetResults,
-  ADD_SELECTED_DOCUMENT_ID,
-  REMOVE_SELECTED_DOCUMENT_ID,
-  ADD_ALL_DOCUMENT_IDS,
-  REMOVE_ALL_DOCUMENT_IDS,
   SET_HOVERED_DOCUMENT,
   UNSET_HOVERED_DOCUMENT,
+  SelectDocumentIds,
+  SELECT_DOCUMENT_IDS,
+  UnselectDocumentIds,
+  UNSELECT_DOCUMENT_IDS,
 } from 'modules/documentSearch/types.actions';
 import { getPreparedQuery } from 'modules/documentSearch/utils';
+
+export const selectDocumentIds = (ids: string[]): SelectDocumentIds => ({
+  type: SELECT_DOCUMENT_IDS,
+  ids,
+});
+
+export const unselectDocumentIds = (ids: string[]): UnselectDocumentIds => ({
+  type: UNSELECT_DOCUMENT_IDS,
+  ids,
+});
 
 const documentSearchMetric = Metrics.create(LOG_DOCUMENT_SEARCH);
 
@@ -272,24 +282,6 @@ const setPreviewedEntities = (entities: DocumentType[]): DocumentAction => ({
   entities,
 });
 
-const addToSelectedDocumentId = (id: string): DocumentAction => ({
-  type: ADD_SELECTED_DOCUMENT_ID,
-  id,
-});
-
-const removeFromSelectedDocument = (id: string): DocumentAction => ({
-  type: REMOVE_SELECTED_DOCUMENT_ID,
-  id,
-});
-
-const addAllDocumentIds = (): DocumentAction => ({
-  type: ADD_ALL_DOCUMENT_IDS,
-});
-
-const removeAllDocumentIds = (): DocumentAction => ({
-  type: REMOVE_ALL_DOCUMENT_IDS,
-});
-
 const setHoveredDocument = (id: string): DocumentAction => ({
   type: SET_HOVERED_DOCUMENT,
   id,
@@ -491,6 +483,8 @@ const toggleDocumentSelection = (
 
 export const documentSearchActions = {
   search,
+  selectDocumentIds,
+  unselectDocumentIds,
   // toggleDuplicatesDisplay,
 
   initialize,
@@ -505,10 +499,6 @@ export const documentSearchActions = {
   removeFromPreviewedEntity,
   displaySearchInformation,
   toggleDocumentSelection,
-  addToSelectedDocumentId,
-  removeFromSelectedDocument,
-  addAllDocumentIds,
-  removeAllDocumentIds,
   setHoveredDocument,
   unsetHoveredDocument,
 

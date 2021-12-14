@@ -7,9 +7,6 @@ export const SET_SEARCH_FOR_SENSITIVE = 'SEARCH_SET_SEARCH_FOR_SENSITIVE';
 export const SET_RESULTS = 'SEARCH_SET_RESULTS';
 export const RESET_RESULTS = 'SEARCH_RESET_RESULTS';
 
-export const SET_ISOLATED_DOCUMENT_RESULT_FACETS =
-  'SET_ISOLATED_DOCUMENT_RESULT_FACETS';
-
 export const SET_SEARCHING = 'SEARCH_SET_SEARCHING';
 export const SET_LOADING = 'SEARCH_SET_LOADING';
 export const SET_ERROR_MESSAGE = 'SEARCH_SET_ERROR_MESSAGE';
@@ -20,22 +17,10 @@ export const SET_SELECTED_COLUMN = 'SEARCH_SET_SELECTED_COLUMN';
 
 export const SET_SELECTED_DOCUMENT = 'SEARCH_SET_SELECTED_DOCUMENT';
 export const SET_LABELS = 'SET_LABELS';
-/**
- * When document is checked from result table add that id to the state
- */
-export const ADD_SELECTED_DOCUMENT_ID = 'SET_SELECTED_DOCUMENT_ID';
-/**
- * When document is checked from result table add that id to the state
- */
-export const REMOVE_SELECTED_DOCUMENT_ID = 'REMOVE_SELECTED_DOCUMENT_ID';
-/**
- * When all documents are select add all ids to state
- */
-export const ADD_ALL_DOCUMENT_IDS = 'SET_ALL_DOCUMENT_IDS';
-/**
- * When all documents are deselect remove all ids from state
- */
-export const REMOVE_ALL_DOCUMENT_IDS = 'REMOVE_ALL_DOCUMENT_IDS';
+
+export const SELECT_DOCUMENT_IDS = 'SELECT_DOCUMENT_IDS';
+export const UNSELECT_DOCUMENT_IDS = 'UNSELECT_DOCUMENT_IDS';
+
 /**
  * When mouse hovered over a document add that document id to state
  */
@@ -70,6 +55,16 @@ export const SET_PREVIEW_ENTITIES = 'SEARCH_SET_PREVIEW_ENTITIES';
 export const CLEAR_PREVIEW_RESULTS = 'SEARCH_CLEAR_PREVIEW_RESULTS';
 export const SET_INITIALIZE = 'SEARCH_SET_INITIALIZE';
 export const TOGGLE_FILE_SELECTION = 'SEARCH_TOGGLE_FILE_SELECTION';
+
+export interface SelectDocumentIds {
+  type: typeof SELECT_DOCUMENT_IDS;
+  ids: string[];
+}
+
+export interface UnselectDocumentIds {
+  type: typeof UNSELECT_DOCUMENT_IDS;
+  ids: string[];
+}
 
 interface SetLabels {
   type: typeof SET_LABELS;
@@ -191,24 +186,6 @@ interface RemoveDocumentFromResults {
   id: DocumentType['id'];
 }
 
-interface SetAddSelectedDocumentId {
-  type: typeof ADD_SELECTED_DOCUMENT_ID;
-  id: string;
-}
-
-interface SetRemoveSelectedDocumentId {
-  type: typeof REMOVE_SELECTED_DOCUMENT_ID;
-  id: string;
-}
-
-interface SetAddAllDocumentIds {
-  type: typeof ADD_ALL_DOCUMENT_IDS;
-}
-
-interface SetRemoveAllDocumentIds {
-  type: typeof REMOVE_ALL_DOCUMENT_IDS;
-}
-
 interface SetHoveredDocument {
   type: typeof SET_HOVERED_DOCUMENT;
   id: string;
@@ -219,6 +196,8 @@ interface UnsetHoveredDocument {
 }
 
 export type DocumentAction =
+  | SelectDocumentIds
+  | UnselectDocumentIds
   | SetLabels
   | SetSearchForSensitive
   | SetResults
@@ -243,10 +222,6 @@ export type DocumentAction =
   | RemoveDocumentFromResults
   | ResetResults
   | SetPreviewEntities
-  | SetAddSelectedDocumentId
-  | SetRemoveSelectedDocumentId
-  | SetAddAllDocumentIds
-  | SetRemoveAllDocumentIds
   | SetHoveredDocument
   | UnsetHoveredDocument
   | {

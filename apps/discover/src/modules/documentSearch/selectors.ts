@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import includes from 'lodash/includes';
-
 import { TableResults } from 'components/tablev2/types';
 import useSelector from 'hooks/useSelector';
 
@@ -63,19 +61,4 @@ export const useSelectedDocumentIds = () => {
 export const useHoveredDocumentId = () => {
   const state = useDocuments();
   return useMemo(() => state.hoveredDocumentId, [state.hoveredDocumentId]);
-};
-
-/**
- * useSelectedDocumentIds returns the externalId or doc.id of document(what is stored as selectedDocumentIds)
- * which should change or variable should change. As a quick fix this selector will return actual document id
- */
-export const useSelectedDocumentsDocId = () => {
-  const state = useDocuments();
-  return useMemo(
-    () =>
-      state.result.hits
-        .filter((document) => includes(state.selectedDocumentIds, document.id))
-        .map((document) => Number(document.doc.id)),
-    [state.selectedDocumentIds]
-  );
 };

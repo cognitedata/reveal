@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import compact from 'lodash/compact';
@@ -14,6 +14,7 @@ import { getMiddleEllipsisWrapper } from 'components/middle-ellipsis/MiddleEllip
 import { Table, RowProps } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
+import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 import { useDocumentsForTable } from 'hooks/useDocumentsForTable';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
@@ -152,7 +153,12 @@ export const DocumentResultTable: React.FC = () => {
     [key: string]: boolean;
   }>({});
 
-  const columns = useMemo(
+  const documentIds = useDeepMemo(
+    () => data.map((document) => document.id),
+    [data]
+  );
+
+  const columns = useDeepMemo(
     () =>
       sortBy(
         compact(selectedColumns.map((column) => columnMap[column])),
@@ -163,7 +169,7 @@ export const DocumentResultTable: React.FC = () => {
 
   // The reduce transforms it from an array of ids to an object:
   // { id123456: true, id234567: true, ... }
-  const transformedSelectedDocumentIds = useMemo(() => {
+  const transformedSelectedDocumentIds = useDeepMemo(() => {
     return selectedDocumentIds.reduce(
       (result, id) => ({ ...result, [id]: true }),
       {}
@@ -202,15 +208,13 @@ export const DocumentResultTable: React.FC = () => {
         if (nextState) {
           // mark for delete
           dispatch(documentSearchActions.addToPreviewedEntity(row.original));
-          dispatch(
-            documentSearchActions.addToSelectedDocumentId(row.original.id)
-          );
+          dispatch(documentSearchActions.selectDocumentIds([row.original.id]));
         } else {
           dispatch(
             documentSearchActions.removeFromPreviewedEntity(row.original)
           );
           dispatch(
-            documentSearchActions.removeFromSelectedDocument(row.original.id)
+            documentSearchActions.unselectDocumentIds([row.original.id])
           );
         }
       });
@@ -218,17 +222,22 @@ export const DocumentResultTable: React.FC = () => {
     []
   );
 
-  const handleRowsSelect = useCallback((value: boolean) => {
-    batch(() => {
-      // mark for delete
-      dispatch(documentSearchActions.setPreviewedEntities(value ? data : []));
-      if (value) {
-        dispatch(documentSearchActions.addAllDocumentIds());
-      } else {
-        dispatch(documentSearchActions.removeAllDocumentIds());
-      }
-    });
-  }, []);
+  const handleRowsSelect = useDeepCallback(
+    (selected: boolean) => {
+      batch(() => {
+        // mark for delete
+        dispatch(
+          documentSearchActions.setPreviewedEntities(selected ? data : [])
+        );
+        if (selected) {
+          dispatch(documentSearchActions.selectDocumentIds(documentIds));
+        } else {
+          dispatch(documentSearchActions.unselectDocumentIds(documentIds));
+        }
+      });
+    },
+    [documentIds]
+  );
 
   const handleSort = useCallback((sortBy: SortBy[]) => {
     if (sortBy.length > 0 && sortByMap[sortBy[0].id]) {
@@ -239,7 +248,7 @@ export const DocumentResultTable: React.FC = () => {
     }
   }, []);
 
-  const options = useMemo(
+  const options = useDeepMemo(
     () => ({
       checkable: true,
       expandable: true,
