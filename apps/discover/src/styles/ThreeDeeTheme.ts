@@ -1,8 +1,6 @@
-import { createMuiTheme } from '@material-ui/core';
-
 // This file is created temporarily.
 // This should be combined with the default theme.
-export const ThreeDeeTheme = createMuiTheme({
+export const ThreeDeeTheme = {
   palette: {
     primary: {
       main: '#e0e0e0',
@@ -18,4 +16,4 @@ export const ThreeDeeTheme = createMuiTheme({
       fontSize: 12,
     },
   },
-});
+};
