@@ -7,6 +7,7 @@ import { Group } from '@visx/group';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import { scaleBand, scaleLinear } from '@visx/scale';
 import { Bar, BarStack } from '@visx/shape';
+import { TextProps } from '@visx/text/lib/Text';
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
 import styled from 'styled-components';
 
@@ -15,6 +16,35 @@ import { Count } from 'hooks/profiling-service';
 const BOTTOM_AXIS_HEIGHT = 24;
 const MAXIMUM_BAR_WIDTH = 16;
 const NUMBER_OF_TICKS = 4;
+
+const getAxisTickLabelStyle = (
+  _: any,
+  index: number,
+  values: any[]
+): Partial<TextProps> => {
+  // The tick label is centered if there is only one tick. But if there are two
+  // ticks, we left and right align the label at the both end of the axis.
+  let textAnchor: TextProps['textAnchor'] = 'middle';
+  let dx: TextProps['dx'] = 0;
+  if (values.length > 1) {
+    if (index === 0) {
+      textAnchor = 'start';
+      dx = -3;
+    } else {
+      textAnchor = 'end';
+      dx = 3;
+    }
+  }
+
+  return {
+    fill: Colors['text-primary'].hex(),
+    fontFamily: 'Inter',
+    fontSize: 12,
+    fontWeight: 500,
+    textAnchor,
+    dx,
+  };
+};
 
 type Props = {
   distribution: Count[];
@@ -217,18 +247,6 @@ export function Graph({
       <div style={{ position: 'relative' }}>
         <svg ref={containerRef} width={width} height={height}>
           <Group top={verticalMargin / 2}>
-            {isGridDisplayed && (
-              <GridRows
-                scale={counts}
-                width={xMax}
-                height={yMax}
-                numTicks={5}
-                stroke={Colors['border-default'].hex()}
-                strokeDasharray="6,6"
-                strokeWidth={1}
-                tickValues={gridTickValues}
-              />
-            )}
             {isTooltipDisplayed && rangeEnd !== undefined && (
               <BarStack
                 data={distribution.map((value, i) => ({
@@ -276,6 +294,33 @@ export function Graph({
                 }
               </BarStack>
             )}
+            {isGridDisplayed && (
+              <GridRows
+                scale={counts}
+                width={xMax}
+                height={yMax}
+                numTicks={5}
+                stroke={Colors['border-default'].hex()}
+                strokeDasharray="6,6"
+                strokeWidth={1}
+                dy={1}
+                tickValues={gridTickValues}
+              />
+            )}
+            {isBottomAxisDisplayed && (
+              <AxisBottom
+                scale={categories}
+                tickLabelProps={getAxisTickLabelStyle}
+                tickValues={tickValues}
+                strokeWidth={0}
+                tickLineProps={{
+                  stroke: Colors['border-default'].hex(),
+                  strokeWidth: 1,
+                  y2: 6,
+                }}
+                top={yMax}
+              />
+            )}
             <BarStack
               data={distribution.map((value, i) => ({
                 ...value,
@@ -312,22 +357,6 @@ export function Graph({
                 )
               }
             </BarStack>
-            {isBottomAxisDisplayed && (
-              <AxisBottom
-                hideTicks
-                scale={categories}
-                tickLabelProps={() => ({
-                  fill: Colors['text-primary'].hex(),
-                  fontFamily: 'Inter',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  textAnchor: 'middle',
-                })}
-                tickValues={tickValues}
-                strokeWidth={0}
-                top={yMax}
-              />
-            )}
           </Group>
         </svg>
       </div>
