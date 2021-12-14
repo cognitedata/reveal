@@ -33,11 +33,11 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
-      centerA_attribute,
-      centerB_attribute,
-      radiusA_attribute,
-      radiusB_attribute,
       valuesAsFloats,
+      centerA_attribute.offset,
+      centerB_attribute.offset,
+      radiusA_attribute.offset,
+      radiusB_attribute.offset,
       elementSize,
       0,
       new THREE.Box3()
@@ -56,11 +56,11 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
-      centerA_attribute,
-      centerB_attribute,
-      radiusA_attribute,
-      radiusB_attribute,
       valuesAsFloats,
+      centerA_attribute.offset,
+      centerB_attribute.offset,
+      radiusA_attribute.offset,
+      radiusB_attribute.offset,
       elementSize,
       0,
       new THREE.Box3()
@@ -80,11 +80,11 @@ describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromCenterAndRadiusAttributes(
-      centerA_attribute,
-      centerB_attribute,
-      radiusA_attribute,
-      radiusB_attribute,
       valuesAsFloats,
+      centerA_attribute.offset,
+      centerB_attribute.offset,
+      radiusA_attribute.offset,
+      radiusB_attribute.offset,
       elementSize,
       1,
       new THREE.Box3()
@@ -137,10 +137,10 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromVertexAttributes(
-      vertex1Attribute,
-      vertex2Attribute,
-      vertex3Attribute,
-      vertex4Attribute,
+      vertex1Attribute.offset,
+      vertex2Attribute.offset,
+      vertex3Attribute.offset,
+      vertex4Attribute.offset,
       valuesAsFloats,
       elementSize,
       0,
@@ -165,10 +165,10 @@ describe('computeBoundingBoxFromVertexAttributes', () => {
 
     // Act
     const result = computeBoundingBoxFromVertexAttributes(
-      vertex1Attribute,
-      vertex2Attribute,
-      vertex3Attribute,
-      vertex4Attribute,
+      vertex1Attribute.offset,
+      vertex2Attribute.offset,
+      vertex3Attribute.offset,
+      vertex4Attribute.offset,
       valuesAsFloats,
       elementSize,
       1,
@@ -218,11 +218,12 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
     const baseBbox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
     const matrix = new THREE.Matrix4().identity();
     const valuesAsFloats = new Float32Array(matrix.toArray());
+    const matrixByteOffset = instanceMatrixAttribute.offset;
 
     // Act
     const result = computeBoundingBoxFromInstanceMatrixAttributes(
-      instanceMatrixAttribute,
       valuesAsFloats,
+      matrixByteOffset,
       elementSize,
       0,
       baseBbox,
@@ -241,11 +242,12 @@ describe('computeBoundingBoxFromInstanceMatrixAttributes', () => {
       new THREE.Matrix4().makeScale(1, 2, 3)
     );
     const valuesAsFloats = new Float32Array(matrix.toArray());
+    const matrixByteOffset = instanceMatrixAttribute.offset;
 
     // Act
     const result = computeBoundingBoxFromInstanceMatrixAttributes(
-      instanceMatrixAttribute,
       valuesAsFloats,
+      matrixByteOffset,
       elementSize,
       0,
       baseBbox,
