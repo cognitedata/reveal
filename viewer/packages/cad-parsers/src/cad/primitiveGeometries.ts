@@ -108,7 +108,7 @@ export const { coneGeometry, coneGeometryBoundingBox } = (() => {
   };
 })();
 
-export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
+export const { torusLodGeometries /* , torusGeometryBoundingBox */ } = (() => {
   const lods = [
     { tubularSegments: 9, radialSegments: 18 },
     { tubularSegments: 5, radialSegments: 12 },
@@ -120,10 +120,11 @@ export const { torusLodGeometries, torusGeometryBoundingBox } = (() => {
   });
 
   return {
-    torusLodGeometries,
-    torusGeometryBoundingBox: new THREE.Box3().setFromArray(
-      torusLodGeometries[torusLodGeometries.length - 1].position.array
-    )
+    torusLodGeometries
+    // TODO 2021-12-10 hflatval: I believe this is wrong, torusLodGeometries are just planes near the origin
+    // torusGeometryBoundingBox: new THREE.Box3().setFromArray(
+    //   torusLodGeometries[torusLodGeometries.length - 1].position.array
+    // )
   };
 })();
 
