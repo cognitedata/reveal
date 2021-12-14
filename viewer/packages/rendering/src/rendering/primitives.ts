@@ -13,7 +13,7 @@ import {
   torusLodGeometries,
   boxGeometryBoundingBox,
   quadGeometryBoundingBox,
-  torusGeometryBoundingBox,
+  /* torusGeometryBoundingBox, */
   nutGeometryBoundingBox,
   SectorGeometry,
   filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
@@ -498,14 +498,16 @@ function createTorusSegments(
   torusSegmentCollection: Uint8Array,
   torusSegmentAttributes: Map<string, ParsePrimitiveAttribute>,
   material: THREE.ShaderMaterial,
-  geometryClipBox: THREE.Box3 | null
+  _geometryClipBox: THREE.Box3 | null
 ) {
-  const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
+  // Torus filtering is disabled due to currently faulty bounding box definition
+  /* const filteredCollection = filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix(
     torusSegmentCollection,
     torusSegmentAttributes,
     torusGeometryBoundingBox,
     geometryClipBox
-  );
+    ); */
+  const filteredCollection = torusSegmentCollection;
 
   const biggestTorus = getBiggestTorusSize(filteredCollection, torusSegmentAttributes);
 
