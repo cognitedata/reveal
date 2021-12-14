@@ -40,6 +40,8 @@ export function Simple() {
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas.current,
       });
+
+      renderer.localClippingEnabled = true;
       renderer.setClearColor('#444');
       renderer.setPixelRatio(window.devicePixelRatio);
 
