@@ -44,7 +44,6 @@ export const Actions: React.FC<Props> = ({
   const dispatch = useDispatch();
   const [isWarningOpen, setWarningOpen] = useState(false);
   const { t } = useTranslation();
-  // const { data: config } = useDocumentConfig();
 
   const metrics = useGlobalMetrics('favorites');
 
@@ -100,17 +99,6 @@ export const Actions: React.FC<Props> = ({
     metrics.track('click-provide-document-feedback-button');
   };
 
-  // const onExtractParentFolder = (document: FavoriteDocumentData) => {
-  //   const parentPath = document.path;
-  //   if (!parentPath) {
-  //     showErrorMessage('Parent path not found');
-  //     return;
-  //   }
-  //   dispatch(
-  //     documentSearchActions.extractParentFolder(parentPath, config?.extractByFilepath)
-  //   );
-  // };
-
   const renderRowHoverComponent = () => {
     return (
       <FlexRow>
@@ -132,13 +120,7 @@ export const Actions: React.FC<Props> = ({
               >
                 Leave feedback
               </Menu.Item>
-              {/* temporarily removing this option until the design is finalized */}
-              {/* <Menu.Divider />
-                <Menu.Item
-                  onClick={() => onExtractParentFolder(row.row.original)}
-                >
-                  Open parent folder
-                </Menu.Item> */}
+
               {showRemoveOption && (
                 <>
                   <Menu.Divider />

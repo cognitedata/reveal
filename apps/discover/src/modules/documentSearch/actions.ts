@@ -29,7 +29,6 @@ import {
 import {
   ADD_PREVIEW_ENTITY,
   ADD_SELECTED_COLUMN,
-  // CLEAR_INITIAL_TIMERANGE,
   CLEAR_PREVIEW_RESULTS,
   CLEAR_TYPEAHEAD,
   REMOVE_PREVIEW_ENTITY,
@@ -37,8 +36,6 @@ import {
   RESET_RESULTS,
   SET_CURRENT_PAGE,
   SET_ERROR_MESSAGE,
-  // SET_FACETS,
-  // SET_INITIAL_TIMERANGE,
   SET_RESULTS,
   SET_SEARCH_FOR_SENSITIVE,
   SET_SEARCHING,
@@ -46,11 +43,8 @@ import {
   SET_SELECTED_COLUMN,
   SET_TYPEAHEAD,
   SET_VIEWMODE,
-  // TOGGLE_DUPLICATE_DISPLAY,
   TOGGLE_SEARH_INFO,
-  REMOVE_DOCUMENT_FROM_RESULTS,
   DocumentAction,
-  SET_SELECTED_DOCUMENT,
   SET_LABELS,
   SET_PREVIEW_ENTITIES,
   ClearPreviewResults,
@@ -62,6 +56,10 @@ import {
   SELECT_DOCUMENT_IDS,
   UnselectDocumentIds,
   UNSELECT_DOCUMENT_IDS,
+  SetExtractParentFolderPath,
+  SET_EXTRACT_PARENT_FOLDER_PATH,
+  CLEAR_EXTRACT_PARENT_FOLDER_PATH,
+  ClearExtractParentFolderPath,
 } from 'modules/documentSearch/types.actions';
 import { getPreparedQuery } from 'modules/documentSearch/utils';
 
@@ -74,6 +72,18 @@ export const unselectDocumentIds = (ids: string[]): UnselectDocumentIds => ({
   type: UNSELECT_DOCUMENT_IDS,
   ids,
 });
+
+export const setExtractParentFolderPath = (
+  path: string
+): SetExtractParentFolderPath => ({
+  type: SET_EXTRACT_PARENT_FOLDER_PATH,
+  path,
+});
+
+export const clearExtractParentFolderPath =
+  (): ClearExtractParentFolderPath => ({
+    type: CLEAR_EXTRACT_PARENT_FOLDER_PATH,
+  });
 
 const documentSearchMetric = Metrics.create(LOG_DOCUMENT_SEARCH);
 
@@ -211,42 +221,6 @@ export const search = (
         });
         showErrorMessage(knownError || DEFAULT_ERROR_MESSAGE);
       });
-  };
-};
-
-const extractParentFolder = (
-  parentPath: string,
-  byFilepath?: boolean
-): ThunkResult<void> => {
-  return (dispatch) => {
-    if (byFilepath) {
-      dispatch(
-        search({
-          filters: {
-            sourceFile: {
-              directoryPrefix: {
-                in: [parentPath],
-              },
-            },
-          },
-          sort: [],
-          searchPhraseOverride: `path:"${parentPath}"`,
-        })
-      );
-    } else {
-      dispatch(
-        search({
-          filters: {
-            sourceFile: {
-              directoryPrefix: {
-                in: [parentPath],
-              },
-            },
-          },
-          sort: [],
-        })
-      );
-    }
   };
 };
 
@@ -408,39 +382,6 @@ const clearTypeahead = (): DocumentAction => {
   return { type: CLEAR_TYPEAHEAD };
 };
 
-// function toggleDuplicatesDisplay(
-//   hit: { id: DocumentType['id'] },
-//   isOpen: boolean
-// ): DocumentAction {
-//   return { type: TOGGLE_DUPLICATE_DISPLAY, hit, isOpen };
-// }
-
-// function findSimilar(id: number): ThunkResult<Promise<void>> {
-//   return (dispatch, getState) => {
-//     const state = getState().documentSearch;
-//     dispatch({ type: SET_SIMILAR_LOADING, id });
-//     return documentSearchService
-//       .findSimilar(id, state.currentDocumentQuery)
-//       .then((hits) => {
-//         dispatch({
-//           type: SET_SIMILAR,
-//           id,
-//           hits,
-//         });
-//       });
-//   };
-// }
-
-// function setSelectedTimeRangeAndSearch(
-//   from: moment.Moment,
-//   to: moment.Moment
-// ): ThunkResult<any> {
-//   return (dispatch) => {
-//     dispatch({ type: SET_SELECTED_TIMERANGE, from, to });
-//     return dispatch(search());
-//   };
-// }
-
 const setCurrentPage = (page: number): ThunkResult<any> => {
   return (dispatch) => {
     dispatch({ type: SET_CURRENT_PAGE, page });
@@ -448,44 +389,12 @@ const setCurrentPage = (page: number): ThunkResult<any> => {
   };
 };
 
-const removeSensitiveDocument = (
-  documentId: DocumentType['id']
-): ThunkResult<void> => {
-  return (dispatch) => {
-    dispatch({
-      type: REMOVE_DOCUMENT_FROM_RESULTS,
-      id: documentId,
-    });
-  };
-};
-
-const toggleDocumentSelection = (
-  documentId: DocumentType['id']
-): ThunkResult<void> => {
-  return (dispatch, getState) => {
-    const state = getState();
-    const { result } = state.documentSearch;
-
-    let selected = false;
-    const doc = result.hits.find((hit) => hit.id === documentId);
-
-    if (doc) {
-      selected = doc.selected || false;
-    }
-
-    dispatch({
-      type: SET_SELECTED_DOCUMENT,
-      id: documentId,
-      state: !selected,
-    });
-  };
-};
-
 export const documentSearchActions = {
   search,
   selectDocumentIds,
   unselectDocumentIds,
-  // toggleDuplicatesDisplay,
+  setExtractParentFolderPath,
+  clearExtractParentFolderPath,
 
   initialize,
 
@@ -498,14 +407,10 @@ export const documentSearchActions = {
   addToPreviewedEntity,
   removeFromPreviewedEntity,
   displaySearchInformation,
-  toggleDocumentSelection,
   setHoveredDocument,
   unsetHoveredDocument,
 
   setViewmode,
-  // findSimilar,
   setSearchForSensitive,
-  extractParentFolder,
-  removeSensitiveDocument,
   setPreviewedEntities,
 };

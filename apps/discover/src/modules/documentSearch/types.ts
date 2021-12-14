@@ -17,6 +17,7 @@ export interface DocumentState {
   currentDocumentQuery: DocumentQuery;
   result: DocumentResult;
   selectedDocumentIds: string[];
+  extractParentFolderPath?: string;
   hoveredDocumentId?: string;
   isSearching: boolean;
   isLoading: boolean;

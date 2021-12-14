@@ -15,6 +15,10 @@ jest.mock('hooks/useProjectConfig', () => ({
   useProjectConfig: jest.fn(),
 }));
 
+jest.mock('modules/documentSearch/selectors', () => ({
+  useExtractParentFolderPath: jest.fn(),
+}));
+
 describe('useDocumentSearch hook', () => {
   const dispatch = jest.fn();
 

@@ -1,41 +1,19 @@
-import { useSelector } from 'react-redux';
-
 import { fireEvent, screen } from '@testing-library/react';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRendererModal } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
 import { useDocument } from 'hooks/useDocument';
-import { useQueryDocumentLabels } from 'modules/api/documents/useDocumentQuery';
 
 import { EntityFeedbackModal } from '../EntityFeedbackModal';
 
-const appState = {
-  feedback: {
-    objectFeedbackModalDocumentId: 200,
-  },
-};
-
-const mockClearObjectFeedbackModalDocumentId = jest.fn();
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
-  useDispatch: () => mockClearObjectFeedbackModalDocumentId,
-}));
-jest.mock('modules/api/documents/useDocumentQuery', () => ({
-  useQueryDocumentLabels: jest.fn(),
-}));
 jest.mock('hooks/useDocument', () => ({
   useDocument: jest.fn(),
 }));
 
 describe('EntityFeedbackModal Tests', () => {
   beforeEach(() => {
-    (useSelector as jest.Mock).mockImplementation((callback) =>
-      callback(appState)
-    );
-    (useQueryDocumentLabels as jest.Mock).mockImplementation(() => ({
-      data: [{ name: 'name', count: 1, id: 'id' }],
-    }));
     const mockDocument = getMockDocument();
     (useDocument as jest.Mock).mockImplementation(() => [
       mockDocument,
@@ -43,13 +21,12 @@ describe('EntityFeedbackModal Tests', () => {
       undefined,
     ]);
   });
-  afterEach(() => {
-    (useSelector as jest.Mock).mockClear();
-    (useQueryDocumentLabels as jest.Mock).mockClear();
-    (useDocument as jest.Mock).mockClear();
-  });
+
+  const store = getMockedStore();
+
   const testInit = async (viewProps?: any) =>
-    testRendererModal(EntityFeedbackModal, undefined, viewProps);
+    testRendererModal(EntityFeedbackModal, store, viewProps);
+
   it('should render modal content as expected', async () => {
     await testInit({
       open: true,

@@ -15,11 +15,14 @@ export const ADD_SELECTED_COLUMN = 'SEARCH_ADD_SELECTED_COLUMN';
 export const REMOVE_SELECTED_COLUMN = 'SEARCH_REMOVE_SELECTED_COLUMN';
 export const SET_SELECTED_COLUMN = 'SEARCH_SET_SELECTED_COLUMN';
 
-export const SET_SELECTED_DOCUMENT = 'SEARCH_SET_SELECTED_DOCUMENT';
 export const SET_LABELS = 'SET_LABELS';
 
 export const SELECT_DOCUMENT_IDS = 'SELECT_DOCUMENT_IDS';
 export const UNSELECT_DOCUMENT_IDS = 'UNSELECT_DOCUMENT_IDS';
+
+export const SET_EXTRACT_PARENT_FOLDER_PATH = 'SET_EXTRACT_PARENT_FOLDER_PATH';
+export const CLEAR_EXTRACT_PARENT_FOLDER_PATH =
+  'CLEAR_EXTRACT_PARENT_FOLDER_PATH';
 
 /**
  * When mouse hovered over a document add that document id to state
@@ -29,11 +32,6 @@ export const SET_HOVERED_DOCUMENT = 'SET_HOVERED_DOCUMENT';
  * When mouse moved from hovering over a document remove that document id to state
  */
 export const UNSET_HOVERED_DOCUMENT = 'UNSET_HOVERED_DOCUMENT';
-
-// export const SET_SIMILAR = 'SEARCH_SET_SIMILAR';
-// export const SET_SIMILAR_LOADING = 'SEARCH_SET_SIMILAR_LOADING';
-export const REMOVE_DOCUMENT_FROM_RESULTS =
-  'SEARCH_REMOVE_DOCUMENT_FROM_RESULTS';
 
 // Paging & sorting
 export const SET_CURRENT_PAGE = 'SEARCH_SET_CURRENT_PAGE';
@@ -64,6 +62,15 @@ export interface SelectDocumentIds {
 export interface UnselectDocumentIds {
   type: typeof UNSELECT_DOCUMENT_IDS;
   ids: string[];
+}
+
+export interface SetExtractParentFolderPath {
+  type: typeof SET_EXTRACT_PARENT_FOLDER_PATH;
+  path: string;
+}
+
+export interface ClearExtractParentFolderPath {
+  type: typeof CLEAR_EXTRACT_PARENT_FOLDER_PATH;
 }
 
 interface SetLabels {
@@ -181,11 +188,6 @@ interface SetPreviewEntities {
   entities: DocumentType[];
 }
 
-interface RemoveDocumentFromResults {
-  type: typeof REMOVE_DOCUMENT_FROM_RESULTS;
-  id: DocumentType['id'];
-}
-
 interface SetHoveredDocument {
   type: typeof SET_HOVERED_DOCUMENT;
   id: string;
@@ -198,6 +200,8 @@ interface UnsetHoveredDocument {
 export type DocumentAction =
   | SelectDocumentIds
   | UnselectDocumentIds
+  | SetExtractParentFolderPath
+  | ClearExtractParentFolderPath
   | SetLabels
   | SetSearchForSensitive
   | SetResults
@@ -219,13 +223,7 @@ export type DocumentAction =
   | AddPreviewEntity
   | RemovePreviewEntity
   | ClearPreviewResults
-  | RemoveDocumentFromResults
   | ResetResults
   | SetPreviewEntities
   | SetHoveredDocument
-  | UnsetHoveredDocument
-  | {
-      type: typeof SET_SELECTED_DOCUMENT;
-      id: DocumentType['id'];
-      state: boolean;
-    };
+  | UnsetHoveredDocument;

@@ -16,6 +16,7 @@ jest.mock('modules/documentSearch/selectors', () => ({
     return { 'unstructured-doctype-TEST_TYPE_1': 'TEST_TYPE_1' };
   }),
   useFilters: jest.fn(),
+  useExtractParentFolderPath: jest.fn(),
 }));
 
 jest.mock('modules/map/selectors', () => ({

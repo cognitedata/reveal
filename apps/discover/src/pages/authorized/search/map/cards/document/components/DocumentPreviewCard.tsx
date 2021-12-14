@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Icons } from '@cognite/cogs.js';
@@ -13,7 +13,7 @@ import DocumentViewModal from 'components/document-preview-card/DocumentViewModa
 import { showSuccessMessage } from 'components/toast';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { openDocumentPreviewInNewTab } from 'modules/documentPreview/utils';
-import { useDocumentResult } from 'modules/documentSearch/selectors';
+import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import { clearSelectedDocument } from 'modules/map/actions';
 import { MarginBottomNormalContainer } from 'styles/layout';
 
@@ -26,11 +26,13 @@ export const DocumentPreviewCard: React.FC<{ documentId: string }> = ({
   documentId,
 }) => {
   const metrics = useGlobalMetrics('map');
-  const doc = useDocumentResult(documentId);
   const dispatch = useDispatch();
-  const [showModal, setShowModal] = React.useState<boolean>(false);
   const { t } = useTranslation();
-  const [downloadingPdf, setDownloadingPdf] = React.useState<boolean>(false);
+
+  const documentResultHits = useDocumentResultHits();
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [downloadingPdf, setDownloadingPdf] = useState<boolean>(false);
   const handlePreviewClick = async () => {
     setShowModal(true);
     metrics.track('click-open-document-preview-button');
@@ -42,6 +44,11 @@ export const DocumentPreviewCard: React.FC<{ documentId: string }> = ({
       window.dispatchEvent(new Event('resize'));
     }, 1000);
   }, [documentId]);
+
+  const doc = useMemo(
+    () => documentResultHits.find((doc) => doc.id === documentId),
+    [documentId]
+  );
 
   const viewDocumentInNewTab = async () => {
     metrics.track('click-view-document-in-tab-button');

@@ -24,6 +24,7 @@ import {
 import { useQuerySavedSearchCurrent } from 'modules/api/savedSearches/useQuery';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
+import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
 import { useFavoriteDocumentIds } from 'modules/documentSearch/hooks/useFavoriteDocumentIds';
 import {
   useDocuments,
@@ -144,6 +145,7 @@ export const DocumentResultTable: React.FC = () => {
   const { data: config } = useDocumentConfig();
   const selectedDocumentIds = useSelectedDocumentIds();
   const favoriteDocumentIds = useFavoriteDocumentIds();
+  const extractParentFolder = useExtractParentFolder();
 
   const [documentToPreview, setDocumentToPreview] = useState<
     DocumentTypeDataModel | undefined
@@ -278,18 +280,7 @@ export const DocumentResultTable: React.FC = () => {
   };
 
   const onExtractParentFolder = (row: DocumentRowType) => {
-    const document = row.original;
-    const parentPath = document.doc.filepath;
-    if (!parentPath) {
-      showErrorMessage('Parent path not found');
-      return;
-    }
-    dispatch(
-      documentSearchActions.extractParentFolder(
-        parentPath,
-        config?.extractByFilepath
-      )
-    );
+    extractParentFolder(row.original);
   };
 
   const onOpenFeedback = (row: DocumentRowType) => {

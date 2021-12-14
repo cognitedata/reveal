@@ -4,6 +4,8 @@ import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
 
 import { SavedSearchQuery } from 'modules/api/savedSearches/types';
+import { documentSearchActions } from 'modules/documentSearch/actions';
+import { useExtractParentFolderPath } from 'modules/documentSearch/selectors';
 import { setSortByOptions } from 'modules/resultPanel/actions';
 import { updateCategoryAppliedFilters } from 'modules/sidebar/actions';
 
@@ -11,6 +13,7 @@ import { updateExtraGeoJsonAppliedFilters } from '../modules/sidebar/actions';
 
 export const useDocumentSearch = () => {
   const dispatch = useDispatch();
+  const extractParentFolderPath = useExtractParentFolderPath();
 
   const doDocumentSearch = (searchQuery: SavedSearchQuery) => {
     const { geoFilter, phrase } = searchQuery;
@@ -20,6 +23,14 @@ export const useDocumentSearch = () => {
 
     // Skip document search if any of these are not mutated
     if (phraseUndefined && !documentFilters && !geoFilter) return;
+
+    /**
+     * Clear `extractParentFolderPath` if exists.
+     * So, the search action works as normal.
+     */
+    if (extractParentFolderPath) {
+      dispatch(documentSearchActions.clearExtractParentFolderPath());
+    }
 
     /**
      * Set sortBy options to state

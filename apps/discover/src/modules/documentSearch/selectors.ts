@@ -11,30 +11,11 @@ export const useCurrentDocumentQuery = () => {
   return useDocuments().currentDocumentQuery;
 };
 
-export const useFacets = () => {
-  const state = useDocuments();
-  return useMemo(() => state.result.facets, [state.result]);
-};
-
 export const useViewMode = () => {
   return useDocuments().viewMode;
 };
 export const useLabels = () => {
   return useDocuments().labels;
-};
-
-export const useDocumentResultHits = () => {
-  const state = useDocuments();
-  return useMemo(() => state.result.hits, [state.result]);
-};
-
-export const useDocumentResultCount = () => {
-  const state = useDocuments();
-  return useMemo(() => state.result.count, [state.result]);
-};
-
-export const useDocumentResult = (id: string) => {
-  return useDocumentResultHits().find((doc) => doc.id === id);
 };
 
 export const usePreviewedDocuments = () => {
@@ -56,6 +37,14 @@ export const usePreviewedDocumentIds = () => {
 export const useSelectedDocumentIds = () => {
   const state = useDocuments();
   return useMemo(() => state.selectedDocumentIds, [state.selectedDocumentIds]);
+};
+
+export const useExtractParentFolderPath = () => {
+  const state = useDocuments();
+  return useMemo(
+    () => state.extractParentFolderPath,
+    [state.extractParentFolderPath]
+  );
 };
 
 export const useHoveredDocumentId = () => {

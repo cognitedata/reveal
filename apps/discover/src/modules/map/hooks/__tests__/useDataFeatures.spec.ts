@@ -8,6 +8,7 @@ import {
 import { getMockWellOld } from '__test-utils/fixtures/well';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import { useDocumentResultHits } from 'modules/documentSearch/hooks/useDocumentResultHits';
 import {
   ExternalWellsFeature,
   useDataFeatures,
@@ -17,25 +18,38 @@ import {
   WELL_HEADS_LAYER_ID,
 } from 'pages/authorized/search/map/constants';
 
+jest.mock('modules/documentSearch/hooks/useDocumentResultHits', () => ({
+  useDocumentResultHits: jest.fn(),
+}));
+
 const selectedLayers = [WELL_HEADS_LAYER_ID, DOCUMENT_LAYER_ID];
 
 describe('useDataFeatures', () => {
+  beforeEach(() =>
+    (useDocumentResultHits as jest.Mock).mockImplementation(() => [
+      getMockDocument({ id: '1', geolocation: getMockGeometry() }),
+      getMockDocument({ id: '2' }),
+    ])
+  );
+
   it('should return empty array for empty state', async () => {
+    (useDocumentResultHits as jest.Mock).mockImplementation(() => []);
     const store = getMockedStore();
+
     const { result } = renderHook(() => useDataFeatures(selectedLayers, []), {
       wrapper: ({ children }) => testWrapper({ store, children }),
     });
+
     expect(result.current.features).toHaveLength(0);
   });
 
   it('should return empty array for documents and wells without geolocation', async () => {
+    (useDocumentResultHits as jest.Mock).mockImplementation(() => [
+      getMockDocument({ id: '1' }),
+      getMockDocument({ id: '2' }),
+    ]);
+
     const store = getMockedStore({
-      documentSearch: {
-        result: {
-          hits: [getMockDocument({ id: '1' }), getMockDocument({ id: '2' })],
-        },
-        selectedDocumentIds: ['1', '2'],
-      },
       wellSearch: {
         wells: [getMockWellOld({ id: 1 })],
         selectedWellIds: {
@@ -43,13 +57,13 @@ describe('useDataFeatures', () => {
         },
       },
     });
+
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures(selectedLayers, []),
       {
         wrapper: ({ children }) => testWrapper({ store, children }),
       }
     );
-
     waitForNextUpdate();
 
     expect(result.current.features).toHaveLength(0);
@@ -57,15 +71,6 @@ describe('useDataFeatures', () => {
 
   it('should return correct data for documents and wells that have geolocation', async () => {
     const store = getMockedStore({
-      documentSearch: {
-        result: {
-          hits: [
-            getMockDocument({ id: '1', geolocation: getMockGeometry() }),
-            getMockDocument({ id: '2' }),
-          ],
-        },
-        selectedDocumentIds: ['1', '2'],
-      },
       wellSearch: {
         wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
@@ -73,13 +78,13 @@ describe('useDataFeatures', () => {
         },
       },
     });
+
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures(selectedLayers, []),
       {
         wrapper: ({ children }) => testWrapper({ store, children }),
       }
     );
-
     waitForNextUpdate();
 
     expect(result.current.features).toHaveLength(2);
@@ -99,16 +104,8 @@ describe('useDataFeatures', () => {
         },
       },
     ];
+
     const store = getMockedStore({
-      documentSearch: {
-        result: {
-          hits: [
-            getMockDocument({ id: '1', geolocation: getMockGeometry() }),
-            getMockDocument({ id: '2' }),
-          ],
-        },
-        selectedDocumentIds: ['1', '2'],
-      },
       wellSearch: {
         wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
@@ -116,13 +113,13 @@ describe('useDataFeatures', () => {
         },
       },
     });
+
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures(selectedLayers, externalWells),
       {
         wrapper: ({ children }) => testWrapper({ store, children }),
       }
     );
-
     waitForNextUpdate();
 
     expect(result.current.features).toHaveLength(3);
@@ -143,16 +140,8 @@ describe('useDataFeatures', () => {
         },
       },
     ];
+
     const store = getMockedStore({
-      documentSearch: {
-        result: {
-          hits: [
-            getMockDocument({ id: '1', geolocation: getMockGeometry() }),
-            getMockDocument({ id: '2' }),
-          ],
-        },
-        selectedDocumentIds: ['1', '2'],
-      },
       wellSearch: {
         wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
@@ -160,6 +149,7 @@ describe('useDataFeatures', () => {
         },
       },
     });
+
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures([], externalWells),
       {
@@ -186,14 +176,9 @@ describe('useDataFeatures', () => {
         },
       },
     ];
+
     const store = getMockedStore({
       documentSearch: {
-        result: {
-          hits: [
-            getMockDocument({ id: '1', geolocation: getMockGeometry() }),
-            getMockDocument({ id: '2' }),
-          ],
-        },
         selectedDocumentIds: ['1', '2'],
       },
       wellSearch: {
@@ -203,13 +188,13 @@ describe('useDataFeatures', () => {
         },
       },
     });
+
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures(selectedLayers, externalWells),
       {
         wrapper: ({ children }) => testWrapper({ store, children }),
       }
     );
-
     waitForNextUpdate();
 
     // documents is selected so isblurred is false
@@ -241,15 +226,6 @@ describe('useDataFeatures', () => {
     ];
 
     const store = getMockedStore({
-      documentSearch: {
-        result: {
-          hits: [
-            getMockDocument({ id: '1', geolocation: getMockGeometry() }),
-            getMockDocument({ id: '2' }),
-          ],
-        },
-        selectedDocumentIds: ['1', '2'],
-      },
       wellSearch: {
         wells: [getMockWellOld({ id: 1, geometry: getMockPointGeo() })],
         selectedWellIds: {
@@ -257,13 +233,13 @@ describe('useDataFeatures', () => {
         },
       },
     });
+
     const { result, waitForNextUpdate } = renderHook(
       () => useDataFeatures(selectedLayers, externalWells),
       {
         wrapper: ({ children }) => testWrapper({ store, children }),
       }
     );
-
     waitForNextUpdate();
 
     expect(result.current.features).toHaveLength(2);

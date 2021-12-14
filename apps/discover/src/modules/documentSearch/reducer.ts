@@ -3,18 +3,12 @@ import concat from 'lodash/concat';
 import difference from 'lodash/difference';
 import merge from 'lodash/merge';
 
-import {
-  DocumentType,
-  DocumentQuery,
-  DocumentState,
-  DocumentResult,
-} from 'modules/documentSearch/types';
+import { DocumentQuery, DocumentState } from 'modules/documentSearch/types';
 import {
   ADD_PREVIEW_ENTITY,
   ADD_SELECTED_COLUMN,
   CLEAR_PREVIEW_RESULTS,
   CLEAR_TYPEAHEAD,
-  REMOVE_DOCUMENT_FROM_RESULTS,
   REMOVE_PREVIEW_ENTITY,
   REMOVE_SELECTED_COLUMN,
   RESET_RESULTS,
@@ -24,7 +18,6 @@ import {
   // SET_SEARCH_FOR_SENSITIVE,
   SET_SEARCHING,
   SET_LOADING,
-  SET_SELECTED_DOCUMENT,
   SET_SELECTED_COLUMN,
   // SET_SIMILAR_LOADING,
   // SET_SIMILAR,
@@ -39,6 +32,8 @@ import {
   UNSET_HOVERED_DOCUMENT,
   SELECT_DOCUMENT_IDS,
   UNSELECT_DOCUMENT_IDS,
+  SET_EXTRACT_PARENT_FOLDER_PATH,
+  CLEAR_EXTRACT_PARENT_FOLDER_PATH,
 } from 'modules/documentSearch/types.actions';
 
 import {
@@ -205,49 +200,6 @@ export function search(
         },
       };
 
-    // case SET_SIMILAR: {
-    //   return {
-    //     ...state,
-    //     result: {
-    //       ...state.result,
-    //       hits: state.result.hits.map((m) => {
-    //         if (m.id === action.id) {
-    //           return {
-    //             ...m,
-    //             similar: [...(action.hits || [])],
-    //             similarLoading: false,
-    //           };
-    //         }
-    //         return m;
-    //       }),
-    //     },
-    //   };
-    // }
-
-    // case SET_SIMILAR_LOADING: {
-    //   return {
-    //     ...state,
-    //     result: {
-    //       ...state.result,
-    //       hits: state.result.hits.map((m) => {
-    //         if (m.id === action.id) {
-    //           return { ...m, similarLoading: true };
-    //         }
-    //         return m;
-    //       }),
-    //     },
-    //   };
-    // }
-
-    case SET_SELECTED_DOCUMENT: {
-      return {
-        ...state,
-        result: modifySearchResult(state.result, action.id, {
-          selected: action.state,
-        }),
-      };
-    }
-
     case SELECT_DOCUMENT_IDS: {
       return {
         ...state,
@@ -259,6 +211,20 @@ export function search(
       return {
         ...state,
         selectedDocumentIds: difference(state.selectedDocumentIds, action.ids),
+      };
+    }
+
+    case SET_EXTRACT_PARENT_FOLDER_PATH: {
+      return {
+        ...state,
+        extractParentFolderPath: action.path,
+      };
+    }
+
+    case CLEAR_EXTRACT_PARENT_FOLDER_PATH: {
+      return {
+        ...state,
+        extractParentFolderPath: undefined,
       };
     }
 
@@ -281,22 +247,6 @@ export function search(
 
     case SET_LOADING:
       return { ...state, isLoading: action.isLoading };
-
-    // case TOGGLE_DUPLICATE_DISPLAY:
-    //   return {
-    //     ...state,
-    //     result: {
-    //       ...state.result,
-    //       hits: state.result.hits.map((f) => {
-    //         if (f.id === action.hit.id) {
-    //           return { ...f, isOpen: action.isOpen };
-    //         }
-    //         return {
-    //           ...f,
-    //         };
-    //       }),
-    //     },
-    //   };
 
     case SET_ERROR_MESSAGE: {
       return {
@@ -326,42 +276,7 @@ export function search(
       };
     }
 
-    // REMOVE SENSITIVE DOCUMENTS
-    case REMOVE_DOCUMENT_FROM_RESULTS: {
-      const hits = state.result.hits.filter((hit) => {
-        return hit.id !== action.id;
-      });
-      const count = state.result.count - 1;
-
-      return {
-        ...state,
-        result: {
-          ...state.result,
-          hits,
-          count,
-        },
-      };
-    }
-
     default:
       return state;
   }
 }
-
-const modifySearchResult = (
-  result: DocumentResult,
-  id: DocumentType['id'],
-  newStuff: Partial<DocumentType>
-) => {
-  return {
-    ...result,
-    hits: result.hits.map((doc) => {
-      if (doc.id === id) {
-        return { ...doc, ...newStuff };
-      }
-      return {
-        ...doc,
-      };
-    }),
-  };
-};

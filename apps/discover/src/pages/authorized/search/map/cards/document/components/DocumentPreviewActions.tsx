@@ -14,12 +14,11 @@ import {
   CogniteButton,
   FeedbackButton,
 } from 'components/buttons';
-import { showErrorMessage } from 'components/toast';
 import { useDocumentLabelsByExternalIds } from 'hooks/useDocumentLabels';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { downloadFileFromUrl } from 'modules/documentPreview/utils';
-import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useDocumentConfig } from 'modules/documentSearch/hooks';
+import { useExtractParentFolder } from 'modules/documentSearch/hooks/useExtractParentFolder';
 import { DocumentType } from 'modules/documentSearch/types';
 import {
   canContextualize,
@@ -50,20 +49,11 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
   const metrics = useGlobalMetrics('feedback');
   const [project] = getTenantInfo();
   const filteredLabels = useDocumentLabelsByExternalIds(doc.doc.labels);
+  const extractParentFolder = useExtractParentFolder();
 
   const onExtractParentFolder = () => {
-    const parentPath = doc.doc.filepath;
-    if (!parentPath) {
-      showErrorMessage('Parent path not found');
-      return;
-    }
     metrics.track('click-extract-parent-folder-button');
-    dispatch(
-      documentSearchActions.extractParentFolder(
-        parentPath,
-        config?.extractByFilepath
-      )
-    );
+    extractParentFolder(doc);
   };
 
   const onOpenFeedback = () => {
@@ -83,7 +73,7 @@ const DocumentPreviewActionsComponent: React.FC<Props> = ({
   const supportedFileTypes = config?.wellboreSchematics?.supportedFileTypes;
 
   /**
-   * Does document type supportd for Wellbore Schematics
+   * Does document type supported for Wellbore Schematics
    */
   const isSupportedFileType =
     supportedFileTypes &&

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,8 +15,8 @@ import {
   sendObjectFeedback,
   useFeedbackCreateMutate,
 } from 'modules/api/feedback';
-import { documentSearchActions } from 'modules/documentSearch/actions';
 import { clearObjectFeedbackModalDocumentId } from 'modules/feedback/actions';
+import { useRemoveSensitiveDocument } from 'modules/feedback/hooks/useRemoveSensitiveDocument';
 import { FeedbackState, NewDocumentFeedbackItem } from 'modules/feedback/types';
 
 import { EntityFeedbackContent } from './EntityFeedbackContent';
@@ -39,25 +39,27 @@ interface Props {
 }
 
 export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const [categories, setCategories] = useState<string[]>([
     UNCLASSIFIED_DOCUMENT_TYPE,
   ]);
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
   const [isSensitiveData, setSensitiveData] = useState(false);
   const [isIncorrectGeo, setIncorrectGeo] = useState(false);
   const [isIncorrectDocType, setIncorrectDocType] = useState(false);
   const [correctDocType, setCorrectDocType] = useState('');
   const [isOther, setOther] = useState(false);
   const [freeText, setFreeText] = useState('');
-  const [showUndoToast, setShowUndoToast] = React.useState<boolean>(false);
-  const [showModal, setShowModal] = React.useState<boolean>(true);
+  const [showUndoToast, setShowUndoToast] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(true);
 
   const { mutateAsync: addObjectFeedback } = useFeedbackCreateMutate('object');
+  const removeSensitiveDocument = useRemoveSensitiveDocument();
 
   const { data: allLabels } = useQueryDocumentLabels();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (allLabels) {
       setCategories(allLabels.map((label) => label.name));
     }
@@ -127,7 +129,7 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
     sendObjectFeedback(feedback, addObjectFeedback);
 
     if (isDocumentFeedback && isSensitiveData) {
-      dispatch(documentSearchActions.removeSensitiveDocument(documentId));
+      removeSensitiveDocument(documentId);
     }
 
     handleCloseEvent();
