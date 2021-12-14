@@ -1,4 +1,3 @@
-import Dialog from '@material-ui/core/Dialog';
 import styled from 'styled-components/macro';
 
 import { Button } from '@cognite/cogs.js';
@@ -128,8 +127,4 @@ export const WellboreSelectionImageContainer = styled.div`
   position: relative;
   bottom: 2px;
   color: var(--cogs-greyscale-grey6);
-`;
-
-export const StyledDialog = styled(Dialog)`
-  margin: 25px;
 `;

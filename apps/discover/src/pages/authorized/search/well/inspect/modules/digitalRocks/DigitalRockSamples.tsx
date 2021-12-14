@@ -4,12 +4,11 @@ import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 
 import EmptyState from 'components/emptyState';
+import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { DIGITAL_ROCK_SAMPLES_ACCESSORS } from 'modules/wellSearch/constants';
 import { useDigitalRocksSamples } from 'modules/wellSearch/selectors/asset/digitalRocks';
 import { FlexRow } from 'styles/layout';
-
-import DialogPopup from '../common/DialogPopup';
 
 import { DigitalRocksSampleWrapper } from './elements';
 import GrainAnalysis from './GrainAnalysis';
@@ -129,14 +128,16 @@ const DigitalRockSamples: React.FC<Props> = ({ digitalRock }) => {
           renderRowHoverComponent={renderRowHoverComponent}
         />
       </DigitalRocksSampleWrapper>
-      <DialogPopup
-        isopen={viewGrainAnalysis !== undefined}
-        handleClose={grainAnalysisClosed}
+      <Modal
+        onCancel={grainAnalysisClosed}
+        onOk={grainAnalysisClosed}
+        fullWidth
+        visible={!!viewGrainAnalysis}
       >
         {viewGrainAnalysis && (
           <GrainAnalysis digitalRockSample={viewGrainAnalysis} />
         )}
-      </DialogPopup>
+      </Modal>
     </>
   );
 };

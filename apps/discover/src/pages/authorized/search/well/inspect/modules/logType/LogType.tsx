@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { Sequence } from '@cognite/sdk';
 
 import { WhiteLoader } from 'components/loading';
+import { Modal } from 'components/modal';
 import { RowProps, Table } from 'components/tablev3';
 import { showErrorMessage } from 'components/toast';
 import { filterDataActions } from 'modules/filterData/actions';
@@ -15,7 +16,6 @@ import {
 } from 'modules/wellSearch/selectors';
 
 import { COMMON_COLUMN_WIDTHS, NO_LOGS_ERROR_MESSAGE } from '../../constants';
-import { DialogPopup } from '../common/DialogPopup';
 import PreviewSelector from '../common/PreviewSelector';
 
 import { LogTypeData } from './interfaces';
@@ -135,9 +135,14 @@ export const LogType: React.FC = () => {
         handleRowsSelect={handleRowsSelect}
       />
       <Preview selected={selectedData} />
-      <DialogPopup isopen={isDialogOpen} handleClose={handleDialogClosed}>
+      <Modal
+        fullWidth
+        visible={isDialogOpen}
+        onOk={() => handleDialogClosed(false)}
+        onCancel={() => handleDialogClosed(false)}
+      >
         <LogTypeViewer logTypes={logTypes} />
-      </DialogPopup>
+      </Modal>
     </>
   );
 };
