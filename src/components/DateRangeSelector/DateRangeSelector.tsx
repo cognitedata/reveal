@@ -6,6 +6,7 @@ import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
 import chartAtom from 'models/chart/atom';
 import { useState } from 'react';
+import { updateChartDateRange } from 'models/chart/updates';
 
 const relativeTimeOptions = [
   {
@@ -63,11 +64,7 @@ const DateRangeSelector = () => {
     source?: 'button' | 'daterange';
   }) => {
     if (dateFrom || dateTo) {
-      setChart((oldChart) => ({
-        ...oldChart!,
-        dateFrom: (dateFrom || new Date(oldChart?.dateFrom!)).toJSON(),
-        dateTo: (dateTo || new Date(oldChart?.dateTo!)).toJSON(),
-      }));
+      setChart((oldChart) => updateChartDateRange(oldChart!, dateFrom, dateTo));
       trackUsage('ChartView.DateChange', { source });
     }
   };

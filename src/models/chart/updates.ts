@@ -11,6 +11,7 @@ import {
 } from 'models/chart/types';
 import { getEntryColor } from 'utils/colors';
 import { convertTsToWorkFlow } from 'utils/timeseries';
+import dayjs from 'dayjs';
 
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = uuidv4();
@@ -234,5 +235,23 @@ export const updateChartSettings = (
   return {
     ...chart,
     settings: { ...chart.settings, ...diff },
+  };
+};
+
+export const updateChartDateRange = (
+  chart: Chart,
+  dateFrom: Date | string | undefined,
+  dateTo: Date | string | undefined
+) => {
+  const requestedDateFrom = dayjs(dateFrom || chart.dateFrom!);
+  const requestedDateTo = dayjs(dateTo || chart.dateTo!);
+  const isFromAfterTo = requestedDateFrom.isAfter(requestedDateTo);
+  const newDateFrom = isFromAfterTo ? requestedDateTo : requestedDateFrom;
+  const newDateTo = isFromAfterTo ? requestedDateFrom : requestedDateTo;
+
+  return {
+    ...chart,
+    dateFrom: newDateFrom.toJSON(),
+    dateTo: newDateTo.toJSON(),
   };
 };

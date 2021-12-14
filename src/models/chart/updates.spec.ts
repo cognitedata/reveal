@@ -6,6 +6,7 @@ import {
   duplicate,
   removeTimeseries,
   removeWorkflow,
+  updateChartDateRange,
   updateTimeseries,
   updateWorkflow,
 } from './updates';
@@ -184,6 +185,78 @@ describe('charts util', () => {
     describe('addWorkflow', () => {
       it('should add timeseries to charts', () => {
         expect(addWorkflow(chart, wf)).toEqual(chartWithWF);
+      });
+    });
+  });
+
+  describe('updateChartDateRange', () => {
+    it('should update correctly when dates are in chronological order', () => {
+      const existingChart: Chart = {
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-13T12:00:00.000Z',
+        dateTo: '2021-12-13T15:00:00.000Z',
+      };
+
+      const requestedDateFrom = '2021-12-13T16:00:00.000Z';
+      const requestedDateTo = '2021-12-13T19:00:00.000Z';
+
+      const updatedChart = updateChartDateRange(
+        existingChart,
+        requestedDateFrom,
+        requestedDateTo
+      );
+
+      expect(updatedChart).toEqual({
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-13T16:00:00.000Z',
+        dateTo: '2021-12-13T19:00:00.000Z',
+      });
+    });
+
+    it('should update correctly when dates are in reverse chronological order', () => {
+      const existingChart: Chart = {
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-13T12:00:00.000Z',
+        dateTo: '2021-12-13T15:00:00.000Z',
+      };
+
+      const requestedDateFrom = '2021-12-13T19:00:00.000Z';
+      const requestedDateTo = '2021-12-13T16:00:00.000Z';
+
+      const updatedChart = updateChartDateRange(
+        existingChart,
+        requestedDateFrom,
+        requestedDateTo
+      );
+
+      expect(updatedChart).toEqual({
+        id,
+        version: 1,
+        name: 'test chart',
+        user: 'user_1@example.org',
+        updatedAt: 1615976865123,
+        createdAt: 1615976863997,
+        public: true,
+        dateFrom: '2021-12-13T16:00:00.000Z',
+        dateTo: '2021-12-13T19:00:00.000Z',
       });
     });
   });
