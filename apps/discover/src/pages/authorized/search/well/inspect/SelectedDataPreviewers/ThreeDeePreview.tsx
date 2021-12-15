@@ -229,7 +229,7 @@ const ThreeDeePreview: React.FC<Props> = ({
  *
  */
 const mapStateToProps = (state: StoreState) => ({
-  selectedWellboreIds: state.wellSearch.selectedWellboreIds,
+  selectedWellboreIds: state.wellSearch.selectedSecondaryWellboreIds,
   wellboreData: state.wellSearch.wellboreData,
 });
 
