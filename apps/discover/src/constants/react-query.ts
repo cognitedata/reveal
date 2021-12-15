@@ -13,12 +13,13 @@ export const DOCUMENTS_BY_IDS_QUERY_KEY = ['documents'];
 
 export const RELATED_DOCUMENT_KEY = 'relatedDocuments';
 
+const USER = 'user';
 export const USER_KEY = {
-  SYNC_QUERY: 'userSync',
-  ALL_USERS: ['user', 'getAll'],
-  USER: ['user'],
-  ROLES: 'roles',
-  USER_FAVORITES: ['user', 'favorites'],
+  SYNC_QUERY: [USER, 'userSync'],
+  ALL_USERS: [USER, 'getAll'],
+  USER: [USER],
+  ROLES: [USER, 'roles'],
+  USER_FAVORITES: [USER, 'favorites'],
 };
 
 export const FAVORITE_KEY = {
@@ -56,19 +57,23 @@ export const STATS_QUERY_KEY = {
 };
 
 export const ONLY_FETCH_ONCE = {
+  refetchOnWindowFocus: false,
+  refetchOnmount: false,
+  refetchOnReconnect: false,
   staleTime: Infinity,
   cacheTime: Infinity,
 };
 
 const WELLS = 'wells';
 export const WELL_QUERY_KEY = {
-  BY_ID: ['wellsById'],
+  BY_ID: [WELLS, 'wellsById'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
-  CASINGS: ['casings'],
-  TRAJECTORIES: ['trajectories'],
-  NDS_EVENTS: ['ndsEvents'],
-  NPT_EVENTS: ['nptEvents'],
-  MEASUREMENTS: ['measurements'],
+  CASINGS: [WELLS, 'casings'],
+  TRAJECTORIES: [WELLS, 'trajectories'],
+  NDS_EVENTS: [WELLS, 'ndsEvents'],
+  NDS_EVENTS_ALL: [WELLS, 'ndsEvents', 'allCursors'],
+  NPT_EVENTS: [WELLS, 'nptEvents'],
+  MEASUREMENTS: [WELLS, 'measurements'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

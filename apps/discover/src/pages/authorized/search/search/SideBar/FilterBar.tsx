@@ -8,6 +8,7 @@ import {
 
 import { setActivePanel } from '../../../../../modules/resultPanel/actions';
 
+import { PrefetchFilterOptions } from './components/PrefetchFilterOptions';
 import { MS_TRANSITION_TIME } from './constants';
 import { FilterBarContainer } from './elements';
 import {
@@ -29,9 +30,11 @@ export const FilterBar: React.FC = () => {
     }, MS_TRANSITION_TIME);
   }, [isOpen]);
 
-  if (category === 'landing') {
-    dispatch(setActivePanel(undefined));
-  }
+  useEffect(() => {
+    if (category === 'landing') {
+      dispatch(setActivePanel(undefined));
+    }
+  }, [category]);
 
   const renderCategoryPage = () => {
     if (category === 'documents') {
@@ -48,6 +51,7 @@ export const FilterBar: React.FC = () => {
 
   return (
     <FilterBarContainer isOpen={isOpen}>
+      <PrefetchFilterOptions />
       {renderCategoryPage()}
     </FilterBarContainer>
   );
