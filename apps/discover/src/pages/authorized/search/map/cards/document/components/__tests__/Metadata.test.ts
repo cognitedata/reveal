@@ -18,22 +18,7 @@ describe('Metadata overlay', () => {
     testRenderer(Metadata, viewStore, viewProps);
 
   const defaultTestInit = async () => {
-    const store = getMockedStore({
-      documentSearch: {
-        result: {
-          facets: {
-            labels: [
-              {
-                name: 'unclassified',
-                key: 'unclassified',
-                count: 2656,
-                selected: false,
-              },
-            ],
-          },
-        },
-      },
-    });
+    const store = getMockedStore();
 
     return { ...page(store, { doc: mockedDocument }), store };
   };

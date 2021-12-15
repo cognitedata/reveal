@@ -9,7 +9,7 @@ import {
 import { useExtractParentFolderPath } from '../selectors';
 import { SearchQueryFull } from '../types';
 
-import { useDocumentConfig } from '.';
+import { useDocumentConfig } from './useDocumentConfig';
 
 export const useDocumentSearchQueryFull = (): SearchQueryFull => {
   const searchPhrase = useSearchPhrase();
@@ -21,9 +21,11 @@ export const useDocumentSearchQueryFull = (): SearchQueryFull => {
   const { data: documentConfig } = useDocumentConfig();
   const extractParentFolderPath = useExtractParentFolderPath();
 
-  const phrase = documentConfig?.extractByFilepath
-    ? `path:"${extractParentFolderPath}"`
-    : searchPhrase;
+  let phrase = extractParentFolderPath || searchPhrase;
+
+  if (extractParentFolderPath && documentConfig?.extractByFilepath) {
+    phrase = `path:"${extractParentFolderPath}"`;
+  }
 
   return {
     phrase,

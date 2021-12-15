@@ -13,14 +13,15 @@ export const useRemoveSensitiveDocument = () => {
 
   return (documentId: string) => {
     const hits = documentResult.hits.filter((hit) => hit.id !== documentId);
-    const count = documentResult.count - 1 || 0;
+
+    if (hits.length === documentResult.hits.length) return;
 
     queryClient.setQueryData(
       [DOCUMENTS_QUERY_KEY.SEARCH, searchQuery, options],
       {
         ...documentResult,
         hits,
-        count,
+        count: hits.length,
       }
     );
   };

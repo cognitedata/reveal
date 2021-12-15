@@ -1,16 +1,10 @@
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
-import { Store } from 'redux';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { initialState as documentSearchState } from 'modules/documentSearch/reducer';
-import {
-  ADD_ALL_DOCUMENT_IDS,
-  ADD_PREVIEW_ENTITY,
-  ADD_SELECTED_DOCUMENT_ID,
-  SET_PREVIEW_ENTITIES,
-} from 'modules/documentSearch/types.actions';
+import { useDocumentSearchResultQuery } from 'modules/documentSearch/hooks/useDocumentSearchResultQuery';
+import { SELECT_DOCUMENT_IDS } from 'modules/documentSearch/types.actions';
 import { ZOOM_TO_COORDS } from 'modules/map/types.actions';
 
 import {
@@ -20,43 +14,43 @@ import {
 } from '../../constants';
 import { DocumentResultTable } from '../DocumentResultTable';
 
-const setupStore = (extras: any = {}) => {
-  const store = getMockedStore({
-    documentSearch: {
-      ...documentSearchState,
-      result: {
-        count: 1,
-        hits: [
-          getMockDocument(
-            {},
-            { author: 'FIRST-DOC-AUTHOR', filename: 'FIRST TEST-DOC' }
-          ),
-          getMockDocument(
-            { ...extras },
-            { author: 'TEST-AUTHOR-2', filename: 'SECOND TEST-DOC-2' }
-          ),
-        ],
-      },
-      selectedDocumentIds: [],
-    },
-  });
+jest.mock('modules/documentSearch/hooks/useDocumentSearchResultQuery', () => ({
+  useDocumentSearchResultQuery: jest.fn(),
+}));
 
-  return store;
+const mockDocumentResult = (extras: any = {}) => {
+  (useDocumentSearchResultQuery as jest.Mock).mockImplementation(() => ({
+    data: {
+      count: 1,
+      hits: [
+        getMockDocument(
+          {},
+          { author: 'FIRST-DOC-AUTHOR', filename: 'FIRST TEST-DOC' }
+        ),
+        getMockDocument(
+          { ...extras },
+          { author: 'TEST-AUTHOR-2', filename: 'SECOND TEST-DOC-2' }
+        ),
+      ],
+    },
+  }));
 };
 
-// Temp disable
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('CheckboxTableResult', () => {
-  const renderPage = (store: Store) => testRenderer(DocumentResultTable, store);
+describe('CheckboxTableResult', () => {
+  const store = getMockedStore();
+  const renderPage = () => testRenderer(DocumentResultTable, store);
+
+  afterEach(() => store.clearActions());
 
   it('should render a document result', () => {
-    renderPage(setupStore());
+    mockDocumentResult();
+    renderPage();
     expect(screen.getByText('FIRST-DOC-AUTHOR')).toBeInTheDocument();
   });
 
   it('should render cell elements', async () => {
-    const store = setupStore();
-    renderPage(store);
+    mockDocumentResult();
+    renderPage();
 
     const rows = screen.getAllByTestId('table-row');
     expect(within(rows[0]).getAllByTestId('table-cell')[2]).toHaveTextContent(
@@ -74,11 +68,10 @@ describe.skip('CheckboxTableResult', () => {
   });
 
   it('should not dispatch action with hover', async () => {
-    const store = setupStore({
+    mockDocumentResult({
       geolocation: { type: 'Polygon', coordinates: [] },
     });
-
-    renderPage(store);
+    renderPage();
 
     fireEvent.mouseOver(screen.getByText('FIRST-DOC-AUTHOR'), {
       bubbles: true,
@@ -91,29 +84,29 @@ describe.skip('CheckboxTableResult', () => {
   });
 
   it('should dispatch `mapProvider/zoomToCoords` action when click on a row and geo location is not `undefined`', async () => {
-    const store = setupStore({
+    mockDocumentResult({
       geolocation: { type: 'Point', coordinates: [] },
     });
+    renderPage();
 
-    renderPage(store);
     fireEvent.click(screen.getByText('TEST-AUTHOR-2'));
     await waitFor(() => expect(store.getActions().length).toEqual(1));
     expect(store.getActions()[0].type).toEqual(ZOOM_TO_COORDS);
   });
 
   it('should not dispatch `mapProvider/zoomToCoords` action when click on a row and geo location is `undefined`', async () => {
-    const store = setupStore();
+    mockDocumentResult();
+    renderPage();
 
-    renderPage(store);
     fireEvent.click(screen.getByText('TEST-AUTHOR-2'));
     await waitFor(() => expect(store.getActions().length).toEqual(0));
   });
 
   it('should dispatch `mapProvider/zoomToCoords` action when double click on a row and geo location is not `undefined`', async () => {
-    const store = setupStore({
+    mockDocumentResult({
       geolocation: { type: 'Point', coordinates: [] },
     });
-    renderPage(store);
+    renderPage();
 
     fireEvent.doubleClick(screen.getByText('TEST-AUTHOR-2'));
     await waitFor(() => expect(store.getActions().length).toEqual(1));
@@ -121,18 +114,18 @@ describe.skip('CheckboxTableResult', () => {
   });
 
   it('should not dispatch `mapProvider/zoomToCoords` action when double click on a row and geo location is `undefined`', async () => {
-    const store = setupStore();
-    renderPage(store);
+    mockDocumentResult();
+    renderPage();
 
     fireEvent.doubleClick(screen.getByText('TEST-AUTHOR-2'));
     expect(store.getActions().length).toEqual(0);
   });
 
   it('should dispatch relevant actions when select a check-box', async () => {
-    const store = setupStore({
+    mockDocumentResult({
       geolocation: { type: 'Point', coordinates: [] },
     });
-    renderPage(store);
+    renderPage();
 
     const checkboxes = screen.getAllByRole('checkbox', {
       name: 'Toggle Row Selected',
@@ -140,16 +133,15 @@ describe.skip('CheckboxTableResult', () => {
     fireEvent.click(checkboxes[0]);
 
     const actions = await store.getActions();
-    expect(actions.length).toEqual(2);
-    expect(actions[0].type).toEqual(ADD_PREVIEW_ENTITY);
-    expect(actions[1].type).toEqual(ADD_SELECTED_DOCUMENT_ID);
+    expect(actions.length).toEqual(1);
+    expect(actions[0].type).toEqual(SELECT_DOCUMENT_IDS);
   });
 
   it('should dispatch relevant actions when select all check-boxes', async () => {
-    const store = setupStore({
+    mockDocumentResult({
       geolocation: { type: 'Point', coordinates: [] },
     });
-    renderPage(store);
+    renderPage();
 
     fireEvent.click(
       screen.getByRole('checkbox', {
@@ -158,14 +150,13 @@ describe.skip('CheckboxTableResult', () => {
     );
 
     const actions = await store.getActions();
-    expect(actions.length).toEqual(2);
-    expect(actions[0].type).toEqual(SET_PREVIEW_ENTITIES);
-    expect(actions[1].type).toEqual(ADD_ALL_DOCUMENT_IDS);
+    expect(actions.length).toEqual(1);
+    expect(actions[0].type).toEqual(SELECT_DOCUMENT_IDS);
   });
 
   it('should render more option menu when mouse enter', () => {
-    const store = setupStore();
-    renderPage(store);
+    mockDocumentResult();
+    renderPage();
 
     fireEvent.mouseEnter(screen.getAllByTestId('menu-button')[0], {
       bubbles: true,

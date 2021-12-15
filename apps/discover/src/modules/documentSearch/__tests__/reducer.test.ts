@@ -5,6 +5,8 @@ import {
   SET_VIEWMODE,
   SELECT_DOCUMENT_IDS,
   UNSELECT_DOCUMENT_IDS,
+  SET_EXTRACT_PARENT_FOLDER_PATH,
+  CLEAR_EXTRACT_PARENT_FOLDER_PATH,
 } from 'modules/documentSearch/types.actions';
 
 import { initialState, search } from '../reducer';
@@ -82,5 +84,21 @@ describe('search.reducer', () => {
       }
     );
     expect(state.selectedDocumentIds).toEqual(['778781654822071']);
+  });
+
+  test(`Reducer key: ${SET_EXTRACT_PARENT_FOLDER_PATH}`, () => {
+    const path = '/extractParentFolder/test/path';
+    const state = search(undefined, {
+      type: SET_EXTRACT_PARENT_FOLDER_PATH,
+      path,
+    });
+    expect(state.extractParentFolderPath).toEqual(path);
+  });
+
+  test(`Reducer key: ${CLEAR_EXTRACT_PARENT_FOLDER_PATH}`, () => {
+    const state = search(undefined, {
+      type: CLEAR_EXTRACT_PARENT_FOLDER_PATH,
+    });
+    expect(state.extractParentFolderPath).toBeUndefined();
   });
 });

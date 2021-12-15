@@ -11,8 +11,13 @@ import { AppStore } from '__test-utils/types';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import {
   ADD_SELECTED_COLUMN,
+  CLEAR_EXTRACT_PARENT_FOLDER_PATH,
   REMOVE_SELECTED_COLUMN,
+  SELECT_DOCUMENT_IDS,
+  SET_EXTRACT_PARENT_FOLDER_PATH,
   SET_SELECTED_COLUMN,
+  SET_VIEWMODE,
+  UNSELECT_DOCUMENT_IDS,
 } from 'modules/documentSearch/types.actions';
 
 const getStoreWithCustomSearch = (searchOverrides = {}) => {
@@ -101,6 +106,73 @@ describe('Search Actions', () => {
       },
     ];
     store.dispatch(documentSearchActions.initialize());
+
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it(`should select document ids as expected`, async () => {
+    const ids = ['doc_id_1', 'doc_id_2'];
+    const expectedActions = [
+      {
+        type: SELECT_DOCUMENT_IDS,
+        ids,
+      },
+    ];
+    store.dispatch(documentSearchActions.selectDocumentIds(ids));
+
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it(`should unselect document ids as expected`, async () => {
+    const ids = ['doc_id_1', 'doc_id_2'];
+    const expectedActions = [
+      {
+        type: UNSELECT_DOCUMENT_IDS,
+        ids,
+      },
+    ];
+    store.dispatch(documentSearchActions.unselectDocumentIds(ids));
+
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it(`should set extract parent folder path as expected`, async () => {
+    const path = '/extractParentFolder/test/path';
+    const expectedActions = [
+      {
+        type: SET_EXTRACT_PARENT_FOLDER_PATH,
+        path,
+      },
+    ];
+    store.dispatch(documentSearchActions.setExtractParentFolderPath(path));
+
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it(`should clear extract parent folder path as expected`, async () => {
+    const expectedActions = [
+      {
+        type: CLEAR_EXTRACT_PARENT_FOLDER_PATH,
+      },
+    ];
+    store.dispatch(documentSearchActions.clearExtractParentFolderPath());
+
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it(`should set view mode as expected`, async () => {
+    const expectedActions = [
+      {
+        type: SET_VIEWMODE,
+        viewMode: 'card',
+      },
+      {
+        type: SET_VIEWMODE,
+        viewMode: 'table',
+      },
+    ];
+    store.dispatch(documentSearchActions.setViewmode('card'));
+    store.dispatch(documentSearchActions.setViewmode('table'));
 
     expect(store.getActions()).toEqual(expectedActions);
   });
