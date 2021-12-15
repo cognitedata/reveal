@@ -112,10 +112,10 @@ const ListView: React.FC<Props> = ({
         sortType: (rowA: Row<FavoriteSummary>, rowB: Row<FavoriteSummary>) =>
           sortDates(
             new Date(
-              getFavoriteLastUpdatedByDateTime(rowA.original.lastUpdatedBy)
+              getFavoriteLastUpdatedByDateTime(rowB.original.lastUpdatedBy)
             ),
             new Date(
-              getFavoriteLastUpdatedByDateTime(rowB.original.lastUpdatedBy)
+              getFavoriteLastUpdatedByDateTime(rowA.original.lastUpdatedBy)
             )
           ),
       },
