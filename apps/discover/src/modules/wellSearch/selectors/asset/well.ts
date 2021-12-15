@@ -7,9 +7,6 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
-
-import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import useSelector from 'hooks/useSelector';
 import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { WELLBORE_COLORS } from 'modules/wellInspect/constants';
@@ -30,6 +27,8 @@ import {
 } from 'modules/wellSearch/types';
 import { getFilteredWellbores } from 'modules/wellSearch/utils/wells';
 import { ExternalLinksConfig } from 'tenants/types';
+
+import { useEnabledWellSdkV3 } from '../../hooks/useEnabledWellSdkV3';
 
 export const useWells = () => {
   return useSelector((state) => state.wellSearch);
@@ -110,9 +109,7 @@ export const useSelectedWells = () => {
 
 // @sdk-wells-v3
 export const useSelectedWellIds = () => {
-  const { data: enableWellSDKV3 } = useProjectConfigByKey<
-    ProjectConfigGeneral['enableWellSDKV3']
-  >('general.enableWellSDKV3');
+  const enabledWellSDKV3 = useEnabledWellSdkV3();
 
   return useSelector((state) => {
     const { selectedWellIds } = state.wellSearch;
@@ -120,7 +117,7 @@ export const useSelectedWellIds = () => {
     return useMemo(() => {
       const selectedIds = Object.keys(pickBy(selectedWellIds));
 
-      return enableWellSDKV3
+      return enabledWellSDKV3
         ? (selectedIds as unknown as number[])
         : selectedIds.map(Number);
     }, [selectedWellIds]);
@@ -231,7 +228,7 @@ export const useSelectedOrHoveredWells = () => {
         return [];
       }
 
-      /* 
+      /*
       This method is used to get a well with a wellbore which hovered on favorite wellbore table
       (View button in seperate wellbore row)
       */
@@ -243,14 +240,14 @@ export const useSelectedOrHoveredWells = () => {
         )
       ) {
         if (isEmpty(favoriteWellData)) return [];
-        /* 
+        /*
         Parsing only one wellId as favoriteHoveredIds when getting favoriteWellData for this function.
-        So the result canbe contained only one well or non. 
+        So the result canbe contained only one well or non.
         So need to get the head of that array if it is not empty.
         */
         const firstWell = head(favoriteWellData);
         if (firstWell) {
-          /* 
+          /*
           HoveredWellboreIds also contains only one wellbore id.
           Then need to get the wellbore that equals with the head of HoveredWellboreIds
           */

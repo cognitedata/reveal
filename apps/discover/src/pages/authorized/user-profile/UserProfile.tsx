@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { Drawer } from '@cognite/cogs.js';
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 
 import { showSuccessMessage } from 'components/toast';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
@@ -22,9 +21,7 @@ export const UserProfile: React.FC<Props> = ({
   handleProfileUpdated,
   onCancel,
 }) => {
-  const { data: companyInfo } = useProjectConfigByKey<
-    ProjectConfigGeneral['companyInfo']
-  >('general.companyInfo');
+  const { data: generalConfig } = useProjectConfigByKey('general');
 
   const mutateUpdateUser = useUserUpdateMutate();
 
@@ -47,7 +44,7 @@ export const UserProfile: React.FC<Props> = ({
       data-testid={`user-profile-${isOverlayOpened ? 'open' : 'close'}`}
     >
       <UserProfileOverlayContent
-        companyInfo={companyInfo}
+        companyInfo={generalConfig?.companyInfo}
         updateUserDetails={updateUserDetails}
       />
     </Drawer>

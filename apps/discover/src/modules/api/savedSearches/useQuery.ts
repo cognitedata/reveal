@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
-import { ProjectConfigSeismic } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 import { reportException } from '@cognite/react-errors';
 
@@ -98,9 +97,7 @@ export const useMutatePatchSavedSearch = (
 ) => {
   const currentSavedSearch = useCurrentSavedSearchState();
   const headers = getJsonHeaders({}, true);
-  const { data: seismicConfig } = useProjectConfigByKey<ProjectConfigSeismic>(
-    Modules.SEISMIC
-  );
+  const { data: seismicConfig } = useProjectConfigByKey(Modules.SEISMIC);
   const { doCommonSearch } = useSearchActions();
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();

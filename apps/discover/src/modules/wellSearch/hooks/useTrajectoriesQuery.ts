@@ -3,12 +3,10 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { Sequence } from '@cognite/sdk';
 
 import { LOG_TRAJECTORY } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
@@ -22,12 +20,11 @@ import { TrajectoryData, TrajectoryRows } from '../types';
 import { trimCachedData } from '../utils/common';
 import { mapWellInfo } from '../utils/trajectory';
 
+import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
 export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
-  const { data: enableWellSDKV3 } = useProjectConfigByKey<
-    ProjectConfigGeneral['enableWellSDKV3']
-  >('general.enableWellSDKV3');
+  const enabledWellSDKV3 = useEnabledWellSdkV3();
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const wells = useSecondarySelectedOrHoveredWells();
   const { data: config } = useWellConfig();
@@ -54,7 +51,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
       query,
       columns,
       metric,
-      enableWellSDKV3
+      enabledWellSDKV3
     )
   );
 
@@ -100,7 +97,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
         query,
         columns,
         metric,
-        enableWellSDKV3
+        enabledWellSDKV3
       ).then((response) => {
         queryClient.setQueryData(WELL_QUERY_KEY.TRAJECTORIES, {
           ...response,

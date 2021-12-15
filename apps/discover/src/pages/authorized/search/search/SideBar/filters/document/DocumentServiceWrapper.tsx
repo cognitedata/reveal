@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro';
 
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
@@ -18,11 +17,9 @@ interface Props {
   children(data: DocumentCategory): React.ReactNode;
 }
 export const DocumentServiceWrapper: React.FC<Props> = ({ children }) => {
-  const { data: showDynamicResultCount } = useProjectConfigByKey<
-    ProjectConfigGeneral['showDynamicResultCount']
-  >('general.showDynamicResultCount');
+  const { data: generalConfig } = useProjectConfigByKey('general');
 
-  const { isLoading, error, data } = showDynamicResultCount
+  const { isLoading, error, data } = generalConfig?.showDynamicResultCount
     ? useDocumentQueryFacets()
     : useDocumentCategoryQuery();
 

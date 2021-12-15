@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import noop from 'lodash/noop';
 
 import { Button, Input } from '@cognite/cogs.js';
-import { ProjectConfigAzureConfig } from '@cognite/discover-api-types';
 import { LogoutButton } from '@cognite/react-container';
 
 import { convertToCancellablePromise } from '_helpers/cancellablePromise';
@@ -48,8 +47,7 @@ export const UserProfileOverlayContent: React.FC<Props> = ({
   const [firstname, setFirstname] = useState<string>('');
   const [lastname, setLastname] = useState<string>('');
   const [logo, setLogo] = useState<string | undefined>();
-  const { data: azureConfig } =
-    useProjectConfigByKey<ProjectConfigAzureConfig>('azureConfig');
+  const { data: azureConfig } = useProjectConfigByKey('azureConfig');
 
   useEffect(() => {
     setFirstname(user?.firstname || '');

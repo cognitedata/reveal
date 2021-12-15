@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { ProjectConfigMap } from '@cognite/discover-api-types';
-
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useDataFeatures } from 'modules/map/hooks/useDataFeatures';
 import { useMap } from 'modules/map/selectors';
@@ -15,7 +13,7 @@ export const useMapSources = () => {
   const sources = useMapContent();
   const seismicCollection = useSeismicMapFeatures();
   const { selectedLayers } = useMap();
-  const { data: mapConfig } = useProjectConfigByKey<ProjectConfigMap>('map');
+  const { data: mapConfig } = useProjectConfigByKey('map');
 
   const externalWells = sources?.find(
     (source) => source.id === WELL_HEADS_LAYER_ID

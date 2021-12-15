@@ -11,8 +11,6 @@ import {
   Popup,
 } from 'maplibre-gl';
 
-import { ProjectConfigDocuments } from '@cognite/discover-api-types';
-
 import { log } from '_helpers/log';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
@@ -151,8 +149,7 @@ export const useMapEvents = () => {
   // const { layers: mapLayers, layersReady } = useLayers();
   const wellIds = useWellIds();
   const dispatch = useDispatch();
-  const { data: documentConfig } =
-    useProjectConfigByKey<ProjectConfigDocuments>(Modules.DOCUMENTS);
+  const { data: documentConfig } = useProjectConfigByKey(Modules.DOCUMENTS);
   const patchSavedSearch = useSavedSearch();
   const drawMode = useMapDrawMode();
 

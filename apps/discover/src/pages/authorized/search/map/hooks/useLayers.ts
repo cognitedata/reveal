@@ -6,10 +6,6 @@ import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import keyBy from 'lodash/keyBy';
 
-import {
-  ProjectConfigGeneral,
-  ProjectConfigMap,
-} from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';
 
 import { LAYERS_QUERY_KEY } from 'constants/react-query';
@@ -24,11 +20,10 @@ import { getLayersByKey, getLayerById } from '../utils';
 
 export const useLayers = () => {
   const [tenant] = getTenantInfo();
-  const { data: projectConfigLayers } =
-    useProjectConfigByKey<ProjectConfigMap['layers']>('map.layers');
+  const { data: mapConfig } = useProjectConfigByKey('map');
 
   // TODO(PP-678) temp name, to be changed to id once done in backend.
-  const adaptedProjectConfigLayers = keyBy(projectConfigLayers, 'name');
+  const adaptedProjectConfigLayers = keyBy(mapConfig?.layers, 'name');
 
   const categoryLayers = useCategoryLayers();
 
@@ -120,10 +115,8 @@ export const useSearchableConfig = (
   allLayers: Layers,
   allLayerData: MapDataSource[]
 ) => {
-  const title = useProjectConfigByKey<
-    ProjectConfigGeneral['searchableLayerTitle']
-  >('general.searchableLayerTitle')?.data;
-
+  const { data: generalConfig } = useProjectConfigByKey('general');
+  const title = generalConfig?.searchableLayerTitle;
   const layers = useMemo(
     () => useSearchableLayers(allLayers, allLayerData),
     [allLayers, allLayerData]

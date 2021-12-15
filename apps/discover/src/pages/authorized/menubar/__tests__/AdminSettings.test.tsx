@@ -37,7 +37,9 @@ describe('Admin Settings', () => {
       data: { isAdmin: true },
     }));
     (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: true,
+      data: {
+        showProjectConfig: false,
+      },
     }));
 
     await defaultTestInit({
@@ -52,7 +54,9 @@ describe('Admin Settings', () => {
       data: { isAdmin: false },
     }));
     (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: false,
+      data: {
+        showProjectConfig: false,
+      },
     }));
 
     await defaultTestInit({
@@ -68,7 +72,9 @@ describe('Admin Settings', () => {
       data: { isAdmin: true },
     }));
     (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: true,
+      data: {
+        showProjectConfig: true,
+      },
     }));
 
     await defaultTestInit({
@@ -87,7 +93,9 @@ describe('Admin Settings', () => {
       data: { isAdmin: true },
     }));
     (useProjectConfigByKey as jest.Mock).mockImplementation(() => ({
-      data: false,
+      data: {
+        showProjectConfig: false,
+      },
     }));
 
     await defaultTestInit({

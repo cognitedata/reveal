@@ -7,7 +7,6 @@ import {
 import { useAuthContext } from '@cognite/react-container';
 
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { AzureConfig } from 'tenants/types';
 
 const AuthenticatedUserContext: React.FC = ({ children }) => {
   const { authState } = useAuthContext();
@@ -25,8 +24,7 @@ const AuthenticatedUserContext: React.FC = ({ children }) => {
 };
 
 export const ProvideAzureTelemetry: React.FC = ({ children }) => {
-  const { data: azureConfig } =
-    useProjectConfigByKey<AzureConfig>('azureConfig');
+  const { data: azureConfig } = useProjectConfigByKey('azureConfig');
 
   if (!azureConfig) {
     return <>{children}</>;

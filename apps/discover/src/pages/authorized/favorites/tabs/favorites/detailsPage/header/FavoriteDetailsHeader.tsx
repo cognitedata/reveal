@@ -2,8 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 
-import { ProjectConfigFavorites } from '@cognite/discover-api-types';
-
 import {
   ShareButton,
   CommentButton,
@@ -39,8 +37,7 @@ const Actions: React.FC<ActionProps> = ({
 }) => {
   const { t } = useTranslation('Favorites');
   const metrics = useGlobalMetrics('favorites');
-  const { data: favoriteConfig } =
-    useProjectConfigByKey<ProjectConfigFavorites>('favorites');
+  const { data: favoriteConfig } = useProjectConfigByKey('favorites');
 
   const { isOwner } = useIsOwner();
   const checkIfIsOwner = isOwner(favorite.owner.id);

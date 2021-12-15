@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/macro';
 
 import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { Admin } from 'components/admin';
@@ -28,9 +27,7 @@ interface AdminMenuItems {
 export const AdminSettings: React.FC<props> = (props) => {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const layersEnabled = useFlag('DISCOVER_admin_layers');
-  const { data: showProjectConfig } = useProjectConfigByKey<
-    ProjectConfigGeneral['showProjectConfig']
-  >('general.showProjectConfig');
+  const { data: generalConfig } = useProjectConfigByKey('general');
 
   const { PATHNAMES, handleNavigation } = props;
 
@@ -81,7 +78,7 @@ export const AdminSettings: React.FC<props> = (props) => {
       return layersEnabled;
     }
     if (item.configKey === 'projectConfig') {
-      return showProjectConfig;
+      return generalConfig?.showProjectConfig;
     }
 
     return true;

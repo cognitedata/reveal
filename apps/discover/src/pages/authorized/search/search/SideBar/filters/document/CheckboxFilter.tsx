@@ -5,7 +5,6 @@ import isEqual from 'lodash/isEqual';
 import styled from 'styled-components/macro';
 
 import { Body, Icon } from '@cognite/cogs.js';
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
@@ -80,9 +79,7 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
     const [showApplyButton, setShowApplyButton] = useState(false);
     const [activeFilters, setFilters] = useState<CheckboxState[]>([]);
     const [isShowMoreExpanded, setIsShowMoreExpanded] = useState(false);
-    const { data: hideFilterCount } = useProjectConfigByKey<
-      ProjectConfigGeneral['hideFilterCount']
-    >('general.hideFilterCount');
+    const { data: generalConfig } = useProjectConfigByKey('general');
     const setDocumentFilters = useSetDocumentFilters();
 
     const currentFilterStateFacets = get(
@@ -208,7 +205,7 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
           <Checkboxes
             data={getCheckboxesData(activeFilters)}
             onValueChange={handleSelectedFilterSelection}
-            hideResultsCount={hideFilterCount}
+            hideResultsCount={generalConfig?.hideFilterCount}
           />
           {renderViewMoreButton}
         </>

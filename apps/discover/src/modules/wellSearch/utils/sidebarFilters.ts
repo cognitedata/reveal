@@ -1,6 +1,7 @@
 import head from 'lodash/head';
 import last from 'lodash/last';
 
+import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
 import {
   LengthUnitEnum,
   MeasurementType,
@@ -10,7 +11,6 @@ import {
 import { endOf, startOf } from '_helpers/date';
 import { FEET, UserPrefferedUnit } from 'constants/units';
 import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
-import { WellConfig } from 'tenants/types';
 
 import { FilterIDs } from '../constants';
 import {
@@ -60,7 +60,7 @@ const getLimitRangeInUserPreferredUnit = (
 
 export const filterConfigs = (
   unit = UserPrefferedUnit.FEET,
-  wellConfig: WellConfig = {}
+  wellCharacteristicsDls?: ProjectConfigWellsWellCharacteristicsFilterDls
 ): FilterConfig[] => [
   {
     id: FilterIDs.DATA_SOURCE,
@@ -197,8 +197,8 @@ export const filterConfigs = (
     id: FilterIDs.DOG_LEG_SEVERITY,
     name: `Dogleg Severity (Degree/ ${
       unit === FEET
-        ? wellConfig.well_characteristics_filter?.dls?.feetDistanceInterval
-        : wellConfig.well_characteristics_filter?.dls?.meterDistanceInterval
+        ? wellCharacteristicsDls?.feetDistanceInterval
+        : wellCharacteristicsDls?.meterDistanceInterval
     } ${unit})`,
     key: 'well_characteristics_filter.dls',
     category: WELL_CHARACTERISTICS,
@@ -217,10 +217,8 @@ export const filterConfigs = (
             distanceUnit: unitToLengthUnitEnum(unit),
             distanceInterval:
               unit === FEET
-                ? wellConfig.well_characteristics_filter?.dls
-                    ?.feetDistanceInterval
-                : wellConfig.well_characteristics_filter?.dls
-                    ?.meterDistanceInterval,
+                ? wellCharacteristicsDls?.feetDistanceInterval
+                : wellCharacteristicsDls?.meterDistanceInterval,
           },
         },
       },

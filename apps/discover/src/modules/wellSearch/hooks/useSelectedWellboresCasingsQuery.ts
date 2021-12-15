@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
-import { ProjectConfigGeneral } from '@cognite/discover-api-types';
-
 import { LOG_CASING } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useGetCogniteMetric } from 'hooks/useTimeLog';
 
 import {
@@ -17,12 +14,11 @@ import { getCasingByWellboreIds as service } from '../service';
 import { WellboreSequencesMap } from '../types';
 import { trimCachedData } from '../utils/common';
 
+import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
 export const useSelectedWellboresCasingsQuery = () => {
-  const { data: enableWellSDKV3 } = useProjectConfigByKey<
-    ProjectConfigGeneral['enableWellSDKV3']
-  >('general.enableWellSDKV3');
+  const enabledWellSDKV3 = useEnabledWellSdkV3();
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const { data: config } = useWellConfig();
   const wellboreAssetIdMap = useWellboreAssetIdMap();
@@ -39,7 +35,7 @@ export const useSelectedWellboresCasingsQuery = () => {
       wellboresSourceExternalIdMap,
       config?.casing?.queries?.[0],
       metric,
-      enableWellSDKV3
+      enabledWellSDKV3
     )
   );
 
@@ -62,7 +58,7 @@ export const useSelectedWellboresCasingsQuery = () => {
       wellboresSourceExternalIdMap,
       config?.casing?.queries?.[0],
       metric,
-      enableWellSDKV3
+      enabledWellSDKV3
     ).then((response) => {
       cache.setQueryData(WELL_QUERY_KEY.CASINGS, {
         ...response,
