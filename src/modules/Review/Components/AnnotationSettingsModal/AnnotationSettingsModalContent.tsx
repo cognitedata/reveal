@@ -1,34 +1,69 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Detail, Tabs, Title } from '@cognite/cogs.js';
-import { AnnotationCollection } from 'src/modules/Review/types';
-import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+import {
+  AnnotationCollection,
+  KeypointCollection,
+  Shape,
+} from 'src/modules/Review/types';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'src/store/rootReducer';
 import { Shapes } from './Body/Shapes';
 import { Keypoints } from './Body/Keypoints';
 
 export const AnnotationSettingsModalContent = ({
+  predefinedAnnotations,
+  onDone,
   onCancel,
   options,
 }: {
+  predefinedAnnotations: AnnotationCollection;
+  onDone: (collection: AnnotationCollection) => void;
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
     activeView: 'keypoint' | 'shape';
   };
 }) => {
-  const dispatch = useDispatch();
-  const collections = useSelector(
-    ({ annotationLabelReducer }: RootState) =>
-      annotationLabelReducer.predefinedAnnotations
-  );
   const [activeView, setActiveView] = useState<string>(
     options?.activeView || 'shape'
   );
 
-  const setCollections = (collection: AnnotationCollection) => {
-    dispatch(SaveAnnotationTemplates(collection));
+  const [newCollection, setNewCollection] = useState<AnnotationCollection>({
+    predefinedKeypoints: [],
+    predefinedShapes: [],
+  });
+
+  const [shapeCreationInProgress, setShapeCreationInProgress] = useState(false);
+  const [keypointCreationInProgress, setKeypointCreationInProgress] =
+    useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const submitNewCollection = async () => {
+    setIsSaving(true);
+    await onDone(newCollection);
+    setIsSaving(false);
+  };
+
+  const setUnsavedShapes = (shapes: Shape[]) => {
+    setNewCollection((collection) => ({
+      ...collection,
+      predefinedShapes: [...shapes],
+    }));
+  };
+
+  const setUnsavedKeypointCollections = (
+    keypointCollections: KeypointCollection[]
+  ) => {
+    setNewCollection((collection) => ({
+      ...collection,
+      predefinedKeypoints: [...keypointCollections],
+    }));
+  };
+
+  const setShapesInProgressState = (state: boolean) => {
+    setShapeCreationInProgress(state);
+  };
+  const setKeypointsInProgressState = (state: boolean) => {
+    setKeypointCreationInProgress(state);
   };
 
   useEffect(() => {
@@ -54,18 +89,24 @@ export const AnnotationSettingsModalContent = ({
         <Tabs.TabPane tab="Pre-defined Shapes" key="shape">
           <Body>
             <Shapes
-              collections={collections}
-              setCollections={setCollections}
+              predefinedShapes={predefinedAnnotations.predefinedShapes}
+              unsavedShapes={newCollection.predefinedShapes}
+              setUnsavedShapes={setUnsavedShapes}
               options={options?.activeView === 'shape' ? options : undefined}
+              creationInProgress={setShapesInProgressState}
             />
           </Body>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Pre-defined Points" key="keypoint">
           <Body>
             <Keypoints
-              collections={collections}
-              setCollections={setCollections}
+              predefinedKeypointCollections={
+                predefinedAnnotations.predefinedKeypoints
+              }
+              unsavedKeypointCollections={newCollection.predefinedKeypoints}
+              setUnsavedKeypointCollections={setUnsavedKeypointCollections}
               options={options?.activeView === 'keypoint' ? options : undefined}
+              creationInProgress={setKeypointsInProgressState}
             />
           </Body>
         </Tabs.TabPane>
@@ -87,7 +128,12 @@ export const AnnotationSettingsModalContent = ({
           <Button type="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="primary" onClick={onCancel}>
+          <Button
+            type="primary"
+            onClick={submitNewCollection}
+            disabled={shapeCreationInProgress || keypointCreationInProgress}
+            loading={isSaving}
+          >
             Done
           </Button>
         </RightFooter>
