@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo } from 'react';
 
 import template from 'lodash/template';
 
+import { ProjectConfigWellsTrajectoryChartVizData } from '@cognite/discover-api-types/types/model/projectConfigWellsTrajectoryChartVizData';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -15,7 +14,7 @@ import {
 } from 'modules/wellSearch/types';
 import { getDataPointInPreferredUnit } from 'modules/wellSearch/utils/trajectory';
 import { FlexGrow } from 'styles/layout';
-import { ChartDataConfig, ChartVizDataConfig } from 'tenants/types';
+import { ChartDataConfig } from 'tenants/types';
 
 import { WellboreSelectionWrapper } from '../../../elements';
 import { Chart } from '../../common/Chart';
@@ -201,7 +200,7 @@ export const Trajectory2D: React.FC<Props> = ({
   };
 
   // return data adding functions for differnt chart types.
-  const getAddDataFn = (type: string) => {
+  const getAddDataFn = (type: string | undefined) => {
     switch (type) {
       case 'line':
         return addLineData;
@@ -231,18 +230,18 @@ export const Trajectory2D: React.FC<Props> = ({
   const isLegend = (index: number) => chartConfigs[index].type === 'legend';
 
   const getChartVizDataConfig = (
-    chartVizDataConfig: ChartVizDataConfig
-  ): ChartVizDataConfig => {
+    chartVizDataConfig: ProjectConfigWellsTrajectoryChartVizData | undefined
+  ): ProjectConfigWellsTrajectoryChartVizData => {
     return {
       ...chartVizDataConfig,
       axisNames: {
-        x: template(chartVizDataConfig.axisNames.x)({
+        x: template(chartVizDataConfig?.axisNames?.x)({
           unit: userPreferredUnit,
         }),
-        y: template(chartVizDataConfig.axisNames.y)({
+        y: template(chartVizDataConfig?.axisNames?.y)({
           unit: userPreferredUnit,
         }),
-        z: template(chartVizDataConfig.axisNames.z)({
+        z: template(chartVizDataConfig?.axisNames?.z)({
           unit: userPreferredUnit,
         }),
       },
@@ -252,6 +251,7 @@ export const Trajectory2D: React.FC<Props> = ({
   if (!config) {
     return null;
   }
+
   return (
     <>
       {showWellWellboreDropdown && (

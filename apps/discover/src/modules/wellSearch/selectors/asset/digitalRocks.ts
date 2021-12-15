@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import constant from 'lodash/constant';
 import flatten from 'lodash/flatten';
 import get from 'lodash/get';
+import merge from 'lodash/merge';
 
 import { ITimer } from '@cognite/metrics';
 import { Asset } from '@cognite/sdk';
@@ -31,6 +32,7 @@ import {
   normalizeSamples,
 } from 'modules/wellSearch/utils/digitalRocks';
 
+import { getCogniteSDKClient } from '../../../../_helpers/getCogniteSDKClient';
 import { useSecondarySelectedOrHoveredWells } from '../asset/well';
 import { useWellboreAssetIdMap, useWellboreData } from '../asset/wellbore';
 import { usePristineIds } from '../common';
@@ -49,6 +51,34 @@ const getDigitalRockUnitChangeAccessors = (
 export const digitalRockAccessorsToFixedDecimal = [
   DIGITAL_ROCKS_ACCESSORS.PLUG_DEPTH,
 ];
+
+const getDigitalRocksFetchFunction = (
+  metadata: Record<string, unknown> | undefined
+) => {
+  if (metadata) {
+    return (extraPayload: Record<string, unknown>) => {
+      return getCogniteSDKClient().assets.search({
+        ...metadata,
+        filter: merge(metadata.filter, extraPayload),
+      });
+    };
+  }
+  return undefined;
+};
+
+const getDigitalRocksSampleFetchFunction = (
+  metadata: Record<string, unknown> | undefined
+) => {
+  if (metadata) {
+    return (extraPayload: Record<string, unknown>) => {
+      return getCogniteSDKClient().assets.search({
+        ...metadata,
+        filter: merge(metadata.filter, extraPayload),
+      });
+    };
+  }
+  return undefined;
+};
 
 export const useSelectedWellBoresDigitalRocks = () => {
   const dispatch = useDispatch();
@@ -82,12 +112,13 @@ export const useSelectedWellBoresDigitalRocks = () => {
           LOG_WELL_DIGITAL_ROCKS_NAMESPACE
         )
       );
+
       dispatch(
         wellSearchActions.getWellboreAssets(
           digitalRocksPristineIds,
           wellboreAssetIdMap,
           'digitalRocks',
-          config?.digitalRocks?.fetch
+          getDigitalRocksFetchFunction(config?.digitalRocks?.metadata)
         )
       );
       return { isLoading: true, digitalRocks };
@@ -162,7 +193,9 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
       dispatch(
         wellSearchActions.getDigitalRockSamples(
           digitalRocksToFetch,
-          config?.digitalRocks?.digitalRockSampleFetch
+          getDigitalRocksSampleFetchFunction(
+            config?.digitalRocks?.sampleFetchMetadata
+          )
         )
       );
       return { isLoading: true, digitalRockSamples: [] };

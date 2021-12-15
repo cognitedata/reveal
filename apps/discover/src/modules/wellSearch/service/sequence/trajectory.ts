@@ -7,6 +7,7 @@ import invert from 'lodash/invert';
 import max from 'lodash/max';
 import uniqueId from 'lodash/uniqueId';
 
+import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Metrics } from '@cognite/metrics';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import {
@@ -26,7 +27,6 @@ import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import {
   SequenceRow,
-  TrajectoryColumnR,
   TrajectoryData,
   TrajectoryRow,
   TrajectoryRows,
@@ -48,7 +48,7 @@ export async function getTrajectoriesByWellboreIds(
   wellboreAssetIdMap: WellboreAssetIdMap,
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   sequenceFilter: SequenceFilter = {},
-  columns: TrajectoryColumnR[] = [],
+  columns: ProjectConfigWellsTrajectoryColumns[] = [],
   metric?: Metrics,
   enableWellSDKV3?: boolean
 ) {
@@ -84,12 +84,12 @@ export async function getTrajectoriesByWellboreIds(
 export const fetchTrajectoriesUsingWellsSDK = async (
   wellboreIds: WellboreId[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
-  columns: TrajectoryColumnR[] = []
+  columns: ProjectConfigWellsTrajectoryColumns[] = []
 ) => {
   const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
   const availableColumnNames = Object.keys(TRAJECTORY_COLUMN_NAME_MAP);
   const existColumns = columns.filter((column) =>
-    availableColumnNames.includes(column.name)
+    column.name ? availableColumnNames.includes(column.name) : false
   );
 
   const trajectories = flatten(
@@ -127,7 +127,7 @@ export const fetchTrajectoriesUsingWellsSDK = async (
 export const convertToCustomTrajectoryData = (
   wellboreId: WellboreId,
   trajectoryData: TrajectoryDataV3,
-  columns: TrajectoryColumnR[] = []
+  columns: ProjectConfigWellsTrajectoryColumns[] = []
 ): TrajectoryData => {
   const trajectoryId = Number(uniqueId());
   const maxMeasuredDepth = max(
@@ -183,7 +183,7 @@ export const fetchTrajectoriesUsingCogniteSDK = async (
   wellboreIds: WellboreId[],
   wellboreAssetIdMap: WellboreAssetIdMap,
   sequenceFilter: SequenceFilter = {},
-  columns: TrajectoryColumnR[] = []
+  columns: ProjectConfigWellsTrajectoryColumns[] = []
 ) => {
   const wellboreAssetIdReverseMap = invert(wellboreAssetIdMap);
   const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
@@ -202,7 +202,13 @@ export const fetchTrajectoriesUsingCogniteSDK = async (
               const existColumns = getExistColumns(sequence, columns);
               return getTrajectoryDataById(
                 sequence.id,
-                existColumns.map((col) => col.name)
+                existColumns.reduce((columns: string[], column) => {
+                  if (column.name) {
+                    return [...columns, column.name];
+                  }
+
+                  return columns;
+                }, [])
               ).then((rowData) => {
                 const convertedRowData = mapDataToTrajectoryRowType(
                   sequence,

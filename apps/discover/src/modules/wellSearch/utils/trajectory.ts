@@ -2,23 +2,20 @@ import convert from 'convert-units';
 import get from 'lodash/get';
 import head from 'lodash/head';
 
+import {
+  ProjectConfigWells,
+  ProjectConfigWellsTrajectoryColumns,
+} from '@cognite/discover-api-types';
 import { Sequence, SequenceColumn } from '@cognite/sdk';
 
 import { UNITS_TO_STANDARD } from '_helpers/units/constants';
 import { FEET } from 'constants/units';
-import { WellConfig } from 'tenants/types';
 
-import {
-  SequenceRow,
-  TrajectoryColumnR,
-  TrajectoryRow,
-  TrajectoryRows,
-  Well,
-} from '../types';
+import { SequenceRow, TrajectoryRow, TrajectoryRows, Well } from '../types';
 
 export const getExistColumns = (
   sequence: Sequence,
-  columns: TrajectoryColumnR[]
+  columns: ProjectConfigWellsTrajectoryColumns[]
 ) => {
   const trajColNames = sequence.columns.map((col) => col.name);
   return columns.filter((col) => trajColNames.includes(col.name));
@@ -27,7 +24,7 @@ export const getExistColumns = (
 export function mapDataToTrajectoryRowType(
   trajectory: Sequence,
   trajRowDataList: SequenceRow[],
-  trajColmns: TrajectoryColumnR[] = []
+  trajColmns: ProjectConfigWellsTrajectoryColumns[] = []
 ): TrajectoryRows {
   return {
     id: trajectory.id,
@@ -92,7 +89,7 @@ export const getDataPointInPreferredUnit = (
   selectedTrajectoryData: (TrajectoryRows | undefined)[],
   prefferedUnit: string,
   columnData?: SequenceColumn[],
-  config?: WellConfig
+  config?: ProjectConfigWells
 ) => {
   const dataPoint = get(
     row.values,

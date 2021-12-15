@@ -1,6 +1,7 @@
 import groupBy from 'lodash/groupBy';
 import set from 'lodash/set';
 
+import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { Metrics } from '@cognite/metrics';
 import { Sequence } from '@cognite/sdk';
 
@@ -13,7 +14,7 @@ import {
 } from 'hooks/useTimeLog';
 import { Measurement, WellboreAssetIdMap } from 'modules/wellSearch/types';
 import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
-import { SequenceFetcher, WellConfig } from 'tenants/types';
+import { SequenceFetcher } from 'tenants/types';
 
 import { getChunkNumberList } from './common';
 
@@ -21,7 +22,7 @@ import { getChunkNumberList } from './common';
 export async function getMeasurementsByWellboreIds(
   wellboreIds: number[],
   wellboreAssetIdMap: WellboreAssetIdMap,
-  config?: WellConfig,
+  config?: ProjectConfigWells,
   metric?: Metrics
 ) {
   const wellboreAssetIdReverseMap =
@@ -39,7 +40,12 @@ export async function getMeasurementsByWellboreIds(
 
   const promises: Promise<Sequence[]>[] = [];
 
-  const dataTypes: (keyof WellConfig)[] = ['geomechanic', 'ppfg', 'fit', 'lot'];
+  const dataTypes: (keyof ProjectConfigWells)[] = [
+    'geomechanic',
+    'ppfg',
+    'fit',
+    'lot',
+  ];
 
   idChunkList.forEach((wellIdChunk: number[]) => {
     dataTypes.forEach((dataType) => {

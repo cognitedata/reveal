@@ -1,3 +1,5 @@
+import { ProjectConfig } from '@cognite/discover-api-types';
+
 import {
   fetchGet,
   FetchHeaders,
@@ -6,19 +8,17 @@ import {
 } from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
 
-import { ProjectConfigResult } from './types';
-
 const getProjectConfigEndpoint = (project: string) =>
   `${SIDECAR.discoverApiBaseUrl}/${project}/config`;
 
 export const projectConfig = {
   update: async (data: any, headers: FetchHeaders, project: string) =>
-    fetchPatch<ProjectConfigResult>(getProjectConfigEndpoint(project), data, {
+    fetchPatch(getProjectConfigEndpoint(project), data, {
       headers,
     }),
 
   getConfig: async (headers: FetchHeaders, project: string) =>
-    fetchGet<ProjectConfigResult>(`${getProjectConfigEndpoint(project)}`, {
+    fetchGet<ProjectConfig>(`${getProjectConfigEndpoint(project)}`, {
       headers,
     }),
 

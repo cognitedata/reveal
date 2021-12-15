@@ -1,6 +1,7 @@
 import { Dictionary } from '@reduxjs/toolkit';
 import { PlotData } from 'plotly.js';
 
+import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
 import { Metadata, Sequence, Asset, CogniteEvent } from '@cognite/sdk';
 import {
   NPT,
@@ -130,7 +131,7 @@ export interface TrajectoryRows {
   id: number;
   wellboreId: WellboreId;
   externalId: string;
-  columns: TrajectoryColumnR[];
+  columns: ProjectConfigWellsTrajectoryColumns[];
   rows: TrajectoryRow[];
 }
 

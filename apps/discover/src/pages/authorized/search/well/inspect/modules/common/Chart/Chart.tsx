@@ -14,7 +14,7 @@ export type ChartProps = {
   axisNames?: { x?: string; y?: string; z?: string };
   axisAutorange?: { x?: Autorange; y?: Autorange; z?: Autorange };
   axisTicksuffixes?: { x?: string; y?: string; z?: string };
-  title: string;
+  title?: string;
   autosize?: boolean;
   showLegend?: boolean;
   hovermode?: 'closest' | 'x' | 'y' | 'x unified' | 'y unified' | false;

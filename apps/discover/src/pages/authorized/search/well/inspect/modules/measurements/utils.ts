@@ -4,6 +4,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
 
+import { ProjectConfigWells } from '@cognite/discover-api-types';
 import { Metadata } from '@cognite/sdk';
 
 import { changeUnitTo } from '_helpers/units/utils';
@@ -15,7 +16,6 @@ import {
   Wellbore,
 } from 'modules/wellSearch/types';
 import { convertPressure } from 'modules/wellSearch/utils/common';
-import { WellConfig } from 'tenants/types';
 
 type ColumnsMetadata = {
   [key: string]: Metadata;
@@ -35,7 +35,7 @@ export const formatChartData = (
   reference: string,
   pressureUnit: string,
   referenceUnit: string,
-  config?: WellConfig
+  config?: ProjectConfigWells
 ) => {
   const chartData: MeasurementChartData[] = [];
   const processedCurves: string[] = [];
@@ -173,7 +173,7 @@ export const formatChartData = (
 export const convertOtherDataToPlotly = (
   sequence: Measurement,
   type: OtherDataType,
-  config: WellConfig,
+  config: ProjectConfigWells,
   pressureUnit: string,
   referenceUnit: string
 ): Partial<PlotData> | null => {

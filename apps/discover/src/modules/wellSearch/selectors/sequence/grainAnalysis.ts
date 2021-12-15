@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import get from 'lodash/get';
+import merge from 'lodash/merge';
 
 import { Asset } from '@cognite/sdk';
 
@@ -13,6 +14,22 @@ import {
   DigitalRockSampleData,
   SequenceData,
 } from 'modules/wellSearch/types';
+
+import { getCogniteSDKClient } from '../../../../_helpers/getCogniteSDKClient';
+
+const getDigitalRocksGrainPartitioningFetchFunction = (
+  metadata: Record<string, unknown> | undefined
+) => {
+  if (metadata) {
+    return (extraPayload: Record<string, unknown>) => {
+      return getCogniteSDKClient().assets.search({
+        ...metadata,
+        filter: merge(metadata.filter, extraPayload),
+      });
+    };
+  }
+  return undefined;
+};
 
 export const useGrainPartionings = (digitalRockSample: Asset) => {
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -48,7 +65,9 @@ export const useGrainPartionings = (digitalRockSample: Asset) => {
           wellSearchActions.getGrainAnalysisData(
             digitalRockSample,
             'gpart',
-            config?.digitalRocks?.gpartFetch
+            getDigitalRocksGrainPartitioningFetchFunction(
+              config?.digitalRocks?.gpartFetchMetadata
+            )
           )
         );
       }

@@ -1,7 +1,9 @@
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { ProjectConfig } from '@cognite/discover-api-types';
+
 import { Modules } from 'modules/sidebar/types';
-import { WellConfig } from 'tenants/types';
+
+import { useProjectConfigByKey } from '../../../hooks/useProjectConfig';
 
 export const useWellConfig = () => {
-  return useTenantConfigByKey<WellConfig>(Modules.WELLS);
+  return useProjectConfigByKey<ProjectConfig['wells']>(Modules.WELLS);
 };
