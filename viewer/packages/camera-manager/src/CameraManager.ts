@@ -395,9 +395,13 @@ export class CameraManager {
     return { tween, stopTween };
   }
 
-  private calculateCameraFar(near: number, cameraPosition: THREE.Vector3, cameraDirection: THREE.Vector3, corners: Array<THREE.Vector3>): number {
-    const { nearPlane, nearPlaneCoplanarPoint } =
-      this._updateNearAndFarPlaneBuffers;
+  private calculateCameraFar(
+    near: number,
+    cameraPosition: THREE.Vector3,
+    cameraDirection: THREE.Vector3,
+    corners: Array<THREE.Vector3>
+  ): number {
+    const { nearPlane, nearPlaneCoplanarPoint } = this._updateNearAndFarPlaneBuffers;
 
     nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
     nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
@@ -413,8 +417,11 @@ export class CameraManager {
     return far;
   }
 
-  private calculateCameraNear(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3, cameraPosition: THREE.Vector3): number {
-    
+  private calculateCameraNear(
+    camera: THREE.PerspectiveCamera,
+    combinedBbox: THREE.Box3,
+    cameraPosition: THREE.Vector3
+  ): number {
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
     near = Math.max(0.1, near);
