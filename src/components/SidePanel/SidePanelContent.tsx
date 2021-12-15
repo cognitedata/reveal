@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import styled from 'styled-components';
 
 import SidePanelDatabaseList from 'components/SidePanelDatabaseList/SidePanelDatabaseList';
 import SidePanelTableList from 'components/SidePanelTableList/SidePanelTableList';
+import { useActiveTable } from 'hooks/table-tabs';
 import { RawExplorerContext } from 'contexts';
 import {
   SIDE_PANEL_FOOTER_HEIGHT,
@@ -27,7 +28,15 @@ const StyledSidePanelContent = styled.div<{
 `;
 
 const SidePanelContent = (): JSX.Element => {
-  const { selectedSidePanelDatabase } = useContext(RawExplorerContext);
+  const { setSelectedSidePanelDatabase, selectedSidePanelDatabase } =
+    useContext(RawExplorerContext);
+  const [[activeDatabase] = []] = useActiveTable();
+
+  useEffect(() => {
+    if (activeDatabase && !selectedSidePanelDatabase)
+      setSelectedSidePanelDatabase(activeDatabase);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <StyledSidePanelContent $isDatabaseLevelActive={!selectedSidePanelDatabase}>
