@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import { Icon } from '@cognite/cogs.js';
@@ -7,6 +7,7 @@ import { SolutionSchema, Solution } from '@platypus/platypus-core';
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 
 const Analytics = lazy<any>(() =>
   import('./analytics/pages/AnalyticsPage').then((module) => ({
@@ -38,13 +39,19 @@ export const OverviewLayout = ({
     return (
       <Switch>
         <Route exact path="*/analytics">
-          <Analytics solution={solution} />
+          <Suspense fallback={<Spinner />}>
+            <Analytics solution={solution} />
+          </Suspense>
         </Route>
         <Route exact path="*/updates">
-          <UpdatesPage solution={solution} />
+          <Suspense fallback={<Spinner />}>
+            <UpdatesPage solution={solution} />
+          </Suspense>
         </Route>
         <Route exact path="*">
-          <OverviewPage solution={solution} schema={schema} />
+          <Suspense fallback={<Spinner />}>
+            <OverviewPage solution={solution} schema={schema} />
+          </Suspense>
         </Route>
       </Switch>
     );
@@ -55,19 +62,19 @@ export const OverviewLayout = ({
       icon: <Icon type="Home" />,
       page: 'overview',
       slug: '',
-      tooltip: t('overview_menu', 'Overview'),
+      tooltip: t('overview_title', 'Overview'),
     },
     {
       icon: <Icon type="LineChart" />,
       page: 'overview',
       slug: 'analytics',
-      tooltip: t('analytics_menu', 'Analytics'),
+      tooltip: t('analytics_title', 'Analytics'),
     },
     {
       icon: <Icon type="Document" />,
       page: 'overview',
       slug: 'updates',
-      tooltip: t('updates_menu', 'Updates'),
+      tooltip: t('updates_title', 'Updates'),
     },
   ];
 

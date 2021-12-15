@@ -11,6 +11,7 @@ export type SideBarItem = {
   page: string;
   slug: string;
   tooltip?: string;
+  splitter?: boolean;
 };
 
 export const SideBarMenu = ({ items }: SideBarProps) => {
@@ -28,13 +29,16 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
 
   const renderIcon = (item: SideBarItem, index: number) => {
     return (
-      <StyledItem
-        key={item.slug}
-        onClick={() => onRoute(item.page, item.slug)}
-        active={solutionPage === item.slug || (!index && !solutionPage)}
-      >
-        {item.icon}
-      </StyledItem>
+      <>
+        {item.splitter && <StyledSplitter />}
+        <StyledItem
+          key={item.slug}
+          onClick={() => onRoute(item.page, item.slug)}
+          active={solutionPage === item.slug || (!index && !solutionPage)}
+        >
+          {item.icon}
+        </StyledItem>
+      </>
     );
   };
 
@@ -103,4 +107,9 @@ const StyledItem = styled.div<StyledIconProps>`
     background-color: ${(props: StyledIconProps) =>
       props.active ? 'var(--cogs-midblue-7)' : 'var(--cogs-midblue-7)'};
   }
+`;
+
+const StyledSplitter = styled.div`
+  border-top: solid 1px var(--cogs-greyscale-grey4);
+  height: 4px;
 `;

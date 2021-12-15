@@ -20,7 +20,7 @@ enum Mode {
   Edit,
 }
 
-export const DatamodelPage = () => {
+export const DataModelPage = () => {
   const history = useHistory();
   const [mode, setMode] = useState<Mode>(Mode.View);
   const [projectSchema, setProjectSchema] = useState('');
@@ -45,7 +45,7 @@ export const DatamodelPage = () => {
             versions={schemas.map((s) => s.version)}
             onChange={(seletedValue) => {
               history.replace(
-                `/solutions/${solution?.id}/${seletedValue}/data-model`
+                `/solutions/${solution?.id}/${seletedValue}/data`
               );
             }}
           />

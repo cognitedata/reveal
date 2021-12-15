@@ -2,16 +2,18 @@ import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentL
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-export const DatapreviewPage = () => {
+export const DataManagementPage = () => {
   const { t } = useTranslation('SolutionDataPreview');
 
   const renderHeader = () => {
-    return <PageToolbar title={t('data_preview_title', 'Data preview')} />;
+    return (
+      <PageToolbar title={t('data_management_title', 'Data management')} />
+    );
   };
   return (
     <PageContentLayout>
       <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
-      <PageContentLayout.Body>DATA PREVIEW (WIP...)</PageContentLayout.Body>
+      <PageContentLayout.Body>DATA MANAGEMENT (WIP...)</PageContentLayout.Body>
     </PageContentLayout>
   );
 };

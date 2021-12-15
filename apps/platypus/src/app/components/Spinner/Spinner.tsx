@@ -2,8 +2,14 @@ import { Icon } from '@cognite/cogs.js';
 import { CSSProperties } from 'styled-components';
 import { StyledLoaderContainer } from './elements';
 
-export const Spinner = ({ style }: { style?: CSSProperties }) => (
+export const Spinner = ({
+  style,
+  size = 40,
+}: {
+  style?: CSSProperties;
+  size?: number;
+}) => (
   <StyledLoaderContainer className="spinner" style={style}>
-    <Icon type="Loading" size={40} />
+    <Icon type="Loading" size={size} />
   </StyledLoaderContainer>
 );

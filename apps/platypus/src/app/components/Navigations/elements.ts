@@ -1,9 +1,10 @@
 import styled from 'styled-components/macro';
-import { TopBar } from '@cognite/cogs.js';
+import { Button, TopBar } from '@cognite/cogs.js';
 
 export const StyledTopBarRight = styled(TopBar.Right)`
   display: flex;
   align-items: center;
+  padding-right: 10px;
 `;
 
 export const StyledTopBar = styled(TopBar)`
@@ -71,4 +72,9 @@ export const StyledTopBar = styled(TopBar)`
   .cogs-topbar--item__actions {
     border-left: none;
   }
+`;
+
+export const StyledButton = styled(Button)`
+  color: var(--cogs-white);
+  background-color: transparent;
 `;

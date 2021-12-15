@@ -19,15 +19,15 @@ const OverviewPage = lazy<any>(() =>
   }))
 );
 
-const DataModelPage = lazy(() =>
-  import('./DataModelLayout').then((module) => ({
-    default: module.DataModelLayout,
+const DataPage = lazy(() =>
+  import('./DataLayout').then((module) => ({
+    default: module.DataLayout,
   }))
 );
 
-const DevelopmentToolsPage = lazy(() =>
-  import('./development-tools/pages/DevelopmentToolsPage').then((module) => ({
-    default: module.DevelopmentToolsPage,
+const ToolsPage = lazy(() =>
+  import('./tools/pages/ToolsPage').then((module) => ({
+    default: module.ToolsPage,
   }))
 );
 
@@ -96,18 +96,15 @@ export const Solution = () => {
           </Route>
           <Route
             exact
-            path="/solutions/:solutionId?/:version?/data-model/:solutionPage?"
+            path="/solutions/:solutionId?/:version?/data/:solutionPage?"
           >
             <Suspense fallback={<Spinner />}>
-              <DataModelPage />
+              <DataPage />
             </Suspense>
           </Route>
-          <Route
-            exact
-            path="/solutions/:solutionId?/:version?/development-tools"
-          >
+          <Route exact path="/solutions/:solutionId?/:version?/tools">
             <Suspense fallback={<Spinner />}>
-              <DevelopmentToolsPage />
+              <ToolsPage />
             </Suspense>
           </Route>
           <Route exact path="/solutions/:solutionId?/:version?/deployments">

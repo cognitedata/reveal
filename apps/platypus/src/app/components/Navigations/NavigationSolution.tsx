@@ -1,35 +1,40 @@
 import { useHistory, useParams } from 'react-router-dom';
-import { TopBar, Button, Dropdown, Body, Icon } from '@cognite/cogs.js';
-import { StyledTopBar, StyledTopBarRight } from './elements';
+import {
+  TopBar,
+  Button,
+  Dropdown,
+  Body,
+  Icon,
+  Tooltip,
+} from '@cognite/cogs.js';
+import { StyledButton, StyledTopBar, StyledTopBarRight } from './elements';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-const tabs: Array<{
-  slug: string;
-  title: string;
-}> = [
-  {
-    slug: 'overview',
-    title: 'Overview',
-  },
-  {
-    slug: 'data-model',
-    title: 'Data model',
-  },
-  {
-    slug: 'development-tools',
-    title: 'Development tools',
-  },
-  {
-    slug: 'deployments',
-    title: 'Deployments',
-  },
-  {
-    slug: 'settings',
-    title: 'Settings',
-  },
-];
-
 export const NavigationSolution = () => {
+  const { t } = useTranslation('Solution');
+
+  const tabs: Array<{
+    slug: string;
+    title: string;
+  }> = [
+    {
+      slug: 'overview',
+      title: t('overview_title', 'Overview'),
+    },
+    {
+      slug: 'data',
+      title: t('data_title', 'Data'),
+    },
+    {
+      slug: 'tools',
+      title: t('tools_title', 'Tools'),
+    },
+    {
+      slug: 'deployments',
+      title: t('demployments_title', 'Deployments'),
+    },
+  ];
+
   const { solutionId, version, tabKey } = useParams<{
     solutionId: string;
     version: string;
@@ -37,7 +42,6 @@ export const NavigationSolution = () => {
   }>();
 
   const history = useHistory();
-  const { t } = useTranslation('navigationSolution');
 
   const projectManagementLinks = tabs.map((tab) => ({
     name: t(tab.title, tab.title),
@@ -54,7 +58,13 @@ export const NavigationSolution = () => {
   );
 
   const renderTopBarRight = () => {
-    return null;
+    return (
+      <StyledTopBarRight>
+        <Tooltip placement="bottom" content="WIP..." arrow={false}>
+          <StyledButton icon="Settings" />
+        </Tooltip>
+      </StyledTopBarRight>
+    );
   };
 
   return (
@@ -89,7 +99,7 @@ export const NavigationSolution = () => {
         />
         {renderLinks()}
       </TopBar.Left>
-      <StyledTopBarRight>{renderTopBarRight()}</StyledTopBarRight>
+      <TopBar.Right>{renderTopBarRight()}</TopBar.Right>
     </StyledTopBar>
   );
 };
