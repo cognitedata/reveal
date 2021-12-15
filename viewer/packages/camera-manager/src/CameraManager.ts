@@ -318,11 +318,11 @@ export class CameraManager {
 
     // 1. Compute nearest to fit the whole bbox (the case
     // where the camera is inside the box is ignored for now)
-    let near = this.calculateCameraNear(camera, combinedBbox);
+    let near = this.calculateCameraNear(camera, combinedBbox, cameraPosition);
 
     // 2. Compute the far distance to the distance from camera to furthest
     // corner of the boundingbox that is "in front" of the near plane
-    const far = this.calculateCameraFar(near);
+    const far = this.calculateCameraFar(near, cameraPosition, cameraDirection, corners);
 
     // 3. Handle when camera is inside the model by adjusting the near value
     const diagonal = combinedBbox.min.distanceTo(combinedBbox.max);
@@ -395,8 +395,8 @@ export class CameraManager {
     return { tween, stopTween };
   }
 
-  private calculateCameraFar(near: number): number {
-    const { nearPlane, nearPlaneCoplanarPoint, cameraPosition, cameraDirection, corners } =
+  private calculateCameraFar(near: number, cameraPosition: THREE.Vector3, cameraDirection: THREE.Vector3, corners: Array<THREE.Vector3>): number {
+    const { nearPlane, nearPlaneCoplanarPoint } =
       this._updateNearAndFarPlaneBuffers;
 
     nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
@@ -413,9 +413,8 @@ export class CameraManager {
     return far;
   }
 
-  private calculateCameraNear(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3): number {
-    const { cameraPosition } = this._updateNearAndFarPlaneBuffers;
-
+  private calculateCameraNear(camera: THREE.PerspectiveCamera, combinedBbox: THREE.Box3, cameraPosition: THREE.Vector3): number {
+    
     let near = combinedBbox.distanceToPoint(cameraPosition);
     near /= Math.sqrt(1 + Math.tan(((camera.fov / 180) * Math.PI) / 2) ** 2 * (camera.aspect ** 2 + 1));
     near = Math.max(0.1, near);

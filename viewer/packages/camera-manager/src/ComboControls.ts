@@ -76,7 +76,7 @@ export class ComboControls extends EventDispatcher {
   public zoomToCursor = true;
   public minDeltaRatio = 1;
   public maxDeltaRatio = 8;
-  public minDeltaDownscaleCoefficient = 0.05;
+  public minDeltaDownscaleCoefficient = 0.1;
   public maxDeltaDownscaleCoefficient = 1;
 
   private _temporarilyDisableDamping: boolean = false;
