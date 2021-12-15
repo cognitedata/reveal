@@ -141,6 +141,14 @@ export class ComboControls extends EventDispatcher {
     };
   }
 
+  public updateWheelEventListener(isRemoved: boolean) {
+    if (isRemoved) {
+      this._domElement.removeEventListener('wheel', this.onMouseWheel);
+    } else {
+      this._domElement.addEventListener('wheel', this.onMouseWheel);
+    }
+  }
+
   public update = (deltaTime: number): boolean => {
     const {
       _camera,
@@ -248,6 +256,7 @@ export class ComboControls extends EventDispatcher {
 
   public setScrollTarget = (target: Vector3) => {
     this._scrollTarget.copy(target);
+    console.log('Target updated');
   };
 
   public triggerCameraChangeEvent = () => {
@@ -629,7 +638,7 @@ export class ComboControls extends EventDispatcher {
     _raycaster.setFromCamera({ x, y }, _reusableCamera);
 
     let radius = distToTarget + deltaDistance;
-
+    
     if (radius < minDistance) {
       radius = minDistance;
       if (dynamicTarget) {
@@ -769,6 +778,7 @@ export class ComboControls extends EventDispatcher {
 
     _targetEnd.add(newTargetOffset);
     _sphericalEnd.radius = newRadius;
+    console.log('Scrolled for real!');
   };
 
   private readonly dollyPerspectiveCamera = (

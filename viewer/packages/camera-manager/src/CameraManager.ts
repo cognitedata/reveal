@@ -522,17 +522,17 @@ export class CameraManager {
 
     const onWheel = async (e: any) => {
       const timeDelta = wheelClock.getDelta();
-
+      
+      if (timeDelta > 0.08) scrollStarted = false;
+      
       const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
 
       if (wantNewScrollTarget) {
         scrollStarted = true;
-
         const newTarget = await this.calculateNewTarget(e);
         this._controls.setScrollTarget(newTarget);
-      } else if (timeDelta > 0.08) {
-        scrollStarted = false;
-      }
+        console.log('Scrolled with target:', newTarget);
+      } 
     };
 
     this.handleMouseWheelActionChange(this._cameraControlsOptions);
@@ -542,7 +542,9 @@ export class CameraManager {
       this._onClick = onClick;
     }
     if (this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor') {
+      this._controls.updateWheelEventListener(true);
       this._domElement.addEventListener('wheel', onWheel);
+      this._controls.updateWheelEventListener(false)
       this._onWheel = onWheel;
     }
   }
