@@ -7,6 +7,7 @@ import {
   AnyAction,
 } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
+import { environment } from '../../environments/environment';
 
 import globalReducer from './reducers/global/globalReducer';
 import solutionSlice from './reducers/global/solutionReducer';
@@ -28,7 +29,7 @@ export const rootReducer = combineReducers(reducersRegistry);
 function createStore() {
   return configureStore({
     reducer: rootReducer,
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: !environment.production,
     middleware: (getDefaultMiddleware) => [
       ...getDefaultMiddleware({ serializableCheck: false }),
     ],

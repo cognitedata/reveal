@@ -13,11 +13,6 @@
     "@sentry/browser": "^6.15.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/user-event": "^13.2.1",
-    "@types/d3": "^7.0.0",
-    "@types/react-redux": "^7.1.20",
-    "@types/react-router-dom": "^5.3.1",
-    "@types/sinon": "^10.0.6",
-    "@types/styled-components": "^5.1.14",
     "ag-grid-community": "^26.1.0",
     "ag-grid-react": "^26.1.0",
     "chalk": "4.1.2",
@@ -103,11 +98,16 @@
     "@svgr/webpack": "^5.4.0",
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
+    "@types/d3": "7.0.0",
     "@types/jest": "27.0.2",
+    "@types/lodash": "^4.14.178",
     "@types/node": "14.14.33",
     "@types/react": "17.0.30",
     "@types/react-dom": "17.0.9",
+    "@types/react-redux": "7.1.20",
     "@types/react-router-dom": "5.3.1",
+    "@types/sinon": "10.0.6",
+    "@types/styled-components": "5.1.14",
     "@types/update-notifier": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "~4.33.0",
     "@typescript-eslint/parser": "~4.33.0",
@@ -135,8 +135,7 @@
   },
   "resolutions": {
     "babel-loader": "8.2.3",
-    "@cognite/sdk": "5.4.0",
-    "chalk": "4.1.2"
+    "@cognite/sdk": "5.4.0"
   },
   "bin": {
     "platypus": "./dist/libs/platypus-cli/src/index.js"
