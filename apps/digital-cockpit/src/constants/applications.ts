@@ -25,4 +25,10 @@ export const allApplications: ApplicationItem[] = [
     title: 'Maintain',
     url: 'https://mp.cogniteapp.com',
   },
+  {
+    key: 'charts',
+    iconKey: 'Cognite',
+    title: 'Charts',
+    url: 'https://charts.cogniteapp.com',
+  },
 ];
