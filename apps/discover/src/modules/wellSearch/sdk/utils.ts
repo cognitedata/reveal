@@ -149,6 +149,11 @@ export const mapV2toV3PolygonFilter = (
   };
 };
 
+const undefinedIfAllKeysUndefined = (object: object) => {
+  const allKeysUndefined = Object.values(object).every(isUndefined);
+  return allKeysUndefined ? undefined : object;
+};
+
 export const mapV2toV3WellFilter = (
   wellFilter: CommonWellFilter
 ): WellFilterV3 => {
@@ -161,16 +166,16 @@ export const mapV2toV3WellFilter = (
     license: toPropertyFilter(wellFilter.licenses),
     sources: wellFilter.sources,
     waterDepth: wellFilter.waterDepth,
-    spudDate: {
+    spudDate: undefinedIfAllKeysUndefined({
       min: wellFilter.spudDate?.min?.toDateString(),
       max: wellFilter.spudDate?.max?.toDateString(),
-    },
+    }),
     polygon: mapV2toV3PolygonFilter(wellFilter.polygon),
-    trajectories: {
+    trajectories: undefinedIfAllKeysUndefined({
       maxMeasuredDepth: wellFilter.hasTrajectory?.maxMeasuredDepth,
       maxTrueVerticalDepth: wellFilter.trajectories?.maxTrueVerticalDepth,
       maxDoglegSeverity: wellFilter.trajectories?.maxDoglegSeverity,
-    },
+    }),
     datum: wellFilter.datum,
   } as WellFilterV3;
 

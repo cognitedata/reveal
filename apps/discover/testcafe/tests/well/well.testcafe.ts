@@ -492,18 +492,17 @@ startTest(
       .expect(App.resultTable.getBulkActionText(wellCountText).exists)
       .ok();
 
-    const wellBoreCount = 'With 2 wellbores inside';
+    const wellBoreCount = 'With 5 wellbores inside';
     progress(
       `Check if the selected wellbores count is displayed as: ${wellBoreCount}`
     );
     await t
-      .debug()
       .expect(App.resultTable.getBulkActionText(wellBoreCount).exists)
       .ok();
 
     await App.resultTable.clickCheckboxOfRowWithText('Wellbore F-10');
 
-    const wellBoreCountFinal = 'With 1 wellbore inside';
+    const wellBoreCountFinal = 'With 4 wellbores inside';
     progress(
       `Check if the selected wellbores count is updated: ${wellBoreCountFinal}`
     );
