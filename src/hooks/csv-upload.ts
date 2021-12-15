@@ -63,7 +63,7 @@ export const useCSVUpload = (
     PapaParse.parse<any>(file, {
       dynamicTyping: true,
       skipEmptyLines: true,
-      beforeFirstChunk: (chunk) => chunk.split('\n').splice(1).join('\n'),
+      header: true,
       error: () => {
         notification.error({
           message: `${file.name} could not be parsed!`,
@@ -80,25 +80,19 @@ export const useCSVUpload = (
         setParser(_parser);
         _parser.pause();
         setParsedCursor(results.meta.cursor);
-        const items = new Array(results.data.length);
-        results.data.forEach((row: string[], rowIndex) => {
-          const newColumns: any = {};
-          columns?.forEach((column, index) => {
-            newColumns[column] = row[index];
-          });
-          try {
-            items[rowIndex] = {
-              key:
-                selectedKeyIndex === -1
-                  ? uuid()
-                  : row[selectedKeyIndex].toString(),
-              columns: newColumns,
-            };
-          } catch (e) {
-            // this will throw error if uses chooses a key which has some empty cells
-            setIsUploadFailed(true);
-          }
-        });
+        let items: { key: string; columns: Record<string, any> }[] = [];
+        try {
+          items = results.data.map((rowData: Record<string, any>) => ({
+            key:
+              selectedKeyIndex === -1
+                ? uuid()
+                : rowData[selectedKeyIndex].toString(),
+            columns: rowData,
+          }));
+        } catch (e) {
+          // this will throw error if uses chooses a key which has some empty cells
+          setIsUploadFailed(true);
+        }
 
         sdk.raw
           .insertRows(database, table, items)
