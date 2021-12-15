@@ -18,7 +18,6 @@ import {
 } from './filters';
 
 export const FilterBar: React.FC = () => {
-  // const { isOpen, category } = useFilterState();
   const isOpen = useFilterBarIsOpen();
   const category = useFilterCategory();
   const dispatch = useDispatch();
