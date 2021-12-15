@@ -25,6 +25,17 @@ export const Table = (props: Props): JSX.Element => {
       columns.map((column: ColumnShape) => ({
         ...column,
         cellRenderer: (props: any) => <Cell {...props} />,
+        // Default dataGetter for react-base-table uses path segments which
+        // causes issues with column names including the dot (`.`) character.
+        // Therefore this custom dataGetter is needed.
+        // https://github.com/Autodesk/react-base-table/blob/4573fc98798f5313a5902c5f0c6dcde99480a159/src/utils.js#L158
+        dataGetter: ({
+          column,
+          rowData,
+        }: {
+          column: ColumnShape;
+          rowData: Record<string, any>;
+        }) => rowData[column.key],
       })),
     [columns]
   );
