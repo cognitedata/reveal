@@ -6,7 +6,6 @@ import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { FetchHeaders } from '_helpers/fetch';
 import { discoverAPI } from 'modules/api/service';
-import { resetSurveyCache } from 'modules/seismicSearch/hooks';
 
 import { SAVED_SEARCHES_CURRENT_KEY } from './constants';
 import { normalizeSavedSearch } from './normalizeSavedSearch';
@@ -16,9 +15,11 @@ import { getEmptyFilters } from './utils/getEmptyFilters';
 /**
  * Update the 'current' search with some new fields
  *
- * @param props - Updated fields
- * @param cache - pass cache to get previous saved object
+ * @param currentSavedSearch - current saved searched
+ * @param savedSearchPatchContent - updated saved search
+ * @param headers - json headers for xhr call
  * @param waitForResponse - Wait until the search saved
+ * @param tenant - project for the xhr call
  */
 export const updateCurrentSearch = async (
   currentSavedSearch: SavedSearchContent,
@@ -82,15 +83,6 @@ export const combineOldAndNew = (
 
 export const convertGeoJsonToGeometry = (geoJson: GeoJson): Geometry => {
   return geoJson.geometry;
-};
-
-export const clearCurrentSearch = (headers: FetchHeaders, tenant: string) => {
-  return discoverAPI.savedSearches
-    .delete(SAVED_SEARCHES_CURRENT_KEY, headers, tenant)
-    .then((response) => {
-      resetSurveyCache();
-      return response;
-    });
 };
 
 // need to use this for react-query mutate requires only one arg

@@ -5,7 +5,7 @@ import { reportException } from '@cognite/react-errors';
 
 import { log } from '_helpers/log';
 import { SAVED_SEARCHES_QUERY_KEY } from 'constants/react-query';
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 
 import { discoverAPI } from '../service';
 
@@ -17,10 +17,10 @@ export const useSavedSearchMutate = () => {
 
 export function useSavedSearchAddShareMutate() {
   const queryClient = useQueryClient();
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
-  const mutation = useMutation(
+  return useMutation(
     (payload: { id: string; users: string[] }) =>
       discoverAPI.savedSearches.addShare(payload, headers, tenant),
     {
@@ -32,12 +32,10 @@ export function useSavedSearchAddShareMutate() {
       },
     }
   );
-
-  return mutation;
 }
 
 export function useSavedSearchRemoveShareMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();
 

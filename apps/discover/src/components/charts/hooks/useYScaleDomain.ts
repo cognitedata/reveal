@@ -11,10 +11,9 @@ export const useYScaleDomain = <T>(
   yAccessor: string,
   yScaleDomainCustom?: string[]
 ) => {
-  if (yScaleDomainCustom) return yScaleDomainCustom;
-
   return useMemo(() => {
+    if (yScaleDomainCustom) return yScaleDomainCustom;
     const yScaleValues = data.map((dataElement) => get(dataElement, yAccessor));
     return uniq(compact(yScaleValues));
-  }, useCompare([data]));
+  }, useCompare([data, yScaleDomainCustom]));
 };

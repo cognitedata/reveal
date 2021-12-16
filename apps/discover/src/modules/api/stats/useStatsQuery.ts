@@ -1,13 +1,13 @@
 import { UseQueryResult, useQuery } from 'react-query';
 
 import { ONLY_FETCH_ONCE, STATS_QUERY_KEY } from 'constants/react-query';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 
 import { Stats } from './types';
 
 // find from cdf
 export const useStatsFindQuery: () => UseQueryResult<Stats, unknown> = () => {
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
 
   return useQuery<Stats>(
     STATS_QUERY_KEY.FIND,
@@ -20,7 +20,7 @@ export const useStatsFindQuery: () => UseQueryResult<Stats, unknown> = () => {
 };
 // get from db-service
 export const useStatsGetQuery: () => UseQueryResult<Stats, unknown> = () => {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   return useQuery<Stats>(
     STATS_QUERY_KEY.GET,
     () => discoverAPI.stats.get({ headers }),

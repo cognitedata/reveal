@@ -10,7 +10,7 @@ import { getTenantInfo } from '@cognite/react-container';
 
 import { caseInsensitiveSort } from '_helpers/sort';
 import { FAVORITE_KEY } from 'constants/react-query';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import {
   FavoriteSummary,
   normalizeFavorite,
@@ -25,7 +25,7 @@ export interface FavoriteSet {
 }
 
 export function useFavoritesCreateMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const queryClient = useQueryClient();
   const [tenant] = getTenantInfo();
 
@@ -41,7 +41,7 @@ export function useFavoritesCreateMutate() {
 }
 
 export function useFavoriteDuplicateMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const queryClient = useQueryClient();
   const [tenant] = getTenantInfo();
 
@@ -57,7 +57,7 @@ export function useFavoriteDuplicateMutate() {
 }
 
 export function useFavoritesUpdateMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const queryClient = useQueryClient();
   const [tenant] = getTenantInfo();
 
@@ -97,7 +97,7 @@ export function useFavoritesUpdateMutate() {
 }
 
 export function useFavoriteUpdateContent() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const queryClient = useQueryClient();
   const [tenant] = getTenantInfo();
 
@@ -117,7 +117,7 @@ export function useFavoriteUpdateContent() {
 }
 
 export function useFavoritesDeleteMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();
 
@@ -132,7 +132,7 @@ export function useFavoritesDeleteMutate() {
 }
 
 export function useFavoriteShareMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();
 
@@ -157,7 +157,7 @@ export function useFavoriteShareMutate() {
 }
 
 export function useFavoriteRemoveShareMutate() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();
 
@@ -183,7 +183,7 @@ export function useFavoriteRemoveShareMutate() {
 export function useFavoritesGetOneQuery(
   id: string
 ): UseQueryResult<FavoriteSummary> {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
   return useQuery([...FAVORITE_KEY.FAVORITES, id], () =>
@@ -194,7 +194,7 @@ export function useFavoritesGetOneQuery(
 }
 
 export function useFavoritesGetAllQuery(): UseQueryResult<FavoriteSummary[]> {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
   return useQuery(

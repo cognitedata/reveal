@@ -20,7 +20,7 @@ import { mapService } from 'modules/map/service';
 import { MapDataSource } from 'modules/map/types';
 import { RemoteServiceResponse } from 'tenants/types';
 
-import { getJsonHeaders } from '../../../../../modules/api/service';
+import { useJsonHeaders } from '../../../../../modules/api/service';
 import { getAssetFilter, getAssetData } from '../utils';
 
 import { useLayers } from './useLayers';
@@ -30,7 +30,7 @@ export const useMapContent = () => {
   const [tenant] = getTenantInfo();
   const { sources } = useMap();
   const dispatch = useDispatch();
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
 
   const startLazyLoad = (lazyIds: [string, string][]) => {
     lazyIds.forEach(async (lazyId) => {

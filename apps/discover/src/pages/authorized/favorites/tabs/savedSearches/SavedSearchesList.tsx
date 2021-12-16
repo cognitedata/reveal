@@ -25,7 +25,7 @@ import {
   useSavedSearchAddShareMutate,
   useSavedSearchDeleteMutate,
 } from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 import { useUserProfileQuery } from 'modules/api/user/useUserQuery';
 import { getFullNameOrDefaultText } from 'modules/user/utils';
 import { PageContainer } from 'pages/authorized/favorites/elements';
@@ -50,7 +50,7 @@ export const SavedSearches: React.FC<{
 }> = ({ setCommentTarget, commentTarget }) => {
   const { t } = useTranslation('Saved Searches');
   const options = { checkable: false, flex: false, disableSorting: true };
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
   const user = useUserProfileQuery();
   const [selectedItem, setSelectedItem] = useState<

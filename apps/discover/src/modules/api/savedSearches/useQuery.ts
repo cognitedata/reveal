@@ -18,7 +18,7 @@ import {
   SavedSearchContent,
 } from 'modules/api/savedSearches/types';
 import { updateCurrentSearch } from 'modules/api/savedSearches/utils';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { Modules } from 'modules/sidebar/types';
 
 import { GenericApiError } from '../types';
@@ -28,7 +28,7 @@ import { SAVED_SEARCHES_CURRENT_KEY } from './constants';
 // Need to keep separate query for related document filters
 // This does not tie into 'current' filters
 export const useQuerySavedSearchRelatedDocuments = () => {
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
 
   return useQuery(
@@ -42,7 +42,7 @@ export const useQuerySavedSearchRelatedDocuments = () => {
 };
 
 export const useQuerySavedSearchCurrent = () => {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
   return useQuery(
@@ -61,7 +61,7 @@ export const useQuerySavedSearchCurrent = () => {
 };
 
 export const useQuerySavedSearchesList = () => {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
   return useQuery<SavedSearchItem[]>(
@@ -75,7 +75,7 @@ export const useQuerySavedSearchesList = () => {
 };
 
 export const useQuerySavedSearcheGetOne = (id: string) => {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
 
   return useQuery<SavedSearchContent>(
@@ -96,7 +96,7 @@ export const useMutatePatchSavedSearch = (
   successCallback?: (data: SavedSearchContent | GenericApiError) => void
 ) => {
   const currentSavedSearch = useCurrentSavedSearchState();
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const { data: seismicConfig } = useProjectConfigByKey(Modules.SEISMIC);
   const { doCommonSearch } = useSearchActions();
   const [tenant] = getTenantInfo();

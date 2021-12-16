@@ -21,7 +21,7 @@ import {
 } from 'hooks/useTimeLog';
 import { SavedSearchContent } from 'modules/api/savedSearches/types';
 import { createSavedSearch } from 'modules/api/savedSearches/utils';
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 import { documentSearchService } from 'modules/documentSearch/service';
 import {
   AggregateNames,
@@ -173,7 +173,7 @@ export const useQuerySavedRelatedDocuments = (
 export const useMutateRelatedDocumentPatch = () => {
   const queryClient = useQueryClient();
 
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
 
   return useMutation(

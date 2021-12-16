@@ -22,12 +22,11 @@ const extractSelectedFiltersName = (
   filter: CheckboxState[],
   forceNameUsage = false
 ) => {
-  const extractedFilters = filter
+  return filter
     .filter((item) => item.selected)
     .map((item) => {
       return forceNameUsage ? item.name : item.id || item.name;
     });
-  return extractedFilters;
 };
 
 const ChevronCollapseUpDownIcon = styled(Icon)<{
@@ -167,12 +166,19 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
       }
     }, [categoryData, currentFilterStateFacets]);
 
-    const getCheckboxesData = (data: CheckboxState[]) =>
-      React.useMemo(() => {
+    const getCheckboxesData = React.useCallback(
+      (data: CheckboxState[]) => {
         return !isShowMoreExpanded && defaultNumberOfItemsToDisplay
           ? data.slice(0, defaultNumberOfItemsToDisplay)
           : data;
-      }, [data, isShowMoreExpanded]);
+      },
+      [isShowMoreExpanded, defaultNumberOfItemsToDisplay]
+    );
+
+    const checkboxesData = React.useMemo(
+      () => getCheckboxesData(activeFilters),
+      [getCheckboxesData, activeFilters]
+    );
 
     const showViewMoreButton =
       defaultNumberOfItemsToDisplay &&
@@ -203,7 +209,7 @@ export const CheckboxFilter: React.FC<Props> = React.memo(
       >
         <>
           <Checkboxes
-            data={getCheckboxesData(activeFilters)}
+            data={checkboxesData}
             onValueChange={handleSelectedFilterSelection}
             hideResultsCount={generalConfig?.hideFilterCount}
           />

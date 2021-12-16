@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 
 import { AutoComplete, OptionsType, OptionTypeBase } from '@cognite/cogs.js';
 
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 import { userManagement } from 'modules/userManagementService/endpoints';
 
 import { showErrorMessage } from '../toast';
@@ -25,7 +25,7 @@ export interface Props {
 
 export const SearchUsers: React.FC<Props> = (props) => {
   const { t } = useTranslation();
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const { search } = userManagement(headers);
 
   const debouncedSearch = useCallback(

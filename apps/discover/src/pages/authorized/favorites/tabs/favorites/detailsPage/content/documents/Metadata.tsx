@@ -19,8 +19,7 @@ export const Metadata: React.FC<Props> = ({ data }) => {
    *
    * https://cognitedata.atlassian.net/browse/PP-1232
    */
-  const filteredLabels =
-    data.labels && useDocumentLabelsByExternalIds(data.labels);
+  const filteredLabels = useDocumentLabelsByExternalIds(data.labels);
 
   return (
     <MetadataWrapper>

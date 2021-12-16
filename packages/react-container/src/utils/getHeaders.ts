@@ -6,7 +6,7 @@ export const getDefaultHeader = () => ({
   'Content-Type': 'application/json',
 });
 
-export const getJsonHeaders = (
+export const useJsonHeaders = (
   extras: Record<string, string> = {},
   useIdToken = false
 ) => {

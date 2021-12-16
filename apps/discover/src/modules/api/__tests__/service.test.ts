@@ -1,14 +1,14 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { getJsonHeaders, discoverAPI } from '../service';
+import { useJsonHeaders, discoverAPI } from '../service';
 
 jest.mock('react-query', () => ({
   useQuery: () => ({ isLoading: false, error: {}, data: [] }),
 }));
 
-describe('getJsonHeaders', () => {
+describe('useJsonHeaders', () => {
   it('should be ok in good case', () => {
-    const { result, waitForNextUpdate } = renderHook(() => getJsonHeaders());
+    const { result, waitForNextUpdate } = renderHook(() => useJsonHeaders());
     waitForNextUpdate();
     expect(result.current).toEqual({
       auth: true,

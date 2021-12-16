@@ -1,7 +1,7 @@
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 
 export const useAccessToken = () => {
-  const authHeaders = getJsonHeaders();
+  const authHeaders = useJsonHeaders();
 
   let authToken = '';
   if ('Authorization' in authHeaders) {

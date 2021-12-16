@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { MultiSelect } from '..';
 
-export const basic = () => {
+export const Basic = () => {
   const [values] = useState<string[]>(['a', 'b', 'c']);
   const [selected, setSelected] = useState<string[]>([]);
 

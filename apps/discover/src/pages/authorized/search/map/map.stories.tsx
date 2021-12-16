@@ -49,7 +49,7 @@ export const verticalDocked = () => {
   );
 };
 
-export const withFlyTo = () => {
+export const WithFlyTo = () => {
   const [position, setPosition] = useState({ zoom: 1, center: [0, 0] });
 
   const handleFlyTo = () => {

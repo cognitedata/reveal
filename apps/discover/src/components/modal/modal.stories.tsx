@@ -10,7 +10,7 @@ export default {
   component: Modal,
 };
 
-export const basic = () => {
+export const Basic = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
@@ -32,7 +32,7 @@ export const basic = () => {
   );
 };
 
-export const withOkButton = () => {
+export const WithOkButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
@@ -53,7 +53,7 @@ export const withOkButton = () => {
   );
 };
 
-export const withoutButtons = () => {
+export const WithoutButtons = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
@@ -69,7 +69,7 @@ export const withoutButtons = () => {
   );
 };
 
-export const withActions = () => {
+export const WithActions = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
 

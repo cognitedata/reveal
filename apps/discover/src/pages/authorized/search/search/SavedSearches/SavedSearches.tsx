@@ -19,7 +19,7 @@ import {
   useSavedSearchCreateMutate,
   useSavedSearchDeleteMutate,
 } from 'modules/api/savedSearches/useSavedSearchesMutate';
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 import { GenericApiError } from 'modules/api/types';
 
 import {
@@ -98,7 +98,7 @@ export const SavedSearches: React.FC = React.memo(() => {
     setCurrentName('');
   };
   // temp, need to refactor the api call into a mutate file
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
   const currentSavedSearch = useCurrentSavedSearchState();
   const savedSearchList = useQuerySavedSearchesList();
   const [tenant] = getTenantInfo();

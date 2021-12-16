@@ -11,7 +11,7 @@ import { getTenantInfo } from '@cognite/react-container';
 import { ONLY_FETCH_ONCE, USER_KEY } from 'constants/react-query';
 import { useAccessToken } from 'hooks/useAccessToken';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { AuthModes, User } from 'modules/user/types';
 
 import { UserProfileUpdateQueryData } from './types';
@@ -19,7 +19,7 @@ import { UserProfileUpdateQueryData } from './types';
 // we sync once on startup to make sure the db-service
 // has all the info about this user, eg: admin status (detected from token)
 export const useUserSyncQuery = () => {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const authToken = useAccessToken();
   const [tenant] = getTenantInfo();
 
@@ -36,7 +36,7 @@ export const useUserSyncQuery = () => {
 };
 
 export function useUserProfileQuery(): UseQueryResult<User | undefined> {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();
 
@@ -54,8 +54,8 @@ export function useUserProfileQuery(): UseQueryResult<User | undefined> {
 }
 
 export function useUserRoles(): UseQueryResult<AuthModes | undefined> {
-  const idHeaders = getJsonHeaders({}, true);
-  const headers = getJsonHeaders();
+  const idHeaders = useJsonHeaders({}, true);
+  const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
   const { data: azureConfig } = useProjectConfigByKey('azureConfig');
 
@@ -82,7 +82,7 @@ export type MutateUpdateUser = MutateFunction<
   unknown
 >;
 export function useUserUpdateMutate() {
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
   const queryClient = useQueryClient();
 

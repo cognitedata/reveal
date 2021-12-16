@@ -33,8 +33,13 @@ export const useChartScales = <T>({
   reverseXScaleDomain?: boolean;
   reverseYScaleDomain?: boolean;
 }) => {
-  const yScaleDomain =
-    yScaleRange || useYScaleDomain<T>(data, accessors.y, yScaleDomainCustom);
+  const calculatedYScaleDomain = useYScaleDomain<T>(
+    data,
+    accessors.y,
+    yScaleDomainCustom
+  );
+
+  const yScaleDomain = yScaleRange || calculatedYScaleDomain;
 
   const getYScaleLinear = () => {
     return scaleLinear()

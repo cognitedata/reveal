@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { NumericRangeFilter } from '..';
 
-export const basic = () => {
+export const Basic = () => {
   const [selected, setSelected] = useState<number[]>([0, 10]);
 
   return (

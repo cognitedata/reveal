@@ -7,13 +7,13 @@ import {
 } from '@cognite/user-management-service-types';
 
 import { USER_MANAGEMENT_SYSTEM_KEY } from 'constants/react-query';
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 
 import { userPreferences } from './endpoints';
 
 export const useUserPreferencesQuery = () => {
   const [project] = getTenantInfo();
-  const headers = getJsonHeaders({ 'x-cdp-project': project }, true);
+  const headers = useJsonHeaders({ 'x-cdp-project': project }, true);
 
   return useQuery(USER_MANAGEMENT_SYSTEM_KEY.ME, () =>
     userPreferences(headers).get()
@@ -26,7 +26,7 @@ export const useUpdateMyPreferences = () =>
 export const useUserPreferencesMutate = (
   key: typeof USER_MANAGEMENT_SYSTEM_KEY[keyof typeof USER_MANAGEMENT_SYSTEM_KEY]
 ) => {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const queryClient = useQueryClient();
 
   return useMutation(

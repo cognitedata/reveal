@@ -4,7 +4,7 @@ import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { DocumentCategory } from 'modules/api/documents/types';
+import { DocumentCategory, DocumentError } from 'modules/api/documents/types';
 import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
 import { useDocumentQueryFacets } from 'modules/documentSearch/hooks/useDocumentQueryFacets';
 import { sizes } from 'styles/layout';
@@ -16,13 +16,14 @@ const Wrapper = styled.div`
 interface Props {
   children(data: DocumentCategory): React.ReactNode;
 }
-export const DocumentServiceWrapper: React.FC<Props> = ({ children }) => {
-  const { data: generalConfig } = useProjectConfigByKey('general');
 
-  const { isLoading, error, data } = generalConfig?.showDynamicResultCount
-    ? useDocumentQueryFacets()
-    : useDocumentCategoryQuery();
-
+const Documents: React.FC<
+  Props & {
+    isLoading: boolean;
+    data?: DocumentCategory | DocumentError;
+    error: unknown;
+  }
+> = ({ isLoading, data, error, children }) => {
   if (isLoading) {
     return <Skeleton.List lines={4} borders />;
   }
@@ -33,4 +34,33 @@ export const DocumentServiceWrapper: React.FC<Props> = ({ children }) => {
   }
 
   return <>{children(data)}</>;
+};
+
+const DocumentFacets: React.FC<Props> = ({ children }) => {
+  const { isLoading, error, data } = useDocumentQueryFacets();
+
+  return (
+    <Documents isLoading={isLoading} error={error} data={data}>
+      {children}
+    </Documents>
+  );
+};
+
+const DocumentCategoryComp: React.FC<Props> = ({ children }) => {
+  const { isLoading, error, data } = useDocumentCategoryQuery();
+  return (
+    <Documents isLoading={isLoading} error={error} data={data}>
+      {children}
+    </Documents>
+  );
+};
+
+export const DocumentServiceWrapper: React.FC<Props> = ({ children }) => {
+  const { data: generalConfig } = useProjectConfigByKey('general');
+
+  return generalConfig?.showDynamicResultCount ? (
+    <DocumentFacets>{children}</DocumentFacets>
+  ) : (
+    <DocumentCategoryComp>{children}</DocumentCategoryComp>
+  );
 };

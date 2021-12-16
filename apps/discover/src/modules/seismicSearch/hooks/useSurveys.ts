@@ -1,11 +1,11 @@
-import { useQuery, QueryClient, useQueryClient } from 'react-query';
+import { useQuery, QueryClient } from 'react-query';
 
 import { getTenantInfo } from '@cognite/react-container';
 
 import { FetchHeaders } from '_helpers/fetch';
 import { SURVEYS_QUERY_KEY } from 'constants/react-query';
 import { SeismicError } from 'modules/api/seismic';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { SeismicGetData } from 'modules/api/types';
 
 import { SeismicSurveyContainer } from '../types';
@@ -27,15 +27,9 @@ export const updateOneSurveyInList = (
   queryClient.setQueryData(SURVEYS_QUERY_KEY, newData);
 };
 
-export const getSurveys = () => {
-  return useQueryClient().getQueryData<SeismicSurveyContainer[]>(
-    SURVEYS_QUERY_KEY
-  );
-};
-
 export const useSurveys = () => {
   const [tenant] = getTenantInfo();
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
 
   return useQuery<SeismicSurveyContainer[], SeismicError>(
     SURVEYS_QUERY_KEY,
@@ -71,7 +65,7 @@ export const prefetchSurveys = (
 
 // expand on one in the results list, showing all the files for it etc.
 export const useSurvey = (surveyId: string) => {
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
 
   return useQuery<SeismicGetData | SeismicError>(
@@ -82,10 +76,4 @@ export const useSurvey = (surveyId: string) => {
       enabled: !!surveyId,
     }
   );
-};
-
-// NOTE: NOT SURE IF THIS WORKS!!
-export const resetSurveyCache = async () => {
-  // console.log('resetSurveyCache invalidateQueries');
-  await useQueryClient().invalidateQueries(SURVEYS_QUERY_KEY);
 };

@@ -8,10 +8,10 @@ import {
   DocumentCategory,
   DocumentError,
 } from 'modules/api/documents/types';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 
 export const useDocumentCategoryQuery = () => {
-  const headers = getJsonHeaders();
+  const headers = useJsonHeaders();
   const [tenant] = getTenantInfo();
 
   return useQuery<DocumentCategory | DocumentError>(

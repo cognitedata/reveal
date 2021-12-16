@@ -75,7 +75,7 @@ const tableOptionsExpandable: Options = {
   expandable: true,
 };
 
-export const expandable = () => {
+export const Expandable = () => {
   const [expanded, setExpanded] = useState<TableResults>({});
 
   const renderSubComponent = () => {

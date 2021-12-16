@@ -11,18 +11,17 @@ import { FlexColumn, FlexRow } from 'styles/layout';
 import { ChartLegend, ChartLegendIsolated, LegendTitle } from './elements';
 import { LegendProps } from './types';
 
-export const Legend = ({
+type LegendWithColorConfigProps = Omit<LegendProps, 'colorConfig'> &
+  ChartId & { colorConfig: Required<LegendProps>['colorConfig'] };
+
+const LegendWithColorConfig = ({
   id,
   legendCheckboxState,
   colorConfig,
   onChangeLegendCheckbox,
   isolateLegend = true,
   legendOptions,
-}: LegendProps & ChartId) => {
-  if (isUndefined(colorConfig)) {
-    return null;
-  }
-
+}: LegendWithColorConfigProps) => {
   const { colors, defaultColor } = colorConfig;
   const title = legendOptions?.title;
 
@@ -68,4 +67,14 @@ export const Legend = ({
       {isolateLegend ? LegendInsideIsolatedBox : LegendContent}
     </ChartLegend>
   );
+};
+
+export const Legend = ({
+  colorConfig,
+  ...restProps
+}: LegendProps & ChartId) => {
+  if (isUndefined(colorConfig)) {
+    return null;
+  }
+  return <LegendWithColorConfig colorConfig={colorConfig} {...restProps} />;
 };

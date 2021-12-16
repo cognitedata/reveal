@@ -2,14 +2,15 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { FEEDBACK_QUERY_KEY } from 'constants/react-query';
 
-import { discoverAPI, getJsonHeaders } from '../service';
+import { discoverAPI, useJsonHeaders } from '../service';
 
 import { FeedbackType } from './types';
 
 export function useFeedbackCreateMutate(endpoint: FeedbackType = 'general') {
   const queryClient = useQueryClient();
-  const headers = getJsonHeaders({}, true);
-  const mutation = useMutation(
+  const headers = useJsonHeaders({}, true);
+
+  return useMutation(
     (payload: Record<string, unknown>) =>
       discoverAPI.feedback.create(endpoint, payload, headers),
     {
@@ -18,13 +19,11 @@ export function useFeedbackCreateMutate(endpoint: FeedbackType = 'general') {
       },
     }
   );
-
-  return mutation;
 }
 
 export function useFeedbackUpdateMutate(endpoint: FeedbackType = 'general') {
   const queryClient = useQueryClient();
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   return useMutation(
     (data: { id: string; payload: Record<string, unknown> }) =>
       discoverAPI.feedback.update(endpoint, data, headers),
@@ -41,7 +40,7 @@ export function useFeedbackUpdateMutate(endpoint: FeedbackType = 'general') {
 }
 
 export function useFeedbackGetAllQuery<T>(endpoint: FeedbackType = 'general') {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   return useQuery(FEEDBACK_QUERY_KEY.ALL(endpoint), () =>
     discoverAPI.feedback.get<T>(endpoint, headers)
   );
@@ -51,7 +50,7 @@ export function useFeedbackGetOneQuery<T>(
   endpoint: FeedbackType = 'general',
   id = ''
 ) {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   return useQuery(FEEDBACK_QUERY_KEY.ONE(endpoint, id), () =>
     discoverAPI.feedback.getOne<T>(endpoint, id, headers)
   );

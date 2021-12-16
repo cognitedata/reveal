@@ -19,7 +19,7 @@ import {
 
 import { fetchGet } from '_helpers/fetch';
 import { SIDECAR } from 'constants/app';
-import { getJsonHeaders } from 'modules/api/service';
+import { useJsonHeaders } from 'modules/api/service';
 
 type ThingsToCheckAccessFor =
   // ACL's
@@ -138,8 +138,8 @@ export const checkACL = ({
 };
 
 export const UserAccessList: React.FC = () => {
-  const headers = getJsonHeaders();
-  // const idTokenHeaders = getJsonHeaders();
+  const headers = useJsonHeaders();
+  // const idTokenHeaders = useJsonHeaders();
 
   const [access, setAccess] = React.useState<
     [ThingsToCheckAccessFor, Access][]

@@ -54,7 +54,7 @@ export const DocumentFilter = () => {
   );
 };
 
-DocumentFilter.Title = () => {
+const DocumentFilterTitle = () => {
   const clearDocumentFilters = useClearDocumentFilters();
 
   return (
@@ -71,3 +71,5 @@ DocumentFilter.Title = () => {
     />
   );
 };
+
+DocumentFilter.Title = DocumentFilterTitle;

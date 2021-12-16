@@ -14,7 +14,7 @@ import {
   PROJECT_CONFIG_QUERY_KEY,
   LAYERS_QUERY_KEY,
 } from 'constants/react-query';
-import { discoverAPI, getJsonHeaders } from 'modules/api/service';
+import { discoverAPI, useJsonHeaders } from 'modules/api/service';
 import { Metadata } from 'pages/authorized/admin/projectConfig/types';
 
 export function useProjectConfigUpdateMutate({
@@ -24,7 +24,7 @@ export function useProjectConfigUpdateMutate({
   onSuccess: () => void;
   onError: () => void;
 }) {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const queryClient = useQueryClient();
   const [project] = getTenantInfo();
 
@@ -51,7 +51,7 @@ export function useProjectConfigUpdateMutate({
 }
 
 export function useProjectConfigGetQuery(): UseQueryResult<ProjectConfig> {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [project] = getTenantInfo();
 
   return useQuery(
@@ -64,7 +64,7 @@ export function useProjectConfigGetQuery(): UseQueryResult<ProjectConfig> {
 }
 
 export function useProjectConfigMetadataGetQuery(): UseQueryResult<Metadata> {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [project] = getTenantInfo();
 
   return useQuery(
@@ -77,7 +77,7 @@ export function useProjectConfigMetadataGetQuery(): UseQueryResult<Metadata> {
 }
 
 export function useProjectConfigDeleteQuery() {
-  const headers = getJsonHeaders({}, true);
+  const headers = useJsonHeaders({}, true);
   const [project] = getTenantInfo();
   const queryClient = useQueryClient();
 
