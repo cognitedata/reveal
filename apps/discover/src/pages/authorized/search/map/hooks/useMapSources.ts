@@ -1,11 +1,9 @@
-import React from 'react';
-
-import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useDataFeatures } from 'modules/map/hooks/useDataFeatures';
 import { useMap } from 'modules/map/selectors';
 import { useSeismicMapFeatures } from 'modules/seismicSearch/hooks/useSeismicMapFeatures';
 import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';
 
+import { useDeepMemo } from '../../../../../hooks/useDeep';
 import { useMapContent } from '../hooks';
 import { createSources } from '../utils';
 
@@ -13,22 +11,22 @@ export const useMapSources = () => {
   const sources = useMapContent();
   const seismicCollection = useSeismicMapFeatures();
   const { selectedLayers } = useMap();
-  const { data: mapConfig } = useProjectConfigByKey('map');
 
-  const externalWells = sources?.find(
-    (source) => source.id === WELL_HEADS_LAYER_ID
-  );
+  const externalWells = useDeepMemo(() => {
+    return sources?.find((source) => source.id === WELL_HEADS_LAYER_ID);
+  }, [sources]);
+
   const features = useDataFeatures(
     selectedLayers,
     externalWells?.data.features || []
   );
 
-  const resultSources = React.useMemo(
-    () => createSources(seismicCollection, features, !!mapConfig?.cluster),
+  const resultSources = useDeepMemo(
+    () => createSources(seismicCollection, features),
     [features, seismicCollection]
   );
 
-  const combinedSources = React.useMemo(
+  const combinedSources = useDeepMemo(
     () =>
       sources
         ? [

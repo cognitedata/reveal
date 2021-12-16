@@ -18,10 +18,7 @@ import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
-import {
-  wellSearchActions,
-  setHoveredWellId,
-} from 'modules/wellSearch/actions';
+import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useFavoriteWellIds } from 'modules/wellSearch/hooks/useFavoriteWellIds';
 import { useWells, useIndeterminateWells } from 'modules/wellSearch/selectors';
 import { getGroupedWellboresByWellIds } from 'modules/wellSearch/service/asset/wellbore';
@@ -48,11 +45,9 @@ const WellResult: React.FC<DispatchProps> = (props) => {
   const history = useHistory();
   const metrics = useGlobalMetrics('wells');
   const {
-    dispatchSetHoveredWellId,
     dispatchSetSelectedWell,
     dispatchToggleExpandedWell,
     dispatchToggleSelectedWells,
-    dispatchUnsetHoveredWellId,
     dispatchGetAllWellbores,
     dispatchSetHoveredWellbores,
     dispatchSetWellbores,
@@ -247,8 +242,6 @@ const WellResult: React.FC<DispatchProps> = (props) => {
         handleDoubleClick={handleDoubleClick}
         handleRowSelect={dispatchSetSelectedWell}
         handleRowsSelect={handleRowsSelect}
-        handleMouseEnter={dispatchSetHoveredWellId}
-        handleMouseLeave={dispatchUnsetHoveredWellId}
         options={options}
         renderRowSubComponent={renderRowSubComponent}
         selectedIds={selectedWellIds}
@@ -271,9 +264,6 @@ function dispatchToProps(dispatch: any) {
     },
     dispatchToggleSelectedWells: (value: boolean) =>
       dispatch(wellSearchActions.toggleSelectedWells(value)),
-    dispatchSetHoveredWellId: (row: any) =>
-      dispatch(setHoveredWellId(row.original)),
-    dispatchUnsetHoveredWellId: () => dispatch(setHoveredWellId()),
     dispatchGetAllWellbores: () =>
       dispatch(wellSearchActions.getAllWellbores()),
     dispatchSetHoveredWellbores: (wellId: number) =>

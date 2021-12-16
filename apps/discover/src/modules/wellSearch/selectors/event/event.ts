@@ -21,6 +21,8 @@ import {
   convertTo3DNPTEvents,
 } from 'modules/wellSearch/utils/events';
 
+import { useDeepMemo } from '../../../../hooks/useDeep';
+
 import { useGetConverFunctionForEvents } from './helper';
 
 export const useNdsEventsForTable = () => {
@@ -50,13 +52,13 @@ export const useNptEvents = () => {
   const userPrefferedUnit = useUserPreferencesMeasurement();
   const { data, isLoading } = useNptEventsQuery();
 
-  return useMemo(() => {
+  return useDeepMemo(() => {
     if (isLoading || !data) {
       return { isLoading, events: [] };
     }
     const events = mapWellInfoToNPTEvents(data, wells, userPrefferedUnit);
     return { isLoading: false, events };
-  }, [JSON.stringify(Object.keys(data || {})), userPrefferedUnit]);
+  }, [data, userPrefferedUnit]);
 };
 
 export const useNptEventsForCasings = () => {

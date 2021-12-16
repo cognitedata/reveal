@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import * as React from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -115,26 +116,31 @@ export const Topbar: React.FC = React.memo(() => {
     handleNavigate(navigation.SEARCH, PATHNAMES.SEARCH)();
   };
 
+  const companyLogo = useMemo(() => {
+    return (
+      <TopBarLogo
+        onClick={handleLogoClick}
+        title="Cognite Discover"
+        logo={
+          <Graphic
+            data-testid="cognite-logo"
+            type="Discover"
+            onClick={handleLogoClick}
+            style={{
+              width: 30,
+              margin: '6px 10px 0 12px',
+              cursor: 'pointer',
+            }}
+          />
+        }
+      />
+    );
+  }, []);
+
   const renderTopBarLeft = React.useMemo(
     () => (
       <TopBar.Left>
-        <TopBarLogo
-          onClick={handleLogoClick}
-          title="Cognite Discover"
-          logo={
-            <Graphic
-              data-testid="cognite-logo"
-              type="Discover"
-              onClick={handleLogoClick}
-              style={{
-                width: 30,
-                margin: '6px 10px 0 12px',
-                cursor: 'pointer',
-              }}
-            />
-          }
-        />
-
+        {companyLogo}
         <TopBar.Navigation
           links={compact([
             {

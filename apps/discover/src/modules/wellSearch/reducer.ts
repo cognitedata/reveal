@@ -19,7 +19,6 @@ import {
   WellSearchAction,
   Wellbore,
   SequenceData,
-  SET_HOVERED_WELL,
   SET_PPFG_ROW_DATA,
   SET_WELLBORE_SEQUENCES,
   SET_WELLBORE_ASSETS,
@@ -97,12 +96,6 @@ export function wellReducer(
       return {
         ...state,
         isSearching: action.isSearching,
-      };
-    }
-    case SET_HOVERED_WELL: {
-      return {
-        ...state,
-        hoveredWellId: action.wellId,
       };
     }
 

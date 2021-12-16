@@ -40,7 +40,6 @@ import {
   WellState,
   WellName,
   WellSearchAction,
-  SET_HOVERED_WELL,
   SET_PPFG_ROW_DATA,
   SET_HOVERED_WELLBORE_IDS,
   LogTypes,
@@ -76,13 +75,6 @@ function resetQuery(): ThunkResult<void> {
     dispatch({
       type: RESET_QUERY,
     });
-  };
-}
-
-export function setHoveredWellId(well?: Well) {
-  return {
-    type: SET_HOVERED_WELL,
-    wellId: well?.id,
   };
 }
 

@@ -253,12 +253,6 @@ interface SetLogsData {
   };
 }
 
-export const SET_HOVERED_WELL = 'wells/SET_HOVERED_WELL';
-interface SetHoveredWell {
-  type: typeof SET_HOVERED_WELL;
-  wellId?: number;
-}
-
 interface SetWellboreAssets {
   type: typeof SET_WELLBORE_ASSETS;
   data: { [key: number]: Asset[] };
@@ -328,7 +322,6 @@ interface SetSelectedSecondaryWellIds {
 }
 
 export type WellSearchAction =
-  | SetHoveredWell
   | SetIsSearching
   | ResetQuery
   | SetWellsData

@@ -32,7 +32,6 @@ import {
   SET_ALL_WELLBORES_FETCHING,
   SET_WELLBORES_FETCHED_WELL_IDS,
   SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
-  SET_HOVERED_WELL,
   SET_HOVERED_WELLBORE_IDS,
   SET_INSECT_WELLBORES_CONTEXT,
   InspectWellboreContext,
@@ -473,19 +472,6 @@ describe('Well Reducer', () => {
         ],
       },
     });
-  });
-
-  it(`should set hovered well id to state`, () => {
-    const wellData = getDefaultWell(true);
-
-    const state = wellReducer(
-      { ...initialState, wells: [wellData] },
-      {
-        type: SET_HOVERED_WELL,
-        wellId: wellData.id,
-      }
-    );
-    expect(state.hoveredWellId).toEqual(wellData.id);
   });
 
   it(`should set all wellbores of hovered well to state`, () => {

@@ -44,9 +44,7 @@ export const clusterConfig = {
 
 const createSources = (
   seismicImages: FeatureCollection,
-  features: FeatureCollection,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  cluster: boolean
+  features: FeatureCollection
 ): MapDataSource[] => {
   const sources = [
     { id: SEISMIC_LAYER_ID, data: seismicImages },

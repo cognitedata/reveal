@@ -54,6 +54,7 @@ import { setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterCategory } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
 
+import { useDeepEffect, useDeepMemo } from '../../../../hooks/useDeep';
 import { setClearPolygon } from '../../../../modules/map/actions';
 import { MS_TRANSITION_TIME } from '../search/SideBar/constants';
 
@@ -241,7 +242,7 @@ export const Map: React.FC = () => {
 
   // Try to get these into the useMapEvents hooks, as of now they require some work if we're to avoid passing
   // tons of props, perhaps go with a context instead of all the useStates.
-  const events = useMemo(
+  const events = useDeepMemo(
     () => [
       {
         type: 'draw.create',
@@ -392,7 +393,7 @@ export const Map: React.FC = () => {
   // sync the initial map state to the 'default' layers selection
   // note: this might be better done when initially loading the layers
   // so we can skip this step entirly.
-  useEffect(() => {
+  useDeepEffect(() => {
     const initialSelectedLayers = selectableLayers
       .filter((layer) => layer.selected)
       .map((layer) => layer.id);
