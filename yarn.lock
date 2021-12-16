@@ -2413,10 +2413,10 @@
     "@types/geojson" "^7946.0.7"
     axios "^0.19.2"
 
-"@cognite/node-visualizer@1.2.16":
-  version "1.2.16"
-  resolved "https://registry.yarnpkg.com/@cognite/node-visualizer/-/node-visualizer-1.2.16.tgz#ca5317cdfffcb657cf45bf7b1b6a79801f7fd3ec"
-  integrity sha512-MkLG7zq1t8KKghS0NF+FqsnF54/10BVEU3b0gWcd9gZhu3jxaJDmrvhwB9je5lrNyoCBkX8Xj37hDyk0SO0BBg==
+"@cognite/node-visualizer@1.2.18":
+  version "1.2.18"
+  resolved "https://registry.yarnpkg.com/@cognite/node-visualizer/-/node-visualizer-1.2.18.tgz#bb378ad86cabb9b351b40408d4b0546c7b4fe08f"
+  integrity sha512-FZhN9TvqGzGGd5BBKaDxJbYk7vENFjZER0YQP7/5fSgPRTTYDUr+CjHiHBRaAZzfwozQouKZLdnLlv5ikDfFMQ==
   dependencies:
     "@cognite/geospatial-sdk-js" "^0.0.6"
     "@cognite/potree-core" "1.0.6"

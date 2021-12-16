@@ -20,6 +20,8 @@ import {
 import { getSeismicSDKClient } from 'modules/seismicSearch/service';
 import { ThreeDeeTheme } from 'styles/ThreeDeeTheme';
 
+import { Toolbar } from './Toolbar';
+
 export interface Props extends WellsData {
   fileId?: string;
 }
@@ -113,7 +115,7 @@ const ThreeDee: React.FC<Props> = ({
 
   return (
     <ThemeProvider theme={ThreeDeeTheme}>
-      <NodeVisualizerProvider root={root} />
+      <NodeVisualizerProvider root={root} toolbar={Toolbar} />
     </ThemeProvider>
   );
 };
