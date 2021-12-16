@@ -39,6 +39,8 @@ export const useCSVUpload = (
     return [newUploadPercentage, size];
   }, [uploadedCursor, file, isUpload]);
 
+  const selectedColumn = columns?.[selectedKeyIndex];
+
   useEffect(
     () => () => {
       if (!parser) return;
@@ -83,10 +85,7 @@ export const useCSVUpload = (
         let items: { key: string; columns: Record<string, any> }[] = [];
         try {
           items = results.data.map((rowData: Record<string, any>) => ({
-            key:
-              selectedKeyIndex === -1
-                ? uuid()
-                : rowData[selectedKeyIndex].toString(),
+            key: !selectedColumn ? uuid() : selectedColumn.toString(),
             columns: rowData,
           }));
         } catch (e) {
@@ -107,7 +106,7 @@ export const useCSVUpload = (
           });
       },
     });
-  }, [file, isUpload, columns, selectedKeyIndex, database, table, sdk.raw]);
+  }, [file, isUpload, columns, selectedColumn, database, table, sdk.raw]);
 
   useEffect(() => {
     if (!file || !isUploadCompleted) return;
