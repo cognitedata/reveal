@@ -8,7 +8,7 @@ import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { DetailFieldNames } from 'model/Extpipe';
 import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
 import { trackUsage } from 'utils/Metrics';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { render } from 'utils/test';
 // eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
@@ -36,8 +36,12 @@ describe('ExtpipeView', () => {
     jest.resetAllMocks();
   });
   test('Displays extpipe', async () => {
-    sdkv3.get.mockResolvedValue({ data: mockExtpipe });
-    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: mockExtpipe }),
+      datasets: {
+        retrieve: () => Promise.resolve([mockDataSet]),
+      },
+    });
 
     render(<ExtpipeDetails />, {
       wrapper: wrapper.wrapper,
@@ -106,7 +110,9 @@ describe('ExtpipeView', () => {
       externalId: 'lisa.external.id',
       name: 'My extpipe',
     };
-    sdkv3.get.mockResolvedValue({ data: mock });
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: mock }),
+    });
     render(<ExtpipeDetails />, {
       wrapper: wrapper.wrapper,
     });

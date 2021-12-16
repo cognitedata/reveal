@@ -13,7 +13,7 @@ import {
   RunScheduleConnection,
 } from 'components/extpipe/RunScheduleConnection';
 import { parseCron } from 'utils/cronUtils';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import moment from 'moment';
 import { renderError } from 'components/extpipe/ExtpipeRunHistory';
 
@@ -21,12 +21,18 @@ describe('RunScheduleConnection', () => {
   test('Renders information when last connected is more recent than latest run', async () => {
     const mockExtpipe = getMockResponse()[0];
     const mockDataSet = mockDataSetResponse()[0];
-    sdkv3.get.mockResolvedValueOnce({
-      data: mockExtpipe,
-    });
-    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
-    sdkv3.get.mockResolvedValueOnce({
-      data: { items: mockDataRunsResponse.items },
+    useSDK.mockReturnValue({
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: mockExtpipe,
+        })
+        .mockResolvedValueOnce({
+          data: { items: mockDataRunsResponse.items },
+        }),
+      datasets: {
+        retrieve: () => Promise.resolve([mockDataSet]),
+      },
     });
     renderWithSelectedExtpipeContext(<RunScheduleConnection />, {
       initExtpipe: mockExtpipe,
@@ -51,12 +57,18 @@ describe('RunScheduleConnection', () => {
   test('Renders information when last failure is also last connected', async () => {
     const mockExtpipe = getMockResponse()[1];
     const mockDataSet = mockDataSetResponse()[0];
-    sdkv3.get.mockResolvedValueOnce({
-      data: mockExtpipe,
-    });
-    sdkv3.datasets.retrieve.mockResolvedValue([mockDataSet]);
-    sdkv3.get.mockResolvedValueOnce({
-      data: { items: mockDataRunsResponse.items },
+    useSDK.mockReturnValue({
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: mockExtpipe,
+        })
+        .mockResolvedValueOnce({
+          data: { items: mockDataRunsResponse.items },
+        }),
+      datasets: {
+        retrieve: () => Promise.resolve([mockDataSet]),
+      },
     });
     renderWithSelectedExtpipeContext(<RunScheduleConnection />, {
       initExtpipe: mockExtpipe,

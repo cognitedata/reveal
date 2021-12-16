@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { QueryClient } from 'react-query';
 import { DEFAULT_RUN_LIMIT } from 'utils/RunsAPI';
 import { createRunsFilter, useFilteredRuns, useRuns } from 'hooks/useRuns';
@@ -24,7 +24,9 @@ describe('useRuns', () => {
   });
 
   test('Returns runs on success', async () => {
-    sdkv3.get.mockResolvedValue({ data: mockDataRunsResponse });
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: mockDataRunsResponse }),
+    });
     const { result, waitFor } = renderHook(() => useRuns(externalId), {
       wrapper,
     });
@@ -35,7 +37,9 @@ describe('useRuns', () => {
 
   test('Returns error on fail', async () => {
     const rejectValue = mockError;
-    sdkv3.get.mockRejectedValue(rejectValue);
+    useSDK.mockReturnValue({
+      get: () => Promise.reject(rejectValue),
+    });
     const { result, waitFor } = renderHook(() => useRuns(externalId), {
       wrapper,
     });
@@ -61,7 +65,9 @@ describe('useFilteredRuns', () => {
   });
 
   test('Returns runs on success', async () => {
-    sdkv3.post.mockResolvedValue({ data: mockDataRunsResponse });
+    useSDK.mockReturnValue({
+      post: jest.fn(() => Promise.resolve({ data: mockDataRunsResponse })),
+    });
     const params = {
       externalId: 'external_id_1',
     };
@@ -72,8 +78,8 @@ describe('useFilteredRuns', () => {
     await waitFor(() => {
       expect(result.current.data?.runs).toBeDefined();
     });
-    expect(sdkv3.post).toHaveBeenCalledTimes(1);
-    expect(sdkv3.post).toHaveBeenCalledWith(`${getBaseUrl('')}/runs/list`, {
+    expect(useSDK().post).toHaveBeenCalledTimes(1);
+    expect(useSDK().post).toHaveBeenCalledWith(`${getBaseUrl('')}/runs/list`, {
       data: {
         filter: { externalId: params.externalId },
         cursor: undefined,

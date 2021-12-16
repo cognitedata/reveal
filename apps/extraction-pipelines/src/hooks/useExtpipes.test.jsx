@@ -1,6 +1,6 @@
 import { QueryClient } from 'react-query';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { renderWithReactQueryCacheProvider } from 'utils/test/render';
 import {
   getMockResponse,
@@ -33,8 +33,12 @@ describe('useExtpipes', () => {
     );
   });
   test('Returns extpipes on success', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-    sdkv3.datasets.retrieve.mockResolvedValue(mockDataSetResponse());
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: { items: getMockResponse() } }),
+      datasets: {
+        retrieve: () => Promise.resolve(mockDataSetResponse()),
+      },
+    });
 
     const { result, waitFor } = renderHook(() => useExtpipes(), {
       wrapper,
@@ -51,14 +55,20 @@ describe('useExtpipes', () => {
   });
 
   test('Returns extpipe without data set if get data set fails', async () => {
-    sdkv3.get.mockResolvedValue({
-      data: {
-        items: getMockResponse().map(({ name, id, dataSetId }) => {
-          return { id, name, dataSetId };
+    useSDK.mockReturnValue({
+      get: () =>
+        Promise.resolve({
+          data: {
+            items: getMockResponse().map(({ name, id, dataSetId }) => {
+              return { id, name, dataSetId };
+            }),
+          },
         }),
+      datasets: {
+        retrieve: () => Promise.reject(rejectValue),
       },
     });
-    sdkv3.datasets.retrieve.mockRejectedValue(rejectValue);
+
     const { result, waitFor } = renderHook(() => useExtpipes(), {
       wrapper,
     });
@@ -77,7 +87,9 @@ describe('useExtpipes', () => {
   });
 
   test('Returns error on fail', async () => {
-    sdkv3.get.mockRejectedValue(rejectValue);
+    useSDK.mockReturnValue({
+      get: () => Promise.reject(rejectValue),
+    });
 
     const { result, waitFor } = renderHook(() => useExtpipes(), {
       wrapper,

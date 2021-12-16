@@ -1,14 +1,14 @@
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { dbResponse, table2Response, tableResponse } from './mockResponse';
 import { getRawDBsAndTables } from './RawDataBaseAPI';
 
 describe('RawDataBaseAPI', () => {
   test('getRawDBsAndTables', async () => {
-    sdkv3.raw.listDatabases.mockResolvedValue(dbResponse);
-    sdkv3.raw.listTables
+    sdk.raw.listDatabases.mockResolvedValue(dbResponse);
+    sdk.raw.listTables
       .mockResolvedValueOnce(tableResponse)
       .mockResolvedValueOnce(table2Response);
-    const res = await getRawDBsAndTables();
+    const res = await getRawDBsAndTables(sdk);
     expect(res.length).toEqual(dbResponse.items.length);
     expect(res[0].database.name).toEqual(dbResponse.items[0].name);
     expect(res[0].tables.length).toEqual(tableResponse.items.length);

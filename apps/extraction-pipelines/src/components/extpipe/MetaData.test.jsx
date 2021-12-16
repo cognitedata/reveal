@@ -5,7 +5,8 @@ import { getMockResponse } from 'utils/mockResponse';
 import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { DetailFieldNames } from 'model/Extpipe';
 
@@ -29,7 +30,9 @@ describe('MetaData', () => {
     );
   });
   test('Should render metadata', async () => {
-    sdkv3.get.mockResolvedValue({ data: { ...mock, metadata } });
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: { ...mock, metadata } }),
+    });
     render(<MetaDataSection canEdit={false} />, {
       wrapper: wrapper.wrapper,
     });
@@ -43,7 +46,7 @@ describe('MetaData', () => {
   });
 
   test('Should render add metadata meta does not exist', () => {
-    sdkv3.get.mockResolvedValue({ data: { ...mock, metadata: undefined } });
+    sdk.get.mockResolvedValue({ data: { ...mock, metadata: undefined } });
     render(<MetaDataSection canEdit />, { wrapper: wrapper.wrapper });
     expect(
       screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
@@ -51,7 +54,7 @@ describe('MetaData', () => {
   });
 
   test('Should render add metadata meta when none to display exist', () => {
-    sdkv3.get.mockResolvedValue({
+    sdk.get.mockResolvedValue({
       data: {
         ...mock,
         metadata: {

@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import { QueryClient } from 'react-query';
 import { act } from '@testing-library/react-hooks';
 import Extpipes from 'pages/Extpipes/Extpipes';
@@ -31,8 +31,12 @@ describe('Extpipes', () => {
   });
 
   test('Render with out fail', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: getMockResponse() } });
-    sdkv3.datasets.retrieve.mockResolvedValue([]);
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: { items: getMockResponse() } }),
+      datasets: {
+        retrieve: () => Promise.resolve([]),
+      },
+    });
     const client = new QueryClient();
     const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
       client,
@@ -48,7 +52,9 @@ describe('Extpipes', () => {
   });
 
   test('Should render "No extraction pipelines have been added yet." message when no extpipes', async () => {
-    sdkv3.get.mockResolvedValue({ data: { items: [] } });
+    useSDK.mockReturnValue({
+      get: () => Promise.resolve({ data: { items: [] } }),
+    });
     const queryCache = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -68,7 +74,9 @@ describe('Extpipes', () => {
   });
 
   test('Render error on fail', async () => {
-    sdkv3.get.mockRejectedValue(unauthorizedError);
+    useSDK.mockReturnValue({
+      get: () => Promise.reject(unauthorizedError),
+    });
     const queryCache = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -88,7 +96,9 @@ describe('Extpipes', () => {
   });
 
   test('Render permission error when user dont have access', async () => {
-    sdkv3.get.mockRejectedValue(unauthorizedError);
+    useSDK.mockReturnValue({
+      get: () => Promise.reject(unauthorizedError),
+    });
     useCapabilities.mockReturnValue({
       isLoading: false,
       data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: [] }],
