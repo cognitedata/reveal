@@ -19,7 +19,8 @@ module.exports = () => {
     moduleNameMapper: {
       '\\.(frag|vert)$': path.resolve(__dirname, './core/src/__mocks__/glslMocks.js'),
       '\\.css$': path.resolve(__dirname, './core/src/__mocks__/cssMock.js'),
-      '\\.svg$': path.resolve(__dirname, './core/src/__mocks__/svgMock.js')
+      '\\.svg$': path.resolve(__dirname, './core/src/__mocks__/svgMock.js'),
+      '\\.png$': path.resolve(__dirname, './core/src/__mocks__/pngMocks.js')
     },
     globals: {
       __webpack_public_path__: '',

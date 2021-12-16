@@ -21,11 +21,7 @@ describe('ToolbarTool', () => {
 
   const styles = {
     container: 'reveal-viewer-toolbar-container',
-    bottom: 'reveal-viewer-toolbar-container--bottom',
-    top: 'reveal-viewer-toolbar-container--top',
-    left: 'reveal-viewer-toolbar-container--left',
-    right: 'reveal-viewer-toolbar-container--right',
-    icon: 'reveal-viewer-toolbar-icon'
+    bottom: 'reveal-viewer-toolbar-container--bottom'
   };
 
   beforeAll(() => {
@@ -60,9 +56,13 @@ describe('ToolbarTool', () => {
   });
 
   test('Set Position of toolbar', () => {
-    const position = ToolbarPosition.Bottom;
-    tool.setPosition(position);
+    const canvasElement = viewer.domElement.querySelector('canvas')?.parentElement;
+    const toolContainerDomElement = canvasElement!.firstElementChild;
 
-    // expect
+    expect(toolContainerDomElement?.classList.contains(styles.container));
+
+    tool.setPosition(ToolbarPosition.Bottom);
+
+    expect(toolContainerDomElement?.classList.contains(styles.bottom));
   });
 });
