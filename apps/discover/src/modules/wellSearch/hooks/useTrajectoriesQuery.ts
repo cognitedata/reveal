@@ -37,27 +37,27 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
   const columns = config?.trajectory?.columns;
   const trajectories: Sequence[] = [];
   const trajectoryRows: TrajectoryRows[] = [];
-
-  if (config?.trajectory?.enabled === false) {
-    return { isLoading: false, trajectories: [], trajectoryRows: [] };
-  }
+  const isTrajectoriesDisabled = config?.trajectory?.enabled === false; // checking false because we want to fetch for undefined
 
   // Do the initial search with react-query
-  const { data, isLoading } = useQuery(WELL_QUERY_KEY.TRAJECTORIES, () =>
-    service(
-      wellboreIds,
-      wellboreAssetIdMap,
-      wellboresSourceExternalIdMap,
-      query,
-      columns,
-      metric,
-      enabledWellSDKV3
-    )
+  const { data, isLoading } = useQuery(
+    WELL_QUERY_KEY.TRAJECTORIES,
+    () =>
+      service(
+        wellboreIds,
+        wellboreAssetIdMap,
+        wellboresSourceExternalIdMap,
+        query,
+        columns,
+        metric,
+        enabledWellSDKV3
+      ),
+    { enabled: !isTrajectoriesDisabled }
   );
 
   return useMemo(() => {
     if (isLoading || !data) {
-      return { isLoading: true, trajectories, trajectoryRows };
+      return { isLoading, trajectories, trajectoryRows };
     }
 
     // Check if there are ids not in the cached data. Also filter cached data by requested ids
@@ -108,5 +108,5 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
     }
 
     return { isLoading: true, trajectories, trajectoryRows };
-  }, [wellboreIds, data, wellboreAssetIdMap]);
+  }, [wellboreIds, isLoading, data, wellboreAssetIdMap, enabledWellSDKV3]);
 };

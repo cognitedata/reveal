@@ -70,7 +70,10 @@ export const useSurvey = (surveyId: string) => {
 
   return useQuery<SeismicGetData | SeismicError>(
     getSurveyKey(surveyId),
-    () => discoverAPI.seismic.get(surveyId, headers, tenant),
+    () =>
+      surveyId
+        ? discoverAPI.seismic.get(surveyId, headers, tenant)
+        : Promise.reject(new Error('Survey Id not supplied.')),
     {
       retry: false,
       enabled: !!surveyId,

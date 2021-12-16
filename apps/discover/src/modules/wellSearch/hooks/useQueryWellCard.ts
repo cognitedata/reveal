@@ -20,7 +20,7 @@ import { normalizeWell } from 'modules/wellSearch/utils/wells';
 export const WELL_CARD_KEY = 'wellCardKey';
 export const WELLBORE_CARD_KEY = 'welloreCardKey';
 
-export const wellBoreUseQuery = (wellIds: WellId[]) => {
+export const useWellboreQuery = (wellIds: WellId[]) => {
   const { wellbores } = useWellbores(wellIds);
 
   return useQuery<WellBoreListMap>([WELLBORE_CARD_KEY], () => {
@@ -36,7 +36,7 @@ export const wellBoreUseQuery = (wellIds: WellId[]) => {
   });
 };
 
-export const wellUseQuery = () => {
+export const useWellQuery = () => {
   const { wells } = useWells();
 
   return useQuery<WellMap>([WELL_CARD_KEY], () => {
@@ -52,7 +52,7 @@ export const wellUseQuery = () => {
 
 export const useMutateWellPatch = () => {
   const queryClient = useQueryClient();
-  const { data } = wellUseQuery();
+  const { data } = useWellQuery();
 
   return useMutation(getWellByWellId, {
     onSuccess: (result) => {
@@ -70,7 +70,7 @@ export const useMutateWellPatch = () => {
 
 export const useMutateWellBorePatch = (wellIds: number[]) => {
   const queryClient = useQueryClient();
-  const { data } = wellBoreUseQuery(wellIds);
+  const { data } = useWellboreQuery(wellIds);
 
   return useMutation(
     async () => {

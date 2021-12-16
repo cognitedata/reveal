@@ -10,9 +10,5 @@ import { useSurvey } from './useSurveys';
 export const useSelectedSurvey = () => {
   const selectedSurveyIds = useSelectedSurveys();
 
-  if (selectedSurveyIds) {
-    return useSurvey(selectedSurveyIds[0]);
-  }
-
-  return { error: true, data: undefined };
+  return useSurvey(selectedSurveyIds?.[0]);
 };

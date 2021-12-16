@@ -15,8 +15,8 @@ import {
   WELL_FIELDS_WITH_PRODUCTION_DATA,
 } from 'modules/wellSearch/constants';
 import {
-  wellBoreUseQuery,
-  wellUseQuery,
+  useWellboreQuery,
+  useWellQuery,
 } from 'modules/wellSearch/hooks/useQueryWellCard';
 import { useWellsByIdForFavoritesQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
 import {
@@ -39,7 +39,7 @@ export const useWellIds = () => {
 };
 
 export const useWellResult = (id?: number) => {
-  const { data } = wellUseQuery();
+  const { data } = useWellQuery();
   if (!id) return null;
   if (data && data[id]) return data[id];
 
@@ -63,7 +63,7 @@ export const useFavoriteWellResults = (ids?: WellId[]) => {
 };
 
 export const useFavoriteWellResult = (id?: number) => {
-  const { data } = wellUseQuery();
+  const { data } = useWellQuery();
   if (!id) return null;
   if (data && data[id]) return data[id];
 
@@ -72,7 +72,7 @@ export const useFavoriteWellResult = (id?: number) => {
 
 export const useWellBoreResult = (wellId?: number): Wellbore[] => {
   const idList = wellId ? [wellId] : [];
-  const { data } = wellBoreUseQuery(idList);
+  const { data } = useWellboreQuery(idList);
   if (!wellId) return [];
   if (data && data[wellId]) return data[wellId];
   return [];
