@@ -6,10 +6,6 @@ import {
 } from 'redux';
 import { ThunkDispatch as ReduxThunkDispatch, ThunkAction } from 'redux-thunk';
 
-import {
-  CrowdsourcingState,
-  CrowdsourcingAction,
-} from 'modules/crowdsourcing/types';
 import { DocumentState } from 'modules/documentSearch/types';
 import { DocumentAction } from 'modules/documentSearch/types.actions';
 import { FavouriteState, FavouriteAction } from 'modules/favorite/types';
@@ -31,7 +27,6 @@ import { WellInspectAction, WellInspectState } from 'modules/wellInspect/types';
 import { WellState, WellSearchAction } from 'modules/wellSearch/types';
 
 export type StoreAction =
-  | CrowdsourcingAction
   | DocumentAction
   | FavouriteAction
   | FeedbackAction
@@ -50,7 +45,6 @@ export type StoreState = {
     tenant: string;
     appName: string;
   };
-  crowdsourcing: CrowdsourcingState;
   favourite: FavouriteState;
   feedback: FeedbackState;
   filterData: FilterDataState;

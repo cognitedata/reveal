@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
 
-import { crowdsourcing } from 'modules/crowdsourcing/reducer';
 import { search as documentSearch } from 'modules/documentSearch/reducer';
 import { favourite } from 'modules/favorite/reducer';
 import { feedback } from 'modules/feedback/reducer';
@@ -20,7 +19,6 @@ const rootReducer = combineReducers<StoreState>({
   environment: (state): StoreState['environment'] => {
     return { ...state } as StoreState['environment'];
   },
-  crowdsourcing,
   favourite,
   feedback,
   filterData,
