@@ -46,3 +46,6 @@ export const LOG_DOCUMENT_PREVIEW_NAMESPACE = 'documents:document_preview';
 
 export const LOG_DOCUMENT_SEARCH = 'document_search';
 export const LOG_DOCUMENT_SEARCH_NAMESPACE = 'documents:document_search';
+
+export const LOG_WELL_SEARCH = 'well_search';
+export const LOG_WELL_SEARCH_NAMESPACE = 'wells:well_search';

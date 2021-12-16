@@ -1,12 +1,12 @@
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 
-import { Well } from '@cognite/sdk-wells-v2';
+import { Well as SDKWell } from '@cognite/sdk-wells-v2';
 
-import { Wellbore } from '../types';
+import { Well, Wellbore } from '../types';
 import { normalizeCoords } from '../utils';
 
-export const normalizeWell = (well: Well) => {
+export const normalizeWell = (well: SDKWell): Well => {
   return {
     ...well,
     ...(well.wellhead
@@ -24,7 +24,7 @@ export const normalizeWell = (well: Well) => {
   };
 };
 
-export const normalizeWells = (wells: Well[]) => {
+export const normalizeWells = (wells: SDKWell[]) => {
   return wells.map(normalizeWell);
 };
 

@@ -66,6 +66,8 @@ export const ONLY_FETCH_ONCE = {
 
 const WELLS = 'wells';
 export const WELL_QUERY_KEY = {
+  SEARCH: [WELLS, 'search'],
+  WELLBORES: [WELLS, 'wellbores'],
   BY_ID: [WELLS, 'wellsById'],
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
   CASINGS: [WELLS, 'casings'],
