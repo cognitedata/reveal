@@ -100,7 +100,7 @@ export const mapWellInfoToNPTEvents = (
   return flatten(
     Object.keys(eventsMap).map((key) => {
       const wellboreId = key as any;
-      return eventsMap[wellboreId].map((event) => ({
+      return (eventsMap[wellboreId] || []).map((event) => ({
         ...event,
         measuredDepth: event.measuredDepth
           ? {
@@ -136,7 +136,7 @@ export const convertTo3DNPTEvents = (
   return flatten(
     Object.keys(eventsMap).map((key) => {
       const wellboreId = Number(key);
-      return eventsMap[wellboreId].map((event) => ({
+      return (eventsMap[wellboreId] || []).map((event) => ({
         assetIds: [wellbores[wellboreId]?.id],
         subType: event.subtype,
         description: event.description,
