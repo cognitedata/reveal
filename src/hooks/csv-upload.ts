@@ -85,7 +85,7 @@ export const useCSVUpload = (
         let items: { key: string; columns: Record<string, any> }[] = [];
         try {
           items = results.data.map((rowData: Record<string, any>) => ({
-            key: !selectedColumn ? uuid() : selectedColumn.toString(),
+            key: !selectedColumn ? uuid() : rowData[selectedColumn].toString(),
             columns: rowData,
           }));
         } catch (e) {
