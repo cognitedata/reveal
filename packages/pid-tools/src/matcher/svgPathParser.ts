@@ -1,8 +1,7 @@
 import { parseSVG, makeAbsolute, CommandMadeAbsolute } from 'svg-path-parser';
 
 import { SVG_ID } from '../constants';
-
-import { CurveSegment, LineSegment, PathSegment, Point } from './PathSegments';
+import { CurveSegment, LineSegment, PathSegment, Point } from '../geometry';
 
 type PointTranslationParams = {
   currentElem: SVGPathElement | SVGTSpanElement;

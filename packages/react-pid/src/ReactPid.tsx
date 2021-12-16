@@ -3,12 +3,10 @@
 import React, { useState } from 'react';
 import {
   PidDocument,
-  SvgPath,
   DiagramSymbol,
   DiagramLineInstance,
   DiagramSymbolInstance,
   SvgRepresentation,
-  getInternalSvgBoundingBox,
   DiagramConnection,
   DiagramInstanceId,
   getNoneOverlappingSymbolInstances,
@@ -115,27 +113,6 @@ export const ReactPid: React.FC = () => {
     return diagramSymbol;
   };
 
-  const createSvgRepresentation = (
-    pidDocument: PidDocument,
-    pathIds: string[]
-  ) => {
-    const newSvgRepresentation = {} as SvgRepresentation;
-
-    const pidPaths = pathIds.map(
-      (pathId) => pidDocument.getPidPathById(pathId)!
-    );
-
-    newSvgRepresentation.boundingBox = getInternalSvgBoundingBox(pidPaths);
-
-    newSvgRepresentation.svgPaths = pidPaths.map(
-      (internalSvgPath) =>
-        ({
-          svgCommands: internalSvgPath?.serializeToPathCommands(),
-        } as SvgPath)
-    );
-    return newSvgRepresentation;
-  };
-
   const deleteSymbol = (diagramSymbol: DiagramSymbol) => {
     deleteSymbolFromState(
       diagramSymbol,
@@ -167,7 +144,7 @@ export const ReactPid: React.FC = () => {
     }
 
     const pathIds = selection.map((svgElement) => svgElement.id);
-    const newSvgRepresentation = createSvgRepresentation(pidDocument, pathIds);
+    const newSvgRepresentation = pidDocument.createSvgRepresentation(pathIds);
     const newSymbol = setOrUpdateSymbol(symbolName, newSvgRepresentation);
 
     setSelection([]);

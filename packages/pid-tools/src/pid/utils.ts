@@ -1,17 +1,16 @@
-import { BoundingBox } from 'types';
-
+import { BoundingBox } from '../types';
 import { PidPath } from '../pid';
 
-export const getInternalSvgBoundingBox = (
-  internalSvgPaths: PidPath[]
+export const calculatePidPathsBoundingBox = (
+  pidPaths: PidPath[]
 ): BoundingBox => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
 
-  internalSvgPaths.forEach((internalSvgPath) => {
-    internalSvgPath.segmentList.forEach((pathSegment) => {
+  pidPaths.forEach((pidPath) => {
+    pidPath.segmentList.forEach((pathSegment) => {
       const bBox = pathSegment.boundingBox;
       minX = Math.min(minX, bBox.x);
       minY = Math.min(minY, bBox.y);

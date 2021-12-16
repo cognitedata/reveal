@@ -1,78 +1,7 @@
-import { BoundingBox } from 'types';
+import { BoundingBox } from '../types';
 
-export const approxeq = (v1: number, v2: number, epsilon = 2) =>
-  Math.abs(v1 - v2) <= epsilon;
-
-export const approxeqrel = (v1: number, v2: number, epsilon = 0.2) => {
-  if (v2 === 0) {
-    return v1 === 0;
-  }
-  return Math.abs(1 - v1 / v2) <= epsilon;
-};
-
-export class Point {
-  x: number;
-  y: number;
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-
-  distance(other: Point) {
-    return Math.sqrt((other.x - this.x) ** 2 + (this.y - other.y) ** 2);
-  }
-
-  lessThan(other: Point): number {
-    const thisSum = this.x + this.y;
-    const otherSum = other.x + other.y;
-
-    if (thisSum < otherSum) {
-      return -1;
-    }
-    if (thisSum > otherSum) {
-      return 1;
-    }
-
-    if (this.y < other.y) {
-      return -1;
-    }
-    if (this.y === other.y) {
-      return 0;
-    }
-    return 1;
-  }
-
-  translate(x: number, y: number) {
-    return new Point(this.x + x, this.y + y);
-  }
-
-  minus(other: Point) {
-    return new Point(this.x - other.x, this.y - other.y);
-  }
-
-  average(other: Point) {
-    return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
-  }
-
-  translateAndScale(translatePoint: Point, scale: number) {
-    const newX = scale * (this.x - translatePoint.x);
-    const newY = scale * (this.y - translatePoint.y);
-    return new Point(newX, newY);
-  }
-}
-const getBoundingBox = (startPoint: Point, stopPoint: Point) => {
-  const minX = Math.min(startPoint.x, stopPoint.x);
-  const minY = Math.min(startPoint.y, stopPoint.y);
-  const maxX = Math.max(startPoint.x, stopPoint.x);
-  const maxY = Math.max(startPoint.y, stopPoint.y);
-
-  return {
-    x: minX,
-    y: minY,
-    width: maxX - minX,
-    height: maxY - minY,
-  };
-};
+import { Point } from './Point';
+import { approxeq, getBoundingBox } from './utils';
 
 export abstract class PathSegment {
   start: Point;
@@ -117,6 +46,51 @@ export abstract class PathSegment {
     theta *= 180 / Math.PI; // rads to degs
     return theta;
   }
+
+  getIntersection = (
+    other: PathSegment,
+    extendLinesIfNeeded = true
+  ): Point | undefined => {
+    // Note: This doens not work properly on Curve segments curently
+
+    // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
+    const x1 = this.start.x;
+    const y1 = this.start.y;
+    const x2 = this.stop.x;
+    const y2 = this.stop.y;
+    const x3 = other.start.x;
+    const y3 = other.start.y;
+    const x4 = other.stop.x;
+    const y4 = other.stop.y;
+
+    // Check if none of the lines are of length 0
+    if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
+      return undefined;
+    }
+
+    const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+
+    // Lines are parallel
+    if (denominator === 0) {
+      return undefined;
+    }
+
+    const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
+    if (!extendLinesIfNeeded) {
+      const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
+
+      // is the intersection along the segments
+      if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+        return undefined;
+      }
+    }
+
+    // Return a object with the x and y coordinates of the intersection
+    const x = x1 + ua * (x2 - x1);
+    const y = y1 + ua * (y2 - y1);
+
+    return new Point(x, y);
+  };
 }
 
 export class LineSegment extends PathSegment {

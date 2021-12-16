@@ -2,20 +2,11 @@ import {
   segmentsToSVGCommand,
   svgCommandToSegments,
 } from '../matcher/svgPathParser';
-import { PathSegment, Point } from '../matcher/PathSegments';
-
-const calculateMidPoint = (pathSegments: PathSegment[]) => {
-  let sumX = 0;
-  let sumY = 0;
-  pathSegments.forEach((pathSegment) => {
-    const { midPoint } = pathSegment;
-    sumX += midPoint.x;
-    sumY += midPoint.y;
-  });
-
-  const numSegment = pathSegments.length;
-  return new Point(sumX / numSegment, sumY / numSegment);
-};
+import {
+  PathSegment,
+  Point,
+  calculateMidPointFromPathSegments,
+} from '../geometry';
 
 export class PidPath {
   segmentList: PathSegment[];
@@ -32,7 +23,7 @@ export class PidPath {
     if (midPoint !== undefined) {
       this.midPoint = midPoint;
     } else {
-      this.midPoint = calculateMidPoint(this.segmentList);
+      this.midPoint = calculateMidPointFromPathSegments(this.segmentList);
     }
   }
   serializeToPathCommands(toFixed: null | number = null): string {

@@ -24,6 +24,16 @@ export const getDiagramInstanceByPathId = (
   return null;
 };
 
+export const getInstanceByDiagramInstanceId = (
+  symbolInstances: DiagramSymbolInstance[],
+  diagramInstanceId: DiagramInstanceId
+): DiagramSymbolInstance | undefined => {
+  return symbolInstances.find(
+    (symbolInstance) =>
+      getDiagramInstanceId(symbolInstance) === diagramInstanceId
+  );
+};
+
 export const isPathIdInInstance = (
   pathId: string,
   instanceId: DiagramInstanceId | null

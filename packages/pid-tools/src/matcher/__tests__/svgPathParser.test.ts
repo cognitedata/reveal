@@ -1,5 +1,5 @@
 import { segmentsToSVGCommand, svgCommandToSegments } from '../svgPathParser';
-import { LineSegment } from '../PathSegments';
+import { LineSegment } from '../../geometry';
 
 describe('svg-commands', () => {
   test('M + V', () => {

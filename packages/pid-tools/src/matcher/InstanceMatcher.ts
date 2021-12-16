@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 import { PidPath } from '../pid/PidPath';
+import { PathSegment } from '../geometry/PathSegment';
 
-import { PathSegment } from './PathSegments';
 import { svgCommandToSegments } from './svgPathParser';
 
 export enum MatchResult {

@@ -25,6 +25,7 @@ import {
   colorSymbol,
   isDiagramLine,
   isInAddSymbolSelection,
+  visualizeConnections,
 } from './utils';
 
 interface SvgViewerProps {
@@ -347,6 +348,14 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
 
     if (pidDocument === undefined) {
       setPidDocument(PidDocument.fromSVGElements(allSVGElements));
+    } else if (active === 'connectInstances') {
+      visualizeConnections(
+        svg,
+        pidDocument,
+        connections,
+        symbolInstances,
+        lines
+      );
     }
   };
   /* eslint-enable no-param-reassign */

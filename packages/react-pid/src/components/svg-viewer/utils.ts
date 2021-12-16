@@ -5,6 +5,13 @@ import {
   getDiagramInstanceId,
   isPathIdInInstance,
   DiagramLabel,
+  PidDocument,
+  DiagramConnection,
+  getInstanceByDiagramInstanceId,
+  getClosestPathSegments,
+  Point,
+  getPointsCloserToEachOther,
+  getPointTowardOtherPoint,
 } from '@cognite/pid-tools';
 
 import { COLORS } from '../../constants';
@@ -169,4 +176,160 @@ export const colorSymbol = (
       );
     });
   }
+};
+
+export const visualizeConnections = (
+  svg: SVGSVGElement,
+  pidDocument: PidDocument,
+  connections: DiagramConnection[],
+  symbolInstances: DiagramSymbolInstance[],
+  lines: DiagramLineInstance[]
+) => {
+  const offset = 2;
+  const maxLength = 10;
+  const intersectionThreshold = 3;
+  const instances = [...symbolInstances, ...lines];
+  connections.forEach((connection) => {
+    const startInstance = getInstanceByDiagramInstanceId(
+      instances,
+      connection.start
+    );
+    const endInstance = getInstanceByDiagramInstanceId(
+      instances,
+      connection.end
+    );
+    if (startInstance === undefined || endInstance === undefined) return;
+
+    let startPoint: Point | undefined;
+    let endPoint: Point | undefined;
+    if (
+      startInstance.symbolName !== 'Line' &&
+      endInstance.symbolName !== 'Line'
+    ) {
+      // Both is symbol
+      startPoint = pidDocument.getMidPointToPaths(startInstance.pathIds);
+      endPoint = pidDocument.getMidPointToPaths(endInstance.pathIds);
+
+      [startPoint, endPoint] = getPointsCloserToEachOther(
+        startPoint,
+        endPoint,
+        offset
+      );
+    } else if (
+      startInstance.symbolName === 'Line' &&
+      endInstance.symbolName === 'Line'
+    ) {
+      // Both is line
+
+      const startPathSegments = pidDocument.getPathSegmentsToPaths(
+        startInstance.pathIds
+      );
+      const endPathSegments = pidDocument.getPathSegmentsToPaths(
+        endInstance.pathIds
+      );
+
+      const [startPathSegment, endPathSegment] = getClosestPathSegments(
+        startPathSegments,
+        endPathSegments
+      );
+
+      const intersection = startPathSegment.getIntersection(endPathSegment);
+      if (intersection === undefined) {
+        startPoint = startPathSegment.midPoint;
+        endPoint = endPathSegment.midPoint;
+      } else {
+        if (
+          intersection.distance(startPathSegment.start) <
+            intersectionThreshold ||
+          intersection.distance(startPathSegment.stop) < intersectionThreshold
+        ) {
+          startPoint = getPointTowardOtherPoint(
+            intersection,
+            startPathSegment.midPoint,
+            Math.min(
+              maxLength,
+              intersection.distance(startPathSegment.midPoint) - offset
+            )
+          );
+        } else {
+          startPoint = intersection;
+        }
+
+        if (
+          intersection.distance(endPathSegment.start) < intersectionThreshold ||
+          intersection.distance(endPathSegment.stop) < intersectionThreshold
+        ) {
+          endPoint = getPointTowardOtherPoint(
+            intersection,
+            endPathSegment.midPoint,
+            Math.min(
+              maxLength,
+              intersection.distance(endPathSegment.midPoint) - offset
+            )
+          );
+        } else {
+          endPoint = intersection;
+        }
+      }
+    } else {
+      // One symbol and one line
+      const [symbol, line] =
+        startInstance.symbolName !== 'Line'
+          ? [startInstance, endInstance]
+          : [endInstance, startInstance];
+
+      const symbolPoint = pidDocument.getMidPointToPaths(symbol.pathIds);
+
+      // Use path segment with start/stop point closest to `symbolPoint`
+      let linePoint: undefined | Point;
+      const linePathSegments = pidDocument.getPathSegmentsToPaths(line.pathIds);
+      let minDistance = Infinity;
+      linePathSegments.forEach((pathSegment) => {
+        const startDistance = symbolPoint.distance(pathSegment.start);
+        if (startDistance < minDistance) {
+          minDistance = startDistance;
+          linePoint = getPointTowardOtherPoint(
+            pathSegment.start,
+            pathSegment.stop,
+            Math.min(
+              maxLength,
+              pathSegment.start.distance(pathSegment.midPoint)
+            )
+          );
+        }
+
+        const stopDistance = symbolPoint.distance(pathSegment.stop);
+        if (stopDistance < minDistance) {
+          minDistance = stopDistance;
+          linePoint = getPointTowardOtherPoint(
+            pathSegment.stop,
+            pathSegment.start,
+            Math.min(maxLength, pathSegment.stop.distance(pathSegment.midPoint))
+          );
+        }
+      });
+
+      startPoint = symbolPoint;
+      endPoint = linePoint;
+      if (endPoint === undefined) return;
+
+      [startPoint, endPoint] = getPointsCloserToEachOther(
+        startPoint,
+        endPoint,
+        offset
+      );
+    }
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute(
+      'd',
+      `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`
+    );
+
+    path.setAttribute(
+      'style',
+      `stroke:${COLORS.connection.color};stroke-width:${COLORS.connection.strokeWidth};opacity:${COLORS.connection.opacity};stroke-linecap:round`
+    );
+    svg.insertBefore(path, svg.children[0]);
+  });
 };

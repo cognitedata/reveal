@@ -66,8 +66,9 @@ export const deleteConnectionFromState = (
   setConnections: (connections: DiagramConnection[]) => void
 ) => {
   setConnections(
-    diagramConnections.filter((connection) =>
-      isConnectionUnidirectionalMatch(diagramConnection, connection)
+    diagramConnections.filter(
+      (connection) =>
+        !isConnectionUnidirectionalMatch(diagramConnection, connection)
     )
   );
 };

@@ -1,10 +1,17 @@
-import { DiagramSymbol, DiagramSymbolInstance } from 'types';
 import { ElementNode, parse } from 'svg-parser';
 
-import { getInternalSvgBoundingBox } from '../utils/getSvgBoundingBox';
+import {
+  BoundingBox,
+  DiagramSymbol,
+  DiagramSymbolInstance,
+  SvgPath,
+  SvgRepresentation,
+} from '../types';
 import { svgCommandToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
+import { PathSegment, Point } from '../geometry';
 
+import { calculatePidPathsBoundingBox } from './utils';
 import { PidTspan } from './PidTspan';
 import { PidPath } from './PidPath';
 
@@ -40,7 +47,7 @@ export class PidDocument {
     const svgString: string[] = [];
     svgString.push(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n`);
 
-    const bBox = getInternalSvgBoundingBox(this.pidPaths);
+    const bBox = calculatePidPathsBoundingBox(this.pidPaths);
     svgString.push(`<svg 
   xmlns="http://www.w3.org/2000/svg"
   viewBox="${bBox.x.toFixed(2)} ${bBox.y.toFixed(2)} ${bBox.height.toFixed(
@@ -90,9 +97,46 @@ export class PidDocument {
     return new PidDocument(paths, labels);
   }
 
-  findAllInstancesOfSymbol = (
-    symbol: DiagramSymbol
-  ): DiagramSymbolInstance[] => {
+  findAllInstancesOfSymbol(symbol: DiagramSymbol): DiagramSymbolInstance[] {
     return findAllInstancesOfSymbol(this.pidPaths, symbol);
-  };
+  }
+
+  getBoundingBoxToPaths(pathIds: string[]): BoundingBox {
+    const pidPaths = pathIds.map(
+      (pathId: string) => this.getPidPathById(pathId)!
+    );
+    return calculatePidPathsBoundingBox(pidPaths);
+  }
+
+  getMidPointToPaths(pathIds: string[]): Point {
+    const bBox = this.getBoundingBoxToPaths(pathIds);
+    return new Point(bBox.x + bBox.width / 2, bBox.y + bBox.height / 2);
+  }
+
+  getPathSegmentsToPaths(pathIds: string[]): PathSegment[] {
+    const allPathSegments: PathSegment[] = [];
+    pathIds.forEach((pathId) => {
+      const pathSegments = this.getPidPathById(pathId)
+        ?.segmentList as PathSegment[];
+      allPathSegments.push(...pathSegments);
+    });
+    return allPathSegments;
+  }
+
+  createSvgRepresentation(pathIds: string[]): SvgRepresentation {
+    const boundingBox = this.getBoundingBoxToPaths(pathIds);
+
+    const pidPaths = pathIds.map((pathId) => this.getPidPathById(pathId)!);
+    const svgPaths: SvgPath[] = pidPaths.map(
+      (pidPath) =>
+        ({
+          svgCommands: pidPath.serializeToPathCommands(),
+        } as SvgPath)
+    );
+
+    return {
+      boundingBox,
+      svgPaths,
+    };
+  }
 }

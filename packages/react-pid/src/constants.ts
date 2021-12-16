@@ -5,4 +5,9 @@ export const COLORS = {
   symbolSelection: 'orange',
   connectionSelection: 'lawngreen',
   labelSelection: 'coral',
+  connection: {
+    color: 'DarkRed',
+    strokeWidth: 3,
+    opacity: 0.4,
+  },
 };

@@ -3,3 +3,4 @@ export * from './matcher';
 export * from './types';
 export * from './constants';
 export * from './pid';
+export * from './geometry';
