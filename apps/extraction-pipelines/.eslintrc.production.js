@@ -21,6 +21,7 @@ module.exports = {
     'react/jsx-props-no-spreading': ['off'],
     'react/static-property-placement': ['off'],
     'react/state-in-constructor': ['off'],
+    'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
 
     'jest/expect-expect': ['off'],
     'jest/no-test-callback': ['off'],
