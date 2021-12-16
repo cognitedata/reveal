@@ -14,6 +14,7 @@ import {
   Menu,
   toast,
 } from '@cognite/cogs.js';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 import {
   NavLink,
   Route,
@@ -153,6 +154,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
   const { setExtpipe } = useSelectedExtpipe();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { data: extpipe, isLoading, error } = useExtpipeById(parseInt(id, 10));
+  const sdk = useSDK();
   useEffect(() => {
     if (extpipe) {
       setExtpipe(extpipe);
@@ -161,7 +163,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
 
   const deletePipeline = useCallback(() => {
     if (extpipe == null) return;
-    deleteExtractionPipeline(extpipe.id)
+    deleteExtractionPipeline(sdk, extpipe.id)
       .then(() => {
         toast.success(
           <div>
@@ -197,7 +199,7 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
         );
         setIsDeleteDialogOpen(false);
       });
-  }, [extpipe, history, project, queryClient]);
+  }, [extpipe, history, project, queryClient, sdk]);
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
 

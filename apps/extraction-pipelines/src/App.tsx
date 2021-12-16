@@ -17,8 +17,7 @@ import { createBrowserHistory } from 'history';
 import { FlagProvider } from '@cognite/react-feature-flags';
 // eslint-disable-next-line
 import { SDKProvider } from '@cognite/sdk-provider';
-import { sdkv3 } from '@cognite/cdf-sdk-singleton';
-import { CogniteClient } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { getCdfEnvFromUrl, projectName } from 'utils/config';
 import isObject from 'lodash/isObject';
 import theme from './styles/theme';
@@ -65,7 +64,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SDKProvider sdk={(sdkv3 as unknown) as CogniteClient}>
+      <SDKProvider sdk={sdk}>
         <AppScopeStyles>
           <SubAppWrapper padding={false}>
             <AuthWrapper

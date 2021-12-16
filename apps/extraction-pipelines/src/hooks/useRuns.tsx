@@ -7,17 +7,25 @@ import { Range } from '@cognite/cogs.js';
 import { RunStatusAPI } from 'model/Status';
 import { mapStatusRow } from 'utils/runsUtils';
 import { useCallback } from 'react';
+import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
 
 export const useRuns = (
   externalId?: string,
   nextCursor?: string | null,
   limit?: number
 ) => {
+  const sdk = useSDK();
   const { project } = useAppEnv();
   return useQuery<RunsAPIResponse, ErrorObj>(
     [project, externalId, nextCursor],
     () => {
-      return getRuns(project ?? '', externalId ?? '', nextCursor ?? '', limit);
+      return getRuns(
+        sdk,
+        project ?? '',
+        externalId ?? '',
+        nextCursor ?? '',
+        limit
+      );
     },
     {
       enabled: !!externalId && nextCursor !== null,
@@ -27,6 +35,7 @@ export const useRuns = (
 };
 
 export const useFilteredRuns = (params: CreateRunFilterParam) => {
+  const sdk = useSDK();
   const { project } = useAppEnv();
   const data = createRunsFilter(params);
   return useQuery<
@@ -44,7 +53,7 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
       data.filter.createdTime?.max,
     ],
     () => {
-      return getFilteredRuns(project ?? '', data);
+      return getFilteredRuns(sdk, project ?? '', data);
     },
     {
       enabled: !!data.filter.externalId,
