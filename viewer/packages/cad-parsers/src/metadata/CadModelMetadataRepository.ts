@@ -56,6 +56,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
       format: cadOutput.format as File3dFormat,
+      formatVersion: cadOutput.version,
       modelMatrix,
       inverseModelMatrix,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
@@ -66,16 +67,28 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
 
-    const cadModelOutput =
-      outputs.find(output => output.format === File3dFormat.GltfCadModel) ??
-      outputs.find(output => output.format === File3dFormat.RevealCadModel);
+    const cadModelOutputs = outputs.filter(
+      output =>
+        output.format === File3dFormat.RevealCadModel ||
+        // TODO 2021-12-14 larsmoa: Remove after 3.0 release
+        // This is in place to support "pre-release" GLTF models that had a different output name
+        output.format === File3dFormat.GltfCadModel
+    );
 
-    if (!cadModelOutput)
+    if (cadModelOutputs.length === 0) {
+      throw new Error(`Model does not contain any supported cad model output ${File3dFormat.RevealCadModel}`);
+    }
+
+    const v9output = cadModelOutputs.find(x => x.version === 9);
+    const v8output = cadModelOutputs.find(x => x.version === 8);
+    if (v8output === undefined && v9output === undefined) {
       throw new Error(
-        `Model does not contain any supported cad model output [${File3dFormat.GltfCadModel}, ${File3dFormat.RevealCadModel}]`
+        `Model does not contain any supported cad model output ${File3dFormat.RevealCadModel} for versions in [8,9], ` +
+          `only got ${cadModelOutputs.map(x => x.version).join(',')}`
       );
+    }
 
-    return cadModelOutput;
+    return (v9output ?? v8output)!;
   }
 }
 

@@ -16,6 +16,7 @@ export function createCadModelMetadata(sceneVersion: number, root: SectorMetadat
   const model: CadModelMetadata = {
     modelIdentifier: modelId,
     format: File3dFormat.RevealCadModel,
+    formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,
     modelMatrix: new THREE.Matrix4().identity(),
     inverseModelMatrix: new THREE.Matrix4().identity(),
