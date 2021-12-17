@@ -14,6 +14,7 @@ import {
   getPointTowardOtherPoint,
 } from '@cognite/pid-tools';
 
+import { ToolType } from '../../types';
 import { COLORS } from '../../constants';
 
 export const isDiagramLine = (
@@ -75,10 +76,10 @@ const getInstanceLabelIndex = (
   instance: DiagramSymbolInstance,
   id: string
 ): number => {
-  return (
-    instance.labels?.findIndex(
-      (labelOnInstance) => labelOnInstance.id === id
-    ) || -1
+  if (instance.labels === undefined) return -1;
+
+  return instance.labels.findIndex(
+    (labelOnInstance) => labelOnInstance.id === id
   );
 };
 
@@ -98,7 +99,8 @@ export const applyStyleToNode = (
   symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[],
   graphPaths: DiagramInstanceId[][],
-  graphSelection: DiagramInstanceId | null
+  graphSelection: DiagramInstanceId | null,
+  active: ToolType
 ) => {
   if (isDiagramLine(node, lines) || isLabelInInstances(node, lines)) {
     node.style.stroke = COLORS.diagramLine;
@@ -118,7 +120,7 @@ export const applyStyleToNode = (
   if (isInAddSymbolSelection(node, selection)) {
     node.style.stroke = COLORS.symbolSelection;
   }
-  if (node instanceof SVGTSpanElement) {
+  if (active === 'connectLabels' && node instanceof SVGTSpanElement) {
     node.style.cursor = 'pointer';
   }
   if (isInGraphSelection(node, graphSelection)) {

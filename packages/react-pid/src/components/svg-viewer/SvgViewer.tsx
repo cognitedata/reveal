@@ -172,10 +172,13 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
 
   const onMouseClick = (node: SVGElement) => {
     if (active === 'addSymbol') {
-      if (isInAddSymbolSelection(node, selection)) {
-        setSelection(selection.filter((e) => e.id !== node.id));
-      } else {
-        setSelection([...selection, node]);
+      if (!(node instanceof SVGTSpanElement)) {
+        const alreadySelected = isInAddSymbolSelection(node, selection);
+        if (alreadySelected) {
+          setSelection(selection.filter((e) => e.id !== node.id));
+        } else {
+          setSelection([...selection, node]);
+        }
       }
     } else if (active === 'addLine') {
       if (isDiagramLine(node, lines)) {
@@ -190,7 +193,7 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
           setConnections,
           setLines
         );
-      } else {
+      } else if (!(node instanceof SVGTSpanElement)) {
         setLines([
           ...lines,
           {
@@ -331,7 +334,8 @@ export const SvgViewer: React.FC<SvgViewerProps> = ({
         symbolInstances,
         lines,
         graphPaths,
-        graphSelection
+        graphSelection,
+        active
       );
 
       node.addEventListener('mouseenter', () => onMouseEnter(node));
