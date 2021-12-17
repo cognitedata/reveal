@@ -1,9 +1,10 @@
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { fireErrorNotification } from 'src/utils';
 import { useQuery, useQueryCache } from 'react-query';
+import { HttpError } from '@cognite/sdk';
 
 async function fetchFile(_key, fileId: number): Promise<string> {
-  const arraybuffers = await v3Client.files3D.retrieve(fileId);
+  const arraybuffers = await sdk.files3D.retrieve(fileId);
   const arrayBufferView = new Uint8Array(arraybuffers);
   const blob = new Blob([arrayBufferView]);
   return window.URL.createObjectURL(blob);
@@ -12,7 +13,7 @@ async function fetchFile(_key, fileId: number): Promise<string> {
 export function useThumbnailFileQuery(fileId: number) {
   const queryKey = ['file', fileId];
   const queryCache = useQueryCache();
-  return useQuery<string, v3.HttpError>({
+  return useQuery<string, HttpError>({
     queryKey,
     queryFn: fetchFile,
     config: {

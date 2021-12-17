@@ -3,7 +3,7 @@ import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import styled from 'styled-components';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { useState } from 'react';
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Model3D } from '@cognite/sdk';
 import { DEFAULT_MARGIN_V, getContainer, userHasCapabilities } from 'src/utils';
 import PermissioningHintWrapper from 'src/components/PermissioningHintWrapper';
 import { message, Card, Modal } from 'antd';
@@ -46,7 +46,7 @@ const ButtonRow = styled.div`
 `;
 
 type Props = RouteComponentProps & {
-  model: v3.Model3D;
+  model: Model3D;
   user: AuthenticatedUserWithGroups;
 };
 

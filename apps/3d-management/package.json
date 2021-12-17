@@ -18,7 +18,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@cognite/3d-viewer": "6.1.4",
-    "@cognite/cdf-sdk-singleton": "^0.7.0",
+    "@cognite/sdk": "^6.3.1",
     "@cognite/cdf-utilities": "^0.7.3",
     "@cognite/cogs.js": "^3.24.3",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",

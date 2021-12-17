@@ -35,7 +35,7 @@ import {
 } from 'src/hooks/revisions';
 import { useModels } from 'src/hooks/models/useModels';
 
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Revision3D } from '@cognite/sdk';
 
 export const PUBLISH_STATUS_HINT = `
   Publishing a Revision makes this version of
@@ -173,7 +173,7 @@ export default function RevisionDetails(props: Props) {
         published: !revision.published,
       },
       {
-        onSuccess: (updatedRevision: v3.Revision3D) => {
+        onSuccess: (updatedRevision: Revision3D) => {
           if (originalPublication !== updatedRevision.published) {
             message.success(
               `Revision successfully ${

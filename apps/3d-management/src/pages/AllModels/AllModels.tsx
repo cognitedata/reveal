@@ -1,4 +1,4 @@
-import { v3 } from '@cognite/cdf-sdk-singleton';
+import { Model3D } from '@cognite/sdk';
 import { AuthenticatedUserWithGroups } from '@cognite/cdf-utilities/dist/types';
 import { useMetrics } from 'src/hooks/useMetrics';
 import React, { ChangeEvent, useState } from 'react';
@@ -71,7 +71,7 @@ export default function AllModels(props: Props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newModelName, setNewModelName] = useState('');
   const [currentUploadStep, setCurrentUploadStep] = useState<number>(0);
-  const [createdModel, setCreatedModel] = useState<v3.Model3D>();
+  const [createdModel, setCreatedModel] = useState<Model3D>();
 
   const isFormFilled = newModelName.length > 0;
 

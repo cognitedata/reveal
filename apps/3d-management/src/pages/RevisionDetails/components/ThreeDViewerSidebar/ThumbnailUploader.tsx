@@ -2,7 +2,8 @@ import React, { CSSProperties, useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { Modal, message } from 'antd';
 
-import { v3Client as sdk, v3 } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { FileUploadResponse } from '@cognite/sdk';
 import { fireErrorNotification } from 'src/utils/notifications';
 import {
   Cognite3DModel,
@@ -71,7 +72,7 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
         name: 'thumbnail.png',
         mimeType: 'image/png',
         source: '3d-models',
-      })) as v3.FileUploadResponse;
+      })) as FileUploadResponse;
 
       const progressMessage = message.loading('Uploading Screenshot...');
 

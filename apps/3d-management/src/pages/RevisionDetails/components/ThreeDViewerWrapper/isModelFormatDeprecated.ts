@@ -1,4 +1,5 @@
-import { v3, v3Client } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { RevealRevision3D, Versioned3DFile } from '@cognite/sdk';
 
 /**
  * @param modelId
@@ -9,7 +10,7 @@ export async function isModelFormatDeprecated(
   modelId: number,
   revisionId: number
 ): Promise<boolean> {
-  const revision: v3.RevealRevision3D = await v3Client!.viewer3D.retrieveRevealRevision3D(
+  const revision: RevealRevision3D = await sdk!.viewer3D.retrieveRevealRevision3D(
     modelId,
     revisionId
   );
@@ -27,9 +28,7 @@ export async function isModelFormatDeprecated(
 }
 
 // from @cognite/3d-viewer -> Cognite3DModelLoader
-function getNewestVersionedFile(
-  files: v3.Versioned3DFile[]
-): v3.Versioned3DFile {
+function getNewestVersionedFile(files: Versioned3DFile[]): Versioned3DFile {
   const supportedVersions = [1, 2, 3, 7];
   return files
     .filter((file) => supportedVersions.includes(file.version))

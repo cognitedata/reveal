@@ -7,7 +7,7 @@ import {
 } from '@cognite/reveal';
 
 import styled from 'styled-components';
-import { v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import * as THREE from 'three';
 import { AxisViewTool } from '@cognite/reveal/tools';
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';

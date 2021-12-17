@@ -1,4 +1,5 @@
-import { v3, v3Client as sdk } from '@cognite/cdf-sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
+import { HttpError, Revision3D } from '@cognite/sdk';
 import { useMutation, useQueryCache } from 'react-query';
 import { fireErrorNotification, QUERY_KEY } from 'src/utils';
 import { RevisionIds } from 'src/utils/types';
@@ -13,7 +14,7 @@ const deleteRevision = async ({
 export function useDeleteRevisionMutation() {
   const queryCache = useQueryCache();
 
-  return useMutation<void, v3.HttpError, RevisionIds, v3.Revision3D[]>(
+  return useMutation<void, HttpError, RevisionIds, Revision3D[]>(
     deleteRevision,
     {
       onMutate: ({ modelId, revisionId }: RevisionIds) => {
@@ -21,12 +22,12 @@ export function useDeleteRevisionMutation() {
         queryCache.cancelQueries(queryKey);
 
         // Snapshot the previous value
-        const previousRevisions = queryCache.getQueryData<v3.Revision3D[]>(
+        const previousRevisions = queryCache.getQueryData<Revision3D[]>(
           queryKey
         );
 
         // Optimistically update to the new value
-        queryCache.setQueryData<v3.Revision3D[]>(queryKey, (old) =>
+        queryCache.setQueryData<Revision3D[]>(queryKey, (old) =>
           (old || []).filter((revision) => {
             return revision.id !== revisionId;
           })
