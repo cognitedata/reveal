@@ -59,15 +59,10 @@ export class LocalModelMetadataProvider implements ModelMetadataProvider {
       }
       switch (version) {
         case 8:
-          return Promise.resolve({
-            blobId: -1,
-            format: File3dFormat.RevealCadModel,
-            version: version
-          });
         case 9:
           return Promise.resolve({
             blobId: -1,
-            format: File3dFormat.GltfCadModel,
+            format: File3dFormat.RevealCadModel,
             version: version
           });
         default:
