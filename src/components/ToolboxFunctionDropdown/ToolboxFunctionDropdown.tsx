@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { Operation } from '@cognite/calculation-backend';
 import { Button, Dropdown, Input, Modal } from '@cognite/cogs.js';
+import ReactMarkdown from 'react-markdown';
 import Layers from 'utils/z-index';
 import CategoryMenu from './CategoryMenu';
 import SearchResultMenu from './SearchResultMenu';
@@ -121,7 +122,7 @@ const ToolboxFunctionDropdown = ({
         }}
         width={750}
       >
-        <p>{selectedFunction?.description}</p>
+        <ReactMarkdown>{selectedFunction?.description || ''}</ReactMarkdown>
       </InfoModal>
     </>
   );

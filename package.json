@@ -140,5 +140,10 @@
   },
   "jira-prepare-commit-msg": {
     "jiraTicketPattern": "(CHART-\\d+)"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
+    ]
   }
 }
