@@ -4,7 +4,7 @@ import { LabelDefinition } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'components';
 import { ResourceType } from 'types';
-import { useList, usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useList } from '@cognite/sdk-react-query-hooks';
 
 export const LabelFilter = ({
   resourceType,
@@ -15,14 +15,11 @@ export const LabelFilter = ({
   value: { externalId: string }[] | undefined;
   setValue: (newValue: { externalId: string }[] | undefined) => void;
 }) => {
-  const { data: hasPermission } = usePermissions('labelsAcl', 'READ');
   const allowLabels = resourceType === 'asset' || resourceType === 'file';
-  const { data: labels = [] } = useList<LabelDefinition>(
+  const { data: labels = [], isError } = useList<LabelDefinition>(
     'labels',
     { filter: {}, limit: 1000 },
-    {
-      enabled: hasPermission,
-    },
+    undefined,
     true
   );
 
@@ -41,8 +38,8 @@ export const LabelFilter = ({
   return (
     <Tooltip
       interactive
-      disabled={hasPermission}
-      content="You do not have access to labels, please make sure you have labelsAcl:READ"
+      disabled={!isError}
+      content="Error fetching labels, please make sure you have labelsAcl:READ"
     >
       <>
         <Body
@@ -57,7 +54,7 @@ export const LabelFilter = ({
             label: el.name,
             value: el.externalId,
           }))}
-          isDisabled={!hasPermission || !allowLabels}
+          isDisabled={isError || !allowLabels}
           onChange={newValue => {
             setLabel(
               newValue

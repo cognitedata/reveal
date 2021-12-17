@@ -5,7 +5,7 @@ import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'components';
 import { ResourceType, convertResourceType } from 'types';
 import { useRelevantDatasets, DataSetWCount } from 'hooks/sdk';
-import { useCdfItems, usePermissions } from '@cognite/sdk-react-query-hooks';
+import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 
 export const DataSetFilter = ({
   resourceType,
@@ -16,10 +16,6 @@ export const DataSetFilter = ({
   value: IdEither[] | undefined;
   setValue: (newValue: IdEither[] | undefined) => void;
 }) => {
-  const {
-    data: hasPermissions,
-    isFetched: arePermissionsFetched,
-  } = usePermissions('datasetsAcl', 'READ');
   const { data: currentDataSets } = useCdfItems<DataSet>(
     'datasets',
     value || [],
@@ -34,7 +30,9 @@ export const DataSetFilter = ({
     setValue(newFilters);
   };
 
-  const validDatasets = useRelevantDatasets(convertResourceType(resourceType));
+  const { data: validDatasets, isError } = useRelevantDatasets(
+    convertResourceType(resourceType)
+  );
   const formatOption = (dataset: DataSetWCount) => {
     const name = dataset?.name || '';
     const label = name.length > 0 ? name : `${dataset.id}`;
@@ -47,11 +45,10 @@ export const DataSetFilter = ({
   return (
     <Tooltip
       interactive
-      disabled={arePermissionsFetched && hasPermissions}
+      disabled={!isError}
       content={
-        arePermissionsFetched &&
-        !hasPermissions &&
-        'You do not have access to data sets, please make sure you have datasetsAcl:READ'
+        isError &&
+        'Error fetching datasets, please make sure you have datasetsAcl:READ'
       }
     >
       <>
@@ -64,7 +61,7 @@ export const DataSetFilter = ({
         </Body>
         <Select
           options={validDatasets?.map(formatOption)}
-          isDisabled={!arePermissionsFetched || !hasPermissions}
+          isDisabled={isError}
           onChange={newValue => {
             setDataSetFilter(
               newValue

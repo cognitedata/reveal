@@ -95,7 +95,7 @@ export interface DataSetWCount extends DataSet {
 }
 export const useRelevantDatasets = (
   type: SdkResourceType
-): DataSetWCount[] | undefined => {
+): { data: DataSetWCount[] | undefined; isError: boolean } => {
   const client = useQueryClient();
   const sdk = useSDK();
   const {
@@ -104,6 +104,7 @@ export const useRelevantDatasets = (
     isFetched: dataSetsFetched,
     fetchNextPage,
     hasNextPage,
+    isError,
   } = useInfiniteList<DataSet>('datasets', 1000);
 
   if (hasNextPage && !dataSetsFetching) {
@@ -142,10 +143,12 @@ export const useRelevantDatasets = (
     }
   );
 
+  let result = datasets;
   if (aggregateFetched && counts) {
-    return counts
+    result = counts
       .filter(({ count = 0 }) => count > 0)
       .sort(({ count: countA = 0 }, { count: countB = 0 }) => countB - countA);
   }
-  return datasets;
+
+  return { data: result, isError };
 };
