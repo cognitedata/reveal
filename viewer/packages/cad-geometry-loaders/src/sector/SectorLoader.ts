@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ConsumedSector, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
+import { ConsumedSector, WantedSector, LevelOfDetail, CadModelMetadata } from '@reveal/cad-parsers';
 
 import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } from './culling/types';
 import { SectorCuller } from './culling/SectorCuller';
@@ -13,6 +13,7 @@ import { ByScreenSizeSectorCuller } from './culling/ByScreenSizeSectorCuller';
 
 import log from '@reveal/logger';
 import { CadNode } from '@reveal/rendering';
+import { File3dFormat } from '@reveal/modeldata-api';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -93,15 +94,12 @@ export class SectorLoader {
   private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
     let sectorCuller: SectorCuller;
 
-    switch (sectorCullerInput.cadModelsMetadata[0].format) {
-      case 'reveal-directory':
-        sectorCuller = this._v8SectorCuller;
-        break;
-      case 'gltf-directory':
-        sectorCuller = this._gltfSectorCuller;
-        break;
-      default:
-        throw new Error(`No supported sector culler for format${sectorCullerInput.cadModelsMetadata[0].format}`);
+    if (isLegacyModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
+      return this._v8SectorCuller;
+    } else if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
+      return this._gltfSectorCuller;
+    } else {
+      throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
     }
     return sectorCuller;
   }
@@ -178,4 +176,15 @@ class ProgressReportHelper {
   private triggerCallback() {
     this._progressCallback(this._sectorsLoaded, this._sectorsScheduled, this._sectorsCulled);
   }
+}
+
+function isLegacyModelFormat(model: CadModelMetadata): boolean {
+  return model.format === File3dFormat.RevealCadModel && model.formatVersion === 8;
+}
+
+function isGltfModelFormat(model: CadModelMetadata): boolean {
+  return (
+    (model.format === File3dFormat.RevealCadModel && model.formatVersion >= 9) ||
+    model.format === File3dFormat.GltfCadModel
+  );
 }

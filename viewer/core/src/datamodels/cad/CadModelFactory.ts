@@ -11,7 +11,6 @@ import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@rev
 import { CadMaterialManager, CadNode } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository } from '@reveal/cad-parsers';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
-import { assertNever } from '@reveal/utilities';
 
 export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
@@ -36,9 +35,9 @@ export class CadModelFactory {
     const geometryClipBox = determineGeometryClipBox(geometryFilter, metadata);
     const modelMetadata = createClippedModel(metadata, geometryClipBox);
 
-    const { modelIdentifier, scene, format } = modelMetadata;
+    const { modelIdentifier, scene, format, formatVersion } = modelMetadata;
 
-    const sectorRepository = this.getSectorRepository(format);
+    const sectorRepository = this.getSectorRepository(format, formatVersion);
 
     this._materialManager.addModelMaterials(modelIdentifier, scene.maxTreeIndex);
     const cadModel = new CadNode(modelMetadata, this._materialManager, sectorRepository);
@@ -52,18 +51,19 @@ export class CadModelFactory {
     return cadModel;
   }
 
-  private getSectorRepository(format: File3dFormat): SectorRepository {
-    switch (format) {
-      case File3dFormat.GltfCadModel:
-        return this._gltfSectorRepository;
-      case File3dFormat.RevealCadModel:
-        return this._v8SectorRepository;
-      case File3dFormat.AnyFormat:
-        throw new Error(`Model format [${format}] is not a valid cad model format`);
-      case File3dFormat.EptPointCloud:
-        throw new Error(`Model format [${format}] is not a valid cad model format`);
-      default:
-        assertNever(format);
+  private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
+    if (format === File3dFormat.RevealCadModel && formatVersion === 8) {
+      return this._v8SectorRepository;
+    } else if (format === File3dFormat.RevealCadModel && formatVersion === 9) {
+      return this._gltfSectorRepository;
+    } else if (format === File3dFormat.GltfCadModel) {
+      return this._gltfSectorRepository;
+    } else if (format !== File3dFormat.RevealCadModel) {
+      throw new Error(`Model format [${format}] is not a valid CAD model format`);
+    } else {
+      throw new Error(
+        `Model format [${format} v${formatVersion}] is not supported (only version 8 and 9 is supported)`
+      );
     }
   }
 
