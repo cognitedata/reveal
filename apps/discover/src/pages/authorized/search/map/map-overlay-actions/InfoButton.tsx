@@ -10,7 +10,7 @@ interface Props {
   infoCodes: InfoCode[];
 }
 
-const infoMessages = Object.freeze([
+const infoMessages = [
   {
     code: 'finish',
     element: (
@@ -31,7 +31,7 @@ const infoMessages = Object.freeze([
     code: 'edit',
     element: 'Click on the polygon to edit it',
   },
-]);
+];
 
 export const InfoButton: React.FC<Props> = React.memo(({ infoCodes }) => {
   if (!infoCodes.length) {

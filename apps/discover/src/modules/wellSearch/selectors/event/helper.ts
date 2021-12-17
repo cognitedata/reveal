@@ -35,7 +35,7 @@ export const getNdsUnitChangeAccessors = (
   },
 ];
 
-export const useGetConverFunctionForEvents = (unit: string) => {
+export const useGetConvertFunctionForEvents = (unit: string) => {
   return (eventType: EventsType, errorHandler?: (error: string) => void) => {
     switch (eventType) {
       case 'nds': {

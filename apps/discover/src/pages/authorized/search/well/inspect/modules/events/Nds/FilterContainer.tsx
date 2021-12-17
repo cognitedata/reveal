@@ -50,7 +50,7 @@ const getOptionsList = (
   ];
 };
 
-const filterContainer: FC<Props> = ({
+const FilterContainer: FC<Props> = ({
   events,
   filteredEvents,
   onChangeFilteredEvents,
@@ -160,4 +160,4 @@ const filterContainer: FC<Props> = ({
   );
 };
 
-export default filterContainer;
+export default FilterContainer;

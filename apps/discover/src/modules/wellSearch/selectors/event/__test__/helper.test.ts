@@ -2,7 +2,7 @@ import { FEET } from 'constants/units';
 
 import {
   getNdsUnitChangeAccessors,
-  useGetConverFunctionForEvents,
+  useGetConvertFunctionForEvents,
 } from '../helper';
 
 describe('getNdsUnitChangeAccessors', () => {
@@ -14,9 +14,9 @@ describe('getNdsUnitChangeAccessors', () => {
   });
 });
 
-describe('useGetConverFunctionForEvents', () => {
+describe('useGetConvertFunctionForEvents', () => {
   it('Accessors should have passed unit', async () => {
-    const functions = useGetConverFunctionForEvents(FEET);
+    const functions = useGetConvertFunctionForEvents(FEET);
     expect(functions).toBeTruthy();
   });
 });
