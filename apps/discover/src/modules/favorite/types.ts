@@ -8,53 +8,16 @@ import {
 } from '@cognite/discover-api-types';
 import { Document } from '@cognite/sdk-playground';
 
-import { DocumentLabel, DocumentType } from '../documentSearch/types';
+import { DocumentLabel } from '../documentSearch/types';
 import { getFilepath } from '../documentSearch/utils/getFilepath';
 import { Well } from '../wellSearch/types';
 
-export const SHOW_CREATE_MODAL = 'prettypoly/favourite/SHOW_CREATE_MODAL';
-export const HIDE_CREATE_MODAL = 'prettypoly/favourite/HIDE_CREATE_MODAL';
-export const SET_VIEWMODE = 'prettypoly/favourites/SET_VIEWMODE';
-
-/**
- * Data actions
- */
-export const SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION =
-  'prettypoly/favorite/SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION';
-
-export type ViewModeType = 'Card' | 'Row';
-
-export interface ViewModeObject {
-  Card: ViewModeType;
-  Row: ViewModeType;
+export enum ViewModeType {
+  Card = 'Card',
+  Row = 'Row',
 }
-
-interface ShowCreateModal {
-  type: typeof SHOW_CREATE_MODAL;
-}
-
-interface HideCreateModal {
-  type: typeof HIDE_CREATE_MODAL;
-}
-
-interface SetViewmode {
-  type: typeof SET_VIEWMODE;
-  viewMode: ViewModeType;
-}
-
-interface SetItemsToAddAfterFavoriteCreation {
-  type: typeof SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION;
-  payload: FavouriteState['itemsToAddAfterFavoriteCreation'] | undefined;
-}
-
-export type FavouriteAction =
-  | HideCreateModal
-  | ShowCreateModal
-  | SetViewmode
-  | SetItemsToAddAfterFavoriteCreation;
 
 export interface FavouriteState {
-  selectedItems: DocumentType[];
   isCreateModalVisible: boolean;
   viewMode: ViewModeType;
   itemsToAddAfterFavoriteCreation?: {

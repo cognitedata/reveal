@@ -7,9 +7,9 @@ import { Icon, Menu } from '@cognite/cogs.js';
 import { CloseButton } from 'components/buttons';
 import { showSuccessMessage } from 'components/toast';
 import {
-  setItemsToAddAfterFavoriteCreation,
-  showCreateFavoriteSetModal,
-} from 'modules/favorite/actions';
+  showCreateFavoriteModal,
+  setItemsToAddAfterFavoriteIsCreated,
+} from 'modules/favorite/reducer';
 import { FavoriteContentWells } from 'modules/favorite/types';
 import {
   getDocumentsToAddAfterFavoriteCreation,
@@ -72,12 +72,12 @@ export const FavoriteBase: React.FC<Props> = ({
     }
 
     dispatch(
-      setItemsToAddAfterFavoriteCreation({
+      setItemsToAddAfterFavoriteIsCreated({
         documentIds: getDocumentsToAddAfterFavoriteCreation(documentIds),
         wells: getWellsToAddAfterFavoriteCreation(wellIds),
       })
     );
-    dispatch(showCreateFavoriteSetModal());
+    dispatch(showCreateFavoriteModal());
   };
 
   return (

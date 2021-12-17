@@ -64,6 +64,10 @@ export const TableWrap = styled.div`
     border-bottom: none;
   }
 
+  & div[role='table'] {
+    overflow: visible;
+  }
+
   & > [data-testid='table-row-sub'] {
     max-width: ${(props: { tableWidth: string }) =>
       Number(props.tableWidth) > 0 ? `${props.tableWidth}px` : ''};

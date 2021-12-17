@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import { search as documentSearch } from 'modules/documentSearch/reducer';
-import { favourite } from 'modules/favorite/reducer';
+import favorites from 'modules/favorite/reducer';
 import { feedback } from 'modules/feedback/reducer';
 import { filterData } from 'modules/filterData/reducer';
 import { map } from 'modules/map/reducer';
@@ -19,7 +19,7 @@ const rootReducer = combineReducers<StoreState>({
   environment: (state): StoreState['environment'] => {
     return { ...state } as StoreState['environment'];
   },
-  favourite,
+  favorites,
   feedback,
   filterData,
   map,

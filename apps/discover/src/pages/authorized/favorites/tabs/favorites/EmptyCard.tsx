@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import EmptyState from 'components/emptyState';
 import InlineLink from 'components/inlineLink';
 import navigation from 'constants/navigation';
-import { showCreateFavoriteSetModal } from 'modules/favorite/actions';
+import { showCreateFavoriteModal } from 'modules/favorite/reducer';
 
 interface Props {
   isLoading: boolean;
@@ -14,8 +14,7 @@ export const EmptyCard: React.FC<Props> = ({ isLoading }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation('Favorites');
 
-  const dispatchOnCreateModalOpen = () =>
-    dispatch(showCreateFavoriteSetModal());
+  const dispatchOnCreateModalOpen = () => dispatch(showCreateFavoriteModal());
 
   return (
     <EmptyState img="Favorites" isLoading={isLoading}>

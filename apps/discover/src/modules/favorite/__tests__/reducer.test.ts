@@ -1,9 +1,8 @@
-import { favourite } from '../reducer';
-import {
-  HIDE_CREATE_MODAL,
-  SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION,
-  SHOW_CREATE_MODAL,
-} from '../types';
+import favoriteReducer, {
+  hideCreateFavoriteModal,
+  setItemsToAddAfterFavoriteIsCreated,
+  showCreateFavoriteModal,
+} from '../reducer';
 
 describe('favourite reducer', () => {
   const getInitialState: any = () => {
@@ -16,29 +15,25 @@ describe('favourite reducer', () => {
 
   test(`should open create modal`, () => {
     const { initialState } = getInitialState();
-    const state = favourite(initialState, {
-      type: SHOW_CREATE_MODAL,
-    });
+    const state = favoriteReducer(initialState, showCreateFavoriteModal());
     expect(state.isCreateModalVisible).toBeTruthy();
   });
 
   test(`should hide create modal`, () => {
     const { initialState } = getInitialState();
-    const state = favourite(initialState, {
-      type: HIDE_CREATE_MODAL,
-    });
+    const state = favoriteReducer(initialState, hideCreateFavoriteModal());
     expect(state.isCreateModalVisible).toBeFalsy();
   });
 
   test(`should set items to add after creation correctly`, () => {
     const { initialState } = getInitialState();
-    const state = favourite(initialState, {
-      type: SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION,
-      payload: {
+    const state = favoriteReducer(
+      initialState,
+      setItemsToAddAfterFavoriteIsCreated({
         documentIds: [1],
         wells: { 1: [] },
-      },
-    });
+      })
+    );
     expect(state.itemsToAddAfterFavoriteCreation).toEqual({
       documentIds: [1],
       wells: { 1: [] },
@@ -47,10 +42,10 @@ describe('favourite reducer', () => {
 
   test(`should set items to add after creation to undefined`, () => {
     const initialState = { ...getInitialState(), lastCreatedSetId: '1234' };
-    const state = favourite(initialState, {
-      type: SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION,
-      payload: undefined,
-    });
+    const state = favoriteReducer(
+      initialState,
+      setItemsToAddAfterFavoriteIsCreated(undefined)
+    );
     expect(state.itemsToAddAfterFavoriteCreation).toBeUndefined();
   });
 });

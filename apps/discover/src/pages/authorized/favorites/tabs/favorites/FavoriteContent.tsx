@@ -10,9 +10,8 @@ import {
   useFavoritesGetAllQuery,
 } from 'modules/api/favorites/useFavoritesQuery';
 import { useIsOwner } from 'modules/api/user/utils';
-import { ViewMode } from 'modules/favorite/constants';
 import { useViewMode } from 'modules/favorite/selectors';
-import { FavoriteSummary } from 'modules/favorite/types';
+import { FavoriteSummary, ViewModeType } from 'modules/favorite/types';
 
 import {
   DeleteFavoriteSetModal,
@@ -97,14 +96,14 @@ export const FavoriteContent: React.FC<Props> = ({
         <EmptyCard isLoading={status === 'loading'} />
       ) : (
         <>
-          {viewMode === ViewMode.Card ? (
+          {viewMode === ViewModeType.Card ? (
             <GridView
               handleNavigateFavoriteSet={handleNavigateFavoriteSet}
               handleOpenModal={handleOpenModal}
               sets={favoriteSets || []}
               isOwner={isOwner}
               setCommentTarget={setCommentTarget}
-              viewMode={ViewMode.Card}
+              viewMode={ViewModeType.Card}
             />
           ) : (
             <ListView

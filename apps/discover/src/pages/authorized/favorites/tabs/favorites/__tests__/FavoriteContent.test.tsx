@@ -1,19 +1,12 @@
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
-// import noop from 'lodash/noop';
-// import { fireEvent, waitFor, screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-// import { defaultTestUser } from '__test-utils/testdata.utils';
-// import { useFirebaseObject } from 'hooks/useFirebase';
 import { initialState as favouriteState } from 'modules/favorite/reducer';
 import { FavouriteState } from 'modules/favorite/types';
-// import * as favouriteActions from 'modules/favourite/actions';
-// import { DELETE_FAVORITE_MODAL_TEXT } from '../../../modals/constants';
 
 import { FavoriteContent, Props } from '../FavoriteContent';
-// import { FAVORITE_LIST_CONTAINER } from '../../../constants';
 
 jest.mock('modules/resultPanel/selectors', () => ({
   useActivePanel: jest.fn(),
@@ -37,7 +30,7 @@ describe('Favorite Content', () => {
       ...favouriteState,
       ...extra,
     };
-    const store = getMockedStore({ favourite: { ...state } });
+    const store = getMockedStore({ favorites: { ...state } });
 
     return {
       ...getPage(store),

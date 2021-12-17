@@ -1,57 +1,38 @@
-import { ViewMode } from 'modules/favorite/constants';
-import {
-  FavouriteAction,
-  FavouriteState,
-  HIDE_CREATE_MODAL,
-  SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION,
-  SET_VIEWMODE,
-  SHOW_CREATE_MODAL,
-} from 'modules/favorite/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export const initialState = {
-  selectedItems: [],
+import { FavouriteState, ViewModeType } from 'modules/favorite/types';
+
+export const initialState: FavouriteState = {
   isCreateModalVisible: false,
-  viewMode: ViewMode.Card,
+  viewMode: ViewModeType.Card,
 };
 
-export function favourite(
-  state: FavouriteState = initialState,
-  action?: FavouriteAction
-) {
-  if (!action) {
-    return state;
-  }
+const favoritesSlice = createSlice({
+  name: 'favorites',
+  initialState,
+  reducers: {
+    showCreateFavoriteModal(state) {
+      state.isCreateModalVisible = true;
+    },
+    hideCreateFavoriteModal(state) {
+      state.isCreateModalVisible = false;
+    },
+    setFavoritesViewMode(state, action: PayloadAction<ViewModeType>) {
+      state.viewMode = action.payload;
+    },
+    setItemsToAddAfterFavoriteIsCreated(
+      state,
+      action: PayloadAction<FavouriteState['itemsToAddAfterFavoriteCreation']>
+    ) {
+      state.itemsToAddAfterFavoriteCreation = action.payload;
+    },
+  },
+});
 
-  switch (action.type) {
-    case SHOW_CREATE_MODAL: {
-      return {
-        ...state,
-        isCreateModalVisible: true,
-      };
-    }
-
-    case HIDE_CREATE_MODAL: {
-      return {
-        ...state,
-        isCreateModalVisible: false,
-      };
-    }
-
-    case SET_VIEWMODE: {
-      return {
-        ...state,
-        viewMode: action.viewMode,
-      };
-    }
-
-    case SET_ITEMS_TO_ADD_AFTER_FAVORITE_CREATION: {
-      return {
-        ...state,
-        itemsToAddAfterFavoriteCreation: action.payload,
-      };
-    }
-
-    default:
-      return state;
-  }
-}
+export const {
+  showCreateFavoriteModal,
+  hideCreateFavoriteModal,
+  setFavoritesViewMode,
+  setItemsToAddAfterFavoriteIsCreated,
+} = favoritesSlice.actions;
+export default favoritesSlice.reducer;

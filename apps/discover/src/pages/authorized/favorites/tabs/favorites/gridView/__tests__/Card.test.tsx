@@ -1,8 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
-import { ViewMode } from 'modules/favorite/constants';
-import { FavoriteSummary } from 'modules/favorite/types';
+import { FavoriteSummary, ViewModeType } from 'modules/favorite/types';
 
 import FavouriteCard, { Props } from '../Card';
 
@@ -29,7 +28,7 @@ describe('Favorite Card', () => {
       handleOpenModal: jest.fn(),
       isFavoriteSetOwner: true,
       setCommentTarget: jest.fn(),
-      viewMode: ViewMode.Card,
+      viewMode: ViewModeType.Card,
     });
 
     const cardContainer = screen.queryByTestId('favorite-card-test');

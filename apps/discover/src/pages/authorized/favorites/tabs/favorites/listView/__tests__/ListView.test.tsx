@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
-import { ViewMode } from 'modules/favorite/constants';
+import { ViewModeType } from 'modules/favorite/types';
 
 import ListView, { Props } from '../ListView';
 
@@ -29,7 +29,7 @@ describe('Favorite List View', () => {
       handleOpenModal: jest.fn(),
       isOwner: jest.fn(),
       setCommentTarget: jest.fn(),
-      viewMode: ViewMode.Row,
+      viewMode: ViewModeType.Row,
     });
 
     const table = screen.queryByTestId('list-favourite');

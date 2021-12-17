@@ -25,7 +25,7 @@ export const AddToFavoriteSetMenu: React.FC<Props> = ({
     return (
       <AddSingleItem
         /*
-        documentIds cannot go with lodash head - 
+        documentIds cannot go with lodash head -
         head returns a number or undefined, undefined cannot assignable to a number
         */
         documentId={documentIds[0]}

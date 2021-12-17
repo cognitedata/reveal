@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { reportException } from '@cognite/react-errors';
 
 import { NOTIFICATION_MESSAGE } from 'components/add-to-favorite-set-menu/constants';
 import { showErrorMessage, showSuccessMessage } from 'components/toast';
-import { StoreState } from 'core/types';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   useFavoritesCreateMutate,
   useFavoriteUpdateContent,
 } from 'modules/api/favorites/useFavoritesQuery';
 import {
-  hideCreateFavoriteSetModal,
-  setItemsToAddAfterFavoriteCreation,
-} from 'modules/favorite/actions';
-import { HIDE_CREATE_MODAL } from 'modules/favorite/types';
+  hideCreateFavoriteModal,
+  setItemsToAddAfterFavoriteIsCreated,
+} from 'modules/favorite/reducer';
 
+import {
+  useIsCreateFavoriteModalOpenSelector,
+  useItemsToAddAfterFavoriteCreationSelector,
+} from '../../../../../modules/favorite/selectors';
 import { CREATE_SET_MODAL_BUTTON_TEXT } from '../../constants';
 import BaseFavoriteCreationModal from '../baseFavoriteCreationModal/BaseFavoriteCreationModal';
 
@@ -32,18 +34,15 @@ const CreateFavoriteSetModal: React.FC = () => {
 
   const { mutateAsync: mutateCreateFavourite } = useFavoritesCreateMutate();
 
-  const isOpen = useSelector(
-    (state: StoreState) => state.favourite.isCreateModalVisible
-  );
-  const itemsToAddAfterFavoriteCreation = useSelector(
-    (state: StoreState) => state.favourite.itemsToAddAfterFavoriteCreation
-  );
+  const isCreateModalOpen = useIsCreateFavoriteModalOpenSelector();
+  const itemsToAddAfterFavoriteCreation =
+    useItemsToAddAfterFavoriteCreationSelector();
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isCreateModalOpen) {
       clearState();
     }
-  }, [isOpen]);
+  }, [isCreateModalOpen]);
 
   const handleTextChanged = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -80,7 +79,7 @@ const CreateFavoriteSetModal: React.FC = () => {
             },
           }).then(() => {
             showSuccessMessage(t(NOTIFICATION_MESSAGE));
-            dispatch(setItemsToAddAfterFavoriteCreation(undefined));
+            dispatch(setItemsToAddAfterFavoriteIsCreated(undefined));
           });
         }
       })
@@ -89,7 +88,7 @@ const CreateFavoriteSetModal: React.FC = () => {
         showErrorMessage('Something went wrong');
       });
 
-    dispatch({ type: HIDE_CREATE_MODAL });
+    dispatch(hideCreateFavoriteModal());
     clearState();
   };
 
@@ -97,13 +96,13 @@ const CreateFavoriteSetModal: React.FC = () => {
     metrics.track('click-cancel-create-set-button');
 
     clearState();
-    dispatch(hideCreateFavoriteSetModal());
-    dispatch(setItemsToAddAfterFavoriteCreation(undefined));
+    dispatch(hideCreateFavoriteModal());
+    dispatch(setItemsToAddAfterFavoriteIsCreated(undefined));
   };
 
   return (
     <BaseFavoriteCreationModal
-      isOpen={isOpen}
+      isOpen={isCreateModalOpen}
       title={t('Create new set')}
       okText={t(CREATE_SET_MODAL_BUTTON_TEXT)}
       name={name}

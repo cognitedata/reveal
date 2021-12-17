@@ -10,10 +10,9 @@ import { PlusButton } from 'components/buttons';
 import Header from 'components/header/Header';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
-  setViewMode,
-  showCreateFavoriteSetModal,
-} from 'modules/favorite/actions';
-import { ViewMode } from 'modules/favorite/constants';
+  setFavoritesViewMode,
+  showCreateFavoriteModal,
+} from 'modules/favorite/reducer';
 import { useViewMode } from 'modules/favorite/selectors';
 import { ViewModeType } from 'modules/favorite/types';
 import { MarginRightContainer } from 'styles/layout';
@@ -52,23 +51,19 @@ interface Props {
 }
 export const FavoriteHeader: React.FC<Props> = ({ hideActions }) => {
   const dispatch = useDispatch();
+  const viewMode = useViewMode();
   const metrics = useGlobalMetrics('favorites');
   const { t } = useTranslation('Favorites');
 
-  const dispatchSetViewMode = (viewMode: ViewModeType) =>
-    dispatch(setViewMode(viewMode));
-
   const dispatchOnCreateModalOpen = () => {
     metrics.track('click-open-create-modal-button');
-    dispatch(showCreateFavoriteSetModal());
+    dispatch(showCreateFavoriteModal());
   };
 
-  const handleSwitchView = (key: ViewModeType) => {
+  const handleSwitchView = (key: string) => {
     metrics.track(`click-${key.toLowerCase()}-view-button`);
-    return dispatchSetViewMode(key);
+    dispatch(setFavoritesViewMode(key as ViewModeType));
   };
-
-  const viewMode = useViewMode();
 
   const renderRightContent = () => {
     if (hideActions) {
@@ -91,20 +86,18 @@ export const FavoriteHeader: React.FC<Props> = ({ hideActions }) => {
           <SegmentedControl
             style={SegmentedControlStyles}
             currentKey={`${viewMode}`}
-            onButtonClicked={(key: string) =>
-              handleSwitchView(key as ViewModeType)
-            }
+            onButtonClicked={handleSwitchView}
           >
             <SegmentedControl.Button
               style={ButtonStyles}
-              key={ViewMode.Card}
+              key={ViewModeType.Card}
               icon="Grid"
               data-testid={FAVORITE_CARD_SWITCH}
               aria-label="Show grid view"
             />
             <SegmentedControl.Button
               style={RightButtonStyles}
-              key={ViewMode.Row}
+              key={ViewModeType.Row}
               icon="List"
               data-testid={FAVORITE_LIST_SWITCH}
               aria-label="Show list view"

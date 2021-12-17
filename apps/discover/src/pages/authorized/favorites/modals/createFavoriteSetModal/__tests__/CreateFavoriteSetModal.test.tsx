@@ -44,7 +44,7 @@ describe('Create Favorite Set Model', () => {
 
   const defaultTestInit = async (props: boolean) => {
     const store: Store = getMockedStore({
-      favourite: {
+      favorites: {
         isCreateModalVisible: props,
         itemsToAddAfterFavoriteCreation: { documentIds: [] },
       },

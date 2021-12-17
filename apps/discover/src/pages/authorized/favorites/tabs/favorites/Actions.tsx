@@ -10,8 +10,7 @@ import {
   CommentButton,
   MoreOptionsButton,
 } from 'components/buttons';
-import { ViewMode } from 'modules/favorite/constants';
-import { FavoriteSummary } from 'modules/favorite/types';
+import { FavoriteSummary, ViewModeType } from 'modules/favorite/types';
 
 import {
   DELETE_FAVORITE_CARD_BUTTON,
@@ -132,7 +131,7 @@ const Actions: React.FC<Props> = ({
 
   return (
     <ActionPadding>
-      {viewMode === ViewMode.Row ? getRowModeAction() : getCardModeAction()}
+      {viewMode === ViewModeType.Row ? getRowModeAction() : getCardModeAction()}
     </ActionPadding>
   );
 };

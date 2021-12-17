@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { Button } from '@cognite/cogs.js';
 
 import { store } from '_helpers/store';
-import { showCreateFavoriteSetModal } from 'modules/favorite/actions';
+import { showCreateFavoriteModal } from 'modules/favorite/reducer';
 
 import CreateFavoriteSetModal from './index';
 
@@ -33,7 +33,7 @@ export const basic = () => {
   return (
     <div>
       <Button
-        onClick={() => store.dispatch(showCreateFavoriteSetModal())}
+        onClick={() => store.dispatch(showCreateFavoriteModal())}
         aria-label="Open modal"
       >
         Open modal
