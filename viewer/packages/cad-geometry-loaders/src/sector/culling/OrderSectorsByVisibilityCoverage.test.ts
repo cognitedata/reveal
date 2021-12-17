@@ -137,6 +137,7 @@ function createStubModel(modelIdentifier: string, scene: SectorScene, modelMatri
     modelIdentifier,
     modelBaseUrl: `https://localhost/${modelIdentifier}/`,
     format: File3dFormat.RevealCadModel,
+    formatVersion: 8,
     modelMatrix,
     inverseModelMatrix: new THREE.Matrix4().copy(modelMatrix).invert(),
     scene,
