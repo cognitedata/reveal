@@ -10,9 +10,9 @@ import { CogniteClient } from '@cognite/sdk';
 import {
   CdfModelDataProvider,
   CdfModelIdentifier,
-  File3dFormat,
   CdfModelMetadataProvider,
-  BlobOutputMetadata
+  BlobOutputMetadata,
+  File3dFormat
 } from '@reveal/modeldata-api';
 import { V8SectorRepository } from '../src/V8SectorRepository';
 import { CadMaterialManager } from '@reveal/rendering';
@@ -28,10 +28,10 @@ async function init() {
   const scene = new THREE.Scene();
 
   const gui = new dat.GUI();
-  const guiData = { format: File3dFormat.GltfCadModel };
-  const formatGuiController = gui.add(guiData, 'format', {
-    gltfCadModel: File3dFormat.GltfCadModel,
-    v8CadModel: File3dFormat.RevealCadModel
+  const guiData = { formatVersion: 9 };
+  const formatGuiController = gui.add(guiData, 'formatVersion', {
+    gltfCadModel: 9,
+    v8CadModel: 8
   });
 
   const client = new CogniteClient({ appId: 'reveal.example.simple' });
@@ -61,7 +61,7 @@ async function init() {
   const modelDataClient = new CdfModelDataProvider(client);
   const cadMaterialManager = new CadMaterialManager();
 
-  let consumedModel = await loadSectors(outputs, guiData, modelDataClient, cadMaterialManager, client);
+  let consumedModel = await loadSectors(outputs, guiData.formatVersion, modelDataClient, cadMaterialManager, client);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,7 +79,7 @@ async function init() {
 
   formatGuiController.onChange(async _ => {
     group.remove(consumedModel);
-    consumedModel = await loadSectors(outputs, guiData, modelDataClient, cadMaterialManager, client);
+    consumedModel = await loadSectors(outputs, guiData.formatVersion, modelDataClient, cadMaterialManager, client);
     group.add(consumedModel);
   });
 
@@ -99,12 +99,14 @@ async function init() {
 
 async function loadSectors(
   outputs: BlobOutputMetadata[],
-  guiData: { format: File3dFormat },
+  formatVersion: number,
   modelDataClient: CdfModelDataProvider,
   cadMaterialManager: CadMaterialManager,
   client: CogniteClient
 ) {
-  const output = outputs.find(output => output.format === guiData.format);
+  const output = outputs.find(
+    output => output.format === File3dFormat.RevealCadModel && output.version === formatVersion
+  );
   const sceneJson = await modelDataClient.getJsonFile(
     `${client.getBaseUrl()}/api/v1/projects/${client.project}/3d/files/${output?.blobId}`,
     'scene.json'
@@ -113,7 +115,7 @@ async function loadSectors(
   cadMaterialManager.addModelMaterials(output!.blobId.toString(), sceneJson.maxTreeIndex);
 
   const sectorRepository: SectorRepository =
-    guiData.format === File3dFormat.GltfCadModel
+    formatVersion === 9
       ? new GltfSectorRepository(modelDataClient, cadMaterialManager)
       : new V8SectorRepository(modelDataClient, cadMaterialManager);
 
