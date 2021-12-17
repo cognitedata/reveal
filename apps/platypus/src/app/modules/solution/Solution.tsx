@@ -96,7 +96,7 @@ export const Solution = () => {
           </Route>
           <Route
             exact
-            path="/solutions/:solutionId?/:version?/data/:solutionPage?"
+            path="/solutions/:solutionId?/:version?/data/:solutionPage?/:subSolutionPage?"
           >
             <Suspense fallback={<Spinner />}>
               <DataPage />

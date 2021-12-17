@@ -5,6 +5,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { SolutionState } from '@platypus-app/redux/reducers/global/solutionReducer';
 import { SchemaVersionSelect } from '@platypus-app/modules/solution/components/SchemaVersionSelect/SchemaVersionSelect';
+import { Placeholder } from '@platypus-app/components/Placeholder/Placeholder';
 
 export const OverviewPage = () => {
   const history = useHistory();
@@ -13,7 +14,7 @@ export const OverviewPage = () => {
     (state) => state.solution
   );
 
-  const { t } = useTranslation('SolutionOverview');
+  const { t } = useTranslation('solution');
 
   const renderVersionSelect = () => {
     return (
@@ -40,15 +41,14 @@ export const OverviewPage = () => {
     <PageContentLayout>
       <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
       <PageContentLayout.Body>
-        OVERVIEW (WIP...)
-        <br />
-        <br />
-        <strong>{solution?.name}</strong>
-        {selectedSchema ? (
-          <div>Version {selectedSchema.version}</div>
-        ) : (
-          <div>No schema defined yet.</div>
-        )}
+        <Placeholder
+          componentName={t('overview', 'Overview page')}
+          componentDescription={t(
+            'ui_editor_description',
+            'This page will give you a good overview of your solution.'
+          )}
+          showGraphic={true}
+        />
       </PageContentLayout.Body>
     </PageContentLayout>
   );

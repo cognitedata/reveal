@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 
 import { Icon } from '@cognite/cogs.js';
 
-import { SolutionSchema, Solution } from '@platypus/platypus-core';
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
 import { SideBarMenu } from '@platypus-app/components/Navigations/SideBarMenu';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
@@ -27,30 +26,24 @@ const OverviewPage = lazy<any>(() =>
   }))
 );
 
-export const OverviewLayout = ({
-  solution,
-  schema,
-}: {
-  solution: Solution;
-  schema: SolutionSchema;
-}) => {
+export const OverviewLayout = () => {
   const { t } = useTranslation('overview');
   const renderPageContent = () => {
     return (
       <Switch>
         <Route exact path="*/analytics">
           <Suspense fallback={<Spinner />}>
-            <Analytics solution={solution} />
+            <Analytics />
           </Suspense>
         </Route>
         <Route exact path="*/updates">
           <Suspense fallback={<Spinner />}>
-            <UpdatesPage solution={solution} />
+            <UpdatesPage />
           </Suspense>
         </Route>
         <Route exact path="*">
           <Suspense fallback={<Spinner />}>
-            <OverviewPage solution={solution} schema={schema} />
+            <OverviewPage />
           </Suspense>
         </Route>
       </Switch>

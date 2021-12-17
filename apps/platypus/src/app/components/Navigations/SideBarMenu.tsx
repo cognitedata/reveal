@@ -34,7 +34,9 @@ export const SideBarMenu = ({ items }: SideBarProps) => {
         <StyledItem
           key={item.slug}
           onClick={() => onRoute(item.page, item.slug)}
-          active={solutionPage === item.slug || (!index && !solutionPage)}
+          active={
+            item.slug.startsWith(solutionPage) || (!index && !solutionPage)
+          }
         >
           {item.icon}
         </StyledItem>

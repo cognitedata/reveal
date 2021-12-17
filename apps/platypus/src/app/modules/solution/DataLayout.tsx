@@ -32,7 +32,7 @@ export const DataLayout = () => {
   const renderPageContent = () => {
     return (
       <Switch>
-        <Route exact path="*/data-management">
+        <Route exact path="*/data-management/:subSolutionPage?">
           <Suspense fallback={<Spinner />}>
             <DataManagementPage />
           </Suspense>
@@ -61,7 +61,7 @@ export const DataLayout = () => {
     {
       icon: <Icon type="Datasource" />,
       page: 'data',
-      slug: 'data-management',
+      slug: 'data-management/preview',
       tooltip: t('data_management_title', 'Data management'),
     },
     {

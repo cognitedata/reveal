@@ -10,8 +10,6 @@ export const StyledPageContentLayout = styled.div`
     display: flex;
     flex: 1;
     overflow: auto;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
     font-size: inherit;
     position: relative;

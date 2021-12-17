@@ -18,7 +18,9 @@ const Routes = () => {
         </Route>
         <Route
           exact
-          path={['/solutions/:solutionId?/:version?/:tabKey?/:solutionPage?']}
+          path={[
+            '/solutions/:solutionId?/:version?/:tabKey?/:solutionPage?/:subSolutionPage?',
+          ]}
         >
           <NavigationSolution />
           <Solution />

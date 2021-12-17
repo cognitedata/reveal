@@ -9,6 +9,6 @@ export const StyledSelectContainer = styled.div`
 `;
 
 export const StyledVersionContainer = styled.div`
-  width: 80px;
+  width: 90px;
   margin-left: 10px;
 `;
