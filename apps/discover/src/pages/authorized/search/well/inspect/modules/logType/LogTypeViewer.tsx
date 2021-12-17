@@ -17,13 +17,13 @@ import { WhiteLoader } from 'components/loading';
 import ManageColumnsPanel from 'components/manage-columns-panel';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { PETREL_LOG_TYPE, TRACK_CONFIG } from 'modules/wellSearch/constants';
+import { useLogsPPFGQuery } from 'modules/wellSearch/hooks/useLogsPPFGQuery';
 import { useNdsEventsQuery } from 'modules/wellSearch/hooks/useNdsEventsQuery';
 import { useWellboreData } from 'modules/wellSearch/selectors';
 import { SequenceData } from 'modules/wellSearch/types';
 import {
   getLogFrmsTopsIdMapping,
   getPetrelLogIdMapping,
-  getPPFGWellboreIdMapping,
 } from 'modules/wellSearch/utils/logs';
 
 import { ModuleFilterDropdownWrapper } from '../common/elements';
@@ -85,6 +85,9 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
   const dispatch = useDispatch();
 
   const { data: ndsData, isLoading: ndsLoading } = useNdsEventsQuery();
+  const { data: ppfgData, isLoading: ppfgLoading } = useLogsPPFGQuery(
+    selectedLogType?.webId
+  );
 
   const logTypeSelections: LogTypeSelection[] = useMemo(
     () =>
@@ -98,22 +101,11 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
     [logTypes]
   );
 
-  // Create ppfg, wellbore id mapping object to access ppfgs efficiently
-  const ppfgWellboreIdMapping = getPPFGWellboreIdMapping(
-    logTypes,
-    wellboreData
-  );
-
   // Create log and id mapping object to access logs efficiently
   const logIdMapping = getPetrelLogIdMapping(logTypes, wellboreData);
 
   // Create log and id mapping object to access logs efficiently
   const logFrmsTopsIdMapping = getLogFrmsTopsIdMapping(logTypes, wellboreData);
-
-  const getPPFGData = useCallback(
-    (ppfg) => dispatch(wellSearchActions.getPPFGData(ppfg)),
-    []
-  );
 
   const getLogData = useCallback(
     (logs, logsFrmTops) =>
@@ -136,16 +128,6 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
       )
         .filter((logsFrmTop) => !logsFrmTop.rows)
         .map((logsFrmTops) => logsFrmTops.sequence);
-      const ppfgsToFetch = (wellboreData[wellboreId].ppfg || [])
-        .filter(
-          (ppfg) =>
-            !ppfg.rows &&
-            ppfgWellboreIdMapping[wellboreId]?.sequence?.id === ppfg.sequence.id
-        )
-        .map((ppfg) => ppfg.sequence);
-      if (ppfgsToFetch.length > 0) {
-        getPPFGData(ppfgsToFetch[0]);
-      }
       getLogData([logsToFetch], logsFrmTopsToFetch);
     }
   };
@@ -163,9 +145,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
       return <LogsMessageWrapper>Logs Not Found</LogsMessageWrapper>;
     const { logTypeId, webId } = selectedLogType;
 
-    if (ndsLoading || !ndsData) return <WhiteLoader />;
-    if (ppfgWellboreIdMapping[webId] && !ppfgWellboreIdMapping[webId].rows)
-      return <WhiteLoader />;
+    if (ndsLoading || !ndsData || ppfgLoading) return <WhiteLoader />;
     if (!logIdMapping[logTypeId] || !logIdMapping[logTypeId].rows)
       return <WhiteLoader />;
 
@@ -213,7 +193,7 @@ export const LogTypeViewer: React.FC<Props> = ({ logTypes }) => {
       <LogViewer
         logs={logIdMapping[logTypeId]}
         logFrmTops={logFrmsTopsIdMapping[webId]}
-        ppfgs={ppfgWellboreIdMapping[webId]}
+        ppfgs={ppfgData}
         selectedMarkers={selectedMarkers}
         events={ndsData[webId]}
         domains={domainMap}

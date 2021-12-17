@@ -21,7 +21,6 @@ import {
   TOGGLE_SELECTED_WELLS,
   SET_LOG_TYPE,
   SET_LOGS_ROW_DATA,
-  SET_PPFG_ROW_DATA,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   SET_SELECTED_WELLBORE_IDS_WITH_WELL_ID,
@@ -183,20 +182,6 @@ describe('Well search Actions', () => {
         {
           type: SET_LOGS_ROW_DATA,
           data: { logs: [{ log, rows: [] }], logsFrmTops: [{ log, rows: [] }] },
-        },
-      ]);
-    });
-  });
-
-  describe('getPPFGData', () => {
-    it(`should fetch ppfg rows for the given ppfg`, async () => {
-      const { store } = getDefaultTestValues();
-      const ppfg = { id: 1234 } as Sequence;
-      await store.dispatch(wellSearchActions.getPPFGData(ppfg) as any);
-      expect(store.getActions()).toEqual([
-        {
-          type: SET_PPFG_ROW_DATA,
-          data: [{ sequence: ppfg, rows: [] }],
         },
       ]);
     });

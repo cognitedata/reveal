@@ -19,8 +19,6 @@ import {
   WellSearchAction,
   Wellbore,
   SequenceData,
-  SET_PPFG_ROW_DATA,
-  SET_WELLBORE_SEQUENCES,
   SET_WELLBORE_ASSETS,
   AssetData,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
@@ -385,54 +383,6 @@ export function wellReducer(
         updatedWellboreData[wellboreId] = {
           ...updatedWellboreData[wellboreId],
           ...{ logsFrmTops: newLogList },
-        };
-      });
-
-      return {
-        ...state,
-        ...{ wellboreData: updatedWellboreData },
-      };
-    }
-
-    case SET_WELLBORE_SEQUENCES: {
-      const updatedWellboreData = { ...state.wellboreData };
-      Object.keys(action.data).forEach((wellboreId) => {
-        const wbId = Number(wellboreId);
-        if (updatedWellboreData[wbId]) {
-          updatedWellboreData[wbId][action.sequenceType] = action.data[
-            wbId
-          ].map((sequence) => ({
-            sequence,
-          }));
-        } else {
-          updatedWellboreData[wbId] = {
-            [action.sequenceType]: action.data[wbId].map((sequence) => ({
-              sequence,
-            })),
-          };
-        }
-      });
-      return {
-        ...state,
-        wellboreData: updatedWellboreData,
-      };
-    }
-
-    case SET_PPFG_ROW_DATA: {
-      const updatedWellboreData = { ...state.wellboreData };
-
-      action.data.forEach((ppfgData) => {
-        const wellboreId = ppfgData.sequence.assetId as number;
-        const newList = (
-          updatedWellboreData[wellboreId].ppfg as SequenceData[]
-        ).map((ppfgRow) =>
-          ppfgRow.sequence.id === ppfgData.sequence.id
-            ? { ...ppfgRow, rows: ppfgData.rows }
-            : ppfgRow
-        );
-        updatedWellboreData[wellboreId] = {
-          ...updatedWellboreData[wellboreId],
-          ...{ ppfg: newList },
         };
       });
 

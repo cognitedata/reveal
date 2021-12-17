@@ -21,7 +21,6 @@ import {
   getGroupedWellboresByWellIds,
 } from './service';
 import {
-  SequenceRow,
   SET_IS_SEARCHING,
   RESET_QUERY,
   SET_WELLS_DATA,
@@ -40,11 +39,8 @@ import {
   WellState,
   WellName,
   WellSearchAction,
-  SET_PPFG_ROW_DATA,
   SET_HOVERED_WELLBORE_IDS,
   LogTypes,
-  SequenceTypes,
-  SET_WELLBORE_SEQUENCES,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   AssetTypes,
@@ -224,42 +220,6 @@ function setAllWellboresSelected(): ThunkResult<void> {
   };
 }
 
-function getWellboreSequences(
-  wellboreIds: number[],
-  wellboreAssetIdMap: WellboreAssetIdMap,
-  sequenceType: SequenceTypes,
-  fetcher: any
-): ThunkResult<void> {
-  const wellboreAssetIdReverseMap =
-    getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-  return (dispatch) => {
-    return wellSearchService
-      .getSequencesByAssetIds(
-        wellboreIds.map((id) => wellboreAssetIdMap[id]),
-        fetcher
-      )
-      .then((data: Sequence[]) => {
-        const sequences = data.map((item) => ({
-          ...item,
-          assetId: wellboreAssetIdReverseMap[item.assetId as number],
-        }));
-        const wellboreSeqeunces = groupBy(sequences, 'assetId') as {
-          [x: string]: any;
-        };
-        wellboreIds.forEach((wellboreId) => {
-          if (!wellboreSeqeunces[wellboreId]) {
-            wellboreSeqeunces[wellboreId] = [];
-          }
-        });
-        dispatch({
-          type: SET_WELLBORE_SEQUENCES,
-          data: wellboreSeqeunces,
-          sequenceType,
-        });
-      });
-  };
-}
-
 function getGrainAnalysisData(
   digitalRockSample: Asset,
   grainAnalysisType: GrainAnalysisTypes,
@@ -420,19 +380,6 @@ function getLogData(
         dispatch({
           type: SET_LOGS_ROW_DATA,
           data: logsData,
-        });
-      });
-  };
-}
-
-function getPPFGData(ppfg: Sequence): ThunkResult<void> {
-  return (dispatch) => {
-    return wellSearchService
-      .getSequenceRowData(ppfg.id)
-      .then((rows: SequenceRow[]) => {
-        dispatch({
-          type: SET_PPFG_ROW_DATA,
-          data: [{ sequence: ppfg, rows }],
         });
       });
   };
@@ -675,7 +622,6 @@ export const wellSearchActions = {
   search,
   setSearchPhrase,
   getWellbores,
-  getWellboreSequences,
   getWellboreAssets,
   setSelectedWellbores,
   resetQuery,
@@ -683,7 +629,6 @@ export const wellSearchActions = {
   toggleSelectedWells,
   getLogType,
   getLogData,
-  getPPFGData,
   getDigitalRockSamples,
   getGrainAnalysisData,
   getAllWellbores,

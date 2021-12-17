@@ -8,11 +8,7 @@ import {
   WellboreData,
 } from 'modules/wellSearch/types';
 
-import {
-  getLogFrmsTopsIdMapping,
-  getPetrelLogIdMapping,
-  getPPFGWellboreIdMapping,
-} from '../logs';
+import { getLogFrmsTopsIdMapping, getPetrelLogIdMapping } from '../logs';
 
 const sequenceData: SequenceData[] = [
   {
@@ -51,28 +47,12 @@ const frmLogsData: SequenceData[] = [
 
 const wellboreData: WellboreData = {
   11111: {
-    ppfg: sequenceData,
     logType: sequenceData,
     logsFrmTops: frmLogsData,
   },
 };
 
 describe('Log viewer utils', () => {
-  it('should return ppfg, wellbore id mapping object', () => {
-    expect(
-      getPPFGWellboreIdMapping(MockSequenceLogTypeData, wellboreData)
-    ).toEqual({
-      '11111': {
-        sequence: {
-          ...sequenceData[0].sequence,
-          metadata: {
-            intersectColCount: '2',
-          },
-        },
-      },
-    });
-  });
-
   it('should return petrel logs id mapping object', () => {
     expect(
       getPetrelLogIdMapping(MockSequenceLogTypeData, wellboreData)

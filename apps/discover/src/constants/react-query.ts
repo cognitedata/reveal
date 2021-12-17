@@ -76,6 +76,7 @@ export const WELL_QUERY_KEY = {
   NDS_EVENTS_ALL: [WELLS, 'ndsEvents', 'allCursors'],
   NPT_EVENTS: [WELLS, 'nptEvents'],
   MEASUREMENTS: [WELLS, 'measurements'],
+  LOGS_PPFGS: ['logsPPFGs'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

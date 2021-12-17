@@ -1,3 +1,5 @@
+import flatten from 'lodash/flatten';
+
 import { Sequence } from '@cognite/sdk';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
@@ -51,22 +53,21 @@ export const getChunkNumberList = (list: number[], size: number) => {
 
 export async function getSequencesByAssetIds(
   wellboreIds: number[],
-  fetcher: any
+  filter: any = {}
 ) {
-  if (fetcher) {
+  if (filter) {
     const idChunkList = getChunkNumberList(wellboreIds, 100);
-    const responses = Promise.all(
+    const responses = await Promise.all(
       idChunkList.map((idChunk: number[]) =>
-        fetcher(getCogniteSDKClient(), {
-          assetIds: idChunk,
+        getCogniteSDKClient().sequences.search({
+          filter: {
+            ...filter,
+            assetIds: idChunk,
+          },
         })
       )
     );
-    return [].concat(
-      ...(await responses).map((response) =>
-        response.items ? response.items : response
-      )
-    );
+    return flatten(responses);
   }
   log(
     'fetcher configurations not found while fetching sequences by wellbore id'

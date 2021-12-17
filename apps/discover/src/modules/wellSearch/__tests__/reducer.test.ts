@@ -24,8 +24,6 @@ import {
   TOGGLE_SELECTED_WELLS,
   SET_LOG_TYPE,
   SET_LOGS_ROW_DATA,
-  SET_WELLBORE_SEQUENCES,
-  SET_PPFG_ROW_DATA,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   SET_WELLBORE_ASSETS,
   SET_GRAIN_ANALYSIS_DATA,
@@ -306,52 +304,6 @@ describe('Well Reducer', () => {
       [wellboreId]: {
         logType: [{ sequence: log, rows: [] }],
         logsFrmTops: [{ sequence: log, rows: [] }],
-      },
-    });
-  });
-
-  it(`should set sequences in wellboreData state`, () => {
-    const ppfg = { id: 231324234223, name: 'PPFG 1' } as Sequence;
-    const wellboreId = 1234;
-    const state = wellReducer(
-      { ...initialState, wellboreData: {} },
-      {
-        type: SET_WELLBORE_SEQUENCES,
-        data: { [wellboreId]: [ppfg] },
-        sequenceType: 'ppfg',
-      }
-    );
-    expect(state.wellboreData).toEqual({
-      [wellboreId]: {
-        ppfg: [{ sequence: ppfg }],
-      },
-    });
-  });
-
-  it(`should set ppfg row data in wellboreData state`, () => {
-    const wellboreId = 1234;
-    const ppfg = {
-      id: 231324234223,
-      name: 'ppfg 1',
-      assetId: wellboreId,
-    } as Sequence;
-    const state = wellReducer(
-      {
-        ...initialState,
-        wellboreData: {
-          [wellboreId]: {
-            ppfg: [{ sequence: ppfg }],
-          },
-        },
-      },
-      {
-        type: SET_PPFG_ROW_DATA,
-        data: [{ sequence: ppfg, rows: [] }],
-      }
-    );
-    expect(state.wellboreData).toEqual({
-      [wellboreId]: {
-        ppfg: [{ sequence: ppfg, rows: [] }],
       },
     });
   });
