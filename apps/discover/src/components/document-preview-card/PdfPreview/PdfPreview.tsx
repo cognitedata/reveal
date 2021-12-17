@@ -3,19 +3,13 @@ import { Document, Page, pdfjs } from 'react-pdf';
 
 import styled from 'styled-components/macro';
 
-import { ITimer } from '@cognite/metrics';
 import { getAuthHeaders } from '@cognite/react-container';
 
 import {
   LOG_DOCUMENT_PREVIEW,
   LOG_DOCUMENT_PREVIEW_NAMESPACE,
 } from 'constants/logging';
-import {
-  useGetCogniteMetric,
-  useStartTimeLogger,
-  useStopTimeLogger,
-  TimeLogStages,
-} from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { getPdfPreview } from 'modules/documentPreview/service';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://storage.googleapis.com/discover-pdfjs-2/pdf.worker.js`;
@@ -44,25 +38,22 @@ export const PdfPreview: React.FC<Props> = ({
   onSuccess,
 }) => {
   const [numberOfPages, setNumberOfPages] = useState<number>();
-  const [networkTimer, setNetworkTimer] = useState<ITimer>();
   const [documentUrl, setDocumentUrl] = useState<string>();
 
-  const metric = useGetCogniteMetric(LOG_DOCUMENT_PREVIEW);
+  const [startTimer, stopTimer] = useMetricLogger(
+    LOG_DOCUMENT_PREVIEW,
+    TimeLogStages.Network,
+    LOG_DOCUMENT_PREVIEW_NAMESPACE
+  );
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    useStopTimeLogger(networkTimer);
+    stopTimer();
     setNumberOfPages(numPages);
     onSuccess();
   }
 
   useEffect(() => {
-    setNetworkTimer(
-      useStartTimeLogger(
-        TimeLogStages.Network,
-        metric,
-        LOG_DOCUMENT_PREVIEW_NAMESPACE
-      )
-    );
+    startTimer();
   }, []);
 
   useEffect(() => {

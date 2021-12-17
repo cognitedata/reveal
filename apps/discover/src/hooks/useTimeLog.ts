@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import isUndefined from 'lodash/isUndefined';
 
 import { ITimer, Metrics, useMetrics } from '@cognite/metrics';
@@ -69,4 +71,36 @@ export const useStopTimeLogger = (timer?: ITimer, params?: any): void => {
     return;
   }
   timer.stop(params);
+};
+
+export type MetricLogger = { (params?: any): void }[];
+
+export const useMetricLogger = (
+  component: string,
+  stage: TimeLogStages,
+  key: string
+): MetricLogger => {
+  // creating metric instance here assumes that creating multiple instances with same component name will report same metric
+  const metric = useGetCogniteMetric(component);
+
+  const timer = useRef<ITimer>();
+
+  const startTimer = (eventParams?: any) => {
+    if (metric && !timer.current) {
+      timer.current = metric.start(key, { ...eventParams, stage });
+    } else {
+      log('Either timer or metric is missing');
+    }
+  };
+
+  const stopTimer = (params?: any) => {
+    if (timer.current) {
+      timer.current.stop(params);
+      timer.current = undefined;
+    } else {
+      log('Timer not found.');
+    }
+  };
+
+  return [startTimer, stopTimer];
 };

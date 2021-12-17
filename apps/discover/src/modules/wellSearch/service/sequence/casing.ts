@@ -4,20 +4,15 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import max from 'lodash/max';
 import min from 'lodash/min';
+import noop from 'lodash/noop';
 import uniq from 'lodash/uniq';
 import uniqueId from 'lodash/uniqueId';
 
-import { Metrics } from '@cognite/metrics';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import { CasingAssembly, CasingItems } from '@cognite/sdk-wells-v3';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
-import { LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
-import {
-  TimeLogStages,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import {
@@ -38,17 +33,11 @@ export async function getCasingByWellboreIds(
   wellboreAssetIdMap: WellboreAssetIdMap,
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   filter: SequenceFilter['filter'] = {},
-  metric?: Metrics,
+  metricLogger: MetricLogger = [noop, noop],
   enableWellSDKV3?: boolean
 ) {
-  let networkTimer;
-  if (metric) {
-    networkTimer = useStartTimeLogger(
-      TimeLogStages.Network,
-      metric,
-      LOG_WELLS_CASING_NAMESPACE
-    );
-  }
+  const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+  startNetworkTimer();
 
   const casingsData = enableWellSDKV3
     ? await fetchCasingsUsingWellsSDK(wellboreIds, wellboreSourceExternalIdMap)
@@ -58,7 +47,7 @@ export async function getCasingByWellboreIds(
         filter
       );
 
-  useStopTimeLogger(networkTimer, {
+  stopNetworkTimer({
     noOfWellbores: wellboreIds.length,
   });
 

@@ -1,14 +1,7 @@
 import groupBy from 'lodash/groupBy';
 import set from 'lodash/set';
 
-import { ITimer, Metrics } from '@cognite/metrics';
-
-import { LOG_EVENTS_NDS } from 'constants/logging';
-import {
-  TimeLogStages,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { MetricLogger } from 'hooks/useTimeLog';
 import { getNPTItems } from 'modules/wellSearch/sdk';
 import { WellboreExternalIdMap } from 'modules/wellSearch/types';
 
@@ -16,16 +9,10 @@ import { EVENT_PER_PAGE } from './common';
 
 export async function getNptEventsByWellboreIds(
   wellboreExternalIdMap: WellboreExternalIdMap,
-  metric?: Metrics
+  metricLogger: MetricLogger
 ) {
-  let networkTimer: ITimer | undefined;
-  if (metric) {
-    networkTimer = useStartTimeLogger(
-      TimeLogStages.Network,
-      metric,
-      LOG_EVENTS_NDS
-    );
-  }
+  const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+  startNetworkTimer();
 
   const wellboreIds = Object.values(wellboreExternalIdMap);
   let { items, nextCursor } = await getNPTItems(
@@ -56,7 +43,7 @@ export async function getNptEventsByWellboreIds(
     }
   });
 
-  useStopTimeLogger(networkTimer, {
+  stopNetworkTimer({
     noOfWellbores: wellboreIds.length,
     noOfNptEvents: items.length,
   });

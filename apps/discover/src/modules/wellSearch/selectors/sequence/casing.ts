@@ -4,17 +4,10 @@ import capitalize from 'lodash/capitalize';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 
-import { ITimer } from '@cognite/metrics';
-
 import { UnitConverterItem } from '_helpers/units/interfaces';
 import { LOG_CASING, LOG_WELLS_CASING_NAMESPACE } from 'constants/logging';
 import { FEET } from 'constants/units';
-import {
-  useGetCogniteMetric,
-  useStartTimeLogger,
-  useStopTimeLogger,
-  TimeLogStages,
-} from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useSelectedWellboresCasingsQuery } from 'modules/wellSearch/hooks/useSelectedWellboresCasingsQuery';
 import { convertObject } from 'modules/wellSearch/utils';
@@ -26,19 +19,18 @@ import { casingAccessorsToFixedDecimal } from './constants';
 
 export const useSelectedWellboresCasingsData = () => {
   const wells = useSecondarySelectedOrHoveredWells();
-  const metric = useGetCogniteMetric(LOG_CASING);
+  const [startPreparationTimer, stopPreparationTimer] = useMetricLogger(
+    LOG_CASING,
+    TimeLogStages.Preperation,
+    LOG_WELLS_CASING_NAMESPACE
+  );
   const { data, isLoading } = useSelectedWellboresCasingsQuery();
-  let preperationTimer: ITimer;
   return useMemo(() => {
     const tempData: CasingData[] = [];
     if (isLoading || !data) {
       return { isLoading: true, casings: [] };
     }
-    preperationTimer = useStartTimeLogger(
-      TimeLogStages.Preperation,
-      metric,
-      LOG_WELLS_CASING_NAMESPACE
-    );
+    startPreparationTimer();
     wells.forEach((well) => {
       if (well.wellbores) {
         well.wellbores.forEach((wellbore) => {
@@ -124,11 +116,11 @@ export const useSelectedWellboresCasingsData = () => {
         });
       }
     });
-    useStopTimeLogger(preperationTimer, {
+    stopPreparationTimer({
       noOfWellbores: Object.keys(data).length,
     });
     return { casings: tempData, isLoading: false };
-  }, [wells, isLoading, data]);
+  }, [wells, isLoading, data, startPreparationTimer, stopPreparationTimer]);
 };
 
 export const useCasingsForTable = () => {

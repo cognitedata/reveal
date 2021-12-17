@@ -10,7 +10,6 @@ import { LOG_THREE_DEE_PREVIEW, LOG_WELLS_THREE_DEE } from 'constants/logging';
 import { StoreState } from 'core/types';
 import {
   useCreateMetricAndStartTimeLogger,
-  useStopTimeLogger,
   TimeLogStages,
 } from 'hooks/useTimeLog';
 import { wellSearchActions } from 'modules/wellSearch/actions';
@@ -156,7 +155,7 @@ const ThreeDeePreview: React.FC<Props> = ({
     }
   }, [isLogsRowsPristineIdsNotEmpty, loadingMap.Logs]);
 
-  useEffect(() => useStopTimeLogger(renderTimer), [renderTimer]);
+  useEffect(() => renderTimer?.stop(), [renderTimer]);
 
   const setLoading = useCallback(
     (data) => setLoadingMap((state) => ({ ...state, ...data })),

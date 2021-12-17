@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
-import { LOG_EVENTS_NPT } from 'constants/logging';
+import { LOG_EVENTS_NPT, LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useGetCogniteMetric } from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 
 import { useActiveWellboresMatchingIdMap } from '../selectors';
 import { getNptEventsByWellboreIds as service } from '../service';
@@ -14,13 +14,22 @@ export const useNptEventsQuery = () => {
   const wellboresMatchingIdMap = useActiveWellboresMatchingIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
-  const metric = useGetCogniteMetric(LOG_EVENTS_NPT);
+  const metricLogger = useMetricLogger(
+    LOG_EVENTS_NPT,
+    TimeLogStages.Network,
+    LOG_EVENTS_NDS
+  );
+  const newDataMetricLogger = useMetricLogger(
+    LOG_EVENTS_NPT,
+    TimeLogStages.Network,
+    LOG_EVENTS_NDS
+  );
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.NPT_EVENTS, () =>
     Promise.all(
       Object.entries(wellboresMatchingIdMap).map(([matchingId, id]) =>
-        service({ [matchingId]: id as number }, metric)
+        service({ [matchingId]: id as number }, metricLogger)
       )
     ).then((response) =>
       response.reduce(
@@ -51,7 +60,7 @@ export const useNptEventsQuery = () => {
       Object.entries(wellboresMatchingIdMap)
         .filter(([_, id]) => newIds.includes(id))
         .map(([matchingId, id]) =>
-          service({ [matchingId]: id as number }, metric)
+          service({ [matchingId]: id as number }, newDataMetricLogger)
         )
     ).then((response) => {
       queryClient.setQueryData(WELL_QUERY_KEY.NPT_EVENTS, {

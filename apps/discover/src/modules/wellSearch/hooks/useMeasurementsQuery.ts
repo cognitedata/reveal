@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
-import { LOG_CASING } from 'constants/logging';
+import {
+  LOG_CASING,
+  LOG_WELLS_MEASUREMENTS_NAMESPACE,
+} from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useGetCogniteMetric } from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 
 import {
   useSelectedOrHoveredWellboreIds,
@@ -21,11 +24,20 @@ export const useMeasurementsQuery = () => {
   const wellboreAssetIdMap = useWellboreAssetIdMap();
   const cache = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
-  const metric = useGetCogniteMetric(LOG_CASING);
+  const metricLogger = useMetricLogger(
+    LOG_CASING,
+    TimeLogStages.Network,
+    LOG_WELLS_MEASUREMENTS_NAMESPACE
+  );
+  const newDataMetricLogger = useMetricLogger(
+    LOG_CASING,
+    TimeLogStages.Network,
+    LOG_WELLS_MEASUREMENTS_NAMESPACE
+  );
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.MEASUREMENTS, () =>
-    service(wellboreIds, wellboreAssetIdMap, config, metric)
+    service(wellboreIds, wellboreAssetIdMap, config, metricLogger)
   );
 
   if (isLoading || !data) {
@@ -42,13 +54,15 @@ export const useMeasurementsQuery = () => {
   // If there are ids not in the cached data, do a search for new ids and update the cache
   if (newIds.length && !fetchingNewData) {
     setFetchingNewData(true);
-    service(newIds, wellboreAssetIdMap, config, metric).then((response) => {
-      cache.setQueryData(WELL_QUERY_KEY.MEASUREMENTS, {
-        ...response,
-        ...data,
-      });
-      setFetchingNewData(false);
-    });
+    service(newIds, wellboreAssetIdMap, config, newDataMetricLogger).then(
+      (response) => {
+        cache.setQueryData(WELL_QUERY_KEY.MEASUREMENTS, {
+          ...response,
+          ...data,
+        });
+        setFetchingNewData(false);
+      }
+    );
   }
 
   return { isLoading: true };

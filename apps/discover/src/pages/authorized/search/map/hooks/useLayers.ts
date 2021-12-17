@@ -18,6 +18,8 @@ import { Layers } from 'tenants/types';
 
 import { getLayersByKey, getLayerById } from '../utils';
 
+const isSelectable = (value: unknown) => isString(value);
+
 export const useLayers = () => {
   const [tenant] = getTenantInfo();
   const { data: mapConfig } = useProjectConfigByKey('map');
@@ -73,42 +75,44 @@ export interface TypeaheadResult {
 
 // might need to generalise this later on
 // but for the license use case at the moment this will do
+// wrapped in useMemo as useSearchableConfig was using it with useMemo callback
 export const useSearchableLayers = (
   allLayers: Layers,
   allLayerData: MapDataSource[]
 ) => {
-  const isSelectable = (value: unknown) => isString(value);
-  const searchableLayers = getLayersByKey(
-    allLayers,
-    'searchable',
-    isSelectable
-  );
-  const results: TypeaheadResult[] = [];
+  return useMemo(() => {
+    const searchableLayers = getLayersByKey(
+      allLayers,
+      'searchable',
+      isSelectable
+    );
+    const results: TypeaheadResult[] = [];
 
-  searchableLayers.forEach((searchableLayer: SelectableLayer) => {
-    const hasData = getLayerById(allLayerData, searchableLayer.id);
+    searchableLayers.forEach((searchableLayer: SelectableLayer) => {
+      const hasData = getLayerById(allLayerData, searchableLayer.id);
 
-    const hasFeatures = get(hasData, 'data.features');
+      const hasFeatures = get(hasData, 'data.features');
 
-    if (hasFeatures) {
-      // cleanup the data for typehahead
-      hasFeatures.forEach((feature: any) => {
-        const field = allLayers[searchableLayer.id].searchable;
+      if (hasFeatures) {
+        // cleanup the data for typehahead
+        hasFeatures.forEach((feature: any) => {
+          const field = allLayers[searchableLayer.id].searchable;
 
-        const hasSearchable =
-          field && feature.properties && feature.properties[field];
-        if (hasSearchable) {
-          results.push({
-            title: hasSearchable,
-            type: 'License',
-            feature,
-          });
-        }
-      });
-    }
-  });
+          const hasSearchable =
+            field && feature.properties && feature.properties[field];
+          if (hasSearchable) {
+            results.push({
+              title: hasSearchable,
+              type: 'License',
+              feature,
+            });
+          }
+        });
+      }
+    });
 
-  return results;
+    return results;
+  }, [allLayers, allLayerData]);
 };
 
 export const useSearchableConfig = (
@@ -117,10 +121,8 @@ export const useSearchableConfig = (
 ) => {
   const { data: generalConfig } = useProjectConfigByKey('general');
   const title = generalConfig?.searchableLayerTitle;
-  const layers = useMemo(
-    () => useSearchableLayers(allLayers, allLayerData),
-    [allLayers, allLayerData]
-  );
+
+  const layers = useSearchableLayers(allLayers, allLayerData);
 
   return useMemo(
     () => ({

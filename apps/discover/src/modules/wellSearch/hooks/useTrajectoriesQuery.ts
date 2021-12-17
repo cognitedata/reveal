@@ -5,9 +5,12 @@ import isEmpty from 'lodash/isEmpty';
 
 import { Sequence } from '@cognite/sdk';
 
-import { LOG_TRAJECTORY } from 'constants/logging';
+import {
+  LOG_TRAJECTORY,
+  LOG_WELLS_TRAJECTORY_NAMESPACE,
+} from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useGetCogniteMetric } from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 
 import {
   useSelectedOrHoveredWellboreIds,
@@ -32,12 +35,21 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
   const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
-  const metric = useGetCogniteMetric(LOG_TRAJECTORY);
   const query = (config?.trajectory?.queries || [])[0];
   const columns = config?.trajectory?.columns;
   const trajectories: Sequence[] = [];
   const trajectoryRows: TrajectoryRows[] = [];
   const isTrajectoriesDisabled = config?.trajectory?.enabled === false; // checking false because we want to fetch for undefined
+  const metricLogger = useMetricLogger(
+    LOG_TRAJECTORY,
+    TimeLogStages.Network,
+    LOG_WELLS_TRAJECTORY_NAMESPACE
+  );
+  const newDataMetricLogger = useMetricLogger(
+    LOG_TRAJECTORY,
+    TimeLogStages.Network,
+    LOG_WELLS_TRAJECTORY_NAMESPACE
+  );
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(
@@ -49,7 +61,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
         wellboresSourceExternalIdMap,
         query,
         columns,
-        metric,
+        metricLogger,
         enabledWellSDKV3
       ),
     { enabled: !isTrajectoriesDisabled }
@@ -96,7 +108,7 @@ export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
         wellboresSourceExternalIdMap,
         query,
         columns,
-        metric,
+        newDataMetricLogger,
         enabledWellSDKV3
       ).then((response) => {
         queryClient.setQueryData(WELL_QUERY_KEY.TRAJECTORIES, {

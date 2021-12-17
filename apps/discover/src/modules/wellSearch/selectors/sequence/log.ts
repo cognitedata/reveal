@@ -1,20 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import get from 'lodash/get';
-
-import { ITimer } from '@cognite/metrics';
 
 import {
   LOG_WELL_LOGS,
   LOG_WELLS_TRAJECTORY_NAMESPACE,
 } from 'constants/logging';
-import {
-  useGetCogniteMetric,
-  useStartTimeLogger,
-  useStopTimeLogger,
-  TimeLogStages,
-} from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 import { SequenceData } from 'modules/wellSearch/types';
@@ -32,22 +25,23 @@ export const useSelectedWellBoresLogs = () => {
   const wellboreAssetIdMap = useWellboreAssetIdMap();
   const dispatch = useDispatch();
   const wellboreData = useWellboreData();
-  const metric = useGetCogniteMetric(LOG_WELL_LOGS);
-  const [networkTimer, setNetworkTimer] = useState<ITimer>();
-  let preperationTimer: ITimer;
+  const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
+    LOG_WELL_LOGS,
+    TimeLogStages.Network,
+    LOG_WELLS_TRAJECTORY_NAMESPACE
+  );
+  const [startPreparationTimer, stopPreparationTimer] = useMetricLogger(
+    LOG_WELL_LOGS,
+    TimeLogStages.Preperation,
+    LOG_WELLS_TRAJECTORY_NAMESPACE
+  );
   return useMemo(() => {
     const tempData: LogTypeData[] = [];
     if (!config) {
       return { isLoading: true, logs: tempData };
     }
     if (logPristineIds.length > 0) {
-      setNetworkTimer(
-        useStartTimeLogger(
-          TimeLogStages.Network,
-          metric,
-          LOG_WELLS_TRAJECTORY_NAMESPACE
-        )
-      );
+      startNetworkTimer();
       dispatch(
         wellSearchActions.getLogType(
           logPristineIds,
@@ -58,12 +52,8 @@ export const useSelectedWellBoresLogs = () => {
       );
       return { isLoading: true, logs: tempData };
     }
-    useStopTimeLogger(networkTimer, { noOfWellbores: logPristineIds.length });
-    preperationTimer = useStartTimeLogger(
-      TimeLogStages.Preperation,
-      metric,
-      LOG_WELLS_TRAJECTORY_NAMESPACE
-    );
+    stopNetworkTimer({ noOfWellbores: logPristineIds.length });
+    startPreparationTimer();
     wells.forEach((well) => {
       if (well.wellbores) {
         well.wellbores.forEach((wellbore) => {
@@ -76,7 +66,7 @@ export const useSelectedWellBoresLogs = () => {
         });
       }
     });
-    useStopTimeLogger(preperationTimer, {
+    stopPreparationTimer({
       noOfWellbores: logPristineIds.length,
     });
     return { isLoading: false, logs: tempData };

@@ -1,17 +1,12 @@
 import groupBy from 'lodash/groupBy';
+import noop from 'lodash/noop';
 import set from 'lodash/set';
 
 import { ProjectConfigWells } from '@cognite/discover-api-types';
-import { Metrics } from '@cognite/metrics';
 import { Sequence } from '@cognite/sdk';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
-import { LOG_WELLS_MEASUREMENTS_NAMESPACE } from 'constants/logging';
-import {
-  TimeLogStages,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { MetricLogger } from 'hooks/useTimeLog';
 import { Measurement, WellboreAssetIdMap } from 'modules/wellSearch/types';
 import { getWellboreAssetIdReverseMap } from 'modules/wellSearch/utils/common';
 import { SequenceFetcher } from 'tenants/types';
@@ -23,18 +18,14 @@ export async function getMeasurementsByWellboreIds(
   wellboreIds: number[],
   wellboreAssetIdMap: WellboreAssetIdMap,
   config?: ProjectConfigWells,
-  metric?: Metrics
+  metricLogger: MetricLogger = [noop, noop]
 ) {
   const wellboreAssetIdReverseMap =
     getWellboreAssetIdReverseMap(wellboreAssetIdMap);
-  let networkTimer;
-  if (metric) {
-    networkTimer = useStartTimeLogger(
-      TimeLogStages.Network,
-      metric,
-      LOG_WELLS_MEASUREMENTS_NAMESPACE
-    );
-  }
+
+  const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+
+  startNetworkTimer();
 
   const idChunkList = getChunkNumberList(wellboreIds, 100);
 
@@ -104,7 +95,7 @@ export async function getMeasurementsByWellboreIds(
     }
   });
 
-  useStopTimeLogger(networkTimer, {
+  stopNetworkTimer({
     noOfWellbores: wellboreIds.length,
   });
 

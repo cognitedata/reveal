@@ -2,7 +2,6 @@ import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
 import set from 'lodash/set';
 
-import { ITimer, Metrics } from '@cognite/metrics';
 import { CogniteEvent } from '@cognite/sdk';
 import {
   Nds,
@@ -12,12 +11,7 @@ import {
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { showErrorMessage } from 'components/toast';
-import { LOG_EVENTS_NDS } from 'constants/logging';
-import {
-  TimeLogStages,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import { WellboreSourceExternalIdMap } from 'modules/wellSearch/types';
@@ -32,17 +26,11 @@ import { EVENT_LIMIT, EVENT_PER_PAGE, groupEventsByAssetId } from './common';
 export function getNdsEventsByWellboreIds(
   wellboreIds: number[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
-  metric?: Metrics,
+  metricLogger: MetricLogger,
   enableWellSDKV3?: boolean
 ) {
-  let networkTimer: ITimer | undefined;
-  if (metric) {
-    networkTimer = useStartTimeLogger(
-      TimeLogStages.Network,
-      metric,
-      LOG_EVENTS_NDS
-    );
-  }
+  const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+  startNetworkTimer();
 
   const fetchNdsEvents = () =>
     enableWellSDKV3
@@ -50,7 +38,7 @@ export function getNdsEventsByWellboreIds(
       : fetchNdsEventsCogniteSDK(wellboreIds, wellboreSourceExternalIdMap);
 
   return fetchNdsEvents().finally(() => {
-    useStopTimeLogger(networkTimer, {
+    stopNetworkTimer({
       noOfWellbores: wellboreIds.length,
     });
   });

@@ -5,10 +5,10 @@ import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
 import invert from 'lodash/invert';
 import max from 'lodash/max';
+import noop from 'lodash/noop';
 import uniqueId from 'lodash/uniqueId';
 
 import { ProjectConfigWellsTrajectoryColumns } from '@cognite/discover-api-types';
-import { Metrics } from '@cognite/metrics';
 import { Sequence, SequenceColumn, SequenceFilter } from '@cognite/sdk';
 import {
   TrajectoryData as TrajectoryDataV3,
@@ -17,12 +17,7 @@ import {
 } from '@cognite/sdk-wells-v3';
 
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
-import { LOG_WELLS_TRAJECTORY_NAMESPACE } from 'constants/logging';
-import {
-  TimeLogStages,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { MetricLogger } from 'hooks/useTimeLog';
 import { toIdentifier } from 'modules/wellSearch/sdk/utils';
 import { getWellSDKClient } from 'modules/wellSearch/sdk/v3';
 import {
@@ -49,17 +44,11 @@ export async function getTrajectoriesByWellboreIds(
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   sequenceFilter: SequenceFilter = {},
   columns: ProjectConfigWellsTrajectoryColumns[] = [],
-  metric?: Metrics,
+  metricLogger: MetricLogger = [noop, noop],
   enableWellSDKV3?: boolean
 ) {
-  let networkTimer;
-  if (metric) {
-    networkTimer = useStartTimeLogger(
-      TimeLogStages.Network,
-      metric,
-      LOG_WELLS_TRAJECTORY_NAMESPACE
-    );
-  }
+  const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+  startNetworkTimer();
 
   const trajectoryData = enableWellSDKV3
     ? await fetchTrajectoriesUsingWellsSDK(
@@ -74,7 +63,7 @@ export async function getTrajectoriesByWellboreIds(
         columns
       );
 
-  useStopTimeLogger(networkTimer, {
+  stopNetworkTimer({
     noOfWellbores: wellboreIds.length,
   });
 

@@ -4,7 +4,10 @@ import { reportException } from '@cognite/react-errors';
 
 import Skeleton from 'components/skeleton';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { DocumentCategory, DocumentError } from 'modules/api/documents/types';
+import {
+  DocumentCategory as DocumentCategoryType,
+  DocumentError,
+} from 'modules/api/documents/types';
 import { useDocumentCategoryQuery } from 'modules/api/documents/useDocumentQuery';
 import { useDocumentQueryFacets } from 'modules/documentSearch/hooks/useDocumentQueryFacets';
 import { sizes } from 'styles/layout';
@@ -14,13 +17,13 @@ const Wrapper = styled.div`
 `;
 
 interface Props {
-  children(data: DocumentCategory): React.ReactNode;
+  children(data: DocumentCategoryType): React.ReactNode;
 }
 
 const Documents: React.FC<
   Props & {
     isLoading: boolean;
-    data?: DocumentCategory | DocumentError;
+    data?: DocumentCategoryType | DocumentError;
     error: unknown;
   }
 > = ({ isLoading, data, error, children }) => {
@@ -46,7 +49,7 @@ const DocumentFacets: React.FC<Props> = ({ children }) => {
   );
 };
 
-const DocumentCategoryComp: React.FC<Props> = ({ children }) => {
+const DocumentCategory: React.FC<Props> = ({ children }) => {
   const { isLoading, error, data } = useDocumentCategoryQuery();
   return (
     <Documents isLoading={isLoading} error={error} data={data}>
@@ -61,6 +64,6 @@ export const DocumentServiceWrapper: React.FC<Props> = ({ children }) => {
   return generalConfig?.showDynamicResultCount ? (
     <DocumentFacets>{children}</DocumentFacets>
   ) : (
-    <DocumentCategoryComp>{children}</DocumentCategoryComp>
+    <DocumentCategory>{children}</DocumentCategory>
   );
 };

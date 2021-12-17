@@ -13,12 +13,7 @@ import {
   LOG_WELLS_RELATED_DOCUMENTS,
 } from 'constants/logging';
 import { RELATED_DOCUMENT_KEY } from 'constants/react-query';
-import {
-  TimeLogStages,
-  useGetCogniteMetric,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
 import { SavedSearchContent } from 'modules/api/savedSearches/types';
 import { createSavedSearch } from 'modules/api/savedSearches/utils';
 import { useJsonHeaders } from 'modules/api/service';
@@ -88,7 +83,11 @@ const useRelatedDocumentsCategories = (
 export const useQuerySavedRelatedDocuments = (
   limit = 100
 ): UseQueryResult<DocumentResult> => {
-  const metric = useGetCogniteMetric(LOG_RELATED_DOCUMENTS);
+  const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
+    LOG_RELATED_DOCUMENTS,
+    TimeLogStages.Network,
+    LOG_WELLS_RELATED_DOCUMENTS
+  );
   const filterQuery = useRelatedDocumentFilterQuery();
   const wellboreIds = useSelectedOrHoveredWellboreIds();
   const wellboreAssetIdMap = useWellboreAssetIdMap();
@@ -101,22 +100,16 @@ export const useQuerySavedRelatedDocuments = (
   const mainResponse = useQuery<DocumentResult>(
     [SAVED_RELATED_DOCUMENTS, filterQuery, filters],
     () => {
-      const networkTimer = useStartTimeLogger(
-        TimeLogStages.Network,
-        metric,
-        LOG_WELLS_RELATED_DOCUMENTS
-      );
+      startNetworkTimer();
       const filterOptions = {
         filters,
         sort: [],
       };
-      const response = documentSearchService.search(
-        filterQuery,
-        filterOptions,
-        limit
-      );
-      useStopTimeLogger(networkTimer);
-      return response;
+      return documentSearchService
+        .search(filterQuery, filterOptions, limit)
+        .finally(() => {
+          stopNetworkTimer();
+        });
     }
   );
 

@@ -6,7 +6,6 @@ import flatten from 'lodash/flatten';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 
-import { ITimer } from '@cognite/metrics';
 import { Asset } from '@cognite/sdk';
 
 import { UnitConverterItem } from '_helpers/units/interfaces';
@@ -15,12 +14,7 @@ import {
   LOG_WELL_DIGITAL_ROCKS_NAMESPACE,
   LOG_WELL_DIGITAL_ROCKS_SAMPLES_NAMESPACE,
 } from 'constants/logging';
-import {
-  TimeLogStages,
-  useGetCogniteMetric,
-  useStartTimeLogger,
-  useStopTimeLogger,
-} from 'hooks/useTimeLog';
+import { TimeLogStages, useMetricLogger } from 'hooks/useTimeLog';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { DIGITAL_ROCKS_ACCESSORS } from 'modules/wellSearch/constants';
@@ -88,10 +82,17 @@ export const useSelectedWellBoresDigitalRocks = () => {
   const wells = useSecondarySelectedOrHoveredWells();
   const wellboreData = useWellboreData();
   const [isLoading, setIsLoading] = useState<boolean>();
-  const metric = useGetCogniteMetric(LOG_WELL_DIGITAL_ROCKS);
+  const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
+    LOG_WELL_DIGITAL_ROCKS,
+    TimeLogStages.Network,
+    LOG_WELL_DIGITAL_ROCKS_NAMESPACE
+  );
+  const [startPreparationTimer, stopPreparationTimer] = useMetricLogger(
+    LOG_WELL_DIGITAL_ROCKS,
+    TimeLogStages.Preperation,
+    LOG_WELL_DIGITAL_ROCKS_NAMESPACE
+  );
   const userPrefferedUnit = useUserPreferencesMeasurement();
-  const [networkTimer, setNetworkTimer] = useState<ITimer>();
-  let preperationTimer: ITimer;
   return useMemo(() => {
     const digitalRocks: Asset[] = [];
 
@@ -105,13 +106,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
 
     if (digitalRocksPristineIds.length && !isLoading) {
       setIsLoading(true);
-      setNetworkTimer(
-        useStartTimeLogger(
-          TimeLogStages.Network,
-          metric,
-          LOG_WELL_DIGITAL_ROCKS_NAMESPACE
-        )
-      );
+      startNetworkTimer();
 
       dispatch(
         wellSearchActions.getWellboreAssets(
@@ -124,12 +119,8 @@ export const useSelectedWellBoresDigitalRocks = () => {
       return { isLoading: true, digitalRocks };
     }
 
-    useStopTimeLogger(networkTimer);
-    preperationTimer = useStartTimeLogger(
-      TimeLogStages.Preperation,
-      metric,
-      LOG_WELL_DIGITAL_ROCKS_NAMESPACE
-    );
+    stopNetworkTimer();
+    startPreparationTimer();
 
     wells.forEach((well) => {
       if (well.wellbores) {
@@ -151,7 +142,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
         });
       }
     });
-    useStopTimeLogger(preperationTimer);
+    stopPreparationTimer();
     return { isLoading: false, digitalRocks: normalize(digitalRocks) };
   }, [wells, wellboreData, digitalRocksPristineIds, userPrefferedUnit]);
 };
@@ -162,9 +153,16 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
   const dispatch = useDispatch();
   const { data: config } = useWellConfig();
   const [isLoading, setIsLoading] = useState<boolean>();
-  const metric = useGetCogniteMetric(LOG_WELL_DIGITAL_ROCKS);
-  let networkTimer: ITimer;
-  let preperationTimer: ITimer;
+  const [startNetworkTimer, stopNetworkTimer] = useMetricLogger(
+    LOG_WELL_DIGITAL_ROCKS,
+    TimeLogStages.Network,
+    LOG_WELL_DIGITAL_ROCKS_SAMPLES_NAMESPACE
+  );
+  const [startPreparationTimer, stopPreparationTimer] = useMetricLogger(
+    LOG_WELL_DIGITAL_ROCKS,
+    TimeLogStages.Preperation,
+    LOG_WELL_DIGITAL_ROCKS_SAMPLES_NAMESPACE
+  );
 
   return useMemo(() => {
     const digitalRocksToFetch = digitalRocks.filter(
@@ -185,11 +183,7 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
 
     if (digitalRocksToFetch.length && !isLoading) {
       setIsLoading(constant(true));
-      networkTimer = useStartTimeLogger(
-        TimeLogStages.Network,
-        metric,
-        LOG_WELL_DIGITAL_ROCKS_SAMPLES_NAMESPACE
-      );
+      startNetworkTimer();
       dispatch(
         wellSearchActions.getDigitalRockSamples(
           digitalRocksToFetch,
@@ -201,12 +195,8 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
       return { isLoading: true, digitalRockSamples: [] };
     }
 
-    useStopTimeLogger(networkTimer);
-    preperationTimer = useStartTimeLogger(
-      TimeLogStages.Preperation,
-      metric,
-      LOG_WELL_DIGITAL_ROCKS_SAMPLES_NAMESPACE
-    );
+    stopNetworkTimer();
+    startPreparationTimer();
 
     // Get Digital Rock samples from wellbore data sate filtered by requested digital rocks
     const digitalRockSamples = flatten(
@@ -225,7 +215,7 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
       )
     );
 
-    useStopTimeLogger(preperationTimer);
+    stopPreparationTimer();
     return {
       isLoading: false,
       digitalRockSamples: normalizeSamples(digitalRockSamples),

@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
-import { useGetCogniteMetric } from 'hooks/useTimeLog';
+import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 
 import {
   useActiveWellboresSourceExternalIdMap,
@@ -21,11 +21,25 @@ export const useNdsEventsQuery = () => {
   const wellboresSourceExternalIdMap = useActiveWellboresSourceExternalIdMap();
   const queryClient = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
-  const metric = useGetCogniteMetric(LOG_EVENTS_NDS);
+  const metricLogger = useMetricLogger(
+    LOG_EVENTS_NDS,
+    TimeLogStages.Network,
+    LOG_EVENTS_NDS
+  );
+  const newDataMetricLogger = useMetricLogger(
+    LOG_EVENTS_NDS,
+    TimeLogStages.Network,
+    LOG_EVENTS_NDS
+  );
 
   // Do the initial search with react-query
   const { data, isLoading } = useQuery(WELL_QUERY_KEY.NDS_EVENTS, () =>
-    service(wellboreIds, wellboresSourceExternalIdMap, metric, enabledWellSDKV3)
+    service(
+      wellboreIds,
+      wellboresSourceExternalIdMap,
+      metricLogger,
+      enabledWellSDKV3
+    )
   );
 
   if (isLoading || !data) {
@@ -44,7 +58,7 @@ export const useNdsEventsQuery = () => {
     service(
       newIds,
       wellboresSourceExternalIdMap,
-      metric,
+      newDataMetricLogger,
       enabledWellSDKV3
     ).then((response) => {
       queryClient.setQueryData(WELL_QUERY_KEY.NDS_EVENTS, {
