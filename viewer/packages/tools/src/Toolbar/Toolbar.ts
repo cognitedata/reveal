@@ -20,6 +20,7 @@ export enum ToolbarPosition {
 export class Toolbar {
   private _toolbarContainer: HTMLDivElement;
   private static readonly stylesId = 'reveal-viewer-toolbar-styles';
+  private readonly _canvasElement: HTMLCanvasElement | null;
 
   private static readonly classnames = {
     container: 'reveal-viewer-toolbar-container',
@@ -34,13 +35,14 @@ export class Toolbar {
   private _activeContainerPosition = Toolbar.classnames.bottom;
 
   constructor(viewer: Cognite3DViewer) {
-    const canvasElement = viewer.domElement.querySelector('canvas')?.parentElement;
-    if (canvasElement === null) {
+    this._canvasElement = viewer.domElement.querySelector('canvas');
+    const canvasElementParent = this._canvasElement?.parentElement;
+    if (canvasElementParent === null) {
       throw new Error('Could not find canvas');
     }
 
     this._toolbarContainer = document.createElement('div');
-    this.createToolBar(canvasElement!);
+    this.createToolBar(canvasElementParent!);
   }
 
   /**
@@ -79,7 +81,7 @@ export class Toolbar {
    * @param onClick Click event action for the icon
    */
   public addToolbarItem(toolTip: string, backgroundImage: string, isToggle: boolean, onClick: () => void): void {
-    const element = document.createElement('BUTTON');
+    const element = document.createElement('button');
     element.className = Toolbar.classnames.icon;
     element.title = toolTip;
     const iconImage = new Image();
@@ -87,7 +89,7 @@ export class Toolbar {
 
     element.appendChild(iconImage);
 
-    element.onclick = function () {
+    element.onclick = () => {
       if (isToggle) {
         if (element.classList.contains(Toolbar.classnames.iconClicked)) {
           element.classList.remove(Toolbar.classnames.iconClicked);
@@ -96,6 +98,7 @@ export class Toolbar {
         }
       }
       onClick();
+      this._canvasElement?.focus();
     };
 
     this._toolbarContainer.appendChild(element);
