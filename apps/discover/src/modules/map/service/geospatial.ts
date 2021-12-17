@@ -4,11 +4,12 @@ import isArray from 'lodash/isArray';
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
-import { SpatialSearchItemResponse } from 'modules/wellSearch/service';
 
 import { FetchHeaders } from '../../../_helpers/fetch';
 import { discoverAPI } from '../../api/service';
 import { getGeospatialSDKClient } from '../sdk';
+
+import { SpatialSearchItemResponse } from './getMapContent';
 
 const cache: {
   getLicenses?: Promise<{ features: any; type: string }>;

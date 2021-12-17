@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components/macro';
@@ -6,6 +6,7 @@ import styled from 'styled-components/macro';
 import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
 import { intercomHelper } from '@cognite/intercom-helper';
 
+import GeneralFeedback from 'components/modals/general-feedback';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 
 const MenuContainer = styled.div``;
@@ -16,20 +17,19 @@ interface ChatModel {
   onClick: () => void;
 }
 
-interface Props {
-  feedbackOnClick: (value: boolean) => void;
-}
-
-export const Feedback: React.FC<Props> = ({ feedbackOnClick }) => {
+export const Feedback: React.FC = () => {
   const { t } = useTranslation('global');
   const metrics = useGlobalMetrics('topbar');
-  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [showDropdown, setShowDropdown] = React.useState<boolean>(false);
+
+  const [feedbackIsVisible, setFeedbackIsVisible] =
+    React.useState<boolean>(false);
 
   const contactMenuItems: ChatModel[] = [
     {
       id: 'feedback',
       value: t('Feedback'),
-      onClick: () => feedbackOnClick(true),
+      onClick: () => setFeedbackIsVisible(true),
     },
     {
       id: 'help',
@@ -67,14 +67,20 @@ export const Feedback: React.FC<Props> = ({ feedbackOnClick }) => {
   );
 
   return (
-    <Dropdown content={MenuContent} appendTo={document.body}>
-      <TopBar.Action
-        data-test-id="feedback-options"
-        data-testid="feedback-options"
-        icon="Help"
-        onClick={handleFeedbackIconClick}
-        aria-label="Help"
-      />
-    </Dropdown>
+    <>
+      <Dropdown content={MenuContent} appendTo={document.body}>
+        <TopBar.Action
+          icon="Help"
+          onClick={handleFeedbackIconClick}
+          aria-label="Help"
+        />
+      </Dropdown>
+      {feedbackIsVisible && (
+        <GeneralFeedback
+          visible={feedbackIsVisible}
+          onCancel={() => setFeedbackIsVisible(false)}
+        />
+      )}
+    </>
   );
 };

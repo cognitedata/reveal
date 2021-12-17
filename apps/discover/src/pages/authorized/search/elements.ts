@@ -148,15 +148,6 @@ export const Container = styled.div`
   width: 100%;
 `;
 
-export const TabPaneBadgeWrapper = styled.div`
-  height: 20px !important;
-  margin-left: ${sizes.extraSmall};
-
-  & > span[class='cogs-badge'] {
-    padding: 2px 8px !important;
-  }
-`;
-
 export const FavoriteIndicatorContainer = styled.div`
   background: var(--cogs-bg-default);
   padding: 0px ${sizes.small};

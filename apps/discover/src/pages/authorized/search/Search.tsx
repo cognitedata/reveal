@@ -11,9 +11,8 @@ import {
 
 import get from 'lodash/get';
 
-import { Loader, Tabs, Badge } from '@cognite/cogs.js';
+import { Loader, Tabs } from '@cognite/cogs.js';
 
-import { formatBigNumbersWithSuffix } from '_helpers/number';
 import { HorizontalResizableBox } from 'components/horizontal-resizable-box/HorizontalResizableBox';
 import navigation from 'constants/navigation';
 import { useAnythingHasSearched } from 'hooks/useAnythingHasSearched';
@@ -34,8 +33,6 @@ import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { initializeWellInspect } from 'modules/wellInspect/actions';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 
-import { BetaSymbol } from '../elements';
-
 import {
   DOCUMENT_TAB_TITLE_KEY,
   SEISMIC_TAB_TITLE_KEY,
@@ -49,8 +46,8 @@ import {
   MapBoxContainer,
   TabsWrapper,
   Container,
-  TabPaneBadgeWrapper,
 } from './elements';
+import { SearchTab } from './search/SearchTabs/SearchTabs';
 import { SideBar } from './search/SideBar';
 import SeismicSearch from './seismic';
 import WellSearch from './well';
@@ -63,13 +60,6 @@ const Map = React.lazy(() => import(/* webpackChunkName: "map" */ './map/Map'));
 const SEARCH_BAR_WIDTH_WELL_INSPECT = 650; // in px
 const SEARCH_BAR_WIDTH_DOC_INSPECT = 1000; // in px
 
-interface TabPaneContentProps {
-  text: string;
-  count?: number;
-  displayBetaSymbol?: boolean;
-  displayCount?: boolean;
-}
-
 interface TabItem {
   id: number;
   name: string;
@@ -78,28 +68,6 @@ interface TabItem {
   total?: number;
   projectConfigKey: Modules;
 }
-
-const TabPaneContent: React.FC<TabPaneContentProps> = ({
-  text,
-  count,
-  displayBetaSymbol,
-  displayCount,
-}) => {
-  return (
-    <>
-      <span>{text}</span>
-      {displayBetaSymbol && <BetaSymbol />}
-      {displayCount && (
-        <TabPaneBadgeWrapper>
-          <Badge
-            text={formatBigNumbersWithSuffix(count || 0).toString()}
-            size={12}
-          />
-        </TabPaneBadgeWrapper>
-      )}
-    </>
-  );
-};
 
 export const Search: React.FC = () => {
   const metrics = useGlobalMetrics('search');
@@ -300,7 +268,7 @@ export const Search: React.FC = () => {
                   <Tabs.TabPane
                     key={Modules.DOCUMENTS}
                     tab={
-                      <TabPaneContent
+                      <SearchTab
                         text={t(DOCUMENT_TAB_TITLE_KEY)}
                         count={documentResultCount}
                         displayCount={
@@ -316,7 +284,7 @@ export const Search: React.FC = () => {
                   <Tabs.TabPane
                     key={Modules.SEISMIC}
                     tab={
-                      <TabPaneContent
+                      <SearchTab
                         text={t(SEISMIC_TAB_TITLE_KEY)}
                         displayBetaSymbol
                       />
@@ -327,7 +295,7 @@ export const Search: React.FC = () => {
                 {!projectConfig[Modules.WELLS]?.disabled && (
                   <Tabs.TabPane
                     key={Modules.WELLS}
-                    tab={<TabPaneContent text={t(WELLS_TAB_TITLE_KEY)} />}
+                    tab={<SearchTab text={t(WELLS_TAB_TITLE_KEY)} />}
                   />
                 )}
               </Tabs>

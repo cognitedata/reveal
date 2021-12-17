@@ -7,6 +7,9 @@ const SEARCH_SEISMIC = `${SEARCH}/seismic`;
 const SEARCH_WELLS = `${SEARCH}/wells`;
 const SEARCH_WELLS_INSPECT = `${SEARCH_WELLS}/inspect`;
 
+/* dashboards */
+const DASHBOARD = `/dashboard`;
+
 /* favorites */
 
 const FAVORITES = '/favorites';
@@ -34,6 +37,8 @@ const INTERNAL_PROJECT_CONFIG = '/__internal__/projectConfig';
 
 const navigationConfig = {
   LOGOUT: '/logout',
+
+  DASHBOARD,
 
   SEARCH,
   SEARCH_DOCUMENTS,

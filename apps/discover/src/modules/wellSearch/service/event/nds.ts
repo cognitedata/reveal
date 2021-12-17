@@ -7,8 +7,10 @@ import {
   Nds,
   NdsItems,
   TrajectoryInterpolationItems,
+  Wellbore,
 } from '@cognite/sdk-wells-v3';
 
+import { fetchAllCursors } from '_helpers/fetchAllCursors';
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { showErrorMessage } from 'components/toast';
 import { MetricLogger } from 'hooks/useTimeLog';
@@ -27,38 +29,66 @@ export function getNdsEventsByWellboreIds(
   wellboreIds: number[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
   metricLogger: MetricLogger,
-  enableWellSDKV3?: boolean
+  enableWellSDKV3?: boolean,
+  cursor?: string
 ) {
   const [startNetworkTimer, stopNetworkTimer] = metricLogger;
+
   startNetworkTimer();
 
-  const fetchNdsEvents = () =>
+  const doFetchNdsEvents = () =>
     enableWellSDKV3
-      ? fetchNdsEventsUsingWellsSDK(wellboreIds, wellboreSourceExternalIdMap)
+      ? fetchNdsEventsUsingWellsSDK(
+          wellboreIds,
+          wellboreSourceExternalIdMap,
+          cursor
+        )
       : fetchNdsEventsCogniteSDK(wellboreIds, wellboreSourceExternalIdMap);
 
-  return fetchNdsEvents().finally(() => {
+  return doFetchNdsEvents().finally(() => {
     stopNetworkTimer({
       noOfWellbores: wellboreIds.length,
     });
   });
 }
 
-export const fetchNdsEventsUsingWellsSDK = async (
+export const fetchNdsEvents = async (
   wellboreIds: number[],
-  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
+  cursor?: string
 ) => {
-  const ndsEventsRequestBody = {
+  return getWellSDKClient().nds.list({
     filter: { wellboreIds: wellboreIds.map(toIdentifier) },
     limit: EVENT_PER_PAGE,
-  };
+    cursor,
+  });
+};
 
-  const ndsEvents = await Promise.resolve(
-    getWellSDKClient()
-      .nds.list(ndsEventsRequestBody)
-      .then((ndsItems: NdsItems) =>
-        mapNdsItemsToCogniteEvents(ndsItems.items, wellboreSourceExternalIdMap)
-      )
+export const fetchAllNdsEvents = async ({
+  wellboreIds,
+}: {
+  wellboreIds: Set<Wellbore['matchingId']>;
+}) => {
+  return fetchAllCursors<Nds>({
+    action: getWellSDKClient().nds.list,
+    actionProps: {
+      filter: { wellboreIds: Array.from(wellboreIds).map(toIdentifier) },
+      limit: EVENT_PER_PAGE,
+    },
+  });
+};
+
+export const fetchNdsEventsUsingWellsSDK = async (
+  wellboreIds: number[],
+  wellboreSourceExternalIdMap: WellboreSourceExternalIdMap,
+  cursor?: string
+) => {
+  const ndsEvents = await fetchNdsEvents(wellboreIds, cursor).then(
+    (ndsItems: NdsItems) => {
+      return mapNdsItemsToCogniteEvents(
+        ndsItems.items,
+        wellboreSourceExternalIdMap
+      );
+    }
   );
 
   return getGroupedNdsEvents(
@@ -162,7 +192,7 @@ export const getGroupedNdsEvents = (
   response: CogniteEvent[],
   wellboreIds: number[],
   wellboreSourceExternalIdMap: WellboreSourceExternalIdMap
-) => {
+): Record<string, CogniteEvent[]> => {
   const events: CogniteEvent[] = response
     .filter((event) => (event.assetIds || []).length)
     .map((event) => ({

@@ -24,7 +24,9 @@ export const getMockState: (extras?: Partial<SidebarState>) => SidebarState = (
   ...extras,
 });
 
-export const getEmptyAppliedFilterType = (): AppliedFiltersType => {
+export const getEmptyAppliedFilterType = (
+  extras?: Partial<AppliedFiltersType>
+): AppliedFiltersType => {
   return {
     documents: {
       filetype: [],
@@ -37,6 +39,7 @@ export const getEmptyAppliedFilterType = (): AppliedFiltersType => {
     seismic: {},
     wells: {},
     landing: {},
+    ...extras,
   };
 };
 
@@ -47,12 +50,10 @@ export const getMockAppliedFiltersType: (
   documentFiltersExtras = {},
   wellFiltersExtras = {}
 ) => {
-  return {
+  return getEmptyAppliedFilterType({
     documents: getMockDocumentFilter(documentFiltersExtras),
-    seismic: {},
     wells: getMockWellFilter(wellFiltersExtras),
-    landing: {},
-  };
+  });
 };
 
 export const getMockDocumentFilter: (
@@ -98,12 +99,10 @@ export const getMockSidebarState: (
     isOpen: true,
     category: DEFAULT_OPEN_CATEGORY,
     activeKeys: getMockActiveKeys(extras.activeKeys),
-    appliedFilters: {
+    appliedFilters: getEmptyAppliedFilterType({
       documents: getMockDocumentFilter(extras.appliedFilters?.documents),
-      seismic: {},
       wells: getMockWellFilter(extras.appliedFilters?.wells),
-      landing: {},
-    },
+    }),
     searchPhrase: DEFAULT_SEARCH_PHRASE,
     ...extras,
   };

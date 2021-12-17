@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
 import get from 'lodash/get';
 import groupBy from 'lodash/groupBy';
@@ -9,9 +9,14 @@ import { Metrics } from '@cognite/metrics';
 
 import { LOG_WELL_SEARCH, LOG_WELL_SEARCH_NAMESPACE } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
+import { useDeepEffect } from 'hooks/useDeep';
 import { TimeLogStages } from 'hooks/useTimeLog';
 
-import { getByFilters, getGroupedWellboresByWellIds } from '../service';
+import {
+  getAllByFilters,
+  getByFilters,
+  getGroupedWellboresByWellIds,
+} from '../service';
 import { Well } from '../types';
 import { handleWellSearchError } from '../utils/wellSearch';
 
@@ -20,6 +25,26 @@ import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
 const wellSearchMetric = Metrics.create(LOG_WELL_SEARCH);
+
+export const useAllWellSearchResultQuery = (): UseQueryResult<Well[]> => {
+  const { data: wellConfig } = useWellConfig();
+  const wellFilter = useCommonWellFilter();
+  const queryClient = useQueryClient();
+
+  useDeepEffect(() => {
+    queryClient.invalidateQueries([WELL_QUERY_KEY.SEARCH, 'allWells']);
+  }, [wellFilter]);
+
+  return useQuery(
+    [WELL_QUERY_KEY.SEARCH, 'allWells'],
+    () => {
+      return getAllByFilters(wellFilter);
+    },
+    {
+      enabled: !wellConfig?.disabled,
+    }
+  );
+};
 
 export const useWellSearchResultQuery = (): UseQueryResult<Well[]> => {
   const wellFilter = useCommonWellFilter();

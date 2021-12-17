@@ -1,3 +1,4 @@
+import { screen } from '@testing-library/testcafe';
 import { Selector, t } from 'testcafe';
 
 import {
@@ -15,9 +16,9 @@ class Topbar {
     'button.cogs-menu-item'
   ).withText('Feedback');
 
-  public readonly feedbackDropdown = Selector(
-    '[data-test-id="feedback-options"]'
-  );
+  public readonly feedbackDropdown = screen.getByRole('button', {
+    name: 'Help',
+  });
 
   public readonly clickNavigationTab = async (tabName: string) => {
     progress(`Clicking '${tabName}' tab in topbar`);

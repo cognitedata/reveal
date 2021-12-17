@@ -18,6 +18,7 @@ import { NotFoundPage } from 'pages/authorized/notfound';
 import { Search } from 'pages/authorized/search';
 
 import { CookieConsent } from './CookieConsent';
+import { Dashboard } from './search/dashboard';
 
 const Content = () => {
   useUserSyncQuery();
@@ -37,6 +38,7 @@ const Content = () => {
             <Switch>
               <Route path={navigation.SEARCH} render={() => <Search />} />
               <Route path={navigation.FAVORITES} render={() => <Favorites />} />
+              <Route path={navigation.DASHBOARD} render={() => <Dashboard />} />
 
               <Route
                 path={navigation.ADMIN}

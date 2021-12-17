@@ -16,31 +16,19 @@ describe('Feedback', () => {
   afterAll(jest.clearAllMocks);
   beforeEach(jest.clearAllMocks);
 
-  const feedbackOnClick = jest.fn();
   const intercomHelpShow = jest.fn();
 
   const defaultTestInit = async () => {
     const store: Store = getMockedStore();
-    return testRendererModal(Feedback, store, { feedbackOnClick });
+    return testRendererModal(Feedback, store, {});
   };
 
   it('should render contact menu items when click `Help` button', async () => {
     await defaultTestInit();
 
-    fireEvent.click(screen.getByTestId('feedback-options'));
+    fireEvent.click(screen.getByRole('button', { name: 'Help' }));
     expect(screen.getByText('Feedback')).toBeInTheDocument();
     expect(screen.getByText('Help')).toBeInTheDocument();
-  });
-
-  it('should call `feedbackOnClick` only once when click `Feedback` option', async () => {
-    await defaultTestInit();
-
-    expect(feedbackOnClick).toHaveBeenCalledTimes(0);
-    fireEvent.click(screen.getByTestId('feedback-options'));
-
-    fireEvent.click(screen.getByText('Feedback'));
-    expect(feedbackOnClick).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText('Feedback')).not.toBeInTheDocument();
   });
 
   it('should call `intercomHelper.show` only once when click `Help` option', async () => {
@@ -50,7 +38,7 @@ describe('Feedback', () => {
     await defaultTestInit();
 
     expect(intercomHelpShow).toHaveBeenCalledTimes(0);
-    fireEvent.click(screen.getByTestId('feedback-options'));
+    fireEvent.click(screen.getByRole('button', { name: 'Help' }));
 
     fireEvent.click(screen.getByText('Help'));
     expect(intercomHelpShow).toHaveBeenCalledTimes(1);
@@ -60,9 +48,12 @@ describe('Feedback', () => {
   it('should minimize the menu items drop-down when click an option', async () => {
     await defaultTestInit();
 
-    fireEvent.click(screen.getByTestId('feedback-options'));
+    fireEvent.click(screen.getByRole('button', { name: 'Help' }));
+    expect(screen.queryByText('Send')).not.toBeInTheDocument();
+
     expect(screen.getByText('Feedback')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Feedback'));
-    expect(screen.queryByText('Feedback')).not.toBeInTheDocument();
+
+    expect(screen.getByText('Send')).toBeInTheDocument();
   });
 });

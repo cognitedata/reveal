@@ -1,4 +1,4 @@
-import { FeatureCollection } from '@turf/helpers';
+import { FeatureCollection, Geometry } from '@turf/helpers';
 import head from 'lodash/head';
 import isFunction from 'lodash/isFunction';
 
@@ -6,7 +6,6 @@ import { fetchGet } from '_helpers/fetch';
 import { getCogniteSDKClient } from '_helpers/getCogniteSDKClient';
 import { API_PLAYGROUND_DOMAIN } from 'constants/app';
 import { NPDLayerItemResponse } from 'modules/map/types';
-import { SpatialSearchItemResponse } from 'modules/wellSearch/service';
 
 export function getMapContent(url: string): Promise<FeatureCollection> {
   return new Promise((resolve) => {
@@ -63,6 +62,14 @@ export function getMapContent(url: string): Promise<FeatureCollection> {
         networkUpdate();
       });
   });
+}
+
+export interface SpatialSearchItemResponse {
+  assetIds: number[];
+  name: string;
+  attributes: {
+    head: Geometry;
+  };
 }
 
 async function getWellHeads(tenant: string, cursor?: string) {

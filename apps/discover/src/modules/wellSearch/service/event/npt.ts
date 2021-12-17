@@ -15,19 +15,18 @@ export async function getNptEventsByWellboreIds(
   startNetworkTimer();
 
   const wellboreIds = Object.values(wellboreExternalIdMap);
-  let { items, nextCursor } = await getNPTItems(
-    { wellboreIds },
-    undefined,
-    EVENT_PER_PAGE
-  );
+  let { items, nextCursor } = await getNPTItems({
+    filter: { wellboreIds },
+    limit: EVENT_PER_PAGE,
+  });
 
   while (nextCursor) {
     // eslint-disable-next-line no-await-in-loop
-    const response = await getNPTItems(
-      { wellboreIds },
-      nextCursor,
-      EVENT_PER_PAGE
-    );
+    const response = await getNPTItems({
+      filter: { wellboreIds },
+      cursor: nextCursor,
+      limit: EVENT_PER_PAGE,
+    });
     nextCursor = response.nextCursor;
     items = [...items, ...response.items];
   }

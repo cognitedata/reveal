@@ -9,7 +9,6 @@ import styled from 'styled-components/macro';
 import { Graphic, TopBar } from '@cognite/cogs.js';
 import { useTranslation } from '@cognite/react-i18n';
 
-import GeneralFeedback from 'components/modals/general-feedback';
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useClearAllFilters } from 'modules/api/savedSearches/hooks/useClearAllFilters';
@@ -20,7 +19,11 @@ import { sizes } from 'styles/layout';
 import { setActivePanel } from '../../../modules/resultPanel/actions';
 
 import { AdminSettings } from './AdminSettings';
-import { SEARCH_LINK_TEXT_KEY, FAVORITES_LINK_TEXT_KEY } from './constants';
+import {
+  SEARCH_LINK_TEXT_KEY,
+  FAVORITES_LINK_TEXT_KEY,
+  DASHBOARD_LINK_TEXT_KEY,
+} from './constants';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
 import { UserProfileButton } from './UserProfileButton';
@@ -50,20 +53,10 @@ const TopBarLogo = styled(TopBar.Logo)`
   cursor: pointer;
 `;
 
-// const Spacer = styled.div`
-//   border-left: 1px solid var(--cogs-greyscale-grey3);
-//   & .cogs-topbar--item__action .action-title {
-//     margin-left: 0;
-//   }
-//   & .cogs-btn.cogs-btn-secondary.cogs-topbar--item__action {
-//     border: none;
-//     padding: 0 12px;
-//   }
-// `;
-
 export const PATHNAMES = {
   SEARCH: 1,
   FAVORITES: 2,
+  DASHBOARD: 3,
   ADMIN: 3, // Default admin base path
   'ADMIN/FEEDBACK': 3,
   'ADMIN/USER': 4,
@@ -71,19 +64,15 @@ export const PATHNAMES = {
   'ADMIN/PROJECT_CONFIG': 6,
 };
 
-export const Topbar: React.FC = React.memo(() => {
+export const Topbar: React.FC = () => {
   const metrics = useGlobalMetrics('topbar');
-
-  const [feedbackIsVisible, setFeedbackIsVisible] =
-    React.useState<boolean>(false);
   const [active, setActive] = React.useState<number>(1);
-
   const { t } = useTranslation('global');
   const history = useHistory();
-
   const dispatch = useDispatch();
   const clearAllFilters = useClearAllFilters();
   const activePanel = useActivePanel();
+  const { pathname } = useLocation();
 
   const handleNavigate =
     (page: string, id = -1) =>
@@ -91,7 +80,6 @@ export const Topbar: React.FC = React.memo(() => {
       setActive(id);
       history.push(page);
     };
-  const { pathname } = useLocation();
 
   React.useEffect(() => {
     const mapOfPathNames = Object.entries(PATHNAMES);
@@ -161,6 +149,15 @@ export const Topbar: React.FC = React.memo(() => {
                 PATHNAMES.FAVORITES
               ),
             },
+            {
+              key: PATHNAMES.DASHBOARD,
+              name: t(DASHBOARD_LINK_TEXT_KEY) as string,
+              isActive: active === PATHNAMES.DASHBOARD,
+              onClick: handleNavigate(
+                navigation.DASHBOARD,
+                PATHNAMES.DASHBOARD
+              ),
+            },
           ])}
         />
       </TopBar.Left>
@@ -178,7 +175,7 @@ export const Topbar: React.FC = React.memo(() => {
           }}
         />
         <UserSettings />
-        <Feedback feedbackOnClick={setFeedbackIsVisible} />
+        <Feedback />
         <UserProfileButton />
 
         <LogoWrapper>
@@ -193,15 +190,10 @@ export const Topbar: React.FC = React.memo(() => {
     <>
       <Container data-testid="top-bar">
         <TopBar>
-          {renderTopBarLeft} {renderTopBarRight}
+          {renderTopBarLeft}
+          {renderTopBarRight}
         </TopBar>
       </Container>
-      {feedbackIsVisible && (
-        <GeneralFeedback
-          visible={feedbackIsVisible}
-          onCancel={() => setFeedbackIsVisible(false)}
-        />
-      )}
     </>
   );
-});
+};

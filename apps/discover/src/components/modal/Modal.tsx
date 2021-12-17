@@ -44,6 +44,7 @@ export const Modal: React.FC<Props> = ({
   return (
     <CustomModal
       {...props}
+      role="dialog"
       width={width || responsiveWidth}
       appElement={document.getElementById('root') || undefined}
     >

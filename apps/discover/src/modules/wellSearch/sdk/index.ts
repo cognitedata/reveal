@@ -3,6 +3,7 @@ import isUndefined from 'lodash/isUndefined';
 import { ProjectConfigGeneral } from '@cognite/discover-api-types';
 import { Cluster, NPTFilter } from '@cognite/sdk-wells-v2';
 
+import { fetchAllCursors } from '_helpers/fetchAllCursors';
 import { CommonWellFilter } from 'modules/wellSearch/types';
 
 import {
@@ -190,6 +191,16 @@ export const getWellItemsByFilter = (wellFilter: CommonWellFilter) => {
     : getWellSDKClientV2().wells.filter(wellFilter);
 };
 
+export const getAllWellItemsByFilter = (wellFilter: CommonWellFilter) => {
+  return fetchAllCursors<unknown>({
+    action: getWellSDKClientV3().wells.list,
+    actionProps: {
+      ...mapWellFilterToWellFilterRequest(wellFilter),
+      limit: 101,
+    },
+  });
+};
+
 export const getWellboresFromWells = (wellIds: number[]) => {
   return globalEnableWellSDKV3
     ? getWellSDKClientV3()
@@ -213,11 +224,15 @@ export const getWellboresByIds = (wellboreIds: number[]) => {
       );
 };
 
-export const getNPTItems = (
-  filter: NPTFilter,
-  cursor?: string,
-  limit?: number
-) => {
+export const getNPTItems = ({
+  filter,
+  cursor,
+  limit,
+}: {
+  filter: NPTFilter;
+  cursor?: string;
+  limit?: number;
+}) => {
   return globalEnableWellSDKV3
     ? getWellSDKClientV3()
         .npt.list({

@@ -17,7 +17,12 @@ import { SidebarState, SidebarActions } from './types';
 export const initialState = {
   isOpen: true,
   category: 'landing',
-  activeKeys: { documents: [], seismic: [], wells: [], landing: [] },
+  activeKeys: {
+    documents: [],
+    seismic: [],
+    wells: [],
+    landing: [],
+  },
   appliedFilters: {
     documents: getEmptyFacets(),
     seismic: {},
