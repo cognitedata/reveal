@@ -7396,6 +7396,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/intersects@^2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@types/intersects/-/intersects-2.5.0.tgz#4b60e30a91abaf974fb88d00645f3a61ea571ca8"
+  integrity sha512-0zpt+T2HILWWQwJD9BbYF0pNfcLzNUZBUxFeW3u8VwMEZ4lkjQIi5Fu2MnITwauuaY5tEGalKFzXtJiXE7WeCw==
+
 "@types/is-function@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/is-function/-/is-function-1.0.0.tgz#1b0b819b1636c7baf0d6785d030d12edf70c3e83"
@@ -18114,6 +18119,11 @@ interpret@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-2.2.0.tgz#1a78a0b5965c40a5416d007ad6f50ad27c417df9"
   integrity sha512-Ju0Bz/cEia55xDwUWEa8+olFpCiQoypjnQySseKtmjNrnps3P+xfpUmGr90T7yjlVJmOtybRvPXhKMbHr+fWnw==
+
+intersects@^2.7.2:
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/intersects/-/intersects-2.7.2.tgz#a3147de29034a8853b0c4dfe1a14d628678828d7"
+  integrity sha512-/LtLDq40iFtvnjhouev9p2R+jP+raVONPiD1t8Mcj879pkrLiav99BTRPBkfMPwSYr5vTNws3USGoW+8usS45A==
 
 interval-tree-1d@^1.0.1:
   version "1.0.4"

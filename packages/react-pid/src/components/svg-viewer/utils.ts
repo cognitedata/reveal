@@ -158,7 +158,7 @@ export const addOrRemoveLabelToInstance = (
 };
 
 export const colorSymbol = (
-  diagramInstanceId: string,
+  diagramInstanceId: DiagramInstanceId,
   strokeColor: string,
   symbolInstances: DiagramSymbolInstance[],
   additionalStyles?: { [key: string]: string }

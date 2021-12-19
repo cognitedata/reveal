@@ -90,6 +90,15 @@ export const ReactPid: React.FC = () => {
     );
   };
 
+  const findLinesAndConnections = () => {
+    if (pidDocument === undefined) return;
+
+    const { lineInstances, newConnections } =
+      pidDocument.findLinesAndConnection(symbolInstances, lines, connections);
+
+    setLines([...lines, ...lineInstances]);
+    setConnections(newConnections);
+  };
   const shouldShowPrompt = (symbolName: string) => {
     const symbolExist = getSymbolByName(symbols, symbolName) !== undefined;
     return symbolExist && existingSymbolPromptData?.resolution !== 'add';
@@ -183,6 +192,7 @@ export const ReactPid: React.FC = () => {
           deleteSymbol={deleteSymbol}
           deleteConnection={deleteConnection}
           fileUrl={fileUrl}
+          findLinesAndConnections={findLinesAndConnections}
           saveGraphAsJson={saveGraphAsJson}
         />
         <Viewport>

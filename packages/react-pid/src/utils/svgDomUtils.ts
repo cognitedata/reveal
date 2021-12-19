@@ -9,6 +9,9 @@ export const applyToLeafSVGElements = (
       }
       return;
     }
+    if (node instanceof SVGClipPathElement) {
+      return;
+    }
 
     for (let i = 0; i < node.children.length; i++) {
       traverse(node.children[i] as SVGElement);

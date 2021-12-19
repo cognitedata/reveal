@@ -1,12 +1,13 @@
 import styled from 'styled-components';
-import { ToolBar, ToolBarButton } from '@cognite/cogs.js';
+import { Button, ToolBar, ToolBarButton } from '@cognite/cogs.js';
 import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
 } from '@cognite/pid-tools';
-import { ToolType } from 'types';
+
+import { ToolType } from '../../types';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
@@ -43,6 +44,7 @@ interface SidePanelProps {
   deleteConnection: (connection: DiagramConnection) => void;
   connections: DiagramConnection[];
   fileUrl?: string;
+  findLinesAndConnections: () => void;
   saveGraphAsJson: () => void;
 }
 
@@ -59,6 +61,7 @@ export const SidePanel = ({
   deleteConnection,
   connections,
   fileUrl,
+  findLinesAndConnections,
   saveGraphAsJson,
 }: SidePanelProps) => {
   const ActionWithCustomStyling: ToolBarButton[][] = [
@@ -114,6 +117,8 @@ export const SidePanel = ({
         deleteConnection={deleteConnection}
         connections={connections}
       />
+      <Button onClick={findLinesAndConnections}> Auto Analysis</Button>
+
       <div>
         {active === 'addSymbol' &&
           AddSymbolController({ selection, saveSymbol })}

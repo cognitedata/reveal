@@ -37,12 +37,14 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//intersects",
     "@npm//svg-parser",
     "@npm//svg-path-parser",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
+    "@npm//@types/intersects",
     "@npm//@types/svg-parser",
     "@npm//@types/svg-path-parser",
 ]
@@ -57,6 +59,8 @@ DEV_DEPENDENCIES = [
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
     "constants": "dist/constants",
+    "findLinesAndConnections": "dist/findLinesAndConnections",
+    "geometry": "dist/geometry",
     "index": "dist/index",
     "matcher": "dist/matcher",
     "pid": "dist/pid",

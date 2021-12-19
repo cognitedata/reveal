@@ -8,7 +8,13 @@ import {
 export const getDiagramInstanceId = (
   symbolInstance: DiagramSymbolInstance
 ): DiagramInstanceId => {
-  return symbolInstance.pathIds.sort().join('-');
+  return getDiagramInstanceIdFromPathIds(symbolInstance.pathIds);
+};
+
+export const getDiagramInstanceIdFromPathIds = (
+  pathIds: string[]
+): DiagramInstanceId => {
+  return pathIds.sort().join('-');
 };
 
 export const getDiagramInstanceByPathId = (
@@ -22,6 +28,17 @@ export const getDiagramInstanceByPathId = (
     return symbolInstance[0];
   }
   return null;
+};
+
+export const isDiagramInstanceInList = (
+  diagramId: DiagramInstanceId,
+  symbolInstances: DiagramSymbolInstance[]
+) => {
+  return (
+    symbolInstances.find(
+      (instance) => diagramId === getDiagramInstanceId(instance)
+    ) !== undefined
+  );
 };
 
 export const getInstanceByDiagramInstanceId = (

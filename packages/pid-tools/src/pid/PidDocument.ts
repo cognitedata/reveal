@@ -1,12 +1,15 @@
 import { ElementNode, parse } from 'svg-parser';
 
 import {
-  BoundingBox,
+  DiagramConnection,
+  DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
+  BoundingBox,
   SvgPath,
   SvgRepresentation,
 } from '../types';
+import { findLinesAndConnections } from '../findLinesAndConnections';
 import { svgCommandToSegments } from '../matcher/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
 import { PathSegment, Point } from '../geometry';
@@ -99,6 +102,19 @@ export class PidDocument {
 
   findAllInstancesOfSymbol(symbol: DiagramSymbol): DiagramSymbolInstance[] {
     return findAllInstancesOfSymbol(this.pidPaths, symbol);
+  }
+
+  findLinesAndConnection(
+    symbolInstances: DiagramSymbolInstance[],
+    lineInstances: DiagramLineInstance[],
+    connections: DiagramConnection[]
+  ) {
+    return findLinesAndConnections(
+      this,
+      symbolInstances,
+      lineInstances,
+      connections
+    );
   }
 
   getBoundingBoxToPaths(pathIds: string[]): BoundingBox {

@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from 'fs';
 import path from 'path';
 
 import { PidDocument } from '../../pid/PidDocument';
-import { InstanceMatcher, MatchResult } from '../InstanceMatcher';
+import { InstanceMatcher, MatchResult } from '../../matcher/InstanceMatcher';
 import {
   DiagramLineInstance,
   DiagramSymbol,
