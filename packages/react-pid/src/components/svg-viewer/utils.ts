@@ -51,7 +51,7 @@ export const isInLabelSelection = (
   node: SVGElement,
   labelSelection: DiagramInstanceId | null
 ) => {
-  return labelSelection === node.id;
+  return isPathIdInInstance(node.id, labelSelection);
 };
 
 export const isLabelInInstance = (
@@ -178,6 +178,17 @@ export const colorSymbol = (
       );
     });
   }
+};
+
+export const setStrokeWidth = (
+  diagramInstance: DiagramSymbolInstance,
+  strokeWidth: string
+) => {
+  diagramInstance.pathIds.forEach((pathId) => {
+    (
+      document.getElementById(pathId) as unknown as SVGElement
+    ).style.strokeWidth = strokeWidth;
+  });
 };
 
 export const visualizeConnections = (
