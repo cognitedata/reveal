@@ -1,4 +1,3 @@
-import groupBy from 'lodash/groupBy';
 import sortedUniq from 'lodash/sortedUniq';
 
 import {
@@ -8,10 +7,12 @@ import {
   TrueVerticalDepths,
 } from '@cognite/sdk-wells-v3';
 
+import { groupByWellbore } from './groupByWellbore';
+
 export const getTrajectoryInterpolationRequests = (
   ndsEvents: Nds[]
 ): TrajectoryInterpolationRequest[] => {
-  const groupedEvents = groupBy(ndsEvents, 'wellboreMatchingId');
+  const groupedEvents = groupByWellbore(ndsEvents);
 
   return Object.keys(groupedEvents).map((wellboreMatchingId) => {
     const measuredDepths = sortedUniq(
@@ -43,7 +44,7 @@ export const getTVDForMD = (
 export const getDummyTrueVerticalDepths = (
   ndsEvents: Nds[]
 ): TrueVerticalDepths[] => {
-  const groupedEvents = groupBy(ndsEvents, 'wellboreMatchingId');
+  const groupedEvents = groupByWellbore(ndsEvents);
 
   return Object.keys(groupedEvents).map((wellboreMatchingId) => ({
     trueVerticalDepths: [],

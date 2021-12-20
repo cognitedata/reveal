@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
 
+import { Nds } from '@cognite/sdk-wells-v3';
+
 import { LOG_EVENTS_NDS } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
@@ -16,8 +18,10 @@ import {
 } from '../service';
 import { WellboreEventsMap, WellboreSourceExternalIdMap } from '../types';
 import { trimCachedData } from '../utils/common';
+import { groupByWellbore } from '../utils/groupByWellbore';
 
 import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
+import { useSmartCache } from './useSmartCache';
 
 interface Props {
   wellboreIds: string[];
@@ -35,17 +39,28 @@ export const useNdsInfiniteQuery = ({ wellboreIds }: Props) => {
     }
   );
 };
+
 interface NdsAllCursorsProps {
   wellboreIds: Set<string>;
 }
+/*
+ * This function will cache any wellboreId's you pass into it
+ *
+ * So if you pass in [1,2] it will cache them
+ * then if you pass in [3] it will add that onto the cache
+ * so the cache will now contain 3 items
+ *
+ */
 export const useAllNdsCursorsQuery = ({ wellboreIds }: NdsAllCursorsProps) => {
-  return useQuery(
-    WELL_QUERY_KEY.NDS_EVENTS_ALL,
-    () => {
-      return fetchAllNdsEvents({ wellboreIds });
-    },
-    { enabled: wellboreIds.size > 0 }
-  );
+  return useSmartCache<Nds>({
+    key: WELL_QUERY_KEY.NDS_EVENTS_CACHE,
+    items: wellboreIds,
+    tempKey: WELL_QUERY_KEY.NDS_EVENTS_ALL,
+    fetchAction: (items: Set<string>) =>
+      fetchAllNdsEvents({ wellboreIds: items }).then((response) =>
+        groupByWellbore(response)
+      ),
+  });
 };
 
 interface NdsQueryProps {

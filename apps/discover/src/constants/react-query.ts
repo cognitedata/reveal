@@ -65,6 +65,7 @@ export const ONLY_FETCH_ONCE = {
 };
 
 const WELLS = 'wells';
+const NDS = 'nds';
 export const WELL_QUERY_KEY = {
   SEARCH: [WELLS, 'search'],
   WELLBORES: [WELLS, 'wellbores'],
@@ -72,8 +73,9 @@ export const WELL_QUERY_KEY = {
   FILTER_OPTIONS: [WELLS, 'filterOptions'],
   CASINGS: [WELLS, 'casings'],
   TRAJECTORIES: [WELLS, 'trajectories'],
-  NDS_EVENTS: [WELLS, 'ndsEvents'],
-  NDS_EVENTS_ALL: [WELLS, 'ndsEvents', 'allCursors'],
+  NDS_EVENTS: [WELLS, NDS, 'old'],
+  NDS_EVENTS_ALL: [WELLS, NDS, 'current'],
+  NDS_EVENTS_CACHE: [WELLS, NDS, 'cache'],
   NPT_EVENTS: [WELLS, 'nptEvents'],
   MEASUREMENTS: [WELLS, 'measurements'],
   LOGS_PPFGS: ['logsPPFGs'],
