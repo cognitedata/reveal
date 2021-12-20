@@ -368,6 +368,12 @@ You don't have to run both containers. Just run one, and run the other part loca
 
 Note: the build of the app that the server hosts, needs to have the REACT_APP_API_KEY set BEFORE the build is run, since that env var is baked into `process.env`.
 
+## Running [(discover-api service)](https://github.com/cognitedata/application-services/tree/master/services/discover-api) locally
+
+1. Set `localDiscover` variable `true` in src/constants/app.ts file in discover.
+2. Clone the [(application services)](https://github.com/cognitedata/application-services) repository.
+3. Go through the README section in application services.
+
 # PR Process
 
 1. Commit (frequently) in your branch following the [commit conventions](https://www.conventionalcommits.org/en/v1.0.0/) (i.e., CC standard with
