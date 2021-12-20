@@ -31,6 +31,7 @@ const InputTimeSeriesEntry = ({
 }: React.PropsWithoutRef<ComponentProps>) => {
   const { setFieldValue, values } = useFormikContext<CalculationConfig>();
   const { unitType, unit, name, aggregateType, type } = timeSeries;
+
   const UNIT = UNIT_TYPE[unitType];
 
   const sampledExternalId = generateInputTimeSeriesExternalId({

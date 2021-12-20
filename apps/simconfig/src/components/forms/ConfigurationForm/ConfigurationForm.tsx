@@ -19,6 +19,7 @@ import { OutputSection } from './OutputSection';
 import { ScheduleSection } from './ScheduleSection';
 import { BHPEstimationSection } from './BHPEstimationSection';
 import { RootFindingSection } from './RootFindingSection';
+import { ChokeCurveSection } from './ChokeCurveSection';
 
 interface ComponentProps {
   formData?: CalculationConfig;
@@ -168,6 +169,7 @@ export function ConfigurationForm({
           <BHPEstimationSection isEditing={false} />
 
           <RootFindingSection isEditing={false} />
+          <ChokeCurveSection isEditing={false} />
           <InputSection />
           <OutputSection />
         </Form>

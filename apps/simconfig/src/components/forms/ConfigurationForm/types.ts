@@ -24,6 +24,7 @@ export interface CalculationConfig {
   outputSequences: ConfigOutputSequence[];
   estimateBHP?: ConfigEstimateBHP;
   rootFindingSettings?: ConfigRootFindingSettings;
+  chokeCurve?: ConfigChokeCurve;
 }
 export interface ConfigSchedule {
   enabled: boolean;
@@ -88,6 +89,11 @@ export interface ConfigEstimateBHP {
   enabled: boolean;
   method: keyof typeof BHP_ESTIMATION_METHOD;
   gaugeDepth?: GaugeDepth;
+}
+export interface ConfigChokeCurve {
+  unit: string;
+  opening: number[];
+  setting: number[];
 }
 
 interface GaugeDepth {

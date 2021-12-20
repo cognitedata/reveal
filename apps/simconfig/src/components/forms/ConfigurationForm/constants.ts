@@ -68,6 +68,11 @@ enum TEMPERATURE_UNIT {
   'deg R' = '°R',
   'deg K' = '°K',
 }
+
+enum PERCENTAGE_UNIT {
+  percent = 'percent',
+  fraction = 'fraction',
+}
 export enum ROOT_FINDING_METHOD {
   'min' = 'Min',
   'max' = 'Max',
@@ -95,5 +100,6 @@ export const UNIT_TYPE: { [x: string]: { [x: string]: string } } =
     GasRate: GAS_RATE_UNIT,
     LiqRate: LIQUID_RATE_UNIT,
     Temperature: TEMPERATURE_UNIT,
+    Percentage: PERCENTAGE_UNIT,
     'LiqRate/GasRate': LIQUID_RATE_GAS_RATE_UNIT,
   });
