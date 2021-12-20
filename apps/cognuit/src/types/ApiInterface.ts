@@ -70,9 +70,10 @@ interface OwToStudioConfig {
   tag_name: string;
 }
 
-interface Source {
+export interface Source {
   external_id: string;
   source: string;
+  instance?: string;
 }
 
 export type Status = 'In progress' | 'Succeeded' | 'Failed';

@@ -5,6 +5,7 @@ import React from 'react';
 import {
   ConfigurationResponse,
   ConnectorInstance,
+  Source as APISource,
 } from '../types/ApiInterface';
 
 export interface RevisionObject {
@@ -136,7 +137,8 @@ export interface TranslationStatisticsObject {
  */
 export interface ExtendedConfigurationsResponse extends ConfigurationResponse {
   statusColor: ConfigurationResponse['status_active'];
-  repoProject: string;
+  sourceProject: APISource;
+  targetProject: APISource;
   actions: {
     direction: ConfigurationResponse['source']['source'];
     statusActive: ConfigurationResponse['status_active'];

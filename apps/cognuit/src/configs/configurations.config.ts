@@ -6,7 +6,8 @@ export default {
     'last_updated',
     'last_updated',
     'author',
-    'repoProject',
+    'sourceProject',
+    'targetProject',
     'progress',
     'actions',
   ],
@@ -17,8 +18,12 @@ export default {
       value: '',
     },
     {
-      keyName: 'repoProject',
-      value: 'Repository/Project',
+      keyName: 'sourceProject',
+      value: 'Repository',
+    },
+    {
+      keyName: 'targetProject',
+      value: 'Project',
     },
     {
       keyName: 'status_actve',

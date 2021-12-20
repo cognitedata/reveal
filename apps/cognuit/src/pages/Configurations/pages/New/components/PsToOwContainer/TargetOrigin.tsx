@@ -57,7 +57,6 @@ export const TargetOrigin: FC<Props> = ({
         <Select
           placeholder="Available projects"
           closeMenuOnSelect
-          theme="filled"
           value={
             configuration.target.external_id.length > 0
               ? {
@@ -67,7 +66,7 @@ export const TargetOrigin: FC<Props> = ({
               : []
           }
           options={availableProjects.map((item) => ({
-            label: item.external_id,
+            label: `${item.external_id} (${item.instance})`,
             value: item.id.toString(),
           }))}
           onChange={(event: any) => {

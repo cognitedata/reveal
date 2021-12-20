@@ -72,7 +72,6 @@ export const SourceOrigin: FC<Props> = ({
           isMulti
           placeholder="Available business tags"
           closeMenuOnSelect
-          theme="filled"
           value={configuration.business_tags.map((item) => ({
             label: item,
             value: item,
@@ -92,7 +91,6 @@ export const SourceOrigin: FC<Props> = ({
           isMulti
           placeholder="Available status tags"
           closeMenuOnSelect
-          theme="filled"
           value={configuration.data_status.map((item) => ({
             label: item,
             value: item,
@@ -140,7 +138,6 @@ export const SourceOrigin: FC<Props> = ({
           <Select
             placeholder="Available repositories"
             closeMenuOnSelect
-            theme="filled"
             value={
               configuration.source.external_id.length > 0
                 ? {
@@ -150,7 +147,7 @@ export const SourceOrigin: FC<Props> = ({
                 : []
             }
             options={availableRepositories.map((item) => ({
-              label: item.external_id,
+              label: `${item.external_id} (${item.instance})`,
               value: item.id.toString(),
             }))}
             onChange={(event: any) => {

@@ -12,7 +12,8 @@ describe('Configurations/Curate', () => {
         {
           ...item,
           statusColor: item.status_active,
-          repoProject: `${item.source.external_id} / ${item.target.external_id}`,
+          sourceProject: item.source,
+          targetProject: item.target,
           actions: {
             direction: 'psToOw',
             statusActive: item.status_active,

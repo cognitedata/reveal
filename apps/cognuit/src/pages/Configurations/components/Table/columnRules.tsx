@@ -74,8 +74,14 @@ export const columnRules: (actions: Props) => Rule[] = ({
       render: ({ value }: { value: any }) => value.external_id,
     },
     {
-      key: 'repoProject',
-      render: ({ value }: { value: string }) => value,
+      key: 'sourceProject',
+      render: ({ value }: { value: any }) =>
+        `${value.external_id} (${value.instance})`,
+    },
+    {
+      key: 'targetProject',
+      render: ({ value }: { value: any }) =>
+        `${value.external_id} (${value.instance})`,
     },
     {
       key: 'status_active',

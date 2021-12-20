@@ -10,7 +10,9 @@ export function curateConfigurationsData(
   return data.map((item) => ({
     ...item,
     statusColor: item.status_active,
-    repoProject: `${item.source.external_id} / ${item.target.external_id}`,
+    // 'sourceProject' and 'targetProject' is what used to be 'repoProject' before.
+    sourceProject: item.source,
+    targetProject: item.target,
     actions: {
       direction: item.source.source === 'Studio' ? 'psToOw' : 'owToPs',
       statusActive: item.status_active,

@@ -54,7 +54,9 @@ const extendedConfigurations = [
   {
     ...defaultConfigurations[0],
     statusColor: defaultConfigurations[0].status_active,
-    repoProject: `${defaultConfigurations[0].source.external_id} / ${defaultConfigurations[0].target.external_id}`,
+    sourceProject: defaultConfigurations[0].source,
+    targetProject: defaultConfigurations[0].target,
+
     actions: {
       direction:
         defaultConfigurations[0].source.source === 'Studio'
@@ -103,9 +105,15 @@ const generatedColumns = [
     sorter: true,
   },
   {
-    title: 'Repository/Project',
-    dataIndex: 'repoProject',
-    key: 'repoProject',
+    title: 'Repository',
+    dataIndex: 'sourceProject',
+    key: 'sourceProject',
+    sorter: expect.any(Boolean),
+  },
+  {
+    title: 'Project',
+    dataIndex: 'targetProject',
+    key: 'targetProject',
     sorter: expect.any(Boolean),
   },
   {
@@ -160,8 +168,14 @@ const curatedColumns = [
     disableSortBy: true,
   },
   {
-    Header: 'Repository/Project',
-    accessor: 'repoProject',
+    Header: 'Repository',
+    accessor: 'sourceProject',
+    Cell: expect.any(Function),
+    disableSortBy: expect.any(Boolean),
+  },
+  {
+    Header: 'Project',
+    accessor: 'targetProject',
     Cell: expect.any(Function),
     disableSortBy: expect.any(Boolean),
   },
