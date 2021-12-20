@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components';
 import { SDKProvider } from '@cognite/sdk-provider';
 import GlobalStyle from 'styles/global-styles';
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { SubAppWrapper, AuthWrapper } from '@cognite/cdf-utilities';
 // import Routes from './routes';
 import RootApp from 'containers/App';

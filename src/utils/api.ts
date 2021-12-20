@@ -1,4 +1,4 @@
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { QueryKey } from 'react-query';
 import {
   CogFunctionUpload,
@@ -9,7 +9,7 @@ import {
   Call,
   CreateScheduleApiParams,
 } from 'types';
-import { FileUploadResponse } from '@cognite/cdf-sdk-singleton';
+import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import UploadGCS from '@cognite/gcs-browser-upload';
 import { sleep } from 'helpers';
@@ -259,5 +259,6 @@ export const createSession = (clientCredentials?: {
 };
 
 export const isOIDCFlow = () => {
-  return sdk.getOAuthFlowType() === 'AAD_OAUTH';
+  // TODO(CDFUX-1188): fix TODOs when sdk-singleton starts using sdk v6
+  return (sdk as any).getOAuthFlowType() === 'AAD_OAUTH';
 };

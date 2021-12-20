@@ -8,7 +8,7 @@ import {
   Log,
   Schedule,
 } from 'types';
-import sdk from 'sdk-singleton';
+import sdk from '@cognite/cdf-sdk-singleton';
 import {
   allFunctionsKey,
   allSchedulesKey,

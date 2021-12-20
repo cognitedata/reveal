@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
 import * as mixpanelConfig from 'mixpanel-browser';
 import { useHistory } from 'react-router-dom';
-import { getAuthState } from 'sdk-singleton';
+import { getAuthState } from '@cognite/cdf-sdk-singleton';
 import { Loader } from 'components/Common';
 import ErrorBoundary from 'components/ErrorBoundary';
 

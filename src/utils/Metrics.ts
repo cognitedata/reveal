@@ -1,5 +1,5 @@
 import * as mixpanelConfig from 'mixpanel-browser';
-import sdk, { getAuthState } from 'sdk-singleton';
+import sdk, { getAuthState } from '@cognite/cdf-sdk-singleton';
 
 const MIXPANEL_TOKEN = '504cfc7feaad55b838d866aff8f91a58';
 
