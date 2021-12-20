@@ -3,10 +3,9 @@ import React from 'react';
 import { Body, Button, Menu } from '@cognite/cogs.js';
 
 import { openInNewTab } from '_helpers/openInNewTab';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
+import { useExternalLinksConfig } from 'hooks/useExternalLinksConfig';
 import { Asset } from 'modules/map/types';
 import { WELL_FIELDS_WITH_PRODUCTION_DATA } from 'modules/wellSearch/constants';
-import { ExternalLinksConfig } from 'tenants/types';
 
 import { AssetListItem, AssetListItemContainer } from './elements';
 
@@ -25,8 +24,7 @@ const Item = ({
   const handleZoomtoAsset = () => {
     zoomToAsset(asset);
   };
-  const { data: tenantConfigExternalLinks } =
-    useTenantConfigByKey<ExternalLinksConfig>('externalLinks');
+  const tenantConfigExternalLinks = useExternalLinksConfig();
 
   const links =
     tenantConfigExternalLinks && tenantConfigExternalLinks.hasProductionData

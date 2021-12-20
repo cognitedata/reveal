@@ -8,9 +8,9 @@ import keyBy from 'lodash/keyBy';
 
 import { getTenantInfo } from '@cognite/react-container';
 
+import { fetchTenantFile } from '_helpers/fetchTenantFile';
 import { LAYERS_QUERY_KEY } from 'constants/react-query';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { fetchTenantFile } from 'hooks/useTenantConfig';
 import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
 import { SelectableLayer, MapDataSource } from 'modules/map/types';
 import { WELL_HEADS_LAYER_ID } from 'pages/authorized/search/map/constants';

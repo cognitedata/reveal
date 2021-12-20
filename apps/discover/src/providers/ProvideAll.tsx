@@ -9,7 +9,6 @@ import { ProvideAuthSetup } from './ProvideAuthSetup';
 import { ProvideAzureTelemetry } from './ProvideAzureTelemetry';
 import { ProvideMixpanelSetup } from './ProvideMixpanelSetup';
 import { ProvideProjectConfig } from './ProvideProjectConfig';
-import { ProvideTenantSetup } from './ProvideTenantSetup';
 import { ProvideUnleash } from './ProvideUnleash';
 
 export const Providers: React.FC = ({ children }) => {
@@ -25,9 +24,7 @@ export const Providers: React.FC = ({ children }) => {
             <ProvideProjectConfig>
               <ProvideAuthSetup authState={authState}>
                 <ProvideAzureTelemetry>
-                  <ProvideTenantSetup>
-                    <ProvideMixpanelSetup>{children}</ProvideMixpanelSetup>
-                  </ProvideTenantSetup>
+                  <ProvideMixpanelSetup>{children}</ProvideMixpanelSetup>
                 </ProvideAzureTelemetry>
               </ProvideAuthSetup>
             </ProvideProjectConfig>

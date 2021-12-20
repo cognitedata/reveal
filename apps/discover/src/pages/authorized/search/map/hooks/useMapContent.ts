@@ -11,8 +11,8 @@ import {
   CancellablePromise,
   convertToCancellablePromise,
 } from '_helpers/cancellablePromise';
+import { fetchTenantFile } from '_helpers/fetchTenantFile';
 import { log } from '_helpers/log';
-import { fetchTenantFile } from 'hooks/useTenantConfig';
 import { geospatialV1 } from 'modules/api/geospatial/geospatialV1';
 import { setSources, patchSource, setAssets } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';

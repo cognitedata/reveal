@@ -7,8 +7,8 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 
+import { useExternalLinksConfig } from 'hooks/useExternalLinksConfig';
 import useSelector from 'hooks/useSelector';
-import { useTenantConfigByKey } from 'hooks/useTenantConfig';
 import { WELLBORE_COLORS } from 'modules/wellInspect/constants';
 import {
   ASSETS_GROUPED_PROPERTY,
@@ -26,7 +26,6 @@ import {
   WellId,
 } from 'modules/wellSearch/types';
 import { getFilteredWellbores } from 'modules/wellSearch/utils/wells';
-import { ExternalLinksConfig } from 'tenants/types';
 
 import { useEnabledWellSdkV3 } from '../../hooks/useEnabledWellSdkV3';
 
@@ -150,8 +149,7 @@ export const useIndeterminateWells = () => {
 // This returns external links based on the selected wells
 export const useExternalLinkFromSelectedWells = (): string[] => {
   const selectedWells = useSelectedWells();
-  const { data: tenantConfigExternalLinks } =
-    useTenantConfigByKey<ExternalLinksConfig>('externalLinks');
+  const tenantConfigExternalLinks = useExternalLinksConfig();
 
   return React.useMemo(() => {
     const externalLinks: string[] = [];

@@ -27,10 +27,6 @@ jest.mock('react-redux', () => ({
 
 const mockExternalLink = jest.fn();
 
-jest.mock('hooks/useTenantConfig', () => ({
-  useTenantConfig: () => mockExternalLink(),
-}));
-
 const wellState = {
   wellSearch: {
     wells: [
