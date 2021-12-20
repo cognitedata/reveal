@@ -1,9 +1,13 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { SidecarConfig } from '@cognite/sidecar';
 
 import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
-export const CogniteQueryClientProvider: React.FC = ({ children }) => {
+export const CogniteQueryClientProvider: React.FC<{
+  reactQueryDevtools?: SidecarConfig['reactQueryDevtools'];
+}> = ({ reactQueryDevtools, children }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -12,18 +16,29 @@ export const CogniteQueryClientProvider: React.FC = ({ children }) => {
       },
     },
   });
+
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      {!reactQueryDevtools?.disabled && (
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          position={reactQueryDevtools?.position || 'bottom-right'}
+        />
+      )}
+      {children}
+    </QueryClientProvider>
   );
 };
 
 export const ConditionalQueryClientProvider: React.FC<{
   children: React.ReactElement;
   disabled?: boolean;
-}> = ({ disabled, children }) => (
+  reactQueryDevtools?: SidecarConfig['reactQueryDevtools'];
+}> = ({ disabled, reactQueryDevtools, children }) => (
   <ConditionalWrapperWithProps
     condition={!disabled}
     wrap={CogniteQueryClientProvider}
+    reactQueryDevtools={reactQueryDevtools}
   >
     {children}
   </ConditionalWrapperWithProps>

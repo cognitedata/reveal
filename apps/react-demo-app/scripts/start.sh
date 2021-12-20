@@ -42,7 +42,7 @@ function cleanup {
 
 trap cleanup EXIT
 
-../../node_modules/.bin/react-scripts --max-old-space-size=4096 start
+ibazel run :start --max-old-space-size=4096
 
 EXIT_CODE=$?
 

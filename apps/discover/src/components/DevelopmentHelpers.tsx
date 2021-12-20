@@ -1,7 +1,5 @@
 // import React from 'react';
 
-import { ReactQueryDevtools } from 'react-query/devtools';
-
 import { isLocalhost } from '@cognite/react-container';
 import { ErrorWatcher } from '@cognite/react-errors';
 
@@ -31,7 +29,6 @@ export const DevelopmentHelpers = () => {
     return (
       <>
         <ErrorWatcher errorMode="flash" zIndex={layers.MAXIMUM} />
-        <ReactQueryDevtools position="bottom-right" initialIsOpen={false} />
       </>
     );
   }

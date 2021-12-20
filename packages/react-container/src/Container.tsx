@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { Router } from 'react-router-dom';
+import merge from 'lodash/merge';
 import { Store } from 'redux';
-import { withI18nSuspense } from '@cognite/react-i18n';
+import { Loader } from '@cognite/cogs.js';
+import { IntercomBootSettings } from '@cognite/intercom-helper';
 import { ErrorBoundary } from '@cognite/react-errors';
+import { withI18nSuspense } from '@cognite/react-i18n';
+import { SentryProps } from '@cognite/react-sentry';
 import { TenantSelector } from '@cognite/react-tenant-selector';
 import { SidecarConfig } from '@cognite/sidecar';
-import { IntercomBootSettings } from '@cognite/intercom-helper';
-import { Loader } from '@cognite/cogs.js';
 import '@cognite/cogs.js/dist/cogs.css';
-import merge from 'lodash/merge';
-import { SentryProps } from '@cognite/react-sentry';
 
-import { IntercomContainer } from './components/Intercom';
 import {
   AuthContainer,
   AuthContainerForApiKeyMode,
@@ -20,9 +19,10 @@ import {
   ConditionalSentry,
   TranslationWrapper,
 } from './components';
+import { IntercomContainer } from './components/Intercom';
 import { useCogniteSDKClient, createBrowserHistory } from './internal';
-import { storage, getTenantInfo } from './utils';
 import { ConditionalReduxProvider } from './providers';
+import { storage, getTenantInfo } from './utils';
 
 const { REACT_APP_API_KEY: apiKey, REACT_APP_API_KEY_PROJECT: project } =
   process.env;
@@ -58,6 +58,7 @@ const RawContainer: React.FC<Props> = ({
     disableSentry,
     disableIntercom,
     disableReactQuery,
+    reactQueryDevtools,
   } = sidecar;
 
   const [history] = React.useState(() => createBrowserHistory(possibleTenant));
@@ -110,7 +111,10 @@ const RawContainer: React.FC<Props> = ({
 
   return (
     <ConditionalLoopDetector disabled={disableLoopDetector}>
-      <ConditionalQueryClientProvider disabled={disableReactQuery}>
+      <ConditionalQueryClientProvider
+        disabled={disableReactQuery}
+        reactQueryDevtools={reactQueryDevtools}
+      >
         <ConditionalSentry
           disabled={disableSentry}
           history={history}

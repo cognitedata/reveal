@@ -1,3 +1,8 @@
+## 3.0.0 Dec 17 2021
+
+- Added `ReactQueryDevtools` by default
+- Extended sidecar options to disable `ReactQueryDevtools`
+
 ## 2.2.2 Nov 18 2021
 
 - Moved `storage.init` into a useEffect hook

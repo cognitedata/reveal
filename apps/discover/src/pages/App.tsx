@@ -12,6 +12,8 @@ import ApplicationRoutes from 'core/routes';
 import { configureStore } from 'core/store';
 import { GlobalStyles } from 'styles/globalStyles';
 
+import { DevelopmentHelpers } from '../components/DevelopmentHelpers';
+
 if (isTest) {
   ReactModal.setAppElement('#root');
 }
@@ -59,6 +61,7 @@ export const AppRoot: React.FC = () => {
     <ReduxProvider store={store}>
       <Container sidecar={sidecar as SidecarConfig}>
         <>
+          <DevelopmentHelpers />
           <GlobalStyles />
           {/* eg: feature flags, query cache */}
           <DiscoverProviders>

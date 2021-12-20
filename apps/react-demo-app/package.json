@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "start": "./scripts/start.sh",
-    "start:bazel": "ibazel run :start",
     "build": "./scripts/build.sh",
     "build:bazel": "bazel build :build_sed",
     "test": "./scripts/test.sh",

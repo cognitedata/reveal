@@ -72,4 +72,8 @@ export type SidecarConfig = ApiBaseUrls & {
   mixpanel?: string;
   privacyPolicyUrl: string;
   simconfigApiBaseUrl: string;
+  reactQueryDevtools?: {
+    disabled: boolean;
+    position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  };
 };

@@ -4,7 +4,6 @@ import { Switch, Redirect, Route } from 'react-router-dom';
 import { ToastContainer } from '@cognite/cogs.js';
 import { Logout } from '@cognite/react-container';
 
-import { DevelopmentHelpers } from 'components/DevelopmentHelpers';
 import { Page } from 'components/page';
 import navigation from 'constants/navigation';
 import { usePageSettings } from 'hooks/usePageSettings';
@@ -26,7 +25,6 @@ const Content = () => {
 
   return (
     <div role="application">
-      <DevelopmentHelpers />
       <ToastContainer />
       <CreateFavoriteSetModal /> {/* Global Modal to create Favorite set */}
       <AppFrame>

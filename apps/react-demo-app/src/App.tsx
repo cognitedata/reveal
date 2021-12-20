@@ -1,6 +1,5 @@
 import GlobalStyles from 'global-styles';
 import { Switch, Redirect, Route } from 'react-router-dom';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { Container, Logout } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import Info from 'pages/Info';
@@ -19,7 +18,6 @@ const App = () => (
     <>
       <GlobalStyles />
       <MenuBar />
-      <ReactQueryDevtools position="bottom-right" initialIsOpen={false} />
 
       <Switch>
         <Route path={PAGES.HOME} render={() => <Home />} />

@@ -61,6 +61,6 @@ const getAadApplicationId = (cluster: string) => {
   },
   enableUserManagement: true,
   ...((window as any).__cogniteSidecar || {}),
-};
+} as SidecarConfig;
 
-export default (window as any).__cogniteSidecar as SidecarConfig;
+export default (window as any).__cogniteSidecar;
