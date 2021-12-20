@@ -177,12 +177,11 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       text: '',
       x: translatedMousePosition.x,
       y: translatedMousePosition.y,
-      fontSize: this.shapeSettings.fontSize || 32,
-      fill: this.shapeSettings.fill || this.shapeSettings.stroke,
       userGenerated: true,
       type: 'text',
       name: 'drawing',
       inGroup: groupName,
+      ...this.shapeSettings.text,
     });
 
     this.ornateInstance.addShape(this.newText);

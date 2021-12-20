@@ -41,14 +41,13 @@ export class RectTool extends Tool implements ICogniteOrnateTool {
       y: translatedMousePosition.y,
       width: 1,
       height: 1,
-      stroke: this.shapeSettings.stroke,
-      strokeWidth: this.shapeSettings.strokeWidth,
       userGenerated: true,
       type: 'rect',
       name: 'drawing',
       fill: `rgba(255,255,255,0)`,
       // TO DO: Refactor how we do this
       inGroup: groupName,
+      ...this.shapeSettings.rect,
     });
 
     // If we get scaled by the transform tool - correct ourselves.

@@ -1,4 +1,4 @@
-import { PRESET_COLORS } from 'components/ShapeSettings/constants';
+import { PRESET_COLORS } from 'context';
 import styled from 'styled-components';
 import { Theme } from 'utils/theme';
 
@@ -10,7 +10,7 @@ export const AnnotationIcon = styled.div`
 `;
 
 export const DrawingIcon = styled.div`
-  border: 2px solid ${PRESET_COLORS[0]};
+  border: 2px solid ${PRESET_COLORS[0].string()};
   width: 16px;
   height: 16px;
 `;

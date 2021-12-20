@@ -30,13 +30,12 @@ export class CircleTool extends Tool implements ICogniteOrnateTool {
       y: translatedMousePosition.y,
       width: 1,
       height: 1,
-      stroke: this.shapeSettings.stroke,
-      strokeWidth: this.shapeSettings.strokeWidth,
       userGenerated: true,
       type: 'circle',
       name: 'drawing',
       fill: `rgba(255,255,255,0)`,
       inGroup: groupName,
+      ...this.shapeSettings.circle,
     });
 
     // If we get scaled by the transform tool - correct ourselves.

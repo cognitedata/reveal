@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Asset, CogniteClient, FileInfo } from '@cognite/sdk';
 import {
   CogniteOrnate,
@@ -7,7 +13,6 @@ import {
   OrnateAnnotation,
   OrnateAnnotationInstance,
   ToolType,
-  ShapeSettings as ShapeSettingsType,
   // Tools
   MoveTool,
   LineTool,
@@ -25,7 +30,6 @@ import debounce from 'lodash/debounce';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
 import WorkSpaceTools from 'components/WorkSpaceTools';
 import ShapeSettings from 'components/ShapeSettings';
-import { defaultShapeSettings } from 'components/ShapeSettings/constants';
 import { Button, Icon, toast, ToastContainer } from '@cognite/cogs.js';
 import WorkspaceService from 'services/workspace.service';
 import { Workspace, WorkspaceDocument } from 'types';
@@ -48,6 +52,7 @@ import { Theme } from 'utils/theme';
 import { Comments } from 'components/Comments/Comments';
 import { useMetrics } from '@cognite/metrics';
 import ContextMenu from 'components/ContextMenu';
+import { defaultShapeSettings, OrnateContext } from 'context';
 import { Node, NodeConfig } from 'konva/lib/Node';
 
 import {
@@ -62,12 +67,10 @@ interface OrnateProps {
 }
 
 const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
+  const { ornateViewer, initOrnate, activeTool, setActiveTool } =
+    useContext(OrnateContext);
   const workspaceService = new WorkspaceService(client);
-  const ornateViewer = useRef<CogniteOrnate>();
   const metrics = useMetrics('Ornate');
-  const [activeTool, setActiveTool] = useState<ToolType>('default');
-  const [shapeSettings, setShapeSettings] =
-    useState<ShapeSettingsType>(defaultShapeSettings);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
   const [selectedNode, setSelectedNode] = useState<Konva.Node | null>(null);
@@ -87,9 +90,15 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     if (ornateViewer.current) {
       return;
     }
-    ornateViewer.current = new CogniteOrnate({
-      container: '#container',
-    });
+
+    initOrnate(
+      new CogniteOrnate({
+        container: '#container',
+      })
+    );
+
+    ornateViewer.current!.shapeSettings = defaultShapeSettings;
+
     document.addEventListener('ornate_toolChange', ((
       e: CustomEvent<ToolType>
     ) => {
@@ -310,13 +319,8 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
     metrics.track('toolChange', { tool });
     ornateViewer.current!.handleToolChange(tool);
     setActiveTool(tool);
-    onShapeSettingsChange({ tool });
   };
 
-  const onShapeSettingsChange = (nextSettings: Partial<ShapeSettingsType>) => {
-    ornateViewer.current!.handleShapeSettingsChange(nextSettings);
-    setShapeSettings({ ...shapeSettings, ...nextSettings });
-  };
   const loadWorkspace = async (workspace: Workspace) => {
     metrics.track('loadWorkspace');
     try {
@@ -756,11 +760,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
 
   const shapeSettingsComponent =
     ornateViewer.current?.isCurrentToolUsingShapeSettings() && (
-      <ShapeSettings
-        shapeSettings={shapeSettings}
-        isSidebarExpanded={isSidebarOpen}
-        onSettingsChange={onShapeSettingsChange}
-      />
+      <ShapeSettings isSidebarExpanded={isSidebarOpen} />
     );
 
   return (

@@ -61,23 +61,18 @@ export type OrnateJSON = {
   }[];
 };
 
+export type ShapeType = 'rect' | 'text' | 'circle' | 'line';
+
 export type ToolType =
+  | ShapeType
   | 'move'
-  | 'line'
-  | 'rect'
-  | 'text'
   | 'default'
-  | 'circle'
   | 'comment'
   | 'list'
   | 'stamp';
 
 export type ShapeSettings = {
-  [key: string]: string | number | undefined;
-  stroke?: string;
-  strokeWidth?: number;
-  fontSize?: number;
-  fill?: string;
+  [key in ToolType]?: ShapeConfig;
 };
 
 export type Marker = {

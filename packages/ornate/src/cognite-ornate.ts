@@ -21,11 +21,11 @@ import { Tool } from './tools/Tool';
 import bgImage from './assets/bg.png';
 import { downloadURL, pdfToImage, ConnectedLine } from './utils';
 
-export const defaultShapeSettings = {
-  strokeWidth: 10,
-  stroke: 'rgba(255,220,127,1)',
-  fill: 'rgba(255,220,127,1)',
-  fontSize: 32,
+const defaultShapeSettings = {
+  circle: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
+  line: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
+  rect: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
+  text: { fill: 'rgba(255,220,127,1)', fontSize: 32 },
 };
 
 const sceneBaseWidth = window.innerWidth * 2;

@@ -10,6 +10,7 @@ export const ShapeSettingsWrapper = styled.div`
 
   .cogs-menu {
     border-radius: 4px;
+    padding-bottom: 8px;
   }
 
   &.expanded {

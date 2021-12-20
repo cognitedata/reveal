@@ -1,22 +1,15 @@
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { Metrics } from '@cognite/metrics';
 import Konva from 'konva';
+import Color from 'color';
+import { defaultColorTransparent } from 'context';
 import { Node, NodeConfig } from 'konva/lib/Node';
-import { useState, useEffect, ChangeEvent } from 'react';
-import { ColorResult } from 'react-color';
 import { UpdateKeyType } from '@cognite/ornate';
 
 import { ColorControl, OpacityControl } from '.';
 import { ShapeStyleControlWrapper } from './elements';
-import {
-  defaultColorTransparent,
-  getInitialOpacity,
-  getOpacityFromRGBA,
-  getRGBAString,
-  hexToRGBA,
-  isHexColor,
-  setOpacityFromRGBA,
-} from './utils';
+import { getInitialOpacity } from './utils';
 
 type ShapeStyleControllProps = {
   selectedNode: Konva.Node;
@@ -46,46 +39,44 @@ const ShapeStyleControl = ({
     fill: selectedNode.getAttr('fill'),
     opacity: getInitialOpacity(selectedNode, fill),
   });
+  const fillOrStroke = fill ? 'fill' : 'stroke';
 
   useEffect(() => {
+    const color = styleSettings[fillOrStroke]
+      ? new Color(styleSettings[fillOrStroke])
+      : defaultColorTransparent;
     setStyleSettings({
       ...styleSettings,
-      opacity: getInitialOpacity(selectedNode, fill),
+      opacity: color.alpha(),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fill]);
 
   const onOpacityChange = (e: ChangeEvent<HTMLInputElement>) => {
     metrics.track('onOpacityChange', { value: e.target.value });
-    const fillOrStroke = fill ? 'fill' : 'stroke';
-    const oldColor = isHexColor(styleSettings[fillOrStroke])
-      ? (hexToRGBA(styleSettings[fillOrStroke], true) as string)
-      : styleSettings[fillOrStroke];
-    const newColor = setOpacityFromRGBA(
-      oldColor || defaultColorTransparent,
-      e.target.value
-    );
+    const newColor = new Color(selectedNode.getAttr(fillOrStroke));
+    const opacity = Number(e.target.value);
     setStyleSettings({
       ...styleSettings,
-      [fillOrStroke]: newColor,
-      opacity: Number(e.target.value),
+      [fillOrStroke]: newColor.alpha(opacity),
+      opacity: opacity || 0,
     });
-    updateShape(selectedNode, fillOrStroke, newColor);
+    updateShape(selectedNode, fillOrStroke, newColor.alpha(opacity).string());
   };
 
-  const onColorChange = (color: ColorResult) => {
-    metrics.track('onColorChange', { color: color.rgb });
-    const { r, g, b, a } = color.rgb;
-    const fillOrStroke = fill ? 'fill' : 'stroke';
-    const opacity = styleSettings[fillOrStroke]
-      ? getOpacityFromRGBA(selectedNode.getAttr(fillOrStroke))
-      : a;
-    const newColor = getRGBAString(r, g, b, opacity || 1);
+  const onColorChange = (newColor: string) => {
+    metrics.track('onColorChange', { color: newColor });
+    const newColorObj = new Color(newColor);
     setStyleSettings({
       ...styleSettings,
       [fillOrStroke]: newColor,
-      opacity: opacity || 1,
     });
-    updateShape(selectedNode, fillOrStroke, newColor);
+
+    updateShape(
+      selectedNode,
+      fillOrStroke,
+      newColorObj.alpha(styleSettings.opacity).string()
+    );
   };
 
   return (
@@ -98,7 +89,7 @@ const ShapeStyleControl = ({
         />
         <ColorControl
           header={`${fill ? 'Fill' : 'Stroke'} Color`}
-          color={fill ? styleSettings.fill : styleSettings.stroke}
+          color={styleSettings[fillOrStroke]}
           onColorChange={onColorChange}
         />
       </Menu>

@@ -1,24 +1,19 @@
+import React from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { PRESET_COLORS } from 'components/ShapeSettings/constants';
-import { CirclePicker, ColorChangeHandler } from 'react-color';
+
+import { ColorPicker } from '../../ColorPicker';
 
 type ColorControlProps = {
   header: string;
   color: string;
-  onColorChange: ColorChangeHandler;
+  onColorChange: (newColor: string) => void;
 };
 
 const ColorControl = ({ header, color, onColorChange }: ColorControlProps) => {
   return (
     <>
       <Menu.Header>{header}</Menu.Header>
-      <CirclePicker
-        color={color}
-        colors={PRESET_COLORS}
-        circleSize={24}
-        width="190px"
-        onChange={onColorChange}
-      />
+      <ColorPicker color={color} onColorChange={onColorChange} />
     </>
   );
 };

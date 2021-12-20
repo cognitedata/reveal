@@ -1,65 +1,101 @@
+import React, { ChangeEvent, useContext } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { useMetrics } from '@cognite/metrics';
-import { ChangeEvent } from 'react';
-import { ShapeSettings as ShapeSettingsType } from '@cognite/ornate';
-import {
-  defaultColor,
-  defaultColorTransparent,
-  getOpacityFromRGBA,
-  hexToRGBA,
-  isHexColor,
-  setOpacityFromRGBA,
-} from 'components/ContextMenu/ContextMenuItems/utils';
+import Color from 'color';
+import { OrnateContext, PREDEFINED_STYLES } from 'context';
+import { PredefinedStyle } from 'context/types';
+import { ShapeConfig } from 'konva/lib/Shape';
 
-import ColorPicker from './ColorPicker/ColorPicker';
+import { ColorPicker } from '../ColorPicker';
+import { PredefinedStylesDropdown } from '../PredefinedStyles';
+
 import { ShapeSettingsWrapper } from './elements';
 
 type ShapeSettingsProps = {
-  shapeSettings: ShapeSettingsType;
   isSidebarExpanded: boolean;
-  onSettingsChange: (nextSettings: Partial<ShapeSettingsType>) => void;
 };
 
-const ShapeSettings = ({
-  shapeSettings: {
-    stroke = defaultColorTransparent,
-    fill = defaultColor,
-    strokeWidth,
-    fontSize,
-    tool,
-  },
-  isSidebarExpanded,
-  onSettingsChange,
-}: ShapeSettingsProps) => {
+const ShapeSettings = ({ isSidebarExpanded }: ShapeSettingsProps) => {
   const metrics = useMetrics('ShapeSettings');
+  const {
+    shapeSettings,
+    onShapeSettingsChange,
+    activeTool,
+    predefinedStyle,
+    setPredefinedStyle,
+  } = useContext(OrnateContext);
+  const currentShapeConfig: ShapeConfig = shapeSettings[
+    activeTool
+  ] as ShapeConfig;
+  const { fontSize, fill, stroke, strokeWidth } = currentShapeConfig;
+  const fillOrStrokeKey = activeTool === 'text' ? 'fill' : 'stroke';
+  const fillOrStroke = new Color(currentShapeConfig?.[fillOrStrokeKey]);
+
   const onThicknessSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
     metrics.track('onThicknessSliderChange', { value: e.target.value });
-    onSettingsChange({ strokeWidth: Number(e.target.value) });
+    onShapeSettingsChange({
+      [activeTool]: {
+        ...currentShapeConfig,
+        strokeWidth: Number(e.target.value),
+      },
+    });
   };
 
   const onOpacitySliderChange = (e: ChangeEvent<HTMLInputElement>) => {
     metrics.track('onOpacitySliderChange', { value: e.target.value });
-    const strokeOpacity =
-      (stroke && isHexColor(stroke) && (hexToRGBA(stroke, true) as string)) ||
-      stroke;
-    const fillOpacity =
-      (fill && isHexColor(fill) && (hexToRGBA(fill, true) as string)) || fill;
-
-    onSettingsChange({
-      stroke: setOpacityFromRGBA(strokeOpacity, e.target.value),
-      fill: setOpacityFromRGBA(fillOpacity, e.target.value),
+    const newOpacity = Number(e.target.value);
+    onShapeSettingsChange({
+      [activeTool]: {
+        ...currentShapeConfig,
+        [fillOrStrokeKey]: fillOrStroke.alpha(newOpacity).string(),
+      },
     });
   };
 
   const onFontSizeChange = (e: ChangeEvent<HTMLInputElement>) => {
     metrics.track('onFontSizeChange', { value: e.target.value });
-    onSettingsChange({ fontSize: Number(e.target.value) });
+    onShapeSettingsChange({
+      [activeTool]: {
+        ...currentShapeConfig,
+        fontSize: Number(e.target.value),
+      },
+    });
+  };
+
+  const onPredefinedStyleChange = (style: PredefinedStyle) => {
+    setPredefinedStyle({
+      label: style.label,
+      value: style.value,
+    });
+
+    onShapeSettingsChange({
+      [activeTool]: {
+        ...currentShapeConfig,
+        [fillOrStrokeKey]: style.value.alpha(fillOrStroke.alpha()).string(),
+        predefinedStyle: style.label,
+      },
+    });
+  };
+
+  const onColorChange = (newColor: string) => {
+    const color = new Color(newColor);
+    metrics.track('onColorChange', { value: newColor });
+
+    const selectedStyle = PREDEFINED_STYLES.find(
+      (s) => s.value.hex() === color.hex()
+    );
+    const label = selectedStyle ? selectedStyle.label : 'Custom';
+    const value = selectedStyle ? selectedStyle.value : color;
+    onPredefinedStyleChange({
+      label,
+      value,
+    });
   };
 
   return (
     <ShapeSettingsWrapper className={isSidebarExpanded ? 'expanded' : ''}>
       <Menu>
-        {tool === 'text' ? (
+        {Number.isInteger(fontSize) && (
           <>
             <Menu.Header>Font Size</Menu.Header>
             <input
@@ -70,8 +106,19 @@ const ShapeSettings = ({
               onChange={onFontSizeChange}
               step="1"
             />
+            <Menu.Header>COLOR</Menu.Header>
           </>
-        ) : (
+        )}
+        {activeTool === 'text' && fill && (
+          <ColorPicker color={fill} onColorChange={onColorChange} />
+        )}
+        {stroke && (
+          <PredefinedStylesDropdown
+            predefinedStyle={predefinedStyle}
+            onChange={onPredefinedStyleChange}
+          />
+        )}
+        {strokeWidth && (
           <>
             <Menu.Header>STROKE</Menu.Header>
             <input
@@ -83,22 +130,29 @@ const ShapeSettings = ({
               step="1"
             />
             <p>Thickness</p>
+          </>
+        )}
+        {stroke && (
+          <>
             <input
               type="range"
               min="0"
               max="1"
-              value={Number(getOpacityFromRGBA(stroke))}
+              value={fillOrStroke.alpha()}
               onChange={onOpacitySliderChange}
               step="0.01"
             />
             <p>Opacity</p>
+            <Menu.Header>COLOR</Menu.Header>
+            <ColorPicker
+              color={
+                predefinedStyle.value.alpha(fillOrStroke.alpha()).string() ||
+                (stroke as string)
+              }
+              onColorChange={onColorChange}
+            />
           </>
         )}
-        <Menu.Header>COLOR</Menu.Header>
-        <ColorPicker
-          color={stroke || fill}
-          onSettingsChange={onSettingsChange}
-        />
       </Menu>
     </ShapeSettingsWrapper>
   );

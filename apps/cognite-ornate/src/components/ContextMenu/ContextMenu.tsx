@@ -1,5 +1,5 @@
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button, Menu } from '@cognite/cogs.js';
-import { useEffect, useRef, useState, useCallback } from 'react';
 import Konva from 'konva';
 import { useMetrics } from '@cognite/metrics';
 import { Node, NodeConfig } from 'konva/lib/Node';
@@ -11,7 +11,7 @@ import {
   ShapeStyleControl,
 } from './ContextMenuItems';
 import { ContextMenuWrapper } from './elements';
-import { getAlignCenterPositionX } from './ContextMenuItems/utils';
+import { getPositionX } from './ContextMenuItems/utils';
 
 type ContextMenuProps = {
   selectedNode: Konva.Node;
@@ -31,44 +31,74 @@ const ContextMenu = ({
   const metrics = useMetrics('ContextMenu');
   const ref = useRef<HTMLDivElement>(null);
   const [x, setX] = useState<number>(
-    getAlignCenterPositionX(
+    getPositionX(
       selectedNode.getClientRect().x,
       selectedNode.getClientRect().width,
-      ref.current?.clientWidth || 0
+      ref.current?.clientWidth || 0,
+      selectedNode.getType() === 'Group'
     )
   );
   const [y, setY] = useState<number>(selectedNode.getClientRect().y);
   const [fill, setFill] = useState<boolean>(false);
   const [toggleStyleMenu, setToggleStyleMenu] = useState<boolean>(false);
+  const [hide, setHide] = useState<boolean>(false);
+
+  const onMouseWheel = useCallback(() => {
+    const { x: newX, y: newY, width } = selectedNode.getClientRect();
+    setX(
+      getPositionX(
+        newX,
+        width,
+        ref.current?.clientWidth || 0,
+        selectedNode.getType() === 'Group'
+      )
+    );
+    setY(newY);
+  }, [selectedNode]);
 
   useEffect(() => {
     document.addEventListener('wheel', onMouseWheel);
     return () => {
       document.removeEventListener('wheel', onMouseWheel);
     };
-  }, [selectedNode]);
+  }, [selectedNode, onMouseWheel]);
 
   useEffect(() => {
-    setX(
-      getAlignCenterPositionX(
-        selectedNode.getClientRect().x,
-        selectedNode.getClientRect().width,
-        ref.current?.clientWidth || 0
-      )
-    );
-    setY(selectedNode.getClientRect().y);
+    // Set drag event listener to hide the context menu accordingly
+    selectedNode.on('dragstart', () => {
+      setHide(true);
+    });
+    selectedNode.on('dragend', () => {
+      const { x, width, y } = selectedNode.getClientRect();
+      setHide(false);
+      setX(
+        getPositionX(
+          x,
+          width,
+          ref.current?.clientWidth || 0,
+          selectedNode.getType() === 'Group'
+        )
+      );
+      setY(y);
+    });
+    return () => {
+      selectedNode.off('dragstart');
+      selectedNode.off('dragend');
+    };
   }, [selectedNode]);
 
   useEffect(() => {
     // We need to reposition the contextmenu whenever the stage view moves
     setX(
-      getAlignCenterPositionX(
+      getPositionX(
         selectedNode.getClientRect().x,
         selectedNode.getClientRect().width,
-        ref.current?.clientWidth || 0
+        ref.current?.clientWidth || 0,
+        selectedNode.getType() === 'Group'
       )
     );
-  }, [ref.current?.clientWidth]);
+    setY(selectedNode.getClientRect().y);
+  }, [selectedNode]);
 
   const toggleFillStyleMenu = () => {
     if (!toggleStyleMenu) {
@@ -81,12 +111,6 @@ const ContextMenu = ({
       setToggleStyleMenu(!toggleStyleMenu);
     }
     setFill(false);
-  };
-
-  const onMouseWheel = () => {
-    const { x: newX, y: newY, width } = selectedNode.getClientRect();
-    setX(getAlignCenterPositionX(newX, width, ref.current?.clientWidth || 0));
-    setY(newY);
   };
 
   const thicknessControl = (
@@ -135,14 +159,27 @@ const ContextMenu = ({
       default:
         return undefined;
     }
-  }, [selectedNode.attrs.type]);
+  }, [
+    selectedNode,
+    fontSizeControl,
+    fillControlButton,
+    thicknessControl,
+    strokeControlButton,
+  ]);
 
   const commonMenuItems = getMenuItems();
+
+  // come up with a better system.
+  const groupStyles = { marginTop: '-38px' };
 
   return (
     <ContextMenuWrapper
       ref={ref}
-      style={{ transform: `translate(${x}px, ${y}px)` }}
+      style={{
+        transform: `translate(${x}px, ${y}px)`,
+        ...(selectedNode.getType() === 'Group' && groupStyles),
+        ...(hide && { display: 'none' }),
+      }}
     >
       {toggleStyleMenu && (
         <ShapeStyleControl

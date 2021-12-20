@@ -79,11 +79,9 @@ DEPENDENCIES = [
     "@npm//@cognite/comment-service-types",
     "@npm//@cognite/sdk",
     "@npm//@sentry/browser",
-    "@npm//@types/react-color",
     "@npm//konva",
     "@npm//lodash",
     "@npm//react",
-    "@npm//react-color",
     "@npm//react-dom",
     "@npm//react-router-dom",
     "@npm//styled-components",
@@ -107,6 +105,7 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
     "@npm//@types/uuid",
+    "@npm//@types/color",
 ]
 
 # Dev dependencies from package.json
@@ -131,6 +130,7 @@ mappings_dict = {
     "App": "build/App",
     "assets": "build/assets",
     "components": "build/components",
+    "context": "build/context",
     "global-styles": "build/global-styles",
     "hooks": "build/hooks",
     "index": "build/index",
