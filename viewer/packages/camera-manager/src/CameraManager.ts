@@ -52,8 +52,6 @@ export class CameraManager {
   private readonly _updateNearAndFarPlaneBuffers = {
     cameraPosition: new THREE.Vector3(),
     cameraDirection: new THREE.Vector3(),
-    nearPlaneCoplanarPoint: new THREE.Vector3(),
-    nearPlane: new THREE.Plane(),
     corners: new Array<THREE.Vector3>(
       new THREE.Vector3(),
       new THREE.Vector3(),
@@ -64,6 +62,11 @@ export class CameraManager {
       new THREE.Vector3(),
       new THREE.Vector3()
     )
+  };
+
+  private readonly _calculateCameraFarBuffers = {
+    nearPlaneCoplanarPoint: new THREE.Vector3(),
+    nearPlane: new THREE.Plane()
   };
 
   constructor(
@@ -401,7 +404,7 @@ export class CameraManager {
     cameraDirection: THREE.Vector3,
     corners: Array<THREE.Vector3>
   ): number {
-    const { nearPlane, nearPlaneCoplanarPoint } = this._updateNearAndFarPlaneBuffers;
+    const { nearPlane, nearPlaneCoplanarPoint } = this._calculateCameraFarBuffers;
 
     nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
     nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);
