@@ -2,7 +2,7 @@ import mapboxgl from 'maplibre-gl';
 
 import { useMap } from 'modules/map/selectors';
 
-import { MapPreviewContainer } from '../CardContainer';
+import MapPopup from '../../MapPopup';
 
 import { WellPreviewCard } from './WellPreviewCard';
 
@@ -13,11 +13,11 @@ interface Props {
 export const WellCard: React.FC<Props> = ({ map }) => {
   const { selectedWell } = useMap(); // map provider
 
-  if (map && selectedWell) {
+  if (map && selectedWell && selectedWell.point) {
     return (
-      <MapPreviewContainer map={map} point={selectedWell.point}>
+      <MapPopup point={selectedWell.point} map={map}>
         <WellPreviewCard wellId={selectedWell.id} />
-      </MapPreviewContainer>
+      </MapPopup>
     );
   }
 

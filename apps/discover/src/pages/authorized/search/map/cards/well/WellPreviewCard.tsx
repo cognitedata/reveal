@@ -22,7 +22,10 @@ import { WellboreCardDetails } from './WellboreCardDetails';
 import { WellMetadata } from './WellMetadata';
 import { WellPreviewAction } from './WellPreviewAction';
 
-export const WellPreviewCard: React.FC<{ wellId: number }> = ({ wellId }) => {
+export const WellPreviewCard: React.FC<{
+  wellId: number;
+  onPopupClose?: () => void;
+}> = ({ wellId, onPopupClose }) => {
   const dispatch = useDispatch();
   const { mutate } = useMutateWellPatch();
   const well = useWellResult(wellId);
@@ -43,7 +46,12 @@ export const WellPreviewCard: React.FC<{ wellId: number }> = ({ wellId }) => {
 
   const handlePreviewClose = () => {
     metrics.track('click-close-well-preview-button');
+
     dispatch(clearSelectedWell());
+
+    if (onPopupClose) {
+      onPopupClose();
+    }
   };
 
   return (

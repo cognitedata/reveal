@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { render } from 'react-dom';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 
 import simplify from '@turf/simplify';
 import { TS_FIX_ME } from 'core';
@@ -204,13 +204,15 @@ export const useMapEvents = () => {
       if (iconType === DOCUMENT_MARKER) {
         const { documentId } = view[0].properties;
 
-        dispatch(
-          setSelectedDocument({
-            id: documentId,
-            point: { type: 'Point', coordinates },
-          })
-        );
-        dispatch(clearSelectedWell());
+        batch(() => {
+          dispatch(
+            setSelectedDocument({
+              id: documentId,
+              point: { type: 'Point', coordinates },
+            })
+          );
+          dispatch(clearSelectedWell());
+        });
       }
 
       if (iconType === WELL_MARKER) {
@@ -224,13 +226,16 @@ export const useMapEvents = () => {
           e.lngLat.lng,
           view[0].geometry.coordinates.slice()
         );
-        dispatch(
-          setSelectedWell({
-            id: wellId,
-            point: { type: 'Point', coordinates },
-          })
-        );
-        dispatch(clearSelectedDocument());
+
+        batch(() => {
+          dispatch(
+            setSelectedWell({
+              id: wellId,
+              point: { type: 'Point', coordinates },
+            })
+          );
+          dispatch(clearSelectedDocument());
+        });
       }
     }
   };

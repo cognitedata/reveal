@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Icons } from '@cognite/cogs.js';
@@ -22,9 +22,10 @@ import { DocumentInfoWrapper } from './elements';
 import { Highlight } from './Highlight';
 import { Metadata } from './Metadata';
 
-export const DocumentPreviewCard: React.FC<{ documentId: string }> = ({
-  documentId,
-}) => {
+export const DocumentPreviewCard: React.FC<{
+  documentId: string;
+  onPopupClose?: () => void;
+}> = ({ documentId, onPopupClose }) => {
   const metrics = useGlobalMetrics('map');
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -38,12 +39,13 @@ export const DocumentPreviewCard: React.FC<{ documentId: string }> = ({
     metrics.track('click-open-document-preview-button');
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      // Trigger a resize for the map to change width after transition has finished
-      window.dispatchEvent(new Event('resize'));
-    }, 1000);
-  }, [documentId]);
+  // Might need to re-enable this code if the map isn't scaling properly on document card click
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // Trigger a resize for the map to change width after transition has finished
+  //     window.dispatchEvent(new Event('resize'));
+  //   }, 1000);
+  // }, [documentId]);
 
   const doc = useMemo(
     () => documentResultHits.find((doc) => doc.id === documentId),
@@ -69,7 +71,13 @@ export const DocumentPreviewCard: React.FC<{ documentId: string }> = ({
     metrics.track('click-close-document-preview-button');
   };
 
-  const handlePreviewClose = () => dispatch(clearSelectedDocument());
+  const handlePreviewClose = () => {
+    dispatch(clearSelectedDocument());
+
+    if (onPopupClose) {
+      onPopupClose();
+    }
+  };
 
   if (!doc) return null;
 

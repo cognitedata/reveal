@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components/macro';
 
 import '@fontsource/inter';
 import layers from '_helpers/zindex';
+import { CARD_WIDTH } from 'components/card/preview-card/constants';
 
 import { sizes } from './layout';
 
@@ -244,5 +245,20 @@ export const GlobalStyles = createGlobalStyle`
 
   .mapboxgl-ctrl-attrib.mapboxgl-compact {
     display: none;
+  }
+
+  .mapbox-popup {
+    width: ${CARD_WIDTH}px;
+    max-width: ${CARD_WIDTH}px !important;
+
+    .mapboxgl-popup-tip {
+      display: none;
+    }
+
+    .mapboxgl-popup-content {
+      width: ${CARD_WIDTH}px;
+      background: transparent;
+      box-shadow: none !important;
+    }
   }
 `;

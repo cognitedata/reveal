@@ -4,7 +4,7 @@ import mapboxgl from 'maplibre-gl';
 
 import { useMap } from 'modules/map/selectors';
 
-import { MapPreviewContainer } from '../CardContainer';
+import MapPopup from '../../MapPopup';
 
 import DocumentPreviewCard from './components';
 
@@ -14,11 +14,11 @@ interface Props {
 export const DocumentCard: React.FC<Props> = ({ map }) => {
   const { selectedDocument } = useMap();
 
-  if (map && selectedDocument) {
+  if (map && selectedDocument && selectedDocument.point) {
     return (
-      <MapPreviewContainer map={map} point={selectedDocument?.point}>
+      <MapPopup point={selectedDocument.point} map={map}>
         <DocumentPreviewCard documentId={selectedDocument.id} />
-      </MapPreviewContainer>
+      </MapPopup>
     );
   }
 
