@@ -16,7 +16,7 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import ComboControls from '@reveal/camera-manager';
+import { RevealCameraControls } from '@reveal/camera-manager';
 import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
 
@@ -342,7 +342,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
   private moveCameraTo(
     camera: THREE.PerspectiveCamera,
-    cameraControls: ComboControls,
+    cameraControls: RevealCameraControls,
     targetAxis: THREE.Vector3,
     targetUpAxis: THREE.Vector3
   ) {

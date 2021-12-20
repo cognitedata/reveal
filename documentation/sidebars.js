@@ -41,7 +41,8 @@ module.exports = {
         'examples/axisviewtool',
         'examples/geomaptool',
         'examples/timelinetool',
-        'examples/combine-models'
+        'examples/combine-models',
+        'examples/controlsmodes',
       ],
     },
     {
