@@ -134,7 +134,10 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _options: HtmlOverlayToolOptions;
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
-  private readonly _compositeOverlays: HTMLElement[] = [];
+  private readonly _compositeOverlays: { element: HTMLElement; key: string }[] = [];
+
+  // HTMLElement bounding boxes need a frame to update. We read them using this map
+  private readonly _previousFrameCompositeWidthHeight: Map<string, [number, number]> = new Map();
 
   private readonly _onSceneRenderedHandler: SceneRenderedDelegate;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
@@ -320,7 +323,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     this.commitDOMChanges();
   }
 
-  private getWidthHeightForHtmlElement(htmlElement: HTMLElement) {
+  private getWidthHeightForHtmlElement(htmlElement: HTMLElement): [number, number] {
     const clientRect = htmlElement.getBoundingClientRect();
     return [clientRect.width, clientRect.height];
   }
@@ -359,8 +362,8 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
       }
     });
 
-    this._compositeOverlays.forEach(htmlElement => {
-      this.viewerDomElement.appendChild(htmlElement);
+    this._compositeOverlays.forEach(composite => {
+      this.viewerDomElement.appendChild(composite.element);
     });
   }
 
@@ -381,8 +384,12 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
   }
 
   private cleanupClusterElements(): void {
-    this._compositeOverlays.forEach(element => {
-      this.viewerDomElement.removeChild(element);
+    this._previousFrameCompositeWidthHeight.clear();
+    this._compositeOverlays.forEach(composite => {
+      const [width, height] = this.getWidthHeightForHtmlElement(composite.element);
+
+      this._previousFrameCompositeWidthHeight.set(composite.key, [width, height]);
+      this.viewerDomElement.removeChild(composite.element);
     });
     this._compositeOverlays.splice(0);
   }
@@ -433,6 +440,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         return this._compositeElement;
       }
     }
+
     function* getAllElements(wrappers: ElementWrapper[]): Generator<Element> {
       for (const w of wrappers) {
         yield* w.getOriginalElements();
@@ -460,9 +468,12 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
 
     const elementBounds = new THREE.Box2();
     const clusterMidpoint = new THREE.Vector2();
-    for (const element of this._htmlOverlays.values()) {
-      const { state } = element;
-      createElementBounds(element.state, elementBounds);
+
+    const elementsToIterateThrough = [...this._htmlOverlays.values()].map(el => el.state);
+
+    for (const state of elementsToIterateThrough) {
+      createElementBounds(state, elementBounds);
+
       if (!state.visible || !elementBounds.intersectsBox(canvasBounds)) {
         continue;
       }
@@ -472,35 +483,53 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
         const midpoint = cluster
           .reduce((position, wrapper) => position.add(wrapper.getElement().state.position2D), clusterMidpoint.set(0, 0))
           .divideScalar(cluster.length);
+
+        const allChildElements = [...getAllElements(cluster)];
         const compositeElement = createClusterElementCallback(
-          cluster.map(wrapper => ({
-            htmlElement: wrapper.getElement().htmlElement,
+          allChildElements.map(element => ({
+            htmlElement: element.htmlElement,
             userData: element.options.userData
           }))
         );
 
-        const [elementWidth, elementHeight] = this.getWidthHeightForHtmlElement(compositeElement);
-        const newScreenState = { visible: false, width: elementWidth, height: elementHeight, position2D: midpoint };
+        let elementWidth, elementHeight;
+
+        const boxPrevFrame = this._previousFrameCompositeWidthHeight.get(midpoint.x + ',' + midpoint.y);
+        if (boxPrevFrame) {
+          [elementWidth, elementHeight] = boxPrevFrame;
+        } else {
+          [elementWidth, elementHeight] = [0, 0];
+        }
+
+        const newScreenState = {
+          visible: true,
+          width: elementWidth,
+          height: elementHeight,
+          position2D: midpoint.clone()
+        };
         const clusterBounds = createElementBounds(newScreenState);
         const clusteredElementWrapper = new ClusteredElementWrapper(cluster, {
           htmlElement: compositeElement,
           ...{ state: newScreenState, options: {}, position3D: new THREE.Vector3() }
         });
 
-        grid.insert(clusterBounds, clusteredElementWrapper);
-
-        clusterSet.add(clusteredElementWrapper);
-
         // Hide all elements in cluster
         cluster.forEach(wrapper => {
-          if (wrapper instanceof SingleElementWrapper) {
-            wrapper.getElement().state.visible = false;
-          } else if (wrapper instanceof ClusteredElementWrapper) {
+          wrapper.getElement().state.visible = false;
+
+          if (wrapper instanceof ClusteredElementWrapper) {
             clusterSet.delete(wrapper);
           }
         });
+
+        if (!clusterBounds.intersectsBox(canvasBounds)) {
+          continue;
+        }
+        grid.insert(clusterBounds, clusteredElementWrapper);
+        elementsToIterateThrough.push(newScreenState);
         // ... and replace with a composite
-        // this.addComposite(compositeElement, midpoint);
+
+        clusterSet.add(clusteredElementWrapper);
       }
     }
 
@@ -514,7 +543,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     htmlElement.style.visibility = 'visible';
     htmlElement.style.left = `${position.x + canvas.offsetLeft}px`;
     htmlElement.style.top = `${position.y + canvas.offsetTop}px`;
-    this._compositeOverlays.push(htmlElement);
+    this._compositeOverlays.push({ element: htmlElement, key: position.x + ',' + position.y });
   }
 
   private onSceneRendered(): void {
