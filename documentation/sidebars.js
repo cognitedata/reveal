@@ -42,7 +42,8 @@ module.exports = {
         'examples/geomaptool',
         'examples/timelinetool',
         'examples/toolbartool',
-        'examples/combine-models'
+        'examples/combine-models',
+        'examples/controlsmodes',
       ],
     },
     {

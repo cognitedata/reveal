@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import 'jest-extended';
-import ComboControls from '../src/ComboControls';
+import { ComboControls } from '../src/ComboControls';
 
 describe('Combo Controls', () => {
   let controls: ComboControls;
