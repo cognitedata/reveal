@@ -46,7 +46,7 @@ export class Toolbar {
   }
 
   /**
-   * Load the the styles from the CSS and appends them to the toolbarLoad the the styles from the CSS and appends them to the toolbar
+   * Load the the styles from the CSS and appends them to the toolbar
    * @returns Return if styles already loaded
    */
   private static loadStyles() {
@@ -98,7 +98,8 @@ export class Toolbar {
         }
       }
       onClick();
-      this._canvasElement?.focus();
+      const event = new Event('focus');
+      this._canvasElement?.dispatchEvent(event);
     };
 
     this._toolbarContainer.appendChild(element);
