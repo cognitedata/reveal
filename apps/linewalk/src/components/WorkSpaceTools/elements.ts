@@ -7,7 +7,7 @@ export const WorkSpaceToolsWrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding: 2px;
-  position: fixed;
+  position: absolute;
   left: 16px;
   bottom: 16px;
   background: #ffffff;

@@ -1,22 +1,20 @@
-import { makeMockLineReview } from './mocks';
-import { LineReview } from './types';
+import { MOCK_LINE_REVIEW_0040_0029 } from './mocks';
+import { Document, LineReview } from './types';
 
-let MOCK_LINE_REVIEWS = [
-  makeMockLineReview('1'),
-  makeMockLineReview('2', 'RESOLVED'),
-  makeMockLineReview('3', 'REVIEW'),
-  makeMockLineReview('4', 'OPEN', ['Alison']),
-  makeMockLineReview('5', 'OPEN', ['Richard']),
-  makeMockLineReview('6', 'OPEN', ['Alison']),
-  makeMockLineReview('7', 'OPEN', ['Alison']),
-  makeMockLineReview('8', 'OPEN', ['Alison', 'Richard']),
-  makeMockLineReview('9', 'RESOLVED'),
-  makeMockLineReview('10', 'REVIEW'),
-];
+let MOCK_LINE_REVIEWS = [MOCK_LINE_REVIEW_0040_0029];
 
 export const fetchLineReviews = async () => {
   // NEXT: Fetch from API
   return MOCK_LINE_REVIEWS;
+};
+
+export const getDocumentUrl = async (client: any, document: Document) => {
+  try {
+    const response = await client.files.getDownloadUrls([{ id: document.id }]);
+    return response[0].downloadUrl;
+  } catch (error) {
+    throw new Error('Getting document url failed');
+  }
 };
 
 export const updateLineReviews = async (updates: LineReview[]) => {

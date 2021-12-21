@@ -145,7 +145,7 @@ export class CogniteOrnate {
     this.stage.on('wheel', this.onStageMouseWheel);
     this.stage.on('mouseover', this.onStageMouseOver);
     this.stage.on('mouseenter', () => {
-      this.stage.container().style.cursor = this.currentTool.cursor;
+      this.stage.container().style.cursor = this.currentTool?.cursor;
     });
     this.currentTool.onInit();
 
@@ -358,19 +358,19 @@ export class CogniteOrnate {
   };
 
   onStageMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (this.currentTool.onMouseDown) {
+    if (this.currentTool?.onMouseDown) {
       this.currentTool.onMouseDown(e);
     }
   };
 
   onStageMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    if (this.currentTool.onMouseMove) {
+    if (this.currentTool?.onMouseMove) {
       this.currentTool.onMouseMove(e);
     }
   };
 
   onStageMouseUp = (e: KonvaEventObject<MouseEvent>) => {
-    if (this.currentTool.onMouseUp) {
+    if (this.currentTool?.onMouseUp) {
       this.currentTool.onMouseUp(e);
     }
     this.connectedLineGroup.forEach((l) => l.update());

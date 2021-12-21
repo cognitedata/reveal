@@ -1,34 +1,110 @@
-import { useState } from 'react';
-import { ToolType } from '@cognite/ornate';
+import Konva from 'konva';
+import { useEffect, useState } from 'react';
+import {
+  CircleTool,
+  CogniteOrnate,
+  CommentTool,
+  DefaultTool,
+  LineTool,
+  MoveTool,
+  RectTool,
+  TextTool,
+  ToolType,
+  SquiggleTool,
+} from '@cognite/ornate';
 import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { useMetrics } from '@cognite/metrics';
 import { AnnotationIcon, DrawingIcon } from 'components/CustomIcons';
+
+import KeyboardShortcut from '../KeyboardShortcut/KeyboardShortcut';
 
 import { ToolboxSeparator, WorkSpaceToolsWrapper } from './elements';
 
 type Layer = 'ANNOTATIONS' | 'DRAWINGS' | 'MARKERS';
 
+export enum WorkspaceTool {
+  LAYERS = 'layers',
+  SELECT = 'select',
+  MOVE = 'move',
+  LINE = 'line',
+  RECTANGLE = 'rectangle',
+  CIRCLE = 'circle',
+  TEXT = 'text',
+  COMMENT = 'comment',
+  SQUIGGLE = 'squiggle',
+}
+
 type WorkSpaceToolsProps = {
   activeTool: ToolType;
   onToolChange: (nextTool: ToolType) => void;
-  onSetLayerVisibility: (layer: Layer, visible: boolean) => void;
+  enabledTools?: WorkspaceTool[];
+  ornateRef?: CogniteOrnate;
 };
 
 const WorkSpaceTools = ({
   activeTool,
   onToolChange,
-  onSetLayerVisibility,
+  enabledTools = [
+    WorkspaceTool.LAYERS,
+    WorkspaceTool.SELECT,
+    WorkspaceTool.MOVE,
+    WorkspaceTool.LINE,
+    WorkspaceTool.RECTANGLE,
+    WorkspaceTool.CIRCLE,
+    WorkspaceTool.TEXT,
+    WorkspaceTool.COMMENT,
+  ],
+  ornateRef,
 }: WorkSpaceToolsProps) => {
-  const metrics = useMetrics('WorkSpaceTools');
   const [layerStatus, setLayerStatus] = useState<Record<Layer, boolean>>({
     ANNOTATIONS: true,
     DRAWINGS: true,
     MARKERS: true,
   });
 
-  const onToolClick = (type: ToolType) => {
-    metrics.track('onToolClick', { type });
-    onToolChange(type);
+  useEffect(() => {
+    if (ornateRef) {
+      // eslint-disable-next-line no-param-reassign
+      ornateRef.tools = {
+        move: new MoveTool(ornateRef),
+        line: new LineTool(ornateRef),
+        rect: new RectTool(ornateRef),
+        circle: new CircleTool(ornateRef),
+        text: new TextTool(ornateRef),
+        comment: new CommentTool(ornateRef),
+        squiggle: new SquiggleTool(ornateRef),
+        default: new DefaultTool(ornateRef),
+      };
+      onToolChange('default');
+    }
+  }, [ornateRef]);
+
+  const onSetLayerVisibility = (layer: Layer, visible: boolean) => {
+    const shapes: Konva.Node[] = [];
+    if (layer === 'ANNOTATIONS') {
+      // Get annotations. Then filter out the ones affected by the list tool
+      shapes.push(
+        ...(ornateRef?.stage.find('.annotation') || []).filter(
+          (shape) => !shape.attrs.inList
+        )
+      );
+    }
+    if (layer === 'DRAWINGS') {
+      shapes.push(
+        ...(ornateRef?.stage.find('.drawing') || []).filter(
+          (shape) => !shape.attrs.inList
+        )
+      );
+    }
+    if (layer === 'MARKERS') {
+      shapes.push(...(ornateRef?.stage.find('.marker') || []));
+    }
+    shapes.forEach((shape) => {
+      if (visible) {
+        shape.show();
+      } else {
+        shape.hide();
+      }
+    });
   };
 
   const onToggleLayer = (layer: Layer) => {
@@ -54,122 +130,136 @@ const WorkSpaceTools = ({
 
   return (
     <WorkSpaceToolsWrapper>
-      <Dropdown
-        content={
-          <Menu>
-            <Menu.Header>Click to turn on / off</Menu.Header>
-            <Menu.Item
-              onClick={() => {
-                onToggleLayer('ANNOTATIONS');
-              }}
-              style={styleItem(layerStatus.ANNOTATIONS)}
+      {enabledTools.includes(WorkspaceTool.LAYERS) && (
+        <>
+          <Dropdown
+            content={
+              <Menu>
+                <Menu.Header>Click to turn on / off</Menu.Header>
+                <Menu.Item
+                  onClick={() => onToggleLayer('ANNOTATIONS')}
+                  style={styleItem(layerStatus.ANNOTATIONS)}
+                >
+                  <AnnotationIcon style={{ marginRight: 8 }} />
+                  lineReviews
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => onToggleLayer('DRAWINGS')}
+                  style={styleItem(layerStatus.DRAWINGS)}
+                >
+                  <DrawingIcon style={{ marginRight: 8 }} />
+                  Drawings
+                </Menu.Item>
+              </Menu>
+            }
+            placement="auto-end"
+          >
+            <Button
+              type="ghost"
+              size="small"
+              onClick={() => onToolChange('default')}
+              title="Layers"
             >
-              <AnnotationIcon style={{ marginRight: 8 }} />
-              lineReviews
-            </Menu.Item>
-            <Menu.Item
-              onClick={() => {
-                onToggleLayer('DRAWINGS');
-              }}
-              style={styleItem(layerStatus.DRAWINGS)}
-            >
-              <DrawingIcon style={{ marginRight: 8 }} />
-              Drawings
-            </Menu.Item>
-          </Menu>
-        }
-        placement="auto-end"
-      >
+              <Icon type="Layers" />
+            </Button>
+          </Dropdown>
+
+          <ToolboxSeparator />
+        </>
+      )}
+      {enabledTools.includes(WorkspaceTool.SELECT) && (
         <Button
           type="ghost"
           size="small"
-          onClick={() => {
-            onToolClick('default');
-          }}
-          title="Layers"
+          onClick={() => onToolChange('default')}
+          title="Select S"
+          disabled={activeTool === 'default'}
         >
-          <Icon type="Layers" />
+          <Icon type="Cursor" />
         </Button>
-      </Dropdown>
+      )}
+      {enabledTools.includes(WorkspaceTool.MOVE) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Move M"
+          onClick={() => onToolChange('move')}
+          disabled={activeTool === 'move'}
+        >
+          <Icon type="Grab" />
+        </Button>
+      )}
       <ToolboxSeparator />
+      {enabledTools.includes(WorkspaceTool.LINE) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Line L"
+          onClick={() => onToolChange('line')}
+          disabled={activeTool === 'line'}
+        >
+          <Icon type="Highlighter" />
+        </Button>
+      )}
+      {enabledTools.includes(WorkspaceTool.RECTANGLE) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Rectangle R"
+          onClick={() => onToolChange('rect')}
+          disabled={activeTool === 'rect'}
+        >
+          <Icon type="FrameTool" />
+        </Button>
+      )}
+      {enabledTools.includes(WorkspaceTool.CIRCLE) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Circle C"
+          onClick={() => onToolChange('circle')}
+          disabled={activeTool === 'circle'}
+        >
+          <Icon type="ColorPalette" />
+        </Button>
+      )}
+      {enabledTools.includes(WorkspaceTool.TEXT) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Text T"
+          onClick={() => onToolChange('text')}
+          disabled={activeTool === 'text'}
+        >
+          <Icon type="Text" />
+        </Button>
+      )}
+      {enabledTools.includes(WorkspaceTool.COMMENT) && (
+        <Button
+          type="ghost"
+          size="small"
+          title="Comment"
+          onClick={() => onToolChange('comment')}
+          disabled={activeTool === 'comment'}
+        >
+          <Icon type="Comment" />
+        </Button>
+      )}
       <Button
         type="ghost"
         size="small"
-        onClick={() => {
-          onToolClick('default');
-        }}
-        title="Select S"
-        disabled={activeTool === 'default'}
+        title="Squiggle"
+        onClick={() => onToolChange('squiggle')}
+        disabled={activeTool === 'squiggle'}
       >
-        <Icon type="Cursor" />
+        <Icon type="Lineage" />
       </Button>
-      <Button
-        type="ghost"
-        size="small"
-        title="Move M"
-        onClick={() => {
-          onToolClick('move');
-        }}
-        disabled={activeTool === 'move'}
-      >
-        <Icon type="Grab" />
-      </Button>
-      <ToolboxSeparator />
-      <Button
-        type="ghost"
-        size="small"
-        title="Line L"
-        onClick={() => {
-          onToolClick('line');
-        }}
-        disabled={activeTool === 'line'}
-      >
-        <Icon type="Highlighter" />
-      </Button>
-      <Button
-        type="ghost"
-        size="small"
-        title="Rectangle R"
-        onClick={() => {
-          onToolClick('rect');
-        }}
-        disabled={activeTool === 'rect'}
-      >
-        <Icon type="FrameTool" />
-      </Button>
-      <Button
-        type="ghost"
-        size="small"
-        title="Circle C"
-        onClick={() => {
-          onToolClick('circle');
-        }}
-        disabled={activeTool === 'circle'}
-      >
-        <Icon type="ColorPalette" />
-      </Button>
-      <Button
-        type="ghost"
-        size="small"
-        title="Text T"
-        onClick={() => {
-          onToolClick('text');
-        }}
-        disabled={activeTool === 'text'}
-      >
-        <Icon type="Text" />
-      </Button>
-      <Button
-        type="ghost"
-        size="small"
-        title="Comment"
-        onClick={() => {
-          onToolChange('comment');
-        }}
-        disabled={activeTool === 'comment'}
-      >
-        <Icon type="Comment" />
-      </Button>
+      <KeyboardShortcut keys="s" onKeyDown={() => onToolChange('default')} />
+      <KeyboardShortcut keys="m" onKeyDown={() => onToolChange('move')} />
+      <KeyboardShortcut keys="r" onKeyDown={() => onToolChange('rect')} />
+      <KeyboardShortcut keys="c" onKeyDown={() => onToolChange('circle')} />
+      <KeyboardShortcut keys="l" onKeyDown={() => onToolChange('line')} />
+      <KeyboardShortcut keys="t" onKeyDown={() => onToolChange('text')} />
     </WorkSpaceToolsWrapper>
   );
 };

@@ -5,10 +5,12 @@ import { toast } from '@cognite/cogs.js';
 import { fetchLineReviews, updateLineReviews } from './api';
 
 const useLineReviews = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [lineReviews, setLineReviews] = useState<LineReview[]>([]);
   const populateLineReviews = async () => {
     const lineReviews = await fetchLineReviews();
     setLineReviews(lineReviews);
+    setIsLoading(false);
   };
   const updateLineReview = async (nextLineReview: LineReview) => {
     await updateLineReviews([nextLineReview]);
@@ -17,6 +19,7 @@ const useLineReviews = () => {
   };
 
   return {
+    isLoading,
     lineReviews,
     populateLineReviews,
     updateLineReview,

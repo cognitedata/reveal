@@ -41,10 +41,10 @@ const LineReviewTable: React.FC<LineReviewTableProps> = ({
           accessor: 'status',
           Cell: StatusCell,
         },
-        {
-          Header: 'LineReview',
-          accessor: 'description',
-        },
+        // {
+        //   Header: 'LineReview',
+        //   accessor: 'description',
+        // },
         {
           Header: 'Assignee',
           accessor: 'assignees',
@@ -113,7 +113,7 @@ const LineReviews = () => {
     }
   }, [lineReviews]);
 
-  const filterlineReviews = useCallback(
+  const filterLineReviews = useCallback(
     (LineReview: LineReview) => {
       if (assignee.length <= 0 && status.length <= 0 && search.length <= 0) {
         return true;
@@ -130,13 +130,13 @@ const LineReviews = () => {
         return true;
       }
 
-      if (
-        search.length > 0 &&
-        (LineReview.name.includes(search) ||
-          LineReview.description.includes(search))
-      ) {
-        return true;
-      }
+      // if (
+      //   search.length > 0 &&
+      //   (LineReview.name.includes(search) ||
+      //     LineReview.description.includes(search))
+      // ) {
+      //   return true;
+      // }
       return false;
     },
     [assignee, status, search]
@@ -150,15 +150,15 @@ const LineReviews = () => {
           <div className="text">LineReviews identified</div>
         </div>
         <div className="stat">
-          <div className="number">
-            {lineReviews.filter((d) => d.status === 'REVIEW').length}
-          </div>
+          {/* <div className="number"> */}
+          {/*  {lineReviews.filter((d) => d.status === 'REVIEW').length} */}
+          {/* </div> */}
           <div className="text">Under Review</div>
         </div>
         <div className="stat">
-          <div className="number">
-            {lineReviews.filter((d) => d.status === 'RESOLVED').length}
-          </div>
+          {/* <div className="number"> */}
+          {/*  {lineReviews.filter((d) => d.status === 'RESOLVED').length} */}
+          {/* </div> */}
           <div className="text">Completed</div>
         </div>
       </Stats>
@@ -192,7 +192,7 @@ const LineReviews = () => {
         </div>
         <div>
           <LineReviewTable
-            lineReviews={lineReviews.filter(filterlineReviews)}
+            lineReviews={lineReviews.filter(filterLineReviews)}
             onRowClick={(lineReview) => {
               history.push(`/LineReview/${lineReview.id}`);
             }}
