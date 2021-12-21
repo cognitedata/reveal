@@ -13,7 +13,6 @@ describe('ToolbarTool', () => {
   let viewer: Cognite3DViewer;
   let canvasContainer: HTMLElement;
   let tool: ToolbarTool;
-  let iconClicked: () => void;
 
   const sdk = new CogniteClient({ appId: 'cognite.reveal.unittest' });
   const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
@@ -35,7 +34,6 @@ describe('ToolbarTool', () => {
     viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
 
     tool = new ToolbarTool(viewer);
-    iconClicked = jest.fn();
   });
 
   afterEach(() => {
@@ -44,25 +42,31 @@ describe('ToolbarTool', () => {
 
   test('Add icon item to the Toolbar', () => {
     const createElementMock = jest.spyOn(document, 'createElement');
+    const toolbarContainer = canvasContainer.getElementsByClassName(styles.container);
+    const iconClicked = jest.fn();
+
+    expect(toolbarContainer[0]).not.toBeEmpty();
+
     tool.addToolbarItem('Tooltip1', '', true, iconClicked);
     tool.addToolbarItem('Tooltip2', '', false, iconClicked);
     tool.addToolbarItem('Tooltip3', '', false, iconClicked);
-    tool.addToolbarItem('Tooltip4', '', true, iconClicked);
-    tool.addToolbarItem('Tooltip5', '', false, iconClicked);
 
-    expect(createElementMock).toBeCalledTimes(10);
+    expect(createElementMock).toBeCalledTimes(6);
+
+    expect(toolbarContainer[0].hasChildNodes()).toBeTrue;
+
+    expect(toolbarContainer[0].childElementCount).toBe(3);
 
     createElementMock.mockRestore();
   });
 
   test('Set Position of toolbar', () => {
-    const canvasElement = viewer.domElement.querySelector('canvas')?.parentElement;
-    const toolContainerDomElement = canvasElement!.firstElementChild;
+    const toolbarContainer = canvasContainer.getElementsByClassName(styles.container);
 
-    expect(toolContainerDomElement?.classList.contains(styles.container));
+    expect(toolbarContainer[0].classList.contains(styles.bottom));
 
     tool.setPosition(ToolbarPosition.Bottom);
 
-    expect(toolContainerDomElement?.classList.contains(styles.bottom));
+    expect(toolbarContainer[0].classList.contains(styles.container));
   });
 });

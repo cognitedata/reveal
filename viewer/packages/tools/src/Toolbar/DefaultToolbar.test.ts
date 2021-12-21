@@ -64,13 +64,45 @@ describe('ToolbarTool', () => {
     jest.restoreAllMocks();
   });
 
-  test('Create Default toolbar', () => {
-    const createElementMock = jest.spyOn(document, 'createElement');
+  test('Test Default Toolbar element creation', () => {
+    const toolbarSpyOn = jest.spyOn(document, 'createElement');
 
     defaultToolbar = new DefaultToolbar(viewer, model);
 
-    expect(createElementMock).toBeCalledTimes(12);
+    expect(toolbarSpyOn).toBeCalledWith('div');
+    expect(toolbarSpyOn).toBeCalledWith('button');
+    expect(toolbarSpyOn).toBeCalledWith('style');
+    expect(toolbarSpyOn).toBeCalledWith('img');
 
-    createElementMock.mockRestore();
+    expect(toolbarSpyOn).toBeCalledTimes(12);
+
+    toolbarSpyOn.mockRestore();
+  });
+
+  test('Test default toolbar elements', () => {
+    defaultToolbar = new DefaultToolbar(viewer, model);
+
+    const toolbarContainer = canvasContainer.getElementsByClassName('reveal-viewer-toolbar-container');
+
+    expect(toolbarContainer[0].hasChildNodes).toBeTrue;
+
+    expect(toolbarContainer[0].childElementCount).toBe(5);
+  });
+
+  test('Add new elements to existing default toolbar', () => {
+    const iconClicked = jest.fn();
+    defaultToolbar = new DefaultToolbar(viewer, model);
+
+    const toolbar = defaultToolbar.getToolbar();
+    expect(toolbar).not.toBeNull();
+
+    toolbar.addToolbarItem('Tooltip1', '', true, iconClicked);
+    toolbar.addToolbarItem('Tooltip2', '', false, iconClicked);
+
+    const toolbarContainer = canvasContainer.getElementsByClassName('reveal-viewer-toolbar-container');
+
+    expect(toolbarContainer[0].hasChildNodes).toBeTrue;
+
+    expect(toolbarContainer[0].childElementCount).toBe(7);
   });
 });
