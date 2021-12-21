@@ -1,13 +1,8 @@
 import { useEffect, useLayoutEffect, Suspense } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Icons } from '@cognite/cogs.js';
-
 import BasePreviewCard from 'components/card/preview-card';
-import {
-  WellTitleButton,
-  LoaderContainer,
-} from 'components/card/preview-card/elements';
+import { LoaderContainer } from 'components/card/preview-card/elements';
 import { WhiteLoaderInline } from 'components/loading';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { clearSelectedWell } from 'modules/map/actions';
@@ -68,11 +63,7 @@ export const WellPreviewCard: React.FC<{
         title={well?.name || ''}
         handleCloseClick={handlePreviewClose}
         actions={<WellPreviewAction well={well} />}
-        iconButton={
-          <WellTitleButton>
-            <Icons.OilPlatform />
-          </WellTitleButton>
-        }
+        icon="OilPlatform"
       >
         <WellMetaDataContainer>
           <WellMetadata well={well} />

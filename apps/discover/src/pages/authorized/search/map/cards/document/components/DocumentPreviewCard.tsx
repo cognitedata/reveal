@@ -1,13 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Icons } from '@cognite/cogs.js';
 import { reportException } from '@cognite/react-errors';
 import { useTranslation } from '@cognite/react-i18n';
 
 import { getPathsFromDoc } from '_helpers/getPathsFromDocument';
 import BasePreviewCard from 'components/card/preview-card/BasePreviewCard';
-import { TitleButton } from 'components/card/preview-card/elements';
 import { FilePath } from 'components/document-info-panel/FilePath';
 import DocumentViewModal from 'components/document-preview-card/DocumentViewModal';
 import { showSuccessMessage } from 'components/toast';
@@ -95,11 +93,7 @@ export const DocumentPreviewCard: React.FC<{
           isPreviewButtonDisabled={downloadingPdf}
         />
       }
-      iconButton={
-        <TitleButton>
-          <Icons.Document />
-        </TitleButton>
-      }
+      icon="Document"
     >
       <DocumentInfoWrapper>
         <MarginBottomNormalContainer>

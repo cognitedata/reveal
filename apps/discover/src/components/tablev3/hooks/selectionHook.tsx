@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import * as React from 'react';
 import { HeaderProps, Hooks } from 'react-table';
 
 import get from 'lodash/get';

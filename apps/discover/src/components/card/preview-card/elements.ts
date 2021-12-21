@@ -2,7 +2,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 
 import styled from 'styled-components/macro';
 
-import { Button, Flex, Title, Tooltip } from '@cognite/cogs.js';
+import { Flex, Title, Tooltip } from '@cognite/cogs.js';
 
 import Divider from 'components/divider';
 import { FlexAlignJustifyContent, FlexAlignItems, sizes } from 'styles/layout';
@@ -67,27 +67,6 @@ const TooltipContainer = styled(Tooltip)`
   width: 100% !important;
 `;
 
-const TitleButton = styled(Button)`
-  color: #5e92f6;
-  background-color: #5e92f614; // has a blur effect which don't have it on cogs
-  padding: ${sizes.small} !important;
-
-  &:hover {
-    color: #5e92f6;
-    background-color: #5e92f614; // has a blur effect which don't have it on cogs
-  }
-`;
-const WellTitleButton = styled(Button)`
-  color: #7064f6;
-  background-color: #7064f614;
-  padding: ${sizes.small} !important;
-
-  &:hover {
-    color: #7064f6;
-    background-color: #7064f614;
-  }
-`;
-
 export {
   Container,
   Content,
@@ -98,7 +77,5 @@ export {
   HeaderContainer,
   LoaderContainer,
   PreviewTitleAlignItems,
-  TitleButton,
   TooltipContainer,
-  WellTitleButton,
 };

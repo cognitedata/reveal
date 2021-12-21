@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, IconType, Label } from '@cognite/cogs.js';
 
 import { CloseButton } from 'components/buttons';
 import Divider from 'components/divider';
@@ -24,7 +24,7 @@ interface Props {
   handleCloseClick?: () => void;
   actions?: React.ReactElement;
   collapsible?: boolean;
-  iconButton?: JSX.Element;
+  icon?: IconType;
 }
 export const BasePreviewCard: React.FC<Props> = ({
   title,
@@ -32,7 +32,7 @@ export const BasePreviewCard: React.FC<Props> = ({
   children,
   actions,
   collapsible,
-  iconButton,
+  icon,
 }) => {
   const [isCollapsed, setCollapsed] = React.useState(false);
 
@@ -41,7 +41,7 @@ export const BasePreviewCard: React.FC<Props> = ({
       <Content collapsed={isCollapsed}>
         <HeaderContainer>
           <PreviewTitleAlignItems>
-            {iconButton}
+            {icon && <Label icon={icon} />}
             <TitleComponent>{title}</TitleComponent>
             <FlexGrow />
             {collapsible && (
