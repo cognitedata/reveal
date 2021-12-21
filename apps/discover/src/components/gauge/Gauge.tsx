@@ -32,12 +32,7 @@ export const Gauge: React.FC<GaugeProps> = ({
   }, [percentage]);
 
   return (
-    <svg
-      style={{ margin: '50px' }}
-      viewBox={`0 0 ${size} ${size}`}
-      width={size}
-      height={size}
-    >
+    <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
       <circle
         cx={center}
         cy={center}

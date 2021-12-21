@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 import {
-  LOG_CASING,
+  LOG_MEASUREMENTS,
   LOG_WELLS_MEASUREMENTS_NAMESPACE,
 } from 'constants/logging';
 import { WELL_QUERY_KEY } from 'constants/react-query';
@@ -25,12 +25,12 @@ export const useMeasurementsQuery = () => {
   const cache = useQueryClient();
   const [fetchingNewData, setFetchingNewData] = useState<boolean>(false);
   const metricLogger = useMetricLogger(
-    LOG_CASING,
+    LOG_MEASUREMENTS,
     TimeLogStages.Network,
     LOG_WELLS_MEASUREMENTS_NAMESPACE
   );
   const newDataMetricLogger = useMetricLogger(
-    LOG_CASING,
+    LOG_MEASUREMENTS,
     TimeLogStages.Network,
     LOG_WELLS_MEASUREMENTS_NAMESPACE
   );
