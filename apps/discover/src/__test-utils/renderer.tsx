@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import { RenderResult, RenderOptions } from '@testing-library/react';
+import { renderHook, RenderHookOptions } from '@testing-library/react-hooks';
 import { Store } from 'redux';
 
 import { ToastContainer } from '@cognite/cogs.js';
@@ -96,3 +97,13 @@ export const testRenderer = (
     options
   );
 };
+
+export const renderHookWithStore = <TProps, TResult>(
+  callback: (props: TProps) => TResult,
+  store: Store,
+  options?: RenderHookOptions<TProps>
+) =>
+  renderHook<TProps, TResult>(callback, {
+    wrapper: ({ children }) => testWrapper({ store, children }),
+    ...options,
+  });

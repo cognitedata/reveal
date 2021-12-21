@@ -1,9 +1,8 @@
-import { useSelector } from 'react-redux';
-
 import { act } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
 
 import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
+import { renderHookWithStore } from '__test-utils/renderer';
+import { getMockedStore } from '__test-utils/store.utils';
 import { Wellbore, WellboreAssetIdMap } from 'modules/wellSearch/types';
 
 import {
@@ -14,33 +13,16 @@ import {
   useSelectedOrHoveredWellbores,
   useSelectedWellbores,
   useWellboreAssetIdMap,
+  useWellboreData,
 } from '../asset/wellbore';
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
-}));
-
-jest.mock('react-query', () => ({
-  useQueryClient: () => ({
-    setQueryData: jest.fn(),
-  }),
-  useQuery: () => ({ isLoading: false, error: {}, data: [] }),
-}));
+const mockStore = getMockedStore(mockedWellStateWithSelectedWells);
 
 describe('Wellbore hook', () => {
-  beforeEach(() => {
-    (useSelector as jest.Mock).mockImplementation((callback) => {
-      return callback(mockedWellStateWithSelectedWells);
-    });
-  });
-  afterEach(() => {
-    (useSelector as jest.Mock).mockClear();
-  });
-
   test('load selected wellbore data', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useSelectedWellbores()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useSelectedWellbores(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -52,8 +34,9 @@ describe('Wellbore hook', () => {
   });
 
   test('load wellbore asset ids', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useWellboreAssetIdMap()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useWellboreAssetIdMap(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -64,8 +47,9 @@ describe('Wellbore hook', () => {
   });
 
   test('load selected or hovered wellbores', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useSelectedOrHoveredWellbores()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useSelectedOrHoveredWellbores(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -77,8 +61,9 @@ describe('Wellbore hook', () => {
   });
 
   test('load selected or hovered wellbores external id map', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useActiveWellboresExternalIdMap()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useActiveWellboresExternalIdMap(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -90,8 +75,9 @@ describe('Wellbore hook', () => {
   });
 
   test('load secondary selected or hovered wellbores', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useSecondarySelectedOrHoveredWellbores()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useSecondarySelectedOrHoveredWellbores(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -103,8 +89,9 @@ describe('Wellbore hook', () => {
   });
 
   test('load selected or hovered wellbores matching id map', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useActiveWellboresMatchingIdMap()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useActiveWellboresMatchingIdMap(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -116,8 +103,9 @@ describe('Wellbore hook', () => {
   });
 
   test('load selected or hovered wellbores source external id map', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useActiveWellboresSourceExternalIdMap()
+    const { result, waitForNextUpdate } = renderHookWithStore(
+      () => useActiveWellboresSourceExternalIdMap(),
+      mockStore
     );
     act(() => {
       waitForNextUpdate();
@@ -126,5 +114,22 @@ describe('Wellbore hook', () => {
     expect(result.current).toEqual({
       'Wellbore A:759155409324993': 759155409324993,
     });
+  });
+
+  test('useWellboreData', async () => {
+    const { result, waitForNextUpdate, rerender } = renderHookWithStore(
+      () => useWellboreData(),
+      mockStore
+    );
+
+    rerender();
+
+    act(() => {
+      waitForNextUpdate();
+    });
+
+    expect(result.current).toEqual(
+      mockedWellStateWithSelectedWells.wellSearch.wellboreData
+    );
   });
 });

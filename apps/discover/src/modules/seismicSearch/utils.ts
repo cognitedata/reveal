@@ -9,9 +9,12 @@ import {
   removeAllFileSelection,
   addFileSelection,
 } from './actions';
-import { useSelectedSurveys, useSelectedFiles } from './selectors';
 import { SeismicHeader } from './service';
-import { SeismicFile, SeismicSurveyContainer } from './types';
+import {
+  SeismicFile,
+  SeismicSurveyContainer,
+  SeismicSelections,
+} from './types';
 
 type RawMetadata = [string, string][];
 // Mapping out metadatalist as an object instead of a list.
@@ -55,19 +58,18 @@ export const normalizeSurvey = (response: any) => {
   return survey;
 };
 
-// selectedSurveys defaults to a hook call
 // this second arg is there so we can call this from nested things
 // by passing that data sourced from the parent component (where hooks are ok)
 export const isSurveySelected = (
   surveyId: string,
-  selectedSurveys = useSelectedSurveys()
+  selectedSurveys: SeismicSelections['surveys']
 ) => {
   return selectedSurveys.includes(surveyId);
 };
 
 export const toggleSurveySelected = (
   surveyId: string,
-  selectedSurveys = useSelectedSurveys()
+  selectedSurveys: SeismicSelections['surveys']
 ) => {
   const isSelected = isSurveySelected(surveyId, selectedSurveys);
 
@@ -80,7 +82,7 @@ export const toggleSurveySelected = (
 
 export const isFileSelected = (
   fileId: string,
-  selectedFiles = useSelectedFiles()
+  selectedFiles: SeismicSelections['files']
 ) => {
   return selectedFiles.some(
     (selectedSurveyFile) => fileId === selectedSurveyFile.fileId
@@ -89,7 +91,7 @@ export const isFileSelected = (
 
 export const toggleFileSelected = (
   file: SeismicFile,
-  selectedFiles = useSelectedFiles()
+  selectedFiles: SeismicSelections['files']
 ) => {
   const isSelected = isFileSelected(file.id, selectedFiles);
 

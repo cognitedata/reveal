@@ -1,33 +1,34 @@
+/*
+ * https://react-redux.js.org/api/hooks#using-memoizing-selectors : As per this doc
+ * using reselect selector & useSelect in combination for memoizing results
+ * */
+
 import React, { useMemo } from 'react';
 
 import flatten from 'lodash/flatten';
-import groupBy from 'lodash/groupBy';
-import head from 'lodash/head';
-import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
-import pickBy from 'lodash/pickBy';
 
+import { useDeepMemo } from 'hooks/useDeep';
 import { useExternalLinksConfig } from 'hooks/useExternalLinksConfig';
 import useSelector from 'hooks/useSelector';
 import { WELLBORE_COLORS } from 'modules/wellInspect/constants';
-import {
-  ASSETS_GROUPED_PROPERTY,
-  WELL_FIELDS_WITH_PRODUCTION_DATA,
-} from 'modules/wellSearch/constants';
+import { WELL_FIELDS_WITH_PRODUCTION_DATA } from 'modules/wellSearch/constants';
 import {
   useWellboreQuery,
   useWellQuery,
 } from 'modules/wellSearch/hooks/useQueryWellCard';
 import { useWellsByIdForFavoritesQuery } from 'modules/wellSearch/hooks/useWellsFavoritesQuery';
-import {
-  InspectWellboreContext,
-  Well,
-  Wellbore,
-  WellId,
-} from 'modules/wellSearch/types';
-import { getFilteredWellbores } from 'modules/wellSearch/utils/wells';
+import { Well, Wellbore, WellId } from 'modules/wellSearch/types';
 
 import { useEnabledWellSdkV3 } from '../../hooks/useEnabledWellSdkV3';
+
+import {
+  groupedWellsSelector,
+  selectedWellsSelector,
+  selectedWellIdsSelector,
+  intermediateWellsSelector,
+  selectedOrHoveredWellsSelector,
+  selectedSecondaryWellAndWellboreIdsSelector,
+} from './wellSelectors';
 
 export const useWells = () => {
   return useSelector((state) => state.wellSearch);
@@ -79,71 +80,24 @@ export const useWellBoreResult = (wellId?: number): Wellbore[] => {
 
 // This returns grouped wells by externalId
 export const useGroupedWells = () => {
-  return useSelector((state) => {
-    return useMemo(
-      () => groupBy(state.wellSearch.wells, ASSETS_GROUPED_PROPERTY),
-      [state.wellSearch.wells]
-    );
-  });
+  return useSelector(groupedWellsSelector);
 };
 
 // This returns selected wells and wellbores
 export const useSelectedWells = () => {
-  return useSelector((state) => {
-    return useMemo(() => {
-      const wells = state.wellSearch.wells
-        .filter((well) => state.wellSearch.selectedWellIds[well.id])
-        .map((well) => {
-          const wellbores = well.wellbores
-            ? well.wellbores.filter(
-                (wellbore) => state.wellSearch.selectedWellboreIds[wellbore.id]
-              )
-            : [];
-          return { ...well, ...{ wellbores } };
-        });
-      return wells;
-    }, [state.wellSearch.selectedWellboreIds, state.wellSearch.wells]);
-  });
+  return useSelector(selectedWellsSelector);
 };
 
 // @sdk-wells-v3
 export const useSelectedWellIds = () => {
   const enabledWellSDKV3 = useEnabledWellSdkV3();
-
-  return useSelector((state) => {
-    const { selectedWellIds } = state.wellSearch;
-
-    return useMemo(() => {
-      const selectedIds = Object.keys(pickBy(selectedWellIds));
-
-      return enabledWellSDKV3
-        ? (selectedIds as unknown as number[])
-        : selectedIds.map(Number);
-    }, [selectedWellIds]);
-  });
+  return useSelector((state) =>
+    selectedWellIdsSelector(state, enabledWellSDKV3)
+  );
 };
 
-// This returns indeterminate wells (Wells that some wellbores are selected but not all)
 export const useIndeterminateWells = () => {
-  return useSelector((state) => {
-    return useMemo(() => {
-      return state.wellSearch.wells.reduce((prev, cur) => {
-        if (!cur.wellbores) {
-          return prev;
-        }
-        const selectedWellboresCount = cur.wellbores.filter(
-          (wellbore) => state.wellSearch.selectedWellboreIds[wellbore.id]
-        ).length;
-        if (
-          selectedWellboresCount > 0 &&
-          selectedWellboresCount !== cur.wellbores.length
-        ) {
-          return { ...prev, [cur.id]: true };
-        }
-        return prev;
-      }, {});
-    }, [state.wellSearch.selectedWellboreIds, state.wellSearch.wells]);
-  });
+  return useSelector(intermediateWellsSelector);
 };
 
 // This returns external links based on the selected wells
@@ -189,132 +143,45 @@ export const useExternalLinkFromSelectedWells = (): string[] => {
 };
 
 export const useSelectedOrHoveredWells = () => {
-  return useSelector((state) => {
-    const wellCardId = state.wellSearch.wellCardSelectedWellId;
-    const well = useWellResult(wellCardId);
-    const wellbores = useWellBoreResult(wellCardId);
+  const wellCardId = useSelector(
+    (state) => state.wellSearch.wellCardSelectedWellId
+  );
+  const favoriteHoveredIds = useSelector(
+    (state) => state.wellSearch.wellFavoriteHoveredOrCheckedWells
+  );
+  const well = useWellResult(wellCardId);
+  const wellbores = useWellBoreResult(wellCardId);
+  const { data: favoriteWellData } = useFavoriteWellResults(favoriteHoveredIds);
+  const wells = useSelector((state) =>
+    selectedOrHoveredWellsSelector(
+      state.wellSearch,
+      well,
+      wellbores,
+      favoriteWellData
+    )
+  );
 
-    // favorite wells
-    const favoriteHoveredIds =
-      state.wellSearch.wellFavoriteHoveredOrCheckedWells;
-    const { data: favoriteWellData } =
-      useFavoriteWellResults(favoriteHoveredIds);
-
-    const wells = useMemo(() => {
-      const inspectContext = state.wellSearch.inspectWellboreContext;
-      if (inspectContext === InspectWellboreContext.WELL_CARD_WELLBORES) {
-        if (well) {
-          // if only wellbore is selected, then show filter others
-          const resultedWellbores = wellbores.filter(
-            (wellbore) =>
-              state.wellSearch.wellCardSelectedWellBoreId[wellbore.id]
-          );
-          return [{ ...well, ...{ wellbores: resultedWellbores } }];
-        }
-        return [];
-      }
-
-      if (inspectContext === InspectWellboreContext.FAVORITE_HOVERED_WELL) {
-        if (!favoriteWellData?.length) return [];
-
-        const firstWell = head(favoriteWellData);
-        if (firstWell)
-          return [
-            { ...firstWell, ...{ wellbores: firstWell.wellbores || [] } },
-          ];
-
-        return [];
-      }
-
-      /*
-      This method is used to get a well with a wellbore which hovered on favorite wellbore table
-      (View button in seperate wellbore row)
-      */
-
-      if (
-        isEqual(
-          inspectContext,
-          InspectWellboreContext.FAVORITE_HOVERED_WELLBORE
-        )
-      ) {
-        if (isEmpty(favoriteWellData)) return [];
-        /*
-        Parsing only one wellId as favoriteHoveredIds when getting favoriteWellData for this function.
-        So the result canbe contained only one well or non.
-        So need to get the head of that array if it is not empty.
-        */
-        const firstWell = head(favoriteWellData);
-        if (firstWell) {
-          /*
-          HoveredWellboreIds also contains only one wellbore id.
-          Then need to get the wellbore that equals with the head of HoveredWellboreIds
-          */
-          const resultedWellbores = getFilteredWellbores(
-            firstWell.wellbores,
-            head(Object.keys(state.wellSearch.hoveredWellboreIds))
-          );
-
-          return [{ ...firstWell, ...{ wellbores: resultedWellbores || [] } }];
-        }
-        return [];
-      }
-      if (inspectContext === InspectWellboreContext.FAVORITE_CHECKED_WELLS) {
-        if (!favoriteWellData?.length) return [];
-
-        return favoriteWellData.map((well) => {
-          return { ...well, ...{ wellbores: well.wellbores || [] } };
-        });
-      }
-
-      return state.wellSearch.wells
-        .filter((well) =>
-          inspectContext === InspectWellboreContext.CHECKED_WELLBORES
-            ? state.wellSearch.selectedWellIds[well.id]
-            : state.wellSearch.hoveredWellId === well.id
-        )
-        .map((well) => {
-          const wellbores = well.wellbores
-            ? well.wellbores.filter((wellbore) => {
-                return inspectContext ===
-                  InspectWellboreContext.CHECKED_WELLBORES
-                  ? state.wellSearch.selectedWellboreIds[wellbore.id]
-                  : state.wellSearch.hoveredWellboreIds[wellbore.id];
-              })
-            : [];
-          return { ...well, ...{ wellbores } };
-        });
-    }, [
-      state.wellSearch.inspectWellboreContext,
-      state.wellSearch.selectedWellIds,
-      state.wellSearch.wells,
-      state.wellSearch.hoveredWellId,
-      state.wellSearch.hoveredWellboreIds,
-      state.wellSearch.wellFavoriteHoveredOrCheckedWells,
-      state.wellSearch.selectedWellboreIds,
-    ]);
-
-    return useMemo(() => {
-      let wellboreIndex = -1;
-      const colors = [
-        ...WELLBORE_COLORS,
-        ...WELLBORE_COLORS.map((color) => `${color}_`),
-      ];
-      return wells.map((well) => ({
-        ...well,
-        wellbores: well.wellbores.map((wellbore) => {
-          wellboreIndex += 1;
-          const colorIndex = wellboreIndex % colors.length;
-          return {
-            ...wellbore,
-            metadata: {
-              ...wellbore.metadata,
-              color: colors[colorIndex],
-            },
-          } as Wellbore;
-        }),
-      }));
-    }, [JSON.stringify(wells)]);
-  });
+  return useDeepMemo(() => {
+    let wellboreIndex = -1;
+    const colors = [
+      ...WELLBORE_COLORS,
+      ...WELLBORE_COLORS.map((color) => `${color}_`),
+    ];
+    return wells.map((well) => ({
+      ...well,
+      wellbores: well.wellbores.map((wellbore) => {
+        wellboreIndex += 1;
+        const colorIndex = wellboreIndex % colors.length;
+        return {
+          ...wellbore,
+          metadata: {
+            ...wellbore.metadata,
+            color: colors[colorIndex],
+          },
+        } as Wellbore;
+      }),
+    }));
+  }, [wells]);
 };
 
 export const useSecondarySelectedOrHoveredWells = () => {
@@ -380,14 +247,5 @@ export const useActiveWellsWellboresCount = () => {
 };
 
 export const useSelectedSecondaryWellAndWellboreIds = () => {
-  return useSelector((state) => {
-    return useMemo(() => {
-      const { selectedSecondaryWellIds, selectedSecondaryWellboreIds } =
-        state.wellSearch;
-      return { selectedSecondaryWellIds, selectedSecondaryWellboreIds };
-    }, [
-      state.wellSearch.selectedSecondaryWellIds,
-      state.wellSearch.selectedSecondaryWellboreIds,
-    ]);
-  });
+  return useSelector(selectedSecondaryWellAndWellboreIdsSelector);
 };

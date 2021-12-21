@@ -142,6 +142,7 @@ DEPENDENCIES = [
     "@npm//redux-logger",
     "@npm//redux-thunk",
     "@npm//redux",
+    "@npm//reselect",
     "@npm//styled-components",
     "@npm//typeface-inter",
     "@npm//uuid",

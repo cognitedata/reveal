@@ -28,8 +28,8 @@ import isEqual from 'lodash/isEqual';
  * **********************************************************************************
  */
 
-export const useCompare = (deps: readonly [...DependencyList]) => {
-  const ref = useRef<readonly [...DependencyList] | undefined>(undefined);
+export const useCompare = (deps: DependencyList) => {
+  const ref = useRef<DependencyList | undefined>(undefined);
 
   if (!ref.current || !isEqual(ref.current, deps)) {
     ref.current = deps;

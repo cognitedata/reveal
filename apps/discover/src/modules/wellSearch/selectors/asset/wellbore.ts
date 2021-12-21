@@ -4,21 +4,13 @@ import { useDispatch } from 'react-redux';
 import difference from 'lodash/difference';
 import flatMap from 'lodash/flatMap';
 import flatten from 'lodash/flatten';
-import get from 'lodash/get';
-import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import useSelector from 'hooks/useSelector';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import {
-  InspectWellboreContext,
-  Wellbore,
-  WellboreAssetIdMap,
-} from 'modules/wellSearch/types';
-import { getFilteredWellbores } from 'modules/wellSearch/utils/wells';
+import { Wellbore } from 'modules/wellSearch/types';
 
 import {
   useWellBoreResult,
@@ -28,6 +20,12 @@ import {
   useSelectedSecondaryWellAndWellboreIds,
   useSelectedOrHoveredWells,
 } from './well';
+import {
+  selectedWellboresSelector,
+  wellboreDataSelector,
+  wellboresFetchedWellIdsSelector,
+  wellboreAssetIdMapSelector,
+} from './wellboreSelectors';
 
 // This returns wellbores for the given well
 export const useWellbores = (wellIds: number[]) => {
@@ -68,31 +66,7 @@ export const useWellbores = (wellIds: number[]) => {
 
 // This returns selected wellbores
 export const useSelectedWellbores = (filterByIds?: number[]) => {
-  return useSelector((state) => {
-    return useMemo(() => {
-      const wellbores = flatten(
-        state.wellSearch.wells
-          .filter((well) => state.wellSearch.selectedWellIds[well.id])
-          .map((well) =>
-            well.wellbores
-              ? well.wellbores.filter(
-                  (wellbore) =>
-                    state.wellSearch.selectedWellboreIds[wellbore.id]
-                )
-              : []
-          )
-      );
-      if (filterByIds) {
-        return wellbores.filter((row) => filterByIds.includes(row.id));
-      }
-      return wellbores;
-    }, [
-      state.wellSearch.wells,
-      state.wellSearch.selectedWellIds,
-      state.wellSearch.selectedWellboreIds,
-      filterByIds,
-    ]);
-  });
+  return useSelector((state) => selectedWellboresSelector(state, filterByIds));
 };
 
 export const useSelectedOrHoveredWellbores = (filterByIds?: number[]) => {
@@ -138,121 +112,23 @@ export const useSelectedOrHoveredWellboreIds = () => {
 
 // This returns wellbore data
 export const useWellboreData = () => {
-  return useSelector((state) =>
-    useMemo(
-      () => state.wellSearch.wellboreData,
-      [state.wellSearch.wellboreData]
-    )
-  );
+  return useSelector(wellboreDataSelector);
 };
 
 export const useWellboreAssetIdMap = () => {
-  return useSelector((state) => {
-    const wellCardId = state.wellSearch.wellCardSelectedWellId;
-    const wellCardWellbores = useWellBoreResult(wellCardId);
-    const inspectContext = state.wellSearch.inspectWellboreContext;
+  const wellCardId = useSelector(
+    (state) => state.wellSearch.wellCardSelectedWellId
+  );
+  const wellCardWellbores = useWellBoreResult(wellCardId);
+  const favoriteHoveredIds = useSelector(
+    (state) => state.wellSearch.wellFavoriteHoveredOrCheckedWells
+  );
+  // favorite wells
+  const { data: favoriteWellData } = useFavoriteWellResults(favoriteHoveredIds);
 
-    // favorite wells
-    const favoriteHoveredIds =
-      state.wellSearch.wellFavoriteHoveredOrCheckedWells;
-    const { data: favoriteWellData } =
-      useFavoriteWellResults(favoriteHoveredIds);
-    const { hoveredWellboreIds } = state.wellSearch;
-
-    return useMemo(() => {
-      if (InspectWellboreContext.WELL_CARD_WELLBORES === inspectContext) {
-        return wellCardWellbores.reduce((idMap, wellbore) => {
-          const wellboreAssetId = get(
-            wellbore,
-            'sourceWellbores[0].id',
-            wellbore.id
-          );
-          return {
-            ...idMap,
-            [wellbore.id]: wellboreAssetId,
-          };
-        }, {} as WellboreAssetIdMap);
-      }
-      if (inspectContext === InspectWellboreContext.FAVORITE_HOVERED_WELL) {
-        const firstWell = head(favoriteWellData);
-
-        const resultedWellbores = firstWell?.wellbores || [];
-        return resultedWellbores.reduce((idMap, wellbore) => {
-          const wellboreAssetId = get(
-            wellbore,
-            'sourceWellbores[0].id',
-            wellbore.id
-          );
-          return {
-            ...idMap,
-            [wellbore.id]: wellboreAssetId,
-          };
-        }, {} as WellboreAssetIdMap);
-      }
-
-      if (
-        isEqual(
-          inspectContext,
-          InspectWellboreContext.FAVORITE_HOVERED_WELLBORE
-        )
-      ) {
-        const firstWell = head(favoriteWellData);
-
-        if (!firstWell) return [];
-        const resultedWellbores = getFilteredWellbores(
-          firstWell.wellbores,
-          head(Object.keys(hoveredWellboreIds))
-        );
-
-        return resultedWellbores.reduce((idMap, wellbore) => {
-          const wellboreAssetId = get(
-            wellbore,
-            'sourceWellbores[0].id',
-            wellbore.id
-          );
-          return {
-            ...idMap,
-            [wellbore.id]: wellboreAssetId,
-          };
-        }, {} as WellboreAssetIdMap);
-      }
-
-      if (inspectContext === InspectWellboreContext.FAVORITE_CHECKED_WELLS) {
-        const resultedWellbores = flatten(
-          favoriteWellData?.map((well) =>
-            well.wellbores ? well.wellbores : []
-          )
-        );
-        return resultedWellbores.reduce((idMap, wellbore) => {
-          const wellboreAssetId = get(
-            wellbore,
-            'sourceWellbores[0].id',
-            wellbore.id
-          );
-          return {
-            ...idMap,
-            [wellbore.id]: wellboreAssetId,
-          };
-        }, {} as WellboreAssetIdMap);
-      }
-
-      return flatten(
-        state.wellSearch.wells.map((well) =>
-          well.wellbores ? well.wellbores : []
-        )
-      ).reduce((idMap, wellbore) => {
-        const wellboreAssetId = get(
-          wellbore,
-          'sourceWellbores[0].id',
-          wellbore.id
-        );
-        return {
-          ...idMap,
-          [wellbore.id]: wellboreAssetId,
-        };
-      }, {} as WellboreAssetIdMap);
-    }, [state.wellSearch.wells]);
-  });
+  return useSelector((state) =>
+    wellboreAssetIdMapSelector(state, wellCardWellbores, favoriteWellData)
+  );
 };
 
 export const useActiveWellboresExternalIdMap = () => {
@@ -311,12 +187,7 @@ export const useActiveWellboresSourceExternalIdMap = () => {
 };
 
 export const useWellboresFetchedWellIds = () => {
-  return useSelector((state) =>
-    useMemo(
-      () => state.wellSearch.wellboresFetchedWellIds,
-      [state.wellSearch.wellboresFetchedWellIds]
-    )
-  );
+  return useSelector(wellboresFetchedWellIdsSelector);
 };
 
 export const useWellboresFetching = () => {

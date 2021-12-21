@@ -39,7 +39,7 @@ export interface SurveyFile {
   fileId: string;
   fileName: string;
 }
-interface SeismicSelections {
+export interface SeismicSelections {
   surveys: string[];
   files: SurveyFile[];
 }

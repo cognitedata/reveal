@@ -37,7 +37,7 @@ import { getSurveyKey } from './useSurveys';
 export const useSeismicMapFeatures = () => {
   // 1. these are the survey UI selections
   const selectedSurveyIds = useSelectedSurveys();
-  const selectedFileIds = useSelectedFiles();
+  const selectedFiles = useSelectedFiles();
   const queryClient = useQueryClient();
 
   // 2. add all opened surveys to the map
@@ -62,7 +62,7 @@ export const useSeismicMapFeatures = () => {
             files.forEach((file) => {
               // console.log('Processing file:', file);
 
-              const state = isFileSelected(file.id, selectedFileIds)
+              const state = isFileSelected(file.id, selectedFiles)
                 ? 'Selected' // show dark outline and grey box
                 : 'Preview'; // just show white outline (if not selected)
               // console.log('Survey state:', { file: file.id, state });
@@ -94,7 +94,7 @@ export const useSeismicMapFeatures = () => {
 
         return result;
       }, []),
-    [selectedSurveyIds, selectedFileIds, queryClient]
+    [selectedSurveyIds, selectedFiles, queryClient]
   );
 
   // console.log('Final seismic features:', surveyFeatures);

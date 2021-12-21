@@ -55,6 +55,7 @@ module.exports = {
 
     'testing-library/prefer-presence-queries': ['error'],
     'react/no-unstable-nested-components': ['error'],
+    'react-hooks/rules-of-hooks': ['error'],
     'testing-library/prefer-query-by-disappearance': ['error'],
     'import/no-anonymous-default-export': ['error'],
     'unicode-bom': ['error'],
@@ -65,7 +66,6 @@ module.exports = {
     // In order to follow the top level .eslintrc setup the rules below
     // should be enabled and corresponding eslint errors should be addressed.
     // This can be done gradually in the later PRs:
-    'react-hooks/rules-of-hooks': ['off'],
     'no-param-reassign': [
       'error',
       { props: true, ignorePropertyModificationsFor: ['state'] },
