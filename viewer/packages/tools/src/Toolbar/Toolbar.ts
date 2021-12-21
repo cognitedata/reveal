@@ -98,8 +98,6 @@ export class Toolbar {
         }
       }
       onClick();
-      const event = new Event('focus');
-      this._canvasElement?.dispatchEvent(event);
     };
 
     this._toolbarContainer.appendChild(element);
