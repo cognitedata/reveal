@@ -14,7 +14,7 @@ const defaultOptions: Options = {
   height: '140px',
   style: MAPBOX_MAP_ID,
   center: [0, 0],
-  zoom: 6,
+  zoom: -1,
 
   // should be a function; will be bound to Minimap
   zoomAdjust: noop,
