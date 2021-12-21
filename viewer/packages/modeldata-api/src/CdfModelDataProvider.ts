@@ -10,9 +10,11 @@ import { ModelDataProvider } from './types';
  */
 export class CdfModelDataProvider implements ModelDataProvider {
   private readonly client: CogniteClient;
+  private authenticationPromise: Promise<boolean>;
 
   constructor(client: CogniteClient) {
     this.client = client;
+    this.authenticationPromise = client.authenticate();
   }
 
   get headers(): HttpHeaders {
@@ -26,7 +28,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
       Accept: '*/*'
     };
 
-    const response = await fetchWithRetry(url, { headers, method: 'GET' });
+    const response = await this.fetchWithRetry(url, { headers, method: 'GET' });
     return response.arrayBuffer();
   }
 
@@ -34,19 +36,29 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const response = await this.client.get(`${baseUrl}/${fileName}`);
     return response.data;
   }
-}
 
-async function fetchWithRetry(input: RequestInfo, options: RequestInit | undefined, retries: number = 3) {
-  let error: Error | undefined;
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fetch(input, options);
-    } catch (err) {
-      // Keep first error only
-      if (error !== undefined) {
-        error = err as Error;
+  private async fetchWithRetry(input: RequestInfo, options: RequestInit, retries: number = 3) {
+    let error: Error | undefined;
+    for (let i = 0; i < retries; i++) {
+      try {
+        await this.authenticationPromise;
+
+        const response = await fetch(input, options);
+
+        // Authentication error
+        if (response.status == 401) {
+          this.authenticationPromise = this.client.authenticate();
+          continue;
+        }
+
+        return response;
+      } catch (err) {
+        // Keep first error only
+        if (error !== undefined) {
+          error = err as Error;
+        }
       }
     }
+    throw error;
   }
-  throw error;
 }
