@@ -11,6 +11,7 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
   newText: Konva.Text | null = null;
   isToolUsingShapeSettings = true;
   group: Konva.Group | null = null;
+  readyToText = true;
 
   onTextEdit = (textNode: Konva.Text) => {
     textNode.hide();
@@ -33,7 +34,9 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
     textarea.style.left = `${areaPosition.x}px`;
     textarea.style.width = `${
       textarea.value.length === 0
-        ? textarea.placeholder.length * textNode.fontSize()
+        ? (textarea.placeholder.length || 1) *
+          textNode.fontSize() *
+          this.ornateInstance.stage.scale().x
         : textNode.width() - textNode.padding() * 2
     }px`;
     textarea.style.height = `${
@@ -82,18 +85,27 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
 
     const removeTextarea = () => {
       textarea.parentNode?.removeChild(textarea);
-      window.removeEventListener('click', handleOutsideClick);
-      textNode.show();
-      (this.ornateInstance.tools.default as DefaultTool).reset();
-      this.ornateInstance.transformer?.setSelectedNodes([textNode]);
+      this.newText?.removeEventListener('ornate_text_destroy');
+      // show node only if there is a text
+      if (textNode.text()) {
+        textNode.show();
+        (this.ornateInstance.tools.default as DefaultTool).reset();
+      } else {
+        textNode.destroy();
+      }
     };
+
+    this.newText?.addEventListener('ornate_text_destroy', removeTextarea);
 
     const setTextareaWidth = (nextWidth?: number) => {
       let newWidth = nextWidth;
 
       if (!newWidth) {
         // set width for placeholder
-        newWidth = textarea.value.length * textNode.fontSize();
+        newWidth =
+          (textarea.value.length < 10 ? 10 : textarea.value.length) *
+          textNode.fontSize() *
+          this.ornateInstance.stage.scale().x;
       }
       // some extra fixes on different browsers
       const isSafari = /^((?!chrome|android).)*safari/i.test(
@@ -116,19 +128,25 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       e.cancelBubble = true;
       // hide on enter
       // but don't hide on shift + enter
-      if (e.keyCode === 13 && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey) {
         textNode.text(textarea.value);
         removeTextarea();
+        // allow text again after clicking enter
+        this.readyToText = true;
+        return;
       }
       // on esc do not set value back to node
-      if (e.keyCode === 27) {
+      if (e.key === 'Escape') {
         removeTextarea();
+        this.readyToText = true;
+        return;
       }
 
       setTextareaWidth();
       textarea.style.height = 'auto';
       textarea.style.height = `${
-        textarea.scrollHeight + textNode.fontSize()
+        textarea.scrollHeight +
+        textNode.fontSize() * this.ornateInstance.stage.scale().x
       }px`;
     });
 
@@ -165,6 +183,11 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
       this.onTextEdit(e.target as Konva.Text);
       return;
     }
+    if (!this.readyToText) {
+      // allow texting after second mouse click
+      this.readyToText = true;
+      return;
+    }
     const groupName =
       e.target.attrs?.attachedToGroup || e.target.attrs?.inGroup;
     this.group = this.ornateInstance.stage.findOne(
@@ -186,5 +209,11 @@ export class TextTool extends Tool implements ICogniteOrnateTool {
 
     this.ornateInstance.addShape(this.newText);
     this.onTextEdit(this.newText);
+    // do not start texting on next mouse click
+    this.readyToText = false;
+  };
+
+  onDestroy = () => {
+    this.newText?.fire('ornate_text_destroy');
   };
 }
