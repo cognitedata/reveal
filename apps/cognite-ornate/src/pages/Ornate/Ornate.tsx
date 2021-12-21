@@ -25,6 +25,7 @@ import {
   StampTool,
   OrnateTransformer,
   UpdateKeyType,
+  SquiggleTool,
 } from '@cognite/ornate';
 import debounce from 'lodash/debounce';
 import WorkSpaceSidebar from 'components/WorkSpaceSidebar';
@@ -145,6 +146,7 @@ const Ornate: React.FC<OrnateProps> = ({ client }: OrnateProps) => {
         comment: new CommentTool(ornateViewer.current),
         list: listTool,
         stamp: stampTool.current,
+        squiggle: new SquiggleTool(ornateViewer.current),
         default: new DefaultTool(ornateViewer.current),
       };
       onToolChange('default');

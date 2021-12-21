@@ -7,3 +7,4 @@ export { ListTool } from './ListTool';
 export { DefaultTool } from './DefaultTool';
 export { CommentTool } from './CommentTool';
 export { StampTool } from './StampTool';
+export { SquiggleTool } from './SquiggleTool';

@@ -7,6 +7,7 @@ import { PDFDocument } from 'pdf-lib';
 
 import { OrnateHistory, UpdateKeyType } from './containers/History';
 import { OrnateTransformer } from './containers/Transformer';
+import Squiggle from './shapes/Squiggle';
 import {
   OrnateAnnotation,
   ToolType,
@@ -25,6 +26,7 @@ const defaultShapeSettings = {
   circle: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
   line: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
   rect: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
+  squiggle: { strokeWidth: 10, stroke: 'rgba(255,220,127,1)' },
   text: { fill: 'rgba(255,220,127,1)', fontSize: 32 },
 };
 
@@ -42,6 +44,10 @@ export type CogniteOrnateOptions = {
 const getShapeByDrawing = (drawing: Drawing) => {
   if (drawing.type === 'line') {
     return new Konva.Line({ ...drawing.attrs, id: drawing.id });
+  }
+
+  if (drawing.type === 'squiggle') {
+    return new Squiggle({ ...drawing.attrs, id: drawing.id });
   }
 
   if (drawing.type === 'rect') {

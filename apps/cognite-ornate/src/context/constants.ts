@@ -18,6 +18,11 @@ export const defaultShapeSettings = {
     stroke: defaultColor.string(),
     fill: defaultColorTransparent.string(),
   },
+  squiggle: {
+    strokeWidth: 10,
+    stroke: defaultColor.string(),
+    fill: defaultColorTransparent.string(),
+  },
   text: { fill: defaultColor.alpha(1).string(), fontSize: 32 },
 };
 

@@ -165,6 +165,17 @@ const WorkSpaceTools = ({
       <Button
         type="ghost"
         size="small"
+        title="Squiggle"
+        onClick={() => {
+          onToolClick('squiggle');
+        }}
+        disabled={activeTool === 'squiggle'}
+      >
+        <Icon type="Polygon" />
+      </Button>
+      <Button
+        type="ghost"
+        size="small"
         title="Circle C"
         onClick={() => {
           onToolClick('circle');
