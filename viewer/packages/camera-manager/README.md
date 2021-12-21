@@ -12,7 +12,7 @@ $ yarn run start
 ## Usage
 ```js
 
-import ComboControls from '@cognite/three-combo-controls';
+import { ComboControls } from '@cognite/three-combo-controls';
 import * as THREE from 'three';
 
 const controls = new ComboControls(camera, domElement);
@@ -60,7 +60,6 @@ controls.dynamicTarget = false; // possible to zoom past the target (will move t
 controls.dollyFactor = 0.98; // zoom factor (when zooming one step the distance to the target will be distance = oldDistance * dollyFactor)
 
 controls.minDistance = 1; // minimum distance to the target (see also dynamicTarget)
-controls.maxDistance = Infinity; // maximum distance to the target
 
 controls.minPolarAngle = 0; // minium polar angle around the target (radians)
 controls.maxPolarAngle = Math.PI; // maximum polar angle around the target (radians)
