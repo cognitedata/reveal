@@ -5,19 +5,19 @@ import { getPercent } from '_helpers/getPercent';
 import { WidgetContentWithLoading } from './WidgetContentWithLoading';
 
 interface Props {
-  singleData: Set<unknown>;
-  singleDataLoading: boolean;
+  selectedData: Set<unknown>;
+  selectedDataLoading: boolean;
   completeData: Set<unknown>;
   completeDataLoading: boolean;
 }
 export const WidgetContentCalculator: React.FC<Props> = ({
-  singleData,
-  singleDataLoading,
+  selectedData,
+  selectedDataLoading,
   completeData,
   completeDataLoading,
 }) => {
   const intersection = new Set(
-    [...completeData].filter((x) => singleData.has(x))
+    [...completeData].filter((x) => selectedData.has(x))
   );
 
   let mainText = `${intersection.size} / ${completeData.size}`;
@@ -27,7 +27,7 @@ export const WidgetContentCalculator: React.FC<Props> = ({
     mainText = '';
   }
 
-  if (singleDataLoading) {
+  if (selectedDataLoading) {
     percent = '';
     mainText = `${completeData.size} wells`;
   }

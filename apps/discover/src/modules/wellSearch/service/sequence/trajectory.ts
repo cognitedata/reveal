@@ -76,6 +76,7 @@ export const fetchTrajectoriesUsingWellsSDK = async (
   columns: ProjectConfigWellsTrajectoryColumns[] = []
 ) => {
   const idChunkList = chunk(wellboreIds, CHUNK_LIMIT);
+
   const availableColumnNames = Object.keys(TRAJECTORY_COLUMN_NAME_MAP);
   const existColumns = columns.filter((column) =>
     column.name ? availableColumnNames.includes(column.name) : false

@@ -4,7 +4,10 @@ import styled from 'styled-components/macro';
 
 import { FlexColumn, sizes } from 'styles/layout';
 
-import { WidgetNDS } from './WidgetNDS';
+import { WidgetCasings } from './widgets/WidgetCasings';
+import { WidgetNDS } from './widgets/WidgetNDS';
+import { WidgetNPT } from './widgets/WidgetNPT';
+import { WidgetTrajectory } from './widgets/WidgetTrajectory';
 
 export const ContentWrapper = styled(FlexColumn)`
   padding-top: ${sizes.normal};
@@ -13,7 +16,7 @@ export const ContentWrapper = styled(FlexColumn)`
   height: 100%;
   display: flex;
   flex: 1;
-  flex-direction: column;
+  flex-direction: row;
   background-color: transparent;
   min-height: 100%;
 `;
@@ -22,6 +25,9 @@ export const Dashboard: React.FC = () => {
   return (
     <ContentWrapper>
       <WidgetNDS />
+      <WidgetNPT />
+      <WidgetTrajectory />
+      <WidgetCasings />
     </ContentWrapper>
   );
 };

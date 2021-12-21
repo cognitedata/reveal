@@ -1,11 +1,12 @@
+import * as React from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
-import flatten from 'lodash/flatten';
-
-import { getSetFromRecord } from '_helpers/getSetFromRecord';
+import pick from 'lodash/pick';
 
 /*
  * Fetch only the new items, get all the rest from cache
+ *
+ * Note: data is stored as Record<string, T[]>
  *
  * Example:
  *
@@ -15,17 +16,12 @@ import { getSetFromRecord } from '_helpers/getSetFromRecord';
  *    then if you request [1,2,3,4] it will only fetch item 4
  *
  */
-export const useSmartCache = <T>({
-  key,
-  tempKey,
-  items,
-  fetchAction,
-}: {
+export type CacheProps<T> = {
   key: string | string[];
-  tempKey: string | string[];
   items: Set<string>;
   fetchAction: (items: Set<string>) => Promise<Record<string, T[]>>;
-}) => {
+};
+export const useCache = <T>({ key, items, fetchAction }: CacheProps<T>) => {
   const queryClient = useQueryClient();
 
   const emptyCache: Record<string, T[]> = {};
@@ -43,13 +39,11 @@ export const useSmartCache = <T>({
     : items;
   // console.log('newItemsToFetch', newItemsToFetch.size);
 
-  const itemsFromCache = flatten(getSetFromRecord(items, previousCache));
-
   return useQuery(
-    tempKey,
+    key,
     () => {
       if (newItemsToFetch.size === 0) {
-        return Promise.resolve(Object.values(itemsFromCache));
+        return previousCache;
       }
 
       return fetchAction(newItemsToFetch).then((groupedEvents) => {
@@ -64,40 +58,19 @@ export const useSmartCache = <T>({
           }
         });
 
-        queryClient.setQueryData(key, updatedCache);
-
-        return Object.values(flatten(getSetFromRecord(items, updatedCache)));
+        return updatedCache;
       });
     },
-    { enabled: items.size > 0 }
+    {
+      enabled: items.size > 0,
+      // ✅ memoizes with useCallback
+      // https://tkdodo.eu/blog/react-query-data-transformations#3-using-the-select-option
+      select: React.useCallback(
+        (data) => {
+          return pick(data, Array.from(items.keys()));
+        },
+        [items.keys()]
+      ),
+    }
   );
 };
-
-// once the above function is settled, then we can break it apart
-// into smaller pieces to help maintaince
-//
-// const findUncached = <T>({
-//   key,
-//   items,
-// }: {
-//   key: string;
-//   items: Set<string>;
-// }) => {
-//   const queryClient = useQueryClient();
-
-//   const emptyCache: Record<string, T[]> = {};
-//   const previousCache =
-//     queryClient.getQueryData<Record<string, T[]>>(key) || emptyCache;
-//   // console.log('previousCache', previousCache);
-
-//   const uncached = previousCache
-//     ? Array.from(items.keys()).reduce((result, possibleNewItemId) => {
-//         if (previousCache && !previousCache[possibleNewItemId]) {
-//           result.add(possibleNewItemId);
-//         }
-//         return result;
-//       }, new Set<string>())
-//     : items;
-
-//   return uncached;
-// };

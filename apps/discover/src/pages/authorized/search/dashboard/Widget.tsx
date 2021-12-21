@@ -23,8 +23,9 @@ const WidgetWrapper = styled.div`
   border: 2px solid var(--cogs-graphics-info);
   background: var(--cogs-white);
   height: 134px;
-  width: 272px;
+  width: 300px;
   padding: ${sizes.normal};
+  margin: ${sizes.small};
 `;
 
 interface Props {

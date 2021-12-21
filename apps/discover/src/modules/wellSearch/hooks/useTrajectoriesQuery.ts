@@ -26,6 +26,7 @@ import { mapWellInfo } from '../utils/trajectory';
 import { useEnabledWellSdkV3 } from './useEnabledWellSdkV3';
 import { useWellConfig } from './useWellConfig';
 
+// NOTE: ignoreEmptyRows seems to always be true everywhere, perhaps we should remove this option
 export const useTrajectoriesQuery = (ignoreEmptyRows = true) => {
   const enabledWellSDKV3 = useEnabledWellSdkV3();
   const wellboreIds = useSelectedOrHoveredWellboreIds();
